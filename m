@@ -2,119 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E05441922CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:34:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85D191922D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:35:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbgCYId5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 04:33:57 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46706 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbgCYId5 (ORCPT
+        id S1727522AbgCYIfB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 25 Mar 2020 04:35:01 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:48075 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727492AbgCYIfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 04:33:57 -0400
-Received: by mail-ot1-f66.google.com with SMTP id 111so1135512oth.13
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 01:33:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FJHGef/EtWaLVVnexBqS74xlLLuhu+RMGQ/OYQ44duc=;
-        b=ZIVMvQHZp99+uoK7d0Yrzn17aHwV6NxDZb+iYTATVwKWxDA5yAwJT88cp1cL3iX/Qa
-         8XTG1ENI+AOcD8u/CLP64CGmgx9O4b2XEatQLIv5dejkD/1FdZlG9rrYj8smRXvH4sqS
-         W+l4GeZqVew7FN7xichaimos8sawJFAu089MSEm92s2dl7H67gE3qJujxC2IFzDLp3js
-         wMo+Hylrv+3KwaMxf0uBfRtOAUSbthJZltu5jZSJD+GLMKhoEuL3juAe3LgRubJfv8o7
-         OhFPjQMwqZbpD2dbgq9qTYrfJ7FKykJeHJ9K7ejTCrEr272elgxoYFgCW8C99LcmTHzI
-         Km0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FJHGef/EtWaLVVnexBqS74xlLLuhu+RMGQ/OYQ44duc=;
-        b=BzPiBuLCy+B1SkvmMikPQSsbhXv9stCxkhu3ZbJNVAQIkxtdma+siyzrjll9ZdieSL
-         fktP9VBVuCuP6fSXIoaDQ9+Zq/jt3w7iLZWN72pWlFBH4FceEuPgflfoDdEANx2YYXK3
-         Eql/RJmdttBYnoIQTsXdpdHkS3HSWhOtlhyRT2tUOFnW1IPhtFbnKyAIg5xn5XZy1LsU
-         xWpO1/pIF2yN5AIA4/UIRzBXoBJlRGsZqJt03+JzxjL9Yrqy6S8COhECg2ymc8js2eec
-         acHU8n3jxlK8ApKeXxkd28mpxIqCV6KMN5Hqp0RaPRkdHziwU75E8Op9oQGIhX4NJWUk
-         2Z/g==
-X-Gm-Message-State: ANhLgQ36gEcLoOrWJ32+/eS6pDpVdMRCKVWN+2zfN1Q36nk53SILIVQQ
-        Aavjyypa+bVw2QwLZvJJQo1/J57mvERw1yP2z37wQw==
-X-Google-Smtp-Source: ADFU+vsyet6PJwmelZB0kHEg09F8xbMLitmgUquIPYDgBQdp5+jzN/ZP9IYr0DU5P2Q+gOGVZ08bxzsAMym9vqLXfV0=
-X-Received: by 2002:a9d:6945:: with SMTP id p5mr1669394oto.268.1585125236058;
- Wed, 25 Mar 2020 01:33:56 -0700 (PDT)
+        Wed, 25 Mar 2020 04:35:00 -0400
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1jH1Uy-0003At-S7; Wed, 25 Mar 2020 09:34:52 +0100
+Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1jH1Uv-00047B-MV; Wed, 25 Mar 2020 09:34:49 +0100
+Date:   Wed, 25 Mar 2020 09:34:49 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     David Miller <davem@davemloft.net>
+Cc:     andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, kernel@pengutronix.de,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        marex@denx.de, david@protonic.nl, devicetree@vger.kernel.org,
+        linux@armlinux.org.uk, olteanv@gmail.com
+Subject: user space interface for configuring T1 PHY management mode
+ (master/slave)
+Message-ID: <20200325083449.GA8404@pengutronix.de>
 MIME-Version: 1.0
-References: <1584965910-19068-1-git-send-email-sumit.garg@linaro.org> <1584965910-19068-3-git-send-email-sumit.garg@linaro.org>
-In-Reply-To: <1584965910-19068-3-git-send-email-sumit.garg@linaro.org>
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-Date:   Wed, 25 Mar 2020 09:33:45 +0100
-Message-ID: <CAHUa44Fd3ujQY8ev9sZOMya7wrTmHnvda_05XhQA7X3knB3auA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] tee: add private login method for kernel clients
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stuart Yoder <stuart.yoder@arm.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:27:16 up 195 days, 21:15, 449 users,  load average: 0.25, 0.32,
+ 0.69
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 1:19 PM Sumit Garg <sumit.garg@linaro.org> wrote:
->
-> There are use-cases where user-space shouldn't be allowed to communicate
-> directly with a TEE device which is dedicated to provide a specific
-> service for a kernel client. So add a private login method for kernel
-> clients and disallow user-space to open-session using GP implementation
-> defined login method range: (0x80000000 - 0xFFFFFFFF).
->
-> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> ---
->  drivers/tee/tee_core.c   | 6 ++++++
->  include/uapi/linux/tee.h | 8 ++++++++
->  2 files changed, 14 insertions(+)
+Hi all,
 
-Looks good.
+I'm working on mainlining of NXP1102 PHY (BroadR Reach/802.3bw) support.
 
-Thanks,
-Jens
+Basic functionality is working and support with mainline kernel. Now it is time
+to extend it. According to the specification, each PHY can be master or slave.
 
->
-> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-> index 37d22e3..533e7a8 100644
-> --- a/drivers/tee/tee_core.c
-> +++ b/drivers/tee/tee_core.c
-> @@ -334,6 +334,12 @@ static int tee_ioctl_open_session(struct tee_context *ctx,
->                         goto out;
->         }
->
-> +       if (arg.clnt_login & TEE_IOCTL_LOGIN_MASK) {
-> +               pr_debug("login method not allowed for user-space client\n");
-> +               rc = -EPERM;
-> +               goto out;
-> +       }
-> +
->         rc = ctx->teedev->desc->ops->open_session(ctx, &arg, params);
->         if (rc)
->                 goto out;
-> diff --git a/include/uapi/linux/tee.h b/include/uapi/linux/tee.h
-> index 6596f3a..19172a2 100644
-> --- a/include/uapi/linux/tee.h
-> +++ b/include/uapi/linux/tee.h
-> @@ -173,6 +173,14 @@ struct tee_ioctl_buf_data {
->  #define TEE_IOCTL_LOGIN_APPLICATION            4
->  #define TEE_IOCTL_LOGIN_USER_APPLICATION       5
->  #define TEE_IOCTL_LOGIN_GROUP_APPLICATION      6
-> +/*
-> + * Disallow user-space to use GP implementation specific login
-> + * method range (0x80000000 - 0xFFFFFFFF). This range is rather
-> + * being reserved for REE kernel clients or TEE implementation.
-> + */
-> +#define TEE_IOCTL_LOGIN_MASK                   0x80000000
-> +/* Private login method for REE kernel clients */
-> +#define TEE_IOCTL_LOGIN_REE_KERNEL             0x80000000
->
->  /**
->   * struct tee_ioctl_param - parameter
-> --
-> 2.7.4
->
+The HW can be pre configured via bootstrap pins or fuses to have a default
+configuration. But in some cases we still need to be able to configure the PHY
+in a different mode: 
+--------------------------------------------------------------------------------
+http://www.ieee802.org/3/1TPCESG/public/BroadR_Reach_Automotive_Spec_V3.0.pdf
+
+6.1 MASTER-SLAVE configuration resolution
+
+All BroadR-Reach PHYs will default to configure as SLAVE upon power up or reset
+until a management system (for example, processor/microcontroller) configures
+it to be MASTER. MASTER-SLAVE assignment for each link configuration is
+necessary for establishing the timing control of each PHY.
+
+6.2 PHY-Initialization
+
+Both PHYs sharing a link segment are capable of being MASTER or SLAVE. In IEEE
+802.3-2012, MASTER-SLAVE resolution is attained during the Auto-Negotiation
+process (see IEEE 802.3-2012 Clause 28). However, the latency for this process
+is not acceptable for automotive application. A forced assignment scheme is
+employed depending on the physical deployment of the PHY within the car. This
+process is conducted at the power-up or reset condition. The station management
+system manually configures the BroadR-Reach PHY to be MASTER (before the link
+acquisition process starts) while the link partner defaults to SLAVE
+(un-managed).
+--------------------------------------------------------------------------------
+
+Should phylink be involved in this configuration? What's the proper user
+space interface to use for this kind of configuration?  ethtool or ip
+comes into mind. Further having a Device Tree property to configure a
+default mode to overwrite the boot strap pins would be nice to have.
+
+
+Regards,
+Oleksij
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
