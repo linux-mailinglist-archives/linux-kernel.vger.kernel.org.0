@@ -2,101 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4907192E6A
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC22192E69
 	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:41:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbgCYQlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 12:41:00 -0400
-Received: from mail-pj1-f74.google.com ([209.85.216.74]:55874 "EHLO
-        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727580AbgCYQk7 (ORCPT
+        id S1727590AbgCYQk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 12:40:58 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:52204 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727280AbgCYQk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:40:59 -0400
-Received: by mail-pj1-f74.google.com with SMTP id y21so2091370pjn.5
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 09:40:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=QQlmwmvyhM5ffUQK0/If9vVW3XeaSkhBNfKa5UWeFk4=;
-        b=ZcDOCz7gERkxui7ejEW6sPXgWIA1mIFEtpFH818ntgGIjUDxfpP+E70RxvU9BSXo1s
-         rcpJ6ND8bMOZwqMSaECwQQdNaKzzLv1EGers5ZQ4Gji+hUFsQDOBetRbS67YVvdPqDX8
-         q+KFOEw3z1DH6u9Pz9eikOzhsbWQP9dUP5sG3IouJRp0Njnfeg+1ji9dzAi/F6Rwb9sf
-         99kyKdvP6rVJg00yLGOgQmEbE4Ds6zvIUYnSgMhPJ6alaRiFoMNNdh21+TgSyp13QUh1
-         RgFzwAo91Y+mCCbQEd/WNjsTgbxEJUddUKfb2OdM8ZPTaFPPzgmgfFEtW/whNr1SSolT
-         /XhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=QQlmwmvyhM5ffUQK0/If9vVW3XeaSkhBNfKa5UWeFk4=;
-        b=ERYp4Ag7Oq+W+E+96Fe2y/7Ta0aAIEIRR+nAd+l0VUc1z269SiaQGRY/apSStT2K2U
-         TbhEMpyTbMOqvwRtcAlgKs8XHcoopVh1seeQQuwdhPNbVjQNpQ6sk2DODyG092z+KI5E
-         xw+GD0W+9teQ1gLGLIrUSqS39h4EtKgxssxf4Fb8+39Jva6XDFcVSBzswVXPDGgRw7C6
-         rXy0K8R8Kcp4iyaNX27/DpmyAXXRSRut+e1CUMWC/llM8dASWlE+1mgtB/voc5cKXTWm
-         3PwMKctiRMgQKD6c2HS9T1XSCPsdSaO0T4MF84d37qlhVRockxBOIcIpWEHoS7bPKgbJ
-         tMAg==
-X-Gm-Message-State: ANhLgQ1UtaDd8n3hCRB+fMXrJxpT4iWsjR1gH6CgMkwXVlAveAiGaUKm
-        yVcdO0HUqpOMFxhb9PUsbGgebmK+ZQQp
-X-Google-Smtp-Source: ADFU+vtObopVuBBWzlezT7hN54bUUKtluYdeW+xJJHvhzakoCOVbPQ0es7kp603MkrtqNC/r2x3r0DZMQzUH
-X-Received: by 2002:a17:90b:8d2:: with SMTP id ds18mr4280096pjb.186.1585154456219;
- Wed, 25 Mar 2020 09:40:56 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 09:40:22 -0700
-Message-Id: <20200325164022.41385-1-irogers@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [PATCH] perf parse-events: add defensive null check
-From:   Ian Rogers <irogers@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        John Garry <john.garry@huawei.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Cc:     Stephane Eranian <eranian@google.com>,
-        Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 25 Mar 2020 12:40:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585154457;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=inE1lIeTra36wMSLrt0bqLRjIvA4EjTAaoQsY08CUCg=;
+        b=DgclrFHiMAWJ2+yWpFdOuxP1nDYGUFzoiFEpvWMBAqRKqU7S8s3elyVPgAaTtQ8SnRe/tT
+        W9TJHDOG//d1Q4nTbtCgkAKDKC+CfBlBw361kJkvl1DDc9JthLAt1QcXGGYw2QaE0Lnkgq
+        Dm0JD6ylDl5zuvd5iviNpdNABWHVDzg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-482-5TcUci5ON8-5fE3wTcwPfg-1; Wed, 25 Mar 2020 12:40:53 -0400
+X-MC-Unique: 5TcUci5ON8-5fE3wTcwPfg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2F40F800D4E;
+        Wed, 25 Mar 2020 16:40:49 +0000 (UTC)
+Received: from treble (unknown [10.10.119.253])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 58E3360BE0;
+        Wed, 25 Mar 2020 16:40:48 +0000 (UTC)
+Date:   Wed, 25 Mar 2020 11:40:46 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org,
+        mhiramat@kernel.org, mbenes@suse.cz, brgerst@gmail.com
+Subject: Re: [PATCH v3 26/26] objtool: Add STT_NOTYPE noinstr validation
+Message-ID: <20200325164046.p2oxemcjnj2tnxbz@treble>
+References: <20200324153113.098167666@infradead.org>
+ <20200324160925.470421121@infradead.org>
+ <20200324221616.2tdljgyay37aiw2t@treble>
+ <20200324223455.GV2452@worktop.programming.kicks-ass.net>
+ <20200325144211.irnwnly37fyhapvx@treble>
+ <20200325155348.GA20696@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200325155348.GA20696@hirez.programming.kicks-ass.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Terms may have a null config in which case a strcmp will segv. This can
-be reproduced with:
-  perf stat -e '*/event=?,nr/' sleep 1
-Add a null check to avoid this. This was caught by LLVM's libfuzzer.
+On Wed, Mar 25, 2020 at 04:53:48PM +0100, Peter Zijlstra wrote:
+> On Wed, Mar 25, 2020 at 09:42:11AM -0500, Josh Poimboeuf wrote:
+> > Sure, but couldn't validate_unwind_hints() and
+> > validate_reachable_instructions() be changed to *only* run on
+> > .noinstr.text, for the vmlinux case?  That might help converge the
+> > vmlinux and !vmlinux paths.
+> 
+> You're thinking something like so then?
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/pmu.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Not exactly.  But I don't want to keep churning this patch set.  I can
+add more patches later, so don't worry about it.
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 616fbda7c3fc..ef6a63f3d386 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -984,12 +984,11 @@ static int pmu_resolve_param_term(struct parse_events_term *term,
- 	struct parse_events_term *t;
- 
- 	list_for_each_entry(t, head_terms, list) {
--		if (t->type_val == PARSE_EVENTS__TERM_TYPE_NUM) {
--			if (!strcmp(t->config, term->config)) {
--				t->used = true;
--				*value = t->val.num;
--				return 0;
--			}
-+		if (t->type_val == PARSE_EVENTS__TERM_TYPE_NUM &&
-+		    t->config && !strcmp(t->config, term->config)) {
-+			t->used = true;
-+			*value = t->val.num;
-+			return 0;
- 		}
- 	}
- 
+But I was thinking it would eventually be good to have the top-level
+check() be like
+
+	sec = NULL;
+	if (!validate_all)
+		sec = find_section_by_name(file->elf, ".noinstr.text");
+
+	ret = validate_functions(&file, sec);
+	if (ret < 0)
+		goto out;
+	warnings += ret;
+
+	ret = validate_unwind_hints(&file, sec);
+	if (ret < 0)
+		goto out;
+	warnings += ret;
+
+	if (!warnings) {
+		ret = validate_reachable_instructions(&file, sec);
+		if (ret < 0)
+			goto out;
+		warnings += ret;
+	}
+
+	if (!validate_all)
+		goto out;
+
+	ret = validate_retpoline(&file);
+	....
+
+that way the general flow is the same regardless...
+
 -- 
-2.25.1.696.g5e7596f4ac-goog
+Josh
 
