@@ -2,63 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 268CB192FB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54B0B192FB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:48:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbgCYRru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 13:47:50 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58362 "EHLO
+        id S1728176AbgCYRsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 13:48:16 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58434 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727253AbgCYRrt (ORCPT
+        with ESMTP id S1727903AbgCYRru (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 13:47:49 -0400
+        Wed, 25 Mar 2020 13:47:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Subject:Cc:To:From:Date:Message-Id:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=eVNvwVJQBlEZzfJXg4Z7qLVAlQDZSb9x/PxITKasAU8=; b=hpKyr6kdav8figazrMeAdXaHl5
-        3E9975mKw524ZM/z1HG8Tvk/Cs4r8DBJzkCmGld3oAMZ50l90ZEH9iungFEvRDjhWEbhgoKMV+sLw
-        Q4+5zo3s1XG8fiC33NSVbRL8aGqb5zqZ8Tqa1Q8SKnnSLbCDhtJQElmpowK9ZuAlh2jWVVN6XyjHq
-        32tOD8S4fTwYm9mMerFsDGJjixfGpgiwO9Fmm8k/L90uR7CDZQ2X9Cne9iKpej2deNuJ8RQBbeWkN
-        XdDBDK2izHaIZdD53y3DTslCn55yYa7oY3BpYRX0UIVp9lwknXhJY+5ZRi+fZxGkX8HJHAnn6pc+n
-        nJ3Zggig==;
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To;
+        bh=Kqw2eANcr/NXrVf+g4UsmSnBMu4St2jvCKmskXKN8nA=; b=ztoLJ0nu4vzJkgIPrzMaGq1UbT
+        fv2ZM7z8HXKPVgze9SaZlUrnAvlcVSg0tj4WZFag4BFiS5rtZKKM17N2LZzOJAnz8NOTpmap/xC8P
+        N08Wrl6HBzl4gF6mckSWHhmMjq2Zjl1Z/Xa4okCzX1nXroxdOZtzZVseC2WF8PZYoBKQH2RPKw10L
+        jv/FmuygQu/D4U2v63YWfnRruIwCoo/TOrMcPTvYl/JIRB6ZkpGg0KMzgYASKNkhJmrL69aSV5Nyt
+        N8TZnw87LWCVh/UKSHmGB13JaW9wAJE9XEb0PWuDFnV9yTYI4/Fyjv1oNJxcvaSQmqVyTTygM8F7f
+        htSyrRAw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHA80-0003oU-8O; Wed, 25 Mar 2020 17:47:44 +0000
+        id 1jHA82-0003oi-Hw; Wed, 25 Mar 2020 17:47:46 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AF9223007F2;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id B32C43010CF;
         Wed, 25 Mar 2020 18:47:42 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 9EF6829BD8A27; Wed, 25 Mar 2020 18:47:42 +0100 (CET)
-Message-Id: <20200325174525.772641599@infradead.org>
+        id A2E92286C1385; Wed, 25 Mar 2020 18:47:42 +0100 (CET)
+Message-Id: <20200325174605.369570202@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 25 Mar 2020 18:45:25 +0100
+Date:   Wed, 25 Mar 2020 18:45:26 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org,
         mhiramat@kernel.org, mbenes@suse.cz
-Subject: [PATCH v4 00/13] objtool: vmlinux.o and moinstr validation
+Subject: [PATCH v4 01/13] objtool: Remove CFI save/restore special case
+References: <20200325174525.772641599@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+There is a special case in the UNWIND_HINT_RESTORE code. When, upon
+looking for the UNWIND_HINT_SAVE instruction to restore from, it finds
+the instruction hasn't been visited yet, it normally issues a WARN,
+except when this HINT_SAVE instruction is the first instruction of
+this branch.
 
-This lacks the first 17 patches of the v3 posting which are en-route to
-tip/core/objtool and should show up there somewhere later this evening.
+This special case is of dubious correctness and is certainly unused
+(verified with an allmodconfig build), the two sites that employ
+UNWIND_HINT_SAVE/RESTORE (sync_core() and ftrace_regs_caller()) have
+the SAVE on unconditional instructions at the start of the function.
+It is therefore impossible for the save_insn not to have been visited
+when we do hit the RESTORE.
 
-As should be familiar by now; these patches implement the noinstr
-(no-instrument) validation in objtool as requested by Thomas, to ensure
-critical code (entry for now, idle later) run no unexpected code.
+Remove this.
 
-Functions are marked with: noinstr, which implies notrace, noinline and sticks
-things in the .noinstr.text section. Such functions can then use instr_begin()
-and instr_end() to allow calls to code outside of this section in sanctioned
-areas.
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ tools/objtool/check.c |   15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -2040,15 +2040,14 @@ static int validate_return(struct symbol
+  * tools/objtool/Documentation/stack-validation.txt.
+  */
+ static int validate_branch(struct objtool_file *file, struct symbol *func,
+-			   struct instruction *first, struct insn_state state)
++			   struct instruction *insn, struct insn_state state)
+ {
++	struct instruction *next_insn;
+ 	struct alternative *alt;
+-	struct instruction *insn, *next_insn;
+ 	struct section *sec;
+ 	u8 visited;
+ 	int ret;
+ 
+-	insn = first;
+ 	sec = insn->sec;
+ 
+ 	if (insn->alt_group && list_empty(&insn->alts)) {
+@@ -2101,16 +2100,6 @@ static int validate_branch(struct objtoo
+ 				}
+ 
+ 				if (!save_insn->visited) {
+-					/*
+-					 * Oops, no state to copy yet.
+-					 * Hopefully we can reach this
+-					 * instruction from another branch
+-					 * after the save insn has been
+-					 * visited.
+-					 */
+-					if (insn == first)
+-						return 0;
+-
+ 					WARN_FUNC("objtool isn't smart enough to handle this CFI save/restore combo",
+ 						  sec, insn->offset);
+ 					return 1;
 
 
