@@ -2,81 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 916D8192E41
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:32:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75B42192E46
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 17:33:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbgCYQc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 12:32:28 -0400
-Received: from elvis.franken.de ([193.175.24.41]:34474 "EHLO elvis.franken.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727901AbgCYQc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 12:32:28 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1jH8x4-0005Qf-00; Wed, 25 Mar 2020 17:32:22 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 15EC5C0D3B; Wed, 25 Mar 2020 17:31:53 +0100 (CET)
-Date:   Wed, 25 Mar 2020 17:31:53 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc:     Marc Zyngier <maz@kernel.org>, linux-mips@vger.kernel.org,
-        Huacai Chen <chenhc@lemote.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 06/11] irqchip: mips-cpu: Convert to simple domain
-Message-ID: <20200325163153.GA16381@alpha.franken.de>
-References: <a69f727d37daac6e20ac08de022245b1@kernel.org>
- <C4892878-8463-448D-897B-5F2C56F5A340@flygoat.com>
- <5eb9ce9ea665ee32da40779f00fc9b37@kernel.org>
- <4BB367D3-B8AD-47B6-ACC2-30752137BC1B@flygoat.com>
- <c4520c4b0b0eaaba5fdbaebfce7b4460@kernel.org>
- <39CF835E-D1D9-4B52-ABDC-BDB17B650936@flygoat.com>
- <20200325150437.GA14217@alpha.franken.de>
- <777D8DAA-F462-4E8D-9012-C114DE6D56DE@flygoat.com>
- <20200325154600.GA14923@alpha.franken.de>
- <8F2B64C3-A887-4D4B-ABEA-4BE3D30F4632@flygoat.com>
+        id S1728165AbgCYQdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 12:33:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40948 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbgCYQdC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 12:33:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=iI2kZCOZdffPIYsZZTBoXRe/J58wOuQpQYgnCS5E0u8=; b=KblLZx5lvHAL3L7FaEMMD5jueW
+        t8BfbCjQuM4FQnOR1tqbhS5fyKSO7LX5vH11QPMn++OAzmBpp3LraQC0wQ3oKUNwXB7etyxwfn51X
+        IX+LSx8iqmiceyhSTch+mTJS/W2pBPWMnHTQIj9j1x8yp8l9pYY0IsRLT8/VaPU4k9J5rSrV5bpln
+        0kGEcnTK7hoiKuqWsJXSNbO9Gb4dsE3fkFbDSeWrJSR5Ckf3n+F7XGj7JssOqhMLGaDYsHAHwbtYT
+        n3qqJlClG1h5570HO7oLBPibCQFK7szYi+RITzIql+GgKgA+uMkT+UuvjU7GfHezQ8hN06eafqn55
+        JNt0rvsA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jH8x5-0000SZ-H8; Wed, 25 Mar 2020 16:32:23 +0000
+Date:   Wed, 25 Mar 2020 09:32:23 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, axboe@kernel.dk,
+        bob.liu@oracle.com, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, song@kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, Chaitanya.Kulkarni@wdc.com,
+        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
+        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/6] block: Introduce REQ_ALLOCATE flag for
+ REQ_OP_WRITE_ZEROES
+Message-ID: <20200325163223.GA27156@infradead.org>
+References: <158157930219.111879.12072477040351921368.stgit@localhost.localdomain>
+ <e2b7cbab-d91f-fd7b-de6f-a671caa6f5eb@virtuozzo.com>
+ <69c0b8a4-656f-98c4-eb55-2fd1184f5fc9@virtuozzo.com>
+ <67d63190-c16f-cd26-6b67-641c8943dc3d@virtuozzo.com>
+ <20200319102819.GA26418@infradead.org>
+ <yq1tv2k8pjn.fsf@oracle.com>
+ <20200325162656.GJ29351@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8F2B64C3-A887-4D4B-ABEA-4BE3D30F4632@flygoat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20200325162656.GJ29351@magnolia>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 12:02:28AM +0800, Jiaxun Yang wrote:
-> >maybe I'm too fast by judging the irq code, but without
-> >CONFIG_SPARSE_IRQ
-> >the whole irq_desc is pre-allocated.
+On Wed, Mar 25, 2020 at 09:26:56AM -0700, Darrick J. Wong wrote:
+> > That said, I do think that we have traditionally put emphasis on the
+> > wrong part of these operations. All we ever talk about wrt. discard and
+> > friends is the zeroing aspect. But I actually think that, semantically,
+> > the act of allocating and deallocating blocks is more important. And
+> > that zeroing is an optional second order effect of those operations. So
+> > if we could go back in time and nuke multi-range DSM TRIM/UNMAP, I would
+> > like to have REQ_OP_ALLOCATE/REQ_OP_DEALLOCATE with an optional REQ_ZERO
+> > flag. I think that would be cleaner. I have a much easier time wrapping
+> > my head around "allocate this block and zero it if you can" than "zero
+> > this block and do not deallocate it". But maybe that's just me.
 > 
-> Sorry. You're right.
-> I found the problem is CONFIG_SPARSE_IRQ is accidentally enabled in my config due to another out-of-tree patch
+> I'd love to transition to that.  My brain is not good at following all
+> the inverse logic that NOUNMAP spread everywhere.  I have a difficult
+> time following what the blockdev fallocate code does, which is sad since
+> hch and I are the primary stuckees^Wmeddlers^Wauthors of that function. :/
 
-ok, that explains it.
+I am very much against that for the following reason:
 
-> during my initial test and I always consider it as a problem.
-> 
-> So we can drop this patch safely for now.
+ - the current REQ_OP_DISCARD is purely a hint, and implementations can
+   (and do) choose to ignore it
+ - REQ_OP_WRITE_ZEROES is an actual data integrity operation with
+   everything that entails
 
-already dropped in my test branch. If nothing shows up, I'll push
-it to mips-next.
-
-> But just need to consider how to deal with it when we want to enable SPARSE_IRQ.
-
-setting NR_IRQS_LEGACY so a sensible value should do the trick then.
-
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Going back to mixing these two will lead to a disaster sooner or later.
