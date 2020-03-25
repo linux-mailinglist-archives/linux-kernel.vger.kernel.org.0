@@ -2,195 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E48981931B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 21:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63FAA1931CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 21:19:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbgCYUQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 16:16:04 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33530 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbgCYUQD (ORCPT
+        id S1727328AbgCYUS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 16:18:59 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:38440 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727406AbgCYUS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 16:16:03 -0400
-Received: by mail-wm1-f68.google.com with SMTP id w25so2986278wmi.0;
-        Wed, 25 Mar 2020 13:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=P4Ii0TDkwdlQFHK60zjqPMZ23Hc82ZULQPDzrcrxaC8=;
-        b=oZy686pVHSQV8lyVpekxmI1+huiDJ7QLLElLaZDKRDcctT+pOt1/2Y2xwrDxKsGeos
-         4SvsW8E/PLHAAzEea+YC8yH9ZfJ/HbxW1kU7H+O1uOetbk26GI2KPBymqpyofWh6gW/a
-         D+TauRu6IgwANmhZQZtqfWgiQflfbwLyp8Z1avVEouhlzJy1BFyCeWOAGjrLzSXArW5V
-         c2id3KUepfnpOVku/SYZCFlMelGDLBcxBAeRJ/S3N2bvSGVnXmQZTT49x3fCt29Cxid9
-         Ml8rLTeJuBfPSUR1VLAwSF6G/Z/LEjLH+dQthMTLQwwx2yefXw90ZhQToBeBp8mT8llW
-         x02Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=P4Ii0TDkwdlQFHK60zjqPMZ23Hc82ZULQPDzrcrxaC8=;
-        b=J1XTS0eEu9ga4fvIzOr/xYFr9lkv5tuPs+GKmVDYfvG5LaA4dEffPkbs/iPLzV5b6J
-         Vi60en/WBW1GdxKRlDhdTybTwH8ErU6JDJcJtdQCj5ekQlDVqYTnxcDroTPKxZYmS1I5
-         G1n0DrDXXXIRo4E8BuZ1XdhpwxGZvqL3+hv5jOPkHjhne49kUR/UPkdG7JOdzPPRcKcd
-         VpR1vOsv6GiiVLzLg0B/gVlRNmJ1vRxzvaS9Vf6fAYcQnRxgnAEtAYsC3Q9fCA6mAajH
-         PQynquZ1BnGd1DL3VaFstHyLKMcf9LJbffntOdWqlnq5/4G6V1LfQuOKyhzq6lU0OdDX
-         pYxQ==
-X-Gm-Message-State: ANhLgQ09O/xLe6EZJWfmiQSghSKJBZqPVjzgI+uttlizMLv55K3hV3vv
-        +2N/fVzUBrXAlyY2SW5nz/lLMqi6
-X-Google-Smtp-Source: ADFU+vuE9rCWTIE+VyxaxIFQu4xroR46lSyL0yhW+d++eabzC47tRT7bOOIeAZCWX4fFBJUP0iKadQ==
-X-Received: by 2002:a1c:4d7:: with SMTP id 206mr5008380wme.5.1585167358877;
-        Wed, 25 Mar 2020 13:15:58 -0700 (PDT)
-Received: from localhost (p200300E41F4A9B0076D02BFFFE273F51.dip0.t-ipconnect.de. [2003:e4:1f4a:9b00:76d0:2bff:fe27:3f51])
-        by smtp.gmail.com with ESMTPSA id y7sm142535wrq.54.2020.03.25.13.15.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 13:15:57 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 21:15:56 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     LABBE Corentin <clabbe@baylibre.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        pdeschrijver@nvidia.com,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        axboe@kernel.dk, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-ide@vger.kernel.org
-Subject: Re: tegra124-jetson-tk1: sata doesnt work since 5.2
-Message-ID: <20200325201125.GA832965@ulmo>
-References: <20200319074401.GA4116@Red>
- <CABr+WTnBmJsDZPjUxYkG98dTneDD1p8G=uRftVduTGYbY0ruqQ@mail.gmail.com>
- <20200325134003.GA27961@Red>
- <cf63d40c-7b84-60f6-76be-a13255e69c99@nvidia.com>
- <20200325142306.GB27961@Red>
+        Wed, 25 Mar 2020 16:18:57 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02PKIiVR085834;
+        Wed, 25 Mar 2020 15:18:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1585167524;
+        bh=CxukkovBJFpII0uJw7j2rQdNqCAT4Ya7y+OIAbYeZf4=;
+        h=From:To:CC:Subject:Date;
+        b=gJdxXPXFwXAp0L2ctK6D43oGj9tX0xL5s2QfU0OqcRaWno9SD9iQ3H9B8D0zg530/
+         TWp4uzQOnKNMetj1WTeaugk4suty839vKyYipV9DL1pXkKCNE/DD2icfYgOzEsAJTo
+         mM/W6bBSRpx4d5deIoEkb91ol9QtUz0ACaVuRAeI=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02PKIi8a025540
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 25 Mar 2020 15:18:44 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 25
+ Mar 2020 15:18:43 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 25 Mar 2020 15:18:43 -0500
+Received: from fllv0103.dal.design.ti.com (fllv0103.dal.design.ti.com [10.247.120.73])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02PKIhmC064313;
+        Wed, 25 Mar 2020 15:18:43 -0500
+Received: from localhost ([10.250.35.147])
+        by fllv0103.dal.design.ti.com (8.14.7/8.14.7) with ESMTP id 02PKIhhq090851;
+        Wed, 25 Mar 2020 15:18:43 -0500
+From:   Suman Anna <s-anna@ti.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH 0/3] TI K3 DSP remoteproc driver for C66x DSPs
+Date:   Wed, 25 Mar 2020 15:18:36 -0500
+Message-ID: <20200325201839.15896-1-s-anna@ti.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="A6N2fC+uXW/VQSAv"
-Content-Disposition: inline
-In-Reply-To: <20200325142306.GB27961@Red>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi All,
 
---A6N2fC+uXW/VQSAv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following series adds a new K3 DSP remoteproc driver supporting the
+C66x DSPs on the TI K3 J721E SoCs. The current series mainly adds the support
+for booting the DSPs from the Linux kernel. This series forms the foundation
+for adding support for a new 64-bit DSP (C71x DSP) to be posted in a separate
+series. Support for attaching to pre-booted DSPs (from bootloader) will be
+done in a future series.
 
-On Wed, Mar 25, 2020 at 03:23:06PM +0100, LABBE Corentin wrote:
-> On Wed, Mar 25, 2020 at 02:00:25PM +0000, Jon Hunter wrote:
-> >=20
-> > On 25/03/2020 13:40, LABBE Corentin wrote:
-> > > On Thu, Mar 19, 2020 at 08:55:38AM +0100, Nicolas Chauvet wrote:
-> > >> Le jeu. 19 mars 2020 =C3=A0 08:44, LABBE Corentin <clabbe@baylibre.c=
-om> a =C3=A9crit :
-> > >>>
-> > >>> Hello
-> > >>>
-> > >>> sata doesnt work on tegra124-jetson-tk1 on next and master and at l=
-east since 5.2 (but 5.1 works).
-> > >>> [    0.492810] +5V_SATA: supplied by +5V_SYS
-> > >>> [    0.493230] +12V_SATA: supplied by +VDD_MUX
-> > >>> [    2.088675] tegra-ahci 70027000.sata: 70027000.sata supply ahci =
-not found, using dummy regulator
-> > >>> [    2.097643] tegra-ahci 70027000.sata: 70027000.sata supply phy n=
-ot found, using dummy regulator
-> > >>> [    3.314776] tegra-ahci 70027000.sata: 70027000.sata supply ahci =
-not found, using dummy regulator
-> > >>> [    3.323658] tegra-ahci 70027000.sata: 70027000.sata supply phy n=
-ot found, using dummy regulator
-> > >>> [    5.236964] tegra-ahci 70027000.sata: 70027000.sata supply ahci =
-not found, using dummy regulator
-> > >>> [    5.245867] tegra-ahci 70027000.sata: 70027000.sata supply phy n=
-ot found, using dummy regulator
-> > >>> [    5.254706] tegra-ahci 70027000.sata: 70027000.sata supply targe=
-t not found, using dummy regulator
-> > >>> [    5.310270] phy phy-sata.6: phy poweron failed --> -110
-> > >>> [    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI co=
-ntroller: -110
-> > >>> [    5.323022] tegra-ahci: probe of 70027000.sata failed with error=
- -110
-> > >>> [   35.694269] +5V_SATA: disabling
-> > >>> [   35.697438] +12V_SATA: disabling
-> > >>
-> > >> It looks strange, because (on same device) , I have sata working as
-> > >> appropriate, but ethernet fails with me.
-> > >> https://bugzilla.kernel.org/show_bug.cgi?id=3D206217
-> > >>
-> > >> It might worth to have another report.
-> > >>
-> > >=20
-> > > Hello
-> > >=20
-> > > Mine has ethernet works well. But I hit many problem with it and olde=
-r kernel.
-> > > Perhaps the 5.1.21, were I am stuck, does not have it.
-> > >=20
-> > > Anyway, the tegra of kerneci has the same SATA problem.
-> > > https://storage.kernelci.org/next/master/next-20200325/arm/multi_v7_d=
-efconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/boot-tegra124-jetson-tk1.txt
-> > >=20
-> > > Maintainers, any idea on this sata issue ?
-> >=20
-> > I have checked our bootlogs for v5.6-rc7 and don't see the issue with
-> > either the tegra_defconfig or the multi_v7_defconfig. I am wondering if
-> > this could be due a difference in the bootloader version. Currently we
-> > are testing with a v2019.07 u-boot bootloader. Looks like the kernelci
-> > board is using an older u-boot. Obviously it should still work, but
-> > would be good to know if the reason why were are not seeing this is
-> > because of the bootloader.
-> >=20
-> > Another thing to check would be the pll_e clock frequency on a working
-> > build and non-working build to see if there is a difference in the pll
-> > frequency that is causing this.
-> >=20
-> > Cheers
-> > Jon
-> >=20
->=20
-> Hello
->=20
-> My uboot is 2016.01-rc4-00002-g3861d78, so a bit old.
-> I have a mainline uboot build for this tegra, but still didnt find a clea=
-r way to update it.
-> Did you have a good documentation on how to update it ?
-> If possible some clear uboot commands to update it via tftp.
+The C66x DSPs can boot either using firmware segments loaded into either DDR
+and/or internal DSP RAMs. IPC is through the virtio-rpmsg transport. There is 
+no Error Recovery or Power Management support at present. The driver also does
+not support loading into on-chip SRAMs at present.
 
-Not sure about TFTP, but you can find the standard flashing scripts for
-various devices here:
+The patches are based on the current rproc-next branch, and does use couple
+of patches posted earlier from the OMAP remoteproc series [1] and TI K3 R5F
+series [2]. It also leverages the fixed memory carveout fixes series [3].
 
-	https://github.com/NVIDIA/tegra-uboot-flasher-scripts
+Following is the patch summary:
+ - Patch 1 adds the bindings in the YAML format.
+ - Patch 2 adds the basic remoteproc driver for the C66x DSPs
+ - Patch 3 is an enhancement to support loading into the DSP's internal
+   RAMs directly.
 
-Those work by uploading the image via RCM and then running the commands
-to flash it.
+regards
+Suman
 
-I think those scripts will also create the images that they will flash,
-so you should be able to download that image via TFTP and then flash it
-using the command that the tool would normally use.
+[1] https://patchwork.kernel.org/patch/11455135/
+[2] https://patchwork.kernel.org/patch/11456383/ 
+[3] https://patchwork.kernel.org/cover/11447649/
 
-Thierry
+Suman Anna (3):
+  dt-bindings: remoteproc: Add bindings for C66x DSPs on TI K3 SoCs
+  remoteproc/k3-dsp: Add a remoteproc driver of K3 C66x DSPs
+  remoteproc/k3-dsp: Add support for L2RAM loading on C66x DSPs
 
---A6N2fC+uXW/VQSAv
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 180 ++++
+ drivers/remoteproc/Kconfig                    |  16 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c     | 818 ++++++++++++++++++
+ 4 files changed, 1015 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+ create mode 100644 drivers/remoteproc/ti_k3_dsp_remoteproc.c
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.23.0
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl57u/wACgkQ3SOs138+
-s6GNUhAAkrcqqRMGZtLkT0sMvVkiyOWw3Bj/DAvkCBNjNgmtxBu//ZjPqOsK7B/h
-4eZJO8SfPWTHHh3zi76o8xMbKu1KFQZxANZ6vNj71GwM2f7iqrHe/wYlD+vv5Myb
-hRYw7oSJVcaAhbTIeQCG4SrGFXT7EBpBHsQqRizsj9voCjY4TrWvG+ZTJZ6fqA5t
-+QtsdOy32rdCIJbLGzHTkzHZg3LDPr6x5KnPhtCUDzoVWJgmBlLjgjPzxcgxzawJ
-MGqvqEkl9I7TAdIBFoxna3HVOX1jZWS1NhCXSP8fJzxmKwrRIgDWP+QYkUegbmve
-RjiI8A94VcdOTnfDTyZSfo7m3rXP4gtLQDTP4r2VUjvElByBlwN5rHM8bNEOyZCM
-FgIVc8kByoK6+leOOfBQWl5aQiQoaUN1pnJHJk/VvC99spAv5Ik692/Tm7wH30SV
-keDGeh7J7QTdsJ/++Obc7vteJo1jNkh0fZLSSA6wukFAYUK9O/+bDkigVOcBmLNY
-H9otuH0Y1uGzwb0Jc1aRKDYOO9FDWNpTop2vGXNOz+BMLFBMjes6/EqmCEPgDtZH
-/4yxLajy71mEl01i8B4cyZSwD796xya9L7cinyVYevxpoxUOmOgb9p/QNG1ziy3C
-IZgWNp5TzacaL4iBFb/UZ86N8BMuwnWADLI8O+1l1kiONPp9i4A=
-=8N/K
------END PGP SIGNATURE-----
-
---A6N2fC+uXW/VQSAv--
