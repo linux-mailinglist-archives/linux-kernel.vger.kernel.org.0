@@ -2,338 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69887193144
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:42:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B91C819315D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 20:45:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbgCYTmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 15:42:46 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40896 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727281AbgCYTmp (ORCPT
+        id S1727817AbgCYToL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 15:44:11 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38014 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727634AbgCYTn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 15:42:45 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a81so4279502wmf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 12:42:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=8bEVB1a8DJ54spo8qZJJ3UN9shg/w6g1RThv5y2mNcg=;
-        b=INQ0Bw4pYpXilmQD3zvEopH1rCE/mtyX04VcvoHpgp4ihOZSV3xnNIKFbCeNBxMQkG
-         ZCI3Tr2PEUS8WwLc7ntmNSCRajL3eNtEv8pKexq0nbKj/kilvQo4nmSnCVRTqDINvT95
-         Kir5udIVWque6JdEeljrHX00e+d4vv9y1ck2E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=8bEVB1a8DJ54spo8qZJJ3UN9shg/w6g1RThv5y2mNcg=;
-        b=gc/LArNdfJlvODtIQgc9KsEB+Xgps2YKVYkN87j1d25SHxvw9rpveF5Gte6XMRoiLX
-         YDPGnlVZ7VzHpQiXvEOoqjsnUhk28G/3lzvafCHAU34kmrL+V1XDuKlbJc/hpblJUX4X
-         X8VSBWDIKN9fzpjJhx7u9RiZsAEyhIxMe4AnZY4OReRsc7n2ifZy0hKD51ZyvP0g2sT+
-         ajUnQn9hXQNmPNJtlq5ineG7rbwrduqAR6gQ44MUsLISokoqmyZvj93C6DgP4VJ72J5h
-         dRJhVmIsFhdsAv/DIiSORQURGwsSWnrjX3vh8qOQzD0uxKZCj8HwEq/MB48mrbHkDQpZ
-         m/sA==
-X-Gm-Message-State: ANhLgQ2BxODcEQUd3EcgE4DZ1xmex0XRFX0NSFAdNsxe6zgj63ogFYTx
-        C4M86RNAvpOwordPgN10sg1lQA==
-X-Google-Smtp-Source: ADFU+vsI3hN8NrPTSObuv1apVehBaOH5DMZmeiNp7qhAXdu5SNohSNbYMtSzmbtmxKBb11K9W9rXsg==
-X-Received: by 2002:a7b:cc06:: with SMTP id f6mr4990847wmh.65.1585165360982;
-        Wed, 25 Mar 2020 12:42:40 -0700 (PDT)
-Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id j11sm34276wrt.14.2020.03.25.12.42.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 12:42:40 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Wed, 25 Mar 2020 20:42:38 +0100
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
-        Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v6 0/8] MAC and Audit policy using eBPF (KRSI)
-Message-ID: <20200325194238.GB22898@chromium.org>
-References: <20200325152629.6904-1-kpsingh@chromium.org>
- <202003251224.2C80636F0F@keescook>
+        Wed, 25 Mar 2020 15:43:59 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PJdJ3g019908;
+        Wed, 25 Mar 2020 19:43:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2020-01-29; bh=FX10Haw9tTd69iSu01amsm7am09LReXT58Vg4Wx0LSQ=;
+ b=AA3HtYz7Hig9PEjnH+o1RlGyhB/J7wbHoR3EEshGc/mhJO19+3YU0rY/AUrDCpVy0Hw2
+ hOBleCqZXtwQvI2kH5WhKsN6CG8HdMnEhjlR6jhOyFlWimMl+kwVuNw5zFq0B1+Y1nqK
+ s/pHsXLtW0WzWf3T1N7w5ch1CoTJIXZXxnwgeI5N2ztXt8Qcp51mMl1iNzpIqSDfSsnO
+ 4Cx/e6PirEiSyYgxFteFXjPzM6+OLI0hKqqk0YR0V/dg+LoXffk5beWodeBc93pJJtrA
+ OVm5aD+Hn61FKr+IaZqkzsWL8nk2HHukq3voxY1b/vMilm7W61fpcXOuQIsr2CmYFAoC Jw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2ywabrbsq1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Mar 2020 19:43:29 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02PJghVo072956;
+        Wed, 25 Mar 2020 19:43:28 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 30073b1tw1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Mar 2020 19:43:28 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02PJhOYt008199;
+        Wed, 25 Mar 2020 19:43:24 GMT
+Received: from pneuma.us.oracle.com (/10.39.203.246)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 25 Mar 2020 12:43:23 -0700
+From:   Ross Philipson <ross.philipson@oracle.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     ross.philipson@oracle.com, dpsmith@apertussolutions.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        trenchboot-devel@googlegroups.com
+Subject: [RFC PATCH 00/12] x86: Trenchboot secure late launch Linux kernel support
+Date:   Wed, 25 Mar 2020 15:43:05 -0400
+Message-Id: <20200325194317.526492-1-ross.philipson@oracle.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <202003251224.2C80636F0F@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 mlxscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003250157
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ clxscore=1015 adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003250156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-Mär 12:24, Kees Cook wrote:
-> On Wed, Mar 25, 2020 at 04:26:21PM +0100, KP Singh wrote:
-> > From: KP Singh <kpsingh@google.com>
-> > 
-> > # v5 -> v6
-> > 
-> >   https://lwn.net/Articles/815826/
-> 
-> Random question: why the switch to lwn.net from lore URLs? The lore
-> URLs have been suggested to be the canonical way to refer to kernel
-> development discussion threads.
+The Trenchboot project focus on boot security has led to the enabling of
+the Linux kernel to be directly invocable by the x86 Dynamic Launch
+instruction(s) for establishing a Dynamic Root of Trust for Measurement
+(DRTM). The dynamic launch will be initiated by a boot loader with
+associated support added to it, for example the first targeted boot
+loader will be GRUB2. An integral part of establishing the DRTM involves
+measuring everything that is intended to be run (kernel image, initrd,
+etc) and everything that will configure that kernel to run (command
+line, boot params, etc) into specific PCRs, the DRTM PCRs (17-22), in
+the TPM. Another key aspect is the dynamic launch is rooted in hardware.
+On Intel this is done using the GETSEC instruction set provided by
+Intel's TXT and the SKINIT instruction provided by AMD's AMD-V.
+Information on these technologies can be readily found online.
 
-No real reason apart from the fact these were shoter:)
+To enable the kernel to be launched by GETSEC or SKINIT, a stub must be
+built into the setup section of the compressed kernel to handle the
+specific state that the late launch process leaves the BSP. This is a
+lot like the EFI stub that is found in the same area. Also this stub
+must measure everything that is going to be used as early as possible.
+This stub code and subsequent code must also deal with the specific
+state that the late launch leaves the APs in.
 
-Duly noted for future patches and revisions. Thanks!
+A quick note on terminology. The larger open source project itself is
+called Trenchboot, which is hosted on Github (links below). The kernel
+feature enabling the use of the x86 technology is referred to as "Secure
+Launch" within the kernel code. As such the prefixes sl_/SL_ or
+slaunch/SLAUNCH will be seen in the code. The stub code discussed above
+is referred to as the SL stub.
 
-- KP
+The basic flow is:
 
-> 
-> -Kees
-> 
-> > 
-> > * Updated LSM_HOOK macro to define a default value and cleaned up the
-> >   BPF LSM hook declarations.
-> > * Added Yonghong's Acks and Kees' Reviewed-by tags.
-> > * Simplification of the selftest code.
-> > * Rebase and fixes suggested by Andrii and Yonghong and some other minor
-> >   fixes noticed in internal review.
-> > 
-> > # v4 -> v5
-> > 
-> >   https://lwn.net/Articles/813057/
-> > 
-> > * Removed static keys and special casing of BPF calls from the LSM
-> >   framework.
-> > * Initialized the BPF callbacks (nops) as proper LSM hooks.
-> > * Updated to using the newly introduced BPF_TRAMP_MODIFY_RETURN
-> >   trampolines in https://lkml.org/lkml/2020/3/4/877
-> > * Addressed Andrii's feedback and rebased.
-> > 
-> > # v3 -> v4
-> > 
-> > * Moved away from allocating a separate security_hook_heads and adding a
-> >   new special case for arch_prepare_bpf_trampoline to using BPF fexit
-> >   trampolines called from the right place in the LSM hook and toggled by
-> >   static keys based on the discussion in:
-> > 
-> >   https://lore.kernel.org/bpf/CAG48ez25mW+_oCxgCtbiGMX07g_ph79UOJa07h=o_6B6+Q-u5g@mail.gmail.com/
-> > 
-> > * Since the code does not deal with security_hook_heads anymore, it goes
-> >   from "being a BPF LSM" to "BPF program attachment to LSM hooks".
-> > * Added a new test case which ensures that the BPF programs' return value
-> >   is reflected by the LSM hook.
-> > 
-> > # v2 -> v3 does not change the overall design and has some minor fixes:
-> > 
-> > * LSM_ORDER_LAST is introduced to represent the behaviour of the BPF LSM
-> > * Fixed the inadvertent clobbering of the LSM Hook error codes
-> > * Added GPL license requirement to the commit log
-> > * The lsm_hook_idx is now the more conventional 0-based index
-> > * Some changes were split into a separate patch ("Load btf_vmlinux only
-> >   once per object")
-> > 
-> >   https://lore.kernel.org/bpf/20200117212825.11755-1-kpsingh@chromium.org/
-> > 
-> > * Addressed Andrii's feedback on the BTF implementation
-> > * Documentation update for using generated vmlinux.h to simplify
-> >   programs
-> > * Rebase
-> > 
-> > # Changes since v1
-> > 
-> >   https://lore.kernel.org/bpf/20191220154208.15895-1-kpsingh@chromium.org
-> > 
-> > * Eliminate the requirement to maintain LSM hooks separately in
-> >   security/bpf/hooks.h Use BPF trampolines to dynamically allocate
-> >   security hooks
-> > * Drop the use of securityfs as bpftool provides the required
-> >   introspection capabilities.  Update the tests to use the bpf_skeleton
-> >   and global variables
-> > * Use O_CLOEXEC anonymous fds to represent BPF attachment in line with
-> >   the other BPF programs with the possibility to use bpf program pinning
-> >   in the future to provide "permanent attachment".
-> > * Drop the logic based on prog names for handling re-attachment.
-> > * Drop bpf_lsm_event_output from this series and send it as a separate
-> >   patch.
-> > 
-> > # Motivation
-> > 
-> > Google does analysis of rich runtime security data to detect and thwart
-> > threats in real-time. Currently, this is done in custom kernel modules
-> > but we would like to replace this with something that's upstream and
-> > useful to others.
-> > 
-> > The current kernel infrastructure for providing telemetry (Audit, Perf
-> > etc.) is disjoint from access enforcement (i.e. LSMs).  Augmenting the
-> > information provided by audit requires kernel changes to audit, its
-> > policy language and user-space components. Furthermore, building a MAC
-> > policy based on the newly added telemetry data requires changes to
-> > various LSMs and their respective policy languages.
-> > 
-> > This patchset allows BPF programs to be attached to LSM hooks This
-> > facilitates a unified and dynamic (not requiring re-compilation of the
-> > kernel) audit and MAC policy.
-> > 
-> > # Why an LSM?
-> > 
-> > Linux Security Modules target security behaviours rather than the
-> > kernel's API. For example, it's easy to miss out a newly added system
-> > call for executing processes (eg. execve, execveat etc.) but the LSM
-> > framework ensures that all process executions trigger the relevant hooks
-> > irrespective of how the process was executed.
-> > 
-> > Allowing users to implement LSM hooks at runtime also benefits the LSM
-> > eco-system by enabling a quick feedback loop from the security community
-> > about the kind of behaviours that the LSM Framework should be targeting.
-> > 
-> > # How does it work?
-> > 
-> > The patchset introduces a new eBPF (https://docs.cilium.io/en/v1.6/bpf/)
-> > program type BPF_PROG_TYPE_LSM which can only be attached to LSM hooks.
-> > Loading and attachment of BPF programs requires CAP_SYS_ADMIN.
-> > 
-> > The new LSM registers nop functions (bpf_lsm_<hook_name>) as LSM hook
-> > callbacks. Their purpose is to provide a definite point where BPF
-> > programs can be attached as BPF_TRAMP_MODIFY_RETURN trampoline programs
-> > for hooks that return an int, and BPF_TRAMP_FEXIT trampoline programs
-> > for void LSM hooks.
-> > 
-> > Audit logs can be written using a format chosen by the eBPF program to
-> > the perf events buffer or to global eBPF variables or maps and can be
-> > further processed in user-space.
-> > 
-> > # BTF Based Design
-> > 
-> > The current design uses BTF:
-> > 
-> >   * https://facebookmicrosites.github.io/bpf/blog/2018/11/14/btf-enhancement.html
-> >   * https://lwn.net/Articles/803258
-> > 
-> > which allows verifiable read-only structure accesses by field names
-> > rather than fixed offsets. This allows accessing the hook parameters
-> > using a dynamically created context which provides a certain degree of
-> > ABI stability:
-> > 
-> > 
-> > // Only declare the structure and fields intended to be used
-> > // in the program
-> > struct vm_area_struct {
-> >   unsigned long vm_start;
-> > } __attribute__((preserve_access_index));
-> > 
-> > // Declare the eBPF program mprotect_audit which attaches to
-> > // to the file_mprotect LSM hook and accepts three arguments.
-> > SEC("lsm/file_mprotect")
-> > int BPF_PROG(mprotect_audit, struct vm_area_struct *vma,
-> >        unsigned long reqprot, unsigned long prot, int ret)
-> > {
-> >   unsigned long vm_start = vma->vm_start;
-> > 
-> >   return 0;
-> > }
-> > 
-> > By relocating field offsets, BTF makes a large portion of kernel data
-> > structures readily accessible across kernel versions without requiring a
-> > large corpus of BPF helper functions and requiring recompilation with
-> > every kernel version. The BTF type information is also used by the BPF
-> > verifier to validate memory accesses within the BPF program and also
-> > prevents arbitrary writes to the kernel memory.
-> > 
-> > The limitations of BTF compatibility are described in BPF Co-Re
-> > (http://vger.kernel.org/bpfconf2019_talks/bpf-core.pdf, i.e. field
-> > renames, #defines and changes to the signature of LSM hooks).  This
-> > design imposes that the MAC policy (eBPF programs) be updated when the
-> > inspected kernel structures change outside of BTF compatibility
-> > guarantees. In practice, this is only required when a structure field
-> > used by a current policy is removed (or renamed) or when the used LSM
-> > hooks change. We expect the maintenance cost of these changes to be
-> > acceptable as compared to the design presented in the RFC.
-> > 
-> > (https://lore.kernel.org/bpf/20190910115527.5235-1-kpsingh@chromium.org/).
-> > 
-> > # Usage Examples
-> > 
-> > A simple example and some documentation is included in the patchset.
-> > In order to better illustrate the capabilities of the framework some
-> > more advanced prototype (not-ready for review) code has also been
-> > published separately:
-> > 
-> > * Logging execution events (including environment variables and
-> >   arguments)
-> >   https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_audit_env.c
-> > 
-> > * Detecting deletion of running executables:
-> >   https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_detect_exec_unlink.c
-> > 
-> > * Detection of writes to /proc/<pid>/mem:
-> >   https://github.com/sinkap/linux-krsi/blob/patch/v1/examples/samples/bpf/lsm_audit_env.c
-> > 
-> > We have updated Google's internal telemetry infrastructure and have
-> > started deploying this LSM on our Linux Workstations. This gives us more
-> > confidence in the real-world applications of such a system.
-> > 
-> > 
-> > KP Singh (8):
-> >   bpf: Introduce BPF_PROG_TYPE_LSM
-> >   security: Refactor declaration of LSM hooks
-> >   bpf: lsm: provide attachment points for BPF LSM programs
-> >   bpf: lsm: Implement attach, detach and execution
-> >   bpf: lsm: Initialize the BPF LSM hooks
-> >   tools/libbpf: Add support for BPF_PROG_TYPE_LSM
-> >   bpf: lsm: Add selftests for BPF_PROG_TYPE_LSM
-> >   bpf: lsm: Add Documentation
-> > 
-> >  Documentation/bpf/bpf_lsm.rst                 | 150 +++++
-> >  Documentation/bpf/index.rst                   |   1 +
-> >  MAINTAINERS                                   |   1 +
-> >  include/linux/bpf.h                           |   3 +
-> >  include/linux/bpf_lsm.h                       |  32 +
-> >  include/linux/bpf_types.h                     |   4 +
-> >  include/linux/lsm_hook_defs.h                 | 378 +++++++++++
-> >  include/linux/lsm_hooks.h                     | 627 +-----------------
-> >  include/uapi/linux/bpf.h                      |   2 +
-> >  init/Kconfig                                  |  10 +
-> >  kernel/bpf/Makefile                           |   1 +
-> >  kernel/bpf/bpf_lsm.c                          |  60 ++
-> >  kernel/bpf/btf.c                              |   9 +-
-> >  kernel/bpf/syscall.c                          |  56 +-
-> >  kernel/bpf/trampoline.c                       |  17 +-
-> >  kernel/bpf/verifier.c                         |  19 +-
-> >  kernel/trace/bpf_trace.c                      |  12 +-
-> >  security/Kconfig                              |  10 +-
-> >  security/Makefile                             |   2 +
-> >  security/bpf/Makefile                         |   5 +
-> >  security/bpf/hooks.c                          |  26 +
-> >  security/security.c                           | 432 ++++++------
-> >  tools/include/uapi/linux/bpf.h                |   2 +
-> >  tools/lib/bpf/bpf.c                           |   3 +-
-> >  tools/lib/bpf/libbpf.c                        |  39 +-
-> >  tools/lib/bpf/libbpf.h                        |   4 +
-> >  tools/lib/bpf/libbpf.map                      |   3 +
-> >  tools/lib/bpf/libbpf_probes.c                 |   1 +
-> >  tools/testing/selftests/bpf/config            |   2 +
-> >  tools/testing/selftests/bpf/lsm_helpers.h     |  19 +
-> >  .../selftests/bpf/prog_tests/lsm_test.c       | 112 ++++
-> >  .../selftests/bpf/progs/lsm_int_hook.c        |  54 ++
-> >  .../selftests/bpf/progs/lsm_void_hook.c       |  41 ++
-> >  33 files changed, 1277 insertions(+), 860 deletions(-)
-> >  create mode 100644 Documentation/bpf/bpf_lsm.rst
-> >  create mode 100644 include/linux/bpf_lsm.h
-> >  create mode 100644 include/linux/lsm_hook_defs.h
-> >  create mode 100644 kernel/bpf/bpf_lsm.c
-> >  create mode 100644 security/bpf/Makefile
-> >  create mode 100644 security/bpf/hooks.c
-> >  create mode 100644 tools/testing/selftests/bpf/lsm_helpers.h
-> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_test.c
-> >  create mode 100644 tools/testing/selftests/bpf/progs/lsm_int_hook.c
-> >  create mode 100644 tools/testing/selftests/bpf/progs/lsm_void_hook.c
-> > 
-> > -- 
-> > 2.20.1
-> > 
-> 
-> -- 
-> Kees Cook
+ - Entry from the late launch jumps to the SL stub
+ - SL stub fixes up the world on the BSP
+ - For TXT, SL stub wakes the APs, fixes up their worlds
+ - For TXT, APs are left halted waiting for an NMI to wake them
+ - SL stub jumps to startup_32
+ - SL main runs to measure configuration and module information into the
+   DRTM PCRs. It also locates the TPM event log.
+ - Kernel boot proceeds normally from this point.
+ - During early setup, slaunch_setup() runs to finish some validation
+   and setup tasks.
+ - The SMP bringup code is modified to wake the waiting APs. APs vector
+   to rmpiggy and start up normally from that point.
+ - Kernel boot finishes booting normally
+ - SL securityfs module is present to allow reading and writing of the
+   TPM event log.
+
+Outstanding:
+
+ - Currently Secure Launch only supports TXT, though there is an AMD
+   version is in progress.
+ - The compressed kernel TPM code includes a CRB interface
+   implementation but is untested due to inability to locate a system
+   with TXT and a TPM accessible with the CRB interface
+ - There is a known crash that is difficult to reproduce and is unclear
+   how the secure launch code is causing the crash. Thread on it here:
+   https://groups.google.com/forum/#!topic/trenchboot-devel/EZN_4ymrCgs
+
+Links:
+
+The Trenchboot project including documentation:
+
+https://github.com/trenchboot
+
+Intel TXT is documented in its own specification and in the SDM Instruction Set volume:
+
+https://www.intel.com/content/dam/www/public/us/en/documents/guides/intel-txt-software-development-guide.pdf
+https://software.intel.com/en-us/articles/intel-sdm
+
+AMD SKINIT is documented in the System Programming manual:
+
+https://www.amd.com/system/files/TechDocs/24593.pdf
+
+Thanks
+Ross Philipson and Daniel P. Smith
+
+Daniel P. Smith (5):
+  x86: Add early SHA support for Secure Launch early measurements
+  x86: Add early TPM TIS/CRB interface support for Secure Launch
+  x86: Add early TPM1.2/TPM2.0 interface support for Secure Launch
+  x86: Add early general TPM interface support for Secure Launch
+  x86: Secure Launch adding event log securityfs
+
+Ross Philipson (7):
+  x86: Secure Launch Kconfig
+  x86: Secure Launch main header file
+  x86: Secure Launch kernel early boot stub
+  x86: Secure Launch kernel late boot stub
+  x86: Secure Launch SMP bringup support
+  kexec: Secure Launch kexec SEXIT support
+  tpm: Allow locality 2 to be set when initializing the TPM for Secure
+    Launch
+
+ Documentation/x86/boot.rst                    |   9 +
+ arch/x86/Kconfig                              |  35 +
+ arch/x86/boot/compressed/Makefile             |   8 +
+ arch/x86/boot/compressed/early_sha1.c         | 104 +++
+ arch/x86/boot/compressed/early_sha1.h         |  17 +
+ arch/x86/boot/compressed/early_sha256.c       |   6 +
+ arch/x86/boot/compressed/early_sha512.c       |   6 +
+ arch/x86/boot/compressed/head_64.S            |  32 +
+ arch/x86/boot/compressed/kernel_info.S        |   3 +
+ arch/x86/boot/compressed/sl_main.c            | 378 ++++++++++
+ arch/x86/boot/compressed/sl_stub.S            | 568 ++++++++++++++
+ arch/x86/boot/compressed/tpm/crb.c            | 302 ++++++++
+ arch/x86/boot/compressed/tpm/crb.h            |  25 +
+ arch/x86/boot/compressed/tpm/tis.c            | 212 ++++++
+ arch/x86/boot/compressed/tpm/tis.h            |  51 ++
+ arch/x86/boot/compressed/tpm/tpm.c            | 190 +++++
+ arch/x86/boot/compressed/tpm/tpm.h            |  42 ++
+ arch/x86/boot/compressed/tpm/tpm1.h           | 112 +++
+ arch/x86/boot/compressed/tpm/tpm1_cmds.c      | 133 ++++
+ arch/x86/boot/compressed/tpm/tpm2.h           |  89 +++
+ arch/x86/boot/compressed/tpm/tpm2_auth.c      |  31 +
+ arch/x86/boot/compressed/tpm/tpm2_auth.h      |  21 +
+ arch/x86/boot/compressed/tpm/tpm2_cmds.c      | 150 ++++
+ arch/x86/boot/compressed/tpm/tpm2_constants.h |  66 ++
+ arch/x86/boot/compressed/tpm/tpm_buff.c       | 135 ++++
+ arch/x86/boot/compressed/tpm/tpm_common.h     | 127 ++++
+ arch/x86/boot/compressed/tpm/tpmbuff.h        |  34 +
+ arch/x86/boot/compressed/tpm/tpmio.c          |  51 ++
+ arch/x86/boot/compressed/vmlinux.lds.S        |   4 +
+ arch/x86/include/asm/realmode.h               |   3 +
+ arch/x86/kernel/Makefile                      |   1 +
+ arch/x86/kernel/asm-offsets.c                 |  15 +
+ arch/x86/kernel/setup.c                       |   3 +
+ arch/x86/kernel/slaunch.c                     | 700 ++++++++++++++++++
+ arch/x86/kernel/smpboot.c                     |  86 +++
+ arch/x86/realmode/rm/header.S                 |   3 +
+ arch/x86/realmode/rm/trampoline_64.S          |  37 +
+ drivers/char/tpm/tpm-chip.c                   |  13 +-
+ drivers/iommu/dmar.c                          |   4 +
+ include/linux/sha512.h                        |  21 +
+ include/linux/slaunch.h                       | 513 +++++++++++++
+ kernel/kexec_core.c                           |   3 +
+ lib/sha1.c                                    |   4 +
+ lib/sha512.c                                  | 209 ++++++
+ 44 files changed, 4554 insertions(+), 2 deletions(-)
+ create mode 100644 arch/x86/boot/compressed/early_sha1.c
+ create mode 100644 arch/x86/boot/compressed/early_sha1.h
+ create mode 100644 arch/x86/boot/compressed/early_sha256.c
+ create mode 100644 arch/x86/boot/compressed/early_sha512.c
+ create mode 100644 arch/x86/boot/compressed/sl_main.c
+ create mode 100644 arch/x86/boot/compressed/sl_stub.S
+ create mode 100644 arch/x86/boot/compressed/tpm/crb.c
+ create mode 100644 arch/x86/boot/compressed/tpm/crb.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tis.c
+ create mode 100644 arch/x86/boot/compressed/tpm/tis.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm.c
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm1.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm1_cmds.c
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm2.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm2_auth.c
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm2_auth.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm2_cmds.c
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm2_constants.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm_buff.c
+ create mode 100644 arch/x86/boot/compressed/tpm/tpm_common.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tpmbuff.h
+ create mode 100644 arch/x86/boot/compressed/tpm/tpmio.c
+ create mode 100644 arch/x86/kernel/slaunch.c
+ create mode 100644 include/linux/sha512.h
+ create mode 100644 include/linux/slaunch.h
+ create mode 100644 lib/sha512.c
+
+-- 
+2.25.1
+
