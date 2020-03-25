@@ -2,89 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E68EA1925AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:34:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52F0C1925B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:35:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727400AbgCYKd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 06:33:59 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:46743 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726103AbgCYKd6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:33:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585132437;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wMz36/b4wvRCQKG24J6IX0P4UpJbOiTrxsPU/Fg1urM=;
-        b=VbJJIdgSxtKEnqT1diDM2NZ4w4IY1thNmhv160YbxpfT0HOtnwV4kkUf4XfBE7Ig89tvps
-        lmLt/LHGinqqwespWJcgpzSoLICzPzROQMdTpSrIQ72TVacw07pLE7TisQdLXi9cxEnUdY
-        ignfSio4y0t6I8B1TxCKM3SDSMyT4b4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-399-yf1_aYnTMRSwPmaIQufFiA-1; Wed, 25 Mar 2020 06:33:54 -0400
-X-MC-Unique: yf1_aYnTMRSwPmaIQufFiA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727542AbgCYKfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 06:35:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44112 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726043AbgCYKfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 06:35:30 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E20338017CE;
-        Wed, 25 Mar 2020 10:33:52 +0000 (UTC)
-Received: from krava (unknown [10.40.192.119])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DA5D2BBBE5;
-        Wed, 25 Mar 2020 10:33:49 +0000 (UTC)
-Date:   Wed, 25 Mar 2020 11:33:45 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf tools: Add missing Intel CPU events to parser
-Message-ID: <20200325103345.GA1856035@krava>
-References: <20200324150443.28832-1-adrian.hunter@intel.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id AAF2020772;
+        Wed, 25 Mar 2020 10:35:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585132528;
+        bh=1A6rNb4E0Q0pJQguCVoz1LWxBQra8oiCyqNMfB8hxtU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YRnMLl/GAv74bb4G1X8jwJAlgaSVgcA51h2S7Mt4rvWW2me1iTeYXclfwgZGMmGa4
+         kYbvWxPDdTL7VRRP3b8bdYD92yN11+If8wwXhAPNorVh3YRvMB4PDPGMWC/dBEK5i6
+         S2wU7OKKbMSwXB5iHNFYxz9JCBkQVY4djMpr3HiE=
+Date:   Wed, 25 Mar 2020 11:35:25 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     linux-spdx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] .gitignore: add SPDX License Identifier
+Message-ID: <20200325103525.GA3086352@kroah.com>
+References: <20200303133600.9263-1-masahiroy@kernel.org>
+ <20200303133600.9263-2-masahiroy@kernel.org>
+ <CAK7LNARZUpDKXpniNZ+_=G5Gskebc0HEHT5TKbaz2Xs_Ni6u4g@mail.gmail.com>
+ <20200325101838.GA3084128@kroah.com>
+ <CAK7LNAQtxwXzmHXr6GMm_BrEvittoUHJkrROVFX02if5BTCgGw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200324150443.28832-1-adrian.hunter@intel.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <CAK7LNAQtxwXzmHXr6GMm_BrEvittoUHJkrROVFX02if5BTCgGw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 05:04:43PM +0200, Adrian Hunter wrote:
-> perf list expects CPU events to be parseable by name, e.g.
+On Wed, Mar 25, 2020 at 07:21:39PM +0900, Masahiro Yamada wrote:
+> On Wed, Mar 25, 2020 at 7:18 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Wed, Mar 25, 2020 at 07:10:03PM +0900, Masahiro Yamada wrote:
+> > > On Tue, Mar 3, 2020 at 10:36 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > > >
+> > > > Add SPDX License Identifier to all .gitignore files.
+> > > >
+> > > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > >
+> > >
+> > > Ping?
+> >
+> > Ah, I just assumed you would take these through your tree, sorry about
+> > that.
+> >
+> > Both look find:
+> >
+> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >
+> > Or do you want me to take these?
+> >
 > 
->     # perf list | grep el-capacity-read
->       el-capacity-read OR cpu/el-capacity-read/          [Kernel PMU event]
-> 
-> But the event parser does not recognize them that way, e.g.
-> 
->     # perf test -v "Parse event"
->     <SNIP>
->     running test 54 'cycles//u'
->     running test 55 'cycles:k'
->     running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
->     running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
->     running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
->     running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp'
->     -> cpu/event=0,umask=0x11/
->     -> cpu/event=0,umask=0x13/
->     -> cpu/event=0x54,umask=0x1/
->     failed to parse event 'el-capacity-read:u,cpu/event=el-capacity-read/u', err 1, str 'parser error'
->     event syntax error: 'el-capacity-read:u,cpu/event=el-capacity-read/u'
->                            \___ parser error test child finished with 1
->     ---- end ----
->     Parse event definition strings: FAILED!
-> 
-> Fix by adding missing Intel CPU events to the event parser.
-> Missing events were found by using:
-> 
->     grep -r EVENT_ATTR_STR arch/x86/events/intel/core.c
-> 
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> Yes.
+> That is why I sent this to linux-spdx ML,
+> which seems a valid path.
 
-Acked-by: Jiri Olsa <jolsa@redhat.com>
+Ok, will take this now, thanks for the ping.
 
-thanks,
-jirka
-
+greg k-h
