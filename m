@@ -2,60 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D195C191FC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 04:31:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D31EA191FC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 04:33:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbgCYDbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 23:31:50 -0400
-Received: from m17617.mail.qiye.163.com ([59.111.176.17]:41131 "EHLO
-        m17617.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727280AbgCYDbt (ORCPT
+        id S1727299AbgCYDds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 23:33:48 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35134 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbgCYDdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 23:31:49 -0400
-Received: from lcc-VirtualBox.vivo.xyz (unknown [58.251.74.227])
-        by m17617.mail.qiye.163.com (Hmail) with ESMTPA id EE9A3261A11;
-        Wed, 25 Mar 2020 11:31:45 +0800 (CST)
-From:   Chucheng Luo <luochucheng@vivo.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     kernel@vivo.com, Chucheng Luo <luochucheng@vivo.com>
-Subject: [PATCH] io_uring:fix missing 'return' in comment
-Date:   Wed, 25 Mar 2020 11:31:38 +0800
-Message-Id: <20200325033138.21488-1-luochucheng@vivo.com>
-X-Mailer: git-send-email 2.17.1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZTlVDSUhLS0tPSEpLTUtMQllXWShZQU
-        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PxQ6Mio6MTgyMCwyDzAuEhgC
-        EwoaCRFVSlVKTkNOSktMSktNSE9LVTMWGhIXVRcOFBgTDhgTHhUcOw0SDRRVGBQWRVlXWRILWUFZ
-        TkNVSU5KVUxPVUlJTFlXWQgBWUFKTUpMNwY+
-X-HM-Tid: 0a710fbef9be9375kuwsee9a3261a11
+        Tue, 24 Mar 2020 23:33:47 -0400
+Received: by mail-wm1-f67.google.com with SMTP id m3so981421wmi.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Mar 2020 20:33:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KxuOmdAysRZGEQNx/Dz1PYBDsyTNUNG3yM0/E844o6Y=;
+        b=c/J6KOmODiexLZ6eE+Q7byqMIyfu4FnkpMeZwi5gE9T+/EA75ajNsvHCRlueB8QnOi
+         UPH8CyFpthAFT1RAn+oSq/Laqhiwe6iz0lX7V2b42ZkgmNolMn/u3meMsGuTQbge2lpp
+         ECvXCaPxDG6m+v5esskixVqrVPEIYAA7iS7p6u2FfOzeUw4mG9fZRAgqwXG7LtrrCpGT
+         3lVVkWYDpuelkVF2ocK7K8t4uYPDASeO4vKQx1HN65+vgysWC1Z1hF/d5f4Hvk9IVzCI
+         fDsV+k3bXspeMm+Vn3P0QQY0qDG0TY9jDmp0e9+0x/8iM7qlf0cGS4OOoOI+iNa8Qkjj
+         fSWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KxuOmdAysRZGEQNx/Dz1PYBDsyTNUNG3yM0/E844o6Y=;
+        b=gzK/VPkbE3gnsWeWxu3qD11UevYJu78i14P0/tk13momjcFoT0rpntndD+y8aiKKbl
+         hrD5s/0vyF03gZdwuOJmASvd1i4IptxXRFgwbg7DY/mYbyJAfI3Cc3qzcdQzES7wbGPu
+         2sT8ea5KJx2X3CCSjlU2pDUoUbHOlT/wjhKzo3zreFiEYRegDG6oquNJxAyspCb5R2He
+         +QbEM5JAH8fhOqnNpPE3LHsIjUGAp7D1WngGRAYiqzOM7ph5HnGy7MVeNnPZikFJUD5/
+         h+EG88VRMbBCna0mhnBDf5bwkWvYRioKsQqXuu+ijF507PEMtKKdTjGgoP5WMvoMYt6E
+         aKDQ==
+X-Gm-Message-State: ANhLgQ30T46C1vA/BUGpLWswZydBAclhkAoISf0D42jTqLE3QQfVDlAd
+        X6F9w4m021tP0uVy5aWzeF7B1tAAmXPKPZHKDUqFoQ==
+X-Google-Smtp-Source: ADFU+vvrBb5PDQiiE02yCmnPwWoxH59MspYVlbdbbf/I+hPVZDRTg4mNSNtH/SjBeMYgKror/eSj+SfdIbQRCwyOkKM=
+X-Received: by 2002:a1c:dc8b:: with SMTP id t133mr1147213wmg.99.1585107225177;
+ Tue, 24 Mar 2020 20:33:45 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191121235058.21653-1-davidgow@google.com> <CAFd5g46Z_vVb92Y-sfWi68=HFy5+kukZXvT9usEEnhBUvPg3AQ@mail.gmail.com>
+In-Reply-To: <CAFd5g46Z_vVb92Y-sfWi68=HFy5+kukZXvT9usEEnhBUvPg3AQ@mail.gmail.com>
+From:   David Gow <davidgow@google.com>
+Date:   Tue, 24 Mar 2020 20:33:33 -0700
+Message-ID: <CABVgOSn1azUN4XujHLsc3NY9fOUPB4Vw6930zc4oR26kxqrwOg@mail.gmail.com>
+Subject: Re: [PATCH kselftest/test] kunit: Always print actual pointer values
+ in asserts
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Kees Cook <keescook@chromium.org>, shuah <shuah@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-the missing 'return' work may make it hard
-for other developers to understand it.
+On Tue, Dec 3, 2019 at 3:44 PM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+>
+> On Thu, Nov 21, 2019 at 3:51 PM David Gow <davidgow@google.com> wrote:
+> >
+> > KUnit assertions and expectations will print the values being tested. If
+> > these are pointers (e.g., KUNIT_EXPECT_PTR_EQ(test, a, b)), these
+> > pointers are currently printed with the %pK format specifier, which -- to
+> > prevent information leaks which may compromise, e.g., ASLR -- are often
+> > either hashed or replaced with ____ptrval____ or similar, making debugging
+> > tests difficult.
+> >
+> > By replacing %pK with %px as Documentation/core-api/printk-formats.rst
+> > suggests, we disable this security feature for KUnit assertions and
+> > expectations, allowing the actual pointer values to be printed. Given
+> > that KUnit is not intended for use in production kernels, and the
+> > pointers are only printed on failing tests, this seems like a worthwhile
+> > tradeoff.
+>
+> I agree. However, I also remember that others in the past yelled at me
+> for assuming that KUnit would not be built into production kernels.
+>
+> I feel like +Kees Cook would have a good opinion on this (or will at
+> least CC the right people).
+>
 
-Signed-off-by: Chucheng Luo <luochucheng@vivo.com>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm tempted to take the silence as a sign that no-one is upset by
+this. Otherwise, consider this a gentle reminder to file any
+objections you may have. :-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5a826017ebb8..4b971c7b4483 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2379,7 +2379,7 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
- 		else
- 			ret2 = loop_rw_iter(WRITE, req->file, kiocb, &iter);
- 		/*
--		 * Raw bdev writes will -EOPNOTSUPP for IOCB_NOWAIT. Just
-+		 * Raw bdev writes will return -EOPNOTSUPP for IOCB_NOWAIT. Just
- 		 * retry them without IOCB_NOWAIT.
- 		 */
- 		if (ret2 == -EOPNOTSUPP && (kiocb->ki_flags & IOCB_NOWAIT))
--- 
-2.17.1
+Otherwise, I've confirmed that this still applies cleanly to the
+latest linux-kselftest/kunit branch, so -- assuming there are no
+last-minute objections -- this ought to be ready to go.
 
+Cheers,
+-- David
