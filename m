@@ -2,81 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 122721921FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 08:52:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3278F1921FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 08:53:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbgCYHwm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 03:52:42 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45510 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbgCYHwm (ORCPT
+        id S1727374AbgCYHxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 03:53:01 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45359 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbgCYHxA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 03:52:42 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b9so485940pls.12;
-        Wed, 25 Mar 2020 00:52:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=OyMSybDgjLtBHyJeIkj6VwbC+46L2Aw6n03o91VqgKc=;
-        b=nDoDTTiZHzzvB2jsefFabUvkfery3Bpl/g896+EwqGpDCT7TNqR+Q2Z0BzX6L5vYAM
-         +InqIY1XHQwQZ1/FcisFl9Y8B5CR6BYVZY9n+Z+SwdBhbV9onGUnbQKVR4aIwLuzAv2N
-         pt0Ake4CWdDmNbDqTROYP61jfMc4XuipXIgu/EcDnItlPET8j5LZG+rWtrPY74VXplMV
-         cIFZM2MH8wy6hcUxrY8+1fxM9EWY2tBwR9rnY1QBoNXWiLEZWi8ddHcSxEfDV1ZDVCk+
-         yMDwvOKjz4LRS93sphkoQYIihVQ7WwP9EevTJSZnZYIrm2QbD/bA6ReivYNxZnuQ4F9E
-         h8Ew==
+        Wed, 25 Mar 2020 03:53:00 -0400
+Received: by mail-oi1-f196.google.com with SMTP id l22so1224821oii.12;
+        Wed, 25 Mar 2020 00:53:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=OyMSybDgjLtBHyJeIkj6VwbC+46L2Aw6n03o91VqgKc=;
-        b=euvAYWUFadfIcI+Wqy5ToxsWlGvEarK8e9WaDm/ygiEsxUSBmcLRhJgplLghB4O9OQ
-         0f6g9q6V6TiwML9IjTTQdcAPBRLDIsLSUFbSLOiIqoPzG26ubGz29G8VCIneAtBpQAOQ
-         kSitu3XDvqQuUQQz2f1EomBcQcJiXnxDF952PGPyQLnsfT89bv+PI+EpbKa5N54wSTRv
-         LRmx6yrvCHtd1xgp5jGxh/KZCY9OBf5eFm5KgcgDoWpPB++SIewRdFSXhexswu3NqNKJ
-         +spoplIPS2qtcDdgCFbLJuMaEE67bMQEcL3SWNI0IrZamcCjOaa7x851K3Z7Q4zK5o4n
-         aPTw==
-X-Gm-Message-State: ANhLgQ3sf/wW7qf6HdAFsHEx+I9E/WrlgaTA4wxZGEIvuK8lqVBNUi88
-        CzZimFVc+JlGRBulj9BW1CM=
-X-Google-Smtp-Source: ADFU+vusxnk8kCNRrmLC5fNeF93JDBXccwRLn9rmfHjTAzwr5ifIQ6m8rVp2oEFRvDTkZdkjUU3uYQ==
-X-Received: by 2002:a17:90b:11d6:: with SMTP id gv22mr2357583pjb.31.1585122761049;
-        Wed, 25 Mar 2020 00:52:41 -0700 (PDT)
-Received: from VM_0_35_centos.localdomain ([150.109.62.251])
-        by smtp.gmail.com with ESMTPSA id ev21sm3994786pjb.24.2020.03.25.00.52.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Mar 2020 00:52:40 -0700 (PDT)
-From:   Qiujun Huang <hqjagain@gmail.com>
-To:     johan@kernel.org, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        anenbupt@gmail.com, Qiujun Huang <hqjagain@gmail.com>
-Subject: [PATCH] USB: io_edgeport: fix  slab-out-of-bounds Read in edge_interrupt_callback
-Date:   Wed, 25 Mar 2020 15:52:37 +0800
-Message-Id: <1585122757-4528-1-git-send-email-hqjagain@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GES48oHSY1Nd2O0lvCRAE6tTRjmq2R3zWeOpNWZv/6s=;
+        b=nx6/3wHdIcOGSHAZyvMI0iFex4JsotJQ8TEghZnOvJ+UiVt8gY7r+VbuCH/Ll7tSuv
+         AMgXWuWlyogKY3R5SLGI7HroboqCbBijY/fu65Dq6xI65PNEPZWOvroYo8lnm7TjgH64
+         zEcoky3mGu/B9olZbjAa6Zkbh6RysN7VWkNbTO+xyErD2KNQQCpmul3gQqezwVOLpE4t
+         IosheBgPLoglSuGiH+rEjhgQgTRvz3Z5lZuei9vJTkWo1sA6tSlysbYlopiWE6VGjWKy
+         yAReMv2x7Cj4wo4u0q4weS6gs4him7Xlb62a2AKvT+1NxJlvSpgKbK7AMMA7cUslrjpU
+         qKsQ==
+X-Gm-Message-State: ANhLgQ0Gn6CoyUPhpa3MvZ+Gp/WcyD10yASdAuQh/hCsEW+hLUiissx6
+        IWstWVeN9T3mWPv6di7AiL/LweYiM2qT1nmcmOkiQDG+
+X-Google-Smtp-Source: ADFU+vtU+LhtZD1BFjienI4GJGjRNMAYuZdM/gxsuYm095k4wQaysCl8pIhASj79Lt78UKLt/MNSAKlkRQmV+YNNwns=
+X-Received: by 2002:aca:4e57:: with SMTP id c84mr1539522oib.148.1585122780154;
+ Wed, 25 Mar 2020 00:53:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200324161539.7538-1-masahiroy@kernel.org> <CAMuHMdWPNFRhUVGb0J27MZg2CrWWm06N9OQjQsGLMZkNXJktAg@mail.gmail.com>
+ <CAK7LNAQFbcfK=q4eYW_dQUqe-sqbjpxSpQBeCkp0Vr4P3HJc7A@mail.gmail.com>
+In-Reply-To: <CAK7LNAQFbcfK=q4eYW_dQUqe-sqbjpxSpQBeCkp0Vr4P3HJc7A@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 25 Mar 2020 08:52:49 +0100
+Message-ID: <CAMuHMdXeOUu_zxKHXnNoLwyExy1GTp6N5UP2Neqyc8M3w2B8KQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] net: wan: wanxl: use $(CC68K) instead of $(AS68K) for
+ rebuilding firmware
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The boundary condition should be (length - 1) as we access data[position+1].
+Hi Yamada-san,
 
-Reported-and-tested-by: syzbot+37ba33391ad5f3935bbd@syzkaller.appspotmail.com
-Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
----
- drivers/usb/serial/io_edgeport.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Mar 25, 2020 at 4:50 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> On Wed, Mar 25, 2020 at 2:47 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Tue, Mar 24, 2020 at 5:17 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > > As far as I understood from the Kconfig help text, this build rule is
+> > > used to rebuild the driver firmware, which runs on the QUICC, m68k-based
+> > > Motorola 68360.
+> > >
+> > > The firmware source, wanxlfw.S, is currently compiled by the combo of
+> > > $(CPP) and $(AS68K). This is not what we usually do for compiling *.S
+> > > files. In fact, this is the only user of $(AS) in the kernel build.
+> > >
+> > > Moreover, $(CPP) is not likely to be a m68k tool because wanxl.c is a
+> > > PCI driver, but CONFIG_M68K does not select CONFIG_HAVE_PCI.
+> > > Instead of combining $(CPP) and (AS) from different tool sets, using
+> > > single $(CC68K) seems simpler, and saner.
+> > >
+> > > After this commit, the firmware rebuild will require cc68k instead of
+> > > as68k. I do not know how many people care about this, though.
+> > >
+> > > I do not have cc68k/ld68k in hand, but I was able to build it by using
+> > > the kernel.org m68k toolchain. [1]
+> >
+> > Would this work with a "standard" m68k-linux-gnu-gcc toolchain, like
+> > provided by Debian/Ubuntu, too?
+> >
+>
+> Yes, I did 'sudo apt install gcc-8-m68k-linux-gnu'
+> It successfully compiled this firmware.
 
-diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
-index 5737add..4cca0b8 100644
---- a/drivers/usb/serial/io_edgeport.c
-+++ b/drivers/usb/serial/io_edgeport.c
-@@ -710,7 +710,7 @@ static void edge_interrupt_callback(struct urb *urb)
- 		/* grab the txcredits for the ports if available */
- 		position = 2;
- 		portNumber = 0;
--		while ((position < length) &&
-+		while ((position < length - 1) &&
- 				(portNumber < edge_serial->serial->num_ports)) {
- 			txCredits = data[position] | (data[position+1] << 8);
- 			if (txCredits) {
+Thanks for checking!
+
+> In my understanding, the difference is that
+> the kernel.org ones lack libc,
+> so cannot link userspace programs.
+>
+> They do not make much difference for this case.
+
+Indeed.
+
+So perhaps it makes sense to replace cc68k and ld68k in the Makefile by
+m68k-linux-gnu-gcc and m68k-linux-gnu-ld, as these are easier to get hold
+of on a modern system?
+
+What do you think?
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.8.3.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
