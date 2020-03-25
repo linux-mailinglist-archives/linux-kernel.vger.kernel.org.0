@@ -2,127 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62581192650
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:57:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE86919265C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:57:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbgCYK4l convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 25 Mar 2020 06:56:41 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:48694 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbgCYK4k (ORCPT
+        id S1727313AbgCYK5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 06:57:42 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41811 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbgCYK5m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:56:40 -0400
-Received: from 185.80.35.16 (185.80.35.16) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
- id 0c81cca4627adb77; Wed, 25 Mar 2020 11:56:37 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux ACPI <linux-acpi@vger.kernel.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Erik Kaneda <erik.kaneda@intel.com>,
-        Bob Moore <robert.moore@intel.com>,
-        =?utf-8?B?T25kxZllag==?= Caletka <ondrej@caletka.cz>
-Subject: [PATCH 2/2] ACPI: PM: s2idle: Refine active GPEs check
-Date:   Wed, 25 Mar 2020 11:55:48 +0100
-Message-ID: <3401112.1UjFo9YGNl@kreacher>
-In-Reply-To: <9291082.ZuhHelrm8h@kreacher>
-References: <9291082.ZuhHelrm8h@kreacher>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 25 Mar 2020 06:57:42 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h9so2393341wrc.8;
+        Wed, 25 Mar 2020 03:57:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=LK/63VpRTinhiS72eGFe8hpGS9Ib9592eNpC47zP9eg=;
+        b=STJZraM7KnNG5j/4mxy5/JwGK6u9Ls8g+U8aHGuB8OiwBRazBmk0EmDZVLasIpVg0l
+         LorsN9AwIU5jU31QyO9MIuxJJW+sLYNIXrfLt4pYBdOE8Pu9Oj734hNYJNCkwEUnLk5l
+         myQiEIBn9uX3gVw6J0TL7xoI12fBLhYqtTKXViXTBiOQsiDYTS65LvrfphITeNZzZI86
+         nOxz0frKnPvmmxaYRS8Ntfuz6rcaJ1Ay0bjXlkUIVMiNa21MYbucmpJA2Q0GYyiCbs4T
+         6XRBiv6s6z5p7ID+Zv2krl/rKyFjIbPLOqvQCItXfyFap7VfMmxa1WY1RjJS/qNiRnL5
+         udXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LK/63VpRTinhiS72eGFe8hpGS9Ib9592eNpC47zP9eg=;
+        b=M2Rp+wA+mk0uSKMweb3uQXdd39nyRDMed0eULj5Ed59ViY60dNQDU/bxHkj2SZw6bQ
+         SPcg865lhoFaTUfJcUf3lnb2axV3Hgv91skOn4lTw2IXME5swZgltbsxdGnuXaJzdWNT
+         IMNuOcvIJt9EsNFDngDuD/NzJ3n421ufg4p0BEYq/3N/0nidI7Va3avJzXOtrqLtcJf2
+         pDStKzkY8hEMVIxLo2/avynhYVHwNNpXkG928yUfAWruOreqXCAcW+OJidMsXnOZ/dgs
+         axyXQFl9jwlslasYXSmXJcLrzNyOMlqPWYkE35NwiOtq6mp3pxsXohuXucZgPVh729rP
+         cg3w==
+X-Gm-Message-State: ANhLgQ3UJjDSEprsqacfdeLtUbM8oC1vz5/91w9Lp4f5i/Avd2l0KjDL
+        /y/4WLdh2913Rt8DkTwAVH4=
+X-Google-Smtp-Source: ADFU+vsNgfBpz3csz9luqYb8b7ZDiuvrOxIb4oqdh2Jlq7yApLxnA+XyWS3p4B5eABuEpP56HxycWA==
+X-Received: by 2002:a5d:468c:: with SMTP id u12mr2983370wrq.394.1585133860900;
+        Wed, 25 Mar 2020 03:57:40 -0700 (PDT)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id o9sm33867584wrw.20.2020.03.25.03.57.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Mar 2020 03:57:40 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: rockchip: remove identical #include from rk3288.dtsi
+Date:   Wed, 25 Mar 2020 11:57:34 +0100
+Message-Id: <20200325105734.5868-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+There are 2 identical '#include' for 'rk3288-power.h',
+so remove one of them.
 
-The check for any active GPEs added by commit fdde0ff8590b ("ACPI:
-PM: s2idle: Prevent spurious SCIs from waking up the system") turns
-out to be insufficiently precise to prevent some systems from
-resuming prematurely due to a spurious EC wakeup, so refine it
-by first checking if any GPEs other than the EC GPE are active
-and skipping all of the SCIs coming from the EC that do not produce
-any genuine wakeup events after processing.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206629
-Fixes: fdde0ff8590b ("ACPI: PM: s2idle: Prevent spurious SCIs from waking up the system")
-Reported-by: Ondřej Caletka <ondrej@caletka.cz>
-Tested-by: Ondřej Caletka <ondrej@caletka.cz>
-Cc: 5.4+ <stable@vger.kernel.org> # 5.4+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- drivers/acpi/ec.c       |  5 +++++
- drivers/acpi/internal.h |  1 +
- drivers/acpi/sleep.c    | 19 ++++++++++---------
- 3 files changed, 16 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/rk3288.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
-index d1f1cf5d4bf0..9b9094b0b73f 100644
---- a/drivers/acpi/ec.c
-+++ b/drivers/acpi/ec.c
-@@ -2037,6 +2037,11 @@ void acpi_ec_set_gpe_wake_mask(u8 action)
- 		acpi_set_gpe_wake_mask(NULL, first_ec->gpe, action);
- }
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index e72368a7a..f102fec69 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -7,7 +7,6 @@
+ #include <dt-bindings/clock/rk3288-cru.h>
+ #include <dt-bindings/power/rk3288-power.h>
+ #include <dt-bindings/thermal/thermal.h>
+-#include <dt-bindings/power/rk3288-power.h>
+ #include <dt-bindings/soc/rockchip,boot-mode.h>
  
-+bool acpi_ec_other_gpes_active(void)
-+{
-+	return acpi_any_gpe_status_set(first_ec ? first_ec->gpe : U32_MAX);
-+}
-+
- bool acpi_ec_dispatch_gpe(void)
- {
- 	u32 ret;
-diff --git a/drivers/acpi/internal.h b/drivers/acpi/internal.h
-index 3616daec650b..d44c591c4ee4 100644
---- a/drivers/acpi/internal.h
-+++ b/drivers/acpi/internal.h
-@@ -202,6 +202,7 @@ void acpi_ec_remove_query_handler(struct acpi_ec *ec, u8 query_bit);
- 
- #ifdef CONFIG_PM_SLEEP
- void acpi_ec_flush_work(void);
-+bool acpi_ec_other_gpes_active(void);
- bool acpi_ec_dispatch_gpe(void);
- #endif
- 
-diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-index 857a6165c534..2cdd3f991a47 100644
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -1013,18 +1013,19 @@ static bool acpi_s2idle_wake(void)
- 			return true;
- 
- 		/*
--		 * If there are no EC events to process and at least one of the
--		 * other enabled GPEs is active, the wakeup is regarded as a
--		 * genuine one.
--		 *
--		 * Note that the checks below must be carried out in this order
--		 * to avoid returning prematurely due to a change of the EC GPE
--		 * status bit from unset to set between the checks with the
--		 * status bits of all the other GPEs unset.
-+		 * If the status bit is set for any enabled GPE other than the
-+		 * EC one, the wakeup is regarded as a genuine one.
- 		 */
--		if (acpi_any_gpe_status_set(U32_MAX) && !acpi_ec_dispatch_gpe())
-+		if (acpi_ec_other_gpes_active())
- 			return true;
- 
-+		/*
-+		 * If the EC GPE status bit has not been set, the wakeup is
-+		 * regarded as a spurious one.
-+		 */
-+		if (!acpi_ec_dispatch_gpe())
-+			return false;
-+
- 		/*
- 		 * Cancel the wakeup and process all pending events in case
- 		 * there are any wakeup ones in there.
+ / {
 -- 
-2.16.4
-
-
-
+2.11.0
 
