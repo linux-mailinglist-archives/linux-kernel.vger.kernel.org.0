@@ -2,109 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C94C6191FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 04:27:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA230191F95
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 04:14:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbgCYD1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 23:27:10 -0400
-Received: from mga01.intel.com ([192.55.52.88]:39340 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727253AbgCYD1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 23:27:08 -0400
-IronPort-SDR: vKhRNizHQhaRl993yZvAV8tGIzLtohcBjIyivbl1Sl8MGj/vPOjw5c+v4PwNKkA8OazxZ5suVh
- fzqJnlOMKFpg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 20:27:08 -0700
-IronPort-SDR: 7I16jIMiWtO8LKycInGLDqLZkstmd2V+72W8N55D6DVRkqRoRYUaMUgMG+8SVfw7uWKIg1uYbF
- Ci9EJ083pPww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,302,1580803200"; 
-   d="scan'208";a="240290011"
-Received: from lxy-clx-4s.sh.intel.com ([10.239.43.39])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Mar 2020 20:27:05 -0700
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>
-Subject: [PATCH v7 2/2] x86/split_lock: Avoid runtime reads of the TEST_CTRL MSR
-Date:   Wed, 25 Mar 2020 11:09:24 +0800
-Message-Id: <20200325030924.132881-3-xiaoyao.li@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200325030924.132881-1-xiaoyao.li@intel.com>
-References: <20200325030924.132881-1-xiaoyao.li@intel.com>
+        id S1727290AbgCYDOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 23:14:14 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:43852 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727262AbgCYDON (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 23:14:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585106052;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=tlnvEiI040ACQ537mohs9KaGt5WE1E8quEggSdqcSkQ=;
+        b=JAZ3NQxbAgVinoZDU0LWzasqNXPUSmQafjIqmcvgN57RePDqXwbU/gJidUKxC1cvBOdga/
+        cRdpqfqcIEadoMrfnp4SUGb4bzMtKiTdbnjjTGRM0N66nGZbJR96h7O+cZnkfEN73i02JV
+        zTwzjmPRWWdzmod7hgd1PJE+P/HDjA8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-350-arsdJjnLP0upUxzGWPsajQ-1; Tue, 24 Mar 2020 23:14:02 -0400
+X-MC-Unique: arsdJjnLP0upUxzGWPsajQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 509FE100550D;
+        Wed, 25 Mar 2020 03:14:01 +0000 (UTC)
+Received: from [10.72.12.54] (ovpn-12-54.pek2.redhat.com [10.72.12.54])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 44E028AC30;
+        Wed, 25 Mar 2020 03:13:55 +0000 (UTC)
+Subject: Re: [PATCH V7 3/8] vringh: IOTLB support
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@lists.01.org, mst@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+References: <20200324041458.27384-4-jasowang@redhat.com>
+ <202003250217.stptJTnJ%lkp@intel.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <4032c9a2-a6c1-a041-fd59-81a8bf2fca46@redhat.com>
+Date:   Wed, 25 Mar 2020 11:13:54 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <202003250217.stptJTnJ%lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In a context switch from a task that is detecting split locks
-to one that is not (or vice versa) we need to update the TEST_CTRL
-MSR. Currently this is done with the common sequence:
-	read the MSR
-	flip the bit
-	write the MSR
-in order to avoid changing the value of any reserved bits in the MSR.
 
-Cache unused and reserved bits of TEST_CTRL MSR with SPLIT_LOCK_DETECT
-bit cleared during initialization, so we can avoid an expensive RDMSR
-instruction during context switch.
+On 2020/3/25 =E4=B8=8A=E5=8D=882:19, kbuild test robot wrote:
+> Hi Jason,
+>
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on vhost/linux-next]
+> [also build test ERROR on linux/master linus/master v5.6-rc7 next-20200=
+324]
+> [if your patch is applied to the wrong git tree, please drop us a note =
+to help
+> improve the system. BTW, we also suggest to use '--base' option to spec=
+ify the
+> base tree in git format-patch, please see https://stackoverflow.com/a/3=
+7406982]
+>
+> url:    https://github.com/0day-ci/linux/commits/Jason-Wang/vDPA-suppor=
+t/20200324-142634
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git l=
+inux-next
+> config: alpha-randconfig-a001-20200324 (attached as .config)
+> compiler: alpha-linux-gcc (GCC) 9.2.0
+> reproduce:
+>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/=
+sbin/make.cross -O ~/bin/make.cross
+>          chmod +x ~/bin/make.cross
+>          # save the attached .config to linux build tree
+>          GCC_VERSION=3D9.2.0 make.cross ARCH=3Dalpha
+>
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+>
+> All errors (new ones prefixed by >>):
+>
+>     alpha-linux-ld: drivers/vhost/vringh.o: in function `iotlb_translat=
+e':
+>     drivers/vhost/vringh.c:1079: undefined reference to `vhost_iotlb_it=
+ree_first'
 
-Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Originally-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
----
- arch/x86/kernel/cpu/intel.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index deb5c42c2089..1f414578899c 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -45,6 +45,7 @@ enum split_lock_detect_state {
-  * split lock detect, unless there is a command line override.
-  */
- static enum split_lock_detect_state sld_state __ro_after_init = sld_off;
-+static u64 msr_test_ctrl_cache __ro_after_init;
- 
- /*
-  * Processors which have self-snooping capability can handle conflicting
-@@ -1037,6 +1038,8 @@ static void __init split_lock_setup(void)
- 		break;
- 	}
- 
-+	rdmsrl(MSR_TEST_CTRL, msr_test_ctrl_cache);
-+
- 	if (!split_lock_verify_msr(true)) {
- 		pr_info("MSR access failed: Disabled\n");
- 		return;
-@@ -1053,14 +1056,10 @@ static void __init split_lock_setup(void)
-  */
- static void sld_update_msr(bool on)
- {
--	u64 test_ctrl_val;
--
--	rdmsrl(MSR_TEST_CTRL, test_ctrl_val);
-+	u64 test_ctrl_val = msr_test_ctrl_cache;
- 
- 	if (on)
- 		test_ctrl_val |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
--	else
--		test_ctrl_val &= ~MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
- 
- 	wrmsrl(MSR_TEST_CTRL, test_ctrl_val);
- }
--- 
-2.20.1
+This is because VHOST now depends on VHOST_IOTLB, but it was still=20
+selected by MIC or VOP.
+
+Will fix this by switching to use "depends on" fro MIC and VOP
+
+Thanks.
+
+
+>>> alpha-linux-ld: drivers/vhost/vringh.c:1079: undefined reference to `=
+vhost_iotlb_itree_first'
+> ---
+> 0-DAY CI Kernel Test Service, Intel Corporation
+> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
