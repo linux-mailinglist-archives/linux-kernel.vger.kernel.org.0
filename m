@@ -2,156 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CFD91927A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:02:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 774E81927AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 13:04:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbgCYMC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 08:02:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43092 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbgCYMCz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 08:02:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=547A7ZAoUu2JDJ2ptSJ8vxecAwOtjI/NDzIFsvFTzXo=; b=QvbtCWiIh5Xi5+8xr7F3LHchs/
-        /enb5Ja0xjCQg6d/l+MMlIiwXqB1vmDvW34OsfyaSVHmfQx5kxyhZIn0FH5/13KsLe0hUWrGWbB2g
-        sxNran2m7QzQfFcu/qurUajS+kK4kEiY6Nojd22Yoyfhsr09GRoJw/fKvlcE/cgG6L+etNC0U3vkq
-        0DIgu/p6cickFzYi2VQqX4rMn0g6k0JEQQFCQ8RoqdCtQshCfS8K0j4G2044VrBkohrju2ToJ8dze
-        6LtjdH/dgtWCSE8hybN/l8eLj9N52oB+rKd+z7jbkSCM2Y9hSv9O3RaK4nV1mItf8R8C4rGnL9moV
-        mHDZZ7Cg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jH4kI-0002HH-Er; Wed, 25 Mar 2020 12:02:54 +0000
-Date:   Wed, 25 Mar 2020 05:02:54 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs <linux-xfs@vger.kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: Re: [PATCH v10 24/25] fuse: Convert from readpages to readahead
-Message-ID: <20200325120254.GA22483@bombadil.infradead.org>
-References: <20200323202259.13363-1-willy@infradead.org>
- <20200323202259.13363-25-willy@infradead.org>
- <CAJfpegu7EFcWrg3bP+-2BX_kb52RrzBCo_U3QKYzUkZfe4EjDA@mail.gmail.com>
+        id S1727456AbgCYMD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 08:03:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50392 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727389AbgCYMD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 08:03:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 55705AC1D;
+        Wed, 25 Mar 2020 12:03:54 +0000 (UTC)
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-mm@kvack.org, Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Guilherme G . Piccoli" <gpiccoli@canonical.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [RFC v2 1/2] kernel/sysctl: support setting sysctl parameters from kernel command line
+Date:   Wed, 25 Mar 2020 13:03:44 +0100
+Message-Id: <20200325120345.12946-1-vbabka@suse.cz>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegu7EFcWrg3bP+-2BX_kb52RrzBCo_U3QKYzUkZfe4EjDA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 10:42:56AM +0100, Miklos Szeredi wrote:
-> > +       while ((page = readahead_page(rac))) {
-> > +               if (fuse_readpages_fill(&data, page) != 0)
-> 
-> Shouldn't this unlock + put page on error?
+A recently proposed patch to add vm_swappiness command line parameter in
+addition to existing sysctl [1] made me wonder why we don't have a general
+support for passing sysctl parameters via command line. Googling found only
+somebody else wondering the same [2], but I haven't found any prior discussion
+with reasons why not to do this.
 
-We're certainly inconsistent between the two error exits from
-fuse_readpages_fill().  But I think we can simplify the whole thing
-... how does this look to you?
+Settings the vm_swappiness issue aside (the underlying issue might be solved in
+a different way), quick search of kernel-parameters.txt shows there are already
+some that exist as both sysctl and kernel parameter - hung_task_panic,
+nmi_watchdog, numa_zonelist_order, traceoff_on_warning. A general mechanism
+would remove the need to add more of those one-offs and might be handy in
+situations where configuration by e.g. /etc/sysctl.d/ is impractical.
+Also after 61a47c1ad3a4 ("sysctl: Remove the sysctl system call") the only way
+to set sysctl is via procfs, so this would eventually allow small systems to be
+built without CONFIG_PROC_SYSCTL and still be able to change sysctl parameters.
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 5749505bcff6..57ea9a364e62 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -915,76 +915,32 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
- 	fuse_readpages_end(fc, &ap->args, err);
+Hence, this patch adds a new parse_args() pass that looks for parameters
+prefixed by 'sysctl.' and searches for them in the sysctl ctl_tables. When
+found, the respective proc handler is invoked. The search is just a naive
+linear one, to avoid using the whole procfs layer. It should be acceptable,
+as the cost depends on number of sysctl. parameters passed.
+
+The main limitation of avoiding the procfs layer is however that sysctls
+dynamically registered by register_sysctl_table() or register_sysctl_paths()
+cannot currently be set by this method.
+
+The processing is hooked right before the init process is loaded, as some
+handlers might be more complicated than simple setters and might need some
+subsystems to be initialized. At the moment the init process can be started and
+eventually execute a process writing to /proc/sys/ then it should be also fine
+to do that from the kernel.
+
+[1] https://lore.kernel.org/linux-doc/BL0PR02MB560167492CA4094C91589930E9FC0@BL0PR02MB5601.namprd02.prod.outlook.com/
+[2] https://unix.stackexchange.com/questions/558802/how-to-set-sysctl-using-kernel-command-line-parameter
+
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+v2: - handle any nesting level of parameter name
+ - add Documentation/admin-guide/kernel-parameters.txt blurb
+ - alias support for legacy one-off parameters, with first conversion (patch 2)
+ - still no support for dynamically registed sysctls
+
+ .../admin-guide/kernel-parameters.txt         |  9 +++
+ include/linux/sysctl.h                        |  1 +
+ init/main.c                                   | 21 +++++++
+ kernel/sysctl.c                               | 62 +++++++++++++++++++
+ 4 files changed, 93 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index c07815d230bc..5076e288f93f 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4793,6 +4793,15 @@
+ 
+ 	switches=	[HW,M68k]
+ 
++	sysctl.*=	[KNL]
++			Set a sysctl parameter right before loading the init
++			process, as if the value was written to the respective
++			/proc/sys/... file. Currently a subset of sysctl
++			parameters is supported that is not registered
++			dynamically. Unrecognized parameters and invalid values
++			are reported in the kernel log.
++			Example: sysctl.vm.swappiness=40
++
+ 	sysfs.deprecated=0|1 [KNL]
+ 			Enable/disable old style sysfs layout for old udev
+ 			on older distributions. When this option is enabled
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 02fa84493f23..62ae963a5c0c 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -206,6 +206,7 @@ struct ctl_table_header *register_sysctl_paths(const struct ctl_path *path,
+ void unregister_sysctl_table(struct ctl_table_header * table);
+ 
+ extern int sysctl_init(void);
++int process_sysctl_arg(char *param, char *val, const char *unused, void *arg);
+ 
+ extern struct ctl_table sysctl_mount_point[];
+ 
+diff --git a/init/main.c b/init/main.c
+index ee4947af823f..74a094c6b8b9 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1345,6 +1345,25 @@ void __weak free_initmem(void)
+ 	free_initmem_default(POISON_FREE_INITMEM);
  }
  
--struct fuse_fill_data {
--	struct fuse_io_args *ia;
--	struct file *file;
--	struct inode *inode;
--	unsigned int nr_pages;
--	unsigned int max_pages;
--};
--
--static int fuse_readpages_fill(struct fuse_fill_data *data, struct page *page)
--{
--	struct fuse_io_args *ia = data->ia;
--	struct fuse_args_pages *ap = &ia->ap;
--	struct inode *inode = data->inode;
--	struct fuse_conn *fc = get_fuse_conn(inode);
--
--	fuse_wait_on_page_writeback(inode, page->index);
--
--	if (ap->num_pages &&
--	    (ap->num_pages == fc->max_pages ||
--	     (ap->num_pages + 1) * PAGE_SIZE > fc->max_read ||
--	     ap->pages[ap->num_pages - 1]->index + 1 != page->index)) {
--		data->max_pages = min_t(unsigned int, data->nr_pages,
--					fc->max_pages);
--		fuse_send_readpages(ia, data->file);
--		data->ia = ia = fuse_io_alloc(NULL, data->max_pages);
--		if (!ia)
--			return -ENOMEM;
--		ap = &ia->ap;
--	}
--
--	if (WARN_ON(ap->num_pages >= data->max_pages)) {
--		unlock_page(page);
--		fuse_io_free(ia);
--		return -EIO;
--	}
--
--	ap->pages[ap->num_pages] = page;
--	ap->descs[ap->num_pages].length = PAGE_SIZE;
--	ap->num_pages++;
--	data->nr_pages--;
--	return 0;
--}
--
- static void fuse_readahead(struct readahead_control *rac)
++static void do_sysctl_args(void)
++{
++#ifdef CONFIG_SYSCTL
++	size_t len = strlen(saved_command_line) + 1;
++	char *command_line;
++
++	command_line = kzalloc(len, GFP_KERNEL);
++	if (!command_line)
++		panic("%s: Failed to allocate %zu bytes\n", __func__, len);
++
++	strcpy(command_line, saved_command_line);
++
++	parse_args("Setting sysctl args", command_line,
++		   NULL, 0, -1, -1, NULL, process_sysctl_arg);
++
++	kfree(command_line);
++#endif
++}
++
+ static int __ref kernel_init(void *unused)
  {
- 	struct inode *inode = rac->mapping->host;
- 	struct fuse_conn *fc = get_fuse_conn(inode);
--	struct fuse_fill_data data;
--	struct page *page;
+ 	int ret;
+@@ -1367,6 +1386,8 @@ static int __ref kernel_init(void *unused)
  
- 	if (is_bad_inode(inode))
- 		return;
+ 	rcu_end_inkernel_boot();
  
--	data.file = rac->file;
--	data.inode = inode;
--	data.nr_pages = readahead_count(rac);
--	data.max_pages = min_t(unsigned int, data.nr_pages, fc->max_pages);
--	data.ia = fuse_io_alloc(NULL, data.max_pages);
--	if (!data.ia)
--		return;
-+	while (readahead_count(rac)) {
-+		struct fuse_io_args *ia;
-+		struct fuse_args_pages *ap;
-+		unsigned int i, nr_pages;
- 
--	while ((page = readahead_page(rac))) {
--		if (fuse_readpages_fill(&data, page) != 0)
-+		nr_pages = min(readahead_count(rac), fc->max_pages);
-+		ia = fuse_io_alloc(NULL, nr_pages);
-+		if (!ia)
- 			return;
-+		ap = &ia->ap;
-+		__readahead_batch(rac, ap->pages, nr_pages);
-+		for (i = 0; i < nr_pages; i++) {
-+			fuse_wait_on_page_writeback(inode, ap->pages[i]->index);
-+			ap->descs[i].length = PAGE_SIZE;
-+		}
-+		ap->num_pages = nr_pages;
-+		fuse_send_readpages(ia, rac->file);
- 	}
--
--	if (data.ia->ap.num_pages)
--		fuse_send_readpages(data.ia, rac->file);
--	else
--		fuse_io_free(data.ia);
++	do_sysctl_args();
++
+ 	if (ramdisk_execute_command) {
+ 		ret = run_init_process(ramdisk_execute_command);
+ 		if (!ret)
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ad5b88a53c5a..18c7f5606d55 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1980,6 +1980,68 @@ int __init sysctl_init(void)
+ 	return 0;
  }
  
- static ssize_t fuse_cache_read_iter(struct kiocb *iocb, struct iov_iter *to)
++/* Set sysctl value passed on kernel command line. */
++int process_sysctl_arg(char *param, char *val,
++			       const char *unused, void *arg)
++{
++	size_t count;
++	char *remaining;
++	int err;
++	loff_t ppos = 0;
++	struct ctl_table *ctl, *found = NULL;
++
++	if (strncmp(param, "sysctl.", sizeof("sysctl.") - 1))
++		return 0;
++
++	param += sizeof("sysctl.") - 1;
++
++	remaining = param;
++	ctl = &sysctl_base_table[0];
++
++	while(ctl->procname != 0) {
++		int len = strlen(ctl->procname);
++		if (strncmp(remaining, ctl->procname, len)) {
++			ctl++;
++			continue;
++		}
++		if (ctl->child) {
++			if (remaining[len] == '.') {
++				remaining += len + 1;
++				ctl = ctl->child;
++				continue;
++			}
++		} else {
++			if (remaining[len] == '\0') {
++				found = ctl;
++				break;
++			}
++		}
++		ctl++;
++	}
++
++	if (!found) {
++		pr_warn("Unknown sysctl param '%s' on command line", param);
++		return 0;
++	}
++
++	if (!(found->mode & 0200)) {
++		pr_warn("Cannot set sysctl '%s=%s' from command line - not writable",
++			param, val);
++		return 0;
++	}
++
++	count = strlen(val);
++	err = found->proc_handler(found, 1, val, &count, &ppos);
++
++	if (err)
++		pr_warn("Error %d setting sysctl '%s=%s' from command line",
++			err, param, val);
++
++	pr_debug("Set sysctl '%s=%s' from command line", param, val);
++
++	return 0;
++}
++
+ #endif /* CONFIG_SYSCTL */
+ 
+ /*
+-- 
+2.25.1
+
