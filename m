@@ -2,138 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 562DC192B0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:23:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BCD2192B12
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:25:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbgCYOX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 10:23:28 -0400
-Received: from mail-qt1-f170.google.com ([209.85.160.170]:43790 "EHLO
-        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbgCYOX1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 10:23:27 -0400
-Received: by mail-qt1-f170.google.com with SMTP id a5so2232633qtw.10;
-        Wed, 25 Mar 2020 07:23:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Yht3Hr3Z2LR8imhVwniUokEOhf9PD9ShQzB5wpJUp7I=;
-        b=H4lv2ExY8zdsjjNslKgsEZs5uBONVSrNzo4qFhyqpJ4gkzc7OE9h7h2vLWGo7kQPbJ
-         jxOgg9iEpsjuRz+5z4ccDxXFeEplNff6AfPcLRs0ncAP5DvGIgt0IYMDXmgj6Minj4G7
-         L41nOxQLMzv3m7mwyJDhUjddy1G7A4bLk00kiylxKwj1l67myofaGxUfY/w1A9E1LKZp
-         M1lzA71O8TlVjyC520n/t/m16TB85yBdVlZJssuGz0cK92oiBIN4B3d9Hb1Zz+VTkkEd
-         svuSvEmkC56fGl+o6iltUJEeiiAS7t5h5HSLZpG4dk85zTCkSOlK1c44pajmzCT4Lv9z
-         EG8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Yht3Hr3Z2LR8imhVwniUokEOhf9PD9ShQzB5wpJUp7I=;
-        b=uclPqd4bPrjJUgtEO40iQQCtiMLZ2yN70NI+qvnZY9OUOEG99nEq0CQi3tWZHxQ/dI
-         c1IMvZQ+YbM+KwSvgOr3RyjJ5ANqP0NRTnukJmKIiTMVHBqzulJjjXsi3ymz0bL6Xwpq
-         eNMG1oGElb2bupBWJn3gKiG3Ty8ShpZSZC66IMmcuvDSZ58DZSoHsbtExFU1fx8TaG1V
-         IZ0IVbJyqnf4y+wG3OQZ8/KsFTxWlO++Q0BGzGfQX/MENaAbRgM3zytgBY6W6D0os6nH
-         nT6dFxv6ejY+joW9vVLK6/BFJFhVoPm1AmLeEV1aAiJZ0e/frEcZjT88kwOJR5J78DYE
-         XyJQ==
-X-Gm-Message-State: ANhLgQ3jmU+8C7rJnr6aEHiR/AbU7xmCLlR291F2DJIBCF613iwdgthX
-        fk87R93lw1RgcAa7r4NHrWU=
-X-Google-Smtp-Source: ADFU+vtnZ6zSN/9XvmD840B39Naz3Lc3yVMoWy3y6qVl/TRldW/Upvc3wcLPCgltAV2ybJ+oEWpWWQ==
-X-Received: by 2002:aed:3988:: with SMTP id m8mr3227568qte.9.1585146206535;
-        Wed, 25 Mar 2020 07:23:26 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id q142sm15895019qke.45.2020.03.25.07.23.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 07:23:25 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 0B0B240F77; Wed, 25 Mar 2020 11:23:24 -0300 (-03)
-Date:   Wed, 25 Mar 2020 11:23:23 -0300
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Leo Yan <leo.yan@linaro.org>
-Subject: Re: tools: Perf: build failed on linux next
-Message-ID: <20200325142323.GE14102@kernel.org>
-References: <CA+G9fYtiroQnpwGu4oLA=ChmS==XGpmAAqB_Oa9nrXC3vQ0xsQ@mail.gmail.com>
+        id S1727691AbgCYOZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 10:25:43 -0400
+Received: from mga04.intel.com ([192.55.52.120]:42723 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727620AbgCYOZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 10:25:43 -0400
+IronPort-SDR: 0aLkYhUQi+VwFxxj0HxjaG3zk891wjJw2ojjykEDDhXJnU6uB3X+AUUGeiusx0+SJoPiNDjDFi
+ V4LctI9L4cWQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 07:25:42 -0700
+IronPort-SDR: htzfHXoUNkSPBbUSnLZHWBq9wNDEgBuzYWwWMQXGZksyQ0Thixhmdz5iYDavm1+rJ+cLyTgv8g
+ 0/tVzvrEYiLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,304,1580803200"; 
+   d="scan'208";a="240631483"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.87]) ([10.237.72.87])
+  by orsmga008.jf.intel.com with ESMTP; 25 Mar 2020 07:25:40 -0700
+Subject: Re: [PATCH] perf tools: Add missing Intel CPU events to parser
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>
+Cc:     linux-kernel@vger.kernel.org
+References: <20200324150443.28832-1-adrian.hunter@intel.com>
+ <20200325103345.GA1856035@krava> <20200325131549.GB14102@kernel.org>
+ <20200325135350.GA1888042@krava> <20200325142214.GD14102@kernel.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <ea516b26-6249-e870-20bf-819ea1a2d2c2@intel.com>
+Date:   Wed, 25 Mar 2020 16:24:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtiroQnpwGu4oLA=ChmS==XGpmAAqB_Oa9nrXC3vQ0xsQ@mail.gmail.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <20200325142214.GD14102@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Mar 25, 2020 at 07:37:10PM +0530, Naresh Kamboju escreveu:
-> Perf build broken on Linux next and mainline on x86_64.
+On 25/03/20 4:22 pm, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Mar 25, 2020 at 02:53:50PM +0100, Jiri Olsa escreveu:
+>> On Wed, Mar 25, 2020 at 10:15:49AM -0300, Arnaldo Carvalho de Melo wrote:
+>>> Em Wed, Mar 25, 2020 at 11:33:45AM +0100, Jiri Olsa escreveu:
+>>>> On Tue, Mar 24, 2020 at 05:04:43PM +0200, Adrian Hunter wrote:
+>>>>> perf list expects CPU events to be parseable by name, e.g.
+>>>
+>>>>>     # perf list | grep el-capacity-read
+>>>>>       el-capacity-read OR cpu/el-capacity-read/          [Kernel PMU event]
+>>>
+>>>>> But the event parser does not recognize them that way, e.g.
+>>>
+>>>>>     # perf test -v "Parse event"
+>>>>>     <SNIP>
+>>>>>     running test 54 'cycles//u'
+>>>>>     running test 55 'cycles:k'
+>>>>>     running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
+>>>>>     running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
+>>>>>     running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
+>>>>>     running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp'
+>>>>>     -> cpu/event=0,umask=0x11/
+>>>>>     -> cpu/event=0,umask=0x13/
+>>>>>     -> cpu/event=0x54,umask=0x1/
+>>>>>     failed to parse event 'el-capacity-read:u,cpu/event=el-capacity-read/u', err 1, str 'parser error'
+>>>>>     event syntax error: 'el-capacity-read:u,cpu/event=el-capacity-read/u'
+>>>>>                            \___ parser error test child finished with 1
+>>>>>     ---- end ----
+>>>>>     Parse event definition strings: FAILED!
+>>>
+>>>>> Fix by adding missing Intel CPU events to the event parser.
+>>>>> Missing events were found by using:
+>>>
+>>>>>     grep -r EVENT_ATTR_STR arch/x86/events/intel/core.c
+>>>>>
+>>>>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+>>>>
+>>>> Acked-by: Jiri Olsa <jolsa@redhat.com>
+>>>
+>>> So, I'm not being able to reproduce this, what an I missing?
+>>
+>> I think you need to be on some really recent intel
+>> which defines events which we did not covered yet
+>> like el-capacity-write in icelake
 > 
-> find: unknown predicate `-m64/arch'
-> Try 'find --help' for more information.
->   HOSTCC   /srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/perf-1.0/pmu-events/json.o
->   LD       /srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/perf-1.0/libperf-in.o
-> x86_64-linaro-linux-gcc: warning: '-x c' after last input file has no effect
->   GEN      perf-archive
->   AR       /srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/perf-1.0/libperf.a
->   GEN      perf-with-kcore
-> x86_64-linaro-linux-gcc: error: unrecognized command line option
-> '-m64/include/uapi/asm-generic/errno.h'
-> x86_64-linaro-linux-gcc: fatal error: no input files
-> compilation terminated.
->   HOSTCC   /srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/perf-1.0/pmu-events/jevents.o
->   MKDIR    /srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/perf-1.0/pmu-events/
-> x86_64-linaro-linux-gcc: warning: '-x c' after last input file has no effect
->   HOSTCC   /srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/perf-1.0/pmu-events/jsmn.o
-> x86_64-linaro-linux-gcc: error: unrecognized command line option
-
-Right, there is some patch handling this, which we're trying to process
-but has some issues.
-
-- Arnaldo
-
-> '-m64/include/uapi/asm-generic/errno.h'
-> x86_64-linaro-linux-gcc: fatal error: no input files
-> compilation terminated.
-> make[3]: Nothing to be done for
-> '/srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/perf-1.0/plugins/libtraceevent-dynamic-list'.
->   GEN      /srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/perf-1.0/python/perf.so
-> Traceback (most recent call last):
->   File "util/setup.py", line 6, in <module>
->     cc_is_clang = b"clang version" in Popen([cc, "-v"],
-> stderr=PIPE).stderr.readline()
->   File "/srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/recipe-sysroot-native/usr/lib/python2.7/subprocess.py",
-> line 394, in __init__
->     errread, errwrite)
->   File "/srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/recipe-sysroot-native/usr/lib/python2.7/subprocess.py",
-> line 1047, in _execute_child
->     raise child_exception
-> OSError: [Errno 2] No such file or directory
-> cp: cannot stat
-> '/srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/perf-1.0/python_ext_build/lib/perf*.so':
-> No such file or directory
-> Makefile.perf:590: recipe for target
-> '/srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/perf-1.0/python/perf.so'
-> failed
-> make[2]: *** [/srv/oe/build/tmp-lkft-glibc/work/intel_corei7_64-linaro-linux/perf/1.0-r9/perf-1.0/python/perf.so]
-> Error 1
-> make[2]: *** Waiting for unfinished jobs....
+> That is why I tried with el-capacity, which is moved to the parser as
+> well, I've replaced el-capacity-read, which I don't have in this Kaby
+> Lake machine, with el-capacity, that is present:
 > 
-> ref:
-> https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-next/DISTRO=lkft,MACHINE=intel-corei7-64,label=docker-lkft/733/consoleText
-> 
-> -- 
-> Linaro LKFT
-> https://lkft.linaro.org
+> [root@seventh ~]# perf list | grep el-capacity
+>   el-capacity OR cpu/el-capacity/                    [Kernel PMU event]
+> [root@seventh ~]#
 
--- 
+I just checked that and it seems to be a "feature" of the parser that it
+gets confused between el-capacity and el-capacity-read.
 
-- Arnaldo
+Making them explicit in parse-events.l makes the problem go away, but I
+wonder now if the parser could be better in this regard.
+
+Any ideas?
