@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F29F192FB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:48:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2356E192FB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:48:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbgCYRsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 13:48:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47294 "EHLO
+        id S1728092AbgCYRry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 13:47:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47290 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727977AbgCYRrv (ORCPT
+        with ESMTP id S1727975AbgCYRrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Mar 2020 13:47:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=O+hMw6k16uCx6Z0yE65dNJqru6M+QlZ2xoJj9XOUwa0=; b=XUcD+AzAjOt2QAuLezLePaHz2g
-        Yz3nTL8Na53sZYkdO028ibHMkNuxmzIcEH83Pje2HX7ApD7SBXwUVqS3n1NCVtWGT8rC2BfrXAF0G
-        YwsbK/kRNgHQqyXxiyBS+t1/uMdZkwY+a0wQVvPEaIH1AFFfkqULSdmwfY3NFTqJMuEV8n+NkH+9C
-        axFKUeMgAgdp20tCAfCFrc1ayEswLvj9JflwTc139Acuvf8Rtqn9GxXRI32SZYd58LthuevJq/q0Y
-        13vufXWr2fHg/N2p87tk71PEq/4Kad53oxyGX+7IpCUy1UgWlbwA8gIOqJFYgq6sxPDzbYkbVYPbv
-        U+i4UKAA==;
+        bh=k/3+spoNimAYc6iAjh77mhVTzVz8FbGn1YtCEp5dCes=; b=JzuficHXVp4WDfYJelHbvcXaEE
+        Fff79ugx0SmcuQuZG1V5yq/6leTeAHsjeRvm5xyshXtKtVxX1St/pSyG79npHFA8gw7oagFOmLqUK
+        sVIaHwKMnmXdkJvefptbbUWIjraOafEIpM+o3Aa6Q9x8A0REWJGmEQKG659RPzWXJN8S5yzTcZgOt
+        L7F0co/1rZ6Ktz7GvNJRm62xNC5SoNompzb5NEWEZj3o6NbU/+yx2ixPWq/6ocNtF9pe3pVx4Ahk8
+        Y+W9ew9jbMEm6IXMp7WmO9oalNMOSKWSRhcPw1mFyuRBJWff9S0aUFcoE1pPhIWLmB+z1KhzMnDxh
+        4NzuKJew==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHA82-0008RI-Np; Wed, 25 Mar 2020 17:47:47 +0000
+        id 1jHA82-0008RJ-OJ; Wed, 25 Mar 2020 17:47:46 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DFE4A306DD7;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E2CEF307276;
         Wed, 25 Mar 2020 18:47:42 +0100 (CET)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id D16CB29BD8A2C; Wed, 25 Mar 2020 18:47:42 +0100 (CET)
-Message-Id: <20200325174606.286244886@infradead.org>
+        id D53CA29BD8A2A; Wed, 25 Mar 2020 18:47:42 +0100 (CET)
+Message-Id: <20200325174606.363061813@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 25 Mar 2020 18:45:37 +0100
+Date:   Wed, 25 Mar 2020 18:45:38 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     tglx@linutronix.de, jpoimboe@redhat.com
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org,
         mhiramat@kernel.org, mbenes@suse.cz
-Subject: [PATCH v4 12/13] objtool: Add STT_NOTYPE noinstr validation
+Subject: [PATCH v4 13/13] objtool: Also consider .entry.text as noinstr
 References: <20200325174525.772641599@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,123 +48,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure to also check STT_NOTYPE symbols for noinstr violations.
+From: Thomas Gleixner <tglx@linutronix.de>
 
+Consider all of .entry.text as noinstr. This gets us coverage across
+the PTI boundary. While we could add everything .noinstr.text into
+.entry.text that would bloat the amount of code in the user mapping.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- tools/objtool/check.c |   46 ++++++++++++++++++++++++++++++----------------
- 1 file changed, 30 insertions(+), 16 deletions(-)
+ tools/objtool/check.c |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -248,10 +248,18 @@ static void init_cfi_state(struct cfi_st
- 	cfi->drap_offset = -1;
- }
+@@ -285,7 +285,8 @@ static int decode_instructions(struct ob
+ 		    strncmp(sec->name, ".discard.", 9))
+ 			sec->text = true;
  
--static void clear_insn_state(struct insn_state *state)
-+static void init_insn_state(struct insn_state *state, struct section *sec)
+-		if (!strcmp(sec->name, ".noinstr.text"))
++		if (!strcmp(sec->name, ".noinstr.text") ||
++		    !strcmp(sec->name, ".entry.text"))
+ 			sec->noinstr = true;
+ 
+ 		for (offset = 0; offset < sec->len; offset += insn->len) {
+@@ -2065,7 +2066,7 @@ static inline const char *call_dest_name
+ static int validate_call(struct instruction *insn, struct insn_state *state)
  {
- 	memset(state, 0, sizeof(*state));
- 	init_cfi_state(&state->cfi);
-+
-+	/*
-+	 * We need the full vmlinux for noinstr validation, otherwise we can
-+	 * not correctly determine insn->call_dest->sec (external symbols do
-+	 * not have a section).
-+	 */
-+	if (vmlinux && sec)
-+		state->noinstr = sec->noinstr;
- }
- 
- /*
-@@ -2422,24 +2430,34 @@ static int validate_branch(struct objtoo
- 	return 0;
- }
- 
--static int validate_unwind_hints(struct objtool_file *file)
-+static int validate_unwind_hints(struct objtool_file *file, struct section *sec)
- {
- 	struct instruction *insn;
--	int ret, warnings = 0;
- 	struct insn_state state;
-+	int ret, warnings = 0;
- 
- 	if (!file->hints)
- 		return 0;
- 
--	clear_insn_state(&state);
-+	init_insn_state(&state, sec);
- 
--	for_each_insn(file, insn) {
-+	if (sec) {
-+		insn = find_insn(file, sec, 0);
-+		if (!insn)
-+			return 0;
-+	} else {
-+		insn = list_first_entry(&file->insn_list, typeof(*insn), list);
-+	}
-+
-+	while (&insn->list != &file->insn_list && (!sec || insn->sec == sec)) {
- 		if (insn->hint && !insn->visited) {
- 			ret = validate_branch(file, insn->func, insn, state);
- 			if (ret && backtrace)
- 				BT_FUNC("<=== (hint)", insn);
- 			warnings += ret;
- 		}
-+
-+		insn = list_next_entry(insn, list);
- 	}
- 
- 	return warnings;
-@@ -2592,21 +2610,13 @@ static int validate_section(struct objto
- 	struct symbol *func;
+ 	if (state->noinstr && state->instr <= 0 &&
+-	    (!insn->call_dest || insn->call_dest->sec != insn->sec)) {
++	    (!insn->call_dest || !insn->call_dest->sec->noinstr)) {
+ 		WARN_FUNC("call to %s() leaves .noinstr.text section",
+ 				insn->sec, insn->offset, call_dest_name(insn));
+ 		return 1;
+@@ -2636,11 +2637,16 @@ static int validate_vmlinux_functions(st
  	int warnings = 0;
  
--	clear_insn_state(&state);
-+	init_insn_state(&state, sec);
- 
- 	state.cfi.cfa = initial_func_cfi.cfa;
- 	memcpy(&state.cfi.regs, &initial_func_cfi.regs,
- 	       CFI_NUM_REGS * sizeof(struct cfi_reg));
- 	state.cfi.stack_size = initial_func_cfi.cfa.offset;
- 
--	/*
--	 * We need the full vmlinux for noinstr validation, otherwise we can
--	 * not correctly determine insn->call_dest->sec (external symbols do
--	 * not have a section).
--	 */
--	if (vmlinux)
--		state.noinstr = sec->noinstr;
--
- 	if (state.noinstr)
- 		prepare_insn_rela(file, sec);
- 
-@@ -2623,12 +2633,16 @@ static int validate_section(struct objto
- static int validate_vmlinux_functions(struct objtool_file *file)
- {
- 	struct section *sec;
-+	int warnings = 0;
- 
  	sec = find_section_by_name(file->elf, ".noinstr.text");
- 	if (!sec)
- 		return 0;
+-	if (!sec)
+-		return 0;
++	if (sec) {
++		warnings += validate_section(file, sec);
++		warnings += validate_unwind_hints(file, sec);
++	}
  
--	return validate_section(file, sec);
-+	warnings += validate_section(file, sec);
-+	warnings += validate_unwind_hints(file, sec);
-+
-+	return warnings;
+-	warnings += validate_section(file, sec);
+-	warnings += validate_unwind_hints(file, sec);
++	sec = find_section_by_name(file->elf, ".entry.text");
++	if (sec) {
++		warnings += validate_section(file, sec);
++		warnings += validate_unwind_hints(file, sec);
++	}
+ 
+ 	return warnings;
  }
- 
- static int validate_functions(struct objtool_file *file)
-@@ -2713,7 +2727,7 @@ int check(const char *_objname, bool orc
- 		goto out;
- 	warnings += ret;
- 
--	ret = validate_unwind_hints(&file);
-+	ret = validate_unwind_hints(&file, NULL);
- 	if (ret < 0)
- 		goto out;
- 	warnings += ret;
 
 
