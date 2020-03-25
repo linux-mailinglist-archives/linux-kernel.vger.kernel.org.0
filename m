@@ -2,134 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01E251920A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 06:35:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D6191920B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 06:50:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbgCYFe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 01:34:59 -0400
-Received: from mga17.intel.com ([192.55.52.151]:31776 "EHLO mga17.intel.com"
+        id S1727262AbgCYFu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 01:50:26 -0400
+Received: from foss.arm.com ([217.140.110.172]:43668 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbgCYFe5 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 01:34:57 -0400
-IronPort-SDR: rj+lCr6mhWumEiY0Wlo9edIxEpGhVV5PR9HAdWURcMO4Ixpdz7YWOdtY4MLL8CmEnjFgHZda3l
- dDwj4lvU2igw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 22:34:57 -0700
-IronPort-SDR: igvLrnb2oYoGC+XBinBi2wi1Yv1bCgvnvMtuSiMPwfXZQWdvJ98jFZClj/1An5RwZUUWCdOD1R
- KiRWPKYNSAcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,303,1580803200"; 
-   d="scan'208";a="393523099"
-Received: from kbl-ppc.sh.intel.com ([10.239.159.24])
-  by orsmga004.jf.intel.com with ESMTP; 24 Mar 2020 22:34:54 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v2 2/2] perf top: support hotkey to change sort order
-Date:   Wed, 25 Mar 2020 06:07:11 +0800
-Message-Id: <20200324220711.6025-2-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200324220711.6025-1-yao.jin@linux.intel.com>
-References: <20200324220711.6025-1-yao.jin@linux.intel.com>
+        id S1725832AbgCYFu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 01:50:26 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C47E631B;
+        Tue, 24 Mar 2020 22:50:25 -0700 (PDT)
+Received: from localhost.localdomain (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0228D3F792;
+        Tue, 24 Mar 2020 22:54:25 -0700 (PDT)
+From:   Hadar Gat <hadar.gat@arm.com>
+To:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc:     linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>
+Subject: [PATCH v6 0/3] hw_random: introduce Arm CryptoCell TRNG driver
+Date:   Wed, 25 Mar 2020 07:41:08 +0200
+Message-Id: <1585114871-6912-1-git-send-email-hadar.gat@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It would be nice if we can use a hotkey in perf top browser to
-select a event for sorting.
+The Arm CryptoCell is a hardware security engine.
+This patch introduces driver for its TRNG (True Random Number Generator)
+engine.
 
-For example,
-perf top --group -e cycles,instructions,cache-misses
+v6 change: add missing initialization of hwrng quality.
 
-Samples
-                Overhead  Shared Object             Symbol
-  40.03%  45.71%   0.03%  div                       [.] main
-  20.46%  14.67%   0.21%  libc-2.27.so              [.] __random_r
-  20.01%  19.54%   0.02%  libc-2.27.so              [.] __random
-   9.68%  10.68%   0.00%  div                       [.] compute_flag
-   4.32%   4.70%   0.00%  libc-2.27.so              [.] rand
-   3.84%   3.43%   0.00%  div                       [.] rand@plt
-   0.05%   0.05%   2.33%  libc-2.27.so              [.] __strcmp_sse2_unaligned
-   0.04%   0.08%   2.43%  perf                      [.] perf_hpp__is_dynamic_en
-   0.04%   0.02%   6.64%  perf                      [.] rb_next
-   0.04%   0.01%   3.87%  perf                      [.] dso__find_symbol
-   0.04%   0.04%   1.77%  perf                      [.] sort__dso_cmp
+v5 changes:
+	1. in arm-cctrng.yaml, fixed error in 'make dt_binding_check'
+	2. in cctrng.c, clean up cctrng clock handling
 
-When user press hotkey '2' (event index, starting from 0), it indicates
-to sort output by the third event in group (cache-misses).
+v4 changes: update arm-cctrng.yaml to conform with json-schema standard.
 
-Samples
-                Overhead  Shared Object               Symbol
-   4.07%   1.28%   6.68%  perf                        [.] rb_next
-   3.57%   3.98%   4.11%  perf                        [.] __hists__insert_output
-   3.67%  11.24%   3.60%  perf                        [.] perf_hpp__is_dynamic_e
-   3.67%   3.20%   3.20%  perf                        [.] hpp__sort_overhead
-   0.81%   0.06%   3.01%  perf                        [.] dso__find_symbol
-   1.62%   5.47%   2.51%  perf                        [.] hists__match
-   2.70%   1.86%   2.47%  libc-2.27.so                [.] _int_malloc
-   0.19%   0.00%   2.29%  [kernel]                    [k] copy_page
-   0.41%   0.32%   1.98%  perf                        [.] hists__decay_entries
-   1.84%   3.67%   1.68%  perf                        [.] sort__dso_cmp
-   0.16%   0.00%   1.63%  [kernel]                    [k] clear_page_erms
+v3 change: removed few unneeded "#ifdef CONFIG_PM" from the code.
 
-Now the output is sorted by cache-misses.
+v2 changes: fixed 'make dt_bnding_check' errors.
 
- v2:
- ---
- Zero the history if hotkey is pressed.
+Hadar Gat (3):
+  dt-bindings: add device tree binding for Arm CryptoCell trng engine
+  hw_random: cctrng: introduce Arm CryptoCell driver
+  MAINTAINERS: add HG as cctrng maintainer
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/builtin-top.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/rng/arm-cctrng.yaml        |  55 ++
+ MAINTAINERS                                        |   9 +
+ drivers/char/hw_random/Kconfig                     |  12 +
+ drivers/char/hw_random/Makefile                    |   1 +
+ drivers/char/hw_random/cctrng.c                    | 736 +++++++++++++++++++++
+ drivers/char/hw_random/cctrng.h                    |  72 ++
+ 6 files changed, 885 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rng/arm-cctrng.yaml
+ create mode 100644 drivers/char/hw_random/cctrng.c
+ create mode 100644 drivers/char/hw_random/cctrng.h
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 494c7b9a1022..29ddae7e1805 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -616,6 +616,7 @@ static void *display_thread_tui(void *arg)
- 		.arg		= top,
- 		.refresh	= top->delay_secs,
- 	};
-+	int ret;
- 
- 	/* In order to read symbols from other namespaces perf to  needs to call
- 	 * setns(2).  This isn't permitted if the struct_fs has multiple users.
-@@ -626,6 +627,7 @@ static void *display_thread_tui(void *arg)
- 
- 	prctl(PR_SET_NAME, "perf-top-UI", 0, 0, 0);
- 
-+repeat:
- 	perf_top__sort_new_samples(top);
- 
- 	/*
-@@ -638,13 +640,18 @@ static void *display_thread_tui(void *arg)
- 		hists->uid_filter_str = top->record_opts.target.uid_str;
- 	}
- 
--	perf_evlist__tui_browse_hists(top->evlist, help, &hbt,
-+	ret = perf_evlist__tui_browse_hists(top->evlist, help, &hbt,
- 				      top->min_percent,
- 				      &top->session->header.env,
- 				      !top->record_opts.overwrite,
- 				      &top->annotation_opts);
- 
--	stop_top();
-+	if (ret == K_RELOAD) {
-+		top->zero = true;
-+		goto repeat;
-+	} else
-+		stop_top();
-+
- 	return NULL;
- }
- 
 -- 
-2.17.1
+2.7.4
 
