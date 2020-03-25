@@ -2,70 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5836191E58
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:02:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A8D8191E77
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:14:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbgCYBCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 21:02:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60658 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727113AbgCYBCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 21:02:00 -0400
-Received: from localhost (unknown [137.135.114.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A25632076A;
-        Wed, 25 Mar 2020 01:01:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585098119;
-        bh=THm7hnZmohNLxGwf0nad1iO7T9b9hejDN5HpxC6xU74=;
-        h=Date:From:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:From;
-        b=S6YigvvI3kSoDyHQ49XpmluaBE1KPAhhr2/Cy2aWFvJO2e2Smy7M7MRtZbD15fIU3
-         pEq97gIBaf9lJK88tvz1jp2lSqzzuU9Np/sfgdO6nByVyPNWrmdEJrf2uea4f2S5oV
-         ukQG7wuMTe+TZJpS98GyW/x6IOC637N4KNi4kCN4=
-Date:   Wed, 25 Mar 2020 01:01:58 +0000
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-To:     Hans de Goede <hdegoede@redhat.com>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH resend] extcon: axp288: Add wakeup support
-In-Reply-To: <20200323215939.79008-1-hdegoede@redhat.com>
-References: <20200323215939.79008-1-hdegoede@redhat.com>
-Message-Id: <20200325010159.A25632076A@mail.kernel.org>
+        id S1727332AbgCYBOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 21:14:02 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:46700 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727298AbgCYBOC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 21:14:02 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jGuSb-0000rB-FO; Wed, 25 Mar 2020 02:03:57 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id E240E100C51; Wed, 25 Mar 2020 02:03:56 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Xiaoyao Li <xiaoyao.li@intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, hpa@zytor.com,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>
+Subject: Re: [PATCH v5 3/9] x86/split_lock: Re-define the kernel param option for split_lock_detect
+In-Reply-To: <54b2b9b5-2307-b5da-6b63-319e9626bcc1@intel.com>
+References: <20200315050517.127446-1-xiaoyao.li@intel.com> <20200315050517.127446-4-xiaoyao.li@intel.com> <87r1xjov3a.fsf@nanos.tec.linutronix.de> <e708f6d2-8f96-903c-0bce-2eeecc4a237d@intel.com> <87r1xidoj1.fsf@nanos.tec.linutronix.de> <54b2b9b5-2307-b5da-6b63-319e9626bcc1@intel.com>
+Date:   Wed, 25 Mar 2020 02:03:56 +0100
+Message-ID: <878sjpz1mr.fsf@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Xiaoyao Li <xiaoyao.li@intel.com> writes:
 
-[This is an automated email]
+> On 3/24/2020 6:40 PM, Thomas Gleixner wrote:
+>> Xiaoyao Li <xiaoyao.li@intel.com> writes:
+>>> On 3/24/2020 1:10 AM, Thomas Gleixner wrote:
+>>>> Xiaoyao Li <xiaoyao.li@intel.com> writes:
+>>>>
+>>>>> Change sld_off to sld_disable, which means disabling feature split lock
+>>>>> detection and it cannot be used in kernel nor can kvm expose it guest.
+>>>>> Of course, the X86_FEATURE_SPLIT_LOCK_DETECT is not set.
+>>>>>
+>>>>> Add a new optioin sld_kvm_only, which means kernel turns split lock
+>>>>> detection off, but kvm can expose it to guest.
+>>>>
+>>>> What's the point of this? If the host is not clean, then you better fix
+>>>> the host first before trying to expose it to guests.
+>>>
+>>> It's not about whether or not host is clean. It's for the cases that
+>>> users just don't want it enabled on host, to not break the applications
+>>> or drivers that do have split lock issue.
+>> 
+>> It's very much about whether the host is split lock clean.
+>> 
+>> If your host kernel is not, then this wants to be fixed first. If your
+>> host application is broken, then either fix it or use "warn".
+>> 
+>
+> My thought is for CSPs that they might not turn on SLD on their product 
+> environment. Any split lock in kernel or drivers may break their service 
+> for tenants.
 
-This commit has been processed because it contains a -stable tag.
-The stable tag indicates that it's relevant for the following trees: all
+Again you are proliferating crap and making excuses for Common Sense
+violating Purposes (CSP).
 
-The bot has tested the following trees: v5.5.11, v5.4.27, v4.19.112, v4.14.174, v4.9.217, v4.4.217.
+Thanks,
 
-v5.5.11: Build OK!
-v5.4.27: Build OK!
-v4.19.112: Build OK!
-v4.14.174: Build failed! Errors:
-    drivers/extcon/extcon-axp288.c:326:21: error: ‘dev’ undeclared (first use in this function); did you mean ‘pdev’?
-
-v4.9.217: Failed to apply! Possible dependencies:
-    dd3a55fc688b ("extcon: axp288: Fix the module not auto-loading")
-
-v4.4.217: Failed to apply! Possible dependencies:
-    dd3a55fc688b ("extcon: axp288: Fix the module not auto-loading")
-
-
-NOTE: The patch will not be queued to stable trees until it is upstream.
-
-How should we proceed with this patch?
-
--- 
-Thanks
-Sasha
+        tglx
