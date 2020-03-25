@@ -2,95 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AC82192924
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:06:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 605A4192928
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:07:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbgCYNGr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 09:06:47 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:45357 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727298AbgCYNGq (ORCPT
+        id S1727487AbgCYNHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 09:07:06 -0400
+Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:38412 "EHLO
+        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727129AbgCYNHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 09:06:46 -0400
-Received: by mail-oi1-f195.google.com with SMTP id l22so1940733oii.12;
-        Wed, 25 Mar 2020 06:06:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tRAqWE5jTPBEZ5gwwukisG5aliJgP0GpLk1uYWHBM64=;
-        b=nUpC4oaZMccfzvcSkkiSvPSNoynX7krGCR6bgkDYsMCW3pSo/SGHi311rLd9QJLgk7
-         Wj9BxcqwIZEn294wAmlU3xd6yI6QAnBNVl0ZBex0/y8bzkaoGpWLv2OIInByG5wd7MvV
-         m/nAxH+y+iiPrYNJCM/F93lUhm6zPExB7yuOqnPsi/8aHz5148p39TKY6PdJHpmqo13c
-         YmDPi2Ruw1Rsnv4+Kz5EnUrE+5qw9hgl+q7vZlSjon2rkGWjMJ+IpWCJ4+Rk3SlLNmEY
-         348BVFvJp/KIsmXCc3RpTszpNf32p10AUa6YKzbNE2CwfzjTROHW2dQuA3YF0npU6jtK
-         Cgzw==
-X-Gm-Message-State: ANhLgQ3h45evt8WtcVt6Y4MUGszpJEYAj6ud42vGptXEkd6pPh+YVz/G
-        UI09CDS5rCVAEt2ekugdBzNs1kNW8cjTvSOfQsqQ12H7
-X-Google-Smtp-Source: ADFU+vv1evnjrbuj83i0B7RGEzz/c4jPdtY0pyZWk0DBMBbFsDcTsnbzisEyBz8xwP8wDfazp9tgg4fkN70P3agYkFQ=
-X-Received: by 2002:aca:ad93:: with SMTP id w141mr2484859oie.54.1585141604111;
- Wed, 25 Mar 2020 06:06:44 -0700 (PDT)
+        Wed, 25 Mar 2020 09:07:05 -0400
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 1D9C72E15E0;
+        Wed, 25 Mar 2020 16:07:03 +0300 (MSK)
+Received: from myt4-18a966dbd9be.qloud-c.yandex.net (myt4-18a966dbd9be.qloud-c.yandex.net [2a02:6b8:c00:12ad:0:640:18a9:66db])
+        by mxbackcorp1o.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id mcZa33whj9-72YaEGHq;
+        Wed, 25 Mar 2020 16:07:03 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1585141623; bh=MmDSH51e7oidVyu0h0NZyr6OzP7Te9DF1c+cTCaNP/Q=;
+        h=Message-ID:Date:To:From:Subject:Cc;
+        b=CLopwyrvQooX+H/lBYtsrKh4IyXX/K3Le0VstZQDxDTkiYJCovjDfeAeeE4eEGjVq
+         vsZbRRuDISQmybsJYFwNjIc+0vFt0/0XMgN0nq8r+9N8Fkd5LhS8WFln3iwsbBL+xL
+         9de0XUle0711gGZoL2ovn1lU2i22uPKRm/aeXKGk=
+Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from unknown (unknown [2a02:6b8:b080:8204::1:e])
+        by myt4-18a966dbd9be.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id cFVHxoSefV-72caHIwA;
+        Wed, 25 Mar 2020 16:07:02 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH v4 0/3] block/diskstats: more accurate io_ticks and
+ optimization
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org
+Cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>
+Date:   Wed, 25 Mar 2020 16:07:01 +0300
+Message-ID: <158514148436.7009.1234367408038809210.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-References: <1585117100-8359-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1585117100-8359-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1585117100-8359-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 25 Mar 2020 14:06:33 +0100
-Message-ID: <CAMuHMdXhwxmDuwK9M4ctP9=FVBfdLHSroq-YhuMrFtXaCtNq4Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: phy: rcar-gen3-phy-usb2: add r8a77961 support
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shimoda-san,
+Simplified estimation for io_ticks introduced in patch
+https://lore.kernel.org/linux-block/20181206164122.2166-5-snitzer@redhat.com/
+could be very inaccurate for request longer than jiffy (i.e. any HDD)
 
-On Wed, Mar 25, 2020 at 7:18 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch adds support for r8a77961 (R-Car M3-W+).
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+There is at least one another report about this:
+https://lore.kernel.org/linux-block/20200324031942.GA3060@ming.t460p/
+See detail in comment for first patch.
 
-Thanks for your patch!
+v1: https://lore.kernel.org/lkml/155413438394.3201.15211440151043943989.stgit@buzz/
+v2: https://lore.kernel.org/lkml/158314549775.1788.6529015932237292177.stgit@buzz/
+v3: https://lore.kernel.org/lkml/158503038812.1955.7827988255138056389.stgit@buzz/
+ * update documentation
+ * rebase to current linux-next
+ * fix compilation for CONFIG_SMP=n
+v4:
+ * rebase to for-5.7/block
+ * make part_stat_read_all static in block/genhd.c
 
-> --- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-> +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-> @@ -18,6 +18,8 @@ Required properties:
->               SoC.
->               "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
+---
 
-While at it, you may want to update "r8A7796 SoC" to "r8A77960 SoC", to
-avoid confusion between R-Car M3-W (R8A77960) and M3-W+ (R8A77961).
+Konstantin Khlebnikov (3):
+      block/diskstats: more accurate approximation of io_ticks for slow disks
+      block/diskstats: accumulate all per-cpu counters in one pass
+      block/diskstats: replace time_in_queue with sum of request times
 
-Note that rebasing this patch on top of your "[PATCH v2] dt-bindings:
-phy: renesas: usb2-phy: convert bindings to json-schema"
-(https://lore.kernel.org/linux-devicetree/1572592763-12396-1-git-send-email-yoshihiro.shimoda.uh@renesas.com/)
-would avoid that, too.
 
->               SoC.
-> +             "renesas,usb2-phy-r8a77961" if the device is a part of an
-> +             R8A77961 SoC.
->               "renesas,usb2-phy-r8a77965" if the device is a part of an
->               R8A77965 SoC.
->               "renesas,usb2-phy-r8a77990" if the device is a part of an
+ Documentation/admin-guide/iostats.rst |    5 +-
+ block/bio.c                           |    9 +--
+ block/blk-core.c                      |    5 +-
+ block/genhd.c                         |  109 +++++++++++++++++++++++----------
+ include/linux/genhd.h                 |    6 --
+ 5 files changed, 88 insertions(+), 46 deletions(-)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--
+Signature
