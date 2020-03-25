@@ -2,53 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DF2419254B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:20:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69B8319254F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:21:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbgCYKUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 06:20:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54106 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726154AbgCYKUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:20:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 2525BAC19;
-        Wed, 25 Mar 2020 10:20:32 +0000 (UTC)
-Date:   Wed, 25 Mar 2020 11:20:31 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     tglx@linutronix.de, jpoimboe@redhat.com,
-        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org,
-        brgerst@gmail.com
-Subject: Re: [PATCH v3 10/26] objtool: Optimize find_symbol_*() and
- read_symbols()
-In-Reply-To: <20200324160924.499016559@infradead.org>
-Message-ID: <alpine.LSU.2.21.2003251120160.12098@pobox.suse.cz>
-References: <20200324153113.098167666@infradead.org> <20200324160924.499016559@infradead.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727487AbgCYKVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 06:21:19 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:33664 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbgCYKVS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 06:21:18 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 48nPKQ3GY0z1qy4M;
+        Wed, 25 Mar 2020 11:21:14 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 48nPKQ1HrGz1qqkK;
+        Wed, 25 Mar 2020 11:21:14 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id c9fCxwBNxHKC; Wed, 25 Mar 2020 11:21:10 +0100 (CET)
+X-Auth-Info: Jk8AWD3vuXK/N+e+qyBjxYOdVRAvzUbptF9rayGrzfo=
+Received: from [127.0.0.1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Wed, 25 Mar 2020 11:21:10 +0100 (CET)
+Subject: Re: user space interface for configuring T1 PHY management mode
+ (master/slave)
+To:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        David Miller <davem@davemloft.net>
+Cc:     andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, kernel@pengutronix.de,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        david@protonic.nl, devicetree@vger.kernel.org,
+        linux@armlinux.org.uk, olteanv@gmail.com
+References: <20200325083449.GA8404@pengutronix.de>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <e2a1877c-1cb2-e047-38e0-e3b41d941b33@denx.de>
+Date:   Wed, 25 Mar 2020 11:21:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200325083449.GA8404@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Mar 2020, Peter Zijlstra wrote:
+On 3/25/20 9:34 AM, Oleksij Rempel wrote:
+> Hi all,
 
-> All of:
-> 
->   read_symbols(), find_symbol_by_offset(), find_symbol_containing(),
->   find_containing_func()
-> 
-> do a linear search of the symbols. Add an RB tree to make it go
-> faster.
-> 
-> This about halves objtool runtime on vmlinux.o, from 34s to 18s.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Hi,
 
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+> I'm working on mainlining of NXP1102 PHY (BroadR Reach/802.3bw) support.
+> 
+> Basic functionality is working and support with mainline kernel. Now it is time
+> to extend it. According to the specification, each PHY can be master or slave.
+> 
+> The HW can be pre configured via bootstrap pins or fuses to have a default
+> configuration. But in some cases we still need to be able to configure the PHY
+> in a different mode: 
+> --------------------------------------------------------------------------------
+> http://www.ieee802.org/3/1TPCESG/public/BroadR_Reach_Automotive_Spec_V3.0.pdf
+> 
+> 6.1 MASTER-SLAVE configuration resolution
+> 
+> All BroadR-Reach PHYs will default to configure as SLAVE upon power up or reset
+> until a management system (for example, processor/microcontroller) configures
+> it to be MASTER. MASTER-SLAVE assignment for each link configuration is
+> necessary for establishing the timing control of each PHY.
 
-M
+Thanks for reminding me of this. I sent out
+https://patchwork.ozlabs.org/project/netdev/list/?series=166575
+maybe it helps.
