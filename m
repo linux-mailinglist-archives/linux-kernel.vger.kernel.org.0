@@ -2,123 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E2F7192749
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:36:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 347FD192754
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:38:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgCYLgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 07:36:55 -0400
-Received: from mailgate1.rohmeurope.com ([87.129.152.131]:49370 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726906AbgCYLgz (ORCPT
+        id S1727356AbgCYLiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 07:38:00 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:17258
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727158AbgCYLiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 07:36:55 -0400
-X-AuditID: c0a8fbf4-489ff70000004419-3a-5e7b4254a412
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id CE.D1.17433.4524B7E5; Wed, 25 Mar 2020 12:36:52 +0100 (CET)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0487.000; Wed, 25 Mar 2020 12:36:47 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "talgi@mellanox.com" <talgi@mellanox.com>,
-        "olteanv@gmail.com" <olteanv@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "brendanhiggins@google.com" <brendanhiggins@google.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "davidgow@google.com" <davidgow@google.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
-        "bp@suse.de" <bp@suse.de>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Laine, Markus" <Markus.Laine@fi.rohmeurope.com>,
-        "vincenzo.frascino@arm.com" <vincenzo.frascino@arm.com>,
-        "sre@kernel.org" <sre@kernel.org>,
-        "ardb@kernel.org" <ardb@kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "zaslonko@linux.ibm.com" <zaslonko@linux.ibm.com>,
-        "uwe@kleine-koenig.org" <uwe@kleine-koenig.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: Re: [PATCH v6 09/10] power: supply: Support ROHM bd99954 charger
-Thread-Topic: [PATCH v6 09/10] power: supply: Support ROHM bd99954 charger
-Thread-Index: AQHWAbbAyLpT1a+wPEGvvo/J38Wk46hXbxYAgAAMuoCAAaNYgA==
-Date:   Wed, 25 Mar 2020 11:36:46 +0000
-Message-ID: <4d75bfeab55c04cc3ca751cf7c364c812848e9ed.camel@fi.rohmeurope.com>
-References: <cover.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
-         <1bf2431b80489ae412e774519a92616a9aa2bcca.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
-         <20200324095024.GE1922688@smile.fi.intel.com>
-         <20200324103557.GH1922688@smile.fi.intel.com>
-In-Reply-To: <20200324103557.GH1922688@smile.fi.intel.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [62.78.225.252]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <85534FA46F1BC646A64DFADFA82589B4@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        Wed, 25 Mar 2020 07:38:00 -0400
+X-IronPort-AV: E=Sophos;i="5.72,304,1580770800"; 
+   d="scan'208";a="343676712"
+Received: from abo-173-121-68.mrs.modulonet.fr (HELO hadrien) ([85.68.121.173])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 12:37:57 +0100
+Date:   Wed, 25 Mar 2020 12:37:56 +0100 (CET)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Simran Singhal <singhalsimran0@gmail.com>
+cc:     Greg KH <gregkh@linuxfoundation.org>, jeremy@azazel.net,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        outreachy-kernel <outreachy-kernel@googlegroups.com>
+Subject: Re: [Outreachy kernel] [PATCH v2] staging: kpc2000: Removing a blank
+ line
+In-Reply-To: <20200325095407.GA3788@simran-Inspiron-5558>
+Message-ID: <alpine.DEB.2.21.2003251234560.2444@hadrien>
+References: <20200325095407.GA3788@simran-Inspiron-5558>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0wTZxzGfe+udwf29CiYvlbNQhdndBn+YJnvFuYYW5ZTl2XLssQsA3aO
-        kzYrLbm2DGGJDKebJWT8rl6KsLIKY43Q1qyoNGuwLjiTdjonSmCTSZyQDZmorLLp7rgp/HXP
-        vc/z+T73Jt+jcV2YMtBmq0MQrbzFSKYS0a65wDPv5FUWbPoyE3l6/CSqrXZjKHnnFkD1X6xH
-        F6404qh5bJxE7uYfAfIkPiXQYKCXQG2xuAbt7+ghUc3kapRI9FLo3qXPMdT0TyeGfjrlIdFM
-        bQwg39AFDHl8gwTq6HwK9YZmMfTniJtAByIxCkXcxzTo/GkHammNUCgUbMbR0O1hDEUeJAkU
-        +WUGoO//SoLcJzj/UT/gTnx9FeNOSqMU9210LdcedHKhrg1cR/8ExgW7D5FcwzGvhhu53E9y
-        U/E4xQ0eniO4Om8UcEfPvcV91+qnuBvuM9ib6e8uzdnNO8reNhdbN257f6nJ69WW3lteHg40
-        YFUgutwFUmjIPgt7mmcoF0ildezPAA5LMUJ9GQTwcPQk6QI0TbI50HWVUoAMdie8P3UFKBmc
-        bafh/m8a5oElbJSA07/XYkoqnd0Ou369qFGJHbDzYIRUdR5sDH02nyHYtbCrOoQrmmHfgL5e
-        P6FoHXsAg7fGtIpOYV+A16XEfDNg18BDVVPzLM7qYfDGrEa9Agu/6k/gql4BJ64/+P88E4Zn
-        jxPKBXB2Pew5tVFFc+Gky0eqOhM21YxR6iekwXNHxok6oJcWNUgLtLSIlhbR0iK6HWi6ASzh
-        zZZi3iFszhIFZ5ZoM5XIjw9sJUGgLuKdPvBwYPsAwGgwAFbSmHEF8+TWygLdst22or0m3m4q
-        FJ0WwT4AII0bM5iQUF6gY4r4vRWCaHtkraIJo55ZN1afr2OVrg8FoVQQH7mradoImb5ceWia
-        KBQL5XvMFseCjdEpyvBUQ4ZdsBYJIu90mAqVXSm0y8uiWFq5t2GbjDP2Ur5EPlXRH8DTdN1E
-        qxenY60+L64jrDarYNAzq16Wo6wSNTmtj4smgZ4GxnTm75dkVyv/jY/nTMoVmFxRLH2kVDj4
-        BctQBQy3LXfLspaYk1vrx+fWVESz/drAc3ePHxm+1hIPZ7+XjO+5ePNMX0t0aof/xP0XvbGH
-        iVfOj6y7nF3m//dSTsGW/vCuNi687/WWm92dNVV5nrSK55s+yW87PV05FMhpH82tG92UfXba
-        z3/86m+Ny6q35NsmYsxOxvDHtX27+s6unD34mpGwm/jNG3DRzv8HaiO7FEoEAAA=
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8gQW5keSwNCg0KT24gVHVlLCAyMDIwLTAzLTI0IGF0IDEyOjM1ICswMjAwLCBBbmR5IFNo
-ZXZjaGVua28gd3JvdGU6DQo+IE9uIFR1ZSwgTWFyIDI0LCAyMDIwIGF0IDExOjUwOjI0QU0gKzAy
-MDAsIEFuZHkgU2hldmNoZW5rbyB3cm90ZToNCj4gPiBPbiBUdWUsIE1hciAyNCwgMjAyMCBhdCAx
-MDozMjoxOUFNICswMjAwLCBNYXR0aSBWYWl0dGluZW4gd3JvdGU6DQo+ID4gPiArI2luY2x1ZGUg
-PGxpbnV4L2FjcGkuaD4NCj4gPiA+ICsjaW5jbHVkZSA8bGludXgvb2YuaD4NCj4gPiANCj4gPiBJ
-IGRpZG4ndCBmaW5kIGFueSBldmlkZW5jZSBvZiB1c2Ugb2YgdGhvc2UgdHdvLCBvdGhlcndpc2Us
-IG1pc3NlZA0KPiA+IHByb3BlcnR5LmgNCj4gPiBhbmQgcGVyaGFwcyBtb2RfZGV2aWNldGFibGUu
-aC4NCj4gDQo+IC4uLg0KPiANCj4gPiA+ICtNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBiZDk5OTV4
-X29mX21hdGNoKTsNCj4gPiA+ICtNT0RVTEVfREVWSUNFX1RBQkxFKGFjcGksIGJkOTk5NXhfYWNw
-aV9tYXRjaCk7DQo+IA0KPiBJIGhhdmUgdG8gYWRkIHNpbmNlIHlvdSBhcmUgdXNpbmcgdGhvc2Ug
-bWFjcm9zIHdpdGhvdXQgaWZkZWZmZXJ5LCB5b3UNCj4gc2hvdWxkDQo+IGdldCB3YXJuaW5nIGlu
-ICFBQ1BJIGFuZC9vciAhT0YgY2FzZXMuDQo+IA0KPiBTbywgZHJvcCB0aG9zZSBvZl9tYXRjaF9w
-dHIoKSAvIEFDUElfUFRSKCkgYW5kIHRodXMgYWJvdmUgaGVhZGVycy4NCg0KU29ycnkgYnV0IEkg
-ZG9uJ3QgZm9sbG93IDovIEkgZGlkIGRyb3Agd2hvbGUgQUNQSSB0YWJsZSBhcyB0aGUgYmF0dGVy
-eQ0KaW5mb3JtYXRpb24gaXMgbm90IGZldGNoZWQgZnJvbSBBQ1BJIGFueXdheXMuIEJ1dCBJIGRv
-bid0IGtub3cgd2hhdCB5b3UNCm1lYW4gYnkgZHJvcHBpbmcgdGhlIG9mX21hdGNoX3B0cj8gSSBm
-b3Igc3VyZSBuZWVkIHRoZSBvZl9kZXZpY2VfaWQgYXMNCmluIG1hbnkgY2FzZXMgYm90aCB0aGUg
-ZGV2aWNlIG1hdGNoaW5nIGFuZCBtb2R1bGUgbWF0Y2hpbmcgYXJlIGRvbmUNCmJhc2VkIG9uICBv
-Zl9tYXRjaF90YWJsZSBhbmQgb2ZfZGV2aWNlX2lkLg0KDQpJIGFkbWl0IEkgZGlkbid0IHRyeSBj
-b21waWxpbmcgdGhlICFPRiBjb25maWcuIEFyZSB5b3Ugc3VnZ2VzdGluZyBJDQpzaG91bGQgcHV0
-IHRoZSBvZl9kZXZpY2VfaWQgYXJyYXkgYW5kIHBvcHVsYXRpbmcgdGhlIG9mX21hdGNoX3RhYmxl
-IGluDQojaWZkZWYgQ09ORklHX09GPyBPciBtYXliZSB5b3Ugc3VnZ2VzdCB0aGF0IEkgd2lsbCBw
-dXQgb2ZfZGV2aWNlX2lkDQphcnJheSBpbiAjaWZkZWYgQ09ORklHX09GIGFuZCB1c2Ugb2ZfbWF0
-Y2hfcHRyKCkgd2hlbiBwb3B1bGF0aW5nIHRoZQ0Kb2ZfbWF0Y2hfdGFibGUgcG9pbnRlcj8gSSBn
-dWVzcyB0aGF0IHdvdWxkIG1ha2Ugc2Vuc2UuIEknbGwgZG8gdGhhdCAtDQpjYW4geW91IHBsZWFz
-ZSBleHBsYWluIGlmIHRoaXMgd2FzIG5vdCB3aGF0IHlvdSBtZWFudC4NCg0KQnIsDQogICAgTWF0
-dGkNCg==
+On Wed, 25 Mar 2020, Simran Singhal wrote:
+
+> This patch fixes the checkpatch warning by removing a blank
+> line.
+> CHECK: Please don't use multiple blank lines
+
+The subject line and the log message should be written in the imperative.
+So that would be Remove, rather than Removing for the subject line.
+
+The log message should first say what you did to fix the problem and why.
+How the problem was found can come afterwards.  So you should not start
+with "This patch fixes the checkpatch warning by".  "This patch" is not
+useful, because it is obvious that it is a patch, based on the subject
+line.  "fixes" does not given any information about what is done or why.
+"the checkpatch warning" is useful, but it's not what one wants to see
+first.
+
+julia
+
+>
+> Signed-off-by: Simran Singhal <singhalsimran0@gmail.com>
+> ---
+> Changes in v2:
+>   - Make the subject and commit message correct by mentioning that
+>     this patch specifically removes a blank line.
+>
+>  drivers/staging/kpc2000/kpc2000/pcie.h | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/staging/kpc2000/kpc2000/pcie.h b/drivers/staging/kpc2000/kpc2000/pcie.h
+> index cb815c30faa4..f1fc91b4c704 100644
+> --- a/drivers/staging/kpc2000/kpc2000/pcie.h
+> +++ b/drivers/staging/kpc2000/kpc2000/pcie.h
+> @@ -6,7 +6,6 @@
+>  #include "../kpc.h"
+>  #include "dma_common_defs.h"
+>
+> -
+>  /*      System Register Map (BAR 1, Start Addr 0)
+>   *
+>   *  BAR Size:
+> --
+> 2.17.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20200325095407.GA3788%40simran-Inspiron-5558.
+>
