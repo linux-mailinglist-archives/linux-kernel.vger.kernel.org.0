@@ -2,215 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E92F8192FDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:50:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2201D192F2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:31:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbgCYRuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 13:50:23 -0400
-Received: from labrats.qualcomm.com ([199.106.110.90]:10957 "EHLO
-        labrats.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728247AbgCYRuV (ORCPT
+        id S1727661AbgCYRbh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 13:31:37 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37006 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbgCYRbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 13:50:21 -0400
-IronPort-SDR: 8VjKLx+JsMa/Of+DSfvflWJoMagIr+MOQ7Wz6+QQYPXON4uQURvzqRis0G4xyWrM0wlYducT5e
- 5xOcGX+qYSD6TV/F5zdhi3854l91Y46crqgv88ymGUi0Ac+SYB/0hVWV3YRJtE5QjCOIWAe3Sd
- Ey4Q17OzoNB/HdOPLjH39gZ6pEEeoHG1W+RR9EKV2+7pD0UKIdpwmQLQpD9LnEVaBI1MPv8S+2
- Dyj1PVF3xh/GWRNdvn/eZtKe2RSJGUpMposOOyepkbilmBcKG7T/MmBeec6knWbUeE2nFbAWJh
- 97I=
-X-IronPort-AV: E=Sophos;i="5.72,303,1580803200"; 
-   d="scan'208";a="28615551"
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by labrats.qualcomm.com with ESMTP; 25 Mar 2020 02:24:53 -0700
-Received: from pacamara-linux.qualcomm.com ([192.168.140.135])
-  by ironmsg05-sd.qualcomm.com with ESMTP; 25 Mar 2020 02:24:51 -0700
-Received: by pacamara-linux.qualcomm.com (Postfix, from userid 359480)
-        id C62C73A9C; Wed, 25 Mar 2020 02:24:51 -0700 (PDT)
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        hongwus@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
-Cc:     Subhash Jadavani <subhashj@codeaurora.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 1/2] scsi: ufs: Clean up ufshcd_scale_clks() and clock scaling error out path
-Date:   Wed, 25 Mar 2020 02:23:38 -0700
-Message-Id: <1585128220-26128-2-git-send-email-cang@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1585128220-26128-1-git-send-email-cang@codeaurora.org>
-References: <1585128220-26128-1-git-send-email-cang@codeaurora.org>
+        Wed, 25 Mar 2020 13:31:37 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 24ED229699D
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com
+Cc:     linux-mediatek@lists.infradead.org,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        rdunlap@infradead.org, frank-w@public-files.de, wens@csie.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        devicetree@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Richard Fontana <rfontana@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        matthias.bgg@kernel.org, Allison Randal <allison@lohutok.net>,
+        linux-kernel@vger.kernel.org, hsinyi@chromium.org,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        linux-clk@vger.kernel.org, mtk01761 <wendell.lin@mediatek.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Matthias Brugger <mbrugger@suse.com>, sean.wang@mediatek.com,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Fabien Parent <fparent@baylibre.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Owen Chen <owen.chen@mediatek.com>
+Subject: [RESEND PATCH v12 0/5] arm/arm64: mediatek: Fix mt8173 mmsys device probing
+Date:   Wed, 25 Mar 2020 18:31:18 +0100
+Message-Id: <20200325173123.3569606-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Subhash Jadavani <subhashj@codeaurora.org>
+[Patches rebased on top of a clean 5.6-rc1 branch]
 
-This change introduces a func ufshcd_set_clk_freq() to explicitly
-set clock frequency so that it can be used in reset_and_resotre path and
-in ufshcd_scale_clks(). Meanwhile, this change cleans up the clock scaling
-error out path.
+Dear all,
 
-Fixes: a3cd5ec55f6c ("scsi: ufs: add load based scaling of UFS gear")
-Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-Signed-off-by: Can Guo <cang@codeaurora.org>
----
- drivers/scsi/ufs/ufshcd.c | 68 ++++++++++++++++++++++++++++++++---------------
- 1 file changed, 46 insertions(+), 22 deletions(-)
+These patches are intended to solve an old standing issue on some
+Mediatek devices (mt8173, mt2701 and mt2712 are affected by this issue).
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 2a2a63b..9c26f82 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -855,28 +855,29 @@ static bool ufshcd_is_unipro_pa_params_tuning_req(struct ufs_hba *hba)
- 		return false;
- }
- 
--static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
-+/**
-+ * ufshcd_set_clk_freq - set UFS controller clock frequencies
-+ * @hba: per adapter instance
-+ * @scale_up: If True, set max possible frequency othewise set low frequency
-+ *
-+ * Returns 0 if successful
-+ * Returns < 0 for any other errors
-+ */
-+static int ufshcd_set_clk_freq(struct ufs_hba *hba, bool scale_up)
- {
- 	int ret = 0;
- 	struct ufs_clk_info *clki;
- 	struct list_head *head = &hba->clk_list_head;
--	ktime_t start = ktime_get();
--	bool clk_state_changed = false;
- 
- 	if (list_empty(head))
- 		goto out;
- 
--	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, PRE_CHANGE);
--	if (ret)
--		return ret;
--
- 	list_for_each_entry(clki, head, list) {
- 		if (!IS_ERR_OR_NULL(clki->clk)) {
- 			if (scale_up && clki->max_freq) {
- 				if (clki->curr_freq == clki->max_freq)
- 					continue;
- 
--				clk_state_changed = true;
- 				ret = clk_set_rate(clki->clk, clki->max_freq);
- 				if (ret) {
- 					dev_err(hba->dev, "%s: %s clk set rate(%dHz) failed, %d\n",
-@@ -895,7 +896,6 @@ static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
- 				if (clki->curr_freq == clki->min_freq)
- 					continue;
- 
--				clk_state_changed = true;
- 				ret = clk_set_rate(clki->clk, clki->min_freq);
- 				if (ret) {
- 					dev_err(hba->dev, "%s: %s clk set rate(%dHz) failed, %d\n",
-@@ -914,13 +914,40 @@ static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
- 				clki->name, clk_get_rate(clki->clk));
- 	}
- 
-+out:
-+	return ret;
-+}
-+
-+/**
-+ * ufshcd_scale_clks - scale up or scale down UFS controller clocks
-+ * @hba: per adapter instance
-+ * @scale_up: True if scaling up and false if scaling down
-+ *
-+ * Returns 0 if successful
-+ * Returns < 0 for any other errors
-+ */
-+static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
-+{
-+	int ret = 0;
-+
-+	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, PRE_CHANGE);
-+	if (ret)
-+		return ret;
-+
-+	ret = ufshcd_set_clk_freq(hba, scale_up);
-+	if (ret)
-+		return ret;
-+
- 	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, POST_CHANGE);
-+	if (ret) {
-+		ufshcd_set_clk_freq(hba, !scale_up);
-+		return ret;
-+	}
- 
--out:
--	if (clk_state_changed)
--		trace_ufshcd_profile_clk_scaling(dev_name(hba->dev),
-+	trace_ufshcd_profile_clk_scaling(dev_name(hba->dev),
- 			(scale_up ? "up" : "down"),
- 			ktime_to_us(ktime_sub(ktime_get(), start)), ret);
-+
- 	return ret;
- }
- 
-@@ -1106,35 +1133,32 @@ static int ufshcd_devfreq_scale(struct ufs_hba *hba, bool scale_up)
- 
- 	ret = ufshcd_clock_scaling_prepare(hba);
- 	if (ret)
--		return ret;
-+		goto out;
- 
- 	/* scale down the gear before scaling down clocks */
- 	if (!scale_up) {
- 		ret = ufshcd_scale_gear(hba, false);
- 		if (ret)
--			goto out;
-+			goto out_unprepare;
- 	}
- 
- 	ret = ufshcd_scale_clks(hba, scale_up);
- 	if (ret) {
- 		if (!scale_up)
- 			ufshcd_scale_gear(hba, true);
--		goto out;
-+		goto out_unprepare;
- 	}
- 
- 	/* scale up the gear after scaling up clocks */
- 	if (scale_up) {
- 		ret = ufshcd_scale_gear(hba, true);
--		if (ret) {
-+		if (ret)
- 			ufshcd_scale_clks(hba, false);
--			goto out;
--		}
- 	}
- 
--	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, POST_CHANGE);
--
--out:
-+out_unprepare:
- 	ufshcd_clock_scaling_unprepare(hba);
-+out:
- 	ufshcd_release(hba);
- 	return ret;
- }
-@@ -6251,7 +6275,7 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
- 	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 
- 	/* scale up clocks to max frequency before full reinitialization */
--	ufshcd_scale_clks(hba, true);
-+	ufshcd_set_clk_freq(hba, true);
- 
- 	err = ufshcd_hba_enable(hba);
- 	if (err)
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver gets probed, which in effect breaks
+graphics on those devices.
+
+The MMSYS (Multimedia subsystem) in Mediatek SoCs has some registers to
+control clock gates (which is used in the clk driver) and some registers
+to set the routing and enable the differnet blocks of the display
+and MDP (Media Data Path) subsystem. On this series the clk driver is
+not a pure clock controller but a system controller that can provide
+access to the shared registers between the different drivers that need
+it (mediatek-drm and mediatek-mdp). Hence the MMSYS clk driver was moved
+to drivers/soc/mediatek and is the entry point (parent) which will trigger
+the probe of the corresponding mediatek-drm driver.
+
+**IMPORTANT** This series only fixes the issue on mt8173 to make it
+simple and as is the only platform I can test. Similar changes should be
+applied for mt2701 and mt2712 to have display working.
+
+These patches apply on top of linux-next.
+
+For reference, here are the links to the old discussions:
+* v11: https://patchwork.kernel.org/project/linux-mediatek/list/?series=249871
+* v10: https://patchwork.kernel.org/project/linux-mediatek/list/?series=248505
+* v9: https://patchwork.kernel.org/project/linux-clk/list/?series=247591
+* v8: https://patchwork.kernel.org/project/linux-mediatek/list/?series=244891
+* v7: https://patchwork.kernel.org/project/linux-mediatek/list/?series=241217
+* v6: https://patchwork.kernel.org/project/linux-mediatek/list/?series=213219
+* v5: https://patchwork.kernel.org/project/linux-mediatek/list/?series=44063
+* v4:
+  * https://patchwork.kernel.org/patch/10530871/
+  * https://patchwork.kernel.org/patch/10530883/
+  * https://patchwork.kernel.org/patch/10530885/
+  * https://patchwork.kernel.org/patch/10530911/
+  * https://patchwork.kernel.org/patch/10530913/
+* v3:
+  * https://patchwork.kernel.org/patch/10367857/
+  * https://patchwork.kernel.org/patch/10367861/
+  * https://patchwork.kernel.org/patch/10367877/
+  * https://patchwork.kernel.org/patch/10367875/
+  * https://patchwork.kernel.org/patch/10367885/
+  * https://patchwork.kernel.org/patch/10367883/
+  * https://patchwork.kernel.org/patch/10367889/
+  * https://patchwork.kernel.org/patch/10367907/
+  * https://patchwork.kernel.org/patch/10367909/
+  * https://patchwork.kernel.org/patch/10367905/
+* v2: No relevant discussion, see v3
+* v1:
+  * https://patchwork.kernel.org/patch/10016497/
+  * https://patchwork.kernel.org/patch/10016499/
+  * https://patchwork.kernel.org/patch/10016505/
+  * https://patchwork.kernel.org/patch/10016507/
+
+Best regards,
+ Enric
+
+Changes in v12:
+- Leave the clocks part in drivers/clk (clk-mt8173-mm)
+- Instantiate the clock driver from the mtk-mmsys driver.
+- Add default config option to not break anything.
+- Removed the Reviewed-by CK tag as changed the organization.
+
+Changes in v10:
+- Update the binding documentation for the mmsys system controller.
+- Renamed to be generic mtk-mmsys
+- Add driver data support to be able to support diferent SoCs
+- Select CONFIG_MTK_MMSYS (CK)
+- Pass device pointer of mmsys device instead of config regs (CK)
+- Match driver data to get display routing.
+
+Changes in v9:
+- Move mmsys to drivers/soc/mediatek (CK)
+- Introduced a new patch to move routing control into mmsys driver.
+- Removed the patch to use regmap as is not needed anymore.
+- Do not move the display routing from the drm driver (CK)
+
+Changes in v8:
+- Be a builtin_platform_driver like other mediatek mmsys drivers.
+- New patch introduced in this series.
+
+Changes in v7:
+- Free clk_data->clks as well
+- Get rid of private data structure
+
+Enric Balletbo i Serra (3):
+  dt-bindings: mediatek: Update mmsys binding to reflect it is a system
+    controller
+  soc / drm: mediatek: Move routing control to mmsys device
+  soc / drm: mediatek: Fix mediatek-drm device probing
+
+Matthias Brugger (2):
+  drm/mediatek: Omit warning on probe defers
+  clk / soc: mediatek: Move mt8173 MMSYS to platform driver
+
+ .../bindings/arm/mediatek/mediatek,mmsys.txt  |   7 +-
+ drivers/clk/mediatek/Kconfig                  |   7 +
+ drivers/clk/mediatek/Makefile                 |   1 +
+ drivers/clk/mediatek/clk-mt8173-mm.c          | 146 ++++++++
+ drivers/clk/mediatek/clk-mt8173.c             | 104 ------
+ drivers/gpu/drm/mediatek/Kconfig              |   1 +
+ drivers/gpu/drm/mediatek/mtk_disp_color.c     |   5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       |   5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c      |   5 +-
+ drivers/gpu/drm/mediatek/mtk_dpi.c            |  12 +-
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c       |  19 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c        | 259 +-------------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h        |   7 -
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  45 +--
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h        |   2 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c            |   8 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c           |   4 +-
+ drivers/soc/mediatek/Kconfig                  |   8 +
+ drivers/soc/mediatek/Makefile                 |   1 +
+ drivers/soc/mediatek/mtk-mmsys.c              | 335 ++++++++++++++++++
+ include/linux/soc/mediatek/mtk-mmsys.h        |  20 ++
+ 21 files changed, 590 insertions(+), 411 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-mm.c
+ create mode 100644 drivers/soc/mediatek/mtk-mmsys.c
+ create mode 100644 include/linux/soc/mediatek/mtk-mmsys.h
+
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.25.1
 
