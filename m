@@ -2,176 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 192D8192BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:13:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9CF6192BE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 16:12:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbgCYPNI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 11:13:08 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:48290 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727319AbgCYPNI (ORCPT
+        id S1727639AbgCYPL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 11:11:58 -0400
+Received: from mail-pl1-f171.google.com ([209.85.214.171]:33644 "EHLO
+        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbgCYPL6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:13:08 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jH7iL-0000FW-EX; Wed, 25 Mar 2020 09:13:05 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jH7iK-00084e-3v; Wed, 25 Mar 2020 09:13:05 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170B2F5BE24A28980D05780E4F50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Wed, 25 Mar 2020 10:10:28 -0500
-In-Reply-To: <AM6PR03MB5170B2F5BE24A28980D05780E4F50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        (Bernd Edlinger's message of "Fri, 20 Mar 2020 21:24:03 +0100")
-Message-ID: <871rpg8o7v.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 25 Mar 2020 11:11:58 -0400
+Received: by mail-pl1-f171.google.com with SMTP id g18so919155plq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 08:11:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=odeneEdONR8grSoihowwuREl6SAzgo70YaaaeKd/NpQ=;
+        b=Bgi2pL0YttlAbAQ73ifCSqGufCdzu80yX+RwuK0Cr4qZkga5F/vOeEcZ3SmF5/rxlT
+         eLQT8KQX4jl1EEkFig+TehDSjlMl4sS9cqCKv6ZP0Bq6To7mMhF/FjLbkCB4BNKO3g7g
+         /o3RvWq6XcC1Ep+tKnoFNt54hcNGxvswvwVfAQk7gAUTlqDAE85QMv1/EcVqnzHA9lat
+         pjirYEIMxdirjaURSXSPYCNhv3pl4jqqQhrgdo73Iree7pvMGj7xXuASmScFTz94Yoj+
+         4YryxJs2ZMIE2U2f/cDC1vgwLNDxaQKjHHkAERDacaBmjmk9K4hWJadKv5WQHmzxfqDH
+         mQOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=odeneEdONR8grSoihowwuREl6SAzgo70YaaaeKd/NpQ=;
+        b=UD8VJY5NwQY5ODlDDVzn5Dgtam3XwUvls97TggZyXCHlET7QxN6YQeOSV5rfAuqLWq
+         aA2p2RM7wIQ6cbElRL6ejMrbrXMUxMQJxSpQ6AVxoqxEFQnWVyanemMKp8gCa13xXqeS
+         4hYt1xCQv4gYStaU+W3fkMvfiv6vEwWc/Z4d5vTRfdH+AKwSf3ZTelKrX8346vF5qIJ7
+         +r6RV/4opNybmPa1+nnOeQFgmoABR4tnCOXxrTsusCrDDJXejBRlfYHZAmCTsuxHavVm
+         il477hGxWv1Zghw9qOgxSASSSMMVQeKlOb2oWglzl3Coi0L3dwhWqw+L1vdZwAwJjnkx
+         ozbg==
+X-Gm-Message-State: ANhLgQ1pjmCcLgCTyOoOnNfYCAHeNJWkix9vbFtJht4LxNw3S2gJZQFT
+        zhVgK/BNSJ5ff8xWCcec6kJpMOqZFrh0FQ==
+X-Google-Smtp-Source: ADFU+vua1+fKJkCuFU81kPz90wA3YXpegsrlLTveHbex3keCG+MmUUofz6eaQImAkWD9Mh/cRF0H3Q==
+X-Received: by 2002:a17:902:76ca:: with SMTP id j10mr3586522plt.184.1585149116391;
+        Wed, 25 Mar 2020 08:11:56 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id 144sm17138984pgc.25.2020.03.25.08.11.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Mar 2020 08:11:55 -0700 (PDT)
+Subject: Re: decruft genhd.h
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200325110338.1029232-1-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b6bac2cc-4657-0004-b69d-68f51ef429e0@kernel.dk>
+Date:   Wed, 25 Mar 2020 09:11:54 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jH7iK-00084e-3v;;;mid=<871rpg8o7v.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+JEzuXaPnCFv9XVnwdfICRpMm6S2cfZJU=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
-        version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4965]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 715 ms - load_scoreonly_sql: 0.02 (0.0%),
-        signal_user_changed: 3.6 (0.5%), b_tie_ro: 2.4 (0.3%), parse: 0.72
-        (0.1%), extract_message_metadata: 9 (1.3%), get_uri_detail_list: 1.45
-        (0.2%), tests_pri_-1000: 6 (0.9%), tests_pri_-950: 0.97 (0.1%),
-        tests_pri_-900: 0.84 (0.1%), tests_pri_-90: 376 (52.6%), check_bayes:
-        363 (50.8%), b_tokenize: 10 (1.4%), b_tok_get_all: 9 (1.3%),
-        b_comp_prob: 2.1 (0.3%), b_tok_touch_all: 338 (47.3%), b_finish: 0.85
-        (0.1%), tests_pri_0: 305 (42.7%), check_dkim_signature: 0.39 (0.1%),
-        check_dkim_adsp: 2.4 (0.3%), poll_dns_idle: 1.14 (0.2%), tests_pri_10:
-        2.8 (0.4%), tests_pri_500: 7 (0.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v6 00/16] Infrastructure to allow fixing exec deadlocks
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <20200325110338.1029232-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+On 3/25/20 5:03 AM, Christoph Hellwig wrote:
+> Hi Jens,
+> 
+> this series tries to move as much out of genhd.h that doesn't really
+> belong there.
 
-> This is an infrastructure change that makes way for fixing this issue.
-> Each patch was already posted previously so this is just a cleanup of
-> the original mailing list thread(s) which got out of control by now.
->
-> Everything started here:
-> https://lore.kernel.org/lkml/AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com/
->
-> I added reviewed-by tags from the mailing list threads, except when
-> withdrawn.
->
-> It took a lot longer than expected to collect everything from the
-> mailinglist threads, since several commit messages have been infected
-> with typos, and they got fixed without a new patch version.
->
-> - Correct the point of no return.
-> - Add two new mutexes to replace cred_guard_mutex.
-> - Fix each use of cred_guard_mutex.
-> - Update documentation.
-> - Add a test case.
->
-> Bernd Edlinger (11):
->   exec: Fix a deadlock in strace
->   selftests/ptrace: add test cases for dead-locks
->   mm: docs: Fix a comment in process_vm_rw_core
->   kernel: doc: remove outdated comment cred.c
->   kernel/kcmp.c: Use new infrastructure to fix deadlocks in execve
->   proc: Use new infrastructure to fix deadlocks in execve
->   proc: io_accounting: Use new infrastructure to fix deadlocks in execve
->   perf: Use new infrastructure to fix deadlocks in execve
->   pidfd: Use new infrastructure to fix deadlocks in execve
->   exec: Fix dead-lock in de_thread with ptrace_attach
->   doc: Update documentation of ->exec_*_mutex
->
-> Eric W. Biederman (5):
->   exec: Only compute current once in flush_old_exec
->   exec: Factor unshare_sighand out of de_thread and call it separately
->   exec: Move cleanup of posix timers on exec out of de_thread
->   exec: Move exec_mmap right after de_thread in flush_old_exec
->   exec: Add exec_update_mutex to replace cred_guard_mutex
->
->  Documentation/security/credentials.rst    |  29 +++++--
->  fs/exec.c                                 | 122 ++++++++++++++++++++++--------
->  fs/proc/base.c                            |  23 +++---
->  include/linux/binfmts.h                   |   8 +-
->  include/linux/sched/signal.h              |  17 ++++-
->  init/init_task.c                          |   3 +-
->  kernel/cred.c                             |   4 +-
->  kernel/events/core.c                      |  12 +--
->  kernel/fork.c                             |   7 +-
->  kernel/kcmp.c                             |   8 +-
->  kernel/pid.c                              |   4 +-
->  kernel/ptrace.c                           |  20 ++++-
->  kernel/seccomp.c                          |  15 ++--
->  mm/process_vm_access.c                    |   2 +-
->  tools/testing/selftests/ptrace/Makefile   |   4 +-
->  tools/testing/selftests/ptrace/vmaccess.c |  86 +++++++++++++++++++++
->  16 files changed, 278 insertions(+), 86 deletions(-)
->  create mode 100644 tools/testing/selftests/ptrace/vmaccess.c
+Can you resend against the current 5.7/block? The second to last
+patch throws a trivial reject, and I could fix this up, but the
+last one moves code that has now changed slightly and it'd be better
+if you could rebase and re-test.
 
-Two small nits.
+This is due to the stat fixups that I queued up this morning.
 
-- You reposted my patches with adding your signed-off-by
-- You reposted my patches and did not include a "From:"
-  in the body so "git am" listed you as the author.
-
-I have fixed those up and will be merging this code to linux-next,
-unless you object.
-
-Eric
+-- 
+Jens Axboe
 
