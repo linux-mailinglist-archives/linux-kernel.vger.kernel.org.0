@@ -2,119 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 052F019297B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:21:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0350192986
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:22:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbgCYNVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 09:21:33 -0400
-Received: from foss.arm.com ([217.140.110.172]:48312 "EHLO foss.arm.com"
+        id S1727518AbgCYNWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 09:22:08 -0400
+Received: from mga04.intel.com ([192.55.52.120]:38450 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727286AbgCYNVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 09:21:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E442B31B;
-        Wed, 25 Mar 2020 06:21:31 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6D813F71F;
-        Wed, 25 Mar 2020 06:21:29 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 13:21:27 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Elena Reshetova <elena.reshetova@intel.com>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jann Horn <jannh@google.com>,
-        "Perla, Enrico" <enrico.perla@intel.com>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] arm64: entry: Enable random_kstack_offset support
-Message-ID: <20200325132127.GB12236@lakrids.cambridge.arm.com>
-References: <20200324203231.64324-1-keescook@chromium.org>
- <20200324203231.64324-6-keescook@chromium.org>
+        id S1727493AbgCYNWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 09:22:07 -0400
+IronPort-SDR: YxEKrTLf3PAXvrZTMRBA/wCi9yDnuLJEt2zVPTT3Cy4uhuPjLGwPS+K/pOb9rzkAEpe4vLc9wX
+ DRdvvDM/ZVkQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 06:22:06 -0700
+IronPort-SDR: 0Jzf9dk7Gw11erDkTbA58HlkoOJOAyD+fbLjqw4wV+NtoG9lCMpstQFrQFVAR7RGPO+8CdVpgk
+ FvMGZnNApHwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,304,1580803200"; 
+   d="scan'208";a="393625854"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga004.jf.intel.com with ESMTP; 25 Mar 2020 06:21:57 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jH5yo-00CpHP-VS; Wed, 25 Mar 2020 15:21:58 +0200
+Date:   Wed, 25 Mar 2020 15:21:58 +0200
+From:   "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "brendanhiggins@google.com" <brendanhiggins@google.com>,
+        "olteanv@gmail.com" <olteanv@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "talgi@mellanox.com" <talgi@mellanox.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "davidgow@google.com" <davidgow@google.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+        "bp@suse.de" <bp@suse.de>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+        "zaslonko@linux.ibm.com" <zaslonko@linux.ibm.com>,
+        "Laine, Markus" <Markus.Laine@fi.rohmeurope.com>,
+        "vincenzo.frascino@arm.com" <vincenzo.frascino@arm.com>,
+        "sre@kernel.org" <sre@kernel.org>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "uwe@kleine-koenig.org" <uwe@kleine-koenig.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: [PATCH v6 09/10] power: supply: Support ROHM bd99954 charger
+Message-ID: <20200325132158.GZ1922688@smile.fi.intel.com>
+References: <cover.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
+ <1bf2431b80489ae412e774519a92616a9aa2bcca.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
+ <20200324095024.GE1922688@smile.fi.intel.com>
+ <20200324103557.GH1922688@smile.fi.intel.com>
+ <4d75bfeab55c04cc3ca751cf7c364c812848e9ed.camel@fi.rohmeurope.com>
+ <20200325120956.GW1922688@smile.fi.intel.com>
+ <d533c18dcd7b4d4ca453661b3f9495a840b3313b.camel@fi.rohmeurope.com>
+ <20200325132033.GY1922688@smile.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200324203231.64324-6-keescook@chromium.org>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <20200325132033.GY1922688@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 01:32:31PM -0700, Kees Cook wrote:
-> Allow for a randomized stack offset on a per-syscall basis, with roughly
-> 5 bits of entropy.
+On Wed, Mar 25, 2020 at 03:20:33PM +0200, andriy.shevchenko@linux.intel.com wrote:
+> On Wed, Mar 25, 2020 at 01:00:21PM +0000, Vaittinen, Matti wrote:
+
+> But why?
 > 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+> You really uglify the code with ifdeffery, make a dependency to OF (yes, you
+> will have to have of.h include) only because of that silly
+> macro and save 64 bytes of memory footprint.
 
-Just to check, do you have an idea of the impact on arm64? Patch 3 had
-figures for x86 where it reads the TSC, and it's unclear to me how
-get_random_int() compares to that.
+And on top of that for !OF configuration you prevent your driver to be usable.
+(Consider PRP0001 ACPI case, for example)
 
-Otherwise, this looks sound to me; I'd jsut like to know whether the
-overhead is in the same ballpark.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks
-Mark.
 
-> ---
->  arch/arm64/Kconfig          |  1 +
->  arch/arm64/kernel/syscall.c | 10 ++++++++++
->  2 files changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 0b30e884e088..4d5aa4959f72 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -127,6 +127,7 @@ config ARM64
->  	select HAVE_ARCH_MMAP_RND_BITS
->  	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
->  	select HAVE_ARCH_PREL32_RELOCATIONS
-> +	select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
->  	select HAVE_ARCH_SECCOMP_FILTER
->  	select HAVE_ARCH_STACKLEAK
->  	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
-> diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
-> index a12c0c88d345..238dbd753b44 100644
-> --- a/arch/arm64/kernel/syscall.c
-> +++ b/arch/arm64/kernel/syscall.c
-> @@ -5,6 +5,7 @@
->  #include <linux/errno.h>
->  #include <linux/nospec.h>
->  #include <linux/ptrace.h>
-> +#include <linux/randomize_kstack.h>
->  #include <linux/syscalls.h>
->  
->  #include <asm/daifflags.h>
-> @@ -42,6 +43,8 @@ static void invoke_syscall(struct pt_regs *regs, unsigned int scno,
->  {
->  	long ret;
->  
-> +	add_random_kstack_offset();
-> +
->  	if (scno < sc_nr) {
->  		syscall_fn_t syscall_fn;
->  		syscall_fn = syscall_table[array_index_nospec(scno, sc_nr)];
-> @@ -51,6 +54,13 @@ static void invoke_syscall(struct pt_regs *regs, unsigned int scno,
->  	}
->  
->  	regs->regs[0] = ret;
-> +
-> +	/*
-> +	 * Since the compiler chooses a 4 bit alignment for the stack,
-> +	 * let's save one additional bit (9 total), which gets us up
-> +	 * near 5 bits of entropy.
-> +	 */
-> +	choose_random_kstack_offset(get_random_int() & 0x1FF);
->  }
->  
->  static inline bool has_syscall_work(unsigned long flags)
-> -- 
-> 2.20.1
-> 
