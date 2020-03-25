@@ -2,115 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BCA9193545
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 02:30:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5793C193577
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 02:57:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbgCZBaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 21:30:23 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:36544 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727574AbgCZBaW (ORCPT
+        id S1727725AbgCZB5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 21:57:53 -0400
+Received: from labrats.qualcomm.com ([199.106.110.90]:22961 "EHLO
+        labrats.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727595AbgCZB5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 21:30:22 -0400
-Received: by mail-il1-f196.google.com with SMTP id p13so3883168ilp.3;
-        Wed, 25 Mar 2020 18:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I4cuIyu/omhcY8YXZWH8kJbJw98P2odDZvIJixI3E5g=;
-        b=jaKrd7YeEmGbkjFUbycPVv8pzEL0/SFIVCzSjpQZ96Iuv3hPdGPt1l6mKlf47WBfmE
-         qFeo2ulVWGfETdv9DMIt71jhTXrfBp8/Yu6Y7zqGI6vX0ehO8sPCT0+S+iguxMQqZ6v7
-         eSqk1+fxqRO1qt8tr2AFr+A94Acnluya/W481EEf7o95wi4IsQ8ZCzn0UyU+z8STQ6P4
-         /vvhsy4CCxe0PrVAzMRZFKsSN6KsVQE2akCDV+GGwlCtlFctwI1tKT6M2VGefs9FDKhO
-         Fb1Yr9rSl4rrh4EPdZmie6Nc8dLiknA15Pi9x8JmaRxFBtcjlx/6vm3r+So9s/UrE111
-         mPOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I4cuIyu/omhcY8YXZWH8kJbJw98P2odDZvIJixI3E5g=;
-        b=KMQjxxm/g46zqTmqOCA65UDKW2XFUEaZ6l3+uXjjL8IHIxRaMpBymlb03wpZmeM31v
-         mym3DF78oyadEOVo6cE8n2g3rpGDnyFcAlrwDsWoitNUUmw5xm2T/DAmY/EJoOMdVM45
-         M+DjZig4VoCjJoC6Hdm+g81CyudF2tMe31Njcqe/jWL6BgBsnNscEJiURXQXU36xVPpX
-         PmGJZWWoeZb5SNR3uIuI17Rj34lovFQ5PVIxYJssZ2LR7NsvpQ9abforwRmPW6edJgTA
-         wZfr1VvqnuUOd7CSp2USlbFwYA0YZF5LlvLYv7GEvh3QgzhW9NHR35zDySB//dqKtNGr
-         eTsw==
-X-Gm-Message-State: ANhLgQ2zfAfyDPgSG9l3ZR9mzS84Xe+eHlCnahjL3O0TMLkboBDlhUPK
-        WfyPbfaSsfqy0XL5kb6JG1JAQCiCTWWr1ZCQG1E=
-X-Google-Smtp-Source: ADFU+vvQ1cFsu4Vlqoe+cIiB4q/YXbv5CPv+Ezun8ZBdyo1Ogg/A/M7m+45lL04KZu4gIws0RFKSq0cHZuZuBIGi2l4=
-X-Received: by 2002:a92:83ca:: with SMTP id p71mr5896717ilk.278.1585186221583;
- Wed, 25 Mar 2020 18:30:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200322090425.6253-1-hqjagain@gmail.com> <20200326001416.GH3756@localhost.localdomain>
-In-Reply-To: <20200326001416.GH3756@localhost.localdomain>
-From:   Qiujun Huang <hqjagain@gmail.com>
-Date:   Thu, 26 Mar 2020 09:30:08 +0800
-Message-ID: <CAJRQjoeWUHj7Ep5ycTxVJVuxmhzrzXx=-rP_h=hCCrBvgTUNEg@mail.gmail.com>
-Subject: Re: [PATCH v4] sctp: fix refcount bug in sctp_wfree
-To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, vyasevich@gmail.com,
-        nhorman@tuxdriver.com, Jakub Kicinski <kuba@kernel.org>,
-        linux-sctp@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, anenbupt@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 25 Mar 2020 21:57:53 -0400
+IronPort-SDR: yZMJ6JjWQeGjfBCABy+Mg6DVJ764FG52ODPBJkbYnHraKNtEFvS856oOvJZjeH2dcWncTAr2Ep
+ GTZ6cjf7NqfdT3wvzW8ZtkkUgC/sAFNoo/pdj6QwbakHh94+gF6oo/5Lvxb8J0O/RrXL5jqKAq
+ 4lU/7nXepRcyFB37dofXjLc2egmEUxP+wu54a2gQIf3mzTZJ6r0t1YbRWSNfPiGBroXK/wdN5F
+ 7QX4Rc7ld2tRUxzCXcYavUsz1lpjWwERRiG493Pwi3f8YBe7tRjMuMTu9KCLX284WWqgWJGaM4
+ 0Sc=
+X-IronPort-AV: E=Sophos;i="5.72,303,1580803200"; 
+   d="scan'208";a="28615552"
+Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
+  by labrats.qualcomm.com with ESMTP; 25 Mar 2020 02:25:00 -0700
+Received: from pacamara-linux.qualcomm.com ([192.168.140.135])
+  by ironmsg05-sd.qualcomm.com with ESMTP; 25 Mar 2020 02:24:59 -0700
+Received: by pacamara-linux.qualcomm.com (Postfix, from userid 359480)
+        id A873A3A9C; Wed, 25 Mar 2020 02:24:59 -0700 (PDT)
+From:   Can Guo <cang@codeaurora.org>
+To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org (open list),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support),
+        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support)
+Subject: [PATCH v5 2/2] scsi: ufs: Do not rely on prefetched data
+Date:   Wed, 25 Mar 2020 02:23:39 -0700
+Message-Id: <1585128220-26128-3-git-send-email-cang@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1585128220-26128-1-git-send-email-cang@codeaurora.org>
+References: <1585128220-26128-1-git-send-email-cang@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 8:14 AM Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
->
-> On Sun, Mar 22, 2020 at 05:04:25PM +0800, Qiujun Huang wrote:
-> > sctp_sock_migrate should iterate over the datamsgs to modify
-> > all trunks(skbs) to newsk. For this, out_msg_list is added to
->
-> s/trunks/chunks/
+We were setting bActiveICCLevel attribute for UFS device only once but
+type of this attribute has changed from persistent to volatile since UFS
+device specification v2.1. This attribute is set to the default value after
+power cycle or hardware reset event. It isn't safe to rely on prefetched
+data (only used for bActiveICCLevel attribute now). Hence this change
+removes the code related to data prefetching and set this parameter on
+every attempt to probe the UFS device.
 
-My :p.
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Reviewed-by: Stanley Chu <stanley.chu@mediatek.com>
+Tested-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+---
+ drivers/scsi/ufs/ufshcd.c | 26 +++++++++++++++-----------
+ drivers/scsi/ufs/ufshcd.h | 11 -----------
+ 2 files changed, 15 insertions(+), 22 deletions(-)
 
->
-> > sctp_outq to maintain datamsgs list.
->
-> It is an interesting approach. It speeds up the migration, yes, but it
-> will also use more memory per datamsg, for an operation that, when
-> performed, the socket is usually calm.
->
-> It's also another list to be handled, and I'm not seeing the patch
-> here move the datamsg itself now to the new outq. It would need
-> something along these lines:
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 9c26f82..b747c17 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6458,11 +6458,12 @@ static u32 ufshcd_find_max_sup_active_icc_level(struct ufs_hba *hba,
+ 	return icc_level;
+ }
+ 
+-static void ufshcd_init_icc_levels(struct ufs_hba *hba)
++static void ufshcd_set_active_icc_lvl(struct ufs_hba *hba)
+ {
+ 	int ret;
+ 	int buff_len = hba->desc_size.pwr_desc;
+ 	u8 *desc_buf;
++	u32 icc_level;
+ 
+ 	desc_buf = kmalloc(buff_len, GFP_KERNEL);
+ 	if (!desc_buf)
+@@ -6477,20 +6478,17 @@ static void ufshcd_init_icc_levels(struct ufs_hba *hba)
+ 		goto out;
+ 	}
+ 
+-	hba->init_prefetch_data.icc_level =
+-			ufshcd_find_max_sup_active_icc_level(hba,
+-			desc_buf, buff_len);
+-	dev_dbg(hba->dev, "%s: setting icc_level 0x%x",
+-			__func__, hba->init_prefetch_data.icc_level);
++	icc_level = ufshcd_find_max_sup_active_icc_level(hba, desc_buf,
++							 buff_len);
++	dev_dbg(hba->dev, "%s: setting icc_level 0x%x", __func__, icc_level);
+ 
+ 	ret = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+-		QUERY_ATTR_IDN_ACTIVE_ICC_LVL, 0, 0,
+-		&hba->init_prefetch_data.icc_level);
++		QUERY_ATTR_IDN_ACTIVE_ICC_LVL, 0, 0, &icc_level);
+ 
+ 	if (ret)
+ 		dev_err(hba->dev,
+ 			"%s: Failed configuring bActiveICCLevel = %d ret = %d",
+-			__func__, hba->init_prefetch_data.icc_level , ret);
++			__func__, icc_level, ret);
+ 
+ out:
+ 	kfree(desc_buf);
+@@ -6996,8 +6994,6 @@ static int ufshcd_add_lus(struct ufs_hba *hba)
+ {
+ 	int ret;
+ 
+-	ufshcd_init_icc_levels(hba);
+-
+ 	/* Add required well known logical units to scsi mid layer */
+ 	ret = ufshcd_scsi_add_wlus(hba);
+ 	if (ret)
+@@ -7095,6 +7091,14 @@ static int ufshcd_probe_hba(struct ufs_hba *hba, bool async)
+ 		}
+ 	}
+ 
++	/*
++	 * bActiveICCLevel is volatile for UFS device (as per latest v2.1 spec)
++	 * and for removable UFS card as well, hence always set the parameter.
++	 * Note: Error handler may issue the device reset hence resetting
++	 * bActiveICCLevel as well so it is always safe to set this here.
++	 */
++	ufshcd_set_active_icc_lvl(hba);
++
+ 	/* set the state as operational after switching to desired gear */
+ 	hba->ufshcd_state = UFSHCD_STATE_OPERATIONAL;
+ 
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index d45a044..5652d39 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -404,15 +404,6 @@ struct ufs_clk_scaling {
+ 	bool is_suspended;
+ };
+ 
+-/**
+- * struct ufs_init_prefetch - contains data that is pre-fetched once during
+- * initialization
+- * @icc_level: icc level which was read during initialization
+- */
+-struct ufs_init_prefetch {
+-	u32 icc_level;
+-};
+-
+ #define UFS_ERR_REG_HIST_LENGTH 8
+ /**
+  * struct ufs_err_reg_hist - keeps history of errors
+@@ -544,7 +535,6 @@ enum ufshcd_quirks {
+  * @intr_mask: Interrupt Mask Bits
+  * @ee_ctrl_mask: Exception event control mask
+  * @is_powered: flag to check if HBA is powered
+- * @init_prefetch_data: data pre-fetched during initialization
+  * @eh_work: Worker to handle UFS errors that require s/w attention
+  * @eeh_work: Worker to handle exception events
+  * @errors: HBA errors
+@@ -632,7 +622,6 @@ struct ufs_hba {
+ 	u32 intr_mask;
+ 	u16 ee_ctrl_mask;
+ 	bool is_powered;
+-	struct ufs_init_prefetch init_prefetch_data;
+ 
+ 	/* Work Queues */
+ 	struct work_struct eh_work;
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-Are all the rx chunks in the rx queues?
-
-> sctp_sock_migrate()
-> {
-> ...
->         /* Move any messages in the old socket's receive queue that are for the
->          * peeled off association to the new socket's receive queue.
->          */
->         sctp_skb_for_each(skb, &oldsk->sk_receive_queue, tmp) {
->                 event = sctp_skb2event(skb);
-> ...
->                 /* Walk through the pd_lobby, looking for skbs that
->                  * need moved to the new socket.
->                  */
->                 sctp_skb_for_each(skb, &oldsp->pd_lobby, tmp) {
->                         event = sctp_skb2event(skb);
->
-> That said, I don't think it's worth this new list.
-
-About this case:
-datamsg
-                   ->chunk0                       chunk1
-       chunk2
- queue          ->transmitted                 ->retransmit
- ->not in any queue
-
-Also need to maintain a datamsg list to record which datamsg is
-processed avoiding repetitive
-processing.
-So, list it to outq. Maybe it will be used sometime.
-
->
->   Marcelo
