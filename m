@@ -2,337 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E1101922B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:30:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DC911922C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:33:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbgCYIaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 04:30:21 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:53463 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727275AbgCYIaU (ORCPT
+        id S1727450AbgCYId3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 04:33:29 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:55797 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727376AbgCYId2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 04:30:20 -0400
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id B52AA231D9;
-        Wed, 25 Mar 2020 09:30:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1585125016;
+        Wed, 25 Mar 2020 04:33:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585125207;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4Sa75AZDjuoGRR7/aAnGm1x34eoqBqwHwvLgzdRS9Iw=;
-        b=HKUyML/MOFe9CMcw7fK52HA8z3eFDlEL39Vi2v7avnRzuZIsLEToXramQIOSN8zLtf80CH
-        qfccl5kwyKLZ1HcnM5qymFiu9ioq7ruQjr2ps2HmwawNadXI9AHLpPKSQuUbEaPIb0s14c
-        nJfTU+YsLIrz3YBkwVJ07GWcpQyoF84=
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=tPDFlQdj8VYweTPWnggqIKOTLY3z3piVcfXmWCzVRUM=;
+        b=QfA0vz8/nIM0g0D7Z9PSrgeBfumCunZln0H126xwGUIk9F+8+oO+Dbzmf+SS02LVc34mNY
+        8o+zg2Ho8xcN4HR7dw1ZYX7kOXHDKmuyXA0nujNZmmeRlcgTq4uzDR+mBsUjhUIJvxqFi1
+        y1oAqChsNEFdnZTAZFaEe3dU8hdZ0d0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-165-4xmb4j9KNTekYa2mn5uV4Q-1; Wed, 25 Mar 2020 04:33:25 -0400
+X-MC-Unique: 4xmb4j9KNTekYa2mn5uV4Q-1
+Received: by mail-wr1-f69.google.com with SMTP id m15so802767wrb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 01:33:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tPDFlQdj8VYweTPWnggqIKOTLY3z3piVcfXmWCzVRUM=;
+        b=YNkGjY8ot/Ds9BUduAiFVHWOG0/yIX3BPaLT1qP46wGwNEcuhkBqdrRYgKAuwST4kA
+         kyxYabhn9NTQHjC+l5lxltNR5kXwE+Re6WQJwjg3wkYJ1aF53aMIETtWM901pFS79YsS
+         WLL9/vroRcOCNVqujBkI16jQjUsbRrreVtXYfb67Pwi5lJrIUv6VJjzF3P0cuD5XyjUo
+         VuUAYwWwskOrEzi9Pv16rqvhdCgyTqhYWXtzwGSQJPV6GK2FQWciFHgTYsADZvgSnxXU
+         4D2lOzeIbuQd3nRjn+dkF1UstZY4pzt/HVh/SIRu/iZ/s80ICGFFwLYHlW4juA1jI1UJ
+         lY+w==
+X-Gm-Message-State: ANhLgQ2b0ZUCFtSubGegY6UvsUNWTumcI9PkKtsU4C/Sr+qneGvibzVs
+        kw6Mkoq9UNvq33BJGzdReyEFclCAxM9p719gHCmdMeUVHN3Xm1cH00BPBisCpF6Eyzwq4serxlM
+        l/fbxro91wAMlx2adCaiGw+25
+X-Received: by 2002:a5d:6a82:: with SMTP id s2mr2183321wru.205.1585125203898;
+        Wed, 25 Mar 2020 01:33:23 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vshmYG1TzvBv5lQipVG7VPJtGxrkEtQs4rrYwizw97mhVW/ki+3UHkEOX30POh7LlxcPhqmBg==
+X-Received: by 2002:a5d:6a82:: with SMTP id s2mr2183298wru.205.1585125203732;
+        Wed, 25 Mar 2020 01:33:23 -0700 (PDT)
+Received: from steredhat.redhat.com (host32-201-dynamic.27-79-r.retail.telecomitalia.it. [79.27.201.32])
+        by smtp.gmail.com with ESMTPSA id f12sm8236732wmh.4.2020.03.25.01.33.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 01:33:23 -0700 (PDT)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: [PATCH liburing] Add test/splice to .gitignore
+Date:   Wed, 25 Mar 2020 09:33:21 +0100
+Message-Id: <20200325083321.16826-1-sgarzare@redhat.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 25 Mar 2020 09:30:14 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Andy Duan <fugang.duan@nxp.com>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [EXT] Re: [PATCH v4 1/4] tty: serial: fsl_lpuart: fix DMA
- operation when using IOMMU
-In-Reply-To: <VI1PR0402MB360011B90343A8008BDB3A3AFFCE0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
-References: <20200306214433.23215-1-michael@walle.cc>
- <20200306214433.23215-2-michael@walle.cc>
- <VI1PR04MB69413E158203E33D42E3B3B3EEF10@VI1PR04MB6941.eurprd04.prod.outlook.com>
- <VI1PR0402MB36001AEE78E0F067D29F2816FFF10@VI1PR0402MB3600.eurprd04.prod.outlook.com>
- <725d2abdcdc0ab05cc1f03028f8a2919@walle.cc>
- <VI1PR0402MB360060ABA69BB138A33C9615FFF10@VI1PR0402MB3600.eurprd04.prod.outlook.com>
- <d9882e8769f234cff634cfdfa9a3dd33@walle.cc>
- <VI1PR0402MB360011B90343A8008BDB3A3AFFCE0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
-Message-ID: <eb5758c9ae3a78954cff0361fa2b5b76@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.10
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: B52AA231D9
-X-Spamd-Result: default: False [1.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[gmail.com];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[12];
-         NEURAL_HAM(-0.00)[-0.625];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         FREEMAIL_CC(0.00)[nxp.com,linuxfoundation.org,kernel.org,vger.kernel.org,suse.com,gmail.com];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ .gitignore | 1 +
+ 1 file changed, 1 insertion(+)
 
-Am 2020-03-25 05:08, schrieb Andy Duan:
-> From: Michael Walle <michael@walle.cc> Sent: Wednesday, March 25, 2020 
-> 12:35 AM
->> Am 2020-03-24 17:28, schrieb Andy Duan:
->> > From: Michael Walle <michael@walle.cc> Sent: Wednesday, March 25,
->> 2020
->> > 12:18 AM
->> >> Am 2020-03-24 17:12, schrieb Andy Duan:
->> >> > From: Leonard Crestez <leonard.crestez@nxp.com> Sent: Tuesday,
->> >> > March 24, 2020 11:27 PM
->> >> >> On 06.03.2020 23:44, Michael Walle wrote:
->> >> >> > The DMA channel might not be available at probe time. This is esp.
->> >> >> > the case if the DMA controller has an IOMMU mapping.
->> >> >> >
->> >> >> > There is also another caveat. If there is no DMA controller at
->> >> >> > all,
->> >> >> > dma_request_chan() will also return -EPROBE_DEFER. Thus we
->> >> >> > cannot test for -EPROBE_DEFER in probe(). Otherwise the lpuart
->> >> >> > driver will fail to probe if, for example, the DMA driver is not
->> >> >> > enabled in the kernel configuration.
->> >> > If DMA driver is not enabled, we should disable DMA controller node
->> >> > in dts file to match current sw environment, then driver doesn't do
->> >> > defer probe.
->> >> >
->> >> > So I still suggest to check -EPROBE_DEFER for
->> >> > dma_request_slave_channel() in
->> >> > .probe() function.
->> >>
->> >> I don't know if I can follow you here. This would lead to non
->> >> functional setups, eg. one build its own kernel with DMA disabled,
->> >> but still have a device tree with the DMA nodes. And besides, the
->> >> current workaround to request the DMA channel in startup() is
->> >> basically working, isn't it? And once the underlying problem is fixed
->> >> (the infinite EPROBE_DEFER), it could be moved back into _probe().
->> >>
->> >> -michael
->> >
->> > I think the user use wrong dtb file. The dtb file doesn't reflect the
->> > real enabled modules. For such case, there have many problems for
->> > syscon,... that other modules depends on them.
->> 
->> But the user doesn't use the wrong dtb. I don't consider having the 
->> DMA
->> channels in the dtb makes it wrong, just because DMA is not enabled in 
->> the
->> kernel. If you'd follow that argument, then the dtb is also wrong if 
->> there is for
->> example a crypto device, although the kernel doesn't have support for 
->> it
->> enabled.
->> 
->> -michael
-> 
-> dma_request_chan() is not atomic context.
-> Even if move it into .startup(), please move it out of spinlock 
-> context.
+diff --git a/.gitignore b/.gitignore
+index 9f85a5f..db163b4 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -74,6 +74,7 @@
+ /test/shared-wq
+ /test/short-read
+ /test/socket-rw
++/test/splice
+ /test/sq-full
+ /test/sq-poll-kthread
+ /test/sq-space_left
+-- 
+2.25.1
 
-Agreed. I'll send a respin of my fixes patches later.
-
--michael
-
-> 
->> 
->> >
->> > So we cannot support wrong usage cases, that is my thought.
->> >
->> > Thanks,
->> > Andy
->> >
->> >>
->> >> >
->> >> > Andy
->> >> >> >
->> >> >> > To workaround this, we request the DMA channel in _startup().
->> >> >> > Other serial drivers do it the same way.
->> >> >> >
->> >> >> > Signed-off-by: Michael Walle <michael@walle.cc>
->> >> >>
->> >> >> This appears to cause boot hangs on imx8qxp-mek (boards boots fine
->> >> >> on
->> >> >> next-20200324 if this patch is reverted)
->> >> >>
->> >> >> > ---
->> >> >> >   drivers/tty/serial/fsl_lpuart.c | 88
->> >> +++++++++++++++++++++------------
->> >> >> >   1 file changed, 57 insertions(+), 31 deletions(-)
->> >> >> >
->> >> >> > diff --git a/drivers/tty/serial/fsl_lpuart.c
->> >> >> > b/drivers/tty/serial/fsl_lpuart.c index
->> >> >> > c31b8f3db6bf..33798df4d727
->> >> >> > 100644
->> >> >> > --- a/drivers/tty/serial/fsl_lpuart.c
->> >> >> > +++ b/drivers/tty/serial/fsl_lpuart.c
->> >> >> > @@ -1493,36 +1493,67 @@ static void rx_dma_timer_init(struct
->> >> >> lpuart_port *sport)
->> >> >> >   static void lpuart_tx_dma_startup(struct lpuart_port *sport)
->> >> >> >   {
->> >> >> >    u32 uartbaud;
->> >> >> > +  int ret;
->> >> >> >
->> >> >> > -  if (sport->dma_tx_chan
->> && !lpuart_dma_tx_request(&sport->port)) {
->> >> >> > -          init_waitqueue_head(&sport->dma_wait);
->> >> >> > -          sport->lpuart_dma_tx_use = true;
->> >> >> > -          if (lpuart_is_32(sport)) {
->> >> >> > -                  uartbaud = lpuart32_read(&sport->port,
->> >> UARTBAUD);
->> >> >> > -                  lpuart32_write(&sport->port,
->> >> >> > -                                 uartbaud |
->> >> UARTBAUD_TDMAE, UARTBAUD);
->> >> >> > -          } else {
->> >> >> > -                  writeb(readb(sport->port.membase +
->> UARTCR5)
->> >> |
->> >> >> > -                          UARTCR5_TDMAS,
->> >> sport->port.membase + UARTCR5);
->> >> >> > -          }
->> >> >> > +  sport->dma_tx_chan = dma_request_chan(sport->port.dev, "tx");
->> >> >> > + if (IS_ERR(sport->dma_tx_chan)) {
->> >> >> > +          dev_info_once(sport->port.dev,
->> >> >> > +                        "DMA tx channel request failed,
->> >> >> > + operating without tx
->> >> >> DMA (%ld)\n",
->> >> >> > +                        PTR_ERR(sport->dma_tx_chan));
->> >> >>
->> >> >> It seems that this since this is called from lpuart32_startup with
->> >> >> &sport->port.lock held and lpuart32_console_write takes the same
->> >> >> lock it can and hang.
->> >> >>
->> >> >> As a workaround I can just remove this print but there are other
->> >> >> possible error conditions in dmaengine code which can cause a printk.
->> >> >>
->> >> >> Maybe the port lock should only be held around register manipulation?
->> >> >>
->> >> >> > +          sport->dma_tx_chan = NULL;
->> >> >> > +          goto err;
->> >> >> > +  }
->> >> >> > +
->> >> >> > +  ret = lpuart_dma_tx_request(&sport->port);
->> >> >> > +  if (!ret)
->> >> >> > +          goto err;
->> >> >>
->> >> >> This is backwards: lpuart_dma_tx_request returns negative errno on
->> >> >> failure.
->> >> >>
->> >> >> > +
->> >> >> > +  init_waitqueue_head(&sport->dma_wait);
->> >> >> > +  sport->lpuart_dma_tx_use = true;  if (lpuart_is_32(sport)) {
->> >> >> > +          uartbaud = lpuart32_read(&sport->port, UARTBAUD);
->> >> >> > +          lpuart32_write(&sport->port,
->> >> >> > +                         uartbaud | UARTBAUD_TDMAE,
->> >> UARTBAUD);
->> >> >> >    } else {
->> >> >> > -          sport->lpuart_dma_tx_use = false;
->> >> >> > +          writeb(readb(sport->port.membase + UARTCR5) |
->> >> >> > +                 UARTCR5_TDMAS, sport->port.membase +
->> >> UARTCR5);
->> >> >> >    }
->> >> >> > +
->> >> >> > +  return;
->> >> >> > +
->> >> >> > +err:
->> >> >> > +  sport->lpuart_dma_tx_use = false;
->> >> >> >   }
->> >> >> >
->> >> >> >   static void lpuart_rx_dma_startup(struct lpuart_port *sport)
->> >> >> >   {
->> >> >> > -  if (sport->dma_rx_chan && !lpuart_start_rx_dma(sport)) {
->> >> >> > -          /* set Rx DMA timeout */
->> >> >> > -          sport->dma_rx_timeout =
->> >> msecs_to_jiffies(DMA_RX_TIMEOUT);
->> >> >> > -          if (!sport->dma_rx_timeout)
->> >> >> > -                  sport->dma_rx_timeout = 1;
->> >> >> > +  int ret;
->> >> >> >
->> >> >> > -          sport->lpuart_dma_rx_use = true;
->> >> >> > -          rx_dma_timer_init(sport);
->> >> >> > -  } else {
->> >> >> > -          sport->lpuart_dma_rx_use = false;
->> >> >> > +  sport->dma_rx_chan = dma_request_chan(sport->port.dev, "rx");
->> >> >> > + if (IS_ERR(sport->dma_rx_chan)) {
->> >> >> > +          dev_info_once(sport->port.dev,
->> >> >> > +                        "DMA rx channel request failed,
->> >> >> > + operating without rx
->> >> >> DMA (%ld)\n",
->> >> >> > +                        PTR_ERR(sport->dma_rx_chan));
->> >> >> > +          sport->dma_rx_chan = NULL;
->> >> >> > +          goto err;
->> >> >> >    }
->> >> >> > +
->> >> >> > +  ret = lpuart_start_rx_dma(sport);  if (ret)
->> >> >> > +          goto err;
->> >> >>
->> >> >> This is not backwards.
->> >> >>
->> >> >> > +
->> >> >> > +  /* set Rx DMA timeout */
->> >> >> > +  sport->dma_rx_timeout = msecs_to_jiffies(DMA_RX_TIMEOUT);
->> if
->> >> >> > + (!sport->dma_rx_timeout)
->> >> >> > +          sport->dma_rx_timeout = 1;
->> >> >> > +
->> >> >> > +  sport->lpuart_dma_rx_use = true;  rx_dma_timer_init(sport);
->> >> >> > +
->> >> >> > +  return;
->> >> >> > +
->> >> >> > +err:
->> >> >> > +  sport->lpuart_dma_rx_use = false;
->> >> >> >   }
->> >> >> >
->> >> >> >   static int lpuart_startup(struct uart_port *port) @@ -1615,6
->> >> >> > +1646,11 @@ static void lpuart_dma_shutdown(struct lpuart_port
->> >> >> > +*sport)
->> >> >> >
->> >> dmaengine_terminate_all(sport->dma_tx_chan);
->> >> >> >            }
->> >> >> >    }
->> >> >> > +
->> >> >> > +  if (sport->dma_tx_chan)
->> >> >> > +          dma_release_channel(sport->dma_tx_chan);
->> >> >> > +  if (sport->dma_rx_chan)
->> >> >> > +          dma_release_channel(sport->dma_rx_chan);
->> >> >> >   }
->> >> >> >
->> >> >> >   static void lpuart_shutdown(struct uart_port *port) @@
->> >> >> > -2520,16
->> >> >> > +2556,6 @@ static int lpuart_probe(struct platform_device *pdev)
->> >> >> >
->> >> >> >    sport->port.rs485_config(&sport->port, &sport->port.rs485);
->> >> >> >
->> >> >> > -  sport->dma_tx_chan =
->> >> >> > dma_request_slave_channel(sport->port.dev,
->> >> >> "tx");
->> >> >> > -  if (!sport->dma_tx_chan)
->> >> >> > -          dev_info(sport->port.dev, "DMA tx channel request
->> failed, "
->> >> >> > -                          "operating without tx DMA\n");
->> >> >> > -
->> >> >> > -  sport->dma_rx_chan =
->> >> >> > dma_request_slave_channel(sport->port.dev,
->> >> >> "rx");
->> >> >> > -  if (!sport->dma_rx_chan)
->> >> >> > -          dev_info(sport->port.dev, "DMA rx channel request
->> failed, "
->> >> >> > -                          "operating without rx DMA\n");
->> >> >> > -
->> >> >> >    return 0;
->> >> >> >
->> >> >> >   failed_attach_port:
->> >> >> >
