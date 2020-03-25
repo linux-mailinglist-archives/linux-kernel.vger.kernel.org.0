@@ -2,90 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF608192B1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:29:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6B07192B27
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 15:31:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbgCYO3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 10:29:41 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44748 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbgCYO3k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 10:29:40 -0400
-Received: by mail-wr1-f65.google.com with SMTP id m17so3324034wrw.11;
-        Wed, 25 Mar 2020 07:29:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xK7fLCOSSVH8HJsoEd66t540+DpWVzc878w2lJBoIek=;
-        b=dnhA39pPS/8f9/GN4xySx8k7TPWXzL46VPbs9cs2YTPSOW0TMM0Zc5RAKWpi8ubbjS
-         J3/VtH4BlMyBK0F0QCM7VU2icxTHO95RG7tBOvggCI5ezG16ZL49l5G2tajqAADKWOrv
-         3mm+gOaLKO3JqTMfaFKI09BS4HZHdH9pdXocjwW/gcxOi8JnXRa11h4S/ol7SQP9hpbG
-         6JS2AK0mk9GTLZVzdSzP9l3RnJ3EjlHvbHoEA5JH5k9clj05VAbuKM2PkrM9hghA5ewb
-         Mu4yn8kwqFpihtHmp36JejyF+OoF2dVzXbAT5BdU57MMuF46eg8GexqwoDh6n7EeDmIk
-         gK7A==
-X-Gm-Message-State: ANhLgQ2jmk2HTGh6qtsi7cSYi9Sl+5jIPvi/BkoVyr6S/RQymBTesLiv
-        W75uidHapuogiyVDAmRfY8RGNjUR
-X-Google-Smtp-Source: ADFU+vvV+iXXv1GpZUfxs9nW5CvCN4kTMNBy1SnvAwfCo+uprHM46YrQo6ZhbZ/Dwea7ETji/N05WQ==
-X-Received: by 2002:a5d:4683:: with SMTP id u3mr3723218wrq.248.1585146578476;
-        Wed, 25 Mar 2020 07:29:38 -0700 (PDT)
-Received: from localhost (ip-37-188-135-150.eurotel.cz. [37.188.135.150])
-        by smtp.gmail.com with ESMTPSA id b15sm33619364wru.70.2020.03.25.07.29.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 07:29:37 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 15:29:36 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Guilherme G . Piccoli" <gpiccoli@canonical.com>
-Subject: Re: [RFC v2 2/2] kernel/sysctl: support handling command line aliases
-Message-ID: <20200325142936.GC19542@dhcp22.suse.cz>
-References: <20200325120345.12946-1-vbabka@suse.cz>
- <20200325120345.12946-2-vbabka@suse.cz>
+        id S1727736AbgCYObG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 10:31:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34700 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727501AbgCYObF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 10:31:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 6FEC1AD0F;
+        Wed, 25 Mar 2020 14:31:03 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 87AE71E10FB; Wed, 25 Mar 2020 15:31:02 +0100 (CET)
+Date:   Wed, 25 Mar 2020 15:31:02 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Xing Zhengjun <zhengjun.xing@linux.intel.com>
+Cc:     Rong Chen <rong.a.chen@intel.com>, Jan Kara <jack@suse.cz>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        lkp@lists.01.org
+Subject: Re: [LKP] Re: [ext4] b1b4705d54: filebench.sum_bytes_mb/s -20.2%
+ regression
+Message-ID: <20200325143102.GJ28951@quack2.suse.cz>
+References: <20191224005915.GW2760@shao2-debian>
+ <20200107134106.GD25547@quack2.suse.cz>
+ <20200107165708.GA3619@mit.edu>
+ <20200107172824.GK25547@quack2.suse.cz>
+ <fde1ad11-c9b0-4393-a123-3f7625c819fa@intel.com>
+ <7ec6b078-7b09-fb87-8ad2-a328e96c5bf9@linux.intel.com>
+ <49a59199-53af-206f-d07c-5c8c45f498b3@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200325120345.12946-2-vbabka@suse.cz>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <49a59199-53af-206f-d07c-5c8c45f498b3@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both patches look really great to me. I haven't really checked all the
-details but from a quick glance they both seem ok.
+On Wed 25-03-20 13:50:09, Xing Zhengjun wrote:
+> ping...
+> The issue still exists in v5.6-rc7.
 
-I would just add a small clarification here. Unless I am mistaken
-early_param is called earlier than it would be now. But that shouldn't
-cause any problems because the underlying implementation is just a noop
-for backward compatibility.
+So I have tried again to reproduce this so that I can look into the
+regression. When observing what is actually happening in the system I have
+to say that this workfile (or actually its implementation in filebench) is
+pretty dubious. The problem is that filebench first creates the files by
+writing them through ordinary write(2). Then it immediately starts reading
+the files with direct IO read. So what happens is that by the time direct
+IO read is running, the system is still writing back the create files and
+depending on how read vs writes get scheduled, you get different results.
+Also direct IO read will first flush the range it is going to read from the
+page cache so to some extent this is actually parallel small ranged
+fsync(2) benchmark. Finally differences in how we achieve integrity of
+direct IO reads with dirty page cache are going to impact this benchmark.
 
-Thanks a lot this looks like a very nice improvement.
+So overall can now see why this commit makes a difference but the workload
+is IMHO largely irrelevant. What would make sense is to run filebench once,
+then unmount & mount the fs to force files to disk and clear page cache and
+then run it again. Filebench will reuse the files in this case and then
+parallel direct IO readers without page cache are a sensible workload. But
+I didn't see any difference in that (even with rotating disk) on my
+machines.
 
-On Wed 25-03-20 13:03:45, Vlastimil Babka wrote:
-[...]
-> -static __init int setup_numa_zonelist_order(char *s)
-> -{
-> -	if (!s)
-> -		return 0;
-> -
-> -	return __parse_numa_zonelist_order(s);
-> -}
-> -early_param("numa_zonelist_order", setup_numa_zonelist_order);
-> -
->  char numa_zonelist_order[] = "Node";
->  
->  /*
+								Honza
+> 
+> On 3/4/2020 4:15 PM, Xing Zhengjun wrote:
+> > Hi Matthew,
+> > 
+> >   We test it in v5.6-rc4, the issue still exist, do you have time to
+> > take a look at this? Thanks.
+> > 
+> > On 1/8/2020 10:31 AM, Rong Chen wrote:
+> > > 
+> > > 
+> > > On 1/8/20 1:28 AM, Jan Kara wrote:
+> > > > On Tue 07-01-20 11:57:08, Theodore Y. Ts'o wrote:
+> > > > > On Tue, Jan 07, 2020 at 02:41:06PM +0100, Jan Kara wrote:
+> > > > > > Hello,
+> > > > > > 
+> > > > > > On Tue 24-12-19 08:59:15, kernel test robot wrote:
+> > > > > > > FYI, we noticed a -20.2% regression of
+> > > > > > > filebench.sum_bytes_mb/s due to commit:
+> > > > > > > 
+> > > > > > > 
+> > > > > > > commit: b1b4705d54abedfd69dcdf42779c521aa1e0fbd3
+> > > > > > > ("ext4: introduce direct I/O read using iomap
+> > > > > > > infrastructure")
+> > > > > > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git
+> > > > > > > master
+> > > > > > > 
+> > > > > > > in testcase: filebench
+> > > > > > > on test machine: 8 threads Intel(R) Core(TM) i7-4770
+> > > > > > > CPU @ 3.40GHz with 8G memory
+> > > > > > > with following parameters:
+> > > > > > > 
+> > > > > > >     disk: 1HDD
+> > > > > > >     fs: ext4
+> > > > > > >     test: fivestreamreaddirect.f
+> > > > > > >     cpufreq_governor: performance
+> > > > > > >     ucode: 0x27
+> > > > > > I was trying to reproduce this but I failed with my test
+> > > > > > VM. I had SATA SSD
+> > > > > > as a backing store though so maybe that's what makes a
+> > > > > > difference. Maybe
+> > > > > > the new code results in somewhat more seeks because the
+> > > > > > five threads which
+> > > > > > compete in submitting sequential IO end up being more interleaved?
+> > > > > A "-20.2% regression" should be read as a "20.2% performance
+> > > > > improvement" is zero-day kernel speak.
+> > > > Are you sure? I can see:
+> > > > 
+> > > >       58.30 ±  2%     -20.2%      46.53        filebench.sum_bytes_mb/s
+> > > > 
+> > > > which implies to me previously the throughput was 58 MB/s and after the
+> > > > commit it was 46 MB/s?
+> > > > 
+> > > > Anyway, in my testing that commit made no difference in that benchmark
+> > > > whasoever (getting around 97 MB/s for each thread before and after the
+> > > > commit).
+> > > >                                 Honza
+> > > 
+> > > We're sorry for the misunderstanding, "-20.2%" means the change of
+> > > filebench.sum_bytes_mb/s,
+> > > "regression" means the explanation of this change from LKP.
+> > > 
+> > > Best Regards,
+> > > Rong Chen
+> > > _______________________________________________
+> > > LKP mailing list -- lkp@lists.01.org
+> > > To unsubscribe send an email to lkp-leave@lists.01.org
+> > 
+> 
 > -- 
-> 2.25.1
-
+> Zhengjun Xing
 -- 
-Michal Hocko
-SUSE Labs
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
