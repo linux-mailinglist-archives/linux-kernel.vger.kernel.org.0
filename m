@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94CD5192FD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:50:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2E86192FD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 18:50:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbgCYRuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 13:50:13 -0400
+        id S1728214AbgCYRtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 13:49:53 -0400
 Received: from mga12.intel.com ([192.55.52.136]:57499 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728016AbgCYRtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 13:49:49 -0400
-IronPort-SDR: MlLRqTQ90UIADaZH97SZaKC299uiL23JTN5VD/UcPRJnvekooqJOERE0ccKYcs0+H4MdS++64T
- AI88UcyZ6K/g==
+        id S1728069AbgCYRtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 13:49:50 -0400
+IronPort-SDR: 7Q3VCDn5zsvOCWl1Czg3M1U/2Hh1Ijo4i0tYNy/H4ZYmQxtx40oS8HzjL70zta0lJegz7XkA/c
+ a650s5v3VODQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
   by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 10:49:48 -0700
-IronPort-SDR: FyphclGVm5V81A6G3RXjmm0rg4SKc3eOufZuMQh2n9LhFiZ5k5seYy3QHrRz/6E35DntrVtHnx
- UN7QJkivNSaw==
+IronPort-SDR: BihTnyWnSBPc+OwyYlWCAPoMgLHJvTnwNeKA8KxGMt7J0VxYvhkJLlGZ7bnDac4xgABtMwbQQC
+ 2mWvpE41GAkg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,305,1580803200"; 
-   d="scan'208";a="393702200"
+   d="scan'208";a="393702203"
 Received: from jacob-builder.jf.intel.com ([10.7.199.155])
   by orsmga004.jf.intel.com with ESMTP; 25 Mar 2020 10:49:48 -0700
 From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -39,9 +39,9 @@ Cc:     "Yi Liu" <yi.l.liu@intel.com>,
         Jonathan Cameron <jic23@kernel.org>,
         Eric Auger <eric.auger@redhat.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH 04/10] iommu/ioasid: Rename ioasid_set_data to avoid confusion with ioasid_set
-Date:   Wed, 25 Mar 2020 10:55:25 -0700
-Message-Id: <1585158931-1825-5-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH 05/10] iommu/ioasid: Create an IOASID set for host SVA use
+Date:   Wed, 25 Mar 2020 10:55:26 -0700
+Message-Id: <1585158931-1825-6-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
@@ -50,119 +50,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IOASID set refers to a group of IOASIDs that shares the same token.
-ioasid_set_data() function is used to attach a private data to an IOASID,
-rename it to ioasid_attach_data() avoid being confused with the group/set
-concept.
+Bare metal SVA allocates IOASIDs for native process addresses. This
+should be separated from VM allocated IOASIDs thus under its own set.
+
+This patch creates a system IOASID set with its quota set to PID_MAX.
+This is a reasonable default in that SVM capable devices can only bind
+to limited user processes.
 
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- drivers/iommu/intel-svm.c | 11 ++++++-----
- drivers/iommu/ioasid.c    |  6 +++---
- include/linux/ioasid.h    |  4 ++--
- 3 files changed, 11 insertions(+), 10 deletions(-)
+ drivers/iommu/intel-iommu.c | 8 +++++++-
+ drivers/iommu/ioasid.c      | 9 +++++++++
+ include/linux/ioasid.h      | 9 +++++++++
+ 3 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index b6405df6cfb5..1991587fd3fd 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -319,14 +319,15 @@ int intel_svm_bind_gpasid(struct iommu_domain *domain,
- 			svm->gpasid = data->gpasid;
- 			svm->flags |= SVM_FLAG_GUEST_PASID;
- 		}
--		ioasid_set_data(data->hpasid, svm);
-+
-+		ioasid_attach_data(data->hpasid, svm);
- 		INIT_LIST_HEAD_RCU(&svm->devs);
- 		mmput(svm->mm);
- 	}
- 	sdev = kzalloc(sizeof(*sdev), GFP_KERNEL);
- 	if (!sdev) {
- 		if (list_empty(&svm->devs)) {
--			ioasid_set_data(data->hpasid, NULL);
-+			ioasid_attach_data(data->hpasid, NULL);
- 			kfree(svm);
- 		}
- 		ret = -ENOMEM;
-@@ -346,7 +347,7 @@ int intel_svm_bind_gpasid(struct iommu_domain *domain,
- 		 * was allocated in this function.
- 		 */
- 		if (list_empty(&svm->devs)) {
--			ioasid_set_data(data->hpasid, NULL);
-+			ioasid_attach_data(data->hpasid, NULL);
- 			kfree(svm);
- 		}
- 		goto out;
-@@ -375,7 +376,7 @@ int intel_svm_bind_gpasid(struct iommu_domain *domain,
- 		 */
- 		kfree(sdev);
- 		if (list_empty(&svm->devs)) {
--			ioasid_set_data(data->hpasid, NULL);
-+			ioasid_attach_data(data->hpasid, NULL);
- 			kfree(svm);
- 		}
- 		goto out;
-@@ -438,7 +439,7 @@ int intel_svm_unbind_gpasid(struct device *dev, int pasid)
- 				 * that PASID allocated by one guest cannot be
- 				 * used by another.
- 				 */
--				ioasid_set_data(pasid, NULL);
-+				ioasid_attach_data(pasid, NULL);
- 				kfree(svm);
- 			}
- 		}
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index ec3fc121744a..af7a1ef7b31e 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -3511,8 +3511,14 @@ static int __init init_dmars(void)
+ 		goto free_iommu;
+ 
+ 	/* PASID is needed for scalable mode irrespective to SVM */
+-	if (intel_iommu_sm)
++	if (intel_iommu_sm) {
+ 		ioasid_install_capacity(intel_pasid_max_id);
++		/* We should not run out of IOASIDs at boot */
++		if (ioasid_alloc_system_set(PID_MAX_DEFAULT)) {
++			pr_err("Failed to enable host PASID allocator\n");
++			intel_iommu_sm = 0;
++		}
++	}
+ 
+ 	/*
+ 	 * for each drhd
 diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
-index 27ee57f7079b..6265d2dbbced 100644
+index 6265d2dbbced..9135af171a7c 100644
 --- a/drivers/iommu/ioasid.c
 +++ b/drivers/iommu/ioasid.c
-@@ -292,14 +292,14 @@ void ioasid_unregister_allocator(struct ioasid_allocator_ops *ops)
- EXPORT_SYMBOL_GPL(ioasid_unregister_allocator);
+@@ -39,6 +39,9 @@ struct ioasid_data {
+ static ioasid_t ioasid_capacity;
+ static ioasid_t ioasid_capacity_avail;
  
- /**
-- * ioasid_set_data - Set private data for an allocated ioasid
-+ * ioasid_attach_data - Set private data for an allocated ioasid
-  * @ioasid: the ID to set data
-  * @data:   the private data
-  *
-  * For IOASID that is already allocated, private data can be set
-  * via this API. Future lookup can be done via ioasid_find.
-  */
--int ioasid_set_data(ioasid_t ioasid, void *data)
-+int ioasid_attach_data(ioasid_t ioasid, void *data)
++int system_ioasid_sid;
++static DECLARE_IOASID_SET(system_ioasid);
++
+ /* System capacity can only be set once */
+ void ioasid_install_capacity(ioasid_t total)
  {
- 	struct ioasid_data *ioasid_data;
- 	int ret = 0;
-@@ -321,7 +321,7 @@ int ioasid_set_data(ioasid_t ioasid, void *data)
- 
- 	return ret;
+@@ -51,6 +54,12 @@ void ioasid_install_capacity(ioasid_t total)
  }
--EXPORT_SYMBOL_GPL(ioasid_set_data);
-+EXPORT_SYMBOL_GPL(ioasid_attach_data);
+ EXPORT_SYMBOL_GPL(ioasid_install_capacity);
  
- /**
-  * ioasid_alloc - Allocate an IOASID
++int ioasid_alloc_system_set(int quota)
++{
++	return ioasid_alloc_set(&system_ioasid, quota, &system_ioasid_sid);
++}
++EXPORT_SYMBOL_GPL(ioasid_alloc_system_set);
++
+ /*
+  * struct ioasid_allocator_data - Internal data structure to hold information
+  * about an allocator. There are two types of allocators:
 diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
-index be158e03c034..8c82d2625671 100644
+index 8c82d2625671..097b1cc043a3 100644
 --- a/include/linux/ioasid.h
 +++ b/include/linux/ioasid.h
-@@ -39,7 +39,7 @@ void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
- 		  bool (*getter)(void *));
- int ioasid_register_allocator(struct ioasid_allocator_ops *allocator);
+@@ -29,6 +29,9 @@ struct ioasid_allocator_ops {
+ 	void *pdata;
+ };
+ 
++/* Shared IOASID set for reserved for host system use */
++extern int system_ioasid_sid;
++
+ #define DECLARE_IOASID_SET(name) struct ioasid_set name = { 0 }
+ 
+ #if IS_ENABLED(CONFIG_IOASID)
+@@ -41,6 +44,7 @@ int ioasid_register_allocator(struct ioasid_allocator_ops *allocator);
  void ioasid_unregister_allocator(struct ioasid_allocator_ops *allocator);
--int ioasid_set_data(ioasid_t ioasid, void *data);
-+int ioasid_attach_data(ioasid_t ioasid, void *data);
+ int ioasid_attach_data(ioasid_t ioasid, void *data);
  void ioasid_install_capacity(ioasid_t total);
++int ioasid_alloc_system_set(int quota);
  int ioasid_alloc_set(struct ioasid_set *token, ioasid_t quota, int *sid);
  void ioasid_free_set(int sid, bool destroy_set);
-@@ -79,7 +79,7 @@ static inline void ioasid_unregister_allocator(struct ioasid_allocator_ops *allo
+ int ioasid_find_sid(ioasid_t ioasid);
+@@ -88,5 +92,10 @@ static inline void ioasid_install_capacity(ioasid_t total)
  {
  }
  
--static inline int ioasid_set_data(ioasid_t ioasid, void *data)
-+static inline int ioasid_attach_data(ioasid_t ioasid, void *data)
- {
- 	return -ENOTSUPP;
- }
++static inline int ioasid_alloc_system_set(int quota)
++{
++	return -ENOTSUPP;
++}
++
+ #endif /* CONFIG_IOASID */
+ #endif /* __LINUX_IOASID_H */
 -- 
 2.7.4
 
