@@ -2,241 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0737192536
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:14:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 967A8192595
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:29:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbgCYKOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 06:14:43 -0400
-Received: from esa3.hc3370-68.iphmx.com ([216.71.145.155]:6495 "EHLO
-        esa3.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbgCYKOn (ORCPT
+        id S1727498AbgCYK3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 06:29:45 -0400
+Received: from mailgate1.rohmeurope.com ([87.129.152.131]:47664 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbgCYK3o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:14:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1585131283;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=HGOJS2fOv/uszg9zMTZ0Pk+5SqksTTlrIT7p7p7GpNk=;
-  b=ZUJ7PJnhLSDbfiigFXxaQlPdztAaVhQk/czVFL5OykcIBq/miYH92fF0
-   YBtIGcJaymoDARBZHRxhr5Z/J7znuM/hfX+QuXzOvSHBejRpYCdKRoegB
-   KFwV3IS1wjvyVss9U+E9xauxYUl8XOHY0QsTKgGu3lNNJE81xqi4fPO8l
-   Y=;
-Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  andrew.cooper3@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="andrew.cooper3@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa3.hc3370-68.iphmx.com: domain of
-  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="Andrew.Cooper3@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa3.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa3.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: r/duezuPH95hneB0/6WiVnY7dVNcDiDLinZUb8n5MUnf4OrVPpdVF0jTSag0GTB1xkfm3Ubrjl
- 2Br2IgAz9LjqMDwhGObwCn1Lfzw1mDFw0IjvtGT2TCIqUUVEbMm5Zf+I5oK/+vkmb+vOkrWJXc
- h5kwlYMlRzDU7VOb9XZMt1Nxgor5pBpwSsNp7ucLyVvjiR57qDj84b/Bw7N0GSjIpc2CEjH0wj
- 64ZZ4MkvLSazeACNFca1jBl3m5g9jDggi6n+sH9Z+rpIaPVlrc9u/rATgDrmBsoIunkNXXOv1C
- lM8=
-X-SBRS: 2.7
-X-MesageID: 14580578
-X-Ironport-Server: esa3.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.72,304,1580792400"; 
-   d="scan'208";a="14580578"
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-CC:     Andrew Cooper <andrew.cooper3@citrix.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
-        "Jan Kiszka" <jan.kiszka@siemens.com>,
-        James Morris <jmorris@namei.org>,
-        "David Howells" <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Josh Boyer <jwboyer@redhat.com>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <len.brown@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Martin Molnar <martin.molnar.programming@gmail.com>,
-        Pingfan Liu <kernelfans@gmail.com>,
-        <jailhouse-dev@googlegroups.com>
-Subject: [PATCH] x86/smpboot: Remove 486-isms from the modern AP boot path
-Date:   Wed, 25 Mar 2020 10:14:31 +0000
-Message-ID: <20200325101431.12341-1-andrew.cooper3@citrix.com>
-X-Mailer: git-send-email 2.11.0
+        Wed, 25 Mar 2020 06:29:44 -0400
+X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Mar 2020 06:29:43 EDT
+X-AuditID: c0a8fbf4-473ff70000004419-ec-5e7b2f11fcf7
+Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id E5.71.17433.11F2B7E5; Wed, 25 Mar 2020 11:14:41 +0100 (CET)
+Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
+ WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
+ 14.03.0487.000; Wed, 25 Mar 2020 11:14:35 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "brendanhiggins@google.com" <brendanhiggins@google.com>,
+        "olteanv@gmail.com" <olteanv@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "talgi@mellanox.com" <talgi@mellanox.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "davidgow@google.com" <davidgow@google.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+        "bp@suse.de" <bp@suse.de>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+        "zaslonko@linux.ibm.com" <zaslonko@linux.ibm.com>,
+        "Laine, Markus" <Markus.Laine@fi.rohmeurope.com>,
+        "vincenzo.frascino@arm.com" <vincenzo.frascino@arm.com>,
+        "sre@kernel.org" <sre@kernel.org>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "uwe@kleine-koenig.org" <uwe@kleine-koenig.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: [PATCH v6 09/10] power: supply: Support ROHM bd99954 charger
+Thread-Topic: [PATCH v6 09/10] power: supply: Support ROHM bd99954 charger
+Thread-Index: AQHWAbbAyLpT1a+wPEGvvo/J38Wk46hXbxYAgAARjYCAABHKgIABdcUA
+Date:   Wed, 25 Mar 2020 10:14:35 +0000
+Message-ID: <f3490f4e7900e463540330665ecf99737070fedd.camel@fi.rohmeurope.com>
+References: <cover.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
+         <1bf2431b80489ae412e774519a92616a9aa2bcca.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
+         <20200324095024.GE1922688@smile.fi.intel.com>
+         <03f7053576e60632d7ac3bc074afe5d8d63e3714.camel@fi.rohmeurope.com>
+         <20200324115653.GI1922688@smile.fi.intel.com>
+In-Reply-To: <20200324115653.GI1922688@smile.fi.intel.com>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [62.78.225.252]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <95FE951F5583494DB6C37EDE94106DDA@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf1AUVRzv7e7tPtCt5YC510WYV9poCNL0x6txir9qrdGJUWccZwJXWTkC
+        7pi9PUX5I8KDySNHROnq5u5wjvg5BOedJSGnzHnVETMQlYBlCWEO0ASmFEM42C6bwl/72e/n
+        13sz3wdJfRdjhAUWWZQsQpGJjqd6WxaDWxIyynK2Ln6eij2d7TQ+WeEi8MLcLMCnT23CQ6Nn
+        SFw3fovGrrrvAPYMOigcOx+gcH10QIePN3TSuHo6BQ8OBhj8z48fEPjs/WYC/9DtofG9k1GA
+        G0eGCOxpjFG4oXkjDoTmCfznDReFK8NRBoddTTrcf0nGH3nDDA4F60g8cvcnAoeXFigc/vUe
+        wF//tQCy1vHtvnbAX2i9TvBfun9h+C96N/DngnY+1LKZb+iZIvhg2wmar23y6/gbwz00PzMw
+        wPCxjxcpvsbfC3hfXzZ/xdvO8LddV4m3E/et2XZAkA/vKsi3ZLy6f405NvI7UdKhL20MOuhy
+        cCfBCeIg4l5CQ61OQsV67hpAgfPPOUG8gmMALU34FQJCmtuGnNcZVZPEvYX+nRkFqobkfBBN
+        9H2vU38e4yIUqg/5lpMSue2o5aZKqI43UXNVmNbw66jCESXVUIrbgH47VaaOWW4n+qzCQWrF
+        /QR6v9IDVCKOewVdc9QtZwLuaXSifGYZk5wBBW/P67QbcOjTnkFSw8loamLp//l6dHG+g1K7
+        SG4T6uzO0KxZaCz8M63h9ehs9TijnSEB9X1yi6oBBveqBveK273K7V7ldq9ynwO6NoCKhYKi
+        fEEWM9Ml0Z4uWc3FyuegtTgItE2c6wIPItsjgIAgAp6EhCmZdaWV5egfP2DNO2oWbOZcyV4k
+        2iIAQdKUxIbE0hw9myccPSZK1ofUU5AyGdjnx0+/o+fUrkJRLBGlh2wKhCbEOtTQBEnMF0sP
+        FRTJKzQB49TweGOSTbTkiZJgl8256q7k2pRlUam1Sq8rXbGzthKhWJlq1m/BC7BmyusnYdTb
+        6Cf1lMVqEY0GtmmLIuVUqdlueVQ0DQwQmBLZnSq7VnmOj3KmlQpCqch3H1ErZGGFMpYD4u8n
+        Us58NXvhvcz7naPv7kmtv3wzraX2w2xMO3HyN9aUB8NtW4/vXrh05WDX4uE70osdkbnJSCDL
+        V1X2bOueyavxtd69gns4jZRh4NiOqsqlyW5jqyG8TgqM7XvNko4KrdV5XalySUV2IbX/jWea
+        +3MmzMa7u/4Yk+lZ5sjLHdBE2cxC5mZSsgn/AayVSkJLBAAA
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linux has an implementation of the Universal Start-up Algorithm (MP spec,
-Appendix B.4, Application Processor Startup), which includes unconditionally
-writing to the Bios Data Area and CMOS registers.
-
-The warm reset vector is only necessary in the non-integrated Local APIC case.
-UV and Jailhouse already have an opt-out for this behaviour, but blindly using
-the BDA and CMOS on a UEFI or other reduced hardware system isn't clever.
-
-Drop the warm_reset flag from struct x86_legacy_features, and tie the warm
-vector modifications to the integrated-ness of the Local APIC.  This has the
-advantage of compiling the warm reset logic out entirely for 64bit builds.
-
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: Borislav Petkov <bp@alien8.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: x86@kernel.org
-CC: Jan Kiszka <jan.kiszka@siemens.com>
-CC: James Morris <jmorris@namei.org>
-CC: David Howells <dhowells@redhat.com>
-CC: Andrew Cooper <andrew.cooper3@citrix.com>
-CC: Matthew Garrett <mjg59@google.com>
-CC: Josh Boyer <jwboyer@redhat.com>
-CC: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-CC: Steve Wahl <steve.wahl@hpe.com>
-CC: Mike Travis <mike.travis@hpe.com>
-CC: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-CC: Arnd Bergmann <arnd@arndb.de>
-CC: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-CC: Giovanni Gherdovich <ggherdovich@suse.cz>
-CC: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-CC: Len Brown <len.brown@intel.com>
-CC: Kees Cook <keescook@chromium.org>
-CC: Martin Molnar <martin.molnar.programming@gmail.com>
-CC: Pingfan Liu <kernelfans@gmail.com>
-CC: linux-kernel@vger.kernel.org
-CC: jailhouse-dev@googlegroups.com
-Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
----
-Thomas: I finally found the reference we were discussing in Portland.  Sorry
-this patch took so long.
-
-I don't have any non-integrated APIC hardware to test with.  Can anyone help
-me out?
----
- arch/x86/include/asm/x86_init.h    |  1 -
- arch/x86/kernel/apic/x2apic_uv_x.c |  1 -
- arch/x86/kernel/jailhouse.c        |  1 -
- arch/x86/kernel/platform-quirks.c  |  1 -
- arch/x86/kernel/smpboot.c          | 21 ++++++++++++---------
- 5 files changed, 12 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index 96d9cd208610..006a5d7fd7eb 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -229,7 +229,6 @@ enum x86_legacy_i8042_state {
- struct x86_legacy_features {
- 	enum x86_legacy_i8042_state i8042;
- 	int rtc;
--	int warm_reset;
- 	int no_vga;
- 	int reserve_bios_regions;
- 	struct x86_legacy_devices devices;
-diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-index ad53b2abc859..5afcfd193592 100644
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -343,7 +343,6 @@ static int __init uv_acpi_madt_oem_check(char *_oem_id, char *_oem_table_id)
- 	} else if (!strcmp(oem_table_id, "UVH")) {
- 		/* Only UV1 systems: */
- 		uv_system_type = UV_NON_UNIQUE_APIC;
--		x86_platform.legacy.warm_reset = 0;
- 		__this_cpu_write(x2apic_extra_bits, pnodeid << uvh_apicid.s.pnode_shift);
- 		uv_set_apicid_hibit();
- 		uv_apic = 1;
-diff --git a/arch/x86/kernel/jailhouse.c b/arch/x86/kernel/jailhouse.c
-index 6eb8b50ea07e..d628fe92d6af 100644
---- a/arch/x86/kernel/jailhouse.c
-+++ b/arch/x86/kernel/jailhouse.c
-@@ -210,7 +210,6 @@ static void __init jailhouse_init_platform(void)
- 	x86_platform.calibrate_tsc	= jailhouse_get_tsc;
- 	x86_platform.get_wallclock	= jailhouse_get_wallclock;
- 	x86_platform.legacy.rtc		= 0;
--	x86_platform.legacy.warm_reset	= 0;
- 	x86_platform.legacy.i8042	= X86_LEGACY_I8042_PLATFORM_ABSENT;
- 
- 	legacy_pic			= &null_legacy_pic;
-diff --git a/arch/x86/kernel/platform-quirks.c b/arch/x86/kernel/platform-quirks.c
-index b348a672f71d..d922c5e0c678 100644
---- a/arch/x86/kernel/platform-quirks.c
-+++ b/arch/x86/kernel/platform-quirks.c
-@@ -9,7 +9,6 @@ void __init x86_early_init_platform_quirks(void)
- {
- 	x86_platform.legacy.i8042 = X86_LEGACY_I8042_EXPECTED_PRESENT;
- 	x86_platform.legacy.rtc = 1;
--	x86_platform.legacy.warm_reset = 1;
- 	x86_platform.legacy.reserve_bios_regions = 0;
- 	x86_platform.legacy.devices.pnpbios = 1;
- 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index d85e91a8aa8c..e2ebb0be2ee3 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1049,18 +1049,21 @@ static int do_boot_cpu(int apicid, int cpu, struct task_struct *idle,
- 	 * the targeted processor.
- 	 */
- 
--	if (x86_platform.legacy.warm_reset) {
-+	/*
-+	 * APs are typically started in one of two ways:
-+	 *
-+	 * - On 486-era hardware with a non-integrated Local APIC, a single
-+	 *   INIT IPI is sent.  When the AP comes out of reset, the BIOS
-+	 *   follows the warm reset vector to start_ip.
-+	 * - On everything with an integrated Local APIC, the start_ip is
-+	 *   provided in the Startup IPI message, sent as part of an
-+	 *   INIT-SIPI-SIPI sequence.
-+	 */
-+	if (!APIC_INTEGRATED(boot_cpu_apic_version)) {
- 
- 		pr_debug("Setting warm reset code and vector.\n");
- 
- 		smpboot_setup_warm_reset_vector(start_ip);
--		/*
--		 * Be paranoid about clearing APIC errors.
--		*/
--		if (APIC_INTEGRATED(boot_cpu_apic_version)) {
--			apic_write(APIC_ESR, 0);
--			apic_read(APIC_ESR);
--		}
- 	}
- 
- 	/*
-@@ -1118,7 +1121,7 @@ static int do_boot_cpu(int apicid, int cpu, struct task_struct *idle,
- 		}
- 	}
- 
--	if (x86_platform.legacy.warm_reset) {
-+	if (!APIC_INTEGRATED(boot_cpu_apic_version)) {
- 		/*
- 		 * Cleanup possible dangling ends...
- 		 */
--- 
-2.11.0
-
+DQpPbiBUdWUsIDIwMjAtMDMtMjQgYXQgMTM6NTYgKzAyMDAsIGFuZHJpeS5zaGV2Y2hlbmtvQGxp
+bnV4LmludGVsLmNvbQ0Kd3JvdGU6DQo+IE9uIFR1ZSwgTWFyIDI0LCAyMDIwIGF0IDEwOjUzOjA5
+QU0gKzAwMDAsIFZhaXR0aW5lbiwgTWF0dGkgd3JvdGU6DQo+ID4gT24gVHVlLCAyMDIwLTAzLTI0
+IGF0IDExOjUwICswMjAwLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6DQo+ID4gPiBPbiBUdWUsIE1h
+ciAyNCwgMjAyMCBhdCAxMDozMjoxOUFNICswMjAwLCBNYXR0aSBWYWl0dGluZW4gd3JvdGU6DQo+
+IA0KPiAuLi4NCj4gDQo+ID4gPiA+ICsJZm9yIChpID0gZmZzKHRtcCk7IGk7IGkgPSBmZnModG1w
+KSkgew0KPiA+ID4gDQo+ID4gPiBOSUggb2YgZm9yX2VhY2hfc2V0X2JpdCgpLg0KPiA+IA0KPiA+
+IFdoYXQgZG9lcyB0aGUgTklIIHN0YW5kIGZvcj8NCj4gDQo+IE5vdCBJbnZlbnRlZCBIZXJlIHN5
+bmRyb21lIDotKQ0KDQpBaC4gSSBkZWZpbml0ZWx5IHBsZWFkIGd1aWx0eSBmb3IgdGhhdCBpbiBn
+ZW5lcmFsLiBPciBldmVuIE5JQk0gKE5vdA0KSW52ZW50ZWQgQnkgTWUpIDpdIEJ1dCBhdCB0aGlz
+IHRpbWUgZm9yX2VhY2hfc2V0X2JpdCgpIGp1c3QgZGlkbid0IGNvbWUNCnRvIG15IG1pbmQgLSBh
+bmQgSSB1c2VkIGZmcygpIC0gZXZlbiB0aG91Z2ggdGhhdCdzIG5vdCBpbnZlbnRlZCBieSBtZQ0K
+ZWl0aGVyIDspDQoNCkkganVzdCBtb2RpZmllZCB0aGUgZHJpdmVyIHRvIHVzZSBmb3JfZWFjaF9z
+ZXRfYml0KCkgYW5kIHlvdSB3ZXJlDQpjb3JyZWN0LiBSZXN1bHQgaXMgX211Y2hfIHByZXR0aWVy
+LiBUaGFua3MhIFRoYXQnbGwgYmUgZml4ZWQgaW4gdjcuDQoNCj4gLi4uDQo+IA0KPiA+ID4gPiAr
+CWlmICghZGV2LT5wbGF0Zm9ybV9kYXRhKSB7DQo+ID4gPiANCj4gPiA+IGRldl9nZXRfcGxhdGRh
+dGEoKQ0KPiA+ID4gDQo+ID4gPiA+ICsJCXJldCA9IGJkOTk5NXhfZndfcHJvYmUoYmQpOw0KPiA+
+ID4gPiArCQlpZiAocmV0IDwgMCkgew0KPiA+ID4gPiArCQkJZGV2X2VycihkZXYsICJDYW5ub3Qg
+cmVhZCBkZXZpY2UNCj4gPiA+ID4gcHJvcGVydGllcy5cbiIpOw0KPiA+ID4gPiArCQkJcmV0dXJu
+IHJldDsNCj4gPiA+ID4gKwkJfQ0KPiA+ID4gPiArCX0gZWxzZSB7DQo+ID4gPiA+ICsJCXJldHVy
+biAtRU5PREVWOw0KPiA+ID4gDQo+ID4gPiBTbywgZXhpc3RpbmcgcGxhdGZvcm0gZGF0YSBsZWFk
+cyB0byBhbiBlcnJvcj8hDQo+ID4gDQo+ID4gWWVzLiBBcyBjdXJyZW50bHkgd2Ugb25seSB1c2Ug
+RFQuIElmIHNvbWVvbmUgbmVlZHMgcGxhdGRhdGEgdGhleQ0KPiA+IG5lZWQNCj4gPiB0byBpbXBy
+b3ZlIHRoZSBkcml2ZXINCj4gDQo+IEkgdGhpbmsgdGhlIGlkZWEgdG8gYXZvaWQgcGxhdGZvcm0g
+ZGF0YSBpbiBuZXcgY29kZSBhcyBtdWNoIGFzDQo+IHBvc3NpYmxlLg0KPiBBbmQgaXQncyB1bnVz
+dWFsIHRvIGhhdmUgc29tZWJvZHkgdG8gdXNlIHRoaXMgZHJpdmVyIHdpdGgNCj4gcGxhdGZvcm1f
+ZGF0YSBzZXQuDQo+IFdoeSBub3Qgc2ltcGxlIGlnbm9yZSBpdD8NCg0KQmVjYXVzZSBpZiBzb21l
+b25lIF9pc18gdXNpbmcgcGxhdGZvcm0gZGF0YSBoZXJlIChhbmQgd2Ugc3RpbGwgcHJvdmlkZQ0K
+dGhpcyBtZWNoYW5pc20pIC0gdGhlbiB3ZSBzaG91bGQgaW5mb3JtIGhpbSB0aGF0IGhlJ3MgZG9p
+bmcgc29tZXRoaW5nDQp3aGljaCBpcyBub3QgY29ycmVjdC4NCg0KQmVzdCBSZWdhcmRzDQoJTWF0
+dGkNCg==
