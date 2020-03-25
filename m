@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B75D192304
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:42:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21C2A19230C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:42:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbgCYImX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 04:42:23 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:57187 "EHLO
+        id S1727600AbgCYImr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 04:42:47 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:58935 "EHLO
         us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727450AbgCYImT (ORCPT
+        by vger.kernel.org with ESMTP id S1727448AbgCYImT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Mar 2020 04:42:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
@@ -18,46 +18,46 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=2qAIsNPbUeit8zA2dMkgRwMCGJOGJ4HMvWIxREwTod4=;
-        b=SPVlsj1zziItwSKv4Qv6mE7x11oZ0XAeeGh43OzAZpACYAZIMXPD3TWtjCLDZDm+W8lpjb
-        qGl4JRedah/yv35esgr6GM+Qeyw2D5udQlDnXPILVlRqJfeizm8OUNsT2kXe6x/MEjC6Ux
-        vZKNwTda2OqrNP1bCQQeOMV0bgnBZ28=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-356-YwZYQbwPOI-PM0bvfXVXag-1; Wed, 25 Mar 2020 04:42:15 -0400
-X-MC-Unique: YwZYQbwPOI-PM0bvfXVXag-1
-Received: by mail-wm1-f69.google.com with SMTP id g9so2222620wmh.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 01:42:15 -0700 (PDT)
+        bh=LkILQqLeJ/zPMBY6DkeS39fjniyl7+maeMVPF6b4gpE=;
+        b=NDFxItVO0x35OnXSK7ypuPjMC10V1FZa/ET2eRqoy6x5Tj+TMHxyCDnY2TYr8PzF3Hv6Ek
+        2Qf8tA8XPa4aevoFtBo/0Yvw1Gdhm0NWlVBbOfEWmDJbZ1+oE3sbQ/qCcO66FNdRkTTKbn
+        hNlGwjKgEJ50vsHWxuvtuA18tfCTWW0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-128-nF1_sdJtPE-xukzyOnMqtg-1; Wed, 25 Mar 2020 04:42:17 -0400
+X-MC-Unique: nF1_sdJtPE-xukzyOnMqtg-1
+Received: by mail-wr1-f69.google.com with SMTP id h17so795735wru.16
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 01:42:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2qAIsNPbUeit8zA2dMkgRwMCGJOGJ4HMvWIxREwTod4=;
-        b=K1E8N8C+/AF3nPmh2di8es0HM7TnYZwKj2OzCBtXGTjIBdmIafDH+ge1aba/RStAT/
-         xz32/ur5h/98SQMY5Cf3oVTH1+iWZatkYtMHc5FL9x9h4Yl3sA9c6SZ93HsE89SYvK1K
-         VUpwZGDUJ9/Q4toPAMkYBNcuG1APBboDhMzOcSW0to0addK14sMxr6PcMm/hMd4OMbTJ
-         rpymVNJwV/dZTqoMA4B72zNNbxgi0AlkTD0lunpglx33Jujn7fjFNiHKdnrApebMwo2k
-         nI8YjmaaW+O8WNvVtjZl678Oq19pOEUEzHln5avHOKalnTbCJLjjTo3meFF9m0Yr2wwL
-         v13w==
-X-Gm-Message-State: ANhLgQ1klI5RMtf05KQrUm2qdHOTjjVbHfyUerPQW2ygj9Yr3YVSUhXV
-        tnUFTq0QglXaUq0QuyHjSgsbI+jPGPL9yszL1kHRMnUwwdhDXOyg1mYEF7N1yIyi/v79LpvVMpm
-        aHq+GQOQBi6BnOwJuToLN3bX7
-X-Received: by 2002:a5d:5386:: with SMTP id d6mr2284685wrv.92.1585125733931;
-        Wed, 25 Mar 2020 01:42:13 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vt7S1Bk6wjwuZycIOSbbEksE/h4lCPt6PRAvCOxIrre14/mA55s9ob1RIVLqShpjIy99dQSZg==
-X-Received: by 2002:a5d:5386:: with SMTP id d6mr2284677wrv.92.1585125733796;
-        Wed, 25 Mar 2020 01:42:13 -0700 (PDT)
+        bh=LkILQqLeJ/zPMBY6DkeS39fjniyl7+maeMVPF6b4gpE=;
+        b=t9TZElxee7KiF4jbOlOZ86V9UP/8nhflg49uC67GxfD3eOUHEjRMjLyPBHLlDAtZud
+         4zvG5aAd5dDhpMqpcrkS4zfRC2AzpRN7RMH+9oFZMG0mK76T4IDSQkoHQGNAr8dwx70h
+         pXAe60vJ91ox+AlfmPxOhe2LisjInlpUVlb/pqEGEUoxlB5ghpk2+4UvNE5xTDVep2/e
+         gk2DsGqSK8ZN0MQnKtaeBkOtXASqxdehxHKb+emvqjDZcT411I1n6saeeMBMProEVfkJ
+         LCclYjjthrob2JaTpWMbHG7ic/fBljFvILHqBIgXGxAA4p352EJrHejPUG+NN3uduTOq
+         S6Xg==
+X-Gm-Message-State: ANhLgQ2tNBesMNCp/xe/qyelR2J0+/R8fQkqdR1Mjq7dDagJDxdFaOe2
+        yKcdUxez4t3X7xvlw3MtvfuXljR7ivgvK5XSyVN9HltITs7TW7DLezQtbOx75YpSTAFrVNiq7L5
+        vnh3qEbfK7jIGq/GF/AKMC8xt
+X-Received: by 2002:adf:eb0c:: with SMTP id s12mr2146701wrn.293.1585125735569;
+        Wed, 25 Mar 2020 01:42:15 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vtvHkIQdl9JjQlSF5P+Gi1rUMMc2pSmPDbMM39ShVd694myUMdKbxgUgxmolVWbomDOiO6XEg==
+X-Received: by 2002:adf:eb0c:: with SMTP id s12mr2146674wrn.293.1585125735325;
+        Wed, 25 Mar 2020 01:42:15 -0700 (PDT)
 Received: from redfedo.redhat.com ([2a01:cb14:58d:8400:ecf6:58e2:9c06:a308])
-        by smtp.gmail.com with ESMTPSA id f12sm8055323wmf.24.2020.03.25.01.42.12
+        by smtp.gmail.com with ESMTPSA id f12sm8055323wmf.24.2020.03.25.01.42.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 01:42:13 -0700 (PDT)
+        Wed, 25 Mar 2020 01:42:14 -0700 (PDT)
 From:   Julien Thierry <jthierry@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
         Julien Thierry <jthierry@redhat.com>
-Subject: [PATCH 03/10] objtool: check: Clean instruction state before each function validation
-Date:   Wed, 25 Mar 2020 08:41:56 +0000
-Message-Id: <20200325084203.17005-4-jthierry@redhat.com>
+Subject: [PATCH 04/10] objtool: check: Ignore empty alternative groups
+Date:   Wed, 25 Mar 2020 08:41:57 +0000
+Message-Id: <20200325084203.17005-5-jthierry@redhat.com>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200325084203.17005-1-jthierry@redhat.com>
 References: <20200325084203.17005-1-jthierry@redhat.com>
@@ -68,49 +68,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a function fails its validation, it might leave a stale state
-that will be used for the validation of other functions. That would
-cause false warnings on potentially valid functions.
+Atlernative section can contain entries for alternatives with no
+instructions. Objtool will currently crash when handling such an entry.
 
-Reset the instruction state before the validation of each individual
-function.
+Just skip that entry, but still give a warning to discourage useless
+entries.
 
 Signed-off-by: Julien Thierry <jthierry@redhat.com>
 ---
- tools/objtool/check.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ tools/objtool/check.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 44a3abbb0b0b..0ccf6882d8ce 100644
+index 0ccf6882d8ce..75ebaa0a6216 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -2406,13 +2406,6 @@ static int validate_functions(struct objtool_file *file)
- 	struct insn_state state;
- 	int ret, warnings = 0;
+@@ -917,6 +917,12 @@ static int add_special_section_alts(struct objtool_file *file)
+ 		}
  
--	clear_insn_state(&state);
--
--	state.cfa = initial_func_cfi.cfa;
--	memcpy(&state.regs, &initial_func_cfi.regs,
--	       CFI_NUM_REGS * sizeof(struct cfi_reg));
--	state.stack_size = initial_func_cfi.cfa.offset;
--
- 	for_each_sec(file, sec) {
- 		list_for_each_entry(func, &sec->symbol_list, list) {
- 			if (func->type != STT_FUNC)
-@@ -2431,6 +2424,12 @@ static int validate_functions(struct objtool_file *file)
- 			if (!insn || insn->ignore || insn->visited)
- 				continue;
- 
-+			clear_insn_state(&state);
-+			state.cfa = initial_func_cfi.cfa;
-+			memcpy(&state.regs, &initial_func_cfi.regs,
-+			       CFI_NUM_REGS * sizeof(struct cfi_reg));
-+			state.stack_size = initial_func_cfi.cfa.offset;
+ 		if (special_alt->group) {
++			if (!special_alt->orig_len) {
++				WARN_FUNC("empty alternative entry",
++					  orig_insn->sec, orig_insn->offset);
++				continue;
++			}
 +
- 			state.uaccess = func->uaccess_safe;
- 
- 			ret = validate_branch(file, func, insn, state);
+ 			ret = handle_group_alt(file, special_alt, orig_insn,
+ 					       &new_insn);
+ 			if (ret)
 -- 
 2.21.1
 
