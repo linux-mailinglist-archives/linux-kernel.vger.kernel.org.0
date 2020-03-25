@@ -2,85 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DC911922C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:33:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E05441922CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 09:34:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbgCYId3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 04:33:29 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:55797 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727376AbgCYId2 (ORCPT
+        id S1727388AbgCYId5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 04:33:57 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46706 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbgCYId5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 04:33:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585125207;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=tPDFlQdj8VYweTPWnggqIKOTLY3z3piVcfXmWCzVRUM=;
-        b=QfA0vz8/nIM0g0D7Z9PSrgeBfumCunZln0H126xwGUIk9F+8+oO+Dbzmf+SS02LVc34mNY
-        8o+zg2Ho8xcN4HR7dw1ZYX7kOXHDKmuyXA0nujNZmmeRlcgTq4uzDR+mBsUjhUIJvxqFi1
-        y1oAqChsNEFdnZTAZFaEe3dU8hdZ0d0=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-165-4xmb4j9KNTekYa2mn5uV4Q-1; Wed, 25 Mar 2020 04:33:25 -0400
-X-MC-Unique: 4xmb4j9KNTekYa2mn5uV4Q-1
-Received: by mail-wr1-f69.google.com with SMTP id m15so802767wrb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 01:33:25 -0700 (PDT)
+        Wed, 25 Mar 2020 04:33:57 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 111so1135512oth.13
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 01:33:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FJHGef/EtWaLVVnexBqS74xlLLuhu+RMGQ/OYQ44duc=;
+        b=ZIVMvQHZp99+uoK7d0Yrzn17aHwV6NxDZb+iYTATVwKWxDA5yAwJT88cp1cL3iX/Qa
+         8XTG1ENI+AOcD8u/CLP64CGmgx9O4b2XEatQLIv5dejkD/1FdZlG9rrYj8smRXvH4sqS
+         W+l4GeZqVew7FN7xichaimos8sawJFAu089MSEm92s2dl7H67gE3qJujxC2IFzDLp3js
+         wMo+Hylrv+3KwaMxf0uBfRtOAUSbthJZltu5jZSJD+GLMKhoEuL3juAe3LgRubJfv8o7
+         OhFPjQMwqZbpD2dbgq9qTYrfJ7FKykJeHJ9K7ejTCrEr272elgxoYFgCW8C99LcmTHzI
+         Km0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tPDFlQdj8VYweTPWnggqIKOTLY3z3piVcfXmWCzVRUM=;
-        b=YNkGjY8ot/Ds9BUduAiFVHWOG0/yIX3BPaLT1qP46wGwNEcuhkBqdrRYgKAuwST4kA
-         kyxYabhn9NTQHjC+l5lxltNR5kXwE+Re6WQJwjg3wkYJ1aF53aMIETtWM901pFS79YsS
-         WLL9/vroRcOCNVqujBkI16jQjUsbRrreVtXYfb67Pwi5lJrIUv6VJjzF3P0cuD5XyjUo
-         VuUAYwWwskOrEzi9Pv16rqvhdCgyTqhYWXtzwGSQJPV6GK2FQWciFHgTYsADZvgSnxXU
-         4D2lOzeIbuQd3nRjn+dkF1UstZY4pzt/HVh/SIRu/iZ/s80ICGFFwLYHlW4juA1jI1UJ
-         lY+w==
-X-Gm-Message-State: ANhLgQ2b0ZUCFtSubGegY6UvsUNWTumcI9PkKtsU4C/Sr+qneGvibzVs
-        kw6Mkoq9UNvq33BJGzdReyEFclCAxM9p719gHCmdMeUVHN3Xm1cH00BPBisCpF6Eyzwq4serxlM
-        l/fbxro91wAMlx2adCaiGw+25
-X-Received: by 2002:a5d:6a82:: with SMTP id s2mr2183321wru.205.1585125203898;
-        Wed, 25 Mar 2020 01:33:23 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vshmYG1TzvBv5lQipVG7VPJtGxrkEtQs4rrYwizw97mhVW/ki+3UHkEOX30POh7LlxcPhqmBg==
-X-Received: by 2002:a5d:6a82:: with SMTP id s2mr2183298wru.205.1585125203732;
-        Wed, 25 Mar 2020 01:33:23 -0700 (PDT)
-Received: from steredhat.redhat.com (host32-201-dynamic.27-79-r.retail.telecomitalia.it. [79.27.201.32])
-        by smtp.gmail.com with ESMTPSA id f12sm8236732wmh.4.2020.03.25.01.33.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 01:33:23 -0700 (PDT)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [PATCH liburing] Add test/splice to .gitignore
-Date:   Wed, 25 Mar 2020 09:33:21 +0100
-Message-Id: <20200325083321.16826-1-sgarzare@redhat.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FJHGef/EtWaLVVnexBqS74xlLLuhu+RMGQ/OYQ44duc=;
+        b=BzPiBuLCy+B1SkvmMikPQSsbhXv9stCxkhu3ZbJNVAQIkxtdma+siyzrjll9ZdieSL
+         fktP9VBVuCuP6fSXIoaDQ9+Zq/jt3w7iLZWN72pWlFBH4FceEuPgflfoDdEANx2YYXK3
+         Eql/RJmdttBYnoIQTsXdpdHkS3HSWhOtlhyRT2tUOFnW1IPhtFbnKyAIg5xn5XZy1LsU
+         xWpO1/pIF2yN5AIA4/UIRzBXoBJlRGsZqJt03+JzxjL9Yrqy6S8COhECg2ymc8js2eec
+         acHU8n3jxlK8ApKeXxkd28mpxIqCV6KMN5Hqp0RaPRkdHziwU75E8Op9oQGIhX4NJWUk
+         2Z/g==
+X-Gm-Message-State: ANhLgQ36gEcLoOrWJ32+/eS6pDpVdMRCKVWN+2zfN1Q36nk53SILIVQQ
+        Aavjyypa+bVw2QwLZvJJQo1/J57mvERw1yP2z37wQw==
+X-Google-Smtp-Source: ADFU+vsyet6PJwmelZB0kHEg09F8xbMLitmgUquIPYDgBQdp5+jzN/ZP9IYr0DU5P2Q+gOGVZ08bxzsAMym9vqLXfV0=
+X-Received: by 2002:a9d:6945:: with SMTP id p5mr1669394oto.268.1585125236058;
+ Wed, 25 Mar 2020 01:33:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1584965910-19068-1-git-send-email-sumit.garg@linaro.org> <1584965910-19068-3-git-send-email-sumit.garg@linaro.org>
+In-Reply-To: <1584965910-19068-3-git-send-email-sumit.garg@linaro.org>
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+Date:   Wed, 25 Mar 2020 09:33:45 +0100
+Message-ID: <CAHUa44Fd3ujQY8ev9sZOMya7wrTmHnvda_05XhQA7X3knB3auA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] tee: add private login method for kernel clients
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stuart Yoder <stuart.yoder@arm.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
- .gitignore | 1 +
- 1 file changed, 1 insertion(+)
+On Mon, Mar 23, 2020 at 1:19 PM Sumit Garg <sumit.garg@linaro.org> wrote:
+>
+> There are use-cases where user-space shouldn't be allowed to communicate
+> directly with a TEE device which is dedicated to provide a specific
+> service for a kernel client. So add a private login method for kernel
+> clients and disallow user-space to open-session using GP implementation
+> defined login method range: (0x80000000 - 0xFFFFFFFF).
+>
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> ---
+>  drivers/tee/tee_core.c   | 6 ++++++
+>  include/uapi/linux/tee.h | 8 ++++++++
+>  2 files changed, 14 insertions(+)
 
-diff --git a/.gitignore b/.gitignore
-index 9f85a5f..db163b4 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -74,6 +74,7 @@
- /test/shared-wq
- /test/short-read
- /test/socket-rw
-+/test/splice
- /test/sq-full
- /test/sq-poll-kthread
- /test/sq-space_left
--- 
-2.25.1
+Looks good.
 
+Thanks,
+Jens
+
+>
+> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+> index 37d22e3..533e7a8 100644
+> --- a/drivers/tee/tee_core.c
+> +++ b/drivers/tee/tee_core.c
+> @@ -334,6 +334,12 @@ static int tee_ioctl_open_session(struct tee_context *ctx,
+>                         goto out;
+>         }
+>
+> +       if (arg.clnt_login & TEE_IOCTL_LOGIN_MASK) {
+> +               pr_debug("login method not allowed for user-space client\n");
+> +               rc = -EPERM;
+> +               goto out;
+> +       }
+> +
+>         rc = ctx->teedev->desc->ops->open_session(ctx, &arg, params);
+>         if (rc)
+>                 goto out;
+> diff --git a/include/uapi/linux/tee.h b/include/uapi/linux/tee.h
+> index 6596f3a..19172a2 100644
+> --- a/include/uapi/linux/tee.h
+> +++ b/include/uapi/linux/tee.h
+> @@ -173,6 +173,14 @@ struct tee_ioctl_buf_data {
+>  #define TEE_IOCTL_LOGIN_APPLICATION            4
+>  #define TEE_IOCTL_LOGIN_USER_APPLICATION       5
+>  #define TEE_IOCTL_LOGIN_GROUP_APPLICATION      6
+> +/*
+> + * Disallow user-space to use GP implementation specific login
+> + * method range (0x80000000 - 0xFFFFFFFF). This range is rather
+> + * being reserved for REE kernel clients or TEE implementation.
+> + */
+> +#define TEE_IOCTL_LOGIN_MASK                   0x80000000
+> +/* Private login method for REE kernel clients */
+> +#define TEE_IOCTL_LOGIN_REE_KERNEL             0x80000000
+>
+>  /**
+>   * struct tee_ioctl_param - parameter
+> --
+> 2.7.4
+>
