@@ -2,440 +2,296 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D65B1925CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:38:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 159411925D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:38:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbgCYKiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 06:38:11 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45197 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727490AbgCYKiI (ORCPT
+        id S1727671AbgCYKij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 06:38:39 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36706 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbgCYKij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:38:08 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j10so834861pfi.12
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 03:38:06 -0700 (PDT)
+        Wed, 25 Mar 2020 06:38:39 -0400
+Received: by mail-wm1-f68.google.com with SMTP id g62so1978784wme.1;
+        Wed, 25 Mar 2020 03:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GvPR5dtYN53423m8vLieKTgDKSgD+LkOgsBlNgdSxxU=;
-        b=yo8gmsGFFFMWbFZySl2oobWBrpOvInKMu/pJaHVYW+2E48DiI6zk4bVW4YkkKDVCKM
-         S8GqT8MFld4HhpVPTbkuXQq+VOXjTN/fU766YonO79Bhu0ogFyY3PQ0lAvegtVT83Vm8
-         UuQCoein0u0t+aaP6YkNsp0bcSCQnOKA4zrPiuSWCEHBDQJoXobmURJ4x9DFnh2vkTSs
-         nMk/IcGFj/Md6TBCWNrcTGY0q0UO+3WrAYNsBi6sQkQqEhOhXFtJ3DSWb5Ux8BqAPGuL
-         m5y5lOAV6zdXIcBhQUNnxgUxFnmgFPenypG9uRECJeQLt2KLFJ3jsE7vAC7kGwMCZvVE
-         dqqA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EzOA88IPnqtfpe/48GPuflQNR0kYjwA+VSvKhhJrxps=;
+        b=RsGdMY8IvlSnAyG0MzIkhchfOXRHnz2dyXPRTkAmdwR5Sa9twAHcAGWe9qyGKH7sFo
+         mxxkmrp3kY9sgPF9DXmJNhevLM4IHDd3xR7Drk0z6tK17xIIwmWpONvnx6msWUP/YJkH
+         wiRxrnH/pQG8F4aUsOiA/SlkA72KVr9g/YULwRFtQQVECRj71W8OVYA1WHURheRC1svq
+         +9YHK6ESY5j8KbqcOZ9fHdSwZ/1han8PUzEYbVwGNk8MATWwv+wrjd17c5jM56zOSw9h
+         PMu/51uwxJ425YHNf9Iy5g7FwAuIVBDpXRz7uE5ZMg2comkxccRQzi3cQ92sZffi8rpP
+         Jfrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GvPR5dtYN53423m8vLieKTgDKSgD+LkOgsBlNgdSxxU=;
-        b=tBn8izhpd2hf8jVmot9Em7rUBVd2XwxdtG7sE/nUINMF9CAS+ZjiTxNh4TO6VmDvpB
-         PrHTaFWbFTahmlZ1OfQslPijex4HEiiAT/Gl9ftAOZu2kZmnFmtGqQ3xf4sXJWukomL6
-         JXxo7EO6rnRjMANz7plBH24vzLTM/givfJXOU7q3K6fxwuDBpNleOdu2B8YOOOUAMk/C
-         X+Kfmt1gWyQUdeelX+A6AxS3mXND1YsaEnyy/Ub/yKKlSMNrEUJeDxf9z5sz+XvWtILL
-         cWiAmGx3oLx7ZOENvsFwHvafihrTDHUlocZmPfU4jnXgJCfp8Pj1bST/QG3l9w8IQaSV
-         r+qg==
-X-Gm-Message-State: ANhLgQ1rW6tgLfJGO/a+ZG+q36gmkcxcfzDNMlzIIGbU35gIOMNuOuy8
-        kfZYS7HgTiPPCh1egQY/5d67
-X-Google-Smtp-Source: ADFU+vvD9wFFBFlldRE0IEa3WNmA36ZmwXFW9rHCH800vQsTGan0Qhk1HRfuHZMid1Dy7QR48oeAkA==
-X-Received: by 2002:a62:e101:: with SMTP id q1mr2074266pfh.84.1585132685668;
-        Wed, 25 Mar 2020 03:38:05 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:6383:8a0b:590d:84c:5d74:d592])
-        by smtp.gmail.com with ESMTPSA id y142sm18865235pfc.53.2020.03.25.03.38.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Mar 2020 03:38:04 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 16:07:58 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>, clew@codeaurora.org
-Cc:     gregkh@linuxfoundation.org, davem@davemloft.net,
-        smohanad@codeaurora.org, jhugo@codeaurora.org,
-        kvalo@codeaurora.org, hemantk@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] net: qrtr: Add MHI transport layer
-Message-ID: <20200325103758.GA7216@Mani-XPS-13-9360>
-References: <20200324061050.14845-1-manivannan.sadhasivam@linaro.org>
- <20200324061050.14845-7-manivannan.sadhasivam@linaro.org>
- <20200324203952.GC119913@minitux>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324203952.GC119913@minitux>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EzOA88IPnqtfpe/48GPuflQNR0kYjwA+VSvKhhJrxps=;
+        b=dYpEBaYt8e9nc494OTGnxN681FIOidp2z/p8fQozw0Ua+qhuKoGrsnsTTenpRfTg7F
+         z4KHThh5GZabVdzuLyZ9sBMsF0QB3vWZ46pU7XXfxfkcxfZ3pcIdMcGkJcGztb2ZQSJJ
+         YjqdFTAWXv/TSTG5o3zjGbFC814abBBtJ1ZGsyGAUuuxvS4pxrotYceU12W6zlB4OIPV
+         u51TIyYjGuPy1VJGwy1cw4Ui8czyhOxxIw4M8+IKbfKk1x5uCtyDWct7Nk2wGCnMvSzP
+         ZkjRa1GKVYkWz6JCuB0WRU/+EiTOdOVKR8DZI9FC+uJqPObbgNaIoIRa+TU2mDdEwc1V
+         /uYw==
+X-Gm-Message-State: ANhLgQ3Llwlery1A7kI3SUEcGiuCaUQKXRG0JkIlhVDPk2M6hbYoH4fC
+        Y/Wyux/fM9bufL0JLRwukSM=
+X-Google-Smtp-Source: ADFU+vuLT8aCFByvpsLDF8ub9Jibc1JcFf94p8oOJbCJ7SMUFWAVz+SXA2LWU40cK+9fXNGYdVX9NQ==
+X-Received: by 2002:a1c:2e04:: with SMTP id u4mr2936248wmu.185.1585132715841;
+        Wed, 25 Mar 2020 03:38:35 -0700 (PDT)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id i21sm9163108wmb.23.2020.03.25.03.38.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Mar 2020 03:38:35 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     hjc@rock-chips.com, airlied@linux.ie, daniel@ffwll.ch,
+        robh+dt@kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/2] dt-bindings: display: convert rockchip vop bindings to yaml
+Date:   Wed, 25 Mar 2020 11:38:27 +0100
+Message-Id: <20200325103828.5422-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+Current dts files with 'vop' nodes are manually verified.
+In order to automate this process rockchip-vop.txt
+has to be converted to yaml.
 
-+ Chris Lew
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+Changes v4:
+  Change description
+  Replace compatible oneOf by enum
+  Change interrupts description
+  Remove resets minItems
 
-On Tue, Mar 24, 2020 at 01:39:52PM -0700, Bjorn Andersson wrote:
-> On Mon 23 Mar 23:10 PDT 2020, Manivannan Sadhasivam wrote:
-> 
-> > MHI is the transport layer used for communicating to the external modems.
-> > Hence, this commit adds MHI transport layer support to QRTR for
-> > transferring the QMI messages over IPC Router.
-> > 
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: netdev@vger.kernel.org
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  net/qrtr/Kconfig  |   7 ++
-> >  net/qrtr/Makefile |   2 +
-> >  net/qrtr/mhi.c    | 208 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 217 insertions(+)
-> >  create mode 100644 net/qrtr/mhi.c
-> > 
-> > diff --git a/net/qrtr/Kconfig b/net/qrtr/Kconfig
-> > index 63f89cc6e82c..8eb876471564 100644
-> > --- a/net/qrtr/Kconfig
-> > +++ b/net/qrtr/Kconfig
-> > @@ -29,4 +29,11 @@ config QRTR_TUN
-> >  	  implement endpoints of QRTR, for purpose of tunneling data to other
-> >  	  hosts or testing purposes.
-> >  
-> > +config QRTR_MHI
-> > +	tristate "MHI IPC Router channels"
-> > +	depends on MHI_BUS
-> > +	help
-> > +	  Say Y here to support MHI based ipcrouter channels. MHI is the
-> > +	  transport used for communicating to external modems.
-> > +
-> >  endif # QRTR
-> > diff --git a/net/qrtr/Makefile b/net/qrtr/Makefile
-> > index 1c6d6c120fb7..3dc0a7c9d455 100644
-> > --- a/net/qrtr/Makefile
-> > +++ b/net/qrtr/Makefile
-> > @@ -5,3 +5,5 @@ obj-$(CONFIG_QRTR_SMD) += qrtr-smd.o
-> >  qrtr-smd-y	:= smd.o
-> >  obj-$(CONFIG_QRTR_TUN) += qrtr-tun.o
-> >  qrtr-tun-y	:= tun.o
-> > +obj-$(CONFIG_QRTR_MHI) += qrtr-mhi.o
-> > +qrtr-mhi-y	:= mhi.o
-> > diff --git a/net/qrtr/mhi.c b/net/qrtr/mhi.c
-> > new file mode 100644
-> > index 000000000000..90af208f34c1
-> > --- /dev/null
-> > +++ b/net/qrtr/mhi.c
-> > @@ -0,0 +1,208 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
-> > + */
-> > +
-> > +#include <linux/mhi.h>
-> > +#include <linux/mod_devicetable.h>
-> > +#include <linux/module.h>
-> > +#include <linux/skbuff.h>
-> > +#include <net/sock.h>
-> > +
-> > +#include "qrtr.h"
-> > +
-> > +struct qrtr_mhi_dev {
-> > +	struct qrtr_endpoint ep;
-> > +	struct mhi_device *mhi_dev;
-> > +	struct device *dev;
-> > +	spinlock_t ul_lock;		/* lock to protect ul_pkts */
-> > +	struct list_head ul_pkts;
-> > +	atomic_t in_reset;
-> > +};
-> > +
-> > +struct qrtr_mhi_pkt {
-> > +	struct list_head node;
-> > +	struct sk_buff *skb;
-> > +	struct kref refcount;
-> > +	struct completion done;
-> > +};
-> > +
-> > +static void qrtr_mhi_pkt_release(struct kref *ref)
-> > +{
-> > +	struct qrtr_mhi_pkt *pkt = container_of(ref, struct qrtr_mhi_pkt,
-> > +						refcount);
-> > +	struct sock *sk = pkt->skb->sk;
-> > +
-> > +	consume_skb(pkt->skb);
-> > +	if (sk)
-> > +		sock_put(sk);
-> > +
-> > +	kfree(pkt);
-> > +}
-> > +
-> > +/* From MHI to QRTR */
-> > +static void qcom_mhi_qrtr_dl_callback(struct mhi_device *mhi_dev,
-> > +				      struct mhi_result *mhi_res)
-> > +{
-> > +	struct qrtr_mhi_dev *qdev = dev_get_drvdata(&mhi_dev->dev);
-> > +	int rc;
-> > +
-> > +	if (!qdev || mhi_res->transaction_status)
-> > +		return;
-> > +
-> > +	rc = qrtr_endpoint_post(&qdev->ep, mhi_res->buf_addr,
-> > +				mhi_res->bytes_xferd);
-> > +	if (rc == -EINVAL)
-> > +		dev_err(qdev->dev, "invalid ipcrouter packet\n");
-> 
-> Perhaps this should be a debug print, perhaps rate limited. But either
-> way it's relevant for any transport, so I think you should skip it here
-> - and potentially move it into qrtr_endpoint_post() in some form.
-> 
+Changes v3:
+  Change description
 
-I agree with moving this to qrtr_endpoint_post() but I don't think it is a
-good idea to make it as a debug print. It is an error log and should stay
-as it is. Only in this MHI transport driver, the return value is not getting
-used but in others it is.
+Changes v2:
+  No new properties
+---
+ .../bindings/display/rockchip/rockchip-vop.txt     |  74 ------------
+ .../bindings/display/rockchip/rockchip-vop.yaml    | 124 +++++++++++++++++++++
+ 2 files changed, 124 insertions(+), 74 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
 
-> > +}
-> > +
-> > +/* From QRTR to MHI */
-> > +static void qcom_mhi_qrtr_ul_callback(struct mhi_device *mhi_dev,
-> > +				      struct mhi_result *mhi_res)
-> > +{
-> > +	struct qrtr_mhi_dev *qdev = dev_get_drvdata(&mhi_dev->dev);
-> > +	struct qrtr_mhi_pkt *pkt;
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&qdev->ul_lock, flags);
-> > +	pkt = list_first_entry(&qdev->ul_pkts, struct qrtr_mhi_pkt, node);
-> > +	list_del(&pkt->node);
-> > +	complete_all(&pkt->done);
-> 
-> You should be able to release the lock after popping the item off the
-> list, then complete and refcount it.
-> 
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt
+deleted file mode 100644
+index 8b3a5f514..000000000
+--- a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.txt
++++ /dev/null
+@@ -1,74 +0,0 @@
+-device-tree bindings for rockchip soc display controller (vop)
+-
+-VOP (Visual Output Processor) is the Display Controller for the Rockchip
+-series of SoCs which transfers the image data from a video memory
+-buffer to an external LCD interface.
+-
+-Required properties:
+-- compatible: value should be one of the following
+-		"rockchip,rk3036-vop";
+-		"rockchip,rk3126-vop";
+-		"rockchip,px30-vop-lit";
+-		"rockchip,px30-vop-big";
+-		"rockchip,rk3066-vop";
+-		"rockchip,rk3188-vop";
+-		"rockchip,rk3288-vop";
+-		"rockchip,rk3368-vop";
+-		"rockchip,rk3366-vop";
+-		"rockchip,rk3399-vop-big";
+-		"rockchip,rk3399-vop-lit";
+-		"rockchip,rk3228-vop";
+-		"rockchip,rk3328-vop";
+-
+-- reg: Must contain one entry corresponding to the base address and length
+-	of the register space. Can optionally contain a second entry
+-	corresponding to the CRTC gamma LUT address.
+-
+-- interrupts: should contain a list of all VOP IP block interrupts in the
+-		 order: VSYNC, LCD_SYSTEM. The interrupt specifier
+-		 format depends on the interrupt controller used.
+-
+-- clocks: must include clock specifiers corresponding to entries in the
+-		clock-names property.
+-
+-- clock-names: Must contain
+-		aclk_vop: for ddr buffer transfer.
+-		hclk_vop: for ahb bus to R/W the phy regs.
+-		dclk_vop: pixel clock.
+-
+-- resets: Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+-- reset-names: Must include the following entries:
+-  - axi
+-  - ahb
+-  - dclk
+-
+-- iommus: required a iommu node
+-
+-- port: A port node with endpoint definitions as defined in
+-  Documentation/devicetree/bindings/media/video-interfaces.txt.
+-
+-Example:
+-SoC specific DT entry:
+-	vopb: vopb@ff930000 {
+-		compatible = "rockchip,rk3288-vop";
+-		reg = <0x0 0xff930000 0x0 0x19c>, <0x0 0xff931000 0x0 0x1000>;
+-		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&cru ACLK_VOP0>, <&cru DCLK_VOP0>, <&cru HCLK_VOP0>;
+-		clock-names = "aclk_vop", "dclk_vop", "hclk_vop";
+-		resets = <&cru SRST_LCDC1_AXI>, <&cru SRST_LCDC1_AHB>, <&cru SRST_LCDC1_DCLK>;
+-		reset-names = "axi", "ahb", "dclk";
+-		iommus = <&vopb_mmu>;
+-		vopb_out: port {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			vopb_out_edp: endpoint@0 {
+-				reg = <0>;
+-				remote-endpoint=<&edp_in_vopb>;
+-			};
+-			vopb_out_hdmi: endpoint@1 {
+-				reg = <1>;
+-				remote-endpoint=<&hdmi_in_vopb>;
+-			};
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
+new file mode 100644
+index 000000000..bc58c5132
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
+@@ -0,0 +1,124 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/rockchip/rockchip-vop.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip SoC display controller (VOP)
++
++description:
++  VOP (Video Output Processor) is the display controller for the Rockchip
++  series of SoCs which transfers the image data from a video memory
++  buffer to an external LCD interface.
++
++maintainers:
++  - Sandy Huang <hjc@rock-chips.com>
++  - Heiko Stuebner <heiko@sntech.de>
++
++properties:
++  compatible:
++    enum:
++      - rockchip,px30-vop-big
++      - rockchip,px30-vop-lit
++      - rockchip,rk3036-vop
++      - rockchip,rk3066-vop
++      - rockchip,rk3126-vop
++      - rockchip,rk3188-vop
++      - rockchip,rk3228-vop
++      - rockchip,rk3288-vop
++      - rockchip,rk3328-vop
++      - rockchip,rk3366-vop
++      - rockchip,rk3368-vop
++      - rockchip,rk3399-vop-big
++      - rockchip,rk3399-vop-lit
++
++  reg:
++    minItems: 1
++    items:
++      - description:
++          Must contain one entry corresponding to the base address and length
++          of the register space.
++      - description:
++          Can optionally contain a second entry corresponding to
++          the CRTC gamma LUT address.
++
++  interrupts:
++    maxItems: 1
++    description:
++      The VOP interrupt is shared by several interrupt sources, such as
++      frame start (VSYNC), line flag and other status interrupts.
++
++  clocks:
++    items:
++      - description: Clock for ddr buffer transfer.
++      - description: Pixel clock.
++      - description: Clock for the ahb bus to R/W the phy regs.
++
++  clock-names:
++    items:
++      - const: aclk_vop
++      - const: dclk_vop
++      - const: hclk_vop
++
++  resets:
++    maxItems: 3
++
++  reset-names:
++    items:
++      - const: axi
++      - const: ahb
++      - const: dclk
++
++  port:
++    type: object
++    description:
++      A port node with endpoint definitions as defined in
++      Documentation/devicetree/bindings/media/video-interfaces.txt.
++
++  iommus:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - port
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/rk3288-cru.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    vopb: vopb@ff930000 {
++      compatible = "rockchip,rk3288-vop";
++      reg = <0x0 0xff930000 0x0 0x19c>,
++            <0x0 0xff931000 0x0 0x1000>;
++      interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&cru ACLK_VOP0>,
++               <&cru DCLK_VOP0>,
++               <&cru HCLK_VOP0>;
++      clock-names = "aclk_vop", "dclk_vop", "hclk_vop";
++      resets = <&cru SRST_LCDC1_AXI>,
++               <&cru SRST_LCDC1_AHB>,
++               <&cru SRST_LCDC1_DCLK>;
++      reset-names = "axi", "ahb", "dclk";
++      iommus = <&vopb_mmu>;
++      vopb_out: port {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        vopb_out_edp: endpoint@0 {
++          reg = <0>;
++          remote-endpoint=<&edp_in_vopb>;
++        };
++        vopb_out_hdmi: endpoint@1 {
++          reg = <1>;
++          remote-endpoint=<&hdmi_in_vopb>;
++        };
++      };
++    };
+-- 
+2.11.0
 
-Okay.
-
-> > +
-> > +	kref_put(&pkt->refcount, qrtr_mhi_pkt_release);
-> > +	spin_unlock_irqrestore(&qdev->ul_lock, flags);
-> > +}
-> > +
-> > +static void qcom_mhi_qrtr_status_callback(struct mhi_device *mhi_dev,
-> > +					  enum mhi_callback mhi_cb)
-> > +{
-> > +	struct qrtr_mhi_dev *qdev = dev_get_drvdata(&mhi_dev->dev);
-> > +	struct qrtr_mhi_pkt *pkt;
-> > +	unsigned long flags;
-> > +
-> > +	if (mhi_cb != MHI_CB_FATAL_ERROR)
-> > +		return;
-> > +
-> > +	atomic_inc(&qdev->in_reset);
-> 
-> You have ul_lock close at hand in both places where you access in_reset,
-> so I think it would be better to just use that, instead of an atomic.
-> 
-
-Okay.
-
-> > +	spin_lock_irqsave(&qdev->ul_lock, flags);
-> > +	list_for_each_entry(pkt, &qdev->ul_pkts, node)
-> > +		complete_all(&pkt->done);
-
-Chris, shouldn't we require list_del(&pkt->node) here?
-
-> > +	spin_unlock_irqrestore(&qdev->ul_lock, flags);
-> > +}
-> > +
-> > +/* Send data over MHI */
-> > +static int qcom_mhi_qrtr_send(struct qrtr_endpoint *ep, struct sk_buff *skb)
-> > +{
-> > +	struct qrtr_mhi_dev *qdev = container_of(ep, struct qrtr_mhi_dev, ep);
-> > +	struct qrtr_mhi_pkt *pkt;
-> > +	int rc;
-> > +
-> > +	rc = skb_linearize(skb);
-> > +	if (rc) {
-> > +		kfree_skb(skb);
-> > +		return rc;
-> > +	}
-> > +
-> > +	pkt = kzalloc(sizeof(*pkt), GFP_KERNEL);
-> > +	if (!pkt) {
-> > +		kfree_skb(skb);
-> > +		return -ENOMEM;
-> > +	}
-> > +
-> > +	init_completion(&pkt->done);
-> > +	kref_init(&pkt->refcount);
-> > +	kref_get(&pkt->refcount);
-> > +	pkt->skb = skb;
-> > +
-> > +	spin_lock_bh(&qdev->ul_lock);
-> > +	list_add_tail(&pkt->node, &qdev->ul_pkts);
-> > +	rc = mhi_queue_skb(qdev->mhi_dev, DMA_TO_DEVICE, skb, skb->len,
-> > +			   MHI_EOT);
-> 
-> Do you want to continue doing this when qdev->in_reset? Wouldn't it be
-> better to bail early if the remote end is dying?
-> 
-
-Now I'm thinking why we are not decrementing in_reset anywhere! Incase of
-SYS_ERR, the status_cb will get processed and in_reset will be set but
-it will stay so even when after MHI gets reset.
-
-Chris, can you please clarify?
-
-> > +	if (rc) {
-> > +		list_del(&pkt->node);
-> > +		/* Reference count needs to be dropped 2 times */
-> > +		kref_put(&pkt->refcount, qrtr_mhi_pkt_release);
-> > +		kref_put(&pkt->refcount, qrtr_mhi_pkt_release);
-> > +		kfree_skb(skb);
-> > +		spin_unlock_bh(&qdev->ul_lock);
-> > +		return rc;
-> > +	}
-> > +
-> > +	spin_unlock_bh(&qdev->ul_lock);
-> > +	if (skb->sk)
-> > +		sock_hold(skb->sk);
-> > +
-> > +	rc = wait_for_completion_interruptible_timeout(&pkt->done, HZ * 5);
-> > +	if (atomic_read(&qdev->in_reset))
-> > +		rc = -ECONNRESET;
-> > +	else if (rc == 0)
-> > +		rc = -ETIMEDOUT;
-> 
-> Is this recoverable? The message will remain on the list and may be
-> delivered at a later point(?), but qrtr and the app will learn that the
-> message was lost - which is presumably considered fatal.
-> 
-> Is it guaranteed that qcom_mhi_qrtr_ul_callback() will happen later and
-> find the head of the list?
-> 
-
-There are 2 scenarios:
-
-1. If the completion interrupt happens after timeout, ul_callback()
-will be called. But it will only try to fetch the current head of ul_pkts.
-In most cases, we can hope that the completion interrupt will happen before
-next queue_skb().
-
-2. If we don't get completion interrupt, timeout will happen and at the final
-stage (during mhi_driver_remove()), MHI stack will go over the pending TREs
-for all channels in queue and call ul_callback() with -ENOTCONN. But in the
-callback, we don't have any idea of the pkt which was not successfully
-transferred to the device and currently just fetching first entry.
-
-Now I'm seeing some issue here which I missed earlier. If the completion
-interrupt never happens then the corresponding pkt will never get freed and
-therefore we have a leak. Eventhough the ul_callback() will get called during
-mhi_driver_remove() for pending TREs, we don't exactly fetch the right pkt.
-
-Chris, our assumption of the ul_callback() gets called irrespective of
-transfer status is wrong. I think this code needs a bit of rework.
-
-> 
-> The reason for my question is that without this you have one of two
-> scenarios;
-> 1) the message is put on the list, decremented in
-> qcom_mhi_qrtr_ul_callback() then we get back here and decrement it
-> again.
-> 2) the message is put on the list, then qcom_mhi_qrtr_status_callback()
-> happens and all messages are released - presumably then
-> qcom_mhi_qrtr_ul_callback() won't happen.
-> 
-> 
-> So if the third case (where we return here and then later
-> qcom_mhi_qrtr_ul_callback() must find this particular packet at the
-> front of the queue) can't happen, then you can just skip the entire
-> refcounting.
-> 
-> Further more, you could carry qrtr_mhi_pkt on the stack.
-> 
-> 
-> ...or to flip this around, is there a reason to wait here at all? What
-> would happen if you just return immediately after calling
-> mhi_queue_skb()? Wouldn't that provide you better throughput?
-> 
-
-Chris would be best person to answer this question.
-
-> > +	else if (rc > 0)
-> > +		rc = 0;
-> > +
-> > +	kref_put(&pkt->refcount, qrtr_mhi_pkt_release);
-> > +
-> > +	return rc;
-> > +}
-> > +
-> > +static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
-> > +			       const struct mhi_device_id *id)
-> > +{
-> > +	struct qrtr_mhi_dev *qdev;
-> > +	u32 net_id;
-> > +	int rc;
-> > +
-> > +	qdev = devm_kzalloc(&mhi_dev->dev, sizeof(*qdev), GFP_KERNEL);
-> > +	if (!qdev)
-> > +		return -ENOMEM;
-> > +
-> > +	qdev->mhi_dev = mhi_dev;
-> > +	qdev->dev = &mhi_dev->dev;
-> > +	qdev->ep.xmit = qcom_mhi_qrtr_send;
-> > +	atomic_set(&qdev->in_reset, 0);
-> > +
-> > +	net_id = QRTR_EP_NID_AUTO;
-> 
-> Just pass QRTR_EP_NID_AUTO directly in the function call below.
-> 
-
-Okay.
-
-Thanks,
-Mani
-
-> Regards,
-> Bjorn
-> 
-> > +
-> > +	INIT_LIST_HEAD(&qdev->ul_pkts);
-> > +	spin_lock_init(&qdev->ul_lock);
-> > +
-> > +	dev_set_drvdata(&mhi_dev->dev, qdev);
-> > +	rc = qrtr_endpoint_register(&qdev->ep, net_id);
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	dev_dbg(qdev->dev, "Qualcomm MHI QRTR driver probed\n");
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static void qcom_mhi_qrtr_remove(struct mhi_device *mhi_dev)
-> > +{
-> > +	struct qrtr_mhi_dev *qdev = dev_get_drvdata(&mhi_dev->dev);
-> > +
-> > +	qrtr_endpoint_unregister(&qdev->ep);
-> > +	dev_set_drvdata(&mhi_dev->dev, NULL);
-> > +}
-> > +
-> > +static const struct mhi_device_id qcom_mhi_qrtr_id_table[] = {
-> > +	{ .chan = "IPCR" },
-> > +	{}
-> > +};
-> > +MODULE_DEVICE_TABLE(mhi, qcom_mhi_qrtr_id_table);
-> > +
-> > +static struct mhi_driver qcom_mhi_qrtr_driver = {
-> > +	.probe = qcom_mhi_qrtr_probe,
-> > +	.remove = qcom_mhi_qrtr_remove,
-> > +	.dl_xfer_cb = qcom_mhi_qrtr_dl_callback,
-> > +	.ul_xfer_cb = qcom_mhi_qrtr_ul_callback,
-> > +	.status_cb = qcom_mhi_qrtr_status_callback,
-> > +	.id_table = qcom_mhi_qrtr_id_table,
-> > +	.driver = {
-> > +		.name = "qcom_mhi_qrtr",
-> > +	},
-> > +};
-> > +
-> > +module_mhi_driver(qcom_mhi_qrtr_driver);
-> > +
-> > +MODULE_DESCRIPTION("Qualcomm IPC-Router MHI interface driver");
-> > +MODULE_LICENSE("GPL v2");
-> > -- 
-> > 2.17.1
-> > 
