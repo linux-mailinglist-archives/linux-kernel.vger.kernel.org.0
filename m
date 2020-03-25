@@ -2,84 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A6BA192695
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:04:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABC7919269E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:05:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbgCYLEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 07:04:15 -0400
-Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:50250 "EHLO
-        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbgCYLEP (ORCPT
+        id S1727438AbgCYLFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 07:05:05 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:27961 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726043AbgCYLFF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 07:04:15 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id BE3C03F30D;
-        Wed, 25 Mar 2020 12:04:13 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -1.9
+        Wed, 25 Mar 2020 07:05:05 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585134304; h=Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Message-ID: Date: Subject: In-Reply-To: References: Cc:
+ To: From: Sender; bh=JepPCPGEarX1ss6ZbVvaIoXfTJutoTJE1MiruN2+lF8=; b=gkxn3/JvzBNYUl9VAT2ZR3vql5376nucZF5G6CvwG7ZUpwcN6LXwMKLqBzlJZKfu191nHqZ4
+ ARtSt1P96TES5pfKFbXGgF1x6Cr47lM5zlvyOlSC40B0C1i9lTuEBLVPvxCuk64Pf6f2u/Uo
+ olammCC4SvYEGvtqq1Oz7yH0kdg=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e7b3adf.7f09eaada1b8-smtp-out-n02;
+ Wed, 25 Mar 2020 11:05:03 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5D206C433BA; Wed, 25 Mar 2020 11:05:02 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9] autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id YlsgwM6yP6_9; Wed, 25 Mar 2020 12:04:13 +0100 (CET)
-Received: from localhost (h-41-252.A163.priv.bahnhof.se [46.59.41.252])
-        (Authenticated sender: mb547485)
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id 8043E3F26F;
-        Wed, 25 Mar 2020 12:04:12 +0100 (CET)
-Date:   Wed, 25 Mar 2020 12:04:12 +0100
-From:   Fredrik Noring <noring@nocrew.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] MIPS: remove cpu_has_64bit_gp_regs and
- cpu_has_64bit_addresses
-Message-ID: <20200325110412.GA40881@sx9>
-References: <20200324161525.754181-1-hch@lst.de>
- <20200324161525.754181-2-hch@lst.de>
- <alpine.LFD.2.21.2003250226450.2689954@eddie.linux-mips.org>
- <20200325083012.GA21605@lst.de>
- <20200325085524.GA28706@sx9>
- <20200325085852.GA23786@lst.de>
- <20200325092446.GB28706@sx9>
- <20200325095435.GA27807@lst.de>
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from Pillair (unknown [183.83.66.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: pillair)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 83978C433F2;
+        Wed, 25 Mar 2020 11:04:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83978C433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=pillair@codeaurora.org
+From:   <pillair@codeaurora.org>
+To:     "'Evan Green'" <evgreen@chromium.org>
+Cc:     "'open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS'" 
+        <devicetree@vger.kernel.org>,
+        "'linux-arm Mailing List'" <linux-arm-kernel@lists.infradead.org>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "'linux-arm-msm'" <linux-arm-msm@vger.kernel.org>
+References: <1580822300-4491-1-git-send-email-pillair@codeaurora.org> <CAE=gft7EOALEMUWzoR3+pjoxCUTYWbiXoXY=dXH1BDhS3KwBzg@mail.gmail.com>
+In-Reply-To: <CAE=gft7EOALEMUWzoR3+pjoxCUTYWbiXoXY=dXH1BDhS3KwBzg@mail.gmail.com>
+Subject: RE: [PATCH v6] arm64: dts: qcom: sc7180: Add WCN3990 WLAN module device node
+Date:   Wed, 25 Mar 2020 16:34:54 +0530
+Message-ID: <000901d60295$3acc79b0$b0656d10$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200325095435.GA27807@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIr1eNiqDxek+JigOIeIUW3T4FxSwDFrKGDp6dQ2yA=
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> So from what I can tell this uses a 32-bit kernel and 32-bit userspace,
-> and sets both pu_has_64bit_gp_regs and cpu_has_64bit_addresses to 0.
-> 
-> Now if you ever wanted to make use of the 64-bit registeres it would
-> require quite some changes, which probably really should have a new
-> Kconfig option.  In fact a lot of the workaround for the 64-bit
-> registeres that are in the code already should be keyed off such an
-> option rather than CONFIG_CPU_R5900.
+Hi Evan,
 
-Addresses are always 32-bit for the R5900 (and not even sign extended?),
-as I understand, but GPRs are also always 128-bit. The kernel is unable
-to disable 64-bit operations and 128-bit multimedia instructions (MMIs)
-because the R5900 doesn't implement CP0.Status.UX. [ In other MIPS ISA
-implementations, attempting to execute 64-bit operations in 32-bit user
-or supervisor mode may cause an reserved instruction exception. ]
+I will send out a v7 for this patchset.
+Since I have to configure the S2 SIDs, it is dependent on below ath10k =
+patchset.
+https://patchwork.kernel.org/project/linux-wireless/list/?series=3D261367=
 
-The best approach, I think, is to have the kernel properly save/restore
-128-bit GPRs in all cases, as MMIs are quite useful and actually would
-"mostly" work regardless of any kernel support. I wrote "mostly" because
-with o32 the upper 96 bits of the GPRs would be clobbered when switching
-contexts unless they are restored by the kernel.
 
-Also of note is that some pieces of hardware require a 64-bit store
-instruction, even with a 32-bit kernel. This implies that the kernel
-either saves 128 or 64 GPR bits in 32-bit mode too, or, that interrupts
-are disabled to avoiding clobbering GPRs in these specific cases.
+Thanks,
+Rakesh Pillai.
 
-Fredrik
+> -----Original Message-----
+> From: Evan Green <evgreen@chromium.org>
+> Sent: Tuesday, March 24, 2020 11:10 PM
+> To: Rakesh Pillai <pillair@codeaurora.org>
+> Cc: open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
+> <devicetree@vger.kernel.org>; linux-arm Mailing List <linux-arm-
+> kernel@lists.infradead.org>; LKML <linux-kernel@vger.kernel.org>; =
+linux-
+> arm-msm <linux-arm-msm@vger.kernel.org>
+> Subject: Re: [PATCH v6] arm64: dts: qcom: sc7180: Add WCN3990 WLAN
+> module device node
+>=20
+> Hi Rakesh,
+>=20
+> On Tue, Feb 4, 2020 at 5:21 AM Rakesh Pillai <pillair@codeaurora.org> =
+wrote:
+> >
+> > Add device node for the ath10k SNOC platform driver probe
+> > and add resources required for WCN3990 on sc7180 soc.
+> >
+> > Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
+>=20
+> What is the status of this? Looks like you have some feedback from
+> Sibi. Can you reply and spin this? Also a comment below:
+>=20
+> > ---
+> >  arch/arm64/boot/dts/qcom/sc7180-idp.dts |  5 +++++
+> >  arch/arm64/boot/dts/qcom/sc7180.dtsi    | 27
+> +++++++++++++++++++++++++++
+> >  2 files changed, 32 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> > index 388f50a..167f68ac 100644
+> > --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> > +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> > @@ -287,6 +287,11 @@
+> >         vdda-pll-supply =3D <&vreg_l4a_0p8>;
+> >  };
+> >
+> > +&wifi {
+> > +       status =3D "okay";
+> > +       qcom,msa-fixed-perm;
+> > +};
+> > +
+> >  /* PINCTRL - additions to nodes defined in sc7180.dtsi */
+> >
+> >  &qspi_clk {
+> > diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> > index 8011c5f..e3e8610 100644
+> > --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> > @@ -75,6 +75,11 @@
+> >                         reg =3D <0x0 0x80900000 0x0 0x200000>;
+> >                         no-map;
+> >                 };
+> > +
+> > +               wlan_fw_mem: memory@93900000 {
+> > +                       reg =3D <0 0x93900000 0 0x200000>;
+> > +                       no-map;
+> > +               };
+> >         };
+> >
+> >         cpus {
+> > @@ -1490,6 +1495,28 @@
+> >
+> >                         #freq-domain-cells =3D <1>;
+> >                 };
+> > +
+> > +               wifi: wifi@18800000 {
+> > +                       compatible =3D "qcom,wcn3990-wifi";
+> > +                       reg =3D <0 0x18800000 0 0x800000>;
+> > +                       reg-names =3D "membase";
+> > +                       iommus =3D <&apps_smmu 0xc0 0x1>;
+> > +                       interrupts =3D
+> > +                               <GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH /* =
+CE0 */ >,
+> > +                               <GIC_SPI 415 IRQ_TYPE_LEVEL_HIGH /* =
+CE1 */ >,
+> > +                               <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH /* =
+CE2 */ >,
+> > +                               <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH /* =
+CE3 */ >,
+> > +                               <GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH /* =
+CE4 */ >,
+> > +                               <GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH /* =
+CE5 */ >,
+> > +                               <GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH /* =
+CE6 */ >,
+> > +                               <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH /* =
+CE7 */ >,
+> > +                               <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH /* =
+CE8 */ >,
+> > +                               <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH /* =
+CE9 */ >,
+> > +                               <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH /* =
+CE10 */>,
+> > +                               <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH /* =
+CE11 */>;
+> > +                       memory-region =3D <&wlan_fw_mem>;
+>=20
+> The clocks are missing:
+>=20
+> clocks =3D <&rpmhcc RPMH_RF_CLK2>;
+> clock-names =3D "cxo_ref_clk_pin";
+>=20
+> > +                       status =3D "disabled";
+> > +               };
+> >         };
+> >
+> >         thermal-zones {
+> > --
+> > 2.7.4
+> >
