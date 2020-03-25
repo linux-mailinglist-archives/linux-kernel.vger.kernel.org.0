@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EEEF193460
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 00:14:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5469193463
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 00:15:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbgCYXOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 19:14:47 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:40176 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727539AbgCYXOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727677AbgCYXOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 25 Mar 2020 19:14:43 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:40190 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727525AbgCYXOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 19:14:42 -0400
 Received: from ip5f5a5d2f.dynamic.kabel-deutschland.de ([95.90.93.47] helo=phil.sntech)
         by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <heiko@sntech.de>)
-        id 1jHFEJ-0007ug-8g; Thu, 26 Mar 2020 00:14:35 +0100
+        id 1jHFEJ-0007ug-KT; Thu, 26 Mar 2020 00:14:35 +0100
 From:   Heiko Stuebner <heiko@sntech.de>
 To:     gregkh@linuxfoundation.org
 Cc:     jslaby@suse.com, andriy.shevchenko@linux.intel.com,
@@ -24,9 +24,9 @@ Cc:     jslaby@suse.com, andriy.shevchenko@linux.intel.com,
         christoph.muellner@theobroma-systems.com,
         giulio.benetti@micronovasrl.com,
         Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: [PATCH v2 6/7] serial: 8250: Support separate rs485 rx-enable GPIO
-Date:   Thu, 26 Mar 2020 00:14:21 +0100
-Message-Id: <20200325231422.1502366-7-heiko@sntech.de>
+Subject: [PATCH v2 7/7] serial: 8250_dw: add em485 support
+Date:   Thu, 26 Mar 2020 00:14:22 +0100
+Message-Id: <20200325231422.1502366-8-heiko@sntech.de>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200325231422.1502366-1-heiko@sntech.de>
 References: <20200325231422.1502366-1-heiko@sntech.de>
@@ -37,103 +37,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
 
-The RE signal is used to control the duplex mode of transmissions,
-aka receiving data while sending in full duplex mode, while stopping
-receiving data in half-duplex mode.
+Need to use rs485 transceiver so let's use existing em485 485 emulation
+layer on top of 8250.
 
-On a number of boards the !RE signal is tied to ground so reception
-is always enabled except if the UART allows disabling the receiver.
-This can be taken advantage of to implement half-duplex mode - like
-done on 8250_bcm2835aux.
+Add rs485_config callback to port and uses the standard em485 start and
+stop helpers.
 
-Another solution is to tie !RE to RTS always forcing half-duplex mode.
-
-And finally there is the option to control the RE signal separately,
-like done here by introducing a new rs485-specifc gpio that can be
-set depending on the RX_DURING_TX setting in the common em485 callbacks.
-
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+[moved to use newly added start/stop helpers]
 Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 ---
- drivers/tty/serial/8250/8250_port.c | 11 ++++++++++-
- drivers/tty/serial/serial_core.c    | 12 ++++++++++++
- include/linux/serial_core.h         |  1 +
- 3 files changed, 23 insertions(+), 1 deletion(-)
+ drivers/tty/serial/8250/8250_dw.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 41ad7db6a31e..6a34204126d9 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -1445,6 +1445,7 @@ static void serial8250_stop_rx(struct uart_port *port)
- void serial8250_em485_stop_tx(struct uart_8250_port *p)
- {
- 	unsigned char mcr = serial8250_in_MCR(p);
-+	struct uart_port *port = &p->port;
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index aab3cccc6789..588319075b36 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -414,6 +414,9 @@ static int dw8250_probe(struct platform_device *pdev)
+ 	p->serial_out	= dw8250_serial_out;
+ 	p->set_ldisc	= dw8250_set_ldisc;
+ 	p->set_termios	= dw8250_set_termios;
++	p->rs485_config = serial8250_em485_config;
++	up->rs485_start_tx = serial8250_em485_start_tx;
++	up->rs485_stop_tx = serial8250_em485_stop_tx;
  
- 	if (p->port.rs485.flags & SER_RS485_RTS_AFTER_SEND)
- 		mcr |= UART_MCR_RTS;
-@@ -1458,6 +1459,9 @@ void serial8250_em485_stop_tx(struct uart_8250_port *p)
- 	 * Enable previously disabled RX interrupts.
- 	 */
- 	if (!(p->port.rs485.flags & SER_RS485_RX_DURING_TX)) {
-+		if (port->rs485_re_gpio)
-+			gpiod_set_value(port->rs485_re_gpio, 1);
-+
- 		serial8250_clear_and_reinit_fifos(p);
- 
- 		p->ier |= UART_IER_RLSI | UART_IER_RDI;
-@@ -1614,9 +1618,14 @@ static inline void __start_tx(struct uart_port *port)
- void serial8250_em485_start_tx(struct uart_8250_port *up)
- {
- 	unsigned char mcr = serial8250_in_MCR(up);
-+	struct uart_port *port = &up->port;
-+
-+	if (!(up->port.rs485.flags & SER_RS485_RX_DURING_TX)) {
-+		if (port->rs485_re_gpio)
-+			gpiod_set_value(port->rs485_re_gpio, 0);
- 
--	if (!(up->port.rs485.flags & SER_RS485_RX_DURING_TX))
- 		serial8250_stop_rx(&up->port);
-+	}
- 
- 	if (up->port.rs485.flags & SER_RS485_RTS_ON_SEND)
- 		mcr |= UART_MCR_RTS;
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 77702b6371e3..5dc9ef31a6fa 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -3356,6 +3356,18 @@ int uart_get_rs485_mode(struct uart_port *port)
- 			rs485conf->flags |= SER_RS485_TERMINATE_BUS;
- 	}
- 
-+	port->rs485_re_gpio = devm_gpiod_get(dev, "rs485-rx-enable",
-+					       GPIOD_FLAGS_BIT_DIR_OUT);
-+	if (IS_ERR(port->rs485_re_gpio)) {
-+		ret = PTR_ERR(port->rs485_re_gpio);
-+		port->rs485_re_gpio = NULL;
-+		if (ret != -ENOENT) {
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(dev, "Cannot get rs485-rx-enable-gpios\n");
-+			return ret;
-+		}
-+	}
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(uart_get_rs485_mode);
-diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
-index 9521e23b2144..4d8f51b1d9b2 100644
---- a/include/linux/serial_core.h
-+++ b/include/linux/serial_core.h
-@@ -252,6 +252,7 @@ struct uart_port {
- 	const struct attribute_group **tty_groups;	/* all attributes (serial core use only) */
- 	struct serial_rs485     rs485;
- 	struct gpio_desc	*rs485_term_gpio;	/* enable RS485 bus termination */
-+	struct gpio_desc	*rs485_re_gpio;		/* gpio RS485 receive enable */
- 	struct serial_iso7816   iso7816;
- 	void			*private_data;		/* generic platform data pointer */
- };
+ 	p->membase = devm_ioremap(dev, regs->start, resource_size(regs));
+ 	if (!p->membase)
 -- 
 2.24.1
 
