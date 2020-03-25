@@ -2,192 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60031192556
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E12192560
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 11:22:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbgCYKVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 06:21:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726239AbgCYKVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:21:37 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F8AC2078A;
-        Wed, 25 Mar 2020 10:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585131696;
-        bh=m5Pq0eBhZeIfxtyF0xHTg4nDRhDM4RXP4sUZd+gwGv4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zXwS+niLdj3whOFFg3NQmSspddaYWtcDSR6ZsApYkYR7fN1qv+YORhRwNzAeNKNBF
-         OYlcLXk06crs3ABWkoc6M0FH5gW+eikAoSxafD22RKhez3CtTKt7YZHYMD88WxQ5cE
-         TRr9x1K6jIRsPMUrSPejQR5yAAQBOzztOs5gAObo=
-Date:   Wed, 25 Mar 2020 11:21:34 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        nicholas.johnson-opensource@outlook.com.au
-Subject: Re: [PATCH v2 2/2] nvmem: core: use is_bin_visible for permissions
-Message-ID: <20200325102134.GA3084470@kroah.com>
-References: <20200325100138.17854-1-srinivas.kandagatla@linaro.org>
- <20200325100138.17854-3-srinivas.kandagatla@linaro.org>
+        id S1727666AbgCYKW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 06:22:27 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:62524 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbgCYKW1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 06:22:27 -0400
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 02PAMGQx028925;
+        Wed, 25 Mar 2020 19:22:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 02PAMGQx028925
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585131736;
+        bh=oKV4gkaGjA8JUJ0R19IwiELg1IvohIMnv7gyVQFEv8g=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xy87udG48Uqlz1ouCY/JCBjnyVTjON2Ra05VsF8gkizOyqx0vrwUGOGoRgk2y6yoT
+         f34+RcZiuNNxC5QmSTgpDaDcBNWtBQkovq0517Mdih8WzMOgVieUR6gj70vsl6OYBr
+         2L5EVf26gs/5mI/Ed7r8n3kN6PKk9EhXs0KYXBTupldY/0tyh5J3VGUdoOOM24ssN4
+         yKRkA6eUh+MkNXLv7cDbhdAuI9RybZk+vr4j6Ml05L6ZdNZ0IkBnXVc387egPpRrxq
+         BB1juIwc6LBW9dLVjfon00pdN0+GBvV4nhJhnJ7syoaZNP0Mh2sm7zlULME2j/+zlR
+         QhwDcZcR4QF8w==
+X-Nifty-SrcIP: [209.85.222.43]
+Received: by mail-ua1-f43.google.com with SMTP id o16so523878uap.6;
+        Wed, 25 Mar 2020 03:22:16 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ1NHx6ju7XiN0slUernAEhDOuTEU9uJvv0PYUq3PpQem48L9F+M
+        lXv0/BqdQC9Uxjzz/IAGLTt6KpAGtS+93K/Igb4=
+X-Google-Smtp-Source: ADFU+vulOrH4nh/j/MQxVkE4DfCZT//dWVxt1fewODMBiEhlfJUPE3Cgci+RGQ7TVq1ud7qHRP44QHrIEw5As28k7VY=
+X-Received: by 2002:ab0:28d8:: with SMTP id g24mr1599988uaq.121.1585131735496;
+ Wed, 25 Mar 2020 03:22:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200325100138.17854-3-srinivas.kandagatla@linaro.org>
+References: <20200303133600.9263-1-masahiroy@kernel.org> <20200303133600.9263-2-masahiroy@kernel.org>
+ <CAK7LNARZUpDKXpniNZ+_=G5Gskebc0HEHT5TKbaz2Xs_Ni6u4g@mail.gmail.com> <20200325101838.GA3084128@kroah.com>
+In-Reply-To: <20200325101838.GA3084128@kroah.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 25 Mar 2020 19:21:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQtxwXzmHXr6GMm_BrEvittoUHJkrROVFX02if5BTCgGw@mail.gmail.com>
+Message-ID: <CAK7LNAQtxwXzmHXr6GMm_BrEvittoUHJkrROVFX02if5BTCgGw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] .gitignore: add SPDX License Identifier
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-spdx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 10:01:38AM +0000, Srinivas Kandagatla wrote:
-> By using is_bin_visible callback to set permissions will remove a
-> large list of attribute groups. These group permissions can be
-> dynamically derived in the callback.
-> 
-> Also add checks for read/write callbacks and set permissions accordingly.
-> 
-> Suggested-by: Greg KH <gregkh@linuxfoundation.org>
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
-> Changes since v1:
-> 	- Updated permissions setup logic as suggested by Greg
-> 	- Added checks for callbacks.
-> 
->  drivers/nvmem/nvmem-sysfs.c | 85 +++++++++++++------------------------
->  1 file changed, 29 insertions(+), 56 deletions(-)
-> 
-> diff --git a/drivers/nvmem/nvmem-sysfs.c b/drivers/nvmem/nvmem-sysfs.c
-> index 8759c4470012..68ad8aef79d4 100644
-> --- a/drivers/nvmem/nvmem-sysfs.c
-> +++ b/drivers/nvmem/nvmem-sysfs.c
-> @@ -104,6 +104,28 @@ static ssize_t bin_attr_nvmem_write(struct file *filp, struct kobject *kobj,
->  	return count;
->  }
->  
-> +static umode_t nvmem_bin_attr_is_visible(struct kobject *kobj,
-> +					 struct bin_attribute *attr, int i)
-> +{
-> +	struct device *dev = container_of(kobj, struct device, kobj);
-> +	struct nvmem_device *nvmem = to_nvmem_device(dev);
-> +	umode_t mode = 0400;
-> +
-> +	if (!nvmem->root_only)
-> +		mode |= 0044;
-> +
-> +	if (!nvmem->read_only)
-> +		mode |= 0200;
-> +
-> +	if (!nvmem->reg_write)
-> +		mode &= ~0200;
-> +
-> +	if (!nvmem->reg_read)
-> +		mode &= ~0444;
-> +
-> +	return mode;
-> +}
-> +
->  /* default read/write permissions */
->  static struct bin_attribute bin_attr_rw_nvmem = {
->  	.attr	= {
-> @@ -114,18 +136,19 @@ static struct bin_attribute bin_attr_rw_nvmem = {
->  	.write	= bin_attr_nvmem_write,
->  };
->  
-> -static struct bin_attribute *nvmem_bin_rw_attributes[] = {
-> +static struct bin_attribute *nvmem_bin_attributes[] = {
->  	&bin_attr_rw_nvmem,
->  	NULL,
->  };
->  
-> -static const struct attribute_group nvmem_bin_rw_group = {
-> -	.bin_attrs	= nvmem_bin_rw_attributes,
-> +static const struct attribute_group nvmem_bin_group = {
-> +	.bin_attrs	= nvmem_bin_attributes,
->  	.attrs		= nvmem_attrs,
-> +	.is_bin_visible = nvmem_bin_attr_is_visible,
->  };
->  
-> -static const struct attribute_group *nvmem_rw_dev_groups[] = {
-> -	&nvmem_bin_rw_group,
-> +static const struct attribute_group *nvmem_dev_groups[] = {
-> +	&nvmem_bin_group,
->  	NULL,
->  };
->  
-> @@ -138,21 +161,6 @@ static struct bin_attribute bin_attr_ro_nvmem = {
->  	.read	= bin_attr_nvmem_read,
->  };
->  
-> -static struct bin_attribute *nvmem_bin_ro_attributes[] = {
-> -	&bin_attr_ro_nvmem,
-> -	NULL,
-> -};
-> -
-> -static const struct attribute_group nvmem_bin_ro_group = {
-> -	.bin_attrs	= nvmem_bin_ro_attributes,
-> -	.attrs		= nvmem_attrs,
-> -};
-> -
-> -static const struct attribute_group *nvmem_ro_dev_groups[] = {
-> -	&nvmem_bin_ro_group,
-> -	NULL,
-> -};
-> -
->  /* default read/write permissions, root only */
->  static struct bin_attribute bin_attr_rw_root_nvmem = {
->  	.attr	= {
-> @@ -163,21 +171,6 @@ static struct bin_attribute bin_attr_rw_root_nvmem = {
->  	.write	= bin_attr_nvmem_write,
->  };
->  
-> -static struct bin_attribute *nvmem_bin_rw_root_attributes[] = {
-> -	&bin_attr_rw_root_nvmem,
-> -	NULL,
-> -};
-> -
-> -static const struct attribute_group nvmem_bin_rw_root_group = {
-> -	.bin_attrs	= nvmem_bin_rw_root_attributes,
-> -	.attrs		= nvmem_attrs,
-> -};
-> -
-> -static const struct attribute_group *nvmem_rw_root_dev_groups[] = {
-> -	&nvmem_bin_rw_root_group,
-> -	NULL,
-> -};
-> -
->  /* read only permission, root only */
->  static struct bin_attribute bin_attr_ro_root_nvmem = {
->  	.attr	= {
-> @@ -187,31 +180,11 @@ static struct bin_attribute bin_attr_ro_root_nvmem = {
->  	.read	= bin_attr_nvmem_read,
->  };
->  
-> -static struct bin_attribute *nvmem_bin_ro_root_attributes[] = {
-> -	&bin_attr_ro_root_nvmem,
-> -	NULL,
-> -};
-> -
-> -static const struct attribute_group nvmem_bin_ro_root_group = {
-> -	.bin_attrs	= nvmem_bin_ro_root_attributes,
-> -	.attrs		= nvmem_attrs,
-> -};
-> -
-> -static const struct attribute_group *nvmem_ro_root_dev_groups[] = {
-> -	&nvmem_bin_ro_root_group,
-> -	NULL,
-> -};
-> -
->  const struct attribute_group **nvmem_sysfs_get_groups(
->  					struct nvmem_device *nvmem,
->  					const struct nvmem_config *config)
+On Wed, Mar 25, 2020 at 7:18 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Mar 25, 2020 at 07:10:03PM +0900, Masahiro Yamada wrote:
+> > On Tue, Mar 3, 2020 at 10:36 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > >
+> > > Add SPDX License Identifier to all .gitignore files.
+> > >
+> > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> >
+> >
+> > Ping?
+>
+> Ah, I just assumed you would take these through your tree, sorry about
+> that.
+>
+> Both look find:
+>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>
+> Or do you want me to take these?
+>
 
-You no longer need any parameters for this function, right?
+Yes.
+That is why I sent this to linux-spdx ML,
+which seems a valid path.
 
-Also, you really don't even need the function, just point to the
-variable instead.
 
-thanks,
-
-greg k-h
+-- 
+Best Regards
+Masahiro Yamada
