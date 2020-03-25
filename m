@@ -2,71 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBC97192A36
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:38:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76339192A02
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 14:36:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbgCYNhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 09:37:23 -0400
-Received: from esa4.mentor.iphmx.com ([68.232.137.252]:34681 "EHLO
-        esa4.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727841AbgCYNhU (ORCPT
+        id S1727928AbgCYNgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 09:36:02 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:25349 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727374AbgCYNgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 09:37:20 -0400
-IronPort-SDR: EnQ15c651USx5bSveWBlSwn4rviqqjOGj7Y2ileG/lXeq+m3rv5Aum/9jfMiWNC0QAxcf7ckf4
- CdPbKK/GddCdZo7myDml14d0nk12kXX7gXFFtFAhwOf7H7Hqo43PU3WSABja9IQZ/T1jHdGHai
- 2u7EMScla6hsGc97NNvg80vFovSdd0vVaOLUEa8a66QZSpkVAZl06fUHMzikQfEMG5j+7Wl66O
- k8obzPnYf7QI8K23I6e1HK0SFLdp+VQLzrL1k4Gp0IxFga82CSwa91evzyVfG0imkyroBU7FbI
- pkI=
-X-IronPort-AV: E=Sophos;i="5.72,304,1580803200"; 
-   d="scan'208";a="47143580"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa4.mentor.iphmx.com with ESMTP; 25 Mar 2020 05:37:20 -0800
-IronPort-SDR: ljHn8vTxJIQ5G1NvGM0TNMXytrpYp25TluGS9uV2rvLzawDAXvssAyDyhFzzxf4O0g0yyT3C4Q
- TFXjMfWMU9Cuuzhs63iTMJSqdfBWbGN5xYacCVljiTks5bTEaXAyq6BDysJ/pOr3mzutLAPgl/
- XDOYtFelgnf7+9HieaVd6Xhfq2fuPkHEYLS14u5tztzPFCQU91Nxbhg88DPeur4LvM7B56rVrG
- sCkcdaneJ0G/dFnlHz3JSAjBpx6TOyVsxAGO5O6yYbhsIXpdiGHKjwSN1nu6YQL/pmw6MVUF5q
- phQ=
-From:   Jiada Wang <jiada_wang@mentor.com>
-To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>,
-        <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
-        <bsz@semihalf.com>, <rydberg@bitmath.org>
-CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <erosca@de.adit-jv.com>, <Andrew_Gabbasov@mentor.com>,
-        <jiada_wang@mentor.com>
-Subject: [PATCH v9 55/55] Input: atmel_mxt_ts - Fix compilation warning
-Date:   Wed, 25 Mar 2020 06:33:34 -0700
-Message-ID: <20200325133334.19346-56-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200325133334.19346-1-jiada_wang@mentor.com>
-References: <20200325133334.19346-1-jiada_wang@mentor.com>
+        Wed, 25 Mar 2020 09:36:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585143360;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gTWSDBTYwDIzFD3B1k+QGH19Oi5HErFXNjNfQmqBD2w=;
+        b=avKWT/7P94lIHLUrZjTxZ/DnRj8NegKYF+3XfU+0mjw4iv/yZFUNQ6LKVmnPQNV92F4fGT
+        mXC+xpVXf7vs/fLgQ88CqhFisc90oJaCBfzTw0puy2W4Vuo+PYYmYORE9q4AXJgoE6w1N1
+        cMHSI31snokN83TFc+Ou8A8hFdpCTVo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-16-zXJVW8PNPOGmt8hrMMw9Pg-1; Wed, 25 Mar 2020 09:35:56 -0400
+X-MC-Unique: zXJVW8PNPOGmt8hrMMw9Pg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 61B78107ACC4;
+        Wed, 25 Mar 2020 13:35:55 +0000 (UTC)
+Received: from sandy.ghostprotocols.net (unknown [10.3.128.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B2B1CBBBDD;
+        Wed, 25 Mar 2020 13:35:54 +0000 (UTC)
+Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
+        id 63859160; Wed, 25 Mar 2020 10:35:51 -0300 (BRT)
+Date:   Wed, 25 Mar 2020 10:35:51 -0300
+From:   Arnaldo Carvalho de Melo <acme@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>, He Zhe <zhe.he@windriver.com>
+Cc:     tstoyanov@vmware.com, hewenliang4@huawei.com,
+        linux-kernel@vger.kernel.org, acme@kernel.org
+Subject: Re: [PATCH v3] tools lib traceevent: Take care of return value of
+ asprintf
+Message-ID: <20200325133551.GA19495@redhat.com>
+References: <1582163930-233692-1-git-send-email-zhe.he@windriver.com>
+ <5f7589c3-323d-1a5c-685c-9becd87a690b@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5f7589c3-323d-1a5c-685c-9becd87a690b@windriver.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix "make W=1" compilation warnings from Atmel driver
-as per the compilation logs.
+Em Wed, Mar 25, 2020 at 09:05:46PM +0800, He Zhe escreveu:
+> Can this be considered for the moment?
 
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
----
- drivers/input/touchscreen/atmel_mxt_ts.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Rostedt, have you looked at this?
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 7bd926f04e9f..c6e3905bb50f 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -2048,7 +2048,7 @@ static int mxt_prepare_cfg_mem(struct mxt_data *data, struct mxt_cfg *cfg)
- 
- 			byte_offset = reg + i - cfg->start_ofs;
- 
--			if (byte_offset >= 0 && byte_offset < cfg->mem_size) {
-+			if (byte_offset < cfg->mem_size) {
- 				*(cfg->mem + byte_offset) = val;
- 			} else {
- 				dev_err(dev, "Bad object: reg:%d, T%d, ofs=%d\n",
--- 
-2.17.1
+- Arnaldo
+=20
+> Thanks,
+> Zhe
+>=20
+> On 2/20/20 9:58 AM, zhe.he@windriver.com wrote:
+> > From: He Zhe <zhe.he@windriver.com>
+> >
+> > According to the API, if memory allocation wasn't possible, or some o=
+ther
+> > error occurs, asprintf will return -1, and the contents of strp below=
+ are
+> > undefined.
+> >
+> > int asprintf(char **strp, const char *fmt, ...);
+> >
+> > This patch takes care of return value of asprintf to make it less err=
+or
+> > prone and prevent the following build warning.
+> >
+> > ignoring return value of =E2=80=98asprintf=E2=80=99, declared with at=
+tribute warn_unused_result [-Wunused-result]
+> >
+> > Signed-off-by: He Zhe <zhe.he@windriver.com>
+> > ---
+> > v2: directly check the return value without saving to a variable
+> > v3: as asked, not remove those that already save the return value
+> >
+> >  tools/lib/traceevent/parse-filter.c | 29 +++++++++++++++++++--------=
+--
+> >  1 file changed, 19 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceeve=
+nt/parse-filter.c
+> > index 20eed71..c271aee 100644
+> > --- a/tools/lib/traceevent/parse-filter.c
+> > +++ b/tools/lib/traceevent/parse-filter.c
+> > @@ -1958,7 +1958,8 @@ static char *op_to_str(struct tep_event_filter =
+*filter, struct tep_filter_arg *a
+> >  				default:
+> >  					break;
+> >  				}
+> > -				asprintf(&str, val ? "TRUE" : "FALSE");
+> > +				if (asprintf(&str, val ? "TRUE" : "FALSE") < 0)
+> > +					str =3D NULL;
+> >  				break;
+> >  			}
+> >  		}
+> > @@ -1976,7 +1977,8 @@ static char *op_to_str(struct tep_event_filter =
+*filter, struct tep_filter_arg *a
+> >  			break;
+> >  		}
+> > =20
+> > -		asprintf(&str, "(%s) %s (%s)", left, op, right);
+> > +		if (asprintf(&str, "(%s) %s (%s)", left, op, right) < 0)
+> > +			str =3D NULL;
+> >  		break;
+> > =20
+> >  	case TEP_FILTER_OP_NOT:
+> > @@ -1992,10 +1994,12 @@ static char *op_to_str(struct tep_event_filte=
+r *filter, struct tep_filter_arg *a
+> >  			right_val =3D 0;
+> >  		if (right_val >=3D 0) {
+> >  			/* just return the opposite */
+> > -			asprintf(&str, right_val ? "FALSE" : "TRUE");
+> > +			if (asprintf(&str, right_val ? "FALSE" : "TRUE") < 0)
+> > +				str =3D NULL;
+> >  			break;
+> >  		}
+> > -		asprintf(&str, "%s(%s)", op, right);
+> > +		if (asprintf(&str, "%s(%s)", op, right) < 0)
+> > +			str =3D NULL;
+> >  		break;
+> > =20
+> >  	default:
+> > @@ -2011,7 +2015,8 @@ static char *val_to_str(struct tep_event_filter=
+ *filter, struct tep_filter_arg *
+> >  {
+> >  	char *str =3D NULL;
+> > =20
+> > -	asprintf(&str, "%lld", arg->value.val);
+> > +	if (asprintf(&str, "%lld", arg->value.val) < 0)
+> > +		str =3D NULL;
+> > =20
+> >  	return str;
+> >  }
+> > @@ -2069,7 +2074,8 @@ static char *exp_to_str(struct tep_event_filter=
+ *filter, struct tep_filter_arg *
+> >  		break;
+> >  	}
+> > =20
+> > -	asprintf(&str, "%s %s %s", lstr, op, rstr);
+> > +	if (asprintf(&str, "%s %s %s", lstr, op, rstr) < 0)
+> > +		str =3D NULL;
+> >  out:
+> >  	free(lstr);
+> >  	free(rstr);
+> > @@ -2113,7 +2119,8 @@ static char *num_to_str(struct tep_event_filter=
+ *filter, struct tep_filter_arg *
+> >  		if (!op)
+> >  			op =3D "<=3D";
+> > =20
+> > -		asprintf(&str, "%s %s %s", lstr, op, rstr);
+> > +		if (asprintf(&str, "%s %s %s", lstr, op, rstr) < 0)
+> > +			str =3D NULL;
+> >  		break;
+> > =20
+> >  	default:
+> > @@ -2148,8 +2155,9 @@ static char *str_to_str(struct tep_event_filter=
+ *filter, struct tep_filter_arg *
+> >  		if (!op)
+> >  			op =3D "!~";
+> > =20
+> > -		asprintf(&str, "%s %s \"%s\"",
+> > -			 arg->str.field->name, op, arg->str.val);
+> > +		if (asprintf(&str, "%s %s \"%s\"",
+> > +			 arg->str.field->name, op, arg->str.val) < 0)
+> > +			str =3D NULL;
+> >  		break;
+> > =20
+> >  	default:
+> > @@ -2165,7 +2173,8 @@ static char *arg_to_str(struct tep_event_filter=
+ *filter, struct tep_filter_arg *
+> > =20
+> >  	switch (arg->type) {
+> >  	case TEP_FILTER_ARG_BOOLEAN:
+> > -		asprintf(&str, arg->boolean.value ? "TRUE" : "FALSE");
+> > +		if (asprintf(&str, arg->boolean.value ? "TRUE" : "FALSE") < 0)
+> > +			str =3D NULL;
+> >  		return str;
+> > =20
+> >  	case TEP_FILTER_ARG_OP:
 
