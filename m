@@ -2,138 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D7B192750
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:37:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E2F7192749
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 12:36:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbgCYLhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 07:37:14 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:16628 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727259AbgCYLhL (ORCPT
+        id S1727401AbgCYLgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 07:36:55 -0400
+Received: from mailgate1.rohmeurope.com ([87.129.152.131]:49370 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726906AbgCYLgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 07:37:11 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02PBWwFf022906;
-        Wed, 25 Mar 2020 12:36:54 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=RjGEbFFJr8rNl19hjksDzi2Iu6GfxyBcu1ZvANyO+rI=;
- b=ieZFcEs2iS3Zh1G4DU6jFqefwRi5v31BvNxybHTgOH2i5mp+FhOu1DX24Mat4rwZmLSQ
- jGTT+wGAJisDVzfOy8TIjhiRX1K74Q2n4gmEvmLdE2ILODJy2cyPnXu/dZa3wdyEmC8t
- Bxzu5Elg23QiJMQv9JuM0ex29wgl32BtF+bcjrcgL2A1QD6cGR5jVYcABEEcMyb/tiqJ
- nQE6tqL1j/T++s97x6yJCoilG5qxT2zs+9X0odO28pXtVeVNOu2A+BX516c9ZXOe3qvj
- iJMvoFu/WWW4ggSVGNL4pEjBVJKyCB3oCZtUurBbnrT2tTaaDjewVksDGyJH9rD3EWX4 Bg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2yw9k05cb5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 25 Mar 2020 12:36:54 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 81B01100039;
-        Wed, 25 Mar 2020 12:36:49 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 71D202A787D;
-        Wed, 25 Mar 2020 12:36:49 +0100 (CET)
-Received: from lmecxl0889.tpe.st.com (10.75.127.48) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 25 Mar
- 2020 12:36:40 +0100
-Subject: Re: [PATCH v7 2/2] tty: add rpmsg driver
-To:     Joe Perches <joe@perches.com>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Suman Anna <s-anna@ti.com>,
-        Fabien DESSENNE <fabien.dessenne@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        xiang xiao <xiaoxiang781216@gmail.com>
-References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
- <20200324170407.16470-3-arnaud.pouliquen@st.com>
- <1dff1b277e5d2c95ce100a2daff4967f98d074ba.camel@perches.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <66fe1087-1a6d-1a96-a043-8013bfb6f2c1@st.com>
-Date:   Wed, 25 Mar 2020 12:36:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <1dff1b277e5d2c95ce100a2daff4967f98d074ba.camel@perches.com>
+        Wed, 25 Mar 2020 07:36:55 -0400
+X-AuditID: c0a8fbf4-489ff70000004419-3a-5e7b4254a412
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id CE.D1.17433.4524B7E5; Wed, 25 Mar 2020 12:36:52 +0100 (CET)
+Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0487.000; Wed, 25 Mar 2020 12:36:47 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "talgi@mellanox.com" <talgi@mellanox.com>,
+        "olteanv@gmail.com" <olteanv@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "brendanhiggins@google.com" <brendanhiggins@google.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "davidgow@google.com" <davidgow@google.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+        "bp@suse.de" <bp@suse.de>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Laine, Markus" <Markus.Laine@fi.rohmeurope.com>,
+        "vincenzo.frascino@arm.com" <vincenzo.frascino@arm.com>,
+        "sre@kernel.org" <sre@kernel.org>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "zaslonko@linux.ibm.com" <zaslonko@linux.ibm.com>,
+        "uwe@kleine-koenig.org" <uwe@kleine-koenig.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: [PATCH v6 09/10] power: supply: Support ROHM bd99954 charger
+Thread-Topic: [PATCH v6 09/10] power: supply: Support ROHM bd99954 charger
+Thread-Index: AQHWAbbAyLpT1a+wPEGvvo/J38Wk46hXbxYAgAAMuoCAAaNYgA==
+Date:   Wed, 25 Mar 2020 11:36:46 +0000
+Message-ID: <4d75bfeab55c04cc3ca751cf7c364c812848e9ed.camel@fi.rohmeurope.com>
+References: <cover.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
+         <1bf2431b80489ae412e774519a92616a9aa2bcca.1584977512.git.matti.vaittinen@fi.rohmeurope.com>
+         <20200324095024.GE1922688@smile.fi.intel.com>
+         <20200324103557.GH1922688@smile.fi.intel.com>
+In-Reply-To: <20200324103557.GH1922688@smile.fi.intel.com>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [62.78.225.252]
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-25_05:2020-03-24,2020-03-25 signatures=0
+Content-ID: <85534FA46F1BC646A64DFADFA82589B4@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0wTZxzGfe+udwf29CiYvlbNQhdndBn+YJnvFuYYW5ZTl2XLssQsA3aO
+        kzYrLbm2DGGJDKebJWT8rl6KsLIKY43Q1qyoNGuwLjiTdjonSmCTSZyQDZmorLLp7rgp/HXP
+        vc/z+T73Jt+jcV2YMtBmq0MQrbzFSKYS0a65wDPv5FUWbPoyE3l6/CSqrXZjKHnnFkD1X6xH
+        F6404qh5bJxE7uYfAfIkPiXQYKCXQG2xuAbt7+ghUc3kapRI9FLo3qXPMdT0TyeGfjrlIdFM
+        bQwg39AFDHl8gwTq6HwK9YZmMfTniJtAByIxCkXcxzTo/GkHammNUCgUbMbR0O1hDEUeJAkU
+        +WUGoO//SoLcJzj/UT/gTnx9FeNOSqMU9210LdcedHKhrg1cR/8ExgW7D5FcwzGvhhu53E9y
+        U/E4xQ0eniO4Om8UcEfPvcV91+qnuBvuM9ib6e8uzdnNO8reNhdbN257f6nJ69WW3lteHg40
+        YFUgutwFUmjIPgt7mmcoF0ildezPAA5LMUJ9GQTwcPQk6QI0TbI50HWVUoAMdie8P3UFKBmc
+        bafh/m8a5oElbJSA07/XYkoqnd0Ou369qFGJHbDzYIRUdR5sDH02nyHYtbCrOoQrmmHfgL5e
+        P6FoHXsAg7fGtIpOYV+A16XEfDNg18BDVVPzLM7qYfDGrEa9Agu/6k/gql4BJ64/+P88E4Zn
+        jxPKBXB2Pew5tVFFc+Gky0eqOhM21YxR6iekwXNHxok6oJcWNUgLtLSIlhbR0iK6HWi6ASzh
+        zZZi3iFszhIFZ5ZoM5XIjw9sJUGgLuKdPvBwYPsAwGgwAFbSmHEF8+TWygLdst22or0m3m4q
+        FJ0WwT4AII0bM5iQUF6gY4r4vRWCaHtkraIJo55ZN1afr2OVrg8FoVQQH7mradoImb5ceWia
+        KBQL5XvMFseCjdEpyvBUQ4ZdsBYJIu90mAqVXSm0y8uiWFq5t2GbjDP2Ur5EPlXRH8DTdN1E
+        qxenY60+L64jrDarYNAzq16Wo6wSNTmtj4smgZ4GxnTm75dkVyv/jY/nTMoVmFxRLH2kVDj4
+        BctQBQy3LXfLspaYk1vrx+fWVESz/drAc3ePHxm+1hIPZ7+XjO+5ePNMX0t0aof/xP0XvbGH
+        iVfOj6y7nF3m//dSTsGW/vCuNi687/WWm92dNVV5nrSK55s+yW87PV05FMhpH82tG92UfXba
+        z3/86m+Ny6q35NsmYsxOxvDHtX27+s6unD34mpGwm/jNG3DRzv8HaiO7FEoEAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 3/24/20 6:23 PM, Joe Perches wrote:
-> On Tue, 2020-03-24 at 18:04 +0100, Arnaud Pouliquen wrote:
->> This driver exposes a standard TTY interface on top of the rpmsg
->> framework through a rpmsg service.
->>
->> This driver supports multi-instances, offering a /dev/ttyRPMSGx entry
->> per rpmsg endpoint.
-> 
-> trivial notes:
-> 
->> diff --git a/Documentation/serial/tty_rpmsg.rst b/Documentation/serial/tty_rpmsg.rst
-> []
->> +The rpmsg tty driver implements serial communication on the RPMsg bus to makes possible for user-space programs to send and receive rpmsg messages as a standard tty protocol.
-> 
-> Very long text lines missing newlines?
-> 
-> []
->> +To be compliant with this driver, the remote firmware must create its data end point associated with the "rpmsg-tty-raw" service.
-> []
->> +To be compatible with this driver, the remote firmware must create or use its end point associated with "rpmsg-tty-ctrl" service, plus a second endpoint for the data flow.
->> +On Linux rpmsg_tty probes, the data endpoint address and the CTS (set to disable)
-> 
-> []
-> 
->> diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
-> []
->> +typedef void (*rpmsg_tty_rx_cb_t)(struct rpmsg_device *, void *, int, void *,
->> +				  u32);
-> 
-> unused typedef?
-
-yes i will clean it.
-
-> 
-> []
-> 
->> +static int __init rpmsg_tty_init(void)
->> +{
-> []
->> +	err = tty_register_driver(rpmsg_tty_driver);
->> +	if (err < 0) {
->> +		pr_err("Couldn't install rpmsg tty driver: err %d\n", err);
->> +		goto error_put;
->> +	}
-> 
-> Might use vsprintf extension %pe
-> 
-> 		pr_err("Couldn't install rpmsg tty driver: %pe\n", ERR_PTR(err));
-
-Seems not possible here as err is an integer value and not a pointer cast to an integer,
-or I missed something?
-
-
-Thanks for the review,
-Arnaud
-> 
->> +	err = register_rpmsg_driver(&rpmsg_tty_rpmsg_drv);
->> +	if (err < 0) {
->> +		pr_err("Couldn't register rpmsg tty driver: err %d\n", err);
-> 
-> etc.
-> 
-> 
+SGVsbG8gQW5keSwNCg0KT24gVHVlLCAyMDIwLTAzLTI0IGF0IDEyOjM1ICswMjAwLCBBbmR5IFNo
+ZXZjaGVua28gd3JvdGU6DQo+IE9uIFR1ZSwgTWFyIDI0LCAyMDIwIGF0IDExOjUwOjI0QU0gKzAy
+MDAsIEFuZHkgU2hldmNoZW5rbyB3cm90ZToNCj4gPiBPbiBUdWUsIE1hciAyNCwgMjAyMCBhdCAx
+MDozMjoxOUFNICswMjAwLCBNYXR0aSBWYWl0dGluZW4gd3JvdGU6DQo+ID4gPiArI2luY2x1ZGUg
+PGxpbnV4L2FjcGkuaD4NCj4gPiA+ICsjaW5jbHVkZSA8bGludXgvb2YuaD4NCj4gPiANCj4gPiBJ
+IGRpZG4ndCBmaW5kIGFueSBldmlkZW5jZSBvZiB1c2Ugb2YgdGhvc2UgdHdvLCBvdGhlcndpc2Us
+IG1pc3NlZA0KPiA+IHByb3BlcnR5LmgNCj4gPiBhbmQgcGVyaGFwcyBtb2RfZGV2aWNldGFibGUu
+aC4NCj4gDQo+IC4uLg0KPiANCj4gPiA+ICtNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBiZDk5OTV4
+X29mX21hdGNoKTsNCj4gPiA+ICtNT0RVTEVfREVWSUNFX1RBQkxFKGFjcGksIGJkOTk5NXhfYWNw
+aV9tYXRjaCk7DQo+IA0KPiBJIGhhdmUgdG8gYWRkIHNpbmNlIHlvdSBhcmUgdXNpbmcgdGhvc2Ug
+bWFjcm9zIHdpdGhvdXQgaWZkZWZmZXJ5LCB5b3UNCj4gc2hvdWxkDQo+IGdldCB3YXJuaW5nIGlu
+ICFBQ1BJIGFuZC9vciAhT0YgY2FzZXMuDQo+IA0KPiBTbywgZHJvcCB0aG9zZSBvZl9tYXRjaF9w
+dHIoKSAvIEFDUElfUFRSKCkgYW5kIHRodXMgYWJvdmUgaGVhZGVycy4NCg0KU29ycnkgYnV0IEkg
+ZG9uJ3QgZm9sbG93IDovIEkgZGlkIGRyb3Agd2hvbGUgQUNQSSB0YWJsZSBhcyB0aGUgYmF0dGVy
+eQ0KaW5mb3JtYXRpb24gaXMgbm90IGZldGNoZWQgZnJvbSBBQ1BJIGFueXdheXMuIEJ1dCBJIGRv
+bid0IGtub3cgd2hhdCB5b3UNCm1lYW4gYnkgZHJvcHBpbmcgdGhlIG9mX21hdGNoX3B0cj8gSSBm
+b3Igc3VyZSBuZWVkIHRoZSBvZl9kZXZpY2VfaWQgYXMNCmluIG1hbnkgY2FzZXMgYm90aCB0aGUg
+ZGV2aWNlIG1hdGNoaW5nIGFuZCBtb2R1bGUgbWF0Y2hpbmcgYXJlIGRvbmUNCmJhc2VkIG9uICBv
+Zl9tYXRjaF90YWJsZSBhbmQgb2ZfZGV2aWNlX2lkLg0KDQpJIGFkbWl0IEkgZGlkbid0IHRyeSBj
+b21waWxpbmcgdGhlICFPRiBjb25maWcuIEFyZSB5b3Ugc3VnZ2VzdGluZyBJDQpzaG91bGQgcHV0
+IHRoZSBvZl9kZXZpY2VfaWQgYXJyYXkgYW5kIHBvcHVsYXRpbmcgdGhlIG9mX21hdGNoX3RhYmxl
+IGluDQojaWZkZWYgQ09ORklHX09GPyBPciBtYXliZSB5b3Ugc3VnZ2VzdCB0aGF0IEkgd2lsbCBw
+dXQgb2ZfZGV2aWNlX2lkDQphcnJheSBpbiAjaWZkZWYgQ09ORklHX09GIGFuZCB1c2Ugb2ZfbWF0
+Y2hfcHRyKCkgd2hlbiBwb3B1bGF0aW5nIHRoZQ0Kb2ZfbWF0Y2hfdGFibGUgcG9pbnRlcj8gSSBn
+dWVzcyB0aGF0IHdvdWxkIG1ha2Ugc2Vuc2UuIEknbGwgZG8gdGhhdCAtDQpjYW4geW91IHBsZWFz
+ZSBleHBsYWluIGlmIHRoaXMgd2FzIG5vdCB3aGF0IHlvdSBtZWFudC4NCg0KQnIsDQogICAgTWF0
+dGkNCg==
