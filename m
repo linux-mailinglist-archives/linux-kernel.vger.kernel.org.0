@@ -2,154 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E8B5191E62
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:06:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB453191E52
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Mar 2020 02:00:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727243AbgCYBGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Mar 2020 21:06:11 -0400
-Received: from mga01.intel.com ([192.55.52.88]:32038 "EHLO mga01.intel.com"
+        id S1727239AbgCYBAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Mar 2020 21:00:33 -0400
+Received: from mga07.intel.com ([134.134.136.100]:56575 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727113AbgCYBGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Mar 2020 21:06:10 -0400
-IronPort-SDR: ay7TFHOeaJW50VAXg7l3jaenbZgbJsPVBDEB4Y+bVy36KnY9b5Op1l+e93oEBA9LSNX4H0Z+/+
- gFdRlu6zEybg==
+        id S1727113AbgCYBAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Mar 2020 21:00:33 -0400
+IronPort-SDR: 5F/LUuo5f3F1jXFLv4wfFvSdd2SNYFYic2tvbw088/72N7L/iWE3shXKdg3KnkiKWGo35ZxD3S
+ UBOvwE5lpJLA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 18:06:09 -0700
-IronPort-SDR: z5R6lpjG8+2Oc1MM89RRMHOBYnTW4DVLrjfbD/wS/e2JrgHpwwTPP0nHfUphaKQqI2BmxmGIG/
- bf8OkxO1AWWg==
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 18:00:32 -0700
+IronPort-SDR: 10z++ObboiGRreXHC3jhskZ2nFNMkJi0JuPSu4Wk9RZgjCXbi3RKT+yPmMM9Bm6rF9cprQVSXW
+ V54SZkuD9vww==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,302,1580803200"; 
-   d="scan'208";a="246951513"
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
-  by orsmga003.jf.intel.com with ESMTP; 24 Mar 2020 18:06:03 -0700
-Date:   Tue, 24 Mar 2020 20:56:32 -0400
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        "cjia@nvidia.com" <cjia@nvidia.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "aik@ozlabs.ru" <aik@ozlabs.ru>,
-        "Zhengxiao.zx@alibaba-inc.com" <Zhengxiao.zx@alibaba-inc.com>,
-        "shuangtai.tst@alibaba-inc.com" <shuangtai.tst@alibaba-inc.com>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
-        "eauger@redhat.com" <eauger@redhat.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Yang, Ziye" <ziye.yang@intel.com>,
-        "mlevitsk@redhat.com" <mlevitsk@redhat.com>,
-        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
-        "libvir-list@redhat.com" <libvir-list@redhat.com>,
-        "felipe@nutanix.com" <felipe@nutanix.com>,
-        "Ken.Xue@amd.com" <Ken.Xue@amd.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "dinechin@redhat.com" <dinechin@redhat.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "Liu, Changpeng" <changpeng.liu@intel.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "jonathan.davies@nutanix.com" <jonathan.davies@nutanix.com>,
-        "He, Shaopeng" <shaopeng.he@intel.com>
-Subject: Re: [PATCH v4 0/2] introduction of migration_version attribute for
- VFIO live migration
-Message-ID: <20200325005631.GA20109@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20190531004438.24528-1-yan.y.zhao@intel.com>
- <20190603132932.1b5dc7fe@x1.home>
- <20190604003422.GA30229@joy-OptiPlex-7040>
- <20200323152959.1c39e9a7@w520.home>
- <20200324035316.GE5456@joy-OptiPlex-7040>
- <20200324092331.GA2645@work-vm>
- <20200324084954.0dd835e2@w520.home>
+   d="scan'208";a="265368200"
+Received: from hmendezc-mobl1.amr.corp.intel.com (HELO [10.254.108.97]) ([10.254.108.97])
+  by orsmga002.jf.intel.com with ESMTP; 24 Mar 2020 18:00:31 -0700
+Subject: Re: [PATCH v18 10/11] PCI/DPC: Add Error Disconnect Recover (EDR)
+ support
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+References: <20200324213710.GA48671@google.com>
+From:   "Kuppuswamy, Sathyanarayanan" 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Message-ID: <f71c989b-b8f8-3437-b086-a97c2aa1e2c5@linux.intel.com>
+Date:   Tue, 24 Mar 2020 18:00:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324084954.0dd835e2@w520.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200324213710.GA48671@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 10:49:54PM +0800, Alex Williamson wrote:
-> On Tue, 24 Mar 2020 09:23:31 +0000
-> "Dr. David Alan Gilbert" <dgilbert@redhat.com> wrote:
-> 
-> > * Yan Zhao (yan.y.zhao@intel.com) wrote:
-> > > On Tue, Mar 24, 2020 at 05:29:59AM +0800, Alex Williamson wrote:  
-> > > > On Mon, 3 Jun 2019 20:34:22 -0400
-> > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > >   
-> > > > > On Tue, Jun 04, 2019 at 03:29:32AM +0800, Alex Williamson wrote:  
-> > > > > > On Thu, 30 May 2019 20:44:38 -0400
-> > > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > > > >     
-> > > > > > > This patchset introduces a migration_version attribute under sysfs of VFIO
-> > > > > > > Mediated devices.
-> > > > > > > 
-> > > > > > > This migration_version attribute is used to check migration compatibility
-> > > > > > > between two mdev devices of the same mdev type.
-> > > > > > > 
-> > > > > > > Patch 1 defines migration_version attribute in
-> > > > > > > Documentation/vfio-mediated-device.txt
-> > > > > > > 
-> > > > > > > Patch 2 uses GVT as an example to show how to expose migration_version
-> > > > > > > attribute and check migration compatibility in vendor driver.    
-> > > > > > 
-> > > > > > Thanks for iterating through this, it looks like we've settled on
-> > > > > > something reasonable, but now what?  This is one piece of the puzzle to
-> > > > > > supporting mdev migration, but I don't think it makes sense to commit
-> > > > > > this upstream on its own without also defining the remainder of how we
-> > > > > > actually do migration, preferably with more than one working
-> > > > > > implementation and at least prototyped, if not final, QEMU support.  I
-> > > > > > hope that was the intent, and maybe it's now time to look at the next
-> > > > > > piece of the puzzle.  Thanks,
-> > > > > > 
-> > > > > > Alex    
-> > > > > 
-> > > > > Got it. 
-> > > > > Also thank you and all for discussing and guiding all along:)
-> > > > > We'll move to the next episode now.  
-> > > > 
-> > > > Hi Yan,
-> > > > 
-> > > > As we're hopefully moving towards a migration API, would it make sense
-> > > > to refresh this series at the same time?  I think we're still expecting
-> > > > a vendor driver implementing Kirti's migration API to also implement
-> > > > this sysfs interface for compatibility verification.  Thanks,
-> > > >  
-> > > Hi Alex
-> > > Got it!
-> > > Thanks for reminding of this. And as now we have vfio-pci implementing
-> > > vendor ops to allow live migration of pass-through devices, is it
-> > > necessary to implement similar sysfs node for those devices?
-> > > or do you think just PCI IDs of those devices are enough for libvirt to
-> > > know device compatibility ?  
-> > 
-> > Wasn't the problem that we'd have to know how to check for things like:
-> >   a) Whether different firmware versions in the device were actually
-> > compatible
-> >   b) Whether minor hardware differences were compatible - e.g. some
-> > hardware might let you migrate to the next version of hardware up.
-> 
-> Yes, minor changes in hardware or firmware that may not be represented
-> in the device ID or hardware revision.  Also the version is as much for
-> indicating the compatibility of the vendor defined migration protocol
-> as it is for the hardware itself.  I certainly wouldn't be so bold as
-> to create a protocol that is guaranteed compatible forever.  We'll need
-> to expose the same sysfs attribute in some standard location for
-> non-mdev devices.  I assume vfio-pci would provide the vendor ops some
-> mechanism to expose these in a standard namespace of sysfs attributes
-> under the device itself.  Perhaps that indicates we need to link the
-> mdev type version under the mdev device as well to make this
-> transparent to userspace tools like libvirt.  Thanks,
->
-Got it. will do it.
-Thanks!
+Hi Bjorn,
 
-Yan
+On 3/24/20 2:37 PM, Bjorn Helgaas wrote:
+> This is really ugly.  What's the story on this firmware?  It sounds
+> defective to me.
+I think there is no defined standard for this. I have checked few
+_DSM implementations. Some of them return default value and some
+don't. But atleast in the test hardware I use, we need this check.
+
+> 
+> Or is everybody that uses _DSM supposed to check before evaluating it?
+I think its safer to do this check.
+> E.g.,
+> 
+>    if (!acpi_check_dsm(...))
+>      return -EINVAL;
+> 
+>    obj = acpi_evaluate_dsm(...);
+> 
+> If everybody is supposed to do this, it seems like the check part
+> should be moved into acpi_evaluate_dsm().
+
