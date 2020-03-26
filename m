@@ -2,123 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2639F193636
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 03:53:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 797D5193639
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 03:56:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbgCZCxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 22:53:04 -0400
-Received: from ozlabs.org ([203.11.71.1]:56355 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727560AbgCZCxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 22:53:03 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48nqKm0WB1z9sSH;
-        Thu, 26 Mar 2020 13:53:00 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1585191181;
-        bh=fORvFbLTiAx94e97lpCZAqe3gHJ27vX7VBM8ULDRHog=;
-        h=Date:From:To:Cc:Subject:From;
-        b=E5L8CErG6TkovQfZga9ak/LyLKFNMRMX7BBSGkFKIpourr8oUGGsk+Ax7TFACXPc+
-         3Og1W0LGrTW5gRRqnluX5PMMYCWqx+3CTce44uDbwhbzMJJN8Lz2KnvTRxfg6LOhYV
-         EOgjmg42sFaPrOVtlwdplMVqSQ5wy8mn5QAeZ1tQeU7mwGAUss9CoBwpsu96J5D4XS
-         QpBCWHfcO0Knu5HHpnf3ZgZm403jghG3X21mZPHxVRT/6THi85yyixTWd8wXZQ78BF
-         hEuv9LwbqQg/lZWE45463tjCfcawU9BYDPdUvc2Izm6XxX7QNddeVRDQvoyU70K1+e
-         mSdyVTjPl5ZWw==
-Date:   Thu, 26 Mar 2020 13:52:58 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Reichel <sre@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Qais Yousef <qais.yousef@arm.com>,
-        Baolin Wang <baolin.wang7@gmail.com>
-Subject: linux-next: build failure after merge of the tip tree
-Message-ID: <20200326135258.2764f0de@canb.auug.org.au>
+        id S1727665AbgCZC4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 22:56:53 -0400
+Received: from mail-yb1-f170.google.com ([209.85.219.170]:43548 "EHLO
+        mail-yb1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbgCZC4w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 22:56:52 -0400
+Received: by mail-yb1-f170.google.com with SMTP id o70so2420999ybg.10
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 19:56:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=S0MCd00hiBhu8IoAyKrnUIhRxVoguqUOo5RV8MMGToY=;
+        b=m8X8VCsd2sQNfwwgM2l4Wp/B8DXJ3vdm3Cf7OopNk8UwxepjDhTQxchpB3ek9VoEzG
+         DuG/l06pK0Je22N5qF2bTpU0BpiPiAWyLIbpj1hHpbGpnErWOySUTzHKkOP/PlyKMEQX
+         DYO8EquYAi/s+A9bTCIXbK2aa25c2YYfp7Mt76T+kazm/GrA7X29YHvPkmcyUcWLV53q
+         pwXVlYRSd60779BsWBgHD9NYJbWIVEd2ZN2mV/ngiLApWShM8BjmeeooMxcdOipImFU/
+         Q48JBxl/WsN8gUAsBZT4ZFoa+uWiPMf3fDpE6Tma259quYhBJvLbO3U/nQm2Lys7HYUa
+         DCfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=S0MCd00hiBhu8IoAyKrnUIhRxVoguqUOo5RV8MMGToY=;
+        b=s3aSLzy/Cy3bPYKGX2l2zBjTT0ls1j5IRk9l22R3wiJh7PK2oBsXK66slEzpmawi55
+         wWpu/MSOMmExknCOT1KgfYx0ZG7hDn/hfATN+3MPfU/TeoeJQK7EE5l9ygi27Yo4lt+u
+         6qrbECEeX/+UVDk48PvX7KX0kD0SW+GvSb5gQQCfr7nq9DYf77a8BsGmKJ4NK1UJ2FMV
+         w6YQGw7LEqNhZU3d4/jUX3qad+B3QiYG8hs2VC25Mv9G9TMr5NpIhaPbAiHCOaCTnumV
+         O1TcgaO/VSrKPIvi4LpW/ECkkYpqMMjwyT/xtNv4vRm+zMR3KdPHqG9JrXzOnxG/Ans+
+         w50Q==
+X-Gm-Message-State: ANhLgQ1ew9s3EZTFiiRNskbJ+3KajA0LLTry2ACDfUuEN98456TVA8d6
+        9tGwQElrDuIYBY6QxKgVtLU22CGj3kct/9Naoj56APK36AI=
+X-Google-Smtp-Source: ADFU+vsQYEblPiKc80eaK8adRNcEBrLj85agt31kCXVvFxIrHWES8AzBjaYVayc4VxAEDGTOsAqoJVAKHnvs0nZFMPc=
+X-Received: by 2002:a25:aa69:: with SMTP id s96mr10418528ybi.85.1585191411175;
+ Wed, 25 Mar 2020 19:56:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/NdMCGHLO=BxLuZdCqOG9=4Y";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 25 Mar 2020 21:56:40 -0500
+Message-ID: <CAH2r5ms4+GyqD3VJNRXXwDsPnEWvWpqEPXqm+UiR92myiAVUww@mail.gmail.com>
+Subject: Using QUIC from kernel drivers
+To:     quic@ietf.org, LKML <linux-kernel@vger.kernel.org>
+Cc:     ronnie sahlberg <ronniesahlberg@gmail.com>,
+        Jeremy Allison <jra@samba.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/NdMCGHLO=BxLuZdCqOG9=4Y
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+We have been trying to experiment with using QUIC for access to
+network file systems (Samba, Windows etc. over SMB3.1.1 over QUIC) but
+cifs.ko is a kernel driver.
 
-Hi all,
+Are there any examples of using QUIC from Linux kernel drivers? Or
+suggestions on how to do this (I didn't see any QUIC kernel drivers
+yet from a "git grep" of 5.6-rc7).  Presumably worst case scenario is
+that the kernel driver could upcall for the authentication phase, and
+then presumably there is a better way to avoid upcalls for the rest.
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+There were some details on how Windows did this at the annual large
+Storage Developer Conference (https://youtu.be/xUvfjZXIu9E) but was
+wondering if any progress with figuring out how kernel drivers can use
+QUIC.
 
-drivers/power/reset/sc27xx-poweroff.c: In function 'sc27xx_poweroff_shutdow=
-n':
-drivers/power/reset/sc27xx-poweroff.c:38:4: error: implicit declaration of =
-function 'cpu_down' [-Werror=3Dimplicit-function-declaration]
-   38 |    cpu_down(cpu);
-      |    ^~~~~~~~
+-- 
+Thanks,
 
-Caused by commit
-
-  33c3736ec888 ("cpu/hotplug: Hide cpu_up/down()")
-
-interacting with commit
-
-  274afbc3ad33 ("power: reset: sc27xx: Change to use cpu_down()")
-
-from the battery tree.
-
-I have added the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 26 Mar 2020 13:42:00 +1100
-Subject: [PATCH] power: reset: sc27xx: use remove_cpu instead of cpu_down
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/power/reset/sc27xx-poweroff.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/power/reset/sc27xx-poweroff.c b/drivers/power/reset/sc=
-27xx-poweroff.c
-index 69863074daf6..90287c31992c 100644
---- a/drivers/power/reset/sc27xx-poweroff.c
-+++ b/drivers/power/reset/sc27xx-poweroff.c
-@@ -35,7 +35,7 @@ static void sc27xx_poweroff_shutdown(void)
-=20
- 	for_each_online_cpu(cpu) {
- 		if (cpu !=3D smp_processor_id())
--			cpu_down(cpu);
-+			remove_cpu(cpu);
- 	}
- #endif
- }
---=20
-2.25.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/NdMCGHLO=BxLuZdCqOG9=4Y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl58GQoACgkQAVBC80lX
-0Gxb2Af/XnYUBmNvdAzIYpjAGQK/wFZn+29Mf0QJ9ZBiNePj3VV9S6xn9tkt9eq1
-YRcg4lvt7yFHec7xL2KtJWuegcYJ7gdMSl5YUlHWjaveGTUfRAEcD1QvE1RTUcEc
-4vXnxaMnIbqNMt+ZuX9ByHUcnDAO7XTq1IOJtuEj1Ib5OPdCgi9a44cVorvuzRBn
-F5j5ajlKBD5Ponk5niYHz0tSZZziQB6cpHtyZNPueZ/JyPGjp+Msn6QNw6GPv0qR
-6I0ykfZH4Yj7Mz5alqsgbRJSC1U+WToiJ2UitwK5v/r0c4uyUOdCru/8A6uyRScc
-vwplQV0bfZZQIkqK1D6GJbUksQEdZg==
-=ig3+
------END PGP SIGNATURE-----
-
---Sig_/NdMCGHLO=BxLuZdCqOG9=4Y--
+Steve
