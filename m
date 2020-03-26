@@ -2,92 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3BBE194B78
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 23:24:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0980194B82
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 23:27:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbgCZWYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 18:24:51 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54925 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbgCZWYu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 18:24:50 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c81so9176153wmd.4
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:24:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ypZyzlrBAG+cLsLy+PU3T0dnOH3TPzYnikBxeCUs2mM=;
-        b=PNtVMhtUOqP8DzyueMCTTgYYrWGu+yFrrmFpnA19hy4ZMZ/s62bZxKhvArlVVOSFQS
-         hrCxqLZJs8FIZZHi6/FbeFe+4566AOXU+65eUYtYGJGRrSP1fRzcxHoR2PuIW8ZWk15+
-         3nELe9YQ8rGDue7kr13V4iMg+Ui/yGYCbsCA1yyNj+Fgg0CcobDMvk8HBSA1ojYn1qk9
-         nXU7EpZVZ/Dtuj9KfD719HX6/KCYayR1l7W5TND7xGjPrECXkIWQ22orEKqqaoU9EkM+
-         j4dKvLVmaJMqt+dlcdlKdoyBRbRRBzlXVcHIfVX8sK8EkZ/hkwE0zCM+AZkwO+XQo4P9
-         zD8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ypZyzlrBAG+cLsLy+PU3T0dnOH3TPzYnikBxeCUs2mM=;
-        b=XxVeuKsS5DYNtWoz2wtD4YpTTW9+YYwi0Ykhfy0oTBWXG9Xau8/uVatuS9uvrP0CS1
-         3pMcQ3mGm9WbWPW3KNkHGbf37YrDE9HFgTYJi7MeC9wfp93M0eyaRuYQQiegAy2ShRD4
-         jXSR0h57uOq9mwb6Oq3xiE4GHU84JIkn4F005PYHJ/dUY1zg6CjIjrknVcXuYRYu8ABg
-         pP4UY9JKyejtpk93D0ZT4f5QLHZ4agu/NNnq5WA9VhOSjoIiqzMsbMRmgfrE2ekzKz4e
-         ja/gXOTZOF5LyzN56DaiRtpaJxP75HDrCYO8nNndKnv4+UIQGi+35wvxFRa8DSw50M0g
-         47WQ==
-X-Gm-Message-State: ANhLgQ1NZsTIbR3OdbMkKuOA3oP60m7fxdiqd3vroGtiK6QB1AvVOQ4n
-        GDKN1bjhcKwZ7j0KJaShz/Yuzp8Q
-X-Google-Smtp-Source: ADFU+vsHPQH1+HrBFDUdDLpJjUvvAhy2zrl3d4FreyJZGAjpLSFjTA1BKwyta+vrf+MCVIx4unC3qg==
-X-Received: by 2002:adf:ef51:: with SMTP id c17mr9582651wrp.130.1585261489629;
-        Thu, 26 Mar 2020 15:24:49 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a64sm5312899wmh.39.2020.03.26.15.24.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 26 Mar 2020 15:24:49 -0700 (PDT)
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Wei Yang <richard.weiyang@gmail.com>
-Subject: [PATCH 2/2] mm/page_alloc.c: define node_order with all zero
-Date:   Thu, 26 Mar 2020 22:24:45 +0000
-Message-Id: <20200326222445.18781-2-richard.weiyang@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200326222445.18781-1-richard.weiyang@gmail.com>
-References: <20200326222445.18781-1-richard.weiyang@gmail.com>
+        id S1727495AbgCZW1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 18:27:52 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:43717 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726260AbgCZW1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 18:27:51 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48pKPK1KNjz9sR4;
+        Fri, 27 Mar 2020 09:27:48 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1585261669;
+        bh=TTUfgK8iyycLNqBt/AiEmDKjm1TJOM+wT3Gze1ZAfoI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=OBFeeCUk/cwaKUMd5zgGF1BMof6bjIeMzIguMLlyDQUAgtrQYbv7wQgcB2tW6AzkO
+         Bc2qT6DLLdb5LleF8cZSIUnNxwaDEHdN5Nn2vbxKNjZBe9Tffd87OYb+SPPoGmu0mr
+         AWBNfhD8GMhnQVQLUMWwsgWkrCOBF50UuhiR23So90sSt+kxM1GZ1soIFpj5IxKHog
+         Ba3iKBpNxbhF84yVjQUyeXrt6SwLZB+yTFFtewWpAGuyk6uD7i+9Zek1bgQ8YgqnXQ
+         PV1KQ1alBU53uPOABEEmzdztbRq+f6k3PMkf/IuBXP0JMLzDGVK45jl3u6gaOFfUT2
+         u5BHSSZWbUx8g==
+Date:   Fri, 27 Mar 2020 09:27:41 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>,
+        Thierry Reding <treding@nvidia.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nagarjuna Kristam <nkristam@nvidia.com>,
+        JC Kuo <jckuo@nvidia.com>, Corentin Labbe <clabbe@baylibre.com>
+Subject: linux-next: manual merge of the tegra tree with the arm-soc tree
+Message-ID: <20200327092741.1dbd3242@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/Tjrk3Z.A=gzsIRzl_glEECC";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we always clear node_order before getting it, we can leverage
-compiler to do this instead of at run time.
+--Sig_/Tjrk3Z.A=gzsIRzl_glEECC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
----
- mm/page_alloc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Hi all,
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2144b6ceb119..7a6435cffdb7 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5585,7 +5585,7 @@ static void build_thisnode_zonelists(pg_data_t *pgdat)
- 
- static void build_zonelists(pg_data_t *pgdat)
- {
--	static int node_order[MAX_NUMNODES];
-+	static int node_order[MAX_NUMNODES] = {0};
- 	int node, load, nr_nodes = 0;
- 	nodemask_t used_mask = {.bits = {0}};
- 	int local_node, prev_node;
-@@ -5595,7 +5595,6 @@ static void build_zonelists(pg_data_t *pgdat)
- 	load = nr_online_nodes;
- 	prev_node = local_node;
- 
--	memset(node_order, 0, sizeof(node_order));
- 	while ((node = find_next_best_node(local_node, &used_mask)) >= 0) {
- 		/*
- 		 * We don't want to pressure a particular node.
--- 
-2.23.0
+Today's linux-next merge of the tegra tree got conflicts in:
 
+  drivers/phy/tegra/Kconfig
+  drivers/phy/tegra/xusb.c
+
+between commits:
+
+  5a00c7c7604f ("phy: tegra: xusb: Add usb-role-switch support")
+  23babe30fb45 ("phy: tegra: xusb: Add usb-phy support")
+  d74ce0954cb2 ("phy: tegra: xusb: Add support to get companion USB 3 port")
+  58e7bd08b569 ("phy: tegra: xusb: Add Tegra194 support")
+
+from the arm-soc tree and commit:
+
+  f67213cee2b3 ("phy: tegra: xusb: Add usb-role-switch support")
+  e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
+  5a40fc4b934c ("phy: tegra: xusb: Add support to get companion USB 3 port")
+  1ef535c6ba8e ("phy: tegra: xusb: Add Tegra194 support")
+
+from the tegra tree.
+
+These are slightly different patches (the latter has been rebased).
+Also there are further commits affecting these files in the tegra tree.
+
+I fixed it up (I just used the version from the tegra tree) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Tjrk3Z.A=gzsIRzl_glEECC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl59LF0ACgkQAVBC80lX
+0GwyAQf+I5kTj3T8nDJGpq9RC07WHcKa32mVQgkMo2yk0xHSeyeD/pVxCFFUTAGM
+Dbn3bOwyMiRP7eXlvvlMue8eIwqBa8iZefahef2i0CbV7nhKR8HLuvVJwspIilMP
+IwA9rlKRT+ESRlP6c76oHbV43qSY6Bg1RtOLPw8CgqzcVFriItgDSbApN+VWvQSY
+Fl8xpuqBhWajxLTjZULhQo/PpngggfPpTI2Z/PE2qBlh9HBQLAFYU/U2qcEaTah/
+86h1R29S1m7VEuHlmzKmwyhB/Z8tt4zXRwhoN5ZdvLB9vXfrqT3HA015xZrPK12Y
+/3jEJRBE5TZ4vM7QZ78S6h51LSEQsA==
+=oWYQ
+-----END PGP SIGNATURE-----
+
+--Sig_/Tjrk3Z.A=gzsIRzl_glEECC--
