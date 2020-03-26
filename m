@@ -2,80 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98F27193AA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 09:17:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F0C0193A8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 09:16:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbgCZIRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 04:17:19 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:5186 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727682AbgCZIRT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 04:17:19 -0400
-X-UUID: 8c21512c61704ae4a13ac9883f90b28b-20200326
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=TUh0oyKKWlFuiaOE7fmc1z5kxisyWDAyryXR2g5CLqg=;
-        b=ZSxbNEfk+E6+9b+mtfqZnBwGGFQR00xv7n/73tjl5DCwvKyO1JRIBr6Aump8Q3sEXInsOmEQcS/qgAaVLPVtys+A2IijjwDaQB1TrUSBaODJlCx1fCwPIJUqezfTVbGy39LRXUb5l/sa4PrPykaZdp5ED4GXAp89Tloed+Snjyo=;
-X-UUID: 8c21512c61704ae4a13ac9883f90b28b-20200326
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1873759620; Thu, 26 Mar 2020 16:17:15 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 26 Mar 2020 16:17:13 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 26 Mar 2020 16:17:14 +0800
-Message-ID: <1585210634.4609.1.camel@mtksdccf07>
-Subject: Re: [PATCH v4 1/1] scsi: ufs: Enable block layer runtime PM for
- well-known logical units
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Can Guo <cang@codeaurora.org>
-CC:     <asutoshd@codeaurora.org>, <nguyenb@codeaurora.org>,
-        <hongwus@codeaurora.org>, <rnayak@codeaurora.org>,
-        <linux-scsi@vger.kernel.org>, <kernel-team@android.com>,
-        <saravanak@google.com>, <salyzyn@google.com>,
-        "Alim Akhtar" <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Bean Huo <beanhuo@micron.com>,
-        "Bart Van Assche" <bvanassche@acm.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        "open list" <linux-kernel@vger.kernel.org>
-Date:   Thu, 26 Mar 2020 16:17:14 +0800
-In-Reply-To: <1585185003-31156-1-git-send-email-cang@codeaurora.org>
-References: <1585185003-31156-1-git-send-email-cang@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        id S1727697AbgCZIP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 04:15:59 -0400
+Received: from mga02.intel.com ([134.134.136.20]:27555 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726298AbgCZIP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 04:15:59 -0400
+IronPort-SDR: gETYUXWuPltYKHUr6p9v9L11Zo/TK0QCIxDnf2STY5FmrWkI2Z0W+3CxOSFJocdJKliVRCau93
+ qNCd6zs9Nc3Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 01:15:58 -0700
+IronPort-SDR: xk+6ZvxFpr0srCx4pxzWjlrkRVfTarECFniJ5feN/lkD/u/kKDbVGaadgS3ZZvaDdCnfeDvz/O
+ wiXc/zX24y+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,307,1580803200"; 
+   d="scan'208";a="393898809"
+Received: from local-michael-cet-test.sh.intel.com ([10.239.159.128])
+  by orsmga004.jf.intel.com with ESMTP; 26 Mar 2020 01:15:55 -0700
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, sean.j.christopherson@intel.com,
+        jmattson@google.com
+Cc:     yu.c.zhang@linux.intel.com, Yang Weijiang <weijiang.yang@intel.com>
+Subject: [PATCH v11 0/9] Introduce support for guest CET feature
+Date:   Thu, 26 Mar 2020 16:18:37 +0800
+Message-Id: <20200326081847.5870-1-weijiang.yang@intel.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQ2FuLA0KDQpPbiBXZWQsIDIwMjAtMDMtMjUgYXQgMTg6MDkgLTA3MDAsIENhbiBHdW8gd3Jv
-dGU6DQo+IEJsb2NrIGxheWVyIFJQTSBpcyBlbmFibGVkIGZvciB0aGUgZ2VuZXJuYWwgVUZTIFND
-U0kgZGV2aWNlcyB3aGVuIHRoZXkgYXJlDQo+IHByb2JlZCBieSB0aGVpciBkcml2ZXIuIEhvd2V2
-ZXIgYmxvY2sgbGF5ZXIgUlBNIGlzIG5vdCBlbmFibGVkIGZvciBVRlMNCj4gd2VsbC1rbm93biBT
-Q1NJIGRldmljZXMuDQo+IA0KPiBBcyBVRlMgU0NTSSBkZXZpY2VzIGhhdmUgdGhlaXIgY29ycmVz
-cG9uZGluZyBCU0cgY2hhciBkZXZpY2VzLCBhY2Nlc3NpbmcNCj4gYSBCU0cgY2hhciBkZXZpY2Ug
-dmlhIElPQ1RMIG1heSBzZW5kIHJlcXVlc3RzIHRvIGl0cyBjb3JyZXNwb25kaW5nIFNDU0kNCj4g
-ZGV2aWNlIHRocm91Z2ggaXRzIHJlcXVlc3QgcXVldWUuIElmIEJTRyBJT0NUTCBzZW5kcyBhIHJl
-cXVlc3QgdG8gYQ0KPiB3ZWxsLWtub3duIFNDU0kgZGV2aWNlIHdoZW4gaGJhIGlzIG5vdCBydW50
-aW1lIGFjdGl2ZSwgZHVlIHRvIGJsb2NrIGxheWVyDQo+IFJQTSBpcyBub3QgZWFuYmxlZCBmb3Ig
-dGhlIHdlbGwta25vd24gU0NTSSBkZXZpY2VzLCBoYmEsIHdoaWNoIGlzIGF0IHRoZQ0KPiB0b3Ag
-b2YgYSBzY3NpIGRldmljZSdzIHBhcmVudCBjaGFpbiwgc2hhbGwgbm90IGJlIHJlc3VtZWQsIHRo
-ZW4gdW5leHBlY3RlZA0KPiBlcnJvciB3b3VsZCBoYXBwZW4uDQo+IA0KPiBUaGlzIGNoYW5nZSBl
-bmFibGVzIGJsb2NrIGxheWVyIFJQTSBmb3IgdGhlIHdlbGwta25vd24gU0NTSSBkZXZpY2VzLCBz
-bw0KPiB0aGF0IGJsb2NrIGxheWVyIGNhbiBoYW5kbGUgUlBNIGZvciB0aGUgd2VsbC1rbm93biBT
-Q1NJIGRldmljZXMganVzdCBsaWtlDQo+IGZvciB0aGUgZ2VuZXJhbCBTQ1NJIGRldmljZXMuDQo+
-IA0KPiBTaWduZWQtb2ZmLWJ5OiBDYW4gR3VvIDxjYW5nQGNvZGVhdXJvcmEub3JnPg0KPiBSZXZp
-ZXdlZC1ieTogQXZyaSBBbHRtYW4gPGF2cmkuYWx0bWFuQHdkYy5jb20+DQoNCkxvb2tzIGdvb2Qh
-DQpUaGFua3MgdG8gbWFrZSBSUE0gZm9yIFVGUyBjb21wbGV0ZWQhDQoNClJldmlld2VkLWJ5OiBT
-dGFubGV5IENodSA8c3RhbmxleS5jaHVAbWVkaWF0ZWsuY29tPg0KDQo=
+Control-flow Enforcement Technology (CET) provides protection against
+Return/Jump-Oriented Programming (ROP/JOP) attack. It includes two
+sub-features: Shadow Stack (SHSTK) and Indirect Branch Tracking (IBT).
+
+KVM needs to update to enable guest CET feature.
+This patchset implements CET related CPUID/XSAVES enumeration, MSRs
+and vmentry/vmexit configuration etc.so that guest kernel can setup CET
+runtime infrastructure based on them. Some CET MSRs and related feature
+flags used reference the definitions in kernel patchset.
+
+CET kernel patches are here:
+https://lkml.org/lkml/2020/2/5/593
+https://lkml.org/lkml/2020/2/5/604
+
+v10 -> v11
+- Fixed a guest vmentry failure issue when guest reboots.
+- Used vm_xxx_control_{set, clear}bit() to avoid side effect, it'll
+  clear cached data instead of pure VMCS field bits.
+- Added vcpu->arch.guest_supported_xss dedidated for guest runtime mask,
+  this avoids supported_xss overwritten issue caused by an old qemu.
+- Separated vmentry/vmexit state setting with CR0/CR4 dependency check
+  to make the patch more clear.
+- Added CET VMCS states in dump_vmcs() for debugging purpose.
+- Other refactor based on testing.
+- This patch serial is built on top of below branch and CET kernel patches
+  for seeking xsaves support:
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git/log/?h=cpu-caps
+
+v9 -> v10
+- Refactored code per Sean's review feedback.
+- Added CET support for nested VM.
+- Removed fix-patch for CPUID(0xd,N) enumeration as this part is done
+  by Paolo and Sean.
+- This new patchset is based on Paolo's queued cpu_caps branch.
+- Modified patch per XSAVES related change.
+- Consolidated KVM unit-test patch with KVM patches.
+
+v8 -> v9:
+- Refactored msr-check functions per Sean's feedback.
+- Fixed a few issues per Sean's suggestion.
+- Rebased patch to kernel-v5.4.
+- Moved CET CPUID feature bits and CR4.CET to last patch.
+
+v7 -> v8:
+- Addressed Jim and Sean's feedback on: 1) CPUID(0xD,i) enumeration. 2)
+  sanity check when configure guest CET. 3) function improvement.
+- Added more sanity check functions.
+- Set host vmexit default status so that guest won't leak CET status to
+  host when vmexit.
+- Added CR0.WP vs. CR4.CET mutual constrains.
+
+v6 -> v7:
+- Rebased patch to kernel v5.3
+- Sean suggested to change CPUID(0xd, n) enumeration code as alined with
+  existing one, and I think it's better to make the fix as an independent patch 
+  since XSS MSR are being used widely on X86 platforms.
+- Check more host and guest status before configure guest CET
+  per Sean's feedback.
+- Add error-check before guest accesses CET MSRs per Sean's feedback.
+- Other minor fixes suggested by Sean.
+
+v5 -> v6:
+- Rebase patch to kernel v5.2.
+- Move CPUID(0xD, n>=1) helper to a seperate patch.
+- Merge xsave size fix with other patch.
+- Other minor fixes per community feedback.
+
+v4 -> v5:
+- Rebase patch to kernel v5.1.
+- Wrap CPUID(0xD, n>=1) code to a helper function.
+- Pass through MSR_IA32_PL1_SSP and MSR_IA32_PL2_SSP to Guest.
+- Add Co-developed-by expression in patch description.
+- Refine patch description.
+
+v3 -> v4:
+- Add Sean's patch for loading Guest fpu state before access XSAVES
+  managed CET MSRs.
+- Melt down CET bits setting into CPUID configuration patch.
+- Add VMX interface to query Host XSS.
+- Check Host and Guest XSS support bits before set Guest XSS.
+- Make Guest SHSTK and IBT feature enabling independent.
+- Do not report CET support to Guest when Host CET feature is Disabled.
+
+v2 -> v3:
+- Modified patches to make Guest CET independent to Host enabling.
+- Added patch 8 to add user space access for Guest CET MSR access.
+- Modified code comments and patch description to reflect changes.
+
+v1 -> v2:
+- Re-ordered patch sequence, combined one patch.
+- Added more description for CET related VMCS fields.
+- Added Host CET capability check while enabling Guest CET loading bit.
+- Added Host CET capability check while reporting Guest CPUID(EAX=7, EXC=0).
+- Modified code in reporting Guest CPUID(EAX=D,ECX>=1), make it clearer.
+- Added Host and Guest XSS mask check while setting bits for Guest XSS.
+
+
+
+Sean Christopherson (1):
+  KVM: X86: Load guest fpu state when access MSRs managed by XSAVES
+
+Yang Weijiang (8):
+  KVM: VMX: Introduce CET VMX fields and flags
+  KVM: VMX: Set guest CET MSRs per KVM and host configuration
+  KVM: VMX: Set host/guest CET states for vmexit/vmentry
+  KVM: VMX: Check CET dependencies on CR settings
+  KVM: X86: Refresh CPUID once guest XSS MSR changes
+  KVM: X86: Add userspace access interface for CET MSRs
+  KVM: VMX: Enable CET support for nested VM
+  KVM: X86: Set CET feature bits for CPUID enumeration
+
+ arch/x86/include/asm/kvm_host.h |   4 +-
+ arch/x86/include/asm/vmx.h      |   8 ++
+ arch/x86/include/uapi/asm/kvm.h |   1 +
+ arch/x86/kvm/cpuid.c            |  25 +++-
+ arch/x86/kvm/vmx/capabilities.h |  10 ++
+ arch/x86/kvm/vmx/nested.c       |  41 +++++-
+ arch/x86/kvm/vmx/vmcs12.c       |   6 +
+ arch/x86/kvm/vmx/vmcs12.h       |  14 +-
+ arch/x86/kvm/vmx/vmx.c          | 232 +++++++++++++++++++++++++++++++-
+ arch/x86/kvm/x86.c              |  46 ++++++-
+ arch/x86/kvm/x86.h              |   2 +-
+ 11 files changed, 376 insertions(+), 13 deletions(-)
+
+-- 
+2.17.2
 
