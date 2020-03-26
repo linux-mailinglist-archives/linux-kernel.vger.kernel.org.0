@@ -2,78 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DCB2193828
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 06:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F052193804
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 06:42:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726336AbgCZFxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 01:53:07 -0400
-Received: from mga03.intel.com ([134.134.136.65]:24516 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726138AbgCZFxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 01:53:07 -0400
-IronPort-SDR: IpqVKyYP5+2EddAv3A7QlF/dlHhfBpvsWtF4qysRuHUttd1/bF2sUDLHc53b4OtloPoDvHkvt0
- 6VXV8o3KCdEg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 22:53:06 -0700
-IronPort-SDR: 1Xzkm47HHv8vFco/3O8phmKYaO3oY+BCjzVOdL+0aY4OFPQjDxsgzY8CMpgzDd7RBWbOlvP6/t
- a4bzIyCpomFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,307,1580803200"; 
-   d="scan'208";a="358041731"
-Received: from aubrey-ubuntu.sh.intel.com ([10.239.53.16])
-  by fmsmga001.fm.intel.com with ESMTP; 25 Mar 2020 22:53:03 -0700
-From:   Aubrey Li <aubrey.li@intel.com>
-To:     vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
-        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        linux-kernel@vger.kernel.org
-Cc:     tim.c.chen@linux.intel.com, vpillai@digitalocean.com,
-        joel@joelfernandes.org, Aubrey Li <aubrey.li@intel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Phil Auld <pauld@redhat.com>
-Subject: [PATCH] sched/fair: Fix negative imbalance in imbalance calculation
-Date:   Thu, 26 Mar 2020 13:42:29 +0800
-Message-Id: <1585201349-70192-1-git-send-email-aubrey.li@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727705AbgCZFmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 01:42:38 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41746 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727682AbgCZFmi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 01:42:38 -0400
+Received: by mail-pf1-f193.google.com with SMTP id z65so2229349pfz.8
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 22:42:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lJBGxRctjvtRkYzCqhBiWXNr6fl3LKIu3bPffT4P37Q=;
+        b=xN/aZFC3ywkctbct64T9SINp67QHK9DwBCHBXcBs0FP40E5s+s9fCTok4tvNQCqDE+
+         L0HFx9UYuKYsHC5iz5cIrIYQCB/b9ETHQmgipbTr9oUNgSA/215Y3WoY6y+Uz92fPbSe
+         XrBwg14hsA3gUwlFIJub6Ocyn/qadeRov99TL3mNE3jLPT0wo1gaXP0XskUvd+pCmrvW
+         Tv4s9ChbrZ77NxWYJhGUQkbU+8kkUKJ0TleFtzpqxx7sEGDldoLR0V34KZlW2deIaF6k
+         01wKAVnPQC0gM161neggvyqFe7HM28zTxM1mwd/YDCy4CsVV1MCJ943ffx9E4NNb1ZUC
+         cn4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lJBGxRctjvtRkYzCqhBiWXNr6fl3LKIu3bPffT4P37Q=;
+        b=HBzMy1FnzqRGwovT72cZYR9v4/tx4JZ++94xHx9xIMueSeVPktfaLIa4GRSkZVOK8Z
+         K37NSOEmadcQGMnXJSYkMq+Lyztp7mltUYYUdq1phxobr/vQ81xdNn6jxqVqxPPGyR4i
+         vJ3TGqc9gH4IBoLkE62044XJODGQyfGMWlOlEIIm7t9eVPDWrXRoOgUBfSFdtnTn5Hdy
+         DtHZVyUwvuvOaFMxFuT+460LWc/PNjOiJz2zqZ5Lxq+k5/ihRUE3GUGdYsaqKqW0eE5v
+         TznwG+nbQI0DsyLA9ZaKBgs9wAovlgbAmsCYXSO5z/5eoHq6NArLOoDoIifSGYhGDhIY
+         1v7g==
+X-Gm-Message-State: ANhLgQ0o2cv9nY+mkK3rY8uvabUUFVXZ2R8CbxY/xLy4X3Lgyopd+TWV
+        TedkVPm675Pskn0ZkzwFAMg7Nu9L/yQ=
+X-Google-Smtp-Source: ADFU+vv9QFRgclZ54bBY7BJnL7ZL1CHe2/kxdDOsKldUA/e7jUAzRpU6ZAtzDKz3uD4UzX/kxliB3w==
+X-Received: by 2002:a63:602:: with SMTP id 2mr6651318pgg.356.1585201357185;
+        Wed, 25 Mar 2020 22:42:37 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y9sm751518pfo.135.2020.03.25.22.42.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 22:42:36 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 22:42:34 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] remoteproc: use a local copy for the name field
+Message-ID: <20200326054234.GA59436@builder>
+References: <20200324201819.23095-1-s-anna@ti.com>
+ <20200324201819.23095-3-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200324201819.23095-3-s-anna@ti.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A negative imbalance value was observed after imbalance calculation,
-this happens when the local sched group type is group_fully_busy,
-and the average load of local group is greater than the selected
-busiest group. Fix this problem by comparing the average load of the
-local and busiest group before imbalance calculation formula.
+On Tue 24 Mar 13:18 PDT 2020, Suman Anna wrote:
 
-Suggested-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
-Cc: Phil Auld <pauld@redhat.com>
----
- kernel/sched/fair.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> The current name field used in the remoteproc structure is simply
+> a pointer to a name field supplied during the rproc_alloc() call.
+> The pointer passed in by remoteproc drivers during registration is
+> typically a dev_name pointer, but it is possible that the pointer
+> will no longer remain valid if the devices themselves were created
+> at runtime like in the case of of_platform_populate(), and were
+> deleted upon any failures within the respective remoteproc driver
+> probe function.
+> 
+> So, allocate and maintain a local copy for this name field to
+> keep it agnostic of the logic used in the remoteproc drivers.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 9 ++++++++-
+>  include/linux/remoteproc.h           | 2 +-
+>  2 files changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index aca6d022901a..6e0b91fa6f11 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1989,6 +1989,7 @@ static void rproc_type_release(struct device *dev)
+>  
+>  	kfree(rproc->firmware);
+>  	kfree(rproc->ops);
+> +	kfree(rproc->name);
+>  	kfree(rproc);
+>  }
+>  
+> @@ -2061,7 +2062,13 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	}
+>  
+>  	rproc->firmware = p;
+> -	rproc->name = name;
+> +	rproc->name = kstrdup(name, GFP_KERNEL);
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c1217bf..4a2ba3f 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8761,6 +8761,14 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 
- 		sds->avg_load = (sds->total_load * SCHED_CAPACITY_SCALE) /
- 				sds->total_capacity;
-+		/*
-+		 * If the local group is more loaded than the selected
-+		 * busiest group don't try to pull any tasks.
-+		 */
-+		if (local->avg_load >= busiest->avg_load) {
-+			env->imbalance = 0;
-+			return;
-+		}
- 	}
- 
- 	/*
--- 
-2.7.4
+Let's use kstrdup_const() instead here (and kfree_const() instead of
+kfree()), so that the cases where we are passed a constant we won't
+create a duplicate on the heap.
 
+And the "name" in struct rproc can remain const.
+
+> +	if (!rproc->name) {
+> +		kfree(p);
+> +		kfree(rproc->ops);
+> +		kfree(rproc);
+> +		return NULL;
+
+Perhaps we can rearrange the hunks here slightly and get to a point
+where we can rely on the release function earlier?
+
+Regards,
+Bjorn
+
+> +	}
+>  	rproc->priv = &rproc[1];
+>  	rproc->auto_boot = true;
+>  	rproc->elf_class = ELFCLASS32;
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index ddce7a7775d1..77788a4bb94e 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -490,7 +490,7 @@ struct rproc_dump_segment {
+>  struct rproc {
+>  	struct list_head node;
+>  	struct iommu_domain *domain;
+> -	const char *name;
+> +	char *name;
+>  	char *firmware;
+>  	void *priv;
+>  	struct rproc_ops *ops;
+> -- 
+> 2.23.0
+> 
