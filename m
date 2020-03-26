@@ -2,80 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D55E193DA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:10:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DDD9193DAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:12:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbgCZLK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 07:10:29 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50381 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727590AbgCZLK3 (ORCPT
+        id S1727994AbgCZLMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 07:12:43 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46864 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbgCZLMn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 07:10:29 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jHQOx-0005eh-EM; Thu, 26 Mar 2020 12:10:19 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id E9D2610069D; Thu, 26 Mar 2020 12:10:18 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, hpa@zytor.com,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH v6 8/8] kvm: vmx: virtualize split lock detection
-In-Reply-To: <88b01989-25cd-90af-bfe8-c236bd5d1dbf@intel.com>
-References: <20200324151859.31068-1-xiaoyao.li@intel.com> <20200324151859.31068-9-xiaoyao.li@intel.com> <87eethz2p6.fsf@nanos.tec.linutronix.de> <88b01989-25cd-90af-bfe8-c236bd5d1dbf@intel.com>
-Date:   Thu, 26 Mar 2020 12:10:18 +0100
-Message-ID: <87d08zxtgl.fsf@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Thu, 26 Mar 2020 07:12:43 -0400
+Received: by mail-pg1-f193.google.com with SMTP id k191so2678216pgc.13;
+        Thu, 26 Mar 2020 04:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=UzzDt0/zC8t7ovhe7yIj9+UNLH3ZfB9o+FewH6cOgh4=;
+        b=eJpCgo34rTMlyH3BQTttLC8UZfwApCAG/DM+Q6SPEsyflv8/b0pm1u0BWgpAsFEsDN
+         LinFDIZOcxNI7oIt+5KyIMBr/pnzuH+wKN1Sua3xMiPXT40HlPYSBa4A3HYZBBR/okXG
+         B+Gd2XqPkQLdJNnPwnIvPGwsZ3okp74+Gi6RaTd6Tq7fnwm4HNBQILCRWs9O/9/9VxWz
+         WjnqyyApKROpRAwLQsANc/upj2KMXuL81L7kEIlTmCok8V9sPba9ToDQs325MFeGIbCz
+         jrbZy5gWvA0nirDhtNON1JeWDZvj+EgDQ6aiLZXFHPPp78GN6mVyeqgp693wacyk2ACO
+         N1ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UzzDt0/zC8t7ovhe7yIj9+UNLH3ZfB9o+FewH6cOgh4=;
+        b=jzx18mznYK3UrfWkpPDtaAxiAjvcC7djx8elfdu/+yks5YgIrGm0T/L69VdBNEkp3f
+         pkyLjk1RrjA/SB4OFjcOw3ErXfdRZcxiNPyqQAoLUHedyAoCVQCEM1UfjKzhtcGJCjDF
+         y8JA0+V8/o3Dr2/WHoQFgUOivFGk6giiFvA/EO/9hno3NwXFNWTnGGufG9SwlmVTaFY9
+         cQRB6CjJkDVXRt9nppH/frdi8q+l0xv07P+OrkGMB5c7NjJNPmBCNdysoY8psJx9sEBe
+         LygD+kFZ8Ha5b6KVNviw8/PG+I1AA5lZBbnWoVfF3XKdt8cY6i1VKLGwTYPCZhYYNQhk
+         Mm3g==
+X-Gm-Message-State: ANhLgQ29Z4DKt6Z1zBqM3uaQzohOK9eIHzc7Hh0VPGqZ19O4zZ9+UKWU
+        hjfPZrChck2BQMOx1im2b90=
+X-Google-Smtp-Source: ADFU+vvamjy5zGNHJhHUhozynw5nSgVNpikKb1pWFXwb+S/0IjyUw+YsyDdNm/I7Qw9TJEhOD73epQ==
+X-Received: by 2002:a62:6807:: with SMTP id d7mr8529801pfc.230.1585221161955;
+        Thu, 26 Mar 2020 04:12:41 -0700 (PDT)
+Received: from dev.localdomain ([203.100.54.194])
+        by smtp.gmail.com with ESMTPSA id m9sm1427723pff.93.2020.03.26.04.12.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Mar 2020 04:12:41 -0700 (PDT)
+From:   Yafang Shao <laoar.shao@gmail.com>
+To:     hannes@cmpxchg.org, peterz@infradead.org,
+        akpm@linux-foundation.org, mhocko@kernel.org, axboe@kernel.dk,
+        mgorman@suse.de, rostedt@goodmis.org, mingo@redhat.com
+Cc:     linux-mm@kvack.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH 0/2] psi: enhance psi with the help of ebpf
+Date:   Thu, 26 Mar 2020 07:12:05 -0400
+Message-Id: <1585221127-11458-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xiaoyao Li <xiaoyao.li@intel.com> writes:
-> On 3/25/2020 8:40 AM, Thomas Gleixner wrote:
->> Xiaoyao Li <xiaoyao.li@intel.com> writes:
->>>   static int handle_exception_nmi(struct kvm_vcpu *vcpu)
->>>   {
->>>   	struct vcpu_vmx *vmx = to_vmx(vcpu);
->>> @@ -4725,12 +4746,13 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
->>>   	case AC_VECTOR:
->>>   		/*
->>>   		 * Reflect #AC to the guest if it's expecting the #AC, i.e. has
->>> -		 * legacy alignment check enabled.  Pre-check host split lock
->>> -		 * support to avoid the VMREADs needed to check legacy #AC,
->>> -		 * i.e. reflect the #AC if the only possible source is legacy
->>> -		 * alignment checks.
->>> +		 * legacy alignment check enabled or split lock detect enabled.
->>> +		 * Pre-check host split lock support to avoid further check of
->>> +		 * guest, i.e. reflect the #AC if host doesn't enable split lock
->>> +		 * detection.
->>>   		 */
->>>   		if (!split_lock_detect_on() ||
->>> +		    guest_cpu_split_lock_detect_on(vmx) ||
->>>   		    guest_cpu_alignment_check_enabled(vcpu)) {
->> 
->> If the host has split lock detection disabled then how is the guest
->> supposed to have it enabled in the first place?
->> 
-> It is ||
+PSI gives us a powerful way to anaylze memory pressure issue, but we can
+make it more powerful with the help of tracepoint, kprobe, ebpf and etc.
+Especially with ebpf we can flexiblely get more details of the memory
+pressure.
 
-Again. If the host has it disabled, then the feature flag is OFF. So
-how is the hypervisor exposing it in the first place?
+In orderc to achieve this goal, a new parameter is added into
+psi_memstall_{enter, leave}, which indicates the specific type of a
+memstall. There're totally ten memstalls by now,
+        MEMSTALL_KSWAPD
+        MEMSTALL_RECLAIM_DIRECT
+        MEMSTALL_RECLAIM_MEMCG
+        MEMSTALL_RECLAIM_HIGH
+        MEMSTALL_KCOMPACTD
+        MEMSTALL_COMPACT
+        MEMSTALL_WORKINGSET_REFAULT
+        MEMSTALL_WORKINGSET_THRASHING
+        MEMSTALL_MEMDELAY
+        MEMSTALL_SWAPIO
+With the help of kprobe or tracepoint to trace this newly added agument we
+can know which type of memstall it is and then do corresponding
+improvement. I can also help us to analyze the latency spike caused by
+memory pressure.
 
-Thanks,
+But note that we can't use it to build memory pressure for a specific type
+of memstall, e.g. memcg pressure, compaction pressure and etc, because it
+doesn't implement various types of task->in_memstall, e.g.
+task->in_memcgstall, task->in_compactionstall and etc.
 
-        tglx
+Although there're already some tracepoints can help us to achieve this
+goal, e.g.
+        vmscan:mm_vmscan_kswapd_{wake, sleep}
+        vmscan:mm_vmscan_direct_reclaim_{begin, end}
+        vmscan:mm_vmscan_memcg_reclaim_{begin, end}
+        /* no tracepoint for memcg high reclaim*/
+        compcation:mm_compaction_kcompactd_{wake, sleep}
+        compcation:mm_compaction_begin_{begin, end}
+        /* no tracepoint for workingset refault */
+        /* no tracepoint for workingset thrashing */
+        /* no tracepoint for use memdelay */
+        /* no tracepoint for swapio */
+but psi_memstall_{enter, leave} gives us a unified entrance for all
+types of memstall and we don't need to add many begin and end tracepoints
+that hasn't been implemented yet.
+
+Patch #2 gives us an example of how to use it with ebpf. With the help of
+ebpf we can trace a specific task, application, container and etc. It also
+can help us to analyze the spread of latencies and whether they were
+clustered at a point of time or spread out over long periods of time.
+
+Yafang Shao (2):
+  psi: introduce various types of memstall
+  psi, tracepoint: introduce tracepoints for psi_memstall_{enter, leave}
+
+ block/blk-cgroup.c           |  4 ++--
+ block/blk-core.c             |  4 ++--
+ include/linux/psi.h          | 15 +++++++++++----
+ include/linux/psi_types.h    | 13 +++++++++++++
+ include/trace/events/sched.h | 41 +++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/psi.c           | 14 ++++++++++++--
+ mm/compaction.c              |  4 ++--
+ mm/filemap.c                 |  4 ++--
+ mm/memcontrol.c              |  4 ++--
+ mm/page_alloc.c              |  8 ++++----
+ mm/page_io.c                 |  4 ++--
+ mm/vmscan.c                  |  8 ++++----
+ 12 files changed, 97 insertions(+), 26 deletions(-)
+
+-- 
+1.8.3.1
+
