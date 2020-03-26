@@ -2,203 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12C901948C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:27:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B8911948FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:28:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbgCZU1o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 16:27:44 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53552 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728658AbgCZU1n (ORCPT
+        id S1728869AbgCZU2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 16:28:21 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:54802 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728765AbgCZU2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:27:43 -0400
-Received: by mail-wm1-f68.google.com with SMTP id b12so8395054wmj.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 13:27:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jktZmsbVaYfCQgFOQaxsmSKFGgjNxgTE596K7P299tE=;
-        b=NW6aBYcPaS+mV12mZI3RwuGwl661E+UeEa0aLD0xlene0yT8jFuQjiyMO8Egf9E1/J
-         hW5U6XeM9hERkrwd9JblHkbFP/0Pd/TA5sixZ8NXNoA7UTXPJTjRjvCSqBZGo6ZC98mD
-         8U0G0eT/ySTliP/NyqtRXcichG/ZtK3sg0q0E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jktZmsbVaYfCQgFOQaxsmSKFGgjNxgTE596K7P299tE=;
-        b=YgCHm0QNVlBFPOAz+UuK3SQv8h+B72QCoRSpQ/+2mewp4QYMMwMaT0DbiqEzAlxW4U
-         62Fi1QD96ipoK6GlwJqItwq58flyLo1negCtM+DwZ6hDxDv1DPtsIsNvQ7f75HHEl1Gp
-         DkSM2HUnL5i+ZLd/UupQ7vGJ3goz4XBJszAvugMEyP08LUlPMz2XuA6DcPYz2gn2dI2B
-         l+vFFaIqQIpKF9jjTnnfdMe+YTISJYNiL30BBMSxGtnMbDosYauHe9+Pg9S4FrvHGRkA
-         5GhwoXVmKrbfF8g7SZ0IhBBN2ZXDUabOykFf+/35aR/YwlNtsMGWnEf+bvqMtcBoTSmH
-         vtYA==
-X-Gm-Message-State: ANhLgQ07OxK/rC8LNrq4m0sPq4NV+1tC7GD+1l3tGZUFjhBUs9Lm2qmv
-        5lY5RZ/j+7ynMzUK+XCG7oRYUg==
-X-Google-Smtp-Source: ADFU+vtPU+HGPWL46bllQ2v2aFSum+2CVfuDGlxDWR+RJJM/9IcDZhej6z0Z7gBtu6+LExlU9PYARw==
-X-Received: by 2002:adf:d4ce:: with SMTP id w14mr11426931wrk.101.1585254461368;
-        Thu, 26 Mar 2020 13:27:41 -0700 (PDT)
-Received: from [10.230.26.36] ([192.19.224.250])
-        by smtp.gmail.com with ESMTPSA id f14sm5010601wmb.3.2020.03.26.13.27.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Mar 2020 13:27:40 -0700 (PDT)
-Subject: Re: [PATCH 1/3] PCI: iproc: fix out of bound array access
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bharat Gooty <bharat.gooty@broadcom.com>
-References: <20200326194810.GA11112@google.com>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <4a836faf-645d-a1ab-d525-738a318758a0@broadcom.com>
-Date:   Thu, 26 Mar 2020 13:27:36 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Thu, 26 Mar 2020 16:28:10 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.93)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1jHZ6j-00CGGW-CK; Thu, 26 Mar 2020 21:28:05 +0100
+Message-ID: <b879b50324b502cbd3f8439182d63532518d7315.camel@sipsolutions.net>
+Subject: Re: [PATCH] kernel/taskstats: fix wrong nla type for
+ {cgroup,task}stats policy
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Yafang Shao <laoar.shao@gmail.com>
+Cc:     bsingharora@gmail.com, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        "David S.Miller" <davem@davemloft.net>
+Date:   Thu, 26 Mar 2020 21:28:03 +0100
+In-Reply-To: <20200326130808.ccbacd6cba99a40326936fea@linux-foundation.org>
+References: <1585191042-9935-1-git-send-email-laoar.shao@gmail.com>
+         <20200326130808.ccbacd6cba99a40326936fea@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-In-Reply-To: <20200326194810.GA11112@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On Thu, 2020-03-26 at 13:08 -0700, Andrew Morton wrote:
+> (cc's added)
+> 
+> On Wed, 25 Mar 2020 22:50:42 -0400 Yafang Shao <laoar.shao@gmail.com> wrote:
+> 
+> > After our server is upgraded to a newer kernel, we found that it
+> > continuesly print a warning in the kernel message. The warning is,
+> > [832984.946322] netlink: 'irmas.lc': attribute type 1 has an invalid length.
+> > 
+> > irmas.lc is one of our container monitor daemons, and it will use
+> > CGROUPSTATS_CMD_GET to get the cgroupstats, that is similar with
+> > tools/accounting/getdelays.c. We can also produce this warning with
+> > getdelays. For example, after running bellow command
+> > 	$ ./getdelays -C /sys/fs/cgroup/memory
+> > then you can find a warning in dmesg,
+> > [61607.229318] netlink: 'getdelays': attribute type 1 has an invalid length.
 
-On 3/26/2020 12:48 PM, Bjorn Helgaas wrote:
-> Change subject to match convention, e.g.,
-> 
->   PCI: iproc: Fix out-of-bound array accesses
-> 
-> On Thu, Mar 26, 2020 at 12:37:25PM +0530, Srinath Mannam wrote:
->> From: Bharat Gooty <bharat.gooty@broadcom.com>
->>
->> Declare the full size array for all revisions of PAX register sets
->> to avoid potentially out of bound access of the register array
->> when they are being initialized in the 'iproc_pcie_rev_init'
->> function.
-> 
-> s/the 'iproc_pcie_rev_init' function/iproc_pcie_rev_init()/
-> 
-> It's outside the scope of this patch, but I'm not really a fan of the
-> pcie->reg_offsets[] scheme this driver uses to deal with these
-> differences.  There usually seems to be *something* that keeps the
-> driver from referencing registers that don't exist, but it doesn't
-> seem like the mechanism is very consistent or robust:
-> 
->   - IPROC_PCIE_LINK_STATUS is implemented by PAXB but not PAXC.
->     iproc_pcie_check_link() avoids using it if "ep_is_internal", which
->     is set for PAXC and PAXC_V2.  Not an obvious connection.
-> 
->   - IPROC_PCIE_CLK_CTRL is implemented for PAXB and PAXC_V1, but not
->     PAXC_V2.  iproc_pcie_perst_ctrl() avoids using it ep_is_internal",
->     so it *doesn't* use it for PAXC_V1, which does implement it.
->     Maybe a bug, maybe intentional; I can't tell.
-> 
->   - IPROC_PCIE_INTX_EN is only implemented by PAXB (not PAXC), but
->     AFAICT, we always call iproc_pcie_enable() and rely on
->     iproc_pcie_write_reg() silently drop the write to it on PAXC.
-> 
->   - IPROC_PCIE_OARR0 is implemented by PAXB and PAXB_V2 and used by
->     iproc_pcie_map_ranges(), which is called if "need_ob_cfg", which
->     is set if there's a "brcm,pcie-ob" DT property.  No clear
->     connection to PAXB.
-> 
-> I think it would be more readable if we used a single variant
-> identifier consistently, e.g., the "pcie->type" already used in
-> iproc_pcie_msi_steer(), or maybe a set of variant-specific function
-> pointers as pcie-qcom.c does.
-> 
+And looking at this ... well, that code is completely wrong?
 
-It is not possible to use a single variant identifier consistently,
-i.e., 'pcie->type'. Many of these features are controller revision
-specific, and certain revisions of the controllers may all have a
-certain feature, while other revisions of the controllers do not. In
-addition, there are overlap in features across different controllers.
+E.g.
 
-IMO, it makes sense to have feature specific flags or booleans, and have
-those features enabled or disabled based on 'pcie->type', which is what
-the current driver does, but like you pointed out, what the driver
-failed is to do this consistently.
+                rc = send_cmd(nl_sd, id, mypid, TASKSTATS_CMD_GET,
+                              cmd_type, &tid, sizeof(__u32));
 
-The IPROC_PCIE_INTX_EN example you pointed out is a good example. I
-agree with you that we shouldn't rely on iproc_pcie_write_reg to
-silently drop the operation for PAXC. We should add code to make it
-explictly obvious that legacy interrupt is not supported in all PAXC
-controllers.
+(cmd_type is one of TASKSTATS_CMD_ATTR_TGID, TASKSTATS_CMD_ATTR_PID)
 
-pcie->pcie->reg_offsets[] scheme was not intended to be used to silently
-drop register access that are activated based on features. It's a
-mistake that should be fixed if some code in the driver is done that
-way, as you pointed out. The intention of reg_offsets[] is to allow many
-of the code in this driver be made generic, and shared between different
-revisions of the driver.
+or it might do
 
-Thanks,
+                rc = send_cmd(nl_sd, id, mypid, CGROUPSTATS_CMD_GET,
+                              CGROUPSTATS_CMD_ATTR_FD, &cfd, sizeof(__u32));
 
-Ray
+so clearly it wants to produce a u32 attribute.
 
->> Fixes: 06324ede76cdf ("PCI: iproc: Improve core register population")
->> Signed-off-by: Bharat Gooty <bharat.gooty@broadcom.com>
->> ---
->>  drivers/pci/controller/pcie-iproc.c | 10 +++++-----
->>  1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
->> index 0a468c7..6972ca4 100644
->> --- a/drivers/pci/controller/pcie-iproc.c
->> +++ b/drivers/pci/controller/pcie-iproc.c
->> @@ -307,7 +307,7 @@ enum iproc_pcie_reg {
->>  };
->>  
->>  /* iProc PCIe PAXB BCMA registers */
->> -static const u16 iproc_pcie_reg_paxb_bcma[] = {
->> +static const u16 iproc_pcie_reg_paxb_bcma[IPROC_PCIE_MAX_NUM_REG] = {
->>  	[IPROC_PCIE_CLK_CTRL]		= 0x000,
->>  	[IPROC_PCIE_CFG_IND_ADDR]	= 0x120,
->>  	[IPROC_PCIE_CFG_IND_DATA]	= 0x124,
->> @@ -318,7 +318,7 @@ static const u16 iproc_pcie_reg_paxb_bcma[] = {
->>  };
->>  
->>  /* iProc PCIe PAXB registers */
->> -static const u16 iproc_pcie_reg_paxb[] = {
->> +static const u16 iproc_pcie_reg_paxb[IPROC_PCIE_MAX_NUM_REG] = {
->>  	[IPROC_PCIE_CLK_CTRL]		= 0x000,
->>  	[IPROC_PCIE_CFG_IND_ADDR]	= 0x120,
->>  	[IPROC_PCIE_CFG_IND_DATA]	= 0x124,
->> @@ -334,7 +334,7 @@ static const u16 iproc_pcie_reg_paxb[] = {
->>  };
->>  
->>  /* iProc PCIe PAXB v2 registers */
->> -static const u16 iproc_pcie_reg_paxb_v2[] = {
->> +static const u16 iproc_pcie_reg_paxb_v2[IPROC_PCIE_MAX_NUM_REG] = {
->>  	[IPROC_PCIE_CLK_CTRL]		= 0x000,
->>  	[IPROC_PCIE_CFG_IND_ADDR]	= 0x120,
->>  	[IPROC_PCIE_CFG_IND_DATA]	= 0x124,
->> @@ -363,7 +363,7 @@ static const u16 iproc_pcie_reg_paxb_v2[] = {
->>  };
->>  
->>  /* iProc PCIe PAXC v1 registers */
->> -static const u16 iproc_pcie_reg_paxc[] = {
->> +static const u16 iproc_pcie_reg_paxc[IPROC_PCIE_MAX_NUM_REG] = {
->>  	[IPROC_PCIE_CLK_CTRL]		= 0x000,
->>  	[IPROC_PCIE_CFG_IND_ADDR]	= 0x1f0,
->>  	[IPROC_PCIE_CFG_IND_DATA]	= 0x1f4,
->> @@ -372,7 +372,7 @@ static const u16 iproc_pcie_reg_paxc[] = {
->>  };
->>  
->>  /* iProc PCIe PAXC v2 registers */
->> -static const u16 iproc_pcie_reg_paxc_v2[] = {
->> +static const u16 iproc_pcie_reg_paxc_v2[IPROC_PCIE_MAX_NUM_REG] = {
->>  	[IPROC_PCIE_MSI_GIC_MODE]	= 0x050,
->>  	[IPROC_PCIE_MSI_BASE_ADDR]	= 0x074,
->>  	[IPROC_PCIE_MSI_WINDOW_SIZE]	= 0x078,
->> -- 
->> 2.7.4
->>
+But then
+
+static int send_cmd(int sd, __u16 nlmsg_type, __u32 nlmsg_pid,
+             __u8 genl_cmd, __u16 nla_type,
+             void *nla_data, int nla_len)
+{
+...
+
+        na = (struct nlattr *) GENLMSG_DATA(&msg);
+
+// this is still fine
+
+        na->nla_type = nla_type;
+
+// this is also fine
+
+        na->nla_len = nla_len + 1 + NLA_HDRLEN;
+
+// but this??? the nla_len of a netlink attribute should just be
+// the len ... what's NLA_HDRLEN doing here? this isn't nested
+// here we end up just reserving 1+NLA_HDRLEN too much space
+
+        memcpy(NLA_DATA(na), nla_data, nla_len);
+
+// but then it anyway only fills the first nla_len bytes, which
+// is just like a regular attribute.
+
+        msg.n.nlmsg_len += NLMSG_ALIGN(na->nla_len);
+// note that this is also wrong - it should be 
+// += NLA_ALIGN(NLA_HDRLEN + nla_len)
+
+
+
+So really I think what happened here is precisely what we wanted -
+David's kernel patch caught the broken userspace tool.
+
+johannes
+
