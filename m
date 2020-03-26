@@ -2,106 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0980194B82
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 23:27:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A6E7194B8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 23:30:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbgCZW1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 18:27:52 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:43717 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726260AbgCZW1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 18:27:51 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48pKPK1KNjz9sR4;
-        Fri, 27 Mar 2020 09:27:48 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1585261669;
-        bh=TTUfgK8iyycLNqBt/AiEmDKjm1TJOM+wT3Gze1ZAfoI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=OBFeeCUk/cwaKUMd5zgGF1BMof6bjIeMzIguMLlyDQUAgtrQYbv7wQgcB2tW6AzkO
-         Bc2qT6DLLdb5LleF8cZSIUnNxwaDEHdN5Nn2vbxKNjZBe9Tffd87OYb+SPPoGmu0mr
-         AWBNfhD8GMhnQVQLUMWwsgWkrCOBF50UuhiR23So90sSt+kxM1GZ1soIFpj5IxKHog
-         Ba3iKBpNxbhF84yVjQUyeXrt6SwLZB+yTFFtewWpAGuyk6uD7i+9Zek1bgQ8YgqnXQ
-         PV1KQ1alBU53uPOABEEmzdztbRq+f6k3PMkf/IuBXP0JMLzDGVK45jl3u6gaOFfUT2
-         u5BHSSZWbUx8g==
-Date:   Fri, 27 Mar 2020 09:27:41 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>,
-        Thierry Reding <treding@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nagarjuna Kristam <nkristam@nvidia.com>,
-        JC Kuo <jckuo@nvidia.com>, Corentin Labbe <clabbe@baylibre.com>
-Subject: linux-next: manual merge of the tegra tree with the arm-soc tree
-Message-ID: <20200327092741.1dbd3242@canb.auug.org.au>
+        id S1727666AbgCZWaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 18:30:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33400 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726270AbgCZWaB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 18:30:01 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02QM45pp017367;
+        Thu, 26 Mar 2020 18:29:29 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ywe7wg67t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 18:29:29 -0400
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 02QMGvZP149162;
+        Thu, 26 Mar 2020 18:29:29 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ywe7wg67j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 18:29:29 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02QMPKDj016953;
+        Thu, 26 Mar 2020 22:29:27 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma04wdc.us.ibm.com with ESMTP id 2ywaw9d6bv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 22:29:27 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02QMTR8E51839366
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Mar 2020 22:29:27 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 76774AE05F;
+        Thu, 26 Mar 2020 22:29:27 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 04A8EAE05C;
+        Thu, 26 Mar 2020 22:29:04 +0000 (GMT)
+Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.85.162.45])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 26 Mar 2020 22:29:04 +0000 (GMT)
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Enrico Weigelt <info@metux.net>,
+        Leonardo Bras <leonardo@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 1/1] ppc/crash: Skip spinlocks during crash
+Date:   Thu, 26 Mar 2020 19:28:37 -0300
+Message-Id: <20200326222836.501404-1-leonardo@linux.ibm.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Tjrk3Z.A=gzsIRzl_glEECC";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-26_13:2020-03-26,2020-03-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 bulkscore=0 phishscore=0 spamscore=0 adultscore=0
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
+ priorityscore=1501 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2003020000 definitions=main-2003260157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Tjrk3Z.A=gzsIRzl_glEECC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+During a crash, there is chance that the cpus that handle the NMI IPI
+are holding a spin_lock. If this spin_lock is needed by crashing_cpu it
+will cause a deadlock. (rtas_lock and printk logbuf_log as of today)
 
-Hi all,
+This is a problem if the system has kdump set up, given if it crashes
+for any reason kdump may not be saved for crash analysis.
 
-Today's linux-next merge of the tegra tree got conflicts in:
+Skip spinlocks after NMI IPI is sent to all other cpus.
 
-  drivers/phy/tegra/Kconfig
-  drivers/phy/tegra/xusb.c
+Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
+---
+ arch/powerpc/include/asm/spinlock.h | 6 ++++++
+ arch/powerpc/kexec/crash.c          | 3 +++
+ 2 files changed, 9 insertions(+)
 
-between commits:
+diff --git a/arch/powerpc/include/asm/spinlock.h b/arch/powerpc/include/asm/spinlock.h
+index 860228e917dc..a6381d110795 100644
+--- a/arch/powerpc/include/asm/spinlock.h
++++ b/arch/powerpc/include/asm/spinlock.h
+@@ -111,6 +111,8 @@ static inline void splpar_spin_yield(arch_spinlock_t *lock) {};
+ static inline void splpar_rw_yield(arch_rwlock_t *lock) {};
+ #endif
+ 
++extern bool crash_skip_spinlock __read_mostly;
++
+ static inline bool is_shared_processor(void)
+ {
+ #ifdef CONFIG_PPC_SPLPAR
+@@ -142,6 +144,8 @@ static inline void arch_spin_lock(arch_spinlock_t *lock)
+ 		if (likely(__arch_spin_trylock(lock) == 0))
+ 			break;
+ 		do {
++			if (unlikely(crash_skip_spinlock))
++				return;
+ 			HMT_low();
+ 			if (is_shared_processor())
+ 				splpar_spin_yield(lock);
+@@ -161,6 +165,8 @@ void arch_spin_lock_flags(arch_spinlock_t *lock, unsigned long flags)
+ 		local_save_flags(flags_dis);
+ 		local_irq_restore(flags);
+ 		do {
++			if (unlikely(crash_skip_spinlock))
++				return;
+ 			HMT_low();
+ 			if (is_shared_processor())
+ 				splpar_spin_yield(lock);
+diff --git a/arch/powerpc/kexec/crash.c b/arch/powerpc/kexec/crash.c
+index d488311efab1..8a522380027d 100644
+--- a/arch/powerpc/kexec/crash.c
++++ b/arch/powerpc/kexec/crash.c
+@@ -66,6 +66,8 @@ static int handle_fault(struct pt_regs *regs)
+ 
+ #ifdef CONFIG_SMP
+ 
++bool crash_skip_spinlock;
++
+ static atomic_t cpus_in_crash;
+ void crash_ipi_callback(struct pt_regs *regs)
+ {
+@@ -129,6 +131,7 @@ static void crash_kexec_prepare_cpus(int cpu)
+ 	/* Would it be better to replace the trap vector here? */
+ 
+ 	if (atomic_read(&cpus_in_crash) >= ncpus) {
++		crash_skip_spinlock = true;
+ 		printk(KERN_EMERG "IPI complete\n");
+ 		return;
+ 	}
+-- 
+2.24.1
 
-  5a00c7c7604f ("phy: tegra: xusb: Add usb-role-switch support")
-  23babe30fb45 ("phy: tegra: xusb: Add usb-phy support")
-  d74ce0954cb2 ("phy: tegra: xusb: Add support to get companion USB 3 port")
-  58e7bd08b569 ("phy: tegra: xusb: Add Tegra194 support")
-
-from the arm-soc tree and commit:
-
-  f67213cee2b3 ("phy: tegra: xusb: Add usb-role-switch support")
-  e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
-  5a40fc4b934c ("phy: tegra: xusb: Add support to get companion USB 3 port")
-  1ef535c6ba8e ("phy: tegra: xusb: Add Tegra194 support")
-
-from the tegra tree.
-
-These are slightly different patches (the latter has been rebased).
-Also there are further commits affecting these files in the tegra tree.
-
-I fixed it up (I just used the version from the tegra tree) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Tjrk3Z.A=gzsIRzl_glEECC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl59LF0ACgkQAVBC80lX
-0GwyAQf+I5kTj3T8nDJGpq9RC07WHcKa32mVQgkMo2yk0xHSeyeD/pVxCFFUTAGM
-Dbn3bOwyMiRP7eXlvvlMue8eIwqBa8iZefahef2i0CbV7nhKR8HLuvVJwspIilMP
-IwA9rlKRT+ESRlP6c76oHbV43qSY6Bg1RtOLPw8CgqzcVFriItgDSbApN+VWvQSY
-Fl8xpuqBhWajxLTjZULhQo/PpngggfPpTI2Z/PE2qBlh9HBQLAFYU/U2qcEaTah/
-86h1R29S1m7VEuHlmzKmwyhB/Z8tt4zXRwhoN5ZdvLB9vXfrqT3HA015xZrPK12Y
-/3jEJRBE5TZ4vM7QZ78S6h51LSEQsA==
-=oWYQ
------END PGP SIGNATURE-----
-
---Sig_/Tjrk3Z.A=gzsIRzl_glEECC--
