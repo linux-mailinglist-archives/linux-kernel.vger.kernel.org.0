@@ -2,124 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F79A193B81
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:10:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDAF9193B90
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:13:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbgCZJKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 05:10:53 -0400
-Received: from mga06.intel.com ([134.134.136.31]:45602 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbgCZJKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 05:10:53 -0400
-IronPort-SDR: Fv9mga/JYauPBSPb6P2hSPJBJUzyLxQOdHOf3RJKEOUro4LZLwZvAUDQ2wTcZXdWYrQII9p5Uo
- dTEzIfH65RUw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 02:10:52 -0700
-IronPort-SDR: FkXE58tUwihO6nd3Lw5ViYuA7DM1g9lgAXC+1NJZGEZhLIUvhLwAWmHfXwsR5ij0icg5VzL9vQ
- FXlrPrLwmmCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,307,1580803200"; 
-   d="scan'208";a="240902570"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga008.jf.intel.com with ESMTP; 26 Mar 2020 02:10:48 -0700
-Subject: Re: [PATCH v8 1/5] usb: hci: add hc_driver as argument for
- usb_hcd_pci_probe
-To:     Vinod Koul <vkoul@kernel.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        =?UTF-8?Q?Andreas_B=c3=b6hler?= <dev@aboehler.at>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200323170601.419809-1-vkoul@kernel.org>
- <20200323170601.419809-2-vkoul@kernel.org>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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 fiD/
-Message-ID: <293c8217-11e5-6231-1506-15c7e1834c4a@linux.intel.com>
-Date:   Thu, 26 Mar 2020 11:13:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727800AbgCZJNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 05:13:42 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37615 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbgCZJNm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 05:13:42 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r24so5605391ljd.4;
+        Thu, 26 Mar 2020 02:13:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uyyUQXlsRxfomovzXi3a4kjq7QvbeI6bqADRdDoCJDI=;
+        b=HVKfRzPKtNDSQgCAR0UEGnT2sOseBT6bcZ5+yHkrlfNjglJKRx7UfnRIbLrAhcZWHh
+         0aagsu8xKRbTXM/TV5AQupc8DkhVw8toHDUTk3tAIHWmlTOEjt4eOqDKavFeJQpDKQPx
+         /m9OSiqtWGNXxo7TWMNICqRZynNvf6eYG3Egm464IlQmemUVUuCui9ezTCvYoRvfwmNx
+         gIKi78cnGCDJGLRRUPCghUqqOCerqMm//u3aSb07pjvIICL2yCb/zSPvpFCu7MFnQ5rs
+         XdYyazUmREdP6sFZeyy/1P5bEO5yPWVerVGG1i7IMw7sJvLrbNi3BT7aq3CFRlvsuyh8
+         A+FA==
+X-Gm-Message-State: AGi0Pub7hJvNQU8GGFs9myMetFU5xInxChM3LsKHQ5L9V+QcbsgwZWBH
+        gpu8QwNjI2ICOfxiNn/xx14=
+X-Google-Smtp-Source: APiQypIFtvQUm+uMPq1l2Hbw7svcZDHM7fc7bFFNVoc0kXHdImSyYm+iyNeTmANGUpYJ6ahggl+jiw==
+X-Received: by 2002:a2e:8316:: with SMTP id a22mr2062884ljh.70.1585214019931;
+        Thu, 26 Mar 2020 02:13:39 -0700 (PDT)
+Received: from xi.terra (c-12aae455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.170.18])
+        by smtp.gmail.com with ESMTPSA id f2sm1036510ljn.101.2020.03.26.02.13.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 02:13:39 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.92.3)
+        (envelope-from <johan@kernel.org>)
+        id 1jHOZq-0003Cl-Gx; Thu, 26 Mar 2020 10:13:26 +0100
+Date:   Thu, 26 Mar 2020 10:13:26 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Qiujun Huang <hqjagain@gmail.com>, johan@kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        anenbupt@gmail.com
+Subject: Re: [PATCH] USB: io_edgeport: fix  slab-out-of-bounds Read in
+ edge_interrupt_callback
+Message-ID: <20200326091326.GD4899@localhost>
+References: <1585122757-4528-1-git-send-email-hqjagain@gmail.com>
+ <20200326081433.GA979574@kroah.com>
+ <20200326082117.GC4899@localhost>
 MIME-Version: 1.0
-In-Reply-To: <20200323170601.419809-2-vkoul@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200326082117.GC4899@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.3.2020 19.05, Vinod Koul wrote:
-> usb_hcd_pci_probe expects users to call this with driver_data set as
-> hc_driver, that limits the possibility of using the driver_data for
-> driver data.
+On Thu, Mar 26, 2020 at 09:21:17AM +0100, Johan Hovold wrote:
+> On Thu, Mar 26, 2020 at 09:14:33AM +0100, Greg Kroah-Hartman wrote:
+> > On Wed, Mar 25, 2020 at 03:52:37PM +0800, Qiujun Huang wrote:
+> > > The boundary condition should be (length - 1) as we access data[position+1].
+> > > 
+> > > Reported-and-tested-by: syzbot+37ba33391ad5f3935bbd@syzkaller.appspotmail.com
+> > > Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+> > > ---
+> > >  drivers/usb/serial/io_edgeport.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
+> > > index 5737add..4cca0b8 100644
+> > > --- a/drivers/usb/serial/io_edgeport.c
+> > > +++ b/drivers/usb/serial/io_edgeport.c
+> > > @@ -710,7 +710,7 @@ static void edge_interrupt_callback(struct urb *urb)
+> > >  		/* grab the txcredits for the ports if available */
+> > >  		position = 2;
+> > >  		portNumber = 0;
+> > > -		while ((position < length) &&
+> > > +		while ((position < length - 1) &&
+> > >  				(portNumber < edge_serial->serial->num_ports)) {
+> > >  			txCredits = data[position] | (data[position+1] << 8);
+> > >  			if (txCredits) {
+> > > -- 
+> > > 1.8.3.1
+> > > 
+> > 
+> > Johan, any objection from me taking this in my tree now?
 > 
-> Add hc_driver as argument to usb_hcd_pci_probe and modify the callers
-> ehci/ohci/xhci/uhci to pass hc_driver as argument and freeup the
-> driver_data used
-> 
-> Tested xhci driver on Dragon-board RB3, compile tested ehci and ohci.
-> Couldn't compile uhci
-> 
-> Suggested-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  drivers/usb/core/hcd-pci.c  |  7 ++++---
->  drivers/usb/host/ehci-pci.c |  6 ++----
->  drivers/usb/host/ohci-pci.c |  9 ++++++---
->  drivers/usb/host/uhci-pci.c |  8 ++++++--
->  drivers/usb/host/xhci-pci.c | 14 +++++---------
->  include/linux/usb/hcd.h     |  3 ++-
->  6 files changed, 25 insertions(+), 22 deletions(-)
-> 
+> Just let me take a look at it first.
+>
+> Are sending another PR to Linus for 5.6? Otherwise I can include this
+> in my 5.7 PR to you. Will try to get it to you today.
 
-For the xhci part of this 1/5 patch only:
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+This issue predates git so I'd add
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Johan Hovold <johan@kernel.org>
+
+if you want to take it yourself. Just let me know, otherwise I'll
+include in my PR.
+
+Johan
