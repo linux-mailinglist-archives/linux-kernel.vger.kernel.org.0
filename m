@@ -2,175 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27B9519435D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E3E7194364
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:40:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbgCZPjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 11:39:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45244 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727835AbgCZPjH (ORCPT
+        id S1728437AbgCZPkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 11:40:51 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40949 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727495AbgCZPkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 11:39:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=4Rhgc12JFsMtKIyNi6i/tNVpQycGEAdzKCaEdKdCY1c=; b=hl67uVF2FcEI0atatFBaSMyqLb
-        o9r800pgWA+iabo3TAoBBmsfysRN/L8vsCIbcivB2IsSkEROq2xRWk6Hs9abnXfiSk0MnLkjMZliM
-        ZEjx1ZEtsYIadI/EzFQhOJK7yZB8l7cLQV/cVo8yjUMt+NMNA5iD8HEJpdw/GK915SUHiqjFHaXPJ
-        OrtPFrJplNu8gAVf4PkFJRqTdaeb5ABnQn6v89KBDggMtYJ5HbEM+AWWigha6i6cGgS+X0fmL7SM6
-        YKckZOeA+AS5rP22i5iWdD2NLKBXKipQ45Nikr1U8PnB3X4CjKITFgnWiRBcfo0E5j3/xwEfQoqCY
-        zGU/HzDg==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHUb3-0002U8-Eb; Thu, 26 Mar 2020 15:39:05 +0000
-Subject: Re: [PATCH] md/raid0: add config parameters to specify zone layout
-To:     Jason Baron <jbaron@akamai.com>, songliubraving@fb.com
-Cc:     agk@redhat.com, snitzer@redhat.com, linux-raid@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        NeilBrown <neilb@suse.de>
-References: <1585236500-12015-1-git-send-email-jbaron@akamai.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d8433599-cd4f-80a1-d9f7-8ddad1693850@infradead.org>
-Date:   Thu, 26 Mar 2020 08:39:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Thu, 26 Mar 2020 11:40:51 -0400
+Received: by mail-wr1-f68.google.com with SMTP id u10so8360484wro.7
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 08:40:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=malat-biz.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XEACa47R1YYA9qHdOiFfEkBUAM/n215wAmRNcBN8QwY=;
+        b=Fdjop2Y7+L6YPRRq3UV/wtGW2NHguQSXMW9DdVOKRM4FI1a8TVD6RUBb0p2AL+YVLY
+         86uf2MCprux6gKpqMXQDyPrhgzrLd0BGo6ylK+XeCEcD/nguONB71GyxnKzUwL32llKH
+         8RRO+S/3awfwIojE86vdypyUtHq0HjV23+eovqI+vKi0BSfl190styxTnAoFZI4r/JtM
+         ZO2oYik9u03NDJGJ0jvgTAA8EF02O1EKG7Kt0n5Sp9xanFHBJcPXt/8+u4VVoJzlY17e
+         6MdsWQVcPMDqCqpsd8LwzihzaT70AI/h4QYoAVotXdBQjFaSPnDZDj11WzNtDEga5WnW
+         8jJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XEACa47R1YYA9qHdOiFfEkBUAM/n215wAmRNcBN8QwY=;
+        b=swLgcgmo/CgBz0I8S1rkexFRHSHAXxkHX1IaFrzjk8yJgiJ0PD3YCxbCdlkCoUOlce
+         t7l00GKimyyhrPx3h2+2vF86lmp68yI0ZcEsY3GAk8EQAy7TYnf8+Qe6P3/7xyTDQaBW
+         M2XFMxfQAmA966y2JRow9lzmL2iMXATXgFBBtN6DRvrA49HJx4vUyWlYgivk8BbRbAxv
+         k+6U8HvXRvWeYB1oSiEYNP68a5J60Z+fTO8h+5EmCUJdLU/j/8xBY8rRYGQ303wfMJ6X
+         cEFcy6gLldeFjGKd7DXiOWnYyLrmQfmFM5kolXOCndiEx3F36CtLiAq2pv4x9bJrEdWr
+         9PVw==
+X-Gm-Message-State: ANhLgQ0jrFSbN9lBIQmCBubszdieQdMDVEWyoZK3X6c5bnJEl5H/0w/L
+        IlGlCel4mcfWht/3/ePeseZHrA==
+X-Google-Smtp-Source: ADFU+vtop7dLCupf/5Cj0LJPXEZFIZb8nPl47px+m0Juh6AjaUQIZHhP5YiWzaS9s6aHc/n/JZymqQ==
+X-Received: by 2002:a05:6000:370:: with SMTP id f16mr10335036wrf.9.1585237249033;
+        Thu, 26 Mar 2020 08:40:49 -0700 (PDT)
+Received: from ntb.petris.klfree.czf (p5B36386E.dip0.t-ipconnect.de. [91.54.56.110])
+        by smtp.gmail.com with ESMTPSA id c5sm11522353wma.3.2020.03.26.08.40.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 08:40:47 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 16:40:38 +0100
+From:   Petr Malat <oss@malat.biz>
+To:     Nick Terrell <nickrterrell@gmail.com>
+Cc:     Nick Terrell <terrelln@fb.com>, linux-kernel@vger.kernel.org,
+        Chris Mason <clm@fb.com>, linux-kbuild@vger.kernel.org,
+        x86@kernel.org, gregkh@linuxfoundation.org,
+        Kees Cook <keescook@chromium.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Adam Borowski <kilobyte@angband.pl>,
+        Patrick Williams <patrickw3@fb.com>, rmikey@fb.com,
+        mingo@kernel.org, Patrick Williams <patrick@stwcx.xyz>
+Subject: Re: [PATCH v3 1/8] lib: prepare zstd for preboot environment
+Message-ID: <20200326154038.GA21231@ntb.petris.klfree.czf>
+References: <20200325195849.407900-1-nickrterrell@gmail.com>
+ <20200325195849.407900-2-nickrterrell@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1585236500-12015-1-git-send-email-jbaron@akamai.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200325195849.407900-2-nickrterrell@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/26/20 8:28 AM, Jason Baron wrote:
-> Let's add some CONFIG_* options to directly configure the raid0 layout
-> if you know in advance how your raid0 array was created. This can be
-> simpler than having to manage module or kernel command-line parameters.
-> 
-> If the raid0 array was created by a pre-3.14 kernel, use
-> RAID0_ORIG_LAYOUT. If the raid0 array was created by a 3.14 or newer
-> kernel then select RAID0_ALT_MULTIZONE_LAYOUT. Otherwise, the default
-> setting is RAID0_LAYOUT_NONE, in which case the current behavior of
-> needing to specify a module parameter raid0.default_layout=1|2 is
-> preserved.
-> 
-> Cc: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-> Cc: NeilBrown <neilb@suse.de>
-> Cc: Song Liu <songliubraving@fb.com>
-> Signed-off-by: Jason Baron <jbaron@akamai.com>
-> ---
->  drivers/md/Kconfig | 55 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/md/raid0.c |  7 +++++++
->  2 files changed, 62 insertions(+)
-> 
-> diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-> index d6d5ab2..c0c6d82 100644
-> --- a/drivers/md/Kconfig
-> +++ b/drivers/md/Kconfig
-> @@ -79,6 +79,61 @@ config MD_RAID0
->  
->  	  If unsure, say Y.
->  
-> +choice
-> +	prompt "RAID0 Layout"
-> +	default RAID0_LAYOUT_NONE
-> +	depends on MD_RAID0
-> +	help
-> +	  A change was made in Linux 3.14 that unintentinally changed the
+Hi Nick,
+I finally got some time to review your patch, here are my comments:
 
-	                                       unintentionally
+On Wed, Mar 25, 2020 at 12:58:42PM -0700, Nick Terrell wrote:
+> * Don't export symbols if ZSTD_PREBOOT is defined.
+I'm not sure if this is needed. When I worked on my patch, I have found that
+all exporting and modinfo macros generate symbols in modinfo and discard.ksym
+sections, which are then dropped by the vmlinux linker script, thus one
+will get the same binary independently if he puts this change in or not.
 
-> +	  the layout for RAID0. This can result in data corruption if a pre-3.14
-> +	  and a 3.14 or later kernel both wrote to the array. However, if the
-> +	  devices in the array are all of the same size then the layout would
-> +	  have been unaffected by this change, and there is no risk of data
-> +	  corruption from this issue.
-> +
-> +	  Unfortunately, the layout can not be determined by the kernel. If the
-> +	  array has only been written to by a 3.14 or later kernel its safe to
+I'm not sure if this is intentional as there is also __DISABLE_EXPORTS define,
+which should be used by a decompressor (according to comments in export.h).
 
-	                                                           it's
-
-> +	  set RAID0_ALT_MULTIZONE_LAYOUT. If its only been written to by a
-
-	                                     it has
-
-> +	  pre-3.14 kernel its safe to select RAID0_ORIG_LAYOUT. If its been
-
-	                  it's                                  If it has been
-
-> +	  written by both then select RAID0_LAYOUT_NONE, which will not
-> +	  configure the array. The array can then be examined for corruption.
-> +
-> +	  For new arrays you may choose either layout version. Neither version
-> +	  is inherently better than the other.
-> +
-> +	  Alternatively, these parameters can also be specified via the module
-> +	  parameter raid0.default_layout=<N>. N=2 selects the 'new' or multizone
-> +	  layout, while N=1 selects the 'old' layout or original layout. If
-> +	  unset the array will not be configured.
-> +
-> +	  The layout can also be written directly to the raid0 array via the
-> +	  mdadm command, which can be auto-detected by the kernel. See:
-> +	  <https://www.kernel.org/doc/html/latest/admin-guide/md.html#multi-zone-raid0-layout-migration>
-> +
-> +config RAID0_ORIG_LAYOUT
-> +	bool "raid0 layout for arrays only written to by a pre-3.14 kernel"
-> +	help
-> +	  If the raid0 array was only created and written to by a pre-3.14 kernel.
-> +
-> +config RAID0_ALT_MULTIZONE_LAYOUT
-> +	bool "raid0 layout for arrays only written to be a 3.14 or newer kernel"
-
-	                                              by
-
-> +	help
-> +	  If the raid0 array was only created and written to by a 3.14 or later
-> +	  kernel.
-> +
-> +config RAID0_LAYOUT_NONE
-> +	bool "raid0 layout must be specified via a module parameter"
-> +	help
-> +	  If a raid0 array was written to by both a pre-3.14 and a 3.14 or
-> +	  later kernel, you may have data corruption. This option will not
-> +	  auto configure the array and thus you can examine the array offline
-> +	  to determine the best way to proceed. With RAID0_LAYOUT_NONE
-> +	  set, the choice for raid0 layout can be set via a module parameter
-> +	  raid0.default_layout=<N>. Or the layout can be written directly
-> +	  to the raid0 array via the mdadm command.
-> +
-> +endchoice
-> +
->  config MD_RAID1
->  	tristate "RAID-1 (mirroring) mode"
->  	depends on BLK_DEV_MD
-> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-> index 322386f..576eaa6 100644
-> --- a/drivers/md/raid0.c
-> +++ b/drivers/md/raid0.c
-> @@ -19,7 +19,14 @@
->  #include "raid0.h"
->  #include "raid5.h"
->  
-> +#if defined(CONFIG_RAID0_ORIG_LAYOUT)
-> +static int default_layout = RAID0_ORIG_LAYOUT;
-> +#elif defined(CONFIG_RAID0_ALT_MULTIZONE_LAYOUT)
-> +static int default_layout = RAID0_ALT_MULTIZONE_LAYOUT;
-> +#else
->  static int default_layout = 0;
-> +#endif
-> +
->  module_param(default_layout, int, 0644);
->  
->  #define UNSUPPORTED_MDDEV_FLAGS		\
-> 
-
-
--- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> * Remove a double definition of the CHECK_F macro when the zstd
+>   library is amalgamated.
+> * Switch ZSTD_copy8() to __builtin_memcpy(), because in the preboot
+>   environment on x86 gcc can't inline `memcpy()` otherwise.
+> * Limit the gcc hack in ZSTD_wildcopy() to the broken gcc version. See
+>   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81388.
+No comments to the rest.
+  Petr
