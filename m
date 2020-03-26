@@ -2,116 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4384B19445F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E92A119445C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:33:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728614AbgCZQdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 12:33:22 -0400
-Received: from mail-wm1-f74.google.com ([209.85.128.74]:41990 "EHLO
-        mail-wm1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727677AbgCZQdW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 12:33:22 -0400
-Received: by mail-wm1-f74.google.com with SMTP id v184so2694977wme.7
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 09:33:19 -0700 (PDT)
+        id S1728144AbgCZQc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 12:32:57 -0400
+Received: from mail-co1nam11on2054.outbound.protection.outlook.com ([40.107.220.54]:6057
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727752AbgCZQc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 12:32:57 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VVBMaAvp266m3dWMADFXR7mZkhGR4MWZY5DfiqGCGVRRVl3UAMY2aHfU4hn6JbvZPywREycw3aLrGeIQ5ZiPDU3oKHR+nM4R9tD9R8ZyJ9NZS4SijsyBINh0sud8KmpzH4zaKv8vhCAJA+6hbAX21OeiGDmz8N9+G2O9f4KHZ+79mC2+jGzEs3IYUiTAQ2I0s/1gm60/pnMP7EcmwtREzuH4OxAJrOGHXcolWWpkS0GMfC3Fuzj9ktdq8F1MAJkDkIKon3ULGYarWHG1hZFmB0e+GO09X6+mu46ThUrmZCsWZJKgkJ+7VE7eIIqOv0qpDRsjbm1/LSqzfPpeqS63Rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kg5z8EUDsSLh9vWLK+waJGLrDxG650MidKnAdACajxY=;
+ b=MqbD9ho+SZEqyRQx1zq7LvqO8RHGfTQ3fd8qb3zpqsse1JTGUFKFYlm11Q5ytxiAfUDHOY0Nbq5D9BGamtpB7/L7UVUlSdGH5a93JKi6bR5NH5wYx1iheiJ2c23byGqChS33FjjIQTQqJ0j+A2q/HVmXcOGeSpp93lR/VNcIVF7OFMakDpP/vLLvk/gxPegnoZOUjxWTZ9O/zn5kZEECQw6CQXbkjk8JnShOoRIxq1pynBZ+yGVPWZZY0A3+ur95kSXiogxMiolYu/nQl2DdFwBlca5njEIScAx/BVgwEFMWKOyrDLWFRWdeWqqUwzwqj5a2yrnBauvNMJbRuIB8Bw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=BTSoe6DkYNZH5BddOxOmXTzuoelDRmUvluUlJbA7LXg=;
-        b=jZb2CWvTWONnA3PrlR7yLTBu8UbvXrO1vido/kl4jzRrxuEXNocipKzkyP6sYmrVL7
-         SGqEPC7daMGhqW/pyxZWMAHCBWkeNdKjdN+jdv9pHQgR5FLcGcAfInOWY56u+nReDLhj
-         hIefxLH3t0J9z1+hWxQFKs/uBokZvWEsJW+FAvtL/0+7K5KtU5UdwD2/WacHcJAhqFZE
-         AaemQCe58Jfk/DfyhxiyGErBRcty5bwPhk2Z5v2xE1qq3rq0SCmjBHR5bJ8rxDokHd/Z
-         IMZgdyYl37Ogb7qKde9uLESdCenT9mnJN8bF9VPy7HwlmEy1aIydVIK0mSNpWDQgYqTy
-         nM3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=BTSoe6DkYNZH5BddOxOmXTzuoelDRmUvluUlJbA7LXg=;
-        b=axkK6H9DmSMZfVeXkzCHYhAtvMB8ioyrksm1Gdp1DI0PWSrqE1ltnsEAVUz+gkqDxc
-         gMnTp4Qg6+LNipnTLCxRQSDoLL3jxFomlm3xbwwku2ikZRWi3bst2/k5nug0ZE0Z91Z4
-         IoJ6H/8QRedK5qofpsNpdZFIribEUafEoBUHJDt3iRpQloRSEuC2OXQkFdg0lAiDMOq1
-         UVotEK7vbHNJfdbPAZF51Rqnh6+jFIDkTqCcqv4oDwKlewmUcd65x9I28mtQxwkpp/cz
-         SLlKZsNbd65fy3KQPRqZxy459e3lnPxhj2vD6qc184Y5HS48cgIGXjj+G3EIirqfcf1/
-         Ct/Q==
-X-Gm-Message-State: ANhLgQ1wowWTeIc7O2BnY8fKGo1uaQcIbmiP/8EWpYA5MErI7Sbc9YgT
-        kEDI94Pq4eaMiBaCqY/+m8PLU7SE5w==
-X-Google-Smtp-Source: ADFU+vsJmGK3ZN6sdJ9iuiL2QlTUBnd8nY2ARCzRymwmFRKW8OOF6mbRMeVz+JGdJazZFXSGI73vH/RRgw==
-X-Received: by 2002:adf:d849:: with SMTP id k9mr10175956wrl.108.1585240395876;
- Thu, 26 Mar 2020 09:33:15 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 17:32:45 +0100
-In-Reply-To: <20200326163245.119670-1-jannh@google.com>
-Message-Id: <20200326163245.119670-3-jannh@google.com>
-Mime-Version: 1.0
-References: <20200326163245.119670-1-jannh@google.com>
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [PATCH 2/2] printk: Reinitialize klogd percpu state for secondary CPUs
-From:   Jann Horn <jannh@google.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>,
-        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+ d=windriversystems.onmicrosoft.com;
+ s=selector2-windriversystems-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kg5z8EUDsSLh9vWLK+waJGLrDxG650MidKnAdACajxY=;
+ b=Lfmz2v6COQGrhAxZi4xBNGohhgyWnvSTC+YSLLeLlnFfED4S8Ue0d436zvg5GO1X9W3zraFFLsWrYwJhlGtF0ax5QvtweeRUDACNoGzwDB1y3f9ADTtFz05Y4TpA3U7PHfHt1vy3Ag7mKj5Bd/vQqqcKTeuNd0r64UWwRQptuwU=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Chris.Friesen@windriver.com; 
+Received: from BYAPR11MB3271.namprd11.prod.outlook.com (2603:10b6:a03:7b::26)
+ by BYAPR11MB3573.namprd11.prod.outlook.com (2603:10b6:a03:fe::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.19; Thu, 26 Mar
+ 2020 16:32:54 +0000
+Received: from BYAPR11MB3271.namprd11.prod.outlook.com
+ ([fe80::394c:8038:a488:13ba]) by BYAPR11MB3271.namprd11.prod.outlook.com
+ ([fe80::394c:8038:a488:13ba%7]) with mapi id 15.20.2856.019; Thu, 26 Mar 2020
+ 16:32:54 +0000
+Subject: Re: [PATCH v2] isolcpus: affine kernel threads to specified cpumask
+To:     Frederic Weisbecker <frederic@kernel.org>,
+        David Laight <David.Laight@ACULAB.COM>
+Cc:     'Marcelo Tosatti' <mtosatti@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Jim Somerville <Jim.Somerville@windriver.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20200323135414.GA28634@fuller.cnet>
+ <87k13boxcn.fsf@nanos.tec.linutronix.de>
+ <af285c22-2a3f-5aa6-3fdb-27fba73389bd@windriver.com>
+ <87imiuq0cg.fsf@nanos.tec.linutronix.de> <20200324152016.GA25422@fuller.cnet>
+ <b88327780661496fbee6d8ebe2e0d965@AcuMS.aculab.com>
+ <20200326162218.GB3946@lenoir>
+From:   Chris Friesen <chris.friesen@windriver.com>
+Message-ID: <76fa0270-40c5-aac7-1c53-38384fa3467d@windriver.com>
+Date:   Thu, 26 Mar 2020 10:32:51 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+In-Reply-To: <20200326162218.GB3946@lenoir>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR13CA0007.namprd13.prod.outlook.com
+ (2603:10b6:a03:180::20) To BYAPR11MB3271.namprd11.prod.outlook.com
+ (2603:10b6:a03:7b::26)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [172.25.39.6] (70.64.94.148) by BY5PR13CA0007.namprd13.prod.outlook.com (2603:10b6:a03:180::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.9 via Frontend Transport; Thu, 26 Mar 2020 16:32:52 +0000
+X-Originating-IP: [70.64.94.148]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f246097c-07ee-466b-a505-08d7d1a3556c
+X-MS-TrafficTypeDiagnostic: BYAPR11MB3573:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <BYAPR11MB35739FCD9F29BFBF893E78A9F6CF0@BYAPR11MB3573.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3826;
+X-Forefront-PRVS: 0354B4BED2
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39850400004)(396003)(366004)(136003)(346002)(376002)(6486002)(2616005)(956004)(186003)(316002)(8676002)(26005)(36756003)(16526019)(5660300002)(16576012)(44832011)(110136005)(54906003)(66556008)(66946007)(8936002)(478600001)(66476007)(53546011)(31696002)(81156014)(81166006)(86362001)(52116002)(2906002)(4744005)(31686004)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR11MB3573;H:BYAPR11MB3271.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
+Received-SPF: None (protection.outlook.com: windriver.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: E72LHfN697r0iG2jwT1gldutWHGDyuoxu3STbtrQTRwhoi/97KENrAkxXeaqCYLdRpoyNdWQOBvrLB3AI33tXjkMqyfB1Eld4D6lWBiaW8gVX/dLXoDY+V/iN5bxzEStJaEP/zYbn/Cvmlh5Uy15MPrwb8J+8+DPLai8NqARDbx9HdFWKQCnTOpQzG/7olu7/uYtmbWpCSq+5QA4ReKhvOhbsLSKvceUM82xa26OaPp6V5e5CDp+aIm1hFq4BNXnEyavi9s0TzMCCYwdoCf1d0jnSUH2ad6xwiXu608Bxu0zwxLh3NgWQI+9SeghRlrYufzfRRn4mqVyXomGiEWp4dqLuxhe/n/XWI2HxUqGlA+Wd/nSqfXXzH4NajZZumEKQYqiJSTn94pqjbUk1K9ZRGa6zZN7XYnlVt79cbmvHT7Sp7LaSU45f27FTfcIJD/F
+X-MS-Exchange-AntiSpam-MessageData: xXXv3iOLLx8E6SPN99jnqYL+GjZ4bAFD8964Us5qaW3konAsoFf3pwA5P1n1yyPBKaUlGoidhlV7jKs8PEOMD3vMQpoP9fRT4807yBExnv8xaCiDh8JHA9M+ijJtRmgDxU8921LEshkvCzeGwoDoeA==
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f246097c-07ee-466b-a505-08d7d1a3556c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2020 16:32:54.2060
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: O3UT7lAItltVdsnBuB1eWYn3yWrT47j7ZP/uQeL17L19LQ8COKNGE1mmlli1p+EEJUqVG1kBARREGsvc65iLZTw59TnSofg7hOEEJbkiqbY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3573
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When printk_deferred() is used before percpu initialization, it will queue
-up wake_up_klogd_work and set printk_pending on the boot CPU; percpu
-initialization then copies the the pending work's state and the
-printk_pending flag to all secondary CPUs. The end result is that e.g.
-if you run "dmesg -w" when the system is up, it won't notice new printk
-messages.
-To ensure that the secondary CPUs don't think that they already have
-pending printk work, reset the secondary CPUs' work items and
-printk_pending state.
+On 3/26/2020 10:22 AM, Frederic Weisbecker wrote:
+> On Wed, Mar 25, 2020 at 06:05:27PM +0000, David Laight wrote:
 
-Signed-off-by: Jann Horn <jannh@google.com>
----
- kernel/printk/printk.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+>> How about making it possible to change the default affinity
+>> for new kthreads at run time?
+>> Is it possible to change the affinity of existing threads?
+>> Or maybe only those that didn't specify an explicit one??
+> 
+> That's already possible yes, most unbound kthreads are accessible
+> through /proc including kthreadd from which new kthread will inherit
+> their CPU affinity.
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index fada22dc4ab6..e531407188f1 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2964,6 +2964,29 @@ static DEFINE_PER_CPU(struct irq_work, wake_up_klogd_work) = {
- 	.flags = ATOMIC_INIT(IRQ_WORK_LAZY),
- };
- 
-+/*
-+ * If we called defer_console_output() before fully initializing the percpu
-+ * subsystem, e.g. via printk_deferred(), the irq_work flags and the
-+ * printk_pending flag may have been copied from the boot CPU to the others
-+ * while work was pending.
-+ * To fix that, manually reset the percpu data for all secondary processors
-+ * before bringing up SMP.
-+ */
-+static int __init klogd_percpu_fixup(void)
-+{
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu) {
-+		if (cpu == smp_processor_id())
-+			continue;
-+		atomic_set(&per_cpu(wake_up_klogd_work.flags, cpu),
-+			   IRQ_WORK_LAZY);
-+		per_cpu(printk_pending, cpu) = 0;
-+	}
-+	return 0;
-+}
-+early_initcall(klogd_percpu_fixup)
-+
- void wake_up_klogd(void)
- {
- 	preempt_disable();
--- 
-2.25.1.696.g5e7596f4ac-goog
+Are you sure that the new kthread will inherit the CPU affinity?
 
+__kthread_create_on_node() explicitly sets the new thread as 
+SCHED_NORMAL with a mask of "cpu_all_mask".
+
+Chris
