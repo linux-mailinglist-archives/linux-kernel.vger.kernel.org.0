@@ -2,85 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E1BD194708
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:06:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C807E194712
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:07:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbgCZTGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 15:06:22 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40201 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727345AbgCZTGW (ORCPT
+        id S1728330AbgCZTHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 15:07:34 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45316 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbgCZTHe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 15:06:22 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w26so8197639edu.7
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 12:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=KppfXZZpJPEi/CjZSEtvqmbI5qt1QsjN8iLsZFEVchY=;
-        b=hlPipW0FVRB2RS816TLwPTrGJVrCrFg5u9p7mj00LbcsP+KTd5P1GA42aYG3QaKYyz
-         Igf48XzsXG8GY9syxSv3Hf+CZSLkgXOdo+VPR4QK0/YzQT15NFle7MKe4M5d+anqb2v5
-         3kBSNw0AkqUOa2dPDpDI3XqmF+vHWb/TN6fDXzkc3w2HmSxKZp3UxCrCH4tzPSJGCdK1
-         9Oj31bY/Wij1qahUd7wzLx73diiTzwawFClZ6D6HrX1dqkqk0t9yPoz/r4N9wX41LjCT
-         +ntbtSIbVYApy/usLaFXdu6iWrn/2ISLiyK2lHJBCqIU6lAJtblVNKwSjmlQfjiV58On
-         OFHw==
+        Thu, 26 Mar 2020 15:07:34 -0400
+Received: by mail-io1-f66.google.com with SMTP id a24so6649801iol.12;
+        Thu, 26 Mar 2020 12:07:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=KppfXZZpJPEi/CjZSEtvqmbI5qt1QsjN8iLsZFEVchY=;
-        b=BQ2YcLoC6DJWrCmpKLCUQQeB8mQCXanLee7WQddVHVhRpOO+6dMpnDZMqTWZCDx19E
-         3DlrpO31Ulahg/rz0Wqx3UfQXc+foxW+Xxdn0VY6LUoT7q8lC1rjE3Ig8vBTGtz+S9iD
-         2S5EaNcg8vThdHcYi3Y60eGoYrl7iq9jrDw24ddCaudBXvvVwr6hKU/FRfPIGQLni4O4
-         00FUt7NrFrPkl+DwdLHrbqHmiy6Kg0Zk8F0CNlzVMWReycBwHeMrGoZH/am7nyC2UYDN
-         on0ZUGCI7Z9WSokfqMVfg5DpriXrWO55LFreFi1i1vCLI3nj601lx6qWK4IRH0BbEIIC
-         PXyw==
-X-Gm-Message-State: ANhLgQ1KaaMNmEKsprMCMbj54KMHdU8o5obLvpT/sz0jD027l+8mUeDA
-        TDtCUzFHbKwjNF79LYWMlcgmfzSqI4E5PFOFzVo=
-X-Google-Smtp-Source: ADFU+vvTCGkKwjtKlAuYci5wGQTVYrt6MnQMQqpP32tsSeLECqUnyxTiGOGy5aAG/58bCGTrB6zXI3AtcjIzSlVjoxI=
-X-Received: by 2002:a17:906:4482:: with SMTP id y2mr9076494ejo.234.1585249580237;
- Thu, 26 Mar 2020 12:06:20 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XlPdXiaUcWF4l3W2QAopXp48lkN8VSOqX9NF2PO2ytM=;
+        b=BeTR7SO6oJCzMeERVN4bLoWaA2s7Bqure483ABH38I3y6Caktcldya5nNEwfNLKO0D
+         2P1Hvamj/hFISaI3UInq0hghsuUVUJsvFWF6pEO7OzCn/EFF4BVknSY702hTb9/KkDkv
+         0fVMjcppW2xnL2YoiP7M38SXAmpyK3iCssqso4/se21PizyXyoVuQYtqmMX+UKVeFx8a
+         Dw/UCZYQ0No0WdJRwiBOVYKrt84JuDxUMyZw7ZBQZUgwHHE92KtQe7aPkyQjQ7zZ7ggY
+         uJvgwHmv58WpL7k4q1GWPpnzYOOorXmuau3LWzXVYBzUvRnAYDXSB15C3SbnCWrhvaD2
+         fUTw==
+X-Gm-Message-State: ANhLgQ2Y9GbPKrIt68ObMBj0Icx5Z7LbrBrssnbw4d/uWyFiWxEY8lHg
+        s1A+mdsXC9JurlRZOx58AA==
+X-Google-Smtp-Source: ADFU+vu0u0z3TnGzqS0Nm32vixLhgoS0FjOXf+e8I7rjAAQMub6xibKWBxvPhpJxr4Ixt/oZcl0CkQ==
+X-Received: by 2002:a02:2a03:: with SMTP id w3mr9353295jaw.142.1585249653148;
+        Thu, 26 Mar 2020 12:07:33 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id p69sm625874ill.46.2020.03.26.12.07.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 12:07:32 -0700 (PDT)
+Received: (nullmailer pid 22609 invoked by uid 1000);
+        Thu, 26 Mar 2020 19:07:31 -0000
+Date:   Thu, 26 Mar 2020 13:07:31 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     allen <allen.chen@ite.com.tw>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
+        Jau-Chih Tseng <Jau-Chih.Tseng@ite.com.tw>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Mark Brown <broonie@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 1/3] dt-bindings: Add vendor prefix for ITE Tech. Inc.
+Message-ID: <20200326190731.GA15606@bogus>
+References: <1584941015-20541-1-git-send-email-allen.chen@ite.com.tw>
+ <1584941015-20541-2-git-send-email-allen.chen@ite.com.tw>
 MIME-Version: 1.0
-Received: by 2002:a17:906:3fd2:0:0:0:0 with HTTP; Thu, 26 Mar 2020 12:06:19
- -0700 (PDT)
-From:   Mrs Carlsen Monika <carlsen.monika@gmail.com>
-Date:   Thu, 26 Mar 2020 20:06:19 +0100
-X-Google-Sender-Auth: oT3K9TONvdf8c6OeGRePCv1HLBs
-Message-ID: <CACw0mX44kS_GC5mqN9t2Xj1K=tVu1noEMOO7rQYXRMyQth79ZA@mail.gmail.com>
-Subject: Greetings My Dear, Please I Need Your Help.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1584941015-20541-2-git-send-email-allen.chen@ite.com.tw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings My Dear,
+On Mon, Mar 23, 2020 at 01:21:52PM +0800, allen wrote:
+> ITE Tech. Inc. (abbreviated as ITE ) is a professional fabless IC
+> design house. ITE's core technology includes PC and NB Controller chips,
+> Super I/O, High Speed Serial Interface, Video Codec, Touch Sensing,
+> Surveillance, OFDM, Sensor Fusion, and so on.
 
-    I sent this mail praying it will found you in a good condition of
-health, since I myself are in a very critical health condition in
-which I  sleep every night without knowing if I may be alive to see
-the next day. I am Mrs. Monika John  Carlsen from Denmark wife of late
-Mr John Carlsen, a widow suffering from long time illness. I have some
-funds I inherited from my late husband, the sum of (eleven million
-dollars) my Doctor told me recently that I have serious sickness which
-is cancer problem. What disturbs me most is my stroke sickness. Having
-known my condition, I decided to donate this fund to a good person
-that will utilize it the way i am going to instruct herein. I need a
-very honest and God fearing person who can claim this money and use it
-for Charity works, for orphanages, widows and also  build schools for
-less privileges that will be named after my late husband if possible
-and to promote the word of God and the effort that the house of God is
-maintained.
+The commit message should explain why you are changing ',' to '.' 
+because you are no longer adding the vendor.
 
-I do not want a situation where this money will be used in an ungodly
-manner. That's why I'm taking this decision. I'm not afraid of death
-so I know where I'm going. I accept this decision because I do not
-have any child who will inherit this money after I die. Please I want
-your sincerely and urgent answer to know if you will be able to
-execute this project, and I will give you more information on how the
-fund will be transferred to your bank account. I am waiting for your
-reply.
-
-May God Bless you,
-Mrs. Monika John  Carlsen
+> 
+> more information on: http://www.ite.com.tw/
+> 
+> Signed-off-by: Allen Chen <allen.chen@ite.com.tw>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> index 4c8eaa1..49b7294 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -482,7 +482,7 @@ patternProperties:
+>    "^issi,.*":
+>      description: Integrated Silicon Solutions Inc.
+>    "^ite,.*":
+> -    description: ITE Tech, Inc.
+> +    description: ITE Tech. Inc.
+>    "^itead,.*":
+>      description: ITEAD Intelligent Systems Co.Ltd
+>    "^iwave,.*":
+> -- 
+> 1.9.1
+> 
