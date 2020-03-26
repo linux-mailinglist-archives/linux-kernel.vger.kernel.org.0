@@ -2,120 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90045193A7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 09:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACDD5193AAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 09:18:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbgCZIMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 04:12:31 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51638 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbgCZIMb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 04:12:31 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c187so5462729wme.1;
-        Thu, 26 Mar 2020 01:12:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oEJ1iAQ+7+YVUW8+jUn/LpDi20P1xzzVQYh1aI/7o1g=;
-        b=Lh2oSAL4GWyDbds8Qlj6rCNPhLzwWT77jtNKGn4A2KUu3LwyNZaWE6RqlwJMgzYOXh
-         wzx0Ii/1s8D1Zo31ki/lYf3+3FEs+qnAYj+6NFdc39tlnSnajwqiHoyMr5H6EL9f4lp1
-         Oy4r73UaYdFrpVM8CzjrfrNvoxEkux+yyESJtnbbSA2fo0VzYi8qkTFzbzWy1NLZhvop
-         iSOY/CjWlYaE0f2uEKox4ueF0l99qS5ECt//F3qg5pdJQvtSgBx9QfwYiDGaktN4w0GZ
-         BFYvECvEjaUGto279tzEQuPdRjSpSRUtwN7foLVFF32q/ogVHNaetbsw0ymmI0ZpCojv
-         ItvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oEJ1iAQ+7+YVUW8+jUn/LpDi20P1xzzVQYh1aI/7o1g=;
-        b=t0ofAU7lfgTcMTZFCnCrHEWVCa4oX78uTzoiyy845svapqT1y+0i3s3Usjv76Xv0b5
-         74AaDNuh4fKEWVRVtqMlcfbs8CGwGBLN1z/kZiDk7uu4CqRZ2+DHFelLoOpO+EdXAUQ/
-         Y+BH+5x2aSEHwUMseBGDRZ1sjq4reGr3Z4B3Vy9SfLRgU0032YF/4hBhchTwKO/fBcrf
-         7RO7tiHuGurJm9LhQHUawQ9EW9RUa3aB2DemeWC00KANlnVSL1RVb83cBuT9yDWStain
-         Zt7jcXTIaZOzawg5BhfK6UIqVGH9utLwvNgGOTm7DVRAJDc8Y3iR5DPEceUmjt5EW4pN
-         iZlQ==
-X-Gm-Message-State: ANhLgQ0WTGnD98cg61sEmnNYkWyyV/M9QlV164LiUr9RTaD9gS4dJ+vu
-        vqrOK4AqOc8ptp1xamtiGPi9OrCr
-X-Google-Smtp-Source: ADFU+vszpHwa+9v6JWIYs2igDhHtyRgaaZLpc8HnU96QPA4kMyij9NCG459Q4bMX/H/k1EUBFXHtqw==
-X-Received: by 2002:a05:600c:4401:: with SMTP id u1mr1816379wmn.103.1585210347230;
-        Thu, 26 Mar 2020 01:12:27 -0700 (PDT)
-Received: from ?IPv6:2001:a61:2482:101:3351:6160:8173:cc31? ([2001:a61:2482:101:3351:6160:8173:cc31])
-        by smtp.gmail.com with ESMTPSA id i1sm2387292wrq.89.2020.03.26.01.12.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Mar 2020 01:12:26 -0700 (PDT)
-Cc:     mtk.manpages@gmail.com, linux-mips@vger.kernel.org,
-        linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] getauxval.3: MIPS, AT_BASE_PLATFORM passes ISA level
-To:     YunQiang Su <syq@debian.org>
-References: <20200322095527.397716-1-syq@debian.org>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <827f0ae8-2e97-5eeb-387d-275d8aac98ad@gmail.com>
-Date:   Thu, 26 Mar 2020 09:12:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1727904AbgCZISK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 04:18:10 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:35275 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727821AbgCZISJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 04:18:09 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 293077ea;
+        Thu, 26 Mar 2020 08:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=z54i3Rpd8bQwLDnVNFV/yezuxLU=; b=boOyqs
+        mCdG+80LeYcjASWpkQ1zMThj2uZPRyQj63aULJ1eho1PEeJxY053blYBVEDv/+X7
+        OBQ/dBvu36pqu+6GHtzv5FnIDYJ8+m+UpNZddescE9+TJew8ZdyolfWdn7qCgNwm
+        hCDQQZZIBJP70J+3MGGaus93N2IUKDn1UavfBtBSFRk4AtjJCPc/vVInIjmHn4rp
+        9nXPZ9Perj3Rk83uKKf3OPmeCafWNMnHZ2UW709Lpc/xjEXipaADr7IcjmiVm9Er
+        qA90IZHHNfiJD+f6KrFTRwRM8Vhig7u1XfQF2UZX5KM4Hl2qhbUe96EyxkSi5RwR
+        yE1MyvOm+wrsj6Vw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id f22236e6 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Thu, 26 Mar 2020 08:10:45 +0000 (UTC)
+Received: by mail-io1-xd36.google.com with SMTP id k9so5139001iov.7;
+        Thu, 26 Mar 2020 01:18:06 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ3XXTfJD2Ff639k67Y0c3BAp/U3FUB4V5ieGUaWa70y8GQopE/p
+        x7aUHw6BxH3iMuvq1jZNZ1glMxnQZEqeTiVu7ag=
+X-Google-Smtp-Source: ADFU+vsTJTCXcFJHQUwui8dbQzcKfWOUCgQIPLG0bwuItksw1ry6Mg259oUoldQgsVo9bcGoroXnNzuIzCxg8dcm+jA=
+X-Received: by 2002:a02:2a4a:: with SMTP id w71mr6759564jaw.75.1585210385536;
+ Thu, 26 Mar 2020 01:13:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200322095527.397716-1-syq@debian.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200326080104.27286-1-masahiroy@kernel.org>
+In-Reply-To: <20200326080104.27286-1-masahiroy@kernel.org>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Thu, 26 Mar 2020 02:12:54 -0600
+X-Gmail-Original-Message-ID: <CAHmME9pnAvgErYkcvvdakvfMY8ZGKfwHHNYzpVtJ913Tgp16CQ@mail.gmail.com>
+Message-ID: <CAHmME9pnAvgErYkcvvdakvfMY8ZGKfwHHNYzpVtJ913Tgp16CQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/16] x86, crypto: remove always-defined CONFIG_AS_*
+ and cosolidate Kconfig/Makefiles
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Jim Kukunas <james.t.kukunas@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        NeilBrown <neilb@suse.de>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Yuanhan Liu <yuanhan.liu@linux.intel.com>,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello YunQiang Su
+Very little has changed from last time, and this whole series still
+looks good to me. I think I already ack'd most packages, but in case
+it helps:
 
-On 3/22/20 10:55 AM, YunQiang Su wrote:
-> Since Linux 5.7, on MIPS, we use AT_BASE_PLATFORM to pass ISA level.
-> The values may be:
->   mips2, mips3, mips4, mips5,
->   mips32, mips32r2, mips32r6,
->   mips64, mips64r2, mips64r6.
-> 
-> This behavior is different with PowerPC.
+Reviewed-by: Jason A. Donenfeld <Jason@zx2c4.com>
 
-Thank you for the patch. I see that this is scheduled for 
-Linux 5.7 (for which the merge window is not yet open).
-How certain is it that the feature will land in 5.7?
-
-Thanks,
-
-Michael
-
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=e585b768da111f2c2d413de6214e83bbdfee8f22
-> Signed-off-by: YunQiang Su <syq@debian.org>
-> 
-> ----
-> v1 -> v2: fix typo
-> ---
->  man3/getauxval.3 | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/man3/getauxval.3 b/man3/getauxval.3
-> index 456371c6a..bcc116dd2 100644
-> --- a/man3/getauxval.3
-> +++ b/man3/getauxval.3
-> @@ -60,9 +60,10 @@ values are present on all architectures.
->  The base address of the program interpreter (usually, the dynamic linker).
->  .TP
->  .BR AT_BASE_PLATFORM
-> -A pointer to a string identifying the real platform; may differ from
-> -.BR AT_PLATFORM
-> -(PowerPC only).
-> +A pointer to a string (PowerPC and MIPS only).
-> +On PowerPC, this identifies the real platform; may differ from
-> +.BR AT_PLATFORM "."
-> +On MIPS, this identifies the ISA level (Since 5.7).
->  .TP
->  .BR AT_CLKTCK
->  The frequency with which
-> 
-
-
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+Since this touches a lot of stuff, it might be best to get it in as
+early as possible during the merge window, as I imagine new code being
+added is going to want to be touching those makefiles too.
