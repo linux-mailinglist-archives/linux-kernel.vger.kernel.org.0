@@ -2,103 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A904E194191
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:32:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DC3219419F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:36:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbgCZOcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 10:32:24 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:51178 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbgCZOcY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:32:24 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02QET77b005362;
-        Thu, 26 Mar 2020 14:32:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=FAXjI9acl3BvhqBVLHwTP8ZVKrXH638AdGx3om6kJNQ=;
- b=t9E6Huvstyz8STIUPEnc9UwPHsnn4KcIAfs9xFb/XSxy5CTk1RWl/Mg7Q+rQ3PY8lkBy
- HIwyE2P7psHnwTy2TAZiXNEJOaaMvW5ryn8/ViLoeT2PawEl2QCjoilfXbWhhYYPUyQ6
- XETCBpu0l4IpmJ+EsoWMb3FPqzkfB048oFFKNUH8Kuknhlwbh6wKU72G/2guoRS0hUZ7
- mAnSnYRY1sQp3ILeVMBc6rQkGCLVLBi6gNlRAViuAkHZzROinEXyGQwXswASFZBBFuvG
- SF06/2+mV83/+uYZn+iZcIUy067Hpe5gjcA7oHiohoaJgHR/GxlbAE8BBLFiv1c4bfHr iA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2ywavmg4es-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Mar 2020 14:32:15 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02QEQbsw162134;
-        Thu, 26 Mar 2020 14:32:15 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 30073dk1av-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Mar 2020 14:32:15 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02QEWEUQ012449;
-        Thu, 26 Mar 2020 14:32:14 GMT
-Received: from localhost.uk.oracle.com (/10.175.198.205)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 26 Mar 2020 07:32:13 -0700
-From:   Alan Maguire <alan.maguire@oracle.com>
-To:     brendanhiggins@google.com, frowand.list@gmail.com,
-        gregkh@linuxfoundation.org, shuah@kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org
-Subject: [PATCH v8 kunit-next 4/4] kunit: update documentation to describe debugfs representation
-Date:   Thu, 26 Mar 2020 14:25:10 +0000
-Message-Id: <1585232710-322-5-git-send-email-alan.maguire@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1585232710-322-1-git-send-email-alan.maguire@oracle.com>
-References: <1585232710-322-1-git-send-email-alan.maguire@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- suspectscore=0 mlxscore=0 phishscore=0 bulkscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003260112
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1015 impostorscore=0
- phishscore=0 suspectscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003260112
+        id S1727792AbgCZOgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 10:36:24 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:42162 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726270AbgCZOgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 10:36:23 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1A3221A0A03;
+        Thu, 26 Mar 2020 15:36:22 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5FD9F1A03E3;
+        Thu, 26 Mar 2020 15:36:16 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2CDCE402E2;
+        Thu, 26 Mar 2020 22:36:09 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2] thermal: imx: Add missing of_node_put()
+Date:   Thu, 26 Mar 2020 22:29:05 +0800
+Message-Id: <1585232945-23368-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation should describe debugfs layout and semantics.
+After finishing using cpu node got from of_get_cpu_node(), of_node_put()
+needs to be called.
 
-Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-Reviewed-by: Frank Rowand <frank.rowand@sony.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- Documentation/dev-tools/kunit/usage.rst | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Changes since V1:
+	- improve the logic, no need to use got.
+---
+ drivers/thermal/imx_thermal.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
-index 607758a..473a236 100644
---- a/Documentation/dev-tools/kunit/usage.rst
-+++ b/Documentation/dev-tools/kunit/usage.rst
-@@ -591,3 +591,17 @@ able to run one test case per invocation.
+diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
+index e761c9b..1b84ea6 100644
+--- a/drivers/thermal/imx_thermal.c
++++ b/drivers/thermal/imx_thermal.c
+@@ -649,7 +649,7 @@ MODULE_DEVICE_TABLE(of, of_imx_thermal_match);
+ static int imx_thermal_register_legacy_cooling(struct imx_thermal_data *data)
+ {
+ 	struct device_node *np;
+-	int ret;
++	int ret = 0;
  
- .. TODO(brendanhiggins@google.com): Add an actual example of an architecture
-    dependent KUnit test.
+ 	data->policy = cpufreq_cpu_get(0);
+ 	if (!data->policy) {
+@@ -664,11 +664,12 @@ static int imx_thermal_register_legacy_cooling(struct imx_thermal_data *data)
+ 		if (IS_ERR(data->cdev)) {
+ 			ret = PTR_ERR(data->cdev);
+ 			cpufreq_cpu_put(data->policy);
+-			return ret;
+ 		}
+ 	}
+ 
+-	return 0;
++	of_node_put(np);
 +
-+KUnit debugfs representation
-+============================
-+When kunit test suites are initialized, they create an associated directory
-+in /sys/kernel/debug/kunit/<test-suite>.  The directory contains one file
-+
-+- results: "cat results" displays results of each test case and the results
-+  of the entire suite for the last test run.
-+
-+The debugfs representation is primarily of use when kunit test suites are
-+run in a native environment, either as modules or builtin.  Having a way
-+to display results like this is valuable as otherwise results can be
-+intermixed with other events in dmesg output.  The maximum size of each
-+results file is KUNIT_LOG_SIZE bytes (defined in include/kunit/test.h).
++	return ret;
+ }
+ 
+ static void imx_thermal_unregister_legacy_cooling(struct imx_thermal_data *data)
 -- 
-1.8.3.1
+2.7.4
 
