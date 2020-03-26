@@ -2,86 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8632E1940DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:04:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5F31940F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:05:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbgCZOEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 10:04:02 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44132 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728304AbgCZOD4 (ORCPT
+        id S1727915AbgCZOF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 10:05:27 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:58354 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727829AbgCZOF1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:03:56 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 142so2904706pgf.11;
-        Thu, 26 Mar 2020 07:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=17tMX3H9Sdcq+0ONAuGblCc3JhNQf2xB0k0+J4gQv5w=;
-        b=vCtMDfHQ5Cvsc6sUODmXa4WM9QXhZZJsWuKwaH0pkh9ZkNZeQw/5z3AlMs6vGFwHyk
-         +855UUdV5Rr7orSl0aK6F10moKt3nwlL9kJCDqMH7zEn3Sh5R5Oc3gFWZ71nHHIzuNKc
-         yj9puVwQYwsJDVv40DcfzGl8K/s2n8Zj2/xhK/AJndlIr1XSqTQIy7VDvnGRaXfueq0N
-         nX0+5nAqmThDz2w4LrDZwqO+cUVCZDFlNFqaxDY1rzRQIDlB5d10Z+YpyxDyG75uy5So
-         AeyaKePMzJu/myLvJElrCPgdElk+8/1ZNV0eQUc2Q3QShNrelHWxNWgvJVA+itxQMUV+
-         ln9w==
+        Thu, 26 Mar 2020 10:05:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585231525;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=iu8pP+Jj7yxXz+kaoKj+StMGIPihDf+lmC4twg0Tx8I=;
+        b=WSWb+AKSjFkVDJ+4UqgQ1b676RSAwOVsRNKIZNKp7Je1VD6QnR1DwgFaMxz1LdGnt81jaa
+        fMRtZtFEoQELpuUwW9iCXKvZig/tTtQf9fdA5ZVkE1A7kZioEtqjOp9NadnUloe9Fem0Ai
+        YJ0YHWQ2c0Pp8VZxVXVZGpuTGOUI3JQ=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-237-0u_75s20Ol2V_hn2y9Qfqw-1; Thu, 26 Mar 2020 10:05:24 -0400
+X-MC-Unique: 0u_75s20Ol2V_hn2y9Qfqw-1
+Received: by mail-wr1-f70.google.com with SMTP id b2so2649372wrq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 07:05:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=17tMX3H9Sdcq+0ONAuGblCc3JhNQf2xB0k0+J4gQv5w=;
-        b=TXgZKcGnmGvq6fqvM0mdhbNGVnStjmrjE7JwmziMElqQOiw6ILJfp/LVrs0Rs/7F4D
-         Ks1UADnP/shhU3QaUyOI5N8Y2GxwP/8vJx/K8Rg6zuhsN7EPDjoePl8V9MslHg5yZX3K
-         lwjWfAigk5pqb3WwPnpvMqadxiSWwhiHf5aB9UHSLSGTfx+Z79KNRMsY8TkKIhoeUCxB
-         DHOEpkPQfaNuhE5bEiNRzQoywfNrDTrSibyc6bkZ8AfXPRmfdBKKToxjQOSTpUt3q+8R
-         pIWCysqv90lF4d19OzHLh4H8BwziOk9qipcC4/H6ssD7OLozcGanKKuLIBufeb7u95rd
-         Wodw==
-X-Gm-Message-State: ANhLgQ35oGszXrXnGK6aYklKOUPxYl1BcOT8qQp4divCj7zzY4hJc49a
-        6Xmjk6VAiX/Rxx0dH6r2lZ8=
-X-Google-Smtp-Source: ADFU+vtdRRGcpFSi9InB6187asoRCJ2tCcZCL55pt1JZiXLIagZ/Fpb5kuHhPGJAztT5ef5nj0jxhw==
-X-Received: by 2002:a62:2b8a:: with SMTP id r132mr9650099pfr.56.1585231435769;
-        Thu, 26 Mar 2020 07:03:55 -0700 (PDT)
-Received: from localhost (c-73-241-114-122.hsd1.ca.comcast.net. [73.241.114.122])
-        by smtp.gmail.com with ESMTPSA id q123sm1853036pfb.54.2020.03.26.07.03.54
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=iu8pP+Jj7yxXz+kaoKj+StMGIPihDf+lmC4twg0Tx8I=;
+        b=SA5MJBU3xtLvNwYo1j0OfrzDWJdT3146GyIApUfR6punU6TaAzFMjs6IvZBK8I/iix
+         L8ifjXNS0XVoe6w66SLY8n1NEClvJT71ALbjBZZ4IgWfPaD6N4/tmDfBgqO8gyeFi1YG
+         YisMgS2rFuMtJTozZvqLCEjfZA2kygNqyW5rtHmNbEypfOMk5pJAlH9v07FIPgsx7IAY
+         qIyJbCZmJFSJ603Csj02gClzFZ2HERK3W7wWfxy0FdFOaqwJQ4VUi9j98g/stL+AXPjZ
+         n5UnGOQgSiwXPgLPe9Is7E0h/juCibDUBEKZlptyoHJb7LU7FMeMejmAaNDru5todc5S
+         3mOQ==
+X-Gm-Message-State: ANhLgQ3DahjdwozQuWt8itoXvMymn99Cg3MrmFYXf1YROsjUAp8oRqCQ
+        e1ChCYhOcD92AQeFI93l9TDYUByK0PELP8lcB8qvQ1jRB/GPIxCb5W6Ugd2Ggrkb+jyl1oqLs/6
+        iKtE1f2dU8izlwoZqojNBnqx8
+X-Received: by 2002:a5d:4611:: with SMTP id t17mr392178wrq.16.1585231520389;
+        Thu, 26 Mar 2020 07:05:20 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vvxFjrunOsSfd505meGyZf11k+WGz1I4Q9myCzJ3l75WCPrsGXFu9lrehOCOCF+g+IF36yJsQ==
+X-Received: by 2002:a5d:4611:: with SMTP id t17mr392144wrq.16.1585231520041;
+        Thu, 26 Mar 2020 07:05:20 -0700 (PDT)
+Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
+        by smtp.gmail.com with ESMTPSA id r3sm3775853wrm.35.2020.03.26.07.05.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 07:03:55 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 07:03:53 -0700
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        netdev <netdev@vger.kernel.org>, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 01/11] net: ethernet: ti: cpts: use dev_yy()
- api for logs
-Message-ID: <20200326140353.GB20841@localhost>
-References: <20200320194244.4703-1-grygorii.strashko@ti.com>
- <20200320194244.4703-2-grygorii.strashko@ti.com>
+        Thu, 26 Mar 2020 07:05:19 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     "Andrea Parri \(Microsoft\)" <parri.andrea@gmail.com>,
+        Dexuan Cui <decui@microsoft.com>
+Cc:     "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, linux-hyperv@vger.kernel.org,
+        Michael Kelley <mikelley@microsoft.com>,
+        Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 01/11] Drivers: hv: vmbus: Always handle the VMBus messages on CPU0
+In-Reply-To: <20200325225505.23998-2-parri.andrea@gmail.com>
+References: <20200325225505.23998-1-parri.andrea@gmail.com> <20200325225505.23998-2-parri.andrea@gmail.com>
+Date:   Thu, 26 Mar 2020 15:05:17 +0100
+Message-ID: <874kub5i02.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200320194244.4703-2-grygorii.strashko@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 09:42:34PM +0200, Grygorii Strashko wrote:
-> @@ -150,7 +150,7 @@ static int cpts_fifo_read(struct cpts *cpts, int match)
+"Andrea Parri (Microsoft)" <parri.andrea@gmail.com> writes:
+
+> A Linux guest have to pick a "connect CPU" to communicate with the
+> Hyper-V host.  This CPU can not be taken offline because Hyper-V does
+> not provide a way to change that CPU assignment.
+>
+> Current code sets the connect CPU to whatever CPU ends up running the
+> function vmbus_negotiate_version(), and this will generate problems if
+> that CPU is taken offine.
+>
+> Establish CPU0 as the connect CPU, and add logics to prevents the
+> connect CPU from being taken offline.   We could pick some other CPU,
+> and we could pick that "other CPU" dynamically if there was a reason to
+> do so at some point in the future.  But for now, #defining the connect
+> CPU to 0 is the most straightforward and least complex solution.
+>
+> While on this, add inline comments explaining "why" offer and rescind
+> messages should not be handled by a same serialized work queue.
+>
+> Suggested-by: Dexuan Cui <decui@microsoft.com>
+> Signed-off-by: Andrea Parri (Microsoft) <parri.andrea@gmail.com>
+> ---
+>  drivers/hv/connection.c   | 20 +-------------------
+>  drivers/hv/hv.c           |  7 +++++++
+>  drivers/hv/hyperv_vmbus.h | 11 ++++++-----
+>  drivers/hv/vmbus_drv.c    | 20 +++++++++++++++++---
+>  4 files changed, 31 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/hv/connection.c b/drivers/hv/connection.c
+> index 74e77de89b4f3..f4bd306d2cef9 100644
+> --- a/drivers/hv/connection.c
+> +++ b/drivers/hv/connection.c
+> @@ -69,7 +69,6 @@ MODULE_PARM_DESC(max_version,
+>  int vmbus_negotiate_version(struct vmbus_channel_msginfo *msginfo, u32 version)
+>  {
+>  	int ret = 0;
+> -	unsigned int cur_cpu;
+>  	struct vmbus_channel_initiate_contact *msg;
+>  	unsigned long flags;
+>  
+> @@ -102,24 +101,7 @@ int vmbus_negotiate_version(struct vmbus_channel_msginfo *msginfo, u32 version)
+>  
+>  	msg->monitor_page1 = virt_to_phys(vmbus_connection.monitor_pages[0]);
+>  	msg->monitor_page2 = virt_to_phys(vmbus_connection.monitor_pages[1]);
+> -	/*
+> -	 * We want all channel messages to be delivered on CPU 0.
+> -	 * This has been the behavior pre-win8. This is not
+> -	 * perf issue and having all channel messages delivered on CPU 0
+> -	 * would be ok.
+> -	 * For post win8 hosts, we support receiving channel messagges on
+> -	 * all the CPUs. This is needed for kexec to work correctly where
+> -	 * the CPU attempting to connect may not be CPU 0.
+> -	 */
+> -	if (version >= VERSION_WIN8_1) {
+> -		cur_cpu = get_cpu();
+> -		msg->target_vcpu = hv_cpu_number_to_vp_number(cur_cpu);
+> -		vmbus_connection.connect_cpu = cur_cpu;
+> -		put_cpu();
+> -	} else {
+> -		msg->target_vcpu = 0;
+> -		vmbus_connection.connect_cpu = 0;
+> -	}
+> +	msg->target_vcpu = hv_cpu_number_to_vp_number(VMBUS_CONNECT_CPU);
+>  
+>  	/*
+>  	 * Add to list before we send the request since we may
+> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> index 6098e0cbdb4b0..e2b3310454640 100644
+> --- a/drivers/hv/hv.c
+> +++ b/drivers/hv/hv.c
+> @@ -249,6 +249,13 @@ int hv_synic_cleanup(unsigned int cpu)
+>  	bool channel_found = false;
+>  	unsigned long flags;
+>  
+> +	/*
+> +	 * Hyper-V does not provide a way to change the connect CPU once
+> +	 * it is set; we must prevent the connect CPU from going offline.
+> +	 */
+> +	if (cpu == VMBUS_CONNECT_CPU)
+> +		return -EBUSY;
+> +
+>  	/*
+>  	 * Search for channels which are bound to the CPU we're about to
+>  	 * cleanup. In case we find one and vmbus is still connected we need to
+> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+> index 70b30e223a578..67fb1edcbf527 100644
+> --- a/drivers/hv/hyperv_vmbus.h
+> +++ b/drivers/hv/hyperv_vmbus.h
+> @@ -212,12 +212,13 @@ enum vmbus_connect_state {
+>  
+>  #define MAX_SIZE_CHANNEL_MESSAGE	HV_MESSAGE_PAYLOAD_BYTE_COUNT
+>  
+> -struct vmbus_connection {
+> -	/*
+> -	 * CPU on which the initial host contact was made.
+> -	 */
+> -	int connect_cpu;
+> +/*
+> + * The CPU that Hyper-V will interrupt for VMBUS messages, such as
+> + * CHANNELMSG_OFFERCHANNEL and CHANNELMSG_RESCIND_CHANNELOFFER.
+> + */
+> +#define VMBUS_CONNECT_CPU	0
+>  
+> +struct vmbus_connection {
+>  	u32 msg_conn_id;
+>  
+>  	atomic_t offer_in_progress;
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index 029378c27421d..7600615e13754 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -1056,14 +1056,28 @@ void vmbus_on_msg_dpc(unsigned long data)
+>  			/*
+>  			 * If we are handling the rescind message;
+>  			 * schedule the work on the global work queue.
+> +			 *
+> +			 * The OFFER message and the RESCIND message should
+> +			 * not be handled by the same serialized work queue,
+> +			 * because the OFFER handler may call vmbus_open(),
+> +			 * which tries to open the channel by sending an
+> +			 * OPEN_CHANNEL message to the host and waits for
+> +			 * the host's response; however, if the host has
+> +			 * rescinded the channel before it receives the
+> +			 * OPEN_CHANNEL message, the host just silently
+> +			 * ignores the OPEN_CHANNEL message; as a result,
+> +			 * the guest's OFFER handler hangs for ever, if we
+> +			 * handle the RESCIND message in the same serialized
+> +			 * work queue: the RESCIND handler can not start to
+> +			 * run before the OFFER handler finishes.
+>  			 */
+> -			schedule_work_on(vmbus_connection.connect_cpu,
+> +			schedule_work_on(VMBUS_CONNECT_CPU,
+>  					 &ctx->work);
 >  			break;
 >  
->  		if (list_empty(&cpts->pool) && cpts_purge_events(cpts)) {
-> -			pr_err("cpts: event pool empty\n");
-> +			dev_info(cpts->dev, "cpts: event pool empty\n");
+>  		case CHANNELMSG_OFFERCHANNEL:
+>  			atomic_inc(&vmbus_connection.offer_in_progress);
+> -			queue_work_on(vmbus_connection.connect_cpu,
+> +			queue_work_on(VMBUS_CONNECT_CPU,
+>  				      vmbus_connection.work_queue,
+>  				      &ctx->work);
+>  			break;
+> @@ -1110,7 +1124,7 @@ static void vmbus_force_channel_rescinded(struct vmbus_channel *channel)
+>  
+>  	INIT_WORK(&ctx->work, vmbus_onmessage_work);
+>  
+> -	queue_work_on(vmbus_connection.connect_cpu,
+> +	queue_work_on(VMBUS_CONNECT_CPU,
+>  		      vmbus_connection.work_queue,
+>  		      &ctx->work);
+>  }
 
-You changed err into info.  Was that on purpose?
+I tried to refresh my memory on why 'connect_cpu' was introduced and it
+all comes down to the following commit:
 
-The size of the pool is hard coded, but it should be large enough for
-any use case.  If the pool size turns out to be too small at run time,
-then I think the message deserves at least the level of warning.
+commit 7268644734f6a300353a4c4ff8bf3e013ba80f89
+Author: Alex Ng <alexng@microsoft.com>
+Date:   Fri Feb 26 15:13:22 2016 -0800
 
-Thanks,
-Richard
+    Drivers: hv: vmbus: Support kexec on ws2012 r2 and above
+
+which for some unknown reason kept hardcoding '0' for pre-win2012-r2 (
+hv_context.vp_index[smp_processor_id()] in all cases would do exactly
+the same I guess ). Later, 'connect_cpu' appeared just to remember our
+choice, I can't see why we didn't go with CPU0 for simplicity.
+
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+
+-- 
+Vitaly
+
