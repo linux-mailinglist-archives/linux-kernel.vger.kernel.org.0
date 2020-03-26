@@ -2,123 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 162571938D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 07:49:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AFF01938F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 07:49:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbgCZGtD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 02:49:03 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34342 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbgCZGtD (ORCPT
+        id S1727895AbgCZGtw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 02:49:52 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:22701 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727869AbgCZGtu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 02:49:03 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p10so5001377ljn.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 23:49:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Qff2i+ym4gPPOxDRIQh2n3v3vk/CiXzDCHZe7pXja70=;
-        b=B0bE+b2zub9Ed3e3JG/LOUjcK8vJWV6A8vAZEzG4VNYTrYdEkkjtpQFepRt7k0nfk+
-         NedFMEqbx0FoYKBB7f5v1zn1wCebqrGMJFNGP3Eetu1xDu7aHOZK4HOsW3QlqGXs8yn/
-         +LF2dIE3uCrgSHTCnt26IF63zdmfQ7j+jfptFQlXUuEEEfO+9k+kifLs+tD3VtCh0nYe
-         oaY/wfcTuGyoQL/2u7lwGe+L1S7bOE3Rp7UQh0aELM8tKX2hfxFNR5YCRNUM/ZcWLlaR
-         dT13eid23FeMvVS4ubmnERWvoXm/uAqQmWuHc9Mwoh0JSFWnIVkcUNaUu19u7oIjNlwV
-         UIdw==
-X-Gm-Message-State: AGi0Pua7aw2VAWsjSVnz1nqV6m0MN5yuDItEgJlcXp2EWFHAjbiL/jU+
-        cFRVBg32r8Vd6UM4Oj3THYs=
-X-Google-Smtp-Source: APiQypKKxRrK0zPIQAUsRUDBdyMW5BiKcxteWRsyZwoU7v2j5uIMayk8EvSsxhEjzSWaGXGXuvFmvA==
-X-Received: by 2002:a2e:9706:: with SMTP id r6mr550239lji.183.1585205340626;
-        Wed, 25 Mar 2020 23:49:00 -0700 (PDT)
-Received: from localhost.localdomain (dc7t7ryyyyyyyyyyyyybt-3.rev.dnainternet.fi. [2001:14ba:16e1:b700::3])
-        by smtp.gmail.com with ESMTPSA id x23sm854496ljd.23.2020.03.25.23.48.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 23:49:00 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 08:48:52 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] mfd: rohm-bdXXX - switch to use i2c probe_new
-Message-ID: <20200326064852.GA23265@localhost.localdomain>
+        Thu, 26 Mar 2020 02:49:50 -0400
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 02Q6nXBS030299;
+        Thu, 26 Mar 2020 15:49:34 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 02Q6nXBS030299
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585205374;
+        bh=yJri4nG4GdtQpimGA+3UpQX1sQISx5nzCRM7PAOAuwY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=jT7Bi9Da0EzCLH/o9xLiT8xvAZULpzWNIMVZvw4484HvYgbiIO7K02JEFQaxhUXCN
+         jOoXLfoGtygn3Ch+onLoE3AUAh1Dn9LUzAmOP8yJ2Vu6A2Kd281W3h/8EI8Mfzn+97
+         Lu4z6Xc2D/tiQMk27LEitULFHXQRERUJQYm+oYNZYL++V5i4jHrqtgYrH0LFGS+9ev
+         Rsj6lMUP46aeHUcoTS/C+/tmR9hj9Auc2F02XOBwWZ5/RRUCYzDu/hLFqrXKxOl6VD
+         HGHlbr6rZuLXOBaex0hsdKj501V4SDVL9n2GmVhrlgFhPsKWiwfvBbqXE007YXhjWm
+         OdG8JXOPvVcMw==
+X-Nifty-SrcIP: [209.85.217.46]
+Received: by mail-vs1-f46.google.com with SMTP id s10so3169542vsi.9;
+        Wed, 25 Mar 2020 23:49:34 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ3LEqcwOXzU2Bss48KNEUpucjw3KdwNqf/wG4i6PmjXd31Sxdn/
+        sTn0+gonkrG+8snYt8bAjjTDBuQJf4FC5PpHiSc=
+X-Google-Smtp-Source: ADFU+vs89T9hOkuWHMz+1BIobf1TLDKTGR9RZQc/Y/Ci/C0MWWZ0/xu9K46o1tb+UA+2xgUpob3pyVu4keWIot/9odQ=
+X-Received: by 2002:a67:6542:: with SMTP id z63mr3012217vsb.179.1585205372803;
+ Wed, 25 Mar 2020 23:49:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20200324084821.29944-1-masahiroy@kernel.org> <20200324084821.29944-2-masahiroy@kernel.org>
+ <CAKwvOd=AXnAjoa0iOhPc4S49ZpDDX9BYB-BZQc=6Z0dygVYLPA@mail.gmail.com>
+In-Reply-To: <CAKwvOd=AXnAjoa0iOhPc4S49ZpDDX9BYB-BZQc=6Z0dygVYLPA@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Thu, 26 Mar 2020 15:48:56 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATXz=x7M-HOfWLf1fc_km5qBYa5u1i3Bj30C7aoJPGjSA@mail.gmail.com>
+Message-ID: <CAK7LNATXz=x7M-HOfWLf1fc_km5qBYa5u1i3Bj30C7aoJPGjSA@mail.gmail.com>
+Subject: Re: [PATCH 01/16] lib/raid6/test: fix build on distros whose /bin/sh
+ is not bash
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Jim Kukunas <james.t.kukunas@linux.intel.com>,
+        NeilBrown <neilb@suse.de>,
+        Yuanhan Liu <yuanhan.liu@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ROHM BD70528 and BD718x7 drivers do not utilize the I2C id.
-Do the trivial conversion and make them to use probe_new
-instead of probe.
+On Wed, Mar 25, 2020 at 1:36 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> On Tue, Mar 24, 2020 at 1:49 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> >
+> > You can test raid6 library code from user-space, like this:
+> >
+> >   $ cd lib/raid6/test
+> >   $ make
+> >
+> > The command in $(shell ...) function is evaluated by /bin/sh by default.
+> > (or, you can change the default shell by setting 'SHELL' in Makefile)
+> >
+> > Currently '>&/dev/null' is used to sink both stdout and stderr. Because
+> > this code is bash-ism, it only works when /bin/sh is a symbolic link to
+> > bash (this is the case on RHEL etc.)
+> >
+> > This does not work on Ubuntu where /bin/sh is a symbolic link to dash.
+> >
+> > I see lots of
+> >
+> >   /bin/sh: 1: Syntax error: Bad fd number
+> >
+> > and
+> >
+> >   warning "your version of binutils lacks ... support"
+> >
+> > Replace it with portable '>/dev/null 2>&1'.
+> >
+> > Fixes: 4f8c55c5ad49 ("lib/raid6: build proper files on corresponding arch")
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > Acked-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+> > ---
+> >
+> >  lib/raid6/test/Makefile | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
+> > index 3ab8720aa2f8..b9e6c3648be1 100644
+> > --- a/lib/raid6/test/Makefile
+> > +++ b/lib/raid6/test/Makefile
+> > @@ -35,13 +35,13 @@ endif
+> >  ifeq ($(IS_X86),yes)
+> >          OBJS   += mmx.o sse1.o sse2.o avx2.o recov_ssse3.o recov_avx2.o avx512.o recov_avx512.o
+> >          CFLAGS += $(shell echo "pshufb %xmm0, %xmm0" |         \
+> > -                    gcc -c -x assembler - >&/dev/null &&       \
+> > +                    gcc -c -x assembler - >/dev/null 2>&1 &&   \
+> >                      rm ./-.o && echo -DCONFIG_AS_SSSE3=1)
+> >          CFLAGS += $(shell echo "vpbroadcastb %xmm0, %ymm1" |   \
+> > -                    gcc -c -x assembler - >&/dev/null &&       \
+> > +                    gcc -c -x assembler - >/dev/null 2>&1 &&   \
+> >                      rm ./-.o && echo -DCONFIG_AS_AVX2=1)
+> >         CFLAGS += $(shell echo "vpmovm2b %k1, %zmm5" |          \
+> > -                   gcc -c -x assembler - >&/dev/null &&        \
+> > +                   gcc -c -x assembler - >/dev/null 2>&1 &&    \
+>
+> These should all use $(CC) rather than hardcode gcc.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/mfd/rohm-bd70528.c | 5 ++---
- drivers/mfd/rohm-bd718x7.c | 5 ++---
- 2 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mfd/rohm-bd70528.c b/drivers/mfd/rohm-bd70528.c
-index 5c44d3b77b3e..179584d10109 100644
---- a/drivers/mfd/rohm-bd70528.c
-+++ b/drivers/mfd/rohm-bd70528.c
-@@ -216,8 +216,7 @@ static struct regmap_irq_chip bd70528_irq_chip = {
- 	.irq_reg_stride = 1,
- };
- 
--static int bd70528_i2c_probe(struct i2c_client *i2c,
--			     const struct i2c_device_id *id)
-+static int bd70528_i2c_probe(struct i2c_client *i2c)
- {
- 	struct bd70528_data *bd70528;
- 	struct regmap_irq_chip_data *irq_data;
-@@ -304,7 +303,7 @@ static struct i2c_driver bd70528_drv = {
- 		.name = "rohm-bd70528",
- 		.of_match_table = bd70528_of_match,
- 	},
--	.probe = &bd70528_i2c_probe,
-+	.probe_new = &bd70528_i2c_probe,
- };
- 
- module_i2c_driver(bd70528_drv);
-diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
-index c32c1b6c98fa..e621e1a82222 100644
---- a/drivers/mfd/rohm-bd718x7.c
-+++ b/drivers/mfd/rohm-bd718x7.c
-@@ -129,8 +129,7 @@ static int bd718xx_init_press_duration(struct bd718xx *bd718xx)
- 	return 0;
- }
- 
--static int bd718xx_i2c_probe(struct i2c_client *i2c,
--			    const struct i2c_device_id *id)
-+static int bd718xx_i2c_probe(struct i2c_client *i2c)
- {
- 	struct bd718xx *bd718xx;
- 	int ret;
-@@ -226,7 +225,7 @@ static struct i2c_driver bd718xx_i2c_driver = {
- 		.name = "rohm-bd718x7",
- 		.of_match_table = bd718xx_of_match,
- 	},
--	.probe = bd718xx_i2c_probe,
-+	.probe_new = bd718xx_i2c_probe,
- };
- 
- static int __init bd718xx_i2c_init(void)
+Right, I had noticed this.
 
-base-commit: 16fbf79b0f83bc752cee8589279f1ebfe57b3b6e
+We often fall between
+"let's fix this too while we are here"
+vs
+"do not do multiple things in a single patch"
+
+
+If we replace gcc -> $(CC),
+we also need to touch line 51 for consistency:
+
+       gcc -c -x c - >/dev/null && rm ./-.o && echo yes)
+
+..., which is not our main interest now.
+
+So, I leave it to a follow-up patch
+if somebody has interest in it.
+
+
 -- 
-2.21.0
-
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
+Best Regards
+Masahiro Yamada
