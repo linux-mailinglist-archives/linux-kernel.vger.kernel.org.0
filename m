@@ -2,327 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFC89194806
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:57:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 334CE19480F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:58:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728607AbgCZT5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 15:57:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41882 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727612AbgCZT5Y (ORCPT
+        id S1728681AbgCZT6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 15:58:21 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37271 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727446AbgCZT6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 15:57:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=npXztQNsueHlShWJd1lOnCg5QbqP/9CD5NFcbhBoQwQ=; b=hi6vwbexGa7OxE3FSXG0Ir++zO
-        jCSpro7RRA6yK0bIRcAhkB7OlbPG58vBocYxwn5RFQqminyMEVfCHZw3pvXE3pMBI9dangfXgXQBw
-        V9s4dFfca+mC2hDJ/EP4Phi0l+svuhjenaOK3+ZB5Zf8x36GywqIh977G3q+j+xy1COPAiDM6bfb6
-        fCyYDf1B2+r/ubKEH5LY4ZQeYVntusBrk7/jXJjcF6rslCbUSTC5oMhUJbWuUTLPNCG+M6hdje7CF
-        gdZ8d4a5c4TIypERmQTPbKuHC8CX/pLsqos2yfzXCbDcYlsIXCGoVAcV7FXm549cBNmpByGosnpuJ
-        srn4aalQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHYcz-00075z-1S; Thu, 26 Mar 2020 19:57:21 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 41579983531; Thu, 26 Mar 2020 20:57:18 +0100 (CET)
-Date:   Thu, 26 Mar 2020 20:57:18 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org,
-        mhiramat@kernel.org, mbenes@suse.cz
-Subject: Re: [PATCH v4 01/13] objtool: Remove CFI save/restore special case
-Message-ID: <20200326195718.GD2452@worktop.programming.kicks-ass.net>
-References: <20200325174525.772641599@infradead.org>
- <20200325174605.369570202@infradead.org>
- <20200326113049.GD20696@hirez.programming.kicks-ass.net>
- <20200326135620.tlmof5fa7p5wct62@treble>
- <20200326154938.GO20713@hirez.programming.kicks-ass.net>
+        Thu, 26 Mar 2020 15:58:20 -0400
+Received: by mail-pf1-f195.google.com with SMTP id h72so3335870pfe.4
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 12:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OTZW/xLJ1BGsM+V9a0Wd+8MrhnBqRKDutU8ctncjlHo=;
+        b=PcUVhKbSFbaawYyYC8+zR2qy1gp/S0ozs7s298FEoX75NUCNOTOxZpUwkL/2BUIKbU
+         1UuJ46D+uHnscvV5NwwYd2RvxJVn1lErDXqA54/Vlor6COuKu6nGflBx5lrs48i7/ZtN
+         MDbZWsbZGH13AgWUH7a3rjhfQdyNBesbopTiYcTHUKsDsB1EB38myZ9ZCY0wgMvH9VOK
+         OBUFs2yI+vQmfSglrQOEMCEe26acxGIhqKOE3iQE1MkeNugqOljlZIvptYte5zZ3ns2O
+         6rZC9FL6Pj9kl42VVhXVFVkdkqfXF7y4ikn8FRIvNTv5uvQg+PZ1lwoNMskxyzJQuqQ6
+         Y7Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OTZW/xLJ1BGsM+V9a0Wd+8MrhnBqRKDutU8ctncjlHo=;
+        b=RhKKKGX9BOBwMNexrKH2cg0Ib9cKExR1PWQ+1/B3Iyq4HVE6KyIh9WMAht9Hrx7Lc7
+         HACKg7ySMZlD5JJ2ap10a3e20B5/XOX+Q9M0Kjs0iAOzNtzr7zg76H+vNp3bR2YGW4zP
+         JEbZDpsoWidx+fvJgMih8d9XewI2KlD/9mAwl3J6PvT05dw1sCPQmzlk6yvrh4SiJWt+
+         xl8+Xp2Pqu6krRLOpQaLNWg52tB98XM4X84TMWYLvTHOJzbv08czM6Xu2qUNvJaZHXpN
+         3Xivka/wEGTn4k6GGdV5a/yk/GeSO8OsDr94iTlTeHwt7B4jKdf6g16rbPuA7EOYtDMs
+         18cg==
+X-Gm-Message-State: ANhLgQ3bqr+4yvd/+h2ujpMospozWajwshse/lVLrrZwbTGAlmTjI/Si
+        usbVxCbGXa5BMjeTFj1acXBlABn0Gk9PwzXEyLq4eg==
+X-Google-Smtp-Source: ADFU+vv9iYKelWkUk09S1YsFIpTByaYuAZxyhNxkqT/sKiyO5bU/yo1RpcYkW97YrXfQw4yo3szrTepwkZwCv6bwvZA=
+X-Received: by 2002:a63:4453:: with SMTP id t19mr9656195pgk.381.1585252699540;
+ Thu, 26 Mar 2020 12:58:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200326154938.GO20713@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200326080104.27286-1-masahiroy@kernel.org> <20200326080104.27286-16-masahiroy@kernel.org>
+ <CAKwvOdnG4F6+Ndfj+=BoV6OidJjWS_dYtjvyCEJ6nyxkSQc3rg@mail.gmail.com> <CAHmME9p_N2cpMt20Gf1kWTRnj36nwrceFxEui2MU0kFu3WOdww@mail.gmail.com>
+In-Reply-To: <CAHmME9p_N2cpMt20Gf1kWTRnj36nwrceFxEui2MU0kFu3WOdww@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 26 Mar 2020 12:58:06 -0700
+Message-ID: <CAKwvOdmLWqVq_EQk2S4FUSUCU7yoppYD4oiL+P7taWoDTyrb9w@mail.gmail.com>
+Subject: Re: [PATCH v2 15/16] x86: update AS_* macros to binutils >=2.23,
+ supporting ADX and AVX2
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Masahiro Yamada <masahiroy@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Ingo Molnar <mingo@redhat.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 04:49:38PM +0100, Peter Zijlstra wrote:
-> > The 'insn == first' check isn't ideal, but at least it works (I think?).
-> 
-> It works, yes, for exactly this one case.
+On Thu, Mar 26, 2020 at 12:48 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> On Thu, Mar 26, 2020 at 11:55 AM Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+> > I see four checks for CONFIG_AS_AVX2 in:
+> > net/netfilter/nft_set_pipapo.c
+> > net/netfilter/nf_tables_api.c
+> > net/netfilter/Makefile
+> > net/netfilter/nft_set_pipapo_avx2.h
+>
+> That code isn't in Linus' tree right now is it? Does it make sense for
 
-How's this? Ignore the ignore_cfi bits, that's a 'failed' experiment.
+Indeed, it seems I was grepping in my checkout of -next.
 
----
- arch/x86/include/asm/orc_types.h       |   2 +
- arch/x86/include/asm/processor.h       |   6 +-
- arch/x86/include/asm/unwind_hints.h    |   4 ++
- tools/arch/x86/include/asm/orc_types.h |   2 +
- tools/objtool/check.c                  | 109 +++++++++++++++++++--------------
- tools/objtool/check.h                  |   3 +-
- 6 files changed, 75 insertions(+), 51 deletions(-)
+> us to see which subsystem trees (crypto, netfilter, raid, etc) are
+> submitted to 5.7? Or would you rather this patchset be rebased now on
+> next?
 
-diff --git a/arch/x86/include/asm/orc_types.h b/arch/x86/include/asm/orc_types.h
-index 6e060907c163..82b5c685341a 100644
---- a/arch/x86/include/asm/orc_types.h
-+++ b/arch/x86/include/asm/orc_types.h
-@@ -60,6 +60,8 @@
- #define ORC_TYPE_REGS_IRET		2
- #define UNWIND_HINT_TYPE_SAVE		3
- #define UNWIND_HINT_TYPE_RESTORE	4
-+#define UNWIND_HINT_TYPE_IGNORE		5
-+#define UNWIND_HINT_TYPE_IRET_CONT	6
+I think rebasing on -next is the way to go.  I usually generate my
+patches off of that, though some trees that don't feed into -next are
+technically further ahead.
 
- #ifndef __ASSEMBLY__
- /*
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 94789db550df..45c74cbc0a83 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -728,8 +728,8 @@ static inline void sync_core(void)
- 	unsigned int tmp;
-
- 	asm volatile (
--		UNWIND_HINT_SAVE
- 		"mov %%ss, %0\n\t"
-+		UNWIND_HINT_SAVE
- 		"pushq %q0\n\t"
- 		"pushq %%rsp\n\t"
- 		"addq $8, (%%rsp)\n\t"
-@@ -737,9 +737,9 @@ static inline void sync_core(void)
- 		"mov %%cs, %0\n\t"
- 		"pushq %q0\n\t"
- 		"pushq $1f\n\t"
-+		UNWIND_HINT_IRET_CONT
- 		"iretq\n\t"
--		UNWIND_HINT_RESTORE
--		"1:"
-+		"1:\n\t"
- 		: "=&r" (tmp), ASM_CALL_CONSTRAINT : : "cc", "memory");
- #endif
- }
-diff --git a/arch/x86/include/asm/unwind_hints.h b/arch/x86/include/asm/unwind_hints.h
-index f5e2eb12cb71..d8a07749c323 100644
---- a/arch/x86/include/asm/unwind_hints.h
-+++ b/arch/x86/include/asm/unwind_hints.h
-@@ -112,6 +112,10 @@
-
- #define UNWIND_HINT_RESTORE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_RESTORE, 0)
-
-+#define UNWIND_HINT_IGNORE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_IGNORE, 0)
-+
-+#define UNWIND_HINT_IRET_CONT UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_IRET_CONT, 0)
-+
- #endif /* __ASSEMBLY__ */
-
- #endif /* _ASM_X86_UNWIND_HINTS_H */
-diff --git a/tools/arch/x86/include/asm/orc_types.h b/tools/arch/x86/include/asm/orc_types.h
-index 6e060907c163..82b5c685341a 100644
---- a/tools/arch/x86/include/asm/orc_types.h
-+++ b/tools/arch/x86/include/asm/orc_types.h
-@@ -60,6 +60,8 @@
- #define ORC_TYPE_REGS_IRET		2
- #define UNWIND_HINT_TYPE_SAVE		3
- #define UNWIND_HINT_TYPE_RESTORE	4
-+#define UNWIND_HINT_TYPE_IGNORE		5
-+#define UNWIND_HINT_TYPE_IRET_CONT	6
-
- #ifndef __ASSEMBLY__
- /*
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index e637a4a38d2a..03bac6cb313c 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1259,14 +1259,25 @@ static int read_unwind_hints(struct objtool_file *file)
-
- 		cfa = &insn->state.cfa;
-
--		if (hint->type == UNWIND_HINT_TYPE_SAVE) {
-+		switch (hint->type) {
-+		case UNWIND_HINT_TYPE_SAVE:
- 			insn->save = true;
- 			continue;
-
--		} else if (hint->type == UNWIND_HINT_TYPE_RESTORE) {
-+		case UNWIND_HINT_TYPE_RESTORE:
- 			insn->restore = true;
--			insn->hint = true;
- 			continue;
-+
-+		case UNWIND_HINT_TYPE_IGNORE:
-+			insn->ignore_cfi = true;
-+			continue;
-+
-+		case UNWIND_HINT_TYPE_IRET_CONT:
-+			insn->iret_cont = true;
-+			continue;
-+
-+		default:
-+			break;
- 		}
-
- 		insn->hint = true;
-@@ -1558,6 +1569,9 @@ static int update_insn_state(struct instruction *insn, struct insn_state *state)
- 	struct cfi_reg *cfa = &state->cfa;
- 	struct cfi_reg *regs = state->regs;
-
-+	if (insn->ignore_cfi)
-+		return 0;
-+
- 	/* stack operations don't make sense with an undefined CFA */
- 	if (cfa->base == CFI_UNDEFINED) {
- 		if (insn->func) {
-@@ -1993,6 +2007,37 @@ static int validate_sibling_call(struct instruction *insn, struct insn_state *st
- 	return validate_call(insn, state);
- }
-
-+static int insn_hint_restore(struct objtool_file *file, struct section *sec,
-+			     struct symbol *func, struct instruction *insn,
-+			     struct insn_state *state)
-+{
-+	struct instruction *save_insn, *i;
-+
-+	i = insn;
-+	save_insn = NULL;
-+	func_for_each_insn_continue_reverse(file, func, i) {
-+		if (i->save) {
-+			save_insn = i;
-+			break;
-+		}
-+	}
-+
-+	if (!save_insn) {
-+		WARN_FUNC("no corresponding CFI save for CFI restore",
-+			  sec, insn->offset);
-+		return 1;
-+	}
-+
-+	if (!save_insn->visited) {
-+		WARN_FUNC("objtool isn't smart enough to handle this CFI save/restore combo",
-+			  sec, insn->offset);
-+		return 1;
-+	}
-+
-+	*state = save_insn->state;
-+	return 0;
-+}
-+
- /*
-  * Follow the branch starting at the given instruction, and recursively follow
-  * any other branches (jumps).  Meanwhile, track the frame pointer state at
-@@ -2000,15 +2045,14 @@ static int validate_sibling_call(struct instruction *insn, struct insn_state *st
-  * tools/objtool/Documentation/stack-validation.txt.
-  */
- static int validate_branch(struct objtool_file *file, struct symbol *func,
--			   struct instruction *first, struct insn_state state)
-+			   struct instruction *insn, struct insn_state state)
- {
-+	struct instruction *next_insn;
- 	struct alternative *alt;
--	struct instruction *insn, *next_insn;
- 	struct section *sec;
- 	u8 visited;
- 	int ret;
-
--	insn = first;
- 	sec = insn->sec;
-
- 	if (insn->alt_group && list_empty(&insn->alts)) {
-@@ -2034,7 +2078,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
-
- 		visited = 1 << state.uaccess;
- 		if (insn->visited) {
--			if (!insn->hint && !insn_state_match(insn, &state))
-+			if ((!insn->hint && !insn->restore) && !insn_state_match(insn, &state))
- 				return 1;
-
- 			if (insn->visited & visited)
-@@ -2042,47 +2086,12 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 		}
-
- 		if (insn->hint) {
--			if (insn->restore) {
--				struct instruction *save_insn, *i;
--
--				i = insn;
--				save_insn = NULL;
--				func_for_each_insn_continue_reverse(file, func, i) {
--					if (i->save) {
--						save_insn = i;
--						break;
--					}
--				}
--
--				if (!save_insn) {
--					WARN_FUNC("no corresponding CFI save for CFI restore",
--						  sec, insn->offset);
--					return 1;
--				}
--
--				if (!save_insn->visited) {
--					/*
--					 * Oops, no state to copy yet.
--					 * Hopefully we can reach this
--					 * instruction from another branch
--					 * after the save insn has been
--					 * visited.
--					 */
--					if (insn == first)
--						return 0;
--
--					WARN_FUNC("objtool isn't smart enough to handle this CFI save/restore combo",
--						  sec, insn->offset);
--					return 1;
--				}
--
--				insn->state = save_insn->state;
--			}
--
- 			state = insn->state;
--
--		} else
-+		} else {
-+			if (insn->restore)
-+				insn_hint_restore(file, sec, func, insn, &state);
- 			insn->state = state;
-+		}
-
- 		insn->visited |= visited;
-
-@@ -2191,11 +2200,17 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 			break;
-
- 		case INSN_CONTEXT_SWITCH:
--			if (func && (!next_insn || !next_insn->hint)) {
-+			if (insn->iret_cont) {
-+				insn_hint_restore(file, sec, func, insn, &state);
-+				break;
-+			}
-+
-+			if (func) {
- 				WARN_FUNC("unsupported instruction in callable function",
- 					  sec, insn->offset);
- 				return 1;
- 			}
-+
- 			return 0;
-
- 		case INSN_STACK:
-diff --git a/tools/objtool/check.h b/tools/objtool/check.h
-index 6d875ca6fce0..f2b6172e119b 100644
---- a/tools/objtool/check.h
-+++ b/tools/objtool/check.h
-@@ -33,7 +33,8 @@ struct instruction {
- 	unsigned int len;
- 	enum insn_type type;
- 	unsigned long immediate;
--	bool alt_group, dead_end, ignore, hint, save, restore, ignore_alts;
-+	bool alt_group, dead_end, ignore, ignore_alts;
-+	bool hint, save, restore, ignore_cfi, iret_cont;
- 	bool retpoline_safe;
- 	u8 visited;
- 	struct symbol *call_dest;
-
+-- 
+Thanks,
+~Nick Desaulniers
