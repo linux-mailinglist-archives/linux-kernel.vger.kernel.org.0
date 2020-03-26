@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A16F1936C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 04:25:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 545731936C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 04:25:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbgCZDYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 23:24:47 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36267 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727900AbgCZDYq (ORCPT
+        id S1727965AbgCZDZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 23:25:00 -0400
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:38931 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727901AbgCZDYr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 23:24:46 -0400
-Received: by mail-qt1-f195.google.com with SMTP id m33so4205421qtb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 20:24:44 -0700 (PDT)
+        Wed, 25 Mar 2020 23:24:47 -0400
+Received: by mail-qv1-f66.google.com with SMTP id v38so2271139qvf.6
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 20:24:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=Br14IEdrQ+h/TluYq6M39j0SJ67HIdjC6baxG9oa0nU=;
-        b=i0IEvGyBqoriM4CG8hBTaH9CpgOJ+6Ro/7wdzybTtPbDV3e3M8UaJfMXQB9ptG5KVI
-         FMkd79h+wUDdq/swltuqmENldbzxosdhpw4megU23U4lXShTmo9RkplMrnpRO+HWT58l
-         bz1J8NxmTMNbonU7mU9LYAok6D8F5cpdxBduNMeJ9AUQNYRgM80AiwlQuWMdnGlMnVXe
-         agnuQ8xBU3v88CVQjZNvk6TyyQa75h7hXBgx/asxBD+iZKo8GNG41Q9syhdbNqf6i43O
-         tG+TvCUOkbFnoZd8PT3+ZRr6ee5z6WwOgYig4/oYl1Wel8/aw2hCIU7IPxIaPJrIFEwF
-         80yA==
+        bh=uH50jv2KMwpjM9MUqJEA6M9mjf0TYnrFc+j0/4JA2/8=;
+        b=fiB9ueCsANwmQzTKLdMTwl073niDxot5bMY8SHMvRN7zmHWFcrQH7scnjR2/1TGnfK
+         dVIOFwbvoAVCesAKXWXgQbZUh/zmmYX3iv5+zHFR5bUds4KxsRNggisBdbNLASd90B35
+         7lcQ5vIafAsStIIPwSFjT2Ihhnkb4cjQJdoZ9AWIkmMTWs63lb4W+f5EjzM/CFYwjp2h
+         0tSJglzq70UYYtHzJ1aa2v5ejWZTzxjE0bUi2ki/7F2ik+qa8qRnwZmxvfmUvds9LZ9m
+         sfcZqJd1S5chEMjK5bYIapAf1x6QQPcCRIO01A4WZjbtTYzLi4pJ2vB0h5FtXqAviG0v
+         AZtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=Br14IEdrQ+h/TluYq6M39j0SJ67HIdjC6baxG9oa0nU=;
-        b=Da9TfXk60sxZbeZSzeIMqtpEXEZkn55DWEzoDrVpKRITsXAt4S0pGSeTn2C3+N8NKo
-         zqCG4JTyOVs241tBFya8VBSF3XMqHIw7cupGGlobp7fuEQgSbYXLDPUSutVJsX6oroL/
-         9H4z3/FIyujFks7cZLrmXYlmT7EWqOq3YNX2PTNfZF2ZTpvchnXKEUV7S9uD0QoMZeuL
-         nEVGINRO29CGXHdcNohzCCqrs/ggP6P01MhHy6f3o+5vEIvoe2jt7qyKWry5Wp6jKbGL
-         SVDrRZO4qCz6LTnVn88hnL/vSBWVQVToLK3WmuH5I6INU/EmBDsz5QzvQp7jCp0SGCxO
-         fzxA==
-X-Gm-Message-State: ANhLgQ0ZRtyLIMKeQeDCMrCz07OmquhYwvY6ocDZaUCULSCjW5XfJKUo
-        4WqE6z0csmVYfNRFYD4Q1uaDJA==
-X-Google-Smtp-Source: ADFU+vtm27PkglkxZBWZNSEtrtj7Md3gNLlQXHWm/UbMjvs5l2SaL7nAgQ6PGID3oJSqgIkAG7pfhQ==
-X-Received: by 2002:aed:3c4b:: with SMTP id u11mr6160095qte.208.1585193084262;
-        Wed, 25 Mar 2020 20:24:44 -0700 (PDT)
+        bh=uH50jv2KMwpjM9MUqJEA6M9mjf0TYnrFc+j0/4JA2/8=;
+        b=JoHddsYrq/TJ4FFdrQHeVUwYCjo0QLQT2b5M+C4TnXP3J11GR3Iz8mE7AUFu3jIokc
+         XIWemkDWXDjQEbesOQ0waugxGFgs8+GIz9Cdhdh2WUCXghhDe/h0J/ms+6TNeZOK4oEA
+         rt305Bx0/OwZsd4fKdR5s0KKhoFzPXKocoxe7/TSApYVHQeY+EVA+k/u7YXPj+gUlQS6
+         gTwR6psMR3WgR/XS4UKmQCVlHZ2hIMfN0+vuzr0JTAFJ4uT/uVciWmMlDpKO2EiSHtpq
+         7dS5LAbHd4AuD0r41NuUDod+be5hS0We4hRPyDVp5GV7OCz8KaAVTYZw2eFm51UmvWZ7
+         YbUg==
+X-Gm-Message-State: ANhLgQ3x2DYm79AWa3URHLHdUuwL8TDxGsJIoQwRwGFJKFZlyBCEiOJb
+        p7N5q1GZOAmVdelv1E5HV+x0Zg==
+X-Google-Smtp-Source: ADFU+vsn5N31l1OOjwnpnGaEWO0LewMtT8xvGuAvQ3zFm5/A5YPwx47lqc7VNLvdKkoNJK+uI7hzhg==
+X-Received: by 2002:a0c:ebd2:: with SMTP id k18mr6281606qvq.143.1585193085859;
+        Wed, 25 Mar 2020 20:24:45 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id u4sm620034qka.35.2020.03.25.20.24.42
+        by smtp.gmail.com with ESMTPSA id u4sm620034qka.35.2020.03.25.20.24.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 20:24:43 -0700 (PDT)
+        Wed, 25 Mar 2020 20:24:45 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -54,9 +54,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com, steve.capper@arm.com, rfontana@redhat.com,
         tglx@linutronix.de, selindag@gmail.com
-Subject: [PATCH v9 14/18] arm64: kexec: offset for relocation function
-Date:   Wed, 25 Mar 2020 23:24:16 -0400
-Message-Id: <20200326032420.27220-15-pasha.tatashin@soleen.com>
+Subject: [PATCH v9 15/18] arm64: kexec: kexec EL2 vectors
+Date:   Wed, 25 Mar 2020 23:24:17 -0400
+Message-Id: <20200326032420.27220-16-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200326032420.27220-1-pasha.tatashin@soleen.com>
 References: <20200326032420.27220-1-pasha.tatashin@soleen.com>
@@ -65,117 +65,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Soon, relocation function will share the same page with EL2 vectors.
-Add offset within this page to arm64_relocate_new_kernel, and also
-the total size of relocation code which will include both the function
-and the EL2 vectors.
+If we have a EL2 mode without VHE, the EL2 vectors are needed in order
+to switch to EL2 and jump to new world with hyperivsor privileges.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 ---
- arch/arm64/include/asm/kexec.h      |  7 +++++++
- arch/arm64/kernel/machine_kexec.c   | 13 ++++---------
- arch/arm64/kernel/relocate_kernel.S | 16 +++++++++++-----
- 3 files changed, 22 insertions(+), 14 deletions(-)
+ arch/arm64/include/asm/kexec.h      |  5 +++++
+ arch/arm64/kernel/asm-offsets.c     |  1 +
+ arch/arm64/kernel/machine_kexec.c   |  5 +++++
+ arch/arm64/kernel/relocate_kernel.S | 35 +++++++++++++++++++++++++++++
+ 4 files changed, 46 insertions(+)
 
 diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index 990185744148..d944c2e289b2 100644
+index d944c2e289b2..0f758fd51518 100644
 --- a/arch/arm64/include/asm/kexec.h
 +++ b/arch/arm64/include/asm/kexec.h
-@@ -90,6 +90,13 @@ static inline void crash_prepare_suspend(void) {}
- static inline void crash_post_resume(void) {}
+@@ -95,6 +95,7 @@ static inline void crash_post_resume(void) {}
+ extern const unsigned long kexec_relocate_code_size;
+ extern const unsigned char kexec_relocate_code_start[];
+ extern const unsigned long kexec_kern_reloc_offset;
++extern const unsigned long kexec_el2_vectors_offset;
  #endif
  
-+#if defined(CONFIG_KEXEC_CORE)
-+/* The beginning and size of relcation code to stage 2 kernel */
-+extern const unsigned long kexec_relocate_code_size;
-+extern const unsigned char kexec_relocate_code_start[];
-+extern const unsigned long kexec_kern_reloc_offset;
-+#endif
-+
  /*
-  * kern_reloc_arg is passed to kernel relocation function as an argument.
-  * head		kimage->head, allows to traverse through relocation segments.
+@@ -104,6 +105,9 @@ extern const unsigned long kexec_kern_reloc_offset;
+  *		kernel, or purgatory entry address).
+  * kern_arg0	first argument to kernel is its dtb address. The other
+  *		arguments are currently unused, and must be set to 0
++ * el2_vector	If present means that relocation routine will go to EL1
++ *		from EL2 to do the copy, and then back to EL2 to do the jump
++ *		to new world.
+  */
+ struct kern_reloc_arg {
+ 	phys_addr_t head;
+@@ -112,6 +116,7 @@ struct kern_reloc_arg {
+ 	phys_addr_t kern_arg1;
+ 	phys_addr_t kern_arg2;
+ 	phys_addr_t kern_arg3;
++	phys_addr_t el2_vector;
+ };
+ 
+ #define ARCH_HAS_KIMAGE_ARCH
+diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
+index 448230684749..ff974b648347 100644
+--- a/arch/arm64/kernel/asm-offsets.c
++++ b/arch/arm64/kernel/asm-offsets.c
+@@ -136,6 +136,7 @@ int main(void)
+   DEFINE(KEXEC_KRELOC_KERN_ARG1,	offsetof(struct kern_reloc_arg, kern_arg1));
+   DEFINE(KEXEC_KRELOC_KERN_ARG2,	offsetof(struct kern_reloc_arg, kern_arg2));
+   DEFINE(KEXEC_KRELOC_KERN_ARG3,	offsetof(struct kern_reloc_arg, kern_arg3));
++  DEFINE(KEXEC_KRELOC_EL2_VECTOR,	offsetof(struct kern_reloc_arg, el2_vector));
+ #endif
+   return 0;
+ }
 diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-index b1122eea627e..ab571fca9bd1 100644
+index ab571fca9bd1..bd398def7627 100644
 --- a/arch/arm64/kernel/machine_kexec.c
 +++ b/arch/arm64/kernel/machine_kexec.c
-@@ -23,10 +23,6 @@
- 
- #include "cpu-reset.h"
- 
--/* Global variables for the arm64_relocate_new_kernel routine. */
--extern const unsigned char arm64_relocate_new_kernel[];
--extern const unsigned long arm64_relocate_new_kernel_size;
--
- /**
-  * kexec_image_info - For debugging output.
-  */
-@@ -82,9 +78,8 @@ int machine_kexec_post_load(struct kimage *kimage)
- 	if (!kern_reloc_arg)
- 		return -ENOMEM;
- 
--	memcpy(reloc_code, arm64_relocate_new_kernel,
--	       arm64_relocate_new_kernel_size);
--	kimage->arch.kern_reloc = __pa(reloc_code);
-+	memcpy(reloc_code, kexec_relocate_code_start, kexec_relocate_code_size);
-+	kimage->arch.kern_reloc = __pa(reloc_code) + kexec_kern_reloc_offset;
- 	kimage->arch.kern_reloc_arg = __pa(kern_reloc_arg);
+@@ -84,6 +84,11 @@ int machine_kexec_post_load(struct kimage *kimage)
  	kern_reloc_arg->head = kimage->head;
  	kern_reloc_arg->entry_addr = kimage->start;
-@@ -189,7 +184,7 @@ void machine_kexec(struct kimage *kimage)
- 		"Some CPUs may be stale, kdump will be unreliable.\n");
+ 	kern_reloc_arg->kern_arg0 = kimage->arch.dtb_mem;
++	/* Setup vector table only when EL2 is available, but no VHE */
++	if (is_hyp_mode_available() && !is_kernel_in_hyp_mode()) {
++		kern_reloc_arg->el2_vector = __pa(reloc_code)
++						+ kexec_el2_vectors_offset;
++	}
+ 	kexec_image_info(kimage);
  
- 	/* Flush the reboot_code_buffer in preparation for its execution. */
--	__flush_dcache_area(reboot_code_buffer, arm64_relocate_new_kernel_size);
-+	__flush_dcache_area(reboot_code_buffer, kexec_relocate_code_size);
- 
- 	/*
- 	 * Although we've killed off the secondary CPUs, we don't update
-@@ -198,7 +193,7 @@ void machine_kexec(struct kimage *kimage)
- 	 * the offline CPUs. Therefore, we must use the __* variant here.
- 	 */
- 	__flush_icache_range((uintptr_t)reboot_code_buffer,
--			     arm64_relocate_new_kernel_size);
-+			     kexec_relocate_code_size);
- 
- 	/* Flush the kimage list and its buffers. */
- 	kexec_list_flush(kimage);
+ 	return 0;
 diff --git a/arch/arm64/kernel/relocate_kernel.S b/arch/arm64/kernel/relocate_kernel.S
-index 22ccdcb106d3..aa9f2b2cd77c 100644
+index aa9f2b2cd77c..6fd2fc0ef373 100644
 --- a/arch/arm64/kernel/relocate_kernel.S
 +++ b/arch/arm64/kernel/relocate_kernel.S
-@@ -14,6 +14,9 @@
- #include <asm/page.h>
- #include <asm/sysreg.h>
- 
-+.globl kexec_relocate_code_start
-+kexec_relocate_code_start:
-+
- /*
-  * arm64_relocate_new_kernel - Put a 2nd stage image in place and boot it.
-  *
-@@ -86,13 +89,16 @@ ENTRY(arm64_relocate_new_kernel)
+@@ -89,6 +89,38 @@ ENTRY(arm64_relocate_new_kernel)
  .ltorg
  END(arm64_relocate_new_kernel)
  
--.Lcopy_end:
-+.Lkexec_relocate_code_end:
++.macro el1_sync_64
++	br	x4			/* Jump to new world from el2 */
++	.fill 31, 4, 0			/* Set other 31 instr to zeroes */
++.endm
++
++.macro invalid_vector label
++\label:
++	b \label
++	.fill 31, 4, 0			/* Set other 31 instr to zeroes */
++.endm
++
++/* el2 vectors - switch el2 here while we restore the memory image. */
++	.align 11
++ENTRY(kexec_el2_vectors)
++	invalid_vector el2_sync_invalid_sp0	/* Synchronous EL2t */
++	invalid_vector el2_irq_invalid_sp0	/* IRQ EL2t */
++	invalid_vector el2_fiq_invalid_sp0	/* FIQ EL2t */
++	invalid_vector el2_error_invalid_sp0	/* Error EL2t */
++	invalid_vector el2_sync_invalid_spx	/* Synchronous EL2h */
++	invalid_vector el2_irq_invalid_spx	/* IRQ EL2h */
++	invalid_vector el2_fiq_invalid_spx	/* FIQ EL2h */
++	invalid_vector el2_error_invalid_spx	/* Error EL2h */
++		el1_sync_64			/* Synchronous 64-bit EL1 */
++	invalid_vector el1_irq_invalid_64	/* IRQ 64-bit EL1 */
++	invalid_vector el1_fiq_invalid_64	/* FIQ 64-bit EL1 */
++	invalid_vector el1_error_invalid_64	/* Error 64-bit EL1 */
++	invalid_vector el1_sync_invalid_32	/* Synchronous 32-bit EL1 */
++	invalid_vector el1_irq_invalid_32	/* IRQ 32-bit EL1 */
++	invalid_vector el1_fiq_invalid_32	/* FIQ 32-bit EL1 */
++	invalid_vector el1_error_invalid_32	/* Error 32-bit EL1 */
++END(kexec_el2_vectors)
++
+ .Lkexec_relocate_code_end:
  .org	KEXEC_CONTROL_PAGE_SIZE
  .align 3	/* To keep the 64-bit values below naturally aligned. */
- /*
-- * arm64_relocate_new_kernel_size - Number of bytes to copy to the
-+ * kexec_relocate_code_size - Number of bytes to copy to the
-  * control_code_page.
-  */
--.globl arm64_relocate_new_kernel_size
--arm64_relocate_new_kernel_size:
--	.quad	.Lcopy_end - arm64_relocate_new_kernel
-+.globl kexec_relocate_code_size
-+kexec_relocate_code_size:
-+	.quad	.Lkexec_relocate_code_end - kexec_relocate_code_start
-+.globl kexec_kern_reloc_offset
-+kexec_kern_reloc_offset:
-+	.quad	arm64_relocate_new_kernel - kexec_relocate_code_start
+@@ -102,3 +134,6 @@ kexec_relocate_code_size:
+ .globl kexec_kern_reloc_offset
+ kexec_kern_reloc_offset:
+ 	.quad	arm64_relocate_new_kernel - kexec_relocate_code_start
++.globl kexec_el2_vectors_offset
++kexec_el2_vectors_offset:
++	.quad	kexec_el2_vectors - kexec_relocate_code_start
 -- 
 2.17.1
 
