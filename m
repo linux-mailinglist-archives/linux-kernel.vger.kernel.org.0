@@ -2,100 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48370194B2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 23:04:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5856194B35
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 23:05:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbgCZWD6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 18:03:58 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53281 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbgCZWD6 (ORCPT
+        id S1727636AbgCZWFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 18:05:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51048 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726363AbgCZWFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 18:03:58 -0400
-Received: by mail-wm1-f67.google.com with SMTP id b12so9045719wmj.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:03:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CVqQ7MESPq+AdE5FevBfn8AolxVmIzRfASYgM+H4STI=;
-        b=szyVRdKUxChTizOYbqe+xujjj60j68XNY2SNyiTfGDb2FOQdOSEPl8zDMtKzEbkOEZ
-         jtQCP5i4iuVP5zMrvcycKgn+qO0lKj6TLMeJBhnVXT7oeJu21WuKDaUh+y8ixfdNBFQE
-         6oFyY3Q/46KVNkl3A8NeA+LMUYdpO7Slu4Tee/ERY9zUHc82YMPuRjGkqdBeKwfxRCqI
-         KqUxD+S3Z4nw18kpiJmpbKA3PX2nTDSUVzJgPVy956S23Br/VEIcdC+LK3Daw9ljv9+8
-         qhXItEAmwk5k03a/QD0NnuHKpqd5PPMt7j1aOKfkpLTyiT23voWFEOtliyOSwkXqS9x8
-         b3Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CVqQ7MESPq+AdE5FevBfn8AolxVmIzRfASYgM+H4STI=;
-        b=ZpQa/5Mn4D+wnVjaEu80x31btNKQW4P0qN73ksYR+Zxeg54yg1eT7mjo7REgf2pFmn
-         WLiOPUA/bjQksFlMmLegIzu1wC8AnZnqg6663g0EPErUOoectjFmHtVcuAaAYSZYfkRV
-         ooOSF/VvhMZCfeDLFv9Uq6HC7cYM9tS2z+GwScYZ40sC/bo1djRb8zVFsn9Phj2By1ja
-         d3jXUUwFKOvXkWERH/ziPF/5r96PYn7bFU9N7t+JStN2mNIOtk0GvItqVjnntMVhf/hH
-         9Zco/3qqLh/0MnNvJ4Ut2jOOTPre5ASm8NqOW+wDn4kd+2rCbxzpQHCcx3Yt21OQbbr+
-         lC5g==
-X-Gm-Message-State: ANhLgQ3/Jyq42Z7BB9ocWNtDSfpHz7BDTNODHbKcwFPmZw18AIQF6fXh
-        m+ZCKqBpIV8KosHWgxq1pajC2CgxDZR5eGQJXc2xlg==
-X-Google-Smtp-Source: ADFU+vvMOIE+L0ZTf7lmFa3S++2BBLAB6zolh3w3IlymO56zrtRps0+OWtJzfllf8QITGyf0P7J6Gml1J+knvxy+Wb8=
-X-Received: by 2002:adf:b60d:: with SMTP id f13mr12155953wre.12.1585260235721;
- Thu, 26 Mar 2020 15:03:55 -0700 (PDT)
+        Thu, 26 Mar 2020 18:05:40 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02QM4pYo003294;
+        Thu, 26 Mar 2020 18:05:22 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 300jeununj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 18:05:22 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02QM3AUC020255;
+        Thu, 26 Mar 2020 22:05:21 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma02dal.us.ibm.com with ESMTP id 2ywaw2ra6v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 22:05:20 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02QM5KIb11076308
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Mar 2020 22:05:20 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 18E20AC311;
+        Thu, 26 Mar 2020 22:05:20 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BCBDAC2E7;
+        Thu, 26 Mar 2020 22:05:11 +0000 (GMT)
+Received: from LeoBras (unknown [9.85.162.45])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 26 Mar 2020 22:05:10 +0000 (GMT)
+Message-ID: <f86aa1672b447bd09a214bc8682a70934dcee82f.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH 1/1] ppc/smp: Replace unnecessary 'while' by 'if'
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Paul Mackerras <paulus@ozlabs.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Thu, 26 Mar 2020 19:05:03 -0300
+In-Reply-To: <20200326214005.GB9894@blackberry>
+References: <20200326203752.497029-1-leonardo@linux.ibm.com>
+         <20200326214005.GB9894@blackberry>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-GTdlyedGwk3mGYQKKQZt"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-References: <20200326191623.129285-1-joel@joelfernandes.org>
- <20200326192035.GO162390@mtj.duckdns.org> <20200326194448.GA133524@google.com>
- <972a5c1b-6721-ac20-cec5-617af67e617d@redhat.com> <CAPz6YkVUsDz456z8-X2G_EDd-uet1rRNnh2sDUpdcoWp_fkDDw@mail.gmail.com>
- <e9093ab2-f61f-edf1-5da7-fce5101d6dbf@redhat.com>
-In-Reply-To: <e9093ab2-f61f-edf1-5da7-fce5101d6dbf@redhat.com>
-From:   Sonny Rao <sonnyrao@google.com>
-Date:   Thu, 26 Mar 2020 15:03:42 -0700
-Message-ID: <CAPz6YkXVYJBow-6G023eaDEKFORPh3AKQb6gfrM8XX8=bdXL2A@mail.gmail.com>
-Subject: Re: [PATCH RFC] cpuset: Make cpusets get restored on hotplug
-To:     Waiman Long <longman@redhat.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>, Tejun Heo <tj@kernel.org>,
-        linux-kernel@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>,
-        Amit Pundir <amit.pundir@linaro.org>, kernel-team@android.com,
-        Jesse Barnes <jsbarnes@google.com>, vpillai@digitalocean.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, cgroups@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Li Zefan <lizefan@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-26_13:2020-03-26,2020-03-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=838 bulkscore=0
+ lowpriorityscore=0 priorityscore=1501 impostorscore=0 spamscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003260160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 2:47 PM Waiman Long <longman@redhat.com> wrote:
->
-> On 3/26/20 4:05 PM, Sonny Rao wrote:
-> >> I think Tejun is concerned about a change in the default behavior of
-> >> cpuset v1.
-> >>
-> >> There is a special v2 mode for cpuset that is enabled by the mount
-> >> option "cpuset_v2_mode". This causes the cpuset v1 to adopt some of the
-> >> v2 behavior. I introduced this v2 mode a while back to address, I think,
-> >> a similar concern. Could you try that to see if it is able to address
-> >> your problem? If not, you can make some code adjustment within the
-> >> framework of the v2 mode. As long as it is an opt-in, I think we are
-> >> open to further change.
-> > I am surprised if anyone actually wants this behavior, we (Chrome OS)
-> > found out about it accidentally, and then found that Android had been
-> > carrying a patch to fix it.  And if it were a desirable behavior then
-> > why isn't it an option in v2?
-> >
-> I am a bit confused. The v2 mode make cpuset v1 behaves more like cpuset
-> v2. The original v1 behavior has some obvious issue that was fixed in
-> v2. So what v2 option are you talking about?
 
-I was merely pointing out the behavior of the v1 implementation is so
-undesirable that it wasn't kept at all in v2.  IMHO, it's a bug that
-should be fixed, and I think it's possible to keep the old behavior if
-all cpus are offlined, but since you've added this option we can use
-it instead.
+--=-GTdlyedGwk3mGYQKKQZt
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->
-> Regards,
-> Longman
->
+On Fri, 2020-03-27 at 08:40 +1100, Paul Mackerras wrote:
+> On Thu, Mar 26, 2020 at 05:37:52PM -0300, Leonardo Bras wrote:
+> > spin_until_cond() will wait until nmi_ipi_busy =3D=3D false, and
+> > nmi_ipi_lock_start() does not seem to change nmi_ipi_busy, so there is
+> > no way this while will ever repeat.
+> >=20
+> > Replace this 'while' by an 'if', so it does not look like it can repeat=
+.
+>=20
+> Nack, it can repeat.  The scenario is that cpu A is in this code,
+> inside spin_until_cond(); cpu B has previously set nmi_ipi_busy, and
+> cpu C is also waiting for nmi_ipi_busy to be cleared, like cpu A.
+> When cpu B clears nmi_ipi_busy, both cpu A and cpu C will see that and
+> will race inside nmi_ipi_lock_start().  One of them, say cpu C, will
+> take the lock and proceed to set nmi_ipi_busy and then call
+> nmi_ipi_unlock().  Then the other cpu (cpu A) will then take the lock
+> and return from nmi_ipi_lock_start() and find nmi_ipi_busy =3D=3D true.
+> At that point it needs to go through the while loop body once more.
+>=20
+> Paul.
+
+Ok, got it.
+
+Thanks for explaining Paul!
+
+--=-GTdlyedGwk3mGYQKKQZt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl59JxAACgkQlQYWtz9S
+ttTSdRAAttveHAUp1FuyI8cjRY3YA64LGrCYQ/GJZfAZljGAMyg78+BO1orF0p7b
+n+wYBDvQzqmLMgL5fUxeHG+CQzPX7unA/9n+rn7y4j+BVZbupjLHOnPXswoDda3Y
+Ycs5eFcEJ2d5Fs0psXJs/aOVtF6cd8uKNzdpk0tVGM3VMkoB509DtJqdkjY96n1g
+Oi7+eDKF+yUNIxmOjEeTaJwR9fSrzLRJhdnLLpOmR0/42QvOcGeh8q3p2qtCyfgo
+H6qEXVCq5E1nYLGuvJskD46vaRRXGZ29myCPzFDTUpaP5JMH36sUw4Ei6UjNgz8x
+DhXNqoqSKQ4/mP91fMXgfyBGER2l4f4dTn1fmkXRC6IAt49XIFzRTVHf7GxS3i2z
+jHQQHrkWmCnFeRjzbGZDZUeNU/XmNMXKponwH7Q2KvPmtiaG9YDsPnB5cKGfFyKN
+uOGH0fjq1yHDq3O4epERX+o+2qTxKcEUQOakkQ4chpJ6eC/EgM2KPEwadZdZ1BAf
+DQM4nCzsPQP+zptJO+LjJqDjZ1JXBwoeJYfPJBfB8pAw8VgvIXcnXVfHwoSH7WGf
+1JRmT583BLGzc3cqD89kyzZ2NbL+XEGNTWcEAEHzg6Nf+2t4AQQY3T7U4Cluj2Fl
+cXrBonqlCQPiR7ShKkwkYgQ7ZuYeuV1JdKsDjVXy85WBnxcAugI=
+=iE5j
+-----END PGP SIGNATURE-----
+
+--=-GTdlyedGwk3mGYQKKQZt--
+
