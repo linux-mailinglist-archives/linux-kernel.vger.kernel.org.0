@@ -2,99 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AEB31938DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 07:49:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA8B5193907
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 07:56:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbgCZGtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 02:49:13 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43716 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbgCZGtN (ORCPT
+        id S1726347AbgCZG4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 02:56:32 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:39919 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726213AbgCZG4c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 02:49:13 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m11so448595wrx.10;
-        Wed, 25 Mar 2020 23:49:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Y4psBKXqPtMQHGDD9G3/UVc0Xd+VFzRe3hFm6IS58p0=;
-        b=UjoPC7uF3WBBdKIXcCFujcbJEaFfpjqCfAPOApPz3XC90/gvtt708FrkoU8hDY++vp
-         ORaBgcBQrUTPbrQMG4rIyylpegm3CVdAHpZrEoS9zYBhaCnUedkpxjLiN/mhl8ih/MnS
-         eUcDHKsHowTcSq2xFxAsG3H39hpKX+Jcqjht39cX54o6OBudmZ6IHGIqAZWZKxydqIar
-         85BmoSS91BGjSdk0vM0wGT5wrEQamLTu0ekfSJyC+3QbrHlFCmLpmvuqgki1tVc8tNpj
-         0oSbAVSvV3iZoYDvn4A6gndz1lgLYYvxdnKoZIlWsTK7BK7r0nJAlpvaZ+C4QYQM4vps
-         rIsw==
-X-Gm-Message-State: ANhLgQ2OeyyHI99GpwG6MrtU/6zLjBCGCZUAG1OUg55T3uEw82Mrq9hS
-        lPWXmulcO89Utv/ZaG9FuLg=
-X-Google-Smtp-Source: ADFU+vsYkHP2H+pALnVpF91T9GwcryXmAjyQiSJ+3+DZsC6TZ76dyL1pE5MKqrHwjbWOtc1EcQMwTQ==
-X-Received: by 2002:adf:fac7:: with SMTP id a7mr7803851wrs.191.1585205351825;
-        Wed, 25 Mar 2020 23:49:11 -0700 (PDT)
-Received: from localhost (ip-37-188-135-150.eurotel.cz. [37.188.135.150])
-        by smtp.gmail.com with ESMTPSA id g2sm2247830wrs.42.2020.03.25.23.49.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 23:49:10 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 07:49:09 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Rafael Aquini <aquini@redhat.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        Eric B Munson <emunson@akamai.com>
-Subject: Re: [PATCH] tools/testing/selftests/vm/mlock2-tests: fix mlock2
- false-negative errors
-Message-ID: <20200326064909.GB27965@dhcp22.suse.cz>
-References: <20200323144240.GB23364@optiplex-lnx>
- <20200323145106.GM7524@dhcp22.suse.cz>
- <20200323150259.GD23364@optiplex-lnx>
- <20200323151256.GP7524@dhcp22.suse.cz>
- <20200323154159.GF23364@optiplex-lnx>
- <20200323155111.GQ7524@dhcp22.suse.cz>
- <20200323155449.GG23364@optiplex-lnx>
- <20200324154218.GS19542@dhcp22.suse.cz>
- <20200324154910.GM23364@optiplex-lnx>
- <20200325174949.95d8a9de61c6a30a7e0f4582@linux-foundation.org>
+        Thu, 26 Mar 2020 02:56:32 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R751e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=changhuaixin@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TtfkZjG_1585205778;
+Received: from localhost(mailfrom:changhuaixin@linux.alibaba.com fp:SMTPD_---0TtfkZjG_1585205778)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 26 Mar 2020 14:56:22 +0800
+From:   Huaixin Chang <changhuaixin@linux.alibaba.com>
+To:     linux-kernel@vger.kernel.org, changhuaixin@linux.alibaba.com
+Cc:     shanpeic@linux.alibaba.com, yun.wang@linux.alibaba.com,
+        xlpang@linux.alibaba.com, peterz@infradead.org, mingo@redhat.com,
+        bsegall@google.com, chiluk+linux@indeed.com,
+        vincent.guittot@linaro.org
+Subject: [PATCH v2] sched: Fix race between runtime distribution and assignment
+Date:   Thu, 26 Mar 2020 14:56:06 +0800
+Message-Id: <20200326065606.19193-1-changhuaixin@linux.alibaba.com>
+X-Mailer: git-send-email 2.14.4.44.g2045bb6
+In-Reply-To: <20200325092602.22471-1-changhuaixin@linux.alibaba.com>
+References: <20200325092602.22471-1-changhuaixin@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200325174949.95d8a9de61c6a30a7e0f4582@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 25-03-20 17:49:49, Andrew Morton wrote:
-> On Tue, 24 Mar 2020 11:49:10 -0400 Rafael Aquini <aquini@redhat.com> wrote:
-> 
-> > Thanks Michal!
-> > 
-> >  
-> > Acked-by: Rafael Aquini <aquini@redhat.com>
-> 
-> I'll add
-> Fixes: 9c4e6b1a7027f ("mm, mlock, vmscan: no more skipping pagevecs")
+Currently, there is a potential race between distribute_cfs_runtime()
+and assign_cfs_rq_runtime(). Race happens when cfs_b->runtime is read,
+distributes without holding lock and finds out there is not enough
+runtime to charge against after distribution. Because
+assign_cfs_rq_runtime() might be called during distribution, and use
+cfs_b->runtime at the same time.
 
-Wouldn't be this misleading? It would suggest that this commit is
-somehow incorrect. I would consider b3b0d09c7a23 ("selftests: vm: add
-tests for lock on fault") to be a better fit.
+Fibtest is the tool to test this race. Assume all gcfs_rq is throttled
+and cfs period timer runs, slow threads might run and sleep, returning
+unused cfs_rq runtime and keeping min_cfs_rq_runtime in their local
+pool. If all this happens sufficiently quickly, cfs_b->runtime will drop
+a lot. If runtime distributed is large too, over-use of runtime happens.
 
-> and cc:stable to this.  Any kernel which has 9c4e6b1a7027f will benefit
-> from this change.
+A runtime over-using by about 70 percent of quota is seen when we
+test fibtest on a 96-core machine. We run fibtest with 1 fast thread and
+95 slow threads in test group, configure 10ms quota for this group and
+see the CPU usage of fibtest is 17.0%, which is far more than the
+expected 10%.
 
-OK, makes sense with
-Cc: stable # with 9c4e6b1a7027f applied
+On a smaller machine with 32 cores, we also run fibtest with 96
+threads. CPU usage is more than 12%, which is also more than expected
+10%. This shows that on similar workloads, this race do affect CPU
+bandwidth control.
+
+Solve this by holding lock inside distribute_cfs_runtime().
+
+Fixes: c06f04c70489 ("sched: Fix potential near-infinite distribute_cfs_runtime() loop")
+Signed-off-by: Huaixin Chang <changhuaixin@linux.alibaba.com>
+---
+v2: fix spelling, initialize variable rumaining in distribute_cfs_runtime()
+---
+ kernel/sched/fair.c | 31 ++++++++++++-------------------
+ 1 file changed, 12 insertions(+), 19 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index c1217bfe5e81..fd30e06a7ffc 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4629,11 +4629,11 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 		resched_curr(rq);
+ }
  
-> We're getting quite late in the cycle now so I think I'll hold off
-> merging this up until post-5.7-rc1.  It will still get into the stable
-> trees, but a bit later.
-
-No problem. Nothing really urget. Coincidentaly we've just had a report
-from our partner about this very specific test failure for our
-enterprise kernel as well. I will just backport the patch as it seems
-nobody really objects to it.
-
-Thanks!
+-static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b, u64 remaining)
++static void distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
+ {
+ 	struct cfs_rq *cfs_rq;
+-	u64 runtime;
+-	u64 starting_runtime = remaining;
++	u64 runtime, remaining = 1;
++	unsigned long flags;
+ 
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(cfs_rq, &cfs_b->throttled_cfs_rq,
+@@ -4648,10 +4648,13 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b, u64 remaining)
+ 		/* By the above check, this should never be true */
+ 		SCHED_WARN_ON(cfs_rq->runtime_remaining > 0);
+ 
++		raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 		runtime = -cfs_rq->runtime_remaining + 1;
+-		if (runtime > remaining)
+-			runtime = remaining;
+-		remaining -= runtime;
++		if (runtime > cfs_b->runtime)
++			runtime = cfs_b->runtime;
++		cfs_b->runtime -= runtime;
++		remaining = cfs_b->runtime;
++		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 
+ 		cfs_rq->runtime_remaining += runtime;
+ 
+@@ -4666,8 +4669,6 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b, u64 remaining)
+ 			break;
+ 	}
+ 	rcu_read_unlock();
+-
+-	return starting_runtime - remaining;
+ }
+ 
+ /*
+@@ -4678,7 +4679,6 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b, u64 remaining)
+  */
+ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, unsigned long flags)
+ {
+-	u64 runtime;
+ 	int throttled;
+ 
+ 	/* no need to continue the timer with no bandwidth constraint */
+@@ -4708,23 +4708,17 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, u
+ 
+ 	/*
+ 	 * This check is repeated as we are holding onto the new bandwidth while
+-	 * we unthrottle. This can potentially race with an unthrottled group
+-	 * trying to acquire new bandwidth from the global pool. This can result
+-	 * in us over-using our runtime if it is all used during this loop, but
+-	 * only by limited amounts in that extreme case.
++	 * we unthrottle.
+ 	 */
+ 	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
+-		runtime = cfs_b->runtime;
+ 		cfs_b->distribute_running = 1;
+ 		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 		/* we can't nest cfs_b->lock while distributing bandwidth */
+-		runtime = distribute_cfs_runtime(cfs_b, runtime);
++		distribute_cfs_runtime(cfs_b);
+ 		raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 
+ 		cfs_b->distribute_running = 0;
+ 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
+-
+-		lsub_positive(&cfs_b->runtime, runtime);
+ 	}
+ 
+ 	/*
+@@ -4858,10 +4852,9 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+ 	if (!runtime)
+ 		return;
+ 
+-	runtime = distribute_cfs_runtime(cfs_b, runtime);
++	distribute_cfs_runtime(cfs_b);
+ 
+ 	raw_spin_lock_irqsave(&cfs_b->lock, flags);
+-	lsub_positive(&cfs_b->runtime, runtime);
+ 	cfs_b->distribute_running = 0;
+ 	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ }
 -- 
-Michal Hocko
-SUSE Labs
+2.14.4.44.g2045bb6
+
