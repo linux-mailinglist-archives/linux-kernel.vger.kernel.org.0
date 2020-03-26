@@ -2,104 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B53A019466A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 271A119466F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:23:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbgCZSVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 14:21:02 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:44089 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbgCZSVC (ORCPT
+        id S1728349AbgCZSWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 14:22:46 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40298 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728202AbgCZSWp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 14:21:02 -0400
-Received: by mail-vs1-f65.google.com with SMTP id e138so4492228vsc.11
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:21:00 -0700 (PDT)
+        Thu, 26 Mar 2020 14:22:45 -0400
+Received: by mail-ot1-f66.google.com with SMTP id r19so1088649otn.7
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:22:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/ohjyYv73OFKplmBSM5tbGvwFGemqZp6n5SDqqDBghU=;
-        b=HMIxrbK1VCB2JxiQem4/MeacZoLlMIbT6Oaise1EYREq3Npjbn+u7cn+w3g/xFl3K/
-         3eeKrOIKuUnSMHwY6GxEXl1EPlDU6KUdFBMueFiFO2KlaCccAiLgmOa2cFUWt6fYhoa7
-         oEDNm5IU3L+Q3TA9eizBtP3dpLIi8HZV3yn1Y=
+        bh=DxL0ioGFfMwjynlJlfLLWjyZe5fDeVy9kFRmHMW+Zn4=;
+        b=HUtCop/N6lNjtvAtGQl3Qm5p2bBQhIlBLItjnkXj5ZKpT5PppcECix1JfOr48DRO4N
+         iavXL5M/GEeqb3r7Rq1msl0BQpyCkLqK3Ve3pqzIdC6/icFLJOyCL9QRML8kWvfUN11K
+         Vkiskx8LkX2OP9kr+Cz/F9EvejTbX1PmtkMqV46iwKlukQuniFRu6D4dWMNtzALmN4UO
+         J1LRjHyLjfvSqMiX3w0CJ1TIfV6fo6HEMGexJE7SVUYm2AJB+o+ujQdi1DIL73voh0rn
+         xuEeof8e+1XOjoagT1sxjmbw2ll+A+tolU0hhsZx2FK5/sjirw0gamQH41k21r31Ku5p
+         uXLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/ohjyYv73OFKplmBSM5tbGvwFGemqZp6n5SDqqDBghU=;
-        b=CQHdBWLlxEsyKCFJIAqYnk3/JtSIy/2u/S7Kp1G/V11nWK762sr/OEjF4VpTVSq2DL
-         IvzNR7gjuiIRpEFKHcrn6hQSNBYhGFH9ezH60wWTfXAyA73dgZ9ZE82DS/TOVIkVJWQV
-         +fPdULdAt1uceyWXmWk8C+Az5MIOb7OFUA+b1N21fh8mK7mbBrAwXUlWcuhWIGOndlmZ
-         tmOFKG5Y6rH1Cg3lt92VtX/9V4YbCrtxsCz7HSBAbSmJsDuqlsY618NmKAM5RXPnyH0/
-         /+lG7wiQYNP+x1guOBUZH6GYqkv8889AwBfRW0dj069HgeMnz4g8sfFrNhyVn7ou8XTn
-         bKFw==
-X-Gm-Message-State: ANhLgQ0AWu81aQ/Hzz/2M6mileJ5/OhMZRI3P3zy30ilnOjpirC0Gl3H
-        UHBavnD/FggTsMSEuSBndCV7TcYEtY8=
-X-Google-Smtp-Source: ADFU+vu5jZuIXq6fyd+fpGSKCnHhaoityiSpsP6NKmAy2fQyIvdIeIiH9sr1BML2VRLpkQFoZIVb6g==
-X-Received: by 2002:a67:c189:: with SMTP id h9mr8089221vsj.91.1585246859642;
-        Thu, 26 Mar 2020 11:20:59 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id g1sm1484972uak.5.2020.03.26.11.20.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Mar 2020 11:20:58 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id e138so4492121vsc.11
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:20:57 -0700 (PDT)
-X-Received: by 2002:a67:2c81:: with SMTP id s123mr7183988vss.198.1585246857424;
- Thu, 26 Mar 2020 11:20:57 -0700 (PDT)
+        bh=DxL0ioGFfMwjynlJlfLLWjyZe5fDeVy9kFRmHMW+Zn4=;
+        b=Nac8BBLAJMqARiJ6obtfvTLBQ7zPBhgvqCzkt8SuKg602CoWA79P4uL3NBfA+2IBO9
+         w9RbudbXA2HPwMnx1qcmHEeg49xloYmKYTpkWREU08/Orcsektv9qEp4sjvrdLqdsK9+
+         7DnIFJipnJAn4habuPSwwM/fjB8C/8V7Fj9BD1ZsJaBWAht7VLVpYiq6Q2nw7O4sY5CF
+         T4poM49U8urFIGVKDMvImLw4dAe3wnAfw8YdjN5izY08n2C0U1sAdfjbcDnggCVBaz7p
+         uRP2Qg7yh/3Y5MgsYPzeJYjEUp9zBkMetpsd6jZafCISB3UIQeaCDbYH3GcYHT5wvMfa
+         WCfA==
+X-Gm-Message-State: ANhLgQ37LfRKMmZhNNdi9xjhDAMl5SztkHRIvBw6OYLkU2cvQ0k/LjQw
+        GWL16WkwG2EA7NEDGtIS6a7aGfqpdgk/ZMbpaudRlVAG
+X-Google-Smtp-Source: ADFU+vtksZIIqekjFEA7AN+kJkboACCxTSymovsuMEtWozINteGk0Gs4LbaZXL36DLqPAcNR1Tpr+XMZlCKK2XGsTF0=
+X-Received: by 2002:a4a:b507:: with SMTP id r7mr6304216ooo.70.1585246964628;
+ Thu, 26 Mar 2020 11:22:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <1585244270-637-1-git-send-email-mkshah@codeaurora.org> <1585244270-637-6-git-send-email-mkshah@codeaurora.org>
-In-Reply-To: <1585244270-637-6-git-send-email-mkshah@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 26 Mar 2020 11:20:45 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WvMe4xqGTH=pU8TL1FWN9BBkp0EOkxasdBsC51299fJA@mail.gmail.com>
-Message-ID: <CAD=FV=WvMe4xqGTH=pU8TL1FWN9BBkp0EOkxasdBsC51299fJA@mail.gmail.com>
-Subject: Re: [PATCH v14 5/6] soc: qcom: rpmh-rsc: Clear active mode
- configuration for wake TCS
-To:     Maulik Shah <mkshah@codeaurora.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+References: <20200326172457.205493-1-saravanak@google.com>
+In-Reply-To: <20200326172457.205493-1-saravanak@google.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Thu, 26 Mar 2020 11:22:32 -0700
+Message-ID: <CALAqxLV6CQkJXdtBD5vUOvLYCe10sEUPa4RS9PuGB2=e4-80rQ@mail.gmail.com>
+Subject: Re: [PATCH v2] slimbus: core: Set fwnode for a device when setting of_node
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Thu, Mar 26, 2020 at 10:38 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+On Thu, Mar 26, 2020 at 10:25 AM Saravana Kannan <saravanak@google.com> wrote:
 >
-> From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+> When setting the of_node for a newly created device, also set the
+> fwnode. This allows fw_devlink feature to work for slimbus devices.
 >
-> For RSCs that have sleep & wake TCS but no dedicated active TCS, wake
-> TCS can be re-purposed to send active requests. Once the active requests
-> are sent and response is received, the active mode configuration needs
-> to be cleared so that controller can use wake TCS for sending wake
-> requests.
->
-> Introduce enable_tcs_irq() to enable completion IRQ for repurposed TCSes.
->
-> Fixes: 2de4b8d33eab (drivers: qcom: rpmh-rsc: allow active requests from wake TCS)
-> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
-> [mkshah: call enable_tcs_irq() within drv->lock, update commit message]
-> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-> ---
->  drivers/soc/qcom/rpmh-rsc.c | 77 +++++++++++++++++++++++++++++++--------------
->  1 file changed, 54 insertions(+), 23 deletions(-)
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
 
-I was writing my review of v1 at the same time you sent this.  Looks
-like your patch does address the most important piece of feedback I
-had (adjusting the interrupt enable under spinlock), but some of the
-other feedback might be nice to incorporate:
+Tested-by: John Stultz <john.stultz@linaro.org>
 
-https://lore.kernel.org/r/CAD=FV=XmBQb8yfx14T-tMQ68F-h=3UHog744b3X3JZViu15+4g@mail.gmail.com
-
--Doug
+thanks!
+-john
