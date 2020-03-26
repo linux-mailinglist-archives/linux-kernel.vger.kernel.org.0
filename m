@@ -2,82 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58CF61942DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:18:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D9581942E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:18:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbgCZPR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 11:17:56 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33878 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbgCZPRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 11:17:55 -0400
-Received: from zn.tnic (p200300EC2F0A4900341618FA2426449A.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:4900:3416:18fa:2426:449a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 97BA51EC0469;
-        Thu, 26 Mar 2020 16:17:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1585235874;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=PoN/7rYz9AoBh8GJI/bdaHsVDtWJ4mFyOEFbfYWnBeQ=;
-        b=gswVKwMcy+eO7uaRwRU7TB7DSqgNABIC2my5gmEVw3JGtgB78N4IawmXs0OcpJwFgZNW6y
-        XYbwynQJ4WaZXx216v/0SVwTDS5jlBg5M3UnWhfBTygQIhgEyj6NRzpnS+OhzanfvGJQ7t
-        iqNQykMOWxj4VTnDdxK8W6/N2569auY=
-Date:   Thu, 26 Mar 2020 16:17:50 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com
-Subject: Re: [RESEND][PATCH v3 10/17] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20200326151750.GC11398@zn.tnic>
-References: <20200324135603.483964896@infradead.org>
- <20200324142245.880990363@infradead.org>
+        id S1728076AbgCZPS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 11:18:27 -0400
+Received: from ec2-3-21-30-127.us-east-2.compute.amazonaws.com ([3.21.30.127]:48634
+        "EHLO www.teo-en-ming.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727547AbgCZPS0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 11:18:26 -0400
+Received: from localhost (localhost [IPv6:::1])
+        by www.teo-en-ming.com (Postfix) with ESMTPA id 36463426B9A;
+        Thu, 26 Mar 2020 23:18:26 +0800 (+08)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200324142245.880990363@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Date:   Thu, 26 Mar 2020 23:18:26 +0800
+From:   Turritopsis Dohrnii Teo En Ming <ceo@teo-en-ming.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     ceo@teo-en-ming.com
+Subject: Teo En Ming's Debian 10.3 Linux Live CD/DVD is available for download
+Message-ID: <bee44e35bead4e58b0f5d255a351fe0a@teo-en-ming.com>
+X-Sender: ceo@teo-en-ming.com
+User-Agent: Roundcube Webmail/1.2.3
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 02:56:13PM +0100, Peter Zijlstra wrote:
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -15,6 +15,7 @@
->  
->  #include <linux/hashtable.h>
->  #include <linux/kernel.h>
-> +#include <linux/static_call_types.h>
->  
->  #define FAKE_JUMP_OFFSET -1
->  
-> @@ -1345,6 +1346,21 @@ static int read_retpoline_hints(struct o
->  	return 0;
->  }
->  
-> +static int read_static_call_tramps(struct objtool_file *file)
-> +{
-> +	struct section *sec, *sc_sec = find_section_by_name(file->elf, ".static_call.text");
-> +	struct symbol *func;
+Subject: Teo En Ming's Debian 10.3 Linux Live CD/DVD is available for 
+download
 
-	if (!sc_sec)
-		return;
+FOR IMMEDIATE RELEASE
+26 MARCH 2020 THURSDAY
+SINGAPORE
 
-no?
+Teo En Ming's Debian 10.3 Linux Live CD/DVD is available for download. 
+It is based on Debian 10.3 Linux 64-bit, features Linux kernel 4.19.0 
+and has an integrated GNOME GUI desktop environment with internet 
+access.
 
-I mean, it is enabled by default on X86_64 but not on 32-bit. Or will it
-be?
+You may download Teo En Ming's Debian 10.3 Linux Live CD/DVD at the 
+following Google Drive download link.
 
--- 
-Regards/Gruss,
-    Boris.
+URL: https://drive.google.com/open?id=1vGKo4OPFj0ziUhFB5sZOL4nwCic4nDBV
 
-https://people.kernel.org/tglx/notes-about-netiquette
+This is the very first release. Expect subsequent releases in the future 
+to be even better. Stay tuned for more!
+
+
+
+
+
+
+
+
+-----BEGIN EMAIL SIGNATURE-----
+
+The Gospel for all Targeted Individuals (TIs):
+
+[The New York Times] Microwave Weapons Are Prime Suspect in Ills of
+U.S. Embassy Workers
+
+Link: 
+https://www.nytimes.com/2018/09/01/science/sonic-attack-cuba-microwave.html
+
+********************************************************************************************
+
+Singaporean Mr. Turritopsis Dohrnii Teo En Ming's Academic
+Qualifications as at 14 Feb 2019 and refugee seeking attempts at the 
+United Nations Refugee Agency Bangkok (21 Mar 2017), in Taiwan (5 Aug 
+2019) and Australia (25 Dec 2019 to 9 Jan 2020):
+
+[1] https://tdtemcerts.wordpress.com/
+
+[2] https://tdtemcerts.blogspot.sg/
+
+[3] https://www.scribd.com/user/270125049/Teo-En-Ming
+
+-----END EMAIL SIGNATURE-----
