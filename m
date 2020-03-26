@@ -2,96 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5614C194CB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 00:26:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D86F194CFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 00:28:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbgCZX0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 19:26:19 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45954 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728475AbgCZX0S (ORCPT
+        id S1728077AbgCZX2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 19:28:02 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58428 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728186AbgCZX2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 19:26:18 -0400
-Received: by mail-ed1-f67.google.com with SMTP id u59so8971852edc.12;
-        Thu, 26 Mar 2020 16:26:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WqZyECE7b3l+/W5cG6aN6aQ7OERbPPJKLPh37gMr4P8=;
-        b=ue1h1NgsTbotQg6qMgEzUEGsjz11gWWWp2SUopj+TH8eOOBmYryxsfc281mZqrloEv
-         P76dythInNUEfdLKgr7SgCfjmFg6sE925yUai/7kD6iygiYW41tOLyueWqE41PZp/QQL
-         FrX5esvWQpq4u2MT/46hJXxhdRYrB5LZG3OXoJRY8UAsN3fhBfF+Mmj+NBCYmBlhXkiB
-         ee9g1chV624ys8iJxZOeJyLMD2lsOpr6uT72VNd2zFkDdFIzEQU1YJ3iJvKiaWZUvhxd
-         8ctYZYkWyFiCfSr/Sev5oQ62jff2k4N93aiamR/xOeC6EwLqNDKHb5/vZDTffrPQMHeA
-         j5uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WqZyECE7b3l+/W5cG6aN6aQ7OERbPPJKLPh37gMr4P8=;
-        b=U3mjb2viczXn5UNIInSpTrD1qs9k91EIacNeAUJkp7WtX4zntiHRY6l3t52ujvc8OV
-         orhdResRTti+Qqyf45272qh2ch7IVbvN+DMIwPKn9CDGSLXhUDdLKlbayUCFChHZgbct
-         4FC0Mr9PjGKiVIBRo1UG4eJdUBRbk5yP5pCmV69T/cnW3WhNEjGDgVSi1RQBdYUEnXpt
-         txwEXPs63Tu9wzIzTfbn9Vw37av0HQK233xppehjKikuPaCsQGZvhUN6D+6w6gTswAB2
-         SqBuvdy2WMriX0glb0YCQVOOODOSfxDsj98DT4oMXIWwzMzxPPVFfWvNm5teWMhAJtvY
-         BM5A==
-X-Gm-Message-State: ANhLgQ35dGKMmUkpazLY+aEyggg9KqzaaaJtrySX00jDM/Nuc6MpTQpv
-        PsDIjdzDbPDHJXKtNWgVTO3JjSypHR2I8RfhKsc=
-X-Google-Smtp-Source: ADFU+vszUtR++CH3qXXBapVjGUYTUgP4+oCVQrrF3dM3CXErGyDOKMkYURV1D0IJSRdLQ53DbhvctfJOG7ec6N875qg=
-X-Received: by 2002:a17:906:491:: with SMTP id f17mr162602eja.30.1585265176806;
- Thu, 26 Mar 2020 16:26:16 -0700 (PDT)
+        Thu, 26 Mar 2020 19:28:00 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02QN37e3115286;
+        Thu, 26 Mar 2020 19:27:24 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ywf2kyp7h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 19:27:24 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 02QN7XfB003164;
+        Thu, 26 Mar 2020 19:27:20 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ywf2kyp5n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 19:27:19 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02QNOwTM031251;
+        Thu, 26 Mar 2020 23:27:14 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma01dal.us.ibm.com with ESMTP id 2ywawmgu13-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 23:27:14 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02QNRD0K50331954
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Mar 2020 23:27:13 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 32EC2AE05C;
+        Thu, 26 Mar 2020 23:27:13 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D0E36AE062;
+        Thu, 26 Mar 2020 23:27:04 +0000 (GMT)
+Received: from LeoBras (unknown [9.85.162.45])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 26 Mar 2020 23:27:04 +0000 (GMT)
+Message-ID: <d8ad4ef329bda280cac4103ad69a391fee63eaf8.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/1] ppc/crash: Skip spinlocks during crash
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Enrico Weigelt <info@metux.net>,
+        Allison Randal <allison@lohutok.net>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 26 Mar 2020 20:26:59 -0300
+In-Reply-To: <20200326222836.501404-1-leonardo@linux.ibm.com>
+References: <20200326222836.501404-1-leonardo@linux.ibm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-FVin2VQG/dF3wxpzlErY"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-References: <20200326134507.4808-1-narmstrong@baylibre.com> <20200326134507.4808-8-narmstrong@baylibre.com>
-In-Reply-To: <20200326134507.4808-8-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 27 Mar 2020 00:26:06 +0100
-Message-ID: <CAFBinCBhk+XvjGODBaNH7tzCfGktYdmk1wED8UC6cYmS3ucbig@mail.gmail.com>
-Subject: Re: [PATCH v2 07/14] usb: dwc3: meson-g12a: refactor usb init
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     kishon@ti.com, balbi@kernel.org, khilman@baylibre.com,
-        linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-26_14:2020-03-26,2020-03-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ suspectscore=0 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ malwarescore=0 mlxlogscore=999 clxscore=1015 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003260166
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
 
-On Thu, Mar 26, 2020 at 2:45 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
-[...]
-> -static int dwc3_meson_g12a_usb2_init(struct dwc3_meson_g12a *priv)
-> +static int dwc3_meson_g12a_usb2_init(struct dwc3_meson_g12a *priv,
-> +                                    enum phy_mode mode)
+--=-FVin2VQG/dF3wxpzlErY
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+oops, forgot to EXPORT_SYMBOL.=20
+arch_spin_lock*() is used on modules.
+
+Sending v2.
+
+On Thu, 2020-03-26 at 19:28 -0300, Leonardo Bras wrote:
+> During a crash, there is chance that the cpus that handle the NMI IPI
+> are holding a spin_lock. If this spin_lock is needed by crashing_cpu it
+> will cause a deadlock. (rtas_lock and printk logbuf_log as of today)
+>=20
+> This is a problem if the system has kdump set up, given if it crashes
+> for any reason kdump may not be saved for crash analysis.
+>=20
+> Skip spinlocks after NMI IPI is sent to all other cpus.
+>=20
+> Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
+> ---
+>  arch/powerpc/include/asm/spinlock.h | 6 ++++++
+>  arch/powerpc/kexec/crash.c          | 3 +++
+>  2 files changed, 9 insertions(+)
+>=20
+> diff --git a/arch/powerpc/include/asm/spinlock.h b/arch/powerpc/include/a=
+sm/spinlock.h
+> index 860228e917dc..a6381d110795 100644
+> --- a/arch/powerpc/include/asm/spinlock.h
+> +++ b/arch/powerpc/include/asm/spinlock.h
+> @@ -111,6 +111,8 @@ static inline void splpar_spin_yield(arch_spinlock_t =
+*lock) {};
+>  static inline void splpar_rw_yield(arch_rwlock_t *lock) {};
+>  #endif
+> =20
+> +extern bool crash_skip_spinlock __read_mostly;
+> +
+>  static inline bool is_shared_processor(void)
 >  {
->         int i, ret;
->
-> -       if (priv->otg_mode == USB_DR_MODE_PERIPHERAL)
-> -               priv->otg_phy_mode = PHY_MODE_USB_DEVICE;
-> -       else
-> -               priv->otg_phy_mode = PHY_MODE_USB_HOST;
-> -
->         for (i = 0; i < priv->drvdata->num_phys; ++i) {
->                 if (!priv->phys[i])
->                         continue;
-> @@ -284,9 +286,10 @@ static void dwc3_meson_g12a_usb3_init(struct dwc3_meson_g12a *priv)
->                         FIELD_PREP(USB_R1_P30_PCS_TX_SWING_FULL_MASK, 127));
->  }
-There is something strange with dwc3_meson_g12a_usb2_init.
-enum phy_mode mode is added here but it's not used inside this function
+>  #ifdef CONFIG_PPC_SPLPAR
+> @@ -142,6 +144,8 @@ static inline void arch_spin_lock(arch_spinlock_t *lo=
+ck)
+>  		if (likely(__arch_spin_trylock(lock) =3D=3D 0))
+>  			break;
+>  		do {
+> +			if (unlikely(crash_skip_spinlock))
+> +				return;
+>  			HMT_low();
+>  			if (is_shared_processor())
+>  				splpar_spin_yield(lock);
+> @@ -161,6 +165,8 @@ void arch_spin_lock_flags(arch_spinlock_t *lock, unsi=
+gned long flags)
+>  		local_save_flags(flags_dis);
+>  		local_irq_restore(flags);
+>  		do {
+> +			if (unlikely(crash_skip_spinlock))
+> +				return;
+>  			HMT_low();
+>  			if (is_shared_processor())
+>  				splpar_spin_yield(lock);
+> diff --git a/arch/powerpc/kexec/crash.c b/arch/powerpc/kexec/crash.c
+> index d488311efab1..8a522380027d 100644
+> --- a/arch/powerpc/kexec/crash.c
+> +++ b/arch/powerpc/kexec/crash.c
+> @@ -66,6 +66,8 @@ static int handle_fault(struct pt_regs *regs)
+> =20
+>  #ifdef CONFIG_SMP
+> =20
+> +bool crash_skip_spinlock;
+> +
+>  static atomic_t cpus_in_crash;
+>  void crash_ipi_callback(struct pt_regs *regs)
+>  {
+> @@ -129,6 +131,7 @@ static void crash_kexec_prepare_cpus(int cpu)
+>  	/* Would it be better to replace the trap vector here? */
+> =20
+>  	if (atomic_read(&cpus_in_crash) >=3D ncpus) {
+> +		crash_skip_spinlock =3D true;
+>  		printk(KERN_EMERG "IPI complete\n");
+>  		return;
+>  	}
 
-I also think that we should not pass enum phy_mode to
-dwc3_meson_g12a_usb_otg_apply_mode
-I'm aware that the original function used enum phy_mode inside but
-this doesn't seem right:
-we're not configuring a PHY there
-instead we're setting up the OTG switch so I think we should use enum
-usb_role instead
+--=-FVin2VQG/dF3wxpzlErY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-[...]
-not part of this patch but should be:
-there's a still a direct call to dwc3_meson_g12a_usb_init() in
-dwc3_meson_g12a_resume()
-I think that needs to be changed to priv->drvdata->usb_init(priv); as well
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl59OkMACgkQlQYWtz9S
+ttTdfxAAxfhffzM9iTgF/t3ay/7HkmkImzVE3dqBCSrCsUNMOI7eO2+Oba7a0Ia6
+Qr+sqoya33yFOHgzsPlj8fSIcaNRxw5qoNU4Mvt/IO+7veVkGfXl6DCvUnjGWRMS
+rZnkQoFb7ilh7ik9yW0zyg5geH7b6IBILDXdMnslGqsQK4G3AkH70Pb/INxvVfOz
+v+qIGriALpQ/PRPKoxbjk7v8ETtkaCvxDsIF05ynnzRr+uPuqydcCWRD5nO8nwBk
+XtF/4RL8zowSnPmlR0s7AMV0Mr7uaNvhrEtKpK9ugl817OGosGgYd76TDbn3n+Ga
+VxK63NNQkUgnUV6gToPoEwSdqSGC6hA31X6y5B6ckLJdjpc1wO+OngBaMUvO0sPE
+tuSN86f4IlaYIHY0szfMdhpoX2ptzN7LSsQwgkYwCrx9RfUrhKGzWIMK+FTH9eF3
+yBHbIkKY+GS3KMnp+lsdtbgNHm4MuEmF4U/TMj6SUi5XPlGKMy9hf/lxucLC5fyA
+ZhZQE3q4U9k2QVSJmZvw/i6jhSi99RbseBe1qt0mwLReDSlP/HUzy6QVky9bh+w5
+1wzAJyQWmM0jCMkAZWDI5ckeV+3Y6tRc5Lor1JTS1LbrG78qyRttq9zaioeSU3C2
+h0StSxKOcPDTIeg3LkZ4cZWubcLo5rwmHNjB5mn/RlRGu4oFqO4=
+=aPwG
+-----END PGP SIGNATURE-----
+
+--=-FVin2VQG/dF3wxpzlErY--
+
