@@ -2,85 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F5501944AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:54:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E45AC1944B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:54:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbgCZQyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 12:54:14 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:35053 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbgCZQyO (ORCPT
+        id S1726954AbgCZQyk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 12:54:40 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39536 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbgCZQyj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 12:54:14 -0400
-Received: by mail-il1-f196.google.com with SMTP id 7so6042682ill.2;
-        Thu, 26 Mar 2020 09:54:13 -0700 (PDT)
+        Thu, 26 Mar 2020 12:54:39 -0400
+Received: by mail-io1-f66.google.com with SMTP id c19so6788855ioo.6;
+        Thu, 26 Mar 2020 09:54:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZwfR/fBPdMpotJWfH8l3kCi597eNk1DfLb7u1dTx3Wo=;
-        b=rmSebLGqA4T0J1zIFyyHLLlSkpdY9FVpDAEYioo0koWdvLpiVeNVZz8zdFapb726n2
-         sJQP0eKqOSDPwqsTiiX0Y4Ma+4SPdHdywpVNIaBe5tT7mvX+baiLf9TsMcCCEJXAhqsp
-         2nR6GghDaCgXdPwxPumEfVKjl/o3hxa/43nrx4BpO7of85gf9pQhzzAYfNVtvwDVfp2T
-         uuMbpA7y8BIicOmZusXY1TSGNozViZuIl2OfQ8dOmMLNx33dEq4hXI2v0HyVEn/T354M
-         xUN4Cr3HcomdorqKO7sRywulIT0/9QQsGalvaXoNo8uCQ+2j52YXc7iyxNIyidPveh7Q
-         CVHQ==
-X-Gm-Message-State: ANhLgQ0CCDorW5SFy88QVebsupCJ0F5DLTguQbJizy123x97WEVBOavA
-        4h+IH8+D7vcdMvN0OIWjCKgP6/s=
-X-Google-Smtp-Source: ADFU+vuXmK4F1Qp+e2kTN3c5xoaJcMADkXSaoy0ZVFhuFIcjEmWwOSP/F/DFYq1+Y8iOgkk9dgNCyg==
-X-Received: by 2002:a92:48cb:: with SMTP id j72mr9631300ilg.162.1585241653028;
-        Thu, 26 Mar 2020 09:54:13 -0700 (PDT)
+        bh=fxdkmv3rlaPbwnsIsqBG6/Y/pJQsCxLU/Fzk50NhJJc=;
+        b=TOI57OlxKo6SrQulJsTkwIWmaEa4bkFxF0v7jSlU5wIY1PoZ4qCxfC0VJn/Kv32FxL
+         ha2JEfdaFT3/m6RztJlaTg6UVn1FRXOaaIMWLoyUvTAAr+SsSAVQGDCpY6XMq+p6gPku
+         BFR3xjTQOZnyQ/UsiNpyChK6i+FYZcwDM4dxZ0uzXLb2xkH6fuW31vCIm5zYNU2r/onz
+         /I5vO49l3ODoSppuisg3jYH1MQtO8gTGei7sZ34lOi4mdCA89BA6mG51z36pv9R3wc3g
+         Zqrg1YsibiLwLb38M1TkT0KDajYE296iIy0Yu7JFb+glSrp6/NYTNCP9v7wx3ytS49HM
+         X9yg==
+X-Gm-Message-State: ANhLgQ0DUMRFdkVxL0fqs6YEMHoLwPqCFRoo93ylGndkJtN44162okP7
+        w88jMnEjCELa7lz4J1HzvA==
+X-Google-Smtp-Source: ADFU+vuO1x11b+eItaisRygLwgmQjoZPmeoCqAv0nxDAmHAK8LsIIIpHg61uNH7cbhjdQGbjuNKgmQ==
+X-Received: by 2002:a6b:8d4c:: with SMTP id p73mr8471676iod.14.1585241677102;
+        Thu, 26 Mar 2020 09:54:37 -0700 (PDT)
 Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id n5sm774947iop.23.2020.03.26.09.54.11
+        by smtp.gmail.com with ESMTPSA id f74sm969012ilh.77.2020.03.26.09.54.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 09:54:12 -0700 (PDT)
-Received: (nullmailer pid 10167 invoked by uid 1000);
-        Thu, 26 Mar 2020 16:54:10 -0000
-Date:   Thu, 26 Mar 2020 10:54:10 -0600
+        Thu, 26 Mar 2020 09:54:36 -0700 (PDT)
+Received: (nullmailer pid 10911 invoked by uid 1000);
+        Thu, 26 Mar 2020 16:54:35 -0000
+Date:   Thu, 26 Mar 2020 10:54:35 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Ivan Mikhaylov <i.mikhaylov@yadro.com>
-Cc:     Ivan Mikhaylov <i.mikhaylov@yadro.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 1/2] iio: proximity: provide device tree binding
- document
-Message-ID: <20200326165410.GA2305@bogus>
-References: <20200325151211.19949-1-i.mikhaylov@yadro.com>
- <20200325151211.19949-2-i.mikhaylov@yadro.com>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: Add bindings for C66x DSPs
+ on TI K3 SoCs
+Message-ID: <20200326165435.GA10370@bogus>
+References: <20200325201839.15896-1-s-anna@ti.com>
+ <20200325201839.15896-2-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200325151211.19949-2-i.mikhaylov@yadro.com>
+In-Reply-To: <20200325201839.15896-2-s-anna@ti.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Mar 2020 18:12:10 +0300, Ivan Mikhaylov wrote:
-> Mostly standard i2c driver with some additional led-current option
-> for vcnl3020.
+On Wed, 25 Mar 2020 15:18:37 -0500, Suman Anna wrote:
+> Some Texas Instruments K3 family of SoCs have one of more Digital Signal
+> Processor (DSP) subsystems that are comprised of either a TMS320C66x
+> CorePac and/or a next-generation TMS320C71x CorePac processor subsystem.
+> Add the device tree bindings document for the C66x DSP devices on these
+> SoCs. The added example illustrates the DT nodes for the first C66x DSP
+> device present on the K3 J721E family of SoCs.
 > 
-> Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
 > ---
->  .../bindings/iio/proximity/vcnl3020.yaml      | 47 +++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/proximity/vcnl3020.yaml
+>  .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 180 ++++++++++++++++++
+>  1 file changed, 180 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
-Documentation/devicetree/bindings/iio/proximity/vcnl3020.example.dts:19.12-25: Warning (reg_format): /example-0/iio-proximity@13:reg: property has invalid length (4 bytes) (#address-cells == 1, #size-cells == 1)
-Documentation/devicetree/bindings/iio/proximity/vcnl3020.example.dt.yaml: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/iio/proximity/vcnl3020.example.dt.yaml: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/iio/proximity/vcnl3020.example.dt.yaml: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dts:23.13-20: Warning (ranges_format): /example-0/reserved-memory:ranges: empty "ranges" property but its #address-cells (2) differs from /example-0 (1)
+Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dts:23.13-20: Warning (ranges_format): /example-0/reserved-memory:ranges: empty "ranges" property but its #size-cells (2) differs from /example-0 (1)
+Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dts:42.13-43.72: Warning (ranges_format): /example-0/interconnect@100000:ranges: "ranges" property has invalid length (48 bytes) (parent #address-cells == 1, child #address-cells == 2, #size-cells == 2)
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.example.dt.yaml: interconnect@100000: $nodename:0: 'interconnect@100000' does not match '^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
 
-See https://patchwork.ozlabs.org/patch/1261460
+See https://patchwork.ozlabs.org/patch/1261640
 
 If you already ran 'make dt_binding_check' and didn't see the above
 error(s), then make sure dt-schema is up to date:
