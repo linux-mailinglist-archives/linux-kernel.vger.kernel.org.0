@@ -2,160 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D483194399
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 839AF1943A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:54:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728299AbgCZPxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 11:53:39 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:36257 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727733AbgCZPxi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 11:53:38 -0400
-Received: by mail-il1-f200.google.com with SMTP id e5so5799604ilg.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 08:53:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:cc;
-        bh=bzkk1YeTuV5XqoOACgaOcwdJANTPaxvRsoXwzGDJF2Y=;
-        b=bUvkZGjYBkX3LT4ZD9bXYZp9PWm2WDoQseTCV2dCrtXrGKTN45Vn6IsQDJ3aZZ0cha
-         e6V9xXZjn0lGcwUrV0DBy/Wfkb/Q2Dylwz/8zk6h1cBUZDiUCdwGHwsosgOYM1fghGDl
-         zBGxdEBACalGvNSVY/q9PBEgryXhemZZp8tHYBXJ7o7GqWWzaThcrnJYRabt2HkS0qW6
-         qb9rpeA923+V/V3Wk1IKYgavREyXr/Z+Bp+JVX6G0wJcg0h2WM8atW4Q4fCnST33KN6H
-         S5ETLzwSyPydRkdgNZlUuCcwX9rsiyUOx5voFEDb0fw7Z1XzY1E+uZkDKHFAAPB9yS0p
-         2X0g==
-X-Gm-Message-State: ANhLgQ2sXzs5Vb/x/1P3RbMFYPKLt9I/VSwL2cJCBvPKXcEWB+JTBuPM
-        jbq1kUErly320+tD/ASXTbFhzW8FPkacHybW5gG0V4vj+8hd
-X-Google-Smtp-Source: ADFU+vuqvXgeYXkEdgWGSyOcxnK8EtQ4aVtCUoWTmbVQCiat3+kTqJDDe1Ke2Yu6pe/Gt4PcE4CpJfPmuRdH6zJHvsD1DMeERrnc
+        id S1728390AbgCZPy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 11:54:26 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:39140 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728208AbgCZPy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 11:54:26 -0400
+Received: from zn.tnic (p200300EC2F0A4900B0CADCDCA21F3A81.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:4900:b0ca:dcdc:a21f:3a81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CC8011EC071C;
+        Thu, 26 Mar 2020 16:54:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1585238064;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=rhNDehhRHOjQ0g6g3hTypMi7Mz8SaoyRrmcWsFMIGcw=;
+        b=Y52U9w6nE7ruAh3wjd1avqlVu9jGjJEZIhzjTjwiIHmZiysIAlMgxjBI63U44p94684+qg
+        Vq/nIhXhGY36aF95UDqFqv+tGqO3Au6BySXj/XAukXg39oq+ocoS1kOml5A0dxuSTBDbJd
+        5gIY6K6bv6XDGufFIze3Mjp0G3Yz99w=
+Date:   Thu, 26 Mar 2020 16:54:25 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, jpoimboe@redhat.com
+Subject: Re: [RESEND][PATCH v3 07/17] static_call: Add inline static call
+ infrastructure
+Message-ID: <20200326155425.GE11398@zn.tnic>
+References: <20200324135603.483964896@infradead.org>
+ <20200324142245.694414364@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a02:708c:: with SMTP id f134mr8012888jac.1.1585238017098;
- Thu, 26 Mar 2020 08:53:37 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 08:53:37 -0700
-In-Reply-To: <CADG63jDmhxE0mrbP8-M7LBHcq7bJGdNjxJ3OF-KMdosZxba0QQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e4cfc105a1c3fc20@google.com>
-Subject: Re: Re: Re: WARNING: refcount bug in sctp_wfree
-From:   syzbot <syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com>
-To:     Qiujun Huang <anenbupt@gmail.com>
-Cc:     anenbupt@gmail.com, davem@davemloft.net, kuba@kernel.org,
-        linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org,
-        marcelo.leitner@gmail.com, netdev@vger.kernel.org,
-        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
-        vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200324142245.694414364@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> #syz test: upstream, 2c523b34
+On Tue, Mar 24, 2020 at 02:56:10PM +0100, Peter Zijlstra wrote:
+> +#define DEFINE_STATIC_CALL(name, _func)					\
+> +	DECLARE_STATIC_CALL(name, _func);				\
+> +	struct static_call_key STATIC_CALL_NAME(name) = {		\
+> +		.func = _func,						\
+> +		.next = NULL,						\
+> +	};								\
+> +	__ADDRESSABLE(STATIC_CALL_NAME(name));				\
+> +	ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
+> +
+> +#define static_call(name)	STATIC_CALL_TRAMP(name)
+> +
+> +#define EXPORT_STATIC_CALL(name)					\
+> +	EXPORT_SYMBOL(STATIC_CALL_NAME(name));				\
+> +	EXPORT_SYMBOL(STATIC_CALL_TRAMP(name))
 
-"upstream," does not look like a valid git repo address.
+I think we want only the _GPL versions below - not those. As you said on
+IRC, jump_label/static_branch is GPL only.
 
->
-> On Thu, Mar 26, 2020 at 11:38 PM syzbot
-> <syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com> wrote:
->>
->> > #syz test: upstream
->>
->> want 2 args (repo, branch), got 10
->>
->> >
->> > On Tue, Mar 10, 2020 at 9:36 AM syzbot
->> > <syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com> wrote:
->> >>
->> >> Hello,
->> >>
->> >> syzbot found the following crash on:
->> >>
->> >> HEAD commit:    2c523b34 Linux 5.6-rc5
->> >> git tree:       upstream
->> >> console output: https://syzkaller.appspot.com/x/log.txt?x=155a5f29e00000
->> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=a5295e161cd85b82
->> >> dashboard link: https://syzkaller.appspot.com/bug?extid=cea71eec5d6de256d54d
->> >> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
->> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164b5181e00000
->> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166dd70de00000
->> >>
->> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> >> Reported-by: syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com
->> >>
->> >> ------------[ cut here ]------------
->> >> refcount_t: underflow; use-after-free.
->> >> WARNING: CPU: 1 PID: 8668 at lib/refcount.c:28 refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
->> >> Kernel panic - not syncing: panic_on_warn set ...
->> >> CPU: 1 PID: 8668 Comm: syz-executor779 Not tainted 5.6.0-rc5-syzkaller #0
->> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> >> Call Trace:
->> >>  __dump_stack lib/dump_stack.c:77 [inline]
->> >>  dump_stack+0x1e9/0x30e lib/dump_stack.c:118
->> >>  panic+0x264/0x7a0 kernel/panic.c:221
->> >>  __warn+0x209/0x210 kernel/panic.c:582
->> >>  report_bug+0x1ac/0x2d0 lib/bug.c:195
->> >>  fixup_bug arch/x86/kernel/traps.c:174 [inline]
->> >>  do_error_trap+0xca/0x1c0 arch/x86/kernel/traps.c:267
->> >>  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
->> >>  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
->> >> RIP: 0010:refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
->> >> Code: c7 e4 ff d0 88 31 c0 e8 23 20 b3 fd 0f 0b eb 85 e8 8a 4a e0 fd c6 05 ff 70 b1 05 01 48 c7 c7 10 00 d1 88 31 c0 e8 05 20 b3 fd <0f> 0b e9 64 ff ff ff e8 69 4a e0 fd c6 05 df 70 b1 05 01 48 c7 c7
->> >> RSP: 0018:ffffc90001f577d0 EFLAGS: 00010246
->> >> RAX: 8c9c9070bbb4e500 RBX: 0000000000000003 RCX: ffff8880938a63c0
->> >> RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
->> >> RBP: 0000000000000003 R08: ffffffff815e16e6 R09: fffffbfff15db92a
->> >> R10: fffffbfff15db92a R11: 0000000000000000 R12: dffffc0000000000
->> >> R13: ffff88809de82000 R14: ffff8880a89237c0 R15: 1ffff11013be52b0
->> >>  sctp_wfree+0x3b1/0x710 net/sctp/socket.c:9111
->> >>  skb_release_head_state+0xfb/0x210 net/core/skbuff.c:651
->> >>  skb_release_all net/core/skbuff.c:662 [inline]
->> >>  __kfree_skb+0x22/0x1c0 net/core/skbuff.c:678
->> >>  sctp_chunk_destroy net/sctp/sm_make_chunk.c:1454 [inline]
->> >>  sctp_chunk_put+0x17b/0x200 net/sctp/sm_make_chunk.c:1481
->> >>  __sctp_outq_teardown+0x80a/0x9d0 net/sctp/outqueue.c:257
->> >>  sctp_association_free+0x21e/0x7c0 net/sctp/associola.c:339
->> >>  sctp_cmd_delete_tcb net/sctp/sm_sideeffect.c:930 [inline]
->> >>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1318 [inline]
->> >>  sctp_side_effects net/sctp/sm_sideeffect.c:1185 [inline]
->> >>  sctp_do_sm+0x3c01/0x5560 net/sctp/sm_sideeffect.c:1156
->> >>  sctp_primitive_ABORT+0x93/0xc0 net/sctp/primitive.c:104
->> >>  sctp_close+0x231/0x770 net/sctp/socket.c:1512
->> >>  inet_release+0x135/0x180 net/ipv4/af_inet.c:427
->> >>  __sock_release net/socket.c:605 [inline]
->> >>  sock_close+0xd8/0x260 net/socket.c:1283
->> >>  __fput+0x2d8/0x730 fs/file_table.c:280
->> >>  task_work_run+0x176/0x1b0 kernel/task_work.c:113
->> >>  exit_task_work include/linux/task_work.h:22 [inline]
->> >>  do_exit+0x5ef/0x1f80 kernel/exit.c:801
->> >>  do_group_exit+0x15e/0x2c0 kernel/exit.c:899
->> >>  __do_sys_exit_group+0x13/0x20 kernel/exit.c:910
->> >>  __se_sys_exit_group+0x10/0x10 kernel/exit.c:908
->> >>  __x64_sys_exit_group+0x37/0x40 kernel/exit.c:908
->> >>  do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:294
->> >>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->> >> RIP: 0033:0x43ef98
->> >> Code: Bad RIP value.
->> >> RSP: 002b:00007ffcc7e7c398 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
->> >> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043ef98
->> >> RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
->> >> RBP: 00000000004be7a8 R08: 00000000000000e7 R09: ffffffffffffffd0
->> >> R10: 000000002059aff8 R11: 0000000000000246 R12: 0000000000000001
->> >> R13: 00000000006d01a0 R14: 0000000000000000 R15: 0000000000000000
->> >> Kernel Offset: disabled
->> >> Rebooting in 86400 seconds..
->> >>
->> >>
->> >> ---
->> >> This bug is generated by a bot. It may contain errors.
->> >> See https://goo.gl/tpsmEJ for more information about syzbot.
->> >> syzbot engineers can be reached at syzkaller@googlegroups.com.
->> >>
->> >> syzbot will keep track of this bug report. See:
->> >> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->> >> syzbot can test patches for this bug, for details see:
->> >> https://goo.gl/tpsmEJ#testing-patches
->> >
->> > --
->> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
->> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
->> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/CADG63jDCTdgSxDRsN_9e3fKCAv5VduS5NNKWmqjByZ%3D4sT%2BHLQ%40mail.gmail.com.
+> +
+> +#define EXPORT_STATIC_CALL_GPL(name)					\
+> +	EXPORT_SYMBOL_GPL(STATIC_CALL_NAME(name));			\
+> +	EXPORT_SYMBOL_GPL(STATIC_CALL_TRAMP(name))
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
