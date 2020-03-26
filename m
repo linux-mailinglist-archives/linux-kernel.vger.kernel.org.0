@@ -2,173 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1F40193D2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:45:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8FDE193D3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:48:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbgCZKpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 06:45:02 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40437 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727688AbgCZKpB (ORCPT
+        id S1727972AbgCZKsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 06:48:52 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:31639 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727781AbgCZKsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 06:45:01 -0400
-Received: by mail-pl1-f194.google.com with SMTP id h11so1969913plk.7
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 03:45:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RrPUkEdcvg/y0PcHJ6HKdHNJrtFFWRIeDiiLxBsymSg=;
-        b=TFmukmOEEJ9JvbTUyj/fyAuzIACL0f7DZw5lHvjrmObXyFhLyn85sKcTW9nb6bb5lJ
-         +8K7x/p+/PJqkq2Y8E7mHe3CJuxq2Yn/lsjcIx9tijhapEPrhgrXeTLlI8kyStJuVEhq
-         q3uxaJo6lcwYGv2XBdaMbm2u3WjI9plJZaR9XViYpZWNYqJkw1iPw+uSHbAfOVrHM8tU
-         Q6ASaqbifZBkCns14PZ6E7EXF5GhgOQ2wiRdalDwLSh7D2WDnQpyElG+23V4sypHLZHr
-         voASvcQFP1zPKwYGh4irfocmMdv5MiRaynYHj0TqZzV7gCV79CefEJNItQ6iogBBdI1t
-         MDBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RrPUkEdcvg/y0PcHJ6HKdHNJrtFFWRIeDiiLxBsymSg=;
-        b=O3dsneMfRbuXyS0QOMDcbsGlMkkDpeOKhE5x1N46YUcUtdgq1z1hz7Kjekjo+kFkvc
-         6WToqw8B3rBSqwT8/qOvquxeX/bxiZm4XkrE2V2rnn3+ZVLPmZfcJvdiBXNoYTrr/MqD
-         0TfeCM65rtLd6gFm1Pv5y5iWbTJiYkicA7l5dA7rvjQy5XyZMUjFmvEQffKLBaPNY+ds
-         VSD2CW8IAblk5mbFCj8tVGkHx3A5miYP1gzWyLvvkIIGdZ4c6slHZwadrNebYelfpcgT
-         vMD6FrNsi5djEIN5NO/x8w4VL3TSLWaRCwfs6Eh/+KoqdnBhii7U0YT9Gp5rRspB5UD1
-         u+LA==
-X-Gm-Message-State: ANhLgQ026r8j2vARBj7WLu1ifU+fQN47FKnnI8HwISAAD/xptR8OFvsL
-        w3QRaoc+pe+X9WL1Qu032uCp6ez5RUt82LhyrHlV0A==
-X-Google-Smtp-Source: ADFU+vtm4pvZ1baADEMOm5q8Pq+om9KOooFXupVEi/ZshCBi906in5Vg+qwqtVBStK9fzAnqSREMEv1vvOyoKa3TD6E=
-X-Received: by 2002:a17:90b:1985:: with SMTP id mv5mr2448311pjb.69.1585219500102;
- Thu, 26 Mar 2020 03:45:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <0000000000006678a105a184ecb7@google.com> <CADG63jCCECPjZWmJfhn9RyJwFvDK3SYQTb8X2GPkrGumAuRfJA@mail.gmail.com>
-In-Reply-To: <CADG63jCCECPjZWmJfhn9RyJwFvDK3SYQTb8X2GPkrGumAuRfJA@mail.gmail.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Thu, 26 Mar 2020 11:44:49 +0100
-Message-ID: <CAAeHK+xi8zjUb8Laigmy7eKHU-36nhXdW_dCXp_MB1nPaLBW4g@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in hfa384x_usbin_callback
-To:     Qiujun Huang <anenbupt@gmail.com>
-Cc:     syzbot <syzbot+a57b24d359dc5577634a@syzkaller.appspotmail.com>,
-        devel@driverdev.osuosl.org, Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>, nishkadg.linux@gmail.com,
-        osdevtc@gmail.com, syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 26 Mar 2020 06:48:52 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585219731; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=nWq7mGCCiLsuXbi/yM67WLfCeYpRQEJ7BwezHf5ePpg=; b=b+pUJkYAoRblxsk1VWKCQhuW2uxzs8vw3OcMDKWrYBIsodegJgPxhW0RhElrqPDmS3aJ4QKv
+ l4tN0oZdsOQJms7SnJUYZRmvpY4mdQEtm3lhx2J47nVFlij5gxYPCMNR6NY1IMjNa5hUEMv9
+ hH8eSM7l2gARcq8eso7RXReqRGw=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e7c8892.7f9b3b430a08-smtp-out-n03;
+ Thu, 26 Mar 2020 10:48:50 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 7C91FC433D2; Thu, 26 Mar 2020 10:48:50 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+Received: from pillair-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pillair)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4649BC433F2;
+        Thu, 26 Mar 2020 10:48:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4649BC433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=pillair@codeaurora.org
+From:   Rakesh Pillai <pillair@codeaurora.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Rakesh Pillai <pillair@codeaurora.org>
+Subject: [PATCH v7] arm64: dts: qcom: sc7180: Add WCN3990 WLAN module device node
+Date:   Thu, 26 Mar 2020 16:18:43 +0530
+Message-Id: <1585219723-28323-1-git-send-email-pillair@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 3:52 AM Qiujun Huang <anenbupt@gmail.com> wrote:
->
-> #syz test: https://github.com/google/kasan.git e17994d1
+Add device node for the ath10k SNOC platform driver probe
+and add resources required for WCN3990 on sc7180 soc.
 
-Hi Qiujun,
+Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
+---
 
-I've already duped this bug to "KASAN: slab-out-of-bounds Read in
-hfa384x_usbin_callback" since I had assumed they have the same root
-cause. Are those bugs different? We can undup if needed.
+Depends on https://patchwork.kernel.org/patch/11455345/
+The above patch adds the dt-bindings for wifi-firmware
+subnode
+---
+ arch/arm64/boot/dts/qcom/sc7180-idp.dts |  8 ++++++++
+ arch/arm64/boot/dts/qcom/sc7180.dtsi    | 27 +++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
 
-Thanks!
-
->
-> On Mon, Mar 23, 2020 at 8:39 PM syzbot
-> <syzbot+a57b24d359dc5577634a@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    e17994d1 usb: core: kcov: collect coverage from usb comple..
-> > git tree:       https://github.com/google/kasan.git usb-fuzzer
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=15217373e00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=5d64370c438bc60
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=a57b24d359dc5577634a
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a720ade00000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1467b755e00000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+a57b24d359dc5577634a@syzkaller.appspotmail.com
-> >
-> > ==================================================================
-> > BUG: KASAN: use-after-free in memcpy include/linux/string.h:381 [inline]
-> > BUG: KASAN: use-after-free in skb_put_data include/linux/skbuff.h:2284 [inline]
-> > BUG: KASAN: use-after-free in hfa384x_int_rxmonitor drivers/staging/wlan-ng/hfa384x_usb.c:3412 [inline]
-> > BUG: KASAN: use-after-free in hfa384x_usbin_rx drivers/staging/wlan-ng/hfa384x_usb.c:3312 [inline]
-> > BUG: KASAN: use-after-free in hfa384x_usbin_callback+0x1993/0x2360 drivers/staging/wlan-ng/hfa384x_usb.c:3026
-> > Read of size 34945 at addr ffff8881cda9f33c by task swapper/0/0
-> >
-> > CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.6.0-rc5-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > Call Trace:
-> >  <IRQ>
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0xef/0x16e lib/dump_stack.c:118
-> >  print_address_description.constprop.0.cold+0xd3/0x314 mm/kasan/report.c:374
-> >  __kasan_report.cold+0x37/0x77 mm/kasan/report.c:506
-> >  kasan_report+0xe/0x20 mm/kasan/common.c:641
-> >  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-> >  check_memory_region+0x152/0x1c0 mm/kasan/generic.c:192
-> >  memcpy+0x20/0x50 mm/kasan/common.c:127
-> >  memcpy include/linux/string.h:381 [inline]
-> >  skb_put_data include/linux/skbuff.h:2284 [inline]
-> >  hfa384x_int_rxmonitor drivers/staging/wlan-ng/hfa384x_usb.c:3412 [inline]
-> >  hfa384x_usbin_rx drivers/staging/wlan-ng/hfa384x_usb.c:3312 [inline]
-> >  hfa384x_usbin_callback+0x1993/0x2360 drivers/staging/wlan-ng/hfa384x_usb.c:3026
-> >  __usb_hcd_giveback_urb+0x29a/0x550 drivers/usb/core/hcd.c:1650
-> >  usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1716
-> >  dummy_timer+0x1258/0x32ae drivers/usb/gadget/udc/dummy_hcd.c:1966
-> >  call_timer_fn+0x195/0x6f0 kernel/time/timer.c:1404
-> >  expire_timers kernel/time/timer.c:1449 [inline]
-> >  __run_timers kernel/time/timer.c:1773 [inline]
-> >  __run_timers kernel/time/timer.c:1740 [inline]
-> >  run_timer_softirq+0x5f9/0x1500 kernel/time/timer.c:1786
-> >  __do_softirq+0x21e/0x950 kernel/softirq.c:292
-> >  invoke_softirq kernel/softirq.c:373 [inline]
-> >  irq_exit+0x178/0x1a0 kernel/softirq.c:413
-> >  exiting_irq arch/x86/include/asm/apic.h:546 [inline]
-> >  smp_apic_timer_interrupt+0x141/0x540 arch/x86/kernel/apic/apic.c:1146
-> >  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
-> >  </IRQ>
-> > RIP: 0010:default_idle+0x28/0x300 arch/x86/kernel/process.c:696
-> > Code: cc cc 41 56 41 55 65 44 8b 2d 44 77 72 7a 41 54 55 53 0f 1f 44 00 00 e8 b6 62 b5 fb e9 07 00 00 00 0f 00 2d ea 0c 53 00 fb f4 <65> 44 8b 2d 20 77 72 7a 0f 1f 44 00 00 5b 5d 41 5c 41 5d 41 5e c3
-> > RSP: 0018:ffffffff87007d80 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-> > RAX: 0000000000000007 RBX: ffffffff8702cc40 RCX: 0000000000000000
-> > RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffffffff8702d48c
-> > RBP: fffffbfff0e05988 R08: ffffffff8702cc40 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> > R13: 0000000000000000 R14: ffffffff87e607c0 R15: 0000000000000000
-> >  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
-> >  do_idle+0x3e0/0x500 kernel/sched/idle.c:269
-> >  cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:361
-> >  start_kernel+0xe16/0xe5a init/main.c:998
-> >  secondary_startup_64+0xb6/0xc0 arch/x86/kernel/head_64.S:242
-> >
-> > The buggy address belongs to the page:
-> > page:ffffea000736a600 refcount:32769 mapcount:0 mapping:0000000000000000 index:0x0 compound_mapcount: 0
-> > flags: 0x200000000010000(head)
-> > raw: 0200000000010000 dead000000000100 dead000000000122 0000000000000000
-> > raw: 0000000000000000 0000000000000000 00008001ffffffff 0000000000000000
-> > page dumped because: kasan: bad access detected
-> >
-> > Memory state around the buggy address:
-> >  ffff8881cda9ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> >  ffff8881cda9ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > >ffff8881cdaa0000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >                    ^
-> >  ffff8881cdaa0080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >  ffff8881cdaa0100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ==================================================================
-> >
-> >
-> > ---
-> > This bug is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this bug report. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > syzbot can test patches for this bug, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
+diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+index 043c9b9..a6168a4 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
++++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+@@ -327,6 +327,14 @@
+ 	};
+ };
+ 
++&wifi {
++	status = "okay";
++	qcom,msa-fixed-perm;
++	wifi-firmware {
++		iommus = <&apps_smmu 0xc2 0x1>;
++	};
++};
++
+ /* PINCTRL - additions to nodes defined in sc7180.dtsi */
+ 
+ &qspi_clk {
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 998f101..2745128 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -83,6 +83,11 @@
+ 			reg = <0 0x8f600000 0 0x500000>;
+ 			no-map;
+ 		};
++
++		wlan_fw_mem: memory@94104000 {
++			reg = <0 0x94104000 0 0x200000>;
++			no-map;
++		};
+ 	};
+ 
+ 	cpus {
+@@ -835,6 +840,28 @@
+ 			};
+ 		};
+ 
++		wifi: wifi@18800000 {
++			compatible = "qcom,wcn3990-wifi";
++			reg = <0 0x18800000 0 0x800000>;
++			reg-names = "membase";
++			iommus = <&apps_smmu 0xc0 0x1>;
++			interrupts =
++				<GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH /* CE0 */ >,
++				<GIC_SPI 415 IRQ_TYPE_LEVEL_HIGH /* CE1 */ >,
++				<GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH /* CE2 */ >,
++				<GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH /* CE3 */ >,
++				<GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH /* CE4 */ >,
++				<GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH /* CE5 */ >,
++				<GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH /* CE6 */ >,
++				<GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH /* CE7 */ >,
++				<GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH /* CE8 */ >,
++				<GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH /* CE9 */ >,
++				<GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH /* CE10 */>,
++				<GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH /* CE11 */>;
++			memory-region = <&wlan_fw_mem>;
++			status = "disabled";
++		};
++
+ 		config_noc: interconnect@1500000 {
+ 			compatible = "qcom,sc7180-config-noc";
+ 			reg = <0 0x01500000 0 0x28000>;
+-- 
+2.7.4
