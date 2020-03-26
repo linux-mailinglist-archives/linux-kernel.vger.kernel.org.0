@@ -2,219 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9A8F193E11
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:40:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91DB6193E18
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:41:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbgCZLkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 07:40:17 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50457 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727900AbgCZLkQ (ORCPT
+        id S1728144AbgCZLlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 07:41:16 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:55146 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727841AbgCZLlP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 07:40:16 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jHQrp-0006UF-Vp; Thu, 26 Mar 2020 12:40:10 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 830511C0470;
-        Thu, 26 Mar 2020 12:40:09 +0100 (CET)
-Date:   Thu, 26 Mar 2020 11:40:09 -0000
-From:   "tip-bot2 for Yu-cheng Yu" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/misc] x86/insn: Add Control-flow Enforcement (CET)
- instructions to the opcode map
-Cc:     "Yu-cheng Yu" <yu-cheng.yu@intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200204171425.28073-2-yu-cheng.yu@intel.com>
-References: <20200204171425.28073-2-yu-cheng.yu@intel.com>
+        Thu, 26 Mar 2020 07:41:15 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02QBc4YE012834;
+        Thu, 26 Mar 2020 12:41:04 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=iO8rUEhZkJ/c/0UaQBy7t2zAod6oV5H9Qli02UGoU+E=;
+ b=g/eaBwl6+MlRla5l+HJZdr8HpTH5Lyx6cyojtzaVlY+iPWHg4oz63jc0Lt121EI4JjQE
+ oc0O4GAYmPVKo3PLcvs8Nl5WM6aLNb1un8Jkfa5qaZ3gk6P6kBRwk5fwEL8fW+3N0kVt
+ n0ywUtAQc2Mp3hlSrpePiyVWcIvwRFQOGo6xa9sNz875fn7yUZW4xieWS/WeVVcS14W4
+ zCvzZs5SVbujX3AWihVVEAUSpTPv2wAByM8EwG2UDSdh65MCEx6n2Hgu+t9yqJSRkdX9
+ y7he6wQ+iaW1dqTsOnumsGotRzLx8MqpFIg8iHRFoDhuozGYWCN6mJVW8TKNkzD/qulf WQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2ywappbc6c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 12:41:04 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 121FC100038;
+        Thu, 26 Mar 2020 12:41:00 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AEBD9210894;
+        Thu, 26 Mar 2020 12:40:59 +0100 (CET)
+Received: from lmecxl0889.tpe.st.com (10.75.127.45) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 26 Mar
+ 2020 12:40:48 +0100
+Subject: Re: [PATCH v7 2/2] tty: add rpmsg driver
+To:     Jiri Slaby <jslaby@suse.cz>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Suman Anna <s-anna@ti.com>,
+        Fabien DESSENNE <fabien.dessenne@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        xiang xiao <xiaoxiang781216@gmail.com>
+References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
+ <20200324170407.16470-3-arnaud.pouliquen@st.com>
+ <e458f805-c746-c88e-98f4-d874a7552933@suse.cz>
+ <1e4ce821-dd9b-bb04-774b-58a255834cf5@st.com>
+ <ec061c30-eace-1df9-fa7b-71a61e5710a2@suse.cz>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <2512639d-424f-9647-4dbd-3b3459465888@st.com>
+Date:   Thu, 26 Mar 2020 12:40:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Message-ID: <158522280919.28353.13352431577449123346.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <ec061c30-eace-1df9-fa7b-71a61e5710a2@suse.cz>
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-26_02:2020-03-26,2020-03-26 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/misc branch of tip:
 
-Commit-ID:     5790921bc18b1eb5c0c61371e31114fd4c4b0154
-Gitweb:        https://git.kernel.org/tip/5790921bc18b1eb5c0c61371e31114fd4c4b0154
-Author:        Yu-cheng Yu <yu-cheng.yu@intel.com>
-AuthorDate:    Tue, 04 Feb 2020 09:14:24 -08:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Thu, 26 Mar 2020 12:21:40 +01:00
 
-x86/insn: Add Control-flow Enforcement (CET) instructions to the opcode map
-
-Add the following CET instructions to the opcode map:
-
-INCSSP:
-    Increment Shadow Stack pointer (SSP).
-
-RDSSP:
-    Read SSP into a GPR.
-
-SAVEPREVSSP:
-    Use "previous ssp" token at top of current Shadow Stack (SHSTK) to
-    create a "restore token" on the previous (outgoing) SHSTK.
-
-RSTORSSP:
-    Restore from a "restore token" to SSP.
-
-WRSS:
-    Write to kernel-mode SHSTK (kernel-mode instruction).
-
-WRUSS:
-    Write to user-mode SHSTK (kernel-mode instruction).
-
-SETSSBSY:
-    Verify the "supervisor token" pointed by MSR_IA32_PL0_SSP, set the
-    token busy, and set then Shadow Stack pointer(SSP) to the value of
-    MSR_IA32_PL0_SSP.
-
-CLRSSBSY:
-    Verify the "supervisor token" and clear its busy bit.
-
-ENDBR64/ENDBR32:
-    Mark a valid 64/32 bit control transfer endpoint.
-
-Detailed information of CET instructions can be found in Intel Software
-Developer's Manual.
-
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Link: https://lkml.kernel.org/r/20200204171425.28073-2-yu-cheng.yu@intel.com
----
- arch/x86/lib/x86-opcode-map.txt       | 17 +++++++++++------
- tools/arch/x86/lib/x86-opcode-map.txt | 17 +++++++++++------
- 2 files changed, 22 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
-index 53adc17..ec31f5b 100644
---- a/arch/x86/lib/x86-opcode-map.txt
-+++ b/arch/x86/lib/x86-opcode-map.txt
-@@ -366,7 +366,7 @@ AVXcode: 1
- 1b: BNDCN Gv,Ev (F2) | BNDMOV Ev,Gv (66) | BNDMK Gv,Ev (F3) | BNDSTX Ev,Gv
- 1c: Grp20 (1A),(1C)
- 1d:
--1e:
-+1e: Grp21 (1A)
- 1f: NOP Ev
- # 0x0f 0x20-0x2f
- 20: MOV Rd,Cd
-@@ -803,8 +803,8 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32 Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
- f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32 Gd,Ew (66&F2)
- f2: ANDN Gy,By,Ey (v)
- f3: Grp17 (1A)
--f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v)
--f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
-+f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v) | WRUSSD/Q My,Gy (66)
-+f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v) | WRSSD/Q My,Gy
- f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
- f8: MOVDIR64B Gv,Mdqq (66) | ENQCMD Gv,Mdqq (F2) | ENQCMDS Gv,Mdqq (F3)
- f9: MOVDIRI My,Gy
-@@ -970,7 +970,7 @@ GrpTable: Grp7
- 2: LGDT Ms | XGETBV (000),(11B) | XSETBV (001),(11B) | VMFUNC (100),(11B) | XEND (101)(11B) | XTEST (110)(11B) | ENCLU (111),(11B)
- 3: LIDT Ms
- 4: SMSW Mw/Rv
--5: rdpkru (110),(11B) | wrpkru (111),(11B)
-+5: rdpkru (110),(11B) | wrpkru (111),(11B) | SAVEPREVSSP (F3),(010),(11B) | RSTORSSP Mq (F3) | SETSSBSY (F3),(000),(11B)
- 6: LMSW Ew
- 7: INVLPG Mb | SWAPGS (o64),(000),(11B) | RDTSCP (001),(11B)
- EndTable
-@@ -1041,8 +1041,8 @@ GrpTable: Grp15
- 2: vldmxcsr Md (v1) | WRFSBASE Ry (F3),(11B)
- 3: vstmxcsr Md (v1) | WRGSBASE Ry (F3),(11B)
- 4: XSAVE | ptwrite Ey (F3),(11B)
--5: XRSTOR | lfence (11B)
--6: XSAVEOPT | clwb (66) | mfence (11B) | TPAUSE Rd (66),(11B) | UMONITOR Rv (F3),(11B) | UMWAIT Rd (F2),(11B)
-+5: XRSTOR | lfence (11B) | INCSSPD/Q Ry (F3),(11B)
-+6: XSAVEOPT | clwb (66) | mfence (11B) | TPAUSE Rd (66),(11B) | UMONITOR Rv (F3),(11B) | UMWAIT Rd (F2),(11B) | CLRSSBSY Mq (F3)
- 7: clflush | clflushopt (66) | sfence (11B)
- EndTable
+On 3/25/20 2:31 PM, Jiri Slaby wrote:
+> On 25. 03. 20, 14:15, Arnaud POULIQUEN wrote:
+>>>> +		if (copied != len)
+>>>> +			dev_dbg(&rpdev->dev, "trunc buffer: available space is %d\n",
+>>>> +				copied);
+>>>> +		tty_flip_buffer_push(&cport->port);
+>>>> +	} else {
+>>>> +		/* control message */
+>>>> +		struct rpmsg_tty_ctrl *msg = data;
+>>>> +
+>>>> +		if (len != sizeof(*msg))
+>>>> +			return -EINVAL;
+>>>> +
+>>>> +		cport->data_dst = msg->d_ept_addr;
+>>>> +
+>>>> +		/* Update remote cts state */
+>>>> +		cport->cts = msg->cts ? 1 : 0;
+>>>
+>>> Number to bool implicit conversion needs no magic, just do:
+>>> cport->cts = msg->cts;
+>>
+>> In this case i would prefer  cport->cts = (msg->cts != 1);
+>> for the conversion
+> 
+> That still looks confusing. In the ternary operator above, you used
+> msg->cts as a bool implicitly and now you are trying to artificially
+> create one :)?
+> 
+> IOW in a bool context, "msg->cts ? 1 : 0" is the same as "msg->cts".
+> Look like the better solution would be to not use bool at all here...
  
-@@ -1077,6 +1077,11 @@ GrpTable: Grp20
- 0: cldemote Mb
- EndTable
+>>>> +	/*
+>>>> +	 * Try to send the message to remote processor, if failed return 0 as
+>>>> +	 * no data sent
+>>>> +	 */
+>>>> +	ret = rpmsg_trysendto(cport->d_ept, tmpbuf, msg_size, cport->data_dst);
+>>>
+>>> data of rpmsg_trysendto is not const. OK, you seem you need to change
+>>> that first, I see no blocker for that.
+>>
+>> I created a temporary buffer to ensure that buffer to sent does not exceed the 
+>> MTU size.
+>> But perhaps this is an useless protection as the rpmsg_tty_write_room already
+>> return the MTU value, and so the 'len' variable can not be higher that value
+>> returned by the write_room?
+> 
+> You still can limit it by msg_size without cloning the buffer, right?
+you are right, but in this case i need to cast the buff to suppress compilation
+warning on const and I don't know if all compilers will accept this...
  
-+GrpTable: Grp21
-+1: RDSSPD/Q Ry (F3),(11B)
-+7: ENDBR64 (F3),(010),(11B) | ENDBR32 (F3),(011),(11B)
-+EndTable
-+
- # AMD's Prefetch Group
- GrpTable: GrpP
- 0: PREFETCH
-diff --git a/tools/arch/x86/lib/x86-opcode-map.txt b/tools/arch/x86/lib/x86-opcode-map.txt
-index 53adc17..ec31f5b 100644
---- a/tools/arch/x86/lib/x86-opcode-map.txt
-+++ b/tools/arch/x86/lib/x86-opcode-map.txt
-@@ -366,7 +366,7 @@ AVXcode: 1
- 1b: BNDCN Gv,Ev (F2) | BNDMOV Ev,Gv (66) | BNDMK Gv,Ev (F3) | BNDSTX Ev,Gv
- 1c: Grp20 (1A),(1C)
- 1d:
--1e:
-+1e: Grp21 (1A)
- 1f: NOP Ev
- # 0x0f 0x20-0x2f
- 20: MOV Rd,Cd
-@@ -803,8 +803,8 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32 Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
- f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32 Gd,Ew (66&F2)
- f2: ANDN Gy,By,Ey (v)
- f3: Grp17 (1A)
--f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v)
--f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
-+f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v) | WRUSSD/Q My,Gy (66)
-+f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v) | WRSSD/Q My,Gy
- f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
- f8: MOVDIR64B Gv,Mdqq (66) | ENQCMD Gv,Mdqq (F2) | ENQCMDS Gv,Mdqq (F3)
- f9: MOVDIRI My,Gy
-@@ -970,7 +970,7 @@ GrpTable: Grp7
- 2: LGDT Ms | XGETBV (000),(11B) | XSETBV (001),(11B) | VMFUNC (100),(11B) | XEND (101)(11B) | XTEST (110)(11B) | ENCLU (111),(11B)
- 3: LIDT Ms
- 4: SMSW Mw/Rv
--5: rdpkru (110),(11B) | wrpkru (111),(11B)
-+5: rdpkru (110),(11B) | wrpkru (111),(11B) | SAVEPREVSSP (F3),(010),(11B) | RSTORSSP Mq (F3) | SETSSBSY (F3),(000),(11B)
- 6: LMSW Ew
- 7: INVLPG Mb | SWAPGS (o64),(000),(11B) | RDTSCP (001),(11B)
- EndTable
-@@ -1041,8 +1041,8 @@ GrpTable: Grp15
- 2: vldmxcsr Md (v1) | WRFSBASE Ry (F3),(11B)
- 3: vstmxcsr Md (v1) | WRGSBASE Ry (F3),(11B)
- 4: XSAVE | ptwrite Ey (F3),(11B)
--5: XRSTOR | lfence (11B)
--6: XSAVEOPT | clwb (66) | mfence (11B) | TPAUSE Rd (66),(11B) | UMONITOR Rv (F3),(11B) | UMWAIT Rd (F2),(11B)
-+5: XRSTOR | lfence (11B) | INCSSPD/Q Ry (F3),(11B)
-+6: XSAVEOPT | clwb (66) | mfence (11B) | TPAUSE Rd (66),(11B) | UMONITOR Rv (F3),(11B) | UMWAIT Rd (F2),(11B) | CLRSSBSY Mq (F3)
- 7: clflush | clflushopt (66) | sfence (11B)
- EndTable
- 
-@@ -1077,6 +1077,11 @@ GrpTable: Grp20
- 0: cldemote Mb
- EndTable
- 
-+GrpTable: Grp21
-+1: RDSSPD/Q Ry (F3),(11B)
-+7: ENDBR64 (F3),(010),(11B) | ENDBR32 (F3),(011),(11B)
-+EndTable
-+
- # AMD's Prefetch Group
- GrpTable: GrpP
- 0: PREFETCH
+pbuf = (u8 *)buf;
+ret = rpmsg_trysendto(cport->d_ept, pbuf, msg_size, cport->data_dst);
+
+> 
+>>>> +static int rpmsg_tty_port_activate(struct tty_port *p, struct tty_struct *tty)
+>>>> +{
+>>>> +	p->low_latency = (p->flags & ASYNC_LOW_LATENCY) ? 1 : 0;
+>>>> +
+>>>> +	/* Allocate the buffer we use for writing data */
+>>>
+>>> Where exactly -- am I missing something?
+>>
+>> in tty_port_alloc_xmit_buf. it's a copy past from mips_ejtag_fdc.c,
+>> I will clean this line if it's confusing.
+> 
+> No, I mean where do you use the allocated buffer? mips_ejtag_fdc.c uses it.
+Seems i misunderstood the usage of the xmit buffer, need to have look in.
+
+> 
+>>>> +static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
+>>>> +{
+>>>> +	struct rpmsg_tty_port *cport;
+>>>> +	struct device *dev = &rpdev->dev;
+>>>> +	struct rpmsg_channel_info chinfo;
+>>>> +	struct device *tty_dev;
+>>>> +	int ret;
+>>>> +
+>>>> +	cport = rpmsg_tty_alloc_cport();
+>>>> +	if (IS_ERR(cport)) {
+>>>> +		dev_err(dev, "failed to alloc tty port\n");
+>>>> +		return PTR_ERR(cport);
+>>>> +	}
+>>>> +
+>>>> +	if (!strncmp(rpdev->id.name, TTY_CH_NAME_WITH_CTS,
+>>>> +		     sizeof(TTY_CH_NAME_WITH_CTS))) {
+>>>
+>>> sizeof of a string feels unnatural, but will work in this case. Can a
+>>> compiler optimize strlen of a static string?
+>>
+>> I don't know if a compiler can do this...
+>> what about replacing sizeof by strlen function? 
+>> i saw some code example that use strlen with static string...
+>> (e.g  https://elixir.bootlin.com/linux/latest/source/drivers/edac/edac_mc.c#L1193)
+> 
+> The question was exactly about that: can a compiler optimize it to a
+> bare number or will strlen call remain there?
+> 
+i answered in Joe's mail for this point
+
+Thanks!
+Arnaud
+
+> thanks,
+> 
+
