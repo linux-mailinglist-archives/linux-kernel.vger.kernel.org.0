@@ -2,125 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E61E4194485
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:44:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 523EE194479
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:39:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbgCZQoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 12:44:05 -0400
-Received: from mout.gmx.net ([212.227.17.22]:55117 "EHLO mout.gmx.net"
+        id S1728543AbgCZQi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 12:38:59 -0400
+Received: from mga18.intel.com ([134.134.136.126]:32663 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726163AbgCZQoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 12:44:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1585241001;
-        bh=UVbrUb+k2mZ8gQQp531jOp6OyS4N5ogYYHX6KJL1YCU=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=blxVZnnmMDa/b8P3caKBpshrtPnRziu3jzDhlTkuXpnrj+kNY0/4RZzksYDbh7hnw
-         fLII8RoVZM59hxxC7Aj7CGOJQjjSYqWOqBatgQZzUauZKcb5LVFJH3ZIsIPtRRWNqP
-         PBfb3GxDKCKxu36ivhmfFT6LVVOW/g3jq67uacfI=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from ubuntu ([83.52.229.196]) by mail.gmx.com (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1N1wpt-1jOCXY1wrp-012Jls; Thu, 26
- Mar 2020 17:43:21 +0100
-Date:   Thu, 26 Mar 2020 17:43:05 +0100
-From:   Oscar Carter <oscar.carter@gmx.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Oscar Carter <oscar.carter@gmx.com>,
-        Forest Bond <forest@alittletooquiet.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Malcolm Priestley <tvboxspy@gmail.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Ojaswin Mujoo <ojaswin25111998@gmail.com>
-Subject: Re: [PATCH] staging: vt6656: Use BIT() macro instead of hex value
-Message-ID: <20200326164304.GA3629@ubuntu>
-References: <20200320171056.7841-1-oscar.carter@gmx.com>
- <20200323073518.GK4650@kadam>
+        id S1727677AbgCZQi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 12:38:58 -0400
+IronPort-SDR: CUG/gTmwJiNJB8jUdADp7XLfPtxKDzV+2l1oUWuZ6Jq0/WbESkYkLSrf3B5fOurAict4yMI3Rk
+ 0OAje6PQIynQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 09:38:58 -0700
+IronPort-SDR: 5qAPNHMPSfUJ2crJnR1N0kbPgi0WNOKmtBXLIv/QW9b1irnPu+DsZbog/yh3hn+zQuOdOnAb5L
+ +QiA/Z+IxVng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,309,1580803200"; 
+   d="scan'208";a="326618818"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 26 Mar 2020 09:38:58 -0700
+Date:   Thu, 26 Mar 2020 09:44:42 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v2 1/3] iommu/uapi: Define uapi version and capabilities
+Message-ID: <20200326094442.5be042ce@jacob-builder>
+In-Reply-To: <20200326092316.GA31648@infradead.org>
+References: <1585178227-17061-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1585178227-17061-2-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20200326092316.GA31648@infradead.org>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200323073518.GK4650@kadam>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:ISIX9ycQftVxIKBz3LnMcYJeXp51Z1jCaxo7XqwvIjHSJSTg4nM
- JHlz+vlVy60PwwLMtbHqQ73yjNPQcFb0B6WkzOj35hsEKcFQ/TGpipUFZFZI4kcjBBgamOm
- W6yGr/ypA+RtBgjIHDOsjMXSIy4D/Ldb9ZY6wYMLUdbkpbnNbtgs+YRD5ZaxiU4KIcftjfo
- zlA5IuYuFS7vx2G/IOXeQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:EXGQy6V7unU=:tkPDTF0Nvd+ujPunjlx3+r
- ONWMxR290GHbd7nj23A7c0sE5BxHQ2u0WEpXVey+UeIvPpfUVX671q+MFYlQB+Xh/VlJIOTMA
- GFI8OoPh1l4jL2+AqaOI3REcvrpKcGMNgRmNjGT9AkzDKEYabzMZIyqBmpMFtPEZZnL3wbJJ1
- uYIItOH8DcyUNX1rrOCO1soO5V8tUNJVtgfrXtUrIwt7PKkyuooaKcV7T93sM5XWB+4QGTJPA
- km8FuHEJJbEegto2Jtuw80yltvM2YYCewUlXeU0CJH2onnJb4PW03zoihfYQ9ASqDb2QBw9tj
- R0ALfO+fl6WM5eaiCO5sLXjUCNEor12FR5A29b1yfn94qJwj7GvU+E3bED9brSQ2q0shHetVj
- ZvIGLTv/bc5nwGTCBpE6pKRyWu4pde6j9ZafRryg1BgrhXNF6MmyRn/m42aGJvOuUZBJDsn5T
- qRTMPWi0CsHQrgoZswd0Of2XitvMlpoBUQnI5dPclaOzk+Xsz8yfH9mn9Ut6i2dGTFPnwq3bE
- lIG/KakrujCm5ylI9EVXcGmKu7aBH9d+8Fnmp4GVDUVM7eGORYBZ40/Q/O5+Ls5k3by7QoMVQ
- JSi4VnbaY6L1qE9sqdEIjUdCH6CHnNjJ4cgEX4POSSPhqKIJvucAeI6h04hVQwnHf0QgdQtfb
- WepzEcAPBGGGwckl/ezimRNP6UrwWpKJlvkB9Ldddeyd3ixbl0F2lSB/H+gTLb/qu2vJipc0Z
- dY5V9kcHmkOqUA3/aaaoyWc/pxkpQfChGEb1tbIvL++QjpWq6oWYOe7ldc4WsK6l4pgcYsyFR
- 2/1Ogtb+NJP6nFsL6temHUyoZNq6OzQtRl8PTKK/bH+ki8v1Zq99IimJiGOOgx21/wSeZxEEL
- 8unoondSozi5sjqrU6Ex3kR4ww9Cw5HIR/LyrpilYdLcg66K5xjxZUEVDFef+55Cd8ZtSmHI7
- YDamsQdrCNRX/vLwh8FCuHOzvyumN63Ql2SHvhGuhR/Rq1PKld8mMV/mv+XZxKGw5dyJYRILg
- jtQts1oz132BK8mFwjvHnJINdwxHCEH688kgSGo9JE0pXUJ6l4CrH3EY99yjJ28O0nMdRtE0D
- FxQPtzr5aHVnaWNO/JEW1+l+a5kqlzvSEi4GQ6UywDsjCXGaZ19HgRkAQQUQqE1g5C1tiswy5
- wAgOQcOGgdIFEBB/2YLq+MxGvz+WJQE/mkQ4PvAhRWt6S5/bdb71kvkljU6QM+FM6ivIS1di3
- D+4e4Eegi7Eolq97Y
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 10:35:18AM +0300, Dan Carpenter wrote:
-> On Fri, Mar 20, 2020 at 06:10:56PM +0100, Oscar Carter wrote:
-> > -#define RSR_ADDRBROAD       0x80
-> > -#define RSR_ADDRMULTI       0x40
-> > +#define RSR_ADDRBROAD       BIT(7)
-> > +#define RSR_ADDRMULTI       BIT(6)
-> >  #define RSR_ADDRUNI         0x00
-> > -#define RSR_IVLDTYP         0x20        /* invalid packet type */
-> > -#define RSR_IVLDLEN         0x10        /* invalid len (> 2312 byte) =
-*/
-> > -#define RSR_BSSIDOK         0x08
-> > -#define RSR_CRCOK           0x04
-> > -#define RSR_BCNSSIDOK       0x02
-> > -#define RSR_ADDROK          0x01
-> > +#define RSR_IVLDTYP         BIT(5)	/* invalid packet type */
-> > +#define RSR_IVLDLEN         BIT(4)	/* invalid len (> 2312 byte) */
-> > +#define RSR_BSSIDOK         BIT(3)
-> > +#define RSR_CRCOK           BIT(2)
-> > +#define RSR_BCNSSIDOK       BIT(1)
-> > +#define RSR_ADDROK          BIT(0)
->
-> I like these ones because I do think the new version is more clear
-> now.
->
-> >  /* Bits in the EnhanceCFG_0 register */
-> >  #define EnCFG_BBType_a		0x00
-> > -#define EnCFG_BBType_b		0x01
-> > -#define EnCFG_BBType_g		0x02
-> > -#define EnCFG_BBType_MASK	0x03
-> > -#define EnCFG_ProtectMd		0x20
-> > +#define EnCFG_BBType_b		BIT(0)
-> > +#define EnCFG_BBType_g		BIT(1)
-> > +#define EnCFG_BBType_MASK	(BIT(0) | BIT(1))
-> > +#define EnCFG_ProtectMd		BIT(5)
->
-> Probably EnCFG_BBType_MASK should be defined using the other defines.
->
-> #define EnCFG_BBType_MASK (EnCFG_BBType_b | EnCFG_BBType_g)
->
-> Otherwise it looks good.  Can you change that one thing and then add
-> my Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-Ok, i will make this change and i will send and incremental patch with the
-"Fixes:" tag due to the this patch has already been added to the staging-n=
-ext
-branch of the greg staging tree.
+Hi Christoph,
 
-> regards,
-> dan carpenter
->
-thanks,
+Thanks for the review. Please see my comments inline.
 
-oscar carter
+On Thu, 26 Mar 2020 02:23:16 -0700
+Christoph Hellwig <hch@infradead.org> wrote:
+
+> On Wed, Mar 25, 2020 at 04:17:05PM -0700, Jacob Pan wrote:
+> > Having a single UAPI version to govern the user-kernel data
+> > structures makes compatibility check straightforward. On the
+> > contrary, supporting combinations of multiple versions of the data
+> > can be a nightmare to maintain.
+> > 
+> > This patch defines a unified UAPI version to be used for
+> > compatibility checks between user and kernel.  
+> 
+> This is bullshit.  Version numbers don't scale and we've avoided them
+> everywhere.  You need need flags specifying specific behavior.
+> 
+We have flags or the equivalent in each UAPI structures. The flags
+are used for checking validity of extensions as well. And you are right
+we can use them for checking specific behavior.
+
+So we have two options here:
+1. Have a overall version for a quick compatibility check while
+starting a VM. If not compatible, we will stop guest SVA entirely.
+
+2. Let each API calls check its own capabilities/flags at runtime. It
+may fail later on and lead to more complex error handling.
+For example, guest starts with SVA support, allocate a PASID, bind
+guest PASID works great. Then when IO page fault happens, it try to do
+page request service and found out certain flags are not compatible.
+This case is more complex to handle.
+
+I am guessing your proposal is #2. right?
+
+Overall, we don;t expect much change to the UAPI other than adding some
+vendor specific part of the union. Is the scalability concern based on
+frequent changes?
+
+> > +#define IOMMU_UAPI_VERSION	1
+> > +static inline int iommu_get_uapi_version(void)
+> > +{
+> > +	return IOMMU_UAPI_VERSION;
+> > +}  
+> 
+> Also inline functions like this in UAPI headers that actually get
+> included by userspace programs simply don't work.
+
+I will remove that, user can just use IOMMU_UAPI_VERSION directly.
