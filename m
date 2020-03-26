@@ -2,68 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2B14194743
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:14:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2D96194749
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:14:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728531AbgCZTOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 15:14:16 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44624 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgCZTOQ (ORCPT
+        id S1728330AbgCZTOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 15:14:47 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38475 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbgCZTOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 15:14:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=OuLpqFnqFDxEEO4sWNfxqmccRQkxk3DQeTo8ggfuiO4=; b=FJsueFtQNP4ma3mKBsUnC3tLbx
-        EWNix8TB2fDfTL2OneTxC1ZRAJAemhRNEkPewt7pRnUfv79yrfLqLQArOfBn1SqIefiO4BuOrsHDZ
-        Qkcajx+Qjeqry1LhpIuDv4CpfMpeVTBIWybdRTDjTQXyS778Eb7VfKo8dpVnp6n/q9ZJni5ky/I3d
-        rVmhhOgkyHz8VjUAGmW0xSTwKpa/hs96qxaz1mzVEoJIGizdfF1vDlxYXbBC1xe69lUSyf5nwCdBV
-        HM8BKGAdGr2uTKyWe/xCL/IxYXDJ0kiHjjFMrj2owAcsWPtrtGNyu4b4OvJX9QFhF1Y8oerjQGgcw
-        vRriEG/A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHXx2-0001js-Bb; Thu, 26 Mar 2020 19:14:00 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C76FE983531; Thu, 26 Mar 2020 20:13:56 +0100 (CET)
-Date:   Thu, 26 Mar 2020 20:13:56 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "bristot@redhat.com" <bristot@redhat.com>,
-        "jbaron@akamai.com" <jbaron@akamai.com>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        tglx <tglx@linutronix.de>, "mingo@kernel.org" <mingo@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>
-Subject: Re: [RESEND][PATCH v3 06/17] static_call: Add basic static call
- infrastructure
-Message-ID: <20200326191356.GC2452@worktop.programming.kicks-ass.net>
-References: <20200324135603.483964896@infradead.org>
- <20200324142245.632535759@infradead.org>
- <12A30BA0-18DA-4748-B82F-6008179CC88C@vmware.com>
- <20200326170128.GQ20713@hirez.programming.kicks-ass.net>
- <9D47A4CA-39AD-4408-879B-677BE9D891B7@vmware.com>
- <20200326182823.GB2452@worktop.programming.kicks-ass.net>
- <313E79F2-E277-4C66-97C8-40B545B58370@vmware.com>
+        Thu, 26 Mar 2020 15:14:47 -0400
+Received: by mail-oi1-f196.google.com with SMTP id w2so6592464oic.5;
+        Thu, 26 Mar 2020 12:14:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QXEle+ZD53+MFHWcLgdRW1ZIu+1OkbpjksE2lr+1gKg=;
+        b=WNF38S/M/dFbhm+YapzzoP5MEt1c3ageOc5gu4bQMXKoeRqwopcFbc/5AqfjBfrGDa
+         NVUdWFairNhwluzfIHXGGgqOGujiVE6SzivgmkQWy6j+rDEuNsPya2IQ2HiW7PXK69pG
+         vve/OJyoHD0jVf4/+attRuADZr7l3kDedXxT2r864xOBa7kEIxN23Q9f+s7EJuZld56/
+         8Imf3xW3lw1p+n/L9wvITImNYbg7Veo4J59vUQhRfv6rJ0iarhK3t4hEKrgeBO+cpeMK
+         zn6YAcjUWAU3W4K5zv+8fgBKn8eBYCy8tTzBmQrVI9RPMRFGCzrVunDP4FnTeuYu9P6v
+         /cnQ==
+X-Gm-Message-State: ANhLgQ3MV4WHCesfQSvo62CMpS2UnHRu4cgqjkO4qrYj/do0KHjcTH/b
+        Ry0S6yML3XkKZRGIfJy6wRPfqC8nlYxI6TRjCSA=
+X-Google-Smtp-Source: ADFU+vsfTSr1oKjoNtVzFV6kqJLSFnimlr7Skrn5pUSOrTjmvEX49Crb7bSqm4rySP49deJhBqwBJs2Mm4RbPbj6rDQ=
+X-Received: by 2002:aca:5155:: with SMTP id f82mr1398128oib.103.1585250086360;
+ Thu, 26 Mar 2020 12:14:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <313E79F2-E277-4C66-97C8-40B545B58370@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200326144630.15011-1-daniel.lezcano@linaro.org>
+In-Reply-To: <20200326144630.15011-1-daniel.lezcano@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 26 Mar 2020 20:14:34 +0100
+Message-ID: <CAJZ5v0iDuv0doOzFd140A17fhLKsdgZXbc_XMOuhUeDt70Jz+g@mail.gmail.com>
+Subject: Re: [PATCH] powercap/drivers/idle_inject: Specify idle state max latency
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 07:02:33PM +0000, Nadav Amit wrote:
-> On another note - it may be beneficial to see if the infrastructure that you
-> built can accommodate notifier-chains. It is not the most painful point, but
-> it would be nice to deal with those as well. Since many of those are changed
-> asynchronously, I am not sure it is the easiest thing to do.
+On Thu, Mar 26, 2020 at 3:48 PM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> Currently the idle injection framework uses the play_idle() function
+> which puts the current CPU in an idle state. The idle state is the
+> deepest one, as specified by the latency constraint when calling the
+> subsequent play_idle_precise() function with the INT_MAX.
+>
+> The idle_injection is used by the cpuidle_cooling device which
+> computes the idle / run duration to mitigate the temperature by
+> injecting idle cycles. The cooling device has no control on the depth
+> of the idle state.
+>
+> Allow finer control of the idle injection mechanism by allowing to
+> specify the latency for the idle state. Thus the cooling device has
+> the ability to have a guarantee on the exit latency of the idle states
+> it is injecting.
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  drivers/powercap/idle_inject.c | 27 ++++++++++++++++++++++++++-
+>  include/linux/idle_inject.h    |  6 ++++++
+>  2 files changed, 32 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/powercap/idle_inject.c b/drivers/powercap/idle_inject.c
+> index cd1270614cc6..15e6f9b8023f 100644
+> --- a/drivers/powercap/idle_inject.c
+> +++ b/drivers/powercap/idle_inject.c
+> @@ -61,12 +61,14 @@ struct idle_inject_thread {
+>   * @timer: idle injection period timer
+>   * @idle_duration_us: duration of CPU idle time to inject
+>   * @run_duration_us: duration of CPU run time to allow
+> + * @latency_us: max allowed latency
+>   * @cpumask: mask of CPUs affected by idle injection
+>   */
+>  struct idle_inject_device {
+>         struct hrtimer timer;
+>         unsigned int idle_duration_us;
+>         unsigned int run_duration_us;
+> +       unsigned int latency_us;
+>         unsigned long int cpumask[0];
+>  };
+>
+> @@ -138,7 +140,8 @@ static void idle_inject_fn(unsigned int cpu)
+>          */
+>         iit->should_run = 0;
+>
+> -       play_idle(READ_ONCE(ii_dev->idle_duration_us));
+> +       play_idle_precise(READ_ONCE(ii_dev->idle_duration_us) * NSEC_PER_USEC,
+> +                         READ_ONCE(ii_dev->latency_us) * NSEC_PER_USEC);
+>  }
+>
+>  /**
+> @@ -169,6 +172,27 @@ void idle_inject_get_duration(struct idle_inject_device *ii_dev,
+>         *idle_duration_us = READ_ONCE(ii_dev->idle_duration_us);
+>  }
+>
+> +/**
+> + * idle_inject_set_latency - set the maximum latency allowed
+> + * @latency_us: set the latency requirement for the idle state
+> + */
+> +void idle_inject_set_latency(struct idle_inject_device *ii_dev,
+> +                            unsigned int latency_us)
+> +{
+> +       WRITE_ONCE(ii_dev->latency_us, latency_us);
+> +}
+> +
+> +/**
+> + * idle_inject_get_latency - get the allowed latency
+> + *
+> + * Return: an unsigned int corresponding to the latency requirement
+> + * for the idle state
+> + */
+> +unsigned int idle_inject_get_latency(struct idle_inject_device *ii_dev)
+> +{
+> +       return READ_ONCE(ii_dev->latency_us);
+> +}
+> +
+>  /**
+>   * idle_inject_start - start idle injections
+>   * @ii_dev: idle injection control device structure
+> @@ -297,6 +321,7 @@ struct idle_inject_device *idle_inject_register(struct cpumask *cpumask)
+>         cpumask_copy(to_cpumask(ii_dev->cpumask), cpumask);
+>         hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+>         ii_dev->timer.function = idle_inject_timer_fn;
+> +       ii_dev->latency_us = UINT_MAX;
+>
+>         for_each_cpu(cpu, to_cpumask(ii_dev->cpumask)) {
+>
+> diff --git a/include/linux/idle_inject.h b/include/linux/idle_inject.h
+> index a445cd1a36c5..b573fee589b9 100644
+> --- a/include/linux/idle_inject.h
+> +++ b/include/linux/idle_inject.h
+> @@ -26,4 +26,10 @@ void idle_inject_set_duration(struct idle_inject_device *ii_dev,
+>  void idle_inject_get_duration(struct idle_inject_device *ii_dev,
+>                                  unsigned int *run_duration_us,
+>                                  unsigned int *idle_duration_us);
+> +
+> +void idle_inject_set_latency(struct idle_inject_device *ii_dev,
+> +                            unsigned int latency_ns);
+> +
+> +unsigned int idle_inject_get_latency(struct idle_inject_device *ii_dev);
+> +
+>  #endif /* __IDLE_INJECT_H__ */
+> --
 
-You mean, like patch 12 does?
+I would like to see a user of idle_inject_get_latency() before this goes in.
