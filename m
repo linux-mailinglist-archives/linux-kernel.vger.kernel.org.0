@@ -2,117 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E32C119468F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:34:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76FCC194699
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:36:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbgCZSeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 14:34:21 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34896 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727446AbgCZSeV (ORCPT
+        id S1728188AbgCZSgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 14:36:14 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42492 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727192AbgCZSgN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 14:34:21 -0400
-Received: by mail-oi1-f195.google.com with SMTP id t25so6470034oij.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:34:21 -0700 (PDT)
+        Thu, 26 Mar 2020 14:36:13 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 22so3213735pfa.9
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:36:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zvcRbO8JiiH8TflCF3JYY64FRuv850T5VBR+zKWVaAo=;
-        b=D5KANnoUgA813LQvHjIp5rAoPhY2gTJup4nP+xGLb5FNmM7+8RNwum/ue1O95T+xWb
-         5Ktbnl2iWEXVoCU3oOQg1rH6QozCfngfrmRO501JFNyUSHuo2dqvZagSkuCv/ZkCcdDy
-         9SNPpYOLAEHYsE4N1CYsv1lw2JsDmzr3bO5CAhprXa6CHmJ/wgf3TslEjhp5iWSPZbla
-         6EGwewp3bw3kVgK1ceZl6cCzyM58RIqxXE7Ece2gV1Bkyopg2Mdv5j42z6O1C0vGsEb+
-         xUlK8kqOpBq79qowMpVYE7dI2KBF+1Bmk+h2mEbeqaCTkXHdCSEol6R1AyJ6SpC3NLmt
-         slKg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=iXlxt2aYlNdrmXy9xrh62320KX+jShx79PK1R5/xAp0=;
+        b=JQuCPnbnMGiAGC1aOyMcC4MmPwZxC6Oi3BG7HdZ54668Q1XbFffRXR0GwZhhSzbFjy
+         2H+CppEVA/1s0X82dxzmDwfpwkayVvIS3xDh2hcImj75t/xQo9Q93jFRKycRVcxVq7x4
+         OYRVuQpXPPRZfZpouGVANjeKzLLoTxyHwxTes=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zvcRbO8JiiH8TflCF3JYY64FRuv850T5VBR+zKWVaAo=;
-        b=rEfutk6FXlKeIUyZqAFojiPIEcrfNIwcpOcEyXyV0dE/e4WACWiuiTcdR8qD5rHOGe
-         dZcyTKMAuMj1zLvnoxwfyQHm6JJLPG/ijBhgiWv1t7/332YuCOVgm664PHyQZ+7wh3ZY
-         /6UqutLCgQ7BE3roIxOwXBbqvnnXavyukdHw3woOcACP2JCud6t6cnLZM6IHXVQ7TyFp
-         fZeldq6R8R3+BVGm6VQENTmfRoganKtZsQllDGeWezGfp7dfo3yCtHOOaWVOACbV1B3g
-         FBnOPj8WUadcwvq/CnIbZa84FJLdDmnvehg7JZKDgYNxrXouB7Kj7GsggAfRN9gVp3AX
-         N6oQ==
-X-Gm-Message-State: ANhLgQ16rNNYEqVKsg5XN36GYeXd3bfv+zECV11GN9Bue5H7KD8iVM8Z
-        pPU2sdxAtas9odK4XFYhiHU5/cHVlltf/Ld0zZrkrg==
-X-Google-Smtp-Source: ADFU+vuhr19j1Gh9BuMJvyrUH94cq/bHJXqm/DeIzQEZemccehjW6KDkcmRhHiQOfwXBWmMBVCeLo1LvtVagEPcJ2FU=
-X-Received: by 2002:aca:f541:: with SMTP id t62mr1218807oih.172.1585247660202;
- Thu, 26 Mar 2020 11:34:20 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=iXlxt2aYlNdrmXy9xrh62320KX+jShx79PK1R5/xAp0=;
+        b=L4P1yQu7GtT/27Vyirs8y8hzVG7DhkEf8IUSQ9FM8OfONMH9+BRWEHnfdryyKbK7dX
+         XMyU8oNu/AcOMEUaVMS0Rgr6cplponBeCFD3EUuJiexPxwmpJiu79fwjgoG4Z8gjuJT+
+         cCm4tddqfZJrkut7jHtDMd7Zg910I7MVTr+zmZC0TAnwjvtfsVIi3AANJbqYpdBA6g/m
+         gDj3SmAwVYy+rhuFb9EhEMztx4Q1OO0rOqhJ56nAMOnQZ+BD40/dqVMZr0nvDi+mVi60
+         lMFNyJrdko+AcMyg/P99bk4kHyujHzhj/jvb7MaXz1UodCSAJx3BaCKcmWyAjnpTO7NL
+         pwYA==
+X-Gm-Message-State: ANhLgQ06OLFXNBs6qU+4hGGKO0fO6S3rZe+et6ws1r37SadJp9flbRxg
+        0unihjD6VeuvUVluJS+2eOUyCA==
+X-Google-Smtp-Source: ADFU+vuidts8P9YSHqfhFKUIj0CYmlitPay4HIJ1OiYEifPM79lkB188HfB6F4kzetKdTpHlb0KBtw==
+X-Received: by 2002:aa7:9811:: with SMTP id e17mr9806248pfl.33.1585247772777;
+        Thu, 26 Mar 2020 11:36:12 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c15sm2242138pfo.139.2020.03.26.11.36.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 11:36:11 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 11:36:10 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Mar 18 (objtool)
+Message-ID: <202003261133.814BEE9F@keescook>
+References: <20200319173326.oj4qs24x4ly5lrgt@treble>
+ <20200319174028.azzaisoj5gbss7zk@treble>
+ <20200319174550.4wpx4j357nw67nzz@treble>
+ <20200320082613.GA20696@hirez.programming.kicks-ass.net>
+ <202003201131.9B688BC@keescook>
+ <20200324164433.qusyu5h7ykx3f2bu@treble>
+ <202003241105.4707F983@keescook>
+ <20200324222406.zg6hylzqux353jhq@treble>
+ <202003252251.771EF5EC5F@keescook>
+ <20200326163110.n35lxcgkfcar7vd5@treble>
 MIME-Version: 1.0
-References: <1584973502-14775-1-git-send-email-ppvk@codeaurora.org> <c17d8842-0e1d-0014-b909-3114952b350b@codeaurora.org>
-In-Reply-To: <c17d8842-0e1d-0014-b909-3114952b350b@codeaurora.org>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Thu, 26 Mar 2020 11:33:44 -0700
-Message-ID: <CAGETcx_GD4K9CKyUtJEHKtAjHFKdfrepT0ZdA9WfRoUCF+QKPg@mail.gmail.com>
-Subject: Re: [RFC v6 0/2] Add SDHC interconnect bandwidth scaling
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     Pradeep P V K <ppvk@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        adrian.hunter@intel.com, Rob Herring <robh+dt@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, asutoshd@codeaurora.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        rampraka@codeaurora.org, vbadigan@codeaurora.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>, mka@chromium.org,
-        linux-mmc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Andy Gross <agross@kernel.org>,
-        linux-mmc-owner@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200326163110.n35lxcgkfcar7vd5@treble>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 2:22 AM Rajendra Nayak <rnayak@codeaurora.org> wrote:
->
-> Adding Viresh and Saravana,
->
-> On 3/23/2020 7:55 PM, Pradeep P V K wrote:
-> > Add interconnect bandwidths for SDHC driver using OPP framework that
-> > is required by SDHC driver based on the clock frequency and bus width
-> > of the card. Otherwise, the system clocks may run at minimum clock
-> > speed and thus affecting the performance.
-> >
-> > This change is based on
-> > [RFC] mmc: host: sdhci-msm: Use the interconnect API
-> > (https://lkml.org/lkml/2018/10/11/499) and
-> >
-> > [PATCH v6] Introduce Bandwidth OPPs for interconnects
-> > (https://lkml.org/lkml/2019/12/6/740)
->
-> Pradeep, since your series seems to depend on the above proposed bw bindings,
-> can you post the DT changes for the platform that you are testing these
-> patches on?
->
-> Please note that the above series is currently deadlocked [1][2] with no clear path
-> forward for now, so looking at how you plan to use this might throw some light onto
-> the requirements
->
-> [1] https://lkml.org/lkml/2020/1/14/511
-> [2] https://lkml.org/lkml/2020/3/20/106
+On Thu, Mar 26, 2020 at 11:31:10AM -0500, Josh Poimboeuf wrote:
+> On Wed, Mar 25, 2020 at 10:57:02PM -0700, Kees Cook wrote:
+> > > In the meantime I can still change objtool to ignore unreachable UD2s if
+> > > there aren't any better ideas.
+> > 
+> > It'll still need the objtool change for CONFIG_UBSAN_TRAP, though based on
+> > the clang bug discussion, I'll probably _also_ be adding CONFIG_UBSAN_WARN
+> > which won't have an unreachable (and won't bloat the kernel). Testing
+> > still under way... it is possible that CONFIG_UBSAN_TRAP will go away
+> > in the future, though. If that happens, should I also remove the change
+> > at that time?
+> 
+> I'll go ahead and make the patch and post it soon.  It should be pretty
+> trivial.  We can always revert it if CONFIG_UBSAN_TRAP goes away.
 
-Sorry, not deadlocked. Just kinda busy. For [1] I believe I agreed
-with Viresh later on. I'll respond to [2] soon.
+Awesome, thanks very much. After digging into the WARN-style option,
+it seems that TRAP is unlikely to go away because it's Clang only;
+GCC doesn't support the "minimal runtime" option. Yay compilers.
 
--Saravana
+Anyway, I'll still get the WARN mode sent out. Thanks for looking at this;
+can you CC me on the patch? I'm trying to get more familiar with objtool
+so I don't have to bug you when objtool is angered by crazy stuff I do. ;)
 
->
-> >
-> > Pradeep P V K (2):
-> >    mmc: sdhci-msm: Add interconnect bus bandwidth scaling support
-> >    dt-bindings: mmc: sdhci-msm: Add interconnect BW scaling strings
-> >
-> >   .../devicetree/bindings/mmc/sdhci-msm.txt          |  18 ++
-> >   drivers/mmc/host/sdhci-msm.c                       | 240 ++++++++++++++++++++-
-> >   2 files changed, 254 insertions(+), 4 deletions(-)
-> >
->
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
+-- 
+Kees Cook
