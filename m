@@ -2,169 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E406F194538
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:16:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB57E194541
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:19:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbgCZRQu convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 26 Mar 2020 13:16:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49902 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727920AbgCZRQr (ORCPT
+        id S1727920AbgCZRTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 13:19:00 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43264 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbgCZRS7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 13:16:47 -0400
-Received: from mail-pj1-f69.google.com ([209.85.216.69])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1jHW7Y-0002zN-Ry
-        for linux-kernel@vger.kernel.org; Thu, 26 Mar 2020 17:16:45 +0000
-Received: by mail-pj1-f69.google.com with SMTP id z5so5030429pjq.9
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 10:16:44 -0700 (PDT)
+        Thu, 26 Mar 2020 13:18:59 -0400
+Received: by mail-pg1-f193.google.com with SMTP id u12so3192770pgb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 10:18:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0r/SurdDSCSAHVti9CZwgq0zi7acyKoJlvToplzgYwo=;
+        b=Vk72SUbH0AvbkhQ5XzcwGL7Voe73IZEF73e/9vZHeWg3ayRXD7y/T9U7Uh5KWQjjP8
+         CngWsDMtAPuLWsVlmB7aXos16mH3SNU0M8VlXfCMvp/8Bx9WCHkMBqDmkU0TZ7L01CCW
+         e/AUEQ1wJPERfVcLRtO1/uNX+Ay7mqmrzOVwtTg97qIX6gAwTaUXjesu1tEQ/zlL9/rk
+         1cmlxmMeuk46R2/U46OrkAlX4oM9FUMXLbvQnIGajbNyi8POyK6bFhuk1yWjrqUn7rqr
+         ODl5/33x6szSqlJdysIchhk/nbfRB0LxnzH2MWIHVjMQ4woLENNRFnDJkF0NI40SjDXK
+         iXZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=dqfMGNuGJlDejAz9mJaTfol96HG948oTLjPcdkSSNds=;
-        b=sPauk8MshEMUA6IPjkUjOCcvuk+NQP8tEOTot+PUDyOE9dZrkr4BLaafuJlWhUKqtk
-         bBjRoh5wzPiVzmfiPK+YZ0JLe7tVBAHCOnNUFhIrCYehmf0Ae8YSLE+MLeFKhq5xO/SP
-         1CTt0lLLph9uOgTE9oo43CF/Hrhs2nUrExiK+PSd8Dc57Zo0nV3k90o/3HD6iyQl/eaB
-         dlegXMcA44gjJMnUR3NEMepVcLrejgxonhWK0CTrmpiesXux6aA3B0LV+oD40cvEgpq0
-         M9M7SoU4e3hgFxSyram+mlVW5tQb+AmHA6ZxX7pnE6mBarb+10oOcxfOUzUeAk9TmHXd
-         znPw==
-X-Gm-Message-State: ANhLgQ1Ng7XQhNMdq2wFDtqJwJZ3Ia5WnHUY7V4EbW9sEi223GpiUCe7
-        l820GL2fUlU80SKPzz/qU/ivqND82erDpapxBjm3ZUpxKoUA5Z8BMZwPDusf9YWcVI/GGbEtreN
-        eI5cDaVM6QZhzX7z9Y6yX0U3sL2v8NO1AtKzCm8dXWg==
-X-Received: by 2002:a63:8948:: with SMTP id v69mr9362895pgd.318.1585243003071;
-        Thu, 26 Mar 2020 10:16:43 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vswShhL/EpTuaoi1tKEpPiSR0ktuhOQpRbacspfuWfDowPWsafFEAU3XqSauf9zfbjWpcjqHQ==
-X-Received: by 2002:a63:8948:: with SMTP id v69mr9362862pgd.318.1585243002685;
-        Thu, 26 Mar 2020 10:16:42 -0700 (PDT)
-Received: from [192.168.1.208] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id f69sm2157271pfa.124.2020.03.26.10.16.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Mar 2020 10:16:42 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [Intel-wired-lan] [PATCH] igb: Use a sperate mutex insead of
- rtnl_lock()
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CAKgT0UfFnXcSSsXvxk8+xiZvyzDh+8V-9bCT-z5U+MEVoAVKLw@mail.gmail.com>
-Date:   Fri, 27 Mar 2020 01:16:39 +0800
-Cc:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:INTEL ETHERNET DRIVERS" 
-        <intel-wired-lan@lists.osuosl.org>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <98E86E5A-4EE9-4CB5-81CF-49C3E74C3AE6@canonical.com>
-References: <20200326103926.20888-1-kai.heng.feng@canonical.com>
- <CAKgT0UfFnXcSSsXvxk8+xiZvyzDh+8V-9bCT-z5U+MEVoAVKLw@mail.gmail.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0r/SurdDSCSAHVti9CZwgq0zi7acyKoJlvToplzgYwo=;
+        b=kQVphSg6t/bbd2nBzYOZLbeJqUNDCEnI1f5HsWf68DE//PL+FB2M83uS8bsezhk88i
+         dj0LOj33ETnsdNRhny1z0sGCX5LLQcEw473VZLjwgXcSX5WsEV5GwS56Aw+PMpex19Wa
+         hWNOutEDzBVkQ19mK576m1AMZSKd169GwNJIYj5IIiUmyjaq2XSk9IofIBLtb7Jb4n7f
+         q6ElVKk6oEfCYg8Q7BHXy/mSs3dLjnRDX75s784k8IhE2u2QFapI1PV17MBB/jPdDpPb
+         RK/46wlJFEiu26HCAmc6gDD0Cu8GruNTkxU46FiXhnDQWOnUmlbDQ2ogA74wPtb+5lFH
+         HAhA==
+X-Gm-Message-State: ANhLgQ0gjTashibggpb4GD4uTwqoYN2c8aRtE9MqY07ikR3eR3cEuROa
+        6p6UkDakW9YAObsjX8Wnj2Vcc2/sr8026I5nOJ9xQg==
+X-Google-Smtp-Source: ADFU+vte/68TxLOoZDxjEk01TZmRSfqPyyu5ylgPkQx+VuS/XaqbzT6xAtlusN5AxnwbvbOL7dGPmztB+EKwgHNkl2Y=
+X-Received: by 2002:a63:a34d:: with SMTP id v13mr9360167pgn.10.1585243137461;
+ Thu, 26 Mar 2020 10:18:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200323114207.222412-1-courbet@google.com> <20200326123841.134068-1-courbet@google.com>
+In-Reply-To: <20200326123841.134068-1-courbet@google.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 26 Mar 2020 10:18:45 -0700
+Message-ID: <CAKwvOdk0N96DOZCUob0b=0DuAxYFq7-3Ft=RToi7EC8vOAhQZw@mail.gmail.com>
+Subject: Re: [PATCH] x86: Alias memset to __builtin_memset.
+To:     Clement Courbet <courbet@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Joe Perches <joe@perches.com>,
+        Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexander,
+On Thu, Mar 26, 2020 at 5:38 AM Clement Courbet <courbet@google.com> wrote:
+>
+> I discussed with the original authors who added freestanding to our
+> build. It turns out that it was added globally but this was just to
+> to workaround powerpc not compiling under clang, but they felt the
+> fix was appropriate globally.
+>
+> Now Nick has dug up https://lkml.org/lkml/2019/8/29/1300, which
+> advises against freestanding. Also, I've did some research and
+> discovered that the original reason for using freestanding for
+> powerpc has been fixed here:
+> https://lore.kernel.org/linuxppc-dev/20191119045712.39633-3-natechancellor@gmail.com/
+>
+> I'm going to remove -ffreestanding from downstream, so we don't really need
+> this anymore, sorry for waisting people's time.
+>
+> I wonder if the freestanding fix from the aforementioned patch is really needed
+> though. I think that clang is actually right to point out the issue.
+> I don't see any reason why setjmp()/longjmp() are declared as taking longs
+> rather than ints. The implementation looks like it only ever propagates the
+> value (in longjmp) or sets it to 1 (in setjmp), and we only ever call longjmp
+> with integer parameters. But I'm not a PowerPC expert, so I might
+> be misreading the code.
+>
+>
+> So it seems that we could just remove freestanding altogether and rewrite the
+> code to:
+>
+> diff --git a/arch/powerpc/include/asm/setjmp.h b/arch/powerpc/include/asm/setjmp.h
+> index 279d03a1eec6..7941ae68fe21 100644
+> --- a/arch/powerpc/include/asm/setjmp.h
+> +++ b/arch/powerpc/include/asm/setjmp.h
+> @@ -12,7 +12,9 @@
+>
+>  #define JMP_BUF_LEN    23
+> -extern long setjmp(long *);
+> -extern void longjmp(long *, long);
+> +typedef long * jmp_buf;
+> +
+> +extern int setjmp(jmp_buf);
+> +extern void longjmp(jmp_buf, int);
+>
+> I'm happy to send a patch for this, and get rid of more -ffreestanding.
+> Opinions ?
 
-> On Mar 27, 2020, at 00:27, Alexander Duyck <alexander.duyck@gmail.com> wrote:
-> 
-> On Thu, Mar 26, 2020 at 3:39 AM Kai-Heng Feng
-> <kai.heng.feng@canonical.com <mailto:kai.heng.feng@canonical.com>> wrote:
->> 
->> Commit 9474933caf21 ("igb: close/suspend race in netif_device_detach")
->> fixed race condition between close and power management ops by using
->> rtnl_lock().
->> 
->> This fix is a preparation for next patch, to prevent a dead lock under
->> rtnl_lock() when calling runtime resume routine.
->> 
->> However, we can't use device_lock() in igb_close() because when module
->> is getting removed, the lock is already held for igb_remove(), and
->> igb_close() gets called during unregistering the netdev, hence causing a
->> deadlock. So let's introduce a new mutex so we don't cause a deadlock
->> with driver core or netdev core.
->> 
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> 
-> So this description doesn't make much sense to me. You describe the
-> use of the device_lock() in igb_close() but it isn't used there.
+Yes, I think the above diff and additionally cleaning up
+-ffreestanding from arch/powerpc/kernel/Makefile and
+arch/powerpc/xmon/Makefile would be a much better approach.  If that's
+good enough to fix the warning, I kind of can't believe we didn't spot
+that in the original code review!
 
-Sorry I forgot to add a revision number.
-It was used by previous version and Aaron found a regression when device_lock() is used.
+Actually, the god awful warning was:
+./arch/powerpc/include/asm/setjmp.h:10:13: error: declaration of
+built-in function 'setjmp' requires the declaration of the 'jmp_buf'
+type, commonly provided in the header <setjmp.h>.
+[-Werror,-Wincomplete-setjmp-declaration]
+extern long setjmp(long *) __attribute__((returns_twice));
+            ^
+So jmp_buf was missing, wasn't used, but also the long vs int confusion.
 
-> In addition it seems like you are arbitrarily moving code that was
-> wrapped in the rtnl_lock out of it. I'm not entirely sure that is safe
-> since there are calls within many of these functions that assume the
-> rtnl_lock is held and changing that is likely going to introduce more
-> issues.
-
-The reason why rtnl lock needs to be removed is because of the following patch:
-https://lore.kernel.org/lkml/20200207101005.4454-2-kai.heng.feng@canonical.com/
-
-Ethtools helpers already held rtnl_lock, so to prevent a deadlock, my idea is to use another lock to solve what "igb: close/suspend race in netif_device_detach" originally tried to fix.
-
-> 
-> 
-> 
->> ---
->> drivers/net/ethernet/intel/igb/igb_main.c | 19 +++++++++++++------
->> 1 file changed, 13 insertions(+), 6 deletions(-)
->> 
->> diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
->> index b46bff8fe056..dc7ed5dd216b 100644
->> --- a/drivers/net/ethernet/intel/igb/igb_main.c
->> +++ b/drivers/net/ethernet/intel/igb/igb_main.c
->> @@ -288,6 +288,8 @@ static const struct igb_reg_info igb_reg_info_tbl[] = {
->>        {}
->> };
->> 
->> +static DEFINE_MUTEX(igb_mutex);
->> +
->> /* igb_regdump - register printout routine */
->> static void igb_regdump(struct e1000_hw *hw, struct igb_reg_info *reginfo)
->> {
->> @@ -4026,9 +4028,14 @@ static int __igb_close(struct net_device *netdev, bool suspending)
->> 
->> int igb_close(struct net_device *netdev)
->> {
->> +       int err = 0;
->> +
->> +       mutex_lock(&igb_mutex);
->>        if (netif_device_present(netdev) || netdev->dismantle)
->> -               return __igb_close(netdev, false);
->> -       return 0;
->> +               err = __igb_close(netdev, false);
->> +       mutex_unlock(&igb_mutex);
->> +
->> +       return err;
->> }
->> 
-> 
-> Okay, so I am guessing the problem has something to do with the
-> addition of the netdev->dismantle test here and the fact that it is
-> bypassing the present check for the hotplug remove case?
-
-Please see the rationale above.
-
-> 
-> So it looks like nobody ever really reviewed commit 888f22931478
-> ("igb: Free IRQs when device is hotplugged"). What I would recommend
-> is reverting it and instead we fix the remaining pieces that need to
-> be addressed in igb so it more closely matches what we have in e1000e
-> after commit a7023819404a ("e1000e: Use rtnl_lock to prevent race
-> conditions between net and pci/pm"). From what I can tell the only
-> pieces that are really missing is to update igb_io_error_detected so
-> that in addition to igb_down it will call igb_free_irq, and then in
-> addition we should be wrapping most of the code in that function with
-> an rtnl_lock since it is detaching a device and making modifications
-> to it.
-
-In addition to that, igb_shutdown() indirectly calls igb_close() when netdev unregistering the device.
-
-My "only scratch the surface" approach is because I don't have a reproducer for commit "igb: close/suspend race in netif_device_detach", and I am afraid of breaking it.
-
-Kai-Heng
+I tested the above diff, all calls to setjmp under arch/powerpc/ just
+compare the return value against 0.  Callers of longjmp just pass 1
+for the final parameter. So the above changes should be no functional
+change.
+-- 
+Thanks,
+~Nick Desaulniers
