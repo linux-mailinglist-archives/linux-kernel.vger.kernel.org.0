@@ -2,251 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A0E194592
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:38:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD9271945A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:39:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbgCZRiA convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 26 Mar 2020 13:38:00 -0400
-Received: from zimbra2.kalray.eu ([92.103.151.219]:51498 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbgCZRh7 (ORCPT
+        id S1728642AbgCZRjO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 13:39:14 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33890 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727541AbgCZRjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 13:37:59 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 71C3927E043E;
-        Thu, 26 Mar 2020 18:37:58 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id spkmu2Ax8Y4I; Thu, 26 Mar 2020 18:37:58 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 0053C27E0A11;
-        Thu, 26 Mar 2020 18:37:57 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id CerupkUqSsv7; Thu, 26 Mar 2020 18:37:57 +0100 (CET)
-Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id DA0F827E043E;
-        Thu, 26 Mar 2020 18:37:57 +0100 (CET)
-Date:   Thu, 26 Mar 2020 18:37:57 +0100 (CET)
-From:   =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalrayinc.com>
-To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>, psodagud@codeaurora.org,
-        tsoni@codeaurora.org, sidgup@codeaurora.org
-Message-ID: <1233159221.12306373.1585244277714.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <1585241440-7572-2-git-send-email-rishabhb@codeaurora.org>
-References: <1585241440-7572-1-git-send-email-rishabhb@codeaurora.org> <1585241440-7572-2-git-send-email-rishabhb@codeaurora.org>
-Subject: Re: [PATCH 1/2] remoteproc: Add userspace char device driver
+        Thu, 26 Mar 2020 13:39:13 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 26so7986761wmk.1;
+        Thu, 26 Mar 2020 10:39:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HpNuF66K0DwGIA2W7BsAFtvMAN5a4ZcafM59XWZDNzw=;
+        b=kqojkeDOTK2W9h5Sy+09ys68xx80S80Uf/X1IBo3l4i4cH5F4emJ3JeXQtt2Eoq73B
+         WflWJocUIKpX3GAmYD5CxWKnvYr/M3py8QFdHD17ud6saxlThWWEjR6jAg85Spk39ks2
+         4JsXQKtvqsp/JTKtbYNVd4IRE4AL4S6A0ETd/Q/3sZAsLgXXdcgFlUq98c3NV52LKRkD
+         hKDKuP2ro+wD4DmVT1BxbAGE4WrugBwyxjvIy7He9vKCats9jM0OB/kuS+fI8vT0/fkQ
+         rdkLLJiI5t9h89/2GGXQ2e5/g35NPpcSUsjXcQLgr1oyIuPjWHTPtBXXL6kfVZiI+GyB
+         M0YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HpNuF66K0DwGIA2W7BsAFtvMAN5a4ZcafM59XWZDNzw=;
+        b=eZHBW7oejwa0yx6OEqRRcZRB3omKyS8V+EMu7mbmoG/KYk9ZalKsBiqovnwgBoLgS4
+         ZZ22ucnYr4k1t3CE0eMoEEVBlU4VpXISVGh/1B5nN/BkUAK+AhiwlJG0T2IqOyeOOt1r
+         DURQLI3sICCqEutvbmlul5vtW0Dp9bP50jb2gEBQBtsVrJxmiiULI5seSUb3MNuUkAXh
+         jMSy2GUNy/70GWV7SzshF1p3bXM5H6akqBHlbyuYvyvM4MxL/OdKNDNsjS/W2ltUKI8e
+         JoqsXkyMYeXYbkO0TziLFcyxmAhqWd46UHdadBdLU9HGisKI+z1lJfgrImCSGl1EAk4k
+         uJbg==
+X-Gm-Message-State: ANhLgQ15Bl/aKCf4W1/IC5UkzkzanGv3CQZvjSkMdAUSWsf9EIWrztt/
+        Bdx0Uxa/lSTi3NZmsY9LnZ8=
+X-Google-Smtp-Source: ADFU+vufbLUwN19BQJGQ//UtXe37wcvKBLYq5YbRQfK92fMa0Gl9hLO0BL4sWPG/AcG/ZXgaQjLTSQ==
+X-Received: by 2002:a05:600c:54f:: with SMTP id k15mr1038530wmc.76.1585244351188;
+        Thu, 26 Mar 2020 10:39:11 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8f29:6000:d031:3b7b:1a72:8f94? (p200300EA8F296000D0313B7B1A728F94.dip0.t-ipconnect.de. [2003:ea:8f29:6000:d031:3b7b:1a72:8f94])
+        by smtp.googlemail.com with ESMTPSA id b11sm4497416wrq.26.2020.03.26.10.39.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Mar 2020 10:39:10 -0700 (PDT)
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH] net: core: provide devm_register_netdev()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20200326131721.6404-1-brgl@bgdev.pl>
+Message-ID: <c71a132d-dc33-0b8a-29e0-9cf93056ef52@gmail.com>
+Date:   Thu, 26 Mar 2020 18:39:06 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
+In-Reply-To: <20200326131721.6404-1-brgl@bgdev.pl>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [192.168.40.202]
-X-Mailer: Zimbra 8.8.15_GA_3895 (ZimbraWebClient - GC80 (Linux)/8.8.15_GA_3895)
-Thread-Topic: remoteproc: Add userspace char device driver
-Thread-Index: sALBqN+bhswvmd/pt74gPjg/0ba/6g==
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rishabh,
-
-While being interesting to have a such a userspace interface, I have
-some remarks.
-
------ On 26 Mar, 2020, at 17:50, Rishabh Bhatnagar rishabhb@codeaurora.org wrote:
-
-> Add the driver for creating the character device interface for
-> userspace applications. The character device interface can be used
-> in order to boot up and shutdown the remote processor.
-> This might be helpful for remote processors that are booted by
-> userspace applications and need to shutdown when the application
-> crahes/shutsdown.
+On 26.03.2020 14:17, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Change-Id: If23c8986272bb7c943eb76665f127ff706f12394
-> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> Create a new source file for networking devres helpers and provide
+> devm_register_netdev() - a managed variant of register_netdev().
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > ---
-> drivers/remoteproc/Makefile               |  1 +
-> drivers/remoteproc/remoteproc_internal.h  |  6 +++
-> drivers/remoteproc/remoteproc_userspace.c | 90 +++++++++++++++++++++++++++++++
-> include/linux/remoteproc.h                |  2 +
-> 4 files changed, 99 insertions(+)
-> create mode 100644 drivers/remoteproc/remoteproc_userspace.c
+> I'm writing a new ethernet driver and I realized there's no devres
+> variant for register_netdev(). Since this is the only function I need
+> to get rid of the remove() callback, I thought I'll just go ahead and
+> add it and send it even before the driver to make it available to other
+> drivers.
 > 
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index e30a1b1..facb3fa 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -7,6 +7,7 @@ obj-$(CONFIG_REMOTEPROC)		+= remoteproc.o
-> remoteproc-y				:= remoteproc_core.o
-> remoteproc-y				+= remoteproc_debugfs.o
-> remoteproc-y				+= remoteproc_sysfs.o
-> +remoteproc-y				+= remoteproc_userspace.o
-> remoteproc-y				+= remoteproc_virtio.o
-> remoteproc-y				+= remoteproc_elf_loader.o
-> obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
-> diff --git a/drivers/remoteproc/remoteproc_internal.h
-> b/drivers/remoteproc/remoteproc_internal.h
-> index 493ef92..97513ba 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -47,6 +47,9 @@ struct dentry *rproc_create_trace_file(const char *name,
-> struct rproc *rproc,
-> int rproc_init_sysfs(void);
-> void rproc_exit_sysfs(void);
+
+Such a new functionality typically is accepted as part of series adding
+at least one user only. Therefore best submit it together with the new
+network driver.
+
+>  .../driver-api/driver-model/devres.rst        |  3 ++
+>  include/linux/netdevice.h                     |  1 +
+>  net/core/Makefile                             |  2 +-
+>  net/core/devres.c                             | 41 +++++++++++++++++++
+>  4 files changed, 46 insertions(+), 1 deletion(-)
+>  create mode 100644 net/core/devres.c
 > 
-> +void rproc_init_cdev(void);
-> +void rproc_exit_cdev(void);
+> diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
+> index 46c13780994c..11a03b65196e 100644
+> --- a/Documentation/driver-api/driver-model/devres.rst
+> +++ b/Documentation/driver-api/driver-model/devres.rst
+> @@ -372,6 +372,9 @@ MUX
+>    devm_mux_chip_register()
+>    devm_mux_control_get()
+>  
+> +NET
+> +  devm_register_netdev()
 > +
-> void rproc_free_vring(struct rproc_vring *rvring);
-> int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
-> 
-> @@ -63,6 +66,9 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct
-> rproc *rproc,
-> struct rproc_mem_entry *
-> rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
-> 
-> +/* from remoteproc_userspace.c */
-> +int rproc_char_device_add(struct rproc *rproc);
-> +
-> static inline
-> int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
-> {
-> diff --git a/drivers/remoteproc/remoteproc_userspace.c
-> b/drivers/remoteproc/remoteproc_userspace.c
+>  PER-CPU MEM
+>    devm_alloc_percpu()
+>    devm_free_percpu()
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index 6c3f7032e8d9..710a7bcfc3dc 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -4196,6 +4196,7 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+>  			 count)
+>  
+>  int register_netdev(struct net_device *dev);
+> +int devm_register_netdev(struct device *dev, struct net_device *ndev);
+>  void unregister_netdev(struct net_device *dev);
+>  
+>  /* General hardware address lists handling functions */
+> diff --git a/net/core/Makefile b/net/core/Makefile
+> index 3e2c378e5f31..f530894068d2 100644
+> --- a/net/core/Makefile
+> +++ b/net/core/Makefile
+> @@ -8,7 +8,7 @@ obj-y := sock.o request_sock.o skbuff.o datagram.o stream.o scm.o \
+>  
+>  obj-$(CONFIG_SYSCTL) += sysctl_net_core.o
+>  
+> -obj-y		     += dev.o dev_addr_lists.o dst.o netevent.o \
+> +obj-y		     += dev.o devres.o dev_addr_lists.o dst.o netevent.o \
+>  			neighbour.o rtnetlink.o utils.o link_watch.o filter.o \
+>  			sock_diag.o dev_ioctl.o tso.o sock_reuseport.o \
+>  			fib_notifier.o xdp.o flow_offload.o
+> diff --git a/net/core/devres.c b/net/core/devres.c
 > new file mode 100644
-> index 0000000..2ef7679
+> index 000000000000..3c080abd1935
 > --- /dev/null
-> +++ b/drivers/remoteproc/remoteproc_userspace.c
-> @@ -0,0 +1,90 @@
+> +++ b/net/core/devres.c
+
+Why a new source file and not just add the function to net/core/dev.c?
+
+
+> @@ -0,0 +1,41 @@
 > +// SPDX-License-Identifier: GPL-2.0-only
 > +/*
-> + * Character device interface driver for Remoteproc framework.
-> + *
-> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+> + * Copyright (C) 2020 BayLibre SAS
+> + * Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > + */
 > +
-> +#include <linux/module.h>
-> +#include <linux/fs.h>
-> +#include <linux/cdev.h>
-> +#include <linux/mutex.h>
-> +#include <linux/remoteproc.h>
+> +#include <linux/device.h>
+> +#include <linux/netdevice.h>
 > +
-> +#include "remoteproc_internal.h"
+> +struct netdevice_devres {
+> +	struct net_device *ndev;
+> +};
 > +
-> +#define NUM_RPROC_DEVICES	64
-> +static dev_t rproc_cdev;
-> +static DEFINE_IDA(cdev_minor_ida);
-> +
-> +static int rproc_open(struct inode *inode, struct file *file)
+
+Adding such a struct isn't strictly needed.
+
+> +static void devm_netdev_release(struct device *dev, void *res)
 > +{
-> +	struct rproc *rproc;
+> +	struct netdevice_devres *this = res;
 > +
-> +	rproc = container_of(inode->i_cdev, struct rproc, char_dev);
-> +	if (!rproc)
-> +		return -EINVAL;
-> +
-> +	return rproc_boot(rproc);
+> +	unregister_netdev(this->ndev);
 > +}
-
-What happens if multiple user open this chardev ? Apparently,
-rproc_boot returns 0 if already powered_up, so the next user won't know
-what is the state of the rproc.
-Exclusive access could probably be a good idea.
-
 > +
-> +static int rproc_release(struct inode *inode, struct file *file)
+> +int devm_register_netdev(struct device *dev, struct net_device *ndev)
 > +{
-> +	struct rproc *rproc;
+
+In this function you'd need to consider the dependency on a previous
+call to devm_alloc_etherdev(). If the netdevice is allocated non-managed,
+then free_netdev() would be called whilst the netdevice is still
+registered, what would trigger a BUG_ON(). Therefore devm_register_netdev()
+should return an error if the netdevice was allocated non-managed.
+The mentioned scenario would result from a severe programming error
+of course, but there are less experienced driver authors and the net core
+should deal gently with wrong API usage.
+
+An example how this could be done you can find in the PCI subsystem,
+see pcim_release() and related functions like pcim_enable() and
+pcim_set_mwi().
+
+> +	struct netdevice_devres *devres;
+> +	int ret;
 > +
-> +	rproc = container_of(inode->i_cdev, struct rproc, char_dev);
-> +	if (!rproc)
-> +		return -EINVAL;
+> +	devres = devres_alloc(devm_netdev_release, sizeof(*devres), GFP_KERNEL);
+> +	if (!devres)
+> +		return -ENOMEM;
 > +
-> +	rproc_shutdown(rproc);
+> +	ret = register_netdev(ndev);
+> +	if (ret) {
+> +		devres_free(devres);
+> +		return ret;
+> +	}
+> +
+> +	devres->ndev = ndev;
+> +	devres_add(dev, devres);
 > +
 > +	return 0;
 > +}
-> +
-> +static const struct file_operations rproc_fops = {
-> +	.open = rproc_open,
-> +	.release = rproc_release,
-> +};
-> +
-> +int rproc_char_device_add(struct rproc *rproc)
-> +{
-> +	int ret, minor;
-> +	dev_t cdevt;
-> +
-> +	minor = ida_simple_get(&cdev_minor_ida, 0, NUM_RPROC_DEVICES,
-> +			GFP_KERNEL);
-> +	if (minor < 0) {
-> +	pr_err("%s: No more minor numbers left! rc:%d\n", __func__,
-> +							minor);
-> +		return -ENODEV;
-> +	}
-
-How can you make the link between the chardev and the device instance ?
-In our case, we have several remoteproc instances and thus we will end
-up having multiple chardev.
-
-Regards,
-
-Clément
-
-> +
-> +	cdev_init(&rproc->char_dev, &rproc_fops);
-> +	rproc->char_dev.owner = THIS_MODULE;
-> +
-> +	cdevt = MKDEV(MAJOR(rproc_cdev), minor);
-> +	ret = cdev_add(&rproc->char_dev, cdevt, 1);
-> +	if (ret < 0)
-> +		ida_simple_remove(&cdev_minor_ida, minor);
-> +
-> +	rproc->dev.devt = cdevt;
-> +
-> +	return ret;
-> +}
-> +
-> +void __init rproc_init_cdev(void)
-> +{
-> +	int ret;
-> +
-> +	ret = alloc_chrdev_region(&rproc_cdev, 0, NUM_RPROC_DEVICES, "rproc");
-> +	if (ret < 0) {
-> +		pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
-> +		return;
-> +	}
-> +}
-> +
-> +void __exit rproc_exit_cdev(void)
-> +{
-> +	unregister_chrdev_region(MKDEV(MAJOR(rproc_cdev), 0),
-> +				NUM_RPROC_DEVICES);
-> +}
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 16ad666..c4ca796 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -37,6 +37,7 @@
+> +EXPORT_SYMBOL(devm_register_netdev);
 > 
-> #include <linux/types.h>
-> #include <linux/mutex.h>
-> +#include <linux/cdev.h>
-> #include <linux/virtio.h>
-> #include <linux/completion.h>
-> #include <linux/idr.h>
-> @@ -514,6 +515,7 @@ struct rproc {
-> 	bool auto_boot;
-> 	struct list_head dump_segments;
-> 	int nb_vdev;
-> +	struct cdev char_dev;
-> };
-> 
-> /**
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+
