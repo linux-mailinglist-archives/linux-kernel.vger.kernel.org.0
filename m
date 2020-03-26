@@ -2,92 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB5241942A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 671E71942B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:12:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbgCZPJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 11:09:28 -0400
-Received: from mga11.intel.com ([192.55.52.93]:17880 "EHLO mga11.intel.com"
+        id S1727726AbgCZPMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 11:12:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728269AbgCZPJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 11:09:27 -0400
-IronPort-SDR: 7x7LOdjTPs40A6ZKdaqVSeQFEbmalSDR3389wllgNs2T+t365kccNKU0rrNgXVAgF6rePud2GE
- KN6x0HIZxMoA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 08:09:26 -0700
-IronPort-SDR: 0olWpR3BrHOQAdLf02zYkwm6exIzj8RlT59MYX5rIQSqQ8WWjOXXO4S2Rk0kt1UhRQJefA2hw2
- ZTFvsFleDGzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,308,1580803200"; 
-   d="scan'208";a="394014406"
-Received: from xiaoyaol-mobl.ccr.corp.intel.com (HELO [10.249.169.99]) ([10.249.169.99])
-  by orsmga004.jf.intel.com with ESMTP; 26 Mar 2020 08:09:22 -0700
-Subject: Re: [PATCH v6 8/8] kvm: vmx: virtualize split lock detection
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>
-References: <20200324151859.31068-1-xiaoyao.li@intel.com>
- <20200324151859.31068-9-xiaoyao.li@intel.com>
- <87eethz2p6.fsf@nanos.tec.linutronix.de>
- <88b01989-25cd-90af-bfe8-c236bd5d1dbf@intel.com>
- <87d08zxtgl.fsf@nanos.tec.linutronix.de>
- <1d98bddd-a6a4-2fcc-476b-c9b19f65c6b6@intel.com>
- <87a743xj0n.fsf@nanos.tec.linutronix.de>
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-Message-ID: <e58484ac-e355-299d-131c-6e8c12b0b1d0@intel.com>
-Date:   Thu, 26 Mar 2020 23:09:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1726496AbgCZPMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 11:12:08 -0400
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9991E206F8;
+        Thu, 26 Mar 2020 15:12:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585235528;
+        bh=gNmb1UwpI1bot54AGT9LmV+Ay1kJtk9PvnEvdt7OJfc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=HswQ9GU3pelOso6U3R+842+f+BEsJtKi+asi1ius/Kpn2ivVMGAkMxQdfx4AdmRWL
+         OXIpK3kwBDOOPY60j6YQgGoDi/R1l/B3W2qIVR2ZIZhJqacpgQuvx/Hur4AJIK+DoY
+         froEyzgClLoLaQL8Y/qmAtHqp2GIHJ1KQZMKnUFw=
+Date:   Thu, 26 Mar 2020 10:12:05 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Srinath Mannam <srinath.mannam@broadcom.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] PCI: iproc: Display PCIe Link information
+Message-ID: <20200326151205.GA6837@google.com>
 MIME-Version: 1.0
-In-Reply-To: <87a743xj0n.fsf@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1585206447-1363-4-git-send-email-srinath.mannam@broadcom.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/26/2020 10:55 PM, Thomas Gleixner wrote:
-> Xiaoyao Li <xiaoyao.li@intel.com> writes:
->> On 3/26/2020 7:10 PM, Thomas Gleixner wrote:
->> If the host has it disabled, !split_lock_detect_on() is true, it skips
->> following check due to ||
->>
->> if (!boot_cpu_has(X86_FEATURE_SPLIT_LOCK)) {
->> 	inject #AC back to guest
-and 	return 1;
-
+On Thu, Mar 26, 2020 at 12:37:27PM +0530, Srinath Mannam wrote:
+> Add more comprehensive information to show PCIe link speed and link
+> width to the console.
 > 
-> That'd be a regular #AC, right?
-
-Yes.
-
->> } else {
->> 	if (guest_alignment_check_enabled() || guest_sld_on())
->> 		inject #AC back to guest
-and 		return 1;
-
-> Here is clearly an else path missing.
-
-the else path is fall through.
-
-i.e. calling handle_user_split_lock().
-
-If cannot handle, it falls through to report #AC to user space (QEMU)
-
->> }
+> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-iproc.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+> index e7f0d58..ed41357 100644
+> --- a/drivers/pci/controller/pcie-iproc.c
+> +++ b/drivers/pci/controller/pcie-iproc.c
+> @@ -823,6 +823,8 @@ static int iproc_pcie_check_link(struct iproc_pcie *pcie)
+>  #define PCI_TARGET_LINK_SPEED_MASK	0xf
+>  #define PCI_TARGET_LINK_SPEED_GEN2	0x2
+>  #define PCI_TARGET_LINK_SPEED_GEN1	0x1
+> +#define PCI_TARGET_LINK_WIDTH_MASK	0x3f
+> +#define PCI_TARGET_LINK_WIDTH_OFFSET	0x4
+>  		iproc_pci_raw_config_read32(pcie, 0,
+>  					    IPROC_PCI_EXP_CAP + PCI_EXP_LNKCTL2,
+>  					    4, &link_ctrl);
+> @@ -843,7 +845,14 @@ static int iproc_pcie_check_link(struct iproc_pcie *pcie)
+>  		}
+>  	}
+>  
+> -	dev_info(dev, "link: %s\n", link_is_active ? "UP" : "DOWN");
+> +	if (link_is_active) {
+> +		dev_info(dev, "link UP @ Speed Gen-%d and width-x%d\n",
+> +			 link_status & PCI_TARGET_LINK_SPEED_MASK,
+> +			 (link_status >> PCI_TARGET_LINK_WIDTH_OFFSET) &
+> +			 PCI_TARGET_LINK_WIDTH_MASK);
 
-If there is no problem with the above. So what's the problem of the 
-original?
+Can you use pcie_print_link_status() or some variant here instead of
+rolling your own?
 
+> +	} else {
+> +		dev_info(dev, "link DOWN\n");
+> +	}
+>  
+>  	return link_is_active ? 0 : -ENODEV;
+>  }
+> -- 
+> 2.7.4
+> 
