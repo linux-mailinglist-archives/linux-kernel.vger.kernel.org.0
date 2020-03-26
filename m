@@ -2,78 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 784C81942AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFD04194263
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:08:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728559AbgCZPJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 11:09:40 -0400
-Received: from 8bytes.org ([81.169.241.247]:55834 "EHLO theia.8bytes.org"
+        id S1727910AbgCZPIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 11:08:37 -0400
+Received: from 8bytes.org ([81.169.241.247]:55756 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728148AbgCZPIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 11:08:51 -0400
+        id S1726267AbgCZPIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 11:08:37 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 516677BA; Thu, 26 Mar 2020 16:08:47 +0100 (CET)
+        id D5F5329A; Thu, 26 Mar 2020 16:08:35 +0100 (CET)
+Date:   Thu, 26 Mar 2020 16:08:34 +0100
 From:   Joerg Roedel <joro@8bytes.org>
-To:     iommu@lists.linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, guohanjun@huawei.com,
-        Sudeep Holla <sudeep.holla@arm.com>,
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "guohanjun@huawei.com" <guohanjun@huawei.com>,
+        Sudeep Holla <Sudeep.Holla@arm.com>,
         Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
         Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jean-Philippe Brucker <jean-philippe@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH v4 08/16] iommu: Introduce accessors for iommu private data
-Date:   Thu, 26 Mar 2020 16:08:33 +0100
-Message-Id: <20200326150841.10083-9-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200326150841.10083-1-joro@8bytes.org>
-References: <20200326150841.10083-1-joro@8bytes.org>
+Subject: Re: [PATCH v3 10/15] iommu/arm-smmu: Use accessor functions for
+ iommu private data
+Message-ID: <20200326150834.GA6937@8bytes.org>
+References: <20200320091414.3941-1-joro@8bytes.org>
+ <20200320091414.3941-11-joro@8bytes.org>
+ <09ed4676-449e-c6eb-8c51-c15b326c206c@arm.com>
+ <20200324100819.GA4038@8bytes.org>
+ <d69dad81-d025-96ef-863c-553b5ed2dd8e@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d69dad81-d025-96ef-863c-553b5ed2dd8e@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+Hi Robin,
 
-Add dev_iommu_priv_get/set() functions to access per-device iommu
-private data. This makes it easier to move the pointer to a different
-location.
+On Wed, Mar 25, 2020 at 12:31:46PM +0000, Robin Murphy wrote:
+> Oops, sorry - as you might imagine I'm not in my normal workflow :)
 
-Tested-by: Will Deacon <will@kernel.org> # arm-smmu
-Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- include/linux/iommu.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+No problem, nobody is right now :)
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index f5edc21a644d..056900e75758 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -627,6 +627,16 @@ static inline void dev_iommu_fwspec_set(struct device *dev,
- 	dev->iommu->fwspec = fwspec;
- }
- 
-+static inline void *dev_iommu_priv_get(struct device *dev)
-+{
-+	return dev->iommu->fwspec->iommu_priv;
-+}
-+
-+static inline void dev_iommu_priv_set(struct device *dev, void *priv)
-+{
-+	dev->iommu->fwspec->iommu_priv = priv;
-+}
-+
- int iommu_probe_device(struct device *dev);
- void iommu_release_device(struct device *dev);
- 
--- 
-2.17.1
+> Let me rebase that onto something actually in your tree (rather than
+> whatever detached HEAD this is checked out out on my laptop...) and try
+> resending it properly.
 
+Got it, thanks. Added to the next version of the patch-set which I will
+send out shortly.
+
+> Cool, let me know if you need a hand with all the *_iommu_configure() stuff
+> - I still have plans for overhauling that lot anyway, but not imminently, so
+> it probably is worthwhile to do the straightforward housekeeping first.
+
+Okay, I'll get back to you if I need help with the conversion.
+
+Thanks,
+
+	Joerg
