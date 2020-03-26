@@ -2,202 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91E2B193F5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 13:56:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FBE5193F58
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 13:56:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbgCZM4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 08:56:41 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:49528 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728187AbgCZM4k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 08:56:40 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jHS3q-0004mY-VW; Thu, 26 Mar 2020 06:56:39 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jHS3q-0002Ox-5s; Thu, 26 Mar 2020 06:56:38 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        Markus Elfring <elfring@users.sourceforge.net>,
-        Yoji <yoji.fujihar.min@gmail.com>, linux-kernel@vger.kernel.org
-References: <20200322110901.GA25108@redhat.com>
-        <20200324200932.GB24230@redhat.com>
-Date:   Thu, 26 Mar 2020 07:54:04 -0500
-In-Reply-To: <20200324200932.GB24230@redhat.com> (Oleg Nesterov's message of
-        "Tue, 24 Mar 2020 21:09:32 +0100")
-Message-ID: <87v9mr1dlf.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1728278AbgCZM4U convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 26 Mar 2020 08:56:20 -0400
+Received: from mga09.intel.com ([134.134.136.24]:20529 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728152AbgCZM4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 08:56:20 -0400
+IronPort-SDR: cfs9XeRP9zJ6WaKyCTH+yKWQai43sQZKh9+4a6bWroOk+mI95eXbPPQk4Zar7YU/QXr23uLlZt
+ YPd81w0DL1hQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 05:56:19 -0700
+IronPort-SDR: yiOsM0HzQtPs7uCAalT1rmEaVhDVR7PBoOr5v2NRZQDpTvBCDiL/gALwpPAPkTAp+Rfv0LXRHs
+ WUCGki2QgF7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,308,1580803200"; 
+   d="scan'208";a="393970616"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga004.jf.intel.com with ESMTP; 26 Mar 2020 05:56:18 -0700
+Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 26 Mar 2020 05:56:18 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.206]) by
+ shsmsx102.ccr.corp.intel.com ([169.254.2.50]) with mapi id 14.03.0439.000;
+ Thu, 26 Mar 2020 20:56:13 +0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>
+CC:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Tian, Jun J" <jun.j.tian@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wu, Hao" <hao.wu@intel.com>
+Subject: RE: [PATCH v1 0/8] vfio: expose virtual Shared Virtual Addressing
+ to VMs
+Thread-Topic: [PATCH v1 0/8] vfio: expose virtual Shared Virtual Addressing
+ to VMs
+Thread-Index: AQHWAEUdI4Sfhdx3H0+yWIyqzj+O7Kha2xeQ
+Date:   Thu, 26 Mar 2020 12:56:13 +0000
+Message-ID: <A2975661238FB949B60364EF0F2C25743A20440A@SHSMSX104.ccr.corp.intel.com>
+References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
+In-Reply-To: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jHS3q-0002Ox-5s;;;mid=<87v9mr1dlf.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19FQNW6El1vkn/O9+aq6uzvW1DZho99q7U=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,T_TooManySym_03,T_TooManySym_04,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4958]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-        *  0.0 T_TooManySym_04 7+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Oleg Nesterov <oleg@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 334 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 14 (4.3%), b_tie_ro: 13 (3.8%), parse: 1.16
-        (0.3%), extract_message_metadata: 4.8 (1.4%), get_uri_detail_list: 2.4
-        (0.7%), tests_pri_-1000: 3.7 (1.1%), tests_pri_-950: 1.44 (0.4%),
-        tests_pri_-900: 1.22 (0.4%), tests_pri_-90: 70 (20.9%), check_bayes:
-        68 (20.4%), b_tokenize: 12 (3.6%), b_tok_get_all: 9 (2.7%),
-        b_comp_prob: 2.4 (0.7%), b_tok_touch_all: 40 (11.9%), b_finish: 1.28
-        (0.4%), tests_pri_0: 218 (65.5%), check_dkim_signature: 0.84 (0.3%),
-        check_dkim_adsp: 2.9 (0.9%), poll_dns_idle: 1.23 (0.4%), tests_pri_10:
-        2.1 (0.6%), tests_pri_500: 7 (2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH V2] ipc/mqueue.c: change __do_notify() to bypass check_kill_permission()
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
+> From: Liu, Yi L <yi.l.liu@intel.com>
+> Sent: Sunday, March 22, 2020 8:32 PM
+> To: alex.williamson@redhat.com; eric.auger@redhat.com
+> Subject: [PATCH v1 0/8] vfio: expose virtual Shared Virtual Addressing to VMs
+> 
+> From: Liu Yi L <yi.l.liu@intel.com>
+> 
+> Shared Virtual Addressing (SVA), a.k.a, Shared Virtual Memory (SVM) on
+> Intel platforms allows address space sharing between device DMA and
+> applications. SVA can reduce programming complexity and enhance security.
+> 
+> This VFIO series is intended to expose SVA usage to VMs. i.e. Sharing
+> guest application address space with passthru devices. This is called
+> vSVA in this series. The whole vSVA enabling requires QEMU/VFIO/IOMMU
+> changes. For IOMMU and QEMU changes, they are in separate series (listed
+> in the "Related series").
+> 
+> The high-level architecture for SVA virtualization is as below, the key
+> design of vSVA support is to utilize the dual-stage IOMMU translation (
+> also known as IOMMU nesting translation) capability in host IOMMU.
+> 
+> 
+>     .-------------.  .---------------------------.
+>     |   vIOMMU    |  | Guest process CR3, FL only|
+>     |             |  '---------------------------'
+>     .----------------/
+>     | PASID Entry |--- PASID cache flush -
+>     '-------------'                       |
+>     |             |                       V
+>     |             |                CR3 in GPA
+>     '-------------'
+> Guest
+> ------| Shadow |--------------------------|--------
+>       v        v                          v
+> Host
+>     .-------------.  .----------------------.
+>     |   pIOMMU    |  | Bind FL for GVA-GPA  |
+>     |             |  '----------------------'
+>     .----------------/  |
+>     | PASID Entry |     V (Nested xlate)
+>     '----------------\.------------------------------.
+>     |             |   |SL for GPA-HPA, default domain|
+>     |             |   '------------------------------'
+>     '-------------'
+> Where:
+>  - FL = First level/stage one page tables
+>  - SL = Second level/stage two page tables
+> 
+> There are roughly four parts in this patchset which are
+> corresponding to the basic vSVA support for PCI device
+> assignment
+>  1. vfio support for PASID allocation and free for VMs
+>  2. vfio support for guest page table binding request from VMs
+>  3. vfio support for IOMMU cache invalidation from VMs
+>  4. vfio support for vSVA usage on IOMMU-backed mdevs
+> 
+> The complete vSVA kernel upstream patches are divided into three phases:
+>     1. Common APIs and PCI device direct assignment
+>     2. IOMMU-backed Mediated Device assignment
+>     3. Page Request Services (PRS) support
+> 
+> This patchset is aiming for the phase 1 and phase 2, and based on Jacob's
+> below series.
+> [PATCH V10 00/11] Nested Shared Virtual Address (SVA) VT-d support:
+> https://lkml.org/lkml/2020/3/20/1172
+> 
+> Complete set for current vSVA can be found in below branch.
+> https://github.com/luxis1999/linux-vsva.git: vsva-linux-5.6-rc6
+> 
+> The corresponding QEMU patch series is as below, complete QEMU set can be
+> found in below branch.
+> [PATCH v1 00/22] intel_iommu: expose Shared Virtual Addressing to VMs
+> complete QEMU set can be found in below link:
+> https://github.com/luxis1999/qemu.git: sva_vtd_v10_v1
 
-> Commit cc731525f26a ("signal: Remove kernel interal si_code magic")
-> changed the value of SI_FROMUSER(SI_MESGQ), this means that mq_notify()
-> no longer works if the sender doesn't have rights to send a signal.
->
-> Change __do_notify() to use do_send_sig_info() instead of kill_pid_info()
-> to avoid check_kill_permission().
->
-> This needs the additional notify.sigev_signo != 0 check, shouldn't we
-> change do_mq_notify() to deny sigev_signo == 0 ?
->
-> Test-case:
->
-> 	#include <signal.h>
-> 	#include <mqueue.h>
-> 	#include <unistd.h>
-> 	#include <sys/wait.h>
-> 	#include <assert.h>
->
-> 	static int notified;
->
-> 	static void sigh(int sig)
-> 	{
-> 		notified = 1;
-> 	}
->
-> 	int main(void)
-> 	{
-> 		signal(SIGIO, sigh);
->
-> 		int fd = mq_open("/mq", O_RDWR|O_CREAT, 0666, NULL);
-> 		assert(fd >= 0);
->
-> 		struct sigevent se = {
-> 			.sigev_notify	= SIGEV_SIGNAL,
-> 			.sigev_signo	= SIGIO,
-> 		};
-> 		assert(mq_notify(fd, &se) == 0);
->
-> 		if (!fork()) {
-> 			assert(setuid(1) == 0);
-> 			mq_send(fd, "",1,0);
-> 			return 0;
-> 		}
->
-> 		wait(NULL);
-> 		mq_unlink("/mq");
-> 		assert(notified);
-> 		return 0;
-> 	}
->
-> Reported-by: Yoji <yoji.fujihar.min@gmail.com>
-> Fixes: cc731525f26a ("signal: Remove kernel interal si_code magic")
-> Cc: stable <stable@vger.kernel.org>
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> ---
->  ipc/mqueue.c | 28 ++++++++++++++++++++--------
->  1 file changed, 20 insertions(+), 8 deletions(-)
->
-> diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-> index 49a05ba3000d..63b164932ffd 100644
-> --- a/ipc/mqueue.c
-> +++ b/ipc/mqueue.c
-> @@ -774,28 +774,40 @@ static void __do_notify(struct mqueue_inode_info *info)
->  	 * synchronously. */
->  	if (info->notify_owner &&
->  	    info->attr.mq_curmsgs == 1) {
-> -		struct kernel_siginfo sig_i;
->  		switch (info->notify.sigev_notify) {
->  		case SIGEV_NONE:
->  			break;
-> -		case SIGEV_SIGNAL:
-> -			/* sends signal */
-> +		case SIGEV_SIGNAL: {
-> +			struct kernel_siginfo sig_i;
-> +			struct task_struct *task;
-> +
-> +			/* do_mq_notify() accepts sigev_signo == 0, why?? */
-> +			if (!info->notify.sigev_signo)
-> +				break;
->  
->  			clear_siginfo(&sig_i);
->  			sig_i.si_signo = info->notify.sigev_signo;
->  			sig_i.si_errno = 0;
->  			sig_i.si_code = SI_MESGQ;
->  			sig_i.si_value = info->notify.sigev_value;
-> -			/* map current pid/uid into info->owner's namespaces */
->  			rcu_read_lock();
-> +			/* map current pid/uid into info->owner's namespaces */
->  			sig_i.si_pid = task_tgid_nr_ns(current,
->  						ns_of_pid(info->notify_owner));
-> -			sig_i.si_uid = from_kuid_munged(info->notify_user_ns, current_uid());
-> +			sig_i.si_uid = from_kuid_munged(info->notify_user_ns,
-> +						current_uid());
-> +			/*
-> +			 * We can't use kill_pid_info(), this signal should
-> +			 * bypass check_kill_permission(). It is from kernel
-> +			 * but si_fromuser() can't know this.
-> +			 */
-> +			task = pid_task(info->notify_owner, PIDTYPE_PID);
-                                                            ^^^^^^^^^^^^
-Minor nit:  If we are doing the task lookup ourselves that can and
-            should be PIDTYPE_TGID.  Because the code captures the TGID
-            itself none of the very valid backwards compatibility
-            reasons for using PIDTYPE_PID come into play.
+The ioasid extension is in the below link.
 
-> +			if (task)
-> +				do_send_sig_info(info->notify.sigev_signo,
-> +						&sig_i, task, PIDTYPE_TGID);
->  			rcu_read_unlock();
-> -
-> -			kill_pid_info(info->notify.sigev_signo,
-> -				      &sig_i, info->notify_owner);
->  			break;
-> +		}
->  		case SIGEV_THREAD:
->  			set_cookie(info->notify_cookie, NOTIFY_WOKENUP);
->  			netlink_sendskb(info->notify_sock, info->notify_cookie);
-Eric
+https://lkml.org/lkml/2020/3/25/874
+
+Regards,
+Yi Liu
