@@ -2,142 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AF92193F2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 13:48:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CC4D193F48
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 13:53:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbgCZMr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 08:47:58 -0400
-Received: from mga18.intel.com ([134.134.136.126]:16947 "EHLO mga18.intel.com"
+        id S1728181AbgCZMxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 08:53:42 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:62547 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727841AbgCZMr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 08:47:57 -0400
-IronPort-SDR: 7WQ/DVEfSuuuJ3MO3WQeXL8T/8epGDim1PVVmvtCBKg+uvtDnP7wCWZ/0KPE4930UYEIQejHHj
- UreKrO+Med0g==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 05:47:57 -0700
-IronPort-SDR: 4MeGnowaMGpgEa9Oj0vOqTX6OTJWRFj2MYMvitJ08h0w8rixQahEakV1Y57nrNbL7Iv7suTABP
- oZzd3Exx34kg==
-X-IronPort-AV: E=Sophos;i="5.72,308,1580803200"; 
-   d="scan'208";a="420687679"
-Received: from likexu-mobl1.ccr.corp.intel.com (HELO [10.249.175.106]) ([10.249.175.106])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 05:47:54 -0700
-Subject: Re: [PATCH v2] KVM: x86/pmu: Reduce counter period change overhead
- and delay the effective time
-To:     pbonzini@redhat.com
-Cc:     ehankland@google.com, jmattson@google.com, joro@8bytes.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sean.j.christopherson@intel.com, vkuznets@redhat.com,
-        wanpengli@tencent.com
-References: <20200317075315.70933-1-like.xu@linux.intel.com>
- <20200317081458.88714-1-like.xu@linux.intel.com>
-From:   Like Xu <like.xu@linux.intel.com>
-Organization: Intel OTC
-Message-ID: <1528e1b4-3dee-161b-9463-57471263b5a8@linux.intel.com>
-Date:   Thu, 26 Mar 2020 20:47:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        id S1728065AbgCZMxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 08:53:42 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48p4fq29TYz9vBnF;
+        Thu, 26 Mar 2020 13:53:39 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=LMyGOtON; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 90yt0EtupaJb; Thu, 26 Mar 2020 13:53:39 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48p4fq0qPRz9vBnC;
+        Thu, 26 Mar 2020 13:53:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1585227219; bh=pv5nl1zmDcq3y5iwkiuJhYXlqL7JGHrLvXca9WF8M7U=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=LMyGOtONLwl4lZL1yJByBQT5ZaVwcGGqx08lFVKYcLFc/Kf+UTGbH5Ee8OxEw2tJa
+         rd8ZRoai5oUExchjaSlAltOy2MaOCBekxlIT0odeIug2+9m2lVTlbk3mJs7Qjmw/j5
+         thaq7bCNspyOR1zahy2HM9D+5UM5pM5w+NqwHNZU=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6C2D88B7BC;
+        Thu, 26 Mar 2020 13:53:40 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id IbawcdGDWZPr; Thu, 26 Mar 2020 13:53:40 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 93C7D8B7BA;
+        Thu, 26 Mar 2020 13:53:39 +0100 (CET)
+Subject: Re: [PATCH v5 10/13] powerpc/ptrace: split out ADV_DEBUG_REGS related
+ functions.
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, mikey@neuling.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1582848567.git.christophe.leroy@c-s.fr>
+ <e2bd7d275bd5933d848aad4fee3ca652a14d039b.1582848567.git.christophe.leroy@c-s.fr>
+ <87imizdbaz.fsf@mpe.ellerman.id.au>
+ <25a7f050-f241-6035-e778-16b1ca9928f3@c-s.fr>
+ <87k13axoda.fsf@mpe.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <e2e02786-1b6c-7e91-6768-60563ad21505@c-s.fr>
+Date:   Thu, 26 Mar 2020 13:53:31 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200317081458.88714-1-like.xu@linux.intel.com>
+In-Reply-To: <87k13axoda.fsf@mpe.ellerman.id.au>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Anyone to help review this change?
 
-Thanks,
-Like Xu
 
-On 2020/3/17 16:14, Like Xu wrote:
-> The cost of perf_event_period() is unstable, and when the guest samples
-> multiple events, the overhead increases dramatically (5378 ns on E5-2699).
+Le 24/03/2020 à 07:23, Michael Ellerman a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>> On 03/20/2020 02:12 AM, Michael Ellerman wrote:
+>>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>>> Move ADV_DEBUG_REGS functions out of ptrace.c, into
+>>>> ptrace-adv.c and ptrace-noadv.c
+>>>>
+>>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>>> ---
+>>>> v4: Leave hw_breakpoint.h for ptrace.c
+>>>> ---
+>>>>    arch/powerpc/kernel/ptrace/Makefile       |   4 +
+>>>>    arch/powerpc/kernel/ptrace/ptrace-adv.c   | 468 ++++++++++++++++
+>>>>    arch/powerpc/kernel/ptrace/ptrace-decl.h  |   5 +
+>>>>    arch/powerpc/kernel/ptrace/ptrace-noadv.c | 236 ++++++++
+>>>>    arch/powerpc/kernel/ptrace/ptrace.c       | 650 ----------------------
+>>>>    5 files changed, 713 insertions(+), 650 deletions(-)
+>>>>    create mode 100644 arch/powerpc/kernel/ptrace/ptrace-adv.c
+>>>>    create mode 100644 arch/powerpc/kernel/ptrace/ptrace-noadv.c
+>>>
+>>> This is somehow breaking the ptrace-hwbreak selftest on Power8:
+>>>
+>>>     test: ptrace-hwbreak
+>>>     tags: git_version:v5.6-rc6-892-g7a285a6067d6
+>>>     PTRACE_SET_DEBUGREG, WO, len: 1: Ok
+>>>     PTRACE_SET_DEBUGREG, WO, len: 2: Ok
+>>>     PTRACE_SET_DEBUGREG, WO, len: 4: Ok
+>>>     PTRACE_SET_DEBUGREG, WO, len: 8: Ok
+>>>     PTRACE_SET_DEBUGREG, RO, len: 1: Ok
+>>>     PTRACE_SET_DEBUGREG, RO, len: 2: Ok
+>>>     PTRACE_SET_DEBUGREG, RO, len: 4: Ok
+>>>     PTRACE_SET_DEBUGREG, RO, len: 8: Ok
+>>>     PTRACE_SET_DEBUGREG, RW, len: 1: Ok
+>>>     PTRACE_SET_DEBUGREG, RW, len: 2: Ok
+>>>     PTRACE_SET_DEBUGREG, RW, len: 4: Ok
+>>>     PTRACE_SET_DEBUGREG, RW, len: 8: Ok
+>>>     PPC_PTRACE_SETHWDEBUG, MODE_EXACT, WO, len: 1: Ok
+>>>     PPC_PTRACE_SETHWDEBUG, MODE_EXACT, RO, len: 1: Ok
+>>>     PPC_PTRACE_SETHWDEBUG, MODE_EXACT, RW, len: 1: Ok
+>>>     PPC_PTRACE_SETHWDEBUG, MODE_RANGE, DW ALIGNED, WO, len: 6: Ok
+>>>     PPC_PTRACE_SETHWDEBUG, MODE_RANGE, DW ALIGNED, RO, len: 6: Ok
+>>>     PPC_PTRACE_SETHWDEBUG, MODE_RANGE, DW ALIGNED, RW, len: 6: Ok
+>>>     PPC_PTRACE_SETHWDEBUG, MODE_RANGE, DW UNALIGNED, WO, len: 6: Ok
+>>>     PPC_PTRACE_SETHWDEBUG, MODE_RANGE, DW UNALIGNED, RO, len: 6: Fail
+>>>     failure: ptrace-hwbreak
+>>>
+>>> I haven't had time to work out why yet.
+>>>
+>>
+>> A (big) part of commit c3f68b0478e7 ("powerpc/watchpoint: Fix ptrace
+>> code that muck around with address/len") was lost during rebase.
+>>
+>> I'll send a fix, up to you to squash it in or commit it as is.
 > 
-> For a non-running counter, the effective time of the new period is when
-> its corresponding enable bit is enabled. Calling perf_event_period()
-> in advance is superfluous. For a running counter, it's safe to delay the
-> effective time until the KVM_REQ_PMU event is handled. If there are
-> multiple perf_event_period() calls before handling KVM_REQ_PMU,
-> it helps to reduce the total cost.
-> 
-> Signed-off-by: Like Xu <like.xu@linux.intel.com>
-> ---
->   arch/x86/kvm/pmu.c           | 11 -----------
->   arch/x86/kvm/pmu.h           | 11 +++++++++++
->   arch/x86/kvm/vmx/pmu_intel.c | 10 ++++------
->   3 files changed, 15 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-> index d1f8ca57d354..527a8bb85080 100644
-> --- a/arch/x86/kvm/pmu.c
-> +++ b/arch/x86/kvm/pmu.c
-> @@ -437,17 +437,6 @@ void kvm_pmu_init(struct kvm_vcpu *vcpu)
->   	kvm_pmu_refresh(vcpu);
->   }
->   
-> -static inline bool pmc_speculative_in_use(struct kvm_pmc *pmc)
-> -{
-> -	struct kvm_pmu *pmu = pmc_to_pmu(pmc);
-> -
-> -	if (pmc_is_fixed(pmc))
-> -		return fixed_ctrl_field(pmu->fixed_ctr_ctrl,
-> -			pmc->idx - INTEL_PMC_IDX_FIXED) & 0x3;
-> -
-> -	return pmc->eventsel & ARCH_PERFMON_EVENTSEL_ENABLE;
-> -}
-> -
->   /* Release perf_events for vPMCs that have been unused for a full time slice.  */
->   void kvm_pmu_cleanup(struct kvm_vcpu *vcpu)
->   {
-> diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
-> index d7da2b9e0755..cd112e825d2c 100644
-> --- a/arch/x86/kvm/pmu.h
-> +++ b/arch/x86/kvm/pmu.h
-> @@ -138,6 +138,17 @@ static inline u64 get_sample_period(struct kvm_pmc *pmc, u64 counter_value)
->   	return sample_period;
->   }
->   
-> +static inline bool pmc_speculative_in_use(struct kvm_pmc *pmc)
-> +{
-> +	struct kvm_pmu *pmu = pmc_to_pmu(pmc);
-> +
-> +	if (pmc_is_fixed(pmc))
-> +		return fixed_ctrl_field(pmu->fixed_ctr_ctrl,
-> +			pmc->idx - INTEL_PMC_IDX_FIXED) & 0x3;
-> +
-> +	return pmc->eventsel & ARCH_PERFMON_EVENTSEL_ENABLE;
-> +}
-> +
->   void reprogram_gp_counter(struct kvm_pmc *pmc, u64 eventsel);
->   void reprogram_fixed_counter(struct kvm_pmc *pmc, u8 ctrl, int fixed_idx);
->   void reprogram_counter(struct kvm_pmu *pmu, int pmc_idx);
-> diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-> index 7c857737b438..20f654a0c09b 100644
-> --- a/arch/x86/kvm/vmx/pmu_intel.c
-> +++ b/arch/x86/kvm/vmx/pmu_intel.c
-> @@ -263,15 +263,13 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->   			if (!msr_info->host_initiated)
->   				data = (s64)(s32)data;
->   			pmc->counter += data - pmc_read_counter(pmc);
-> -			if (pmc->perf_event)
-> -				perf_event_period(pmc->perf_event,
-> -						  get_sample_period(pmc, data));
-> +			if (pmc_speculative_in_use(pmc))
-> +				kvm_make_request(KVM_REQ_PMU, vcpu);
->   			return 0;
->   		} else if ((pmc = get_fixed_pmc(pmu, msr))) {
->   			pmc->counter += data - pmc_read_counter(pmc);
-> -			if (pmc->perf_event)
-> -				perf_event_period(pmc->perf_event,
-> -						  get_sample_period(pmc, data));
-> +			if (pmc_speculative_in_use(pmc))
-> +				kvm_make_request(KVM_REQ_PMU, vcpu);
->   			return 0;
->   		} else if ((pmc = get_gp_pmc(pmu, msr, MSR_P6_EVNTSEL0))) {
->   			if (data == pmc->eventsel)
+> Thanks.
 > 
 
+One person asked me if I sent the fix already. So yes, it is there:
+
+https://patchwork.ozlabs.org/patch/1259348/
+
+Christophe
