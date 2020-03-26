@@ -2,138 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE100194420
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:17:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5829194429
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:20:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbgCZQRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 12:17:08 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35473 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727847AbgCZQRI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 12:17:08 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200326161706euoutp0126fd034db9a988e43fe773e441006f21~-5twUBHSa1096310963euoutp013
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 16:17:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200326161706euoutp0126fd034db9a988e43fe773e441006f21~-5twUBHSa1096310963euoutp013
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585239426;
-        bh=mlr6X8MPWZHzVO5afRfEhMBUcBa5uRmLLtJFWSxoqMM=;
-        h=From:Subject:To:Cc:Date:In-Reply-To:References:From;
-        b=DdZs0B7clVlDxrgWPcUv+4qtdj7/ohPUSswevF6OcgTdv6xq0Qa0W7/GzeFf8snh8
-         SzULL4BFcb0RSRIv+uAtePD81E6cIndCQnpsRdLp3RTkI3jyyzA4kFTfn18LdwC/K0
-         lWWAN7/4ca2NqbxAcALILA1PnJbpQhdFjhBou+9w=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200326161706eucas1p20b37fa3c36e50bfe859816f53622a874~-5tv1hluO3256532565eucas1p2N;
-        Thu, 26 Mar 2020 16:17:06 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 20.5A.60698.285DC7E5; Thu, 26
-        Mar 2020 16:17:06 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200326161705eucas1p1c41061b29d9c3bc58a5d127211c3e3e9~-5tvVnkYO2811828118eucas1p18;
-        Thu, 26 Mar 2020 16:17:05 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200326161705eusmtrp1e878269c1dae460bbbcd9408b9ecb726~-5tvVABxx0072100721eusmtrp1y;
-        Thu, 26 Mar 2020 16:17:05 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-f1-5e7cd5829d0c
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id A4.FC.07950.185DC7E5; Thu, 26
-        Mar 2020 16:17:05 +0000 (GMT)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200326161705eusmtip179bb55c215c1a75d6aee8d93c69973cf~-5tu7Mjey2790027900eusmtip1Y;
-        Thu, 26 Mar 2020 16:17:05 +0000 (GMT)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v4 00/27] ata: optimize core code size on PATA only
- setups
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-ID: <7c1e3658-2405-03f5-37ed-b9951886d674@samsung.com>
-Date:   Thu, 26 Mar 2020 17:17:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        id S1728208AbgCZQUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 12:20:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38406 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726270AbgCZQUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 12:20:10 -0400
+Received: from localhost (lfbn-ncy-1-985-231.w90-101.abo.wanadoo.fr [90.101.63.231])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 932882083E;
+        Thu, 26 Mar 2020 16:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585239608;
+        bh=V0bwBbJyY1QosWL6Qthc9eGWMt88BWvj2yaKKDb3Gwc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GvkZkibuDm+OFw8wtKPkyfUYgQDoF2Yixj/a6D5D7bR7wv76S56yWtdpwNuVJK5lX
+         jop5cohgQMNbB0D4zW6pQSzEl8aNEOZFkKr/xft7Sdno01jGGmDbeiE/sYLcyVq9gU
+         4/A/x22BWY0eMx+gFvc54a7exf+MIe4KMu/pf1K4=
+Date:   Thu, 26 Mar 2020 17:20:05 +0100
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Chris Friesen <chris.friesen@windriver.com>,
+        linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+        Jim Somerville <Jim.Somerville@windriver.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2] isolcpus: affine kernel threads to specified cpumask
+Message-ID: <20200326162002.GA3946@lenoir>
+References: <20200323135414.GA28634@fuller.cnet>
+ <87k13boxcn.fsf@nanos.tec.linutronix.de>
+ <af285c22-2a3f-5aa6-3fdb-27fba73389bd@windriver.com>
+ <87imiuq0cg.fsf@nanos.tec.linutronix.de>
+ <20200324152016.GA25422@fuller.cnet>
+ <20200325002956.GC20223@lenoir>
+ <20200325114736.GA17165@fuller.cnet>
 MIME-Version: 1.0
-In-Reply-To: <3ec639bd-f307-df95-857c-d613a375c7fc@kernel.dk>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRmVeSWpSXmKPExsWy7djPc7pNV2viDGad57RYfbefzeLZrb1M
-        FitXH2WyOLbjEZPF5V1z2CyWP1nLbDG3dTq7A7vHzll32T0uny31OHS4g9HjZOs3Fo/dNxvY
-        PD5vkgtgi+KySUnNySxLLdK3S+DK+LTmGWtBA2fF/jd7mBsYV7J3MXJySAiYSHSd+8nUxcjF
-        ISSwglFixoR97BDOF0aJ44vWsUI4nxklXkxZywzT0j+vASqxnFFi3duLLBDOW0aJ3euOglWx
-        CVhJTGxfxQhiCwsESLxech1soYiAgkTP75VsIA3MAlcZJY6t+84KkuAVsJPYfLsJzGYRUJX4
-        cvcJG4gtKhAh8enBYagaQYmTM5+wgNicArYSb07MAxvKLCAucevJfCYIW15i+9s5zCALJAR2
-        sUt8/rkGKMEB5LhIzFxvB/GCsMSr41ugISAjcXpyDwtE/TpGib8dL6CatzNKLJ/8jw2iylri
-        zrlfbCCDmAU0Jdbv0ocIO0o8WLiaHWI+n8SNt4IQN/BJTNo2nRkizCvR0SYEUa0msWHZBjaY
-        tV07VzJPYFSaheSzWUi+mYXkm1kIexcwsqxiFE8tLc5NTy02zkst1ytOzC0uzUvXS87P3cQI
-        TEen/x3/uoNx35+kQ4wCHIxKPLwNbTVxQqyJZcWVuYcYJTiYlUR4n0YChXhTEiurUovy44tK
-        c1KLDzFKc7AoifMaL3oZKySQnliSmp2aWpBaBJNl4uCUamDkuf20v+d38qKSE81vz61+qGP2
-        umKGkuxbJwNbvrJvxxn37jZsaX7VJh5sulAiuSTk87mqtw26GzqmJ+WJp+R5XM738j65t1XV
-        t7dmd7uKs+tZ9SnpjMlJ0fEarhlLG6ta10dM/nlvW/t2h0fbOCdfteNNnPf81d9ZP0P5NWwE
-        LCJ8pzQWvFViKc5INNRiLipOBACyyKG6QwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsVy+t/xu7qNV2viDHbOVbdYfbefzeLZrb1M
-        FitXH2WyOLbjEZPF5V1z2CyWP1nLbDG3dTq7A7vHzll32T0uny31OHS4g9HjZOs3Fo/dNxvY
-        PD5vkgtgi9KzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3
-        S9DL+LTmGWtBA2fF/jd7mBsYV7J3MXJySAiYSPTPa2AFsYUEljJK7LvF08XIARSXkTi+vgyi
-        RFjiz7Uuti5GLqCS14wSR7qvg9WzCVhJTGxfxQhSLyzgJ3FmZjlIWERAQaLn90o2EJtZ4Cqj
-        xN4jNRC9hxkl2jcfBdvLK2Ansfl2E9gcFgFViS93n4A1iApESBzeMYsRokZQ4uTMJywgNqeA
-        rcSbE/PYIYaqS/yZd4kZwhaXuPVkPhOELS+x/e0c5gmMQrOQtM9C0jILScssJC0LGFlWMYqk
-        lhbnpucWG+kVJ+YWl+al6yXn525iBEbetmM/t+xg7HoXfIhRgINRiYdXo6UmTog1say4MvcQ
-        owQHs5II79NIoBBvSmJlVWpRfnxRaU5q8SFGU6DnJjJLiSbnA5NCXkm8oamhuYWlobmxubGZ
-        hZI4b4fAwRghgfTEktTs1NSC1CKYPiYOTqkGxpgXW6u+mL/9F3lgT9tsxhvRN/9sTl2S9jI1
-        wmLK391a0xzW3/5zYt7qyg1/7738pnul6ar3l/U/dVdsEIk4Hvn2OUd5wEmGj7uPdMUUdnMq
-        KOXfidN9IqruGi5n1J48WfmHzjpzdse1Gcv7rJ6HPTvs4TBRU9Su7o3xNZY9dr3v/Z43Wub+
-        71ViKc5INNRiLipOBACuNIJ80gIAAA==
-X-CMS-MailID: 20200326161705eucas1p1c41061b29d9c3bc58a5d127211c3e3e9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200317144340eucas1p1f6f7a6fbd27cbfeaab2ea97fbccb2836
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200317144340eucas1p1f6f7a6fbd27cbfeaab2ea97fbccb2836
-References: <CGME20200317144340eucas1p1f6f7a6fbd27cbfeaab2ea97fbccb2836@eucas1p1.samsung.com>
-        <20200317144333.2904-1-b.zolnierkie@samsung.com>
-        <3ec639bd-f307-df95-857c-d613a375c7fc@kernel.dk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200325114736.GA17165@fuller.cnet>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 3/26/20 4:16 PM, Jens Axboe wrote:
-> On 3/17/20 8:43 AM, Bartlomiej Zolnierkiewicz wrote:
->> Hi,
->>
->> There have been reports in the past of libata core code size
->> being a problem in migration from deprecated IDE subsystem on
->> legacy PATA only systems, i.e.:
->>
->> https://lore.kernel.org/linux-ide/db2838b7-4862-785b-3a1d-3bf09811340a@gmail.com/
->>
->> This patchset re-organizes libata core code to exclude SATA
->> specific code from being built for PATA only setups.
->>
->> The end result is up to 24% (by 23949 bytes, from 101769 bytes to
->> 77820 bytes) smaller libata core code size (as measured for m68k
->> arch using modified atari_defconfig) on affected setups.
->>
->> I've tested this patchset using pata_falcon driver under ARAnyM
->> emulator.
+On Wed, Mar 25, 2020 at 08:47:36AM -0300, Marcelo Tosatti wrote:
 > 
-> Bart, I'd like to get this into 5.7, can you rebase on current
-> for-5.7/libata? As you know, I dropped the dprintk series, and it's
-> now throwing rejects.
+> Hi Frederic,
+> 
+> On Wed, Mar 25, 2020 at 01:30:00AM +0100, Frederic Weisbecker wrote:
+> > On Tue, Mar 24, 2020 at 12:20:16PM -0300, Marcelo Tosatti wrote:
+> > > 
+> > > This is a kernel enhancement to configure the cpu affinity of kernel
+> > > threads via kernel boot option isolcpus=no_kthreads,<isolcpus_params>,<cpulist>
+> > > 
+> > > When this option is specified, the cpumask is immediately applied upon
+> > > thread launch. This does not affect kernel threads that specify cpu
+> > > and node.
+> > > 
+> > > This allows CPU isolation (that is not allowing certain threads
+> > > to execute on certain CPUs) without using the isolcpus=domain parameter,
+> > > making it possible to enable load balancing on such CPUs
+> > > during runtime (see
+> > > 
+> > > Note-1: this is based off on Wind River's patch at
+> > > https://github.com/starlingx-staging/stx-integ/blob/master/kernel/kernel-std/centos/patches/affine-compute-kernel-threads.patch
+> > > 
+> > > Difference being that this patch is limited to modifying
+> > > kernel thread cpumask: Behaviour of other threads can
+> > > be controlled via cgroups or sched_setaffinity.
+> > > 
+> > > Note-2: MontaVista's patch was based off Christoph Lameter's patch at
+> > > https://lwn.net/Articles/565932/ with the only difference being
+> > > the kernel parameter changed from kthread to kthread_cpus.
+> > > 
+> > > Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+> > 
+> > I'm wondering, why do you need such a boot shift at all when you
+> > can actually affine kthreads on runtime?
+> 
+> New, unbound kernel threads inherit the cpumask of kthreadd.
+> 
+> Therefore there is a race between kernel thread creation 
+> and affine.
+> 
+> If you know of a solution to that problem, that can be used instead.
 
-Sure, I've just posted v5 (I've rebased it on today's -next and
-added Reviewed-by tags from Christoph).
+Well, you could first set the affinity of kthreadd and only then the affinity
+of the others. But I can still imagine some tiny races with fork().
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+> > 
+> > >  };
+> > >  
+> > >  #ifdef CONFIG_CPU_ISOLATION
+> > > diff --git a/kernel/kthread.c b/kernel/kthread.c
+> > > index b262f47046ca..be9c8d53a986 100644
+> > > --- a/kernel/kthread.c
+> > > +++ b/kernel/kthread.c
+> > > @@ -347,7 +347,7 @@ struct task_struct *__kthread_create_on_node(int (*threadfn)(void *data),
+> > >  		 * The kernel thread should not inherit these properties.
+> > >  		 */
+> > >  		sched_setscheduler_nocheck(task, SCHED_NORMAL, &param);
+> > > -		set_cpus_allowed_ptr(task, cpu_all_mask);
+> > > +		set_cpus_allowed_ptr(task, cpu_kthread_mask);
+> > 
+> > I'm wondering, why are we using cpu_all_mask and not cpu_possible_mask here?
+> > If we used the latter, you wouldn't need to create cpu_kthread_mask and
+> > you could directly rely on housekeeping_cpumask(HK_FLAG_KTHREAD).
+> 
+> I suppose that either work: CPUs can only be online from
+> cpu_possible_mask (and is contained in cpu_possible_mask).
+> 
+> Nice cleanup, thanks.
+
+But may I suggest you to do:
+
+-         set_cpus_allowed_ptr(task, cpu_all_mask);
++         set_cpus_allowed_ptr(task, cpu_possible_mask);
+
+as a first step in its own patch in the series. I just want to make sure that change
+isn't missed by reviewers or bisections, in case someone catches something we
+overlooked.
+
+> 
+> > 
+> > > diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> > > index 008d6ac2342b..e9d48729efd4 100644
+> > > --- a/kernel/sched/isolation.c
+> > > +++ b/kernel/sched/isolation.c
+> > > @@ -169,6 +169,12 @@ static int __init housekeeping_isolcpus_setup(char *str)
+> > >  			continue;
+> > >  		}
+> > >  
+> > > +		if (!strncmp(str, "no_kthreads,", 12)) {
+> > > +			str += 12;
+> > > +			flags |= HK_FLAG_NO_KTHREADS;
+> > 
+> > You will certainly want HK_FLAG_WQ as well since workqueue has its own
+> > way to deal with unbound affinity.
+> 
+> Yep. HK_FLAG_WQ is simply a convenience so that the user does not have
+> to configure this separately: OK.
+
+Also, and that's a larger debate, are you interested in isolating kthreads
+only or any kind of kernel unbound work that could be affine outside
+a given CPU?
+
+In case of all the unbound work, I may suggest an all-in-one "unbound"
+flag that would do:
+
+    HK_FLAG_KTHREAD | HK_FLAG_WQ | HK_FLAG_TIMER | HK_FLAG_RCU | HK_FLAG_MISC
+        | HK_FLAG_SCHED
+
+Otherwise we can stick with HK_FLAG_KTHREAD, but I'd be curious about your usecase.
+
+Thanks.
