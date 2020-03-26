@@ -2,167 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60F12194E70
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 02:28:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C080D194EAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 02:59:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbgC0B2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 21:28:39 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36515 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727696AbgC0B2j (ORCPT
+        id S1727769AbgC0B7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 21:59:12 -0400
+Received: from labrats.qualcomm.com ([199.106.110.90]:12695 "EHLO
+        labrats.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727607AbgC0B7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 21:28:39 -0400
-Received: by mail-pf1-f195.google.com with SMTP id i13so3709162pfe.3;
-        Thu, 26 Mar 2020 18:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Wn2KMixsOvTxOcizpjpAsR4EdISJdwDYaV+po/VHdGM=;
-        b=IQOxyx6gjjTtLnmSZW8H9ipDdwt8Zuh0/lds8DQEe6d5YRkKFJwDMfOqG2WszyY3az
-         fp7ZWo8B4GoIBKoVIwiEhq9uF/DWeIEvxzDQn9HATvz20ICqfPgjoRcycALMxvQKGQPC
-         BGoZ16ebyqHS7CokW09aByvxPJBKCA8gNt3vCgE8cHCp/4San8owBCNedPupf/LgvrD0
-         efwK6X9ty1hdMUhGwpT+mak5LKx8xxjWbSN664AgQIJKrkOg3XmOKkyoeWDVolVoAZhI
-         4NHVycZ/+dVfKVMiGdCZIcNW3wb6dkNIvy+LHiVCGefd9sIQmsvGHsUa0PBwYL1l0Eva
-         6h3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Wn2KMixsOvTxOcizpjpAsR4EdISJdwDYaV+po/VHdGM=;
-        b=K7M7tAcOkmiUGvS8q3IVAo8Jy6h4p7SAkA+EOOtc+pWy0F7fOvvnQd9K/VOZC2zSci
-         QzGE4Cyl7jvWkr0RRDvZ9CXsWtXUKNJQwwuxRKEfXaKqHGqRmgonUyNAeEjV8f5O5aHO
-         AQF9DPcNYw2hg6UzbFGJr1526WBDOmm+wtHw/rIpGEEPW5Do9WlSOCeI6uNmJ1a8MGsB
-         WPYVRf8Hulr0zzw/2+OJdabxe2c4khbfN2SAceEXczSFN8hq09Msfxd2PCpi1e5aTkJl
-         iXS3cTmFdgOHlmtrCw2LBEuwkIqtICxYPJqtlkLNl54ByBkeXG5q13QGR4YCMvZiE2BP
-         59Sg==
-X-Gm-Message-State: ANhLgQ2bATBqfBlVRfqXLMbm7hwDP9aE0/OjMhpql5fawZLZgL5Ho5uz
-        Kw2Ca7AUfD8WfTc85/CKZIvHJ0y8Sm12wg==
-X-Google-Smtp-Source: ADFU+vtyn40zf5zeoVM54s0yfTucJOPnrBMUG/bWNKfviQkdvoM05tKma3yvszFCNDp12OhRH8UEZw==
-X-Received: by 2002:a05:6a00:9:: with SMTP id h9mr12329841pfk.78.1585272517673;
-        Thu, 26 Mar 2020 18:28:37 -0700 (PDT)
-Received: from localhost ([161.117.239.120])
-        by smtp.gmail.com with ESMTPSA id j1sm2730313pfg.64.2020.03.26.18.28.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 26 Mar 2020 18:28:37 -0700 (PDT)
-From:   Qiujun Huang <hqjagain@gmail.com>
-To:     marcelo.leitner@gmail.com, davem@davemloft.net
-Cc:     vyasevich@gmail.com, nhorman@tuxdriver.com, kuba@kernel.org,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, anenbupt@gmail.com,
-        Qiujun Huang <hqjagain@gmail.com>
-Subject: [PATCH v5 RESEND] sctp: fix refcount bug in sctp_wfree
-Date:   Fri, 27 Mar 2020 09:28:32 +0800
-Message-Id: <20200327012832.19193-1-hqjagain@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 26 Mar 2020 21:59:11 -0400
+IronPort-SDR: sceStHUxbTExeoMoi3X1XquwHPh1T9zG3OG+7wxL5o2k0kmfKdCWQWNesjUgHoPgZ/yAE9H3Co
+ V3oKxvnY07z14QYfjtp7Uk2RFt+qGBnslg7XKoH5a9Gfh5t8qLJclqs9+IJriyKUUgusHxVpBz
+ 7yIXTavOlaIstujGkUO6lVlynJUdAPKjOJkDn4aXOgTCvQRf09lVtD3QCqOrEErJw+gaDxQIG0
+ GRX/xjcGVW4I49BDUdTcjbjG+7kVRMGyUoUfD7WVI63GMdPrGI0xZmv+lDdSlN8I29SPUbdWIU
+ cSc=
+X-IronPort-AV: E=Sophos;i="5.72,307,1580803200"; 
+   d="scan'208";a="28616316"
+Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
+  by labrats.qualcomm.com with ESMTP; 26 Mar 2020 02:26:06 -0700
+Received: from pacamara-linux.qualcomm.com ([192.168.140.135])
+  by ironmsg03-sd.qualcomm.com with ESMTP; 26 Mar 2020 02:26:05 -0700
+Received: by pacamara-linux.qualcomm.com (Postfix, from userid 359480)
+        id C69FF3AA6; Thu, 26 Mar 2020 02:26:05 -0700 (PDT)
+From:   Can Guo <cang@codeaurora.org>
+To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com, cang@codeaurora.org
+Cc:     Subhash Jadavani <subhashj@codeaurora.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v6 1/2] scsi: ufs: Clean up ufshcd_scale_clks() and clock scaling error out path
+Date:   Thu, 26 Mar 2020 02:25:40 -0700
+Message-Id: <1585214742-5466-2-git-send-email-cang@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1585214742-5466-1-git-send-email-cang@codeaurora.org>
+References: <1585214742-5466-1-git-send-email-cang@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should iterate over the datamsgs to modify
-all chunks(skbs) to newsk.
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-The following case cause the bug:
-for the trouble SKB, it was in outq->transmitted list
+This change introduces a func ufshcd_set_clk_freq() to explicitly
+set clock frequency so that it can be used in reset_and_resotre path and
+in ufshcd_scale_clks(). Meanwhile, this change cleans up the clock scaling
+error out path.
 
-sctp_outq_sack
-        sctp_check_transmitted
-                SKB was moved to outq->sacked list
-        then throw away the sack queue
-                SKB was deleted from outq->sacked
-(but it was held by datamsg at sctp_datamsg_to_asoc
-So, sctp_wfree was not called here)
-
-then migrate happened
-
-        sctp_for_each_tx_datachunk(
-        sctp_clear_owner_w);
-        sctp_assoc_migrate();
-        sctp_for_each_tx_datachunk(
-        sctp_set_owner_w);
-SKB was not in the outq, and was not changed to newsk
-
-finally
-
-__sctp_outq_teardown
-        sctp_chunk_put (for another skb)
-                sctp_datamsg_put
-                        __kfree_skb(msg->frag_list)
-                                sctp_wfree (for SKB)
-	SKB->sk was still oldsk (skb->sk != asoc->base.sk).
-
-Reported-and-tested-by:syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com
-Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+Fixes: a3cd5ec55f6c ("scsi: ufs: add load based scaling of UFS gear")
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
 ---
- net/sctp/socket.c | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ drivers/scsi/ufs/ufshcd.c | 65 ++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 44 insertions(+), 21 deletions(-)
 
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index 1b56fc440606..f68076713162 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -147,29 +147,44 @@ static void sctp_clear_owner_w(struct sctp_chunk *chunk)
- 	skb_orphan(chunk->skb);
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 2a2a63b..148e73a 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -855,28 +855,29 @@ static bool ufshcd_is_unipro_pa_params_tuning_req(struct ufs_hba *hba)
+ 		return false;
  }
  
-+#define traverse_and_process()	\
-+do {				\
-+	msg = chunk->msg;	\
-+	if (msg == prev_msg)	\
-+		continue;	\
-+	list_for_each_entry(c, &msg->chunks, frag_list) {	\
-+		if ((clear && asoc->base.sk == c->skb->sk) ||	\
-+		    (!clear && asoc->base.sk != c->skb->sk))	\
-+		    cb(c);	\
-+	}			\
-+	prev_msg = msg;		\
-+} while (0)
-+
- static void sctp_for_each_tx_datachunk(struct sctp_association *asoc,
-+				       bool clear,
- 				       void (*cb)(struct sctp_chunk *))
- 
+-static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
++/**
++ * ufshcd_set_clk_freq - set UFS controller clock frequencies
++ * @hba: per adapter instance
++ * @scale_up: If True, set max possible frequency othewise set low frequency
++ *
++ * Returns 0 if successful
++ * Returns < 0 for any other errors
++ */
++static int ufshcd_set_clk_freq(struct ufs_hba *hba, bool scale_up)
  {
-+	struct sctp_datamsg *msg, *prev_msg = NULL;
- 	struct sctp_outq *q = &asoc->outqueue;
-+	struct sctp_chunk *chunk, *c;
- 	struct sctp_transport *t;
--	struct sctp_chunk *chunk;
+ 	int ret = 0;
+ 	struct ufs_clk_info *clki;
+ 	struct list_head *head = &hba->clk_list_head;
+-	ktime_t start = ktime_get();
+-	bool clk_state_changed = false;
  
- 	list_for_each_entry(t, &asoc->peer.transport_addr_list, transports)
- 		list_for_each_entry(chunk, &t->transmitted, transmitted_list)
--			cb(chunk);
-+			traverse_and_process();
+ 	if (list_empty(head))
+ 		goto out;
  
- 	list_for_each_entry(chunk, &q->retransmit, transmitted_list)
--		cb(chunk);
-+		traverse_and_process();
+-	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, PRE_CHANGE);
+-	if (ret)
+-		return ret;
+-
+ 	list_for_each_entry(clki, head, list) {
+ 		if (!IS_ERR_OR_NULL(clki->clk)) {
+ 			if (scale_up && clki->max_freq) {
+ 				if (clki->curr_freq == clki->max_freq)
+ 					continue;
  
- 	list_for_each_entry(chunk, &q->sacked, transmitted_list)
--		cb(chunk);
-+		traverse_and_process();
+-				clk_state_changed = true;
+ 				ret = clk_set_rate(clki->clk, clki->max_freq);
+ 				if (ret) {
+ 					dev_err(hba->dev, "%s: %s clk set rate(%dHz) failed, %d\n",
+@@ -895,7 +896,6 @@ static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
+ 				if (clki->curr_freq == clki->min_freq)
+ 					continue;
  
- 	list_for_each_entry(chunk, &q->abandoned, transmitted_list)
--		cb(chunk);
-+		traverse_and_process();
+-				clk_state_changed = true;
+ 				ret = clk_set_rate(clki->clk, clki->min_freq);
+ 				if (ret) {
+ 					dev_err(hba->dev, "%s: %s clk set rate(%dHz) failed, %d\n",
+@@ -914,11 +914,37 @@ static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
+ 				clki->name, clk_get_rate(clki->clk));
+ 	}
  
- 	list_for_each_entry(chunk, &q->out_chunk_list, list)
--		cb(chunk);
-+		traverse_and_process();
++out:
++	return ret;
++}
++
++/**
++ * ufshcd_scale_clks - scale up or scale down UFS controller clocks
++ * @hba: per adapter instance
++ * @scale_up: True if scaling up and false if scaling down
++ *
++ * Returns 0 if successful
++ * Returns < 0 for any other errors
++ */
++static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
++{
++	int ret = 0;
++	ktime_t start = ktime_get();
++
++	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, PRE_CHANGE);
++	if (ret)
++		goto out;
++
++	ret = ufshcd_set_clk_freq(hba, scale_up);
++	if (ret)
++		goto out;
++
+ 	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, POST_CHANGE);
++	if (ret)
++		ufshcd_set_clk_freq(hba, !scale_up);
+ 
+ out:
+-	if (clk_state_changed)
+-		trace_ufshcd_profile_clk_scaling(dev_name(hba->dev),
++	trace_ufshcd_profile_clk_scaling(dev_name(hba->dev),
+ 			(scale_up ? "up" : "down"),
+ 			ktime_to_us(ktime_sub(ktime_get(), start)), ret);
+ 	return ret;
+@@ -1106,35 +1132,32 @@ static int ufshcd_devfreq_scale(struct ufs_hba *hba, bool scale_up)
+ 
+ 	ret = ufshcd_clock_scaling_prepare(hba);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	/* scale down the gear before scaling down clocks */
+ 	if (!scale_up) {
+ 		ret = ufshcd_scale_gear(hba, false);
+ 		if (ret)
+-			goto out;
++			goto out_unprepare;
+ 	}
+ 
+ 	ret = ufshcd_scale_clks(hba, scale_up);
+ 	if (ret) {
+ 		if (!scale_up)
+ 			ufshcd_scale_gear(hba, true);
+-		goto out;
++		goto out_unprepare;
+ 	}
+ 
+ 	/* scale up the gear after scaling up clocks */
+ 	if (scale_up) {
+ 		ret = ufshcd_scale_gear(hba, true);
+-		if (ret) {
++		if (ret)
+ 			ufshcd_scale_clks(hba, false);
+-			goto out;
+-		}
+ 	}
+ 
+-	ret = ufshcd_vops_clk_scale_notify(hba, scale_up, POST_CHANGE);
+-
+-out:
++out_unprepare:
+ 	ufshcd_clock_scaling_unprepare(hba);
++out:
+ 	ufshcd_release(hba);
+ 	return ret;
  }
+@@ -6251,7 +6274,7 @@ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
+ 	spin_unlock_irqrestore(hba->host->host_lock, flags);
  
- static void sctp_for_each_rx_skb(struct sctp_association *asoc, struct sock *sk,
-@@ -9574,9 +9589,9 @@ static int sctp_sock_migrate(struct sock *oldsk, struct sock *newsk,
- 	 * paths won't try to lock it and then oldsk.
- 	 */
- 	lock_sock_nested(newsk, SINGLE_DEPTH_NESTING);
--	sctp_for_each_tx_datachunk(assoc, sctp_clear_owner_w);
-+	sctp_for_each_tx_datachunk(assoc, true, sctp_clear_owner_w);
- 	sctp_assoc_migrate(assoc, newsk);
--	sctp_for_each_tx_datachunk(assoc, sctp_set_owner_w);
-+	sctp_for_each_tx_datachunk(assoc, false, sctp_set_owner_w);
+ 	/* scale up clocks to max frequency before full reinitialization */
+-	ufshcd_scale_clks(hba, true);
++	ufshcd_set_clk_freq(hba, true);
  
- 	/* If the association on the newsk is already closed before accept()
- 	 * is called, set RCV_SHUTDOWN flag.
+ 	err = ufshcd_hba_enable(hba);
+ 	if (err)
 -- 
-2.17.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
