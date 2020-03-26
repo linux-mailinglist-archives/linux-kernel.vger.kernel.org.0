@@ -2,164 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29B97193EDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 13:30:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EF02193EE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 13:31:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728184AbgCZM3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 08:29:32 -0400
-Received: from mga05.intel.com ([192.55.52.43]:12370 "EHLO mga05.intel.com"
+        id S1728257AbgCZMah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 08:30:37 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:48680 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbgCZM3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 08:29:32 -0400
-IronPort-SDR: dN5uaA0nrIGKSKfked7lua6qHE4Kr7b9A6cqGM0Xcmv/4vPPcjMcZgp1F123mSE2IwqYcftlIZ
- tvwKhwN4McnQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 05:29:31 -0700
-IronPort-SDR: dXPNEOPC5+kdmw+CvdnwzeOi9ptIUMJEKuzfPDCIKxbLhXIeXygIF/ttMOk3pFtj0IjKLzQ62q
- KGoPFyrQUwNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,308,1580803200"; 
-   d="scan'208";a="282481672"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 26 Mar 2020 05:29:29 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1jHRdY-0006mo-JG; Thu, 26 Mar 2020 20:29:28 +0800
-Date:   Thu, 26 Mar 2020 20:28:58 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     kbuild-all@lists.01.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sekhar Nori <nsekhar@ti.com>, Roger Quadros <rogerq@ti.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Pawel Laszczak <pawell@cadence.com>, linux-usb@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] usb: cdns3: cdns3_clear_register_bit() can be static
-Message-ID: <20200326122858.GA50118@cde5a4ed3207>
-References: <20200325125041.94769-1-colin.king@canonical.com>
+        id S1727781AbgCZMag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 08:30:36 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0302F1A09B1;
+        Thu, 26 Mar 2020 13:30:34 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E970B1A090A;
+        Thu, 26 Mar 2020 13:30:33 +0100 (CET)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CA67320564;
+        Thu, 26 Mar 2020 13:30:33 +0100 (CET)
+Date:   Thu, 26 Mar 2020 14:30:33 +0200
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [RFC 01/11] mfd: Add i.MX generic mix support
+Message-ID: <20200326123033.vi7l5mixgre2caon@fsr-ub1664-175>
+References: <1583226206-19758-1-git-send-email-abel.vesa@nxp.com>
+ <1583226206-19758-2-git-send-email-abel.vesa@nxp.com>
+ <20200326110306.GE603801@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200325125041.94769-1-colin.king@canonical.com>
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200326110306.GE603801@dell>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 20-03-26 11:03:06, Lee Jones wrote:
+> On Tue, 03 Mar 2020, Abel Vesa wrote:
+> 
+> > Some of the i.MX SoCs have a IP for interfacing the dedicated IPs with
+> > clocks, resets and interrupts, plus some other specific control registers.
+> > To allow the functionality to be split between drivers, this MFD driver is
+> > added that has only two purposes: register the devices and map the entire
+> > register addresses. Everything else is left to the dedicated drivers that will
+> > bind to the registered devices.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> > ---
+> >  drivers/mfd/Kconfig   | 11 +++++++++++
+> >  drivers/mfd/Makefile  |  1 +
+> >  drivers/mfd/imx-mix.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 60 insertions(+)
+> >  create mode 100644 drivers/mfd/imx-mix.c
+> > 
+> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > index 3c547ed..3c89288 100644
+> > --- a/drivers/mfd/Kconfig
+> > +++ b/drivers/mfd/Kconfig
+> > @@ -460,6 +460,17 @@ config MFD_MX25_TSADC
+> >  	  i.MX25 processors. They consist of a conversion queue for general
+> >  	  purpose ADC and a queue for Touchscreens.
+> >  
+> > +config MFD_IMX_MIX
+> > +	tristate "NXP i.MX Generic Mix Control Driver"
+> > +	depends on OF || COMPILE_TEST
+> > +	help
+> > +	  Enable generic mixes support. On some i.MX platforms, there are
+> > +	  devices that are a mix of multiple functionalities like reset
+> > +	  controllers, clock controllers and some others. In order to split
+> > +	  those functionalities between the right drivers, this MFD populates
+> > +	  with virtual devices based on what's found in the devicetree node,
+> > +	  leaving the rest of the behavior control to the dedicated driver.
+> > +
+> >  config MFD_HI6421_PMIC
+> >  	tristate "HiSilicon Hi6421 PMU/Codec IC"
+> >  	depends on OF
+> > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> > index f935d10..5b2ae5d 100644
+> > --- a/drivers/mfd/Makefile
+> > +++ b/drivers/mfd/Makefile
+> > @@ -113,6 +113,7 @@ obj-$(CONFIG_MFD_TWL4030_AUDIO)	+= twl4030-audio.o
+> >  obj-$(CONFIG_TWL6040_CORE)	+= twl6040.o
+> >  
+> >  obj-$(CONFIG_MFD_MX25_TSADC)	+= fsl-imx25-tsadc.o
+> > +obj-$(CONFIG_MFD_IMX_MIX)	+= imx-mix.o
+> >  
+> >  obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
+> >  obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
+> > diff --git a/drivers/mfd/imx-mix.c b/drivers/mfd/imx-mix.c
+> > new file mode 100644
+> > index 00000000..d3f8c71
+> > --- /dev/null
+> > +++ b/drivers/mfd/imx-mix.c
+> > @@ -0,0 +1,48 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright 2019 NXP.
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/err.h>
+> > +#include <linux/io.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/spinlock.h>
+> > +#include <linux/types.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/of_platform.h>
+> > +
+> > +#include <linux/mfd/core.h>
+> > +
+> > +static int imx_audiomix_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct resource *res;
+> > +	void __iomem *base;
+> > +
+> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +	base = devm_ioremap_resource(dev, res);
+> > +	if (IS_ERR(base))
+> > +		return PTR_ERR(base);
+> > +
+> > +	dev_set_drvdata(dev, base);
+> > +
+> > +	return devm_of_platform_populate(dev);
+> > +}
+> > +
+> > +static const struct of_device_id imx_audiomix_of_match[] = {
+> > +	{ .compatible = "fsl,imx8mp-audiomix" },
+> > +	{ /* Sentinel */ },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, imx_audiomix_of_match);
+> 
+> This needs DT binding documentation.
+> 
+> Do the sub-device memory ranges overlap?
+> 
 
-Fixes: 87db1192dc33 ("usb: cdns3: make signed 1 bit bitfields unsigned")
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
- gadget.c |   32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+Yes, they do.
 
-diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-index 372460ea4df9a..54a04614d336f 100644
---- a/drivers/usb/cdns3/gadget.c
-+++ b/drivers/usb/cdns3/gadget.c
-@@ -82,7 +82,7 @@ static int cdns3_ep_run_stream_transfer(struct cdns3_endpoint *priv_ep,
-  * @ptr: address of device controller register to be read and changed
-  * @mask: bits requested to clar
-  */
--void cdns3_clear_register_bit(void __iomem *ptr, u32 mask)
-+static void cdns3_clear_register_bit(void __iomem *ptr, u32 mask)
- {
- 	mask = readl(ptr) & ~mask;
- 	writel(mask, ptr);
-@@ -137,7 +137,7 @@ struct usb_request *cdns3_next_request(struct list_head *list)
-  *
-  * Returns buffer or NULL if no buffers in list
-  */
--struct cdns3_aligned_buf *cdns3_next_align_buf(struct list_head *list)
-+static struct cdns3_aligned_buf *cdns3_next_align_buf(struct list_head *list)
- {
- 	return list_first_entry_or_null(list, struct cdns3_aligned_buf, list);
- }
-@@ -148,7 +148,7 @@ struct cdns3_aligned_buf *cdns3_next_align_buf(struct list_head *list)
-  *
-  * Returns request or NULL if no requests in list
-  */
--struct cdns3_request *cdns3_next_priv_request(struct list_head *list)
-+static struct cdns3_request *cdns3_next_priv_request(struct list_head *list)
- {
- 	return list_first_entry_or_null(list, struct cdns3_request, list);
- }
-@@ -190,7 +190,7 @@ dma_addr_t cdns3_trb_virt_to_dma(struct cdns3_endpoint *priv_ep,
- 	return priv_ep->trb_pool_dma + offset;
- }
- 
--int cdns3_ring_size(struct cdns3_endpoint *priv_ep)
-+static int cdns3_ring_size(struct cdns3_endpoint *priv_ep)
- {
- 	switch (priv_ep->type) {
- 	case USB_ENDPOINT_XFER_ISOC:
-@@ -345,7 +345,7 @@ static void cdns3_ep_inc_deq(struct cdns3_endpoint *priv_ep)
- 	cdns3_ep_inc_trb(&priv_ep->dequeue, &priv_ep->ccs, priv_ep->num_trbs);
- }
- 
--void cdns3_move_deq_to_next_trb(struct cdns3_request *priv_req)
-+static void cdns3_move_deq_to_next_trb(struct cdns3_request *priv_req)
- {
- 	struct cdns3_endpoint *priv_ep = priv_req->priv_ep;
- 	int current_trb = priv_req->start_trb;
-@@ -511,9 +511,9 @@ static void cdns3_wa2_descmiss_copy_data(struct cdns3_endpoint *priv_ep,
- 	}
- }
- 
--struct usb_request *cdns3_wa2_gadget_giveback(struct cdns3_device *priv_dev,
--					      struct cdns3_endpoint *priv_ep,
--					      struct cdns3_request *priv_req)
-+static struct usb_request *cdns3_wa2_gadget_giveback(struct cdns3_device *priv_dev,
-+						     struct cdns3_endpoint *priv_ep,
-+						     struct cdns3_request *priv_req)
- {
- 	if (priv_ep->flags & EP_QUIRK_EXTRA_BUF_EN &&
- 	    priv_req->flags & REQUEST_INTERNAL) {
-@@ -551,9 +551,9 @@ struct usb_request *cdns3_wa2_gadget_giveback(struct cdns3_device *priv_dev,
- 	return &priv_req->request;
- }
- 
--int cdns3_wa2_gadget_ep_queue(struct cdns3_device *priv_dev,
--			      struct cdns3_endpoint *priv_ep,
--			      struct cdns3_request *priv_req)
-+static int cdns3_wa2_gadget_ep_queue(struct cdns3_device *priv_dev,
-+				     struct cdns3_endpoint *priv_ep,
-+				     struct cdns3_request *priv_req)
- {
- 	int deferred = 0;
- 
-@@ -836,7 +836,7 @@ void cdns3_gadget_giveback(struct cdns3_endpoint *priv_ep,
- 		cdns3_gadget_ep_free_request(&priv_ep->endpoint, request);
- }
- 
--void cdns3_wa1_restore_cycle_bit(struct cdns3_endpoint *priv_ep)
-+static void cdns3_wa1_restore_cycle_bit(struct cdns3_endpoint *priv_ep)
- {
- 	/* Work around for stale data address in TRB*/
- 	if (priv_ep->wa1_set) {
-@@ -1904,8 +1904,8 @@ static int cdns3_ep_onchip_buffer_reserve(struct cdns3_device *priv_dev,
- 	return 0;
- }
- 
--void cdns3_stream_ep_reconfig(struct cdns3_device *priv_dev,
--			      struct cdns3_endpoint *priv_ep)
-+static void cdns3_stream_ep_reconfig(struct cdns3_device *priv_dev,
-+				     struct cdns3_endpoint *priv_ep)
- {
- 	if (!priv_ep->use_streams || priv_dev->gadget.speed < USB_SPEED_SUPER)
- 		return;
-@@ -1925,8 +1925,8 @@ void cdns3_stream_ep_reconfig(struct cdns3_device *priv_dev,
- 			       EP_CFG_TDL_CHK | EP_CFG_SID_CHK);
- }
- 
--void cdns3_configure_dmult(struct cdns3_device *priv_dev,
--			   struct cdns3_endpoint *priv_ep)
-+static void cdns3_configure_dmult(struct cdns3_device *priv_dev,
-+				  struct cdns3_endpoint *priv_ep)
- {
- 	struct cdns3_usb_regs __iomem *regs = priv_dev->regs;
- 
+Resent another version of this series yesterday.
+
+> > +static struct platform_driver imx_audiomix_driver = {
+> > +	.probe = imx_audiomix_probe,
+> > +	.driver = {
+> > +		.name = "imx-audiomix",
+> > +		.of_match_table = of_match_ptr(imx_audiomix_of_match),
+> > +	},
+> > +};
+> > +module_platform_driver(imx_audiomix_driver);
+> 
+> -- 
+> Lee Jones [李琼斯]
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
