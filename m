@@ -2,100 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 894921934E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 01:14:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E20D1934F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 01:19:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbgCZAOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 20:14:21 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44682 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727498AbgCZAOV (ORCPT
+        id S1727606AbgCZATO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 20:19:14 -0400
+Received: from smtprelay0055.hostedemail.com ([216.40.44.55]:40620 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727498AbgCZATN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 20:14:21 -0400
-Received: by mail-qt1-f194.google.com with SMTP id x16so3874232qts.11;
-        Wed, 25 Mar 2020 17:14:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=S7Sc2duj77D7JUnGMQoCkHU904ydcBEnNRzF9FLm+YI=;
-        b=RlP8ohqHvEQkTK5kGgiSBl6WH15PaVWtiHB0v1Iv/6+Vfb7Eka28N35XydaiEqMzR/
-         jyu0O0ohpyMxX4ljdq7uAa05nGe/pUIyNc9EcCYEbxQw9WHup+M3MJlOoqNaH7GaJ2yj
-         IIL3xL3riXneubS0jgb8qcUWmvFUyfQDfxyG8dEmm56J0BIvzPHd9zdvAocR0scnEneT
-         ytPm34ox8nq05DzF6Ndfs7FOgsEZUd5mtuxinmQv/6KP2RC9XOVR3AE081hTqJaNTNcC
-         SwPCUuoNv6teuL1fTt1fk5V6SCKAiCa9FQmkBJahwk8h5XoEJOdj7j1iApionCMf+WdI
-         VOZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=S7Sc2duj77D7JUnGMQoCkHU904ydcBEnNRzF9FLm+YI=;
-        b=JeN73LHIHRj/Ot6qfymUEkqFZCOq8Z1sowgVqkWna2PPHAmrKStznoh/YpIYlkJSEy
-         VjZ3FlXTUoYGJCp2XW0y/3Ucf8FcHOiu2Lgmc5sfhsCndulgvXEW8en3PmEbg6aRamhH
-         bUlIsgeu5qLOXapdShMfOWdJi+bFEIpApoFoA9xf98gxDLKsqbKyaO/ghEkWzyMF1Sz/
-         FMpgp0dO4TAfy3PcIfjw++ON2iRpQFYauLKunrXR8n7CxP8rC1lhVb6jfMMmk0NuBe2C
-         yoektX9YOA4PeaZ1IcESiZ731A9cxAdUrM3he/rt7n512ftSRZAP8TGS4jFNkBOnBNqM
-         PwmA==
-X-Gm-Message-State: ANhLgQ2Lyeh0qNteFNqizwUPyRW6B6J3lys4fjq5+SoSdnBpzk2Z7EKo
-        q524Aw5g0AXLlLhDtTjM4zU=
-X-Google-Smtp-Source: ADFU+vvK1RIyUK2HbSXkLR4unarSaVy6joaX5gpk8/f4lhxjrE6nMTj7npVg5cJ/aI0GxF+KKR9pDQ==
-X-Received: by 2002:ac8:568b:: with SMTP id h11mr4420271qta.105.1585181659543;
-        Wed, 25 Mar 2020 17:14:19 -0700 (PDT)
-Received: from localhost.localdomain ([2001:1284:f028:d8e3:b319:cf5:7776:b4d9])
-        by smtp.gmail.com with ESMTPSA id 82sm340437qkd.62.2020.03.25.17.14.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 17:14:18 -0700 (PDT)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id 4C55BC5CE4; Wed, 25 Mar 2020 21:14:16 -0300 (-03)
-Date:   Wed, 25 Mar 2020 21:14:16 -0300
-From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To:     Qiujun Huang <hqjagain@gmail.com>
-Cc:     davem@davemloft.net, vyasevich@gmail.com, nhorman@tuxdriver.com,
-        kuba@kernel.org, linux-sctp@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        anenbupt@gmail.com
-Subject: Re: [PATCH v4] sctp: fix refcount bug in sctp_wfree
-Message-ID: <20200326001416.GH3756@localhost.localdomain>
-References: <20200322090425.6253-1-hqjagain@gmail.com>
+        Wed, 25 Mar 2020 20:19:13 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id DD985100E8423;
+        Thu, 26 Mar 2020 00:19:12 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3871:3872:3874:4321:4605:5007:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12740:12760:12895:13069:13161:13229:13311:13357:13439:14181:14659:14721:21080:21451:21627:21990:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:7,LUA_SUMMARY:none
+X-HE-Tag: basin81_8a8cb0808492b
+X-Filterd-Recvd-Size: 2061
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 26 Mar 2020 00:19:11 +0000 (UTC)
+Message-ID: <fcb60b1d27fb0120a5934d30481e15fa3f171310.camel@perches.com>
+Subject: Re: [PATCH 2/9] block: mark part_in_flight and part_in_flight_rw
+ static
+From:   Joe Perches <joe@perches.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 25 Mar 2020 17:17:21 -0700
+In-Reply-To: <20200325154843.1349040-3-hch@lst.de>
+References: <20200325154843.1349040-1-hch@lst.de>
+         <20200325154843.1349040-3-hch@lst.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200322090425.6253-1-hqjagain@gmail.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 22, 2020 at 05:04:25PM +0800, Qiujun Huang wrote:
-> sctp_sock_migrate should iterate over the datamsgs to modify
-> all trunks(skbs) to newsk. For this, out_msg_list is added to
+On Wed, 2020-03-25 at 16:48 +0100, Christoph Hellwig wrote:
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-s/trunks/chunks/
+Some people still ask for some commit description,
+not just a sign-off line.
 
-> sctp_outq to maintain datamsgs list.
+I do think that's unnecessary though when, as here,
+the patch subject is descriptive and complete.
 
-It is an interesting approach. It speeds up the migration, yes, but it
-will also use more memory per datamsg, for an operation that, when
-performed, the socket is usually calm.
+> diff --git a/block/genhd.c b/block/genhd.c
+[]
+> @@ -139,7 +139,8 @@ void part_dec_in_flight(struct request_queue *q, struct hd_struct *part, int rw)
+>  		part_stat_local_dec(&part_to_disk(part)->part0, in_flight[rw]);
+>  }
+>  
+> -unsigned int part_in_flight(struct request_queue *q, struct hd_struct *part)
+> +static unsigned int part_in_flight(struct request_queue *q,
+> +		struct hd_struct *part)
 
-It's also another list to be handled, and I'm not seeing the patch
-here move the datamsg itself now to the new outq. It would need
-something along these lines:
-sctp_sock_migrate()
-{
-...
-        /* Move any messages in the old socket's receive queue that are for the
-         * peeled off association to the new socket's receive queue.
-         */
-        sctp_skb_for_each(skb, &oldsk->sk_receive_queue, tmp) {
-                event = sctp_skb2event(skb);
-...
-                /* Walk through the pd_lobby, looking for skbs that
-                 * need moved to the new socket.
-                 */
-                sctp_skb_for_each(skb, &oldsp->pd_lobby, tmp) {
-                        event = sctp_skb2event(skb);
+genhd.c aligns multi-line arguments to open parenthesis,
+it'd be nicer to maintain that style.
 
-That said, I don't think it's worth this new list.
+>  {
+>  	int cpu;
+>  	unsigned int inflight;
+> @@ -159,8 +160,8 @@ unsigned int part_in_flight(struct request_queue *q, struct hd_struct *part)
+>  	return inflight;
+>  }
+>  
+> -void part_in_flight_rw(struct request_queue *q, struct hd_struct *part,
+> -		       unsigned int inflight[2])
+> +static void part_in_flight_rw(struct request_queue *q, struct hd_struct *part,
+> +		unsigned int inflight[2])
 
-  Marcelo
+etc.
+
+
