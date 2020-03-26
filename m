@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BCAB194BBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 23:45:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BCAF194BBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 23:45:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbgCZWpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 18:45:08 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33393 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727702AbgCZWpG (ORCPT
+        id S1727763AbgCZWpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 18:45:13 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34938 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbgCZWpH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 18:45:06 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j1so3539549pfe.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:45:05 -0700 (PDT)
+        Thu, 26 Mar 2020 18:45:07 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u68so3532142pfb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:45:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BibBtGLwvmKQbx0thQsTKW+m6NhfuyqCvXSj60tccDo=;
-        b=flZpKzNJcKTxocpBQsnbos0dcK3aTkIvYGIK9dtTslwcM1iiJ1s0l8VJhBlBLG8UQ6
-         I/3J/RcTYzwclhVvm5EYqR/ZzX09Kh/SxlvtdomLiMb4PQlqY1/ROIUCrxYdNGUHP/6p
-         oDEfMDj32AHSQGD0IPXy4cC2zDHC6wH1EzS5T1Zej6ehS5fTjqwrjxmsfUeotYtcH0H/
-         WCqTEoyC5Wqc2ghhQV0GM5GoLw9o2Omrx1xtAb9WlAjy7RukGMNbXYGynHB0h/TiVxnE
-         Jlr0yYuGZo6VPMKx8aZiGnMWRwfWYclIexDl7oKyEAlyRhkwYGd4JZe3ufZXEEqYDeQ7
-         yQjA==
+        bh=uXFWCA6HsRoFU7UHbCkibQyhhxiptzgR3ncwTu65yOs=;
+        b=b6EBDV5D14KVHV3wD3Ol5xWcqk/VSycmLNDdgJZ9srR1xMjA8/P+83qr06g+dwDBF3
+         tpkK0HVrqwYlyhyNs/6Fb9jrYz1YUFN1U7dIz0f2lGUMngq8+meZbD8zi0FnI1x2ZtmN
+         1NWQpNJL3NrsmF2m+TgTg8rdjT0TVisGMeu9gwy2G1GFTZHLc7kKDbJT2g0kdR4dBT1K
+         G/YP2FpEUoY6ZLU2tq9MsyfKtUB3dyAVMgzesmCp+jCzo7yLR7Vu2OCfOFWCzzioei41
+         GEZmdwuTUB+wOIx8RY0OI4BaDASpGUy6JVpuOmO70/NECorFsuLdy/35S5QODhrSfwKD
+         o/Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=BibBtGLwvmKQbx0thQsTKW+m6NhfuyqCvXSj60tccDo=;
-        b=GuFyBhAQsF+kxrYyc1nDFYsr92tDqtHnN5jPwCSyWYca5KH1tpjmX64GK5B7vr6jtU
-         NSjoDEHB64HzYHACv/buFi9sn/Wp3gApDxEW4NA9TRNL3YUXDNYLEnVBMwBhPdM0FXk4
-         T+ZXSNbwaT+0qQ+B3twyFXXMF3oTxVnTX+RO7rgQ+Xhsob0L+dDspj2ZicD8fZm1qm7q
-         DNJq1Bc7jMRmEkgo8YDDdb+uoU2KCVENbmuANrgNz2P+9q70H6t7IlQCoaY25JwnyvaN
-         aivKhmmbHEF6aRnezfVRHTYqvZUA8llT+V346FNt6L/echi4FoCfEdmSnjFn+S+beejx
-         IaaA==
-X-Gm-Message-State: ANhLgQ2NSaAY/mbJ4HBu+tu9mfeZi4MEImvrZsnBAS/PWR2eT9rc578Q
-        L/L9njGRLjkD5Fs0IikiV2oPQizT938=
-X-Google-Smtp-Source: ADFU+vsJ1o2UHUr5ZHKd/XXcN8AZhYuiYsHkoVFN14N8MhOoYypiyukKcfGgQMCKoQycbMrNm8DnWg==
-X-Received: by 2002:a63:a55d:: with SMTP id r29mr11142296pgu.248.1585262705086;
-        Thu, 26 Mar 2020 15:45:05 -0700 (PDT)
+        bh=uXFWCA6HsRoFU7UHbCkibQyhhxiptzgR3ncwTu65yOs=;
+        b=NLybMBUd8OVIQEZFgf2pXesmOlIUvtWSAx0/8UXWhtNUCe3T5ABezkwzU35YgJR5cA
+         q8R7ZntFPrbF4PD2/rQXzH4x8eCGc5cHfOtTAPEHeWRRos3eJcdZX6IZG4oKwpia6ajj
+         45a3cWDRGyvUjKjzvixNaX5pt53+g6nDngMA4et18/ynINWJ5TwfOJeTmBo8f+WR9fmJ
+         1ZiEpUgVpdWXB2zcF8W3T2itZ9JjfwN0edZznbq/NCegrJKDJWH21Xci2M116lUluXP/
+         usTREicbRonsF21WhOgTQNIMjBjEPy9YIROlo95V/pvzMk1kjQ3rYjJpiXEiTXmfH4oL
+         soPw==
+X-Gm-Message-State: ANhLgQ3QDhy+YZVy4Z6ZcdMa/nzJ8mzmMrGc2KxGz4NmXu9N5/zJaw+h
+        nBWm16L9WZl9Uj0CEKqAgvTojUAdr+A=
+X-Google-Smtp-Source: ADFU+vu9KGqoAE4crBP4wJCZ1UO5CXpzN5sdzapPizXKKa7HM9pL5RtmXtBOe7hYseU2KlJwcR0Mww==
+X-Received: by 2002:a63:60d:: with SMTP id 13mr10693526pgg.151.1585262706292;
+        Thu, 26 Mar 2020 15:45:06 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id g10sm2592788pfk.90.2020.03.26.15.45.04
+        by smtp.gmail.com with ESMTPSA id g10sm2592788pfk.90.2020.03.26.15.45.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 15:45:04 -0700 (PDT)
+        Thu, 26 Mar 2020 15:45:05 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     John Stultz <john.stultz@linaro.org>, Todd Kjos <tkjos@google.com>,
@@ -52,9 +52,9 @@ Cc:     John Stultz <john.stultz@linaro.org>, Todd Kjos <tkjos@google.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org
-Subject: [PATCH v3 2/3] soc: qcom: rpmh: Allow RPMH driver to be loaded as a module
-Date:   Thu, 26 Mar 2020 22:44:58 +0000
-Message-Id: <20200326224459.105170-3-john.stultz@linaro.org>
+Subject: [PATCH v3 3/3] soc: qcom: rpmhpd: Allow RPMHPD driver to be loaded as a module
+Date:   Thu, 26 Mar 2020 22:44:59 +0000
+Message-Id: <20200326224459.105170-4-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200326224459.105170-1-john.stultz@linaro.org>
 References: <20200326224459.105170-1-john.stultz@linaro.org>
@@ -63,14 +63,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allow the rpmh driver to be loaded as a permenent
+This patch allow the rpmhpd driver to be loaded as a permenent
 module. Meaning it can be loaded from a module, but then cannot
 be unloaded.
 
 Ideally, it would include a remove hook and related logic, but
-the rpmh driver is fairly core to the system, so once its loaded
-with almost anythign else to get the system to go, the dependencies
-are not likely to ever also be removed.
+apparently the genpd code isn't able to track usage and cleaning
+things up?
 
 So making it a permenent module at least improves things slightly
 over requiring it to be a built in driver.
@@ -85,50 +84,49 @@ Cc: Rajendra Nayak <rnayak@codeaurora.org>
 Cc: linux-arm-msm@vger.kernel.org
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- drivers/soc/qcom/Kconfig    | 2 +-
- drivers/soc/qcom/rpmh-rsc.c | 6 ++++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ drivers/soc/qcom/Kconfig  | 2 +-
+ drivers/soc/qcom/rpmhpd.c | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index af774555b9d2..ac91eaf810f7 100644
+index ac91eaf810f7..ffc04285840b 100644
 --- a/drivers/soc/qcom/Kconfig
 +++ b/drivers/soc/qcom/Kconfig
-@@ -104,7 +104,7 @@ config QCOM_RMTFS_MEM
- 	  Say y here if you intend to boot the modem remoteproc.
+@@ -114,7 +114,7 @@ config QCOM_RPMH
+ 	  help apply the aggregated state on the resource.
  
- config QCOM_RPMH
--	bool "Qualcomm RPM-Hardened (RPMH) Communication"
-+	tristate "Qualcomm RPM-Hardened (RPMH) Communication"
- 	depends on ARCH_QCOM && ARM64 || COMPILE_TEST
+ config QCOM_RPMHPD
+-	bool "Qualcomm RPMh Power domain driver"
++	tristate "Qualcomm RPMh Power domain driver"
+ 	depends on QCOM_RPMH && QCOM_COMMAND_DB
  	help
- 	  Support for communication with the hardened-RPM blocks in
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index e278fc11fe5c..30585d98fdf1 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -11,6 +11,7 @@
- #include <linux/io.h>
+ 	  QCOM RPMh Power domain driver to support power-domains with
+diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
+index 4d264d0672c4..0bb12d5870a7 100644
+--- a/drivers/soc/qcom/rpmhpd.c
++++ b/drivers/soc/qcom/rpmhpd.c
+@@ -4,6 +4,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
  #include <linux/kernel.h>
- #include <linux/list.h>
 +#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
-@@ -679,6 +680,8 @@ static const struct of_device_id rpmh_drv_match[] = {
- 	{ .compatible = "qcom,rpmh-rsc", },
+ #include <linux/mutex.h>
+ #include <linux/pm_domain.h>
+ #include <linux/slab.h>
+@@ -189,6 +190,7 @@ static const struct of_device_id rpmhpd_match_table[] = {
+ 	{ .compatible = "qcom,sm8150-rpmhpd", .data = &sm8150_desc },
  	{ }
  };
-+MODULE_DEVICE_TABLE(of, rpmh_drv_match);
-+
++MODULE_DEVICE_TABLE(of, rpmhpd_match_table);
  
- static struct platform_driver rpmh_driver = {
- 	.probe = rpmh_rsc_probe,
-@@ -693,3 +696,6 @@ static int __init rpmh_driver_init(void)
- 	return platform_driver_register(&rpmh_driver);
+ static int rpmhpd_send_corner(struct rpmhpd *pd, int state,
+ 			      unsigned int corner, bool sync)
+@@ -460,3 +462,6 @@ static int __init rpmhpd_init(void)
+ 	return platform_driver_register(&rpmhpd_driver);
  }
- arch_initcall(rpmh_driver_init);
+ core_initcall(rpmhpd_init);
 +
-+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. RPMh Driver");
++MODULE_DESCRIPTION("Qualcomm Technologies, Inc. RPMh Power Domain Driver");
 +MODULE_LICENSE("GPL v2");
 -- 
 2.17.1
