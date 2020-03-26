@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F8881944D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:00:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6846C1944D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:00:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbgCZRAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 13:00:11 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33927 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbgCZRAI (ORCPT
+        id S1728292AbgCZRAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 13:00:19 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38238 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbgCZRAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 13:00:08 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 65so8773779wrl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 10:00:07 -0700 (PDT)
+        Thu, 26 Mar 2020 13:00:11 -0400
+Received: by mail-wr1-f67.google.com with SMTP id s1so8725442wrv.5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 10:00:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=C9+ngUpmkFwCrrCCNM5K1pYaDR7H/QYUrPj981ohJpA=;
-        b=E0Av0gMBUOqV1dPvKF2FITdx8Rf0uAaobKa9Ln4rw+eC7JsGjCT057RazyNLToqdYH
-         uDM362SfMEaE7zSr81m7UtJQ2xDDpsqsxmUGaVfeKZBeqvv/vEe2gsnqwKSv4np35TFW
-         8EFA1KJB9qJxQUbzq/UzRCCRMY4nBGQUaajRFRG9MMBwrp1LPEaDjWccAoThyaXXPfm+
-         ZHpQR74vp4XXkR1gbn4lyQYMaZUHpO68kkbt/0dLeH/z8KMmdSSWBl/m09gMcbefsYKq
-         4hjpimLD5O3WfuEsmeJvI1MXq8AvpVQ8HKEBwpsxvofC/mt+BL9LfjlSdxxwVGPvaGpo
-         qdVg==
+        bh=LxcKkp++L7yp/h9Hem5yr49+eGcTTPzuu5jvOWKTxmA=;
+        b=sfZU1l0CsD8lTrhTD4XPLlFmnial8LrAHG1mR+jpGFP/i1SKVl8zPCXQPjbF7cihJh
+         +A5dlLwmq9wcng6RiXhKVN6ZQPcEy+XekaY1TGo4OS+16+7A1kZ1/mbseAUOEqVQssGj
+         iJq4CS4ZFHiDNtO/bVOiImEFDtPYP/aTNNwXzFc6B6TA2zHjeNuH5jICglqU82vI5Q53
+         T6vDUfd/1Wqrwj7IVYbzuX9UZj2VhhC102ZjAxm/EY/wumUZBMHbGeTw0QXH6zTUZpfC
+         29Eiz/WSLItxD1wbSw3oB9OHO/fCjYlfGcOhkNic3IyLT+teQHi7ww7K64o89DaBA1l7
+         PCUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=C9+ngUpmkFwCrrCCNM5K1pYaDR7H/QYUrPj981ohJpA=;
-        b=m3/54O1ttNdo6rT1ctj4gkA7qaS/BX+Ap/Cfbf55FzD84CEm4q4evrN4V/CMBQIBfT
-         fFj1PoWcgQluB7qL1SnumC8cIdWTAxA2zJ8bPKnNoOlX8D0q5nfv2ovoTE/Y5gDkOSoq
-         YZgiA5NuEtxkm4tpgNUg0Kf9yLpS7PFp4/bAnDWZLqWoH6othFfohzz8osZ06kMz6bQ3
-         F4J9tx4/CKGlRzxp73ePEn2HKkHtB06qVuLGjmV3fFbhdmNH4/9ncq58SFOT8mTgM6xE
-         xPnU4rNiaAfdte2eq0VGAQcAgGNcvJ9FENTU2YH5aUed6byCQDsyfVQ19vBXknjTnlnm
-         GQyQ==
-X-Gm-Message-State: ANhLgQ33WbF8wQ57W5w5SLLKUR8fczAFrJz+BdaALKzyQUHhhmDij93O
-        7USDHqnzzw7blwyUvBJd2Rl5zA==
-X-Google-Smtp-Source: ADFU+vseedUJg+qIi0p0xgZxO6cJSY/Je6ly7V3VTm6ALURObymwtKpKsQpPYy2rJDKVcOfhXF3N0A==
-X-Received: by 2002:adf:82b0:: with SMTP id 45mr10206215wrc.120.1585242006281;
-        Thu, 26 Mar 2020 10:00:06 -0700 (PDT)
+        bh=LxcKkp++L7yp/h9Hem5yr49+eGcTTPzuu5jvOWKTxmA=;
+        b=hFrCoAXXn9DbExSsrGllkMtrMebYXoW8JW7GUneNOwg6Rm+odAU+RGjCwMSMxqIYoU
+         PtYKQk48J79UjLTccmCzG5sA5eBXHdyKL5dyPieDWZZfM7blI9M0cqPgJDsFlz43jOip
+         y5VVN5rLv6Q0yp7bEga7yO2Nr3ybtk08ON51GqBinec3e64qjKBctehpU0XUvsKMD5yO
+         1/jO+PNTvMu0taFF4UqAr2b2dKaX/Mj6iNil0Ot4cyaJG/DICzNDR004T6YVLnqkF36s
+         A2eHWn6azVSASG/6QhuzjeILpH+az6S6BnTrNeJ088yMEel7/fp9oynl5yUUoL2KETSm
+         Ighw==
+X-Gm-Message-State: ANhLgQ1TU/ULtUBzT1L9IalVLGgaz7erMLV9OILs4i8X9mKXmt7CEkl1
+        0wOhSnbUV1KwlXnaG0lWazLBlg==
+X-Google-Smtp-Source: ADFU+vt678Nhxx77VFoeY4pri/SUs/4tTh321n/fUb14KxYkkqXRV/VnCnyzTCIaRDHORBpwNgx1Jw==
+X-Received: by 2002:adf:dec3:: with SMTP id i3mr10862529wrn.351.1585242007735;
+        Thu, 26 Mar 2020 10:00:07 -0700 (PDT)
 Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
-        by smtp.gmail.com with ESMTPSA id r15sm4609823wra.19.2020.03.26.10.00.04
+        by smtp.gmail.com with ESMTPSA id r15sm4609823wra.19.2020.03.26.10.00.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 10:00:05 -0700 (PDT)
+        Thu, 26 Mar 2020 10:00:06 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com, devicetree@vger.kernel.org
 Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 2/5] arm64: dts: meson: fixup SCP sram nodes
-Date:   Thu, 26 Mar 2020 17:59:55 +0100
-Message-Id: <20200326165958.19274-3-narmstrong@baylibre.com>
+Subject: [PATCH 3/5] arm64: dts: meson-g12b-ugoos-am6: fix board compatible
+Date:   Thu, 26 Mar 2020 17:59:56 +0100
+Message-Id: <20200326165958.19274-4-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200326165958.19274-1-narmstrong@baylibre.com>
 References: <20200326165958.19274-1-narmstrong@baylibre.com>
@@ -63,76 +63,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The GX and AXG SCP sram nodes were using invalid compatible and
-node names for the sram entries.
+Add missing amlogic,s922x in the board compatible list.
 
-Fixup the sram entries node names, and use proper compatible for them.
-
-It notably fixes:
-sram@c8000000: 'scp-shmem@0', 'scp-shmem@200' do not match any of the regexes: '^([a-z]*-)?sram(-section)?@[a-f0-9]+$', 'pinctrl-[0-9]+'
+It fixes:
+meson-g12b-ugoos-am6.dt.yaml: /: compatible: ['ugoos,am6', 'amlogic,g12b'] is not valid under any of the given schemas
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi |  6 +++---
- arch/arm64/boot/dts/amlogic/meson-gx.dtsi  | 10 +++++-----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index aace3d32a3df..8e6281c685fa 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -1735,18 +1735,18 @@
- 		};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts
+index 06c5430eb92d..fdaacfd96b97 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts
+@@ -14,7 +14,7 @@
+ #include <dt-bindings/sound/meson-g12a-tohdmitx.h>
  
- 		sram: sram@fffc0000 {
--			compatible = "amlogic,meson-axg-sram", "mmio-sram";
-+			compatible = "mmio-sram";
- 			reg = <0x0 0xfffc0000 0x0 0x20000>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0 0x0 0xfffc0000 0x20000>;
+ / {
+-	compatible = "ugoos,am6", "amlogic,g12b";
++	compatible = "ugoos,am6", "amlogic,s922x", "amlogic,g12b";
+ 	model = "Ugoos AM6";
  
--			cpu_scp_lpri: scp-shmem@13000 {
-+			cpu_scp_lpri: scp-sram@13000 {
- 				compatible = "amlogic,meson-axg-scp-shmem";
- 				reg = <0x13000 0x400>;
- 			};
- 
--			cpu_scp_hpri: scp-shmem@13400 {
-+			cpu_scp_hpri: scp-sram@13400 {
- 				compatible = "amlogic,meson-axg-scp-shmem";
- 				reg = <0x13400 0x400>;
- 			};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-index 03f79fe045b7..e2bb68ec8502 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-@@ -398,20 +398,20 @@
- 		};
- 
- 		sram: sram@c8000000 {
--			compatible = "amlogic,meson-gx-sram", "amlogic,meson-gxbb-sram", "mmio-sram";
-+			compatible = "mmio-sram";
- 			reg = <0x0 0xc8000000 0x0 0x14000>;
- 
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0 0x0 0xc8000000 0x14000>;
- 
--			cpu_scp_lpri: scp-shmem@0 {
--				compatible = "amlogic,meson-gx-scp-shmem", "amlogic,meson-gxbb-scp-shmem";
-+			cpu_scp_lpri: scp-sram@0 {
-+				compatible = "amlogic,meson-gxbb-scp-shmem";
- 				reg = <0x13000 0x400>;
- 			};
- 
--			cpu_scp_hpri: scp-shmem@200 {
--				compatible = "amlogic,meson-gx-scp-shmem", "amlogic,meson-gxbb-scp-shmem";
-+			cpu_scp_hpri: scp-sram@200 {
-+				compatible = "amlogic,meson-gxbb-scp-shmem";
- 				reg = <0x13400 0x400>;
- 			};
- 		};
+ 	aliases {
 -- 
 2.22.0
 
