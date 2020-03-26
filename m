@@ -2,160 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 614A71947B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:44:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF3BE1947BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:44:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbgCZToG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 15:44:06 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54924 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727822AbgCZToG (ORCPT
+        id S1728587AbgCZTov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 15:44:51 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44097 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgCZTov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 15:44:06 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c81so8039870wmd.4
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 12:44:03 -0700 (PDT)
+        Thu, 26 Mar 2020 15:44:51 -0400
+Received: by mail-qk1-f194.google.com with SMTP id j4so8156559qkc.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 12:44:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=0Bii1s2deigTxksVQn5D4fa3g6KSqWpYF2vfQCrTCkQ=;
-        b=mXue/BH8dMK46Q+CxoPuOCAXIhsjfNF4BBz9nY0CKpqWmSNg1EdIyHxC/ObRwwi+4Y
-         vrbbv616X1THSsMHpH5lPr0ZnkJbdXDnByiot4haqIrWo6+ag7FMFpksuXbvMVX5B1mz
-         KDJ9sjiU9NcbKj1KvyZfGqfFysuI5OEoyFOoY=
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Vz8M+WY12BuCsCLe/S9A2YcP2dqH4GItbGgYzpSKVks=;
+        b=Wvi8sFDy3Xelku+ev0Z+8Z88gUwLdh49TKjzgpvENdRnjLybfJv52p2eJGWj4Po7mX
+         9ZiDd3dnWbFl0RVSEDSIc7JcCinAuAswL3ehy/VJRT+S+Z294BqheymwNr9VaspjVkRw
+         jDTamd/KQWz5bhF0xB8oGvoDFbXtqoH/LflMo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=0Bii1s2deigTxksVQn5D4fa3g6KSqWpYF2vfQCrTCkQ=;
-        b=X9GNi5qW6Tk+dUwvOCJ80BnBj37cwqB2OhEMUrkQ5Bl/L/Tllds/lVlm7mbjgGWJBV
-         gL+FZeJZILQJrB+UjxXK+n1jw3aRKZDIfU+qZtNERF5VTU0H0ToCdMxeIOMh0KPijqzo
-         /8aTwcIhv8NKHpatsc9cyfgKxo6bRtRyVk8YQlWbWjEEvPhtECGstjicjZGSB6NoZQ8+
-         eVnS3dZcidbOiuCxIa3nwQ+bHkz59pNtLoU42RhbtQ+V2uUXKPI6qTEUHiCBr4J+YNoU
-         JrdVCgY7wTwOmCOJiFona4rLCjjjpftJZJ88t45C+DOzEvyff8SP1X8D/IPyr2rsYjfR
-         8WFA==
-X-Gm-Message-State: ANhLgQ2vFcrK/XjbZKC51Tyr2PjmGwi7pg7dk0RcLBtQRFF4L78yXAmQ
-        gLw+ReFXFzDyMKVeSGS999iA7g==
-X-Google-Smtp-Source: ADFU+vv6oOna9/uYcBsBB+T/TvHqVZPZsv2Q92xO2Srm3mQHiGr5MgeyNE/xuLzjiHifH8JuX6CviQ==
-X-Received: by 2002:a05:600c:24c:: with SMTP id 12mr1548359wmj.186.1585251843249;
-        Thu, 26 Mar 2020 12:44:03 -0700 (PDT)
-Received: from chromium.org (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id s127sm4869574wmf.28.2020.03.26.12.44.01
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Vz8M+WY12BuCsCLe/S9A2YcP2dqH4GItbGgYzpSKVks=;
+        b=QMevjwzosaw4DTQ3V/eYYR/TfhcACjDwFjPd/1DilnVZ2G1Wv3jjGxOlgSHeSLQXbH
+         b034UuuUvqz2HQ1iS02pwl9mqhUcDBQG/ecF4J1UuHi0+w6DDZAWcSXr5HKvQt5V5nKS
+         CfF1jTUkWVmfMMvclgVHWURPXt4CeJJkthjdVNQDOBueDt/en0cXMzvNTL7cWCqmU5oL
+         qLRTkvQgL3KNM4tZbH2PLddZ/caCcVJ/uOHFJAeQaabMA+V4oGZK90iBb/eXJ+1zrmOl
+         CPJM99T3Wfsdg45NQAZSWSoVdDy+hooVXyO9S+FhMO2KmDmt5g8BV8PkqGdxdv+S9Pth
+         7qfA==
+X-Gm-Message-State: ANhLgQ32oGUGA5/xAdi9PAus2BqKpIdcYmM/9wJ15WXHonnA9rZhvCM8
+        Pg/guPCM5KwLxZBKxg8NRs897rM6I3o=
+X-Google-Smtp-Source: ADFU+vv4Ed+8fGkonegfzDlU+QiZdHa5jyfFN+G7H65B9V9e/l32Mev8DSAqceTHpeLqzZ3Vgffnmw==
+X-Received: by 2002:a37:9ec8:: with SMTP id h191mr10060075qke.260.1585251889761;
+        Thu, 26 Mar 2020 12:44:49 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id s36sm2246621qtb.28.2020.03.26.12.44.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 12:44:02 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-X-Google-Original-From: KP Singh <kpsingh>
-Date:   Thu, 26 Mar 2020 20:44:00 +0100
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v7 7/8] bpf: lsm: Add selftests for
- BPF_PROG_TYPE_LSM
-Message-ID: <20200326194400.GB15273@chromium.org>
-References: <20200326142823.26277-1-kpsingh@chromium.org>
- <20200326142823.26277-8-kpsingh@chromium.org>
- <CAEf4BzZRe_kFR4yzhPFGgauvYLKvre1reuGp=5=jq_nvQGAayw@mail.gmail.com>
+        Thu, 26 Mar 2020 12:44:49 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 15:44:48 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>,
+        Amit Pundir <amit.pundir@linaro.org>, kernel-team@android.com,
+        jsbarnes@google.com, sonnyrao@google.com, vpillai@digitalocean.com,
+        peterz@infradead.org, Guenter Roeck <groeck@chromium.org>,
+        Waiman Long <longman@redhat.com>,
+        Greg Kerr <kerrnel@google.com>, cgroups@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Li Zefan <lizefan@huawei.com>
+Subject: Re: [PATCH RFC] cpuset: Make cpusets get restored on hotplug
+Message-ID: <20200326194448.GA133524@google.com>
+References: <20200326191623.129285-1-joel@joelfernandes.org>
+ <20200326192035.GO162390@mtj.duckdns.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZRe_kFR4yzhPFGgauvYLKvre1reuGp=5=jq_nvQGAayw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200326192035.GO162390@mtj.duckdns.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26-Mär 12:24, Andrii Nakryiko wrote:
-> On Thu, Mar 26, 2020 at 7:30 AM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > From: KP Singh <kpsingh@google.com>
-> >
-> > * Load/attach a BPF program that hooks to file_mprotect (int)
-> >   and bprm_committed_creds (void).
-> > * Perform an action that triggers the hook.
-> > * Verify if the audit event was received using the shared global
-> >   variables for the process executed.
-> > * Verify if the mprotect returns a -EPERM.
-> >
-> > Signed-off-by: KP Singh <kpsingh@google.com>
-> > Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> > Reviewed-by: Florent Revest <revest@google.com>
-> > Reviewed-by: Thomas Garnier <thgarnie@google.com>
-> > ---
-> 
-> Please fix endlines below. With that:
-> 
-> Acked-by: Andrii Nakryiko <andriin@fb.com>
-> 
-> >  tools/testing/selftests/bpf/config            |  2 +
-> >  .../selftests/bpf/prog_tests/test_lsm.c       | 86 +++++++++++++++++++
-> >  tools/testing/selftests/bpf/progs/lsm.c       | 48 +++++++++++
-> >  3 files changed, 136 insertions(+)
-> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/test_lsm.c
-> >  create mode 100644 tools/testing/selftests/bpf/progs/lsm.c
-> >
-> 
-> [...]
-> 
-> > +void test_test_lsm(void)
-> > +{
-> > +       struct lsm *skel = NULL;
-> > +       int err, duration = 0;
-> > +
-> > +       skel = lsm__open_and_load();
-> > +       if (CHECK(!skel, "skel_load", "lsm skeleton failed\n"))
-> > +               goto close_prog;
-> > +
-> > +       err = lsm__attach(skel);
-> > +       if (CHECK(err, "attach", "lsm attach failed: %d\n", err))
-> > +               goto close_prog;
-> > +
-> > +       err = exec_cmd(&skel->bss->monitored_pid);
-> > +       if (CHECK(err < 0, "exec_cmd", "err %d errno %d\n", err, errno))
-> > +               goto close_prog;
-> > +
-> > +       CHECK(skel->bss->bprm_count != 1, "bprm_count", "bprm_count = %d",
-> 
-> \n is missing
+Hi Tejun,
 
-Done.
-
+On Thu, Mar 26, 2020 at 03:20:35PM -0400, Tejun Heo wrote:
+> On Thu, Mar 26, 2020 at 03:16:23PM -0400, Joel Fernandes (Google) wrote:
+> > This deliberately changes the behavior of the per-cpuset
+> > cpus file to not be effected by hotplug. When a cpu is offlined,
+> > it will be removed from the cpuset/cpus file. When a cpu is onlined,
+> > if the cpuset originally requested that that cpu was part of the cpuset,
+> > that cpu will be restored to the cpuset. The cpus files still
+> > have to be hierachical, but the ranges no longer have to be out of
+> > the currently online cpus, just the physically present cpus.
 > 
-> > +             skel->bss->bprm_count);
-> > +
-> > +       skel->bss->monitored_pid = getpid();
-> > +
-> > +       err = heap_mprotect();
-> > +       if (CHECK(errno != EPERM, "heap_mprotect", "want errno=EPERM, got %d\n",
-> > +                 errno))
-> > +               goto close_prog;
-> > +
-> > +       CHECK(skel->bss->mprotect_count != 1, "mprotect_count",
-> > +             "mprotect_count = %d", skel->bss->mprotect_count);
-> 
-> \n is missing
+> This is already the behavior on cgroup2 and I don't think we want to
+> introduce this big a behavior change to cgroup1 cpuset at this point.
 
-Done.
+It is not really that big a change. Please go over the patch, we are not
+changing anything with how ->cpus_allowed works and interacts with the rest
+of the system and the scheduler. We have just introduced a new mask to keep
+track of which CPUs were requested without them being affected by hotplug. On
+CPU onlining, we restore the state of ->cpus_allowed as not be affected by
+hotplug.
 
-- KP
+There's 3 companies that have this issue so that should tell you something.
+We don't want to carry this patch forever. Many people consider the hotplug
+behavior to be completely broken.
 
-> 
-> > +
-> > +close_prog:
-> > +       lsm__destroy(skel);
-> > +}
-> 
-> [...]
+thanks,
+
+ - Joel
+
