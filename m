@@ -2,157 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92611194B89
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 23:29:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D126194B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 23:33:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbgCZW3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 18:29:51 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55132 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbgCZW3v (ORCPT
+        id S1727495AbgCZWds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 18:33:48 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:43280 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgCZWds (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 18:29:51 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02QMSYv0178468;
-        Thu, 26 Mar 2020 22:29:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=AbnF9vL8V5KcErLA/dx3AbUSHBS3ZjKSUCbowOPIxBQ=;
- b=OSvQga1K+wfyGCM+thkdl6gQ6QHkKbTxVPkn1eo+KofzPr8bhKUaE0P5mNGwqS3jlmpG
- hGyCiDR24GbFuCl2ewyo6tbQWcqt7JWvgMd4PKVcMotgJkoCj2OfA/eCahe9eKlxf/Y9
- D2+Ef3FfxMq5mksmKSSFXLsR0bQ6iGfDCPeBrw9b711H9cyvudTplqHybroFSEm9wd4c
- GzdcA946rESJE5punlDl6SiojrvVtOwaau6kxSITrU3yf8bZidQqJF8eC7rbBDJvRxSr
- chfIFIxIrL8WwzcvS1/vhqUhsJmNC1JYxCY0Jc6krGCC8b0XXPNeVw9zFtqZNQnDVeY7 xw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 300urk36pt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Mar 2020 22:29:44 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02QMQb85133092;
-        Thu, 26 Mar 2020 22:29:44 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 30073epnya-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Mar 2020 22:29:44 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02QMThpU029885;
-        Thu, 26 Mar 2020 22:29:43 GMT
-Received: from anon-dhcp-153.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 26 Mar 2020 15:29:43 -0700
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH 2/2] SUNRPC: Optimize 'svc_print_xprts()'
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <87r1xe7pvy.fsf@notabene.neil.brown.name>
-Date:   Thu, 26 Mar 2020 18:29:41 -0400
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9AC34F25-68B7-4184-9A91-A6D026F6BA6F@oracle.com>
-References: <20200325070452.22043-1-christophe.jaillet@wanadoo.fr>
- <EA5BCDB2-DB05-4B26-8635-E6F5C231DDC6@oracle.com>
- <42afbf1f-19e1-a05c-e70c-1d46eaba3a71@wanadoo.fr>
- <87wo786o80.fsf@notabene.neil.brown.name>
- <2e2d1293-c978-3f1d-5a1e-dc43dc2ad06b@wanadoo.fr>
- <87r1xe7pvy.fsf@notabene.neil.brown.name>
-To:     Neil Brown <neilb@suse.de>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-X-Mailer: Apple Mail (2.3445.104.11)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9572 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=988 adultscore=0
- suspectscore=0 mlxscore=0 phishscore=0 bulkscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003260163
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9572 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
- mlxlogscore=999 clxscore=1015 lowpriorityscore=0 mlxscore=0 phishscore=0
- bulkscore=0 impostorscore=0 adultscore=0 malwarescore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003260163
+        Thu, 26 Mar 2020 18:33:48 -0400
+Received: by mail-il1-f194.google.com with SMTP id g15so6985842ilj.10
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kjtLmei14Aqe6drnic5xmk3O+peLFqdWaisNXVkXGdU=;
+        b=LDp1HOz4HRDcpEUE/IODV5zUi8p4m/bTmt+Due8jI4CRWUH08jE3IOL0+gMN7atpoA
+         gTRYN4GEg+beygpKEJUpyOj5DLy7Aya6zVDZFacmvFjxr0x8yaK+xuZefyLMLtVSCXHQ
+         lDcPSqUMxCawAdciC6sGGZPl5FsLBpvCs/cuQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kjtLmei14Aqe6drnic5xmk3O+peLFqdWaisNXVkXGdU=;
+        b=pAzk2nvQu9yUZgKrLPZ8g08Sc19q6qAnWtzCko7MdHKOEPKCZmHTYAnGfHd/dtpqOi
+         tSqARnQ5NNYxUct+gh+COgN8p0Wy5pOpnk4Vdgmph8Ynt+X/E5TQfw7GcGTmQ0nTRtwh
+         /+v9ZJwcv1sX4Ss2oqiK+bX/uUfH2YxOxdt7c/43O96snArWaYnqjN6Ly+MA9X0X3XVQ
+         hczFUs962+IzW8jD9f1jIs+c/9a/J4tftnET4a9QQ+f0ppPifAa+JYKQJMcOPkB/h3P/
+         vQJfAdNefhAfL8HqwQ3yBebT4/8Hoj2dJg4LR4N9vZw8xK7ouk8yP0cZVfdRtZhW2Vu9
+         7N3g==
+X-Gm-Message-State: ANhLgQ1WcyIyCASdgdK+mBjVpDMUmYpEUcdfMFitDU0eJNzReqbG9qJZ
+        aK6ctoFxSjGpA6hhLpF2+gSMwA==
+X-Google-Smtp-Source: ADFU+vtMO7/dx04DcpOtgDV7w5GSmDnkphd5lBOQl2I1jSMmN1W9RaTneGmqZD3lGbRVl2wtOisAng==
+X-Received: by 2002:a92:359b:: with SMTP id c27mr10690452ilf.148.1585262026859;
+        Thu, 26 Mar 2020 15:33:46 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id j84sm1238655ili.65.2020.03.26.15.33.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Mar 2020 15:33:46 -0700 (PDT)
+Subject: Re: [PATCH] selftests: Fix memfd to support relocatable build
+ (O=objdir)
+To:     "Bird, Tim" <Tim.Bird@sony.com>,
+        "shuah@kernel.org" <shuah@kernel.org>
+Cc:     "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20200325231709.13122-1-skhan@linuxfoundation.org>
+ <MWHPR13MB08955F0F8C5D0B07CA86DA92FDCF0@MWHPR13MB0895.namprd13.prod.outlook.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <3fa8af77-4b4b-c1e2-2467-fb7b9adb3f66@linuxfoundation.org>
+Date:   Thu, 26 Mar 2020 16:33:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <MWHPR13MB08955F0F8C5D0B07CA86DA92FDCF0@MWHPR13MB0895.namprd13.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 3/26/20 4:23 PM, Bird, Tim wrote:
+>> -----Original Message-----
+>> From: Shuah Khan
+>>
+>> Fix memfd to support relocatable build (O=objdir). This calls out
+>> source files necessary to build tests and simplfies the dependency
+>> enforcement.
+>>
+>> Tested the following:
+>>
+>> Note that cross-build for fuse_mnt has dependency on -lfuse.
+>>
+>> make all
+>> make clean
+>> make kselftest-install O=/arm64_build/ ARCH=arm64 HOSTCC=gcc \
+>> CROSS_COMPILE=aarch64-linux-gnu- TARGETS=memfd
+>>
+>> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+>> ---
+>>   tools/testing/selftests/memfd/Makefile | 9 ++++-----
+>>   1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/memfd/Makefile b/tools/testing/selftests/memfd/Makefile
+>> index 53a848109f7b..0a15f9e23431 100644
+>> --- a/tools/testing/selftests/memfd/Makefile
+>> +++ b/tools/testing/selftests/memfd/Makefile
+>> @@ -4,9 +4,8 @@ CFLAGS += -I../../../../include/uapi/
+>>   CFLAGS += -I../../../../include/
+>>   CFLAGS += -I../../../../usr/include/
+>>
+>> -TEST_GEN_PROGS := memfd_test
+>> +TEST_GEN_PROGS := memfd_test fuse_test fuse_mnt
+>>   TEST_PROGS := run_fuse_test.sh run_hugetlbfs_test.sh
+>> -TEST_GEN_FILES := fuse_mnt fuse_test
+>>
+>>   fuse_mnt.o: CFLAGS += $(shell pkg-config fuse --cflags)
+>>
+>> @@ -14,7 +13,7 @@ include ../lib.mk
+>>
+>>   $(OUTPUT)/fuse_mnt: LDLIBS += $(shell pkg-config fuse --libs)
+> 
+> Sorry to interject here.  This comment doesn't have to do with this patch,
+> but the above line is problematical for cross-compilation.
+> $(shell pkg-config fuse --libs) will use pkg-config from the host
+> machine, and may produce something different from what's
+> installed on the target.  For most enterprise and desktop systems
+> library paths for are mostly standardized.  The effect is that if
+> you're doing 'simple' embedded, the pkg-config output on the
+> host will match that of the target board.  However, in some
+> embedded products the partition and filesystem setups are
+> often quite complicated (e.g. I recently worked on a TV set with 14
+> partitions) and things are not in the locations preferred by the
+> Filesystem Hierarchy Standard.
+> 
+> When cross-compiling for our products, we tend to use the pkg-config
+> from the filesystem of the target (a copy of which is on the host), rather
+> than the host's pkg-config.
+> 
+Thanks for bringing attention to the issue. This is an existing
+issue. Thankfully this is one of the two tests that use pkg-config.
+
+The problem is limited to just two tests that are included in the
+Makefile TARGETS.
+
+> I don't have a board in my test lab where this shows up, nor a
+> proposed solution at the moment, but I'm just mentioning it as a
+> potential host-environment build contamination issue.  Maybe I
+> should start keeping a list, and start thinking of possible solutions for
+> more of these types of issues.
 
 
-> On Mar 26, 2020, at 5:44 PM, NeilBrown <neilb@suse.de> wrote:
->=20
-> On Thu, Mar 26 2020, Christophe JAILLET wrote:
->=20
->> Le 25/03/2020 =C3=A0 23:53, NeilBrown a =C3=A9crit :
->>> Can I suggest something more like this:
->>> diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
->>> index de3c077733a7..0292f45b70f6 100644
->>> --- a/net/sunrpc/svc_xprt.c
->>> +++ b/net/sunrpc/svc_xprt.c
->>> @@ -115,16 +115,9 @@ int svc_print_xprts(char *buf, int maxlen)
->>>  	buf[0] =3D '\0';
->>>=20
->>>  	spin_lock(&svc_xprt_class_lock);
->>> -	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list) {
->>> -		int slen;
->>> -
->>> -		sprintf(tmpstr, "%s %d\n", xcl->xcl_name, =
-xcl->xcl_max_payload);
->>> -		slen =3D strlen(tmpstr);
->>> -		if (len + slen > maxlen)
->>> -			break;
->>> -		len +=3D slen;
->>> -		strcat(buf, tmpstr);
->>> -	}
->>> +	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list)
->>> +		len +=3D scnprintf(buf + len, maxlen - len, "%s %d\n",
->>> +				 xcl->xcl_name, xcl->xcl_max_payload);
->>>  	spin_unlock(&svc_xprt_class_lock);
->>>=20
->>>  	return len;
->>>=20
->>> NeilBrown
->>=20
->> Hi,
->>=20
->> this was what I suggested in the patch:
->>     ---
->>     This patch should have no functional change.
->>     We could go further, use scnprintf and write directly in the=20
->> destination
->>     buffer. However, this could lead to a truncated last line.
->>     ---
->=20
-> Sorry - I missed that.
-> So add
->=20
-> end =3D strrchr(tmpstr, '\n');
-> if (end)
->    end[1] =3D 0;
-> else
->    tmpstr[0] =3D 0;
->=20
-> or maybe something like
-> 	list_for_each_entry(xcl, &svc_xprt_class_list, xcl_list) {
-> 		int l =3D snprintf(buf + len, maxlen - len, "%s %d\n",
-> 				 xcl->xcl_name, xcl->xcl_max_payload);
->                if (l < maxlen - len)
->                	len +=3D l;
->        }
->        buf[len] =3D 0;
->=20
-> There really is no need to have the secondary buffer, and I think =
-doing
-> so just complicates the code.
+Thanks for bringing attention to the issue. I will keep an eye out for
+this kind of usage during my reviews.
 
-In the interest of getting this fix into the upcoming merge window, =
-let's
-stick with the temporary buffer approach. Thanks!
+> 
+> P.S. I'd ignore this issue for approving this patch.  I'm just bringing
+> it up as a red flag for future work.
 
+Thanks. This is an existing problem that can be addressed in a separate
+page.
 
---
-Chuck Lever
-
-
-
+thanks,
+-- Shuah
