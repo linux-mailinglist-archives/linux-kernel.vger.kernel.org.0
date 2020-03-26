@@ -2,151 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A99F319465F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:16:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B53A019466A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:21:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbgCZSQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 14:16:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45168 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728428AbgCZSQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 14:16:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D7D36ADE2;
-        Thu, 26 Mar 2020 18:16:22 +0000 (UTC)
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Guilherme G . Piccoli" <gpiccoli@canonical.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: [RFC v3 2/2] kernel/sysctl: support handling command line aliases
-Date:   Thu, 26 Mar 2020 19:16:06 +0100
-Message-Id: <20200326181606.7027-2-vbabka@suse.cz>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200326181606.7027-1-vbabka@suse.cz>
-References: <20200326181606.7027-1-vbabka@suse.cz>
+        id S1727792AbgCZSVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 14:21:02 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44089 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727026AbgCZSVC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 14:21:02 -0400
+Received: by mail-vs1-f65.google.com with SMTP id e138so4492228vsc.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:21:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/ohjyYv73OFKplmBSM5tbGvwFGemqZp6n5SDqqDBghU=;
+        b=HMIxrbK1VCB2JxiQem4/MeacZoLlMIbT6Oaise1EYREq3Npjbn+u7cn+w3g/xFl3K/
+         3eeKrOIKuUnSMHwY6GxEXl1EPlDU6KUdFBMueFiFO2KlaCccAiLgmOa2cFUWt6fYhoa7
+         oEDNm5IU3L+Q3TA9eizBtP3dpLIi8HZV3yn1Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/ohjyYv73OFKplmBSM5tbGvwFGemqZp6n5SDqqDBghU=;
+        b=CQHdBWLlxEsyKCFJIAqYnk3/JtSIy/2u/S7Kp1G/V11nWK762sr/OEjF4VpTVSq2DL
+         IvzNR7gjuiIRpEFKHcrn6hQSNBYhGFH9ezH60wWTfXAyA73dgZ9ZE82DS/TOVIkVJWQV
+         +fPdULdAt1uceyWXmWk8C+Az5MIOb7OFUA+b1N21fh8mK7mbBrAwXUlWcuhWIGOndlmZ
+         tmOFKG5Y6rH1Cg3lt92VtX/9V4YbCrtxsCz7HSBAbSmJsDuqlsY618NmKAM5RXPnyH0/
+         /+lG7wiQYNP+x1guOBUZH6GYqkv8889AwBfRW0dj069HgeMnz4g8sfFrNhyVn7ou8XTn
+         bKFw==
+X-Gm-Message-State: ANhLgQ0AWu81aQ/Hzz/2M6mileJ5/OhMZRI3P3zy30ilnOjpirC0Gl3H
+        UHBavnD/FggTsMSEuSBndCV7TcYEtY8=
+X-Google-Smtp-Source: ADFU+vu5jZuIXq6fyd+fpGSKCnHhaoityiSpsP6NKmAy2fQyIvdIeIiH9sr1BML2VRLpkQFoZIVb6g==
+X-Received: by 2002:a67:c189:: with SMTP id h9mr8089221vsj.91.1585246859642;
+        Thu, 26 Mar 2020 11:20:59 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id g1sm1484972uak.5.2020.03.26.11.20.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Mar 2020 11:20:58 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id e138so4492121vsc.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:20:57 -0700 (PDT)
+X-Received: by 2002:a67:2c81:: with SMTP id s123mr7183988vss.198.1585246857424;
+ Thu, 26 Mar 2020 11:20:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1585244270-637-1-git-send-email-mkshah@codeaurora.org> <1585244270-637-6-git-send-email-mkshah@codeaurora.org>
+In-Reply-To: <1585244270-637-6-git-send-email-mkshah@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 26 Mar 2020 11:20:45 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WvMe4xqGTH=pU8TL1FWN9BBkp0EOkxasdBsC51299fJA@mail.gmail.com>
+Message-ID: <CAD=FV=WvMe4xqGTH=pU8TL1FWN9BBkp0EOkxasdBsC51299fJA@mail.gmail.com>
+Subject: Re: [PATCH v14 5/6] soc: qcom: rpmh-rsc: Clear active mode
+ configuration for wake TCS
+To:     Maulik Shah <mkshah@codeaurora.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org,
+        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can now handle sysctl parameters on kernel command line, but historically
-some parameters introduced their own command line equivalent, which we don't
-want to remove for compatibility reasons. We can however convert them to the
-generic infrastructure with a table translating the legacy command line
-parameters to their sysctl names, and removing the one-off param handlers.
+Hi,
 
-This patch adds the support and makes the first conversion to demonstrate it,
-on the (deprecated) numa_zonelist_order parameter.
+On Thu, Mar 26, 2020 at 10:38 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+>
+> From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+>
+> For RSCs that have sleep & wake TCS but no dedicated active TCS, wake
+> TCS can be re-purposed to send active requests. Once the active requests
+> are sent and response is received, the active mode configuration needs
+> to be cleared so that controller can use wake TCS for sending wake
+> requests.
+>
+> Introduce enable_tcs_irq() to enable completion IRQ for repurposed TCSes.
+>
+> Fixes: 2de4b8d33eab (drivers: qcom: rpmh-rsc: allow active requests from wake TCS)
+> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+> [mkshah: call enable_tcs_irq() within drv->lock, update commit message]
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+> ---
+>  drivers/soc/qcom/rpmh-rsc.c | 77 +++++++++++++++++++++++++++++++--------------
+>  1 file changed, 54 insertions(+), 23 deletions(-)
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
-Changes in v3:
-- constify some things according to Kees
-- expand the comment of sysctl_aliases to note on different timings
+I was writing my review of v1 at the same time you sent this.  Looks
+like your patch does address the most important piece of feedback I
+had (adjusting the interrupt enable under spinlock), but some of the
+other feedback might be nice to incorporate:
 
- fs/proc/proc_sysctl.c | 48 ++++++++++++++++++++++++++++++++++++-------
- mm/page_alloc.c       |  9 --------
- 2 files changed, 41 insertions(+), 16 deletions(-)
+https://lore.kernel.org/r/CAD=FV=XmBQb8yfx14T-tMQ68F-h=3UHog744b3X3JZViu15+4g@mail.gmail.com
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 8ee3273e4540..3a861e0a7c7e 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -1729,6 +1729,37 @@ int __init proc_sys_init(void)
- 
- struct vfsmount *proc_mnt = NULL;
- 
-+struct sysctl_alias {
-+	const char *kernel_param;
-+	const char *sysctl_param;
-+};
-+
-+/*
-+ * Historically some settings had both sysctl and a command line parameter.
-+ * With the generic sysctl. parameter support, we can handle them at a single
-+ * place and only keep the historical name for compatibility. This is not meant
-+ * to add brand new aliases. When adding existing aliases, consider whether
-+ * the possibly different moment of changing the value (e.g. from early_param
-+ * to the moment do_sysctl_args() is called) is an issue for the specific
-+ * parameter.
-+ */
-+static const struct sysctl_alias sysctl_aliases[] = {
-+	{"numa_zonelist_order",		"vm.numa_zonelist_order" },
-+	{ }
-+};
-+
-+const char *sysctl_find_alias(char *param)
-+{
-+	const struct sysctl_alias *alias;
-+
-+	for (alias = &sysctl_aliases[0]; alias->kernel_param != NULL; alias++) {
-+		if (strcmp(alias->kernel_param, param) == 0)
-+			return alias->sysctl_param;
-+	}
-+
-+	return NULL;
-+}
-+
- /* Set sysctl value passed on kernel command line. */
- static int process_sysctl_arg(char *param, char *val,
- 			       const char *unused, void *arg)
-@@ -1741,15 +1772,18 @@ static int process_sysctl_arg(char *param, char *val,
- 	loff_t pos = 0;
- 	ssize_t wret;
- 
--	if (strncmp(param, "sysctl", sizeof("sysctl") - 1))
--		return 0;
--
--	param += sizeof("sysctl") - 1;
-+	if (strncmp(param, "sysctl", sizeof("sysctl") - 1) == 0) {
-+		param += sizeof("sysctl") - 1;
- 
--	if (param[0] != '/' && param[0] != '.')
--		return 0;
-+		if (param[0] != '/' && param[0] != '.')
-+			return 0;
- 
--	param++;
-+		param++;
-+	} else {
-+		param = (char *) sysctl_find_alias(param);
-+		if (!param)
-+			return 0;
-+	}
- 
- 	if (!proc_mnt) {
- 		proc_fs_type = get_fs_type("proc");
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3c4eb750a199..de7a134b1b8a 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5460,15 +5460,6 @@ static int __parse_numa_zonelist_order(char *s)
- 	return 0;
- }
- 
--static __init int setup_numa_zonelist_order(char *s)
--{
--	if (!s)
--		return 0;
--
--	return __parse_numa_zonelist_order(s);
--}
--early_param("numa_zonelist_order", setup_numa_zonelist_order);
--
- char numa_zonelist_order[] = "Node";
- 
- /*
--- 
-2.25.1
-
+-Doug
