@@ -2,101 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21039193BC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:26:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E2A2193BDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:30:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbgCZJ0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 05:26:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45872 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727833AbgCZJ0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 05:26:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 17520AF2C;
-        Thu, 26 Mar 2020 09:26:07 +0000 (UTC)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     boris.ostrovsky@oracle.com, jgross@suse.com,
-        sstabellini@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, jpoimboe@redhat.com
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        jslaby@suse.cz, andrew.cooper3@citrix.com, jbeulich@suse.com,
-        Miroslav Benes <mbenes@suse.cz>
-Subject: [PATCH v3 2/2] x86/xen: Make the secondary CPU idle tasks reliable
-Date:   Thu, 26 Mar 2020 10:26:03 +0100
-Message-Id: <20200326092603.7230-3-mbenes@suse.cz>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200326092603.7230-1-mbenes@suse.cz>
-References: <20200326092603.7230-1-mbenes@suse.cz>
+        id S1727875AbgCZJ36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 05:29:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39720 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbgCZJ36 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 05:29:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=dG5pPHs14OBzWSVcRXLG0d0hpdMtIjiZ05XYggJN7Nw=; b=olbIXlgRMRYIuRBimP12omMlMf
+        qniCU91DEn3QcBZif8E9ZHHXEHuxyEImoFcq421j3RYxfsEGB4HIt4ACQMQ4A52je9dlbLNu+l9R2
+        DCZGhCnkyzbZKJdgbvSkRV5SR3Z76Zm71qw/x2GRBhrZ5B+iV4mAktYlQmLh6fbv+zN2SDyeJyiAr
+        TMy9g1dH4+NmPyjVbAg/uKUnOvvBCDTSvrPPPmCgESua3nLpqouFCD4kGGDuSYC+U3fPKzTxmbCvM
+        c6TPM73XIQ/CTiAQ0ucsBmDkG6gRa81JKCjhoMNeOHD3XAEpMwKBj4ZiWY77jkfq4kZk/3kctdhWI
+        liblYJtA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jHOpT-0001iz-SO; Thu, 26 Mar 2020 09:29:35 +0000
+Date:   Thu, 26 Mar 2020 02:29:35 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, axboe@kernel.dk,
+        bob.liu@oracle.com, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, song@kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, Chaitanya.Kulkarni@wdc.com,
+        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
+        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/6] block: Introduce REQ_ALLOCATE flag for
+ REQ_OP_WRITE_ZEROES
+Message-ID: <20200326092935.GA6478@infradead.org>
+References: <158157930219.111879.12072477040351921368.stgit@localhost.localdomain>
+ <e2b7cbab-d91f-fd7b-de6f-a671caa6f5eb@virtuozzo.com>
+ <69c0b8a4-656f-98c4-eb55-2fd1184f5fc9@virtuozzo.com>
+ <67d63190-c16f-cd26-6b67-641c8943dc3d@virtuozzo.com>
+ <20200319102819.GA26418@infradead.org>
+ <yq1tv2k8pjn.fsf@oracle.com>
+ <20200325162656.GJ29351@magnolia>
+ <20200325163223.GA27156@infradead.org>
+ <yq1d090jqlm.fsf@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq1d090jqlm.fsf@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The unwinder reports the secondary CPU idle tasks' stack on XEN PV as
-unreliable, which affects at least live patching.
-cpu_initialize_context() sets up the context of the CPU through
-VCPUOP_initialise hypercall. After it is woken up, the idle task starts
-in cpu_bringup_and_idle() function and its stack starts at the offset
-right below pt_regs. The unwinder correctly detects the end of stack
-there but it is confused by NULL return address in the last frame.
+On Wed, Mar 25, 2020 at 01:23:33PM -0400, Martin K. Petersen wrote:
+> 
+> Christoph,
+> 
+> > I am very much against that for the following reason:
+> >
+> >  - the current REQ_OP_DISCARD is purely a hint, and implementations can
+> >    (and do) choose to ignore it
+> >
+> >  - REQ_OP_WRITE_ZEROES is an actual data integrity operation with
+> >    everything that entails
+> 
+> If you want to keep emphasis on the "integrity operation" instead of the
+> provisioning aspect, would you expect REQ_ALLOCATE (which may or may not
+> zero blocks) to be considered a deterministic operation or a
+> non-deterministic one? Should this depend on whether the device
+> guarantees zeroing when provisioning blocks or not?
 
-Introduce a wrapper in assembly, which just calls
-cpu_bringup_and_idle(). The return address is thus pushed on the stack
-and the wrapper contains the annotation hint for the unwinder regarding
-the stack state.
-
-Signed-off-by: Miroslav Benes <mbenes@suse.cz>
----
- arch/x86/xen/smp_pv.c   |  3 ++-
- arch/x86/xen/xen-head.S | 10 ++++++++++
- 2 files changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
-index 802ee5bba66c..8fb8a50a28b4 100644
---- a/arch/x86/xen/smp_pv.c
-+++ b/arch/x86/xen/smp_pv.c
-@@ -53,6 +53,7 @@ static DEFINE_PER_CPU(struct xen_common_irq, xen_irq_work) = { .irq = -1 };
- static DEFINE_PER_CPU(struct xen_common_irq, xen_pmu_irq) = { .irq = -1 };
- 
- static irqreturn_t xen_irq_work_interrupt(int irq, void *dev_id);
-+void asm_cpu_bringup_and_idle(void);
- 
- static void cpu_bringup(void)
- {
-@@ -309,7 +310,7 @@ cpu_initialize_context(unsigned int cpu, struct task_struct *idle)
- 	 * pointing just below where pt_regs would be if it were a normal
- 	 * kernel entry.
- 	 */
--	ctxt->user_regs.eip = (unsigned long)cpu_bringup_and_idle;
-+	ctxt->user_regs.eip = (unsigned long)asm_cpu_bringup_and_idle;
- 	ctxt->flags = VGCF_IN_KERNEL;
- 	ctxt->user_regs.eflags = 0x1000; /* IOPL_RING1 */
- 	ctxt->user_regs.ds = __USER_DS;
-diff --git a/arch/x86/xen/xen-head.S b/arch/x86/xen/xen-head.S
-index d63806e1ff7a..7d1c4fcbe8f7 100644
---- a/arch/x86/xen/xen-head.S
-+++ b/arch/x86/xen/xen-head.S
-@@ -58,6 +58,16 @@ SYM_CODE_START(startup_xen)
- 	call xen_start_kernel
- SYM_CODE_END(startup_xen)
- 	__FINIT
-+
-+#ifdef CONFIG_XEN_PV_SMP
-+.pushsection .text
-+SYM_CODE_START(asm_cpu_bringup_and_idle)
-+	UNWIND_HINT_EMPTY
-+
-+	call cpu_bringup_and_idle
-+SYM_CODE_END(asm_cpu_bringup_and_idle)
-+.popsection
-+#endif
- #endif
- 
- .pushsection .text
--- 
-2.25.1
-
+That's why I don't like the whole flags game very much.  I'd rather
+have REQ_OP_WRITE_ZEROES as the integrity operation that gurantees
+zeroing, and a REQ_ALLOCATE that doesn't guarantee zeroing, just some
+deterministic state of the blocks.
