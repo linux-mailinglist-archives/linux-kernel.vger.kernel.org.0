@@ -2,145 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8546F194525
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:11:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDF47194552
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:21:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbgCZRLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 13:11:54 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:16207 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbgCZRLy (ORCPT
+        id S1727646AbgCZRVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 13:21:12 -0400
+Received: from esa1.hc3370-68.iphmx.com ([216.71.145.142]:44023 "EHLO
+        esa1.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbgCZRVL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 13:11:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1585242713; x=1616778713;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=7dKViaTkqgkOuleKzCaJ8koVRSroLTuB4+O9Hh8aggM=;
-  b=ESl69Xjo8HJb0mcrmO8q/uKsDwwFYjWckhJDaireykIMpyt7eTlp37qN
-   78uEP7kgjVZAbI8fIMDZilKBeajLr9xgsEgTtw7ISRDSassWjjQOZwKKN
-   brpTKJCSKiWOUruMvcq549sbK0nq22ZycvJK2bn7BYuf1aE2OGX0qWISu
-   8=;
-IronPort-SDR: VLVG9KdHa9SYDLOS5XHvQwlSi5CKx1/HQVCocDXLl0fRLLxFzUUQLhJik/SBPYR9NgJKGCXbkw
- vTgHetDIaOrA==
-X-IronPort-AV: E=Sophos;i="5.72,309,1580774400"; 
-   d="scan'208";a="23030054"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-69849ee2.us-west-2.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 26 Mar 2020 17:11:39 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2a-69849ee2.us-west-2.amazon.com (Postfix) with ESMTPS id 15434A2102;
-        Thu, 26 Mar 2020 17:11:39 +0000 (UTC)
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 26 Mar 2020 17:11:38 +0000
-Received: from 38f9d3867b82.ant.amazon.com (10.43.162.39) by
- EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Thu, 26 Mar 2020 17:11:34 +0000
-Subject: Re: [PATCH] swiotlb: Allow swiotlb to live at pre-defined address
-To:     Christoph Hellwig <hch@lst.de>
-CC:     <iommu@lists.linux-foundation.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        <x86@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, <dwmw@amazon.com>,
-        <benh@amazon.com>, Jan Kiszka <jan.kiszka@siemens.com>,
-        <alcioa@amazon.com>, <aggh@amazon.com>, <aagch@amazon.com>,
-        <dhr@amazon.com>
-References: <20200326162922.27085-1-graf@amazon.com>
- <20200326170516.GB6387@lst.de>
-From:   Alexander Graf <graf@amazon.com>
-Message-ID: <cef4f2f5-3530-82f8-c0f5-ee0c2701ce6a@amazon.com>
-Date:   Thu, 26 Mar 2020 18:11:31 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.6.0
+        Thu, 26 Mar 2020 13:21:11 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Mar 2020 13:21:11 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1585243271;
+  h=from:mime-version:content-transfer-encoding:message-id:
+   date:to:cc:subject:in-reply-to:references;
+  bh=cmRchjwNto76J2Gl/1QYJEwtQJh32wTy2r7u8WH1uLE=;
+  b=bvbIOljwzygxqJ9m9feKhKYdZIk1n7dSloBLbdDEYKTZAnq6pDIm4bMG
+   WvPV5uxyKHfWbhudXuoBE7Nvpg9zz13tMgMPTu1tEXlOhQtZbU0iEzI+W
+   HXEomzFCQavs7czLvvxEb5KB1K2rZgX4JLUgjCfHcxdesXWYE2mFqb5PW
+   o=;
+Authentication-Results: esa1.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=ian.jackson@citrix.com; spf=Pass smtp.mailfrom=Ian.Jackson@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa1.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  ian.jackson@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa1.hc3370-68.iphmx.com;
+  envelope-from="Ian.Jackson@citrix.com";
+  x-sender="ian.jackson@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa1.hc3370-68.iphmx.com: domain of
+  Ian.Jackson@citrix.com designates 162.221.158.21 as permitted
+  sender) identity=mailfrom; client-ip=162.221.158.21;
+  receiver=esa1.hc3370-68.iphmx.com;
+  envelope-from="Ian.Jackson@citrix.com";
+  x-sender="Ian.Jackson@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
+  ip4:168.245.78.127 ~all"
+Received-SPF: None (esa1.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa1.hc3370-68.iphmx.com;
+  envelope-from="Ian.Jackson@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: 1Q0rUJbKc0Aoxy3/YvCB1Nq30ZyL1lCn/Ogum4ql1ohORUmPJS6t66tqmdmxlTyTrJVED56ncv
+ RSa6FYsjxrBAKDGf5gCSVx+EoVnF8/TtxuMKMhyK7SO91z2Po8g+iNKPGnxf2veWb0T2UyvJKZ
+ GIcUZWyTT95kmTDt6XAtj8ggVxEi81jxfQvZ54sKLinF+r5rrSj+lajTHFUcld+u8cmPogmVh/
+ O3zUBvCWanxWmgMwVaRFncFFFhm/1/ZxXNvv3ogA0YFdoH+26CZ+fw7aOiqRGv5MVcY6/LKSUQ
+ afE=
+X-SBRS: 2.7
+X-MesageID: 14913055
+X-Ironport-Server: esa1.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.72,309,1580792400"; 
+   d="scan'208";a="14913055"
+From:   Ian Jackson <ian.jackson@citrix.com>
 MIME-Version: 1.0
-In-Reply-To: <20200326170516.GB6387@lst.de>
-Content-Language: en-US
-X-Originating-IP: [10.43.162.39]
-X-ClientProxiedBy: EX13D36UWA004.ant.amazon.com (10.43.160.175) To
- EX13D20UWC001.ant.amazon.com (10.43.162.244)
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Message-ID: <24188.58071.444694.257081@mariner.uk.xensource.com>
+Date:   Thu, 26 Mar 2020 17:13:59 +0000
+To:     Roger Pau Monne <roger.pau@citrix.com>
+CC:     =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Subject: Re: [PATCH 2/2] xen: enable BALLOON_MEMORY_HOTPLUG by default
+In-Reply-To: <20200324151628.GM24458@Air-de-Roger.citrite.net>
+References: <20200324150015.50496-1-roger.pau@citrix.com>
+        <20200324150015.50496-2-roger.pau@citrix.com>
+        <f4ce1d95-c80a-8727-7ddc-9199bb2036c4@suse.com>
+        <20200324151628.GM24458@Air-de-Roger.citrite.net>
+X-Mailer: VM 8.2.0b under 24.5.1 (i686-pc-linux-gnu)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Roger Pau Monne writes ("Re: [PATCH 2/2] xen: enable BALLOON_MEMORY_HOTPLUG by default"):
+> I would rather have it always on if possible, as gntdev or privcmd
+> (when used to map foreign pages from user-space) will also require it,
+> and they are not gated on XEN_BACKEND AFAICT.
 
+Currently there seem to be problems with this:
 
-On 26.03.20 18:05, Christoph Hellwig wrote:
-> =
+http://logs.test-lab.xenproject.org/osstest/logs/149014/test-amd64-amd64-dom0pvh-xl-intel/info.html
 
-> On Thu, Mar 26, 2020 at 05:29:22PM +0100, Alexander Graf wrote:
->> The swiotlb is a very convenient fallback mechanism for bounce buffering=
- of
->> DMAable data. It is usually used for the compatibility case where devices
->> can only DMA to a "low region".
->>
->> However, in some scenarios this "low region" may be bound even more
->> heavily. For example, there are embedded system where only an SRAM region
->> is shared between device and CPU. There are also heterogeneous computing
->> scenarios where only a subset of RAM is cache coherent between the
->> components of the system. There are partitioning hypervisors, where
->> a "control VM" that implements device emulation has limited view into a
->> partition's memory for DMA capabilities due to safety concerns.
->>
->> This patch adds a command line driven mechanism to move all DMA memory i=
-nto
->> a predefined shared memory region which may or may not be part of the
->> physical address layout of the Operating System.
->>
->> Ideally, the typical path to set this configuration would be through Dev=
-ice
->> Tree or ACPI, but neither of the two mechanisms is standardized yet. Als=
-o,
->> in the x86 MicroVM use case, we have neither ACPI nor Device Tree, but
->> instead configure the system purely through kernel command line options.
->>
->> I'm sure other people will find the functionality useful going forward
->> though and extend it to be triggered by DT/ACPI in the future.
-> =
+For now I have rolled back the change in osstest to enable this option
+explicitly.
 
-> I'm totally against hacking in a kernel parameter for this.  We'll need
-> a proper documented DT or ACPI way.  =
-
-
-I'm with you on that sentiment, but in the environment I'm currently =
-
-looking at, we have neither DT nor ACPI: The kernel gets purely =
-
-configured via kernel command line. For other unenumerable artifacts on =
-
-the system, such as virtio-mmio platform devices, that works well enough =
-
-and also basically "hacks a kernel parameter" to specify the system layout.
-
-> We also need to feed this information
-> into the actual DMA bounce buffering decisions and not just the swiotlb
-> placement.
-
-Care to elaborate a bit here? I was under the impression that =
-
-"swiotlb=3Dforce" basically allows you to steer the DMA bounce buffering =
-
-decisions already.
-
-
-Thanks!
-
-Alex
-
-
-
-Amazon Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
-Sitz: Berlin
-Ust-ID: DE 289 237 879
-
-
-
+Ian.
