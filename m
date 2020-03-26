@@ -2,210 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E600F19392B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 08:07:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DA35193927
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 08:06:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbgCZHG6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 26 Mar 2020 03:06:58 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:37610 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726138AbgCZHG6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 03:06:58 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01419;MF=teawaterz@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TtfYrM9_1585206379;
-Received: from 127.0.0.1(mailfrom:teawaterz@linux.alibaba.com fp:SMTPD_---0TtfYrM9_1585206379)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 26 Mar 2020 15:06:24 +0800
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [PATCH for QEMU v2] virtio-balloon: Add option cont-pages to set
- VIRTIO_BALLOON_VQ_INFLATE_CONT
-From:   teawater <teawaterz@linux.alibaba.com>
-In-Reply-To: <1584893097-12317-2-git-send-email-teawater@gmail.com>
-Date:   Thu, 26 Mar 2020 15:06:18 +0800
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        mojha@codeaurora.org, pagupta@redhat.com, aquini@redhat.com,
-        namit@vmware.com, david@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        qemu-devel@nongnu.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <575FA585-343A-4246-830B-C1CB3153B7E0@linux.alibaba.com>
-References: <1584893097-12317-1-git-send-email-teawater@gmail.com>
- <1584893097-12317-2-git-send-email-teawater@gmail.com>
-To:     Hui Zhu <teawater@gmail.com>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        id S1726422AbgCZHGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 03:06:51 -0400
+Received: from mail-dm6nam11on2058.outbound.protection.outlook.com ([40.107.223.58]:6173
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726210AbgCZHGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 03:06:50 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=V9gAo/nBKsc4Oqv6jFJPv5DwDRcL0ETfbsVKjPWKqr1ceDvH4TgRIoo+lBD3mr43SDGpgnBLlgLJtcw/XPi74v8yMEAxx0JTj1eqN1LPy5bIxDoyAFrgKURaWRVXSrRKpaY1X1DobcHoAQhn9hodyYgPtnwbVST65ohcLlHFcjCYkWO/CdcsrRI6rSbg3hXvMpeuTJ16+xtj4WtBcrHenLOTWpiu8OYGKFzi+yX8B2Iu2Y36kxnQd66jZmDtp2zMDS+ixwlvpOOvmOWOb86J89GykAkbMcYoX5HDzf2BeQWJZ7Bd9LvFDmsY3fcIMfKQ2HyH2TvsMYZtiEIa1Y33kA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8uRXgbQfH6Tw8+20TlfCgdr2GO5mf3bTD/In5ZNh688=;
+ b=CZPm/u8npXrFI2g3Eb+1gvDaPD62JMj9wrlZgew5f3ffAsXk7npGOHk4gGEbhqLHa6R4ZH0xUvolw+57bIcBE8G52+lU/5oa18jSJ1y473ndkcS1okzxotJ9v+g1yuvT73Lja12Hz8G25TKldhXV0xvyEPT+DxPK3qeHPxrdHgDq/XVxBuWwEqVr5GIWWh2pNQcdPhaeT5O1CRBOVx2v/vLZwINLBCNVrCUd3kk/qohepgXaUqd025R1Dej5qm6L/g8sEqXO9VHH8+wvOm/DUXn4dehCP/D+gfMFxGFYVhcqUdmKeUc8RCh0zRXrsQMhEdDcPed15+sr5HO62aDHTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=canb.auug.org.au smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8uRXgbQfH6Tw8+20TlfCgdr2GO5mf3bTD/In5ZNh688=;
+ b=cZ+oq65SwgbE1vNP7X2WFPXNVegvLjQO9sCxjiKLxwyHWR63H7rrRSi0BSeCLydq57GsYgq4S83uJKyjivxEZQVfrqc4zOk2EMvGHZJoe5PHXXAYf6EeyW0S662Va/7s/vIZR//aKBeLnPK+lySwLlgmTn/u/5fGXLmXAM3Ggoc=
+Received: from SN6PR08CA0010.namprd08.prod.outlook.com (2603:10b6:805:66::23)
+ by DM5PR02MB2235.namprd02.prod.outlook.com (2603:10b6:3:4f::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2835.22; Thu, 26 Mar 2020 07:06:44 +0000
+Received: from SN1NAM02FT035.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:805:66:cafe::dd) by SN6PR08CA0010.outlook.office365.com
+ (2603:10b6:805:66::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.18 via Frontend
+ Transport; Thu, 26 Mar 2020 07:06:44 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; canb.auug.org.au; dkim=none (message not signed)
+ header.d=none;canb.auug.org.au; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT035.mail.protection.outlook.com (10.152.72.145) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2856.17
+ via Frontend Transport; Thu, 26 Mar 2020 07:06:43 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1jHMbC-0008C0-U3; Thu, 26 Mar 2020 00:06:42 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1jHMb7-00066x-Px; Thu, 26 Mar 2020 00:06:37 -0700
+Received: from xsj-pvapsmtp01 (smtp.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 02Q76RvA019013;
+        Thu, 26 Mar 2020 00:06:27 -0700
+Received: from [172.30.17.108]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1jHMax-00062L-4B; Thu, 26 Mar 2020 00:06:27 -0700
+Subject: Re: linux-next: build failure after merge of the irqchip tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Mubin Sayyed <mubin.usman.sayyed@xilinx.com>
+References: <20200323175946.7ad497ea@canb.auug.org.au>
+ <20200326173656.691628e8@canb.auug.org.au>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <1e0a9c45-e525-a3ac-b352-e236d8427e0b@xilinx.com>
+Date:   Thu, 26 Mar 2020 08:06:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200326173656.691628e8@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(396003)(376002)(39860400002)(46966005)(82740400003)(8676002)(54906003)(110136005)(4326008)(2616005)(8936002)(9786002)(44832011)(81156014)(2906002)(31686004)(36756003)(107886003)(81166006)(26005)(70206006)(70586007)(31696002)(47076004)(336012)(356004)(316002)(5660300002)(426003)(478600001)(186003)(6666004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR02MB2235;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 88fa6663-a328-41fe-39cc-08d7d1543d69
+X-MS-TrafficTypeDiagnostic: DM5PR02MB2235:
+X-Microsoft-Antispam-PRVS: <DM5PR02MB2235345791709C1BD321F130C6CF0@DM5PR02MB2235.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-Forefront-PRVS: 0354B4BED2
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DBxsBvX4UI+Jp5n0RGX/zPDbh0QkelckUIzpXxvhFjQA41FQM2i69/EVTpfqMCnt0aJFxImLnDoPc97WzwS39FPvW/h5w6lupQg1QFbs3f0WeMqBueZzCPK4GJJdrBDdGaUwGbb1AKiSEbRxJP1nH5/KTZyRiVGuu6Ztn0+a5zBGu0jbn8zprApO+TB1rSv1vOAk4tdqVsf9RM1zbIrph7LpbvrPiZ4Vfl00PyfPIAgew2p+Y7NkwdGju8EeQ/CXdB9JynQnjmDM5HFSkiv13HRb8Q4m5AYJBw0bqqURi1Pz0Lh+LRUgiYH0lfwfJ2KqwMlkSz+bNSTIK7CuQBDNokShAo6L2tLN2sl7LOst8bhaA7fWvgYbo2QjmWN2wcvqihTq/QiLLMrWvYJ839BJOrSdILT3BtcPGazTK07l5qI1kXnD1REb6pHi6wchJ8X/7mFSSpzrGJvcFhs2082BAVIBFiZ7tjCWtD+WrWCb21JcuTv758/cNHI6klmKFtRd1h7lYGJMyZ8nf9qFMLeneQ==
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2020 07:06:43.2869
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88fa6663-a328-41fe-39cc-08d7d1543d69
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB2235
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping.
+Hi Stephen,
+
+On 26. 03. 20 7:36, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Mon, 23 Mar 2020 17:59:46 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the irqchip tree, today's linux-next build (powerpc
+>> ppc44x_defconfig) failed like this:
+>>
+>> drivers/irqchip/irq-xilinx-intc.c: In function 'xil_intc_handle_irq':
+>> drivers/irqchip/irq-xilinx-intc.c:176:10: error: implicit declaration of function 'handle_domain_irq'; did you mean 'handle_bad_irq'? [-Werror=implicit-function-declaration]
+>>   176 |    ret = handle_domain_irq(irqc->root_domain, hwirq, regs);
+>>       |          ^~~~~~~~~~~~~~~~~
+>>       |          handle_bad_irq
+>> drivers/irqchip/irq-xilinx-intc.c: In function 'xilinx_intc_of_init':
+>> drivers/irqchip/irq-xilinx-intc.c:253:3: error: implicit declaration of function 'set_handle_irq'; did you mean 'generic_handle_irq'? [-Werror=implicit-function-declaration]
+>>   253 |   set_handle_irq(xil_intc_handle_irq);
+>>       |   ^~~~~~~~~~~~~~
+>>       |   generic_handle_irq
+>>
+>> Caused by commit
+>>
+>>   a0789993bf82 ("irqchip/xilinx: Enable generic irq multi handler")
+>>
+>> I have reverted that commit (and commit
+>>
+>>   9c2d4f525c00 ("irqchip/xilinx: Do not call irq_set_default_host()")
+>>
+>> that conflicted with the other revert).
+> 
+> I am still getting these errors.
+> 
+
+
+Marc: Can you please respond my email I sent on Monday when Stephen
+reported this issue?
 
 Thanks,
-Hui
-
-> 2020年3月23日 00:04，Hui Zhu <teawater@gmail.com> 写道：
-> 
-> If the guest kernel has many fragmentation pages, use virtio_balloon
-> will split THP of QEMU when it calls MADV_DONTNEED madvise to release
-> the balloon pages.
-> Set option cont-pages to on will open flags VIRTIO_BALLOON_VQ_INFLATE_CONT
-> and set continuous pages order to THP order.
-> Then It will get continuous pages PFN from VQ icvq use use madvise
-> MADV_DONTNEED release the THP page.
-> This will handle the THP split issue.
-> 
-> Signed-off-by: Hui Zhu <teawaterz@linux.alibaba.com>
-> ---
-> hw/virtio/virtio-balloon.c                      | 32 +++++++++++++++++++++----
-> include/hw/virtio/virtio-balloon.h              |  4 +++-
-> include/standard-headers/linux/virtio_balloon.h |  4 ++++
-> 3 files changed, 35 insertions(+), 5 deletions(-)
-> 
-> diff --git a/hw/virtio/virtio-balloon.c b/hw/virtio/virtio-balloon.c
-> index a4729f7..88bdaca 100644
-> --- a/hw/virtio/virtio-balloon.c
-> +++ b/hw/virtio/virtio-balloon.c
-> @@ -34,6 +34,7 @@
-> #include "hw/virtio/virtio-access.h"
-> 
-> #define BALLOON_PAGE_SIZE  (1 << VIRTIO_BALLOON_PFN_SHIFT)
-> +#define CONT_PAGES_ORDER   9
-> 
-> typedef struct PartiallyBalloonedPage {
->     ram_addr_t base_gpa;
-> @@ -65,7 +66,8 @@ static bool virtio_balloon_pbp_matches(PartiallyBalloonedPage *pbp,
-> 
-> static void balloon_inflate_page(VirtIOBalloon *balloon,
->                                  MemoryRegion *mr, hwaddr mr_offset,
-> -                                 PartiallyBalloonedPage *pbp)
-> +                                 PartiallyBalloonedPage *pbp, 
-> +                                 bool is_cont_pages)
-> {
->     void *addr = memory_region_get_ram_ptr(mr) + mr_offset;
->     ram_addr_t rb_offset, rb_aligned_offset, base_gpa;
-> @@ -76,6 +78,13 @@ static void balloon_inflate_page(VirtIOBalloon *balloon,
->     /* XXX is there a better way to get to the RAMBlock than via a
->      * host address? */
->     rb = qemu_ram_block_from_host(addr, false, &rb_offset);
-> +
-> +    if (is_cont_pages) {
-> +        ram_block_discard_range(rb, rb_offset,
-> +                                BALLOON_PAGE_SIZE << CONT_PAGES_ORDER);
-> +        return;
-> +    }
-> +
->     rb_page_size = qemu_ram_pagesize(rb);
-> 
->     if (rb_page_size == BALLOON_PAGE_SIZE) {
-> @@ -361,9 +370,10 @@ static void virtio_balloon_handle_output(VirtIODevice *vdev, VirtQueue *vq)
->             trace_virtio_balloon_handle_output(memory_region_name(section.mr),
->                                                pa);
->             if (!qemu_balloon_is_inhibited()) {
-> -                if (vq == s->ivq) {
-> +                if (vq == s->ivq || vq == s->icvq) {
->                     balloon_inflate_page(s, section.mr,
-> -                                         section.offset_within_region, &pbp);
-> +                                         section.offset_within_region, &pbp,
-> +                                         vq == s->icvq);
->                 } else if (vq == s->dvq) {
->                     balloon_deflate_page(s, section.mr, section.offset_within_region);
->                 } else {
-> @@ -618,9 +628,12 @@ static size_t virtio_balloon_config_size(VirtIOBalloon *s)
->     if (s->qemu_4_0_config_size) {
->         return sizeof(struct virtio_balloon_config);
->     }
-> -    if (virtio_has_feature(features, VIRTIO_BALLOON_F_PAGE_POISON)) {
-> +    if (virtio_has_feature(s->host_features, VIRTIO_BALLOON_F_CONT_PAGES)) {
->         return sizeof(struct virtio_balloon_config);
->     }
-> +    if (virtio_has_feature(features, VIRTIO_BALLOON_F_PAGE_POISON)) {
-> +        return offsetof(struct virtio_balloon_config, pages_order);
-> +    }
->     if (virtio_has_feature(features, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
->         return offsetof(struct virtio_balloon_config, poison_val);
->     }
-> @@ -646,6 +659,10 @@ static void virtio_balloon_get_config(VirtIODevice *vdev, uint8_t *config_data)
->                        cpu_to_le32(VIRTIO_BALLOON_CMD_ID_DONE);
->     }
-> 
-> +    if (virtio_has_feature(dev->host_features, VIRTIO_BALLOON_F_CONT_PAGES)) {
-> +        config.pages_order = cpu_to_le32(CONT_PAGES_ORDER);
-> +    }
-> +
->     trace_virtio_balloon_get_config(config.num_pages, config.actual);
->     memcpy(config_data, &config, virtio_balloon_config_size(dev));
-> }
-> @@ -816,6 +833,11 @@ static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
->             virtio_error(vdev, "iothread is missing");
->         }
->     }
-> +
-> +    if (virtio_has_feature(s->host_features, VIRTIO_BALLOON_F_CONT_PAGES)) {
-> +        s->icvq = virtio_add_queue(vdev, 128, virtio_balloon_handle_output);
-> +    }
-> +
->     reset_stats(s);
-> }
-> 
-> @@ -916,6 +938,8 @@ static Property virtio_balloon_properties[] = {
->                     VIRTIO_BALLOON_F_DEFLATE_ON_OOM, false),
->     DEFINE_PROP_BIT("free-page-hint", VirtIOBalloon, host_features,
->                     VIRTIO_BALLOON_F_FREE_PAGE_HINT, false),
-> +    DEFINE_PROP_BIT("cont-pages", VirtIOBalloon, host_features,
-> +                    VIRTIO_BALLOON_F_CONT_PAGES, false),
->     /* QEMU 4.0 accidentally changed the config size even when free-page-hint
->      * is disabled, resulting in QEMU 3.1 migration incompatibility.  This
->      * property retains this quirk for QEMU 4.1 machine types.
-> diff --git a/include/hw/virtio/virtio-balloon.h b/include/hw/virtio/virtio-balloon.h
-> index d1c968d..61d2419 100644
-> --- a/include/hw/virtio/virtio-balloon.h
-> +++ b/include/hw/virtio/virtio-balloon.h
-> @@ -42,7 +42,7 @@ enum virtio_balloon_free_page_report_status {
-> 
-> typedef struct VirtIOBalloon {
->     VirtIODevice parent_obj;
-> -    VirtQueue *ivq, *dvq, *svq, *free_page_vq;
-> +    VirtQueue *ivq, *dvq, *svq, *free_page_vq, *icvq;
->     uint32_t free_page_report_status;
->     uint32_t num_pages;
->     uint32_t actual;
-> @@ -70,6 +70,8 @@ typedef struct VirtIOBalloon {
->     uint32_t host_features;
-> 
->     bool qemu_4_0_config_size;
-> +
-> +    uint32_t pages_order;
-> } VirtIOBalloon;
-> 
-> #endif
-> diff --git a/include/standard-headers/linux/virtio_balloon.h b/include/standard-headers/linux/virtio_balloon.h
-> index 9375ca2..ee18be7 100644
-> --- a/include/standard-headers/linux/virtio_balloon.h
-> +++ b/include/standard-headers/linux/virtio_balloon.h
-> @@ -36,6 +36,8 @@
-> #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
-> #define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
-> #define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoning */
-> +#define VIRTIO_BALLOON_F_CONT_PAGES	5 /* VQ to report continuous pages */
-> +
-> 
-> /* Size of a PFN in the balloon interface. */
-> #define VIRTIO_BALLOON_PFN_SHIFT 12
-> @@ -51,6 +53,8 @@ struct virtio_balloon_config {
-> 	uint32_t free_page_report_cmd_id;
-> 	/* Stores PAGE_POISON if page poisoning is in use */
-> 	uint32_t poison_val;
-> +	/* Pages order if VIRTIO_BALLOON_F_CONT_PAGES is set */
-> +	uint32_t pages_order;
-> };
-> 
-> #define VIRTIO_BALLOON_S_SWAP_IN  0   /* Amount of memory swapped in */
-> -- 
-> 2.7.4
-> 
-
+Michal
