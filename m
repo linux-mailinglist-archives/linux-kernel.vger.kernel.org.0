@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3CD11943B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:59:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4019F1943C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:59:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728678AbgCZP7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 11:59:00 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59001 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728627AbgCZP6x (ORCPT
+        id S1728705AbgCZP7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 11:59:18 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:52770 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728616AbgCZP6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 11:58:53 -0400
+        Thu, 26 Mar 2020 11:58:50 -0400
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200326155848euoutp017e7845d767f0f8c2d42b51729c11326e~-5dxwBcQr3025530255euoutp01W
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:58:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200326155848euoutp017e7845d767f0f8c2d42b51729c11326e~-5dxwBcQr3025530255euoutp01W
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200326155849euoutp02094b7da295918df7cbce4af6a8a052f9~-5dyYU7Mv0089000890euoutp02T
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:58:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200326155849euoutp02094b7da295918df7cbce4af6a8a052f9~-5dyYU7Mv0089000890euoutp02T
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585238328;
-        bh=mUdKzVw9E5Ypfhtc3A8SGx31D64x8DTDK1w4rz1Wye8=;
+        s=mail20170921; t=1585238329;
+        bh=ClzUpKG2VnZyQz5IwFzjQO6Uh0tMYISB0yCrxJPnVFA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m6SgG2ap1/gmstCNH3Fw+f0aizlDVWiFsvTLbPRxnrxCESEfecKTocJg94zD8KLTI
-         2wEqbnk7j9Qa3QPruu6sRBl4JQ9cCODJhnNdTHzLO2gHm8ohiyupD/Rbiz4gB50PtZ
-         F9pM60HqDcv/4veeXLWcuIHqTxigVtVs+RS7fKlA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200326155848eucas1p1bb026c23c4e1b3d99d1ce837d9006f5c~-5dxhGEaC2821828218eucas1p13;
-        Thu, 26 Mar 2020 15:58:48 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 18.F7.60698.831DC7E5; Thu, 26
-        Mar 2020 15:58:48 +0000 (GMT)
+        b=dC1r49youdBr/QYIULYgn5AI7i0x980bElLa3a4n7bP1JbHz/fyttSV1+p7AAoviw
+         kQSrRQTg5Sef6rJpcDyejh9wV4Dcz9yiTIwPOn049fKHv5+Ycau9YshPAjne9qPjrs
+         fskYgdjB3vgYjAxWEGxCcHLt0UKRjrKoU/3llk4U=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200326155849eucas1p2e54138f2d5ccc6bb6daaefd4788f8ef8~-5dyDUXqD2255222552eucas1p2T;
+        Thu, 26 Mar 2020 15:58:49 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id A3.06.61286.931DC7E5; Thu, 26
+        Mar 2020 15:58:49 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200326155848eucas1p2f3c45c3f3a26da7950118a88a1a65502~-5dxLpeUs2646526465eucas1p2I;
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200326155848eucas1p1c9c2ca0451748cdfa4ab6a3420ab2847~-5dxnHQeX2422724227eucas1p18;
         Thu, 26 Mar 2020 15:58:48 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200326155848eusmtrp167370cd85eb32cfc8b2584bfc82268a3~-5dxLDhhm2090020900eusmtrp1y;
+        20200326155848eusmtrp179162452eb08329f6e215f85bf92ace0~-5dxmka5v2090020900eusmtrp1z;
         Thu, 26 Mar 2020 15:58:48 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-a2-5e7cd1387539
+X-AuditID: cbfec7f2-ef1ff7000001ef66-d7-5e7cd139aba8
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id C1.DA.07950.831DC7E5; Thu, 26
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id E3.6A.08375.831DC7E5; Thu, 26
         Mar 2020 15:58:48 +0000 (GMT)
 Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200326155847eusmtip10f2c9b2f767b55e43bdc54a2ae9f7105~-5dwyMh4y1572315723eusmtip1u;
-        Thu, 26 Mar 2020 15:58:47 +0000 (GMT)
+        20200326155848eusmtip179a6e09043f77af95a8bb31428580121~-5dxKEjG91235312353eusmtip12;
+        Thu, 26 Mar 2020 15:58:48 +0000 (GMT)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Michael Schmitz <schmitzmic@gmail.com>,
@@ -53,655 +53,270 @@ Cc:     Michael Schmitz <schmitzmic@gmail.com>,
         Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH v5 24/27] ata: move ata_sas_*() to libata-sata.c
-Date:   Thu, 26 Mar 2020 16:58:19 +0100
-Message-Id: <20200326155822.19400-25-b.zolnierkie@samsung.com>
+Subject: [PATCH v5 25/27] ata: start separating SATA specific code from
+ libata-eh.c
+Date:   Thu, 26 Mar 2020 16:58:20 +0100
+Message-Id: <20200326155822.19400-26-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200326155822.19400-1-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djPc7oWF2viDB5dkbZYfbefzWLjjPWs
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djP87qWF2viDP5uZrZYfbefzWLjjPWs
         Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
-        eOy+2cDm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBnrP5xmLHjZwVixdEYnSwPj0oIuRk4O
-        CQETiQNTDzB3MXJxCAmsYJTYe3cnC4TzhVFi/6PzUJnPjBJ/tz1ih2mZ9bWLGcQWEljOKNGx
-        UATCBur4fCYSxGYTsJKY2L6KEcQWEVCQ6Pm9kg1kELPAe0aJFZP2soAkhAUcJB4/7GADsVkE
-        VCUalpwGi/MK2EmsfLaBGWKZvMTWb59YQWxOoPjydfOZIWoEJU7OfAJWzwxU07x1NtilEgKr
-        2CWufb/GCtHsIvHmwSUmCFtY4tXxLVAfyEicntzDAtGwDui1jhdQ3dsZJZZP/scGUWUtcefc
-        LyCbA2iFpsT6XfoQYUeJL++vsoOEJQT4JG68FYQ4gk9i0rbpzBBhXomONiGIajWJDcs2sMGs
-        7dq5EuovD4ne2yuZJjAqzkLyziwk78xC2LuAkXkVo3hqaXFuemqxcV5quV5xYm5xaV66XnJ+
-        7iZGYCo6/e/41x2M+/4kHWIU4GBU4uFtaKuJE2JNLCuuzD3EKMHBrCTC+zQSKMSbklhZlVqU
-        H19UmpNafIhRmoNFSZzXeNHLWCGB9MSS1OzU1ILUIpgsEwenVAOj0Qdz+ZX9YbLaNcftdNh7
-        Pn4JuX34Ns+MBRd0z1r9fG1yrz5VKvCfbfXibxIHa7U7lRaKzitaJqSfODM1ZEnQhhfc816v
-        E11Z/P6zol+tf/O5ud6KVzu/eK0Rv2RU1LSdV2n7tca2V3HJIn3i/w8s9PQILDz+7kkbs69I
-        4OyPL812KHGs8A9QYinOSDTUYi4qTgQA9JRqiUEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsVy+t/xu7oWF2viDGa1cVisvtvPZrFxxnpW
+        eOy+2cDm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBlTn71kLHhmXDGl7wVjA+MrjS5GTg4J
+        AROJp1d2MHYxcnEICaxglJh/YDMbhPOFUeLrmR4WCOczo8TelZOZYVouvt0CVbWcUWLe15MI
+        LTunP2MEqWITsJKY2L4KzBYRUJDo+b0SrIhZ4D2jxIpJe1lAEsICoRL9y54xgdgsAqoSa2/P
+        YgOxeQXsJD7N+84GsU5eYuu3T6wgNidQfPm6+cwQNYISJ2c+AZvDDFTTvHU2M8gCCYFl7BLL
+        ljYADeUAclwk7m23gpgjLPHq+BZ2CFtG4vRkiN8kBNYxSvzteAHVvJ1RYvnkf1CbrSXunPvF
+        BjKIWUBTYv0ufYiwo8ScK/vZIObzSdx4KwhxA5/EpG3TmSHCvBIdbUIQ1WoSG5ZtYINZ27Vz
+        JTQUPSRe3X3BPoFRcRaSb2Yh+WYWwt4FjMyrGMVTS4tz01OLDfNSy/WKE3OLS/PS9ZLzczcx
+        AlPR6X/HP+1g/Hop6RCjAAejEg+vRktNnBBrYllxZe4hRgkOZiUR3qeRQCHelMTKqtSi/Pii
+        0pzU4kOM0hwsSuK8xotexgoJpCeWpGanphakFsFkmTg4pRoYA7dez9aqXNRfWnL04MFDy2LE
+        OMo+LtXTiO76x/5tEqfB4Zc/HXmkaiY7+tQ8mRwQ9VXOOkYjdN/dRWFSGWaXjK8uaP4qOjVp
+        74ojP/b3iNdtVTslsGNPwA6hPvnPz48W2W24kcIV/nn5q/CbW39mzj7dxH9Bmk/n60FZd5Fb
+        mTZfK7MXxDwTUmIpzkg01GIuKk4EAFdAOIxBAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xu7oWF2viDBrWKVisvtvPZrFxxnpW
         i2e39jJZrFx9lMni2I5HTBaXd81hs1j+ZC2zxdzW6ewOHB47Z91l97h8ttTj0OEORo+Trd9Y
         PHbfbGDz6NuyitHj8ya5APYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9
-        O5uU1JzMstQifbsEvYz1H04zFrzsYKxYOqOTpYFxaUEXIyeHhICJxKyvXcxdjFwcQgJLGSU+
-        zuxm7WLkAErISBxfXwZRIyzx51oXG0TNJ0aJuUeuMIMk2ASsJCa2r2IEsUUEFCR6fq8EK2IW
-        +MoosXRSN1iRsICDxOOHHWwgNouAqkTDktMsIDavgJ3EymcbmCE2yEts/faJFcTmBIovXzcf
-        LC4kYCux+MsHJoh6QYmTM5+A9TID1Tdvnc08gVFgFpLULCSpBYxMqxhFUkuLc9Nzi430ihNz
-        i0vz0vWS83M3MQJjZtuxn1t2MHa9Cz7EKMDBqMTDq9FSEyfEmlhWXJl7iFGCg1lJhPdpJFCI
-        NyWxsiq1KD++qDQntfgQoynQExOZpUST84HxnFcSb2hqaG5haWhubG5sZqEkztshcDBGSCA9
-        sSQ1OzW1ILUIpo+Jg1OqgXEim2rWihnG7AkL71RvcN9z3oUtO7/46hTX3wVH1kfuZp1lKTQv
-        9/Of3yc69syf3ptQmsTSaVVmyPuoZ01x/KFFE5w6xfU/Jsw8q3NwrdidI6/z4kp7nWZ25d6y
-        bua2Nln/pOPm1j37u0TF+6aEBTKuf3FC4OOGC6aBght6bK5c1Nsz1ajBMUuJpTgj0VCLuag4
-        EQCo476arwIAAA==
-X-CMS-MailID: 20200326155848eucas1p2f3c45c3f3a26da7950118a88a1a65502
+        O5uU1JzMstQifbsEvYypz14yFjwzrpjS94KxgfGVRhcjJ4eEgInExbdb2LoYuTiEBJYyStxt
+        b2buYuQASshIHF9fBlEjLPHnWhdUzSdGic7rE5lAEmwCVhIT21cxgtgiAgoSPb9XghUxC3xl
+        lFg6qZsZJCEsECzx9fAjFhCbRUBVYu3tWWwgNq+AncSned/ZIDbIS2z99okVxOYEii9fNx+s
+        V0jAVmLxlw9MEPWCEidnPgGbwwxU37x1NvMERoFZSFKzkKQWMDKtYhRJLS3OTc8tNtQrTswt
+        Ls1L10vOz93ECIyYbcd+bt7BeGlj8CFGAQ5GJR5ejZaaOCHWxLLiytxDjBIczEoivE8jgUK8
+        KYmVValF+fFFpTmpxYcYTYGemMgsJZqcD4zmvJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFCAumJ
+        JanZqakFqUUwfUwcnFINjLWl/2d95g2b9uDTCrlTJ5LvzJTkvbLrnUXKuerSu6cFVgWpqUg/
+        2HtJ2WFS/ak2M8XFK/fMVG3k61We1NfXyXz65xRVkZ2PlWUUOvq+Wdwr21fVlpryP/eb1pbf
+        DZbFR/a8WLOHLevjClbdPu+Kxra83qqDbyyf/ZJkZLapFr5yPbCs4fSmuUosxRmJhlrMRcWJ
+        AFSwUiSuAgAA
+X-CMS-MailID: 20200326155848eucas1p1c9c2ca0451748cdfa4ab6a3420ab2847
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200326155848eucas1p2f3c45c3f3a26da7950118a88a1a65502
+X-RootMTR: 20200326155848eucas1p1c9c2ca0451748cdfa4ab6a3420ab2847
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200326155848eucas1p2f3c45c3f3a26da7950118a88a1a65502
+X-CMS-RootMailID: 20200326155848eucas1p1c9c2ca0451748cdfa4ab6a3420ab2847
 References: <20200326155822.19400-1-b.zolnierkie@samsung.com>
-        <CGME20200326155848eucas1p2f3c45c3f3a26da7950118a88a1a65502@eucas1p2.samsung.com>
+        <CGME20200326155848eucas1p1c9c2ca0451748cdfa4ab6a3420ab2847@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* un-inline:
-  - ata_scsi_dump_cdb()
-  - __ata_scsi_queuecmd()
+Start separating SATA specific code from libata-eh.c:
 
-* un-static:
-  - ata_scsi_sdev_config()
-  - ata_scsi_dev_config()
-  - ata_scsi_dump_cdb()
-  - __ata_scsi_queuecmd()
-
-* move ata_sas_*() to libata-sata.c:
-
-* add static inlines for CONFIG_SATA_HOST=n case for
-  ata_sas_{allocate,free}_tag()
+* move sata_async_notification() to libata-sata.c:
 
 Code size savings on m68k arch using (modified) atari_defconfig:
 
    text    data     bss     dec     hex filename
 before:
-  19137      23     576   19736    4d18 drivers/ata/libata-scsi.o
+  16243      18       0   16261    3f85 drivers/ata/libata-eh.o
 after:
-  18330      23     576   18929    49f1 drivers/ata/libata-scsi.o
+  16164      18       0   16182    3f36 drivers/ata/libata-eh.o
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/ata/libata-sata.c | 213 ++++++++++++++++++++++++++++++++++++
- drivers/ata/libata-scsi.c | 222 +-------------------------------------
- drivers/ata/libata.h      |  19 +++-
- include/linux/libata.h    |  24 ++---
- 4 files changed, 245 insertions(+), 233 deletions(-)
+ drivers/ata/libata-eh.c   | 74 --------------------------------------
+ drivers/ata/libata-sata.c | 75 +++++++++++++++++++++++++++++++++++++++
+ include/linux/libata.h    |  2 +-
+ 3 files changed, 76 insertions(+), 75 deletions(-)
 
+diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
+index 8dc33b6832f0..ef4d606cd8c6 100644
+--- a/drivers/ata/libata-eh.c
++++ b/drivers/ata/libata-eh.c
+@@ -1092,80 +1092,6 @@ int ata_port_freeze(struct ata_port *ap)
+ }
+ EXPORT_SYMBOL_GPL(ata_port_freeze);
+ 
+-/**
+- *	sata_async_notification - SATA async notification handler
+- *	@ap: ATA port where async notification is received
+- *
+- *	Handler to be called when async notification via SDB FIS is
+- *	received.  This function schedules EH if necessary.
+- *
+- *	LOCKING:
+- *	spin_lock_irqsave(host lock)
+- *
+- *	RETURNS:
+- *	1 if EH is scheduled, 0 otherwise.
+- */
+-int sata_async_notification(struct ata_port *ap)
+-{
+-	u32 sntf;
+-	int rc;
+-
+-	if (!(ap->flags & ATA_FLAG_AN))
+-		return 0;
+-
+-	rc = sata_scr_read(&ap->link, SCR_NOTIFICATION, &sntf);
+-	if (rc == 0)
+-		sata_scr_write(&ap->link, SCR_NOTIFICATION, sntf);
+-
+-	if (!sata_pmp_attached(ap) || rc) {
+-		/* PMP is not attached or SNTF is not available */
+-		if (!sata_pmp_attached(ap)) {
+-			/* PMP is not attached.  Check whether ATAPI
+-			 * AN is configured.  If so, notify media
+-			 * change.
+-			 */
+-			struct ata_device *dev = ap->link.device;
+-
+-			if ((dev->class == ATA_DEV_ATAPI) &&
+-			    (dev->flags & ATA_DFLAG_AN))
+-				ata_scsi_media_change_notify(dev);
+-			return 0;
+-		} else {
+-			/* PMP is attached but SNTF is not available.
+-			 * ATAPI async media change notification is
+-			 * not used.  The PMP must be reporting PHY
+-			 * status change, schedule EH.
+-			 */
+-			ata_port_schedule_eh(ap);
+-			return 1;
+-		}
+-	} else {
+-		/* PMP is attached and SNTF is available */
+-		struct ata_link *link;
+-
+-		/* check and notify ATAPI AN */
+-		ata_for_each_link(link, ap, EDGE) {
+-			if (!(sntf & (1 << link->pmp)))
+-				continue;
+-
+-			if ((link->device->class == ATA_DEV_ATAPI) &&
+-			    (link->device->flags & ATA_DFLAG_AN))
+-				ata_scsi_media_change_notify(link->device);
+-		}
+-
+-		/* If PMP is reporting that PHY status of some
+-		 * downstream ports has changed, schedule EH.
+-		 */
+-		if (sntf & (1 << SATA_PMP_CTRL_PORT)) {
+-			ata_port_schedule_eh(ap);
+-			return 1;
+-		}
+-
+-		return 0;
+-	}
+-}
+-EXPORT_SYMBOL_GPL(sata_async_notification);
+-
+ /**
+  *	ata_eh_freeze_port - EH helper to freeze port
+  *	@ap: ATA port to freeze
 diff --git a/drivers/ata/libata-sata.c b/drivers/ata/libata-sata.c
-index 341699f5af20..2d934ccfc930 100644
+index 2d934ccfc930..008468e516cd 100644
 --- a/drivers/ata/libata-sata.c
 +++ b/drivers/ata/libata-sata.c
-@@ -8,10 +8,12 @@
- 
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <scsi/scsi_cmnd.h>
- #include <scsi/scsi_device.h>
- #include <linux/libata.h>
- 
- #include "libata.h"
-+#include "libata-transport.h"
- 
- /* debounce timing parameters in msecs { interval, duration, timeout } */
- const unsigned long sata_deb_timing_normal[]		= {   5,  100, 2000 };
-@@ -1062,3 +1064,214 @@ int ata_scsi_change_queue_depth(struct scsi_device *sdev, int queue_depth)
- 	return __ata_change_queue_depth(ap, sdev, queue_depth);
- }
- EXPORT_SYMBOL_GPL(ata_scsi_change_queue_depth);
-+
-+/**
-+ *	port_alloc - Allocate port for a SAS attached SATA device
-+ *	@host: ATA host container for all SAS ports
-+ *	@port_info: Information from low-level host driver
-+ *	@shost: SCSI host that the scsi device is attached to
-+ *
-+ *	LOCKING:
-+ *	PCI/etc. bus probe sem.
-+ *
-+ *	RETURNS:
-+ *	ata_port pointer on success / NULL on failure.
-+ */
-+
-+struct ata_port *ata_sas_port_alloc(struct ata_host *host,
-+				    struct ata_port_info *port_info,
-+				    struct Scsi_Host *shost)
-+{
-+	struct ata_port *ap;
-+
-+	ap = ata_port_alloc(host);
-+	if (!ap)
-+		return NULL;
-+
-+	ap->port_no = 0;
-+	ap->lock = &host->lock;
-+	ap->pio_mask = port_info->pio_mask;
-+	ap->mwdma_mask = port_info->mwdma_mask;
-+	ap->udma_mask = port_info->udma_mask;
-+	ap->flags |= port_info->flags;
-+	ap->ops = port_info->port_ops;
-+	ap->cbl = ATA_CBL_SATA;
-+
-+	return ap;
-+}
-+EXPORT_SYMBOL_GPL(ata_sas_port_alloc);
-+
-+/**
-+ *	ata_sas_port_start - Set port up for dma.
-+ *	@ap: Port to initialize
-+ *
-+ *	Called just after data structures for each port are
-+ *	initialized.
-+ *
-+ *	May be used as the port_start() entry in ata_port_operations.
-+ *
-+ *	LOCKING:
-+ *	Inherited from caller.
-+ */
-+int ata_sas_port_start(struct ata_port *ap)
-+{
-+	/*
-+	 * the port is marked as frozen at allocation time, but if we don't
-+	 * have new eh, we won't thaw it
-+	 */
-+	if (!ap->ops->error_handler)
-+		ap->pflags &= ~ATA_PFLAG_FROZEN;
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(ata_sas_port_start);
-+
-+/**
-+ *	ata_port_stop - Undo ata_sas_port_start()
-+ *	@ap: Port to shut down
-+ *
-+ *	May be used as the port_stop() entry in ata_port_operations.
-+ *
-+ *	LOCKING:
-+ *	Inherited from caller.
-+ */
-+
-+void ata_sas_port_stop(struct ata_port *ap)
-+{
-+}
-+EXPORT_SYMBOL_GPL(ata_sas_port_stop);
-+
-+/**
-+ * ata_sas_async_probe - simply schedule probing and return
-+ * @ap: Port to probe
-+ *
-+ * For batch scheduling of probe for sas attached ata devices, assumes
-+ * the port has already been through ata_sas_port_init()
-+ */
-+void ata_sas_async_probe(struct ata_port *ap)
-+{
-+	__ata_port_probe(ap);
-+}
-+EXPORT_SYMBOL_GPL(ata_sas_async_probe);
-+
-+int ata_sas_sync_probe(struct ata_port *ap)
-+{
-+	return ata_port_probe(ap);
-+}
-+EXPORT_SYMBOL_GPL(ata_sas_sync_probe);
-+
-+
-+/**
-+ *	ata_sas_port_init - Initialize a SATA device
-+ *	@ap: SATA port to initialize
-+ *
-+ *	LOCKING:
-+ *	PCI/etc. bus probe sem.
-+ *
-+ *	RETURNS:
-+ *	Zero on success, non-zero on error.
-+ */
-+
-+int ata_sas_port_init(struct ata_port *ap)
-+{
-+	int rc = ap->ops->port_start(ap);
-+
-+	if (rc)
-+		return rc;
-+	ap->print_id = atomic_inc_return(&ata_print_id);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(ata_sas_port_init);
-+
-+int ata_sas_tport_add(struct device *parent, struct ata_port *ap)
-+{
-+	return ata_tport_add(parent, ap);
-+}
-+EXPORT_SYMBOL_GPL(ata_sas_tport_add);
-+
-+void ata_sas_tport_delete(struct ata_port *ap)
-+{
-+	ata_tport_delete(ap);
-+}
-+EXPORT_SYMBOL_GPL(ata_sas_tport_delete);
-+
-+/**
-+ *	ata_sas_port_destroy - Destroy a SATA port allocated by ata_sas_port_alloc
-+ *	@ap: SATA port to destroy
-+ *
-+ */
-+
-+void ata_sas_port_destroy(struct ata_port *ap)
-+{
-+	if (ap->ops->port_stop)
-+		ap->ops->port_stop(ap);
-+	kfree(ap);
-+}
-+EXPORT_SYMBOL_GPL(ata_sas_port_destroy);
-+
-+/**
-+ *	ata_sas_slave_configure - Default slave_config routine for libata devices
-+ *	@sdev: SCSI device to configure
-+ *	@ap: ATA port to which SCSI device is attached
-+ *
-+ *	RETURNS:
-+ *	Zero.
-+ */
-+
-+int ata_sas_slave_configure(struct scsi_device *sdev, struct ata_port *ap)
-+{
-+	ata_scsi_sdev_config(sdev);
-+	ata_scsi_dev_config(sdev, ap->link.device);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(ata_sas_slave_configure);
-+
-+/**
-+ *	ata_sas_queuecmd - Issue SCSI cdb to libata-managed device
-+ *	@cmd: SCSI command to be sent
-+ *	@ap:	ATA port to which the command is being sent
-+ *
-+ *	RETURNS:
-+ *	Return value from __ata_scsi_queuecmd() if @cmd can be queued,
-+ *	0 otherwise.
-+ */
-+
-+int ata_sas_queuecmd(struct scsi_cmnd *cmd, struct ata_port *ap)
-+{
-+	int rc = 0;
-+
-+	ata_scsi_dump_cdb(ap, cmd);
-+
-+	if (likely(ata_dev_enabled(ap->link.device)))
-+		rc = __ata_scsi_queuecmd(cmd, ap->link.device);
-+	else {
-+		cmd->result = (DID_BAD_TARGET << 16);
-+		cmd->scsi_done(cmd);
-+	}
-+	return rc;
-+}
-+EXPORT_SYMBOL_GPL(ata_sas_queuecmd);
-+
-+int ata_sas_allocate_tag(struct ata_port *ap)
-+{
-+	unsigned int max_queue = ap->host->n_tags;
-+	unsigned int i, tag;
-+
-+	for (i = 0, tag = ap->sas_last_tag + 1; i < max_queue; i++, tag++) {
-+		tag = tag < max_queue ? tag : 0;
-+
-+		/* the last tag is reserved for internal command. */
-+		if (ata_tag_internal(tag))
-+			continue;
-+
-+		if (!test_and_set_bit(tag, &ap->sas_tag_allocated)) {
-+			ap->sas_last_tag = tag;
-+			return tag;
-+		}
-+	}
-+	return -1;
-+}
-+
-+void ata_sas_free_tag(unsigned int tag, struct ata_port *ap)
-+{
-+	clear_bit(tag, &ap->sas_tag_allocated);
-+}
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index a5dfcd9e09a1..36e588d88b95 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -988,7 +988,7 @@ static void ata_gen_ata_sense(struct ata_queued_cmd *qc)
- 	scsi_set_sense_information(sb, SCSI_SENSE_BUFFERSIZE, block);
- }
- 
--static void ata_scsi_sdev_config(struct scsi_device *sdev)
-+void ata_scsi_sdev_config(struct scsi_device *sdev)
- {
- 	sdev->use_10_for_rw = 1;
- 	sdev->use_10_for_ms = 1;
-@@ -1028,8 +1028,7 @@ static int atapi_drain_needed(struct request *rq)
- 	return atapi_cmd_type(scsi_req(rq)->cmd[0]) == ATAPI_MISC;
- }
- 
--static int ata_scsi_dev_config(struct scsi_device *sdev,
--			       struct ata_device *dev)
-+int ata_scsi_dev_config(struct scsi_device *sdev, struct ata_device *dev)
- {
- 	struct request_queue *q = sdev->request_queue;
- 
-@@ -4005,8 +4004,7 @@ static inline ata_xlat_func_t ata_get_xlat_func(struct ata_device *dev, u8 cmd)
-  *	Prints the contents of a SCSI command via printk().
+@@ -4,6 +4,7 @@
+  *
+  *  Copyright 2003-2004 Red Hat, Inc.  All rights reserved.
+  *  Copyright 2003-2004 Jeff Garzik
++ *  Copyright 2006 Tejun Heo <htejun@gmail.com>
   */
  
--static inline void ata_scsi_dump_cdb(struct ata_port *ap,
--				     struct scsi_cmnd *cmd)
-+void ata_scsi_dump_cdb(struct ata_port *ap, struct scsi_cmnd *cmd)
+ #include <linux/kernel.h>
+@@ -1275,3 +1276,77 @@ void ata_sas_free_tag(unsigned int tag, struct ata_port *ap)
  {
- #ifdef ATA_VERBOSE_DEBUG
- 	struct scsi_device *scsidev = cmd->device;
-@@ -4018,8 +4016,7 @@ static inline void ata_scsi_dump_cdb(struct ata_port *ap,
- #endif
+ 	clear_bit(tag, &ap->sas_tag_allocated);
  }
- 
--static inline int __ata_scsi_queuecmd(struct scsi_cmnd *scmd,
--				      struct ata_device *dev)
-+int __ata_scsi_queuecmd(struct scsi_cmnd *scmd, struct ata_device *dev)
- {
- 	u8 scsi_op = scmd->cmnd[0];
- 	ata_xlat_func_t xlat_func;
-@@ -4662,214 +4659,3 @@ void ata_scsi_dev_rescan(struct work_struct *work)
- 	spin_unlock_irqrestore(ap->lock, flags);
- 	mutex_unlock(&ap->scsi_scan_mutex);
- }
--
--/**
-- *	ata_sas_port_alloc - Allocate port for a SAS attached SATA device
-- *	@host: ATA host container for all SAS ports
-- *	@port_info: Information from low-level host driver
-- *	@shost: SCSI host that the scsi device is attached to
-- *
-- *	LOCKING:
-- *	PCI/etc. bus probe sem.
-- *
-- *	RETURNS:
-- *	ata_port pointer on success / NULL on failure.
-- */
--
--struct ata_port *ata_sas_port_alloc(struct ata_host *host,
--				    struct ata_port_info *port_info,
--				    struct Scsi_Host *shost)
--{
--	struct ata_port *ap;
--
--	ap = ata_port_alloc(host);
--	if (!ap)
--		return NULL;
--
--	ap->port_no = 0;
--	ap->lock = &host->lock;
--	ap->pio_mask = port_info->pio_mask;
--	ap->mwdma_mask = port_info->mwdma_mask;
--	ap->udma_mask = port_info->udma_mask;
--	ap->flags |= port_info->flags;
--	ap->ops = port_info->port_ops;
--	ap->cbl = ATA_CBL_SATA;
--
--	return ap;
--}
--EXPORT_SYMBOL_GPL(ata_sas_port_alloc);
--
--/**
-- *	ata_sas_port_start - Set port up for dma.
-- *	@ap: Port to initialize
-- *
-- *	Called just after data structures for each port are
-- *	initialized.
-- *
-- *	May be used as the port_start() entry in ata_port_operations.
-- *
-- *	LOCKING:
-- *	Inherited from caller.
-- */
--int ata_sas_port_start(struct ata_port *ap)
--{
--	/*
--	 * the port is marked as frozen at allocation time, but if we don't
--	 * have new eh, we won't thaw it
--	 */
--	if (!ap->ops->error_handler)
--		ap->pflags &= ~ATA_PFLAG_FROZEN;
--	return 0;
--}
--EXPORT_SYMBOL_GPL(ata_sas_port_start);
--
--/**
-- *	ata_port_stop - Undo ata_sas_port_start()
-- *	@ap: Port to shut down
-- *
-- *	May be used as the port_stop() entry in ata_port_operations.
-- *
-- *	LOCKING:
-- *	Inherited from caller.
-- */
--
--void ata_sas_port_stop(struct ata_port *ap)
--{
--}
--EXPORT_SYMBOL_GPL(ata_sas_port_stop);
--
--/**
-- * ata_sas_async_probe - simply schedule probing and return
-- * @ap: Port to probe
-- *
-- * For batch scheduling of probe for sas attached ata devices, assumes
-- * the port has already been through ata_sas_port_init()
-- */
--void ata_sas_async_probe(struct ata_port *ap)
--{
--	__ata_port_probe(ap);
--}
--EXPORT_SYMBOL_GPL(ata_sas_async_probe);
--
--int ata_sas_sync_probe(struct ata_port *ap)
--{
--	return ata_port_probe(ap);
--}
--EXPORT_SYMBOL_GPL(ata_sas_sync_probe);
--
--
--/**
-- *	ata_sas_port_init - Initialize a SATA device
-- *	@ap: SATA port to initialize
-- *
-- *	LOCKING:
-- *	PCI/etc. bus probe sem.
-- *
-- *	RETURNS:
-- *	Zero on success, non-zero on error.
-- */
--
--int ata_sas_port_init(struct ata_port *ap)
--{
--	int rc = ap->ops->port_start(ap);
--
--	if (rc)
--		return rc;
--	ap->print_id = atomic_inc_return(&ata_print_id);
--	return 0;
--}
--EXPORT_SYMBOL_GPL(ata_sas_port_init);
--
--int ata_sas_tport_add(struct device *parent, struct ata_port *ap)
--{
--	return ata_tport_add(parent, ap);
--}
--EXPORT_SYMBOL_GPL(ata_sas_tport_add);
--
--void ata_sas_tport_delete(struct ata_port *ap)
--{
--	ata_tport_delete(ap);
--}
--EXPORT_SYMBOL_GPL(ata_sas_tport_delete);
--
--/**
-- *	ata_sas_port_destroy - Destroy a SATA port allocated by ata_sas_port_alloc
-- *	@ap: SATA port to destroy
-- *
-- */
--
--void ata_sas_port_destroy(struct ata_port *ap)
--{
--	if (ap->ops->port_stop)
--		ap->ops->port_stop(ap);
--	kfree(ap);
--}
--EXPORT_SYMBOL_GPL(ata_sas_port_destroy);
--
--/**
-- *	ata_sas_slave_configure - Default slave_config routine for libata devices
-- *	@sdev: SCSI device to configure
-- *	@ap: ATA port to which SCSI device is attached
-- *
-- *	RETURNS:
-- *	Zero.
-- */
--
--int ata_sas_slave_configure(struct scsi_device *sdev, struct ata_port *ap)
--{
--	ata_scsi_sdev_config(sdev);
--	ata_scsi_dev_config(sdev, ap->link.device);
--	return 0;
--}
--EXPORT_SYMBOL_GPL(ata_sas_slave_configure);
--
--/**
-- *	ata_sas_queuecmd - Issue SCSI cdb to libata-managed device
-- *	@cmd: SCSI command to be sent
-- *	@ap:	ATA port to which the command is being sent
-- *
-- *	RETURNS:
-- *	Return value from __ata_scsi_queuecmd() if @cmd can be queued,
-- *	0 otherwise.
-- */
--
--int ata_sas_queuecmd(struct scsi_cmnd *cmd, struct ata_port *ap)
--{
--	int rc = 0;
--
--	ata_scsi_dump_cdb(ap, cmd);
--
--	if (likely(ata_dev_enabled(ap->link.device)))
--		rc = __ata_scsi_queuecmd(cmd, ap->link.device);
--	else {
--		cmd->result = (DID_BAD_TARGET << 16);
--		cmd->scsi_done(cmd);
--	}
--	return rc;
--}
--EXPORT_SYMBOL_GPL(ata_sas_queuecmd);
--
--int ata_sas_allocate_tag(struct ata_port *ap)
--{
--	unsigned int max_queue = ap->host->n_tags;
--	unsigned int i, tag;
--
--	for (i = 0, tag = ap->sas_last_tag + 1; i < max_queue; i++, tag++) {
--		tag = tag < max_queue ? tag : 0;
--
--		/* the last tag is reserved for internal command. */
--		if (ata_tag_internal(tag))
--			continue;
--
--		if (!test_and_set_bit(tag, &ap->sas_tag_allocated)) {
--			ap->sas_last_tag = tag;
--			return tag;
--		}
--	}
--	return -1;
--}
--
--void ata_sas_free_tag(unsigned int tag, struct ata_port *ap)
--{
--	clear_bit(tag, &ap->sas_tag_allocated);
--}
-diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
-index ce3f3c039572..6c808cf39135 100644
---- a/drivers/ata/libata.h
-+++ b/drivers/ata/libata.h
-@@ -87,6 +87,18 @@ extern unsigned int ata_read_log_page(struct ata_device *dev, u8 log,
- 
- #define to_ata_port(d) container_of(d, struct ata_port, tdev)
- 
-+/* libata-sata.c */
-+#ifdef CONFIG_SATA_HOST
-+int ata_sas_allocate_tag(struct ata_port *ap);
-+void ata_sas_free_tag(unsigned int tag, struct ata_port *ap);
-+#else
-+static inline int ata_sas_allocate_tag(struct ata_port *ap)
-+{
-+	return -EOPNOTSUPP;
-+}
-+static inline void ata_sas_free_tag(unsigned int tag, struct ata_port *ap) { }
-+#endif
 +
- /* libata-acpi.c */
- #ifdef CONFIG_ATA_ACPI
- extern unsigned int ata_acpi_gtf_filter;
-@@ -130,9 +142,10 @@ extern void ata_scsi_dev_rescan(struct work_struct *work);
- extern int ata_bus_probe(struct ata_port *ap);
- extern int ata_scsi_user_scan(struct Scsi_Host *shost, unsigned int channel,
- 			      unsigned int id, u64 lun);
--int ata_sas_allocate_tag(struct ata_port *ap);
--void ata_sas_free_tag(unsigned int tag, struct ata_port *ap);
--
-+void ata_scsi_sdev_config(struct scsi_device *sdev);
-+int ata_scsi_dev_config(struct scsi_device *sdev, struct ata_device *dev);
-+void ata_scsi_dump_cdb(struct ata_port *ap, struct scsi_cmnd *cmd);
-+int __ata_scsi_queuecmd(struct scsi_cmnd *scmd, struct ata_device *dev);
- 
- /* libata-eh.c */
- extern unsigned long ata_internal_cmd_timeout(struct ata_device *dev, u8 cmd);
++/**
++ *	sata_async_notification - SATA async notification handler
++ *	@ap: ATA port where async notification is received
++ *
++ *	Handler to be called when async notification via SDB FIS is
++ *	received.  This function schedules EH if necessary.
++ *
++ *	LOCKING:
++ *	spin_lock_irqsave(host lock)
++ *
++ *	RETURNS:
++ *	1 if EH is scheduled, 0 otherwise.
++ */
++int sata_async_notification(struct ata_port *ap)
++{
++	u32 sntf;
++	int rc;
++
++	if (!(ap->flags & ATA_FLAG_AN))
++		return 0;
++
++	rc = sata_scr_read(&ap->link, SCR_NOTIFICATION, &sntf);
++	if (rc == 0)
++		sata_scr_write(&ap->link, SCR_NOTIFICATION, sntf);
++
++	if (!sata_pmp_attached(ap) || rc) {
++		/* PMP is not attached or SNTF is not available */
++		if (!sata_pmp_attached(ap)) {
++			/* PMP is not attached.  Check whether ATAPI
++			 * AN is configured.  If so, notify media
++			 * change.
++			 */
++			struct ata_device *dev = ap->link.device;
++
++			if ((dev->class == ATA_DEV_ATAPI) &&
++			    (dev->flags & ATA_DFLAG_AN))
++				ata_scsi_media_change_notify(dev);
++			return 0;
++		} else {
++			/* PMP is attached but SNTF is not available.
++			 * ATAPI async media change notification is
++			 * not used.  The PMP must be reporting PHY
++			 * status change, schedule EH.
++			 */
++			ata_port_schedule_eh(ap);
++			return 1;
++		}
++	} else {
++		/* PMP is attached and SNTF is available */
++		struct ata_link *link;
++
++		/* check and notify ATAPI AN */
++		ata_for_each_link(link, ap, EDGE) {
++			if (!(sntf & (1 << link->pmp)))
++				continue;
++
++			if ((link->device->class == ATA_DEV_ATAPI) &&
++			    (link->device->flags & ATA_DFLAG_AN))
++				ata_scsi_media_change_notify(link->device);
++		}
++
++		/* If PMP is reporting that PHY status of some
++		 * downstream ports has changed, schedule EH.
++		 */
++		if (sntf & (1 << SATA_PMP_CTRL_PORT)) {
++			ata_port_schedule_eh(ap);
++			return 1;
++		}
++
++		return 0;
++	}
++}
++EXPORT_SYMBOL_GPL(sata_async_notification);
 diff --git a/include/linux/libata.h b/include/linux/libata.h
-index ae74fd048a32..da899f18a3e9 100644
+index da899f18a3e9..9c7ca659dc94 100644
 --- a/include/linux/libata.h
 +++ b/include/linux/libata.h
-@@ -1094,18 +1094,6 @@ extern int ata_scsi_ioctl(struct scsi_device *dev, unsigned int cmd,
- extern int ata_scsi_queuecmd(struct Scsi_Host *h, struct scsi_cmnd *cmd);
- extern int ata_sas_scsi_ioctl(struct ata_port *ap, struct scsi_device *dev,
- 			    unsigned int cmd, void __user *arg);
--extern void ata_sas_port_destroy(struct ata_port *);
--extern struct ata_port *ata_sas_port_alloc(struct ata_host *,
--					   struct ata_port_info *, struct Scsi_Host *);
--extern void ata_sas_async_probe(struct ata_port *ap);
--extern int ata_sas_sync_probe(struct ata_port *ap);
--extern int ata_sas_port_init(struct ata_port *);
--extern int ata_sas_port_start(struct ata_port *ap);
--extern int ata_sas_tport_add(struct device *parent, struct ata_port *ap);
--extern void ata_sas_tport_delete(struct ata_port *ap);
--extern void ata_sas_port_stop(struct ata_port *ap);
--extern int ata_sas_slave_configure(struct scsi_device *, struct ata_port *);
--extern int ata_sas_queuecmd(struct scsi_cmnd *cmd, struct ata_port *ap);
- extern bool ata_link_online(struct ata_link *link);
- extern bool ata_link_offline(struct ata_link *link);
- #ifdef CONFIG_PM
-@@ -1235,6 +1223,18 @@ extern int sata_link_debounce(struct ata_link *link,
- extern int sata_link_scr_lpm(struct ata_link *link, enum ata_lpm_policy policy,
- 			     bool spm_wakeup);
- extern int ata_slave_link_init(struct ata_port *ap);
-+extern void ata_sas_port_destroy(struct ata_port *);
-+extern struct ata_port *ata_sas_port_alloc(struct ata_host *,
-+					   struct ata_port_info *, struct Scsi_Host *);
-+extern void ata_sas_async_probe(struct ata_port *ap);
-+extern int ata_sas_sync_probe(struct ata_port *ap);
-+extern int ata_sas_port_init(struct ata_port *);
-+extern int ata_sas_port_start(struct ata_port *ap);
-+extern int ata_sas_tport_add(struct device *parent, struct ata_port *ap);
-+extern void ata_sas_tport_delete(struct ata_port *ap);
-+extern void ata_sas_port_stop(struct ata_port *ap);
-+extern int ata_sas_slave_configure(struct scsi_device *, struct ata_port *);
-+extern int ata_sas_queuecmd(struct scsi_cmnd *cmd, struct ata_port *ap);
- extern void ata_tf_to_fis(const struct ata_taskfile *tf,
- 			  u8 pmp, int is_cmd, u8 *fis);
+@@ -1240,6 +1240,7 @@ extern void ata_tf_to_fis(const struct ata_taskfile *tf,
  extern void ata_tf_from_fis(const u8 *fis, struct ata_taskfile *tf);
+ extern int ata_qc_complete_multiple(struct ata_port *ap, u64 qc_active);
+ extern bool sata_lpm_ignore_phy_events(struct ata_link *link);
++extern int sata_async_notification(struct ata_port *ap);
+ 
+ extern int ata_cable_40wire(struct ata_port *ap);
+ extern int ata_cable_80wire(struct ata_port *ap);
+@@ -1332,7 +1333,6 @@ extern void ata_port_wait_eh(struct ata_port *ap);
+ extern int ata_link_abort(struct ata_link *link);
+ extern int ata_port_abort(struct ata_port *ap);
+ extern int ata_port_freeze(struct ata_port *ap);
+-extern int sata_async_notification(struct ata_port *ap);
+ 
+ extern void ata_eh_freeze_port(struct ata_port *ap);
+ extern void ata_eh_thaw_port(struct ata_port *ap);
 -- 
 2.24.1
 
