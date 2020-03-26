@@ -2,128 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FDFC194457
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:31:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2708319445D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:33:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbgCZQbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 12:31:35 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:40812 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727912AbgCZQbf (ORCPT
+        id S1728535AbgCZQdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 12:33:08 -0400
+Received: from mail-oi1-f201.google.com ([209.85.167.201]:52967 "EHLO
+        mail-oi1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727752AbgCZQdI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 12:31:35 -0400
-Received: by mail-pj1-f67.google.com with SMTP id kx8so2616124pjb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 09:31:35 -0700 (PDT)
+        Thu, 26 Mar 2020 12:33:08 -0400
+Received: by mail-oi1-f201.google.com with SMTP id c123so5152153oig.19
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 09:33:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZDF6On+HDyMfQFFmOzj2HQxDo1MqPfrIkTej+3BhvlQ=;
-        b=fMaF0p1e3sw4WUqlnz+78vbRi0z7dyl2McMHXTD+sd1/6njnlDhaPruhcC8Rm/PONY
-         h/KIZx8kfstf2SInDgM8Ia8ACWComL6cz15SRdgw2ZqSeVFDj6jKGl1qdbKgSajR39p6
-         OWi/cobumFsmvp3qDjKwP7CpsIHjb95Q2VwBQ=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=/J9DKIJKhoNAqIER9UasEoSb9g40NhzAqb5br/ibrT0=;
+        b=beSw2q4SdKcg2ewSfNyzPzqQi7r3biZrSQXp2knPVxfAerelXJjmhK9TCYS7rW12ie
+         aTfz4SLt5zbajIBh5cWhhcq5lEyvYrN4uGoXQZnwbJWqrq3tjKl9b4tWRK00frEKMoOd
+         x5BZCE6CXh6GWMjkOchwFfFL0bdrCtl7EhdrEa/6cugeK0y3wR4KzQobSR/39xve71eZ
+         KNUzTShRtOJMZTRegK23KRRi8V/m8GTBht1NvCfuAfGyD73L/1/j5P0SRjukQ7C5oAq0
+         7FHVxIAjG3yXjk0ncnwiH2N20DUV+YIWeZ8KfdSdB5+zmd+nwxbX354Ym7/YIv73XaeF
+         R8Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZDF6On+HDyMfQFFmOzj2HQxDo1MqPfrIkTej+3BhvlQ=;
-        b=M2SAPDb84aVDLTL9BizdPUN7eoYOGDsZlKMl1Q0qDCzq6kkxxUfveRoRqQwivxl0c3
-         N4tbrq4BMhnHhnLUnNFYzTbHUKMye3AQWOLieqmzK7ghD/qSy3BvXo28QUgGaEd4GBpB
-         yTE2FBlMSU2SAnFwSPoZxNtttm5OPQ1d2ZNVHRjqz/rJ8K3bGtAtZFWiW7rSxc0aAFKZ
-         jlRZQSDLqsTaTz0VAI+sWaYADrR+I8fEDQ/x7/agQnOC7By4TZURH62/keb8hrOFM+2c
-         DgYzB/sB19HmZi9Us/ShWAFSioOKF33Ev2VCVd7U1LO2p5vGia8dLVnHdKHeqJ3f/7Av
-         HQjA==
-X-Gm-Message-State: ANhLgQ27gh2dlAtra+UDvqpY1oauYId/lavth9VnYRWtpbaCg86pRsuL
-        7+vtNTc3WY2D375vqaBc8N1kfw==
-X-Google-Smtp-Source: ADFU+vuLwI1ER/8Bbsjtmss9W6jlCzZe3fmKIOXRb2Ju4TVJZ9hfmc4Ba4cmo4/+h6Vgp2PYRi2lvA==
-X-Received: by 2002:a17:90a:2541:: with SMTP id j59mr883153pje.128.1585240294536;
-        Thu, 26 Mar 2020 09:31:34 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t60sm2044703pjb.9.2020.03.26.09.31.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 09:31:33 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 09:31:32 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Elena Reshetova <elena.reshetova@intel.com>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jann Horn <jannh@google.com>,
-        "Perla, Enrico" <enrico.perla@intel.com>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] arm64: entry: Enable random_kstack_offset support
-Message-ID: <202003260926.83BC44B@keescook>
-References: <20200324203231.64324-1-keescook@chromium.org>
- <20200324203231.64324-6-keescook@chromium.org>
- <20200325132127.GB12236@lakrids.cambridge.arm.com>
- <202003251319.AECA788D63@keescook>
- <20200326111521.GA72909@C02TD0UTHF1T.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200326111521.GA72909@C02TD0UTHF1T.local>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=/J9DKIJKhoNAqIER9UasEoSb9g40NhzAqb5br/ibrT0=;
+        b=FLoPr+XwEGrtcAf8f8R13EuCqAnsUX55xNPWMbBBEAt5wxn0oPtu6z+C5NGas3CISK
+         OJlKv5ppSLmsdGuvweWTonjGR052JPL7pVsKFZ/ZNUltl+W3ZGdchOve+vFcFU2qWxMn
+         YqV5nRwAxnBR5eKuCT7W/Fsacb1FRzeMCj52BHXDdLyqcuAaZejXv3uempJECG0FRcOY
+         QhBnkFVOCYgXPUn/P0jB8iJZRhhzcSVyVA6t8D/dRCLzVlv181xb2ai+nrcGR9IxRhN4
+         J1l+OxT8DzBDoembCsLblyA8dQZ9uWjUDIUnd1PviL56/k/829W1ZJixDuZ/45qbR6Tg
+         ID5g==
+X-Gm-Message-State: ANhLgQ2LUuwgpXbxlxY5VIpsAvC5zmdJmp1SWpZahr0SrBvHRbZKMy7E
+        I314mJiaxCHPeMStyNn8nmIoMMlXNw==
+X-Google-Smtp-Source: ADFU+vswccn+Q+WfsmaOAwBveKU2nHAMiMFJYzibgK2DXdmsoT2sJImOAdVerEb5afTmMyP5wKACsOobtw==
+X-Received: by 2002:a9d:8e4:: with SMTP id 91mr7312036otf.130.1585240387114;
+ Thu, 26 Mar 2020 09:33:07 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 17:32:43 +0100
+Message-Id: <20200326163245.119670-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH 0/2] Make printk_deferred() work properly before percpu setup
+ is done
+From:   Jann Horn <jannh@google.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 11:15:21AM +0000, Mark Rutland wrote:
-> On Wed, Mar 25, 2020 at 01:22:07PM -0700, Kees Cook wrote:
-> > On Wed, Mar 25, 2020 at 01:21:27PM +0000, Mark Rutland wrote:
-> > > On Tue, Mar 24, 2020 at 01:32:31PM -0700, Kees Cook wrote:
-> > > > Allow for a randomized stack offset on a per-syscall basis, with roughly
-> > > > 5 bits of entropy.
-> > > > 
-> > > > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > > 
-> > > Just to check, do you have an idea of the impact on arm64? Patch 3 had
-> > > figures for x86 where it reads the TSC, and it's unclear to me how
-> > > get_random_int() compares to that.
-> > 
-> > I didn't do a measurement on arm64 since I don't have a good bare-metal
-> > test environment. I know Andy Lutomirki has plans for making
-> > get_random_get() as fast as possible, so that's why I used it here.
-> 
-> Ok. I suspect I also won't get the chance to test that in the next few
-> days, but if I do I'll try to share the results.
+While I was doing some development work, I noticed that if you call
+printk_deferred() before percpu setup has finished, stuff breaks, and
+e.g. "dmesg -w" fails to print new messages.
 
-Okay, thanks! I can try a rough estimate under emulation, but I assume
-that'll be mostly useless. :)
+This happens because writing to percpu memory before percpu
+initialization is done causes the modified percpu memory to be
+propagated from the boot CPU to all the secondary CPUs; and both the
+printk code as well as the irq_work implementation use percpu memory.
 
-> My concern here was that, get_random_int() has to grab a spinlock and
-> mess with IRQ masking, so has the potential to block for much longer,
-> but that might not be an issue in practice, and I don't think that
-> should block these patches.
+I think that printk_deferred() ought to work even before percpu
+initialization, since it is used by things like pr_warn_ratelimited()
+and the unwinder infrastructure. I'm not entirely sure though whether
+this is the best way to implement that, or whether it would be better to
+let printk_deferred() do something different if it is called during
+early boot.
 
-Gotcha. I was already surprised by how "heavy" the per-cpu access was
-when I looked at the resulting assembly (there looked to be preempt
-stuff, etc). But my hope was that this is configurable so people can
-measure for themselves if they want it, and most people who want this
-feature have a high tolerance for performance trade-offs. ;)
+Jann Horn (2):
+  irq_work: Reinitialize list heads for secondary CPUs
+  printk: Reinitialize klogd percpu state for secondary CPUs
 
-> > I couldn't figure out if there was a comparable instruction like rdtsc
-> > in aarch64 (it seems there's a cycle counter, but I found nothing in
-> > the kernel that seemed to actually use it)?
-> 
-> AArch64 doesn't have a direct equivalent. The generic counter
-> (CNTxCT_EL0) is the closest thing, but its nominal frequency is
-> typically much lower than the nominal CPU clock frequency (unlike TSC
-> where they're the same). The cycle counter (PMCCNTR_EL0) is part of the
-> PMU, and can't be relied on in the same way (e.g. as perf reprograms it
-> to generate overflow events, and it can stop for things like WFI/WFE).
+ kernel/irq_work.c      | 22 ++++++++++++++++++++++
+ kernel/printk/printk.c | 23 +++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
 
-Okay, cool; thanks for the details! It's always nice to confirm I didn't
-miss some glaringly obvious solution. ;)
 
-For a potential v2, should I add your reviewed-by or wait for your
-timing analysis, etc?
-
+base-commit: 76ccd234269bd05debdbc12c96eafe62dd9a6180
 -- 
-Kees Cook
+2.25.1.696.g5e7596f4ac-goog
+
