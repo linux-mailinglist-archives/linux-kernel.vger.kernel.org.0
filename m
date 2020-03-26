@@ -2,92 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 282F01941E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:48:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DC9A1941EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:49:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbgCZOsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 10:48:42 -0400
-Received: from retiisi.org.uk ([95.216.213.190]:35070 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726270AbgCZOsl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:48:41 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1728002AbgCZOtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 10:49:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726363AbgCZOtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 10:49:32 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id D0130634C90;
-        Thu, 26 Mar 2020 16:48:21 +0200 (EET)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1jHTnw-0000iH-Up; Thu, 26 Mar 2020 16:48:20 +0200
-Date:   Thu, 26 Mar 2020 16:48:20 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, helen.koike@collabora.com, digetx@gmail.com,
-        sboyd@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
-Message-ID: <20200326144820.GB2394@valkosipuli.retiisi.org.uk>
-References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
- <1584985955-19101-7-git-send-email-skomatineni@nvidia.com>
- <20200325110358.GB853@valkosipuli.retiisi.org.uk>
- <a219aeb2-3d00-016e-eed9-503a9fbd0d13@nvidia.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 217312076A;
+        Thu, 26 Mar 2020 14:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585234171;
+        bh=Ug1D44mwlx8j3F/CjHJhs2v08/ZQjLO4bJ6bUCCSm98=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YTXzjOdR9HmKH5G1vrzE5EcgwMp/HKuIKt6wYEB6z0UUl1D+lhxGIWGQRGDAs/axP
+         Rxt2gR1ShmIfcdE0QvRt6sgE0X3r7+R3Enh5GnU+eNOg32iECPZchmWnUr5EGiDTSK
+         rgVmJzYvQ3PxTRv3mmQggxMKFmq4liEAJizqtORc=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Paul McKenney <paulmck@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH -tip 0/4] kprobes: Support __kprobes and NOKPROBE_SYMBOL in modules
+Date:   Thu, 26 Mar 2020 23:49:23 +0900
+Message-Id: <158523416289.24735.10455512519475919061.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a219aeb2-3d00-016e-eed9-503a9fbd0d13@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sowjanya,
+Hi,
 
-On Wed, Mar 25, 2020 at 11:30:18PM -0700, Sowjanya Komatineni wrote:
-> 
-> On 3/25/20 4:03 AM, Sakari Ailus wrote:
-> > > +static int tegra_channel_enum_input(struct file *file, void *fh,
-> > > +                                 struct v4l2_input *inp)
-> > > +{
-> > > +     /* currently driver supports internal TPG only */
-> > > +     if (inp->index)
-> > > +             return -EINVAL;
-> > > +
-> > > +     inp->type = V4L2_INPUT_TYPE_CAMERA;
-> > > +     strscpy(inp->name, "Tegra TPG", sizeof(inp->name));
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static int tegra_channel_g_input(struct file *file, void *priv,
-> > > +                              unsigned int *i)
-> > > +{
-> > > +     *i = 0;
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static int tegra_channel_s_input(struct file *file, void *priv,
-> > > +                              unsigned int input)
-> > > +{
-> > > +     if (input > 0)
-> > > +             return -EINVAL;
-> > > +
-> > > +     return 0;
-> > > +}
-> > Please see patchset on topic "v4l2-dev/ioctl: Add V4L2_CAP_IO_MC" on
-> > linux-media; it's relevant here, too.
-> 
-> Can update in v6 to add device caps V4L2_CAP_IO_MC and remove enum/g/s_input
-> ioctls.
-> 
-> But, I don't see this patch "v4l2-dev/ioctl: Add V4L2_CAP_IO_MC" on latest
-> linux-next
+Here is a series for adding support of __kprobes attribute
+and NOKPROBE_SYMBOL() macro in modules. With this series,
+kprobes user can add its handlers and sub-functions to kprobe
+blacklist so that other kprobes don't probe it.
 
-It's not merged yet but likely will be very soon.
+Note that user should not use both __kprobes and NOKPROBE_SYMBOL()
+to same function. In that case, the function will appear twice
+on the blacklist, and that is a waste of memory.
 
--- 
-Sakari Ailus
+Thomas, it is easy to add ".noinstr.text" support to this series.
+as same as __kprobes (.kprobes.text) support in [2/4], we can
+add mod->noinstr_text_start and mod->noinstr_text_size and
+register it in add_module_kprobe_blacklist().
+
+
+Thank you,
+
+---
+
+Masami Hiramatsu (4):
+      kprobes: Lock kprobe_mutex while showing kprobe_blacklist
+      kprobes: Support __kprobes blacklist in modules
+      kprobes: Support NOKPROBE_SYMBOL() in modules
+      samples/kprobes: Add __kprobes and NOKPROBE_SYMBOL() for handlers.
+
+
+ include/linux/module.h              |    6 +++
+ kernel/kprobes.c                    |   67 ++++++++++++++++++++++++++++++++++-
+ kernel/module.c                     |    7 ++++
+ samples/kprobes/kprobe_example.c    |    6 ++-
+ samples/kprobes/kretprobe_example.c |    2 +
+ 5 files changed, 85 insertions(+), 3 deletions(-)
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
