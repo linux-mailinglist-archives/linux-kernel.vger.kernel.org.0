@@ -2,128 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A035B193BFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:36:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93452193BE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:30:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbgCZJf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 05:35:58 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:9324 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727911AbgCZJf6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 05:35:58 -0400
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02Q9PJJ9002741;
-        Thu, 26 Mar 2020 05:30:46 -0400
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2ywcs68gnb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Mar 2020 05:30:45 -0400
-Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 02Q9UiYU013848
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Thu, 26 Mar 2020 05:30:44 -0400
-Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by SCSQMBX10.ad.analog.com
- (10.77.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Thu, 26 Mar
- 2020 02:30:42 -0700
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX10.ad.analog.com
- (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Thu, 26 Mar 2020 02:30:42 -0700
-Received: from localhost.localdomain ([10.48.65.12])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 02Q9Uchj022178;
-        Thu, 26 Mar 2020 05:30:39 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.net>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v3] iio: buffer: Don't allow buffers without any channels enabled to be activated
-Date:   Thu, 26 Mar 2020 11:30:12 +0200
-Message-ID: <20200326093012.10758-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200320104031.31701-1-alexandru.ardelean@analog.com>
-References: <20200320104031.31701-1-alexandru.ardelean@analog.com>
+        id S1727913AbgCZJai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 05:30:38 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:38520 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726354AbgCZJah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 05:30:37 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0D07C7169ACE85BE893B;
+        Thu, 26 Mar 2020 17:30:35 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 26 Mar
+ 2020 17:30:30 +0800
+Subject: Re: [PATCH v2 3/5] f2fs: fix to avoid NULL pointer dereference
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20200325091811.60725-1-yuchao0@huawei.com>
+ <20200325155014.GB65658@google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <b20a846a-6035-6f5e-72a9-adb1b5399bbd@huawei.com>
+Date:   Thu, 26 Mar 2020 17:30:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-25_15:2020-03-24,2020-03-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- malwarescore=0 clxscore=1015 suspectscore=0 spamscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003260070
+In-Reply-To: <20200325155014.GB65658@google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+Hi Jaegeuk,
 
-Before activating a buffer make sure that at least one channel is enabled.
-Activating a buffer with 0 channels enabled doesn't make too much sense and
-disallowing this case makes sure that individual driver don't have to add
-special case code to handle it.
+I've made that diff as a patch and changed title and commit message a
+bit, let's merge the new one.
 
-Currently, without this patch enabling a buffer is possible and no error is
-produced. With this patch -EINVAL is returned.
+Thanks,
 
-An example of execution with this patch and some instrumented print-code:
-   root@analog:~# cd /sys/bus/iio/devices/iio\:device3/buffer
-   root@analog:/sys/bus/iio/devices/iio:device3/buffer# echo 1 > enable
-   0: iio_verify_update 748 indio_dev->masklength 2 *insert_buffer->scan_mask 00000000
-   1: iio_verify_update 753
-   2:__iio_update_buffers 1115 ret -22
-   3: iio_buffer_store_enable 1241 ret -22
-   -bash: echo: write error: Invalid argument
-1, 2 & 3 are exit-error paths. 0 the first print in iio_verify_update()
-rergardless of error path.
-
-Without this patch (and same instrumented print-code):
-   root@analog:~# cd /sys/bus/iio/devices/iio\:device3/buffer
-   root@analog:/sys/bus/iio/devices/iio:device3/buffer# echo 1 > enable
-   0: iio_verify_update 748 indio_dev->masklength 2 *insert_buffer->scan_mask 00000000
-   root@analog:/sys/bus/iio/devices/iio:device3/buffer#
-Buffer is enabled with no error.
-
-Fixes: 84b36ce5f79c0 ("staging:iio: Add support for multiple buffers")
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
-
-Changelog v2 -> v3:
-* actually added Fixes tag; seems I forgot it in v2
-  hopefully the tag is the good one; if needed, it can be
-  dropped; this has been around for ~8 years; no idea if it's worth
-  backporting
-
-Changelog v1 -> v2:
-* moved check in iio_verify_update()
-* added dev_dbg() message; should help some folks understand the message
-* documented steps to reproduce
-
- drivers/iio/industrialio-buffer.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index 5ff34ce8b6a2..e6fa1a4e135d 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -686,6 +686,13 @@ static int iio_verify_update(struct iio_dev *indio_dev,
- 	bool scan_timestamp;
- 	unsigned int modes;
- 
-+	if (insert_buffer &&
-+	    bitmap_empty(insert_buffer->scan_mask, indio_dev->masklength)) {
-+		dev_dbg(&indio_dev->dev,
-+			"At least one scan element must be enabled first\n");
-+		return -EINVAL;
-+	}
-+
- 	memset(config, 0, sizeof(*config));
- 	config->watermark = ~0;
- 
--- 
-2.17.1
-
+On 2020/3/25 23:50, Jaegeuk Kim wrote:
+> Hi Chao,
+> 
+> I don't want to rebase old commit at this moment, so applied on top of the tree.
+> 
+> Thanks,
+> 
+> On 03/25, Chao Yu wrote:
+>> Unable to handle kernel NULL pointer dereference at virtual address 00000000
+>> PC is at f2fs_free_dic+0x60/0x2c8
+>> LR is at f2fs_decompress_pages+0x3c4/0x3e8
+>> f2fs_free_dic+0x60/0x2c8
+>> f2fs_decompress_pages+0x3c4/0x3e8
+>> __read_end_io+0x78/0x19c
+>> f2fs_post_read_work+0x6c/0x94
+>> process_one_work+0x210/0x48c
+>> worker_thread+0x2e8/0x44c
+>> kthread+0x110/0x120
+>> ret_from_fork+0x10/0x18
+>>
+>> In f2fs_free_dic(), we can not use f2fs_put_page(,1) to release dic->tpages[i],
+>> as the page's mapping is NULL.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>> v2:
+>> - fix to skip release tpages[i] if it is NULL in error path.
+>>  fs/f2fs/compress.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+>> index ef7dd04312fe..6e10800729b6 100644
+>> --- a/fs/f2fs/compress.c
+>> +++ b/fs/f2fs/compress.c
+>> @@ -1137,7 +1137,10 @@ void f2fs_free_dic(struct decompress_io_ctx *dic)
+>>  		for (i = 0; i < dic->cluster_size; i++) {
+>>  			if (dic->rpages[i])
+>>  				continue;
+>> -			f2fs_put_page(dic->tpages[i], 1);
+>> +			if (!dic->tpages[i])
+>> +				continue;
+>> +			unlock_page(dic->tpages[i]);
+>> +			put_page(dic->tpages[i]);
+>>  		}
+>>  		kfree(dic->tpages);
+>>  	}
+>> -- 
+>> 2.18.0.rc1
+> .
+> 
