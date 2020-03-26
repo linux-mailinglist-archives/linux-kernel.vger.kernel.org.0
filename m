@@ -2,90 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 233D119467D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:28:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20FE4194697
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:35:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbgCZS2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 14:28:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39986 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727792AbgCZS2e (ORCPT
+        id S1728443AbgCZSfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 14:35:16 -0400
+Received: from wrqvfbnq.outbound-mail.sendgrid.net ([149.72.251.36]:24713 "EHLO
+        wrqvfbnq.outbound-mail.sendgrid.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727541AbgCZSfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 14:28:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=mchJhWy78UOAMgl1C3IsTG+i6Njh78XReHFvvDrBBYI=; b=I+G+8vAiultIOC5GApAmNq0dsd
-        S5djnLy/8+F9ob6Bo9Glu4BwoJne3D7OMuWPqXCm2tWWygSn3ojNOtwfkMqB7P09tvRdibdAe8XGE
-        Ug1xN0wYsEyIMSFRuWnwBgIG0nOKLAW/OuLhpW3RFNacrqWXX2XYjNtqklIze9ibQHCGx85zYmChT
-        his8KsXMsge+Xk4mRYbkcPizS4oDFX9xYLdG/uIMY2glCLYJOqad2NmEWuibrbDiCc7aKiHov8dAh
-        +rz6xMapLhRZAXl7zsVufGDBeurhLf0J6RxJzmOrO3gAfV3QghpRdsqA5On9k+Q1121sIDyq7QdR5
-        URqA+kgg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHXEw-0007XV-Gb; Thu, 26 Mar 2020 18:28:26 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DF411983531; Thu, 26 Mar 2020 19:28:23 +0100 (CET)
-Date:   Thu, 26 Mar 2020 19:28:23 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "bristot@redhat.com" <bristot@redhat.com>,
-        "jbaron@akamai.com" <jbaron@akamai.com>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        tglx <tglx@linutronix.de>, "mingo@kernel.org" <mingo@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>
-Subject: Re: [RESEND][PATCH v3 06/17] static_call: Add basic static call
- infrastructure
-Message-ID: <20200326182823.GB2452@worktop.programming.kicks-ass.net>
-References: <20200324135603.483964896@infradead.org>
- <20200324142245.632535759@infradead.org>
- <12A30BA0-18DA-4748-B82F-6008179CC88C@vmware.com>
- <20200326170128.GQ20713@hirez.programming.kicks-ass.net>
- <9D47A4CA-39AD-4408-879B-677BE9D891B7@vmware.com>
+        Thu, 26 Mar 2020 14:35:16 -0400
+X-Greylist: delayed 3610 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Mar 2020 14:35:16 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sendgrid.net; 
+        h=content-type:mime-version:content-transfer-encoding:content-description:subject:to:from:reply-to; 
+        s=smtpapi; bh=ipMzoPexz4UeXvnWtP3W7WauHSEkak9qqI9BEsHO8V0=; b=lW
+        wY8rNnTNKRsVkxLP07lYPRAuD9tr2XorXvbHXaChUUyGQpaFPbpsS8JlMr/XQ1IA
+        1P4lljDFIQQx4r2jCGKd8YNOCBggJsjEICeEU69zSBjmay6i9NBL3XUGbak+z37O
+        M4RoPZXtjxQeW/WPx76vskdAFdTjQxal/DMMZSUJY=
+Received: by filter0771p1iad2.sendgrid.net with SMTP id filter0771p1iad2-2581-5E7CE366-B
+        2020-03-26 17:16:22.235731959 +0000 UTC m=+64068.442155397
+Received: from)
+        by ismtpd0002p1sjc2.sendgrid.net (SG) with ESMTP id VpPxI5DLSIOGtbWnYywt2w
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 17:16:22.020 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9D47A4CA-39AD-4408-879B-677BE9D891B7@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Final Notice
+To:     linux-kernel@vger.kernel.org
+From:   trustees@trust.net
+Date:   Thu, 26 Mar 2020 17:16:22 +0000 (UTC)
+Reply-To: trustees202000@consultant.com
+Message-ID: <VpPxI5DLSIOGtbWnYywt2w@ismtpd0002p1sjc2.sendgrid.net>
+X-SG-EID: UsLXQ589HNP4HLBydmD9pgHURQozLYm9XliudupI8Yu5M2E4TAenb3yFq/VxoF9sKw0+5bUYWs2Bww
+ Tly+4lDMAOyntLKmVzkG8VDaf5+Ab7o2J+z5UHgPeOOJvtGSGpcYmWRqRkkOjC0hNKjJ3/6m/puoRy
+ nu/0n6Kuh7d/B6X+Vd0UFI6NuWQzdcGHJWtzVmMO9NJGS4zCAW7Ujtgdng==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 06:09:07PM +0000, Nadav Amit wrote:
-
-> I think that the kernel underutilizes the pure attribute in general.
-> Building it with "-Wsuggest-attribute=pure” results in many warnings.
-> Function pointers such kvm_x86_ops.get_XXX() could have been candidates to
-> use the “pure” attribute.
-> 
-> The syntax is what you would expect:
-> 
->   static void __attribute__((pure))(*ptr)(void);
-> 
-
-Well, I didn't in fact expect that, because an attribute is not a
-type qualifier.
-
-> However, you have a point, gcc does not appear to respect “pure” for
-> function pointers and emits a warning it is ignored. GCC apparently only
-> respects “const”. In contrast clang appears to respect the pure attribute
-> for function pointers.
-
-Still, we can probably make it happen for static_call(), since it is a
-direct call to the trampoline, all we need to do is make sure the
-trampoline is declared pure.
-
-It does however mean that static_call() inherits all the dangers and
-pit-falls of function pointers with some extra on top. It will be
-impossible to validate this stuff.
-
-That is, you can static_call_update() with a pointer to a !pure function
-and you get to keep the pieces.
+We have been trying to reach you as regards the estate of our deceased clie=
+nt who made you one of the beneficiaries of his estate. Do get back to me a=
+t your earliest convenience. The Trustees
+=20=20
