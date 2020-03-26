@@ -2,53 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC9EA194145
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:28:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C568A194160
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:29:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbgCZO2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 10:28:04 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:34883 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727695AbgCZO2E (ORCPT
+        id S1728296AbgCZO2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 10:28:52 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:38658 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728107AbgCZO2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:28:04 -0400
-Received: by mail-vs1-f68.google.com with SMTP id u11so3973671vsg.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 07:28:03 -0700 (PDT)
+        Thu, 26 Mar 2020 10:28:47 -0400
+Received: by mail-ua1-f65.google.com with SMTP id h35so2167634uae.5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 07:28:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Nwrqr8fUwcczi1tkKbhoCAaTj0Lz9vANHD/lv6450Ik=;
-        b=s0AYeRSme5ZYMG5Hj00MtSphy+ZF1hJEIT/x2laNKAPH6uwyawibNxjdwbP2n3VcAz
-         csHlsS0gxGoa5DicQVyRyza5fvlnbU7gXob7YwmrF1iP6Arowk1BTPlr0kz4O3XeecgF
-         1zk9ZTQ+jv4zeHagRLkhqZrvKEFdH+oNeK135nUnNRS91hY2ue714O+FEjcV14/4YNSF
-         LfEKcr0FypAkSBknWreQBXQ7JbSB7qSlCdDz+6IHoDYmn4ebQwicF5K71DOR0GD0cCFh
-         bCHWHd0BIGOXrsyTGs9lNM+SLJBnuSpHOhufi/2mLRvJCbJQ5z5/y/CztJiv8Q92tTQi
-         xs6A==
+        bh=dpR7Oxz1qNUziJu9EkZNTQU3ukjyRpCe41037a5byCM=;
+        b=A5cZNsK5c5uZutnm0OIXGS+KX7eNfN7wqt28zszCZAhqy6YCJE5AXwTRTNuYDXqs6O
+         kVy906+0sjz7Ea81h3wXaysYdR1rk2YkZaFasf8szBzhyoNf2RhFmIDZJ7itRAwGsL6p
+         WNZ1EWZMpmNa1RW0Y3ztF9PD6W/8Tg1LWwKb/Dsx6bkaaASYPLcIsKa1lSndDFWS+ybG
+         vY5Q33UTJBetKrYcvjeakGfoc+euPMjtKyS/THQ2N6reNORXrSfKGjJesQFgGTNoI4U1
+         wHF6ka30AIQAMrzkrofwUZOiYP3y0tSwom2KGfmjP0/uZtxcc0DRdQQw0w++JfPFBHFp
+         PX6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Nwrqr8fUwcczi1tkKbhoCAaTj0Lz9vANHD/lv6450Ik=;
-        b=hMkTP9tsi5ME5sn0iIPAZ0vjwqmATtDJWJjuE4es9etdQ8a73YfXX11U/W8ij7epM+
-         cyXQ4T6ja5p2V7bfbInjpx9fetgqIPFiYbNYQObQz4f4uMH+Cr/zLYYaD5k1piy+8URd
-         XPqDusfAHk/mHxiJwiWTh//AfLJhLhI4NuX1gLkxFTDt9z1UsVdE7ebxlqZqVJr9iZ2H
-         XiUWTfUXQfk/amoHHpaeUMqPhSiR26K9UhY1h2kjRptK3ayLVCeMW4/PEwD2zLEGXvK8
-         WvcNWDOKPXyb3SkXwC5fVLnT7kjW2oGIXi2m+EM9Ik1ICJQTW/H8esz3Q7C9dxcrVLTL
-         YP/w==
-X-Gm-Message-State: ANhLgQ2bOQkHYZaWn7vgvWA54yVLgD3ImXLLb60Gd0MfTmncUPVjFT4L
-        tSofVJwPcR05OrwjTPYRS8NLn0Ag5iP4+Outt/5nug==
-X-Google-Smtp-Source: ADFU+vsDl0E1ShxlqFNIKGgRphr3dXzKQ2BouqsiqJSyqwn2BTjEQZNw7vYZJmX1XaoteUXkIePuQWywtUNQtEW50KM=
-X-Received: by 2002:a67:2ec6:: with SMTP id u189mr7072856vsu.200.1585232883289;
- Thu, 26 Mar 2020 07:28:03 -0700 (PDT)
+        bh=dpR7Oxz1qNUziJu9EkZNTQU3ukjyRpCe41037a5byCM=;
+        b=AmGosdbjJpklTBQHSdfCjREKvPNQHv5xLson3Q0PCsW3UX3vkMNVf9aOz15796wd1I
+         PlHeG24X17gfq8+E9fNCYa/JRL/3YocM/tKc0uV85LPle8s8M3tuYuJbENCEMziISP93
+         BppI05RqglOMozqui5wROeFxoBMpsB7GVD9fXbxS2qhHGHQQSZUC7j+QyS/IqOUNJDaR
+         iUyZBGlZFvjCN5+KozSGk8wYpnOmbCSX+gw1SWYfMjUrHzOx9b6J1dUVklzDG2ClvuSx
+         8TKz4P5cBS13SsMRx/NtaIc0YpGWd1XcdGhsbFo3Ipj816PQOdiH7n0A/BRiozut9cnT
+         uVqQ==
+X-Gm-Message-State: ANhLgQ2TgplRWMm0Wl1wrXBY9rXDf5gM2u7Q6/b9eBwxoxHCF41cV1Yy
+        Kzk88ph8V7SYYTVtwQ8KjWjT3mlanKdTbUChIvkryw==
+X-Google-Smtp-Source: ADFU+vtSP1ZWeFS0v/IYE0yhokN9YWSHWu7abe9/C6yo19lM7d8FYypGhqrHHkutkPFQ/tySL6jnvOiMocB0QKtvN6g=
+X-Received: by 2002:ab0:6204:: with SMTP id m4mr6628927uao.15.1585232925473;
+ Thu, 26 Mar 2020 07:28:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200325143409.13005-1-ludovic.barre@st.com> <20200325143409.13005-3-ludovic.barre@st.com>
-In-Reply-To: <20200325143409.13005-3-ludovic.barre@st.com>
+References: <20200325143409.13005-1-ludovic.barre@st.com> <20200325143409.13005-2-ludovic.barre@st.com>
+In-Reply-To: <20200325143409.13005-2-ludovic.barre@st.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 26 Mar 2020 15:27:27 +0100
-Message-ID: <CAPDyKFpO40Ois8pNwYOeqZrJbV9UeCLok=i8z4GWML+A7TP2-w@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] mmc: mmci: initialize pwr|clk|datactrl_reg with
- their hardware values
+Date:   Thu, 26 Mar 2020 15:28:09 +0100
+Message-ID: <CAPDyKFo-Lgikwf=PUAd1naXxiyn=z425sTXX9O39__Xi39oUYQ@mail.gmail.com>
+Subject: Re: [PATCH V2 1/2] mmc: mmci_sdmmc: fix clear busyd0end irq flag
 To:     Ludovic Barre <ludovic.barre@st.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Srini Kandagatla <srinivas.kandagatla@linaro.org>,
@@ -67,54 +66,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, 25 Mar 2020 at 15:34, Ludovic Barre <ludovic.barre@st.com> wrote:
 >
-> In mmci_write_pwr|clk|datactrlreg functions, if the desired value
-> is equal to corresponding variable (pwr_reg|clk_reg|datactrl_reg),
-> the value is not written in the register.
+> The busyd0 line transition can be very fast. The busy request
+> may be completed by busy_d0end without wait the busy_d0 steps.
+> The busyd0end irq flag must be cleared even if no busy_status.
 >
-> At probe pwr|clk|datactrl_reg of mmci_host structure are initialized
-> to 0 (kzalloc of mmc_alloc_host). But they does not necessarily reflect
-> hardware value of these registers, if they are used while boot level.
-> This is problematic, if we want to write 0 in these registers.
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 
-It could be, but I don't see that we ever needs to do that - at least
-not before we have written some other non-zero values to them (through
-the helper functions).
-
->
-> This patch initializes pwr|clk|datactrl_reg variables with their
-> hardware values while probing.
-
-Hmm, so in principle this change seems quite okay, but I am hesitant
-to pick it up - unless it really addresses a problem that you have
-observed.
-
-The reason is, this change may lead to avoiding to re-write the
-register with the same value it got during boot - and who knows what
-is best here.
+Applied for next, by adding a fixes+stable tag, thanks!
 
 Kind regards
 Uffe
 
->
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+
 > ---
->  drivers/mmc/host/mmci.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/mmc/host/mmci_stm32_sdmmc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-> index 647567def612..f378ae18d5dc 100644
-> --- a/drivers/mmc/host/mmci.c
-> +++ b/drivers/mmc/host/mmci.c
-> @@ -2085,6 +2085,10 @@ static int mmci_probe(struct amba_device *dev,
->         else if (plat->ocr_mask)
->                 dev_warn(mmc_dev(mmc), "Platform OCR mask is ignored\n");
+> diff --git a/drivers/mmc/host/mmci_stm32_sdmmc.c b/drivers/mmc/host/mmci_stm32_sdmmc.c
+> index f76e82f8f12f..d33e62bd6153 100644
+> --- a/drivers/mmc/host/mmci_stm32_sdmmc.c
+> +++ b/drivers/mmc/host/mmci_stm32_sdmmc.c
+> @@ -358,11 +358,11 @@ static bool sdmmc_busy_complete(struct mmci_host *host, u32 status, u32 err_msk)
+>         if (host->busy_status) {
+>                 writel_relaxed(mask & ~host->variant->busy_detect_mask,
+>                                base + MMCIMASK0);
+> -               writel_relaxed(host->variant->busy_detect_mask,
+> -                              base + MMCICLEAR);
+>                 host->busy_status = 0;
+>         }
 >
-> +       host->pwr_reg = readl_relaxed(host->base + MMCIPOWER);
-> +       host->clk_reg = readl_relaxed(host->base + MMCICLOCK);
-> +       host->datactrl_reg = readl_relaxed(host->base + MMCIDATACTRL);
+> +       writel_relaxed(host->variant->busy_detect_mask, base + MMCICLEAR);
 > +
->         /* We support these capabilities. */
->         mmc->caps |= MMC_CAP_CMD23;
+>         return true;
+>  }
 >
 > --
 > 2.17.1
