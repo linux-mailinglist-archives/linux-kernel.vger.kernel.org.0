@@ -2,140 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19BA81938F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 07:50:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 162571938D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 07:49:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbgCZGtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 02:49:50 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40300 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727874AbgCZGtt (ORCPT
+        id S1727677AbgCZGtD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 02:49:03 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34342 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbgCZGtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 02:49:49 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u10so6342072wro.7
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 23:49:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0idw5B6PcVqWUxIoMkNt7TgZxctDSgOOI59ozY4oTHM=;
-        b=eOzaFwpapO566KIN7o8CtBngABKyDb0NQEUbuybM+vBuUJ6pSDk6ZXtpd0TBG5lVde
-         ptxih3E2lZ1YpIPRurd1aXbCr2bn4XHT3tOHFPBrImMzJVGQbsVkQvVLIW7OHtnTo8fe
-         OvcoHrjVDGAENbGCR2UwXUevVKaeUk//26t/g=
+        Thu, 26 Mar 2020 02:49:03 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p10so5001377ljn.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 23:49:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0idw5B6PcVqWUxIoMkNt7TgZxctDSgOOI59ozY4oTHM=;
-        b=ij0MIwekqaEB1/Cmo6lHl/q1Rc8yR/c7z8VyyYFUic+IUt4bjy7bSzoFq2W5y6NQsX
-         0pBJ9x1WaXjoYcXFgnNWon97fa9EjJPRF/2tk6NcedGwygnTBX0KfrzJT54cDOt/rvWE
-         uwCMIuE90c51rB0cZXASsXMMbvw/9yOrRAFSGCdHUcu45X0ld4x/hYhiX5F1JKm12Kt3
-         EuwZnLWQ5D3WXCdFWsNohXCoLJQuZP71PXBMFkVS3ZTdzfbyLkNSDFIE0M3Bg3PMiwbu
-         5I5T3gdT5lbaQe/gCeZHJsSaBsTeJlvx1RG/+9Dngth2SPIJgyZnVg0YHRJTB5Zq7Hdz
-         9MbA==
-X-Gm-Message-State: ANhLgQ1WuezppNz8x2W2TeGI64bK3454p2pA047kMIhh12DCjrgv8YTr
-        gXwEPpr+wiMj9B3GTW62NZilMg==
-X-Google-Smtp-Source: ADFU+vsQTR/kVV+uSwHzxwJhKiVFKKuIbCfDf2JW2zqZaGt6ru+SMQ31s/bTu6v99Ao07jypy+Wdrw==
-X-Received: by 2002:adf:efc9:: with SMTP id i9mr7182823wrp.23.1585205387945;
-        Wed, 25 Mar 2020 23:49:47 -0700 (PDT)
-Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id v21sm2069137wmj.8.2020.03.25.23.49.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 25 Mar 2020 23:49:47 -0700 (PDT)
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Ray Jui <ray.jui@broadcom.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH v5 6/6] arm64: dts: Change PCIe INTx mapping for NS2
-Date:   Thu, 26 Mar 2020 12:18:46 +0530
-Message-Id: <1585205326-25326-7-git-send-email-srinath.mannam@broadcom.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1585205326-25326-1-git-send-email-srinath.mannam@broadcom.com>
-References: <1585205326-25326-1-git-send-email-srinath.mannam@broadcom.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Qff2i+ym4gPPOxDRIQh2n3v3vk/CiXzDCHZe7pXja70=;
+        b=B0bE+b2zub9Ed3e3JG/LOUjcK8vJWV6A8vAZEzG4VNYTrYdEkkjtpQFepRt7k0nfk+
+         NedFMEqbx0FoYKBB7f5v1zn1wCebqrGMJFNGP3Eetu1xDu7aHOZK4HOsW3QlqGXs8yn/
+         +LF2dIE3uCrgSHTCnt26IF63zdmfQ7j+jfptFQlXUuEEEfO+9k+kifLs+tD3VtCh0nYe
+         oaY/wfcTuGyoQL/2u7lwGe+L1S7bOE3Rp7UQh0aELM8tKX2hfxFNR5YCRNUM/ZcWLlaR
+         dT13eid23FeMvVS4ubmnERWvoXm/uAqQmWuHc9Mwoh0JSFWnIVkcUNaUu19u7oIjNlwV
+         UIdw==
+X-Gm-Message-State: AGi0Pua7aw2VAWsjSVnz1nqV6m0MN5yuDItEgJlcXp2EWFHAjbiL/jU+
+        cFRVBg32r8Vd6UM4Oj3THYs=
+X-Google-Smtp-Source: APiQypKKxRrK0zPIQAUsRUDBdyMW5BiKcxteWRsyZwoU7v2j5uIMayk8EvSsxhEjzSWaGXGXuvFmvA==
+X-Received: by 2002:a2e:9706:: with SMTP id r6mr550239lji.183.1585205340626;
+        Wed, 25 Mar 2020 23:49:00 -0700 (PDT)
+Received: from localhost.localdomain (dc7t7ryyyyyyyyyyyyybt-3.rev.dnainternet.fi. [2001:14ba:16e1:b700::3])
+        by smtp.gmail.com with ESMTPSA id x23sm854496ljd.23.2020.03.25.23.48.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 23:49:00 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 08:48:52 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] mfd: rohm-bdXXX - switch to use i2c probe_new
+Message-ID: <20200326064852.GA23265@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ray Jui <ray.jui@broadcom.com>
+ROHM BD70528 and BD718x7 drivers do not utilize the I2C id.
+Do the trivial conversion and make them to use probe_new
+instead of probe.
 
-Change the PCIe INTx mapping to model the 4 INTx interrupts in the
-IRQ domain of the iProc PCIe controller itself.
-
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi | 28 ++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+ drivers/mfd/rohm-bd70528.c | 5 ++---
+ drivers/mfd/rohm-bd718x7.c | 5 ++---
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-index 15f7b0e..489bfd5 100644
---- a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-@@ -117,8 +117,11 @@
- 		dma-coherent;
+diff --git a/drivers/mfd/rohm-bd70528.c b/drivers/mfd/rohm-bd70528.c
+index 5c44d3b77b3e..179584d10109 100644
+--- a/drivers/mfd/rohm-bd70528.c
++++ b/drivers/mfd/rohm-bd70528.c
+@@ -216,8 +216,7 @@ static struct regmap_irq_chip bd70528_irq_chip = {
+ 	.irq_reg_stride = 1,
+ };
  
- 		#interrupt-cells = <1>;
--		interrupt-map-mask = <0 0 0 0>;
--		interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-map-mask = <0 0 0 7>;
-+		interrupt-map = <0 0 0 1 &pcie0_intc 0>,
-+				<0 0 0 2 &pcie0_intc 1>,
-+				<0 0 0 3 &pcie0_intc 2>,
-+				<0 0 0 4 &pcie0_intc 3>;
+-static int bd70528_i2c_probe(struct i2c_client *i2c,
+-			     const struct i2c_device_id *id)
++static int bd70528_i2c_probe(struct i2c_client *i2c)
+ {
+ 	struct bd70528_data *bd70528;
+ 	struct regmap_irq_chip_data *irq_data;
+@@ -304,7 +303,7 @@ static struct i2c_driver bd70528_drv = {
+ 		.name = "rohm-bd70528",
+ 		.of_match_table = bd70528_of_match,
+ 	},
+-	.probe = &bd70528_i2c_probe,
++	.probe_new = &bd70528_i2c_probe,
+ };
  
- 		linux,pci-domain = <0>;
+ module_i2c_driver(bd70528_drv);
+diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+index c32c1b6c98fa..e621e1a82222 100644
+--- a/drivers/mfd/rohm-bd718x7.c
++++ b/drivers/mfd/rohm-bd718x7.c
+@@ -129,8 +129,7 @@ static int bd718xx_init_press_duration(struct bd718xx *bd718xx)
+ 	return 0;
+ }
  
-@@ -140,6 +143,13 @@
- 		phy-names = "pcie-phy";
+-static int bd718xx_i2c_probe(struct i2c_client *i2c,
+-			    const struct i2c_device_id *id)
++static int bd718xx_i2c_probe(struct i2c_client *i2c)
+ {
+ 	struct bd718xx *bd718xx;
+ 	int ret;
+@@ -226,7 +225,7 @@ static struct i2c_driver bd718xx_i2c_driver = {
+ 		.name = "rohm-bd718x7",
+ 		.of_match_table = bd718xx_of_match,
+ 	},
+-	.probe = bd718xx_i2c_probe,
++	.probe_new = bd718xx_i2c_probe,
+ };
  
- 		msi-parent = <&v2m0>;
-+		pcie0_intc: interrupt-controller {
-+			compatible = "brcm,iproc-intc";
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>;
-+		};
- 	};
- 
- 	pcie4: pcie@50020000 {
-@@ -148,8 +158,11 @@
- 		dma-coherent;
- 
- 		#interrupt-cells = <1>;
--		interrupt-map-mask = <0 0 0 0>;
--		interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-map-mask = <0 0 0 7>;
-+		interrupt-map = <0 0 0 1 &pcie4_intc 0>,
-+				<0 0 0 2 &pcie4_intc 1>,
-+				<0 0 0 3 &pcie4_intc 2>,
-+				<0 0 0 4 &pcie4_intc 3>;
- 
- 		linux,pci-domain = <4>;
- 
-@@ -171,6 +184,13 @@
- 		phy-names = "pcie-phy";
- 
- 		msi-parent = <&v2m0>;
-+		pcie4_intc: interrupt-controller {
-+			compatible = "brcm,iproc-intc";
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+		};
- 	};
- 
- 	pcie8: pcie@60c00000 {
+ static int __init bd718xx_i2c_init(void)
+
+base-commit: 16fbf79b0f83bc752cee8589279f1ebfe57b3b6e
 -- 
-2.7.4
+2.21.0
 
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
