@@ -2,152 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07E1E193B7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:07:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45DC0193B97
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:17:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbgCZJHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 05:07:44 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42284 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbgCZJHn (ORCPT
+        id S1727719AbgCZJRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 05:17:39 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:19949 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbgCZJRj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 05:07:43 -0400
-Received: by mail-lj1-f196.google.com with SMTP id q19so5524569ljp.9
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 02:07:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=tqgBaV78PQqZolZo5QZFRoALvirH5iBLVW/jfhHSDg0=;
-        b=ofKmE5yb4X6lGFHr4+7NTByDIQviSW04LED0VqqiFvXCwzmjKiY7GQpQao0jRWQNkx
-         Lfyzm426ubs3FeKnP5V7Vv98m3zzgrvnorCWiNySLc/umQt7dYv4NY10HY5omWaga6aj
-         fbbS9j4A8lSKYBKcb0QnDA5VZy3vmAxFTXfDZa3SAIbAqp0Oll3TqmaDHWvjZRBWmxEW
-         S49/7iu9RmwCjNII+Lhy8ObSP29e7obBMSVAXstwCDeRHVolYbGgi3vpA80hQa/u1Rzv
-         gMYFzKcv0CI9hUfjIYWfqZq6Sr5MlF2VmuVo5UsIO0FSr7QSmjNvSgvYxtqT5fLfX2fD
-         /LKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=tqgBaV78PQqZolZo5QZFRoALvirH5iBLVW/jfhHSDg0=;
-        b=LYaBJ62ojL72qO9UbI2jpEYgO8P/SzR4/zPsbivbmgBNG9SdAQyaJWTmZZqocJ551+
-         b/u5pdj99sxijdzCeSaSfO6Hjn5iNbCwCpnLxqGQ038Cuj/YESoEkV04JM12N0VmR3qJ
-         bbN5DibvWvFup1xHK6tAeeYLAO3wClffGqbk4gAyY/GsGD8MI/DQI2znLhQEdbweea5X
-         tXLI0priRZQiITE1h42Iue9N3vaRsenisRO4bEeKh6mvikthP5sdvumfdY9weNw806zP
-         UrkTOvRwmy+/+AfWpBYRgkZJQCN0yEp0e5Rn8atZOlwVrjdSHDYgbH80mpsoGHBvEdXO
-         Li0w==
-X-Gm-Message-State: AGi0Pua1Iyh1rJpHnlXbPT/dXmYKee4uFRBlnUZnMvyfdnN1FShErYZy
-        ReNQ3zJqLgMVrFdvcR0ZN6rFXa1pVItuusMZteTDBgINpQ8=
-X-Google-Smtp-Source: ADFU+vuY/mX+a6lOOhWP3ico6Dy3TmuugokwnEmRW9l6EChld/TLcCpOoPKX3/HSREhsR79pRO+mABA6GX5DKSuoAkU=
-X-Received: by 2002:a2e:8084:: with SMTP id i4mr4565066ljg.185.1585213661142;
- Thu, 26 Mar 2020 02:07:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <1585207429-10630-1-git-send-email-sumit.garg@linaro.org>
- <1585207429-10630-3-git-send-email-sumit.garg@linaro.org> <CAA-cTWZWPFtq-9MOrr6YDV4SGyo_JNaNsFJc=pjaWBrWHMid1A@mail.gmail.com>
-In-Reply-To: <CAA-cTWZWPFtq-9MOrr6YDV4SGyo_JNaNsFJc=pjaWBrWHMid1A@mail.gmail.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Thu, 26 Mar 2020 14:37:29 +0530
-Message-ID: <CAFA6WYOvBNcGe+4ndq-YmM6haVoH4QiM7goYw5T40mR15muQKQ@mail.gmail.com>
-Subject: Re: [Tee-dev] [PATCH v5 2/2] tee: add private login method for kernel clients
-To:     =?UTF-8?B?SsOpcsO0bWUgRm9yaXNzaWVy?= <jerome@forissier.org>
-Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 26 Mar 2020 05:17:39 -0400
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200326091736epoutp02b76c7f49ced30b59b730171fee6ec3a2~-z-e6q2ND1730017300epoutp02T
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 09:17:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200326091736epoutp02b76c7f49ced30b59b730171fee6ec3a2~-z-e6q2ND1730017300epoutp02T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1585214256;
+        bh=onuYfqDYIOCuYPJgDNR7ttwIKwGYq/9ECZgsogSZ2n0=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=ckeM8v59cRn1tB2Kznx1rRKhO7g2SmZwqNfQi+iJ1KSgZc34l102E9YBNGNo5uL0x
+         wvIZmQuiiGs85oMgX6ajZ16M1fTNeJwUHbXCTfCGa+ZRyz6fyJS2xOr+xv/nlGYDPg
+         HXvFWUUYCj2YgoHFCd0O/usRQQsfjOYr30RCLryg=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20200326091736epcas2p4512b097c588a20a997677fd7654d5681~-z-ej2Rv22126021260epcas2p4I;
+        Thu, 26 Mar 2020 09:17:36 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.40.186]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 48nzsV2RNZzMqYkf; Thu, 26 Mar
+        2020 09:17:34 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B5.17.04142.C237C7E5; Thu, 26 Mar 2020 18:17:32 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200326091732epcas2p2be24b70dca0039b10b828e8b9102f6bf~-z-a2xUAt1413814138epcas2p2P;
+        Thu, 26 Mar 2020 09:17:32 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200326091732epsmtrp2d6626bb580590dbc1055f468101fa012~-z-a1sK_71240612406epsmtrp2c;
+        Thu, 26 Mar 2020 09:17:32 +0000 (GMT)
+X-AuditID: b6c32a46-3e1ff7000000102e-29-5e7c732ce5db
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BF.F7.04158.C237C7E5; Thu, 26 Mar 2020 18:17:32 +0900 (KST)
+Received: from KEI.dsn.sec.samsung.com (unknown [12.36.155.227]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200326091732epsmtip2773add7b7a4f68e550b3e8f207f07426~-z-ar8gQM2849628496epsmtip2e;
+        Thu, 26 Mar 2020 09:17:32 +0000 (GMT)
+From:   Seungchul Kim <sc377.kim@samsung.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Seungchul Kim <sc377.kim@samsung.com>
+Subject: [PATCH] media: v4l2-fh: define v4l2_fh struct regardless of
+ condition
+Date:   Thu, 26 Mar 2020 18:09:46 +0900
+Message-Id: <1585213786-39068-1-git-send-email-sc377.kim@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMKsWRmVeSWpSXmKPExsWy7bCmma5OcU2cwdxZBhaXd81hs+jZsJXV
+        YtmmP0wW0+5MYHRg8di0qpPNo2/LKkaPz5vkApijcmwyUhNTUosUUvOS81My89JtlbyD453j
+        Tc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgLYpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yV
+        UgtScgoMDQv0ihNzi0vz0vWS83OtDA0MjEyBKhNyMq51rWcraOKvWDhjA0sD42GeLkZODgkB
+        E4mvjb/Yuxi5OIQEdjBK3L/xiRUkISTwiVHi2hxXiMQ3RokNN68xwXS8fHkdqmMvo8TsdeeY
+        IDq+MkqcW58NYrMJaEtcXT2PGcQWEdCTeL75IguIzSyQJjH3RgtYvbBAgMSZrvtsIDaLgKrE
+        xqO3GUFsXgFXiUWrXrJDLJOTuHmukxlkmYTAQ1aJA48/QCVcJA7/3cwMYQtLvDq+BSouJfH5
+        3V42CLtc4sOjrUwQzR2MEk1f70AljCVmPWsH2sYBdJGmxPpd+iCmhICyxJFbUHfySXQc/ssO
+        EeaV6GgTgmhUllj9tx9qq6TE/r8noGHiIXHs5WZoMMRKTG+bzjaBUXYWwvwFjIyrGMVSC4pz
+        01OLjQqMkONoEyM4AWm57WBccs7nEKMAB6MSD+8Gy+o4IdbEsuLK3EOMEhzMSiK8TyNr4oR4
+        UxIrq1KL8uOLSnNSiw8xmgIDbyKzlGhyPjA55pXEG5oamZkZWJpamJoZWSiJ827ivhkjJJCe
+        WJKanZpakFoE08fEwSnVwLj2me2mY/GreN7MOlFz5MLnpvjOCVuCDi9Z29rCmHF5wnHf41Gx
+        p1InKJ4s+Mbg6SL7awGL8Cm1yQ05iWV5M33TnQRkG9RZ7epV3Hbu2Vn1kd+7xE9upW4US+T9
+        NzFc/84ZrX1bHB/JZuj2eUKaIsPZjZ+iay+q1Wbv4E53MdzVlvRr0eqHi5RYijMSDbWYi4oT
+        ATtKgDxWAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEJMWRmVeSWpSXmKPExsWy7bCSvK5OcU2cwf0nghaXd81hs+jZsJXV
+        YtmmP0wW0+5MYHRg8di0qpPNo2/LKkaPz5vkApijuGxSUnMyy1KL9O0SuDKuda1nK2jir1g4
+        YwNLA+Nhni5GTg4JAROJly+vs3cxcnEICexmlPjR8RnI4QBKSEq0HC6AqBGWuN9yhBWi5jOj
+        xPVZs9lAEmwC2hJXV89jBrFFBPQknm++yAJiMwtkSJzceowdxBYW8JOYfqYDrJ5FQFVi49Hb
+        jCA2r4CrxKJVL9khFshJ3DzXyTyBkWcBI8MqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS95Pzc
+        TYzgkNDS2sF44kT8IUYBDkYlHt4I8+o4IdbEsuLK3EOMEhzMSiK8TyNr4oR4UxIrq1KL8uOL
+        SnNSiw8xSnOwKInzyucfixQSSE8sSc1OTS1ILYLJMnFwSjUwln15yOjsvCXo6SVJ5TOryx58
+        s5YUFzc5mrQq/sayJCMGRt9Z4Xa3JDSywtYcvfvLxLBDpvKafoHns51iBmubq9ylF904uH3z
+        pRlJORu3lvyVOf/lwtSHpQt9/301XJ1o+TXfTH+GXkDUiRUXrpnnHVW9td7tVJJeD2/9VT2d
+        2ndmG5XPnr4rp8RSnJFoqMVcVJwIAFvxPeAFAgAA
+X-CMS-MailID: 20200326091732epcas2p2be24b70dca0039b10b828e8b9102f6bf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200326091732epcas2p2be24b70dca0039b10b828e8b9102f6bf
+References: <CGME20200326091732epcas2p2be24b70dca0039b10b828e8b9102f6bf@epcas2p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Mar 2020 at 14:05, J=C3=A9r=C3=B4me Forissier <jerome@forissier.=
-org> wrote:
->
-> On Thu, Mar 26, 2020 at 8:24 AM Sumit Garg <sumit.garg@linaro.org> wrote:
->>
->> There are use-cases where user-space shouldn't be allowed to communicate
->> directly with a TEE device which is dedicated to provide a specific
->> service for a kernel client. So add a private login method for kernel
->> clients
->
->
-> OK
->
->> and disallow user-space to open-session using GP implementation
->> defined login method range: (0x80000000 - 0xFFFFFFFF).
->
->
-> I'm not sure this is correct, because it would prevent the client library=
- or the TEE supplicant from using such values, although they are part of th=
-e TEE implementation; and further, nothing mandates that an implementation-=
-defined method should not be used directly by client applications.
->
+v4l2_fh struct define differently by CONFIG_V4L2_MEM2MEM_DEV.
+If some vendors use CONFIG_V4L2_MEM2MEM_DEV by module,
+it can make the mismatch of v4l2_fh sturct.
 
-Initial implementation of this patch only put restriction for single
-implementation-defined login method (TEE_IOCTL_LOGIN_REE_KERNEL) only.
-But after discussion with Jens here [1], I have changed that to
-restrict complete implementation-defined range. If we think to further
-partition this range considering API stability then I am open to that
-too.
+By the mismatch, the following error occurs.
+===============================
+[    7.533506] v4l2_mem2mem: disagrees about version of symbol video_devdata
+[    7.533594] v4l2_mem2mem: Unknown symbol video_devdata (err -22)
+[    7.535319] v4l2_mem2mem: disagrees about version of symbol v4l2_event_pending
+[    7.542532] v4l2_mem2mem: Unknown symbol v4l2_event_pending (err -22)
+===============================
 
-[1] https://lore.kernel.org/patchwork/patch/1088062/
+So v4l2_fh struct is modified to does not have dependency
+for CONFIG_V4L2_MEM2MEM_DEV.
 
--Sumit
+Signed-off-by: Seungchul Kim <sc377.kim@samsung.com>
+---
+ drivers/media/v4l2-core/v4l2-ioctl.c | 2 --
+ include/media/v4l2-fh.h              | 2 --
+ 2 files changed, 4 deletions(-)
 
-> --
-> Jerome
->
->>
->>
->> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
->> ---
->>  drivers/tee/tee_core.c   | 6 ++++++
->>  include/uapi/linux/tee.h | 8 ++++++++
->>  2 files changed, 14 insertions(+)
->>
->> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
->> index 37d22e3..533e7a8 100644
->> --- a/drivers/tee/tee_core.c
->> +++ b/drivers/tee/tee_core.c
->> @@ -334,6 +334,12 @@ static int tee_ioctl_open_session(struct tee_contex=
-t *ctx,
->>                         goto out;
->>         }
->>
->> +       if (arg.clnt_login & TEE_IOCTL_LOGIN_MASK) {
->> +               pr_debug("login method not allowed for user-space client=
-\n");
->> +               rc =3D -EPERM;
->> +               goto out;
->> +       }
->> +
->>         rc =3D ctx->teedev->desc->ops->open_session(ctx, &arg, params);
->>         if (rc)
->>                 goto out;
->> diff --git a/include/uapi/linux/tee.h b/include/uapi/linux/tee.h
->> index 6596f3a..19172a2 100644
->> --- a/include/uapi/linux/tee.h
->> +++ b/include/uapi/linux/tee.h
->> @@ -173,6 +173,14 @@ struct tee_ioctl_buf_data {
->>  #define TEE_IOCTL_LOGIN_APPLICATION            4
->>  #define TEE_IOCTL_LOGIN_USER_APPLICATION       5
->>  #define TEE_IOCTL_LOGIN_GROUP_APPLICATION      6
->> +/*
->> + * Disallow user-space to use GP implementation specific login
->> + * method range (0x80000000 - 0xFFFFFFFF). This range is rather
->> + * being reserved for REE kernel clients or TEE implementation.
->> + */
->> +#define TEE_IOCTL_LOGIN_MASK                   0x80000000
->> +/* Private login method for REE kernel clients */
->> +#define TEE_IOCTL_LOGIN_REE_KERNEL             0x80000000
->>
->>  /**
->>   * struct tee_ioctl_param - parameter
->> --
->> 2.7.4
->>
->> _______________________________________________
->> Tee-dev mailing list
->> Tee-dev@lists.linaro.org
->> https://lists.linaro.org/mailman/listinfo/tee-dev
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index fbcc7a2..befafcd 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -2800,13 +2800,11 @@ static struct mutex *v4l2_ioctl_get_lock(struct video_device *vdev,
+ {
+ 	if (_IOC_NR(cmd) >= V4L2_IOCTLS)
+ 		return vdev->lock;
+-#if IS_ENABLED(CONFIG_V4L2_MEM2MEM_DEV)
+ 	if (vfh && vfh->m2m_ctx &&
+ 	    (v4l2_ioctls[_IOC_NR(cmd)].flags & INFO_FL_QUEUE)) {
+ 		if (vfh->m2m_ctx->q_lock)
+ 			return vfh->m2m_ctx->q_lock;
+ 	}
+-#endif
+ 	if (vdev->queue && vdev->queue->lock &&
+ 			(v4l2_ioctls[_IOC_NR(cmd)].flags & INFO_FL_QUEUE))
+ 		return vdev->queue->lock;
+diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h
+index 53b4dbb..b5b3e00 100644
+--- a/include/media/v4l2-fh.h
++++ b/include/media/v4l2-fh.h
+@@ -53,9 +53,7 @@ struct v4l2_fh {
+ 	unsigned int		navailable;
+ 	u32			sequence;
+ 
+-#if IS_ENABLED(CONFIG_V4L2_MEM2MEM_DEV)
+ 	struct v4l2_m2m_ctx	*m2m_ctx;
+-#endif
+ };
+ 
+ /**
+-- 
+2.7.4
+
