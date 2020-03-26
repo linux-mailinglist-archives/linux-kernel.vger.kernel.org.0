@@ -2,102 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C59193867
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 07:14:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E71E1193870
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 07:17:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbgCZGOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 02:14:50 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:62855 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbgCZGOu (ORCPT
+        id S1726292AbgCZGRE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 02:17:04 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:41782 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbgCZGRD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 02:14:50 -0400
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 02Q6ERNC010464;
-        Thu, 26 Mar 2020 15:14:27 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 02Q6ERNC010464
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1585203268;
-        bh=9JvGFXDbXf0WHwUuU/6/XuO+PW6RcH+NvJKjNlcv4ZM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=De9gZQ+3D+HbdIRAHlgDjfw4T2JvNYMxXm9IlpEJy1cYv/ooP/3e8iMk2RZdOc2x4
-         mLD92alU8mMLzIEt/ceThq8ZNHs6RiiEaszrxCC0LcLDXGGVc+0Wcd5VO+es2m5EXl
-         Ci71pbZZQzNnfaOHVNB2RkH8dighd+JP4B48cHPkTaq5iPnYTFuZjtAQWfPj56/bC3
-         xN6/rnG9V2/ZBgoyJUJA7zXkWMI8alq+0W94adSNYqQLmln/ZTnMGDK8dpFBdsFqaw
-         USQF4J4/ArsRS/f29dOdyzBGHm+B5qynMmscRX6HBi3iqHLtW9q26/HvbQagwftIlX
-         neFkPfwtjpvRw==
-X-Nifty-SrcIP: [209.85.221.181]
-Received: by mail-vk1-f181.google.com with SMTP id p123so1400484vkg.1;
-        Wed, 25 Mar 2020 23:14:27 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ285ry1bZZ69SW2N9QpArMN5/EL0PGSwfCVbX0GmSjJGrT8HMRB
-        B6fGqXGNyh1cZv6vnco4qvEJ+ELM8Wfl9CoF9bQ=
-X-Google-Smtp-Source: ADFU+vtR1PkThEG5fof0BkpvSUODBLIJyFZ5IQflhtz2NMxdF8WuPUa/n0iZ8kRCvUgyaSGgVqW4CH7K0FGWSteFi80=
-X-Received: by 2002:a1f:3649:: with SMTP id d70mr3829330vka.12.1585203266653;
- Wed, 25 Mar 2020 23:14:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200324161539.7538-1-masahiroy@kernel.org> <20200324161539.7538-3-masahiroy@kernel.org>
- <CAKwvOdkjiyyt8Ju2j2O4cm1sB34rb_FTgjCRzEiXM6KL4muO_w@mail.gmail.com> <CAKwvOdmWqAUhL5DRg9oQPXzFtogK-0Q-VZ=FWf=Cjm-RJgR4sw@mail.gmail.com>
-In-Reply-To: <CAKwvOdmWqAUhL5DRg9oQPXzFtogK-0Q-VZ=FWf=Cjm-RJgR4sw@mail.gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Thu, 26 Mar 2020 15:13:50 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS+3gq-uL6HF=o2NbZ2udkr+dqAhsvs-XxFs0M9wShJbw@mail.gmail.com>
-Message-ID: <CAK7LNAS+3gq-uL6HF=o2NbZ2udkr+dqAhsvs-XxFs0M9wShJbw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] kbuild: remove AS variable
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
+        Thu, 26 Mar 2020 02:17:03 -0400
+Received: by mail-pg1-f202.google.com with SMTP id m25so3934612pgl.8
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 23:17:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=+SxjJva0YWqxT42y0+cCD4roUNRLjOULUql4d4jTyTI=;
+        b=S2Ut1a4FemVD9Zoec3UCctFsUiTAvIJKEHmJLdisnxkdN1QAmnv7kUCCGObqlXGywG
+         y11PUqJTLCd2pzRTATD1VEWCVRT+whbEo8ULNoJHo/iiZ+HR/ytJpFnw//IdN6ehY2bc
+         cF1Ir8+jaJUqJWqQse+nBtttB6IVOU0NI+f594KuonTEodvlE6sOXKy8B/MlIdL22X+A
+         TLPLFio2kcOT5Xh1chrb/ZZzqp7+5ZpJ6G8tgY3/oqf2T3w2XkY038nFERVrfEod3K2e
+         QZemx+O3sr4+ZAA79fr/cEHqIX85qwabSve279SYHkLZC7Yf2iU3Qilch59sfklhcdwf
+         LvbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=+SxjJva0YWqxT42y0+cCD4roUNRLjOULUql4d4jTyTI=;
+        b=klx75BseazJAEL7C0qPLGXSr1IXVgvE+yH3JjkvlJaU3xzHaP+CnQw35WWwM1KBTYc
+         yhE9isVHLKL5q5PlKqAR33GRaKmE3/CmB5aUHR34fQnKpkCWRE+t3aKTuEEDnPb2C7g1
+         YRr81JpnIqeNTKQEJ6bw3V0Ab+rGPtnJOTONSAJ607oX7j3yUmxqT9ANCTz9Cz+b0tLU
+         8/78xn+aUnA9M2i/DDi5T+VxqNDhodo4qvnocs1axKBe/iUfq6clGrOpP5KIKVcLt6gv
+         MoSOQdZ3zWyhYJxxW1UTa7i8Ysm30acs9Ag+y7lEsMUdaOgtMya8Ki04ZrSkB79Xe7Tx
+         fs8A==
+X-Gm-Message-State: ANhLgQ0qv+tzB5d6VLIa60ze42B35VRckuU3+xBYSC0NewlRH6l2nzf/
+        O/76whstMUNSV3fxF35Vw/ph/0mKsj/yBLQ=
+X-Google-Smtp-Source: ADFU+vtQ+Z2Scs+XMv1fSFAZCfEtCAWRrDtOmcSf1EJHJYN3e2K+DylCjXC8A/4njqK7vcMXHIqrBg82Yw5Lzog=
+X-Received: by 2002:a17:90b:3752:: with SMTP id ne18mr1415515pjb.143.1585203422125;
+ Wed, 25 Mar 2020 23:17:02 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 23:16:48 -0700
+Message-Id: <20200326061648.78914-1-saravanak@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH v1] slimbus: core: Set fwnode for a device when setting of_node
+From:   Saravana Kannan <saravanak@google.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-team@android.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
+When setting the of_node for a newly created device, also set the
+fwnode. This allows fw_devlink to work for slimbus devices.
 
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+Change-Id: I5505213f8ecca908860a1ad6bbc275ec0f78e4a6
+---
+ drivers/slimbus/core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On Wed, Mar 25, 2020 at 4:59 AM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Tue, Mar 24, 2020 at 12:38 PM Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
-> > consistent in this regard (and not using the compiler as the driver),
->
-> Ah, the preprocessor; we need to preprocess the .S files, .s files are
-> fine (though we have .lds.S files that are not `-x
-> assembler-with-cpp`)
-
-
-Right, there is no '*.s' source file in the kernel tree.
-
-If we want to de-couple $(AS), we must the compilation
-before the assemble stage   ( $(CC) -S ), but
-doing so does not buy us.
-
-So, $(CC) always works as the front-end
-for compiling both .c and .S files.
-
-
-You can see the internal database by
-'make --print-data-base'.
-
-I see the following for  *.S -> *.o rule.
-
-# default
-COMPILE.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(TARGET_MACH) -c
-
-
-So, using $(CC) is the right thing.
-
-
-Even if we keep AS, we cannot do like AS=llvm-as
-since llvm-as is a different kind of tool
-that processes LLVM assembly (.ll) .
-
-
+diff --git a/drivers/slimbus/core.c b/drivers/slimbus/core.c
+index 526e3215d8fe..44228a5b246d 100644
+--- a/drivers/slimbus/core.c
++++ b/drivers/slimbus/core.c
+@@ -163,8 +163,10 @@ static int slim_add_device(struct slim_controller *ctrl,
+ 	INIT_LIST_HEAD(&sbdev->stream_list);
+ 	spin_lock_init(&sbdev->stream_list_lock);
+ 
+-	if (node)
++	if (node) {
+ 		sbdev->dev.of_node = of_node_get(node);
++		sbdev->dev.fwnode = of_fwnode_handle(node);
++	}
+ 
+ 	dev_set_name(&sbdev->dev, "%x:%x:%x:%x",
+ 				  sbdev->e_addr.manf_id,
 -- 
-Best Regards
-Masahiro Yamada
+2.25.1.696.g5e7596f4ac-goog
+
