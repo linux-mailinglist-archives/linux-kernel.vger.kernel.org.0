@@ -2,127 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB561945AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:40:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E284194583
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:36:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbgCZRkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 13:40:22 -0400
-Received: from m9a0014g.houston.softwaregrp.com ([15.124.64.90]:45173 "EHLO
-        m9a0014g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726067AbgCZRkW (ORCPT
+        id S1727899AbgCZRgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 13:36:13 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40906 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgCZRgN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 13:40:22 -0400
-Received: FROM m9a0014g.houston.softwaregrp.com (15.121.0.190) BY m9a0014g.houston.softwaregrp.com WITH ESMTP;
- Thu, 26 Mar 2020 17:38:59 +0000
-Received: from M4W0334.microfocus.com (2002:f78:1192::f78:1192) by
- M9W0067.microfocus.com (2002:f79:be::f79:be) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Thu, 26 Mar 2020 17:35:25 +0000
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (15.124.8.11) by
- M4W0334.microfocus.com (15.120.17.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10 via Frontend Transport; Thu, 26 Mar 2020 17:35:25 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f1kmBDcHu3OmJe7raI2nQ8aTxvsOOuQ1/zXosqDpmUrXAHbeX6W/Hpp4IFjnsPrypDvm38RyNHQxYnnzdD6VtMuyhWlk2IZq8fWGlIDJdKqec2jE77v5AMuvsJeTRf2LMdrWYINNZWsc/BTO2xwB6x+YgIWS454m91wAmJbKrzcWKlm9NPXpoHqmkoNusyDHCw2kZhg9WsUAXBFQ/I6YD7gjGurTe2mRwQuJzvjx4DjFN/p7kQJjVxTQWcZdGwFs8LubmkkxhncHQIuRSbD8l3m+OGkTE7tO2oEE89WoA90QGh3LRDcvemUySOOi3imnoLe0DehvK+GoiBs2MKmqGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KnqIo0rWw/nad9DwT7/GilIxbt/xJbsNb5dSib4DDFg=;
- b=dtFsKP8eOanzz0bRrcRCF5T/2nGMU6H45Z+N2HNi7rylSqcR1oVizSveJxrD9dmNogmNS6wxy3oyZVNW3OA6NZLFqe+EHOVhDqCzYtbP/hCVZYkQzzjrwQ7wwy9JMuvbnNVOti4KSSiKr7858qSPm54HNTcQYSersyHSodkhTYh3LJgRocIQ1rRH6JG4kfpxO8wut5XSXlMPytDcViu3GSg12ctWiafbxSzxNin5feCJI1RimJcumN1RvFhHBDJ9ssO4jVfGlU9UGBjmixfXSO23w7190C1lGXiqqN70ayu4pHQ7kqTFcgddHR7f1IYd2jkMxcH+ro+2f3IX13mTPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=LDuncan@suse.com; 
-Received: from MN2PR18MB3278.namprd18.prod.outlook.com (2603:10b6:208:168::12)
- by MN2PR18MB2832.namprd18.prod.outlook.com (2603:10b6:208:a1::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.22; Thu, 26 Mar
- 2020 17:35:24 +0000
-Received: from MN2PR18MB3278.namprd18.prod.outlook.com
- ([fe80::257e:4933:95ff:e316]) by MN2PR18MB3278.namprd18.prod.outlook.com
- ([fe80::257e:4933:95ff:e316%5]) with mapi id 15.20.2856.019; Thu, 26 Mar 2020
- 17:35:24 +0000
-Subject: Re: [PATCH] scsi:libiscsi:Fix an error count for active session
-To:     "wubo (T)" <wubo40@huawei.com>, Chris Leech <cleech@redhat.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "open-iscsi@googlegroups.com" <open-iscsi@googlegroups.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     linfeilong <linfeilong@huawei.com>,
-        "liuzhiqiang (I)" <liuzhiqiang26@huawei.com>
-References: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6916A28542@DGGEML525-MBS.china.huawei.com>
-From:   Lee Duncan <lduncan@suse.com>
-Message-ID: <d4f7d5e1-1695-488e-2fee-ab562173d079@suse.com>
-Date:   Thu, 26 Mar 2020 10:35:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-In-Reply-To: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6916A28542@DGGEML525-MBS.china.huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0344.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:d::20) To MN2PR18MB3278.namprd18.prod.outlook.com
- (2603:10b6:208:168::12)
+        Thu, 26 Mar 2020 13:36:13 -0400
+Received: by mail-ed1-f65.google.com with SMTP id w26so7832390edu.7;
+        Thu, 26 Mar 2020 10:36:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8+Ugwyc8ML4peI25E2t3UFApnbL9Vw/SvVb5J6/qvFg=;
+        b=lPhMtOCLbROjP2BLncSQ9jCvAf5x53CJgO1FmY67FXg9UduaalPhxePkOSGGXtqTK9
+         z0WTnfs5jhx76mvR2fBXM8pJTy/vfl5CkIWoBaypUI+aRsMoctrlFT6gT9QlAShOFgnJ
+         OhO5lpz0bAsPTpWpObd39j1AxBxVB27cegmgA79Qt25nDojzSsvzXrlT7AVhsGJO3usb
+         v5oEj21GAfemq4xyeQyW6eKyJyWggVhoryC5SX/ealeEiniEmAfv0rAcm1G+50RHQjsG
+         JL2Dauenw6nvMUnF7Y5l67J1GOsQVlc7tdzjQpnUkhpKWVepZ93bUDDJLDbL0HNKA20/
+         C0/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8+Ugwyc8ML4peI25E2t3UFApnbL9Vw/SvVb5J6/qvFg=;
+        b=lhdRqVfm+XFTW+W5/MeVGmZR94S0pr/ubSdgZRAepyA5CCLhYD6z71REH7m1WCoiuO
+         GTEnrNKDIubAFWzQeVj84bHvMdbkaCraFEIfGp3BVxpvxFEMA15KA2+o6DGjZX3tlyeD
+         PoWYxG/pHpbJmNqs+J8zrfO1yRaW0uceixJPtctd5IBDKk3BtlJC7/er6f1SYiisOTt+
+         Pn/mFMrOmz9f/lA8WpOR3DuK1MFL3U88kxaPrgm1TnH4s9Y79GR3AqLXvc+lMth7QQeZ
+         Fl5LLnwH3/YTY3Eu5ooTJgKnxEZfp4WVF/Vq84HCMwcX3YngX1W0q/UhvyPZccNfGJxP
+         /W1Q==
+X-Gm-Message-State: ANhLgQ2V0UXkawr5INrWgtsQ8AS+FQJfS7VMQ+GxCHG195gLZjx1syy/
+        ibyUJWJf/Ucpl/oLPkAcZRc=
+X-Google-Smtp-Source: ADFU+vsrsA/iixmQ2Wh7lUtLnt+k2r/AoPzphAGrjbVY1iT6R8i2W1Zt6miMmd2Qs7O9ItaLYWsZtg==
+X-Received: by 2002:a17:906:fd7:: with SMTP id c23mr9080221ejk.312.1585244170431;
+        Thu, 26 Mar 2020 10:36:10 -0700 (PDT)
+Received: from Ansuel-XPS.localdomain ([79.53.232.203])
+        by smtp.googlemail.com with ESMTPSA id d11sm375409ejd.2.2020.03.26.10.36.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 10:36:09 -0700 (PDT)
+From:   Ansuel Smith <ansuelsmth@gmail.com>
+To:     Andy Gross <agross@kernel.org>
+Cc:     Ajay Kishore <akisho@codeaurora.org>,
+        Ansuel Smith <ansuelsmth@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] pinctrl: qcom: use scm_call to route GPIO irq to Apps
+Date:   Thu, 26 Mar 2020 18:35:24 +0100
+Message-Id: <20200326173524.15236-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.20.3] (73.25.22.216) by LO2P265CA0344.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:d::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.19 via Frontend Transport; Thu, 26 Mar 2020 17:35:21 +0000
-X-Originating-IP: [73.25.22.216]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2c24c07d-2b1b-45cf-15e3-08d7d1ac108d
-X-MS-TrafficTypeDiagnostic: MN2PR18MB2832:
-X-Microsoft-Antispam-PRVS: <MN2PR18MB283211C8EB5000542FD82D5BDACF0@MN2PR18MB2832.namprd18.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-Forefront-PRVS: 0354B4BED2
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(136003)(39860400002)(366004)(376002)(396003)(66946007)(66476007)(54906003)(81166006)(110136005)(81156014)(8936002)(478600001)(8676002)(316002)(4744005)(52116002)(16576012)(5660300002)(66556008)(86362001)(2616005)(53546011)(26005)(6486002)(2906002)(956004)(31686004)(6666004)(186003)(31696002)(36756003)(4326008)(16526019);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR18MB2832;H:MN2PR18MB3278.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
-Received-SPF: None (protection.outlook.com: suse.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: OsC5z7JC2D5SUjOUQ9B81ly2Qi13yw1VtuxjuKGtKILoqiQA3wr0ZN/qpFzM4HEynjIoQWmMKXOmDoA++9CJ/IDWnOM7cDfDiNEhOtj0+eRk5XET31hrifrQYy4aZHAa0sXAdCJRoF7GWHkNonVori84tkLj3tMdOdWIlhqDtBU9z6vr2ElLf/FE7DLhJI9DjrYREiMXRzQo7VHh0THqJoSgX/mwdzJ2f5c1jffJFg9h9fc5POAFlAKFH0F2gnfxWEctCNsXIJ3Xa4X+UKCdf6G8BahGeymgAslnG4Z/KTMSjMH9I74h6gJuM57kjNBRDJXu3RMvSONBk1ONsutjI/aCL16kmY3fEe5L/F9o+futpi0h+sYJBhqnT0Miwtl9YvjdQOePoJKbWFUa9vZdQhFcSCkwxPurvbq47AmdB3PCGhv2OmBpUYBnYTcSP+tE
-X-MS-Exchange-AntiSpam-MessageData: 18rljXGFLzYfsse4D4ibEdKFjMQVFzf527KTxrn5rTevyusXHTtxkp/TWAX/7kdLs1BShalizHvcEiDVQSkVwYVSh7K2BsXR3YnJVqThFSCQS6OGCEEb+Zp9ys7UmUkRoLOE08aKXjJaOUJx1TnzPA==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c24c07d-2b1b-45cf-15e3-08d7d1ac108d
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2020 17:35:24.1414
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 856b813c-16e5-49a5-85ec-6f081e13b527
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QDA8oTcSZG2Xl0DGKj+NCwTTKQEuddpz2e8tK/788MOwE7Vzdt9gWKHSJgNGpw8AnsTKtT6bjCwhLF4jvt5V5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2832
-X-OriginatorOrg: suse.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/24/20 11:53 PM, wubo (T) wrote:
-> From: Wu Bo <wubo40@huawei.com>
-> 
-> Fix an error count for active session if the total_cmds is invalid 
-> on the function iscsi_session_setup().
-> decrement the number of active sessions before the func return.
-> 
-> Signed-off-by: Wu Bo <wubo40@huawei.com>
-> ---
->  drivers/scsi/libiscsi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
-> index 70b99c0..b7158eb 100644
-> --- a/drivers/scsi/libiscsi.c
-> +++ b/drivers/scsi/libiscsi.c
-> @@ -2771,7 +2771,7 @@ struct iscsi_cls_session *
->                        "must be a power of 2.\n", total_cmds);
->                 total_cmds = rounddown_pow_of_two(total_cmds);
->                 if (total_cmds < ISCSI_TOTAL_CMDS_MIN)
-> -                       return NULL;
-> +                       goto dec_session_count;
->                 printk(KERN_INFO "iscsi: Rounding can_queue to %d.\n",
->                        total_cmds);
->         }
-> --
-> 1.8.3.1
-> 
+From: Ajay Kishore <akisho@codeaurora.org>
 
-Reviewed-by: Lee Duncan <lduncan@suuse.com>
+For IPQ806x targets, TZ protects the registers that are used to
+configure the routing of interrupts to a target processor.
+To resolve this, this patch uses scm call to route GPIO interrupts
+to application processor. Also the scm call interface is changed.
+
+Signed-off-by: Ajay Kishore <akisho@codeaurora.org>
+Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+---
+v2:
+* Move static varibale in msm_pinctrl struct
+* Revert '4b024225c4a8 ("pinctrl: use devm_platform_ioremap_resource() to simplify code")'
+  to get base_reg addr
+
+ drivers/pinctrl/qcom/pinctrl-msm.c | 37 ++++++++++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 9a8daa256a32..9627ebd41ff9 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -22,6 +22,8 @@
+ #include <linux/reboot.h>
+ #include <linux/pm.h>
+ #include <linux/log2.h>
++#include <linux/qcom_scm.h>
++#include <linux/io.h>
+ 
+ #include <linux/soc/qcom/irq.h>
+ 
+@@ -60,6 +62,9 @@ struct msm_pinctrl {
+ 	struct irq_chip irq_chip;
+ 	int irq;
+ 
++	int route_to_apps;
++	u32 base_reg;
++
+ 	raw_spinlock_t lock;
+ 
+ 	DECLARE_BITMAP(dual_edge_irqs, MAX_NR_GPIO);
+@@ -883,10 +888,27 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 		clear_bit(d->hwirq, pctrl->dual_edge_irqs);
+ 
+ 	/* Route interrupts to application cpu */
+-	val = msm_readl_intr_target(pctrl, g);
+-	val &= ~(7 << g->intr_target_bit);
+-	val |= g->intr_target_kpss_val << g->intr_target_bit;
+-	msm_writel_intr_target(val, pctrl, g);
++	if (pctrl->route_to_apps && pctrl->base_reg) {
++		u32 addr = pctrl->base_reg + g->intr_target_reg;
++		int ret;
++
++		qcom_scm_io_readl(addr, &val);
++
++		val &= ~(7 << g->intr_target_bit);
++		val |= g->intr_target_kpss_val << g->intr_target_bit;
++
++		ret = qcom_scm_io_writel(addr, val);
++		if (ret)
++			dev_err(pctrl->dev,
++				"Failed routing %lu interrupt to Apps proc",
++				d->hwirq);
++		}
++	} else {
++		val = msm_readl_intr_target(pctrl, g);
++		val &= ~(7 << g->intr_target_bit);
++		val |= g->intr_target_kpss_val << g->intr_target_bit;
++		msm_writel_intr_target(val, pctrl, g);
++	}
+ 
+ 	/* Update configuration for gpio.
+ 	 * RAW_STATUS_EN is left on for all gpio irqs. Due to the
+@@ -1241,6 +1263,8 @@ int msm_pinctrl_probe(struct platform_device *pdev,
+ 	pctrl->dev = &pdev->dev;
+ 	pctrl->soc = soc_data;
+ 	pctrl->chip = msm_gpio_template;
++	pctrl->route_to_apps = of_device_is_compatible(pctrl->dev->of_node,
++					"qcom,ipq8064-pinctrl");
+ 
+ 	raw_spin_lock_init(&pctrl->lock);
+ 
+@@ -1253,9 +1277,12 @@ int msm_pinctrl_probe(struct platform_device *pdev,
+ 				return PTR_ERR(pctrl->regs[i]);
+ 		}
+ 	} else {
+-		pctrl->regs[0] = devm_platform_ioremap_resource(pdev, 0);
++		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++		pctrl->regs[0] = devm_ioremap_resource(&pdev->dev, res);
+ 		if (IS_ERR(pctrl->regs[0]))
+ 			return PTR_ERR(pctrl->regs[0]);
++		else
++			pctrl->base_reg = res->start;
+ 	}
+ 
+ 	msm_pinctrl_setup_pm_reset(pctrl);
+-- 
+2.25.1
+
