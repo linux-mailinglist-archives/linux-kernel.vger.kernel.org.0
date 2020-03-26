@@ -2,432 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B11D31948D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:28:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12C901948C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:27:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbgCZU16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 16:27:58 -0400
-Received: from smtp-bc08.mail.infomaniak.ch ([45.157.188.8]:35027 "EHLO
-        smtp-bc08.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728729AbgCZU14 (ORCPT
+        id S1728736AbgCZU1o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 16:27:44 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53552 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728658AbgCZU1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:27:56 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 48pGkw5RH1zlj7tm;
-        Thu, 26 Mar 2020 21:27:52 +0100 (CET)
-Received: from localhost (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 48pGkw2Sb5zlkchT;
-        Thu, 26 Mar 2020 21:27:52 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v15 10/10] landlock: Add user and kernel documentation
-Date:   Thu, 26 Mar 2020 21:27:31 +0100
-Message-Id: <20200326202731.693608-11-mic@digikod.net>
-X-Mailer: git-send-email 2.26.0.rc2
-In-Reply-To: <20200326202731.693608-1-mic@digikod.net>
-References: <20200326202731.693608-1-mic@digikod.net>
+        Thu, 26 Mar 2020 16:27:43 -0400
+Received: by mail-wm1-f68.google.com with SMTP id b12so8395054wmj.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 13:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jktZmsbVaYfCQgFOQaxsmSKFGgjNxgTE596K7P299tE=;
+        b=NW6aBYcPaS+mV12mZI3RwuGwl661E+UeEa0aLD0xlene0yT8jFuQjiyMO8Egf9E1/J
+         hW5U6XeM9hERkrwd9JblHkbFP/0Pd/TA5sixZ8NXNoA7UTXPJTjRjvCSqBZGo6ZC98mD
+         8U0G0eT/ySTliP/NyqtRXcichG/ZtK3sg0q0E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jktZmsbVaYfCQgFOQaxsmSKFGgjNxgTE596K7P299tE=;
+        b=YgCHm0QNVlBFPOAz+UuK3SQv8h+B72QCoRSpQ/+2mewp4QYMMwMaT0DbiqEzAlxW4U
+         62Fi1QD96ipoK6GlwJqItwq58flyLo1negCtM+DwZ6hDxDv1DPtsIsNvQ7f75HHEl1Gp
+         DkSM2HUnL5i+ZLd/UupQ7vGJ3goz4XBJszAvugMEyP08LUlPMz2XuA6DcPYz2gn2dI2B
+         l+vFFaIqQIpKF9jjTnnfdMe+YTISJYNiL30BBMSxGtnMbDosYauHe9+Pg9S4FrvHGRkA
+         5GhwoXVmKrbfF8g7SZ0IhBBN2ZXDUabOykFf+/35aR/YwlNtsMGWnEf+bvqMtcBoTSmH
+         vtYA==
+X-Gm-Message-State: ANhLgQ07OxK/rC8LNrq4m0sPq4NV+1tC7GD+1l3tGZUFjhBUs9Lm2qmv
+        5lY5RZ/j+7ynMzUK+XCG7oRYUg==
+X-Google-Smtp-Source: ADFU+vtPU+HGPWL46bllQ2v2aFSum+2CVfuDGlxDWR+RJJM/9IcDZhej6z0Z7gBtu6+LExlU9PYARw==
+X-Received: by 2002:adf:d4ce:: with SMTP id w14mr11426931wrk.101.1585254461368;
+        Thu, 26 Mar 2020 13:27:41 -0700 (PDT)
+Received: from [10.230.26.36] ([192.19.224.250])
+        by smtp.gmail.com with ESMTPSA id f14sm5010601wmb.3.2020.03.26.13.27.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Mar 2020 13:27:40 -0700 (PDT)
+Subject: Re: [PATCH 1/3] PCI: iproc: fix out of bound array access
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bharat Gooty <bharat.gooty@broadcom.com>
+References: <20200326194810.GA11112@google.com>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <4a836faf-645d-a1ab-d525-738a318758a0@broadcom.com>
+Date:   Thu, 26 Mar 2020 13:27:36 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+In-Reply-To: <20200326194810.GA11112@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This documentation can be built with the Sphinx framework.
+Hi Bjorn,
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Reviewed-by: Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: James Morris <jmorris@namei.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
----
+On 3/26/2020 12:48 PM, Bjorn Helgaas wrote:
+> Change subject to match convention, e.g.,
+> 
+>   PCI: iproc: Fix out-of-bound array accesses
+> 
+> On Thu, Mar 26, 2020 at 12:37:25PM +0530, Srinath Mannam wrote:
+>> From: Bharat Gooty <bharat.gooty@broadcom.com>
+>>
+>> Declare the full size array for all revisions of PAX register sets
+>> to avoid potentially out of bound access of the register array
+>> when they are being initialized in the 'iproc_pcie_rev_init'
+>> function.
+> 
+> s/the 'iproc_pcie_rev_init' function/iproc_pcie_rev_init()/
+> 
+> It's outside the scope of this patch, but I'm not really a fan of the
+> pcie->reg_offsets[] scheme this driver uses to deal with these
+> differences.  There usually seems to be *something* that keeps the
+> driver from referencing registers that don't exist, but it doesn't
+> seem like the mechanism is very consistent or robust:
+> 
+>   - IPROC_PCIE_LINK_STATUS is implemented by PAXB but not PAXC.
+>     iproc_pcie_check_link() avoids using it if "ep_is_internal", which
+>     is set for PAXC and PAXC_V2.  Not an obvious connection.
+> 
+>   - IPROC_PCIE_CLK_CTRL is implemented for PAXB and PAXC_V1, but not
+>     PAXC_V2.  iproc_pcie_perst_ctrl() avoids using it ep_is_internal",
+>     so it *doesn't* use it for PAXC_V1, which does implement it.
+>     Maybe a bug, maybe intentional; I can't tell.
+> 
+>   - IPROC_PCIE_INTX_EN is only implemented by PAXB (not PAXC), but
+>     AFAICT, we always call iproc_pcie_enable() and rely on
+>     iproc_pcie_write_reg() silently drop the write to it on PAXC.
+> 
+>   - IPROC_PCIE_OARR0 is implemented by PAXB and PAXB_V2 and used by
+>     iproc_pcie_map_ranges(), which is called if "need_ob_cfg", which
+>     is set if there's a "brcm,pcie-ob" DT property.  No clear
+>     connection to PAXB.
+> 
+> I think it would be more readable if we used a single variant
+> identifier consistently, e.g., the "pcie->type" already used in
+> iproc_pcie_msi_steer(), or maybe a set of variant-specific function
+> pointers as pcie-qcom.c does.
+> 
 
-Changes since v14:
-* Fix spelling (contributed by Randy Dunlap).
-* Extend documentation about inheritance and explain layer levels.
-* Remove the use of now-removed access rights.
-* Use GitHub links.
-* Improve kernel documentation.
-* Add section for tests.
-* Update example.
+It is not possible to use a single variant identifier consistently,
+i.e., 'pcie->type'. Many of these features are controller revision
+specific, and certain revisions of the controllers may all have a
+certain feature, while other revisions of the controllers do not. In
+addition, there are overlap in features across different controllers.
 
-Changes since v13:
-* Rewrote the documentation according to the major revamp.
+IMO, it makes sense to have feature specific flags or booleans, and have
+those features enabled or disabled based on 'pcie->type', which is what
+the current driver does, but like you pointed out, what the driver
+failed is to do this consistently.
 
-Previous version:
-https://lore.kernel.org/lkml/20191104172146.30797-8-mic@digikod.net/
----
- Documentation/security/index.rst           |   1 +
- Documentation/security/landlock/index.rst  |  18 ++
- Documentation/security/landlock/kernel.rst |  69 +++++++
- Documentation/security/landlock/user.rst   | 227 +++++++++++++++++++++
- 4 files changed, 315 insertions(+)
- create mode 100644 Documentation/security/landlock/index.rst
- create mode 100644 Documentation/security/landlock/kernel.rst
- create mode 100644 Documentation/security/landlock/user.rst
+The IPROC_PCIE_INTX_EN example you pointed out is a good example. I
+agree with you that we shouldn't rely on iproc_pcie_write_reg to
+silently drop the operation for PAXC. We should add code to make it
+explictly obvious that legacy interrupt is not supported in all PAXC
+controllers.
 
-diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
-index fc503dd689a7..4d213e76ddf4 100644
---- a/Documentation/security/index.rst
-+++ b/Documentation/security/index.rst
-@@ -15,3 +15,4 @@ Security Documentation
-    self-protection
-    siphash
-    tpm/index
-+   landlock/index
-diff --git a/Documentation/security/landlock/index.rst b/Documentation/security/landlock/index.rst
-new file mode 100644
-index 000000000000..2520f8f33f5e
---- /dev/null
-+++ b/Documentation/security/landlock/index.rst
-@@ -0,0 +1,18 @@
-+=========================================
-+Landlock LSM: unprivileged access control
-+=========================================
-+
-+:Author: Mickaël Salaün
-+
-+The goal of Landlock is to enable to restrict ambient rights (e.g.  global
-+filesystem access) for a set of processes.  Because Landlock is a stackable
-+LSM, it makes possible to create safe security sandboxes as new security layers
-+in addition to the existing system-wide access-controls. This kind of sandbox
-+is expected to help mitigate the security impact of bugs or
-+unexpected/malicious behaviors in user-space applications. Landlock empowers
-+any process, including unprivileged ones, to securely restrict themselves.
-+
-+.. toctree::
-+
-+    user
-+    kernel
-diff --git a/Documentation/security/landlock/kernel.rst b/Documentation/security/landlock/kernel.rst
-new file mode 100644
-index 000000000000..0211ef5df06f
---- /dev/null
-+++ b/Documentation/security/landlock/kernel.rst
-@@ -0,0 +1,69 @@
-+==============================
-+Landlock: kernel documentation
-+==============================
-+
-+Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
-+harden a whole system, this feature should be available to any process,
-+including unprivileged ones.  Because such process may be compromised or
-+backdoored (i.e. untrusted), Landlock's features must be safe to use from the
-+kernel and other processes point of view.  Landlock's interface must therefore
-+expose a minimal attack surface.
-+
-+Landlock is designed to be usable by unprivileged processes while following the
-+system security policy enforced by other access control mechanisms (e.g. DAC,
-+LSM).  Indeed, a Landlock rule shall not interfere with other access-controls
-+enforced on the system, only add more restrictions.
-+
-+Any user can enforce Landlock rulesets on their processes.  They are merged and
-+evaluated according to the inherited ones in a way that ensures that only more
-+constraints can be added.
-+
-+Guiding principles for safe access controls
-+===========================================
-+
-+* A Landlock rule shall be focused on access control on kernel objects instead
-+  of syscall filtering (i.e. syscall arguments), which is the purpose of
-+  seccomp-bpf.
-+* To avoid multiple kinds of side-channel attacks (e.g. leak of security
-+  policies, CPU-based attacks), Landlock rules shall not be able to
-+  programmatically communicate with user space.
-+* Kernel access check shall not slow down access request from unsandboxed
-+  processes.
-+* Computation related to Landlock operations (e.g. enforce a ruleset) shall
-+  only impact the processes requesting them.
-+
-+Tests
-+=====
-+
-+Userspace tests for backward compatibility, ptrace restrictions and filesystem
-+support can be found here: `tools/testing/selftests/landlock/`_.
-+
-+Kernel structures
-+=================
-+
-+Object
-+------
-+
-+.. kernel-doc:: security/landlock/object.h
-+    :identifiers:
-+
-+Ruleset and domain
-+------------------
-+
-+A domain is a read-only ruleset tied to a set of subjects (i.e. tasks'
-+credentials).  Each time a ruleset is enforced on a task, the current domain is
-+duplicated and the ruleset is imported as a new layer of rules in the new
-+domain.  Indeed, once in a domain, each rule is tied to a layer level.  To
-+grant access to an object, at least one rule of each layer must allow the
-+requested action on the object.  A task can then only transit to a new domain
-+which is the intersection of the constraints from the current domain and those
-+of a ruleset provided by the task.
-+
-+The definition of a subject is implicit for a task sandboxing itself, which
-+makes the reasoning much easier and helps avoid pitfalls.
-+
-+.. kernel-doc:: security/landlock/ruleset.h
-+    :identifiers:
-+
-+.. Links
-+.. _tools/testing/selftests/landlock/: https://github.com/landlock-lsm/linux/tree/landlock-v15/tools/testing/selftests/landlock/
-diff --git a/Documentation/security/landlock/user.rst b/Documentation/security/landlock/user.rst
-new file mode 100644
-index 000000000000..8f34d1cf1e03
---- /dev/null
-+++ b/Documentation/security/landlock/user.rst
-@@ -0,0 +1,227 @@
-+=================================
-+Landlock: userspace documentation
-+=================================
-+
-+Landlock rules
-+==============
-+
-+A Landlock rule enables to describe an action on an object.  An object is
-+currently a file hierarchy, and the related filesystem actions are defined in
-+`Access rights`_.  A set of rules is aggregated in a ruleset, which can then
-+restrict the thread enforcing it, and its future children.
-+
-+Defining and enforcing a security policy
-+----------------------------------------
-+
-+Before defining a security policy, an application should first probe for the
-+features supported by the running kernel, which is important to be compatible
-+with older kernels.  This can be done thanks to the `landlock` syscall (cf.
-+:ref:`syscall`).
-+
-+.. code-block:: c
-+
-+    struct landlock_attr_features attr_features;
-+
-+    if (landlock(LANDLOCK_CMD_GET_FEATURES, LANDLOCK_OPT_GET_FEATURES,
-+            sizeof(attr_features), &attr_features)) {
-+        perror("Failed to probe the Landlock supported features");
-+        return 1;
-+    }
-+
-+Then, we need to create the ruleset that will contain our rules.  For this
-+example, the ruleset will contain rules which only allow read actions, but
-+write actions will be denied.  The ruleset then needs to handle both of these
-+kind of actions.  To have a backward compatibility, these actions should be
-+ANDed with the supported ones.
-+
-+.. code-block:: c
-+
-+    int ruleset_fd;
-+    struct landlock_attr_ruleset ruleset = {
-+        .handled_access_fs =
-+            LANDLOCK_ACCESS_FS_EXECUTE |
-+            LANDLOCK_ACCESS_FS_WRITE_FILE |
-+            LANDLOCK_ACCESS_FS_READ_FILE |
-+            LANDLOCK_ACCESS_FS_READ_DIR |
-+            LANDLOCK_ACCESS_FS_LINK_TO |
-+            LANDLOCK_ACCESS_FS_RENAME_FROM |
-+            LANDLOCK_ACCESS_FS_RENAME_TO |
-+            LANDLOCK_ACCESS_FS_RMDIR |
-+            LANDLOCK_ACCESS_FS_UNLINK |
-+            LANDLOCK_ACCESS_FS_MAKE_CHAR |
-+            LANDLOCK_ACCESS_FS_MAKE_DIR |
-+            LANDLOCK_ACCESS_FS_MAKE_REG |
-+            LANDLOCK_ACCESS_FS_MAKE_SOCK |
-+            LANDLOCK_ACCESS_FS_MAKE_FIFO |
-+            LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-+            LANDLOCK_ACCESS_FS_MAKE_SYM,
-+    };
-+
-+    ruleset.handled_access_fs &= attr_features.access_fs;
-+    ruleset_fd = landlock(LANDLOCK_CMD_CREATE_RULESET,
-+                    LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
-+    if (ruleset_fd < 0) {
-+        perror("Failed to create a ruleset");
-+        return 1;
-+    }
-+
-+We can now add a new rule to this ruleset thanks to the returned file
-+descriptor referring to this ruleset.  The rule will only enable to read the
-+file hierarchy ``/usr``.  Without another rule, write actions would then be
-+denied by the ruleset.  To add ``/usr`` to the ruleset, we open it with the
-+``O_PATH`` flag and fill the &struct landlock_attr_path_beneath with this file
-+descriptor.
-+
-+.. code-block:: c
-+
-+    int err;
-+    struct landlock_attr_path_beneath path_beneath = {
-+        .ruleset_fd = ruleset_fd,
-+        .allowed_access =
-+            LANDLOCK_ACCESS_FS_EXECUTE |
-+            LANDLOCK_ACCESS_FS_READ_FILE |
-+            LANDLOCK_ACCESS_FS_READ_DIR,
-+    };
-+
-+    path_beneath.allowed_access &= attr_features.access_fs;
-+    path_beneath.parent_fd = open("/usr", O_PATH | O_CLOEXEC);
-+    if (path_beneath.parent_fd < 0) {
-+        perror("Failed to open file");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+    err = landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
-+            sizeof(path_beneath), &path_beneath);
-+    close(path_beneath.parent_fd);
-+    if (err) {
-+        perror("Failed to update ruleset");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+
-+We now have a ruleset with one rule allowing read access to ``/usr`` while
-+denying all accesses featured in ``attr_features.access_fs`` to everything else
-+on the filesystem.  The next step is to restrict the current thread from
-+gaining more privileges (e.g. thanks to a SUID binary).
-+
-+.. code-block:: c
-+
-+    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-+        perror("Failed to restrict privileges");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+
-+The current thread is now ready to sandbox itself with the ruleset.
-+
-+.. code-block:: c
-+
-+    struct landlock_attr_enforce attr_enforce = {
-+        .ruleset_fd = ruleset_fd,
-+    };
-+
-+    if (landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET,
-+            sizeof(attr_enforce), &attr_enforce)) {
-+        perror("Failed to enforce ruleset");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+    close(ruleset_fd);
-+
-+If the last `landlock` system call succeeds, the current thread is now
-+restricted and this policy will be enforced on all its subsequently created
-+children as well.  Once a thread is landlocked, there is no way to remove its
-+security policy; only adding more restrictions is allowed.  These threads are
-+now in a new Landlock domain, merge of their parent one (if any) with the new
-+ruleset.
-+
-+Full working code can be found in `samples/landlock/sandboxer.c`_.
-+
-+Inheritance
-+-----------
-+
-+Every new thread resulting from a :manpage:`clone(2)` inherits Landlock domain
-+restrictions from its parent.  This is similar to the seccomp inheritance (cf.
-+:doc:`/userspace-api/seccomp_filter`) or any other LSM dealing with task's
-+:manpage:`credentials(7)`.  For instance, one process's thread may apply
-+Landlock rules to itself, but they will not be automatically applied to other
-+sibling threads (unlike POSIX thread credential changes, cf.
-+:manpage:`nptl(7)`).
-+
-+When a thread sandbox itself, we have the grantee that the related security
-+policy will stay enforced on all this thread's descendants.  This enables to
-+create standalone and modular security policies per application, which will
-+automatically be composed between themselves according to their runtime parent
-+policies.
-+
-+Ptrace restrictions
-+-------------------
-+
-+A sandboxed process has less privileges than a non-sandboxed process and must
-+then be subject to additional restrictions when manipulating another process.
-+To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
-+process, a sandboxed process should have a subset of the target process rules,
-+which means the tracee must be in a sub-domain of the tracer.
-+
-+.. _syscall:
-+
-+The `landlock` syscall and its arguments
-+========================================
-+
-+.. kernel-doc:: security/landlock/syscall.c
-+    :identifiers: sys_landlock
-+
-+Commands
-+--------
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :identifiers: landlock_cmd
-+
-+Options
-+-------
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :identifiers: options_intro
-+                  options_get_features options_create_ruleset
-+                  options_add_rule options_enforce_ruleset
-+
-+Attributes
-+----------
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :identifiers: landlock_attr_features landlock_attr_ruleset
-+                  landlock_attr_path_beneath landlock_attr_enforce
-+
-+Access rights
-+-------------
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :identifiers: fs_access
-+
-+Questions and answers
-+=====================
-+
-+What about user space sandbox managers?
-+---------------------------------------
-+
-+Using user space process to enforce restrictions on kernel resources can lead
-+to race conditions or inconsistent evaluations (i.e. `Incorrect mirroring of
-+the OS code and state
-+<https://www.ndss-symposium.org/ndss2003/traps-and-pitfalls-practical-problems-system-call-interposition-based-security-tools/>`_).
-+
-+What about namespaces and containers?
-+-------------------------------------
-+
-+Namespaces can help create sandboxes but they are not designed for
-+access-control and then miss useful features for such use case (e.g. no
-+fine-grained restrictions).  Moreover, their complexity can lead to security
-+issues, especially when untrusted processes can manipulate them (cf.
-+`Controlling access to user namespaces <https://lwn.net/Articles/673597/>`_).
-+
-+Additional documentation
-+========================
-+
-+See https://landlock.io
-+
-+.. Links
-+.. _samples/landlock/sandboxer.c: https://github.com/landlock-lsm/linux/tree/landlock-v15/samples/landlock/sandboxer.c
--- 
-2.26.0.rc2
+pcie->pcie->reg_offsets[] scheme was not intended to be used to silently
+drop register access that are activated based on features. It's a
+mistake that should be fixed if some code in the driver is done that
+way, as you pointed out. The intention of reg_offsets[] is to allow many
+of the code in this driver be made generic, and shared between different
+revisions of the driver.
 
+Thanks,
+
+Ray
+
+>> Fixes: 06324ede76cdf ("PCI: iproc: Improve core register population")
+>> Signed-off-by: Bharat Gooty <bharat.gooty@broadcom.com>
+>> ---
+>>  drivers/pci/controller/pcie-iproc.c | 10 +++++-----
+>>  1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+>> index 0a468c7..6972ca4 100644
+>> --- a/drivers/pci/controller/pcie-iproc.c
+>> +++ b/drivers/pci/controller/pcie-iproc.c
+>> @@ -307,7 +307,7 @@ enum iproc_pcie_reg {
+>>  };
+>>  
+>>  /* iProc PCIe PAXB BCMA registers */
+>> -static const u16 iproc_pcie_reg_paxb_bcma[] = {
+>> +static const u16 iproc_pcie_reg_paxb_bcma[IPROC_PCIE_MAX_NUM_REG] = {
+>>  	[IPROC_PCIE_CLK_CTRL]		= 0x000,
+>>  	[IPROC_PCIE_CFG_IND_ADDR]	= 0x120,
+>>  	[IPROC_PCIE_CFG_IND_DATA]	= 0x124,
+>> @@ -318,7 +318,7 @@ static const u16 iproc_pcie_reg_paxb_bcma[] = {
+>>  };
+>>  
+>>  /* iProc PCIe PAXB registers */
+>> -static const u16 iproc_pcie_reg_paxb[] = {
+>> +static const u16 iproc_pcie_reg_paxb[IPROC_PCIE_MAX_NUM_REG] = {
+>>  	[IPROC_PCIE_CLK_CTRL]		= 0x000,
+>>  	[IPROC_PCIE_CFG_IND_ADDR]	= 0x120,
+>>  	[IPROC_PCIE_CFG_IND_DATA]	= 0x124,
+>> @@ -334,7 +334,7 @@ static const u16 iproc_pcie_reg_paxb[] = {
+>>  };
+>>  
+>>  /* iProc PCIe PAXB v2 registers */
+>> -static const u16 iproc_pcie_reg_paxb_v2[] = {
+>> +static const u16 iproc_pcie_reg_paxb_v2[IPROC_PCIE_MAX_NUM_REG] = {
+>>  	[IPROC_PCIE_CLK_CTRL]		= 0x000,
+>>  	[IPROC_PCIE_CFG_IND_ADDR]	= 0x120,
+>>  	[IPROC_PCIE_CFG_IND_DATA]	= 0x124,
+>> @@ -363,7 +363,7 @@ static const u16 iproc_pcie_reg_paxb_v2[] = {
+>>  };
+>>  
+>>  /* iProc PCIe PAXC v1 registers */
+>> -static const u16 iproc_pcie_reg_paxc[] = {
+>> +static const u16 iproc_pcie_reg_paxc[IPROC_PCIE_MAX_NUM_REG] = {
+>>  	[IPROC_PCIE_CLK_CTRL]		= 0x000,
+>>  	[IPROC_PCIE_CFG_IND_ADDR]	= 0x1f0,
+>>  	[IPROC_PCIE_CFG_IND_DATA]	= 0x1f4,
+>> @@ -372,7 +372,7 @@ static const u16 iproc_pcie_reg_paxc[] = {
+>>  };
+>>  
+>>  /* iProc PCIe PAXC v2 registers */
+>> -static const u16 iproc_pcie_reg_paxc_v2[] = {
+>> +static const u16 iproc_pcie_reg_paxc_v2[IPROC_PCIE_MAX_NUM_REG] = {
+>>  	[IPROC_PCIE_MSI_GIC_MODE]	= 0x050,
+>>  	[IPROC_PCIE_MSI_BASE_ADDR]	= 0x074,
+>>  	[IPROC_PCIE_MSI_WINDOW_SIZE]	= 0x078,
+>> -- 
+>> 2.7.4
+>>
