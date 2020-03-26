@@ -2,138 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83DB81941C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:44:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CB871941D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:46:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbgCZOoj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 10:44:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52416 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728172AbgCZOoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:44:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 72A88AC22;
-        Thu, 26 Mar 2020 14:44:31 +0000 (UTC)
-Date:   Thu, 26 Mar 2020 15:44:30 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     tglx@linutronix.de, jpoimboe@redhat.com,
-        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org
-Subject: Re: [PATCH v4 01/13] objtool: Remove CFI save/restore special case
-In-Reply-To: <20200326125844.GD20760@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.LSU.2.21.2003261537380.17254@pobox.suse.cz>
-References: <20200325174525.772641599@infradead.org> <20200325174605.369570202@infradead.org> <20200326113049.GD20696@hirez.programming.kicks-ass.net> <20200326125844.GD20760@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727832AbgCZOp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 10:45:57 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:40301 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727547AbgCZOp5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 10:45:57 -0400
+Received: by mail-pj1-f67.google.com with SMTP id kx8so2486365pjb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 07:45:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Zf3SgpTviOz3lQwF+V98hRrPph7fFIwjiGfFOD+A1SU=;
+        b=XfrmyTTR0L7MXh44tl5zWiYrnemvAZkEiuBg3/oNahrmvE42MlqkKkqjjd15C4xe/D
+         XhLoeujzT21hjEgZ158tUE7uMNAZOXPey3O+XlobUVICgUziI2rA7FlMcVascSWXD2vK
+         F1ZOxgH+IRfCiQZ5Z6TVdydKwsjgT/au8U7Hk6QhliPgpLUUeShvzFMKh9qXRZ1wal8b
+         l7Jpqo7Z9o+mvTW8HyWcd6dIyHiQuQhyGmW1fVxiIdovLrW4NISxcP7fvtXUDNvl3gp/
+         jwB6ysndmLh9ePO6BzlyjKKClMY607sFQD6GyAL28Bun+Kq43zNu65zaYUgDjVwiu3hk
+         Cu3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Zf3SgpTviOz3lQwF+V98hRrPph7fFIwjiGfFOD+A1SU=;
+        b=hOk5dm0+cA1s/7WZJI2TLFVdkqc0I4VRbkzfYkZH5SL2W8TWwtErNNqP07z9mb8oTv
+         tMUanC0C1MriEj/voqb1i2FHos7zoGXM0T9/1SkJ8+/R/Wl9pZUJWb/el2D3PYmEgCZX
+         27Ji8zU2YgLDQq6AT+8Ibaz86FiuoYdj4f319gwiXPi7b/ihSLQfgSAufH2kLr63M61r
+         RzS36Rn5kHFYvBWjKxybRimMbdaqF2Sxas+Ip7x6pFfZ2Fksfi7eDsFRkLIsQdbf6TyR
+         TlqETmRNC74qe+k0jqIrVeaRmMX3JP29TzUid2vf95hTYOLSJi7Y2HcujgTKleWH2M6a
+         lJ+Q==
+X-Gm-Message-State: ANhLgQ0XlI2XTdew/tG9zpKMrRhui1HVfx03loISmk1OTxzeO3lv0FYx
+        CzI2YIf2eJo88OkAD+JY4V3nUDVbTlzUwPDWSrMrtllG
+X-Google-Smtp-Source: ADFU+vtxsH9sLh9tX9lheGQtfWCJVm0LpiX0BO9m49++P+VTw8qUFrSLHlR0DzEg9rTQmxaBMlAiYO3c2yTgGRsZDVQ=
+X-Received: by 2002:a17:90a:2541:: with SMTP id j59mr376656pje.128.1585233955883;
+ Thu, 26 Mar 2020 07:45:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20200320201539.3a3a8640@canb.auug.org.au> <ca0078e2-89b5-09a7-f61e-7f2906900622@infradead.org>
+ <20200324164709.ux4riz7v7uy32nlj@treble> <39035493-9d5b-9da3-10d4-0af5d1cdb32a@infradead.org>
+ <20200324211303.GQ2452@worktop.programming.kicks-ass.net>
+In-Reply-To: <20200324211303.GQ2452@worktop.programming.kicks-ass.net>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Thu, 26 Mar 2020 15:45:44 +0100
+Message-ID: <CAAeHK+zQDFAnST_EeLGZWVEk10N0O+Ba06rv0QaxE0-BMSC94A@mail.gmail.com>
+Subject: Re: linux-next: Tree for Mar 20 (objtool warnings)
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Mar 2020, Peter Zijlstra wrote:
+On Tue, Mar 24, 2020 at 10:13 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Mar 24, 2020 at 10:53:05AM -0700, Randy Dunlap wrote:
+> > >> kernel/kcov.o: warning: objtool: __sanitizer_cov_trace_pc()+0x89: call to __ubsan_handle_load_invalid_value() with UACCESS enabled
+> > >>
+> >
+> > config-r1510 is attached.
+> > and kcov.o is attached.
+>
+> I'm thinking this is because of commit:
+>
+>   0d6958a70483 kcov: collect coverage from interrupts
+>
+> Which has:
+>
+> @@ -1230,6 +1230,9 @@ struct task_struct {
+>
+> +       bool                            kcov_softirq;
+>
+> @@ -145,9 +157,10 @@ static notrace bool check_kcov_mode(enum kcov_mode needed_mode, struct task_stru
+>
+> +       if (!in_task() && !(in_serving_softirq() && t->kcov_softirq))
+>
+> And this __ubsan_handle_load_invalid_value() is verifying a bool is 0,1.
+>
+> Another reason to hate on _Bool I suppose...
+>
+> Let me see what to do about that... :/
 
-> On Thu, Mar 26, 2020 at 12:30:50PM +0100, Peter Zijlstra wrote:
-> 
-> > There is a special case in the UNWIND_HINT_RESTORE code. When, upon
-> > looking for the UNWIND_HINT_SAVE instruction to restore from, it finds
-> > the instruction hasn't been visited yet, it normally issues a WARN,
-> > except when this HINT_SAVE instruction is the first instruction of
-> > this branch.
-> > 
-> > The reason for this special case comes apparent when we remove it;
-> > code like:
-> > 
-> > 	if (cond) {
-> > 		UNWIND_HINT_SAVE
-> > 		// do stuff
-> > 		UNWIND_HINT_RESTORE
-> > 	}
-> > 	// more stuff
-> > 
-> > will now trigger the warning. This is because UNWIND_HINT_RESTORE is
-> > just a label, and there is nothing keeping it inside the (extended)
-> > basic block covered by @cond. It will attach itself to the first
-> > instruction of 'more stuff' and we'll hit it outside of the @cond,
-> > confusing things.
-> > 
-> > I don't much like this special case, it confuses things and will come
-> > apart horribly if/when the annotation needs to support nesting.
-> > Instead extend the affected code to at least form an extended basic
-> > block.
-> > 
-> > In particular, of the 2 users of this annotation: ftrace_regs_caller()
-> > and sync_core(), only the latter suffers this problem. Extend it's
-> > code sequence with a NOP to make it an extended basic block.
-> > 
-> > This isn't ideal either; stuffing code with NOPs just to make
-> > annotations work is certainly sub-optimal, but given that sync_core()
-> > is stupid expensive in any case, one extra nop isn't going to be a
-> > problem here.
-> 
-> So instr_begin() / instr_end() have this exact problem, but worse. Those
-> actually do nest and I've ran into the following situation:
-> 
-> 	if (cond1) {
-> 		instr_begin();
-> 		// code1
-> 		instr_end();
-> 	}
-> 	// code
-> 
-> 	if (cond2) {
-> 		instr_begin();
-> 		// code2
-> 		instr_end();
-> 	}
-> 	// tail
-> 
-> Where objtool then finds the path: !cond1, cond2, which ends up at code2
-> with 0, instead of 1.
-> 
-> I've also seen:
-> 
-> 	if (cond) {
-> 		instr_begin();
-> 		// code1
-> 		instr_end();
-> 	}
-> 	instr_begin();
-> 	// code2
-> 	instr_end();
-> 
-> Where instr_end() and instr_begin() merge onto the same instruction of
-> code2 as a 0, and again code2 will issue a false warning.
-> 
-> You can also not make objtool lift the end marker to the previous
-> instruction, because then:
-> 
-> 	if (cond1) {
-> 		instr_begin();
-> 		if (cond2) {
-> 			// code2
-> 		}
-> 		instr_end();
-> 	}
-> 
-> Suffers the reverse problem, instr_end() becomes part of the @cond2
-> block and cond1 grows a path that misses it entirely.
-
-One could argue that this is really nasty and the correct way should be
-
-	if (cond1) {
-		if (cond2) {
-			instr_begin();
-			// code2
-			instr_end();
-		}
-	}
-
-Then it should work if instr_begin() marks the next instruction and 
-instr_end() marks the previous one, no? There is a corner case when code2 
-is exactly one instruction, so instr counting would have to be updated.
-
-Hopefully there is a better way.
-
-Miroslav
+Sent v4 patchset with a fix.
