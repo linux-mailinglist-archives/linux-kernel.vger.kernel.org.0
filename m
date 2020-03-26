@@ -2,256 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15800193DB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:12:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A081193DB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:14:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728092AbgCZLM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 07:12:57 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:39876 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727560AbgCZLM5 (ORCPT
+        id S1727970AbgCZLOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 07:14:38 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36928 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbgCZLOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 07:12:57 -0400
-Received: by mail-pj1-f65.google.com with SMTP id z3so1741546pjr.4;
-        Thu, 26 Mar 2020 04:12:55 -0700 (PDT)
+        Thu, 26 Mar 2020 07:14:38 -0400
+Received: by mail-oi1-f194.google.com with SMTP id u20so367339oic.4
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 04:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lDcRAPOAOCjxei5GIfDQABYJpwvJHNWVWIgGygWjlfU=;
-        b=iELsYFB7VpOogk9P9fQpVkKjPl9106/LwwtS35V+SKTH2G9QOEQme56XM0YTTDT0t7
-         JyZMHFe17Ei43hfsUIZEl4y4TY2uOS+1VnORvr90+36VcG0y/qfGqU+dm9VBANQut0e0
-         B1Z7rSwuXLh7uc8gyk0yGg+OlfSKCzwLTzeUUUvzHRJP7XdUAtt2p8KntcuIv5b5br1t
-         GlD9yKSlI00phiyzl+vT22TZuGIa+f+TqCh/CXqFmxepjY4Bxya7ZAhf/cSYZykUmzxV
-         fhQ93AF+6vmxuvTds1Q9pMK1+2dBYPI/qtG2EHNvWEzJyhHW1BAYrUCyGpAYwhzcy1U1
-         6v6g==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=/KnIiWMvMcdCBpsG+OVuDQeKNXTaq/KhRb7ZPYMTP80=;
+        b=Gul4ZHP11May7R+Nn64ei72Pl10lLniihdtyAwma1JbSpMcTtUJ735uEe3zq0MiLZ6
+         tvWlVqpUrsUZz9dWuTOEgfhzyWUsXW/qU4pEMz/33CfuVF/u6fSGuq/PqNTb5AH64V/6
+         nQgi7EtP4YcI0pKAnqYuCNEImXEPLY6n01F2KcHpJiMjCPpIO0wzUK8NkOaO6NRTHmTZ
+         LfAZuqESiCxulFp8s2PprQiCthsXukAGFhdeaqGo4Z4v045YkfvrSawZ1FiuCaJysz5O
+         BVnbGTR2juiSy8rO4TNgm2wZiy0F5qIEhDWetGac0ofgUJupZFM995HOGHwrr4CIYBtO
+         zwEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=lDcRAPOAOCjxei5GIfDQABYJpwvJHNWVWIgGygWjlfU=;
-        b=tB8E9xGCKuv6ui1koY9ucqsmsSKHPAIoYnNir6akk1h/iG1TZp3NRo0GIjKiSZYxhr
-         0p99lvyFc+dXZCqcq8bcUc6DiqRGFODTx5Az75G/t+JjoBzK2WVOildFKwWX6cZzH6Zp
-         qcnFuzmRsfLBNQ8QC0cTepxyZL7EgNRqq8273jhG0hkTNty2Eh6CuXVCn5pNHF/Pkccd
-         MOAX1ZAO1Hr97NKgwSFocFRaKvTbtixl8dvSdafY5+GnelIcFfe8qE+j4SjmgYek6mwo
-         qQNay2QYJW9wwyMG0KBd9HGdyw5v8eB06tsKwW3F6bctuI+e9a9BYItYYgph2ywIPPhs
-         /SfQ==
-X-Gm-Message-State: ANhLgQ23vRXx5t01li8Jv0dLYZ72FwNr5QGSjU/rq02/F2YgTmFELdL8
-        2YwDSC9NRLviZyyjUfAFlpI=
-X-Google-Smtp-Source: ADFU+vusNe8isEuLjYVdOaSJm3pPllANr4V6EDWHvBZaYRQbgIVI+9LfWkRoZv1XUfRz+yO5J9nohA==
-X-Received: by 2002:a17:902:20b:: with SMTP id 11mr7030287plc.209.1585221174653;
-        Thu, 26 Mar 2020 04:12:54 -0700 (PDT)
-Received: from dev.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id m9sm1427723pff.93.2020.03.26.04.12.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Mar 2020 04:12:54 -0700 (PDT)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     hannes@cmpxchg.org, peterz@infradead.org,
-        akpm@linux-foundation.org, mhocko@kernel.org, axboe@kernel.dk,
-        mgorman@suse.de, rostedt@goodmis.org, mingo@redhat.com
-Cc:     linux-mm@kvack.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH 2/2] psi, tracepoint: introduce tracepoints for psi_memstall_{enter, leave}
-Date:   Thu, 26 Mar 2020 07:12:07 -0400
-Message-Id: <1585221127-11458-3-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1585221127-11458-1-git-send-email-laoar.shao@gmail.com>
-References: <1585221127-11458-1-git-send-email-laoar.shao@gmail.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=/KnIiWMvMcdCBpsG+OVuDQeKNXTaq/KhRb7ZPYMTP80=;
+        b=fWIU7n5+YH94nQI0ZmIygBuCHYssDRaR1D82cvO26hbfjg1+u189v/5Tib+6AQGw6C
+         oLwS/sNnlojjXsDpPSmUUW/wdcVKPF2bvBwNS4NVjEwtSh8G7qociFir9Jfj3gc4H4MZ
+         kQRvVefOeUdTJSycyvvufpmoRuGJ+F+eEVG9mbg6ZflbmDEB7ym+npdRICf3eCXbcKKg
+         q2YRWnCJiZVpMHLZtsbyJ52EPTaZKgVzHHZ7OyWXzdSY0oRPm2iV1GSTYRSB9Ad5ZRRH
+         kbFaByDe6u0cb1H8Ld0UpHt9CJBDbZtbAtFOPpuGyz171L1ip9ixb9lqgYidbYBDOGsj
+         IHKg==
+X-Gm-Message-State: ANhLgQ2XnLpOMHaYX5CJf3WBbv+alXCxqkb9YXr7cJOX0yGF4IgTD0EW
+        g2yPuUpRambvamdgXNL/vkO9ICSPdJhZcWCodFY=
+X-Google-Smtp-Source: ADFU+vtQ7xUleUoiskmTXHT4N6AcQUUDXRmuSWQAEbNf/4udvuVuzR88MEjLnGJoMeBG6v4lSRFVO0Ih6UuANRwWF+Y=
+X-Received: by 2002:aca:3a83:: with SMTP id h125mr1317665oia.64.1585221276079;
+ Thu, 26 Mar 2020 04:14:36 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:7417:0:0:0:0:0 with HTTP; Thu, 26 Mar 2020 04:14:34
+ -0700 (PDT)
+Reply-To: ambrosecooker389@gmail.com
+From:   Ambrose Cooker <mrs.chichimohamed01@gmail.com>
+Date:   Thu, 26 Mar 2020 04:14:34 -0700
+Message-ID: <CAKWaEg+SbnSs3PZaatYHQv4WTvDa2t9uJVZ1Bqs5HbygNsELew@mail.gmail.com>
+Subject: Greetings to you my Dear!
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the new parameter introduced in psi_memstall_{enter, leave} we can
-get the specific type of memstal. To make it easier to use, we'd better
-introduce tracepoints for them. Once these two tracepoints are added we
-can easily use other tools like ebpf or bash script to collect the
-memstall data and analyze.
+Greetings My Dear Friend,
 
-Here's one example with bpftrace to measure application's latency.
-tracepoint:sched:psi_memstall_enter
-{
-        @start[tid, args->type] = nsecs
-}
+Please reply to my private email ambrosecooker389@gmail.com
 
-tracepoint:sched:psi_memstall_leave
-{
-        @time[comm, args->type] = hist(nsecs - @start[tid, args->type]);
-        delete(@start[tid, args->type]);
-}
+Before I introduce myself, I wish to inform you that this letter is
+not a hoax mail and I urge you to treat it serious.This letter must
+come to you as a big surprise, but I believe it is only a day that
+people meet and become great friends and business partners. Please I
+want you to read this letter very carefully and I must apologize for
+barging this message into your mail box without any formal
+introduction due to the urgency and confidentiality of this business.
+I make this contact with you as I believe that you can be of great
+assistance to me. My name is Mr.Ambrose Cooker, from Burkina Faso,
+West Africa. I work in African Development Bank (ADB) as Telex
+manager, please see this as a confidential message and do not reveal
+it to another person and let me know whether you can be of assistance
+regarding my proposal below because it is top secret.
 
-Bellow is part of the result after producing some memory pressure.
-@time[objdump, 7]:
-[256K, 512K)           1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[512K, 1M)             0 |                                                    |
-[1M, 2M)               0 |                                                    |
-[2M, 4M)               0 |                                                    |
-[4M, 8M)               1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+I am about to retire from active Banking service to start a new life
+but I am skeptical to reveal this particular secret to a stranger. You
+must assure me that everything will be handled confidentially because
+we are not going to suffer again in life. It has been 10 years now
+that most of the greedy African Politicians used our bank to launder
+money overseas through the help of their Political advisers. Most of
+the funds which they transferred out of the shores of Africa were gold
+and oil money that was supposed to have been used to develop the
+continent. T heir Political advisers always inflated the amounts
+before
+transferring to foreign accounts, so I also used the opportunity to
+divert part of the funds hence I am aware that there is no official
+trace of how much was transferred as all the accounts used for such
+transfers were being closed after transfer. I acted as the Bank
+Officer to most of the politicians and when I discovered that they
+were using me to succeed in their greedy act; I also cleaned some of
+their banking records from the Bank files and no one cared to ask me
+because the money was too much for them to control. They laundered
+over $5billion Dollars during the process.
 
-@time[objdump, 6]:
-[8K, 16K)              2 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+Before I send this message to you, I have already diverted
+($10.5million Dollars) to an escrow account belonging to no one in the
+bank. The bank is anxious now to know who the beneficiary to the funds
+because they have made a lot of profits with the funds. It is more
+than Eight years now and most of the politicians are no longer using
+our bank to transfer funds overseas. The ($10.5million Dollars) has
+been laying waste in our bank and I don't want to retire from the bank
+without transferring the funds to a foreign account to enable me share
+the proceeds with the receiver (a foreigner). The money will be shared
+60% for me and 40% for you. There is no one coming to ask you about
+the funds because I secured everything. I only want you to assist me
+by providing a reliable bank account where the funds can be
+transferred.
 
-@time[objcopy, 7]:
-[16K, 32K)             1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[32K, 64K)             0 |                                                    |
-[64K, 128K)            0 |                                                    |
-[128K, 256K)           0 |                                                    |
-[256K, 512K)           1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+You are not to face any difficulties or legal implications as I am
+going to handle the transfer personally. If you are capable of
+receiving the funds, do let me know immediately to enable me give you
+a detailed information on what to do. For me, I have not stolen the
+money from anyone because the other people that took the whole money
+did not face any problems. This is my chance to grab my own life
+opportunity but you must keep the details of the funds secret to avoid
+any leakages as no one in the bank knows about my plans.Please get
+back to me if you are interested and capable to handle this project, I
+am looking forward to hear from you immediately for further
+information.Please reply to my private email
+ambrosecooker389@gmail.com
 
-@time[ld, 7]:
-[4M, 8M)               1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[8M, 16M)              1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-
-@time[khugepaged, 5]:
-[4K, 8K)               1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[8K, 16K)              0 |                                                    |
-[16K, 32K)             0 |                                                    |
-[32K, 64K)             0 |                                                    |
-[64K, 128K)            0 |                                                    |
-[128K, 256K)           0 |                                                    |
-[256K, 512K)           0 |                                                    |
-[512K, 1M)             0 |                                                    |
-[1M, 2M)               0 |                                                    |
-[2M, 4M)               0 |                                                    |
-[4M, 8M)               0 |                                                    |
-[8M, 16M)              0 |                                                    |
-[16M, 32M)             0 |                                                    |
-[32M, 64M)             1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-
-@time[kswapd0, 0]:
-[16K, 32K)             1 |@@@@@                                               |
-[32K, 64K)             0 |                                                    |
-[64K, 128K)            0 |                                                    |
-[128K, 256K)           0 |                                                    |
-[256K, 512K)           0 |                                                    |
-[512K, 1M)             0 |                                                    |
-[1M, 2M)               0 |                                                    |
-[2M, 4M)               0 |                                                    |
-[4M, 8M)               0 |                                                    |
-[8M, 16M)              1 |@@@@@                                               |
-[16M, 32M)            10 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[32M, 64M)             9 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@      |
-[64M, 128M)            2 |@@@@@@@@@@                                          |
-[128M, 256M)           2 |@@@@@@@@@@                                          |
-[256M, 512M)           3 |@@@@@@@@@@@@@@@                                     |
-[512M, 1G)             1 |@@@@@                                               |
-
-@time[kswapd1, 0]:
-[1M, 2M)               1 |@@@@                                                |
-[2M, 4M)               2 |@@@@@@@@                                            |
-[4M, 8M)               0 |                                                    |
-[8M, 16M)             12 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[16M, 32M)             7 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                      |
-[32M, 64M)             5 |@@@@@@@@@@@@@@@@@@@@@                               |
-[64M, 128M)            5 |@@@@@@@@@@@@@@@@@@@@@                               |
-[128M, 256M)           3 |@@@@@@@@@@@@@                                       |
-[256M, 512M)           1 |@@@@                                                |
-
-@time[khugepaged, 1]:
-[2M, 4M)               1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-
-With the builtin variable 'cgroup' of bpftrace we can also filter a
-memcg and its descendants.
-
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- include/trace/events/sched.h | 41 +++++++++++++++++++++++++++++++++++++++++
- kernel/sched/psi.c           |  8 ++++++++
- 2 files changed, 49 insertions(+)
-
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index 420e80e..6aca996 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -7,8 +7,20 @@
- 
- #include <linux/sched/numa_balancing.h>
- #include <linux/tracepoint.h>
-+#include <linux/psi_types.h>
- #include <linux/binfmts.h>
- 
-+#define show_psi_memstall_type(type) __print_symbolic(type,	\
-+	{MEMSTALL_KSWAPD, "MEMSTALL_KSWAPD"},			\
-+	{MEMSTALL_RECLAIM_DIRECT, "MEMSTALL_RECLAIM_DIRECT"},	\
-+	{MEMSTALL_RECLAIM_MEMCG, "MEMSTALL_RECLAIM_MEMCG"},	\
-+	{MEMSTALL_RECLAIM_HIGH, "MEMSTALL_RECLAIM_HIGH"},	\
-+	{MEMSTALL_KCOMPACTD, "MEMSTALL_KCOMPACTD"},		\
-+	{MEMSTALL_COMPACT, "MEMSTALL_COMPACT"},			\
-+	{MEMSTALL_WORKINGSET, "MEMSTALL_WORKINGSET"},		\
-+	{MEMSTALL_PGLOCK, "MEMSTALL_PGLOCK"},			\
-+	{MEMSTALL_MEMDELAY, "MEMSTALL_MEMDELAY"},		\
-+	{MEMSTALL_SWAP, "MEMSTALL_SWAP"})
- /*
-  * Tracepoint for calling kthread_stop, performed to end a kthread:
-  */
-@@ -625,6 +637,35 @@ static inline long __trace_sched_switch_state(bool preempt, struct task_struct *
- 	TP_PROTO(struct root_domain *rd, bool overutilized),
- 	TP_ARGS(rd, overutilized));
- 
-+DECLARE_EVENT_CLASS(psi_memstall_template,
-+
-+	TP_PROTO(int type),
-+
-+	TP_ARGS(type),
-+
-+	TP_STRUCT__entry(
-+		__field(int, type)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->type = type;
-+	),
-+
-+	TP_printk("type=%s",
-+		show_psi_memstall_type(__entry->type))
-+);
-+
-+DEFINE_EVENT(psi_memstall_template, psi_memstall_enter,
-+	TP_PROTO(int type),
-+	TP_ARGS(type)
-+);
-+
-+DEFINE_EVENT(psi_memstall_template, psi_memstall_leave,
-+	TP_PROTO(int type),
-+	TP_ARGS(type)
-+);
-+
-+
- #endif /* _TRACE_SCHED_H */
- 
- /* This part must be outside protection */
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 460f084..4c5a402 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -142,6 +142,8 @@
- #include <linux/psi.h>
- #include "sched.h"
- 
-+#include <trace/events/sched.h>
-+
- static int psi_bug __read_mostly;
- 
- DEFINE_STATIC_KEY_FALSE(psi_disabled);
-@@ -822,6 +824,9 @@ void psi_memstall_enter(unsigned long *flags, enum memstall_types type)
- 	*flags = current->flags & PF_MEMSTALL;
- 	if (*flags)
- 		return;
-+
-+	trace_psi_memstall_enter(type);
-+
- 	/*
- 	 * PF_MEMSTALL setting & accounting needs to be atomic wrt
- 	 * changes to the task's scheduling state, otherwise we can
-@@ -852,6 +857,9 @@ void psi_memstall_leave(unsigned long *flags, enum memstall_types type)
- 
- 	if (*flags)
- 		return;
-+
-+	trace_psi_memstall_leave(type);
-+
- 	/*
- 	 * PF_MEMSTALL clearing & accounting needs to be atomic wrt
- 	 * changes to the task's scheduling state, otherwise we could
--- 
-1.8.3.1
-
+Thanks with my best regards.
+Mr.Ambrose Cooker.
+Telex Manager
+African Development Bank (ADB)
+Burkina Faso.
