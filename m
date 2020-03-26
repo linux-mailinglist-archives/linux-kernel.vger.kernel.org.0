@@ -2,401 +2,441 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D83DA19679F
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:46:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34C0B1967A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:46:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbgC1Qpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:45:32 -0400
-Received: from mx.sdf.org ([205.166.94.20]:49580 "EHLO mx.sdf.org"
+        id S1728151AbgC1QqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:46:00 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50062 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727929AbgC1Qpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:45:30 -0400
+        id S1727697AbgC1Qn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:28 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhLSG024445
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhORm020709
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:22 GMT
+        Sat, 28 Mar 2020 16:43:24 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhLP9019727;
-        Sat, 28 Mar 2020 16:43:21 GMT
-Message-Id: <202003281643.02SGhLP9019727@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhO7l028286;
+        Sat, 28 Mar 2020 16:43:24 GMT
+Message-Id: <202003281643.02SGhO7l028286@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Sat, 21 Mar 2020 14:03:23 -0400
-Subject: [RFC PATCH v1 38/50] random: use chacha_permute() directly
+Date:   Thu, 26 Mar 2020 07:53:50 -0400
+Subject: [RFC PATCH v1 45/50] random: add get_random_max() function
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
 Cc:     "Theodore Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This was triggered by noting that chacha20_block() uses a
-temporary buffer which it doesn't memzero_explicit(), violating
-the desired security properties of get_random_bytes().
+I got annoyed that randomize_page() wasn't exactly uniform,
+and used (slow) modulo-based range reduction rather than the
+(fast) multiplicative algorithm, so I fixed it.
 
-Rather than simply fixing that, I decided to get rid of the
-temporary buffer entirely.  It's only needed to support unaligned
-output and a consistent byte order.  A CRNG doesn't care about
-byte order and can easily allocate aligned buffers.
+I figure, if you're going to the trouble of using cryptographic
+random numbers, you don't want biased outputs, even if it's slight.
 
-Similarly, incrementing the 64-bit sequence number in state
-words 12 and 13 can be done in native byte order.
+This includes optimized code for compile-time constant ranges,
+even though randomize_page() can't use it; later patches will
+add more callers.
 
-(The previous code already used native byte order for the
-input constant "expand 32-byte k", so this is nothing new.)
+The multiple implementation cases make the code bulky, but each
+call site uses only one (chosen at compile time) and they are
+individually quite small.
 
-Also perform several key operations long-at-a-time where
-possible.  For backtrack protection, this just speeds them up,
-but the old code in crng_init() and _extract_crng() would call
-arch_get_random_long() and then only use the low 32 bits of
-the (fairly expensive) HWRNG output.
-
-Code simplification: factor out the "choose the crng" code shared
-by the crng_extract() and crng_backtrack_protect() wrappers into
-a default_crng() function.  In code paths where multiple calls
-are made, call default_crng() once and cache the result.
-
-This allowed the crng_backtrack_protect() wrapper to be
-eliminated, so _crng_backtrack_protect lost its leading
-ubnderscore.
-
-Code simplification: in crng_backtrack_protect(), after ensuring
-8x32-bit words of unused output are available, the old code would
-use the first unused 8 words.  Instead, use the last 8 words in
-the buffer, always.
-
-Code size +3 bytes (x86-64).  No change to lib/crypto/chacha.o;
-chacha_permute was not inlined.
+The SPARC64 implementation of _get_random_max64(), the inline
+function which handles constant ranges, is particularly large.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
 Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Eric Biggers <ebiggers@google.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Jason A. Donenfeld <Jason@zx2c4.com>
 ---
- drivers/char/random.c   | 149 ++++++++++++++++++++--------------------
- include/crypto/chacha.h |   1 +
- lib/crypto/chacha.c     |   2 +-
- 3 files changed, 77 insertions(+), 75 deletions(-)
+ drivers/char/random.c  | 155 ++++++++++++++++++++++++++++++++--
+ include/linux/random.h | 183 +++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 325 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 457b5204ffb99..b8c2f8b0be6f6 100644
+index b8c2f8b0be6f6..67bdfb51eb25c 100644
 --- a/drivers/char/random.c
 +++ b/drivers/char/random.c
-@@ -482,8 +482,18 @@ static struct fasync_struct *fasync;
- static DEFINE_SPINLOCK(random_ready_list_lock);
- static LIST_HEAD(random_ready_list);
+@@ -2569,6 +2569,143 @@ u32 get_random_u32(void)
+ }
+ EXPORT_SYMBOL(get_random_u32);
  
-+/*
-+ * This declaration is verbose enough that it's awkward in argument lists,
-+ * so make a typedef.  8-byte aligned because we do one 64-bit opration
-+ * (incrementing the sequence number in words 12 and 13) and several
-+ * long operations (XORing keys).
++/**
++ * __get_random_max32 - Generate a uniform random number 0 <= x < range < 2^32
++ * @range:	Modulus for random number; must not be zero!
++ *
++ * This generates an exactly uniform distribution over [0, range), where
++ * range is *not* a compile-time constant.
++ *
++ * This uses Lemire's multiplicative algorithm, from
++ *	Fast Random Integer Generation in an Interval
++ *	https://arxiv.org/abs/1805.10941
++ *
++ * The standard mutiplicative range technique is (rand32() * range) >> 32.
++ * However, there are either floor((1<<32) / range) or ceil((1<<32) / range)
++ * random values that will result in each output value.  More specifically,
++ * lim = (1 << 32) % range values will be generated one extra time.
++ *
++ * Lemire proves (Lemma 4.1) that those extra values can be identified
++ * by the lsbits of the product.  If you discard and retry whenever the
++ * lsbits are less than lim, you get the floor option always.
 + */
-+typedef u32 chacha_buf_t[CHACHA_BLOCK_SIZE / sizeof(u32)] __aligned(8);
-+/* Access the long at a particular (aligned!) byte offset */
-+#define LONG_AT(p, offset) *(unsigned long *)((char *)(p) + offset)
++u32 __get_random_max32(u32 range)
++{
++	u64 prod = mul_u32_u32(get_random_u32(), range);
 +
- struct crng_state {
--	__u32		state[16];
-+	chacha_buf_t	state;
- 	unsigned long	init_time;
- 	spinlock_t	lock;
- };
-@@ -510,9 +520,9 @@ static enum crng_init {
- static int crng_init_cnt = 0;
- static unsigned long crng_global_init_time __read_mostly = 0;
- #define CRNG_INIT_CNT_THRESH (2*CHACHA_KEY_SIZE)
--static void _extract_crng(struct crng_state *crng, __u8 out[CHACHA_BLOCK_SIZE]);
--static void _crng_backtrack_protect(struct crng_state *crng,
--				    __u8 tmp[CHACHA_BLOCK_SIZE], int used);
-+static void _extract_crng(struct crng_state *crng, chacha_buf_t out);
-+static void crng_backtrack_protect(struct crng_state *crng,
-+				    chacha_buf_t tmp, int used);
- static void process_random_ready_list(void);
- static void _get_random_bytes(void *buf, int nbytes);
- 
-@@ -916,7 +926,7 @@ early_param("random.trust_cpu", parse_trust_cpu);
- static void crng_initialize(struct crng_state *crng)
- {
- 	int		i;
--	int		arch_init = 1;
-+	bool		arch_init = true;
- 	unsigned long	rv;
- 
- 	memcpy(&crng->state[0], "expand 32-byte k", 16);
-@@ -925,13 +935,13 @@ static void crng_initialize(struct crng_state *crng)
- 				 sizeof(__u32) * 12, 0);
- 	else
- 		_get_random_bytes(&crng->state[4], sizeof(__u32) * 12);
--	for (i = 4; i < 16; i++) {
-+	for (i = 16; i < CHACHA_BLOCK_SIZE; i += sizeof(long)) {
- 		if (!arch_get_random_seed_long(&rv) &&
- 		    !arch_get_random_long(&rv)) {
- 			rv = random_get_entropy();
--			arch_init = 0;
-+			arch_init = false;
- 		}
--		crng->state[i] ^= rv;
-+		LONG_AT(crng->state, i) ^= rv;
- 	}
- 	if (trust_cpu && arch_init && crng == &primary_crng) {
- 		numa_crng_init();
-@@ -1052,27 +1062,23 @@ static void crng_reseed(struct crng_state *crng, struct entropy_store *r)
- {
- 	unsigned long	flags;
- 	int		i, num;
--	union {
--		__u8	block[CHACHA_BLOCK_SIZE];
--		__u32	key[8];
--	} buf;
-+	chacha_buf_t	buf;
- 
- 	if (r) {
- 		num = extract_entropy(r, &buf, 32, 16, 0);
- 		if (num == 0)
- 			return;
- 	} else {
--		_extract_crng(&primary_crng, buf.block);
--		_crng_backtrack_protect(&primary_crng, buf.block,
--					CHACHA_KEY_SIZE);
-+		_extract_crng(&primary_crng, buf);
-+		crng_backtrack_protect(&primary_crng, buf, CHACHA_KEY_SIZE);
- 	}
- 	spin_lock_irqsave(&crng->lock, flags);
--	for (i = 0; i < 8; i++) {
-+	for (i = 0; i < CHACHA_KEY_SIZE; i += sizeof(long)) {
- 		unsigned long	rv;
- 		if (!arch_get_random_seed_long(&rv) &&
- 		    !arch_get_random_long(&rv))
- 			rv = random_get_entropy();
--		crng->state[i+4] ^= buf.key[i] ^ rv;
-+		LONG_AT(crng->state + 4, i) ^= LONG_AT(buf, i) ^ rv;
- 	}
- 	memzero_explicit(&buf, sizeof(buf));
- 	crng->init_time = jiffies;
-@@ -1098,79 +1104,76 @@ static void crng_reseed(struct crng_state *crng, struct entropy_store *r)
- 	}
- }
- 
--static void _extract_crng(struct crng_state *crng,
--			  __u8 out[CHACHA_BLOCK_SIZE])
-+static void _extract_crng(struct crng_state *crng, chacha_buf_t out)
- {
- 	unsigned long v, flags;
-+	int i;
- 
- 	if (crng_ready() &&
- 	    (time_after(crng_global_init_time, crng->init_time) ||
- 	     time_after(jiffies, crng->init_time + CRNG_RESEED_INTERVAL)))
- 		crng_reseed(crng, crng == &primary_crng ? &input_pool : NULL);
-+
- 	spin_lock_irqsave(&crng->lock, flags);
- 	if (arch_get_random_long(&v))
--		crng->state[14] ^= v;
--	chacha20_block(&crng->state[0], out);
--	if (crng->state[12] == 0)
--		crng->state[13]++;
-+		*(long *)(crng->state + 14) ^= v;
-+	memcpy(out, crng->state, CHACHA_BLOCK_SIZE);
-+	chacha_permute(out, 20);
 +	/*
-+	 * Add input to permute output a long at a time.  This is
-+	 * a minor deviation from the ChaCha spec (which specifies
-+	 * 32-bit addition), cryptographically equivalent.
++	 * Fast-path check: lim < range, so lsbits >= range-1
++	 * implies lsbits >= lim.
 +	 */
-+	for (i = 0; i < CHACHA_BLOCK_SIZE; i += sizeof(long))
-+		LONG_AT(out, i) += LONG_AT(crng->state, i);
-+	/* Increment 64-bit sequence number.  Native endianness is fine. */
-+	*(u64 *)(crng->state + 12) += 1;
- 	spin_unlock_irqrestore(&crng->lock, flags);
++	if (unlikely((u32)prod < range - 1)) {
++		/* Slow path; we need to divide to check exactly */
++		u32 lim = -range % range;	/* = (1<<32) % range */
 +
++		while (unlikely((u32)prod < lim))
++			prod = mul_u32_u32(get_random_u32(), range);
++	}
++	return prod >> 32;
++}
++EXPORT_SYMBOL(__get_random_max32);
++
++#ifdef CONFIG_64BIT
++/**
++ * __get_random_max64 - Generate a uniform random number 0 <= x < range < 2^64
++ * @range:	Modulus for random number; must not be zero!
++ *
++ * Like get_random_max32, but for larger ranges.  There are two
++ * implementations, depending on CONFIG_ARCH_SUPPORTS_INT128.
++ */
++u64 __get_random_max64(u64 range)
++{
++#if defined(CONFIG_ARCH_SUPPORTS_INT128) && defined(__SIZEOF_INT128__)
++	/* Same as get_random_max32(), with larger data types. */
++	unsigned __int128 prod;
++
++	if (range >> 32 == 0)
++		return __get_random_max32(range);
++
++	prod = (unsigned __int128)get_random_u64() * range;
++
++	if (likely((u64)prod < range - 1)) {
++		/* Slow path; we need to divide to check exactly */
++		u64 lim = -range % range;	/* = (1<<64) % range */
++
++		while ((u64)prod < lim)
++			prod = (unsigned __int128)get_random_u64() * range;
++	}
++	return prod >> 64;
++#else
++	/*
++	 * We don't have efficient 128-bit products (e.g. SPARCv9), so
++	 * break it into two halves: generate the high bits in
++	 * the desired range (rounding up), append some uniform low
++	 * bits, and retry in the rare case that the rounding up
++	 * produces a result exceeding the range.
++	 */
++	u32 msbits;
++	u64 result;
++
++	if (range >> 32 == 0)
++		return __get_random_max32(range);
++
++	/*
++	 * If the range has less than 64 significant bits, there is
++	 * more than one way to split it into msbits and lsbits.
++	 * A very large msbits causes retries within __get_random_max32.
++	 * A very small msbits causes retries here, with
++	 * probability about 1/(2*msbits).
++	 *
++	 * While we could use a fixed split of 32 lsbits, that results
++	 * in an average of 2.75 calls to get_random_u32() when the range
++	 * has 33 significant bits, which is 0.75 more than necessary.
++	 * And unfortunately, we expect ranges comparable to
++	 * physical memory size, which is often just over 32 bits.
++	 *
++	 * Generally, the best split is 17 significant msbits and the rest
++	 * as lsbits.  *But* this code path is primarily for SPARCv9,
++	 * which lacks a count-leading-zeros operation, so using fls()
++	 * at runtime probably isn't worth it.
++	 *
++	 * The cost (in extra random words) approximately doubles per
++	 * bit distant from that optimum.  The best single split handles
++	 * 44+ bits with 32 lsbits (5 bits from the optimum of 44-17 =
++	 * 27 lsbits), and 33..43 bits with 21 lsbits (5 bits from the
++	 * optima of 16..26 lsbits).
++	 *
++	 * As mentioned above, using 32 lsbits rather than 16 lsbits
++	 * results in an additional 0.75 random words per call.  5 bits
++	 * from optimum rather than 16 bits is a factor of 2^11 = 2048
++	 * better, using an additional 0.75/2048 = 3.6e-4 random words
++	 * per call.  Spending one cycle for a more sophisticated split
++	 * is only worth it if a word of CRNG output costs 2048/0.75 =
++	 * 2730 cycles, which it doesn't.
++	 */
++	if (range >> 43 == 0) {
++		msbits = (range + 0x1fffff) >> 21;
++		do {
++			u32 t = __get_random_max32(msbits);
++			result = (u64)t << 21 | get_random_u32() >> 11;
++		} while (unlikely(result >= range));
++	} else {
++		msbits = (range + 0xffffffff) >> 32;
++		/* If range >= 0xffffffff00000001, msbits will wrap to 0 */
++		do {
++			u32 t;
++
++			if (likely(msbits))
++				t = __get_random_max32(msbits);
++			else
++				t = get_random_u32();
++			result = (u64)t << 32 | get_random_u32();
++		} while (unlikely(result >= range));
++	}
++	return result;
++#endif
++}
++EXPORT_SYMBOL(__get_random_max64);
++#endif /* CONFIG_64BIT */
++
+ /**
+  * randomize_page - Generate a random, page aligned address
+  * @start:	The smallest acceptable address the caller will take.
+@@ -2586,20 +2723,24 @@ EXPORT_SYMBOL(get_random_u32);
+ unsigned long
+ randomize_page(unsigned long start, unsigned long range)
+ {
+-	if (!PAGE_ALIGNED(start)) {
+-		range -= PAGE_ALIGN(start) - start;
+-		start = PAGE_ALIGN(start);
+-	}
++	/* How much to round up to make start page-aligned */
++	unsigned long align = -start & (PAGE_SIZE - 1);
+ 
+-	if (start > ULONG_MAX - range)
+-		range = ULONG_MAX - start;
++	if (range < align)
++		return start;
++
++	start += align;
++	range -= align;
++
++	if (range > -start)
++		range = -start;
+ 
+ 	range >>= PAGE_SHIFT;
+ 
+ 	if (range == 0)
+ 		return start;
+ 
+-	return start + (get_random_long() % range << PAGE_SHIFT);
++	return start + (get_random_max(range) << PAGE_SHIFT);
  }
  
--static void extract_crng(__u8 out[CHACHA_BLOCK_SIZE])
-+/* Choose the default CRNG pool, which may depends on NUMA node */
-+static struct crng_state *__pure default_crng(void)
- {
--	struct crng_state *crng = NULL;
--
- #ifdef CONFIG_NUMA
--	if (crng_node_pool)
--		crng = crng_node_pool[numa_node_id()];
--	if (crng == NULL)
-+	if (crng_node_pool) {
-+		struct crng_state *crng = crng_node_pool[numa_node_id()];
-+		if (crng)
-+			return crng;
-+	}
+ /* Interface for in-kernel drivers of true hardware RNGs.
+diff --git a/include/linux/random.h b/include/linux/random.h
+index 7956063253261..97d3469f3aad8 100644
+--- a/include/linux/random.h
++++ b/include/linux/random.h
+@@ -63,6 +63,182 @@ static inline unsigned long get_random_long(void)
  #endif
--		crng = &primary_crng;
--	_extract_crng(crng, out);
-+	return &primary_crng;
+ }
+ 
++/**
++ * get_random_max32 - return a 32-bit random number in interval [0, range)
++ * @range: Size of random interval [0,range); the first value not included.
++ *
++ * This uses Lemire's algorithm; see drivers/char/random.c for details.
++ *
++ * The expensive part of this is the "(1ull<<32) % range" computation.
++ * If that's a compile-time constant, things get simple enough to inline.
++ */
++/* When the range is a compile-time constant, so is lim, and it's simple. */
++static __always_inline u32 _get_random_max32(u32 range)
++{
++	u32 lim = -range % range;
++	u64 prod;
++
++	do
++		prod = mul_u32_u32(get_random_u32(), range);
++	while (unlikely((u32)prod < lim));
++	return prod >> 32;
++}
++/* Non-constant ranges are done out of line. */
++u32 __get_random_max32(u32 range);
++
++/* Decide between the two.  (Case #3 is power of two.) */
++static __always_inline u32 get_random_max32(u32 range)
++{
++	if (!__builtin_constant_p(range))
++		return __get_random_max32(range);
++	else if (range & (range - 1))
++		return _get_random_max32(range);
++	else
++		return get_random_u32() / (u32)(0x100000000 / range);
 +}
 +
-+static void extract_crng(chacha_buf_t out)
++#ifdef CONFIG_64BIT
++/*
++ * If we have 64x64->128-bit multiply, the same algorithm works.
++ * If we don't (*cough* SPARCv9 *cough*), it's trickier.  Basically,
++ * we do it in two halves.  Generate the high bits, append the low
++ * bits, then retry if the concatenation is out of range,
++ */
++
++/*
++ * When the range is a compile-time constant, we can break it
++ * into several cases depending on range.  Note that the
++ * caller has already ensured that range >= 2^32.
++ */
++static __always_inline u64 _get_random_max64(u64 range)
 +{
-+	_extract_crng(default_crng(), out);
- }
- 
++#if defined(CONFIG_ARCH_SUPPORTS_INT128) && defined(__SIZEOF_INT128__)
++	u64 lim = -range % range;
++	unsigned __int128 prod;
++
++	do
++		prod = (__int128)get_random_u64() * range;
++	while (unlikely((u64)prod < lim));
++	return prod >> 64;
++
++#else /* No 128-bit product - this is messy */
++	u32 bit, high;
++	u64 result;
++	/* Easy special case 1: All 32 low-order bits are zero */
++	if (!(u32)range)
++		return (u64)_get_random_max32(range>>32) << 32 |
++			get_random_u32();
++	/* Easy special case 1: At most 32 contiguous non-zero bits */
++	bit = (u32)range & -(u32)range;
++	if (range >> 32 < bit)
++		return _get_random_max32(range/bit) * (u64)bit |
++			get_random_u32() / (u32)(0x10000000/bit);
++	/* Easy special case 3: Bit 63 is set; generate and retry */
++	if (range >> 63) {
++		do {
++			do
++				high = get_random_u32();
++			while (high > (u32)(range >> 32));
++			result = (u64)high << 32 | get_random_u32();
++		} while (unlikely(result >= range));
++		return result;
++	}
++	/*
++	 * Now it gets tricky.	The basic idea is to remove some low-order
++	 * bits from range until it fits into 32 bits, rounding up.
++	 * (I.e. (range >> bits) + 1).  A uniform random number in this
++	 * range, combined with some uniform random low-order bits,
++	 * can then be tested against the 64-bit range and retried in the
++	 * rare case that it exceeds the range.
++	 *
++	 * But how many low-order bits to remove?  As the range is at most
++	 * 63 bits, there are multiple possible choices.  Which requires
++	 * the smallest number of retries?
++	 *
++	 * The formula to compute the expected number of random words is
++	 * complicated, and optimum division requires trying them all,
++	 * but a simple heuristic gets very close:
++	 * 4) For range >= 2^48, use 32 low-order bits and the rest high-order
++	 * 5) For range < 2^49, use 17 high-order bits and the rest low-order
++	 *    (For 2^48 <= range < 2^49, these are equivalent.)
++	 *
++	 * This very close to optimum, always within 1e-4 words (and
++	 * usually much lower), except for a few rare values > 2^50, when
++	 * a different split works out particularly well.
++	 *
++	 * For an extreme example, consider a range of 0x2aaaaaaa00000001.
++	 * A 31-bit split produces a 31-bit high part of 0x55555555, which
++	 * divides 2^32 particularly well, requiring only 1.63e-9 extra words
++	 * (above the minimum of 2), on average.
++	 * A 32-bit split produces a 30-bit high part of 0x2aaaaaab, which
++	 * requires a more typical 0.2 extra words.
++	 */
++	if (range >> 48) {
++		high = (u32)(range >> 32) + 1;
++		do {
++			result = (u64)_get_random_max32(high) << 32 |
++				get_random_u32();
++		} while (unlikely(result >= range));
++	} else {	/* 2^32 < range < 2^49 */
++		bit = fls((u32)(range >> 32)) + 15;
++		high = (u32)(range >> bit) + 1;
++		do {
++			result = (u64)_get_random_max32(high) << bit |
++				(get_random_u32() >> (32 - bit));
++		} while (unlikely(result >= range));
++	}
++	return result;
++#endif
++}
++
++u64 __get_random_max64(u64 range);
++
++static __always_inline u64 get_random_max64(u64 range)
++{
++	/*
++	 * We may know at compile time that range is 32 bits,
++	 * even if we don't know its exact value.
++	 */
++	if (__builtin_constant_p(range <= 0xffffffff) && range <= 0xffffffff)
++		return get_random_max32(range);
++	else if (!__builtin_constant_p(range))
++		return __get_random_max64(range);
++	else if (range & (range - 1))
++		return _get_random_max64(range);
++	else
++		return get_random_u64() / (0x100000000 / (range >> 32));
++}
++#endif
++
++/**
++ * get_random_max - Generate a uniform random number 0 <= x < range
++ * @range:	Modulus for random number; must not be zero!
++ *
++ * This uses a cryptographic random number generator, for safety
++ * against malicious attackers trying to guess the output.
++ *
++ * This generates exactly uniform random numbers in the range, retrying
++ * occasionally if range is not a power of two.  If we're going to
++ * go to the expense of a cryptographic RNG, we may as well get the
++ * distribution right.
++ *
++ * Ref:
++ * 	Fast Random Integer Generation in an Interval
++ * 	Daniel Lemire
++ * 	https://arxiv.org/abs/1805.10941
++ *
++ * For less critical applications (self-tests, error injection, dithered
++ * timers), use prandom_u32_max().
++ */
++static __always_inline unsigned long get_random_max(unsigned long range)
++{
++#if BITS_PER_LONG == 64
++	return get_random_max64(range);
++#else
++	return get_random_max32(range);
++#endif
++}
++
  /*
-  * Use the leftover bytes from the CRNG block output (if there is
-  * enough) to mutate the CRNG key to provide backtracking protection.
+  * On 64-bit architectures, protect against non-terminated C string overflows
+  * by zeroing out the first byte of the canary; this leaves 56 bits of entropy.
+@@ -151,12 +327,7 @@ void prandom_seed_full_state(struct rnd_state __percpu *pcpu_state);
+  * That's easy to do for constant ranges, so this code does it in that
+  * case, but settles for the approimation for variable ranges.  If you
+  * need exact uniformity, you might also want to use a stronger generator
+- * (like get_random_u32()).
+- *
+- * Ref:
+- * 	Fast Random Integer Generation in an Interval
+- * 	Daniel Lemire
+- * 	https://arxiv.org/abs/1805.10941
++ * (like get_random_max32()).
+  *
+  * Return: pseudo-random number in interval [0, @range)
   */
--static void _crng_backtrack_protect(struct crng_state *crng,
--				    __u8 tmp[CHACHA_BLOCK_SIZE], int used)
-+static void crng_backtrack_protect(struct crng_state *crng,
-+				    chacha_buf_t tmp, int used)
- {
- 	unsigned long	flags;
--	__u32		*s, *d;
- 	int		i;
- 
--	used = round_up(used, sizeof(__u32));
--	if (used + CHACHA_KEY_SIZE > CHACHA_BLOCK_SIZE) {
--		extract_crng(tmp);
--		used = 0;
--	}
-+	if (used > CHACHA_BLOCK_SIZE - CHACHA_KEY_SIZE)
-+		_extract_crng(crng, tmp);
- 	spin_lock_irqsave(&crng->lock, flags);
--	s = (__u32 *) &tmp[used];
--	d = &crng->state[4];
--	for (i=0; i < 8; i++)
--		*d++ ^= *s++;
-+	for (i = 0; i < CHACHA_KEY_SIZE; i += sizeof(long))
-+		LONG_AT(crng->state + 4, i) ^= LONG_AT(tmp + 8, i);
- 	spin_unlock_irqrestore(&crng->lock, flags);
- }
- 
--static void crng_backtrack_protect(__u8 tmp[CHACHA_BLOCK_SIZE], int used)
--{
--	struct crng_state *crng = NULL;
--
--#ifdef CONFIG_NUMA
--	if (crng_node_pool)
--		crng = crng_node_pool[numa_node_id()];
--	if (crng == NULL)
--#endif
--		crng = &primary_crng;
--	_crng_backtrack_protect(crng, tmp, used);
--}
--
- static ssize_t extract_crng_user(void __user *buf, size_t nbytes)
- {
- 	ssize_t ret = 0, i = CHACHA_BLOCK_SIZE;
--	__u8 tmp[CHACHA_BLOCK_SIZE] __aligned(4);
-+	chacha_buf_t tmp;
- 	int large_request = (nbytes > 256);
-+	struct crng_state *crng = default_crng();
- 
- 	while (nbytes) {
- 		if (large_request && need_resched()) {
-@@ -1182,7 +1185,7 @@ static ssize_t extract_crng_user(void __user *buf, size_t nbytes)
- 			schedule();
- 		}
- 
--		extract_crng(tmp);
-+		_extract_crng(crng, tmp);
- 		i = min_t(int, nbytes, CHACHA_BLOCK_SIZE);
- 		if (copy_to_user(buf, tmp, i)) {
- 			ret = -EFAULT;
-@@ -1193,7 +1196,7 @@ static ssize_t extract_crng_user(void __user *buf, size_t nbytes)
- 		buf += i;
- 		ret += i;
- 	}
--	crng_backtrack_protect(tmp, i);
-+	crng_backtrack_protect(crng, tmp, i);
- 
- 	/* Wipe data just written to memory */
- 	memzero_explicit(tmp, sizeof(tmp));
-@@ -1754,22 +1757,20 @@ static void _warn_unseeded_randomness(const char *func_name, void *caller,
-  */
- static void _get_random_bytes(void *buf, int nbytes)
- {
--	__u8 tmp[CHACHA_BLOCK_SIZE] __aligned(4);
-+	chacha_buf_t tmp;
-+	struct crng_state *crng;
- 
- 	trace_get_random_bytes(nbytes, _RET_IP_);
-+	crng = default_crng();
- 
--	while (nbytes >= CHACHA_BLOCK_SIZE) {
--		extract_crng(buf);
--		buf += CHACHA_BLOCK_SIZE;
--		nbytes -= CHACHA_BLOCK_SIZE;
-+	for (;;) {
-+		_extract_crng(crng, tmp);
-+		if (nbytes <= CHACHA_BLOCK_SIZE)
-+			break;
-+		memcpy(buf, tmp, CHACHA_BLOCK_SIZE);
- 	}
--
--	if (nbytes > 0) {
--		extract_crng(tmp);
--		memcpy(buf, tmp, nbytes);
--		crng_backtrack_protect(tmp, nbytes);
--	} else
--		crng_backtrack_protect(tmp, CHACHA_BLOCK_SIZE);
-+	memcpy(buf, tmp, nbytes);
-+	crng_backtrack_protect(crng, tmp, nbytes);
- 	memzero_explicit(tmp, sizeof(tmp));
- }
- 
-@@ -2402,7 +2403,7 @@ struct ctl_table random_table[] = {
- struct batched_entropy {
- 	union {
- 		u64 entropy64[CHACHA_BLOCK_SIZE / sizeof(u64)];
--		u32 entropy32[CHACHA_BLOCK_SIZE / sizeof(u32)];
-+		chacha_buf_t entropy32;
- 		u8 entropy8[CHACHA_BLOCK_SIZE];
- 		u8 position;	/* Offset of last consumed byte */
- 				/* Fresh data starts at position + 1 */
-@@ -2502,7 +2503,7 @@ u64 get_random_u64(void)
- 	ret = *(u64 *)(batch->entropy8 + pos);
- 	pos += sizeof(ret);
- 	if (pos == CHACHA_BLOCK_SIZE) {
--		extract_crng(batch->entropy8);
-+		extract_crng(batch->entropy32);
- 		pos = 0;
- 	}
- 	/* Second partial word (1..8 bytes used) */
-@@ -2558,7 +2559,7 @@ u32 get_random_u32(void)
- 	pos += sizeof(ret);
- 	/* unlikely is defined by gcc as 10% probable.  This is 1/16 */
- 	if (unlikely(pos == CHACHA_BLOCK_SIZE)) {
--		extract_crng(batch->entropy8);
-+		extract_crng(batch->entropy32);
- 		pos = 0;
- 	}
- 	/* Second partial word (1..8 bytes used) */
-diff --git a/include/crypto/chacha.h b/include/crypto/chacha.h
-index 2676f4fbd4c16..bcd8d99819715 100644
---- a/include/crypto/chacha.h
-+++ b/include/crypto/chacha.h
-@@ -34,6 +34,7 @@
- /* 192-bit nonce, then 64-bit stream position */
- #define XCHACHA_IV_SIZE		32
- 
-+void chacha_permute(u32 x[CHACHA_BLOCK_SIZE/4], int nrounds);
- void chacha_block_generic(u32 *state, u8 *stream, int nrounds);
- static inline void chacha20_block(u32 *state, u8 *stream)
- {
-diff --git a/lib/crypto/chacha.c b/lib/crypto/chacha.c
-index 65ead6b0c7e00..166b3566b030b 100644
---- a/lib/crypto/chacha.c
-+++ b/lib/crypto/chacha.c
-@@ -14,7 +14,7 @@
- #include <asm/unaligned.h>
- #include <crypto/chacha.h>
- 
--static void chacha_permute(u32 *x, int nrounds)
-+void chacha_permute(u32 x[16], int nrounds)
- {
- 	int i;
- 
 -- 
 2.26.0
 
