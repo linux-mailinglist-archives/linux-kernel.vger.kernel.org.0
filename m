@@ -2,166 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C3119453F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:19:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76D3F194545
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:19:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbgCZRS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 13:18:56 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38956 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbgCZRSz (ORCPT
+        id S1728248AbgCZRTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 13:19:20 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:33102 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbgCZRTT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 13:18:55 -0400
-Received: by mail-pl1-f193.google.com with SMTP id m1so2388135pll.6
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 10:18:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=FuNH3TvottBd6Vom+HjZUn38bx12HjWSuxT5PFFp2NM=;
-        b=bOPaTx6GdaN/kw3TDtNtl7YJvpKCdLmNpmXwiUaOV/H2Dyt1eisLQis+PnTqW9A+cy
-         EpkaDdfA5uo4DCk1ebTh4faj0FTdvUrGM01MpAbv2nSbK+gGglpLa6jzzOF6TUBcNS18
-         J+EdB85pXrJ9G1gjVsQGSBY1SA1XxTOvVWnGc=
+        Thu, 26 Mar 2020 13:19:19 -0400
+Received: by mail-io1-f72.google.com with SMTP id w25so5897784iom.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 10:19:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=FuNH3TvottBd6Vom+HjZUn38bx12HjWSuxT5PFFp2NM=;
-        b=pujXa8qKZgplmazhVdeJ+qAn52+EKFORRCAyhJZqrVa5n4cHeyPszTm4qMWov5ys/h
-         tAlfTNeZt3Oxefx7xEtYmE5P8Qfv2dng+K9Aceol1NETnjZb7QDHwYjzZyA4zn80gigj
-         OirQhwC89U677sKE7I9armbhLyps7PhqdVJLxAibYZLDodsuYs6dkTiOML4hmepGDY+/
-         RTl5bzXqOt6xaeyDHpyp6mVqbujPaKbsIybTnePTZfgYI+fmPOpYezbGelSnfltyCJTy
-         8dPd3PxZxwYA2eDejv8X4z5iB+iPdV6kF/LCbVppDKG7kteawP87QVDJ/cffiY0SGOYw
-         L93g==
-X-Gm-Message-State: ANhLgQ3gzB+m0x11LU/wSHhf8nTX+7hpbvOUvqCWAlOoAH5i4b9RQAMe
-        3va89LKVh6JZZoQpoHcz5KD0Kw==
-X-Google-Smtp-Source: ADFU+vuKz5FLrd/n++22UcE/kf4ftn3gYQmH2FDL1/qqMttDY074nJOuzLStkZh5VaZoPZM9xVSjkg==
-X-Received: by 2002:a17:90a:3783:: with SMTP id v3mr1135572pjb.31.1585243134014;
-        Thu, 26 Mar 2020 10:18:54 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id m68sm6263454pjb.0.2020.03.26.10.18.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 10:18:53 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 10:18:51 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     "Reshetova, Elena" <elena.reshetova@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Potapenko <glider@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/5] Optionally randomize kernel stack offset each
- syscall
-Message-ID: <202003260932.510967DD@keescook>
-References: <20200324203231.64324-1-keescook@chromium.org>
- <CAG48ez3yYkMdxEEW6sJzBC5BZSbzEZKnpWzco32p-TJx7y_srg@mail.gmail.com>
- <202003241604.7269C810B@keescook>
- <BL0PR11MB3281D8D615FA521401B8E320E7CE0@BL0PR11MB3281.namprd11.prod.outlook.com>
- <202003251322.180F2536E@keescook>
- <CAG48ez1RfvayCpNVkVQrdNbb6tNv1Wc=337Q7kZu80PrbMOP_A@mail.gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=89AASuIsuhq2TDnjrU3eDHxKk/9xmva/NohKkxqdSAA=;
+        b=U6ZaXiZozEHC3Th/WP3aCaEVuSLQBBjDwCXdUioDRNko5hlMHu6XuLDi986l48wa83
+         YehOekaHyRxWBtUyc7jlLt70ndVtU4l8/gLi1bD5m4kkmeXSM3QcJupURezMXGSEl+2S
+         5VmQsrLHABHBdVSanqnA4fyIPX63tfpjdq0eU3Ixg+vEAu1S3gdCy4vMHPyAcf1WRHL7
+         bAp75N+cbJ5P3thMnj1Aev/lCVoIBpq9nsi/s+oph5MUu2rAg5/NTlOLu/6U7rKS5pBM
+         5Qxqq2tG08H0qrOoR5g43NUKEzEODBsOY6gjqmNz905udVxfHMRNGrmlpjv+9elyq+4J
+         +nPw==
+X-Gm-Message-State: ANhLgQ2tEs65uVDdJbsmz0md0gGupGRaQwRRs1WatYe0uzVlyY0Tzc5L
+        uYyOc8DqBXfjXHXTD1Tses+of/8dGnwu323Wk7rlX44LGTGO
+X-Google-Smtp-Source: ADFU+vtgCXMrV1x/q2M3+wuvcIE1En+W91TuXhXYhJ2UHktcg8B/cDWeG3d/eunelo+KoKiVVOL84bsHeOR9XFS3l5pv3/hObVKD
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez1RfvayCpNVkVQrdNbb6tNv1Wc=337Q7kZu80PrbMOP_A@mail.gmail.com>
+X-Received: by 2002:a92:dcc6:: with SMTP id b6mr7549715ilr.113.1585243156443;
+ Thu, 26 Mar 2020 10:19:16 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 10:19:16 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000038f92e05a1c52f43@google.com>
+Subject: KMSAN: kernel-infoleak in copyout (2)
+From:   syzbot <syzbot+fa5414772d5c445dac3c@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, edumazet@google.com, glider@google.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
+        yuehaibing@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 12:20:19AM +0100, Jann Horn wrote:
-> On Wed, Mar 25, 2020 at 9:27 PM Kees Cook <keescook@chromium.org> wrote:
-> > On Wed, Mar 25, 2020 at 12:15:12PM +0000, Reshetova, Elena wrote:
-> > > > > Also, are you sure that it isn't possible to make the syscall that
-> > > > > leaked its stack pointer never return to userspace (via ptrace or
-> > > > > SIGSTOP or something like that), and therefore never realign its
-> > > > > stack, while keeping some controlled data present on the syscall's
-> > > > > stack?
-> > >
-> > > How would you reliably detect that a stack pointer has been leaked
-> > > to userspace while it has been in a syscall? Does not seem to be a trivial
-> > > task to me.
-> >
-> > Well, my expectation is that folks using this defense are also using
-> > panic_on_warn sysctl, etc, so attackers don't get a chance to actually
-> > _use_ register values spilled to dmesg.
-> 
-> Uh... I thought that thing was exclusively for stuff like syzkaller,
-> because nuking the entire system because of a WARN is far too
-> excessive? WARNs should be safe to add almost anywhere in the kernel,
-> so that developers can put their assumptions about system behavior
-> into code without having to worry about bringing down the entire
-> system if that assumption turns out to have been false in some
-> harmless edgecase.
+Hello,
 
-So, I'm caught in a tight spot between Linus's deprecation of BUG()[1],
-and the desire for high-sensitivity security-oriented system builders
-to have a "completely stop running that kernel thread" option. Linus's
-entirely reasonable observation that BUG() destabilizes the kernel more
-often than it doesn't means there isn't actually a safe "stop that kernel
-thread" option, especially since many mitigations that detect badness span
-a spectrum of "stops the badness before it happens" (e.g. NX memory) to
-"I see badness has already happened" (e.g. stack protector). As a result,
-the only way to provide a way for the security-prioritized users is to
-downgrade corruptions to DoSes via panic(). I wish there was a magic
-way to have a perfect kernel state unwinder to get us the BUG() we
-wanted it to be, but given the kernel's complexity, it doesn't exist
-(and is unlikely to be worth developing). Right now, we either get
-"WARN() and keep going as best we can" or we get "WARN() and panic".
+syzbot found the following crash on:
 
-And with regard to "WARNs should be safe to add", yes, that's generally
-true, but the goal is to not make them reachable from userspace because
-of this need to be able to "upgrade" them to panic(). I have tried to
-document[1] this:
+HEAD commit:    686a4f77 kmsan: don't compile memmove
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=13235a31e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e10654781bc1f11c
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa5414772d5c445dac3c
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164789e9e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1014a229e00000
 
-  Note that the WARN()-family should only be used for "expected to
-  be unreachable" situations. If you want to warn about "reachable
-  but undesirable" situations, please use the pr_warn()-family of
-  functions. System owners may have set the *panic_on_warn* sysctl,
-  to make sure their systems do not continue running in the face of
-  "unreachable" conditions. (For example, see commits like `this one
-  <https://git.kernel.org/linus/d4689846881d160a4d12a514e991a740bcb5d65a>`_.)
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fa5414772d5c445dac3c@syzkaller.appspotmail.com
 
-[1] https://lore.kernel.org/lkml/202003141524.59C619B51A@keescook/
+=====================================================
+BUG: KMSAN: kernel-infoleak in kmsan_copy_to_user+0x81/0x90 mm/kmsan/kmsan_hooks.c:253
+CPU: 1 PID: 11522 Comm: syz-executor835 Not tainted 5.5.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x220 lib/dump_stack.c:118
+ kmsan_report+0xf7/0x1e0 mm/kmsan/kmsan_report.c:118
+ kmsan_internal_check_memory+0x238/0x3d0 mm/kmsan/kmsan.c:423
+ kmsan_copy_to_user+0x81/0x90 mm/kmsan/kmsan_hooks.c:253
+ copyout+0x15a/0x1e0 lib/iov_iter.c:145
+ _copy_to_iter+0x34e/0x2420 lib/iov_iter.c:633
+ copy_to_iter include/linux/uio.h:138 [inline]
+ simple_copy_to_iter+0xd7/0x130 net/core/datagram.c:515
+ __skb_datagram_iter+0x25f/0xfc0 net/core/datagram.c:423
+ skb_copy_datagram_iter+0x292/0x2b0 net/core/datagram.c:529
+ tun_put_user drivers/net/tun.c:2144 [inline]
+ tun_do_read+0x2471/0x2df0 drivers/net/tun.c:2228
+ tun_chr_read_iter+0x229/0x460 drivers/net/tun.c:2247
+ call_read_iter include/linux/fs.h:1896 [inline]
+ new_sync_read fs/read_write.c:414 [inline]
+ __vfs_read+0xa64/0xc80 fs/read_write.c:427
+ vfs_read+0x346/0x6a0 fs/read_write.c:461
+ ksys_read+0x267/0x450 fs/read_write.c:587
+ __do_sys_read fs/read_write.c:597 [inline]
+ __se_sys_read+0x92/0xb0 fs/read_write.c:595
+ __x64_sys_read+0x4a/0x70 fs/read_write.c:595
+ do_syscall_64+0xb8/0x160 arch/x86/entry/common.c:296
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x403f40
+Code: 01 f0 ff ff 0f 83 a0 0d 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 83 3d 6d a0 2d 00 00 75 14 b8 00 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 74 0d 00 00 c3 48 83 ec 08 e8 da 02 00 00
+RSP: 002b:00007ffe8e33e1d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000403f40
+RDX: 00000000000003e8 RSI: 00007ffe8e33e1e0 RDI: 00000000000000f0
+RBP: 000000000002640f R08: 0000000000000000 R09: 0000000000000004
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00000000004051d0 R14: 0000000000000000 R15: 0000000000000000
 
-> Also, there are other places that dump register state. In particular
-> the soft lockup detection, which you can IIRC easily trip even
-> accidentally if you play around with stuff like FUSE filesystems, or
-> if a disk becomes unresponsive. Sure, *theoretically* you can also set
-> the "panic on soft lockup" flag, but that seems like a really terrible
-> idea to me.
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:144 [inline]
+ kmsan_internal_chain_origin+0xad/0x130 mm/kmsan/kmsan.c:310
+ kmsan_memcpy_memmove_metadata+0x272/0x2e0 mm/kmsan/kmsan.c:247
+ kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:267
+ __msan_memcpy+0x43/0x50 mm/kmsan/kmsan_instr.c:116
+ pskb_expand_head+0x38b/0x1b00 net/core/skbuff.c:1637
+ __skb_cow include/linux/skbuff.h:3120 [inline]
+ skb_cow_head include/linux/skbuff.h:3154 [inline]
+ batadv_skb_head_push+0x234/0x350 net/batman-adv/soft-interface.c:74
+ batadv_send_skb_packet+0x1a7/0x8c0 net/batman-adv/send.c:86
+ batadv_send_broadcast_skb+0x76/0x90 net/batman-adv/send.c:127
+ batadv_iv_ogm_send_to_if net/batman-adv/bat_iv_ogm.c:393 [inline]
+ batadv_iv_ogm_emit net/batman-adv/bat_iv_ogm.c:419 [inline]
+ batadv_iv_send_outstanding_bat_ogm_packet+0x97e/0xd50 net/batman-adv/bat_iv_ogm.c:1706
+ process_one_work+0x1552/0x1ef0 kernel/workqueue.c:2264
+ worker_thread+0xef6/0x2450 kernel/workqueue.c:2410
+ kthread+0x4b5/0x4f0 kernel/kthread.c:256
+ ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:353
 
-I understand your general objection to non-deterministic defenses,
-as there will always be ways to weaken them, but I don't think that's
-reason enough to not have them. I prefer to look at mitigations as a
-spectrum, and to recognize that some are more effective with certain
-system configurations. They become tools to choose from when building
-defense in depth.
+Uninit was created at:
+ kmsan_save_stack_with_flags+0x3c/0x90 mm/kmsan/kmsan.c:144
+ kmsan_internal_alloc_meta_for_pages mm/kmsan/kmsan_shadow.c:307 [inline]
+ kmsan_alloc_page+0x12a/0x310 mm/kmsan/kmsan_shadow.c:336
+ __alloc_pages_nodemask+0x57f2/0x5f60 mm/page_alloc.c:4800
+ __alloc_pages include/linux/gfp.h:498 [inline]
+ __alloc_pages_node include/linux/gfp.h:511 [inline]
+ alloc_pages_node include/linux/gfp.h:525 [inline]
+ __page_frag_cache_refill mm/page_alloc.c:4875 [inline]
+ page_frag_alloc+0x3ae/0x910 mm/page_alloc.c:4905
+ __netdev_alloc_skb+0x703/0xbb0 net/core/skbuff.c:455
+ __netdev_alloc_skb_ip_align include/linux/skbuff.h:2801 [inline]
+ netdev_alloc_skb_ip_align include/linux/skbuff.h:2811 [inline]
+ batadv_iv_ogm_aggregate_new net/batman-adv/bat_iv_ogm.c:558 [inline]
+ batadv_iv_ogm_queue_add+0x10da/0x1900 net/batman-adv/bat_iv_ogm.c:670
+ batadv_iv_ogm_schedule_buff net/batman-adv/bat_iv_ogm.c:845 [inline]
+ batadv_iv_ogm_schedule+0x107b/0x13c0 net/batman-adv/bat_iv_ogm.c:865
+ batadv_iv_send_outstanding_bat_ogm_packet+0xbae/0xd50 net/batman-adv/bat_iv_ogm.c:1718
+ process_one_work+0x1552/0x1ef0 kernel/workqueue.c:2264
+ worker_thread+0xef6/0x2450 kernel/workqueue.c:2410
+ kthread+0x4b5/0x4f0 kernel/kthread.c:256
+ ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:353
 
-> As far as I can tell, the only clean way to fix this is to tell
-> distros that give non-root users access to dmesg (Ubuntu in
-> particular) that they have to stop doing that. E.g. Debian seems to
-> get by just fine with root-restricted dmesg.
+Bytes 52-53 of 146 are uninitialized
+Memory access of size 146 starts at ffff9ecbf8eb0c40
+Data copied to user address 00007ffe8e33e1e0
+=====================================================
 
-Totally agreed about that. Ubuntu may be hard to convince as one of
-their design principles has been to make the first user able to use the
-system completely with as little interruption as possible. (e.g. pop-up
-confirmation dialogs are strongly discouraged, etc.)
 
-So, for this series, I think the benefit-to-complexity value is high.
-It's a simple solution even if it's not perfect (most things can't be
-given the existing kernel design trade-offs).
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
--Kees
-
--- 
-Kees Cook
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
