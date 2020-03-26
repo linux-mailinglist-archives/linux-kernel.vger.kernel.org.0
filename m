@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E58A193C92
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:09:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CABE193CAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:09:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbgCZKIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 06:08:45 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50200 "EHLO
+        id S1728138AbgCZKJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 06:09:25 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50196 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbgCZKIn (ORCPT
+        with ESMTP id S1727773AbgCZKIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 06:08:43 -0400
+        Thu, 26 Mar 2020 06:08:42 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jHPRE-00047r-Pu; Thu, 26 Mar 2020 11:08:36 +0100
+        id 1jHPRE-00047J-AV; Thu, 26 Mar 2020 11:08:36 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5707A1C0440;
-        Thu, 26 Mar 2020 11:08:36 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DEBB51C0478;
+        Thu, 26 Mar 2020 11:08:35 +0100 (CET)
 Date:   Thu, 26 Mar 2020 10:08:35 -0000
 From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/objtool] objtool: Optimize find_section_by_index()
+Subject: [tip: core/objtool] objtool: Optimize find_section_by_name()
 Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Miroslav Benes <mbenes@suse.cz>,
         Josh Poimboeuf <jpoimboe@redhat.com>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200324160924.381249993@infradead.org>
-References: <20200324160924.381249993@infradead.org>
+In-Reply-To: <20200324160924.440174280@infradead.org>
+References: <20200324160924.440174280@infradead.org>
 MIME-Version: 1.0
-Message-ID: <158521731598.28353.8097168736160020060.tip-bot2@tip-bot2>
+Message-ID: <158521731555.28353.11326523921308261337.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,106 +48,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/objtool branch of tip:
 
-Commit-ID:     530389968739883a61192767e1c215653ba4ba2b
-Gitweb:        https://git.kernel.org/tip/530389968739883a61192767e1c215653ba4ba2b
+Commit-ID:     ae358196fac3a0b4d2a7d47a4f401e3421027b03
+Gitweb:        https://git.kernel.org/tip/ae358196fac3a0b4d2a7d47a4f401e3421027b03
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Tue, 10 Mar 2020 18:43:35 +01:00
+AuthorDate:    Thu, 12 Mar 2020 09:32:10 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 25 Mar 2020 18:28:28 +01:00
+CommitterDate: Wed, 25 Mar 2020 18:28:29 +01:00
 
-objtool: Optimize find_section_by_index()
+objtool: Optimize find_section_by_name()
 
-In order to avoid a linear search (over 20k entries), add an
-section_hash to the elf object.
+In order to avoid yet another linear search of (20k) sections, add a
+name based hash.
 
-This reduces objtool on vmlinux.o from a few minutes to around 45
-seconds.
+This reduces objtool runtime on vmlinux.o by some 10s to around 35s.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Miroslav Benes <mbenes@suse.cz>
 Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20200324160924.381249993@infradead.org
+Link: https://lkml.kernel.org/r/20200324160924.440174280@infradead.org
 ---
- tools/objtool/elf.c | 13 ++++++++-----
- tools/objtool/elf.h |  2 ++
- 2 files changed, 10 insertions(+), 5 deletions(-)
+ tools/objtool/elf.c | 10 +++++++++-
+ tools/objtool/elf.h |  3 +++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index ff29306..9007713 100644
+index 9007713..20fe40d 100644
 --- a/tools/objtool/elf.c
 +++ b/tools/objtool/elf.c
-@@ -38,7 +38,7 @@ static struct section *find_section_by_index(struct elf *elf,
+@@ -22,11 +22,16 @@
+ 
+ #define MAX_NAME_LEN 128
+ 
++static inline u32 str_hash(const char *str)
++{
++	return jhash(str, strlen(str), 0);
++}
++
+ struct section *find_section_by_name(struct elf *elf, const char *name)
  {
  	struct section *sec;
  
 -	list_for_each_entry(sec, &elf->sections, list)
-+	hash_for_each_possible(elf->section_hash, sec, hash, idx)
- 		if (sec->idx == idx)
++	hash_for_each_possible(elf->section_name_hash, sec, name_hash, str_hash(name))
+ 		if (!strcmp(sec->name, name))
  			return sec;
  
-@@ -166,8 +166,6 @@ static int read_sections(struct elf *elf)
- 		INIT_LIST_HEAD(&sec->rela_list);
- 		hash_init(sec->rela_hash);
+@@ -202,6 +207,7 @@ static int read_sections(struct elf *elf)
  
--		list_add_tail(&sec->list, &elf->sections);
--
- 		s = elf_getscn(elf->elf, i);
- 		if (!s) {
- 			WARN_ELF("elf_getscn");
-@@ -201,6 +199,9 @@ static int read_sections(struct elf *elf)
- 			}
- 		}
- 		sec->len = sec->sh.sh_size;
-+
-+		list_add_tail(&sec->list, &elf->sections);
-+		hash_add(elf->section_hash, &sec->hash, sec->idx);
+ 		list_add_tail(&sec->list, &elf->sections);
+ 		hash_add(elf->section_hash, &sec->hash, sec->idx);
++		hash_add(elf->section_name_hash, &sec->name_hash, str_hash(sec->name));
  	}
  
  	if (stats)
-@@ -439,6 +440,7 @@ struct elf *elf_read(const char *name, int flags)
- 	memset(elf, 0, sizeof(*elf));
+@@ -441,6 +447,7 @@ struct elf *elf_read(const char *name, int flags)
  
  	hash_init(elf->symbol_hash);
-+	hash_init(elf->section_hash);
+ 	hash_init(elf->section_hash);
++	hash_init(elf->section_name_hash);
  	INIT_LIST_HEAD(&elf->sections);
  
  	elf->fd = open(name, flags);
-@@ -501,8 +503,6 @@ struct section *elf_create_section(struct elf *elf, const char *name,
- 	INIT_LIST_HEAD(&sec->rela_list);
- 	hash_init(sec->rela_hash);
+@@ -581,6 +588,7 @@ struct section *elf_create_section(struct elf *elf, const char *name,
  
--	list_add_tail(&sec->list, &elf->sections);
--
- 	s = elf_newscn(elf->elf);
- 	if (!s) {
- 		WARN_ELF("elf_newscn");
-@@ -579,6 +579,9 @@ struct section *elf_create_section(struct elf *elf, const char *name,
- 	shstrtab->len += strlen(name) + 1;
- 	shstrtab->changed = true;
+ 	list_add_tail(&sec->list, &elf->sections);
+ 	hash_add(elf->section_hash, &sec->hash, sec->idx);
++	hash_add(elf->section_name_hash, &sec->name_hash, str_hash(sec->name));
  
-+	list_add_tail(&sec->list, &elf->sections);
-+	hash_add(elf->section_hash, &sec->hash, sec->idx);
-+
  	return sec;
  }
- 
 diff --git a/tools/objtool/elf.h b/tools/objtool/elf.h
-index 1222980..8c272eb 100644
+index 8c272eb..ac7c46f 100644
 --- a/tools/objtool/elf.h
 +++ b/tools/objtool/elf.h
-@@ -25,6 +25,7 @@
+@@ -10,6 +10,7 @@
+ #include <gelf.h>
+ #include <linux/list.h>
+ #include <linux/hashtable.h>
++#include <linux/jhash.h>
  
+ #ifdef LIBELF_USE_DEPRECATED
+ # define elf_getshdrnum    elf_getshnum
+@@ -26,6 +27,7 @@
  struct section {
  	struct list_head list;
-+	struct hlist_node hash;
+ 	struct hlist_node hash;
++	struct hlist_node name_hash;
  	GElf_Shdr sh;
  	struct list_head symbol_list;
  	struct list_head rela_list;
-@@ -71,6 +72,7 @@ struct elf {
- 	char *name;
+@@ -73,6 +75,7 @@ struct elf {
  	struct list_head sections;
  	DECLARE_HASHTABLE(symbol_hash, 20);
-+	DECLARE_HASHTABLE(section_hash, 16);
+ 	DECLARE_HASHTABLE(section_hash, 16);
++	DECLARE_HASHTABLE(section_name_hash, 16);
  };
  
  
