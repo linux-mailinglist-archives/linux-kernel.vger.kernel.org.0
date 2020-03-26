@@ -2,79 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD1CA194757
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:18:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAF8719473A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:12:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbgCZTSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 15:18:40 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43149 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgCZTSk (ORCPT
+        id S1728502AbgCZTMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 15:12:33 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42788 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgCZTMd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 15:18:40 -0400
-Received: by mail-ot1-f68.google.com with SMTP id a6so7125619otb.10;
-        Thu, 26 Mar 2020 12:18:40 -0700 (PDT)
+        Thu, 26 Mar 2020 15:12:33 -0400
+Received: by mail-qt1-f193.google.com with SMTP id t9so6433479qto.9;
+        Thu, 26 Mar 2020 12:12:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qHsOC/D03h0XLJc3jn+ovK0zIf17NyvwgvW1/olri/I=;
+        b=bf6kiiHYYEmy+3+jGQVmaoWewfjr+65/fJMxT3+fBDJDAhrQDTAQ0SmQTR7BCn8CRK
+         vZkl+MrEgKTW+TDY2kVcx7MunV5Ah0JzeuoqBPr+QMczC2o/j6nQfbR28g9bguH5Zp0B
+         qnpFSiL9IwOWsGibJm5lBiUzGWZ6GTsw8DCvBhkdB8SjgyaDSjwg+0zMYT1NfGBK+h7n
+         Flx86kVsOZLHxbajZdP5eRt04jWA3o4WqtrqHkLBGmfYrQNyXp2vtZsuS+LCLZD5BBIR
+         C76i1mZKyXw0rj3w+NqtLoQfQqQzdC2I+2FIrFEuQvSMBqlwhaj956AkTW7N0p2URmKG
+         lLfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+zI0TwvsWVYhlJVr19T19enByryhK08B3uBQBVeTRjY=;
-        b=NNxcOgBIEJo1cXT9MqV7z4owAq5wt0IRldauAD/p4p/mLiSjlnGBSWBnqEgS6QZYog
-         T540cjjBcMuRlL0wbbwoVMIpT11jy+B8BTM8bore9lg51IQxajUYQ8qtJWDFXDpT4U2k
-         AYtFPxTcdynqkvZ3zeRb7DTKxFyoT0lRJ9zixwivIunsrEeS0nYOrL0225Gm01OCsviK
-         cuBHLH/xPiEraA2Z+waEjasck5VV7Fw4YWl9Rk3ZNk4lRORffQYoR3jJs0f2KAb/Qf4X
-         b2MpVozd0Y8mO5BkS54doFWGJSN6RwRgh4r2H7mbr5r/pgBuywoxSplK040rI8AW2kdE
-         jyVw==
-X-Gm-Message-State: ANhLgQ34T8aJngQd44ULJFkgkLguz2sOrvVfFBld7bJEVJqnhP6pUDaC
-        EGHh8yXCe5yZ8zX8w0FO4azHEygJQqHalesZbTjS7g==
-X-Google-Smtp-Source: ADFU+vuK4kISyUSvbd8lSoZFRj3ieawYyrBiTo4R5Rxz0RRx7BltA46EjHJ8e5WuRny7Y3Y0tc2SGe+kDAOHJiiJ8oo=
-X-Received: by 2002:a05:6830:14cc:: with SMTP id t12mr7236262otq.118.1585249833999;
- Thu, 26 Mar 2020 12:10:33 -0700 (PDT)
+        bh=qHsOC/D03h0XLJc3jn+ovK0zIf17NyvwgvW1/olri/I=;
+        b=gmw1xzwJTAc9p5z5rXbjx3QyRTPInNGPre2z3AOTtuoHM3XaYbbmY492iizHr4HJy9
+         la+qjNVMv7Vn1aclWiUO+33Dv8jYjoS8EeI48PREQJ6GoNIXLSNohx9YxGs/BJSUbvmo
+         gVObJOZbvLp28n3SNyNU4PyJbEtN+fxhSKodRH45idfAKBLHEIQS1Xg8HZyBPr/wzNx1
+         eOvsVTooGDLutY1UgSKmiWi/5tEfWGIfRSlDqThprBP5uiIbYn1WYXClEoSyMtuEmXNW
+         THvOnGz77AgQANGu35svMB1nbl3HTxktJJTfNuPFfsjQt/IcHFha07WVsWTmZsAw/OBk
+         6mFA==
+X-Gm-Message-State: ANhLgQ35mkFv3S2loU+Ocl+aIZ7wglwc5TysWsBh2dSCRiHCVurOjpbf
+        AVbYfnEgL70quJWG0Z0eidhfWqlbIuCAmMHFen4=
+X-Google-Smtp-Source: ADFU+vuGpdr6jRNAReDB+x/B5xU92+TkGFdR4WoigAiJV5uSEeF2uvz6dQHx2HBTxi6NSUjJPpXxEE6SZe4f6P7KjgA=
+X-Received: by 2002:ac8:3f62:: with SMTP id w31mr9934413qtk.171.1585249951604;
+ Thu, 26 Mar 2020 12:12:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200326162007.25670-1-dsmythies@telus.net>
-In-Reply-To: <20200326162007.25670-1-dsmythies@telus.net>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 26 Mar 2020 20:10:22 +0100
-Message-ID: <CAJZ5v0iGJ288aLqUWGD35mNQ3WX_sDvS82HOzXPewWE_44j6yw@mail.gmail.com>
-Subject: Re: [PATCH] tools/power/x86/intel_pstate_tracer: fix a broken y-axis scale
-To:     Doug Smythies <doug.smythies@gmail.com>
-Cc:     Doug Smythies <dsmythies@telus.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
+References: <20200326142823.26277-1-kpsingh@chromium.org> <20200326142823.26277-5-kpsingh@chromium.org>
+In-Reply-To: <20200326142823.26277-5-kpsingh@chromium.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Thu, 26 Mar 2020 12:12:20 -0700
+Message-ID: <CAEf4BzaS8xLLrbaWgWbWSEVfc3YBPURQhZxe=zR06B021jH5BA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v7 4/8] bpf: lsm: Implement attach, detach and execution
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-security-module@vger.kernel.org,
+        Brendan Jackman <jackmanb@google.com>,
+        Florent Revest <revest@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 5:20 PM Doug Smythies <doug.smythies@gmail.com> wrote:
+On Thu, Mar 26, 2020 at 7:29 AM KP Singh <kpsingh@chromium.org> wrote:
 >
-> A fixed y-axis scale was missed during a change to autoscale.
-> Correct it.
+> From: KP Singh <kpsingh@google.com>
 >
-> Fixes: 709bd70d070ee6d775c6e77e40e8444bd5fa123f
-> "tools/power/x86/intel_pstate_tracer: change several graphs to autoscale y-axis"
+> JITed BPF programs are dynamically attached to the LSM hooks
+> using BPF trampolines. The trampoline prologue generates code to handle
+> conversion of the signature of the hook to the appropriate BPF context.
 >
-> Signed-off-by: Doug Smythies <dsmythies@telus.net>
+> The allocated trampoline programs are attached to the nop functions
+> initialized as LSM hooks.
+>
+> BPF_PROG_TYPE_LSM programs must have a GPL compatible license and
+> and need CAP_SYS_ADMIN (required for loading eBPF programs).
+>
+> Upon attachment:
+>
+> * A BPF fexit trampoline is used for LSM hooks with a void return type.
+> * A BPF fmod_ret trampoline is used for LSM hooks which return an
+>   int. The attached programs can override the return value of the
+>   bpf LSM hook to indicate a MAC Policy decision.
+>
+> Signed-off-by: KP Singh <kpsingh@google.com>
+> Reviewed-by: Brendan Jackman <jackmanb@google.com>
+> Reviewed-by: Florent Revest <revest@google.com>
 > ---
->  tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-> index 256199c7a182..3c47865bb247 100755
-> --- a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-> +++ b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-> @@ -235,7 +235,6 @@ def plot_duration_cpu():
->      output_png = 'all_cpu_durations.png'
->      g_plot = common_all_gnuplot_settings(output_png)
->  #   autoscale this one, no set y range
-> -    g_plot('set ytics 0, 500')
->      g_plot('set ylabel "Timer Duration (MilliSeconds)"')
->      g_plot('set title "{} : cpu durations : {:%F %H:%M}"'.format(testname, datetime.now()))
->
-> --
 
-Applied as 5.7 material, thanks!
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+
+
+>  include/linux/bpf_lsm.h | 11 ++++++++
+>  kernel/bpf/bpf_lsm.c    | 28 ++++++++++++++++++++
+>  kernel/bpf/btf.c        |  9 ++++++-
+>  kernel/bpf/syscall.c    | 57 ++++++++++++++++++++++++++++-------------
+>  kernel/bpf/trampoline.c | 17 +++++++++---
+>  kernel/bpf/verifier.c   | 19 +++++++++++---
+>  6 files changed, 114 insertions(+), 27 deletions(-)
+>
+
+[...]
+
+> @@ -2479,6 +2496,10 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
+>                 }
+>                 buf[sizeof(buf) - 1] = 0;
+>                 tp_name = buf;
+> +               break;
+> +       default:
+> +                       err = -EINVAL;
+> +                       goto out_put_prog;
+>         }
+
+is indentation off here or it's my email client?
+
+[...]
