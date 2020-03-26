@@ -2,102 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24EFD1948AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:19:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E6AA1948AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:19:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbgCZUTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 16:19:04 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44619 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbgCZUTE (ORCPT
+        id S1728737AbgCZUTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 16:19:45 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:38477 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728326AbgCZUTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:19:04 -0400
-Received: by mail-qk1-f193.google.com with SMTP id j4so8313474qkc.11;
-        Thu, 26 Mar 2020 13:19:02 -0700 (PDT)
+        Thu, 26 Mar 2020 16:19:43 -0400
+Received: by mail-il1-f196.google.com with SMTP id m7so6690738ilg.5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 13:19:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rzV++PjycMf1C6DNb3Bvn/qTQ5TRkWt2M63e9VE4bbI=;
-        b=D2TAtx8FfNkFcX/x5Nkw002dVxBLRsFTu4IS+wnPcNna/HdEd9nkWgy9PEdV/ryXF8
-         irjFtYV0LC17Obpl11YhzuGa4+N49pl/Aw74ddi4HOsG7AcwArBKjooG8cYpmyV+wwG3
-         yibNMAa48vwV9r3a6ZMHEhyFvTcE++PToGoR7eY/ZIYkLYDLGbMGtaAJWOMahom5CPlk
-         Vv25JfW5GVTqTUL+SEfUtYSbpUIsAsEawlnnwhwDMr0Q0XOlFf7Q+n31hCeooERR5YRU
-         7te2t0z/N8pjtGy7z0t+TH242ZaiAP/vaXLtsZWat51yM+LIaQ6wvz1Hj3xqTzPFhUL+
-         erew==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2dOHIQM15C+8J2rrlogjSwV4spTK3lPNUtfX8p1nrXQ=;
+        b=mrKSk27QeQHjOhXDQ67+/nvXEJW9w0/5zoTq0a3tKFUS5MEt0c8/8hyr9bA/lTtcZc
+         usly1JHNxlla3H/Z/lx62QtQG/yuXx3E9yREvC7YE+KFdrZRa1w2X/3r8Wp0N5W+tQvQ
+         vW9SIOWUhjdDUtyBWGLxhpykQPilXkcZCKd5TuKwpsvC8sgHDQLTfnQ1GOnbgxcj4ocl
+         RbuuOeFwOi4nupN8mAU0KKNF8E996G+GZReVy6dbztLiHFcw6uj3QsnhfmPMgIIztihp
+         EZ/PStOMq+tEGtwYXNLFa1+rqA070AZY6YalKjALb79Nz7mTMn/cKm+rYa3bGpLHMpqp
+         KlOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=rzV++PjycMf1C6DNb3Bvn/qTQ5TRkWt2M63e9VE4bbI=;
-        b=lzKrFi41CWZ6JjqUInmeUaSnvvC1DL5ranzfTROGTX4iK0pA+Y1frhq7h90U2otwFY
-         PHOCqurGv0pbO2WaU+gdAMBr4cF0L49aH+YD85CESXiw3jsIrI3f2oLLIL1TL67Dy7UG
-         9dvzwPfvs0ErPaqcD/QDOsO1up9xsYjzLuyXUmGdTl7q9b6Y1XO/ioihlW5VTouHV/ux
-         iWcYrbSAS2ZFyD9iOAKgZcP7jw90a5wjwBy6VvWVotqg+H0E9fXIvWTonkaS7gYrYh40
-         yWhV8LLW2xLNjjU7E52c7n7YIFNvMl6xeE22bvEPeibpJAz+31ZR3Y0Lqdk3Nsy8s42+
-         5B9A==
-X-Gm-Message-State: ANhLgQ1kJK259zF/drsPr4vQyp9zzhncwyeQAhUcFM7wW9S/Yv9HprcK
-        0eYOfnkkmk/HKsvMNq09Oh8=
-X-Google-Smtp-Source: ADFU+vtJtabC1yJ4OPnSe9XH97DFyXt86qeuRZ6tOIR6sMiY5i6rwl1XVXWfnzOhBmdPC3oyIg/dyw==
-X-Received: by 2002:a37:d285:: with SMTP id f127mr10513039qkj.107.1585253941971;
-        Thu, 26 Mar 2020 13:19:01 -0700 (PDT)
-Received: from localhost ([199.96.181.106])
-        by smtp.gmail.com with ESMTPSA id n38sm2252946qtk.64.2020.03.26.13.19.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 13:19:01 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 16:18:59 -0400
-From:   Tejun Heo <tj@kernel.org>
-To:     Sonny Rao <sonnyrao@google.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>,
-        Amit Pundir <amit.pundir@linaro.org>, kernel-team@android.com,
-        Jesse Barnes <jsbarnes@google.com>, vpillai@digitalocean.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, cgroups@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Li Zefan <lizefan@huawei.com>
-Subject: Re: [PATCH RFC] cpuset: Make cpusets get restored on hotplug
-Message-ID: <20200326201649.GQ162390@mtj.duckdns.org>
-References: <20200326191623.129285-1-joel@joelfernandes.org>
- <20200326192035.GO162390@mtj.duckdns.org>
- <20200326194448.GA133524@google.com>
- <972a5c1b-6721-ac20-cec5-617af67e617d@redhat.com>
- <CAPz6YkVUsDz456z8-X2G_EDd-uet1rRNnh2sDUpdcoWp_fkDDw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2dOHIQM15C+8J2rrlogjSwV4spTK3lPNUtfX8p1nrXQ=;
+        b=DvmWzT0SGvawJeS0pzZU8yNZuaxvkrRNW+iPn4ntokDNQUGFtBUwslXmfgnGQSDtOw
+         xr1Zv1GEqZs0f0tv94dOlSoftQrOEAc+VrB6ZSEP9tjJQ79yNiw9wxS/ws8uD/LnlzSH
+         Y8f55bwZYUn1jRPnSeUtjrfP36QHPZ5UxBMI/QRRIiRFIHtmVPmkIypxs7K4iVHOIROD
+         a7nF37PVFo4glFAcjkrJY4t6sqWdKgcdow1/eSDbeDxqVpWAy1yQnX31Zol+7DpPD+ye
+         WkXB3E7ecwFQTd30DUELzlLtGU3RWLT1Ail68WDbbebCQ/hPo/L2u3dVXjXp1etNratZ
+         XSkw==
+X-Gm-Message-State: ANhLgQ2XRZjDmJKdPesQWbH0cs0uvuFmX1ATqOSdrfemReyP9UfjPyRt
+        UtFysDlT2dWu8Oftfmvo18XMjRK5gXkdZyPPjpHRYQ==
+X-Google-Smtp-Source: ADFU+vv9DU+eeDcpOTiazVkWPCi0VWmR4L7HpVdNPP5erkX2ql7MUXAnFmpS/pDyT/XQQ+IAZqH1L7D77DQ/545HJzs=
+X-Received: by 2002:a92:8384:: with SMTP id p4mr10939777ilk.16.1585253982337;
+ Thu, 26 Mar 2020 13:19:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPz6YkVUsDz456z8-X2G_EDd-uet1rRNnh2sDUpdcoWp_fkDDw@mail.gmail.com>
+References: <20200325194317.526492-1-ross.philipson@oracle.com>
+ <CACdnJut56WuqO=uLff0qy1Jp=C6f_sRxLpRBsrzb6byBsFYdCg@mail.gmail.com> <20200326134011.c4dswiq2g7eln3qd@tomti.i.net-space.pl>
+In-Reply-To: <20200326134011.c4dswiq2g7eln3qd@tomti.i.net-space.pl>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Thu, 26 Mar 2020 13:19:30 -0700
+Message-ID: <CACdnJutT1F7YJ5KFkyuaZv=nj8GqC+mrnoAsHZfMP1ZRNUQg3Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/12] x86: Trenchboot secure late launch Linux kernel support
+To:     Daniel Kiper <daniel.kiper@oracle.com>
+Cc:     Ross Philipson <ross.philipson@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-doc@vger.kernel.org, dpsmith@apertussolutions.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        trenchboot-devel@googlegroups.com,
+        Ard Biesheuvel <ardb@kernel.org>, leif@nuviainc.com,
+        eric.snowberg@oracle.com, piotr.krol@3mdeb.com,
+        krystian.hebel@3mdeb.com, michal.zygowski@3mdeb.com,
+        James Bottomley <james.bottomley@hansenpartnership.com>,
+        andrew.cooper3@citrix.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 01:05:04PM -0700, Sonny Rao wrote:
-> I am surprised if anyone actually wants this behavior, we (Chrome OS)
+On Thu, Mar 26, 2020 at 6:40 AM Daniel Kiper <daniel.kiper@oracle.com> wrote:
+> On Wed, Mar 25, 2020 at 01:29:03PM -0700, 'Matthew Garrett' via trenchboot-devel wrote:
+> > On Wed, Mar 25, 2020 at 12:43 PM Ross Philipson
+> > <ross.philipson@oracle.com> wrote:
+> > > To enable the kernel to be launched by GETSEC or SKINIT, a stub must be
+> > > built into the setup section of the compressed kernel to handle the
+> > > specific state that the late launch process leaves the BSP. This is a
+> > > lot like the EFI stub that is found in the same area. Also this stub
+> > > must measure everything that is going to be used as early as possible.
+> > > This stub code and subsequent code must also deal with the specific
+> > > state that the late launch leaves the APs in.
+> >
+> > How does this integrate with the EFI entry point? That's the expected
+>
+> It does not. We do not want and need to tie secure launch with UEFI.
 
-The behavior is silly but consistent in that it doesn't allow empty active
-cpusets and it has been like that for many many years now.
+I agree that it shouldn't be required, but it should be possible. We
+shouldn't add new entry points that don't integrate with the standard
+way of booting the kernel.
 
-> found out about it accidentally, and then found that Android had been
-> carrying a patch to fix it.  And if it were a desirable behavior then
-> why isn't it an option in v2?
+> > What's calling ExitBootServices() in
+>
+> Currently it is a bootloader, the GRUB which I am working on... OK, this
+> is not perfect but if we want to call ExitBootServices() from the kernel
+> then we have to move all pre-launch code from the bootloader to the
+> kernel. Not nice because then everybody who wants to implement secure
+> launch in different kernel, hypervisor, etc. has to re-implement whole
+> pre-launch code again.
 
-Nobody is saying it's a good behavior (hence the change in cgroup2) and there
-are situations where changing things like this is justifiable, but, here:
+We call ExitBootServices() in the EFI stub, so this is fine as long as
+the EFI stub hands over control to the SL code. But yes, I think it's
+a requirement that it be kernel-owned code calling ExitBootServices().
 
-* The proposed change makes the interface inconsistent and does so
-  unconditionally on what is now a mostly legacy interface.
+> > this flow, and does the secure launch have to occur after it? It'd be
+>
+> Yes, it does.
 
-* There already is a newer version of the interface which includes the
-  desired behavior.
+Ok. The firmware TPM interfaces are gone after ExitBootServices(), so
+we're going to need an additional implementation.
 
-* I forgot but as Waiman pointed out, you can even opt-in to the new
-  behavior, which is more comprehensive without the inconsitencies,
-  while staying on cgroup1.
+> I think any post-launch code in the kernel should not call anything from
+> the gap. And UEFI belongs to the gap. OK, we can potentially re-use UEFI
+> TPM code in the pre-launch phase but I am not convinced that we should
+> (I am looking at it right now). And this leads us to other question
+> which pops up here and there. How to call UEFI runtime services, e.g. to
+> modify UEFI variables, update firmware, etc., from MLE or even from the
+> OS started from MLE? In my opinion it is not safe to call anything from
+> the gap after secure launch. However, on the other hand we have to give
+> an option to change the boot order or update the firmware. So, how to
+> do that? I do not have an easy answer yet...
 
-Thanks.
-
--- 
-tejun
+How does Windows manage this? Retaining access to EFI runtime services
+is necessary, and the areas in the memory map marked as runtime
+services code or data should be considered part of the TCB and
+measured - they're very much not part of the gap.
