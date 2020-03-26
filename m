@@ -2,66 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF8E4193B68
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:02:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1DA6193B74
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:03:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbgCZJCA convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 26 Mar 2020 05:02:00 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:38318 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbgCZJB7 (ORCPT
+        id S1727793AbgCZJDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 05:03:50 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:34247 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbgCZJDu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 05:01:59 -0400
-Received: from marcel-macbook.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 23B15CECDB;
-        Thu, 26 Mar 2020 10:11:29 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: [PATCH v3 1/2] Bluetooth: btusb: Indicate Microsoft vendor
- extension for Intel 9460/9560 and 9160/9260
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20200326005931.v3.1.I0e975833a6789e8acc74be7756cd54afde6ba98c@changeid>
-Date:   Thu, 26 Mar 2020 10:01:56 +0100
-Cc:     Bluetooth Kernel Mailing List <linux-bluetooth@vger.kernel.org>,
-        Alain Michaud <alainm@chromium.org>,
-        Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <ADF19483-721C-4263-8CA8-CF4587E79BA4@holtmann.org>
-References: <20200326075938.65053-1-mcchou@chromium.org>
- <20200326005931.v3.1.I0e975833a6789e8acc74be7756cd54afde6ba98c@changeid>
-To:     Miao-chen Chou <mcchou@chromium.org>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
+        Thu, 26 Mar 2020 05:03:50 -0400
+Received: from [2a02:fe0:c700:2:781f:1a82:338:d2b7] (port=65133)
+        by smtp.domeneshop.no with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <Sami_Lands_Medias@samilands.eu>)
+        id 1jHOQW-0000nr-Eu
+        for linux-kernel@vger.kernel.org; Thu, 26 Mar 2020 10:03:48 +0100
+To:     linux-kernel@vger.kernel.org
+From:   Sami Lands Medias <Sami_Lands_Medias@samilands.eu>
+Subject: Was: fair pay sys - new domain
+Message-ID: <a8f4d941-01b1-905c-fd44-3f4953dc6e50@samilands.eu>
+Date:   Thu, 26 Mar 2020 10:03:39 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miao-chen,
+Coming to you from my new domain, Sami Lands Medias.
 
-> This adds a bit mask of driver_info for Microsoft vendor extension and
-> indicates the support for Intel 9460/9560 and 9160/9260. See
-> https://docs.microsoft.com/en-us/windows-hardware/drivers/bluetooth/
-> microsoft-defined-bluetooth-hci-commands-and-events for more information
-> about the extension. This was verified with Intel ThunderPeak BT controller
-> where msft_vnd_ext_opcode is 0xFC1E.
-> 
-> Signed-off-by: Miao-chen Chou <mcchou@chromium.org>
-> ---
-> 
-> Changes in v3:
-> - Create net/bluetooth/msft.c with struct msft_vnd_ext defined internally
-> and change the hdev->msft_ext field to void*.
-> - Define and expose msft_vnd_ext_set_opcode() for btusb use.
-> - Init hdev->msft_ext in hci_alloc_dev() and deinit it in hci_free_dev().
-
-so I spent some cycles on thinking about on how we can have this nice and cleanly without putting too much into the core stack or hci_dev. I took your patches and converted them a little bit into how I would do it. Please have a look.
-
-Regards
-
-Marcel
-
+We support the economic growth of samilands in Eu, which also is all the 
+aforementioned.
