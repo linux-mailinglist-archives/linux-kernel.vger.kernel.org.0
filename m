@@ -2,152 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC81F194B05
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 22:59:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36402194B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 23:04:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbgCZV7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 17:59:14 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:49936 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726260AbgCZV7O (ORCPT
+        id S1727585AbgCZWEu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 18:04:50 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40104 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbgCZWEt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 17:59:14 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02QLuO8a012424;
-        Thu, 26 Mar 2020 14:59:02 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=btULhVNZ+FcsHMbgEadVs6xowHHuhCtXKovdGRDiq1M=;
- b=q0DrcVUnhBSzM8m5LOl+eo8D7V9kbdP7SLJvCwgYYRh5eVj9DAoPVUeDUSlH6scoQw95
- JHQ2FRkLCNIF9qVOh+ky4flBPjRgFaEaoKlzmBAlYnX409loVMO7Ben8Ich6+vXUiwSB
- 0SlzPIjokkHhQmEEf+Z244j0BRU514Y6Z4Q= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 3010021pq8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 26 Mar 2020 14:59:02 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Thu, 26 Mar 2020 14:59:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jPvThokSx1rcLvpfsoCBClxFfy6rKgwM90XzM9M+ZQd7TPXY//cRpByrpmTq7WkOKxUyQmPkiAO2e32/d4C+jz56LvvR4CZxl0EXIUF6By8jwvGCuvE+oBpdP23dgqeSCO3DAXlFblRQkl7xX9PqyGEGvyIFz0IwSJkdCqzJ1JijCzBHFByCVHB4oKrS5uSadc3FE60DzR9OK9a3KKQAjdhS8gt/iD+MMFwQbPK5elXYjy3/GSh/SAKyPK7bEoRghzfciBjltDAPalbYUjBy00Jh+jnPWsyO9O0G8Ongt4SzGucb/wydsVVJ5KIASqMth9pAV1ZBcM4NnwS/8G/+5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=btULhVNZ+FcsHMbgEadVs6xowHHuhCtXKovdGRDiq1M=;
- b=jvjNlcEjOupfDeSD04vE2mnh+Amjp58jZYElpuPZevTVotNhcwbqKGsOqO2MqHRL7uNNCpB8e4YKFkFN9A9fFnmFGR+raO5dnvMtXEgXPYkaGQCByHv1yCUq086dgmZeV4PCNHF1yxgLL5dXYijlBOKORKHXPyzE6d49CfuSoKqDknUl0XtcooU985YusVKVdEcXbnmLRlEOS1cdhnzF0Hcx+3u+A30oO+IDgZ2OMRd8q2bO0nRYw98o4kNZh6NMzcsIhmcgUEWQzVgjyv1eapBPxUWpw10lOl6He5ggEriaPalx4hXLE0rLuRcbomMkK66JAN+1iO3iTLYCptxPCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=btULhVNZ+FcsHMbgEadVs6xowHHuhCtXKovdGRDiq1M=;
- b=M6qFnMshS3ilokIBwA/WcmvmZp81GaarArA0Zb51O5MNxM1kvMCR0SByMMjosrUl9Na/XnhWEMZeGhGrzc/BokqqHItRxVkxM52xYF0cWU1PXyEBx+g0fRBQ+DIYQwpRlJod996fhGn3vI2vurMeSzsA32IA5ytVhdoNXgATMEE=
-Received: from MW3PR15MB3753.namprd15.prod.outlook.com (2603:10b6:303:50::17)
- by MW3PR15MB3884.namprd15.prod.outlook.com (2603:10b6:303:42::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.18; Thu, 26 Mar
- 2020 21:58:59 +0000
-Received: from MW3PR15MB3753.namprd15.prod.outlook.com
- ([fe80::3517:e69:6e78:4f7c]) by MW3PR15MB3753.namprd15.prod.outlook.com
- ([fe80::3517:e69:6e78:4f7c%7]) with mapi id 15.20.2856.019; Thu, 26 Mar 2020
- 21:58:59 +0000
-From:   Nick Terrell <terrelln@fb.com>
-To:     Petr Malat <oss@malat.biz>
-CC:     Nick Terrell <nickrterrell@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chris Mason <clm@fb.com>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Patrick Williams <patrickw3@fb.com>,
-        Michael van der Westhuizen <rmikey@fb.com>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        Patrick Williams <patrick@stwcx.xyz>
-Subject: Re: [PATCH v3 3/8] lib: add zstd support to decompress
-Thread-Topic: [PATCH v3 3/8] lib: add zstd support to decompress
-Thread-Index: AQHWAt/m23+sZPjy5kGvzHRfaAnHI6hbFrwAgAAmGgCAABROAIAAEAIAgAAIgoCAAAQZgA==
-Date:   Thu, 26 Mar 2020 21:58:59 +0000
-Message-ID: <48A06739-A73B-4AE3-80A2-3F490B78404B@fb.com>
-References: <20200325195849.407900-1-nickrterrell@gmail.com>
- <20200325195849.407900-4-nickrterrell@gmail.com>
- <20200326164732.GA17157@ntb.petris.klfree.czf>
- <611A224B-1CB3-4283-9783-87C184C8983A@fb.com>
- <20200326201634.GA9948@ntb.petris.klfree.czf>
- <ED5FFEDC-A3B7-470E-95AE-B60EB1E6AE64@fb.com>
- <20200326214419.GA13249@ntb.petris.klfree.czf>
-In-Reply-To: <20200326214419.GA13249@ntb.petris.klfree.czf>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [67.188.225.242]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 162c8664-c840-4af8-8b3d-08d7d1d0e3af
-x-ms-traffictypediagnostic: MW3PR15MB3884:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MW3PR15MB3884B23BED671B96D2095BF5ABCF0@MW3PR15MB3884.namprd15.prod.outlook.com>
-x-fb-source: Internal
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0354B4BED2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(366004)(136003)(346002)(396003)(66476007)(91956017)(6506007)(33656002)(26005)(76116006)(66556008)(4326008)(6916009)(36756003)(53546011)(66946007)(64756008)(66446008)(86362001)(7416002)(54906003)(6486002)(71200400001)(81166006)(8936002)(81156014)(6512007)(5660300002)(2906002)(316002)(2616005)(8676002)(478600001)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:MW3PR15MB3884;H:MW3PR15MB3753.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: zELHJzu+QVxXymu3Jm+pWYwn4RmVwUMnwAccEwRk75YN7CLAzT3tWBsogzJybjCJHLQZ/uGyH39mu2wSOyGteKWxtyEcFELRRfiuEYAUrkgHYM3nZiHbk6QqmmqNl9jYIJv6G6deNt1NNwf8Hxdj5dXW2eKDXuIEOJxevVxzgKJAH5VkiRlp7uElEFcEX9XWcdw/wZ1uQTvdr5e6avprcXcJU5zIkpiK/r25yPm/Nu5tDSxIHdiNW3u3GSGlHXbJpvkAxzyfnrSxuh9y3maEc8PZya6u3v+tdzetColBXPlu6Qo3FpE7/mnxLO4NIRDBL5GmZPwCkVHgGbwM84ZwOIEBF5C6WaeuzmPV3ijjXr8Qus3gXCliF9dJym5hdnDoKDd1Ynq2SYtCGJOg9mRHaWE+m6edxBm13K/kmms6+7/0t9c4E+WBmvVZVZqbTilJ
-x-ms-exchange-antispam-messagedata: PRNo3QxOu2fofxCpITaIwGMs1bCuUrzULHwI7pjlrRCccgGR46SCbsKyocFyspjiY4EVNW9sohpT4XS0zaR/89zU7Lq9EwTS0ZFlnz214wR0/WrXKYaVqWPRjFDFy59itsV9pjAiZUej0GTfBxzv6w==
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <062C362D7CFD85429D95828EDC6128A8@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 26 Mar 2020 18:04:49 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02QLn98F086088;
+        Thu, 26 Mar 2020 21:56:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=jJlpHWqDgAaQnn+x/AibIAVJw425RNnEJVeE/H96C6Q=;
+ b=DkZIPKkvMhi7MgJ7A6372ctDD6ur875QCwmr9LjM6f/gcN5OLsYztXi/9wp7FD338Eh1
+ BcpAaYJlJsPca1+YzPWnvyZLl0/l9jzlAO26D9M2lRz/YnxIOtavH2bdzDl78rbNS7QS
+ w/70j06rpqsxG+rvW1byAPFer6qmmn6ntz8ZtvxuNNNNHPQ6CcnDnqC0fhG48N9veZVg
+ BCfsiKmD0CdRGaJja5RXf7JXI4W1+6Wfb9/4o4noftsF2yrL4eKSp0J70hpbbeGCvHbP
+ j84RfZbN8C8lsTDgCFGpBO0ICKX/8T12IimZxxtb9mIqtc54TXgPLYw1Bv1mXgDOPyi2 vQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2ywavmjcja-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Mar 2020 21:56:24 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02QLpI7M027652;
+        Thu, 26 Mar 2020 21:56:24 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2yxw4ufgb2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Mar 2020 21:56:23 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02QLuAlh008996;
+        Thu, 26 Mar 2020 21:56:10 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 26 Mar 2020 14:56:10 -0700
+Subject: Re: [PATCH 1/4] hugetlbfs: add arch_hugetlb_valid_size
+To:     Dave Hansen <dave.hansen@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "David S.Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Longpeng <longpeng2@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20200318220634.32100-1-mike.kravetz@oracle.com>
+ <20200318220634.32100-2-mike.kravetz@oracle.com>
+ <831a0773-1ba6-4d72-44b9-7472123b8528@intel.com>
+ <5aceea6a-8dc0-a44b-80c6-94511b5c75ca@oracle.com>
+ <1c8b16c7-248e-b75f-96c6-eabc953c5066@intel.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <530e6e11-ad1a-55bc-e61e-9da6eb7fea21@oracle.com>
+Date:   Thu, 26 Mar 2020 14:56:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 162c8664-c840-4af8-8b3d-08d7d1d0e3af
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Mar 2020 21:58:59.8354
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: t26e8yNQAe8srUP6ylPXQ3NrkOfcof7QWHfFGn57i9kEzN4ePSjJeH8jPoUVFZ+6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR15MB3884
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-26_13:2020-03-26,2020-03-26 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 adultscore=0
- mlxlogscore=849 mlxscore=0 impostorscore=0 clxscore=1015 malwarescore=0
- phishscore=0 spamscore=0 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003260160
-X-FB-Internal: deliver
+In-Reply-To: <1c8b16c7-248e-b75f-96c6-eabc953c5066@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9572 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=2
+ spamscore=0 mlxlogscore=999 adultscore=0 phishscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003260159
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9572 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1011 impostorscore=0
+ phishscore=0 suspectscore=2 mlxlogscore=999 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003260159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gT24gTWFyIDI2LCAyMDIwLCBhdCAyOjQ0IFBNLCBQZXRyIE1hbGF0IDxvc3NAbWFsYXQu
-Yml6PiB3cm90ZToNCj4gDQo+IE9uIFRodSwgTWFyIDI2LCAyMDIwIGF0IDA5OjEzOjU0UE0gKzAw
-MDAsIE5pY2sgVGVycmVsbCB3cm90ZToNCj4+Pj4gV2hhdCBkbyB5b3UgbWVhbiBieSB0aGF0PyBD
-YW4geW91IHNoYXJlIHdpdGggbWUgdGhlIHRlc3QgeW91IHJhbj8NCj4+Pj4gSXMgdGhpcyBmb3Ig
-a2VybmVsIGRlY29tcHJlc3Npb24gb3IgaW5pdHJhbWZzIGRlY29tcHJlc3Npb24/DQo+Pj4gSW5p
-dHJhbWZzIC0geW91IGNhbiBhcHBseSBteSB2MiBwYXRjaCBvbiB2NS41IGFuZCB0cnkgd2l0aCB5
-b3VyIHRlc3QgZGF0YS4NCj4+PiANCj4+PiBJIGhhdmUgdGVzdGVkIHlvdXIgcGF0Y2ggYWxzbyBv
-biBBUk12NyBwbGF0Zm9ybSBhbmQgdGhlcmUgdGhlIGRlZ3JhZGF0aW9uDQo+Pj4gd2FzIDglLg0K
-Pj4gDQo+PiBBcmUgeW91IGNvbXBhcmluZyB0aGUgcGVyZm9ybWFuY2Ugb2YgYW4gOCBNQiB3aW5k
-b3cgc2l6ZSB2cyBhIDEyOCBNQg0KPj4gd2luZG93IHNpemU/DQo+IE5vLCBJIHVzZSB0aGUgc2Ft
-ZSBpbml0cmFtZnMgZmlsZSB3aXRoIDIgZGlmZmVyZW50IGtlcm5lbHMgZm9yIHRoZSB0ZXN0LiBJ
-IGhhdmUNCj4gcmVtb3ZlZA0KPiAgaWYgKHBhcmFtcy53aW5kb3dTaXplID4gWlNURF9XSU5ET1dT
-SVpFX01BWCkgZ290byBvdXQ7DQo+IGZyb20geW91ciBjb2RlLg0KDQpUaGFua3MgZm9yIHRoZSBj
-bGFyaWZpY2F0aW9uLiBJIHdpbGwgdHJ5IHRvIHJlcHJvZHVjZSB0aGUgc3BlZWQgZGlmZmVyZW5j
-ZSB5b3XigJl2ZQ0KbWVhc3VyZWQgYmVmb3JlIHN1Ym1pdHRpbmcgdjQgKHRoYXQgZGVsZXRlcyB0
-aGUgd2luZG93U2l6ZSBib3VuZCkuDQoNCkluaXRyYW1mcyBwYXNzZXMgdGhlIHdob2xlIGlucHV0
-IGJ1ZmZlciAoZG9lc27igJl0IHVzZSBmaWxsKSwgYnV0IGRvZXMgdXNlIGZsdXNoLg0KWnN0ZCBh
-bHdheXMgZGVjb21wcmVzc2VzIGludG8gYW4gaW50ZXJuYWwgYnVmZmVyLCB0aGVuIGNvcGllcyBp
-bnRvIHRoZQ0KWlNURF9vdXRCdWZmZXIuIFRoYXQgbWVhbnMgdGhlIG9ubHkgZnVuY3Rpb25hbCBk
-aWZmZXJlbmNlIGJldHdlZW4gdGhlIHR3bw0KdmVyc2lvbnMgZm9yIGluaXRyYW1mcyBzaG91bGQg
-YmUgdGhhdCBJIHdpbGwgY2FsbCBmbHVzaCgpIDQgS0IgYXQgYSB0aW1lLCBhbmQgeW91DQpjYWxs
-IGZsdXNoIDEyOCBLQiBhdCBhIHRpbWUuIE5haXZlbHkgSSB3b3VsZG7igJl0IGV4cGVjdCB0aGlz
-IHRvIG1hdHRlciB0b28gbXVjaCwNCmJ1dCBJIHdpbGwgbWVhc3VyZS4NCg0KQmVzdCwNCk5pY2s=
+On 3/18/20 4:36 PM, Dave Hansen wrote:
+> On 3/18/20 3:52 PM, Mike Kravetz wrote:
+>> Sounds good.  I'll incorporate those changes into a v2, unless someone
+>> else with has a different opinion.
+>>
+>> BTW, this patch should not really change the way the code works today.
+>> It is mostly a movement of code.  Unless I am missing something, the
+>> existing code will always allow setup of PMD_SIZE hugetlb pages.
+> 
+> Hah, I totally skipped over the old code in the diff.
+> 
+> It looks like we'll disable hugetblfs *entirely* if PSE isn't supported.
+>  I think this is actually wrong, but nobody ever noticed.  I think you'd
+> have to be running as a guest under a hypervisor that's lying about PSE
+> not being supported *and* care about 1GB pages.  Nobody does that.
+
+Actually, !PSE will disable hugetlbfs a little later in the boot process.
+You are talking about hugepages_supported() correct?
+
+I think something really bad could happen in this situation (!PSE and
+X86_FEATURE_GBPAGES).  When parsing 'hugepages=' for gigantic pages we
+immediately allocate from bootmem.  This happens before later checks in
+hugetlb_init for hugepages_supported().  So, I think we would end up
+allocating GB pages from bootmem and not be able to use or free them. :(
+
+Perhaps it would be best to check hugepages_supported() when parsing
+hugetlb command line options.  If not enabled, throw an error.  This
+will be much easier to do after moving all command line parsing to
+arch independent code.
+
+Is that a sufficient way to address this concern?  I think it is a good
+change in any case.
+-- 
+Mike Kravetz
