@@ -2,245 +2,346 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89864193938
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 08:08:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE6D519395B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 08:09:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbgCZHH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 03:07:57 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:56973 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726138AbgCZHH5 (ORCPT
+        id S1727675AbgCZHJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 03:09:27 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37862 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726138AbgCZHJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 03:07:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585206475;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HcclFoRcUMXAmqI5wWRUbmFwT+7W1c3+/OsDIjflcfA=;
-        b=VPDw/Bs2zpZzlz1dCXVJ8Ig1EhfPz5OuDGCHbY7+vI2opp6EDYbAApCnabtHsTTZJokr7R
-        EadD6FAf7Cnzia5BRsMeiLaDBlzolxHFWt8XE+rLbBnr4quUQnO2Cn1x4HTHEumjxaAY93
-        izRRxuVEdkuNrzJkFtGAshcO0xGkFqo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-302-UrSx3Uh4MaSroNC7RtFgvQ-1; Thu, 26 Mar 2020 03:07:50 -0400
-X-MC-Unique: UrSx3Uh4MaSroNC7RtFgvQ-1
-Received: by mail-wm1-f72.google.com with SMTP id p18so2060182wmk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 00:07:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=HcclFoRcUMXAmqI5wWRUbmFwT+7W1c3+/OsDIjflcfA=;
-        b=YK++BBy9xJHsP3ZL3G4QTNiIvlF8uBNypD/AhnZGNqLRIlRndVHYVxSzNKety38w35
-         dun4N04dNAruE6vGxIA+PgxjwHRPk2B9lA32mvGnE0Nk4X5tyxEYdNsHjB1Uo0qpzT3F
-         j0mmsWLwgk6TljE7EQ/3gJg/jugHkTw7sUBo3htPxj/zA9/KHvjIn2zhLxCXMGPqq4Oh
-         fwFeRYhnbGqchJTC11KT8l1qhWPKZra2HV04M8K7k+KU+vP9wR2JkOndjs+ey07zmh9W
-         A/7ICWgReVifWkkegSTAI8zrg64hnjXJtpYkVTn1WoAPqUKcZ/LIPQpq+0FRTkoHsU58
-         0a4Q==
-X-Gm-Message-State: ANhLgQ02YnCGp28usvF+NZvf31zJzc4+AYaFlTHcjceJKOd+wPSfqrzN
-        52MSEIbfgkBGXF5PC/gNqMFpYhydHakq6UFAR1BUG+YR2mXmbwKLme5tEErg5Q7Cb+fSMapcVQR
-        pM9uE+yJxdJ+Jb7CoAN8DOKHl
-X-Received: by 2002:a5d:55c2:: with SMTP id i2mr7335578wrw.133.1585206469561;
-        Thu, 26 Mar 2020 00:07:49 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtyd/EPOwcyQHG07tKxst9zHxndG/LnYfA/RKr4oJerYtEj2yvFk8Wke9pviMCzagX64P7J3Q==
-X-Received: by 2002:a5d:55c2:: with SMTP id i2mr7335547wrw.133.1585206469208;
-        Thu, 26 Mar 2020 00:07:49 -0700 (PDT)
-Received: from redhat.com (bzq-79-182-20-254.red.bezeqint.net. [79.182.20.254])
-        by smtp.gmail.com with ESMTPSA id t2sm2145055wml.30.2020.03.26.00.07.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 00:07:48 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 03:07:45 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     teawater <teawaterz@linux.alibaba.com>
-Cc:     Hui Zhu <teawater@gmail.com>, jasowang@redhat.com,
-        akpm@linux-foundation.org, pagupta@redhat.com,
-        mojha@codeaurora.org, david@redhat.com, namit@vmware.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
-Subject: Re: [RFC for QEMU] virtio-balloon: Add option thp-order to set
- VIRTIO_BALLOON_F_THP_ORDER
-Message-ID: <20200326030636-mutt-send-email-mst@kernel.org>
-References: <1583999395-9131-1-git-send-email-teawater@gmail.com>
- <1583999395-9131-2-git-send-email-teawater@gmail.com>
- <20200312042340-mutt-send-email-mst@kernel.org>
- <C9436807-D9CA-49FD-AEE3-3B7CE4BBB711@linux.alibaba.com>
+        Thu, 26 Mar 2020 03:09:27 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02Q72uMN092608
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 03:09:25 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ywf2k4pth-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 03:09:25 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <psampat@linux.ibm.com>;
+        Thu, 26 Mar 2020 07:09:19 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 26 Mar 2020 07:09:16 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02Q79KB561800498
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Mar 2020 07:09:20 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EA3C4A4054;
+        Thu, 26 Mar 2020 07:09:19 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 25D2FA405C;
+        Thu, 26 Mar 2020 07:09:18 +0000 (GMT)
+Received: from pratiks-thinkpad.ibmuc.com (unknown [9.199.35.246])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 26 Mar 2020 07:09:17 +0000 (GMT)
+From:   Pratik Rajesh Sampat <psampat@linux.ibm.com>
+To:     skiboot@lists.ozlabs.org, oohall@gmail.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org,
+        mpe@ellerman.id.au, ego@linux.vnet.ibm.com, linuxram@us.ibm.com,
+        psampat@linux.ibm.com, pratik.r.sampat@gmail.com
+Subject: [PATCH v6 0/4] Support for Self Save API in OPAL
+Date:   Thu, 26 Mar 2020 12:39:13 +0530
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <C9436807-D9CA-49FD-AEE3-3B7CE4BBB711@linux.alibaba.com>
+X-TM-AS-GCONF: 00
+x-cbid: 20032607-4275-0000-0000-000003B397D3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20032607-4276-0000-0000-000038C8D83B
+Message-Id: <20200326070917.12744-1-psampat@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-25_15:2020-03-24,2020-03-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=18 impostorscore=0
+ suspectscore=0 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ malwarescore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
+ lowpriorityscore=18 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003260043
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 06:13:32PM +0800, teawater wrote:
-> 
-> 
-> > 2020年3月12日 16:25，Michael S. Tsirkin <mst@redhat.com> 写道：
-> > 
-> > On Thu, Mar 12, 2020 at 03:49:55PM +0800, Hui Zhu wrote:
-> >> If the guest kernel has many fragmentation pages, use virtio_balloon
-> >> will split THP of QEMU when it calls MADV_DONTNEED madvise to release
-> >> the balloon pages.
-> >> Set option thp-order to on will open flags VIRTIO_BALLOON_F_THP_ORDER.
-> >> It will set balloon size to THP size to handle the THP split issue.
-> >> 
-> >> Signed-off-by: Hui Zhu <teawaterz@linux.alibaba.com>
-> > 
-> > What's wrong with just using the PartiallyBalloonedPage machinery
-> > instead? That would make it guest transparent.
-> 
-> In balloon_inflate_page:
->     rb_page_size = qemu_ram_pagesize(rb);
-> 
->     if (rb_page_size == BALLOON_PAGE_SIZE) {
->         /* Easy case */
-> 
-> It seems that PartiallyBalloonedPage is only used when rb_page_size is greater than BALLOON_PAGE_SIZE.
-> Do you mean I should modify the working mechanism of balloon_inflate_page function?
-> 
-> Thanks,
-> Hui
+v5:https://lists.ozlabs.org/pipermail/skiboot/2020-March/016538.html
+Changelog
+v5 --> v6
+Updated background, motivation and illuminated potential design choices
 
-Yes, we can tweak it to unconditionally combine pages to
-a huge page.
+Background
+==========
+
+The power management framework on POWER systems include core idle
+states that lose context. Deep idle states namely "winkle" on POWER8
+and "stop4" and "stop5" on POWER9 can be entered by a CPU to save
+different levels of power, as a consequence of which all the
+hypervisor resources such as SPRs and SCOMs are lost.
+
+For most SPRs, saving and restoration of content for SPRs and SCOMs
+is handled by the hypervisor kernel prior to entering an post exit
+from an idle state respectively. However, there is a small set of
+critical SPRs and XSCOMs that are expected to contain sane values even
+before the control is transferred to the hypervisor kernel at system
+reset vector.
+
+For this purpose, microcode firmware provides a mechanism to restore
+values on certain SPRs. The communication mechanism between the
+hypervisor kernel and the microcode is a standard interface called
+sleep-winkle-engine (SLW) on Power8 and Stop-API on Power9 which is
+abstracted by OPAL calls from the hypervisor kernel. The Stop-API
+provides an interface known as the self-restore API, to which the SPR
+number and a predefined value to be restored on wake-up from a deep
+stop state is supplied.
 
 
-> > 
-> >> ---
-> >> hw/virtio/virtio-balloon.c                      | 67 ++++++++++++++++---------
-> >> include/standard-headers/linux/virtio_balloon.h |  4 ++
-> >> 2 files changed, 47 insertions(+), 24 deletions(-)
-> >> 
-> >> diff --git a/hw/virtio/virtio-balloon.c b/hw/virtio/virtio-balloon.c
-> >> index a4729f7..cfe86b0 100644
-> >> --- a/hw/virtio/virtio-balloon.c
-> >> +++ b/hw/virtio/virtio-balloon.c
-> >> @@ -340,37 +340,49 @@ static void virtio_balloon_handle_output(VirtIODevice *vdev, VirtQueue *vq)
-> >>         while (iov_to_buf(elem->out_sg, elem->out_num, offset, &pfn, 4) == 4) {
-> >>             unsigned int p = virtio_ldl_p(vdev, &pfn);
-> >>             hwaddr pa;
-> >> +            size_t handle_size = BALLOON_PAGE_SIZE;
-> >> 
-> >>             pa = (hwaddr) p << VIRTIO_BALLOON_PFN_SHIFT;
-> >>             offset += 4;
-> >> 
-> >> -            section = memory_region_find(get_system_memory(), pa,
-> >> -                                         BALLOON_PAGE_SIZE);
-> >> -            if (!section.mr) {
-> >> -                trace_virtio_balloon_bad_addr(pa);
-> >> -                continue;
-> >> -            }
-> >> -            if (!memory_region_is_ram(section.mr) ||
-> >> -                memory_region_is_rom(section.mr) ||
-> >> -                memory_region_is_romd(section.mr)) {
-> >> -                trace_virtio_balloon_bad_addr(pa);
-> >> -                memory_region_unref(section.mr);
-> >> -                continue;
-> >> -            }
-> >> +            if (virtio_has_feature(s->host_features,
-> >> +                                   VIRTIO_BALLOON_F_THP_ORDER))
-> >> +                handle_size = BALLOON_PAGE_SIZE << VIRTIO_BALLOON_THP_ORDER;
-> >> +
-> >> +            while (handle_size > 0) {
-> >> +                section = memory_region_find(get_system_memory(), pa,
-> >> +                                             BALLOON_PAGE_SIZE);
-> >> +                if (!section.mr) {
-> >> +                    trace_virtio_balloon_bad_addr(pa);
-> >> +                    continue;
-> >> +                }
-> >> +                if (!memory_region_is_ram(section.mr) ||
-> >> +                    memory_region_is_rom(section.mr) ||
-> >> +                    memory_region_is_romd(section.mr)) {
-> >> +                    trace_virtio_balloon_bad_addr(pa);
-> >> +                    memory_region_unref(section.mr);
-> >> +                    continue;
-> >> +                }
-> >> 
-> >> -            trace_virtio_balloon_handle_output(memory_region_name(section.mr),
-> >> -                                               pa);
-> >> -            if (!qemu_balloon_is_inhibited()) {
-> >> -                if (vq == s->ivq) {
-> >> -                    balloon_inflate_page(s, section.mr,
-> >> -                                         section.offset_within_region, &pbp);
-> >> -                } else if (vq == s->dvq) {
-> >> -                    balloon_deflate_page(s, section.mr, section.offset_within_region);
-> >> -                } else {
-> >> -                    g_assert_not_reached();
-> >> +                trace_virtio_balloon_handle_output(memory_region_name(section.mr),
-> >> +                                                   pa);
-> >> +                if (!qemu_balloon_is_inhibited()) {
-> >> +                    if (vq == s->ivq) {
-> >> +                        balloon_inflate_page(s, section.mr,
-> >> +                                             section.offset_within_region,
-> >> +                                             &pbp);
-> >> +                    } else if (vq == s->dvq) {
-> >> +                        balloon_deflate_page(s, section.mr,
-> >> +                                             section.offset_within_region);
-> >> +                    } else {
-> >> +                        g_assert_not_reached();
-> >> +                    }
-> >>                 }
-> >> +                memory_region_unref(section.mr);
-> >> +
-> >> +                pa += BALLOON_PAGE_SIZE;
-> >> +                handle_size -= BALLOON_PAGE_SIZE;
-> >>             }
-> >> -            memory_region_unref(section.mr);
-> >>         }
-> >> 
-> >>         virtqueue_push(vq, elem, offset);
-> >> @@ -693,6 +705,8 @@ static void virtio_balloon_set_config(VirtIODevice *vdev,
-> >> 
-> >>     memcpy(&config, config_data, virtio_balloon_config_size(dev));
-> >>     dev->actual = le32_to_cpu(config.actual);
-> >> +    if (virtio_has_feature(vdev->host_features, VIRTIO_BALLOON_F_THP_ORDER))
-> >> +        dev->actual <<= VIRTIO_BALLOON_THP_ORDER;
-> >>     if (dev->actual != oldactual) {
-> >>         qapi_event_send_balloon_change(vm_ram_size -
-> >>                         ((ram_addr_t) dev->actual << VIRTIO_BALLOON_PFN_SHIFT));
-> >> @@ -728,6 +742,9 @@ static void virtio_balloon_to_target(void *opaque, ram_addr_t target)
-> >>     }
-> >>     if (target) {
-> >>         dev->num_pages = (vm_ram_size - target) >> VIRTIO_BALLOON_PFN_SHIFT;
-> >> +        if (virtio_has_feature(dev->host_features,
-> >> +                               VIRTIO_BALLOON_F_THP_ORDER))
-> >> +            dev->num_pages >>= VIRTIO_BALLOON_THP_ORDER;
-> >>         virtio_notify_config(vdev);
-> >>     }
-> >>     trace_virtio_balloon_to_target(target, dev->num_pages);
-> >> @@ -916,6 +933,8 @@ static Property virtio_balloon_properties[] = {
-> >>                     VIRTIO_BALLOON_F_DEFLATE_ON_OOM, false),
-> >>     DEFINE_PROP_BIT("free-page-hint", VirtIOBalloon, host_features,
-> >>                     VIRTIO_BALLOON_F_FREE_PAGE_HINT, false),
-> >> +    DEFINE_PROP_BIT("thp-order", VirtIOBalloon, host_features,
-> >> +                    VIRTIO_BALLOON_F_THP_ORDER, false),
-> >>     /* QEMU 4.0 accidentally changed the config size even when free-page-hint
-> >>      * is disabled, resulting in QEMU 3.1 migration incompatibility.  This
-> >>      * property retains this quirk for QEMU 4.1 machine types.
-> >> diff --git a/include/standard-headers/linux/virtio_balloon.h b/include/standard-headers/linux/virtio_balloon.h
-> >> index 9375ca2..f54d613 100644
-> >> --- a/include/standard-headers/linux/virtio_balloon.h
-> >> +++ b/include/standard-headers/linux/virtio_balloon.h
-> >> @@ -36,10 +36,14 @@
-> >> #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
-> >> #define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
-> >> #define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoning */
-> >> +#define VIRTIO_BALLOON_F_THP_ORDER	5 /* Set balloon page order to thp order */
-> >> 
-> >> /* Size of a PFN in the balloon interface. */
-> >> #define VIRTIO_BALLOON_PFN_SHIFT 12
-> >> 
-> >> +/* The order of the balloon page */
-> >> +#define VIRTIO_BALLOON_THP_ORDER 9
-> >> +
-> >> #define VIRTIO_BALLOON_CMD_ID_STOP	0
-> >> #define VIRTIO_BALLOON_CMD_ID_DONE	1
-> >> struct virtio_balloon_config {
-> >> -- 
-> >> 2.7.4
+Motivation to introduce a new Stop-API
+======================================
+
+The self-restore API expects not just the SPR number but also the
+value with which the SPR is restored. This is good for those SPRs such
+as HSPRG0 whose values do not change at runtime, since for them, the
+kernel can invoke the self-restore API at boot time once the values of
+these SPRs are determined.
+
+However, there are use-cases where-in the value to be saved cannot be
+known or cannot be updated in the layer it currently is.
+The shortcomings and the new use-cases which cannot be served by the
+existing self-restore API, serves as motivation for a new API:
+
+Shortcoming1:
+------------
+In a special wakeup scenario, SPRs such as PSSCR, whose values can
+change at runtime, are compelled to make the self-restore API call
+every time before entering a deep-idle state rendering it to be
+prohibitively expensive
+
+Shortcoming2:
+------------
+The value of LPCR is dynamic based on if the CPU is entered a stop
+state during cpu idle versus cpu hotplug.
+Today, an additional self-restore call is made before entering
+CPU-Hotplug to clear the PECE1 bit in stop-API so that if we are
+woken up by a special wakeup on an offlined CPU, we go back to stop
+with the the bit cleared.
+There is a overhead of an extra call
+
+New Use-case:
+-------------
+In the case where the hypervisor is running on an
+ultravisor environment, the boot time is too late in the cycle to make
+the self-restore API calls, as these cannot be invoked from an
+non-secure context anymore
+
+To address these shortcomings, the firmware provides another API known
+as the self-save API. The self-save API only takes the SPR number as a
+parameter and will ensure that on wakeup from a deep-stop state the
+SPR is restored with the value that it contained prior to entering the
+deep-stop.
+
+Contrast between self-save and self-restore APIs
+================================================
+
+		  Before entering
+                  deep idle     |---------------|
+                  ------------> | HCODE A       |                
+                  |             |---------------|
+   |---------|    |
+   |   CPU   |----|
+   |---------|    |             
+                  |             |---------------|
+                  |------------>| HCODE B       |
+                  On waking up  |---------------|
+                from deep idle
+
+
+
+
+When a self-restore API is invoked, the HCODE inserts instructions
+into "HCODE B" region of the above figure to restore the content of
+the SPR to the said value. The "HCODE B" region gets executed soon
+after the CPU wakes up from a deep idle state, thus executing the
+inserted instructions, thereby restoring the contents of the SPRs to
+the required values.
+
+When a self-save API is invoked, the HCODE inserts instructions into
+the "HCODE A" region of the above figure to save the content of the
+SPR into some location in memory. It also inserts instructions into
+the "HCODE B" region to restore the content of the SPR to the
+corresponding value saved in the memory by the instructions in "HCODE
+A" region.
+
+Thus, in contrast with self-restore, the self-save API *does not* need
+a value to be passed to it, since it ensures that the value of SPR
+before entering deep stop is saved, and subsequently the same value is
+restored.
+
+Self-save and self-restore are complementary features since,
+self-restore can help in restoring a different value in the SPR on
+wakeup from a deep-idle state than what it had before entering the
+deep idle state. This was used in POWER8 for HSPRG0 to distinguish a
+wakeup from Winkle vs Fastsleep.
+
+Limitations of self-save
+========================
+Ideally all SPRs should be available for self-save, but HID0 is very
+tricky to implement in microcode due to various endianess quirks.
+Couple of implementation schemes were buggy and hence HID0 was left
+out to be self-restore only.
+
+The fallout of this limitation is as follows:
+
+* In Non PEF environment, no issue. Linux will use self-restore for
+  HID0 as it does today and no functional impact.
+
+* In PEF environment, the HID0 restore value is decided by OPAL during
+  boot and it is setup for LE hypervisor with radix MMU. This is the
+  default and current working configuration of a PEF environment.
+  However if there is a change, then HV Linux will try to change the
+  HID0 value to something different than what OPAL decided, at which
+  time deep-stop states will be disabled under this new PEF
+  environment.
+
+A simple and workable design is achieved by scoping the power
+management deep-stop state support only to a known default PEF
+environment. Any deviation will affect *only* deep stop-state support
+(stop4,5) in that environment and not have any functional impediment
+to the environment itself.
+
+In future, if there is a need to support changing of HID0 to various
+values under PEF environment and support deep-stop states, it can be
+worked out via an ultravisor call or improve the microcode design to
+include HID0 in self-save.  These future scheme would be an extension
+and does not break or make the current implementation scheme
+redundant.
+
+Design Choices
+==============
+
+Presenting the design choices in front of us:
+
+Design-Choice 1:
+----------------
+Only expose one of self-save or self-restore for all the SPRs. Prefer
+Self-save
+
+Pros:
+   - Simplifies the design heavily, since the Kernel can unambiguously
+   make one API call for all the SPRs on discovering the presence of
+   the API type.
+
+Cons:
+    - Breaks backward compatibility if OPAL always chooses to expose
+      only the self-save API as the older kernels assume the existence
+      of self-restore.
+
+    - The set of SPRs supported by self-save and self-restore are not
+      identical. Eg: HID0 is not supported by self-save API. PSSCR
+      support via self-restore is not robust during special-wakeup.
+
+    - As discussed above, self-save and self-restore are
+      complementary. Thus OPAL apriory choosing one over the other for
+      all SPRs takes away the flexibility from the kernel.
+
+
+Design-Choice 2:
+----------------
+Expose two arrays of SPRs: One set of SPRs that are supported by
+self-save. Another set of SPRs supported by self-restore. These two
+sets do not intersect. Further, if an SPR is supported by both
+self-save and self-restore APIs, expose it only via self-save.
+
+Pros:
+     - For an SPR the choice for the kernel is unambiguous.
+
+Cons:
+    - Breaks backward compatibility if OPAL always chooses to expose
+      the legacy SPRs only via the self-save API as the older kernels
+      assume the existence of self-restore.
+
+    - By making the decision early on, we take away the flexibility
+       from the kernel to use an API of its choice for an SPR.
+
+
+Design-Choice 3
+---------------
+Expose two arrays of SPRs. One set of SPRs that are supported by
+self-save API. Another set of SPRs supported by self-restore API. Let
+the kernel choose which API to invoke. Even if it wants to always
+prefer self-save over self-restore, let that be kernel's choice.
+
+Pros:
+     - Keeps the design flexible to allow the kernel to take a
+       decision based on its functional and performance requirements.
+       Thus, the kernel for instance can make a choice to invoke
+       self-restore API (when available) for SPRs whose values do not
+       evolve at runtime, and invoke the self-save API (when
+       available)
+       for SPRs whose values will change during runtime.
+
+     - Design is backward compatible with older kernels.
+
+Cons:
+     - The Kernel code will have additional complexity for parsing two
+     lists of SPRs and making a choice w.r.t invocation of a specific
+     stop-api.
+
+
+
+Patches Organization
+====================
+Design choice 3 has been chosen as an implementation to demonstrate in
+this patch series.
+
+Patch 1:
+Commit adds support calling into the self save firmware API.
+Also adds abstraction for making platform agnostic calls.
+
+Patch 2:
+Commit adds wrappers for the Self Save API for which an OPAL call can
+be made.
+
+Patch 3:
+Commit adds API to determine the version of the STOP API. This helps
+to identify support for self save in the firmware
+
+Patch 4:
+Commit adds device tree attributes to advertise self save and self
+restore functionality along with the register set as a bitmask
+currently supported in the firmware. It also uses the versioning API
+to determine support for the self-save feature as a whole.
+
+Pratik Rajesh Sampat (2):
+  Self save API integration
+  Advertise the self-save and self-restore attributes in the device tree
+
+Prem Shanker Jha (2):
+  Self Save: Introducing Support for SPR Self Save
+  API to verify the STOP API and image compatibility
+
+ .../ibm,opal/power-mgt/self-restore.rst       |  27 +
+ .../ibm,opal/power-mgt/self-save.rst          |  27 +
+ doc/opal-api/opal-slw-self-save-reg-181.rst   |  49 +
+ doc/opal-api/opal-slw-set-reg-100.rst         |   5 +
+ doc/power-management.rst                      |  44 +
+ hw/slw.c                                      | 205 ++++
+ include/opal-api.h                            |   3 +-
+ include/p9_stop_api.H                         | 122 ++-
+ include/skiboot.h                             |   4 +
+ libpore/p9_cpu_reg_restore_instruction.H      |  11 +-
+ libpore/p9_hcd_memmap_base.H                  |   7 +
+ libpore/p9_stop_api.C                         | 964 ++++++++++--------
+ libpore/p9_stop_api.H                         | 141 ++-
+ libpore/p9_stop_data_struct.H                 |   4 +-
+ libpore/p9_stop_util.H                        |  27 +-
+ 15 files changed, 1208 insertions(+), 432 deletions(-)
+ create mode 100644 doc/device-tree/ibm,opal/power-mgt/self-restore.rst
+ create mode 100644 doc/device-tree/ibm,opal/power-mgt/self-save.rst
+ create mode 100644 doc/opal-api/opal-slw-self-save-reg-181.rst
+
+-- 
+2.24.1
 
