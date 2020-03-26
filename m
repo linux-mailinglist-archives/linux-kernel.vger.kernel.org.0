@@ -2,130 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BC92194584
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:36:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C90D19458A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:37:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbgCZRg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 13:36:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59870 "EHLO mx2.suse.de"
+        id S1728177AbgCZRhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 13:37:14 -0400
+Received: from mga06.intel.com ([134.134.136.31]:10737 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726067AbgCZRg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 13:36:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B6691AF40;
-        Thu, 26 Mar 2020 17:36:23 +0000 (UTC)
-Message-ID: <486b5c63e5b9bd81051500c0c310e68af16956c4.camel@suse.de>
-Subject: Re: [PATCH] drm/vc4: Fix HDMI mode validation
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Eric Anholt <eric@anholt.net>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     maxime@cerno.tech, linux-rpi-kernel@lists.infradead.org,
-        f.fainelli@gmail.com,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date:   Thu, 26 Mar 2020 18:36:20 +0100
-In-Reply-To: <c4b3e083-ac6e-b321-f0eb-f20e8ec3b1a6@i2se.com>
-References: <20200326122001.22215-1-nsaenzjulienne@suse.de>
-         <c4b3e083-ac6e-b321-f0eb-f20e8ec3b1a6@i2se.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-WLjDMV1ZcTszpN+SQxBm"
-User-Agent: Evolution 3.34.4 
+        id S1726163AbgCZRhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 13:37:14 -0400
+IronPort-SDR: apyPiRvDy0MUyL9GuGnPpWYlxiurke3ApppjDAFqJBJ+7va9hnck1CowSK3bRD8KnuiiuBoyB8
+ 8g56xIZxiZIQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 10:37:12 -0700
+IronPort-SDR: Rf8tWKJt5t723ausfpo3FPrMmYgpgF8T4FXVT7vUs8LAJMN9af91YTGAtfQkqg03pgnM08PsX+
+ oigxuMvtzRUA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,309,1580803200"; 
+   d="scan'208";a="240737743"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.87]) ([10.237.72.87])
+  by fmsmga008.fm.intel.com with ESMTP; 26 Mar 2020 10:37:09 -0700
+Subject: Re: [PATCH] x86: perf: insn: Tweak opcode map for Intel CET
+ instructions
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mingbo Zhang <whensungoes@gmail.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200303045033.6137-1-whensungoes@gmail.com>
+ <20200326103153.de709903f26fee0918414bd2@kernel.org>
+ <bac567dd-9810-4919-365e-b3dfb54a6c4b@intel.com>
+ <20200326135547.GA20397@redhat.com>
+ <363DA0ED52042842948283D2FC38E4649C72EFF3@IRSMSX106.ger.corp.intel.com>
+ <20200326145726.GC6411@kernel.org> <20200326150137.GD6411@kernel.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <4a2a3582-21a0-f3fc-102e-42ec67d0aafa@intel.com>
+Date:   Thu, 26 Mar 2020 19:36:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <20200326150137.GD6411@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---=-WLjDMV1ZcTszpN+SQxBm
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, 2020-03-26 at 18:19 +0100, Stefan Wahren wrote:
-> Am 26.03.20 um 13:20 schrieb Nicolas Saenz Julienne:
-> > Current mode validation impedes setting up some video modes which shoul=
-d
-> > be supported otherwise. Namely 1920x1200@60Hz.
-> >=20
-> > Fix this by lowering the minimum HDMI state machine clock to pixel cloc=
-k
-> > ratio allowed.
-> >=20
-> > Fixes: 32e823c63e90 ("drm/vc4: Reject HDMI modes with too high of clock=
-s")
-> > Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
-> > Suggested-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> > ---
-> >  drivers/gpu/drm/vc4/vc4_hdmi.c | 20 ++++++++++++++++----
-> >  1 file changed, 16 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_h=
-dmi.c
-> > index cea18dc15f77..340719238753 100644
-> > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > @@ -681,11 +681,23 @@ static enum drm_mode_status
-> >  vc4_hdmi_encoder_mode_valid(struct drm_encoder *crtc,
-> >  			    const struct drm_display_mode *mode)
-> >  {
-> > -	/* HSM clock must be 108% of the pixel clock.  Additionally,
-> > -	 * the AXI clock needs to be at least 25% of pixel clock, but
-> > -	 * HSM ends up being the limiting factor.
-> > +	/*
-> > +	 * As stated in RPi's vc4 firmware "HDMI state machine (HSM) clock mu=
-st
-> > +	 * be faster than pixel clock, infinitesimally faster, tested in
-> > +	 * simulation. Otherwise, exact value is unimportant for HDMI
-> > +	 * operation." This conflicts with bcm2835's vc4 documentation, which
-> > +	 * states HSM's clock has to be at least 108% of the pixel clock.
-> > +	 *
-> > +	 * Real life tests reveal that vc4's firmware statement holds up, and
-> > +	 * users are able to use pixel clocks closer to HSM's, namely for
-> > +	 * 1920x1200@60Hz. So it was decided to have leave a 1% margin betwee=
-n
-> > +	 * both clocks. Which, for RPi0-3 implies a maximum pixel clock of
->=20
-> s/RPi0-3/bcm2835/ ?
-
-Well as Dave Stevenson stated on the previous thread[1], it's the firmware =
-that
-sets up the HSM limitation. IIUC technically both HSM and pixel clocks coul=
-d be
-increased. Hence this being more of a RPi limitation than the chip itself.
-
-"Whilst the firmware would appear to use a fixed HSM clock on Pi0-3, I
-don't anticipate there being any issue with varying it. It looks like
-there was the expectation of it being variable in the past, but
-someone has refactored it and either accidentally or deliberately
-given up on the idea."
-
-Regards,
-Nicolas
-
-[1] https://www.spinics.net/lists/arm-kernel/msg794591.html
+On 26/03/20 5:01 pm, Arnaldo Carvalho de Melo wrote:
+> Em Thu, Mar 26, 2020 at 11:57:26AM -0300, Arnaldo Carvalho de Melo escreveu:
+>> Em Thu, Mar 26, 2020 at 02:19:07PM +0000, Hunter, Adrian escreveu:
+>>>>> But they have not yet been applied.
+> 
+>>>>> Sorry for the confusion.
+> 
+>>>> I'll collect them, thanks for pointing this out.
+> 
+>>> The patches are in tip courtesy of Borislav Petkov thank you!
+>  
+>> Ok, thanks Borislav,
+> 
+> I didn't notice because it didn't made into tip/perf/core :-\ In what
+> branch is it btw, I couldn't find any cset with substr summary "Add
+> Control-flow Enforcement" in, tip/master also doesn't have it.
+> 
+> - Arnaldo
+> 
 
 
---=-WLjDMV1ZcTszpN+SQxBm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl586BQACgkQlfZmHno8
-x/7xnQf6AuxYHKRPr2+3HAcUcMvGEUsg4+CG33ixIOsZSzYB4i53R8AaNPUXuT49
-DgINWf1HDprPNcucqW0YHLK1MuOHLr037rJaEi8U7niiYwf1NhCowZarMRZsdng0
-uDBenGjN+AfeI303kAU/U5oPK+5R013lkXTpi+KKGeAmdsg0cWCnCXvQj4eA2PrT
-MJ67v2ageDmRvuA/OJ+N2+tpz7raOs08ErzH5kYW8OUIllpTpIQSNr8Vn1JJZgF9
-FjyvhPl4PNuNaUaTQm/Hi+TMH3tW51q5q9ZWPkBikHpyGmUbIaEBqNV0ZEuDAXDR
-LUhSe29/+lSxhq7Hvo7FH29Yz183Tw==
-=RSrf
------END PGP SIGNATURE-----
-
---=-WLjDMV1ZcTszpN+SQxBm--
+x86/misc
 
