@@ -2,90 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BBE2194938
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:33:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82080194939
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:33:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbgCZUdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 16:33:04 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38423 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbgCZUdE (ORCPT
+        id S1728023AbgCZUdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 16:33:22 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44130 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727928AbgCZUdV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:33:04 -0400
-Received: by mail-lf1-f65.google.com with SMTP id c5so6050834lfp.5
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 13:33:02 -0700 (PDT)
+        Thu, 26 Mar 2020 16:33:21 -0400
+Received: by mail-pl1-f195.google.com with SMTP id h11so2593066plr.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 13:33:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=uIvUjlehSVigkxhw02yxSAS/Jekd0JL8sbxoZE/mhG8=;
-        b=VYg4Pn2gymEJm9bVPj1GDyDVYTBGYuf9p5cme3IxcSNgK1zKlTUuhLSajg8soAEKHG
-         1kLQhzlUOexfjIsDbIRYr9p81R5JXKo9Vp5T7ukr4PGDUoAZW5dgAYAJuf6KBug8AtEv
-         qdtEL+i0mqZQ5C/ZEInaS1vuyt2SLdlfHo0h3sroSSLcmvfFnJts4s2ucom4Ri2bZOb0
-         Gadup+I2zQHb432rlsbudLnxe9elH7NT8IPWvVgIh/kIaMPsXF2jhxW3+bPqgM0iFSyh
-         hic28HEopSS8IfmUToUs5/fPg1WJ7PJO1OMrWL+JfXSor0sAoPvrIieO5YOACkw4lUVP
-         4xpQ==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=31LBMmRcYe+yEGtoM08ZSaLwaQfDlxsblA8wVchHVi8=;
+        b=NrpPlECo6AI/hAQE3I/XEDAjdjtUo9LXqFqVAUMuzk1z6cbpF8zmw6aox8LpgFf6/D
+         e9DU2naiucIg6yd2Ts76fWA+ep+Gef7o5mHgq35y2n0lR8oGOCTdq8645lxKk264kt7M
+         fGlozyLZ/YECGQkKZp3ZuIQ9TuAVcsw7vmeEXm/dV6M5pNEWF2e+HRV35RyDCM2Gg4b6
+         QXl+vV0oSLfr7kuwXp1717znu1qp4xMgHFUHuCr0yvsK7sY6n/0WUSPg+IvDoZu0a/Db
+         Kb+kPOT74J/2lhYllCcc/XEgBWVZ2HG4UDhkPAFvX0GLeaE0/gpaNxU2/rL02Dm+OYiU
+         uU0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=uIvUjlehSVigkxhw02yxSAS/Jekd0JL8sbxoZE/mhG8=;
-        b=nrnLVAH1UBlgQFgTWsl8DZdT1WldrRU0WEnQQEkI1NZnc3qZ7ROkq++Rgkb5irIyLR
-         DnMIKmKUt9+UsDsSgkKZYM44e2PYwrYvQ8lzl/jCT3+WMAFfh6E54vHZqfV0H/ITInAo
-         YtNW9oDaoq5aDHyK+JnD5rX/j5TxwyoRNTHR5B5UP6GMrtWZleML5IlbuSEAML9dHcJm
-         Wpu6piiSeUTflx868SwLQPQZIYs0ElJGnDusmTK5JmmxKlVqR/7vqLKcuIbHLy5PcWaK
-         hT3ipxzXFqBkl3FdyneqlWCOGP9hivAclEl49wt4axjmAyDIg4Pi1DEiLD3qxdb4qUQ7
-         dmDw==
-X-Gm-Message-State: ANhLgQ2Il5QP/UTH6KPHuvZ87uKy3uhu9N8fJi+inMXkVrdits+kLefx
-        rpCEF9QuLLH4UxOLzONlRnwi3TYCTMbSJUNorLgOGQ8E
-X-Google-Smtp-Source: ADFU+vvQ5SsdTqqJn6Yj0TEz+5nGhKIpGCBuLA5cZjUZ9X72Eji+EfTIAVV3Vz70Oot5GmYmXAMGKQD/nnEo94ag2W8=
-X-Received: by 2002:a19:2d15:: with SMTP id k21mr6981410lfj.137.1585254781859;
- Thu, 26 Mar 2020 13:33:01 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:8556:0:0:0:0:0 with HTTP; Thu, 26 Mar 2020 13:33:01
- -0700 (PDT)
-Reply-To: officework_progress@yahoo.com
-From:   Andrew Ede <lmenkwa12@gmail.com>
-Date:   Thu, 26 Mar 2020 22:33:01 +0200
-Message-ID: <CAHPhtMA_ug1ONc00WFWuhc+wg+1LgHVxKFJdTmB30PgoCb6W9g@mail.gmail.com>
-Subject: CAN YOU WORK WITH US?
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=31LBMmRcYe+yEGtoM08ZSaLwaQfDlxsblA8wVchHVi8=;
+        b=s7pWvHnv4kS4o1f+R8rL9ykF/q7c1cfvaPF02VLtjqNuj25dkvpmhFexAeRLjlOOmZ
+         danmPcrZkBd5cE99l9QPNFtSq7wkKuAQ5bNLHfaDmYJ8I3I8vgDyGyKAuDf8yMHc8Om4
+         D5a+ykp/70W4ENco3mx9COErnIEX3STGImgHA/8cS3SgujVLR8kmDlsJjUNlynrjygsh
+         6Sw7NIZLCOmZ95pPeitnIQ5OEu7WkB8q51WMcHJfkM0VeM/POixxZmFiCaeAknd7HjEd
+         TIyyQMFVtQZKW5CKhi5lnBnDewYUv7caZG0iBCtf1VJw/8DEVoZb7tosXUifgHDqAbz/
+         gkaA==
+X-Gm-Message-State: ANhLgQ1inXposh679PbEzMphf11+EcinPe1553VJa27B5TSIOnKwPU1u
+        VgCRM2rEnjdhxj+ogbBAsUH+Dg==
+X-Google-Smtp-Source: ADFU+vu+gUBPTHCiLbo4oeQsnkYNtYX/UDxhFzKc+aeKr+GO4BTRKm7q6N09v+wRxLLr/n/j+YjkuA==
+X-Received: by 2002:a17:902:b088:: with SMTP id p8mr10115931plr.106.1585254800408;
+        Thu, 26 Mar 2020 13:33:20 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:1ef2:6dcf:5ef7:9489:9d02? ([2601:646:c200:1ef2:6dcf:5ef7:9489:9d02])
+        by smtp.gmail.com with ESMTPSA id 79sm2388418pfz.23.2020.03.26.13.33.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Mar 2020 13:33:19 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH 00/12] x86: Trenchboot secure late launch Linux kernel support
+Date:   Thu, 26 Mar 2020 13:33:17 -0700
+Message-Id: <FE871C2B-15BB-4089-A912-40F2E9FE680B@amacapital.net>
+References: <CACdnJutT1F7YJ5KFkyuaZv=nj8GqC+mrnoAsHZfMP1ZRNUQg3Q@mail.gmail.com>
+Cc:     Daniel Kiper <daniel.kiper@oracle.com>,
+        Ross Philipson <ross.philipson@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        linux-doc@vger.kernel.org, dpsmith@apertussolutions.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        trenchboot-devel@googlegroups.com,
+        Ard Biesheuvel <ardb@kernel.org>, leif@nuviainc.com,
+        eric.snowberg@oracle.com, piotr.krol@3mdeb.com,
+        krystian.hebel@3mdeb.com, michal.zygowski@3mdeb.com,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        andrew.cooper3@citrix.com
+In-Reply-To: <CACdnJutT1F7YJ5KFkyuaZv=nj8GqC+mrnoAsHZfMP1ZRNUQg3Q@mail.gmail.com>
+To:     Matthew Garrett <mjg59@google.com>
+X-Mailer: iPhone Mail (17D50)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day.
 
-My reason of contacting you is that I and my colleagues working in our
-country=E2=80=99s National Petroleum Corporation want to buy any existing
-modern crude oil refinery in any part of the world.
 
-We are ready to buy any available land to build the Refinery or buy
-the existing one anywhere outside Africa. We will make you our foreign
-partner abroad with some percentage shareholding if you will be
-interested to work with us on this project.
+> On Mar 26, 2020, at 1:19 PM, Matthew Garrett <mjg59@google.com> wrote:
+>=20
+> =EF=BB=BFOn Thu, Mar 26, 2020 at 6:40 AM Daniel Kiper <daniel.kiper@oracle=
+.com> wrote:
+>>> On Wed, Mar 25, 2020 at 01:29:03PM -0700, 'Matthew Garrett' via trenchbo=
+ot-devel wrote:
+>>> On Wed, Mar 25, 2020 at 12:43 PM Ross Philipson
+>>> <ross.philipson@oracle.com> wrote:
+>>>> To enable the kernel to be launched by GETSEC or SKINIT, a stub must be=
 
-We have the sum of ($600 Million Dollars) Six Hundred Million Dollars
-for this project.
+>>>> built into the setup section of the compressed kernel to handle the
+>>>> specific state that the late launch process leaves the BSP. This is a
+>>>> lot like the EFI stub that is found in the same area. Also this stub
+>>>> must measure everything that is going to be used as early as possible.
+>>>> This stub code and subsequent code must also deal with the specific
+>>>> state that the late launch leaves the APs in.
+>>>=20
+>>> How does this integrate with the EFI entry point? That's the expected
+>>=20
+>> It does not. We do not want and need to tie secure launch with UEFI.
+>=20
+> I agree that it shouldn't be required, but it should be possible. We
+> shouldn't add new entry points that don't integrate with the standard
+> way of booting the kernel.
+>=20
+>>> What's calling ExitBootServices() in
+>>=20
+>> Currently it is a bootloader, the GRUB which I am working on... OK, this
+>> is not perfect but if we want to call ExitBootServices() from the kernel
+>> then we have to move all pre-launch code from the bootloader to the
+>> kernel. Not nice because then everybody who wants to implement secure
+>> launch in different kernel, hypervisor, etc. has to re-implement whole
+>> pre-launch code again.
+>=20
+> We call ExitBootServices() in the EFI stub, so this is fine as long as
+> the EFI stub hands over control to the SL code. But yes, I think it's
+> a requirement that it be kernel-owned code calling ExitBootServices().
+>=20
+>>> this flow, and does the secure launch have to occur after it? It'd be
+>>=20
+>> Yes, it does.
+>=20
+> Ok. The firmware TPM interfaces are gone after ExitBootServices(), so
+> we're going to need an additional implementation.
+>=20
+>> I think any post-launch code in the kernel should not call anything from
+>> the gap. And UEFI belongs to the gap. OK, we can potentially re-use UEFI
+>> TPM code in the pre-launch phase but I am not convinced that we should
+>> (I am looking at it right now). And this leads us to other question
+>> which pops up here and there. How to call UEFI runtime services, e.g. to
+>> modify UEFI variables, update firmware, etc., from MLE or even from the
+>> OS started from MLE? In my opinion it is not safe to call anything from
+>> the gap after secure launch. However, on the other hand we have to give
+>> an option to change the boot order or update the firmware. So, how to
+>> do that? I do not have an easy answer yet...
+>=20
+> How does Windows manage this? Retaining access to EFI runtime services
+> is necessary, and the areas in the memory map marked as runtime
+> services code or data should be considered part of the TCB and
+> measured - they're very much not part of the gap.
 
-Meanwhile, this amount of ($600 Million Dollars) will be accessible
-through Foreign Contract Purchase Fund. We are going to clarify what
-we meant by Foreign Contract Purchase Fund as soon as we hear from you
-for better understanding and the way forward.
+As a straw-man approach: make the rule that we never call EFI after secure l=
+aunch. Instead we write out any firmware variables that we want to change on=
+ disk somewhere.  When we want to commit those changes, we reboot, commit th=
+e changes, and re-launch. Or we deactivate the kernel kexec-style, seal the i=
+mage against PCRs, blow away PCRs, call EFI, relaunch, unseal the PCRs, and c=
+ontinue on our merry way.
 
-However, in case you are not capable to handle this project with us,
-please kindly connect us to any capable person or company that would
-handle the project with us in order to enable us proceed at once.
+I=E2=80=99m not sure how SMM fits in to this whole mess.
 
-We hope to hear you in no distance time through this e-mail address
-at: officework_progress@yahoo.com, for immediate communication and
-more facts on how to go on.
-
-With respect
-
-Best Regards
-
-Andrew Ede and Co,,
+If we insist on allowing EFI calls and SMM, then we may be able to *measure*=
+ our exposure to potentially malicious firmware, but we can=E2=80=99t elimin=
+ate it. I personally trust OEM firmware about as far as I can throw it.=
