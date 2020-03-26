@@ -2,187 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C26F19493C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:34:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3E2E194946
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:35:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbgCZUeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 16:34:13 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43194 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbgCZUeN (ORCPT
+        id S1727714AbgCZUft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 16:35:49 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:53326 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbgCZUfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:34:13 -0400
-Received: by mail-pg1-f193.google.com with SMTP id u12so3472853pgb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 13:34:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Le7doV1aD2nnDIjljTT6TRoqwG4Kk2Xg5cqe+Y2QeE8=;
-        b=IRl4RWYnFi1S/4ylGpDj2CLK3Ia0Xfv+YRQBn3BpWZOs7UKH6YZo8+zxLGWahTKYuZ
-         M/tNUA95U4+1GTULWdX+4rxNECrKnt/UOjrhOmD5k3nKqeauDBg0WkYbDFmCbgqodyGb
-         N0hlBrV9t60fDGH88FD7DUnHKF0D8Q11RzoCg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Le7doV1aD2nnDIjljTT6TRoqwG4Kk2Xg5cqe+Y2QeE8=;
-        b=GQdtmDvf9t5jeIj0/l57Pf/S9zu6T3Hd+mqsQ6z2FRfUbdw6IA1cYMa6mQQUnZESG5
-         ll9SRKS0K0/ilnHbVPHMLfhwkTdsEiw/IRD3rOn8m1/xQV3w4VbzHbrDar90Ro5ZAHL8
-         tL0xsX7cdZcIrB3Nr7VpARROMa/sJM7JcIg6jsSw2eu2gOM5Afl45Te8jSnuhz3iPxEo
-         2hFX5oAMmEpCEU42t3hMx8u2hdNQCfsifRgGtrz4voZtO0r923kUPSxZI56jgD+lTnuW
-         DzCHUKMVLyLIPVlGaQsk1SFlDQEmuRu8dJAQPBLX0iqtZu5+hLsXG1gngTcFsCxJZx49
-         6a9w==
-X-Gm-Message-State: ANhLgQ0G3FsaUZ9A1+crHTUCLzL3ul+ujTMAsiQflyEFbkvzGc/WI3IM
-        hgTtxwp/D3QZpRv2qxu0/uJZTQ==
-X-Google-Smtp-Source: ADFU+vvJTCE0NaoY9hAAFAj5SygbDrAri2BStTDh6/CdBA2TgHqaM/8tkrZcR45y2gjrmFw6MHuIHw==
-X-Received: by 2002:a62:342:: with SMTP id 63mr11323648pfd.19.1585254850791;
-        Thu, 26 Mar 2020 13:34:10 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id l11sm2222672pjy.44.2020.03.26.13.34.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 13:34:09 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 13:34:08 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Guilherme G . Piccoli" <gpiccoli@canonical.com>
-Subject: Re: [RFC v3 2/2] kernel/sysctl: support handling command line aliases
-Message-ID: <202003261329.AAFEE9C@keescook>
-References: <20200326181606.7027-1-vbabka@suse.cz>
- <20200326181606.7027-2-vbabka@suse.cz>
+        Thu, 26 Mar 2020 16:35:48 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02QKZdhx019913;
+        Thu, 26 Mar 2020 15:35:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1585254939;
+        bh=7oFxOrVn9kAxU5Nag+rYJqlAUCr7/ru9mGgP0JQb4HQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=kJztcR/o4CVsqS6x4WZ9NlGs+bgrwSaib49+8okz9XJQRXtS62aEoVnugub56k2Sc
+         WuLMDvLnv65nGcdbIPLUCkvF4v5jrFVpBnF4nw4DXbZFwJj/YNInbBvJhLdBhgqFJO
+         P1mSzrTDbPsbvBeMl5R+UkY3WPTNWowBN0WI9rQY=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02QKZdnb079059;
+        Thu, 26 Mar 2020 15:35:39 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 26
+ Mar 2020 15:35:38 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 26 Mar 2020 15:35:38 -0500
+Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02QKZcFK118216;
+        Thu, 26 Mar 2020 15:35:38 -0500
+Subject: Re: [PATCH 2/7] remoteproc: use a local copy for the name field
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200324201819.23095-1-s-anna@ti.com>
+ <20200324201819.23095-3-s-anna@ti.com> <20200326054234.GA59436@builder>
+ <2089a4a8-d5e4-e4f5-e7bc-7d053f654204@ti.com>
+ <20200326194304.GB59436@builder>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <3c38485d-5bae-a759-833c-45ddb0e6cfcd@ti.com>
+Date:   Thu, 26 Mar 2020 15:35:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200326181606.7027-2-vbabka@suse.cz>
+In-Reply-To: <20200326194304.GB59436@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 07:16:06PM +0100, Vlastimil Babka wrote:
-> We can now handle sysctl parameters on kernel command line, but historically
-> some parameters introduced their own command line equivalent, which we don't
-> want to remove for compatibility reasons. We can however convert them to the
-> generic infrastructure with a table translating the legacy command line
-> parameters to their sysctl names, and removing the one-off param handlers.
+On 3/26/20 2:43 PM, Bjorn Andersson wrote:
+> On Thu 26 Mar 07:01 PDT 2020, Suman Anna wrote:
 > 
-> This patch adds the support and makes the first conversion to demonstrate it,
-> on the (deprecated) numa_zonelist_order parameter.
+>> Hi Bjorn,
+>>
+>> On 3/26/20 12:42 AM, Bjorn Andersson wrote:
+>>> On Tue 24 Mar 13:18 PDT 2020, Suman Anna wrote:
+>>>
+>>>> The current name field used in the remoteproc structure is simply
+>>>> a pointer to a name field supplied during the rproc_alloc() call.
+>>>> The pointer passed in by remoteproc drivers during registration is
+>>>> typically a dev_name pointer, but it is possible that the pointer
+>>>> will no longer remain valid if the devices themselves were created
+>>>> at runtime like in the case of of_platform_populate(), and were
+>>>> deleted upon any failures within the respective remoteproc driver
+>>>> probe function.
+>>>>
+>>>> So, allocate and maintain a local copy for this name field to
+>>>> keep it agnostic of the logic used in the remoteproc drivers.
+>>>>
+>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>> ---
+>>>>  drivers/remoteproc/remoteproc_core.c | 9 ++++++++-
+>>>>  include/linux/remoteproc.h           | 2 +-
+>>>>  2 files changed, 9 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>>>> index aca6d022901a..6e0b91fa6f11 100644
+>>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>>> @@ -1989,6 +1989,7 @@ static void rproc_type_release(struct device *dev)
+>>>>  
+>>>>  	kfree(rproc->firmware);
+>>>>  	kfree(rproc->ops);
+>>>> +	kfree(rproc->name);
+>>>>  	kfree(rproc);
+>>>>  }
+>>>>  
+>>>> @@ -2061,7 +2062,13 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>>>>  	}
+>>>>  
+>>>>  	rproc->firmware = p;
+>>>> -	rproc->name = name;
+>>>> +	rproc->name = kstrdup(name, GFP_KERNEL);
+>>>
+>>> Let's use kstrdup_const() instead here (and kfree_const() instead of
+>>> kfree()), so that the cases where we are passed a constant we won't
+>>> create a duplicate on the heap.
+>>>
+>>> And the "name" in struct rproc can remain const.
+>>
+>> Agreed, that's better functions to use for this.
+>>
+>>>
+>>>> +	if (!rproc->name) {
+>>>> +		kfree(p);
+>>>> +		kfree(rproc->ops);
+>>>> +		kfree(rproc);
+>>>> +		return NULL;
+>>>
+>>> Perhaps we can rearrange the hunks here slightly and get to a point
+>>> where we can rely on the release function earlier?
+>>
+>> Not sure I understand. I don't see any release function, all failure
+>> paths in rproc_alloc() directly unwind the previous operations. You mean
+>> move this to before the alloc for rproc structure, something similar to
+>> what we are doing with firmware?
+>>
 > 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
-> Changes in v3:
-> - constify some things according to Kees
-> - expand the comment of sysctl_aliases to note on different timings
+> Look at the failure for ida_simple_get(), there we're past the setup of
+> rproc->dev.type, so the rproc_type->release function will be invoked as
+> we call put_device().
 > 
->  fs/proc/proc_sysctl.c | 48 ++++++++++++++++++++++++++++++++++++-------
->  mm/page_alloc.c       |  9 --------
->  2 files changed, 41 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 8ee3273e4540..3a861e0a7c7e 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -1729,6 +1729,37 @@ int __init proc_sys_init(void)
->  
->  struct vfsmount *proc_mnt = NULL;
->  
-> +struct sysctl_alias {
-> +	const char *kernel_param;
-> +	const char *sysctl_param;
-> +};
-> +
-> +/*
-> + * Historically some settings had both sysctl and a command line parameter.
-> + * With the generic sysctl. parameter support, we can handle them at a single
-> + * place and only keep the historical name for compatibility. This is not meant
-> + * to add brand new aliases. When adding existing aliases, consider whether
-> + * the possibly different moment of changing the value (e.g. from early_param
-> + * to the moment do_sysctl_args() is called) is an issue for the specific
-> + * parameter.
-> + */
-> +static const struct sysctl_alias sysctl_aliases[] = {
-> +	{"numa_zonelist_order",		"vm.numa_zonelist_order" },
-> +	{ }
-> +};
-> +
-> +const char *sysctl_find_alias(char *param)
+> So if you move the initialization of rproc->dev up right after the
+> allocation of rproc we should be able to rely on that to clean up all
+> these for us.
 
-This should be "static" too.
+Yeah ok. That's cleanup though, and probably a patch of its own, and not
+directly related to the subject of this patch. Yeah, I can rework this
+patch to sit on top of that cleanup patch.
 
-> +{
-> +	const struct sysctl_alias *alias;
-> +
-> +	for (alias = &sysctl_aliases[0]; alias->kernel_param != NULL; alias++) {
-> +		if (strcmp(alias->kernel_param, param) == 0)
-> +			return alias->sysctl_param;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  /* Set sysctl value passed on kernel command line. */
->  static int process_sysctl_arg(char *param, char *val,
->  			       const char *unused, void *arg)
-> @@ -1741,15 +1772,18 @@ static int process_sysctl_arg(char *param, char *val,
->  	loff_t pos = 0;
->  	ssize_t wret;
->  
-> -	if (strncmp(param, "sysctl", sizeof("sysctl") - 1))
-> -		return 0;
-> -
-> -	param += sizeof("sysctl") - 1;
-> +	if (strncmp(param, "sysctl", sizeof("sysctl") - 1) == 0) {
-> +		param += sizeof("sysctl") - 1;
->  
-> -	if (param[0] != '/' && param[0] != '.')
-> -		return 0;
-> +		if (param[0] != '/' && param[0] != '.')
-> +			return 0;
->  
-> -	param++;
-> +		param++;
-> +	} else {
-> +		param = (char *) sysctl_find_alias(param);
-> +		if (!param)
-> +			return 0;
-> +	}
->  
->  	if (!proc_mnt) {
->  		proc_fs_type = get_fs_type("proc");
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 3c4eb750a199..de7a134b1b8a 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5460,15 +5460,6 @@ static int __parse_numa_zonelist_order(char *s)
->  	return 0;
->  }
->  
-> -static __init int setup_numa_zonelist_order(char *s)
-> -{
-> -	if (!s)
-> -		return 0;
-> -
-> -	return __parse_numa_zonelist_order(s);
-> -}
-> -early_param("numa_zonelist_order", setup_numa_zonelist_order);
-> -
->  char numa_zonelist_order[] = "Node";
->  
->  /*
-> -- 
-> 2.25.1
+regards
+Suman
+
 > 
+> Regards,
+> Bjorn
+> 
+>> regards
+>> Suman
+>>
+>>
+>>>
+>>> Regards,
+>>> Bjorn
+>>>
+>>>> +	}
+>>>>  	rproc->priv = &rproc[1];
+>>>>  	rproc->auto_boot = true;
+>>>>  	rproc->elf_class = ELFCLASS32;
+>>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>>> index ddce7a7775d1..77788a4bb94e 100644
+>>>> --- a/include/linux/remoteproc.h
+>>>> +++ b/include/linux/remoteproc.h
+>>>> @@ -490,7 +490,7 @@ struct rproc_dump_segment {
+>>>>  struct rproc {
+>>>>  	struct list_head node;
+>>>>  	struct iommu_domain *domain;
+>>>> -	const char *name;
+>>>> +	char *name;
+>>>>  	char *firmware;
+>>>>  	void *priv;
+>>>>  	struct rproc_ops *ops;
+>>>> -- 
+>>>> 2.23.0
+>>>>
+>>
 
-Otherwise, yay, I love it! :)
-
--- 
-Kees Cook
