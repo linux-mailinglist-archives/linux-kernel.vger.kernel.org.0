@@ -2,99 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDC56194C1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 00:19:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F4B2194C2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 00:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbgCZXTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 19:19:48 -0400
-Received: from gateway21.websitewelcome.com ([192.185.46.113]:21493 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726359AbgCZXTs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 19:19:48 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 9862B400CB9B4
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 18:19:47 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id HbmtjOdpNAGTXHbmtjnLw2; Thu, 26 Mar 2020 18:19:47 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=s6LutiGk2IllAHlFGyWkD3z+bSbaKNTGXhQLNtAMbZU=; b=vhY5OV6SGw7bbrYBQQiQ1VOo6t
-        LaHxWYVqHGcs4E5mi2Pm0j3mh6gFjFJ34zpsRPdsP7PdQh7rcA9B7EYeOqpLw3KNqfjUn3AOkWV2s
-        rY2wq3isOFZ/QljsGc4u2BEeS10NRAUC2Ifp6+xDl2fBwExWYDH0dhSR+zXPQyWQASUu6J0i+al37
-        HV30V73m3NU7wSD2fGwJCjGdtOklBUlApXzMNK8n8DONiB9RVJuEhyoOIo95sRzvRQ3cV/T8m0e7B
-        GsFQoxQRU2N+dRn52UkPTrdLY49AlWjLczB/L/MmN1crfOPhirYh7a1fOiCGkvAyCOWsC5dhbgkQj
-        h/dI3OcQ==;
-Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:33582 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jHbmr-0012KV-NP; Thu, 26 Mar 2020 18:19:45 -0500
-Date:   Thu, 26 Mar 2020 18:23:22 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2][next] m68k: amiga: config: Use flexible-array member and
- mark expected switch fall-through
-Message-ID: <cover.1585264062.git.gustavo@embeddedor.com>
+        id S1727456AbgCZXYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 19:24:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726296AbgCZXX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 19:23:59 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AE6420663;
+        Thu, 26 Mar 2020 23:23:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585265039;
+        bh=Z4iMPj2/JljR+Vd2zFTtsyHkYIrKFgH9K7WTppGiQTU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=wzceW/JqhJz3hvZl2SGUBeXhlcRUIaaVcnZtnaHlOL4+ir/8Sw0wjEmD9/eXYHjlA
+         alqkXEY/LxFIab8OQNTWiaykhLek9kc9y5fIRkEKaZLdElfc2DzHyNjVTKMkZadRc3
+         ampKLYGEJyZfnaJbvb39Q8qHzrJq3iUrOgfObtZk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 01/28] thunderbolt: Fix error code in tb_port_is_width_supported()
+Date:   Thu, 26 Mar 2020 19:23:30 -0400
+Message-Id: <20200326232357.7516-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.218.116.241
-X-Source-L: No
-X-Exim-ID: 1jHbmr-0012KV-NP
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:33582
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mark expected switch fall-through
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Hi,
+[ Upstream commit e9d0e7511fda92a6511904996dd0aa57b6d7687a ]
 
-This series aims to replace a zero-length array with a flexible-array
-member and mark a switch case where we are expecting to fall through.
+This function is type bool, and it's supposed to return true on success.
+Unfortunately, this path takes negative error codes and casts them to
+bool (true) so it's treated as success instead of failure.
 
-This also coverts some /* fall through */ comments to the new
-pseudo-keyword fallthrough;
+Fixes: 91c0c12080d0 ("thunderbolt: Add support for lane bonding")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/thunderbolt/switch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Building: allmodconfig m68k
-
-Thanks
-
-Gustavo A. R. Silva (2):
-  [next] m68k: amiga: config: Replace zero-length array with
-    flexible-array member
-  [next] m68k: amiga: config: Mark expected switch fall-through
-
- arch/m68k/amiga/config.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index 43bfeb8866141..f0f77da6ca26d 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -848,7 +848,7 @@ static bool tb_port_is_width_supported(struct tb_port *port, int width)
+ 	ret = tb_port_read(port, &phy, TB_CFG_PORT,
+ 			   port->cap_phy + LANE_ADP_CS_0, 1);
+ 	if (ret)
+-		return ret;
++		return false;
+ 
+ 	widths = (phy & LANE_ADP_CS_0_SUPPORTED_WIDTH_MASK) >>
+ 		LANE_ADP_CS_0_SUPPORTED_WIDTH_SHIFT;
 -- 
-2.26.0
+2.20.1
 
