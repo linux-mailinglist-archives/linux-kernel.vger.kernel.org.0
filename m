@@ -2,214 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01E1D193DD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:26:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BE33193DDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:30:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbgCZL0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 07:26:46 -0400
-Received: from mga17.intel.com ([192.55.52.151]:9890 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727560AbgCZL0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 07:26:45 -0400
-IronPort-SDR: 7C3kS7zrNh/hCiyB5w5F/vcVoP3DMrSSq8fyYNuvI9iHo74M3QmHNK7swOyYGwif/eaSqcJMzp
- UaWQXW4ZHqKQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 04:26:44 -0700
-IronPort-SDR: j+CX21XIILRChtNrHQMbIj0SlMiqShprtb0zcBZPdehxP4557gVhBxKOezUEUVceIPa8QALX4P
- mphdgBgGDe2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,308,1580803200"; 
-   d="scan'208";a="240931447"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga008.jf.intel.com with ESMTP; 26 Mar 2020 04:26:41 -0700
-Subject: Re: [PATCH v8 3/5] usb: xhci: Add support for Renesas controller with
- memory
-To:     Vinod Koul <vkoul@kernel.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        =?UTF-8?Q?Andreas_B=c3=b6hler?= <dev@aboehler.at>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200323170601.419809-1-vkoul@kernel.org>
- <20200323170601.419809-4-vkoul@kernel.org>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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 fiD/
-Message-ID: <6ea778a7-6d58-6dae-bd65-3a63a945fb97@linux.intel.com>
-Date:   Thu, 26 Mar 2020 13:29:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200323170601.419809-4-vkoul@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1728092AbgCZLaI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 26 Mar 2020 07:30:08 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36112 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728021AbgCZLaI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 07:30:08 -0400
+Received: from mail-pg1-f199.google.com ([209.85.215.199])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1jHQi5-0000jE-HK
+        for linux-kernel@vger.kernel.org; Thu, 26 Mar 2020 11:30:05 +0000
+Received: by mail-pg1-f199.google.com with SMTP id z29so4458656pgc.23
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 04:30:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=HALfYwFfeY5UrbJ7xe/bm/b+wfD4jWuw8RPBvgJnNt8=;
+        b=KyisNW0ZYy8LHlgHBCkk6vZSANLiIwbNWJ3cJwqEYmsRkfPzyXLqs0zU60M5RDlYVF
+         u8thtcCvrBs5KeFHRKj6wk0DCGZuso2YqLCEMjGLhrRB4VsRmvt+wHBrMAS3xKG2YcLY
+         VUf6Vwr3RslGRxV+yNmLcneiG9Xu9bSgKnsNXcBo/kokaAiLCHBr+bxJYda8uOSnpL5J
+         lz6kyXm+QUjX8w/gTzJ72cRGLJlpTmLiJCUWpXl2U5KoLCtahqSzfuZKC+w6AtTojD9h
+         e+2MzOER9E5nGI7PBm6TDyVq6pUbaPKJaDJ94JZEgbNNNUpvi6DsMhlmJuLJLMTaFe84
+         gIhg==
+X-Gm-Message-State: ANhLgQ1zaPSQyajlby4aRTCKTcDhrE91xFMBOwA/QEQuwlFWdzNM1QKr
+        3DwqDV/rWS/VKf9MKKGdiMySlyJ6KKAFNnZzX2GIippVwpl19kjoveoWYQsubWDcqSrPu99aqNJ
+        xDOcrkS/PFhKi9rjX/xsG6ZoQHe6Gtv4h9Pd9EE3kyQ==
+X-Received: by 2002:a17:90a:d081:: with SMTP id k1mr2764267pju.57.1585222203902;
+        Thu, 26 Mar 2020 04:30:03 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vuS+bLH90tlYwet5AJzyUoCGHkWCs9CDSvMU1YuamVJeArEPTfM7EKmXOeR4nlxgDj09iQpzg==
+X-Received: by 2002:a17:90a:d081:: with SMTP id k1mr2764220pju.57.1585222203472;
+        Thu, 26 Mar 2020 04:30:03 -0700 (PDT)
+Received: from [192.168.1.208] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id y131sm1454645pfb.78.2020.03.26.04.30.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Mar 2020 04:30:03 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [Intel-wired-lan] [PATCH] e1000e: bump up timeout to wait when ME
+ un-configure ULP mode
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <f9dc1980-fa8b-7df9-6460-b0944c7ebc43@molgen.mpg.de>
+Date:   Thu, 26 Mar 2020 19:29:59 +0800
+Cc:     Sasha Neftin <sasha.neftin@intel.com>,
+        Aaron Ma <aaron.ma@canonical.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+        David Miller <davem@davemloft.net>,
+        Rex Tsai <rex.tsai@intel.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <60A8493D-811B-4AD5-A8D3-82054B562A8C@canonical.com>
+References: <20200323191639.48826-1-aaron.ma@canonical.com>
+ <EC4F7F0B-90F8-4325-B170-84C65D8BBBB8@canonical.com>
+ <2c765c59-556e-266b-4d0d-a4602db94476@intel.com>
+ <899895bc-fb88-a97d-a629-b514ceda296d@canonical.com>
+ <750ad0ad-816a-5896-de2f-7e034d2a2508@intel.com>
+ <f9dc1980-fa8b-7df9-6460-b0944c7ebc43@molgen.mpg.de>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod
+Hi Paul,
 
-On 23.3.2020 19.05, Vinod Koul wrote:
-> Some rensas controller like uPD720201 and uPD720202 need firmware to be
-> loaded. Add these devices in table and invoke renesas firmware loader
-> functions to check and load the firmware into device memory when
-> required.
+> On Mar 25, 2020, at 23:49, Paul Menzel <pmenzel@molgen.mpg.de> wrote:
 > 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  drivers/usb/host/xhci-pci-renesas.c |  1 +
->  drivers/usb/host/xhci-pci.c         | 29 ++++++++++++++++++++++++++++-
->  drivers/usb/host/xhci-pci.h         |  3 +++
->  3 files changed, 32 insertions(+), 1 deletion(-)
+> Dear Linux folks,
+> 
+> 
+> Am 25.03.20 um 14:58 schrieb Neftin, Sasha:
+>> On 3/25/2020 08:43, Aaron Ma wrote:
+> 
+>>> On 3/25/20 2:36 PM, Neftin, Sasha wrote:
+>>>> On 3/25/2020 06:17, Kai-Heng Feng wrote:
+> 
+>>>>>> On Mar 24, 2020, at 03:16, Aaron Ma <aaron.ma@canonical.com> wrote:
+>>>>>> 
+>>>>>> ME takes 2+ seconds to un-configure ULP mode done after resume
+>>>>>> from s2idle on some ThinkPad laptops.
+>>>>>> Without enough wait, reset and re-init will fail with error.
+>>>>> 
+>>>>> Thanks, this patch solves the issue. We can drop the DMI quirk in
+>>>>> favor of this patch.
+>>>>> 
+>>>>>> Fixes: f15bb6dde738cc8fa0 ("e1000e: Add support for S0ix")
+>>>>>> BugLink: https://bugs.launchpad.net/bugs/1865570
+>>>>>> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+>>>>>> ---
+>>>>>> drivers/net/ethernet/intel/e1000e/ich8lan.c | 4 ++--
+>>>>>> 1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>> 
+>>>>>> diff --git a/drivers/net/ethernet/intel/e1000e/ich8lan.c
+>>>>>> b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+>>>>>> index b4135c50e905..147b15a2f8b3 100644
+>>>>>> --- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
+>>>>>> +++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+>>>>>> @@ -1240,9 +1240,9 @@ static s32 e1000_disable_ulp_lpt_lp(struct
+>>>>>> e1000_hw *hw, bool force)
+>>>>>>              ew32(H2ME, mac_reg);
+>>>>>>          }
+>>>>>> 
+>>>>>> -        /* Poll up to 300msec for ME to clear ULP_CFG_DONE. */
+>>>>>> +        /* Poll up to 2.5sec for ME to clear ULP_CFG_DONE. */
+>>>>>>          while (er32(FWSM) & E1000_FWSM_ULP_CFG_DONE) {
+>>>>>> -            if (i++ == 30) {
+>>>>>> +            if (i++ == 250) {
+>>>>>>                  ret_val = -E1000_ERR_PHY;
+>>>>>>                  goto out;
+>>>>>>              }
+>>>>> 
+>>>>> The return value was not caught by the caller, so the error ends up
+>>>>> unnoticed.
+>>>>> Maybe let the caller check the return value of
+>>>>> e1000_disable_ulp_lpt_lp()?
+> 
+>>>> I a bit confused. In our previous conversation you told ME not running.
+>>>> let me shimming in. Increasing delay won't be solve the problem and just
+>>>> mask it. We need to understand why ME take too much time. What is
+>>>> problem with this specific system?
+>>>> So, basically no ME system should works for you.
+>>> 
+>>> Some laptops ME work that's why only reproduce issue on some laptops.
+>>> In this issue i219 is controlled by ME.
+>> 
+>> Who can explain - why ME required too much time on this system?
+>> Probably need work with ME/BIOS vendor and understand it.
+>> Delay will just mask the real problem - we need to find root cause.
+>>> Quirk is only for 1 model type. But issue is reproduced by more models.
+>>> So it won't work.
+> 
+> (Where is Aaron’s reply? It wasn’t delivered to me yet.)
+> 
+> As this is clearly a regression, please revert the commit for now, and then find a way to correctly implement S0ix support. Linux’ regression policy demands that as no fix has been found since v5.5-rc1. Changing Intel ME settings, even if it would work around the issue, is not an acceptable solution. Delaying the resume time is also not a solution.
+
+The s0ix patch can reduce power consumption, finally makes S2idle an acceptable sleep method.
+So I'd say it's a fix, albeit a regression was introduced.
+
+> 
+> Regarding Intel Management Engine, only Intel knows what it does and what the error is, as the ME firmware is proprietary and closed.
+> 
+> Lastly, there is no way to fully disable the Intel Management Engine. The HAP stuff claims to stop the Intel ME execution, but nobody knows, if it’s successful.
+> 
+> Aaron, Kai-Hang, can you send the revert?
+
+I consider that as an important fix for s2idle, I don't think reverting is appropriate.
+
+Kai-Heng
+
+> 
+> 
+> Kind regards,
+> 
+> Paul
+> 
 > 
 
-It's unfortunate if firmware loading couldn't be initiated in a PCI fixup hook
-for this Renesas controller. What was the reason it failed?
-
-Nicolas Saenz Julienne just submitted a solution like that for Raspberry Pi 4
-where firmware loading is initiated in pci-quirks.c quirk_usb_early_handoff()
-
-https://lore.kernel.org/lkml/20200324182812.20420-1-nsaenzjulienne@suse.de
-
-Is he doing something different than what was done for the Renesas controller?
-
-
-> diff --git a/drivers/usb/host/xhci-pci-renesas.c b/drivers/usb/host/xhci-pci-renesas.c
-> index c588277ac9b8..d413d53df94b 100644
-> --- a/drivers/usb/host/xhci-pci-renesas.c
-> +++ b/drivers/usb/host/xhci-pci-renesas.c
-> @@ -336,6 +336,7 @@ static void renesas_fw_callback(const struct firmware *fw,
->  		goto cleanup;
->  	}
->  
-> +	xhci_pci_probe(pdev, ctx->id);
->  	return;
-
-I haven't looked into this but instead of calling xhci_pci_probe() here in the async fw
-loading callback could we just return -EPROBE_DEFER until firmware is loaded when
-xhci_pci_probe() is originally called?
-
->  
->  cleanup:
-> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-> index a19752178216..7e63658542ac 100644
-> --- a/drivers/usb/host/xhci-pci.c
-> +++ b/drivers/usb/host/xhci-pci.c
-> @@ -15,6 +15,7 @@
->  
->  #include "xhci.h"
->  #include "xhci-trace.h"
-> +#include "xhci-pci.h"
->  
->  #define SSIC_PORT_NUM		2
->  #define SSIC_PORT_CFG2		0x880c
-> @@ -312,11 +313,25 @@ static int xhci_pci_setup(struct usb_hcd *hcd)
->   * We need to register our own PCI probe function (instead of the USB core's
->   * function) in order to create a second roothub under xHCI.
->   */
-> -static int xhci_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
-> +int xhci_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
->  {
->  	int retval;
->  	struct xhci_hcd *xhci;
->  	struct usb_hcd *hcd;
-> +	char *renesas_fw;
-> +
-> +	renesas_fw = (char *)id->driver_data;
-
-driver_data is useful for other things than just renesas firmware loading.
-Heikki suggested a long time ago to use it for passing the quirk flags as well, which
-makes sense.
-
-We probably need a structure, something like
-
-struct xhci_driver_data = {
-	u64 quirks;
-	const char *firmware;
-};
-
-> +	if (renesas_fw) {
-> +		retval = renesas_xhci_pci_probe(dev, id);
-> +		switch (retval) {
-> +		case 0: /* fw check success, continue */
-> +			break;
-> +		case 1: /* fw will be loaded by async load */
-> +			return 0;
-> +		default: /* error */
-> +			return retval;
-> +		}
-> +	}
->  
-
-If returning -EPROBE_DEFER until firmware is loaded is an option then we would prevent probe
-from returning success while the renesas controller is still loading firmware.
-
-So we would end up with something like this:
-(we can add a quirk flag for renesas firmware loading)
-
-int xhci_pci_probe(..)
-{
-	...
-	struct xhci_driver_data *data = id->driver_data;
-	if (data && data->quirks & XHCI_RENESAS_FW_QUIRK) { 
-		if (!xhci_renesas_fw_ready(...))
-			return -EPROBE_DEFER
-	}
-}
-
-xhci_renesas_fw_ready() would need to initiate firmware loading unless
-firmware is already running or loading.
-
-Would that work for you?
-
--Mathias
