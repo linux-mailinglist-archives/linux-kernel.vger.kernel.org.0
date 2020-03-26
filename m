@@ -2,126 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A081193DB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:14:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0442E193DB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:15:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727970AbgCZLOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 07:14:38 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36928 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727560AbgCZLOi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 07:14:38 -0400
-Received: by mail-oi1-f194.google.com with SMTP id u20so367339oic.4
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 04:14:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=/KnIiWMvMcdCBpsG+OVuDQeKNXTaq/KhRb7ZPYMTP80=;
-        b=Gul4ZHP11May7R+Nn64ei72Pl10lLniihdtyAwma1JbSpMcTtUJ735uEe3zq0MiLZ6
-         tvWlVqpUrsUZz9dWuTOEgfhzyWUsXW/qU4pEMz/33CfuVF/u6fSGuq/PqNTb5AH64V/6
-         nQgi7EtP4YcI0pKAnqYuCNEImXEPLY6n01F2KcHpJiMjCPpIO0wzUK8NkOaO6NRTHmTZ
-         LfAZuqESiCxulFp8s2PprQiCthsXukAGFhdeaqGo4Z4v045YkfvrSawZ1FiuCaJysz5O
-         BVnbGTR2juiSy8rO4TNgm2wZiy0F5qIEhDWetGac0ofgUJupZFM995HOGHwrr4CIYBtO
-         zwEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=/KnIiWMvMcdCBpsG+OVuDQeKNXTaq/KhRb7ZPYMTP80=;
-        b=fWIU7n5+YH94nQI0ZmIygBuCHYssDRaR1D82cvO26hbfjg1+u189v/5Tib+6AQGw6C
-         oLwS/sNnlojjXsDpPSmUUW/wdcVKPF2bvBwNS4NVjEwtSh8G7qociFir9Jfj3gc4H4MZ
-         kQRvVefOeUdTJSycyvvufpmoRuGJ+F+eEVG9mbg6ZflbmDEB7ym+npdRICf3eCXbcKKg
-         q2YRWnCJiZVpMHLZtsbyJ52EPTaZKgVzHHZ7OyWXzdSY0oRPm2iV1GSTYRSB9Ad5ZRRH
-         kbFaByDe6u0cb1H8Ld0UpHt9CJBDbZtbAtFOPpuGyz171L1ip9ixb9lqgYidbYBDOGsj
-         IHKg==
-X-Gm-Message-State: ANhLgQ2XnLpOMHaYX5CJf3WBbv+alXCxqkb9YXr7cJOX0yGF4IgTD0EW
-        g2yPuUpRambvamdgXNL/vkO9ICSPdJhZcWCodFY=
-X-Google-Smtp-Source: ADFU+vtQ7xUleUoiskmTXHT4N6AcQUUDXRmuSWQAEbNf/4udvuVuzR88MEjLnGJoMeBG6v4lSRFVO0Ih6UuANRwWF+Y=
-X-Received: by 2002:aca:3a83:: with SMTP id h125mr1317665oia.64.1585221276079;
- Thu, 26 Mar 2020 04:14:36 -0700 (PDT)
+        id S1728054AbgCZLPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 07:15:40 -0400
+Received: from foss.arm.com ([217.140.110.172]:59242 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727688AbgCZLPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 07:15:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD1087FA;
+        Thu, 26 Mar 2020 04:15:39 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 531823F71F;
+        Thu, 26 Mar 2020 04:15:36 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 11:15:21 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Elena Reshetova <elena.reshetova@intel.com>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Alexander Potapenko <glider@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jann Horn <jannh@google.com>,
+        "Perla, Enrico" <enrico.perla@intel.com>,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] arm64: entry: Enable random_kstack_offset support
+Message-ID: <20200326111521.GA72909@C02TD0UTHF1T.local>
+References: <20200324203231.64324-1-keescook@chromium.org>
+ <20200324203231.64324-6-keescook@chromium.org>
+ <20200325132127.GB12236@lakrids.cambridge.arm.com>
+ <202003251319.AECA788D63@keescook>
 MIME-Version: 1.0
-Received: by 2002:a9d:7417:0:0:0:0:0 with HTTP; Thu, 26 Mar 2020 04:14:34
- -0700 (PDT)
-Reply-To: ambrosecooker389@gmail.com
-From:   Ambrose Cooker <mrs.chichimohamed01@gmail.com>
-Date:   Thu, 26 Mar 2020 04:14:34 -0700
-Message-ID: <CAKWaEg+SbnSs3PZaatYHQv4WTvDa2t9uJVZ1Bqs5HbygNsELew@mail.gmail.com>
-Subject: Greetings to you my Dear!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202003251319.AECA788D63@keescook>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings My Dear Friend,
+On Wed, Mar 25, 2020 at 01:22:07PM -0700, Kees Cook wrote:
+> On Wed, Mar 25, 2020 at 01:21:27PM +0000, Mark Rutland wrote:
+> > On Tue, Mar 24, 2020 at 01:32:31PM -0700, Kees Cook wrote:
+> > > Allow for a randomized stack offset on a per-syscall basis, with roughly
+> > > 5 bits of entropy.
+> > > 
+> > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > 
+> > Just to check, do you have an idea of the impact on arm64? Patch 3 had
+> > figures for x86 where it reads the TSC, and it's unclear to me how
+> > get_random_int() compares to that.
+> 
+> I didn't do a measurement on arm64 since I don't have a good bare-metal
+> test environment. I know Andy Lutomirki has plans for making
+> get_random_get() as fast as possible, so that's why I used it here.
 
-Please reply to my private email ambrosecooker389@gmail.com
+Ok. I suspect I also won't get the chance to test that in the next few
+days, but if I do I'll try to share the results.
 
-Before I introduce myself, I wish to inform you that this letter is
-not a hoax mail and I urge you to treat it serious.This letter must
-come to you as a big surprise, but I believe it is only a day that
-people meet and become great friends and business partners. Please I
-want you to read this letter very carefully and I must apologize for
-barging this message into your mail box without any formal
-introduction due to the urgency and confidentiality of this business.
-I make this contact with you as I believe that you can be of great
-assistance to me. My name is Mr.Ambrose Cooker, from Burkina Faso,
-West Africa. I work in African Development Bank (ADB) as Telex
-manager, please see this as a confidential message and do not reveal
-it to another person and let me know whether you can be of assistance
-regarding my proposal below because it is top secret.
+My concern here was that, get_random_int() has to grab a spinlock and
+mess with IRQ masking, so has the potential to block for much longer,
+but that might not be an issue in practice, and I don't think that
+should block these patches.
 
-I am about to retire from active Banking service to start a new life
-but I am skeptical to reveal this particular secret to a stranger. You
-must assure me that everything will be handled confidentially because
-we are not going to suffer again in life. It has been 10 years now
-that most of the greedy African Politicians used our bank to launder
-money overseas through the help of their Political advisers. Most of
-the funds which they transferred out of the shores of Africa were gold
-and oil money that was supposed to have been used to develop the
-continent. T heir Political advisers always inflated the amounts
-before
-transferring to foreign accounts, so I also used the opportunity to
-divert part of the funds hence I am aware that there is no official
-trace of how much was transferred as all the accounts used for such
-transfers were being closed after transfer. I acted as the Bank
-Officer to most of the politicians and when I discovered that they
-were using me to succeed in their greedy act; I also cleaned some of
-their banking records from the Bank files and no one cared to ask me
-because the money was too much for them to control. They laundered
-over $5billion Dollars during the process.
+> I couldn't figure out if there was a comparable instruction like rdtsc
+> in aarch64 (it seems there's a cycle counter, but I found nothing in
+> the kernel that seemed to actually use it)?
 
-Before I send this message to you, I have already diverted
-($10.5million Dollars) to an escrow account belonging to no one in the
-bank. The bank is anxious now to know who the beneficiary to the funds
-because they have made a lot of profits with the funds. It is more
-than Eight years now and most of the politicians are no longer using
-our bank to transfer funds overseas. The ($10.5million Dollars) has
-been laying waste in our bank and I don't want to retire from the bank
-without transferring the funds to a foreign account to enable me share
-the proceeds with the receiver (a foreigner). The money will be shared
-60% for me and 40% for you. There is no one coming to ask you about
-the funds because I secured everything. I only want you to assist me
-by providing a reliable bank account where the funds can be
-transferred.
+AArch64 doesn't have a direct equivalent. The generic counter
+(CNTxCT_EL0) is the closest thing, but its nominal frequency is
+typically much lower than the nominal CPU clock frequency (unlike TSC
+where they're the same). The cycle counter (PMCCNTR_EL0) is part of the
+PMU, and can't be relied on in the same way (e.g. as perf reprograms it
+to generate overflow events, and it can stop for things like WFI/WFE).
 
-You are not to face any difficulties or legal implications as I am
-going to handle the transfer personally. If you are capable of
-receiving the funds, do let me know immediately to enable me give you
-a detailed information on what to do. For me, I have not stolen the
-money from anyone because the other people that took the whole money
-did not face any problems. This is my chance to grab my own life
-opportunity but you must keep the details of the funds secret to avoid
-any leakages as no one in the bank knows about my plans.Please get
-back to me if you are interested and capable to handle this project, I
-am looking forward to hear from you immediately for further
-information.Please reply to my private email
-ambrosecooker389@gmail.com
-
-Thanks with my best regards.
-Mr.Ambrose Cooker.
-Telex Manager
-African Development Bank (ADB)
-Burkina Faso.
+Thanks,
+Mark.
