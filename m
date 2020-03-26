@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBD34193D18
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:40:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB06E193D28
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:43:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728077AbgCZKkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 06:40:23 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:37151 "EHLO
+        id S1727991AbgCZKnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 06:43:43 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:42857 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727884AbgCZKkX (ORCPT
+        with ESMTP id S1727560AbgCZKnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 06:40:23 -0400
+        Thu, 26 Mar 2020 06:43:43 -0400
 Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MG90u-1j0yT23l6a-00GYWb for <linux-kernel@vger.kernel.org>; Thu, 26 Mar
- 2020 11:40:20 +0100
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1N79q8-1jIVOq1alI-017X7z for <linux-kernel@vger.kernel.org>; Thu, 26 Mar
+ 2020 11:43:40 +0100
 Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id A023464FAA0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 10:40:20 +0000 (UTC)
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id 291156502CB
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 10:43:40 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at cetitec.com
 Received: from mail.cetitecgmbh.com ([127.0.0.1])
         by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id GEHCg7JkF-b5 for <linux-kernel@vger.kernel.org>;
-        Thu, 26 Mar 2020 11:40:19 +0100 (CET)
+        with ESMTP id ItpFom61juuT for <linux-kernel@vger.kernel.org>;
+        Thu, 26 Mar 2020 11:43:39 +0100 (CET)
 Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 492E364BE29
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:40:19 +0100 (CET)
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 9CA4A64FD0A
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:43:39 +0100 (CET)
 Received: from pflmari.corp.cetitec.com (10.8.5.79) by
  PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Thu, 26 Mar 2020 11:40:19 +0100
+ id 15.0.1497.2; Thu, 26 Mar 2020 11:43:39 +0100
 Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
-        id 182C1804FD; Thu, 26 Mar 2020 11:34:57 +0100 (CET)
-Date:   Thu, 26 Mar 2020 11:34:57 +0100
+        id 4A517804FE; Thu, 26 Mar 2020 11:34:59 +0100 (CET)
+Date:   Thu, 26 Mar 2020 11:34:59 +0100
 From:   Alex Riesen <alexander.riesen@cetitec.com>
 To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
 CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -45,9 +45,9 @@ CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
         <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH v4 1/9] media: adv748x: fix end-of-line terminators in
- diagnostic statements
-Message-ID: <df22a88b6a2006920bae857c53e45c34b31175d6.1585218857.git.alexander.riesen@cetitec.com>
+Subject: [PATCH v4 2/9] media: adv748x: include everything adv748x.h needs
+ into the file
+Message-ID: <e37abb9c66571ad02a7d0c7903d1889d7d52ed46.1585218857.git.alexander.riesen@cetitec.com>
 Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -70,148 +70,155 @@ X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
  PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
 X-EsetResult: clean, is OK
 X-EsetId: 37303A290D7F536A6D7C67
-X-Provags-ID: V03:K1:JsQ4YwYMn3GDlWBLpSvJUkC6LWzOVBWglf3RT0nr1nzl/FULbFw
- BaPArt+zDCdHRQqyosYJuICB2XCy4pAaimQILq8l3dhIcHTIxSmdwgy8W0XCpKKtEGoNZeh
- ckZlC8MqJPI81rqiOLZNFH6lqyXfbT0GzuFAixsEeLyG8jOiQFTdNwJdNjfY+Z8Ni2KIGv4
- slL9aWmdfLymICXIlJ7tQ==
+X-Provags-ID: V03:K1:6zX46J1OtgbpS91h09Kh2mhAAB+Ra+cyNtMiLUGp4bzNShjrQJm
+ eQN9iY4JlmlGhTDxch2V/wwUVUeB42OKCXxCrJhHHU3/qluWniPGpMIBrJZmQrh69rTi3Zl
+ cvQSNYThq8Ijs+LVN+V5qMsQjFAzv/uSusoKGutIGJRVZG2OcLiQZAvs5OxAHYr7cMG7+8x
+ EnRtoanuPGsHAtKcbH76Q==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:I9xhmXBPSLM=:GpPIpfsDOu4RLhEM3gaerP
- krzWmwRAo0AEf37eHRBOn/P939bkIO3wET/BfhsYZqsYVaVtfQIuCczjviC9zJhZUVN+/tHvk
- 9KuFj9iw68hlLl0ZpXEd1ATZT+nUoiiAhKkbI+SXRK0Y3RpYWrxWtnLLiZh2x9kCN0rnc64s2
- VUUbBlMWvJODfH5UOduLVvBC0vH7runa02RM2eFYipqNGBfipSzXJmwG/PnKhynwcbwZFIm73
- VNHl0UoABPbL7hrhrEKLsuIftF7mZFRFr68i/zahm5o9N3Xyyj2hNEMo88TY/MAROQcqvi6bF
- e+dJseh6FQc1B2D0XSqUSuP9HXc2A/LD3KVp7dRVOPFhqE6N5vCbq/M+u4y54vEt9eahx2lzm
- jqXhnQeZfFvcqLzLee0EzQHwsEdp7qp5ZJgDvsOQqmjzfpspUpsG6mz7GF2U1fyacdgHZs8Ye
- j5UsBWbZqpdUcIaAO3VdAQDIOHx5gVT3vysUmnGuebfrAa2hFOdh4LYHPOGzXwh0c1skaarZD
- SKKlP7IHVthDMcnhBIRdZ3cFNVH2Ikc1zCMlUbhBe9aO61yi1CorNF1xM/KgcsjJ62XVzd/YF
- EJrrGdCeaw5dFTL0KbZ2lZUlrRgfOWYeuZbXKaQSLvwIv4fPxsVi4ZFBBtMCQ3y+wZCiD9CkF
- KxZ2MsrJCx0ZcdRHj34qU4X40e5LjJYbzIqeTHaBuTog8XWMtwp1aXyKrjFT/VNdqVCgpwA3h
- 6JY9QYlL327Pv8iwc+kW6TSjCl9nq7oZn58sbugTxqYQZIYw0A9OYJQuymx8WSFkFvnM20Zy8
- yS7JpIoS0q3eJTXQIW26OGRZeKHqv6ptrdy66fYdLBThkVkR3UNSes8AmUroEu0qFmUiOL2
+X-UI-Out-Filterresults: notjunk:1;V03:K0:V92qZAtN7tQ=:r64Bhqb7NdoYe6iNVcxZKc
+ A3NpSitdtPd43PX6Ew+vNxE7yIrgu3qDsX0ewymTsCLO1r9yyTybFMDoMDqM2yBnfgYxw7V5j
+ u1CceExUXX3OamFJpjO7UOTWBlq3811mj1rBmZCk7/eBATjiyEn+pnxSFNII0+oEgzmVro7YW
+ DgdRyKzF1uAlrobJHTxLxjZ+Hi7NWveBZ7NWCYxiTPN0tZ2H3nfpgKj8f3dR/ovjzfZCbhdAV
+ XjVjzcKYSpD4qL63jw7hnmXiakdVNTPAnvH+3MEx+mfA7xeF7BXNGjAsafCGXXsv3hoT88sD3
+ 7Iz6RvDhAxvIqavGbe+JufMVeESvde49+vYpJQLB6CFeYZXdIKijh3DUl7q2RLs6YFh6FWcEt
+ SX48bedGNnbQ/oKnGAZVOXD/dyd4hnmMkIkvCwfxtoi63EUaSdHWKK8FNX1wr3i/xHMXA7Rnj
+ j7rXiME5YufmpwV6Hir+8343Ry/LCZHfsCFSZzDXKOzC/9KXkR8ApEOv0TtxEXjr79cjPYGW3
+ uegcddJwRJ9sLCn6rFv98Uom7XxDXJvZt5NttuRa3mcITtUGWgcBEj784YPHOWrzR54O0MsQ4
+ iXSHWHbBnkQ6IqDe6zWqLLxQtJcwKVp/u0auuMjaq4Q8qvWQXIm02iBEvj3Z8tVp3ZykuNJP3
+ VQUMDIS6JAGjTBZOQAcArUcohjdHe+H01SPe9f3MhZhOAgHGKUAgd751JDZXN6Z82oNlYjM2p
+ Z9Fb428wf56mcWVU4B2luaLM5vJ3sWQKk0ofwRWdQo8kY6Rr0b8oNAObI9xzMUzKFSQ8nOHcT
+ WQYJmJ6ighsgtvgs+jU09Eo8nnf+vCnyoNQoYbHgScruUuo7Z34Eo/uNaL5kgScaABp7LFa
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+To follow the established practice of not depending on others to
+pull everything in. While at it, make sure it stays like this.
+
 Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/media/i2c/adv748x/adv748x-core.c | 24 ++++++++++++------------
- drivers/media/i2c/adv748x/adv748x-csi2.c |  2 +-
- 2 files changed, 13 insertions(+), 13 deletions(-)
+ drivers/media/i2c/adv748x/adv748x-afe.c  | 6 ++----
+ drivers/media/i2c/adv748x/adv748x-core.c | 6 ++----
+ drivers/media/i2c/adv748x/adv748x-csi2.c | 6 ++----
+ drivers/media/i2c/adv748x/adv748x-hdmi.c | 6 ++----
+ drivers/media/i2c/adv748x/adv748x.h      | 2 ++
+ 5 files changed, 10 insertions(+), 16 deletions(-)
 
+diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
+index dbbb1e4d6363..5a25d1fbe25f 100644
+--- a/drivers/media/i2c/adv748x/adv748x-afe.c
++++ b/drivers/media/i2c/adv748x/adv748x-afe.c
+@@ -6,18 +6,16 @@
+  * Copyright (C) 2017 Renesas Electronics Corp.
+  */
+ 
++#include "adv748x.h"
++
+ #include <linux/delay.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/v4l2-dv-timings.h>
+ 
+-#include <media/v4l2-ctrls.h>
+-#include <media/v4l2-device.h>
+ #include <media/v4l2-dv-timings.h>
+ #include <media/v4l2-ioctl.h>
+ 
+-#include "adv748x.h"
+-
+ /* -----------------------------------------------------------------------------
+  * SDP
+  */
 diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 23e02ff27b17..c3fb113cef62 100644
+index c3fb113cef62..5c59aad319d1 100644
 --- a/drivers/media/i2c/adv748x/adv748x-core.c
 +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -623,11 +623,11 @@ static int adv748x_parse_dt(struct adv748x_state *state)
+@@ -10,6 +10,8 @@
+  *	Kieran Bingham <kieran.bingham@ideasonboard.com>
+  */
  
- 	for_each_endpoint_of_node(state->dev->of_node, ep_np) {
- 		of_graph_parse_endpoint(ep_np, &ep);
--		adv_info(state, "Endpoint %pOF on port %d", ep.local_node,
-+		adv_info(state, "Endpoint %pOF on port %d\n", ep.local_node,
- 			 ep.port);
++#include "adv748x.h"
++
+ #include <linux/delay.h>
+ #include <linux/errno.h>
+ #include <linux/i2c.h>
+@@ -20,14 +22,10 @@
+ #include <linux/slab.h>
+ #include <linux/v4l2-dv-timings.h>
  
- 		if (ep.port >= ADV748X_PORT_MAX) {
--			adv_err(state, "Invalid endpoint %pOF on port %d",
-+			adv_err(state, "Invalid endpoint %pOF on port %d\n",
- 				ep.local_node, ep.port);
+-#include <media/v4l2-ctrls.h>
+-#include <media/v4l2-device.h>
+ #include <media/v4l2-dv-timings.h>
+ #include <media/v4l2-fwnode.h>
+ #include <media/v4l2-ioctl.h>
  
- 			continue;
-@@ -635,7 +635,7 @@ static int adv748x_parse_dt(struct adv748x_state *state)
- 
- 		if (state->endpoints[ep.port]) {
- 			adv_err(state,
--				"Multiple port endpoints are not supported");
-+				"Multiple port endpoints are not supported\n");
- 			continue;
- 		}
- 
-@@ -702,62 +702,62 @@ static int adv748x_probe(struct i2c_client *client)
- 	/* Discover and process ports declared by the Device tree endpoints */
- 	ret = adv748x_parse_dt(state);
- 	if (ret) {
--		adv_err(state, "Failed to parse device tree");
-+		adv_err(state, "Failed to parse device tree\n");
- 		goto err_free_mutex;
- 	}
- 
- 	/* Configure IO Regmap region */
- 	ret = adv748x_configure_regmap(state, ADV748X_PAGE_IO);
- 	if (ret) {
--		adv_err(state, "Error configuring IO regmap region");
-+		adv_err(state, "Error configuring IO regmap region\n");
- 		goto err_cleanup_dt;
- 	}
- 
- 	ret = adv748x_identify_chip(state);
- 	if (ret) {
--		adv_err(state, "Failed to identify chip");
-+		adv_err(state, "Failed to identify chip\n");
- 		goto err_cleanup_dt;
- 	}
- 
- 	/* Configure remaining pages as I2C clients with regmap access */
- 	ret = adv748x_initialise_clients(state);
- 	if (ret) {
--		adv_err(state, "Failed to setup client regmap pages");
-+		adv_err(state, "Failed to setup client regmap pages\n");
- 		goto err_cleanup_clients;
- 	}
- 
- 	/* SW reset ADV748X to its default values */
- 	ret = adv748x_reset(state);
- 	if (ret) {
--		adv_err(state, "Failed to reset hardware");
-+		adv_err(state, "Failed to reset hardware\n");
- 		goto err_cleanup_clients;
- 	}
- 
- 	/* Initialise HDMI */
- 	ret = adv748x_hdmi_init(&state->hdmi);
- 	if (ret) {
--		adv_err(state, "Failed to probe HDMI");
-+		adv_err(state, "Failed to probe HDMI\n");
- 		goto err_cleanup_clients;
- 	}
- 
- 	/* Initialise AFE */
- 	ret = adv748x_afe_init(&state->afe);
- 	if (ret) {
--		adv_err(state, "Failed to probe AFE");
-+		adv_err(state, "Failed to probe AFE\n");
- 		goto err_cleanup_hdmi;
- 	}
- 
- 	/* Initialise TXA */
- 	ret = adv748x_csi2_init(state, &state->txa);
- 	if (ret) {
--		adv_err(state, "Failed to probe TXA");
-+		adv_err(state, "Failed to probe TXA\n");
- 		goto err_cleanup_afe;
- 	}
- 
- 	/* Initialise TXB */
- 	ret = adv748x_csi2_init(state, &state->txb);
- 	if (ret) {
--		adv_err(state, "Failed to probe TXB");
-+		adv_err(state, "Failed to probe TXB\n");
- 		goto err_cleanup_txa;
- 	}
- 
+-#include "adv748x.h"
+-
+ /* -----------------------------------------------------------------------------
+  * Register manipulation
+  */
 diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 2091cda50935..c43ce5d78723 100644
+index c43ce5d78723..c00d4f347d95 100644
 --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
 +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -72,7 +72,7 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
- 	struct adv748x_state *state = tx->state;
- 	int ret;
+@@ -5,15 +5,13 @@
+  * Copyright (C) 2017 Renesas Electronics Corp.
+  */
  
--	adv_dbg(state, "Registered %s (%s)", is_txa(tx) ? "TXA":"TXB",
-+	adv_dbg(state, "Registered %s (%s)\n", is_txa(tx) ? "TXA":"TXB",
- 			sd->name);
++#include "adv748x.h"
++
+ #include <linux/module.h>
+ #include <linux/mutex.h>
  
- 	/*
+-#include <media/v4l2-ctrls.h>
+-#include <media/v4l2-device.h>
+ #include <media/v4l2-ioctl.h>
+ 
+-#include "adv748x.h"
+-
+ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
+ 					    unsigned int vc)
+ {
+diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+index c557f8fdf11a..f598acec3b5c 100644
+--- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
++++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+@@ -5,18 +5,16 @@
+  * Copyright (C) 2017 Renesas Electronics Corp.
+  */
+ 
++#include "adv748x.h"
++
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ 
+-#include <media/v4l2-ctrls.h>
+-#include <media/v4l2-device.h>
+ #include <media/v4l2-dv-timings.h>
+ #include <media/v4l2-ioctl.h>
+ 
+ #include <uapi/linux/v4l2-dv-timings.h>
+ 
+-#include "adv748x.h"
+-
+ /* -----------------------------------------------------------------------------
+  * HDMI and CP
+  */
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index fccb388ce179..09aab4138c3f 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -19,6 +19,8 @@
+  */
+ 
+ #include <linux/i2c.h>
++#include <media/v4l2-ctrls.h>
++#include <media/v4l2-device.h>
+ 
+ #ifndef _ADV748X_H_
+ #define _ADV748X_H_
 -- 
 2.25.1.25.g9ecbe7eb18
 
