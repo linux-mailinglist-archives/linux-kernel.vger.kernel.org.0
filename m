@@ -2,184 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B99194613
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:09:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4466194618
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:09:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbgCZSJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 14:09:01 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38632 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbgCZSJB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 14:09:01 -0400
-Received: by mail-ot1-f65.google.com with SMTP id t28so6882339ott.5
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U23zV80H/fWBc+iRgD1UjAaCfCC2dZVzJMDMBndseY4=;
-        b=YQHUd4g2qLXtQjXBE4UkMWhIR8nDbvEUaciILNOK1DDGTPkVwxPnjuXXEl+PQHbM/1
-         y6LDzWG05v6UkDFD+hMNUXbok89dYzFWteDm2vjHupA5u+YtneTqEU/fVPzR8E2nTUZ8
-         66uNDVPrLuINvhQ8gOBxGfgdzbAs3VvT6YKpRtj30g+Zjzz8nXk+owbQRhHorhxFTmVZ
-         JIwHb/KAKnILqy/tO+qHlvAZde4hejp45M8JGZWeHHHHfQO45fI7cyUT1Q5iH6ZbiFhu
-         pJ49aMWlxdim62oSWBo3EI1E9poJSoNy/2Z0hdT7sSaBj/1L3nU1I2G8IPtyJeA6+sqi
-         K6Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U23zV80H/fWBc+iRgD1UjAaCfCC2dZVzJMDMBndseY4=;
-        b=l0Wmo7FsV8lZ3FNLDtY5okLP/do4i4vU/IGkAaYooAkwObh3+7moDnEX0lHdXFUJqa
-         4Mr5O2E4N3gMibCQcCaQyo8tsB6SBu1kmqjQrVh7sgdtwA/TPWFfHj6RGmMQZ2WLInld
-         n1RrGNp9QzUiRt/iW9pEHm5n+jZnZ4whu9elJNcXmnDh5FKgIdHPW+iDVQYsPPAigRKQ
-         xFbVMvQq2pm29Js9Utr+x96TP8SvfECHYoJFzOWJ5n7tJV4ULKIDtX/4JBA7qmTfh78t
-         oLQEHFmTxdQ7qX/y3/XI0FGxhNXkjmJo0nkMnZN6R6hq716nTCTVqIgbhJkohaMADuYY
-         Pwgg==
-X-Gm-Message-State: ANhLgQ3IviGygA7rP2OR6leeBRJIjQhYdpeRznlYvZ54krjWTLLNE5KE
-        MFxDfbo0XBnvEk1fQWv9gDffZPVSA9DiOpsZrHavog==
-X-Google-Smtp-Source: ADFU+vvpl+5OQEhCNCLDYCWe7itQaBuqxVZA0v7+jdNtoVBCkI1H0Pb9vRkZPwD2wnPPVM/+flWYswsezj+oPgatsOA=
-X-Received: by 2002:a4a:4190:: with SMTP id x138mr6179666ooa.35.1585246139794;
- Thu, 26 Mar 2020 11:08:59 -0700 (PDT)
+        id S1728335AbgCZSJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 14:09:23 -0400
+Received: from mail-bn7nam10on2063.outbound.protection.outlook.com ([40.107.92.63]:49231
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726163AbgCZSJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 14:09:23 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C/sXzu5xaKH8PRxM8MXtVZxznmIqbTEoJ2e6TjwwaOMesHrNH1xXDPxR+8YWvWmwQcS97oKFdezP6kV9VDd+ckMxJgD96yVBQyjl4tW7/AQBBTZ+iO5XHjgRPxg8aueRMZ+0WhVh6PXo2FoxNWRjcRsQJ4KtWZO3HDwZwgLX/f/4oOWLJ06+txCmxU4mC53xA4xmm4e8qGtZdRMPtWCDRWGK21p78uBSCGJaDZGccflU5Qnvid9JRRLHuNx4K96vsn4OasieB2zCjPQWWRpbmH6Tqm54WGI36W00hGHoJwCnrw6I1c/JuLFpQ7zQV8XP8vvnGLlz/1KtcQyOc2Ae+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Crih+INTUlvGXKOKX9LLynjEU9qA0UPK5Zv/NdtlOTo=;
+ b=eD0xT5Dxe8Ea0DHJ97ZcxNEGR0a96VdKsRqTXqVvNBTew+fUk7AisOifdT3q85lbu5xCHgjMS9wexTTPH/nnOMm/IyOACVVD0ZB7Uk/jEnPkA18Ux69Z2x6t+HcX2lM9IfI59hrzVzJDQICKjY1M+yg9nwUbGIZ93tidhYqPU71ERJC2ZeWLGtwZfwDIZh5VT8FR22thCyk/Kx77QrEpdAHlC2UNQtyHH/oJ7qWkKDRS9CxvtDarLILiNRtFrp4SLCUlbMAfhfrV9XWapsDtEyg2guWSlnftHf2/sOR3XykdSkybxKKdkonst1KZx3d/kzaCz8Zfnsgsh0pE4n8SVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
+ dkim=pass header.d=vmware.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Crih+INTUlvGXKOKX9LLynjEU9qA0UPK5Zv/NdtlOTo=;
+ b=Pgs86IDPrzXiednlP/A5SIwSePRvHLLYwCH+FJRaCck9rvly12mopMPhUWd6TpqiHEWJWJhJWqtU4nERShBfyu2K4JNlOK/m0Fzt1XMFaHhfT37HRyjMnDJjgXeaDYpJmMS5OHu+S9Y90Zm3VKjOO1syvjjb5KEAOulAcUIbkyY=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (2603:10b6:a03:4a::18)
+ by BYAPR05MB5224.namprd05.prod.outlook.com (2603:10b6:a03:9b::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.18; Thu, 26 Mar
+ 2020 18:09:07 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::7c65:25af:faf7:5331]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::7c65:25af:faf7:5331%2]) with mapi id 15.20.2856.019; Thu, 26 Mar 2020
+ 18:09:07 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "bristot@redhat.com" <bristot@redhat.com>,
+        "jbaron@akamai.com" <jbaron@akamai.com>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        tglx <tglx@linutronix.de>, "mingo@kernel.org" <mingo@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>
+Subject: Re: [RESEND][PATCH v3 06/17] static_call: Add basic static call
+ infrastructure
+Thread-Topic: [RESEND][PATCH v3 06/17] static_call: Add basic static call
+ infrastructure
+Thread-Index: AQHWAegAhdNiMLofE02jpsU0DrVXFKhbFyMAgAAFbgCAABLlAA==
+Date:   Thu, 26 Mar 2020 18:09:07 +0000
+Message-ID: <9D47A4CA-39AD-4408-879B-677BE9D891B7@vmware.com>
+References: <20200324135603.483964896@infradead.org>
+ <20200324142245.632535759@infradead.org>
+ <12A30BA0-18DA-4748-B82F-6008179CC88C@vmware.com>
+ <20200326170128.GQ20713@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200326170128.GQ20713@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [2601:647:4700:9b2:857a:d913:34b7:2afa]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 304fb010-6079-4b2a-9c8e-08d7d1b0c6ee
+x-ms-traffictypediagnostic: BYAPR05MB5224:
+x-microsoft-antispam-prvs: <BYAPR05MB5224066F0030207FBB8F011ED0CF0@BYAPR05MB5224.namprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0354B4BED2
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR05MB4776.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(39860400002)(366004)(346002)(396003)(376002)(136003)(6486002)(186003)(2906002)(86362001)(5660300002)(81166006)(8676002)(6512007)(81156014)(71200400001)(6506007)(76116006)(8936002)(66946007)(66446008)(2616005)(36756003)(64756008)(66556008)(33656002)(478600001)(54906003)(66476007)(316002)(7416002)(53546011)(4326008)(6916009)(21314003);DIR:OUT;SFP:1101;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: J7hUKZugMTc0MNS8K9TRKT3jzAZEAVlmzL0B8VROHIWi3PsFryAv8bS2nn7YJbKHYct2VevrjuTMY1kfrKNiA053poeFaGx2pwYPSDJzT7smHoyciUSrXGIR6DxstZuS82g/ae6Bou469cb3uBaFKzk+vg87+3qEanpYYFO0wlgLAK/WIjoqgYj6S5LxNt+0d9/DbqNeWVesWqjqhk7DPCiinVM7TNfq53R4t/YjqrcAsW2sudndlQbJ67HT3U91hY1Jrc3FtJHtUeHAUwi3EWZ5pwwpe1/9ULldcrQT37X5jHIfBydBnc889z1gAW6FF8WY+hQoQPpnQfhnAYFSQVJWFj/fJUsjQVSS33GekkDBZ8oysu406szeuC9heNPh76qdLRjUrUl+eS/P3zD1mdtgrAiHqOUAYpJWnAZt2PHbgVmIb39gyrlcDQY722GEZ1lX8+3DTgDpGKBYPPVA+qyYYciY3EtwwpF9yci3brdwa7vkIObJO11VZk8NWvAo
+x-ms-exchange-antispam-messagedata: +ENVhbKaOuKnwMUwb9/dEHzMk4CihzLtzqwUmGiErMas69Ki5ttAB/XcrRsfQctjG8jHEtR0Sx4mrGL4g0lN6CXFnzEYYMTwHQIKBappTh0bKQW7VDrYxeosMlN57cIplFpnNZoUnEWiZtx4cM9pgY1rBWMUht8M2rcRn1UYwhTg+nNR4oPSqYU/l2vLpUAxmtTT72kVlZuHuI3VqzjDng==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C23DD4052446044D9B1453F6582AFB3A@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20200111052125.238212-1-saravanak@google.com> <158460766637.28353.11325960928759668587.tip-bot2@tip-bot2>
- <20200324175955.GA16972@arm.com> <CAGETcx8Qhy3y66vJyi8kRvg1+hXf-goDvyty-bsG5qFrA-CKgg@mail.gmail.com>
- <CAGETcx80wvGnS0-MwJ9M9RR9Mny0jmmep+JfwaUJUOR2bfJYsQ@mail.gmail.com>
- <87lfnoxg2a.fsf@nanos.tec.linutronix.de> <CAGETcx_3GSKmSveiGrM2vQp=q57iZYc0T4ELMY7Zw8UwzPEnYA@mail.gmail.com>
- <87imirxv57.fsf@nanos.tec.linutronix.de> <CAL_JsqLas2mi-kTrEY=9vnopU57qwJNDtvui0erMghfG4-pOZw@mail.gmail.com>
-In-Reply-To: <CAL_JsqLas2mi-kTrEY=9vnopU57qwJNDtvui0erMghfG4-pOZw@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Thu, 26 Mar 2020 11:08:23 -0700
-Message-ID: <CAGETcx_MC7weVSYF9CpWt_5Otf3G1Hd75Z8_0LcN0SS42UDyJw@mail.gmail.com>
-Subject: Re: [tip: timers/core] clocksource/drivers/timer-probe: Avoid
- creating dead devices
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ionela Voinescu <ionela.voinescu@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-tip-commits@vger.kernel.org, x86 <x86@kernel.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 304fb010-6079-4b2a-9c8e-08d7d1b0c6ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Mar 2020 18:09:07.6701
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Szux5/jE5KbaZ26R2Yo5oOt4PW3ZzQ0l32bDOGfjnlUwQLezh7zUDEkPeB1cooqdv/9Ji1u6e4f8WXb84J1Dxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5224
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 8:02 AM Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Thu, Mar 26, 2020 at 4:34 AM Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> > Saravana Kannan <saravanak@google.com> writes:
-> > > On Wed, Mar 25, 2020 at 2:47 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> > >
-> > >> Saravana Kannan <saravanak@google.com> writes:
-> > >> > On Tue, Mar 24, 2020 at 11:34 AM Saravana Kannan <saravanak@google.com> wrote:
-> > >> > I took a closer look. So two different drivers [1] [2] are saying they
-> > >> > know how to handle "arm,vexpress-sysreg" and are expecting to run at
-> > >> > the same time. That seems a bit unusual to me. I wonder if this is a
-> > >> > violation of the device-driver model because this expectation would
-> > >> > never be allowed if these device drivers were actual drivers
-> > >> > registered with driver-core. But that's a discussion for another time.
-> > >> >
-> > >> > To fix this issue you are facing, this patch should work:
-> > >> > https://lore.kernel.org/lkml/20200324195302.203115-1-saravanak@google.com/T/#u
-> > >>
-> > >> Sorry, that's not a fix. That's a crude hack.
-> > >
-> > > If device nodes are being handled by drivers without binding a driver
-> > > to struct devices, then not setting OF_POPULATED is wrong. So the
-> > > original patch sets it. There are also very valid reasons for allowing
-> > > OF_POPULATED to be cleared by a driver as discussed here [1].
-> > >
-> > > The approach of the original patch (setting the flag and letting the
-> > > driver sometimes clear it) is also followed by many other frameworks
-> > > like irq, clk, i2c, etc. Even ingenic-timer.c already does it for the
-> > > exact same reason.
-> > >
-> > > So, why is the vexpress fix a crude hack?
-> >
-> > If it's the right thing to do and accepted by the DT folks, then the
-> > changelog should provide a proper explanation for it. The one you
-> > provided just baffles me. Plus the clearing of the flag really needs a
-> > big fat comment.
->
-> IMO, commit 4f41fe386a946 should be reverted and be done with it.
-> There's no way the timer core can know whether a specific node should
-> be scanned or not. If you really want to avoid a struct device, then
-> set OF_POPULATED in specific timer drivers. But I'd rather not see
-> more places mucking with OF_POPULATED. It's really only bus code that
-> should be touching it.
-
-Since most drivers don't need the struct device, my patch sets the
-flag in the timer core. And for the few exception cases where the
-device is needed, we can clear the flag in the driver. That'll reduce
-the number of places mucking with OF_POPULATED.
-
-Does this seem okay to you?
-
-> Is having a struct device really a problem? If we want to save memory
-> usage, I have some ideas that would save much more than 1 or 2 struct
-> devices.
-
-Keep in mind that struct devices cost more than one struct device of
-memory. They also create a bunch of sysfs nodes, uevents, etc.
-
-> > It still does not make any sense to me.
-> >
-> > arm,vexpress-sysreg is a MFD device, so can the ARM people please
-> > explain, why the sched clock part is not just another MFD sub-device or
-> > simply has it's own DT match?
->
-> The issue is DT nodes and Linux drivers aren't necessarily 1-1. That
-> would be nice, but hardware is messy and DT doesn't abstract that
-> away. If we tried to always make things 1-1, then if/when the Linux
-> driver structure changes we'd have to change the DT.
-
-I agree with this. I'm definitely not asking to create a node just
-because we want another struct device.
-
-> If we decided to
-> add a node now, we'd still have to support the old DT for backwards
-> compatibility.
-
-Right, I agree it's too late to fix this DT for vexpress-sysreg now.
-
-> We also have to consider the structure for another OS
-> may be different.
->
-> Generally, if I see a node with a compatible only it gets NAKed as
-> that's a sure sign of someone just trying to bind a driver and not
-> describing the h/w. We only do MFD sub-devices if those devices
-> provide or consume other DT resources.
-
-If we have a timer MFD, it'd technically consume a fixed-clock and not
-be empty. vexpress-sysreg just assumes the clock is 24 MHz right now.
-
-My point about the vexpress DT nodes being weird is not about Linux
-devices, rather it's that:
-1. It's already a MFD
-2. Most of the functions are separated clearly into their functional
-device nodes
-3. However, the timer functionality is combined with the parent MFD
-device when the parent MFD device implements a completely separate
-function (gpio?). Why?
-
-If one wants to split out the functions, do it fully. If one wants it
-all under one mega driver (ugh!) then combine it all. Going halfway
-causes these weird issues. That's my complaint about how the DT layout
-is for this device.
-
-Having said all that, I'd rather manipulate the OF_POPULATED flag than
-break DT backward compatibility at this point.
-
-But in general, I think we should try to reject two separate drivers
-claiming to be compatible with the same device and expecting to work
-at the same time. That's just weird.
-
--Saravana
+PiBPbiBNYXIgMjYsIDIwMjAsIGF0IDEwOjAxIEFNLCBQZXRlciBaaWpsc3RyYSA8cGV0ZXJ6QGlu
+ZnJhZGVhZC5vcmc+IHdyb3RlOg0KPiANCj4gT24gVGh1LCBNYXIgMjYsIDIwMjAgYXQgMDQ6NDI6
+MDdQTSArMDAwMCwgTmFkYXYgQW1pdCB3cm90ZToNCj4+PiBPbiBNYXIgMjQsIDIwMjAsIGF0IDY6
+NTYgQU0sIFBldGVyIFppamxzdHJhIDxwZXRlcnpAaW5mcmFkZWFkLm9yZz4gd3JvdGU6DQo+IA0K
+Pj4+ICsgKiBBUEkgb3ZlcnZpZXc6DQo+Pj4gKyAqDQo+Pj4gKyAqICAgREVDTEFSRV9TVEFUSUNf
+Q0FMTChuYW1lLCBmdW5jKTsNCj4+PiArICogICBERUZJTkVfU1RBVElDX0NBTEwobmFtZSwgZnVu
+Yyk7DQo+Pj4gKyAqICAgc3RhdGljX2NhbGwobmFtZSkoYXJncy4uLik7DQo+Pj4gKyAqICAgc3Rh
+dGljX2NhbGxfdXBkYXRlKG5hbWUsIGZ1bmMpOw0KPj4+ICsgKg0KPj4+ICsgKiBVc2FnZSBleGFt
+cGxlOg0KPj4+ICsgKg0KPj4+ICsgKiAgICMgU3RhcnQgd2l0aCB0aGUgZm9sbG93aW5nIGZ1bmN0
+aW9ucyAod2l0aCBpZGVudGljYWwgcHJvdG90eXBlcyk6DQo+Pj4gKyAqICAgaW50IGZ1bmNfYShp
+bnQgYXJnMSwgaW50IGFyZzIpOw0KPj4+ICsgKiAgIGludCBmdW5jX2IoaW50IGFyZzEsIGludCBh
+cmcyKTsNCj4+PiArICoNCj4+PiArICogICAjIERlZmluZSBhICdteV9uYW1lJyByZWZlcmVuY2Us
+IGFzc29jaWF0ZWQgd2l0aCBmdW5jX2EoKSBieSBkZWZhdWx0DQo+Pj4gKyAqICAgREVGSU5FX1NU
+QVRJQ19DQUxMKG15X25hbWUsIGZ1bmNfYSk7DQo+PiANCj4+IERvIHlvdSB3YW50IHRvIHN1cHBv
+cnQgb3B0aW9uYWwgZnVuY3Rpb24gYXR0cmlidXRlcywgc3VjaCBhcyDigJxwdXJl4oCdIGFuZA0K
+Pj4g4oCcY29uc3TigJ0/DQo+IA0KPiBEbyB5b3Ugc2VlIGEgbmVlZCBmb3IgdGhhdD8gQW5kIHdo
+YXQgaXMgdGhlIHN5bnRheCBmb3IgYSBwb2ludGVyIHRvIGENCj4gcHVyZSBmdW5jdGlvbj8NCg0K
+SSB0aGluayB0aGF0IHRoZSBrZXJuZWwgdW5kZXJ1dGlsaXplcyB0aGUgcHVyZSBhdHRyaWJ1dGUg
+aW4gZ2VuZXJhbC4NCkJ1aWxkaW5nIGl0IHdpdGggIi1Xc3VnZ2VzdC1hdHRyaWJ1dGU9cHVyZeKA
+nSByZXN1bHRzIGluIG1hbnkgd2FybmluZ3MuDQpGdW5jdGlvbiBwb2ludGVycyBzdWNoIGt2bV94
+ODZfb3BzLmdldF9YWFgoKSBjb3VsZCBoYXZlIGJlZW4gY2FuZGlkYXRlcyB0bw0KdXNlIHRoZSDi
+gJxwdXJl4oCdIGF0dHJpYnV0ZS4NCg0KVGhlIHN5bnRheCBpcyB3aGF0IHlvdSB3b3VsZCBleHBl
+Y3Q6DQoNCiAgc3RhdGljIHZvaWQgX19hdHRyaWJ1dGVfXygocHVyZSkpKCpwdHIpKHZvaWQpOw0K
+DQpIb3dldmVyLCB5b3UgaGF2ZSBhIHBvaW50LCBnY2MgZG9lcyBub3QgYXBwZWFyIHRvIHJlc3Bl
+Y3Qg4oCccHVyZeKAnSBmb3INCmZ1bmN0aW9uIHBvaW50ZXJzIGFuZCBlbWl0cyBhIHdhcm5pbmcg
+aXQgaXMgaWdub3JlZC4gR0NDIGFwcGFyZW50bHkgb25seQ0KcmVzcGVjdHMg4oCcY29uc3TigJ0u
+IEluIGNvbnRyYXN0IGNsYW5nIGFwcGVhcnMgdG8gcmVzcGVjdCB0aGUgcHVyZSBhdHRyaWJ1dGUN
+CmZvciBmdW5jdGlvbiBwb2ludGVycy4NCg0K
