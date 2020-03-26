@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED6AF19449D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:50:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6398B19449E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:51:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbgCZQuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 12:50:50 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:15902 "EHLO
+        id S1728026AbgCZQuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 12:50:55 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:16713 "EHLO
         mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726067AbgCZQut (ORCPT
+        by vger.kernel.org with ESMTP id S1727560AbgCZQuu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 12:50:49 -0400
+        Thu, 26 Mar 2020 12:50:50 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585241449; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=kzGBufw4XcOfd9u6lXmQ6aW6t3E2LZcw3C5ePtsICcM=; b=tY2vXeIYykdwbyEKiPLWRDvddWqwKVmjBDA3tDehnb6mJA/fWWbJaSYLBioQY0ZaSy5aeqhJ
- s8PnuK9pwXVkj4jXKwixEnrrpDc6hiw7hcw4RCWRNO8LHGvMxbFf8oavWZf044CwkrdMKKC8
- S/T6x+1BfT8l+0r3lVlvwsyQV3U=
+ s=smtp; t=1585241449; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=0MwlHtuDNa/a9rL+GOaesKKAFJQ6knJ6nRxs8znDSGA=; b=bKFz04myjpivZ5mytq7GU6+jsI4CEyLqFk9jb5xKQa19D3SJBf33P+f67E3RkQwrCkLJl7iI
+ skcKPNk1+FTbBY56Pc5fCS738535ghBoUQQH606pOiKIbULHqYGNjAzfp5F/aXlTg16j8mmy
+ BGWNEZ2QQNrjqlFNb27WE2Qv3HA=
 X-Mailgun-Sending-Ip: 104.130.122.27
 X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e7cdd68.7f5cbc4c7960-smtp-out-n01;
- Thu, 26 Mar 2020 16:50:48 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e7cdd69.7ff84c898420-smtp-out-n03;
+ Thu, 26 Mar 2020 16:50:49 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id AEE96C44791; Thu, 26 Mar 2020 16:50:47 +0000 (UTC)
+        id 112B0C433D2; Thu, 26 Mar 2020 16:50:48 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EAAB9C433D2;
-        Thu, 26 Mar 2020 16:50:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EAAB9C433D2
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 824CEC43636;
+        Thu, 26 Mar 2020 16:50:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 824CEC43636
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
 From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
@@ -43,44 +44,186 @@ To:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         bjorn.andersson@linaro.org, ohad@wizery.com
 Cc:     psodagud@codeaurora.org, tsoni@codeaurora.org,
         sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH 0/2] Add character device interface to remoteproc
-Date:   Thu, 26 Mar 2020 09:50:38 -0700
-Message-Id: <1585241440-7572-1-git-send-email-rishabhb@codeaurora.org>
+Subject: [PATCH 1/2] remoteproc: Add userspace char device driver
+Date:   Thu, 26 Mar 2020 09:50:39 -0700
+Message-Id: <1585241440-7572-2-git-send-email-rishabhb@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1585241440-7572-1-git-send-email-rishabhb@codeaurora.org>
+References: <1585241440-7572-1-git-send-email-rishabhb@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds a character device interface to remoteproc
-framework. This interface can be used by userspace clients in order
-to boot and shutdown the remote processor.
-Currently there is only a sysfs interface which the userspace
-clients can use. If a usersapce application crashes after booting
-the remote processor through the sysfs interface the remote processor
-does not get any indication about the crash. It might still assume
-that the  application is running.
-For example modem uses remotefs service to data from disk/flash memory.
-If the remotefs service crashes, modem still keeps on requesting data
-which might lead to crash on modem. Even if the service is restarted the
-file handles modem requested previously would become stale.
-Adding a character device interface makes the remote processor tightly
-coupled with the user space application. A crash of the application
-leads to a close on the file descriptors therefore shutting down the
-remoteproc.
+Add the driver for creating the character device interface for
+userspace applications. The character device interface can be used
+in order to boot up and shutdown the remote processor.
+This might be helpful for remote processors that are booted by
+userspace applications and need to shutdown when the application
+crahes/shutsdown.
 
-Rishabh Bhatnagar (2):
-  remoteproc: Add userspace char device driver
-  remoteproc: core: Register the character device interface
-
- drivers/remoteproc/Makefile               |   1 +
- drivers/remoteproc/remoteproc_core.c      |   8 +-
- drivers/remoteproc/remoteproc_internal.h  |   3 +
- drivers/remoteproc/remoteproc_userspace.c | 126 ++++++++++++++++++++++++++++++
- include/linux/remoteproc.h                |   2 +
- 5 files changed, 139 insertions(+), 1 deletion(-)
+Change-Id: If23c8986272bb7c943eb76665f127ff706f12394
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+---
+ drivers/remoteproc/Makefile               |  1 +
+ drivers/remoteproc/remoteproc_internal.h  |  6 +++
+ drivers/remoteproc/remoteproc_userspace.c | 90 +++++++++++++++++++++++++++++++
+ include/linux/remoteproc.h                |  2 +
+ 4 files changed, 99 insertions(+)
  create mode 100644 drivers/remoteproc/remoteproc_userspace.c
 
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index e30a1b1..facb3fa 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -7,6 +7,7 @@ obj-$(CONFIG_REMOTEPROC)		+= remoteproc.o
+ remoteproc-y				:= remoteproc_core.o
+ remoteproc-y				+= remoteproc_debugfs.o
+ remoteproc-y				+= remoteproc_sysfs.o
++remoteproc-y				+= remoteproc_userspace.o
+ remoteproc-y				+= remoteproc_virtio.o
+ remoteproc-y				+= remoteproc_elf_loader.o
+ obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 493ef92..97513ba 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -47,6 +47,9 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+ int rproc_init_sysfs(void);
+ void rproc_exit_sysfs(void);
+ 
++void rproc_init_cdev(void);
++void rproc_exit_cdev(void);
++
+ void rproc_free_vring(struct rproc_vring *rvring);
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 
+@@ -63,6 +66,9 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+ struct rproc_mem_entry *
+ rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
+ 
++/* from remoteproc_userspace.c */
++int rproc_char_device_add(struct rproc *rproc);
++
+ static inline
+ int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+ {
+diff --git a/drivers/remoteproc/remoteproc_userspace.c b/drivers/remoteproc/remoteproc_userspace.c
+new file mode 100644
+index 0000000..2ef7679
+--- /dev/null
++++ b/drivers/remoteproc/remoteproc_userspace.c
+@@ -0,0 +1,90 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Character device interface driver for Remoteproc framework.
++ *
++ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/module.h>
++#include <linux/fs.h>
++#include <linux/cdev.h>
++#include <linux/mutex.h>
++#include <linux/remoteproc.h>
++
++#include "remoteproc_internal.h"
++
++#define NUM_RPROC_DEVICES	64
++static dev_t rproc_cdev;
++static DEFINE_IDA(cdev_minor_ida);
++
++static int rproc_open(struct inode *inode, struct file *file)
++{
++	struct rproc *rproc;
++
++	rproc = container_of(inode->i_cdev, struct rproc, char_dev);
++	if (!rproc)
++		return -EINVAL;
++
++	return rproc_boot(rproc);
++}
++
++static int rproc_release(struct inode *inode, struct file *file)
++{
++	struct rproc *rproc;
++
++	rproc = container_of(inode->i_cdev, struct rproc, char_dev);
++	if (!rproc)
++		return -EINVAL;
++
++	rproc_shutdown(rproc);
++
++	return 0;
++}
++
++static const struct file_operations rproc_fops = {
++	.open = rproc_open,
++	.release = rproc_release,
++};
++
++int rproc_char_device_add(struct rproc *rproc)
++{
++	int ret, minor;
++	dev_t cdevt;
++
++	minor = ida_simple_get(&cdev_minor_ida, 0, NUM_RPROC_DEVICES,
++			GFP_KERNEL);
++	if (minor < 0) {
++	pr_err("%s: No more minor numbers left! rc:%d\n", __func__,
++							minor);
++		return -ENODEV;
++	}
++
++	cdev_init(&rproc->char_dev, &rproc_fops);
++	rproc->char_dev.owner = THIS_MODULE;
++
++	cdevt = MKDEV(MAJOR(rproc_cdev), minor);
++	ret = cdev_add(&rproc->char_dev, cdevt, 1);
++	if (ret < 0)
++		ida_simple_remove(&cdev_minor_ida, minor);
++
++	rproc->dev.devt = cdevt;
++
++	return ret;
++}
++
++void __init rproc_init_cdev(void)
++{
++	int ret;
++
++	ret = alloc_chrdev_region(&rproc_cdev, 0, NUM_RPROC_DEVICES, "rproc");
++	if (ret < 0) {
++		pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
++		return;
++	}
++}
++
++void __exit rproc_exit_cdev(void)
++{
++	unregister_chrdev_region(MKDEV(MAJOR(rproc_cdev), 0),
++				NUM_RPROC_DEVICES);
++}
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 16ad666..c4ca796 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -37,6 +37,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/mutex.h>
++#include <linux/cdev.h>
+ #include <linux/virtio.h>
+ #include <linux/completion.h>
+ #include <linux/idr.h>
+@@ -514,6 +515,7 @@ struct rproc {
+ 	bool auto_boot;
+ 	struct list_head dump_segments;
+ 	int nb_vdev;
++	struct cdev char_dev;
+ };
+ 
+ /**
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
