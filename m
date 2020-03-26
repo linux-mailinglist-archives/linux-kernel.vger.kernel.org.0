@@ -2,109 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF175194197
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:34:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 648D81941A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:37:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbgCZOeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 10:34:00 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]:37902 "EHLO
-        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbgCZOd7 (ORCPT
+        id S1728014AbgCZOhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 10:37:38 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:56242 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbgCZOhh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:33:59 -0400
-Received: by mail-qk1-f180.google.com with SMTP id h14so6607673qke.5
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 07:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=PDJcCICWbBvg13CmIRICUUgkZIihePfG6AfLGVtczXE=;
-        b=V/tsxhNlgL1zE+ydPp6RYZSukW4QFUAyXDiouNnu1aT33E7W36MZpVDIAcVBiqNIGb
-         kkxRCjrgowoDk3T0PwhGJ6qWxYFO/Vn2sY41C4iyl31Saq9d4xMp1lt2UeA0M+cYDfU0
-         2Cob6N0r7EvNUltd2OvftrjsrV+YH048FkYxaO/TEH9QSZO3Gswy5SEuuPMoyrZoNhiR
-         WwPF7HXzPcqxNZj3SN94kR2B1jingXnfPhAcGRsvhuxP8j/05UBLWHi6tuciSmQ6jKhg
-         sq83Ctr2Xs04WDBEgkMksEFwNkJkZR5ICUP2AAGIQlUv4Xycj2dTkE1bq5e9sROwYdGc
-         KzBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PDJcCICWbBvg13CmIRICUUgkZIihePfG6AfLGVtczXE=;
-        b=a3Qms6pE8KIA5y0K6H9Ogf5Hik7irILQHTJ1ZWbDQvRmEeyJfFOs46BC5Xm9gnDRVA
-         s1wquh+xbsfYBlvs7hPEMi0AipyBuzDLEsutU4p+Gy5J1CYzzBEVPF7dCHqiu/NsNDws
-         n/5xINUyG3mio/RnuueN4jbC0VF0c9NVnUIWZJQTHA6tgvLQ56+nvolNT3a1STGXBWsm
-         mP2706pIqdqWpZA042hbVD92PR2FklEq7dO6aWepcKkpPHRfp/04IZPLMmOjYm75emga
-         639JnHB7a6dmrOUINsvqeqULGA7mTG7aunIXsG93g7rc0NHDJw9Z3IQE2Renx6zORoj2
-         rgcQ==
-X-Gm-Message-State: ANhLgQ1IwAxW5TVZywxUQPVMzDlu8amMzUHP8Tmutxxy7MdkNbLA9oAC
-        bmctfXs9jDzueycktg/HFOY=
-X-Google-Smtp-Source: ADFU+vuuspsU7l4L6IeTqyaXySgVBnIXRxjK4Wmy7I7wbgJu9/aSgAgbD+KAisRxWWWnXd6bud4UXA==
-X-Received: by 2002:ae9:eb0b:: with SMTP id b11mr8213333qkg.75.1585233238542;
-        Thu, 26 Mar 2020 07:33:58 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.37.151])
-        by smtp.gmail.com with ESMTPSA id x89sm1672947qtd.43.2020.03.26.07.33.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 07:33:57 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 62CD840061; Thu, 26 Mar 2020 11:33:55 -0300 (-03)
-Date:   Thu, 26 Mar 2020 11:33:55 -0300
-To:     Hagen Paul Pfeifer <hagen@jauu.net>
-Cc:     linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH] perf script: introduce deltatime option
-Message-ID: <20200326143355.GB6411@kernel.org>
-References: <20200204173709.489161-1-hagen@jauu.net>
+        Thu, 26 Mar 2020 10:37:37 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02QEX7M4009867;
+        Thu, 26 Mar 2020 14:36:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=7ms8FwymQmddGHgatxkaCEwofDmjeI0drCKbrY3vE+A=;
+ b=oOVvjG/31vXbRMOzNpZ/LF+hTmcD6PEEc8JMgwIKf+ywhGB14RZdvG/5EhRCLmmJNYox
+ P58kYdfDT7YLAotxz+eQ3JMyXl2oBrX1tb5i50OeGWQtYK6IFO58ALlNV13aXsApdcC9
+ ta6kx8O4O0k9Fug82JJd2EvdzrkmLbzKRFD5z/6M+Uoq0u/ze2M2uDkEuCa0YnWmFY/L
+ NiAIwUiFxqdOA76OtqxPjoqBvbwO5MqbmL+LUAHzklChNqmzYd6XBX6qY8/1Kc0hGd3y
+ xfWMSna09dPrI/8NeeHvvKncNNvRrh01++6zorBh6r+cu8LfIe4neKQ+yqSX3oNIBQeF FQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2ywavmg5am-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Mar 2020 14:36:56 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02QEWpDq129855;
+        Thu, 26 Mar 2020 14:34:55 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2yxw4trtk3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Mar 2020 14:34:55 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02QEYmJI025407;
+        Thu, 26 Mar 2020 14:34:48 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 26 Mar 2020 07:34:47 -0700
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, axboe@kernel.dk,
+        bob.liu@oracle.com, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, song@kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, Chaitanya.Kulkarni@wdc.com,
+        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
+        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/6] block: Introduce REQ_ALLOCATE flag for REQ_OP_WRITE_ZEROES
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <158157930219.111879.12072477040351921368.stgit@localhost.localdomain>
+        <e2b7cbab-d91f-fd7b-de6f-a671caa6f5eb@virtuozzo.com>
+        <69c0b8a4-656f-98c4-eb55-2fd1184f5fc9@virtuozzo.com>
+        <67d63190-c16f-cd26-6b67-641c8943dc3d@virtuozzo.com>
+        <20200319102819.GA26418@infradead.org> <yq1tv2k8pjn.fsf@oracle.com>
+        <20200325162656.GJ29351@magnolia>
+        <20200325163223.GA27156@infradead.org> <yq1d090jqlm.fsf@oracle.com>
+        <20200326092935.GA6478@infradead.org>
+Date:   Thu, 26 Mar 2020 10:34:42 -0400
+In-Reply-To: <20200326092935.GA6478@infradead.org> (Christoph Hellwig's
+        message of "Thu, 26 Mar 2020 02:29:35 -0700")
+Message-ID: <yq1lfnngp6l.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200204173709.489161-1-hagen@jauu.net>
-X-Url:  http://acmel.wordpress.com
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ spamscore=0 mlxlogscore=923 adultscore=0 phishscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003260113
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9571 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=965 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003260113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Feb 04, 2020 at 06:37:09PM +0100, Hagen Paul Pfeifer escreveu:
-> For some kind of analysis a deltatime output is more human friendly and reduce
-> the cognitive load for further analysis.
-> 
-> The following output demonstrate the new option "deltatime": calculate
-> the time difference in relation to the previous event.
-> 
-> $ perf script --deltatime
-> test  2525 [001]     0.000000:            sdt_libev:ev_add: (5635e72a5ebd)
-> test  2525 [001]     0.000091:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-> test  2525 [001]     1.000051: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
-> test  2525 [001]     0.000685:            sdt_libev:ev_add: (5635e72a5ebd)
-> test  2525 [001]     0.000048:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-> test  2525 [001]     1.000104: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
-> test  2525 [001]     0.003895:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-> test  2525 [001]     0.996034: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
-> test  2525 [001]     0.000058:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-> test  2525 [001]     1.000004: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
-> test  2525 [001]     0.000064:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-> test  2525 [001]     0.999934: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
-> test  2525 [001]     0.000056:  sdt_libev:epoll_wait_enter: (5635e72a76a9)
-> test  2525 [001]     0.999930: sdt_libev:epoll_wait_return: (5635e72a772e) arg1=1
 
-You forgot to update the man page, I did it, tested and applied, thanks.
+Christoph,
 
-- Arnaldo
+> That's why I don't like the whole flags game very much.  I'd rather
+> have REQ_OP_WRITE_ZEROES as the integrity operation that gurantees
+> zeroing, and a REQ_ALLOCATE that doesn't guarantee zeroing, just some
+> deterministic state of the blocks.
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index db6a36aac47e..4af255bb0977 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -390,6 +390,9 @@ include::itrace.txt[]
- --reltime::
- 	Print time stamps relative to trace start.
- 
-+--deltatime::
-+	Print time stamps relative to previous event.
-+
- --per-event-dump::
- 	Create per event files with a "perf.data.EVENT.dump" name instead of
-         printing to stdout, useful, for instance, for generating flamegraphs.
+I just worry about the proliferation of identical merging and splitting
+code throughout the block stack as we add additional single-range, no
+payload operations (Verify, etc.). I prefer to enforce the semantics in
+the LLD and not in the plumbing. But I won't object to a separate
+REQ_OP_ALLOCATE if you find the resulting code duplication acceptable.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
