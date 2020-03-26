@@ -2,96 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F246193824
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 06:52:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24B0419382A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 06:53:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726038AbgCZFwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 01:52:06 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:25023 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726332AbgCZFwF (ORCPT
+        id S1727560AbgCZFxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 01:53:49 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44801 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbgCZFxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 01:52:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585201925;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nHSCTCOpueCpiOWznPRR+Xn/UI1HYzEARRPs1NvUwTk=;
-        b=BPq/fVQd7hFlrh7J3PImINEcj6DIynvs81RwDTjals9U4xHi5PfvWpQo0QX4nhrk/Xv62y
-        T4NmdpWYpVytAlUxsDbcNvsF24wJR0jpTD6d2ZeYx1fAkjPfNByw1ZFh53P34ktBPdhIjx
-        q8JsoME61fYA+mSAingPA1jbr7YegFg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-106-3eHxDwQyNnWQi176UfAy4A-1; Thu, 26 Mar 2020 01:52:01 -0400
-X-MC-Unique: 3eHxDwQyNnWQi176UfAy4A-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CAF121005510;
-        Thu, 26 Mar 2020 05:51:58 +0000 (UTC)
-Received: from [10.72.13.193] (ovpn-13-193.pek2.redhat.com [10.72.13.193])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 149D2A0A87;
-        Thu, 26 Mar 2020 05:51:42 +0000 (UTC)
-Subject: Re: [PATCH V8 5/9] vDPA: introduce vDPA bus
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     mst@redhat.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        maxime.coquelin@redhat.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com, rob.miller@broadcom.com,
-        xiao.w.wang@intel.com, lingshan.zhu@intel.com, eperezma@redhat.com,
-        lulu@redhat.com, parav@mellanox.com, kevin.tian@intel.com,
-        stefanha@redhat.com, rdunlap@infradead.org, hch@infradead.org,
-        aadam@redhat.com, jiri@mellanox.com, shahafs@mellanox.com,
-        hanand@xilinx.com, mhabets@solarflare.com, gdawar@xilinx.com,
-        saugatm@xilinx.com, vmireyno@marvell.com
-References: <20200325082711.1107-1-jasowang@redhat.com>
- <20200325082711.1107-6-jasowang@redhat.com>
- <20200325122949.GW13183@mellanox.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <a1474a55-7525-7c3e-a806-e3f53850a590@redhat.com>
-Date:   Thu, 26 Mar 2020 13:51:41 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 26 Mar 2020 01:53:48 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p14so5090203lji.11
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 22:53:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OamWJL+Kraa8aO4Mkhy7ZkgdOxINecQMyrACLlFZPL8=;
+        b=DT5EldjKHxzvFeMbmuQkccpeMvDVkVAh7h2G1YJS+3oTIcBcOxVNUzo0njpHzC07aP
+         qftgGWtlSjcONHnap3ytTGZvdBK5TrQ9qn/Fi3K9645uAI8eYdMrWfTPolE8/Dg6mHpI
+         4toDx71shQVGj2fSTCpufOkWDU/mXBnc5YV9I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OamWJL+Kraa8aO4Mkhy7ZkgdOxINecQMyrACLlFZPL8=;
+        b=myfNabWiKZxuHlUDTQdUoMFHeUdVWk+Buhiscnewjfr/RX/v3joWxOGbgZp7oqtcPk
+         K8leVVas/ujWto0LhpHrll78wp0/Oqs45UQU+amc3G8NMSZ6iLvnwsgHh7rpX2SEY2GX
+         Iik8F7/pjyCx/chOVUTo/VW/kLy0NPSbk274OK0rOeaXZzp/d9IMX6JM63c5beJEBR27
+         4k5PSXPz2UHi1h/orEJrC5TTaV0VBSojY+B7T1dpQf42d2OEYudZyign/xwtYz6QiMSd
+         af9mWic7f0rIFC8dPMrkD4fmATskGZPSsplpIBv7+nqeYCmqEExOoPzk2O4TDl1+Wwkq
+         Uyzg==
+X-Gm-Message-State: AGi0PuYZ56+Qtd/siTFT25Hx5/jt4vkHevjKWv5w/5aZ7ZqGCrM7DWqU
+        COFpAsKQW/Z91TPROciXG60Q34albxkxP5ensnV6cQ==
+X-Google-Smtp-Source: APiQypJFZkp52F4PqCr2TUsH6tvpdBDaO3MlZ3gnWs88/rEddguemkOsIxCUPkHx08J7PVHpdA/hRPk7l6QfTWJIjI4=
+X-Received: by 2002:a2e:8511:: with SMTP id j17mr4191189lji.292.1585202026293;
+ Wed, 25 Mar 2020 22:53:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200325122949.GW13183@mellanox.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-Content-Transfer-Encoding: quoted-printable
+References: <20200228084842.18691-1-rayagonda.kokatanur@broadcom.com>
+ <CAL_JsqLXvVnVq0Mc1d0WMLNjURbHe9T3bKNb+5D6Nz3iyTK8GA@mail.gmail.com>
+ <CAHO=5PFuercRYBzupd-Zb3q8v3sQWGT2ySXodG9S5NVj7Ta+1Q@mail.gmail.com>
+ <CAL_JsqLW+3aJrB2EOEU74o+aVO9yPG74xi=Eov5_6++NdnOBPg@mail.gmail.com> <CAHO=5PEEgQ+0xhBmFwjvi2nBada17fxDYeG42SDjk5qdzCQANg@mail.gmail.com>
+In-Reply-To: <CAHO=5PEEgQ+0xhBmFwjvi2nBada17fxDYeG42SDjk5qdzCQANg@mail.gmail.com>
+From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Date:   Thu, 26 Mar 2020 11:23:34 +0530
+Message-ID: <CAHO=5PHbOWcjAc-C-v-h7YiaKwtKJvS0DcKaxpLfSsfrEeGTAQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] scripts: dtc: mask flags bit when check i2c addr
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2020/3/25 =E4=B8=8B=E5=8D=888:29, Jason Gunthorpe wrote:
-> On Wed, Mar 25, 2020 at 04:27:07PM +0800, Jason Wang wrote:
->> +struct vdpa_device *__vdpa_alloc_device(struct device *parent,
->> +					const struct vdpa_config_ops *config,
->> +					size_t size);
->> +
->> +#define vdpa_alloc_device(dev_struct, member, parent, config)   \
->> +			  container_of(__vdpa_alloc_device( \
->> +				       parent, config, \
->> +				       sizeof(struct dev_struct) + \
->> +				       BUILD_BUG_ON_ZERO(offsetof( \
->> +				       struct dev_struct, member))), \
->> +				       struct dev_struct, member)
-> This all looks robust now, one minor remark is to not do 'struct
-> dev_struct' here so the caller has to do
+On Thu, Mar 26, 2020 at 10:04 AM Rayagonda Kokatanur
+<rayagonda.kokatanur@broadcom.com> wrote:
 >
->     vdpa_alloc_device(struct foo, vpda, ...)
->
-> Which suggests to the reader something unusual is happening
->
-> Jason
+> On Thu, Mar 26, 2020 at 12:37 AM Rob Herring <robh+dt@kernel.org> wrote:
+> >
+> > On Mon, Mar 2, 2020 at 9:56 PM Rayagonda Kokatanur
+> > <rayagonda.kokatanur@broadcom.com> wrote:
+> > >
+> > > On Fri, Feb 28, 2020 at 7:20 PM Rob Herring <robh+dt@kernel.org> wrote:
+> > > >
+> > > > On Fri, Feb 28, 2020 at 2:48 AM Rayagonda Kokatanur
+> > > > <rayagonda.kokatanur@broadcom.com> wrote:
+> > > > >
+> > > > > Generally i2c addr should not be greater than 10-bit. The highest 2 bits
+> > > > > are used for I2C_TEN_BIT_ADDRESS and I2C_OWN_SLAVE_ADDRESS. Need to mask
+> > > > > these flags if check slave addr valid.
+> > > > >
+> > > > > Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+> > > > > ---
+> > > > >  scripts/dtc/Makefile | 2 +-
+> > > > >  scripts/dtc/checks.c | 5 +++++
+> > > > >  2 files changed, 6 insertions(+), 1 deletion(-)
+> > > >
+> > > > dtc changes must be submitted against upstream dtc.
+> > >
+> > > Please let me know link to clone the upstream dtc branch.
+> > > >
+> > > >
+> > > > > diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
+> > > > > index 3acbb410904c..c5e8d6a9e73c 100644
+> > > > > --- a/scripts/dtc/Makefile
+> > > > > +++ b/scripts/dtc/Makefile
+> > > > > @@ -9,7 +9,7 @@ dtc-objs        := dtc.o flattree.o fstree.o data.o livetree.o treesource.o \
+> > > > >  dtc-objs       += dtc-lexer.lex.o dtc-parser.tab.o
+> > > > >
+> > > > >  # Source files need to get at the userspace version of libfdt_env.h to compile
+> > > > > -HOST_EXTRACFLAGS := -I $(srctree)/$(src)/libfdt
+> > > > > +HOST_EXTRACFLAGS := -I $(srctree)/$(src)/libfdt -I$(srctree)/tools/include
+> > > > >
+> > > > >  ifeq ($(shell pkg-config --exists yaml-0.1 2>/dev/null && echo yes),)
+> > > > >  ifneq ($(CHECK_DTBS),)
+> > > > > diff --git a/scripts/dtc/checks.c b/scripts/dtc/checks.c
+> > > > > index 756f0fa9203f..17c9ed4137b5 100644
+> > > > > --- a/scripts/dtc/checks.c
+> > > > > +++ b/scripts/dtc/checks.c
+> > > > > @@ -3,6 +3,7 @@
+> > > > >   * (C) Copyright David Gibson <dwg@au1.ibm.com>, IBM Corporation.  2007.
+> > > > >   */
+> > > > >
+> > > > > +#include <linux/bits.h>
+> > > >
+> > > > Not a UAPI header not that that would be much better as dtc also builds on Mac.
+> > > >
+> > > > >  #include "dtc.h"
+> > > > >  #include "srcpos.h"
+> > > > >
+> > > > > @@ -17,6 +18,9 @@
+> > > > >  #define TRACE(c, fmt, ...)     do { } while (0)
+> > > > >  #endif
+> > > > >
+> > > > > +#define I2C_TEN_BIT_ADDRESS    BIT(31)
+> > > > > +#define I2C_OWN_SLAVE_ADDRESS  BIT(30)
+> > > > > +
+> > > > >  enum checkstatus {
+> > > > >         UNCHECKED = 0,
+> > > > >         PREREQ,
+> > > > > @@ -1048,6 +1052,7 @@ static void check_i2c_bus_reg(struct check *c, struct dt_info *dti, struct node
+> > > > >
+> > > > >         for (len = prop->val.len; len > 0; len -= 4) {
+> > > > >                 reg = fdt32_to_cpu(*(cells++));
+> > > > > +               reg &= ~(I2C_OWN_SLAVE_ADDRESS | I2C_TEN_BIT_ADDRESS);
+> > > >
+> > > > I'd just mask the top byte so we don't have to update on the next flag we add.
+> > > Do you mean something like this, shown below ?
+> > > reg &= 0xFFFF_FC000;
+> >
+> > Yes, but as I said, the 'top byte', so 0xFF000000.
+> Thank you, will do as per your suggestion and send v2.
+Hi Rob,
+I have pushed separate patch which is prepared against dtc master branch.
+Please review.
 
-
-Yes, that's better.
-
-But my understanding is that this can be done on top.
-
-Thanks
-
+> >
+> > Rob
