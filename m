@@ -2,100 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60643194243
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:02:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7643194247
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:02:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbgCZPCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 11:02:08 -0400
-Received: from mickerik.phytec.de ([195.145.39.210]:46414 "EHLO
-        mickerik.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727895AbgCZPCG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 11:02:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a1; c=relaxed/simple;
-        q=dns/txt; i=@phytec.de; t=1585234924; x=1587826924;
-        h=From:Sender:Reply-To:Subject:Date:Message-Id:To:Cc:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ZtaKUFL4WFPqauqkay4ZKL991OIGk+dXJk8/oBMqrxM=;
-        b=g2hoOhE/uF2KCdfKa2xcZv4hOkncq+ytoBl8JK7seW5JWgwrhwfEgnDo/tHacGu+
-        GjMGxETN0Efe1/h/QtaLdYJs2ityWdE6S1uFrClSN+OEjcIBttPY79xRCqq23NXF
-        yPRUNnMZhTk60FqR6ilFGTofofaoAXjvkmPY1KifumA=;
-X-AuditID: c39127d2-583ff70000001db9-a6-5e7cc3ec7c4b
-Received: from idefix.phytec.de (Unknown_Domain [172.16.0.10])
-        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id D4.1C.07609.CE3CC7E5; Thu, 26 Mar 2020 16:02:04 +0100 (CET)
-Received: from augenblix2.phytec.de ([172.16.0.56])
-          by idefix.phytec.de (IBM Domino Release 9.0.1FP7)
-          with ESMTP id 2020032616020440-89376 ;
-          Thu, 26 Mar 2020 16:02:04 +0100 
-From:   Stefan Riedmueller <s.riedmueller@phytec.de>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Support Opensource <support.opensource@diasemi.com>
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] watchdog: da9062: No need to ping manually before setting timeout
-Date:   Thu, 26 Mar 2020 16:02:03 +0100
-Message-Id: <20200326150203.371673-3-s.riedmueller@phytec.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200326150203.371673-1-s.riedmueller@phytec.de>
-References: <20200326150203.371673-1-s.riedmueller@phytec.de>
+        id S1727895AbgCZPCq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 11:02:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726296AbgCZPCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 11:02:46 -0400
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1F6620737;
+        Thu, 26 Mar 2020 15:02:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585234965;
+        bh=aFhpJni6/CsdULCawfOYAw4NLfGaTvWSDBG0TOaDnoM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OHYRQTyLSsYSPoUl6SZEiyMAUR6rTUhuXiGvPh/3UoTTvgCtJnfcGU+x1sMZPRZP9
+         0v64ZGV9OGSx58uesR2IQH5ak0NVdTL4XRaf30mRrnGdv/JCXyajGMKha5zai5OlWO
+         bf+2QL9mggVeVI5hp8O0lR2susQJZAYVFNLieWRs=
+Received: by mail-qv1-f47.google.com with SMTP id m2so3047343qvu.13;
+        Thu, 26 Mar 2020 08:02:44 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ20TV5JWDmEdlp9YA/0/lqQ+B/WrlY4+uaMt6QONw/ZcVIvzf0d
+        3tQ7NmpO+Dk6bCyjXZEmwBHM5fEAjCn+7BCr2w==
+X-Google-Smtp-Source: ADFU+vuqAZmLCbZGmwxWI/Q5si27yCPAGJMMn6YIKMYX8mHxHUsqX+kMnnH+O6NAtvkOEOYCpxZSs9Uojued4Yax7VI=
+X-Received: by 2002:ad4:4829:: with SMTP id h9mr8086052qvy.135.1585234963992;
+ Thu, 26 Mar 2020 08:02:43 -0700 (PDT)
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 26.03.2020 16:02:04,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 26.03.2020 16:02:04
-X-TNEFEvaluated: 1
-Content-Transfer-Encoding: quoted-printable
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWyRoCBS/fN4Zo4g0fXNS0u75rDZnFj3T52
-        iycLzzBZ7G29yGzx+OU/ZgdWjxWf9D1WrlnD6rHzewO7x+dNcgEsUVw2Kak5mWWpRfp2CVwZ
-        N47cZiw4yllxsP0yWwPjB/YuRk4OCQETia0/pzN1MXJxCAlsZZR4//YYC4RzjlFi4vKHrCBV
-        bAJGEgumNYJViQi0MUrsOTqLESTBLOAg8XjuQzBbWCBMYu+kVWA2i4CqxJ7OW0wgNq+ArcTH
-        SW1AUzmA1slLHD6UBRLmFLCT2PxwFwuILQRUsn9xOztEuaDEyZlPwI6QELjCKHH8dg8LxKlC
-        EqcXn2WG2KstsWzha+YJjAKzkPTMQpJawMi0ilEoNzM5O7UoM1uvIKOyJDVZLyV1EyMwVA9P
-        VL+0g7FvjschRiYOxkOMEhzMSiK8TyNr4oR4UxIrq1KL8uOLSnNSiw8xSnOwKInzbuAtCRMS
-        SE8sSc1OTS1ILYLJMnFwSjUwrn7TzZe1d41X96Swf29qHJmjGGpasmN2+B9n3Ca1eOo1d+md
-        ZUoi81YYXL6/8FOM0iztbP63z+ZevMjnuUb7c13tJZ0lDpeOnSho1N3umCCtF/OdWyhehdPx
-        tcSutu9hJu/vzlp3p4/XZfW1BzvfOrwxarjnunLL2enht/m52YOv/65fzeLopMRSnJFoqMVc
-        VJwIANV+3R9DAgAA
+References: <20200111052125.238212-1-saravanak@google.com> <158460766637.28353.11325960928759668587.tip-bot2@tip-bot2>
+ <20200324175955.GA16972@arm.com> <CAGETcx8Qhy3y66vJyi8kRvg1+hXf-goDvyty-bsG5qFrA-CKgg@mail.gmail.com>
+ <CAGETcx80wvGnS0-MwJ9M9RR9Mny0jmmep+JfwaUJUOR2bfJYsQ@mail.gmail.com>
+ <87lfnoxg2a.fsf@nanos.tec.linutronix.de> <CAGETcx_3GSKmSveiGrM2vQp=q57iZYc0T4ELMY7Zw8UwzPEnYA@mail.gmail.com>
+ <87imirxv57.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <87imirxv57.fsf@nanos.tec.linutronix.de>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 26 Mar 2020 09:02:32 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLas2mi-kTrEY=9vnopU57qwJNDtvui0erMghfG4-pOZw@mail.gmail.com>
+Message-ID: <CAL_JsqLas2mi-kTrEY=9vnopU57qwJNDtvui0erMghfG4-pOZw@mail.gmail.com>
+Subject: Re: [tip: timers/core] clocksource/drivers/timer-probe: Avoid
+ creating dead devices
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Saravana Kannan <saravanak@google.com>
+Cc:     Ionela Voinescu <ionela.voinescu@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-tip-commits@vger.kernel.org, x86 <x86@kernel.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is actually no need to ping the watchdog before disabling it
-during timeout change. Disabling the watchdog already takes care of
-resetting the counter.
+On Thu, Mar 26, 2020 at 4:34 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Saravana Kannan <saravanak@google.com> writes:
+> > On Wed, Mar 25, 2020 at 2:47 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> >
+> >> Saravana Kannan <saravanak@google.com> writes:
+> >> > On Tue, Mar 24, 2020 at 11:34 AM Saravana Kannan <saravanak@google.com> wrote:
+> >> > I took a closer look. So two different drivers [1] [2] are saying they
+> >> > know how to handle "arm,vexpress-sysreg" and are expecting to run at
+> >> > the same time. That seems a bit unusual to me. I wonder if this is a
+> >> > violation of the device-driver model because this expectation would
+> >> > never be allowed if these device drivers were actual drivers
+> >> > registered with driver-core. But that's a discussion for another time.
+> >> >
+> >> > To fix this issue you are facing, this patch should work:
+> >> > https://lore.kernel.org/lkml/20200324195302.203115-1-saravanak@google.com/T/#u
+> >>
+> >> Sorry, that's not a fix. That's a crude hack.
+> >
+> > If device nodes are being handled by drivers without binding a driver
+> > to struct devices, then not setting OF_POPULATED is wrong. So the
+> > original patch sets it. There are also very valid reasons for allowing
+> > OF_POPULATED to be cleared by a driver as discussed here [1].
+> >
+> > The approach of the original patch (setting the flag and letting the
+> > driver sometimes clear it) is also followed by many other frameworks
+> > like irq, clk, i2c, etc. Even ingenic-timer.c already does it for the
+> > exact same reason.
+> >
+> > So, why is the vexpress fix a crude hack?
+>
+> If it's the right thing to do and accepted by the DT folks, then the
+> changelog should provide a proper explanation for it. The one you
+> provided just baffles me. Plus the clearing of the flag really needs a
+> big fat comment.
 
-This fixes an issue during boot when the userspace watchdog handler takes
-over and the watchdog is already running. Opening the watchdog in this case
-leads to the first ping and directly after that without the required
-heartbeat delay a second ping issued by the set=5Ftimeout call. Due to the
-missing delay this resulted in a reset.
+IMO, commit 4f41fe386a946 should be reverted and be done with it.
+There's no way the timer core can know whether a specific node should
+be scanned or not. If you really want to avoid a struct device, then
+set OF_POPULATED in specific timer drivers. But I'd rather not see
+more places mucking with OF_POPULATED. It's really only bus code that
+should be touching it.
 
-Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
----
- drivers/watchdog/da9062=5Fwdt.c | 5 -----
- 1 file changed, 5 deletions(-)
+Is having a struct device really a problem? If we want to save memory
+usage, I have some ideas that would save much more than 1 or 2 struct
+devices.
 
-diff --git a/drivers/watchdog/da9062=5Fwdt.c b/drivers/watchdog/da9062=5Fwd=
-t.c
-index 6d81b1276b87..c5bd075c8b14 100644
---- a/drivers/watchdog/da9062=5Fwdt.c
-+++ b/drivers/watchdog/da9062=5Fwdt.c
-@@ -66,11 +66,6 @@ static int da9062=5Fwdt=5Fupdate=5Ftimeout=5Fregister(st=
-ruct da9062=5Fwatchdog *wdt,
- 					      unsigned int regval)
- {
- 	struct da9062 *chip =3D wdt->hw;
--	int ret;
--
--	ret =3D da9062=5Freset=5Fwatchdog=5Ftimer(wdt);
--	if (ret)
--		return ret;
-=20
- 	regmap=5Fupdate=5Fbits(chip->regmap,
- 				  DA9062AA=5FCONTROL=5FD,
---=20
-2.23.0
+> It still does not make any sense to me.
+>
+> arm,vexpress-sysreg is a MFD device, so can the ARM people please
+> explain, why the sched clock part is not just another MFD sub-device or
+> simply has it's own DT match?
 
+The issue is DT nodes and Linux drivers aren't necessarily 1-1. That
+would be nice, but hardware is messy and DT doesn't abstract that
+away. If we tried to always make things 1-1, then if/when the Linux
+driver structure changes we'd have to change the DT. If we decided to
+add a node now, we'd still have to support the old DT for backwards
+compatibility. We also have to consider the structure for another OS
+may be different.
+
+Generally, if I see a node with a compatible only it gets NAKed as
+that's a sure sign of someone just trying to bind a driver and not
+describing the h/w. We only do MFD sub-devices if those devices
+provide or consume other DT resources.
+
+Rob
