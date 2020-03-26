@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 915F2193D3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:49:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D3E1193D70
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:00:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbgCZKtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 06:49:18 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:34895 "EHLO
+        id S1728049AbgCZLAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 07:00:08 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:40085 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbgCZKtS (ORCPT
+        with ESMTP id S1727590AbgCZLAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 06:49:18 -0400
+        Thu, 26 Mar 2020 07:00:08 -0400
 Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MXY2T-1ikGYe11EV-00Yz9z for <linux-kernel@vger.kernel.org>; Thu, 26 Mar
- 2020 11:49:15 +0100
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MidPj-1jlpJ336lr-00fggk for <linux-kernel@vger.kernel.org>; Thu, 26 Mar
+ 2020 12:00:06 +0100
 Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id 0946A65047A
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 10:49:15 +0000 (UTC)
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id 350CC6502CC
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:00:06 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at cetitec.com
 Received: from mail.cetitecgmbh.com ([127.0.0.1])
         by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 3wQ7VDnqA6fZ for <linux-kernel@vger.kernel.org>;
-        Thu, 26 Mar 2020 11:49:14 +0100 (CET)
+        with ESMTP id QPOzjhV_9Y3C for <linux-kernel@vger.kernel.org>;
+        Thu, 26 Mar 2020 12:00:05 +0100 (CET)
 Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id A682164E57B
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:49:14 +0100 (CET)
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id D77B46500AC
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 12:00:05 +0100 (CET)
 Received: from pflmari.corp.cetitec.com (10.8.5.79) by
  PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Thu, 26 Mar 2020 11:49:14 +0100
+ id 15.0.1497.2; Thu, 26 Mar 2020 12:00:05 +0100
 Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
-        id 4A99B80501; Thu, 26 Mar 2020 11:35:25 +0100 (CET)
-Date:   Thu, 26 Mar 2020 11:35:25 +0100
+        id DD5CD80504; Thu, 26 Mar 2020 11:35:42 +0100 (CET)
+Date:   Thu, 26 Mar 2020 11:35:42 +0100
 From:   Alex Riesen <alexander.riesen@cetitec.com>
 To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
 CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -45,9 +45,9 @@ CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
         <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH v4 4/9] media: adv748x: add definitions for audio output
- related registers
-Message-ID: <c4314afadd7e0882d8e2cbcbe2fe9c6a46775016.1585218857.git.alexander.riesen@cetitec.com>
+Subject: [PATCH v4 7/9] media: adv748x: only activate DAI if it is described
+ in device tree
+Message-ID: <a7112a71e23d63cb6d19188e59252689e4900c70.1585218857.git.alexander.riesen@cetitec.com>
 Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -70,99 +70,56 @@ X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
  PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
 X-EsetResult: clean, is OK
 X-EsetId: 37303A290D7F536A6D7C67
-X-Provags-ID: V03:K1:T/spGFn1RJdOBBzCDpJ14DoQD0HZM0gDmSih0WzxF9UtxJONp6j
- /Jfo7kwlYaV6f6cFJvgij7YsakIGwTxYESGrp22yhK38E05uL/GXdlSZkG7hIE5GBT96eQQ
- Sr1aqASvdmZ8OCZRnhwTB/VczwloWSXfOCjxGVEkc0nyJ/SLy4eimPfjIUroA6DVuITVlQm
- yQXxBPLiQQXS+t1t3HGpg==
+X-Provags-ID: V03:K1:jyjcLbFRqAkYVisLJ3uA1R0rveaKV5kqtpzvb9WvOsypntvh4yu
+ zN7kfH+xukY0soiipLN7Gh29Z59NjrHC2Zp+Sg4q7HmK+xbqWK++yywkssVLyjqp7SlLPXf
+ Xem+vl+zs7BHSn5xS13mlREQKPsJY2ImMJ0hb3x2813thE3xVtayHfM+AaSU5zB8KRYFBtR
+ DtUApe7GGrfnCM26fRwSw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:2tXXuxCn6u8=:4QM/cgbAk6yafcqVX/2eAR
- BiYW2ifNeRxMQDp87/XFkUTBV51zuVHybLlwWFHHhZtfeNdY3lBS0Ss3qq3dvBnEO0mFe4VZV
- CJmh0RCmJaQzGHSOcSee9TsAN8a2GlPA16D0CXH+151FOStnpAmLm7fp975qbFDSvk/XSNFup
- rRkRqJexxbMzJSftIMgvxj/qr2fOPdpMysteswPiyvBJ9GF5GuxqxoB6Nptvf4fxu0rRuLFiQ
- 4iv0EN5ZWlRiM+kD5w9t6CWghGOlyvHzyD+RgvUryRURrA93yt90FV20OYlYikpqtuXCQTr5a
- VMj+6oFcMjHzMszBSgPYSdKjTc3w0G8a+DX9qePgOOX4jbnJxABPdcsAiRdddOxyXC3xIqRfe
- uPIgjZP9K3WGMAr80DNLQFQ4mUQopt/oq6dUz62LIEjG8yepNptQoTsRCzR2HfsHER88L9g6o
- a0IlmgMF9W7rjGfvawaYZqgxZfwlE3JUlr69mBeIk03vMncKbZKUsFRoeidfTDpV3iZ9vumhi
- 1tAtupqVEdXMma27qcqilMsglw26lmW3836IYWzY9jUyAsb22GMVHfVifCB23CR9AB5vUVppf
- Cf1rePUh+IH9zhXWefN9jyqCV8cNOjy49WbunT20DpBvJaFPDcd3g7tlyaZ77mUPtU1aRt+fm
- Sk6+r8MHfG80nChIGUSQg51PKIU+wrGI7MQ/7sl/1EfgH4wP6vMJ/nhUSlcCH3WJFAnbLD2dj
- 1mrEbfLLlJTWIBDZNKtTLyT0gt4T9p4rxa3kB6vRBD2gxgqUatVxk7wJ4eJ4j/49kEJF3tlOH
- 6UZVjRzKUJJQC33aRhao0hDIQyB90/Bqk2G2mzlayf/zPtLkedSwUPlz01LasCo6hn/5rgN
+X-UI-Out-Filterresults: notjunk:1;V03:K0:jG5K2UJ80Jo=:IWe4qbDdigUW2WsB8esnOQ
+ Gaam/jlvP7xUER9NnQYjW3tFRcKvyY0XAfFvNoHSDYP3hsTiJ/m5g9ydc+DKLTb3oe2IBdzi1
+ ZnAwPFNk5VJArjxxz4znwJtaoEM0eCT1Rcl4sdvWDWznRDaW8e8XuB1w57DNhSaCkVIjr3XIZ
+ 8DFhr+laB93cUZ6ryLjCa0DQVUIuIu+EL8Bfclh0PvjQf+6PxSJG5MNeKTgiAxoC/P74ETlGp
+ AZ+uraH34l8p6mO0AGwyBhM4AlISNWiV6OReAMR0Lk6lLF8qI8sJ2brHItGSBE0Tqi8gnawuu
+ 4Z/zoFCAehqQkkR/QfknTCjrlzTpjgKbQH5vPhkaH2bX3aHOIofNP6Hao0QFeau5jYZ8Xk11O
+ zKXTup/fWR9i2CYFN78pBBpej+Q5Ram4SoQLivvqQ/gFh7DH8d/5MFi0cxAtIlI6vX+T9rPsu
+ pflxwHIBlquafyCW+cW414piSFk6FBmHDj0sR3fQ1S1BXGPKAvmaHfI/0QDTIEmCOG06bVCaG
+ tGYbIQyqznIkQ7IvPlYeNliuKdFqJryg7ngHQXjxR0Jv4l8Dtk7hgQLEhp3tXDdoKJy0Sl9tc
+ sUrqD9hz3JmBY2OIycZiXk+GRBz9YlLBtW6OZyZL1sA87lWL/C2Xb9wbbq+Vzk3hnltmWrplf
+ KOaZNmuCZ8kdDHGV2AqvIG0GJiJe2D1UBcvYmrc+h+Q7gPxJb1tvwU00Z+QVEksV7OL2h330R
+ bGbWPOpx69RGDjAK0Er6FhDuI7tNvjrtzxHxmSsQC1T3ckhvHeV/2rSOQ7D0N9MsgxTfjQjzC
+ +L4maKYrB6wtRqr6RSLWJdcaZ41WhT6TtXoMrlEzz4yTLe3gmKb6qOolGtMfKp52Wh3cdZp
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+To avoid setting it up even if the hardware is not actually connected
+to anything physically.
+
+Besides, the bindings explicitly notes that port definitions are
+"optional if they are not connected to anything at the hardware level".
+
 Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
 ---
- drivers/media/i2c/adv748x/adv748x.h | 32 +++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/media/i2c/adv748x/adv748x-dai.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 0a9d78c2870b..1a1ea70086c6 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -226,6 +226,11 @@ struct adv748x_state {
+diff --git a/drivers/media/i2c/adv748x/adv748x-dai.c b/drivers/media/i2c/adv748x/adv748x-dai.c
+index 185f78023e91..f9cc47fa9ad1 100644
+--- a/drivers/media/i2c/adv748x/adv748x-dai.c
++++ b/drivers/media/i2c/adv748x/adv748x-dai.c
+@@ -216,6 +216,11 @@ int adv748x_dai_init(struct adv748x_dai *dai)
+ 	int ret;
+ 	struct adv748x_state *state = adv748x_dai_to_state(dai);
  
- #define ADV748X_IO_VID_STD		0x05
- 
-+#define ADV748X_IO_PAD_CONTROLS		0x0e
-+#define ADV748X_IO_PAD_CONTROLS_TRI_AUD	BIT(5)
-+#define ADV748X_IO_PAD_CONTROLS_PDN_AUD	BIT(1)
-+#define ADV748X_IO_PAD_CONTROLS1	0x1d
-+
- #define ADV748X_IO_10			0x10	/* io_reg_10 */
- #define ADV748X_IO_10_CSI4_EN		BIT(7)
- #define ADV748X_IO_10_CSI1_EN		BIT(6)
-@@ -248,7 +253,21 @@ struct adv748x_state {
- #define ADV748X_IO_REG_FF		0xff
- #define ADV748X_IO_REG_FF_MAIN_RESET	0xff
- 
-+/* DPLL Map */
-+#define ADV748X_DPLL_MCLK_FS		0xb5
-+#define ADV748X_DPLL_MCLK_FS_N_MASK	GENMASK(2, 0)
-+
- /* HDMI RX Map */
-+#define ADV748X_HDMI_I2S		0x03	/* I2S mode and width */
-+#define ADV748X_HDMI_I2SBITWIDTH_MASK	GENMASK(4, 0)
-+#define ADV748X_HDMI_I2SOUTMODE_SHIFT	5
-+#define ADV748X_HDMI_I2SOUTMODE_MASK	\
-+	GENMASK(6, ADV748X_HDMI_I2SOUTMODE_SHIFT)
-+#define ADV748X_I2SOUTMODE_I2S 0
-+#define ADV748X_I2SOUTMODE_RIGHT_J 1
-+#define ADV748X_I2SOUTMODE_LEFT_J 2
-+#define ADV748X_I2SOUTMODE_SPDIF 3
-+
- #define ADV748X_HDMI_LW1		0x07	/* line width_1 */
- #define ADV748X_HDMI_LW1_VERT_FILTER	BIT(7)
- #define ADV748X_HDMI_LW1_DE_REGEN	BIT(5)
-@@ -260,6 +279,16 @@ struct adv748x_state {
- #define ADV748X_HDMI_F1H1		0x0b	/* field1 height_1 */
- #define ADV748X_HDMI_F1H1_INTERLACED	BIT(5)
- 
-+#define ADV748X_HDMI_MUTE_CTRL		0x1a
-+#define ADV748X_HDMI_MUTE_CTRL_MUTE_AUDIO BIT(4)
-+#define ADV748X_HDMI_MUTE_CTRL_WAIT_UNMUTE_MASK	GENMASK(3, 1)
-+#define ADV748X_HDMI_MUTE_CTRL_NOT_AUTO_UNMUTE	BIT(0)
-+
-+#define ADV748X_HDMI_AUDIO_MUTE_SPEED	0x0f
-+#define ADV748X_HDMI_AUDIO_MUTE_SPEED_MASK	GENMASK(4, 0)
-+#define ADV748X_MAN_AUDIO_DL_BYPASS BIT(7)
-+#define ADV748X_AUDIO_DELAY_LINE_BYPASS BIT(6)
-+
- #define ADV748X_HDMI_HFRONT_PORCH	0x20	/* hsync_front_porch_1 */
- #define ADV748X_HDMI_HFRONT_PORCH_MASK	0x1fff
- 
-@@ -281,6 +310,9 @@ struct adv748x_state {
- #define ADV748X_HDMI_TMDS_1		0x51	/* hdmi_reg_51 */
- #define ADV748X_HDMI_TMDS_2		0x52	/* hdmi_reg_52 */
- 
-+#define ADV748X_HDMI_REG_6D		0x6d	/* hdmi_reg_6d */
-+#define ADV748X_I2S_TDM_MODE_ENABLE BIT(7)
-+
- /* HDMI RX Repeater Map */
- #define ADV748X_REPEATER_EDID_SZ	0x70	/* primary_edid_size */
- #define ADV748X_REPEATER_EDID_SZ_SHIFT	4
++	if (!state->endpoints[ADV748X_PORT_I2S]) {
++		adv_info(state, "no I2S port, DAI disabled\n");
++		ret = 0;
++		goto fail;
++	}
+ 	dai->mclk_name = kasprintf(GFP_KERNEL, "%s.%s-i2s-mclk",
+ 				   state->dev->driver->name,
+ 				   dev_name(state->dev));
 -- 
 2.25.1.25.g9ecbe7eb18
 
