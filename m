@@ -2,174 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8214E1937FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 06:42:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DCB2193828
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 06:53:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbgCZFmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 01:42:08 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45416 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbgCZFmH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 01:42:07 -0400
-Received: by mail-pg1-f195.google.com with SMTP id o26so2316756pgc.12
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 22:42:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GAtp02xkzcXTpQVd6eNZ6e9QAobCmX4PQ/bu6ncX+V8=;
-        b=Gav9O9ydwdK++YUnd3IMS6cNflMzwIphGTaGQJBtPJx+iXD2x0HBVJYtMggTQZlnZQ
-         Ed4lwh6OvbtumiMpLwpLntyFkFWb5GcSirNrgYv+WvnzvT2M7wrqEPqo4DP/ASZGd0/Q
-         ix5lqjduBOwfPM7cxgUisfwdbx9i2xAAmPklA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GAtp02xkzcXTpQVd6eNZ6e9QAobCmX4PQ/bu6ncX+V8=;
-        b=Os0YgJ/DKHwgYQVaHzH1jbl9CUP2SUrtnhG5VvrcC5U1K0vZf1uMJS8s7JC3TtWVLL
-         zFQQLX+9LX7F8HnY0Hyj2wq+Ki0xforLtDH+57It4pEoTv/sRoMeNfor0hAu1A7e/I+f
-         ADwZdB7+4wLILWPJT8V0ddEZUlbmoAdsl04RH2wK+MZECSf+pnkklXe+mtYLGl8Q0PwV
-         p4eL/+U6DEd3kd2VaglOohdqvIEUEIGMTDMyWHjjnDT5OvxWeR4+/XPU+QWEO1x81T6v
-         pJUjdQpjZFxcTRTMvcK3XC5vC3ItKLbCYWbJq/CkVO/OL+nwLFRotpPsCGcPHBDdflR0
-         gScQ==
-X-Gm-Message-State: ANhLgQ0yLGhgNGjSMrZBQshT5ipbhxXco/qylaU/2RqqL9Lkw/82Z4CJ
-        KPZEXC6ZJATtYYlFcXcB8aIL4Q==
-X-Google-Smtp-Source: ADFU+vsZgMeDCxKHPHjGYbZhk8LncJ1ytMqCvgZsIcf8XqiYbTF3nFfv9g0EuUyt27Crks0bIfsmHg==
-X-Received: by 2002:a62:ce8a:: with SMTP id y132mr7013942pfg.163.1585201326283;
-        Wed, 25 Mar 2020 22:42:06 -0700 (PDT)
-Received: from apsdesk.mtv.corp.google.com ([2620:15c:202:1:e09a:8d06:a338:aafb])
-        by smtp.gmail.com with ESMTPSA id b3sm710855pgs.69.2020.03.25.22.42.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 22:42:05 -0700 (PDT)
-From:   Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-To:     marcel@holtmann.org
-Cc:     linux-bluetooth@vger.kernel.org,
-        chromeos-bluetooth-upstreaming@chromium.org,
-        Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH 1/1] Bluetooth: Update add_device with wakeable actions
-Date:   Wed, 25 Mar 2020 22:39:17 -0700
-Message-Id: <20200325223803.1.I196e4af9cde6c6e6aa7102906722cb9df8c80a7b@changeid>
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-In-Reply-To: <20200326053917.65024-1-abhishekpandit@chromium.org>
-References: <20200326053917.65024-1-abhishekpandit@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726336AbgCZFxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 01:53:07 -0400
+Received: from mga03.intel.com ([134.134.136.65]:24516 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726138AbgCZFxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 01:53:07 -0400
+IronPort-SDR: IpqVKyYP5+2EddAv3A7QlF/dlHhfBpvsWtF4qysRuHUttd1/bF2sUDLHc53b4OtloPoDvHkvt0
+ 6VXV8o3KCdEg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2020 22:53:06 -0700
+IronPort-SDR: 1Xzkm47HHv8vFco/3O8phmKYaO3oY+BCjzVOdL+0aY4OFPQjDxsgzY8CMpgzDd7RBWbOlvP6/t
+ a4bzIyCpomFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,307,1580803200"; 
+   d="scan'208";a="358041731"
+Received: from aubrey-ubuntu.sh.intel.com ([10.239.53.16])
+  by fmsmga001.fm.intel.com with ESMTP; 25 Mar 2020 22:53:03 -0700
+From:   Aubrey Li <aubrey.li@intel.com>
+To:     vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
+        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        linux-kernel@vger.kernel.org
+Cc:     tim.c.chen@linux.intel.com, vpillai@digitalocean.com,
+        joel@joelfernandes.org, Aubrey Li <aubrey.li@intel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Phil Auld <pauld@redhat.com>
+Subject: [PATCH] sched/fair: Fix negative imbalance in imbalance calculation
+Date:   Thu, 26 Mar 2020 13:42:29 +0800
+Message-Id: <1585201349-70192-1-git-send-email-aubrey.li@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new actions to add_device to allow it to set or unset a device as
-wakeable. When the set wakeable and unset wakeable actions are used, the
-autoconnect property is not updated and the device is not added to the
-whitelist (if BR/EDR).
+A negative imbalance value was observed after imbalance calculation,
+this happens when the local sched group type is group_fully_busy,
+and the average load of local group is greater than the selected
+busiest group. Fix this problem by comparing the average load of the
+local and busiest group before imbalance calculation formula.
 
-Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Suggested-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
+Cc: Phil Auld <pauld@redhat.com>
 ---
+ kernel/sched/fair.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- net/bluetooth/mgmt.c | 56 ++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 46 insertions(+), 10 deletions(-)
-
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index 6552003a170e..8688673542b3 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -5775,6 +5775,7 @@ static int add_device(struct sock *sk, struct hci_dev *hdev,
- 		      void *data, u16 len)
- {
- 	struct mgmt_cp_add_device *cp = data;
-+	struct hci_conn_params *params;
- 	u8 auto_conn, addr_type;
- 	int err;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index c1217bf..4a2ba3f 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8761,6 +8761,14 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
  
-@@ -5786,7 +5787,7 @@ static int add_device(struct sock *sk, struct hci_dev *hdev,
- 					 MGMT_STATUS_INVALID_PARAMS,
- 					 &cp->addr, sizeof(cp->addr));
- 
--	if (cp->action != 0x00 && cp->action != 0x01 && cp->action != 0x02)
-+	if (cp->action > 0x04)
- 		return mgmt_cmd_complete(sk, hdev->id, MGMT_OP_ADD_DEVICE,
- 					 MGMT_STATUS_INVALID_PARAMS,
- 					 &cp->addr, sizeof(cp->addr));
-@@ -5794,8 +5795,35 @@ static int add_device(struct sock *sk, struct hci_dev *hdev,
- 	hci_dev_lock(hdev);
- 
- 	if (cp->addr.type == BDADDR_BREDR) {
--		/* Only incoming connections action is supported for now */
--		if (cp->action != 0x01) {
-+		switch (cp->action) {
-+		case 0x3:
-+			/* Set wakeable */
-+			err = hci_bdaddr_list_add(&hdev->wakeable,
-+						  &cp->addr.bdaddr,
-+						  cp->addr.type);
-+			if (err && err != -EEXIST)
-+				goto unlock;
-+			break;
-+		case 0x4:
-+			/* Remove wakeable */
-+			err = hci_bdaddr_list_del(&hdev->wakeable,
-+						  &cp->addr.bdaddr,
-+						  cp->addr.type);
-+			if (err)
-+				goto unlock;
-+
-+			break;
-+		case 0x1:
-+			/* Allow incoming connection */
-+			err = hci_bdaddr_list_add(&hdev->whitelist,
-+						  &cp->addr.bdaddr,
-+						  cp->addr.type);
-+			if (err && err != -EEXIST)
-+				goto unlock;
-+
-+			hci_req_update_scan(hdev);
-+			break;
-+		default:
- 			err = mgmt_cmd_complete(sk, hdev->id,
- 						MGMT_OP_ADD_DEVICE,
- 						MGMT_STATUS_INVALID_PARAMS,
-@@ -5803,13 +5831,6 @@ static int add_device(struct sock *sk, struct hci_dev *hdev,
- 			goto unlock;
- 		}
- 
--		err = hci_bdaddr_list_add(&hdev->whitelist, &cp->addr.bdaddr,
--					  cp->addr.type);
--		if (err)
--			goto unlock;
--
--		hci_req_update_scan(hdev);
--
- 		goto added;
- 	}
- 
-@@ -5834,6 +5855,21 @@ static int add_device(struct sock *sk, struct hci_dev *hdev,
- 		goto unlock;
- 	}
- 
-+	/* Only allow wakeable property to be set/unset on existing device */
-+	if (cp->action == 0x03 || cp->action == 0x04) {
-+		params = hci_conn_params_lookup(hdev, &cp->addr.bdaddr,
-+						addr_type);
-+		if (!params) {
-+			err = mgmt_cmd_complete(sk, hdev->id,
-+						MGMT_OP_ADD_DEVICE,
-+						MGMT_STATUS_FAILED, &cp->addr,
-+						sizeof(cp->addr));
+ 		sds->avg_load = (sds->total_load * SCHED_CAPACITY_SCALE) /
+ 				sds->total_capacity;
++		/*
++		 * If the local group is more loaded than the selected
++		 * busiest group don't try to pull any tasks.
++		 */
++		if (local->avg_load >= busiest->avg_load) {
++			env->imbalance = 0;
++			return;
 +		}
-+
-+		params->wakeable = cp->action == 0x03;
-+		goto added;
-+	}
-+
- 	/* If the connection parameters don't exist for this device,
- 	 * they will be created and configured with defaults.
- 	 */
+ 	}
+ 
+ 	/*
 -- 
-2.25.1.696.g5e7596f4ac-goog
+2.7.4
 
