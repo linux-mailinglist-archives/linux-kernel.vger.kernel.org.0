@@ -2,81 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A7D91940BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:02:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C29271940C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:04:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbgCZOCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 10:02:35 -0400
-Received: from correo.us.es ([193.147.175.20]:51288 "EHLO mail.us.es"
+        id S1728150AbgCZODO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 10:03:14 -0400
+Received: from mga18.intel.com ([134.134.136.126]:21527 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727981AbgCZOCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:02:34 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id 604BC11EB84
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:02:32 +0100 (CET)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 5318BDA3AA
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:02:32 +0100 (CET)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id 47F8CDA38D; Thu, 26 Mar 2020 15:02:32 +0100 (CET)
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
-X-Spam-Level: 
-X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
-        SMTPAUTH_US2,URIBL_BLOCKED,USER_IN_WHITELIST autolearn=disabled version=3.4.1
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 3386FDA38D;
-        Thu, 26 Mar 2020 15:02:30 +0100 (CET)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Thu, 26 Mar 2020 15:02:30 +0100 (CET)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (unknown [90.77.255.23])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727738AbgCZODO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 10:03:14 -0400
+IronPort-SDR: I97fcWokmN/hogqLRjM58bWJ4LcZsjay+skELlvk51d9ptb9ha835dYJpBZWzRd5/xTOFUOC3W
+ qxhvIIQEokLw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 07:03:13 -0700
+IronPort-SDR: 2xMnfKiNNIribQHyU99+kqBuFzEPshilBpp4VmLjGKBP0/Yb9ogFvu8RtCBDvmiHzPKA1aWgxt
+ JemivmV5wg7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,308,1580803200"; 
+   d="scan'208";a="271181383"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 26 Mar 2020 07:03:11 -0700
+Received: from [10.254.68.166] (kliang2-mobl.ccr.corp.intel.com [10.254.68.166])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 0C83C42EF4E0;
-        Thu, 26 Mar 2020 15:02:30 +0100 (CET)
-Date:   Thu, 26 Mar 2020 15:02:29 +0100
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Julian Anastasov <ja@ssi.bg>
-Cc:     Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
-        Simon Horman <horms@verge.net.au>, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ipvs: optimize tunnel dumps for icmp errors
-Message-ID: <20200326140229.emeplg75xszpd7rs@salvia>
-References: <1584278741-13944-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
- <alpine.LFD.2.21.2003181333460.4911@ja.home.ssi.bg>
+        by linux.intel.com (Postfix) with ESMTPS id 3CC085803E3;
+        Thu, 26 Mar 2020 07:03:09 -0700 (PDT)
+Subject: Re: [PATCH v1 01/11] perf/x86/core: Support KVM to assign a dedicated
+ counter for guest PEBS
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Luwei Kang <luwei.kang@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, tglx@linutronix.de, bp@alien8.de,
+        hpa@zytor.com, pbonzini@redhat.com,
+        sean.j.christopherson@intel.com, vkuznets@redhat.com,
+        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
+        pawan.kumar.gupta@linux.intel.com, ak@linux.intel.com,
+        thomas.lendacky@amd.com, fenghua.yu@intel.com,
+        like.xu@linux.intel.com
+References: <1583431025-19802-1-git-send-email-luwei.kang@intel.com>
+ <1583431025-19802-2-git-send-email-luwei.kang@intel.com>
+ <20200306135317.GD12561@hirez.programming.kicks-ass.net>
+ <b72cb68e-1a0a-eeff-21b4-ce412e939cfd@linux.intel.com>
+ <20200309100443.GG12561@hirez.programming.kicks-ass.net>
+ <97ce1ba4-d75a-8db2-ea2f-7d334942b4e6@linux.intel.com>
+ <20200309150526.GI12561@hirez.programming.kicks-ass.net>
+ <45a1a575-9363-f778-b5f5-bcdf28d3e34b@linux.intel.com>
+Message-ID: <e4a97965-5e57-56c5-1610-b84cf349e466@linux.intel.com>
+Date:   Thu, 26 Mar 2020 10:03:07 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.21.2003181333460.4911@ja.home.ssi.bg>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <45a1a575-9363-f778-b5f5-bcdf28d3e34b@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 01:36:32PM +0200, Julian Anastasov wrote:
-> 
-> 	Hello,
-> 
-> On Sun, 15 Mar 2020, Haishuang Yan wrote:
-> 
-> > After strip GRE/UDP tunnel header for icmp errors, it's better to show
-> > "GRE/UDP" instead of "IPIP" in debug message.
-> > 
-> > Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-> 
-> 	Looks good to me, thanks!
-> 
-> Acked-by: Julian Anastasov <ja@ssi.bg>
-> 
-> 	Simon, this is for -next kernels...
+Hi Peter,
 
-Simon, if no objection, I'm going to include this in the next nf-next
-pull request.
+On 3/9/2020 3:28 PM, Liang, Kan wrote:
+> 
+> 
+> On 3/9/2020 11:05 AM, Peter Zijlstra wrote:
+>>> In the new proposal, KVM user is treated the same as other host 
+>>> events with
+>>> event constraint. The scheduler is free to choose whether or not to 
+>>> assign a
+>>> counter for it.
+>> That's what it does, I understand that. I'm saying that that is creating
+>> artificial contention.
+>>
+>>
+>> Why is this needed anyway? Can't we force the guest to flush and then
+>> move it over to a new counter?
+>
 
-Thanks.
+Current perf scheduling is pure software behavior. KVM only traps the 
+MSR access. It’s impossible for KVM to impact the guest’s scheduling 
+with current implementation.
+
+To address the concern regarding to 'artificial contention', we have two 
+proposals.
+Could you please take a look, and share your thoughts?
+
+Proposal 1:
+Reject the guest request, if host has to use the counter which occupied 
+by guest. At the meantime, host prints a warning.
+I still think the contention should rarely happen in practical.
+Personally, I prefer this proposal.
+
+
+Proposal 2:
+Add HW advisor for the scheduler in guest.
+Starts from Architectural Perfmon Version 4, IA32_PERF_GLOBAL_INUSE MSR 
+is introduced. It provides an “InUse” bit for each programmable 
+performance counter and fixed counter in the processor.
+
+In perf, the scheduler will read the MSR and mask the “in used” 
+counters. I think we can use X86_FEATURE_HYPERVISOR to limit the check 
+in guest. For non-virtualization usage and host, nothing changed for 
+scheduler.
+
+But there is still a problem for this proposal. Host may request a 
+counter later, which has been used by guest.
+We can only do multiplexing or grab the counter just like proposal 1.
+
+
+What do you think?
+
+Thanks,
+Kan
+
+> KVM only traps the MSR access. There is no MSR access during the 
+> scheduling in guest.
+> KVM/host only knows the request counter, when guest tries to enable the 
+> counter. It's too late for guest to start over.
+> 
+> Regarding to the artificial contention, as my understanding, it should 
+> rarely happen in practical.
+> Cloud vendors have to explicitly set pebs option in qemu to enable PEBS 
+> support for guest. They knows the environment well. They can avoid the 
+> contention. (We may implement some patches for qemu/KVM later to 
+> temporarily disable PEBS in runtime if they require.)
+> 
+> For now, I think we may print a warning when both host and guest require 
+> the same counter. Host can get a clue from the warning.
+> 
+> Thanks,
+> Kan
