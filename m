@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 632E1193C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:08:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2656A193CA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:09:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbgCZKIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 06:08:41 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50174 "EHLO
+        id S1728112AbgCZKJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 06:09:16 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50201 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbgCZKIl (ORCPT
+        with ESMTP id S1727873AbgCZKIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 06:08:41 -0400
+        Thu, 26 Mar 2020 06:08:42 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jHPRA-00045R-OJ; Thu, 26 Mar 2020 11:08:32 +0100
+        id 1jHPRB-00045Y-HH; Thu, 26 Mar 2020 11:08:33 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3FAFD1C0440;
-        Thu, 26 Mar 2020 11:08:32 +0100 (CET)
-Date:   Thu, 26 Mar 2020 10:08:31 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 15E651C0440;
+        Thu, 26 Mar 2020 11:08:33 +0100 (CET)
+Date:   Thu, 26 Mar 2020 10:08:32 -0000
 From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/objtool] objtool: Re-arrange validate_functions()
+Subject: [tip: core/objtool] objtool: Delete cleanup()
 Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Miroslav Benes <mbenes@suse.cz>,
         Josh Poimboeuf <jpoimboe@redhat.com>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200324160924.924304616@infradead.org>
-References: <20200324160924.924304616@infradead.org>
+In-Reply-To: <20200324160924.800720170@infradead.org>
+References: <20200324160924.800720170@infradead.org>
 MIME-Version: 1.0
-Message-ID: <158521731184.28353.5517081652261174451.tip-bot2@tip-bot2>
+Message-ID: <158521731275.28353.8005439987604062029.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,104 +48,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/objtool branch of tip:
 
-Commit-ID:     350994bf95414d6da67a72f27d7ac3832ce3725d
-Gitweb:        https://git.kernel.org/tip/350994bf95414d6da67a72f27d7ac3832ce3725d
+Commit-ID:     8887a86eddd93ca396ca35f7b41fb14ed412f85d
+Gitweb:        https://git.kernel.org/tip/8887a86eddd93ca396ca35f7b41fb14ed412f85d
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 23 Mar 2020 20:57:13 +01:00
+AuthorDate:    Wed, 11 Mar 2020 23:07:42 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 25 Mar 2020 18:28:31 +01:00
+CommitterDate: Wed, 25 Mar 2020 18:28:30 +01:00
 
-objtool: Re-arrange validate_functions()
+objtool: Delete cleanup()
 
-In preparation to adding a vmlinux.o specific pass, rearrange some
-code. No functional changes intended.
+Perf shows we spend a measurable amount of time spend cleaning up
+right before we exit anyway. Avoid the needsless work and just
+terminate.
+
+This reduces objtool on vmlinux.o runtime from 5.4s to 4.8s
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Miroslav Benes <mbenes@suse.cz>
 Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20200324160924.924304616@infradead.org
+Link: https://lkml.kernel.org/r/20200324160924.800720170@infradead.org
 ---
- tools/objtool/check.c | 52 ++++++++++++++++++++++++------------------
- 1 file changed, 30 insertions(+), 22 deletions(-)
+ tools/objtool/check.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 0c9c9ad..0bfcb39 100644
+index 54a6043..0c9c9ad 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -2395,9 +2395,8 @@ static bool ignore_unreachable_insn(struct instruction *insn)
- 	return false;
+@@ -2458,23 +2458,6 @@ static int validate_reachable_instructions(struct objtool_file *file)
+ 	return 0;
  }
  
--static int validate_functions(struct objtool_file *file)
-+static int validate_section(struct objtool_file *file, struct section *sec)
- {
--	struct section *sec;
- 	struct symbol *func;
- 	struct instruction *insn;
- 	struct insn_state state;
-@@ -2410,36 +2409,45 @@ static int validate_functions(struct objtool_file *file)
- 	       CFI_NUM_REGS * sizeof(struct cfi_reg));
- 	state.stack_size = initial_func_cfi.cfa.offset;
- 
--	for_each_sec(file, sec) {
--		list_for_each_entry(func, &sec->symbol_list, list) {
--			if (func->type != STT_FUNC)
--				continue;
-+	list_for_each_entry(func, &sec->symbol_list, list) {
-+		if (func->type != STT_FUNC)
-+			continue;
- 
--			if (!func->len) {
--				WARN("%s() is missing an ELF size annotation",
--				     func->name);
--				warnings++;
--			}
-+		if (!func->len) {
-+			WARN("%s() is missing an ELF size annotation",
-+			     func->name);
-+			warnings++;
-+		}
- 
--			if (func->pfunc != func || func->alias != func)
--				continue;
-+		if (func->pfunc != func || func->alias != func)
-+			continue;
- 
--			insn = find_insn(file, sec, func->offset);
--			if (!insn || insn->ignore || insn->visited)
--				continue;
-+		insn = find_insn(file, sec, func->offset);
-+		if (!insn || insn->ignore || insn->visited)
-+			continue;
- 
--			state.uaccess = func->uaccess_safe;
-+		state.uaccess = func->uaccess_safe;
- 
--			ret = validate_branch(file, func, insn, state);
--			if (ret && backtrace)
--				BT_FUNC("<=== (func)", insn);
--			warnings += ret;
+-static void cleanup(struct objtool_file *file)
+-{
+-	struct instruction *insn, *tmpinsn;
+-	struct alternative *alt, *tmpalt;
+-
+-	list_for_each_entry_safe(insn, tmpinsn, &file->insn_list, list) {
+-		list_for_each_entry_safe(alt, tmpalt, &insn->alts, list) {
+-			list_del(&alt->list);
+-			free(alt);
 -		}
-+		ret = validate_branch(file, func, insn, state);
-+		if (ret && backtrace)
-+			BT_FUNC("<=== (func)", insn);
-+		warnings += ret;
+-		list_del(&insn->list);
+-		hash_del(&insn->hash);
+-		free(insn);
+-	}
+-	elf_close(file->elf);
+-}
+-
+ static struct objtool_file file;
+ 
+ int check(const char *_objname, bool orc)
+@@ -2542,8 +2525,6 @@ int check(const char *_objname, bool orc)
  	}
  
- 	return warnings;
- }
- 
-+static int validate_functions(struct objtool_file *file)
-+{
-+	struct section *sec;
-+	int warnings = 0;
-+
-+	for_each_sec(file, sec)
-+		warnings += validate_section(file, sec);
-+
-+	return warnings;
-+}
-+
- static int validate_reachable_instructions(struct objtool_file *file)
- {
- 	struct instruction *insn;
+ out:
+-	cleanup(&file);
+-
+ 	if (ret < 0) {
+ 		/*
+ 		 *  Fatal error.  The binary is corrupt or otherwise broken in
