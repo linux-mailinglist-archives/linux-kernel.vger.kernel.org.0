@@ -2,120 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99602193D13
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:39:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 785C5193D0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:39:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbgCZKjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 06:39:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:34648 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727948AbgCZKjn (ORCPT
+        id S1727979AbgCZKjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 06:39:40 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33648 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727936AbgCZKjk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 06:39:43 -0400
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1jHPvD-0003yo-Eu; Thu, 26 Mar 2020 10:39:36 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     jeffrey.t.kirsher@intel.com
-Cc:     aaron.f.brown@intel.com,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
-        netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] igb: Use a sperate mutex insead of rtnl_lock()
-Date:   Thu, 26 Mar 2020 18:39:26 +0800
-Message-Id: <20200326103926.20888-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 26 Mar 2020 06:39:40 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f20so5874868ljm.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 03:39:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Nm7daEZmRCQGmg/oeW9vSEkTDhWhC4wvKQ8H8nvYJtM=;
+        b=uLZoHBJEdtCKbN/cWMQfWVW6g7VVQmFbA9BxpfTJC7cp+MOqzvZrVFfgDeyxQk+57Y
+         4WbA08qgC5ei/09QJVDsr4EZguqAkujA6xwZ8S9wOb8KNWCFtRIllODAqTj4DWEiiTsX
+         qDydMS8vylDi8g/R3tfS1llR+urMeF4kKg/9i0UnxeqMfJBOdf7GZ+zEWOBzNFr4wfeO
+         O4DcQdustyzR8jZ1MeHZKOfDKn0y46nufGHK1V/lertkMrPKavB7nuZiLbesId/A3UGO
+         S1alPWvAOgFgldImIijjrtmS/IDo3h8V+OwyBWBk4YzB/WyDfeJc4aVeK1FkOMJrH+Sg
+         pn5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Nm7daEZmRCQGmg/oeW9vSEkTDhWhC4wvKQ8H8nvYJtM=;
+        b=iXjVEIFXI66qbF44P8jiX5+kEsQU7Ftrlw4UCLG5TttS+/+tOxoY/lv6M8+eZI4Sdv
+         rlG5wH5VXDZAeIGTMMXTKSgV9gzWgCCE2qZ6nM7Tc1qCiWEt3fZlbualFu/DAXTJd7h1
+         YOMn4ObTYMTp7zHN842cxd51wkVi6wiz856dK6B90NI8qYc/epLrIir7EM5uaPIvCqES
+         pAwhMl779VzBZo5siObm8rHZuamJvU+0CWlrkc8B2qzwjz7G6FSTjO8s2rHZsU1p3/I/
+         pZHKueG80T9/NSY0C+hf6xfipiu4M7fsR0JwOPtY5P0gnso+2OfIloyjZ8nzv/znpVx1
+         lEzg==
+X-Gm-Message-State: AGi0PuaQx3VDGh5YExMrtGv0LBEa8kU+t/BoLCuFsNRdNqXJ0J0pcDB4
+        OGL1sQppEztgmwO944HtqpQoMw==
+X-Google-Smtp-Source: APiQypIGUavt2IrOB7A4U98tlaEHV4jg99sIklKUxPb5m6wVRKOPaVtVY3T6r1VJhKDcNeEFtQH5Ww==
+X-Received: by 2002:a2e:8109:: with SMTP id d9mr4398900ljg.31.1585219177107;
+        Thu, 26 Mar 2020 03:39:37 -0700 (PDT)
+Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
+        by smtp.gmail.com with ESMTPSA id h3sm1304008lfk.30.2020.03.26.03.39.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 03:39:36 -0700 (PDT)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 0/2] arm64: dts: msm8916: Conform to updated PSCI bindings
+Date:   Thu, 26 Mar 2020 11:39:30 +0100
+Message-Id: <20200326103932.5809-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 9474933caf21 ("igb: close/suspend race in netif_device_detach")
-fixed race condition between close and power management ops by using
-rtnl_lock().
+The PSCI DT binding was recently updated to fix some errors and so was also the
+related domain-idle-state DT binding. Therefore, this series updates the
+msm8916 to conform to these updates.
 
-This fix is a preparation for next patch, to prevent a dead lock under
-rtnl_lock() when calling runtime resume routine.
+Ulf Hansson (2):
+  arm64: dts: msm8916: Conform to the domain-idle-state binding
+  arm64: dts: msm8916: Conform to the nodename pattern PSCI subnodes
 
-However, we can't use device_lock() in igb_close() because when module
-is getting removed, the lock is already held for igb_remove(), and
-igb_close() gets called during unregistering the netdev, hence causing a
-deadlock. So let's introduce a new mutex so we don't cause a deadlock
-with driver core or netdev core.
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/net/ethernet/intel/igb/igb_main.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index b46bff8fe056..dc7ed5dd216b 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -288,6 +288,8 @@ static const struct igb_reg_info igb_reg_info_tbl[] = {
- 	{}
- };
- 
-+static DEFINE_MUTEX(igb_mutex);
-+
- /* igb_regdump - register printout routine */
- static void igb_regdump(struct e1000_hw *hw, struct igb_reg_info *reginfo)
- {
-@@ -4026,9 +4028,14 @@ static int __igb_close(struct net_device *netdev, bool suspending)
- 
- int igb_close(struct net_device *netdev)
- {
-+	int err = 0;
-+
-+	mutex_lock(&igb_mutex);
- 	if (netif_device_present(netdev) || netdev->dismantle)
--		return __igb_close(netdev, false);
--	return 0;
-+		err = __igb_close(netdev, false);
-+	mutex_unlock(&igb_mutex);
-+
-+	return err;
- }
- 
- /**
-@@ -8760,7 +8767,7 @@ static int __igb_shutdown(struct pci_dev *pdev, bool *enable_wake,
- 	u32 wufc = runtime ? E1000_WUFC_LNKC : adapter->wol;
- 	bool wake;
- 
--	rtnl_lock();
-+	mutex_lock(&igb_mutex);
- 	netif_device_detach(netdev);
- 
- 	if (netif_running(netdev))
-@@ -8769,7 +8776,7 @@ static int __igb_shutdown(struct pci_dev *pdev, bool *enable_wake,
- 	igb_ptp_suspend(adapter);
- 
- 	igb_clear_interrupt_scheme(adapter);
--	rtnl_unlock();
-+	mutex_unlock(&igb_mutex);
- 
- 	status = rd32(E1000_STATUS);
- 	if (status & E1000_STATUS_LU)
-@@ -8897,13 +8904,13 @@ static int __maybe_unused igb_resume(struct device *dev)
- 
- 	wr32(E1000_WUS, ~0);
- 
--	rtnl_lock();
-+	mutex_lock(&igb_mutex);
- 	if (!err && netif_running(netdev))
- 		err = __igb_open(netdev, true);
- 
- 	if (!err)
- 		netif_device_attach(netdev);
--	rtnl_unlock();
-+	mutex_unlock(&igb_mutex);
- 
- 	return err;
- }
 -- 
-2.17.1
+2.20.1
 
