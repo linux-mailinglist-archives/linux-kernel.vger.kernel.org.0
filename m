@@ -2,60 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31E14194404
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:09:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7881919440E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:10:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbgCZQJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 12:09:07 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36407 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbgCZQJF (ORCPT
+        id S1728511AbgCZQKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 12:10:53 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39713 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727822AbgCZQKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 12:09:05 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 31so8498065wrs.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 09:09:04 -0700 (PDT)
+        Thu, 26 Mar 2020 12:10:52 -0400
+Received: by mail-wm1-f68.google.com with SMTP id a9so7631221wmj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 09:10:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pZI4mFYIeUBqyaD+rgbp/dHgudUJiutQ+jywlmvsJi4=;
-        b=wHdLPElFbWZX4QzH1H99ZzwKFnHC8E+AE/ASH6YVsojyJt+o9b2frATNFHTv5wWxiY
-         svFX3mxxPsXUCxQOiIOhNSFwU1euEqEmQP/tN9msQ/0diAtr2aPEenOzeeOU69qqnYlD
-         60BD+1FC/gwXeBM2bIX2LSxcnMVm6LCT+fMFNQu4Fm/aaUBwks2FZeEZS3qNmL9l0ihH
-         FX0s6PgP6fMY9AXJN5NfVXYLhx+P14L5IcNUbpvnH0oWNkHpZEdiPiQqfU8B7AYuRXsu
-         uur6JlE0s19UUy6x2o8EZBRfLLlZ7DuxRxbmdekEh4WoEf4Sng1lNX0FxlbiBs+a9bga
-         ULHQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1ef+2V/P1wVE9VpsnS3HxhmcxnSy4fChdW7K3iDl8o8=;
+        b=gXvzLY6CeYfNADxB4JG7xpxE1ji6qxNQpWQTYlcZc2xV6aeQHWJx7+Ku4CkmmIsu/j
+         5lgc2eF4IeXZDfNTc/6NawhJONqDcc/DonMZnbnHT0pkJe4Ep9i6OGj3M+DsdjC8PqJd
+         iEBf/wVHXTc5e4Tqzqsm07uRysLqJhCt/Kv3LORjwjD/TPUF3QZ0D6hXGOrqkxoOtA4s
+         bxNHXHXqOhXOVVTSJl4cg11QufqsP2o8bht5TXZuCL8edYupMSlZTqrGGypsOYoyGTql
+         m4QhIuLQReAEik1QYMGEMfhZRtTJ8t+RfAQbQwcnrq3b/Crfd7YVI9IO74+xVSRjY5iU
+         KQlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pZI4mFYIeUBqyaD+rgbp/dHgudUJiutQ+jywlmvsJi4=;
-        b=GfRSAAKIyVf8oUWLa5OTHUwQ//VUqUDketbvoFQYPQbuV0Iq3lDuCDBek2g0TR8zf+
-         0vcbVuKGe/e4xKBll4YCXO/ElPe0HBmDnJdFptHNNziAvi/8LUPZP2/Hfgr2qSBb28Js
-         zzGSTl5daQybyoWXjjySr6H5R7DMz/gh5VgYchU+uJNSch9nUydVl8721xI88gFh0ZnT
-         LNwLUpxMVDAT4vWKMm91rusSUUxrqmG9oJhvmuqfCuo2HJi076SJO3HMj+8esPov/zHF
-         7ZGwvyEgzbeWArc3vMyUWmLM2VYDLFobcLyCaYm76V4ObIccxCnGZbg1OfShLwR7bD59
-         95og==
-X-Gm-Message-State: ANhLgQ37eh5/cDBlGQOeoT/OqoKaK62Y2EWBdpUnWjyEH1BuWQ0N/Sdw
-        cLi1qA+B+Nn1RM5MWY/af6CxQQ==
-X-Google-Smtp-Source: ADFU+vviie4DwJ//1lgb8NoEiaThjzKQPQnFgaGF/UDsdQxDgsRx38hfv7RxV8qwxxrIMh0gu4KH7w==
-X-Received: by 2002:a05:6000:100f:: with SMTP id a15mr9738134wrx.382.1585238943970;
-        Thu, 26 Mar 2020 09:09:03 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1ef+2V/P1wVE9VpsnS3HxhmcxnSy4fChdW7K3iDl8o8=;
+        b=CmDW4MuH6HpXvReoY12Zn5of/hKT4g7lp1hpoEZ4L/wGT3L584NZkbult5LbbJQDMT
+         JPsPb8XMGLeRCKRqN/MxniSWIZ2zqxPKgx9yvNGzBzFouQ6CU22kiBcLu1yPIS90+kmb
+         g1HX8MCA3seI6pAiLLZ4I05RSPdOx/cksutqAT55KVDEIlZAj6ccaPvcxzwNJHtA1966
+         BtCEdBV1zZHivFA116YTwJVem5U6sCdWEh9DMpfSsi1lcUVPVTgszIygWrbMrU4TrpQ6
+         9rc03kU3Zok0rzWReYWNUqfZtl/+rmVsPO/PqFCrDrcTJdUpgaqyRAgXFxf5uO+WOdUt
+         cDpg==
+X-Gm-Message-State: ANhLgQ10axybU0bZTMvhatX4lEg4zmTcL8lxh2SyjUCojstOoGFtZShP
+        KXyPbgiMBy2LuZgAXHWJKEJNwQ==
+X-Google-Smtp-Source: ADFU+vsfmcT+ctSJtMv05Y4tqAkQhOxGFaOI1CZwiZ+BkPxzrO7+Kc9u+EBInbsonLwD8A2tC7yMtA==
+X-Received: by 2002:a1c:9c85:: with SMTP id f127mr661739wme.91.1585239050485;
+        Thu, 26 Mar 2020 09:10:50 -0700 (PDT)
 Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
-        by smtp.gmail.com with ESMTPSA id z188sm4093511wme.46.2020.03.26.09.09.02
+        by smtp.gmail.com with ESMTPSA id v8sm4275098wrw.2.2020.03.26.09.10.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 09:09:03 -0700 (PDT)
+        Thu, 26 Mar 2020 09:10:49 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+To:     devicetree@vger.kernel.org
+Cc:     benjamin.gaignard@st.com, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 2/2] arm64: dts: meson-g12-common: fix dwc2 clock names
-Date:   Thu, 26 Mar 2020 17:08:57 +0100
-Message-Id: <20200326160857.11929-3-narmstrong@baylibre.com>
+Subject: [PATCH] dt-bindings: usb: dwc2: fix bindings for amlogic,meson-gxbb-usb
+Date:   Thu, 26 Mar 2020 17:10:46 +0100
+Message-Id: <20200326161046.12111-1-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200326160857.11929-1-narmstrong@baylibre.com>
-References: <20200326160857.11929-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,27 +62,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the correct dwc2 clock name.
+The amlogic,meson-gxbb-usb compatible needs snps,dwc2 aswell like other
+Amlogic SoC.
 
-Fixes: 9baf7d6be730 ("arm64: dts: meson: g12a: Add G12A USB nodes")
+Fixes: f3ca745d8a0e ("dt-bindings: usb: Convert DWC2 bindings to json-schema")
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/usb/dwc2.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-index 0882ea215b88..c0aef7d69117 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-@@ -2319,7 +2319,7 @@
- 				reg = <0x0 0xff400000 0x0 0x40000>;
- 				interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clkc CLKID_USB1_DDR_BRIDGE>;
--				clock-names = "ddr";
-+				clock-names = "otg";
- 				phys = <&usb2_phy1>;
- 				phy-names = "usb2-phy";
- 				dr_mode = "peripheral";
+diff --git a/Documentation/devicetree/bindings/usb/dwc2.yaml b/Documentation/devicetree/bindings/usb/dwc2.yaml
+index 71cf7ba32237..b7b9ddcbc637 100644
+--- a/Documentation/devicetree/bindings/usb/dwc2.yaml
++++ b/Documentation/devicetree/bindings/usb/dwc2.yaml
+@@ -49,7 +49,9 @@ properties:
+       - items:
+           - const: amlogic,meson8b-usb
+           - const: snps,dwc2
+-      - const: amlogic,meson-gxbb-usb
++      - items:
++          - const: amlogic,meson-gxbb-usb
++          - const: snps,dwc2
+       - items:
+           - const: amlogic,meson-g12a-usb
+           - const: snps,dwc2
 -- 
 2.22.0
 
