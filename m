@@ -2,135 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24A4B194990
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F02194994
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:51:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbgCZUvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 16:51:03 -0400
-Received: from sender4-of-o51.zoho.com ([136.143.188.51]:21150 "EHLO
-        sender4-of-o51.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbgCZUvC (ORCPT
+        id S1727701AbgCZUvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 16:51:36 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:60039 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbgCZUvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:51:02 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1585255833; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=HdeXMevfOIcsbuowu41x8Yr2L9uaB6M/xb4QdjgKqwbXa9sQcutx/elAdHpNvqq5aCJ7Z70X3ooYW6Hj4FAOlKwTPpHf85sCU40sA4+35QWPTXx69Ssjtx2FvekWJSjhgMZn15/n4spypvAUbKrR0nIa8XwnymXDio7+yS221N0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1585255833; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=tCEEChtqaTQC6wwZW6TB4bgghKsc5x69oKkMslX1HKE=; 
-        b=lf/Tco9I1L75zEfRm6envwaFIieccoygEzITqLUSm5tr+sD5NHjfRcbKRQ1ub2Ofr7sRIUWlRTnfknn7pYPBrfiDYF0ojaSIaqtzmza8XYJtN19UJzelqMtKWKsbDXPbYFWrpCPcCr/6l6/C3oTMkS/NH4ac+RbIU7DvA0FbVyk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=apertussolutions.com;
-        spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
-        dmarc=pass header.from=<dpsmith@apertussolutions.com> header.from=<dpsmith@apertussolutions.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1585255833;
-        s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        bh=tCEEChtqaTQC6wwZW6TB4bgghKsc5x69oKkMslX1HKE=;
-        b=mdJeEgi7rHkiWipHS/sFroK97XTMRhOp8btgzH3pSN1eblcUz4ait9UEcAdqj05K
-        g5CAMCMgTLXx8LfysIZNrqnHcW5Txr19Xvn4fNpdPOXKZMVsy8FuhaZTuEgNhnFuK39
-        j4IxyAbH4YCUYUReNeeaAMANqFhx4wEda3LTvPTg=
-Received: from [10.10.1.24] (c-73-129-47-101.hsd1.md.comcast.net [73.129.47.101]) by mx.zohomail.com
-        with SMTPS id 1585255832320978.2395265047164; Thu, 26 Mar 2020 13:50:32 -0700 (PDT)
-Subject: Re: [RFC PATCH 00/12] x86: Trenchboot secure late launch Linux kernel
- support
-To:     Matthew Garrett <mjg59@google.com>,
-        Ross Philipson <ross.philipson@oracle.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-doc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, trenchboot-devel@googlegroups.com
-References: <20200325194317.526492-1-ross.philipson@oracle.com>
- <CACdnJut56WuqO=uLff0qy1Jp=C6f_sRxLpRBsrzb6byBsFYdCg@mail.gmail.com>
-From:   "Daniel P. Smith" <dpsmith@apertussolutions.com>
-Message-ID: <bacbc25a-c724-d2fd-40bd-065799cd6195@apertussolutions.com>
-Autocrypt: addr=dpsmith@apertussolutions.com; prefer-encrypt=mutual; keydata=
- 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
-Date:   Thu, 26 Mar 2020 16:50:25 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Thu, 26 Mar 2020 16:51:35 -0400
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id 02QKpB37016411;
+        Fri, 27 Mar 2020 05:51:11 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 02QKpB37016411
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585255872;
+        bh=zRQ7nCLtjVIU1Jq1HUXWonwpqrxN+T1KGJqxECEbYQM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WTuGQjp7kChJ1ST2JqdmXuS0WEo1zexYQsX/JqecibFcS4AiJIxr1dTwJjMrEqx7o
+         U2B6CQ1NPFtPxw56un3S/xdeZcxhX2s36uh8nQU3BXB0voh6SWC9MBWv8wv8Xd9FeT
+         DdW8Busb1dTeisI3Mbu4XlyDpvt4bxNyWcVJkrqOVFft3TZFoOVH4+3jPZZTZKsuOe
+         qR0ts1dbukFHyL6M8Njg8XtAKx5N/wu60vbcGBBsKi4jzMKjgx9f7qFuy1UrMWrwjT
+         Vk8j2OFe0r6rPp3SycnhhhPENmdQ+MIbLNjzYhDf3cYQX6qTI6qWgIOoY7rSjQ4DmM
+         HDTttTA034q2w==
+X-Nifty-SrcIP: [209.85.222.41]
+Received: by mail-ua1-f41.google.com with SMTP id o15so2711254ual.3;
+        Thu, 26 Mar 2020 13:51:11 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ3rk2jXwAW9W/+cFn57cIRJ4a6TQJFUBdJkK4eOWO7PU+56a1GO
+        LNbKBgYILLsaJ1hTFV+pqQxgETwa3Ep2qOYpZJw=
+X-Google-Smtp-Source: ADFU+vulKPchjBB+wJWyQk8duaib49GFM1PSH3O5Tu2zolCDCTk/AuA/mB2ZDNQX+Mpj+8VI/7zef+V9swnyXsYSkRk=
+X-Received: by 2002:a9f:28c5:: with SMTP id d63mr8445238uad.25.1585255870618;
+ Thu, 26 Mar 2020 13:51:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CACdnJut56WuqO=uLff0qy1Jp=C6f_sRxLpRBsrzb6byBsFYdCg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+References: <CAKwvOdmLWqVq_EQk2S4FUSUCU7yoppYD4oiL+P7taWoDTyrb9w@mail.gmail.com>
+ <20200326202600.7086-1-Jason@zx2c4.com>
+In-Reply-To: <20200326202600.7086-1-Jason@zx2c4.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 27 Mar 2020 05:50:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASVciXgqwfaEbH5i2GT++hHhbjabtzN_s=tzXh4up93ZA@mail.gmail.com>
+Message-ID: <CAK7LNASVciXgqwfaEbH5i2GT++hHhbjabtzN_s=tzXh4up93ZA@mail.gmail.com>
+Subject: Re: [PATCH] x86: update AS_* macros to binutils >=2.23, supporting
+ ADX and AVX2
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/25/20 4:29 PM, Matthew Garrett wrote:
-> On Wed, Mar 25, 2020 at 12:43 PM Ross Philipson
-> <ross.philipson@oracle.com> wrote:
->> To enable the kernel to be launched by GETSEC or SKINIT, a stub must be
->> built into the setup section of the compressed kernel to handle the
->> specific state that the late launch process leaves the BSP. This is a
->> lot like the EFI stub that is found in the same area. Also this stub
->> must measure everything that is going to be used as early as possible.
->> This stub code and subsequent code must also deal with the specific
->> state that the late launch leaves the APs in.
->=20
-> How does this integrate with the EFI entry point? That's the expected
-> entry point on most modern x86. What's calling ExitBootServices() in
-> this flow, and does the secure launch have to occur after it? It'd be
-> a lot easier if you could still use the firmware's TPM code rather
-> than carrying yet another copy.
+On Fri, Mar 27, 2020 at 5:26 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> Now that the kernel specifies binutils 2.23 as the minimum version, we
+> can remove ifdefs for AVX2 and ADX throughout.
+>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+>
+>
+> Masahiro - here's an updated patch based on -next, as Nick requested.
+> Whether or not you'd prefer this one to the other one based on Linus'
+> tree is up to you, but here it is in case it's helpful.
 
 
-It is not part of the EFI entry point as we are not entering the kernel
-from EFI but I will address that further in my response to Andy. The
-expectation is that if you are on an UEFI platform then EBS should have
-already been called. With respect to using the firmware's TPM code, one
-of the purposes of a TCG Dynamic Launch is to remove the firmware from
-the code being trusted in making the integrity measurement of the
-kernel. I trust the firmware to initialize the hardware because I have
-to and it does give a trust chain, aka the SRTM, that can attest to what
-was used during that process. When the OS kernel is being started that
-trust chain has become weak (or even broken). I want a new trust chain
-that can provide better footing for asserting the integrity of the
-kernel and this is what Dynamic Launch gives us. I would like to think I
-did a fair job explaining this at LSS last fall[1][2] and would
-recommend those that are curious to review the slides/watch the
-presentation.
+Thanks.
 
-V/r,
-Daniel P. Smith
-
-[1]
-https://lssna19.sched.com/event/RHb0/trenchboot-how-to-nicely-boot-system-w=
-ith-intel-txt-and-amd-svm-daniel-kiper-oracle-daniel-smith-apertus-solution=
-s
-[2] https://youtu.be/DbpCU9iSi4g
+When the netfilter PR is pulled,
+I will rebase on top of Linus' tree.
 
 
+> diff --git a/net/netfilter/Makefile b/net/netfilter/Makefile
+> index 292e71dc7ba4..cd0d6ad48650 100644
+> --- a/net/netfilter/Makefile
+> +++ b/net/netfilter/Makefile
+> @@ -83,10 +83,8 @@ nf_tables-objs := nf_tables_core.o nf_tables_api.o nft_chain_filter.o \
+>                   nft_set_pipapo.o
+>
+>  ifdef CONFIG_X86_64
+> -ifneq (,$(findstring -DCONFIG_AS_AVX2=1,$(KBUILD_CFLAGS)))
+>  nf_tables-objs += nft_set_pipapo_avx2.o
+>  endif
+> -endif
+
+
+This hunk should go to:
+
+[v2,10/16] x86: probe assembler capabilities via kconfig instead of makefile
+
+
+I will try my best to remember this.
+
+
+--
+Best Regards
+Masahiro Yamada
