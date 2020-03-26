@@ -2,97 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB4A7194785
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:37:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0423A194789
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:38:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728599AbgCZThe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 15:37:34 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46980 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgCZThe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 15:37:34 -0400
-Received: by mail-oi1-f195.google.com with SMTP id q204so6600566oia.13;
-        Thu, 26 Mar 2020 12:37:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OQejYhkmJ8jpMQwP4np5/qfbpLG+c7Y/YgNN9D4Afuk=;
-        b=bOKPLVf2Kxy+k9BiM2WIBR6i8oY2iE5Q98V9vwGLgMgDErNKZALvT0YzWkDH4pALms
-         ildQnzfzIczfdpFModRwSOsYR0G3kqfECg0AIAh5EDZ8ZksElT2JEK+XsloEkC43vPnP
-         PDrgurzbsddgI8bdoQ0HRb/ZKxqN7LLuJzyRpsZBoZJXoXH8ovF3h3AC5I7IMsl1elnE
-         DYzXuPV8mLU+LyNRSaK7g++2Inrxg/GFlxxS7S76x1ecTsHvEr2ML2GAU2aHvTHQQ/3J
-         wfP2C9QlLkwxmV2Vlbm5opTuy3odHTZFQZnlvQewIkUITHzfHXyZJdlmpvmpq/Equw8o
-         ytGQ==
-X-Gm-Message-State: ANhLgQ3+f3LKHT5UQKWm4OJTxyL0VU3+hfJhvHT2IRG8wY9/4UxwL8Mx
-        UKAlwZmUNFw/sfZ/+IA1c6RlT9pZ/k9Hus9D2t0=
-X-Google-Smtp-Source: ADFU+vvEZ/iZqdJiCJri8T3uuYRSdtllmwAZLQvwiAy+tAT0vyGcMSRRnwD384RTgRhlUh8bZass889rIRaKdFwVuXY=
-X-Received: by 2002:aca:f07:: with SMTP id 7mr1415179oip.68.1585251453248;
- Thu, 26 Mar 2020 12:37:33 -0700 (PDT)
+        id S1728383AbgCZTiq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 15:38:46 -0400
+Received: from mout.gmx.net ([212.227.15.18]:33791 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726340AbgCZTiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 15:38:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1585251514;
+        bh=nIDDfq+abaAHQYUdKZ8Szi95vJE1wabuhvaK9tddpb8=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=JPx1PEc54q6qkFcBInrqKWb080RTe8zqI7V8Jyf0uTmnyTE4QNP0ERKPtQfqIbQFa
+         AjOvcFDLBeU5TR5/zY86dLlnRM1ky+dzW7qGZplsJ2CzkGtYTe8nWFRFOy1odh0vi9
+         1wgt/6n/dvlsG4GkbHDG3ZIwHWygFYFLq3FwREvY=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([82.19.195.159]) by mail.gmx.com
+ (mrgmx004 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 1MOA3P-1itAv23I0f-00Oam8; Thu, 26 Mar 2020 20:38:33 +0100
+From:   Alex Dewar <alex.dewar@gmx.co.uk>
+Cc:     alex.dewar@gmx.co.uk, Hannes Reinecke <hare@suse.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: aic7xxx: aic97xx: Remove FreeBSD-specific code
+Date:   Thu, 26 Mar 2020 19:38:17 +0000
+Message-Id: <20200326193817.12568-1-alex.dewar@gmx.co.uk>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-References: <20200326144630.15011-1-daniel.lezcano@linaro.org>
- <CAJZ5v0iDuv0doOzFd140A17fhLKsdgZXbc_XMOuhUeDt70Jz+g@mail.gmail.com> <bb21941a-69ff-36fe-05dd-8f3eb63326dc@linaro.org>
-In-Reply-To: <bb21941a-69ff-36fe-05dd-8f3eb63326dc@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 26 Mar 2020 20:37:21 +0100
-Message-ID: <CAJZ5v0ghHFJCfG5vxE=O6+bD4neyvyF2WD6ASGptBaptm2-5Ow@mail.gmail.com>
-Subject: Re: [PATCH] powercap/drivers/idle_inject: Specify idle state max latency
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:EoKMGVgPqbm/NudaV7nK++v76WAKtvCJBuKOB1zX72dFD34r6O1
+ +YVbeQuCCDao2oBEV+B/nMqxaHkxGqtB3DcnO/GovLlWmTG3Zl0a0ZcW6s8T/mW9Mip+rNE
+ VWMXhEe6+Jymb4fXULwNHdFX2qkeFYxv4b2u/Uw6dCDrfMZ02GOxsKq9JH5es4BDWNa6uQo
+ W3MP4YwZmiah9WxkNAOvQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/VWNwnjenT4=:hnj19P/M1lK5/XCAcRQQvf
+ Zb4lLrtIXHElMj7Ih5uqZrFlp2Np4HsXskBmm2McYdJ+yiCBn4dq6qIQOSRm9nL29GKgrNDvB
+ RgkW5s+D5zfm7mnf/osiLmMpM0oO4lEgyHRNHNuDCKwTGwPUudiuvSAE6czetjCgKH4lQMfbN
+ Ui0BWhWV5ZN+kA/7sBhy+a9PSwxEEm6Ce1dLPwEjF/XzF+rS9j/S2Q4zr/YCqNcU0odLaK5+U
+ Y6I34ej01AsKaKJiwnJmavS+DlVThPYR6CdvPRmAgB754O5apAsUGupPgkU/LiNdaO7L5/1F0
+ 6jtYr7/LKTFANKx4derX9E1LC1RXIAX2mLZCaMFAPeJgxxw7S7mmihNobR68K9TKTps6V5y7M
+ B62Q5SHvt+IIgqLb/5iIJYe6JiuHyoseE6erN9B/XN3sTMgZLBg2bj3oLLcoGclAvu5qsP59Q
+ 3tkOgTBwI8R7Vm4GNg5Um44SRn57qw43VS5WuwoUmDOBPHEyuGE6iHatsGBikFOH+TlhI4tnB
+ vSZ+3Yj0Be9cjpYaIMR5D3/qQxjnmDAEgf+XaJYZzjNt9NLbYmsQmiUxPBTj/hCPgKqWkjECA
+ HPg6nr2yDTLlyXquXhCUQC6xjRnfgKym+eubXzzqP6v6phhXyaqvIJH2gcFqLeIoxnx9osOhG
+ lEfBwOmoCxNm1TGOMP0/rDfHHQguSEP7N0Vv06aY2oxFo1lpRmAFjP5U32V6M9Sbwhr6Ec+Aj
+ nZtk+qPhynFYLNN+pN8vRTo70m0uurySeVmIV6PtFzLKAyweIMQXdEBIopizRYOg7f0HZPjnO
+ mQU/Xf2wx0s8HJ5ENLeE6Ui0bj4BwMqjIxy7zjGsl4vnPoiKOZYcwrGbT7xC+K5qVqAHQBHP7
+ XV0Yj79QRoPkw1GXzkgsLysCb6z0BpDjrquxIgaBOtRQDoPVstW51oCwdQLZcoTIiGWRBgg7t
+ tzWsy8P0CT0WYF3H4h6lvF7bQU2QfxPDggFJOh3ENLSNTQHc2uZCVUIkXKCxYC0qHI4fudlwZ
+ Birfm2mqrBXuAKPjodGJx78DvbLCqX7s/Snbqj+oLoBwxLomcYzYXttlzDZfyYa6HrLSooYtd
+ /b18v8hXCbPkU+xjnHPEB4k+h/6jpwiUxtX4RRxLc+DBHHh03E6NeLK3oZlMvOyPARxS0TO6R
+ nnWro31Pfk0gAOKG8gSoWsVCOlInYPokDWWsTqQFkrSvTwcUTA82vMJYph0pT8GbwmItR/wQn
+ UnuC0xBFYmNQvKwfe
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 8:20 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 26/03/2020 20:14, Rafael J. Wysocki wrote:
-> > On Thu, Mar 26, 2020 at 3:48 PM Daniel Lezcano
-> > <daniel.lezcano@linaro.org> wrote:
-> >>
-> >> Currently the idle injection framework uses the play_idle()
-> >> function which puts the current CPU in an idle state. The idle
-> >> state is the deepest one, as specified by the latency constraint
-> >> when calling the subsequent play_idle_precise() function with the
-> >> INT_MAX.
-> >>
-> >> The idle_injection is used by the cpuidle_cooling device which
-> >> computes the idle / run duration to mitigate the temperature by
-> >> injecting idle cycles. The cooling device has no control on the
-> >> depth of the idle state.
-> >>
-> >> Allow finer control of the idle injection mechanism by allowing
-> >> to specify the latency for the idle state. Thus the cooling
-> >> device has the ability to have a guarantee on the exit latency of
-> >> the idle states it is injecting.
-> >>
-> >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org> ---
-> >> drivers/powercap/idle_inject.c | 27 ++++++++++++++++++++++++++-
-> >> include/linux/idle_inject.h    |  6 ++++++ 2 files changed, 32
-> >> insertions(+), 1 deletion(-)
->
-> [ ... ]
->
-> >> + +void idle_inject_set_latency(struct idle_inject_device
-> >> *ii_dev, +                            unsigned int latency_ns);
-> >> + +unsigned int idle_inject_get_latency(struct idle_inject_device
-> >> *ii_dev); + #endif /* __IDLE_INJECT_H__ */ --
-> >
-> > I would like to see a user of idle_inject_get_latency() before this
-> > goes in.
->
-> Do you mean a user for the set/get or the get only? If the latter,
-> there is no user yet I just added it to have an usual get/set helpers,
-> if that hurts, I can resend by removing it. If the former, there is a
-> patch I'm about to send which depends on the 'set'.
+The file aic79xx_core.c still contains some FreeBSD-specific code/macro
+guards, although cross-compatibility was in theory removed with
+commit cca6cb8ad7a8 ("scsi: aic7xxx: Fix build using bare-metal
+toolchain"). Remove it.
 
-So I wouldn't add the "get" thing at all if it has no users.
+Signed-off-by: Alex Dewar <alex.dewar@gmx.co.uk>
+=2D--
+ drivers/scsi/aic7xxx/aic79xx_core.c | 22 +---------------------
+ 1 file changed, 1 insertion(+), 21 deletions(-)
 
-Also it would be better to send this patch along with the other one
-depending on it.
+diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/ai=
+c79xx_core.c
+index 7e5044bf05c0..a336a458c978 100644
+=2D-- a/drivers/scsi/aic7xxx/aic79xx_core.c
++++ b/drivers/scsi/aic7xxx/aic79xx_core.c
+@@ -3107,19 +3107,6 @@ ahd_handle_nonpkt_busfree(struct ahd_softc *ahd)
+ 			printerror =3D 0;
+ 		} else if (ahd_sent_msg(ahd, AHDMSG_1B,
+ 					MSG_BUS_DEV_RESET, TRUE)) {
+-#ifdef __FreeBSD__
+-			/*
+-			 * Don't mark the user's request for this BDR
+-			 * as completing with CAM_BDR_SENT.  CAM3
+-			 * specifies CAM_REQ_CMP.
+-			 */
+-			if (scb !=3D NULL
+-			 && scb->io_ctx->ccb_h.func_code=3D=3D XPT_RESET_DEV
+-			 && ahd_match_scb(ahd, scb, target, 'A',
+-					  CAM_LUN_WILDCARD, SCB_LIST_NULL,
+-					  ROLE_INITIATOR))
+-				ahd_set_transaction_status(scb, CAM_REQ_CMP);
+-#endif
+ 			ahd_handle_devreset(ahd, &devinfo, CAM_LUN_WILDCARD,
+ 					    CAM_BDR_SENT, "Bus Device Reset",
+ 					    /*verbose_level*/0);
+@@ -6067,22 +6054,17 @@ ahd_alloc(void *platform_arg, char *name)
+ {
+ 	struct  ahd_softc *ahd;
+
+-#ifndef	__FreeBSD__
+ 	ahd =3D kmalloc(sizeof(*ahd), GFP_ATOMIC);
+ 	if (!ahd) {
+ 		printk("aic7xxx: cannot malloc softc!\n");
+ 		kfree(name);
+ 		return NULL;
+ 	}
+-#else
+-	ahd =3D device_get_softc((device_t)platform_arg);
+-#endif
++
+ 	memset(ahd, 0, sizeof(*ahd));
+ 	ahd->seep_config =3D kmalloc(sizeof(*ahd->seep_config), GFP_ATOMIC);
+ 	if (ahd->seep_config =3D=3D NULL) {
+-#ifndef	__FreeBSD__
+ 		kfree(ahd);
+-#endif
+ 		kfree(name);
+ 		return (NULL);
+ 	}
+@@ -6206,9 +6188,7 @@ ahd_free(struct ahd_softc *ahd)
+ 		kfree(ahd->seep_config);
+ 	if (ahd->saved_stack !=3D NULL)
+ 		kfree(ahd->saved_stack);
+-#ifndef __FreeBSD__
+ 	kfree(ahd);
+-#endif
+ 	return;
+ }
+
+=2D-
+2.26.0
+
