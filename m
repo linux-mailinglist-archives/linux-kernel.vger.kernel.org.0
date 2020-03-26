@@ -2,111 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8909193CF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:34:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C369193D4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:51:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbgCZKeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 06:34:03 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50298 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727560AbgCZKeC (ORCPT
+        id S1728054AbgCZKvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 06:51:21 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:47857 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbgCZKvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 06:34:02 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jHPpk-0004nJ-V5; Thu, 26 Mar 2020 11:33:57 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 1959110069D; Thu, 26 Mar 2020 11:33:56 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Ionela Voinescu <ionela.voinescu@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-tip-commits@vger.kernel.org, x86 <x86@kernel.org>,
-        liviu.dudau@arm.com, sudeep.holla@arm.com,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Pawel Moll <pawel.moll@arm.com>,
+        Thu, 26 Mar 2020 06:51:21 -0400
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1N4yNG-1jP5eN2DeG-010sJL for <linux-kernel@vger.kernel.org>; Thu, 26 Mar
+ 2020 11:51:19 +0100
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id 5230564D88B
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 10:51:19 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id qWLGmhY8RLJd for <linux-kernel@vger.kernel.org>;
+        Thu, 26 Mar 2020 11:51:18 +0100 (CET)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id E05BC64CEE5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 11:51:18 +0100 (CET)
+Received: from pflmari.corp.cetitec.com (10.8.5.79) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Thu, 26 Mar 2020 11:51:18 +0100
+Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
+        id 5832D804FB; Thu, 26 Mar 2020 11:34:54 +0100 (CET)
+Date:   Thu, 26 Mar 2020 11:34:54 +0100
+From:   Alex Riesen <alexander.riesen@cetitec.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [tip: timers/core] clocksource/drivers/timer-probe: Avoid creating dead devices
-In-Reply-To: <CAGETcx_3GSKmSveiGrM2vQp=q57iZYc0T4ELMY7Zw8UwzPEnYA@mail.gmail.com>
-References: <20200111052125.238212-1-saravanak@google.com> <158460766637.28353.11325960928759668587.tip-bot2@tip-bot2> <20200324175955.GA16972@arm.com> <CAGETcx8Qhy3y66vJyi8kRvg1+hXf-goDvyty-bsG5qFrA-CKgg@mail.gmail.com> <CAGETcx80wvGnS0-MwJ9M9RR9Mny0jmmep+JfwaUJUOR2bfJYsQ@mail.gmail.com> <87lfnoxg2a.fsf@nanos.tec.linutronix.de> <CAGETcx_3GSKmSveiGrM2vQp=q57iZYc0T4ELMY7Zw8UwzPEnYA@mail.gmail.com>
-Date:   Thu, 26 Mar 2020 11:33:56 +0100
-Message-ID: <87imirxv57.fsf@nanos.tec.linutronix.de>
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH v4 0/9] media: adv748x: add support for HDMI audio
+Message-ID: <cover.1585218857.git.alexander.riesen@cetitec.com>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-Originating-IP: [10.8.5.79]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A290D7F536A6D7C67
+X-Provags-ID: V03:K1:FFhR6LTz2EZg+Ww9urmN1vgOM8TjPrtxYFXGZY5XK6iIrWm+DKs
+ lzq2tfyx4NimnLvLsxMAagjw6TOZPjISaI1gFufH6IRXk8EUTSpKd8XuWLQDaZ/aOb0z4FG
+ uVjrGOe37H6gGRm1j5TxUinwD2x7ukQTr5KHbtujcL3kB2+u2w6fu41ugJtfouSD616AejF
+ aEpEqdYX8VtFkPoPk8fvg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:P+mL37FFhEM=:vkupZQld0G9QhzBaQX/WcJ
+ OzVobsvD/g4s9FEReZfVQ/AWJ+1RwIyo35deF0ZZ63H7iBx3UIblLpf4eCm/s7FqCFMFgHHuF
+ MluHBy/gI0oF24QPEzx9Ojqmo0kGOp5iZ+h4QSJP/cKaD4my51qR7ZA2qHpEJKqi6Vu4O77tW
+ rfDks5vSBcCOEZSiaa3oj8MCpb9/mGQbGbHvddnjjf15EON2uwbXpglhneFqKfFozXmNw48pw
+ thHZWYASu5a+rC222fV8gY91amHZhUQL/SqAC3ONGY9NpMtEIYBuLAHGtsW5NTmlZNJBabVmj
+ OS4py7PxjUh3TrOn4LYa2+vueLJLTESww6zLQ7YAktIwITnRxkusYSpy9CopyLmg8HWv0sTCP
+ jXh450SBsWvuOzsc6//nohOoGIEctS77ip3vLfZIEXUbHDeVUQrvYZZwtVBAFEnkKfiRxNk1q
+ 3TSFN/xiLBzf9S2OxtS5IZsIF2Ctk4hMrdKEhskR0IOAvh5UyzJUspmll4rfp5iRFkoLAeVpM
+ c8UFyVxSHkFHm9FhgNNi4IHnM11WVppi0kS8wqUHled62YjlxcH1JT/cQnJgeOs1LzJ1LBuCC
+ P1IN+8KToGWiyoYPV8EEE28HJTYmquaOU/yiHoHGfbUdMZkG5+OzcPYOANhybbuaqqlNSzAi+
+ NWE2j4fCzivDdCwfaKgqTOonT0fDaSam6ioIwSl3FaUHgg6aoI8Llv/lSYOcCwmFtgMrkjcMG
+ doRWT5GVWzGE+BLTk01GJnJyzix0eQt8HBoRwXfM4Mv6c1hidNlbsozheid+qSzqxujEkSgKc
+ +1n/aOCpHhk3EyZQQdBaN5m1EnGa5IJZpUMk9eESemsYCJmn3QdDopm+8jjE7KPy7+Jk9af
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Saravana Kannan <saravanak@google.com> writes:
-> On Wed, Mar 25, 2020 at 2:47 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
->> Saravana Kannan <saravanak@google.com> writes:
->> > On Tue, Mar 24, 2020 at 11:34 AM Saravana Kannan <saravanak@google.com> wrote:
->> > I took a closer look. So two different drivers [1] [2] are saying they
->> > know how to handle "arm,vexpress-sysreg" and are expecting to run at
->> > the same time. That seems a bit unusual to me. I wonder if this is a
->> > violation of the device-driver model because this expectation would
->> > never be allowed if these device drivers were actual drivers
->> > registered with driver-core. But that's a discussion for another time.
->> >
->> > To fix this issue you are facing, this patch should work:
->> > https://lore.kernel.org/lkml/20200324195302.203115-1-saravanak@google.com/T/#u
->>
->> Sorry, that's not a fix. That's a crude hack.
->
-> If device nodes are being handled by drivers without binding a driver
-> to struct devices, then not setting OF_POPULATED is wrong. So the
-> original patch sets it. There are also very valid reasons for allowing
-> OF_POPULATED to be cleared by a driver as discussed here [1].
->
-> The approach of the original patch (setting the flag and letting the
-> driver sometimes clear it) is also followed by many other frameworks
-> like irq, clk, i2c, etc. Even ingenic-timer.c already does it for the
-> exact same reason.
->
-> So, why is the vexpress fix a crude hack?
+This adds minimal support for accessing the HDMI audio provided through the
+I2S port available on ADV7481 and ADV7482 decoder devices by ADI.
+The port carries audio signal from the decoded HDMI stream.
 
-If it's the right thing to do and accepted by the DT folks, then the
-changelog should provide a proper explanation for it. The one you
-provided just baffles me. Plus the clearing of the flag really needs a
-big fat comment.
+Currently, the driver only supports I2S in TDM, 8 channels a 24bit at 48kHz.
+Furthermore, only left-justified, 8 slots, 32bit/slot TDM, at 256fs has been
+ever tried.
 
-It still does not make any sense to me.
+An ADV7482 on the Renesas Salvator-X ES1.1 (R8A77950 SoC) was used during
+development of this code.
 
-arm,vexpress-sysreg is a MFD device, so can the ARM people please
-explain, why the sched clock part is not just another MFD sub-device or
-simply has it's own DT match?
+Changes since v3:
+  - use clk_hw instead of clk
+    Suggested-by: Stephen Boyd <sboyd@kernel.org>
 
->> As this is also causing trouble on tegra30-cardhu-a04 the only sane
->> solution is to revert it and start over with a proper solution for the
->> vexpress problem and a root cause analysis for the tegra.
->
-> If someone can tell me which of the timer drivers are relevant for
-> tegra30-cardhu-a04, I can help fix it.
+  - formatting improvements and use const where possible
 
-git grep perhaps? And that's pretty much the same problem:
+  - removed implementation of log_status and EDID setting ioctls,
+    those will be submitted as separate patches.
+    Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-drivers/clocksource/timer-tegra.c:TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
-drivers/rtc/rtc-tegra.c:        { .compatible = "nvidia,tegra20-rtc", },
+Changes since v2:
+  - prepare/enable the clock when it is used, as it seems nothing else does
+    this otherwise
 
-Without looking deeper I suspect that these two are not the only ones.
+  - give the clock a unique name to ensure it can be registered if there are
+    multiple adv748x devices in the system
 
-Can the DT folks pretty please comment on this and provide some guidance
-how to fix that w/o sprinkling 
+  - remove optionality note from clock cell description to ensure the device
+    description matches the real device (the line is always present, even
+    if not used)
 
-    of_node_clear_flag(node, OF_POPULATED);
+Changes since v1:
+  - Add ssi4_ctrl pin group to the sound pins. The pins are responsible for
+    SCK4 (sample clock) WS4 and (word boundary input), and are required for
+    SSI audio input over I2S.
+    Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-all over the place?
+  - Removed the audio clock C from the list of clocks of adv748x,
+    it is exactly the other way around.
+    Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Thanks,
+  - Add an instance of (currently) fixed rate I2S master clock (MCLK),
+    connected to the audio_clk_c line of the R-Car SoC.
+    Explicitly declare the device a clock producer and add it to the
+    list of clocks used by the audio system of the Salvator-X board.
+    Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-        tglx
+  - The implementation of DAI driver has been moved in a separate file
+    and modified to activate audio decoding and I2S streaming using
+    snd_soc_dai_... interfaces. This allows the driver to be used with
+    just ALSA interfaces.
+
+  - The ioctls for selecting audio output and muting have been removed,
+    as not applicable.
+    Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+    I have left implementation of the QUERYCAP in, as it seems to be required
+    by v4l-ctl to support loading of EDID for this node. And setting the EDID
+    is one feature I desperately need: there are devices which plainly refuse
+    to talk to the sink if it does not provide EDID they like.
+
+  - A device tree configuration without audio port will disable the audio code
+    altogether, supporting integrations where the port is not connected.
+
+  - The patches have been re-arranged, starting with the generic changes and
+    changes not related to audio directly. Those will be probably sent as a
+    separate series later.
+
+  - The whole series has been rebased on top of v5.6-rc6
+
+Alex Riesen (9):
+  media: adv748x: fix end-of-line terminators in diagnostic statements
+  media: adv748x: include everything adv748x.h needs into the file
+  media: adv748x: reduce amount of code for bitwise modifications of
+    device registers
+  media: adv748x: add definitions for audio output related registers
+  media: adv748x: add support for HDMI audio
+  media: adv748x: prepare/enable mclk when the audio is used
+  media: adv748x: only activate DAI if it is described in device tree
+  dt-bindings: adv748x: add information about serial audio interface
+    (I2S/TDM)
+  arm64: dts: renesas: salvator: add a connection from adv748x codec
+    (HDMI input) to the R-Car SoC
+
+ .../devicetree/bindings/media/i2c/adv748x.txt |  16 +-
+ .../boot/dts/renesas/r8a77950-salvator-x.dts  |   3 +-
+ .../boot/dts/renesas/salvator-common.dtsi     |  47 ++-
+ drivers/media/i2c/adv748x/Makefile            |   3 +-
+ drivers/media/i2c/adv748x/adv748x-afe.c       |   6 +-
+ drivers/media/i2c/adv748x/adv748x-core.c      |  45 +--
+ drivers/media/i2c/adv748x/adv748x-csi2.c      |   8 +-
+ drivers/media/i2c/adv748x/adv748x-dai.c       | 278 ++++++++++++++++++
+ drivers/media/i2c/adv748x/adv748x-hdmi.c      |   6 +-
+ drivers/media/i2c/adv748x/adv748x.h           |  65 +++-
+ 10 files changed, 435 insertions(+), 42 deletions(-)
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-dai.c
+
+-- 
+2.25.1.25.g9ecbe7eb18
+
