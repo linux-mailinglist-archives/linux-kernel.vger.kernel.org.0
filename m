@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75C2F1936BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 04:25:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34BD31936CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 04:25:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727831AbgCZDYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 23:24:35 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46061 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727702AbgCZDYb (ORCPT
+        id S1728036AbgCZDZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 23:25:17 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:46297 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727766AbgCZDYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 23:24:31 -0400
-Received: by mail-qk1-f193.google.com with SMTP id c145so5059891qke.12
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 20:24:31 -0700 (PDT)
+        Wed, 25 Mar 2020 23:24:33 -0400
+Received: by mail-qk1-f195.google.com with SMTP id u4so5057153qkj.13
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 20:24:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=ze3FGBZb0nSlBTYQ3vDSCVsFtbgdtnnRlj5C751EbXw=;
-        b=f49DFHwQ6bD5X4T6UQG6qlTqIEvg3jahXGHW4JpCoTMg2jEaJI6BxNqCBdECJgFfK3
-         4TI/epxBM6OVNuRhLYFo4jmICLO5LM/VcYhlagkyOCPXmvQqG/tUrcW4UrajjCAg3J/i
-         nu7t0GPzghw7vKGqT3E0eKZZeIjB4VojCzJnaIgkNWWAZRv4BINCOVe4mktc2HxfAPAe
-         d45QCBnsMTjafOfsfWeFhzYbdxSqDyDUiATTddFL1b8T7FNgG01/VsZ9jk/wxRoHr4+P
-         9TVuZAZ9WR4x9gl4ppCWZP8/njPwv+C03K7zIiScDSoiqbgSeE1NpbS4WGKA4syFVN0f
-         NWaA==
+        bh=BKhAx6BebFw/oEITnjoM5nL1ibAHOPqPAiH4c9gaYa8=;
+        b=YNFNHzcL8opCZWUO6XnLzhdlsu4Yy+Rizy9yCWVbFy3ZRpvtcZv2puWnEOvUC3b1Vt
+         XHs+hMfat0AMwYaJFwe1RjtrQM1/uslxPjzHvIs14d1/5BioLW/YL75JijXhWEBD/9yF
+         5sEve9b8u+au7l1RKRTggSnH7moh6udjbiEcmw0ePceWaMVwexeB6yeHT0HIof6DX8JL
+         fQtTMoJKaZnvMyOB2sU5splZqi4JPAZcRlyG/7Pf29MOG3wsql0XOZOoGU/cimjTj6y2
+         2DVjOG87kdt+O93WALQb53VWLj/tVNY4j/j+Wlv7R+JedlxC22BoesYGUjxdDwJ3uBn7
+         zG/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=ze3FGBZb0nSlBTYQ3vDSCVsFtbgdtnnRlj5C751EbXw=;
-        b=RyXoLug8MSBQYhDPS+ontEhchrxqx1amH/G1ENRF2evhbSlqMwzDrLMBR42a8I9/up
-         MOcg+BzWzed8ttnXZ/w1DGtyTuD+pFJag+M74/T9HQL2Nqu5VAoHJZQWSqN8qp0FbIqJ
-         ibQtCR8tm4a8hI0ZiTdCLjRCF+NJev+Uwm4qUgPj/9l4eoARrmrN/fDaAwQctXkdW3pj
-         O21VB2Op2OTnSuddf224aVc2v4n2A8hWMqW7yaQMpVlOYzsLa3+mquBb7+jwgDNGH/uF
-         cZgBPzoeOZnjAGTn7qrdY3i6jXD8cjsg5zsCDVUj4cVfpULR9XqkOZ1fmnOJ2iM8l5Oh
-         HAGQ==
-X-Gm-Message-State: ANhLgQ1khF6n9rGp7az3lwjbv1+3ROgFgReUvNpshwtNM11824zG4OWx
-        miFrrPYo4ZdkmsdIHnIUxUh8YQ==
-X-Google-Smtp-Source: ADFU+vtdrLXfDGYEC5WyjNqxKQP1AFgGN296Vf8D65tgrkwFasA1en9oG0QpvaU+6qDqbwwX7VAE7Q==
-X-Received: by 2002:a37:63c5:: with SMTP id x188mr6282164qkb.276.1585193070601;
-        Wed, 25 Mar 2020 20:24:30 -0700 (PDT)
+        bh=BKhAx6BebFw/oEITnjoM5nL1ibAHOPqPAiH4c9gaYa8=;
+        b=F1Y3kg5XYIUDjQ97k9oCMYASC+10ecS4yluNAzZWhQDCNWRqjkZiBsAvLkPgUsMeEm
+         A8ibVOlk8GCHOJf59wtp4w5B8ZaaOtU+jnoIWRKRdX56ZEfuma0yMJgD9tkrUxkKnItA
+         VEjf7W96D7UCczMxjqscvmmrk57Gv7WNpXePSDk9KoEtAbP1kQq0APHF0cAKekdChC0d
+         6S0UZmCGCgxr/5hl6x9XHJTw43YuwCk09GV/W3KaeUcmP8uvZestd85IY/AgZrOS7Rk0
+         XQ5URGQHG9mT0tXszT/fhWnXSq+JBNRun7n7LME7yKk1xZif54rXrqc+HQ34HvsWU6pa
+         vvxA==
+X-Gm-Message-State: ANhLgQ3U+ozrYiNydl1V2/xacrI45ECKHIoEIadkdpj3VWeDK7CXJiL8
+        m7Atu4t+vsNVZAdFt1f1CRE9Lg==
+X-Google-Smtp-Source: ADFU+vsaZX4t6NPWbuLtjOb6I822H6afCjwQpAn6wOnDl28ywTXqmlBMj7nd/Y69a1G7LrS1oIl+Zw==
+X-Received: by 2002:a37:a543:: with SMTP id o64mr6053234qke.460.1585193072231;
+        Wed, 25 Mar 2020 20:24:32 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id u4sm620034qka.35.2020.03.25.20.24.29
+        by smtp.gmail.com with ESMTPSA id u4sm620034qka.35.2020.03.25.20.24.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 20:24:30 -0700 (PDT)
+        Wed, 25 Mar 2020 20:24:31 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -54,9 +54,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com, steve.capper@arm.com, rfontana@redhat.com,
         tglx@linutronix.de, selindag@gmail.com
-Subject: [PATCH v9 05/18] arm64: trans_pgd: pass NULL instead of init_mm to *_populate functions
-Date:   Wed, 25 Mar 2020 23:24:07 -0400
-Message-Id: <20200326032420.27220-6-pasha.tatashin@soleen.com>
+Subject: [PATCH v9 06/18] arm64: mm: Always update TCR_EL1 from __cpu_set_tcr_t0sz()
+Date:   Wed, 25 Mar 2020 23:24:08 -0400
+Message-Id: <20200326032420.27220-7-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200326032420.27220-1-pasha.tatashin@soleen.com>
 References: <20200326032420.27220-1-pasha.tatashin@soleen.com>
@@ -65,73 +65,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-trans_pgd_* should be independent from mm context because the tables that
-are created by this code are used when there are no mm context around, as
-it is between kernels. Simply replace mm_init's with NULL.
+From: James Morse <james.morse@arm.com>
 
+Because only the idmap sets a non-standard T0SZ, __cpu_set_tcr_t0sz()
+can check for platforms that need to do this using
+__cpu_uses_extended_idmap() before doing its work.
+
+The idmap is only built with enough levels, (and T0SZ bits) to map
+its single page.
+
+To allow hibernate, and then kexec to idmap their single page copy
+routines, __cpu_set_tcr_t0sz() needs to consider additional users,
+who may need a different number of levels/T0SZ-bits to the idmap.
+(i.e. VA_BITS may be enough for the idmap, but not hibernate/kexec)
+
+Always read TCR_EL1, and check whether any work needs doing for
+this request. __cpu_uses_extended_idmap() remains as it is used
+by KVM, whose idmap is also part of the kernel image.
+
+This mostly affects the cpuidle path, where we now get an extra
+system register read .
+
+CC: Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>
+CC: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: James Morse <james.morse@arm.com>
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 ---
- arch/arm64/mm/trans_pgd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm64/include/asm/mmu_context.h | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/mm/trans_pgd.c b/arch/arm64/mm/trans_pgd.c
-index c16ae4e2b496..37d7d1c60f65 100644
---- a/arch/arm64/mm/trans_pgd.c
-+++ b/arch/arm64/mm/trans_pgd.c
-@@ -67,7 +67,7 @@ static int copy_pte(struct trans_pgd_info *info, pmd_t *dst_pmdp,
- 	dst_ptep = trans_alloc(info);
- 	if (!dst_ptep)
- 		return -ENOMEM;
--	pmd_populate_kernel(&init_mm, dst_pmdp, dst_ptep);
-+	pmd_populate_kernel(NULL, dst_pmdp, dst_ptep);
- 	dst_ptep = pte_offset_kernel(dst_pmdp, start);
+diff --git a/arch/arm64/include/asm/mmu_context.h b/arch/arm64/include/asm/mmu_context.h
+index 3827ff4040a3..09ecbfd0ad2e 100644
+--- a/arch/arm64/include/asm/mmu_context.h
++++ b/arch/arm64/include/asm/mmu_context.h
+@@ -79,16 +79,15 @@ static inline bool __cpu_uses_extended_idmap_level(void)
+ }
  
- 	src_ptep = pte_offset_kernel(src_pmdp, start);
-@@ -90,7 +90,7 @@ static int copy_pmd(struct trans_pgd_info *info, pud_t *dst_pudp,
- 		dst_pmdp = trans_alloc(info);
- 		if (!dst_pmdp)
- 			return -ENOMEM;
--		pud_populate(&init_mm, dst_pudp, dst_pmdp);
-+		pud_populate(NULL, dst_pudp, dst_pmdp);
- 	}
- 	dst_pmdp = pmd_offset(dst_pudp, start);
+ /*
+- * Set TCR.T0SZ to its default value (based on VA_BITS)
++ * Ensure TCR.T0SZ is set to the provided value.
+  */
+ static inline void __cpu_set_tcr_t0sz(unsigned long t0sz)
+ {
+-	unsigned long tcr;
++	unsigned long tcr = read_sysreg(tcr_el1);
  
-@@ -126,7 +126,7 @@ static int copy_pud(struct trans_pgd_info *info, pgd_t *dst_pgdp,
- 		dst_pudp = trans_alloc(info);
- 		if (!dst_pudp)
- 			return -ENOMEM;
--		pgd_populate(&init_mm, dst_pgdp, dst_pudp);
-+		pgd_populate(NULL, dst_pgdp, dst_pudp);
- 	}
- 	dst_pudp = pud_offset(dst_pgdp, start);
+-	if (!__cpu_uses_extended_idmap())
++	if ((tcr & TCR_T0SZ_MASK) >> TCR_T0SZ_OFFSET == t0sz)
+ 		return;
  
-@@ -218,7 +218,7 @@ int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
- 		pudp = trans_alloc(info);
- 		if (!pudp)
- 			return -ENOMEM;
--		pgd_populate(&init_mm, pgdp, pudp);
-+		pgd_populate(NULL, pgdp, pudp);
- 	}
- 
- 	pudp = pud_offset(pgdp, dst_addr);
-@@ -226,7 +226,7 @@ int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
- 		pmdp = trans_alloc(info);
- 		if (!pmdp)
- 			return -ENOMEM;
--		pud_populate(&init_mm, pudp, pmdp);
-+		pud_populate(NULL, pudp, pmdp);
- 	}
- 
- 	pmdp = pmd_offset(pudp, dst_addr);
-@@ -234,7 +234,7 @@ int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
- 		ptep = trans_alloc(info);
- 		if (!ptep)
- 			return -ENOMEM;
--		pmd_populate_kernel(&init_mm, pmdp, ptep);
-+		pmd_populate_kernel(NULL, pmdp, ptep);
- 	}
- 
- 	ptep = pte_offset_kernel(pmdp, dst_addr);
+-	tcr = read_sysreg(tcr_el1);
+ 	tcr &= ~TCR_T0SZ_MASK;
+ 	tcr |= t0sz << TCR_T0SZ_OFFSET;
+ 	write_sysreg(tcr, tcr_el1);
 -- 
 2.17.1
 
