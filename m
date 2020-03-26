@@ -2,36 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25990193BDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:29:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B88F193BE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:30:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbgCZJ3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 05:29:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47962 "EHLO mx2.suse.de"
+        id S1727888AbgCZJaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 05:30:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48234 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbgCZJ3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 05:29:43 -0400
+        id S1726354AbgCZJaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 05:30:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D0E3BAF43;
-        Thu, 26 Mar 2020 09:29:41 +0000 (UTC)
-Subject: Re: [PATCH v3 1/2] x86/xen: Make the boot CPU idle task reliable
-To:     Miroslav Benes <mbenes@suse.cz>, boris.ostrovsky@oracle.com,
-        sstabellini@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, jpoimboe@redhat.com
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        jslaby@suse.cz, andrew.cooper3@citrix.com, jbeulich@suse.com
-References: <20200326092603.7230-1-mbenes@suse.cz>
- <20200326092603.7230-2-mbenes@suse.cz>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <f743b8bd-7552-24a8-e7bc-fa8b3bbcb9d2@suse.com>
-Date:   Thu, 26 Mar 2020 10:29:40 +0100
+        by mx2.suse.de (Postfix) with ESMTP id 3DF79AD08;
+        Thu, 26 Mar 2020 09:30:04 +0000 (UTC)
+Subject: Re: [RFC v2 1/2] kernel/sysctl: support setting sysctl parameters
+ from kernel command line
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-mm@kvack.org, Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Guilherme G . Piccoli" <gpiccoli@canonical.com>
+References: <20200325120345.12946-1-vbabka@suse.cz>
+ <202003251404.12A69348@keescook>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <f250814f-2c04-7bbf-035d-1dedcb260335@suse.cz>
+Date:   Thu, 26 Mar 2020 10:30:02 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200326092603.7230-2-mbenes@suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <202003251404.12A69348@keescook>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -39,22 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.03.20 10:26, Miroslav Benes wrote:
-> The unwinder reports the boot CPU idle task's stack on XEN PV as
-> unreliable, which affects at least live patching. There are two reasons
-> for this. First, the task does not follow the x86 convention that its
-> stack starts at the offset right below saved pt_regs. It allows the
-> unwinder to easily detect the end of the stack and verify it. Second,
-> startup_xen() function does not store the return address before jumping
-> to xen_start_kernel() which confuses the unwinder.
+On 3/25/20 10:21 PM, Kees Cook wrote:
+>> --- a/init/main.c
+>> +++ b/init/main.c
+>> @@ -1345,6 +1345,25 @@ void __weak free_initmem(void)
+>>  	free_initmem_default(POISON_FREE_INITMEM);
+>>  }
+>>  
+>> +static void do_sysctl_args(void)
+>> +{
+>> +#ifdef CONFIG_SYSCTL
+>> +	size_t len = strlen(saved_command_line) + 1;
+>> +	char *command_line;
+>> +
+>> +	command_line = kzalloc(len, GFP_KERNEL);
+>> +	if (!command_line)
+>> +		panic("%s: Failed to allocate %zu bytes\n", __func__, len);
+>> +
+>> +	strcpy(command_line, saved_command_line);
 > 
-> Amend both issues by moving the starting point of initial stack in
-> startup_xen() and storing the return address before the jump, which is
-> exactly what call instruction does.
+> No need to open-code this:
 > 
-> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
+> 	char *command_line;
+> 
+> 	command_line = kstrdup(saved_command_line, GFP_KERNEL);
+> 	if (!command_line)
+> 		panic("%s: Failed to allocate %zu bytes\n", __func__, len);
+> 
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Ah, right. I admit I basically copy_pasted some other parse_args user.
 
+>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+>> index ad5b88a53c5a..18c7f5606d55 100644
+>> --- a/kernel/sysctl.c
+>> +++ b/kernel/sysctl.c
+>> @@ -1980,6 +1980,68 @@ int __init sysctl_init(void)
+>>  	return 0;
+>>  }
+>>  
+>> +/* Set sysctl value passed on kernel command line. */
+>> +int process_sysctl_arg(char *param, char *val,
+>> +			       const char *unused, void *arg)
+>> +{
+>> +	size_t count;
+>> +	char *remaining;
+>> +	int err;
+>> +	loff_t ppos = 0;
+>> +	struct ctl_table *ctl, *found = NULL;
+>> +
+>> +	if (strncmp(param, "sysctl.", sizeof("sysctl.") - 1))
+>> +		return 0;
+>> +
+>> +	param += sizeof("sysctl.") - 1;
+>> +
+>> +	remaining = param;
+>> +	ctl = &sysctl_base_table[0];
+>> +
+>> +	while(ctl->procname != 0) {
+>> +		int len = strlen(ctl->procname);
+>> +		if (strncmp(remaining, ctl->procname, len)) {
+>> +			ctl++;
+>> +			continue;
+>> +		}
+> 
+> I think you need to validate that "len" is within "remaining" here
+> first.
 
-Juergen
+My reasoning was that if remaining terminates too early, the null byte would be
+different from non-null byte in ctl->procname and thus strncmp will return it as
+different?
+And the reason I used len in strncmp there is only so it doesn't compare the
+terminating null, because remaning can continue with ".foo" instead.
+
+>> +		if (ctl->child) {
+>> +			if (remaining[len] == '.') {
+>> +				remaining += len + 1;
+> 
+> And that "len + 1" is still valid.
+
+And since we passed strncmp(..., len), remaining[len] might be null byte, but
+then we can still compare it with '.'.
+
+But C strings are full of landmines.
