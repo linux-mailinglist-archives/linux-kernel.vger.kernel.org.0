@@ -2,164 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E284194583
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:36:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C03A194585
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:36:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbgCZRgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 13:36:13 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40906 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgCZRgN (ORCPT
+        id S1726067AbgCZRgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 13:36:31 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34381 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727495AbgCZRga (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 13:36:13 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w26so7832390edu.7;
-        Thu, 26 Mar 2020 10:36:11 -0700 (PDT)
+        Thu, 26 Mar 2020 13:36:30 -0400
+Received: by mail-oi1-f193.google.com with SMTP id d3so1674208oic.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 10:36:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8+Ugwyc8ML4peI25E2t3UFApnbL9Vw/SvVb5J6/qvFg=;
-        b=lPhMtOCLbROjP2BLncSQ9jCvAf5x53CJgO1FmY67FXg9UduaalPhxePkOSGGXtqTK9
-         z0WTnfs5jhx76mvR2fBXM8pJTy/vfl5CkIWoBaypUI+aRsMoctrlFT6gT9QlAShOFgnJ
-         OhO5lpz0bAsPTpWpObd39j1AxBxVB27cegmgA79Qt25nDojzSsvzXrlT7AVhsGJO3usb
-         v5oEj21GAfemq4xyeQyW6eKyJyWggVhoryC5SX/ealeEiniEmAfv0rAcm1G+50RHQjsG
-         JL2Dauenw6nvMUnF7Y5l67J1GOsQVlc7tdzjQpnUkhpKWVepZ93bUDDJLDbL0HNKA20/
-         C0/g==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Ksp5Sn0D2BCzxAWL5WIyush4E3FbeS39jm1gaEuKlPM=;
+        b=aom4ucNcTUQhWPzVTqDvFvPAfYHfWfK0KLSjwT7h+o8E+zDmiouxvPbHIuwl5pVfUY
+         8GCufmcl8u3PZF9YMIWcrKqJ6EHbF4eYWr2mRvWj34BTIFk34r6TcInkAgUovApwkg3O
+         2ueLARfDzJxGCUeT6GiGdxUIGSyvnbUjRimkCviSJnK35uI+KiZXfruurW3fNlZJ+Xzw
+         DmeeGVPr7T+um/KhA6QhHNfJsIVI7uhiXqReqvolCWpHGw83HSDPOZTp+nNX5yJSNuMZ
+         p2b0ANcN/SPeBjNg8ybQ5St4js7J2n7+inzA+w60BpHcz407XVGG5RZNHRhVZc2NE76J
+         1t3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8+Ugwyc8ML4peI25E2t3UFApnbL9Vw/SvVb5J6/qvFg=;
-        b=lhdRqVfm+XFTW+W5/MeVGmZR94S0pr/ubSdgZRAepyA5CCLhYD6z71REH7m1WCoiuO
-         GTEnrNKDIubAFWzQeVj84bHvMdbkaCraFEIfGp3BVxpvxFEMA15KA2+o6DGjZX3tlyeD
-         PoWYxG/pHpbJmNqs+J8zrfO1yRaW0uceixJPtctd5IBDKk3BtlJC7/er6f1SYiisOTt+
-         Pn/mFMrOmz9f/lA8WpOR3DuK1MFL3U88kxaPrgm1TnH4s9Y79GR3AqLXvc+lMth7QQeZ
-         Fl5LLnwH3/YTY3Eu5ooTJgKnxEZfp4WVF/Vq84HCMwcX3YngX1W0q/UhvyPZccNfGJxP
-         /W1Q==
-X-Gm-Message-State: ANhLgQ2V0UXkawr5INrWgtsQ8AS+FQJfS7VMQ+GxCHG195gLZjx1syy/
-        ibyUJWJf/Ucpl/oLPkAcZRc=
-X-Google-Smtp-Source: ADFU+vsrsA/iixmQ2Wh7lUtLnt+k2r/AoPzphAGrjbVY1iT6R8i2W1Zt6miMmd2Qs7O9ItaLYWsZtg==
-X-Received: by 2002:a17:906:fd7:: with SMTP id c23mr9080221ejk.312.1585244170431;
-        Thu, 26 Mar 2020 10:36:10 -0700 (PDT)
-Received: from Ansuel-XPS.localdomain ([79.53.232.203])
-        by smtp.googlemail.com with ESMTPSA id d11sm375409ejd.2.2020.03.26.10.36.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 10:36:09 -0700 (PDT)
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Andy Gross <agross@kernel.org>
-Cc:     Ajay Kishore <akisho@codeaurora.org>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] pinctrl: qcom: use scm_call to route GPIO irq to Apps
-Date:   Thu, 26 Mar 2020 18:35:24 +0100
-Message-Id: <20200326173524.15236-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Ksp5Sn0D2BCzxAWL5WIyush4E3FbeS39jm1gaEuKlPM=;
+        b=nY1drfC4vCI/BPkTO4wbZ7HTWWXN8cko3s28JsJgSb/CtbVyvWSZZMVyhHmF17yU01
+         uNSgYA8GfH/GDsIfSsSKXArGehoNKDrS7RxMoWuv0i7BxnpOhTuhuL0N8HNtsnTlM9cI
+         mjBWUN8EI0qsGVTptVR5oplpag5MCiXdw8Qx5J9N3DHVr4NmdswKg84FMuJpyp1ktFZv
+         zKji+gnnPOOGVp7wQffdpdg+ODKUlIqDaQEh7Pzu8FMpdPnX1gF3pdK2mUXtBeUvCSkJ
+         S+/NOBtKZozltYz8vuyk8nj1WKR5S7FhXfkA0KkNFLPspKYhtQKzoNgMduWdYw9KkG9G
+         kfsQ==
+X-Gm-Message-State: ANhLgQ3aeJ2B/kpbgtAWwR6fgK4FKUw6hVCsvQ7GsM95bsJ6I9JFtD9J
+        OnThvVwp3aV3a5LADObpE3ESOODvckmQ552NYPejvg==
+X-Google-Smtp-Source: ADFU+vsUFgYfTh9MfYEpNtnCc+Ey7SO/N36tAbJifWJH/LQd66sU0sgoNrCQ52m6Fhte7Jrd4RO8rT31PNt+Uh5W3fg=
+X-Received: by 2002:aca:f541:: with SMTP id t62mr993785oih.172.1585244189614;
+ Thu, 26 Mar 2020 10:36:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200111052125.238212-1-saravanak@google.com> <158460766637.28353.11325960928759668587.tip-bot2@tip-bot2>
+ <20200324175955.GA16972@arm.com> <CAGETcx8Qhy3y66vJyi8kRvg1+hXf-goDvyty-bsG5qFrA-CKgg@mail.gmail.com>
+ <CAGETcx80wvGnS0-MwJ9M9RR9Mny0jmmep+JfwaUJUOR2bfJYsQ@mail.gmail.com>
+ <87lfnoxg2a.fsf@nanos.tec.linutronix.de> <CAGETcx_3GSKmSveiGrM2vQp=q57iZYc0T4ELMY7Zw8UwzPEnYA@mail.gmail.com>
+ <4be7d1bf-9039-4ca0-02ac-d90d01cf1c4b@linaro.org>
+In-Reply-To: <4be7d1bf-9039-4ca0-02ac-d90d01cf1c4b@linaro.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Thu, 26 Mar 2020 10:35:46 -0700
+Message-ID: <CAGETcx_uz91H-+6YfChA0PsGsC6Vc90grhTsgG3pAv=xGtqpSA@mail.gmail.com>
+Subject: Re: [tip: timers/core] clocksource/drivers/timer-probe: Avoid
+ creating dead devices
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ionela Voinescu <ionela.voinescu@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-tip-commits@vger.kernel.org, x86 <x86@kernel.org>,
+        liviu.dudau@arm.com, sudeep.holla@arm.com,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ajay Kishore <akisho@codeaurora.org>
+On Thu, Mar 26, 2020 at 3:18 AM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+>
+> Hi Saravana,
+>
+> On 25/03/2020 23:56, Saravana Kannan wrote:
+> > On Wed, Mar 25, 2020 at 2:47 PM Thomas Gleixner
+> > <tglx@linutronix.de> wrote:
+> >>
+> >> Saravana Kannan <saravanak@google.com> writes:
+> >>> On Tue, Mar 24, 2020 at 11:34 AM Saravana Kannan
+> >>> <saravanak@google.com> wrote: I took a closer look. So two
+> >>> different drivers [1] [2] are saying they know how to handle
+> >>> "arm,vexpress-sysreg" and are expecting to run at the same
+> >>> time. That seems a bit unusual to me. I wonder if this is a
+> >>> violation of the device-driver model because this expectation
+> >>> would never be allowed if these device drivers were actual
+> >>> drivers registered with driver-core. But that's a discussion
+> >>> for another time.
+> >>>
+> >>> To fix this issue you are facing, this patch should work:
+> >>> https://lore.kernel.org/lkml/20200324195302.203115-1-saravanak@google=
+.com/T/#u
+> >>
+> >>
+> >>>
+> >>>
+> >>>
+> > Sorry, that's not a fix. That's a crude hack.
+> >
+> > If device nodes are being handled by drivers without binding a
+> > driver to struct devices, then not setting OF_POPULATED is wrong.
+> > So the original patch sets it. There are also very valid reasons
+> > for allowing OF_POPULATED to be cleared by a driver as discussed
+> > here [1].
+> >
+> > The approach of the original patch (setting the flag and letting
+> > the driver sometimes clear it) is also followed by many other
+> > frameworks like irq, clk, i2c, etc. Even ingenic-timer.c already
+> > does it for the exact same reason.
+> >
+> > So, why is the vexpress fix a crude hack?
+> >
+> >> As this is also causing trouble on tegra30-cardhu-a04 the only
+> >> sane solution is to revert it and start over with a proper
+> >> solution for the vexpress problem and a root cause analysis for
+> >> the tegra.
+> >
+> > If someone can tell me which of the timer drivers are relevant for
+> > tegra30-cardhu-a04, I can help fix it. If you want to revert the
+> > original patch first before waiting for a tegra fix, that's okay by
+> > me.
+>
+>
+> It seems the OF_POPULATED flag change spotted something wrong in
+> different drivers and that is a good thing. Thanks for your patch for
+> that.
+>
+> Without putting in question your analysis, we need to stabilize the
+> release, can you send a revert of your patch?
+>
+> Let's try to figure out what is happening and fix the issues in the
+> other drivers for the next cycle.
 
-For IPQ806x targets, TZ protects the registers that are used to
-configure the routing of interrupts to a target processor.
-To resolve this, this patch uses scm call to route GPIO interrupts
-to application processor. Also the scm call interface is changed.
+Make sense. Will do soon.
 
-Signed-off-by: Ajay Kishore <akisho@codeaurora.org>
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
----
-v2:
-* Move static varibale in msm_pinctrl struct
-* Revert '4b024225c4a8 ("pinctrl: use devm_platform_ioremap_resource() to simplify code")'
-  to get base_reg addr
+-Saravana
 
- drivers/pinctrl/qcom/pinctrl-msm.c | 37 ++++++++++++++++++++++++++----
- 1 file changed, 32 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 9a8daa256a32..9627ebd41ff9 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -22,6 +22,8 @@
- #include <linux/reboot.h>
- #include <linux/pm.h>
- #include <linux/log2.h>
-+#include <linux/qcom_scm.h>
-+#include <linux/io.h>
- 
- #include <linux/soc/qcom/irq.h>
- 
-@@ -60,6 +62,9 @@ struct msm_pinctrl {
- 	struct irq_chip irq_chip;
- 	int irq;
- 
-+	int route_to_apps;
-+	u32 base_reg;
-+
- 	raw_spinlock_t lock;
- 
- 	DECLARE_BITMAP(dual_edge_irqs, MAX_NR_GPIO);
-@@ -883,10 +888,27 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 		clear_bit(d->hwirq, pctrl->dual_edge_irqs);
- 
- 	/* Route interrupts to application cpu */
--	val = msm_readl_intr_target(pctrl, g);
--	val &= ~(7 << g->intr_target_bit);
--	val |= g->intr_target_kpss_val << g->intr_target_bit;
--	msm_writel_intr_target(val, pctrl, g);
-+	if (pctrl->route_to_apps && pctrl->base_reg) {
-+		u32 addr = pctrl->base_reg + g->intr_target_reg;
-+		int ret;
-+
-+		qcom_scm_io_readl(addr, &val);
-+
-+		val &= ~(7 << g->intr_target_bit);
-+		val |= g->intr_target_kpss_val << g->intr_target_bit;
-+
-+		ret = qcom_scm_io_writel(addr, val);
-+		if (ret)
-+			dev_err(pctrl->dev,
-+				"Failed routing %lu interrupt to Apps proc",
-+				d->hwirq);
-+		}
-+	} else {
-+		val = msm_readl_intr_target(pctrl, g);
-+		val &= ~(7 << g->intr_target_bit);
-+		val |= g->intr_target_kpss_val << g->intr_target_bit;
-+		msm_writel_intr_target(val, pctrl, g);
-+	}
- 
- 	/* Update configuration for gpio.
- 	 * RAW_STATUS_EN is left on for all gpio irqs. Due to the
-@@ -1241,6 +1263,8 @@ int msm_pinctrl_probe(struct platform_device *pdev,
- 	pctrl->dev = &pdev->dev;
- 	pctrl->soc = soc_data;
- 	pctrl->chip = msm_gpio_template;
-+	pctrl->route_to_apps = of_device_is_compatible(pctrl->dev->of_node,
-+					"qcom,ipq8064-pinctrl");
- 
- 	raw_spin_lock_init(&pctrl->lock);
- 
-@@ -1253,9 +1277,12 @@ int msm_pinctrl_probe(struct platform_device *pdev,
- 				return PTR_ERR(pctrl->regs[i]);
- 		}
- 	} else {
--		pctrl->regs[0] = devm_platform_ioremap_resource(pdev, 0);
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		pctrl->regs[0] = devm_ioremap_resource(&pdev->dev, res);
- 		if (IS_ERR(pctrl->regs[0]))
- 			return PTR_ERR(pctrl->regs[0]);
-+		else
-+			pctrl->base_reg = res->start;
- 	}
- 
- 	msm_pinctrl_setup_pm_reset(pctrl);
--- 
-2.25.1
-
+>
+> Thanks
+>
+>   -- Daniel
+>
+>
+>
+> --
+> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
+M SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
