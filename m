@@ -2,96 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C81A21942C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:14:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 524561942CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:15:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbgCZPOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 11:14:21 -0400
-Received: from mail-il1-f198.google.com ([209.85.166.198]:37556 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727655AbgCZPOT (ORCPT
+        id S1728005AbgCZPP2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 11:15:28 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45030 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727431AbgCZPP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 11:14:19 -0400
-Received: by mail-il1-f198.google.com with SMTP id z89so5707730ilk.4
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 08:14:19 -0700 (PDT)
+        Thu, 26 Mar 2020 11:15:28 -0400
+Received: by mail-wr1-f65.google.com with SMTP id m17so8214377wrw.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 08:15:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=h4U844jPltBTNlYGJyCJI7cYyBDxAP1w1W8i3jCDF+o=;
+        b=JS+pLv9fDBxaQfEl9AuZOvc6smAsjUyx44iUyuGoFgU/xI8ifgOiBmPf7q+EwOTzsM
+         EpXbcerCl5zWUljBtjDrQNU+ZkQAqFlRHQHz/Sgm25kEXUNlFEgVkhizg/8hxJzJdDAS
+         PYQbRcOI/8QO2YFg5KUYQWS6bgtNNhEfLsNFoYlSDT/OZl1Fx0zqAvWcc1Oz+/2RdmCh
+         tbr6FAb7vhDHxKCfJZbU9sdwiG2jW86S1ndXd03uQjedW5jf3J76rCtzEGNUVFf9lyrB
+         C5yF1EG2fkF7H4k4v/BRBp9E0hbz/YxHTs14FPCO/ijpTZfmiGnA+hkp0L+Dj3YF5Fhz
+         nzYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=sMQYIcxP6s383S1Iv/2tUT3HdLMKF9nZyauaAtUzZEM=;
-        b=dG+3wd6UrePuxL6cPNpSWlHktyrC7gvKsHIpXzfw6QM81mQskWpHsDT91xt/Dx4wNv
-         OSxXotCqOj9iCzgbdCNSM9tTV1sAm96wE4tv11XMJf8QDHxCsZI9K3+zvnxv5Zkda9/6
-         vB7MpEztGZSomlNsbkR0/lv1+zg5lYAfgHPO45EjwgKMEMRYC23FKUtJx+bYddQbNnKU
-         7AnRhrvGmIx+HUw+CbohvEbscVhwKz9d8JJG/P9kTwi74wHQkfGkiBXdPBBpu2oPfDs7
-         8exCMI9x8C8uaFbZ2DxO4SaiogV0rjr7B7FDZwpbbKy6lzOUymMPQr5I4bsP2LL/U9/U
-         meQw==
-X-Gm-Message-State: ANhLgQ2clKX7GZfIRRBh1/0SJZVW1XezCC8MjymJpnuzl8PCWLaRcAZ3
-        ninB3M8QNB1jgny+wU3wUOJygDZEi9O33Ai2rybYpyDW23on
-X-Google-Smtp-Source: ADFU+vuS4lXG57+YM3bVs1vgJ/z/JIV1Uy0m8cbiF4B/9amQkvgycJ+FyjmwTmZl6UYrFWNtSaercpmV9IAuTecdiZbttwsiBwdK
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=h4U844jPltBTNlYGJyCJI7cYyBDxAP1w1W8i3jCDF+o=;
+        b=DBaXB6bVn13dk0tD5W95DElriX54QvC4MIks2v3kELEAdZEWIbxbrW5yhqYt4MIg0u
+         phfW/8ahYlUReXzNm0wDqRIwxlkNiD8bYMbsyVeJYuz+Vwk2yMh2Otjs+oC8Sao5FcQm
+         owBt+hf52a6u8Ld+ZeqcGktyDhE0hcaE2WZtEycKz8KcFypZcX06mC9E2cPh9IaqpkLC
+         lPBHPOApevtE2tHQSM/dNGTChtlot7sRcGfzuKk9Rw2oP8gGE6Kuj5wb3wG79+YPc3eY
+         W0vx8Py2vNjIR6WPV7BF/ODA9knKEvLqT9Pq5wd8acHOJxlSeUhudZ4l5al6ld0CxGot
+         7qbQ==
+X-Gm-Message-State: ANhLgQ3No63NpQ6iK8KaCzZGhrvL1uKuum6H/VtOpDht6xjOaOgx3XT7
+        3gv6CMH8nzervOz/OfX4kELvdLVXCsAj4Jode5lk2g==
+X-Google-Smtp-Source: ADFU+vuDPVK8YAR70/g3YIqHaMwtOomcLHlX/P94KVdu/G2/oJGtgeTYOw+ZOJ/sbGEWuQqyqRyKHRotaEG256Qbo1A=
+X-Received: by 2002:adf:efc9:: with SMTP id i9mr9415479wrp.23.1585235726390;
+ Thu, 26 Mar 2020 08:15:26 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a92:c9c9:: with SMTP id k9mr8765625ilq.307.1585235658914;
- Thu, 26 Mar 2020 08:14:18 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 08:14:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000055c12d05a1c3701e@google.com>
-Subject: KASAN: use-after-free Read in ath9k_htc_rx_msg
-From:   syzbot <syzbot+666280b21749af5d36db@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, ath9k-devel@qca.qualcomm.com,
-        davem@davemloft.net, kvalo@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+References: <20200319164227.87419-1-trishalfonso@google.com>
+ <20200319164227.87419-4-trishalfonso@google.com> <CACT4Y+YHPfP3LP04=Zc4NgyhH8FMJ9m-eU_VPjmk5SmGWo_fTg@mail.gmail.com>
+ <CAKFsvU+N=8=VmKVdNdf6os26z+vVD=vR=TL5GJtLQhR9FxOJUQ@mail.gmail.com> <CACT4Y+ZGcZhbkcAVVfKP1gUs7mg=LrSwBqhqpUozSX8Fof6ANA@mail.gmail.com>
+In-Reply-To: <CACT4Y+ZGcZhbkcAVVfKP1gUs7mg=LrSwBqhqpUozSX8Fof6ANA@mail.gmail.com>
+From:   Patricia Alfonso <trishalfonso@google.com>
+Date:   Thu, 26 Mar 2020 08:15:14 -0700
+Message-ID: <CAKFsvUK-9QU7SfKLoL0w75VgSOneO8DWciHTDYMfU8aD98Unbw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 3/3] KASAN: Port KASAN Tests to KUnit
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     David Gow <davidgow@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        kunit-dev@googlegroups.com,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Mar 26, 2020 at 2:12 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Tue, Mar 24, 2020 at 4:05 PM Patricia Alfonso
+> <trishalfonso@google.com> wrote:
+> >
+> > On Tue, Mar 24, 2020 at 4:25 AM Dmitry Vyukov <dvyukov@google.com> wrot=
+e:
+> > >
+> > > On Thu, Mar 19, 2020 at 5:42 PM 'Patricia Alfonso' via kasan-dev
+> > > <kasan-dev@googlegroups.com> wrote:
+> > > >
+> > > > Transfer all previous tests for KASAN to KUnit so they can be run
+> > > > more easily. Using kunit_tool, developers can run these tests with =
+their
+> > > > other KUnit tests and see "pass" or "fail" with the appropriate KAS=
+AN
+> > > > report instead of needing to parse each KASAN report to test KASAN
+> > > > functionalities. All KASAN reports are still printed to dmesg.
+> > > >
+> > > > Stack tests do not work in UML so those tests are protected inside =
+an
+> > > > "#if IS_ENABLED(CONFIG_KASAN_STACK)" so this only runs if stack
+> > > > instrumentation is enabled.
+> > > >
+> > > > copy_user_test cannot be run in KUnit so there is a separate test f=
+ile
+> > > > for those tests, which can be run as before as a module.
+> > >
+> > > Hi Patricia,
+> > >
+> > > FWIW I've got some conflicts applying this patch on latest linux-next
+> > > next-20200324. There are some changes to the tests in mm tree I think=
+.
+> > >
+> > > Which tree will this go through? I would be nice to resolve these
+> > > conflicts somehow, but I am not sure how. Maybe the kasan tests
+> > > changes are merged upstream next windows, and then rebase this?
+> > >
+> > > Also, how can I apply this for testing? I assume this is based on som=
+e
+> > > kunit branch? which one?
+> > >
+> > Hmm... okay, that sounds like a problem. I will have to look into the
+> > conflicts. I'm not sure which tree this will go through upstream; I
+> > expect someone will tell me which is best when the time comes. This is
+> > based on the kunit branch in the kunit documentation here:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.g=
+it/log/?h=3Dkunit
+>
+> I've checked out:
+>
+> commit 0476e69f39377192d638c459d11400c6e9a6ffb0 (HEAD, kselftest/kunit)
+> Date:   Mon Mar 23 12:04:59 2020 -0700
+>
+> But the build still fails for me:
+>
+> mm/kasan/report.c: In function =E2=80=98kasan_update_kunit_status=E2=80=
+=99:
+> mm/kasan/report.c:466:6: error: implicit declaration of function
+> =E2=80=98kunit_find_named_resource=E2=80=99 [-Werror=3Dimplicit-function-=
+declar]
+>   466 |  if (kunit_find_named_resource(cur_test, "kasan_data")) {
+>       |      ^~~~~~~~~~~~~~~~~~~~~~~~~
+> mm/kasan/report.c:467:12: warning: assignment to =E2=80=98struct
+> kunit_resource *=E2=80=99 from =E2=80=98int=E2=80=99 makes pointer from i=
+nteger without a cas]
+>   467 |   resource =3D kunit_find_named_resource(cur_test, "kasan_data");
+>       |            ^
+> mm/kasan/report.c:468:24: error: =E2=80=98struct kunit_resource=E2=80=99 =
+has no member
+> named =E2=80=98data=E2=80=99
+>   468 |   kasan_data =3D resource->data;
+>       |                        ^~
+>
+> What am I doing wrong?
 
-syzbot found the following crash on:
+This patchset relies on another RFC patchset from Alan:
+https://lore.kernel.org/linux-kselftest/1583251361-12748-1-git-send-email-a=
+lan.maguire@oracle.com/T/#t
 
-HEAD commit:    e17994d1 usb: core: kcov: collect coverage from usb comple..
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=113938c5e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d64370c438bc60
-dashboard link: https://syzkaller.appspot.com/bug?extid=666280b21749af5d36db
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13fdc1e5e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1507178de00000
+I thought I linked it in the commit message but it may only be in the
+commit message for part 2/3. It should work with Alan's patchset, but
+let me know if you have any trouble.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+666280b21749af5d36db@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in __wake_up_common+0x634/0x650 kernel/sched/wait.c:86
-Read of size 8 at addr ffff8881cec10000 by task swapper/1/0
-
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.6.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xef/0x16e lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xd3/0x314 mm/kasan/report.c:374
- __kasan_report.cold+0x37/0x77 mm/kasan/report.c:506
- kasan_report+0xe/0x20 mm/kasan/common.c:641
- __wake_up_common+0x634/0x650 kernel/sched/wait.c:86
- complete+0x51/0x70 kernel/sched/completion.c:36
- htc_process_conn_rsp drivers/net/wireless/ath/ath9k/htc_hst.c:138 [inline]
- ath9k_htc_rx_msg+0x7c2/0xaf0 drivers/net/wireless/ath/ath9k/htc_hst.c:443
- ath9k_hif_usb_reg_in_cb+0x1ba/0x630 drivers/net/wireless/ath/ath9k/hif_usb.c:718
- __usb_hcd_giveback_urb+0x29a/0x550 drivers/usb/core/hcd.c:1650
- usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1716
- dummy_timer+0x1258/0x32ae drivers/usb/gadget/udc/dummy_hcd.c:1966
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+--
+Best,
+Patricia
