@@ -2,357 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1842C19438F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:51:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB6E219439B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:53:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbgCZPva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 11:51:30 -0400
-Received: from mta-02.yadro.com ([89.207.88.252]:54926 "EHLO mta-01.yadro.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728005AbgCZPvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 11:51:25 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-01.yadro.com (Postfix) with ESMTP id 1EF6D412CA;
-        Thu, 26 Mar 2020 15:51:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:from:from:received:received:received; s=mta-01; t=
-        1585237880; x=1587052281; bh=iuA2WXC77xDlHEHU/nV2nGc7uYlesGCHfdx
-        IGV16i00=; b=XT9q9Ny/TrIJI68/+uJuBbzc939Yh0gLBNWnHxAlkdk0oP5LgNF
-        4JFhnrriEFmUY6ETjSUw7hdk2oYLQn38jy9NW30Hr9w6pOxh08Xt9Ne/ZMTCridz
-        dl7On+7PC3wzDZyaSN+UqVpprdfDtyXQjdejNfrDXE/7gJMm5HHadz4Y=
-X-Virus-Scanned: amavisd-new at yadro.com
-Received: from mta-01.yadro.com ([127.0.0.1])
-        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Yy1WZ0weHeoW; Thu, 26 Mar 2020 18:51:20 +0300 (MSK)
-Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mta-01.yadro.com (Postfix) with ESMTPS id F2567412CF;
-        Thu, 26 Mar 2020 18:51:18 +0300 (MSK)
-Received: from localhost.yadro.com (10.199.2.118) by T-EXCH-02.corp.yadro.com
- (172.17.10.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.1.669.32; Thu, 26
- Mar 2020 18:51:19 +0300
-From:   Ivan Mikhaylov <i.mikhaylov@yadro.com>
-CC:     Ivan Mikhaylov <i.mikhaylov@yadro.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v3 2/2] iio: proximity: Add driver support for vcnl3020 proximity sensor
-Date:   Thu, 26 Mar 2020 18:51:18 +0300
-Message-ID: <20200326155118.8224-3-i.mikhaylov@yadro.com>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200326155118.8224-1-i.mikhaylov@yadro.com>
-References: <20200326155118.8224-1-i.mikhaylov@yadro.com>
+        id S1728076AbgCZPxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 11:53:39 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:35582 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbgCZPxi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 11:53:38 -0400
+Received: by mail-ua1-f66.google.com with SMTP id a6so2299464uao.2;
+        Thu, 26 Mar 2020 08:53:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YdcKU2fWVmxV4EPZreK3DMbDp4S5sKe/Um/DZY8ELl8=;
+        b=s8gHmIaFL1kX+CM1NBeA07szf4fmIVNcN1dtCtvB+e98rldZHAksnmFCs9nchqNpeD
+         gyDZ9Nfz9RC2UO8zN6ebVAfu8Mo7qEvl+iQOw+Ms5v0ZIv8kTkZucLxH6ObvAknCLti4
+         RtgHbSEeBU2VvU1YTINKWte4gsFlMotqI/S3WVICLBK3eDAGeJGYmKJtQn8qcZBWU0cf
+         qDIHzFdxJpYNGV8X7NOR/tLjBXwDujTSj8ocx4dl30T/bhqsKc+8qhazAaKS8gnGK2gT
+         2bsnyveMmmzkiqJHgzQK/RQGdaHXW1A0kBElvUsRCIZTk54X/MsWTo588/EhrdCb9UcB
+         zfnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YdcKU2fWVmxV4EPZreK3DMbDp4S5sKe/Um/DZY8ELl8=;
+        b=tx3wXHppZF7XCGVbBhOkfL/ppadUJNBFED2+nGhQJiWyofcq9ahmQFmdoZleFUaKpT
+         X4aZmDEZLq1AxAgXgEBUJDH0Mriy6uF4Bljg16Y/i9InZMHq80TnWIRQSYMzFdGFYJB3
+         kq0ojkS4cbWG0xJKzpo/bDbGtTt91kdHyOha/0SoaGcKHn8lI49ZFL4l3pfOHib7a1bL
+         /TK0JTt2z4/17nUHj7eBdAeqVR9cUU7v5ekgcnue7Hc3pVYOpX5mzbLUPCN6VNEw6ob4
+         xFSioG9SK/6dK1jXvdzjWIsnM6mpVbAuPIc+zAb5THCmjAzD9TDEra5vxxwvFfppvggX
+         MwjQ==
+X-Gm-Message-State: ANhLgQ1hMM6xSeOxbI+gCH+YL9QT5HragyLD4KYlzEZ2V5vGC2k0yDH5
+        EdKV6lAqb+641j0VRA9gniJQk+P4qUV6F+rGz8A=
+X-Google-Smtp-Source: ADFU+vuWExg6rCqSh3w1DEZ0NxiONd73k4mLl2bXALhyGl8MnDC3+rIhbdlpOznsyZ7iBceZZhAalSf0cPDWnjAZRTU=
+X-Received: by 2002:ab0:480f:: with SMTP id b15mr6550343uad.11.1585238015906;
+ Thu, 26 Mar 2020 08:53:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.199.2.118]
-X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
- T-EXCH-02.corp.yadro.com (172.17.10.102)
-To:     unlisted-recipients:; (no To-header on input)
+References: <CADG63jDCTdgSxDRsN_9e3fKCAv5VduS5NNKWmqjByZ=4sT+HLQ@mail.gmail.com>
+ <000000000000cb35d705a1c3c747@google.com>
+In-Reply-To: <000000000000cb35d705a1c3c747@google.com>
+From:   Qiujun Huang <anenbupt@gmail.com>
+Date:   Thu, 26 Mar 2020 23:53:24 +0800
+Message-ID: <CADG63jDmhxE0mrbP8-M7LBHcq7bJGdNjxJ3OF-KMdosZxba0QQ@mail.gmail.com>
+Subject: Re: Re: WARNING: refcount bug in sctp_wfree
+To:     syzbot <syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com>
+Cc:     davem@davemloft.net, kuba@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-sctp@vger.kernel.org,
+        marcelo.leitner@gmail.com, netdev@vger.kernel.org,
+        nhorman@tuxdriver.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        vyasevich@gmail.com
+Content-Type: multipart/mixed; boundary="000000000000d2bada05a1c3fc5a"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Proximity sensor driver based on light/vcnl4000.c code.
-For now supports only the single on-demand measurement.
+--000000000000d2bada05a1c3fc5a
+Content-Type: text/plain; charset="UTF-8"
 
-The VCNL3020 is a fully integrated proximity sensor. Fully
-integrated means that the infrared emitter is included in the
-package. It has 16-bit resolution. It includes a signal
-processing IC and features standard I2C communication
-interface. It features an interrupt function.
+#syz test: upstream, 2c523b34
 
-Datasheet: http://www.vishay.com/docs/84150/vcnl3020.pdf
-Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
----
- drivers/iio/proximity/Kconfig    |  11 ++
- drivers/iio/proximity/Makefile   |   1 +
- drivers/iio/proximity/vcnl3020.c | 233 +++++++++++++++++++++++++++++++
- 3 files changed, 245 insertions(+)
- create mode 100644 drivers/iio/proximity/vcnl3020.c
+On Thu, Mar 26, 2020 at 11:38 PM syzbot
+<syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com> wrote:
+>
+> > #syz test: upstream
+>
+> want 2 args (repo, branch), got 10
+>
+> >
+> > On Tue, Mar 10, 2020 at 9:36 AM syzbot
+> > <syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com> wrote:
+> >>
+> >> Hello,
+> >>
+> >> syzbot found the following crash on:
+> >>
+> >> HEAD commit:    2c523b34 Linux 5.6-rc5
+> >> git tree:       upstream
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=155a5f29e00000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=a5295e161cd85b82
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=cea71eec5d6de256d54d
+> >> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164b5181e00000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166dd70de00000
+> >>
+> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >> Reported-by: syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com
+> >>
+> >> ------------[ cut here ]------------
+> >> refcount_t: underflow; use-after-free.
+> >> WARNING: CPU: 1 PID: 8668 at lib/refcount.c:28 refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
+> >> Kernel panic - not syncing: panic_on_warn set ...
+> >> CPU: 1 PID: 8668 Comm: syz-executor779 Not tainted 5.6.0-rc5-syzkaller #0
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> >> Call Trace:
+> >>  __dump_stack lib/dump_stack.c:77 [inline]
+> >>  dump_stack+0x1e9/0x30e lib/dump_stack.c:118
+> >>  panic+0x264/0x7a0 kernel/panic.c:221
+> >>  __warn+0x209/0x210 kernel/panic.c:582
+> >>  report_bug+0x1ac/0x2d0 lib/bug.c:195
+> >>  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+> >>  do_error_trap+0xca/0x1c0 arch/x86/kernel/traps.c:267
+> >>  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
+> >>  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+> >> RIP: 0010:refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
+> >> Code: c7 e4 ff d0 88 31 c0 e8 23 20 b3 fd 0f 0b eb 85 e8 8a 4a e0 fd c6 05 ff 70 b1 05 01 48 c7 c7 10 00 d1 88 31 c0 e8 05 20 b3 fd <0f> 0b e9 64 ff ff ff e8 69 4a e0 fd c6 05 df 70 b1 05 01 48 c7 c7
+> >> RSP: 0018:ffffc90001f577d0 EFLAGS: 00010246
+> >> RAX: 8c9c9070bbb4e500 RBX: 0000000000000003 RCX: ffff8880938a63c0
+> >> RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+> >> RBP: 0000000000000003 R08: ffffffff815e16e6 R09: fffffbfff15db92a
+> >> R10: fffffbfff15db92a R11: 0000000000000000 R12: dffffc0000000000
+> >> R13: ffff88809de82000 R14: ffff8880a89237c0 R15: 1ffff11013be52b0
+> >>  sctp_wfree+0x3b1/0x710 net/sctp/socket.c:9111
+> >>  skb_release_head_state+0xfb/0x210 net/core/skbuff.c:651
+> >>  skb_release_all net/core/skbuff.c:662 [inline]
+> >>  __kfree_skb+0x22/0x1c0 net/core/skbuff.c:678
+> >>  sctp_chunk_destroy net/sctp/sm_make_chunk.c:1454 [inline]
+> >>  sctp_chunk_put+0x17b/0x200 net/sctp/sm_make_chunk.c:1481
+> >>  __sctp_outq_teardown+0x80a/0x9d0 net/sctp/outqueue.c:257
+> >>  sctp_association_free+0x21e/0x7c0 net/sctp/associola.c:339
+> >>  sctp_cmd_delete_tcb net/sctp/sm_sideeffect.c:930 [inline]
+> >>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1318 [inline]
+> >>  sctp_side_effects net/sctp/sm_sideeffect.c:1185 [inline]
+> >>  sctp_do_sm+0x3c01/0x5560 net/sctp/sm_sideeffect.c:1156
+> >>  sctp_primitive_ABORT+0x93/0xc0 net/sctp/primitive.c:104
+> >>  sctp_close+0x231/0x770 net/sctp/socket.c:1512
+> >>  inet_release+0x135/0x180 net/ipv4/af_inet.c:427
+> >>  __sock_release net/socket.c:605 [inline]
+> >>  sock_close+0xd8/0x260 net/socket.c:1283
+> >>  __fput+0x2d8/0x730 fs/file_table.c:280
+> >>  task_work_run+0x176/0x1b0 kernel/task_work.c:113
+> >>  exit_task_work include/linux/task_work.h:22 [inline]
+> >>  do_exit+0x5ef/0x1f80 kernel/exit.c:801
+> >>  do_group_exit+0x15e/0x2c0 kernel/exit.c:899
+> >>  __do_sys_exit_group+0x13/0x20 kernel/exit.c:910
+> >>  __se_sys_exit_group+0x10/0x10 kernel/exit.c:908
+> >>  __x64_sys_exit_group+0x37/0x40 kernel/exit.c:908
+> >>  do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:294
+> >>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >> RIP: 0033:0x43ef98
+> >> Code: Bad RIP value.
+> >> RSP: 002b:00007ffcc7e7c398 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> >> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043ef98
+> >> RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+> >> RBP: 00000000004be7a8 R08: 00000000000000e7 R09: ffffffffffffffd0
+> >> R10: 000000002059aff8 R11: 0000000000000246 R12: 0000000000000001
+> >> R13: 00000000006d01a0 R14: 0000000000000000 R15: 0000000000000000
+> >> Kernel Offset: disabled
+> >> Rebooting in 86400 seconds..
+> >>
+> >>
+> >> ---
+> >> This bug is generated by a bot. It may contain errors.
+> >> See https://goo.gl/tpsmEJ for more information about syzbot.
+> >> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >>
+> >> syzbot will keep track of this bug report. See:
+> >> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >> syzbot can test patches for this bug, for details see:
+> >> https://goo.gl/tpsmEJ#testing-patches
+> >
+> > --
+> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/CADG63jDCTdgSxDRsN_9e3fKCAv5VduS5NNKWmqjByZ%3D4sT%2BHLQ%40mail.gmail.com.
 
-diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
-index d53601447da4..b8d2b17e60ac 100644
---- a/drivers/iio/proximity/Kconfig
-+++ b/drivers/iio/proximity/Kconfig
-@@ -112,6 +112,17 @@ config SRF08
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called srf08.
- 
-+config VCNL3020
-+	tristate "VCNL3020 proximity sensor"
-+	select REGMAP_I2C
-+	depends on I2C
-+	help
-+	  Say Y here if you want to build a driver for the Vishay VCNL3020
-+	  proximity sensor.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called vcnl3020.
-+
- config VL53L0X_I2C
- 	tristate "STMicroelectronics VL53L0X ToF ranger sensor (I2C)"
- 	depends on I2C
-diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
-index 0bb5f9de13d6..8245978ced30 100644
---- a/drivers/iio/proximity/Makefile
-+++ b/drivers/iio/proximity/Makefile
-@@ -12,5 +12,6 @@ obj-$(CONFIG_RFD77402)		+= rfd77402.o
- obj-$(CONFIG_SRF04)		+= srf04.o
- obj-$(CONFIG_SRF08)		+= srf08.o
- obj-$(CONFIG_SX9500)		+= sx9500.o
-+obj-$(CONFIG_VCNL3020)		+= vcnl3020.o
- obj-$(CONFIG_VL53L0X_I2C)	+= vl53l0x-i2c.o
- 
-diff --git a/drivers/iio/proximity/vcnl3020.c b/drivers/iio/proximity/vcnl3020.c
-new file mode 100644
-index 000000000000..c94c16120600
---- /dev/null
-+++ b/drivers/iio/proximity/vcnl3020.c
-@@ -0,0 +1,233 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Support for Vishay VCNL3020 proximity sensor on i2c bus.
-+ * Based on Vishay VCNL4000 driver code.
-+ *
-+ * TODO: interrupts.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/err.h>
-+#include <linux/delay.h>
-+#include <linux/regmap.h>
-+
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+
-+#define VCNL_DRV_NAME		"vcnl3020"
-+#define VCNL_REGMAP_NAME	"vcnl3020_regmap"
-+#define VCNL3020_PROD_ID	0x21
-+
-+#define VCNL_COMMAND		0x80 /* Command register */
-+#define VCNL_PROD_REV		0x81 /* Product ID and Revision ID */
-+#define VCNL_PROXIMITY_RATE	0x82 /* Rate of Proximity Measurement */
-+#define VCNL_LED_CURRENT	0x83 /* IR LED current for proximity mode */
-+#define VCNL_PS_RESULT_HI	0x87 /* Proximity result register, MSB */
-+#define VCNL_PS_RESULT_LO	0x88 /* Proximity result register, LSB */
-+#define VCNL_PS_ICR		0x89 /* Interrupt Control Register  */
-+
-+#define VCNL_PS_LO_THR_HI	0x8a /* High byte of low threshold value */
-+#define VCNL_PS_LO_THR_LO	0x8b /* Low byte of low threshold value */
-+#define VCNL_PS_HI_THR_HI	0x8c /* High byte of high threshold value */
-+#define VCNL_PS_HI_THR_LO	0x8d /* Low byte of high threshold value */
-+#define VCNL_ISR		0x8e /* Interrupt Status Register */
-+#define VCNL_PS_MOD_ADJ		0x8f /* Proximity Modulator Timing Adjustment */
-+
-+/* Bit masks for COMMAND register */
-+#define VCNL_PS_RDY		BIT(5) /* proximity data ready? */
-+#define VCNL_PS_OD		BIT(3) /* start on-demand proximity
-+					* measurement
-+					*/
-+
-+#define VCNL_ON_DEMAND_TIMEOUT	100000 /* on-demand measurement timeout in us */
-+#define VCNL_POLL_US		20000
-+
-+struct vcnl3020_data {
-+	struct regmap *regmap;
-+	struct device *dev;
-+	u8 rev;
-+	struct mutex lock;
-+};
-+
-+static int vcnl3020_init(struct vcnl3020_data *data)
-+{
-+	int rc;
-+	unsigned int reg;
-+	u32 led_current;
-+
-+	rc = device_property_read_u32(data->dev, "led-current", &led_current);
-+	if (rc) {
-+		dev_err(data->dev, "Couldn't get led current (%d)", rc);
-+		return rc;
-+	}
-+
-+	rc = regmap_read(data->regmap, VCNL_PROD_REV, &reg);
-+	if (rc) {
-+		dev_err(data->dev,
-+			"Error (%d) reading product revision", rc);
-+		return rc;
-+	}
-+
-+	if (reg == VCNL3020_PROD_ID) {
-+		data->rev = reg;
-+		mutex_init(&data->lock);
-+	} else {
-+		dev_err(data->dev,
-+			"Product id (%x) did not match vcnl3020 (%x)", reg,
-+			VCNL3020_PROD_ID);
-+		return -ENODEV;
-+	}
-+
-+	/* set led current */
-+	rc = regmap_write(data->regmap, VCNL_LED_CURRENT, led_current);
-+	if (rc) {
-+		dev_err(data->dev, "Error (%d) setting LED current", rc);
-+	}
-+
-+	return rc;
-+};
-+
-+static int vcnl3020_measure_proximity(struct vcnl3020_data *data, int *val)
-+{
-+	int rc;
-+	unsigned int reg;
-+
-+	mutex_lock(&data->lock);
-+
-+	rc = regmap_write(data->regmap, VCNL_COMMAND, VCNL_PS_OD);
-+	if (rc)
-+		goto err_unlock;
-+
-+	/* wait for data to become ready */
-+	rc = regmap_read_poll_timeout(data->regmap, VCNL_COMMAND, reg,
-+				      reg & VCNL_PS_RDY, VCNL_POLL_US,
-+				      VCNL_ON_DEMAND_TIMEOUT);
-+	if (rc) {
-+		dev_err(data->dev,
-+			"vcnl3020_measure() failed, data is not ready");
-+		goto err_unlock;
-+	}
-+
-+	rc = regmap_read(data->regmap, VCNL_PS_RESULT_HI, &reg);
-+	if (rc)
-+		goto err_unlock;
-+	*val = reg << 8;
-+	dev_dbg(data->dev, "result high byte 0x%x", rc);
-+
-+	rc = regmap_read(data->regmap, VCNL_PS_RESULT_LO, &reg);
-+	if (rc)
-+		goto err_unlock;
-+	*val |= reg;
-+	dev_dbg(data->dev, "result low byte 0x%x", rc);
-+
-+err_unlock:
-+	mutex_unlock(&data->lock);
-+
-+	return rc;
-+}
-+
-+static const struct iio_chan_spec vcnl3020_channels[] = {
-+	{
-+		.type = IIO_PROXIMITY,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-+	},
-+};
-+
-+static int vcnl3020_read_raw(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan, int *val,
-+			     int *val2, long mask)
-+{
-+	int rc;
-+	struct vcnl3020_data *data = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		switch (chan->type) {
-+		case IIO_PROXIMITY:
-+			rc = vcnl3020_measure_proximity(data, val);
-+			if (rc)
-+				return rc;
-+			return IIO_VAL_INT;
-+		default:
-+			return -EINVAL;
-+		}
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct iio_info vcnl3020_info = {
-+	.read_raw = vcnl3020_read_raw,
-+};
-+
-+static const struct regmap_config vcnl3020_regmap_config = {
-+	.name		= VCNL_REGMAP_NAME,
-+	.reg_bits	= 8,
-+	.val_bits	= 8,
-+	.max_register	= VCNL_PS_MOD_ADJ,
-+};
-+
-+static int vcnl3020_probe(struct i2c_client *client)
-+{
-+	struct vcnl3020_data *data;
-+	struct iio_dev *indio_dev;
-+	struct regmap *regmap;
-+	int rc;
-+
-+	regmap = devm_regmap_init_i2c(client, &vcnl3020_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		dev_err(&client->dev, "regmap_init failed!\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	data = iio_priv(indio_dev);
-+	i2c_set_clientdata(client, indio_dev);
-+	data->regmap = regmap;
-+	data->dev = &client->dev;
-+
-+	rc = vcnl3020_init(data);
-+	if (rc)
-+		return rc;
-+
-+	indio_dev->dev.parent = &client->dev;
-+	indio_dev->info = &vcnl3020_info;
-+	indio_dev->channels = vcnl3020_channels;
-+	indio_dev->num_channels = ARRAY_SIZE(vcnl3020_channels);
-+	indio_dev->name = VCNL_DRV_NAME;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+
-+	return devm_iio_device_register(&client->dev, indio_dev);
-+}
-+
-+static const struct i2c_device_id vcnl3020_id[] = {
-+	{ "vcnl3020", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, vcnl3020_id);
-+
-+static const struct of_device_id vcnl3020_of_match[] = {
-+	{
-+		.compatible = "vishay,vcnl3020",
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, vcnl3020_of_match);
-+
-+static struct i2c_driver vcnl3020_driver = {
-+	.driver = {
-+		.name   = VCNL_DRV_NAME,
-+		.of_match_table = vcnl3020_of_match,
-+	},
-+	.probe_new  = vcnl3020_probe,
-+	.id_table = vcnl3020_id,
-+};
-+module_i2c_driver(vcnl3020_driver);
-+
-+MODULE_AUTHOR("Ivan Mikhaylov <i.mikhaylov@yadro.com>");
-+MODULE_DESCRIPTION("Vishay VCNL3020 proximity sensor driver");
-+MODULE_LICENSE("GPL");
--- 
-2.21.1
+--000000000000d2bada05a1c3fc5a
+Content-Type: application/octet-stream; 
+	name="0001-sctp-fix-refcount-bug-in-sctp_wfree.patch"
+Content-Disposition: attachment; 
+	filename="0001-sctp-fix-refcount-bug-in-sctp_wfree.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k88xrstz0>
+X-Attachment-Id: f_k88xrstz0
 
+RnJvbSA2NWY2MDBlODVhOGRjNmU2YmNiYWI2OWU0MTExZTgzMDQxZjIyYzMyIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBRaXVqdW4gSHVhbmcgPGhxamFnYWluQGdtYWlsLmNvbT4KRGF0
+ZTogVGh1LCAyNiBNYXIgMjAyMCAyMzoyMjozOCArMDgwMApTdWJqZWN0OiBbUEFUQ0hdIHNjdHA6
+IGZpeCByZWZjb3VudCBidWcgaW4gc2N0cF93ZnJlZQoKV2Ugc2hvdWxkIGl0ZXJhdGUgb3ZlciB0
+aGUgZGF0YW1zZ3MgdG8gbW9kaWZ5CmFsbCBjaHVua3Moc2ticykgdG8gbmV3c2suCgpUaGUgZm9s
+bG93aW5nIGNhc2UgY2F1c2UgdGhlIGJ1ZzoKZm9yIHRoZSB0cm91YmxlIFNLQiwgaXQgd2FzIGlu
+IG91dHEtPnRyYW5zbWl0dGVkIGxpc3QKCnNjdHBfb3V0cV9zYWNrCiAgICAgICAgc2N0cF9jaGVj
+a190cmFuc21pdHRlZAogICAgICAgICAgICAgICAgU0tCIHdhcyBtb3ZlZCB0byBvdXRxLT5zYWNr
+ZWQgbGlzdAogICAgICAgIHRoZW4gdGhyb3cgYXdheSB0aGUgc2FjayBxdWV1ZQogICAgICAgICAg
+ICAgICAgU0tCIHdhcyBkZWxldGVkIGZyb20gb3V0cS0+c2Fja2VkCihidXQgaXQgd2FzIGhlbGQg
+YnkgZGF0YW1zZyBhdCBzY3RwX2RhdGFtc2dfdG9fYXNvYwpTbywgc2N0cF93ZnJlZSB3YXMgbm90
+IGNhbGxlZCBoZXJlKQoKdGhlbiBtaWdyYXRlIGhhcHBlbmVkCgogICAgICAgIHNjdHBfZm9yX2Vh
+Y2hfdHhfZGF0YWNodW5rKAogICAgICAgIHNjdHBfY2xlYXJfb3duZXJfdyk7CiAgICAgICAgc2N0
+cF9hc3NvY19taWdyYXRlKCk7CiAgICAgICAgc2N0cF9mb3JfZWFjaF90eF9kYXRhY2h1bmsoCiAg
+ICAgICAgc2N0cF9zZXRfb3duZXJfdyk7ClNLQiB3YXMgbm90IGluIHRoZSBvdXRxLCBhbmQgd2Fz
+IG5vdCBjaGFuZ2VkIHRvIG5ld3NrCgpmaW5hbGx5CgpfX3NjdHBfb3V0cV90ZWFyZG93bgogICAg
+ICAgIHNjdHBfY2h1bmtfcHV0IChmb3IgYW5vdGhlciBza2IpCiAgICAgICAgICAgICAgICBzY3Rw
+X2RhdGFtc2dfcHV0CiAgICAgICAgICAgICAgICAgICAgICAgIF9fa2ZyZWVfc2tiKG1zZy0+ZnJh
+Z19saXN0KQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNjdHBfd2ZyZWUgKGZvciBT
+S0IpCglTS0ItPnNrIHdhcyBzdGlsbCBvbGRzayAoc2tiLT5zayAhPSBhc29jLT5iYXNlLnNrKS4K
+ClJlcG9ydGVkLWFuZC10ZXN0ZWQtYnk6c3l6Ym90K2NlYTcxZWVjNWQ2ZGUyNTZkNTRkQHN5emth
+bGxlci5hcHBzcG90bWFpbC5jb20KU2lnbmVkLW9mZi1ieTogUWl1anVuIEh1YW5nIDxocWphZ2Fp
+bkBnbWFpbC5jb20+Ci0tLQogbmV0L3NjdHAvc29ja2V0LmMgfCAzMCArKysrKysrKysrKysrKysr
+KysrKysrLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAyMiBpbnNlcnRpb25zKCspLCA4IGRlbGV0
+aW9ucygtKQoKZGlmZiAtLWdpdCBhL25ldC9zY3RwL3NvY2tldC5jIGIvbmV0L3NjdHAvc29ja2V0
+LmMKaW5kZXggMWI1NmZjNDQwNjA2Li43NWFjYmQ1ZDQ1OTcgMTAwNjQ0Ci0tLSBhL25ldC9zY3Rw
+L3NvY2tldC5jCisrKyBiL25ldC9zY3RwL3NvY2tldC5jCkBAIC0xNDcsMjkgKzE0Nyw0MyBAQCBz
+dGF0aWMgdm9pZCBzY3RwX2NsZWFyX293bmVyX3coc3RydWN0IHNjdHBfY2h1bmsgKmNodW5rKQog
+CXNrYl9vcnBoYW4oY2h1bmstPnNrYik7CiB9CiAKKyNkZWZpbmUgdHJhdmVyc2VfYW5kX3Byb2Nl
+c3MoKQlcCitkbyB7CQkJCVwKKwltc2cgPSBjaHVuay0+bXNnOwlcCisJaWYgKG1zZyA9PSBwcmV2
+X21zZykJXAorCQljb250aW51ZTsJXAorCWxpc3RfZm9yX2VhY2hfZW50cnkoYywgJm1zZy0+Y2h1
+bmtzLCBmcmFnX2xpc3QpIHsJXAorCQlpZiAoKGNsZWFyICYmIGFzb2MtPmJhc2Uuc2sgPT0gYy0+
+c2tiLT5zaykgfHwJXAorCQkgICAgKCFjbGVhciAmJiBhc29jLT5iYXNlLnNrICE9IGMtPnNrYi0+
+c2spKQlcCisJCSAgICBjYihjKTsJXAorCX0JCQlcCit9IHdoaWxlICgwKQorCiBzdGF0aWMgdm9p
+ZCBzY3RwX2Zvcl9lYWNoX3R4X2RhdGFjaHVuayhzdHJ1Y3Qgc2N0cF9hc3NvY2lhdGlvbiAqYXNv
+YywKKwkJCQkgICAgICAgYm9vbCBjbGVhciwKIAkJCQkgICAgICAgdm9pZCAoKmNiKShzdHJ1Y3Qg
+c2N0cF9jaHVuayAqKSkKIAogeworCXN0cnVjdCBzY3RwX2RhdGFtc2cgKm1zZywgKnByZXZfbXNn
+ID0gTlVMTDsKIAlzdHJ1Y3Qgc2N0cF9vdXRxICpxID0gJmFzb2MtPm91dHF1ZXVlOworCXN0cnVj
+dCBzY3RwX2NodW5rICpjaHVuaywgKmM7CiAJc3RydWN0IHNjdHBfdHJhbnNwb3J0ICp0OwotCXN0
+cnVjdCBzY3RwX2NodW5rICpjaHVuazsKIAogCWxpc3RfZm9yX2VhY2hfZW50cnkodCwgJmFzb2Mt
+PnBlZXIudHJhbnNwb3J0X2FkZHJfbGlzdCwgdHJhbnNwb3J0cykKIAkJbGlzdF9mb3JfZWFjaF9l
+bnRyeShjaHVuaywgJnQtPnRyYW5zbWl0dGVkLCB0cmFuc21pdHRlZF9saXN0KQotCQkJY2IoY2h1
+bmspOworCQkJdHJhdmVyc2VfYW5kX3Byb2Nlc3MoKTsKIAogCWxpc3RfZm9yX2VhY2hfZW50cnko
+Y2h1bmssICZxLT5yZXRyYW5zbWl0LCB0cmFuc21pdHRlZF9saXN0KQotCQljYihjaHVuayk7CisJ
+CXRyYXZlcnNlX2FuZF9wcm9jZXNzKCk7CiAKIAlsaXN0X2Zvcl9lYWNoX2VudHJ5KGNodW5rLCAm
+cS0+c2Fja2VkLCB0cmFuc21pdHRlZF9saXN0KQotCQljYihjaHVuayk7CisJCXRyYXZlcnNlX2Fu
+ZF9wcm9jZXNzKCk7CiAKIAlsaXN0X2Zvcl9lYWNoX2VudHJ5KGNodW5rLCAmcS0+YWJhbmRvbmVk
+LCB0cmFuc21pdHRlZF9saXN0KQotCQljYihjaHVuayk7CisJCXRyYXZlcnNlX2FuZF9wcm9jZXNz
+KCk7CiAKIAlsaXN0X2Zvcl9lYWNoX2VudHJ5KGNodW5rLCAmcS0+b3V0X2NodW5rX2xpc3QsIGxp
+c3QpCi0JCWNiKGNodW5rKTsKKwkJdHJhdmVyc2VfYW5kX3Byb2Nlc3MoKTsKIH0KIAogc3RhdGlj
+IHZvaWQgc2N0cF9mb3JfZWFjaF9yeF9za2Ioc3RydWN0IHNjdHBfYXNzb2NpYXRpb24gKmFzb2Ms
+IHN0cnVjdCBzb2NrICpzaywKQEAgLTk1NzQsOSArOTU4OCw5IEBAIHN0YXRpYyBpbnQgc2N0cF9z
+b2NrX21pZ3JhdGUoc3RydWN0IHNvY2sgKm9sZHNrLCBzdHJ1Y3Qgc29jayAqbmV3c2ssCiAJICog
+cGF0aHMgd29uJ3QgdHJ5IHRvIGxvY2sgaXQgYW5kIHRoZW4gb2xkc2suCiAJICovCiAJbG9ja19z
+b2NrX25lc3RlZChuZXdzaywgU0lOR0xFX0RFUFRIX05FU1RJTkcpOwotCXNjdHBfZm9yX2VhY2hf
+dHhfZGF0YWNodW5rKGFzc29jLCBzY3RwX2NsZWFyX293bmVyX3cpOworCXNjdHBfZm9yX2VhY2hf
+dHhfZGF0YWNodW5rKGFzc29jLCB0cnVlLCBzY3RwX2NsZWFyX293bmVyX3cpOwogCXNjdHBfYXNz
+b2NfbWlncmF0ZShhc3NvYywgbmV3c2spOwotCXNjdHBfZm9yX2VhY2hfdHhfZGF0YWNodW5rKGFz
+c29jLCBzY3RwX3NldF9vd25lcl93KTsKKwlzY3RwX2Zvcl9lYWNoX3R4X2RhdGFjaHVuayhhc3Nv
+YywgZmFsc2UsIHNjdHBfc2V0X293bmVyX3cpOwogCiAJLyogSWYgdGhlIGFzc29jaWF0aW9uIG9u
+IHRoZSBuZXdzayBpcyBhbHJlYWR5IGNsb3NlZCBiZWZvcmUgYWNjZXB0KCkKIAkgKiBpcyBjYWxs
+ZWQsIHNldCBSQ1ZfU0hVVERPV04gZmxhZy4KLS0gCjIuMTcuMQoK
+--000000000000d2bada05a1c3fc5a--
