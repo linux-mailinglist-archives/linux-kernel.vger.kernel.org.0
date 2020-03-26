@@ -2,193 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C791943E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:00:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 417DB1943F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:04:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728793AbgCZQAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 12:00:08 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:52649 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728479AbgCZP6o (ORCPT
+        id S1728475AbgCZQDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 12:03:24 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36772 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727670AbgCZQDY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 11:58:44 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200326155843euoutp02655ba4ecd85725a1beb39ad362c97553~-5dsyWowl0075000750euoutp02X
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:58:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200326155843euoutp02655ba4ecd85725a1beb39ad362c97553~-5dsyWowl0075000750euoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585238323;
-        bh=ysgEdo9XebnXhbcjjAesZ87JzNw6hdR+CiYzzMFUriA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tde1AqY7BauG/WJPhUOBlCyxzRSN8d9syFZWGquNt72/3eQ/Jzk+VM+kqGP94tRhF
-         963WHbYZGu+dLjMtHQvVnGCqpQGLIb3qte5Nkj2NkUyzvJk9oUAlXqTUA2o4dc54FK
-         G+5tgTi2xyt3Y7O6E7b86dmbLi4HWG5oJiQANz2w=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200326155843eucas1p13e1d94945ea51ecf874626588d063115~-5dsgKc-92821328213eucas1p1v;
-        Thu, 26 Mar 2020 15:58:43 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id CC.F5.61286.331DC7E5; Thu, 26
-        Mar 2020 15:58:43 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200326155842eucas1p1aa92a260749305a13bebcd7999fd801b~-5dsS-gB82821828218eucas1p1v;
-        Thu, 26 Mar 2020 15:58:42 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200326155842eusmtrp1ac353618e775754154a85ea23478188c~-5dsSc9OX2090020900eusmtrp1i;
-        Thu, 26 Mar 2020 15:58:42 +0000 (GMT)
-X-AuditID: cbfec7f2-f0bff7000001ef66-c4-5e7cd133281e
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 7B.5A.08375.231DC7E5; Thu, 26
-        Mar 2020 15:58:42 +0000 (GMT)
-Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200326155842eusmtip195c31d1cb4c163551709cadfaaa76789~-5dr56S100452404524eusmtip1M;
-        Thu, 26 Mar 2020 15:58:42 +0000 (GMT)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com
-Subject: [PATCH v5 11/27] ata: fix CodingStyle issues in PATA timings code
-Date:   Thu, 26 Mar 2020 16:58:06 +0100
-Message-Id: <20200326155822.19400-12-b.zolnierkie@samsung.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200326155822.19400-1-b.zolnierkie@samsung.com>
+        Thu, 26 Mar 2020 12:03:24 -0400
+Received: by mail-lf1-f68.google.com with SMTP id s1so5302214lfd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 09:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xsryagRvVoFbMcFk5ndWvfGYfunGGRbmaGXhKdSiUek=;
+        b=ysHzBPwOVcBR9JOSVKRcaDNPdGCt48vT1oXTkE1P488x04V0hIlMkHTQ9qFkuiIPDM
+         lrDk+rsC+4cLeTMta7k5qsFJ9tncl2Y8xsP2sYnzW7ho8VIxanUrOOMQpaKHI/5PCASR
+         md1D5YIB7GCjjADYz/KRetihwuEq3c65ZpgotYCzWyKSfCe2neCEUKe21oOOpjH46SwG
+         XOixwF6KUlRbeOYhTPlmfJnaT9TjgSRhK0wy+/TH2nUYtE/UkUX+ISxm8xXvqPltYG2i
+         62RsRFZhEDzBwwbI2NNxRmfj0kwnNRfHZmcFjNfFovXVRwMLZpW51clMVCxmIPTQptyN
+         2Xjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xsryagRvVoFbMcFk5ndWvfGYfunGGRbmaGXhKdSiUek=;
+        b=d8NNbU7CflaF2N1DKrnUBmIbeHYft7u5kAJ2iZ8avwDsADgoKzmNc/CMCqfny06xiV
+         oVroll5Dx57HD0+IeXw6IOa94YjQxFRUM426ZVTgrl230avaUTowKEYmRAv80hSlWJIX
+         S5fZN1PoNHd1h3lTSUHb70h/R1zXr7Udcp4c9h+4FTl63i9im/Xs3PDQpwwC22wPG4mS
+         IiUeJNGfqNPUMbLKmDHMyzuYZqrH8Xdrw5P4Xft+y72dfEK6fUiQ/6ZvqXBivqdTpzt0
+         IvZO1E18jxniiYu4PuFIbyRU1kJqEVepC2Gpb9nCpqw9+7D40Gsw2bFgPIKKl4dLaaEc
+         o8PA==
+X-Gm-Message-State: ANhLgQ0XfrrmTgdNYXmT85AkUAS/34svUEKPGKUYDPnWUhMKyfSoCGTS
+        gO4JiQMYGQDhlqj9og771Cmd1jadBGcuzckK/WtPEA==
+X-Google-Smtp-Source: ADFU+vsPCjuvq+fZsWLA4/OXHd/Qhuz2rJukqcHy8gyX/twtEzJaEJhADKOK74SHMGwQc+BDJykgiPfIqS7GYrH3L50=
+X-Received: by 2002:ac2:4c29:: with SMTP id u9mr6293876lfq.149.1585238602095;
+ Thu, 26 Mar 2020 09:03:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djPc7rGF2viDO61cVisvtvPZrFxxnpW
-        i2e39jJZrFx9lMni2I5HTBaXd81hs1j+ZC2zxdzW6ewOHB47Z91l97h8ttTj0OEORo+Trd9Y
-        PHbfbGDz6NuyitHj8ya5APYoLpuU1JzMstQifbsEroyFW04xFyyQqZh66xpLA+MHsS5GTg4J
-        AROJbR+/MHUxcnEICaxglJi34zAjhPOFUWL25KnsEM5nRomfT46yw7ScatjECpFYziix6MMJ
-        ZriWJb8es4FUsQlYSUxsX8UIYosIKEj0/F7JBlLELPCeUWLFpL0sIAlhAS+JFX8mgDWwCKhK
-        nNy+AWwFr4CdxNrXN5gh1slLbP32iRXE5gSKL183nxmiRlDi5MwnYHOYgWqat84Gu0JCYBW7
-        xO7Nx4Be4gByXCT2XraHmCMs8er4FqgXZCROT+5hgahfxyjxt+MFVPN2Ronlk/+xQVRZS9w5
-        94sNZBCzgKbE+l36EGFHic0vtzNDzOeTuPFWEOIGPolJ26ZDhXklOtqEIKrVJDYs28AGs7Zr
-        50qotzwk9p28yT6BUXEWkm9mIflmFsLeBYzMqxjFU0uLc9NTiw3zUsv1ihNzi0vz0vWS83M3
-        MQJT0el/xz/tYPx6KekQowAHoxIPr0ZLTZwQa2JZcWXuIUYJDmYlEd6nkUAh3pTEyqrUovz4
-        otKc1OJDjNIcLErivMaLXsYKCaQnlqRmp6YWpBbBZJk4OKUaGNd8DHy9zMDphta2qxovjNhv
-        uudKJ6pUaOy+lZuUes9oie2iF6G8lf1aWq+szM9qK//1uJWwPO+XzwSPSedzH/QsO3BV8mLX
-        hD6ffRteMv09rZq7tOSumn8ld8XlVsnJpdWHYg6tLI2VbbxxaF1Br6Xpaatuz2M+zhcmHjdO
-        erDm7pXmhw81UpRYijMSDbWYi4oTAfcoMWZBAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xu7pGF2viDM79NrVYfbefzWLjjPWs
-        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
-        eOy+2cDm0bdlFaPH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6
-        djYpqTmZZalF+nYJehkLt5xiLlggUzH11jWWBsYPYl2MnBwSAiYSpxo2sXYxcnEICSxllDh8
-        7w6QwwGUkJE4vr4MokZY4s+1LjaImk+MEp/uT2EHSbAJWElMbF/FCGKLCChI9PxeCVbELPCV
-        UWLppG5mkISwgJfEij8T2EBsFgFViZPbN4A18wrYSax9fYMZYoO8xNZvn1hBbE6g+PJ188Hi
-        QgK2Eou/fGCCqBeUODnzCQuIzQxU37x1NvMERoFZSFKzkKQWMDKtYhRJLS3OTc8tNtQrTswt
-        Ls1L10vOz93ECIyYbcd+bt7BeGlj8CFGAQ5GJR5ejZaaOCHWxLLiytxDjBIczEoivE8jgUK8
-        KYmVValF+fFFpTmpxYcYTYGemMgsJZqcD4zmvJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFCAumJ
-        JanZqakFqUUwfUwcnFINjFMXithZfb/tuq/w1exjnmeslU4XXWYvLn971OPlx1cl3K8mbp7V
-        qX5YYtm+X/bR9nf+7szZ+3gh2/oTfc2f1Vg/6qWkRv/3sd/is+rJq/uvBFWtTLjaCx2+bD/x
-        p/CzoM/vbDeFrwYsVr8yde8V7fSZf3nOw1mr7q9dXbTK8ceyCYy6JlfCO5SUWIozEg21mIuK
-        EwGuO9fhrgIAAA==
-X-CMS-MailID: 20200326155842eucas1p1aa92a260749305a13bebcd7999fd801b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200326155842eucas1p1aa92a260749305a13bebcd7999fd801b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200326155842eucas1p1aa92a260749305a13bebcd7999fd801b
-References: <20200326155822.19400-1-b.zolnierkie@samsung.com>
-        <CGME20200326155842eucas1p1aa92a260749305a13bebcd7999fd801b@eucas1p1.samsung.com>
+References: <1585201349-70192-1-git-send-email-aubrey.li@intel.com>
+In-Reply-To: <1585201349-70192-1-git-send-email-aubrey.li@intel.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Thu, 26 Mar 2020 17:03:10 +0100
+Message-ID: <CAKfTPtBWQDkmkuxPTEC8QY1PXicZ51w7tjDPRm2rYM+8QN5rLQ@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Fix negative imbalance in imbalance calculation
+To:     Aubrey Li <aubrey.li@intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Vineeth Pillai <vpillai@digitalocean.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Phil Auld <pauld@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* fix the overly long line in ata_timing_quantize()
+On Thu, 26 Mar 2020 at 06:53, Aubrey Li <aubrey.li@intel.com> wrote:
+>
+> A negative imbalance value was observed after imbalance calculation,
+> this happens when the local sched group type is group_fully_busy,
+> and the average load of local group is greater than the selected
+> busiest group. Fix this problem by comparing the average load of the
+> local and busiest group before imbalance calculation formula.
+>
+> Suggested-by: Vincent Guittot <vincent.guittot@linaro.org>
+> Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
+> Cc: Phil Auld <pauld@redhat.com>
 
-* use standard kernel CodingStyle in ata_timing_merge()
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-* do not use assignment in if condition in ata_timing_compute()
-
-* fix non-standard comment style in ata_timing_compute()
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/ata/libata-core.c | 42 +++++++++++++++++++++++++--------------
- 1 file changed, 27 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 2ec1a49388ee..acdcedcb3d10 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -3251,7 +3251,8 @@ static const struct ata_timing ata_timing[] = {
- #define ENOUGH(v, unit)		(((v)-1)/(unit)+1)
- #define EZ(v, unit)		((v)?ENOUGH(((v) * 1000), unit):0)
- 
--static void ata_timing_quantize(const struct ata_timing *t, struct ata_timing *q, int T, int UT)
-+static void ata_timing_quantize(const struct ata_timing *t,
-+				struct ata_timing *q, int T, int UT)
- {
- 	q->setup	= EZ(t->setup,       T);
- 	q->act8b	= EZ(t->act8b,       T);
-@@ -3267,15 +3268,24 @@ static void ata_timing_quantize(const struct ata_timing *t, struct ata_timing *q
- void ata_timing_merge(const struct ata_timing *a, const struct ata_timing *b,
- 		      struct ata_timing *m, unsigned int what)
- {
--	if (what & ATA_TIMING_SETUP  ) m->setup   = max(a->setup,   b->setup);
--	if (what & ATA_TIMING_ACT8B  ) m->act8b   = max(a->act8b,   b->act8b);
--	if (what & ATA_TIMING_REC8B  ) m->rec8b   = max(a->rec8b,   b->rec8b);
--	if (what & ATA_TIMING_CYC8B  ) m->cyc8b   = max(a->cyc8b,   b->cyc8b);
--	if (what & ATA_TIMING_ACTIVE ) m->active  = max(a->active,  b->active);
--	if (what & ATA_TIMING_RECOVER) m->recover = max(a->recover, b->recover);
--	if (what & ATA_TIMING_DMACK_HOLD) m->dmack_hold = max(a->dmack_hold, b->dmack_hold);
--	if (what & ATA_TIMING_CYCLE  ) m->cycle   = max(a->cycle,   b->cycle);
--	if (what & ATA_TIMING_UDMA   ) m->udma    = max(a->udma,    b->udma);
-+	if (what & ATA_TIMING_SETUP)
-+		m->setup = max(a->setup, b->setup);
-+	if (what & ATA_TIMING_ACT8B)
-+		m->act8b = max(a->act8b, b->act8b);
-+	if (what & ATA_TIMING_REC8B)
-+		m->rec8b = max(a->rec8b, b->rec8b);
-+	if (what & ATA_TIMING_CYC8B)
-+		m->cyc8b = max(a->cyc8b, b->cyc8b);
-+	if (what & ATA_TIMING_ACTIVE)
-+		m->active = max(a->active, b->active);
-+	if (what & ATA_TIMING_RECOVER)
-+		m->recover = max(a->recover, b->recover);
-+	if (what & ATA_TIMING_DMACK_HOLD)
-+		m->dmack_hold = max(a->dmack_hold, b->dmack_hold);
-+	if (what & ATA_TIMING_CYCLE)
-+		m->cycle = max(a->cycle, b->cycle);
-+	if (what & ATA_TIMING_UDMA)
-+		m->udma = max(a->udma, b->udma);
- }
- EXPORT_SYMBOL_GPL(ata_timing_merge);
- 
-@@ -3306,8 +3316,8 @@ int ata_timing_compute(struct ata_device *adev, unsigned short speed,
- 	/*
- 	 * Find the mode.
- 	 */
--
--	if (!(s = ata_timing_find_mode(speed)))
-+	s = ata_timing_find_mode(speed);
-+	if (!s)
- 		return -EINVAL;
- 
- 	memcpy(t, s, sizeof(*s));
-@@ -3363,9 +3373,11 @@ int ata_timing_compute(struct ata_device *adev, unsigned short speed,
- 		t->recover = t->cycle - t->active;
- 	}
- 
--	/* In a few cases quantisation may produce enough errors to
--	   leave t->cycle too low for the sum of active and recovery
--	   if so we must correct this */
-+	/*
-+	 * In a few cases quantisation may produce enough errors to
-+	 * leave t->cycle too low for the sum of active and recovery
-+	 * if so we must correct this.
-+	 */
- 	if (t->active + t->recover > t->cycle)
- 		t->cycle = t->active + t->recover;
- 
--- 
-2.24.1
-
+> ---
+>  kernel/sched/fair.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index c1217bf..4a2ba3f 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8761,6 +8761,14 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+>
+>                 sds->avg_load = (sds->total_load * SCHED_CAPACITY_SCALE) /
+>                                 sds->total_capacity;
+> +               /*
+> +                * If the local group is more loaded than the selected
+> +                * busiest group don't try to pull any tasks.
+> +                */
+> +               if (local->avg_load >= busiest->avg_load) {
+> +                       env->imbalance = 0;
+> +                       return;
+> +               }
+>         }
+>
+>         /*
+> --
+> 2.7.4
+>
