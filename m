@@ -2,136 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 367961941A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:37:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 326431941B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:42:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbgCZOhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 10:37:24 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33179 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbgCZOhY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:37:24 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j1so2880714pfe.0;
-        Thu, 26 Mar 2020 07:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xcJ9A36qE7fmwILM0GIjQcoBryZ8cQtpU3R/gSX0bfw=;
-        b=Hj+GXpttQEF8xznQ2rVTuxma2i7jZmuN8GRAQn6sIWhgC4o4xDnW7wFusMuV8o2LbI
-         bay9pVfypJf/YhGlOzXqqT5xjCRnkIuIUkIZnegDauwEobqVXXbuuS6POybxMyvZl4be
-         ScLmbSsGBuJNWfiM60rxOUXURna7W/yXDmnthc8oqsqvzSiMWXGv5fUcrpvpz4bC+Oev
-         oLhZEwB8u4qNCz/t8D0bfjrMv3fhzNvzjiAwry9NZO8dtYlB/srOL0h6f9GJB6O/d1jZ
-         3OQ77yfP4NQ6Z7AlwktCS3ZTyeQpDKHnMBqewIgpL00cuSh78Ut0k9iYl0hOdolwR6P2
-         xZdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xcJ9A36qE7fmwILM0GIjQcoBryZ8cQtpU3R/gSX0bfw=;
-        b=d88pJOOfcCfvIuQNqp/3JuPV7vJgkxEzbvtJ9fiWMi9bPBYybTN47l2P3+/pgMrysG
-         zjTMdhCDb/NT12iwadTOzoOYqwYQud4fipuyViRIfxYcDawBTEkrWsWlnEeQS2631glb
-         MbG63iaTt4VU38zwI2FUxasN/fTYW1S6uL7elyIYrrkRN3vW/3/xNhT4yulqdvgQMPjb
-         PNpP/aK1dqqCE7lgr7+yj6zC+ztuV49ZYtY614iabZjqxcbo75q9zYRnICYpBql94FH5
-         erVjcb1Pouh+L2rcDGUJvf4RoXQyppUZLSxUdpiO2+X8Yqeru82RmG/rXWcPKNOQX0k6
-         XGtw==
-X-Gm-Message-State: ANhLgQ2lfDYYciacU0YJ+6y+kB6FOCeBhlSGA8/2PakTCiWnhBvfF1ca
-        ROBa9h41SKXd9K9tlm6n8GiOAHdmIlcfHALUxwM=
-X-Google-Smtp-Source: ADFU+vsONeD2TN2CDHUgnVhWVwIcnrhd9OmNhte1Zfml9aKMC9gE+W9zgd27TYvKJYDgdxOIM0foGkFZx1J2fO3yIo0=
-X-Received: by 2002:aa7:8149:: with SMTP id d9mr9058526pfn.170.1585233442792;
- Thu, 26 Mar 2020 07:37:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <1585205326-25326-1-git-send-email-srinath.mannam@broadcom.com> <1585205326-25326-3-git-send-email-srinath.mannam@broadcom.com>
-In-Reply-To: <1585205326-25326-3-git-send-email-srinath.mannam@broadcom.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 26 Mar 2020 16:37:15 +0200
-Message-ID: <CAHp75VfUCwcXN_OF-tq1wuiCFdicMMEpJpWNccQT=6cv0DNnWQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/6] PCI: iproc: Add INTx support with better modeling
-To:     Srinath Mannam <srinath.mannam@broadcom.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        linux-pci@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ray Jui <ray.jui@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727868AbgCZOmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 10:42:18 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:60999 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726270AbgCZOmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 10:42:18 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48p7466SP9z9vBmt;
+        Thu, 26 Mar 2020 15:42:14 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=mJgIki0K; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id cr9aaoSfj6m6; Thu, 26 Mar 2020 15:42:14 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48p746529Yz9vBmr;
+        Thu, 26 Mar 2020 15:42:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1585233734; bh=pxlhHd5KJjHJbZKhUrrTB5maIqr0JBMbVZgBuq9rqY8=;
+        h=From:Subject:To:Cc:Date:From;
+        b=mJgIki0KIobQpvxL4shrRvaUsX2PrpAHFRxhXSImCNW6EPhlmMgYw1kvv98dBNn/m
+         mrTOYJdkt/CnIa9OY1UVWKIU6x6ziFptgzZP5knwnD+oNQ5VJMcecfCHfAMF504wul
+         /YdBUHanRuX6qYBkn+TcQRd764WnxcRcIQ/We3HA=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2E4318B7AD;
+        Thu, 26 Mar 2020 15:42:16 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id zamguf2qSdgK; Thu, 26 Mar 2020 15:42:16 +0100 (CET)
+Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id ED95F8B756;
+        Thu, 26 Mar 2020 15:42:15 +0100 (CET)
+Received: by pc16570vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id B152C655EB; Thu, 26 Mar 2020 14:42:15 +0000 (UTC)
+Message-Id: <c88b13ede49744d81fdab32e037a7ae10f0b241f.1585233657.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC PATCH] powerpc/lib: Fixing use a temporary mm for code patching
+To:     cmr@informatik.wtf
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 26 Mar 2020 14:42:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 8:49 AM Srinath Mannam
-<srinath.mannam@broadcom.com> wrote:
->
-> From: Ray Jui <ray.jui@broadcom.com>
->
-> Add PCIe legacy interrupt INTx support to the iProc PCIe driver by
-> modeling it with its own IRQ domain. All 4 interrupts INTA, INTB, INTC,
-> INTD share the same interrupt line connected to the GIC in the system,
-> while the status of each INTx can be obtained through the INTX CSR
-> register.
+This patch fixes the RFC series identified below.
+It fixes three points:
+- Failure with CONFIG_PPC_KUAP
+- Failure to write do to lack of DIRTY bit set on the 8xx
+- Inadequaly complex WARN post verification
 
-...
-> +       val &= ~(BIT(irqd_to_hwirq(d)));
+However, it has an impact on the CPU load. Here is the time
+needed on an 8xx to run the ftrace selftests without and
+with this series:
+- Without CONFIG_STRICT_KERNEL_RWX		==> 38 seconds
+- With CONFIG_STRICT_KERNEL_RWX			==> 40 seconds
+- With CONFIG_STRICT_KERNEL_RWX + this series	==> 43 seconds
 
-Too many parentheses.
+Link: https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=166003
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/lib/code-patching.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-...
-
-> +       val |= (BIT(irqd_to_hwirq(d)));
-
-Ditto.
-
-...
-
-> +       /* go through INTx A, B, C, D until all interrupts are handled */
-> +       do {
-> +               status = iproc_pcie_read_reg(pcie, IPROC_PCIE_INTX_CSR);
-> +               for_each_set_bit(bit, &status, PCI_NUM_INTX) {
-> +                       virq = irq_find_mapping(pcie->irq_domain, bit);
-> +                       if (virq)
-> +                               generic_handle_irq(virq);
-
-> +                       else
-> +                               dev_err(dev, "unexpected INTx%u\n", bit);
-
-Any guarantee it will be no storm of undesired messages here?
-
-> +               }
-
-> +       } while ((status & SYS_RC_INTX_MASK) != 0);
-
-' != 0' part is not needed.
-
-If there an interrupt storm the handler will never end, right?
-Is it the idea by design?
-
-...
-
-> +       node = of_get_compatible_child(dev->of_node, "brcm,iproc-intc");
-> +       if (node)
-> +               pcie->irq = of_irq_get(node, 0);
-> +
-> +       if (!node || pcie->irq <= 0)
-> +               return 0;
-
-Perhaps
-       node = of_get_compatible_child(dev->of_node, "brcm,iproc-intc");
-       if (!node)
-               return 0;
-
-       pcie->irq = of_irq_get(node, 0);
-       if (pcie->irq <= 0)
-              return 0;
-?
-
+diff --git a/arch/powerpc/lib/code-patching.c b/arch/powerpc/lib/code-patching.c
+index f156132e8975..4ccff427592e 100644
+--- a/arch/powerpc/lib/code-patching.c
++++ b/arch/powerpc/lib/code-patching.c
+@@ -97,6 +97,7 @@ static int map_patch(const void *addr, struct patch_mapping *patch_mapping)
+ 	}
+ 
+ 	pte = mk_pte(page, pgprot);
++	pte = pte_mkdirty(pte);
+ 	set_pte_at(patching_mm, patching_addr, ptep, pte);
+ 
+ 	init_temp_mm(&patch_mapping->temp_mm, patching_mm);
+@@ -168,7 +169,9 @@ static int do_patch_instruction(unsigned int *addr, unsigned int instr)
+ 			(offset_in_page((unsigned long)addr) /
+ 				sizeof(unsigned int));
+ 
++	allow_write_to_user(patch_addr, sizeof(instr));
+ 	__patch_instruction(addr, instr, patch_addr);
++	prevent_write_to_user(patch_addr, sizeof(instr));
+ 
+ 	err = unmap_patch(&patch_mapping);
+ 	if (err)
+@@ -179,7 +182,7 @@ static int do_patch_instruction(unsigned int *addr, unsigned int instr)
+ 	 * think we just wrote.
+ 	 * XXX: BUG_ON() instead?
+ 	 */
+-	WARN_ON(memcmp(addr, &instr, sizeof(instr)));
++	WARN_ON(*addr != instr);
+ 
+ out:
+ 	local_irq_restore(flags);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.25.0
+
