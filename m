@@ -2,114 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98971194464
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:37:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97B0D194477
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:38:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbgCZQhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 12:37:48 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:36841 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727502AbgCZQhs (ORCPT
+        id S1728651AbgCZQiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 12:38:22 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:34746 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728437AbgCZQiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 12:37:48 -0400
-Received: by mail-pj1-f67.google.com with SMTP id nu11so2631796pjb.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 09:37:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Z52Q+C+NI5sRvzCwNZXwgTHsc/eFf849vvv2BFT3moo=;
-        b=DqAELuZErWTZ9hBELLMJ53oDN2Sud960uYRXs/thckf6EyZUJQdCpntPZ6YiACA6UE
-         Z+zCiJTaK/dRm8nt5AoEc7YoZ5imYsqSlKYoSpqCPMovTb0u1k15+TbbzLhdajQ8qzhW
-         OWqkLfZiJbn/ZbhDQGa5fg8J4mkBd2U6uIPDZ0o2huMMiFXD5eJAnGIuqz3DGKfFExWi
-         JzaoAb3syFAjg4Ltucnzc4IBecoILolIB6T2fW9YHLlPPSjYSY/SHZEd8WQAaJUSfB2u
-         FOwPTq3FOp2ZK8SjreYNkEhj3iqF/scAGPPJugkbCXYt5q/kwcrWUOwH68ZYKAIUdpse
-         qc+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=Z52Q+C+NI5sRvzCwNZXwgTHsc/eFf849vvv2BFT3moo=;
-        b=U6hSMXScneh4mcFIxqnc1uoAbNILnfrNH4wBBJBTW4i2XQGE+VVzag7FEwN4lh7JUo
-         lKieN6ySYplV/bCYkNFuctPxc4qQ4W6GRT+7Eoesx5X3DyaCAFRhUZNb9iNtVShkhsiq
-         YePsO/YJ6kXcmPF6wNLALAqjNHc+4iCD0/UOlai/4Oa1G3v7EcMYnswUdE/EsgG44sZF
-         yejuyxvo74Wo3qBVs/0xYt1Nvrb76DMt2I0hlQxNOdOBtvO8Grp8vUvvmzLb98g8A2zn
-         h7oyI9JKCdrGjNw0iafUyGjyjT8XaR+3NcYd9mkg0XeU3Le9Bxy0a8TErIUGM7J3TPWn
-         yodA==
-X-Gm-Message-State: ANhLgQ3xlNVM4Wi/erMiKTz5CYdX7oga9rfWA4sSjAlVU556zSsIIHHi
-        tJ/iirXpiBkIa3uN+N2Qf2lg4Q==
-X-Google-Smtp-Source: ADFU+vtpKTz44UaLjK5rWW1p85dRlUFtlNTouBjZDGVUSoB5dNYxtvMdL9b/q3M0sgc1U6XZSte2wQ==
-X-Received: by 2002:a17:902:6b48:: with SMTP id g8mr8800403plt.149.1585240665030;
-        Thu, 26 Mar 2020 09:37:45 -0700 (PDT)
-Received: from localhost (c-67-161-15-180.hsd1.ca.comcast.net. [67.161.15.180])
-        by smtp.gmail.com with ESMTPSA id t60sm2053163pjb.9.2020.03.26.09.37.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 09:37:43 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 09:37:43 -0700 (PDT)
-X-Google-Original-Date: Thu, 26 Mar 2020 09:37:16 PDT (-0700)
-Subject:     Re: [PATCH v7 08/13] pwm: sifive: Use 64-bit division macros for period and duty cycle
-In-Reply-To: <4212f82b8711b2b33f0e71142526d5a7575564e9.1583782035.git.gurus@codeaurora.org>
-CC:     linux-pwm@vger.kernel.org, thierry.reding@gmail.com,
-        uwe@kleine-koenig.org, subbaram@codeaurora.org,
-        linux-kernel@vger.kernel.org, gurus@codeaurora.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-riscv@lists.infradead.org, yash.shah@sifive.com,
-        Atish Patra <Atish.Patra@wdc.com>
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     gurus@codeaurora.org
-Message-ID: <mhng-29ba8348-64c8-4113-ac65-1e81c0a1da70@palmerdabbelt-glaptop1>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Thu, 26 Mar 2020 12:38:13 -0400
+Received: from ramsan ([84.195.182.253])
+        by albert.telenet-ops.be with bizsmtp
+        id K4eA2200s5USYZQ064eBAL; Thu, 26 Mar 2020 17:38:11 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jHVWE-0002rD-Re; Thu, 26 Mar 2020 17:38:10 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jHVWE-00064i-P1; Thu, 26 Mar 2020 17:38:10 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] dt-bindings: usb: generic-ehci/ohci: Document power-domains property
+Date:   Thu, 26 Mar 2020 17:38:04 +0100
+Message-Id: <20200326163807.23216-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 09 Mar 2020 12:35:11 PDT (-0700), gurus@codeaurora.org wrote:
-> Because period and duty cycle are defined in the PWM framework structs
-> as ints with units of nanoseconds, the maximum time duration that can be
-> set is limited to ~2.147 seconds. Redefining them as u64 values will
-> enable larger time durations to be set.
->
-> As a first step, prepare drivers to handle the switch to u64 period and
-> duty_cycle by replacing division operations involving pwm period and duty cycle
-> with their 64-bit equivalents as appropriate. The actual switch to u64 period
-> and duty_cycle follows as a separate patch.
->
-> Where the dividend is 64-bit but the divisor is 32-bit, use *_ULL
-> macros:
-> - DIV_ROUND_UP_ULL
-> - DIV_ROUND_CLOSEST_ULL
-> - div_u64
->
-> Where the divisor is 64-bit (dividend may be 32-bit or 64-bit), use
-> DIV64_* macros:
-> - DIV64_U64_ROUND_CLOSEST
-> - div64_u64
->
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: linux-riscv@lists.infradead.org
-> Cc: Yash Shah <yash.shah@sifive.com>
-> Cc: Atish Patra <atish.patra@wdc.com>
->
-> Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
-> ---
->  drivers/pwm/pwm-sifive.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pwm/pwm-sifive.c b/drivers/pwm/pwm-sifive.c
-> index cc63f9b..62de0bb 100644
-> --- a/drivers/pwm/pwm-sifive.c
-> +++ b/drivers/pwm/pwm-sifive.c
-> @@ -181,7 +181,7 @@ static int pwm_sifive_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->  	 * consecutively
->  	 */
->  	num = (u64)duty_cycle * (1U << PWM_SIFIVE_CMPWIDTH);
-> -	frac = DIV_ROUND_CLOSEST_ULL(num, state->period);
-> +	frac = DIV64_U64_ROUND_CLOSEST(num, state->period);
->  	/* The hardware cannot generate a 100% duty cycle */
->  	frac = min(frac, (1U << PWM_SIFIVE_CMPWIDTH) - 1);
+	Hi Greg, Rob,
 
-Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+It is quite common for a generic EHCI or OHCI block to be embedded in an
+SoC in its own power domain.  However, the current DT bindings do not
+cover this yet, leading to "make dtbs_check" warnings like:
+
+    arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m.dt.yaml: usb@ee080000: 'power-domains' does not match any of the regexes: 'pinctrl-[0-9]+'
+    arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m.dt.yaml: usb@ee080100: 'power-domains' does not match any of the regexes: 'pinctrl-[0-9]+'
+
+This patch series documents the optional presence of "power-domains"
+properties in the EHCI and OHCI devices nodes, allowing the DTS writer
+to describe the controllers' positions in the power hierarchy.
+
+Thanks!
+
+Geert Uytterhoeven (2):
+  dt-bindings: usb: generic-ehci: Document power-domains property
+  dt-bindings: usb: generic-ohci: Document power-domains property
+
+ Documentation/devicetree/bindings/usb/generic-ehci.yaml | 3 +++
+ Documentation/devicetree/bindings/usb/generic-ohci.yaml | 3 +++
+ 2 files changed, 6 insertions(+)
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
