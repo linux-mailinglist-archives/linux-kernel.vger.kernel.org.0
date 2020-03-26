@@ -2,86 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D779E1947DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:49:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8FE51947E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:51:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728641AbgCZTs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 15:48:59 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33202 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbgCZTs6 (ORCPT
+        id S1728317AbgCZTvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 15:51:01 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39141 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgCZTvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 15:48:58 -0400
-Received: by mail-qt1-f195.google.com with SMTP id c14so6608769qtp.0;
-        Thu, 26 Mar 2020 12:48:58 -0700 (PDT)
+        Thu, 26 Mar 2020 15:51:01 -0400
+Received: by mail-pg1-f195.google.com with SMTP id b22so3432772pgb.6
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 12:51:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+X43fOowivo9wQhliFx6lnhtIaMEbCHpeVUMSBZZuGY=;
-        b=U5JDgEKNA0GkBeHvV5CHdgdArh42FYVrmzkogGBIyPh3UbwY/HtRPl1L7OI8kSvTuM
-         t7BJG7ezUxnmgRFbliiaIwK8OBPkiXIeGrhetTsK6rDsWt1lNTKwuMPWLqOYF0Uz07uP
-         vlAyx6tjVavmsfFsclBaBM5kI1FLo9fg+4Ct2XX22fBdqTWnySs24i1kyUSGY1vHhgPy
-         CuU82/h7zfoXRaJJcIxxSNIjvjQrS8IIf64WfaRfpBpfzEocyTurwPs9dmGXh/+Q/esb
-         pdpiaqT4PIpE6gDZyhqhdIScxy7PlNi43u4b6oe1NowK41XpBBOw6RXKLF4zN+sjinb5
-         JVnA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WNlM17wU13V4C2Q82cbPsO90RUOYDip+1HB0oBZcydk=;
+        b=Ku00JDgAcccYNbI1uZUctsOQld+eet5Omx+ff0Cvy3YjfYUgT8Ul9wVIslnrn03YMh
+         4zePPAIWKAGJsJ2snn8TFLwVN1+6R5VTe0MJT0CV09SzOOZjeXDy2wuYiSvVGWo5yBHG
+         +0kqWcHWvgrFziwr3K07NdsRNIT8IsX9fz7K3IQggjJML5zHKGawVHWcvrLttDSmQG+K
+         lNWvIIaE4Ko8i76CPIKmW4hHLOw8UlXKx+SvHG2UWMD4BhfECGZEU5+lxZgR35HyuLXY
+         WL5bkoNGSnDUYxtQ999hS4mvdUXqcDnoLXr9WnNKAyIf+ZSQk3wPz43if7ri/zhClL+z
+         mx3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=+X43fOowivo9wQhliFx6lnhtIaMEbCHpeVUMSBZZuGY=;
-        b=gpHMmgwjXTLKJQifPSzZLLaN3v+PGWZSCJ80XSVyvmKCPJra3h5OQ0fDUV0ImaYnn3
-         2Gq3WCxKiveUTZDKIjK2KsQ3FlF5yq1usYD7kYFkbeYgMETG5Zxp6eiIVnXml6ix55sv
-         2+Tp4LEwQbwoiqnKbsAB296CkuLZgwgiKHYbVOnESrp4AeyvnpxVqwRmSllZHRtEWuG8
-         Ro7d78oOf4gMWrjKF7FzVCtZCUg2HiewgV0euuneNznaoKn2C39u/cbwmOvb/rVA+fae
-         B2STsO+8kGrfNUNhLh5ZtRXZ1F+p0lTSdU62ADb0VFxNvmNLkB83swA+dM8IKP29neQd
-         GrYQ==
-X-Gm-Message-State: ANhLgQ3Z5kYKtiCZEuINIodqUmW7P96jddmWcW9U+bCjSuSGXxYW+SWK
-        KOaDYfLnkWcMLhlwBG7SIP5RPpTl2yM=
-X-Google-Smtp-Source: ADFU+vtLFlzARKEMRWc1YGd7T4n7YiyfdU1NRA6ydWosFisgJpC626glGMvBSi56eVhlehZTCUKjjA==
-X-Received: by 2002:ac8:366d:: with SMTP id n42mr10293278qtb.180.1585252137334;
-        Thu, 26 Mar 2020 12:48:57 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::d3b8])
-        by smtp.gmail.com with ESMTPSA id 10sm1707115qtt.54.2020.03.26.12.48.56
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WNlM17wU13V4C2Q82cbPsO90RUOYDip+1HB0oBZcydk=;
+        b=cv98JfRJmeELZvAI7+/59On7N1lzkttVV6PJUXmA62lROfF/toZgnhd/hSp3NYoCpD
+         u659DiviE4+fJPia7uG4WZsmey8ZVkqU6TqEMJzfhmTzoqkj3QmaFXqW9h7fyJXeBdca
+         5QEF+7aFkrAHTFmMhuhjfx74J1+JBObhiHmvaT4q+RIL3XnX4mk/2P82hJa+fGKcr9OZ
+         cOQrxw7BJSgeNZbTHchmGSJECLC4uUu6e4Qi0FZ4Pj1cCBVMvBAGwyiRATlVZCfhZnrv
+         Vjv+jfWKK+9V2AJ7ffQvK2yx5rskzi7jLoSGG5LtB35wcvNPjLWZso21r4fTZ1vO9cvg
+         DGIQ==
+X-Gm-Message-State: ANhLgQ07MxiDoaO8OiZY37qepIiZ5KVmxWLsENU387YmI+By9xEmxnVT
+        1aWCqHkfM6ssvZlg3fp7T2oxeA==
+X-Google-Smtp-Source: ADFU+vtzP9lVP4j9byE0r6N4bVzAiTyE4ric+6ZCDq/jLYLVUz8dO/kaQvref43Lu+xQ9E7J1QiiqQ==
+X-Received: by 2002:a62:fc12:: with SMTP id e18mr11054224pfh.45.1585252260035;
+        Thu, 26 Mar 2020 12:51:00 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id m14sm2252235pje.19.2020.03.26.12.50.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 12:48:56 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 15:48:55 -0400
-From:   Tejun Heo <tj@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>,
-        Amit Pundir <amit.pundir@linaro.org>, kernel-team@android.com,
-        jsbarnes@google.com, sonnyrao@google.com, vpillai@digitalocean.com,
-        peterz@infradead.org, Guenter Roeck <groeck@chromium.org>,
-        Waiman Long <longman@redhat.com>,
-        Greg Kerr <kerrnel@google.com>, cgroups@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Li Zefan <lizefan@huawei.com>
-Subject: Re: [PATCH RFC] cpuset: Make cpusets get restored on hotplug
-Message-ID: <20200326194855.GP162390@mtj.duckdns.org>
-References: <20200326191623.129285-1-joel@joelfernandes.org>
- <20200326192035.GO162390@mtj.duckdns.org>
- <20200326194448.GA133524@google.com>
+        Thu, 26 Mar 2020 12:50:59 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 12:50:57 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Loic Pallardy <loic.pallardy@st.com>
+Subject: Re: [PATCH 1/7] remoteproc: add prepare and unprepare ops
+Message-ID: <20200326195057.GC59436@builder>
+References: <20200324201819.23095-1-s-anna@ti.com>
+ <20200324201819.23095-2-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200326194448.GA133524@google.com>
+In-Reply-To: <20200324201819.23095-2-s-anna@ti.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 03:44:48PM -0400, Joel Fernandes wrote:
-> It is not really that big a change. Please go over the patch, we are not
-> changing anything with how ->cpus_allowed works and interacts with the rest
-> of the system and the scheduler. We have just introduced a new mask to keep
-> track of which CPUs were requested without them being affected by hotplug. On
-> CPU onlining, we restore the state of ->cpus_allowed as not be affected by
-> hotplug.
+On Tue 24 Mar 13:18 PDT 2020, Suman Anna wrote:
 
-It's not the code. It's the behavior. I'm not flipping the behavior for
-the existing cgroup1 users underneath them at this point. As-is, it's a
-hard nack. If you really really really want it, put it behind a mount
-option.
+> From: Loic Pallardy <loic.pallardy@st.com>
+> 
+> On some SoC architecture, it is needed to enable HW like
+> clock, bus, regulator, memory region... before loading
+> co-processor firmware.
+> 
+> This patch introduces prepare and unprepare ops to execute
+> platform specific function before firmware loading and after
+> stop execution.
+> 
 
--- 
-tejun
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 20 +++++++++++++++++++-
+>  include/linux/remoteproc.h           |  4 ++++
+>  2 files changed, 23 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 26f6947267d2..aca6d022901a 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1394,12 +1394,22 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  		return ret;
+>  	}
+>  
+> +	/* Prepare rproc for firmware loading if needed */
+> +	if (rproc->ops->prepare) {
+> +		ret = rproc->ops->prepare(rproc);
+> +		if (ret) {
+> +			dev_err(dev, "can't prepare rproc %s: %d\n",
+> +				rproc->name, ret);
+> +			goto disable_iommu;
+> +		}
+> +	}
+> +
+>  	rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
+>  
+>  	/* Load resource table, core dump segment list etc from the firmware */
+>  	ret = rproc_parse_fw(rproc, fw);
+>  	if (ret)
+> -		goto disable_iommu;
+> +		goto unprepare_rproc;
+>  
+>  	/* reset max_notifyid */
+>  	rproc->max_notifyid = -1;
+> @@ -1433,6 +1443,10 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  	kfree(rproc->cached_table);
+>  	rproc->cached_table = NULL;
+>  	rproc->table_ptr = NULL;
+> +unprepare_rproc:
+> +	/* release HW resources if needed */
+> +	if (rproc->ops->unprepare)
+> +		rproc->ops->unprepare(rproc);
+>  disable_iommu:
+>  	rproc_disable_iommu(rproc);
+>  	return ret;
+> @@ -1838,6 +1852,10 @@ void rproc_shutdown(struct rproc *rproc)
+>  	/* clean up all acquired resources */
+>  	rproc_resource_cleanup(rproc);
+>  
+> +	/* release HW resources if needed */
+> +	if (rproc->ops->unprepare)
+> +		rproc->ops->unprepare(rproc);
+> +
+>  	rproc_disable_iommu(rproc);
+>  
+>  	/* Free the copy of the resource table */
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 07bd73a6d72a..ddce7a7775d1 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -355,6 +355,8 @@ enum rsc_handling_status {
+>  
+>  /**
+>   * struct rproc_ops - platform-specific device handlers
+> + * @prepare:	prepare device for code loading
+> + * @unprepare:	unprepare device after stop
+>   * @start:	power on the device and boot it
+>   * @stop:	power off the device
+>   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+> @@ -371,6 +373,8 @@ enum rsc_handling_status {
+>   * @get_boot_addr:	get boot address to entry point specified in firmware
+>   */
+>  struct rproc_ops {
+> +	int (*prepare)(struct rproc *rproc);
+> +	int (*unprepare)(struct rproc *rproc);
+>  	int (*start)(struct rproc *rproc);
+>  	int (*stop)(struct rproc *rproc);
+>  	void (*kick)(struct rproc *rproc, int vqid);
+> -- 
+> 2.23.0
+> 
