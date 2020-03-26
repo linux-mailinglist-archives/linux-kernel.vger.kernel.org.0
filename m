@@ -2,139 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C29271940C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:04:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8632E1940DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:04:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbgCZODO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 10:03:14 -0400
-Received: from mga18.intel.com ([134.134.136.126]:21527 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727738AbgCZODO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:03:14 -0400
-IronPort-SDR: I97fcWokmN/hogqLRjM58bWJ4LcZsjay+skELlvk51d9ptb9ha835dYJpBZWzRd5/xTOFUOC3W
- qxhvIIQEokLw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 07:03:13 -0700
-IronPort-SDR: 2xMnfKiNNIribQHyU99+kqBuFzEPshilBpp4VmLjGKBP0/Yb9ogFvu8RtCBDvmiHzPKA1aWgxt
- JemivmV5wg7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,308,1580803200"; 
-   d="scan'208";a="271181383"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga004.fm.intel.com with ESMTP; 26 Mar 2020 07:03:11 -0700
-Received: from [10.254.68.166] (kliang2-mobl.ccr.corp.intel.com [10.254.68.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 3CC085803E3;
-        Thu, 26 Mar 2020 07:03:09 -0700 (PDT)
-Subject: Re: [PATCH v1 01/11] perf/x86/core: Support KVM to assign a dedicated
- counter for guest PEBS
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Luwei Kang <luwei.kang@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, tglx@linutronix.de, bp@alien8.de,
-        hpa@zytor.com, pbonzini@redhat.com,
-        sean.j.christopherson@intel.com, vkuznets@redhat.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        pawan.kumar.gupta@linux.intel.com, ak@linux.intel.com,
-        thomas.lendacky@amd.com, fenghua.yu@intel.com,
-        like.xu@linux.intel.com
-References: <1583431025-19802-1-git-send-email-luwei.kang@intel.com>
- <1583431025-19802-2-git-send-email-luwei.kang@intel.com>
- <20200306135317.GD12561@hirez.programming.kicks-ass.net>
- <b72cb68e-1a0a-eeff-21b4-ce412e939cfd@linux.intel.com>
- <20200309100443.GG12561@hirez.programming.kicks-ass.net>
- <97ce1ba4-d75a-8db2-ea2f-7d334942b4e6@linux.intel.com>
- <20200309150526.GI12561@hirez.programming.kicks-ass.net>
- <45a1a575-9363-f778-b5f5-bcdf28d3e34b@linux.intel.com>
-Message-ID: <e4a97965-5e57-56c5-1610-b84cf349e466@linux.intel.com>
-Date:   Thu, 26 Mar 2020 10:03:07 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1728357AbgCZOEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 10:04:02 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44132 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728304AbgCZOD4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 10:03:56 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 142so2904706pgf.11;
+        Thu, 26 Mar 2020 07:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=17tMX3H9Sdcq+0ONAuGblCc3JhNQf2xB0k0+J4gQv5w=;
+        b=vCtMDfHQ5Cvsc6sUODmXa4WM9QXhZZJsWuKwaH0pkh9ZkNZeQw/5z3AlMs6vGFwHyk
+         +855UUdV5Rr7orSl0aK6F10moKt3nwlL9kJCDqMH7zEn3Sh5R5Oc3gFWZ71nHHIzuNKc
+         yj9puVwQYwsJDVv40DcfzGl8K/s2n8Zj2/xhK/AJndlIr1XSqTQIy7VDvnGRaXfueq0N
+         nX0+5nAqmThDz2w4LrDZwqO+cUVCZDFlNFqaxDY1rzRQIDlB5d10Z+YpyxDyG75uy5So
+         AeyaKePMzJu/myLvJElrCPgdElk+8/1ZNV0eQUc2Q3QShNrelHWxNWgvJVA+itxQMUV+
+         ln9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=17tMX3H9Sdcq+0ONAuGblCc3JhNQf2xB0k0+J4gQv5w=;
+        b=TXgZKcGnmGvq6fqvM0mdhbNGVnStjmrjE7JwmziMElqQOiw6ILJfp/LVrs0Rs/7F4D
+         Ks1UADnP/shhU3QaUyOI5N8Y2GxwP/8vJx/K8Rg6zuhsN7EPDjoePl8V9MslHg5yZX3K
+         lwjWfAigk5pqb3WwPnpvMqadxiSWwhiHf5aB9UHSLSGTfx+Z79KNRMsY8TkKIhoeUCxB
+         DHOEpkPQfaNuhE5bEiNRzQoywfNrDTrSibyc6bkZ8AfXPRmfdBKKToxjQOSTpUt3q+8R
+         pIWCysqv90lF4d19OzHLh4H8BwziOk9qipcC4/H6ssD7OLozcGanKKuLIBufeb7u95rd
+         Wodw==
+X-Gm-Message-State: ANhLgQ35oGszXrXnGK6aYklKOUPxYl1BcOT8qQp4divCj7zzY4hJc49a
+        6Xmjk6VAiX/Rxx0dH6r2lZ8=
+X-Google-Smtp-Source: ADFU+vtdRRGcpFSi9InB6187asoRCJ2tCcZCL55pt1JZiXLIagZ/Fpb5kuHhPGJAztT5ef5nj0jxhw==
+X-Received: by 2002:a62:2b8a:: with SMTP id r132mr9650099pfr.56.1585231435769;
+        Thu, 26 Mar 2020 07:03:55 -0700 (PDT)
+Received: from localhost (c-73-241-114-122.hsd1.ca.comcast.net. [73.241.114.122])
+        by smtp.gmail.com with ESMTPSA id q123sm1853036pfb.54.2020.03.26.07.03.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 07:03:55 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 07:03:53 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        netdev <netdev@vger.kernel.org>, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 01/11] net: ethernet: ti: cpts: use dev_yy()
+ api for logs
+Message-ID: <20200326140353.GB20841@localhost>
+References: <20200320194244.4703-1-grygorii.strashko@ti.com>
+ <20200320194244.4703-2-grygorii.strashko@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <45a1a575-9363-f778-b5f5-bcdf28d3e34b@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320194244.4703-2-grygorii.strashko@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+On Fri, Mar 20, 2020 at 09:42:34PM +0200, Grygorii Strashko wrote:
+> @@ -150,7 +150,7 @@ static int cpts_fifo_read(struct cpts *cpts, int match)
+>  			break;
+>  
+>  		if (list_empty(&cpts->pool) && cpts_purge_events(cpts)) {
+> -			pr_err("cpts: event pool empty\n");
+> +			dev_info(cpts->dev, "cpts: event pool empty\n");
 
-On 3/9/2020 3:28 PM, Liang, Kan wrote:
-> 
-> 
-> On 3/9/2020 11:05 AM, Peter Zijlstra wrote:
->>> In the new proposal, KVM user is treated the same as other host 
->>> events with
->>> event constraint. The scheduler is free to choose whether or not to 
->>> assign a
->>> counter for it.
->> That's what it does, I understand that. I'm saying that that is creating
->> artificial contention.
->>
->>
->> Why is this needed anyway? Can't we force the guest to flush and then
->> move it over to a new counter?
->
+You changed err into info.  Was that on purpose?
 
-Current perf scheduling is pure software behavior. KVM only traps the 
-MSR access. It’s impossible for KVM to impact the guest’s scheduling 
-with current implementation.
-
-To address the concern regarding to 'artificial contention', we have two 
-proposals.
-Could you please take a look, and share your thoughts?
-
-Proposal 1:
-Reject the guest request, if host has to use the counter which occupied 
-by guest. At the meantime, host prints a warning.
-I still think the contention should rarely happen in practical.
-Personally, I prefer this proposal.
-
-
-Proposal 2:
-Add HW advisor for the scheduler in guest.
-Starts from Architectural Perfmon Version 4, IA32_PERF_GLOBAL_INUSE MSR 
-is introduced. It provides an “InUse” bit for each programmable 
-performance counter and fixed counter in the processor.
-
-In perf, the scheduler will read the MSR and mask the “in used” 
-counters. I think we can use X86_FEATURE_HYPERVISOR to limit the check 
-in guest. For non-virtualization usage and host, nothing changed for 
-scheduler.
-
-But there is still a problem for this proposal. Host may request a 
-counter later, which has been used by guest.
-We can only do multiplexing or grab the counter just like proposal 1.
-
-
-What do you think?
+The size of the pool is hard coded, but it should be large enough for
+any use case.  If the pool size turns out to be too small at run time,
+then I think the message deserves at least the level of warning.
 
 Thanks,
-Kan
-
-> KVM only traps the MSR access. There is no MSR access during the 
-> scheduling in guest.
-> KVM/host only knows the request counter, when guest tries to enable the 
-> counter. It's too late for guest to start over.
-> 
-> Regarding to the artificial contention, as my understanding, it should 
-> rarely happen in practical.
-> Cloud vendors have to explicitly set pebs option in qemu to enable PEBS 
-> support for guest. They knows the environment well. They can avoid the 
-> contention. (We may implement some patches for qemu/KVM later to 
-> temporarily disable PEBS in runtime if they require.)
-> 
-> For now, I think we may print a warning when both host and guest require 
-> the same counter. Host can get a clue from the warning.
-> 
-> Thanks,
-> Kan
+Richard
