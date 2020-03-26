@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2A81943BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 16:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11EEA1943E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:00:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728698AbgCZP7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 11:59:13 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58866 "EHLO
+        id S1728804AbgCZQAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 12:00:18 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58844 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728630AbgCZP6v (ORCPT
+        with ESMTP id S1728024AbgCZP6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 11:58:51 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200326155850euoutp017ab5126b3c8ea1765fed9d23c37eda60~-5dy60-_83032230322euoutp01K
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:58:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200326155850euoutp017ab5126b3c8ea1765fed9d23c37eda60~-5dy60-_83032230322euoutp01K
+        Thu, 26 Mar 2020 11:58:41 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200326155840euoutp0116f1e92402db3c0059c7a926d2a4cc07~-5dpnwBBr2919829198euoutp01l
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:58:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200326155840euoutp0116f1e92402db3c0059c7a926d2a4cc07~-5dpnwBBr2919829198euoutp01l
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585238330;
-        bh=vGtux1WiegvO/UUDLPVSnOePgjBue0cxSOaZFFwOA0c=;
+        s=mail20170921; t=1585238320;
+        bh=tjSnuOlCAjOn2sRgXXH/J4iu3AMghYSQUVeuXVPyA4A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jauiz6NlE5IR7sJYw+1Rq0RB4O0yJJPaikrX4+Sx+yZyB3f4CIbkB9syZZkSTmATz
-         eXKLMIJJnj2/jSjgLwtWsf2Fz4948nR91sBOt4bUR0zTFVt/a6Q0kX+bOfh8O6izGW
-         oDtViTk7W6fzG0fF6ywNvcbHQi1B8IHmEFXdZD4M=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200326155849eucas1p2ece3135eb66cc4632dd1a82d474cc4f7~-5dyiTSy23015130151eucas1p27;
-        Thu, 26 Mar 2020 15:58:49 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 8A.E9.60679.931DC7E5; Thu, 26
-        Mar 2020 15:58:49 +0000 (GMT)
+        b=H++a8aZbsqTVrYxluGBzGs5zb5Eu7XfL9AwAolsUGhm6j5yFQ+E8CwmmNr+F2sASk
+         kzaFNggUHRKXVF2YvZlP+U8KuiwGGqCvNMlaCUxdOFf+9qPBqjDf0e9EVbPVgMMS6B
+         p+XS2BkcMDcWZGf1QPhTNy6LvGhlsoeL3Z3X89NU=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200326155839eucas1p1c7598c32383161c4b7eeb9d615958aab~-5dpKPaUy1202612026eucas1p1X;
+        Thu, 26 Mar 2020 15:58:39 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 8A.F5.61286.F21DC7E5; Thu, 26
+        Mar 2020 15:58:39 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200326155849eucas1p2c1c0d059d5474597bd1eec3a6855ed8a~-5dySLE_O2254022540eucas1p2K;
-        Thu, 26 Mar 2020 15:58:49 +0000 (GMT)
+        20200326155839eucas1p2c9e354eb1f81d47c2c00d1c6c42f28a5~-5dou6fto2605126051eucas1p2y;
+        Thu, 26 Mar 2020 15:58:39 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200326155849eusmtrp10d0ffdf0d8922e481d392a5f3596e67b~-5dyRlS8j2091520915eusmtrp1c;
-        Thu, 26 Mar 2020 15:58:49 +0000 (GMT)
-X-AuditID: cbfec7f4-0cbff7000001ed07-e0-5e7cd1396012
+        20200326155839eusmtrp1437c620802f6dc94705d32f0341cc41e~-5douWMgO2090020900eusmtrp1T;
+        Thu, 26 Mar 2020 15:58:39 +0000 (GMT)
+X-AuditID: cbfec7f2-f0bff7000001ef66-b6-5e7cd12f4499
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E2.DA.07950.931DC7E5; Thu, 26
-        Mar 2020 15:58:49 +0000 (GMT)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 47.CA.07950.E21DC7E5; Thu, 26
+        Mar 2020 15:58:39 +0000 (GMT)
 Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200326155848eusmtip16cabfd6934476f0488c53c84ec50c54f~-5dx49A821572015720eusmtip1a;
-        Thu, 26 Mar 2020 15:58:48 +0000 (GMT)
+        20200326155838eusmtip1a49e6c1093f52603a5a7dc355c36ce88~-5doTwIB01506115061eusmtip1w;
+        Thu, 26 Mar 2020 15:58:38 +0000 (GMT)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Michael Schmitz <schmitzmic@gmail.com>,
@@ -53,200 +53,133 @@ Cc:     Michael Schmitz <schmitzmic@gmail.com>,
         Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH v5 27/27] ata: make "libata.force" kernel parameter optional
-Date:   Thu, 26 Mar 2020 16:58:22 +0100
-Message-Id: <20200326155822.19400-28-b.zolnierkie@samsung.com>
+Subject: [PATCH v5 02/27] ata: expose ncq_enable_prio sysfs attribute only
+ on NCQ capable hosts
+Date:   Thu, 26 Mar 2020 16:57:57 +0100
+Message-Id: <20200326155822.19400-3-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200326155822.19400-1-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djP87qWF2viDNacVrVYfbefzWLjjPWs
-        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
-        eOy+2cDm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBlLv71gLTinVjGtfTVrA+NN+S5GTg4J
-        AROJoxuvsYHYQgIrGCWWP2eGsL8wSlyfEdDFyAVkf2aUOL7tHiNMw9Sz1xghEssZJWZMmsAE
-        4QB1tC75CNbOJmAlMbF9FViHiICCRM/vlWwgRcwC7xklVkzaywKSEBbwkXi47BfYbhYBVYmn
-        q2eCNfAK2Encu7GIDWKdvMTWb59YQWxOoPjydfOZIWoEJU7OfAI2hxmopnnrbGaQBRICq9gl
-        7rfdZododpG48OY+C4QtLPHq+BaouIzE6ck9LBAN6xgl/na8gOreDgyByf+gVltL3DkHch4H
-        0ApNifW79CHCjhKzPj9mAglLCPBJ3HgrCHEEn8SkbdOZIcK8Eh1tQhDVahIblm1gg1nbtXMl
-        M4TtITFn0322CYyKs5C8MwvJO7MQ9i5gZF7FKJ5aWpybnlpslJdarlecmFtcmpeul5yfu4kR
-        mIhO/zv+ZQfjrj9JhxgFOBiVeHg1WmrihFgTy4orcw8xSnAwK4nwPo0ECvGmJFZWpRblxxeV
-        5qQWH2KU5mBREuc1XvQyVkggPbEkNTs1tSC1CCbLxMEp1cBY25Xenv0m/xezf2pGmtn0QKMK
-        zuNhDx49ZY+ZZeXT6NBW3yf0yV2f6cDPfZz1Cz97zl0cuLBowsyPDvVaZ77/7S02m5C4ZXNz
-        /6k3Vtzz2KvSGI7MlQh4saSzpnLW+9i+FNlOvsRfzYfMNKYnGv6fPiNIyz5w+ubEjrQKjSuX
-        LPZvVsn4UK3EUpyRaKjFXFScCABDtMsOQAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xu7qWF2viDKauELZYfbefzWLjjPWs
-        Fs9u7WWyWLn6KJPFsR2PmCwu75rDZrH8yVpmi7mt09kdODx2zrrL7nH5bKnHocMdjB4nW7+x
-        eOy+2cDm0bdlFaPH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6
-        djYpqTmZZalF+nYJehlLv71gLTinVjGtfTVrA+NN+S5GTg4JAROJqWevMXYxcnEICSxllHi9
-        4QtTFyMHUEJG4vj6MogaYYk/17rYIGo+MUo87GthBkmwCVhJTGxfxQhiiwgoSPT8XglWxCzw
-        lVFi6aRusCJhAR+Jh8t+sYHYLAKqEk9XzwRr4BWwk7h3YxEbxAZ5ia3fPrGC2JxA8eXr5oP1
-        CgnYSiz+8oEJol5Q4uTMJywgNjNQffPW2cwTGAVmIUnNQpJawMi0ilEktbQ4Nz232EivODG3
-        uDQvXS85P3cTIzBith37uWUHY9e74EOMAhyMSjy8Gi01cUKsiWXFlbmHGCU4mJVEeJ9GAoV4
-        UxIrq1KL8uOLSnNSiw8xmgI9MZFZSjQ5HxjNeSXxhqaG5haWhubG5sZmFkrivB0CB2OEBNIT
-        S1KzU1MLUotg+pg4OKUaGFcIF/8Of3L60Lcdi2ReT7FS0D/g+CCcJfnxohMfJzNHyd1Snf1Y
-        KzWRqfbzmnq/Csf2LjYny2ULjS+tqZ968etmPaeiilsS5zf5V+s5P9u8aGHJhlN2aV9m/Tlv
-        kflnpeDBuaYpba842i/rbL7NmHLQ2nu15NSIBTczn3RxL+D5dUtqb/mlrEtKLMUZiYZazEXF
-        iQA73+eGrgIAAA==
-X-CMS-MailID: 20200326155849eucas1p2c1c0d059d5474597bd1eec3a6855ed8a
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfyyUcRzH973nuece1ulxlM9k4VqtNL/ZnhSj1fZs/aP1h7HQlWcYju5x
+        SvOHreiY5Lj5cYWWdceZn8Oh+YdhN5xhazG/k1RTRpGKuvNQ/nt935/3+/v5fL77kpikQehM
+        JsrTWYVcliwlbPGOgW2zp/dYVozP4rIrXT/zlKBbypuE9PJUj4Cuq+8X0AOdiwJ6ovs5QeuX
+        GjC6MqdMFEoyXdoZETMxomR6+1SIMeVs4szryWyCKWwzIGaj9WS4KMr2UhybnJjBKrxDbtkm
+        rC3MCtNMx+/vmgewbLQlyUc2JFAB8MpkxK0soWoRaHKYfGRr4W8Ivhg6EH/YQNA8tUscJEY/
+        mEV8QY9gfrJS9C9SVmjccxFUEKgfG5CVHSk3KPhVR1hNGPUVQW1xz15DB0oGU6WzFiZJnDoN
+        TQVglcVUMNR8fofz3VyhfXNdaGUbKgT0jdUY77EHU8XSngezeB62P8Os9wOlE8G4akTAh69A
+        3m8z4tkBPg22iXh2gaGSApwPNCLYUa3sp40I9CUHi16EafNPwjodRp2Dpm5vXg4D9Y4Os8pA
+        2cHbVXt+CDso7ijbl8Wgyt1/3zPQrGsmDtrmd9VhPDMwPTEvKELu2kPraA+to/3f9wXCDMiJ
+        VXIp8SznK2fveXGyFE4pj/e6k5rSiiyfaGh3cL0TfR+/3YsoEkmPiM8+yoqRCGUZXGZKLwIS
+        kzqK30daJHGcLPMBq0iNVSiTWa4XnSBxqZPY/+XHaAkVL0tnk1g2jVUcVAWkjXM2cim/G7St
+        1JcGqLu0I3In8k9gwGr4tGNgx5tKQ2TfeOiNraII6bXLC8ZsxSm/iBk056PEPaP6IXiI24ge
+        81GPrtG6prxc5fBV+4Hz1z0Gl4dSueoxnXElrmVu9OixKrfQJM12jVuFv1+YfljUsoi5M5NP
+        qm5eaO37oRnUTMZKcS5B5uuBKTjZX5PC4CxAAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsVy+t/xu7r6F2viDH50MFmsvtvPZrFxxnpW
+        i2e39jJZrFx9lMni2I5HTBaXd81hs1j+ZC2zxdzW6ewOHB47Z91l97h8ttTj0OEORo+Trd9Y
+        PHbfbGDz6NuyitHj8ya5APYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9
+        O5uU1JzMstQifbsEvYwPD++xFpwUq/h37hhzA+N3oS5GTg4JAROJ88/PsXcxcnEICSxllLiy
+        dztLFyMHUEJG4vj6MogaYYk/17rYIGo+MUr0zrnMBpJgE7CSmNi+ihHEFhFQkOj5vRKsiFng
+        K6PE0kndzCAJYYF4iUOHDrGDDGURUJVY3yMBEuYVsJVY/PoxC8QCeYmt3z6xgticAnYSy9fN
+        B2sVAqn58oEJol5Q4uTMJ2D1zED1zVtnM09gFJiFJDULSWoBI9MqRpHU0uLc9NxiI73ixNzi
+        0rx0veT83E2MwHjZduznlh2MXe+CDzEKcDAq8fBqtNTECbEmlhVX5h5ilOBgVhLhfRoJFOJN
+        SaysSi3Kjy8qzUktPsRoCvTDRGYp0eR8YCznlcQbmhqaW1gamhubG5tZKInzdggcjBESSE8s
+        Sc1OTS1ILYLpY+LglGpgVP704fb64tRO1UNzBLWTjfXqDk7Of6hdvmWBvOvm+HN9W9ckfO88
+        UqH5yF54cuWqsyenKfG8tjyl/sG0TviK8sm0vAfqXHaBsjukQt/yfqjPnNnEvS3uy/KrvI5r
+        Nli7xq7gv8OlabfC+42GkXt05dw/Pa+mbnp+7ozsKa9gyWsfCt7qPDP1V2Ipzkg01GIuKk4E
+        AH+BQSWtAgAA
+X-CMS-MailID: 20200326155839eucas1p2c9e354eb1f81d47c2c00d1c6c42f28a5
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200326155849eucas1p2c1c0d059d5474597bd1eec3a6855ed8a
+X-RootMTR: 20200326155839eucas1p2c9e354eb1f81d47c2c00d1c6c42f28a5
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200326155849eucas1p2c1c0d059d5474597bd1eec3a6855ed8a
+X-CMS-RootMailID: 20200326155839eucas1p2c9e354eb1f81d47c2c00d1c6c42f28a5
 References: <20200326155822.19400-1-b.zolnierkie@samsung.com>
-        <CGME20200326155849eucas1p2c1c0d059d5474597bd1eec3a6855ed8a@eucas1p2.samsung.com>
+        <CGME20200326155839eucas1p2c9e354eb1f81d47c2c00d1c6c42f28a5@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add ATA_FORCE config option (visible only if EXPERT config
-option is enabled) and make "libata.force" kernel parameter
-optional.
+There is no point in exposing ncq_enable_prio sysfs attribute for
+devices on PATA and non-NCQ capable SATA hosts so:
 
-Code size savings on m68k arch using (modified) atari_defconfig:
+* remove dev_attr_ncq_prio_enable from ata_common_sdev_attrs[]
 
-   text    data     bss     dec     hex filename
-w/ CONFIG_ATA_FORCE=y:
-  31983     572      40   32595    7f53 drivers/ata/libata-core.o
-w/ CONFIG_ATA_FROCE=n:
-  28958     316      32   29306    727a drivers/ata/libata-core.o
+* add ata_ncq_sdev_attrs[]
 
-Suggested-by: Christoph Hellwig <hch@lst.de>
+* update ATA_NCQ_SHT() macro to use ata_ncq_sdev_attrs[]
+
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/ata/Kconfig       | 16 ++++++++++++++++
- drivers/ata/libata-core.c | 22 ++++++++++++++++++++--
- drivers/ata/libata.h      |  4 ++++
- 3 files changed, 40 insertions(+), 2 deletions(-)
+ drivers/ata/libata-scsi.c |  8 +++++++-
+ include/linux/libata.h    | 11 ++++++++---
+ 2 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index 5b55ebf56b5a..05ecdce1b702 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -51,6 +51,22 @@ config ATA_VERBOSE_ERROR
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index ebc3de7c363a..005c6f2f7d21 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -463,11 +463,17 @@ EXPORT_SYMBOL_GPL(dev_attr_sw_activity);
  
- 	  If unsure, say Y.
+ struct device_attribute *ata_common_sdev_attrs[] = {
+ 	&dev_attr_unload_heads,
+-	&dev_attr_ncq_prio_enable,
+ 	NULL
+ };
+ EXPORT_SYMBOL_GPL(ata_common_sdev_attrs);
  
-+config ATA_FORCE
-+	bool "\"libata.force=\" kernel parameter support" if EXPERT
-+	default y
-+	help
-+	  This option adds support for "libata.force=" kernel parameter for
-+	  forcing configuration settings.
++struct device_attribute *ata_ncq_sdev_attrs[] = {
++	&dev_attr_unload_heads,
++	&dev_attr_ncq_prio_enable,
++	NULL
++};
++EXPORT_SYMBOL_GPL(ata_ncq_sdev_attrs);
 +
-+	  For further information, please read
-+	  <file:Documentation/admin-guide/kernel-parameters.txt>.
-+
-+	  This option will enlarge the kernel by approx. 3KB. Disable it if
-+	  kernel size is more important than ability to override the default
-+	  configuration settings.
-+
-+	  If unsure, say Y.
-+
- config ATA_ACPI
- 	bool "ATA ACPI Support"
- 	depends on ACPI
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 20c22dbc1f24..beca5f91bb4c 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -89,6 +89,7 @@ static unsigned long ata_dev_blacklisted(const struct ata_device *dev);
- 
- atomic_t ata_print_id = ATOMIC_INIT(0);
- 
-+#ifdef CONFIG_ATA_FORCE
- struct ata_force_param {
- 	const char	*name;
- 	u8		cbl;
-@@ -112,6 +113,7 @@ static char ata_force_param_buf[COMMAND_LINE_SIZE] __initdata;
- /* param_buf is thrown away after initialization, disallow read */
- module_param_string(force, ata_force_param_buf, sizeof(ata_force_param_buf), 0);
- MODULE_PARM_DESC(force, "Force ATA configurations including cable type, link speed and transfer mode (see Documentation/admin-guide/kernel-parameters.rst for details)");
-+#endif
- 
- static int atapi_enabled = 1;
- module_param(atapi_enabled, int, 0444);
-@@ -303,6 +305,7 @@ struct ata_link *ata_dev_phys_link(struct ata_device *dev)
- 	return ap->slave_link;
- }
- 
-+#ifdef CONFIG_ATA_FORCE
  /**
-  *	ata_force_cbl - force cable type according to libata.force
-  *	@ap: ATA port of interest
-@@ -483,6 +486,11 @@ static void ata_force_horkage(struct ata_device *dev)
- 			       fe->param.name);
- 	}
- }
-+#else
-+static inline void ata_force_link_limits(struct ata_link *link) { }
-+static inline void ata_force_xfermask(struct ata_device *dev) { }
-+static inline void ata_force_horkage(struct ata_device *dev) { }
-+#endif
+  *	ata_std_bios_param - generic bios head/sector/cylinder calculator used by sd.
+  *	@sdev: SCSI device for which BIOS geometry is to be determined
+diff --git a/include/linux/libata.h b/include/linux/libata.h
+index 710e09dae910..350fa584acde 100644
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -1334,6 +1334,7 @@ extern int ata_link_nr_enabled(struct ata_link *link);
+ extern const struct ata_port_operations ata_base_port_ops;
+ extern const struct ata_port_operations sata_port_ops;
+ extern struct device_attribute *ata_common_sdev_attrs[];
++extern struct device_attribute *ata_ncq_sdev_attrs[];
  
- /**
-  *	atapi_cmd_type - Determine ATAPI command type from SCSI opcode
-@@ -6080,6 +6088,7 @@ int ata_platform_remove_one(struct platform_device *pdev)
- }
- EXPORT_SYMBOL_GPL(ata_platform_remove_one);
- 
-+#ifdef CONFIG_ATA_FORCE
- static int __init ata_parse_force_one(char **cur,
- 				      struct ata_force_ent *force_ent,
- 				      const char **reason)
-@@ -6259,6 +6268,15 @@ static void __init ata_parse_force_param(void)
- 	ata_force_tbl_size = idx;
- }
- 
-+static void ata_free_force_param(void)
-+{
-+	kfree(ata_force_tbl);
-+}
-+#else
-+static inline void ata_parse_force_param(void) { }
-+static inline void ata_free_force_param(void) { }
-+#endif
+ /*
+  * All sht initializers (BASE, PIO, BMDMA, NCQ) must be instantiated
+@@ -1341,7 +1342,7 @@ extern struct device_attribute *ata_common_sdev_attrs[];
+  * edge driver's module reference, otherwise the driver can be unloaded
+  * even if the scsi_device is being accessed.
+  */
+-#define ATA_BASE_SHT(drv_name)					\
++#define __ATA_BASE_SHT(drv_name)				\
+ 	.module			= THIS_MODULE,			\
+ 	.name			= drv_name,			\
+ 	.ioctl			= ata_scsi_ioctl,		\
+@@ -1355,11 +1356,15 @@ extern struct device_attribute *ata_common_sdev_attrs[];
+ 	.slave_configure	= ata_scsi_slave_config,	\
+ 	.slave_destroy		= ata_scsi_slave_destroy,	\
+ 	.bios_param		= ata_std_bios_param,		\
+-	.unlock_native_capacity	= ata_scsi_unlock_native_capacity, \
++	.unlock_native_capacity	= ata_scsi_unlock_native_capacity
 +
- static int __init ata_init(void)
- {
- 	int rc;
-@@ -6267,7 +6285,7 @@ static int __init ata_init(void)
++#define ATA_BASE_SHT(drv_name)					\
++	__ATA_BASE_SHT(drv_name),				\
+ 	.sdev_attrs		= ata_common_sdev_attrs
  
- 	rc = ata_sff_init();
- 	if (rc) {
--		kfree(ata_force_tbl);
-+		ata_free_force_param();
- 		return rc;
- 	}
+ #define ATA_NCQ_SHT(drv_name)					\
+-	ATA_BASE_SHT(drv_name),					\
++	__ATA_BASE_SHT(drv_name),				\
++	.sdev_attrs		= ata_ncq_sdev_attrs,		\
+ 	.change_queue_depth	= ata_scsi_change_queue_depth
  
-@@ -6291,7 +6309,7 @@ static void __exit ata_exit(void)
- 	ata_release_transport(ata_scsi_transport_template);
- 	libata_transport_exit();
- 	ata_sff_exit();
--	kfree(ata_force_tbl);
-+	ata_free_force_param();
- }
- 
- subsys_initcall(ata_init);
-diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
-index 6c808cf39135..68cdd81d747c 100644
---- a/drivers/ata/libata.h
-+++ b/drivers/ata/libata.h
-@@ -37,7 +37,11 @@ extern int libata_noacpi;
- extern int libata_allow_tpm;
- extern const struct device_type ata_port_type;
- extern struct ata_link *ata_dev_phys_link(struct ata_device *dev);
-+#ifdef CONFIG_ATA_FORCE
- extern void ata_force_cbl(struct ata_port *ap);
-+#else
-+static inline void ata_force_cbl(struct ata_port *ap) { }
-+#endif
- extern u64 ata_tf_to_lba(const struct ata_taskfile *tf);
- extern u64 ata_tf_to_lba48(const struct ata_taskfile *tf);
- extern struct ata_queued_cmd *ata_qc_new_init(struct ata_device *dev, int tag);
+ /*
 -- 
 2.24.1
 
