@@ -2,200 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78DE91934E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 01:10:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F234C1934E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 01:13:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbgCZAKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 20:10:32 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35583 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727525AbgCZAKc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 20:10:32 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 7so1984523pgr.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 17:10:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2TLCIayFIh5w2c05KwNKqvVja8wF1oXdMguuXxf6c88=;
-        b=mcg2Bs1/Nwi+ze10ARXtbL5aZ4s3WkjaFpQCuZL22Sr/57of9GKPV43s2w4UxOMBdI
-         xWKBa9Z9Vx/ggJSwC+dcyIrGg39sNINmAfJTqyVRnZhzCQJD6Q9VR21Jq17cP6OtbLaZ
-         Xi72XGXyLAKrT/95E43XifM36FwZ6b6OcD9gIVH/QAB5/U1l8gdJ1fl4nenE2jF6biNN
-         Ko3yvp7K8DjUXwpIcI83p6TQjkVEheeVEN9r7CO5l2vx0x+2ZkgZwneMoFi2nBQViN3Z
-         E48INybmpXNJi12nbXTBNHHZYxjN2K/0cmMNN2MMbq3GWdzT6aRVeqMgoFT1xh/lHyKP
-         NbPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2TLCIayFIh5w2c05KwNKqvVja8wF1oXdMguuXxf6c88=;
-        b=RSkQltxLMmDgr1tm5F/3O7Dkdbf1dhDTu/F4i6HL71HoMNkEfAu6GMPWuBQ0NoCmQe
-         uJkkOaVZ1r6p9MlPu+I2k9BeEEMJJhDqlJxz7PEQLzonuta7LDaez7odADv0oqX3tsMq
-         N6Be+uWndLWueAQGmmQYBN+XZ9HLULbrg9+w4qE914aX11dnR2Glm05T4YNqujV1VG6F
-         SeKPxLTg8ndYFRuzJLtakz5GOX52fguiF+eWBlUtWrLjEZUmNL3Lsbw93iE27pJH1KeS
-         NUNanqRuq90uZBGG6bWbHdIiu6h7fewzAhnXQ/A1G0eSlXy56avlSe5vZVT/0EgHGKvD
-         Xq5A==
-X-Gm-Message-State: ANhLgQ3BlZxPBk/WosWh+XCgBemqDGybKd+b9kSv0Y0K9eBuLM4cVjbk
-        DXi2ob46v9xQ19KpOMVhCNgmTA==
-X-Google-Smtp-Source: ADFU+vueD5HKQNt112j2D/SR5oowg3NH7+PyYA8C/vR8DYdfCLRQnjxh6OczgKVDVdPopQiCWqM/jQ==
-X-Received: by 2002:a63:6944:: with SMTP id e65mr5977248pgc.406.1585181428497;
-        Wed, 25 Mar 2020 17:10:28 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:bc61:d85d:eb16:9036])
-        by smtp.gmail.com with ESMTPSA id d206sm229190pfd.160.2020.03.25.17.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 17:10:27 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 17:10:22 -0700
-From:   Benson Leung <bleung@google.com>
-To:     Prashant Malani <pmalani@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v5 1/4] dt-bindings: Add cros-ec Type C port driver
-Message-ID: <20200326001022.GA117276@google.com>
-References: <20200316090021.52148-1-pmalani@chromium.org>
- <20200316090021.52148-2-pmalani@chromium.org>
+        id S1727547AbgCZANB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 20:13:01 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:40076 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727498AbgCZANA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 20:13:00 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CB6CF1A072D;
+        Thu, 26 Mar 2020 01:12:58 +0100 (CET)
+Received: from smtp.na-rdc02.nxp.com (usphx01srsp001v.us-phx01.nxp.com [134.27.49.11])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9232D1A0728;
+        Thu, 26 Mar 2020 01:12:58 +0100 (CET)
+Received: from right.am.freescale.net (right.am.freescale.net [10.81.116.70])
+        by usphx01srsp001v.us-phx01.nxp.com (Postfix) with ESMTP id D006D4040F;
+        Wed, 25 Mar 2020 17:12:57 -0700 (MST)
+From:   Li Yang <leoyang.li@nxp.com>
+To:     arm@kernel.org, soc@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org
+Subject: [GIT PULL] soc/fsl drivers changes for next(v5.7)
+Date:   Wed, 25 Mar 2020 19:12:57 -0500
+Message-Id: <20200326001257.22696-1-leoyang.li@nxp.com>
+X-Mailer: git-send-email 2.25.1.377.g2d2118b
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
-Content-Disposition: inline
-In-Reply-To: <20200316090021.52148-2-pmalani@chromium.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi soc maintainers,
 
---tThc/1wpZn/ma/RB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please merge the following new changes for soc/fsl drivers.
 
-Hi Prashant,
+Regards,
+Leo
 
-On Mon, Mar 16, 2020 at 02:00:15AM -0700, Prashant Malani wrote:
-> Some Chrome OS devices with Embedded Controllers (EC) can read and
-> modify Type C port state.
->=20
-> Add an entry in the DT Bindings documentation that lists out the logical
-> device and describes the relevant port information, to be used by the
-> corresponding driver.
->=20
-> Signed-off-by: Prashant Malani <pmalani@chromium.org>
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
 
-Hi Rob,
+are available in the Git repository at:
 
-Will you go ahead and merge this through your tree for v5.7?
+  git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-next-v5.7
 
-Thanks,
-Benson
+for you to fetch changes up to 461c3ac0dc46ba7fc09628aadf63c81253c4c3de:
 
-> ---
->=20
-> Changes in v5:
-> - Updated License identifier.
-> - Updated DT example to be a full example.
->=20
-> Changes in v4:
-> - Rebased on top of usb-connector.yaml, so the connector property now
->   directly references the usb-connector DT binding.
->=20
->  .../bindings/chrome/google,cros-ec-typec.yaml | 54 +++++++++++++++++++
->  1 file changed, 54 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-=
-ec-typec.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/chrome/google,cros-ec-type=
-c.yaml b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> new file mode 100644
-> index 0000000000000..6d7396ab8beec
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yaml
-> @@ -0,0 +1,54 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/chrome/google,cros-ec-typec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google Chrome OS EC(Embedded Controller) Type C port driver.
-> +
-> +maintainers:
-> +  - Benson Leung <bleung@chromium.org>
-> +  - Prashant Malani <pmalani@chromium.org>
-> +
-> +description:
-> +  Chrome OS devices have an Embedded Controller(EC) which has access to
-> +  Type C port state. This node is intended to allow the host to read and
-> +  control the Type C ports. The node for this device should be under a
-> +  cros-ec node like google,cros-ec-spi.
-> +
-> +properties:
-> +  compatible:
-> +    const: google,cros-ec-typec
-> +
-> +  connector:
-> +    $ref: /schemas/connector/usb-connector.yaml#
-> +
-> +required:
-> +  - compatible
-> +
-> +examples:
-> +  - |+
-> +    spi0 {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      cros_ec: ec@0 {
-> +        compatible =3D "google,cros-ec-spi";
-> +        reg =3D <0>;
-> +
-> +        typec {
-> +          compatible =3D "google,cros-ec-typec";
-> +
-> +          #address-cells =3D <1>;
-> +          #size-cells =3D <0>;
-> +
-> +          connector@0 {
-> +            compatible =3D "usb-c-connector";
-> +            reg =3D <0>;
-> +            power-role =3D "dual";
-> +            data-role =3D "dual";
-> +            try-power-role =3D "source";
-> +          };
-> +        };
-> +      };
-> +    };
-> --=20
-> 2.25.1.481.gfbce0eb801-goog
->=20
+  soc: fsl: qe: fix sparse warnings for ucc_slow.c (2020-03-24 19:09:40 -0500)
 
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
+----------------------------------------------------------------
+NXP/FSL SoC driver updates for v5.7
 
---tThc/1wpZn/ma/RB
-Content-Type: application/pgp-signature; name="signature.asc"
+DPAA2 DPIO driver performance optimization
+- Add and use QMAN multiple enqueue interface
+- Use function pointer indirection to replace checks in hotpath
 
------BEGIN PGP SIGNATURE-----
+QUICC Engine drivers
+- Fix sparse warnings and exposed endian issues
 
-iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCXnvy7gAKCRBzbaomhzOw
-wlL5AQCe/VHDNM66dRaoDQSNG5IZBjItx7VRHnBWlduXpWT1SwD/XH6Abd9zP4vz
-zJvWwtwdlOCA4OtCkTb3NrcwSyvQowA=
-=tVxd
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Colin Ian King (1):
+      soc: fsl: dpio: fix dereference of pointer p before null check
 
---tThc/1wpZn/ma/RB--
+Li Yang (7):
+      soc: fsl: qe: fix sparse warnings for qe.c
+      soc: fsl: qe: fix sparse warning for qe_common.c
+      soc: fsl: qe: fix sparse warnings for ucc.c
+      soc: fsl: qe: fix sparse warnings for qe_ic.c
+      soc: fsl: qe: fix sparse warnings for ucc_fast.c
+      soc: fsl: qe: ucc_slow: remove 0 assignment for kzalloc'ed structure
+      soc: fsl: qe: fix sparse warnings for ucc_slow.c
+
+Youri Querry (3):
+      soc: fsl: dpio: Adding QMAN multiple enqueue interface
+      soc: fsl: dpio: QMAN performance improvement with function pointer indirection
+      soc: fsl: dpio: Replace QMAN array mode with ring mode enqueue
+
+ drivers/soc/fsl/dpio/dpio-service.c |  69 +++-
+ drivers/soc/fsl/dpio/qbman-portal.c | 767 ++++++++++++++++++++++++++++++++----
+ drivers/soc/fsl/dpio/qbman-portal.h | 158 +++++++-
+ drivers/soc/fsl/qe/qe.c             |   4 +-
+ drivers/soc/fsl/qe/qe_common.c      |   2 +-
+ drivers/soc/fsl/qe/qe_ic.c          |   2 +-
+ drivers/soc/fsl/qe/ucc.c            |   2 +-
+ drivers/soc/fsl/qe/ucc_slow.c       |  33 +-
+ include/soc/fsl/dpaa2-io.h          |   6 +-
+ include/soc/fsl/qe/ucc_fast.h       |   6 +-
+ include/soc/fsl/qe/ucc_slow.h       |  13 +-
+ 11 files changed, 935 insertions(+), 127 deletions(-)
