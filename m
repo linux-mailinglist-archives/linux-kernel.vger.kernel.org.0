@@ -2,33 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0709B194002
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 14:45:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EE8419400B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 14:45:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbgCZNpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 09:45:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50476 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbgCZNpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 09:45:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B1542AB3D;
-        Thu, 26 Mar 2020 13:45:09 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: bcm2835_defconfig: Enable fixed-regulator
+        id S1727879AbgCZNpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 09:45:24 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55065 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727832AbgCZNpU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 09:45:20 -0400
+Received: by mail-wm1-f68.google.com with SMTP id c81so6511979wmd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 06:45:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=E2Nej3PvIghRUOKzyBo4bIwNfTfqhNtg3/diQuBc7As=;
+        b=EBSK+E9NDW6/g5NS8KEfKOXbeCyuAzwOTDTO1vQwh0l3zrv8Q2tyK/LrydSklc4JX+
+         pqsTOR4naUDFKVaVpM1TqekGxLf2R03Yg30rMeFkiES78oulP5qC5aCOZ66Ku27ITvYq
+         OVevZUCL3r8VcaWFHv9qIPfi5YBlHdnrk2HJiQGdHpq1h4T7m3VLpePVbjr5hM6yCWu6
+         +w1U1yZCLQJt16R2im4++WMu1WiU7m2qkpA0eOum52mdnKyyjQqUWYrMxmxu3Yrs5dxt
+         lxOFJOZmCbfFlS3sErPEPe/+Lj5XimXNaignHRINQQKQ5JzcTo6a4XJeC85hfOe0nsQ6
+         E6dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=E2Nej3PvIghRUOKzyBo4bIwNfTfqhNtg3/diQuBc7As=;
+        b=PJl28aCqWG53OKEWWz+eWw7G5pRihui2rpX7/OiHAxtN60b/UrNkHT4gcugnfly+qE
+         hqKrXfeP7D+nWiOGSVhLfcSLaLIZZa5IQzt6MQL//eJ1bwMG+UdQEwKTrR8AlkGgdvkl
+         RbRBxe3ic7nLJ13B/ORfFRnQR7hWudkK8j1R6kdkDJeOenT1r3F3WR7vQcIGXjmw52Cc
+         qmeCvKAbc2qdlxcyqQMeexoP79QjwAWcLYQ7T7IETwKGmtyaE8BWCGKEhhJB2Mj2CFhH
+         nlSCDWEjEds1yYr1hxjO5kN+N80w1Zs0TYr1u2H73BJBMDUw+9pFmvO5VLkNn9nwXqa5
+         Y1Xw==
+X-Gm-Message-State: ANhLgQ3twBOjD80QvnynIwubJRQjsI1KyfDGyrApH59dvIYlC09GsjUY
+        W62ab+HHFMrZAi8PFQ0OmH9BCQ==
+X-Google-Smtp-Source: ADFU+vvlZVniCdthaZ5Ps9LD3FGyRxckA9MDLoj9Ko1f8T/NE7VRmePqEkNAlyEGnn9joVshcbaFYQ==
+X-Received: by 2002:a7b:cb42:: with SMTP id v2mr43647wmj.170.1585230317388;
+        Thu, 26 Mar 2020 06:45:17 -0700 (PDT)
+Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
+        by smtp.gmail.com with ESMTPSA id h29sm4079617wrc.64.2020.03.26.06.45.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 06:45:16 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     kishon@ti.com, balbi@kernel.org, khilman@baylibre.com,
+        martin.blumenstingl@googlemail.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 05/14] usb: dwc3: meson-g12a: check return of dwc3_meson_g12a_usb_init
 Date:   Thu, 26 Mar 2020 14:44:57 +0100
-Message-Id: <20200326134458.13992-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.25.1
+Message-Id: <20200326134507.4808-6-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20200326134507.4808-1-narmstrong@baylibre.com>
+References: <20200326134507.4808-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -36,27 +64,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This regulator is now used to control the SD card's power supply on the
-Raspberry Pi 4.
+The dwc3_meson_g12a_usb_init function can return an error, check it.
 
-Suggested-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Fixes: e3e716e6b889 ("usb: dwc3: Add Amlogic A1 DWC3 glue")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm/configs/bcm2835_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/dwc3/dwc3-meson-g12a.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/bcm2835_defconfig b/arch/arm/configs/bcm2835_defconfig
-index 8e7a3ed2a4df..44ff9cd88d81 100644
---- a/arch/arm/configs/bcm2835_defconfig
-+++ b/arch/arm/configs/bcm2835_defconfig
-@@ -103,6 +103,7 @@ CONFIG_WATCHDOG=y
- CONFIG_BCM2835_WDT=y
- CONFIG_MFD_SYSCON=y
- CONFIG_REGULATOR=y
-+CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_MEDIA_SUPPORT=y
- CONFIG_MEDIA_CAMERA_SUPPORT=y
+diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
+index 41bcbd31fe4e..69381c42a6d3 100644
+--- a/drivers/usb/dwc3/dwc3-meson-g12a.c
++++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
+@@ -588,7 +588,9 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+ 	/* Get dr_mode */
+ 	priv->otg_mode = usb_get_dr_mode(dev);
+ 
+-	dwc3_meson_g12a_usb_init(priv);
++	ret = dwc3_meson_g12a_usb_init(priv);
++	if (ret)
++		goto err_disable_clks;
+ 
+ 	/* Init PHYs */
+ 	for (i = 0 ; i < PHY_COUNT ; ++i) {
 -- 
-2.25.1
+2.22.0
 
