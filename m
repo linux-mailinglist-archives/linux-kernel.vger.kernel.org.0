@@ -2,105 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E51F6193BD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:29:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A035B193BFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:36:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbgCZJ3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 05:29:33 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46421 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726292AbgCZJ3c (ORCPT
+        id S1727941AbgCZJf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 05:35:58 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:9324 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727911AbgCZJf6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 05:29:32 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j17so6739879wru.13
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 02:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=UBGWriIek5v0PtwSr6maLDwCqpBsKEE/T0ObkYjazh4=;
-        b=hMamO+S9uSMmYirEaLH+WfXFn5+pTev8UTI/BfQPluXmQLkA/kXVl5thwb0WHj3NXG
-         OVUFYKndO40SrzZ6qK0V1tbFuUPkiPiUTqaTM/B5UMOIiVgJgKXJwiVU4h1AC4jIkytq
-         e+IGBbozBs8D/xONjMpQFLUbMQjP9CiBRVTVcY/L9/PdE8Q13bleCYZaDi6uX4en4sOd
-         TdaKqyIEHYjQidJ2rJPX9MnUKBhwZjJ51Y8XxXjEwiwE7rZUBs7+pqWNoR4mIKy7T6F0
-         le773exPPJCMvTvSy95qNOzkWpG6DtKzDwXVWRc1SfC7amIWxhAXvlhQMD0ndTHOsSfr
-         KVkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=UBGWriIek5v0PtwSr6maLDwCqpBsKEE/T0ObkYjazh4=;
-        b=tsTgOcWy9NX6n1KF0mAKbaikJ1mTfRGhMhpmlIy4XvPx+H9EA/J9pYHnTN1R7PcWkk
-         PdUp4uvx7Ryq2F93P1Q5Gti/DqFZCCbDxVdp5WE/XbUx/H2RE7ZkokP+ZQ4WD+Fg7JLk
-         HHlF8uKOj5NnhWm59LddD5S7vQMqdWzMl4cogMtP68FWNzWxmbwX3BsEI66EJ6c5LrMm
-         cR3BN2eNy8tecfNU9sS3vut1ittuG6AyeRwv30dgj8r989C02vmetkSIQ6ap7xwAsKkx
-         leT9OgjCJvWEFWTlY986WPTMrXDtKX9tQ6CpdKWtRh4NpSPuXeNy2arJCCkryyFpneuU
-         /yig==
-X-Gm-Message-State: ANhLgQ16BwFuJeDsDhCQ1Nxad06TL7A2bySfPnXvnk5BLlVoOORmWAZy
-        0McrQf4lGd4hX0i8kkxz8XXvhQ==
-X-Google-Smtp-Source: ADFU+vvnwukm7zzP15OgKy56b6O0Cc4OinBoGIg9TVhQc2hJN41CAQsnoNiB9+V2WiGJ2qvxwOfKzw==
-X-Received: by 2002:a5d:6ac8:: with SMTP id u8mr8786646wrw.53.1585214970465;
-        Thu, 26 Mar 2020 02:29:30 -0700 (PDT)
-Received: from dell ([2.27.35.213])
-        by smtp.gmail.com with ESMTPSA id h26sm2598633wmb.19.2020.03.26.02.29.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 02:29:29 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 09:30:19 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, icenowy@aosc.io,
-        anarsoul@gmail.com, Neil Armstrong <narmstrong@baylibre.com>,
-        matthias.bgg@gmail.com, drinkcat@chromium.org, hsinyi@chromium.org,
-        megous@megous.com
-Subject: Re: [PATCH v4 2/4] mfd: anx7688: Add driver for Analogix ANX7688 chip
-Message-ID: <20200326093019.GC603801@dell>
-References: <20200318070730.4012371-1-enric.balletbo@collabora.com>
- <20200318070730.4012371-2-enric.balletbo@collabora.com>
+        Thu, 26 Mar 2020 05:35:58 -0400
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02Q9PJJ9002741;
+        Thu, 26 Mar 2020 05:30:46 -0400
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2ywcs68gnb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 05:30:45 -0400
+Received: from SCSQMBX10.ad.analog.com (scsqmbx10.ad.analog.com [10.77.17.5])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 02Q9UiYU013848
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Thu, 26 Mar 2020 05:30:44 -0400
+Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by SCSQMBX10.ad.analog.com
+ (10.77.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Thu, 26 Mar
+ 2020 02:30:42 -0700
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX10.ad.analog.com
+ (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Thu, 26 Mar 2020 02:30:42 -0700
+Received: from localhost.localdomain ([10.48.65.12])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 02Q9Uchj022178;
+        Thu, 26 Mar 2020 05:30:39 -0400
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <jic23@kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH v3] iio: buffer: Don't allow buffers without any channels enabled to be activated
+Date:   Thu, 26 Mar 2020 11:30:12 +0200
+Message-ID: <20200326093012.10758-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200320104031.31701-1-alexandru.ardelean@analog.com>
+References: <20200320104031.31701-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200318070730.4012371-2-enric.balletbo@collabora.com>
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-25_15:2020-03-24,2020-03-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ malwarescore=0 clxscore=1015 suspectscore=0 spamscore=0 mlxlogscore=999
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003260070
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Mar 2020, Enric Balletbo i Serra wrote:
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-> The ANX7688 chip is a Type-C Port Controller, HDMI to DP converter and
-> USB-C mux between USB 3.0 lanes and the DP output.
-> 
-> For our use case a big part of the chip, like power supplies, control
-> gpios and usb-c parts are managed by an Embedded Controller, hence,
-> this is its simplest form of it. Other users of this chip might
-> introduce new functionalities as per their requirements.
+Before activating a buffer make sure that at least one channel is enabled.
+Activating a buffer with 0 channels enabled doesn't make too much sense and
+disallowing this case makes sure that individual driver don't have to add
+special case code to handle it.
 
-Hmm... So first impressions is that this 'driver' doesn't really do
-anything useful other than checking the running model.  I think you're
-better off using "simple-mfd" and doing the ID check inside the
-useful/functional child device driver(s).
+Currently, without this patch enabling a buffer is possible and no error is
+produced. With this patch -EINVAL is returned.
 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2: None
-> 
->  drivers/mfd/Kconfig         | 11 +++++
->  drivers/mfd/Makefile        |  1 +
->  drivers/mfd/anx7688.c       | 87 +++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/anx7688.h | 39 +++++++++++++++++
->  4 files changed, 138 insertions(+)
->  create mode 100644 drivers/mfd/anx7688.c
->  create mode 100644 include/linux/mfd/anx7688.h
+An example of execution with this patch and some instrumented print-code:
+   root@analog:~# cd /sys/bus/iio/devices/iio\:device3/buffer
+   root@analog:/sys/bus/iio/devices/iio:device3/buffer# echo 1 > enable
+   0: iio_verify_update 748 indio_dev->masklength 2 *insert_buffer->scan_mask 00000000
+   1: iio_verify_update 753
+   2:__iio_update_buffers 1115 ret -22
+   3: iio_buffer_store_enable 1241 ret -22
+   -bash: echo: write error: Invalid argument
+1, 2 & 3 are exit-error paths. 0 the first print in iio_verify_update()
+rergardless of error path.
 
+Without this patch (and same instrumented print-code):
+   root@analog:~# cd /sys/bus/iio/devices/iio\:device3/buffer
+   root@analog:/sys/bus/iio/devices/iio:device3/buffer# echo 1 > enable
+   0: iio_verify_update 748 indio_dev->masklength 2 *insert_buffer->scan_mask 00000000
+   root@analog:/sys/bus/iio/devices/iio:device3/buffer#
+Buffer is enabled with no error.
+
+Fixes: 84b36ce5f79c0 ("staging:iio: Add support for multiple buffers")
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+
+Changelog v2 -> v3:
+* actually added Fixes tag; seems I forgot it in v2
+  hopefully the tag is the good one; if needed, it can be
+  dropped; this has been around for ~8 years; no idea if it's worth
+  backporting
+
+Changelog v1 -> v2:
+* moved check in iio_verify_update()
+* added dev_dbg() message; should help some folks understand the message
+* documented steps to reproduce
+
+ drivers/iio/industrialio-buffer.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+index 5ff34ce8b6a2..e6fa1a4e135d 100644
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -686,6 +686,13 @@ static int iio_verify_update(struct iio_dev *indio_dev,
+ 	bool scan_timestamp;
+ 	unsigned int modes;
+ 
++	if (insert_buffer &&
++	    bitmap_empty(insert_buffer->scan_mask, indio_dev->masklength)) {
++		dev_dbg(&indio_dev->dev,
++			"At least one scan element must be enabled first\n");
++		return -EINVAL;
++	}
++
+ 	memset(config, 0, sizeof(*config));
+ 	config->watermark = ~0;
+ 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
