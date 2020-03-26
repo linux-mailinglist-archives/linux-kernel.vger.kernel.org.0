@@ -2,129 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E937A1939F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 08:58:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F178193A08
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 08:59:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbgCZH6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 03:58:53 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38024 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbgCZH6x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 03:58:53 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w3so1834487plz.5;
-        Thu, 26 Mar 2020 00:58:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=kpesQAb1EfvXtxtfV/ThTPpjKNkxOztwAVy2KkYtRQs=;
-        b=jzAIRaqUHbJdHcBmYlTiQwxR7p6qtDzRAZq18vVuoq/WS8xJYMme88GfJsqrf0q9zA
-         GZ98OOXWvIn/4CY3U/VSxm0DgQU1U7v2X1CImXiqUZ4GjcSUkWZS0Uo/alo+Qhy92W01
-         LkEhlCDUdT59m6UWtRiwiG6BL6+k7NXc4go1GF/fDJLJ4LzFTIPHp2k1JAquhtT7Lkz/
-         LRmep1QLA/+xOyqiCCW41O27ByxoKpx1d4u/JGrHGn6QVWRZRMMRbD1T+dJws9kxrEC1
-         QVB9CrLshT97eFW+o8mxQ457lkevhUUY+dBWLephD0e5wiCeWNjWm2wuLZiQcn2sBiRf
-         eJTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kpesQAb1EfvXtxtfV/ThTPpjKNkxOztwAVy2KkYtRQs=;
-        b=t45X+4OfJ7hxemEF+OZgjXZ43JOlCZkhb3HNvs8KR0D2FFvLGmWDX31/zKNYHAKccC
-         beDA8ya77vdNQjD6f6xlqGer8/gyUK7+sp9DO7uFSYtbPzHl+z8gaJ8DkMbX0hwND+UN
-         O9oiggMxya9dCrgJnwY1UovJ6zlb5RI9VPP72Ay2Vkyc8ONEMO4Me+2xpq8FJDrShd3a
-         qGn+wdQ+frdtE+GiHVKsqj/2SEftqx+BPmXHK45DBFm1Moad2DDXSZgqHXfo4bGiWXP5
-         A0zGOOUvqGv0UxK1lBYVEZjmzjZWSkAKOgVjN6PxGijq0b1fPEIDB1VYFWu3q5gXrTY/
-         U07A==
-X-Gm-Message-State: ANhLgQ2YXQvtcJPx5phrNqz0WS7l5l1CqUNrzg6RX4leryhKVkX9aZc6
-        JTbWrgdCVJA9EdfU9Rq8h34=
-X-Google-Smtp-Source: ADFU+vu56+99aFARGE8a5QmN/kZSODsnm4TPg+HH+ts6prsTBPuNX0IH5gkjvDVPnJEJbrvniXpTpQ==
-X-Received: by 2002:a17:90a:37ea:: with SMTP id v97mr1825249pjb.26.1585209531605;
-        Thu, 26 Mar 2020 00:58:51 -0700 (PDT)
-Received: from localhost.localdomain ([2401:e180:8844:1606:8876:e9fa:cdda:cda2])
-        by smtp.gmail.com with ESMTPSA id 144sm1011804pgd.29.2020.03.26.00.58.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 26 Mar 2020 00:58:51 -0700 (PDT)
-From:   Johnny Chuang <johnny.chuang.emc@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        Rob Schonberger <robsc@google.com>,
-        Johnny Chuang <johnny.chuang@emc.com.tw>
-Cc:     James Chen <james.chen@emc.com.tw>,
-        Jennifer Tsai <jennifer.tsai@emc.com.tw>,
-        Paul Liang <paul.liang@emc.com.tw>,
-        Jeff Chuang <jeff.chuang@emc.com.tw>
-Subject: [PATCH] Input: elants_i2c - support palm detection
-Date:   Thu, 26 Mar 2020 15:58:45 +0800
-Message-Id: <1585209525-6047-1-git-send-email-johnny.chuang.emc@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727763AbgCZH70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 03:59:26 -0400
+Received: from mail-eopbgr40080.outbound.protection.outlook.com ([40.107.4.80]:39331
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726279AbgCZH7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 03:59:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ml67QrSnU37goX368yB0z8lf7c83Oq+cKe+RVfnDDnPtijvxLXA5GThT3FRX6A9xHzTNoZ0Vv6nCwO7DCWMdQk0Fa/QsgnP29vlAzqxokj7xlMwmkGQ0BHlH/kTcONBL2LBEjnJG3KDNxFUMJjXge46ESOm+SR/psPnVFUHLMX17JHTnBTSzd3PBBosswJa9uuRKcdJW09vsJwlHsWnWaGSOodooRoIEhj3HriOrt4i7w8Fk/4wCYEaj9BRuPAM+vLrUy5REgXArRMHR4SybFa4pqeEeElBNFq4BWV82hScdNC5ljhYUIlSVIJMWtpSKezLlXcRIAnCprCql1qoqbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pvbKp2cMV93dwUhpQEDEeK+kZ/BA9Rl5QGw3EG6S6hw=;
+ b=C4cZ1H8S75h2h/Ok0jZwmc4zE0U40PwB7mjJ8XuGwj/lGtV+a3RuS8My95+eiSBwQn0QbNzKqxhWNgg77o1Ka5lD0/b4MltJ/Blm0ph0RsvdPuBuEWAIgYInxt9h00CHEOtvj/GS9MYWGHQ4Nbd45nzNy2qTOt6v9vFbPY7OnKwl0aaKGfRW6LT+JZRB48QgNTINyXnf2XujbHQ+SGcgyF/drHtlew9roCJDM9fLha0fwUJ0BQs136opKv71iuyKam9sdtzki8b/7U0NbRCS2mq8zJ5RjOoVPfvnuUO1Wzr+5x6o500Gs1TOiXhX6dGQLi9E945usZYz86fzGR6BFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pvbKp2cMV93dwUhpQEDEeK+kZ/BA9Rl5QGw3EG6S6hw=;
+ b=j0oT7vFfy99Ie1lc00ToY7R4BM2yXr5uI1xxwuJgZCd6ZodV3+uPAbUmIlBgXHxl/XVYkYloMcjmBFWYZ3rF3mwwBVzBX2FOALUTs4hIml0NPulywi8XVSvOIiftgu7v+cKIMPKe/ScJU8LUZF0XBEa/Ry7KIGcanBWof14unZQ=
+Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com (52.134.3.146) by
+ VI1PR0402MB2941.eurprd04.prod.outlook.com (10.175.24.135) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2835.18; Thu, 26 Mar 2020 07:58:49 +0000
+Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com
+ ([fe80::c991:848b:cc80:2768]) by VI1PR0402MB3600.eurprd04.prod.outlook.com
+ ([fe80::c991:848b:cc80:2768%7]) with mapi id 15.20.2835.023; Thu, 26 Mar 2020
+ 07:58:49 +0000
+From:   Andy Duan <fugang.duan@nxp.com>
+To:     Martin Fuzzey <martin.fuzzey@flowbird.group>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: RE: [EXT] [PATCH v2 3/4] dt-bindings: fec: document the new gpr
+ property.
+Thread-Topic: [EXT] [PATCH v2 3/4] dt-bindings: fec: document the new gpr
+ property.
+Thread-Index: AQHWAtDigL59/vfUi0SjmWgPNOv2tqhagtYA
+Date:   Thu, 26 Mar 2020 07:58:49 +0000
+Message-ID: <VI1PR0402MB360011C8A7A66BCDBC0D0D50FFCF0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+References: <1585159919-11491-1-git-send-email-martin.fuzzey@flowbird.group>
+ <1585159919-11491-4-git-send-email-martin.fuzzey@flowbird.group>
+In-Reply-To: <1585159919-11491-4-git-send-email-martin.fuzzey@flowbird.group>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fugang.duan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ad93ba77-d124-401c-2a93-08d7d15b84d1
+x-ms-traffictypediagnostic: VI1PR0402MB2941:|VI1PR0402MB2941:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB2941C401614EC4F9BC557932FFCF0@VI1PR0402MB2941.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3826;
+x-forefront-prvs: 0354B4BED2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(136003)(396003)(346002)(376002)(66946007)(81166006)(9686003)(66556008)(7416002)(66446008)(186003)(64756008)(110136005)(76116006)(55016002)(8676002)(6506007)(66476007)(7696005)(81156014)(26005)(71200400001)(4326008)(5660300002)(2906002)(316002)(86362001)(8936002)(33656002)(54906003)(52536014)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2941;H:VI1PR0402MB3600.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: KD/DcNhj3K4Oj7DXkWHxw4d7A8wKduznEjag9842qgrPk/4FfSlwKcM8C1fTbkU/pUqzs7uLw0IXc++/XvR02tyzXDxQkA6SZ7rMuFpdoE5uXSLAH7Oxr2YQ7BEHtwVXJt/DRZSLvAEYy6YPtqwShWqWimKabu2qCyxytYIfFra89p4+oeydHgQg4qgor55yHh+JpixV8ZxD44VEhuLMO3lySS4TLPwNbh/QwxoM7ojgcr++0SnKrEaXYzNFXofrpWaCwUpT9tPd2alvAAh1qq47iZbzYBPOsaCtBKztgVOJax6OweYKMIytPKk/MMna8C8dNYr2BLoNtWN5WSORhLPM8roMho1zFY28FbedQzMu6qxs48aagE0IgoWwRcx3m3gkl8SnoHjnWTZxiH2bu6exWUhTc09h7KTAqlSrgzyl79THXLR2AFd8GR3Qi8R/
+x-ms-exchange-antispam-messagedata: xHhEpUEx0O1JIdXVeLjEfbNCbw+BMNPjrb27WvkQRAR/5kzrYVDkAunlc9N9J7YuumH0jiqT8x4ZmP+WsoMcRI097cfkEXn8WS+1cD3TJsWYy8aB7r/Riu+fCvRM+WtbqONNPYdUXfL9AjGmYNTbXA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad93ba77-d124-401c-2a93-08d7d15b84d1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Mar 2020 07:58:49.5654
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rGewhVNNGLrpWjn8PlLVuVLTeSYgJlhb92T6hDQ0bvkWKkeRPMa5gXwBTG/88Dci+FRw/lyiMUxKOD3y4ADsMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2941
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johnny Chuang <johnny.chuang@emc.com.tw>
+From: Martin Fuzzey <martin.fuzzey@flowbird.group> Sent: Thursday, March 26=
+, 2020 2:12 AM
+> This property allows the gpr register bit to be defined for wake on lan s=
+upport.
+>=20
+> Signed-off-by: Martin Fuzzey <martin.fuzzey@flowbird.group>
 
-Elan define finger/palm detection on the least significant bit of byte 33.
-The default value is 1 for all firmwares, which report as MT_TOOL_FINGER.
-If firmware support palm detection, the bit will change to 0 and
-report as MT_TOOL_PALM when firmware detecting palm.
-
-Signed-off-by: Johnny Chuang <johnny.chuang@emc.com.tw>
----
- drivers/input/touchscreen/elants_i2c.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
-index 14c577c..3b4d9eb3 100644
---- a/drivers/input/touchscreen/elants_i2c.c
-+++ b/drivers/input/touchscreen/elants_i2c.c
-@@ -73,6 +73,7 @@
- #define FW_POS_STATE		1
- #define FW_POS_TOTAL		2
- #define FW_POS_XY		3
-+#define FW_POS_TOOL_TYPE	33
- #define FW_POS_CHECKSUM		34
- #define FW_POS_WIDTH		35
- #define FW_POS_PRESSURE		45
-@@ -842,6 +843,7 @@ static void elants_i2c_mt_event(struct elants_data *ts, u8 *buf)
- {
- 	struct input_dev *input = ts->input;
- 	unsigned int n_fingers;
-+	unsigned int tool_type;
- 	u16 finger_state;
- 	int i;
- 
-@@ -852,6 +854,12 @@ static void elants_i2c_mt_event(struct elants_data *ts, u8 *buf)
- 	dev_dbg(&ts->client->dev,
- 		"n_fingers: %u, state: %04x\n",  n_fingers, finger_state);
- 
-+	/* Note: all fingers have the same tool type */
-+	if (buf[FW_POS_TOOL_TYPE] & 0x01)
-+		tool_type = MT_TOOL_FINGER;
-+	else
-+		tool_type = MT_TOOL_PALM;
-+
- 	for (i = 0; i < MAX_CONTACT_NUM && n_fingers; i++) {
- 		if (finger_state & 1) {
- 			unsigned int x, y, p, w;
-@@ -867,7 +875,7 @@ static void elants_i2c_mt_event(struct elants_data *ts, u8 *buf)
- 				i, x, y, p, w);
- 
- 			input_mt_slot(input, i);
--			input_mt_report_slot_state(input, MT_TOOL_FINGER, true);
-+			input_mt_report_slot_state(input, tool_type, true);
- 			input_event(input, EV_ABS, ABS_MT_POSITION_X, x);
- 			input_event(input, EV_ABS, ABS_MT_POSITION_Y, y);
- 			input_event(input, EV_ABS, ABS_MT_PRESSURE, p);
-@@ -1307,6 +1315,7 @@ static int elants_i2c_probe(struct i2c_client *client,
- 	input_set_abs_params(ts->input, ABS_MT_POSITION_Y, 0, ts->y_max, 0, 0);
- 	input_set_abs_params(ts->input, ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0);
- 	input_set_abs_params(ts->input, ABS_MT_PRESSURE, 0, 255, 0, 0);
-+	input_set_abs_params(ts->input, ABS_MT_TOOL_TYPE, 0, MT_TOOL_MAX, 0, 0);
- 	input_abs_set_res(ts->input, ABS_MT_POSITION_X, ts->x_res);
- 	input_abs_set_res(ts->input, ABS_MT_POSITION_Y, ts->y_res);
- 	input_abs_set_res(ts->input, ABS_MT_TOUCH_MAJOR, 1);
--- 
-2.7.4
+Reviewed-by: Fugang Duan <fugang.duan@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/net/fsl-fec.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/fsl-fec.txt
+> b/Documentation/devicetree/bindings/net/fsl-fec.txt
+> index 5b88fae0..ff8b0f2 100644
+> --- a/Documentation/devicetree/bindings/net/fsl-fec.txt
+> +++ b/Documentation/devicetree/bindings/net/fsl-fec.txt
+> @@ -22,6 +22,8 @@ Optional properties:
+>  - fsl,err006687-workaround-present: If present indicates that the system=
+ has
+>    the hardware workaround for ERR006687 applied and does not need a
+> software
+>    workaround.
+> +- gpr: phandle of SoC general purpose register mode. Required for wake
+> +on LAN
+> +  on some SoCs
+>   -interrupt-names:  names of the interrupts listed in interrupts propert=
+y in
+>    the same order. The defaults if not specified are
+>    __Number of interrupts__   __Default__
+> --
+> 1.9.1
 
