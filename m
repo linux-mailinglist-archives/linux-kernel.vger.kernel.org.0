@@ -2,222 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 673CD193616
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 03:41:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 020F7193601
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 03:40:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbgCZCk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 22:40:56 -0400
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:37428 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727773AbgCZCky (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 22:40:54 -0400
-Received: by mail-qv1-f66.google.com with SMTP id n1so2243620qvz.4;
-        Wed, 25 Mar 2020 19:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CDkP0xS8y57msegU04s88KpDDAiPZL218+4rLGcZdeE=;
-        b=GD5Re1YPr+bT+fcFm1zknxALyyjys58Bfjg8guvY8KpiMqK4sWykpsOrcorynIZdsM
-         S7Eny9aic6xx2cFO2yNpQyu4xbO96/JhBHR4vRhC3/L97qxkbfmhcPcjjdFAGSV28xQf
-         yl4wro+zivt1SoZrIp7OSFGXkty+gk4GwLRva/wM7BpKNS+QD1OpJFbAyXOWm3FvyFQ8
-         ozq0KM7WcDXbuUM+uPM6xCZI+IMQqDZXS11VYFK68h0pxh1FSUPLW+SodxgaRk7hrVIh
-         Oskh9gOD0fTo7g28uaAd31Rzbwc6vPAHK23HNGi4Lqyw92+qaw6WI13EHGwDbISQW5tc
-         tI5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CDkP0xS8y57msegU04s88KpDDAiPZL218+4rLGcZdeE=;
-        b=Mi2Cjvpae0uBtP5v8XSP+J9st1m24wJ/xbLEN17p+AOGLrhs0urDwufKVcwRm8G18D
-         Uvu8Rxjyxt6xr42FpW9juCo5lRlujSr+rRfOGJTbOXLIkmzwHbEF7nQsGQgdU1LkuB2n
-         q2Jd92UuKzsAGwmNGAJk6cTE+Pfhkwx1CGteHsLv5NgnRSWdxOoNbv4XPrcHCQJCCk4I
-         G22W1PmkTbE/3COq+RWcZ1OWFQJfkWiMJy2Q/vp2hZTWvt1Cy040e7G+1I1wNjk514vl
-         t6QjIFzSMRXpK1fwtofamSoyN86EnP0btK0Tfrrj6bUxoUTxZytolrir7HYqBHQAJL70
-         VnJQ==
-X-Gm-Message-State: ANhLgQ3xPsIi4Q8jdWASfaW98CStmMa2Nvo0J2W05qQI0JtSv2Tqta8Y
-        sUpbr2T3aig/j2O9khMV+Rg=
-X-Google-Smtp-Source: ADFU+vvrGMv+AfF6WJTwqJcQtFoJ6xDjfC6ceKdmKfmw0s/38JFkENT0B6/d8W+L5TuJO7hFILvHYg==
-X-Received: by 2002:ad4:5427:: with SMTP id g7mr6131032qvt.23.1585190452760;
-        Wed, 25 Mar 2020 19:40:52 -0700 (PDT)
-Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
-        by smtp.gmail.com with ESMTPSA id c27sm552831qkk.0.2020.03.25.19.40.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Mar 2020 19:40:52 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 8026027C0054;
-        Wed, 25 Mar 2020 22:40:51 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Wed, 25 Mar 2020 22:40:51 -0400
-X-ME-Sender: <xms:MxZ8XjKkQy2hzboiBz1t4UPlja2i28B7fMebjELNaJ8fPJ5ZOnInkg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudehhedggeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeeuohhquhhn
-    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecukfhppeehvd
-    drudehhedrudduuddrjedunecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehm
-    rghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthi
-    dqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghi
-    lhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:MxZ8XrbKjmaN807oQyJUe3d9gcBkm8U3E_7slKuJOsjCU-9mLBhoEA>
-    <xmx:MxZ8XmvAXmpz1i-jxlQ4fNXdbTRA3KC5yBSJDrhES_ZSO1VkXXbvlw>
-    <xmx:MxZ8XgsZ26YoqoIEzowpo7SR8ZxZBhXePWuNc7yy985_EENwSkguUg>
-    <xmx:MxZ8XpNUUKpHrbznJ05LDG3R5z0wf1dDYc8jHSJ70HRbUrGz79fyRPoOpvc>
-Received: from localhost (unknown [52.155.111.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id ED0223067F8B;
-        Wed, 25 Mar 2020 22:40:50 -0400 (EDT)
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will@kernel.org>,
+        id S1727707AbgCZCkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 22:40:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59496 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727560AbgCZCkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Mar 2020 22:40:39 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F23B020714;
+        Thu, 26 Mar 2020 02:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585190438;
+        bh=B/0A+EakHUoxJZZH8Zsz0E0Jrwx9AZ5KMhmmm4tWgAU=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=hlvpwsdFfUlivcRX+rgOky3Qzz9W6+h3DS6rDIiFCMTcOVT/UZK7XAVPOw5xlfZmc
+         U4gWvMk+HY610Ebp67p0IXeEOlLqhqArE8W38Bn1Pstxz2UMd+wQaxLwVqwPtOGuCa
+         LHixNahpVcBZT1S+4QWNrSt9INUA9VsBP8hxz+k8=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id C134335226B0; Wed, 25 Mar 2020 19:40:37 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 19:40:37 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Joel Fernandes <joel@joelfernandes.org>,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH v4 4/4] Documentation/litmus-tests/atomic: Add a test for smp_mb__after_atomic()
-Date:   Thu, 26 Mar 2020 10:40:22 +0800
-Message-Id: <20200326024022.7566-5-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200326024022.7566-1-boqun.feng@gmail.com>
-References: <20200326024022.7566-1-boqun.feng@gmail.com>
+        Oleg Nesterov <oleg@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        linux-pci@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-pm@vger.kernel.org, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org,
+        Brian Cain <bcain@codeaurora.org>,
+        linux-hexagon@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+        Michal Simek <monstr@monstr.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geoff Levand <geoff@infradead.org>,
+        linuxppc-dev@lists.ozlabs.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH v2] Documentation/locking/locktypes: minor copy editor
+ fixes
+Message-ID: <20200326024037.GJ19865@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200323025501.GE3199@paulmck-ThinkPad-P72>
+ <87r1xhz6qp.fsf@nanos.tec.linutronix.de>
+ <20200325002811.GO19865@paulmck-ThinkPad-P72>
+ <87wo78y5yy.fsf@nanos.tec.linutronix.de>
+ <ac615f36-0b44-408d-aeab-d76e4241add4@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac615f36-0b44-408d-aeab-d76e4241add4@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We already use a litmus test in atomic_t.txt to describe atomic RMW +
-smp_mb__after_atomic() is stronger than acquire (both the read and the
-write parts are ordered). So make it a litmus test in atomic-tests
-directory, so that people can access the litmus easily.
+On Wed, Mar 25, 2020 at 09:58:14AM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Minor editorial fixes:
+> - add some hyphens in multi-word adjectives
+> - add some periods for consistency
+> - add "'" for possessive CPU's
+> - capitalize IRQ when it's an acronym and not part of a function name
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Paul McKenney <paulmck@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Sebastian Siewior <bigeasy@linutronix.de>
+> Cc: Joel Fernandes <joel@joelfernandes.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
 
-Additionally, change the processor numbers "P1, P2" to "P0, P1" in
-atomic_t.txt for the consistency with the processor numbers in the
-litmus test, which herd can handle.
+Some nits below, but with or without those suggested changes:
 
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Acked-by: Andrea Parri <parri.andrea@gmail.com>
----
- Documentation/atomic_t.txt                    | 10 +++---
- ...ter_atomic-is-stronger-than-acquire.litmus | 32 +++++++++++++++++++
- Documentation/litmus-tests/atomic/README      |  5 +++
- 3 files changed, 42 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/litmus-tests/atomic/Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.litmus
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
-diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
-index 67d1d99f8589..0f1fdedf36bb 100644
---- a/Documentation/atomic_t.txt
-+++ b/Documentation/atomic_t.txt
-@@ -233,19 +233,19 @@ as well. Similarly, something like:
- is an ACQUIRE pattern (though very much not typical), but again the barrier is
- strictly stronger than ACQUIRE. As illustrated:
- 
--  C strong-acquire
-+  C Atomic-RMW+mb__after_atomic-is-stronger-than-acquire
- 
-   {
-   }
- 
--  P1(int *x, atomic_t *y)
-+  P0(int *x, atomic_t *y)
-   {
-     r0 = READ_ONCE(*x);
-     smp_rmb();
-     r1 = atomic_read(y);
-   }
- 
--  P2(int *x, atomic_t *y)
-+  P1(int *x, atomic_t *y)
-   {
-     atomic_inc(y);
-     smp_mb__after_atomic();
-@@ -253,14 +253,14 @@ strictly stronger than ACQUIRE. As illustrated:
-   }
- 
-   exists
--  (r0=1 /\ r1=0)
-+  (0:r0=1 /\ 0:r1=0)
- 
- This should not happen; but a hypothetical atomic_inc_acquire() --
- (void)atomic_fetch_inc_acquire() for instance -- would allow the outcome,
- because it would not order the W part of the RMW against the following
- WRITE_ONCE.  Thus:
- 
--  P1			P2
-+  P0			P1
- 
- 			t = LL.acq *y (0)
- 			t++;
-diff --git a/Documentation/litmus-tests/atomic/Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.litmus b/Documentation/litmus-tests/atomic/Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.litmus
-new file mode 100644
-index 000000000000..9a8e31a44b28
---- /dev/null
-+++ b/Documentation/litmus-tests/atomic/Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.litmus
-@@ -0,0 +1,32 @@
-+C Atomic-RMW+mb__after_atomic-is-stronger-than-acquire
-+
-+(*
-+ * Result: Never
-+ *
-+ * Test that an atomic RMW followed by a smp_mb__after_atomic() is
-+ * stronger than a normal acquire: both the read and write parts of
-+ * the RMW are ordered before the subsequential memory accesses.
-+ *)
-+
-+{
-+}
-+
-+P0(int *x, atomic_t *y)
-+{
-+	int r0;
-+	int r1;
-+
-+	r0 = READ_ONCE(*x);
-+	smp_rmb();
-+	r1 = atomic_read(y);
-+}
-+
-+P1(int *x, atomic_t *y)
-+{
-+	atomic_inc(y);
-+	smp_mb__after_atomic();
-+	WRITE_ONCE(*x, 1);
-+}
-+
-+exists
-+(0:r0=1 /\ 0:r1=0)
-diff --git a/Documentation/litmus-tests/atomic/README b/Documentation/litmus-tests/atomic/README
-index a1b72410b539..714cf93816ea 100644
---- a/Documentation/litmus-tests/atomic/README
-+++ b/Documentation/litmus-tests/atomic/README
-@@ -7,5 +7,10 @@ tools/memory-model/README.
- LITMUS TESTS
- ============
- 
-+Atomic-RMW+mb__after_atomic-is-stronger-than-acquire
-+	Test that an atomic RMW followed by a smp_mb__after_atomic() is
-+	stronger than a normal acquire: both the read and write parts of
-+	the RMW are ordered before the subsequential memory accesses.
-+
- Atomic-RMW-ops-are-atomic-WRT-atomic_set.litmus
- 	Test that atomic_set() cannot break the atomicity of atomic RMWs.
--- 
-2.25.1
+> ---
+>  Documentation/locking/locktypes.rst |   16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> --- linux-next-20200325.orig/Documentation/locking/locktypes.rst
+> +++ linux-next-20200325/Documentation/locking/locktypes.rst
+> @@ -84,7 +84,7 @@ rtmutex
+>  
+>  RT-mutexes are mutexes with support for priority inheritance (PI).
+>  
+> -PI has limitations on non PREEMPT_RT enabled kernels due to preemption and
+> +PI has limitations on non-PREEMPT_RT-enabled kernels due to preemption and
 
+Or just drop the " enabled".
+
+>  interrupt disabled sections.
+>  
+>  PI clearly cannot preempt preemption-disabled or interrupt-disabled
+> @@ -150,7 +150,7 @@ kernel configuration including PREEMPT_R
+>  
+>  raw_spinlock_t is a strict spinning lock implementation in all kernels,
+>  including PREEMPT_RT kernels.  Use raw_spinlock_t only in real critical
+> -core code, low level interrupt handling and places where disabling
+> +core code, low-level interrupt handling and places where disabling
+>  preemption or interrupts is required, for example, to safely access
+>  hardware state.  raw_spinlock_t can sometimes also be used when the
+>  critical section is tiny, thus avoiding RT-mutex overhead.
+> @@ -160,20 +160,20 @@ spinlock_t
+>  
+>  The semantics of spinlock_t change with the state of PREEMPT_RT.
+>  
+> -On a non PREEMPT_RT enabled kernel spinlock_t is mapped to raw_spinlock_t
+> +On a non-PREEMPT_RT-enabled kernel spinlock_t is mapped to raw_spinlock_t
+
+Ditto.
+
+>  and has exactly the same semantics.
+>  
+>  spinlock_t and PREEMPT_RT
+>  -------------------------
+>  
+> -On a PREEMPT_RT enabled kernel spinlock_t is mapped to a separate
+> +On a PREEMPT_RT-enabled kernel spinlock_t is mapped to a separate
+
+And here as well.
+
+>  implementation based on rt_mutex which changes the semantics:
+>  
+> - - Preemption is not disabled
+> + - Preemption is not disabled.
+>  
+>   - The hard interrupt related suffixes for spin_lock / spin_unlock
+> -   operations (_irq, _irqsave / _irqrestore) do not affect the CPUs
+> -   interrupt disabled state
+> +   operations (_irq, _irqsave / _irqrestore) do not affect the CPU's
+> +   interrupt disabled state.
+>  
+>   - The soft interrupt related suffix (_bh()) still disables softirq
+>     handlers.
+> @@ -279,7 +279,7 @@ fully preemptible context.  Instead, use
+>  spin_lock_irqsave() and their unlock counterparts.  In cases where the
+>  interrupt disabling and locking must remain separate, PREEMPT_RT offers a
+>  local_lock mechanism.  Acquiring the local_lock pins the task to a CPU,
+> -allowing things like per-CPU irq-disabled locks to be acquired.  However,
+> +allowing things like per-CPU IRQ-disabled locks to be acquired.  However,
+
+Quite a bit of text in the kernel uses "irq", lower case.  Another
+option is to spell out "interrupt".
+
+>  this approach should be used only where absolutely necessary.
+>  
+>  
+> 
