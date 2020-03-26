@@ -2,158 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BB3F1940A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:01:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A7D91940BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 15:02:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbgCZOBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 10:01:44 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:39262 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727719AbgCZOBn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 10:01:43 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02QE1ZnH081454;
-        Thu, 26 Mar 2020 09:01:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1585231295;
-        bh=zYArPMmVw6lKGB9faTlm/kbugEnXXS+Ts1oLp9FmQFE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=vJ4vyijKkiE5LXCT8trbn0i+6MUcSGmcRJFPXmQrmhG/c9PYzUi571SU8vAHqK1Sm
-         baxE7yBoC5KL5caR+IrSEytt+QpFsRjmErivsFChO01QSV+SaiDuhj9eXrKJSdfPZC
-         PSEDMhGovS73cq5VsSRR3xN5cICyoTiKulBjdW84=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02QE1Zfn120305
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 26 Mar 2020 09:01:35 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 26
- Mar 2020 09:01:35 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 26 Mar 2020 09:01:35 -0500
-Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02QE1YQA035082;
-        Thu, 26 Mar 2020 09:01:34 -0500
-Subject: Re: [PATCH 2/7] remoteproc: use a local copy for the name field
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200324201819.23095-1-s-anna@ti.com>
- <20200324201819.23095-3-s-anna@ti.com> <20200326054234.GA59436@builder>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <2089a4a8-d5e4-e4f5-e7bc-7d053f654204@ti.com>
-Date:   Thu, 26 Mar 2020 09:01:34 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728069AbgCZOCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 10:02:35 -0400
+Received: from correo.us.es ([193.147.175.20]:51288 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727981AbgCZOCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 10:02:34 -0400
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id 604BC11EB84
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:02:32 +0100 (CET)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 5318BDA3AA
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 15:02:32 +0100 (CET)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 47F8CDA38D; Thu, 26 Mar 2020 15:02:32 +0100 (CET)
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
+X-Spam-Level: 
+X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
+        SMTPAUTH_US2,URIBL_BLOCKED,USER_IN_WHITELIST autolearn=disabled version=3.4.1
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 3386FDA38D;
+        Thu, 26 Mar 2020 15:02:30 +0100 (CET)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Thu, 26 Mar 2020 15:02:30 +0100 (CET)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (unknown [90.77.255.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id 0C83C42EF4E0;
+        Thu, 26 Mar 2020 15:02:30 +0100 (CET)
+Date:   Thu, 26 Mar 2020 15:02:29 +0100
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Julian Anastasov <ja@ssi.bg>
+Cc:     Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        Simon Horman <horms@verge.net.au>, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ipvs: optimize tunnel dumps for icmp errors
+Message-ID: <20200326140229.emeplg75xszpd7rs@salvia>
+References: <1584278741-13944-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+ <alpine.LFD.2.21.2003181333460.4911@ja.home.ssi.bg>
 MIME-Version: 1.0
-In-Reply-To: <20200326054234.GA59436@builder>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.21.2003181333460.4911@ja.home.ssi.bg>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
-
-On 3/26/20 12:42 AM, Bjorn Andersson wrote:
-> On Tue 24 Mar 13:18 PDT 2020, Suman Anna wrote:
+On Wed, Mar 18, 2020 at 01:36:32PM +0200, Julian Anastasov wrote:
 > 
->> The current name field used in the remoteproc structure is simply
->> a pointer to a name field supplied during the rproc_alloc() call.
->> The pointer passed in by remoteproc drivers during registration is
->> typically a dev_name pointer, but it is possible that the pointer
->> will no longer remain valid if the devices themselves were created
->> at runtime like in the case of of_platform_populate(), and were
->> deleted upon any failures within the respective remoteproc driver
->> probe function.
->>
->> So, allocate and maintain a local copy for this name field to
->> keep it agnostic of the logic used in the remoteproc drivers.
->>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->>  drivers/remoteproc/remoteproc_core.c | 9 ++++++++-
->>  include/linux/remoteproc.h           | 2 +-
->>  2 files changed, 9 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index aca6d022901a..6e0b91fa6f11 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1989,6 +1989,7 @@ static void rproc_type_release(struct device *dev)
->>  
->>  	kfree(rproc->firmware);
->>  	kfree(rproc->ops);
->> +	kfree(rproc->name);
->>  	kfree(rproc);
->>  }
->>  
->> @@ -2061,7 +2062,13 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->>  	}
->>  
->>  	rproc->firmware = p;
->> -	rproc->name = name;
->> +	rproc->name = kstrdup(name, GFP_KERNEL);
+> 	Hello,
 > 
-> Let's use kstrdup_const() instead here (and kfree_const() instead of
-> kfree()), so that the cases where we are passed a constant we won't
-> create a duplicate on the heap.
+> On Sun, 15 Mar 2020, Haishuang Yan wrote:
 > 
-> And the "name" in struct rproc can remain const.
-
-Agreed, that's better functions to use for this.
-
+> > After strip GRE/UDP tunnel header for icmp errors, it's better to show
+> > "GRE/UDP" instead of "IPIP" in debug message.
+> > 
+> > Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 > 
->> +	if (!rproc->name) {
->> +		kfree(p);
->> +		kfree(rproc->ops);
->> +		kfree(rproc);
->> +		return NULL;
+> 	Looks good to me, thanks!
 > 
-> Perhaps we can rearrange the hunks here slightly and get to a point
-> where we can rely on the release function earlier?
-
-Not sure I understand. I don't see any release function, all failure
-paths in rproc_alloc() directly unwind the previous operations. You mean
-move this to before the alloc for rproc structure, something similar to
-what we are doing with firmware?
-
-regards
-Suman
-
-
+> Acked-by: Julian Anastasov <ja@ssi.bg>
 > 
-> Regards,
-> Bjorn
-> 
->> +	}
->>  	rproc->priv = &rproc[1];
->>  	rproc->auto_boot = true;
->>  	rproc->elf_class = ELFCLASS32;
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index ddce7a7775d1..77788a4bb94e 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -490,7 +490,7 @@ struct rproc_dump_segment {
->>  struct rproc {
->>  	struct list_head node;
->>  	struct iommu_domain *domain;
->> -	const char *name;
->> +	char *name;
->>  	char *firmware;
->>  	void *priv;
->>  	struct rproc_ops *ops;
->> -- 
->> 2.23.0
->>
+> 	Simon, this is for -next kernels...
 
+Simon, if no objection, I'm going to include this in the next nf-next
+pull request.
+
+Thanks.
