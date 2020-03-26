@@ -2,103 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 951E819480D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B56AF194815
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 20:59:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbgCZT6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 15:58:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34184 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727446AbgCZT6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 15:58:11 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5784D206E6;
-        Thu, 26 Mar 2020 19:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585252690;
-        bh=Iy1Vo9XDp/0w9tjBUq/6qFzyHr6inT+v6uL1ZbBtUtk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=uMpnCJ5tcvu2lcbi9CrLyaFTqKO8nrKkLodw/67tQDB4pUcH1IUlEbljKZgJj/2Pk
-         FuhR9hX/G2PewXCK81qSP/9ZNj1s0HHUH6nT4vYnJ74R4ne0m5SkPmpm9+Q3EvodUb
-         xaH56cb6xSHmcHIyH2Y6gUx2FeM/JXExhebkYQU4=
-Date:   Thu, 26 Mar 2020 12:58:09 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Rafael Aquini <aquini@redhat.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        Eric B Munson <emunson@akamai.com>
-Subject: Re: [PATCH] tools/testing/selftests/vm/mlock2-tests: fix mlock2
- false-negative errors
-Message-Id: <20200326125809.64d92920bcd481cf15207855@linux-foundation.org>
-In-Reply-To: <20200326064909.GB27965@dhcp22.suse.cz>
-References: <20200323144240.GB23364@optiplex-lnx>
-        <20200323145106.GM7524@dhcp22.suse.cz>
-        <20200323150259.GD23364@optiplex-lnx>
-        <20200323151256.GP7524@dhcp22.suse.cz>
-        <20200323154159.GF23364@optiplex-lnx>
-        <20200323155111.GQ7524@dhcp22.suse.cz>
-        <20200323155449.GG23364@optiplex-lnx>
-        <20200324154218.GS19542@dhcp22.suse.cz>
-        <20200324154910.GM23364@optiplex-lnx>
-        <20200325174949.95d8a9de61c6a30a7e0f4582@linux-foundation.org>
-        <20200326064909.GB27965@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728689AbgCZT7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 15:59:00 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37416 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727851AbgCZT67 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 15:58:59 -0400
+Received: by mail-ot1-f66.google.com with SMTP id g23so7314316otq.4;
+        Thu, 26 Mar 2020 12:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ujm9KF63/2Xh115nBCNoaxnV0BjyE1MHL3TYCViqZyo=;
+        b=dqhFaSe++a6/RkbeF44E988RrAbfGKW3JSkG4/6VsckRWU0SNkPkn4iw5X2HSvXHEe
+         rLUYKAdYRHiiBS/zbJsmvoDCZAo2xI9K20gUOjkKKgPu1eHCzKVIsGq4rgZpWLixqPA2
+         WMauF17ZmQUwEZf5zVkf1z9+4Z59P6IVRKSjWdSyp7KBFbkYrrUXWfJoa8suPju2X2Ms
+         hqTzF1OVmxRqiWJGDNlh22gRoPRx6KSeDubBJJRUmUWt+xiVFYHnTF1xLlDPZOXLxhEa
+         XTVHkTmO4UzXV/BI9Kk7zQVu64x9IaMRCdjfXu/fJTTZGgSGV9M2zyHaKhRO92kgpnr+
+         gpig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ujm9KF63/2Xh115nBCNoaxnV0BjyE1MHL3TYCViqZyo=;
+        b=SOOA+hNyE/+HyTKBf4UmLLef6nAf+WX+S2Wkom3+uc9GGm6DQVSFjRLe7+CXX2jvWa
+         RpNTuJvr699tm7oNEkPZMy20DbUiYyG8ws/bABKoD8cX41nSFZf75YdF4rjxCs4jI6KF
+         BL2IyqfNBvqUA/du8C0J96W6V5OMzJXuGyMcudFKmt2j3FbBxUryqkydItHxLWtwLotH
+         nf5fDqDATRqJy0GRJoprjqt9RqKIKXJxNZ8TQLPeeYw7o8CCaICy6w3bXxf7XHsdr9dB
+         BqjCYZ4jVytpdIYPzFr3rY4zy9OeOm09XAhdcxiwbFZeyQ2gzci1fZHOdyEZO2XUDBF+
+         8n+A==
+X-Gm-Message-State: ANhLgQ09E2lcIDCd3EzXID4q4/V2OZfzVsnpBL7Okkn0VyHiv2rjJRuo
+        H+OzsTAicQJtjeNi0qs3qUg=
+X-Google-Smtp-Source: ADFU+vtD4p8O/2ipfHSoS84IwgBiH+6D5rxYJYDtw8QWkpJ2ALLIJpe4Z27mKt4JLhHlETM7ETqxOg==
+X-Received: by 2002:a9d:8d0:: with SMTP id 74mr7767203otf.39.1585252738620;
+        Thu, 26 Mar 2020 12:58:58 -0700 (PDT)
+Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id b26sm864123oti.3.2020.03.26.12.58.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Mar 2020 12:58:58 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 12:58:55 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>,
+        Felipe Balbi <balbi@kernel.org>
+Cc:     Ashwini Pahuja <ashwini.linux@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Subject: Re: [PATCH] usb: gadget: udc: bdc: Remove unnecessary NULL checks in
+ bdc_req_complete
+Message-ID: <20200326195855.GB29213@ubuntu-m2-xlarge-x86>
+References: <20191023002014.22571-1-natechancellor@gmail.com>
+ <20200221045740.GA43417@ubuntu-m2-xlarge-x86>
+ <CAKwvOdku24UV8J4uSKFFc7gmwOP28-8K352BJepb_z-octFoPw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdku24UV8J4uSKFFc7gmwOP28-8K352BJepb_z-octFoPw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Mar 2020 07:49:09 +0100 Michal Hocko <mhocko@kernel.org> wrote:
-
-> On Wed 25-03-20 17:49:49, Andrew Morton wrote:
-> > On Tue, 24 Mar 2020 11:49:10 -0400 Rafael Aquini <aquini@redhat.com> wrote:
-> > 
-> > > Thanks Michal!
-> > > 
-> > >  
-> > > Acked-by: Rafael Aquini <aquini@redhat.com>
-> > 
-> > I'll add
-> > Fixes: 9c4e6b1a7027f ("mm, mlock, vmscan: no more skipping pagevecs")
+On Mon, Feb 24, 2020 at 01:42:57PM -0800, Nick Desaulniers wrote:
+> On Thu, Feb 20, 2020 at 8:57 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > I know it has been a while but ping?
 > 
-> Wouldn't be this misleading? It would suggest that this commit is
-> somehow incorrect. I would consider b3b0d09c7a23 ("selftests: vm: add
-> tests for lock on fault") to be a better fit.
-
-Yes, it's a bit misleading.
-
-Or maybe not.  b3b0d09c7a23 was merged in 2015 and worked OK (afaik)
-until 9c4e6b1a7027f came along in 2020.  So arguably, 2020's
-9c4e6b1a7027f was correct but incomplete, since it failed to repair the
-impact upon the test code.
-
-I don't think that kernels prior to 2020's 9c4e6b1a7027f require this
-change(?), so we only need to backport this into 5.6.x, which is what
-my proposed Fixes: and cc:stable expresses.
-
-> > and cc:stable to this.  Any kernel which has 9c4e6b1a7027f will benefit
-> > from this change.
+> Sorry! Too many bugs...barely treading water! Send help!
 > 
-> OK, makes sense with
-> Cc: stable # with 9c4e6b1a7027f applied
->  
-> > We're getting quite late in the cycle now so I think I'll hold off
-> > merging this up until post-5.7-rc1.  It will still get into the stable
-> > trees, but a bit later.
+> >
+> > On Tue, Oct 22, 2019 at 05:20:15PM -0700, Nathan Chancellor wrote:
+> > > When building with Clang + -Wtautological-pointer-compare:
+> > >
+> > > drivers/usb/gadget/udc/bdc/bdc_ep.c:543:28: warning: comparison of
+> > > address of 'req->queue' equal to a null pointer is always false
+> > > [-Wtautological-pointer-compare]
+> > >         if (req == NULL  || &req->queue == NULL || &req->usb_req == NULL)
+> > >                              ~~~~~^~~~~    ~~~~
+> > > drivers/usb/gadget/udc/bdc/bdc_ep.c:543:51: warning: comparison of
+> > > address of 'req->usb_req' equal to a null pointer is always false
+> > > [-Wtautological-pointer-compare]
+> > >         if (req == NULL  || &req->queue == NULL || &req->usb_req == NULL)
+> > >                                                     ~~~~~^~~~~~~    ~~~~
+> > > 2 warnings generated.
+> > >
+> > > As it notes, these statements will always evaluate to false so remove
+> > > them.
 > 
-> No problem. Nothing really urget. Coincidentaly we've just had a report
-> from our partner about this very specific test failure for our
-> enterprise kernel as well.
+> `req` is an instance of a `struct bdc_req` defined in
+> drivers/usb/gadget/udc/bdc/bdc.h as:
+> 333 struct bdc_req {
+> 334   struct usb_request  usb_req;
+> 335   struct list_head  queue;
+> 336   struct bdc_ep   *ep;
+> 337   /* only one Transfer per request */
+> 338   struct bd_transfer bd_xfr;
+> 339   int epnum;
+> 340 };
+> 
+> So indeed the non-pointer, struct members can never be NULL.
+> 
+> I think the second check that was removed should be
+> `req->usb_req.complete == NULL`, since otherwise `&req->usb_req` may
+> be passed to usb_gadget_giveback_request which tries to invoke the
+> `complete` member as a callback.  There are numerous places in
+> drivers/usb/gadget/udc/bdc/bdc_ep.c that assign `complete = NULL`.
+> 
+> Can the maintainers clarify?
 
-I assume that your kernel has 2020's 9c4e6b1a7027f?
+$ sed -n 537,555p drivers/usb/gadget/udc/bdc/bdc_ep.c
+/* callback to gadget layer when xfr completes */
+static void bdc_req_complete(struct bdc_ep *ep, struct bdc_req *req,
+						int status)
+{
+	struct bdc *bdc = ep->bdc;
 
-> I will just backport the patch as it seems
-> nobody really objects to it.
+	if (req == NULL  || &req->queue == NULL || &req->usb_req == NULL)
+		return;
 
+	dev_dbg(bdc->dev, "%s ep:%s status:%d\n", __func__, ep->name, status);
+	list_del(&req->queue);
+	req->usb_req.status = status;
+	usb_gadget_unmap_request(&bdc->gadget, &req->usb_req, ep->dir);
+	if (req->usb_req.complete) {
+		spin_unlock(&bdc->lock);
+		usb_gadget_giveback_request(&ep->usb_ep, &req->usb_req);
+		spin_lock(&bdc->lock);
+	}
+}
+
+It looks like req->usb_req.complete is checked before being passed to
+usb_gadget_giveback_request. So the patch as it stands is correct,
+unless those checks needed to be something else.
+
+Felipe, could you clarify or pick up this patch if it is correct? This
+is one of two warnings that I see for -Wtautological-compare and I want
+it turned on for 5.7 and it'd be nice to be warning free, especially
+since I sent this patch back in October :/
+
+Cheers,
+Nathan
