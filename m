@@ -2,84 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E2A2193BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F3D9193BD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:29:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbgCZJ36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 05:29:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39720 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726540AbgCZJ36 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 05:29:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=dG5pPHs14OBzWSVcRXLG0d0hpdMtIjiZ05XYggJN7Nw=; b=olbIXlgRMRYIuRBimP12omMlMf
-        qniCU91DEn3QcBZif8E9ZHHXEHuxyEImoFcq421j3RYxfsEGB4HIt4ACQMQ4A52je9dlbLNu+l9R2
-        DCZGhCnkyzbZKJdgbvSkRV5SR3Z76Zm71qw/x2GRBhrZ5B+iV4mAktYlQmLh6fbv+zN2SDyeJyiAr
-        TMy9g1dH4+NmPyjVbAg/uKUnOvvBCDTSvrPPPmCgESua3nLpqouFCD4kGGDuSYC+U3fPKzTxmbCvM
-        c6TPM73XIQ/CTiAQ0ucsBmDkG6gRa81JKCjhoMNeOHD3XAEpMwKBj4ZiWY77jkfq4kZk/3kctdhWI
-        liblYJtA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHOpT-0001iz-SO; Thu, 26 Mar 2020 09:29:35 +0000
-Date:   Thu, 26 Mar 2020 02:29:35 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, axboe@kernel.dk,
-        bob.liu@oracle.com, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, song@kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, Chaitanya.Kulkarni@wdc.com,
-        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
-        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
-        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
-        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
-        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/6] block: Introduce REQ_ALLOCATE flag for
- REQ_OP_WRITE_ZEROES
-Message-ID: <20200326092935.GA6478@infradead.org>
-References: <158157930219.111879.12072477040351921368.stgit@localhost.localdomain>
- <e2b7cbab-d91f-fd7b-de6f-a671caa6f5eb@virtuozzo.com>
- <69c0b8a4-656f-98c4-eb55-2fd1184f5fc9@virtuozzo.com>
- <67d63190-c16f-cd26-6b67-641c8943dc3d@virtuozzo.com>
- <20200319102819.GA26418@infradead.org>
- <yq1tv2k8pjn.fsf@oracle.com>
- <20200325162656.GJ29351@magnolia>
- <20200325163223.GA27156@infradead.org>
- <yq1d090jqlm.fsf@oracle.com>
+        id S1727826AbgCZJ3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 05:29:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57548 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726292AbgCZJ3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 05:29:40 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B534320714;
+        Thu, 26 Mar 2020 09:29:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585214980;
+        bh=UoGc8pPRQVbuOM6FxhZbGGEF/HGWRxriugGNyAa0F30=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kHI7WdxeMAgK6glxwYzwiGGTtCyrbaQCRXUVjpnZCpQWY4ZGP0LLZnW/0x1Bl+MGy
+         aWvVPfizsEoHkQMxI+9Mb4rSMD0lY+VQoiAtViUL7I+3iYyhrhmqxoe9Q0QCIlD3A9
+         nYhGSerbYpKxB0NuW0mnczLup4F4f3t4QC8+FjHI=
+Date:   Thu, 26 Mar 2020 10:29:36 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Qiujun Huang <hqjagain@gmail.com>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, anenbupt@gmail.com
+Subject: Re: [PATCH] USB: io_edgeport: fix  slab-out-of-bounds Read in
+ edge_interrupt_callback
+Message-ID: <20200326092936.GA994882@kroah.com>
+References: <1585122757-4528-1-git-send-email-hqjagain@gmail.com>
+ <20200326081433.GA979574@kroah.com>
+ <20200326082117.GC4899@localhost>
+ <20200326091326.GD4899@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <yq1d090jqlm.fsf@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200326091326.GD4899@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 01:23:33PM -0400, Martin K. Petersen wrote:
-> 
-> Christoph,
-> 
-> > I am very much against that for the following reason:
+On Thu, Mar 26, 2020 at 10:13:26AM +0100, Johan Hovold wrote:
+> On Thu, Mar 26, 2020 at 09:21:17AM +0100, Johan Hovold wrote:
+> > On Thu, Mar 26, 2020 at 09:14:33AM +0100, Greg Kroah-Hartman wrote:
+> > > On Wed, Mar 25, 2020 at 03:52:37PM +0800, Qiujun Huang wrote:
+> > > > The boundary condition should be (length - 1) as we access data[position+1].
+> > > > 
+> > > > Reported-and-tested-by: syzbot+37ba33391ad5f3935bbd@syzkaller.appspotmail.com
+> > > > Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+> > > > ---
+> > > >  drivers/usb/serial/io_edgeport.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
+> > > > index 5737add..4cca0b8 100644
+> > > > --- a/drivers/usb/serial/io_edgeport.c
+> > > > +++ b/drivers/usb/serial/io_edgeport.c
+> > > > @@ -710,7 +710,7 @@ static void edge_interrupt_callback(struct urb *urb)
+> > > >  		/* grab the txcredits for the ports if available */
+> > > >  		position = 2;
+> > > >  		portNumber = 0;
+> > > > -		while ((position < length) &&
+> > > > +		while ((position < length - 1) &&
+> > > >  				(portNumber < edge_serial->serial->num_ports)) {
+> > > >  			txCredits = data[position] | (data[position+1] << 8);
+> > > >  			if (txCredits) {
+> > > > -- 
+> > > > 1.8.3.1
+> > > > 
+> > > 
+> > > Johan, any objection from me taking this in my tree now?
+> > 
+> > Just let me take a look at it first.
 > >
-> >  - the current REQ_OP_DISCARD is purely a hint, and implementations can
-> >    (and do) choose to ignore it
-> >
-> >  - REQ_OP_WRITE_ZEROES is an actual data integrity operation with
-> >    everything that entails
+> > Are sending another PR to Linus for 5.6? Otherwise I can include this
+> > in my 5.7 PR to you. Will try to get it to you today.
 > 
-> If you want to keep emphasis on the "integrity operation" instead of the
-> provisioning aspect, would you expect REQ_ALLOCATE (which may or may not
-> zero blocks) to be considered a deterministic operation or a
-> non-deterministic one? Should this depend on whether the device
-> guarantees zeroing when provisioning blocks or not?
+> This issue predates git so I'd add
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: stable <stable@vger.kernel.org>
+> Acked-by: Johan Hovold <johan@kernel.org>
+> 
+> if you want to take it yourself. Just let me know, otherwise I'll
+> include in my PR.
 
-That's why I don't like the whole flags game very much.  I'd rather
-have REQ_OP_WRITE_ZEROES as the integrity operation that gurantees
-zeroing, and a REQ_ALLOCATE that doesn't guarantee zeroing, just some
-deterministic state of the blocks.
+I'm not sending anything to Linus for 5.6, so putting it in your 5.7 PR
+is fine.
+
+thanks,
+
+greg k-h
