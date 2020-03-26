@@ -2,86 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59886194617
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:09:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC4BD194620
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 19:09:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbgCZSJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 14:09:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55748 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbgCZSJU (ORCPT
+        id S1728443AbgCZSJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 14:09:53 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40438 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgCZSJx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 14:09:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=oGl3kyUUBo3pRyuKgQ0JM7kMCAak5k4pqUHDa2g2cJ8=; b=uLrXxifGT4O7snJNYyN4C7LkQy
-        w9lZQ13zOq5kYBQEfor5TL9Ogk5wydcZJeHh39p05ZPMzQmZrrCXW4Xb/11m4XeAfY2VdDr5zecKF
-        wz2EvCPMLd4lJrAd4FmSBzCHVMQty+jT3bwDbkNEyVb7fJyr3AvFClfij9Jg+qi8+Gp2DKe9TjtNG
-        F8jGRx6EEF2XWR8gkcRNYww3T55LfqttfEuR9Mz8tN/FTKW1sEBL/qYkSXD77h+XG6YuMR54oU6IP
-        wnvXJVSDC40sQk6JxLVlaZC32L80q0fGj5sVwNWIJKBBG093m9csTdbRSBFx8m8izByTHHlsxf8U3
-        ixNbDVdQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHWwO-0007ev-UO; Thu, 26 Mar 2020 18:09:16 +0000
-Date:   Thu, 26 Mar 2020 11:09:16 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Michel Lespinasse <walken@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Liam Howlett <Liam.Howlett@oracle.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        David Rientjes <rientjes@google.com>,
-        Hugh Dickins <hughd@google.com>, Ying Han <yinghan@google.com>
-Subject: Re: [PATCH 1/8] mmap locking API: initial implementation as rwsem
- wrappers
-Message-ID: <20200326180916.GL22483@bombadil.infradead.org>
-References: <20200326070236.235835-1-walken@google.com>
- <20200326070236.235835-2-walken@google.com>
- <20200326175644.GN20941@ziepe.ca>
- <20200326180621.GK22483@bombadil.infradead.org>
+        Thu, 26 Mar 2020 14:09:53 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02QI9fkO005199;
+        Thu, 26 Mar 2020 13:09:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1585246181;
+        bh=p3uCdd3lNgStEmVbRoGU3tYob5tHrXuUe3dGhywOrXc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=oxTllWopocVS+boJ3JwFLjfj7+B7KNkWnWw8YgaE1/SQv0c0QnjdnCkH705FazV7R
+         TzUrv+kqFB8IHVRP6nI68IeE5MeJJd5ArtvJbBzzK862KXr7G1Wgeo25yevhkuoeQP
+         UXyQy2H94/jn8WXIcWpg0S8Jz07hnbU0N1hAX+HQ=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02QI9fj9094474
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 26 Mar 2020 13:09:41 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 26
+ Mar 2020 13:09:41 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 26 Mar 2020 13:09:41 -0500
+Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02QI9eb5072144;
+        Thu, 26 Mar 2020 13:09:41 -0500
+Subject: Re: [PATCH 3/7] dt-bindings: remoteproc: Add bindings for R5F
+ subsystem on TI K3 SoCs
+To:     Rob Herring <robh@kernel.org>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200324201819.23095-1-s-anna@ti.com>
+ <20200324201819.23095-4-s-anna@ti.com> <20200326162802.GA32328@bogus>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <90bae05e-dd47-5b71-07a7-5c3efd929143@ti.com>
+Date:   Thu, 26 Mar 2020 13:09:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200326180621.GK22483@bombadil.infradead.org>
+In-Reply-To: <20200326162802.GA32328@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 11:06:21AM -0700, Matthew Wilcox wrote:
-> On Thu, Mar 26, 2020 at 02:56:44PM -0300, Jason Gunthorpe wrote:
-> > On Thu, Mar 26, 2020 at 12:02:29AM -0700, Michel Lespinasse wrote:
-> > 
-> > > +static inline bool mmap_is_locked(struct mm_struct *mm)
-> > > +{
-> > > +	return rwsem_is_locked(&mm->mmap_sem) != 0;
-> > > +}
-> > 
-> > I've been wondering if the various VM_BUG(rwsem_is_locked()) would be
-> > better as lockdep expressions? Certainly when lockdep is enabled it
-> > should be preferred, IMHO.
-> > 
-> > So, I think if inlines are to be introduced this should be something
-> > similar to netdev's ASSERT_RTNL which seems to have worked well.
-> > 
-> > Maybe ASSERT_MMAP_SEM_READ/WRITE/HELD() and do the VM_BUG or
-> > lockdep_is_held as appropriate?
+Hi Rob,
+
+On 3/26/20 11:28 AM, Rob Herring wrote:
+> On Tue, 24 Mar 2020 15:18:15 -0500, Suman Anna wrote:
+>> The Texas Instruments K3 family of SoCs have one or more dual-core
+>> Arm Cortex R5F processor subsystems/clusters (R5FSS). The clusters
+>> can be split between multiple voltage domains as well. Add the device
+>> tree bindings document for these R5F subsystem devices. These R5F
+>> processors do not have an MMU, and so require fixed memory carveout
+>> regions matching the firmware image addresses. The nodes require more
+>> than one memory region, with the first memory region used for DMA
+>> allocations at runtime. The remaining memory regions are reserved
+>> and are used for the loading and running of the R5F remote processors.
+>> The R5F processors can also optionally use any internal on-chip SRAM
+>> memories either for executing code or using it as fast-access data.
+>>
+>> The added example illustrates the DT nodes for the single R5FSS device
+>> present on K3 AM65x family of SoCs.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>> Hi Rob,
+>>
+>> The dt_bindings_check seems to throw couple of warnings around the
+>> usage of ranges because the tooling is adding the #address-cells
+>> and #size-cells of 1 by default, whereas our actual code uses 2.
+>> No issues are found with dtbs_check.
+>>
+>> regards
+>> Suman
+>>
+>>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 338 ++++++++++++++++++
+>>  1 file changed, 338 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>
 > 
-> I'd rather see lockdep_assert_held() used directly rather than have
-> a wrapper.  This API includes options to check for it beind explicitly
-> held for read/write/any, which should be useful.
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.example.dts:23.13-20: Warning (ranges_format): /example-0/reserved-memory:ranges: empty "ranges" property but its #address-cells (2) differs from /example-0 (1)
+> Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.example.dts:23.13-20: Warning (ranges_format): /example-0/reserved-memory:ranges: empty "ranges" property but its #size-cells (2) differs from /example-0 (1)
+> Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.example.dts:54.13-56.72: Warning (ranges_format): /example-0/interconnect@100000:ranges: "ranges" property has invalid length (72 bytes) (parent #address-cells == 1, child #address-cells == 2, #size-cells == 2)
 
-... oh, but that requires naming the lock, which we're trying to get
-away from.
+I only saw these, because the generated example dts is using cell values
+of 1. I tried adding them using 2 in my example, but then it complains
+about duplicate properties. I do not know how to fix these though. Same
+with the K3 DSP bindings patches as well.
 
-I guess we need a wrapper, but yes, by all means, let's level it up
-to put the VM_BUG_ON inside the wrapper, as that means we can get the
-mm dumped everywhere, rather than just the few places that have done
-VM_BUG_ON_MM instead of plain VM_BUG_ON.
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.example.dt.yaml: interconnect@100000: $nodename:0: 'interconnect@100000' does not match '^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.example.dt.yaml: interconnect@28380000: $nodename:0: 'interconnect@28380000' does not match '^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.example.dt.yaml: mcu-ram@41c00000: 'r5f-sram@0' does not match any of the regexes: '^([a-z]*-)?sram(-section)?@[a-f0-9]+$', 'pinctrl-[0-9]+'
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.example.dt.yaml: mcu-ram@41c00000: $nodename:0: 'mcu-ram@41c00000' does not match '^sram(@.*)?'
+
+These node names are already upstream. Do I just update the example or
+the upstream dts also needs fixing?
+
+> 
+> See https://patchwork.ozlabs.org/patch/1260966
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure dt-schema is up to date:
+> 
+> pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+
+Thanks, will upgrade my dt-schema.
+
+regards
+Suman
