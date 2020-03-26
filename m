@@ -2,162 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E139219498E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:50:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20CD119499A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:54:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbgCZUu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 16:50:58 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43313 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbgCZUu6 (ORCPT
+        id S1727439AbgCZUym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 16:54:42 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40611 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbgCZUyl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:50:58 -0400
-Received: by mail-lj1-f195.google.com with SMTP id g27so7908396ljn.10
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 13:50:56 -0700 (PDT)
+        Thu, 26 Mar 2020 16:54:41 -0400
+Received: by mail-io1-f65.google.com with SMTP id k9so7637641iov.7
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 13:54:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7rAItXMRvBZm31ysm2z8WUbF9TsTJLp451lXgVpORtI=;
-        b=jSpc3zgtOsuGZiH4Vx5+f4B1qjsyI9zsctUsWSP69CzTAJxMCxojEJdHl61huawuZT
-         7z16LNUHLvoN0FK3avAUgWI5PRQafFJXvfOXbnfDeTTBt7YxG9nDBsLZ0Je97PwUzZFe
-         q+UUd4mACIn/XJ88T4iqtJwWmwjg/T5/gjhk1Lp52aD0BUtRA5rlgNbU9JhhjjVwGsgR
-         uTZDlwx1b5GTRDOXGcGvvqYISqZkALfdd5C0FVARQQ2mUksAQjgvQqLLNwemVXt5S5Jp
-         9JAjY/XpcPOKVllugYZ1I+t/N02KizInAewdW4zyZ92DhuaO/5fYhGjJsPUTJYIGtg0n
-         UxFw==
+         :cc;
+        bh=qIpHqCITSlYq28ZrJK7yCjm9889luVYT0dj9kJsGITk=;
+        b=Uon02VISKzAqEHBzK9cAGSYsu3Qc5mvKQe0UNv3bzOXpocEW541GOj4o7jeU1eFLEf
+         FCfPXPngZNSGwcn7DzfGZFny+hmAQxoGR0gOGQvVoQ/SHcrWe7LB/UV2tgP8bQQwZLXk
+         qv1cACG8+rK+gl+lqDtENPtWyDRQ2noPT+Ow5TPxoSNoWghNoB8jZT+3NOkoOl2aUH1P
+         XqkVKvWIumZ9IFErd1dVxFSxVXxMtebypV6OuVjjlOG6dBn7tv/pFEamtOBLcRGG65bs
+         zkvfjglNTrwHmkbRiXA6JddZPeT4I/iO/e7MEFB1N/1Uc5420lVVQivh9f5LhzReltxl
+         N44Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7rAItXMRvBZm31ysm2z8WUbF9TsTJLp451lXgVpORtI=;
-        b=KFViI3AWPeVSuUACI5YBCcSzTN061EOulZBDb8hZQQmYvrNryd5OIyKoUOYp4DQTUv
-         e0riUeAqv8/YxhW+cej3jdZEjl2TA5J/BfS2jMu0MqaiHk/W930t+k/iBYaJOlUoRYDw
-         FKPUt7AwQtNDSvX+UjUJRRUpf0OaE3gYyvXt6osgC73rP3y6dMFuBcRntlJxkvMW0qAO
-         pttayMEVGyXIOl2WZg6XZGwtWdYIMl9PtZ/xcwbF4fUHMz6680tm+atVKT8g5oWsPmrZ
-         GOOCzLEt1BHZldcKEvv6ObO8Z6VVYc3fjxQ8MLsGyi+M7hQ+Uxh+xpOtHLXs50S+XBjL
-         rn6A==
-X-Gm-Message-State: AGi0PuaC3Gf52cq697QZ357ZFCTV0H4ohQC9YluLbXDWdSi4gBIqwPzV
-        OIQfbwbwhqjEAlufbUh7F3UAfpkhi1Q8teHoB4YeNw==
-X-Google-Smtp-Source: APiQypJH7u6LrRAz5mVgf+hvQ1hGv7QlLR1Yc0jVBD8iyZzbx/yS97MV+WHcuRdT4e1rYMJHdWvPTPjYzmoRtZWIu3E=
-X-Received: by 2002:a2e:9c48:: with SMTP id t8mr496874ljj.168.1585255856054;
- Thu, 26 Mar 2020 13:50:56 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=qIpHqCITSlYq28ZrJK7yCjm9889luVYT0dj9kJsGITk=;
+        b=kSinpZh8MMq+iWWYExtRg7pBdmrLCFzHRfBFA27X0yaR2ovRi2IGIPriJoapjJYesl
+         XbNAs70gj88xuXLYAIAyqUpMaUueTzyPgiRLyLppYNI43jqRTaw7TH00mmzMGMzegBlI
+         PM3Ds9eEjSdejjKl4AsqGM4INXnHO81S6VSpuJo2stx717Jko1fF7gAewV8mrCLGiIEu
+         xSMo0fWqNmS+DciyRTqVGLW6NtSSU1V5BZenCHX2kG4UlTQ2wkfp5BGG8CPA7iVPTCM+
+         lAa7v/RYyc3cs7wIJ0WwMdAQPCCDcKoqTZ1x0pa/lufl7Tlo7DeTHBtr8FFZOiiu3W86
+         oFTA==
+X-Gm-Message-State: ANhLgQ0K7Lf5sNU6uFyGeQd2+TG1sYm0++hzmsDyeZgmYw3RHQ3yuxeg
+        6UdnO5eJffiI2LidedxfPLqYWmcpxoYkCcDmSKoKjw==
+X-Google-Smtp-Source: ADFU+vtevMH/ScxX0+FfrRrjbtXu5Z8zBAJlGo7wIoSFADSBRTftgXQxvct5MOt73cc2XvWulS4HQ++eUxWzTIUAxS4=
+X-Received: by 2002:a6b:580d:: with SMTP id m13mr9737394iob.59.1585256080560;
+ Thu, 26 Mar 2020 13:54:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200224094158.28761-1-brgl@bgdev.pl> <20200224094158.28761-3-brgl@bgdev.pl>
- <CACRpkdZSooH+mXbimgT-hnaC2gO1nTi+rY7UmUhVg9bk1j+Eow@mail.gmail.com> <CAMRc=Mf2Mx+rB7du8D66WP=Js0wuK8x44aT9H2q6JhLJvrOcVQ@mail.gmail.com>
-In-Reply-To: <CAMRc=Mf2Mx+rB7du8D66WP=Js0wuK8x44aT9H2q6JhLJvrOcVQ@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 26 Mar 2020 21:50:44 +0100
-Message-ID: <CACRpkdaPwfpfDJ2CjGCVFbMvXaSnCXaisvb2N-edeZO0Tbkssw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] gpiolib: use kref in gpio_desc
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Khouloud Touil <ktouil@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20200325194317.526492-1-ross.philipson@oracle.com>
+ <CACdnJut56WuqO=uLff0qy1Jp=C6f_sRxLpRBsrzb6byBsFYdCg@mail.gmail.com> <bacbc25a-c724-d2fd-40bd-065799cd6195@apertussolutions.com>
+In-Reply-To: <bacbc25a-c724-d2fd-40bd-065799cd6195@apertussolutions.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Thu, 26 Mar 2020 13:54:28 -0700
+Message-ID: <CACdnJusRATYv3Une5r14KHJVEg5COVW9B_BNViUXjavSxZ6d5A@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/12] x86: Trenchboot secure late launch Linux kernel support
+To:     "Daniel P. Smith" <dpsmith@apertussolutions.com>
+Cc:     Ross Philipson <ross.philipson@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-doc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, trenchboot-devel@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 3:47 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> czw., 12 mar 2020 o 11:35 Linus Walleij <linus.walleij@linaro.org> napisa=
-=C5=82(a):
+On Thu, Mar 26, 2020 at 1:50 PM Daniel P. Smith
+<dpsmith@apertussolutions.com> wrote:
+> It is not part of the EFI entry point as we are not entering the kernel
+> from EFI but I will address that further in my response to Andy. The
+> expectation is that if you are on an UEFI platform then EBS should have
+> already been called.
 
-> In this case I was thinking about a situation where we pass a
-> requested descriptor to some other framework (nvmem in this case)
-> which internally doesn't know anything about who manages this resource
-> externally. Now we can of course simply not do anything about it and
-> expect the user (who passed us the descriptor) to handle the resources
-> correctly. But what happens if the user releases the descriptor not on
-> driver detach but somewhere else for whatever reason while nvmem
-> doesn't know about it? It may try to use the descriptor which will now
-> be invalid. Reference counting in this case would help IMHO.
+Ok. In that case should the EFI boot stub optionally be calling this
+instead of startup_32?
 
-I'm so confused because I keep believing it is reference counted
-elsewhere.
+> With respect to using the firmware's TPM code, one
+> of the purposes of a TCG Dynamic Launch is to remove the firmware from
+> the code being trusted in making the integrity measurement of the
+> kernel. I trust the firmware to initialize the hardware because I have
+> to and it does give a trust chain, aka the SRTM, that can attest to what
+> was used during that process. When the OS kernel is being started that
+> trust chain has become weak (or even broken). I want a new trust chain
+> that can provide better footing for asserting the integrity of the
+> kernel and this is what Dynamic Launch gives us. I would like to think I
+> did a fair job explaining this at LSS last fall[1][2] and would
+> recommend those that are curious to review the slides/watch the
+> presentation.
 
-struct gpio_desc *d always comes from the corresponding
-struct gpio_device *descs array. This:
-
-struct gpio_device {
-        int                     id;
-        struct device           dev;
-(...)
-        struct gpio_desc        *descs;
-(...)
-
-This array is allocated in gpiochip_add_data_with_key() like this:
-
-        gdev->descs =3D kcalloc(chip->ngpio, sizeof(gdev->descs[0]), GFP_KE=
-RNEL);
-
-Then it gets free:d in gpiodevice_release():
-
-static void gpiodevice_release(struct device *dev)
-{
-        struct gpio_device *gdev =3D dev_get_drvdata(dev);
-(...)
-        kfree(gdev->descs);
-        kfree(gdev);
-}
-
-This is the .release function for the gdev->dev, the device inside
-struct gpio_device,
-i.e. the same device that contains the descs in the first place. So it
-is just living
-and dying with the struct gpio_device.
-
-struct gpio_device does *NOT* die in the devm_* destructor that gets called
-when someone has e.g. added a gpiochip using devm_gpiochip_add_data().
-
-I think the above observation is crucial: the lifetime of struct gpio_chip =
-and
-struct gpio_device are decoupled. When the struct gpio_chip dies, that
-just "numbs" all gpio descriptors but they stay around along with the
-struct gpio_device that contain them until the last
-user is gone.
-
-The struct gpio_device reference counted with the call to get_device(&gdev-=
->dev)
-in gpiod_request() which is on the path of gpiod_get_[index]().
-
-If a consumer gets a gpio_desc using any gpiod_get* API this gets
-increased and it gets decreased at every gpiod_put() or by the
-managed resources.
-
-So should you not rather exploit this fact and just add something
-like:
-
-void gpiod_reference(struct gpio_desc *desc)
-{
-    struct gpio_device *gdev;
-
-    VALIDATE_DESC(desc);
-    gdev =3D desc->gdev;
-    get_device(&gdev->dev);
-}
-
-void gpiod_unreference(struct gpio_desc *desc)
-{
-    struct gpio_device *gdev;
-
-    VALIDATE_DESC(desc);
-    gdev =3D desc->gdev;
-    put_device(&gdev->dev);
-}
-
-This should make sure the desc and the backing gpio_device
-stays around until all references are gone.
-
-NB: We also issue try_module_get() on the module that drives the
-GPIO, which will make it impossible to unload that module while it
-has active GPIOs. I think maybe the whole logic inside gpiod_request()
-is needed to properly add an extra reference to a gpiod else someone
-can (theoretically) pull out the module from below.
-
-Yours,
-Linus Walleij
+PCs depend on the availability of EFI runtime services - it's not
+possible to just assert that they're untrusted and so unsupported. The
+TPM code is part of boot services which (based on your design) are
+unavailable at this point, so I agree that you need your own
+implementation.
