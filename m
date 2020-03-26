@@ -2,151 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84EBB193C97
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:09:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3A89193CB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 11:13:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbgCZKIt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 06:08:49 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50232 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727967AbgCZKIq (ORCPT
+        id S1727781AbgCZKMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 06:12:49 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7364 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726298AbgCZKMt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 06:08:46 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jHPRI-00049r-Tp; Thu, 26 Mar 2020 11:08:41 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A56E31C0494;
-        Thu, 26 Mar 2020 11:08:39 +0100 (CET)
-Date:   Thu, 26 Mar 2020 10:08:39 -0000
-From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/objtool] objtool: Introduce validate_return()
-Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200324160923.963996225@infradead.org>
-References: <20200324160923.963996225@infradead.org>
+        Thu, 26 Mar 2020 06:12:49 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02QACYnG032171;
+        Thu, 26 Mar 2020 11:12:35 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=STMicroelectronics;
+ bh=L85rZOpZxg375px3mWAwS/C7vybF5ftzlf5QE8rNbBw=;
+ b=ewiNc0NURcooa2CNZCnpwJ2/qcd5H7zKOVLl+rUFPuFDTR/ypJAFyy+I1XdX1HLCWyCx
+ gChVcjirmE+eEojq7dsgc3wEhu6qfIF2pPYZFHXM2qFp6P1bBUQEf68mfx4q5Xdt8n2/
+ HnyEuYLZD3WPUI+OM9reFz4sCxi1swXLLmbXuQG+q19pU6sgyu6qwmgwR6nR3ajXZ9Ys
+ E8rdXmNrRMZqGwlzOvvxalTnRUATrsxBdfFqhY+q2Ma/c3ni8ln0L+jNxKX8tQmB7lhF
+ xDvbggUkFql0Iq/wGT1jMIUxn+05hkPYokR5JDtgxD0L2mdqtrK0ocbcQ65CSNKlbApw Pw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2yw8xeb99h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 11:12:35 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 07635100034;
+        Thu, 26 Mar 2020 11:12:25 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C354B22228D;
+        Thu, 26 Mar 2020 11:12:25 +0100 (CET)
+Received: from gnbcxd0016.gnb.st.com (10.75.127.51) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 26 Mar
+ 2020 11:12:25 +0100
+Date:   Thu, 26 Mar 2020 11:12:19 +0100
+From:   Alain Volmat <alain.volmat@st.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Pierre Yves MORDRET <pierre-yves.mordret@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fabrice GASNIER <fabrice.gasnier@st.com>
+Subject: Re: [PATCH 2/2] i2c: i2c-stm32f7: allows for any bus frequency
+Message-ID: <20200326101219.GA21190@gnbcxd0016.gnb.st.com>
+Mail-Followup-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Pierre Yves MORDRET <pierre-yves.mordret@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fabrice GASNIER <fabrice.gasnier@st.com>
+References: <1585161361-3408-1-git-send-email-alain.volmat@st.com>
+ <1585161361-3408-3-git-send-email-alain.volmat@st.com>
+ <CAHp75VdPCWdpGo=2n9g0ivti-g2m4jZ=cG4BKHBLk8BVDzaCyg@mail.gmail.com>
 MIME-Version: 1.0
-Message-ID: <158521731933.28353.7307768837288463941.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAHp75VdPCWdpGo=2n9g0ivti-g2m4jZ=cG4BKHBLk8BVDzaCyg@mail.gmail.com>
+X-Disclaimer: ce message est personnel / this message is private
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-26_02:2020-03-24,2020-03-26 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the core/objtool branch of tip:
+Hi Andy,
 
-Commit-ID:     a92e92d1a749e9bae9828f34f632d56ac2c6d2c3
-Gitweb:        https://git.kernel.org/tip/a92e92d1a749e9bae9828f34f632d56ac2c6d2c3
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Tue, 10 Mar 2020 18:07:44 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 25 Mar 2020 18:28:27 +01:00
+Thanks for the review.
 
-objtool: Introduce validate_return()
+On Wed, Mar 25, 2020 at 06:53:45PM +0000, Andy Shevchenko wrote:
+> On Wed, Mar 25, 2020 at 8:38 PM Alain Volmat <alain.volmat@st.com> wrote:
+> >
+> > Do not limitate to the 3 (100KHz, 400KHz, 1MHz) bus frequency but
+> > instead allows any frequency (if it matches timing requirements).
+> > Depending on the requested frequency, use the spec data from either
+> > Standard, Fast or Fast Plus mode.
+> >
+> > Hardcoding of min/max bus frequencies is removed and is instead computed.
+> >
+> > The driver do not use anymore speed identifier but instead handle
+> > directly the frequency and figure out the spec data (necessary
+> > for the computation of the timing register) based on the frequency.
+> 
+> ...
+> 
+> > +static struct stm32f7_i2c_spec *get_specs(u32 rate)
+> > +{
+> > +       int i;
+> > +
+> > +       for (i = 0; i < ARRAY_SIZE(i2c_specs); i++)
+> > +               if (rate <= i2c_specs[i].rate)
+> > +                       return &i2c_specs[i];
+> > +
+> 
+> > +       /* NOT REACHED */
+> > +       return ERR_PTR(-EINVAL);
+> 
+> WARN_ONCE() ?
 
-Trivial 'cleanup' to save one indentation level and match
-validate_call().
+The comment should actually be removed. get_specs return value is
+properly checked in stm32f7_i2c_compute_timing and an error message
+is displayed in case of an error.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20200324160923.963996225@infradead.org
----
- tools/objtool/check.c | 64 +++++++++++++++++++++++-------------------
- 1 file changed, 36 insertions(+), 28 deletions(-)
+> 
+> > +}
+> 
+> ...
+> 
+> > -                       if ((tscl_l < i2c_specs[setup->speed].l_min) ||
+> > +                       if ((tscl_l < specs->l_min) ||
+> 
+> >                             (i2cclk >=
+> >                              ((tscl_l - af_delay_min - dnf_delay) / 4))) {
+> 
+> Perhaps squash above two to one line at the same time?
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 6b6178e..da17b5a 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1975,6 +1975,41 @@ static int validate_sibling_call(struct instruction *insn, struct insn_state *st
- 	return validate_call(insn, state);
- }
- 
-+static int validate_return(struct symbol *func, struct instruction *insn, struct insn_state *state)
-+{
-+	if (state->uaccess && !func_uaccess_safe(func)) {
-+		WARN_FUNC("return with UACCESS enabled",
-+			  insn->sec, insn->offset);
-+		return 1;
-+	}
-+
-+	if (!state->uaccess && func_uaccess_safe(func)) {
-+		WARN_FUNC("return with UACCESS disabled from a UACCESS-safe function",
-+			  insn->sec, insn->offset);
-+		return 1;
-+	}
-+
-+	if (state->df) {
-+		WARN_FUNC("return with DF set",
-+			  insn->sec, insn->offset);
-+		return 1;
-+	}
-+
-+	if (func && has_modified_stack_frame(state)) {
-+		WARN_FUNC("return with modified stack frame",
-+			  insn->sec, insn->offset);
-+		return 1;
-+	}
-+
-+	if (state->bp_scratch) {
-+		WARN("%s uses BP as a scratch register",
-+		     func->name);
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Follow the branch starting at the given instruction, and recursively follow
-  * any other branches (jumps).  Meanwhile, track the frame pointer state at
-@@ -2090,34 +2125,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 		switch (insn->type) {
- 
- 		case INSN_RETURN:
--			if (state.uaccess && !func_uaccess_safe(func)) {
--				WARN_FUNC("return with UACCESS enabled", sec, insn->offset);
--				return 1;
--			}
--
--			if (!state.uaccess && func_uaccess_safe(func)) {
--				WARN_FUNC("return with UACCESS disabled from a UACCESS-safe function", sec, insn->offset);
--				return 1;
--			}
--
--			if (state.df) {
--				WARN_FUNC("return with DF set", sec, insn->offset);
--				return 1;
--			}
--
--			if (func && has_modified_stack_frame(&state)) {
--				WARN_FUNC("return with modified stack frame",
--					  sec, insn->offset);
--				return 1;
--			}
--
--			if (state.bp_scratch) {
--				WARN("%s uses BP as a scratch register",
--				     func->name);
--				return 1;
--			}
--
--			return 0;
-+			return validate_return(func, insn, &state);
- 
- 		case INSN_CALL:
- 		case INSN_CALL_DYNAMIC:
+I agree that this is not very pretty to read now but that would lead to
+a line exceeding 80 characters. To fix that it'd be better to rework the code
+but in such case that should be done at a separate time to keep this commit
+as small / simpler to understand as possible. So I'd prefer leave this code
+for the time being.
+
+> 
+> ...
+> 
+> > +       int i;
+> > +
+> > +       for (i = ARRAY_SIZE(i2c_specs) - 1; i >= 0; i--)
+> 
+> 
+> Perhaps
+> 
+>        int i = ARRAY_SIZE(i2c_specs);
+> 
+>        while(i--)
+> 
+> ?
+
+I propose the following code to make it a bit easier to read/understand:
+
+static u32 get_lower_rate(u32 rate)
+{
+        int i = ARRAY_SIZE(i2c_specs);
+
+        while (i--)
+                if (i2c_specs[i].rate < rate)
+                        break;
+
+        return i2c_specs[i].rate;
+}
+
+If you agree with that I'll push a v2.
+
+> 
+> > +               if (i2c_specs[i].rate < rate)
+> > +                       return i2c_specs[i].rate;
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
