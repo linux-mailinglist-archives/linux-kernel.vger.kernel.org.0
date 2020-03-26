@@ -2,68 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C183194A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 22:22:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03ADD194A79
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 22:25:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbgCZVWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 17:22:52 -0400
-Received: from mr85p00im-zteg06021901.me.com ([17.58.23.194]:48450 "EHLO
-        mr85p00im-zteg06021901.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726034AbgCZVWw (ORCPT
+        id S1727656AbgCZVZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 17:25:04 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:44107 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbgCZVZE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 17:22:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1585257771; bh=1giZd2owGIj9cpPaRlxOyrqDeGF8FFFXZCqKHweT8Kc=;
-        h=From:To:Subject:Date:Message-Id;
-        b=KCSInXcjW3AwTJydl6bt+xudN4Eo8Vv+9YUY9qh89kVQihw7Na5Y/442yuCgpNPeQ
-         UcLWOX6DvxX1l9TFfGk7nK/mwnFcG6LTDvgM6nJNldp9Q+cnEQ2ZjS37ctQf42nUws
-         svtkyvF5N6ddzt0fhe7E+jRnYf871Exr8/GH8Kp3hHfqHABVbg5iXMJnRaN2FIWIGg
-         BOVPzU4+HNkmpBkJ3RdCOnaO9cuDCTsbKnzK+hZo+uecfTvY5bo/2pyVnCfI2Fk4wg
-         VEGZ9W8Tf8VAye3eeFMF+TZglM8YDGsO4zdLj3lN0Y7EcRH4dtHI2JAb1jcfmuPMta
-         E+5jRVYJbHxAg==
-Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
-        by mr85p00im-zteg06021901.me.com (Postfix) with ESMTPSA id 6A424720842;
-        Thu, 26 Mar 2020 21:22:51 +0000 (UTC)
-From:   Alain Volmat <avolmat@me.com>
-To:     Patrice Chotard <patrice.chotard@st.com>,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     avolmat@me.com
-Subject: [PATCH] i2c: i2c-st: fix missing struct parameter description
-Date:   Thu, 26 Mar 2020 22:22:43 +0100
-Message-Id: <20200326212243.17363-1-avolmat@me.com>
-X-Mailer: git-send-email 2.17.1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-03-26_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 clxscore=1011 mlxscore=0
- mlxlogscore=968 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-2003260156
+        Thu, 26 Mar 2020 17:25:04 -0400
+Received: by mail-io1-f70.google.com with SMTP id h4so6568619ior.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 14:25:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=R0UtT0wl+/DHJxOHjaoWbQcF3VR+MnxFmO8PugCJFXM=;
+        b=JmMvWwq4HYsu7S7v00ZDI9Nvu8QFHUVvTwAWfPNB3ziwo4M8Zs2ZpO5dmqKJ4x3aEO
+         4YewGzEK4WN7vKSu33l0xIkqtre+xwyZiAwlAavbqbBxNKTqj1NipE+SW7GZB3OACE8C
+         mddPAJiS3yN/gC+cRq0Omf3/Pmyt1HzrMXXdgqNBNie0W6foBnsry3wwM6owyNr3jesH
+         jBXPGp3JLFMu01jPJMUtzZfmqHz2OhkEZ8AcggAzGf67Rh4NHGAanP2K0sckZGt83HvA
+         HKPsGnoSjNA8Oq9DrW1HRe4hczictdum+4FPuBgS3wmgPqIc1wTJolUwuoCsBOGkpPLJ
+         RMyw==
+X-Gm-Message-State: ANhLgQ15zOCw1H/ahp6xSLJ4Nr5xYpQ20BN6uOk25fG9vnIVlS7IbJzE
+        VNyxTb4H6aGnjOExGrB2WQtzCzBoiG4eRr74vJOrfnf8wyxP
+X-Google-Smtp-Source: ADFU+vuq1ZdA15x+aWbKAF5XR3OUgPZocunA3rxU2f2eixsCPsTJVpYHE8hrML1m+H2C0/QHibYoQEO8qicie9S7k8eG7C6Y0h32
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:3a4:: with SMTP id z4mr9602598jap.141.1585257901712;
+ Thu, 26 Mar 2020 14:25:01 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 14:25:01 -0700
+In-Reply-To: <CADG63jDGY1dEQ9uS5Cd9q3DeEKWTff-4FC=UiEBpuh2caSLwOQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001bedcf05a1c89e96@google.com>
+Subject: Re: WARNING: refcount bug in sctp_wfree
+From:   syzbot <syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com>
+To:     anenbupt@gmail.com, davem@davemloft.net, kuba@kernel.org,
+        linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org,
+        marcelo.leitner@gmail.com, netdev@vger.kernel.org,
+        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
+        vyasevich@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix a missing struct parameter description to allow
-warning free W=1 compilation.
+Hello,
 
-Signed-off-by: Alain Volmat <avolmat@me.com>
----
- drivers/i2c/busses/i2c-st.c | 1 +
- 1 file changed, 1 insertion(+)
+syzbot has tested the proposed patch and the reproducer did not trigger crash:
 
-diff --git a/drivers/i2c/busses/i2c-st.c b/drivers/i2c/busses/i2c-st.c
-index 54e1fc8a495e..f7f7b5b64720 100644
---- a/drivers/i2c/busses/i2c-st.c
-+++ b/drivers/i2c/busses/i2c-st.c
-@@ -434,6 +434,7 @@ static void st_i2c_wr_fill_tx_fifo(struct st_i2c_dev *i2c_dev)
- /**
-  * st_i2c_rd_fill_tx_fifo() - Fill the Tx FIFO in read mode
-  * @i2c_dev: Controller's private data
-+ * @max: Maximum amount of data to fill into the Tx FIFO
-  *
-  * This functions fills the Tx FIFO with fixed pattern when
-  * in read mode to trigger clock.
--- 
-2.17.1
+Reported-and-tested-by: syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         9420e8ad Merge tag 'for-linus' of git://git.kernel.org/pub..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4ac76c43beddbd9
+dashboard link: https://syzkaller.appspot.com/bug?extid=cea71eec5d6de256d54d
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1670bfbbe00000
+
+Note: testing is done by a robot and is best-effort only.
