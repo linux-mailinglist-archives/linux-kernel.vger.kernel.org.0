@@ -2,152 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FBE5193F58
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 13:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30CD0193F5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 13:56:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbgCZM4U convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 26 Mar 2020 08:56:20 -0400
-Received: from mga09.intel.com ([134.134.136.24]:20529 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728152AbgCZM4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 08:56:20 -0400
-IronPort-SDR: cfs9XeRP9zJ6WaKyCTH+yKWQai43sQZKh9+4a6bWroOk+mI95eXbPPQk4Zar7YU/QXr23uLlZt
- YPd81w0DL1hQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 05:56:19 -0700
-IronPort-SDR: yiOsM0HzQtPs7uCAalT1rmEaVhDVR7PBoOr5v2NRZQDpTvBCDiL/gALwpPAPkTAp+Rfv0LXRHs
- WUCGki2QgF7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,308,1580803200"; 
-   d="scan'208";a="393970616"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga004.jf.intel.com with ESMTP; 26 Mar 2020 05:56:18 -0700
-Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 26 Mar 2020 05:56:18 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.206]) by
- shsmsx102.ccr.corp.intel.com ([169.254.2.50]) with mapi id 14.03.0439.000;
- Thu, 26 Mar 2020 20:56:13 +0800
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>
-CC:     "Tian, Kevin" <kevin.tian@intel.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Tian, Jun J" <jun.j.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wu, Hao" <hao.wu@intel.com>
-Subject: RE: [PATCH v1 0/8] vfio: expose virtual Shared Virtual Addressing
- to VMs
-Thread-Topic: [PATCH v1 0/8] vfio: expose virtual Shared Virtual Addressing
- to VMs
-Thread-Index: AQHWAEUdI4Sfhdx3H0+yWIyqzj+O7Kha2xeQ
-Date:   Thu, 26 Mar 2020 12:56:13 +0000
-Message-ID: <A2975661238FB949B60364EF0F2C25743A20440A@SHSMSX104.ccr.corp.intel.com>
-References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
-In-Reply-To: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1728317AbgCZM45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 08:56:57 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:36107 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728144AbgCZM45 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 08:56:57 -0400
+Received: by mail-yb1-f193.google.com with SMTP id i4so3168164ybl.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 05:56:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y9YWW6vz22mlq1guLvP+/fT4LGWaEEduUDPTk3TTYX4=;
+        b=HSv98EMEHHKD7UrRFLWR8ZBt4EMruUsPmDtAvm0qup2h9sFn6HXYf98wloKcmRhC9c
+         s9NomqprvtpQWkfHrqHk4EXaQ8ApGUgEUc7lgCJouaeYlOAeDpYcVxNcPoghjRyH/yRa
+         aQ5GWklAUXwS8/Z/lnWserBu7VV4tBVRWz59he+CaMkmc5uIR6foZuF9Vi+QZ+V5KB7P
+         pkbs8FYrAboUF0FhrJFzl5qHjoAwbuN3zggbIb76d2vgarOa9XHBPReLGMIbG99gYW32
+         ar0IBEYhHFRy7EK6xYjVPSB2O8lrG4nqCSdcfFVSgu86gEygJpJ9eyHYnd7P2/olTVoy
+         v8lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y9YWW6vz22mlq1guLvP+/fT4LGWaEEduUDPTk3TTYX4=;
+        b=hgor6ruabJK/bGjAEix7oNpFGmVNul87H8a1hqNqOR0li2Kq+WpyfbNSnaVRtydCOo
+         HtT8VGKtw1Li8BNQLI56ZF/OOxNSYyruf+9TNNPN6+4BsBxs4NuIoSLMAmtEN1+rewG0
+         tLUeae5Fm8hnDyeo/fDXDBD2g/FPKOMztX8HBssShDlcm9osHr/7gaj4gMfmFi8NzgLG
+         32XKM51saQ8NjwTbo1uk5Z7fw3JjXoce3diP5x7CKBs4Jzy5tFBAHexqCsMkY2SjvMHK
+         7crEp67sTPeCbqzU99Q6bsQ3J/TtD1/3RAL4//j224sGLfv343T3zUQc+POgntjJqxsN
+         +QGQ==
+X-Gm-Message-State: ANhLgQ3Vbmqctq6Hk1sTfDrOWxHgyjePbnPdJHOo8oTQI46BuieWStS9
+        g0r0upceSTVC1KuWc4+nKMo5cRf6UJ263/qQCAOAvAoegOQ=
+X-Google-Smtp-Source: ADFU+vtF2qA3KBXX2BP5sJdWnpK/D2XCaS4hZJxxpwlwViIjO8YnBCF6JvUS+L7CIbDo7ziKEq2xz1Qd6tz/vPNxDBc=
+X-Received: by 2002:a25:ccd0:: with SMTP id l199mr14690377ybf.446.1585227415649;
+ Thu, 26 Mar 2020 05:56:55 -0700 (PDT)
 MIME-Version: 1.0
+References: <20200326070236.235835-1-walken@google.com> <20200326070236.235835-6-walken@google.com>
+ <20200326120931.GF22483@bombadil.infradead.org>
+In-Reply-To: <20200326120931.GF22483@bombadil.infradead.org>
+From:   Michel Lespinasse <walken@google.com>
+Date:   Thu, 26 Mar 2020 05:56:43 -0700
+Message-ID: <CANN689F_wVcLddAfcvZ+CvqW-JxF4=7an_B5WLRKjYcf31DkAg@mail.gmail.com>
+Subject: Re: [PATCH 5/8] mmap locking API: convert nested write lock sites
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Liam Howlett <Liam.Howlett@oracle.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        David Rientjes <rientjes@google.com>,
+        Hugh Dickins <hughd@google.com>, Ying Han <yinghan@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Liu, Yi L <yi.l.liu@intel.com>
-> Sent: Sunday, March 22, 2020 8:32 PM
-> To: alex.williamson@redhat.com; eric.auger@redhat.com
-> Subject: [PATCH v1 0/8] vfio: expose virtual Shared Virtual Addressing to VMs
-> 
-> From: Liu Yi L <yi.l.liu@intel.com>
-> 
-> Shared Virtual Addressing (SVA), a.k.a, Shared Virtual Memory (SVM) on
-> Intel platforms allows address space sharing between device DMA and
-> applications. SVA can reduce programming complexity and enhance security.
-> 
-> This VFIO series is intended to expose SVA usage to VMs. i.e. Sharing
-> guest application address space with passthru devices. This is called
-> vSVA in this series. The whole vSVA enabling requires QEMU/VFIO/IOMMU
-> changes. For IOMMU and QEMU changes, they are in separate series (listed
-> in the "Related series").
-> 
-> The high-level architecture for SVA virtualization is as below, the key
-> design of vSVA support is to utilize the dual-stage IOMMU translation (
-> also known as IOMMU nesting translation) capability in host IOMMU.
-> 
-> 
->     .-------------.  .---------------------------.
->     |   vIOMMU    |  | Guest process CR3, FL only|
->     |             |  '---------------------------'
->     .----------------/
->     | PASID Entry |--- PASID cache flush -
->     '-------------'                       |
->     |             |                       V
->     |             |                CR3 in GPA
->     '-------------'
-> Guest
-> ------| Shadow |--------------------------|--------
->       v        v                          v
-> Host
->     .-------------.  .----------------------.
->     |   pIOMMU    |  | Bind FL for GVA-GPA  |
->     |             |  '----------------------'
->     .----------------/  |
->     | PASID Entry |     V (Nested xlate)
->     '----------------\.------------------------------.
->     |             |   |SL for GPA-HPA, default domain|
->     |             |   '------------------------------'
->     '-------------'
-> Where:
->  - FL = First level/stage one page tables
->  - SL = Second level/stage two page tables
-> 
-> There are roughly four parts in this patchset which are
-> corresponding to the basic vSVA support for PCI device
-> assignment
->  1. vfio support for PASID allocation and free for VMs
->  2. vfio support for guest page table binding request from VMs
->  3. vfio support for IOMMU cache invalidation from VMs
->  4. vfio support for vSVA usage on IOMMU-backed mdevs
-> 
-> The complete vSVA kernel upstream patches are divided into three phases:
->     1. Common APIs and PCI device direct assignment
->     2. IOMMU-backed Mediated Device assignment
->     3. Page Request Services (PRS) support
-> 
-> This patchset is aiming for the phase 1 and phase 2, and based on Jacob's
-> below series.
-> [PATCH V10 00/11] Nested Shared Virtual Address (SVA) VT-d support:
-> https://lkml.org/lkml/2020/3/20/1172
-> 
-> Complete set for current vSVA can be found in below branch.
-> https://github.com/luxis1999/linux-vsva.git: vsva-linux-5.6-rc6
-> 
-> The corresponding QEMU patch series is as below, complete QEMU set can be
-> found in below branch.
-> [PATCH v1 00/22] intel_iommu: expose Shared Virtual Addressing to VMs
-> complete QEMU set can be found in below link:
-> https://github.com/luxis1999/qemu.git: sva_vtd_v10_v1
+On Thu, Mar 26, 2020 at 5:09 AM Matthew Wilcox <willy@infradead.org> wrote:
+> On Thu, Mar 26, 2020 at 12:02:33AM -0700, Michel Lespinasse wrote:
+> > @@ -47,9 +48,9 @@ static inline void activate_mm(struct mm_struct *old, struct mm_struct *new)
+> >        * when the new ->mm is used for the first time.
+> >        */
+> >       __switch_mm(&new->context.id);
+> > -     down_write_nested(&new->mmap_sem, 1);
+> > +     mmap_write_lock_nested(new, 1);
+> >       uml_setup_stubs(new);
+> > -     mmap_write_unlock(new);
+> > +     mmap_write_unlock_nested(new);
+>
+> This is a bit of an oddity.  We don't usually have an unlock_nested()
+> variant (a quick grep finds only something complicated in reiserfs).
+> That's because it's legitimate to release locks in a different order from
+> the one they were acquired in (eg lock A, lock B, unlock A, unlock B), and
+> it's not clear whether "nested" would follow the lock (ie unlock_nested B)
+> or whether it would follow the code (ie unlock_nested A).
+>
+> Does your future API require knowing the nested nature at the unlock
+> point?  And if so, does it require it for A or B in the above scenario?
+> And how does it mix with lock A or B being of a different type (eg a
+> plain mutex or a spinlock)?
 
-The ioasid extension is in the below link.
+I'll admit it's a bit unusual.
 
-https://lkml.org/lkml/2020/3/25/874
+In MM we have only two uses nested mmap locks (as you can see in this
+patch), and they both release locks in the opposite order as they
+acquire them. We could probably follow this pattern if additional use
+cases end up being needed.
 
-Regards,
-Yi Liu
+In my range locking patchset, nested locks need to pass an explicit
+lock range. Also when implementing mmap_sem locking latencies, it can
+be convenient to ignore the nested locks under the assumption that
+their hold interval is contained within the outer lock's hold
+interval.
+
+-- 
+Michel "Walken" Lespinasse
+A program is never fully debugged until the last user dies.
