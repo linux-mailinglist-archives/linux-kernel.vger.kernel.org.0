@@ -2,70 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CB6B193A99
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 09:16:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B5B4193A86
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 09:14:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbgCZIQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 04:16:30 -0400
-Received: from smtprelay0038.hostedemail.com ([216.40.44.38]:39990 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727919AbgCZIQY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 04:16:24 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 74954182CED5B;
-        Thu, 26 Mar 2020 08:16:22 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2525:2560:2563:2682:2685:2828:2859:2892:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3351:3622:3865:3866:3868:3871:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6119:7688:8957:9025:10004:10400:10471:10848:11026:11232:11658:11914:12043:12296:12297:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:14775:21080:21627:30054:30055:30060:30075:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: cart64_548b3b72c1009
-X-Filterd-Recvd-Size: 1972
-Received: from XPS-9350.home (unknown [47.151.136.130])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 26 Mar 2020 08:16:20 +0000 (UTC)
-Message-ID: <0cb96a93000c02e4c4816c64492afef10bc76fd9.camel@perches.com>
-Subject: Re: [PATCH v3 1/2] Bluetooth: btusb: Indicate Microsoft vendor
- extension for Intel 9460/9560 and 9160/9260
-From:   Joe Perches <joe@perches.com>
-To:     Miao-chen Chou <mcchou@chromium.org>,
-        Bluetooth Kernel Mailing List 
-        <linux-bluetooth@vger.kernel.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Alain Michaud <alainm@chromium.org>,
-        Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Date:   Thu, 26 Mar 2020 01:14:29 -0700
-In-Reply-To: <20200326005931.v3.1.I0e975833a6789e8acc74be7756cd54afde6ba98c@changeid>
-References: <20200326075938.65053-1-mcchou@chromium.org>
-         <20200326005931.v3.1.I0e975833a6789e8acc74be7756cd54afde6ba98c@changeid>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1727699AbgCZIOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 04:14:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38196 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726298AbgCZIOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 04:14:36 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CAC82070A;
+        Thu, 26 Mar 2020 08:14:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585210476;
+        bh=elz3UD004qynkZxjoJv1nYmnugnX1dCGwgJS0d8+k4Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=y9+4WRWnBTZ4ra47yUm7mmra9bmFqu1h7f7HB6RjbmAhL43j7Iy3niG05rhzaD0K/
+         5mJRdJl3Ts07KRxp/f70IXq0X6fH5jxc54OvzoLILi+2i4aZ8lcxOgc22fZz5AELx+
+         jxdQL6+7di777t5ZsUpmXbMy7tcWBnPvZZV/XEI8=
+Date:   Thu, 26 Mar 2020 09:14:33 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Qiujun Huang <hqjagain@gmail.com>
+Cc:     johan@kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, anenbupt@gmail.com
+Subject: Re: [PATCH] USB: io_edgeport: fix  slab-out-of-bounds Read in
+ edge_interrupt_callback
+Message-ID: <20200326081433.GA979574@kroah.com>
+References: <1585122757-4528-1-git-send-email-hqjagain@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1585122757-4528-1-git-send-email-hqjagain@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2020-03-26 at 00:59 -0700, Miao-chen Chou wrote:
-> This adds a bit mask of driver_info for Microsoft vendor extension and
-> indicates the support for Intel 9460/9560 and 9160/9260. See
-> https://docs.microsoft.com/en-us/windows-hardware/drivers/bluetooth/
-> microsoft-defined-bluetooth-hci-commands-and-events for more information
-> about the extension. This was verified with Intel ThunderPeak BT controller
-> where msft_vnd_ext_opcode is 0xFC1E.
-[]
-> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
-[]
-> @@ -414,6 +414,8 @@ struct hci_dev {
->  	void			*smp_data;
->  	void			*smp_bredr_data;
->  
-> +	void			*msft_ext;
+On Wed, Mar 25, 2020 at 03:52:37PM +0800, Qiujun Huang wrote:
+> The boundary condition should be (length - 1) as we access data[position+1].
+> 
+> Reported-and-tested-by: syzbot+37ba33391ad5f3935bbd@syzkaller.appspotmail.com
+> Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+> ---
+>  drivers/usb/serial/io_edgeport.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
+> index 5737add..4cca0b8 100644
+> --- a/drivers/usb/serial/io_edgeport.c
+> +++ b/drivers/usb/serial/io_edgeport.c
+> @@ -710,7 +710,7 @@ static void edge_interrupt_callback(struct urb *urb)
+>  		/* grab the txcredits for the ports if available */
+>  		position = 2;
+>  		portNumber = 0;
+> -		while ((position < length) &&
+> +		while ((position < length - 1) &&
+>  				(portNumber < edge_serial->serial->num_ports)) {
+>  			txCredits = data[position] | (data[position+1] << 8);
+>  			if (txCredits) {
+> -- 
+> 1.8.3.1
+> 
 
-Why should this be a void * and not a msft_vnd_ext * ?
+Johan, any objection from me taking this in my tree now?
 
+thanks,
 
+greg k-h
