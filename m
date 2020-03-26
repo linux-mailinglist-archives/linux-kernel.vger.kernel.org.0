@@ -2,179 +2,268 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C3D619390E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 08:01:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18B21193912
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 08:02:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbgCZHBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 03:01:51 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38409 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbgCZHBu (ORCPT
+        id S1727656AbgCZHCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 03:02:45 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:36651 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbgCZHCo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 03:01:50 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s1so6385566wrv.5
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 00:01:47 -0700 (PDT)
+        Thu, 26 Mar 2020 03:02:44 -0400
+Received: by mail-pf1-f202.google.com with SMTP id h125so4431884pfg.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 00:02:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jofCgVIHQ01SmLvuORxlj/SeIQqWtEau+/mAl/qksKc=;
-        b=bcSpSKxPVEFvA3e83gc9piZG/avwTjWX9CPl9XOB1c6n0Ldk7d4t6xtIWfmiNiR19u
-         0SEPQodiQ2SEVXgFtvYF/b31l6kAm4VxQpVAKfFpsn5iTRQc9fKupgAX3gF6vUTZtug8
-         tEcG1DON4PidJ8Es38iq+6RB8gD7PTI/ilJ8RN33vhSmqHY2L8f1iZg5sZXq5/M8aPCX
-         uMb5yzhFe3S2/2n3btGG0V9R+iRzS0USFqBBZRXW83vOVhvm+O7xs0H8N3OQZHryJTdQ
-         0AEYngAaD+hL9yN1/c1ANSsRBQaY7d+5WdkNTK3YsZXTTHqOiHB1NzUGfT6Zc5mn9UHz
-         N/dA==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=tNlW6L/2XFnR6aPCHierE31WIPDldccPhC+22hE3ZVE=;
+        b=b2lHZXWyAL9IsGHA9JgXPhinVADFrfV9rDjWtTSCM92Aq8ct3DBGEgVq03EmqtkOzn
+         bjOlYcorf20tBxWgg1X4SkKswoj6Yzbpv+0d5jtpaIRHrpN4mykiLkrQ0P5jr9Yji7+G
+         rMHwXZJSz0LPka0yhbTprijjYSWHgjYT1rPIWA0pJiPFsRfkMT0eQIVaY3nvkZ9CXBLr
+         cqyHCCqiTFlUWzJpD1IgAWfTJw56y/vEQUVHNfprfl+tKu3kl4jSrpHfBn0DSW+9p3wM
+         bxROwQuw6Z6PpCO1cX8TXLgo2sRiW0YBKFmzrFbVjpOQaAk22OxsOeS0ie9oBw28j9nR
+         cnMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jofCgVIHQ01SmLvuORxlj/SeIQqWtEau+/mAl/qksKc=;
-        b=Ue6zjxR/nrA900pE1vm5F1tJmVguwKEyPt465+Pxe47lrjdIjyVhK9U4PkzNFLp1je
-         zlrlkB76NO36W96RM/jjMfBqycv/ddRTOTlrCDAjHAT5H1LIOiSzXJBPHs1QiGF6qAq8
-         uTg/v9a2QBB+tz6s6UgYehTeTekp2LQPYLmgZqaCDE2A+jqj3hIBf1TJaHwF+wHsnDwR
-         lmFcgREEEolKZtgS+OZkK6Q2FJq6JN84j9IKLs8QrNj7Vi0FCmLqi4dXcGSeomauJVCi
-         vc7Xaet9FAGPSvHI8lRAqs+JQBueKomHhaBmHyq8j6DUZpMU/xYtA7I6Wc35mxkhMaL4
-         /GWg==
-X-Gm-Message-State: ANhLgQ0ZUFbQs1ZB/5KUuBLMYis9Xc4ZLIGPfxvfh2dHiZIpCy424QHn
-        jqpLQX2C17EyX7FeR11I+WVrGT5a0stW5ZUXoj73CA==
-X-Google-Smtp-Source: ADFU+vsbROIUoA90FStIEmYD0FITWzGap+V5Xr2S+KQyHdoQESAi373eDUqAUZe8sPw3C/qJn1CIrZEetGQs1GmcRv0=
-X-Received: by 2002:a5d:4acd:: with SMTP id y13mr7573260wrs.61.1585206106903;
- Thu, 26 Mar 2020 00:01:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200322110028.18279-1-alex@ghiti.fr> <20200322110028.18279-6-alex@ghiti.fr>
-In-Reply-To: <20200322110028.18279-6-alex@ghiti.fr>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 26 Mar 2020 12:31:35 +0530
-Message-ID: <CAAhSdy19xsOew+4OhNndUpjzFQtu7gX2VZn-4fczVxuJinP-OA@mail.gmail.com>
-Subject: Re: [RFC PATCH 5/7] riscv: Use pgtable_l4_enabled to output mmu type
- in cpuinfo
-To:     Alexandre Ghiti <alex@ghiti.fr>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Zong Li <zong.li@sifive.com>, Christoph Hellwig <hch@lst.de>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=tNlW6L/2XFnR6aPCHierE31WIPDldccPhC+22hE3ZVE=;
+        b=JJ/3iiyj3GSH084SPRBope3Nf5lSDhRO6dkSH7ypVAZy6aRCQVRb8sSXAT2UwnyhOb
+         ajDsbcTZovKJ9p3gPLvHQL5yyQCB09eiupIPuVOwWYTTmkAoG8JD1EmVdZ0HrMC5qUze
+         jsR+tgAQxhKaTOqHYe3i12mv/EAkVKZEQdZNOjRerx6rJkJk0ey1ep5NqzyW9q8dAecx
+         Lwca5V4ww0obKV8o/WLm8o5Xdj0pLsCPuy8jLjJopirWGAqIsdKWSDdslLrQibwUGR13
+         BpOBPYwdRM48iQIasiksojnpPw4v0ptdTZyvJWFHtSEvMZLV38KJ99NMoyKBHKOMnX6O
+         z7Aw==
+X-Gm-Message-State: ANhLgQ0mv2Sz7CSk//nd+njU1KEQ6a8wad/GpMQiMTI1pnsrl/A+jRmT
+        S7jbKRJFx9NswJX3vtIol1kBtbbxuxA=
+X-Google-Smtp-Source: ADFU+vu6qBdrGMLpNcPs/heI9wuDJk04pDv/BVcj0tTQ3y1FTbkwJJaDGi4LQUeD1gN7ODG8b95akrU2p4M=
+X-Received: by 2002:a17:90b:490b:: with SMTP id kr11mr1555412pjb.21.1585206158617;
+ Thu, 26 Mar 2020 00:02:38 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 00:02:28 -0700
+Message-Id: <20200326070236.235835-1-walken@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH 0/8] Add a new mmap locking API wrapping mmap_sem calls
+From:   Michel Lespinasse <walken@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Liam Howlett <Liam.Howlett@oracle.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        David Rientjes <rientjes@google.com>,
+        Hugh Dickins <hughd@google.com>, Ying Han <yinghan@google.com>,
+        Michel Lespinasse <walken@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 22, 2020 at 4:35 PM Alexandre Ghiti <alex@ghiti.fr> wrote:
->
-> Now that the mmu type is determined at runtime using SATP
-> characteristic, use the global variable pgtable_l4_enabled to output
-> mmu type of the processor through /proc/cpuinfo instead of relying on
-> device tree infos.
->
-> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-> ---
->  arch/riscv/boot/dts/sifive/fu540-c000.dtsi |  4 ----
->  arch/riscv/kernel/cpu.c                    | 24 ++++++++++++----------
->  2 files changed, 13 insertions(+), 15 deletions(-)
->
-> diff --git a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
-> index 7db861053483..6138590a2229 100644
-> --- a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
-> +++ b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
-> @@ -50,7 +50,6 @@
->                         i-cache-size = <32768>;
->                         i-tlb-sets = <1>;
->                         i-tlb-size = <32>;
-> -                       mmu-type = "riscv,sv39";
->                         reg = <1>;
->                         riscv,isa = "rv64imafdc";
->                         tlb-split;
-> @@ -74,7 +73,6 @@
->                         i-cache-size = <32768>;
->                         i-tlb-sets = <1>;
->                         i-tlb-size = <32>;
-> -                       mmu-type = "riscv,sv39";
->                         reg = <2>;
->                         riscv,isa = "rv64imafdc";
->                         tlb-split;
-> @@ -98,7 +96,6 @@
->                         i-cache-size = <32768>;
->                         i-tlb-sets = <1>;
->                         i-tlb-size = <32>;
-> -                       mmu-type = "riscv,sv39";
->                         reg = <3>;
->                         riscv,isa = "rv64imafdc";
->                         tlb-split;
-> @@ -122,7 +119,6 @@
->                         i-cache-size = <32768>;
->                         i-tlb-sets = <1>;
->                         i-tlb-size = <32>;
-> -                       mmu-type = "riscv,sv39";
->                         reg = <4>;
->                         riscv,isa = "rv64imafdc";
->                         tlb-split;
-> diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-> index 40a3c442ac5f..38a699b997a8 100644
-> --- a/arch/riscv/kernel/cpu.c
-> +++ b/arch/riscv/kernel/cpu.c
-> @@ -8,6 +8,8 @@
->  #include <linux/of.h>
->  #include <asm/smp.h>
->
-> +extern bool pgtable_l4_enabled;
-> +
->  /*
->   * Returns the hart ID of the given device tree node, or -ENODEV if the node
->   * isn't an enabled and valid RISC-V hart node.
-> @@ -54,18 +56,19 @@ static void print_isa(struct seq_file *f, const char *isa)
->         seq_puts(f, "\n");
->  }
->
-> -static void print_mmu(struct seq_file *f, const char *mmu_type)
-> +static void print_mmu(struct seq_file *f)
->  {
-> +       char sv_type[16];
-> +
->  #if defined(CONFIG_32BIT)
-> -       if (strcmp(mmu_type, "riscv,sv32") != 0)
-> -               return;
-> +       strncpy(sv_type, "sv32", 5);
->  #elif defined(CONFIG_64BIT)
-> -       if (strcmp(mmu_type, "riscv,sv39") != 0 &&
-> -           strcmp(mmu_type, "riscv,sv48") != 0)
-> -               return;
-> +       if (pgtable_l4_enabled)
-> +               strncpy(sv_type, "sv48", 5);
-> +       else
-> +               strncpy(sv_type, "sv39", 5);
->  #endif
-> -
-> -       seq_printf(f, "mmu\t\t: %s\n", mmu_type+6);
-> +       seq_printf(f, "mmu\t\t: %s\n", sv_type);
->  }
->
->  static void *c_start(struct seq_file *m, loff_t *pos)
-> @@ -90,14 +93,13 @@ static int c_show(struct seq_file *m, void *v)
->  {
->         unsigned long cpu_id = (unsigned long)v - 1;
->         struct device_node *node = of_get_cpu_node(cpu_id, NULL);
-> -       const char *compat, *isa, *mmu;
-> +       const char *compat, *isa;
->
->         seq_printf(m, "processor\t: %lu\n", cpu_id);
->         seq_printf(m, "hart\t\t: %lu\n", cpuid_to_hartid_map(cpu_id));
->         if (!of_property_read_string(node, "riscv,isa", &isa))
->                 print_isa(m, isa);
-> -       if (!of_property_read_string(node, "mmu-type", &mmu))
-> -               print_mmu(m, mmu);
-> +       print_mmu(m);
->         if (!of_property_read_string(node, "compatible", &compat)
->             && strcmp(compat, "riscv"))
->                 seq_printf(m, "uarch\t\t: %s\n", compat);
-> --
-> 2.20.1
->
+This patch series adds a new mmap locking API replacing the existing
+mmap_sem lock and unlocks. Initially the API is just implemente in terms
+of inlined rwsem calls, so it doesn't provide any new functionality.
 
-Looks good to me.
+There are two justifications for the new API:
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+- At first, it provides an easy hooking point to instrument mmap_sem
+  locking latencies independently of any other rwsems.
 
-Regards,
-Anup
+- In the future, it may be a starting point for replacing the rwsem
+  implementation with a different one, such as range locks. This is
+  something that is being explored, even though there is no wide concensus
+  about this possible direction yet.
+  (see https://patchwork.kernel.org/cover/11401483/)
+
+The changes apply on top of v5.6-rc7.
+
+I think it would be feasible to apply them in the next merge cycle if
+given sufficient approval.  The coccinelle part of the change is
+relatively invasive, but can be skipped over on a file by file basis
+if it causes any conflicts with other pending changes. The new mmap
+locking API can interoperate with new code that is still using direct
+rwsem calls, until the last patch in the series which renames mmap_sem
+to enforce using the new API. Maybe that last patch could be delayed for
+a bit, so that we'd get a chance to convert any new code that locks
+mmap_sem in the -rc1 release before applying that last patch.
+
+Michel Lespinasse (8):
+  mmap locking API: initial implementation as rwsem wrappers
+  MMU notifier: use the new mmap locking API
+  mmap locking API: use coccinelle to convert mmap_sem rwsem call sites
+  mmap locking API: convert mmap_sem call sites missed by coccinelle
+  mmap locking API: convert nested write lock sites
+  mmap locking API: add mmap_read_release() and mmap_read_unlock_non_owner()
+  mmap locking API: add MMAP_LOCK_INITIALIZER
+  mmap locking API: rename mmap_sem to mmap_lock
+
+ arch/alpha/kernel/traps.c                     |  4 +-
+ arch/alpha/mm/fault.c                         | 10 +--
+ arch/arc/kernel/process.c                     |  4 +-
+ arch/arc/kernel/troubleshoot.c                |  4 +-
+ arch/arc/mm/fault.c                           |  4 +-
+ arch/arm/kernel/process.c                     |  4 +-
+ arch/arm/kernel/swp_emulate.c                 |  4 +-
+ arch/arm/lib/uaccess_with_memcpy.c            | 16 ++--
+ arch/arm/mm/fault.c                           |  6 +-
+ arch/arm64/kernel/traps.c                     |  4 +-
+ arch/arm64/kernel/vdso.c                      |  8 +-
+ arch/arm64/mm/fault.c                         |  8 +-
+ arch/csky/kernel/vdso.c                       |  4 +-
+ arch/csky/mm/fault.c                          |  8 +-
+ arch/hexagon/kernel/vdso.c                    |  4 +-
+ arch/hexagon/mm/vm_fault.c                    |  8 +-
+ arch/ia64/kernel/perfmon.c                    |  8 +-
+ arch/ia64/mm/fault.c                          | 12 +--
+ arch/ia64/mm/init.c                           | 12 +--
+ arch/m68k/kernel/sys_m68k.c                   | 14 ++--
+ arch/m68k/mm/fault.c                          |  8 +-
+ arch/microblaze/mm/fault.c                    | 12 +--
+ arch/mips/kernel/traps.c                      |  4 +-
+ arch/mips/kernel/vdso.c                       |  4 +-
+ arch/mips/mm/fault.c                          | 10 +--
+ arch/nds32/kernel/vdso.c                      |  6 +-
+ arch/nds32/mm/fault.c                         | 12 +--
+ arch/nios2/mm/fault.c                         | 12 +--
+ arch/nios2/mm/init.c                          |  4 +-
+ arch/openrisc/mm/fault.c                      | 10 +--
+ arch/parisc/kernel/traps.c                    |  6 +-
+ arch/parisc/mm/fault.c                        |  8 +-
+ arch/powerpc/kernel/vdso.c                    |  6 +-
+ arch/powerpc/kvm/book3s_64_mmu_hv.c           |  4 +-
+ arch/powerpc/kvm/book3s_hv.c                  |  6 +-
+ arch/powerpc/kvm/book3s_hv_uvmem.c            | 12 +--
+ arch/powerpc/kvm/e500_mmu_host.c              |  4 +-
+ arch/powerpc/mm/book3s64/iommu_api.c          |  4 +-
+ arch/powerpc/mm/book3s64/subpage_prot.c       | 12 +--
+ arch/powerpc/mm/copro_fault.c                 |  4 +-
+ arch/powerpc/mm/fault.c                       | 12 +--
+ arch/powerpc/oprofile/cell/spu_task_sync.c    |  6 +-
+ arch/powerpc/platforms/cell/spufs/file.c      |  4 +-
+ arch/riscv/kernel/vdso.c                      |  4 +-
+ arch/riscv/mm/fault.c                         | 10 +--
+ arch/s390/kernel/vdso.c                       |  4 +-
+ arch/s390/kvm/gaccess.c                       |  4 +-
+ arch/s390/kvm/kvm-s390.c                      | 24 +++---
+ arch/s390/kvm/priv.c                          | 32 ++++----
+ arch/s390/mm/fault.c                          |  6 +-
+ arch/s390/mm/gmap.c                           | 40 ++++-----
+ arch/s390/pci/pci_mmio.c                      |  4 +-
+ arch/sh/kernel/sys_sh.c                       |  6 +-
+ arch/sh/kernel/vsyscall/vsyscall.c            |  4 +-
+ arch/sh/mm/fault.c                            | 14 ++--
+ arch/sparc/mm/fault_32.c                      | 18 ++--
+ arch/sparc/mm/fault_64.c                      | 12 +--
+ arch/sparc/vdso/vma.c                         |  4 +-
+ arch/um/include/asm/mmu_context.h             |  5 +-
+ arch/um/kernel/tlb.c                          |  2 +-
+ arch/um/kernel/trap.c                         |  6 +-
+ arch/unicore32/mm/fault.c                     |  6 +-
+ arch/x86/entry/vdso/vma.c                     | 14 ++--
+ arch/x86/events/core.c                        |  4 +-
+ arch/x86/kernel/tboot.c                       |  2 +-
+ arch/x86/kernel/vm86_32.c                     |  4 +-
+ arch/x86/kvm/mmu/paging_tmpl.h                |  8 +-
+ arch/x86/mm/fault.c                           | 10 +--
+ arch/x86/um/vdso/vma.c                        |  4 +-
+ arch/xtensa/mm/fault.c                        | 10 +--
+ drivers/android/binder_alloc.c                | 10 +--
+ drivers/dma-buf/dma-resv.c                    |  4 +-
+ drivers/firmware/efi/efi.c                    |  2 +-
+ .../gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c  |  4 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c       | 10 +--
+ drivers/gpu/drm/amd/amdkfd/kfd_events.c       |  4 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c         |  2 +-
+ drivers/gpu/drm/i915/gem/i915_gem_mman.c      |  4 +-
+ drivers/gpu/drm/i915/gem/i915_gem_userptr.c   |  8 +-
+ drivers/gpu/drm/nouveau/nouveau_svm.c         | 20 ++---
+ drivers/gpu/drm/radeon/radeon_cs.c            |  4 +-
+ drivers/gpu/drm/radeon/radeon_gem.c           |  6 +-
+ drivers/gpu/drm/ttm/ttm_bo_vm.c               |  4 +-
+ drivers/infiniband/core/umem_odp.c            |  4 +-
+ drivers/infiniband/core/uverbs_main.c         |  4 +-
+ drivers/infiniband/hw/mlx4/mr.c               |  4 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c    |  6 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c      |  4 +-
+ drivers/infiniband/sw/siw/siw_mem.c           |  4 +-
+ drivers/iommu/amd_iommu_v2.c                  |  4 +-
+ drivers/iommu/intel-svm.c                     |  4 +-
+ drivers/media/v4l2-core/videobuf-core.c       |  4 +-
+ drivers/media/v4l2-core/videobuf-dma-contig.c |  4 +-
+ drivers/media/v4l2-core/videobuf-dma-sg.c     |  4 +-
+ drivers/misc/cxl/cxllib.c                     |  4 +-
+ drivers/misc/cxl/fault.c                      |  4 +-
+ drivers/misc/sgi-gru/grufault.c               | 16 ++--
+ drivers/misc/sgi-gru/grufile.c                |  4 +-
+ drivers/oprofile/buffer_sync.c                | 10 +--
+ drivers/staging/kpc2000/kpc_dma/fileops.c     |  4 +-
+ drivers/tee/optee/call.c                      |  4 +-
+ drivers/vfio/vfio_iommu_type1.c               |  8 +-
+ drivers/xen/gntdev.c                          |  4 +-
+ drivers/xen/privcmd.c                         | 14 ++--
+ fs/aio.c                                      |  4 +-
+ fs/coredump.c                                 |  4 +-
+ fs/exec.c                                     | 16 ++--
+ fs/io_uring.c                                 |  4 +-
+ fs/proc/base.c                                | 18 ++--
+ fs/proc/task_mmu.c                            | 28 +++----
+ fs/proc/task_nommu.c                          | 18 ++--
+ fs/userfaultfd.c                              | 28 +++----
+ include/linux/mm.h                            |  1 +
+ include/linux/mm_types.h                      |  2 +-
+ include/linux/mmap_lock.h                     | 82 +++++++++++++++++++
+ include/linux/mmu_notifier.h                  |  5 +-
+ ipc/shm.c                                     |  8 +-
+ kernel/acct.c                                 |  4 +-
+ kernel/bpf/stackmap.c                         | 13 ++-
+ kernel/events/core.c                          |  4 +-
+ kernel/events/uprobes.c                       | 16 ++--
+ kernel/exit.c                                 |  8 +-
+ kernel/fork.c                                 | 14 ++--
+ kernel/futex.c                                |  4 +-
+ kernel/sched/fair.c                           |  4 +-
+ kernel/sys.c                                  | 18 ++--
+ kernel/trace/trace_output.c                   |  4 +-
+ mm/filemap.c                                  |  6 +-
+ mm/frame_vector.c                             |  4 +-
+ mm/gup.c                                      | 20 ++---
+ mm/hmm.c                                      |  2 +-
+ mm/init-mm.c                                  |  2 +-
+ mm/internal.h                                 |  2 +-
+ mm/khugepaged.c                               | 36 ++++----
+ mm/ksm.c                                      | 34 ++++----
+ mm/madvise.c                                  | 18 ++--
+ mm/memcontrol.c                               |  8 +-
+ mm/memory.c                                   | 14 ++--
+ mm/mempolicy.c                                | 22 ++---
+ mm/migrate.c                                  |  8 +-
+ mm/mincore.c                                  |  4 +-
+ mm/mlock.c                                    | 16 ++--
+ mm/mmap.c                                     | 36 ++++----
+ mm/mmu_notifier.c                             | 22 ++---
+ mm/mprotect.c                                 | 12 +--
+ mm/mremap.c                                   |  6 +-
+ mm/msync.c                                    |  8 +-
+ mm/nommu.c                                    | 16 ++--
+ mm/oom_kill.c                                 |  4 +-
+ mm/pagewalk.c                                 | 15 ++--
+ mm/process_vm_access.c                        |  4 +-
+ mm/ptdump.c                                   |  4 +-
+ mm/swapfile.c                                 |  4 +-
+ mm/userfaultfd.c                              | 14 ++--
+ mm/util.c                                     | 12 +--
+ net/ipv4/tcp.c                                |  4 +-
+ net/xdp/xdp_umem.c                            |  4 +-
+ virt/kvm/arm/mmu.c                            | 14 ++--
+ virt/kvm/async_pf.c                           |  4 +-
+ virt/kvm/kvm_main.c                           |  8 +-
+ 160 files changed, 778 insertions(+), 693 deletions(-)
+ create mode 100644 include/linux/mmap_lock.h
+
+-- 
+2.25.1.696.g5e7596f4ac-goog
+
