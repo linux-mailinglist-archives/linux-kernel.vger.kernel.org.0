@@ -2,121 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B37D7193DA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:08:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EB9C193DAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 12:11:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbgCZLIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 07:08:52 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50368 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727688AbgCZLIv (ORCPT
+        id S1728035AbgCZLLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 07:11:18 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:62199 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727688AbgCZLLS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 07:08:51 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jHQNH-0005bA-Jj; Thu, 26 Mar 2020 12:08:35 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 0775710069D; Thu, 26 Mar 2020 12:08:35 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Xiaoyao Li <xiaoyao.li@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, hpa@zytor.com,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH v6 8/8] kvm: vmx: virtualize split lock detection
-In-Reply-To: <9a9c0817-9ebb-524f-44df-176a15ea3fca@intel.com>
-References: <20200324151859.31068-1-xiaoyao.li@intel.com> <20200324151859.31068-9-xiaoyao.li@intel.com> <87eethz2p6.fsf@nanos.tec.linutronix.de> <6d3e7e03-d304-8ec0-b00d-050b1c12140d@intel.com> <87369xyzvk.fsf@nanos.tec.linutronix.de> <9a9c0817-9ebb-524f-44df-176a15ea3fca@intel.com>
-Date:   Thu, 26 Mar 2020 12:08:34 +0100
-Message-ID: <87ftdvxtjh.fsf@nanos.tec.linutronix.de>
+        Thu, 26 Mar 2020 07:11:18 -0400
+Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 02QBA2lL021666;
+        Thu, 26 Mar 2020 20:10:03 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp);
+ Thu, 26 Mar 2020 20:10:02 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 02QBA2aM021662
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 26 Mar 2020 20:10:02 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v2] Add kernel config option for fuzz testing.
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Jiri Slaby <jslaby@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20200307135822.3894-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <6f2e27de-c820-7de3-447d-cd9f7c650add@suse.com>
+ <20200308065258.GE3983392@kroah.com>
+ <3e9f47f7-a6c1-7cec-a84f-e621ae5426be@suse.com>
+ <CACT4Y+a6KExbggs4mg8pvoD554PcDqQNW4sM15X-tc=YONCzYw@mail.gmail.com>
+ <7728c978-d359-227f-0f3e-f975c45ca218@i-love.sakura.ne.jp>
+ <CACT4Y+YEYYNv-=AgNthQvLkeK-8uEeRs4XEuRqphfZBhc2hc5g@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <55c906c8-ca70-9d1b-a90f-49660773856b@i-love.sakura.ne.jp>
+Date:   Thu, 26 Mar 2020 20:10:01 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <CACT4Y+YEYYNv-=AgNthQvLkeK-8uEeRs4XEuRqphfZBhc2hc5g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xiaoyao Li <xiaoyao.li@intel.com> writes:
-> On 3/25/2020 9:41 AM, Thomas Gleixner wrote:
->> If you really want to address that scenario, then why are you needing
->> any of those completely backwards interfaces at all?
->> 
->> Just because your KVM exception trap uses the host handling function
->> which sets TIF_SLD?
->>   
-> Yes. just because KVM use the host handling function.
+On 2020/03/24 19:37, Dmitry Vyukov wrote:
+>> So, we have three questions.
+>>
+>> Q1: Can we agree with adding build-time branching (i.e. kernel config options) ?
+>>
+>>     I fear bugs (e.g. unexpectedly overwrting flag variables) in run-time
+>>     branching mechanisms. Build-time branching mechanisms cannot have such bugs.
+> 
+> My vote is for build config. It's simplest to configure (every testing
+> system should already have control over config) and most reliable
+> (e.g. fuzzer figures out a way to disable a runtime option).
 
-> If you disallow me to touch codes out of kvm. It can be achieved with
+Right. For example, console loglevel has been unexpectedly changed via syscall
+arguments. For another example, /dev/mem has been unexpectedly accessed using
+mount operation ( https://github.com/google/syzkaller/issues/1436 ). Providing
+an interface (e.g. debugfs files) for branching after boot has a risk of
+unexpectedly overwriting flag variables.
 
-Who said you cannot touch code outside of KVM? 
+Since it seems that there is no objection to Q1, I think that we can go with
+build-time branching.
 
-> Obviously re-use TIF_SLD flag to automatically switch MSR_TEST_CTRL.SLD 
-> bit when switch to/from vcpu thread is better.
+>> Q3: If we can agree with kernel config options but we can't start with single
+>>     (or fewer) kernel config option, can we agree with adding another kernel
+>>     config option which selects all options (e.g.
+>>     ) ?
+> 
+> I think this option is the best. It both allows fine-grained control
+> (and documentation for each switch), and coarse-grained control for
+> testing systems.
+> We could also add "depends on DEBUG_KERNEL" just to make sure.
+> 
 
-What's better about that?
+OK. But I think that KERNEL_BUILT_FOR_FUZZ_TESTING_SELECT_ALL might fail to
+work, for it is possible that a new option was added but that option was not
+added to "select" list of KERNEL_BUILT_FOR_FUZZ_TESTING_SELECT_ALL. Also,
+there might be cases where a new option was added but that option should not
+be selected for some fuzzers (e.g. syzkaller wants to hardcode console loglevel
+to foo while fuzzer1 and fuzzer2 want to hardcode console loglevel to bar).
+That is, something like
 
-TIF_SLD has very well defined semantics. It's used to denote that the
-SLD bit needs to be cleared for the task when its scheduled in.
+      config KERNEL_BUILT_FOR_FUZZ_TESTING
+             bool "Build kernel for fuzz testing"
 
-So now you overload it by clearing it magically and claim that this is
-better.
+      config KERNEL_BUILT_FOR_SYZKALLER
+             bool "Build kernel for syzkaller testing"
+             depends on KERNEL_BUILT_FOR_FUZZ_TESTING
+             select KERNEL_DISABLE_FOO1
+             select KERNEL_DISABLE_BAR1
+             select KERNEL_DISABLE_BUZ1
+             select KERNEL_ENABLE_BAR2
 
-vCPU-thread
+      config KERNEL_BUILT_FOR_FUZZER1
+             bool "Build kernel for fuzzer1 testing"
+             depends on KERNEL_BUILT_FOR_FUZZ_TESTING
+             select KERNEL_DISABLE_FOO1
+             select KERNEL_DISABLE_BAR1
 
-   user space (qemu)
-     triggers #AC
-       -> exception
-           set TIF_SLD
+      config KERNEL_BUILT_FOR_FUZZER2
+             bool "Build kernel for fuzzer2 testing"
+             depends on KERNEL_BUILT_FOR_FUZZ_TESTING
+             select KERNEL_DISABLE_FOO1
+             select KERNEL_DISABLE_BUZ1
 
-   iotctl()
-     vcpu_run()
-       -> clear TIF_SLD
+      config KERNEL_DISABLE_FOO1
+             bool "Disable foo1"
+             depends on KERNEL_BUILT_FOR_FUZZ_TESTING
 
-It's not better, it's simply wrong and inconsistent.
+      config KERNEL_DISABLE_BAR1
+             bool "Disable bar1"
+             depends on KERNEL_BUILT_FOR_FUZZ_TESTING
 
-> And to virtualize SLD feature as full as possible for guest, we have to 
-> implement the backwards interface. If you really don't want that 
-> interface, we have to write code directly in kvm to modify TIF_SLD flag 
-> and MSR_TEST_CTRL.SLD bit.
+      config KERNEL_DISABLE_BUZ1
+             bool "Disable buz1"
+             depends on KERNEL_BUILT_FOR_FUZZ_TESTING
 
-Wrong again. KVM has absolutely no business in fiddling with TIF_SLD and
-the function to flip the SLD bit is simply sld_update_msr(bool on) which
-does not need any KVMism at all.
+      config KERNEL_CHANGE_FOO2
+             bool "Change foo2"
+             depends on KERNEL_BUILT_FOR_FUZZ_TESTING
 
-There are two options to handle SLD for KVM:
+      config KERNEL_ENABLE_BAR2
+             bool "Enable bar2"
+             depends on KERNEL_BUILT_FOR_FUZZ_TESTING
 
-   1) Follow strictly the host rules
+in order to allow each testing system to select what it wants with
+"only two options" ("CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING=y" and one of
+"CONFIG_KERNEL_BUILT_FOR_SYZKALLER=y" or "CONFIG_KERNEL_BUILT_FOR_FUZZER1=y"
+or "CONFIG_KERNEL_BUILT_FOR_FUZZER2=y").
 
-      If user space or guest triggered #AC then TIF_SLD is set and that
-      task is excluded from ever setting SLD again.
+CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING option remains there in order to
+avoid needlessly prompting choices to users who do not intend to build
+for fuzz testing.
 
-   2) Track KVM guest state separately
-
-      vcpu_run()
-        if (current_has(TIF_SLD) && guest_sld_on())
-          sld_update_msr(true);
-        else if (!current_has(TIF_SLD) && !guest_sld_on())
-          sld_update_msr(false);
-        vmenter()
-          ....
-        vmexit()
-        if (current_has(TIF_SLD) && guest_sld_on())
-          sld_update_msr(false);
-        else if (!current_has(TIF_SLD) && !guest_sld_on())
-          sld_update_msr(true);
-
-      If the guest triggers #AC then this solely affects guest state
-      and does not fiddle with TIF_SLD.
-
-Thanks,
-
-        tglx
