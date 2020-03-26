@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14683193911
+	by mail.lfdr.de (Postfix) with ESMTP id 7D95D193913
 	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 08:02:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbgCZHCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 03:02:44 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:42272 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbgCZHCo (ORCPT
+        id S1727695AbgCZHCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 03:02:47 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:33261 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbgCZHCq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 03:02:44 -0400
-Received: by mail-pf1-f202.google.com with SMTP id j2so4422345pfh.9
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 00:02:41 -0700 (PDT)
+        Thu, 26 Mar 2020 03:02:46 -0400
+Received: by mail-pg1-f201.google.com with SMTP id 33so4028161pgn.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 00:02:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=xxvyxjj91melXa2f3O0p5YGO5yfdIf2InM2lDPE9tIk=;
-        b=S+rb2gtqH3Mle1QzHX8tBmJKYQt8IOQhCKT8GNmojRB6bUWcTc2zCtEYWPPOXh3raR
-         KfZuAnS5qLywjBjfFSZFvlD52vx1ktBHNB1BFhpeqkugFuvfrI16BTHF0FtoUHxZ0dVp
-         TQE6+Lykq+FwLKbyOHFBMTwlVg6LYtJquwrx3qIGfrIBCU8YK9i/h0LiHp2l6wRGigxz
-         u4N/9klDmr3UAS3arA9uDAqhoxX+eqe6xy6jeIKwbl5GBEmcAVfJ2hWexeJYL1YyJfsv
-         wCmSV830WdwO6IkvYg1rF0EXNVgfBv1p4nzSZZoY7E9hn1SdoY4nSiy8A2oQc4AgD8dE
-         gCXA==
+        bh=nanV+r4IHUqeQck6GgJYnAFKZtppjERc1ou3yY6xyBw=;
+        b=LmUQdBDejAspO3PcKB4zLsQohmBqVwbHT1UyMB4iIUpqCUBTZzktu8nyeHvZTaA0hk
+         oNcJc8OCZPgCQYxD8S3se5Z/E7sNU55V4gpf3s1nQW25tLvnWaQ5YBqve2cWOWHkS+aG
+         Em39wZpEZR5j1YccH3IFocIDstDiIZLbDk7eMXJUGSDMqexG99DNX0yEYA/xi7i/czs6
+         +u8luaxJgpwJI+KkhuaQPzaMEAqA1PhH4+MznL3LfX/vUMVivuDTeZRIkYG/5h/hHDE0
+         n1Bo5gVT9ckfPbuTfj2cHU1u9W78Rm7Wa7GKt3guIrHNQSg85+W+CKfC2WIxiTHhwdag
+         /yww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=xxvyxjj91melXa2f3O0p5YGO5yfdIf2InM2lDPE9tIk=;
-        b=FsbAhHtvcLSM7Dc0+zIy0ypU9y3kb26OM+5seHca3Q+BVRrkIxtdreBpqNNRjOYbJA
-         gQoaz4X6w0CSj4eaFfHS4NWb6q+l+xzo9/HbnXODWMz2n+DwMZTIE4tMF2Sn35LjPooY
-         KxWmtp1QHMNQnkbFrvbBgqWj+mQlf0em6gvp6lNQIqGU45n03IfnTHCdO8vBt2AcSeze
-         XzdPSUVm59rNniJjxe5Jgl/nCjk8ZWNJCcZ+KDJ20gReavZh///5/I20CLaWZ6ts7rW6
-         oOvIH2+ixxFm/G7s666MBju7J7/NUbK+dPomQ9ey9wk+w6NU1QNmvTJbfE2ZrprHmHWw
-         EE2A==
-X-Gm-Message-State: ANhLgQ11+SxT79UU1jl0e4Ic5JdhnUMP08KnF00N66HdfTd18rlVSwPy
-        D0sy/Hcc0wfu1ED8bPc5+TzKtzzmsP8=
-X-Google-Smtp-Source: ADFU+vtNeNSXu+zk+G9qTMevsl/EO/OZ7hP+2bvX9a40agCXFI6f7Ltq/McjSMLAed50Ejoy3tAOmtow6I0=
-X-Received: by 2002:a17:90a:5d16:: with SMTP id s22mr1610999pji.118.1585206161146;
- Thu, 26 Mar 2020 00:02:41 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 00:02:29 -0700
+        bh=nanV+r4IHUqeQck6GgJYnAFKZtppjERc1ou3yY6xyBw=;
+        b=G+Jr0+lq/gCBNuuMAXPcsqLyCItxTIm8Wj9zVm0KUnh6g9IEEtUCWfMHkykZU5YRA9
+         MBr7c7qjHGVZzOfsexw6ERYLo3SQMI3V+RjrE9yZpBLiSPGcec1JwcQfgHdSs96cND+i
+         wPyoUm7wMtbZ9erXmQrOpvQ0ThuIwgBahWdUTTO34SHXkL5U5iJqUj75VjFpM6Za18/b
+         Z5RmXrM1oQMhPbHnF33P0tH+rX2BTc8IhVuGmSiqfK8Pwgj51FlJkoDGs1fPCXwW3RXt
+         BmHXMpH99pTXJs49XS3SW2gDdSkWgOKETgss1If+5DUw6PHovowRGQ0GMhJFO56/R9BY
+         2XEw==
+X-Gm-Message-State: ANhLgQ3t4z7q+WeYbDRi4IRcLT6C9AGdd0kIp6iWFIQ2GjGmZrG+/hRZ
+        xdbbFKTINkwPxRFGDmRSFgVMA4ljcKc=
+X-Google-Smtp-Source: ADFU+vvuAUqsuHn1JjDrf5Rb1rHNy26IhDPkLLb/EupUwsNN9p2UUhFu44cCHrPhifWwqyRof5N9SY1oKWs=
+X-Received: by 2002:a63:1517:: with SMTP id v23mr6799206pgl.89.1585206163502;
+ Thu, 26 Mar 2020 00:02:43 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 00:02:30 -0700
 In-Reply-To: <20200326070236.235835-1-walken@google.com>
-Message-Id: <20200326070236.235835-2-walken@google.com>
+Message-Id: <20200326070236.235835-3-walken@google.com>
 Mime-Version: 1.0
 References: <20200326070236.235835-1-walken@google.com>
 X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [PATCH 1/8] mmap locking API: initial implementation as rwsem wrappers
+Subject: [PATCH 2/8] MMU notifier: use the new mmap locking API
 From:   Michel Lespinasse <walken@google.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         linux-mm <linux-mm@kvack.org>
@@ -68,99 +68,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change wraps the existing mmap_sem related rwsem calls into a new
-mmap locking API. There are two justifications for the new API:
-
-- At first, it provides an easy hooking point to instrument mmap_sem
-  locking latencies independently of any other rwsems.
-
-- In the future, it may be a starting point for replacing the rwsem
-  implementation with a different one, such as range locks.
+This use is converted manually ahead of the next patch in the series,
+as it requires including a new header which the automated conversion
+would miss.
 
 Signed-off-by: Michel Lespinasse <walken@google.com>
 ---
- include/linux/mm.h        |  1 +
- include/linux/mmap_lock.h | 59 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 60 insertions(+)
- create mode 100644 include/linux/mmap_lock.h
+ include/linux/mmu_notifier.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c54fb96cb1e6..2f13c9198999 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -15,6 +15,7 @@
- #include <linux/atomic.h>
- #include <linux/debug_locks.h>
+diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+index 736f6918335e..2f462710a1a4 100644
+--- a/include/linux/mmu_notifier.h
++++ b/include/linux/mmu_notifier.h
+@@ -5,6 +5,7 @@
+ #include <linux/list.h>
+ #include <linux/spinlock.h>
  #include <linux/mm_types.h>
 +#include <linux/mmap_lock.h>
- #include <linux/range.h>
- #include <linux/pfn.h>
- #include <linux/percpu-refcount.h>
-diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
-new file mode 100644
-index 000000000000..cffd25afe92b
---- /dev/null
-+++ b/include/linux/mmap_lock.h
-@@ -0,0 +1,59 @@
-+#ifndef _LINUX_MMAP_LOCK_H
-+#define _LINUX_MMAP_LOCK_H
-+
-+static inline void mmap_init_lock(struct mm_struct *mm)
-+{
-+	init_rwsem(&mm->mmap_sem);
-+}
-+
-+static inline void mmap_write_lock(struct mm_struct *mm)
-+{
-+	down_write(&mm->mmap_sem);
-+}
-+
-+static inline int mmap_write_lock_killable(struct mm_struct *mm)
-+{
-+	return down_write_killable(&mm->mmap_sem);
-+}
-+
-+static inline bool mmap_write_trylock(struct mm_struct *mm)
-+{
-+	return down_write_trylock(&mm->mmap_sem) != 0;
-+}
-+
-+static inline void mmap_write_unlock(struct mm_struct *mm)
-+{
-+	up_write(&mm->mmap_sem);
-+}
-+
-+static inline void mmap_downgrade_write_lock(struct mm_struct *mm)
-+{
-+	downgrade_write(&mm->mmap_sem);
-+}
-+
-+static inline void mmap_read_lock(struct mm_struct *mm)
-+{
-+	down_read(&mm->mmap_sem);
-+}
-+
-+static inline int mmap_read_lock_killable(struct mm_struct *mm)
-+{
-+	return down_read_killable(&mm->mmap_sem);
-+}
-+
-+static inline bool mmap_read_trylock(struct mm_struct *mm)
-+{
-+	return down_read_trylock(&mm->mmap_sem) != 0;
-+}
-+
-+static inline void mmap_read_unlock(struct mm_struct *mm)
-+{
-+	up_read(&mm->mmap_sem);
-+}
-+
-+static inline bool mmap_is_locked(struct mm_struct *mm)
-+{
-+	return rwsem_is_locked(&mm->mmap_sem) != 0;
-+}
-+
-+#endif /* _LINUX_MMAP_LOCK_H */
+ #include <linux/srcu.h>
+ #include <linux/interval_tree.h>
+ 
+@@ -277,9 +278,9 @@ mmu_notifier_get(const struct mmu_notifier_ops *ops, struct mm_struct *mm)
+ {
+ 	struct mmu_notifier *ret;
+ 
+-	down_write(&mm->mmap_sem);
++	mmap_write_lock(mm);
+ 	ret = mmu_notifier_get_locked(ops, mm);
+-	up_write(&mm->mmap_sem);
++	mmap_write_unlock(mm);
+ 	return ret;
+ }
+ void mmu_notifier_put(struct mmu_notifier *subscription);
 -- 
 2.25.1.696.g5e7596f4ac-goog
 
