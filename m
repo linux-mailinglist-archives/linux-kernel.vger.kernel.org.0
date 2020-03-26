@@ -2,90 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BBEE19494B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:36:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B003019494E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:39:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbgCZUgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 16:36:53 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35188 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbgCZUgw (ORCPT
+        id S1727690AbgCZUjL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 16:39:11 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13420 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726281AbgCZUjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:36:52 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u68so3386199pfb.2;
-        Thu, 26 Mar 2020 13:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=t+UEiQ8yfqgCYbdamETpWg51SIJm0Evjj0FdT/Dr3I0=;
-        b=bdO4KFhttrIM8xOkNnMb3OnmpOWJ5mHVX+21JOsGY0Oj0R9aU+gblAMAv8kB7eTCCC
-         R3wUfUgx4jDPiL0tsu2L5j8g4TW8XyLtYqHrRg6k+V7vcrR7lgJ3uifzWFV6ySXCPYqL
-         ZY8VxLeGHicm5J2YWmZHL9Xxd0EylAYRDLPmd8E3aDCYgAOyTwDedg/N44KDesBPOF+8
-         oxKJZJuxvAuc24eF/Fqku0+UijjmLSZUjKnAEVhVGKgUFv/fCkyofgSrq+7vzbWxQbn0
-         WZhHGPh+WWgGckBgnUebIcKS+qYnza92Bu5jGgIVy2GhD608M2+O9NoZckf1au4Wm2fY
-         A46Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=t+UEiQ8yfqgCYbdamETpWg51SIJm0Evjj0FdT/Dr3I0=;
-        b=aO5EidQ9G2ANlesDktFymz+SiXn7bL/rfRzDtOWKdqx+oU1TTGee/6IVlJNMSGhOLz
-         fxMzLeVFJwDbDMd9PftrqZ4He5bPdUvYVnRQAzQ40gnA52xvjQ2ZwUzvf0IX4fTwgapp
-         JSTZR47hRvpaXmJKofky6BQX7tUZfoDsGbnl/yLmwTny6/Cg4hWLyu7vW2IbmcKw0MpJ
-         0rRdaPAFzUQjgVptGpvqKgvA/EEPp1OtU/FjJOXMCY1oDjBH9Hbk/lWu4/uyKPQVEptE
-         MNgeNm2wqAEM5l2Z5hoaMJAxB0WTUq83aZHL3ViwbdoJbeIYpYZ8i+V8MouSopDKKTy0
-         ye7g==
-X-Gm-Message-State: ANhLgQ2af+B9WgA53rjuGDvcbtu2puePCduJ52Zh7y1XR6ADm6ji81LV
-        xxU5s879PIT++nKBR1XhGB3gU+ET
-X-Google-Smtp-Source: ADFU+vvHmwCpydnpgZIzK6cQlPqAiKa3/mZDIHNnuNigmXRHJuXsHIje6L1r4syzRd5BhVwb4eZwJA==
-X-Received: by 2002:a63:4e22:: with SMTP id c34mr10629783pgb.263.1585255010217;
-        Thu, 26 Mar 2020 13:36:50 -0700 (PDT)
-Received: from s15.smythies.com (mail.smythies.com. [173.180.45.4])
-        by smtp.gmail.com with ESMTPSA id z16sm2373767pfr.138.2020.03.26.13.36.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 13:36:49 -0700 (PDT)
-From:   Doug Smythies <doug.smythies@gmail.com>
-X-Google-Original-From: Doug Smythies <dsmythies@telus.net>
-To:     lenb@kernel.org
-Cc:     dsmythies@telus.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] tools/power/x86/turbostat: Always print idle in the system configuration header
-Date:   Thu, 26 Mar 2020 13:36:37 -0700
-Message-Id: <20200326203637.1892-1-dsmythies@telus.net>
-X-Mailer: git-send-email 2.25.1
+        Thu, 26 Mar 2020 16:39:10 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02QKWO9Q008292;
+        Thu, 26 Mar 2020 16:38:39 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ywewx5wjs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 16:38:39 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02QKbqpA012173;
+        Thu, 26 Mar 2020 20:38:39 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma04wdc.us.ibm.com with ESMTP id 2ywaw9cjsm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Mar 2020 20:38:39 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02QKccO954329848
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Mar 2020 20:38:38 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE881AC05E;
+        Thu, 26 Mar 2020 20:38:38 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5CCFFAC059;
+        Thu, 26 Mar 2020 20:38:26 +0000 (GMT)
+Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.85.162.45])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 26 Mar 2020 20:38:25 +0000 (GMT)
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Leonardo Bras <leonardo@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 1/1] ppc/smp: Replace unnecessary 'while' by 'if'
+Date:   Thu, 26 Mar 2020 17:37:52 -0300
+Message-Id: <20200326203752.497029-1-leonardo@linux.ibm.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-26_11:2020-03-26,2020-03-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 spamscore=0 clxscore=1015 malwarescore=0 impostorscore=0
+ bulkscore=0 phishscore=0 mlxscore=0 adultscore=0 mlxlogscore=660
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003260146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the --quiet option is not used, turbostat prints a useful system
-configuration header during startup. Inclusion of idle system configuration
-information is a function of inclusion in the columns choosen to be displayed.
+spin_until_cond() will wait until nmi_ipi_busy == false, and
+nmi_ipi_lock_start() does not seem to change nmi_ipi_busy, so there is
+no way this while will ever repeat.
 
-Always list the idle system configuration.
+Replace this 'while' by an 'if', so it does not look like it can repeat.
 
-Signed-off-by: Doug Smythies <dsmythies@telus.net>
+Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
 ---
- tools/power/x86/turbostat/turbostat.c | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/powerpc/kernel/smp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index 33b370865d16..834b86676d00 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -3530,9 +3530,6 @@ dump_sysfs_cstate_config(void)
- 	int state;
- 	char *sp;
+diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+index ea6adbf6a221..7c904d6fb4d2 100644
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -473,7 +473,7 @@ static int __smp_send_nmi_ipi(int cpu, void (*fn)(struct pt_regs *),
+ 		return 0;
  
--	if (!DO_BIC(BIC_sysfs))
--		return;
--
- 	if (access("/sys/devices/system/cpu/cpuidle", R_OK)) {
- 		fprintf(outf, "cpuidle not loaded\n");
- 		return;
+ 	nmi_ipi_lock_start(&flags);
+-	while (nmi_ipi_busy) {
++	if (nmi_ipi_busy) {
+ 		nmi_ipi_unlock_end(&flags);
+ 		spin_until_cond(!nmi_ipi_busy);
+ 		nmi_ipi_lock_start(&flags);
 -- 
-2.25.1
+2.24.1
 
