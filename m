@@ -2,103 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 523EE194479
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:39:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77DFA194492
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 17:47:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728543AbgCZQi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 12:38:59 -0400
-Received: from mga18.intel.com ([134.134.136.126]:32663 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727677AbgCZQi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 12:38:58 -0400
-IronPort-SDR: CUG/gTmwJiNJB8jUdADp7XLfPtxKDzV+2l1oUWuZ6Jq0/WbESkYkLSrf3B5fOurAict4yMI3Rk
- 0OAje6PQIynQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 09:38:58 -0700
-IronPort-SDR: 5qAPNHMPSfUJ2crJnR1N0kbPgi0WNOKmtBXLIv/QW9b1irnPu+DsZbog/yh3hn+zQuOdOnAb5L
- +QiA/Z+IxVng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,309,1580803200"; 
-   d="scan'208";a="326618818"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 26 Mar 2020 09:38:58 -0700
-Date:   Thu, 26 Mar 2020 09:44:42 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 1/3] iommu/uapi: Define uapi version and capabilities
-Message-ID: <20200326094442.5be042ce@jacob-builder>
-In-Reply-To: <20200326092316.GA31648@infradead.org>
-References: <1585178227-17061-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1585178227-17061-2-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20200326092316.GA31648@infradead.org>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1727792AbgCZQrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 12:47:51 -0400
+Received: from smtprelay0003.hostedemail.com ([216.40.44.3]:41814 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726267AbgCZQru (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 12:47:50 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 1BFC818029121;
+        Thu, 26 Mar 2020 16:47:48 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:982:983:988:989:1208:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1543:1593:1594:1605:1711:1730:1747:1777:1792:2197:2198:2199:2200:2393:2559:2562:2731:2828:2892:3138:3139:3140:3141:3142:3622:3653:3865:3866:3867:3868:3871:3874:4321:4605:5007:6119:6299:7875:7901:7903:8957:9010:9040:9405:10004:10226:10400:10848:11232:11658:11914:12043:12291:12296:12297:12555:12683:12740:12760:12895:13439:14181:14659:14721:21080:21221:21433:21451:21627:21740:21820:21939:30025:30046:30054:30060:30062:30070:30075:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: moon13_26d3129e62d05
+X-Filterd-Recvd-Size: 4910
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 26 Mar 2020 16:47:46 +0000 (UTC)
+Message-ID: <00d11cf766237d9c12c2a06458962c4bae84fa78.camel@perches.com>
+Subject: Re: [PATCH] parse-maintainers: Do not sort section content by
+ default
+From:   Joe Perches <joe@perches.com>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 26 Mar 2020 09:45:55 -0700
+In-Reply-To: <4d5291fa3fb4962b1fa55e8fd9ef421ef0c1b1e5.camel@perches.com>
+References: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
+         <20200304131035.731a3947@lwn.net>
+         <alpine.DEB.2.21.2003042145340.2698@felia>
+         <e43f0cf0117fbfa8fe8c7e62538fd47a24b4657a.camel@perches.com>
+         <alpine.DEB.2.21.2003062214500.5521@felia>
+         <20200307110154.719572e4@onda.lan>
+         <0d5503e1d864f2588e756ae590ff8935e11bf9d6.camel@perches.com>
+         <4d5291fa3fb4962b1fa55e8fd9ef421ef0c1b1e5.camel@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+On Sat, 2020-03-07 at 18:59 -0800, Joe Perches wrote:
+> Add an --order switch to control section reordering.
+> Default for --order is off.
 
-Thanks for the review. Please see my comments inline.
-
-On Thu, 26 Mar 2020 02:23:16 -0700
-Christoph Hellwig <hch@infradead.org> wrote:
-
-> On Wed, Mar 25, 2020 at 04:17:05PM -0700, Jacob Pan wrote:
-> > Having a single UAPI version to govern the user-kernel data
-> > structures makes compatibility check straightforward. On the
-> > contrary, supporting combinations of multiple versions of the data
-> > can be a nightmare to maintain.
-> > 
-> > This patch defines a unified UAPI version to be used for
-> > compatibility checks between user and kernel.  
+> Change the default ordering to a slightly more sensible:
 > 
-> This is bullshit.  Version numbers don't scale and we've avoided them
-> everywhere.  You need need flags specifying specific behavior.
+> M:  Person acting as a maintainer
+> R:  Person acting as a patch reviewer
+> L:  Mailing list where patches should be sent
+> S:  Maintenance status
+> W:  URI for general information
+> Q:  URI for patchwork tracking
+> B:  URI for bug tracking/submission
+> C:  URI for chat
+> P:  URI or file for subsystem specific coding styles
+> T:  SCM tree type and location
+> F:  File and directory pattern
+> X:  File and directory exclusion pattern
+> N:  File glob
+> K:  Keyword - patch content regex
+
+Linus? ping?
+
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+>  scripts/parse-maintainers.pl | 31 +++++++++++++++++++++++++++----
+>  1 file changed, 27 insertions(+), 4 deletions(-)
 > 
-We have flags or the equivalent in each UAPI structures. The flags
-are used for checking validity of extensions as well. And you are right
-we can use them for checking specific behavior.
-
-So we have two options here:
-1. Have a overall version for a quick compatibility check while
-starting a VM. If not compatible, we will stop guest SVA entirely.
-
-2. Let each API calls check its own capabilities/flags at runtime. It
-may fail later on and lead to more complex error handling.
-For example, guest starts with SVA support, allocate a PASID, bind
-guest PASID works great. Then when IO page fault happens, it try to do
-page request service and found out certain flags are not compatible.
-This case is more complex to handle.
-
-I am guessing your proposal is #2. right?
-
-Overall, we don;t expect much change to the UAPI other than adding some
-vendor specific part of the union. Is the scalability concern based on
-frequent changes?
-
-> > +#define IOMMU_UAPI_VERSION	1
-> > +static inline int iommu_get_uapi_version(void)
-> > +{
-> > +	return IOMMU_UAPI_VERSION;
-> > +}  
+> diff --git a/scripts/parse-maintainers.pl b/scripts/parse-maintainers.pl
+> index 255cef1..2ca4eb3 100644
+> --- a/scripts/parse-maintainers.pl
+> +++ b/scripts/parse-maintainers.pl
+> @@ -8,13 +8,14 @@ my $input_file = "MAINTAINERS";
+>  my $output_file = "MAINTAINERS.new";
+>  my $output_section = "SECTION.new";
+>  my $help = 0;
+> -
+> +my $order = 0;
+>  my $P = $0;
+>  
+>  if (!GetOptions(
+>  		'input=s' => \$input_file,
+>  		'output=s' => \$output_file,
+>  		'section=s' => \$output_section,
+> +		'order!' => \$order,
+>  		'h|help|usage' => \$help,
+>  	    )) {
+>      die "$P: invalid argument - use --help if necessary\n";
+> @@ -32,6 +33,22 @@ usage: $P [options] <pattern matching regexes>
+>    --input => MAINTAINERS file to read (default: MAINTAINERS)
+>    --output => sorted MAINTAINERS file to write (default: MAINTAINERS.new)
+>    --section => new sorted MAINTAINERS file to write to (default: SECTION.new)
+> +  --order => Use the preferred section content output ordering (default: 0)
+> +    Preferred ordering of section output is:
+> +      M:  Person acting as a maintainer
+> +      R:  Person acting as a patch reviewer
+> +      L:  Mailing list where patches should be sent
+> +      S:  Maintenance status
+> +      W:  URI for general information
+> +      Q:  URI for patchwork tracking
+> +      B:  URI for bug tracking/submission
+> +      C:  URI for chat
+> +      P:  URI or file for subsystem specific coding styles
+> +      T:  SCM tree type and location
+> +      F:  File and directory pattern
+> +      X:  File and directory exclusion pattern
+> +      N:  File glob
+> +      K:  Keyword - patch content regex
+>  
+>  If <pattern match regexes> exist, then the sections that match the
+>  regexes are not written to the output file but are written to the
+> @@ -56,7 +73,7 @@ sub by_category($$) {
+>  
+>  sub by_pattern($$) {
+>      my ($a, $b) = @_;
+> -    my $preferred_order = 'MRPLSWTQBCFXNK';
+> +    my $preferred_order = 'MRLSWQBCPTFXNK';
+>  
+>      my $a1 = uc(substr($a, 0, 1));
+>      my $b1 = uc(substr($b, 0, 1));
+> @@ -105,8 +122,14 @@ sub alpha_output {
+>  		print $file $separator;
+>  	    }
+>  	    print $file $key . "\n";
+> -	    foreach my $pattern (sort by_pattern split('\n', %$hashref{$key})) {
+> -		print $file ($pattern . "\n");
+> +	    if ($order) {
+> +		foreach my $pattern (sort by_pattern split('\n', %$hashref{$key})) {
+> +		    print $file ($pattern . "\n");
+> +		}
+> +	    } else {
+> +		foreach my $pattern (split('\n', %$hashref{$key})) {
+> +		    print $file ($pattern . "\n");
+> +		}
+>  	    }
+>  	}
+>      }
 > 
-> Also inline functions like this in UAPI headers that actually get
-> included by userspace programs simply don't work.
 
-I will remove that, user can just use IOMMU_UAPI_VERSION directly.
