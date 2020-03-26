@@ -2,181 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0DC219458C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:37:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDE17194594
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 18:38:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbgCZRhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 13:37:34 -0400
-Received: from USAT19PA20.eemsg.mail.mil ([214.24.22.194]:23802 "EHLO
-        USAT19PA20.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbgCZRhd (ORCPT
+        id S1728437AbgCZRiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 13:38:13 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:12070 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726163AbgCZRiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 13:37:33 -0400
-X-EEMSG-check-017: 93888031|USAT19PA20_ESA_OUT01.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.72,309,1580774400"; 
-   d="scan'208";a="93888031"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by USAT19PA20.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 26 Mar 2020 17:36:41 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1585244201; x=1616780201;
-  h=subject:to:references:from:message-id:date:mime-version:
-   in-reply-to:content-transfer-encoding;
-  bh=4btUFkjZphQF2UdhZnXwDJJ8A/TabzXpxKrmQP1Nhwc=;
-  b=M9sVOfTNm3W1Xx1nQoEDacgCYJ97K4U2NzzCI6OpQUKXL+Y1AHi0IIJn
-   SralracjvE/QBOe0zzf4FaCRWNuaPYgqzzaUJJ6MHijxKnnkUXcF4B/0d
-   ujYUpDig1U8AZEHoCNhKlr3LUmjIKpKoC/SwOhAS/8KvNWsmnuLN4uZrZ
-   YHVJT5JUM1Cd74hdGXESojkbtRfkKRXltpWwVsHmHKa9IeNG3Y5UnpCR2
-   KOJCyWBOxMd6+TFiJRmqHcujqvXww1x0O6V5vNiCpCfR6NAh7f5f3VNhz
-   oxt4TM8I6wqzTS6VYYlP5Eg8PDUC4zvF0nvIYxbfC1SVt8bZ+iQ11MUN5
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.72,309,1580774400"; 
-   d="scan'208";a="34644859"
-IronPort-PHdr: =?us-ascii?q?9a23=3ARN2Bwhfdok8C1OGOSHEDiy9nlGMj4u6mDksu8p?=
- =?us-ascii?q?Mizoh2WeGdxc28bB2N2/xhgRfzUJnB7Loc0qyK6vymADFfqs3e+Fk5M7VyFD?=
- =?us-ascii?q?Y9wf0MmAIhBMPXQWbaF9XNKxIAIcJZSVV+9Gu6O0UGUOz3ZlnVv2HgpWVKQk?=
- =?us-ascii?q?a3OgV6PPn6FZDPhMqrye+y54fTYwJVjzahfL9+Nhq7oRjeu8UMnIdvKqQ8xh?=
- =?us-ascii?q?THr3ZKZu9b2X5mKVWPkhnz4cu94IRt+DlKtfI78M5AX6T6f6AmQrFdET8rLW?=
- =?us-ascii?q?M76tD1uBfaVQeA6WcSXWsQkhpTHgjK9wr6UYvrsiv7reVyxi+XNtDrQL8uWD?=
- =?us-ascii?q?Si66BrSAL0iCoCKjU0/n3bhtB2galGux+quQBxzJDIb4GULPp+f73SfdUGRW?=
- =?us-ascii?q?paQ81dUzVNDp6gY4cTCuYMO+hXr5P5p1ATsxWwAweiD/7rxjNRiHL72ag23u?=
- =?us-ascii?q?I8Gg/EwQMgBcoDvmnKotX7NKkcUu67w6fHwjrBc/xY1izw6JTKfx07vf2AQb?=
- =?us-ascii?q?x9fMjXxEIyFw3FlFKQqYn9Mj2IyuQCrXCb7+p+WuKplmUptgRxrSKrxscolI?=
- =?us-ascii?q?bIhp8ex1ff9Spk24Y4PsG4SU5nbt6kF5tcrSeaN5BsTc84TGFovzg6x6QAtJ?=
- =?us-ascii?q?WmfyYK0IwqywPQZvGIaYSF4g/vWPyPLTp3mn5pYq+zihCv+ka60OL8TNO70F?=
- =?us-ascii?q?NSoypAldnDq24C2gTI6siCVvt95kCh2SuT1wzL6uFLP0Q0la3DJp492LEwjJ?=
- =?us-ascii?q?sTsVnYHiPshEX3jLOZdkUj+uSy7eTofq7mqYOGO49xiwH+Nrwims25AesmLg?=
- =?us-ascii?q?gDR3WX9Ouz2bH5/UD1Xa9GguM5n6XHqpzWONwXpqujDA9U1oYj5Qy/DzCj0N?=
- =?us-ascii?q?kAhnkIMUlFdQmbj4npJ17OIPf4Ae25g1S3ijhn3f/GPrr/ApnVNHjMjK/hfa?=
- =?us-ascii?q?ph605b0Ac80MpQ55RIBbEGJPL+QUDxtNvfDh82Nwy73fzrB8l61oMbQWiPGL?=
- =?us-ascii?q?OWMLvOsV+U4eIiO/WMZI4QuDb4Nvgl/eTugmU5mFIGcqmp2pwXaH+8Hvt4OU?=
- =?us-ascii?q?mWfX3sgtIZG2cQogU+VPDqiEGFUTNLfHa9QaY85jA9CIK7AobOXZ6tgLOf0y?=
- =?us-ascii?q?ehBJFWZX5JCkqKEXj2c4WIQfAMaDidIsV5iDwLSaChS5M91RGprAL6z7tnLu?=
- =?us-ascii?q?zJ+iwXrJ7jz8Z66PHOlREo9Dx0E8Sc33iIT2Fzg2wIWjs2075krExjxVeMz7?=
- =?us-ascii?q?J4j+ZbFdNN/fNJVBk1NZrGw+x9EdDyVRrLfs2VR1a+XtWmHTYxQ8o1w98PZU?=
- =?us-ascii?q?Z9BtqjggnN3yqxHrAaiaKLC4Iw8q/HwXjxKNhyy2zc2KkikVYmWM1POnOihq?=
- =?us-ascii?q?Jl8AjTHYHJmV2Dl6m2baQcwDLN9GCbwGqKvUFYVhNwUKrcUXAceETWt9L56V?=
- =?us-ascii?q?3GT7K1F7QnPRVOydSYJqtJdNLpl1NGS+nnONjEZGKxgWiwDw6SxryQdIrqZ3?=
- =?us-ascii?q?kd3CLFBUgHjQAT+G2LNRYxBii/uWLSFj9uGkz1Y0Pq7+Z+rGm3TkguzwGFd0?=
- =?us-ascii?q?dhzaa6+gYJhfyATPMexqwEuCY7qzVzB1u83szZC9yBpwp/ZqlcZdI94FFa1W?=
- =?us-ascii?q?PWrQB9OYagL694il4DcAR9p1nu2AlvCoVcjcgqq2snzBJoJqKF1FNMbCuY0o?=
- =?us-ascii?q?rtOr3TM2Xy+Reva6nM2l7AytqZ5qAP6PEgoVX5oA6pDlYi82lg09RN1Xuc4J?=
- =?us-ascii?q?bKAREdUZL2VUY3+Bx6qK/AbiYh4IPU0GVmMbOovT/ax9IpGOwlxw6kf9dYM6?=
- =?us-ascii?q?OLChTyE80VB8ivNeMqgUKmYwkLPOBV8640MMemeOWc1KG3O+ZgmWHusWMSzI?=
- =?us-ascii?q?l700+IvwF7TufT1JcCxfzQigeOUTz7iH+utcf4nY0CbjYXSC731SnhAZNLfK?=
- =?us-ascii?q?RjVYkMDmiqLou8wdA6z4XgX39e6U6LGVwLwomqdACUYli72hdfkQwToHq6iW?=
- =?us-ascii?q?6jwjdpiTA1v++a2yDTx+nKahUKIChISXNkgFOqJpK7y5geXU61f00njxeo+0?=
- =?us-ascii?q?v+77ZUqb45LGTJR0pMOS/sICUqVqq2q6rHYMNV7p4smTtYXf76Yl2ATLP55R?=
- =?us-ascii?q?wA3GerHHVb7C40eivsuZjjmRF+zmWHIzI7snvDfuliyBHe+prYRPhMznwBXi?=
- =?us-ascii?q?Y+lDqTTkC1It2B5dyJk9LGteekWiSqUZgXOS/tzquPsyy04WAsChq627i3nd?=
- =?us-ascii?q?7qCgg10CPh3vFlUiLHqBu6aY7uhIqgNucyRVVlHF/x7YJBH4h6loYhzMUL1W?=
- =?us-ascii?q?MymoSe/X1Bl3z6d9pcx/StPzI2WTcXzouNs0De00p5IyfMntmoWw=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2DuAADi53xe/wHyM5BmHAEBAQEBBwEBEQEEBAEBgWoEA?=
- =?us-ascii?q?QELAYF8LIFBMiqEGo5+VAaBN4l6kHYDVAoBAQEBAQEBAQE0AQIEAQGERAKCL?=
- =?us-ascii?q?yQ3Bg4CEAEBAQUBAQEBAQUDAQFshWKCOykBgn8BBSMEEVELDgoCAiYCAlcGA?=
- =?us-ascii?q?QwGAgEBgmM/glglrXp/M4VLg16BPoEOKgGMLhp5gQeBOA+CXj6ES4MRgl4El?=
- =?us-ascii?q?w9xmFWCRoJWlC0GHZtfjxGeBSM3gSErCAIYCCEPgydQGA2OKReNbFUlAzCBB?=
- =?us-ascii?q?gEBjh0BAQ?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 26 Mar 2020 17:36:24 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 02QHaiqe158602;
-        Thu, 26 Mar 2020 13:36:44 -0400
-Subject: Re: [PATCH v2 2/3] Teach SELinux about anonymous inodes
-To:     Daniel Colascione <dancol@google.com>, timmurray@google.com,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
-        nnk@google.com, lokeshgidra@google.com
-References: <20200214032635.75434-1-dancol@google.com>
- <20200325230245.184786-3-dancol@google.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <3e098729-dc6d-68d0-46a6-7add4fd75b11@tycho.nsa.gov>
-Date:   Thu, 26 Mar 2020 13:37:36 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <20200325230245.184786-3-dancol@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 26 Mar 2020 13:38:13 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585244292; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=olwq/tt1NVcJbMaU8qh8Fy028waGW9o2ny/LjvxmEng=; b=VWWraiMZ/O2+/sWVz6a6UMjO7putqVWkmRGteHx6cg4DJWziYkcWspRLqHBquws60AfPtzzC
+ 0g3fSnCmcne4W6w87QdKgTwfiOfvHS51aK31P9CjvgBEZMwJ4vgI28HIvkNo0XE3NVjtegQ+
+ BS0OJytLPamrmXmsxWdVDdScAQU=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e7ce883.7f3ae0140f10-smtp-out-n03;
+ Thu, 26 Mar 2020 17:38:11 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id C51D3C43636; Thu, 26 Mar 2020 17:38:11 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mkshah-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mkshah)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 36E29C433D2;
+        Thu, 26 Mar 2020 17:38:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 36E29C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
+From:   Maulik Shah <mkshah@codeaurora.org>
+To:     swboyd@chromium.org, evgreen@chromium.org, dianders@chromium.org,
+        bjorn.andersson@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org, mka@chromium.org, rnayak@codeaurora.org,
+        ilina@codeaurora.org, lsrao@codeaurora.org,
+        Maulik Shah <mkshah@codeaurora.org>
+Subject: [PATCH v14 0/6] Invoke rpmh_flush for non OSI targets
+Date:   Thu, 26 Mar 2020 23:07:44 +0530
+Message-Id: <1585244270-637-1-git-send-email-mkshah@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/25/20 7:02 PM, Daniel Colascione wrote:
-> This change uses the anon_inodes and LSM infrastructure introduced in
-> the previous patch to give SELinux the ability to control
-> anonymous-inode files that are created using the new _secure()
-> anon_inodes functions.
-> 
-> A SELinux policy author detects and controls these anonymous inodes by
-> adding a name-based type_transition rule that assigns a new security
-> type to anonymous-inode files created in some domain. The name used
-> for the name-based transition is the name associated with the
-> anonymous inode for file listings --- e.g., "[userfaultfd]" or
-> "[perf_event]".
-> 
-> Example:
-> 
-> type uffd_t;
-> type_transition sysadm_t sysadm_t : file uffd_t "[userfaultfd]";
-> allow sysadm_t uffd_t:file { create };
+Changes in v14:
+- Address Doug's comments on change 3 from v13
+- Drop new APIs for start and end transaction from change 4 in v13
+- Update change 4 to use cpu pm notifications instead
+- Add [5] as change 5 to enable use of WAKE TCS when ACTIVE TCS count is 0
+- Add change 6 to Allow multiple WAKE TCS to be used as ACTIVE TCSes
+- First 4 changes can be merged even without change 5 and 6.
 
-These should use :anon_inode rather than :file since the class is no 
-longer file.
+Changes in v13:
+- Address Stephen's comment to maintain COMPILE_TEST
+- Address Doug's comments and add new APIs for start and end transaction
 
-> 
-> (The next patch in this series is necessary for making userfaultfd
-> support this new interface.  The example above is just
-> for exposition.)
-> 
-> Signed-off-by: Daniel Colascione <dancol@google.com>
-> ---
->   security/selinux/hooks.c            | 54 +++++++++++++++++++++++++++++
->   security/selinux/include/classmap.h |  2 ++
->   2 files changed, 56 insertions(+)
-> 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 1659b59fb5d7..b9eb45c2e4e5 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2915,6 +2915,59 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
->   	return 0;
->   }
->   
-> +static int selinux_inode_init_security_anon(struct inode *inode,
-> +					    const struct qstr *name,
-> +					    const struct file_operations *fops,
-> +					    const struct inode *context_inode)
-> +{
-> +	const struct task_security_struct *tsec = selinux_cred(current_cred());
-> +	struct common_audit_data ad;
-> +	struct inode_security_struct *isec;
-> +	int rc;
-> +
-> +	if (unlikely(!selinux_state.initialized))
-> +		return 0;
-> +
-> +	isec = selinux_inode(inode);
-> +
-> +	/*
-> +	 * We only get here once per ephemeral inode.  The inode has
-> +	 * been initialized via inode_alloc_security but is otherwise
-> +	 * untouched.
-> +	 */
-> +
-> +	if (context_inode) {
-> +		struct inode_security_struct *context_isec =
-> +			selinux_inode(context_inode);
-> +		isec->sclass = context_isec->sclass;
-> +		isec->sid = context_isec->sid;
-> +	} else {
-> +		isec->sclass = SECCLASS_ANON_INODE;
-> +		rc = security_transition_sid(
-> +			&selinux_state, tsec->sid, tsec->sid,
-> +			SECCLASS_FILE, name, &isec->sid);
+Changes in v12:
+- Kconfig change to remove COMPILE_TEST was dropped in v11, reinclude it.
 
-You should use isec->sclass == SECCLASS_ANON_INODE instead of 
-SECCLASS_FILE here.
+Changes in v11:
+- Address Doug's comments on change 2 and 3
+- Include change to invalidate TCSes before flush from [4]
+
+Changes in v10:
+- Address Evan's comments to update commit message on change 2
+- Add Evan's Reviewed by on change 2
+- Remove comment from rpmh_flush() related to last CPU invoking it
+- Rebase all changes on top of next-20200302
+
+Changes in v9:
+- Keep rpmh_flush() to invoke from within cache_lock
+- Remove comments related to only last cpu invoking rpmh_flush()
+
+Changes in v8:
+- Address Stephen's comments on changes 2 and 3
+- Add Reviewed by from Stephen on change 1
+
+Changes in v7:
+- Address Srinivas's comments to update commit text
+- Add Reviewed by from Srinivas
+
+Changes in v6:
+- Drop 1 & 2 changes from v5 as they already landed in maintainer tree
+- Drop 3 & 4 changes from v5 as no user at present for power domain in rsc
+- Rename subject to appropriate since power domain changes are dropped
+- Rebase other changes on top of next-20200221
+
+Changes in v5:
+- Add Rob's Acked by on dt-bindings change
+- Drop firmware psci change
+- Update cpuidle stats in dtsi to follow PC mode
+- Include change to update dirty flag when data is updated from [4]
+- Add change to invoke rpmh_flush when caches are dirty
+
+Changes in v4:
+- Add change to allow hierarchical topology in PC mode
+- Drop hierarchical domain idle states converter from v3
+- Address Merge sc7180 dtsi change to add low power modes
+
+Changes in v3:
+- Address Rob's comment on dt property value
+- Address Stephen's comments on rpmh-rsc driver change
+- Include sc7180 cpuidle low power mode changes from [1]
+- Include hierarchical domain idle states converter change from [2]
+
+Changes in v2:
+- Add Stephen's Reviewed-By to the first three patches
+- Addressed Stephen's comments on fourth patch
+- Include changes to connect rpmh domain to cpuidle and genpds
+
+Resource State Coordinator (RSC) is responsible for powering off/lowering
+the requirements from CPU subsystem for the associated hardware like buses,
+clocks, and regulators when all CPUs and cluster is powered down.
+
+RSC power domain uses last-man activities provided by genpd framework based
+on Ulf Hansoon's patch series[3], when the cluster of CPUs enter deepest
+idle states. As a part of domain poweroff, RSC can lower resource state
+requirements by flushing the cached sleep and wake state votes for various
+resources.
+
+[1] https://patchwork.kernel.org/patch/11218965
+[2] https://patchwork.kernel.org/patch/10941671
+[3] https://patchwork.kernel.org/project/linux-arm-msm/list/?series=222355
+[4] https://patchwork.kernel.org/project/linux-arm-msm/list/?series=236503
+[5] https://patchwork.kernel.org/patch/10818129
+
+Maulik Shah (5):
+  arm64: dts: qcom: sc7180: Add cpuidle low power states
+  soc: qcom: rpmh: Update dirty flag only when data changes
+  soc: qcom: rpmh: Invalidate SLEEP and WAKE TCSes before flushing new
+    data
+  soc: qcom: rpmh: Invoke rpmh_flush() for dirty caches
+  soc: qcom: rpmh-rsc: Allow using free WAKE TCS for active request
+
+Raju P.L.S.S.S.N (1):
+  soc: qcom: rpmh-rsc: Clear active mode configuration for wake TCS
+
+ arch/arm64/boot/dts/qcom/sc7180.dtsi |  78 ++++++++++++++
+ drivers/soc/qcom/rpmh-internal.h     |   8 ++
+ drivers/soc/qcom/rpmh-rsc.c          | 203 ++++++++++++++++++++++++++++-------
+ drivers/soc/qcom/rpmh.c              |  71 ++++++------
+ 4 files changed, 280 insertions(+), 80 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
