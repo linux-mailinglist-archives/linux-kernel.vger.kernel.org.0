@@ -2,90 +2,270 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B872C194930
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:29:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D55A6194943
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 21:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbgCZU31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 16:29:27 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35943 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728808AbgCZU30 (ORCPT
+        id S1727674AbgCZUfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 16:35:30 -0400
+Received: from smtp-42aa.mail.infomaniak.ch ([84.16.66.170]:40203 "EHLO
+        smtp-42aa.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726034AbgCZUf3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:29:26 -0400
-Received: by mail-lj1-f193.google.com with SMTP id g12so7918942ljj.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 13:29:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=uIvUjlehSVigkxhw02yxSAS/Jekd0JL8sbxoZE/mhG8=;
-        b=d9GLbFa5w7D6F4JVqM13LQ0/htvqkcWhyfar3qbwnKva6V/7EwmoJItzaFB2d+GSR9
-         +nDidoQELXiCICB8nfE0OMo9/JMn1p75UmJ5mmTVygTw1dVe38CEBUhhYk2155jK96YZ
-         NC1HlWmEKqw78R+AIYkPpjvYAFj0bQzRp3WaQbz4U3ZJqmSBpBlvl1y+WhozeWBFluwF
-         PEYo99FaNd+1mYHsVH2lXS2PI4eeF9yfjJoyOiOUYop5rwFIKtwu5G5Xp3dDdD6olO4O
-         qDvhTYRg1IlC8g3l2JkZ6vVKcfVHSWzTCiPtT5d9tDNbJhjFKkRYOItC9oeDRjPixKpJ
-         lerw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=uIvUjlehSVigkxhw02yxSAS/Jekd0JL8sbxoZE/mhG8=;
-        b=hTzTjIdmYxE3zvfoyV6QZpoAE2OVpq8gK5kzkwVkZjhqfzuUtsajtwxOJhl5Ov5OCs
-         8ZmYPTs+MaIc+uRN8CPM1KOgdTjKFYaFr9o2ZqrpsRqA3NoC1LNLlX8Kzt5Jz0q5DYmr
-         +LtnSnDZzn3M7UzdrGWV5Zuap04H/3CciwxCkq/m15tkgWVMLxbuwO/29D6ebcj7ipkN
-         rHZhlUZkHws+8LJEwQk5Newp8b11JmLdwoPUmpDsr33wb6IGO9JI7QuUcTgICbCTQsrp
-         BS1ZiQIWSPgYTEVnnkVoBUFk4suQPZEI6DjEVa/Ucft5BWrXWwDlDgCYrD9lzpmAqMl2
-         c9RA==
-X-Gm-Message-State: AGi0PuaeSf6Kbrbm/9AA+3gHgLASPrE0WGGqNLT5wXgz+pk7/m+op+Rn
-        B3oO2fMMP1dKGbBadHREkwXJD60z+IO/yi8w1D8=
-X-Google-Smtp-Source: APiQypKKs6NadkotS6HxD541Nsyi/5Qs7T+bscC+65jGdo/F/vUwHqHhwxrvkwuO0sQbqhQnznq+VEIHef+JXQuH49o=
-X-Received: by 2002:a2e:989a:: with SMTP id b26mr6234335ljj.274.1585254563989;
- Thu, 26 Mar 2020 13:29:23 -0700 (PDT)
+        Thu, 26 Mar 2020 16:35:29 -0400
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 48pGkn1BlgzljC2N;
+        Thu, 26 Mar 2020 21:27:45 +0100 (CET)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 48pGkm5TpTzlkchX;
+        Thu, 26 Mar 2020 21:27:44 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v15 04/10] landlock: Add ptrace restrictions
+Date:   Thu, 26 Mar 2020 21:27:25 +0100
+Message-Id: <20200326202731.693608-5-mic@digikod.net>
+X-Mailer: git-send-email 2.26.0.rc2
+In-Reply-To: <20200326202731.693608-1-mic@digikod.net>
+References: <20200326202731.693608-1-mic@digikod.net>
 MIME-Version: 1.0
-Received: by 2002:a2e:8556:0:0:0:0:0 with HTTP; Thu, 26 Mar 2020 13:29:23
- -0700 (PDT)
-Reply-To: officework_progress@yahoo.com
-From:   Andrew Ede <lmenkwa12@gmail.com>
-Date:   Thu, 26 Mar 2020 22:29:23 +0200
-Message-ID: <CAHPhtMCH=ZieuW855YNjJKN=C88_EzF76-KBgU+60UoyQbo0jQ@mail.gmail.com>
-Subject: CAN YOU WORK WITH US?
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day.
+Using ptrace(2) and related debug features on a target process can lead
+to a privilege escalation.  Indeed, ptrace(2) can be used by an attacker
+to impersonate another task and to remain undetected while performing
+malicious activities.  Thanks to  ptrace_may_access(), various part of
+the kernel can check if a tracer is more privileged than a tracee.
 
-My reason of contacting you is that I and my colleagues working in our
-country=E2=80=99s National Petroleum Corporation want to buy any existing
-modern crude oil refinery in any part of the world.
+A landlocked process has fewer privileges than a non-landlocked process
+and must then be subject to additional restrictions when manipulating
+processes. To be allowed to use ptrace(2) and related syscalls on a
+target process, a landlocked process must have a subset of the target
+process' rules (i.e. the tracee must be in a sub-domain of the tracer).
 
-We are ready to buy any available land to build the Refinery or buy
-the existing one anywhere outside Africa. We will make you our foreign
-partner abroad with some percentage shareholding if you will be
-interested to work with us on this project.
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: James Morris <jmorris@namei.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+---
 
-We have the sum of ($600 Million Dollars) Six Hundred Million Dollars
-for this project.
+Changes since v14:
+* Constify variables.
 
-Meanwhile, this amount of ($600 Million Dollars) will be accessible
-through Foreign Contract Purchase Fund. We are going to clarify what
-we meant by Foreign Contract Purchase Fund as soon as we hear from you
-for better understanding and the way forward.
+Changes since v13:
+* Make the ptrace restriction mandatory, like in the v10.
+* Remove the eBPF dependency.
 
-However, in case you are not capable to handle this project with us,
-please kindly connect us to any capable person or company that would
-handle the project with us in order to enable us proceed at once.
+Previous version:
+https://lore.kernel.org/lkml/20191104172146.30797-5-mic@digikod.net/
+---
+ security/landlock/Makefile |   2 +-
+ security/landlock/ptrace.c | 120 +++++++++++++++++++++++++++++++++++++
+ security/landlock/ptrace.h |  14 +++++
+ security/landlock/setup.c  |   2 +
+ 4 files changed, 137 insertions(+), 1 deletion(-)
+ create mode 100644 security/landlock/ptrace.c
+ create mode 100644 security/landlock/ptrace.h
 
-We hope to hear you in no distance time through this e-mail address
-at: officework_progress@yahoo.com, for immediate communication and
-more facts on how to go on.
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+index 041ea242e627..f1d1eb72fa76 100644
+--- a/security/landlock/Makefile
++++ b/security/landlock/Makefile
+@@ -1,4 +1,4 @@
+ obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
+ 
+ landlock-y := setup.o object.o ruleset.o \
+-	cred.o
++	cred.o ptrace.o
+diff --git a/security/landlock/ptrace.c b/security/landlock/ptrace.c
+new file mode 100644
+index 000000000000..61df38b13f5c
+--- /dev/null
++++ b/security/landlock/ptrace.c
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Landlock LSM - Ptrace hooks
++ *
++ * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2020 ANSSI
++ */
++
++#include <asm/current.h>
++#include <linux/cred.h>
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/lsm_hooks.h>
++#include <linux/rcupdate.h>
++#include <linux/sched.h>
++
++#include "common.h"
++#include "cred.h"
++#include "ptrace.h"
++#include "ruleset.h"
++#include "setup.h"
++
++/**
++ * domain_scope_le - Checks domain ordering for scoped ptrace
++ *
++ * @parent: Parent domain.
++ * @child: Potential child of @parent.
++ *
++ * Checks if the @parent domain is less or equal to (i.e. an ancestor, which
++ * means a subset of) the @child domain.
++ */
++static bool domain_scope_le(const struct landlock_ruleset *const parent,
++		const struct landlock_ruleset *const child)
++{
++	const struct landlock_hierarchy *walker;
++
++	if (!parent)
++		return true;
++	if (!child)
++		return false;
++	for (walker = child->hierarchy; walker; walker = walker->parent) {
++		if (walker == parent->hierarchy)
++			/* @parent is in the scoped hierarchy of @child. */
++			return true;
++	}
++	/* There is no relationship between @parent and @child. */
++	return false;
++}
++
++static bool task_is_scoped(const struct task_struct *const parent,
++		const struct task_struct *const child)
++{
++	bool is_scoped;
++	const struct landlock_ruleset *dom_parent, *dom_child;
++
++	rcu_read_lock();
++	dom_parent = landlock_get_task_domain(parent);
++	dom_child = landlock_get_task_domain(child);
++	is_scoped = domain_scope_le(dom_parent, dom_child);
++	rcu_read_unlock();
++	return is_scoped;
++}
++
++static int task_ptrace(const struct task_struct *const parent,
++		const struct task_struct *const child)
++{
++	/* Quick return for non-landlocked tasks. */
++	if (!landlocked(parent))
++		return 0;
++	if (task_is_scoped(parent, child))
++		return 0;
++	return -EPERM;
++}
++
++/**
++ * hook_ptrace_access_check - Determines whether the current process may access
++ *			      another
++ *
++ * @child: Process to be accessed.
++ * @mode: Mode of attachment.
++ *
++ * If the current task has Landlock rules, then the child must have at least
++ * the same rules.  Else denied.
++ *
++ * Determines whether a process may access another, returning 0 if permission
++ * granted, -errno if denied.
++ */
++static int hook_ptrace_access_check(struct task_struct *const child,
++		const unsigned int mode)
++{
++	return task_ptrace(current, child);
++}
++
++/**
++ * hook_ptrace_traceme - Determines whether another process may trace the
++ *			 current one
++ *
++ * @parent: Task proposed to be the tracer.
++ *
++ * If the parent has Landlock rules, then the current task must have the same
++ * or more rules.  Else denied.
++ *
++ * Determines whether the nominated task is permitted to trace the current
++ * process, returning 0 if permission is granted, -errno if denied.
++ */
++static int hook_ptrace_traceme(struct task_struct *const parent)
++{
++	return task_ptrace(parent, current);
++}
++
++static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
++	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
++};
++
++__init void landlock_add_hooks_ptrace(void)
++{
++	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
++			LANDLOCK_NAME);
++}
+diff --git a/security/landlock/ptrace.h b/security/landlock/ptrace.h
+new file mode 100644
+index 000000000000..6740c6a723de
+--- /dev/null
++++ b/security/landlock/ptrace.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Landlock LSM - Ptrace hooks
++ *
++ * Copyright © 2017-2019 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2019 ANSSI
++ */
++
++#ifndef _SECURITY_LANDLOCK_PTRACE_H
++#define _SECURITY_LANDLOCK_PTRACE_H
++
++__init void landlock_add_hooks_ptrace(void);
++
++#endif /* _SECURITY_LANDLOCK_PTRACE_H */
+diff --git a/security/landlock/setup.c b/security/landlock/setup.c
+index 00eb78275cd8..a40822135d13 100644
+--- a/security/landlock/setup.c
++++ b/security/landlock/setup.c
+@@ -11,6 +11,7 @@
+ 
+ #include "common.h"
+ #include "cred.h"
++#include "ptrace.h"
+ #include "setup.h"
+ 
+ struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
+@@ -21,6 +22,7 @@ static int __init landlock_init(void)
+ {
+ 	pr_info("Registering hooks.\n");
+ 	landlock_add_hooks_cred();
++	landlock_add_hooks_ptrace();
+ 	return 0;
+ }
+ 
+-- 
+2.26.0.rc2
 
-With respect
-
-Best Regards
-
-Andrew Ede and Co,,
