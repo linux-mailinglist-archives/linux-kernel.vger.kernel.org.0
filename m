@@ -2,174 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8F621934DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 01:08:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FE4C1934E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 01:10:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbgCZAIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Mar 2020 20:08:02 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38144 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727498AbgCZAIC (ORCPT
+        id S1727612AbgCZAKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Mar 2020 20:10:40 -0400
+Received: from smtprelay0253.hostedemail.com ([216.40.44.253]:39390 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727525AbgCZAKj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Mar 2020 20:08:02 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c21so1228793pfo.5
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Mar 2020 17:08:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=D0CV0Uku18oFuW+TPNfaEyxgPkTMYFP8ObQ3tAgtOsc=;
-        b=SBVg/zWsk52JKcc+nEzqXNzg7w+HdPM+lrL+HI2UtDuTis6PRGJW94M/+n13O7YFJ6
-         MkyiHnm+qz/wx068nDs7rRLD8Mxv0/d1wvd4ydeatxtcR8oeIo1jgdzPJWoBiWLOMy5D
-         Sr7aD48oUo1BGco1e4RkKs/cV4d8PChb5tGcmIVWLw4+gCx6zjSNiIkgcushvn7efvzG
-         2NB35CZPdE1L9jj/4rXITMdF2rI03jjFSk5pQtNPgT9t6zFYfBB69DlnPNvdf0FaIVyh
-         RdJT+9KPjhHtw68UyMFICMBQNtihr9TcRKOx34/0Fr0tHKLMzLfslUmpoZ/zH8vX9jx/
-         Av0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=D0CV0Uku18oFuW+TPNfaEyxgPkTMYFP8ObQ3tAgtOsc=;
-        b=tPrDqs+Pds6UznKJL8ojCtsCwFzxwLb9ViwQaShBaOkXgFLxYz5xzK160fiQbWuA8U
-         SD8v0pfs74Hn0y1lTHglId6ED2Y5pjo+jX1U/vj9H9HjDTzNG2te6eyKi7AxdXryrT0V
-         802thM/1zA2ZVmXjynbEJwgrjss47xfJJtdJrDm269LQVfveuEiOQM16ZP1aMNC+qgtj
-         OV/+ABGBb2RT3FqYHnmWc6GPPO9QCMsOokrqei3tDDFSwLdjHoKKlTWluOdiIyFYODpo
-         wmMkvUERarR59jQZ0Fg9XnvhI+DTwpHvYgY9i1rvUlGNQXkCri1zK8NyKInlcRZuohVb
-         Qu0A==
-X-Gm-Message-State: ANhLgQ2C3wVkzKE8eBkqsqFG8q9C4ennaW5TwqxQQF3E3n+nqNve+Tuj
-        xMDpfvnzoaTAT8VlzYfZHSkhCQ==
-X-Google-Smtp-Source: ADFU+vuIfUjtKDwe+/9IZoHaEyu52b65Fllav4Sg62s59kUgWWdWFkYrl4HvkTVxCVFhPIOx9IDLGA==
-X-Received: by 2002:a62:2e42:: with SMTP id u63mr6197087pfu.69.1585181280449;
-        Wed, 25 Mar 2020 17:08:00 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id u12sm227537pfm.165.2020.03.25.17.07.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 17:07:59 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 17:07:57 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845-mtp: Relocate remoteproc
- firmware
-Message-ID: <20200326000757.GF119913@minitux>
-References: <20200302020757.551483-1-bjorn.andersson@linaro.org>
- <CAK8P3a1QZbpYV8juTb31-CXQMVF==qFjJdRd064Md_rw5V7Vnw@mail.gmail.com>
+        Wed, 25 Mar 2020 20:10:39 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 2F914100E8420;
+        Thu, 26 Mar 2020 00:10:39 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:960:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3351:3622:3865:4321:5007:7903:8957:10004:10400:10848:11026:11232:11657:11658:11914:12043:12297:12438:12740:12760:12895:13069:13161:13229:13311:13357:13439:14659:14721:21080:21627:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: hose84_3fbcf8ba85931
+X-Filterd-Recvd-Size: 1625
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf15.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 26 Mar 2020 00:10:37 +0000 (UTC)
+Message-ID: <9b369028adca4105c376094db569637cf8bb1fa2.camel@perches.com>
+Subject: Re: [PATCH] staging: rtl8188eu: cleanup long line in odm.c
+From:   Joe Perches <joe@perches.com>
+To:     Michael Straube <straube.linux@gmail.com>,
+        gregkh@linuxfoundation.org
+Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 25 Mar 2020 17:08:46 -0700
+In-Reply-To: <20200325215940.9225-1-straube.linux@gmail.com>
+References: <20200325215940.9225-1-straube.linux@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1QZbpYV8juTb31-CXQMVF==qFjJdRd064Md_rw5V7Vnw@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 25 Mar 14:13 PDT 2020, Arnd Bergmann wrote:
+On Wed, 2020-03-25 at 22:59 +0100, Michael Straube wrote:
+> Cleanup line over 80 characters by removing unnecessary parentheses.
+[]
+> diff --git a/drivers/staging/rtl8188eu/hal/odm.c b/drivers/staging/rtl8188eu/hal/odm.c
+[]
+> @@ -590,7 +590,7 @@ void odm_CCKPacketDetectionThresh(struct odm_dm_struct *pDM_Odm)
+>  	if (pDM_Odm->bLinked) {
+>  		if (pDM_Odm->RSSI_Min > 25) {
+>  			CurCCK_CCAThres = 0xcd;
+> -		} else if ((pDM_Odm->RSSI_Min <= 25) && (pDM_Odm->RSSI_Min > 10)) {
+> +		} else if (pDM_Odm->RSSI_Min <= 25 && pDM_Odm->RSSI_Min > 10) {
 
-> On Mon, Mar 2, 2020 at 3:09 AM Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
-> >
-> > Update the firmware-name of the remoteproc nodes to mimic the firmware
-> > structure on other 845 devices.
-> >
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> 
-> Hi Bjorn,
-> 
-> Sorry for the late reply, I only came across this one while going
-> through the pull requests
-> that we had failed to pick up earlier.
-> 
-> I really dislike the idea of hardcoding a firmware name in the
-> devicetree, we had long
-> discussions about this a few years ago and basically concluded that the firmware
-> name needs to be generated by the driver after identifying the hardware itself.
-> 
+The test above this already guarantees pDM_Odm->RSSI_Min <= 25
+so the block could be written just
 
-I remember this discussion and generally I share your view, but after
-postponing this problem for years we've not managed to come up with a
-solution for our problem.
+		} else if (pDM->RSSI_Min > 10) {
 
-> The problem is that the firmware generally needs to match both the device driver
-> and the hardware, so when there is a firmware update that changes the behavior
-> (intentionally or not) in a way the driver needs to know about, then
-> the driver should
-> be able to request a particular firmware file based on information
-> that the owner
-> of the dtb may not have.
-> 
+>  			CurCCK_CCAThres = 0x83;
+>  		} else {
+>  			if (FalseAlmCnt->Cnt_Cck_fail > 1000)
 
-There are three variables in play here:
-
-1) Large feature differences, e.g. does your modem Hexagon have
-associated RF hardware, or is it WiFi only. Or other similar things,
-which does affect DeviceTree anyways (memory maps, audio routing etc)
-
-2) Purely software versions of the firmware. Generally no impact on
-remoteproc level or the immediate layers above, bug fixes etc.
-
-3) Vendor specific signatures. All these files are signed with vendor
-specific private keys.
-
-
-None of these affects how we describe the hardware, so we did choose to
-use a compatible per platform and remoteproc, e.g. qcom,sdm845-mss-pil
-will handle the modem core on all SDM845 devices, regardless of the
-firmware implementing WiFi only or it's a devboard or a product with
-strict signature validation.
-
-We could add another property in the DT node to denote if the modem RF
-hardware is present and have the sdm845-mss-pil compatible result in a
-selection of qcom/sdm845/modem.mbn vs qcom/sdm845/modem_nm.mbn. This
-would handle 1) above.
-
-
-But this doesn't solve 3) and my Lenovo Yoga C630 will refuse to load
-these files, as they are not signed by Lenovo.
-
-For years we've toyed with the idea of building the necessary firmware
-path based on e.g. information from DMI (which not all boards has) or
-somehow tokenizing the machine compatible. But nothing sane has come out
-of these attempts/ideas.
-
-So after years of not being able to send these files to linux-firmware,
-without breaking some other board we decided to just describe these
-variations using firmware-name.
-
-So this solves 1) and 3) in a straight forward way, and so far in all
-cases we've handled 2) by upgrading (until now, our fork of)
-linux-firmware.
-
-But I don't have any suggestions for how to solve the case where kernel
-version X and X+1 _needs_ different versions of the firmware.
-
-
-Lastly, most variations in firmware features are discoverable by the
-higher layers, but for the cases where the remoteproc driver itself is
-affected we're looking at changes to the memory map, clocks, regulators,
-power domains - problems that has to be resolved in DT anyways. 
-
-Which is the reason why several companies are looking at passing
-dynamically loaded DT snippets with their remoteproc firmware.
-
-> I'm holding off on the pull request for today, maybe there is something we can
-> still do about it before the merge window.
-> 
-
-The binding addition was merged in 5.1, with Rob's r-b, in 5.5 we used
-these properties for the Lenovo Yoga C630 and in 5.6 we merged the
-equivalent change for the Dragonboard 845c.
-
-If there is a solution that allow us to move away from firmware-name in
-DT I'm interested and would like to see us migrate towards it, but the
-only thing this particular change does is to make the SDM845 MTP find
-the right files in linux-firmware, using the already existing binding
-and implementation.
-
-Regards,
-Bjorn
