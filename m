@@ -2,85 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E13C193BF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:35:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B8FE193BF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 10:35:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbgCZJfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 05:35:11 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12197 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726540AbgCZJfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 05:35:11 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7644EDB1CEFD789CD5B1;
-        Thu, 26 Mar 2020 17:35:08 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 26 Mar
- 2020 17:35:04 +0800
-Subject: Re: [PATCH RFC] f2fs: don't inline compressed inode
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20200325092754.63411-1-yuchao0@huawei.com>
- <20200325155806.GC65658@google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <87d715d0-a5c4-7b54-95bb-9b627d163271@huawei.com>
-Date:   Thu, 26 Mar 2020 17:35:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20200325155806.GC65658@google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1727907AbgCZJfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 05:35:25 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:43281 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726540AbgCZJfX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 05:35:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585215322;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=mHAcO/esGjuXCW34/CgY8eM7k2k6/5G4mIqIMAwoOLc=;
+        b=T0NiE5lS3K9AZoaKGWCQEj3PwxeYs9rpStzHXj7YbP99tR7LjhkEOEkhVXAKVYiNwf7abV
+        D9nGsBVK7Wjuywo8AZugPdNFV13IC7daOMS+QaP9dG5du1pyxrgsvk8a0sr2462JQRD/cy
+        yGOAV5tY7LbwFB/6UGVVaEfmn3hFsZM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-480-U5kOa6KsMQy72PQznZ-5Kg-1; Thu, 26 Mar 2020 05:35:18 -0400
+X-MC-Unique: U5kOa6KsMQy72PQznZ-5Kg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A9ABB801E53;
+        Thu, 26 Mar 2020 09:35:17 +0000 (UTC)
+Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EA7A49CA3;
+        Thu, 26 Mar 2020 09:35:16 +0000 (UTC)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Junaid Shahid <junaids@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH 0/3] KVM: x86: sync SPTEs on page/EPT fault injection
+Date:   Thu, 26 Mar 2020 05:35:13 -0400
+Message-Id: <20200326093516.24215-1-pbonzini@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/3/25 23:58, Jaegeuk Kim wrote:
-> On 03/25, Chao Yu wrote:
->> f2fs_may_inline_data() only check compressed flag on current inode
->> rather than on parent inode, however at this time compressed flag
->> has not been inherited yet.
-> 
-> When write() or other allocation happens, it'll be reset.
+This is my take on Junaid and Sean's patch, from the TLB cleanup series.
+It passes initial tests, including my usual guest installation and
+kvm-unit-tests battery (with both ept=0 and ept=1), but I'm not sure if
+there's anything that isn't covered by kvm-unit-tests, especially for
+nested.  I have not yet run guest installation tests under nested
+virt but I will before merging the whole TLB cleanup series.
 
-Yeah, all tests are fine w/o this RFC patch, anyway, will let you know if
-I find something incompatible.
+Please review!
 
-Thanks,
+Junaid Shahid (1):
+  KVM: x86: Sync SPTEs when injecting page/EPT fault into L1
 
-> 
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>
->> Jaegeuk,
->>
->> I'm not sure about this, whether inline_data flag can be compatible with
->> compress flag, thoughts?
->>
->>  fs/f2fs/namei.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->> index f54119da2217..3807d1b4c4bc 100644
->> --- a/fs/f2fs/namei.c
->> +++ b/fs/f2fs/namei.c
->> @@ -86,7 +86,8 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
->>  	if (test_opt(sbi, INLINE_XATTR))
->>  		set_inode_flag(inode, FI_INLINE_XATTR);
->>  
->> -	if (test_opt(sbi, INLINE_DATA) && f2fs_may_inline_data(inode))
->> +	if (test_opt(sbi, INLINE_DATA) && f2fs_may_inline_data(inode) &&
->> +					!f2fs_compressed_file(dir))
->>  		set_inode_flag(inode, FI_INLINE_DATA);
->>  	if (f2fs_may_inline_dentry(inode))
->>  		set_inode_flag(inode, FI_INLINE_DENTRY);
->> -- 
->> 2.18.0.rc1
-> .
-> 
+Paolo Bonzini (2):
+  KVM: x86: introduce kvm_mmu_invalidate_gva
+  KVM: x86: cleanup kvm_inject_emulated_page_fault
+
+ arch/x86/include/asm/kvm_host.h |  2 +
+ arch/x86/kvm/mmu/mmu.c          | 77 +++++++++++++++++++--------------
+ arch/x86/kvm/mmu/paging_tmpl.h  |  2 +-
+ arch/x86/kvm/vmx/nested.c       | 12 ++---
+ arch/x86/kvm/vmx/vmx.c          |  2 +-
+ arch/x86/kvm/x86.c              | 16 +++++--
+ 6 files changed, 67 insertions(+), 44 deletions(-)
+
+-- 
+2.18.2
+
