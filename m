@@ -2,75 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00A0B193FC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 14:30:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15258193FC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Mar 2020 14:31:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbgCZNau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 09:30:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39779 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbgCZNau (ORCPT
+        id S1727729AbgCZNbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 09:31:09 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:28695 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726175AbgCZNbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 09:30:50 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jHSao-0003tR-O0; Thu, 26 Mar 2020 13:30:42 +0000
-Date:   Thu, 26 Mar 2020 14:30:41 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Guilherme G . Piccoli" <gpiccoli@canonical.com>
-Subject: Re: [RFC v2 1/2] kernel/sysctl: support setting sysctl parameters
- from kernel command line
-Message-ID: <20200326133041.a3zit3gzdqmphane@wittgenstein>
-References: <20200325120345.12946-1-vbabka@suse.cz>
- <874kuc5b5z.fsf@x220.int.ebiederm.org>
- <20200326065829.GC27965@dhcp22.suse.cz>
+        Thu, 26 Mar 2020 09:31:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585229468;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=JszvOvoRUQGRKGqg0igxZKOZO39zKRLJjdSgTJKjaug=;
+        b=Igz90rJc5cy0HfxA1hEv4PXQuuwxyL8x2ZG1KxzbU6TjCMjUeuUTtYK1MMdsykaCEcOZTG
+        k5k3UnQ2KuX8QlCBDheJoTUKza7a9UFjjMNyHl1Lyg34v6B3iaQYd6tRvMSXwCj44Mfamd
+        KmPUFqjYlpZ5v8ixFW0VzF1d/5lQxQI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-454-GC-7odwjPjakEKZ5OgNsMQ-1; Thu, 26 Mar 2020 09:31:03 -0400
+X-MC-Unique: GC-7odwjPjakEKZ5OgNsMQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AF44C107ACCA;
+        Thu, 26 Mar 2020 13:31:01 +0000 (UTC)
+Received: from lorien.usersys.redhat.com (ovpn-113-62.phx2.redhat.com [10.3.113.62])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 82A1F10002A5;
+        Thu, 26 Mar 2020 13:30:57 +0000 (UTC)
+Date:   Thu, 26 Mar 2020 09:30:55 -0400
+From:   Phil Auld <pauld@redhat.com>
+To:     Aubrey Li <aubrey.li@intel.com>
+Cc:     vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
+        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        linux-kernel@vger.kernel.org, tim.c.chen@linux.intel.com,
+        vpillai@digitalocean.com, joel@joelfernandes.org,
+        Aubrey Li <aubrey.li@linux.intel.com>
+Subject: Re: [PATCH] sched/fair: Fix negative imbalance in imbalance
+ calculation
+Message-ID: <20200326133055.GA5537@lorien.usersys.redhat.com>
+References: <1585201349-70192-1-git-send-email-aubrey.li@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200326065829.GC27965@dhcp22.suse.cz>
+In-Reply-To: <1585201349-70192-1-git-send-email-aubrey.li@intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 07:58:29AM +0100, Michal Hocko wrote:
-> On Wed 25-03-20 17:20:40, Eric W. Biederman wrote:
-> > Vlastimil Babka <vbabka@suse.cz> writes:
-> [...]
-> > > +	if (strncmp(param, "sysctl.", sizeof("sysctl.") - 1))
-> > > +		return 0;
-> > 
-> > Is there any way we can use a slash separated path.  I know
-> > in practice there are not any sysctl names that don't have
-> > a '.' in them but why should we artifically limit ourselves?
+On Thu, Mar 26, 2020 at 01:42:29PM +0800 Aubrey Li wrote:
+> A negative imbalance value was observed after imbalance calculation,
+> this happens when the local sched group type is group_fully_busy,
+> and the average load of local group is greater than the selected
+> busiest group. Fix this problem by comparing the average load of the
+> local and busiest group before imbalance calculation formula.
 > 
-> Because this is the normal userspace interface? Why should it be any
-> different from calling sysctl?
-> [...]
+> Suggested-by: Vincent Guittot <vincent.guittot@linaro.org>
+> Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
+> Cc: Phil Auld <pauld@redhat.com>
+> ---
+>  kernel/sched/fair.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index c1217bf..4a2ba3f 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8761,6 +8761,14 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+>  
+>  		sds->avg_load = (sds->total_load * SCHED_CAPACITY_SCALE) /
+>  				sds->total_capacity;
+> +		/*
+> +		 * If the local group is more loaded than the selected
+> +		 * busiest group don't try to pull any tasks.
+> +		 */
+> +		if (local->avg_load >= busiest->avg_load) {
+> +			env->imbalance = 0;
+> +			return;
+> +		}
+>  	}
+>  
+>  	/*
+> -- 
+> 2.7.4
+> 
 
-Imho, we should use ".". Kernel developers aren't the ones setting
-these options, admins are and if I think back to the times doing that as
-a job at uni I'd be very confused if I learned that I get to set sysctl
-options through the kernel command but need to use yet another format
-than what I usually do to set those from the shell. Consistency is most
-of the times to be preferred imho.
+I like this one better. Thanks!
 
-Also, the kernel docs illustrate that the "." syntax is used for other
-keys as well (e.g. acpi.<option>) and userspace options passed via the
-kernel command line have standardized on the "." format as well, e.g.
-systemd appends in the same format (e.g.
-systemd.unified_cgroup_hierarchy, systemd.unit what have you).
+Reviewed-by: Phil Auld <pauld@redhat.com>
 
-Christian
+-- 
+
