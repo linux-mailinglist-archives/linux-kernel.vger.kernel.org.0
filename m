@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8642D195BEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A1D6195BEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:06:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbgC0RGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 13:06:09 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46457 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727675AbgC0RGI (ORCPT
+        id S1727830AbgC0RGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 13:06:06 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37528 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbgC0RGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 13:06:08 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r7so3324673ljg.13
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 10:06:04 -0700 (PDT)
+        Fri, 27 Mar 2020 13:06:06 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j11so8474915lfg.4
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 10:06:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Fw/iy6xjbd/Vbu7hIqNLPaVOpy/RK+By1QJ7syGCyKw=;
-        b=pqPZ+KnQrKyd6FiKwsInKAWqhn2zXakFKwgrm9nzLBgFus1py3Iu2UO8q6Qx1MQ6+C
-         e8Ejg39nuKDg9y06gDkoTBO9VJJ4QW4vH2JXjX9tkq3eYlJN5MzXHZG2HDwpxJaG9oLV
-         +1gbfeTURUHlkt1jQlO6qZPrpP5TnwfKGAH1BDJOhJ5qiTlotjonDqsfcZ205isYssHd
-         RXb7QKpee++7GHCpH53vyhFQ/Hanp/zRWwJgCSmWLbZy6TW3aAQqvNaZWFb8I4dUEFdF
-         PpJCf/z6u1OGEnuXJRcCchYi5/AuZPs+FQk0gQBGH+PnjeWKCzfLhnK7BUUuJkboh7LO
-         Ficw==
+        bh=uEmPFiw3NMkf3IfRIxWgnKIkN+OrB/j1csttn5Htb5E=;
+        b=z3j+MugvIOEV5ZTNeV8Y5iSCTsByA3McfeDK2HMga5j30TJGS1jCU2mARtvWuwgHZT
+         wBwryyzEC9XH8i28e+3+RHU3jD6Q86e2Y7N/2LASbsk4xhgGhE/LKp0YxH614uxCaLm2
+         Uxb43/hP9GUS78Cz+RGLCxlp/k0xwNjWmpLM/AY1ydd0ToWnqmkTAkioJShsGdnUnmIq
+         KDHOOiJRSvG43K61Vm4lBM4R+aHhWi5VCLrVpWl0+Xy9KMLWv5aei3nbPj/r3QC5WhNR
+         oOxCPsb+UmkK4aAszIDPTddUV08oDFX+pDtf6D7W6u5qb88ypahuJSlTJ0irMeO6isQL
+         UEHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Fw/iy6xjbd/Vbu7hIqNLPaVOpy/RK+By1QJ7syGCyKw=;
-        b=Sqrx/QwCeGKSniLX9OcNTUfRT2zXA6zHsIWrw1RQK9u0m29/4deNS2G9Z43ALT5CVc
-         JpoRffIlmpGj0193PKj5IDslsi3hBF+pgr55et4eicbs99kMjTUnJC9s3h4UPsvy80qw
-         YI+F+1+tqL9Uvfyr6tb5cYq2m8hbVpjl5Zbcru8/OtMHgo5qWEHj4hwEOg5jbOZmrXhh
-         x22PG8fE4Cxix3e2NGbsZXfpTpsL3md2bu66FCNUT4dYvJwfx9XrE2j8xhTQdLmSnaXR
-         jOyGPdgLYmp3gkYrVLWnB8mcO4kBq0100HnLZWQuxeToNfIiCf/y9N8jugORLkPAyDqE
-         mN2A==
-X-Gm-Message-State: AGi0PubMUhCnYBpn0DtynNqNRqGbXgAo12sHJX4djMVU8e+woDaqSVat
-        L/uugrTUcEMjO6KJkp4kK0oLAA==
-X-Google-Smtp-Source: ADFU+vvdqlE5S6Ml34ZpWzMm9diRAgh8m5sJC5LUbAaWxqKa8rxqiLVwiLIVGcpzhADb4m0kD666Zg==
-X-Received: by 2002:a05:651c:515:: with SMTP id o21mr9232046ljp.91.1585328764152;
+        bh=uEmPFiw3NMkf3IfRIxWgnKIkN+OrB/j1csttn5Htb5E=;
+        b=RGD37FKFppKM58uk931ABI+6RZOQyrnxEdKjwO1og9jZLJWrHRQe30HMPsH4BiMExt
+         R36BXZueczgTrEUP9NYWULFnpGQutV93+aUbRjmeJVfX7uXNL+iZ5U54uapLVEaFtKpq
+         N8FbrzFPQ41/5dRl8+vqsLeIWXk3PEMKt8JOTEwATxRAju6yepYtDHuMs2jFWcLm4QET
+         g5AQuFDbLmDDI+R0vD0A8vYW4qSCr3bq4W6quGKqrT0rfIja3tnWLq3FUAt78UrCDhEE
+         jY1RchnPI8tW2jOWI/gMhlwVihnKeKybUJvUObRG7eaD0e31gu5gQRWeGiiaRibc7PpM
+         cNDw==
+X-Gm-Message-State: AGi0PuZ6iVpua2nMKCV5SoJ0W+QvPES9vrxDyghB/P3kOdFYGW30F2Ac
+        iB2J9/AXfUpLJaEgOLFxJ2NPMw==
+X-Google-Smtp-Source: APiQypI3S8W00hxoDxa3oFcnVq3mUYLKs3IlsAXA0vKYmfajc3bCUm9dNAKtZxa0tJ1SdtOMPJlmlg==
+X-Received: by 2002:a19:4f01:: with SMTP id d1mr184636lfb.182.1585328764571;
         Fri, 27 Mar 2020 10:06:04 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id y20sm2967120ljy.100.2020.03.27.10.06.02
+        by smtp.gmail.com with ESMTPSA id c5sm3225046lfg.82.2020.03.27.10.06.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 27 Mar 2020 10:06:03 -0700 (PDT)
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 62ED8100D27; Fri, 27 Mar 2020 20:06:07 +0300 (+03)
+        id 699D3100D28; Fri, 27 Mar 2020 20:06:07 +0300 (+03)
 To:     akpm@linux-foundation.org, Andrea Arcangeli <aarcange@redhat.com>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 2/7] khugepaged: Do not stop collapse if less than half PTEs are referenced
-Date:   Fri, 27 Mar 2020 20:05:56 +0300
-Message-Id: <20200327170601.18563-3-kirill.shutemov@linux.intel.com>
+Subject: [PATCH 3/7] khugepaged: Drain LRU add pagevec to get rid of extra pins
+Date:   Fri, 27 Mar 2020 20:05:57 +0300
+Message-Id: <20200327170601.18563-4-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200327170601.18563-1-kirill.shutemov@linux.intel.com>
 References: <20200327170601.18563-1-kirill.shutemov@linux.intel.com>
@@ -65,32 +65,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__collapse_huge_page_swapin() check number of referenced PTE to decide
-if the memory range is hot enough to justify swapin.
-
-The problem is that it stops collapse altogether if there's not enough
-refereced pages, not only swappingin.
+__collapse_huge_page_isolate() may fail due to extra pin in the LRU add
+pagevec. It's petty common for swapin case: we swap in pages just to
+fail due to the extra pin.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Fixes: 0db501f7a34c ("mm, thp: convert from optimistic swapin collapsing to conservative")
 ---
- mm/khugepaged.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/khugepaged.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 99bab7e4d05b..14d7afc90786 100644
+index 14d7afc90786..39e0994abeb8 100644
 --- a/mm/khugepaged.c
 +++ b/mm/khugepaged.c
-@@ -905,7 +905,8 @@ static bool __collapse_huge_page_swapin(struct mm_struct *mm,
- 	/* we only decide to swapin, if there is enough young ptes */
- 	if (referenced < HPAGE_PMD_NR/2) {
- 		trace_mm_collapse_huge_page_swapin(mm, swapped_in, referenced, 0);
--		return false;
-+		/* Do not block collapse, only skip swapping in */
-+		return true;
- 	}
- 	vmf.pte = pte_offset_map(pmd, address);
- 	for (; vmf.address < address + HPAGE_PMD_NR*PAGE_SIZE;
+@@ -585,11 +585,19 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+ 		 * The page must only be referenced by the scanned process
+ 		 * and page swap cache.
+ 		 */
++		if (page_count(page) != 1 + PageSwapCache(page)) {
++			/*
++			 * Drain pagevec and retry just in case we can get rid
++			 * of the extra pin, like in swapin case.
++			 */
++			lru_add_drain();
++		}
+ 		if (page_count(page) != 1 + PageSwapCache(page)) {
+ 			unlock_page(page);
+ 			result = SCAN_PAGE_COUNT;
+ 			goto out;
+ 		}
++
+ 		if (pte_write(pteval)) {
+ 			writable = true;
+ 		} else {
 -- 
 2.26.0
 
