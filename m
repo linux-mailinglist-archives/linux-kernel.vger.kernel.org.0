@@ -2,71 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B246196184
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 23:52:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCCE196188
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 23:53:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbgC0Wvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 18:51:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727800AbgC0Wvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 18:51:41 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3019820787;
-        Fri, 27 Mar 2020 22:51:40 +0000 (UTC)
-Date:   Fri, 27 Mar 2020 18:51:38 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Jules Irenge <jbi.octave@gmail.com>
-Cc:     julia.lawall@lip6.fr, boqun.feng@gmail.com,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH 10/10] trace: Replace printk and WARN_ON with WARN
-Message-ID: <20200327185138.5e98e17b@gandalf.local.home>
-In-Reply-To: <20200327212358.5752-11-jbi.octave@gmail.com>
-References: <0/10>
-        <20200327212358.5752-1-jbi.octave@gmail.com>
-        <20200327212358.5752-11-jbi.octave@gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727726AbgC0Wxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 18:53:51 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39732 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbgC0Wxu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 18:53:50 -0400
+Received: by mail-pg1-f193.google.com with SMTP id b22so5293225pgb.6
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 15:53:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=u//RFRwBb0m9lwVRnZnuN1wIsLwSxdDr93Wv4WL3gak=;
+        b=sCLGEAWMh1HSvJ+QM8j2lloft3uPeNHMcMj6BmwhaTwvSP2P4K8TyvIbsSpX+ZbSQ6
+         HERLK4yeWKux2ZLUriBsIVL77UetK/CkpdZTTh748tOxtGhooB5gcjlwQCggun6xvHX9
+         d4EVzFEPqcWxprhJvN3A9oBIXMUz+cHkaovqJfucawus4FjC9X5GjfdcjR2J4hVl8ezd
+         x/VGVaKjmWaXnxY6KQTQlBJgaxf1T3GqonDTIimI9rPYb6rHAPFd5J7IAIvTwVsZp0Tg
+         YnEEmvMPcyGK9b+ts9frgqH2YOGDrb5VHekmJ1I5ZXzmQTmvnNwtxsnNi9iiosGJ63qm
+         iSUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=u//RFRwBb0m9lwVRnZnuN1wIsLwSxdDr93Wv4WL3gak=;
+        b=C9WH939gzRXn4GQPGYCmLJzv1/+XSJVpoGn/JFVifh4BxhP98Gb3Qba7ePcDq+0+Nl
+         AQcm/jCbgnoELUBQC/ePe5IE+er7i8Ng0yerX2q2nky/1509W/A3QF7YIBBf7W5ScfCT
+         HTtlyQolvDa7hYPc6068D6RGsQB1aBfYPTORoreNv9zQfiisJ+Wu2dNECtMpG/1coKq1
+         dlVm3KD3ICZPlbJbc+D2knKv2MIyQoaL7t/bQShPt0VmZc0akBXy00ju8VrbkWXBJmMI
+         yHRjOVtWwNdnTJR7Z5X33jl8wNheaJsS+gUksHdez1oEqDenX+uyjrZ6PNYEEEAWw9w8
+         DHcQ==
+X-Gm-Message-State: ANhLgQ0W6n20FhbWgetrqvhE2RcsEkdewM6KXI4nzkauQs9FisbP2cph
+        k4Ct2GVMrua9VWX6VzZ4kCIzuQ==
+X-Google-Smtp-Source: ADFU+vvmOFrFFFf0Ylaxpwo5cZwgZFAq0POqcMDvAU5keyfbpNREBBtPuvkrV6yluD9CWYp3jhMddA==
+X-Received: by 2002:a63:78e:: with SMTP id 136mr1551884pgh.181.1585349628346;
+        Fri, 27 Mar 2020 15:53:48 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id t1sm4590766pgh.88.2020.03.27.15.53.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Mar 2020 15:53:47 -0700 (PDT)
+Date:   Fri, 27 Mar 2020 15:53:45 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     rui.zhang@intel.com, ulf.hansson@linaro.org,
+        daniel.lezcano@linaro.org, agross@kernel.org, robh@kernel.org,
+        amit.kucheria@verdurent.com, mark.rutland@arm.com,
+        rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Patch v5 4/6] soc: qcom: Extend RPMh power controller driver to
+ register warming devices.
+Message-ID: <20200327225345.GH5063@builder>
+References: <20200320014107.26087-1-thara.gopinath@linaro.org>
+ <20200320014107.26087-5-thara.gopinath@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320014107.26087-5-thara.gopinath@linaro.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Mar 2020 21:23:57 +0000
-Jules Irenge <jbi.octave@gmail.com> wrote:
+On Thu 19 Mar 18:41 PDT 2020, Thara Gopinath wrote:
 
-> Coccinelle suggests replacing printk and WARN_ON with WARN
+> RPMh power control hosts power domains that can be used as
+> thermal warming devices. Register these power domains
+> with the generic power domain warming device thermal framework.
 > 
-> SUGGESTION: printk + WARN_ON can be just WARN.
-> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
 > ---
->  kernel/trace/trace.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 6b11e4e2150c..1fe31272ea73 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -1799,9 +1799,7 @@ static int run_tracer_selftest(struct tracer *type)
->  	/* the test is responsible for resetting too */
->  	tr->current_trace = saved_tracer;
->  	if (ret) {
-> -		printk(KERN_CONT "FAILED!\n");
-> -		/* Add the warning after printing 'FAILED' */
+> v3->v4:
+> 	- Introduce a boolean value is_warming_dev in rpmhpd structure to
+> 	  indicate if a generic power domain can be used as a warming
+> 	  device or not.With this change, device tree no longer has to
+> 	  specify which power domain inside the rpmh power domain provider
+> 	  is a warming device.
+> 	- Move registering of warming devices into a late initcall to
+> 	  ensure that warming devices are registered after thermal
+> 	  framework is initialized.
 
-NACK! Did you not read the above comment. The FAILED goes with another
-print and should NOT be part of the WARN_ON.
+This information is lost when we merge patches, as such I would like
+such design decisions to be described in the commit message itself.
+But...
 
--- Steve
-
-> -		WARN_ON(1);
-> +		WARN(1, "FAILED!\n");
->  		return -1;
+> 
+>  drivers/soc/qcom/rpmhpd.c | 37 ++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 36 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
+> index 7142409a3b77..4e9c0bbb8826 100644
+> --- a/drivers/soc/qcom/rpmhpd.c
+> +++ b/drivers/soc/qcom/rpmhpd.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_opp.h>
+> +#include <linux/pd_warming.h>
+>  #include <soc/qcom/cmd-db.h>
+>  #include <soc/qcom/rpmh.h>
+>  #include <dt-bindings/power/qcom-rpmpd.h>
+> @@ -48,6 +49,7 @@ struct rpmhpd {
+>  	bool		enabled;
+>  	const char	*res_name;
+>  	u32		addr;
+> +	bool		is_warming_dev;
+>  };
+>  
+>  struct rpmhpd_desc {
+> @@ -55,6 +57,8 @@ struct rpmhpd_desc {
+>  	size_t num_pds;
+>  };
+>  
+> +const struct rpmhpd_desc *global_desc;
+> +
+>  static DEFINE_MUTEX(rpmhpd_lock);
+>  
+>  /* SDM845 RPMH powerdomains */
+> @@ -89,6 +93,7 @@ static struct rpmhpd sdm845_mx = {
+>  	.pd = { .name = "mx", },
+>  	.peer = &sdm845_mx_ao,
+>  	.res_name = "mx.lvl",
+> +	.is_warming_dev = true,
+>  };
+>  
+>  static struct rpmhpd sdm845_mx_ao = {
+> @@ -452,7 +457,14 @@ static int rpmhpd_probe(struct platform_device *pdev)
+>  					       &rpmhpds[i]->pd);
 >  	}
->  	/* Only reset on passing, to avoid touching corrupted buffers */
+>  
+> -	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
+> +	ret = of_genpd_add_provider_onecell(pdev->dev.of_node, data);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	global_desc = desc;
+> +
+> +	return 0;
+>  }
+>  
+>  static struct platform_driver rpmhpd_driver = {
+> @@ -469,3 +481,26 @@ static int __init rpmhpd_init(void)
+>  	return platform_driver_register(&rpmhpd_driver);
+>  }
+>  core_initcall(rpmhpd_init);
+> +
+> +static int __init rpmhpd_init_warming_device(void)
+> +{
+> +	size_t num_pds;
+> +	struct rpmhpd **rpmhpds;
+> +	int i;
+> +
+> +	if (!global_desc)
+> +		return -EINVAL;
+> +
+> +	rpmhpds = global_desc->rpmhpds;
+> +	num_pds = global_desc->num_pds;
+> +
+> +	if (!of_find_property(rpmhpds[0]->dev->of_node, "#cooling-cells", NULL))
+> +		return 0;
+> +
+> +	for (i = 0; i < num_pds; i++)
+> +		if (rpmhpds[i]->is_warming_dev)
+> +			of_pd_warming_register(rpmhpds[i]->dev, i);
+> +
+> +	return 0;
+> +}
+> +late_initcall(rpmhpd_init_warming_device);
 
+...why can't this be done in rpmhpd_probe()?
+
+In particular with the recent patches from John Stultz to allow rpmhpd
+to be built as a module I don't think there's any guarantees that
+rpmh_probe() will have succeeded before rpmhpd_init_warming_device()
+executes.
+
+Regards,
+Bjorn
