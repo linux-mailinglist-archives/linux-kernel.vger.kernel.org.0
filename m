@@ -2,270 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FEA9195669
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 12:33:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50951195672
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 12:33:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbgC0LdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 07:33:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:5190 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727354AbgC0LdD (ORCPT
+        id S1727755AbgC0Ld1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 07:33:27 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:42727 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726742AbgC0LdZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 07:33:03 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02RB7DLk015793;
-        Fri, 27 Mar 2020 07:32:56 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ywe7x1fxt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Mar 2020 07:32:56 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02RBVSgV006135;
-        Fri, 27 Mar 2020 11:32:55 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma02dal.us.ibm.com with ESMTP id 2ywaw2x8qm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Mar 2020 11:32:55 +0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02RBWt1K50856434
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Mar 2020 11:32:55 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C538124052;
-        Fri, 27 Mar 2020 11:32:55 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6CE4F124055;
-        Fri, 27 Mar 2020 11:32:54 +0000 (GMT)
-Received: from sofia.ibm.com (unknown [9.85.72.108])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 27 Mar 2020 11:32:54 +0000 (GMT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 317932E3B0A; Fri, 27 Mar 2020 17:02:45 +0530 (IST)
-From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-To:     Nathan Lynch <nathanl@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: [PATCH v4 6/6] pseries/sysfs: Minimise IPI noise while reading [idle_][s]purr
-Date:   Fri, 27 Mar 2020 17:02:40 +0530
-Message-Id: <1585308760-28792-7-git-send-email-ego@linux.vnet.ibm.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1585308760-28792-1-git-send-email-ego@linux.vnet.ibm.com>
-References: <1585308760-28792-1-git-send-email-ego@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-27_03:2020-03-27,2020-03-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 bulkscore=0 phishscore=0 spamscore=0 adultscore=0
- mlxscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2003020000 definitions=main-2003270097
+        Fri, 27 Mar 2020 07:33:25 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.west.internal (Postfix) with ESMTP id 12439784;
+        Fri, 27 Mar 2020 07:33:24 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Fri, 27 Mar 2020 07:33:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        Onhi3WOhu99LoHFUFk71poWljRjNkAHvTTxbtB4I1nE=; b=ndoytVo0TrRRKDgA
+        Y+Otg+vtxSv11h+SWwq0w478ve0tIPFGWJxdypZOYh9E6o+L0ct0IBxY5LXtQEwq
+        YWT22NVpyJgsVDgMSdf1Haj0t8IBJZycaYTREF9suSJmWgdqcJPx1IUWNRtCtxn9
+        4+uiPugRwOPqndmONwEEetjArRqBnQlwFdOqLQISlmG1e2a1511xGnnU31vu0/hI
+        WwBc2+ryptxKc7hRzM4C/grbOQKtnIwk/Qx+k6j5L/r4rVuk/8q1uRiIxQ1RjFZ/
+        SoN9nO+5H5S62NiA9VQ/9ZvZA2N46qddpTZXb5U4ZkVyeNaA/dhcvSV0kc39cAbZ
+        QDMI1w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=Onhi3WOhu99LoHFUFk71poWljRjNkAHvTTxbtB4I1
+        nE=; b=oZLe0eCM/BA9pkehdtqitW5v+7BL08NRu2SeTuxoEHygOlz+YWXrSXJff
+        CXvbH4k5fIXJjsPkrhpgffh42w7ZSn6bXbuRN4d+kfMNlgj66p+E4VHkNq5R41rz
+        8PGEfHK1t018xtSINAqoCwkCNSKQRfGiNmcRwCbTs/9Ey3bLi4C6wEBGyZt8/kA+
+        Als6Gqljwu060rNK/lagpUr2TqM9xyKuicnO1FsJg4rjd/jSmGGcLpT0s+peJrLz
+        cNzL1SWxenwOGDVs2ehEYRJTKA/u1bb/dIvydwSKspBknTg7qldnhTzr2v7zZ2wS
+        mZPYw1j05ZEf7RS7Y0wkZHhxY4Sog==
+X-ME-Sender: <xms:guR9Xlu5-aR4DJgfMQr9MHoZ9yqAUzuTlcohriJapN2TCIGDoV3JKw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudehledgvdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtle
+    drudeitddrvddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:g-R9XiGoIcAZF05Hy62GODynbSaNFYl9-fRjcQYH0A7eFEao0Q6I1Q>
+    <xmx:g-R9XgCrockZbyUjGXwmdASYyVMHKNU8Z21Ho6ZC8eq5ymHVcXwMJQ>
+    <xmx:g-R9XhIZb4yi-fEtGeb9HA3M9fKhnXOvgN5wj0ck6S2yGDylADv2GA>
+    <xmx:g-R9Xm_lE_FhaZPhOTiSJJTQhFdi_O7TJIlM_SCvccbhnt4KdWpcFQ>
+Received: from mickey.themaw.net (unknown [118.209.160.209])
+        by mail.messagingengine.com (Postfix) with ESMTPA id B2AD6306BEE3;
+        Fri, 27 Mar 2020 07:33:20 -0400 (EDT)
+Message-ID: <11a106b080f743964c86e6c0dd3ce32aa5d48b1b.camel@themaw.net>
+Subject: Re: [PATCH 4/4] autofs: add comment about
+ autofs_mountpoint_changed()
+From:   Ian Kent <raven@themaw.net>
+To:     "McIntyre, Vincent (CASS, Marsfield)" <Vincent.Mcintyre@csiro.au>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        autofs mailing list <autofs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Fri, 27 Mar 2020 19:33:17 +0800
+In-Reply-To: <20200327051928.i5xtvskvktbugifa@mayhem.atnf.CSIRO.AU>
+References: <158520019862.5325.7856909810909592388.stgit@mickey.themaw.net>
+         <158520021604.5325.4342529050022426912.stgit@mickey.themaw.net>
+         <20200327051928.i5xtvskvktbugifa@mayhem.atnf.CSIRO.AU>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+On Fri, 2020-03-27 at 05:19 +0000, McIntyre, Vincent (CASS, Marsfield)
+wrote:
+> One nit, below.
 
-Currently purr, spurr, idle_purr, idle_spurr are exposed for every CPU
-via the sysfs interface
-/sys/devices/system/cpu/cpuX/[idle_][s]purr. Each sysfs read currently
-generates an IPI to obtain the desired value from the target CPU X.
-Since these aforementioned sysfs are typically read one after another,
-we end up generating 4 IPIs per CPU in a short duration.
+Yeah, thanks for that, you effort looking at the patches is
+appreciated, I'll fix it.
 
-In order to minimize the IPI noise, this patch caches the values of
-all the four entities whenever one of them is read. If subsequently
-any of these are read within the next 10ms, the cached value is
-returned. With this, we will generate at most one IPI every 10ms for
-every CPU.
-
-Test-results: While reading the four sysfs files back-to-back for a
-given CPU every second for 100 seconds.
-
-Without the patch:
-		 16 [XICS 2 Edge IPI] = 422 times
-		 DBL [Doorbell interrupts] = 13 times
-		 Total : 435 IPIs.
-
-With the patch:
-		  16 [XICS 2 Edge IPI] = 111 times
-		  DBL [Doorbell interrupts] = 17 times
-		  Total : 128 IPIs.
-
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
----
- arch/powerpc/kernel/sysfs.c | 117 ++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 97 insertions(+), 20 deletions(-)
-
-diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
-index 571b325..bd92023 100644
---- a/arch/powerpc/kernel/sysfs.c
-+++ b/arch/powerpc/kernel/sysfs.c
-@@ -586,8 +586,6 @@ void ppc_enable_pmcs(void)
-  * SPRs which are not related to PMU.
-  */
- #ifdef CONFIG_PPC64
--SYSFS_SPRSETUP(purr, SPRN_PURR);
--SYSFS_SPRSETUP(spurr, SPRN_SPURR);
- SYSFS_SPRSETUP(pir, SPRN_PIR);
- SYSFS_SPRSETUP(tscr, SPRN_TSCR);
- 
-@@ -596,8 +594,6 @@ void ppc_enable_pmcs(void)
-   enable write when needed with a separate function.
-   Lets be conservative and default to pseries.
- */
--static DEVICE_ATTR(spurr, 0400, show_spurr, NULL);
--static DEVICE_ATTR(purr, 0400, show_purr, store_purr);
- static DEVICE_ATTR(pir, 0400, show_pir, NULL);
- static DEVICE_ATTR(tscr, 0600, show_tscr, store_tscr);
- #endif /* CONFIG_PPC64 */
-@@ -761,22 +757,110 @@ static void create_svm_file(void)
- }
- #endif /* CONFIG_PPC_SVM */
- 
-+#ifdef CONFIG_PPC64
-+/*
-+ * The duration (in ms) from the last IPI to the target CPU until
-+ * which a cached value of purr, spurr, idle_purr, idle_spurr can be
-+ * reported to the user on a corresponding sysfs file read. Beyond
-+ * this duration, fresh values need to be obtained by sending IPIs to
-+ * the target CPU when the sysfs files are read.
-+ */
-+static unsigned long util_stats_staleness_tolerance_ms = 10;
-+struct util_acct_stats {
-+	u64 latest_purr;
-+	u64 latest_spurr;
-+#ifdef CONFIG_PPC_PSERIES
-+	u64 latest_idle_purr;
-+	u64 latest_idle_spurr;
-+#endif
-+	unsigned long last_update_jiffies;
-+};
-+
-+DEFINE_PER_CPU(struct util_acct_stats, util_acct_stats);
-+
-+static void update_util_acct_stats(void *ptr)
-+{
-+	struct util_acct_stats *stats = ptr;
-+
-+	stats->latest_purr = mfspr(SPRN_PURR);
-+	stats->latest_spurr = mfspr(SPRN_SPURR);
- #ifdef CONFIG_PPC_PSERIES
--static void read_idle_purr(void *val)
-+	stats->latest_idle_purr = read_this_idle_purr();
-+	stats->latest_idle_spurr = read_this_idle_spurr();
-+#endif
-+	stats->last_update_jiffies = jiffies;
-+}
-+
-+struct util_acct_stats *get_util_stats_ptr(int cpu)
-+{
-+	struct util_acct_stats *stats = per_cpu_ptr(&util_acct_stats, cpu);
-+	unsigned long delta_jiffies;
-+
-+	delta_jiffies = jiffies - stats->last_update_jiffies;
-+
-+	/*
-+	 * If we have a recent enough data, reuse that instead of
-+	 * sending an IPI.
-+	 */
-+	if (jiffies_to_msecs(delta_jiffies) < util_stats_staleness_tolerance_ms)
-+		return stats;
-+
-+	smp_call_function_single(cpu, update_util_acct_stats, stats, 1);
-+	return stats;
-+}
-+
-+static ssize_t show_purr(struct device *dev,
-+			 struct device_attribute *attr, char *buf)
- {
--	u64 *ret = val;
-+	struct cpu *cpu = container_of(dev, struct cpu, dev);
-+	struct util_acct_stats *stats;
- 
--	*ret = read_this_idle_purr();
-+	stats = get_util_stats_ptr(cpu->dev.id);
-+	return sprintf(buf, "%llx\n", stats->latest_purr);
- }
- 
-+static void write_purr(void *val)
-+{
-+	mtspr(SPRN_PURR, *(unsigned long *)val);
-+}
-+
-+static ssize_t __used store_purr(struct device *dev,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t count)
-+{
-+	struct cpu *cpu = container_of(dev, struct cpu, dev);
-+	unsigned long val;
-+	int ret = kstrtoul(buf, 16, &val);
-+
-+	if (ret != 0)
-+		return -EINVAL;
-+
-+	smp_call_function_single(cpu->dev.id, write_purr, &val, 1);
-+	return count;
-+}
-+static DEVICE_ATTR(purr, 0400, show_purr, store_purr);
-+
-+static ssize_t show_spurr(struct device *dev,
-+			  struct device_attribute *attr, char *buf)
-+{
-+	struct cpu *cpu = container_of(dev, struct cpu, dev);
-+	struct util_acct_stats *stats;
-+
-+	stats = get_util_stats_ptr(cpu->dev.id);
-+	return sprintf(buf, "%llx\n", stats->latest_spurr);
-+}
-+static DEVICE_ATTR(spurr, 0400, show_spurr, NULL);
-+#endif /* CONFIG_PPC64 */
-+
-+#ifdef CONFIG_PPC_PSERIES
- static ssize_t idle_purr_show(struct device *dev,
- 			      struct device_attribute *attr, char *buf)
- {
- 	struct cpu *cpu = container_of(dev, struct cpu, dev);
--	u64 val;
-+	struct util_acct_stats *stats;
- 
--	smp_call_function_single(cpu->dev.id, read_idle_purr, &val, 1);
--	return sprintf(buf, "%llx\n", val);
-+	stats = get_util_stats_ptr(cpu->dev.id);
-+	return sprintf(buf, "%llx\n", stats->latest_idle_purr);
- }
- static DEVICE_ATTR(idle_purr, 0400, idle_purr_show, NULL);
- 
-@@ -792,21 +876,14 @@ static void remove_idle_purr_file(struct device *s)
- 		device_remove_file(s, &dev_attr_idle_purr);
- }
- 
--static void read_idle_spurr(void *val)
--{
--	u64 *ret = val;
--
--	*ret = read_this_idle_spurr();
--}
--
- static ssize_t idle_spurr_show(struct device *dev,
- 			       struct device_attribute *attr, char *buf)
- {
- 	struct cpu *cpu = container_of(dev, struct cpu, dev);
--	u64 val;
-+	struct util_acct_stats *stats;
- 
--	smp_call_function_single(cpu->dev.id, read_idle_spurr, &val, 1);
--	return sprintf(buf, "%llx\n", val);
-+	stats =  get_util_stats_ptr(cpu->dev.id);
-+	return sprintf(buf, "%llx\n", stats->latest_idle_spurr);
- }
- static DEVICE_ATTR(idle_spurr, 0400, idle_spurr_show, NULL);
- 
--- 
-1.9.4
+> Vince
+> 
+> On Thu, Mar 26, 2020 at 01:23:36PM +0800, Ian Kent wrote:
+> > The function autofs_mountpoint_changed() is unusual, add a comment
+> > about two cases for which it is used.
+> > 
+> > Signed-off-by: Ian Kent <raven@themaw.net>
+> > ---
+> > fs/autofs/root.c |   21 ++++++++++++++++++---
+> > 1 file changed, 18 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/autofs/root.c b/fs/autofs/root.c
+> > index 308cc49aca1d..a972bbaecb46 100644
+> > --- a/fs/autofs/root.c
+> > +++ b/fs/autofs/root.c
+> > @@ -280,9 +280,24 @@ static struct dentry
+> > *autofs_mountpoint_changed(struct path *path)
+> > 	struct dentry *dentry = path->dentry;
+> > 	struct autofs_sb_info *sbi = autofs_sbi(dentry->d_sb);
+> > 
+> > -	/*
+> > -	 * If this is an indirect mount the dentry could have gone away
+> > -	 * as a result of an expire and a new one created.
+> > +	/* If this is an indirect mount the dentry could have gone away
+> > +	 * and a new one created.
+> > +	 *
+> > +	 * This is unusual and I can't remember the case for which it
+> > +	 * was originally added now. But a example of how this can
+> 
+> 'an' example
+> 
+> > +	 * happen is an autofs indirect mount that has the "browse"
+> > +	 * option set and also has the "symlink" option in the autofs
+> > +	 * map entry. In this case the daemon will remove the browse
+> > +	 * directory and create a symlink as the mount (pointing to a
+> > +	 * local path) leaving the struct path stale.
+> > +	 *
+> > +	 * Another not so obvious case is when a mount in an autofs
+> > +	 * indirect mount that uses the "nobrowse" option is being
+> > +	 * expired and the mount has been umounted but the mount point
+> > +	 * directory remains when a stat family system call is made.
+> > +	 * In this case the mount point is removed (by the daemon) and
+> > +	 * a new mount triggered leading to a stale dentry in the
+> > struct
+> > +	 * path of the waiting process.
+> > 	 */
+> > 	if (autofs_type_indirect(sbi->type) && d_unhashed(dentry)) {
+> > 		struct dentry *parent = dentry->d_parent;
+> > 
+> 
+> -- 
 
