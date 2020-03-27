@@ -2,142 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41E90195D9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 19:27:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB947195DAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 19:31:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbgC0S1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 14:27:14 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44394 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbgC0S1O (ORCPT
+        id S1727349AbgC0Sbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 14:31:38 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41878 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbgC0Sbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 14:27:14 -0400
-Received: by mail-ot1-f68.google.com with SMTP id a49so10724641otc.11
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 11:27:14 -0700 (PDT)
+        Fri, 27 Mar 2020 14:31:37 -0400
+Received: by mail-ot1-f66.google.com with SMTP id f52so10760327otf.8
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 11:31:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=mUgPEhhQcjfKASu4ovKrH+viuyNdfG4nZwjDD1Ymszw=;
-        b=r0rNlhVimz1jLFP4LI5uNfJbXruYRsORoEQ0uyvX0mufWuM8CdPFKzLwq4qrJwOWhO
-         uFle0oNx9vT9khT+B+CDzwhYESTBUcmysC9xEDxsq2tcOy43loZE7UtmxLjaazwY4rg8
-         flx79GrN7yot+qtLDdKrdcF3vxg/xUme2bxdqLfQFInktyLoNg3hfId+VXqV+EHpNJGt
-         /gOwF8cuoyzuG18OjUaiz8PH4dM2bgatOd6+7qoAyzxj4QMuic4HYtftQ2/bstRJBI6a
-         zLAQEqh3wmcJzDKeyXqkMCi0YWiYm5h6rbvxCjDIUeNFwWVaRA9ZgsKOOoZtsqdklvOP
-         BxLw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KI2dTrx/jXK38PbXpYOkSOlcGmSiDkUIwHW8vQMK71g=;
+        b=ftU32uvodMmh9TUHBTsggNDykA0JWSoOl8vv6OZMmjFyeH+BjHX3KbXJ64DokTNeW8
+         bJYL7htiWlyya8+yMZKcSWzvd2QzqRSVq90WRpVAWIED6t6G4Vvy7gQfUYwlHv636Qon
+         pJILf2c9ad+yw94jyDC4zn1jVtQfCbD0fA8u3QGgsSr56xs/5hzWg7WxsVfMscprH+9x
+         9lycyrBABLC8NZOHDGFQg2Ys67QcMo26x36JMYW8Tf1jlljbxEUL0GxZ9hL1SlJ2Zf6M
+         YYu2l01UCXdJThX0Sx+viedEeZKn4XfRrk4z/XGsRE5sUu2IdQj9jfosX+ApYrGPqjwJ
+         nSXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=mUgPEhhQcjfKASu4ovKrH+viuyNdfG4nZwjDD1Ymszw=;
-        b=WSYhAT3hkKlhuNDbiiVQ4gSfJbd6z6mHZkwJYyHundOZOcjZsW08K5h4OkH+vRZkOQ
-         cHcoxX/uqD6pZumRoNOu3M7QPLQGrZ3h+KGLhBIW70saZzG5ytGQLPqZh1VcAO2nuIMs
-         /WZ34Wxf4uarBDTeukUDgdXDZ7rBwUIaKVkbcCiiWbKWgsy7h+3bJGjX6XakaQHhIr/e
-         wXPCnV9ImfF3LxaSA772UQO2QbSduMCgeNMUNyWnHStyMhIl0JSK54JB4asbBeoZvulI
-         O6D3kqdpNfUDxZ/rkA4F4ZNGHUwN2xhh3DOLyxfq2MZS9AtuWtwlELSHjy9EOBjUU673
-         5dwA==
-X-Gm-Message-State: ANhLgQ1KBg/+5rQBjEViFSZ6JNEYqeUo+dcHOPA+wbKyJtSWQdI6YXR7
-        0DrUni74o4BU5f2rbKDUTtg=
-X-Google-Smtp-Source: ADFU+vtdpg8Fj9qWpoFZDCMJMpqvoI2Km1QbYSGsd9kgZPB7kySBYzo13mltBcCSQCDysnICymSguQ==
-X-Received: by 2002:a4a:da48:: with SMTP id f8mr632811oou.44.1585333633780;
-        Fri, 27 Mar 2020 11:27:13 -0700 (PDT)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id b2sm2094786oii.20.2020.03.27.11.27.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Mar 2020 11:27:13 -0700 (PDT)
-Date:   Fri, 27 Mar 2020 11:27:08 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Clement Courbet <courbet@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH v1] powerpc: Make setjmp/longjump signature standard
-Message-ID: <20200327182708.GA13308@ubuntu-m2-xlarge-x86>
-References: <20200327100801.161671-1-courbet@google.com>
- <f1b85a2a-1c60-9a12-f547-13ff255f18f0@c-s.fr>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KI2dTrx/jXK38PbXpYOkSOlcGmSiDkUIwHW8vQMK71g=;
+        b=pM8+kMCp+2VKNxNkTAhOxH+5R5UYvqfBMmCZO2ADJDUdUMqHW9GiNquLVRfpHo96qm
+         V1w92XqoxVWMQmoRi8rwUB5NK1wY/Upf8e6WPZEmuVOrO6SH7KMUE9yMOZL9gXiUBhQC
+         sb/VPw9XQWpTNpmTNJa0zEANoFbfTTKt6SFFJjNmabP2VEpkoi6S0ilABbe9yUYtiME6
+         h0lHphnJ8gD7JkJVbl80llkSvn/A+sJ5P0gL3fRaQk8gPCtUvhGhd7GM+oUcWRGTHlip
+         69EOast4OpUg8PraCG1sxOOTqtoLGEHloAOgK6lXd8kkow0Pq6b4WmFS3rVXn2xxR1vI
+         HD9w==
+X-Gm-Message-State: ANhLgQ0IQn7Q62Xkcg5MNEnrJf30qTrr7kiAoiFk/yQ56AQDmHRoHABA
+        k39LPkBeuGAPEKQjqGFtlwutJWEFKG4/oIA7H4ODdA==
+X-Google-Smtp-Source: ADFU+vvTE+yu3Qrc0iwfoYnnfjvt5whAuu9S0p0ocDjhgWmev5ClxaCzU9FH1Cxy+HeexYbpKglLL/8Ushcu3EV/D5M=
+X-Received: by 2002:a9d:42f:: with SMTP id 44mr22412otc.236.1585333895496;
+ Fri, 27 Mar 2020 11:31:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f1b85a2a-1c60-9a12-f547-13ff255f18f0@c-s.fr>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200321210305.28937-1-saravanak@google.com> <CGME20200327102554eucas1p1f848633a39f8e158472506b84877f98c@eucas1p1.samsung.com>
+ <bd8b42d3-a35a-cc8e-0d06-2899416c2996@samsung.com> <20200327152144.GA2996253@kroah.com>
+In-Reply-To: <20200327152144.GA2996253@kroah.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Fri, 27 Mar 2020 11:30:59 -0700
+Message-ID: <CAGETcx-J+TP+0NsOe75Uu3Q8K6=qYja6eDbjNH2764QV53=nMA@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] driver core: Set fw_devlink to "permissive"
+ behavior by default
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 06:45:21PM +0100, Christophe Leroy wrote:
-> Subject line, change longjump to longjmp
-> 
-> Le 27/03/2020 à 11:07, Clement Courbet a écrit :
-> > Declaring setjmp()/longjmp() as taking longs makes the signature
-> > non-standard, and makes clang complain. In the past, this has been
-> > worked around by adding -ffreestanding to the compile flags.
-> > 
-> > The implementation looks like it only ever propagates the value
-> > (in longjmp) or sets it to 1 (in setjmp), and we only call longjmp
-> > with integer parameters.
-> > 
-> > This allows removing -ffreestanding from the compilation flags.
-> > 
-> > Context:
-> > https://lore.kernel.org/patchwork/patch/1214060
-> > https://lore.kernel.org/patchwork/patch/1216174
-> > 
-> > Signed-off-by: Clement Courbet <courbet@google.com>
-> > ---
-> >   arch/powerpc/include/asm/setjmp.h | 6 ++++--
-> >   arch/powerpc/kexec/Makefile       | 3 ---
-> >   2 files changed, 4 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/arch/powerpc/include/asm/setjmp.h b/arch/powerpc/include/asm/setjmp.h
-> > index e9f81bb3f83b..84bb0d140d59 100644
-> > --- a/arch/powerpc/include/asm/setjmp.h
-> > +++ b/arch/powerpc/include/asm/setjmp.h
-> > @@ -7,7 +7,9 @@
-> >   #define JMP_BUF_LEN    23
-> > -extern long setjmp(long *) __attribute__((returns_twice));
-> > -extern void longjmp(long *, long) __attribute__((noreturn));
-> > +typedef long *jmp_buf;
-> 
-> Do we need that new opaque typedef ? Why not just keep long * ?
+On Fri, Mar 27, 2020 at 8:21 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Fri, Mar 27, 2020 at 11:25:48AM +0100, Marek Szyprowski wrote:
+> > Hi,
+> >
+> > On 2020-03-21 22:03, Saravana Kannan wrote:
+> > > Set fw_devlink to "permissive" behavior by default so that device links
+> > > are automatically created (with DL_FLAG_SYNC_STATE_ONLY) by scanning the
+> > > firmware.
+> > >
+> > > This ensures suppliers get their sync_state() calls only after all their
+> > > consumers have probed successfully. Without this, suppliers will get
+> > > their sync_state() calls at late_initcall_sync() even if their consuer
+> > >
+> > > Ideally, we'd want to set fw_devlink to "on" or "rpm" by default. But
+> > > that needs more testing as it's known to break some corner case
+> > > drivers/platforms.
+> > >
+> > > Cc: Rob Herring <robh+dt@kernel.org>
+> > > Cc: Frank Rowand <frowand.list@gmail.com>
+> > > Cc: devicetree@vger.kernel.org
+> > > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> >
+> > This patch has just landed in linux-next 20200326. Sadly it breaks
+> > booting of the Raspberry Pi3b and Pi4 boards, either in 32bit or 64bit
+> > mode. There is no warning nor panic message, just a silent freeze. The
+> > last message shown on the earlycon is:
+> >
+> > [    0.893217] Serial: 8250/16550 driver, 1 ports, IRQ sharing enabled
 
-Yes, otherwise the warning comes back:
+Marek,
 
-In file included from arch/powerpc/kexec/crash.c:25:
-arch/powerpc/include/asm/setjmp.h:10:12: error: declaration of built-in function 'setjmp' requires the declaration of the 'jmp_buf' type, commonly provided in the header <setjmp.h>. [-Werror,-Wincomplete-setjmp-declaration]
-extern int setjmp(long *env) __attribute__((returns_twice));
-           ^
-arch/powerpc/include/asm/setjmp.h:11:13: error: declaration of built-in function 'longjmp' requires the declaration of the 'jmp_buf' type, commonly provided in the header <setjmp.h>. [-Werror,-Wincomplete-setjmp-declaration]
-extern void longjmp(long *env, int val) __attribute__((noreturn));
-            ^
-2 errors generated.
+Any chance you could get me a stack trace for when it's stuck? That'd
+be super helpful and I'd really appreciate it. Is it working fine on
+other variants of Raspberry?
 
-> > +
-> > +extern int setjmp(jmp_buf env) __attribute__((returns_twice));
-> > +extern void longjmp(jmp_buf env, int val) __attribute__((noreturn));
-> >   #endif /* _ASM_POWERPC_SETJMP_H */
-> > diff --git a/arch/powerpc/kexec/Makefile b/arch/powerpc/kexec/Makefile
-> > index 378f6108a414..86380c69f5ce 100644
-> > --- a/arch/powerpc/kexec/Makefile
-> > +++ b/arch/powerpc/kexec/Makefile
-> > @@ -3,9 +3,6 @@
-> >   # Makefile for the linux kernel.
-> >   #
-> > -# Avoid clang warnings around longjmp/setjmp declarations
-> > -CFLAGS_crash.o += -ffreestanding
-> > -
-> >   obj-y				+= core.o crash.o core_$(BITS).o
-> >   obj-$(CONFIG_PPC32)		+= relocate_32.o
-> > 
-> 
-> Christophe
+>
+> I've just reverted this for now.
+>
+
+Greg,
+
+I have no problem with reverting this. If there's any other
+tree/branch you can put this on where it could get more testing and
+reporting of issues, that'd be great.
+
+-Saravana
