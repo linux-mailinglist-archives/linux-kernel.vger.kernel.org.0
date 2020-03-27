@@ -2,178 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9038119566C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 12:33:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3D91195661
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 12:30:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbgC0LdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 07:33:10 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41913 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727677AbgC0LdI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 07:33:08 -0400
-Received: by mail-ed1-f68.google.com with SMTP id v1so10616580edq.8
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 04:33:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+HBDIdNbauUzWWpYygi2C8elHABQwqvtXozjKK9jHI8=;
-        b=g9mIfMvDXBJf9IKXU+ep7HNuIrcACmkCAlfPqrOeebATZu/zp+1kFgDcYwIlwtarnT
-         uGHcciMeUHiOiCf9zVFQo8SK+++7ueQJZcS0YbeFeq49y5a+IbMjk7Bhnm8v5+wj16ow
-         nSVG6bfxiVbsBcMTQ9hRdH+zTtM7PL50EsVYs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+HBDIdNbauUzWWpYygi2C8elHABQwqvtXozjKK9jHI8=;
-        b=nbzu9fSlrRoUS4PdHJVA3IVd/uQ2z+NoQFc215HU5xxEJtH6dC2wULfT/SoxoewOo2
-         s0bGIikpG5nIHDVwsYFnBcmn+TFKqTyhbjmA0qXXSfKJIeAnT1T439EAF0UARt9ErpvA
-         bmRSQG4VBM3AvZFYEBdf7LaA/9XHP/zHPlMQDcvTsBMuIBdMq0Z0bFu59XApndQqysdU
-         lb00UXxDZp7lSVNcQlKw1xnUb02QUKrc8iPTKVF3kLTBcT9e19SEwsKvj9GmxLiRODG6
-         PQDWxkzkOtaPcDyhUGAa7aUaYOBBnBAVyCWXPz2ZcIUns1aEg6kgFsHoQo8sU4ynZfpX
-         nM8Q==
-X-Gm-Message-State: ANhLgQ0CXq0nLvP0rFWBblOw+79NbYpT4Q6uy6mWo/B+m46BZhzQNrUJ
-        9NLFR2yQsVc7P0yauvYIr88W+JUeuUQL4w==
-X-Google-Smtp-Source: ADFU+vumC+r1yhC0U6kcNoWOR9UE8dBCKrg2HproLtVnNU+tXcXZourTcSgoqKUswjZchHiZTsHRiw==
-X-Received: by 2002:a17:906:69d1:: with SMTP id g17mr6053769ejs.32.1585308785803;
-        Fri, 27 Mar 2020 04:33:05 -0700 (PDT)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com. [209.85.221.47])
-        by smtp.gmail.com with ESMTPSA id lu24sm699617ejb.35.2020.03.27.04.33.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Mar 2020 04:33:05 -0700 (PDT)
-Received: by mail-wr1-f47.google.com with SMTP id p10so10990129wrt.6
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 04:33:05 -0700 (PDT)
-X-Received: by 2002:adf:f0c5:: with SMTP id x5mr14731096wro.415.1585308473751;
- Fri, 27 Mar 2020 04:27:53 -0700 (PDT)
+        id S1727173AbgC0Lap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 07:30:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726165AbgC0Lap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 07:30:45 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E53C206F1;
+        Fri, 27 Mar 2020 11:30:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585308644;
+        bh=vba1+ff8GL/oR+HlvxVDHtEKjYfF8hxoXUDYxy50Jkc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iUcEMILWrBSrbYydPksBHKHAgTNmurDKsRwoO5NuElUD/R+/0tno/6tkVcXCaxyZr
+         veUjBr2R1ZIkwJhtbcxuuJjILJD9M7rYrzOMlYThTJc+Iou6qAYMRZdHPjxm+ZoeSx
+         A3PXxCwLfXvJNR/ovfD749uREg4ilPMnziqKW/ls=
+Date:   Fri, 27 Mar 2020 12:30:41 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, kernel-team@android.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1] driver core: Set fw_devlink to "permissive"
+ behavior by default
+Message-ID: <20200327113041.GA1708599@kroah.com>
+References: <20200321210305.28937-1-saravanak@google.com>
+ <CGME20200327102554eucas1p1f848633a39f8e158472506b84877f98c@eucas1p1.samsung.com>
+ <bd8b42d3-a35a-cc8e-0d06-2899416c2996@samsung.com>
 MIME-Version: 1.0
-References: <20200302041213.27662-1-senozhatsky@chromium.org>
- <20200302041213.27662-5-senozhatsky@chromium.org> <6e4fc7f9-0068-92ff-77d7-9c77c047f3db@collabora.com>
- <20200324023909.GA201720@google.com> <1187a3f660b092d8a9d5437445155edfc0744a4f.camel@collabora.com>
- <20200325023248.GA241329@google.com>
-In-Reply-To: <20200325023248.GA241329@google.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Fri, 27 Mar 2020 12:27:41 +0100
-X-Gmail-Original-Message-ID: <CAAFQd5BhDLcKHR1aO2U5Lf6EBhoqtBJbg6LzWDQd7XkDJ1YUaw@mail.gmail.com>
-Message-ID: <CAAFQd5BhDLcKHR1aO2U5Lf6EBhoqtBJbg6LzWDQd7XkDJ1YUaw@mail.gmail.com>
-Subject: Re: [PATCHv4 04/11] videobuf2: add queue memory consistency parameter
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
-        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        nicolas.dufresne@collabora.co.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bd8b42d3-a35a-cc8e-0d06-2899416c2996@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 3:32 AM Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
->
-> On (20/03/24 07:17), Ezequiel Garcia wrote:
-> [..]
-> > > > > +static void set_queue_consistency(struct vb2_queue *q, bool consistent_mem)
-> > > > > +{
-> > > > > +       if (!vb2_queue_allows_cache_hints(q))
-> > > > > +               return;
-> > > > > +
-> > > > > +       if (consistent_mem)
-> > > > > +               q->dma_attrs &= ~DMA_ATTR_NON_CONSISTENT;
-> > > > > +       else
-> > > > > +               q->dma_attrs |= DMA_ATTR_NON_CONSISTENT;
-> > > > > +}
-> > > > > +
-> > > > >   int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
-> > > > > -               unsigned int *count)
-> > > > > +               bool consistent_mem, unsigned int *count)
-> > > > You extended the vb2_core_reqbufs accepting a new boolean that
-> > > > is decided according to the setting of the V4L2_FLAG_MEMORY_NON_CONSISTENT
-> > > > but in the future some other flags might be added, and so I think it
-> > > > is better to replace the boolean with a u32 consisting of all the flags.
-> > >
-> > > Don't have any objections. Can change the `bool' to `u32'.
-> > >
+On Fri, Mar 27, 2020 at 11:25:48AM +0100, Marek Szyprowski wrote:
+> Hi,
+> 
+> On 2020-03-21 22:03, Saravana Kannan wrote:
+> > Set fw_devlink to "permissive" behavior by default so that device links
+> > are automatically created (with DL_FLAG_SYNC_STATE_ONLY) by scanning the
+> > firmware.
 > >
-> > or maybe an enum instead? That would help get a cleaner
-> > interface.
->
-> Hmm, interesting.
->
-> The flags in question can be from different, unrelated groups
-> (types), controlling various parts of the stack. Not necessarily
-> all of them are memory_consistency related. We can, for instance,
-> pass some additional flags to underlying memory allocators (contig,
-> sg), etc.
->
-> E.g.
->
->         enum MEMORY_ATTR {
->                 MEM_NON_CONSISTENT,
->                 ...
->         };
->
->         enum VMALLOC_ALLOCATOR_ATTR {
->                 DO_A_BARREL_ROLL,
->                 ...
->         };
->
->         enum DMA_SG_ALLOCATOR_ATTR {
->                 WRITEBACK_TO_TAPE_DEVICE,
->                 ...
->         };
->
->         enum DMA_CONTIG_ALLOCATOR_ATTR {
->                 PREFER_HTTPS,
->                 ...
->         };
->
-> and so on. We maybe can keep all of those in one enum (umm, what should
-> be the name?), and then either make sure that all of them are proper powers
-> of two
->
->         enum AUX_FLAGS {
->                 MEM_NON_CONSISTENT              = (1 << 0),
->                 DO_A_BARREL_ROLL                = (1 << 1),
->                 WRITEBACK_TO_TAPE_DEVICE        = (1 << 2),
->                 PREFER_HTTPS                    = (1 << 3),
->         };
->
-> or
->         enum AUX_FLAGS {
->                 MEM_NON_CONSISTENT              = 0,
->                 DO_A_BARREL_ROLL,
->                 WRITEBACK_TO_TAPE_DEVICE,
->                 PREFER_HTTPS,
->         };
->
-> and make sure that those are not flags, but bits.
-> IOW, if (flags & BIT(MEM_NON_CONSISTENT)).
->
->
-> What do others think?
+> > This ensures suppliers get their sync_state() calls only after all their
+> > consumers have probed successfully. Without this, suppliers will get
+> > their sync_state() calls at late_initcall_sync() even if their consuer
+> >
+> > Ideally, we'd want to set fw_devlink to "on" or "rpm" by default. But
+> > that needs more testing as it's known to break some corner case
+> > drivers/platforms.
+> >
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Frank Rowand <frowand.list@gmail.com>
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> 
+> This patch has just landed in linux-next 20200326. Sadly it breaks 
+> booting of the Raspberry Pi3b and Pi4 boards, either in 32bit or 64bit 
+> mode. There is no warning nor panic message, just a silent freeze. The 
+> last message shown on the earlycon is:
+> 
+> [    0.893217] Serial: 8250/16550 driver, 1 ports, IRQ sharing enabled
 
-My feeling is that there it's a bit of an abuse of the language
-construct. Enum is expected to be an enumeration type, where the value
-is always one and only one of the defined values at the same time.
-Making a bitwise OR of several values makes the resulting value
-outside of the enum specification.
+Ugh, not good.
 
-AFAICT, the typical approach in the kernel is to just have a block of
-#define statements to define the flags and have the flag names
-prefixed with some consistent prefix, e.g. VB2_QUEUE_FLAG_. The flags
-itself would be defined using BIT() so they can be used directly in
-the bitwise arithmetics.
+Saravana, mind if I revert this?
 
-Best regards,
-Tomasz
+thanks,
+
+greg k-h
