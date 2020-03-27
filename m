@@ -2,136 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC86E195641
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 12:24:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1FB3195659
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 12:29:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbgC0LYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 07:24:34 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53385 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbgC0LYe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 07:24:34 -0400
-Received: by mail-wm1-f67.google.com with SMTP id b12so11026220wmj.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 04:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=NEKo1+Ks52CKrgqp13o2semhHLME73XljK+CspwLPrY=;
-        b=Jtw4HczpGtExse/Jed/9i2XrjLsmX3A8SK85csRKWjvyV7FYnyDWaK8osGBUNIh4IT
-         SXyF2Inx9f76wiysMcdpRB24m3bU94HFjU9zXmvZsK+rxp96pezRZeLD4AKgMLcX7I6t
-         AE0n5YdCM9yiRHauKSO14tA1SwGtP39L7lbsBOvqC2Tl5xCDaXZBKDcBwmNEd9k+gA0a
-         K6Fxy5inzLVO95/7z3fX98ZxfcOv5+WuZo3Bl8ZPbXBlA5aswDEs0VuqqwPmkMCfayvV
-         6j4uOqJZcjd38vtVnCaXo6geSVe/5BMRbzNACDHgTCBtqfua9IxT+Yq/ksnegy9Xw7X+
-         A8eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=NEKo1+Ks52CKrgqp13o2semhHLME73XljK+CspwLPrY=;
-        b=ihrLp87fnWKmHfkGQy9vQ3Z+luy27VceZht1C2Z6EGYh/2ff/X5XguGGNZ7IXvcd4i
-         1rciMEQy59XfZM1TkTnb19VYals47hEtYq19iEhBaC2XlXIhfO8DTXHpjsD4nXrMmqBu
-         h8zRr6Bq4ozwZkPdo0ohgkcwT/8x71OpV47sac3eM+wLbLqAtNfpTvjqzqko6bpNz9Vx
-         YSXYlLlfX6OiyQHt7uRkxC1U8QVNqxLPAXmKQxbMix7P+eGVr1+Q3XTtPYRHGa+5OgFe
-         /CpaL6eT2yT2obwi8Ne/Jo7LIk2KYkv7K2xSgFEPbBFkEswsb21BZnJmu7sUYU6xeFiL
-         6K9g==
-X-Gm-Message-State: ANhLgQ08VpTCNs7mun+ZSHc/Q+AHae2SnH6yj/B3mJW51Cx/VEvPmh1h
-        VfgLw36WIZNqnKu6jeqPIIHmvA==
-X-Google-Smtp-Source: ADFU+vukihyFjfwUuPh25SnSXHqq3y8g/HlHxFrHniP9gGajGvwecjChMSKb0wlOCy8D3fuAaLaRiA==
-X-Received: by 2002:a7b:c408:: with SMTP id k8mr4876391wmi.11.1585308272376;
-        Fri, 27 Mar 2020 04:24:32 -0700 (PDT)
-Received: from dell ([95.149.164.95])
-        by smtp.gmail.com with ESMTPSA id q17sm8213043wrp.11.2020.03.27.04.24.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 04:24:31 -0700 (PDT)
-Date:   Fri, 27 Mar 2020 11:25:23 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     saravanan sekar <sravanhome@gmail.com>
-Cc:     robh+dt@kernel.org, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] mfd: mp2629: Add support for mps battery charger
-Message-ID: <20200327112523.GC3383@dell>
-References: <20200322224626.13160-1-sravanhome@gmail.com>
- <20200322224626.13160-3-sravanhome@gmail.com>
- <20200327075541.GF603801@dell>
- <a6098b6a-2b2f-5279-f9fc-85201b9aabde@gmail.com>
- <20200327102221.GA3383@dell>
- <a679aba5-4cfb-1b6c-8cb0-dab3a644f3e7@gmail.com>
+        id S1727242AbgC0L3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 07:29:02 -0400
+Received: from mga07.intel.com ([134.134.136.100]:42872 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726165AbgC0L3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 07:29:01 -0400
+IronPort-SDR: qmRQtPUyEqOI3dZ0YK37c52nazaj6MqnxJn68ovJVmOS9grsNHqWkW5FjysdrNYSOL3pnOIHx5
+ F5IOPvIGeBYA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 04:29:00 -0700
+IronPort-SDR: TplRB2qtu8oKUu9udsKs3UpndgrkxW74fpbT7cF7If3oZvrQSJN5Eibvf6GDn9jmdtzJskRy33
+ sd2jMyaKWhLQ==
+X-IronPort-AV: E=Sophos;i="5.72,312,1580803200"; 
+   d="scan'208";a="421070855"
+Received: from defretin-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.56.231])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 04:28:57 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     peter@bikeshed.quignogs.org.uk,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-doc@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Lister <peter@bikeshed.quignogs.org.uk>
+Subject: Re: [PATCH v3 0/1] Compactly make code examples into literal blocks
+In-Reply-To: <20200326195156.11858-1-peter@bikeshed.quignogs.org.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200326192947.GM22483@bombadil.infradead.org> <20200326195156.11858-1-peter@bikeshed.quignogs.org.uk>
+Date:   Fri, 27 Mar 2020 13:28:54 +0200
+Message-ID: <87imiqghop.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a679aba5-4cfb-1b6c-8cb0-dab3a644f3e7@gmail.com>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Mar 2020, saravanan sekar wrote:
-> On 27/03/20 11:22 am, Lee Jones wrote:
-> > Saravanan, Jonathan,
-> > 
-> > On Fri, 27 Mar 2020, saravanan sekar wrote:
-> > > On 27/03/20 8:55 am, Lee Jones wrote:
-> > > > On Sun, 22 Mar 2020, Saravanan Sekar wrote:
-> > > > 
-> > > > > mp2629 is a highly-integrated switching-mode battery charge management
-> > > > > device for single-cell Li-ion or Li-polymer battery.
-> > > > > 
-> > > > > Add MFD core enables chip access for ADC driver for battery readings,
-> > > > > and a power supply battery-charger driver
-> > > > > 
-> > > > > Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> > > > > ---
-> > > > >    drivers/mfd/Kconfig        |   9 +++
-> > > > >    drivers/mfd/Makefile       |   2 +
-> > > > >    drivers/mfd/mp2629.c       | 116 +++++++++++++++++++++++++++++++++++++
-> > > > >    include/linux/mfd/mp2629.h |  22 +++++++
-> > > > >    4 files changed, 149 insertions(+)
-> > > > >    create mode 100644 drivers/mfd/mp2629.c
-> > > > >    create mode 100644 include/linux/mfd/mp2629.h
+On Thu, 26 Mar 2020, peter@bikeshed.quignogs.org.uk wrote:
+> From: Peter Lister <peter@bikeshed.quignogs.org.uk>
+>
+> [ A couple of typos corrected. Thanks, Matthew ]
+>
+> In a previous patch, I fixed a couple of doc build warnings due to a
+> section heading "Example:" which didn't have the intended effect of
+> inserting a heading and literal quoting the following code snippet. I
+> added an explicit double colon to fix warnings and produce nice ReST.
+>
+> Jon suggested that I could have used a minimal form "Example::".
+> Unfortunately not - kernel-doc munges the output so that the formatted
+> output ends up as a stray colon and no literal block.
+>
+> Looking around in the source tree, it seems that parameter definitions
+> can be more complex than the original authors of kernel-doc allowed
+> for. Return values often need lists and examples often should be
+> literal blocks. Many comments in the source are "ASCII formatted" but
+> kernel-doc can make a mess of them and generate doc build warnings
+> along the way.
+>
+> It seems useful to support some terse idioms which serve as compact
+> source annotation and also generate well formed ReST.
+>
+> Here is a first try to let a heading directly introduce a literal
+> block - the "Example::" form for code snippets and an update to
+> platform.c to use it, just as Jon suggested.
 
-[...]
+IMHO the real problem is kernel-doc doing too much preprocessing on the
+input, preventing us from doing what would be the sensible thing in
+rst. The more we try to fix the problem by adding more kernel-doc
+processing, the further we dig ourselves into this hole.
 
-> > > > > +#ifndef __MP2629_H__
-> > > > > +#define __MP2629_H__
-> > > > > +
-> > > > > +#include <linux/types.h>
-> > > > > +
-> > > > > +struct device;
-> > > > > +struct regmap;
-> > > > Why not just add the includes?
-> > > Some more shared enum added in ADC driver
-> > Sorry?
-> 
-> I misunderstood your previous question that you are asking to remove this
-> mp2629.h file
-> 
-> "No user here. (Hint: Use forward declaration of struct device instead)" -
-> review comments on V1 from Andy Shevchenko.
-> So remove the includes
+If kernel-doc didn't have its own notion of section headers, such as
+"example:", we wouldn't have this problem to begin with. We could just
+use the usual rst construct; "example::" followed by an indented block.
 
-So Andy has reviewed, but you still don't have him on Cc?
+I'm not going to stand in the way of the patch, but I'm telling you,
+this is going to get harder, not easier, on this path.
 
-How are we meant to continue the discussion?
 
-As a general rule I'm not a fan of forward declarations.
+BR,
+Jani.
 
-I think they should be avoided if at all possible.
-
-> > > > > +struct mp2629_info {
-> > > > > +	struct device *dev;
-> > > > > +	struct regmap *regmap;
-> > > > > +};
-> > > > > +
-> > > > > +#endif
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Jani Nikula, Intel Open Source Graphics Center
