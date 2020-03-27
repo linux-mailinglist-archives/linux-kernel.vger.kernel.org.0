@@ -2,149 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B798195CDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:32:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2695A195CBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:30:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbgC0Rbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 13:31:46 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:38834 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727593AbgC0Rbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 13:31:43 -0400
-Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 219CE20AB8;
-        Fri, 27 Mar 2020 17:24:02 +0000 (UTC)
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v10 9/9] proc: use named enums for better readability
-Date:   Fri, 27 Mar 2020 18:23:31 +0100
-Message-Id: <20200327172331.418878-10-gladkov.alexey@gmail.com>
-X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200327172331.418878-1-gladkov.alexey@gmail.com>
-References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
+        id S1727354AbgC0Raa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 13:30:30 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:17902 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727125AbgC0Raa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 13:30:30 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e7e38060002>; Fri, 27 Mar 2020 10:29:42 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 27 Mar 2020 10:30:29 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 27 Mar 2020 10:30:29 -0700
+Received: from [10.2.174.211] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 27 Mar
+ 2020 17:30:28 +0000
+From:   Zi Yan <ziy@nvidia.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH 2/7] khugepaged: Do not stop collapse if less than half
+ PTEs are referenced
+Date:   Fri, 27 Mar 2020 13:30:26 -0400
+X-Mailer: MailMate (1.13.1r5680)
+Message-ID: <82E3CA05-2AE5-4FB4-860E-F334A99E69FD@nvidia.com>
+In-Reply-To: <20200327170601.18563-3-kirill.shutemov@linux.intel.com>
+References: <20200327170601.18563-1-kirill.shutemov@linux.intel.com>
+ <20200327170601.18563-3-kirill.shutemov@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Fri, 27 Mar 2020 17:24:02 +0000 (UTC)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: multipart/signed;
+        boundary="=_MailMate_B74C0D56-6018-4515-9BF0-1EF7BAD28B3B_=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1585330182; bh=vBdCIoLeE0Y5Jf2pHeWx2jEGBq4SgdB78rYKGEE2XvY=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:X-Mailer:Message-ID:
+         In-Reply-To:References:MIME-Version:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type;
+        b=X4Adxfb9ZsdOWD+ku69YVAVAFrl5K9mzefdbiOrygqFB+xEDlN4vj9/0l62vFp7/2
+         cf3mhY4mtW56XUnucc7T1S3gTVEAbFQ5s+0saWaguqd4kuF23EX+XTvagmSNGw1dtj
+         zn3FG6DRYBOOEylqM5+G6tcR2cFAeEnyZqXOIIkIEsT4Wj+koJTdKrvMx4ZTmsJ+Ie
+         PpaOH+O30xCTKoDk6z5VFqfcz2mm7mLoiYQAibFpiTUN619jkuaEMjS/fJfSmDxn37
+         lf50dtyQrzLttSdDgC+4hSyj4rAugo47PetOlQM39jWLRK8QmEkKJVALifryOmHpQZ
+         DIN3M/x8OtB9Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
----
- fs/proc/base.c               | 2 +-
- fs/proc/inode.c              | 2 +-
- fs/proc/root.c               | 4 ++--
- include/linux/proc_fs.h      | 6 +++---
- include/uapi/linux/proc_fs.h | 2 +-
- 5 files changed, 8 insertions(+), 8 deletions(-)
+--=_MailMate_B74C0D56-6018-4515-9BF0-1EF7BAD28B3B_=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 1ebe9eba48ea..2f2f7b36c947 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -699,7 +699,7 @@ int proc_setattr(struct dentry *dentry, struct iattr *attr)
-  */
- static bool has_pid_permissions(struct proc_fs_info *fs_info,
- 				 struct task_struct *task,
--				 int hide_pid_min)
-+				 enum proc_hidepid hide_pid_min)
- {
- 	/*
- 	 * If 'hidpid' mount option is set force a ptrace check,
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index f01fb4bed75c..77128bc36a05 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -165,7 +165,7 @@ void proc_invalidate_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock
- 		deactivate_super(old_sb);
- }
- 
--static inline const char *hidepid2str(int v)
-+static inline const char *hidepid2str(enum proc_hidepid v)
- {
- 	switch (v) {
- 		case HIDEPID_OFF: return "off";
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index ba782d6e6197..00f75d8ef32f 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -32,9 +32,9 @@
- struct proc_fs_context {
- 	struct proc_fs_info	*fs_info;
- 	unsigned int		mask;
--	int			hidepid;
-+	enum proc_hidepid	hidepid;
- 	int			gid;
--	int			pidonly;
-+	enum proc_pidonly	pidonly;
- };
- 
- enum proc_param {
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index d259817ec913..b9f7ecd7f61f 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -29,7 +29,7 @@ struct proc_ops {
- };
- 
- /* definitions for proc mount option pidonly */
--enum {
-+enum proc_pidonly {
- 	PROC_PIDONLY_OFF = 0,
- 	PROC_PIDONLY_ON  = 1,
- };
-@@ -39,8 +39,8 @@ struct proc_fs_info {
- 	struct dentry *proc_self;        /* For /proc/self */
- 	struct dentry *proc_thread_self; /* For /proc/thread-self */
- 	kgid_t pid_gid;
--	int hide_pid;
--	int pidonly;
-+	enum proc_hidepid hide_pid;
-+	enum proc_pidonly pidonly;
- };
- 
- static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
-diff --git a/include/uapi/linux/proc_fs.h b/include/uapi/linux/proc_fs.h
-index dc6d717aa6ec..f5fe0e8dcfe4 100644
---- a/include/uapi/linux/proc_fs.h
-+++ b/include/uapi/linux/proc_fs.h
-@@ -3,7 +3,7 @@
- #define _UAPI_PROC_FS_H
- 
- /* definitions for hide_pid field */
--enum {
-+enum proc_hidepid {
- 	HIDEPID_OFF            = 0,
- 	HIDEPID_NO_ACCESS      = 1,
- 	HIDEPID_INVISIBLE      = 2,
--- 
-2.25.2
+On 27 Mar 2020, at 13:05, Kirill A. Shutemov wrote:
 
+> __collapse_huge_page_swapin() check number of referenced PTE to decide
+> if the memory range is hot enough to justify swapin.
+>
+> The problem is that it stops collapse altogether if there's not enough
+> refereced pages, not only swappingin.
+>
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Fixes: 0db501f7a34c ("mm, thp: convert from optimistic swapin collapsin=
+g to conservative")
+> ---
+>  mm/khugepaged.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 99bab7e4d05b..14d7afc90786 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -905,7 +905,8 @@ static bool __collapse_huge_page_swapin(struct mm_s=
+truct *mm,
+>  	/* we only decide to swapin, if there is enough young ptes */
+>  	if (referenced < HPAGE_PMD_NR/2) {
+>  		trace_mm_collapse_huge_page_swapin(mm, swapped_in, referenced, 0);
+> -		return false;
+> +		/* Do not block collapse, only skip swapping in */
+> +		return true;
+>  	}
+>  	vmf.pte =3D pte_offset_map(pmd, address);
+>  	for (; vmf.address < address + HPAGE_PMD_NR*PAGE_SIZE;
+> -- =
+
+> 2.26.0
+
+Make sense.
+
+Reviewed-by: Zi Yan <ziy@nvidia.com>
+
+=E2=80=94
+Best Regards,
+Yan Zi
+
+--=_MailMate_B74C0D56-6018-4515-9BF0-1EF7BAD28B3B_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAl5+ODIPHHppeUBudmlk
+aWEuY29tAAoJEJ2yUfNrYfqK9dQP/36AU1eLyLdcEEc6sSwHwvUDPYoUaxIcFuSM
++Gwc8frVB9juhqzRQkor/SgZGAL0otYiXx49kJSGk0SwWnugZ38Y7vs2XHB9+b86
+lUP3CNrMpqbKu3h3QQ0oKR34jQKZME8bLXmSKpGDRJHcHTgVndBrNmzlfqDwR79+
+tG68aNQTLpCatQN242AE7pF9zzca+t4FRJCCoBw257vcFe+YhXOIcLpPPvfshTq0
+663f1FtjTyjQ3GzwOJx0yz+X9tE5hYmSrf4OsntedPyNWJI7y2SY9ZF/xAjN5wXl
+tOBzeJOyoZ168nJGGrEDWXs1K2GBedFqc+jriMXFk0LGVXHmYaMlcOMw3egjmLec
+4wlOEMM5DHecGAINlMb5p+Ztg9xHAWtAgXDkWu6Fhk2xhtUT+aqDJ4VXqJlfCXdI
+19rjiZWJxLYsb72bLYFwuGX41EvKiJFMwIm6sojB57UBC4+K0F8TjucxbiEbVXSv
+0mdQM8wv29SpbxGKcEog4e8c0mWT596D97tOdkwvI283nAPLPtNKRGic5SXopBZK
+gEe9nHruK+DhRoSZ5ZTZIeNjyRigo4G7N5mRS9L+M7Wveg4kiWO3FyYAh66ER5Ee
+nwTnJOeY0iHQu4dhUSZnVgD54u2EU2UZwKyPc6RJ6ZtCuLUGpIbO9xCp8rkECR+Q
+Vzn6qF9t
+=VYnS
+-----END PGP SIGNATURE-----
+
+--=_MailMate_B74C0D56-6018-4515-9BF0-1EF7BAD28B3B_=--
