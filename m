@@ -2,171 +2,250 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2DCD195A69
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 16:58:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8483D195A50
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 16:52:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbgC0P62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 11:58:28 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:26410 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726515AbgC0P61 (ORCPT
+        id S1727636AbgC0Pwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 11:52:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49534 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbgC0Pwu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 11:58:27 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02RFXFct015771;
-        Fri, 27 Mar 2020 11:57:51 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ywf0sb78q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Mar 2020 11:57:50 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 02RFveYe030502;
-        Fri, 27 Mar 2020 11:57:40 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ywf0sb5um-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Mar 2020 11:57:40 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02RFk6A8001596;
-        Fri, 27 Mar 2020 15:52:12 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma02wdc.us.ibm.com with ESMTP id 2ywawkkbrq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Mar 2020 15:52:12 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02RFqBPl49742292
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Mar 2020 15:52:11 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8659CAC05E;
-        Fri, 27 Mar 2020 15:52:11 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BC13EAC05F;
-        Fri, 27 Mar 2020 15:52:04 +0000 (GMT)
-Received: from LeoBras (unknown [9.85.230.141])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 27 Mar 2020 15:52:03 +0000 (GMT)
-Message-ID: <56965ad674071181548d5ed4fb7c8fa08061b591.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/1] ppc/crash: Skip spinlocks during crash
-From:   Leonardo Bras <leonardo@linux.ibm.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Enrico Weigelt <info@metux.net>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Date:   Fri, 27 Mar 2020 12:51:55 -0300
-In-Reply-To: <af505ef0-e0df-e0aa-bb83-3ed99841f151@c-s.fr>
-References: <20200326222836.501404-1-leonardo@linux.ibm.com>
-         <af505ef0-e0df-e0aa-bb83-3ed99841f151@c-s.fr>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-N8KxtCe2h0PkgV316JGh"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Fri, 27 Mar 2020 11:52:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=ACvsZf1sb/ZPbsmrhFL30kdimae4anZCMRz8z9bhNVQ=; b=iJ+kBl4DZBZqxM7kQw5hFMF4iw
+        xTmDVObuAgEyG7SWN8Y/GFOZvqpQ0IluClbjKRit9dK4ajQtgned6I9Pos0tdhk32SdwSc+R4jKa0
+        jjlbGsos7djdIp/txBVC14GWQuCy607sgymWwVjcRwUi638NVD1YtQRul2YiDrusnci1+cyTR/CcI
+        jLgWzJphvFMf3HVVNAfg1VnBueFL2yaSjxZCDWNmUUw95OvflJTZjuBECzoyoiDE2Hr8G+QTusTR3
+        T/+kvvfmZgw+KyanAI/MyTEQcyIuek9/0wifq8fjM0x2sWhMQuUe/+h8BXbg46DmDHrQnEIt5BH1c
+        LJaDCyYw==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jHrHs-0004L8-C6; Fri, 27 Mar 2020 15:52:48 +0000
+Subject: Re: linux-next: Tree for Mar 27
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        richard -rw- weinberger <richard.weinberger@gmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+References: <20200327190740.7385d4ff@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <425b6d83-53da-15bb-8e7a-158f7c44ffad@infradead.org>
+Date:   Fri, 27 Mar 2020 08:52:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-27_05:2020-03-27,2020-03-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999 spamscore=0
- clxscore=1015 lowpriorityscore=0 adultscore=0 suspectscore=2 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003270141
+In-Reply-To: <20200327190740.7385d4ff@canb.auug.org.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 3/27/20 1:07 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20200326:
+> 
 
---=-N8KxtCe2h0PkgV316JGh
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hello Christophe, thanks for the feedback.
-
-I noticed an error in this patch and sent a v2, that can be seen here:
-http://patchwork.ozlabs.org/patch/1262468/
-
-Comments inline::
-
-On Fri, 2020-03-27 at 07:50 +0100, Christophe Leroy wrote:
-> > @@ -142,6 +144,8 @@ static inline void arch_spin_lock(arch_spinlock_t *=
-lock)
-> >   		if (likely(__arch_spin_trylock(lock) =3D=3D 0))
-> >   			break;
-> >   		do {
-> > +			if (unlikely(crash_skip_spinlock))
-> > +				return;
-
-Complete function for reference:
-static inline void arch_spin_lock(arch_spinlock_t *lock)
-{
-	while (1) {
-		if (likely(__arch_spin_trylock(lock) =3D=3D 0))
-			break;
-		do {
-			if (unlikely(crash_skip_spinlock))
-				return;
-			HMT_low();
-			if (is_shared_processor())
-				splpar_spin_yield(lock);
-		} while (unlikely(lock->slock !=3D 0));
-		HMT_medium();
-	}
-}
-
-> You are adding a test that reads a global var in the middle of a so hot=
-=20
-> path ? That must kill performance.=20
-
-I thought it would, in worst case scenario, increase a maximum delay of
-an arch_spin_lock() call 1 spin cycle. Here is what I thought:
-
-- If the lock is already free, it would change nothing,=20
-- Otherwise, the lock will wait.
-- Waiting cycle just got bigger.
-- Worst case scenario: running one more cycle, given lock->slock can
-turn to 0 just after checking.
-
-Could you please point where I failed to see the performance penalty?
-(I need to get better at this :) )
+on i386, UML defconfig build fails with: (mostly get_user() variants)
 
 
-> Can we do different ?
+  CC      kernel/signal.o
+In file included from ../include/linux/kernel.h:15:0,
+                 from ../include/asm-generic/bug.h:19,
+                 from ./arch/um/include/generated/asm/bug.h:1,
+                 from ../include/linux/bug.h:5,
+                 from ../include/linux/mmdebug.h:5,
+                 from ../include/linux/gfp.h:5,
+                 from ../include/linux/slab.h:15,
+                 from ../kernel/signal.c:14:
+../kernel/signal.c: In function 'print_fatal_signal':
+../kernel/signal.c:1250:33: error: 'struct pt_regs' has no member named 'ip'
+  pr_info("code at %08lx: ", regs->ip);
+                                 ^
+../include/linux/printk.h:310:34: note: in definition of macro 'pr_info'
+  printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+                                  ^~~~~~~~~~~
+In file included from ../arch/um/include/asm/uaccess.h:39:0,
+                 from ../include/linux/uaccess.h:11,
+                 from ../include/linux/sched/task.h:11,
+                 from ../kernel/signal.c:20:
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:196:28: note: in definition of macro 'get_user'
+  const void __user *__p = (ptr);    \
+                            ^~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:93:66: note: in definition of macro 'access_ok'
+ #define access_ok(addr, size) __access_ok((unsigned long)(addr),(size))
+                                                                  ^~~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:158:19: note: in definition of macro '__get_user'
+  switch (sizeof(*(ptr))) {    \
+                   ^~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:209:47: note: in definition of macro '__get_user_fn'
+ #define __get_user_fn(sz, u, k) __get_user_fn(sz, u, k)
+                                               ^~
+../include/asm-generic/uaccess.h:199:3: note: in expansion of macro '__get_user'
+   __get_user((x), (__typeof__(*(ptr)) __user *)__p) :\
+   ^~~~~~~~~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:209:51: note: in definition of macro '__get_user_fn'
+ #define __get_user_fn(sz, u, k) __get_user_fn(sz, u, k)
+                                                   ^
+../include/asm-generic/uaccess.h:199:3: note: in expansion of macro '__get_user'
+   __get_user((x), (__typeof__(*(ptr)) __user *)__p) :\
+   ^~~~~~~~~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:163:32: note: in definition of macro '__get_user'
+   (x) = *(__force __typeof__(*(ptr)) *) &__x; \
+                                ^~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:209:47: note: in definition of macro '__get_user_fn'
+ #define __get_user_fn(sz, u, k) __get_user_fn(sz, u, k)
+                                               ^~
+../include/asm-generic/uaccess.h:199:3: note: in expansion of macro '__get_user'
+   __get_user((x), (__typeof__(*(ptr)) __user *)__p) :\
+   ^~~~~~~~~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:209:51: note: in definition of macro '__get_user_fn'
+ #define __get_user_fn(sz, u, k) __get_user_fn(sz, u, k)
+                                                   ^
+../include/asm-generic/uaccess.h:199:3: note: in expansion of macro '__get_user'
+   __get_user((x), (__typeof__(*(ptr)) __user *)__p) :\
+   ^~~~~~~~~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:170:32: note: in definition of macro '__get_user'
+   (x) = *(__force __typeof__(*(ptr)) *) &__x; \
+                                ^~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:209:47: note: in definition of macro '__get_user_fn'
+ #define __get_user_fn(sz, u, k) __get_user_fn(sz, u, k)
+                                               ^~
+../include/asm-generic/uaccess.h:199:3: note: in expansion of macro '__get_user'
+   __get_user((x), (__typeof__(*(ptr)) __user *)__p) :\
+   ^~~~~~~~~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:209:51: note: in definition of macro '__get_user_fn'
+ #define __get_user_fn(sz, u, k) __get_user_fn(sz, u, k)
+                                                   ^
+../include/asm-generic/uaccess.h:199:3: note: in expansion of macro '__get_user'
+   __get_user((x), (__typeof__(*(ptr)) __user *)__p) :\
+   ^~~~~~~~~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:177:32: note: in definition of macro '__get_user'
+   (x) = *(__force __typeof__(*(ptr)) *) &__x; \
+                                ^~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:209:47: note: in definition of macro '__get_user_fn'
+ #define __get_user_fn(sz, u, k) __get_user_fn(sz, u, k)
+                                               ^~
+../include/asm-generic/uaccess.h:199:3: note: in expansion of macro '__get_user'
+   __get_user((x), (__typeof__(*(ptr)) __user *)__p) :\
+   ^~~~~~~~~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:209:51: note: in definition of macro '__get_user_fn'
+ #define __get_user_fn(sz, u, k) __get_user_fn(sz, u, k)
+                                                   ^
+../include/asm-generic/uaccess.h:199:3: note: in expansion of macro '__get_user'
+   __get_user((x), (__typeof__(*(ptr)) __user *)__p) :\
+   ^~~~~~~~~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:184:32: note: in definition of macro '__get_user'
+   (x) = *(__force __typeof__(*(ptr)) *) &__x; \
+                                ^~~
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
+../kernel/signal.c:1256:45: error: 'struct pt_regs' has no member named 'ip'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+                                             ^
+../include/asm-generic/uaccess.h:200:24: note: in definition of macro 'get_user'
+   ((x) = (__typeof__(*(ptr)))0,-EFAULT);  \
+                        ^~~
+../include/asm-generic/uaccess.h:200:31: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+   ((x) = (__typeof__(*(ptr)))0,-EFAULT);  \
+                               ^
+../kernel/signal.c:1256:8: note: in expansion of macro 'get_user'
+    if (get_user(insn, (unsigned char *)(regs->ip + i)))
+        ^~~~~~~~
 
-Sure, a less intrusive way of doing it would be to free the currently
-needed locks before proceeding. I just thought it would be harder to
-maintain.
 
-> Christophe
-
-Best regards,
-Leonardo
-
---=-N8KxtCe2h0PkgV316JGh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl5+IRsACgkQlQYWtz9S
-ttRYYg//fvDvt7w4iVd2lQCTzrUoA50Bf5B58kF9Hv+9VEW1V4BEOQpAzHVZHFjm
-5qQwHnFnvOjvoCQhcGPKoPt39DHSDHmajf5XygqLve8OrQZwEzOaUazV8q1ZNQGN
-jpX7WBR5qlnmZshJkPcf8UtYDAOCdhHgn6rEN8W4L7bUpGP8pWXDiqB9WPmaE2Yx
-/qjdvmzLcLjKsB2GUrFKBTgFBdM0yFJSERnBZ7Er0zRrLWeKBKSvRAyrrbuKHX+0
-tMsH5wD/Q0hEll8E/Bc47ggDnZ2Sa62mBNsl1M4U+Sj3BMitD9PONcaY8imHxnB7
-xJvjw1ja5rFO2ELMNASOVAXKnOzbHYdSjNxxqsHwmmzrU7gr//UBRiVAn00CYScI
-ninm9FtUJqYwhxm1CjGc86vQ14CzNQ+a1RTdAjCe6Cl75PMuLYthGeLUPigNKWm2
-q7qXCl2xdqs6MAWByWBoAkAt5ZtVMtuEt3R77pAPPFFSgg8fIZeyhMGeqIYXeCR+
-fGufYRvnf4rAspYonFGdKtLdjcYpsSETZ5+ZUk3L1YmunbgYImvNM5uRg6WzwIGl
-uXlqDA/iqyfk2kABmpNOWSk9gcR/hHJkn+kGjTDl3ajM7qdvyqxR/H7sh0oQifpw
-UR+DiiNuKgQJJcM3KnPYSS3V76uk52I7mzy/MbhTXIHj2P2dBoU=
-=fUTE
------END PGP SIGNATURE-----
-
---=-N8KxtCe2h0PkgV316JGh--
-
+-- 
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
