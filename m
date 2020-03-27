@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BEF1194EFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:32:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4058194F0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:33:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbgC0CcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 22:32:16 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48052 "EHLO
+        id S1728061AbgC0CdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 22:33:06 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48034 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727879AbgC0CcL (ORCPT
+        with ESMTP id S1727834AbgC0CcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 22:32:11 -0400
+        Thu, 26 Mar 2020 22:32:10 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHen0-003hRR-6p; Fri, 27 Mar 2020 02:32:06 +0000
+        id 1jHen0-003hRX-BS; Fri, 27 Mar 2020 02:32:06 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH v2 08/22] x86: kill get_user_{try,catch,ex}
-Date:   Fri, 27 Mar 2020 02:31:51 +0000
-Message-Id: <20200327023205.881896-8-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v2 09/22] x86: switch save_v86_state() to unsafe_put_user()
+Date:   Fri, 27 Mar 2020 02:31:52 +0000
+Message-Id: <20200327023205.881896-9-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200327023205.881896-1-viro@ZenIV.linux.org.uk>
 References: <20200327023007.GS23230@ZenIV.linux.org.uk>
@@ -34,95 +34,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-no users left
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/include/asm/uaccess.h | 54 ------------------------------------------
- 1 file changed, 54 deletions(-)
+ arch/x86/kernel/vm86_32.c | 61 +++++++++++++++++++++++------------------------
+ 1 file changed, 30 insertions(+), 31 deletions(-)
 
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 1cfa33b94a1a..4dc5accdd826 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -335,12 +335,9 @@ do {									\
- 		       "i" (errret), "0" (retval));			\
- })
+diff --git a/arch/x86/kernel/vm86_32.c b/arch/x86/kernel/vm86_32.c
+index 49b37eb01e99..47a8676c7395 100644
+--- a/arch/x86/kernel/vm86_32.c
++++ b/arch/x86/kernel/vm86_32.c
+@@ -98,7 +98,6 @@ void save_v86_state(struct kernel_vm86_regs *regs, int retval)
+ 	struct task_struct *tsk = current;
+ 	struct vm86plus_struct __user *user;
+ 	struct vm86 *vm86 = current->thread.vm86;
+-	long err = 0;
  
--#define __get_user_asm_ex_u64(x, ptr)			(x) = __get_user_bad()
- #else
- #define __get_user_asm_u64(x, ptr, retval, errret) \
- 	 __get_user_asm(x, ptr, retval, "q", "", "=r", errret)
--#define __get_user_asm_ex_u64(x, ptr) \
--	 __get_user_asm_ex(x, ptr, "q", "", "=r")
- #endif
+ 	/*
+ 	 * This gets called from entry.S with interrupts disabled, but
+@@ -114,37 +113,30 @@ void save_v86_state(struct kernel_vm86_regs *regs, int retval)
+ 	set_flags(regs->pt.flags, VEFLAGS, X86_EFLAGS_VIF | vm86->veflags_mask);
+ 	user = vm86->user_vm86;
  
- #define __get_user_size(x, ptr, size, retval, errret)			\
-@@ -378,41 +375,6 @@ do {									\
- 		     : "=r" (err), ltype(x)				\
- 		     : "m" (__m(addr)), "i" (errret), "0" (err))
- 
--/*
-- * This doesn't do __uaccess_begin/end - the exception handling
-- * around it must do that.
-- */
--#define __get_user_size_ex(x, ptr, size)				\
--do {									\
--	__chk_user_ptr(ptr);						\
--	switch (size) {							\
--	case 1:								\
--		__get_user_asm_ex(x, ptr, "b", "b", "=q");		\
--		break;							\
--	case 2:								\
--		__get_user_asm_ex(x, ptr, "w", "w", "=r");		\
--		break;							\
--	case 4:								\
--		__get_user_asm_ex(x, ptr, "l", "k", "=r");		\
--		break;							\
--	case 8:								\
--		__get_user_asm_ex_u64(x, ptr);				\
--		break;							\
--	default:							\
--		(x) = __get_user_bad();					\
--	}								\
--} while (0)
+-	if (!access_ok(user, vm86->vm86plus.is_vm86pus ?
++	if (!user_access_begin(user, vm86->vm86plus.is_vm86pus ?
+ 		       sizeof(struct vm86plus_struct) :
+-		       sizeof(struct vm86_struct))) {
+-		pr_alert("could not access userspace vm86 info\n");
+-		do_exit(SIGSEGV);
+-	}
 -
--#define __get_user_asm_ex(x, addr, itype, rtype, ltype)			\
--	asm volatile("1:	mov"itype" %1,%"rtype"0\n"		\
--		     "2:\n"						\
--		     ".section .fixup,\"ax\"\n"				\
--                     "3:xor"itype" %"rtype"0,%"rtype"0\n"		\
--		     "  jmp 2b\n"					\
--		     ".previous\n"					\
--		     _ASM_EXTABLE_EX(1b, 3b)				\
--		     : ltype(x) : "m" (__m(addr)))
+-	put_user_try {
+-		put_user_ex(regs->pt.bx, &user->regs.ebx);
+-		put_user_ex(regs->pt.cx, &user->regs.ecx);
+-		put_user_ex(regs->pt.dx, &user->regs.edx);
+-		put_user_ex(regs->pt.si, &user->regs.esi);
+-		put_user_ex(regs->pt.di, &user->regs.edi);
+-		put_user_ex(regs->pt.bp, &user->regs.ebp);
+-		put_user_ex(regs->pt.ax, &user->regs.eax);
+-		put_user_ex(regs->pt.ip, &user->regs.eip);
+-		put_user_ex(regs->pt.cs, &user->regs.cs);
+-		put_user_ex(regs->pt.flags, &user->regs.eflags);
+-		put_user_ex(regs->pt.sp, &user->regs.esp);
+-		put_user_ex(regs->pt.ss, &user->regs.ss);
+-		put_user_ex(regs->es, &user->regs.es);
+-		put_user_ex(regs->ds, &user->regs.ds);
+-		put_user_ex(regs->fs, &user->regs.fs);
+-		put_user_ex(regs->gs, &user->regs.gs);
 -
- #define __put_user_nocheck(x, ptr, size)			\
- ({								\
- 	__label__ __pu_label;					\
-@@ -540,22 +502,6 @@ struct __large_struct { unsigned long buf[100]; };
- #define __put_user(x, ptr)						\
- 	__put_user_nocheck((__typeof__(*(ptr)))(x), (ptr), sizeof(*(ptr)))
+-		put_user_ex(vm86->screen_bitmap, &user->screen_bitmap);
+-	} put_user_catch(err);
+-	if (err) {
+-		pr_alert("could not access userspace vm86 info\n");
+-		do_exit(SIGSEGV);
+-	}
++		       sizeof(struct vm86_struct)))
++		goto Efault;
++
++	unsafe_put_user(regs->pt.bx, &user->regs.ebx, Efault_end);
++	unsafe_put_user(regs->pt.cx, &user->regs.ecx, Efault_end);
++	unsafe_put_user(regs->pt.dx, &user->regs.edx, Efault_end);
++	unsafe_put_user(regs->pt.si, &user->regs.esi, Efault_end);
++	unsafe_put_user(regs->pt.di, &user->regs.edi, Efault_end);
++	unsafe_put_user(regs->pt.bp, &user->regs.ebp, Efault_end);
++	unsafe_put_user(regs->pt.ax, &user->regs.eax, Efault_end);
++	unsafe_put_user(regs->pt.ip, &user->regs.eip, Efault_end);
++	unsafe_put_user(regs->pt.cs, &user->regs.cs, Efault_end);
++	unsafe_put_user(regs->pt.flags, &user->regs.eflags, Efault_end);
++	unsafe_put_user(regs->pt.sp, &user->regs.esp, Efault_end);
++	unsafe_put_user(regs->pt.ss, &user->regs.ss, Efault_end);
++	unsafe_put_user(regs->es, &user->regs.es, Efault_end);
++	unsafe_put_user(regs->ds, &user->regs.ds, Efault_end);
++	unsafe_put_user(regs->fs, &user->regs.fs, Efault_end);
++	unsafe_put_user(regs->gs, &user->regs.gs, Efault_end);
++	unsafe_put_user(vm86->screen_bitmap, &user->screen_bitmap, Efault_end);
++
++	user_access_end();
  
--/*
-- * {get|put}_user_try and catch
-- *
-- * get_user_try {
-- *	get_user_ex(...);
-- * } get_user_catch(err)
-- */
--#define get_user_try		uaccess_try_nospec
--#define get_user_catch(err)	uaccess_catch(err)
--
--#define get_user_ex(x, ptr)	do {					\
--	unsigned long __gue_val;					\
--	__get_user_size_ex((__gue_val), (ptr), (sizeof(*(ptr))));	\
--	(x) = (__force __typeof__(*(ptr)))__gue_val;			\
--} while (0)
--
- #define put_user_try		uaccess_try
- #define put_user_catch(err)	uaccess_catch(err)
+ 	preempt_disable();
+ 	tsk->thread.sp0 = vm86->saved_sp0;
+@@ -159,6 +151,13 @@ void save_v86_state(struct kernel_vm86_regs *regs, int retval)
+ 	lazy_load_gs(vm86->regs32.gs);
  
+ 	regs->pt.ax = retval;
++	return;
++
++Efault_end:
++	user_access_end();
++Efault:
++	pr_alert("could not access userspace vm86 info\n");
++	do_exit(SIGSEGV);
+ }
+ 
+ static void mark_screen_rdonly(struct mm_struct *mm)
 -- 
 2.11.0
 
