@@ -2,101 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D884C1956B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 13:04:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4BBE1956BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 13:06:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbgC0MEs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 08:04:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35368 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbgC0MEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 08:04:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C3F8FAE2B;
-        Fri, 27 Mar 2020 12:04:45 +0000 (UTC)
-Date:   Fri, 27 Mar 2020 13:04:44 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Jessica Yu <jeyu@kernel.org>
-cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com
-Subject: Re: [RESEND][PATCH v3 03/17] module: Properly propagate MODULE_STATE_COMING
- failure
-In-Reply-To: <20200325173519.GA5415@linux-8ccs>
-Message-ID: <alpine.LSU.2.21.2003271257560.19979@pobox.suse.cz>
-References: <20200324135603.483964896@infradead.org> <20200324142245.445253190@infradead.org> <20200325173519.GA5415@linux-8ccs>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727185AbgC0MG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 08:06:56 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:33132 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbgC0MGz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 08:06:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1A4KxxyEJTfDzTDi2VM8eA6J5WdBqmTT9sy80l9pA+o=; b=ShehKgELrAc6eNI9ymTruR1W2
+        vaeSKkreP+P8DnttUOjT9Yr8siV4KdBMCt09RLgO4J5+idLUaha1TFeA/N0wy3hN4jYpYlYgc/nej
+        +JPLNDiFzBsfd4VIXRcwP9RZRsdc/+5MPHy/gqgeWcdijbOOMo+zwVZ5xX2Om/Ao48SjJ9EEL/JZp
+        hCwhcxYbqRR3ID6K7wakAt0+2HHQ9qDJalnSkF/sh3bnR3tHqjjBpYDA/dUeVcdJNwKV7u8HBQw/Z
+        H2hfJ+saVsDJfoL5QdU54vHN/5+I7my2InJMBfUlJnvL5mWzfxqGL9doVX6LT5dKLroxLR8Qz6agc
+        anAYSbGWg==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:37886)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1jHnl9-0000uz-Rz; Fri, 27 Mar 2020 12:06:48 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1jHnl8-0004Br-Of; Fri, 27 Mar 2020 12:06:46 +0000
+Date:   Fri, 27 Mar 2020 12:06:46 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Florinel Iordache <florinel.iordache@nxp.com>, davem@davemloft.net,
+        netdev@vger.kernel.org, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, kuba@kernel.org,
+        corbet@lwn.net, shawnguo@kernel.org, leoyang.li@nxp.com,
+        madalin.bucur@oss.nxp.com, ioana.ciornei@nxp.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/9] dt-bindings: net: add backplane dt bindings
+Message-ID: <20200327120646.GH25745@shell.armlinux.org.uk>
+References: <1585230682-24417-1-git-send-email-florinel.iordache@nxp.com>
+ <1585230682-24417-3-git-send-email-florinel.iordache@nxp.com>
+ <20200327010411.GM3819@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200327010411.GM3819@lunn.ch>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Mar 2020, Jessica Yu wrote:
-
-> +++ Peter Zijlstra [24/03/20 14:56 +0100]:
-> >Now that notifiers got unbroken; use the proper interface to handle
-> >notifier errors and propagate them.
-> >
-> >There were already MODULE_STATE_COMING notifiers that failed; notably:
-> >
-> > - jump_label_module_notifier()
-> > - tracepoint_module_notify()
-> > - bpf_event_notify()
-> >
-> >By propagating this error, we fix those users.
-> >
-> >Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> >Cc: jeyu@kernel.org
-> >---
-> > kernel/module.c |   10 +++++++---
-> > 1 file changed, 7 insertions(+), 3 deletions(-)
-> >
-> >--- a/kernel/module.c
-> >+++ b/kernel/module.c
-> >@@ -3751,9 +3751,13 @@ static int prepare_coming_module(struct
-> >  if (err)
-> >   return err;
-> >
-> >-	blocking_notifier_call_chain(&module_notify_list,
-> >-				     MODULE_STATE_COMING, mod);
-> >-	return 0;
-> >+	err = blocking_notifier_call_chain_robust(&module_notify_list,
-> >+			MODULE_STATE_COMING, MODULE_STATE_GOING, mod);
-> >+	err = notifier_to_errno(err);
-> >+	if (err)
-> >+		klp_module_going(mod);
-> >+
-> >+	return err;
-> > }
-> >
-> > static int unknown_module_param_cb(char *param, char *val, const char
-> > *modname,
-> >
+On Fri, Mar 27, 2020 at 02:04:11AM +0100, Andrew Lunn wrote:
+> On Thu, Mar 26, 2020 at 03:51:15PM +0200, Florinel Iordache wrote:
+> > Add ethernet backplane device tree bindings
 > 
-> This looks fine to me - klp_module_going() is only called after
-> successful klp_module_coming(), and klp_module_going() is fine with
-> mod->state still being MODULE_STATE_COMING here. Would be good to have
-> livepatch folks double check.
+> > +  - |
+> > +    /* Backplane configurations for specific setup */
+> > +    &mdio9 {
+> > +        bpphy6: ethernet-phy@0 {
+> > +            compatible = "ethernet-phy-ieee802.3-c45";
+> > +            reg = <0x0>;
+> > +            lane-handle = <&lane_d>; /* use lane D */
+> > +            eq-algorithm = "bee";
+> > +            /* 10G Short cables setup: up to 30 cm cable */
+> > +            eq-init = <0x2 0x5 0x29>;
+> > +            eq-params = <0>;
+> > +        };
+> > +    };
+> 
+> So you are modelling this as just another PHY? Does the driver get
+> loaded based on the PHY ID in registers 2 and 3? Does the standard
+> define these IDs or are they vendor specific?
 
-Yes, it is ok.
+We likely need some mutual coordination here between the patches I've
+already posted for PCS support and these patches.
 
-> Which reminds me - Miroslav had pointed
-> out in the past that if there is an error when calling the COMING
-> notifiers, the GOING notifiers will be called while the mod->state is
-> still MODULE_STATE_COMING. I've briefly looked through all the module
-> notifiers and it looks like nobody is looking at mod->state directly
-> at least.
+As I've said, we can't deal with multiple ethernet PHYs connected to
+one MAC, the patches I've posted cope with that, but likely will need
+changes for this.  Conversely, these patches will need changes for my
+work.
 
-Thanks for double-checking. I triple-checked and yes, it should be fine. 
-All module notifiers check the value from the function parameter and not 
-mod->state directly.
-
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
-
-M
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
