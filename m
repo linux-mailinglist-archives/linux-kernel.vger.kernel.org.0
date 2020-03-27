@@ -2,112 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B353195C96
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3AD1195C9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:25:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbgC0RYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 13:24:11 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35908 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbgC0RYK (ORCPT
+        id S1727716AbgC0RZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 13:25:01 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44998 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbgC0RZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 13:24:10 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 84FB8297DE9
-Subject: Re: [PATCH] platform/chrome: wilco_ec: Provide correct output format
- to 'h1_gpio' file
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     Daniel Campello <campello@google.com>
-Cc:     Bernardo Perez Priego <bernardo.perez.priego@intel.com>,
-        Benson Leung <bleung@chromium.org>,
-        Nick Crews <ncrews@chromium.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org
-References: <20200313232720.22364-1-bernardo.perez.priego@intel.com>
- <f1635547-2c18-b9d6-0fb2-2f69dcfd124e@collabora.com>
- <CAHcu+Vb37A+b2B6tJDYmJtH2dhUPEDy-3yZxaQYy3P3fLV2nVg@mail.gmail.com>
- <334c8fff-db38-1b99-01d9-b251435ddec1@collabora.com>
-Message-ID: <252e6ef3-b9f0-edb3-a7d4-be269e08e25f@collabora.com>
-Date:   Fri, 27 Mar 2020 18:24:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Fri, 27 Mar 2020 13:25:01 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p14so10994476lji.11
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 10:24:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BsrK46vQ35+v3vstANJDsKCt2RLh4j5JJHq78hw90Cg=;
+        b=LyhqEyhFVhLvPgLfeQiZBbkqBhqcUmwfWUwFmqQgcqDHGkAjBjy69gsvWPnLyCLr9l
+         ub4d8ljKaebWH1VCAQG9mlHReY258tSYmQga+itSeD5mXRcniQ338POLmK0YISYnSuVp
+         6A6TdO7x5UmCDkQyHDrMuK3XxRNmY6CKiCSIeIpkbheqMMjeFHswA9zGplgIJzsoFEl3
+         nptJn/Xp3Gk0nuh6rx/TQkkXmi8hJKKF/c6+hsJl1pHY3+H/uBn5PxuS6pm5DUozCr8y
+         uPxJiyP8fMWzLjD9MTdQqnJtjTXXmAvivCDrMvUG8FaZ1C+dZkEBztWbqZXEc0NovQmD
+         0tbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BsrK46vQ35+v3vstANJDsKCt2RLh4j5JJHq78hw90Cg=;
+        b=m/lECylyduopOu1M6BNvyNtgsy6uYPu6m6JgHPCQ16l0uIM16/LGkvOXrr2XK/vJUr
+         9S+ACxZM8cTaq9NdhQRAiCTd8ejVmKclQZqUH1tFuYiKUeo7IuBuop557EvGf8ax0fiM
+         EV0QcTr6BmL2CIvNVlK82ORDzUq1e1maVbMK38Nwyi7FXFTv0dwKrplD0O6CDb1YaOXk
+         GzXlDomlcxgUFM5h1UYgs5R+MS2Gu87Xb22oUYMtypAnYPsJ9qcpIe3EUZPZKRJUxLLb
+         w+0siq5Oam/mWZjlmR0dcrq6Bl3YKaNy6VL8HXfh4ZqwHF9rvdeMIwrbvhnv7i089D8j
+         XP2Q==
+X-Gm-Message-State: AGi0Pubg6ifxXkSQ3U3rpdgNxdiM3ypWAFAHKJkFnV19OeMFZNPfXWQd
+        WzspAZ7Z9BRlZmE8puwDfeAVffZMxzuu7Q0BBM0=
+X-Google-Smtp-Source: APiQypIEaUrI2pBQKvvCxQSERCnysMEM8pkuoEB4sHJBVv54D/4RtLBF7AaYjn+CmEGlJvJE2jYmJvml3Gzr2pI8nQQ=
+X-Received: by 2002:a2e:a0d3:: with SMTP id f19mr5866ljm.117.1585329898944;
+ Fri, 27 Mar 2020 10:24:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <334c8fff-db38-1b99-01d9-b251435ddec1@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200326174232.23365-1-andrew.smirnov@gmail.com>
+In-Reply-To: <20200326174232.23365-1-andrew.smirnov@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 27 Mar 2020 14:24:49 -0300
+Message-ID: <CAOMZO5Bd1yhT95Tc3Y_sF2XpuDz4vjtxu3jw3U_KTjp5C9+XaA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: vf610: report soc info via soc device
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bernardo,
+Hi Andrey,
 
-On 24/3/20 14:54, Enric Balletbo i Serra wrote:
-> Hi,
-> 
-> On 23/3/20 21:06, Daniel Campello wrote:
->> Hello,
->>
->> On Tue, Mar 17, 2020 at 1:09 AM Enric Balletbo i Serra
->> <enric.balletbo@collabora.com> wrote:
->>>
->>> Hi,
->>>
->>> On 14/3/20 0:27, Bernardo Perez Priego wrote:
->>>> Function 'h1_gpio_get' is receiving 'val' parameter of type u64,
->>>> this is being passed to 'send_ec_cmd' as type u8, thus, result
->>>> is stored in least significant byte. Due to output format,
->>>> the whole 'val' value was being displayed when any of the most
->>>> significant bytes are different than zero.
->>>>
->>>> This fix will make sure only least significant byte is displayed
->>>> regardless of remaining bytes value.
->>>>
->>>> Signed-off-by: Bernardo Perez Priego <bernardo.perez.priego@intel.com>
->>>
->>> Daniel, could you give a try and give you Tested-by tag if you're fine with it?
->>>
->>> Thanks,
->>>  Enric
->>>
->>>> ---
->>>>  drivers/platform/chrome/wilco_ec/debugfs.c | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/platform/chrome/wilco_ec/debugfs.c b/drivers/platform/chrome/wilco_ec/debugfs.c
->>>> index df5a5f6c3ec6..c775b7d58c6d 100644
->>>> --- a/drivers/platform/chrome/wilco_ec/debugfs.c
->>>> +++ b/drivers/platform/chrome/wilco_ec/debugfs.c
->>>> @@ -211,7 +211,7 @@ static int h1_gpio_get(void *arg, u64 *val)
->>>>       return send_ec_cmd(arg, SUB_CMD_H1_GPIO, (u8 *)val);
->>>>  }
->>>>
->>>> -DEFINE_DEBUGFS_ATTRIBUTE(fops_h1_gpio, h1_gpio_get, NULL, "0x%02llx\n");
->>>> +DEFINE_DEBUGFS_ATTRIBUTE(fops_h1_gpio, h1_gpio_get, NULL, "0x%02hhx\n");
->>>>
->>>>  /**
->>>>   * test_event_set() - Sends command to EC to cause an EC test event.
->>>>
->>
->> Done. I also found the chromium review for this on crrev.com/c/2090128
->>
->> Tested-by: Daniel Campello <campello@chromium.org>
->>
-> 
-> Queued for 5.7. Thanks.
-> 
+On Thu, Mar 26, 2020 at 2:42 PM Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
+>
+> The patch adds plumbing to soc device info code necessary to support
+> Vybrid devices. Use case in mind for this is CAAM driver, which
+> utilizes said API.
+>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-
-I removed the patch from the queue as it triggers the following build warning:
-
-drivers/platform/chrome/wilco_ec/debugfs.c:214:59: warning: format ‘%hhx’
-expects argument of type ‘int’, but argument 2 has type ‘long long unsigned int’
-[-Wformat=]
-
-Thanks,
-Enric
-
-> ~ Enric
-> 
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
