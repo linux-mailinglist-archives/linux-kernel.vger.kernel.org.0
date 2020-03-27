@@ -2,123 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E596195185
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 07:48:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF7BC195197
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 07:50:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbgC0Gsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 02:48:33 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35963 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727706AbgC0Gsb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 02:48:31 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g2so3113269plo.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 23:48:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/ziE3u+JHVGjUbo7zvAcqmvTGnTDwDeNLGHtkAuW1SE=;
-        b=i/kVRB9h49fSIU/SXBBd76YRq+m2dKmO90EFoN2azRXHRsGFnN8fQwX1bWQShxfMO3
-         fsJCr1ApPfPLWPyVmqTHbvnE0/TQ+9Ft1N7AnyEv2Obi+yKqae7pHIiFGbj+dcCs3Qth
-         hx/8AA5HN+FRYM8rSleK8Ggvfe0bb3ThM++NY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/ziE3u+JHVGjUbo7zvAcqmvTGnTDwDeNLGHtkAuW1SE=;
-        b=oJKL+v3MnXs5m8uWSBvxYn1VpqKaOGvgKLmX8q0FVS1aYOy1b+p/evyeAyFneyS/pB
-         wNb50Evj9tgbRGFKmG1MKDeUH3EMnssZnKPaVh07qQ36J/I1arHeKBnkJKQ3OdDsSMr4
-         ki8Z+Kgfb9MHag7ziD3LBFdg7pagYCgMFV4s+Yo3g359QTSNpBuDk0X5yepZFbjKTs3T
-         YH5siiWb81nCQcLWRTbQr2asQSkZnkEIQmgHSClZ4uLAtiaBqOxiIWjJJRXTDrirdphC
-         B5Yff72NJUAiMGaTV9oPfcU+9DtqAKW4889kwFT8Seg8v4b4WeNJOmNM0CRURWjRw4TZ
-         iwVg==
-X-Gm-Message-State: ANhLgQ3LHvBi8jSBf9v2sq4u/QIGDjLqAscXF4bvKCwqGVTOyW+z0q+8
-        +mBpI6I0dCM1aPulq7p657XhMA==
-X-Google-Smtp-Source: ADFU+vvGmOrrIs+Qj5TkNUJrkUU3G9n3+Tfo2n/9fFwWG4WT0SaqW8ECI8HTyCrm6d42Hjl+wwoUXQ==
-X-Received: by 2002:a17:90a:b395:: with SMTP id e21mr4362227pjr.33.1585291708788;
-        Thu, 26 Mar 2020 23:48:28 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e184sm3275892pfh.219.2020.03.26.23.48.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 23:48:27 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Hector Marco-Gisbert <hecmargi@upv.es>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will@kernel.org>, Jann Horn <jannh@google.com>,
-        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 6/6] arm64, elf: Disable automatic READ_IMPLIES_EXEC for 64-bit address spaces
-Date:   Thu, 26 Mar 2020 23:48:20 -0700
-Message-Id: <20200327064820.12602-7-keescook@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200327064820.12602-1-keescook@chromium.org>
-References: <20200327064820.12602-1-keescook@chromium.org>
+        id S1726333AbgC0Gu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 02:50:28 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:5854 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725992AbgC0Gu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 02:50:27 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48pXYF0HKqz9txpx;
+        Fri, 27 Mar 2020 07:50:25 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=pDvSIsk8; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 9c3JvdN5GUEC; Fri, 27 Mar 2020 07:50:24 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48pXYD6KQRz9txpw;
+        Fri, 27 Mar 2020 07:50:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1585291824; bh=hAABVY6NqVGKI9aIL19sjFZK5w87U11qF1N1xyDIMOU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=pDvSIsk8b/wsU/W/xdQHaHU3X4yZMJUw38gYA4+Vv5rXQaJIFGpiAVlSoCpFhxtcW
+         3wqHC/fNrVURiU1MrDudrICkh4dbRM085tn5JZ51PA3UPb06TMzFCJt84BAPL8nM8t
+         C+u5t5Rwl8Z+4I7bPftzFeS/HLzjjTjKn6xvG/m4=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B503C8B7BC;
+        Fri, 27 Mar 2020 07:50:25 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id KttQcZwNJpxx; Fri, 27 Mar 2020 07:50:25 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id EA0608B756;
+        Fri, 27 Mar 2020 07:50:24 +0100 (CET)
+Subject: Re: [PATCH 1/1] ppc/crash: Skip spinlocks during crash
+To:     Leonardo Bras <leonardo@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Enrico Weigelt <info@metux.net>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <20200326222836.501404-1-leonardo@linux.ibm.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <af505ef0-e0df-e0aa-bb83-3ed99841f151@c-s.fr>
+Date:   Fri, 27 Mar 2020 07:50:20 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20200326222836.501404-1-leonardo@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With arm64 64-bit environments, there should never be a need for automatic
-READ_IMPLIES_EXEC, as the architecture has always been execute-bit aware
-(as in, the default memory protection should be NX unless a region
-explicitly requests to be executable).
 
-Suggested-by: Hector Marco-Gisbert <hecmargi@upv.es>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
----
- arch/arm64/include/asm/elf.h | 4 ++--
- fs/compat_binfmt_elf.c       | 5 +++++
- 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/elf.h b/arch/arm64/include/asm/elf.h
-index 0074e9fd6431..0e7df6f1eb7a 100644
---- a/arch/arm64/include/asm/elf.h
-+++ b/arch/arm64/include/asm/elf.h
-@@ -105,7 +105,7 @@
-  *                CPU*: | arm32      | arm64      |
-  * ELF:                 |            |            |
-  * ---------------------|------------|------------|
-- * missing PT_GNU_STACK | exec-all   | exec-all   |
-+ * missing PT_GNU_STACK | exec-all   | exec-none  |
-  * PT_GNU_STACK == RWX  | exec-stack | exec-stack |
-  * PT_GNU_STACK == RW   | exec-none  | exec-none  |
-  *
-@@ -117,7 +117,7 @@
-  *  *all arm64 CPUs support NX, so there is no "lacks NX" column.
-  *
-  */
--#define elf_read_implies_exec(ex, stk)	(stk == EXSTACK_DEFAULT)
-+#define compat_elf_read_implies_exec(ex, stk)	(stk == EXSTACK_DEFAULT)
- 
- #define CORE_DUMP_USE_REGSET
- #define ELF_EXEC_PAGESIZE	PAGE_SIZE
-diff --git a/fs/compat_binfmt_elf.c b/fs/compat_binfmt_elf.c
-index aaad4ca1217e..3068d57436b3 100644
---- a/fs/compat_binfmt_elf.c
-+++ b/fs/compat_binfmt_elf.c
-@@ -113,6 +113,11 @@
- #define	arch_setup_additional_pages compat_arch_setup_additional_pages
- #endif
- 
-+#ifdef	compat_elf_read_implies_exec
-+#undef	elf_read_implies_exec
-+#define	elf_read_implies_exec compat_elf_read_implies_exec
-+#endif
-+
- /*
-  * Rename a few of the symbols that binfmt_elf.c will define.
-  * These are all local so the names don't really matter, but it
--- 
-2.20.1
+Le 26/03/2020 à 23:28, Leonardo Bras a écrit :
+> During a crash, there is chance that the cpus that handle the NMI IPI
+> are holding a spin_lock. If this spin_lock is needed by crashing_cpu it
+> will cause a deadlock. (rtas_lock and printk logbuf_log as of today)
+> 
+> This is a problem if the system has kdump set up, given if it crashes
+> for any reason kdump may not be saved for crash analysis.
+> 
+> Skip spinlocks after NMI IPI is sent to all other cpus.
+> 
+> Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
+> ---
+>   arch/powerpc/include/asm/spinlock.h | 6 ++++++
+>   arch/powerpc/kexec/crash.c          | 3 +++
+>   2 files changed, 9 insertions(+)
+> 
+> diff --git a/arch/powerpc/include/asm/spinlock.h b/arch/powerpc/include/asm/spinlock.h
+> index 860228e917dc..a6381d110795 100644
+> --- a/arch/powerpc/include/asm/spinlock.h
+> +++ b/arch/powerpc/include/asm/spinlock.h
+> @@ -111,6 +111,8 @@ static inline void splpar_spin_yield(arch_spinlock_t *lock) {};
+>   static inline void splpar_rw_yield(arch_rwlock_t *lock) {};
+>   #endif
+>   
+> +extern bool crash_skip_spinlock __read_mostly;
+> +
+>   static inline bool is_shared_processor(void)
+>   {
+>   #ifdef CONFIG_PPC_SPLPAR
+> @@ -142,6 +144,8 @@ static inline void arch_spin_lock(arch_spinlock_t *lock)
+>   		if (likely(__arch_spin_trylock(lock) == 0))
+>   			break;
+>   		do {
+> +			if (unlikely(crash_skip_spinlock))
+> +				return;
 
+You are adding a test that reads a global var in the middle of a so hot 
+path ? That must kill performance. Can we do different ?
+
+Christophe
