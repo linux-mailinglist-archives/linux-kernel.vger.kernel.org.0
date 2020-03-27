@@ -2,133 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8D281954A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 10:59:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C3691954D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:06:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbgC0J7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 05:59:50 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33203 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbgC0J7t (ORCPT
+        id S1726656AbgC0KGw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 06:06:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37508 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726133AbgC0KGw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 05:59:49 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f20so9590187ljm.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 02:59:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iT9ew65Ai4POSw9apePAlYbX2sb+iJXvkgJnQxpRw0g=;
-        b=cWW3YcpEyyYutTrNo9KR9HBH3E1bK+HR2Lj5S1ufOBfKm/JNDbVKgSTehtTbK/piG7
-         AKjHnGwyvO2icmwsa3kFw6Zy9abidGdYmBJm7RwikCnCpiGoaqgq5m3bGu0GFONHPovH
-         s0c/WvnYnPEvbNXNyKweaiea++yeq0zcHNyQfUxojaI3SyGLY4+iyWjDQ0x68SaY8Drf
-         JMetNVWiEP6KTRh7NjcfaAuyl0sKbJRnuDYUHwbVm3S17ouQgtixys00HdZ8IS96Ovz4
-         pek6sQ78KGlTRqT5w9MPDkgc2TCFzKlFMmuVNKZoTHdy8naS5UOmiEGTokrk8DVStpkg
-         Jd4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iT9ew65Ai4POSw9apePAlYbX2sb+iJXvkgJnQxpRw0g=;
-        b=iXXc49b6qcPVIBIYbT53ztl4z+FemxuFi1fo7N25BDADh1M0lJ/wy6TZj30ef6zJsn
-         kGY9nXMMMn1qd7nZpv1RYvZmLf1z+2T/rWiuxvBwSpxR71UM4b88zu9EWr0H0xWqtEiC
-         ebePsBjA8XToaNsU94v/FmaS+xnO7IQUXDAd6+iG1VaCvJyu/3m5P4EaKoiJDwugq7tP
-         nz4yYvD+lzETfG/yGfkOIjj0YWGVy+0npsHl6pJBLGCCCn+TlkeYaPFnbw3953lm5LPi
-         H3JxWlMqZ7/A6GgEgirtV3WElvTM9iZ7xKKybWo6rpiE0c5Ns1KrJmhraXOljUJ+IWDk
-         k90w==
-X-Gm-Message-State: AGi0PubbUVgtnuccTyFXS3wl1ufTbJJQe3KQg0+N5PCyO7J7DriTMKOR
-        jbw1OAcj/k4DLbsF+CYBt+tkdRJabN4JQBId79Y/1w==
-X-Google-Smtp-Source: ADFU+vsFTyW5diEMQrZ6oc8ojCeBX7BYjVmipZYNTS3SNNq4tTiZwvSWUqKgPn07Ht2NDQ7OLG9B8uptAVDDcyFhwxQ=
-X-Received: by 2002:a2e:9605:: with SMTP id v5mr7685010ljh.258.1585303186378;
- Fri, 27 Mar 2020 02:59:46 -0700 (PDT)
+        Fri, 27 Mar 2020 06:06:52 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02RA2fse179254;
+        Fri, 27 Mar 2020 06:06:27 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 301fcyg3mh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 27 Mar 2020 06:06:27 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 02RA3Haw180880;
+        Fri, 27 Mar 2020 06:06:26 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 301fcyg3ky-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 27 Mar 2020 06:06:26 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02R9ufGQ027025;
+        Fri, 27 Mar 2020 10:00:54 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma03wdc.us.ibm.com with ESMTP id 2ywawah9ur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 27 Mar 2020 10:00:54 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02RA0rwr46793202
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 27 Mar 2020 10:00:53 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A4E378066;
+        Fri, 27 Mar 2020 10:00:53 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 96D137805E;
+        Fri, 27 Mar 2020 10:00:44 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.79.180.159])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 27 Mar 2020 10:00:44 +0000 (GMT)
+Subject: Re: [PATCH v6 09/11] perf/tools: Enhance JSON/metric infrastructure
+ to handle "?"
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
+        sukadev@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, anju@linux.vnet.ibm.com,
+        maddy@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com,
+        peterz@infradead.org, yao.jin@linux.intel.com, ak@linux.intel.com,
+        jolsa@kernel.org, kan.liang@linux.intel.com, jmario@redhat.com,
+        alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        paulus@ozlabs.org, namhyung@kernel.org, mpetlan@redhat.com,
+        gregkh@linuxfoundation.org, benh@kernel.crashing.org,
+        mamatha4@linux.vnet.ibm.com, mark.rutland@arm.com,
+        tglx@linutronix.de
+References: <20200320125406.30995-1-kjain@linux.ibm.com>
+ <20200320125406.30995-10-kjain@linux.ibm.com>
+ <20200324131141.GV1534489@krava>
+From:   kajoljain <kjain@linux.ibm.com>
+Message-ID: <5f0c693a-42e4-0ff8-7fe5-8a35f5efe64a@linux.ibm.com>
+Date:   Fri, 27 Mar 2020 15:30:42 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20200325220542.19189-1-robh@kernel.org> <20200325220542.19189-4-robh@kernel.org>
-In-Reply-To: <20200325220542.19189-4-robh@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 27 Mar 2020 10:59:35 +0100
-Message-ID: <CACRpkdbWeKjd6B2mLz3+7LOxSGP9FqSz6YRp_YHx+2qHkJVFCQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] dt-bindings: Clean-up schema errors due to missing
- 'addtionalProperties: false'
-To:     Rob Herring <robh@kernel.org>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Brian Masney <masneyb@onstation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        linux-media@vger.kernel.org,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200324131141.GV1534489@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-27_02:2020-03-26,2020-03-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
+ mlxscore=0 impostorscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003270087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 11:05 PM Rob Herring <robh@kernel.org> wrote:
 
-> Numerous schemas are missing 'additionalProperties: false' statements which
-> ensures a binding doesn't have any extra undocumented properties or child
-> nodes. Fixing this reveals various missing properties, so let's fix all
-> those occurrences.
->
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Guillaume La Roque <glaroque@baylibre.com>
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-iio@vger.kernel.org.
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-amlogic@lists.infradead.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Sorry for errors caused by me,
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On 3/24/20 6:41 PM, Jiri Olsa wrote:
+> On Fri, Mar 20, 2020 at 06:24:04PM +0530, Kajol Jain wrote:
+>> Patch enhances current metric infrastructure to handle "?" in the metric
+>> expression. The "?" can be use for parameters whose value not known while
+>> creating metric events and which can be replace later at runtime to
+>> the proper value. It also add flexibility to create multiple events out
+>> of single metric event added in json file.
+>>
+>> Patch adds function 'arch_get_runtimeparam' which is a arch specific
+>> function, returns the count of metric events need to be created.
+>> By default it return 1.
+>>
+>> This infrastructure needed for hv_24x7 socket/chip level events.
+>> "hv_24x7" chip level events needs specific chip-id to which the
+>> data is requested. Function 'arch_get_runtimeparam' implemented
+>> in header.c which extract number of sockets from sysfs file
+>> "sockets" under "/sys/devices/hv_24x7/interface/".
+>>
+>>
+>> With this patch basically we are trying to create as many metric events
+>> as define by runtime_param.
+>>
+>> For that one loop is added in function 'metricgroup__add_metric',
+>> which create multiple events at run time depend on return value of
+>> 'arch_get_runtimeparam' and merge that event in 'group_list'.
+>>
+>> To achieve that we are actually passing this parameter value as part of
+>> `expr__find_other` function and changing "?" present in metric expression
+>> with this value.
+>>
+>> As in our json file, there gonna be single metric event, and out of
+>> which we are creating multiple events, I am also merging this value
+>> to the original metric name to specify parameter value.
+>>
+>> For example,
+>> command:# ./perf stat  -M PowerBUS_Frequency -C 0 -I 1000
+>> #           time             counts unit events
+>>      1.000101867          9,356,933      hv_24x7/pm_pb_cyc,chip=0/ #      2.3 GHz  PowerBUS_Frequency_0
+>>      1.000101867          9,366,134      hv_24x7/pm_pb_cyc,chip=1/ #      2.3 GHz  PowerBUS_Frequency_1
+>>      2.000314878          9,365,868      hv_24x7/pm_pb_cyc,chip=0/ #      2.3 GHz  PowerBUS_Frequency_0
+>>      2.000314878          9,366,092      hv_24x7/pm_pb_cyc,chip=1/ #      2.3 GHz  PowerBUS_Frequency_1
+>>
+>> So, here _0 and _1 after PowerBUS_Frequency specify parameter value.
+>>
+>> As after adding this to group_list, again we call expr__parse
+>> in 'generic_metric' function present in util/stat-display.c.
+>> By this time again we need to pass this parameter value. So, now to get this value
+>> actually I am trying to extract it from metric name itself. Because
+>> otherwise it gonna point to last updated value present in runtime_param.
+>> And gonna match for that value only.
+> 
+> so why can't we pass that param as integer value through the metric objects?
+> 
+> it get's created in metricgroup__add_metric_param:
+>   - as struct egroup *eg
+>   - we can add egroup::param and store the param value there
+> 
+> then in metricgroup__setup_events it moves to:
+>   - struct metric_expr *expr
+>   - we can add metric_expr::param to keep the param
+> 
+> then in perf_stat__print_shadow_stats there's:
+>   - struct metric_expr *mexp loop
+>   - calling generic_metric metric - we could call it with mexp::param
+>   - and pass the param to expr__parse
+> 
+Hi jiri,
+   	Thanks for the suggestion, Yes it make more sense to use like that.
+Will update.
 
-Yours,
-Linus Walleij
+Thanks,
+Kajol
+> jirka
+> 
