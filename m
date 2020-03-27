@@ -2,330 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B007195DA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 19:31:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8CA195DCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 19:42:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbgC0SbD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 27 Mar 2020 14:31:03 -0400
-Received: from mga01.intel.com ([192.55.52.88]:14268 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726275AbgC0SbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 14:31:02 -0400
-IronPort-SDR: NcOK4AoRI+9KLqU5N9tYTOH5vq3Pf6pqg+DmeRLwDkY512yTq67/9HXYgX1vavH8wOJd5AbGlP
- gfhEkyd5uwvQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 11:31:01 -0700
-IronPort-SDR: WFnSUQR4gQVK9TH+1Rlvn8U3eWAGraqcWgAyVnCL5Ln7bacVW33WmMlEfMZKMk2BO5uppqNNGT
- yUF8Cy7TrUwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,313,1580803200"; 
-   d="scan'208";a="247970408"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga003.jf.intel.com with ESMTP; 27 Mar 2020 11:31:01 -0700
-Date:   Fri, 27 Mar 2020 11:36:46 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 08/10] iommu/ioasid: Introduce notifier APIs
-Message-ID: <20200327113646.3d87f17f@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED5D6@SHSMSX104.ccr.corp.intel.com>
-References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1585158931-1825-9-git-send-email-jacob.jun.pan@linux.intel.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED5D6@SHSMSX104.ccr.corp.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1727352AbgC0SmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 14:42:20 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35409 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbgC0SmU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 14:42:20 -0400
+Received: by mail-vs1-f68.google.com with SMTP id u11so6895589vsg.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 11:42:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xc3LoiplRnf2aKZoDkeqAn+I7PpOTwp2GWQBp5c9cME=;
+        b=KbYEM+2vyjx2c7Pk5OCUrrNAWU8wVJP8BfLb9V1kBS3T3g9kwSbFPaih46M5o42bHE
+         BwX800FckXQ8L0ubDF/CdkrVIPG7r4L/IuzFcu+CJKZDfw93iGrHwj2Ka1WDjoN2heic
+         MriKZ8uwjcDbohlycFXZywHiFek01lSaL/Fho=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xc3LoiplRnf2aKZoDkeqAn+I7PpOTwp2GWQBp5c9cME=;
+        b=roADx8S6r5gSZTpKUUM+Jq8A55/konzoQjz9QB71TXU1xzJkE+a0Fn+tzlQP4lKwyF
+         Nciv2UfgrOXoxSXctnLjQp6/5Uta9TEzryRLwBw6Q6s5eEnU5y4T4Up/HFgb4wRiCpxV
+         7SBOQ5gC3EmhdTgxxqYPB0bONhBUX1mVh4dFGDj5/8PznHp7pe6TyW4Z9V8ymdakTPHy
+         AYQ8DlK8Q6k/sFH6N97K2tT5ikndd+leeKdezAYEEYWg46v0/AhiGyeHNw230XaJWaxC
+         4l3rfWoITXSambCUzQRGPjajmcEEBD3BVAGEfVLCxkHnuhg+3VQ+D3aCUo1WN8T6FBGR
+         jnCA==
+X-Gm-Message-State: AGi0PuYj7zJuTSK0JoRQS94sJR7tYZPS094yiUGUWrk8GXIhyAk4KIlE
+        LM68JW36ALstdGFfuIBb5AqcLYl7F2w=
+X-Google-Smtp-Source: APiQypL/Nzr/rwWqmsnrkFk/J4WcMINB2nh8fxWNz8UQqY1II9Nhw2DrP8wP8KywLgL1oezcfU3HDQ==
+X-Received: by 2002:a67:2fd8:: with SMTP id v207mr308061vsv.233.1585334537277;
+        Fri, 27 Mar 2020 11:42:17 -0700 (PDT)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id c16sm1065352vsq.18.2020.03.27.11.42.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Mar 2020 11:42:15 -0700 (PDT)
+Received: by mail-ua1-f44.google.com with SMTP id t20so3869486uao.7
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 11:42:15 -0700 (PDT)
+X-Received: by 2002:a9f:21b8:: with SMTP id 53mr279391uac.8.1585334535095;
+ Fri, 27 Mar 2020 11:42:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <1585244270-637-1-git-send-email-mkshah@codeaurora.org>
+ <1585244270-637-7-git-send-email-mkshah@codeaurora.org> <CAD=FV=Vbo3JC6mBJXq+q+DQPC_bbNtn3bbScG5N8wzJZm87YuA@mail.gmail.com>
+ <8d19958d-7334-ca4e-d7ba-f5919a56b279@codeaurora.org>
+In-Reply-To: <8d19958d-7334-ca4e-d7ba-f5919a56b279@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 27 Mar 2020 11:42:03 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UZTyfVN=a35hiXxdNSvdhfK60HewP_p_VvH1KdoUa1ww@mail.gmail.com>
+Message-ID: <CAD=FV=UZTyfVN=a35hiXxdNSvdhfK60HewP_p_VvH1KdoUa1ww@mail.gmail.com>
+Subject: Re: [PATCH v14 6/6] soc: qcom: rpmh-rsc: Allow using free WAKE TCS
+ for active request
+To:     Maulik Shah <mkshah@codeaurora.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Mar 2020 10:03:26 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+Hi,
 
-> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Sent: Thursday, March 26, 2020 1:55 AM
-> > 
-> > IOASID users fit into the publisher-subscriber pattern, a system
-> > wide blocking notifier chain can be used to inform subscribers of
-> > state changes. Notifier mechanism also abstracts publisher from
-> > knowing the private context each subcriber may have.
-> > 
-> > This patch adds APIs and a global notifier chain, a further
-> > optimization might be per set notifier for ioasid_set aware users.
-> > 
-> > Usage example:
-> > KVM register notifier block such that it can keep its guest-host
-> > PASID translation table in sync with any IOASID updates.
-> > 
-> > VFIO publish IOASID change by performing alloc/free, bind/unbind
-> > operations.
-> > 
-> > IOMMU driver gets notified when IOASID is freed by VFIO or core mm
-> > code such that PASID context can be cleaned up.  
-> 
-> above example looks mixed. You have KVM registers the notifier but
-> finally having IOMMU driver to get notified... 😊
-> 
-Right, felt like a tale of two subscribers got mixed. I meant to list a
-few use cases with publisher and subscriber roles separate.
-I will change that to "Usage examples", and explicit state each role.
+On Fri, Mar 27, 2020 at 5:04 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+>
+> > Why can't rpmh_write()
+> > / rpmh_write_async() / rpmh_write_batch() just always unconditionally
+> > mark the cache dirty?  Are there really lots of cases when those calls
+> > are made and they do nothing?
+>
+> At rpmh.c, it doesn't know that rpmh-rsc.c worked on borrowed TCS to finish the request.
+>
+> We should not blindly mark caches dirty everytime.
 
-> > 
-> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >  drivers/iommu/ioasid.c | 61
-> > ++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/ioasid.h | 40 +++++++++++++++++++++++++++++++++
-> >  2 files changed, 101 insertions(+)
-> > 
-> > diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
-> > index 8612fe6477dc..27dce2cb5af2 100644
-> > --- a/drivers/iommu/ioasid.c
-> > +++ b/drivers/iommu/ioasid.c
-> > @@ -11,6 +11,22 @@
-> >  #include <linux/xarray.h>
-> > 
-> >  static DEFINE_XARRAY_ALLOC(ioasid_sets);
-> > +/*
-> > + * An IOASID could have multiple consumers. When a status change
-> > occurs,
-> > + * this notifier chain is used to keep them in sync. Each consumer
-> > of the
-> > + * IOASID service must register notifier block early to ensure no
-> > events
-> > + * are missed.
-> > + *
-> > + * This is a publisher-subscriber pattern where publisher can
-> > change the
-> > + * state of each IOASID, e.g. alloc/free, bind IOASID to a device
-> > and mm.
-> > + * On the other hand, subscribers gets notified for the state
-> > change and
-> > + * keep local states in sync.
-> > + *
-> > + * Currently, the notifier is global. A further optimization could
-> > be per
-> > + * IOASID set notifier chain.
-> > + */
-> > +static BLOCKING_NOTIFIER_HEAD(ioasid_chain);
-> > +
-> >  /**
-> >   * struct ioasid_set_data - Meta data about ioasid_set
-> >   *
-> > @@ -408,6 +424,7 @@ static void ioasid_free_locked(ioasid_t ioasid)
-> >  {
-> >  	struct ioasid_data *ioasid_data;
-> >  	struct ioasid_set_data *sdata;
-> > +	struct ioasid_nb_args args;
-> > 
-> >  	ioasid_data = xa_load(&active_allocator->xa, ioasid);
-> >  	if (!ioasid_data) {
-> > @@ -415,6 +432,13 @@ static void ioasid_free_locked(ioasid_t ioasid)
-> >  		return;
-> >  	}
-> > 
-> > +	args.id = ioasid;
-> > +	args.sid = ioasid_data->sdata->sid;
-> > +	args.pdata = ioasid_data->private;
-> > +	args.set_token = ioasid_data->sdata->token;
-> > +
-> > +	/* Notify all users that this IOASID is being freed */
-> > +	blocking_notifier_call_chain(&ioasid_chain, IOASID_FREE,
-> > &args); active_allocator->ops->free(ioasid,
-> > active_allocator->ops->pdata); /* Custom allocator needs additional
-> > steps to free the xa element */ if (active_allocator->flags &
-> > IOASID_ALLOCATOR_CUSTOM) { @@ -624,6 +648,43 @@ int
-> > ioasid_find_sid(ioasid_t ioasid) }
-> >  EXPORT_SYMBOL_GPL(ioasid_find_sid);
-> > 
-> > +int ioasid_add_notifier(struct notifier_block *nb)
-> > +{
-> > +	return blocking_notifier_chain_register(&ioasid_chain, nb);
-> > +}
-> > +EXPORT_SYMBOL_GPL(ioasid_add_notifier);
-> > +
-> > +void ioasid_remove_notifier(struct notifier_block *nb)
-> > +{
-> > +	blocking_notifier_chain_unregister(&ioasid_chain, nb);
-> > +}
-> > +EXPORT_SYMBOL_GPL(ioasid_remove_notifier);  
-> 
-> register/unregister
-> 
-Sounds good.
+In message ID "5a5274ac-41f4-b06d-ff49-c00cef67aa7f@codeaurora.org"
+which seems to be missing from the archives, you said:
 
-> > +
-> > +int ioasid_notify(ioasid_t ioasid, enum ioasid_notify_val cmd)  
-> 
-> add a comment on when this function should be used?
-> 
-Sure, how about:
-/**
- * ioasid_notify - Send notification on a given IOASID for status change.
- *                 Used by publishers when the status change may affect
- *                 subscriber's internal state.
- *
- * @ioasid:	The IOASID to which the notification will send
- * @cmd:	The notification event
- *
- */
+> yes we should trust callers not to send duplicate data
 
-> > +{
-> > +	struct ioasid_data *ioasid_data;
-> > +	struct ioasid_nb_args args;
-> > +	int ret = 0;
-> > +
-> > +	mutex_lock(&ioasid_allocator_lock);
-> > +	ioasid_data = xa_load(&active_allocator->xa, ioasid);
-> > +	if (!ioasid_data) {
-> > +		pr_err("Trying to free unknown IOASID %u\n",
-> > ioasid);  
-> 
-> why is it fixed to 'free'?
-> 
-Good catch, it shouldn;t be just free. It was a relic of early test
-case.
+...you can see some reference to it in my reply:
 
-> > +		mutex_unlock(&ioasid_allocator_lock);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	args.id = ioasid;
-> > +	args.sid = ioasid_data->sdata->sid;
-> > +	args.pdata = ioasid_data->private;  
-> 
-> why no token info as did in ioasid_free?
-> 
-Good catch, should include token as well. It is better to include all
-the data such that subscribers don't have to do any lookup which may
-cause race.
+https://lore.kernel.org/r/CAD=FV=VPSahhK71k_D+nfL1=5QE5sKMQT=6zzyEF7+JWMcTxsg@mail.gmail.com/
 
-> > +
-> > +	ret = blocking_notifier_call_chain(&ioasid_chain, cmd,
-> > &args);
-> > +	mutex_unlock(&ioasid_allocator_lock);
-> > +
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(ioasid_notify);
-> > +
-> >  MODULE_AUTHOR("Jean-Philippe Brucker <jean-  
-> > philippe.brucker@arm.com>");  
-> >  MODULE_AUTHOR("Jacob Pan <jacob.jun.pan@linux.intel.com>");
-> >  MODULE_DESCRIPTION("IO Address Space ID (IOASID) allocator");
-> > diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
-> > index e19c0ad93bd7..32d032913828 100644
-> > --- a/include/linux/ioasid.h
-> > +++ b/include/linux/ioasid.h
-> > @@ -4,6 +4,7 @@
-> > 
-> >  #include <linux/types.h>
-> >  #include <linux/errno.h>
-> > +#include <linux/notifier.h>
-> > 
-> >  #define INVALID_IOASID ((ioasid_t)-1)
-> >  #define INVALID_IOASID_SET (-1)
-> > @@ -30,6 +31,27 @@ struct ioasid_allocator_ops {
-> >  	void *pdata;
-> >  };
-> > 
-> > +/* Notification data when IOASID status changed */
-> > +enum ioasid_notify_val {
-> > +	IOASID_ALLOC = 1,
-> > +	IOASID_FREE,
-> > +	IOASID_BIND,
-> > +	IOASID_UNBIND,
-> > +};  
-> 
-> Curious why IOASID_ALLOC is not notified aumatically within
-> ioasid_alloc similar to ioasid_free, while leaving to the publisher?
-> BIND/UNBIND is a publisher thing but a bit strange to see ALLOC/FREE
-> with different policy here.
-> 
-I don't see a use case for ALLOC notification yet. Any user does the
-allocation would the be the first and only one know about this IOASID.
+If callers are trusted to never send duplicate data then ever call to
+rpmh_write() will make a change.  ...and thus the cache should always
+be marked dirty, no?  Also note that since rpmh_write() to "active"
+also counts as a write to "wake" even those will dirty the cache.
 
-Unless we have set level notifier, which may be interested in a new
-IOASID being allocated within the set.
+Which case are you expecting a rpmh_write() call to not dirty the cache?
 
-> > +
-> > +/**
-> > + * struct ioasid_nb_args - Argument provided by IOASID core when
-> > notifier
-> > + * is called.
-> > + * @id:		the IOASID being notified
-> > + * @sid:	the IOASID set @id belongs to
-> > + * @pdata:	the private data attached to the IOASID
-> > + */
-> > +struct ioasid_nb_args {
-> > +	ioasid_t id;
-> > +	int sid;
-> > +	struct ioasid_set *set_token;
-> > +	void *pdata;
-> > +};
-> >  /* Shared IOASID set for reserved for host system use */
-> >  extern int system_ioasid_sid;
-> > 
-> > @@ -43,11 +65,15 @@ void *ioasid_find(int sid, ioasid_t ioasid, bool
-> > (*getter)(void *));
-> >  int ioasid_register_allocator(struct ioasid_allocator_ops
-> > *allocator); void ioasid_unregister_allocator(struct
-> > ioasid_allocator_ops *allocator); int ioasid_attach_data(ioasid_t
-> > ioasid, void *data); +int ioasid_add_notifier(struct notifier_block
-> > *nb); +void ioasid_remove_notifier(struct notifier_block *nb);
-> >  void ioasid_install_capacity(ioasid_t total);
-> >  int ioasid_alloc_system_set(int quota);
-> >  int ioasid_alloc_set(struct ioasid_set *token, ioasid_t quota, int
-> > *sid); void ioasid_free_set(int sid, bool destroy_set);
-> >  int ioasid_find_sid(ioasid_t ioasid);
-> > +int ioasid_notify(ioasid_t id, enum ioasid_notify_val cmd);
-> > +
-> >  #else /* !CONFIG_IOASID */
-> >  static inline ioasid_t ioasid_alloc(int sid, ioasid_t min,
-> >  				    ioasid_t max, void *private)
-> > @@ -73,6 +99,20 @@ static inline void *ioasid_find(int sid,
-> > ioasid_t ioasid, bool (*getter)(void *)
-> >  	return NULL;
-> >  }
-> > 
-> > +static inline int ioasid_add_notifier(struct notifier_block *nb)
-> > +{
-> > +	return -ENOTSUPP;
-> > +}
-> > +
-> > +static inline void ioasid_remove_notifier(struct notifier_block
-> > *nb) +{
-> > +}
-> > +
-> > +int ioasid_notify(ioasid_t ioasid, enum ioasid_notify_val cmd)
-> > +{
-> > +	return -ENOTSUPP;
-> > +}
-> > +
-> >  static inline int ioasid_register_allocator(struct
-> > ioasid_allocator_ops *allocator)
-> >  {
-> >  	return -ENOTSUPP;
-> > --
-> > 2.7.4  
-> 
 
-[Jacob Pan]
+> > ...interestingly after your patch I guess now I guess tcs_invalidate()
+> > no longer needs spinlocks since it's only ever called from PM code on
+> > the last CPU.  ...if you agree, I can always do it in my cleanup
+> > series.  See:
+> >
+> > https://lore.kernel.org/r/CAD=FV=Xp1o68HnC2-hMnffDDsi+jjgc9pNrdNuypjQZbS5K4nQ@mail.gmail.com
+> >
+> > -Doug
+>
+> There are other RSCs which use same driver, so lets keep spinlock.
+
+It is really hard to try to write keeping in mind these "other RSCs"
+for which there is no code upstream.  IMO we should write the code
+keeping in mind what is supported upstream and then when those "other
+RSCs" get added we can evaluate their needs.
+
+Specifically when reasoning about rpmh.c and rpmh-rsc.c I can only
+look at the code that's there now and decide whether it is race free
+or there are races.  Back when I was analyzing the proposal to do
+rpmh_flush() all the time (not from PM code) it felt like there were a
+bunch of races, especially in the zero-active-TCS case.  Most of the
+races go away when you assume that rpmh_flush() is only ever called
+from the PM code when nobody could be in the middle of an active
+transfer.
+
+If we are ever planning to call rpmh_flush() from another place we
+need to re-look at all those races.
+
+
+-Doug
