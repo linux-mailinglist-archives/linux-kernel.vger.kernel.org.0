@@ -2,163 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C3691954D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:06:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 471751954B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:03:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbgC0KGw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 06:06:52 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37508 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726133AbgC0KGw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 06:06:52 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02RA2fse179254;
-        Fri, 27 Mar 2020 06:06:27 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 301fcyg3mh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Mar 2020 06:06:27 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 02RA3Haw180880;
-        Fri, 27 Mar 2020 06:06:26 -0400
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 301fcyg3ky-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Mar 2020 06:06:26 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02R9ufGQ027025;
-        Fri, 27 Mar 2020 10:00:54 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma03wdc.us.ibm.com with ESMTP id 2ywawah9ur-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Mar 2020 10:00:54 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02RA0rwr46793202
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Mar 2020 10:00:53 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A4E378066;
-        Fri, 27 Mar 2020 10:00:53 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 96D137805E;
-        Fri, 27 Mar 2020 10:00:44 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.79.180.159])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 27 Mar 2020 10:00:44 +0000 (GMT)
-Subject: Re: [PATCH v6 09/11] perf/tools: Enhance JSON/metric infrastructure
- to handle "?"
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
-        sukadev@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, anju@linux.vnet.ibm.com,
-        maddy@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com,
-        peterz@infradead.org, yao.jin@linux.intel.com, ak@linux.intel.com,
-        jolsa@kernel.org, kan.liang@linux.intel.com, jmario@redhat.com,
-        alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        paulus@ozlabs.org, namhyung@kernel.org, mpetlan@redhat.com,
-        gregkh@linuxfoundation.org, benh@kernel.crashing.org,
-        mamatha4@linux.vnet.ibm.com, mark.rutland@arm.com,
-        tglx@linutronix.de
-References: <20200320125406.30995-1-kjain@linux.ibm.com>
- <20200320125406.30995-10-kjain@linux.ibm.com>
- <20200324131141.GV1534489@krava>
-From:   kajoljain <kjain@linux.ibm.com>
-Message-ID: <5f0c693a-42e4-0ff8-7fe5-8a35f5efe64a@linux.ibm.com>
-Date:   Fri, 27 Mar 2020 15:30:42 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200324131141.GV1534489@krava>
-Content-Type: text/plain; charset=utf-8
+        id S1726360AbgC0KDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 06:03:30 -0400
+Received: from mga14.intel.com ([192.55.52.115]:6363 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725946AbgC0KDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 06:03:30 -0400
+IronPort-SDR: 1UCsWbnceaDVZDgvIVkHaUaKebqjejeWS8f0iOBKrm6gh2HN2pkTllypfugySTn7qz8BuF3Ehx
+ pvVnY4lOCg/A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 03:03:29 -0700
+IronPort-SDR: eT54+LcsYTLwuhiTQmob94KCBJXl5mV2J6XbS61sLN5HHe+KT4weIKn8IXpyJs45o/5Z+XnLGI
+ p20ICh9mJFIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,311,1580803200"; 
+   d="scan'208";a="447359734"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by fmsmga005.fm.intel.com with ESMTP; 27 Mar 2020 03:03:29 -0700
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 27 Mar 2020 03:03:29 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.206]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.137]) with mapi id 14.03.0439.000;
+ Fri, 27 Mar 2020 18:03:26 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>
+CC:     "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>
+Subject: RE: [PATCH 08/10] iommu/ioasid: Introduce notifier APIs
+Thread-Topic: [PATCH 08/10] iommu/ioasid: Introduce notifier APIs
+Thread-Index: AQHWAs3LObgJz6FgC0iTqd7+QDVAGahcNi2w
+Date:   Fri, 27 Mar 2020 10:03:26 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED5D6@SHSMSX104.ccr.corp.intel.com>
+References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1585158931-1825-9-git-send-email-jacob.jun.pan@linux.intel.com>
+In-Reply-To: <1585158931-1825-9-git-send-email-jacob.jun.pan@linux.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-27_02:2020-03-26,2020-03-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
- mlxscore=0 impostorscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003270087
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 3/24/20 6:41 PM, Jiri Olsa wrote:
-> On Fri, Mar 20, 2020 at 06:24:04PM +0530, Kajol Jain wrote:
->> Patch enhances current metric infrastructure to handle "?" in the metric
->> expression. The "?" can be use for parameters whose value not known while
->> creating metric events and which can be replace later at runtime to
->> the proper value. It also add flexibility to create multiple events out
->> of single metric event added in json file.
->>
->> Patch adds function 'arch_get_runtimeparam' which is a arch specific
->> function, returns the count of metric events need to be created.
->> By default it return 1.
->>
->> This infrastructure needed for hv_24x7 socket/chip level events.
->> "hv_24x7" chip level events needs specific chip-id to which the
->> data is requested. Function 'arch_get_runtimeparam' implemented
->> in header.c which extract number of sockets from sysfs file
->> "sockets" under "/sys/devices/hv_24x7/interface/".
->>
->>
->> With this patch basically we are trying to create as many metric events
->> as define by runtime_param.
->>
->> For that one loop is added in function 'metricgroup__add_metric',
->> which create multiple events at run time depend on return value of
->> 'arch_get_runtimeparam' and merge that event in 'group_list'.
->>
->> To achieve that we are actually passing this parameter value as part of
->> `expr__find_other` function and changing "?" present in metric expression
->> with this value.
->>
->> As in our json file, there gonna be single metric event, and out of
->> which we are creating multiple events, I am also merging this value
->> to the original metric name to specify parameter value.
->>
->> For example,
->> command:# ./perf stat  -M PowerBUS_Frequency -C 0 -I 1000
->> #           time             counts unit events
->>      1.000101867          9,356,933      hv_24x7/pm_pb_cyc,chip=0/ #      2.3 GHz  PowerBUS_Frequency_0
->>      1.000101867          9,366,134      hv_24x7/pm_pb_cyc,chip=1/ #      2.3 GHz  PowerBUS_Frequency_1
->>      2.000314878          9,365,868      hv_24x7/pm_pb_cyc,chip=0/ #      2.3 GHz  PowerBUS_Frequency_0
->>      2.000314878          9,366,092      hv_24x7/pm_pb_cyc,chip=1/ #      2.3 GHz  PowerBUS_Frequency_1
->>
->> So, here _0 and _1 after PowerBUS_Frequency specify parameter value.
->>
->> As after adding this to group_list, again we call expr__parse
->> in 'generic_metric' function present in util/stat-display.c.
->> By this time again we need to pass this parameter value. So, now to get this value
->> actually I am trying to extract it from metric name itself. Because
->> otherwise it gonna point to last updated value present in runtime_param.
->> And gonna match for that value only.
-> 
-> so why can't we pass that param as integer value through the metric objects?
-> 
-> it get's created in metricgroup__add_metric_param:
->   - as struct egroup *eg
->   - we can add egroup::param and store the param value there
-> 
-> then in metricgroup__setup_events it moves to:
->   - struct metric_expr *expr
->   - we can add metric_expr::param to keep the param
-> 
-> then in perf_stat__print_shadow_stats there's:
->   - struct metric_expr *mexp loop
->   - calling generic_metric metric - we could call it with mexp::param
->   - and pass the param to expr__parse
-> 
-Hi jiri,
-   	Thanks for the suggestion, Yes it make more sense to use like that.
-Will update.
-
-Thanks,
-Kajol
-> jirka
-> 
+PiBGcm9tOiBKYWNvYiBQYW4gPGphY29iLmp1bi5wYW5AbGludXguaW50ZWwuY29tPg0KPiBTZW50
+OiBUaHVyc2RheSwgTWFyY2ggMjYsIDIwMjAgMTo1NSBBTQ0KPiANCj4gSU9BU0lEIHVzZXJzIGZp
+dCBpbnRvIHRoZSBwdWJsaXNoZXItc3Vic2NyaWJlciBwYXR0ZXJuLCBhIHN5c3RlbSB3aWRlDQo+
+IGJsb2NraW5nIG5vdGlmaWVyIGNoYWluIGNhbiBiZSB1c2VkIHRvIGluZm9ybSBzdWJzY3JpYmVy
+cyBvZiBzdGF0ZQ0KPiBjaGFuZ2VzLiBOb3RpZmllciBtZWNoYW5pc20gYWxzbyBhYnN0cmFjdHMg
+cHVibGlzaGVyIGZyb20ga25vd2luZyB0aGUNCj4gcHJpdmF0ZSBjb250ZXh0IGVhY2ggc3ViY3Jp
+YmVyIG1heSBoYXZlLg0KPiANCj4gVGhpcyBwYXRjaCBhZGRzIEFQSXMgYW5kIGEgZ2xvYmFsIG5v
+dGlmaWVyIGNoYWluLCBhIGZ1cnRoZXIgb3B0aW1pemF0aW9uDQo+IG1pZ2h0IGJlIHBlciBzZXQg
+bm90aWZpZXIgZm9yIGlvYXNpZF9zZXQgYXdhcmUgdXNlcnMuDQo+IA0KPiBVc2FnZSBleGFtcGxl
+Og0KPiBLVk0gcmVnaXN0ZXIgbm90aWZpZXIgYmxvY2sgc3VjaCB0aGF0IGl0IGNhbiBrZWVwIGl0
+cyBndWVzdC1ob3N0IFBBU0lEDQo+IHRyYW5zbGF0aW9uIHRhYmxlIGluIHN5bmMgd2l0aCBhbnkg
+SU9BU0lEIHVwZGF0ZXMuDQo+IA0KPiBWRklPIHB1Ymxpc2ggSU9BU0lEIGNoYW5nZSBieSBwZXJm
+b3JtaW5nIGFsbG9jL2ZyZWUsIGJpbmQvdW5iaW5kDQo+IG9wZXJhdGlvbnMuDQo+IA0KPiBJT01N
+VSBkcml2ZXIgZ2V0cyBub3RpZmllZCB3aGVuIElPQVNJRCBpcyBmcmVlZCBieSBWRklPIG9yIGNv
+cmUgbW0gY29kZQ0KPiBzdWNoIHRoYXQgUEFTSUQgY29udGV4dCBjYW4gYmUgY2xlYW5lZCB1cC4N
+Cg0KYWJvdmUgZXhhbXBsZSBsb29rcyBtaXhlZC4gWW91IGhhdmUgS1ZNIHJlZ2lzdGVycyB0aGUg
+bm90aWZpZXIgYnV0DQpmaW5hbGx5IGhhdmluZyBJT01NVSBkcml2ZXIgdG8gZ2V0IG5vdGlmaWVk
+Li4uIPCfmIoNCg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTGl1IFlpIEwgPHlpLmwubGl1QGludGVs
+LmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogSmFjb2IgUGFuIDxqYWNvYi5qdW4ucGFuQGxpbnV4Lmlu
+dGVsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2lvbW11L2lvYXNpZC5jIHwgNjENCj4gKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gIGluY2x1ZGUv
+bGludXgvaW9hc2lkLmggfCA0MCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4g
+IDIgZmlsZXMgY2hhbmdlZCwgMTAxIGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL2lvbW11L2lvYXNpZC5jIGIvZHJpdmVycy9pb21tdS9pb2FzaWQuYw0KPiBpbmRleCA4
+NjEyZmU2NDc3ZGMuLjI3ZGNlMmNiNWFmMiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9pb21tdS9p
+b2FzaWQuYw0KPiArKysgYi9kcml2ZXJzL2lvbW11L2lvYXNpZC5jDQo+IEBAIC0xMSw2ICsxMSwy
+MiBAQA0KPiAgI2luY2x1ZGUgPGxpbnV4L3hhcnJheS5oPg0KPiANCj4gIHN0YXRpYyBERUZJTkVf
+WEFSUkFZX0FMTE9DKGlvYXNpZF9zZXRzKTsNCj4gKy8qDQo+ICsgKiBBbiBJT0FTSUQgY291bGQg
+aGF2ZSBtdWx0aXBsZSBjb25zdW1lcnMuIFdoZW4gYSBzdGF0dXMgY2hhbmdlIG9jY3VycywNCj4g
+KyAqIHRoaXMgbm90aWZpZXIgY2hhaW4gaXMgdXNlZCB0byBrZWVwIHRoZW0gaW4gc3luYy4gRWFj
+aCBjb25zdW1lciBvZiB0aGUNCj4gKyAqIElPQVNJRCBzZXJ2aWNlIG11c3QgcmVnaXN0ZXIgbm90
+aWZpZXIgYmxvY2sgZWFybHkgdG8gZW5zdXJlIG5vIGV2ZW50cw0KPiArICogYXJlIG1pc3NlZC4N
+Cj4gKyAqDQo+ICsgKiBUaGlzIGlzIGEgcHVibGlzaGVyLXN1YnNjcmliZXIgcGF0dGVybiB3aGVy
+ZSBwdWJsaXNoZXIgY2FuIGNoYW5nZSB0aGUNCj4gKyAqIHN0YXRlIG9mIGVhY2ggSU9BU0lELCBl
+LmcuIGFsbG9jL2ZyZWUsIGJpbmQgSU9BU0lEIHRvIGEgZGV2aWNlIGFuZCBtbS4NCj4gKyAqIE9u
+IHRoZSBvdGhlciBoYW5kLCBzdWJzY3JpYmVycyBnZXRzIG5vdGlmaWVkIGZvciB0aGUgc3RhdGUg
+Y2hhbmdlIGFuZA0KPiArICoga2VlcCBsb2NhbCBzdGF0ZXMgaW4gc3luYy4NCj4gKyAqDQo+ICsg
+KiBDdXJyZW50bHksIHRoZSBub3RpZmllciBpcyBnbG9iYWwuIEEgZnVydGhlciBvcHRpbWl6YXRp
+b24gY291bGQgYmUgcGVyDQo+ICsgKiBJT0FTSUQgc2V0IG5vdGlmaWVyIGNoYWluLg0KPiArICov
+DQo+ICtzdGF0aWMgQkxPQ0tJTkdfTk9USUZJRVJfSEVBRChpb2FzaWRfY2hhaW4pOw0KPiArDQo+
+ICAvKioNCj4gICAqIHN0cnVjdCBpb2FzaWRfc2V0X2RhdGEgLSBNZXRhIGRhdGEgYWJvdXQgaW9h
+c2lkX3NldA0KPiAgICoNCj4gQEAgLTQwOCw2ICs0MjQsNyBAQCBzdGF0aWMgdm9pZCBpb2FzaWRf
+ZnJlZV9sb2NrZWQoaW9hc2lkX3QgaW9hc2lkKQ0KPiAgew0KPiAgCXN0cnVjdCBpb2FzaWRfZGF0
+YSAqaW9hc2lkX2RhdGE7DQo+ICAJc3RydWN0IGlvYXNpZF9zZXRfZGF0YSAqc2RhdGE7DQo+ICsJ
+c3RydWN0IGlvYXNpZF9uYl9hcmdzIGFyZ3M7DQo+IA0KPiAgCWlvYXNpZF9kYXRhID0geGFfbG9h
+ZCgmYWN0aXZlX2FsbG9jYXRvci0+eGEsIGlvYXNpZCk7DQo+ICAJaWYgKCFpb2FzaWRfZGF0YSkg
+ew0KPiBAQCAtNDE1LDYgKzQzMiwxMyBAQCBzdGF0aWMgdm9pZCBpb2FzaWRfZnJlZV9sb2NrZWQo
+aW9hc2lkX3QgaW9hc2lkKQ0KPiAgCQlyZXR1cm47DQo+ICAJfQ0KPiANCj4gKwlhcmdzLmlkID0g
+aW9hc2lkOw0KPiArCWFyZ3Muc2lkID0gaW9hc2lkX2RhdGEtPnNkYXRhLT5zaWQ7DQo+ICsJYXJn
+cy5wZGF0YSA9IGlvYXNpZF9kYXRhLT5wcml2YXRlOw0KPiArCWFyZ3Muc2V0X3Rva2VuID0gaW9h
+c2lkX2RhdGEtPnNkYXRhLT50b2tlbjsNCj4gKw0KPiArCS8qIE5vdGlmeSBhbGwgdXNlcnMgdGhh
+dCB0aGlzIElPQVNJRCBpcyBiZWluZyBmcmVlZCAqLw0KPiArCWJsb2NraW5nX25vdGlmaWVyX2Nh
+bGxfY2hhaW4oJmlvYXNpZF9jaGFpbiwgSU9BU0lEX0ZSRUUsICZhcmdzKTsNCj4gIAlhY3RpdmVf
+YWxsb2NhdG9yLT5vcHMtPmZyZWUoaW9hc2lkLCBhY3RpdmVfYWxsb2NhdG9yLT5vcHMtPnBkYXRh
+KTsNCj4gIAkvKiBDdXN0b20gYWxsb2NhdG9yIG5lZWRzIGFkZGl0aW9uYWwgc3RlcHMgdG8gZnJl
+ZSB0aGUgeGEgZWxlbWVudCAqLw0KPiAgCWlmIChhY3RpdmVfYWxsb2NhdG9yLT5mbGFncyAmIElP
+QVNJRF9BTExPQ0FUT1JfQ1VTVE9NKSB7DQo+IEBAIC02MjQsNiArNjQ4LDQzIEBAIGludCBpb2Fz
+aWRfZmluZF9zaWQoaW9hc2lkX3QgaW9hc2lkKQ0KPiAgfQ0KPiAgRVhQT1JUX1NZTUJPTF9HUEwo
+aW9hc2lkX2ZpbmRfc2lkKTsNCj4gDQo+ICtpbnQgaW9hc2lkX2FkZF9ub3RpZmllcihzdHJ1Y3Qg
+bm90aWZpZXJfYmxvY2sgKm5iKQ0KPiArew0KPiArCXJldHVybiBibG9ja2luZ19ub3RpZmllcl9j
+aGFpbl9yZWdpc3RlcigmaW9hc2lkX2NoYWluLCBuYik7DQo+ICt9DQo+ICtFWFBPUlRfU1lNQk9M
+X0dQTChpb2FzaWRfYWRkX25vdGlmaWVyKTsNCj4gKw0KPiArdm9pZCBpb2FzaWRfcmVtb3ZlX25v
+dGlmaWVyKHN0cnVjdCBub3RpZmllcl9ibG9jayAqbmIpDQo+ICt7DQo+ICsJYmxvY2tpbmdfbm90
+aWZpZXJfY2hhaW5fdW5yZWdpc3RlcigmaW9hc2lkX2NoYWluLCBuYik7DQo+ICt9DQo+ICtFWFBP
+UlRfU1lNQk9MX0dQTChpb2FzaWRfcmVtb3ZlX25vdGlmaWVyKTsNCg0KcmVnaXN0ZXIvdW5yZWdp
+c3Rlcg0KDQo+ICsNCj4gK2ludCBpb2FzaWRfbm90aWZ5KGlvYXNpZF90IGlvYXNpZCwgZW51bSBp
+b2FzaWRfbm90aWZ5X3ZhbCBjbWQpDQoNCmFkZCBhIGNvbW1lbnQgb24gd2hlbiB0aGlzIGZ1bmN0
+aW9uIHNob3VsZCBiZSB1c2VkPw0KDQo+ICt7DQo+ICsJc3RydWN0IGlvYXNpZF9kYXRhICppb2Fz
+aWRfZGF0YTsNCj4gKwlzdHJ1Y3QgaW9hc2lkX25iX2FyZ3MgYXJnczsNCj4gKwlpbnQgcmV0ID0g
+MDsNCj4gKw0KPiArCW11dGV4X2xvY2soJmlvYXNpZF9hbGxvY2F0b3JfbG9jayk7DQo+ICsJaW9h
+c2lkX2RhdGEgPSB4YV9sb2FkKCZhY3RpdmVfYWxsb2NhdG9yLT54YSwgaW9hc2lkKTsNCj4gKwlp
+ZiAoIWlvYXNpZF9kYXRhKSB7DQo+ICsJCXByX2VycigiVHJ5aW5nIHRvIGZyZWUgdW5rbm93biBJ
+T0FTSUQgJXVcbiIsIGlvYXNpZCk7DQoNCndoeSBpcyBpdCBmaXhlZCB0byAnZnJlZSc/DQoNCj4g
+KwkJbXV0ZXhfdW5sb2NrKCZpb2FzaWRfYWxsb2NhdG9yX2xvY2spOw0KPiArCQlyZXR1cm4gLUVJ
+TlZBTDsNCj4gKwl9DQo+ICsNCj4gKwlhcmdzLmlkID0gaW9hc2lkOw0KPiArCWFyZ3Muc2lkID0g
+aW9hc2lkX2RhdGEtPnNkYXRhLT5zaWQ7DQo+ICsJYXJncy5wZGF0YSA9IGlvYXNpZF9kYXRhLT5w
+cml2YXRlOw0KDQp3aHkgbm8gdG9rZW4gaW5mbyBhcyBkaWQgaW4gaW9hc2lkX2ZyZWU/DQoNCj4g
+Kw0KPiArCXJldCA9IGJsb2NraW5nX25vdGlmaWVyX2NhbGxfY2hhaW4oJmlvYXNpZF9jaGFpbiwg
+Y21kLCAmYXJncyk7DQo+ICsJbXV0ZXhfdW5sb2NrKCZpb2FzaWRfYWxsb2NhdG9yX2xvY2spOw0K
+PiArDQo+ICsJcmV0dXJuIHJldDsNCj4gK30NCj4gK0VYUE9SVF9TWU1CT0xfR1BMKGlvYXNpZF9u
+b3RpZnkpOw0KPiArDQo+ICBNT0RVTEVfQVVUSE9SKCJKZWFuLVBoaWxpcHBlIEJydWNrZXIgPGpl
+YW4tDQo+IHBoaWxpcHBlLmJydWNrZXJAYXJtLmNvbT4iKTsNCj4gIE1PRFVMRV9BVVRIT1IoIkph
+Y29iIFBhbiA8amFjb2IuanVuLnBhbkBsaW51eC5pbnRlbC5jb20+Iik7DQo+ICBNT0RVTEVfREVT
+Q1JJUFRJT04oIklPIEFkZHJlc3MgU3BhY2UgSUQgKElPQVNJRCkgYWxsb2NhdG9yIik7DQo+IGRp
+ZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2lvYXNpZC5oIGIvaW5jbHVkZS9saW51eC9pb2FzaWQu
+aA0KPiBpbmRleCBlMTljMGFkOTNiZDcuLjMyZDAzMjkxMzgyOCAxMDA2NDQNCj4gLS0tIGEvaW5j
+bHVkZS9saW51eC9pb2FzaWQuaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L2lvYXNpZC5oDQo+IEBA
+IC00LDYgKzQsNyBAQA0KPiANCj4gICNpbmNsdWRlIDxsaW51eC90eXBlcy5oPg0KPiAgI2luY2x1
+ZGUgPGxpbnV4L2Vycm5vLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvbm90aWZpZXIuaD4NCj4gDQo+
+ICAjZGVmaW5lIElOVkFMSURfSU9BU0lEICgoaW9hc2lkX3QpLTEpDQo+ICAjZGVmaW5lIElOVkFM
+SURfSU9BU0lEX1NFVCAoLTEpDQo+IEBAIC0zMCw2ICszMSwyNyBAQCBzdHJ1Y3QgaW9hc2lkX2Fs
+bG9jYXRvcl9vcHMgew0KPiAgCXZvaWQgKnBkYXRhOw0KPiAgfTsNCj4gDQo+ICsvKiBOb3RpZmlj
+YXRpb24gZGF0YSB3aGVuIElPQVNJRCBzdGF0dXMgY2hhbmdlZCAqLw0KPiArZW51bSBpb2FzaWRf
+bm90aWZ5X3ZhbCB7DQo+ICsJSU9BU0lEX0FMTE9DID0gMSwNCj4gKwlJT0FTSURfRlJFRSwNCj4g
+KwlJT0FTSURfQklORCwNCj4gKwlJT0FTSURfVU5CSU5ELA0KPiArfTsNCg0KQ3VyaW91cyB3aHkg
+SU9BU0lEX0FMTE9DIGlzIG5vdCBub3RpZmllZCBhdW1hdGljYWxseSB3aXRoaW4gaW9hc2lkX2Fs
+bG9jDQpzaW1pbGFyIHRvIGlvYXNpZF9mcmVlLCB3aGlsZSBsZWF2aW5nIHRvIHRoZSBwdWJsaXNo
+ZXI/IEJJTkQvVU5CSU5EIGlzDQphIHB1Ymxpc2hlciB0aGluZyBidXQgYSBiaXQgc3RyYW5nZSB0
+byBzZWUgQUxMT0MvRlJFRSB3aXRoIGRpZmZlcmVudCBwb2xpY3kgaGVyZS4NCg0KPiArDQo+ICsv
+KioNCj4gKyAqIHN0cnVjdCBpb2FzaWRfbmJfYXJncyAtIEFyZ3VtZW50IHByb3ZpZGVkIGJ5IElP
+QVNJRCBjb3JlIHdoZW4gbm90aWZpZXINCj4gKyAqIGlzIGNhbGxlZC4NCj4gKyAqIEBpZDoJCXRo
+ZSBJT0FTSUQgYmVpbmcgbm90aWZpZWQNCj4gKyAqIEBzaWQ6CXRoZSBJT0FTSUQgc2V0IEBpZCBi
+ZWxvbmdzIHRvDQo+ICsgKiBAcGRhdGE6CXRoZSBwcml2YXRlIGRhdGEgYXR0YWNoZWQgdG8gdGhl
+IElPQVNJRA0KPiArICovDQo+ICtzdHJ1Y3QgaW9hc2lkX25iX2FyZ3Mgew0KPiArCWlvYXNpZF90
+IGlkOw0KPiArCWludCBzaWQ7DQo+ICsJc3RydWN0IGlvYXNpZF9zZXQgKnNldF90b2tlbjsNCj4g
+Kwl2b2lkICpwZGF0YTsNCj4gK307DQo+ICAvKiBTaGFyZWQgSU9BU0lEIHNldCBmb3IgcmVzZXJ2
+ZWQgZm9yIGhvc3Qgc3lzdGVtIHVzZSAqLw0KPiAgZXh0ZXJuIGludCBzeXN0ZW1faW9hc2lkX3Np
+ZDsNCj4gDQo+IEBAIC00MywxMSArNjUsMTUgQEAgdm9pZCAqaW9hc2lkX2ZpbmQoaW50IHNpZCwg
+aW9hc2lkX3QgaW9hc2lkLCBib29sDQo+ICgqZ2V0dGVyKSh2b2lkICopKTsNCj4gIGludCBpb2Fz
+aWRfcmVnaXN0ZXJfYWxsb2NhdG9yKHN0cnVjdCBpb2FzaWRfYWxsb2NhdG9yX29wcyAqYWxsb2Nh
+dG9yKTsNCj4gIHZvaWQgaW9hc2lkX3VucmVnaXN0ZXJfYWxsb2NhdG9yKHN0cnVjdCBpb2FzaWRf
+YWxsb2NhdG9yX29wcyAqYWxsb2NhdG9yKTsNCj4gIGludCBpb2FzaWRfYXR0YWNoX2RhdGEoaW9h
+c2lkX3QgaW9hc2lkLCB2b2lkICpkYXRhKTsNCj4gK2ludCBpb2FzaWRfYWRkX25vdGlmaWVyKHN0
+cnVjdCBub3RpZmllcl9ibG9jayAqbmIpOw0KPiArdm9pZCBpb2FzaWRfcmVtb3ZlX25vdGlmaWVy
+KHN0cnVjdCBub3RpZmllcl9ibG9jayAqbmIpOw0KPiAgdm9pZCBpb2FzaWRfaW5zdGFsbF9jYXBh
+Y2l0eShpb2FzaWRfdCB0b3RhbCk7DQo+ICBpbnQgaW9hc2lkX2FsbG9jX3N5c3RlbV9zZXQoaW50
+IHF1b3RhKTsNCj4gIGludCBpb2FzaWRfYWxsb2Nfc2V0KHN0cnVjdCBpb2FzaWRfc2V0ICp0b2tl
+biwgaW9hc2lkX3QgcXVvdGEsIGludCAqc2lkKTsNCj4gIHZvaWQgaW9hc2lkX2ZyZWVfc2V0KGlu
+dCBzaWQsIGJvb2wgZGVzdHJveV9zZXQpOw0KPiAgaW50IGlvYXNpZF9maW5kX3NpZChpb2FzaWRf
+dCBpb2FzaWQpOw0KPiAraW50IGlvYXNpZF9ub3RpZnkoaW9hc2lkX3QgaWQsIGVudW0gaW9hc2lk
+X25vdGlmeV92YWwgY21kKTsNCj4gKw0KPiAgI2Vsc2UgLyogIUNPTkZJR19JT0FTSUQgKi8NCj4g
+IHN0YXRpYyBpbmxpbmUgaW9hc2lkX3QgaW9hc2lkX2FsbG9jKGludCBzaWQsIGlvYXNpZF90IG1p
+biwNCj4gIAkJCQkgICAgaW9hc2lkX3QgbWF4LCB2b2lkICpwcml2YXRlKQ0KPiBAQCAtNzMsNiAr
+OTksMjAgQEAgc3RhdGljIGlubGluZSB2b2lkICppb2FzaWRfZmluZChpbnQgc2lkLCBpb2FzaWRf
+dCBpb2FzaWQsDQo+IGJvb2wgKCpnZXR0ZXIpKHZvaWQgKikNCj4gIAlyZXR1cm4gTlVMTDsNCj4g
+IH0NCj4gDQo+ICtzdGF0aWMgaW5saW5lIGludCBpb2FzaWRfYWRkX25vdGlmaWVyKHN0cnVjdCBu
+b3RpZmllcl9ibG9jayAqbmIpDQo+ICt7DQo+ICsJcmV0dXJuIC1FTk9UU1VQUDsNCj4gK30NCj4g
+Kw0KPiArc3RhdGljIGlubGluZSB2b2lkIGlvYXNpZF9yZW1vdmVfbm90aWZpZXIoc3RydWN0IG5v
+dGlmaWVyX2Jsb2NrICpuYikNCj4gK3sNCj4gK30NCj4gKw0KPiAraW50IGlvYXNpZF9ub3RpZnko
+aW9hc2lkX3QgaW9hc2lkLCBlbnVtIGlvYXNpZF9ub3RpZnlfdmFsIGNtZCkNCj4gK3sNCj4gKwly
+ZXR1cm4gLUVOT1RTVVBQOw0KPiArfQ0KPiArDQo+ICBzdGF0aWMgaW5saW5lIGludCBpb2FzaWRf
+cmVnaXN0ZXJfYWxsb2NhdG9yKHN0cnVjdCBpb2FzaWRfYWxsb2NhdG9yX29wcw0KPiAqYWxsb2Nh
+dG9yKQ0KPiAgew0KPiAgCXJldHVybiAtRU5PVFNVUFA7DQo+IC0tDQo+IDIuNy40DQoNCg==
