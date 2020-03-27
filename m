@@ -2,157 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 689B5194E1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 01:35:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E528194E25
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 01:40:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbgC0AfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 20:35:12 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34494 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbgC0AfL (ORCPT
+        id S1727612AbgC0AkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 20:40:01 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:36160 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbgC0AkA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 20:35:11 -0400
-Received: by mail-wr1-f68.google.com with SMTP id 65so9490537wrl.1;
-        Thu, 26 Mar 2020 17:35:09 -0700 (PDT)
+        Thu, 26 Mar 2020 20:40:00 -0400
+Received: by mail-il1-f195.google.com with SMTP id p13so7246633ilp.3;
+        Thu, 26 Mar 2020 17:40:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bmhev9wfQUAhxT/ORzDJ1IVbBeA142XQHyMYlNcZRpo=;
-        b=fFu0Uy5yzTfa7AB5nOGwzAkhLsTsuzh8C87BcZ4mnBkrCcj0ZSkc5Ce/z05pHYDwdd
-         bFsMQ52OObjqApMej8wQRN/DA+UB6ZpPrjFdfBMaYO4vyD0a8dded05NUOAZ7OhfwlDw
-         JbAyRR3jctzBl7IGUljwNUjtVlR5tpkcyr9g4RnInWFfJdHcM2wN0ZLAZDYUaKnzXJI9
-         nmnzgxDakjhczMMsUrFkbJeHWSlnCS2AilD/eS0el+bq7hBurbmtF6uQBnA26NWpKlq8
-         OEwKoSyIMTJvP30veB5htIdnqOfYI5HLHbeuGB+32WGJ+sr28mYaKmM6atLxKiCe6iTV
-         iwwQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zd/d+NmMfPoiVkw185r4QcNynYeA8Jn7+WiOnzp7Ycc=;
+        b=W5nlJorNuK4rURuQTs6iC1P12yA5n9Wuu8NtBkUOsA28f/gRN3PPhsNN16ANwGfkyK
+         r9e7/WcZ5jqGRCnCUjy+RsHIPuJ9hJEpbEhmRVJyTbv4DA0IBeQDyu/frMlUWMALBvv0
+         7gi7ne70vx/TwDzk3Ajx4DKoosU7UB7N6wuADgzjg2dkIyQWRit8BRdiCnYs+lUEBQWd
+         uaJZwQjJtjE4YId47nkZmDuTQ+nkflxbm8knUO4RmmXr6E0isGA7e+VoFT13I6sgvHBh
+         p0Cen6VvO+2Fh6EJhThKKmjytiluW0aJqdUPsCPFXeXzgJJwbDnaZxe9scXURZI2iiDx
+         gqlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=bmhev9wfQUAhxT/ORzDJ1IVbBeA142XQHyMYlNcZRpo=;
-        b=Oy818ENc6FsGNDmqWfeON1sAhQO3gBL6Mf6jjgnjSosu/4W3Vul1AFwU/CmozUpydQ
-         w1ECoCC+crGmge+Mq6HUMkmxfpZpZbYS0219BKA7i0HJ9qvVB05v4r1Ln/PZUZoeTNj5
-         xR1ShKyxzNjYrERR8IQcdi0NiOWihnYSMn3JHAPuRVipjlR0mNxm7jiGH78CZXk1wUgR
-         /VWBcs5h/Q4xADd8PN8XysTGaZ5UlNgU7wk8hfyAEpucJK6nNpGNsliWHPFxeMrIRLdQ
-         qg6RyItgkq2D0VL7VgloCXx6dSGFfwigh/XWkGuYBKf6twd8tdzjTYwkenTvff9I+jgV
-         BVHg==
-X-Gm-Message-State: ANhLgQ3QJxjeQoYNPlv7z8z5TsjdeiIJrvg1rtKfGb4JA0ZQHqceX3ru
-        5AaJArKjwBmzTybCsfDkUS8=
-X-Google-Smtp-Source: ADFU+vuM1gTU8z+WPH8wXL1Xqz1uDIJ2gRoRB5wHULBKkl8UJiB3UXGz2RtVNj/Ezhxzhx2uuwtmLw==
-X-Received: by 2002:adf:9321:: with SMTP id 30mr11626637wro.330.1585269309240;
-        Thu, 26 Mar 2020 17:35:09 -0700 (PDT)
-Received: from [10.230.186.223] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id k3sm5555165wmf.16.2020.03.26.17.35.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Mar 2020 17:35:08 -0700 (PDT)
-Subject: Re: [PATCH] ARM: dts: bcm283x: Use firmware PM driver for V3D
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>
-Cc:     devicetree@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        wahrenst@gmx.net, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org
-References: <20200303173217.3987-1-nsaenzjulienne@suse.de>
- <24f850f64b5c71c71938110775e16caaec2811cc.camel@suse.de>
- <8c2bdd83-c8a9-7ba8-8d61-69594e6a2bde@i2se.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <4239bf44-1a2d-09c4-fc1b-186955c062ab@gmail.com>
-Date:   Thu, 26 Mar 2020 17:35:04 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Firefox/68.0 Thunderbird/68.6.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zd/d+NmMfPoiVkw185r4QcNynYeA8Jn7+WiOnzp7Ycc=;
+        b=lRhV7iroaUo1+KV7DXscSc7QMn69tIDhdfQ36m69eKsVzhz7zL/UGxTc30pVodRKI5
+         zVa6wxWBZgQE+iLx8rmTD0oBoH+6gIknza4XDdLmLArQ1mloFiuonOvdfTUVUvBa5FxC
+         BM3XDIaWbDqhUGWWJCK5LcaxFASm05rmtfROqcBRMHaXDGl/6VYhMf/3CGeUDzdpj6j7
+         mBHyDi1oOs0kgcHxd+Wpt0OZjS/kC7AbU36/AjaxB+jW4T8Q/VAZAG586qTGTRHKN4xw
+         d7DfTPof/Cq3tra7X83JmJ4YjBgTO+AoBZuBO96zSfCqcIyiAl1AuSkcsHUYnmT3T3nz
+         O8vA==
+X-Gm-Message-State: ANhLgQ0KYy2qx7meKjN/0pJUqb6rAxLOMkmmtSOSTaVudjCOoh5U2TXY
+        PsJUYfhtKFetxgcmhIAgtJNr7PtTQiajDDVK2Pg=
+X-Google-Smtp-Source: ADFU+vvq6MTlWxf9MwL0wPp/8QhnDH4n7lMLXziqgL0JnLCFB/c74o1Hh1ddfrQpa2QnhBwjCPHktiDH7/9v0k39Nfw=
+X-Received: by 2002:a92:d850:: with SMTP id h16mr11422557ilq.203.1585269599596;
+ Thu, 26 Mar 2020 17:39:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <8c2bdd83-c8a9-7ba8-8d61-69594e6a2bde@i2se.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1585191042-9935-1-git-send-email-laoar.shao@gmail.com>
+ <20200326130808.ccbacd6cba99a40326936fea@linux-foundation.org>
+ <b879b50324b502cbd3f8439182d63532518d7315.camel@sipsolutions.net> <ed7c4063-8b45-9fc8-5b92-a903d9da4054@gmail.com>
+In-Reply-To: <ed7c4063-8b45-9fc8-5b92-a903d9da4054@gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Fri, 27 Mar 2020 08:39:23 +0800
+Message-ID: <CALOAHbB3mByKY4jfkHLBMu+GOt5XiXURXYwVhExXc4DdZThhVQ@mail.gmail.com>
+Subject: Re: [PATCH] kernel/taskstats: fix wrong nla type for
+ {cgroup,task}stats policy
+To:     David Ahern <dsahern@gmail.com>
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        bsingharora@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org, "David S.Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 27, 2020 at 5:11 AM David Ahern <dsahern@gmail.com> wrote:
+>
+> On 3/26/20 2:28 PM, Johannes Berg wrote:
+> >
+> > And looking at this ... well, that code is completely wrong?
+> >
+> > E.g.
+> >
+> >                 rc = send_cmd(nl_sd, id, mypid, TASKSTATS_CMD_GET,
+> >                               cmd_type, &tid, sizeof(__u32));
+> >
+> > (cmd_type is one of TASKSTATS_CMD_ATTR_TGID, TASKSTATS_CMD_ATTR_PID)
+> >
+> > or it might do
+> >
+> >                 rc = send_cmd(nl_sd, id, mypid, CGROUPSTATS_CMD_GET,
+> >                               CGROUPSTATS_CMD_ATTR_FD, &cfd, sizeof(__u32));
+> >
+> > so clearly it wants to produce a u32 attribute.
+> >
+> > But then
+> >
+> > static int send_cmd(int sd, __u16 nlmsg_type, __u32 nlmsg_pid,
+> >              __u8 genl_cmd, __u16 nla_type,
+> >              void *nla_data, int nla_len)
+> > {
+> > ...
+> >
+> >         na = (struct nlattr *) GENLMSG_DATA(&msg);
+> >
+> > // this is still fine
+> >
+> >         na->nla_type = nla_type;
+> >
+> > // this is also fine
+> >
+> >         na->nla_len = nla_len + 1 + NLA_HDRLEN;
+> >
+> > // but this??? the nla_len of a netlink attribute should just be
+> > // the len ... what's NLA_HDRLEN doing here? this isn't nested
+> > // here we end up just reserving 1+NLA_HDRLEN too much space
+> >
+> >         memcpy(NLA_DATA(na), nla_data, nla_len);
+> >
+> > // but then it anyway only fills the first nla_len bytes, which
+> > // is just like a regular attribute.
+> >
+> >         msg.n.nlmsg_len += NLMSG_ALIGN(na->nla_len);
+> > // note that this is also wrong - it should be
+> > // += NLA_ALIGN(NLA_HDRLEN + nla_len)
+> >
+> >
+> >
+> > So really I think what happened here is precisely what we wanted -
+> > David's kernel patch caught the broken userspace tool.
+>
+> agreed. The tool needs to be fixed, not the kernel policy.
+>
+> I do not get the error message with this change as Johannes points out
+> above:
+>
+> diff --git a/tools/accounting/getdelays.c b/tools/accounting/getdelays.c
+> index 8cb504d30384..e90fd133df0e 100644
+> --- a/tools/accounting/getdelays.c
+> +++ b/tools/accounting/getdelays.c
+> @@ -136,7 +136,7 @@ static int send_cmd(int sd, __u16 nlmsg_type, __u32
+> nlmsg_pid,
+>         msg.g.version = 0x1;
+>         na = (struct nlattr *) GENLMSG_DATA(&msg);
+>         na->nla_type = nla_type;
+> -       na->nla_len = nla_len + 1 + NLA_HDRLEN;
+> +       na->nla_len = nla_len + NLA_HDRLEN;
+>         memcpy(NLA_DATA(na), nla_data, nla_len);
+>         msg.n.nlmsg_len += NLMSG_ALIGN(na->nla_len);
+>
 
+Right. This is the right thing to do.
+I missed that the nla_len() will minus the NLA_HDRLEN.
 
-On 3/26/2020 10:24 AM, Stefan Wahren wrote:
-> Am 26.03.20 um 13:24 schrieb Nicolas Saenz Julienne:
->> Hi Stefan and Florian,
->>
->> On Tue, 2020-03-03 at 18:32 +0100, Nicolas Saenz Julienne wrote:
->>> The register based driver turned out to be unstable, specially on RPi3a+
->>> but not limited to it. While a fix is being worked on, we roll back to
->>> using firmware based scheme.
->>>
->>> Fixes: e1dc2b2e1bef ("ARM: bcm283x: Switch V3D over to using the PM driver
->>> instead of firmware")
->>> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
->>> ---
->> now that the problem Stefan was seeing is being taken care of, I think it's
->> fair to reconsider taking this patch. Maybe even adding a Tested-by by Stefan?
-> 
-> after applying "drm/vc4: Fix HDMI mode validation" this commit doesn't
-> cause any regression:
-> 
-> Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+Would you pls. submit a patch ?
 
-Good, how do you like to see this applied? Do we need to ensure that
-drm/vc4: Fix HDMI mode validation is applied to Linus' tree before
-merging this one? Nicolas, should this be queued for 5.7 or 5.8 (I do
-not think the 5.7 PRs have been merged yet).
--- 
-Florian
+Feel free to add:
+Tested-by: Yafang Shao <laoar.shao@gmail.com>
+
+Thanks
+Yafang
