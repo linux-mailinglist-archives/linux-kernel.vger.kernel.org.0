@@ -2,75 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EFA91956F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 13:16:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 412FA1956FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 13:16:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbgC0MQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 08:16:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726661AbgC0MQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 08:16:09 -0400
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5CF020787
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 12:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585311369;
-        bh=/2HMPORZ12E8OERO6OoSoK6K05k7eyq73faR8OPKxfY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=xA/vyeexZuSQ7/a6cRtGnGJWJBvB60XeijO/mgEYeru5BovhhXZeWIvDQ3RmgU1Mm
-         3G0dL9JQkVEWj/lWk/jzsBWijwDtIBnjaEgUJDx9MXa5DhMJ9gCDf5NaYhQgAomnB3
-         o0zroopYZegnvlluYSPNkRh63XjwoHG/bWc/EpGk=
-Received: by mail-wr1-f42.google.com with SMTP id h15so11117985wrx.9
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 05:16:08 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ3y2sCWHLLOvFZmHtBQ9uO0wS0FHn9XolvtqKKH9XBsRIGds+ed
-        ziBt4UVAcMRP2o+57jOox2chaNmAK2ywd8s3t7Q=
-X-Google-Smtp-Source: ADFU+vvcUOv53tgiW4AvEma9SKV84qzuLQblzC1TPmgmBJHgDj8wMXy6C+BdlFl+bzbXobFqKfuFsZF1/2Rc7E7lh/I=
-X-Received: by 2002:a5d:4146:: with SMTP id c6mr14141722wrq.181.1585311367249;
- Fri, 27 Mar 2020 05:16:07 -0700 (PDT)
+        id S1727655AbgC0MQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 08:16:28 -0400
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:33000 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbgC0MQ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 08:16:27 -0400
+Received: by mail-qv1-f66.google.com with SMTP id p19so4730967qve.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 05:16:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=S/ta/XSnHTGzReKRmYeOqvL+o0DEdbV+GJUdYHEwsAM=;
+        b=ZORz3IQa1vSFeMnbdYj6MSqI9MkOTJC0QA1qNwwPop1+HwvEd7bZ4cOs2Z8aVZXKy0
+         F8txb/jEslWWWBSkNVrZM9ovOtEkCIP8yA62Uf6jh/OrVX86ryJvXp4bj12XL2jAkeTm
+         SNpVH5pzKTGH7I2ddnJwaxLeKRdqYXorni/5sWOR6A+Bq+xUpH01BvYo5hjz5WniTQbx
+         c6p7+FHxJiXDoiSF+qppko6XlaBVziQ8lqoZAM2NcvmZnDj9ckA5OoCu1zI23u86rvIM
+         GPmSD0MWABUGFgTS/COIJCt5Xrbwu22/v1WVFmv18apwzN8ma0kBhTaDRrIE60lhuQY8
+         5VUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=S/ta/XSnHTGzReKRmYeOqvL+o0DEdbV+GJUdYHEwsAM=;
+        b=BSsngBYE7kPBjk2zaaNPLLuROKmpyRL6bEBi/PaQwYW3f7V7UduocXimv1BHkGqvJA
+         4FDxNjeF5U9PexRoUsnRMyrVHzTqbXld84nKXutONDXZAuf8F9mphrZS2xwgfyJBReDh
+         PMweeY/Y0JugGZuirVR6OHrr7HHru8KgDh6ASm4eb/MxTdde08DGGrckTD8d1JNiISYb
+         7nVRgBAAArC0+VC719URTeUBikeVOYdcasZluhoxFzZc16I/Txw1MQ6xNpc1tEeVVtkn
+         LvKTS3bbhYxtFyyuvF7WwcUkanUyuzZU9YYlQnixGApWFxbVxkS3N9sXzGq0+2LstR+x
+         7PrA==
+X-Gm-Message-State: ANhLgQ34d5Y8Kkml7twwWAbWc3hMOlChPcZBL34kmBcJaTwxCcJRsDbn
+        waXIKoQUp2CMNzJbenoyk1p5mQ==
+X-Google-Smtp-Source: ADFU+vv7TdbZ+yEnsLfOzkI96fzPdYyFM5bhu2lYotTNuOnZpGbEoNwugSKeHBoAdhrhfHq5OXZkSg==
+X-Received: by 2002:a05:6214:68f:: with SMTP id r15mr12825495qvz.96.1585311386587;
+        Fri, 27 Mar 2020 05:16:26 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id 17sm3500884qkm.105.2020.03.27.05.16.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 27 Mar 2020 05:16:26 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1jHnuT-0007QU-EF; Fri, 27 Mar 2020 09:16:25 -0300
+Date:   Fri, 27 Mar 2020 09:16:25 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Michel Lespinasse <walken@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Liam Howlett <Liam.Howlett@oracle.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        David Rientjes <rientjes@google.com>,
+        Hugh Dickins <hughd@google.com>, Ying Han <yinghan@google.com>,
+        Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: [PATCH v2 01/10] mmap locking API: initial implementation as
+ rwsem wrappers
+Message-ID: <20200327121625.GS20941@ziepe.ca>
+References: <20200327021058.221911-1-walken@google.com>
+ <20200327021058.221911-2-walken@google.com>
 MIME-Version: 1.0
-References: <20200327030414.5903-3-wens@kernel.org> <8bfb3237-4bd3-8452-1860-ac05f3a23503@gmail.com>
-In-Reply-To: <8bfb3237-4bd3-8452-1860-ac05f3a23503@gmail.com>
-From:   Chen-Yu Tsai <wens@kernel.org>
-Date:   Fri, 27 Mar 2020 20:15:57 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65CL_K-c=fej=5UNseJvApusj7Q1AjZETs-q70kOwey8w@mail.gmail.com>
-Message-ID: <CAGb2v65CL_K-c=fej=5UNseJvApusj7Q1AjZETs-q70kOwey8w@mail.gmail.com>
-Subject: Re: [PATCH 2/6] arm64: dts: rockchip: rk3328: Replace RK805 PMIC node
- name with "pmic"
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     Chen-Yu Tsai <wens@kernel.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200327021058.221911-2-walken@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 8:12 PM Johan Jonker <jbx6244@gmail.com> wrote:
->
-> Hi Chen-Yu Tsai,
->
-> The Documentation/ portion of the patch should come in the series before
-> the code implementing the binding.
+On Thu, Mar 26, 2020 at 07:10:49PM -0700, Michel Lespinasse wrote:
 
-The name is not part of the binding.
+> +static inline bool mmap_is_locked(struct mm_struct *mm)
+> +{
+> +	return rwsem_is_locked(&mm->mmap_sem) != 0;
+> +}
 
-> If you like, could you convert the binding as well and fix the example?
->
-> Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
+I didn't notice any callers to this in the series? Can it be deleted?
 
-I can send an extra patch to fix the example.
-
-ChenYu
-
-> > Example:
-> > --------
-> > rk805: rk805@18 {
-> >       compatible = "rockchip,rk805";
->
+Jason
