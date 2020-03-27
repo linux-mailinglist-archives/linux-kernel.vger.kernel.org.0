@@ -2,100 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD75A1961EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 00:30:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2549D1961E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 00:28:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbgC0XaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 19:30:12 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35876 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbgC0XaK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 19:30:10 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHyQQ-004KFl-9L; Fri, 27 Mar 2020 23:30:06 +0000
-Date:   Fri, 27 Mar 2020 23:30:06 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC][PATCHSET] uaccess: getting csum_and_copy_..._user() into saner
- shape
-Message-ID: <20200327233006.GW23230@ZenIV.linux.org.uk>
+        id S1727125AbgC0X2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 19:28:15 -0400
+Received: from mga11.intel.com ([192.55.52.93]:6383 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726071AbgC0X2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 19:28:15 -0400
+IronPort-SDR: 20NqEPHO2xi1IVnDkVWeQh9U4qYAzHyOd5fWOxy3W8lrgg+tduhVcsSKf6OQvs3KPmygR0XTOP
+ PaRu07RvbKdQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 16:25:12 -0700
+IronPort-SDR: q5U/8cOHnQLIs+eR3NNw74xmIUCV5cB6hNSTBtRZzvQWm6/JqNeOkA885f2wXsikKW9vvrws6f
+ 39DoKFsTdsSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,314,1580803200"; 
+   d="scan'208";a="394528485"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga004.jf.intel.com with ESMTP; 27 Mar 2020 16:25:12 -0700
+Date:   Fri, 27 Mar 2020 16:30:57 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 09/10] iommu/ioasid: Support ioasid_set quota adjustment
+Message-ID: <20200327163057.75a0e154@jacob-builder>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED605@SHSMSX104.ccr.corp.intel.com>
+References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1585158931-1825-10-git-send-email-jacob.jun.pan@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED605@SHSMSX104.ccr.corp.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-        In that area uaccess primitives actually used by the rest of the kernel
-are csum_and_copy_{to,from}_user().  Currently we have a strange mix;
-        * some architectures supply csum_and_copy_from_user().  That's
-indicated by defining _HAVE_ARCH_COPY_AND_CSUM_FROM_USER
-        * the rest end up using the wrapper from net/checksum.h instead;
-that (fairly thin) wrapper expects to find csum_partial_copy_from_user().
-Some among those have csum_partial_copy_from_user() that tries to be smart,
-some end up picking a dumb one from lib/checksum.c, some have a literal
-copy of that dumb version...
-        * some architectures supply csum_and_copy_to_user().  Those define
-HAVE_CSUM_COPY_USER.
-        * the rest pick the dumb (inlined) implementation from net/checksum.h
-        * to confuse the situation even more, there's a couple of architectures
-that call their csum_and_copy_to_user() "csum_partial_copy_to_user" instead...
-and have a macro defining csum_and_copy_to_user as csum_partial_copy_to_user.
-        The rules for access_ok() location are also messy - in principle,
-csum_partial_copy_from_user() expects to have access_ok() done in the wrapper,
-but e.g. i386 one does that on its own.
+On Fri, 27 Mar 2020 10:09:04 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
 
-        A saner approach would be to turn the csum_partial_copy_from_user()
-instances into csum_and_copy_from_user() ones, getting rid of the wrapper
-for those, then move the dumb one (also converted) into net/checksum.h.
-The series below does that; it lives in
-	git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #next.uaccess-4
-based at #next.uaccess-3.  Individual patches in followups; please review.
-Not sure which tree would that best go through, TBH...
+> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Sent: Thursday, March 26, 2020 1:56 AM
+> > 
+> > IOASID set is allocated with an initial quota, at runtime there may
+> > be needs to balance IOASID resources among different VMs/sets.
+> >   
+> 
+> I may overlook previous patches but I didn't see any place setting the
+> initial quota...
+> 
+Initial quota is in place when the ioasid_set is allocated.
 
-Diffstat:
- arch/alpha/include/asm/checksum.h    |  3 ++-
- arch/alpha/lib/csum_partial_copy.c   |  6 +++---
- arch/arm/include/asm/checksum.h      | 14 ++++++++++++++
- arch/c6x/lib/checksum.c              | 22 ----------------------
- arch/ia64/include/asm/checksum.h     | 10 ----------
- arch/ia64/lib/csum_partial_copy.c    | 32 ++------------------------------
- arch/m68k/include/asm/checksum.h     |  3 ++-
- arch/m68k/lib/checksum.c             |  4 ++--
- arch/nios2/include/asm/checksum.h    |  2 --
- arch/parisc/include/asm/checksum.h   |  7 -------
- arch/parisc/lib/checksum.c           | 20 --------------------
- arch/s390/include/asm/checksum.h     | 19 -------------------
- arch/sh/include/asm/checksum_32.h    |  9 +++++++--
- arch/sparc/include/asm/checksum.h    |  1 +
- arch/sparc/include/asm/checksum_32.h | 15 ++++++++++-----
- arch/sparc/include/asm/checksum_64.h |  2 +-
- arch/x86/include/asm/checksum.h      |  2 ++
- arch/x86/include/asm/checksum_32.h   | 21 +++++++++++----------
- arch/x86/include/asm/checksum_64.h   | 12 ++----------
- arch/x86/lib/csum-wrappers_64.c      | 35 ++++++++++++++++++-----------------
- arch/x86/um/asm/checksum.h           | 20 --------------------
- arch/xtensa/include/asm/checksum.h   | 11 +++++++----
- include/asm-generic/checksum.h       |  9 ---------
- include/net/checksum.h               |  8 ++------
- lib/checksum.c                       | 20 --------------------
- 25 files changed, 86 insertions(+), 221 deletions(-)
+> > This patch adds a new API to adjust per set quota.  
+> 
+> since this is purely an internal kernel API, implies that the
+> publisher (e.g. VFIO) is responsible for exposing its own uAPI to set
+> the quota?
+> 
+yes, VFIO will do the adjustment. I think Alex suggested module
+parameters.
 
-Shortlog:
-      get rid of csum_partial_copy_to_user()
-      x86_64: csum_..._copy_..._user(): switch to unsafe_..._user()
-      x86: switch both 32bit and 64bit to providing csum_and_copy_from_user()
-      x86: switch 32bit csum_and_copy_to_user() to user_access_{begin,end}()
-      ia64: csum_partial_copy_nocheck(): don't abuse csum_partial_copy_from_user()
-      ia64: turn csum_partial_copy_from_user() into csum_and_copy_from_user()
-      alpha: turn csum_partial_copy_from_user() into csum_and_copy_from_user()
-      parisc: turn csum_partial_copy_from_user() into csum_and_copy_from_user()
-      sparc: switch to providing csum_and_copy_from_user()
-      xtensa: switch to providing csum_and_copy_from_user()
-      m68k: convert to csum_and_copy_from_user()
-      sh32: convert to csum_and_copy_from_user()
-      arm: switch to csum_and_copy_from_user()
-      take the dummy csum_and_copy_from_user() into net/checksum.h
+> > 
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > ---
+> >  drivers/iommu/ioasid.c | 44
+> > ++++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/ioasid.h |  6 ++++++
+> >  2 files changed, 50 insertions(+)
+> > 
+> > diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
+> > index 27dce2cb5af2..5ac28862a1db 100644
+> > --- a/drivers/iommu/ioasid.c
+> > +++ b/drivers/iommu/ioasid.c
+> > @@ -578,6 +578,50 @@ void ioasid_free_set(int sid, bool destroy_set)
+> >  }
+> >  EXPORT_SYMBOL_GPL(ioasid_free_set);
+> > 
+> > +/**
+> > + * ioasid_adjust_set - Adjust the quota of an IOASID set
+> > + * @quota:	Quota allowed in this set
+> > + * @sid:	IOASID set ID to be assigned
+> > + *
+> > + * Return 0 on success. If the new quota is smaller than the
+> > number of
+> > + * IOASIDs already allocated, -EINVAL will be returned. No change
+> > will be
+> > + * made to the existing quota.
+> > + */
+> > +int ioasid_adjust_set(int sid, int quota)
+> > +{
+> > +	struct ioasid_set_data *sdata;
+> > +	int ret = 0;
+> > +
+> > +	mutex_lock(&ioasid_allocator_lock);
+> > +	sdata = xa_load(&ioasid_sets, sid);
+> > +	if (!sdata || sdata->nr_ioasids > quota) {
+> > +		pr_err("Failed to adjust IOASID set %d quota %d\n",
+> > +			sid, quota);
+> > +		ret = -EINVAL;
+> > +		goto done_unlock;
+> > +	}
+> > +
+> > +	if (quota >= ioasid_capacity_avail) {
+> > +		ret = -ENOSPC;
+> > +		goto done_unlock;
+> > +	}
+> > +
+> > +	/* Return the delta back to system pool */
+> > +	ioasid_capacity_avail += sdata->size - quota;
+> > +
+> > +	/*
+> > +	 * May have a policy to prevent giving all available
+> > IOASIDs
+> > +	 * to one set. But we don't enforce here, it should be in
+> > the
+> > +	 * upper layers.
+> > +	 */
+> > +	sdata->size = quota;
+> > +
+> > +done_unlock:
+> > +	mutex_unlock(&ioasid_allocator_lock);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(ioasid_adjust_set);
+> > 
+> >  /**
+> >   * ioasid_find - Find IOASID data
+> > diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
+> > index 32d032913828..6e7de6fb91bf 100644
+> > --- a/include/linux/ioasid.h
+> > +++ b/include/linux/ioasid.h
+> > @@ -73,6 +73,7 @@ int ioasid_alloc_set(struct ioasid_set *token,
+> > ioasid_t quota, int *sid);
+> >  void ioasid_free_set(int sid, bool destroy_set);
+> >  int ioasid_find_sid(ioasid_t ioasid);
+> >  int ioasid_notify(ioasid_t id, enum ioasid_notify_val cmd);
+> > +int ioasid_adjust_set(int sid, int quota);
+> > 
+> >  #else /* !CONFIG_IOASID */
+> >  static inline ioasid_t ioasid_alloc(int sid, ioasid_t min,
+> > @@ -136,5 +137,10 @@ static inline int ioasid_alloc_system_set(int
+> > quota) return -ENOTSUPP;
+> >  }
+> > 
+> > +static inline int ioasid_adjust_set(int sid, int quota)
+> > +{
+> > +	return -ENOTSUPP;
+> > +}
+> > +
+> >  #endif /* CONFIG_IOASID */
+> >  #endif /* __LINUX_IOASID_H */
+> > --
+> > 2.7.4  
+> 
+
+[Jacob Pan]
