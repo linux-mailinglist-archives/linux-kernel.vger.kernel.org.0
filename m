@@ -2,59 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C5D1195099
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 06:29:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C6411950A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 06:30:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727717AbgC0F25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 01:28:57 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:17575 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726133AbgC0F2x (ORCPT
+        id S1726750AbgC0FaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 01:30:08 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39983 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbgC0FaI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 01:28:53 -0400
-X-IronPort-AV: E=Sophos;i="5.72,311,1580742000"; 
-   d="scan'208";a="42990139"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 27 Mar 2020 14:28:51 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D4CFA416FA94;
-        Fri, 27 Mar 2020 14:28:50 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     kishon@ti.com, robh+dt@kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 4/4] dt-bindings: phy: renesas: usb3-phy: add r8a77961 support
-Date:   Fri, 27 Mar 2020 14:28:43 +0900
-Message-Id: <1585286923-11740-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 27 Mar 2020 01:30:08 -0400
+Received: by mail-pl1-f195.google.com with SMTP id h11so3036769plk.7
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 22:30:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Lm1u47S5JidKhkVx8IGA84wVeHQdBB/rw6jHTncgb7g=;
+        b=XqvYk7Epaq1pQelWWkRRLUw7ghr3v/gqHkUyKn19in2OkkChCI6RdHwLRfhQoMMz2z
+         b2zS0lZJ9oasZj6eSowszO8uJVYND+T87nHAfm7GKdqiIp/uWH49PJERyoGhfFZXJxYH
+         AhItwM/fth1TwRqH0G2fQoh4bFntDWX4tWY7Ij6aXpQu6Q9DVNrnVTMvlZH+udrsSN7Z
+         6odx8c1SxO6PAQGIVBO+uBl93GJXGSnVHMR5lcja8DmGwupgu2PSMi+hXjfkNvJgRXo8
+         ctJSh6vDrHfR+fxJuEghBEYWAlbqpi1ZRhSlWa+hs6midxmScRy+WecEJgQ0/DsPCukr
+         oUuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Lm1u47S5JidKhkVx8IGA84wVeHQdBB/rw6jHTncgb7g=;
+        b=dP85GMyx0of+GR9VNTWFn2TpzuEUDFANru0O55o4o+I2DZL4TlkJNe62sil4z3p+Sk
+         8Xu1zZvbnEs9Aolk5yQaINM47RRYebU7APRQjzoy+vUlLj1mArppwx+gKxozcnnVjYk0
+         QGjlsDVStC6Vl6PzVHPlb+9uYdWxk1su7k8zWliGPCJOb5U//v+anZWt8GBB3oPr4QeW
+         xba6wdnItEy0skhnzOq1QHFywlaW/Rd7c1w8vzaPA6LInYaFtV+WN8On62ca/XQHd8Hx
+         ScPEfE9M2C6ZdhGK33jRlsHGe80oOHAU8wCzVNKoLKwdoVo5zw6gLg9L2kulDBOkU4pq
+         btew==
+X-Gm-Message-State: ANhLgQ0tLFxCT7KQvqeLqt0nFZE7UShMMCXGpU6keR1s9J6m2zG0InLi
+        WQergiLLZ2hHkg9t+v6PS6v6GFnpHcU=
+X-Google-Smtp-Source: ADFU+vtWkGzz91/Ck9l0BTTs9lOA8IG21kYm30dzrPfG0zvuls8V79S0oH29+cY87jCoAyEUGOFUbA==
+X-Received: by 2002:a17:90a:cb87:: with SMTP id a7mr3925645pju.114.1585287007100;
+        Thu, 26 Mar 2020 22:30:07 -0700 (PDT)
+Received: from localhost.localdomain ([117.210.211.37])
+        by smtp.gmail.com with ESMTPSA id l5sm3003637pgt.10.2020.03.26.22.30.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 26 Mar 2020 22:30:06 -0700 (PDT)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     jens.wiklander@linaro.org
+Cc:     tee-dev@lists.linaro.org, linux-kernel@vger.kernel.org,
+        jerome@forissier.org, stuart.yoder@arm.com,
+        daniel.thompson@linaro.org, Sumit Garg <sumit.garg@linaro.org>
+Subject: [PATCH v6 0/2] Enhance TEE kernel client interface
+Date:   Fri, 27 Mar 2020 10:59:46 +0530
+Message-Id: <1585286988-10671-1-git-send-email-sumit.garg@linaro.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1585286923-11740-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1585286923-11740-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for r8a77961 (R-Car M3-W+).
+Earlier this patch-set was part of TEE Trusted keys patch-set [1]. But
+since these are completely independent enhancements for TEE kernel
+client interface which can be merged separately while TEE Trusted keys
+discussions are ongoing.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Patch #1 enables support for registered kernel shared memory with TEE.
 
-diff --git a/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
-index edd5417..f459eaf 100644
---- a/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
-@@ -17,6 +17,7 @@ properties:
-           - renesas,r8a774b1-usb3-phy # RZ/G2N
-           - renesas,r8a7795-usb3-phy  # R-Car H3
-           - renesas,r8a7796-usb3-phy  # R-Car M3-W
-+          - renesas,r8a77961-usb3-phy # R-Car M3-W+
-           - renesas,r8a77965-usb3-phy # R-Car M3-N
-       - const: renesas,rcar-gen3-usb3-phy
- 
+Patch #2 enables support for private kernel login method required for
+cases like trusted keys where we don't wan't user-space to directly
+access TEE service.
+
+[1] https://lkml.org/lkml/2019/10/31/430
+
+Changes in v6:
+- Reserve only half of GP implementation defined range for kernel space.
+
+Changes in v5:
+- Misc. renaming of variables.
+
+Sumit Garg (2):
+  tee: enable support to register kernel memory
+  tee: add private login method for kernel clients
+
+ drivers/tee/tee_core.c   |  7 +++++++
+ drivers/tee/tee_shm.c    | 28 +++++++++++++++++++++++++---
+ include/linux/tee_drv.h  |  1 +
+ include/uapi/linux/tee.h |  9 +++++++++
+ 4 files changed, 42 insertions(+), 3 deletions(-)
+
 -- 
 2.7.4
 
