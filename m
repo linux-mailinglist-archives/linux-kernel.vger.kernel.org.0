@@ -2,127 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55C881959D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 16:28:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58B881959DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 16:29:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbgC0P2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 11:28:16 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:60325 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbgC0P2P (ORCPT
+        id S1727740AbgC0P27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 11:28:59 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:56645 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726515AbgC0P26 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 11:28:15 -0400
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id EB34922FEC;
-        Fri, 27 Mar 2020 16:28:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1585322892;
+        Fri, 27 Mar 2020 11:28:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585322936;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eqUqITWsj9KDFGHrWeFv9QwKV40MUcbbCm0POjhjwys=;
-        b=NH9IOM80ezOu/xwgBZKQz57gkLeRbVpBO6uhULy0WRIQwRM6uLeXsXUIgRsya4g0GiBhLJ
-        V7nQFEI7obV92eVs8K0Ug7pHGzqpMHjtBP9MH2YUCHq5FqwNCeHAAxhU3Opxy1oqePUh8G
-        x9v49TPkEiJCurb1daDWtLGhW/jpfno=
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=LrVbKy832yQOEnKJUht0bMjtEexZGq0QyNpHi1sAYOs=;
+        b=CE/JXgEoaYMiLYPkCSXHqcW6n1b0FHAco8l8RwJ8zuagRC5xjf9oURD8Y+Z4m7fDJyo60M
+        v+QR5yG13lls2mbldtgQLe1uPyRDtYnb9a3XMgJ3XRaLoxiUXKSE1+Z+2iRIADicPQUYCD
+        3HanJC94gbp1kSrYy7l+WG858cFOwzc=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-471-Ts07-gpkOVSLxGIWapvoBw-1; Fri, 27 Mar 2020 11:28:52 -0400
+X-MC-Unique: Ts07-gpkOVSLxGIWapvoBw-1
+Received: by mail-wr1-f69.google.com with SMTP id i18so4681261wrx.17
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 08:28:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LrVbKy832yQOEnKJUht0bMjtEexZGq0QyNpHi1sAYOs=;
+        b=S7TrlyiLqdpJixTcQC2uZF4Na+2+vhfEQSQRrp8JqrmjcDk0DEbD5cXapx68Xmin8z
+         3BG3ObWm2NFaZSQpG8uVp4foOoT/O2FzfHIko6X92wsy8QJv9v6n1GPg53YiAbrlRNi8
+         B1xv7V8WQJ3EgwRpeEfvnYzxvESrz19tU9ZNzIX2zST5LXQ38rJCikrDXy0mdX4aulsr
+         tABrrnhnnw4RhDL6k79dqcjJ6Z1p3g6UH7U4+sV3ZeuQWTq0tSsC3v2CGBz09++zi+3n
+         R6H53ezG5psmmypP+jcm2l2IewJraB9LxyhNbyFNFsm02yoNJLXO5AA34Au9pkmuzBVY
+         s3wA==
+X-Gm-Message-State: ANhLgQ2EF8Y8scbnlhsLlus6Ji8BIqaXzZMTEtCRoQhXI6UXjVBTN0PI
+        6RuuG7aqh5x1F0WyC+5kToioSTL/w8imQS8Zo9R6162cl86G2CzKdeUapnvQaJCOGxXOHE4FVkd
+        SIL6gegLvBCDiiM5r9dfPjB0Y
+X-Received: by 2002:adf:e650:: with SMTP id b16mr14914712wrn.328.1585322930876;
+        Fri, 27 Mar 2020 08:28:50 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vuuhVU6uZvYqzAHNpesAwkUn6yyADQcW6XSpPmlOfhMg5xdFnKij9JHYD1KAG4ja84uht3Ecg==
+X-Received: by 2002:adf:e650:: with SMTP id b16mr14914701wrn.328.1585322930693;
+        Fri, 27 Mar 2020 08:28:50 -0700 (PDT)
+Received: from redfedo.redhat.com ([2a01:cb14:58d:8400:ecf6:58e2:9c06:a308])
+        by smtp.gmail.com with ESMTPSA id i8sm8906856wrb.41.2020.03.27.08.28.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Mar 2020 08:28:49 -0700 (PDT)
+From:   Julien Thierry <jthierry@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     jpoimboe@redhat.com, peterz@infradead.org, raphael.gault@arm.com,
+        Julien Thierry <jthierry@redhat.com>
+Subject: [PATCH v2 00/10] Objtool updates for easier portability
+Date:   Fri, 27 Mar 2020 15:28:37 +0000
+Message-Id: <20200327152847.15294-1-jthierry@redhat.com>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 27 Mar 2020 16:28:11 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-hwmon@vger.kernel.org,
-        linux-pwm@vger.kernel.org,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH 12/18] gpio: add support for the sl28cpld GPIO controller
-In-Reply-To: <CACRpkdbJ3DBO+W4P0n-CfZ1T3L8d_L0Nizra8frkv92XPXR4WA@mail.gmail.com>
-References: <20200317205017.28280-1-michael@walle.cc>
- <20200317205017.28280-13-michael@walle.cc>
- <CAMpxmJW770v6JLdveEe1hkgNEJByVyArhorSyUZBYOyFiVyOeg@mail.gmail.com>
- <9c310f2a11913d4d089ef1b07671be00@walle.cc>
- <CAMpxmJXmD-M+Wbj6=wgFgP2aDxbqDN=ceHi1XDun4iwdLm55Zg@mail.gmail.com>
- <22944c9b62aa69da418de7766b7741bd@walle.cc>
- <CACRpkdbJ3DBO+W4P0n-CfZ1T3L8d_L0Nizra8frkv92XPXR4WA@mail.gmail.com>
-Message-ID: <4d8d3bc26bdf73eb5c0e5851589fe085@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.10
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: EB34922FEC
-X-Spamd-Result: default: False [1.40 / 15.00];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[gmail.com];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[21];
-         NEURAL_HAM(-0.00)[-0.548];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         FREEMAIL_CC(0.00)[baylibre.com,vger.kernel.org,lists.infradead.org,kernel.org,suse.com,roeck-us.net,linaro.org,gmail.com,pengutronix.de,linux-watchdog.org,nxp.com,linutronix.de,lakedaemon.net];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 2020-03-27 11:20, schrieb Linus Walleij:
-> On Thu, Mar 26, 2020 at 9:06 PM Michael Walle <michael@walle.cc> wrote:
->> Am 2020-03-25 12:50, schrieb Bartosz Golaszewski:
-> 
->> > In that case maybe you should use the disable_locking option in
->> > regmap_config and provide your own callbacks that you can use in the
->> > irqchip code too?
->> 
->> But how would that solve problem (1). And keep in mind, that the
->> reqmap_irqchip is actually used for the interrupt controller, which
->> is not this gpio controller.
->> 
->> Ie. the interrupt controller of the sl28cpld uses the regmap_irqchip
->> and all interrupt phandles pointing to the interrupt controller will
->> reference the toplevel node. Any phandles pointing to the gpio
->> controller will reference the GPIO subnode.
-> 
-> Ideally we would create something generic that has been on my
-> mind for some time, like a generic GPIO regmap irqchip now that
-> there are a few controllers like that.
-> 
-> I don't know how feasible it is or how much work it would be. But
-> as with GPIO_GENERIC (for MMIO) it would be helpful since we
-> can then implement things like .set_multiple() and .get_multiple()
-> for everyone.
+Hi,
 
-For starters, would that be a drivers/gpio/gpio-regmap.c or a
-drivers/base/regmap/regmap-gpio.c? I would assume the first,
-because the stuff in drivers/base/regmap operates on a given
-regmap and we'd just be using one, correct? On the other hand
-there is also the reqmap-irq.c. But as pointed out before, it
-will add an interrupt controller to the regmap, not a device
-so to speak.
+This patchset includes some of the least controversial changes that
+were needed as part of the arm64 port [1].
 
--michael
+I'm resending these rebase on top of linux-tip/core/objtool, following
+the addition of Peter's patches [2]
+
+It consist mostly of small fixes or lifting some limitations to make it
+easier to support a new architecture in objtool. Of course, these will
+not be the only required changes, but these are the ones I hope make
+enough sense to be merged separately from the rest of arm64 port series.
+
+Changes since v1[3]:
+- Really just rebased things
+
+[1] https://lkml.org/lkml/2020/1/9/643
+[2] https://lkml.org/lkml/2020/3/25/807
+[3] https://www.spinics.net/lists/kernel/msg3453718.html
+
+Thanks,
+
+Julien
+
+-->
+
+Julien Thierry (9):
+  objtool: Move header sync-check ealier in build
+  objtool: check: Remove redundant checks on operand type
+  objtool: check: Clean instruction state before each function
+    validation
+  objtool: check: Ignore empty alternative groups
+  objtool: check: Remove check preventing branches within alternative
+  objtool: check: Use arch specific values in restore_reg()
+  objtool: check: Allow save/restore hint in non standard function
+    symbols
+  objtool: Split generic and arch specific CFI definitions
+  objtool: Support multiple stack_op per instruction
+
+Raphael Gault (1):
+  objtool: Add abstraction for computation of symbols offsets
+
+ tools/objtool/Makefile                    |   5 +-
+ tools/objtool/arch.h                      |  10 +-
+ tools/objtool/arch/x86/decode.c           |  24 +++-
+ tools/objtool/arch/x86/include/cfi_regs.h |  25 ++++
+ tools/objtool/cfi.h                       |  21 +--
+ tools/objtool/check.c                     | 152 +++++++++++++---------
+ tools/objtool/check.h                     |   3 +-
+ 7 files changed, 154 insertions(+), 86 deletions(-)
+ create mode 100644 tools/objtool/arch/x86/include/cfi_regs.h
+
+--
+2.21.1
+
