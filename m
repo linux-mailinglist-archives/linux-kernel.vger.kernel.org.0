@@ -2,134 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1891195331
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58AF7195337
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:46:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbgC0Ip6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 04:45:58 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50797 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbgC0Ip5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 04:45:57 -0400
-Received: by mail-wm1-f67.google.com with SMTP id d198so10589148wmd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 01:45:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=TNtHMrBw1/kFRLyWRQzpEzTGkiODbvLoqCcIATUetSQ=;
-        b=LA9Fq6azF2+zSralszTxVY7JqxhxxsiaZb2AoDbfkRN0R3N0rkQgFTS6aGvtGchHSq
-         rGvKFw+0Zf8fHrmkahk4/6T3g1thDq3mnNR/aO4WyAvZYh3EhZOwiAs8p3je9NR8FqeH
-         eugcdMHplFlkKr3XiGbHLTK0T3hIfOEt+M/NTlQcdTGw8Rk0VoMHKlmiiWpqbHbPcwXo
-         /ZOo3it+BOseqw84us4p+ubVuYX1XIJtpj38y1kZV/AK6AlqlYX+UUjX4wUuMn0B1uTO
-         jAxY7u+cIYL8ahbK3hSj8z04XrUqEAxtSPl8sMDrkuj2AVpubAi9PzGk62rHm7z/KdgE
-         QErA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TNtHMrBw1/kFRLyWRQzpEzTGkiODbvLoqCcIATUetSQ=;
-        b=uVUL7ixFteWHnx43Gd1U/OQGing8CS4yvefRtXp23/snB1bBAYNrxRHmOP+a1tT5av
-         EnDO5YydXftqZ0s1VG131rOh88N3eWczz1Ppcn1KeWBCKVSj1GXH66Xns67PGUS9IZ7+
-         UbFATKiWk/C8gv8G/xOMnXmLm7sB0iuV05beFcys7/i7yImSPjfiLQ0R1bZKOg7E5uNi
-         3e3Bio0I8kodw0yN8F/Zh2OHWH+ZLX1cRduAVCPP8Bg9q59cJ8K+O3uO9UOyel7uRNvr
-         PBVpHHzVJ2Gk1u+cFGaaPJ6QI0w01D9upIqOtrv2sat7Wq3Na7uzRHh7olX71royaKPY
-         E7ew==
-X-Gm-Message-State: ANhLgQ3bZLalznk+K6h1dDKWAIzEdkQnTPAtXgtRvaAY9pRkfLDHQJY/
-        tPfMrQQA3EG7+ZOp9V1YcB+xwA==
-X-Google-Smtp-Source: ADFU+vsEaMqgmcJTryYU53r8BbWXb0EA3wBlWHalOBre6t/JUxmyfZ0AnP1+VitjwwucuGEimHxOZQ==
-X-Received: by 2002:a1c:4987:: with SMTP id w129mr4498312wma.168.1585298755090;
-        Fri, 27 Mar 2020 01:45:55 -0700 (PDT)
-Received: from myrica ([2001:171b:226b:54a0:116c:c27a:3e7f:5eaf])
-        by smtp.gmail.com with ESMTPSA id y187sm7437237wmd.0.2020.03.27.01.45.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 01:45:54 -0700 (PDT)
-Date:   Fri, 27 Mar 2020 09:45:46 +0100
-From:   Jean-Philippe Brucker <jean-philippe@linaro.org>
-To:     Hanjun Guo <guohanjun@huawei.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH v4 02/16] ACPI/IORT: Remove direct access of
- dev->iommu_fwspec
-Message-ID: <20200327084546.GA4083132@myrica>
-References: <20200326150841.10083-1-joro@8bytes.org>
- <20200326150841.10083-3-joro@8bytes.org>
- <82dea1be-4a2e-e914-c607-8aeb924eb36f@huawei.com>
+        id S1727254AbgC0Iqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 04:46:42 -0400
+Received: from mga14.intel.com ([192.55.52.115]:2058 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726096AbgC0Iqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 04:46:42 -0400
+IronPort-SDR: ajW9eLjF99Q94bOokbHTbdWnOBaSGGUHCprt79fBeGnxIn6QeBWuEh3HGF4nr+Q7Q0G15MoTns
+ MjK3YPfgeQcg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 01:46:42 -0700
+IronPort-SDR: m9bWDS0smC6fU10zjO7AJfBOg/gNnNGCaVr0F8Otjg4VJbEX2WXZ+lrW0mtLUCYuWtbLiux74X
+ oPnqGlHqj3iQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,311,1580803200"; 
+   d="scan'208";a="271497408"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.3]) ([10.239.13.3])
+  by fmsmga004.fm.intel.com with ESMTP; 27 Mar 2020 01:46:40 -0700
+Subject: Re: [mm] fd4d9c7d0c: stress-ng.switch.ops_per_sec -30.5% regression
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jann Horn <jannh@google.com>, LKML <linux-kernel@vger.kernel.org>,
+        lkp@lists.01.org
+References: <20200326055723.GL11705@shao2-debian>
+ <CAHk-=wi2c3UcK4fjUR2nM-7iUOAyQijq9ETfQHaN0WwFh2Bm9A@mail.gmail.com>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <e8ed8717-4cfd-60c8-6c08-2915e5caed6c@intel.com>
+Date:   Fri, 27 Mar 2020 16:46:22 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <82dea1be-4a2e-e914-c607-8aeb924eb36f@huawei.com>
+In-Reply-To: <CAHk-=wi2c3UcK4fjUR2nM-7iUOAyQijq9ETfQHaN0WwFh2Bm9A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 11:30:53AM +0800, Hanjun Guo wrote:
-> On 2020/3/26 23:08, Joerg Roedel wrote:
-> > From: Joerg Roedel <jroedel@suse.de>
-> > 
-> > Use the accessor functions instead of directly dereferencing
-> > dev->iommu_fwspec.
-> > 
-> > Tested-by: Hanjun Guo <guohanjun@huawei.com>
-> > Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> > Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> > ---
-> >  drivers/acpi/arm64/iort.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-> > index ed3d2d1a7ae9..7d04424189df 100644
-> > --- a/drivers/acpi/arm64/iort.c
-> > +++ b/drivers/acpi/arm64/iort.c
-> > @@ -1015,6 +1015,7 @@ const struct iommu_ops *iort_iommu_configure(struct device *dev)
-> >  		return ops;
-> >  
-> >  	if (dev_is_pci(dev)) {
-> > +		struct iommu_fwspec *fwspec;
-> >  		struct pci_bus *bus = to_pci_dev(dev)->bus;
-> >  		struct iort_pci_alias_info info = { .dev = dev };
-> >  
-> > @@ -1027,8 +1028,9 @@ const struct iommu_ops *iort_iommu_configure(struct device *dev)
-> >  		err = pci_for_each_dma_alias(to_pci_dev(dev),
-> >  					     iort_pci_iommu_init, &info);
-> 
-> ...
-> 
-> >  
-> > -		if (!err && iort_pci_rc_supports_ats(node))
-> > -			dev->iommu_fwspec->flags |= IOMMU_FWSPEC_PCI_RC_ATS;
-> > +		fwspec = dev_iommu_fwspec_get(dev);
-> > +		if (fwspec && iort_pci_rc_supports_ats(node))
-> 
-> Should we check !err as well?
 
-No need, the check should have been on fwspec from the beginning. Checking
-err was just a lazy shortcut on my part, as we're really just making sure
-that we can dereference fwspec->flags here.
 
-Thanks,
-Jean
+On 3/27/20 12:57 AM, Linus Torvalds wrote:
+> On Wed, Mar 25, 2020 at 10:57 PM kernel test robot
+> <rong.a.chen@intel.com> wrote:
+>> FYI, we noticed a -30.5% regression of stress-ng.switch.ops_per_sec due to commit:
+>>
+>> commit: fd4d9c7d0c71866ec0c2825189ebd2ce35bd95b8 ("mm: slub: add missing TID bump in kmem_cache_alloc_bulk()")
+> This looks odd.
+>
+> I would not expect the update of c->tid to have that noticeable an
+> impact, even on a big machine that might be close to some scaling
+> limit.
+>
+> It doesn't add any expensive atomic ops, and while it _could_ make a
+> percpu cacheline dirty, I think that cacheline should already be dirty
+> anyway under any load where this is noticeable. Plus this should be a
+> relatively cold path anyway.
+>
+> So mind humoring me, and double-check that regression?
+>
+> Of course, it might be another "just magic cache placement" detail
+> where code moved enough to make a difference.
+>
+> Or maybe it really ends up causing new tid mismatches and we end up
+> failing the fast path in slub as a result. But looking at the stats
+> that changed in your message doesn't make me go "yeah, that looks like
+> a slub difference".
+>
+> So before we look more at this, I'd like to make sure that the
+> regression is actually real, and not noise.
+>
+> Please?
+>
+>               Linus
 
-> 
-> Thanks
-> Hanjun
-> 
-> > +			fwspec->flags |= IOMMU_FWSPEC_PCI_RC_ATS;
-> >  	} else {
-> >  		int i = 0;
-> >  
-> > 
-> 
+Hi Linus,
+
+We rebuilt the kernels and tested more times, but the data is constant,
+we are still checking this case.
+
+Best Regards,
+Rong Chen
