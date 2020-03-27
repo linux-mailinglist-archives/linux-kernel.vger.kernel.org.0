@@ -2,227 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 852B6195310
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:36:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 038A419530D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:36:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbgC0Ig4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 04:36:56 -0400
-Received: from mga04.intel.com ([192.55.52.120]:3912 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726115AbgC0Ig4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 04:36:56 -0400
-IronPort-SDR: a6aLNG1nV0c1z3dj2VXyhm/eLEP7+ZGz37pO711TBLMLkD/VqerrQ8ufeYMcSX5h10U+HFOWGJ
- oA+K5OtIzz7g==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 01:36:56 -0700
-IronPort-SDR: r+j7kpjQNN5jKzVLqgUYcwO7YIajvFnRHuJUeCRPOkzFwjcXg5HZ/pTfMKxBjfzXsnbkd6ExDJ
- MiJFXW7JTZNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,311,1580803200"; 
-   d="scan'208";a="251076918"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.87]) ([10.237.72.87])
-  by orsmga006.jf.intel.com with ESMTP; 27 Mar 2020 01:36:52 -0700
-Subject: [PATCH V5 05/13] perf/x86: Add perf text poke events for kprobes
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-References: <20200304090633.420-1-adrian.hunter@intel.com>
- <20200304090633.420-6-adrian.hunter@intel.com>
- <20200324122150.GN20696@hirez.programming.kicks-ass.net>
- <20200326105805.0723cd10325ad301de061743@kernel.org>
- <07415abd-5084-f16c-cc62-6c9a237951f3@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <8eb2a113-f90d-856d-8e14-509d690a2989@intel.com>
-Date:   Fri, 27 Mar 2020 10:36:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727287AbgC0Ign (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 04:36:43 -0400
+Received: from mail-eopbgr1300055.outbound.protection.outlook.com ([40.107.130.55]:1680
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726165AbgC0Igm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 04:36:42 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jwi+G7QMiNeKnvoYzHFdJkoKxhVtdtRTmg+yJ2gHFmoHWYbmr9uPVmJxUyPp0J1cUYqY6v/kKcYMHP9xYVmr0ijROL5GAyCVNQXMF5NKngqhreGpb2IK/8czr1opi0WZL93rv4TZSoPH8ugapeiLi+F1ChWustkRhDIM9V/s8IS9XbF0yue4xKE5QXKeKuR8d974xjBXNPH8o30TJwPwhTHNG7Gv5JcuiAq1lRMOkvRStYspKGQC3yNz4PNslTJkTA5FIH+UgHh1NjOd6nijUnOLItLaM7tUXwkQSNSjTOkhzvy7aLx3LGsFzpcTFktmnuXncD2hLqaYcZCFGV+obg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cBE9U5BcmItCF4MOwduLCX0HZ/KF3+NGrWUVYOafdgc=;
+ b=EDyWd+IoBFH2YgWCnmAlsQLjqOhK4gIOreEf2KdtUxllJmFJO+dJ3V0bGaAN5+eKtASh6iw2AZwYF4rDyJTPGMAniYNH/ms8rynAgEetxVISeFs/LmvCGQo64MJh+/kASBxSsXwoFWi0sZd5WNkXfRhapHoC+zMPkq2u/IOLqXKdeEMl05WHwfuu1r/g6fKnfxb+INeJwypYETF7Y36p3aWDg/G8yZgWZD0Lc7sJjABIfy1PirDav9mLfxV0yLh9VLfd7Gai/WSVVRQ5fKQnNchLOupbDzVBXJkOHgSYojpPVFc3PjOhWAIvnrELc16J82wdBKgJ20DWL2AP8Bn9yA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
+ dkim=pass header.d=oppo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oppoglobal.onmicrosoft.com; s=selector1-oppoglobal-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cBE9U5BcmItCF4MOwduLCX0HZ/KF3+NGrWUVYOafdgc=;
+ b=KwhDVlztmm5PJ4POuf+psbn2PBfgfbL76jcdr3UteUIat/MZE4dvN4aMkpkjwB6+IU+7OVk2TD9/UDpszd3WIkyxgplUyONnAAJcQD1IY3kmMq7fU1YJz2QhcxVsgbgTWy79X3mGIh0i0xvhBOPRUcEYjMpu1iAvZo+m1DxAc2I=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=chenanqing@oppo.com; 
+Received: from HK0PR02MB2563.apcprd02.prod.outlook.com (52.133.210.11) by
+ HK0SPR01MB0008.apcprd02.prod.outlook.com (20.177.30.84) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2856.19; Fri, 27 Mar 2020 08:36:35 +0000
+Received: from HK0PR02MB2563.apcprd02.prod.outlook.com
+ ([fe80::4078:fbe4:9043:d61e]) by HK0PR02MB2563.apcprd02.prod.outlook.com
+ ([fe80::4078:fbe4:9043:d61e%2]) with mapi id 15.20.2835.023; Fri, 27 Mar 2020
+ 08:36:35 +0000
+Date:   Fri, 27 Mar 2020 04:36:32 -0400
+From:   chenanqing@oppo.com
+To:     chenanqing@oppo.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, ceph-devel@vger.kernel.org,
+        kuba@kernel.org, sage@redhat.com, jlayton@kernel.org,
+        idryomov@gmail.com
+Message-ID: <5e7dbb10.ulraq/ljeOm297+z%chenanqing@oppo.com>
+User-Agent: Heirloom mailx 12.5 7/5/10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: HK2PR0401CA0016.apcprd04.prod.outlook.com
+ (2603:1096:202:2::26) To HK0PR02MB2563.apcprd02.prod.outlook.com
+ (2603:1096:203:25::11)
 MIME-Version: 1.0
-In-Reply-To: <07415abd-5084-f16c-cc62-6c9a237951f3@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from master (58.252.5.69) by HK2PR0401CA0016.apcprd04.prod.outlook.com (2603:1096:202:2::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.19 via Frontend Transport; Fri, 27 Mar 2020 08:36:34 +0000
+X-Originating-IP: [58.252.5.69]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d5a0020f-4a00-40cb-bc7b-08d7d229f5bc
+X-MS-TrafficTypeDiagnostic: HK0SPR01MB0008:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <HK0SPR01MB0008FDC2C20AE3780C3D4141ABCC0@HK0SPR01MB0008.apcprd02.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:513;
+X-Forefront-PRVS: 0355F3A3AE
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK0PR02MB2563.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(366004)(346002)(39860400002)(376002)(396003)(136003)(8936002)(186003)(81166006)(478600001)(81156014)(26005)(52116002)(16526019)(6496006)(316002)(66476007)(9686003)(5660300002)(66556008)(66946007)(86362001)(2616005)(6486002)(2906002)(956004)(36756003)(1670200006)(25626001)(11606004);DIR:OUT;SFP:1101;
+Received-SPF: None (protection.outlook.com: oppo.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9/x1z3n494YqMNnUiMYJV+GA7vi/JcpraGFkEIuF4LtpEKXUA7xdcuN1CVi+ph3YhlOqvlEkr+SNyk8lkiSF7l8YJA6CTbTGUBGEHFiFMMHeqatUFGh93R1J1a6f4oRKeNMtdtALcxa1WbmqVge7gEne4CTvQwtiQzCTEouufoQo7nDclABVV9Qnla/dvTSpAEOGJ9h41EQW/AmrzYhCcd/SJUqjHE4T77/8gcWu8VLjQcM9sZr3mmkCe+/OeY0DgxHsWp09ipJ+CbwnYCUefnX7s7aFpSkIx9ZFNlHCfUHmM8UWCMdmGo2Grv+qdznoRa5UpY4jtmRGiwJq1dkySPzeI/sdNiT3ti3XW86RaGcbAVgsdLtPZGeqXLgndBAYpD+sWvRSrKjI/AnITpFpQKIwyqX/ET3MTOIg2yLXbV2ohMJ8cR/YhcRNlzO8ofxlF3d+6ATekb7XsCMFQYcB+Ixh1v1KzNZSMRbHS/gDTZz1J+SZGOaDHRtNIUabqeGsyl+pyf/++x633guLyw9nA8PiCCxeE4hkaHzWJ6vQLgw=
+X-MS-Exchange-AntiSpam-MessageData: kYwkmZSmduwT27ce7yxZcXhJiIU/9O8Kafe4CuAphANW4SPwYZaAPYHTmGYV+uF8G1+jCFdkSQsAHagBkStFhjTZyTJLOKbrGZfnSe74fbz5cWEbu84sB2WZJ7Wfwy36LrmpPU/ud7Bfh9ktoOrCeA==
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5a0020f-4a00-40cb-bc7b-08d7d229f5bc
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2020 08:36:35.6342
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gXz3zG3tU0ULzNY/N5lLA+XSpr3k/7FW9+ZXtnb5UmvfejGGj8UELxFenYt8gDYTgXf1b7aeYISvdaNoYGLwWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0SPR01MB0008
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add perf text poke events for kprobes. That includes:
+From: Chen Anqing <chenanqing@oppo.com>
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>,
+        Sage Weil <sage@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        ceph-devel@vger.kernel.org,
+        netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        chenanqing@oppo.com
+Subject: [PATCH] libceph: we should take compound page into account also
+Date: Fri, 27 Mar 2020 04:36:30 -0400
+Message-Id: <20200327083630.36296-1-chenanqing@oppo.com>
+X-Mailer: git-send-email 2.18.2
 
- - the replaced instruction(s) which are executed out-of-line
-   i.e. arch_copy_kprobe() and arch_remove_kprobe()
+the patch is occur at a real crash,which slab is
+come from a compound page,so we need take the compound page
+into account also.
+fixed commit 7e241f647dc7 ("libceph: fall back to sendmsg for slab pages")'
 
- - optimised kprobe function
-   i.e. arch_prepare_optimized_kprobe() and
-      __arch_remove_optimized_kprobe()
-
- - optimised kprobe
-   i.e. arch_optimize_kprobes() and arch_unoptimize_kprobe()
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Chen Anqing <chenanqing@oppo.com>
 ---
+ net/ceph/messenger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index f8ca5edc5f2c..e08c1c334cd9 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -582,7 +582,7 @@ static int ceph_tcp_sendpage(struct socket *sock, struc=
+t page *page,
+         * coalescing neighboring slab objects into a single frag which
+         * triggers one of hardened usercopy checks.
+         */
+-       if (page_count(page) >=3D 1 && !PageSlab(page))
++       if (page_count(page) >=3D 1 && !PageSlab(compound_head(page)))
+                sendpage =3D sock->ops->sendpage;
+        else
+                sendpage =3D sock_no_sendpage;
+--
+2.18.2
 
-Changes in V5:
+________________________________
+OPPO
 
-	Simplify optimized kprobes events (Peter)
+=E6=9C=AC=E7=94=B5=E5=AD=90=E9=82=AE=E4=BB=B6=E5=8F=8A=E5=85=B6=E9=99=84=E4=
+=BB=B6=E5=90=AB=E6=9C=89OPPO=E5=85=AC=E5=8F=B8=E7=9A=84=E4=BF=9D=E5=AF=86=
+=E4=BF=A1=E6=81=AF=EF=BC=8C=E4=BB=85=E9=99=90=E4=BA=8E=E9=82=AE=E4=BB=B6=E6=
+=8C=87=E6=98=8E=E7=9A=84=E6=94=B6=E4=BB=B6=E4=BA=BA=E4=BD=BF=E7=94=A8=EF=BC=
+=88=E5=8C=85=E5=90=AB=E4=B8=AA=E4=BA=BA=E5=8F=8A=E7=BE=A4=E7=BB=84=EF=BC=89=
+=E3=80=82=E7=A6=81=E6=AD=A2=E4=BB=BB=E4=BD=95=E4=BA=BA=E5=9C=A8=E6=9C=AA=E7=
+=BB=8F=E6=8E=88=E6=9D=83=E7=9A=84=E6=83=85=E5=86=B5=E4=B8=8B=E4=BB=A5=E4=BB=
+=BB=E4=BD=95=E5=BD=A2=E5=BC=8F=E4=BD=BF=E7=94=A8=E3=80=82=E5=A6=82=E6=9E=9C=
+=E6=82=A8=E9=94=99=E6=94=B6=E4=BA=86=E6=9C=AC=E9=82=AE=E4=BB=B6=EF=BC=8C=E8=
+=AF=B7=E7=AB=8B=E5=8D=B3=E4=BB=A5=E7=94=B5=E5=AD=90=E9=82=AE=E4=BB=B6=E9=80=
+=9A=E7=9F=A5=E5=8F=91=E4=BB=B6=E4=BA=BA=E5=B9=B6=E5=88=A0=E9=99=A4=E6=9C=AC=
+=E9=82=AE=E4=BB=B6=E5=8F=8A=E5=85=B6=E9=99=84=E4=BB=B6=E3=80=82
 
-
- arch/x86/include/asm/kprobes.h |  2 ++
- arch/x86/kernel/kprobes/core.c | 15 +++++++++++++-
- arch/x86/kernel/kprobes/opt.c  | 38 +++++++++++++++++++++++++++++-----
- 3 files changed, 49 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/include/asm/kprobes.h b/arch/x86/include/asm/kprobes.h
-index 95b1f053bd96..ee669cdb5709 100644
---- a/arch/x86/include/asm/kprobes.h
-+++ b/arch/x86/include/asm/kprobes.h
-@@ -65,6 +65,8 @@ struct arch_specific_insn {
- 	 */
- 	bool boostable;
- 	bool if_modifier;
-+	/* Number of bytes of text poked */
-+	int tp_len;
- };
- 
- struct arch_optimized_insn {
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 579d30e91a36..8513594bfed1 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -33,6 +33,7 @@
- #include <linux/hardirq.h>
- #include <linux/preempt.h>
- #include <linux/sched/debug.h>
-+#include <linux/perf_event.h>
- #include <linux/extable.h>
- #include <linux/kdebug.h>
- #include <linux/kallsyms.h>
-@@ -470,6 +471,9 @@ static int arch_copy_kprobe(struct kprobe *p)
- 	/* Also, displacement change doesn't affect the first byte */
- 	p->opcode = buf[0];
- 
-+	p->ainsn.tp_len = len;
-+	perf_event_text_poke(p->ainsn.insn, NULL, 0, buf, len);
-+
- 	/* OK, write back the instruction(s) into ROX insn buffer */
- 	text_poke(p->ainsn.insn, buf, len);
- 
-@@ -501,12 +505,18 @@ int arch_prepare_kprobe(struct kprobe *p)
- 
- void arch_arm_kprobe(struct kprobe *p)
- {
--	text_poke(p->addr, ((unsigned char []){INT3_INSN_OPCODE}), 1);
-+	u8 int3 = INT3_INSN_OPCODE;
-+
-+	text_poke(p->addr, &int3, 1);
- 	text_poke_sync();
-+	perf_event_text_poke(p->addr, &p->opcode, 1, &int3, 1);
- }
- 
- void arch_disarm_kprobe(struct kprobe *p)
- {
-+	u8 int3 = INT3_INSN_OPCODE;
-+
-+	perf_event_text_poke(p->addr, &int3, 1, &p->opcode, 1);
- 	text_poke(p->addr, &p->opcode, 1);
- 	text_poke_sync();
- }
-@@ -514,6 +524,9 @@ void arch_disarm_kprobe(struct kprobe *p)
- void arch_remove_kprobe(struct kprobe *p)
- {
- 	if (p->ainsn.insn) {
-+		/* Record the perf event before freeing the slot */
-+		perf_event_text_poke(p->ainsn.insn, p->ainsn.insn,
-+				     p->ainsn.tp_len, NULL, 0);
- 		free_insn_slot(p->ainsn.insn, p->ainsn.boostable);
- 		p->ainsn.insn = NULL;
- 	}
-diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-index 3f45b5c43a71..b1072c47b595 100644
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -6,6 +6,7 @@
-  * Copyright (C) Hitachi Ltd., 2012
-  */
- #include <linux/kprobes.h>
-+#include <linux/perf_event.h>
- #include <linux/ptrace.h>
- #include <linux/string.h>
- #include <linux/slab.h>
-@@ -331,8 +332,15 @@ int arch_within_optimized_kprobe(struct optimized_kprobe *op,
- static
- void __arch_remove_optimized_kprobe(struct optimized_kprobe *op, int dirty)
- {
--	if (op->optinsn.insn) {
--		free_optinsn_slot(op->optinsn.insn, dirty);
-+	u8 *slot = op->optinsn.insn;
-+	if (slot) {
-+		int len = TMPL_END_IDX + op->optinsn.size + JMP32_INSN_SIZE;
-+
-+		/* Record the perf event before freeing the slot */
-+		if (dirty)
-+			perf_event_text_poke(slot, slot, len, NULL, 0);
-+
-+		free_optinsn_slot(slot, dirty);
- 		op->optinsn.insn = NULL;
- 		op->optinsn.size = 0;
- 	}
-@@ -401,8 +409,15 @@ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op,
- 			   (u8 *)op->kp.addr + op->optinsn.size);
- 	len += JMP32_INSN_SIZE;
- 
-+	/*
-+	 * Note	len = TMPL_END_IDX + op->optinsn.size + JMP32_INSN_SIZE is also
-+	 * used in __arch_remove_optimized_kprobe().
-+	 */
-+
- 	/* We have to use text_poke() for instruction buffer because it is RO */
-+	perf_event_text_poke(slot, NULL, 0, buf, len);
- 	text_poke(slot, buf, len);
-+
- 	ret = 0;
- out:
- 	kfree(buf);
-@@ -454,10 +469,23 @@ void arch_optimize_kprobes(struct list_head *oplist)
-  */
- void arch_unoptimize_kprobe(struct optimized_kprobe *op)
- {
--	arch_arm_kprobe(&op->kp);
--	text_poke(op->kp.addr + INT3_INSN_SIZE,
--		  op->optinsn.copied_insn, DISP32_SIZE);
-+	u8 new[JMP32_INSN_SIZE] = { INT3_INSN_OPCODE, };
-+	u8 old[JMP32_INSN_SIZE];
-+	u8 *addr = op->kp.addr;
-+
-+	memcpy(old, op->kp.addr, JMP32_INSN_SIZE);
-+	memcpy(new + INT3_INSN_SIZE,
-+	       op->optinsn.copied_insn,
-+	       JMP32_INSN_SIZE - INT3_INSN_SIZE);
-+
-+	text_poke(addr, new, INT3_INSN_SIZE);
- 	text_poke_sync();
-+	text_poke(addr + INT3_INSN_SIZE,
-+		  new + INT3_INSN_SIZE,
-+		  JMP32_INSN_SIZE - INT3_INSN_SIZE);
-+	text_poke_sync();
-+
-+	perf_event_text_poke(op->kp.addr, old, JMP32_INSN_SIZE, new, JMP32_INSN_SIZE);
- }
- 
- /*
--- 
-2.17.1
-
+This e-mail and its attachments contain confidential information from OPPO,=
+ which is intended only for the person or entity whose address is listed ab=
+ove. Any use of the information contained herein in any way (including, but=
+ not limited to, total or partial disclosure, reproduction, or disseminatio=
+n) by persons other than the intended recipient(s) is prohibited. If you re=
+ceive this e-mail in error, please notify the sender by phone or email imme=
+diately and delete it!
