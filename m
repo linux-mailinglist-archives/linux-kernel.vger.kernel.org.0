@@ -2,134 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05A481952B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:22:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BDA81952B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:23:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726149AbgC0IW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 04:22:27 -0400
-Received: from mout.web.de ([212.227.15.3]:59205 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725946AbgC0IW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 04:22:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1585297322;
-        bh=09xSHgI4+pz/lOuIHHd1hLw07vgXad9er5cWcbQjT2I=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=piqSM48RXiUJqrKsyM7bpYPWpWE3NpdVwQ21B5NZBWqVk2FMkm9dkO8DGryKPEFoi
-         sBOaOwJkcbnNfRybSl7Mp6VeSKd3/KQWGbUgbodcsdHmHCsJcrgrlz70weFtS8GQmG
-         CzgXKNUji5x9l5Msw23LnAZ0caTAgG6tQhvgVTrk=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([2.244.164.253]) by smtp.web.de (mrweb004
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0LyOuM-1jLT3f3qLe-015n27; Fri, 27
- Mar 2020 09:22:02 +0100
-Subject: Re: [PATCH v2 05/10] mmap locking API: convert mmap_sem call sites
- missed by coccinelle
-To:     Michel Lespinasse <walken@google.com>,
-        Coccinelle <cocci@systeme.lip6.fr>, linux-mm@kvack.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Liam Howlett <Liam.Howlett@oracle.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        David Rientjes <rientjes@google.com>,
-        Hugh Dickins <hughd@google.com>, Ying Han <yinghan@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20200327021058.221911-1-walken@google.com>
- <20200327021058.221911-6-walken@google.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <554c16c7-cfad-2d36-d7ae-4c17190a2b50@web.de>
-Date:   Fri, 27 Mar 2020 09:21:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1726284AbgC0IW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 04:22:56 -0400
+Received: from sonic303-1.consmr.mail.bf2.yahoo.com ([74.6.131.40]:45360 "EHLO
+        sonic303-1.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725946AbgC0IW4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 04:22:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1585297375; bh=NajTNMrfMLb6UXcjRhYpYerQX8PtVBLz0oFgaMINSWY=; h=Date:From:Reply-To:Subject:References:From:Subject; b=dUzc9c8bsfaykrQjvI88uwMC6TZEWw1nvSxvVOTICqc7caCrbQ3LaWn+w4r70UVQLZ2/hOV1vBRy1RUBUXGj6QSaKLTMrSBgava/ujb+WZyy+bsNKTbuUm2w2ft4gG/LODa/ILs8hHHuyfTqhb4jbvKcBURwl2EsRlby/FmgE2TjNY03vmsHLt5d6WoYipsRDhOsB6yekw07oS36OOjlITwHh60/O46fGQO6jz19yY5Qr26vvWgaj0mZKm7tpISGmkpFkn266urhadGCKZB3xj0QJtyj1HYVr2xg33S9meP0SyqhkV4C4cKWuYYema8tboUvTjHCjsbhLnn0P4wPLA==
+X-YMail-OSG: mU6orekVM1kkfFEViLIqw3U6dxIwi_13MMW.FfcSKoo.kVG7mH5u5KYkaTJSKYU
+ HwsCgZhq9dtKpSVvF6Oku.N2C.FFXeVZ4oneUX1uisY6XZSZgMb9oJ9Dsa6DxQjI082gfd4XXNg_
+ Tq3vhPNzBS3581595ckMX4JO2ce2.PKYfWA3xOo__JLUKMf1HnD8DDC.VGIwI83ZVkwIXyzryD_c
+ .gLLK.i6tohy7rTBsxdAcnt.Cfc_bh_AIG_In2crzHcW_yILWltVnIpLPeulTF.eDWQdJ2brZtd4
+ r0D86cwwRumioQeYKenDaqAI_HE7zmTInHFtGnBFNLHiSBIg3nmLGOOj97vv5.UJl8yZla5UX8Xd
+ GeiKGH6u2tLUT_jXgWHbniNS_C5k8Z_jK1ZCR1mJO8EaiOgly0uGO6.NgNNPTI1_VvBvjZiFOmRq
+ c4u.KFdah4igWZcPrlWitYiwmvsOnqzpTkTwZR0SJ8nO.SBgq_dNCpw1Q47qcwzTc3PLdOTDGSkp
+ .pxB1dWV8d3NuBg_y8kqqJwyd4JS27uDEHQfJK8fGs8RiiHkRDHr1.fnjfMKWNd9Um_jmenkbCXa
+ DkrwQMXEvlBejJwAbjuB4padAI2fBUQafgBk.C3QNZrsjlbrwKjzExW1.kWzJlNS_jzlOjchC3AD
+ wX2V7H4lDQk22wSIc8YDedn5vQsiyCyTTPerDpBPKz8gjyXSxMiWWtjK_llpfQQHtySPhhRhFErn
+ M7eQxNgdohj4dfoxmNqK0zyAAEr.fgCjaxBDv_1pn09CHkYWwfe_RLXFLirCQX3zRjqB58cPGjwV
+ iL0RpB4vid0L0j7PHPkokcqyC_7lA15HYtu.XrfR6q3HzKG.S4zNYqAq7d8SOhWkvG74dnKc18.L
+ imeS3UqEKdGwFy2BDfFBAw3kLNFaNbmmpgEjdxCVC.eH.AQ.gMKkl.Vw0TI.DPT0ItE611FM0eGd
+ Lv1oDIUj5c1JFGIc_2iXtJcXACYHFskJ5XKACZe.U7bBVtXpWSzVh5Hqv9DgOjytno0NEWbz_ryu
+ 2rJb6FS0MlnOncIoOMnWIqCC.YfLkCt0EmyccEdnKbAouzQsTh.M_iNupjQO95Thw5PeIhpr44Se
+ PtM6PMzXIytkQs0KwKM4csJFYEFbPWsw3RVwtL1zVXTXToMewW1M5De5e7lWBImeNp.8ik4VbCeu
+ hUqeQzMSNsmWetVkOmkyGOSvh3q1efTLA_C77LQ6SNHlUDwoFDljmdlShn.UR0TFjZch7L8tDXJQ
+ HxJkoOPJG6eVSFX3Z14VgXI9mfSL2c9qvpc0C6.ikc3HlszGXUmx8D1DPOioWSFJ5MBTFGOkZ6u4
+ -
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Fri, 27 Mar 2020 08:22:55 +0000
+Date:   Fri, 27 Mar 2020 08:22:53 +0000 (UTC)
+From:   Ms lisa Hugh <lisahugh531@gmail.com>
+Reply-To: ms.lisahugh000@gmail.com
+Message-ID: <1852203301.1879507.1585297373380@mail.yahoo.com>
+Subject: BUSINESS CO-OPERATION OPPORTUNITY.
 MIME-Version: 1.0
-In-Reply-To: <20200327021058.221911-6-walken@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Provags-ID: V03:K1:/uC6/hsQfP2gaWqRYwVagI8UGJqU9uA4QIurdD3KAJZirSReeLy
- iC+P3aIO7TjMfWknEcfxrtEWfAMe4q+dBNr/2lkJ4z0mDbOoznCFm6CiqXuIiF28vZ31csD
- +CFyEecW4/M/2xUjmqEOhNHzBKEP4/wIi7pYoVrq71IAEY4NjSMwrtaVfyO6DtiiEwvsMyS
- aI4DST4ofnTt3Ne0fgZ3A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:P5oad6+qnTU=:Y0cdRzR5dzNPMgYQb4iijO
- bnwi38gC4qyuYE1LljmdgpmGZODCla5jTmfm1cRDjed8dPkc++AO1k+wbz4YqHQYLRwL/qnJm
- 0Wrutu4U7wU7wiw7UjQZB73qVm+fBU9M0pI1TkMwhNLqk0ZoiqVgDDOj3vXNNLqEJb979j/8c
- ++G1EWeYs9HxE3/76wzzrnusR+1wSn3xWgBh22hgc7zlb2APIJy+XBP4Hp76XU610i9xqM53F
- 6Hz0xdG5aojmZ3Al8ZqgIAPQYqrSkjmqrhhn3TYVADu4LOrPDzxNfb8BHNJyLR+P9fyIWI91x
- ktcw/vpSZ1rHswuFMTeupOwUu2lMIvKMiX1vtj/muts6TH6OR30bx0JTIazmDMZElfC8Hpssj
- w5dWGwqzVhS7M5MWx5qia/SafWRSjEyTmMyttcLawS3JxHGs2yWxwlaonLotba8JVlCqbKy+6
- jDpcxyScd3h0mXV0Hu6k6rpervKVF/a7yU1pUYLWNZbzSBivCdxi1xTnhEyyVUCrCTDYqUvfb
- G41XM9Q9xIZIBDXQZ92dzN/6H7vD45laxRiY5/9KNnNZIzLEXbgEwHyMvWWN+FQRf4J0U+waT
- tD1KUuroZoEsMDSgvSGNpzyPn0BIkvYc0g12JGtyFY3KEuQlbuXWnAC9gYqzo5aZR8kJHRywO
- lGyq/yqymeZ6V4Tf+Mp4Z7a7ueJuX/DOpJE/SVfOoo3va0EtOjSb6tjUkioVKViU+aeA/3vEd
- o4K0HRfegdtYGJgOFPEv+yr70Mmpk9T/FNbPA6YT5HM0k9fBfusHi8xWdU/y/WSPEjPGfUhsD
- /rqvio285+gc0gWWfhnqAkhiugri71rDwp/UFHET4B4lAXNOGqpyoERBO4D6qM2Nd+Khuf7wg
- Vdi4NDLd4tDPBcxtW9UC1u75TJEuwMt1isgzy0AeUfVYHOc7z65UiVggJ3nhmYB+ULri9KQtR
- HulKnQ9SEhohlFAFbdLnfrzwFCY4aXaMcwYKJtDffOtiry10yxqj5FHQ8C1tZI+W6VHb23/C0
- oMe/iIcZq3uXs5V3BL2HAwTmrPkzqUX9ToL9AzGci1IcYwtXO8GQphMDdxXkv2QZOwxfq3/YO
- jIXPabuDj+wf3rv31TEG/UKwKQVYKuCbWvNIWon3RXlu4vRazq0xxBiIdTCx4XhUY4Cl3UTgl
- f4t9Q1m3rG6gNwX831HBNHco6dG1v6cKkrQmwa1jj2kj2EwHEj5D/8bzlyvU3UTS0wZa+/+Uo
- TR+rZy/6ruqr8oqcd
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <1852203301.1879507.1585297373380.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.15518 YMailNodin Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Convert the last few remaining mmap_sem rwsem calls to use the new
-> mmap locking API. These were missed by coccinelle for some reason
 
-I find such a software situation still unfortunate.
 
-* Should the data processing results be clarified any further
-  for the shown transformation approach?
+Dear Friend,
 
-* Will additional improvements be considered?
+I am Ms Lisa hugh, work with the department of Audit and accounting manager here in the Bank(B.O.A).
 
-Regards,
-Markus
+Please i need your assistance for the transferring of thIs fund to your bank account for both of us benefit for life time investment, amount (US$4.5M DOLLARS).
+
+I have every inquiry details to make the bank believe you and release the fund in within 5 banking working days with your full co-operation with me for success.
+
+Note/ 50% for you why 50% for me after success of the transfer to your bank account.
+
+Below information is what i need from you so will can be reaching each other
+
+1)Full name ...
+2)Private telephone number...
+3)Age...
+4)Nationality...
+5)Occupation ...
+
+
+Thanks.
+
+Ms Lisa hugh.
