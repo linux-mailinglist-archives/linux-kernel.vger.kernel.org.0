@@ -2,98 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAFDA1953F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 10:27:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D23EE1953A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 10:12:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbgC0J1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 05:27:39 -0400
-Received: from ZXSHCAS2.zhaoxin.com ([203.148.12.82]:20800 "EHLO
-        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726698AbgC0J1j (ORCPT
+        id S1726454AbgC0JMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 05:12:44 -0400
+Received: from mail.baikalelectronics.com ([87.245.175.226]:55300 "EHLO
+        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726284AbgC0JMl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 05:27:39 -0400
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by ZXSHCAS2.zhaoxin.com
- (10.28.252.162) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Fri, 27 Mar
- 2020 17:11:57 +0800
-Received: from raymond-pc.zhaoxin.com (10.29.28.62) by zxbjmbx1.zhaoxin.com
- (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Fri, 27 Mar
- 2020 17:11:57 +0800
-From:   Raymond Pang <RaymondPang-oc@zhaoxin.com>
-To:     <bhelgaas@google.com>, <linux-pci@vger.kernel.org>
-CC:     <TonyWWang-oc@zhaoxin.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] PCI: Add ACS quirk for Root/Downstream Ports
-Date:   Fri, 27 Mar 2020 17:11:48 +0800
-Message-ID: <20200327091148.5190-4-RaymondPang-oc@zhaoxin.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200327091148.5190-1-RaymondPang-oc@zhaoxin.com>
-References: <20200327091148.5190-1-RaymondPang-oc@zhaoxin.com>
+        Fri, 27 Mar 2020 05:12:41 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 6552B8030886;
+        Fri, 27 Mar 2020 09:12:34 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at baikalelectronics.ru
+Received: from mail.baikalelectronics.ru ([127.0.0.1])
+        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id e8trym8yYIyf; Fri, 27 Mar 2020 12:12:33 +0300 (MSK)
+Date:   Fri, 27 Mar 2020 12:12:26 +0300
+From:   Sergey Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
+        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
+        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Chen-Yu Tsai <wens@csie.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Catalin Marina s <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] serial: 8250_dw: Fix common clocks usage race
+ condition
+Message-ID: <20200327091226.7kgpum3td3blubsn@ubsrv2.baikal.int>
+References: <20200306130231.05BBC8030795@mail.baikalelectronics.ru>
+ <20200323024611.16039-1-Sergey.Semin@baikalelectronics.ru>
+ <20200323100109.k2gckdyneyzo23fb@gilmour.lan>
+ <20200323135017.4vi5nwam2rlpepgn@ubsrv2.baikal.int>
+ <20200324101243.GG1922688@smile.fi.intel.com>
+ <20200325171109.cohnsw3s57ckaqud@ubsrv2.baikal.int>
+ <158518709322.125146.10069235641747677647@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.29.28.62]
-X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
- zxbjmbx1.zhaoxin.com (10.29.252.163)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <158518709322.125146.10069235641747677647@swboyd.mtv.corp.google.com>
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many Zhaoxin Root Ports and Switch Downstream Ports do provide ACS-like
-capability but have no ACS Capability Structure. Peer-to-Peer
-transactions could be blocked between these ports, so add quirk
-to make devices behind them could be assigned to different IOMMU group.
+Hello Stephen
 
-Signed-off-by: Raymond Pang <RaymondPang-oc@zhaoxin.com>
----
- drivers/pci/quirks.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Thanks for reply. My comment is below.
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 3f06496a3d4c..49cf6e943f16 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4464,6 +4464,30 @@ static int pci_quirk_xgene_acs(struct pci_dev *dev, u16 acs_flags)
- 	return pci_acs_ctrl_enabled(acs_flags,
- 		PCI_ACS_SV | PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_UF);
- }
-+
-+/*
-+ * Many Zhaoxin Root Ports and Switch Downstream Ports have no ACS capability.
-+ * But the implementation could block peer-to-peer transactions between them
-+ * and provide ACS-like functionality.
-+ */
-+static int  pci_quirk_zhaoxin_pcie_ports_acs(struct pci_dev *dev, u16 acs_flags)
-+{
-+
-+	if (!pci_is_pcie(dev) ||
-+	    ((pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT) &&
-+	     (pci_pcie_type(dev) != PCI_EXP_TYPE_DOWNSTREAM)))
-+		return -ENOTTY;
-+
-+	switch (dev->device) {
-+	case 0x0710 ... 0x071e:
-+	case 0x0721:
-+	case 0x0723 ... 0x0732:
-+		return pci_acs_ctrl_enabled(acs_flags,
-+			PCI_ACS_SV | PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_UF);
-+	}
-+
-+	return false;
-+}
- 
- /*
-  * Many Intel PCH Root Ports do provide ACS-like features to disable peer
-@@ -4771,6 +4795,8 @@ static const struct pci_dev_acs_enabled {
- 	{ PCI_VENDOR_ID_ZHAOXIN, 0x3038, pci_quirk_mf_endpoint_acs },
- 	{ PCI_VENDOR_ID_ZHAOXIN, 0x3104, pci_quirk_mf_endpoint_acs },
- 	{ PCI_VENDOR_ID_ZHAOXIN, 0x9083, pci_quirk_mf_endpoint_acs },
-+	/* Zhaoxin Root/Downstream Ports */
-+	{ PCI_VENDOR_ID_ZHAOXIN, PCI_ANY_ID, pci_quirk_zhaoxin_pcie_ports_acs },
- 	{ 0 }
- };
- 
--- 
-2.26.0
+On Wed, Mar 25, 2020 at 06:44:53PM -0700, Stephen Boyd wrote:
+> Quoting Sergey Semin (2020-03-25 10:11:09)
+> > On Tue, Mar 24, 2020 at 12:12:43PM +0200, Andy Shevchenko wrote:
+> > > On Mon, Mar 23, 2020 at 04:50:17PM +0300, Sergey Semin wrote:
+> > > > On Mon, Mar 23, 2020 at 11:01:09AM +0100, Maxime Ripard wrote:
+> > > 
+> > > > > clk_rate_exclusive_get is pretty intrusive, and due to the usual
+> > > > > topology of clock trees, this will lock down 3-4 parent clocks to
+> > > > > their current rate as well. In the Allwinner SoCs case for example,
+> > > > > this will lock down the same PLL than the one used by the CPU,
+> > > > > preventing cpufreq from running.
+> > > > 
+> > > > Speaking about weak design of a SoC' clock tree. Our problems are nothing
+> > > > with respect to the Allwinner SoC, in which case of changing the
+> > > > CPU-frequency may cause the UART glitches subsequently causing data
+> > > > transfer artefacts.) Moreover as I can see the same issue may raise for
+> > > > I2C, QSPI, PWM devices there.
+> > > > 
+> > > > Anyway your concern does make sense.
+> > > > 
+> > > > > However, the 8250 has a pretty wide range of dividers and can adapt to
+> > > > > any reasonable parent clock rate, so we don't really need to lock the
+> > > > > rate either, we can simply react to a parent clock rate change using
+> > > > > the clock notifiers, just like the SiFive UART is doing.
+> > > > > 
+> > > > > I tried to do that, but given that I don't really have an extensive
+> > > > > knowledge of the 8250, I couldn't find a way to stop the TX of chars
+> > > > > while we change the clock rate. I'm not sure if this is a big deal or
+> > > > > not, the SiFive UART doesn't seem to care.
+> > > > 
+> > > > Yes, your solution is also possible, but even in case of stopping Tx/Rx it
+> > > > doesn't lack drawbacks. First of all AFAIK there is no easy way to just
+> > > > pause the transfers. We'd have to first wait for the current transfers
+> > > > to be completed, then somehow lock the port usage (both Tx and Rx
+> > > > traffic), permit the reference clock rate change, accordingly adjust the
+> > > > UART clock divider, and finally unlock the port. While if we don't mind
+> > > > to occasionally have UART data glitches, we can just adjust the UART ref
+> > > > divider synchronously with ref clock rate change as you and SiFive UART
+> > > > driver suggest.
+> > > > 
+> > > > So we are now at a zugzwang - a fork to three not that good solutions:
+> > > > 1) lock the whole clock branch and provide a glitchless interfaces. But
+> > > > by doing so we may (in case of Allwinner SoCs we will) lockup some very
+> > > > important functionality like CPU-frequency change while the UART port is
+> > > > started up. In this case we won't have the data glitches.
+> > > > 2) just adjust the UART clock divider in case of reference clock rate
+> > > > change (use the SiFive UART driver approach). In this case we may have the
+> > > > data corruption.
+> > > > 3) somehow implement the algo: wait for the transfers to be completed,
+> > > > lock UART interface (it's possible for Tx, but for Rx in case of no handshake
+> > > > enabled it's simply impossible), permit the ref clock rate change,
+> > > > adjust the UART divider, then unlock the UART interface. In this case the data
+> > > > glitches still may happen (if no modem control is available or
+> > > > handshakes are disabled).
+> > > > 
+> > > > As for the cases of Baikal-T1 UARTs the first solutions is the most suitable.
+> > > > We don't lock anything valuable, since a base PLL output isn't directly
+> > > > connected to any device and it's rate once setup isn't changed during the
+> > > > system running. On the other hand I don't mind to implement the second
+> > > > solution, even though it's prone to data glitches. Regarding the solution
+> > > > 3) I won't even try. It's too complicated, I don't have time and
+> > > > test-infrastructure for this.
+> > > > 
+> > > > So Andy what do you think?
+> > > 
+> > > From Intel HW perspective the first two are okay, but since Maxime is against
+> > > first, you have the only option from your list. Perhaps somebody may give
+> > > option 4) here...
+> > > 
+> > 
+> > Ok then. I'll implement the option 2) in v3 if noone gives any alternatives
+> > before that.
+> > 
+> 
+> Sorry, I haven't really read the thread but I'll quickly reply with
+> this.
+> 
+> Maybe option 4 is to make the uart driver a clk provider that consumes
+> the single reference clk like it is already doing today? Then when the
+> rate changes up above for the clk implemented here the clk set rate op
+> for the newly implemented clk can go poke the uart registers to maintain
+> the baud or whatever?
+> 
+> That is close to how the notifier design would work, but it avoids
+> keeping the notifiers around given that the notifiers are not preferred.
+> It is also closer to reality, the uart has a divider or mux internally
+> that we don't model as a clk, but we could just as easily model as such.
+
+AFAIU your suggestion is pretty similar to the option 2), but it concerns
+the fixup implementation. So instead of subscribing to the reference clock
+change event and directly adjusting the UART clock divider when the change
+happens, you suggest to convert the divisor setting code into a clock
+provider, which in case of the parental clocks rate change shall
+automatically cause the rate adjustment of the clocks hierarchy below.
+
+While your proposal looks neat and better suits a common approach of
+the drivers design, it won't be that easy to be implemented for the serial
+subsystem. As far as I can see serial and 8250 code is too coupled with
+manual divisor and reference clock settings. Common 8250 port code gets
+and sets the divisor and relies on the reference clock value. Similarly
+the 8250-compatible vendor specific devices may also have custom divisor
+settings. Moreover uartclk field, which indicates the reference clock rate
+value, is used in many placed over the serial code, so if we implemented
+your design we would have to update it value anyway, which means to
+subscribe to the reference clock rate change event.
+
+So in order to do what you said, the serial subsystem would have to be
+seriously refactored, which taking into account the subsystem age and
+number of driver, will be very painful.
+
+-Sergey
 
