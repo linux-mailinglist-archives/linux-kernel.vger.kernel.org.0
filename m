@@ -2,101 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0691194FCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 04:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5D89194FAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 04:32:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbgC0DrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 23:47:01 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12139 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727509AbgC0DrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 23:47:01 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id EF603D7CE21F66CD2DAD;
-        Fri, 27 Mar 2020 11:31:15 +0800 (CST)
-Received: from [127.0.0.1] (10.177.223.23) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.487.0; Fri, 27 Mar 2020
- 11:31:11 +0800
-Subject: Re: [PATCH v4 02/16] ACPI/IORT: Remove direct access of
- dev->iommu_fwspec
-To:     Joerg Roedel <joro@8bytes.org>, <iommu@lists.linux-foundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Joerg Roedel <jroedel@suse.de>
-References: <20200326150841.10083-1-joro@8bytes.org>
- <20200326150841.10083-3-joro@8bytes.org>
-From:   Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <82dea1be-4a2e-e914-c607-8aeb924eb36f@huawei.com>
-Date:   Fri, 27 Mar 2020 11:30:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1727702AbgC0Dc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 23:32:28 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38839 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727611AbgC0Dc1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 23:32:27 -0400
+Received: by mail-qt1-f193.google.com with SMTP id z12so7533556qtq.5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 20:32:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=r71azbnhZkfrbX5EBuBZs+Z142rnXfAai7VBmmvucRQ=;
+        b=k/l+7EzRvmXCev0yuQZ0c5mJXHjOLfvHQv5AbXX/oUQO+o9lT3gePYJcarWNlmcpCv
+         ClHFnZTbq4sfmSoo8TOlCB6tzUEW7P/5gEYXFW/YRX3Pkssb9HoAXHR4MzQS6h3cMcRV
+         nsx+2eXk4NImybe1UdIJbSYaSvypRWxcmZktI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=r71azbnhZkfrbX5EBuBZs+Z142rnXfAai7VBmmvucRQ=;
+        b=ftOFaVjuxW1AoQXyyuIBS/jRINyfj5NwTPJ6tCJ4oqE1HYXUfS7o9Wjyu9Q5yDwX2i
+         yRsFmYQZ21jaVSLMeN7fL9mjZSVXgNLL/h89/LNmrZsJZdztryzJJEbQ3wsSsGj7yw0o
+         UDfnBS9i6vrKQkphOT8i4zc4uDhusMpyfG6mcYG599XmtnOJs89HOyBQ4VR+CDf0j0Cc
+         agCHAUbgeNegq7mtyOOF/SKy3NRVG5AjcM1K1rK4a7RVw6SFtMjEHz5LmBhdb8Vd2YBO
+         6MJ0YUlj1gtP1QYdgZxDQkPxyhOC7fPoZf/YCnRnfNcUGaHfzCKjLPgzcvNC9qp9+PeU
+         oJkA==
+X-Gm-Message-State: ANhLgQ2bzeI1Ew4b9rAYLxO8Ian3aXnaOliP7lkV5wj8tvVJLAhfTwmh
+        xVyYWunuxhHDi2MyoQIw5va13A==
+X-Google-Smtp-Source: ADFU+vsTzsOQvgZZdj5qStX5c0xxObyeCKI3NnnQb0WpT0KdNeU7rXLEYJh4618T/wuDQOBRiFznkQ==
+X-Received: by 2002:ac8:1b46:: with SMTP id p6mr12221767qtk.369.1585279946428;
+        Thu, 26 Mar 2020 20:32:26 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id 199sm2629376qkm.7.2020.03.26.20.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 20:32:25 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 23:32:25 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Tejun Heo <tj@kernel.org>, Sonny Rao <sonnyrao@google.com>,
+        linux-kernel@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>,
+        Amit Pundir <amit.pundir@linaro.org>, kernel-team@android.com,
+        Jesse Barnes <jsbarnes@google.com>, vpillai@digitalocean.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, cgroups@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Li Zefan <lizefan@huawei.com>
+Subject: Re: [PATCH RFC] cpuset: Make cpusets get restored on hotplug
+Message-ID: <20200327033225.GA250520@google.com>
+References: <20200326191623.129285-1-joel@joelfernandes.org>
+ <20200326192035.GO162390@mtj.duckdns.org>
+ <20200326194448.GA133524@google.com>
+ <972a5c1b-6721-ac20-cec5-617af67e617d@redhat.com>
+ <CAPz6YkVUsDz456z8-X2G_EDd-uet1rRNnh2sDUpdcoWp_fkDDw@mail.gmail.com>
+ <20200326201649.GQ162390@mtj.duckdns.org>
+ <20200326202340.GA146657@google.com>
+ <592d4120-0b42-4607-5efd-fb2d4d29f0cc@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200326150841.10083-3-joro@8bytes.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.223.23]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <592d4120-0b42-4607-5efd-fb2d4d29f0cc@redhat.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/3/26 23:08, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
-> 
-> Use the accessor functions instead of directly dereferencing
-> dev->iommu_fwspec.
-> 
-> Tested-by: Hanjun Guo <guohanjun@huawei.com>
-> Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->  drivers/acpi/arm64/iort.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-> index ed3d2d1a7ae9..7d04424189df 100644
-> --- a/drivers/acpi/arm64/iort.c
-> +++ b/drivers/acpi/arm64/iort.c
-> @@ -1015,6 +1015,7 @@ const struct iommu_ops *iort_iommu_configure(struct device *dev)
->  		return ops;
->  
->  	if (dev_is_pci(dev)) {
-> +		struct iommu_fwspec *fwspec;
->  		struct pci_bus *bus = to_pci_dev(dev)->bus;
->  		struct iort_pci_alias_info info = { .dev = dev };
->  
-> @@ -1027,8 +1028,9 @@ const struct iommu_ops *iort_iommu_configure(struct device *dev)
->  		err = pci_for_each_dma_alias(to_pci_dev(dev),
->  					     iort_pci_iommu_init, &info);
+On Thu, Mar 26, 2020 at 09:26:51PM -0400, Waiman Long wrote:
+[...]
+> I think the problem is that the v2_mode mount option is not that well
+> documented. Maybe I should send a patch to add some some description
+> about it in cgroup-v2.rst or cgroup-v1/cpusets.rst.
 
-...
+That is definitely worth it and I would fully support that.
 
->  
-> -		if (!err && iort_pci_rc_supports_ats(node))
-> -			dev->iommu_fwspec->flags |= IOMMU_FWSPEC_PCI_RC_ATS;
-> +		fwspec = dev_iommu_fwspec_get(dev);
-> +		if (fwspec && iort_pci_rc_supports_ats(node))
+thanks,
 
-Should we check !err as well?
-
-Thanks
-Hanjun
-
-> +			fwspec->flags |= IOMMU_FWSPEC_PCI_RC_ATS;
->  	} else {
->  		int i = 0;
->  
-> 
+ - Joel
 
