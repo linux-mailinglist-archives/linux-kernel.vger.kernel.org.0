@@ -2,116 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E172C195342
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:49:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC83195346
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:50:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbgC0ItM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 04:49:12 -0400
-Received: from mga04.intel.com ([192.55.52.120]:4873 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725946AbgC0ItL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 04:49:11 -0400
-IronPort-SDR: 0zOHc5cFIwsiV1I9Eb4FjGl29QIwnANvY2PBq6/7ZGHXOxoxM4q9LANs2/slq7VbnkzSpa1AHK
- +qKw/pvsuCvQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 01:49:11 -0700
-IronPort-SDR: EWtP0uuIemIMexIyJ1rR3Cv6Vyxrtoz3vma1Hir5BHUhgAyksLnYh0psTOLB61hv9goEVK9e6E
- zwaFsZqT6KiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,311,1580803200"; 
-   d="scan'208";a="448940271"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 27 Mar 2020 01:49:11 -0700
-Received: from [10.249.36.56] (abudanko-mobl.ccr.corp.intel.com [10.249.36.56])
-        by linux.intel.com (Postfix) with ESMTP id 1E06A5803E3;
-        Fri, 27 Mar 2020 01:49:08 -0700 (PDT)
-Subject: [PATCH v1 5/8] perf docs: extend stat mode docs with info on
- --ctl-fd[-ack] options
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <825a5132-b58d-c0b6-b050-5a6040386ec7@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <6dab86f5-403a-e280-d66e-20dd02ea4ec2@linux.intel.com>
-Date:   Fri, 27 Mar 2020 11:49:07 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <825a5132-b58d-c0b6-b050-5a6040386ec7@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726758AbgC0IuP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 04:50:15 -0400
+Received: from zimbra2.kalray.eu ([92.103.151.219]:57286 "EHLO
+        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726169AbgC0IuO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 04:50:14 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id 5860A27E039A;
+        Fri, 27 Mar 2020 09:50:13 +0100 (CET)
+Received: from zimbra2.kalray.eu ([127.0.0.1])
+        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id FpmscZvK2U_Z; Fri, 27 Mar 2020 09:50:12 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id CB6CC27E0AEB;
+        Fri, 27 Mar 2020 09:50:12 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu CB6CC27E0AEB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
+        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1585299012;
+        bh=SN/jDLRWylESkAt6QMekC/Tpe7ewfTl4FIMoaHWoEeE=;
+        h=From:To:Date:Message-Id;
+        b=cb1Ymu+VokqUrg5PAArt3L1fVzMSjaS8q1pFp8sQ05nvnbXNfsNMzoWTUAbeAWvc3
+         T/P28dcqbk3354ctudCjeii82CY8Td+j1cg/eCpWgvONCz0RYRSeUfYhJjTq1CU0SV
+         p0aPmDnS+ZuITE0P0BxkugItjSRiYYTy36K90D00=
+X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
+Received: from zimbra2.kalray.eu ([127.0.0.1])
+        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id JMcNRfuSCV0B; Fri, 27 Mar 2020 09:50:12 +0100 (CET)
+Received: from triton.lin.mbt.kalray.eu (unknown [192.168.37.25])
+        by zimbra2.kalray.eu (Postfix) with ESMTPSA id AF16827E039A;
+        Fri, 27 Mar 2020 09:50:12 +0100 (CET)
+From:   Clement Leger <cleger@kalray.eu>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Clement Leger <cleger@kalray.eu>
+Subject: [PATCH] remoteproc: remove rproc_elf32_sanity_check
+Date:   Fri, 27 Mar 2020 09:49:39 +0100
+Message-Id: <20200327084939.8321-1-cleger@kalray.eu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since checks are present in the remoteproc elf loader before calling
+da_to_va, loading a elf64 will work on 32bits flavors of kernel.
+Indeed, if a segment size is larger than what size_t can hold, the
+loader will return an error so the functionality is equivalent to
+what exists today.
 
-Extend perf-stat.txt file with --ctl-fd[-ack] options description.
-Document possible usage model introduced by --ctl-fd[-ack] options
-by providing example bash shell script.
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Signed-off-by: Clement Leger <cleger@kalray.eu>
 ---
- tools/perf/Documentation/perf-stat.txt | 38 ++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/remoteproc/remoteproc_core.c       |  2 +-
+ drivers/remoteproc/remoteproc_elf_loader.c | 21 ---------------------
+ drivers/remoteproc/remoteproc_internal.h   |  1 -
+ drivers/remoteproc/st_remoteproc.c         |  2 +-
+ drivers/remoteproc/st_slim_rproc.c         |  2 +-
+ drivers/remoteproc/stm32_rproc.c           |  2 +-
+ 6 files changed, 4 insertions(+), 26 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
-index 4d56586b2fb9..a8a279ff9cb2 100644
---- a/tools/perf/Documentation/perf-stat.txt
-+++ b/tools/perf/Documentation/perf-stat.txt
-@@ -164,6 +164,44 @@ with it.  --append may be used here.  Examples:
-      3>results  perf stat --log-fd 3          -- $cmd
-      3>>results perf stat --log-fd 3 --append -- $cmd
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index a9ac1d01e09b..02ff076b0122 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2069,7 +2069,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
+ 		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
+ 		if (!rproc->ops->sanity_check)
+-			rproc->ops->sanity_check = rproc_elf32_sanity_check;
++			rproc->ops->sanity_check = rproc_elf_sanity_check;
+ 		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
+ 	}
  
-+--ctl-fd::
-+--ctl-fd-ack::
-+
-+Listen on ctl-fd descriptor for command to control measurement ('r': resume, 'p': pause).
-+Optionally send control command completion ('a') to fd-ack descriptor to synchronize with
-+the controlling process. Example of bash shell script to resume and pause measurements:
-+#!/bin/bash
-+
-+ctl_dir=/tmp/
-+
-+ctl_fifo=${ctl_dir}perf_ctl.fifo
-+test -p ${ctl_fifo} && unlink ${ctl_fifo}
-+mkfifo ${ctl_fifo}
-+exec {ctl_fd}<>${ctl_fifo}
-+
-+ctl_ack_fifo=${ctl_dir}perf_ctl_ack.fifo
-+test -p ${ctl_ack_fifo} && unlink ${ctl_ack_fifo}
-+mkfifo ${ctl_ack_fifo}
-+exec {ctl_fd_ack}<>${ctl_ack_fifo}
-+
-+perf stat -D -1 -e cpu-cycles -a -I 1000                \
-+          --ctl-fd ${ctl_fd} --ctl-fd-ack ${ctl_fd_ack} \
-+          -- sleep 30 &
-+perf_pid=$!
-+
-+sleep 5  && echo 'r' >&${ctl_fd} && read -u ${ctl_fd_ack} r1 && echo "resumed(${r1})"
-+sleep 10 && echo 'p' >&${ctl_fd} && read -u ${ctl_fd_ack} p1 && echo "paused(${p1})"
-+
-+exec {ctl_fd_ack}>&-
-+unlink ${ctl_ack_fifo}
-+
-+exec {ctl_fd}>&-
-+unlink ${ctl_fifo}
-+
-+wait -n ${perf_pid}
-+exit $?
-+
-+
- --pre::
- --post::
- 	Pre and post measurement hooks, e.g.:
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index 16e2c496fd45..29034f99898d 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -112,27 +112,6 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+ }
+ EXPORT_SYMBOL(rproc_elf_sanity_check);
+ 
+-/**
+- * rproc_elf_sanity_check() - Sanity Check ELF32 firmware image
+- * @rproc: the remote processor handle
+- * @fw: the ELF32 firmware image
+- *
+- * Make sure this fw image is sane.
+- */
+-int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw)
+-{
+-	int ret = rproc_elf_sanity_check(rproc, fw);
+-
+-	if (ret)
+-		return ret;
+-
+-	if (fw_elf_get_class(fw) == ELFCLASS32)
+-		return 0;
+-
+-	return -EINVAL;
+-}
+-EXPORT_SYMBOL(rproc_elf32_sanity_check);
+-
+ /**
+  * rproc_elf_get_boot_addr() - Get rproc's boot address.
+  * @rproc: the remote processor handle
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index b389dc79da81..31994715fd43 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -54,7 +54,6 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len);
+ phys_addr_t rproc_va_to_pa(void *cpu_addr);
+ int rproc_trigger_recovery(struct rproc *rproc);
+ 
+-int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw);
+ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
+ u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
+ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
+diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+index a6cbfa452764..a3268d95a50e 100644
+--- a/drivers/remoteproc/st_remoteproc.c
++++ b/drivers/remoteproc/st_remoteproc.c
+@@ -233,7 +233,7 @@ static const struct rproc_ops st_rproc_ops = {
+ 	.parse_fw		= st_rproc_parse_fw,
+ 	.load			= rproc_elf_load_segments,
+ 	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
+-	.sanity_check		= rproc_elf32_sanity_check,
++	.sanity_check		= rproc_elf_sanity_check,
+ 	.get_boot_addr		= rproc_elf_get_boot_addr,
+ };
+ 
+diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+index 3cca8b65a8db..09bcb4d8b9e0 100644
+--- a/drivers/remoteproc/st_slim_rproc.c
++++ b/drivers/remoteproc/st_slim_rproc.c
+@@ -203,7 +203,7 @@ static const struct rproc_ops slim_rproc_ops = {
+ 	.da_to_va       = slim_rproc_da_to_va,
+ 	.get_boot_addr	= rproc_elf_get_boot_addr,
+ 	.load		= rproc_elf_load_segments,
+-	.sanity_check	= rproc_elf32_sanity_check,
++	.sanity_check	= rproc_elf_sanity_check,
+ };
+ 
+ /**
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 6a66dbf2df40..2e07a95439c8 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -505,7 +505,7 @@ static struct rproc_ops st_rproc_ops = {
+ 	.load		= rproc_elf_load_segments,
+ 	.parse_fw	= stm32_rproc_parse_fw,
+ 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+-	.sanity_check	= rproc_elf32_sanity_check,
++	.sanity_check	= rproc_elf_sanity_check,
+ 	.get_boot_addr	= rproc_elf_get_boot_addr,
+ };
+ 
 -- 
-2.24.1
+2.17.1
 
