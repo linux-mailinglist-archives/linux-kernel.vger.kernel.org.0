@@ -2,62 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BF15194E16
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 01:34:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15A3A194E1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 01:35:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbgC0AeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 20:34:09 -0400
-Received: from namei.org ([65.99.196.166]:43916 "EHLO namei.org"
+        id S1727770AbgC0AfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 20:35:17 -0400
+Received: from mga12.intel.com ([192.55.52.136]:44340 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbgC0AeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 20:34:09 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 02R0Xank018319;
-        Fri, 27 Mar 2020 00:33:36 GMT
-Date:   Fri, 27 Mar 2020 11:33:36 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     KP Singh <kpsingh@chromium.org>
-cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Brendan Jackman <jackmanb@google.com>,
-        Florent Revest <revest@google.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Turner <pjt@google.com>, Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH bpf-next v7 8/8] bpf: lsm: Add Documentation
-In-Reply-To: <20200326142823.26277-9-kpsingh@chromium.org>
-Message-ID: <alpine.LRH.2.21.2003271133130.17915@namei.org>
-References: <20200326142823.26277-1-kpsingh@chromium.org> <20200326142823.26277-9-kpsingh@chromium.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726359AbgC0AfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 20:35:17 -0400
+IronPort-SDR: sK+/uC2zPYzaUNZTSerJFe63ma0XYcLCEmuusGv6FgejRMIBCv2QhmtHPjcUc3EdGfjBmUxWKW
+ kDiB3yhQx+NQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 17:35:16 -0700
+IronPort-SDR: e22T3VdHduyjz5bDy4OZa210k9WTO1218bTaoPEseA5BLErTX2QCPDoJWKDZia+MKeWxQXCcma
+ BQIJKtcvrU0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,310,1580803200"; 
+   d="scan'208";a="250972692"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.3]) ([10.239.13.3])
+  by orsmga006.jf.intel.com with ESMTP; 26 Mar 2020 17:35:10 -0700
+Subject: Re: [kbuild-all] Re: [RFC PATCH] usb: cdns3:
+ cdns3_clear_register_bit() can be static
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kbuild test robot <lkp@intel.com>
+Cc:     Colin King <colin.king@canonical.com>, kbuild-all@lists.01.org,
+        Sekhar Nori <nsekhar@ti.com>, Roger Quadros <rogerq@ti.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Pawel Laszczak <pawell@cadence.com>, linux-usb@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200325125041.94769-1-colin.king@canonical.com>
+ <20200326122858.GA50118@cde5a4ed3207> <20200326130418.GA1295433@kroah.com>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <571960b6-5ed7-2106-7091-3ea83c31051a@intel.com>
+Date:   Fri, 27 Mar 2020 08:34:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200326130418.GA1295433@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Mar 2020, KP Singh wrote:
-
-> From: KP Singh <kpsingh@google.com>
-> 
-> Document how eBPF programs (BPF_PROG_TYPE_LSM) can be loaded and
-> attached (BPF_LSM_MAC) to the LSM hooks.
-> 
-> Signed-off-by: KP Singh <kpsingh@google.com>
-> Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> Reviewed-by: Florent Revest <revest@google.com>
-> Reviewed-by: Thomas Garnier <thgarnie@google.com>
 
 
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+On 3/26/20 9:04 PM, Greg Kroah-Hartman wrote:
+> On Thu, Mar 26, 2020 at 08:28:58PM +0800, kbuild test robot wrote:
+>> Fixes: 87db1192dc33 ("usb: cdns3: make signed 1 bit bitfields unsigned")
+> This original patch did not "cause" this problem, it's just that you for
+> some reason ran sparse for the first time on the file.
+>
+> So I can't take this as-is, can you remove this line and resend?
 
+Hi Greg,
 
--- 
-James Morris
-<jmorris@namei.org>
+Sorry for the inconvenience, the patch was generated by the bot,
+we'll check and resend it.
+
+Best Regards,
+Rong Chen
+
+>
+> thanks,
+>
+> greg k-h
+> _______________________________________________
+> kbuild-all mailing list -- kbuild-all@lists.01.org
+> To unsubscribe send an email to kbuild-all-leave@lists.01.org
 
