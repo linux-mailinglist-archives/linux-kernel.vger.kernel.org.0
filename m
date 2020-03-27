@@ -2,91 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 044AA196062
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 22:24:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B02BD196074
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 22:33:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbgC0VYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 17:24:39 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51925 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727754AbgC0VYb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 17:24:31 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c187so13035263wme.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 14:24:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gfukkDHwtKj4BKlXc/fjhSsSldS9nfyhxc+J7rLMUOQ=;
-        b=Ef80zkdZrF8agBFess6gmp2WYDfANzlCqZ5kc9TJFBJdhTDp8BBF/T2wvWSGKD2Ux+
-         1bydBbVa7LeAgNcbuVtVp8X7svWe5bBvxYNsJIQ/VLYzCrCpAbwPukCbJs+eu6CTtY4B
-         q7EKo0mkdJ20W4KVxCfqZmpORonw+voPf9/aoTIL04BSdjJD+EyO4sAx2yxwUXxSIS3p
-         DGZmGaMYb6IvzZtokwms7DMjPzf4OWW1OEZfxbKQzCo0gbZJ5A3LsLpe5HGdYo3MGWf3
-         LlHtE0QeyNBdvK66wGB7ZbrpToVwC6WDxeqWpPLjSdlgb/Wxw+g15hVsRgOVt8bdL75J
-         Si4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gfukkDHwtKj4BKlXc/fjhSsSldS9nfyhxc+J7rLMUOQ=;
-        b=f0jtotxu9sDdSRp6JHbH7LXtDm3Cz2ugmNR9pPr+REtDYPd+Vq1f6LIm5e9auLazQu
-         92c/WHnclAHpNZlgzsM4Ybu4BYA1MX2vtzM5L/Gq0lAHy1kWBylZHXbkGE4nrtupiPWF
-         +VIZBLgQj5rCi12K8vmfGYdfPelvgF/UjET7TPM2JNtN/VF4uF1nO2xBGSgDyzE5iOMp
-         S9UPXYjqkBIg9MNXOx+jD7I7FN0eWDPXSUGCRlF+WLx3tQzwh8esVH0lm7u7jLfmIMiU
-         HRfnMNRjR8OnX68VDNgY8LGiiHPtgXBt0qmdkr3M4eGGjfc4aNezDkN5JN8jVu0ZuD00
-         IyNQ==
-X-Gm-Message-State: ANhLgQ1Z9NfJs6GvbHxUZg/mr0/6uaxy8IySEhKGhqveI8waCf9RbgQA
-        U0khIbNdLfDAsV3dEoGLTQ==
-X-Google-Smtp-Source: ADFU+vvgKU83rENNsYeVyec3WQDUcJE4oHjBb7ESipJUBJQaN94MAD5Ej3+z+MCMbQSvq8bR5BESDw==
-X-Received: by 2002:a7b:c846:: with SMTP id c6mr639905wml.189.1585344270664;
-        Fri, 27 Mar 2020 14:24:30 -0700 (PDT)
-Received: from ninjahost.lan (host-92-23-82-35.as13285.net. [92.23.82.35])
-        by smtp.gmail.com with ESMTPSA id h132sm10215141wmf.18.2020.03.27.14.24.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 14:24:30 -0700 (PDT)
-From:   Jules Irenge <jbi.octave@gmail.com>
-To:     julia.lawall@lip6.fr
-Cc:     boqun.feng@gmail.com, Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 10/10] trace: Replace printk and WARN_ON with WARN
-Date:   Fri, 27 Mar 2020 21:23:57 +0000
-Message-Id: <20200327212358.5752-11-jbi.octave@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200327212358.5752-1-jbi.octave@gmail.com>
-References: <0/10>
- <20200327212358.5752-1-jbi.octave@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727708AbgC0Vdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 17:33:45 -0400
+Received: from mga06.intel.com ([134.134.136.31]:35671 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727423AbgC0Vdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 17:33:45 -0400
+IronPort-SDR: H9I635yBmUhWL24zUypg9OosVQFSKt7bvqFxFxSWuIeQ9ssK+7C+DpYBmcSvlB2ev2hzj/8eVC
+ eCIaKvt1oytg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 14:33:43 -0700
+IronPort-SDR: OhQc7XDvRNnOvb7TqkMaCQkgdqOHWj7ItCPIm9zSDCDGRMsmba0TazTQG/9vWe5Ep43dYI0KHq
+ 2J7kuyt3W4Wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,313,1580803200"; 
+   d="scan'208";a="358607252"
+Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.171])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Mar 2020 14:33:44 -0700
+From:   Gayatri Kammela <gayatri.kammela@intel.com>
+To:     linux-pm@vger.kernel.org
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lenb@kernel.org, dvhart@infradead.org, alex.hung@canonical.com,
+        rui.zhang@intel.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, mika.westerberg@intel.com,
+        peterz@infradead.org, charles.d.prestopine@intel.com,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH v2 0/3] Fixes: update Tiger Lake ACPI device IDs
+Date:   Fri, 27 Mar 2020 14:28:18 -0700
+Message-Id: <cover.1585343507.git.gayatri.kammela@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Coccinelle suggests replacing printk and WARN_ON with WARN
+Hi,
 
-SUGGESTION: printk + WARN_ON can be just WARN.
-Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
----
- kernel/trace/trace.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+The hardware IDs for devices supported by Tiger Lake for various drivers
+such as DPTF, fan, Intel thermal and intel-hid are added with missing 'C'
+which makes them invalid. Hence fix these IDs by updating.
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 6b11e4e2150c..1fe31272ea73 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1799,9 +1799,7 @@ static int run_tracer_selftest(struct tracer *type)
- 	/* the test is responsible for resetting too */
- 	tr->current_trace = saved_tracer;
- 	if (ret) {
--		printk(KERN_CONT "FAILED!\n");
--		/* Add the warning after printing 'FAILED' */
--		WARN_ON(1);
-+		WARN(1, "FAILED!\n");
- 		return -1;
- 	}
- 	/* Only reset on passing, to avoid touching corrupted buffers */
+For instance, the updated ID now looks like
+INT1047 --> INTC1047
+
+Patch 1: Update Tiger Lake ACPI device IDs for DPTF and fan drivers
+Patch 2: Update Tiger Lake ACPI device ID for intel-hid driver
+Patch 3: Update Tiger Lake ACPI device IDs for thermal driver
+
+Changes since v1:
+1) Added fixes tag to each patch
+
+Gayatri Kammela (3):
+  ACPI: fix: Update Tiger Lake ACPI device IDs
+  platform/x86: intel-hid: fix: Update Tiger Lake ACPI device ID
+  thermal: int340x_thermal: fix: Update Tiger Lake ACPI device IDs
+
+ drivers/acpi/device_pm.c                                | 2 +-
+ drivers/acpi/dptf/dptf_power.c                          | 2 +-
+ drivers/acpi/dptf/int340x_thermal.c                     | 8 ++++----
+ drivers/platform/x86/intel-hid.c                        | 2 +-
+ drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 2 +-
+ drivers/thermal/intel/int340x_thermal/int3403_thermal.c | 2 +-
+ 6 files changed, 9 insertions(+), 9 deletions(-)
+
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 -- 
-2.25.1
+2.17.1
 
