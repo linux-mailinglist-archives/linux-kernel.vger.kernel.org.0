@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8B76194F02
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:32:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B02194F03
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:32:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbgC0Ccb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 22:32:31 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48058 "EHLO
+        id S1727975AbgC0Ccg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 22:32:36 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48054 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727885AbgC0CcL (ORCPT
+        with ESMTP id S1727881AbgC0CcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Mar 2020 22:32:11 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHen1-003hSh-K9; Fri, 27 Mar 2020 02:32:07 +0000
+        id 1jHen1-003hSo-MN; Fri, 27 Mar 2020 02:32:07 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH v2 20/22] x86: x32_setup_rt_frame(): consolidate uaccess areas
-Date:   Fri, 27 Mar 2020 02:32:03 +0000
-Message-Id: <20200327023205.881896-20-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v2 21/22] x86: unsafe_put-style macro for sigmask
+Date:   Fri, 27 Mar 2020 02:32:04 +0000
+Message-Id: <20200327023205.881896-21-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200327023205.881896-1-viro@ZenIV.linux.org.uk>
 References: <20200327023007.GS23230@ZenIV.linux.org.uk>
@@ -34,55 +34,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
+regularizes things a bit
+
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/kernel/signal.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ arch/x86/kernel/signal.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index e37d5a1bb713..38b359325291 100644
+index 38b359325291..1215fc7da0ba 100644
 --- a/arch/x86/kernel/signal.c
 +++ b/arch/x86/kernel/signal.c
-@@ -517,7 +517,6 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- 	struct rt_sigframe_x32 __user *frame;
- 	unsigned long uc_flags;
- 	void __user *restorer;
--	int err = 0;
- 	void __user *fp = NULL;
+@@ -203,6 +203,11 @@ do {									\
+ 		goto label;						\
+ } while(0);
  
- 	if (!(ksig->ka.sa.sa_flags & SA_RESTORER))
-@@ -525,14 +524,6 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
++#define unsafe_put_sigmask(set, frame, label) \
++	unsafe_put_user(*(__u64 *)(set), \
++			(__u64 __user *)&(frame)->uc.uc_sigmask, \
++			label)
++
+ /*
+  * Set up a signal frame.
+  */
+@@ -392,8 +397,7 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
+ 	 */
+ 	unsafe_put_user(*((u64 *)&rt_retcode), (u64 *)frame->retcode, Efault);
+ 	unsafe_put_sigcontext(&frame->uc.uc_mcontext, fp, regs, set, Efault);
+-	unsafe_put_user(*(__u64 *)set,
+-			(__u64 __user *)&frame->uc.uc_sigmask, Efault);
++	unsafe_put_sigmask(set, frame, Efault);
+ 	user_access_end();
+ 	
+ 	if (copy_siginfo_to_user(&frame->info, &ksig->info))
+@@ -458,7 +462,7 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
+ 	   already in userspace.  */
+ 	unsafe_put_user(ksig->ka.sa.sa_restorer, &frame->pretcode, Efault);
+ 	unsafe_put_sigcontext(&frame->uc.uc_mcontext, fp, regs, set, Efault);
+-	unsafe_put_user(set->sig[0], &frame->uc.uc_sigmask.sig[0], Efault);
++	unsafe_put_sigmask(set, frame, Efault);
+ 	user_access_end();
  
- 	frame = get_sigframe(&ksig->ka, regs, sizeof(*frame), &fp);
- 
--	if (!access_ok(frame, sizeof(*frame)))
--		return -EFAULT;
--
--	if (ksig->ka.sa.sa_flags & SA_SIGINFO) {
--		if (__copy_siginfo_to_user32(&frame->info, &ksig->info, true))
--			return -EFAULT;
--	}
--
- 	uc_flags = frame_uc_flags(regs);
- 
- 	if (!user_access_begin(frame, sizeof(*frame)))
-@@ -546,11 +537,13 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
+ 	if (ksig->ka.sa.sa_flags & SA_SIGINFO) {
+@@ -537,7 +541,7 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
  	restorer = ksig->ka.sa.sa_restorer;
  	unsafe_put_user(restorer, (unsigned long __user *)&frame->pretcode, Efault);
  	unsafe_put_sigcontext(&frame->uc.uc_mcontext, fp, regs, set, Efault);
-+	unsafe_put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask, Efault);
+-	unsafe_put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask, Efault);
++	unsafe_put_sigmask(set, frame, Efault);
  	user_access_end();
--	err |= __put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask);
  
--	if (err)
--		return -EFAULT;
-+	if (ksig->ka.sa.sa_flags & SA_SIGINFO) {
-+		if (__copy_siginfo_to_user32(&frame->info, &ksig->info, true))
-+			return -EFAULT;
-+	}
- 
- 	/* Set up registers for signal handler */
- 	regs->sp = (unsigned long) frame;
+ 	if (ksig->ka.sa.sa_flags & SA_SIGINFO) {
 -- 
 2.11.0
 
