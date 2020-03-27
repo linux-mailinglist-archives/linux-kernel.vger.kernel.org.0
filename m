@@ -2,267 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D49F7195F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 20:46:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B5C8195F14
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 20:48:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbgC0Tqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 15:46:42 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36094 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726959AbgC0Tql (ORCPT
+        id S1727685AbgC0Tsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 15:48:38 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:49043 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727495AbgC0Tsh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 15:46:41 -0400
-Received: by mail-io1-f65.google.com with SMTP id d15so11111487iog.3;
-        Fri, 27 Mar 2020 12:46:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DMZEgg/zEanfnErzXv8eRtaC03idBo6feUMxPRNa2CI=;
-        b=Ji6NlmXaRiGbcAoGWKS8DxgqY9IdVbG8EyJY8ZZ2h+33LMLkkSqa+6hlzTbqroKKTq
-         WnNXDXzyW6YozBAT5gArw7UUHScv8IMCfSuwmZ2+iMJy1dnfMLC/tR0q+0syzSMjgAjl
-         IFb0BUgP0mri5f9640hFkl2jdgxmaLB5xE5X0+y/953n01ELhdVbMQyps5pUY9JncNEX
-         VcyNOcSZLFXrx3sYuVwXjemGO0KTmnsTOWQ7YdOhqfmlKos70dTCQD4F2qWW/ztcPyEJ
-         FU41Ai+ceX8pNDKRBGh4plVuKHS70CDIbDWc+hT9XRMgho6EB+3DTFIiBhB/RF1H85nO
-         t+lw==
-X-Gm-Message-State: ANhLgQ2cm6fbrWnn6OXnS1P/QFS31VoxVMBqGThhHXtnT5FWiYwAffGi
-        LMplCopmTzL8w4hp2IH6Vw==
-X-Google-Smtp-Source: ADFU+vsMs7PILXWuXR0LCIYKPob3h38oQFLxMnBZAWweTfKeLxAcwIsLCG4v8a/NeEu4ifwcJ/Tomg==
-X-Received: by 2002:a6b:b78d:: with SMTP id h135mr286038iof.84.1585338399714;
-        Fri, 27 Mar 2020 12:46:39 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id x13sm578014ilh.66.2020.03.27.12.46.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 12:46:39 -0700 (PDT)
-Received: (nullmailer pid 24552 invoked by uid 1000);
-        Fri, 27 Mar 2020 19:46:37 -0000
-Date:   Fri, 27 Mar 2020 13:46:37 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 24/28] dt-bindings: media: Convert marvell,mmp2-ccic to
- json-schema
-Message-ID: <20200327194637.GA18803@bogus>
-References: <20200317093922.20785-1-lkundrak@v3.sk>
- <20200317093922.20785-25-lkundrak@v3.sk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200317093922.20785-25-lkundrak@v3.sk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 27 Mar 2020 15:48:37 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585338516; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=0fqTY0l0+n8WhQXdA6uQEsshpvosH4QlcVJn+mbYH6Q=; b=phgKOWmBtg57tor/53EobbxFo+nQ2AQZpzPFrBD9bG38QrKQcpb3rEeEnGF+6HuYCELkGGXb
+ k+9FhjEL4OUXlylJuUUzC11FM6okL6gt3b5CDeyVjJTGs5LoFtj08H9aOCO/Va7xrRCRvOWw
+ U4Te/SDMlX1Z70O2Yn2fOI1s8Go=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e7e5883.7f98046e2228-smtp-out-n01;
+ Fri, 27 Mar 2020 19:48:19 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 28B8AC44788; Fri, 27 Mar 2020 19:48:19 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 098F2C433D2;
+        Fri, 27 Mar 2020 19:48:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 098F2C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1 0/4] clk: qcom: Support for Low Power Audio Clocks on SC7180
+Date:   Sat, 28 Mar 2020 01:18:01 +0530
+Message-Id: <1585338485-31820-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 10:39:18AM +0100, Lubomir Rintel wrote:
-> Convert the marvell,mmp2-ccic binding to DT schema format using
-> json-schema.
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  .../bindings/media/marvell,mmp2-ccic.txt      |  50 ---------
->  .../bindings/media/marvell,mmp2-ccic.yaml     | 102 ++++++++++++++++++
->  2 files changed, 102 insertions(+), 50 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
->  create mode 100644 Documentation/devicetree/bindings/media/marvell,mmp2-ccic.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
-> deleted file mode 100644
-> index 7ec2c8c8a3b98..0000000000000
-> --- a/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
-> +++ /dev/null
-> @@ -1,50 +0,0 @@
-> -Marvell MMP2 camera host interface
-> -
-> -Required properties:
-> - - compatible: Should be "marvell,mmp2-ccic".
-> - - reg: Register base and size.
-> - - interrupts: The interrupt number.
-> - - #clock-cells: Must be 0.
-> -
-> -Optional properties:
-> - - clocks: Reference to the input clock as specified by
-> -           Documentation/devicetree/bindings/clock/clock-bindings.txt.
-> - - clock-names: Names of the clocks used; "axi" for the AXI bus interface,
-> -                "func" for the peripheral clock and "phy" for the parallel
-> -                video bus interface.
-> - - clock-output-names: Optional clock source for sensors. Shall be "mclk".
-> -
-> -Required subnodes:
-> - - port: The parallel bus interface port with a single endpoint linked to
-> -         the sensor's endpoint as described in
-> -         Documentation/devicetree/bindings/media/video-interfaces.txt.
-> -
-> -Required endpoint properties:
-> - - bus-type: data bus type, <5> or <6> for Parallel or Bt.656 respectively
-> - - pclk-sample: pixel clock polarity
-> - - hsync-active: horizontal synchronization polarity (only required for
-> -   parallel bus)
-> - - vsync-active: vertical synchronization polarity (only required for
-> -   parallel bus)
-> -
-> -Example:
-> -
-> -	camera0: camera@d420a000 {
-> -		compatible = "marvell,mmp2-ccic";
-> -		reg = <0xd420a000 0x800>;
-> -		interrupts = <42>;
-> -		clocks = <&soc_clocks MMP2_CLK_CCIC0>;
-> -		clock-names = "axi";
-> -		#clock-cells = <0>;
-> -		clock-output-names = "mclk";
-> -
-> -		port {
-> -			camera0_0: endpoint {
-> -				remote-endpoint = <&ov7670_0>;
-> -                                bus-type = <5>;      /* Parallel */
-> -                                hsync-active = <1>;  /* Active high */
-> -                                vsync-active = <1>;  /* Active high */
-> -                                pclk-sample = <0>;   /* Falling */
-> -			};
-> -		};
-> -	};
-> diff --git a/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.yaml b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.yaml
-> new file mode 100644
-> index 0000000000000..890a3f9d0302f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.yaml
-> @@ -0,0 +1,102 @@
-> +# SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
+[v1]
+ * Add support for Retention of GDSCR.
+ * Add YAML schema for LPASS clocks and clock IDs for LPASS.
+ * Add clock driver for LPASS core clocks and GCC LPASS clock.
 
-GPL-2.0-only please. Dual license only if you have rights on the old 
-file to do so.
+Taniya Das (4):
+  clk: qcom: gdsc: Add support to enable retention of GSDCR
+  dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7180
+  clk: qcom: gcc: Add support for GCC LPASS clock for SC7180
+  clk: qcom: lpass: Add support for LPASS clock controller for SC7180
 
-> +# Copyright 2019,2020 Lubomir Rintel <lkundrak@v3.sk>
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/marvell,mmp2-ccic.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Marvell MMP2 camera host interface bindings
-> +
-> +maintainers:
-> +  - Lubomir Rintel <lkundrak@v3.sk>
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: '^camera@[a-f0-9]+$'
-> +
-> +  compatible:
-> +    const: marvell,mmp2-ccic
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  port:
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +       endpoint:
+ .../bindings/clock/qcom,sc7180-lpasscorecc.yaml    |  81 ++++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/gcc-sc7180.c                      |  14 +
+ drivers/clk/qcom/gdsc.c                            |  12 +
+ drivers/clk/qcom/gdsc.h                            |   1 +
+ drivers/clk/qcom/lpasscorecc-sc7180.c              | 479 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sc7180.h        |   1 +
+ .../dt-bindings/clock/qcom,lpasscorecc-sc7180.h    |  28 ++
+ 9 files changed, 626 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml
+ create mode 100644 drivers/clk/qcom/lpasscorecc-sc7180.c
+ create mode 100644 include/dt-bindings/clock/qcom,lpasscorecc-sc7180.h
 
-Wrong indentaion.
-
-> +         type: object
-> +         additionalProperties: false
-> +
-> +         # Properties described in
-> +         # Documentation/devicetree/bindings/media/video-interfaces.txt
-> +         properties:
-> +           remote-endpoint: true
-> +           hsync-active: true
-> +           vsync-active: true
-> +           pclk-sample: true
-> +           bus-type: true
-> +
-> +         required:
-> +           - remote-endpoint
-> +
-> +    required:
-> +      - endpoint
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 3
-
-Shouldn't really be variable for a single compatible.
-
-> +    items:
-> +      - description: AXI bus interface clock
-> +      - description: Peripheral clock
-> +      - description: Parallel video bus interface clock
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 3
-> +    items:
-> +      - const: axi
-> +      - const: func
-> +      - const: phy
-> +
-> +  '#clock-cells':
-> +    const: 0
-> +
-> +  clock-output-names:
-> +    const: mclk
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - port
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/marvell,mmp2.h>
-> +
-> +    camera@d420a000 {
-> +      compatible = "marvell,mmp2-ccic";
-> +      reg = <0xd420a000 0x800>;
-> +      interrupts = <42>;
-> +      clocks = <&soc_clocks MMP2_CLK_CCIC0>;
-> +      clock-names = "axi";
-> +      #clock-cells = <0>;
-> +      clock-output-names = "mclk";
-> +
-> +      port {
-> +        camera0_0: endpoint {
-> +          remote-endpoint = <&ov7670_0>;
-> +          bus-type = <5>;      /* Parallel */
-> +          hsync-active = <1>;  /* Active high */
-> +          vsync-active = <1>;  /* Active high */
-> +          pclk-sample = <0>;   /* Falling */
-> +        };
-> +      };
-> +    };
-> +
-> +...
-> -- 
-> 2.25.1
-> 
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
