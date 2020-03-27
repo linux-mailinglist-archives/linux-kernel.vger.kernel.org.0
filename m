@@ -2,57 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D80B195AB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 17:10:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 925FB195ABC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 17:10:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbgC0QK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 12:10:28 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:38191 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbgC0QK1 (ORCPT
+        id S1727860AbgC0QKs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 12:10:48 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39114 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbgC0QKs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 12:10:27 -0400
-Received: by mail-pj1-f67.google.com with SMTP id m15so3964173pje.3;
-        Fri, 27 Mar 2020 09:10:27 -0700 (PDT)
+        Fri, 27 Mar 2020 12:10:48 -0400
+Received: by mail-pg1-f196.google.com with SMTP id b22so4786456pgb.6
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 09:10:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=75IkkZ1NYInUGk9X1drfGLOcKHAXU9ALtpboPRPENVs=;
-        b=bAG8+6cfrQfvrSSLoJGkn9Mx3btLb8agasQ1eNRiHrr91lZ6srxsGXppBKGid71T9u
-         ZDEDVH5LOFJFKs7Nf60HoWfxbVzMLaeu68qEaBucSTc5D9yeo7sDdVdj6QxhKFEPHaZE
-         vBx+UAiICx+3zfGJOZfhHlEzUpMa9x1YIAg922wy3yrs4Uk2ePM4FFFu8eUUUK16w9s4
-         CrkEbth6870yo3dqnnz1tHHJ8moLr91D+7+pngGKMvnvH2g8Gkat5oPaz5U9Xjp5Jc3m
-         ZI6Roj9K//5uSvv97m57UA129ZRAIpM7gyLFDd2Wh0pvFAk6RXYL61KHeU+6UG8P1cNb
-         J/Uw==
+        bh=RRZMftXcxMjfGIn/jefNpJoaxUEahFI1OKDxY1BN4IA=;
+        b=WI5JZEk5f08r9Ae9aGeMFQViCXXVYhgq72UdkbGkvFk9bzN85JK1k5ees3MMHvSP0u
+         fMclc0AzeSng2rEXHu54GlRW8cxSv6cvHY3tKj+4RMb4iZJJhM2bqqUpTxZXmXHjbOE0
+         uBG1Q9QuA9+DzDiIZZPokutq1gWFYMUJiGTdB/zDq9WYrzaLq2Zum0BerIqb13bw28i8
+         K/XiaYnwRkvX5dDcamTCYhowxvuDV7axb+Lubfc+rWbrIYkypwCwZJD4rQRPCMdn3h/x
+         PgpwtK9h/cmjiAu0z0LmpJxe6c9HqgBRIOc3Oo2SPLwK2dhtcz6+EHpOrj8Z6u3tJVUh
+         oYJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=75IkkZ1NYInUGk9X1drfGLOcKHAXU9ALtpboPRPENVs=;
-        b=hPcphFn5B0+3SICCkZypHMNa34ZiNoDNOVW8qvpQHEMkBXs1kmyTa9wrXGu2abZlpH
-         PUCbhWIVvV9EbQI2fl6toWtXH9Sq8G7nnzceXc7pOQOhgXIlO7oj20BgmYXqRktkv6ou
-         BM6K5r+SYkZNMDImoOAc09QZm6O8PGm+/l6dJMNM1ql4XwH3LxXE01Nm4WLaG3Vhw9kR
-         9SQWNk+ozpFiEiIE0+j/Kprk/C8kCrYvSqJFt12OOeTcK2bQ9Agmby2x+xg7SYaqGnLh
-         TMOPH8KOuxlQVgn1WH1Nkj8zdzqy0rk3SHPvK8z5w72baCFKaYw/v6PCC+YMTha2R2AE
-         lo7A==
-X-Gm-Message-State: ANhLgQ2uLWcVVw1+WpAvO8wnAMlvwxBwGfaN75NpwNW6Ms6lRQcQ9G+G
-        6xvQrdWLIUo0bKwTymTiawUB/Ymr
-X-Google-Smtp-Source: ADFU+vurKJrwwB33jYJnrhJXRA/YWejexO4juDqDNS25pviTIQnNGfPFkl1T7lks/qnpFyONQtxqjw==
-X-Received: by 2002:a17:902:b281:: with SMTP id u1mr13999282plr.287.1585325426590;
-        Fri, 27 Mar 2020 09:10:26 -0700 (PDT)
+        bh=RRZMftXcxMjfGIn/jefNpJoaxUEahFI1OKDxY1BN4IA=;
+        b=mK1NdMblU/wbG2fhwPbEcXAgsCYKDgg7Ykg7/20pX8vQBD5/tR2NjCZpt/l+oVmqvs
+         ZOGBPS4k5zV4pVzjNMow5yPWQA5UQWyIF2j4bQFfBYpmrPHU9zewmFBWwSGz+Ly471Qd
+         jblDBR4fANRCN9AbXR/4ghWjmbbe/537gOzEkHEnabrscaFrdXWgmUt3e8+LKg/k/KJX
+         B45YmbgiFZec1SB1dy+xl6aVIpLVzXnSm7TEc5NCaCq93wbhbOy7CIloTihONeO1N44P
+         +2AbZUwKInK2Xw/v4vzuno3Sf+AqQuqJRGwPdUm0TvL45WSDe8njliOFqFxT3UOS29xr
+         aBEw==
+X-Gm-Message-State: ANhLgQ1T5OOfI1IeITsvBmid2dDwxiapWF5zfw3eFtSKCE9tu5C1ockl
+        RgL6/bO0m6ibrVn+uXUzPWFxZRLm
+X-Google-Smtp-Source: ADFU+vvDkHbVeKyMYiW4BR5DDKjHh9a5a588eJJ9BB+YdnBGP9qQ7mXBSkRXlnnb86j57sLyyuaMdA==
+X-Received: by 2002:aa7:8bdc:: with SMTP id s28mr16126509pfd.110.1585325446926;
+        Fri, 27 Mar 2020 09:10:46 -0700 (PDT)
 Received: from localhost ([49.207.55.57])
-        by smtp.gmail.com with ESMTPSA id u14sm4159413pgg.67.2020.03.27.09.10.25
+        by smtp.gmail.com with ESMTPSA id d23sm4393280pfq.210.2020.03.27.09.10.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Mar 2020 09:10:26 -0700 (PDT)
-Date:   Fri, 27 Mar 2020 21:40:24 +0530
+        Fri, 27 Mar 2020 09:10:46 -0700 (PDT)
+Date:   Fri, 27 Mar 2020 21:40:44 +0530
 From:   afzal mohammed <afzal.mohd.ma@gmail.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Subject: [PATCH v5 4/6] sh: replace setup_irq() by request_irq()
-Message-ID: <b060312689820559121ee0a6456bbc1202fb7ee5.1585320721.git.afzal.mohd.ma@gmail.com>
+Cc:     Guan Xuetao <gxt@pku.edu.cn>, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 5/6] unicore32: replace setup_irq() by request_irq()
+Message-ID: <82667ae23520611b2a9d8db77e1d8aeb982f08e5.1585320721.git.afzal.mohd.ma@gmail.com>
 References: <20200321174303.GA7930@afzalpc>
  <cover.1585320721.git.afzal.mohd.ma@gmail.com>
 MIME-Version: 1.0
@@ -79,7 +77,7 @@ Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
 ---
 
 Link to v3, v2 & v1,
-[v3] https://lkml.kernel.org/r/20200304005120.5403-1-afzal.mohd.ma@gmail.com
+[v3] https://lkml.kernel.org/r/20200304005137.5523-1-afzal.mohd.ma@gmail.com
 [v2] https://lkml.kernel.org/r/cover.1582471508.git.afzal.mohd.ma@gmail.com
 [v1] https://lkml.kernel.org/r/cover.1581478323.git.afzal.mohd.ma@gmail.com
 
@@ -99,71 +97,38 @@ v2:
            pr_err("%s: request_irq() failed"
  * Commit message massage
 
- arch/sh/boards/mach-cayman/irq.c | 18 ++++++------------
- arch/sh/drivers/dma/dma-pvr2.c   |  9 +++------
- 2 files changed, 9 insertions(+), 18 deletions(-)
+ arch/unicore32/kernel/time.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/arch/sh/boards/mach-cayman/irq.c b/arch/sh/boards/mach-cayman/irq.c
-index 3b6ea2d99013..0305d0b51730 100644
---- a/arch/sh/boards/mach-cayman/irq.c
-+++ b/arch/sh/boards/mach-cayman/irq.c
-@@ -40,16 +40,6 @@ static irqreturn_t cayman_interrupt_pci2(int irq, void *dev_id)
- 	return IRQ_NONE;
- }
+diff --git a/arch/unicore32/kernel/time.c b/arch/unicore32/kernel/time.c
+index 8b217a761bf0..c3a37edf4d40 100644
+--- a/arch/unicore32/kernel/time.c
++++ b/arch/unicore32/kernel/time.c
+@@ -72,13 +72,6 @@ static struct clocksource cksrc_puv3_oscr = {
+ 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+ };
  
--static struct irqaction cayman_action_smsc = {
--	.name		= "Cayman SMSC Mux",
--	.handler	= cayman_interrupt_smsc,
+-static struct irqaction puv3_timer_irq = {
+-	.name		= "ost0",
+-	.flags		= IRQF_TIMER | IRQF_IRQPOLL,
+-	.handler	= puv3_ost0_interrupt,
+-	.dev_id		= &ckevt_puv3_osmr0,
 -};
 -
--static struct irqaction cayman_action_pci2 = {
--	.name		= "Cayman PCI2 Mux",
--	.handler	= cayman_interrupt_pci2,
--};
--
- static void enable_cayman_irq(struct irq_data *data)
+ void __init time_init(void)
  {
- 	unsigned int irq = data->irq;
-@@ -149,6 +139,10 @@ void init_cayman_irq(void)
- 	}
+ 	writel(0, OST_OIER);		/* disable any timer interrupts */
+@@ -94,7 +87,9 @@ void __init time_init(void)
+ 	ckevt_puv3_osmr0.min_delta_ticks = MIN_OSCR_DELTA * 2;
+ 	ckevt_puv3_osmr0.cpumask = cpumask_of(0);
  
- 	/* Setup the SMSC interrupt */
--	setup_irq(SMSC_IRQ, &cayman_action_smsc);
--	setup_irq(PCI2_IRQ, &cayman_action_pci2);
-+	if (request_irq(SMSC_IRQ, cayman_interrupt_smsc, 0, "Cayman SMSC Mux",
-+			NULL))
-+		pr_err("Failed to register Cayman SMSC Mux interrupt\n");
-+	if (request_irq(PCI2_IRQ, cayman_interrupt_pci2, 0, "Cayman PCI2 Mux",
-+			NULL))
-+		pr_err("Failed to register Cayman PCI2 Mux interrupt\n");
- }
-diff --git a/arch/sh/drivers/dma/dma-pvr2.c b/arch/sh/drivers/dma/dma-pvr2.c
-index b5dbd1f75768..21c347543e19 100644
---- a/arch/sh/drivers/dma/dma-pvr2.c
-+++ b/arch/sh/drivers/dma/dma-pvr2.c
-@@ -64,11 +64,6 @@ static int pvr2_xfer_dma(struct dma_channel *chan)
- 	return 0;
- }
+-	setup_irq(IRQ_TIMER0, &puv3_timer_irq);
++	if (request_irq(IRQ_TIMER0, puv3_ost0_interrupt,
++			IRQF_TIMER | IRQF_IRQPOLL, "ost0", &ckevt_puv3_osmr0))
++		pr_err("Failed to register ost0 interrupt\n");
  
--static struct irqaction pvr2_dma_irq = {
--	.name		= "pvr2 DMA handler",
--	.handler	= pvr2_dma_interrupt,
--};
--
- static struct dma_ops pvr2_dma_ops = {
- 	.request	= pvr2_request_dma,
- 	.get_residue	= pvr2_get_dma_residue,
-@@ -84,7 +79,9 @@ static struct dma_info pvr2_dma_info = {
- 
- static int __init pvr2_dma_init(void)
- {
--	setup_irq(HW_EVENT_PVR2_DMA, &pvr2_dma_irq);
-+	if (request_irq(HW_EVENT_PVR2_DMA, pvr2_dma_interrupt, 0,
-+			"pvr2 DMA handler", NULL))
-+		pr_err("Failed to register pvr2 DMA handler interrupt\n");
- 	request_dma(PVR2_CASCADE_CHAN, "pvr2 cascade");
- 
- 	return register_dmac(&pvr2_dma_info);
+ 	clocksource_register_hz(&cksrc_puv3_oscr, CLOCK_TICK_RATE);
+ 	clockevents_register_device(&ckevt_puv3_osmr0);
 -- 
 2.25.1
 
