@@ -2,97 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63CA01950B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 06:39:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2CF71950BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 06:41:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbgC0Fi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 01:38:59 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47679 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbgC0Fi6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 01:38:58 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jHhhk-00085G-Qu; Fri, 27 Mar 2020 06:38:52 +0100
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jHhhj-0001QA-LF; Fri, 27 Mar 2020 06:38:51 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Bin Liu <b-liu@ti.com>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, russell@personaltelco.net,
-        fercerpav@gmail.com
-Subject: [PATCH v1] usb: musb: dsps: set MUSB_DA8XX quirk for AM335x
-Date:   Fri, 27 Mar 2020 06:38:49 +0100
-Message-Id: <20200327053849.5348-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.26.0.rc2
+        id S1726698AbgC0Fly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 01:41:54 -0400
+Received: from mail-bn8nam12on2116.outbound.protection.outlook.com ([40.107.237.116]:17735
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725857AbgC0Fly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 01:41:54 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z44uqVSccQvnDr4SEdHQGzndiOSyfPJdJody+6y+F+aQrIlHk7maprXUxLiVW8GUHEx5Lzg2DcRpq2gXIm9V6mb+cNOetyzf3spsxKb45CndNlhQBXFBvXG1bASCuneG85kOUfujFWTctvXU+eSSSj6/MGjQf5ElJRvZU+cXftbpbDv8kTH5zIgjXIVcXgvihlF+kEZXIiDvIvo6mpLvt2R7Nds2/1FJfmKv0JR2q5u7vf55XObbgQp+Bj9zBp3Ejy2wXk39obrNYp4glK0llVfmlhmO7OPx5gOEFCX/OrDjbMLk0u8CwR9ifAGEsH5X1Z0VQcYCPGkpQMgVZ19BSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=407qbvaXOwH4+VFCN4wAc2aTLnpq21I1BrERdNMs2lI=;
+ b=NmI7udPVlW46ML/QOvNM5IANXawRo6zBQsvZopGOPJKRSIcGmH30moP4eug3kcJF7XLS/EkFJodX5JsOPKyv6TdXX+btZyrtNlB5TeIYEtqBU6jukGXZIoIfGIx/FRWewyaywsdEDMBqoYazCRBMG3S0sLujqDBFK5nXpk3N3tR8dGk861jw3BLw17MeytFzex/7rVN2FS72lmimtdpabmcf0wVIzLrpGwN80U3WOV9GNCwe1EOwliuifuKTEQkCpIl3GGeOPwl1zvOEsG9FBFJ0ok09kmf31JkU6t+1mcnScJjFvVKuaAI/AO10+jwhyX1VBBeCy1WeTJXKlkozcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=407qbvaXOwH4+VFCN4wAc2aTLnpq21I1BrERdNMs2lI=;
+ b=QTtfVH6nKNRCRsd4JLmocuQgsqhM2NnkhnVw6FjDSMbDYUyhphc+x5PiSK2R93Zkf3AkzWM/w+wt0YDXpa2i/pm5fNYQoMtq9+ZuMCWvI2T4/VdzjuW/yLQ+lImyPuuKKFKPemwy4BodZN+JZCL+PvTS4MvYoeR69EvZgrOzD3M=
+Received: from BN8PR21MB1155.namprd21.prod.outlook.com (2603:10b6:408:73::10)
+ by BN8PR21MB1203.namprd21.prod.outlook.com (2603:10b6:408:76::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.2; Fri, 27 Mar
+ 2020 05:41:21 +0000
+Received: from BN8PR21MB1155.namprd21.prod.outlook.com
+ ([fe80::d11:18b7:289c:ea17]) by BN8PR21MB1155.namprd21.prod.outlook.com
+ ([fe80::d11:18b7:289c:ea17%7]) with mapi id 15.20.2878.000; Fri, 27 Mar 2020
+ 05:41:21 +0000
+From:   Long Li <longli@microsoft.com>
+To:     =?utf-8?B?QXVyw6lsaWVuIEFwdGVs?= <aaptel@suse.com>,
+        "longli@linuxonhyperv.com" <longli@linuxonhyperv.com>,
+        Steve French <sfrench@samba.org>,
+        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] cifs: Remove locking in smb2_verify_signature() when
+ calculating SMB2/SMB3 signature on receiving packets
+Thread-Topic: [PATCH] cifs: Remove locking in smb2_verify_signature() when
+ calculating SMB2/SMB3 signature on receiving packets
+Thread-Index: AQHWAtFD/Rup8jtV9E+7q8K5j1eLM6hao/yAgAFKpPA=
+Date:   Fri, 27 Mar 2020 05:41:21 +0000
+Message-ID: <BN8PR21MB1155DCB17C62EDCE529922ABCECC0@BN8PR21MB1155.namprd21.prod.outlook.com>
+References: <1585159997-115196-1-git-send-email-longli@linuxonhyperv.com>
+ <87d08zzbg6.fsf@suse.com>
+In-Reply-To: <87d08zzbg6.fsf@suse.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=longli@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:a:ede4:db5c:c6fe:798]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ad504827-4ce4-4ebe-7e70-08d7d2117ae9
+x-ms-traffictypediagnostic: BN8PR21MB1203:
+x-microsoft-antispam-prvs: <BN8PR21MB1203489C05E1B74E780E53F3CECC0@BN8PR21MB1203.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0355F3A3AE
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR21MB1155.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(39860400002)(346002)(376002)(396003)(366004)(136003)(66476007)(66556008)(5660300002)(66574012)(66446008)(64756008)(8990500004)(7696005)(186003)(82950400001)(316002)(82960400001)(76116006)(33656002)(9686003)(2906002)(86362001)(71200400001)(66946007)(110136005)(6506007)(8936002)(81166006)(81156014)(478600001)(55016002)(8676002)(10290500003)(52536014);DIR:OUT;SFP:1102;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: xFMuafOfg2MpYCRW0J73xk2KyU92z9bBTq33fh3dW3k0v7Sl57vRRTLl6ZzewWDD+28DytyOpvo+5+JOlEtajK3pXsOVZ4OKyrphyp+0ycWbCqHhEpPtcl7jz8yqp8M6uCOazbnTKaavggh9CywS+mDoIPzLXFn5YGJB13Q8AetDTpf+jSq5tIKJ6gOTMmqCp4xPm0FTGkBTtSypch+Ti3UH0gjL838eZmZ5y022CDvBHmb6B9mrG+AqTGgnb78dkeCBfVV9q80ltJfXg+2+17Wl6DCDlGV/C3MwnekMVKkeY5sKGkxFySWFQD2Gpx9Ii6N3lUMUQcRzYfrX/wa4d6IzdqGuQXWXHN1Lumb+NkqvHt6roHaVKUWb05qtiutNIYM7uCnIsnQzkmSWzZqcqxzlB0SJiZC6GwYmocEbLlGbU3XJrOq7X6A6RgwaM7yY
+x-ms-exchange-antispam-messagedata: 6g8bW7480c+UwuZH9UdUt741PkIhZZDYJ1waNUbQhZ7kVFExXNYhXMXUhfZJf/louplyQNADf0M3PssQYL0mxiMD3iL8ULDKYrDGOcho6C6XmnJjiga5uAD52SpLpcxKr92lFMN7Lla+k3V1kVgIAs1Ki31vq+F5/eC4qi1bHdeWr1rc4DQB3S3/AShoIkqKj9tN78ISZoUpI0SrpjbMqA==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad504827-4ce4-4ebe-7e70-08d7d2117ae9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2020 05:41:21.3614
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2nJ3RyqF9OWpy+XBO4S1JDSrFM2nnpKcF+Z3r5g41ymIQha5BV6eEGFkKgmOtTSCluB5t7jppAarUmao6tEPlg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR21MB1203
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Beagle Bone Black has different memory corruptions if kernel is
-configured with USB_TI_CPPI41_DMA=y. This issue is reproducible with
-ath9k-htc driver (ar9271 based wifi usb controller):
-
-root@AccessBox:~ iw dev wlan0 set monitor  fcsfail otherbss
-root@AccessBox:~ ip l s dev wlan0 up
-kmemleak: Cannot insert 0xda577e40 into the object search tree (overlaps existing)
-CPU: 0 PID: 176 Comm: ip Not tainted 5.5.0 #7
-Hardware name: Generic AM33XX (Flattened Device Tree)
-[<c0112c14>] (unwind_backtrace) from [<c010dc98>] (show_stack+0x18/0x1c)
-[<c010dc98>] (show_stack) from [<c08c7c2c>] (dump_stack+0x84/0x98)
-[<c08c7c2c>] (dump_stack) from [<c02c75a8>] (create_object+0x2f8/0x324)
-[<c02c75a8>] (create_object) from [<c02b8928>] (kmem_cache_alloc+0x1a8/0x39c)
-[<c02b8928>] (kmem_cache_alloc) from [<c072fb68>] (__alloc_skb+0x60/0x174)
-[<c072fb68>] (__alloc_skb) from [<bf0c5c58>] (ath9k_wmi_cmd+0x50/0x184 [ath9k_htc])
-[<bf0c5c58>] (ath9k_wmi_cmd [ath9k_htc]) from [<bf0cb410>] (ath9k_regwrite_multi+0x54/0x84 [ath9k_htc])
-[<bf0cb410>] (ath9k_regwrite_multi [ath9k_htc]) from [<bf0cb7fc>] (ath9k_regwrite+0xf0/0xfc [ath9k_htc])
-[<bf0cb7fc>] (ath9k_regwrite [ath9k_htc]) from [<bf1aca78>] (ar5008_hw_process_ini+0x280/0x6c0 [ath9k_hw])
-[<bf1aca78>] (ar5008_hw_process_ini [ath9k_hw]) from [<bf1a66ac>] (ath9k_hw_reset+0x270/0x1458 [ath9k_hw])
-[<bf1a66ac>] (ath9k_hw_reset [ath9k_hw]) from [<bf0c9588>] (ath9k_htc_start+0xb0/0x22c [ath9k_htc])
-[<bf0c9588>] (ath9k_htc_start [ath9k_htc]) from [<bf0eb3c0>] (drv_start+0x4c/0x1e8 [mac80211])
-[<bf0eb3c0>] (drv_start [mac80211]) from [<bf104a84>] (ieee80211_do_open+0x480/0x954 [mac80211])
-[<bf104a84>] (ieee80211_do_open [mac80211]) from [<c075127c>] (__dev_open+0xdc/0x160)
-[<c075127c>] (__dev_open) from [<c07516a8>] (__dev_change_flags+0x1a4/0x204)
-[<c07516a8>] (__dev_change_flags) from [<c0751728>] (dev_change_flags+0x20/0x50)
-[<c0751728>] (dev_change_flags) from [<c076971c>] (do_setlink+0x2ac/0x978)
-
-After applying this patch, the system is running in monitor mode without
-noticeable issues.
-
-Suggested-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/usb/musb/musb_dsps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/musb/musb_dsps.c b/drivers/usb/musb/musb_dsps.c
-index 88923175f71e..c01f9e9e69f5 100644
---- a/drivers/usb/musb/musb_dsps.c
-+++ b/drivers/usb/musb/musb_dsps.c
-@@ -690,7 +690,7 @@ static void dsps_dma_controller_resume(struct dsps_glue *glue) {}
- #endif /* CONFIG_USB_TI_CPPI41_DMA */
- 
- static struct musb_platform_ops dsps_ops = {
--	.quirks		= MUSB_DMA_CPPI41 | MUSB_INDEXED_EP,
-+	.quirks		= MUSB_DMA_CPPI41 | MUSB_INDEXED_EP | MUSB_DA8XX,
- 	.init		= dsps_musb_init,
- 	.exit		= dsps_musb_exit,
- 
--- 
-2.26.0.rc2
-
+PlN1YmplY3Q6IFJlOiBbUEFUQ0hdIGNpZnM6IFJlbW92ZSBsb2NraW5nIGluIHNtYjJfdmVyaWZ5
+X3NpZ25hdHVyZSgpIHdoZW4NCj5jYWxjdWxhdGluZyBTTUIyL1NNQjMgc2lnbmF0dXJlIG9uIHJl
+Y2VpdmluZyBwYWNrZXRzDQo+DQo+bG9uZ2xpQGxpbnV4b25oeXBlcnYuY29tIHdyaXRlczoNCj4+
+IE9uIHRoZSBzZW5kaW5nIGFuZCByZWNlaXZpbmcgcGF0aHMsIENJRlMgdXNlcyB0aGUgc2FtZSBj
+eXB0byBkYXRhDQo+PiBzdHJ1Y3R1cmVzIHRvIGNhbGN1bGF0ZSBTTUIyL1NNQjMgcGFja2V0IHNp
+Z25hdHVyZXMuIEEgbG9jayBvbiB0aGUNCj4+IHJlY2VpdmluZyBwYXRoIGlzIG5lY2Vzc2FyeSB0
+byBjb250cm9sIHNoYXJlZCBhY2Nlc3MgdG8gY3J5cHRvIGRhdGENCj4+IHN0cnVjdHVyZXMuIFRo
+aXMgbG9jayBkZWdyYWRlcyBwZXJmb3JtYW5jZSBiZWNhdXNlIGl0IHJhY2VzIHdpdGggdGhlDQo+
+c2VuZGluZyBwYXRoLg0KPj4NCj4+IERlZmluZSBzZXBhcmF0ZSBjcnlwdG8gZGF0YSBzdHJ1Y3R1
+cmVzIGZvciBzZW5kaW5nIGFuZCByZWNlaXZpbmcgcGF0aHMNCj4+IGFuZCByZW1vdmUgdGhpcyBs
+b2NrLg0KPg0KPlNvbWV0aGluZyBJJ3ZlIG9mdGVuIHdvbmRlcmVkOiB3aHkgZG8gd2Uga2VlcCBj
+cnlwdG8gc3RhdGUgaW4gdGhlIHNlcnZlcg0KPnN0cnVjdHVyZSBpbnN0ZWFkIG9mIGNyZWF0aW5n
+IGl0IGFzIG5lZWRlZCBpbiB0aGUgY2FsbGVyIHN0YWNrICh0aHVzIGF2b2lkaW5nIHRoZQ0KPm5l
+ZWQgZm9yIGxvY2tzKS4gQUZBSUsgdGhlcmUncyBubyBzdGF0ZSB0aGF0IG5lZWQgdG8gYmUga2Vw
+dCBiZXR3ZWVuDQo+c2lnbmluZy9lbmNyeXB0aW5nIGNhbGxzIGJlc2lkZSB0aGUgYWNjZXNzIHRv
+IGtleXMuIElzIGl0IHRoYXQgZXhwZW5zaXZlIHRvDQo+Y3JlYXRlL3JlbGVhc2U/DQoNCk15IGd1
+ZXNzIGlzIHRoYXQgY3J5cHRvX2FsbG9jX3NoYXNoKCkgaXMgYSBoZWF2eSBjYWxsPw0KDQo+DQo+
+Q2hlZXJzLA0KPi0tDQo+QXVyw6lsaWVuIEFwdGVsIC8gU1VTRSBMYWJzIFNhbWJhIFRlYW0NCj5H
+UEc6IDE4MzkgQ0I1RiA5RjVCIEZCOUIgQUE5NyAgOEM5OSAwM0M4IEE0OUIgNTIxQiBENUQzIFNV
+U0UgU29mdHdhcmUNCj5Tb2x1dGlvbnMgR2VybWFueSBHbWJILCBNYXhmZWxkc3RyLiA1LCA5MDQw
+OSBOw7xybmJlcmcsIERFDQo+R0Y6IEZlbGl4IEltZW5kw7ZyZmZlciwgTWFyeSBIaWdnaW5zLCBT
+cmkgUmFzaWFoIEhSQiAyNDcxNjUgKEFHIE3DvG5jaGVuKQ0K
