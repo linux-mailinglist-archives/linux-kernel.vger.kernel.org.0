@@ -2,172 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AE51195BD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:04:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2C56195BDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:05:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbgC0RDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 13:03:55 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39440 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbgC0RDz (ORCPT
+        id S1727795AbgC0RFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 13:05:07 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:36902 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbgC0RFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 13:03:55 -0400
-Received: by mail-lj1-f196.google.com with SMTP id i20so10967853ljn.6
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 10:03:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iEb1i/1dam767tXvuNF7Sp30M1yJHeTtnfytL2XD9+0=;
-        b=UKAxQ3oghy+KZvU5JfMJspP8dHawVw7uDcnn47JgJG7naaZjSSbK3N/IV1OHC4LJiD
-         y4XVmBqPEg8SEU+wmheP20Xupt0JU5rP9FMo9KWUEmky3NsncP1TBOc1V6LAv+cNI2MW
-         hOb0MWLTA0sCb2gN8xaaF7IKfrgbtHv1VBtgI5alO0NUxnDbF47pj8AwJI2tCqaQKrqL
-         ET+rtMfzfCxvwusObnkT4M6ZrFUOdSnbXV35HKtvOZGbxcZ3UPExH9BpRUL4A67zVJDt
-         tCST/F2usiNPzXp8GA33dK4aj0lB5usiYOYRV9iU/g5UYYCBdV9GZfhgIFp+uZ5VkzXk
-         00xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iEb1i/1dam767tXvuNF7Sp30M1yJHeTtnfytL2XD9+0=;
-        b=rNd0BKJWrEyst8LXFtnQdAbRoOFRFj7+VeU85ePBTFJNJh34Y60ygJtt6AXmqzqk4O
-         Yvez1632CxOZhjxhHwU0c8MN8ziv+TzxVun97j2u17y7kW2rjur3n0iKoeC41RxUs2/c
-         Cfmu/4bIOlICUdWg4LZXlmRPcfEH3n/11yceKt7sKPR2ZgucT5r/TK9VOqlGhYKYnVMF
-         K7BrDO1GXkT2sOKT3hjLxsOkPU+IzPtRt0Y/Rvypw8qDgIZL41cksnn2pU7vKOyw3B9y
-         XveLDdBPHHCGG6bIEUaLOrOLikn4ZKetNUNC9sLmINnTBKN5I5W4KtkjjFxAFsvLDeUd
-         +bdA==
-X-Gm-Message-State: ANhLgQ2Ehk9IbO1dpQNfATz6nSWoan7q+K6HQzDATbwdHbu8qdVj5wyn
-        C9EZVGdiCb0DGfAL1lskhCXesw==
-X-Google-Smtp-Source: ADFU+vsaOT1upNhaotWwn6axLPCq69xi3Z89C1aMdJzXgAdGhWzDJWqFhqI079xcIrBwzRY46uYzpw==
-X-Received: by 2002:a2e:b6c2:: with SMTP id m2mr8958115ljo.72.1585328631545;
-        Fri, 27 Mar 2020 10:03:51 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id j125sm2083865lfj.38.2020.03.27.10.03.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 10:03:50 -0700 (PDT)
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 8BD32100D24; Fri, 27 Mar 2020 20:03:54 +0300 (+03)
-To:     akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH] thp: Simplify splitting PMD mapping huge zero page
-Date:   Fri, 27 Mar 2020 20:03:53 +0300
-Message-Id: <20200327170353.17734-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.26.0
+        Fri, 27 Mar 2020 13:05:06 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02RGrUN7167850;
+        Fri, 27 Mar 2020 17:04:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=2uSk5OmF7Is8u+ylzJyfXZPzvaBYULTp/WZBWkL3rbo=;
+ b=x4GRhdLT20y/KfX33gRdU9TWV63b9LlKIKi007etL+l23nhyRDc/1A0pQcAiSlecM+5h
+ EnvTwNGd/j6GozwGvLETzWjZHxub7Hh6Gd4mQGum2lRMCP53bWsl0p0PE424sMLGdqtr
+ vYw+uVckIktqjGt6wQUXKeRhseWQRo9UsfJIXYhGv07YiBVyUAwH9GDwllU196WTTysc
+ vy3AV8YFvVTdnw/YBIDMzYUUkGJMRYP8jSD00T3X9jS929M0tGE9Kzp0Wp/dP6ikl+b1
+ RgC9/0to3zQlwrsk3/JxGTRqAuxeJri8mcsnUX++AbBAHGUHYuc5zbk+wIlyffCOJ7PR 2w== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 301459c9e8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 27 Mar 2020 17:04:43 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02RGr57S113183;
+        Fri, 27 Mar 2020 17:04:42 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 30073h7308-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 27 Mar 2020 17:04:42 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02RH4c6j005514;
+        Fri, 27 Mar 2020 17:04:39 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 27 Mar 2020 10:04:38 -0700
+To:     Can Guo <cang@codeaurora.org>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        hongwus@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH v6 1/2] scsi: ufs: Clean up ufshcd_scale_clks() and clock scaling error out path
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1585214742-5466-1-git-send-email-cang@codeaurora.org>
+        <1585214742-5466-2-git-send-email-cang@codeaurora.org>
+Date:   Fri, 27 Mar 2020 13:04:33 -0400
+In-Reply-To: <1585214742-5466-2-git-send-email-cang@codeaurora.org> (Can Guo's
+        message of "Thu, 26 Mar 2020 02:25:40 -0700")
+Message-ID: <yq1imipbufy.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9573 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 mlxscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003270146
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9573 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 mlxlogscore=999
+ adultscore=0 suspectscore=0 impostorscore=0 mlxscore=0 spamscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003270146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Splitting PMD mapping huge zero page can be simplified a lot: we can
-just unmap it and fallback to PTE handling.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- mm/huge_memory.c | 57 ++++--------------------------------------------
- 1 file changed, 4 insertions(+), 53 deletions(-)
+Can,
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 42407e16bd80..ef6a6bcb291f 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2114,40 +2114,6 @@ void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
- }
- #endif /* CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
- 
--static void __split_huge_zero_page_pmd(struct vm_area_struct *vma,
--		unsigned long haddr, pmd_t *pmd)
--{
--	struct mm_struct *mm = vma->vm_mm;
--	pgtable_t pgtable;
--	pmd_t _pmd;
--	int i;
--
--	/*
--	 * Leave pmd empty until pte is filled note that it is fine to delay
--	 * notification until mmu_notifier_invalidate_range_end() as we are
--	 * replacing a zero pmd write protected page with a zero pte write
--	 * protected page.
--	 *
--	 * See Documentation/vm/mmu_notifier.rst
--	 */
--	pmdp_huge_clear_flush(vma, haddr, pmd);
--
--	pgtable = pgtable_trans_huge_withdraw(mm, pmd);
--	pmd_populate(mm, &_pmd, pgtable);
--
--	for (i = 0; i < HPAGE_PMD_NR; i++, haddr += PAGE_SIZE) {
--		pte_t *pte, entry;
--		entry = pfn_pte(my_zero_pfn(haddr), vma->vm_page_prot);
--		entry = pte_mkspecial(entry);
--		pte = pte_offset_map(&_pmd, haddr);
--		VM_BUG_ON(!pte_none(*pte));
--		set_pte_at(mm, haddr, pte, entry);
--		pte_unmap(pte);
--	}
--	smp_wmb(); /* make pte visible before pmd */
--	pmd_populate(mm, pmd, pgtable);
--}
--
- static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
- 		unsigned long haddr, bool freeze)
- {
-@@ -2167,7 +2133,7 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
- 
- 	count_vm_event(THP_SPLIT_PMD);
- 
--	if (!vma_is_anonymous(vma)) {
-+	if (!vma_is_anonymous(vma) || is_huge_zero_pmd(*pmd)) {
- 		_pmd = pmdp_huge_clear_flush_notify(vma, haddr, pmd);
- 		/*
- 		 * We are going to unmap this huge page. So
-@@ -2175,7 +2141,7 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
- 		 */
- 		if (arch_needs_pgtable_deposit())
- 			zap_deposited_table(mm, pmd);
--		if (vma_is_dax(vma))
-+		if (vma_is_dax(vma) || is_huge_zero_pmd(*pmd))
- 			return;
- 		page = pmd_page(_pmd);
- 		if (!PageDirty(page) && pmd_dirty(_pmd))
-@@ -2186,17 +2152,6 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
- 		put_page(page);
- 		add_mm_counter(mm, mm_counter_file(page), -HPAGE_PMD_NR);
- 		return;
--	} else if (is_huge_zero_pmd(*pmd)) {
--		/*
--		 * FIXME: Do we want to invalidate secondary mmu by calling
--		 * mmu_notifier_invalidate_range() see comments below inside
--		 * __split_huge_pmd() ?
--		 *
--		 * We are going from a zero huge page write protected to zero
--		 * small page also write protected so it does not seems useful
--		 * to invalidate secondary mmu at this time.
--		 */
--		return __split_huge_zero_page_pmd(vma, haddr, pmd);
- 	}
- 
- 	/*
-@@ -2339,13 +2294,9 @@ void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 	spin_unlock(ptl);
- 	/*
- 	 * No need to double call mmu_notifier->invalidate_range() callback.
--	 * They are 3 cases to consider inside __split_huge_pmd_locked():
-+	 * They are 2 cases to consider inside __split_huge_pmd_locked():
- 	 *  1) pmdp_huge_clear_flush_notify() call invalidate_range() obvious
--	 *  2) __split_huge_zero_page_pmd() read only zero page and any write
--	 *    fault will trigger a flush_notify before pointing to a new page
--	 *    (it is fine if the secondary mmu keeps pointing to the old zero
--	 *    page in the meantime)
--	 *  3) Split a huge pmd into pte pointing to the same page. No need
-+	 *  2) Split a huge pmd into pte pointing to the same page. No need
- 	 *     to invalidate secondary tlb entry they are all still valid.
- 	 *     any further changes to individual pte will notify. So no need
- 	 *     to call mmu_notifier->invalidate_range()
+> This change introduces a func ufshcd_set_clk_freq() to explicitly set
+> clock frequency so that it can be used in reset_and_resotre path and
+> in ufshcd_scale_clks(). Meanwhile, this change cleans up the clock
+> scaling error out path.
+
+Applied to 5.7/scsi-queue, thanks!
+
 -- 
-2.26.0
-
+Martin K. Petersen	Oracle Linux Engineering
