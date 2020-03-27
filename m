@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE3BB194F0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:33:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52C4D194F0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:33:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbgC0Ccz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 22:32:55 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48040 "EHLO
+        id S1728034AbgC0CdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 22:33:03 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48038 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727849AbgC0CcL (ORCPT
+        with ESMTP id S1727848AbgC0CcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 22:32:11 -0400
+        Thu, 26 Mar 2020 22:32:10 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHen0-003hRq-OX; Fri, 27 Mar 2020 02:32:06 +0000
+        id 1jHen0-003hRy-Rw; Fri, 27 Mar 2020 02:32:06 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH v2 12/22] x86: get rid of put_user_try in {ia32,x32}_setup_rt_frame()
-Date:   Fri, 27 Mar 2020 02:31:55 +0000
-Message-Id: <20200327023205.881896-12-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v2 13/22] x86: ia32_setup_sigcontext(): lift user_access_{begin,end}() into the callers
+Date:   Fri, 27 Mar 2020 02:31:56 +0000
+Message-Id: <20200327023205.881896-13-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200327023205.881896-1-viro@ZenIV.linux.org.uk>
 References: <20200327023007.GS23230@ZenIV.linux.org.uk>
@@ -34,82 +34,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Straightforward, except for compat_save_altstack_ex() stuck in those.
-Replace that thing with an analogue that would use unsafe_put_user()
-instead of put_user_ex() (called unsafe_compat_save_altstack()) and
-be done with that...
+What's left is just a sequence of stores to userland addresses, with all
+error handling, etc. done out of line.  Calling that from user_access block
+is safe, but rather than teaching objtool to recognize it as such we can
+just make it always_inline - it is small enough and has few enough callers,
+for the space savings not to be an issue.
+
+	Rename the sucker to __unsafe_setup_sigcontext32() and provide
+unsafe_put_sigcontext32() with usual kind of semantics.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/ia32/ia32_signal.c | 50 +++++++++++++++++++++++----------------------
- arch/x86/kernel/signal.c    | 33 ++++++++++++++++--------------
- include/linux/compat.h      |  9 ++++----
- 3 files changed, 49 insertions(+), 43 deletions(-)
+ arch/x86/ia32/ia32_signal.c | 44 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 28 insertions(+), 16 deletions(-)
 
 diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
-index af673ec23a2d..a96995aa23da 100644
+index a96995aa23da..799ca5b31b87 100644
 --- a/arch/x86/ia32/ia32_signal.c
 +++ b/arch/x86/ia32/ia32_signal.c
-@@ -326,35 +326,34 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
+@@ -154,13 +154,11 @@ COMPAT_SYSCALL_DEFINE0(rt_sigreturn)
  
- 	frame = get_sigframe(ksig, regs, sizeof(*frame), &fpstate);
+ #define get_user_seg(seg)	({ unsigned int v; savesegment(seg, v); v; })
  
--	if (!access_ok(frame, sizeof(*frame)))
-+	if (!user_access_begin(frame, sizeof(*frame)))
+-static int ia32_setup_sigcontext(struct sigcontext_32 __user *sc,
+-				 void __user *fpstate,
+-				 struct pt_regs *regs, unsigned int mask)
++static __always_inline int
++__unsafe_setup_sigcontext32(struct sigcontext_32 __user *sc,
++			    void __user *fpstate,
++			    struct pt_regs *regs, unsigned int mask)
+ {
+-	if (!user_access_begin(sc, sizeof(struct sigcontext_32)))
+-		return -EFAULT;
+-
+ 	unsafe_put_user(get_user_seg(gs), (unsigned int __user *)&sc->gs, Efault);
+ 	unsafe_put_user(get_user_seg(fs), (unsigned int __user *)&sc->fs, Efault);
+ 	unsafe_put_user(get_user_seg(ds), (unsigned int __user *)&sc->ds, Efault);
+@@ -187,13 +185,18 @@ static int ia32_setup_sigcontext(struct sigcontext_32 __user *sc,
+ 	/* non-iBCS2 extensions.. */
+ 	unsafe_put_user(mask, &sc->oldmask, Efault);
+ 	unsafe_put_user(current->thread.cr2, &sc->cr2, Efault);
+-	user_access_end();
+ 	return 0;
++
+ Efault:
+-	user_access_end();
+ 	return -EFAULT;
+ }
+ 
++#define unsafe_put_sigcontext32(sc, fp, regs, set, label)		\
++do {									\
++	if (__unsafe_setup_sigcontext32(sc, fp, regs, set->sig[0]))	\
++		goto label;						\
++} while(0)
++
+ /*
+  * Determine which stack to use..
+  */
+@@ -234,7 +237,7 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
+ 	struct sigframe_ia32 __user *frame;
+ 	void __user *restorer;
+ 	int err = 0;
+-	void __user *fpstate = NULL;
++	void __user *fp = NULL;
+ 
+ 	/* copy_to_user optimizes that into a single 8 byte store */
+ 	static const struct {
+@@ -247,7 +250,7 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
+ 		0x80cd,		/* int $0x80 */
+ 	};
+ 
+-	frame = get_sigframe(ksig, regs, sizeof(*frame), &fpstate);
++	frame = get_sigframe(ksig, regs, sizeof(*frame), &fp);
+ 
+ 	if (!access_ok(frame, sizeof(*frame)))
+ 		return -EFAULT;
+@@ -255,9 +258,12 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
+ 	if (__put_user(sig, &frame->sig))
  		return -EFAULT;
  
--	put_user_try {
--		put_user_ex(sig, &frame->sig);
--		put_user_ex(ptr_to_compat(&frame->info), &frame->pinfo);
--		put_user_ex(ptr_to_compat(&frame->uc), &frame->puc);
-+	unsafe_put_user(sig, &frame->sig, Efault);
-+	unsafe_put_user(ptr_to_compat(&frame->info), &frame->pinfo, Efault);
-+	unsafe_put_user(ptr_to_compat(&frame->uc), &frame->puc, Efault);
+-	if (ia32_setup_sigcontext(&frame->sc, fpstate, regs, set->sig[0]))
++	if (!user_access_begin(&frame->sc, sizeof(struct sigcontext_32)))
+ 		return -EFAULT;
  
--		/* Create the ucontext.  */
--		if (static_cpu_has(X86_FEATURE_XSAVE))
--			put_user_ex(UC_FP_XSTATE, &frame->uc.uc_flags);
--		else
--			put_user_ex(0, &frame->uc.uc_flags);
--		put_user_ex(0, &frame->uc.uc_link);
--		compat_save_altstack_ex(&frame->uc.uc_stack, regs->sp);
-+	/* Create the ucontext.  */
-+	if (static_cpu_has(X86_FEATURE_XSAVE))
-+		unsafe_put_user(UC_FP_XSTATE, &frame->uc.uc_flags, Efault);
-+	else
-+		unsafe_put_user(0, &frame->uc.uc_flags, Efault);
-+	unsafe_put_user(0, &frame->uc.uc_link, Efault);
-+	unsafe_compat_save_altstack(&frame->uc.uc_stack, regs->sp, Efault);
- 
--		if (ksig->ka.sa.sa_flags & SA_RESTORER)
--			restorer = ksig->ka.sa.sa_restorer;
--		else
--			restorer = current->mm->context.vdso +
--				vdso_image_32.sym___kernel_rt_sigreturn;
--		put_user_ex(ptr_to_compat(restorer), &frame->pretcode);
-+	if (ksig->ka.sa.sa_flags & SA_RESTORER)
-+		restorer = ksig->ka.sa.sa_restorer;
-+	else
-+		restorer = current->mm->context.vdso +
-+			vdso_image_32.sym___kernel_rt_sigreturn;
-+	unsafe_put_user(ptr_to_compat(restorer), &frame->pretcode, Efault);
- 
--		/*
--		 * Not actually used anymore, but left because some gdb
--		 * versions need it.
--		 */
--		put_user_ex(*((u64 *)&code), (u64 __user *)frame->retcode);
--	} put_user_catch(err);
-+	/*
-+	 * Not actually used anymore, but left because some gdb
-+	 * versions need it.
-+	 */
-+	unsafe_put_user(*((u64 *)&code), (u64 __user *)frame->retcode, Efault);
++	unsafe_put_sigcontext32(&frame->sc, fp, regs, set, Efault);
 +	user_access_end();
++
+ 	if (__put_user(set->sig[1], &frame->extramask[0]))
+ 		return -EFAULT;
  
- 	err |= __copy_siginfo_to_user32(&frame->info, &ksig->info, false);
- 	err |= ia32_setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
-@@ -380,4 +379,7 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
+@@ -301,6 +307,9 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
  	regs->ss = __USER32_DS;
  
  	return 0;
@@ -117,87 +131,42 @@ index af673ec23a2d..a96995aa23da 100644
 +	user_access_end();
 +	return -EFAULT;
  }
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 3b4ca484cfc2..29abad29aaa1 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -529,6 +529,9 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
+ 
+ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
+@@ -309,7 +318,7 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
+ 	struct rt_sigframe_ia32 __user *frame;
+ 	void __user *restorer;
  	int err = 0;
- 	void __user *fpstate = NULL;
+-	void __user *fpstate = NULL;
++	void __user *fp = NULL;
  
-+	if (!(ksig->ka.sa.sa_flags & SA_RESTORER))
+ 	/* __copy_to_user optimizes that into a single 8 byte store */
+ 	static const struct {
+@@ -324,7 +333,7 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
+ 		0,
+ 	};
+ 
+-	frame = get_sigframe(ksig, regs, sizeof(*frame), &fpstate);
++	frame = get_sigframe(ksig, regs, sizeof(*frame), &fp);
+ 
+ 	if (!user_access_begin(frame, sizeof(*frame)))
+ 		return -EFAULT;
+@@ -355,9 +364,12 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
+ 	unsafe_put_user(*((u64 *)&code), (u64 __user *)frame->retcode, Efault);
+ 	user_access_end();
+ 
+-	err |= __copy_siginfo_to_user32(&frame->info, &ksig->info, false);
+-	err |= ia32_setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
+-				     regs, set->sig[0]);
++	if (__copy_siginfo_to_user32(&frame->info, &ksig->info, false))
 +		return -EFAULT;
-+
- 	frame = get_sigframe(&ksig->ka, regs, sizeof(*frame), &fpstate);
- 
- 	if (!access_ok(frame, sizeof(*frame)))
-@@ -541,22 +544,17 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- 
- 	uc_flags = frame_uc_flags(regs);
- 
--	put_user_try {
--		/* Create the ucontext.  */
--		put_user_ex(uc_flags, &frame->uc.uc_flags);
--		put_user_ex(0, &frame->uc.uc_link);
--		compat_save_altstack_ex(&frame->uc.uc_stack, regs->sp);
--		put_user_ex(0, &frame->uc.uc__pad0);
-+	if (!user_access_begin(frame, sizeof(*frame)))
++	if (!user_access_begin(&frame->uc.uc_mcontext, sizeof(struct sigcontext_32)))
 +		return -EFAULT;
- 
--		if (ksig->ka.sa.sa_flags & SA_RESTORER) {
--			restorer = ksig->ka.sa.sa_restorer;
--		} else {
--			/* could use a vstub here */
--			restorer = NULL;
--			err |= -EFAULT;
--		}
--		put_user_ex(restorer, (unsigned long __user *)&frame->pretcode);
--	} put_user_catch(err);
-+	/* Create the ucontext.  */
-+	unsafe_put_user(uc_flags, &frame->uc.uc_flags, Efault);
-+	unsafe_put_user(0, &frame->uc.uc_link, Efault);
-+	unsafe_compat_save_altstack(&frame->uc.uc_stack, regs->sp, Efault);
-+	unsafe_put_user(0, &frame->uc.uc__pad0, Efault);
-+	restorer = ksig->ka.sa.sa_restorer;
-+	unsafe_put_user(restorer, (unsigned long __user *)&frame->pretcode, Efault);
++	unsafe_put_sigcontext32(&frame->uc.uc_mcontext, fp, regs, set, Efault);
 +	user_access_end();
+ 	err |= __put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask);
  
- 	err |= setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
- 				regs, set->sig[0]);
-@@ -582,6 +580,11 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- #endif	/* CONFIG_X86_X32_ABI */
- 
- 	return 0;
-+#ifdef CONFIG_X86_X32_ABI
-+Efault:
-+	user_access_end();
-+	return -EFAULT;
-+#endif
- }
- 
- /*
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index 11083d84eb23..224ecb4fffd4 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -483,12 +483,13 @@ extern void __user *compat_alloc_user_space(unsigned long len);
- 
- int compat_restore_altstack(const compat_stack_t __user *uss);
- int __compat_save_altstack(compat_stack_t __user *, unsigned long);
--#define compat_save_altstack_ex(uss, sp) do { \
-+#define unsafe_compat_save_altstack(uss, sp, label) do { \
- 	compat_stack_t __user *__uss = uss; \
- 	struct task_struct *t = current; \
--	put_user_ex(ptr_to_compat((void __user *)t->sas_ss_sp), &__uss->ss_sp); \
--	put_user_ex(t->sas_ss_flags, &__uss->ss_flags); \
--	put_user_ex(t->sas_ss_size, &__uss->ss_size); \
-+	unsafe_put_user(ptr_to_compat((void __user *)t->sas_ss_sp), \
-+			&__uss->ss_sp, label); \
-+	unsafe_put_user(t->sas_ss_flags, &__uss->ss_flags, label); \
-+	unsafe_put_user(t->sas_ss_size, &__uss->ss_size, label); \
- 	if (t->sas_ss_flags & SS_AUTODISARM) \
- 		sas_ss_reset(t); \
- } while (0);
+ 	if (err)
 -- 
 2.11.0
 
