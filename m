@@ -2,166 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E078F195511
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:23:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D28FA195519
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:24:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbgC0KXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 06:23:02 -0400
-Received: from mga02.intel.com ([134.134.136.20]:13029 "EHLO mga02.intel.com"
+        id S1726804AbgC0KYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 06:24:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726002AbgC0KXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 06:23:02 -0400
-IronPort-SDR: atyEV/cYMmLhPZT0F4O6Jn2cCIDe7n2tWRT1Lxs7xtn9HZvCH0rGYwK295fd5cLJ6qzZhxr7M1
- 8r5zhsiWxSHw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 03:23:00 -0700
-IronPort-SDR: 6ZN8f+bSxYAMu9n5uXSQWg/zn0EJ8O2Dk24TSu6QUUHM+CHiqTAqF6gVQsnp4iSOViWy3BPlji
- tjSbyEo3RLYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,311,1580803200"; 
-   d="scan'208";a="271529243"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Mar 2020 03:23:00 -0700
-Received: from fmsmsx161.amr.corp.intel.com (10.18.125.9) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 27 Mar 2020 03:23:00 -0700
-Received: from shsmsx105.ccr.corp.intel.com (10.239.4.158) by
- FMSMSX161.amr.corp.intel.com (10.18.125.9) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 27 Mar 2020 03:23:00 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.206]) by
- SHSMSX105.ccr.corp.intel.com ([169.254.11.144]) with mapi id 14.03.0439.000;
- Fri, 27 Mar 2020 18:22:57 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: RE: [PATCH 10/10] iommu/vt-d: Register PASID notifier for status
- change
-Thread-Topic: [PATCH 10/10] iommu/vt-d: Register PASID notifier for status
- change
-Thread-Index: AQHWAs3LAsvpFGSvTECBwK8sBN6czqhcOe4w
-Date:   Fri, 27 Mar 2020 10:22:57 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED65A@SHSMSX104.ccr.corp.intel.com>
-References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1585158931-1825-11-git-send-email-jacob.jun.pan@linux.intel.com>
-In-Reply-To: <1585158931-1825-11-git-send-email-jacob.jun.pan@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726165AbgC0KYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 06:24:13 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9319A20705;
+        Fri, 27 Mar 2020 10:24:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585304653;
+        bh=lF/JY9ZVPOd2GvsK5POWvp9v/fpJ4aUeUUUE0LLiT5Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cGsbdW4AfZk74llKktuJuBgvMAnTth5VSaNK32PplZn/Un0/A8h1qEA20gOXHdeHy
+         PV2+veX+oDFxPV3TmzxPLiYDzrzmjdIJ7oFCXg0e20Ivf/L/txU1h2DEv8ZobLSBcf
+         CHvzxL+4ZBTPq/78Dk+qC2TW9Onu4EUUKVCpUFQg=
+Date:   Fri, 27 Mar 2020 11:24:09 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Tejas Joglekar <Tejas.Joglekar@synopsys.com>
+Cc:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        John Youn <John.Youn@synopsys.com>
+Subject: Re: [RESENDING RFC PATCH 1/4] dt-bindings: usb: Add
+ snps,consolidate-sgl & consolidate-sgl
+Message-ID: <20200327102409.GB1700570@kroah.com>
+References: <cover.1585297723.git.joglekar@synopsys.com>
+ <8a9ca8e08d7c4957789a209c77589f1aa4bd2f06.1585297723.git.joglekar@synopsys.com>
+ <20200327095447.GA1698181@kroah.com>
+ <11a058bc-a947-a763-680f-a11fd454925a@synopsys.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11a058bc-a947-a763-680f-a11fd454925a@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBKYWNvYiBQYW4NCj4gU2VudDogVGh1cnNkYXksIE1hcmNoIDI2LCAyMDIwIDE6NTYg
-QU0NCj4gDQo+IEluIGJhcmUgbWV0YWwgU1ZBLCBJT01NVSBkcml2ZXIgZW5zdXJlcyB0aGF0IElP
-QVNJRCBmcmVlIGNhbGwgYWx3YXlzIGNvbWVzDQo+IGFmdGVyIElPQVNJRCB1bmJpbmQgb3BlcmF0
-aW9uLg0KPiANCj4gSG93ZXZlciwgZm9yIGd1ZXN0IFNWQSB0aGUgdW5iaW5kIGFuZCBmcmVlIGNh
-bGwgY29tZSBmcm9tIHVzZXIgc3BhY2UNCj4gdmlhIFZGSU8sIHdoaWNoIGNvdWxkIGJlIG91dCBv
-ZiBvcmRlci4gVGhpcyBwYXRjaCByZWdpc3RlcnMgYSBub3RpZmllcg0KPiBibG9jayBpbiBjYXNl
-IElPQVNJRCBmcmVlKCkgY29tZXMgYmVmb3JlIHVuYmluZCBzdWNoIHRoYXQgVlQtZCBkcml2ZXIN
-Cj4gY2FuIHRha2UgYWN0aW9uIHRvIGNsZWFuIHVwIFBBU0lEIGNvbnRleHQgYW5kIGRhdGEuDQoN
-CmNsZWFybHkgdGhlIHBhdGNoIGluY2x1ZGVzIG1vcmUgdGhhbiBhYm92ZSB1c2FnZS4gSXQgYWxz
-byBoYW5kbGVzIHRoZQ0KYmluZCB1c2FnZSB0byBub3RpZnkgS1ZNIGZvciBzZXR0aW5nIFBBU0lE
-IHRyYW5zbGF0aW9uIHRhYmxlLg0KDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBMaXUgWWkgTCA8eWku
-bC5saXVAaW50ZWwuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBKYWNvYiBQYW4gPGphY29iLmp1bi5w
-YW5AbGludXguaW50ZWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvaW9tbXUvaW50ZWwtc3ZtLmMg
-ICB8IDY4DQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLQ0K
-PiAgaW5jbHVkZS9saW51eC9pbnRlbC1pb21tdS5oIHwgIDEgKw0KPiAgMiBmaWxlcyBjaGFuZ2Vk
-LCA2OCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9pb21tdS9pbnRlbC1zdm0uYyBiL2RyaXZlcnMvaW9tbXUvaW50ZWwtc3ZtLmMNCj4gaW5k
-ZXggZjUxMTg1NWQxODdiLi43NzlkZDJjNmY5ZTEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaW9t
-bXUvaW50ZWwtc3ZtLmMNCj4gKysrIGIvZHJpdmVycy9pb21tdS9pbnRlbC1zdm0uYw0KPiBAQCAt
-MjMsNiArMjMsNyBAQA0KPiAgI2luY2x1ZGUgImludGVsLXBhc2lkLmgiDQo+IA0KPiAgc3RhdGlj
-IGlycXJldHVybl90IHBycV9ldmVudF90aHJlYWQoaW50IGlycSwgdm9pZCAqZCk7DQo+ICtzdGF0
-aWMgREVGSU5FX01VVEVYKHBhc2lkX211dGV4KTsNCj4gDQo+ICAjZGVmaW5lIFBSUV9PUkRFUiAw
-DQo+IA0KPiBAQCAtOTIsNiArOTMsNjUgQEAgc3RhdGljIGlubGluZSBib29sIGludGVsX3N2bV9j
-YXBhYmxlKHN0cnVjdA0KPiBpbnRlbF9pb21tdSAqaW9tbXUpDQo+ICAJcmV0dXJuIGlvbW11LT5m
-bGFncyAmIFZURF9GTEFHX1NWTV9DQVBBQkxFOw0KPiAgfQ0KPiANCj4gKyNkZWZpbmUgcGFzaWRf
-bG9ja19oZWxkKCkgbG9ja19pc19oZWxkKCZwYXNpZF9tdXRleC5kZXBfbWFwKQ0KPiArDQo+ICtz
-dGF0aWMgaW50IHBhc2lkX3N0YXR1c19jaGFuZ2Uoc3RydWN0IG5vdGlmaWVyX2Jsb2NrICpuYiwN
-Cj4gKwkJCQl1bnNpZ25lZCBsb25nIGNvZGUsIHZvaWQgKmRhdGEpDQo+ICt7DQo+ICsJc3RydWN0
-IGlvYXNpZF9uYl9hcmdzICphcmdzID0gKHN0cnVjdCBpb2FzaWRfbmJfYXJncyAqKWRhdGE7DQo+
-ICsJc3RydWN0IGludGVsX3N2bV9kZXYgKnNkZXY7DQo+ICsJc3RydWN0IGludGVsX3N2bSAqc3Zt
-Ow0KPiArCWludCByZXQgPSBOT1RJRllfRE9ORTsNCj4gKw0KPiArCWlmIChjb2RlID09IElPQVNJ
-RF9GUkVFKSB7DQo+ICsJCS8qDQo+ICsJCSAqIFVuYmluZCBhbGwgZGV2aWNlcyBhc3NvY2lhdGVk
-IHdpdGggdGhpcyBQQVNJRCB3aGljaCBpcw0KPiArCQkgKiBiZWluZyBmcmVlZCBieSBvdGhlciB1
-c2VycyBzdWNoIGFzIFZGSU8uDQo+ICsJCSAqLw0KPiArCQltdXRleF9sb2NrKCZwYXNpZF9tdXRl
-eCk7DQo+ICsJCXN2bSA9IGlvYXNpZF9maW5kKElOVkFMSURfSU9BU0lEX1NFVCwgYXJncy0+aWQs
-IE5VTEwpOw0KPiArCQlpZiAoIXN2bSB8fCAhc3ZtLT5pb21tdSkNCj4gKwkJCWdvdG8gZG9uZV91
-bmxvY2s7DQoNCnNob3VsZCB3ZSB0cmVhdCAhc3ZtLT5pb21tdSBhcyBhbiBlcnJvciBjb25kaXRp
-b24/IGlmIG5vdCwgZG8geW91IGhhdmUNCmFuIGV4YW1wbGUgd2hlbiBpdCBtYXkgb2NjdXIgaW4g
-bm9ybWFsIHNpdHVhdGlvbj8NCg0KPiArDQo+ICsJCWlmIChJU19FUlIoc3ZtKSkgew0KPiArCQkJ
-cmV0ID0gTk9USUZZX0JBRDsNCj4gKwkJCWdvdG8gZG9uZV91bmxvY2s7DQo+ICsJCX0NCg0Kc3Zt
-LT5pb21tdSBzaG91bGQgYmUgcmVmZXJlbmNlZCBhZnRlciBJU19FUlIgY2hlY2sNCg0KPiArDQo+
-ICsJCWxpc3RfZm9yX2VhY2hfZW50cnlfcmN1KHNkZXYsICZzdm0tPmRldnMsIGxpc3QsDQo+IHBh
-c2lkX2xvY2tfaGVsZCgpKSB7DQo+ICsJCQkvKiBEb2VzIG5vdCBwb2lzb24gZm9yd2FyZCBwb2lu
-dGVyICovDQo+ICsJCQlsaXN0X2RlbF9yY3UoJnNkZXYtPmxpc3QpOw0KPiArCQkJaW50ZWxfcGFz
-aWRfdGVhcl9kb3duX2VudHJ5KHN2bS0+aW9tbXUsIHNkZXYtDQo+ID5kZXYsDQo+ICsJCQkJCQkg
-ICAgc3ZtLT5wYXNpZCk7DQo+ICsJCQlrZnJlZV9yY3Uoc2RldiwgcmN1KTsNCj4gKw0KPiArCQkJ
-LyoNCj4gKwkJCSAqIEZyZWUgYmVmb3JlIHVuYmluZCBvbmx5IGhhcHBlbnMgd2l0aCBndWVzdA0K
-PiB1c2FnZWQNCj4gKwkJCSAqIGhvc3QgUEFTSURzLiBJT0FTSUQgZnJlZSB3aWxsIGRldGFjaCBw
-cml2YXRlIGRhdGENCj4gKwkJCSAqIGFuZCBmcmVlIHRoZSBJT0FTSUQgZW50cnkuDQoNCiJndWVz
-dCB1c2FnZWQgaG9zdCBQQVNJRHMiPw0KDQo+ICsJCQkgKi8NCj4gKwkJCWlmIChsaXN0X2VtcHR5
-KCZzdm0tPmRldnMpKQ0KPiArCQkJCWtmcmVlKHN2bSk7DQo+ICsJCX0NCj4gKwkJbXV0ZXhfdW5s
-b2NrKCZwYXNpZF9tdXRleCk7DQo+ICsNCj4gKwkJcmV0dXJuIE5PVElGWV9PSzsNCj4gKwl9DQo+
-ICsNCj4gK2RvbmVfdW5sb2NrOg0KPiArCW11dGV4X3VubG9jaygmcGFzaWRfbXV0ZXgpOw0KPiAr
-CXJldHVybiByZXQ7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBzdHJ1Y3Qgbm90aWZpZXJfYmxvY2sg
-cGFzaWRfbmIgPSB7DQo+ICsJCS5ub3RpZmllcl9jYWxsID0gcGFzaWRfc3RhdHVzX2NoYW5nZSwN
-Cj4gK307DQo+ICsNCj4gK3ZvaWQgaW50ZWxfc3ZtX2FkZF9wYXNpZF9ub3RpZmllcih2b2lkKQ0K
-PiArew0KPiArCWlvYXNpZF9hZGRfbm90aWZpZXIoJnBhc2lkX25iKTsNCj4gK30NCj4gKw0KPiAg
-dm9pZCBpbnRlbF9zdm1fY2hlY2soc3RydWN0IGludGVsX2lvbW11ICppb21tdSkNCj4gIHsNCj4g
-IAlpZiAoIXBhc2lkX3N1cHBvcnRlZChpb21tdSkpDQo+IEBAIC0yMTksNyArMjc5LDYgQEAgc3Rh
-dGljIGNvbnN0IHN0cnVjdCBtbXVfbm90aWZpZXJfb3BzIGludGVsX21tdW9wcyA9DQo+IHsNCj4g
-IAkuaW52YWxpZGF0ZV9yYW5nZSA9IGludGVsX2ludmFsaWRhdGVfcmFuZ2UsDQo+ICB9Ow0KPiAN
-Cj4gLXN0YXRpYyBERUZJTkVfTVVURVgocGFzaWRfbXV0ZXgpOw0KPiAgc3RhdGljIExJU1RfSEVB
-RChnbG9iYWxfc3ZtX2xpc3QpOw0KPiANCj4gICNkZWZpbmUgZm9yX2VhY2hfc3ZtX2RldihzZGV2
-LCBzdm0sIGQpCQkJXA0KPiBAQCAtMzE5LDYgKzM3OCw3IEBAIGludCBpbnRlbF9zdm1fYmluZF9n
-cGFzaWQoc3RydWN0IGlvbW11X2RvbWFpbg0KPiAqZG9tYWluLA0KPiAgCQkJc3ZtLT5ncGFzaWQg
-PSBkYXRhLT5ncGFzaWQ7DQo+ICAJCQlzdm0tPmZsYWdzIHw9IFNWTV9GTEFHX0dVRVNUX1BBU0lE
-Ow0KPiAgCQl9DQo+ICsJCXN2bS0+aW9tbXUgPSBpb21tdTsNCg0KYWgsIGl0J3MgaW50ZXJlc3Rp
-bmcgdG8gc2VlIHdlIGhhdmUgYSBmaWVsZCBkZWZpbmVkIGJlZm9yZSBidXQgbmV2ZXIgdXNlZC4g
-8J+Yig0KDQo+IA0KPiAgCQlpb2FzaWRfYXR0YWNoX2RhdGEoZGF0YS0+aHBhc2lkLCBzdm0pOw0K
-PiAgCQlJTklUX0xJU1RfSEVBRF9SQ1UoJnN2bS0+ZGV2cyk7DQo+IEBAIC0zODMsNiArNDQzLDEx
-IEBAIGludCBpbnRlbF9zdm1fYmluZF9ncGFzaWQoc3RydWN0IGlvbW11X2RvbWFpbg0KPiAqZG9t
-YWluLA0KPiAgCX0NCj4gIAlzdm0tPmZsYWdzIHw9IFNWTV9GTEFHX0dVRVNUX01PREU7DQo+IA0K
-PiArCS8qDQo+ICsJICogTm90aWZ5IEtWTSBuZXcgaG9zdC1ndWVzdCBQQVNJRCBiaW5kIGlzIHJl
-YWR5LiBLVk0gd2lsbCBzZXQgdXANCj4gKwkgKiBQQVNJRCB0cmFuc2xhdGlvbiB0YWJsZSB0byBz
-dXBwb3J0IGd1ZXN0IEVOUUNNRC4NCj4gKwkgKi8NCg0Kc2hvdWxkIHRha2UgaXQgYXMgYW4gZXhh
-bXBsZSBpbnN0ZWFkIG9mIHRoZSBvbmx5IHBvc3NpYmxlIHVzYWdlLg0KDQo+ICsJaW9hc2lkX25v
-dGlmeShkYXRhLT5ocGFzaWQsIElPQVNJRF9CSU5EKTsNCj4gIAlpbml0X3JjdV9oZWFkKCZzZGV2
-LT5yY3UpOw0KPiAgCWxpc3RfYWRkX3JjdSgmc2Rldi0+bGlzdCwgJnN2bS0+ZGV2cyk7DQo+ICAg
-b3V0Og0KPiBAQCAtNDQwLDYgKzUwNSw3IEBAIGludCBpbnRlbF9zdm1fdW5iaW5kX2dwYXNpZChz
-dHJ1Y3QgZGV2aWNlICpkZXYsIGludA0KPiBwYXNpZCkNCj4gIAkJCQkgKiB1c2VkIGJ5IGFub3Ro
-ZXIuDQo+ICAJCQkJICovDQo+ICAJCQkJaW9hc2lkX2F0dGFjaF9kYXRhKHBhc2lkLCBOVUxMKTsN
-Cj4gKwkJCQlpb2FzaWRfbm90aWZ5KHBhc2lkLCBJT0FTSURfVU5CSU5EKTsNCj4gIAkJCQlrZnJl
-ZShzdm0pOw0KPiAgCQkJfQ0KPiAgCQl9DQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2lu
-dGVsLWlvbW11LmggYi9pbmNsdWRlL2xpbnV4L2ludGVsLWlvbW11LmgNCj4gaW5kZXggZjg1MDRh
-OTgwOTgxLi42NDc5OTA2N2VhNTggMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvaW50ZWwt
-aW9tbXUuaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L2ludGVsLWlvbW11LmgNCj4gQEAgLTcwOCw2
-ICs3MDgsNyBAQCBleHRlcm4gc3RydWN0IGlvbW11X3N2YSAqDQo+ICBpbnRlbF9zdm1fYmluZChz
-dHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBtbV9zdHJ1Y3QgKm1tLCB2b2lkICpkcnZkYXRhKTsN
-Cj4gIGV4dGVybiB2b2lkIGludGVsX3N2bV91bmJpbmQoc3RydWN0IGlvbW11X3N2YSAqaGFuZGxl
-KTsNCj4gIGV4dGVybiBpbnQgaW50ZWxfc3ZtX2dldF9wYXNpZChzdHJ1Y3QgaW9tbXVfc3ZhICpo
-YW5kbGUpOw0KPiArZXh0ZXJuIHZvaWQgaW50ZWxfc3ZtX2FkZF9wYXNpZF9ub3RpZmllcih2b2lk
-KTsNCj4gDQo+ICBzdHJ1Y3Qgc3ZtX2Rldl9vcHM7DQo+IA0KPiAtLQ0KPiAyLjcuNA0KPiANCj4g
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4gaW9tbXUg
-bWFpbGluZyBsaXN0DQo+IGlvbW11QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnDQo+IGh0dHBz
-Oi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lvbW11DQo=
+On Fri, Mar 27, 2020 at 10:11:59AM +0000, Tejas Joglekar wrote:
+> Hi,
+> On 3/27/2020 3:24 PM, Greg KH wrote:
+> > On Fri, Mar 27, 2020 at 03:11:56PM +0530, Tejas Joglekar wrote:
+> >> This commit adds the documentation for consolidate-sgl, and
+> >> snps,consolidate-sgl property. These when set enables the quirk for
+> >> XHCI driver for consolidation of sg list into a temporary buffer when small
+> >> buffer sizes are scattered over the sg list not making up to MPS or total
+> >> transfer size within TRB cache size with Synopsys xHC.
+> >>
+> >> Signed-off-by: Tejas Joglekar <joglekar@synopsys.com>
+> >> ---
+> >>  Documentation/devicetree/bindings/usb/dwc3.txt     | 3 +++
+> >>  Documentation/devicetree/bindings/usb/usb-xhci.txt | 3 +++
+> >>  2 files changed, 6 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
+> >> index 9946ff9ba735..292d1f7969e4 100644
+> >> --- a/Documentation/devicetree/bindings/usb/dwc3.txt
+> >> +++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+> >> @@ -104,6 +104,9 @@ Optional properties:
+> >>  			this and tx-thr-num-pkt-prd to a valid, non-zero value
+> >>  			1-16 (DWC_usb31 programming guide section 1.2.3) to
+> >>  			enable periodic ESS TX threshold.
+> >> + - snps,consolidate-sgl: enable sg list consolidation - host mode only. Set to use
+> >> +			SG buffers of at least MPS size by consolidating smaller SG
+> >> +			buffers list into a single buffer.
+> >>  
+> >>   - <DEPRECATED> tx-fifo-resize: determines if the FIFO *has* to be reallocated.
+> >>   - snps,incr-burst-type-adjustment: Value for INCR burst type of GSBUSCFG0
+> >> diff --git a/Documentation/devicetree/bindings/usb/usb-xhci.txt b/Documentation/devicetree/bindings/usb/usb-xhci.txt
+> >> index 3f378951d624..a90d853557ee 100644
+> >> --- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
+> >> +++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
+> >> @@ -43,6 +43,9 @@ Optional properties:
+> >>    - quirk-broken-port-ped: set if the controller has broken port disable mechanism
+> >>    - imod-interval-ns: default interrupt moderation interval is 5000ns
+> >>    - phys : see usb-hcd.yaml in the current directory
+> >> +  - consolidate-sgl: indicate if you need to consolidate sg list into a
+> >> +    temporary buffer when small SG buffer sizes does not make upto MPS
+> >> +    size or total transfer size across the TRB cache size.
+> > 
+> > Shouldn't this refer to the fact that the hardware is broken?  Otherwise
+> > why would anyone know if they should, or should not, enable this option?
+> >
+> We have not seen issue with Linux environment for now. But with other OS with
+> SG list with very small buffer sizes the xHC controller hang was seen. So 
+> currently introducing the binding as optional one. One could enable this 
+> option when xHC halt happens due to small SG list sizes.  
+
+What I mean is this should be something like,
+"quirk-broken-sg-list-handler" or something like that.  Otherwise how
+does anyone know if this really is needed or not.  Reading this would
+seem like everyone would like to do this, as consolidating links
+sounds like a good optimization, when instead this really cause more
+memory allocations, making this possibly worse performance.
+
+thanks,
+
+greg k-h
