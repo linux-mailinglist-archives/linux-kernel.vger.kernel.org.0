@@ -2,62 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 682BE19605F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 22:24:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 852D2196061
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 22:24:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbgC0VYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 17:24:34 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43575 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727716AbgC0VY1 (ORCPT
+        id S1727832AbgC0VYl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 17:24:41 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51919 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727740AbgC0VYa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 17:24:27 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m11so7359380wrx.10;
-        Fri, 27 Mar 2020 14:24:26 -0700 (PDT)
+        Fri, 27 Mar 2020 17:24:30 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c187so13035015wme.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 14:24:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oI5D0YXqK9ZgIbRmCkwUrf790yb4frzgCUGa0p7twfM=;
-        b=fnSxsxJPJczTGw2uS+6OEn/aQr8ytsEbnRz9pM/1qTU6g/0Oqg0vgSsOu66kUEt8Wm
-         2RwEKnJEVGEF/fBnrL4Mje1cysHGcxqMIv9jgeDWT5DNL+TxSe/JFuq4/ZnZSc2QzUdb
-         fxZY9VeiMvfrlBYMoGstB3lklzKqVAXL7lXXKf1Uwc6UGB4udXnkODQdZUeR61psfVw6
-         E1/y3d3tD9afaMeO4yNkjs3QqhSBq9o1/dLRy7ici+92b6MYizvHdqCXwn0j4W1SFrUw
-         eXP1I0+SF/Wl8e/4XpP9bTana57/WPJ3XEw1GUQYtBL70g21DLR5hqWKrne1gb+hWkMU
-         emUQ==
+        bh=2RL3xiN8W6cz7dfbCpGqvic4ZrO12rtINmJ/67vPTQI=;
+        b=hTeA/5vbANSKBOfgfgihFOWpSkJAhBcEKyTFX75mkuw1DQpvwgEkuL6EFYmAl6htpQ
+         DcmRDKfbqSSTKqm00O1zKpLZK6xjeZzH583LaLOJhBEFNy07lKRLuMNhxN/RXB8Yvq8z
+         +S9c49lQVipwVUFS5gZf2ZW8rTsrWIMb9R3x43IjatVoYkBpx1DUVol/SHLdYMNfrKQB
+         BUQscsqnBPxUfMyERtvtza1DV3cVHzqi/kgn8uT+Fx/yj66s5C6X1x+Jd5lEetNcoIsT
+         dy1ide/aQTtRUyfwpPZ3z015M8YlUhZ5NpIAqjbit5ZJ9TOHRe6ot8EL+nf+4tLEyimL
+         zYrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oI5D0YXqK9ZgIbRmCkwUrf790yb4frzgCUGa0p7twfM=;
-        b=I2S5aDGwytMDCeriBnr5OxO/GuPCFawlspA7gQD4+eOfdv/jflOypr76r99LbcYbKg
-         B4flUn9dtYX829Mp4m8n8T6W46CuUSQZP46l2Dx1BZaiGlO8TXv5hiRTeLvfkwBOPupE
-         Mfyb9ZKaMhXqUbicG1RjqtSmBdmoEwS55rKXmiGjdyLbnMuedGl6tdUEHl3qL6qzqdfF
-         gBXlnrHKtyWLo4T6V/kJh6NGu+cLK3Yjhxfn4kqko0pjuwRDAHWrbOm1BxrWOETwVpB6
-         y2gO8wdlEgLaqcieZSTVFMNEKP/KwDUm4/vbPe2keevWyY3/epXxoEbIeVnMaR/RKtp3
-         We9A==
-X-Gm-Message-State: ANhLgQ2+5rK/N6kotkxjxvG1k22DqsxhTR39luFfddxV/jvHn8TKvWG6
-        t3Xcs+bd4V1ygqtJwNesRw==
-X-Google-Smtp-Source: ADFU+vu7dBJNaL8ARFfODOVqGmkMaeUBdQUh0DCx6dsVUbL0hnjIG870s3bSG+bTQYoE5Uv+BJdTiA==
-X-Received: by 2002:adf:9cca:: with SMTP id h10mr1452221wre.167.1585344265854;
-        Fri, 27 Mar 2020 14:24:25 -0700 (PDT)
+        bh=2RL3xiN8W6cz7dfbCpGqvic4ZrO12rtINmJ/67vPTQI=;
+        b=TqS3rb8dpYHseCV3tv1wkAfw3QuIBG4VBoe2l9ytW2hJVQHZVUGO5YmBpOqX0ouIgs
+         5Id2O/aJIoQyCafHhkNpxkRD1YFubBZIEmB5NR07KTccW160cpxdUQWWSRtI7RmLQEAS
+         c5UkNHBzhZ39EOUKTdxPmm53OG0v3ig4QV2l/bOjxzVtDjRe6oXrTFzpYUrM5UtExxfp
+         +WG6lwHOnoOiKzsWJkw3Rzp7MGLQraEBQgJomqJhRtx/Z/DhxhWfHQVXOTVxoTcr4hj/
+         Y6tXS9XtvkqgIMKdS6KiyK+6OjybbzlGmcu6WUInxSRX5dKKP9HMSaNzPYkB9NWW9SpR
+         Ghgg==
+X-Gm-Message-State: ANhLgQ2ewTCYnqzbrcjtJokzkNR0P8XDY2QMlwmUB71dLf1pbcG1fc/6
+        R4A9/rtVrUwcdZe/2dfewQ==
+X-Google-Smtp-Source: ADFU+vtwug51RoUyH5LzFvTkssv7ihCgoPrxnE2ed7vc1qPZLVwxHVvVdJHexLK6kUc7NQUPdIFcJg==
+X-Received: by 2002:a7b:c117:: with SMTP id w23mr755644wmi.26.1585344267401;
+        Fri, 27 Mar 2020 14:24:27 -0700 (PDT)
 Received: from ninjahost.lan (host-92-23-82-35.as13285.net. [92.23.82.35])
-        by smtp.gmail.com with ESMTPSA id h132sm10215141wmf.18.2020.03.27.14.24.24
+        by smtp.gmail.com with ESMTPSA id h132sm10215141wmf.18.2020.03.27.14.24.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 14:24:25 -0700 (PDT)
+        Fri, 27 Mar 2020 14:24:27 -0700 (PDT)
 From:   Jules Irenge <jbi.octave@gmail.com>
 To:     julia.lawall@lip6.fr
-Cc:     boqun.feng@gmail.com, "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
+Cc:     boqun.feng@gmail.com, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        rcu@vger.kernel.org (open list:READ-COPY UPDATE (RCU)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 06/10] rcu: Replace assigned pointer ret value by corresponding boolean value
-Date:   Fri, 27 Mar 2020 21:23:53 +0000
-Message-Id: <20200327212358.5752-7-jbi.octave@gmail.com>
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel@vger.kernel.org (open list:SCHEDULER)
+Subject: [PATCH 07/10] sched/fair: Replace 1 and 0 by boolean value
+Date:   Fri, 27 Mar 2020 21:23:54 +0000
+Message-Id: <20200327212358.5752-8-jbi.octave@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200327212358.5752-1-jbi.octave@gmail.com>
 References: <0/10>
@@ -69,42 +69,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Coccinelle reports warnings at rcu_read_lock_held_common()
+Coccinelle reports a warning at voluntary_active_balance
 
-WARNING: Assignment of 0/1 to bool variable
+WARNING: return of 0/1 in function voluntary_active_balance with return type bool
 
-To fix this,
-the assigned  pointer ret values are replaced by corresponding boolean value.
-Given that ret is a pointer of bool type
+To fix this, 1 is replaced by true and 0 by false.
+Given that voluntary_active_balance() is of bool type.
+This fixes the warnings.
 
 Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 ---
- kernel/rcu/update.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/sched/fair.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 6c4b862f57d6..24fb64fd1a1a 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -98,15 +98,15 @@ module_param(rcu_normal_after_boot, int, 0);
- static bool rcu_read_lock_held_common(bool *ret)
- {
- 	if (!debug_lockdep_rcu_enabled()) {
--		*ret = 1;
-+		*ret = true;
- 		return true;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index c1217bfe5e81..b11bb08687a9 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9082,7 +9082,7 @@ voluntary_active_balance(struct lb_env *env)
+ 	struct sched_domain *sd = env->sd;
+ 
+ 	if (asym_active_balance(env))
+-		return 1;
++		return true;
+ 
+ 	/*
+ 	 * The dst_cpu is idle and the src_cpu CPU has only 1 CFS task.
+@@ -9094,13 +9094,13 @@ voluntary_active_balance(struct lb_env *env)
+ 	    (env->src_rq->cfs.h_nr_running == 1)) {
+ 		if ((check_cpu_capacity(env->src_rq, sd)) &&
+ 		    (capacity_of(env->src_cpu)*sd->imbalance_pct < capacity_of(env->dst_cpu)*100))
+-			return 1;
++			return true;
  	}
- 	if (!rcu_is_watching()) {
--		*ret = 0;
-+		*ret = false;
- 		return true;
- 	}
- 	if (!rcu_lockdep_current_cpu_online()) {
--		*ret = 0;
-+		*ret = false;
- 		return true;
- 	}
- 	return false;
+ 
+ 	if (env->migration_type == migrate_misfit)
+-		return 1;
++		return true;
+ 
+-	return 0;
++	return false;
+ }
+ 
+ static int need_active_balance(struct lb_env *env)
 -- 
 2.25.1
 
