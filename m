@@ -2,134 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A6FB194E80
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 02:33:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDAA3194E85
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 02:34:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbgC0BdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 21:33:01 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:33823 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727884AbgC0Bc7 (ORCPT
+        id S1727891AbgC0BeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 21:34:15 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40670 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727725AbgC0BeP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 21:32:59 -0400
-Received: by mail-pl1-f202.google.com with SMTP id j8so5884354plk.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 18:32:58 -0700 (PDT)
+        Thu, 26 Mar 2020 21:34:15 -0400
+Received: by mail-pl1-f194.google.com with SMTP id h11so2852049plk.7;
+        Thu, 26 Mar 2020 18:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=KfX4YhNI554hDVYR+6ARHJ1c92FuwzQbetwUIUbSZaQ=;
-        b=cOd197Tc0jF8mPH8KVYwd9hJtOaPM0teR5d/aaVBilfpv2fnQq4VdJ8W2OLD9Wvn7g
-         OeBDI3TNzKDHKT3W8qc0eDAr2I3PHdckKRs8YTe7xheYA62F6dUCRHYv+/hzH9B5iTcR
-         SnY7GQpHxOxHfQo+NejJhn+Gg4cXCF+UOAucPeeLnSRNWVoTYm9hQSaG5JsS990B2pDd
-         9XIYxKRa37roipCiSN1F+//suiCaCII2Hu7nCtoWQBWMuTMhslCozyfRLdp4uSPHD7Du
-         12h94o8Z90VphWhaQYP5S01wZwMbZow82nU+GLcU9g9jLqFRD8qhpPtcg4+03NBI+BPu
-         wZUQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uFKK0rmf3+J4yn+P1XSuUCuH04czYSHT54dW1GTJiIE=;
+        b=GnwZFUcQYqI7zQi8Mj3xiFnMlKQufDQ93cXDZ8zf6U9O+GeDp+srzeKk6whXoiKbNF
+         sRK3qhWoDl/jh9BNDeLaLwH3bldkPA8iDRhgD0YnlOJsjwdh3CmngZD6mx13U+Yz6K1U
+         amC6EC+ZdQJh5Ke6PhA9/6VbECAHdufuZxxO8Mgg/qOZ3iblvqfM5lOCpxUt+TtaNUrE
+         x0W9HL/B2CrUS2cNuJgWQ/1eaFtCJ12K0g6qOImoMvr3Q8hpVxmJu01ic8Ssc+OWQClb
+         k3zQbZhEJzWzzCKvA58nw2JH7w5bjEN5j2G0UBG3r3MvmWJhgS/wFWA/aBrX29hE4nKv
+         k2wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=KfX4YhNI554hDVYR+6ARHJ1c92FuwzQbetwUIUbSZaQ=;
-        b=R6sKK/3f7NTH0lJXmk+xOaUONMSERXlSOyn1eWoouq+wydD4H7sH5bCIJTzV0EshvP
-         eKoTI8HQ0HZiECQxc5veigKMW/MO0PAZsXIk1c0Ixz4aMtGlfzrcJB1EodmAakOeEAfp
-         Q09ysvcGHUNLXLADgrCr+R6QY5aD8ScTGmOg39S/n6rTk7MegEbRQw5bz/dH3qpVevOZ
-         VtMrjxioNWyE+w/zUZevj4L45fs9vwWbVxpSIW+06ZeXuUW/WmVVfE5TKQKtLeyNc24r
-         h4oW4AyrK/4DSNAx64sUfTnUuP63jaMuHoY0A05/tCUFvEDGFCEa2/Klkc/ygBMqPpL8
-         CS3g==
-X-Gm-Message-State: ANhLgQ2kpIyhtEfMOJcbIeOYXVoNhzOXFqDx1ZBHgyAB/tVVTNPQ9E/z
-        8003RM8QYwvJPEDUdCCewCl+srkd2h+Z
-X-Google-Smtp-Source: ADFU+vvZVBcF8elF8fTvulona4bRznVutDnKtKKl/DFIzMuaGqA1lxuTP7n4DU222Wk5nXojz7mHQMYTa4xt
-X-Received: by 2002:a17:90a:e382:: with SMTP id b2mr2952451pjz.83.1585272778333;
- Thu, 26 Mar 2020 18:32:58 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 18:32:39 -0700
-In-Reply-To: <20200327013239.238182-1-rajatja@google.com>
-Message-Id: <20200327013239.238182-5-rajatja@google.com>
-Mime-Version: 1.0
-References: <20200327013239.238182-1-rajatja@google.com>
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [PATCH v3 5/5] dt-bindings: input/atkbd.txt: Add binding info for
- "keymap" property
-From:   Rajat Jain <rajatja@google.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>, dtor@google.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rajat Jain <rajatja@google.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, furquan@google.com,
-        dlaurie@google.com, bleung@google.com, zentaro@google.com,
-        dbehr@google.com
-Cc:     rajatxjain@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uFKK0rmf3+J4yn+P1XSuUCuH04czYSHT54dW1GTJiIE=;
+        b=Os7es1srQc69wLcGIgQoX4r/U9QinaF0MoARUKD6fgpjHfpGOSg+PxloF/RC84Hd/A
+         O42IwGXuUnpNgVTUmhW5JW7Lio8J0xNzthHaIFIPhx/O+DXteMCI8VqQqDuCocevf7Gp
+         q04GWE1p4WSTPhCFMQhSEzPFTPFqERWQhwf7HQMA0P+mcujEJs43ywgXuoKmunStHewW
+         Sb5qcG5O6n0QAcMK1zeIhvO/KJVhjIAme8m0nDvl5mdUwmmkgPsBsHeGFSBtLxwtXTi7
+         Qa1eGdt9nz9YNMnYm92/JHM/QIQg+T2JnGAGARQRf/5chwg3cdbAhMl96S2hbsG2i+/j
+         he5w==
+X-Gm-Message-State: ANhLgQ2IKIlFtonPTX8OgV3ElU2po02+vClNz0vQSr/6vQsp69loU2D6
+        qLwRdNiw9Wvv8fBqNAAFxPc=
+X-Google-Smtp-Source: ADFU+vsvC/cghxY3m+o0RhnGEcQXGHPtloWMklG8ItXaIqS7q6X3VvXOGxG/X8J9PCt5lFl1gjG5Jw==
+X-Received: by 2002:a17:90a:f0c6:: with SMTP id fa6mr3140222pjb.5.1585272853380;
+        Thu, 26 Mar 2020 18:34:13 -0700 (PDT)
+Received: from localhost (c-73-241-114-122.hsd1.ca.comcast.net. [73.241.114.122])
+        by smtp.gmail.com with ESMTPSA id 193sm2724577pfa.182.2020.03.26.18.34.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 18:34:12 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 18:34:10 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        netdev <netdev@vger.kernel.org>, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 10/11] net: ethernet: ti: cpts: add support
+ for HW_TS_PUSH events
+Message-ID: <20200327013410.GC9677@localhost>
+References: <20200320194244.4703-1-grygorii.strashko@ti.com>
+ <20200320194244.4703-11-grygorii.strashko@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320194244.4703-11-grygorii.strashko@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the info for keymap property that allows firmware to specify the
-mapping from physical code to linux keycode, that the kernel should use.
+> +static int cpts_extts_enable(struct cpts *cpts, u32 index, int on)
+> +{
+> +	u32 v;
+> +
+> +	if (index >= cpts->info.n_ext_ts)
+> +		return -ENXIO;
 
-Signed-off-by: Rajat Jain <rajatja@google.com>
----
-v3: same as v2
-v2: Remove the Change-Id from the commit log
+This check is already performed in ptp_chardev.c.
 
- .../devicetree/bindings/input/atkbd.txt       | 27 ++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/input/atkbd.txt b/Documentation/devicetree/bindings/input/atkbd.txt
-index 816653eb8e98d..0a0037d70adc8 100644
---- a/Documentation/devicetree/bindings/input/atkbd.txt
-+++ b/Documentation/devicetree/bindings/input/atkbd.txt
-@@ -6,9 +6,15 @@ Optional properties:
- 			An ordered array of the physical codes for the function
- 			row keys. Arranged in order from left to right.
- 
-+	keymap:
-+			An array of the u32 entries to specify mapping from the
-+			keyboard physcial codes to linux keycodes. The top 16
-+			bits of each entry are the physical code, and bottom
-+			16 bits are the	linux keycode.
-+
- Example:
- 
--	This is a sample ACPI _DSD node describing the property:
-+	This is a sample ACPI _DSD node describing the properties:
- 
-         Name (_DSD, Package () {
-                 ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-@@ -29,6 +35,25 @@ Example:
-                                         0xAE, /* T12 VOL_DOWN */
-                                         0xB0, /* T13 VOL_UP */
-                                 }
-+                        },
-+                        Package () { "keymap",
-+                                Package () {
-+                                        0xEA009E, /* EA -> KEY_BACK */
-+                                        0xE700AD, /* E7 -> KEY_REFRESH */
-+                                        0x910174, /* 91 -> KEY_FULL_SCREEN */
-+                                        0x920078, /* 92 -> KEY_SCALE */
-+                                        0x930280, /* 93 -> 0x280 */
-+                                        0x9400E0, /* 94 -> KEY_BRIGHTNESS_DOWN*/
-+                                        0x9500E1, /* 95 -> KEY_BRIGHTNESS_UP */
-+                                        0x960279, /* 96 -> KEY_PRIVACY_SCRN_TOGGLE*/
-+                                        0x9700E5, /* 97 -> KEY_KBDILLUMDOWN */
-+                                        0x9800E6, /* 98 -> KEY_KBDILLUMUP */
-+                                        0xA00071, /* A0 -> KEY_MUTE */
-+                                        0xAE0072, /* AE -> KEY_VOLUMEDOWN */
-+                                        0xB00073, /* B0 -> KEY_VOLUMEUP */
-+					...
-+					<snip other entries>
-+                                }
-                         }
-                 }
-         })
--- 
-2.25.1.696.g5e7596f4ac-goog
+Thanks,
+Richard
 
