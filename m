@@ -2,131 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D85E195A97
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 17:06:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15688195ABB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 17:10:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbgC0QGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 12:06:14 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:42672 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726515AbgC0QGO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 12:06:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585325170;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rADClTuM8rDCPwa+pftuZtYBhIX2IPiWqkZ05BPZYE0=;
-        b=JSlpCw4VB06QDfm6nFl/AWgn1sohEQ4OEc+rSk558Ro4vZJC9F32OyVpZSrECO8YxUiqVy
-        4k2fVAR4YGxtfF9/WEKDjSFE3UIj55kcTGRBxFt4xMl6wOAwdFNTWR3b8b96kcTEKBXE1L
-        3/8R7OIUh1s4bSnANnNrXhOzeSMYrEQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-461-K_ZuWAB8M42Xkd9Far-IRA-1; Fri, 27 Mar 2020 12:06:05 -0400
-X-MC-Unique: K_ZuWAB8M42Xkd9Far-IRA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5251A8018A1;
-        Fri, 27 Mar 2020 16:06:03 +0000 (UTC)
-Received: from [10.36.113.142] (ovpn-113-142.ams2.redhat.com [10.36.113.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 957C460304;
-        Fri, 27 Mar 2020 16:05:54 +0000 (UTC)
-Subject: Re: [PATCH V10 04/11] iommu/vt-d: Use helper function to skip agaw
- for SL
-To:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>
-Cc:     "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>
-References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1584746861-76386-5-git-send-email-jacob.jun.pan@linux.intel.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED91C@SHSMSX104.ccr.corp.intel.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <310693c3-9bd2-a764-2053-cd785d329ee6@redhat.com>
-Date:   Fri, 27 Mar 2020 17:05:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727848AbgC0QKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 12:10:41 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12205 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726515AbgC0QKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 12:10:32 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A0F4D6FF656609A32887;
+        Sat, 28 Mar 2020 00:10:23 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.487.0; Sat, 28 Mar 2020 00:10:16 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <xuwei5@huawei.com>, <arnd@arndb.de>
+CC:     <okaya@kernel.org>, <bhelgaas@google.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>,
+        <olof@lixom.net>, <jiaxun.yang@flygoat.com>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH v2 0/3] io.h, logic_pio: Allow barriers for inX() and outX() be overridden
+Date:   Sat, 28 Mar 2020 00:06:11 +0800
+Message-ID: <1585325174-195915-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED91C@SHSMSX104.ccr.corp.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob,
+Since commits a7851aa54c0c ("io: change outX() to have their own IO
+barrier overrides") and 87fe2d543f81 ("io: change inX() to have their own
+IO barrier overrides"), the outX() and inX() functions have memory
+barriers which can be overridden per-arch.
 
-On 3/27/20 12:55 PM, Tian, Kevin wrote:
->> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Sent: Saturday, March 21, 2020 7:28 AM
->>
->> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> ---
->>  drivers/iommu/intel-pasid.c | 14 ++++----------
->>  1 file changed, 4 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
->> index 191508c7c03e..9bdb7ee228b6 100644
->> --- a/drivers/iommu/intel-pasid.c
->> +++ b/drivers/iommu/intel-pasid.c
->> @@ -544,17 +544,11 @@ int intel_pasid_setup_second_level(struct
->> intel_iommu *iommu,
->>  		return -EINVAL;
->>  	}
->>
->> -	/*
->> -	 * Skip top levels of page tables for iommu which has less agaw
->> -	 * than default. Unnecessary for PT mode.
->> -	 */
->>  	pgd = domain->pgd;
->> -	for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
->> -		pgd = phys_to_virt(dma_pte_addr(pgd));
->> -		if (!dma_pte_present(pgd)) {
->> -			dev_err(dev, "Invalid domain page table\n");
->> -			return -EINVAL;
->> -		}
->> +	agaw = iommu_skip_agaw(domain, iommu, &pgd);
->> +	if (agaw < 0) {
->> +		dev_err(dev, "Invalid domain page table\n");
-is the dev_err() really requested. I see in domain_setup_first_level(),
-there is none.
->> +		return -EINVAL;
->>  	}
-> 
-> ok, I see how it is used. possibly combine last and this one together since
-> it's mostly moving code...
+However, under CONFIG_INDIRECT_PIO, logic_pio defines its own version of
+inX() and outX(), which still use readb et al. For these, the barrier
+after a raw read is weaker than it otherwise would be. 
 
-I tend to agree with Kevin. May be better squash the 2 patches. Also not
-sure the inline of iommu_skip_agaw() is meaningful then. Also Add commit
-messages on the resulting patch.
+This series generates consistent behaviour for logic_pio, by defining
+generic _inX() and _outX() in asm-generic/io.h, and using those in
+logic_pio. Generic _inX() and _outX() have per-arch overrideable
+barriers.
 
-Note domain_setup_first_level() also could use the helper while we are
-it (if declaration moved to common helper). Only the error code differs
-in case !dma_pte_present(pgd), ie. -ENOMEM. May be good to align.
+The topic was discussed there originally:
+https://lore.kernel.org/lkml/2e80d7bc-32a0-cc40-00a9-8a383a1966c2@huawei.com/
 
-Otherwise those stuff may be done in a fixup patch.
+A small tidy-up patch is included.
 
-Thanks
+I hope that series can go through the arm-soc tree, as with other recent
+logic_pio changes.
 
-Eric
-> 
->>
->>  	pgd_val = virt_to_phys(pgd);
->> --
->> 2.7.4
-> 
+Hi Arnd,
+
+I added your tag, but please let me know if you have any issue with the
+updated change in patch #1.
+
+cheers
+
+- Differences to v1
+	- fix x86 clang build by adding extra build swicth for _{in,out}X
+	- added Arnd's RB tag
+
+John Garry (3):
+  io: Provide _inX() and _outX()
+  logic_pio: Improve macro argument name
+  logic_pio: Use _inX() and _outX()
+
+ include/asm-generic/io.h | 64 +++++++++++++++++++++++++++++++++---------------
+ lib/logic_pio.c          | 22 ++++++++---------
+ 2 files changed, 55 insertions(+), 31 deletions(-)
+
+-- 
+2.16.4
 
