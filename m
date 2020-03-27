@@ -2,365 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6852C195BED
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:06:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C566195C1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:14:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbgC0RGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 13:06:12 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34467 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbgC0RGK (ORCPT
+        id S1727600AbgC0ROR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 13:14:17 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:36641 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbgC0ROQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 13:06:10 -0400
-Received: by mail-lf1-f66.google.com with SMTP id e7so8482930lfq.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 10:06:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5kQB28Q1srv5R/NFD9NiHhGkcte0ot9iIq76f8JehPk=;
-        b=Q9Z9XrgC1agbGS6iVd1s2BTilTO0EpLN+sb0E1/T4r7u8Tvb/ifohsIOQxVZiio+VQ
-         SOg+W0ADbWLo87YzursLjwt4RcWg7zpPiDeBYSN+wtK1dxLrdrN0FtDa8DCML9ASlM27
-         bsw0DhpdD0wElolWk9Z3X/JGQAkfKOAmpLQ4orKmxSwYv/1DkIGC6Q2T/V6IlhrfUpMk
-         nj5Qf/2D2DeyTiKHJnw83cEmIl+yl7R+3GyT9i+laFYnxUy6D5kzUFPjLzN2qJU6GmXw
-         9g/+0SmJgLcq7O+XfJ7D3/0ifej4g5dwkW2frwZ04PGgV1XfGtkMwtUQbYujGNL05CDE
-         6psw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5kQB28Q1srv5R/NFD9NiHhGkcte0ot9iIq76f8JehPk=;
-        b=BMBk8ogIJH50heGELMjGmBiMIT95MrSa3O6qff2Q6pailgTwuH3EwPNe22LzZui7QP
-         7BMqgDZZCGGWxKCtkzxZT8IJBi9uMHe5NnhSJZou94FitnNZ7RObCzrjF+xEft1nvGJG
-         bTorFQfdPC/+MzH4Tk1z3gM+0kDWivq+Qn+Gz0JY8M/MxMpMHHsddL/lJqf1hZqTriDv
-         tKcjK9EJYi5YA6ACswgFD6tQrpaGZByM94w0QIJ4go1kq+G/TWC7AEtjgX+BkE7s3PfV
-         +ZDoD/3FyCCspL+4cpb8eZ4HYO6kA5CkY+NKCudhg5BVSBPKZJjCdfvlgT7CUgHPxHGQ
-         nFLA==
-X-Gm-Message-State: AGi0PubK6Pl+2ZhwBGQT4cIp1So6r52tmWHB/+iOyxTLzPqhBjTTsXxZ
-        wDTfFXQjkohiBumD0uAhumIxaA==
-X-Google-Smtp-Source: APiQypJTg/7Jr+2YbWa9fzssusziciWK2L5tL//ePdoqgZeZK4AL4xepP8yE4nyjxIGV8HzMS9IywA==
-X-Received: by 2002:ac2:4316:: with SMTP id l22mr185811lfh.150.1585328766284;
-        Fri, 27 Mar 2020 10:06:06 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id x128sm3240696lff.67.2020.03.27.10.06.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 10:06:05 -0700 (PDT)
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 84E70100D2C; Fri, 27 Mar 2020 20:06:07 +0300 (+03)
-To:     akpm@linux-foundation.org, Andrea Arcangeli <aarcange@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 7/7] khugepaged: Introduce 'max_ptes_shared' tunable
-Date:   Fri, 27 Mar 2020 20:06:01 +0300
-Message-Id: <20200327170601.18563-8-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200327170601.18563-1-kirill.shutemov@linux.intel.com>
-References: <20200327170601.18563-1-kirill.shutemov@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 27 Mar 2020 13:14:16 -0400
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200327171413epoutp02108f0a7a7b79d97b1bc4ec0af53add50~AOI6K9pXT0261402614epoutp02Z
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 17:14:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200327171413epoutp02108f0a7a7b79d97b1bc4ec0af53add50~AOI6K9pXT0261402614epoutp02Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1585329253;
+        bh=HUdcqKZsLPveKDiPJtPprbc+ufYhRwknzSlEiKJ+2+Y=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=GeUZKv4uyeH2fqUYVVysQoj5uXMLHn2MYEc3pM+RwnEDGuNwx0cYMBhO7h7rsrYki
+         yGugSf1eyiePnNpcLN7GAogwoNYBb5GMWZf3/d2UUP2sLwpv+xeRwyTCB/TG1fzqKC
+         pAnOleWWyc+5N99J76vf2K/fsdIvYQNb6yk/PDfw=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20200327171413epcas5p244d575053adb248b70ef41362404a8b7~AOI5m6gOH1294012940epcas5p2h;
+        Fri, 27 Mar 2020 17:14:13 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A6.4F.04778.4643E7E5; Sat, 28 Mar 2020 02:14:12 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200327171411epcas5p17f4457f9fd61800257607059b9506fb2~AOI4bOrYF3139031390epcas5p1s;
+        Fri, 27 Mar 2020 17:14:11 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200327171411epsmtrp1cfa33d9a0beee8ebaac5dc1f3d715a61~AOI4aXG_r0124901249epsmtrp1J;
+        Fri, 27 Mar 2020 17:14:11 +0000 (GMT)
+X-AuditID: b6c32a4a-353ff700000012aa-b6-5e7e3464e4bc
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FD.3E.04158.3643E7E5; Sat, 28 Mar 2020 02:14:11 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200327171409epsmtip11bf4df68a2f039d21812dc58c656a1f4~AOI2lVx3V0050600506epsmtip1i;
+        Fri, 27 Mar 2020 17:14:09 +0000 (GMT)
+From:   Alim Akhtar <alim.akhtar@samsung.com>
+To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Cc:     krzk@kernel.org, avri.altman@wdc.com, martin.petersen@oracle.com,
+        kwmad.kim@samsung.com, stanley.chu@mediatek.com,
+        cang@codeaurora.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v4 0/5] exynos-ufs: Add support for UFS HCI
+Date:   Fri, 27 Mar 2020 22:36:33 +0530
+Message-Id: <20200327170638.17670-1-alim.akhtar@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpileLIzCtJLcpLzFFi42LZdlhTXTfFpC7OYG2LrcWDedvYLF7+vMpm
+        8Wn9MlaL+UfOsVqcP7+B3eLmlqMsFpseX2O1uLxrDpvFjPP7mCy6r+9gs1h+/B+TReveI+wW
+        S7feZHTg9bjc18vksWlVJ5vH5iX1Hi0n97N4fHx6i8Wjb8sqRo/Pm+Q82g90MwVwRHHZpKTm
+        ZJalFunbJXBlzO+azlYwS6Ti5uZnzA2MB/m7GDk5JARMJLasWcPexcjFISSwm1Hi8YubjCAJ
+        IYFPjBKzHqhBJL4xSuw78pwdpmP1753sEEV7GSU6rqRDFLUwSRz784YZJMEmoC1xd/oWJhBb
+        RCBA4tL7g2wgRcwC85gkFj3qAUsIC1hL9B/6wAZiswioStw8/h9sNa+AjcS8H3dYIbbJS6ze
+        cIAZpFlC4AibxPFfV4CaOYAcF4nT84whaoQlXh3fAnWdlMTL/jZ2iJJsiZ5dUCU1EkvnHWOB
+        sO0lDlyZwwJSwiygKbF+lz5ImFmAT6L39xOo4bwSHW1CENWqEs3vrkJ1SktM7O6GOsxD4vi/
+        l8yQYIiV2LvjJcsERplZCEMXMDKuYpRMLSjOTU8tNi0wykst1ytOzC0uzUvXS87P3cQIThla
+        XjsYl53zOcQowMGoxMO74mptnBBrYllxZe4hRgkOZiUR3qeRNXFCvCmJlVWpRfnxRaU5qcWH
+        GKU5WJTEeSexXo0REkhPLEnNTk0tSC2CyTJxcEo1ME41SfcIXZN0zITzhoX6nC8tM0407e12
+        e6kYKJVnYMin62r2pPxOQpbzh2TZ4vywt0ZxzQ1fnGT4v++eeyB5ckLxs7tdr45eff5g1Z7M
+        61F8XJEz7ffeXql469futuIH0Vt+bmV7duu86fMtjHZdP7amzQidsLPjdUu95Y/7M+X1PzcZ
+        1rg9mqLEUpyRaKjFXFScCAD1WVKuFQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJLMWRmVeSWpSXmKPExsWy7bCSnG6ySV2cwekL+hYP5m1js3j58yqb
+        xaf1y1gt5h85x2px/vwGdoubW46yWGx6fI3V4vKuOWwWM87vY7Lovr6DzWL58X9MFq17j7Bb
+        LN16k9GB1+NyXy+Tx6ZVnWwem5fUe7Sc3M/i8fHpLRaPvi2rGD0+b5LzaD/QzRTAEcVlk5Ka
+        k1mWWqRvl8CVMb9rOlvBLJGKm5ufMTcwHuTvYuTkkBAwkVj9eyd7FyMXh5DAbkaJP3tvMUEk
+        pCWub5zADmELS6z89xyqqIlJYvX0x2BFbALaEnenbwGzRQSCJO6tWcsKUsQssIpJorP3LCNI
+        QljAWqL/0Ac2EJtFQFXi5vH/YHFeARuJeT/usEJskJdYveEA8wRGngWMDKsYJVMLinPTc4sN
+        C4zyUsv1ihNzi0vz0vWS83M3MYIDVEtrB+OJE/GHGAU4GJV4eFdcrY0TYk0sK67MPcQowcGs
+        JML7NLImTog3JbGyKrUoP76oNCe1+BCjNAeLkjivfP6xSCGB9MSS1OzU1ILUIpgsEwenVAOj
+        8izNLPbt56LfNE5gm+Kx4uIfcf7nfgmBP030lL5dzr9b+75KYY2ogAJTvEZwbbfYu+aEG7mS
+        Aiuub2g6tXQ+T8VfB77I/4ofZ9+6e8HR79AtBs3emiymhIr3CRvDpvulRQteVjsb7JivMc/g
+        t+Z2k+0r0xVOeQQoZwl+fLrh/LcfjEdZc3yUWIozEg21mIuKEwEBvsv+TAIAAA==
+X-CMS-MailID: 20200327171411epcas5p17f4457f9fd61800257607059b9506fb2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200327171411epcas5p17f4457f9fd61800257607059b9506fb2
+References: <CGME20200327171411epcas5p17f4457f9fd61800257607059b9506fb2@epcas5p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-``max_ptes_shared`` speicies how many pages can be shared across multiple
-processes. Exeeding the number woul block the collapse::
+This patch-set introduces UFS (Universal Flash Storage) host controller support
+for Samsung family SoC. Mostly, it consists of UFS PHY and host specific driver.
 
-	/sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_shared
+- Changes since v3:
+* Addressed Kishon's and Avir's review comments
+* fixed make dt_binding_check error as pointed by Rob 
 
-A higher value may increase memory footprint for some workloads.
+- Changes since v2:
+* fixed build warning by kbuild test robot 
+* Added Reported-by tags
 
-By default, at least half of pages has to be not shared.
+- Changes since v1:
+* fixed make dt_binding_check error as pointed by Rob
+* Addressed Krzysztof's review comments
+* Added Reviewed-by tags
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- Documentation/admin-guide/mm/transhuge.rst |  7 ++
- mm/khugepaged.c                            | 52 ++++++++++++--
- tools/testing/selftests/vm/khugepaged.c    | 83 ++++++++++++++++++++++
- 3 files changed, 138 insertions(+), 4 deletions(-)
+ 
+patch 1/5: define devicetree bindings for UFS PHY
+patch 2/5: Adds UFS PHY driver
+patch 3/5: define devicetree bindings for UFS HCI 
+patch 4/5: Adds Samsung UFS HCI driver
+patch 5/5: Enabled UFS on exynos7 platform
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index bd5714547cee..d16e4f2bb70f 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -220,6 +220,13 @@ memory. A lower value can prevent THPs from being
- collapsed, resulting fewer pages being collapsed into
- THPs, and lower memory access performance.
- 
-+``max_ptes_shared`` speicies how many pages can be shared across multiple
-+processes. Exeeding the number woul block the collapse::
-+
-+	/sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_shared
-+
-+A higher value may increase memory footprint for some workloads.
-+
- Boot parameter
- ==============
- 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index c8c2c463095c..8e728a602491 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -28,6 +28,8 @@ enum scan_result {
- 	SCAN_SUCCEED,
- 	SCAN_PMD_NULL,
- 	SCAN_EXCEED_NONE_PTE,
-+	SCAN_EXCEED_SWAP_PTE,
-+	SCAN_EXCEED_SHARED_PTE,
- 	SCAN_PTE_NON_PRESENT,
- 	SCAN_PAGE_RO,
- 	SCAN_LACK_REFERENCED_PAGE,
-@@ -46,7 +48,6 @@ enum scan_result {
- 	SCAN_DEL_PAGE_LRU,
- 	SCAN_ALLOC_HUGE_PAGE_FAIL,
- 	SCAN_CGROUP_CHARGE_FAIL,
--	SCAN_EXCEED_SWAP_PTE,
- 	SCAN_TRUNCATED,
- 	SCAN_PAGE_HAS_PRIVATE,
- };
-@@ -71,6 +72,7 @@ static DECLARE_WAIT_QUEUE_HEAD(khugepaged_wait);
-  */
- static unsigned int khugepaged_max_ptes_none __read_mostly;
- static unsigned int khugepaged_max_ptes_swap __read_mostly;
-+static unsigned int khugepaged_max_ptes_shared __read_mostly;
- 
- #define MM_SLOTS_HASH_BITS 10
- static __read_mostly DEFINE_HASHTABLE(mm_slots_hash, MM_SLOTS_HASH_BITS);
-@@ -290,15 +292,43 @@ static struct kobj_attribute khugepaged_max_ptes_swap_attr =
- 	__ATTR(max_ptes_swap, 0644, khugepaged_max_ptes_swap_show,
- 	       khugepaged_max_ptes_swap_store);
- 
-+static ssize_t khugepaged_max_ptes_shared_show(struct kobject *kobj,
-+					     struct kobj_attribute *attr,
-+					     char *buf)
-+{
-+	return sprintf(buf, "%u\n", khugepaged_max_ptes_shared);
-+}
-+
-+static ssize_t khugepaged_max_ptes_shared_store(struct kobject *kobj,
-+					      struct kobj_attribute *attr,
-+					      const char *buf, size_t count)
-+{
-+	int err;
-+	unsigned long max_ptes_shared;
-+
-+	err  = kstrtoul(buf, 10, &max_ptes_shared);
-+	if (err || max_ptes_shared > HPAGE_PMD_NR-1)
-+		return -EINVAL;
-+
-+	khugepaged_max_ptes_shared = max_ptes_shared;
-+
-+	return count;
-+}
-+
-+static struct kobj_attribute khugepaged_max_ptes_shared_attr =
-+	__ATTR(max_ptes_shared, 0644, khugepaged_max_ptes_shared_show,
-+	       khugepaged_max_ptes_shared_store);
-+
- static struct attribute *khugepaged_attr[] = {
- 	&khugepaged_defrag_attr.attr,
- 	&khugepaged_max_ptes_none_attr.attr,
-+	&khugepaged_max_ptes_swap_attr.attr,
-+	&khugepaged_max_ptes_shared_attr.attr,
- 	&pages_to_scan_attr.attr,
- 	&pages_collapsed_attr.attr,
- 	&full_scans_attr.attr,
- 	&scan_sleep_millisecs_attr.attr,
- 	&alloc_sleep_millisecs_attr.attr,
--	&khugepaged_max_ptes_swap_attr.attr,
- 	NULL,
- };
- 
-@@ -360,6 +390,7 @@ int __init khugepaged_init(void)
- 	khugepaged_pages_to_scan = HPAGE_PMD_NR * 8;
- 	khugepaged_max_ptes_none = HPAGE_PMD_NR - 1;
- 	khugepaged_max_ptes_swap = HPAGE_PMD_NR / 8;
-+	khugepaged_max_ptes_shared = HPAGE_PMD_NR / 2;
- 
- 	return 0;
- }
-@@ -546,7 +577,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
- {
- 	struct page *page = NULL;
- 	pte_t *_pte;
--	int none_or_zero = 0, result = 0, referenced = 0;
-+	int none_or_zero = 0, shared = 0, result = 0, referenced = 0;
- 	bool writable = false;
- 	LIST_HEAD(compound_pagelist);
- 
-@@ -575,6 +606,12 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
- 
- 		VM_BUG_ON_PAGE(!PageAnon(page), page);
- 
-+		if (page_mapcount(page) > 1 &&
-+				++shared > khugepaged_max_ptes_shared) {
-+			result = SCAN_EXCEED_SHARED_PTE;
-+			goto out;
-+		}
-+
- 		if (PageCompound(page)) {
- 			struct page *p;
- 			page = compound_head(page);
-@@ -1160,7 +1197,8 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
- {
- 	pmd_t *pmd;
- 	pte_t *pte, *_pte;
--	int ret = 0, none_or_zero = 0, result = 0, referenced = 0;
-+	int ret = 0, result = 0, referenced = 0;
-+	int none_or_zero = 0, shared = 0;
- 	struct page *page = NULL;
- 	unsigned long _address;
- 	spinlock_t *ptl;
-@@ -1210,6 +1248,12 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
- 			goto out_unmap;
- 		}
- 
-+		if (page_mapcount(page) > 1 &&
-+				++shared > khugepaged_max_ptes_shared) {
-+			result = SCAN_EXCEED_SHARED_PTE;
-+			goto out_unmap;
-+		}
-+
- 		page = compound_head(page);
- 
- 		/*
-diff --git a/tools/testing/selftests/vm/khugepaged.c b/tools/testing/selftests/vm/khugepaged.c
-index 193bde6a1534..3a98d5b2d6d8 100644
---- a/tools/testing/selftests/vm/khugepaged.c
-+++ b/tools/testing/selftests/vm/khugepaged.c
-@@ -77,6 +77,7 @@ struct khugepaged_settings {
- 	unsigned int scan_sleep_millisecs;
- 	unsigned int max_ptes_none;
- 	unsigned int max_ptes_swap;
-+	unsigned int max_ptes_shared;
- 	unsigned long pages_to_scan;
- };
- 
-@@ -276,6 +277,7 @@ static void write_settings(struct settings *settings)
- 			khugepaged->scan_sleep_millisecs);
- 	write_num("khugepaged/max_ptes_none", khugepaged->max_ptes_none);
- 	write_num("khugepaged/max_ptes_swap", khugepaged->max_ptes_swap);
-+	write_num("khugepaged/max_ptes_shared", khugepaged->max_ptes_shared);
- 	write_num("khugepaged/pages_to_scan", khugepaged->pages_to_scan);
- }
- 
-@@ -312,6 +314,7 @@ static void save_settings(void)
- 			read_num("khugepaged/scan_sleep_millisecs"),
- 		.max_ptes_none = read_num("khugepaged/max_ptes_none"),
- 		.max_ptes_swap = read_num("khugepaged/max_ptes_swap"),
-+		.max_ptes_shared = read_num("khugepaged/max_ptes_shared"),
- 		.pages_to_scan = read_num("khugepaged/pages_to_scan"),
- 	};
- 	success("OK");
-@@ -786,12 +789,90 @@ static void collapse_fork_compound(void)
- 			fail("Fail");
- 		fill_memory(p, 0, page_size);
- 
-+		write_num("khugepaged/max_ptes_shared", hpage_pmd_nr - 1);
- 		if (wait_for_scan("Collapse PTE table full of compound pages in child", p))
- 			fail("Timeout");
- 		else if (check_huge(p))
- 			success("OK");
- 		else
- 			fail("Fail");
-+		write_num("khugepaged/max_ptes_shared",
-+				default_settings.khugepaged.max_ptes_shared);
-+
-+		validate_memory(p, 0, hpage_pmd_size);
-+		munmap(p, hpage_pmd_size);
-+		exit(exit_status);
-+	}
-+
-+	wait(&wstatus);
-+	exit_status += WEXITSTATUS(wstatus);
-+
-+	printf("Check if parent still has huge page...");
-+	if (check_huge(p))
-+		success("OK");
-+	else
-+		fail("Fail");
-+	validate_memory(p, 0, hpage_pmd_size);
-+	munmap(p, hpage_pmd_size);
-+}
-+
-+static void collapse_max_ptes_shared()
-+{
-+	int max_ptes_shared = read_num("khugepaged/max_ptes_shared");
-+	int wstatus;
-+	void *p;
-+
-+	p = alloc_mapping();
-+
-+	printf("Allocate huge page...");
-+	madvise(p, hpage_pmd_size, MADV_HUGEPAGE);
-+	fill_memory(p, 0, hpage_pmd_size);
-+	if (check_huge(p))
-+		success("OK");
-+	else
-+		fail("Fail");
-+
-+	printf("Share huge page over fork()...");
-+	if (!fork()) {
-+		/* Do not touch settings on child exit */
-+		skip_settings_restore = true;
-+		exit_status = 0;
-+
-+		if (check_huge(p))
-+			success("OK");
-+		else
-+			fail("Fail");
-+
-+		printf("Trigger CoW in %d of %d...",
-+				hpage_pmd_nr - max_ptes_shared - 1, hpage_pmd_nr);
-+		fill_memory(p, 0, (hpage_pmd_nr - max_ptes_shared - 1) * page_size);
-+		if (!check_huge(p))
-+			success("OK");
-+		else
-+			fail("Fail");
-+
-+		if (wait_for_scan("Do not collapse with max_ptes_shared exeeded", p))
-+			fail("Timeout");
-+		else if (!check_huge(p))
-+			success("OK");
-+		else
-+			fail("Fail");
-+
-+		printf("Trigger CoW in %d of %d...",
-+				hpage_pmd_nr - max_ptes_shared, hpage_pmd_nr);
-+		fill_memory(p, 0, (hpage_pmd_nr - max_ptes_shared) * page_size);
-+		if (!check_huge(p))
-+			success("OK");
-+		else
-+			fail("Fail");
-+
-+
-+		if (wait_for_scan("Collapse with max_ptes_shared PTEs shared", p))
-+			fail("Timeout");
-+		else if (check_huge(p))
-+			success("OK");
-+		else
-+			fail("Fail");
- 
- 		validate_memory(p, 0, hpage_pmd_size);
- 		munmap(p, hpage_pmd_size);
-@@ -820,6 +901,7 @@ int main(void)
- 
- 	default_settings.khugepaged.max_ptes_none = hpage_pmd_nr - 1;
- 	default_settings.khugepaged.max_ptes_swap = hpage_pmd_nr / 8;
-+	default_settings.khugepaged.max_ptes_shared = hpage_pmd_nr / 2;
- 	default_settings.khugepaged.pages_to_scan = hpage_pmd_nr * 8;
- 
- 	save_settings();
-@@ -836,6 +918,7 @@ int main(void)
- 	collapse_full_of_compound();
- 	collapse_fork();
- 	collapse_fork_compound();
-+	collapse_max_ptes_shared();
- 
- 	restore_settings(0);
- }
+Note: This series is based on Linux-5.6-rc6 (commit: fb33c6510d55)
+
+
+Alim Akhtar (5):
+  dt-bindings: phy: Document Samsung UFS PHY bindings
+  phy: samsung-ufs: add UFS PHY driver for samsung SoC
+  Documentation: devicetree: ufs: Add DT bindings for exynos UFS host
+    controller
+  scsi: ufs-exynos: add UFS host support for Exynos SoCs
+  arm64: dts: Add node for ufs exynos7
+
+ .../bindings/phy/samsung,ufs-phy.yaml         |   62 +
+ .../devicetree/bindings/ufs/ufs-exynos.txt    |  104 ++
+ .../boot/dts/exynos/exynos7-espresso.dts      |   16 +
+ arch/arm64/boot/dts/exynos/exynos7.dtsi       |   44 +-
+ drivers/phy/samsung/Kconfig                   |    9 +
+ drivers/phy/samsung/Makefile                  |    1 +
+ drivers/phy/samsung/phy-exynos7-ufs.h         |   85 +
+ drivers/phy/samsung/phy-samsung-ufs.c         |  311 ++++
+ drivers/phy/samsung/phy-samsung-ufs.h         |  100 ++
+ drivers/scsi/ufs/Kconfig                      |   12 +
+ drivers/scsi/ufs/Makefile                     |    1 +
+ drivers/scsi/ufs/ufs-exynos.c                 | 1399 +++++++++++++++++
+ drivers/scsi/ufs/ufs-exynos.h                 |  268 ++++
+ drivers/scsi/ufs/unipro.h                     |   41 +
+ include/linux/phy/phy-samsung-ufs.h           |   70 +
+ 15 files changed, 2521 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+ create mode 100644 Documentation/devicetree/bindings/ufs/ufs-exynos.txt
+ create mode 100644 drivers/phy/samsung/phy-exynos7-ufs.h
+ create mode 100644 drivers/phy/samsung/phy-samsung-ufs.c
+ create mode 100644 drivers/phy/samsung/phy-samsung-ufs.h
+ create mode 100644 drivers/scsi/ufs/ufs-exynos.c
+ create mode 100644 drivers/scsi/ufs/ufs-exynos.h
+ create mode 100644 include/linux/phy/phy-samsung-ufs.h
+
 -- 
-2.26.0
+2.17.1
 
