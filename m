@@ -2,172 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EEC919552B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:26:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9DD19553C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:28:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbgC0KZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 06:25:57 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49209 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbgC0KZ5 (ORCPT
+        id S1727185AbgC0K2p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 06:28:45 -0400
+Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:37760 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726002AbgC0K2p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 06:25:57 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200327102554euoutp016d26aef51ac6f85c42ed5bc04fe0a034~AIkZ1zQjP2940029400euoutp01X
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 10:25:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200327102554euoutp016d26aef51ac6f85c42ed5bc04fe0a034~AIkZ1zQjP2940029400euoutp01X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585304754;
-        bh=Q7T4AyrE0AJN/v8GqKhjMNo1UHbMdedXuiUU90yqFWY=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Ehm/OV7hCtoXv38UlNkzEAwS2s56G6KUhp0fC+fFxIY4G8R+DsSM1m3627LGQuF6f
-         inRXxG24N1V+vkZOteo/C9Rgd/4WBUkz+f0GcqedpLL8rrAqOd3+wWQ+vIsJdMxzo9
-         AXT6wTW1XmjHyIiEv/xeBnQRSpJOoEtM7P5vBxn8=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200327102554eucas1p1001d761387dacfcd0e19f761872b0e60~AIkZkNxw81375613756eucas1p1E;
-        Fri, 27 Mar 2020 10:25:54 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 78.3A.61286.2B4DD7E5; Fri, 27
-        Mar 2020 10:25:54 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200327102554eucas1p1f848633a39f8e158472506b84877f98c~AIkZN-Tsz1352813528eucas1p1D;
-        Fri, 27 Mar 2020 10:25:54 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200327102554eusmtrp1a5e09948fd42ecfa61afc7f3b3726a35~AIkZNTw8T1114511145eusmtrp1_;
-        Fri, 27 Mar 2020 10:25:54 +0000 (GMT)
-X-AuditID: cbfec7f2-ef1ff7000001ef66-66-5e7dd4b24fbf
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 22.4D.07950.2B4DD7E5; Fri, 27
-        Mar 2020 10:25:54 +0000 (GMT)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200327102553eusmtip26fe13a9353677c4a19d04ae8aa4aebe4~AIkYlqzJb2542525425eusmtip2E;
-        Fri, 27 Mar 2020 10:25:53 +0000 (GMT)
-Subject: Re: [RFC PATCH v1] driver core: Set fw_devlink to "permissive"
- behavior by default
-To:     Saravana Kannan <saravanak@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, kernel-team@android.com,
-        linux-kernel@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <bd8b42d3-a35a-cc8e-0d06-2899416c2996@samsung.com>
-Date:   Fri, 27 Mar 2020 11:25:48 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <20200321210305.28937-1-saravanak@google.com>
-Content-Transfer-Encoding: 8bit
+        Fri, 27 Mar 2020 06:28:45 -0400
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 04795425BD;
+        Fri, 27 Mar 2020 10:28:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1585304924; bh=Dr43viJs/Cyd6J2wzr4se58hi3UXf6AQDCgErx1lLzc=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=OiHCkO3Nd6Br7/pu6rkG8S1yqo1ylvSC2hJC0YyVfvcYBx6mobkTQLOjms8SKA0mq
+         73YZ9wYKdQdqOehxpY9SrOHFZYZXrCS5uwca0gyWq4lY6nw17cYwyUI6E7ZAqik0G4
+         UsdCkff6VO1x3P8mO+L9EMWqnVvzkIR5vrDlxM0LsyQEctZctmT3OiYaftK9VXUUIJ
+         uEEodQCWZK6lqNAjH0dF7ybmDTU85bdBH+a4xqF3ueF9fLI2Gk15UHxNbhpIIorZmO
+         EXY+NkIuR/mhNT0cYwQ/UEaM2uQ91u8Swd8MTd7SymV6mkM6aPu2L76aZ+hwmrX8pQ
+         m5/Mmbjt6VZ2g==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 7249DA0079;
+        Fri, 27 Mar 2020 10:28:43 +0000 (UTC)
+Received: from us01hybrid1.internal.synopsys.com (10.200.27.51) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 27 Mar 2020 03:28:11 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (10.202.3.67) by
+ mrs.synopsys.com (10.200.27.51) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 27 Mar 2020 03:28:10 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=l1IFGphLl2LMD34rcd2wyHpdsdcFJG4gBvNesP8491VSVB8X2q2HRJHe5ojHLWaV4a85LaEWPDfINBU5/USB+S4/aP3UvoRXo7LmsJzDJvzQb4VpGrPOm8DY/7w4Z5nXQeOl7bhdIJQYnnYskm7QNlLT+Swyb8Xl/ymiTC26R0lSdv+djdjV7ypCtGupih8JirF+YpsVe6sOClaAAU9KwsoiTWXlZyoDAiSR4yM8YdMOXr9/Zb2pjvFJ+pun/hckA5GvVv0bHQk5pFQxjGJ28KK0SnAeYQqfIxRD914PLRHTQ2UWFWKWHq8tl+zgK/YU4ydqkG3/f7cYoUeRukLHjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Dr43viJs/Cyd6J2wzr4se58hi3UXf6AQDCgErx1lLzc=;
+ b=Ymn+cTPk9cw0R2CCQWR9MhMeGB5WeTcxZm4rOqerXA20EeD3RID1PMiPAgwvqaMo74donuX/G/1uPrBMWu+Fmj/lc07gY6Ut9IXDY1jE8agQqLeYdAzMsGs97ciDQ3Pi53Kjr6Kl/q+xq1Osm8iylwLDDowY0zsN+wgcLOejUP0t8qrkBAVM4a14F2BDLHdvWVI0ZWTBLxQxu6GEes0J5TGZKN5eBBOe/RuEF1sfn/kUo4f+E8t1JouTyTCtfrXvLoYSWcPSOaVpisHXMZfMzo2sSH2/lG0GLT2u0uIZ5vtdcs2w5XDjnLLJte/4HBhO3lk1n2Agf+LWh2b6Zm9WKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Dr43viJs/Cyd6J2wzr4se58hi3UXf6AQDCgErx1lLzc=;
+ b=nm6qxOJ6xIt74J+ZNXdEyCv5cEoR0XHSIa4q+hcarewZK9cY+QEJY9yWCXjxv49e/x85HaDK5FL0KKBX2gk2LRdgMT/kHJs/KnAzX8p+qFthNMowmA0p7jh74wDvyQka48X78wigyeqF0apTVPBoD+PqCubhrt737NujbbT/JFY=
+Received: from DM6PR12MB4251.namprd12.prod.outlook.com (2603:10b6:5:21e::12)
+ by DM6PR12MB4434.namprd12.prod.outlook.com (2603:10b6:5:2ad::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.20; Fri, 27 Mar
+ 2020 10:28:09 +0000
+Received: from DM6PR12MB4251.namprd12.prod.outlook.com
+ ([fe80::65a9:e78c:7f63:81ab]) by DM6PR12MB4251.namprd12.prod.outlook.com
+ ([fe80::65a9:e78c:7f63:81ab%6]) with mapi id 15.20.2835.023; Fri, 27 Mar 2020
+ 10:28:09 +0000
+From:   Tejas Joglekar <Tejas.Joglekar@synopsys.com>
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Tejas Joglekar <Tejas.Joglekar@synopsys.com>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        John Youn <John.Youn@synopsys.com>
+Subject: Re: [RESENDING RFC PATCH 1/4] dt-bindings: usb: Add
+ snps,consolidate-sgl & consolidate-sgl
+Thread-Topic: [RESENDING RFC PATCH 1/4] dt-bindings: usb: Add
+ snps,consolidate-sgl & consolidate-sgl
+Thread-Index: AQHWBB3U2hXO07jC8U6J6+lTktLsnqhcOBAAgAADaICAAAEdAA==
+Date:   Fri, 27 Mar 2020 10:28:09 +0000
+Message-ID: <53f27031-50bb-8fde-3c53-30307aec6982@synopsys.com>
+References: <cover.1585297723.git.joglekar@synopsys.com>
+ <8a9ca8e08d7c4957789a209c77589f1aa4bd2f06.1585297723.git.joglekar@synopsys.com>
+ <20200327095447.GA1698181@kroah.com>
+ <11a058bc-a947-a763-680f-a11fd454925a@synopsys.com>
+ <20200327102409.GB1700570@kroah.com>
+In-Reply-To: <20200327102409.GB1700570@kroah.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMKsWRmVeSWpSXmKPExsWy7djP87qbrtTGGSy9JWsx/8g5VouZb/6z
-        WTQvXs9msWO7iMXlXXPYLOZ+mcps0br3CLtF16G/bA4cHtt2b2P12DnrLrvHgk2lHptWdbJ5
-        7J+7ht3j8ya5ALYoLpuU1JzMstQifbsErox1ZzezFrwSqtjw+Rh7A+ME/i5GTg4JAROJPztb
-        mboYuTiEBFYwSszsPsUC4XxhlDiy9wA7hPOZUaL/SDsrTMujo40sILaQwHJGiVs/7SGK3jNK
-        rJi4HaxIWCBWYtO+o2DdIgJtjBIP9/0Em8sssIhR4tmSrewgVWwChhJdb7vYQGxeATuJFc8b
-        mUFsFgFViU2fVoJNEhWIkbh4uJ8VokZQ4uTMJ2CrOQWsJE4v/QlWzywgL9G8dTaULS5x68l8
-        JohT97FL3L0TBGG7SCx418ICYQtLvDq+hR3ClpE4PbkH7DgJgWagS8+tZYdwehglLjfNYISo
-        spa4c+4X0KUcQBs0Jdbv0gcxJQQcJb7u14Yw+SRuvBWEOIFPYtK26cwQYV6JjjYhiBlqErOO
-        r4PbevDCJeYJjEqzkDw2C8kzs5A8Mwth7QJGllWM4qmlxbnpqcWGeanlesWJucWleel6yfm5
-        mxiBSen0v+OfdjB+vZR0iFGAg1GJh1ejpSZOiDWxrLgy9xCjBAezkgjv00igEG9KYmVValF+
-        fFFpTmrxIUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJMHJxSDYxJBh+tQqSdivVmMh47p365
-        /ZvbQ+HXAexxGlu3la72m6Bc03Bk11HvT68CNptmmy8Q+bJB1mzS0s1Zp5aoOu18nyHWL8K4
-        9Xr2tO/ygdzBLyOVNiyZ6GvcvGvNqjUL3mqe76rY3GbKkbD1lH5c8W2biJ5lk27MmTh3Gr9w
-        wVTRuQd89zD8Er6lxFKckWioxVxUnAgAlwLcAUYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsVy+t/xe7qbrtTGGUydxGIx/8g5VouZb/6z
-        WTQvXs9msWO7iMXlXXPYLOZ+mcps0br3CLtF16G/bA4cHtt2b2P12DnrLrvHgk2lHptWdbJ5
-        7J+7ht3j8ya5ALYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzM
-        stQifbsEvYx1ZzezFrwSqtjw+Rh7A+ME/i5GTg4JAROJR0cbWboYuTiEBJYySrx9/owFIiEj
-        cXJaAyuELSzx51oXG0TRW0aJ/o3rGEESwgKxEpv2HWUHSYgIdDBKfLt6HayKWWARo8Sse5PA
-        qoQELCVmz+piBrHZBAwlut6CjOLk4BWwk1jxvBEsziKgKrHp00qwdaICMRI/93SxQNQISpyc
-        +QTM5hSwkji99CdYPbOAmcS8zQ+hbHmJ5q2zoWxxiVtP5jNNYBSahaR9FpKWWUhaZiFpWcDI
-        sopRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwErcd+7llB2PXu+BDjAIcjEo8vBotNXFCrIll
-        xZW5hxglOJiVRHifRgKFeFMSK6tSi/Lji0pzUosPMZoCPTeRWUo0OR+YJPJK4g1NDc0tLA3N
-        jc2NzSyUxHk7BA7GCAmkJ5akZqemFqQWwfQxcXBKNTD2F7LtPrnZZfpvxddxZ/9IW8w5MTFi
-        3rJ26Rr5Fz593KrLZiy8LeSepH3Q63XUsifTJC3YS2/a91bLBF9eVlhq/+3Htw+X3n1f9yur
-        fNfZZY9eliQysOytDv5nc6XHefI044T3YiEPE2N8y350Lnj1yuXjw0nfzO7OdjwZXWzTNOfv
-        yjy9g6d1lViKMxINtZiLihMBlVPOA9oCAAA=
-X-CMS-MailID: 20200327102554eucas1p1f848633a39f8e158472506b84877f98c
-X-Msg-Generator: CA
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=joglekar@synopsys.com; 
+x-originating-ip: [198.182.52.26]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 04684ee1-f649-424c-6dec-08d7d2398b93
+x-ms-traffictypediagnostic: DM6PR12MB4434:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR12MB4434C6B61C85406F1DF37C82A4CC0@DM6PR12MB4434.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0355F3A3AE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(366004)(39860400002)(136003)(316002)(36756003)(81156014)(186003)(8676002)(31696002)(86362001)(107886003)(6512007)(81166006)(6486002)(54906003)(76116006)(91956017)(2906002)(31686004)(478600001)(4326008)(2616005)(66946007)(64756008)(8936002)(53546011)(6506007)(5660300002)(26005)(66476007)(66556008)(66446008)(110136005)(71200400001)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR12MB4434;H:DM6PR12MB4251.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Ed0j9+Vtc5LDQEkn70zZqa5oCrg4/J665QsWoUOu3N4Y5wKdk7eh2EvPG6IrX6pumoHILfTvBR9tLvkH0y+wWWvAsNm4kF8tbkK1t1KHx5CGI+FHT365U8KJUCMIn4lFfWEVQXNj2hAiqozLiwFaaEwauMUXTlsXvf0G5fHT2qnsrkVOwhXGmjUebhgKZLebNbcSMSyLfyjNYHgYQIg642uIwbnwSoj0H5Ke9k8JRhCiACpUSZficjbAAPWDLsYOugIJkpx0W2fpPEDdFa2aziYo1wZnpqPbmxSs6n5D7Fk+9cvLmnWX/VsZ1HlwZWM++TWUoYy7vheEaR3mtZzBYygOlWtrPZ49xds/+fhJ+slDvXvCSG9f1JXfMeabtzQ6Cw6aJDPvbWa7Sn7gIYqzfomMk+23S9FGhJljrbieEKVlmD63yq3ejx6mLBn1SGyp5vO8Fx88/VgbEa/IsuGzJftqch/8409hy71TSqFiqmj72TFFB5ijjf4rlVB8Hpxr
+x-ms-exchange-antispam-messagedata: fUkdcS4dRFAubVA/MnvHqXhk9h5Q8l0nz1xdD+iQZfy83C4xlLQGm954pblEdIG4+nqM8FT9S18ArbKRpDyyoafYASyHGq91dfZzYg9dp0mu012s2WrulJVHkEchqkVy2kcfwc582JVzLkYja72fWA==
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200327102554eucas1p1f848633a39f8e158472506b84877f98c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200327102554eucas1p1f848633a39f8e158472506b84877f98c
-References: <20200321210305.28937-1-saravanak@google.com>
-        <CGME20200327102554eucas1p1f848633a39f8e158472506b84877f98c@eucas1p1.samsung.com>
+Content-ID: <E6CCB0FB71AFED4A9C78D87417695328@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04684ee1-f649-424c-6dec-08d7d2398b93
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2020 10:28:09.1195
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9sHPidsnbXtv4Wq8AFBwtFsqEf5XrED8FDO3eVww3Uv4s5N8qpIhIPx/vB2QN9fFEclYuQug+JEhEX0uPJBBaA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4434
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 2020-03-21 22:03, Saravana Kannan wrote:
-> Set fw_devlink to "permissive" behavior by default so that device links
-> are automatically created (with DL_FLAG_SYNC_STATE_ONLY) by scanning the
-> firmware.
->
-> This ensures suppliers get their sync_state() calls only after all their
-> consumers have probed successfully. Without this, suppliers will get
-> their sync_state() calls at late_initcall_sync() even if their consuer
->
-> Ideally, we'd want to set fw_devlink to "on" or "rpm" by default. But
-> that needs more testing as it's known to break some corner case
-> drivers/platforms.
->
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-
-This patch has just landed in linux-next 20200326. Sadly it breaks 
-booting of the Raspberry Pi3b and Pi4 boards, either in 32bit or 64bit 
-mode. There is no warning nor panic message, just a silent freeze. The 
-last message shown on the earlycon is:
-
-[    0.893217] Serial: 8250/16550 driver, 1 ports, IRQ sharing enabled
-
-> ---
->
-> I think it's time to soak test this and see if anything fails or if
-> anyone complains. Definitely not ready for 5.6. But pulling it in for
-> 5.7 and having it go through all the rc testing would be helpful.
->
-> I'm sure there'll be reports where some DT properties are ambiguously
-> names and is breaking downstream or even some upstream platform. For
-> example, a DT property like "nr-gpios" would have a dmesg log about
-> parsing error because it looks like a valid "-gpios" DT binding. It'll
-> be good to catch those case and fix them.
->
-> Also, is there no way to look up current value of early_params? It'd be
-> nice if there was a way to do that.
->
-> -Saravana
->
->   drivers/base/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 5e3cc1651c78..9fabf9749a06 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -2345,7 +2345,7 @@ static int device_private_init(struct device *dev)
->   	return 0;
->   }
->   
-> -static u32 fw_devlink_flags;
-> +static u32 fw_devlink_flags = DL_FLAG_SYNC_STATE_ONLY;
->   static int __init fw_devlink_setup(char *arg)
->   {
->   	if (!arg)
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+T24gMy8yNy8yMDIwIDM6NTQgUE0sIEdyZWcgS0ggd3JvdGU6DQo+IE9uIEZyaSwgTWFyIDI3LCAy
+MDIwIGF0IDEwOjExOjU5QU0gKzAwMDAsIFRlamFzIEpvZ2xla2FyIHdyb3RlOg0KPj4gSGksDQo+
+PiBPbiAzLzI3LzIwMjAgMzoyNCBQTSwgR3JlZyBLSCB3cm90ZToNCj4+PiBPbiBGcmksIE1hciAy
+NywgMjAyMCBhdCAwMzoxMTo1NlBNICswNTMwLCBUZWphcyBKb2dsZWthciB3cm90ZToNCj4+Pj4g
+VGhpcyBjb21taXQgYWRkcyB0aGUgZG9jdW1lbnRhdGlvbiBmb3IgY29uc29saWRhdGUtc2dsLCBh
+bmQNCj4+Pj4gc25wcyxjb25zb2xpZGF0ZS1zZ2wgcHJvcGVydHkuIFRoZXNlIHdoZW4gc2V0IGVu
+YWJsZXMgdGhlIHF1aXJrIGZvcg0KPj4+PiBYSENJIGRyaXZlciBmb3IgY29uc29saWRhdGlvbiBv
+ZiBzZyBsaXN0IGludG8gYSB0ZW1wb3JhcnkgYnVmZmVyIHdoZW4gc21hbGwNCj4+Pj4gYnVmZmVy
+IHNpemVzIGFyZSBzY2F0dGVyZWQgb3ZlciB0aGUgc2cgbGlzdCBub3QgbWFraW5nIHVwIHRvIE1Q
+UyBvciB0b3RhbA0KPj4+PiB0cmFuc2ZlciBzaXplIHdpdGhpbiBUUkIgY2FjaGUgc2l6ZSB3aXRo
+IFN5bm9wc3lzIHhIQy4NCj4+Pj4NCj4+Pj4gU2lnbmVkLW9mZi1ieTogVGVqYXMgSm9nbGVrYXIg
+PGpvZ2xla2FyQHN5bm9wc3lzLmNvbT4NCj4+Pj4gLS0tDQo+Pj4+ICBEb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvdXNiL2R3YzMudHh0ICAgICB8IDMgKysrDQo+Pj4+ICBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL3VzYi14aGNpLnR4dCB8IDMgKysrDQo+Pj4+
+ICAyIGZpbGVzIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKQ0KPj4+Pg0KPj4+PiBkaWZmIC0tZ2l0
+IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3VzYi9kd2MzLnR4dCBiL0RvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy91c2IvZHdjMy50eHQNCj4+Pj4gaW5kZXggOTk0
+NmZmOWJhNzM1Li4yOTJkMWY3OTY5ZTQgMTAwNjQ0DQo+Pj4+IC0tLSBhL0RvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy91c2IvZHdjMy50eHQNCj4+Pj4gKysrIGIvRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL3VzYi9kd2MzLnR4dA0KPj4+PiBAQCAtMTA0LDYgKzEwNCw5
+IEBAIE9wdGlvbmFsIHByb3BlcnRpZXM6DQo+Pj4+ICAJCQl0aGlzIGFuZCB0eC10aHItbnVtLXBr
+dC1wcmQgdG8gYSB2YWxpZCwgbm9uLXplcm8gdmFsdWUNCj4+Pj4gIAkJCTEtMTYgKERXQ191c2Iz
+MSBwcm9ncmFtbWluZyBndWlkZSBzZWN0aW9uIDEuMi4zKSB0bw0KPj4+PiAgCQkJZW5hYmxlIHBl
+cmlvZGljIEVTUyBUWCB0aHJlc2hvbGQuDQo+Pj4+ICsgLSBzbnBzLGNvbnNvbGlkYXRlLXNnbDog
+ZW5hYmxlIHNnIGxpc3QgY29uc29saWRhdGlvbiAtIGhvc3QgbW9kZSBvbmx5LiBTZXQgdG8gdXNl
+DQo+Pj4+ICsJCQlTRyBidWZmZXJzIG9mIGF0IGxlYXN0IE1QUyBzaXplIGJ5IGNvbnNvbGlkYXRp
+bmcgc21hbGxlciBTRw0KPj4+PiArCQkJYnVmZmVycyBsaXN0IGludG8gYSBzaW5nbGUgYnVmZmVy
+Lg0KPj4+PiAgDQo+Pj4+ICAgLSA8REVQUkVDQVRFRD4gdHgtZmlmby1yZXNpemU6IGRldGVybWlu
+ZXMgaWYgdGhlIEZJRk8gKmhhcyogdG8gYmUgcmVhbGxvY2F0ZWQuDQo+Pj4+ICAgLSBzbnBzLGlu
+Y3ItYnVyc3QtdHlwZS1hZGp1c3RtZW50OiBWYWx1ZSBmb3IgSU5DUiBidXJzdCB0eXBlIG9mIEdT
+QlVTQ0ZHMA0KPj4+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL3VzYi91c2IteGhjaS50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+dXNiL3VzYi14aGNpLnR4dA0KPj4+PiBpbmRleCAzZjM3ODk1MWQ2MjQuLmE5MGQ4NTM1NTdlZSAx
+MDA2NDQNCj4+Pj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3VzYi91
+c2IteGhjaS50eHQNCj4+Pj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L3VzYi91c2IteGhjaS50eHQNCj4+Pj4gQEAgLTQzLDYgKzQzLDkgQEAgT3B0aW9uYWwgcHJvcGVy
+dGllczoNCj4+Pj4gICAgLSBxdWlyay1icm9rZW4tcG9ydC1wZWQ6IHNldCBpZiB0aGUgY29udHJv
+bGxlciBoYXMgYnJva2VuIHBvcnQgZGlzYWJsZSBtZWNoYW5pc20NCj4+Pj4gICAgLSBpbW9kLWlu
+dGVydmFsLW5zOiBkZWZhdWx0IGludGVycnVwdCBtb2RlcmF0aW9uIGludGVydmFsIGlzIDUwMDBu
+cw0KPj4+PiAgICAtIHBoeXMgOiBzZWUgdXNiLWhjZC55YW1sIGluIHRoZSBjdXJyZW50IGRpcmVj
+dG9yeQ0KPj4+PiArICAtIGNvbnNvbGlkYXRlLXNnbDogaW5kaWNhdGUgaWYgeW91IG5lZWQgdG8g
+Y29uc29saWRhdGUgc2cgbGlzdCBpbnRvIGENCj4+Pj4gKyAgICB0ZW1wb3JhcnkgYnVmZmVyIHdo
+ZW4gc21hbGwgU0cgYnVmZmVyIHNpemVzIGRvZXMgbm90IG1ha2UgdXB0byBNUFMNCj4+Pj4gKyAg
+ICBzaXplIG9yIHRvdGFsIHRyYW5zZmVyIHNpemUgYWNyb3NzIHRoZSBUUkIgY2FjaGUgc2l6ZS4N
+Cj4+Pg0KPj4+IFNob3VsZG4ndCB0aGlzIHJlZmVyIHRvIHRoZSBmYWN0IHRoYXQgdGhlIGhhcmR3
+YXJlIGlzIGJyb2tlbj8gIE90aGVyd2lzZQ0KPj4+IHdoeSB3b3VsZCBhbnlvbmUga25vdyBpZiB0
+aGV5IHNob3VsZCwgb3Igc2hvdWxkIG5vdCwgZW5hYmxlIHRoaXMgb3B0aW9uPw0KPj4+DQo+PiBX
+ZSBoYXZlIG5vdCBzZWVuIGlzc3VlIHdpdGggTGludXggZW52aXJvbm1lbnQgZm9yIG5vdy4gQnV0
+IHdpdGggb3RoZXIgT1Mgd2l0aA0KPj4gU0cgbGlzdCB3aXRoIHZlcnkgc21hbGwgYnVmZmVyIHNp
+emVzIHRoZSB4SEMgY29udHJvbGxlciBoYW5nIHdhcyBzZWVuLiBTbyANCj4+IGN1cnJlbnRseSBp
+bnRyb2R1Y2luZyB0aGUgYmluZGluZyBhcyBvcHRpb25hbCBvbmUuIE9uZSBjb3VsZCBlbmFibGUg
+dGhpcyANCj4+IG9wdGlvbiB3aGVuIHhIQyBoYWx0IGhhcHBlbnMgZHVlIHRvIHNtYWxsIFNHIGxp
+c3Qgc2l6ZXMuICANCj4gDQo+IFdoYXQgSSBtZWFuIGlzIHRoaXMgc2hvdWxkIGJlIHNvbWV0aGlu
+ZyBsaWtlLA0KPiAicXVpcmstYnJva2VuLXNnLWxpc3QtaGFuZGxlciIgb3Igc29tZXRoaW5nIGxp
+a2UgdGhhdC4gIE90aGVyd2lzZSBob3cNCj4gZG9lcyBhbnlvbmUga25vdyBpZiB0aGlzIHJlYWxs
+eSBpcyBuZWVkZWQgb3Igbm90LiAgUmVhZGluZyB0aGlzIHdvdWxkDQo+IHNlZW0gbGlrZSBldmVy
+eW9uZSB3b3VsZCBsaWtlIHRvIGRvIHRoaXMsIGFzIGNvbnNvbGlkYXRpbmcgbGlua3MNCj4gc291
+bmRzIGxpa2UgYSBnb29kIG9wdGltaXphdGlvbiwgd2hlbiBpbnN0ZWFkIHRoaXMgcmVhbGx5IGNh
+dXNlIG1vcmUNCj4gbWVtb3J5IGFsbG9jYXRpb25zLCBtYWtpbmcgdGhpcyBwb3NzaWJseSB3b3Jz
+ZSBwZXJmb3JtYW5jZS4NCj4gDQpTdXJlLCB1bmRlcnN0b29kLiBJIHdpbGwgcmVuYW1lIHRoaXMg
+ZW50cnkuDQo+IHRoYW5rcywNCj4gDQo+IGdyZWcgay1oDQo+IA0KDQpUaGFua3MgJiBSZWdhcmRz
+LA0KIFRlamFzIEpvZ2xla2FyDQo=
