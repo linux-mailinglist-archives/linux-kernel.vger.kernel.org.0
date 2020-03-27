@@ -2,111 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE461951C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 08:12:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44D921951D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 08:19:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbgC0HM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 03:12:28 -0400
-Received: from ushosting.nmnhosting.com ([66.55.73.32]:35608 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbgC0HMW (ORCPT
+        id S1726168AbgC0HTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 03:19:20 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36351 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbgC0HTU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 03:12:22 -0400
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id EB93C2DC682E;
-        Fri, 27 Mar 2020 18:12:20 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1585293141;
-        bh=vpE3Z7AWSr9my143HyVtO4yHV91rl8rmhtd6A3TKrQs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ToWrV+3ZvZNUE2ymKS5AQKjdsoM8VnN0qS7Mcg9YpzMua6UKfnzZyjTa2CjCdkbAx
-         KA4DnOTootSPbswhgz91nw0o0biwbDxGGtU0moHxcS4X33+W5cUSY031Xl/IrjDcZd
-         k3akP1KgKpgAFMucLlxQ3QSayVxS+wFdH5r/CbdTgtEm2Lm0kz0rlKGVn2QnbTTmUY
-         UkMI0q1W76+Cvy4N74Irk+FktDx/FAGYFcmEmjYiX7Nqu9M/8R0gPLHdVNTj3r5m56
-         z8ExH4vvUt4YZDpKoUykg9YeTGV2GWmofs8LL315gf708HqmzIocIMebbvWxygke/J
-         32agGl9J6xWPkVtSWxa+am6KzeJxoO0/g4PK3Ng2KA76AixIloAhpOJc7kNPGwysHV
-         T7Z+WgI/ICr/00Hx0uOy+52nbSf4jEphgh3ufk7wZnG00NaTJJ565EWv8n93D9nR/C
-         8gE9SepGUhdH3IliID4vYmthn4YIuB85FAXfMAQ6NpMPmma20AplulMTz4Potr3Qw/
-         krKKVXInJ8PzHdWHNiOFeLBHEa011pvUyKeZs2wdc6f8SoFaBDJl2Fl1zKiU3R5MjB
-         e4zLtL+yqH7gkqhY5wwcPBO/0Knua2Y3YlppmvVOY4DDN5PsenvhIhiww1FHkOXtoP
-         NiMUvB+XldjBvNPEI3v1PTTo=
-Received: from localhost.lan ([10.0.1.179])
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTP id 02R7C4Ak045934;
-        Fri, 27 Mar 2020 18:12:16 +1100 (AEDT)
-        (envelope-from alastair@d-silva.org)
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     alastair@d-silva.org
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Subject: [PATCH v4 11/25] powerpc: Enable the OpenCAPI Persistent Memory driver for powernv_defconfig
-Date:   Fri, 27 Mar 2020 18:11:48 +1100
-Message-Id: <20200327071202.2159885-12-alastair@d-silva.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200327071202.2159885-1-alastair@d-silva.org>
-References: <20200327071202.2159885-1-alastair@d-silva.org>
+        Fri, 27 Mar 2020 03:19:20 -0400
+Received: by mail-lf1-f67.google.com with SMTP id s1so6996132lfd.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 00:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8yD3/mZAPx4NyJAYvyAM42UOXEcrRRB02HlarcvJcpY=;
+        b=cdU3jT5oe/H7QKTBQOhKMp9drgTOsgZe5NhZH3AgSZm3iIiqG7Mpdb7eiSi/aoXspU
+         adDnKmgjnNQOPOlbHzzO67tuGNnmIIXVdvnZjQLsWvhaxncdd/E9LNTu0B8xituEt11S
+         im4peLookDERzMUR0/fJILym8NflyDU2H23CU1F2sEboZO0GzyBnSX7Sw58NmW1eoFRz
+         QmjqAIIJ9eQ8gHc/xFj9sQsbaUodlZeNkmUP/NtCyr8IOePkWyk2t1k8IYPAE5lUA9Un
+         TRQsPtLWtJUdSDAhud+rUIempEHW9rwXfg91DpI/kpwYm00hGRzm7ZMusZ+CVcF3VjUC
+         zW8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8yD3/mZAPx4NyJAYvyAM42UOXEcrRRB02HlarcvJcpY=;
+        b=OKtF3v9Ty5h0+o+c84WXsqhgh07t8C3N0VkbimX+MtP0srNDR/vaIXTP2kRIlC4hJ/
+         sN5uviEj/Er4MpAjitFgXOnkbUaJa6MnUBv9qL2SzeiXyyxidxj5/cZcvA38KPW6iqZc
+         sa4z18g2GjKACtMZMWzedEnoG5WeRpbHsDQjyBDVvMvQrprHdNijheVu8YR7FfLbKMKm
+         0oPg+CeCeSmctYs1H5GmPmlI4mXiZ4bpbDjPUfnLwKgkeDSGBteacRaTrDjKMRDWqCvD
+         1p57INgicNSvB93mPd0Ne2jqLcsypV0DophapAQNkn+IwMT5QpzYdX3L0rI3iHmlN3xd
+         SOBw==
+X-Gm-Message-State: ANhLgQ2CTRa4OS6Mfl6CBK6lzeVt9umYZzIDazzQNSf51bk2on/b6BcR
+        E8g13mJli1zUXN6Z5WQf3NHGNQl4t+p9saq9c5T9UQ==
+X-Google-Smtp-Source: ADFU+vsVleHzR2OlQgFnip8JwdTpgtyxbozUTC6A2rWBZO45SHy2RsvKY2E8cSZkDmSqmkfRqCMidvfUsGCh9kDJWeQ=
+X-Received: by 2002:ac2:53b2:: with SMTP id j18mr8178328lfh.206.1585293557144;
+ Fri, 27 Mar 2020 00:19:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Fri, 27 Mar 2020 18:12:17 +1100 (AEDT)
+References: <20200326182742.487026-1-enric.balletbo@collabora.com>
+In-Reply-To: <20200326182742.487026-1-enric.balletbo@collabora.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Fri, 27 Mar 2020 08:19:06 +0100
+Message-ID: <CADYN=9Kd-eWAFaN-ttX+Aq5HyH2AiUfqeCRC1mMTZM93DBshsA@mail.gmail.com>
+Subject: Re: [PATCH] soc: mediatek: mtk-mmsys: Export ddp_dis/connect symbols
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        drinkcat@chromium.org, hsinyi@chromium.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables the OpenCAPI Persistent Memory driver, as well
-as DAX support, for the 'powernv' defconfig.
+On Thu, 26 Mar 2020 at 19:27, Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> When building on arm64 with allmodconfig or CONFIG_DRM_MEDIATEK=m we see
+> the following error.
+>
+>   ERROR: modpost: "mtk_mmsys_ddp_disconnect"
+>   [drivers/gpu/drm/mediatek/mediatek-drm.ko] undefined!
+>   ERROR: modpost: "mtk_mmsys_ddp_connect"
+>   [drivers/gpu/drm/mediatek/mediatek-drm.ko] undefined!
+>
+> Export mtk_mmsys_ddp_connect and mtk_mmsys_ddp_disconnect symbols to be
+> able to be used for other modules.
+>
+> Fixes: 396c3fccaf03 ("soc / drm: mediatek: Move routing control to mmsys device")
+> Reported-by: Anders Roxell <anders.roxell@linaro.org>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-DAX is not a strict requirement for the functioning of the driver, but it
-is likely that a user will want to create a DAX device on top of their
-persistent memory device.
+Tested-by: Anders Roxell <anders.roxell@linaro.org>
 
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
----
- arch/powerpc/configs/powernv_defconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+Cheers,
+Anders
 
-diff --git a/arch/powerpc/configs/powernv_defconfig b/arch/powerpc/configs/powernv_defconfig
-index 71749377d164..921d77bbd3d2 100644
---- a/arch/powerpc/configs/powernv_defconfig
-+++ b/arch/powerpc/configs/powernv_defconfig
-@@ -348,3 +348,8 @@ CONFIG_KVM_BOOK3S_64=m
- CONFIG_KVM_BOOK3S_64_HV=m
- CONFIG_VHOST_NET=m
- CONFIG_PRINTK_TIME=y
-+CONFIG_ZONE_DEVICE=y
-+CONFIG_OCXL_PMEM=m
-+CONFIG_DEV_DAX=m
-+CONFIG_DEV_DAX_PMEM=m
-+CONFIG_FS_DAX=y
--- 
-2.24.1
-
+> ---
+>
+>  drivers/soc/mediatek/mtk-mmsys.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/soc/mediatek/mtk-mmsys.c b/drivers/soc/mediatek/mtk-mmsys.c
+> index 32a92ec447c5..05e322c9c301 100644
+> --- a/drivers/soc/mediatek/mtk-mmsys.c
+> +++ b/drivers/soc/mediatek/mtk-mmsys.c
+> @@ -259,6 +259,7 @@ void mtk_mmsys_ddp_connect(struct device *dev,
+>                 writel_relaxed(reg, config_regs + addr);
+>         }
+>  }
+> +EXPORT_SYMBOL_GPL(mtk_mmsys_ddp_connect);
+>
+>  void mtk_mmsys_ddp_disconnect(struct device *dev,
+>                               enum mtk_ddp_comp_id cur,
+> @@ -279,6 +280,7 @@ void mtk_mmsys_ddp_disconnect(struct device *dev,
+>                 writel_relaxed(reg, config_regs + addr);
+>         }
+>  }
+> +EXPORT_SYMBOL_GPL(mtk_mmsys_ddp_disconnect);
+>
+>  static int mtk_mmsys_probe(struct platform_device *pdev)
+>  {
+> --
+> 2.25.1
+>
