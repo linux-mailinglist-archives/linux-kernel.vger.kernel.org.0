@@ -2,405 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9805A195BA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 17:53:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6122B195BC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:02:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbgC0Qxk convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 27 Mar 2020 12:53:40 -0400
-Received: from mga06.intel.com ([134.134.136.31]:20409 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbgC0Qxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 12:53:40 -0400
-IronPort-SDR: 1HPBv2x/RM6NHwsXfa/ltVFrMpGK9K7ELUzPp0fwE802R0jqhq89EYM5y9zWFKK9SH4LGIwWHP
- 1VVNf/h0TQpQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 09:53:38 -0700
-IronPort-SDR: aPghkadiVzT/6DpiSbdM+7TEEwdiOv0kXMVQLIY3B4lmuNgH3UkLc0mWPutgdilKXwYe52ePRv
- uVXE9q2odRvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,313,1580803200"; 
-   d="scan'208";a="394432438"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga004.jf.intel.com with ESMTP; 27 Mar 2020 09:53:38 -0700
-Date:   Fri, 27 Mar 2020 09:59:23 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 03/10] iommu/ioasid: Introduce per set allocation APIs
-Message-ID: <20200327095923.4454cc7f@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED324@SHSMSX104.ccr.corp.intel.com>
-References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1585158931-1825-4-git-send-email-jacob.jun.pan@linux.intel.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED324@SHSMSX104.ccr.corp.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1727549AbgC0RCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 13:02:02 -0400
+Received: from mail-eopbgr130050.outbound.protection.outlook.com ([40.107.13.50]:60171
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726515AbgC0RCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 13:02:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JfT+kca4GLNNh9u4rlHJEk+/N0PILO4/pBqrj87G/18=;
+ b=VuEVVEz/9yoK4xYIoGRqYTN5C8cwkVbeYmVDLOfK2LGa7zH7RRww35whweT+tGbhBNIt3N6/m73mbwvUYQu48t6wd3ZeSJBT8lae+2YC6YSQ2TWVfYjYU6WBhp8XpRAOJYBsGEduxgd1WqsAQYynUkq6JsBF+m23kBhkTjIYYpM=
+Received: from VI1PR0701CA0041.eurprd07.prod.outlook.com
+ (2603:10a6:800:90::27) by HE1PR08MB2873.eurprd08.prod.outlook.com
+ (2603:10a6:7:30::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20; Fri, 27 Mar
+ 2020 17:01:55 +0000
+Received: from VE1EUR03FT036.eop-EUR03.prod.protection.outlook.com
+ (2603:10a6:800:90:cafe::3b) by VI1PR0701CA0041.outlook.office365.com
+ (2603:10a6:800:90::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.9 via Frontend
+ Transport; Fri, 27 Mar 2020 17:01:54 +0000
+Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=bestguesspass
+ action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ VE1EUR03FT036.mail.protection.outlook.com (10.152.19.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2856.17 via Frontend Transport; Fri, 27 Mar 2020 17:01:54 +0000
+Received: ("Tessian outbound 19f8d550f75c:v48"); Fri, 27 Mar 2020 17:01:54 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: f4805d5f11123ead
+X-CR-MTA-TID: 64aa7808
+Received: from b8e79db3fe2a.2
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id A4944EE2-CB12-420A-B914-C2162DFA389E.1;
+        Fri, 27 Mar 2020 17:01:48 +0000
+Received: from EUR03-VE1-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id b8e79db3fe2a.2
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Fri, 27 Mar 2020 17:01:48 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xhz5fWzcgDZqbWdBeR3xTI1eq+b9MEZPClfzFEnqSxSZtockjAA1IH+s3tUALXWWbDLA0mrgcHSvGg+jE3HowXISBzlf2E+07QlrKLS5WQAgqChHsTawFvfGMfhq18+4wWyx3yHXof2dMG5wp2EWHBrg1l+uB+G/ruyd4mbtCj1II34eov9FbImJwuIMQWI/CVuLO2qliq2zHRdFNhzfjaKrr89XQ20OiXJg4hZy+xSQg3+CzeliOQ6te+ragXPG8PkRklsxBz3g0Y/qZLaYNG1WsJyliHGItPIDFyX+wkvlsHsGsB/f0As0OL4R1+rBLkKZXkVHBxtQ6ZIAzg6Spg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JfT+kca4GLNNh9u4rlHJEk+/N0PILO4/pBqrj87G/18=;
+ b=WvdCEV+D5UxlO8Sl1rHg6HMfzubLaZDiNlgMTOfrHpgWgnwaOIyv6Habn8qtLChfSABWb+Np9d2x037xxDd8GNI0H9OlB4WAkmK/dVZBlpR+ecxSmvKY242OUVlox8Cv8+coTzCrfVqvDhM83zfWrATP6oJyqMeD0g4eHCc828YrVXz5h1v3a2kmJoJnPj8j32b80w3E/qd63B/8IDeOAxrhsw9DZkP5WmZxGRCsw2+9UJLnGwgZREadXoOd9ymbAMzj14O2NcrXksuRzdiBSIVOW2Jz4k3pDPiIquZ3knJdsDOhPLksoGsTjc17h+cWAwjdr8qFPlPXLtWHG/Y9Iw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JfT+kca4GLNNh9u4rlHJEk+/N0PILO4/pBqrj87G/18=;
+ b=VuEVVEz/9yoK4xYIoGRqYTN5C8cwkVbeYmVDLOfK2LGa7zH7RRww35whweT+tGbhBNIt3N6/m73mbwvUYQu48t6wd3ZeSJBT8lae+2YC6YSQ2TWVfYjYU6WBhp8XpRAOJYBsGEduxgd1WqsAQYynUkq6JsBF+m23kBhkTjIYYpM=
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=Grant.Likely@arm.com; 
+Received: from DB8PR08MB4010.eurprd08.prod.outlook.com (20.179.10.207) by
+ DB8SPR01MB0016.eurprd08.prod.outlook.com (20.179.251.212) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2856.18; Fri, 27 Mar 2020 17:01:46 +0000
+Received: from DB8PR08MB4010.eurprd08.prod.outlook.com
+ ([fe80::4521:d746:9e7:4ae3]) by DB8PR08MB4010.eurprd08.prod.outlook.com
+ ([fe80::4521:d746:9e7:4ae3%5]) with mapi id 15.20.2835.023; Fri, 27 Mar 2020
+ 17:01:46 +0000
+From:   Grant Likely <grant.likely@arm.com>
+To:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     nd@arm.com, Grant Likely <grant.likely@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH] Add documentation on meaning of -EPROBE_DEFER
+Date:   Fri, 27 Mar 2020 17:01:32 +0000
+Message-Id: <20200327170132.17275-1-grant.likely@arm.com>
+X-Mailer: git-send-email 2.20.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO2P123CA0047.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::35)
+ To DB8PR08MB4010.eurprd08.prod.outlook.com (2603:10a6:10:ab::15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from moist.secretlab.ca (92.40.174.1) by LO2P123CA0047.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::35) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.20 via Frontend Transport; Fri, 27 Mar 2020 17:01:45 +0000
+X-Mailer: git-send-email 2.20.1
+X-Originating-IP: [92.40.174.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: b9a9b07f-eea9-48e2-2e07-08d7d2708d61
+X-MS-TrafficTypeDiagnostic: DB8SPR01MB0016:|DB8SPR01MB0016:|HE1PR08MB2873:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <HE1PR08MB2873F217EB9B54B4D404788195CC0@HE1PR08MB2873.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;OLM:9508;
+X-Forefront-PRVS: 0355F3A3AE
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR08MB4010.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(136003)(396003)(376002)(39860400002)(346002)(366004)(4326008)(2906002)(8676002)(26005)(66556008)(66476007)(6506007)(66946007)(55236004)(1076003)(36756003)(6512007)(86362001)(5660300002)(8936002)(81156014)(81166006)(6666004)(186003)(478600001)(956004)(316002)(44832011)(2616005)(6486002)(52116002)(54906003)(16526019);DIR:OUT;SFP:1101;
+Received-SPF: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: Qc3Q8VuOPWX90wCYXk/Mq2C2yNhaty3Gll0Q518+cpEuixPMUkELB0vrBLf0p4vn8Sec03B81Bb2nRANZW5A14bpuY3hzFMViVcyNp1Z/oCd4oSnAzLUTJXW7Ty0LvT8iG9RHn0FL0vUUdKIhnDPY/JsOIaLvyx0IbKxhbvKfnaQ5R07icZvS/IlbiCfX+jJuSX0uSlurywJtV6A+jG6+RlLae2/k2C/n479Ll8d/2HEk8kG8DSOUt+cbjBS8oB59r7x3+apfRm4eqJU3NsHw7MSQcgxDI6TwT/KRCiIzBjUgY5jwmlZnwT64KADpquSZ2hWKMRZn8kje1XLVVGbCBrD+Q1EgrvBHNkDBW+c2uoAz+UVOHVQq8VPxNDLhi+cLex4pV0bC1RjSZyCnLgPMicVHd1MUaL+QO2BHjvO0/Rraehich5Tq6EXnH+sCCet
+X-MS-Exchange-AntiSpam-MessageData: lRcCVs+Pavytr2M6cpOsb7GrUWzir73ynlFhCABkrgJMzxE0xpJ5cmYiK1UFC9nuj38Y6bzniHFbaEci3DFBCd66vwg3w8HMXQsi6UlqZ1IyoBv0HlGhGGtWgK8QEeM+6QxUYyT3nZcwPHYEJ5nPpA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8SPR01MB0016
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Grant.Likely@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT036.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(346002)(136003)(396003)(376002)(39860400002)(46966005)(6506007)(336012)(81156014)(6666004)(82740400003)(2906002)(5660300002)(8676002)(70586007)(16526019)(26005)(356004)(1076003)(44832011)(81166006)(186003)(47076004)(8936002)(4326008)(70206006)(316002)(86362001)(36756003)(36906005)(26826003)(450100002)(956004)(478600001)(54906003)(2616005)(6486002)(107886003)(6512007);DIR:OUT;SFP:1101;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: f88f4bdf-2851-4d5c-9af4-08d7d2708828
+X-Forefront-PRVS: 0355F3A3AE
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 13YW+75haqasC2wSI+2qE8LUI7JU8/Y0imdRGzsSP1fWo008pM8BtQXZDHWn587CtilzI+87z4VRyP8SXkO0fJYu0hMe73BwDiaAydbxmi7/Yex+L2OgTgywTUyekEe5Pci/saq36x07K680hBbIhJu0vXss1WYwCvuVtISdoxVVT1bURVtJohp+nxBvOAJvH4gUun0I5ytp4L74rCEmHbMbThHByk+L70m8j0xd8fIkljWPlFmMUeeZVLOUfucCRlkVqz4EBVm87RdyI+WG7YDaqhO1dh+S3p+xLuZGvv4zcswXmHTBB/cN3QDo/i/r0U8ACsXQAxMYymrK31cfKtWHZcsgWj8zwir2PQi2hwQMVcbD1dEyhOaWdvofZHYi+mPCwoDyUdIrrv+cYuTYgkDTbaxjDqOrmvwWkoNOg45Xmps932rtkbYN0kzWZCAjTOmOmNgl/AaN3IrpGpYF23QmSCareki2KdfcRVPoNuSz/vR7uSCpiysTyQ5RT4g/5aDdKGquozHXWW5w0jXN1A==
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2020 17:01:54.4959
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9a9b07f-eea9-48e2-2e07-08d7d2708d61
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR08MB2873
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Mar 2020 08:38:44 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+Add a bit of documentation on what it means when a driver .probe() hook
+returns the -EPROBE_DEFER error code, including the limitation that
+-EPROBE_DEFER should be returned as early as possible, before the driver
+starts to register child devices.
 
-> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Sent: Thursday, March 26, 2020 1:55 AM
-> > 
-> > IOASID set defines a group of IDs that share the same token. The
-> > ioasid_set concept helps to do permission checking among users as
-> > in the current code.
-> > 
-> > With guest SVA usage, each VM has its own IOASID set. More
-> > functionalities are needed:
-> > 1. Enforce quota, each guest may be assigned limited quota such
-> > that one guest cannot abuse all the system resource.
-> > 2. Stores IOASID mapping between guest and host IOASIDs
-> > 3. Per set operations, e.g. free the entire set
-> > 
-> > For each ioasid_set token, a unique set ID is assigned. This makes
-> > reference of the set and data lookup much easier to implement.
-> > 
-> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >  drivers/iommu/ioasid.c | 147
-> > +++++++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/ioasid.h |  13 +++++
-> >  2 files changed, 160 insertions(+)
-> > 
-> > diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
-> > index 4026e52855b9..27ee57f7079b 100644
-> > --- a/drivers/iommu/ioasid.c
-> > +++ b/drivers/iommu/ioasid.c
-> > @@ -10,6 +10,25 @@
-> >  #include <linux/spinlock.h>
-> >  #include <linux/xarray.h>
-> > 
-> > +static DEFINE_XARRAY_ALLOC(ioasid_sets);
-> > +/**
-> > + * struct ioasid_set_data - Meta data about ioasid_set
-> > + *
-> > + * @token:	Unique to identify an IOASID set
-> > + * @xa:		XArray to store subset ID and IOASID
-> > mapping  
-> 
-> what is a subset? is it a different thing from set?
-> 
-Subset is a set, but a subset ID is an ID only valid within the set.
-When we have non-identity Guest-Host PASID mapping, Subset ID is
-the Guest PASID but in more general terms. Or call it "Set Private ID"
+Also: minor markup fixes in the same file
 
-This can be confusing, perhaps I rephrase it as:
-"XArray to store ioasid_set private ID to system-wide IOASID mapping"
+Signed-off-by: Grant Likely <grant.likely@arm.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Saravana Kannan <saravanak@google.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ .../driver-api/driver-model/driver.rst        | 32 ++++++++++++++++---
+ 1 file changed, 27 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/driver-api/driver-model/driver.rst b/Documentation/driver-api/driver-model/driver.rst
+index baa6a85c8287..63057d9bc8a6 100644
+--- a/Documentation/driver-api/driver-model/driver.rst
++++ b/Documentation/driver-api/driver-model/driver.rst
+@@ -4,7 +4,6 @@ Device Drivers
+ 
+ See the kerneldoc for the struct device_driver.
+ 
+-
+ Allocation
+ ~~~~~~~~~~
+ 
+@@ -167,9 +166,26 @@ the driver to that device.
+ 
+ A driver's probe() may return a negative errno value to indicate that
+ the driver did not bind to this device, in which case it should have
+-released all resources it allocated::
++released all resources it allocated.
++
++Optionally, probe() may return -EPROBE_DEFER if the driver depends on
++resources that are not yet available (e.g., supplied by a driver that
++hasn't initialized yet).  The driver core will put the device onto the
++deferred probe list and will try to call it again later. If a driver
++must defer, it should return -EPROBE_DEFER as early as possible to
++reduce the amount of time spent on setup work that will need to be
++unwound and reexecuted at a later time.
++
++.. warning::
++      -EPROBE_DEFER must not be returned if probe() has already created
++      child devices, even if those child devices are removed again
++      in a cleanup path. If -EPROBE_DEFER is returned after a child
++      device has been registered, it may result in an infinite loop of
++      .probe() calls to the same driver.
++
++::
+ 
+-	void (*sync_state)(struct device *dev);
++	void	(*sync_state)	(struct device *dev);
+ 
+ sync_state is called only once for a device. It's called when all the consumer
+ devices of the device have successfully probed. The list of consumers of the
+@@ -212,6 +228,8 @@ over management of devices from the bootloader, the usage of sync_state() is
+ not restricted to that. Use it whenever it makes sense to take an action after
+ all the consumers of a device have probed.
+ 
++::
++
+ 	int 	(*remove)	(struct device *dev);
+ 
+ remove is called to unbind a driver from a device. This may be
+@@ -224,11 +242,15 @@ not. It should free any resources allocated specifically for the
+ device; i.e. anything in the device's driver_data field.
+ 
+ If the device is still present, it should quiesce the device and place
+-it into a supported low-power state::
++it into a supported low-power state.
++
++::
+ 
+ 	int	(*suspend)	(struct device *dev, pm_message_t state);
+ 
+-suspend is called to put the device in a low power state::
++suspend is called to put the device in a low power state.
++
++::
+ 
+ 	int	(*resume)	(struct device *dev);
+ 
+-- 
+2.20.1
 
-> > + * @size:	Max number of IOASIDs can be allocated within the
-> > set  
-> 
-> 'size' reads more like 'current size' instead of 'max size'. maybe
-> call it 'max_ioasids' to align with 'nr_ioasids'? or simplify both as 
-> 'max' and 'nr'?
-> 
-Right, how about max_id and nr_id?
-
-> > + * @nr_ioasids	Number of IOASIDs allocated in the set
-> > + * @sid		ID of the set
-> > + */
-> > +struct ioasid_set_data {
-> > +	struct ioasid_set *token;
-> > +	struct xarray xa;
-> > +	int size;
-> > +	int nr_ioasids;
-> > +	int sid;
-> > +	struct rcu_head rcu;
-> > +};
-> > +
-> >  struct ioasid_data {
-> >  	ioasid_t id;
-> >  	struct ioasid_set *set;
-> > @@ -388,6 +407,111 @@ void ioasid_free(ioasid_t ioasid)
-> >  EXPORT_SYMBOL_GPL(ioasid_free);
-> > 
-> >  /**
-> > + * ioasid_alloc_set - Allocate a set of IOASIDs  
-> 
-> 'a set of IOASIDS' sounds like 'many IOASIDs'. Just saying 'allocate
-> an IOASID set' is more clear. 😊
-> 
-Make sense
-
-> > + * @token:	Unique token of the IOASID set
-> > + * @quota:	Quota allowed in this set
-> > + * @sid:	IOASID set ID to be assigned
-> > + *
-> > + * Return 0 upon success. Token will be stored internally for
-> > lookup,
-> > + * IOASID allocation within the set and other per set operations
-> > will use
-> > + * the @sid assigned.
-> > + *
-> > + */
-> > +int ioasid_alloc_set(struct ioasid_set *token, ioasid_t quota, int
-> > *sid) +{
-> > +	struct ioasid_set_data *sdata;
-> > +	ioasid_t id;
-> > +	int ret = 0;
-> > +
-> > +	if (quota > ioasid_capacity_avail) {
-> > +		pr_warn("Out of IOASID capacity! ask %d, avail
-> > %d\n",
-> > +			quota, ioasid_capacity_avail);
-> > +		return -ENOSPC;
-> > +	}
-> > +
-> > +	sdata = kzalloc(sizeof(*sdata), GFP_KERNEL);
-> > +	if (!sdata)
-> > +		return -ENOMEM;
-> > +
-> > +	spin_lock(&ioasid_allocator_lock);
-> > +
-> > +	ret = xa_alloc(&ioasid_sets, &id, sdata,
-> > +		       XA_LIMIT(0, ioasid_capacity_avail - quota),
-> > +		       GFP_KERNEL);  
-> 
-> Interestingly I didn't find the definition of ioasid_sets. and it is
-> not in existing file.
-> 
-It is at the beginning of this file
-+static DEFINE_XARRAY_ALLOC(ioasid_sets);
-
-> I'm not sure how many sets can be created, but anyway the set
-> namespace is different from ioasid name space. Then why do we
-> use ioasid capability as the limitation for allocating set id here?
-> 
-I am assuming the worst case scenario which is one IOASID per set, that
-is why the number of sets are limited by the number of system IOASIDs.
-
-> > +	if (ret) {
-> > +		kfree(sdata);
-> > +		goto error;
-> > +	}
-> > +
-> > +	sdata->token = token;  
-> 
-> given token must be unique, a check on any conflict is required here?
-> 
-Right, I will add a check to reject duplicated tokens.
-
-	/* Search existing set tokens, reject duplicates */
-	xa_for_each(&ioasid_sets, index, sdata) {
-		if (sdata->token == token) {
-			pr_warn("Token already exists in the set %lu\n", index);
-			ret = -EEXIST;
-			goto error;
-		}
-	}
-
-
-
-
-> > +	sdata->size = quota;
-> > +	sdata->sid = id;
-> > +
-> > +	/*
-> > +	 * Set Xarray is used to store IDs within the set, get
-> > ready for
-> > +	 * sub-set ID and system-wide IOASID allocation results.  
-> 
-> looks 'subset' is the same thing as 'set'. let's make it consistent.
-> 
-Sounds good, will also rename subset ID to set private ID.
-
-> > +	 */
-> > +	xa_init_flags(&sdata->xa, XA_FLAGS_ALLOC);
-> > +
-> > +	ioasid_capacity_avail -= quota;
-> > +	*sid = id;
-> > +
-> > +error:
-> > +	spin_unlock(&ioasid_allocator_lock);
-> > +
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(ioasid_alloc_set);
-> > +
-> > +/**
-> > + * ioasid_free_set - Free all IOASIDs within the set
-> > + *
-> > + * @sid:		The IOASID set ID to be freed
-> > + * @destroy_set:	Whether to keep the set for further
-> > allocation.
-> > + *			If true, the set will be destroyed.
-> > + *
-> > + * All IOASIDs allocated within the set will be freed upon return.
-> > + */
-> > +void ioasid_free_set(int sid, bool destroy_set)
-> > +{  
-> 
-> what is the actual usage of just freeing ioasid while keeping the
-> set itself?
-> 
-I was thinking users use mm as token can retain the ioasid_set until
-mm being destroyed. This is to support some kind of lazy free.
-
-> > +	struct ioasid_set_data *sdata;
-> > +	struct ioasid_data *entry;
-> > +	unsigned long index;
-> > +
-> > +	spin_lock(&ioasid_allocator_lock);
-> > +	sdata = xa_load(&ioasid_sets, sid);
-> > +	if (!sdata) {
-> > +		pr_err("No IOASID set found to free %d\n", sid);
-> > +		goto done_unlock;
-> > +	}
-> > +
-> > +	if (xa_empty(&sdata->xa)) {
-> > +		pr_warn("No IOASIDs in the set %d\n", sdata->sid);
-> > +		goto done_destroy;
-> > +	}  
-> 
-> why is it a warning condition? it is possible that an user has done
-> ioasid_free for all allocated ioasids and then call this function,
-> which is actually the expected normal situation.
-> 
-You are right, there is no need to warn. I will put the following
-comment in place.
-	/* The set is already empty, we just destroy the set if requested */
-	if (xa_empty(&sdata->xa))
-		goto done_destroy;
-
-> > +
-> > +	/* Just a place holder for now */
-> > +	xa_for_each(&sdata->xa, index, entry) {
-> > +		/* Free from per sub-set pool */
-> > +		xa_erase(&sdata->xa, index);
-> > +	}  
-> 
-> but the placeholder would lead to undesired behavior, not good for
-> bisect. If no support now, then should return an error if any in-use
-> ioasid is not freed.
-> 
-Good point, I will return -ENOTSUPP in the place holder. Remove it
-during the API conversion.
-
-> > +
-> > +done_destroy:
-> > +	if (destroy_set) {
-> > +		xa_erase(&ioasid_sets, sid);
-> > +
-> > +		/* Return the quota back to system pool */
-> > +		ioasid_capacity_avail += sdata->size;
-> > +		kfree_rcu(sdata, rcu);
-> > +	}
-> > +
-> > +done_unlock:
-> > +	spin_unlock(&ioasid_allocator_lock);
-> > +}
-> > +EXPORT_SYMBOL_GPL(ioasid_free_set);
-> > +
-> > +
-> > +/**
-> >   * ioasid_find - Find IOASID data
-> >   * @set: the IOASID set
-> >   * @ioasid: the IOASID to find
-> > @@ -431,6 +555,29 @@ void *ioasid_find(struct ioasid_set *set,
-> > ioasid_t ioasid,
-> >  }
-> >  EXPORT_SYMBOL_GPL(ioasid_find);
-> > 
-> > +/**
-> > + * ioasid_find_sid - Retrieve IOASID set ID from an ioasid
-> > + *                   Caller must hold a reference to the set.  
-> 
-> please unify capitalization around IOASID or ioasid.
-> 
-Will do.
-
-> Thanks
-> Kevin
-> 
-> > + *
-> > + * @ioasid: IOASID associated with the set
-> > + *
-> > + * Return IOASID set ID or error
-> > + */
-> > +int ioasid_find_sid(ioasid_t ioasid)
-> > +{
-> > +	struct ioasid_data *ioasid_data;
-> > +	int ret = 0;
-> > +
-> > +	spin_lock(&ioasid_allocator_lock);
-> > +	ioasid_data = xa_load(&active_allocator->xa, ioasid);
-> > +	ret = (ioasid_data) ? ioasid_data->sdata->sid : -ENOENT;
-> > +
-> > +	spin_unlock(&ioasid_allocator_lock);
-> > +
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(ioasid_find_sid);
-> > +
-> >  MODULE_AUTHOR("Jean-Philippe Brucker <jean-  
-> > philippe.brucker@arm.com>");  
-> >  MODULE_AUTHOR("Jacob Pan <jacob.jun.pan@linux.intel.com>");
-> >  MODULE_DESCRIPTION("IO Address Space ID (IOASID) allocator");
-> > diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
-> > index 9711fa0dc357..be158e03c034 100644
-> > --- a/include/linux/ioasid.h
-> > +++ b/include/linux/ioasid.h
-> > @@ -41,6 +41,9 @@ int ioasid_register_allocator(struct
-> > ioasid_allocator_ops *allocator);
-> >  void ioasid_unregister_allocator(struct ioasid_allocator_ops
-> > *allocator); int ioasid_set_data(ioasid_t ioasid, void *data);
-> >  void ioasid_install_capacity(ioasid_t total);
-> > +int ioasid_alloc_set(struct ioasid_set *token, ioasid_t quota, int
-> > *sid); +void ioasid_free_set(int sid, bool destroy_set);
-> > +int ioasid_find_sid(ioasid_t ioasid);
-> >  #else /* !CONFIG_IOASID */
-> >  static inline ioasid_t ioasid_alloc(struct ioasid_set *set,
-> > ioasid_t min, ioasid_t max, void *private)
-> > @@ -52,6 +55,15 @@ static inline void ioasid_free(ioasid_t ioasid)
-> >  {
-> >  }
-> > 
-> > +static inline int ioasid_alloc_set(struct ioasid_set *token,
-> > ioasid_t quota, int *sid)
-> > +{
-> > +	return -ENOTSUPP;
-> > +}
-> > +
-> > +static inline void ioasid_free_set(int sid, bool destroy_set)
-> > +{
-> > +}
-> > +
-> >  static inline void *ioasid_find(struct ioasid_set *set, ioasid_t
-> > ioasid, bool (*getter)(void *))
-> >  {
-> > @@ -75,5 +87,6 @@ static inline int ioasid_set_data(ioasid_t
-> > ioasid, void *data)
-> >  static inline void ioasid_install_capacity(ioasid_t total)
-> >  {
-> >  }
-> > +
-> >  #endif /* CONFIG_IOASID */
-> >  #endif /* __LINUX_IOASID_H */
-> > --
-> > 2.7.4  
-> 
-
-[Jacob Pan]
