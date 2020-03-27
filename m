@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4058194F0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:33:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32277194F04
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:32:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbgC0CdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 22:33:06 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48034 "EHLO
+        id S1727983AbgC0Cci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 22:32:38 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48050 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727834AbgC0CcK (ORCPT
+        with ESMTP id S1727878AbgC0CcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 22:32:10 -0400
+        Thu, 26 Mar 2020 22:32:11 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHen0-003hRX-BS; Fri, 27 Mar 2020 02:32:06 +0000
+        id 1jHen0-003hRd-GW; Fri, 27 Mar 2020 02:32:06 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH v2 09/22] x86: switch save_v86_state() to unsafe_put_user()
-Date:   Fri, 27 Mar 2020 02:31:52 +0000
-Message-Id: <20200327023205.881896-9-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v2 10/22] x86: switch setup_sigcontext() to unsafe_put_user()
+Date:   Fri, 27 Mar 2020 02:31:53 +0000
+Message-Id: <20200327023205.881896-10-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200327023205.881896-1-viro@ZenIV.linux.org.uk>
 References: <20200327023007.GS23230@ZenIV.linux.org.uk>
@@ -36,96 +36,137 @@ From: Al Viro <viro@zeniv.linux.org.uk>
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/kernel/vm86_32.c | 61 +++++++++++++++++++++++------------------------
- 1 file changed, 30 insertions(+), 31 deletions(-)
+ arch/x86/include/asm/sighandling.h |  3 --
+ arch/x86/kernel/signal.c           | 88 +++++++++++++++++++-------------------
+ 2 files changed, 45 insertions(+), 46 deletions(-)
 
-diff --git a/arch/x86/kernel/vm86_32.c b/arch/x86/kernel/vm86_32.c
-index 49b37eb01e99..47a8676c7395 100644
---- a/arch/x86/kernel/vm86_32.c
-+++ b/arch/x86/kernel/vm86_32.c
-@@ -98,7 +98,6 @@ void save_v86_state(struct kernel_vm86_regs *regs, int retval)
- 	struct task_struct *tsk = current;
- 	struct vm86plus_struct __user *user;
- 	struct vm86 *vm86 = current->thread.vm86;
--	long err = 0;
+diff --git a/arch/x86/include/asm/sighandling.h b/arch/x86/include/asm/sighandling.h
+index 2fcbd6f33ef7..35e0b579ffcb 100644
+--- a/arch/x86/include/asm/sighandling.h
++++ b/arch/x86/include/asm/sighandling.h
+@@ -14,9 +14,6 @@
+ 			 X86_EFLAGS_CF | X86_EFLAGS_RF)
  
- 	/*
- 	 * This gets called from entry.S with interrupts disabled, but
-@@ -114,37 +113,30 @@ void save_v86_state(struct kernel_vm86_regs *regs, int retval)
- 	set_flags(regs->pt.flags, VEFLAGS, X86_EFLAGS_VIF | vm86->veflags_mask);
- 	user = vm86->user_vm86;
- 
--	if (!access_ok(user, vm86->vm86plus.is_vm86pus ?
-+	if (!user_access_begin(user, vm86->vm86plus.is_vm86pus ?
- 		       sizeof(struct vm86plus_struct) :
--		       sizeof(struct vm86_struct))) {
--		pr_alert("could not access userspace vm86 info\n");
--		do_exit(SIGSEGV);
--	}
+ void signal_fault(struct pt_regs *regs, void __user *frame, char *where);
+-int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
+-		     struct pt_regs *regs, unsigned long mask);
 -
--	put_user_try {
--		put_user_ex(regs->pt.bx, &user->regs.ebx);
--		put_user_ex(regs->pt.cx, &user->regs.ecx);
--		put_user_ex(regs->pt.dx, &user->regs.edx);
--		put_user_ex(regs->pt.si, &user->regs.esi);
--		put_user_ex(regs->pt.di, &user->regs.edi);
--		put_user_ex(regs->pt.bp, &user->regs.ebp);
--		put_user_ex(regs->pt.ax, &user->regs.eax);
--		put_user_ex(regs->pt.ip, &user->regs.eip);
--		put_user_ex(regs->pt.cs, &user->regs.cs);
--		put_user_ex(regs->pt.flags, &user->regs.eflags);
--		put_user_ex(regs->pt.sp, &user->regs.esp);
--		put_user_ex(regs->pt.ss, &user->regs.ss);
--		put_user_ex(regs->es, &user->regs.es);
--		put_user_ex(regs->ds, &user->regs.ds);
--		put_user_ex(regs->fs, &user->regs.fs);
--		put_user_ex(regs->gs, &user->regs.gs);
--
--		put_user_ex(vm86->screen_bitmap, &user->screen_bitmap);
--	} put_user_catch(err);
--	if (err) {
--		pr_alert("could not access userspace vm86 info\n");
--		do_exit(SIGSEGV);
--	}
-+		       sizeof(struct vm86_struct)))
-+		goto Efault;
-+
-+	unsafe_put_user(regs->pt.bx, &user->regs.ebx, Efault_end);
-+	unsafe_put_user(regs->pt.cx, &user->regs.ecx, Efault_end);
-+	unsafe_put_user(regs->pt.dx, &user->regs.edx, Efault_end);
-+	unsafe_put_user(regs->pt.si, &user->regs.esi, Efault_end);
-+	unsafe_put_user(regs->pt.di, &user->regs.edi, Efault_end);
-+	unsafe_put_user(regs->pt.bp, &user->regs.ebp, Efault_end);
-+	unsafe_put_user(regs->pt.ax, &user->regs.eax, Efault_end);
-+	unsafe_put_user(regs->pt.ip, &user->regs.eip, Efault_end);
-+	unsafe_put_user(regs->pt.cs, &user->regs.cs, Efault_end);
-+	unsafe_put_user(regs->pt.flags, &user->regs.eflags, Efault_end);
-+	unsafe_put_user(regs->pt.sp, &user->regs.esp, Efault_end);
-+	unsafe_put_user(regs->pt.ss, &user->regs.ss, Efault_end);
-+	unsafe_put_user(regs->es, &user->regs.es, Efault_end);
-+	unsafe_put_user(regs->ds, &user->regs.ds, Efault_end);
-+	unsafe_put_user(regs->fs, &user->regs.fs, Efault_end);
-+	unsafe_put_user(regs->gs, &user->regs.gs, Efault_end);
-+	unsafe_put_user(vm86->screen_bitmap, &user->screen_bitmap, Efault_end);
-+
-+	user_access_end();
  
- 	preempt_disable();
- 	tsk->thread.sp0 = vm86->saved_sp0;
-@@ -159,6 +151,13 @@ void save_v86_state(struct kernel_vm86_regs *regs, int retval)
- 	lazy_load_gs(vm86->regs32.gs);
- 
- 	regs->pt.ax = retval;
-+	return;
-+
-+Efault_end:
-+	user_access_end();
-+Efault:
-+	pr_alert("could not access userspace vm86 info\n");
-+	do_exit(SIGSEGV);
+ #ifdef CONFIG_X86_X32_ABI
+ asmlinkage long sys32_x32_rt_sigreturn(void);
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index 83563e98f0be..3b4ca484cfc2 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -140,63 +140,65 @@ static int restore_sigcontext(struct pt_regs *regs,
+ 			       IS_ENABLED(CONFIG_X86_32));
  }
  
- static void mark_screen_rdonly(struct mm_struct *mm)
+-int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
++static int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
+ 		     struct pt_regs *regs, unsigned long mask)
+ {
+-	int err = 0;
+-
+-	put_user_try {
++	if (!user_access_begin(sc, sizeof(struct sigcontext)))
++		return -EFAULT;
+ 
+ #ifdef CONFIG_X86_32
+-		put_user_ex(get_user_gs(regs), (unsigned int __user *)&sc->gs);
+-		put_user_ex(regs->fs, (unsigned int __user *)&sc->fs);
+-		put_user_ex(regs->es, (unsigned int __user *)&sc->es);
+-		put_user_ex(regs->ds, (unsigned int __user *)&sc->ds);
++	unsafe_put_user(get_user_gs(regs),
++				  (unsigned int __user *)&sc->gs, Efault);
++	unsafe_put_user(regs->fs, (unsigned int __user *)&sc->fs, Efault);
++	unsafe_put_user(regs->es, (unsigned int __user *)&sc->es, Efault);
++	unsafe_put_user(regs->ds, (unsigned int __user *)&sc->ds, Efault);
+ #endif /* CONFIG_X86_32 */
+ 
+-		put_user_ex(regs->di, &sc->di);
+-		put_user_ex(regs->si, &sc->si);
+-		put_user_ex(regs->bp, &sc->bp);
+-		put_user_ex(regs->sp, &sc->sp);
+-		put_user_ex(regs->bx, &sc->bx);
+-		put_user_ex(regs->dx, &sc->dx);
+-		put_user_ex(regs->cx, &sc->cx);
+-		put_user_ex(regs->ax, &sc->ax);
++	unsafe_put_user(regs->di, &sc->di, Efault);
++	unsafe_put_user(regs->si, &sc->si, Efault);
++	unsafe_put_user(regs->bp, &sc->bp, Efault);
++	unsafe_put_user(regs->sp, &sc->sp, Efault);
++	unsafe_put_user(regs->bx, &sc->bx, Efault);
++	unsafe_put_user(regs->dx, &sc->dx, Efault);
++	unsafe_put_user(regs->cx, &sc->cx, Efault);
++	unsafe_put_user(regs->ax, &sc->ax, Efault);
+ #ifdef CONFIG_X86_64
+-		put_user_ex(regs->r8, &sc->r8);
+-		put_user_ex(regs->r9, &sc->r9);
+-		put_user_ex(regs->r10, &sc->r10);
+-		put_user_ex(regs->r11, &sc->r11);
+-		put_user_ex(regs->r12, &sc->r12);
+-		put_user_ex(regs->r13, &sc->r13);
+-		put_user_ex(regs->r14, &sc->r14);
+-		put_user_ex(regs->r15, &sc->r15);
++	unsafe_put_user(regs->r8, &sc->r8, Efault);
++	unsafe_put_user(regs->r9, &sc->r9, Efault);
++	unsafe_put_user(regs->r10, &sc->r10, Efault);
++	unsafe_put_user(regs->r11, &sc->r11, Efault);
++	unsafe_put_user(regs->r12, &sc->r12, Efault);
++	unsafe_put_user(regs->r13, &sc->r13, Efault);
++	unsafe_put_user(regs->r14, &sc->r14, Efault);
++	unsafe_put_user(regs->r15, &sc->r15, Efault);
+ #endif /* CONFIG_X86_64 */
+ 
+-		put_user_ex(current->thread.trap_nr, &sc->trapno);
+-		put_user_ex(current->thread.error_code, &sc->err);
+-		put_user_ex(regs->ip, &sc->ip);
++	unsafe_put_user(current->thread.trap_nr, &sc->trapno, Efault);
++	unsafe_put_user(current->thread.error_code, &sc->err, Efault);
++	unsafe_put_user(regs->ip, &sc->ip, Efault);
+ #ifdef CONFIG_X86_32
+-		put_user_ex(regs->cs, (unsigned int __user *)&sc->cs);
+-		put_user_ex(regs->flags, &sc->flags);
+-		put_user_ex(regs->sp, &sc->sp_at_signal);
+-		put_user_ex(regs->ss, (unsigned int __user *)&sc->ss);
++	unsafe_put_user(regs->cs, (unsigned int __user *)&sc->cs, Efault);
++	unsafe_put_user(regs->flags, &sc->flags, Efault);
++	unsafe_put_user(regs->sp, &sc->sp_at_signal, Efault);
++	unsafe_put_user(regs->ss, (unsigned int __user *)&sc->ss, Efault);
+ #else /* !CONFIG_X86_32 */
+-		put_user_ex(regs->flags, &sc->flags);
+-		put_user_ex(regs->cs, &sc->cs);
+-		put_user_ex(0, &sc->gs);
+-		put_user_ex(0, &sc->fs);
+-		put_user_ex(regs->ss, &sc->ss);
++	unsafe_put_user(regs->flags, &sc->flags, Efault);
++	unsafe_put_user(regs->cs, &sc->cs, Efault);
++	unsafe_put_user(0, &sc->gs, Efault);
++	unsafe_put_user(0, &sc->fs, Efault);
++	unsafe_put_user(regs->ss, &sc->ss, Efault);
+ #endif /* CONFIG_X86_32 */
+ 
+-		put_user_ex(fpstate, (unsigned long __user *)&sc->fpstate);
++	unsafe_put_user(fpstate, (unsigned long __user *)&sc->fpstate, Efault);
+ 
+-		/* non-iBCS2 extensions.. */
+-		put_user_ex(mask, &sc->oldmask);
+-		put_user_ex(current->thread.cr2, &sc->cr2);
+-	} put_user_catch(err);
+-
+-	return err;
++	/* non-iBCS2 extensions.. */
++	unsafe_put_user(mask, &sc->oldmask, Efault);
++	unsafe_put_user(current->thread.cr2, &sc->cr2, Efault);
++	user_access_end();
++	return 0;
++Efault:
++	user_access_end();
++	return -EFAULT;
+ }
+ 
+ /*
 -- 
 2.11.0
 
