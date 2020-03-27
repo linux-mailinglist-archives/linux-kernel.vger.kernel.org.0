@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DCC2194F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:32:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BEF1194EFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:32:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbgC0CcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 22:32:10 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48008 "EHLO
+        id S1727915AbgC0CcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 22:32:16 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48052 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727674AbgC0CcJ (ORCPT
+        with ESMTP id S1727879AbgC0CcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 22:32:09 -0400
+        Thu, 26 Mar 2020 22:32:11 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHen0-003hRL-2y; Fri, 27 Mar 2020 02:32:06 +0000
+        id 1jHen0-003hRR-6p; Fri, 27 Mar 2020 02:32:06 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH v2 07/22] x86: get rid of get_user_ex() in restore_sigcontext()
-Date:   Fri, 27 Mar 2020 02:31:50 +0000
-Message-Id: <20200327023205.881896-7-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v2 08/22] x86: kill get_user_{try,catch,ex}
+Date:   Fri, 27 Mar 2020 02:31:51 +0000
+Message-Id: <20200327023205.881896-8-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200327023205.881896-1-viro@ZenIV.linux.org.uk>
 References: <20200327023007.GS23230@ZenIV.linux.org.uk>
@@ -34,145 +34,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Just do copyin into a local struct and be done with that - we are
-on a shallow stack here.
-
-[reworked by tglx, removing the macro horrors while we are touching that]
+no users left
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/kernel/signal.c | 86 ++++++++++++++++++++----------------------------
- 1 file changed, 36 insertions(+), 50 deletions(-)
+ arch/x86/include/asm/uaccess.h | 54 ------------------------------------------
+ 1 file changed, 54 deletions(-)
 
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 53ac66b3fd9b..83563e98f0be 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -47,24 +47,6 @@
- #include <asm/sigframe.h>
- #include <asm/signal.h>
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index 1cfa33b94a1a..4dc5accdd826 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -335,12 +335,9 @@ do {									\
+ 		       "i" (errret), "0" (retval));			\
+ })
  
--#define COPY(x)			do {			\
--	get_user_ex(regs->x, &sc->x);			\
--} while (0)
--
--#define GET_SEG(seg)		({			\
--	unsigned short tmp;				\
--	get_user_ex(tmp, &sc->seg);			\
--	tmp;						\
--})
--
--#define COPY_SEG(seg)		do {			\
--	regs->seg = GET_SEG(seg);			\
--} while (0)
--
--#define COPY_SEG_CPL3(seg)	do {			\
--	regs->seg = GET_SEG(seg) | 3;			\
--} while (0)
--
- #ifdef CONFIG_X86_64
- /*
-  * If regs->ss will cause an IRET fault, change it.  Otherwise leave it
-@@ -92,53 +74,58 @@ static void force_valid_ss(struct pt_regs *regs)
- 	    ar != (AR_DPL3 | AR_S | AR_P | AR_TYPE_RWDATA_EXPDOWN))
- 		regs->ss = __USER_DS;
- }
-+# define CONTEXT_COPY_SIZE	offsetof(struct sigcontext, reserved1)
-+#else
-+# define CONTEXT_COPY_SIZE	sizeof(struct sigcontext)
+-#define __get_user_asm_ex_u64(x, ptr)			(x) = __get_user_bad()
+ #else
+ #define __get_user_asm_u64(x, ptr, retval, errret) \
+ 	 __get_user_asm(x, ptr, retval, "q", "", "=r", errret)
+-#define __get_user_asm_ex_u64(x, ptr) \
+-	 __get_user_asm_ex(x, ptr, "q", "", "=r")
  #endif
  
- static int restore_sigcontext(struct pt_regs *regs,
--			      struct sigcontext __user *sc,
-+			      struct sigcontext __user *usc,
- 			      unsigned long uc_flags)
- {
--	unsigned long buf_val;
--	void __user *buf;
--	unsigned int tmpflags;
--	unsigned int err = 0;
-+	struct sigcontext sc;
+ #define __get_user_size(x, ptr, size, retval, errret)			\
+@@ -378,41 +375,6 @@ do {									\
+ 		     : "=r" (err), ltype(x)				\
+ 		     : "m" (__m(addr)), "i" (errret), "0" (err))
  
- 	/* Always make any pending restarted system calls return -EINTR */
- 	current->restart_block.fn = do_no_restart_syscall;
- 
--	get_user_try {
-+	if (copy_from_user(&sc, usc, CONTEXT_COPY_SIZE))
-+		return -EFAULT;
- 
- #ifdef CONFIG_X86_32
--		set_user_gs(regs, GET_SEG(gs));
--		COPY_SEG(fs);
--		COPY_SEG(es);
--		COPY_SEG(ds);
-+	set_user_gs(regs, sc.gs);
-+	regs->fs = sc.fs;
-+	regs->es = sc.es;
-+	regs->ds = sc.ds;
- #endif /* CONFIG_X86_32 */
- 
--		COPY(di); COPY(si); COPY(bp); COPY(sp); COPY(bx);
--		COPY(dx); COPY(cx); COPY(ip); COPY(ax);
-+	regs->bx = sc.bx;
-+	regs->cx = sc.cx;
-+	regs->dx = sc.dx;
-+	regs->si = sc.si;
-+	regs->di = sc.di;
-+	regs->bp = sc.bp;
-+	regs->ax = sc.ax;
-+	regs->sp = sc.sp;
-+	regs->ip = sc.ip;
- 
- #ifdef CONFIG_X86_64
--		COPY(r8);
--		COPY(r9);
--		COPY(r10);
--		COPY(r11);
--		COPY(r12);
--		COPY(r13);
--		COPY(r14);
--		COPY(r15);
-+	regs->r8 = sc.r8;
-+	regs->r9 = sc.r9;
-+	regs->r10 = sc.r10;
-+	regs->r11 = sc.r11;
-+	regs->r12 = sc.r12;
-+	regs->r13 = sc.r13;
-+	regs->r14 = sc.r14;
-+	regs->r15 = sc.r15;
- #endif /* CONFIG_X86_64 */
- 
--		COPY_SEG_CPL3(cs);
--		COPY_SEG_CPL3(ss);
+-/*
+- * This doesn't do __uaccess_begin/end - the exception handling
+- * around it must do that.
+- */
+-#define __get_user_size_ex(x, ptr, size)				\
+-do {									\
+-	__chk_user_ptr(ptr);						\
+-	switch (size) {							\
+-	case 1:								\
+-		__get_user_asm_ex(x, ptr, "b", "b", "=q");		\
+-		break;							\
+-	case 2:								\
+-		__get_user_asm_ex(x, ptr, "w", "w", "=r");		\
+-		break;							\
+-	case 4:								\
+-		__get_user_asm_ex(x, ptr, "l", "k", "=r");		\
+-		break;							\
+-	case 8:								\
+-		__get_user_asm_ex_u64(x, ptr);				\
+-		break;							\
+-	default:							\
+-		(x) = __get_user_bad();					\
+-	}								\
+-} while (0)
 -
--		get_user_ex(tmpflags, &sc->flags);
--		regs->flags = (regs->flags & ~FIX_EFLAGS) | (tmpflags & FIX_EFLAGS);
--		regs->orig_ax = -1;		/* disable syscall checks */
-+	/* Get CS/SS and force CPL3 */
-+	regs->cs = sc.cs | 0x03;
-+	regs->ss = sc.ss | 0x03;
- 
--		get_user_ex(buf_val, &sc->fpstate);
--		buf = (void __user *)buf_val;
--	} get_user_catch(err);
-+	regs->flags = (regs->flags & ~FIX_EFLAGS) | (sc.flags & FIX_EFLAGS);
-+	/* disable syscall checks */
-+	regs->orig_ax = -1;
- 
- #ifdef CONFIG_X86_64
- 	/*
-@@ -149,9 +136,8 @@ static int restore_sigcontext(struct pt_regs *regs,
- 		force_valid_ss(regs);
- #endif
- 
--	err |= fpu__restore_sig(buf, IS_ENABLED(CONFIG_X86_32));
+-#define __get_user_asm_ex(x, addr, itype, rtype, ltype)			\
+-	asm volatile("1:	mov"itype" %1,%"rtype"0\n"		\
+-		     "2:\n"						\
+-		     ".section .fixup,\"ax\"\n"				\
+-                     "3:xor"itype" %"rtype"0,%"rtype"0\n"		\
+-		     "  jmp 2b\n"					\
+-		     ".previous\n"					\
+-		     _ASM_EXTABLE_EX(1b, 3b)				\
+-		     : ltype(x) : "m" (__m(addr)))
 -
--	return err;
-+	return fpu__restore_sig((void __user *)sc.fpstate,
-+			       IS_ENABLED(CONFIG_X86_32));
- }
+ #define __put_user_nocheck(x, ptr, size)			\
+ ({								\
+ 	__label__ __pu_label;					\
+@@ -540,22 +502,6 @@ struct __large_struct { unsigned long buf[100]; };
+ #define __put_user(x, ptr)						\
+ 	__put_user_nocheck((__typeof__(*(ptr)))(x), (ptr), sizeof(*(ptr)))
  
- int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
+-/*
+- * {get|put}_user_try and catch
+- *
+- * get_user_try {
+- *	get_user_ex(...);
+- * } get_user_catch(err)
+- */
+-#define get_user_try		uaccess_try_nospec
+-#define get_user_catch(err)	uaccess_catch(err)
+-
+-#define get_user_ex(x, ptr)	do {					\
+-	unsigned long __gue_val;					\
+-	__get_user_size_ex((__gue_val), (ptr), (sizeof(*(ptr))));	\
+-	(x) = (__force __typeof__(*(ptr)))__gue_val;			\
+-} while (0)
+-
+ #define put_user_try		uaccess_try
+ #define put_user_catch(err)	uaccess_catch(err)
+ 
 -- 
 2.11.0
 
