@@ -2,183 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 421DC195C8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:23:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2391E195CBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:29:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbgC0RXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 13:23:06 -0400
-Received: from mga01.intel.com ([192.55.52.88]:9882 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727754AbgC0RXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 13:23:06 -0400
-IronPort-SDR: +Gyo2xhleGpUOVeHuam5UP8Z+kRFblCLaFI4ilA4wrB98JREZTFlTKQdSO9IfMUdqNScJSr0z/
- ORi4iJ/yDz1w==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 10:23:05 -0700
-IronPort-SDR: dmCESq+UuI/tUr1+5McIjHKVJAkla5rxQ82hDDoulRwum86+9trA9MXHYN3YnNUG5mZ/Lfejpc
- IxZbe8txAaow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,313,1580803200"; 
-   d="scan'208";a="394441624"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga004.jf.intel.com with ESMTP; 27 Mar 2020 10:23:05 -0700
-Date:   Fri, 27 Mar 2020 10:28:50 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 05/10] iommu/ioasid: Create an IOASID set for host SVA
- use
-Message-ID: <20200327102850.77a5d5da@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED4DA@SHSMSX104.ccr.corp.intel.com>
-References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1585158931-1825-6-git-send-email-jacob.jun.pan@linux.intel.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED4DA@SHSMSX104.ccr.corp.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727718AbgC0R3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 13:29:21 -0400
+Received: from mail-pl1-f202.google.com ([209.85.214.202]:56845 "EHLO
+        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727349AbgC0R3U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 13:29:20 -0400
+Received: by mail-pl1-f202.google.com with SMTP id ba5so7395180plb.23
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 10:29:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=nYM21RQKMWKnZIsx81qxWw5mST50/xX7RSJ9IL1/IfE=;
+        b=GVOvsRxikbZ6W0E22qgqj80nhVJO2S4/gc8abgRK0hCAKCysjF/dPAqwlTCE/AcStD
+         zLgSpbd4r1GrAbQ1D/cq+dl0dlVZMO0MVeUMXa7soKYSP3TL43BeWdhjTr6egsLaf9bt
+         wkMy/7haKhW+Fa2axLvFo8fIFxx2GLKbFAthnC4p0J4yIvoZ1AhawRvp7dfbAuj//CaB
+         n9gnjP5yvQOYB1SEZ6e7i3VlvHdWzfMeZUNNskJ+sIcjGAboRids+qT84Y8S1px3N/2T
+         b0mbvUbXG/BZIF6jKG6rvVjHR0XWdOD9TUu0VYPh6wp6T0elxxpb8KXY4/wNhKXaLwc3
+         yFUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=nYM21RQKMWKnZIsx81qxWw5mST50/xX7RSJ9IL1/IfE=;
+        b=HU3zPEjwwr0ZZpdZW/iciTg/obAnqC51AdMZsVZhnAJsUZA3fuJHifQ+jg0+o6e9Uo
+         /GHKGDM66MWlgt6RlCVcukVTIiHNAfDskfVgtXThFl/Ypkqwc9FEjHImq5+ibzg8CB6N
+         UvApXUjsFMPWI8mtQ+NngOoijiJkA0uega1rVdrKhaeLl2WYdd/x2zhOT6wJ07pzxQiZ
+         qMVNLdUILf/HTB8C4zpGfbnE4P57b9BJhL11NY5lS+IXGBDvG3jM+cphNke8sz1bhndr
+         /BgbtE1OAPLdiYHcYSEc76cl/WeteJ41dnSh+hdkuQwDV9LgauYKRfJdOO94efxYzNuY
+         Wixw==
+X-Gm-Message-State: ANhLgQ3UOh9FcDgox4BkVsB3n0HherKWvi5W8LQeGEoRunGhCCUvarke
+        Lrmjvif5mMesFYagOWx0O73BCC3YJ9Kd
+X-Google-Smtp-Source: ADFU+vt448Oh08eoCcuE9TgJEkx1c6psomK0Lndojb9UeUMgyEL16VSjzO1etMw1f3mWs7sW2kT3fBZWnDCD
+X-Received: by 2002:a63:5c1c:: with SMTP id q28mr344900pgb.125.1585330157920;
+ Fri, 27 Mar 2020 10:29:17 -0700 (PDT)
+Date:   Fri, 27 Mar 2020 10:29:14 -0700
+Message-Id: <20200327172914.28603-1-irogers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH v2] perf synthetic-events: save 4kb from 2 stack frames
+From:   Ian Rogers <irogers@google.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Stephane Eranian <eranian@google.com>,
+        Ian Rogers <irogers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Mar 2020 09:41:55 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+Reuse an existing char buffer to avoid two PATH_MAX sized char buffers.
+Reduces stack frame sizes by 4kb.
 
-> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Sent: Thursday, March 26, 2020 1:55 AM
-> > 
-> > Bare metal SVA allocates IOASIDs for native process addresses. This
-> > should be separated from VM allocated IOASIDs thus under its own
-> > set.  
-> 
-> A curious question. Now bare metal SVA uses the system set and guest
-> SVA uses dynamically-created set. Then do we still allow ioasid_alloc
-> with a NULL set pointer?
-> 
-Good point! There shouldn't be NULL set. That was one of the sticky
-point in the previous allocation API. I will add a check in
-ioasid_alloc_set().
+perf_event__synthesize_mmap_events before 'sub $0x45b8,%rsp' after
+'sub $0x35b8,%rsp'.
 
-However, there is still need for global search, e.g. PRS.
-https://lore.kernel.org/linux-arm-kernel/1d62b2e1-fe8c-066d-34e0-f7929f6a78e2@arm.com/#t	
+perf_event__get_comm_ids before 'sub $0x2028,%rsp' after
+'sub $0x1028,%rsp'.
 
-In that case, use INVALID_IOASID_SET to indicate the search is global.
-e.g.
-ioasid_find(INVALID_IOASID_SET, data->hpasid, NULL);
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/synthetic-events.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-> > 
-> > This patch creates a system IOASID set with its quota set to
-> > PID_MAX. This is a reasonable default in that SVM capable devices
-> > can only bind to limited user processes.
-> > 
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >  drivers/iommu/intel-iommu.c | 8 +++++++-
-> >  drivers/iommu/ioasid.c      | 9 +++++++++
-> >  include/linux/ioasid.h      | 9 +++++++++
-> >  3 files changed, 25 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iommu/intel-iommu.c
-> > b/drivers/iommu/intel-iommu.c index ec3fc121744a..af7a1ef7b31e
-> > 100644 --- a/drivers/iommu/intel-iommu.c
-> > +++ b/drivers/iommu/intel-iommu.c
-> > @@ -3511,8 +3511,14 @@ static int __init init_dmars(void)
-> >  		goto free_iommu;
-> > 
-> >  	/* PASID is needed for scalable mode irrespective to SVM */
-> > -	if (intel_iommu_sm)
-> > +	if (intel_iommu_sm) {
-> >  		ioasid_install_capacity(intel_pasid_max_id);
-> > +		/* We should not run out of IOASIDs at boot */
-> > +		if (ioasid_alloc_system_set(PID_MAX_DEFAULT)) {
-> > +			pr_err("Failed to enable host PASID
-> > allocator\n");
-> > +			intel_iommu_sm = 0;
-> > +		}
-> > +	}
-> > 
-> >  	/*
-> >  	 * for each drhd
-> > diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
-> > index 6265d2dbbced..9135af171a7c 100644
-> > --- a/drivers/iommu/ioasid.c
-> > +++ b/drivers/iommu/ioasid.c
-> > @@ -39,6 +39,9 @@ struct ioasid_data {
-> >  static ioasid_t ioasid_capacity;
-> >  static ioasid_t ioasid_capacity_avail;
-> > 
-> > +int system_ioasid_sid;
-> > +static DECLARE_IOASID_SET(system_ioasid);
-> > +
-> >  /* System capacity can only be set once */
-> >  void ioasid_install_capacity(ioasid_t total)
-> >  {
-> > @@ -51,6 +54,12 @@ void ioasid_install_capacity(ioasid_t total)
-> >  }
-> >  EXPORT_SYMBOL_GPL(ioasid_install_capacity);
-> > 
-> > +int ioasid_alloc_system_set(int quota)
-> > +{
-> > +	return ioasid_alloc_set(&system_ioasid, quota,
-> > &system_ioasid_sid); +}
-> > +EXPORT_SYMBOL_GPL(ioasid_alloc_system_set);
-> > +
-> >  /*
-> >   * struct ioasid_allocator_data - Internal data structure to hold
-> > information
-> >   * about an allocator. There are two types of allocators:
-> > diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
-> > index 8c82d2625671..097b1cc043a3 100644
-> > --- a/include/linux/ioasid.h
-> > +++ b/include/linux/ioasid.h
-> > @@ -29,6 +29,9 @@ struct ioasid_allocator_ops {
-> >  	void *pdata;
-> >  };
-> > 
-> > +/* Shared IOASID set for reserved for host system use */
-> > +extern int system_ioasid_sid;
-> > +
-> >  #define DECLARE_IOASID_SET(name) struct ioasid_set name = { 0 }
-> > 
-> >  #if IS_ENABLED(CONFIG_IOASID)
-> > @@ -41,6 +44,7 @@ int ioasid_register_allocator(struct
-> > ioasid_allocator_ops *allocator);
-> >  void ioasid_unregister_allocator(struct ioasid_allocator_ops
-> > *allocator); int ioasid_attach_data(ioasid_t ioasid, void *data);
-> >  void ioasid_install_capacity(ioasid_t total);
-> > +int ioasid_alloc_system_set(int quota);
-> >  int ioasid_alloc_set(struct ioasid_set *token, ioasid_t quota, int
-> > *sid); void ioasid_free_set(int sid, bool destroy_set);
-> >  int ioasid_find_sid(ioasid_t ioasid);
-> > @@ -88,5 +92,10 @@ static inline void
-> > ioasid_install_capacity(ioasid_t total) {
-> >  }
-> > 
-> > +static inline int ioasid_alloc_system_set(int quota)
-> > +{
-> > +	return -ENOTSUPP;
-> > +}
-> > +
-> >  #endif /* CONFIG_IOASID */
-> >  #endif /* __LINUX_IOASID_H */
-> > --
-> > 2.7.4  
-> 
+diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
+index 3f28af39f9c6..1f3d8d4bb879 100644
+--- a/tools/perf/util/synthetic-events.c
++++ b/tools/perf/util/synthetic-events.c
+@@ -70,7 +70,6 @@ int perf_tool__process_synth_event(struct perf_tool *tool,
+ static int perf_event__get_comm_ids(pid_t pid, char *comm, size_t len,
+ 				    pid_t *tgid, pid_t *ppid)
+ {
+-	char filename[PATH_MAX];
+ 	char bf[4096];
+ 	int fd;
+ 	size_t size = 0;
+@@ -80,11 +79,11 @@ static int perf_event__get_comm_ids(pid_t pid, char *comm, size_t len,
+ 	*tgid = -1;
+ 	*ppid = -1;
+ 
+-	snprintf(filename, sizeof(filename), "/proc/%d/status", pid);
++	snprintf(bf, sizeof(bf), "/proc/%d/status", pid);
+ 
+-	fd = open(filename, O_RDONLY);
++	fd = open(bf, O_RDONLY);
+ 	if (fd < 0) {
+-		pr_debug("couldn't open %s\n", filename);
++		pr_debug("couldn't open %s\n", bf);
+ 		return -1;
+ 	}
+ 
+@@ -280,9 +279,9 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
+ 				       struct machine *machine,
+ 				       bool mmap_data)
+ {
+-	char filename[PATH_MAX];
+ 	FILE *fp;
+ 	unsigned long long t;
++	char bf[BUFSIZ];
+ 	bool truncation = false;
+ 	unsigned long long timeout = proc_map_timeout * 1000000ULL;
+ 	int rc = 0;
+@@ -292,15 +291,15 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
+ 	if (machine__is_default_guest(machine))
+ 		return 0;
+ 
+-	snprintf(filename, sizeof(filename), "%s/proc/%d/task/%d/maps",
+-		 machine->root_dir, pid, pid);
++	snprintf(bf, sizeof(bf), "%s/proc/%d/task/%d/maps",
++		machine->root_dir, pid, pid);
+ 
+-	fp = fopen(filename, "r");
++	fp = fopen(bf, "r");
+ 	if (fp == NULL) {
+ 		/*
+ 		 * We raced with a task exiting - just return:
+ 		 */
+-		pr_debug("couldn't open %s\n", filename);
++		pr_debug("couldn't open %s\n", bf);
+ 		return -1;
+ 	}
+ 
+@@ -308,7 +307,6 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
+ 	t = rdclock();
+ 
+ 	while (1) {
+-		char bf[BUFSIZ];
+ 		char prot[5];
+ 		char execname[PATH_MAX];
+ 		char anonstr[] = "//anon";
+@@ -320,10 +318,10 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
+ 			break;
+ 
+ 		if ((rdclock() - t) > timeout) {
+-			pr_warning("Reading %s time out. "
++			pr_warning("Reading %s/proc/%d/task/%d/maps time out. "
+ 				   "You may want to increase "
+ 				   "the time limit by --proc-map-timeout\n",
+-				   filename);
++				   machine->root_dir, pid, pid);
+ 			truncation = true;
+ 			goto out;
+ 		}
+-- 
+2.25.1.696.g5e7596f4ac-goog
 
-[Jacob Pan]
