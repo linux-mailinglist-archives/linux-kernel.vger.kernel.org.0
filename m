@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39EB4195951
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 15:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0933419594D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 15:54:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbgC0Oyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 10:54:39 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:53620 "EHLO
+        id S1727699AbgC0Oyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 10:54:36 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:53599 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbgC0Oyi (ORCPT
+        with ESMTP id S1726515AbgC0Oyf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 10:54:38 -0400
+        Fri, 27 Mar 2020 10:54:35 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jHqNS-0008W3-9s; Fri, 27 Mar 2020 15:54:30 +0100
+        id 1jHqNS-0008WL-Tz; Fri, 27 Mar 2020 15:54:31 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 98A4F1C03AB;
-        Fri, 27 Mar 2020 15:54:29 +0100 (CET)
-Date:   Fri, 27 Mar 2020 14:54:29 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 84CB71C0475;
+        Fri, 27 Mar 2020 15:54:30 +0100 (CET)
+Date:   Fri, 27 Mar 2020 14:54:30 -0000
 From:   "tip-bot2 for Benjamin Thiel" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/mm/set_memory: Fix -Wmissing-prototypes warnings
+Subject: [tip: x86/cleanups] x86/mm: Mark setup_emu2phys_nid() static
 Cc:     Benjamin Thiel <b.thiel@posteo.de>, Borislav Petkov <bp@suse.de>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200320145028.6013-1-b.thiel@posteo.de>
-References: <20200320145028.6013-1-b.thiel@posteo.de>
+In-Reply-To: <20200326135842.3875-1-b.thiel@posteo.de>
+References: <20200326135842.3875-1-b.thiel@posteo.de>
 MIME-Version: 1.0
-Message-ID: <158532086917.28353.12594836247959241572.tip-bot2@tip-bot2>
+Message-ID: <158532087014.28353.6859659281599423620.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,91 +46,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/cleanups branch of tip:
 
-Commit-ID:     5bacdc0982f2b343afa5adbb80517d3392a7e357
-Gitweb:        https://git.kernel.org/tip/5bacdc0982f2b343afa5adbb80517d3392a7e357
+Commit-ID:     be98dc6e50433fdcacaf29ec682e85de0ead6748
+Gitweb:        https://git.kernel.org/tip/be98dc6e50433fdcacaf29ec682e85de0ead6748
 Author:        Benjamin Thiel <b.thiel@posteo.de>
-AuthorDate:    Fri, 27 Mar 2020 11:26:06 +01:00
+AuthorDate:    Thu, 26 Mar 2020 14:58:42 +01:00
 Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Fri, 27 Mar 2020 11:26:06 +01:00
+CommitterDate: Fri, 27 Mar 2020 11:07:30 +01:00
 
-x86/mm/set_memory: Fix -Wmissing-prototypes warnings
+x86/mm: Mark setup_emu2phys_nid() static
 
-Add missing includes and move prototypes into the header set_memory.h in
-order to fix -Wmissing-prototypes warnings.
-
- [ bp: Add ifdeffery around arch_invalidate_pmem() ]
+Make function static because it is used only in this file.
 
 Signed-off-by: Benjamin Thiel <b.thiel@posteo.de>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20200320145028.6013-1-b.thiel@posteo.de
+Link: https://lkml.kernel.org/r/20200326135842.3875-1-b.thiel@posteo.de
 ---
- arch/x86/include/asm/set_memory.h | 2 ++
- arch/x86/mm/pat/set_memory.c      | 3 +++
- arch/x86/mm/pti.c                 | 8 +-------
- 3 files changed, 6 insertions(+), 7 deletions(-)
+ arch/x86/mm/numa_emulation.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
-index 64c3dce..950532c 100644
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -46,6 +46,8 @@ int set_memory_4k(unsigned long addr, int numpages);
- int set_memory_encrypted(unsigned long addr, int numpages);
- int set_memory_decrypted(unsigned long addr, int numpages);
- int set_memory_np_noalias(unsigned long addr, int numpages);
-+int set_memory_nonglobal(unsigned long addr, int numpages);
-+int set_memory_global(unsigned long addr, int numpages);
- 
- int set_pages_array_uc(struct page **pages, int addrinarray);
- int set_pages_array_wc(struct page **pages, int addrinarray);
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index c4aedd0..6d54240 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -15,6 +15,7 @@
- #include <linux/gfp.h>
- #include <linux/pci.h>
- #include <linux/vmalloc.h>
-+#include <linux/libnvdimm.h>
- 
- #include <asm/e820/api.h>
- #include <asm/processor.h>
-@@ -304,11 +305,13 @@ void clflush_cache_range(void *vaddr, unsigned int size)
+diff --git a/arch/x86/mm/numa_emulation.c b/arch/x86/mm/numa_emulation.c
+index 7f1d203..c5174b4 100644
+--- a/arch/x86/mm/numa_emulation.c
++++ b/arch/x86/mm/numa_emulation.c
+@@ -324,7 +324,7 @@ static int __init split_nodes_size_interleave(struct numa_meminfo *ei,
+ 			0, NULL, NUMA_NO_NODE);
  }
- EXPORT_SYMBOL_GPL(clflush_cache_range);
  
-+#ifdef CONFIG_ARCH_HAS_PMEM_API
- void arch_invalidate_pmem(void *addr, size_t size)
+-int __init setup_emu2phys_nid(int *dfl_phys_nid)
++static int __init setup_emu2phys_nid(int *dfl_phys_nid)
  {
- 	clflush_cache_range(addr, size);
- }
- EXPORT_SYMBOL_GPL(arch_invalidate_pmem);
-+#endif
+ 	int i, max_emu_nid = 0;
  
- static void __cpa_flush_all(void *arg)
- {
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 44a9f06..843aa10 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -39,6 +39,7 @@
- #include <asm/tlbflush.h>
- #include <asm/desc.h>
- #include <asm/sections.h>
-+#include <asm/set_memory.h>
- 
- #undef pr_fmt
- #define pr_fmt(fmt)     "Kernel/User page tables isolation: " fmt
-@@ -555,13 +556,6 @@ static inline bool pti_kernel_image_global_ok(void)
- }
- 
- /*
-- * This is the only user for these and it is not arch-generic
-- * like the other set_memory.h functions.  Just extern them.
-- */
--extern int set_memory_nonglobal(unsigned long addr, int numpages);
--extern int set_memory_global(unsigned long addr, int numpages);
--
--/*
-  * For some configurations, map all of kernel text into the user page
-  * tables.  This reduces TLB misses, especially on non-PCID systems.
-  */
