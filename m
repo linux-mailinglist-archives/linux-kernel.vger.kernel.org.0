@@ -2,108 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 249D21953B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 10:19:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 759B61953B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 10:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbgC0JTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 05:19:23 -0400
-Received: from mail-eopbgr1400090.outbound.protection.outlook.com ([40.107.140.90]:10828
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        id S1726418AbgC0JUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 05:20:11 -0400
+Received: from mail-eopbgr1300084.outbound.protection.outlook.com ([40.107.130.84]:63273
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725946AbgC0JTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 05:19:23 -0400
+        id S1725946AbgC0JUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 05:20:11 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Zo6sgmlwkf9ySWokJi/pR9aQmn+XQ5hZrk1oVmcEl4lUSAzGHo+WBknO9uEabw/bF14tMeFp1MeQqRQoxqN2gxWzil4g7QgJ2U8jwjyYU7zL9moFYVTW7WinCDOf+pGUWQSaNEoedo+tnLhTc7UlvQJVsE+UWHZv0tHWvwrYXW/pIfAsMEdQZi1aovL89AlXEEUZSx5xBerifZwJJsXP+eRh0VGZYNy780LWslgcuQbtdBxBjymJHPybpmhEPl2dFQbCQBtQKlhrszubdY/sRDtBQPfRFkDpUsgXeRlwHexrTuXXbSGKYAtLQNUVf8+WfoVCSq35uJGFtMk5JkJQdQ==
+ b=eP0wRE2qoI9ZW4dyummDtMSh/AgGm1kZ+SKmXFOrZ5K913Bb4gFmDBbhdukw5iz4u2i/fUKEe4VRWc0rRZSYkgkRvBQzljX6vbnlKdFuMiGQFB5mJMqE6bwiAQ0+YzdNAnetBTuCFk76fSQNuZ/plHwH+z9E5pxdE75/gFMwJh0VREiG9qP6C1Jni1jZtC9BTD/eiMKe5U6eXCqnz+wTtaYpe1hv39Q0sZSLRrpikIYg9FNboqX4kESYzbXae7F9O0NKiNJSvkpT/juPOxiXxT0fPpw6BMnm7WMNPeTU6xzJ+L8SU0yzH0ZWhmeq27IBGPn2Q/z8839s2dQWyL2Y+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8WWd/EB7bKGVbjYf7lmOO/3qwqklrC7Ims8FSJ/BCr8=;
- b=jmHar2D7WK7Wy00+QYFYvs8uQulWWsPhSIcHNsdYZjDZBG8LxeN0ppVAaW6DoOM//bEmMs3ZU6O8U7r3R7LoqVjpKGgExKOQpg7+cMRccXB/0bsbXGFrao0ZVr3NVbDWHyf1AW3vxJPhX3xbs9MgLgPFXWB8iT5ydDsljlaMIp/BXMWFO0dKU9LVwdb4EtyQOfD9Iist4kYIFwKqVYrMl+r9uKL4zJS0gFIUwNFFNvTffYX2J9HFNDtQoru5pflFBtHdetsRkCp8ZR+w3vnUCstCDXyMJpFZFD3IyoOiFNuxMX6ljWBYb2yTp7vBg1K7Ehar7nDZsZz+2gioyqn00w==
+ bh=Ors8Y6esGbrtbsRquYSvz+tU/XN4lHc2ms16inOSiuA=;
+ b=S22lFIUCJXl1cwXdXOljy0hI18fxppYLBWctqg2sTup8GNTeEiBovjoSe0SOZykJYwjSwefFEXtYMvYGF0axl3OElQbr3oWl7DOyi87Vze6jA0BvS+mH3XO4FcjHlFcgusjevECl8ckRDtnu1b3DeRfz8q2dwNigQY2C+HCsS5kajnVymUg6V4z4FiOSW2MYUn3CEZ5O9kfy3mZ1JSVG9IG9OQk4eR6umlosf99BNnqJMa/Ka6CffHWrbRjDVQEMr9b5+XhkyRmWG8iVjr1T+oDbaQOT8eEGekWoXcxZr5FNUR/RVqcroYGilBHzFH05ix+pGepciVx1legLgmKsqw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
+ smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
+ dkim=pass header.d=oppo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ d=oppoglobal.onmicrosoft.com; s=selector1-oppoglobal-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8WWd/EB7bKGVbjYf7lmOO/3qwqklrC7Ims8FSJ/BCr8=;
- b=i1tpjs5LJmmlmhTeCWjIL8ZcgI8X8D5SM6lgwcJKIP2JswuKv5O2bOliEHW16Uwv0mccBs5/x4PuwEZrvcts4swUwkn34bRPHpLhHhKhhfF14SIRIXSkou7dOMn7WKXlnVFBChjbDtREG7T140TDYziiL3E292vhpkBRSFv84yo=
-Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com (20.179.175.203) by
- TYAPR01MB4063.jpnprd01.prod.outlook.com (20.178.140.79) with Microsoft SMTP
+ bh=Ors8Y6esGbrtbsRquYSvz+tU/XN4lHc2ms16inOSiuA=;
+ b=UUtMhka0PfTnoJ1HlUEqWVEQ3C/+OtSA4DYd7h0jDUAmDKEOV9O6nflAkVmHGmg16hlzx4JSl3jGaShMzvqNt0bfTXLPmdTXZGX9T74HSQUSWHOQfJXvXauxO3h8uhDvikgWR0xQLVDJWnhhZWwGUDEWNDBbpLD/+Tw7MVMSiOc=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=chenanqing@oppo.com; 
+Received: from HK0PR02MB2563.apcprd02.prod.outlook.com (52.133.210.11) by
+ HK0PR02MB3393.apcprd02.prod.outlook.com (20.177.69.83) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2835.22; Fri, 27 Mar 2020 09:19:20 +0000
-Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com
- ([fe80::ed7f:1268:55a9:fc06]) by TYAPR01MB4544.jpnprd01.prod.outlook.com
- ([fe80::ed7f:1268:55a9:fc06%4]) with mapi id 15.20.2835.023; Fri, 27 Mar 2020
- 09:19:19 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v3 1/4] dt-bindings: phy: renesas: usb2-phy: convert
- bindings to json-schema
-Thread-Topic: [PATCH v3 1/4] dt-bindings: phy: renesas: usb2-phy: convert
- bindings to json-schema
-Thread-Index: AQHWA/iZb4r2sibuR06+pRT+YCncm6hcIuKAgAAF3uA=
-Date:   Fri, 27 Mar 2020 09:19:19 +0000
-Message-ID: <TYAPR01MB4544104071EEA9DA9BF86B96D8CC0@TYAPR01MB4544.jpnprd01.prod.outlook.com>
-References: <1585286923-11740-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1585286923-11740-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdV+kPei=4tBb8FGC1oE2+sRffXRz2KZtKU7svyz=22AGg@mail.gmail.com>
-In-Reply-To: <CAMuHMdV+kPei=4tBb8FGC1oE2+sRffXRz2KZtKU7svyz=22AGg@mail.gmail.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [211.11.155.148]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ca2af7de-3a51-4748-7de6-08d7d22fee4e
-x-ms-traffictypediagnostic: TYAPR01MB4063:
-x-microsoft-antispam-prvs: <TYAPR01MB406382A901F77500E64995A3D8CC0@TYAPR01MB4063.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0355F3A3AE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(366004)(39860400002)(396003)(346002)(376002)(81156014)(71200400001)(186003)(2906002)(4326008)(86362001)(4744005)(8676002)(6916009)(26005)(6506007)(76116006)(55016002)(5660300002)(52536014)(9686003)(33656002)(66446008)(7696005)(66476007)(66556008)(64756008)(8936002)(316002)(478600001)(81166006)(66946007)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB4063;H:TYAPR01MB4544.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: OWhIQ7ZFSnRwkvW5pKiC6ibBNECFPhb18Tw+lold6OUHo2shyuNlh4xjJj82+2ExJJzZ/w8ezG4Isz2Wb3KFT8FNpFQCNHfMZt7teaKzi+DEPc+iv3GQro1VYS2wKYkhqzmF6ko/v3VTO+nHIPiGIP4WAx0MlgBmcLqk/8rGXIfCrZP9EkhVj9MziS7L/rBRBczEyMlaytHW/a7IYeoBmYrwZgbr4EpTRCgpxVZU69gNgFdZQYwq4d9jzXkPPGgq9eqKsPVjYR9B47zRXo65Vmgf3Jw21dg7W8N/Djj5FAMvLL4ymuu9ksA2cQgq/HpvvvrQZVL6Pc3zEVoNxi3xuE4LXHIGVbS7ag9LKgy1+3rYwXZVss/OKeLzquxGOzPJkBcJs6XEnfPdh7U9xw+yEaL7vEgU6rjJ7Rs3pyLhMBcNlKbip41gIgl96eRU/UXu
-x-ms-exchange-antispam-messagedata: 8Sbp+XcN9b9tn/V5YohJwSw119fjqdA96rZAiJI3EspHP1pUmAPZUitcOiDs05UUbObSnKODErmsF+8/gfVziwQ3D/3wf9PLDUmHQeyXlr2QhI9S5CeGZClihi1gNqWoF3gs71fTApbqIixlxZ30ug==
-x-ms-exchange-transport-forked: True
+ 15.20.2835.19; Fri, 27 Mar 2020 09:20:06 +0000
+Received: from HK0PR02MB2563.apcprd02.prod.outlook.com
+ ([fe80::4078:fbe4:9043:d61e]) by HK0PR02MB2563.apcprd02.prod.outlook.com
+ ([fe80::4078:fbe4:9043:d61e%2]) with mapi id 15.20.2835.023; Fri, 27 Mar 2020
+ 09:20:06 +0000
+Date:   Fri, 27 Mar 2020 05:20:03 -0400
+From:   chenanqing@oppo.com
+To:     chenanqing@oppo.com, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
+        ceph-devel@vger.kernel.org, martin.petersen@oracle.com,
+        jejb@linux.ibm.com, cleech@redhat.com, lduncan@suse.com
+Message-ID: <5e7dc543.vYG3wru8B/me1sOV%chenanqing@oppo.com>
+User-Agent: Heirloom mailx 12.5 7/5/10
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: HKAPR04CA0008.apcprd04.prod.outlook.com
+ (2603:1096:203:d0::18) To HK0PR02MB2563.apcprd02.prod.outlook.com
+ (2603:1096:203:25::11)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca2af7de-3a51-4748-7de6-08d7d22fee4e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2020 09:19:19.8682
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from master (58.252.5.69) by HKAPR04CA0008.apcprd04.prod.outlook.com (2603:1096:203:d0::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.19 via Frontend Transport; Fri, 27 Mar 2020 09:20:04 +0000
+X-Originating-IP: [58.252.5.69]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8238515b-22cf-4369-6d93-08d7d23009bf
+X-MS-TrafficTypeDiagnostic: HK0PR02MB3393:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <HK0PR02MB3393BC7C71EBBE23EF7BFBA2ABCC0@HK0PR02MB3393.apcprd02.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:513;
+X-Forefront-PRVS: 0355F3A3AE
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK0PR02MB2563.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(396003)(346002)(376002)(39860400002)(366004)(136003)(316002)(5660300002)(186003)(26005)(16526019)(36756003)(9686003)(956004)(2616005)(86362001)(81166006)(81156014)(8936002)(2906002)(66946007)(478600001)(52116002)(6496006)(66556008)(6486002)(66476007)(1670200006)(25626001)(11606004);DIR:OUT;SFP:1101;
+Received-SPF: None (protection.outlook.com: oppo.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: oMe2c6UfTB6phpnbQ3JBdCCUhWeaejQVrHFl9SPfn2IIFR/ay6vW3Pz3sOFYAV2NAWPV2XasaQuqiGgmqnFH2hsPDUZkOessiFs7VVLVKjm/j0BgeZ/qZHm9uh+F36bRR43RTF2k4TF7Wt7uvKhO8Eobb4NrVE2rkGG6OPiHoor5kSOVUVc5BPASx1bxtPutUod+jazRLlKFEmmGHMEEEuo5qyXeugDRaLM0R4X6AX8AM+onXyhgwoaIYdlSZqPXqOdEu1nEI7zWuNcfZ8nJqCIo+rsDp10gw7aYtIWI0zdZt+BC7+B8izLdhBCkZt/PSpcyDYpIgFZ7ZgeoiEZwLqMsYACgMw1Lha2aND+8dmqJc54Nk2bzAGL7xcsRaCwpw1AU9TOSoE/1XbZ7+mAPbeVMZ+y1Y//wN+Vov0ZG9286zwWHJ6UapdG7zGlZTEDxvQx/XiEADOrubhm/qoZ0rXHClXIq08K0h0yDbylju6iJ8wP2UyCxnDNKY5GWBSXD6zCo+2s7OtOWbk+6wR03mognibp3kOWaIwQAP/FXdhc=
+X-MS-Exchange-AntiSpam-MessageData: ezZ4vsxAPhSF0cK+F+Ihb50vVFCS9gPP9BQW/glPhuDoJVkxb9BuIQxDjzA4kktr+8qez4Zgvz52dUAbU2DdhEVIPQLXYM824FTPB5rT/Eud2Z93Wjtvzx8kdfaRY1Tu6bauNVYFJ8nYP29iaPLcgA==
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8238515b-22cf-4369-6d93-08d7d23009bf
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2020 09:20:06.2246
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HHwZ9FH06EUCxrA8a1qjJAq5XmH3RSl1/2Es9hU7zeDN9h6lbU7E+ZJrkBp2WUyEWoTAqsbH4jyFURYQMR9dFIbnDTtefxhP9aPXsTv22Z0Zp7EniPQZ/oKuVogW9F9T
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB4063
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7alaUVwRQ5dAsv6piV9e3YPbOWkiNef2/K48MpfvYcjGEisMlRx3JwEVeGCYILURiKz55kzrq9ySCCER8egx6Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0PR02MB3393
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR2VlcnQtc2FuLA0KDQpUaGFuayB5b3UgZm9yIHlvdXIgcmV2aWV3IQ0KDQo+IEZyb206IEdl
-ZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogRnJpZGF5LCBNYXJjaCAyNywgMjAyMCA1OjU1IFBNDQo8
-c25pcD4NCj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3Jj
-YXItZ2VuMy1waHktdXNiMi50eHQNCj4gPiArKysgL2Rldi9udWxsDQo+IA0KPiA+IC1UaGUgcGhh
-bmRsZSdzIGFyZ3VtZW50IGluIHRoZSBQSFkgc3BlY2lmaWVyIGlzIHRoZSBJTlRfU1RBVFVTIGJp
-dCBvZiBjb250cm9sbGVyOg0KPiA+IC0tIDEgPSBVU0JIX0lOVEEgKE9IQ0kpDQo+ID4gLS0gMiA9
-IFVTQkhfSU5UQiAoRUhDSSkNCj4gPiAtLSAzID0gVUNPTV9JTlQgKE9URyBhbmQgQkMpDQo+IA0K
-PiBTb3JyeSwgSSBmYWlsZWQgdG8gbm90aWNlIGR1cmluZyBteSBwcmV2aW91cyByZXZpZXcgdGhh
-dCB0aGUgYWJvdmUgaW5mb3JtYXRpb24NCj4gaXMgbG9zdCBkdXJpbmcgdGhlIGNvbnZlcnNpb24u
-ICBJIHRoaW5rIGl0IHdvdWxkIGJlIGdvb2QgdG8gcmV0YWluIGl0IGluIHRoZQ0KPiBkZXNjcmlw
-dGlvbiBmb3IgI3BoeS1jZWxscy4NCg0KSSBhZ3JlZS4gSSdsbCBhZGQgaXQuDQoNCj4gV2l0aCB0
-aGF0IGFkZGVkOg0KPiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5l
-c2FzQGdsaWRlci5iZT4NCg0KVGhhbmtzIQ0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hp
-bW9kYQ0KDQo=
+From: Chen Anqing <chenanqing@oppo.com>
+To: Lee Duncan <lduncan@suse.com>
+Cc: Chris Leech <cleech@redhat.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        ceph-devel@vger.kernel.org,
+        open-iscsi@googlegroups.com,
+        linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        chenanqing@oppo.com
+Subject: [PATCH] scsi: libiscsi: we should take compound page into account =
+also
+Date: Fri, 27 Mar 2020 05:20:01 -0400
+Message-Id: <20200327092001.56879-1-chenanqing@oppo.com>
+X-Mailer: git-send-email 2.18.2
+
+the patch is occur at a real crash,which slab is
+come from a compound page,so we need take the compound page
+into account also.
+fixed commit 08b11eaccfcf ("scsi: libiscsi: fall back to
+sendmsg for slab pages").
+
+Signed-off-by: Chen Anqing <chenanqing@oppo.com>
+---
+ drivers/scsi/libiscsi_tcp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/libiscsi_tcp.c b/drivers/scsi/libiscsi_tcp.c
+index 6ef93c7af954..98304e5e1f6f 100644
+--- a/drivers/scsi/libiscsi_tcp.c
++++ b/drivers/scsi/libiscsi_tcp.c
+@@ -128,7 +128,8 @@ static void iscsi_tcp_segment_map(struct iscsi_segment =
+*segment, int recv)
+         * coalescing neighboring slab objects into a single frag which
+         * triggers one of hardened usercopy checks.
+         */
+-       if (!recv && page_count(sg_page(sg)) >=3D 1 && !PageSlab(sg_page(sg=
+)))
++       if (!recv && page_count(sg_page(sg)) >=3D 1 &&
++           !PageSlab(compound_head(sg_page(sg))))
+                return;
+
+        if (recv) {
+--
+2.18.2
+
+________________________________
+OPPO
+
+=E6=9C=AC=E7=94=B5=E5=AD=90=E9=82=AE=E4=BB=B6=E5=8F=8A=E5=85=B6=E9=99=84=E4=
+=BB=B6=E5=90=AB=E6=9C=89OPPO=E5=85=AC=E5=8F=B8=E7=9A=84=E4=BF=9D=E5=AF=86=
+=E4=BF=A1=E6=81=AF=EF=BC=8C=E4=BB=85=E9=99=90=E4=BA=8E=E9=82=AE=E4=BB=B6=E6=
+=8C=87=E6=98=8E=E7=9A=84=E6=94=B6=E4=BB=B6=E4=BA=BA=E4=BD=BF=E7=94=A8=EF=BC=
+=88=E5=8C=85=E5=90=AB=E4=B8=AA=E4=BA=BA=E5=8F=8A=E7=BE=A4=E7=BB=84=EF=BC=89=
+=E3=80=82=E7=A6=81=E6=AD=A2=E4=BB=BB=E4=BD=95=E4=BA=BA=E5=9C=A8=E6=9C=AA=E7=
+=BB=8F=E6=8E=88=E6=9D=83=E7=9A=84=E6=83=85=E5=86=B5=E4=B8=8B=E4=BB=A5=E4=BB=
+=BB=E4=BD=95=E5=BD=A2=E5=BC=8F=E4=BD=BF=E7=94=A8=E3=80=82=E5=A6=82=E6=9E=9C=
+=E6=82=A8=E9=94=99=E6=94=B6=E4=BA=86=E6=9C=AC=E9=82=AE=E4=BB=B6=EF=BC=8C=E8=
+=AF=B7=E7=AB=8B=E5=8D=B3=E4=BB=A5=E7=94=B5=E5=AD=90=E9=82=AE=E4=BB=B6=E9=80=
+=9A=E7=9F=A5=E5=8F=91=E4=BB=B6=E4=BA=BA=E5=B9=B6=E5=88=A0=E9=99=A4=E6=9C=AC=
+=E9=82=AE=E4=BB=B6=E5=8F=8A=E5=85=B6=E9=99=84=E4=BB=B6=E3=80=82
+
+This e-mail and its attachments contain confidential information from OPPO,=
+ which is intended only for the person or entity whose address is listed ab=
+ove. Any use of the information contained herein in any way (including, but=
+ not limited to, total or partial disclosure, reproduction, or disseminatio=
+n) by persons other than the intended recipient(s) is prohibited. If you re=
+ceive this e-mail in error, please notify the sender by phone or email imme=
+diately and delete it!
