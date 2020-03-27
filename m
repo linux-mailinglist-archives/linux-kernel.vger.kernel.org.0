@@ -2,81 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C61B19594E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 15:54:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06EE8195958
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 15:55:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbgC0Oyh convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 27 Mar 2020 10:54:37 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:53606 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbgC0Oyg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 10:54:36 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jHqNT-00005h-Qi; Fri, 27 Mar 2020 15:54:31 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5D96A1C0470;
-        Fri, 27 Mar 2020 15:54:31 +0100 (CET)
-Date:   Fri, 27 Mar 2020 14:54:31 -0000
-From:   "tip-bot2 for Benjamin Thiel" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/platform/uv: Add a missing prototype for
- uv_bau_message_interrupt()
-Cc:     Benjamin Thiel <b.thiel@posteo.de>, Borislav Petkov <bp@suse.de>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200327072621.2255-1-b.thiel@posteo.de>
-References: <20200327072621.2255-1-b.thiel@posteo.de>
+        id S1727826AbgC0OzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 10:55:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726515AbgC0OzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 10:55:02 -0400
+Received: from coco.lan (ip5f5ad4d8.dynamic.kabel-deutschland.de [95.90.212.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 342442073B;
+        Fri, 27 Mar 2020 14:54:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585320902;
+        bh=NLcg8KW/dZw7wy0b01U+CcbR/Kn5ISoIiCtxhv/EldU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=lj+ypSdD3GgA7cTWkjGw6AEbmyo0TBSyGhajV9dIULl5V9teVxwnjAmjzq0QD5wyJ
+         BOBtagFDlNDVunjYnRRgq0tXkMaUncYAH4kmdu9qLvmu5DZD82jkf1Aj6eiKVkoSM2
+         P4dczkaw3svEpC60eOqFY4A5RZavGk1tWvTjYCRU=
+Date:   Fri, 27 Mar 2020 15:54:56 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Simon Horman <simon.horman@netronome.com>,
+        Harish Bandi <c-hbandi@codeaurora.org>,
+        Venkata Lakshmi Narayana Gubba <gubbaven@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Rocky Liao <rjliao@codeaurora.org>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH] docs: dt: fix a broken reference for a file converted
+ to json
+Message-ID: <20200327155456.6d582bde@coco.lan>
+In-Reply-To: <CAL_JsqLZQN253PDi-HXtP3s5CCg0OzaUK99onC9UjQWeVw3KYw@mail.gmail.com>
+References: <33fa622c263ad40a129dc2b8dd0111b40016bc17.1585316085.git.mchehab+huawei@kernel.org>
+        <CAL_JsqLZQN253PDi-HXtP3s5CCg0OzaUK99onC9UjQWeVw3KYw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Message-ID: <158532087103.28353.1381973254942714459.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/cleanups branch of tip:
+Em Fri, 27 Mar 2020 08:26:58 -0600
+Rob Herring <robh+dt@kernel.org> escreveu:
 
-Commit-ID:     01bd18624d91cfe82e7df4bfe2f22814a20b993a
-Gitweb:        https://git.kernel.org/tip/01bd18624d91cfe82e7df4bfe2f22814a20b993a
-Author:        Benjamin Thiel <b.thiel@posteo.de>
-AuthorDate:    Fri, 27 Mar 2020 08:26:21 +01:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Fri, 27 Mar 2020 10:54:52 +01:00
+> On Fri, Mar 27, 2020 at 7:34 AM Mauro Carvalho Chehab
+> <mchehab+huawei@kernel.org> wrote:
+> >
+> > Changeset 32ced09d7903 ("dt-bindings: serial: Convert slave-device bindings to json-schema")
+> > moved a binding to json and updated the links. Yet, one link
+> > was forgotten.  
+> 
+> It was not. There's a merge conflict, so I dropped it until after rc1.
 
-x86/platform/uv: Add a missing prototype for uv_bau_message_interrupt()
+Ah, ok.
 
-... in order to fix a -Wmissing-prototypes warning:
+Thanks!
+Mauro
 
-  arch/x86/platform/uv/tlb_uv.c:1275:6: warning:
-  no previous prototype for ‘uv_bau_message_interrupt’ [-Wmissing-prototypes] \
-	  void uv_bau_message_interrupt(struct pt_regs *regs)
+> >
+> > Update this one too.
+> >
+> > Fixes: 32ced09d7903 ("dt-bindings: serial: Convert slave-device bindings to json-schema")
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+> > index beca6466d59a..d2202791c1d4 100644
+> > --- a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+> > +++ b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+> > @@ -29,7 +29,7 @@ Required properties for compatible string qcom,wcn399x-bt:
+> >
+> >  Optional properties for compatible string qcom,wcn399x-bt:
+> >
+> > - - max-speed: see Documentation/devicetree/bindings/serial/slave-device.txt
+> > + - max-speed: see Documentation/devicetree/bindings/serial/serial.yaml
+> >   - firmware-name: specify the name of nvm firmware to load
+> >   - clocks: clock provided to the controller
+> >
+> > --
+> > 2.25.1
+> >  
 
-Signed-off-by: Benjamin Thiel <b.thiel@posteo.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20200327072621.2255-1-b.thiel@posteo.de
----
- arch/x86/include/asm/uv/uv_bau.h | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/include/asm/uv/uv_bau.h b/arch/x86/include/asm/uv/uv_bau.h
-index 7803114..13687bf 100644
---- a/arch/x86/include/asm/uv/uv_bau.h
-+++ b/arch/x86/include/asm/uv/uv_bau.h
-@@ -858,4 +858,6 @@ static inline int atomic_inc_unless_ge(spinlock_t *lock, atomic_t *v, int u)
- 	return 1;
- }
- 
-+void uv_bau_message_interrupt(struct pt_regs *regs);
-+
- #endif /* _ASM_X86_UV_UV_BAU_H */
+
+Thanks,
+Mauro
