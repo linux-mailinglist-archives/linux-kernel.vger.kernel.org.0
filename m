@@ -2,143 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2BCE19517B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 07:46:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9626195184
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 07:48:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbgC0Gqw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 02:46:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:41054 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbgC0Gqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 02:46:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC7317FA;
-        Thu, 26 Mar 2020 23:46:50 -0700 (PDT)
-Received: from [10.163.1.31] (unknown [10.163.1.31])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B53F3F71F;
-        Thu, 26 Mar 2020 23:50:47 -0700 (PDT)
-Subject: Re: [PATCH V2 0/3] mm/debug: Add more arch page table helper tests
-To:     Christophe Leroy <christophe.leroy@c-s.fr>, linux-mm@kvack.org
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
+        id S1727729AbgC0Gsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 02:48:32 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:35894 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbgC0Gs2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 02:48:28 -0400
+Received: by mail-pj1-f67.google.com with SMTP id nu11so3404490pjb.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 23:48:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e2pldkrhAni9nq8EyiG2WO78f/APBgebCGeZjhrmshQ=;
+        b=I5pLNO+fPogPHiacztpG1HxVvtnTLCdqXJT+PYXFAYy2wxLIwXNdmFqAS1I1f0M/jk
+         i7aiI8cdZcbouxeLQbQqZcLjULDiMw3oqCK7zfUVhtO0VEAHkOFMQ2tOJkveDwz0wuv6
+         pOsphc56mqYDnuZStj5ScZg0AFgtI8LBlfI3I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e2pldkrhAni9nq8EyiG2WO78f/APBgebCGeZjhrmshQ=;
+        b=C8nmlKA0VQTiFB1jK5lDlyvqb1DmPRcoJpNn2wvPPFr2W4hZTKDqVHemBfze2cp7Zu
+         7xgfllLWxu/DOFJVUPgRlGWUKPgjbG6yVmx0qgPLZyrqirtqb+X/anI9B4H8NNsjUgNl
+         BHumj33U81cMvGYzxfFzfSfPCmAOZD7N8CPffOQmuYFq6nlH/gVgh0hMqVf7DyOqaCaD
+         xuTYU/JdYU006cUr48p+Jo1oF2YVDaj0fEvc5ckKKfQgV6oJA4qDTjt9E85v6sxC8nZT
+         zlv37UgZXxImGRdsplgasArnx0vwHOHYjsjoHWxQgdzLvUNM3n84n5KV+BHt8vJDycC8
+         gfLg==
+X-Gm-Message-State: ANhLgQ34WZwDUp39qp9ryU4OKe7sRZuVt7AWYCsyFCncCaHJgD9+/Pwc
+        psQd8fqi260V1Uz7QJOEtfSAYSHKmGA=
+X-Google-Smtp-Source: ADFU+vu33/tER7UbAE9saaXS5jjv8U5NDlXNrJgfePpmE/SLJRv4FbdKQSggX0D5kcr6Hk9V6uB9jw==
+X-Received: by 2002:a17:90a:bf18:: with SMTP id c24mr4158631pjs.125.1585291706174;
+        Thu, 26 Mar 2020 23:48:26 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d7sm3308989pfa.106.2020.03.26.23.48.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 23:48:23 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Hector Marco-Gisbert <hecmargi@upv.es>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-riscv@lists.infradead.org, x86@kernel.org,
-        linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1585027375-9997-1-git-send-email-anshuman.khandual@arm.com>
- <2bb4badc-2b7a-e15d-a99b-b1bd38c9d9bf@arm.com>
- <a46d18ed-8911-1ec3-c32f-58b6e0d959d7@c-s.fr>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <9675882f-0ec5-5e46-551f-dd3aa38bf8d8@arm.com>
-Date:   Fri, 27 Mar 2020 12:16:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Russell King <linux@armlinux.org.uk>,
+        Will Deacon <will@kernel.org>, Jann Horn <jannh@google.com>,
+        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/6] binfmt_elf: Update READ_IMPLIES_EXEC logic for modern CPUs
+Date:   Thu, 26 Mar 2020 23:48:14 -0700
+Message-Id: <20200327064820.12602-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <a46d18ed-8911-1ec3-c32f-58b6e0d959d7@c-s.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-On 03/26/2020 08:53 PM, Christophe Leroy wrote:
-> 
-> 
-> Le 26/03/2020 à 03:23, Anshuman Khandual a écrit :
->>
->>
->> On 03/24/2020 10:52 AM, Anshuman Khandual wrote:
->>> This series adds more arch page table helper tests. The new tests here are
->>> either related to core memory functions and advanced arch pgtable helpers.
->>> This also creates a documentation file enlisting all expected semantics as
->>> suggested by Mike Rapoport (https://lkml.org/lkml/2020/1/30/40).
->>>
->>> This series has been tested on arm64 and x86 platforms.
->>
->> If folks can test these patches out on remaining ARCH_HAS_DEBUG_VM_PGTABLE
->> enabled platforms i.e s390, arc, powerpc (32 and 64), that will be really
->> appreciated. Thank you.
->>
-> 
-> On powerpc 8xx (PPC32), I get:
-> 
-> [   53.338368] debug_vm_pgtable: debug_vm_pgtable: Validating architecture page table helpers
-> [   53.347403] ------------[ cut here ]------------
-> [   53.351832] WARNING: CPU: 0 PID: 1 at mm/debug_vm_pgtable.c:647 debug_vm_pgtable+0x280/0x3f4
+This continues my attempt to fix READ_IMPLIES_EXEC. :)
 
-mm/debug_vm_pgtable.c:647 ?
+This series is for x86, arm, and arm64; I'd like it to go via
+-tip, though, just to keep these changes together, as they're
+related. (Note that most other architectures don't suffer from this
+problem. e.g. powerpc's behavior appears to already be correct. MIPS may
+need adjusting but the history of CPU features and toolchain behavior
+is very unclear to me.)
 
-With the following commits in place
+Repeating the commit log from later in the series:
 
-53a8338ce (HEAD) Documentation/mm: Add descriptions for arch page table helper
-5d4913fc1 mm/debug: Add tests validating arch advanced page table helpers
-bcaf120a7 mm/debug: Add tests validating arch page table helpers for core features
-d6ed5a4a5 x86/memory: Drop pud_mknotpresent()
-0739d1f8d mm/debug: Add tests validating architecture page table helpers
-16fbf79b0 (tag: v5.6-rc7) Linux 5.6-rc7
 
-mm/debug_vm_pgtable.c:647 is here.
+The READ_IMPLIES_EXEC work-around was designed for old toolchains that
+lacked the ELF PT_GNU_STACK marking under the assumption that toolchains
+that couldn't specify executable permission flags for the stack may not
+know how to do it correctly for any memory region.
 
-#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-static void __init pmd_swap_tests(unsigned long pfn, pgprot_t prot)
-{
-        swp_entry_t swp;
-        pmd_t pmd;  -----------------------------> Line #647
+This logic is sensible for having ancient binaries coexist in a system
+with possibly NX memory, but was implemented in a way that equated having
+a PT_GNU_STACK marked executable as being as "broken" as lacking the
+PT_GNU_STACK marking entirely. Things like unmarked assembly and stack
+trampolines may cause PT_GNU_STACK to need an executable bit, but they
+do not imply all mappings must be executable.
 
-        pmd = pfn_pmd(pfn, prot);
-        swp = __pmd_to_swp_entry(pmd);
-        WARN_ON(!pmd_same(pmd, __swp_entry_to_pmd(swp)));
-}
-#else
-static void __init pmd_swap_tests(unsigned long pfn, pgprot_t prot) { }
-#end
+This confusion has led to situations where modern programs with explicitly
+marked executable stack are forced into the READ_IMPLIES_EXEC state when
+no such thing is needed. (And leads to unexpected failures when mmap()ing
+regions of device driver memory that wish to disallow VM_EXEC[1].)
 
-Did I miss something ?
+In looking for other reasons for the READ_IMPLIES_EXEC behavior, Jann
+Horn noted that glibc thread stacks have always been marked RWX (until
+2003 when they started tracking the PT_GNU_STACK flag instead[2]). And
+musl doesn't support executable stacks at all[3]. As such, no breakage
+for multithreaded applications is expected from this change.
 
-> [   53.360140] CPU: 0 PID: 1 Comm: swapper Not tainted 5.6.0-rc7-s3k-dev-01090-g92710e99881f #3544
-> [   53.368718] NIP:  c0777c04 LR: c0777bb8 CTR: 00000000
-> [   53.373720] REGS: c9023df0 TRAP: 0700   Not tainted (5.6.0-rc7-s3k-dev-01090-g92710e99881f)
-> [   53.382042] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 22000222  XER: 20000000
-> [   53.388667]
-> [   53.388667] GPR00: c0777bb8 c9023ea8 c6120000 00000001 1e410000 00000000 00000000 007641c9
-> [   53.388667] GPR08: 00000000 00000001 00000000 ffffffff 82000222 00000000 c00039b8 00000000
-> [   53.388667] GPR16: 00000000 00000000 00000000 fffffff0 065fc000 1e410000 c6600000 000001e4
-> [   53.388667] GPR24: 000001d9 c062d14c c65fc000 c642d448 000006c9 00000000 c65f8000 c65fc040
-> [   53.423400] NIP [c0777c04] debug_vm_pgtable+0x280/0x3f4
-> [   53.428559] LR [c0777bb8] debug_vm_pgtable+0x234/0x3f4
-> [   53.433593] Call Trace:
-> [   53.436048] [c9023ea8] [c0777bb8] debug_vm_pgtable+0x234/0x3f4 (unreliable)
-> [   53.442936] [c9023f28] [c00039e0] kernel_init+0x28/0x124
-> [   53.448184] [c9023f38] [c000f174] ret_from_kernel_thread+0x14/0x1c
-> [   53.454245] Instruction dump:
-> [   53.457180] 41a20008 4bea3ed9 62890021 7d36b92e 7d36b82e 71290fd0 3149ffff 7d2a4910
-> [   53.464838] 0f090000 5789077e 3149ffff 7d2a4910 <0f090000> 38c00000 38a00000 38800000
-> [   53.472671] ---[ end trace fd5dd92744dc0065 ]---
-Could you please point me to the exact test which is failing ?
+[1] https://lkml.kernel.org/r/20190418055759.GA3155@mellanox.com
+[2] https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=54ee14b3882
+[3] https://lkml.kernel.org/r/20190423192534.GN23599@brightrain.aerifal.cx
 
-> [   53.519778] Freeing unused kernel memory: 608K
-> 
-> 
-So I assume that the system should have come till runtime just fine apart from
-the above warning message because.
+
+Thanks!
+
+-Kees
+
+v5:
+ - re-align tables and use full name of PT_GNU_STACK (bp)
+v4: https://lore.kernel.org/lkml/20200225051307.6401-1-keescook@chromium.org
+v3: https://lore.kernel.org/lkml/20200210193049.64362-1-keescook@chromium.org
+v2: https://lore.kernel.org/lkml/20190424203408.GA11386@beast/
+v1: https://lore.kernel.org/lkml/20190423181210.GA2443@beast/
+
+Kees Cook (6):
+  x86/elf: Add table to document READ_IMPLIES_EXEC
+  x86/elf: Split READ_IMPLIES_EXEC from executable PT_GNU_STACK
+  x86/elf: Disable automatic READ_IMPLIES_EXEC for 64-bit address spaces
+  arm32/64, elf: Add tables to document READ_IMPLIES_EXEC
+  arm32/64, elf: Split READ_IMPLIES_EXEC from executable PT_GNU_STACK
+  arm64, elf: Disable automatic READ_IMPLIES_EXEC for 64-bit address
+    spaces
+
+ arch/arm/kernel/elf.c        | 27 +++++++++++++++++++++++----
+ arch/arm64/include/asm/elf.h | 23 ++++++++++++++++++++++-
+ arch/x86/include/asm/elf.h   | 22 +++++++++++++++++++++-
+ fs/compat_binfmt_elf.c       |  5 +++++
+ 4 files changed, 71 insertions(+), 6 deletions(-)
+
+-- 
+2.20.1
+
