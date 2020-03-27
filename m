@@ -2,367 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45CCA195B74
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 17:50:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 023F7195B67
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 17:49:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbgC0QuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 12:50:19 -0400
-Received: from mail-dm6nam12on2072.outbound.protection.outlook.com ([40.107.243.72]:27998
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727242AbgC0QuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 12:50:19 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oBPVyJEqKUlAQVYGuyt44jbauZh3kiq+WRfYuqW3hMZjKXrL97V5YCgjnJtE19jVUPXbU853fzeqK6V7JCqZ705uBgHeX++RvdaZ/9GvLcBm+QE0nSMenll6XyzLtKTUeaXqO6GBAw5gAMhbnadwX++h8XWyVyNiaHZCkTUu9y4PBXCYWqbodn5WfHT5mKvqO5vmFUypsHEssiLwcLaEy3rnBuuvLDQyamb4LeHigt5bKwUQjKJP2aO1W2617oZiLu7pP2RJCsfT8eTA1o1VmDsIeTGI34bO1uoXPVK1gEAB5HlVViUpGR1YObFRg5zFz1nP+cUr0tJdq1XWS3rpww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0LFqiO5qG5YYDkhm8lTNwaev9cw/vu90KnMaH9OFfFw=;
- b=SdXzujwns9e0aH9j3CjRsoBgpAV1ZSlEQl5zi0NDYnUfDLkInnoARNTxQSkFAvV+WUyDq8MmgYHZBT3gDf6DhQgBSIeMzYLPdLu3erP5/KUx6sMtwAyQ+XUVs8KZMUs+cqEwscQJAA+JJWwWL0R3YVt/kp1/piw1aO1yejgmGILAezWh8DWmtQKr0lZnMvx/zePmJGK5cyQHOAirrkwf+p0GGtI7BduMDfsCmUWLy95LR67KGuJk+KXUKuhbaSGE1XtKB3gc7q2KHDl9+/CT5NIzL4GeZcXQOP5yCt17HF2A5DQx1BcY4idEa4Q/SZDzKCHQiuZNzY4jki8SzGlQAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+        id S1727773AbgC0Qs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 12:48:58 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54534 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727606AbgC0Qs6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 12:48:58 -0400
+Received: by mail-wm1-f67.google.com with SMTP id c81so12111147wmd.4;
+        Fri, 27 Mar 2020 09:48:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=windriversystems.onmicrosoft.com;
- s=selector2-windriversystems-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0LFqiO5qG5YYDkhm8lTNwaev9cw/vu90KnMaH9OFfFw=;
- b=iNu0+/grTcSkrkcTMnkTROapy+whi5mpRPZiOWQMVoFAwP5Ugo3721724GQR/74toSDpxDa5GhbrrFs0LHF96wuLh3R/rXsG0KKjBW7M21eA1abgspP9wfJNBFWN1laWuUYKf4SKq7yqbGPYVUofxtLvW/6BBOR+6OIB+gO3DWs=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Li.Wang@windriver.com; 
-Received: from DM6PR11MB3595.namprd11.prod.outlook.com (2603:10b6:5:142::16)
- by DM6PR11MB3177.namprd11.prod.outlook.com (2603:10b6:5:c::28) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2835.20; Fri, 27 Mar 2020 16:47:40 +0000
-Received: from DM6PR11MB3595.namprd11.prod.outlook.com
- ([fe80::4038:e1b8:4bd3:74f3]) by DM6PR11MB3595.namprd11.prod.outlook.com
- ([fe80::4038:e1b8:4bd3:74f3%5]) with mapi id 15.20.2835.023; Fri, 27 Mar 2020
- 16:47:40 +0000
-Subject: Re: [PATCH] arm64: mmu: no write cache for O_SYNC flag
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=h1aelAWLaoqq3uil0dejAhrqyTDcEF0k6JCj32olGXA=;
+        b=GkDeyJ/PCc0L5dJxqXZT3LuJ3mpLN69xZP9u7AT+BEY/kivZWonVcjpLn9ujh2pUCg
+         uYiP/TZGpCYBIjIfI79MybwkJlLF18HTjaecjRlAsZAzqBqYrkwpQpKtF5eUrDAjik71
+         Fpa3evP8G6gv34y8NsQ2cXZjdgOl/Tk+RfAEeWBN48ox72/77KErx/PlY4h9joS3gSCq
+         hnKT737Nw8q+oJ3P5t9cxi8cs47qsvk4uuBbAi9a/KRe1TFz4Ax3VmRDlXZCsS3ZPS5z
+         IHTMJARKCrJioKKL4alJrK7QoPUr8p7/gUkIgAfXo9w+svMz5ufI6UKR8ytyVBCkwN58
+         DBKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=h1aelAWLaoqq3uil0dejAhrqyTDcEF0k6JCj32olGXA=;
+        b=tdBmd21r4lUFiz4IjcHbvfCpI/fUNps+FO3QFcf+OaaEd8LKIBLBZQIFw4OTZCUF1n
+         XhA2uoSocNpqKXK5mjV09MWeMRTK7Z/KmyVBMvj62C0UmVG23fgxizhMoiNNILSQ6VFr
+         eRFZ13Zfrn83Q4GeLloh0nr09Z0NVBtk4uf3s+Y0lqxFqMDvqmcDsR3SSiW3b0KZMuMX
+         Zvgd7iUORtER+p6E7XvA1NxB8+kBXrSts1vm5PeEQcipo02V18//z56jqN7jstgnoG9L
+         g7ZWCPW94McWjOIXVH0GvOEkikqEyItyi6pKK6wOW4nwmqS5LRj2lSjjhHr4qT5NtBir
+         EIUg==
+X-Gm-Message-State: ANhLgQ1XcP0WwE87i9d2jLKO63ISXSkV/9pXGGZgisYs4D+1JHW9PfA+
+        ZwvK64rQIX/aRT9/O79WK4gQ27iZUyo=
+X-Google-Smtp-Source: ADFU+vvAbGX0hOXXJsXga4rmC2wnaTcEWIvck8c9xLmeF2v0jGqWQ7UjvMRuzizVUB2i1aHBQOu+Dw==
+X-Received: by 2002:a1c:de07:: with SMTP id v7mr6495554wmg.79.1585327735486;
+        Fri, 27 Mar 2020 09:48:55 -0700 (PDT)
+Received: from ziggy.stardust ([213.195.113.243])
+        by smtp.gmail.com with ESMTPSA id y7sm9838574wrq.54.2020.03.27.09.48.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Mar 2020 09:48:54 -0700 (PDT)
+Subject: Re: [PATCH] ARM: dts: bcm283x: Add cells encoding format to firmware
+ bus
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Rob Herring <robh+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20200326163625.30714-1-li.wang@windriver.com>
- <20200327142937.GB94838@C02TD0UTHF1T.local>
-From:   "Wang, Li" <li.wang@windriver.com>
-Message-ID: <6fc201bf-ad0c-3dae-783e-c9c9e4ac034e@windriver.com>
-Date:   Sat, 28 Mar 2020 00:47:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-In-Reply-To: <20200327142937.GB94838@C02TD0UTHF1T.local>
-Content-Type: multipart/mixed;
- boundary="------------456B615C93724A699A05DEC0"
-X-ClientProxiedBy: HKAPR04CA0018.apcprd04.prod.outlook.com
- (2603:1096:203:d0::28) To DM6PR11MB3595.namprd11.prod.outlook.com
- (2603:10b6:5:142::16)
+References: <20200326134413.12298-1-nsaenzjulienne@suse.de>
+ <015ad553-86a2-c6ac-e515-f14df83cec26@gmail.com>
+ <701084d1-d03d-8890-c2ca-16daaa3085d6@gmail.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <05354cea-756c-640e-24d7-272eafd69ef1@gmail.com>
+Date:   Fri, 27 Mar 2020 17:48:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.0.116] (120.244.141.26) by HKAPR04CA0018.apcprd04.prod.outlook.com (2603:1096:203:d0::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.19 via Frontend Transport; Fri, 27 Mar 2020 16:47:37 +0000
-X-Originating-IP: [120.244.141.26]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ca9bfc6b-1a16-4242-69aa-08d7d26e8fc1
-X-MS-TrafficTypeDiagnostic: DM6PR11MB3177:
-X-Microsoft-Antispam-PRVS: <DM6PR11MB3177A2E932E57EBB6D3A70B6EFCC0@DM6PR11MB3177.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2512;
-X-Forefront-PRVS: 0355F3A3AE
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39850400004)(136003)(346002)(396003)(366004)(376002)(81166006)(81156014)(8936002)(6666004)(54906003)(316002)(6916009)(36756003)(5660300002)(52116002)(33964004)(66946007)(66556008)(6486002)(8676002)(66476007)(235185007)(16576012)(66616009)(31686004)(186003)(966005)(2906002)(2616005)(26005)(86362001)(478600001)(31696002)(956004)(4326008)(16526019);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR11MB3177;H:DM6PR11MB3595.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
-Received-SPF: None (protection.outlook.com: windriver.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kvCcQu/ZxTvCaNfsIHUCIG2AZ5OyR8tIa+yME/l+hpAC3dePAsKHREWwu4NKeUlY0KzMli0MnUgpb/IqjmvBKuDH2zuVFVB+EK/9lnyho+ZOptyzT+tfzvvrIcYljtlDgyLOGAP7tB8diHEFTZLxC0MsZpB2GTIX6VNfIjPmFyUdQUm36aA/wzSdzFt8ENCv/icSV/lvKcEYFnRSHF7kTtKtzYr3eTYMNghLsZIw4LDEsZ8BHXk33EdzAx6lkgLGOzSgfCyxgct5hBB8rMJXMyFPEcOt8gUYL+PSEntgikWBqd5V0Rv9kIHLuIOjnJgyjFoVxvnL+1Fzj/I9sIBhqpJGAtrXOK0xxcDq5SAsT6nrkoRiDuD5OJsoPUjRDz9kIU9otUEiDAC3i9ebiBHjPKE5XBII8nnaxhDbqgdw6l7Ty7Q77S6UKIlmKVMiRwdFfq1vJ1Q04rdIiGv7NPu/1eTcEDkBfzsUfZUvZyxisojWZXjboJSh+7nRNRf5wcNA/ua/r52TJgcWyXQ14TzAxA==
-X-MS-Exchange-AntiSpam-MessageData: jYtovzZCUk1fs5rYV/m1WOn/bYcEF6SULYtTms5POAcqZmSoAnYjsYvT6ckD4uOjXohEbi7RFvyPskrv1bGCIFl2hgTC9+hG5vGUZpBr4YiRBD01DnzpZ0urWDa+30FOjr6r88QVMCbhWIPOjOtsdg==
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca9bfc6b-1a16-4242-69aa-08d7d26e8fc1
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2020 16:47:40.0444
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +Xzyt6rLtkMMHLirtYAvK4mXG9gth9mFvw44VAD8u2sAfgeny26SnVKOVqlbOeOQ0QCntrgRuYjdLvn+JvaMNA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB3177
+In-Reply-To: <701084d1-d03d-8890-c2ca-16daaa3085d6@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---------------456B615C93724A699A05DEC0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
 
-在 2020/3/27 22:29, Mark Rutland 写道:
-> On Thu, Mar 26, 2020 at 09:36:25AM -0700, Li Wang wrote:
->> reproduce steps:
->> 1.
->> disable CONFIG_STRICT_DEVMEM in linux kernel
->> 2.
->> Process A gets a Physical Address of global variable by
->> "/proc/self/pagemap".
->> 3.
->> Process B writes a value to the same Physical Address by mmap():
->> fd=open("/dev/mem",O_SYNC);
->> Virtual Address=mmap(fd);
-> Is this just to demonstrate the behaviour, or is this meant to be
-> indicative of a real use-case? I'm struggling to see the latter.
->
->> problem symptom:
->> after Process B write a value to the Physical Address,
->> Process A of the value of global variable does not change.
->> They both W/R the same Physical Address.
-> If Process A is not using the same attributes as process B, there is no
-> guarantee of coherency. How did process A map this memory?
-
-
-about 2 Process:
-
-Process A:
-
-the memory is not declared by map function, it is just a global variable.
-
-only by /proc/self/pagemap to get its Physical Address.
-
-I attached the codes(wrl-cache-coh-test.c)
-
-Process B:
-
-it is command of "devmem" in busybox, it writes a value to Physical Address.
-
-it uses open(O_SYNC) and mmap.
-
-
->> technical reason:
->> Process B writing the Physical Address is by the Virtual Address,
->> and the Virtual Address comes from "/dev/mem" and mmap().
->> In arm64 arch, the Virtual Address has write cache.
->> So, maybe the value is not written into Physical Address.
-> I don't think that's true. I think what's happening here is:
->
-> * Process A has a Normal WBWA Cacheable mapping.
-> * Process B as a Normal Non-cacheable mapping.
-> * Process B's write does not snoop any caches, and goes straight to
->    memory.
-> * Process A reads a value from cache, which does not include process B's
->    write.
->
-> That's a natural result of using mismatched attributes, and is
-> consistent with the O_SYNC flag meaning that the write "is transferred
-> to the underlying hardware".
-
-
-if you agree that O_SYNC flag means "is transferred to the underlying 
-hardware",
-
-the arm64 does not do that:
-
-when use O_SYNC flag under arm64 arch, it adds write cache feature,
-
-so, it is no guarantee "transferred to hardware".
-
-=====
-
-arch/arm64/mm/mmu.c
-phys_mem_access_prot(){
-   else if (file->f_flags & O_SYNC)
-     return pgprot_writecombine(vma_prot);}
-
-=====
-
-
-by my test without the write cache, even if Process A is not using the 
-same attributes as process B,
-
-it has guarantee of coherency:
-
-when Process B change value, Process B can see the change, too.
-
-
-Thanks,
-
-LiWang.
-
-
-my email server seems to reject to send to 
-linux-arm-kernel@lists.infradead.org,
-
-the info is in another email not showing in 
-linux-arm-kernel@lists.infradead.org:
-
-
-1.
-
-no pass O_SYNC in user space is not a good idea.
-
-in fact, the codes come from 'devmem' command of busybox:
-
-=====
-
-busybox-1.24.1/miscutils$ vim devmem.c
-
-fd = xopen("/dev/mem", O_SYNC);
-
-=====
-
-the codes are used for a long time.
-
-
-2.
-
-according to info of open man about "O_SYNC":
-
-=====
-
-http://man7.org/linux/man-pages/man2/open.2.html
-
-the output data and associated file metadata have been transferred to 
-the underlying hardware
-
-=====
-
-I think "O_SYNC" means no cache.
-
-
-3.
-
-/dev/mem of driver offers 2 ways to operate  physical memory.
-
-one is mmap, the other is read/write.
-
-when use read/write way, it operates uncached memory:
-
-=====
-
-kernel-source/drivers/char/mem.c
-
-write_mem(){
-
-/* it must also be accessed uncached */
-
-}
-
-=====
-
-
-4.
-
-arm64 arch is different with other arch about phys_mem_access_prot().
-
-you can see no any other arch add cache flag in the function.
-
-only arm and arm64 add write cache for O_SYNC flag.
-
-
-x86/mm/pat.c
-
-phys_mem_access_prot(){
-
-return vma_prot;
-
-}
-
-
-powerpc/mm/mem.c
-
-phys_mem_access_prot(){
-         if (ppc_md.phys_mem_access_prot)
-                 return ppc_md.phys_mem_access_prot(file, pfn, size, 
-vma_prot);
-         if (!page_is_ram(pfn))
-                 vma_prot = pgprot_noncached(vma_prot);
-         return vma_prot;
-}
-
-
-drivers/char/mem.c
-
-phys_mem_access_prot()
-{
-#ifdef pgprot_noncached
-         phys_addr_t offset = pfn << PAGE_SHIFT;
-
-         if (uncached_access(file, offset))
-                 return pgprot_noncached(vma_prot);
-#endif
-    return vma_prot;
-}
-
-
->> fix reason:
->> giving write cache flag in arm64 is in phys_mem_access_prot():
->> =====
->> arch/arm64/mm/mmu.c
->> phys_mem_access_prot()
->> {
->>    if (!pfn_valid(pfn))
->>      return pgprot_noncached(vma_prot);
->>    else if (file->f_flags & O_SYNC)
->>      return pgprot_writecombine(vma_prot);
->>    return vma_prot;
->> }
->> ====
->> the other arch and the share function drivers/char/mem.c of phys_mem_access_prot()
->> does not add write cache flag.
->> So, removing the flag to fix the issue
-> This will change behaviour that other software may be relying upon, and
-> as above I do not believe this actually solves the problem you describe.
->
-> Thanks,
-> Mark.
->
->> Signed-off-by: Li Wang <li.wang@windriver.com>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>   arch/arm64/mm/mmu.c | 2 --
->>   1 file changed, 2 deletions(-)
+On 27/03/2020 17:17, Florian Fainelli wrote:
+> 
+> 
+> On 3/27/2020 9:15 AM, Matthias Brugger wrote:
 >>
->> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> index 128f70852bf3..d7083965ca17 100644
->> --- a/arch/arm64/mm/mmu.c
->> +++ b/arch/arm64/mm/mmu.c
->> @@ -81,8 +81,6 @@ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
->>   {
->>   	if (!pfn_valid(pfn))
->>   		return pgprot_noncached(vma_prot);
->> -	else if (file->f_flags & O_SYNC)
->> -		return pgprot_writecombine(vma_prot);
->>   	return vma_prot;
->>   }
->>   EXPORT_SYMBOL(phys_mem_access_prot);
->> -- 
->> 2.24.1
 >>
+>> On 26/03/2020 14:44, Nicolas Saenz Julienne wrote:
+>>> With the introduction of 55c7c0621078 ("ARM: dts: bcm283x: Fix vc4's
+>>> firmware bus DMA limitations") the firmware bus has to comply with
+>>> /soc's DMA limitations. Ultimately linking both buses to a same
+>>> dma-ranges property. The patch (and author) missed the fact that a bus'
+>>> #address-cells and #size-cells properties are not inherited, but set to
+>>> a fixed value which, in this case, doesn't match /soc's. This, although
+>>> not breaking Linux's DMA mapping functionality, generates ugly dtc
+>>> warnings.
+>>>
+>>> Fix the issue by adding the correct address and size cells properties
+>>> under the firmware bus.
+>>>
+>>> Fixes: 55c7c0621078 ("ARM: dts: bcm283x: Fix vc4's firmware bus DMA limitations")
+>>> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+>>
+>> Reviewed-by: Matthias Brugger <mbrugger@suse.com>
+> 
+> Should this be squashed into "ARM: dts: bcm283x: Fix vc4's firmware bus
+> DMA limitations"? I have not gotten a response it has been accepted yet.
+> 
 
---------------456B615C93724A699A05DEC0
-Content-Type: text/plain; charset=UTF-8;
- name="cache-test.c"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="cache-test.c"
+Well I think if we can squash the two instead of providing a Fixes-tag, even better.
 
-I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRpbnQuaD4KI2luY2x1ZGUgPHVuaXN0ZC5o
-PgoKc3RhdGljIHVpbnRwdHJfdCB2aXJ0X3RvX3BoeXNfYWRkcmVzcyh1aW50cHRyX3QgdmFkZHIp
-CnsKCUZJTEUgKnBhZ2VtYXA7Cgl1aW50cHRyX3QgcGFkZHIgPSAwOwoJb2ZmX3Qgb2Zmc2V0ID0g
-KHZhZGRyIC8gc3lzY29uZihfU0NfUEFHRVNJWkUpKSAqIHNpemVvZih1aW50NjRfdCk7Cgl1aW50
-NjRfdCBlOwoKCS8qIGh0dHBzOi8vd3d3Lmtlcm5lbC5vcmcvZG9jL0RvY3VtZW50YXRpb24vdm0v
-cGFnZW1hcC50eHQgKi8KCWlmICgocGFnZW1hcCA9IGZvcGVuKCIvcHJvYy9zZWxmL3BhZ2VtYXAi
-LCAiciIpKSkgewoJCWlmIChsc2VlayhmaWxlbm8ocGFnZW1hcCksIG9mZnNldCwgU0VFS19TRVQp
-ID09IG9mZnNldCkgewoJCQlpZiAoZnJlYWQoJmUsIHNpemVvZih1aW50NjRfdCksIDEsIHBhZ2Vt
-YXApKSB7CgkJCQlpZiAoZSAmICgxVUxMIDw8IDYzKSkgeyAvKiBwYWdlIHByZXNlbnQgPyAqLwoJ
-CQkJCS8qIHBmbiBtYXNrICovCgkJCQkJcGFkZHIgPSBlICYgKCgxVUxMIDw8IDU0KSAtIDEpOwoJ
-CQkJCXBhZGRyID0gcGFkZHIgKiBzeXNjb25mKF9TQ19QQUdFU0laRSk7CgkJCQkJLyogYWRkIG9m
-ZnNldCB3aXRoaW4gcGFnZSAqLwoJCQkJCXBhZGRyIHw9ICh2YWRkciAmIChzeXNjb25mKF9TQ19Q
-QUdFU0laRSkgLSAxKSk7CgkJCQl9CgkJCQllbHNlCgkJCQkJcHJpbnRmKCIlczogTm8gcGFnZSBw
-cmVzZW50XG4iLCBfX2Z1bmNfXyk7CgkJCX0KCQkJZWxzZQoJCQkJcHJpbnRmKCIlczogZnJlYWQg
-ZmFpbGVkXG4iLCBfX2Z1bmNfXyk7CgkJfQoJCWVsc2UKCQkJcHJpbnRmKCIlczogbHNlZWsgZGlk
-IG5vdCBmaW5kXG4iLCBfX2Z1bmNfXyk7CgoJCWZjbG9zZShwYWdlbWFwKTsKCX0KCWVsc2UKCQlw
-cmludGYoIiVzOiBQYWdlbWFwIG9wZW4gZmFpbGVkXG4iLCBfX2Z1bmNfXyk7CgoJcmV0dXJuIHBh
-ZGRyOwp9Cgp2b2xhdGlsZSB1aW50MzJfdCB2YXI9MDsKCmludCBtYWluKCkKewogICB2b2lkKiBw
-aHlzX2FkZHIgPSB2aXJ0X3RvX3BoeXNfYWRkcmVzcygmdmFyKTsKICAgcHJpbnRmKCIlcCAlcFxu
-IiwgJnZhciwgcGh5c19hZGRyKTsKICAgd2hpbGUoIHZhcj09MCApCiAgICAgIHNsZWVwKDEpOwog
-ICBwcmludGYoImRvbmVcbiIpOwogICBmZmx1c2goc3Rkb3V0KTsKICAgcmV0dXJuIDA7Cn0K
-
---------------456B615C93724A699A05DEC0--
+Regards,
+Matthias
