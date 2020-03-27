@@ -2,102 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86886195609
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 12:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB7D2195615
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 12:13:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbgC0LKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 07:10:17 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40888 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbgC0LKQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 07:10:16 -0400
-Received: by mail-pl1-f195.google.com with SMTP id h11so3324460plk.7
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 04:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TGLdq/U95WT3HxV3sUtO3DHH/5EDIKVtU9/EIJiiqA0=;
-        b=ooDVIr/nQdq4AcQGTXHjjO6dJVbi51GdNjzGeNh99xO+1hi1/ufg/eevXiM9cQglkE
-         bq8AimnGS9XIa3R5C7rGG27gevdg7jlS9Hfs/RnoGemFpecapjdhMLotbInDyaqB58v1
-         dl3iwezCYpzJ+Esk/AZXIa4JyrK6WGhHYBr+H8zFm/cCgSF0Hu1k8PWJCpQjPQx8zMJa
-         RVAo25zw5VyZo9g8lpSkqLIgWsqc1+i89AgE8K9FsIUu/81l/tnEu92fPH4gofuv5UyC
-         cJDpds+OZCPwOeBH3FDRYuL/+sDCN5kQK/rBM6tfldSUKLENsnNKFOlG5Sfs4l2qAFJP
-         3yOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TGLdq/U95WT3HxV3sUtO3DHH/5EDIKVtU9/EIJiiqA0=;
-        b=Z+Bn7rRWDSS0pgniNMltwXRgf3LJ32v2eQ85vnhRfddltpp63PDojC8W85aL090the
-         krzUr1v2oHlfhgEG8rw0gwlVOpyBLZeqR0SQnNIE2H9umqiJryCzRlsNJXzubC1NJ0cx
-         vSxwgT6t33zAX8q/aT+edG/hRKfYo95wCsoCp2/3cNUke+Lqmg+ga63F1w0htWx/ryd/
-         SGNkhuNP6dMUDjQ5qMnb7vrANn3f8+eXcZBuoCuqRXPvbVLeiLLOstThZi7w5Rgg6GF/
-         Wpwj7/A574QBjtkQOYbSqN9TAX596x3LT5TyAlp/bfqJJCYVnGjSFXeAxshafPt0Vr7k
-         BLsQ==
-X-Gm-Message-State: ANhLgQ2X0GN3eL+7Q2GUkq1Cofb39m3Vdf1zUSDA0nMrFFOdQwfnsGRs
-        AxhOtyiCJubWg0Vg5lNSNWw=
-X-Google-Smtp-Source: ADFU+vvx6xgRoCFobHljQubBlxi17gVHoQR1r82g3QG+ZJ1M3ewEJcTwpCSIhlcpqaaNY2cX9bcmNg==
-X-Received: by 2002:a17:902:8a81:: with SMTP id p1mr12498205plo.284.1585307415138;
-        Fri, 27 Mar 2020 04:10:15 -0700 (PDT)
-Received: from localhost ([183.82.181.40])
-        by smtp.gmail.com with ESMTPSA id x24sm3866628pfn.140.2020.03.27.04.10.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Mar 2020 04:10:14 -0700 (PDT)
-Date:   Fri, 27 Mar 2020 16:40:12 +0530
-From:   afzal mohammed <afzal.mohd.ma@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        SoC Team <soc@kernel.org>, arm-soc <arm@kernel.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3] ARM: replace setup_irq() by request_irq()
-Message-ID: <20200327111012.GA8355@afzalpc>
-References: <20200308161903.GA156645@furthur.local>
- <20200301122226.4068-1-afzal.mohd.ma@gmail.com>
- <m3ftepbtxm.fsf@t19.piap.pl>
- <51cebbbb-3ba4-b336-82a9-abcc22f9a69c@gmail.com>
- <20200304163412.GX37466@atomide.com>
- <20200313154520.GA5375@afzalpc>
- <20200317043702.GA5852@afzalpc>
- <20200325114332.GA6337@afzalpc>
- <20200327104635.GA7775@afzalpc>
- <CAK8P3a0kVvkCW+2eiyZTkfS=LqqnbeQS+S-os=vxhaYXCwLK+A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0kVvkCW+2eiyZTkfS=LqqnbeQS+S-os=vxhaYXCwLK+A@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1726804AbgC0LNa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 07:13:30 -0400
+Received: from mga06.intel.com ([134.134.136.31]:65535 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726217AbgC0LNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 07:13:30 -0400
+IronPort-SDR: 5mjP/eToJptF8XXS5ET8vWaZummJ0kMenL1I1P/2o0XsuxHnDZzcqfsS+D8G5YyICgox8m3sbx
+ POOqDJW9xEqw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 04:13:29 -0700
+IronPort-SDR: 1TMMu0bX7LuJ4UwoUGRyHRf7VQ5nlu/6g+WiYeRMJZo1fivt+FUk4Ryr2Nt3AW5nK7X87H6Ptg
+ Iu4ikqUsaBqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,312,1580803200"; 
+   d="scan'208";a="247854794"
+Received: from chenyu-office.sh.intel.com ([10.239.158.173])
+  by orsmga003.jf.intel.com with ESMTP; 27 Mar 2020 04:13:27 -0700
+From:   Chen Yu <yu.c.chen@intel.com>
+To:     linux-pm@vger.kernel.org
+Cc:     Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        Chen Yu <yu.c.chen@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH] PM / sleep: Add pm_debug_messages boot command control
+Date:   Fri, 27 Mar 2020 19:11:41 +0800
+Message-Id: <20200327111141.14324-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Debug messages from the system suspend/hibernation infrastructure
+is disabled by default, and can only be enabled after the system
+has boot up via /sys/power/pm_debug_messages. This makes the hibernation
+resume hard to track as it involves system boot up across hibernation.
+There's no chance for software_resume() to track the resume process,
+eg.
 
-On Fri, Mar 27, 2020 at 11:55:36AM +0100, Arnd Bergmann wrote:
+Turning on the pm_debug_messages during boot up by appending
+'pm_debug_message'.
 
-> To make sure I get the right ones, could you bounce all the patches that are
-> still missing to soc@kernel.org to let them show up in patchwork?
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+ kernel/power/main.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Done.
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 69b7a8aeca3b..1da3d7c15e03 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -535,6 +535,13 @@ static ssize_t pm_debug_messages_store(struct kobject *kobj,
+ 
+ power_attr(pm_debug_messages);
+ 
++static int __init pm_debug_message_setup(char *str)
++{
++	pm_debug_messages_on = true;
++	return 1;
++}
++__setup("pm_debug_message", pm_debug_message_setup);
++
+ /**
+  * __pm_pr_dbg - Print a suspend debug message to the kernel log.
+  * @defer: Whether or not to use printk_deferred() to print the message.
+-- 
+2.17.1
 
-If it helps, i can send the same patches w/ tags received as well.
-
-Regards
-afzal
