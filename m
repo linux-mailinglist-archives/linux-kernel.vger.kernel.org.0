@@ -2,80 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AC7E195FBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 21:30:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2E3195FA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 21:25:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbgC0UaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 16:30:24 -0400
-Received: from mga12.intel.com ([192.55.52.136]:51291 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbgC0UaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 16:30:23 -0400
-IronPort-SDR: jl4H+99Y0Bz5VfCL4MWl8dmxy/DMvnBe3TSqSgwfWRNXTBneDiiOUX/oEffM4ONe2OJHDmjQio
- tBaVSc6WzKeQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 13:30:22 -0700
-IronPort-SDR: gjhrgaRikKuLGoRzuJ9UaElWS0LV9pvmGcVha6M6+TR3bU/xjcqEMa7TdBQZXP88kGb5biaEp6
- ihEToXScSNGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,313,1580803200"; 
-   d="scan'208";a="358592663"
-Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.171])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Mar 2020 13:30:22 -0700
-From:   Gayatri Kammela <gayatri.kammela@intel.com>
-To:     linux-pm@vger.kernel.org
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lenb@kernel.org, dvhart@infradead.org, alex.hung@canonical.com,
-        rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, mika.westerberg@intel.com,
-        peterz@infradead.org, charles.d.prestopine@intel.com,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
+        id S1727612AbgC0UZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 16:25:21 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40824 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727143AbgC0UZV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 16:25:21 -0400
+Received: by mail-ot1-f65.google.com with SMTP id r19so5310617otn.7
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 13:25:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=akWa2ipvxDdFjzHuT26VN2IdHpNjEh3op9l8PYfCVA0=;
+        b=NRA7NIyKs9dvbrJdb5I0eFsmvwBuuz3f4W7KGO5Y6YsRY/dAZH+qXFQC1B/HIO8q90
+         Di99YhMlahViPssUjztq+3fKqXSiF5fbgKk+mOGT+o3FPZy1dk7n4dYfdnWMzt33uDxD
+         xxUKAC5cU66mNQjvtGbkHpDCaqZD7FA8potYQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=akWa2ipvxDdFjzHuT26VN2IdHpNjEh3op9l8PYfCVA0=;
+        b=YounGtBMVUYhHGqhyn03JPyMOMWrk2G3OU/mC427y9zNvc1OgSNISrGo0DCDh4qEL8
+         g0IhC+udPuAvksMotdcDIHjdg7uj7XECbaR0lM/DE0hIAdAH1LZqibWXkgBe0zzVgJFX
+         987mdAiNniZS//YcyMq/MTBqA7I/j9U99wdLNd+hKldNqVqJDT6LsLToS2x2lzWBVMjd
+         L9DDBn7Qiay9MO7EeJQOyLzVxeBHL+gtzjl4ewwTS/NZVtB4CiyfqONGce26P8b0BEy3
+         F9TJ/OwoZj8rCQdOLQfKUoai8rQz1xQKp0f4ueGhPq0X4+RX6kLviCUXdjiLIPdvdR//
+         2fqg==
+X-Gm-Message-State: ANhLgQ0A7xjFzNlAvDLMklXAfkh0UK4/jktS8fe3tBiU6nAeNVp2WBC1
+        GDeR4t1Vb0LUKzw61Lx/KcxMC5E7ugFRsarIfAJo
+X-Google-Smtp-Source: ADFU+vtEIPmG+pfkHCSu82SSE3geeF9tI5kApWkuTOGuNqdr4Sq82a3K7dRYtvTWJOz2KWUcNK/35wGwBVO+Z9Sv9Ak=
+X-Received: by 2002:a05:6820:122:: with SMTP id i2mr1003546ood.73.1585340720551;
+ Fri, 27 Mar 2020 13:25:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200313141545.31943-1-alcooperx@gmail.com> <20200313141545.31943-2-alcooperx@gmail.com>
+ <20200313220202.GA23539@bogus>
+In-Reply-To: <20200313220202.GA23539@bogus>
+From:   Al Cooper <al.cooper@broadcom.com>
+Date:   Fri, 27 Mar 2020 16:25:09 -0400
+Message-ID: <CAGh=XADV-wp_vggA=3Nf8wGdABvgkhVzpMjFg4XcdOukRoC6TA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: Add Broadcom STB USB support
+To:     Rob Herring <robh@kernel.org>
+Cc:     Al Cooper <alcooperx@gmail.com>, linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH v1 2/3] platform/x86: intel-hid: fix: Update Tiger Lake ACPI device ID
-Date:   Fri, 27 Mar 2020 13:24:53 -0700
-Message-Id: <76d9ea413ccd72fd080fc3bf60aa02e3556d5e70.1585335927.git.gayatri.kammela@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1585335927.git.gayatri.kammela@intel.com>
-References: <cover.1585335927.git.gayatri.kammela@intel.com>
-In-Reply-To: <cover.1585335927.git.gayatri.kammela@intel.com>
-References: <cover.1585335927.git.gayatri.kammela@intel.com>
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johan Hovold <johan@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tiger Lake's new unique ACPI device IDs for intel-hid driver is not
-valid because of missing 'C' in the ID. Fix the ID by updating it.
+On Fri, Mar 13, 2020 at 6:02 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Fri, 13 Mar 2020 10:15:42 -0400, Al Cooper wrote:
+> > Add DT bindings for Broadcom STB USB EHCI and XHCI drivers.
+> >
+> > NOTE: The OHCI driver is not included because it uses the generic
+> >       platform driver.
+> >
+> > Signed-off-by: Al Cooper <alcooperx@gmail.com>
+> > ---
+> >  .../bindings/usb/brcm,bcm7445-ehci.yaml       | 60 +++++++++++++++++++
+> >  .../devicetree/bindings/usb/usb-xhci.txt      |  1 +
+> >  2 files changed, 61 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/usb/brcm,bcm7445-ehci.yaml
+> >
+>
+> My bot found errors running 'make dt_binding_check' on your patch:
+>
+> Error: Documentation/devicetree/bindings/usb/brcm,bcm7445-ehci.example.dts:24.13-14 syntax error
+> FATAL ERROR: Unable to parse input tree
+> scripts/Makefile.lib:311: recipe for target 'Documentation/devicetree/bindings/usb/brcm,bcm7445-ehci.example.dt.yaml' failed
+> make[1]: *** [Documentation/devicetree/bindings/usb/brcm,bcm7445-ehci.example.dt.yaml] Error 1
+> make[1]: *** Waiting for unfinished jobs....
+> Makefile:1262: recipe for target 'dt_binding_check' failed
+> make: *** [dt_binding_check] Error 2
+>
+> See https://patchwork.ozlabs.org/patch/1254417
+> Please check and re-submit.
 
-After the update, the new ID should now look like
-INT1051 --> INTC1051
-
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Suggested-by: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
-Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
----
- drivers/platform/x86/intel-hid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/platform/x86/intel-hid.c b/drivers/platform/x86/intel-hid.c
-index 43d590250228..c0a4696803eb 100644
---- a/drivers/platform/x86/intel-hid.c
-+++ b/drivers/platform/x86/intel-hid.c
-@@ -19,7 +19,7 @@ MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Alex Hung");
- 
- static const struct acpi_device_id intel_hid_ids[] = {
--	{"INT1051", 0},
-+	{"INTC1051", 0},
- 	{"INT33D5", 0},
- 	{"", 0},
- };
--- 
-2.17.1
-
+I fixed this.
+Thanks
