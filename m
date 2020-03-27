@@ -2,74 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BDA81952B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:23:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D31941952B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:23:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbgC0IW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 04:22:56 -0400
-Received: from sonic303-1.consmr.mail.bf2.yahoo.com ([74.6.131.40]:45360 "EHLO
-        sonic303-1.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725946AbgC0IW4 (ORCPT
+        id S1726439AbgC0IXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 04:23:50 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:37331 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726133AbgC0IXt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 04:22:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1585297375; bh=NajTNMrfMLb6UXcjRhYpYerQX8PtVBLz0oFgaMINSWY=; h=Date:From:Reply-To:Subject:References:From:Subject; b=dUzc9c8bsfaykrQjvI88uwMC6TZEWw1nvSxvVOTICqc7caCrbQ3LaWn+w4r70UVQLZ2/hOV1vBRy1RUBUXGj6QSaKLTMrSBgava/ujb+WZyy+bsNKTbuUm2w2ft4gG/LODa/ILs8hHHuyfTqhb4jbvKcBURwl2EsRlby/FmgE2TjNY03vmsHLt5d6WoYipsRDhOsB6yekw07oS36OOjlITwHh60/O46fGQO6jz19yY5Qr26vvWgaj0mZKm7tpISGmkpFkn266urhadGCKZB3xj0QJtyj1HYVr2xg33S9meP0SyqhkV4C4cKWuYYema8tboUvTjHCjsbhLnn0P4wPLA==
-X-YMail-OSG: mU6orekVM1kkfFEViLIqw3U6dxIwi_13MMW.FfcSKoo.kVG7mH5u5KYkaTJSKYU
- HwsCgZhq9dtKpSVvF6Oku.N2C.FFXeVZ4oneUX1uisY6XZSZgMb9oJ9Dsa6DxQjI082gfd4XXNg_
- Tq3vhPNzBS3581595ckMX4JO2ce2.PKYfWA3xOo__JLUKMf1HnD8DDC.VGIwI83ZVkwIXyzryD_c
- .gLLK.i6tohy7rTBsxdAcnt.Cfc_bh_AIG_In2crzHcW_yILWltVnIpLPeulTF.eDWQdJ2brZtd4
- r0D86cwwRumioQeYKenDaqAI_HE7zmTInHFtGnBFNLHiSBIg3nmLGOOj97vv5.UJl8yZla5UX8Xd
- GeiKGH6u2tLUT_jXgWHbniNS_C5k8Z_jK1ZCR1mJO8EaiOgly0uGO6.NgNNPTI1_VvBvjZiFOmRq
- c4u.KFdah4igWZcPrlWitYiwmvsOnqzpTkTwZR0SJ8nO.SBgq_dNCpw1Q47qcwzTc3PLdOTDGSkp
- .pxB1dWV8d3NuBg_y8kqqJwyd4JS27uDEHQfJK8fGs8RiiHkRDHr1.fnjfMKWNd9Um_jmenkbCXa
- DkrwQMXEvlBejJwAbjuB4padAI2fBUQafgBk.C3QNZrsjlbrwKjzExW1.kWzJlNS_jzlOjchC3AD
- wX2V7H4lDQk22wSIc8YDedn5vQsiyCyTTPerDpBPKz8gjyXSxMiWWtjK_llpfQQHtySPhhRhFErn
- M7eQxNgdohj4dfoxmNqK0zyAAEr.fgCjaxBDv_1pn09CHkYWwfe_RLXFLirCQX3zRjqB58cPGjwV
- iL0RpB4vid0L0j7PHPkokcqyC_7lA15HYtu.XrfR6q3HzKG.S4zNYqAq7d8SOhWkvG74dnKc18.L
- imeS3UqEKdGwFy2BDfFBAw3kLNFaNbmmpgEjdxCVC.eH.AQ.gMKkl.Vw0TI.DPT0ItE611FM0eGd
- Lv1oDIUj5c1JFGIc_2iXtJcXACYHFskJ5XKACZe.U7bBVtXpWSzVh5Hqv9DgOjytno0NEWbz_ryu
- 2rJb6FS0MlnOncIoOMnWIqCC.YfLkCt0EmyccEdnKbAouzQsTh.M_iNupjQO95Thw5PeIhpr44Se
- PtM6PMzXIytkQs0KwKM4csJFYEFbPWsw3RVwtL1zVXTXToMewW1M5De5e7lWBImeNp.8ik4VbCeu
- hUqeQzMSNsmWetVkOmkyGOSvh3q1efTLA_C77LQ6SNHlUDwoFDljmdlShn.UR0TFjZch7L8tDXJQ
- HxJkoOPJG6eVSFX3Z14VgXI9mfSL2c9qvpc0C6.ikc3HlszGXUmx8D1DPOioWSFJ5MBTFGOkZ6u4
- -
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Fri, 27 Mar 2020 08:22:55 +0000
-Date:   Fri, 27 Mar 2020 08:22:53 +0000 (UTC)
-From:   Ms lisa Hugh <lisahugh531@gmail.com>
-Reply-To: ms.lisahugh000@gmail.com
-Message-ID: <1852203301.1879507.1585297373380@mail.yahoo.com>
-Subject: BUSINESS CO-OPERATION OPPORTUNITY.
+        Fri, 27 Mar 2020 04:23:49 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585297429; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=ucvUfVE9bEnqsldfxSjExm37VB9VjR5Onas8L9QcKhA=; b=nUUgO7VKqeTp4NBvKfpLZxwCwrg7mYIs9OIAyK3KirI1HzayhRHwifTP4VETsC7+d4Eg0jWB
+ tqz0rs8tslmkBjOdIM046+pUB0DIQAJ6S+50HZi8DBEDi+eeZKVBXnucVuKX74jr9UDpL4Ge
+ eVJ0gS8WyxTfYdkSpDhiUYKaCl8=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e7db80e.7fb06cb65ab0-smtp-out-n02;
+ Fri, 27 Mar 2020 08:23:42 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 3F06EC44788; Fri, 27 Mar 2020 08:23:41 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [192.168.43.129] (unknown [106.222.5.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mkshah)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0A660C433F2;
+        Fri, 27 Mar 2020 08:23:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0A660C433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
+Subject: Re: [PATCH v14 3/6] soc: qcom: rpmh: Invalidate SLEEP and WAKE TCSes
+ before flushing new data
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org
+References: <1585244270-637-1-git-send-email-mkshah@codeaurora.org>
+ <1585244270-637-4-git-send-email-mkshah@codeaurora.org>
+ <CAD=FV=Xwhz=N5dd5u2pYxKXyv5_PKhSZ5xZdvo+YXdk8THz_Wg@mail.gmail.com>
+From:   Maulik Shah <mkshah@codeaurora.org>
+Message-ID: <8ca62b01-d6d2-94fa-d032-b4ec8912ed8e@codeaurora.org>
+Date:   Fri, 27 Mar 2020 13:53:26 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAD=FV=Xwhz=N5dd5u2pYxKXyv5_PKhSZ5xZdvo+YXdk8THz_Wg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-References: <1852203301.1879507.1585297373380.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15518 YMailNodin Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+On 3/27/2020 12:01 AM, Doug Anderson wrote:
+> Hi,
+>
+> On Thu, Mar 26, 2020 at 10:38 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+>>  /**
+>> - * rpmh_invalidate: Invalidate all sleep and active sets
+>> - * sets.
+>> + * rpmh_invalidate: Invalidate sleep and active sets in batch_cache
+> s/and active/and wake/
+>
+> ...with that, feel free to add my Reviewed-by tag.
+>
+> -Doug
 
-Dear Friend,
+Thankd Doug for the review. I will update this in v15.
 
-I am Ms Lisa hugh, work with the department of Audit and accounting manager here in the Bank(B.O.A).
+Thanks,
+Maulik
 
-Please i need your assistance for the transferring of thIs fund to your bank account for both of us benefit for life time investment, amount (US$4.5M DOLLARS).
-
-I have every inquiry details to make the bank believe you and release the fund in within 5 banking working days with your full co-operation with me for success.
-
-Note/ 50% for you why 50% for me after success of the transfer to your bank account.
-
-Below information is what i need from you so will can be reaching each other
-
-1)Full name ...
-2)Private telephone number...
-3)Age...
-4)Nationality...
-5)Occupation ...
-
-
-Thanks.
-
-Ms Lisa hugh.
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
