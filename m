@@ -2,101 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA614195E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 20:28:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 175C7195ED5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 20:32:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbgC0T2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 15:28:07 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.105]:17780 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726738AbgC0T2H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 15:28:07 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 8B6F92D647DA
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 14:28:06 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id HueEjWAgO8vkBHueEjLox7; Fri, 27 Mar 2020 14:28:06 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Buqi6OLghYZwwzbP5D9+pYan+g0L6EIsYgrXmMspPF0=; b=mNjug9fnBO0RNjDFqB25HutLRA
-        pdoV97bGFsrtxdD6c4cv0QDOYKWDw3SlNAEGuGvoLSDPmNFuDnqGKEnqQ4IL4ZlHs+3gdeFtt78Tn
-        br8ERDh1FLCl7DGv0CfZHMqPUL+iwqYX6kNZ47qNx3h3nvAyh2G82J0YtCSJ+JzdDbZoqh1/t8Gqw
-        Em4+5auxJtZMOW//BiBwt7TAcHbJxsTptKbMIUjNKBa39hsvSSHVDDwz8iwKYLY174GbWCCPE+H08
-        SD5eGpOKkjyUrWh7EuhThX2KQITdXVIkWrIUgTM34OggWv4HkEk3Mk4boPPT7nZZA6ij1KIfClzdV
-        x4dkxwCw==;
-Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:45216 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jHueD-002Ixm-1D; Fri, 27 Mar 2020 14:28:05 -0500
-Date:   Fri, 27 Mar 2020 14:31:42 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Lijun Ou <oulijun@huawei.com>,
-        "Wei Hu(Xavier)" <huwei87@hisilicon.com>,
-        Weihang Li <liweihang@huawei.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Xi Wang <wangxi11@huawei.com>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] RDMA/hns: Fix uninitialized variable bug
-Message-ID: <20200327193142.GA32547@embeddedor>
+        id S1727393AbgC0Tce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 15:32:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726738AbgC0Tce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 15:32:34 -0400
+Received: from localhost (unknown [104.132.1.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F43F20575;
+        Fri, 27 Mar 2020 19:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585337553;
+        bh=wWoAjZwt2nR5X1UPX0ZZp4acCT8N6K2BluWge4uJRGQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZIdX+zVLGrFZGp9dBUOVypptkgXVWdke59yk8jKqMZpdpClIGzxKm2WW990B2Xq3w
+         Ycgwyu0RSSByNv0YKGZ2hWNga+DXU4+PwFWzck9gYDldbJWpDsfE1qHVMH/JkWe4Ha
+         IniH6OY7izr4MJGs8sp2auOMJRfD+eAD4WKlRqOI=
+Date:   Fri, 27 Mar 2020 12:32:33 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH 3/3] f2fs: fix to check f2fs_compressed_file() in
+ f2fs_bmap()
+Message-ID: <20200327193233.GB186975@google.com>
+References: <20200327102953.104035-1-yuchao0@huawei.com>
+ <20200327102953.104035-3-yuchao0@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.218.116.241
-X-Source-L: No
-X-Exim-ID: 1jHueD-002Ixm-1D
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:45216
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20200327102953.104035-3-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a potential execution path in which variable *ret* is returned
-without being properly initialized, previously.
+On 03/27, Chao Yu wrote:
+> Otherwise, for compressed inode, returned physical block address
+> may be wrong.
 
-Fix this by initializing variable *ret* to -ENODEV.
+We can use bmap to check the allocated (non)compressed blocks.
 
-Addresses-Coverity-ID: 1491917 ("Uninitialized scalar variable")
-Fixes: 2f49de21f3e9 ("RDMA/hns: Optimize mhop get flow for multi-hop addressing")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/infiniband/hw/hns/hns_roce_hem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hem.c b/drivers/infiniband/hw/hns/hns_roce_hem.c
-index c96378718f88..3fd8100c2b56 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hem.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hem.c
-@@ -603,7 +603,7 @@ static int set_mhop_hem(struct hns_roce_dev *hr_dev,
- {
- 	struct ib_device *ibdev = &hr_dev->ib_dev;
- 	int step_idx;
--	int ret;
-+	int ret = -ENODEV;
- 
- 	if (index->inited & HEM_INDEX_L0) {
- 		ret = hr_dev->hw->set_hem(hr_dev, table, obj, 0);
--- 
-2.26.0
-
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/data.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 24643680489b..f22f3ba10a48 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -3591,6 +3591,8 @@ static sector_t f2fs_bmap(struct address_space *mapping, sector_t block)
+>  
+>  	if (f2fs_has_inline_data(inode))
+>  		return 0;
+> +	if (f2fs_compressed_file(inode))
+> +		return 0;
+>  
+>  	/* make sure allocating whole blocks */
+>  	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
+> -- 
+> 2.18.0.rc1
