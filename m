@@ -2,258 +2,348 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1655195281
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:03:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CB70195289
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:04:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbgC0ID2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 04:03:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56840 "EHLO mail.kernel.org"
+        id S1727252AbgC0IEe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 04:04:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbgC0ID2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 04:03:28 -0400
+        id S1726165AbgC0IEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 04:04:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05FD020714;
-        Fri, 27 Mar 2020 08:03:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0940720714;
+        Fri, 27 Mar 2020 08:04:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585296206;
-        bh=L8j7G5jMjtpXoiR/9IBYLeUFH9fJrK3JA8DL+b3axRs=;
+        s=default; t=1585296272;
+        bh=rPnAP0Xfa76gafW25Xfs6v9g+Ufjrv7cMkDFifQ4Yqo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EiKQw2ThSLfdnCbX33dpyZNDwp9jLoKgLipBlBh4xVQaAG3/iwbEF+ua4BEWCz38R
-         HqtTOojxSbLjtGZMKIhHDD6zzR49ErMNlgWCyip5vZGgZEhapdejepCTj7UKXa0vbf
-         qEdJRIwJfJLHTRKiQp7FdFWts8JFquG/IKtL/laY=
-Date:   Fri, 27 Mar 2020 09:03:23 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Grant Likely <grant.likely@arm.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Saravana Kannan <saravanak@google.com>, a.hajda@samsung.com,
-        artem.bityutskiy@linux.intel.com, balbi@kernel.org,
-        broonie@kernel.org, fntoth@gmail.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, peter.ujfalusi@ti.com, rafael@kernel.org,
-        kernel-team@android.com, nd <nd@arm.com>
-Subject: Re: [PATCH v3] driver core: Break infinite loop when deferred probe
- can't be satisfied
-Message-ID: <20200327080323.GA1627562@kroah.com>
-References: <20200324175719.62496-1-andriy.shevchenko@linux.intel.com>
- <20200325032901.29551-1-saravanak@google.com>
- <20200325125120.GX1922688@smile.fi.intel.com>
- <295d25de-f01e-26de-02d6-1ac0c149d828@arm.com>
- <20200326163110.GD1922688@smile.fi.intel.com>
- <20200326163953.GA1551380@kroah.com>
- <9350ec52-345f-5c3c-f175-4e256699b9cf@arm.com>
+        b=kD1gwN1gNWBTdi/O6BL6cEHljnsEuXu6AaMI/A35q+BWFkD+9XvByemufVB7BQbUb
+         yVFFYZJvyoLJ2HEh1f1znFctppK+VlGPVsBvmcUI1FU8MNghgAaq87UOwK6+aiG0kQ
+         yon0T/r+7Ys+en/rIfBy2M+OOmJdUpyfSCOA4wP4=
+Date:   Fri, 27 Mar 2020 09:04:29 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Aiman Najjar <aiman.najjar@hurranet.com>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8712: fix checkpatch warnings
+Message-ID: <20200327080429.GB1627562@kroah.com>
+References: <20200326055616.GA3718@kernel-dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9350ec52-345f-5c3c-f175-4e256699b9cf@arm.com>
+In-Reply-To: <20200326055616.GA3718@kernel-dev>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 06:06:37PM +0000, Grant Likely wrote:
+On Thu, Mar 26, 2020 at 01:56:16AM -0400, Aiman Najjar wrote:
+> This patch fixes remaining warnings in rtl871x_xmit.c of
+> rtl8712 staging driver
 > 
+> The following warnings are resolved:
 > 
-> On 26/03/2020 16:39, Greg KH wrote:
-> > On Thu, Mar 26, 2020 at 06:31:10PM +0200, Andy Shevchenko wrote:
-> > > On Thu, Mar 26, 2020 at 03:01:22PM +0000, Grant Likely wrote:
-> > > > On 25/03/2020 12:51, Andy Shevchenko wrote:
-> > > > > On Tue, Mar 24, 2020 at 08:29:01PM -0700, Saravana Kannan wrote:
-> > > > > > On Tue, Mar 24, 2020 at 5:38 AM Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > > > Consider the following scenario.
-> > > > > > > 
-> > > > > > > The main driver of USB OTG controller (dwc3-pci), which has the following
-> > > > > > > functional dependencies on certain platform:
-> > > > > > > - ULPI (tusb1210)
-> > > > > > > - extcon (tested with extcon-intel-mrfld)
-> > > > > > > 
-> > > > > > > Note, that first driver, tusb1210, is available at the moment of
-> > > > > > > dwc3-pci probing, while extcon-intel-mrfld is built as a module and
-> > > > > > > won't appear till user space does something about it.
-> > > > > > > 
-> > > > > > > This is depicted by kernel configuration excerpt:
-> > > > > > > 
-> > > > > > > 	CONFIG_PHY_TUSB1210=y
-> > > > > > > 	CONFIG_USB_DWC3=y
-> > > > > > > 	CONFIG_USB_DWC3_ULPI=y
-> > > > > > > 	CONFIG_USB_DWC3_DUAL_ROLE=y
-> > > > > > > 	CONFIG_USB_DWC3_PCI=y
-> > > > > > > 	CONFIG_EXTCON_INTEL_MRFLD=m
-> > > > > > > 
-> > > > > > > In the Buildroot environment the modules are probed by alphabetical ordering
-> > > > > > > of their modaliases. The latter comes to the case when USB OTG driver will be
-> > > > > > > probed first followed by extcon one.
-> > > > > > > 
-> > > > > > > So, if the platform anticipates extcon device to be appeared, in the above case
-> > > > > > > we will get deferred probe of USB OTG, because of ordering.
-> > > > > > > 
-> > > > > > > Since current implementation, done by the commit 58b116bce136 ("drivercore:
-> > > > > > > deferral race condition fix") counts the amount of triggered deferred probe,
-> > > > > > > we never advance the situation -- the change makes it to be an infinite loop.
-> > > > > > 
-> > > > > > Hi Andy,
-> > > > > > 
-> > > > > > I'm trying to understand this sequence of steps. Sorry if the questions
-> > > > > > are stupid -- I'm not very familiar with USB/PCI stuff.
-> > > > > 
-> > > > > Thank you for looking into this. My answer below.
-> > > > > 
-> > > > > As a first thing I would like to tell that there is another example of bad
-> > > > > behaviour of deferred probe with no relation to USB. The proposed change also
-> > > > > fixes that one (however, less possible to find in real life).
-> > > > > 
-> > > > > > > ---8<---8<---
-> > > > > > > 
-> > > > > > > [   22.187127] driver_deferred_probe_trigger <<< 1
-> > > > > > > 
-> > > > > > > ...here is the late initcall triggers deferred probe...
-> > > > > > > 
-> > > > > > > [   22.191725] platform dwc3.0.auto: deferred_probe_work_func in deferred list
-> > > > > > > 
-> > > > > > > ...dwc3.0.auto is the only device in the deferred list...
-> > > > > > 
-> > > > > > Ok, dwc3.0.auto is the only unprobed device at this point?
-> > > > > 
-> > > > > Correct.
-> > > > > 
-> > > > > > > [   22.198727] platform dwc3.0.auto: deferred_probe_work_func 1 <<< counter 1
-> > > > > > > 
-> > > > > > > ...the counter before mutex is unlocked is kept the same...
-> > > > > > > 
-> > > > > > > [   22.205663] platform dwc3.0.auto: Retrying from deferred list
-> > > > > > > 
-> > > > > > > ...mutes has been unlocked, we try to re-probe the driver...
-> > > > > > > 
-> > > > > > > [   22.211487] bus: 'platform': driver_probe_device: matched device dwc3.0.auto with driver dwc3
-> > > > > > > [   22.220060] bus: 'platform': really_probe: probing driver dwc3 with device dwc3.0.auto
-> > > > > > > [   22.238735] bus: 'ulpi': driver_probe_device: matched device dwc3.0.auto.ulpi with driver tusb1210
-> > > > > > > [   22.247743] bus: 'ulpi': really_probe: probing driver tusb1210 with device dwc3.0.auto.ulpi
-> > > > > > > [   22.256292] driver: 'tusb1210': driver_bound: bound to device 'dwc3.0.auto.ulpi'
-> > > > > > > [   22.263723] driver_deferred_probe_trigger <<< 2
-> > > > > > > 
-> > > > > > > ...the dwc3.0.auto probes ULPI, we got successful bound and bumped counter...
-> > > > > > > 
-> > > > > > > [   22.268304] bus: 'ulpi': really_probe: bound device dwc3.0.auto.ulpi to driver tusb1210
-> > > > > > 
-> > > > > > So where did this dwc3.0.auto.ulpi come from?
-> > > > > 
-> > > > > > Looks like the device is created by dwc3_probe() through this call flow:
-> > > > > > dwc3_probe() -> dwc3_core_init() -> dwc3_core_ulpi_init() ->
-> > > > > > dwc3_ulpi_init() -> ulpi_register_interface() -> ulpi_register()
-> > > > > 
-> > > > > Correct.
-> > > > > 
-> > > > > > > [   22.276697] platform dwc3.0.auto: Driver dwc3 requests probe deferral
-> > > > > > 
-> > > > > > Can you please point me to which code patch actually caused the probe
-> > > > > > deferral?
-> > > > > 
-> > > > > Sure, it's in drd.c.
-> > > > > 
-> > > > > if (device_property_read_string(dev, "linux,extcon-name", &name) == 0) {
-> > > > >     edev = extcon_get_extcon_dev(name);
-> > > > >     if (!edev)
-> > > > >       return ERR_PTR(-EPROBE_DEFER);
-> > > > >     return edev;
-> > > > > }
-> > > > > 
-> > > > > > > ...but extcon driver is still missing...
-> > > > > > > 
-> > > > > > > [   22.283174] platform dwc3.0.auto: Added to deferred list
-> > > > > > > [   22.288513] platform dwc3.0.auto: driver_deferred_probe_add_trigger local counter: 1 new counter 2
-> > > > > > 
-> > > > > > I'm not fully aware of all the USB implications, but if extcon is
-> > > > > > needed, why can't that check be done before we add and probe the ulpi
-> > > > > > device? That'll avoid this whole "fake" probing and avoid the counter
-> > > > > > increase. And avoid the need for this patch that's touching the code
-> > > > > > code that's already a bit delicate.
-> > > > > 
-> > > > > > Also, with my limited experience with all the possible drivers in the
-> > > > > > kernel, it's weird that the ulpi device is added and probed before we
-> > > > > > make sure the parent device (dwc3.0.auto) can actually probe
-> > > > > > successfully.
-> > > > > 
-> > > > > As I said above the deferred probe trigger has flaw on its own.
-> > > > > Even if we fix for USB case, there is (and probably will be) others.
-> > > > 
-> > > > Right here is the driver design bug. A driver's probe() hook should *not*
-> > > > return -EPROBE_DEFER after already creating child devices which may have
-> > > > already been probed.
-> > > 
-> > > Any documentation statement for this requirement?
-> > 
-> > There shouldn't be.  If you return ANY error from a probe function, your
-> > driver is essencially "dead" when it comes to that device, and it had
-> > better have cleaned up after itself. >
-> > That includes defering probe, that's not "special" here at all.
+> WARNING: line over 80 characters
+> \#74: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:74:
+> +	* Please allocate memory with the sz = (struct xmit_frame) * NR_XMITFRAME,
 > 
-> What is special in this case is that if a .probe() hook had registered a
-> child device, then removed that child device (so it did clean up after
-> itself) and then return -EPROBE_DEFER, then we end up in an endless probe
-> loop.
-
-If all child devices really are cleaned up completly, why would this be
-a problem?  What is set internally in the driver core that would get
-tripped up by this?
-
-> But this is unusual behaviour. Normally a .probe() hook checks all required
-> resources are available before registering any child devices. This driver
-> doesn't do that. Arguably this is indeed an additional requirement beyond
-> "clean up after yourself". I cannot find anyplace where it is documented. In
-> fact, I cannot find any documentation on EPROBE_DEFER in the Documentation/
-> tree. How about the below?
+> WARNING: line over 80 characters
+> \#79: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:79:
+> +		kmalloc(NR_XMITFRAME * sizeof(struct xmit_frame) + 4, GFP_ATOMIC);
 > 
-> > > By the way, I may imagine other mechanisms that probe the driver on other CPU
-> > > at the same time (let's consider parallel modprobes). The current code has a
-> > > flaw with that.
-> > 
-> > That can't happen, the driver core prevents that.
+> WARNING: line over 80 characters
+> \#129: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:129:
+> +		pxmitbuf->pallocated_buf = kmalloc(MAX_XMITBUF_SZ + XMITBUF_ALIGN_SZ,
 > 
-> Greg's right, that can't happen. At worst a driver will get an additional
-> defer event; but it all still works.
+> WARNING: Avoid multiple line dereference - prefer 'psecuritypriv->XGrptxmickey'
+> \#378: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:378:
+> +					psecuritypriv->
+> +					XGrptxmickey[psecuritypriv->
 > 
-> g.
+> WARNING: Avoid multiple line dereference - prefer 'psecuritypriv->XGrpKeyid'
+> \#379: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:379:
+> +					XGrptxmickey[psecuritypriv->
+> +					XGrpKeyid].skey);
 > 
+> WARNING: Avoid multiple line dereference - prefer 'psta->sta_xmitpriv.txseq_tid[pattrib->priority]'
+> \#544: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:544:
+> +				pattrib->seqnum = psta->sta_xmitpriv.
+> +						 txseq_tid[pattrib->priority];
+> 
+> WARNING: Avoid multiple line dereference - prefer 'psecuritypriv->PrivacyKeyIndex'
+> \#636: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:636:
+> +					      (u8)psecuritypriv->
+> +					      PrivacyKeyIndex);
+> 
+> WARNING: Avoid multiple line dereference - prefer 'psecuritypriv->XGrpKeyid'
+> \#643: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:643:
+> +						   (u8)psecuritypriv->
+> +						   XGrpKeyid);
+> 
+> WARNING: Avoid multiple line dereference - prefer 'psecuritypriv->XGrpKeyid'
+> \#652: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:652:
+> +						   (u8)psecuritypriv->
+> +						   XGrpKeyid);
+> 
+> Signed-off-by: aimannajjar <aiman.najjar@hurranet.com>
 > ---
-> diff --git a/Documentation/driver-api/driver-model/driver.rst
-> b/Documentation/driver-api/driver-model/driver.rst
-> index baa6a85c8287..46adede13aba 100644
-> --- a/Documentation/driver-api/driver-model/driver.rst
-> +++ b/Documentation/driver-api/driver-model/driver.rst
-> @@ -167,7 +167,17 @@ the driver to that device.
+>  drivers/staging/rtl8712/rtl871x_xmit.c | 85 +++++++++++++-------------
+>  1 file changed, 41 insertions(+), 44 deletions(-)
 > 
->  A driver's probe() may return a negative errno value to indicate that
->  the driver did not bind to this device, in which case it should have
-> -released all resources it allocated::
-> +released all resources it allocated. Optionally, probe() may return
-> +-EPROBE_DEFER if the driver depends on resources that are not yet
-> +available (e.g., supplied by a driver that hasn't initialized yet).
-> +The driver core will put the device onto the deferred probe list and
-> +will try to call it again later. Important: -EPROBE_DEFER must not be
-> +returned if probe() has already created child devices, even if those
-> +child devices have were removed again in a cleanup path. If -EPROBE_DEFER
-> +is returned after a child device has been registered, it may result in an
-> +infinite loop of .probe() calls to the same driver.
+> diff --git a/drivers/staging/rtl8712/rtl871x_xmit.c b/drivers/staging/rtl8712/rtl871x_xmit.c
+> index f0b85338b567..82df5e26f8c8 100644
+> --- a/drivers/staging/rtl8712/rtl871x_xmit.c
+> +++ b/drivers/staging/rtl8712/rtl871x_xmit.c
+> @@ -71,12 +71,13 @@ int _r8712_init_xmit_priv(struct xmit_priv *pxmitpriv,
+>  	_init_queue(&pxmitpriv->apsd_queue);
+>  	_init_queue(&pxmitpriv->free_xmit_queue);
+>  	/*
+> -	 * Please allocate memory with the sz = (struct xmit_frame) * NR_XMITFRAME,
+> +	 * Please allocate memory with sz = (struct xmit_frame) * NR_XMITFRAME,
+>  	 * and initialize free_xmit_frame below.
+>  	 * Please also apply  free_txobj to link_up all the xmit_frames...
+>  	 */
+>  	pxmitpriv->pallocated_frame_buf =
+> -		kmalloc(NR_XMITFRAME * sizeof(struct xmit_frame) + 4, GFP_ATOMIC);
+> +		kmalloc(NR_XMITFRAME * sizeof(struct xmit_frame) + 4,
+> +			GFP_ATOMIC);
+>  	if (!pxmitpriv->pallocated_frame_buf) {
+>  		pxmitpriv->pxmit_frame_buf = NULL;
+>  		return -ENOMEM;
+> @@ -126,8 +127,8 @@ int _r8712_init_xmit_priv(struct xmit_priv *pxmitpriv,
+>  	pxmitbuf = (struct xmit_buf *)pxmitpriv->pxmitbuf;
+>  	for (i = 0; i < NR_XMITBUFF; i++) {
+>  		INIT_LIST_HEAD(&pxmitbuf->list);
+> -		pxmitbuf->pallocated_buf = kmalloc(MAX_XMITBUF_SZ + XMITBUF_ALIGN_SZ,
+> -						   GFP_ATOMIC);
+> +		pxmitbuf->pallocated_buf =
+> +			kmalloc(MAX_XMITBUF_SZ + XMITBUF_ALIGN_SZ, GFP_ATOMIC);
+>  		if (!pxmitbuf->pallocated_buf)
+>  			return -ENOMEM;
+>  		pxmitbuf->pbuf = pxmitbuf->pallocated_buf + XMITBUF_ALIGN_SZ -
+> @@ -350,7 +351,7 @@ static int xmitframe_addmic(struct _adapter *padapter,
+>  	struct	sta_info *stainfo;
+>  	struct	qos_priv *pqospriv = &(padapter->mlmepriv.qospriv);
+>  	struct	pkt_attrib  *pattrib = &pxmitframe->attrib;
+> -	struct	security_priv *psecuritypriv = &padapter->securitypriv;
+> +	struct	security_priv *psecpriv = &padapter->securitypriv;
+>  	struct	xmit_priv *pxmitpriv = &padapter->xmitpriv;
+>  	u8 priority[4] = {0x0, 0x0, 0x0, 0x0};
+>  	bool bmcst = is_multicast_ether_addr(pattrib->ra);
+> @@ -368,15 +369,14 @@ static int xmitframe_addmic(struct _adapter *padapter,
+>  					   0x0, 0x0};
+>  			pframe = pxmitframe->buf_addr + TXDESC_OFFSET;
+>  			if (bmcst) {
+> -				if (!memcmp(psecuritypriv->XGrptxmickey
+> -				   [psecuritypriv->XGrpKeyid].skey,
+> +				if (!memcmp(psecpriv->XGrptxmickey
+> +				   [psecpriv->XGrpKeyid].skey,
+>  				   null_key, 16))
+>  					return -ENOMEM;
+>  				/*start to calculate the mic code*/
+>  				r8712_secmicsetkey(&micdata,
+> -					 psecuritypriv->
+> -					 XGrptxmickey[psecuritypriv->
+> -					XGrpKeyid].skey);
+> +					psecpriv->XGrptxmickey
+> +					[psecpriv->XGrpKeyid].skey);
+>  			} else {
+>  				if (!memcmp(&stainfo->tkiptxmickey.skey[0],
+>  					    null_key, 16))
+> @@ -416,7 +416,7 @@ static int xmitframe_addmic(struct _adapter *padapter,
+>  					length = pattrib->last_txcmdsz -
+>  						  pattrib->hdrlen -
+>  						  pattrib->iv_len -
+> -						  ((psecuritypriv->sw_encrypt)
+> +						  ((psecpriv->sw_encrypt)
+>  						  ? pattrib->icv_len : 0);
+>  					r8712_secmicappend(&micdata, payload,
+>  							   length);
+> @@ -424,7 +424,7 @@ static int xmitframe_addmic(struct _adapter *padapter,
+>  				} else {
+>  					length = pxmitpriv->frag_len -
+>  					    pattrib->hdrlen - pattrib->iv_len -
+> -					    ((psecuritypriv->sw_encrypt) ?
+> +					    ((psecpriv->sw_encrypt) ?
+>  					    pattrib->icv_len : 0);
+>  					r8712_secmicappend(&micdata, payload,
+>  							   length);
+> @@ -469,7 +469,7 @@ static sint xmitframe_swencrypt(struct _adapter *padapter,
+>  }
+>  
+>  static int make_wlanhdr(struct _adapter *padapter, u8 *hdr,
+> -			struct pkt_attrib *pattrib)
+> +			struct pkt_attrib *pattr)
+>  {
+>  	u16 *qc;
+>  
+> @@ -479,70 +479,70 @@ static int make_wlanhdr(struct _adapter *padapter, u8 *hdr,
+>  	__le16 *fctrl = &pwlanhdr->frame_ctl;
+>  
+>  	memset(hdr, 0, WLANHDR_OFFSET);
+> -	SetFrameSubType(fctrl, pattrib->subtype);
+> -	if (pattrib->subtype & WIFI_DATA_TYPE) {
+> +	SetFrameSubType(fctrl, pattr->subtype);
+> +	if (pattr->subtype & WIFI_DATA_TYPE) {
+>  		if (check_fwstate(pmlmepriv,  WIFI_STATION_STATE)) {
+>  			/* to_ds = 1, fr_ds = 0; */
+>  			SetToDs(fctrl);
+>  			memcpy(pwlanhdr->addr1, get_bssid(pmlmepriv),
+>  				ETH_ALEN);
+> -			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
+> -			memcpy(pwlanhdr->addr3, pattrib->dst, ETH_ALEN);
+> +			memcpy(pwlanhdr->addr2, pattr->src, ETH_ALEN);
+> +			memcpy(pwlanhdr->addr3, pattr->dst, ETH_ALEN);
+>  		} else if (check_fwstate(pmlmepriv, WIFI_AP_STATE)) {
+>  			/* to_ds = 0, fr_ds = 1; */
+>  			SetFrDs(fctrl);
+> -			memcpy(pwlanhdr->addr1, pattrib->dst, ETH_ALEN);
+> +			memcpy(pwlanhdr->addr1, pattr->dst, ETH_ALEN);
+>  			memcpy(pwlanhdr->addr2, get_bssid(pmlmepriv),
+>  				ETH_ALEN);
+> -			memcpy(pwlanhdr->addr3, pattrib->src, ETH_ALEN);
+> +			memcpy(pwlanhdr->addr3, pattr->src, ETH_ALEN);
+>  		} else if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) ||
+>  			   check_fwstate(pmlmepriv,
+>  					 WIFI_ADHOC_MASTER_STATE)) {
+> -			memcpy(pwlanhdr->addr1, pattrib->dst, ETH_ALEN);
+> -			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
+> +			memcpy(pwlanhdr->addr1, pattr->dst, ETH_ALEN);
+> +			memcpy(pwlanhdr->addr2, pattr->src, ETH_ALEN);
+>  			memcpy(pwlanhdr->addr3, get_bssid(pmlmepriv),
+>  				ETH_ALEN);
+>  		} else if (check_fwstate(pmlmepriv, WIFI_MP_STATE)) {
+> -			memcpy(pwlanhdr->addr1, pattrib->dst, ETH_ALEN);
+> -			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
+> +			memcpy(pwlanhdr->addr1, pattr->dst, ETH_ALEN);
+> +			memcpy(pwlanhdr->addr2, pattr->src, ETH_ALEN);
+>  			memcpy(pwlanhdr->addr3, get_bssid(pmlmepriv),
+>  				ETH_ALEN);
+>  		} else {
+>  			return -EINVAL;
+>  		}
+>  
+> -		if (pattrib->encrypt)
+> +		if (pattr->encrypt)
+>  			SetPrivacy(fctrl);
+>  		if (pqospriv->qos_option) {
+> -			qc = (unsigned short *)(hdr + pattrib->hdrlen - 2);
+> -			if (pattrib->priority)
+> -				SetPriority(qc, pattrib->priority);
+> -			SetAckpolicy(qc, pattrib->ack_policy);
+> +			qc = (unsigned short *)(hdr + pattr->hdrlen - 2);
+> +			if (pattr->priority)
+> +				SetPriority(qc, pattr->priority);
+> +			SetAckpolicy(qc, pattr->ack_policy);
+>  		}
+>  		/* TODO: fill HT Control Field */
+>  		/* Update Seq Num will be handled by f/w */
+>  		{
+>  			struct sta_info *psta;
+> -			bool bmcst = is_multicast_ether_addr(pattrib->ra);
+> +			bool bmcst = is_multicast_ether_addr(pattr->ra);
+>  
+> -			if (pattrib->psta) {
+> -				psta = pattrib->psta;
+> +			if (pattr->psta) {
+> +				psta = pattr->psta;
+>  			} else {
+>  				if (bmcst)
+>  					psta = r8712_get_bcmc_stainfo(padapter);
+>  				else
+>  					psta =
+>  					 r8712_get_stainfo(&padapter->stapriv,
+> -					 pattrib->ra);
+> +					 pattr->ra);
+>  			}
+>  			if (psta) {
+>  				psta->sta_xmitpriv.txseq_tid
+> -						  [pattrib->priority]++;
+> -				psta->sta_xmitpriv.txseq_tid[pattrib->priority]
+> +						  [pattr->priority]++;
+> +				psta->sta_xmitpriv.txseq_tid[pattr->priority]
+>  						   &= 0xFFF;
+> -				pattrib->seqnum = psta->sta_xmitpriv.
+> -						  txseq_tid[pattrib->priority];
+> -				SetSeqNum(hdr, pattrib->seqnum);
+> +				pattr->seqnum =
+> +				  psta->sta_xmitpriv.txseq_tid[pattr->priority];
+> +				SetSeqNum(hdr, pattr->seqnum);
+>  			}
+>  		}
+>  	}
+> @@ -589,7 +589,7 @@ sint r8712_xmitframe_coalesce(struct _adapter *padapter, _pkt *pkt,
+>  	addr_t addr;
+>  	u8 *pframe, *mem_start, *ptxdesc;
+>  	struct sta_info		*psta;
+> -	struct security_priv	*psecuritypriv = &padapter->securitypriv;
+> +	struct security_priv	*psecpriv = &padapter->securitypriv;
+>  	struct mlme_priv	*pmlmepriv = &padapter->mlmepriv;
+>  	struct xmit_priv	*pxmitpriv = &padapter->xmitpriv;
+>  	struct pkt_attrib	*pattrib = &pxmitframe->attrib;
+> @@ -632,15 +632,13 @@ sint r8712_xmitframe_coalesce(struct _adapter *padapter, _pkt *pkt,
+>  				case _WEP40_:
+>  				case _WEP104_:
+>  					WEP_IV(pattrib->iv, psta->txpn,
+> -					       (u8)psecuritypriv->
+> -					       PrivacyKeyIndex);
+> +					       (u8)psecpriv->PrivacyKeyIndex);
+>  					break;
+>  				case _TKIP_:
+>  					if (bmcst)
+>  						TKIP_IV(pattrib->iv,
+>  						    psta->txpn,
+> -						    (u8)psecuritypriv->
+> -						    XGrpKeyid);
+> +						    (u8)psecpriv->XGrpKeyid);
+>  					else
+>  						TKIP_IV(pattrib->iv, psta->txpn,
+>  							0);
+> @@ -648,8 +646,7 @@ sint r8712_xmitframe_coalesce(struct _adapter *padapter, _pkt *pkt,
+>  				case _AES_:
+>  					if (bmcst)
+>  						AES_IV(pattrib->iv, psta->txpn,
+> -						    (u8)psecuritypriv->
+> -						    XGrpKeyid);
+> +						    (u8)psecpriv->XGrpKeyid);
+>  					else
+>  						AES_IV(pattrib->iv, psta->txpn,
+>  						       0);
+> -- 
+> 2.20.1
+> 
 
-Ok, this is a bug, if that is the case, in the driver core as it should
-not matter how many devices were added/removed/whatever while a driver
-is in it's probe function.
+Hi,
 
-But, I don't see how this patch solves that problem, another probe call
-should never be made for the same bus while in this probe function.  If
-we do:
-	device1->probe()
-		device1 creates device2 and registers it
-			device2->probe is called
-			device2->probe returns 0
-		device1 has problems, unregisters device2
-			device2->remove is called
-		device1 deletes device2
-		device1 returns -EPROBE_DEFER
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-So then where's the problem?  Did device2 somehow not really get
-properly cleaned up?
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-confused,
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
 
-greg k-h
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
