@@ -2,117 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE06D195F94
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 21:23:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C1EB195FBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 21:30:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbgC0UXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 16:23:05 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37434 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbgC0UXE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 16:23:04 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g23so11165404otq.4
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 13:23:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OFz97eXpjJf+7mUd4dNZdWEqJgglvlf1biCOfhwlvrw=;
-        b=CSvH/Ub1dezjRaHvNDRiXZX7jQJCKDFX+dMYut7M8RhokpljrMAVooMj1bo9SqDIb3
-         1ZaKfbVP4po180gn4uml+oUsHpx5MgITAEltFGisMTpSBUEnbhaUhi3JkPzSbjDauj6K
-         a+B+xGyeeYUdP+yk/txqFyw8E1pPKBrG4ME9k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OFz97eXpjJf+7mUd4dNZdWEqJgglvlf1biCOfhwlvrw=;
-        b=gU815Hm6Tea3hkyyA935zOpJSf9v5jfGw6BYaksLguVguv6qfAndZnS+X1TFl9In4+
-         oZbwZoeWDCRTPhdi7gcVrkBKoyI+PLljAG/fad1284W2/Vi0zfpuKxDBPpMtCuWaGqPd
-         6W53gAktPChNBj0JQBAH5DbS48B4HZEkO8dtfkgVAv85xHBFVrbyCMRIoRiExHYiScZJ
-         QayuRDdPfoz2x7ztVJktinE0L7uhV7qfFwSF74Mi4vdy9rIaP3mTgWQQch6q61ikIzPe
-         tVO76FX7q9JqvyQoD5ooNf7zKMOUCtnwH3a8RJeCIs5+mpQ6AHWZIWcYuJO+/+l2coAR
-         5UWA==
-X-Gm-Message-State: ANhLgQ2vpTlTm2PPX8bFJrnZGjLQCoX9GkOTzgbI6GUEbDlpNz9BK9jJ
-        AH1kRiSx9FKIffAAmzHx475NVR9AhJinSDhm2mwO
-X-Google-Smtp-Source: ADFU+vvIa69JmP/eHtaUxuKh+BObIiRLVegX94oveThM6CY52unkByyBKrxVNAURHYXSfVWiT369OFTMKFjSimrf3G0=
-X-Received: by 2002:a05:6830:19ee:: with SMTP id t14mr375774ott.287.1585340583924;
- Fri, 27 Mar 2020 13:23:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200313141545.31943-1-alcooperx@gmail.com> <20200313161836.GX1922688@smile.fi.intel.com>
-In-Reply-To: <20200313161836.GX1922688@smile.fi.intel.com>
-From:   Al Cooper <al.cooper@broadcom.com>
-Date:   Fri, 27 Mar 2020 16:22:52 -0400
-Message-ID: <CAGh=XAD63AhGRqvvNKfm2=0-bsZZdhtXcMDavR75BNzUd7UiOQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Add XHCI, EHCI and OHCI support for Broadcom STB SoS's
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Al Cooper <alcooperx@gmail.com>, linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727708AbgC0UaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 16:30:18 -0400
+Received: from mga12.intel.com ([192.55.52.136]:51291 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726710AbgC0UaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 16:30:18 -0400
+IronPort-SDR: B7N8+r//HFL4ozsEV/TF2hSYuQIdh/k1ZwlS470Df4PNTWnXfWnGwwo0tkSR9kTVmRumVoon+M
+ I/Ro42p1o0Xg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 13:30:18 -0700
+IronPort-SDR: kqxKbG1sRcnLoME3tzRzMfAB+ZTLLcpVYKqgo8dH4pNw4oBUmWgYz98OpCI5c3TunJC/lq7Kzd
+ LiU20Zvi5bfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,313,1580803200"; 
+   d="scan'208";a="358592620"
+Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.171])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Mar 2020 13:30:17 -0700
+From:   Gayatri Kammela <gayatri.kammela@intel.com>
+To:     linux-pm@vger.kernel.org
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lenb@kernel.org, dvhart@infradead.org, alex.hung@canonical.com,
+        rui.zhang@intel.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, mika.westerberg@intel.com,
+        peterz@infradead.org, charles.d.prestopine@intel.com,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH v1 0/3] Fixes: update Tiger Lake ACPI device IDs
+Date:   Fri, 27 Mar 2020 13:24:51 -0700
+Message-Id: <cover.1585335927.git.gayatri.kammela@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 12:18 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Fri, Mar 13, 2020 at 10:15:41AM -0400, Al Cooper wrote:
-> > This adds support for the XHCI, EHCI and OHCI host controllers found
-> > in Broadcom STB SoC's. These drivers depend on getting access to the
-> > new Broadcom STB USB PHY driver through a device-tree phandle and
-> > will fail if the driver is not available.
->
-> Hint to the future:
->
->         scripts/get_maintainer.pl --git --git-min-percent=67 ...
+Hi,
 
-Thanks, I'll use that in the future.
+The hardware IDs for devices supported by Tiger Lake for various drivers
+such as DPTF, fan, Intel thermal and intel-hid are added with missing 'C'
+which makes them invalid. Hence fix these IDs by updating.
 
->
-> >
-> > Al Cooper (4):
-> >   dt-bindings: Add Broadcom STB USB support
-> >   usb: xhci: xhci-plat: Add support for Broadcom STB SoC's
-> >   usb: ehci: Add new EHCI driver for Broadcom STB SoC's
-> >   usb: host: Add ability to build new Broadcom STB USB drivers
-> >
-> >  .../bindings/usb/brcm,bcm7445-ehci.yaml       |  60 ++++
-> >  .../devicetree/bindings/usb/usb-xhci.txt      |   1 +
-> >  MAINTAINERS                                   |   9 +
-> >  drivers/usb/host/Kconfig                      |  20 ++
-> >  drivers/usb/host/Makefile                     |  20 +-
-> >  drivers/usb/host/ehci-brcm.c                  | 288 ++++++++++++++++++
-> >  drivers/usb/host/xhci-brcm.c                  |  16 +
-> >  drivers/usb/host/xhci-brcm.h                  |  16 +
-> >  drivers/usb/host/xhci-plat.c                  |  11 +
-> >  9 files changed, 435 insertions(+), 6 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/usb/brcm,bcm7445-ehci.yaml
-> >  create mode 100644 drivers/usb/host/ehci-brcm.c
-> >  create mode 100644 drivers/usb/host/xhci-brcm.c
-> >  create mode 100644 drivers/usb/host/xhci-brcm.h
-> >
-> > --
-> > 2.17.1
-> >
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+For instance, the updated ID now looks like
+INT1047 --> INTC1047
+
+Patch 1: Update Tiger Lake ACPI device IDs for DPTF and fan drivers
+Patch 2: Update Tiger Lake ACPI device ID for intel-hid driver
+Patch 3: Update Tiger Lake ACPI device IDs for thermal driver
+
+Gayatri Kammela (3):
+  ACPI: fix: Update Tiger Lake ACPI device IDs
+  platform/x86: intel-hid: fix: Update Tiger Lake ACPI device ID
+  thermal: int340x_thermal: fix: Update Tiger Lake ACPI device IDs
+
+ drivers/acpi/device_pm.c                                | 2 +-
+ drivers/acpi/dptf/dptf_power.c                          | 2 +-
+ drivers/acpi/dptf/int340x_thermal.c                     | 8 ++++----
+ drivers/platform/x86/intel-hid.c                        | 2 +-
+ drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 2 +-
+ drivers/thermal/intel/int340x_thermal/int3403_thermal.c | 2 +-
+ 6 files changed, 9 insertions(+), 9 deletions(-)
+
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+-- 
+2.17.1
+
