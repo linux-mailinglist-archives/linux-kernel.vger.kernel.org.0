@@ -2,63 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E5E19605A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 22:24:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BAD219605C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 22:24:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbgC0VYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 17:24:20 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51907 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbgC0VYT (ORCPT
+        id S1727707AbgC0VYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 17:24:24 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40129 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727444AbgC0VYX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 17:24:19 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c187so13034380wme.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 14:24:18 -0700 (PDT)
+        Fri, 27 Mar 2020 17:24:23 -0400
+Received: by mail-wm1-f67.google.com with SMTP id a81so14030745wmf.5;
+        Fri, 27 Mar 2020 14:24:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2U7oLUCsJOQ4a/FLlJ460vCsETAhV3DLpMjadPQVC5c=;
-        b=ki/AziaDhT4ywGicvQ/vCu4L+QgCFYdcK6+O79hjwsD210Ks1920AJhKVDC1+qJspu
-         YCxtKpnOt4fu8KFH1IHTMe+AHsuux+Q4Mgti7+rKo9FR1kt6+nwhwHLO+RxEqqZfQmul
-         joAZlzHzoCTbAer4s/c2WE9JTBgRWyOIreg9s18UeVCcIhkC1D3bdB/QryomEVjt+y6G
-         46O+pLYN0TMVtcQn1roKGMdNFcyopmdIZEFmOpAyO96BNAQ3jP88V5z9BmTQmWb2h3QN
-         K/PCbTE0APX6hZRGE1STrdocLxnYwt258rus9XExM6dcrdXk7TLIv4jCUSX2iP4gETqW
-         6uWQ==
+        bh=4xPO8eVqTt9l/uaZnaIr8tbja2hwuVvwRYCjBY7pIEI=;
+        b=Cu7jsjptYx1vrlkZ+q0qkFuoBaDuIBDgeHxvr8Nuk3xWzkEMNQDP0aqJwfu2STJcPW
+         SsYW9f61kOijmKWztqze+OrlpUgHu31J6pbz3MnftiRRm/z1px3yk2OWGGZs7aIWw/LY
+         sKHdff/FGRgPC2ugoDX+FNfuu8zJnPZOk0NJ5tuFmOVEkhQHMZcoakMXjWuT+vjpMArH
+         oVtDq06E6ljA/iBklFxhw1R54woFRTondSOpKMmlYjQ61Nwo4+mC0jmqw6ncFOvG8ru2
+         jQGQtx7BoCiqK6WNoQ+lUcspy7IJP4EyTerilz3j1OA1umSgXjY1WWp0KfeCHjJiA+ps
+         EXZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2U7oLUCsJOQ4a/FLlJ460vCsETAhV3DLpMjadPQVC5c=;
-        b=Ix0gJlAQoKIldd7QeBNQL26rm5uTHMgZHwwgcygrrO7LPhGDpdIKvD0kmfAjrf+vIF
-         y5k42CykWZpxd0ywvCMWW7zfn6tUcinD3N3J4ZgQPPFmKLg+N+hp0U5Hv2dkQJAC0EEG
-         y1t9cHXMl0kJ3K8H8cXITvw8rEwC9D65oqIB/82GKA+MjMI2HZqKKHXZwaXyojEO0oGi
-         4oSqBmffkH+WG4DepRSPiJgnNPdt1FlwbLkY9o2GUpWMefhTyKIJP3svMUR2vwmR9Awf
-         Ce9Scu1A4YMNwCnAkmReLfzXf7p83CT8zXRCfuPBwhblurY6k2WTsU797JVt1t6l5Cbv
-         r3GQ==
-X-Gm-Message-State: ANhLgQ2Hp94YaCDQ14br6m3/AFF6dk0Ii4iWp6PeNGc7Q3N3ID4Nfwp0
-        8XENmWVgNJMIG2mrmtsqIQ==
-X-Google-Smtp-Source: ADFU+vuzNcwEIl8sV7OiTZxgepkTU/u9e4cuenG2/rP9HYNlCa5AB/zqHiH5pI79GP860PjzebpZXA==
-X-Received: by 2002:a05:600c:20a:: with SMTP id 10mr739151wmi.135.1585344257389;
-        Fri, 27 Mar 2020 14:24:17 -0700 (PDT)
+        bh=4xPO8eVqTt9l/uaZnaIr8tbja2hwuVvwRYCjBY7pIEI=;
+        b=pmpSSNRgmwwCyyzRQOvpuwIpzJm5lv/rXGQ2jM5sX1PEQYVDW0u7G1BPw7qqIPMfLy
+         dkVmF8dt9j5HOvKt5yfDF6TbOV0uzLHfaRCsEi4BMWWpricOjTetdU1g/DivHbjaBT+Y
+         1L0LlGOYGeBbsIF7sgfL0PHH+pSRkWHdFgPbmkhj4UfSLd6lVK6CYZJjja7MOwGV67ZB
+         69HmOB7IE97SoWEl2gTYf5lC9UE8IHQGEaQWYCrM5FC690kDv7bGVrOfGOE5pyBYcdM5
+         0hcOYbL8yKVwZhGIx0/GAjBNB+h/bwlfzQvpxn99ob+j+VSGU6ad89mtu5GTG4wZLMvD
+         Y4hA==
+X-Gm-Message-State: ANhLgQ0TStkqDWyqWhRRndsV7CmchLCcyxUhcZl4DxTs2qmC7u57s0DN
+        oelLaE5lXeHzvonl6L0a/Q==
+X-Google-Smtp-Source: ADFU+vsgk1CVD8uaxH2wBkuZwRRmB415F+Y2SyC32UGwlVGUkEFc5Tag8xVHtkk8ExNduqTU4sb5sA==
+X-Received: by 2002:a1c:147:: with SMTP id 68mr795846wmb.28.1585344260673;
+        Fri, 27 Mar 2020 14:24:20 -0700 (PDT)
 Received: from ninjahost.lan (host-92-23-82-35.as13285.net. [92.23.82.35])
-        by smtp.gmail.com with ESMTPSA id h132sm10215141wmf.18.2020.03.27.14.24.16
+        by smtp.gmail.com with ESMTPSA id h132sm10215141wmf.18.2020.03.27.14.24.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 14:24:16 -0700 (PDT)
+        Fri, 27 Mar 2020 14:24:20 -0700 (PDT)
 From:   Jules Irenge <jbi.octave@gmail.com>
 To:     julia.lawall@lip6.fr
 Cc:     boqun.feng@gmail.com, Jules Irenge <jbi.octave@example.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org (open list:SCHEDULER)
-Subject: [PATCH 02/10] sched/topology: Replace 1 and 0 by boolean value
-Date:   Fri, 27 Mar 2020 21:23:49 +0000
-Message-Id: <20200327212358.5752-3-jbi.octave@gmail.com>
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>, Ingo Molnar <mingo@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>, Qian Cai <cai@lca.pw>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        linux-kernel@vger.kernel.org (open list),
+        rcu@vger.kernel.org (open list:READ-COPY UPDATE (RCU))
+Subject: [PATCH 03/10] cpu: Remove Comparison to bool
+Date:   Fri, 27 Mar 2020 21:23:50 +0000
+Message-Id: <20200327212358.5752-4-jbi.octave@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200327212358.5752-1-jbi.octave@gmail.com>
 References: <0/10>
@@ -72,35 +79,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jules Irenge <jbi.octave@example.com>
 
-Coccinelle reports a warning inside sched_energy_aware_handler()
+Coccinelle reports a warning inside __cpuhp_state_add_instance_cpuslocked
 
-WARNING: Assignment of 0/1 to bool variable
+WARNING: Comparison to bool
 
-To fix this, 1 is replaced by true and 0 by false.
-Given that variable sched_energy_update is of bool type.
-This fixes the warnings.
+To fix this, the comparison to bool is removed
+This not only fixes the issue but also removes the unnecessary comparison.
 
-Signed-off-by: Jules Irenge <jbi.octave@example.com>
+Remove comparison to bool
+
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 ---
- kernel/sched/topology.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/cpu.c      | 2 +-
+ kernel/rcu/tree.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index dfb64c08a407..9d70cc68e549 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -221,9 +221,9 @@ int sched_energy_aware_handler(struct ctl_table *table, int write,
- 		state = static_branch_unlikely(&sched_energy_present);
- 		if (state != sysctl_sched_energy_aware) {
- 			mutex_lock(&sched_energy_mutex);
--			sched_energy_update = 1;
-+			sched_energy_update = true;
- 			rebuild_sched_domains();
--			sched_energy_update = 0;
-+			sched_energy_update = false;
- 			mutex_unlock(&sched_energy_mutex);
- 		}
- 	}
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 9c706af713fb..97f8b79ba5f5 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1682,7 +1682,7 @@ int __cpuhp_state_add_instance_cpuslocked(enum cpuhp_state state,
+ 	lockdep_assert_cpus_held();
+ 
+ 	sp = cpuhp_get_step(state);
+-	if (sp->multi_instance == false)
++	if (!sp->multi_instance)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&cpuhp_state_mutex);
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index d91c9156fab2..c2ffea31eae8 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -100,7 +100,7 @@ static struct rcu_state rcu_state = {
+ static bool dump_tree;
+ module_param(dump_tree, bool, 0444);
+ /* By default, use RCU_SOFTIRQ instead of rcuc kthreads. */
+-static bool use_softirq = 1;
++static bool use_softirq = true;
+ module_param(use_softirq, bool, 0444);
+ /* Control rcu_node-tree auto-balancing at boot time. */
+ static bool rcu_fanout_exact;
 -- 
 2.25.1
 
