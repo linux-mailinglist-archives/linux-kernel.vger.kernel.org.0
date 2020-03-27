@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB24E195BEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68C58195BF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 18:07:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbgC0RGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 13:06:08 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45553 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727652AbgC0RGH (ORCPT
+        id S1727929AbgC0RGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 13:06:19 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36884 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbgC0RGI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 13:06:07 -0400
-Received: by mail-lj1-f195.google.com with SMTP id t17so10967164ljc.12
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 10:06:04 -0700 (PDT)
+        Fri, 27 Mar 2020 13:06:08 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r24so10996791ljd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 10:06:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fCQS2NypN0JhzS0ypfUQeVkn+9tCE2dlRA9LI38iq5A=;
-        b=kGB2Kiza8RBWjYqxA3azU6g8J+6XrN9ulu4WXST9nTuu7lCP+8CM9665C9vnVCYq54
-         a54sLLad2b2bTddxdKbxR7qHl+0LKFhsMw61E1fYfXl7LzKcj+gX4gaotJhuZNR4aKUF
-         s2u6W4nwNqfG9/o7+MBxAp0NSDCKH6hAROgHEnlVip56MyiJ7W3YZYHlgIvp9m2ZyLuG
-         Ah2k+r1+ivnzGTsaJwo5xxCsuEd7s3YIYTHKWJJnhB38iR2aXTLScV37U1ksZN6YNXMX
-         6IiWaat9A/HJGfNaanM/u784X4QNsGw7Uit8DElFc6L58KRu9Br4VDrfkFVrR0M8FTzW
-         rS9A==
+        bh=ThpcVoxxySBsyGDL9yqIPPj2mnnyBXzq6rEXvZDPIuA=;
+        b=fNHTd/MARGBDdMO/5j8pGyv1gV0nBmX6x3XXpQnpq1EssAZZ1iPmkK24TfgSdoIPZ7
+         zB+EDT1S8pUEnv4AU2xKOt/qRJw7Brw6WoyxvFeKej16Mv20jxP8xGZSLsE04KJhwz4m
+         zYuRXoJsT3WE0gMGKx2NqYQYonIYj6KDAwwAQhsB5sQtLXcKsWmZWMxgNfqbXoENWLYj
+         Tm/dpS/UUQagNliXw1OPspoP8YQYKKKbnrditaiksEOnKWJoYKu/QLPfwqOn4FsZ8nZN
+         FLuhSnDFJgoGb2EI79yLSfh49rnhZPCtq6WLO1L+oSgIMgFPJbbJ0n7490F2GybiezZ8
+         TWQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fCQS2NypN0JhzS0ypfUQeVkn+9tCE2dlRA9LI38iq5A=;
-        b=evGQqnBjGEgKKLIsjmriMP+XdIk/fuNq9EWlRzuOusRpuux5Ibd3/FHp0fm7vgGOiV
-         L8o8VcOY0UB+I2aV/1tSUufhT/PqTT0pfr0gaPXXKC00e9K3Eftq3BfyXjkcjzkrjIPC
-         Qi4pE7uOyYTSH97JL6BBz6bS+tC9Rue9DGXU4XjdnDht0cLYlu33RvWVXKBJ9BTxLHMa
-         71pmJOfhbHNlJ5ocimVB66wq7vtxwTgbZqOIEAjpE2Xuc0nueSA3iUtrsuC1kKmK6L7n
-         6f6KPwIACasIGgd+yti+GUMBa6hEBv6T3IzDFCE/4zKPPyi7pV6Hxzi2vsyk+V0rhjg1
-         /k/g==
-X-Gm-Message-State: AGi0PuYx2rXJx8o3DYHhnI6VapR//M8CHLfXaRTjhh4wadn0+gntSkqR
-        Ep133N+vteqtiDDklZa69+aNNQ==
-X-Google-Smtp-Source: APiQypKBQAwVwbRAVi/qZWZFWn/tOxio6lk6NKivsgpAW6fPbyvc3MwwRJKbLPJvgEySXhgoHQQ6lQ==
-X-Received: by 2002:a2e:854e:: with SMTP id u14mr8553799ljj.182.1585328763840;
-        Fri, 27 Mar 2020 10:06:03 -0700 (PDT)
+        bh=ThpcVoxxySBsyGDL9yqIPPj2mnnyBXzq6rEXvZDPIuA=;
+        b=A4s0uECxLZ9NW3LWnKvxF9/9MXaeCAESvXOUNaRO8Kc81/d77B4xae1PvgWbeIUi4q
+         fkyoZef5P1ZDddNfNeemD+vJ48n926K38NlgmKnW97UE9uG078xsYD6hYBdx8XqhojAF
+         ymmJ5YcJZ4FNa22R2SvA/8L0hiBLu4XCy6vTGGlvJ8iyTSQiHZ28q2eyIIKNP65lQ1Ma
+         hXKlA7tOT1NHM6tWWA3GWu5BEkwltNXx6g4jtakEEi0STy+NRUR7szb94IurnMruONfR
+         o8hBAO3hEfl2Ed0UiumghGjd8/O4TClRw4eSPGNiMJJ2rEG/VcOLsLotW+9OWSy+Ielp
+         +zEw==
+X-Gm-Message-State: ANhLgQ0+B2usTj2SZhMPMK8k3i5CwBJ5/UBixEAeb68bzjEfD8wpB/iO
+        EvHEGkXVMiiprRUK7ZFh0JDZCQ==
+X-Google-Smtp-Source: APiQypLtn/NpXZCnCXpoQScUjDIxmuhP+tRIc0nLOzigxrfVLxvwc+v9+cf1EYMqS3kUQzsle5YSxQ==
+X-Received: by 2002:a2e:730e:: with SMTP id o14mr8917059ljc.273.1585328765915;
+        Fri, 27 Mar 2020 10:06:05 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id o68sm3692303lff.81.2020.03.27.10.06.02
+        by smtp.gmail.com with ESMTPSA id u8sm3272039lfi.12.2020.03.27.10.06.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 10:06:03 -0700 (PDT)
+        Fri, 27 Mar 2020 10:06:05 -0700 (PDT)
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 6FEFD100D29; Fri, 27 Mar 2020 20:06:07 +0300 (+03)
+        id 7673A100D2A; Fri, 27 Mar 2020 20:06:07 +0300 (+03)
 To:     akpm@linux-foundation.org, Andrea Arcangeli <aarcange@redhat.com>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 4/7] khugepaged: Allow to callapse a page shared across fork
-Date:   Fri, 27 Mar 2020 20:05:58 +0300
-Message-Id: <20200327170601.18563-5-kirill.shutemov@linux.intel.com>
+Subject: [PATCH 5/7] khugepaged: Allow to collapse PTE-mapped compound pages
+Date:   Fri, 27 Mar 2020 20:05:59 +0300
+Message-Id: <20200327170601.18563-6-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200327170601.18563-1-kirill.shutemov@linux.intel.com>
 References: <20200327170601.18563-1-kirill.shutemov@linux.intel.com>
@@ -65,74 +65,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The page can be included into collapse as long as it doesn't have extra
-pins (from GUP or otherwise).
+We can collapse PTE-mapped compound pages. We only need to avoid
+handling them more than once: lock/unlock page only once if it's present
+in the PMD range multiple times as it handled on compound level. The
+same goes for LRU isolation and putpack.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- mm/khugepaged.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ mm/khugepaged.c | 41 +++++++++++++++++++++++++++++++----------
+ 1 file changed, 31 insertions(+), 10 deletions(-)
 
 diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 39e0994abeb8..b47edfe57f7b 100644
+index b47edfe57f7b..c8c2c463095c 100644
 --- a/mm/khugepaged.c
 +++ b/mm/khugepaged.c
-@@ -581,18 +581,26 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+@@ -515,6 +515,17 @@ void __khugepaged_exit(struct mm_struct *mm)
+ 
+ static void release_pte_page(struct page *page)
+ {
++	/*
++	 * We need to unlock and put compound page on LRU only once.
++	 * The rest of the pages have to be locked and not on LRU here.
++	 */
++	VM_BUG_ON_PAGE(!PageCompound(page) &&
++			(!PageLocked(page) && PageLRU(page)), page);
++
++	if (!PageLocked(page))
++		return;
++
++	page = compound_head(page);
+ 	dec_node_page_state(page, NR_ISOLATED_ANON + page_is_file_cache(page));
+ 	unlock_page(page);
+ 	putback_lru_page(page);
+@@ -537,6 +548,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+ 	pte_t *_pte;
+ 	int none_or_zero = 0, result = 0, referenced = 0;
+ 	bool writable = false;
++	LIST_HEAD(compound_pagelist);
+ 
+ 	for (_pte = pte; _pte < pte+HPAGE_PMD_NR;
+ 	     _pte++, address += PAGE_SIZE) {
+@@ -561,13 +573,23 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+ 			goto out;
  		}
+ 
+-		/* TODO: teach khugepaged to collapse THP mapped with pte */
++		VM_BUG_ON_PAGE(!PageAnon(page), page);
++
+ 		if (PageCompound(page)) {
+-			result = SCAN_PAGE_COMPOUND;
+-			goto out;
+-		}
++			struct page *p;
++			page = compound_head(page);
+ 
+-		VM_BUG_ON_PAGE(!PageAnon(page), page);
++			/*
++			 * Check if we have dealt with the compount page
++			 * already
++			 */
++			list_for_each_entry(p, &compound_pagelist, lru) {
++				if (page ==  p)
++					break;
++			}
++			if (page ==  p)
++				continue;
++		}
  
  		/*
--		 * cannot use mapcount: can't collapse if there's a gup pin.
--		 * The page must only be referenced by the scanned process
--		 * and page swap cache.
-+		 * Check if the page has any GUP (or other external) pins.
-+		 *
-+		 * The page table that maps the page has been already unlinked
-+		 * from the page table tree and this process cannot get
-+		 * additinal pin on the page.
-+		 *
-+		 * New pins can come later if the page is shared across fork,
-+		 * but not for the this process. It is fine. The other process
-+		 * cannot write to the page, only trigger CoW.
- 		 */
--		if (page_count(page) != 1 + PageSwapCache(page)) {
-+		if (total_mapcount(page) + PageSwapCache(page) !=
-+				page_count(page)) {
- 			/*
- 			 * Drain pagevec and retry just in case we can get rid
- 			 * of the extra pin, like in swapin case.
- 			 */
- 			lru_add_drain();
- 		}
--		if (page_count(page) != 1 + PageSwapCache(page)) {
-+		if (total_mapcount(page) + PageSwapCache(page) !=
-+				page_count(page)) {
- 			unlock_page(page);
- 			result = SCAN_PAGE_COUNT;
- 			goto out;
-@@ -680,7 +688,6 @@ static void __collapse_huge_page_copy(pte_t *pte, struct page *page,
- 		} else {
- 			src_page = pte_page(pteval);
- 			copy_user_highpage(page, src_page, address, vma);
--			VM_BUG_ON_PAGE(page_mapcount(src_page) != 1, src_page);
- 			release_pte_page(src_page);
- 			/*
- 			 * ptl mostly unnecessary, but preempt has to
-@@ -1209,12 +1216,9 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
+ 		 * We can do it before isolate_lru_page because the
+@@ -640,6 +662,9 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+ 		    page_is_young(page) || PageReferenced(page) ||
+ 		    mmu_notifier_test_young(vma->vm_mm, address))
+ 			referenced++;
++
++		if (PageCompound(page))
++			list_add_tail(&page->lru, &compound_pagelist);
+ 	}
+ 	if (likely(writable)) {
+ 		if (likely(referenced)) {
+@@ -1185,11 +1210,7 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
  			goto out_unmap;
  		}
  
--		/*
--		 * cannot use mapcount: can't collapse if there's a gup pin.
--		 * The page must only be referenced by the scanned process
--		 * and page swap cache.
--		 */
--		if (page_count(page) != 1 + PageSwapCache(page)) {
-+		/* Check if the page has any GUP (or other external) pins */
-+		if (total_mapcount(page) + PageSwapCache(page) !=
-+				page_count(page)) {
- 			result = SCAN_PAGE_COUNT;
- 			goto out_unmap;
- 		}
+-		/* TODO: teach khugepaged to collapse THP mapped with pte */
+-		if (PageCompound(page)) {
+-			result = SCAN_PAGE_COMPOUND;
+-			goto out_unmap;
+-		}
++		page = compound_head(page);
+ 
+ 		/*
+ 		 * Record which node the original page is from and save this
 -- 
 2.26.0
 
