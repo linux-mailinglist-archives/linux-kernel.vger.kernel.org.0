@@ -2,205 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB1B9195E9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 20:27:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 349C8195EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 20:28:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbgC0T1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 15:27:42 -0400
-Received: from mga09.intel.com ([134.134.136.24]:57695 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbgC0T1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 15:27:42 -0400
-IronPort-SDR: fQJGtEwluwIQV5cFMVCU7VVc+8RDWH3zGiaKMOCVBli+MupOfYCf6nT0bLz8yiLQxLpyMTCjuX
- m4/gkGyhf4Pw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 12:27:41 -0700
-IronPort-SDR: Gv6znBERPWPtW30bjubtY3/bE/YhEKAgj2NfJ1V6GyUuOxgWqrbmr3ICv7JCa8Hzz/9GlSakPq
- joAgOjDqOSHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,313,1580803200"; 
-   d="scan'208";a="294013701"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 27 Mar 2020 12:27:40 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1jHudn-000Fp1-Nr; Sat, 28 Mar 2020 03:27:39 +0800
-Date:   Sat, 28 Mar 2020 03:26:39 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "x86-ml" <x86@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 28aa62327f5e6d5167deb4f51371657840f153c6
-Message-ID: <5e7e536f.SJQGe90cDH63cCN6%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1727702AbgC0T2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 15:28:11 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46982 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727585AbgC0T2J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 15:28:09 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q3so4941726pff.13
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 12:28:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ciBC3j8wG4a8pHJA61Krk7wdzxQIPFblhY8Mnmnqr/E=;
+        b=dZbWG7+WmyxKjt8o1CFjmawcgYb9EEMCzsYlcILxxPtiGer6uV+HnUYpVcY1RNBFRG
+         RjwL4s2vQk6bvP8QSj2WiIANCPx4nfL86AVwKtE/T3vgBWCwO+W6gCzZsM50wBfPNP02
+         pVt3JhCwHQK0kEFTi5SLljHXMhHno/WK55SKM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ciBC3j8wG4a8pHJA61Krk7wdzxQIPFblhY8Mnmnqr/E=;
+        b=dDt4NI7sISlnE2A1mAIGodpaudXqEObKVyMN3AAXjGDOt8HLzKyXgra24ycXvD8gDN
+         LgqpKOlySLCWfbSTrToPQiQDZmfkIztIkyrlhBxv59GYlyymDdnMMcNw2wUhLJo5SH4h
+         XsyVpjZAvf5NCUzZd+5tM9hydk4wk9BWNxegd+suXnNqjIXRL0+GXZI3oF4sNM0d00tP
+         VeIAgu5yBIhKVhhpCWhYNkQ7Mm+s8cDXVJZ39MTkcqrrxTjRQxi75CHuC1f1I/W+l31s
+         O6sNp6FNw/2fGL2lQPNroKk2c6LLhH5ROHGkOrjlrLlFZTe29kJRJgOrOGk52nrP+fv0
+         wVSw==
+X-Gm-Message-State: ANhLgQ16MVWNy8OvTZtQ5kuvCfdrjJB256d976J8tieTW0scDLCYY9NM
+        FFCzOD8ElX5j90sOkwbgfD5btg==
+X-Google-Smtp-Source: ADFU+vuchbCxcDuvMI0oXv3NR9kDEcIvh5PdrH4MH/b2GxywfhrWBKPCrJOWYzpn/J65ZJciM9QCVg==
+X-Received: by 2002:aa7:9a01:: with SMTP id w1mr759393pfj.256.1585337286979;
+        Fri, 27 Mar 2020 12:28:06 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id u21sm4342053pjy.8.2020.03.27.12.28.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Mar 2020 12:28:06 -0700 (PDT)
+Date:   Fri, 27 Mar 2020 12:28:05 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrea Righi <andrea.righi@canonical.com>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/runner: avoid using timeout when timeout is
+ disabled
+Message-ID: <202003271208.0D9A3A48CC@keescook>
+References: <20200327093620.GB1223497@xps-13>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20200327093620.GB1223497@xps-13>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  master
-branch HEAD: 28aa62327f5e6d5167deb4f51371657840f153c6  Merge branch 'x86/build'
+On Fri, Mar 27, 2020 at 10:36:20AM +0100, Andrea Righi wrote:
+> Avoid using /usr/bin/timeout unnecessarily if timeout is set to 0
+> (disabled) in the "settings" file for a specific test.
 
-elapsed time: 483m
+That seems to be a reasonable optimization, sure.
 
-configs tested: 146
-configs skipped: 0
+> NOTE: without this change (and adding timeout=0 in the corresponding
+> settings file - tools/testing/selftests/seccomp/settings) the
+> seccomp_bpf selftest is always failing with a timeout event during the
+> syscall_restart step.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+This, however, is worrisome. I think there is something else wrong here.
+I will investigate why the output of seccomp_bpf is weird when running
+under the runner scripts. Hmmm. The output looks corrupted...
 
-arm64                            allyesconfig
-arm                              allyesconfig
-arm64                            allmodconfig
-arm64                             allnoconfig
-arm                               allnoconfig
-arm                           efm32_defconfig
-arm                         at91_dt_defconfig
-arm                        shmobile_defconfig
-arm64                               defconfig
-arm                          exynos_defconfig
-arm                        multi_v5_defconfig
-arm                           sunxi_defconfig
-arm                        multi_v7_defconfig
-sparc                            allyesconfig
-h8300                     edosk2674_defconfig
-um                                  defconfig
-sh                            titan_defconfig
-ia64                             allmodconfig
-parisc                            allnoconfig
-parisc                generic-32bit_defconfig
-s390                          debug_defconfig
-i386                              allnoconfig
-i386                             alldefconfig
-i386                             allyesconfig
-i386                                defconfig
-ia64                             alldefconfig
-ia64                              allnoconfig
-ia64                             allyesconfig
-ia64                                defconfig
-arm                              allmodconfig
-c6x                              allyesconfig
-c6x                        evmc6678_defconfig
-nios2                         10m50_defconfig
-nios2                         3c120_defconfig
-openrisc                    or1ksim_defconfig
-openrisc                 simple_smp_defconfig
-xtensa                       common_defconfig
-xtensa                          iss_defconfig
-nds32                               defconfig
-nds32                             allnoconfig
-csky                                defconfig
-alpha                               defconfig
-h8300                    h8300h-sim_defconfig
-h8300                       h8s-sim_defconfig
-m68k                             allmodconfig
-m68k                       m5475evb_defconfig
-m68k                          multi_defconfig
-m68k                           sun3_defconfig
-arc                                 defconfig
-arc                              allyesconfig
-powerpc                          rhel-kconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                           allnoconfig
-mips                      fuloong2e_defconfig
-mips                      malta_kvm_defconfig
-mips                             allyesconfig
-mips                         64r6el_defconfig
-mips                              allnoconfig
-mips                           32r2_defconfig
-mips                             allmodconfig
-parisc                generic-64bit_defconfig
-parisc                           allyesconfig
-i386                 randconfig-a002-20200327
-i386                 randconfig-a001-20200327
-x86_64               randconfig-a002-20200327
-x86_64               randconfig-a001-20200327
-i386                 randconfig-a003-20200327
-x86_64               randconfig-a003-20200327
-mips                 randconfig-a001-20200327
-nds32                randconfig-a001-20200327
-m68k                 randconfig-a001-20200327
-parisc               randconfig-a001-20200327
-alpha                randconfig-a001-20200327
-riscv                randconfig-a001-20200327
-c6x                  randconfig-a001-20200327
-h8300                randconfig-a001-20200327
-microblaze           randconfig-a001-20200327
-nios2                randconfig-a001-20200327
-sparc64              randconfig-a001-20200327
-csky                 randconfig-a001-20200327
-openrisc             randconfig-a001-20200327
-s390                 randconfig-a001-20200327
-sh                   randconfig-a001-20200327
-xtensa               randconfig-a001-20200327
-i386                 randconfig-b003-20200327
-x86_64               randconfig-c003-20200327
-x86_64               randconfig-c001-20200327
-i386                 randconfig-c002-20200327
-x86_64               randconfig-c002-20200327
-i386                 randconfig-c003-20200327
-i386                 randconfig-c001-20200327
-i386                 randconfig-d003-20200327
-i386                 randconfig-d001-20200327
-x86_64               randconfig-d002-20200327
-x86_64               randconfig-d001-20200327
-i386                 randconfig-d002-20200327
-x86_64               randconfig-d003-20200327
-x86_64               randconfig-e001-20200327
-x86_64               randconfig-e003-20200327
-i386                 randconfig-e002-20200327
-i386                 randconfig-e003-20200327
-i386                 randconfig-e001-20200327
-x86_64               randconfig-e002-20200327
-i386                 randconfig-f001-20200327
-x86_64               randconfig-h001-20200327
-x86_64               randconfig-h002-20200327
-x86_64               randconfig-h003-20200327
-i386                 randconfig-h001-20200327
-i386                 randconfig-h002-20200327
-i386                 randconfig-h003-20200327
-arm                  randconfig-a001-20200327
-powerpc              randconfig-a001-20200327
-ia64                 randconfig-a001-20200327
-sparc                randconfig-a001-20200327
-arc                  randconfig-a001-20200327
-arm64                randconfig-a001-20200327
-riscv                            allmodconfig
-riscv                             allnoconfig
-riscv                            allyesconfig
-riscv                               defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-s390                             alldefconfig
-s390                             allmodconfig
-s390                              allnoconfig
-s390                             allyesconfig
-s390                                defconfig
-s390                       zfcpdump_defconfig
-sh                               allmodconfig
-sh                                allnoconfig
-sh                          rsk7269_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sparc                               defconfig
-sparc64                             defconfig
-sparc64                           allnoconfig
-sparc64                          allyesconfig
-sparc64                          allmodconfig
-um                           x86_64_defconfig
-um                             i386_defconfig
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                         rhel-7.2-clear
-x86_64                               rhel-7.6
+-Kees
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> Signed-off-by: Andrea Righi <andrea.righi@canonical.com>
+> ---
+>  tools/testing/selftests/kselftest/runner.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kselftest/runner.sh b/tools/testing/selftests/kselftest/runner.sh
+> index e84d901f8567..2cd3c8def0f6 100644
+> --- a/tools/testing/selftests/kselftest/runner.sh
+> +++ b/tools/testing/selftests/kselftest/runner.sh
+> @@ -32,7 +32,7 @@ tap_prefix()
+>  tap_timeout()
+>  {
+>  	# Make sure tests will time out if utility is available.
+> -	if [ -x /usr/bin/timeout ] ; then
+> +	if [ -x /usr/bin/timeout ] && [ $kselftest_timeout -gt 0 ] ; then
+>  		/usr/bin/timeout "$kselftest_timeout" "$1"
+>  	else
+>  		"$1"
+> -- 
+> 2.25.1
+> 
+
+-- 
+Kees Cook
