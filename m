@@ -2,58 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA059195B9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 17:52:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EC7D195BA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 17:55:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbgC0Qwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 12:52:44 -0400
-Received: from ms.lwn.net ([45.79.88.28]:47328 "EHLO ms.lwn.net"
+        id S1727575AbgC0QzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 12:55:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbgC0Qwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 12:52:43 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 1890B2E4;
-        Fri, 27 Mar 2020 16:52:43 +0000 (UTC)
-Date:   Fri, 27 Mar 2020 10:52:42 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2] Documentation: x86: exception-tables: document
- CONFIG_BUILDTIME_TABLE_SORT
-Message-ID: <20200327105242.20a6d20e@lwn.net>
-In-Reply-To: <20200327000951.84071-1-ndesaulniers@google.com>
-References: <6e26c798-1439-2bbd-6801-8fd21c4e6926@zytor.com>
-        <20200327000951.84071-1-ndesaulniers@google.com>
-Organization: LWN.net
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+        id S1727185AbgC0QzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 12:55:06 -0400
+Subject: Re: [git pull] drm fixes for 5.6-rc8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585328106;
+        bh=5GmCGse5ThixCBJK4fRqQmxGOVFWWuHQS36UiFoeoVo=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=uB0Jk3P1+bSNUw36JsbT47ruqLtLLSB3qiQ8lI8wGvIa0MpX2+4++vikOX3ru9vBt
+         NRRMjKkPswYrynt+rpISVFymsCFBwWkPRKD8t41PAoi0WQ3ApH9CVgjPP8wz+PnXWO
+         Yn9Csi/5tZF/JjDdq+HSOlW1sYgoP/g1yNNhNZBM=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAPM=9tx=PisdA7qzEBz+n9Sqc4YfSpaSV-ja3tf7MjBnZ=_NXg@mail.gmail.com>
+References: <CAPM=9tx=PisdA7qzEBz+n9Sqc4YfSpaSV-ja3tf7MjBnZ=_NXg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAPM=9tx=PisdA7qzEBz+n9Sqc4YfSpaSV-ja3tf7MjBnZ=_NXg@mail.gmail.com>
+X-PR-Tracked-Remote: git://anongit.freedesktop.org/drm/drm
+ tags/drm-fixes-2020-03-27
+X-PR-Tracked-Commit-Id: c4b979ebcafe978338cad1df4c77cdc8f84bd51c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7bf8df68cba0536479aead32297e47908922582c
+Message-Id: <158532810616.31172.8807001450688549024.pr-tracker-bot@kernel.org>
+Date:   Fri, 27 Mar 2020 16:55:06 +0000
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Mar 2020 17:09:51 -0700
-Nick Desaulniers <ndesaulniers@google.com> wrote:
+The pull request you sent on Fri, 27 Mar 2020 16:58:46 +1000:
 
-> Provide more information about __ex_table sorting post link.
-> 
-> The exception tables and fixup tables use a commonly recurring pattern
-> in the kernel of storing the address of labels as date in custom ELF
-> sections, then finding these sections, iterating elements within them,
-> and possibly revisiting them or modifying the data at these addresses.
-> 
-> Sorting readonly arrays to minimize runtime penalties is quite clever.
-> 
-> Suggested-by: H. Peter Anvin <hpa@zytor.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2020-03-27
 
-I've applied this, thanks.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7bf8df68cba0536479aead32297e47908922582c
 
-jon
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
