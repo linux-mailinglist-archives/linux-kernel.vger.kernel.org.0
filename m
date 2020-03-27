@@ -2,162 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E8FE194F5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 04:02:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EDEE194F62
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 04:03:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbgC0DC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 23:02:26 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:37456 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727446AbgC0DCZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 23:02:25 -0400
-Received: by mail-il1-f194.google.com with SMTP id a6so7472418ilr.4;
-        Thu, 26 Mar 2020 20:02:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XvGh7t/U9TB56qg/e8cfeP1L5u/Gtl2g1y168+rAvRc=;
-        b=NH/OePeuKXgc2QssZKkDL9IphW2MVfpMS3JshbaPYI23f2mYGSc1ZODdPESb5TrJ6/
-         vjAq4Xqg1kmmxcIjuI3mt/CvvL72tpNgJa5+k+5bfxeR+DpSpV+mZVHB7HN3KbJf2yx7
-         WtiQZ9C5RE5zIs9C6By71Nux7BWnXDnY30VriZpKp5t+jagWvqG0gF78uR703NZ/syqH
-         +TxF0JO1Y6FMBrasOPDF0Zy0flOUB6EemGsVMJxlGD4BFzms8mUeqxQGO1mTSc2Lx7ul
-         3pyB++kBYmU3YglULW8iz8c1JkKX3BmnAAk/6ykZ6615VpsUW6MlBPgBGie6iOysmV2c
-         nO9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XvGh7t/U9TB56qg/e8cfeP1L5u/Gtl2g1y168+rAvRc=;
-        b=bsn4pLCo+1qR8QWao+Nn8535p7RSe+Z4ySMh5i0DjiWuwLXNuAhXyXW/fpkLL8bCkR
-         USXYYP97LIZdSYjUMFWVeV8aoEF9bB5H+/+0P8RDkQ4SWOxwdydTJo/TJd9Mz68/NZkA
-         eHcofd8cNHSMiGnRqt1RIQq6J2BaBpEuRDpl4m6ZX4rRDE3Es3/g6daZe03BZ383ruX7
-         jYftAoTZyVMyWpgj39qD4yGdufjl+SMhHuO6VX3xmYc3kLKsLi0dwOG8O36YWttE9J/M
-         k2lw/mDSqINWg1XzSC+u0faP2Zw+tE6+QYzfNzrU2ZF4oh1ftlKRDJOruC9RiTtVRzRy
-         llEg==
-X-Gm-Message-State: ANhLgQ3PSyyOkwVBxCV330eHtvIMr4VoLsYPLgs3BP40xm8u+oT/eIkI
-        YlWATX121zBUqCWBcWRvwgdJyPsDSA1egRPQWd8=
-X-Google-Smtp-Source: ADFU+vuTaLfd3e7xTa3AW37/PjMa023Kqtto9yeReMU5tfoR/3qFiiL8LMIhS94K1vGtwdQN6YU26qodYFD5uZDJGwc=
-X-Received: by 2002:a92:83ca:: with SMTP id p71mr11019457ilk.278.1585278144784;
- Thu, 26 Mar 2020 20:02:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200327012832.19193-1-hqjagain@gmail.com> <20200327023534.GJ3756@localhost.localdomain>
-In-Reply-To: <20200327023534.GJ3756@localhost.localdomain>
-From:   Qiujun Huang <hqjagain@gmail.com>
-Date:   Fri, 27 Mar 2020 11:02:12 +0800
-Message-ID: <CAJRQjofFxvEP+vpWV7ChtEvtzBbfAEiGbj0YhaGP2RKUmQKc8Q@mail.gmail.com>
-Subject: Re: [PATCH v5 RESEND] sctp: fix refcount bug in sctp_wfree
-To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, vyasevich@gmail.com,
-        nhorman@tuxdriver.com, Jakub Kicinski <kuba@kernel.org>,
-        linux-sctp@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, anenbupt@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1727829AbgC0DDC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 23:03:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726496AbgC0DDC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Mar 2020 23:03:02 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CA9C20787;
+        Fri, 27 Mar 2020 03:02:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585278181;
+        bh=b2ccDeO/pD0R+Y+srohROcyVA9Q145YuMgSh8oAXLmM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=rniJm74HvN/lsrQkGt9EY0ampwZGukQI1mGNUHZ+Y1qgVosyqSmxQh7Y/aB0kiHUd
+         skjYGOhr0dmRm2/Rkd2IbLKBHC5ii1/ZdoWPnM2LYGCid8jJUA+iigEapBxQLUIJVy
+         je1LuCvKfE6zYULbGOvvJ9u/UCVNUeI2v0ouqBgk=
+Date:   Fri, 27 Mar 2020 12:02:32 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Borislav Petkov <bp@alien8.de>, Joerg Roedel <jroedel@suse.de>
+Cc:     Joerg Roedel <joro@8bytes.org>, x86@kernel.org, hpa@zytor.com,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Joerg Roedel <jroedel@suse.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 05/70] x86/insn: Make inat-tables.c suitable for
+ pre-decompression code
+Message-Id: <20200327120232.c8e455ca100dc0d96e4ddc43@kernel.org>
+In-Reply-To: <20200325153945.GD27261@zn.tnic>
+References: <20200319091407.1481-1-joro@8bytes.org>
+        <20200319091407.1481-6-joro@8bytes.org>
+        <20200325153945.GD27261@zn.tnic>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 10:35 AM Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
->
-> On Fri, Mar 27, 2020 at 09:28:32AM +0800, Qiujun Huang wrote:
-> > We should iterate over the datamsgs to modify
->
-> Just two small things now.
-> s/modify/move/  , it's more accurate.
-Get it.
+Hi,
 
-> But mainly because...
->
-> ...
-> >
-> > Reported-and-tested-by:syzbot+cea71eec5d6de256d54d@syzkaller.appspotmail.com
->
-> checkpatch.pl is warning that there should be an empty space after the
-> ':' here.
-forgot that.
->
-> Otherwise, looks very good.
->
-> Btw, I learned a lot about syzbot new features with your tests, thanks :-)
+On Wed, 25 Mar 2020 16:39:45 +0100
+Borislav Petkov <bp@alien8.de> wrote:
 
-So do I, thanks.
+> + Masami.
+> 
+> On Thu, Mar 19, 2020 at 10:13:02AM +0100, Joerg Roedel wrote:
+> > From: Joerg Roedel <jroedel@suse.de>
+> > 
+> > The inat-tables.c file has some arrays in it that contain pointers to
+> > other arrays. These pointers need to be relocated when the kernel
+> > image is moved to a different location.
+> > 
+> > The pre-decompression boot-code has no support for applying ELF
+> > relocations, so initialize these arrays at runtime in the
+> > pre-decompression code to make sure all pointers are correctly
+> > initialized.
 
->
-> > Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+I need to check the whole series, but as far as I can understand from
+this patch, this seems not allowing to store the address value in
+static pointers. It may break more things, for example _kprobe_blacklist
+records the NOKPROBE_SYMBOL() symbol addresses at the build time.
+
+I have some comments here.
+ 
+> > Signed-off-by: Joerg Roedel <jroedel@suse.de>
 > > ---
-> >  net/sctp/socket.c | 31 +++++++++++++++++++++++--------
-> >  1 file changed, 23 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> > index 1b56fc440606..f68076713162 100644
-> > --- a/net/sctp/socket.c
-> > +++ b/net/sctp/socket.c
-> > @@ -147,29 +147,44 @@ static void sctp_clear_owner_w(struct sctp_chunk *chunk)
-> >       skb_orphan(chunk->skb);
-> >  }
-> >
-> > +#define traverse_and_process()       \
-> > +do {                         \
-> > +     msg = chunk->msg;       \
-> > +     if (msg == prev_msg)    \
-> > +             continue;       \
-> > +     list_for_each_entry(c, &msg->chunks, frag_list) {       \
-> > +             if ((clear && asoc->base.sk == c->skb->sk) ||   \
-> > +                 (!clear && asoc->base.sk != c->skb->sk))    \
-> > +                 cb(c);      \
-> > +     }                       \
-> > +     prev_msg = msg;         \
-> > +} while (0)
+> >  arch/x86/tools/gen-insn-attr-x86.awk       | 50 +++++++++++++++++++++-
+> >  tools/arch/x86/tools/gen-insn-attr-x86.awk | 50 +++++++++++++++++++++-
+> >  2 files changed, 98 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/x86/tools/gen-insn-attr-x86.awk b/arch/x86/tools/gen-insn-attr-x86.awk
+> > index a42015b305f4..af38469afd14 100644
+> > --- a/arch/x86/tools/gen-insn-attr-x86.awk
+> > +++ b/arch/x86/tools/gen-insn-attr-x86.awk
+> > @@ -362,6 +362,9 @@ function convert_operands(count,opnd,       i,j,imm,mod)
+> >  END {
+> >  	if (awkchecked != "")
+> >  		exit 1
 > > +
-> >  static void sctp_for_each_tx_datachunk(struct sctp_association *asoc,
-> > +                                    bool clear,
-> >                                      void (*cb)(struct sctp_chunk *))
-> >
-> >  {
-> > +     struct sctp_datamsg *msg, *prev_msg = NULL;
-> >       struct sctp_outq *q = &asoc->outqueue;
-> > +     struct sctp_chunk *chunk, *c;
-> >       struct sctp_transport *t;
-> > -     struct sctp_chunk *chunk;
-> >
-> >       list_for_each_entry(t, &asoc->peer.transport_addr_list, transports)
-> >               list_for_each_entry(chunk, &t->transmitted, transmitted_list)
-> > -                     cb(chunk);
-> > +                     traverse_and_process();
-> >
-> >       list_for_each_entry(chunk, &q->retransmit, transmitted_list)
-> > -             cb(chunk);
-> > +             traverse_and_process();
-> >
-> >       list_for_each_entry(chunk, &q->sacked, transmitted_list)
-> > -             cb(chunk);
-> > +             traverse_and_process();
-> >
-> >       list_for_each_entry(chunk, &q->abandoned, transmitted_list)
-> > -             cb(chunk);
-> > +             traverse_and_process();
-> >
-> >       list_for_each_entry(chunk, &q->out_chunk_list, list)
-> > -             cb(chunk);
-> > +             traverse_and_process();
+> > +	print "#ifndef __BOOT_COMPRESSED\n"
+> > +
+> >  	# print escape opcode map's array
+> >  	print "/* Escape opcode map array */"
+> >  	print "const insn_attr_t * const inat_escape_tables[INAT_ESC_MAX + 1]" \
+> > @@ -388,6 +391,51 @@ END {
+> >  		for (j = 0; j < max_lprefix; j++)
+> >  			if (atable[i,j])
+> >  				print "	["i"]["j"] = "atable[i,j]","
+> > -	print "};"
+> > +	print "};\n"
+> > +
+> > +	print "#else /* !__BOOT_COMPRESSED */\n"
+
+I think the definitions of inat_*_tables can be shared in both case.
+If __BOOT_COMPRESSED is set, we can define inat_init_tables() as a
+initialize function, and if not, it will be just a dummy "do {} while (0)".
+
+BTW, where is the __BOOT_COMPRESSED defined?
+
+> > +
+> > +	print "/* Escape opcode map array */"
+> > +	print "static const insn_attr_t *inat_escape_tables[INAT_ESC_MAX + 1]" \
+> > +	      "[INAT_LSTPFX_MAX + 1];"
+> > +	print ""
+> > +
+> > +	print "/* Group opcode map array */"
+> > +	print "static const insn_attr_t *inat_group_tables[INAT_GRP_MAX + 1]"\
+> > +	      "[INAT_LSTPFX_MAX + 1];"
+> > +	print ""
+> > +
+> > +	print "/* AVX opcode map array */"
+> > +	print "static const insn_attr_t *inat_avx_tables[X86_VEX_M_MAX + 1]"\
+> > +	      "[INAT_LSTPFX_MAX + 1];"
+> > +	print ""
+> > +
+> > +	print "static void inat_init_tables(void)"
+
+This functions should be "inline".
+And I can not see the call-site of inat_init_tables() in this patch.
+
+If possible, please include call-site with definition (especially
+new init function) so that I can check the init call timing too.
+
+> > +	print "{"
+> > +
+> > +	# print escape opcode map's array
+> > +	print "\t/* Print Escape opcode map array */"
+> > +	for (i = 0; i < geid; i++)
+> > +		for (j = 0; j < max_lprefix; j++)
+> > +			if (etable[i,j])
+> > +				print "\tinat_escape_tables["i"]["j"] = "etable[i,j]";"
+> > +	print ""
+> > +
+> > +	# print group opcode map's array
+> > +	print "\t/* Print Group opcode map array */"
+> > +	for (i = 0; i < ggid; i++)
+> > +		for (j = 0; j < max_lprefix; j++)
+> > +			if (gtable[i,j])
+> > +				print "\tinat_group_tables["i"]["j"] = "gtable[i,j]";"
+> > +	print ""
+> > +	# print AVX opcode map's array
+> > +	print "\t/* Print AVX opcode map array */"
+> > +	for (i = 0; i < gaid; i++)
+> > +		for (j = 0; j < max_lprefix; j++)
+> > +			if (atable[i,j])
+> > +				print "\tinat_avx_tables["i"]["j"] = "atable[i,j]";"
+> > +
+> > +	print "}"
+> > +	print "#endif"
 > >  }
-> >
-> >  static void sctp_for_each_rx_skb(struct sctp_association *asoc, struct sock *sk,
-> > @@ -9574,9 +9589,9 @@ static int sctp_sock_migrate(struct sock *oldsk, struct sock *newsk,
-> >        * paths won't try to lock it and then oldsk.
-> >        */
-> >       lock_sock_nested(newsk, SINGLE_DEPTH_NESTING);
-> > -     sctp_for_each_tx_datachunk(assoc, sctp_clear_owner_w);
-> > +     sctp_for_each_tx_datachunk(assoc, true, sctp_clear_owner_w);
-> >       sctp_assoc_migrate(assoc, newsk);
-> > -     sctp_for_each_tx_datachunk(assoc, sctp_set_owner_w);
-> > +     sctp_for_each_tx_datachunk(assoc, false, sctp_set_owner_w);
-> >
-> >       /* If the association on the newsk is already closed before accept()
-> >        * is called, set RCV_SHUTDOWN flag.
-> > --
-> > 2.17.1
-> >
+
+The code itself looks good to me.
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
