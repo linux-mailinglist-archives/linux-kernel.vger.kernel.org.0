@@ -2,106 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D4BF195FFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 21:47:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF56219600E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 21:48:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbgC0Ur2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 16:47:28 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34341 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727322AbgC0Ur1 (ORCPT
+        id S1727848AbgC0UsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 16:48:02 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37167 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727352AbgC0UsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 16:47:27 -0400
-Received: by mail-ed1-f65.google.com with SMTP id i24so12946142eds.1;
-        Fri, 27 Mar 2020 13:47:26 -0700 (PDT)
+        Fri, 27 Mar 2020 16:48:01 -0400
+Received: by mail-qk1-f196.google.com with SMTP id x3so12342789qki.4
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 13:48:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KrwX+7IzzOcdtmf9GL8aP68WQccVqVWSmtAG1GU9fKQ=;
-        b=ZHJZ1sVao15S3PsXnhgLvQKmGh+O3Mrw5UAt6NlaAgQyn2ZmDn/JZuh0bJ5DcWpSmt
-         Pb8woPwR21dktkpk17yEH74bwFfUaqlH15wb0TupQEUwbiH95dVBaN0L0S8urJytHLM3
-         YnOgNEVJJcct8WA5h+ZjlYw7V/HoJ1P1h56E4g5/bOyXy15gq4P2hQ0Q8b51BoE0ChGD
-         st/R7hd71pURtL2VPnBDAtacN7kPswlcWf+kzA+OO1vmbgcZFh0hC12JJsgixnuxMhvv
-         A7IOrkb7zT1aZtU2fLMPD/BOjdz8kpURUT8qwMvIIwltjjtzks76Rry0+bwm/XbjJh4I
-         JljA==
+        d=lca.pw; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=9q1XY4KqbbTRLheOot7MCrox3Fgc87F65JC9LGYyt/E=;
+        b=GmqrUd2C6lvT6vlUdQucy70SSLtfxsKdUjOHWqJyOD8f1vWLJa5e6GYpJ9Npn1jKUh
+         RQKqmeIdVm7NetPjv9kPl5b08t/PpjpjUv7DCinp3PrZIwC2UmHt2CpwFM7OOJ6lHiFM
+         Q102qGtpZYc7xQKpLdqS7yQXUHF3YHZYzGkfuuSMThrDVUYxKczB+z15Rm9CSHYQlIOz
+         fmKXu+PqvhBXZjZtUrzjdZxknkPNMfoKO4wAnvUxi75V++fORXMOHg3aziuDT+9lGaRM
+         wzi5R35OV/ah4OcxihiVz15pL/N44chQI0FXkwtkZMiDWJ/3PHJw79yOsQlrvwX1kq6P
+         CnbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KrwX+7IzzOcdtmf9GL8aP68WQccVqVWSmtAG1GU9fKQ=;
-        b=S7duBvmKwYwJecfq5KIF2v6YyQW0U0dAB+FAzT+DbF5+Y12aoySAE/et3xA2pTtUfA
-         9H7GZbBTNoitlHaZBQRIO0whrOKBKnhbn4nh+/xl7PP9oPVmx5E3pfGfeVgwEzI0Omq4
-         q9Aexyo+deEjgMY7jCz82fWVilr9zBMweIv5iwC+48zCuHTQV78QfQfzM9TNLefo6O9U
-         yySsNAXxgx1j7J0eV9W/JZHQp0wIpPJXM26w+1Jwj+eihT8eRX5kDL3qEovKPF4hHpQ3
-         u/UwWDeGAqNIGx5Rkas4wsGbq1kdNV3FTzcfnKi8YJkovah0O0314bYbU48LhyPiONsS
-         WaMw==
-X-Gm-Message-State: ANhLgQ0dZsM+jajyALC9p1E9HCTxrOiXdwwzd7t3irzgnL56AyBYQDe3
-        yv1P011pRSX1EfA2CvS2UAM=
-X-Google-Smtp-Source: ADFU+vu2kBpouAt4iFovayfU8Nv6v1u2o+RYuTZtb4ny6MP0OKtvpfFVrmCI9cxb/fF2Qok5vQ/H4w==
-X-Received: by 2002:a17:906:4e12:: with SMTP id z18mr868375eju.49.1585342045395;
-        Fri, 27 Mar 2020 13:47:25 -0700 (PDT)
-Received: from localhost.localdomain (bbcs-97-49.pub.wingo.ch. [144.2.97.49])
-        by smtp.googlemail.com with ESMTPSA id p17sm1048552edq.57.2020.03.27.13.47.24
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=9q1XY4KqbbTRLheOot7MCrox3Fgc87F65JC9LGYyt/E=;
+        b=TicfeeESb+uiJM+GcchpXkntsLK1PgWXzjM7zxFpZk9V9GvdcEBmsXXn+VtsWxGFpb
+         6ynbkNWLSlB1V6CSvyxtttnYS1bAf6yjDKASWQ1rGeDPMIbbjhuKcjlZLlVkwG06ra7e
+         s2IwEMjRwA4j+0y2vs8K3j363UX64VC2Kar/3+z7CPct/5S/KGgdTBEBgtrVzzx3vbQI
+         50dhSol9BLFfM0UwUkwnTuSGfS+3NLq9mmnigPrhP0Eir9385neEgsinF5iJ2/A3/ZIn
+         tsZOXx0Ye93iNqzdEEcY71uNJ6kYIVhr+N6Z1e/nXjwEkjMyrwx+nkgAZJST1zjTcn6J
+         3Vhg==
+X-Gm-Message-State: ANhLgQ0g3pPJyqkWI59XSBwFB3I9fIK1vEM+kSWF+PMBOy0J3akcD4MK
+        4PQwDxG4XSw+AQ89o+/o6rOSrg==
+X-Google-Smtp-Source: ADFU+vum1YDCNVR+ZGbjSSgdxeGaVZ3Vf8cRn4knXCG80t3ZykaXm1aP4n2qerO0tMux7GIpvqDeng==
+X-Received: by 2002:a05:620a:135b:: with SMTP id c27mr1301375qkl.104.1585342080284;
+        Fri, 27 Mar 2020 13:48:00 -0700 (PDT)
+Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id p1sm4485204qkf.73.2020.03.27.13.47.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Mar 2020 13:47:24 -0700 (PDT)
-From:   Jean-Philippe Menil <jpmenil@gmail.com>
-To:     daniel@iogearbox.net
-Cc:     kernel-janitors@vger.kernel.org, jpmenil@gmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4] bpf: fix build warning - missing prototype
-Date:   Fri, 27 Mar 2020 21:47:13 +0100
-Message-Id: <20200327204713.28050-1-jpmenil@gmail.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <3164e566-d54e-2254-32c4-d7fee47c37ea@iogearbox.net>
-References: <3164e566-d54e-2254-32c4-d7fee47c37ea@iogearbox.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 27 Mar 2020 13:47:59 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Memory leaks due to "locking/percpu-rwsem: Remove the embedded rwsem"
+From:   Qian Cai <cai@lca.pw>
+In-Reply-To: <BB30C711-B54C-4D61-8BEE-A55F410C4178@lca.pw>
+Date:   Fri, 27 Mar 2020 16:47:58 -0400
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        dbueso@suse.de, juri.lelli@redhat.com, longman@redhat.com,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C1CCBDAC-A453-4FF2-908F-0B6E356223D1@lca.pw>
+References: <20200327093754.GS20713@hirez.programming.kicks-ass.net>
+ <BB30C711-B54C-4D61-8BEE-A55F410C4178@lca.pw>
+To:     Peter Zijlstra <peterz@infradead.org>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix build warnings when building net/bpf/test_run.o with W=1 due
-to missing prototype for bpf_fentry_test{1..6}.
 
-Instead of declaring prototypes, turn off warnings with
-__diag_{push,ignore,pop} as pointed by Alexei.
 
-Signed-off-by: Jean-Philippe Menil <jpmenil@gmail.com>
----
- net/bpf/test_run.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> On Mar 27, 2020, at 6:19 AM, Qian Cai <cai@lca.pw> wrote:
+>=20
+>=20
+>=20
+>> On Mar 27, 2020, at 5:37 AM, Peter Zijlstra <peterz@infradead.org> =
+wrote:
+>>=20
+>> If the trylock fails, someone else got the lock and we remain on the
+>> waitqueue. It seems like a very bad idea to put the task while it
+>> remains on the waitqueue, no?
+>=20
+> Interesting, I thought this was more straightforward to see, but I may =
+be wrong as always. At the beginning of percpu_rwsem_wake_function() it =
+calls get_task_struct(), but if the trylock failed, it will remain in =
+the waitqueue. However, it will run percpu_rwsem_wake_function() again =
+with get_task_struct() to increase the refcount. Can you enlighten me =
+where it will call put_task_struct() in waitqueue or elsewhere to =
+balance the refcount in this case?
 
-diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
-index 4c921f5154e0..73e703895343 100644
---- a/net/bpf/test_run.c
-+++ b/net/bpf/test_run.c
-@@ -114,6 +114,9 @@ static int bpf_test_finish(const union bpf_attr *kattr,
-  * architecture dependent calling conventions. 7+ can be supported in the
-  * future.
-  */
-+__diag_push();
-+__diag_ignore(GCC, 8, "-Wmissing-prototypes",
-+	      "Global functions as their definitions will be in vmlinux BTF");
- int noinline bpf_fentry_test1(int a)
- {
- 	return a + 1;
-@@ -150,6 +153,8 @@ int noinline bpf_modify_return_test(int a, int *b)
- 	return a + *b;
- }
- 
-+__diag_pop();
-+
- ALLOW_ERROR_INJECTION(bpf_modify_return_test, ERRNO);
- 
- static void *bpf_test_init(const union bpf_attr *kattr, u32 size,
--- 
-2.26.0
+I am pretty confident that the linux-next commit,
 
+7f26482a872c ("locking/percpu-rwsem: Remove the embedded rwsem=E2=80=9D)
+
+Introduced memory leaks,
+
+I put a debugging patch here,
+
+diff --git a/kernel/locking/percpu-rwsem.c =
+b/kernel/locking/percpu-rwsem.c
+index a008a1ba21a7..857602ef54f1 100644
+--- a/kernel/locking/percpu-rwsem.c
++++ b/kernel/locking/percpu-rwsem.c
+@@ -123,8 +123,10 @@ static int percpu_rwsem_wake_function(struct =
+wait_queue_entry *wq_entry,
+ 	struct percpu_rw_semaphore *sem =3D key;
+=20
+ 	/* concurrent against percpu_down_write(), can get stolen */
+-	if (!__percpu_rwsem_trylock(sem, reader))
++	if (!__percpu_rwsem_trylock(sem, reader)) {
++		printk("KK __percpu_rwsem_trylock\n");
+ 		return 1;
++	}
+=20
+ 	list_del_init(&wq_entry->entry);
+ 	smp_store_release(&wq_entry->private, NULL);
+
+Once those printks() triggered, it ends up with task_struct leaks,
+
+unreferenced object 0xc000200df1422280 (size 8192):
+  comm "read_all", pid 12975, jiffies 4297309144 (age 5351.480s)
+  hex dump (first 32 bytes):
+    02 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000f5c5fa2d>] copy_process+0x26c/0x1920
+    [<0000000099229290>] _do_fork+0xac/0xb20
+    [<00000000d40a7825>] __do_sys_clone+0x98/0xe0
+    [<00000000c7cd06a4>] ppc_clone+0x8/0xc
+unreferenced object 0xc00020047ef8eb80 (size 120):
+  comm "read_all", pid 12975, jiffies 4297309144 (age 5351.480s)
+  hex dump (first 32 bytes):
+    02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<000000004def8a44>] prepare_creds+0x38/0x110
+    [<0000000037a68116>] copy_creds+0xbc/0x1d0
+    [<0000000016b7471c>] copy_process+0x454/0x1920
+    [<0000000099229290>] _do_fork+0xac/0xb20
+    [<00000000d40a7825>] __do_sys_clone+0x98/0xe0
+    [<00000000c7cd06a4>] ppc_clone+0x8/0xc
+unreferenced object 0xc000200d96f80800 (size 1384):
+  comm "read_all", pid 12975, jiffies 4297309144 (age 5351.480s)
+  hex dump (first 32 bytes):
+    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    10 08 f8 96 0d 20 00 c0 10 08 f8 96 0d 20 00 c0  ..... ....... ..
+  backtrace:
+    [<000000008894d13b>] copy_process+0xa40/0x1920
+    [<0000000099229290>] _do_fork+0xac/0xb20
+    [<00000000d40a7825>] __do_sys_clone+0x98/0xe0
+    [<00000000c7cd06a4>] ppc_clone+0x8/0xc
+unreferenced object 0xc000001e91ba4000 (size 16384):
+  comm "read_all", pid 12982, jiffies 4297309462 (age 5348.300s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 08 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<000000009689397b>] kzalloc.constprop.48+0x1c/0x30
+    [<000000001753eb18>] task_numa_fault+0xac8/0x1260
+    [<0000000047bb80b1>] __handle_mm_fault+0x12cc/0x1b00
+    [<00000000c0a4c8ba>] handle_mm_fault+0x298/0x450
+    [<000000003465b20d>] __do_page_fault+0x2b8/0xf90
+    [<000000005037fec9>] handle_page_fault+0x10/0x30
+unreferenced object 0xc0002015fe4aaa80 (size 8192):
+  comm "read_all", pid 13157, jiffies 4297353979 (age 4903.130s)
+  hex dump (first 32 bytes):
+    02 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000f5c5fa2d>] copy_process+0x26c/0x1920
+    [<0000000099229290>] _do_fork+0xac/0xb20
+    [<00000000d40a7825>] __do_sys_clone+0x98/0xe0
+    [<00000000c7cd06a4>] ppc_clone+0x8/0xc
+unreferenced object 0xc00020047ef8f080 (size 120):
+  comm "read_all", pid 13157, jiffies 4297353979 (age 4903.130s)
+  hex dump (first 32 bytes):
+    02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<000000004def8a44>] prepare_creds+0x38/0x110
+    [<0000000037a68116>] copy_creds+0xbc/0x1d0
+    [<0000000016b7471c>] copy_process+0x454/0x1920
+    [<0000000099229290>] _do_fork+0xac/0xb20
+    [<00000000d40a7825>] __do_sys_clone+0x98/0xe0
+    [<00000000c7cd06a4>] ppc_clone+0x8/0xc
+unreferenced object 0xc0002012a9388f00 (size 1384):
+  comm "read_all", pid 13157, jiffies 4297353979 (age 4903.130s)
+  hex dump (first 32 bytes):
+    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    10 8f 38 a9 12 20 00 c0 10 8f 38 a9 12 20 00 c0  ..8.. ....8.. ..
+  backtrace:
+    [<000000008894d13b>] copy_process+0xa40/0x1920
+    [<0000000099229290>] _do_fork+0xac/0xb20
+    [<00000000d40a7825>] __do_sys_clone+0x98/0xe0
+    [<00000000c7cd06a4>] ppc_clone+0x8/0xc
+unreferenced object 0xc000001c86704000 (size 16384):
+  comm "read_all", pid 13164, jiffies 4297354081 (age 4902.110s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 08 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<000000009689397b>] kzalloc.constprop.48+0x1c/0x30
+    [<000000001753eb18>] task_numa_fault+0xac8/0x1260
+    [<0000000047bb80b1>] __handle_mm_fault+0x12cc/0x1b00
+    [<00000000c0a4c8ba>] handle_mm_fault+0x298/0x450
+    [<000000003465b20d>] __do_page_fault+0x2b8/0xf90
+    [<000000005037fec9>] handle_page_fault+0x10/0x30=
