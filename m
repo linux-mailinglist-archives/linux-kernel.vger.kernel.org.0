@@ -2,180 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D88219550A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:21:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BA3E195516
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:23:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbgC0KVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 06:21:33 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53968 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbgC0KVd (ORCPT
+        id S1726661AbgC0KXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 06:23:07 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35665 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbgC0KXH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 06:21:33 -0400
-Received: by mail-wm1-f66.google.com with SMTP id b12so10833313wmj.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 03:21:31 -0700 (PDT)
+        Fri, 27 Mar 2020 06:23:07 -0400
+Received: by mail-lj1-f193.google.com with SMTP id k21so9632634ljh.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 03:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=mxz8+ilE2NjB6kYVNyYap8z20EWNc89Zq7z80dHig9g=;
-        b=lwFfgP7q0u5LzYu5IHEQz+moTPm67eiVbNP8jvxisTOsI5Ma9EXK0h13/GmZJTgMnl
-         +Onr6bFvSPfXY+9YSNs3mbaMYQKyYOx/Nun1R1AIDyUetdtqqChqnXG7/1EIZeZJwG+h
-         AoYjZMrLCixc4B2+nEQHEZhYmkVUgGuEFxsGPd1u8CQiLy2L6AQ8e4C5sS5mdW24AHni
-         L423xnfJL3YVYLmXGSdDIk0Rk/t8gmiLBSeHvfIrZebXL+l1ni5cFPFsMcSjyofPyV6m
-         rZrGDRGPqN0mT60S1tgbFGUZi4IjDSYnD6UJGS6q6bGnrTlVviriUNh9zl3/vfCBifys
-         8g/g==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/6+qsGlY5ufaYGYSvfi6R/XdWdgiZnQOUmk027h++wY=;
+        b=txdKACCdM7XXYtTJw1Cpjkvm6oyL7atR/RjEVZa4sh+MYp1TgRoMuB4B04Q0FgZjsv
+         y0KzVBiDt3Z1FhO2p8E+MU3YRMufVrRxCYmY7YjzjKWlGskcN+zZ06vyYjx+OiQr0UZ3
+         gpNercDKBycZnaS5EtnhmJ38FNp+YDDfQgGRFHKExKCyZWsHI9amhTlaUmujm60c5TI2
+         Ge3c0sBOTmyfm1JbVHfFedn9QZukp8yXjcH/fCQ5IpDzWxKthGjvXw00GQVULuC2mKz0
+         n2kpIEvWqRvtHSRWdfOvd0+a8KJf2vlqa1o2A7Quk9XZ2UFXj2EBVl8YdPspHfIuzTXf
+         v91A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=mxz8+ilE2NjB6kYVNyYap8z20EWNc89Zq7z80dHig9g=;
-        b=KPGjxXBgZ6QsWAm0tKQQBMGOTqP+5uNA0ZRtPkn7rJIFVi1J6eZDMl0uMOXBJA+nQp
-         EdMdcA7l54LaRChLPSt5vOeYSJaTz/msGYom+eL+KeDcLYavTUfINxWK/lgNimAFjNAl
-         +EMZT7aUW1GYyaTxswaqYCpztczjwXXLaQhLxoL8IqmendXxH1pIZeU0rPvPTkYGg7iy
-         +b7o8RTDLIfaG8EaIWJAKCAiKA7O4bEjcJHDfruh9fyThtltU4bA0cWQrEOF2zXIlwvp
-         RgI5Gp64LpASLBE6EVjbfaDvEldeljebFf5ZtztX3xmgism5ZhsaK8M0AWpKC39uARRO
-         CI2g==
-X-Gm-Message-State: ANhLgQ14O212+csTivz4FJSsqxpy3Q+XmYNpSrqKf6ZhwFyKfTLtKFf6
-        NQCpDdnl90PaCGqBjsypH0idkw==
-X-Google-Smtp-Source: ADFU+vv/J6W+8sMVirHWEM1E3vhMlYyC18B4Hdl1cCEW5yYGJgHZTGUu0teFlFTlPWijkILtA2tP2g==
-X-Received: by 2002:a1c:b4c6:: with SMTP id d189mr4433247wmf.132.1585304491231;
-        Fri, 27 Mar 2020 03:21:31 -0700 (PDT)
-Received: from dell ([95.149.164.95])
-        by smtp.gmail.com with ESMTPSA id n9sm7646671wru.50.2020.03.27.03.21.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 03:21:30 -0700 (PDT)
-Date:   Fri, 27 Mar 2020 10:22:21 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     saravanan sekar <sravanhome@gmail.com>
-Cc:     robh+dt@kernel.org, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] mfd: mp2629: Add support for mps battery charger
-Message-ID: <20200327102221.GA3383@dell>
-References: <20200322224626.13160-1-sravanhome@gmail.com>
- <20200322224626.13160-3-sravanhome@gmail.com>
- <20200327075541.GF603801@dell>
- <a6098b6a-2b2f-5279-f9fc-85201b9aabde@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/6+qsGlY5ufaYGYSvfi6R/XdWdgiZnQOUmk027h++wY=;
+        b=jh60e2I3dE/f33qm7C2j/tj9+PS33wuwvNAls/Hzjr0cDMIgDctFruH7UmldwHeXKe
+         T/U5IoZlgnbXevm2pFegNfZni/y3he8YIdfVcY81DtX90AmKdlybc0n3dcI0c+VrY6U4
+         l8VF6+fViqKE8PjDl2sqHmSE64s8Q0cQwrJ6p6FpPuEg8wc7KdGXgWUvtFJ9SfnT6/Mz
+         DGkxj69HGS1EU3VPtrLzVVB/+N+gxYgXVdFdhlyarG3GviuR6D044Re1ELNO1ft8GFKy
+         U8i1O8BGBM1AQPrsw/BNtS0xz6N52jFQGphcEjBZkOAI6dpA8kqVpTaekWe4ovrZZ4zE
+         15kw==
+X-Gm-Message-State: AGi0PubgZD1r3wBif3Gb613DkCZAwHVtXKfyqtqdOdGAk8PHAl+64hg9
+        4Kh+WLy0M05/QDj4QexQiOgxxF0uiBHuM/1weeK1tg==
+X-Google-Smtp-Source: APiQypLAxlxUn/h9pbLaNqfw8TLuPxvnQJeZXEcak++olZSdCahmwgdRjDUQzOitW2xd7O4LOLGl+Jaw0WeumCFSA7U=
+X-Received: by 2002:a2e:5048:: with SMTP id v8mr7429532ljd.99.1585304583741;
+ Fri, 27 Mar 2020 03:23:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a6098b6a-2b2f-5279-f9fc-85201b9aabde@gmail.com>
+References: <cover.1584456635.git.mchehab+huawei@kernel.org> <51197e3568f073e22c280f0584bfa20b44436708.1584456635.git.mchehab+huawei@kernel.org>
+In-Reply-To: <51197e3568f073e22c280f0584bfa20b44436708.1584456635.git.mchehab+huawei@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 27 Mar 2020 11:22:52 +0100
+Message-ID: <CACRpkdYrL02YHn5dPnh_Oz0Ysm5BxHrwQgwNMtsD55XGid_hCQ@mail.gmail.com>
+Subject: Re: [PATCH 12/17] gpio: gpiolib.c: fix a doc warning
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Saravanan, Jonathan,
+On Tue, Mar 17, 2020 at 3:54 PM Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
 
-On Fri, 27 Mar 2020, saravanan sekar wrote:
-> On 27/03/20 8:55 am, Lee Jones wrote:
-> > On Sun, 22 Mar 2020, Saravanan Sekar wrote:
-> > 
-> > > mp2629 is a highly-integrated switching-mode battery charge management
-> > > device for single-cell Li-ion or Li-polymer battery.
-> > > 
-> > > Add MFD core enables chip access for ADC driver for battery readings,
-> > > and a power supply battery-charger driver
-> > > 
-> > > Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> > > ---
-> > >   drivers/mfd/Kconfig        |   9 +++
-> > >   drivers/mfd/Makefile       |   2 +
-> > >   drivers/mfd/mp2629.c       | 116 +++++++++++++++++++++++++++++++++++++
-> > >   include/linux/mfd/mp2629.h |  22 +++++++
-> > >   4 files changed, 149 insertions(+)
-> > >   create mode 100644 drivers/mfd/mp2629.c
-> > >   create mode 100644 include/linux/mfd/mp2629.h
+> Use a different markup for the ERR_PTR, as %FOO doesn't work
+> if there are parenthesis. So, use, instead:
+>
+>         ``ERR_PTR(-EINVAL)``
+>
+> This fixes the following warning:
+>
+>         ./drivers/gpio/gpiolib.c:139: WARNING: Inline literal start-string without end-string.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-[...]
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> > > +static int mp2629_probe(struct i2c_client *client)
-> > > +{
-> > > +	struct mp2629_info *info;
-> > Call this ddata instead of info.
-> Not sure the reason, I will do.
+Mauro are you merging this or do you want me to merge it?
 
-Because this is device data.  Info is too loose of a definition.
-
-> > > +	struct resource	*resources;
-> > > +	int ret;
-> > > +	int i;
-> > > +
-> > > +	info = devm_kzalloc(&client->dev, sizeof(*info), GFP_KERNEL);
-> > > +	if (!info)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	info->dev = &client->dev;
-> > > +	i2c_set_clientdata(client, info);
-> > > +
-> > > +	info->regmap = devm_regmap_init_i2c(client, &mp2629_regmap_config);
-> > > +	if (IS_ERR(info->regmap)) {
-> > > +		dev_err(info->dev, "Failed to allocate regmap!\n");
-> > > +		return PTR_ERR(info->regmap);
-> > > +	}
-> > > +
-> > > +	for (i = 0; i < MP2629_MFD_MAX; i++) {
-> > > +		mp2629mfd[i].platform_data = &info->regmap;
-> > > +		mp2629mfd[i].pdata_size = sizeof(info->regmap);
-> > You don't need to store this in platform data as well.
-> > 
-> > You already have it in device data (ddata [currently 'info']).
-> 
-> "The IIO parts seems fine (minor comments inline) but I'm not keep on
-> directly accessing the internals of the mfd device info structure.
-> To my mind that should be opaque to the child drivers so as to provide
-> clear structure to any such accesses.
-> 
-> This mess in layering with the children directly using the parents
-> regmap is a little concerning. It means that the 3 drivers
-> really aren't very well separated and can't really be reviewed
-> independently (not a good thing)."
-> 
-> This is the review comments form Jonathan on V2, not to access parent data
-> structure directly.
-> Am I misunderstood his review comments? please suggest the better option to
-> follow as like in V2
-> or V2 + some improvements or V4 + improvements?
-
-I will take this up with Jonathan separately if necessary.
-
-For your FYI (and Jonathan if he's Cc'ed), it's very common for a
-child of an MFD to acquire resources from their parent.  That is the
-point of a lot of MFDs, to obtain and register shared resources and
-pass them onto their offspring.  There are 10's of examples of this.
-
-Things like Regmaps aren't platform data, they are device/driver data,
-which is usually passed though platform_set_drvdata().
-
-[...]
-
-> > > + */
-> > > +
-> > > +#ifndef __MP2629_H__
-> > > +#define __MP2629_H__
-> > > +
-> > > +#include <linux/types.h>
-> > > +
-> > > +struct device;
-> > > +struct regmap;
-> > Why not just add the includes?
-> Some more shared enum added in ADC driver
-
-Sorry?
-
-> > > +struct mp2629_info {
-> > > +	struct device *dev;
-> > > +	struct regmap *regmap;
-> > > +};
-> > > +
-> > > +#endif
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Yours,
+Linus Walleij
