@@ -2,83 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08EF21956D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 13:12:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41B8E1956ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 13:15:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbgC0MMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 08:12:52 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46757 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbgC0MMt (ORCPT
+        id S1727636AbgC0MP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 08:15:27 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:53204 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbgC0MP0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 08:12:49 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j17so11071834wru.13
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 05:12:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:subject:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CUiNH0fTVA8sWzw/AYTfBd2HLFCeSkZT6ClcIL3H9v4=;
-        b=V14ZuboKkD4qd4LaZyDPH1whtWYrtM2qRjYA79lluKWh36n85Y3yCGmU3K6leg3HqK
-         wRIrvN6mWJUJt1SuBF7JfQcf+7/D7LLG8yqqY9zSpWiXJi/7QCnOBDZsctQT7GNQ0gnC
-         QvGcW7Gpu1NtQi/RdTOJplVe/Mvq3jWvuabIx3HNHF3r+B0bIpPfsQSr6Hww3CaYwbsH
-         dQc05E2NhX6v80eqy8MrbfDhulQeOUdWve0S+NdS89UxGaeJ7ix8748edhjchSSxck/3
-         3WpeK2CUVfX9h978rh00KOTPj087GtYs15st0MJGHFzaWdMh9TtK0+tcF1I6Hs5ZDq4Z
-         yGjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:subject:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CUiNH0fTVA8sWzw/AYTfBd2HLFCeSkZT6ClcIL3H9v4=;
-        b=Lwjn1xOPkw0ZiRaWjFNzhDAR6KSNZTpNsUwpbmFYHgIPqE/Z3dGWm1BTfilOtMkUFT
-         oud9LkeQ/Jg4+trn3SLhcGfvFljbjRFROCPPvGYYSk4KuSKDGcbZ/b6QSAXYJi02YMSl
-         HEgafRbBFiUqRkJPzanUcbfCMt/r/KIkkugeNwmSzqbEAiaNwDmKVUSNuKSGlfbI242i
-         ZBflwsSXRXBqfMLQVEUEBcJ4AcP+zCD39CnJteWhGhp3peOvgKEpyw74h5I9M173QoeF
-         V+DDuiM/Eawo7qpDbdJqSuOYMnfOrKjgG6J8u3YUA510J57UAoM92hvC+HNZZF1dwDfD
-         vCHQ==
-X-Gm-Message-State: ANhLgQ24IUR5oue8KGofw+qStnHP/aqr8+R0LhCZWFs8kqf9FGaUiY85
-        nmErStrGRgc+Bb6Qkqj22h4=
-X-Google-Smtp-Source: ADFU+vuJ9aerEJXEOaiSabitWRVaw7hwPu0xTEw3lR3e7uubpKeFlViKg9fc57GyA0az1mygc1NgPw==
-X-Received: by 2002:adf:a457:: with SMTP id e23mr14895961wra.21.1585311168560;
-        Fri, 27 Mar 2020 05:12:48 -0700 (PDT)
-Received: from [192.168.2.1] (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id a14sm7984275wmj.6.2020.03.27.05.12.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Mar 2020 05:12:47 -0700 (PDT)
-To:     wens@kernel.org
-Cc:     heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        robh+dt@kernel.org, wens@csie.org
-References: <20200327030414.5903-3-wens@kernel.org>
-Subject: Re: [PATCH 2/6] arm64: dts: rockchip: rk3328: Replace RK805 PMIC node
- name with "pmic"
-From:   Johan Jonker <jbx6244@gmail.com>
-Message-ID: <8bfb3237-4bd3-8452-1860-ac05f3a23503@gmail.com>
-Date:   Fri, 27 Mar 2020 13:12:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 27 Mar 2020 08:15:26 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1jHnsx-0005QZ-2Y; Fri, 27 Mar 2020 13:14:51 +0100
+Date:   Fri, 27 Mar 2020 13:14:51 +0100
+From:   Sebastian Siewior <bigeasy@linutronix.de>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        linux-pci@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-pm@vger.kernel.org, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org,
+        Brian Cain <bcain@codeaurora.org>,
+        linux-hexagon@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+        Michal Simek <monstr@monstr.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geoff Levand <geoff@infradead.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [patch V3 03/20] usb: gadget: Use completion interface instead
+ of open coding it
+Message-ID: <20200327121451.pxwewr46urt6dmhe@linutronix.de>
+References: <20200321112544.878032781@linutronix.de>
+ <20200321113241.043380271@linutronix.de>
+ <87blokde3e.fsf@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200327030414.5903-3-wens@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <87blokde3e.fsf@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chen-Yu Tsai,
+On 2020-03-25 10:37:57 [+0200], Felipe Balbi wrote:
+> Do you want to carry it via your tree? If so:
 
-The Documentation/ portion of the patch should come in the series before
-the code implementing the binding.
+We would like to do so.
 
-If you like, could you convert the binding as well and fix the example?
+> Acked-by: Felipe Balbi <balbi@kernel.org>
 
-Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
+Thank you.
 
-> Example:
-> --------
-> rk805: rk805@18 {
-> 	compatible = "rockchip,rk805";
+> Otherwise, let me know and I'll pick this patch.
 
+Sebastian
