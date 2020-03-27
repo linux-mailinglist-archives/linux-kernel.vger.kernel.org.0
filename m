@@ -2,53 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39D7019617C
+	by mail.lfdr.de (Postfix) with ESMTP id AA19119617D
 	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 23:51:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbgC0WvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 18:51:21 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:41985 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbgC0WvS (ORCPT
+        id S1727833AbgC0WvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 18:51:25 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:37851 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727718AbgC0WvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 18:51:18 -0400
-Received: by mail-pl1-f202.google.com with SMTP id g7so8142313plj.9
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 15:51:17 -0700 (PDT)
+        Fri, 27 Mar 2020 18:51:20 -0400
+Received: by mail-pg1-f201.google.com with SMTP id q15so9150464pgb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 15:51:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=86ZhzKm5T/6O9jpZoUxqs4yVA0IM57Jhl4+KLMoCVFw=;
-        b=k0FbyRqkOXxRQlfvn1N+cnDG8L1/+HDAoR54lNZ3beA68vtZsiUw5DITNAshJ/ArYi
-         SOAd4ZMMV3FGcrxeKmjC8sQovLZk7wcgo4KGv5l1c6VjbDSnxm49GVMnNWERqXidi4xC
-         7xhe5z7low3mrkO3wUnK+MuVRdEo7mfElKRSmCh5FYcDJEtJ2qZ7IV5eWgyrwiUF0OAx
-         VPROWPNVXdj227MglU9n1d8myzv1vhZ2wic5PPna/oK2qfYiPMX5FztMkjnmKJOKR6mJ
-         dhqWRH1KqcLE17OEu323a/YRtwLg3GVfptB/YWk7ImNd1qW7Z1QoTqOcClMr7g6szJit
-         gp/g==
+        bh=9JjmHpcSetUzd2DQK65fziZHzZsJKOqreOscrjvhn1w=;
+        b=mOxcA4ktC5UqT4y7L4l/BUK52XTyHPa9goELov+T+H7q5BNgQv4ayBvYB3qZIq9JD5
+         BkrHzzRy/mikJbiyQehvSUDR14j4lc/SbRKPhL9SAWz1X46altDUabXYu7JBewzLNhH7
+         pS9hADkzlEnvPIHN/WaCGYkx5egXD8vAVXJLDFGHDZwQO3mW7QarQNLDLYr/HPIplrzN
+         AqeNYlxnIIHjDB0mfNordUwzkzCuYd8y9bB4YaOqpj/GGG625fPja9UFrVPih7fWRV6n
+         fVQD0AsnlmIaD6dXFcUaWdvhs9nnb6+egsYg2TytI/wJXBHhtU03HIm7koHhFeJsmG42
+         552w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=86ZhzKm5T/6O9jpZoUxqs4yVA0IM57Jhl4+KLMoCVFw=;
-        b=n60TuANUfN/qLI84Pthck522b4sKW44jfq2DDR0pUYN2uMsdyTpzIjrvtUdkbr3lKn
-         e/Lr5MVcCdERw7brrdypjD3MsdaW6rHl9uh3Ilt5GEBta34653WMK1rvOf1YOUEkCSXX
-         p8gOslWsKA3GaZkE531H+NO8iI0GrRYX0CITDXfCo3bbVVpeOM4RteGvVlL+4VxR72KK
-         w6bWZJgbchN7/dfEXWdfYc+R5Lx74SLP75jLGBr+/CvGM49aUpZs/jOUZVh0EFUJLRpy
-         Hon9Anqcbcxg7gDEhODowNFTwLV34cFeHeDYo/KFT1WPCP4EhRRG1p+NhOqX6DcMNZls
-         LZmQ==
-X-Gm-Message-State: ANhLgQ1nDjaAsaCz6AvGbDrxSLL3j3N4AmKuuTnqdXr2dOyeWPG9arep
-        X6PHOwsyYJO8nNDX+Qus1Oi/vT2UNZ0=
-X-Google-Smtp-Source: ADFU+vsPrkID+VTQJXNWuRyxzO+kSp+fAxL/4uWtlgDKm8F2KMwVHD0zZJREluBLHhPyNtq0IKWMj4lzQNs=
-X-Received: by 2002:a17:90a:9409:: with SMTP id r9mr1775117pjo.39.1585349476789;
- Fri, 27 Mar 2020 15:51:16 -0700 (PDT)
-Date:   Fri, 27 Mar 2020 15:50:57 -0700
+        bh=9JjmHpcSetUzd2DQK65fziZHzZsJKOqreOscrjvhn1w=;
+        b=LmrtC0/jen61WsQkHRKPH6+MT05dlx53Ya7xdJ1Ge4kJP0o7VIP7CCcpuvYoNxrV1l
+         nmujkD4/PGlRzmvd2HXMMnGF/+grdUull6uB/CZ6ugiG+n9bx0v3EIb9yrKvwBLsbR6i
+         E3ll0qkCsAZK0h/7yhARPQunGr2hh9y7oIth4vL108uQBfl8WlADipN6lMdd3wvT+9Ml
+         etoRHDmg+nvkt8dYe/gnFly3F9KsFXkvcHCcdgTDDB3LqWjtC4mJVws/Yne3Kqc96kv9
+         HDBVWvAoY0wmFwLRCPcnnkKMsTChxZbjiuiJ461dHz01FsMpZl9Pd31+wN+2VZZvBcib
+         cLgQ==
+X-Gm-Message-State: ANhLgQ3XrP8uuyQkaTdAObEM1MF+6IfJmMm6uhAEq7d+Z2SVUHl20erX
+        75NjfGu8BqhC2sFJjuS/84ETONqY4jI=
+X-Google-Smtp-Source: ADFU+vuSsgM/jrzZ4eZBp7cSHVGsQXOE2CSs9MIM1i2Xg2Z0bI/jIRcAISkde1W+6I9nqAHgiJTRgVoY8Lk=
+X-Received: by 2002:a63:f243:: with SMTP id d3mr1605790pgk.254.1585349479677;
+ Fri, 27 Mar 2020 15:51:19 -0700 (PDT)
+Date:   Fri, 27 Mar 2020 15:50:58 -0700
 In-Reply-To: <20200327225102.25061-1-walken@google.com>
-Message-Id: <20200327225102.25061-6-walken@google.com>
+Message-Id: <20200327225102.25061-7-walken@google.com>
 Mime-Version: 1.0
 References: <20200327225102.25061-1-walken@google.com>
 X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
-Subject: [PATCH v3 05/10] mmap locking API: convert mmap_sem call sites missed
- by coccinelle
+Subject: [PATCH v3 06/10] mmap locking API: convert nested write lock sites
 From:   Michel Lespinasse <walken@google.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         linux-mm <linux-mm@kvack.org>
@@ -71,151 +70,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the last few remaining mmap_sem rwsem calls to use the new
-mmap locking API. These were missed by coccinelle for some reason
-(I think coccinelle does not support some of the preprocessor
-constructs in these files ?)
+Add API for nested write locks and convert the few call sites doing that.
 
 Signed-off-by: Michel Lespinasse <walken@google.com>
 ---
- arch/mips/mm/fault.c           | 10 +++++-----
- arch/x86/kvm/mmu/paging_tmpl.h |  8 ++++----
- drivers/android/binder_alloc.c |  4 ++--
- fs/proc/base.c                 |  6 +++---
- 4 files changed, 14 insertions(+), 14 deletions(-)
+ arch/um/include/asm/mmu_context.h |  5 +++--
+ include/linux/mmap_lock.h         | 11 +++++++++++
+ kernel/fork.c                     |  4 ++--
+ 3 files changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/arch/mips/mm/fault.c b/arch/mips/mm/fault.c
-index 1e8d00793784..c406250d7761 100644
---- a/arch/mips/mm/fault.c
-+++ b/arch/mips/mm/fault.c
-@@ -97,7 +97,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
- 	if (user_mode(regs))
- 		flags |= FAULT_FLAG_USER;
- retry:
--	down_read(&mm->mmap_sem);
-+	mmap_read_lock(mm);
- 	vma = find_vma(mm, address);
- 	if (!vma)
- 		goto bad_area;
-@@ -191,7 +191,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
- 		}
- 	}
+diff --git a/arch/um/include/asm/mmu_context.h b/arch/um/include/asm/mmu_context.h
+index 62262c5c7785..cc15173f7518 100644
+--- a/arch/um/include/asm/mmu_context.h
++++ b/arch/um/include/asm/mmu_context.h
+@@ -8,6 +8,7 @@
  
--	up_read(&mm->mmap_sem);
-+	mmap_read_unlock(mm);
- 	return;
+ #include <linux/sched.h>
+ #include <linux/mm_types.h>
++#include <linux/mmap_lock.h>
  
- /*
-@@ -199,7 +199,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
-  * Fix it, but check if it's kernel or user first..
-  */
- bad_area:
--	up_read(&mm->mmap_sem);
-+	mmap_read_unlock(mm);
+ #include <asm/mmu.h>
  
- bad_area_nosemaphore:
- 	/* User mode accesses just cause a SIGSEGV */
-@@ -251,14 +251,14 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
- 	 * We ran out of memory, call the OOM killer, and return the userspace
- 	 * (which will retry the fault, or kill us if we got oom-killed).
+@@ -47,9 +48,9 @@ static inline void activate_mm(struct mm_struct *old, struct mm_struct *new)
+ 	 * when the new ->mm is used for the first time.
  	 */
--	up_read(&mm->mmap_sem);
-+	mmap_read_unlock(mm);
- 	if (!user_mode(regs))
- 		goto no_context;
- 	pagefault_out_of_memory();
- 	return;
+ 	__switch_mm(&new->context.id);
+-	down_write_nested(&new->mmap_sem, 1);
++	mmap_write_lock_nested(new, 1);
+ 	uml_setup_stubs(new);
+-	mmap_write_unlock(new);
++	mmap_write_unlock_nested(new);
+ }
  
- do_sigbus:
--	up_read(&mm->mmap_sem);
-+	mmap_read_unlock(mm);
+ static inline void switch_mm(struct mm_struct *prev, struct mm_struct *next, 
+diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+index 8b5a3cd56118..36fb758401d6 100644
+--- a/include/linux/mmap_lock.h
++++ b/include/linux/mmap_lock.h
+@@ -11,6 +11,11 @@ static inline void mmap_write_lock(struct mm_struct *mm)
+ 	down_write(&mm->mmap_sem);
+ }
  
- 	/* Kernel mode? Handle exceptions or die */
- 	if (!user_mode(regs))
-diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
-index e4c8a4cbf407..8cbfe6c96d82 100644
---- a/arch/x86/kvm/mmu/paging_tmpl.h
-+++ b/arch/x86/kvm/mmu/paging_tmpl.h
-@@ -165,22 +165,22 @@ static int FNAME(cmpxchg_gpte)(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
- 		unsigned long pfn;
- 		unsigned long paddr;
++static inline void mmap_write_lock_nested(struct mm_struct *mm, int subclass)
++{
++	down_write_nested(&mm->mmap_sem, subclass);
++}
++
+ static inline int mmap_write_lock_killable(struct mm_struct *mm)
+ {
+ 	return down_write_killable(&mm->mmap_sem);
+@@ -26,6 +31,12 @@ static inline void mmap_write_unlock(struct mm_struct *mm)
+ 	up_write(&mm->mmap_sem);
+ }
  
--		down_read(&current->mm->mmap_sem);
-+		mmap_read_lock(current->mm);
- 		vma = find_vma_intersection(current->mm, vaddr, vaddr + PAGE_SIZE);
- 		if (!vma || !(vma->vm_flags & VM_PFNMAP)) {
--			up_read(&current->mm->mmap_sem);
-+			mmap_read_unlock(current->mm);
- 			return -EFAULT;
- 		}
- 		pfn = ((vaddr - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
- 		paddr = pfn << PAGE_SHIFT;
- 		table = memremap(paddr, PAGE_SIZE, MEMREMAP_WB);
- 		if (!table) {
--			up_read(&current->mm->mmap_sem);
-+			mmap_read_unlock(current->mm);
- 			return -EFAULT;
- 		}
- 		ret = CMPXCHG(&table[index], orig_pte, new_pte);
- 		memunmap(table);
--		up_read(&current->mm->mmap_sem);
-+		mmap_read_unlock(current->mm);
- 	}
++/* Pairs with mmap_write_lock_nested() */
++static inline void mmap_write_unlock_nested(struct mm_struct *mm)
++{
++	up_write(&mm->mmap_sem);
++}
++
+ static inline void mmap_downgrade_write_lock(struct mm_struct *mm)
+ {
+ 	downgrade_write(&mm->mmap_sem);
+diff --git a/kernel/fork.c b/kernel/fork.c
+index c321910d46e8..3460308b2213 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -497,7 +497,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+ 	/*
+ 	 * Not linked in yet - no deadlock potential:
+ 	 */
+-	down_write_nested(&mm->mmap_sem, SINGLE_DEPTH_NESTING);
++	mmap_write_lock_nested(mm, SINGLE_DEPTH_NESTING);
  
- 	return (ret != orig_pte);
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 5e063739a3a8..cbdc43ed0f9f 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -932,7 +932,7 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- 	mm = alloc->vma_vm_mm;
- 	if (!mmget_not_zero(mm))
- 		goto err_mmget;
--	if (!down_read_trylock(&mm->mmap_sem))
-+	if (!mmap_read_trylock(mm))
- 		goto err_down_read_mmap_sem_failed;
- 	vma = binder_alloc_get_vma(alloc);
- 
-@@ -946,7 +946,7 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- 
- 		trace_binder_unmap_user_end(alloc, index);
- 	}
--	up_read(&mm->mmap_sem);
-+	mmap_read_unlock(mm);
- 	mmput(mm);
- 
- 	trace_binder_unmap_kernel_start(alloc, index);
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 479efdba60b9..0dc54b5d75f2 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2280,7 +2280,7 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
- 	if (!mm)
- 		goto out_put_task;
- 
--	ret = down_read_killable(&mm->mmap_sem);
-+	ret = mmap_read_lock_killable(mm);
- 	if (ret) {
- 		mmput(mm);
- 		goto out_put_task;
-@@ -2307,7 +2307,7 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
- 		p = genradix_ptr_alloc(&fa, nr_files++, GFP_KERNEL);
- 		if (!p) {
- 			ret = -ENOMEM;
--			up_read(&mm->mmap_sem);
-+			mmap_read_unlock(mm);
- 			mmput(mm);
- 			goto out_put_task;
- 		}
-@@ -2316,7 +2316,7 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
- 		p->end = vma->vm_end;
- 		p->mode = vma->vm_file->f_mode;
- 	}
--	up_read(&mm->mmap_sem);
-+	mmap_read_unlock(mm);
- 	mmput(mm);
- 
- 	for (i = 0; i < nr_files; i++) {
+ 	/* No ordering required: file already has been exposed. */
+ 	RCU_INIT_POINTER(mm->exe_file, get_mm_exe_file(oldmm));
+@@ -612,7 +612,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+ 	/* a new mm has just been created */
+ 	retval = arch_dup_mmap(oldmm, mm);
+ out:
+-	mmap_write_unlock(mm);
++	mmap_write_unlock_nested(mm);
+ 	flush_tlb_mm(oldmm);
+ 	mmap_write_unlock(oldmm);
+ 	dup_userfaultfd_complete(&uf);
 -- 
 2.26.0.rc2.310.g2932bb562d-goog
 
