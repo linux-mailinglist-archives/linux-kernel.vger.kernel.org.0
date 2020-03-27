@@ -2,53 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9CD9194F8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 04:08:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC9F4194F97
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 04:12:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbgC0DIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 23:08:41 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:57902 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727446AbgC0DIl (ORCPT
+        id S1727803AbgC0DMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 23:12:13 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42371 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727446AbgC0DMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 23:08:41 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 14FD015CE723E;
-        Thu, 26 Mar 2020 20:08:40 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 20:08:39 -0700 (PDT)
-Message-Id: <20200326.200839.844293452319241756.davem@davemloft.net>
-To:     esyr@redhat.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        vinicius.gomes@intel.com, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, jiri@resnulli.us, olteanv@gmail.com,
-        weifeng.voon@intel.com, ldv@altlinux.org
-Subject: Re: [PATCH net-next] taprio: do not use BIT() in
- TCA_TAPRIO_ATTR_FLAG_* definitions
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200324041920.GA7068@asgard.redhat.com>
-References: <20200324041920.GA7068@asgard.redhat.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 26 Mar 2020 20:08:40 -0700 (PDT)
+        Thu, 26 Mar 2020 23:12:13 -0400
+Received: by mail-qt1-f193.google.com with SMTP id t9so7488487qto.9
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 20:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vIXComzXepyZpZfkSblI2SvNO6XmMKECWAWpAqRW/10=;
+        b=Au21O8D/qy9u3Of+krvBKLHtOYxqMUd5Ec6R5lbQ/DBQTGXqjAho1ZDpFIMAkaOgm2
+         ewXEfxltHGoRfNE3fC2zN0YtVceZeNo+CDY9k4iZ3Os3/gKTHxXuYEstaSys1lovmaxt
+         QqN21E/z71rWIfKUNCA+qK9kmo0TB2o5nC2D+06D4p1ezFmxBgKvHhhkvE38RbsXK4Ab
+         wRKl40UnPP2cJ0kmrfoIM7W9wUQBoOgJvFMZwjwAe3IObYQpWbVNDiA78+youcAZnRfg
+         FvjAKcb7FwMCmxYf2FJto0/drulD7TOB3qvInk4sA6X09Kbu/0aFmH4QED0b1eSyUIxg
+         jnCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vIXComzXepyZpZfkSblI2SvNO6XmMKECWAWpAqRW/10=;
+        b=novItSVMTFM3pMj7PLWD7ndmG4sYMlhH6dz4vJjS8DanValuq9muasg89vT4VDWu4s
+         SC24SWLfD55DqCZEQfobXCwomEmA0uToNqBlWVwkJw+OwJMNBS7M2VmQ/nzu5TGlncgw
+         s0/dcXmyNErWnQw+BUx+nn1Wn8bCy8qcRY+yVGjfOI6ciqnglFa2IZ/7L/aew9BXupJz
+         7hIk37oabhzMbxvwoOYpRtqwHH9+6DNxVZOuBkkZIALKWBlrag52Td1sS+ePdFyqr/5P
+         Er9QSUsTvTaKGVpnPANfSDUJJhNYUMwdNYQdYW3Liea1KmigBHD8qmZCn/REfMvgX1wV
+         cqlQ==
+X-Gm-Message-State: ANhLgQ1yNx3NWJJNj44Y0/9Ec1cuobFFliX2v58cKaL3P1mR2cK2RQT0
+        9vKCG6xTgPwC9iJ5VLHsyDs1dw==
+X-Google-Smtp-Source: ADFU+vu9EU6kz3gxEg0tiOJnT7diZc04olU9w1A4COE5kYhYoV9Q753XHqozw9Vazmcbo2FKj6jY0A==
+X-Received: by 2002:ac8:376d:: with SMTP id p42mr12210719qtb.378.1585278731781;
+        Thu, 26 Mar 2020 20:12:11 -0700 (PDT)
+Received: from ovpn-66-69.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id p38sm2994223qtf.50.2020.03.26.20.12.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Mar 2020 20:12:11 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     peterz@infradead.org, mingo@redhat.com
+Cc:     will@kernel.org, dbueso@suse.de, juri.lelli@redhat.com,
+        longman@redhat.com, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] locking/percpu-rwsem: fix a task_struct refcount
+Date:   Thu, 26 Mar 2020 23:10:57 -0400
+Message-Id: <20200327031057.10866-1-cai@lca.pw>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugene Syromiatnikov <esyr@redhat.com>
-Date: Tue, 24 Mar 2020 05:19:20 +0100
+There are some memory leaks due to a missing put_task_struct().
 
-> BIT() macro definition is internal to the Linux kernel and is not
-> to be used in UAPI headers; replace its usage with the _BITUL() macro
-> that is already used elsewhere in the header.
-> 
-> Cc: <stable@vger.kernel.org> # v5.4+
-> Fixes: 9c66d1564676 ("taprio: Add support for hardware offloading")
-> Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+Fixes: 7f26482a872c ("locking/percpu-rwsem: Remove the embedded rwsem")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ kernel/locking/percpu-rwsem.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied.
+diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
+index a008a1ba21a7..6f487e5d923f 100644
+--- a/kernel/locking/percpu-rwsem.c
++++ b/kernel/locking/percpu-rwsem.c
+@@ -123,8 +123,10 @@ static int percpu_rwsem_wake_function(struct wait_queue_entry *wq_entry,
+ 	struct percpu_rw_semaphore *sem = key;
+ 
+ 	/* concurrent against percpu_down_write(), can get stolen */
+-	if (!__percpu_rwsem_trylock(sem, reader))
++	if (!__percpu_rwsem_trylock(sem, reader)) {
++		put_task_struct(p);
+ 		return 1;
++	}
+ 
+ 	list_del_init(&wq_entry->entry);
+ 	smp_store_release(&wq_entry->private, NULL);
+-- 
+2.21.0 (Apple Git-122.2)
+
