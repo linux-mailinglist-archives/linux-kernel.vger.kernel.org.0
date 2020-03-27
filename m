@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D870194F0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:33:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 533A9194F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:32:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbgC0Ccu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 22:32:50 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48048 "EHLO
+        id S1727939AbgC0Cc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 22:32:29 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48060 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727873AbgC0CcL (ORCPT
+        with ESMTP id S1727887AbgC0CcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Mar 2020 22:32:11 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHen0-003hS5-U2; Fri, 27 Mar 2020 02:32:06 +0000
+        id 1jHen0-003hSB-WF; Fri, 27 Mar 2020 02:32:07 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH v2 14/22] x86: ia32_setup_frame(): consolidate uaccess areas
-Date:   Fri, 27 Mar 2020 02:31:57 +0000
-Message-Id: <20200327023205.881896-14-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v2 15/22] x86: ia32_setup_rt_frame(): consolidate uaccess areas
+Date:   Fri, 27 Mar 2020 02:31:58 +0000
+Message-Id: <20200327023205.881896-15-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200327023205.881896-1-viro@ZenIV.linux.org.uk>
 References: <20200327023007.GS23230@ZenIV.linux.org.uk>
@@ -34,84 +34,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Currently we have user_access block, followed by __put_user(),
-deciding what the restorer will be and finally a put_user_try
-block.
-
-Moving the calculation of restorer first allows the rest
-(actual copyout work) to coalesce into a single user_access block.
+__copy_siginfo_to_user32() call reordered a bit.  The rest folds
+nicely.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/ia32/ia32_signal.c | 39 ++++++++++++---------------------------
- 1 file changed, 12 insertions(+), 27 deletions(-)
+ arch/x86/ia32/ia32_signal.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
 diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
-index 799ca5b31b87..7018c2c325a1 100644
+index 7018c2c325a1..f9d8804144d0 100644
 --- a/arch/x86/ia32/ia32_signal.c
 +++ b/arch/x86/ia32/ia32_signal.c
-@@ -236,7 +236,6 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
+@@ -302,10 +302,9 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
  {
- 	struct sigframe_ia32 __user *frame;
+ 	struct rt_sigframe_ia32 __user *frame;
  	void __user *restorer;
 -	int err = 0;
  	void __user *fp = NULL;
  
- 	/* copy_to_user optimizes that into a single 8 byte store */
-@@ -252,21 +251,6 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
- 
- 	frame = get_sigframe(ksig, regs, sizeof(*frame), &fp);
- 
--	if (!access_ok(frame, sizeof(*frame)))
--		return -EFAULT;
--
--	if (__put_user(sig, &frame->sig))
--		return -EFAULT;
--
--	if (!user_access_begin(&frame->sc, sizeof(struct sigcontext_32)))
--		return -EFAULT;
--
--	unsafe_put_sigcontext32(&frame->sc, fp, regs, set, Efault);
+-	/* __copy_to_user optimizes that into a single 8 byte store */
++	/* unsafe_put_user optimizes that into a single 8 byte store */
+ 	static const struct {
+ 		u8 movl;
+ 		u32 val;
+@@ -347,17 +346,11 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
+ 	 * versions need it.
+ 	 */
+ 	unsafe_put_user(*((u64 *)&code), (u64 __user *)frame->retcode, Efault);
 -	user_access_end();
 -
--	if (__put_user(set->sig[1], &frame->extramask[0]))
+-	if (__copy_siginfo_to_user32(&frame->info, &ksig->info, false))
 -		return -EFAULT;
--
- 	if (ksig->ka.sa.sa_flags & SA_RESTORER) {
- 		restorer = ksig->ka.sa.sa_restorer;
- 	} else {
-@@ -278,19 +262,20 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
- 			restorer = &frame->retcode;
- 	}
+-	if (!user_access_begin(&frame->uc.uc_mcontext, sizeof(struct sigcontext_32)))
+-		return -EFAULT;
+ 	unsafe_put_sigcontext32(&frame->uc.uc_mcontext, fp, regs, set, Efault);
++	unsafe_put_user(*(__u64 *)set, (__u64 *)&frame->uc.uc_sigmask, Efault);
+ 	user_access_end();
+-	err |= __put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask);
  
--	put_user_try {
--		put_user_ex(ptr_to_compat(restorer), &frame->pretcode);
--
--		/*
--		 * These are actually not used anymore, but left because some
--		 * gdb versions depend on them as a marker.
--		 */
--		put_user_ex(*((u64 *)&code), (u64 __user *)frame->retcode);
--	} put_user_catch(err);
--
 -	if (err)
-+	if (!user_access_begin(frame, sizeof(*frame)))
++	if (__copy_siginfo_to_user32(&frame->info, &ksig->info, false))
  		return -EFAULT;
  
-+	unsafe_put_user(sig, &frame->sig, Efault);
-+	unsafe_put_sigcontext32(&frame->sc, fp, regs, set, Efault);
-+	unsafe_put_user(set->sig[1], &frame->extramask[0], Efault);
-+	unsafe_put_user(ptr_to_compat(restorer), &frame->pretcode, Efault);
-+	/*
-+	 * These are actually not used anymore, but left because some
-+	 * gdb versions depend on them as a marker.
-+	 */
-+	unsafe_put_user(*((u64 *)&code), (u64 __user *)frame->retcode, Efault);
-+	user_access_end();
-+
  	/* Set up registers for signal handler */
- 	regs->sp = (unsigned long) frame;
- 	regs->ip = (unsigned long) ksig->ka.sa.sa_handler;
 -- 
 2.11.0
 
