@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1B2195344
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:49:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 881C8195348
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 09:50:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbgC0Ity (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 04:49:54 -0400
-Received: from mga09.intel.com ([134.134.136.24]:23421 "EHLO mga09.intel.com"
+        id S1727115AbgC0Iuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 04:50:32 -0400
+Received: from mga02.intel.com ([134.134.136.20]:8312 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725946AbgC0Itx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 04:49:53 -0400
-IronPort-SDR: rUhakbOYtTkTrY5A7Ro4KWj/qiaqnxZIc2zXDJLIsxnmHVDTG8+ToQpgBgXeLFgcuHCPVRyXvl
- nhy9u9b/9mIA==
+        id S1726379AbgC0Iuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 04:50:32 -0400
+IronPort-SDR: jnQwyytBsfJTrd6pZT4l5AQD3kqYNatVjoCUv5AuOA9oyQ9r/npsTGbKYLWWHPVydXglAORg3Z
+ Ht5XPw0t8plg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 01:49:53 -0700
-IronPort-SDR: M0GUwlkTiRHeBIuJb0OQWsrs44vlaTCh26lP5U9FibaZCsUfbnLDAGDg/HfAojf/VScdj3MqrQ
- wk607div46Tw==
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 01:50:31 -0700
+IronPort-SDR: Uisx96pK35clw9YgyfO/QLv+sU+bBHhXMMvK/yJZU1YAmdsQemiqJFJkEYlZRePanbxN4mUZXH
+ xcqIWN7gxt6Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,311,1580803200"; 
-   d="scan'208";a="358425864"
+   d="scan'208";a="448940722"
 Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Mar 2020 01:49:53 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 27 Mar 2020 01:50:31 -0700
 Received: from [10.249.36.56] (abudanko-mobl.ccr.corp.intel.com [10.249.36.56])
-        by linux.intel.com (Postfix) with ESMTP id DBCB8580479;
-        Fri, 27 Mar 2020 01:49:50 -0700 (PDT)
-Subject: [PATCH v1 6/8] perf record: introduce control descriptors and
- --ctl-fd[-ack] options
+        by linux.intel.com (Postfix) with ESMTP id E4F885803E3;
+        Fri, 27 Mar 2020 01:50:28 -0700 (PDT)
+Subject: [PATCH v1 7/8] perf record: implement resume and pause control
+ commands handling
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 To:     Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
@@ -39,8 +39,8 @@ Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 References: <825a5132-b58d-c0b6-b050-5a6040386ec7@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <8f1b6db8-1d54-06d4-18b9-a1e24ff0e2cb@linux.intel.com>
-Date:   Fri, 27 Mar 2020 11:49:49 +0300
+Message-ID: <b4daca98-812c-3da3-3a75-85dbc7ef32be@linux.intel.com>
+Date:   Fri, 27 Mar 2020 11:50:27 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
@@ -54,103 +54,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Introduce control file descriptors and --ctl-fd[-ack] options to pass
-control descriptors from command line. Extend --delay option with -1
-value to start collection in paused mode to be resumed later by resume
-command provided via control file descriptor.
+Implement handling of events coming from control file descriptor.
 
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- tools/perf/builtin-record.c | 18 ++++++++++++++----
- tools/perf/builtin-trace.c  |  2 +-
- tools/perf/util/record.h    |  4 +++-
- 3 files changed, 18 insertions(+), 6 deletions(-)
+ tools/perf/builtin-record.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 4c301466101b..f99751943b40 100644
+index f99751943b40..ae6f7d08e472 100644
 --- a/tools/perf/builtin-record.c
 +++ b/tools/perf/builtin-record.c
-@@ -1621,8 +1621,12 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+@@ -1418,6 +1418,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 	struct evlist *sb_evlist = NULL;
+ 	int fd;
+ 	float ratio = 0;
++	enum evlist_ctl_cmd cmd = CTL_CMD_UNSUPPORTED;
+ 
+ 	atexit(record__sig_exit);
+ 	signal(SIGCHLD, sig_handler);
+@@ -1620,6 +1621,8 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 		perf_evlist__start_workload(rec->evlist);
  	}
  
++	perf_evlist__initialize_ctlfd(rec->evlist, opts->ctl_fd, opts->ctl_fd_ack);
++
  	if (opts->initial_delay) {
--		usleep(opts->initial_delay * USEC_PER_MSEC);
--		evlist__enable(rec->evlist);
-+		pr_info(PERF_EVLIST__PAUSED_MSG);
-+		if (opts->initial_delay > 0) {
-+			usleep(opts->initial_delay * USEC_PER_MSEC);
-+			evlist__enable(rec->evlist);
-+			pr_info(PERF_EVLIST__RESUMED_MSG);
-+		}
- 	}
+ 		pr_info(PERF_EVLIST__PAUSED_MSG);
+ 		if (opts->initial_delay > 0) {
+@@ -1710,8 +1713,23 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 			 * Propagate error, only if there's any. Ignore positive
+ 			 * number of returned events and interrupt error.
+ 			 */
+-			if (err > 0 || (err < 0 && errno == EINTR))
++			if (err > 0 || (err < 0 && errno == EINTR)) {
+ 				err = 0;
++				if (perf_evlist__ctlfd_process(rec->evlist, &cmd) > 0) {
++					switch (cmd) {
++					case CTL_CMD_RESUME:
++						pr_info(PERF_EVLIST__RESUMED_MSG);
++						break;
++					case CTL_CMD_PAUSE:
++						pr_info(PERF_EVLIST__PAUSED_MSG);
++						break;
++					case CTL_CMD_ACK:
++					case CTL_CMD_UNSUPPORTED:
++					default:
++						break;
++					}
++				}
++			}
+ 			waking++;
  
- 	trigger_ready(&auxtrace_snapshot_trigger);
-@@ -2218,6 +2222,8 @@ static struct record record = {
- 			.default_per_cpu = true,
- 		},
- 		.mmap_flush          = MMAP_FLUSH_DEFAULT,
-+		.ctl_fd              = -1,
-+		.ctl_fd_ack          = -1,
- 	},
- 	.tool = {
- 		.sample		= process_sample_event,
-@@ -2320,8 +2326,8 @@ static struct option __record_options[] = {
- 	OPT_CALLBACK('G', "cgroup", &record.evlist, "name",
- 		     "monitor event in cgroup name only",
- 		     parse_cgroups),
--	OPT_UINTEGER('D', "delay", &record.opts.initial_delay,
--		  "ms to wait before starting measurement after program start"),
-+	OPT_INTEGER('D', "delay", &record.opts.initial_delay,
-+		  "ms to wait before starting measurement after program start (-1: start paused)"),
- 	OPT_BOOLEAN(0, "kcore", &record.opts.kcore, "copy /proc/kcore"),
- 	OPT_STRING('u', "uid", &record.opts.target.uid_str, "user",
- 		   "user to profile"),
-@@ -2405,6 +2411,10 @@ static struct option __record_options[] = {
- #endif
- 	OPT_CALLBACK(0, "max-size", &record.output_max_size,
- 		     "size", "Limit the maximum size of the output file", parse_output_max_size),
-+	OPT_INTEGER(0, "ctl-fd", &record.opts.ctl_fd,
-+		    "Listen on fd descriptor for command to control measurement ('r': resume, 'p': pause)"),
-+	OPT_INTEGER(0, "ctl-fd-ack", &record.opts.ctl_fd_ack,
-+		    "Send control command completion ('a') to fd ack descriptor"),
- 	OPT_END()
- };
+ 			if (evlist__filter_pollfd(rec->evlist, POLLERR | POLLHUP) == 0)
+@@ -1751,6 +1769,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 		record__synthesize_workload(rec, true);
  
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 01d542007c8b..4088d099f8bd 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -4778,7 +4778,7 @@ int cmd_trace(int argc, const char **argv)
- 			"per thread proc mmap processing timeout in ms"),
- 	OPT_CALLBACK('G', "cgroup", &trace, "name", "monitor event in cgroup name only",
- 		     trace__parse_cgroups),
--	OPT_UINTEGER('D', "delay", &trace.opts.initial_delay,
-+	OPT_INTEGER('D', "delay", &trace.opts.initial_delay,
- 		     "ms to wait before starting measurement after program "
- 		     "start"),
- 	OPTS_EVSWITCH(&trace.evswitch),
-diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
-index 5421fd2ad383..138f914f4ea9 100644
---- a/tools/perf/util/record.h
-+++ b/tools/perf/util/record.h
-@@ -59,7 +59,7 @@ struct record_opts {
- 	const char    *auxtrace_snapshot_opts;
- 	const char    *auxtrace_sample_opts;
- 	bool	      sample_transaction;
--	unsigned      initial_delay;
-+	int	      initial_delay;
- 	bool	      use_clockid;
- 	clockid_t     clockid;
- 	u64	      clockid_res_ns;
-@@ -67,6 +67,8 @@ struct record_opts {
- 	int	      affinity;
- 	int	      mmap_flush;
- 	unsigned int  comp_level;
-+	int	      ctl_fd;
-+	int	      ctl_fd_ack;
- };
+ out_child:
++	perf_evlist__finalize_ctlfd(rec->evlist);
+ 	record__mmap_read_all(rec, true);
+ 	record__aio_mmap_read_sync(rec);
  
- extern const char * const *record_usage;
 -- 
 2.24.1
 
