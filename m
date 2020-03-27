@@ -2,80 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 718F61956CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 13:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E03D1956CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 13:11:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbgC0MJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 08:09:53 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:36675 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727143AbgC0MJw (ORCPT
+        id S1727173AbgC0MLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 08:11:05 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44008 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbgC0MLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 08:09:52 -0400
-Received: by mail-ot1-f68.google.com with SMTP id l23so9446541otf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 05:09:51 -0700 (PDT)
+        Fri, 27 Mar 2020 08:11:05 -0400
+Received: by mail-qk1-f195.google.com with SMTP id o10so10401107qki.10
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 05:11:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=6AzsbaBnXkz3OM6AFQR1SIwxBjyJjyhL1gvcLvlX+dM=;
-        b=ToWPcL7MBMuCD6lHM8jMGYrdQnHY68Go5SyCO1+7SBETQkSaYoiXcKOwsNQ6EqdYrv
-         7qxGuppqd8T+z13H0AYEZ947RysscnL/CF1alo1ZWFRI672RGlQPAZH78wuOQcZ9oMJs
-         q8VhwZ0PEFmWZIsnZ+s2p0zkMFDfSFyuYhHd9KIVW+ErjSlWyQLfVvT/yOtxnaOk4QEx
-         qTgzc+4SZUx1xKJiVphQHZFpDqnqF4LWcJJx7oI41grr0O7C7pLUUOF4o7lWL//3vv60
-         GSZdslp1ehGbV2b455TMRyoN8cgPb7bx9bhumu2yy6XHtdWH8HsUIfg7T5OHSCcE5a2P
-         +J0g==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ae32xXO67Uei3DTimjBj1wlAZ/pkH/el6Qiul9IT/30=;
+        b=Ex3D0PnD7gDl3aSUB2klXnKG6WqRJ7QfwnM6N9ZGFL92WovcOuAzEFRyYweVO4bxtE
+         7Xg8gqSK2Z3BuI8TP9K0fdhDNWpdwzHD/JkAmE9cJPZ0tZrDsJOHhAbWsH+vjsmkuIY6
+         uwK5871CUpjZLzSstezfN/aBg5CasNqsGxP8A9EfPWuZRYdJDyWQBXQ7ttS6IiSCsthL
+         ifCas0C0YCZ3fC4iuuQORU9gg8EUmyeqhcf3rCO0NRXcZ2xj0HrGTKS3hd6SWnksKhsW
+         VFFIjipCV/rNC4HQApb3Vkke+23D5s7p4BGXZmNMTKFYNFv1sR1pllPZ8YXvdvs0uPyV
+         9Few==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=6AzsbaBnXkz3OM6AFQR1SIwxBjyJjyhL1gvcLvlX+dM=;
-        b=H5KfNUpNRxXsWRdT/JNJzLonWK9r7zwgNNFzWsx+lRXiFx1jr1eNtS9JK7E1CsKq3T
-         tFcFtgXV2VRL5xTUuYYGM0teYlWLLwHrev7pno/i4+GmfS/QGnnXodPaafNcGXHMcN17
-         86liK6aNv6GebbcYznX8WctdhRnsaosSNPNSkFez8xRVtDaplQY0ZbhUy2Qrj4Ue2uOE
-         lwlBzPRoq6re9c5TIZB+4pLrtIwWKOYX6adYxghD3lWPc3afx1xI7+TM7Hubp76bNJLQ
-         3jukEIhZbrVmlwFOAEZi9zh/XlKv3Mn8jZwt/8XMfAkgXGxkW8BA5aGwRr5hFeBoT+nf
-         A/og==
-X-Gm-Message-State: ANhLgQ3Yx/RM5r1lGZxDkCfdPbuEgnr4AwoHIhegSDkyvIESpIKeaqAJ
-        9ppcOr28Imugf8jOjkyk/+REkHi7/a9MJMMpi7g=
-X-Google-Smtp-Source: ADFU+vvITJODYsI9WxPpNdXpzWJA22v8HmXu97ic9zBaMScNnnHkKitrbQOARZTF4ublOLVtL7KwLmpOtduoGX2GNeE=
-X-Received: by 2002:a9d:3b6:: with SMTP id f51mr10696411otf.255.1585310991422;
- Fri, 27 Mar 2020 05:09:51 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ae32xXO67Uei3DTimjBj1wlAZ/pkH/el6Qiul9IT/30=;
+        b=Cqlam+IiDP7lHN40iptwrITQ6Sec3dblLEQt6VtBW5tv+dD8nECLxRSsHf1B+Qdebp
+         GOO33rYOpLxgPofPGtLWp4MGdO+frPyA0Nf30zW2NuhD+OcfqaGAstrtPoHfhxPdAz0O
+         7yGGO3EpzF/hCyTmfU8Wn/BGzFvK7OnLj1CfRYUndvgDKeoCmKoAekfFUK6ianVuWeXL
+         nTL+DaF/RaQjfYgoLelvoigCJoPxaExG1TNN2u4Zt0mQOAP8HtOFq611I0FN09Y+CXgY
+         CZiTtPjl1/Ib4bIsMuLra4q+XRf84yLyxNCHk+aCU0gMEZ5m4lj+/OHNC5V2X0Sxbk8W
+         6UQA==
+X-Gm-Message-State: ANhLgQ0Clf+1uV4HbqgvlVW1XdC62wlD8A0dLeNpuy0coAMm0DE8eDVc
+        tO0QcvTd8ASJrpgb0Te6MvRT6g==
+X-Google-Smtp-Source: ADFU+vu5etCsTsz6Y5TtfPSyk7GQigfbQaUBOkfH75rGPq30AeujH7DUKAa3E9WYmWw4syrKT0bbug==
+X-Received: by 2002:a37:a746:: with SMTP id q67mr14014729qke.215.1585311063288;
+        Fri, 27 Mar 2020 05:11:03 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id t71sm3539359qke.55.2020.03.27.05.11.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 27 Mar 2020 05:11:02 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1jHnpE-0007MU-MC; Fri, 27 Mar 2020 09:11:00 -0300
+Date:   Fri, 27 Mar 2020 09:11:00 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Longpeng(Mike)" <longpeng2@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kvm@vger.kernel.org, arei.gonglei@huawei.com,
+        weidong.huang@huawei.com, weifuqiang@huawei.com,
+        kirill.shutemov@linux.intel.com,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v3] mm/hugetlb: fix a addressing exception caused by
+ huge_pte_offset
+Message-ID: <20200327121100.GR20941@ziepe.ca>
+References: <20200327014007.1915-1-longpeng2@huawei.com>
 MIME-Version: 1.0
-Received: by 2002:ac9:7c15:0:0:0:0:0 with HTTP; Fri, 27 Mar 2020 05:09:50
- -0700 (PDT)
-Reply-To: robertandersonhappy1@gmail.com
-From:   robert <emekanawafo@gmail.com>
-Date:   Fri, 27 Mar 2020 05:09:50 -0700
-Message-ID: <CAH0FejzHC=weONeYbFxNdhh-of4+bp3BfE+vO2siWBJg264GAg@mail.gmail.com>
-Subject: very good
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200327014007.1915-1-longpeng2@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Querido amigo,
-Meu nome =C3=A9 Bar.robert anderson Eu sou advogado e particular
-gerente de conta para meu cliente atrasado. No ano de 2015, meu
-cliente pelo nome
-Sr. Carlos, faleceu. A raz=C3=A3o pela qual eu entrei em contato com voc=C3=
-=AA =C3=A9
-porque voc=C3=AA
-tem o mesmo sobrenome do falecido, e posso apresent=C3=A1-lo como
-o benefici=C3=A1rio e parente pr=C3=B3ximo aos meus fundos de clientes
-atrasados, ent=C3=A3o voc=C3=AA vai
-permanecer como seu parente mais pr=C3=B3ximo e reivindicar os fundos.
-deixando para tr=C3=A1s um dinheiro
-heran=C3=A7a de sete milh=C3=B5es quinhentos mil Estados Unidos
-(US $ 7.500.000,00). Meu cliente e amigo =C3=ADntimo falecido cresceu em
-um "lar de beb=C3=AAs sem m=C3=A3e". Ele n=C3=A3o tinha fam=C3=ADlia, nem b=
-enefici=C3=A1rio nem pr=C3=B3ximo
-parentes dos Fundos de heran=C3=A7a deixados para tr=C3=A1s no Banco.
-Voc=C3=AA deve entrar em contato comigo atrav=C3=A9s do meu endere=C3=A7o d=
-e e-mail particular:
-robertandersonhappy1@gmail.com
-Cumprimentos,
-Barra. Robert Anderson
+On Fri, Mar 27, 2020 at 09:40:07AM +0800, Longpeng(Mike) wrote:
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index dd8737a..d4fab68 100644
+> +++ b/mm/hugetlb.c
+> @@ -4909,29 +4909,33 @@ pte_t *huge_pte_offset(struct mm_struct *mm,
+>  		       unsigned long addr, unsigned long sz)
+>  {
+>  	pgd_t *pgd;
+> -	p4d_t *p4d;
+> -	pud_t *pud;
+> -	pmd_t *pmd;
+> +	p4d_t *p4g, p4d_entry;
+> +	pud_t *pud, pud_entry;
+> +	pmd_t *pmd, pmd_entry;
+>  
+>  	pgd = pgd_offset(mm, addr);
+>  	if (!pgd_present(*pgd))
+>  		return NULL;
+> -	p4d = p4d_offset(pgd, addr);
+> -	if (!p4d_present(*p4d))
+> +
+> +	p4g = p4d_offset(pgd, addr);
+
+Why p4g here? Shouldn't it be p4d?
+
+Jason
