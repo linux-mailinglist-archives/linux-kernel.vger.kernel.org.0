@@ -2,100 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0171195520
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:25:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17916195528
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:25:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbgC0KZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 06:25:16 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:41714 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbgC0KZQ (ORCPT
+        id S1727347AbgC0KZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 06:25:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19804 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726515AbgC0KZv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 06:25:16 -0400
-Received: by mail-io1-f68.google.com with SMTP id y24so9234075ioa.8;
-        Fri, 27 Mar 2020 03:25:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+DtgW0asTVLRmsP/wkgDLG5KuILtoelQrHJyD4vPRGk=;
-        b=VixHdO8Hw9jXt84SnnDFMGQQjN+nZh5xzNUbbN5TwxzAF/tN0b966nHiajtCMIUjRe
-         QPrW8LgWJCh/qCTIWcBul+nq3pGxjVd7qN3hBNLBZYo3Y9nAKcG7/MJZNbYiZUsWgWqj
-         0dKw5nHWGX5HMroQsYECsSA9OoFyjOYNaPcNTtb9/7Yp9p075eTwNb0T24TdH6CBlI+8
-         ZPKuxCQ7llQkFU+Qcwl26aLr8yUREpdsDvFvrAbnBPcXWG9hjM82ZqZ5DF6d+w+Q6OyV
-         N0VWSHaOOhgSSsYHaOaRx7NnFfDkTSADaPM1dlNEZdjVBsM+oX7z0luWXoaNI4VKban+
-         abfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+DtgW0asTVLRmsP/wkgDLG5KuILtoelQrHJyD4vPRGk=;
-        b=rgCNTVcUQr2YTAfqWw7ntT5ENjipNOnwhSgCXFCvLw9cXGOVTJ0UuYB213P6RTY4mQ
-         DFVCb9gqr/pmOr17Li6GGsj7KuSsFVweHOGTJHx7xvLVkpOaIc3WHHdYQsk8jZ4Oo2kY
-         /ciVc6LqlYdVwFSuqSZJHXk2DptlwhYyNPPqzCTsqK002bH92TJkx3Z5yGP/a6LbHM+6
-         83b34FlBQ/1xTA6tFgIVfEBnhM/u1uFvFztOAA/0+c2trwoY6u4FkT3TLYcJHH9XRRSs
-         Yg/JbPz9bUhrYi0SqsBtwvoj1RpU779om/OtR6mJIdTAWEBUyWghMzkJ8NzO6HkNGthS
-         tQKw==
-X-Gm-Message-State: ANhLgQ0b6fRG3YEeK8aXeWGRYcs4jsJ4xkK/Epm8bMZhJTTfTBvs5w2D
-        /I9KSqmlTFsLJ5kM5pkfPb+rx5oAvB0kYsQgMbo=
-X-Google-Smtp-Source: ADFU+vvlcRTv5JovTHQ7RzXH0cra/ZdGkjZHlnblRSUuAxnLXSZ5BrZueQ9HJCBkcc1dc3kUFDm7yiF7dseHsA+NeRA=
-X-Received: by 2002:a6b:c916:: with SMTP id z22mr12020083iof.138.1585304714741;
- Fri, 27 Mar 2020 03:25:14 -0700 (PDT)
+        Fri, 27 Mar 2020 06:25:51 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02RA3ZQo057353
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 06:25:49 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ywdr9hq7r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 06:25:49 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <kjain@linux.ibm.com>;
+        Fri, 27 Mar 2020 10:25:39 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 27 Mar 2020 10:25:33 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02RAPdlY51314874
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 27 Mar 2020 10:25:39 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 80456A4062;
+        Fri, 27 Mar 2020 10:25:39 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3981EA405B;
+        Fri, 27 Mar 2020 10:25:33 +0000 (GMT)
+Received: from localhost.localdomain.com (unknown [9.79.180.159])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 27 Mar 2020 10:25:33 +0000 (GMT)
+From:   Kajol Jain <kjain@linux.ibm.com>
+To:     acme@kernel.org, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
+        sukadev@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        anju@linux.vnet.ibm.com, maddy@linux.vnet.ibm.com,
+        ravi.bangoria@linux.ibm.com, peterz@infradead.org,
+        yao.jin@linux.intel.com, ak@linux.intel.com, jolsa@kernel.org,
+        kan.liang@linux.intel.com, jmario@redhat.com,
+        alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        paulus@ozlabs.org, namhyung@kernel.org, mpetlan@redhat.com,
+        gregkh@linuxfoundation.org, benh@kernel.crashing.org,
+        mamatha4@linux.vnet.ibm.com, mark.rutland@arm.com,
+        tglx@linutronix.de, kjain@linux.ibm.com
+Subject: [PATCH v7 0/6] powerpc/perf: Add json file metric support for the hv_24x7 socket/chip level events
+Date:   Fri, 27 Mar 2020 15:55:22 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <CGME20200327082453eucas1p15b2371b61f653031408f319cc6d13893@eucas1p1.samsung.com>
- <20200327082446.18480-1-m.szyprowski@samsung.com> <CABnpCuDySf89HL2AksMB2fOcVCci+1zgB9r8zjRdpCAH3GWhPA@mail.gmail.com>
- <64025801-10f0-9f28-17b2-2c04d4308ac5@samsung.com>
-In-Reply-To: <64025801-10f0-9f28-17b2-2c04d4308ac5@samsung.com>
-From:   Shane Francis <bigbeeshane@gmail.com>
-Date:   Fri, 27 Mar 2020 10:25:04 +0000
-Message-ID: <CABnpCuBUEO6V=hwzHkUEKK5KDXC=ovPrTHyb9zFYrj0KaHHdww@mail.gmail.com>
-Subject: Re: [PATCH] drm/prime: fix extracting of the DMA addresses from a scatterlist
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        "Michael J . Ruhl" <michael.j.ruhl@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20032710-0020-0000-0000-000003BC5619
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20032710-0021-0000-0000-00002214E8A4
+Message-Id: <20200327102528.4267-1-kjain@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-27_02:2020-03-26,2020-03-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound score=100 malwarescore=0
+ bulkscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 clxscore=1015 suspectscore=0 mlxlogscore=527 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003270087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Marek,
+Patchset adds json file metric support for the hv_24x7 socket/chip level
+events. "hv_24x7" pmu interface events needs system dependent parameter
+like socket/chip/core. For example, hv_24x7 chip level events needs
+specific chip-id to which the data is requested should be added as part
+of pmu events.
 
-On Fri, Mar 27, 2020 at 9:00 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> > I have tested the above patch against my original issues with amdgpu
-> > and radeon drivers and everything is still working as expected.
-> >
-> > Sorry I missed this in my original patches.
->
-> No problem. Thanks for testing!
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
-Just a thought.
+So to enable JSON file support to "hv_24x7" interface, patchset reads
+total number of sockets details in sysfs under 
+"/sys/devices/hv_24x7/interface/".
 
-Would it be worth adding some comments to the code to explain why this
-is needed, reading
-the thread around my original patches and the DMA-API documentation it
-is not instantly
-clear why you would be mapping the pages in this way.
+Second patch of the patchset adds expr_scanner_ctx object to hold user
+data for the expr scanner, which can be used to hold runtime parameter.
 
-Would probably prevent someone in the future making the same mistake I
-did while updating
-this code.
+Patch 4 & 6 of the patchset handles perf tool plumbing needed to replace
+the "?" character in the metric expression to proper value and hv_24x7
+json metric file for different Socket/chip resources.
 
-Regards,
+Patch set also enable Hz/hz prinitg for --metric-only option to print
+metric data for bus frequency.
 
-Shane Francis
+Applied and tested all these patches cleanly on top of jiri's flex changes
+with the changes done by Kan Liang for "Support metric group constraint"
+patchset and made required changes.
+
+Also apply this patch on top of the fix patch send earlier
+for printing metric name incase overlapping events.
+https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/commit/?h=perf/core&id=37cd7f65bf71a48f25eeb6d9be5dacb20d008ea6
+
+Changelog:
+v6 -> v7
+- Spit patchset into two patch series one for kernel changes and other
+  for tool side changes.
+- Made changes Suggested by Jiri, including rather then reading runtime
+  parameter from metric name, actually add it in structure egroup and
+  metric_expr.
+- As we don't need to read runtime parameter from metric name,
+  now I am not appending it and rather just printing it in
+  generic_metric function.
+
+Kernel Side changes patch series: https://lkml.org/lkml/2020/3/27/58
+
+v5 -> v6
+- resolve compilation issue due to rearranging patch series.
+- Rather then adding new function to take careof case for runtime param
+  in metricgroup__add_metric, using metricgroup__add_metric_param itself
+  for that work.
+- Address some optimization suggested like using directly file path
+  rather then adding new macro in header.c
+- Change commit message on patch where we are adding "?" support
+  by adding simple example.
+
+v4 -> v5
+- Using sysfs__read_int instead of sysfs__read_ull while reading
+  parameter value in powerpc/util/header.c file.
+
+- Using asprintf rather then malloc and sprintf 
+  Suggested by Arnaldo Carvalho de Melo
+
+- Break patch 6 from previous version to two patch,
+  - One to add refactor current "metricgroup__add_metric" function
+    and another where actually "?" handling infra added.
+
+- Add expr__runtimeparam as part of 'expr_scanner_ctx' struct
+  rather then making it global variable. Thanks Jiri for
+  adding this structure to hold user data for the expr scanner.
+
+- Add runtime param as agrugement to function 'expr__find_other'
+  and 'expr__parse' and made changes on references accordingly.
+
+v3 -> v4
+- Apply these patch on top of Kan liang changes.
+  As suggested by Jiri.
+
+v2 -> v3
+- Remove setting  event_count to 0 part in function 'h_24x7_event_read'
+  with comment rather then adding 0 to event_count value.
+  Suggested by: Sukadev Bhattiprolu
+
+- Apply tool side changes require to replace "?" on Jiri's flex patch
+  series and made all require changes to make it compatible with added
+  flex change.
+
+v1 -> v2
+- Rename hv-24x7 metric json file as nest_metrics.json
+
+Jiri Olsa (2):
+  perf expr: Add expr_ prefix for parse_ctx and parse_id
+  perf expr: Add expr_scanner_ctx object
+
+Kajol Jain (4):
+  perf/tools: Refactoring metricgroup__add_metric function
+  perf/tools: Enhance JSON/metric infrastructure to handle "?"
+  tools/perf: Enable Hz/hz prinitg for --metric-only option
+  perf/tools/pmu-events/powerpc: Add hv_24x7 socket/chip level metric
+    events
+
+ tools/perf/arch/powerpc/util/header.c         |  8 ++
+ .../arch/powerpc/power9/nest_metrics.json     | 19 +++++
+ tools/perf/tests/expr.c                       | 12 +--
+ tools/perf/util/expr.c                        | 25 +++---
+ tools/perf/util/expr.h                        | 19 +++--
+ tools/perf/util/expr.l                        | 37 ++++++---
+ tools/perf/util/expr.y                        |  6 +-
+ tools/perf/util/metricgroup.c                 | 79 +++++++++++++------
+ tools/perf/util/metricgroup.h                 |  2 +
+ tools/perf/util/stat-display.c                |  2 -
+ tools/perf/util/stat-shadow.c                 | 19 +++--
+ 11 files changed, 157 insertions(+), 71 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/powerpc/power9/nest_metrics.json
+
+-- 
+2.18.1
+
