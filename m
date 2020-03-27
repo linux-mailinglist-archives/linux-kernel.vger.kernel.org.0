@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC07C196101
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 23:25:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8C8C19610A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 23:26:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbgC0WZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 18:25:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43394 "EHLO mail.kernel.org"
+        id S1728061AbgC0WZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 18:25:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727869AbgC0WZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727879AbgC0WZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 27 Mar 2020 18:25:09 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA0E921D6C;
-        Fri, 27 Mar 2020 22:25:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AE4D21556;
+        Fri, 27 Mar 2020 22:25:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585347907;
-        bh=AozrG3MmGq6+pM4lOKZjhKJpJ9U2ielG7RVJMhTB7pw=;
+        s=default; t=1585347908;
+        bh=C0mR+oVSGsBrT/NnbUHWzDYpCT/o9GJoOYQwwGwT130=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xGDVj2yfmCfSZa+shrDeY1vLssuE0+riJLlgKTy7VPuNr8ZBbfEEneRCDfsNJmIpc
-         5GwKdWFg/0KBfc04TpPMCcEP6CkjWDd/YSZNwPogCtIpHYVtCWO+9KwvJltCm4Oerb
-         1WaRRebSxmH6rCwgOXYpWpRM9MeJ37IfwiGj7sZw=
+        b=Z+BrxhK3aZM6YhMrgIFxH+BCHwzcNaUySEDGnjfPyPf1qUL1HyFJ037IH9b661Ds0
+         4QQtAzoOyWgboBFh27sedGCi4aK4jW2hzx3MRII09LaXLaocI5bc5FTyJooJxXhX5W
+         BMpiM1RPZ4A5wzdF6sbNJtUF7RbFywAEJ+nj628g=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v3 tip/core/rcu 28/34] rcu-tasks: Disable CPU hotplug across RCU tasks trace scans
-Date:   Fri, 27 Mar 2020 15:24:50 -0700
-Message-Id: <20200327222456.12470-28-paulmck@kernel.org>
+Subject: [PATCH v3 tip/core/rcu 29/34] rcu-tasks: Handle the running-offline idle-task special case
+Date:   Fri, 27 Mar 2020 15:24:51 -0700
+Message-Id: <20200327222456.12470-29-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200327222346.GA12082@paulmck-ThinkPad-P72>
 References: <20200327222346.GA12082@paulmck-ThinkPad-P72>
@@ -45,71 +45,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-This commit disables CPU hotplug across RCU tasks trace scans, which
-is a first step towards correctly recognizing idle tasks "running" on
-offline CPUs.
+The idle task corresponding to an offline CPU can appear to be running
+while that CPU is offline.  This commit therefore adds checks for this
+situation, treating it as a quiescent state.  Because the tasklist scan
+and the holdout-list scan now exclude CPU-hotplug operations, readers
+on the CPU-hotplug paths are still waited for.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tasks.h | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ kernel/rcu/tasks.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index 2663167e..df6e785 100644
+index df6e785..d1fa7715 100644
 --- a/kernel/rcu/tasks.h
 +++ b/kernel/rcu/tasks.h
-@@ -906,16 +906,16 @@ static void rcu_tasks_trace_pregp_step(void)
+@@ -818,16 +818,20 @@ static bool trc_inspect_reader(struct task_struct *t, void *arg)
  {
- 	int cpu;
+ 	int cpu = task_cpu(t);
+ 	bool in_qs = false;
++	bool ofl = cpu_is_offline(cpu);
  
--	// Wait for CPU-hotplug paths to complete.
--	cpus_read_lock();
--	cpus_read_unlock();
--
- 	// Allow for fast-acting IPIs.
- 	atomic_set(&trc_n_readers_need_end, 1);
+ 	if (task_curr(t)) {
++		WARN_ON_ONCE(ofl & !is_idle_task(t));
++
+ 		// If no chance of heavyweight readers, do it the hard way.
+-		if (!IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB))
++		if (!ofl && !IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB))
+ 			return false;
  
- 	// There shouldn't be any old IPIs, but...
- 	for_each_possible_cpu(cpu)
- 		WARN_ON_ONCE(per_cpu(trc_ipi_to_cpu, cpu));
-+
-+	// Disable CPU hotplug across the tasklist scan.
-+	// This also waits for all readers in CPU-hotplug code paths.
-+	cpus_read_lock();
- }
- 
- /* Do first-round processing for the specified task. */
-@@ -931,6 +931,9 @@ static void rcu_tasks_trace_pertask(struct task_struct *t,
- /* Do intermediate processing between task and holdout scans. */
- static void rcu_tasks_trace_postscan(void)
- {
-+	// Re-enable CPU hotplug now that the tasklist scan has completed.
-+	cpus_read_unlock();
-+
- 	// Wait for late-stage exiting tasks to finish exiting.
- 	// These might have passed the call to exit_tasks_rcu_finish().
- 	synchronize_rcu();
-@@ -975,6 +978,9 @@ static void check_all_holdout_tasks_trace(struct list_head *hop,
- {
- 	struct task_struct *g, *t;
- 
-+	// Disable CPU hotplug across the holdout list scan.
-+	cpus_read_lock();
-+
- 	list_for_each_entry_safe(t, g, hop, trc_holdout_list) {
- 		// If safe and needed, try to check the current task.
- 		if (READ_ONCE(t->trc_ipi_to_cpu) == -1 &&
-@@ -987,6 +993,10 @@ static void check_all_holdout_tasks_trace(struct list_head *hop,
- 		else if (needreport)
- 			show_stalled_task_trace(t, firstreport);
- 	}
-+
-+	// Re-enable CPU hotplug now that the holdout list scan has completed.
-+	cpus_read_unlock();
-+
- 	if (needreport) {
- 		if (firstreport)
- 			pr_err("INFO: rcu_tasks_trace detected stalls?\n");
+ 		// If heavyweight readers are enabled on the remote task,
+ 		// we can inspect its state despite its currently running.
+ 		// However, we cannot safely change its state.
+-		if (!rcu_dynticks_zero_in_eqs(cpu, &t->trc_reader_nesting))
++		if (!ofl && // Check for "running" idle tasks on offline CPUs.
++		    !rcu_dynticks_zero_in_eqs(cpu, &t->trc_reader_nesting))
+ 			return false; // No quiescent state, do it the hard way.
+ 		in_qs = true;
+ 	} else {
 -- 
 2.9.5
 
