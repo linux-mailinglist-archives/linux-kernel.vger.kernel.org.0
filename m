@@ -2,93 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5C9F1957FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 14:29:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 950B1195807
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 14:30:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbgC0N3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 09:29:22 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:22124 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726275AbgC0N3V (ORCPT
+        id S1727708AbgC0NaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 09:30:18 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:37305 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727541AbgC0NaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 09:29:21 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585315761; h=Content-Transfer-Encoding: MIME-Version:
- Message-Id: Date: Subject: Cc: To: From: Sender;
- bh=wk6z8lY+8A26/AMPDqUoidffKFNMBrvM9I+CQYQywl8=; b=w0Fu58LeKwsGD2oP/tfMVWn4stLcMrW09wCBAMJgMwzrruLMsv7p14WbZqzPx2Hkl+iQw8c4
- YAJOeGIf3l+TZvlBurefbwBKe4duZc1df1Wv3Ug+jQPzROxUr/5rYzMV7B0wAsq46+KVFIg+
- i3HWcquKs5M4qhUGh8rv7WwfyEg=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e7dffa3.7fec5bd37500-smtp-out-n01;
- Fri, 27 Mar 2020 13:29:07 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 63EA7C433F2; Fri, 27 Mar 2020 13:29:07 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-311.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 71A98C433D2;
-        Fri, 27 Mar 2020 13:29:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71A98C433D2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        Douglas Anderson <dianders@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Subject: [PATCH] iommu/arm-smmu: Demote error messages to debug in shutdown callback
-Date:   Fri, 27 Mar 2020 18:58:52 +0530
-Message-Id: <20200327132852.10352-1-saiprakash.ranjan@codeaurora.org>
-X-Mailer: git-send-email 2.22.0
+        Fri, 27 Mar 2020 09:30:17 -0400
+Received: by mail-il1-f197.google.com with SMTP id z89so8924208ilk.4
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 06:30:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=HweTU5jj17xC6BlpXQyem62ObeI/pFALQMnTvUhCql4=;
+        b=Xh6rjQw5+djctXLhesJdjvg9/qzEUamS+/6AZQ08uQA2ggwZosY/dZ5FhxHYeZoMPd
+         5N2emHSuAOnIenmIWK7MtXL8MlLSgdwbLJRWxnWrtbQnWcALeiNdlqWq1+sq4QcLSeYr
+         AYO+ByFlE8h+wa0xu9ArpZJZtuGHqYqYBnnaRlNmB8zqqJPMm8CNJasSs7MRp0BlHwyW
+         I27F8GxhbM+eYr4CoG1CJtJ1zCgstgLc/5n/RluXuhCHMU4GgxxgWjtZAQZH3lixvLbQ
+         XDlZu3As6zs4Jx4lj5P5QnjCFVCzonD801xdzX9JFQ4Y6nFM+iSDGX7r8EUy7U2s2DVd
+         TArw==
+X-Gm-Message-State: ANhLgQ1SJes+3xfEE9jVjCRkDxoYrBlOTMoPDnicwZUFG29tbcXk6iPT
+        f21aOovzYACZw+ipzqXQBFfgxZnUpD+bUyb3SetpvbcriiLB
+X-Google-Smtp-Source: ADFU+vvJsJfct4TOYF0rsn4TG7dIp3UoAiUjSETSMIFbPyzhwwX/OW1NnqSw1DEFL3ukg0pGEpIAIM41ykLMvtPXAdnRAyTgXYnT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:8f81:: with SMTP id r1mr13736124ilk.51.1585315814830;
+ Fri, 27 Mar 2020 06:30:14 -0700 (PDT)
+Date:   Fri, 27 Mar 2020 06:30:14 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000002fc05a1d61a68@google.com>
+Subject: KASAN: use-after-free Read in ath9k_wmi_ctrl_rx
+From:   syzbot <syzbot+5d338854440137ea0fef@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, ath9k-devel@qca.qualcomm.com,
+        davem@davemloft.net, kvalo@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently on reboot/shutdown, the following messages are
-displayed on the console as error messages before the
-system reboots/shutdown.
+Hello,
 
-On SC7180:
+syzbot found the following crash on:
 
-  arm-smmu 15000000.iommu: removing device with active domains!
-  arm-smmu 5040000.iommu: removing device with active domains!
+HEAD commit:    e17994d1 usb: core: kcov: collect coverage from usb comple..
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=1253c9d5e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5d64370c438bc60
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d338854440137ea0fef
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17fd135be00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16436be5e00000
 
-Demote the log level to debug since it does not offer much
-help in identifying/fixing any issue as the system is anyways
-going down and reduce spamming the kernel log.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5d338854440137ea0fef@syzkaller.appspotmail.com
 
-Reported-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+==================================================================
+BUG: KASAN: use-after-free in ath9k_wmi_ctrl_rx+0x416/0x500 drivers/net/wireless/ath/ath9k/wmi.c:215
+Read of size 1 at addr ffff8881cef1417c by task swapper/1/0
+
+CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.6.0-rc5-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xef/0x16e lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xd3/0x314 mm/kasan/report.c:374
+ __kasan_report.cold+0x37/0x77 mm/kasan/report.c:506
+ kasan_report+0xe/0x20 mm/kasan/common.c:641
+ ath9k_wmi_ctrl_rx+0x416/0x500 drivers/net/wireless/ath/ath9k/wmi.c:215
+ ath9k_htc_rx_msg+0x2da/0xaf0 drivers/net/wireless/ath/ath9k/htc_hst.c:459
+ ath9k_hif_usb_reg_in_cb+0x1ba/0x630 drivers/net/wireless/ath/ath9k/hif_usb.c:718
+ __usb_hcd_giveback_urb+0x29a/0x550 drivers/usb/core/hcd.c:1650
+ usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1716
+ dummy_timer+0x1258/0x32ae drivers/usb/gadget/udc/dummy_hcd.c:1966
+ call_timer_fn+0x195/0x6f0 kernel/time/timer.c:1404
+ expire_timers kernel/time/timer.c:1449 [inline]
+ __run_timers kernel/time/timer.c:1773 [inline]
+ __run_timers kernel/time/timer.c:1740 [inline]
+ run_timer_softirq+0x5f9/0x1500 kernel/time/timer.c:1786
+
+
 ---
- drivers/iommu/arm-smmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 16c4b87af42b..0a865e32054a 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -2250,7 +2250,7 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
- 		return -ENODEV;
- 
- 	if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
--		dev_err(&pdev->dev, "removing device with active domains!\n");
-+		dev_dbg(&pdev->dev, "removing device with active domains!\n");
- 
- 	arm_smmu_bus_init(NULL);
- 	iommu_device_unregister(&smmu->iommu);
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
