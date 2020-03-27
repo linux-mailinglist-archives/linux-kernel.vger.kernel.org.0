@@ -2,348 +2,367 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D18BD195B58
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 17:44:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CCA195B74
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 17:50:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbgC0Qn6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 12:43:58 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46571 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727677AbgC0Qn6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 12:43:58 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r7so3249367ljg.13
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 09:43:55 -0700 (PDT)
+        id S1727822AbgC0QuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 12:50:19 -0400
+Received: from mail-dm6nam12on2072.outbound.protection.outlook.com ([40.107.243.72]:27998
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727242AbgC0QuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 12:50:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oBPVyJEqKUlAQVYGuyt44jbauZh3kiq+WRfYuqW3hMZjKXrL97V5YCgjnJtE19jVUPXbU853fzeqK6V7JCqZ705uBgHeX++RvdaZ/9GvLcBm+QE0nSMenll6XyzLtKTUeaXqO6GBAw5gAMhbnadwX++h8XWyVyNiaHZCkTUu9y4PBXCYWqbodn5WfHT5mKvqO5vmFUypsHEssiLwcLaEy3rnBuuvLDQyamb4LeHigt5bKwUQjKJP2aO1W2617oZiLu7pP2RJCsfT8eTA1o1VmDsIeTGI34bO1uoXPVK1gEAB5HlVViUpGR1YObFRg5zFz1nP+cUr0tJdq1XWS3rpww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0LFqiO5qG5YYDkhm8lTNwaev9cw/vu90KnMaH9OFfFw=;
+ b=SdXzujwns9e0aH9j3CjRsoBgpAV1ZSlEQl5zi0NDYnUfDLkInnoARNTxQSkFAvV+WUyDq8MmgYHZBT3gDf6DhQgBSIeMzYLPdLu3erP5/KUx6sMtwAyQ+XUVs8KZMUs+cqEwscQJAA+JJWwWL0R3YVt/kp1/piw1aO1yejgmGILAezWh8DWmtQKr0lZnMvx/zePmJGK5cyQHOAirrkwf+p0GGtI7BduMDfsCmUWLy95LR67KGuJk+KXUKuhbaSGE1XtKB3gc7q2KHDl9+/CT5NIzL4GeZcXQOP5yCt17HF2A5DQx1BcY4idEa4Q/SZDzKCHQiuZNzY4jki8SzGlQAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/as+JmASInELkwgMMroyTytycvdO80e/O5XQm7EVJ04=;
-        b=N94PB/az/5ogUkEN2H5bSUX/pt39lLxP6TGokNcH47TODKfVNSFWelt+L2lhTIKQtI
-         RvVsggxZZqOfj4avuouhfKgFn+jGs5UQSDjPN7kwLmCnKp++4cZYfcFGb2jEGbnHQgOu
-         PiU/YZ9gUnHqFV9xF/0jtiPkupWenYH9NgsCN7Q2hn4YYF7IRTnTraedmM/PmRq7MSSi
-         PstbSqqfi4tVSDsEQlRlHkERcM3fw/dF4IQxr29o+vGaerHwvdddujg8x2nx4LJBRceU
-         iIpIU8bOKijqJJGvJIySuSLVI2fW3NMH2gxT7w2lzJUhF4OkJXtu79+u9b9DSnQsT0Po
-         FpZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/as+JmASInELkwgMMroyTytycvdO80e/O5XQm7EVJ04=;
-        b=I9vf4ztt9T/XFeCYAxyWNgyt+3JG2YWIzk0Jj46xzObLl/LI3Yzwd+hhIjIzm19A+w
-         2KmTp+GSd+B4AAe/xZIMHKx3ZQqcxW23cJO6zxTJEyIcnquwvd/GDm8JfBSIppr/D68Z
-         VrJA0l26c6bCIQTYI88gOBRh+rV99q2q6Z1LlD7ShNzMLDe/myMFRfrEx2yHVlTXIKnc
-         pvrzWTacO9gyV7trpd0gBI5yfLginqz/Vu2Ziv21TQmM8yGifphjfAUASOLlS4Gy8nW5
-         KQWij7taXgJQlcadGKMQk+i9IECl8pY6XmV0lQ8u1VIgFU0/qDwf2M/oPJVY8CK7GW5/
-         azXA==
-X-Gm-Message-State: ANhLgQ2P24tbKGemGmc9/53vCgQBj/elTlBGvDKh44WhWpWqRBsUOeo0
-        U1V03LBQqULTmIm9A1F3vwlHJfgxu1oPhv4wG+naBA==
-X-Google-Smtp-Source: APiQypLiDOdZo24P4irE2iCOBbxz0P/Ae40vM0rZyGQiaVc8txobsuxM3AssXxPTAa/sZUhJvWeerCEsmPjhG7t3LXc=
-X-Received: by 2002:a2e:8015:: with SMTP id j21mr8570425ljg.165.1585327434686;
- Fri, 27 Mar 2020 09:43:54 -0700 (PDT)
+ d=windriversystems.onmicrosoft.com;
+ s=selector2-windriversystems-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0LFqiO5qG5YYDkhm8lTNwaev9cw/vu90KnMaH9OFfFw=;
+ b=iNu0+/grTcSkrkcTMnkTROapy+whi5mpRPZiOWQMVoFAwP5Ugo3721724GQR/74toSDpxDa5GhbrrFs0LHF96wuLh3R/rXsG0KKjBW7M21eA1abgspP9wfJNBFWN1laWuUYKf4SKq7yqbGPYVUofxtLvW/6BBOR+6OIB+gO3DWs=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Li.Wang@windriver.com; 
+Received: from DM6PR11MB3595.namprd11.prod.outlook.com (2603:10b6:5:142::16)
+ by DM6PR11MB3177.namprd11.prod.outlook.com (2603:10b6:5:c::28) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2835.20; Fri, 27 Mar 2020 16:47:40 +0000
+Received: from DM6PR11MB3595.namprd11.prod.outlook.com
+ ([fe80::4038:e1b8:4bd3:74f3]) by DM6PR11MB3595.namprd11.prod.outlook.com
+ ([fe80::4038:e1b8:4bd3:74f3%5]) with mapi id 15.20.2835.023; Fri, 27 Mar 2020
+ 16:47:40 +0000
+Subject: Re: [PATCH] arm64: mmu: no write cache for O_SYNC flag
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20200326163625.30714-1-li.wang@windriver.com>
+ <20200327142937.GB94838@C02TD0UTHF1T.local>
+From:   "Wang, Li" <li.wang@windriver.com>
+Message-ID: <6fc201bf-ad0c-3dae-783e-c9c9e4ac034e@windriver.com>
+Date:   Sat, 28 Mar 2020 00:47:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+In-Reply-To: <20200327142937.GB94838@C02TD0UTHF1T.local>
+Content-Type: multipart/mixed;
+ boundary="------------456B615C93724A699A05DEC0"
+X-ClientProxiedBy: HKAPR04CA0018.apcprd04.prod.outlook.com
+ (2603:1096:203:d0::28) To DM6PR11MB3595.namprd11.prod.outlook.com
+ (2603:10b6:5:142::16)
 MIME-Version: 1.0
-References: <CA+G9fYv5NxK+F5DX_q1c_wvnhjT_WTZBFJQXLWFeqMXsEcASZg@mail.gmail.com>
-In-Reply-To: <CA+G9fYv5NxK+F5DX_q1c_wvnhjT_WTZBFJQXLWFeqMXsEcASZg@mail.gmail.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 27 Mar 2020 22:13:43 +0530
-Message-ID: <CA+G9fYu-qYP2wJw4p1p_C6_ttwK0fvw+qUnsN9mDuKOv3zGEBw@mail.gmail.com>
-Subject: Re: OF: ERROR: Bad of_node_put() on /ocp/interconnect@4a000000/segment@0/target-module@8000/cm_core@0/l4per-cm@1700/l4per-clkctrl@28
-To:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-omap@vger.kernel.org
-Cc:     lkft-triage@lists.linaro.org, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Benoit Cousson <bcousson@baylibre.com>,
-        Carlos Hernandez <ceh@ti.com>,
-        Thomas Gleixner <tglx@linutronix.de>, t-kristo@ti.com,
-        Olof Johansson <olof@lixom.net>, tomi.valkeinen@ti.com,
-        Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.0.116] (120.244.141.26) by HKAPR04CA0018.apcprd04.prod.outlook.com (2603:1096:203:d0::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.19 via Frontend Transport; Fri, 27 Mar 2020 16:47:37 +0000
+X-Originating-IP: [120.244.141.26]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ca9bfc6b-1a16-4242-69aa-08d7d26e8fc1
+X-MS-TrafficTypeDiagnostic: DM6PR11MB3177:
+X-Microsoft-Antispam-PRVS: <DM6PR11MB3177A2E932E57EBB6D3A70B6EFCC0@DM6PR11MB3177.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2512;
+X-Forefront-PRVS: 0355F3A3AE
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39850400004)(136003)(346002)(396003)(366004)(376002)(81166006)(81156014)(8936002)(6666004)(54906003)(316002)(6916009)(36756003)(5660300002)(52116002)(33964004)(66946007)(66556008)(6486002)(8676002)(66476007)(235185007)(16576012)(66616009)(31686004)(186003)(966005)(2906002)(2616005)(26005)(86362001)(478600001)(31696002)(956004)(4326008)(16526019);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR11MB3177;H:DM6PR11MB3595.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
+Received-SPF: None (protection.outlook.com: windriver.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: kvCcQu/ZxTvCaNfsIHUCIG2AZ5OyR8tIa+yME/l+hpAC3dePAsKHREWwu4NKeUlY0KzMli0MnUgpb/IqjmvBKuDH2zuVFVB+EK/9lnyho+ZOptyzT+tfzvvrIcYljtlDgyLOGAP7tB8diHEFTZLxC0MsZpB2GTIX6VNfIjPmFyUdQUm36aA/wzSdzFt8ENCv/icSV/lvKcEYFnRSHF7kTtKtzYr3eTYMNghLsZIw4LDEsZ8BHXk33EdzAx6lkgLGOzSgfCyxgct5hBB8rMJXMyFPEcOt8gUYL+PSEntgikWBqd5V0Rv9kIHLuIOjnJgyjFoVxvnL+1Fzj/I9sIBhqpJGAtrXOK0xxcDq5SAsT6nrkoRiDuD5OJsoPUjRDz9kIU9otUEiDAC3i9ebiBHjPKE5XBII8nnaxhDbqgdw6l7Ty7Q77S6UKIlmKVMiRwdFfq1vJ1Q04rdIiGv7NPu/1eTcEDkBfzsUfZUvZyxisojWZXjboJSh+7nRNRf5wcNA/ua/r52TJgcWyXQ14TzAxA==
+X-MS-Exchange-AntiSpam-MessageData: jYtovzZCUk1fs5rYV/m1WOn/bYcEF6SULYtTms5POAcqZmSoAnYjsYvT6ckD4uOjXohEbi7RFvyPskrv1bGCIFl2hgTC9+hG5vGUZpBr4YiRBD01DnzpZ0urWDa+30FOjr6r88QVMCbhWIPOjOtsdg==
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca9bfc6b-1a16-4242-69aa-08d7d26e8fc1
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2020 16:47:40.0444
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +Xzyt6rLtkMMHLirtYAvK4mXG9gth9mFvw44VAD8u2sAfgeny26SnVKOVqlbOeOQ0QCntrgRuYjdLvn+JvaMNA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB3177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The reported problem still happening on arm beagle board x15 device
-running Linux next kernel 20200327.
-
-[    0.000000] Linux version 5.6.0-rc7-next-20200327
-(TuxBuild@63c63a28ad60) (gcc version 9.2.1 20191130 (Debian 9.2.1-21))
-#1 SMP Fri Mar 27 08:19:49 UTC 2020
-[    0.000000] CPU: ARMv7 Processor [412fc0f2] revision 2 (ARMv7), cr=10c5387d
-[    0.000000] CPU: div instructions available: patching division code
-[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
-[    0.000000] OF: fdt: Machine model: TI AM5728 BeagleBoard-X15
-[    0.000000] Memory policy: Data cache writealloc
-[    0.000000] efi: UEFI not found.
-[    0.000000] cma: Reserved 64 MiB at 0xfb800000
-[    0.000000] OMAP4: Map 0xafe00000 to (ptrval) for dram barrier
-[    0.000000] DRA752 ES2.0
-[    0.000000] percpu: Embedded 20 pages/cpu s49484 r8192 d24244 u81920
-[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 522051
-[    0.000000] Kernel command line: console=ttyS2,115200n8
-root=PARTUUID=faec2ecf-8544-e241-b19d-757e796da607 rw rootfstype=ext4
-rootwait
-[    0.000000] Dentry cache hash table entries: 131072 (order: 7,
-524288 bytes, linear)
-[    0.000000] Inode-cache hash table entries: 65536 (order: 6, 262144
-bytes, linear)
-[    0.000000] mem auto-init: stack:off, heap alloc:off, heap free:off
-[    0.000000] Memory: 1985888K/2095100K available (13312K kernel
-code, 1844K rwdata, 5676K rodata, 2048K init, 424K bss, 43676K
-reserved, 65536K cma-reserved, 1245180K highmem)
-[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
-[    0.000000] rcu: Hierarchical RCU implementation.
-[    0.000000] rcu: RCU event tracing is enabled.
-[    0.000000] rcu: RCU restricting CPUs from NR_CPUS=16 to nr_cpu_ids=2.
-[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay
-is 10 jiffies.
-[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
-[    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
-[    0.000000] GIC: Using split EOI/Deactivate mode
-[    0.000000] random: get_random_bytes called from
-start_kernel+0x300/0x4b8 with crng_init=0
-[    0.000000] OF: ERROR: Bad of_node_put() on
-/ocp/interconnect@4a000000/segment@0/target-module@5000/cm_core_aon@0/ipu-cm@500/ipu1-clkctrl@20
-[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W
-  5.6.0-rc7-next-20200327 #1
-[    0.000000] Hardware name: Generic DRA74X (Flattened Device Tree)
-[    0.000000] [<c0311810>] (unwind_backtrace) from [<c030ba14>]
-(show_stack+0x10/0x14)
-[    0.000000] [<c030ba14>] (show_stack) from [<c0fb6604>]
-(dump_stack+0xbc/0xd0)
-[    0.000000] [<c0fb6604>] (dump_stack) from [<c0fbb07c>]
-(kobject_put+0xc0/0x104)
-[    0.000000] [<c0fbb07c>] (kobject_put) from [<c1639e4c>]
-(of_clk_init+0x18c/0x228)
-[    0.000000] [<c1639e4c>] (of_clk_init) from [<c1611544>]
-(omap_clk_init+0x3c/0x58)
-[    0.000000] [<c1611544>] (omap_clk_init) from [<c1611ea8>]
-(omap4_sync32k_timer_init+0x8/0x2c)
-[    0.000000] [<c1611ea8>] (omap4_sync32k_timer_init) from
-[<c161213c>] (omap5_realtime_timer_init+0x8/0x234)
-[    0.000000] [<c161213c>] (omap5_realtime_timer_init) from
-[<c1600c88>] (start_kernel+0x330/0x4b8)
-[    0.000000] [<c1600c88>] (start_kernel) from [<00000000>] (0x0)
-[    0.000000] OF: ERROR: Bad of_node_put() on
-/ocp/interconnect@4a000000/segment@0/target-module@8000/cm_core@0/l4per-cm@1700/l4per-clkctrl@28
-[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W
-  5.6.0-rc7-next-20200327 #1
-[    0.000000] Hardware name: Generic DRA74X (Flattened Device Tree)
-[    0.000000] [<c0311810>] (unwind_backtrace) from [<c030ba14>]
-(show_stack+0x10/0x14)
-[    0.000000] [<c030ba14>] (show_stack) from [<c0fb6604>]
-(dump_stack+0xbc/0xd0)
-[    0.000000] [<c0fb6604>] (dump_stack) from [<c0fbb07c>]
-(kobject_put+0xc0/0x104)
-[    0.000000] [<c0fbb07c>] (kobject_put) from [<c1639e4c>]
-(of_clk_init+0x18c/0x228)
-[    0.000000] [<c1639e4c>] (of_clk_init) from [<c1611544>]
-(omap_clk_init+0x3c/0x58)
-[    0.000000] [<c1611544>] (omap_clk_init) from [<c1611ea8>]
-(omap4_sync32k_timer_init+0x8/0x2c)
-[    0.000000] [<c1611ea8>] (omap4_sync32k_timer_init) from
-[<c161213c>] (omap5_realtime_timer_init+0x8/0x234)
-[    0.000000] [<c161213c>] (omap5_realtime_timer_init) from
-[<c1600c88>] (start_kernel+0x330/0x4b8)
-[    0.000000] [<c1600c88>] (start_kernel) from [<00000000>] (0x0)
-[    0.000000] OMAP clockevent source: timer1 at 32786 Hz
-[    0.000000] arch_timer: cp15 timer(s) running at 6.14MHz (phys).
-[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff
-max_cycles: 0x16af5adb9, max_idle_ns: 440795202250 ns
-[    0.000005] sched_clock: 56 bits at 6MHz, resolution 162ns, wraps
-every 4398046511023ns
-[    0.000016] Switching to timer-based delay loop, resolution 162ns
-[    0.004217] clocksource: 32k_counter: mask: 0xffffffff max_cycles:
-0xffffffff, max_idle_ns: 58327039986419 ns
-[    0.004225] OMAP clocksource: 32k_counter at 32768 Hz
-[    0.010420] ------------[ cut here ]------------
+--------------456B615C93724A699A05DEC0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-https://lkft.validation.linaro.org/scheduler/job/1317004#L3449
+在 2020/3/27 22:29, Mark Rutland 写道:
+> On Thu, Mar 26, 2020 at 09:36:25AM -0700, Li Wang wrote:
+>> reproduce steps:
+>> 1.
+>> disable CONFIG_STRICT_DEVMEM in linux kernel
+>> 2.
+>> Process A gets a Physical Address of global variable by
+>> "/proc/self/pagemap".
+>> 3.
+>> Process B writes a value to the same Physical Address by mmap():
+>> fd=open("/dev/mem",O_SYNC);
+>> Virtual Address=mmap(fd);
+> Is this just to demonstrate the behaviour, or is this meant to be
+> indicative of a real use-case? I'm struggling to see the latter.
+>
+>> problem symptom:
+>> after Process B write a value to the Physical Address,
+>> Process A of the value of global variable does not change.
+>> They both W/R the same Physical Address.
+> If Process A is not using the same attributes as process B, there is no
+> guarantee of coherency. How did process A map this memory?
 
-- Naresh
-On Wed, 19 Feb 2020 at 21:11, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+
+about 2 Process:
+
+Process A:
+
+the memory is not declared by map function, it is just a global variable.
+
+only by /proc/self/pagemap to get its Physical Address.
+
+I attached the codes(wrl-cache-coh-test.c)
+
+Process B:
+
+it is command of "devmem" in busybox, it writes a value to Physical Address.
+
+it uses open(O_SYNC) and mmap.
+
+
+>> technical reason:
+>> Process B writing the Physical Address is by the Virtual Address,
+>> and the Virtual Address comes from "/dev/mem" and mmap().
+>> In arm64 arch, the Virtual Address has write cache.
+>> So, maybe the value is not written into Physical Address.
+> I don't think that's true. I think what's happening here is:
 >
-> The following error/warning noticed on arm beagleboard x15 running
-> linux next  and linux mainline.
+> * Process A has a Normal WBWA Cacheable mapping.
+> * Process B as a Normal Non-cacheable mapping.
+> * Process B's write does not snoop any caches, and goes straight to
+>    memory.
+> * Process A reads a value from cache, which does not include process B's
+>    write.
 >
-> [    0.000000] Linux version 5.6.0-rc1 (oe-user@oe-host) (gcc version
-> 7.3.0 (GCC)) #1 SMP Fri Feb 14 21:54:55 UTC 2020
-> [    0.000000] CPU: ARMv7 Processor [412fc0f2] revision 2 (ARMv7), cr=30c5387d
-> ...
-> [    0.000000] random: get_random_bytes called from
-> start_kernel+0x5d0/0x798 with crng_init=0
-> [    0.000000] OF: ERROR: Bad of_node_put() on
-> /ocp/interconnect@4a000000/segment@0/target-module@8000/cm_core@0/l4per-cm@1700/l4per-clkctrl@28
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W
->   5.6.0-rc1 #1
-> [    0.000000] Hardware name: Generic DRA74X (Flattened Device Tree)
-> [    0.000000] Backtrace:
-> [    0.000000] [<c040fabc>] (dump_backtrace) from [<c040fdf0>]
-> (show_stack+0x20/0x24)
-> [    0.000000]  r7:c23f1460 r6:00000000 r5:600000d3 r4:c23f1460
-> [    0.000000] [<c040fdd0>] (show_stack) from [<c13e0cf0>]
-> (dump_stack+0xe8/0x114)
-> [    0.000000] [<c13e0c08>] (dump_stack) from [<c1127c0c>]
-> (of_node_release+0xb4/0xcc)
-> [    0.000000]  r10:efca9a44 r9:00000001 r8:00000000 r7:00000000
-> r6:c23d1250 r5:efca9a44
-> [    0.000000]  r4:efca9a70 r3:aac0aa55
-> [    0.000000] [<c1127b58>] (of_node_release) from [<c13e6448>]
-> (kobject_put+0x11c/0x23c)
-> [    0.000000]  r5:c2421020 r4:efca9a70
-> [    0.000000] [<c13e632c>] (kobject_put) from [<c1126ed8>]
-> (of_node_put+0x24/0x28)
-> [    0.000000]  r7:e98f6940 r6:c2201ef4 r5:00000000 r4:e98f6900
-> [    0.000000] [<c1126eb4>] (of_node_put) from [<c2047540>]
-> (of_clk_init+0x1a4/0x248)
-> [    0.000000] [<c204739c>] (of_clk_init) from [<c20141bc>]
-> (omap_clk_init+0x4c/0x68)
-> [    0.000000]  r10:efc8b8c0 r9:c243129c r8:00000000 r7:c2208700
-> r6:00000066 r5:c20daf64
-> [    0.000000]  r4:c2432740
-> [    0.000000] [<c2014170>] (omap_clk_init) from [<c2014bdc>]
-> (omap4_sync32k_timer_init+0x18/0x3c)
-> [    0.000000]  r5:c20daf64 r4:c2431240
-> [    0.000000] [<c2014bc4>] (omap4_sync32k_timer_init) from
-> [<c2014ec8>] (omap5_realtime_timer_init+0x1c/0x258)
-> [    0.000000] [<c2014eac>] (omap5_realtime_timer_init) from
-> [<c2005a38>] (time_init+0x30/0x44)
-> [    0.000000]  r9:c243129c r8:00000000 r7:c2208700 r6:00000066
-> r5:c20daf64 r4:c2431240
-> [    0.000000] [<c2005a08>] (time_init) from [<c20013bc>]
-> (start_kernel+0x604/0x798)
-> [    0.000000] [<c2000db8>] (start_kernel) from [<00000000>] (0x0)
-> [    0.000000]  r10:30c5387d r9:412fc0f2 r8:8ffdc000 r7:00000000
-> r6:30c0387d r5:00000000
-> [    0.000000]  r4:c2000330
-> [    0.000000] OMAP clockevent source: timer1 at 32786 Hz
-> [    0.000000] arch_timer: cp15 timer(s) running at 6.14MHz (phys).
-> [    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff
-> max_cycles: 0x16af5adb9, max_idle_ns: 440795202250 ns
-> [    0.000006] sched_clock: 56 bits at 6MHz, resolution 162ns, wraps
-> every 4398046511023ns
-> [    0.000028] Switching to timer-based delay loop, resolution 162ns
-> [    0.005242] clocksource: 32k_counter: mask: 0xffffffff max_cycles:
-> 0xffffffff, max_idle_ns: 58327039986419 ns
-> [    0.005261] OMAP clocksource: 32k_counter at 32768 Hz
-> [    0.012808] ------------[ cut here ]------------
-> [    0.012814] WARNING: CPU: 0 PID: 0 at
-> /usr/src/kernel/lib/refcount.c:25 refcount_warn_saturate+0x108/0x174
-> [    0.012818] refcount_t: addition on 0; use-after-free.
-> [    0.012821] Modules linked in:
-> [    0.012828] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.6.0-rc1 #1
-> [    0.012831] Hardware name: Generic DRA74X (Flattened Device Tree)
-> [    0.012834] Backtrace:
-> [    0.012841] [<c040fabc>] (dump_backtrace) from [<c040fdf0>]
-> (show_stack+0x20/0x24)
-> [    0.012844]  r7:c23f1460 r6:00000000 r5:600000d3 r4:c23f1460
-> [    0.012848] [<c040fdd0>] (show_stack) from [<c13e0cf0>]
-> (dump_stack+0xe8/0x114)
-> [    0.012852] [<c13e0c08>] (dump_stack) from [<c04595d0>] (__warn+0x100/0x118)
-> [    0.012856]  r10:efca9a50 r9:c09577c8 r8:00000019 r7:c1c1c6c0
-> r6:00000009 r5:00000000
-> [    0.012859]  r4:c2201b7c r3:aac0aa55
-> [    0.012862] [<c04594d0>] (__warn) from [<c045966c>]
-> (warn_slowpath_fmt+0x84/0xc0)
-> [    0.012866]  r9:00000009 r8:c09577c8 r7:00000019 r6:c1c1c6c0
-> r5:c1c1c6e0 r4:c2208708
-> [    0.012870] [<c04595ec>] (warn_slowpath_fmt) from [<c09577c8>]
-> (refcount_warn_saturate+0x108/0x174)
-> [    0.012873]  r9:c2a34254 r8:c2a33e96 r7:c2a33e96 r6:00000007
-> r5:efca9a50 r4:efca9a70
-> [    0.012877] [<c09576c0>] (refcount_warn_saturate) from [<c13e6250>]
-> (kobject_get+0xa8/0xac)
-> [    0.012881] [<c13e61a8>] (kobject_get) from [<c1126eac>]
-> (of_node_get+0x24/0x2c)
-> [    0.012884]  r4:efca9a44
-> [    0.012887] [<c1126e88>] (of_node_get) from [<c1125d3c>]
-> (of_fwnode_get+0x44/0x50)
-> [    0.012890]  r5:efca9a50 r4:00000007
-> [    0.012894] [<c1125cf8>] (of_fwnode_get) from [<c0cbc270>]
-> (fwnode_get_nth_parent+0x3c/0x6c)
-> [    0.012898] [<c0cbc234>] (fwnode_get_nth_parent) from [<c13f4e44>]
-> (fwnode_full_name_string+0x3c/0xa8)
-> [    0.012901]  r7:c2a33e96 r6:c1c4d59d r5:c189ae2c r4:00000007
-> [    0.012904] [<c13f4e08>] (fwnode_full_name_string) from
-> [<c13f686c>] (device_node_string+0x48c/0x4ec)
-> [    0.012908]  r10:ffffffff r9:c1bd7a4c r8:efca9a44 r7:c2a33e96
-> r6:c1c4d59d r5:c2a34254
-> [    0.012911]  r4:c2208708
-> [    0.012915] [<c13f63e4>] (device_node_string) from [<c13f843c>]
-> (pointer+0x43c/0x4e0)
-> [    0.012918]  r10:c2a34254 r9:c2201d3c r8:c2201e90 r7:00000002
-> r6:00000000 r5:c2a34254
-> [    0.012921]  r4:c2a33e96
-> [    0.012925] [<c13f8000>] (pointer) from [<c13f86a8>] (vsnprintf+0x1c8/0x414)
-> [    0.012928]  r7:00000002 r6:c1d5476c r5:c1d5476a r4:c2a33e96
-> [    0.012931] [<c13f84e0>] (vsnprintf) from [<c13f8908>] (vscnprintf+0x14/0x2c)
-> [    0.012935]  r10:00000000 r9:00000000 r8:ffffffff r7:c2a33528
-> r6:00000028 r5:600000d3
-> [    0.012938]  r4:000003e0
-> [    0.012942] [<c13f88f4>] (vscnprintf) from [<c04db308>]
-> (vprintk_store+0x44/0x220)
-> [    0.012945]  r5:600000d3 r4:c2a33528
-> [    0.012949] [<c04db2c4>] (vprintk_store) from [<c04db8a8>]
-> (vprintk_emit+0xa0/0x2fc)
-> [    0.012953]  r10:00000001 r9:ffffffff r8:00000000 r7:00000000
-> r6:00000028 r5:600000d3
-> [    0.012956]  r4:c2a33528
-> [    0.012959] [<c04db808>] (vprintk_emit) from [<c04dbb34>]
-> (vprintk_default+0x30/0x38)
-> [    0.012963]  r10:efca9a44 r9:00000001 r8:00000000 r7:ffffe000
-> r6:c2201e8c r5:c1d54748
-> [    0.012966]  r4:c21a8590
-> [    0.012970] [<c04dbb04>] (vprintk_default) from [<c04dc9dc>]
-> (vprintk_func+0xe0/0x168)
-> [    0.012974] [<c04dc8fc>] (vprintk_func) from [<c04dc1f4>] (printk+0x40/0x5c)
-> [    0.012977]  r7:00000000 r6:c23d1250 r5:efca9a44 r4:c2208708
-> [    0.012981] [<c04dc1b4>] (printk) from [<c1127c08>]
-> (of_node_release+0xb0/0xcc)
-> [    0.012984]  r3:00000008 r2:00000000 r1:efca9a44 r0:c1d54748
-> [    0.012987]  r4:efca9a70
-> [    0.012991] [<c1127b58>] (of_node_release) from [<c13e6448>]
-> (kobject_put+0x11c/0x23c)
-> [    0.012994]  r5:c2421020 r4:efca9a70
-> [    0.012998] [<c13e632c>] (kobject_put) from [<c1126ed8>]
-> (of_node_put+0x24/0x28)
-> [    0.013001]  r7:e98f6940 r6:c2201ef4 r5:00000000 r4:e98f6900
-> [    0.013005] [<c1126eb4>] (of_node_put) from [<c2047540>]
-> (of_clk_init+0x1a4/0x248)
-> [    0.013009] [<c204739c>] (of_clk_init) from [<c20141bc>]
-> (omap_clk_init+0x4c/0x68)
-> [    0.013013]  r10:efc8b8c0 r9:c243129c r8:00000000 r7:c2208700
-> r6:00000066 r5:c20daf64
-> [    0.013016]  r4:c2432740
-> [    0.013020] [<c2014170>] (omap_clk_init) from [<c2014bdc>]
-> (omap4_sync32k_timer_init+0x18/0x3c)
-> [    0.013023]  r5:c20daf64 r4:c2431240
-> [    0.013027] [<c2014bc4>] (omap4_sync32k_timer_init) from
-> [<c2014ec8>] (omap5_realtime_timer_init+0x1c/0x258)
-> [    0.013031] [<c2014eac>] (omap5_realtime_timer_init) from
-> [<c2005a38>] (time_init+0x30/0x44)
-> [    0.013034]  r9:c243129c r8:00000000 r7:c2208700 r6:00000066
-> r5:c20daf64 r4:c2431240
-> [    0.013038] [<c2005a08>] (time_init) from [<c20013bc>]
-> (start_kernel+0x604/0x798)
-> [    0.013042] [<c2000db8>] (start_kernel) from [<00000000>] (0x0)
-> [    0.013045]  r10:30c5387d r9:412fc0f2 r8:8ffdc000 r7:00000000
-> r6:30c0387d r5:00000000
-> [    0.013048]  r4:c2000330
-> [    0.013051] irq event stamp: 0
-> [    0.013055] hardirqs last  enabled at (0): [<00000000>] 0x0
-> [    0.013058] hardirqs last disabled at (0): [<00000000>] 0x0
-> [    0.013062] softirqs last  enabled at (0): [<00000000>] 0x0
-> [    0.013065] softirqs last disabled at (0): [<00000000>] 0x0
-> [    0.013069] ---[ end trace dc03abb39d272e33 ]---
-> [    0.013072] ------------[ cut here ]------------
+> That's a natural result of using mismatched attributes, and is
+> consistent with the O_SYNC flag meaning that the write "is transferred
+> to the underlying hardware".
+
+
+if you agree that O_SYNC flag means "is transferred to the underlying 
+hardware",
+
+the arm64 does not do that:
+
+when use O_SYNC flag under arm64 arch, it adds write cache feature,
+
+so, it is no guarantee "transferred to hardware".
+
+=====
+
+arch/arm64/mm/mmu.c
+phys_mem_access_prot(){
+   else if (file->f_flags & O_SYNC)
+     return pgprot_writecombine(vma_prot);}
+
+=====
+
+
+by my test without the write cache, even if Process A is not using the 
+same attributes as process B,
+
+it has guarantee of coherency:
+
+when Process B change value, Process B can see the change, too.
+
+
+Thanks,
+
+LiWang.
+
+
+my email server seems to reject to send to 
+linux-arm-kernel@lists.infradead.org,
+
+the info is in another email not showing in 
+linux-arm-kernel@lists.infradead.org:
+
+
+1.
+
+no pass O_SYNC in user space is not a good idea.
+
+in fact, the codes come from 'devmem' command of busybox:
+
+=====
+
+busybox-1.24.1/miscutils$ vim devmem.c
+
+fd = xopen("/dev/mem", O_SYNC);
+
+=====
+
+the codes are used for a long time.
+
+
+2.
+
+according to info of open man about "O_SYNC":
+
+=====
+
+http://man7.org/linux/man-pages/man2/open.2.html
+
+the output data and associated file metadata have been transferred to 
+the underlying hardware
+
+=====
+
+I think "O_SYNC" means no cache.
+
+
+3.
+
+/dev/mem of driver offers 2 ways to operate  physical memory.
+
+one is mmap, the other is read/write.
+
+when use read/write way, it operates uncached memory:
+
+=====
+
+kernel-source/drivers/char/mem.c
+
+write_mem(){
+
+/* it must also be accessed uncached */
+
+}
+
+=====
+
+
+4.
+
+arm64 arch is different with other arch about phys_mem_access_prot().
+
+you can see no any other arch add cache flag in the function.
+
+only arm and arm64 add write cache for O_SYNC flag.
+
+
+x86/mm/pat.c
+
+phys_mem_access_prot(){
+
+return vma_prot;
+
+}
+
+
+powerpc/mm/mem.c
+
+phys_mem_access_prot(){
+         if (ppc_md.phys_mem_access_prot)
+                 return ppc_md.phys_mem_access_prot(file, pfn, size, 
+vma_prot);
+         if (!page_is_ram(pfn))
+                 vma_prot = pgprot_noncached(vma_prot);
+         return vma_prot;
+}
+
+
+drivers/char/mem.c
+
+phys_mem_access_prot()
+{
+#ifdef pgprot_noncached
+         phys_addr_t offset = pfn << PAGE_SHIFT;
+
+         if (uncached_access(file, offset))
+                 return pgprot_noncached(vma_prot);
+#endif
+    return vma_prot;
+}
+
+
+>> fix reason:
+>> giving write cache flag in arm64 is in phys_mem_access_prot():
+>> =====
+>> arch/arm64/mm/mmu.c
+>> phys_mem_access_prot()
+>> {
+>>    if (!pfn_valid(pfn))
+>>      return pgprot_noncached(vma_prot);
+>>    else if (file->f_flags & O_SYNC)
+>>      return pgprot_writecombine(vma_prot);
+>>    return vma_prot;
+>> }
+>> ====
+>> the other arch and the share function drivers/char/mem.c of phys_mem_access_prot()
+>> does not add write cache flag.
+>> So, removing the flag to fix the issue
+> This will change behaviour that other software may be relying upon, and
+> as above I do not believe this actually solves the problem you describe.
 >
-> ref:
-> https://qa-reports.linaro.org/lkft/linux-mainline-oe/build/v5.6-rc1-186-g2019fc96af22/testrun/1221060/log
+> Thanks,
+> Mark.
 >
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+>> Signed-off-by: Li Wang <li.wang@windriver.com>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>   arch/arm64/mm/mmu.c | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+>> index 128f70852bf3..d7083965ca17 100644
+>> --- a/arch/arm64/mm/mmu.c
+>> +++ b/arch/arm64/mm/mmu.c
+>> @@ -81,8 +81,6 @@ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+>>   {
+>>   	if (!pfn_valid(pfn))
+>>   		return pgprot_noncached(vma_prot);
+>> -	else if (file->f_flags & O_SYNC)
+>> -		return pgprot_writecombine(vma_prot);
+>>   	return vma_prot;
+>>   }
+>>   EXPORT_SYMBOL(phys_mem_access_prot);
+>> -- 
+>> 2.24.1
+>>
+
+--------------456B615C93724A699A05DEC0
+Content-Type: text/plain; charset=UTF-8;
+ name="cache-test.c"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="cache-test.c"
+
+I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRpbnQuaD4KI2luY2x1ZGUgPHVuaXN0ZC5o
+PgoKc3RhdGljIHVpbnRwdHJfdCB2aXJ0X3RvX3BoeXNfYWRkcmVzcyh1aW50cHRyX3QgdmFkZHIp
+CnsKCUZJTEUgKnBhZ2VtYXA7Cgl1aW50cHRyX3QgcGFkZHIgPSAwOwoJb2ZmX3Qgb2Zmc2V0ID0g
+KHZhZGRyIC8gc3lzY29uZihfU0NfUEFHRVNJWkUpKSAqIHNpemVvZih1aW50NjRfdCk7Cgl1aW50
+NjRfdCBlOwoKCS8qIGh0dHBzOi8vd3d3Lmtlcm5lbC5vcmcvZG9jL0RvY3VtZW50YXRpb24vdm0v
+cGFnZW1hcC50eHQgKi8KCWlmICgocGFnZW1hcCA9IGZvcGVuKCIvcHJvYy9zZWxmL3BhZ2VtYXAi
+LCAiciIpKSkgewoJCWlmIChsc2VlayhmaWxlbm8ocGFnZW1hcCksIG9mZnNldCwgU0VFS19TRVQp
+ID09IG9mZnNldCkgewoJCQlpZiAoZnJlYWQoJmUsIHNpemVvZih1aW50NjRfdCksIDEsIHBhZ2Vt
+YXApKSB7CgkJCQlpZiAoZSAmICgxVUxMIDw8IDYzKSkgeyAvKiBwYWdlIHByZXNlbnQgPyAqLwoJ
+CQkJCS8qIHBmbiBtYXNrICovCgkJCQkJcGFkZHIgPSBlICYgKCgxVUxMIDw8IDU0KSAtIDEpOwoJ
+CQkJCXBhZGRyID0gcGFkZHIgKiBzeXNjb25mKF9TQ19QQUdFU0laRSk7CgkJCQkJLyogYWRkIG9m
+ZnNldCB3aXRoaW4gcGFnZSAqLwoJCQkJCXBhZGRyIHw9ICh2YWRkciAmIChzeXNjb25mKF9TQ19Q
+QUdFU0laRSkgLSAxKSk7CgkJCQl9CgkJCQllbHNlCgkJCQkJcHJpbnRmKCIlczogTm8gcGFnZSBw
+cmVzZW50XG4iLCBfX2Z1bmNfXyk7CgkJCX0KCQkJZWxzZQoJCQkJcHJpbnRmKCIlczogZnJlYWQg
+ZmFpbGVkXG4iLCBfX2Z1bmNfXyk7CgkJfQoJCWVsc2UKCQkJcHJpbnRmKCIlczogbHNlZWsgZGlk
+IG5vdCBmaW5kXG4iLCBfX2Z1bmNfXyk7CgoJCWZjbG9zZShwYWdlbWFwKTsKCX0KCWVsc2UKCQlw
+cmludGYoIiVzOiBQYWdlbWFwIG9wZW4gZmFpbGVkXG4iLCBfX2Z1bmNfXyk7CgoJcmV0dXJuIHBh
+ZGRyOwp9Cgp2b2xhdGlsZSB1aW50MzJfdCB2YXI9MDsKCmludCBtYWluKCkKewogICB2b2lkKiBw
+aHlzX2FkZHIgPSB2aXJ0X3RvX3BoeXNfYWRkcmVzcygmdmFyKTsKICAgcHJpbnRmKCIlcCAlcFxu
+IiwgJnZhciwgcGh5c19hZGRyKTsKICAgd2hpbGUoIHZhcj09MCApCiAgICAgIHNsZWVwKDEpOwog
+ICBwcmludGYoImRvbmVcbiIpOwogICBmZmx1c2goc3Rkb3V0KTsKICAgcmV0dXJuIDA7Cn0K
+
+--------------456B615C93724A699A05DEC0--
