@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2C18194F11
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:33:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCE3F194F0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:33:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbgC0CcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 22:32:10 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48000 "EHLO
+        id S1728047AbgC0CdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 22:33:04 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48036 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727696AbgC0CcJ (ORCPT
+        with ESMTP id S1727835AbgC0CcK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 22:32:09 -0400
+        Thu, 26 Mar 2020 22:32:10 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jHemz-003hR3-Ni; Fri, 27 Mar 2020 02:32:05 +0000
+        id 1jHemz-003hR9-Q3; Fri, 27 Mar 2020 02:32:05 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH v2 04/22] x86: get rid of small constant size cases in raw_copy_{to,from}_user()
-Date:   Fri, 27 Mar 2020 02:31:47 +0000
-Message-Id: <20200327023205.881896-4-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v2 05/22] vm86: get rid of get_user_ex() use
+Date:   Fri, 27 Mar 2020 02:31:48 +0000
+Message-Id: <20200327023205.881896-5-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200327023205.881896-1-viro@ZenIV.linux.org.uk>
 References: <20200327023007.GS23230@ZenIV.linux.org.uk>
@@ -34,201 +34,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Very few call sites where that would be triggered remain, and none
-of those is anywhere near hot enough to bother.
+Just do a copyin of what we want into a local variable and
+be done with that.  We are guaranteed to be on shallow stack
+here...
+
+Note that conditional expression for range passed to access_ok()
+in mainline had been pointless all along - the only difference
+between vm86plus_struct and vm86_struct is that the former has
+one extra field in the end and when we get to copyin of that
+field (conditional upon 'plus' argument), we use copy_from_user().
+Moreover, all fields starting with ->int_revectored are copied
+that way, so we only need that check (be it done by access_ok()
+or by user_access_begin()) only on the beginning of the structure -
+the fields that used to be covered by that get_user_try() block.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/include/asm/uaccess.h    |  12 -----
- arch/x86/include/asm/uaccess_32.h |  27 ----------
- arch/x86/include/asm/uaccess_64.h | 108 +-------------------------------------
- 3 files changed, 2 insertions(+), 145 deletions(-)
+ arch/x86/kernel/vm86_32.c | 54 +++++++++++++++++++++--------------------------
+ 1 file changed, 24 insertions(+), 30 deletions(-)
 
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index ab8eab43a8a2..1cfa33b94a1a 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -378,18 +378,6 @@ do {									\
- 		     : "=r" (err), ltype(x)				\
- 		     : "m" (__m(addr)), "i" (errret), "0" (err))
+diff --git a/arch/x86/kernel/vm86_32.c b/arch/x86/kernel/vm86_32.c
+index 91d55454e702..49b37eb01e99 100644
+--- a/arch/x86/kernel/vm86_32.c
++++ b/arch/x86/kernel/vm86_32.c
+@@ -243,6 +243,7 @@ static long do_sys_vm86(struct vm86plus_struct __user *user_vm86, bool plus)
+ 	struct kernel_vm86_regs vm86regs;
+ 	struct pt_regs *regs = current_pt_regs();
+ 	unsigned long err = 0;
++	struct vm86_struct v;
  
--#define __get_user_asm_nozero(x, addr, err, itype, rtype, ltype, errret)	\
--	asm volatile("\n"						\
--		     "1:	mov"itype" %2,%"rtype"1\n"		\
--		     "2:\n"						\
--		     ".section .fixup,\"ax\"\n"				\
--		     "3:	mov %3,%0\n"				\
--		     "	jmp 2b\n"					\
--		     ".previous\n"					\
--		     _ASM_EXTABLE_UA(1b, 3b)				\
--		     : "=r" (err), ltype(x)				\
--		     : "m" (__m(addr)), "i" (errret), "0" (err))
--
- /*
-  * This doesn't do __uaccess_begin/end - the exception handling
-  * around it must do that.
-diff --git a/arch/x86/include/asm/uaccess_32.h b/arch/x86/include/asm/uaccess_32.h
-index ba2dc1930630..388a40660c7b 100644
---- a/arch/x86/include/asm/uaccess_32.h
-+++ b/arch/x86/include/asm/uaccess_32.h
-@@ -23,33 +23,6 @@ raw_copy_to_user(void __user *to, const void *from, unsigned long n)
- static __always_inline unsigned long
- raw_copy_from_user(void *to, const void __user *from, unsigned long n)
- {
--	if (__builtin_constant_p(n)) {
--		unsigned long ret;
--
--		switch (n) {
--		case 1:
--			ret = 0;
--			__uaccess_begin_nospec();
--			__get_user_asm_nozero(*(u8 *)to, from, ret,
--					      "b", "b", "=q", 1);
--			__uaccess_end();
--			return ret;
--		case 2:
--			ret = 0;
--			__uaccess_begin_nospec();
--			__get_user_asm_nozero(*(u16 *)to, from, ret,
--					      "w", "w", "=r", 2);
--			__uaccess_end();
--			return ret;
--		case 4:
--			ret = 0;
--			__uaccess_begin_nospec();
--			__get_user_asm_nozero(*(u32 *)to, from, ret,
--					      "l", "k", "=r", 4);
--			__uaccess_end();
--			return ret;
--		}
--	}
- 	return __copy_user_ll(to, (__force const void *)from, n);
- }
+ 	err = security_mmap_addr(0);
+ 	if (err) {
+@@ -278,39 +279,32 @@ static long do_sys_vm86(struct vm86plus_struct __user *user_vm86, bool plus)
+ 	if (vm86->saved_sp0)
+ 		return -EPERM;
  
-diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-index 5cd1caa8bc65..bc10e3dc64fe 100644
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -65,117 +65,13 @@ copy_to_user_mcsafe(void *to, const void *from, unsigned len)
- static __always_inline __must_check unsigned long
- raw_copy_from_user(void *dst, const void __user *src, unsigned long size)
- {
--	int ret = 0;
--
--	if (!__builtin_constant_p(size))
--		return copy_user_generic(dst, (__force void *)src, size);
--	switch (size) {
--	case 1:
--		__uaccess_begin_nospec();
--		__get_user_asm_nozero(*(u8 *)dst, (u8 __user *)src,
--			      ret, "b", "b", "=q", 1);
--		__uaccess_end();
--		return ret;
--	case 2:
--		__uaccess_begin_nospec();
--		__get_user_asm_nozero(*(u16 *)dst, (u16 __user *)src,
--			      ret, "w", "w", "=r", 2);
--		__uaccess_end();
--		return ret;
--	case 4:
--		__uaccess_begin_nospec();
--		__get_user_asm_nozero(*(u32 *)dst, (u32 __user *)src,
--			      ret, "l", "k", "=r", 4);
--		__uaccess_end();
--		return ret;
--	case 8:
--		__uaccess_begin_nospec();
--		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
--			      ret, "q", "", "=r", 8);
--		__uaccess_end();
--		return ret;
--	case 10:
--		__uaccess_begin_nospec();
--		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
--			       ret, "q", "", "=r", 10);
--		if (likely(!ret))
--			__get_user_asm_nozero(*(u16 *)(8 + (char *)dst),
--				       (u16 __user *)(8 + (char __user *)src),
--				       ret, "w", "w", "=r", 2);
--		__uaccess_end();
--		return ret;
--	case 16:
--		__uaccess_begin_nospec();
--		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
--			       ret, "q", "", "=r", 16);
--		if (likely(!ret))
--			__get_user_asm_nozero(*(u64 *)(8 + (char *)dst),
--				       (u64 __user *)(8 + (char __user *)src),
--				       ret, "q", "", "=r", 8);
--		__uaccess_end();
--		return ret;
--	default:
--		return copy_user_generic(dst, (__force void *)src, size);
--	}
-+	return copy_user_generic(dst, (__force void *)src, size);
- }
+-	if (!access_ok(user_vm86, plus ?
+-		       sizeof(struct vm86_struct) :
+-		       sizeof(struct vm86plus_struct)))
++	if (copy_from_user(&v, user_vm86,
++			offsetof(struct vm86_struct, int_revectored)))
+ 		return -EFAULT;
  
- static __always_inline __must_check unsigned long
- raw_copy_to_user(void __user *dst, const void *src, unsigned long size)
- {
--	int ret = 0;
+ 	memset(&vm86regs, 0, sizeof(vm86regs));
+-	get_user_try {
+-		unsigned short seg;
+-		get_user_ex(vm86regs.pt.bx, &user_vm86->regs.ebx);
+-		get_user_ex(vm86regs.pt.cx, &user_vm86->regs.ecx);
+-		get_user_ex(vm86regs.pt.dx, &user_vm86->regs.edx);
+-		get_user_ex(vm86regs.pt.si, &user_vm86->regs.esi);
+-		get_user_ex(vm86regs.pt.di, &user_vm86->regs.edi);
+-		get_user_ex(vm86regs.pt.bp, &user_vm86->regs.ebp);
+-		get_user_ex(vm86regs.pt.ax, &user_vm86->regs.eax);
+-		get_user_ex(vm86regs.pt.ip, &user_vm86->regs.eip);
+-		get_user_ex(seg, &user_vm86->regs.cs);
+-		vm86regs.pt.cs = seg;
+-		get_user_ex(vm86regs.pt.flags, &user_vm86->regs.eflags);
+-		get_user_ex(vm86regs.pt.sp, &user_vm86->regs.esp);
+-		get_user_ex(seg, &user_vm86->regs.ss);
+-		vm86regs.pt.ss = seg;
+-		get_user_ex(vm86regs.es, &user_vm86->regs.es);
+-		get_user_ex(vm86regs.ds, &user_vm86->regs.ds);
+-		get_user_ex(vm86regs.fs, &user_vm86->regs.fs);
+-		get_user_ex(vm86regs.gs, &user_vm86->regs.gs);
 -
--	if (!__builtin_constant_p(size))
--		return copy_user_generic((__force void *)dst, src, size);
--	switch (size) {
--	case 1:
--		__uaccess_begin();
--		__put_user_asm(*(u8 *)src, (u8 __user *)dst,
--			      ret, "b", "b", "iq", 1);
--		__uaccess_end();
--		return ret;
--	case 2:
--		__uaccess_begin();
--		__put_user_asm(*(u16 *)src, (u16 __user *)dst,
--			      ret, "w", "w", "ir", 2);
--		__uaccess_end();
--		return ret;
--	case 4:
--		__uaccess_begin();
--		__put_user_asm(*(u32 *)src, (u32 __user *)dst,
--			      ret, "l", "k", "ir", 4);
--		__uaccess_end();
--		return ret;
--	case 8:
--		__uaccess_begin();
--		__put_user_asm(*(u64 *)src, (u64 __user *)dst,
--			      ret, "q", "", "er", 8);
--		__uaccess_end();
--		return ret;
--	case 10:
--		__uaccess_begin();
--		__put_user_asm(*(u64 *)src, (u64 __user *)dst,
--			       ret, "q", "", "er", 10);
--		if (likely(!ret)) {
--			asm("":::"memory");
--			__put_user_asm(4[(u16 *)src], 4 + (u16 __user *)dst,
--				       ret, "w", "w", "ir", 2);
--		}
--		__uaccess_end();
--		return ret;
--	case 16:
--		__uaccess_begin();
--		__put_user_asm(*(u64 *)src, (u64 __user *)dst,
--			       ret, "q", "", "er", 16);
--		if (likely(!ret)) {
--			asm("":::"memory");
--			__put_user_asm(1[(u64 *)src], 1 + (u64 __user *)dst,
--				       ret, "q", "", "er", 8);
--		}
--		__uaccess_end();
--		return ret;
--	default:
--		return copy_user_generic((__force void *)dst, src, size);
--	}
-+	return copy_user_generic((__force void *)dst, src, size);
- }
+-		get_user_ex(vm86->flags, &user_vm86->flags);
+-		get_user_ex(vm86->screen_bitmap, &user_vm86->screen_bitmap);
+-		get_user_ex(vm86->cpu_type, &user_vm86->cpu_type);
+-	} get_user_catch(err);
+-	if (err)
+-		return err;
++
++	vm86regs.pt.bx = v.regs.ebx;
++	vm86regs.pt.cx = v.regs.ecx;
++	vm86regs.pt.dx = v.regs.edx;
++	vm86regs.pt.si = v.regs.esi;
++	vm86regs.pt.di = v.regs.edi;
++	vm86regs.pt.bp = v.regs.ebp;
++	vm86regs.pt.ax = v.regs.eax;
++	vm86regs.pt.ip = v.regs.eip;
++	vm86regs.pt.cs = v.regs.cs;
++	vm86regs.pt.flags = v.regs.eflags;
++	vm86regs.pt.sp = v.regs.esp;
++	vm86regs.pt.ss = v.regs.ss;
++	vm86regs.es = v.regs.es;
++	vm86regs.ds = v.regs.ds;
++	vm86regs.fs = v.regs.fs;
++	vm86regs.gs = v.regs.gs;
++
++	vm86->flags = v.flags;
++	vm86->screen_bitmap = v.screen_bitmap;
++	vm86->cpu_type = v.cpu_type;
  
- static __always_inline __must_check
+ 	if (copy_from_user(&vm86->int_revectored,
+ 			   &user_vm86->int_revectored,
 -- 
 2.11.0
 
