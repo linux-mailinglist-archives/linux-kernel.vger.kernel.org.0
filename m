@@ -2,120 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FF9D1956AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 13:02:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B7791956B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 13:04:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbgC0MCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 08:02:06 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:33052 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbgC0MCG (ORCPT
+        id S1727287AbgC0MEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 08:04:51 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:64771 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726540AbgC0MEt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 08:02:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0KCyy4fR6uqfv7pQ7Bns3VVcVENtN8zz9qfPJTw1u4U=; b=qrI9PjSf/erLcmWVGVGBLQ3Mq
-        01EOlIAqHOrpOFWwygcxDrNjhTmbFQ9VQX92GkkqsZ+n5l2wtjzpSi+3A50x8bCduK1sO1pVfsB61
-        bHohG0qrEgypXagKGIaLv0ERu47suHhJkWI+wHldYyowaoRWhi5U6MgxJ5vFQXbaWzgeUTXlywCkB
-        hkoRLzdjJ8V8DZ1Nj9hXLvXwZCUIOup90jsHvuaY0ptujc453VdVh54oUfD24NtB2R+AKS4XcLKFH
-        K+xpv5v5M74br+N3dEVjydMvRcwTVQ67AsDpoLwSnjRcDbmfnhY0B1I2/f/x4cJJoQ+7Xx8fuO2fA
-        Q3UM/wpTg==;
-Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:37884)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1jHngR-0000tb-TR; Fri, 27 Mar 2020 12:01:56 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1jHngO-0004Bh-2o; Fri, 27 Mar 2020 12:01:52 +0000
-Date:   Fri, 27 Mar 2020 12:01:52 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Florinel Iordache <florinel.iordache@nxp.com>, davem@davemloft.net,
-        netdev@vger.kernel.org, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, kuba@kernel.org,
-        corbet@lwn.net, shawnguo@kernel.org, leoyang.li@nxp.com,
-        madalin.bucur@oss.nxp.com, ioana.ciornei@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/9] net: phy: add kr phy connection type
-Message-ID: <20200327120151.GG25745@shell.armlinux.org.uk>
-References: <1585230682-24417-1-git-send-email-florinel.iordache@nxp.com>
- <1585230682-24417-4-git-send-email-florinel.iordache@nxp.com>
- <20200327001515.GL3819@lunn.ch>
+        Fri, 27 Mar 2020 08:04:49 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585310688; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=WKPprADW7GaHUNyw/PHeP+u/8K2DkZNryKIcozt3Bdo=; b=tw0546czURVt3JqUZKtGw/twd7Ptz4/6uvDLRZxi+GXrLKgnuQUZMfr3LbTDEY06h3t3YISA
+ h+gPRbwKvES5pC5gKXDPWMPkE+6JYaWdDRb9ju8DohRj/M0mJEZgtx+YEvk6p2ABnmbIdWyA
+ jhuAI4ij6cezN8jivdid8Wo5Ka4=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e7debd2.7feaa61c4998-smtp-out-n01;
+ Fri, 27 Mar 2020 12:04:34 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id DDDB3C43637; Fri, 27 Mar 2020 12:04:33 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [192.168.43.129] (unknown [106.222.5.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mkshah)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5F482C433D2;
+        Fri, 27 Mar 2020 12:04:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F482C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
+Subject: Re: [PATCH v14 6/6] soc: qcom: rpmh-rsc: Allow using free WAKE TCS
+ for active request
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org
+References: <1585244270-637-1-git-send-email-mkshah@codeaurora.org>
+ <1585244270-637-7-git-send-email-mkshah@codeaurora.org>
+ <CAD=FV=Vbo3JC6mBJXq+q+DQPC_bbNtn3bbScG5N8wzJZm87YuA@mail.gmail.com>
+From:   Maulik Shah <mkshah@codeaurora.org>
+Message-ID: <8d19958d-7334-ca4e-d7ba-f5919a56b279@codeaurora.org>
+Date:   Fri, 27 Mar 2020 17:34:26 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200327001515.GL3819@lunn.ch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAD=FV=Vbo3JC6mBJXq+q+DQPC_bbNtn3bbScG5N8wzJZm87YuA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 01:15:15AM +0100, Andrew Lunn wrote:
-> On Thu, Mar 26, 2020 at 03:51:16PM +0200, Florinel Iordache wrote:
-> > Add support for backplane kr phy connection types currently available
-> > (10gbase-kr, 40gbase-kr4) and the required phylink updates (cover all
-> > the cases for KR modes which are clause 45 compatible to correctly assign
-> > phy_interface and phylink#supported)
-> > 
-> > Signed-off-by: Florinel Iordache <florinel.iordache@nxp.com>
-> > ---
-> >  drivers/net/phy/phylink.c | 15 ++++++++++++---
-> >  include/linux/phy.h       |  6 +++++-
-> >  2 files changed, 17 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-> > index fed0c59..db1bb87 100644
-> > --- a/drivers/net/phy/phylink.c
-> > +++ b/drivers/net/phy/phylink.c
-> > @@ -4,6 +4,7 @@
-> >   * technologies such as SFP cages where the PHY is hot-pluggable.
-> >   *
-> >   * Copyright (C) 2015 Russell King
-> > + * Copyright 2020 NXP
-> >   */
-> >  #include <linux/ethtool.h>
-> >  #include <linux/export.h>
-> > @@ -303,7 +304,6 @@ static int phylink_parse_mode(struct phylink *pl, struct fwnode_handle *fwnode)
-> >  			break;
-> >  
-> >  		case PHY_INTERFACE_MODE_USXGMII:
-> > -		case PHY_INTERFACE_MODE_10GKR:
-> 
-> We might have a backwards compatibility issue here. If i remember
-> correctly, there are some boards out in the wild using
-> PHY_INTERFACE_MODE_10GKR not PHY_INTERFACE_MODE_10GBASER.
-> 
-> See e0f909bc3a242296da9ccff78277f26d4883a79d
-> 
-> Russell, what do you say about this?
+Hi,
 
-Yes, and that's a point that I made when I introduced 10GBASER to
-correct that mistake.  It is way too soon to change this; it will
-definitely cause regressions:
+On 3/27/2020 3:16 AM, Doug Anderson wrote:
+> Hi,
+>
+> On Thu, Mar 26, 2020 at 10:38 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+>> When there are more than one WAKE TCS available and there is no dedicated
+>> ACTIVE TCS available, invalidating all WAKE TCSes and waiting for current
+>> transfer to complete in first WAKE TCS blocks using another free WAKE TCS
+>> to complete current request.
+>>
+>> Remove rpmh_rsc_invalidate() to happen from tcs_write() when WAKE TCSes
+>> is re-purposed to be used for Active mode. Clear only currently used
+>> WAKE TCS's register configuration.
+>>
+>> Mark the caches as dirty so next time when rpmh_flush() is invoked it
+>> can invalidate and program cached sleep and wake sets again.
+>>
+>> Fixes: 2de4b8d33eab (drivers: qcom: rpmh-rsc: allow active requests from wake TCS)
+>> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+>> ---
+>>  drivers/soc/qcom/rpmh-rsc.c | 29 +++++++++++++++++++----------
+>>  1 file changed, 19 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+>> index 8fa70b4..c0513af 100644
+>> --- a/drivers/soc/qcom/rpmh-rsc.c
+>> +++ b/drivers/soc/qcom/rpmh-rsc.c
+>> @@ -154,8 +154,9 @@ int rpmh_rsc_invalidate(struct rsc_drv *drv)
+>>  static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+>>                                          const struct tcs_request *msg)
+>>  {
+>> -       int type, ret;
+>> +       int type;
+>>         struct tcs_group *tcs;
+>> +       unsigned long flags;
+>>
+>>         switch (msg->state) {
+>>         case RPMH_ACTIVE_ONLY_STATE:
+>> @@ -175,18 +176,18 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+>>          * If we are making an active request on a RSC that does not have a
+>>          * dedicated TCS for active state use, then re-purpose a wake TCS to
+>>          * send active votes.
+>> -        * NOTE: The driver must be aware that this RSC does not have a
+>> -        * dedicated AMC, and therefore would invalidate the sleep and wake
+>> -        * TCSes before making an active state request.
+>> +        *
+>> +        * NOTE: Mark caches as dirty here since existing data in wake TCS will
+>> +        * be lost. rpmh_flush() will processed for dirty caches to restore
+>> +        * data.
+>>          */
+>>         tcs = get_tcs_of_type(drv, type);
+>>         if (msg->state == RPMH_ACTIVE_ONLY_STATE && !tcs->num_tcs) {
+>>                 tcs = get_tcs_of_type(drv, WAKE_TCS);
+>> -               if (tcs->num_tcs) {
+>> -                       ret = rpmh_rsc_invalidate(drv);
+>> -                       if (ret)
+>> -                               return ERR_PTR(ret);
+>> -               }
+>> +
+>> +               spin_lock_irqsave(&drv->client.cache_lock, flags);
+>> +               drv->client.dirty = true;
+>> +               spin_unlock_irqrestore(&drv->client.cache_lock, flags);
+> This seems like a huge abstraction violation.  
 
-$ grep 10gbase-kr arch/*/boot/dts -r
-arch/arm64/boot/dts/marvell/cn9131-db.dts:      phy-mode = "10gbase-kr";
-arch/arm64/boot/dts/marvell/armada-8040-mcbin.dts:      phy-mode = "10gbase-kr";
-arch/arm64/boot/dts/marvell/armada-8040-mcbin.dts:      phy-mode = "10gbase-kr";
-arch/arm64/boot/dts/marvell/armada-7040-db.dts:    phy-mode = "10gbase-kr";
-arch/arm64/boot/dts/marvell/armada-8040-mcbin-singleshot.dts:   phy-mode = "10gbase-kr";
-arch/arm64/boot/dts/marvell/armada-8040-mcbin-singleshot.dts:   phy-mode = "10gbase-kr";
-arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts:     phy-mode = "10gbase-kr";
-arch/arm64/boot/dts/marvell/armada-8040-db.dts: phy-mode = "10gbase-kr";
-arch/arm64/boot/dts/marvell/armada-8040-db.dts: phy-mode = "10gbase-kr";
-arch/arm64/boot/dts/marvell/cn9132-db.dts:      phy-mode = "10gbase-kr";
-arch/arm64/boot/dts/marvell/cn9130-db.dts:      phy-mode = "10gbase-kr";
+Agree that cache_lock and dirty flag are used in rpmh.c
 
-So any change to the existing PHY_INTERFACE_MODE_10GKR will likely
-break all these platforms.
+I will address this to either notify rpmh.c to mark it dirty or think of other solution.
+
+> Why can't rpmh_write()
+> / rpmh_write_async() / rpmh_write_batch() just always unconditionally
+> mark the cache dirty?  Are there really lots of cases when those calls
+> are made and they do nothing?
+
+At rpmh.c, it doesn't know that rpmh-rsc.c worked on borrowed TCS to finish the request.
+
+We should not blindly mark caches dirty everytime.
+
+>
+>
+> Other than that this patch seems sane to me and addresses one of the
+> comments I had in:
+>
+> https://lore.kernel.org/r/CAD=FV=XmBQb8yfx14T-tMQ68F-h=3UHog744b3X3JZViu15+4g@mail.gmail.com
+>
+> ...interestingly after your patch I guess now I guess tcs_invalidate()
+> no longer needs spinlocks since it's only ever called from PM code on
+> the last CPU.  ...if you agree, I can always do it in my cleanup
+> series.  See:
+>
+> https://lore.kernel.org/r/CAD=FV=Xp1o68HnC2-hMnffDDsi+jjgc9pNrdNuypjQZbS5K4nQ@mail.gmail.com
+>
+> -Doug
+
+There are other RSCs which use same driver, so lets keep spinlock.
+
+I still didn't get chance to validate your patch (i will have update sometime next week), just to update I have never seen any issue internally
+
+using spin_lock even on nosmp case, that might require it to change to _irq_save/restore variant.
+
+Thanks,
+Maulik
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
