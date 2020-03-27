@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E38511960FD
+	by mail.lfdr.de (Postfix) with ESMTP id 7986D1960FC
 	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 23:25:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbgC0WZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 18:25:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42686 "EHLO mail.kernel.org"
+        id S1727924AbgC0WZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 18:25:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727848AbgC0WZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 18:25:05 -0400
+        id S1727851AbgC0WZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 18:25:06 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4348120748;
+        by mail.kernel.org (Postfix) with ESMTPSA id 960922082F;
         Fri, 27 Mar 2020 22:25:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1585347905;
-        bh=vQe8NVEMs1r1iIdW79nChbeEufogMpa18G/zwHFEoSQ=;
+        bh=kK1MJt6yTefHujSugVU2qoSkuuW27g9hBc3UdDhh07E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SQiiUl5hDCl4F4W5UrTIKu284R2qZVNjSmhtQ2LuOLwHq2Vi7RxFpkjGaBpt8Fqc1
-         35iaRZVOIFutS9ooRUWswhZyjl1s6JhHSkKuGfw2XGXuDYkBXPZ85dtPDacW2OGKYZ
-         QrWa1lZ5oMSpCAyqSRJLDh+l5NLCK4wuwuuKxicc=
+        b=QNUHR4FPrKjyAGZWE9y1FlLcSgSLpD8vXrnm42fB7nMyj1gHTCZFFx/TvhABagO/p
+         VtZrRGgqL3/xwN24yaJ5I+oA2BSEPmO3YXP6IIc3sFuwHNH096b+NiByVdbDnsQcrT
+         YD4+Uj0CUrF3kq1yCjZ68VX4O1/WkMgd13gYk9/0=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v3 tip/core/rcu 21/34] rcu-tasks: Add a grace-period start time for throttling and debug
-Date:   Fri, 27 Mar 2020 15:24:43 -0700
-Message-Id: <20200327222456.12470-21-paulmck@kernel.org>
+Subject: [PATCH v3 tip/core/rcu 22/34] rcu-tasks: Provide boot parameter to delay IPIs until late in grace period
+Date:   Fri, 27 Mar 2020 15:24:44 -0700
+Message-Id: <20200327222456.12470-22-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200327222346.GA12082@paulmck-ThinkPad-P72>
 References: <20200327222346.GA12082@paulmck-ThinkPad-P72>
@@ -45,35 +45,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-This commit adds a place to record the grace-period start in jiffies.
-This will be used by later commits for debugging purposes and to throttle
-IPIs early in the grace period.
+This commit provides a rcupdate.rcu_task_ipi_delay kernel boot parameter
+that specifies how old the RCU tasks trace grace period must be before
+the grace-period kthread starts sending IPIs.  This delay allows more
+tasks to pass through rcu_tasks_qs() quiescent states, thus reducing
+(or even eliminating) the number of IPIs that must be sent.
+
+On a short rcutorture test setting this kernel boot parameter to HZ/2
+resulted in zero IPIs for all 877 RCU-tasks trace grace periods that
+elapsed during that test.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tasks.h | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt |  7 +++++++
+ kernel/rcu/tasks.h                              | 15 ++++++++++-----
+ 2 files changed, 17 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index df2baf9..6f3b3be 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4246,6 +4246,13 @@
+ 			only normal grace-period primitives.  No effect
+ 			on CONFIG_TINY_RCU kernels.
+ 
++	rcupdate.rcu_task_ipi_delay= [KNL]
++			Set time in jiffies during which RCU tasks will
++			avoid sending IPIs, starting with the beginning
++			of a given grace period.  Setting a large
++			number avoids disturbing real-time workloads,
++			but lengthens grace periods.
++
+ 	rcupdate.rcu_task_stall_timeout= [KNL]
+ 			Set timeout in jiffies for RCU task stall warning
+ 			messages.  Disable with a value less than or equal
 diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index cbc9905..fa9c069 100644
+index fa9c069..a034f48 100644
 --- a/kernel/rcu/tasks.h
 +++ b/kernel/rcu/tasks.h
-@@ -46,6 +46,7 @@ struct rcu_tasks {
- 	raw_spinlock_t cbs_lock;
- 	int gp_state;
- 	unsigned long gp_jiffies;
-+	unsigned long gp_start;
- 	struct task_struct *kthread_ptr;
- 	rcu_tasks_gp_func_t gp_func;
- 	pregp_func_t pregp_func;
-@@ -200,6 +201,7 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+@@ -74,6 +74,11 @@ static struct rcu_tasks rt_name =					\
+ /* Track exiting tasks in order to allow them to be waited for. */
+ DEFINE_STATIC_SRCU(tasks_rcu_exit_srcu);
  
- 		// Wait for one grace period.
- 		set_tasks_gp_state(rtp, RTGS_WAIT_GP);
-+		rtp->gp_start = jiffies;
- 		rtp->gp_func(rtp);
++/* Avoid IPIing CPUs early in the grace period. */
++#define RCU_TASK_IPI_DELAY (HZ / 2)
++static int rcu_task_ipi_delay __read_mostly = RCU_TASK_IPI_DELAY;
++module_param(rcu_task_ipi_delay, int, 0644);
++
+ /* Control stall timeouts.  Disable with <= 0, otherwise jiffies till stall. */
+ #define RCU_TASK_STALL_TIMEOUT (HZ * 60 * 10)
+ static int rcu_task_stall_timeout __read_mostly = RCU_TASK_STALL_TIMEOUT;
+@@ -713,6 +718,10 @@ DECLARE_WAIT_QUEUE_HEAD(trc_wait);	// List of holdout tasks.
+ // Record outstanding IPIs to each CPU.  No point in sending two...
+ static DEFINE_PER_CPU(bool, trc_ipi_to_cpu);
  
- 		/* Invoke the callbacks. */
++void call_rcu_tasks_trace(struct rcu_head *rhp, rcu_callback_t func);
++DEFINE_RCU_TASKS(rcu_tasks_trace, rcu_tasks_wait_gp, call_rcu_tasks_trace,
++		 "RCU Tasks Trace");
++
+ /* If we are the last reader, wake up the grace-period kthread. */
+ void rcu_read_unlock_trace_special(struct task_struct *t)
+ {
+@@ -825,7 +834,7 @@ static void trc_wait_for_one_reader(struct task_struct *t,
+ 
+ 	// If currently running, send an IPI, either way, add to list.
+ 	trc_add_holdout(t, bhp);
+-	if (task_curr(t)) {
++	if (task_curr(t) && time_after(jiffies, rcu_tasks_trace.gp_start + rcu_task_ipi_delay)) {
+ 		// The task is currently running, so try IPIing it.
+ 		cpu = task_cpu(t);
+ 
+@@ -994,10 +1003,6 @@ void exit_tasks_rcu_finish_trace(struct task_struct *t)
+ 		rcu_read_unlock_trace_special(t);
+ }
+ 
+-void call_rcu_tasks_trace(struct rcu_head *rhp, rcu_callback_t func);
+-DEFINE_RCU_TASKS(rcu_tasks_trace, rcu_tasks_wait_gp, call_rcu_tasks_trace,
+-		 "RCU Tasks Trace");
+-
+ /**
+  * call_rcu_tasks_trace() - Queue a callback trace task-based grace period
+  * @rhp: structure to be used for queueing the RCU updates.
 -- 
 2.9.5
 
