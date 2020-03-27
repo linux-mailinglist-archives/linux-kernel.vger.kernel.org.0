@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 793EB194EBF
+	by mail.lfdr.de (Postfix) with ESMTP id E319B194EC0
 	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 03:11:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbgC0CLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Mar 2020 22:11:07 -0400
-Received: from mail-pj1-f74.google.com ([209.85.216.74]:54388 "EHLO
-        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727708AbgC0CLH (ORCPT
+        id S1727781AbgC0CLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Mar 2020 22:11:11 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:38813 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727708AbgC0CLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Mar 2020 22:11:07 -0400
-Received: by mail-pj1-f74.google.com with SMTP id p14so6207002pjo.4
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 19:11:06 -0700 (PDT)
+        Thu, 26 Mar 2020 22:11:11 -0400
+Received: by mail-pf1-f202.google.com with SMTP id f14so7052008pfk.5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Mar 2020 19:11:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=5IcQYYvEOpf9NGuTwGi2Hn9JVgRq+o118uhRqu7k0m0=;
-        b=nd1CtBFcTZEGQcDkT14QoA4Yt3oF33FVgLCEDBR2Q7ayEh/pg5mxeQei8Hq6Qn/fQN
-         dnvae75F9n2TtcYdf4RCvvHCcmR8c4+8qU/cTzfGkGlswnCmlgVaWb3zeCV/UmRCOThK
-         ffEw6O7z9sjLvRugSKN6fwq2aWH93kF22ftaeZBjBrBN8bVVTSaBSNj6b+EuPcoaS0Bc
-         qYL103D7NSB5dr8XVVEIOJzQtuRRSqJSfW0sAIWuExMN26s2VyTogQwN2Ulb+bgyQzUq
-         6XW+y6ZMN2ev1vLcSUTw7Q1PT5IbehalfTH0WflgQfqJgCwpW8WXF/OpN84zvj5v+39c
-         jqwg==
+        bh=lSXLGIOt8CRablzbfhFF+Q5uTpG35OzukruA70fch2E=;
+        b=jkJyZtiTrah0k12mJlrKqb7rSd5WlOpLupMyryDRi33YSxPy+21eUQex0fK+X6UB+0
+         zT9vjBnp+JwXEhFJRtxY2RsQTudvG97D1Lhp3WSb6TWLEk4+0gziK988qhQUXl4RUfnA
+         JJC0smgj5BCrsqaMZZx/nrKasdKT8AJ3vDRG51QIjnQs+dXXdQb8IFLBNIluFonhWM24
+         lBGwXY+6lOwUxGW551lnx+9w9Xh6gM3qrAD4/jWe5h3HN25ESGEJDg9fXRfMZFw8Ciia
+         h4zvE9h5T43BpT3s4TZGvD3/NrHuQjjWBNEmx/PkneV8d+2w+CXEFk7tKbW2PI/RYW6J
+         uOHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=5IcQYYvEOpf9NGuTwGi2Hn9JVgRq+o118uhRqu7k0m0=;
-        b=H6/R/JimwXu/ehbJxQZLZRkE/tPRoclGZM1p+NJnVuyjqVDaBUZxlUfzjuhrvVbW3W
-         ELhI+rPQInFR5qHM6Z8JI1Dn8LAvIoeVGWFkeD7tWAzvsqusxa9zNHhaCylnn31lD2jG
-         +9jEu7BLYqzb59ltNP04Ogtqlbl4BQfIs6910lfqVw2uUago/vjCmeb41jjYNuMJga+/
-         mvELLGaAW2gl5hRrMrSKur3oRkovagYRoIIOet8Q0bLKFqojTGfJZteQmhz9YSrVT1V2
-         1pPTpVYm0pXC0ITonPG+cFTM8U9sZa4GMIdQvOoA+UhELfVgHkAJii0C0QSyszT43b5I
-         8BIw==
-X-Gm-Message-State: ANhLgQ2CNrPr4gpIQWdAUtldJby7wJopPsbVhaJDpoCaIB6wk7SQBeGc
-        dGDQ8a4fUhxXJ9G7bkzVeU+M14mt4/I=
-X-Google-Smtp-Source: ADFU+vukgJsaKkjiJl9jV3Uag6Yq8m6U/B+bL9fZPSlqRx0VPEEqdKN0rSymuE2xHRSkZ6VEB9E4A/A6zSE=
-X-Received: by 2002:a17:90a:264f:: with SMTP id l73mr3221253pje.92.1585275065886;
- Thu, 26 Mar 2020 19:11:05 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 19:10:50 -0700
+        bh=lSXLGIOt8CRablzbfhFF+Q5uTpG35OzukruA70fch2E=;
+        b=cTxWDOa1W71BgV1QV7TLzGuqTYdPvhE123/DOujtTdBCA1oSj1KsifMeIPSeO3fg0y
+         qcLPLxCF6d7tNekuIn2DVrm5Esk74oDrMrBgtcLLgB00kEEPs+XdjERNUHDMvuDRJFHg
+         WsVA10+so15QVyQpfz0P1DXP9/9zg1XHcKn1pzq+o+nVtHW5E4RYu1EC2KTtjUn9uSeP
+         hCbPaRlNa/8KwB0AiupvLPeMC8/EHlLhPfAXYLr6cVE7uJ4ySmlaexqPIulik2CYgqjU
+         kwpNuN/6ZQL/MJnURk+hZ2rLeqWEtX49wtgtSZk7tJNtUANz8xwuOtH9NDZyEIzEu1ci
+         6log==
+X-Gm-Message-State: ANhLgQ311MkQE94qbr2Ljlk5RPiAR1xx0IE2VNxyL1HnAHJbt/XW1XqE
+        n2FrxA7deCawgEnDBayh69mFO/jls3M=
+X-Google-Smtp-Source: ADFU+vvRRsE1kbtwpKYeV5gGrgzJavkeIriSS9e6ve7iTLNvp2pxYAdq+JZbiyapnuNAIMUA+wO7dwV9jjg=
+X-Received: by 2002:a17:90a:d585:: with SMTP id v5mr3322521pju.4.1585275068691;
+ Thu, 26 Mar 2020 19:11:08 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 19:10:51 -0700
 In-Reply-To: <20200327021058.221911-1-walken@google.com>
-Message-Id: <20200327021058.221911-3-walken@google.com>
+Message-Id: <20200327021058.221911-4-walken@google.com>
 Mime-Version: 1.0
 References: <20200327021058.221911-1-walken@google.com>
 X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
-Subject: [PATCH v2 02/10] MMU notifier: use the new mmap locking API
+Subject: [PATCH v2 03/10] DMA  reservations: use the new mmap locking API
 From:   Michel Lespinasse <walken@google.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         linux-mm <linux-mm@kvack.org>
@@ -76,33 +76,39 @@ would miss.
 
 Signed-off-by: Michel Lespinasse <walken@google.com>
 ---
- include/linux/mmu_notifier.h | 5 +++--
+ drivers/dma-buf/dma-resv.c | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index 736f6918335e..2f462710a1a4 100644
---- a/include/linux/mmu_notifier.h
-+++ b/include/linux/mmu_notifier.h
-@@ -5,6 +5,7 @@
- #include <linux/list.h>
- #include <linux/spinlock.h>
- #include <linux/mm_types.h>
-+#include <linux/mmap_lock.h>
- #include <linux/srcu.h>
- #include <linux/interval_tree.h>
+diff --git a/drivers/dma-buf/dma-resv.c b/drivers/dma-buf/dma-resv.c
+index 4264e64788c4..b45f8514dc82 100644
+--- a/drivers/dma-buf/dma-resv.c
++++ b/drivers/dma-buf/dma-resv.c
+@@ -34,6 +34,7 @@
  
-@@ -277,9 +278,9 @@ mmu_notifier_get(const struct mmu_notifier_ops *ops, struct mm_struct *mm)
- {
- 	struct mmu_notifier *ret;
+ #include <linux/dma-resv.h>
+ #include <linux/export.h>
++#include <linux/mm.h>
+ #include <linux/sched/mm.h>
  
--	down_write(&mm->mmap_sem);
-+	mmap_write_lock(mm);
- 	ret = mmu_notifier_get_locked(ops, mm);
--	up_write(&mm->mmap_sem);
-+	mmap_write_unlock(mm);
- 	return ret;
- }
- void mmu_notifier_put(struct mmu_notifier *subscription);
+ /**
+@@ -109,7 +110,7 @@ static int __init dma_resv_lockdep(void)
+ 
+ 	dma_resv_init(&obj);
+ 
+-	down_read(&mm->mmap_sem);
++	mmap_read_lock(mm);
+ 	ww_acquire_init(&ctx, &reservation_ww_class);
+ 	ret = dma_resv_lock(&obj, &ctx);
+ 	if (ret == -EDEADLK)
+@@ -118,7 +119,7 @@ static int __init dma_resv_lockdep(void)
+ 	fs_reclaim_release(GFP_KERNEL);
+ 	ww_mutex_unlock(&obj.lock);
+ 	ww_acquire_fini(&ctx);
+-	up_read(&mm->mmap_sem);
++	mmap_read_unlock(mm);
+ 	
+ 	mmput(mm);
+ 
 -- 
 2.26.0.rc2.310.g2932bb562d-goog
 
