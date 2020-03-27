@@ -2,100 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B43EE1959F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 16:33:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD7621959FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 16:35:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbgC0Pdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 11:33:32 -0400
-Received: from foss.arm.com ([217.140.110.172]:46882 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbgC0Pdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 11:33:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2E0031B;
-        Fri, 27 Mar 2020 08:33:31 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36BCF3F71F;
-        Fri, 27 Mar 2020 08:33:31 -0700 (PDT)
-Date:   Fri, 27 Mar 2020 15:33:29 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     alsa-devel@alsa-project.org, Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: pxa: magician: convert to use i2c_new_client_device()" to the asoc tree
-In-Reply-To:  <20200326211010.13471-2-wsa+renesas@sang-engineering.com>
-Message-Id:  <applied-20200326211010.13471-2-wsa+renesas@sang-engineering.com>
-X-Patchwork-Hint: ignore
+        id S1727606AbgC0Pff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 11:35:35 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:33725 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbgC0Pfb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 11:35:31 -0400
+Received: by mail-vk1-f195.google.com with SMTP id f63so2793062vkh.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 08:35:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=O9dJ6ogh71Pb5Yhc0YsPgqXvzYYmHlI805Hcr0oRvnk=;
+        b=WQmCcaJLCjH+Y/bk6cBwlM3vi2NSt+Eo1g09Ot+7fbNbJKYqBw6CjniZE7QcITNlPu
+         Bs6dlOdjHVOANKB+yfblfYscMNRyrifpLf0MH5dVuzCVI8MgPcxBQabIUqL1fBCk58TR
+         kpqgBgkEVlBTLhMSzoEnc6cL2KLN09JjGoH+mTCFxuuJa9ao12aXGjekqKJ6cSvs1jxV
+         VlEPO1mWVkD5bC6h6kwp/4C81u+OAZV1FZ8ZyGcbGGR6C9R7QNVmLGqPX7RE2R9Aq/SW
+         hGtXbdg6xyAJG9dDQrhv+GgzTS1QEYGxtrkzL02rWrEp85aIUjM3G5M6M8eDaJ1noWbc
+         AL7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=O9dJ6ogh71Pb5Yhc0YsPgqXvzYYmHlI805Hcr0oRvnk=;
+        b=UA+jZkJdAxAVPRy4O/nf1hazb6gLojmbRbxSpB+pUYHsJ5JjR+C2b2pY2g8b9nNuSF
+         uQQkum9Ls0dAQWG2Wc7SBpyH0+cjqXlZf5u5LDUcgQQl2slr5ay5zyc3VSwP8gllaeVz
+         3eYEBUk6OFOo7rGZsZRKobuCaQWGvCeo6y9V/Fwq/KdOJ8QPF5poxZ3ytr7w+GCWpLsL
+         6JbVpaT45rz3Blb9OF1zJTaTc8oPVwfKaROIEzQLNTlqu36kHJIZO2EQm/cjNKJYYM8d
+         FeyQ4z9aDlo66mcXrQzjUh0sRroywZER0U3yJSe4lSWQ1qnlv2a5M02Dp1Xvnu8H79Ka
+         pTRg==
+X-Gm-Message-State: ANhLgQ0rUYZnKEC+++61z4o18B67EP1wukZXo5ZG4rHo6FB0qJhDyQHk
+        cRzpMuOITje84pDmTH3KXv8cFa0bULlays46KdWbiuhOwKU=
+X-Google-Smtp-Source: ADFU+vtKz15viEUk4xOXDGYZGMYE5SXgcDqR/iXSCAChXlh2gnOavOfVTolvTnJ/rkcoYXRFryMu5lJ34uXAd7dKr3Q=
+X-Received: by 2002:a1f:2947:: with SMTP id p68mr11663597vkp.43.1585323330353;
+ Fri, 27 Mar 2020 08:35:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200325113407.26996-1-ulf.hansson@linaro.org>
+ <VI1PR04MB504097B40CE0B804FA60D67A90CF0@VI1PR04MB5040.eurprd04.prod.outlook.com>
+ <VI1PR04MB5040FFADA4F780422E208AC390CC0@VI1PR04MB5040.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB5040FFADA4F780422E208AC390CC0@VI1PR04MB5040.eurprd04.prod.outlook.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 27 Mar 2020 16:34:53 +0100
+Message-ID: <CAPDyKFr_yOmZ2MMvp=1krHejCRDRfhC0B+1icYR5xuZfhKy_ag@mail.gmail.com>
+Subject: Re: [PATCH 0/2] amba/platform: Initialize dma_parms at the bus level
+To:     BOUGH CHEN <haibo.chen@nxp.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Fri, 27 Mar 2020 at 04:02, BOUGH CHEN <haibo.chen@nxp.com> wrote:
+>
+>
+> > -----Original Message-----
+> > From: BOUGH CHEN
+> > Sent: 2020=E5=B9=B43=E6=9C=8826=E6=97=A5 12:41
+> > To: Ulf Hansson <ulf.hansson@linaro.org>; Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org>; Rafael J . Wysocki <rafael@kernel.org>;
+> > linux-kernel@vger.kernel.org
+> > Cc: Arnd Bergmann <arnd@arndb.de>; Christoph Hellwig <hch@lst.de>;
+> > Russell King <linux@armlinux.org.uk>; Linus Walleij <linus.walleij@lina=
+ro.org>;
+> > Vinod Koul <vkoul@kernel.org>; Ludovic Barre <ludovic.barre@st.com>;
+> > linux-arm-kernel@lists.infradead.org; dmaengine@vger.kernel.org
+> > Subject: RE: [PATCH 0/2] amba/platform: Initialize dma_parms at the bus=
+ level
+> >
+> > > -----Original Message-----
+> > > From: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Sent: 2020=E5=B9=B43=E6=9C=8825=E6=97=A5 19:34
+> > > To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Rafael J .
+> > > Wysocki <rafael@kernel.org>; linux-kernel@vger.kernel.org
+> > > Cc: Arnd Bergmann <arnd@arndb.de>; Christoph Hellwig <hch@lst.de>;
+> > > Russell King <linux@armlinux.org.uk>; Linus Walleij
+> > > <linus.walleij@linaro.org>; Vinod Koul <vkoul@kernel.org>; BOUGH CHEN
+> > > <haibo.chen@nxp.com>; Ludovic Barre <ludovic.barre@st.com>;
+> > > linux-arm-kernel@lists.infradead.org; dmaengine@vger.kernel.org; Ulf
+> > > Hansson <ulf.hansson@linaro.org>
+> > > Subject: [PATCH 0/2] amba/platform: Initialize dma_parms at the bus
+> > > level
+> > >
+> > > It's currently the amba/platform driver's responsibility to initializ=
+e
+> > > the pointer, dma_parms, for its corresponding struct device. The
+> > > benefit with this approach allows us to avoid the initialization and
+> > > to not waste memory for the struct device_dma_parameters, as this can
+> > > be decided on a case by case basis.
+> > >
+> > > However, it has turned out that this approach is not very practical.
+> > > Not only does it lead to open coding, but also to real errors. In
+> > > principle callers of
+> > > dma_set_max_seg_size() doesn't check the error code, but just assumes
+> > > it succeeds.
+> > >
+> > > For these reasons, this series initializes the dma_parms from the
+> > > amba/platform bus at the device registration point. This also follows
+> > > the way the PCI devices are being managed, see pci_device_add().
+> > >
+> > > If it turns out that this is an acceptable solution, we probably also
+> > > want the changes for stable, but I am not sure if it applies without =
+conflicts.
+> > >
+> > > The series is based on v5.6-rc7.
+> > >
+> >
+> > Hi Ulf,
+> >
+> > Since i.MXQM SMMU related code still not upstream yet, so I apply your
+> > patches on our internal Linux branch based on v5.4.24, and find it do n=
+ot work
+> > on my side. Maybe for platform core drivers, there is a gap between v5.=
+4.24
+> > and v5.6-rc7 which has the impact.
+> > I will try to put our SMMU related code into v5.6-rc7, then do the test=
+ again.
+> >
+> >
+>
+> Hi Ulf,
+>
+> On the latest Linux-next branch, the top commit 89295c59c1f063b533d071ca4=
+9d0fa0c0783ca6f (tag: next-20200326), after add your two patches, I just ad=
+d the simple debug code as following in the /driver/mmc/core/queue.c, but s=
+eems still not work as our expect, logically, it should work, so can you or=
+ anyone test on other platform? This seems weird.
 
-   ASoC: pxa: magician: convert to use i2c_new_client_device()
+You are right, this doesn't work for platform devices being added
+through the OF path.
 
-has been applied to the asoc tree at
+In other words, of_platform_device_create_pdata() manually allocates
+the platform device and assigns it the &platform_bus_type, but without
+calling platform_device_add().
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+For amba, it works fine, as in that OF path, amba_device_add() is called. H=
+mm.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+I re-spin this, to address the problem. Perhaps we simply need to use
+the ->probe() path.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Kind regards
+Uffe
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 17fb5433150e8b0b4000a77a21055359a2eab534 Mon Sep 17 00:00:00 2001
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 26 Mar 2020 22:10:10 +0100
-Subject: [PATCH] ASoC: pxa: magician: convert to use i2c_new_client_device()
-
-Move away from the deprecated API and return the shiny new ERRPTR where
-useful.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/20200326211010.13471-2-wsa+renesas@sang-engineering.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/pxa/magician.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/pxa/magician.c b/sound/soc/pxa/magician.c
-index 6483cff5b73d..3bafd86bfb93 100644
---- a/sound/soc/pxa/magician.c
-+++ b/sound/soc/pxa/magician.c
-@@ -358,10 +358,10 @@ static int __init magician_init(void)
- 	adapter = i2c_get_adapter(0);
- 	if (!adapter)
- 		return -ENODEV;
--	client = i2c_new_device(adapter, i2c_board_info);
-+	client = i2c_new_client_device(adapter, i2c_board_info);
- 	i2c_put_adapter(adapter);
--	if (!client)
--		return -ENODEV;
-+	if (IS_ERR(client))
-+		return PTR_ERR(client);
- 
- 	ret = gpio_request(EGPIO_MAGICIAN_SPK_POWER, "SPK_POWER");
- 	if (ret)
--- 
-2.20.1
-
+>
+> diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
+> index 25bee3daf9e2..f091280f7ffb 100644
+> --- a/drivers/mmc/core/queue.c
+> +++ b/drivers/mmc/core/queue.c
+> @@ -403,6 +403,13 @@ static void mmc_setup_queue(struct mmc_queue *mq, st=
+ruct mmc_card *card)
+>                 blk_queue_max_segment_size(mq->queue,
+>                         round_down(host->max_seg_size, block_size));
+>
+> +       pr_err("###### the max segment size is %d\n", queue_max_segment_s=
+ize(mq->queue));
+> +       if (host->parent->dma_parms) {
+> +                      pr_err("######### the dma parms has value\n");
+> +       } else if (!(host->parent->dma_parms)) {
+> +                      pr_err("######## the dma parms is zero!!\n");
+> +       }
+> +
+>         dma_set_max_seg_size(mmc_dev(host), queue_max_segment_size(mq->qu=
+eue));
+>
+>         INIT_WORK(&mq->recovery_work, mmc_mq_recovery_handler);
+>
+> Here is the log I got when system run, even after your patch, the dev->dm=
+a_parms is still NULL.
+> [    0.989853] mmc0: new HS400 MMC card at address 0001
+> [    0.995708] sdhci-esdhc-imx 30b50000.mmc: Got CD GPIO
+> [    0.999374] ###### the max segment size is 65024
+> [    1.008594] ######## the dma parms is zero!!
+> [    1.012875] mmcblk0: mmc0:0001 IB2932 29.2 GiB
+> [    1.017569] ###### the max segment size is 65024
+> [    1.022195] ######## the dma parms is zero!!
+> [    1.026479] mmcblk0boot0: mmc0:0001 IB2932 partition 1 4.00 MiB
+> [    1.032541] ###### the max segment size is 65024
+> [    1.035198] mmc1: SDHCI controller on 30b50000.mmc [30b50000.mmc] usin=
+g ADMA
+> [    1.037169] ######## the dma parms is zero!!
+> [    1.048493] mmcblk0boot1: mmc0:0001 IB2932 partition 2 4.00 MiB
+> [    1.054531] mmcblk0rpmb: mmc0:0001 IB2932 partition 3 4.00 MiB, charde=
+v (234:0)
+>
+>
+> Regards
+> Haibo Chen
+> > Best Regards
+> > Haibo Chen
+> >
+> > > Kind regards
+> > > Ulf Hansson
+> > >
+> > > Ulf Hansson (2):
+> > >   driver core: platform: Initialize dma_parms for platform devices
+> > >   amba: Initialize dma_parms for amba devices
+> > >
+> > >  drivers/amba/bus.c              | 2 ++
+> > >  drivers/base/platform.c         | 1 +
+> > >  include/linux/amba/bus.h        | 1 +
+> > >  include/linux/platform_device.h | 1 +
+> > >  4 files changed, 5 insertions(+)
+> > >
+> > > --
+> > > 2.20.1
+>
