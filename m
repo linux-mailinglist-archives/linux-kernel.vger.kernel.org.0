@@ -2,59 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35CDF196060
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 22:24:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 044AA196062
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 22:24:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbgC0VYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 17:24:37 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35947 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbgC0VYc (ORCPT
+        id S1727817AbgC0VYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 17:24:39 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51925 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727754AbgC0VYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 17:24:32 -0400
-Received: by mail-wm1-f65.google.com with SMTP id g62so14070329wme.1;
-        Fri, 27 Mar 2020 14:24:30 -0700 (PDT)
+        Fri, 27 Mar 2020 17:24:31 -0400
+Received: by mail-wm1-f68.google.com with SMTP id c187so13035263wme.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 14:24:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ALcoYp10x9FcpeDcmDwp78wr5UzvY5AhSnD49w1EnHs=;
-        b=py8hXeX3LdEEuS/iKqjHRAcybU1xUpZcmvu7S2uoDfNXaKELn4isRj2Rh3EXBOMN3I
-         uSjREoKCsI5t8AKbxHSMPcveGmK1J9s8iiQPMQ8piLaXLg7eARbZE1pB2nRF7YyvWMSc
-         oZBqVui8Ii1lYSXPDizHaI5I9NxjT0ECVx809GZXxtT7m3B8pao75ldselbJS0/h/S+U
-         hIWsSaUqYM5UU3IopOztaddH6yXeLWZDXCRhS3G/tKXsZQxKT0sj/+ImtPfrHKB0NHK2
-         4VsSy/XbT4cpN/YxLGI7oCb8uxzjl/6T6I0nnEWtrhAftDE5aWrC0tAjkWg2zbWADp8w
-         zI3A==
+        bh=gfukkDHwtKj4BKlXc/fjhSsSldS9nfyhxc+J7rLMUOQ=;
+        b=Ef80zkdZrF8agBFess6gmp2WYDfANzlCqZ5kc9TJFBJdhTDp8BBF/T2wvWSGKD2Ux+
+         1bydBbVa7LeAgNcbuVtVp8X7svWe5bBvxYNsJIQ/VLYzCrCpAbwPukCbJs+eu6CTtY4B
+         q7EKo0mkdJ20W4KVxCfqZmpORonw+voPf9/aoTIL04BSdjJD+EyO4sAx2yxwUXxSIS3p
+         DGZmGaMYb6IvzZtokwms7DMjPzf4OWW1OEZfxbKQzCo0gbZJ5A3LsLpe5HGdYo3MGWf3
+         LlHtE0QeyNBdvK66wGB7ZbrpToVwC6WDxeqWpPLjSdlgb/Wxw+g15hVsRgOVt8bdL75J
+         Si4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ALcoYp10x9FcpeDcmDwp78wr5UzvY5AhSnD49w1EnHs=;
-        b=m2KQvHUyxW8uZKVRucjvia5gqb4SQBQQZJjC5cg55ouNpBK1sXLhz9CNObP7/cLkmP
-         XcNvf+2G24q/n37lFIjq8/A0C8Z1T/9GESzWAZoJMbSf4TcddIlRg+xjsFujuY+PN6qW
-         jCUoVWdDZjxRYmCUcvIgZxra3C8CHXbMIf8vPbMiDzzIv0d8db1FqIQTEvi5UFGhAqjR
-         Uf7L8gyTGf5yu6PQiEDN+9jhaw0WgyRahKtdODUakhxjsW1TJRzo4Uj+OLA3fVdDq4Vw
-         RF70X/Xv5PRLq5e603p0VCIuyjARykPfNhbQ2b4rYvZ7C790V3vtCM5+PWPn+SiCW43m
-         HR+g==
-X-Gm-Message-State: ANhLgQ3Gbdt12m4Ms0OfmGfhlUXNYVbaDh+mMBA4pjCQb8rbTaqn6wd5
-        8QQ8iC2dkdI5ciXBtYzhgA==
-X-Google-Smtp-Source: ADFU+vukEibRAnv/BOUzkB6kl/EJ/isToaeTK7a27bwPpYmvrf+3y5yRTZnOGjJnluSodJLb7AIfDA==
-X-Received: by 2002:a1c:de87:: with SMTP id v129mr681152wmg.68.1585344269552;
-        Fri, 27 Mar 2020 14:24:29 -0700 (PDT)
+        bh=gfukkDHwtKj4BKlXc/fjhSsSldS9nfyhxc+J7rLMUOQ=;
+        b=f0jtotxu9sDdSRp6JHbH7LXtDm3Cz2ugmNR9pPr+REtDYPd+Vq1f6LIm5e9auLazQu
+         92c/WHnclAHpNZlgzsM4Ybu4BYA1MX2vtzM5L/Gq0lAHy1kWBylZHXbkGE4nrtupiPWF
+         +VIZBLgQj5rCi12K8vmfGYdfPelvgF/UjET7TPM2JNtN/VF4uF1nO2xBGSgDyzE5iOMp
+         S9UPXYjqkBIg9MNXOx+jD7I7FN0eWDPXSUGCRlF+WLx3tQzwh8esVH0lm7u7jLfmIMiU
+         HRfnMNRjR8OnX68VDNgY8LGiiHPtgXBt0qmdkr3M4eGGjfc4aNezDkN5JN8jVu0ZuD00
+         IyNQ==
+X-Gm-Message-State: ANhLgQ1Z9NfJs6GvbHxUZg/mr0/6uaxy8IySEhKGhqveI8waCf9RbgQA
+        U0khIbNdLfDAsV3dEoGLTQ==
+X-Google-Smtp-Source: ADFU+vvgKU83rENNsYeVyec3WQDUcJE4oHjBb7ESipJUBJQaN94MAD5Ej3+z+MCMbQSvq8bR5BESDw==
+X-Received: by 2002:a7b:c846:: with SMTP id c6mr639905wml.189.1585344270664;
+        Fri, 27 Mar 2020 14:24:30 -0700 (PDT)
 Received: from ninjahost.lan (host-92-23-82-35.as13285.net. [92.23.82.35])
-        by smtp.gmail.com with ESMTPSA id h132sm10215141wmf.18.2020.03.27.14.24.28
+        by smtp.gmail.com with ESMTPSA id h132sm10215141wmf.18.2020.03.27.14.24.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 14:24:29 -0700 (PDT)
+        Fri, 27 Mar 2020 14:24:30 -0700 (PDT)
 From:   Jules Irenge <jbi.octave@gmail.com>
 To:     julia.lawall@lip6.fr
-Cc:     boqun.feng@gmail.com, Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org (open list:PROC SYSCTL),
-        linux-fsdevel@vger.kernel.org (open list:PROC SYSCTL)
-Subject: [PATCH 09/10] kernel/sysctl.c: Replace 1 and 0 by corresponding boolean value
-Date:   Fri, 27 Mar 2020 21:23:56 +0000
-Message-Id: <20200327212358.5752-10-jbi.octave@gmail.com>
+Cc:     boqun.feng@gmail.com, Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 10/10] trace: Replace printk and WARN_ON with WARN
+Date:   Fri, 27 Mar 2020 21:23:57 +0000
+Message-Id: <20200327212358.5752-11-jbi.octave@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200327212358.5752-1-jbi.octave@gmail.com>
 References: <0/10>
@@ -66,51 +64,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Coccinelle reports a warning
+Coccinelle suggests replacing printk and WARN_ON with WARN
 
-WARNING: Assignment of 0/1 to bool variable
-
-To fix this, values 1 and 0 of first variable
-are replaced by true and false respectively.
-Given that variable first is of bool type.
-This fixes the warnings.
-
+SUGGESTION: printk + WARN_ON can be just WARN.
 Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 ---
- kernel/sysctl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/trace/trace.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index ad5b88a53c5a..4132a35e85bd 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -3158,7 +3158,7 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
- 			 void __user *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int err = 0;
--	bool first = 1;
-+	bool first = true;
- 	size_t left = *lenp;
- 	unsigned long bitmap_len = table->maxlen;
- 	unsigned long *bitmap = *(unsigned long **) table->data;
-@@ -3249,7 +3249,7 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
- 			}
- 
- 			bitmap_set(tmp_bitmap, val_a, val_b - val_a + 1);
--			first = 0;
-+			first = false;
- 			proc_skip_char(&p, &left, '\n');
- 		}
- 		kfree(kbuf);
-@@ -3281,7 +3281,7 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
- 					break;
- 			}
- 
--			first = 0; bit_b++;
-+			first = false; bit_b++;
- 		}
- 		if (!err)
- 			err = proc_put_char(&buffer, &left, '\n');
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 6b11e4e2150c..1fe31272ea73 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1799,9 +1799,7 @@ static int run_tracer_selftest(struct tracer *type)
+ 	/* the test is responsible for resetting too */
+ 	tr->current_trace = saved_tracer;
+ 	if (ret) {
+-		printk(KERN_CONT "FAILED!\n");
+-		/* Add the warning after printing 'FAILED' */
+-		WARN_ON(1);
++		WARN(1, "FAILED!\n");
+ 		return -1;
+ 	}
+ 	/* Only reset on passing, to avoid touching corrupted buffers */
 -- 
 2.25.1
 
