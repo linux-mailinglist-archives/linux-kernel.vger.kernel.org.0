@@ -2,238 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9363F1955B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 596731955C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:55:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbgC0Kw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 06:52:28 -0400
-Received: from mx0b-00328301.pphosted.com ([148.163.141.47]:24418 "EHLO
-        mx0b-00328301.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726284AbgC0Kw2 (ORCPT
+        id S1726742AbgC0Kzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 06:55:55 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:47301 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726217AbgC0Kzz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 06:52:28 -0400
-Received: from pps.filterd (m0156136.ppops.net [127.0.0.1])
-        by mx0b-00328301.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02RApnf1020688;
-        Fri, 27 Mar 2020 03:52:05 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=invensense.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt1;
- bh=YAdAil2EByAmnOnKo3Bheq01DoRT7Usv7JJwfCNN66Q=;
- b=R2jt3VIjc8bH7YH/I7bE28NCwniG1ZvecyvtaCfrcdtE4bdCPoqWUitDVPvdhRJpAu6b
- jOv8hnjBFiGOG523zbbbNYgEGA6taNC07ERZTmDQW88Y1hn6vG1qmSHPBoFEsnxnNKMF
- 6U0ODyQeaTXm2x+OO/UBEj4araS+AXSOyckF1/mYUxXI6qTTw61jvwzamEfTsCsfxRaT
- rPRAq7glN+8n3yjijfEusHQMeAmjEixEN7sb3Gt/HgU2U6LZptGaNrRVcz/6MoX0BsJl
- /WAXEBrAweezkcsy6egHU7VPkTRi9h0IDwda1+On0X1zA+Vk/ght2KLEaJVNTjwBoZ3A /A== 
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2049.outbound.protection.outlook.com [104.47.66.49])
-        by mx0b-00328301.pphosted.com with ESMTP id 300bux0v9r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Mar 2020 03:52:05 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FtPSfOOv08u3GX2JLcznwDVBH8oY+8D9hV2+Lp/lQbMGibnNGy/KzcLUxUxF0o73ASdS4F9sugQOBNq4blpmYDafcdACWXAZLCHA1XJaezyE8JQc+Wf0rKzadsB5eNDfHfNf6NDKnQExP9BRe6X5AKDJkAh2lbWwzX76ED6bZ6gi1lO27WZ/0rpj5CVEIJKjEvWGwMHybuJVQLFSd4Q6Sg8waiPgkDz7Vi3Hj+78oLWSUeCcAQJb5PXIeRPxblT5KZfjut1TgbvBDBE2hmx2j3yaojca+E62fXxs/+pNqHuNB2JP7zeJPMU8m83DAB2qmgtMsTzl+F13xt41Boa55w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YAdAil2EByAmnOnKo3Bheq01DoRT7Usv7JJwfCNN66Q=;
- b=ku8kaMTNcCdp1pd+3xO18fQdMMEY8BKa0s8o1KB6gjVMq0Wd+9NwOIDJS6wZH0rI9cYxaYnkApN+QpftyABRp8AkxlVCPdNodGEWTJSEryDDCatIfnupiHvypRlxkUK+kepgxtYSAlWY/4PlTSM5Ru8oWss8dnzp/S6cobik0NplPciJyU3ILHn+/DYIHWJEE+ETXM/BPRq/M13sX1gUEUKF+Ar/Em/yFubKbvvOW1f66RpW1685fOFdgWRPo2g34GOaLX9L7k+MpIO+qzT2CY/x47P1ASvZE+9hGyX1Pvf8MIy3O1J8ZmfnSb0XRQANBc1qqHmPBGq55ktETah7Uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=invensense.com; dmarc=pass action=none
- header.from=invensense.com; dkim=pass header.d=invensense.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=invensense.onmicrosoft.com; s=selector2-invensense-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YAdAil2EByAmnOnKo3Bheq01DoRT7Usv7JJwfCNN66Q=;
- b=LOoMeksZwkHyZei5QQNQSDBEEbgohMZtb7VicxVmEFWCq/MwDDRs/bcdR7iL5mTNe1d2EpCPvUHWP7KwsvICBP3F4H5Rw2Vr+nG64hGx0UVVU4xpJFDD1ENqxk0gRvm+3muFQMuvxKXjQ8GQIhCJAaMljEbc05PtAUtbhGbRx0A=
-Received: from MN2PR12MB4422.namprd12.prod.outlook.com (2603:10b6:208:265::9)
- by MN2PR12MB4533.namprd12.prod.outlook.com (2603:10b6:208:266::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20; Fri, 27 Mar
- 2020 10:52:02 +0000
-Received: from MN2PR12MB4422.namprd12.prod.outlook.com
- ([fe80::7471:da8b:8ca1:6af0]) by MN2PR12MB4422.namprd12.prod.outlook.com
- ([fe80::7471:da8b:8ca1:6af0%4]) with mapi id 15.20.2835.021; Fri, 27 Mar 2020
- 10:52:02 +0000
-From:   Jean-Baptiste Maneyrol <JManeyrol@invensense.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-CC:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] iio: imu: inv_mpu6050: convert to use
- i2c_new_client_device()
-Thread-Topic: [PATCH 1/1] iio: imu: inv_mpu6050: convert to use
- i2c_new_client_device()
-Thread-Index: AQHWA7NBLBGRcKbNIkm533g4m2Qp66hcQ5oV
-Date:   Fri, 27 Mar 2020 10:52:02 +0000
-Message-ID: <MN2PR12MB44228DEA7CE19B853292FE38C4CC0@MN2PR12MB4422.namprd12.prod.outlook.com>
-References: <20200326210955.12991-1-wsa+renesas@sang-engineering.com>,<20200326210955.12991-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20200326210955.12991-2-wsa+renesas@sang-engineering.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [91.174.78.156]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a7e5910a-5431-457d-08d0-08d7d23ce1c1
-x-ms-traffictypediagnostic: MN2PR12MB4533:
-x-microsoft-antispam-prvs: <MN2PR12MB4533140DC097390C0293D0FCC4CC0@MN2PR12MB4533.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4502;
-x-forefront-prvs: 0355F3A3AE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(136003)(396003)(39850400004)(64756008)(66556008)(91956017)(33656002)(76116006)(86362001)(66446008)(2906002)(26005)(66946007)(71200400001)(478600001)(4326008)(110136005)(81166006)(8676002)(8936002)(9686003)(66476007)(52536014)(53546011)(54906003)(7696005)(5660300002)(55016002)(186003)(316002)(81156014)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB4533;H:MN2PR12MB4422.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
-received-spf: None (protection.outlook.com: invensense.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: j5KOn+qrCIQC0ienDwVdbbTKCPSRP2guh6ENbg9hBXCf4pFuRdn6la8Sm7cML7eJhGX1tI5lnAyIHXWNt2Opaq9x9bbywH2BSWkSYjScdol652gi3VyB6DXob1XPum89ev9paZpR0Z4SsBqDfSC9OVhLF/sb04K8j9fy6BftqAW+HNajKI8y+xj3wVQySB/6/MBsuNAdveU66UcJPvMFJgO3k7kCqCLAw0AK6togcKcseUOsjnQAKy1W0BHLw0v6bKSfSu27TeYuGkv0+sXDTdDhBz46NhuCTZjrpP/HJKpzPnw2Bkgr24VMPo5LMr3W99jO/eQxw0Unca4IhGhEAFNM6u7BTXfSbXMWP9UwcodfgfCfFNnUXciq3W+h3O30S2ZnWtrJfcYLK0pRBYDFHFM0bisj8nBBqDat5NVKChObNKr0SwThsgzFUCPIhwWm
-x-ms-exchange-antispam-messagedata: lF1se7bi4A1TGdwOhxL5smVAtsiy5dKb/vpLM2bVbttzezxtGxfovZun3QbR0vxGZn91FBXNEP+o6ShE9GICyyXG00WRIpWxu7DQjUXF5GZIWX4gwLJB6PG6rGDK5KG2BI4Hs2kFtI2A0Z0JFwx4gQ==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 27 Mar 2020 06:55:55 -0400
+Received: from mail-qk1-f181.google.com ([209.85.222.181]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Md6V1-1jr7Ck3rut-00aCVD for <linux-kernel@vger.kernel.org>; Fri, 27 Mar
+ 2020 11:55:54 +0100
+Received: by mail-qk1-f181.google.com with SMTP id k13so10292925qki.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 03:55:53 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0SkL9vtLDiCzNm7x/TTBLm20EGsdfEdPJDkX23+duj0CBER8Qm
+        QFjD/0kQ1N8tO6QrtpMW9725SRz1qFvpp+UBNvY=
+X-Google-Smtp-Source: ADFU+vu/SBluPJe4SG/RVo/VOSCt5yg8qCa0C0hT1HJWo2MkHT9vfnjXTH3ldYZD2r/o7bjQOUlqAYVkLLzc9qdU5cI=
+X-Received: by 2002:a37:a4d6:: with SMTP id n205mr13487320qke.352.1585306552796;
+ Fri, 27 Mar 2020 03:55:52 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: invensense.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7e5910a-5431-457d-08d0-08d7d23ce1c1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2020 10:52:02.2992
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 462b3b3b-e42b-47ea-801a-f1581aac892d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: uMEsU8IilfofHRFRtgZR46Ph5WeRfuUvI+juthJlXrYTPMbtZ1WU6ZKS3o6CSlb678xet03INLkMKfPgYtYmKXNbWYGW/HgSbqU7xchZ4NY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4533
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-27_03:2020-03-27,2020-03-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 clxscore=1011 mlxlogscore=978 bulkscore=0 adultscore=0
- suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003270100
+References: <87mu8ppknv.fsf@FE-laptop> <20200302031736.5or4ww5a4l7zomfo@vireshk-i7>
+ <20200308161903.GA156645@furthur.local> <20200301122226.4068-1-afzal.mohd.ma@gmail.com>
+ <m3ftepbtxm.fsf@t19.piap.pl> <51cebbbb-3ba4-b336-82a9-abcc22f9a69c@gmail.com>
+ <20200304163412.GX37466@atomide.com> <20200313154520.GA5375@afzalpc>
+ <20200317043702.GA5852@afzalpc> <20200325114332.GA6337@afzalpc> <20200327104635.GA7775@afzalpc>
+In-Reply-To: <20200327104635.GA7775@afzalpc>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 27 Mar 2020 11:55:36 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0kVvkCW+2eiyZTkfS=LqqnbeQS+S-os=vxhaYXCwLK+A@mail.gmail.com>
+Message-ID: <CAK8P3a0kVvkCW+2eiyZTkfS=LqqnbeQS+S-os=vxhaYXCwLK+A@mail.gmail.com>
+Subject: Re: [PATCH v3] ARM: replace setup_irq() by request_irq()
+To:     afzal mohammed <afzal.mohd.ma@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Hartley Sweeten <hsweeten@visionengravers.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        SoC Team <soc@kernel.org>, arm-soc <arm@kernel.org>,
+        Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:eGcuhSAiGrRQoEppFKm7A4PdslXwF0gaWKNb5ZwO0MyIjmoM14P
+ 692hUMtoO5bSnbsl4cH70X5C9+J/kvfo5jRMd8dBasEkM7cqfAJbOdru9b3Bci+wAUohfWu
+ F/FfoqWGiEONMxrGXpwai2m6dxlsUHdv1rsDeTb1d/O8uafsIoV0mlglVWGOetpVc/7YV6w
+ kbzFV/PhLWkoUr6vvLrCA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:oAbNTvQNORc=:4TlCRANWGFvOYVNzZKeBfH
+ cm59hdNs2JHKx0QxLEPuJgoQJ+GmC8EaLPGbxJHjI/vKiUSOj3yjLgoDRRAFjgBi+JzBr6AA+
+ TAWow/twxbKwcOXixsrDmLscy7gFbUR0xXTBlxe7VJj/O533DzbyTSIefnEhIxGnXxabykrSg
+ ZZa8/824EkxBKbCgr3RCElnVFtheBHEPGvDLrpUJI/NyNIfwOvqyhKktS9PJPSaI8LzKd9vK6
+ Ps2tOa3J7Mz4I+rR/gUSvVErxIMZq82YD2HA/fTtqj3HqH3lnbBsuzQzSgo00e2gZtXKA4okA
+ FzgO1I7M3VW9krsewoQC6r+940anlE0eoeUuJl2YiBN7undJguGRPdM3hN7k8isrqQ3JiKawn
+ Z+rLtZB3wesgeibCosKgTJNQJbiAqNYScwe9llL7TzYx5tF/aW2pODIa9qazKjxTzvOfLX/Xx
+ MJA/CoQJJ9eisT94GeORwEHKDjH/MthN9I9bTyUg7hN5orjeRgHCIh/eMKsckXnlIxniMUe32
+ msig1uYRK9CrvL4vdH6JMjPVWDbztAYYXs9k/lb4CBNTi+npvg0OzYsF1c+12Be83JXyT3YjS
+ T8rNmPnOakdD1L6SbkQ0PZ5qMqL9GNUGc4kPm0gqkvulnsEJWsWsJybIuVREJlhI/jC038gyx
+ YVaEb/xNlSYEQW8Y54+cL7e+PQ/Lr8DORk9DCtPiGx4RKvBkJiOnJBlTh1qGNw9BGxZ+iXNuJ
+ yd2L2fK0exKdJO/JB49l8ayt9m9XISznICuAZ0X+dJtjTO4f41JsGr9rRtP3Fl+q3f69dX6Wt
+ AYjxClLVH2SOVRST5Bj3rp6NWUqsi7/KnSm0WHB6srNLmh4p10=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,=0A=
-=0A=
-thanks for the patch.=0A=
-Looks good for me.=0A=
-=0A=
-Acked-by: Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>=0A=
-=0A=
-Best regards,=0A=
-JB=0A=
-=0A=
-=0A=
-From: linux-iio-owner@vger.kernel.org <linux-iio-owner@vger.kernel.org> on =
-behalf of Wolfram Sang <wsa+renesas@sang-engineering.com>=0A=
-=0A=
-Sent: Thursday, March 26, 2020 22:09=0A=
-=0A=
-To: linux-i2c@vger.kernel.org <linux-i2c@vger.kernel.org>=0A=
-=0A=
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>; Jonathan Cameron <jic2=
-3@kernel.org>; Hartmut Knaack <knaack.h@gmx.de>; Lars-Peter Clausen <lars@m=
-etafoo.de>; Peter Meerwald-Stadler <pmeerw@pmeerw.net>; linux-iio@vger.kern=
-el.org <linux-iio@vger.kernel.org>;=0A=
- linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>=0A=
-=0A=
-Subject: [PATCH 1/1] iio: imu: inv_mpu6050: convert to use i2c_new_client_d=
-evice()=0A=
-=0A=
-=A0=0A=
-=0A=
-=0A=
-=A0CAUTION: This email originated from outside of the organization. Please =
-make sure the sender is who they say they are and do not click links or ope=
-n attachments unless you recognize the sender and know the content is safe.=
-=0A=
-=0A=
-=0A=
-=0A=
-Move away from the deprecated API and return the shiny new ERRPTR where=0A=
-=0A=
-useful.=0A=
-=0A=
-=0A=
-=0A=
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>=0A=
-=0A=
----=0A=
-=0A=
-=A0drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c | 8 +++++---=0A=
-=0A=
-=A01 file changed, 5 insertions(+), 3 deletions(-)=0A=
-=0A=
-=0A=
-=0A=
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c b/drivers/iio/imu/i=
-nv_mpu6050/inv_mpu_acpi.c=0A=
-=0A=
-index 2f8560ba4572..c27d06035c8b 100644=0A=
-=0A=
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c=0A=
-=0A=
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c=0A=
-=0A=
-@@ -135,6 +135,7 @@ int inv_mpu_acpi_create_mux_client(struct i2c_client *c=
-lient)=0A=
-=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0 st->mux_client =3D NULL;=0A=
-=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0 if (ACPI_HANDLE(&client->dev)) {=0A=
-=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 struct i2c_board_info info=
-;=0A=
-=0A=
-+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 struct i2c_client *mux_client;=
-=0A=
-=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 struct acpi_device *adev;=
-=0A=
-=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 int ret =3D -1;=0A=
-=0A=
-=A0=0A=
-=0A=
-@@ -172,9 +173,10 @@ int inv_mpu_acpi_create_mux_client(struct i2c_client *=
-client)=0A=
-=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 } =
-else=0A=
-=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0 return 0; /* no secondary addr, which is OK */=0A=
-=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 }=0A=
-=0A=
--=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 st->mux_client =3D i2c_new_devi=
-ce(st->muxc->adapter[0], &info);=0A=
-=0A=
--=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (!st->mux_client)=0A=
-=0A=
--=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return =
--ENODEV;=0A=
-=0A=
-+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 mux_client =3D i2c_new_client_d=
-evice(st->muxc->adapter[0], &info);=0A=
-=0A=
-+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (IS_ERR(mux_client))=0A=
-=0A=
-+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return =
-PTR_ERR(mux_client);=0A=
-=0A=
-+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 st->mux_client =3D mux_client;=
-=0A=
-=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0 }=0A=
-=0A=
-=A0=0A=
-=0A=
-=A0=A0=A0=A0=A0=A0=A0=A0 return 0;=0A=
-=0A=
--- =0A=
-=0A=
-2.20.1=0A=
-=0A=
-=0A=
-=0A=
+On Fri, Mar 27, 2020 at 11:46 AM afzal mohammed <afzal.mohd.ma@gmail.com> wrote:
+>
+> Hi Arnd,
+>
+> On Wed, Mar 25, 2020 at 05:13:32PM +0530, afzal mohammed wrote:
+> > On Tue, Mar 17, 2020 at 10:07:02AM +0530, afzal mohammed wrote:
+> > > On Fri, Mar 13, 2020 at 09:15:20PM +0530, afzal mohammed wrote:
+>
+> > > > Can you please include the patches 6-10 directly into the armsoc tree ?,
+> > > > Let me know if anything needs to be done from my side.
+> >
+> > Can you please consider for inclusion the above 5 patches.
+> >
+> > Sorry for pestering, i understand that none of the ARM SoC pull requests
+> > has been picked up as opposed to what happens normally by this time of
+> > development cycle.
+>
+> i think you have pulled the ARM SoC pull requests, but above changes
+> doesn't seem to be applied, can you please respond on how to proceed ?
+> (of all the tree-wide changes, the above are the only ones in limbo)
+
+Hi afzal,
+
+To make sure I get the right ones, could you bounce all the patches that are
+still missing to soc@kernel.org to let them show up in patchwork?
+
+I'll apply them right away after that. Sorry I forgot about them as I went
+through the patchwork backlog.
+
+       Arnd
