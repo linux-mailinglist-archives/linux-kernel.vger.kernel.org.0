@@ -2,257 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 550E8195524
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:25:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EEC919552B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 11:26:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbgC0KZh convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 27 Mar 2020 06:25:37 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:58545 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbgC0KZh (ORCPT
+        id S1727505AbgC0KZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 06:25:57 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:49209 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbgC0KZ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 06:25:37 -0400
-X-Originating-IP: 91.224.148.103
-Received: from xps13 (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 03B3AFF813;
-        Fri, 27 Mar 2020 10:25:31 +0000 (UTC)
-Date:   Fri, 27 Mar 2020 11:25:30 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Sergey Semin <Sergey.Semin@baikalelectronics.ru>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
+        Fri, 27 Mar 2020 06:25:57 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200327102554euoutp016d26aef51ac6f85c42ed5bc04fe0a034~AIkZ1zQjP2940029400euoutp01X
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 10:25:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200327102554euoutp016d26aef51ac6f85c42ed5bc04fe0a034~AIkZ1zQjP2940029400euoutp01X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1585304754;
+        bh=Q7T4AyrE0AJN/v8GqKhjMNo1UHbMdedXuiUU90yqFWY=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Ehm/OV7hCtoXv38UlNkzEAwS2s56G6KUhp0fC+fFxIY4G8R+DsSM1m3627LGQuF6f
+         inRXxG24N1V+vkZOteo/C9Rgd/4WBUkz+f0GcqedpLL8rrAqOd3+wWQ+vIsJdMxzo9
+         AXT6wTW1XmjHyIiEv/xeBnQRSpJOoEtM7P5vBxn8=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200327102554eucas1p1001d761387dacfcd0e19f761872b0e60~AIkZkNxw81375613756eucas1p1E;
+        Fri, 27 Mar 2020 10:25:54 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 78.3A.61286.2B4DD7E5; Fri, 27
+        Mar 2020 10:25:54 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200327102554eucas1p1f848633a39f8e158472506b84877f98c~AIkZN-Tsz1352813528eucas1p1D;
+        Fri, 27 Mar 2020 10:25:54 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200327102554eusmtrp1a5e09948fd42ecfa61afc7f3b3726a35~AIkZNTw8T1114511145eusmtrp1_;
+        Fri, 27 Mar 2020 10:25:54 +0000 (GMT)
+X-AuditID: cbfec7f2-ef1ff7000001ef66-66-5e7dd4b24fbf
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 22.4D.07950.2B4DD7E5; Fri, 27
+        Mar 2020 10:25:54 +0000 (GMT)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200327102553eusmtip26fe13a9353677c4a19d04ae8aa4aebe4~AIkYlqzJb2542525425eusmtip2E;
+        Fri, 27 Mar 2020 10:25:53 +0000 (GMT)
+Subject: Re: [RFC PATCH v1] driver core: Set fw_devlink to "permissive"
+ behavior by default
+To:     Saravana Kannan <saravanak@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, kernel-team@android.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mfd: Add Baikal-T1 Boot Controller driver
-Message-ID: <20200327112530.71192909@xps13>
-In-Reply-To: <20200327090139.GK603801@dell>
-References: <20200306130528.9973-1-Sergey.Semin@baikalelectronics.ru>
-        <20200306130614.696EF8030704@mail.baikalelectronics.ru>
-        <20200325100940.GI442973@dell>
-        <20200325165511.tjdaf2l5kkuhbhrr@ubsrv2.baikal.int>
-        <20200326091313.GA603801@dell>
-        <20200326113254.nfgiw5uynpbx5xhy@ubsrv2.baikal.int>
-        <20200327090139.GK603801@dell>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <bd8b42d3-a35a-cc8e-0d06-2899416c2996@samsung.com>
+Date:   Fri, 27 Mar 2020 11:25:48 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200321210305.28937-1-saravanak@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMKsWRmVeSWpSXmKPExsWy7djP87qbrtTGGSy9JWsx/8g5VouZb/6z
+        WTQvXs9msWO7iMXlXXPYLOZ+mcps0br3CLtF16G/bA4cHtt2b2P12DnrLrvHgk2lHptWdbJ5
+        7J+7ht3j8ya5ALYoLpuU1JzMstQifbsErox1ZzezFrwSqtjw+Rh7A+ME/i5GTg4JAROJPztb
+        mboYuTiEBFYwSszsPsUC4XxhlDiy9wA7hPOZUaL/SDsrTMujo40sILaQwHJGiVs/7SGK3jNK
+        rJi4HaxIWCBWYtO+o2DdIgJtjBIP9/0Em8sssIhR4tmSrewgVWwChhJdb7vYQGxeATuJFc8b
+        mUFsFgFViU2fVoJNEhWIkbh4uJ8VokZQ4uTMJ2CrOQWsJE4v/QlWzywgL9G8dTaULS5x68l8
+        JohT97FL3L0TBGG7SCx418ICYQtLvDq+hR3ClpE4PbkH7DgJgWagS8+tZYdwehglLjfNYISo
+        spa4c+4X0KUcQBs0Jdbv0gcxJQQcJb7u14Yw+SRuvBWEOIFPYtK26cwQYV6JjjYhiBlqErOO
+        r4PbevDCJeYJjEqzkDw2C8kzs5A8Mwth7QJGllWM4qmlxbnpqcWGeanlesWJucWleel6yfm5
+        mxiBSen0v+OfdjB+vZR0iFGAg1GJh1ejpSZOiDWxrLgy9xCjBAezkgjv00igEG9KYmVValF+
+        fFFpTmrxIUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJMHJxSDYxJBh+tQqSdivVmMh47p365
+        /ZvbQ+HXAexxGlu3la72m6Bc03Bk11HvT68CNptmmy8Q+bJB1mzS0s1Zp5aoOu18nyHWL8K4
+        9Xr2tO/ygdzBLyOVNiyZ6GvcvGvNqjUL3mqe76rY3GbKkbD1lH5c8W2biJ5lk27MmTh3Gr9w
+        wVTRuQd89zD8Er6lxFKckWioxVxUnAgAlwLcAUYDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsVy+t/xe7qbrtTGGUydxGIx/8g5VouZb/6z
+        WTQvXs9msWO7iMXlXXPYLOZ+mcps0br3CLtF16G/bA4cHtt2b2P12DnrLrvHgk2lHptWdbJ5
+        7J+7ht3j8ya5ALYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzM
+        stQifbsEvYx1ZzezFrwSqtjw+Rh7A+ME/i5GTg4JAROJR0cbWboYuTiEBJYySrx9/owFIiEj
+        cXJaAyuELSzx51oXG0TRW0aJ/o3rGEESwgKxEpv2HWUHSYgIdDBKfLt6HayKWWARo8Sse5PA
+        qoQELCVmz+piBrHZBAwlut6CjOLk4BWwk1jxvBEsziKgKrHp00qwdaICMRI/93SxQNQISpyc
+        +QTM5hSwkji99CdYPbOAmcS8zQ+hbHmJ5q2zoWxxiVtP5jNNYBSahaR9FpKWWUhaZiFpWcDI
+        sopRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwErcd+7llB2PXu+BDjAIcjEo8vBotNXFCrIll
+        xZW5hxglOJiVRHifRgKFeFMSK6tSi/Lji0pzUosPMZoCPTeRWUo0OR+YJPJK4g1NDc0tLA3N
+        jc2NzSyUxHk7BA7GCAmkJ5akZqemFqQWwfQxcXBKNTD2F7LtPrnZZfpvxddxZ/9IW8w5MTFi
+        3rJ26Rr5Fz593KrLZiy8LeSepH3Q63XUsifTJC3YS2/a91bLBF9eVlhq/+3Htw+X3n1f9yur
+        fNfZZY9eliQysOytDv5nc6XHefI044T3YiEPE2N8y350Lnj1yuXjw0nfzO7OdjwZXWzTNOfv
+        yjy9g6d1lViKMxINtZiLihMBlVPOA9oCAAA=
+X-CMS-MailID: 20200327102554eucas1p1f848633a39f8e158472506b84877f98c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200327102554eucas1p1f848633a39f8e158472506b84877f98c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200327102554eucas1p1f848633a39f8e158472506b84877f98c
+References: <20200321210305.28937-1-saravanak@google.com>
+        <CGME20200327102554eucas1p1f848633a39f8e158472506b84877f98c@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee, Sergey,
+Hi,
 
-Lee Jones <lee.jones@linaro.org> wrote on Fri, 27 Mar 2020 09:01:39
-+0000:
+On 2020-03-21 22:03, Saravana Kannan wrote:
+> Set fw_devlink to "permissive" behavior by default so that device links
+> are automatically created (with DL_FLAG_SYNC_STATE_ONLY) by scanning the
+> firmware.
+>
+> This ensures suppliers get their sync_state() calls only after all their
+> consumers have probed successfully. Without this, suppliers will get
+> their sync_state() calls at late_initcall_sync() even if their consuer
+>
+> Ideally, we'd want to set fw_devlink to "on" or "rpm" by default. But
+> that needs more testing as it's known to break some corner case
+> drivers/platforms.
+>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
 
-> On Thu, 26 Mar 2020, Sergey Semin wrote:
-> 
-> > Michael, Richard, Vignesh and MTD mailing list are Cc'ed to have their
-> > comments on the issue.
-> > 
-> > My answers on the previous email are below.
-> > 
-> > On Thu, Mar 26, 2020 at 09:13:13AM +0000, Lee Jones wrote:  
-> > > On Wed, 25 Mar 2020, Sergey Semin wrote:
-> > >   
-> > > > Hello Lee,
-> > > > 
-> > > > On Wed, Mar 25, 2020 at 10:09:40AM +0000, Lee Jones wrote:  
-> > > > > On Fri, 06 Mar 2020, Sergey.Semin@baikalelectronics.ru wrote:
-> > > > >   
-> > > > > > From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> > > > > > 
-> > > > > > Baikal-T1 Boot Controller is an IP block embedded into the SoC and
-> > > > > > responsible for the chip proper pre-initialization and further
-> > > > > > booting up from some memory device. From the Linux kernel point of view
-> > > > > > it's just a multi-functional device, which exports three physically mapped
-> > > > > > ROMs and a single SPI controller.
-> > > > > > 
-> > > > > > Primarily the ROMs are intended to be used for transparent access of
-> > > > > > the memory devices with system bootup code. First ROM device is an
-> > > > > > embedded into the SoC firmware, which is supposed to be used just for
-> > > > > > the chip debug and tests. Second ROM device provides a MMIO-based
-> > > > > > access to an external SPI flash. Third ROM mirrors either the Internal
-> > > > > > or SPI ROM region, depending on the state of the external BOOTCFG_{0,1}
-> > > > > > chip pins selecting the system boot device.
-> > > > > > 
-> > > > > > External SPI flash can be also accessed by the DW APB SSI SPI controller
-> > > > > > embedded into the Baikal-T1 Boot Controller. In this case the memory mapped
-> > > > > > SPI flash region shouldn't be accessed.
-> > > > > > 
-> > > > > > Taking into account all the peculiarities described above, we created
-> > > > > > an MFD-based driver for the Baikal-T1 controller. Aside from ordinary
-> > > > > > OF-based sub-device registration it also provides a simple API to
-> > > > > > serialize an access to the external SPI flash from either the MMIO-based
-> > > > > > SPI interface or embedded SPI controller.  
-> > > > > 
-> > > > > Not sure why this is being classified as an MFD.
-> > > > > 
-> > > > > This is clearly 'just' a memory device.
-> > > > >   
-> > > > 
-> > > > Hm, I see this as a normal MFD device. The Boot controller provides a
-> > > > set of physically mapped ROMs and a DW APB SSI-based embedded SPI
-> > > > controller. Yes, the SPI controller is normally utilized to access an external
-> > > > flash device, and at boot stage it is used for it. But still it's a SPI
-> > > > controller which driver belongs to the kernel SPI subsystem. Moreover
-> > > > nothing prevents a platform designer from using it together with custom
-> > > > GPIO-based chip-selects to have additional devices on the SPI bus.
-> > > > 
-> > > > As I said the problem is that an SPI flash might be accessed either with
-> > > > use of a physically mapped ROM or via the normal DW APB SPI controller.
-> > > > These two interfaces can't be used simultaneously, because the ROM is
-> > > > just an rtl state-machine, which is built to translate MMIO operations
-> > > > through the SPI controller registers to an external SPI-nor at CS0 of
-> > > > the interface. That's why first I need to make sure the interface is locked,
-> > > > then being enabled, then the corresponding driver can use it, then get
-> > > > to unlock. That's the point of having the __bt1_bc_spi_lock() and
-> > > > bt1_bc_spi_unlock() methods exported from the driver.
-> > > > 
-> > > > I've got two drivers for MTD ROM and SPI controller based on that
-> > > > methods. But I haven't submitted them yet, because they belong to two
-> > > > different subsystems and I need to have this one being accepted first.  
-> > > 
-> > > This is not a totally unique device/situation.  I've seen (and NACKed)
-> > > this type of device before.  You need to explain this to the MTD
-> > > (SPI-NOR?) maintainers.  They should be in a good position to provide
-> > > guidance.
-> > >   
-> > 
-> > Sorry, I don't really understand your justification. The boot controller
-> > exports two types of devices: physically mapped ROMs and an DW APB
-> > SSI-based SPI controller. Aside from being able to access an externally
-> > attached SPI flash the SPI controller has normal SPI interface which in
-> > general can be used to access any other SPI-slave. The complexity of
-> > the case is that one of physically mapped ROM RTL uses the DW APB SSI
-> > controller to access an external SPI flash, which when done makes the
-> > DW APB SSI registers unusable on direct way. That's why I implemented the
-> > boot controller as an MFD. An alternation caused by this peculiarity
-> > will be submitted to drivers/mtd/maps/physmap-{core.c,baikal-t1-rom.c}
-> > later after this change is reviewed and accepted. Similar situation
-> > concerns a driver of DW APB SSI-based SPI controller. So according to
-> > the current design the boot controller with it' sub-devices will be
-> > declared in dts as follows:
-> > 
-> > boot: boot@1f040000 {
-> > 	compatible = "be,bt1-boot-ctl";
-> > 	reg = <0x1f040000 0x100>;
-> > 	#address-cells = <1>;
-> > 	#size-cells = <1>;
-> > 	ranges;  
-> 
-> What control does this device offer in those 0x100 registers? 
-> 
-> > 	clocks = <&ccu_sys CCU_SYS_APB_CLK>;
-> > 	clock-names = "pclk";
-> > 
-> > 	int_rom: rom@1bfc0000 {
-> > 		compatible = "be,bt1-int-rom", "mtd-rom";
-> > 		reg = <0x1bfc0000 0x10000>;
-> > 		...
-> > 	};
-> > 
-> > 	spi_rom: rom@1c000000 {
-> > 		compatible = "be,bt1-ssi-rom", "mtd-rom";
-> > 		reg = <0x1c000000 0x1000000>;
-> > 		...
-> > 	};
-> > 
-> > 	spi0: spi@1f040100 {
-> > 		compatible = "be,bt1-boot-ssi";
-> > 		reg = <0x1f040100 0xf00>;
-> > 		#address-cells = <1>;
-> > 		#size-cells = <0>;
-> > 
-> > 		clocks = <&ccu_sys CCU_SYS_SPI_CLK>;
-> > 		clock-names = "ref";
-> > 
-> > 		...
-> > 	};
-> > 
-> > 	boot_rom: rom@1fc00000 {
-> > 		compatible = "be,bt1-boot-rom", "mtd-rom";
-> > 		reg = <0x1fc00000 0x400000>;
-> > 		...
-> > 	};
-> > };
-> > 
-> > I dare to assume, that by saying: "Despite including the MFD API, I don't
-> > see it being used at all." you meant that since the driver doesn't
-> > redistribute any resource by declaring mfd_cell'es, doesn't
-> > register mfd-based sub-devices, and primary use-case of the boot
-> > controller is to access flash-devices, it should be just moved to the MTD
-> > subsystem. I don't think it would be better than to have a common part 
-> > defined here in MFD while ROM-specific part - in MTD, and SPI-specific - in
-> > the SPI subsystems. I would consider Baikal-T1 Boot Controller being similar
-> > to drivers/mfd/qcom-spmi-pmic.c, drivers/mfd/atmel-flexcom.c, etc, but
-> > instead of having GPIO, RTC, UART, i2c, etc sub-devices (which are also
-> > fully defied in dts), it exports MMIO-based ROMs and SPI-controller.  
-> 
-> Are the ROMs all controlled via SPI?
-> 
-> > Lee, explain me please what is the difference between these MFDs and
-> > Baikal-T1 Boot Controller, that makes one simple MFDs suitable for the
-> > MFD subsystem, while another isn't?  
-> 
-> Complexity.
-> 
-> [NB: Please Don't assume that just because I accepted a driver into
->      MFD 6 years ago, that it would be accepted again today.]
-> 
-> To me this looks like an MTD device which is controlled via SPI.
-> 
-> The way I'm reading this currently, it might serve well to make the
-> MTD portion(s) children of the SPI controller.  I still do not see a
-> compelling reason to warrant adding a superfluous MFD driver if at all
-> avoidable.
-> 
-> > Miquel, Richard, Vignesh and everyone from MTD, who can help could you
-> > join this discussion and clarify whether the Baikal-T1 Boot Controller
-> > driver is supposed to be moved to the MTD subsystem? If so, then what is
-> > the better place to put it within the drivers/mtd/ directory tree?
-> >   
+This patch has just landed in linux-next 20200326. Sadly it breaks 
+booting of the Raspberry Pi3b and Pi4 boards, either in 32bit or 64bit 
+mode. There is no warning nor panic message, just a silent freeze. The 
+last message shown on the earlycon is:
 
-Thank you for the detailed explanation. I'll try to bring useful
-information to sort this out. IIUC, this bloc exports:
+[    0.893217] Serial: 8250/16550 driver, 1 ports, IRQ sharing enabled
 
-1/ One ROM located in the SoC
-2/ The access to a possible second ROM over SPI
+> ---
+>
+> I think it's time to soak test this and see if anything fails or if
+> anyone complains. Definitely not ready for 5.6. But pulling it in for
+> 5.7 and having it go through all the rc testing would be helpful.
+>
+> I'm sure there'll be reports where some DT properties are ambiguously
+> names and is breaking downstream or even some upstream platform. For
+> example, a DT property like "nr-gpios" would have a dmesg log about
+> parsing error because it looks like a valid "-gpios" DT binding. It'll
+> be good to catch those case and fix them.
+>
+> Also, is there no way to look up current value of early_params? It'd be
+> nice if there was a way to do that.
+>
+> -Saravana
+>
+>   drivers/base/core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 5e3cc1651c78..9fabf9749a06 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -2345,7 +2345,7 @@ static int device_private_init(struct device *dev)
+>   	return 0;
+>   }
+>   
+> -static u32 fw_devlink_flags;
+> +static u32 fw_devlink_flags = DL_FLAG_SYNC_STATE_ONLY;
+>   static int __init fw_devlink_setup(char *arg)
+>   {
+>   	if (!arg)
 
-And also:
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-3/ Access to the SPI controller itself
-4/ Access to 1/ or 2/ depending on an external switch.
-
-IMHO:
-
-1/ Might be seen as a random MTD device, its driver should be in
-   /drivers/mtd/devices I guess.
-3/ Is a SPI controller, its driver should be memory agnostic and
-   located in /driver/spi/. However, it should probably implement
-   the spi-mem infrastructure *and* the direct-mapping infrastructure
-   which would automatically cover 2/ as well. The reg property of 2/
-   should probably be part of 3/.
-
-For 4/ I don't know what is the right thing to do yet.
-
-What do you think?
- 
-> > > > Recently I've sent an RFC regarding a different question, but it
-> > > > concerns the Baikal-T1 system controller and the boot controller as being part
-> > > > of it:
-> > > > 
-> > > > https://lkml.org/lkml/2020/3/22/393  
-
-
-Thanks,
-Miquèl
