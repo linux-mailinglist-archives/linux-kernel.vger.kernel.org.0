@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A7CE19610E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 23:26:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC07C196101
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 23:25:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbgC0W0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 18:26:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43370 "EHLO mail.kernel.org"
+        id S1727966AbgC0WZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 18:25:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727866AbgC0WZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 18:25:08 -0400
+        id S1727869AbgC0WZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 18:25:09 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57C33217D8;
+        by mail.kernel.org (Postfix) with ESMTPSA id AA0E921D6C;
         Fri, 27 Mar 2020 22:25:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1585347907;
-        bh=nTy6FurwjMOt+wtEU20iWyrcDsMmmfs5wl7gzXUqPPE=;
+        bh=AozrG3MmGq6+pM4lOKZjhKJpJ9U2ielG7RVJMhTB7pw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1s6LEN+O1BnIE0kUU7dLVNoXAMENP8KdBVM8jQKLfSk3LkgQz3HPIiSqh+nhUQoJN
-         Q1Bt0xG/OQsnfZSddbP6OjYySTXkS8D/KSDjXg7jeUix2sMAtutMXIJXDIB/bAVX7F
-         YXRaNbg+hj1cp8V8FYaHfQxHOHRAUq2FOp1l58ok=
+        b=xGDVj2yfmCfSZa+shrDeY1vLssuE0+riJLlgKTy7VPuNr8ZBbfEEneRCDfsNJmIpc
+         5GwKdWFg/0KBfc04TpPMCcEP6CkjWDd/YSZNwPogCtIpHYVtCWO+9KwvJltCm4Oerb
+         1WaRRebSxmH6rCwgOXYpWpRM9MeJ37IfwiGj7sZw=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v3 tip/core/rcu 27/34] rcu-tasks: Allow rcu_read_unlock_trace() under scheduler locks
-Date:   Fri, 27 Mar 2020 15:24:49 -0700
-Message-Id: <20200327222456.12470-27-paulmck@kernel.org>
+Subject: [PATCH v3 tip/core/rcu 28/34] rcu-tasks: Disable CPU hotplug across RCU tasks trace scans
+Date:   Fri, 27 Mar 2020 15:24:50 -0700
+Message-Id: <20200327222456.12470-28-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200327222346.GA12082@paulmck-ThinkPad-P72>
 References: <20200327222346.GA12082@paulmck-ThinkPad-P72>
@@ -45,62 +45,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-The rcu_read_unlock_trace() can invoke rcu_read_unlock_trace_special(),
-which in turn can call wake_up().  Therefore, if any scheduler lock is
-held across a call to rcu_read_unlock_trace(), self-deadlock can occur.
-This commit therefore uses the irq_work facility to defer the wake_up()
-to a clean environment where no scheduler locks will be held.
+This commit disables CPU hotplug across RCU tasks trace scans, which
+is a first step towards correctly recognizing idle tasks "running" on
+offline CPUs.
 
-Reported-by: Steven Rostedt <rostedt@goodmis.org>
-[ paulmck: Update #includes for m68k per kbuild test robot. ]
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tasks.h  | 12 +++++++++++-
- kernel/rcu/update.c |  1 +
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ kernel/rcu/tasks.h | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index a7ecde9..2663167e 100644
+index 2663167e..df6e785 100644
 --- a/kernel/rcu/tasks.h
 +++ b/kernel/rcu/tasks.h
-@@ -729,6 +729,16 @@ void call_rcu_tasks_trace(struct rcu_head *rhp, rcu_callback_t func);
- DEFINE_RCU_TASKS(rcu_tasks_trace, rcu_tasks_wait_gp, call_rcu_tasks_trace,
- 		 "RCU Tasks Trace");
- 
-+/*
-+ * This irq_work handler allows rcu_read_unlock_trace() to be invoked
-+ * while the scheduler locks are held.
-+ */
-+static void rcu_read_unlock_iw(struct irq_work *iwp)
-+{
-+	wake_up(&trc_wait);
-+}
-+static DEFINE_IRQ_WORK(rcu_tasks_trace_iw, rcu_read_unlock_iw);
-+
- /* If we are the last reader, wake up the grace-period kthread. */
- void rcu_read_unlock_trace_special(struct task_struct *t, int nesting)
+@@ -906,16 +906,16 @@ static void rcu_tasks_trace_pregp_step(void)
  {
-@@ -742,7 +752,7 @@ void rcu_read_unlock_trace_special(struct task_struct *t, int nesting)
- 		WRITE_ONCE(t->trc_reader_special.b.need_qs, false);
- 	WRITE_ONCE(t->trc_reader_nesting, nesting);
- 	if (nq && atomic_dec_and_test(&trc_n_readers_need_end))
--		wake_up(&trc_wait);
-+		irq_work_queue(&rcu_tasks_trace_iw);
+ 	int cpu;
+ 
+-	// Wait for CPU-hotplug paths to complete.
+-	cpus_read_lock();
+-	cpus_read_unlock();
+-
+ 	// Allow for fast-acting IPIs.
+ 	atomic_set(&trc_n_readers_need_end, 1);
+ 
+ 	// There shouldn't be any old IPIs, but...
+ 	for_each_possible_cpu(cpu)
+ 		WARN_ON_ONCE(per_cpu(trc_ipi_to_cpu, cpu));
++
++	// Disable CPU hotplug across the tasklist scan.
++	// This also waits for all readers in CPU-hotplug code paths.
++	cpus_read_lock();
  }
- EXPORT_SYMBOL_GPL(rcu_read_unlock_trace_special);
  
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 0fb2a9e..40e3512 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -41,6 +41,7 @@
- #include <linux/sched/isolation.h>
- #include <linux/kprobes.h>
- #include <linux/slab.h>
-+#include <linux/irq_work.h>
+ /* Do first-round processing for the specified task. */
+@@ -931,6 +931,9 @@ static void rcu_tasks_trace_pertask(struct task_struct *t,
+ /* Do intermediate processing between task and holdout scans. */
+ static void rcu_tasks_trace_postscan(void)
+ {
++	// Re-enable CPU hotplug now that the tasklist scan has completed.
++	cpus_read_unlock();
++
+ 	// Wait for late-stage exiting tasks to finish exiting.
+ 	// These might have passed the call to exit_tasks_rcu_finish().
+ 	synchronize_rcu();
+@@ -975,6 +978,9 @@ static void check_all_holdout_tasks_trace(struct list_head *hop,
+ {
+ 	struct task_struct *g, *t;
  
- #define CREATE_TRACE_POINTS
- 
++	// Disable CPU hotplug across the holdout list scan.
++	cpus_read_lock();
++
+ 	list_for_each_entry_safe(t, g, hop, trc_holdout_list) {
+ 		// If safe and needed, try to check the current task.
+ 		if (READ_ONCE(t->trc_ipi_to_cpu) == -1 &&
+@@ -987,6 +993,10 @@ static void check_all_holdout_tasks_trace(struct list_head *hop,
+ 		else if (needreport)
+ 			show_stalled_task_trace(t, firstreport);
+ 	}
++
++	// Re-enable CPU hotplug now that the holdout list scan has completed.
++	cpus_read_unlock();
++
+ 	if (needreport) {
+ 		if (firstreport)
+ 			pr_err("INFO: rcu_tasks_trace detected stalls?\n");
 -- 
 2.9.5
 
