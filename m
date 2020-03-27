@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A209196110
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 23:26:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07FA11960FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Mar 2020 23:25:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbgC0W0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 18:26:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42902 "EHLO mail.kernel.org"
+        id S1727901AbgC0WZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 18:25:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727822AbgC0WZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727821AbgC0WZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 27 Mar 2020 18:25:04 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 338772137B;
+        by mail.kernel.org (Postfix) with ESMTPSA id 86ABC215A4;
         Fri, 27 Mar 2020 22:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1585347903;
-        bh=yQeLNXE8pE+mX3NEX+uIgJ7GV9AeElQkGmvOOqKMGQ4=;
+        bh=WXBO/ZPMHex+UqRjYTFM44vWqG22vzMF6bLX0ctGiVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IcUE2hcyHo3P42DvB5aLcbawWekr1QUmns8giXhhv9X5D3hLECUnsH7V/Q9bCRWly
-         SEHNtJxLAAdxvkDfDlWLrJl9cghQ5sjTGkLp6/1lPXBldlyo98vhkfa1+UQ2fS66LC
-         JunGkxQ2047ExDM8S6gi+wBm+HjDBWzt0WVH7wJw=
+        b=JwdocSBNZLDugUS6nKYjuf8tbC0aA8MrJcmtm0NxZk3yqJbvBMk4bD/3SK4ki70fh
+         x+/qvqeAFIX4NIB3BwiZyVHzWdT+14YCBeJwB3jtAewhNddoX11NchmJOf5zOE61Xp
+         EDE5NkiOaQQ7R95usAXzZS7Jlrmu9/xV2AjyKZNk=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v3 tip/core/rcu 15/34] rcutorture: Add torture tests for RCU Tasks Trace
-Date:   Fri, 27 Mar 2020 15:24:37 -0700
-Message-Id: <20200327222456.12470-15-paulmck@kernel.org>
+Subject: [PATCH v3 tip/core/rcu 16/34] rcu-tasks: Add stall warnings for RCU Tasks Trace
+Date:   Fri, 27 Mar 2020 15:24:38 -0700
+Message-Id: <20200327222456.12470-16-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20200327222346.GA12082@paulmck-ThinkPad-P72>
 References: <20200327222346.GA12082@paulmck-ThinkPad-P72>
@@ -45,161 +45,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-This commit adds the definitions required to torture the tracing flavor
-of RCU tasks.
+This commit adds RCU CPU stall warnings for RCU Tasks Trace.  These
+dump out any tasks blocking the current grace period, as well as any
+CPUs that have not responded to an IPI request.  This happens in two
+phases, when initially extracting state from the tasks and later when
+waiting for any holdout tasks to check in.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/Kconfig.debug                           |  2 +
- kernel/rcu/rcu.h                                   |  1 +
- kernel/rcu/rcutorture.c                            | 44 +++++++++++++++++++++-
- .../selftests/rcutorture/configs/rcu/CFLIST        |  1 +
- .../selftests/rcutorture/configs/rcu/TRACE01       | 10 +++++
- .../selftests/rcutorture/configs/rcu/TRACE01.boot  |  1 +
- 6 files changed, 58 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/TRACE01
- create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/TRACE01.boot
+ kernel/rcu/tasks.h | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 66 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/rcu/Kconfig.debug b/kernel/rcu/Kconfig.debug
-index b15a3bd..a4db41d 100644
---- a/kernel/rcu/Kconfig.debug
-+++ b/kernel/rcu/Kconfig.debug
-@@ -25,6 +25,7 @@ config RCU_PERF_TEST
- 	select SRCU
- 	select TASKS_RCU
- 	select TASKS_RUDE_RCU
-+	select TASKS_TRACE_RCU
- 	default n
- 	help
- 	  This option provides a kernel module that runs performance
-@@ -43,6 +44,7 @@ config RCU_TORTURE_TEST
- 	select SRCU
- 	select TASKS_RCU
- 	select TASKS_RUDE_RCU
-+	select TASKS_TRACE_RCU
- 	default n
- 	help
- 	  This option provides a kernel module that runs torture tests
-diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-index c574620..72903867 100644
---- a/kernel/rcu/rcu.h
-+++ b/kernel/rcu/rcu.h
-@@ -442,6 +442,7 @@ enum rcutorture_type {
- 	RCU_FLAVOR,
- 	RCU_TASKS_FLAVOR,
- 	RCU_TASKS_RUDE_FLAVOR,
-+	RCU_TASKS_TRACING_FLAVOR,
- 	RCU_TRIVIAL_FLAVOR,
- 	SRCU_FLAVOR,
- 	INVALID_RCU_FLAVOR
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 386cd11..bb6daa58 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -45,6 +45,7 @@
- #include <linux/sched/sysctl.h>
- #include <linux/oom.h>
- #include <linux/tick.h>
-+#include <linux/rcupdate_trace.h>
+diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+index a5ed7e2..fc7f116 100644
+--- a/kernel/rcu/tasks.h
++++ b/kernel/rcu/tasks.h
+@@ -794,9 +794,41 @@ static void rcu_tasks_trace_postscan(void)
+ 	// Any tasks that exit after this point will set ->trc_reader_checked.
+ }
  
- #include "rcu.h"
- 
-@@ -758,6 +759,45 @@ static struct rcu_torture_ops tasks_rude_ops = {
- 	.name		= "tasks-rude"
- };
- 
-+/*
-+ * Definitions for tracing RCU-tasks torture testing.
-+ */
-+
-+static int tasks_tracing_torture_read_lock(void)
++/* Show the state of a task stalling the current RCU tasks trace GP. */
++static void show_stalled_task_trace(struct task_struct *t, bool *firstreport)
 +{
-+	rcu_read_lock_trace();
-+	return 0;
++	int cpu;
++
++	if (*firstreport) {
++		pr_err("INFO: rcu_tasks_trace detected stalls on tasks:\n");
++		*firstreport = false;
++	}
++	// FIXME: This should attempt to use try_invoke_on_nonrunning_task().
++	cpu = task_cpu(t);
++	pr_alert("P%d: %c%c%c nesting: %d%c cpu: %d\n",
++		 t->pid,
++		 ".I"[READ_ONCE(t->trc_ipi_to_cpu) > 0],
++		 ".i"[is_idle_task(t)],
++		 ".N"[cpu > 0 && tick_nohz_full_cpu(cpu)],
++		 t->trc_reader_nesting,
++		 " N"[!!t->trc_reader_need_end],
++		 cpu);
++	sched_show_task(t);
 +}
 +
-+static void tasks_tracing_torture_read_unlock(int idx)
++/* List stalled IPIs for RCU tasks trace. */
++static void show_stalled_ipi_trace(void)
 +{
-+	rcu_read_unlock_trace();
++	int cpu;
++
++	for_each_possible_cpu(cpu)
++		if (per_cpu(trc_ipi_to_cpu, cpu))
++			pr_alert("\tIPI outstanding to CPU %d\n", cpu);
 +}
 +
-+static void rcu_tasks_tracing_torture_deferred_free(struct rcu_torture *p)
-+{
-+	call_rcu_tasks_trace(&p->rtort_rcu, rcu_torture_cb);
-+}
-+
-+static struct rcu_torture_ops tasks_tracing_ops = {
-+	.ttype		= RCU_TASKS_TRACING_FLAVOR,
-+	.init		= rcu_sync_torture_init,
-+	.readlock	= tasks_tracing_torture_read_lock,
-+	.read_delay	= srcu_read_delay,  /* just reuse srcu's version. */
-+	.readunlock	= tasks_tracing_torture_read_unlock,
-+	.get_gp_seq	= rcu_no_completed,
-+	.deferred_free	= rcu_tasks_tracing_torture_deferred_free,
-+	.sync		= synchronize_rcu_tasks_trace,
-+	.exp_sync	= synchronize_rcu_tasks_trace,
-+	.call		= call_rcu_tasks_trace,
-+	.cb_barrier	= rcu_barrier_tasks_trace,
-+	.fqs		= NULL,
-+	.stats		= NULL,
-+	.irq_capable	= 1,
-+	.slow_gps	= 1,
-+	.name		= "tasks-tracing"
-+};
-+
- static unsigned long rcutorture_seq_diff(unsigned long new, unsigned long old)
+ /* Do one scan of the holdout list. */
+ static void check_all_holdout_tasks_trace(struct list_head *hop,
+-					  bool ndrpt, bool *frptp)
++					  bool needreport, bool *firstreport)
  {
- 	if (!cur_ops->gp_diff)
-@@ -1316,6 +1356,7 @@ static bool rcu_torture_one_read(struct torture_random_state *trsp)
- 				  rcu_read_lock_bh_held() ||
- 				  rcu_read_lock_sched_held() ||
- 				  srcu_read_lock_held(srcu_ctlp) ||
-+				  rcu_read_lock_trace_held() ||
- 				  torturing_tasks());
- 	if (p == NULL) {
- 		/* Wait for rcu_torture_writer to get underway */
-@@ -2435,7 +2476,8 @@ rcu_torture_init(void)
- 	int firsterr = 0;
- 	static struct rcu_torture_ops *torture_ops[] = {
- 		&rcu_ops, &rcu_busted_ops, &srcu_ops, &srcud_ops,
--		&busted_srcud_ops, &tasks_ops, &tasks_rude_ops, &trivial_ops,
-+		&busted_srcud_ops, &tasks_ops, &tasks_rude_ops,
-+		&tasks_tracing_ops, &trivial_ops,
- 	};
+ 	struct task_struct *g, *t;
  
- 	if (!torture_init_begin(torture_type, verbose))
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFLIST b/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
-index ec0c72f..dfb1817 100644
---- a/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
-@@ -15,3 +15,4 @@ TASKS01
- TASKS02
- TASKS03
- RUDE01
-+TRACE01
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TRACE01 b/tools/testing/selftests/rcutorture/configs/rcu/TRACE01
-new file mode 100644
-index 0000000..078e2c1
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/TRACE01
-@@ -0,0 +1,10 @@
-+CONFIG_SMP=y
-+CONFIG_NR_CPUS=4
-+CONFIG_HOTPLUG_CPU=y
-+CONFIG_PREEMPT_NONE=y
-+CONFIG_PREEMPT_VOLUNTARY=n
-+CONFIG_PREEMPT=n
-+CONFIG_DEBUG_LOCK_ALLOC=y
-+CONFIG_PROVE_LOCKING=y
-+#CHECK#CONFIG_PROVE_RCU=y
-+CONFIG_RCU_EXPERT=y
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TRACE01.boot b/tools/testing/selftests/rcutorture/configs/rcu/TRACE01.boot
-new file mode 100644
-index 0000000..9675ad6
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/TRACE01.boot
-@@ -0,0 +1 @@
-+rcutorture.torture_type=tasks-tracing
+@@ -809,21 +841,51 @@ static void check_all_holdout_tasks_trace(struct list_head *hop,
+ 		// If check succeeded, remove this task from the list.
+ 		if (READ_ONCE(t->trc_reader_checked))
+ 			trc_del_holdout(t);
++		else if (needreport)
++			show_stalled_task_trace(t, firstreport);
++	}
++	if (needreport) {
++		if (firstreport)
++			pr_err("INFO: rcu_tasks_trace detected stalls?\n");
++		show_stalled_ipi_trace();
+ 	}
+ }
+ 
+ /* Wait for grace period to complete and provide ordering. */
+ static void rcu_tasks_trace_postgp(void)
+ {
++	bool firstreport;
++	struct task_struct *g, *t;
++	LIST_HEAD(holdouts);
++	long ret;
++
+ 	// Remove the safety count.
+ 	smp_mb__before_atomic();  // Order vs. earlier atomics
+ 	atomic_dec(&trc_n_readers_need_end);
+ 	smp_mb__after_atomic();  // Order vs. later atomics
+ 
+ 	// Wait for readers.
+-	wait_event_idle_exclusive(trc_wait,
+-				  atomic_read(&trc_n_readers_need_end) == 0);
+-
++	for (;;) {
++		ret = wait_event_idle_exclusive_timeout(
++				trc_wait,
++				atomic_read(&trc_n_readers_need_end) == 0,
++				READ_ONCE(rcu_task_stall_timeout));
++		if (ret)
++			break;  // Count reached zero.
++		for_each_process_thread(g, t)
++			if (READ_ONCE(t->trc_reader_need_end))
++				trc_add_holdout(t, &holdouts);
++		firstreport = true;
++		list_for_each_entry_safe(t, g, &holdouts, trc_holdout_list)
++			if (READ_ONCE(t->trc_reader_need_end)) {
++				show_stalled_task_trace(t, &firstreport);
++				trc_del_holdout(t);
++			}
++		if (firstreport)
++			pr_err("INFO: rcu_tasks_trace detected stalls?\n");
++		show_stalled_ipi_trace();
++		pr_err("\t%d holdouts\n", atomic_read(&trc_n_readers_need_end));
++	}
+ 	smp_mb(); // Caller's code must be ordered after wakeup.
+ }
+ 
 -- 
 2.9.5
 
