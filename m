@@ -2,111 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F58C1964F4
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 11:08:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D494A1964FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 11:19:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbgC1KIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 06:08:09 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35852 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbgC1KIJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 06:08:09 -0400
-Received: by mail-wm1-f65.google.com with SMTP id g62so15423188wme.1
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Mar 2020 03:08:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=LmXzIdsgOGOrYXNyO5YlJa3HyL+hZye7blb+c0Swzc0=;
-        b=WmDZ7yik0sLkHcczuVaK0qyto4JitTtfPFmIpjBd9wNtV4zoys6/yedhUUNx2tE8as
-         Tw1HQntF4KHvZ0waYrJacDy34yDtBpO8/T0F5EBkCpPHyAJtdQyXly9OexUYuy43H9nC
-         48QMgD9CfF8F4pQmsVTSTGCdqrdPGvYT9cI8NkOLz6Eh2WYyqJD3aLnNz9yBdE7CN7jZ
-         DF2/92YC48LxReVqy/6UTMluKOp/f6CzRHjOkRCptWTqiTAF+EgvaiqmA+vQYYaXq7EZ
-         xlIIZcI9JAYva4gaFMSgvsS8ECZBJ/yTPd7C9E159JELk1kS81hmM5dX3Vy8QNmKJ9ZV
-         UFew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=LmXzIdsgOGOrYXNyO5YlJa3HyL+hZye7blb+c0Swzc0=;
-        b=OopOx/HRNSsWC/HJFtnNiic5QH8XcFLIp1nJBSlKrU+Nkr73+jqC7+X8jJfCjOQxuk
-         R805bpWOiwk5Ock2/dQWvz+NX/PC/MjSXjiI6QsqQN5xidvXb9FPQ4UKVKL3DWYkYEGI
-         oaboMII8mjBpJEd4LtWF2p43DipBcKIEtKJtdQrHwGw2k04UMs4OfQNRWk9vzz/5bcQx
-         NDJa2yjk/bH4MNqpune1MEIq6rRuyb9j9Sl5L2HLY01+2s6fjnXkv+eiDLRPlnVzUjxU
-         M6MooMqGGdLDGIUMkW/G+BvLKvePYscHOehejIyYLUN0D3myktTvAMvhw4BBHJz404In
-         AhyQ==
-X-Gm-Message-State: ANhLgQ1r4JZs4tjsnJ0o1AcrY3mY7HoARgJ6WUJk/UuYlPeRTtlg3lmo
-        PVopfSmIwTDlGo11JF02yzrqjQ==
-X-Google-Smtp-Source: ADFU+vsNR1mrhIcAfevBCNXwc4R7vToBFdkBDFd3MJHvo7dEc9SPf2sPNpROD3ab5FuvnU+PGOlMmg==
-X-Received: by 2002:a7b:c343:: with SMTP id l3mr3320247wmj.38.1585390086574;
-        Sat, 28 Mar 2020 03:08:06 -0700 (PDT)
-Received: from localhost (jirka.pirko.cz. [84.16.102.26])
-        by smtp.gmail.com with ESMTPSA id w204sm11970180wma.1.2020.03.28.03.08.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Mar 2020 03:08:05 -0700 (PDT)
-Date:   Sat, 28 Mar 2020 11:08:05 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        John Linville <linville@tuxdriver.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Richard Cochran <richardcochran@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 00/12] ethtool netlink interface, part 4
-Message-ID: <20200328100805.GO11304@nanopsycho.orion>
-References: <cover.1585349448.git.mkubecek@suse.cz>
+        id S1726199AbgC1KSw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 28 Mar 2020 06:18:52 -0400
+Received: from mga03.intel.com ([134.134.136.65]:48320 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbgC1KSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 06:18:51 -0400
+IronPort-SDR: CDetSSF5pgytrTelfsbOuOfJKVpi6NA0xvpXIL0yoFI2OsofkHsu8FUAwwilTRTNAp3Dha+WX0
+ 71AjI7aadXPQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2020 03:18:51 -0700
+IronPort-SDR: 6TLXjdCgJm76oiGhIztihN1Zcus13c+IQlK4rKUh+9hyDIydlM9113zuPmVNdIMPJwq2tskEHU
+ kNL4eCVKi8Nw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,316,1580803200"; 
+   d="scan'208";a="248132943"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga003.jf.intel.com with ESMTP; 28 Mar 2020 03:18:50 -0700
+Received: from fmsmsx604.amr.corp.intel.com (10.18.126.84) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Sat, 28 Mar 2020 03:18:50 -0700
+Received: from fmsmsx604.amr.corp.intel.com (10.18.126.84) by
+ fmsmsx604.amr.corp.intel.com (10.18.126.84) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Sat, 28 Mar 2020 03:18:49 -0700
+Received: from shsmsx107.ccr.corp.intel.com (10.239.4.96) by
+ fmsmsx604.amr.corp.intel.com (10.18.126.84) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Sat, 28 Mar 2020 03:18:49 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.225]) by
+ SHSMSX107.ccr.corp.intel.com ([169.254.9.191]) with mapi id 14.03.0439.000;
+ Sat, 28 Mar 2020 18:08:52 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Alex Williamson" <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>
+CC:     "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>
+Subject: RE: [PATCH V10 10/11] iommu/vt-d: Enlightened PASID allocation
+Thread-Topic: [PATCH V10 10/11] iommu/vt-d: Enlightened PASID allocation
+Thread-Index: AQHV/w5iiZKRdi7L1UuU5LlV/2W3nKhd0n8A
+Date:   Sat, 28 Mar 2020 10:08:52 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D7FA10F@SHSMSX104.ccr.corp.intel.com>
+References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1584746861-76386-11-git-send-email-jacob.jun.pan@linux.intel.com>
+In-Reply-To: <1584746861-76386-11-git-send-email-jacob.jun.pan@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1585349448.git.mkubecek@suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sat, Mar 28, 2020 at 12:00:58AM CET, mkubecek@suse.cz wrote:
->Implementation of more netlink request types:
->
->  - coalescing (ethtool -c/-C, patches 2-4)
->  - pause parameters (ethtool -a/-A, patches 5-7)
->  - EEE settings (--show-eee / --set-eee, patches 8-10)
->  - timestamping info (-T, patches 11-12)
->
->Patch 1 is a fix for netdev reference leak similar to commit 2f599ec422ad
->("ethtool: fix reference leak in some *_SET handlers") but fixing a code
->
->Changes in v3
->  - change "one-step-*" Tx type names to "onestep-*", (patch 11, suggested
->    by Richard Cochran
->  - use "TSINFO" rather than "TIMESTAMP" for timestamping information
->    constants and adjust symbol names (patch 12, suggested by Richard
->    Cochran)
->
->Changes in v2:
->  - fix compiler warning in net_hwtstamp_validate() (patch 11)
->  - fix follow-up lines alignment (whitespace only, patches 3 and 8)
->which is only in net-next tree at the moment.
->
->Michal Kubecek (12):
->  ethtool: fix reference leak in ethnl_set_privflags()
->  ethtool: provide coalescing parameters with COALESCE_GET request
->  ethtool: set coalescing parameters with COALESCE_SET request
->  ethtool: add COALESCE_NTF notification
->  ethtool: provide pause parameters with PAUSE_GET request
->  ethtool: set pause parameters with PAUSE_SET request
->  ethtool: add PAUSE_NTF notification
->  ethtool: provide EEE settings with EEE_GET request
->  ethtool: set EEE settings with EEE_SET request
->  ethtool: add EEE_NTF notification
->  ethtool: add timestamping related string sets
->  ethtool: provide timestamping information with TSINFO_GET request
+> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Sent: Saturday, March 21, 2020 7:28 AM
+> 
+> From: Lu Baolu <baolu.lu@linux.intel.com>
+> 
+> Enabling IOMMU in a guest requires communication with the host
+> driver for certain aspects. Use of PASID ID to enable Shared Virtual
+> Addressing (SVA) requires managing PASID's in the host. VT-d 3.0 spec
+> provides a Virtual Command Register (VCMD) to facilitate this.
+> Writes to this register in the guest are trapped by QEMU which
+> proxies the call to the host driver.
 
-FWIW, this looks fine to me.
-set-
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+Qemu -> vIOMMU
 
-Thanks Michal!
+> 
+> This virtual command interface consists of a capability register,
+> a virtual command register, and a virtual response register. Refer
+> to section 10.4.42, 10.4.43, 10.4.44 for more information.
+> 
+> This patch adds the enlightened PASID allocation/free interfaces
+> via the virtual command interface.
+> 
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Cc: Kevin Tian <kevin.tian@intel.com>
+> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Reviewed-by: Eric Auger <eric.auger@redhat.com>
+> ---
+>  drivers/iommu/intel-pasid.c | 57
+> +++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/iommu/intel-pasid.h | 13 ++++++++++-
+>  include/linux/intel-iommu.h |  1 +
+>  3 files changed, 70 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
+> index 9f6d07410722..e87ad67aad36 100644
+> --- a/drivers/iommu/intel-pasid.c
+> +++ b/drivers/iommu/intel-pasid.c
+> @@ -27,6 +27,63 @@
+>  static DEFINE_SPINLOCK(pasid_lock);
+>  u32 intel_pasid_max_id = PASID_MAX;
+> 
+> +int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int *pasid)
+> +{
+> +	unsigned long flags;
+> +	u8 status_code;
+> +	int ret = 0;
+> +	u64 res;
+> +
+> +	raw_spin_lock_irqsave(&iommu->register_lock, flags);
+> +	dmar_writeq(iommu->reg + DMAR_VCMD_REG,
+> VCMD_CMD_ALLOC);
+> +	IOMMU_WAIT_OP(iommu, DMAR_VCRSP_REG, dmar_readq,
+> +		      !(res & VCMD_VRSP_IP), res);
+> +	raw_spin_unlock_irqrestore(&iommu->register_lock, flags);
+> +
+> +	status_code = VCMD_VRSP_SC(res);
+> +	switch (status_code) {
+> +	case VCMD_VRSP_SC_SUCCESS:
+> +		*pasid = VCMD_VRSP_RESULT_PASID(res);
+> +		break;
+> +	case VCMD_VRSP_SC_NO_PASID_AVAIL:
+> +		pr_info("IOMMU: %s: No PASID available\n", iommu->name);
+> +		ret = -ENOSPC;
+> +		break;
+> +	default:
+> +		ret = -ENODEV;
+> +		pr_warn("IOMMU: %s: Unexpected error code %d\n",
+> +			iommu->name, status_code);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +void vcmd_free_pasid(struct intel_iommu *iommu, unsigned int pasid)
+> +{
+> +	unsigned long flags;
+> +	u8 status_code;
+> +	u64 res;
+> +
+> +	raw_spin_lock_irqsave(&iommu->register_lock, flags);
+> +	dmar_writeq(iommu->reg + DMAR_VCMD_REG,
+> +		    VCMD_CMD_OPERAND(pasid) | VCMD_CMD_FREE);
+> +	IOMMU_WAIT_OP(iommu, DMAR_VCRSP_REG, dmar_readq,
+> +		      !(res & VCMD_VRSP_IP), res);
+> +	raw_spin_unlock_irqrestore(&iommu->register_lock, flags);
+> +
+> +	status_code = VCMD_VRSP_SC(res);
+> +	switch (status_code) {
+> +	case VCMD_VRSP_SC_SUCCESS:
+> +		break;
+> +	case VCMD_VRSP_SC_INVALID_PASID:
+> +		pr_info("IOMMU: %s: Invalid PASID\n", iommu->name);
+> +		break;
+> +	default:
+> +		pr_warn("IOMMU: %s: Unexpected error code %d\n",
+> +			iommu->name, status_code);
+> +	}
+> +}
+> +
+>  /*
+>   * Per device pasid table management:
+>   */
+> diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
+> index 698015ee3f04..cd3d63f3e936 100644
+> --- a/drivers/iommu/intel-pasid.h
+> +++ b/drivers/iommu/intel-pasid.h
+> @@ -23,6 +23,16 @@
+>  #define is_pasid_enabled(entry)		(((entry)->lo >> 3) & 0x1)
+>  #define get_pasid_dir_size(entry)	(1 << ((((entry)->lo >> 9) & 0x7) + 7))
+> 
+> +/* Virtual command interface for enlightened pasid management. */
+> +#define VCMD_CMD_ALLOC			0x1
+> +#define VCMD_CMD_FREE			0x2
+> +#define VCMD_VRSP_IP			0x1
+> +#define VCMD_VRSP_SC(e)			(((e) >> 1) & 0x3)
+> +#define VCMD_VRSP_SC_SUCCESS		0
+> +#define VCMD_VRSP_SC_NO_PASID_AVAIL	1
+> +#define VCMD_VRSP_SC_INVALID_PASID	1
+> +#define VCMD_VRSP_RESULT_PASID(e)	(((e) >> 8) & 0xfffff)
+> +#define VCMD_CMD_OPERAND(e)		((e) << 8)
+>  /*
+>   * Domain ID reserved for pasid entries programmed for first-level
+>   * only and pass-through transfer modes.
+> @@ -113,5 +123,6 @@ int intel_pasid_setup_nested(struct intel_iommu
+> *iommu,
+>  			int addr_width);
+>  void intel_pasid_tear_down_entry(struct intel_iommu *iommu,
+>  				 struct device *dev, int pasid);
+> -
+> +int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int *pasid);
+> +void vcmd_free_pasid(struct intel_iommu *iommu, unsigned int pasid);
+>  #endif /* __INTEL_PASID_H */
+> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+> index ccbf164fb711..9cbf5357138b 100644
+> --- a/include/linux/intel-iommu.h
+> +++ b/include/linux/intel-iommu.h
+> @@ -169,6 +169,7 @@
+>  #define ecap_smpwc(e)		(((e) >> 48) & 0x1)
+>  #define ecap_flts(e)		(((e) >> 47) & 0x1)
+>  #define ecap_slts(e)		(((e) >> 46) & 0x1)
+> +#define ecap_vcs(e)		(((e) >> 44) & 0x1)
+>  #define ecap_smts(e)		(((e) >> 43) & 0x1)
+>  #define ecap_dit(e)		((e >> 41) & 0x1)
+>  #define ecap_pasid(e)		((e >> 40) & 0x1)
+> --
+> 2.7.4
+
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+
