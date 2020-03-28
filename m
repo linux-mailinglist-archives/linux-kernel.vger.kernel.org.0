@@ -2,134 +2,274 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A19F19666E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 14:53:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 252C0196674
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 14:56:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbgC1Nxn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 09:53:43 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:40257 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726045AbgC1Nxn (ORCPT
+        id S1727070AbgC1N4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 09:56:45 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50710 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbgC1N4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 09:53:43 -0400
-X-IronPort-AV: E=Sophos;i="5.72,316,1580770800"; 
-   d="scan'208";a="442757694"
-Received: from abo-173-121-68.mrs.modulonet.fr (HELO hadrien) ([85.68.121.173])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Mar 2020 14:53:40 +0100
-Date:   Sat, 28 Mar 2020 14:53:40 +0100 (CET)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     Michel Lespinasse <walken@google.com>,
-        Coccinelle <cocci@systeme.lip6.fr>, linux-mm@kvack.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Liam Howlett <Liam.Howlett@oracle.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ying Han <yinghan@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [Cocci] [v3 05/10] mmap locking API: Checking the Coccinelle
- software
-In-Reply-To: <590dbec7-341a-3480-dd47-cb3c65b023c7@web.de>
-Message-ID: <alpine.DEB.2.21.2003281450360.3005@hadrien>
-References: <20200327225102.25061-1-walken@google.com> <20200327225102.25061-6-walken@google.com> <bc2980d7-b823-2fff-d29c-57dcbc9aaf27@web.de> <CANN689H=tjNi=g6M776qo8inr+OfAu8mtL5xsJpu4F=dB6R9zA@mail.gmail.com> <3c222f3c-c8e2-660a-a348-5f3583e7e036@web.de>
- <CANN689HyS0dYWZw3AeWGBvN6_2G4hRDzjMJQ_adHMh0ZkiACYg@mail.gmail.com> <590dbec7-341a-3480-dd47-cb3c65b023c7@web.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 28 Mar 2020 09:56:45 -0400
+Received: by mail-wm1-f67.google.com with SMTP id d198so14639027wmd.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Mar 2020 06:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura-hr.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NMjjibIIWKkjS3mT8K/LaAOt0umug6ECpFrUMrbf80Q=;
+        b=Zj9977bHjaB09yAPwDZyZzHGCvoSs+HuKu40DVFrBL6m5HHOFap7vzBixOfnMnvwij
+         dfHrqHrvmsvbPpci7d62jcfiL70Daz+0xw4quqpeO7lTqEu/9bMoHgSXpNvUuXuHMbI7
+         A15BLvvngWVwADRaarQJIckd8YldLeV49pllURCFP6ozg588tcIRtSwLf6CpBEC79kPc
+         UshHAAiGC4kVXvuqZO3GSW2HCXkYBDwZ2091G5eotPZ4e2KqLadqLA0wv27G5sFTMahP
+         /DRK/1R+X+jiUjHJv3vrlRvknlXjSrBV+ynPLd1GuCHBGkes9QPTR4iyKGf4WMvNNw+r
+         uz5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NMjjibIIWKkjS3mT8K/LaAOt0umug6ECpFrUMrbf80Q=;
+        b=hPLNl4v79LXt2MjgBif2jQMFkoJRyE9RG74g+Usf7oym8PooY/DAYHxMx9T1kKU8yy
+         A+y94lyGvDU9MMT5FkHp9gytOQhabLlnRyb6kudwH9wVvu544xVSwVBxKebAUrh9hj8M
+         WhP39qlgeC09MgQH0F4bEw+oH4u8ux+3otCQxvElDsooJuZaI9ibDNqh+HB/KBixbvzU
+         DfuXvtXy51Gk1q63Hag1ul2q9nGKFKIYMJ/qBnaVtaXe5rBPnPKxqASCOT4RbsoKpO9g
+         2kMnnRV+muwqZbrCOe0vZa27nWDshhYGtCkqu0qqbq5+Xd2DmUqoNVuBUCcB+BuUaMrj
+         36zQ==
+X-Gm-Message-State: ANhLgQ2iCWYtIbV+A+XcMYtax1RHMV8/9APO89WtLgzK26IpZfH3c3E2
+        lpYuewilKAf7YdHHU2a3N8NWe6OggD4=
+X-Google-Smtp-Source: ADFU+vucBnK4QBDQ0SlXaKME/T+OFBV0XfuTMEMJbY9YzNL1c1gitEsNS70qbDqQJ69i2Q64Mg41Jg==
+X-Received: by 2002:a05:600c:257:: with SMTP id 23mr4104677wmj.155.1585403802961;
+        Sat, 28 Mar 2020 06:56:42 -0700 (PDT)
+Received: from localhost.localdomain (dh207-96-177.xnet.hr. [88.207.96.177])
+        by smtp.googlemail.com with ESMTPSA id f12sm8461975wrm.94.2020.03.28.06.56.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Mar 2020 06:56:42 -0700 (PDT)
+From:   Robert Marko <robert.marko@sartura.hr>
+To:     agross@kernel.org, bjorn.andersson@linaro.org, kishon@ti.com,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org
+Cc:     John Crispin <john@phrozen.org>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Luka Perkov <luka.perkov@sartura.hr>
+Subject: [PATCH v4 1/3] phy: add driver for Qualcomm IPQ40xx USB PHY
+Date:   Sat, 28 Mar 2020 14:53:47 +0100
+Message-Id: <20200328135345.695622-1-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-495123161-1585403621=:3005"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: John Crispin <john@phrozen.org>
 
---8323329-495123161-1585403621=:3005
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Add a driver to setup the USB phy on Qualcom Dakota SoCs.
+The driver sets up HS and SS phys.
 
+Signed-off-by: John Crispin <john@phrozen.org>
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+Cc: Luka Perkov <luka.perkov@sartura.hr>
+---
+Changes from v2 to v3:
+* Remove magic writes as they are not needed
+* Correct commit message
 
+ drivers/phy/qualcomm/Kconfig                |   7 +
+ drivers/phy/qualcomm/Makefile               |   1 +
+ drivers/phy/qualcomm/phy-qcom-ipq4019-usb.c | 152 ++++++++++++++++++++
+ 3 files changed, 160 insertions(+)
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-ipq4019-usb.c
 
-On Sat, 28 Mar 2020, Markus Elfring wrote:
+diff --git a/drivers/phy/qualcomm/Kconfig b/drivers/phy/qualcomm/Kconfig
+index e46824da29f6..964bd5d784d2 100644
+--- a/drivers/phy/qualcomm/Kconfig
++++ b/drivers/phy/qualcomm/Kconfig
+@@ -18,6 +18,13 @@ config PHY_QCOM_APQ8064_SATA
+ 	depends on OF
+ 	select GENERIC_PHY
+ 
++config PHY_QCOM_IPQ4019_USB
++	tristate "Qualcomm IPQ4019 USB PHY module"
++	depends on OF && ARCH_QCOM
++	select GENERIC_PHY
++	help
++	  Support for the USB PHY on QCOM IPQ4019/Dakota chipsets.
++
+ config PHY_QCOM_IPQ806X_SATA
+ 	tristate "Qualcomm IPQ806x SATA SerDes/PHY driver"
+ 	depends on ARCH_QCOM
+diff --git a/drivers/phy/qualcomm/Makefile b/drivers/phy/qualcomm/Makefile
+index 283251d6a5d9..8afe6c4f5178 100644
+--- a/drivers/phy/qualcomm/Makefile
++++ b/drivers/phy/qualcomm/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_PHY_ATH79_USB)		+= phy-ath79-usb.o
+ obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)	+= phy-qcom-apq8064-sata.o
++obj-$(CONFIG_PHY_QCOM_IPQ4019_USB)	+= phy-qcom-ipq4019-usb.o
+ obj-$(CONFIG_PHY_QCOM_IPQ806X_SATA)	+= phy-qcom-ipq806x-sata.o
+ obj-$(CONFIG_PHY_QCOM_PCIE2)		+= phy-qcom-pcie2.o
+ obj-$(CONFIG_PHY_QCOM_QMP)		+= phy-qcom-qmp.o
+diff --git a/drivers/phy/qualcomm/phy-qcom-ipq4019-usb.c b/drivers/phy/qualcomm/phy-qcom-ipq4019-usb.c
+new file mode 100644
+index 000000000000..7efebae6b6fd
+--- /dev/null
++++ b/drivers/phy/qualcomm/phy-qcom-ipq4019-usb.c
+@@ -0,0 +1,152 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (C) 2018 John Crispin <john@phrozen.org>
++ *
++ * Based on code from
++ * Allwinner Technology Co., Ltd. <www.allwinnertech.com>
++ *
++ */
++
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of_platform.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++#include <linux/reset.h>
++
++struct ipq4019_usb_phy {
++	struct device		*dev;
++	struct phy		*phy;
++	void __iomem		*base;
++	struct reset_control	*por_rst;
++	struct reset_control	*srif_rst;
++};
++
++static int ipq4019_ss_phy_power_off(struct phy *_phy)
++{
++	struct ipq4019_usb_phy *phy = phy_get_drvdata(_phy);
++
++	reset_control_assert(phy->por_rst);
++	msleep(10);
++
++	return 0;
++}
++
++static int ipq4019_ss_phy_power_on(struct phy *_phy)
++{
++	struct ipq4019_usb_phy *phy = phy_get_drvdata(_phy);
++
++	ipq4019_ss_phy_power_off(_phy);
++
++	reset_control_deassert(phy->por_rst);
++
++	return 0;
++}
++
++static struct phy_ops ipq4019_usb_ss_phy_ops = {
++	.power_on	= ipq4019_ss_phy_power_on,
++	.power_off	= ipq4019_ss_phy_power_off,
++};
++
++static int ipq4019_hs_phy_power_off(struct phy *_phy)
++{
++	struct ipq4019_usb_phy *phy = phy_get_drvdata(_phy);
++
++	reset_control_assert(phy->por_rst);
++	msleep(10);
++
++	reset_control_assert(phy->srif_rst);
++	msleep(10);
++
++	return 0;
++}
++
++static int ipq4019_hs_phy_power_on(struct phy *_phy)
++{
++	struct ipq4019_usb_phy *phy = phy_get_drvdata(_phy);
++
++	ipq4019_hs_phy_power_off(_phy);
++
++	reset_control_deassert(phy->srif_rst);
++	msleep(10);
++
++	reset_control_deassert(phy->por_rst);
++
++	return 0;
++}
++
++static struct phy_ops ipq4019_usb_hs_phy_ops = {
++	.power_on	= ipq4019_hs_phy_power_on,
++	.power_off	= ipq4019_hs_phy_power_off,
++};
++
++static const struct of_device_id ipq4019_usb_phy_of_match[] = {
++	{ .compatible = "qcom,usb-hs-ipq4019-phy", .data = &ipq4019_usb_hs_phy_ops},
++	{ .compatible = "qcom,usb-ss-ipq4019-phy", .data = &ipq4019_usb_ss_phy_ops},
++	{ },
++};
++MODULE_DEVICE_TABLE(of, ipq4019_usb_phy_of_match);
++
++static int ipq4019_usb_phy_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	struct phy_provider *phy_provider;
++	struct ipq4019_usb_phy *phy;
++	const struct of_device_id *match;
++
++	match = of_match_device(ipq4019_usb_phy_of_match, &pdev->dev);
++	if (!match)
++		return -ENODEV;
++
++	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
++	if (!phy)
++		return -ENOMEM;
++
++	phy->dev = &pdev->dev;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	phy->base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(phy->base)) {
++		dev_err(dev, "failed to remap register memory\n");
++		return PTR_ERR(phy->base);
++	}
++
++	phy->por_rst = devm_reset_control_get(phy->dev, "por_rst");
++	if (IS_ERR(phy->por_rst)) {
++		if (PTR_ERR(phy->por_rst) != -EPROBE_DEFER)
++			dev_err(dev, "POR reset is missing\n");
++		return PTR_ERR(phy->por_rst);
++	}
++
++	phy->srif_rst = devm_reset_control_get_optional(phy->dev, "srif_rst");
++	if (IS_ERR(phy->srif_rst))
++		return PTR_ERR(phy->srif_rst);
++
++	phy->phy = devm_phy_create(dev, NULL, match->data);
++	if (IS_ERR(phy->phy)) {
++		dev_err(dev, "failed to create PHY\n");
++		return PTR_ERR(phy->phy);
++	}
++	phy_set_drvdata(phy->phy, phy);
++
++	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++
++	return PTR_ERR_OR_ZERO(phy_provider);
++}
++
++static struct platform_driver ipq4019_usb_phy_driver = {
++	.probe	= ipq4019_usb_phy_probe,
++	.driver = {
++		.of_match_table	= ipq4019_usb_phy_of_match,
++		.name  = "ipq4019-usb-phy",
++	}
++};
++module_platform_driver(ipq4019_usb_phy_driver);
++
++MODULE_DESCRIPTION("QCOM/IPQ4019 USB phy driver");
++MODULE_AUTHOR("John Crispin <john@phrozen.org>");
++MODULE_LICENSE("GPL v2");
+-- 
+2.26.0
 
-> >> How will corresponding software development resources evolve?
-> >
-> > I don't think I understand the question, or, actually, are you asking
-> > me or the coccinelle developers ?
->
-> I hope that another communication approach can eventually increase
-> the chances for a better common understanding of development challenges.
->
-> The code from a mentioned source file can be reduced to the following
-> test file.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/mips/mm/fault.c?id=69c5eea3128e775fd3c70ecf0098105d96dee330#n34
->
-> // deleted part
-> static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
-> 	unsigned long address)
-> {
-> 	struct vm_area_struct * vma = NULL;
-> 	struct task_struct *tsk = current;
-> 	struct mm_struct *mm = tsk->mm;
-> // deleted part
-> retry:
-> 	down_read(&mm->mmap_sem);
-> 	vma = find_vma(mm, address);
-> 	if (!vma)
-> 		goto bad_area;
-> // deleted part
-> }
-> // deleted part
->
->
-> Application of the software “Coccinelle 1.0.8-00029-ga549b9f0” (OCaml 4.10.0)
->
-> elfring@Sonne:~/Projekte/Coccinelle/Probe> spatch --parse-c do_page_fault-excerpt3.c
-> …
-> NB total files = 1; perfect = 1; pbs = 0; timeout = 0; =========> 100%
-> nb good = 15,  nb passed = 1 =========> 6.25% passed
-> nb good = 15,  nb bad = 0 =========> 100.00% good or passed
->
->
-> The discussed transformation approach can also be reduced for a test
-> to the following script for the semantic patch language.
->
-> @replacement@
-> expression x;
-> @@
-> -down_read
-> +mmap_read_lock
->  (
-> - &
->   x
-> - ->mmap_sem
->  )
->
->
-> elfring@Sonne:~/Projekte/Coccinelle/Probe> spatch use_mmap_locking_API_3.cocci do_page_fault-excerpt3.c
->
->
-> The desired diff is not generated so far.
-> How would you like to fix this situation?
-
-The problem is due to a preceding goto where the destination is expressed
-as a macro name.  Maybe there should be a warning in this case.
-
-julia
-
->
-> Regards,
-> Markus
-> _______________________________________________
-> Cocci mailing list
-> Cocci@systeme.lip6.fr
-> https://systeme.lip6.fr/mailman/listinfo/cocci
->
---8323329-495123161-1585403621=:3005--
