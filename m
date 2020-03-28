@@ -2,144 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E95D3196632
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 13:58:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5950219663A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 14:02:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbgC1M60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 08:58:26 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:58417 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbgC1M60 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 08:58:26 -0400
-Received: from 185.80.35.16 (185.80.35.16) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
- id 9c4c29803feb8bf4; Sat, 28 Mar 2020 13:58:24 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Doug Smythies <dsmythies@telus.net>
-Subject: [PATCH 2/2] cpufreq: intel_pstate: Use passive mode by default without HWP
-Date:   Sat, 28 Mar 2020 13:57:48 +0100
-Message-ID: <2988949.NgUrjYMkJj@kreacher>
-In-Reply-To: <2016232.ihCVsphvri@kreacher>
-References: <2016232.ihCVsphvri@kreacher>
+        id S1726382AbgC1NCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 09:02:15 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56746 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726225AbgC1NCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 09:02:15 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id CC0D1DB02DE44016DCAE;
+        Sat, 28 Mar 2020 21:01:26 +0800 (CST)
+Received: from use12-sp2.huawei.com (10.67.189.174) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.487.0; Sat, 28 Mar 2020 21:01:20 +0800
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+To:     <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>
+CC:     <nixiaoming@huawei.com>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <wangle6@huawei.com>,
+        <zhangweimin12@huawei.com>, <yebin10@huawei.com>,
+        <houtao1@huawei.com>
+Subject: [PATCH] mtd:clear cache_state to avoid writing to bad clocks repeatedly
+Date:   Sat, 28 Mar 2020 21:01:17 +0800
+Message-ID: <1585400477-65705-1-git-send-email-nixiaoming@huawei.com>
+X-Mailer: git-send-email 1.8.5.6
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+X-Originating-IP: [10.67.189.174]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+The function call process is as follows:
+	mtd_blktrans_work()
+	  while (1)
+	    do_blktrans_request()
+	      mtdblock_writesect()
+	        do_cached_write()
+	          write_cached_data() /*if cache_state is STATE_DIRTY*/
+	            erase_write()
 
-After recent changes allowing scale-invariant utilization to be
-used on x86, the schedutil governor on top of intel_pstate in the
-passive mode should be on par with (or better than) the active mode
-"powersave" algorithm of intel_pstate on systems in which
-hardware-managed P-states (HWP) are not used, so it should not be
-necessary to use the internal scaling algorithm in those cases.
+write_cached_data() returns failure without modifying cache_state
+and cache_offset. so when do_cached_write() is called again,
+write_cached_data() will be called again to perform erase_write()
+on the same cache_offset.
 
-Accordingly, modify intel_pstate to start in the passive mode by
-default if the processor at hand does not support HWP of if the driver
-is requested to avoid using HWP through the kernel command line.
+but if this cache_offset points to a bad block, erase_write() will
+always return -EIO. Writing to this mtdblk is equivalent to losing
+the current data, and repeatedly writing to the bad block.
 
-Among other things, that will allow utilization clamps and the
-support for RT/DL tasks in the schedutil governor to be utilized on
-systems in which intel_pstate is used.
+Repeatedly writing a bad block has no real benefits,
+but brings some negative effects:
+1 Lost subsequent data
+2 Loss of flash device life
+3 erase_write() bad blocks are very time-consuming. for example:
+	the function do_erase_oneblock() in chips/cfi_cmdset_0020.c or
+	chips/cfi_cmdset_0002.c may take more than 20 seconds to return
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Therefore, when erase_write() returns -EIO in write_cached_data(),
+clear cache_state to avoid writing to bad clocks repeatedly.
+
+Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
 ---
- Documentation/admin-guide/pm/intel_pstate.rst | 32 ++++++++++++++++-----------
- drivers/cpufreq/intel_pstate.c                |  3 ++-
- 2 files changed, 21 insertions(+), 14 deletions(-)
+ drivers/mtd/mtdblock.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/pm/intel_pstate.rst b/Documentation/admin-guide/pm/intel_pstate.rst
-index ad392f3aee06..39d80bc29ccd 100644
---- a/Documentation/admin-guide/pm/intel_pstate.rst
-+++ b/Documentation/admin-guide/pm/intel_pstate.rst
-@@ -62,9 +62,10 @@ on the capabilities of the processor.
- Active Mode
- -----------
+diff --git a/drivers/mtd/mtdblock.c b/drivers/mtd/mtdblock.c
+index 078e0f6..98c25d6 100644
+--- a/drivers/mtd/mtdblock.c
++++ b/drivers/mtd/mtdblock.c
+@@ -89,8 +89,6 @@ static int write_cached_data (struct mtdblk_dev *mtdblk)
  
--This is the default operation mode of ``intel_pstate``.  If it works in this
--mode, the ``scaling_driver`` policy attribute in ``sysfs`` for all ``CPUFreq``
--policies contains the string "intel_pstate".
-+This is the default operation mode of ``intel_pstate`` for processors with
-+hardware-managed P-states (HWP) support.  If it works in this mode, the
-+``scaling_driver`` policy attribute in ``sysfs`` for all ``CPUFreq`` policies
-+contains the string "intel_pstate".
+ 	ret = erase_write (mtd, mtdblk->cache_offset,
+ 			   mtdblk->cache_size, mtdblk->cache_data);
+-	if (ret)
+-		return ret;
  
- In this mode the driver bypasses the scaling governors layer of ``CPUFreq`` and
- provides its own scaling algorithms for P-state selection.  Those algorithms
-@@ -138,12 +139,13 @@ internal P-state selection logic to be less performance-focused.
- Active Mode Without HWP
- ~~~~~~~~~~~~~~~~~~~~~~~
- 
--This is the default operation mode for processors that do not support the HWP
--feature.  It also is used by default with the ``intel_pstate=no_hwp`` argument
--in the kernel command line.  However, in this mode ``intel_pstate`` may refuse
--to work with the given processor if it does not recognize it.  [Note that
--``intel_pstate`` will never refuse to work with any processor with the HWP
--feature enabled.]
-+This operation mode is optional for processors that do not support the HWP
-+feature or when the ``intel_pstate=no_hwp`` argument is passed to the kernel in
-+the command line.  The active mode is used in those cases if the
-+``intel_pstate=active`` argument is passed to the kernel in the command line.
-+In this mode ``intel_pstate`` may refuse to work with processors that are not
-+recognized by it.  [Note that ``intel_pstate`` will never refuse to work with
-+any processor with the HWP feature enabled.]
- 
- In this mode ``intel_pstate`` registers utilization update callbacks with the
- CPU scheduler in order to run a P-state selection algorithm, either
-@@ -188,10 +190,14 @@ is not set.
- Passive Mode
- ------------
- 
--This mode is used if the ``intel_pstate=passive`` argument is passed to the
--kernel in the command line (it implies the ``intel_pstate=no_hwp`` setting too).
--Like in the active mode without HWP support, in this mode ``intel_pstate`` may
--refuse to work with the given processor if it does not recognize it.
-+This is the default operation mode of ``intel_pstate`` for processors without
-+hardware-managed P-states (HWP) support.  It is always used if the
-+``intel_pstate=passive`` argument is passed to the kernel in the command line
-+regardless of whether or not the given processor supports HWP.  [Note that the
-+``intel_pstate=no_hwp`` setting implies ``intel_pstate=passive`` if it is used
-+without ``intel_pstate=active``.]  Like in the active mode without HWP support,
-+in this mode ``intel_pstate`` may refuse to work with processors that are not
-+recognized by it.
- 
- If the driver works in this mode, the ``scaling_driver`` policy attribute in
- ``sysfs`` for all ``CPUFreq`` policies contains the string "intel_cpufreq".
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index d2297839374d..b24a5c5ec4f9 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -2769,6 +2769,8 @@ static int __init intel_pstate_init(void)
- 		pr_info("Invalid MSRs\n");
- 		return -ENODEV;
- 	}
-+	/* Without HWP start in the passive mode. */
-+	default_driver = &intel_cpufreq;
- 
- hwp_cpu_matched:
  	/*
-@@ -2814,7 +2816,6 @@ static int __init intel_pstate_setup(char *str)
- 	if (!strcmp(str, "disable")) {
- 		no_load = 1;
- 	} else if (!strcmp(str, "passive")) {
--		pr_info("Passive mode enabled\n");
- 		default_driver = &intel_cpufreq;
- 		no_hwp = 1;
- 	}
+ 	 * Here we could arguably set the cache state to STATE_CLEAN.
+@@ -98,9 +96,14 @@ static int write_cached_data (struct mtdblk_dev *mtdblk)
+ 	 * be notified if this content is altered on the flash by other
+ 	 * means.  Let's declare it empty and leave buffering tasks to
+ 	 * the buffer cache instead.
++	 *
++	 * if this cache_offset points to a bad block
++	 * data cannot be written to the device.
++	 * clear cache_state to avoid writing to bad clocks repeatedly
+ 	 */
+-	mtdblk->cache_state = STATE_EMPTY;
+-	return 0;
++	if (ret == 0 || ret == -EIO)
++		mtdblk->cache_state = STATE_EMPTY;
++	return ret;
+ }
+ 
+ 
 -- 
-2.16.4
-
-
-
+1.8.5.6
 
