@@ -2,63 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA731966E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 16:17:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AABE71966E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 16:19:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbgC1PRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 11:17:30 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35731 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbgC1PR3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 11:17:29 -0400
-Received: by mail-ot1-f67.google.com with SMTP id v2so8519627oto.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Mar 2020 08:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=1JW1rb+7JaiEtoD11Th+rGuWU7fZ1SnbInuVGLL3ngQ=;
-        b=YVXwRR/+LMhYyQkjtSZXZXIaLIJT7nWMErtU2nKF9RHLwjLjLoEdwX9WcSxXT2fpTd
-         4KpzLh6Qpix/COfzU7B2aIVu6I+iId2IRCC/hw3t2eoyF/30bt84vmQYUSwcmHDPtpSJ
-         mdPOoRiimNUE+e/T+pIPwW0AjiCUng1ngM1EXgcMSaXQvhUYaTBM6CyscL/NX5RUClp9
-         uuCV81UakOXhn+w2yCrO5oKjrkxXJYO4ixg5yiFfo16oSPzTfzpgW7SzjVQ5ulC6klPv
-         o4XYfEVjngaIjcXT6bK0BOS9iMIojTHywspyuGKeyBnEH8dOfpH6zMyiXTvEq2wgkbhW
-         h6xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=1JW1rb+7JaiEtoD11Th+rGuWU7fZ1SnbInuVGLL3ngQ=;
-        b=gEPAMGHhZzE3pbVBJbcH/wzfl/QuF3VGlxpaOQqn4RUSRsO6eumvnnNWHlb2XSfOR0
-         50nkhagP3PJbWU6J4F2GkWnClitG0v8EciYCJ5GwB8dzL1u6gzlQvzW+jzPDv9yktDeM
-         /KDyX8dUd2YkJMseR/GkeQKv61Lu5dq0n66xqQqlEas6tx6yXoUATY3ezcB9/jLMk1R9
-         qX6OJ3lBHbbSchUSZF0Q1+cQJRZeuGINfYePPLkuICDq+h8Tk48dBUgpJNNUJnRD6NEM
-         e19yFrl6+YkKyBm5vY0sbk+4zVR3RiR20B7LpGgNCcwfixWWKJGbl2nvcKOPTQQ/buf3
-         y5iQ==
-X-Gm-Message-State: ANhLgQ3qqnOpPFUeUgvnkLlH+SB5wPn/nDvYpX1SJraTHgUab3Os1TZA
-        V0ORVVpdY/nCt5uywOZRD8RMu4ambZwqIJPUVu8=
-X-Google-Smtp-Source: ADFU+vtT3qbigf/aXn6f8XN6aPyrZjK+yx4ePoz3UrRe7zNPut3eLSCjwhq6lbAf9FCla2oGSrwFzYcivr7bhnZtmu8=
-X-Received: by 2002:a9d:3423:: with SMTP id v32mr2967272otb.46.1585408648960;
- Sat, 28 Mar 2020 08:17:28 -0700 (PDT)
+        id S1727028AbgC1PTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 11:19:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35680 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726290AbgC1PTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 11:19:33 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70B7B20716;
+        Sat, 28 Mar 2020 15:19:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585408772;
+        bh=3FpOqlp62zWsadRbpg8ISDnWML7ZQ6fDKR5Cz7RJ+g8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=z1PRnsmUmGISBlei7hEHBrqg8rGQ1FABnyjr2RG6UbhySsO8mypi7rlSYlh1A95eV
+         JDDM02bi57ZWMGxQGGU9QL5da7q4a9PYSMYY65Uv9weJsugR+HPoXC4tLXbLzl5+SE
+         ahJf0wcXi2hM9GjOVUjDFhwvj/UBNxlCCw+q/6H0=
+Date:   Sat, 28 Mar 2020 15:19:28 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Mike Looijmans <mike.looijmans@topic.nl>
+Cc:     devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v2] dt-bindings: iio: accel: Add bmi088 accelerometer
+ bindings
+Message-ID: <20200328151928.12f5517e@archlinux>
+In-Reply-To: <20200323095551.23500-1-mike.looijmans@topic.nl>
+References: <20200323095551.23500-1-mike.looijmans@topic.nl>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:ac9:948:0:0:0:0:0 with HTTP; Sat, 28 Mar 2020 08:17:28 -0700 (PDT)
-Reply-To: johnbieber0215@gmail.com
-From:   John Bieber <zebmorris.62@gmail.com>
-Date:   Sat, 28 Mar 2020 16:17:28 +0100
-Message-ID: <CAJACw=Xg1zWoxEm5duSCjXNvorRygah4=2wh_KW9Uo59oh0ERg@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Dear Friend,
+On Mon, 23 Mar 2020 10:55:51 +0100
+Mike Looijmans <mike.looijmans@topic.nl> wrote:
 
-How are you, i have an important message and information i want to
-share with you.
+> This adds the device-tree bindings for the Bosch Sensortec BMI088 IMU,
+> the accelerometer part.
+> 
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Hi Mike
 
-Regards
-John Bieber
+The binding should look to be as complete as possible, independent on what
+we are actually using in the driver.
+
+A quick glance at the datasheet shows me this device has 2 interrupt lines
+dedicated to the accelerometer and 2 power supplies, vddio and vdd.
+
+Interrupt lines for flexible parts like this are fiddly to do, so take
+a look at how we do this in other drivers.  Hmm. the interrupt line to set
+a tag is 'interesting'.  I'd ignore that for now...
+
+> ---
+> v2: convert to yaml format
+> 
+>  .../bindings/iio/accel/bosch,bmi088.yaml      | 38 +++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/accel/bosch,bmi088.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/accel/bosch,bmi088.yaml b/Documentation/devicetree/bindings/iio/accel/bosch,bmi088.yaml
+> new file mode 100644
+> index 000000000000..715f79c3b2a9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/accel/bosch,bmi088.yaml
+> @@ -0,0 +1,38 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/accel/bosch,bma400.yaml#
+
+Should reflect the compatible so include the accel part.
+
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Bosch BMI088 IMU accelerometer part
+> +
+> +maintainers:
+> +  - Mike Looijmans <mike.looijmans@topic.nl>
+> +
+> +description: |
+> +  Acceleration part of the IMU sensor with an SPI interface
+> +
+> +  Specifications about the sensor can be found at:
+> +    https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi088-ds001.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - bosch,bmi088_accel
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +  spi {
+> +    bmi088_accel@1 {
+> +      compatible = "bosch,bmi088_accel";
+> +      reg = <1>;
+> +      spi-max-frequency = <10000000>;
+> +    };
+> +  };
+
