@@ -2,180 +2,325 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42763196621
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 13:37:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F0D8196625
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 13:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726315AbgC1MhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 08:37:17 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:38306 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbgC1MhR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 08:37:17 -0400
-Received: by mail-il1-f194.google.com with SMTP id n13so4012063ilm.5;
-        Sat, 28 Mar 2020 05:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O/8yHh9a7PftoLLUSkGnNnfodolyFPpd9WhHKOKDPIA=;
-        b=CY8eZFv7KVbtrEKXF0M8rb3igcjdETQPtrZ4ZnFKlcfLnduiyC36E1ZgohJf95wvmX
-         p52eU0pxQVlFCQeSq3G6rsdkLILNCl34UO8f7yJRZglOun2Bdf4Zga+evMfYR2dU8s5P
-         Zd6TvAFNOu/tiXas5A8aYH5NxdrMAntPGczoEXjpX94OngWN4dyR3nLiZqyyIshMlnx/
-         gb8PZ6+IxUxNNng0uBuSXmhOK5M5o5f3Oel0hcJMguTUgQejUHwYwdUM3zPkS/sHA7rU
-         3/R2SOB5aQ9incRSZUHje8qqACLlXMMvnxiMhWsJE0Yq/rx8/07OkUPXFjONFKKS+DPU
-         pu3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O/8yHh9a7PftoLLUSkGnNnfodolyFPpd9WhHKOKDPIA=;
-        b=AIQAUPHaatJoGbWOBmK4NuIbRQfPk28099ooz/kW774gBbF104NkiYJ4Z0dpg3y1ML
-         v1+Ikp48cNRho3Trn+M8ipjfLyOWBchwb/MhtVnb26Gw4SuhnGjynGi/+wdvr6uEKXI1
-         t/nW4+ZBxWudV6RxCq/GN0yp5LXpnWmTOAcXVZG1h6WVCS/PVPNreEL5Q6QYfdaiPSbx
-         R7bMlWclpv+U1Bl0kKmM59hE+Cp5MlCeQD9klWouDPN90JjTHF/B+/fx2RlH5mjrL25v
-         FbTgGdOpVgl3NiWMaIds63Ga9o874vmoz9pe/v3r8kqmTUuLbFQ920O1HcRA+cjUQG8P
-         j/KA==
-X-Gm-Message-State: ANhLgQ2JNLda8It9uOfIW2AIxrk/D2qcxm+4xEhvveGKUQFbP0mfc5BO
-        lenTMy46LQq3hn7bBtWzjYZDfu4/uDtsSFKLTD8=
-X-Google-Smtp-Source: ADFU+vu+FX/31Esa4oReLjE2l+HEqXJ0WmQE/QmsqlRjAHIQis3eJkgh0I/03U+PImxYEHaV+/7e3sBg1ZxBNUmLpX4=
-X-Received: by 2002:a92:5dc7:: with SMTP id e68mr3547084ilg.205.1585399035789;
- Sat, 28 Mar 2020 05:37:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHCN7xJSKH-gXA5ncFS3h6_2R28rn70O3HfT=ActS1XVgCFSeg@mail.gmail.com>
- <DB3PR0402MB39160D3F0D03B968B7CBE25AF5CD0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-In-Reply-To: <DB3PR0402MB39160D3F0D03B968B7CBE25AF5CD0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Sat, 28 Mar 2020 07:37:04 -0500
-Message-ID: <CAHCN7xJ2m3LRB3oGBb5QKbacYyTBQK1CdzGcTh3w=hj18H=4Pw@mail.gmail.com>
-Subject: Re: i.MX8MN Errors on 5.6-RC7
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726411AbgC1Ml3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 08:41:29 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:39448 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726225AbgC1Ml3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 08:41:29 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 54F8B1A1353;
+        Sat, 28 Mar 2020 13:41:26 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D8961A1351;
+        Sat, 28 Mar 2020 13:41:15 +0100 (CET)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 1FBEB402A5;
+        Sat, 28 Mar 2020 20:41:02 +0800 (SGT)
+From:   Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
+To:     xiaoliang.yang_1@nxp.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        olteanv@gmail.com, ivan.khoronzhuk@linaro.org,
+        horatiu.vultur@microchip.com, alexandre.belloni@bootlin.com,
+        andrew@lunn.ch, allan.nielsen@microchip.com,
+        vivien.didelot@gmail.com, joergen.andreasen@microchip.com,
+        UNGLinuxDriver@microchip.com, natechancellor@gmail.com,
+        yuehaibing@huawei.com, maowenan@huawei.com, yangbo.lu@nxp.com,
+        alexandru.marginean@nxp.com, po.liu@nxp.com,
+        claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, leoyang.li@nxp.com
+Subject: [net-next,v1] net: mscc: ocelot: add action of police on vcap_is2
+Date:   Sat, 28 Mar 2020 20:37:39 +0800
+Message-Id: <20200328123739.45247-1-xiaoliang.yang_1@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 28, 2020 at 7:07 AM Anson Huang <anson.huang@nxp.com> wrote:
->
-> Hi, Adam
->
-> > Subject: i.MX8MN Errors on 5.6-RC7
-> >
-> > I am getting a few errors on the i.MX8MN:
-> >
-> > [    0.000368] Failed to get clock for /timer@306a0000
-> > [    0.000380] Failed to initialize '/timer@306a0000': -22
-> > [    7.203447] caam 30900000.caam: Failed to get clk 'ipg': -2
-> > [    7.334741] caam 30900000.caam: Failed to request all necessary clocks
-> > [    7.438651] caam: probe of 30900000.caam failed with error -2
-> > [    7.854193] imx-cpufreq-dt: probe of imx-cpufreq-dt failed with error -2
-> >
-> > I was curious to know if anyone else is seeing similar errors.  I already
-> > submitted a proposed fix for a DMA timeout (not shown here) which
-> > matched work already done on i.MX8MQ and i.MX8MM.
-> >
-> > I am not seeing huge differences between 8MM and 8MN in the nodes which
-> > address the timer, caam or imx-cpufreq-dt.
-> >
-> > If anyone has any suggestions, I'd love to try them.
->
+Ocelot has 384 policers that can be allocated to ingress ports,
+QoS classes per port, and VCAP IS2 entries. ocelot_police.c
+supports to set policers which can be allocated to police action
+of VCAP IS2. We allocate policers from maximum pol_id, and
+decrease the pol_id when add a new vcap_is2 entry which is
+police action.
 
-Fabio,
+Signed-off-by: Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
+---
+ drivers/net/ethernet/mscc/ocelot_ace.c    | 62 ++++++++++++++++++++---
+ drivers/net/ethernet/mscc/ocelot_ace.h    |  4 ++
+ drivers/net/ethernet/mscc/ocelot_flower.c |  9 ++++
+ drivers/net/ethernet/mscc/ocelot_police.c | 24 +++++++++
+ drivers/net/ethernet/mscc/ocelot_police.h |  5 ++
+ include/soc/mscc/ocelot.h                 |  1 +
+ 6 files changed, 98 insertions(+), 7 deletions(-)
 
-I tried your ATF suggestion, and it fixed some issues and introduced others:
+diff --git a/drivers/net/ethernet/mscc/ocelot_ace.c b/drivers/net/ethernet/mscc/ocelot_ace.c
+index 906b54025b17..159490212f4b 100644
+--- a/drivers/net/ethernet/mscc/ocelot_ace.c
++++ b/drivers/net/ethernet/mscc/ocelot_ace.c
+@@ -7,6 +7,7 @@
+ #include <linux/proc_fs.h>
+ 
+ #include <soc/mscc/ocelot_vcap.h>
++#include "ocelot_police.h"
+ #include "ocelot_ace.h"
+ #include "ocelot_s2.h"
+ 
+@@ -299,9 +300,9 @@ static void vcap_action_set(struct ocelot *ocelot, struct vcap_data *data,
+ }
+ 
+ static void is2_action_set(struct ocelot *ocelot, struct vcap_data *data,
+-			   enum ocelot_ace_action action)
++			   struct ocelot_ace_rule *ace)
+ {
+-	switch (action) {
++	switch (ace->action) {
+ 	case OCELOT_ACL_ACTION_DROP:
+ 		vcap_action_set(ocelot, data, VCAP_IS2_ACT_PORT_MASK, 0);
+ 		vcap_action_set(ocelot, data, VCAP_IS2_ACT_MASK_MODE, 1);
+@@ -319,6 +320,14 @@ static void is2_action_set(struct ocelot *ocelot, struct vcap_data *data,
+ 		vcap_action_set(ocelot, data, VCAP_IS2_ACT_CPU_QU_NUM, 0);
+ 		vcap_action_set(ocelot, data, VCAP_IS2_ACT_CPU_COPY_ENA, 1);
+ 		break;
++	case OCELOT_ACL_ACTION_POLICE:
++		vcap_action_set(ocelot, data, VCAP_IS2_ACT_PORT_MASK, 0);
++		vcap_action_set(ocelot, data, VCAP_IS2_ACT_MASK_MODE, 0);
++		vcap_action_set(ocelot, data, VCAP_IS2_ACT_POLICE_ENA, 1);
++		vcap_action_set(ocelot, data, VCAP_IS2_ACT_POLICE_IDX, ace->pol_ix);
++		vcap_action_set(ocelot, data, VCAP_IS2_ACT_CPU_QU_NUM, 0);
++		vcap_action_set(ocelot, data, VCAP_IS2_ACT_CPU_COPY_ENA, 0);
++		break;
+ 	}
+ }
+ 
+@@ -611,7 +620,7 @@ static void is2_entry_set(struct ocelot *ocelot, int ix,
+ 	}
+ 
+ 	vcap_key_set(ocelot, &data, VCAP_IS2_TYPE, type, type_mask);
+-	is2_action_set(ocelot, &data, ace->action);
++	is2_action_set(ocelot, &data, ace);
+ 	vcap_data_set(data.counter, data.counter_offset,
+ 		      vcap_is2->counter_width, ace->stats.pkts);
+ 
+@@ -639,12 +648,19 @@ static void is2_entry_get(struct ocelot *ocelot, struct ocelot_ace_rule *rule,
+ 	rule->stats.pkts = cnt;
+ }
+ 
+-static void ocelot_ace_rule_add(struct ocelot_acl_block *block,
++static void ocelot_ace_rule_add(struct ocelot *ocelot,
++				struct ocelot_acl_block *block,
+ 				struct ocelot_ace_rule *rule)
+ {
+ 	struct ocelot_ace_rule *tmp;
+ 	struct list_head *pos, *n;
+ 
++	if (rule->action == OCELOT_ACL_ACTION_POLICE) {
++		block->pol_lpr--;
++		rule->pol_ix = block->pol_lpr;
++		ocelot_ace_policer_add(ocelot, rule->pol_ix, &rule->pol);
++	}
++
+ 	block->count++;
+ 
+ 	if (list_empty(&block->rules)) {
+@@ -697,7 +713,7 @@ int ocelot_ace_rule_offload_add(struct ocelot *ocelot,
+ 	int i, index;
+ 
+ 	/* Add rule to the linked list */
+-	ocelot_ace_rule_add(block, rule);
++	ocelot_ace_rule_add(ocelot, block, rule);
+ 
+ 	/* Get the index of the inserted rule */
+ 	index = ocelot_ace_rule_get_index_id(block, rule);
+@@ -713,7 +729,33 @@ int ocelot_ace_rule_offload_add(struct ocelot *ocelot,
+ 	return 0;
+ }
+ 
+-static void ocelot_ace_rule_del(struct ocelot_acl_block *block,
++static void ocelot_ace_police_del(struct ocelot *ocelot,
++				  struct ocelot_acl_block *block,
++				  u32 ix)
++{
++	struct ocelot_ace_rule *tmp;
++	int index = -1;
++
++	if (ix < block->pol_lpr)
++		return;
++
++	list_for_each_entry(tmp, &block->rules, list) {
++		index++;
++		if (tmp->action == OCELOT_ACL_ACTION_POLICE &&
++		    tmp->pol_ix < ix) {
++			tmp->pol_ix += 1;
++			ocelot_ace_policer_add(ocelot, tmp->pol_ix,
++					       &rule->pol);
++			is2_entry_set(ocelot, index, tmp);
++		}
++	}
++
++	ocelot_ace_policer_del(ocelot, block->pol_lpr);
++	block->pol_lpr++;
++}
++
++static void ocelot_ace_rule_del(struct ocelot *ocelot,
++				struct ocelot_acl_block *block,
+ 				struct ocelot_ace_rule *rule)
+ {
+ 	struct ocelot_ace_rule *tmp;
+@@ -722,6 +764,9 @@ static void ocelot_ace_rule_del(struct ocelot_acl_block *block,
+ 	list_for_each_safe(pos, q, &block->rules) {
+ 		tmp = list_entry(pos, struct ocelot_ace_rule, list);
+ 		if (tmp->id == rule->id) {
++			if (tmp->action == OCELOT_ACL_ACTION_POLICE)
++				ocelot_ace_police_del(ocelot, block, tmp->pol_ix);
++
+ 			list_del(pos);
+ 			kfree(tmp);
+ 		}
+@@ -744,7 +789,7 @@ int ocelot_ace_rule_offload_del(struct ocelot *ocelot,
+ 	index = ocelot_ace_rule_get_index_id(block, rule);
+ 
+ 	/* Delete rule */
+-	ocelot_ace_rule_del(block, rule);
++	ocelot_ace_rule_del(ocelot, block, rule);
+ 
+ 	/* Move up all the blocks over the deleted rule */
+ 	for (i = index; i < block->count; i++) {
+@@ -779,6 +824,7 @@ int ocelot_ace_rule_stats_update(struct ocelot *ocelot,
+ int ocelot_ace_init(struct ocelot *ocelot)
+ {
+ 	const struct vcap_props *vcap_is2 = &ocelot->vcap[VCAP_IS2];
++	struct ocelot_acl_block *block = &ocelot->acl_block;
+ 	struct vcap_data data;
+ 
+ 	memset(&data, 0, sizeof(data));
+@@ -807,6 +853,8 @@ int ocelot_ace_init(struct ocelot *ocelot)
+ 	ocelot_write_gix(ocelot, 0x3fffff, ANA_POL_CIR_STATE,
+ 			 OCELOT_POLICER_DISCARD);
+ 
++	block->pol_lpr = OCELOT_POLICER_DISCARD - 1;
++
+ 	INIT_LIST_HEAD(&ocelot->acl_block.rules);
+ 
+ 	return 0;
+diff --git a/drivers/net/ethernet/mscc/ocelot_ace.h b/drivers/net/ethernet/mscc/ocelot_ace.h
+index b9a5868e3f15..29d22c566786 100644
+--- a/drivers/net/ethernet/mscc/ocelot_ace.h
++++ b/drivers/net/ethernet/mscc/ocelot_ace.h
+@@ -7,6 +7,7 @@
+ #define _MSCC_OCELOT_ACE_H_
+ 
+ #include "ocelot.h"
++#include "ocelot_police.h"
+ #include <net/sch_generic.h>
+ #include <net/pkt_cls.h>
+ 
+@@ -176,6 +177,7 @@ struct ocelot_ace_frame_ipv6 {
+ enum ocelot_ace_action {
+ 	OCELOT_ACL_ACTION_DROP,
+ 	OCELOT_ACL_ACTION_TRAP,
++	OCELOT_ACL_ACTION_POLICE,
+ };
+ 
+ struct ocelot_ace_stats {
+@@ -208,6 +210,8 @@ struct ocelot_ace_rule {
+ 		struct ocelot_ace_frame_ipv4 ipv4;
+ 		struct ocelot_ace_frame_ipv6 ipv6;
+ 	} frame;
++	struct ocelot_policer pol;
++	u32 pol_ix;
+ };
+ 
+ int ocelot_ace_rule_offload_add(struct ocelot *ocelot,
+diff --git a/drivers/net/ethernet/mscc/ocelot_flower.c b/drivers/net/ethernet/mscc/ocelot_flower.c
+index 873a9944fbfb..1af7968ad598 100644
+--- a/drivers/net/ethernet/mscc/ocelot_flower.c
++++ b/drivers/net/ethernet/mscc/ocelot_flower.c
+@@ -12,6 +12,8 @@ static int ocelot_flower_parse_action(struct flow_cls_offload *f,
+ 				      struct ocelot_ace_rule *ace)
+ {
+ 	const struct flow_action_entry *a;
++	s64 burst;
++	u64 rate;
+ 	int i;
+ 
+ 	if (!flow_offload_has_one_action(&f->rule->action))
+@@ -29,6 +31,13 @@ static int ocelot_flower_parse_action(struct flow_cls_offload *f,
+ 		case FLOW_ACTION_TRAP:
+ 			ace->action = OCELOT_ACL_ACTION_TRAP;
+ 			break;
++		case FLOW_ACTION_POLICE:
++			ace->action = OCELOT_ACL_ACTION_POLICE;
++			rate = a->police.rate_bytes_ps;
++			ace->pol.rate = (u32)div_u64(rate, 1000) * 8;
++			burst = rate * PSCHED_NS2TICKS(a->police.burst);
++			ace->pol.burst = (u32)div_u64(burst, PSCHED_TICKS_PER_SEC);
++			break;
+ 		default:
+ 			return -EOPNOTSUPP;
+ 		}
+diff --git a/drivers/net/ethernet/mscc/ocelot_police.c b/drivers/net/ethernet/mscc/ocelot_police.c
+index faddce43f2e3..8d25b2706ff0 100644
+--- a/drivers/net/ethernet/mscc/ocelot_police.c
++++ b/drivers/net/ethernet/mscc/ocelot_police.c
+@@ -225,3 +225,27 @@ int ocelot_port_policer_del(struct ocelot *ocelot, int port)
+ 
+ 	return 0;
+ }
++
++int ocelot_ace_policer_add(struct ocelot *ocelot, u32 pol_ix,
++			   struct ocelot_policer *pol)
++{
++	struct qos_policer_conf pp = { 0 };
++
++	if (!pol)
++		return -EINVAL;
++
++	pp.mode = MSCC_QOS_RATE_MODE_DATA;
++	pp.pir = pol->rate;
++	pp.pbs = pol->burst;
++
++	return qos_policer_conf_set(ocelot, 0, pol_ix, &pp);
++}
++
++int ocelot_ace_policer_del(struct ocelot *ocelot, u32 pol_ix)
++{
++	struct qos_policer_conf pp = { 0 };
++
++	pp.mode = MSCC_QOS_RATE_MODE_DISABLED;
++
++	return qos_policer_conf_set(ocelot, 0, pol_ix, &pp);
++}
+diff --git a/drivers/net/ethernet/mscc/ocelot_police.h b/drivers/net/ethernet/mscc/ocelot_police.h
+index ae9509229463..22025cce0a6a 100644
+--- a/drivers/net/ethernet/mscc/ocelot_police.h
++++ b/drivers/net/ethernet/mscc/ocelot_police.h
+@@ -19,4 +19,9 @@ int ocelot_port_policer_add(struct ocelot *ocelot, int port,
+ 
+ int ocelot_port_policer_del(struct ocelot *ocelot, int port);
+ 
++int ocelot_ace_policer_add(struct ocelot *ocelot, u32 pol_ix,
++			   struct ocelot_policer *pol);
++
++int ocelot_ace_policer_del(struct ocelot *ocelot, u32 pol_ix);
++
+ #endif /* _MSCC_OCELOT_POLICE_H_ */
+diff --git a/include/soc/mscc/ocelot.h b/include/soc/mscc/ocelot.h
+index 007b584cc431..388504c94f6e 100644
+--- a/include/soc/mscc/ocelot.h
++++ b/include/soc/mscc/ocelot.h
+@@ -468,6 +468,7 @@ struct ocelot_ops {
+ struct ocelot_acl_block {
+ 	struct list_head rules;
+ 	int count;
++	int pol_lpr;
+ };
+ 
+ struct ocelot_port {
+-- 
+2.17.1
 
-[    0.767679] ------------[ cut here ]------------
-[    0.767687] coherent pool not initialised!
-[    0.767714] WARNING: CPU: 3 PID: 1 at kernel/dma/remap.c:190
-dma_alloc_from_pool+0x94/0xa0
-[    0.767718] Modules linked in:
-[    0.767728] CPU: 3 PID: 1 Comm: swapper/0 Not tainted
-5.6.0-rc7-00471-g97c33f1ada5c-dirty #5
-[    0.767732] Hardware name: Beacon EmbeddedWorks i.MX8M Nano
-Development Kit (DT)
-[    0.767738] pstate: 60000005 (nZCv daif -PAN -UAO)
-[    0.767744] pc : dma_alloc_from_pool+0x94/0xa0
-[    0.767749] lr : dma_alloc_from_pool+0x94/0xa0
-[    0.767753] sp : ffff80001003ba10
-[    0.767756] x29: ffff80001003ba10 x28: ffff00007c868080
-[    0.767762] x27: 0000000fffffffe0 x26: ffff00007fbdd080
-[    0.767768] x25: 0000000000000000 x24: ffff800010161b3c
-[    0.767774] x23: 0000000000001000 x22: ffff00007c86bd38
-[    0.767780] x21: ffff8000112ba000 x20: ffff00007f6ed410
-[    0.767785] x19: 0000000000000000 x18: 0000000000000010
-[    0.767791] x17: 00000000000045e0 x16: 00000000000045d0
-[    0.767796] x15: ffff00007f470470 x14: ffffffffffffffff
-[    0.767802] x13: ffff80009003b777 x12: ffff80001003b77f
-[    0.767807] x11: ffff8000118e1000 x10: ffff800011abc658
-[    0.767813] x9 : 0000000000000000 x8 : 6573696c61697469
-[    0.767818] x7 : 6e6920746f6e206c x6 : 00000000000000a9
-[    0.767824] x5 : 0000000000000000 x4 : 0000000000000000
-[    0.767829] x3 : 00000000ffffffff x2 : ffff8000118e1b80
-[    0.767835] x1 : 3a4437124c5a6b00 x0 : 0000000000000000
-[    0.767840] Call trace:
-[    0.767847]  dma_alloc_from_pool+0x94/0xa0
-[    0.767853]  dma_direct_alloc_pages+0x1a4/0x1e0
-[    0.767858]  dma_direct_alloc+0xc/0x20
-[    0.767863]  dma_alloc_attrs+0x7c/0xf0
-[    0.767870]  sdma_probe+0x3d4/0x7f0
-[    0.767877]  platform_drv_probe+0x50/0xa0
-[    0.767885]  really_probe+0xd4/0x320
-[    0.767891]  driver_probe_device+0x54/0xf0
-[    0.767897]  device_driver_attach+0x6c/0x80
-[    0.767903]  __driver_attach+0x54/0xd0
-[    0.767908]  bus_for_each_dev+0x6c/0xc0
-[    0.767914]  driver_attach+0x20/0x30
-[    0.767919]  bus_add_driver+0x140/0x1f0
-[    0.767925]  driver_register+0x60/0x110
-[    0.767930]  __platform_driver_register+0x44/0x50
-[    0.767938]  sdma_driver_init+0x18/0x20
-[    0.767944]  do_one_initcall+0x50/0x190
-[    0.767950]  kernel_init_freeable+0x1cc/0x23c
-[    0.767958]  kernel_init+0x10/0x100
-[    0.767963]  ret_from_fork+0x10/0x18
-[    0.767972] ---[ end trace 796b8d949d96f5f6 ]---
-
-
-Anson,
-
-> Which board did you try? I just run it on i.MX8MN-EVK board, no such failure:
-I have a board from Beacon EmbeddedWorks based on the i.MX8MN which is
-nearly identical to the i.MX8MM which doesn't exhibit any of these
-errors.
-
-I tried Fabio's suggestion of switching the version of ATF which did
-fix the Bluetooth communication errors I was getting, but I didn't
-show them before.
-
-Unfortunately, I don't have the i.MX8MN-EVK right now, I'm working on
-trying to get one.
-
-Can I ask which version of U-Boot and ATF you're using?  I am
-wondering if I need to update something else.
-
-adam
->
-> root@imx8mnevk:~# uname -a
-> Linux imx8mnevk 5.6.0-rc7 #621 SMP PREEMPT Sat Mar 28 19:56:30 CST 2020 aarch64 aarch64 aarch64 GNU/Linux
-> root@imx8mnevk:~# dmesg | grep fail
-> [    0.719353] imx-sdma 302b0000.dma-controller: Direct firmware load for imx/sdma/sdma-imx7d.bin failed with error -2
-> [    0.941304] calling  net_failover_init+0x0/0x8 @ 1
-> [    0.941310] initcall net_failover_init+0x0/0x8 returned 0 after 0 usecs
-> [    1.135885] calling  failover_init+0x0/0x24 @ 1
-> [    1.135897] initcall failover_init+0x0/0x24 returned 0 after 6 usecs
-> root@imx8mnevk:~#
->
-> Thanks,
-> Anson
