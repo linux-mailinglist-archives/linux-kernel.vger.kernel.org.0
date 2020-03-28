@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51864196554
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:04:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1944C19655A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbgC1LAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 07:00:08 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55557 "EHLO
+        id S1727627AbgC1LAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 07:00:12 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55582 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbgC1LAH (ORCPT
+        with ESMTP id S1727386AbgC1LAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 07:00:07 -0400
+        Sat, 28 Mar 2020 07:00:09 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jI9C7-0003ew-SJ; Sat, 28 Mar 2020 12:00:04 +0100
+        id 1jI9CA-0003ex-QI; Sat, 28 Mar 2020 12:00:06 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 61B491C0470;
-        Sat, 28 Mar 2020 12:00:01 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D4D201C04CE;
+        Sat, 28 Mar 2020 12:00:00 +0100 (CET)
 Date:   Sat, 28 Mar 2020 11:00:00 -0000
 From:   "tip-bot2 for Al Viro" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86: switch sigframe sigset handling to explict
- __get_user()/__put_user()
+Subject: [tip: x86/cleanups] x86: get rid of small constant size cases in
+ raw_copy_{to,from}_user()
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158539320093.28353.2717834444858954380.tip-bot2@tip-bot2>
+Message-ID: <158539320051.28353.7961284449453218037.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,153 +45,207 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/cleanups branch of tip:
 
-Commit-ID:     71c3313a38aa09339a2442809e658fd233ab0757
-Gitweb:        https://git.kernel.org/tip/71c3313a38aa09339a2442809e658fd233ab0757
+Commit-ID:     4b842e4e25b12951fa10dedb4bc16bc47e3b850c
+Gitweb:        https://git.kernel.org/tip/4b842e4e25b12951fa10dedb4bc16bc47e3b850c
 Author:        Al Viro <viro@zeniv.linux.org.uk>
-AuthorDate:    Sat, 15 Feb 2020 11:43:18 -05:00
+AuthorDate:    Sat, 15 Feb 2020 11:46:30 -05:00
 Committer:     Al Viro <viro@zeniv.linux.org.uk>
-CommitterDate: Wed, 18 Mar 2020 15:29:54 -04:00
+CommitterDate: Wed, 18 Mar 2020 15:53:25 -04:00
 
-x86: switch sigframe sigset handling to explict __get_user()/__put_user()
+x86: get rid of small constant size cases in raw_copy_{to,from}_user()
 
-... and consolidate the definition of sigframe_ia32->extramask - it's
-always a 1-element array of 32bit unsigned.
+Very few call sites where that would be triggered remain, and none
+of those is anywhere near hot enough to bother.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/ia32/ia32_signal.c     | 16 +++++-----------
- arch/x86/include/asm/sigframe.h |  6 +-----
- arch/x86/kernel/signal.c        | 20 ++++++++------------
- 3 files changed, 14 insertions(+), 28 deletions(-)
+ arch/x86/include/asm/uaccess.h    |  12 +---
+ arch/x86/include/asm/uaccess_32.h |  27 +-------
+ arch/x86/include/asm/uaccess_64.h | 108 +-----------------------------
+ 3 files changed, 2 insertions(+), 145 deletions(-)
 
-diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
-index a3aefe9..c72025d 100644
---- a/arch/x86/ia32/ia32_signal.c
-+++ b/arch/x86/ia32/ia32_signal.c
-@@ -126,10 +126,7 @@ COMPAT_SYSCALL_DEFINE0(sigreturn)
- 	if (!access_ok(frame, sizeof(*frame)))
- 		goto badframe;
- 	if (__get_user(set.sig[0], &frame->sc.oldmask)
--	    || (_COMPAT_NSIG_WORDS > 1
--		&& __copy_from_user((((char *) &set.sig) + 4),
--				    &frame->extramask,
--				    sizeof(frame->extramask))))
-+	    || __get_user(((__u32 *)&set)[1], &frame->extramask[0]))
- 		goto badframe;
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index ab8eab4..1cfa33b 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -378,18 +378,6 @@ do {									\
+ 		     : "=r" (err), ltype(x)				\
+ 		     : "m" (__m(addr)), "i" (errret), "0" (err))
  
- 	set_current_blocked(&set);
-@@ -153,7 +150,7 @@ COMPAT_SYSCALL_DEFINE0(rt_sigreturn)
- 
- 	if (!access_ok(frame, sizeof(*frame)))
- 		goto badframe;
--	if (__copy_from_user(&set, &frame->uc.uc_sigmask, sizeof(set)))
-+	if (__get_user(set.sig[0], (__u64 __user *)&frame->uc.uc_sigmask))
- 		goto badframe;
- 
- 	set_current_blocked(&set);
-@@ -277,11 +274,8 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
- 	if (ia32_setup_sigcontext(&frame->sc, fpstate, regs, set->sig[0]))
- 		return -EFAULT;
- 
--	if (_COMPAT_NSIG_WORDS > 1) {
--		if (__copy_to_user(frame->extramask, &set->sig[1],
--				   sizeof(frame->extramask)))
--			return -EFAULT;
+-#define __get_user_asm_nozero(x, addr, err, itype, rtype, ltype, errret)	\
+-	asm volatile("\n"						\
+-		     "1:	mov"itype" %2,%"rtype"1\n"		\
+-		     "2:\n"						\
+-		     ".section .fixup,\"ax\"\n"				\
+-		     "3:	mov %3,%0\n"				\
+-		     "	jmp 2b\n"					\
+-		     ".previous\n"					\
+-		     _ASM_EXTABLE_UA(1b, 3b)				\
+-		     : "=r" (err), ltype(x)				\
+-		     : "m" (__m(addr)), "i" (errret), "0" (err))
+-
+ /*
+  * This doesn't do __uaccess_begin/end - the exception handling
+  * around it must do that.
+diff --git a/arch/x86/include/asm/uaccess_32.h b/arch/x86/include/asm/uaccess_32.h
+index ba2dc19..388a406 100644
+--- a/arch/x86/include/asm/uaccess_32.h
++++ b/arch/x86/include/asm/uaccess_32.h
+@@ -23,33 +23,6 @@ raw_copy_to_user(void __user *to, const void *from, unsigned long n)
+ static __always_inline unsigned long
+ raw_copy_from_user(void *to, const void __user *from, unsigned long n)
+ {
+-	if (__builtin_constant_p(n)) {
+-		unsigned long ret;
+-
+-		switch (n) {
+-		case 1:
+-			ret = 0;
+-			__uaccess_begin_nospec();
+-			__get_user_asm_nozero(*(u8 *)to, from, ret,
+-					      "b", "b", "=q", 1);
+-			__uaccess_end();
+-			return ret;
+-		case 2:
+-			ret = 0;
+-			__uaccess_begin_nospec();
+-			__get_user_asm_nozero(*(u16 *)to, from, ret,
+-					      "w", "w", "=r", 2);
+-			__uaccess_end();
+-			return ret;
+-		case 4:
+-			ret = 0;
+-			__uaccess_begin_nospec();
+-			__get_user_asm_nozero(*(u32 *)to, from, ret,
+-					      "l", "k", "=r", 4);
+-			__uaccess_end();
+-			return ret;
+-		}
 -	}
-+	if (__put_user(set->sig[1], &frame->extramask[0]))
-+		return -EFAULT;
+ 	return __copy_user_ll(to, (__force const void *)from, n);
+ }
  
- 	if (ksig->ka.sa.sa_flags & SA_RESTORER) {
- 		restorer = ksig->ka.sa.sa_restorer;
-@@ -381,7 +375,7 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
- 	err |= __copy_siginfo_to_user32(&frame->info, &ksig->info, false);
- 	err |= ia32_setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
- 				     regs, set->sig[0]);
--	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
-+	err |= __put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask);
- 
- 	if (err)
- 		return -EFAULT;
-diff --git a/arch/x86/include/asm/sigframe.h b/arch/x86/include/asm/sigframe.h
-index f176114..84eab27 100644
---- a/arch/x86/include/asm/sigframe.h
-+++ b/arch/x86/include/asm/sigframe.h
-@@ -33,11 +33,7 @@ struct sigframe_ia32 {
- 	 * legacy application accessing/modifying it.
- 	 */
- 	struct _fpstate_32 fpstate_unused;
--#ifdef CONFIG_IA32_EMULATION
--	unsigned int extramask[_COMPAT_NSIG_WORDS-1];
--#else /* !CONFIG_IA32_EMULATION */
--	unsigned long extramask[_NSIG_WORDS-1];
--#endif /* CONFIG_IA32_EMULATION */
-+	unsigned int extramask[1];
- 	char retcode[8];
- 	/* fp state follows here */
- };
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 8a29573..53ac66b 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -326,11 +326,8 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
- 	if (setup_sigcontext(&frame->sc, fpstate, regs, set->sig[0]))
- 		return -EFAULT;
- 
--	if (_NSIG_WORDS > 1) {
--		if (__copy_to_user(&frame->extramask, &set->sig[1],
--				   sizeof(frame->extramask)))
--			return -EFAULT;
+diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
+index 5cd1caa..bc10e3d 100644
+--- a/arch/x86/include/asm/uaccess_64.h
++++ b/arch/x86/include/asm/uaccess_64.h
+@@ -65,117 +65,13 @@ copy_to_user_mcsafe(void *to, const void *from, unsigned len)
+ static __always_inline __must_check unsigned long
+ raw_copy_from_user(void *dst, const void __user *src, unsigned long size)
+ {
+-	int ret = 0;
+-
+-	if (!__builtin_constant_p(size))
+-		return copy_user_generic(dst, (__force void *)src, size);
+-	switch (size) {
+-	case 1:
+-		__uaccess_begin_nospec();
+-		__get_user_asm_nozero(*(u8 *)dst, (u8 __user *)src,
+-			      ret, "b", "b", "=q", 1);
+-		__uaccess_end();
+-		return ret;
+-	case 2:
+-		__uaccess_begin_nospec();
+-		__get_user_asm_nozero(*(u16 *)dst, (u16 __user *)src,
+-			      ret, "w", "w", "=r", 2);
+-		__uaccess_end();
+-		return ret;
+-	case 4:
+-		__uaccess_begin_nospec();
+-		__get_user_asm_nozero(*(u32 *)dst, (u32 __user *)src,
+-			      ret, "l", "k", "=r", 4);
+-		__uaccess_end();
+-		return ret;
+-	case 8:
+-		__uaccess_begin_nospec();
+-		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
+-			      ret, "q", "", "=r", 8);
+-		__uaccess_end();
+-		return ret;
+-	case 10:
+-		__uaccess_begin_nospec();
+-		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
+-			       ret, "q", "", "=r", 10);
+-		if (likely(!ret))
+-			__get_user_asm_nozero(*(u16 *)(8 + (char *)dst),
+-				       (u16 __user *)(8 + (char __user *)src),
+-				       ret, "w", "w", "=r", 2);
+-		__uaccess_end();
+-		return ret;
+-	case 16:
+-		__uaccess_begin_nospec();
+-		__get_user_asm_nozero(*(u64 *)dst, (u64 __user *)src,
+-			       ret, "q", "", "=r", 16);
+-		if (likely(!ret))
+-			__get_user_asm_nozero(*(u64 *)(8 + (char *)dst),
+-				       (u64 __user *)(8 + (char __user *)src),
+-				       ret, "q", "", "=r", 8);
+-		__uaccess_end();
+-		return ret;
+-	default:
+-		return copy_user_generic(dst, (__force void *)src, size);
 -	}
-+	if (__put_user(set->sig[1], &frame->extramask[0]))
-+		return -EFAULT;
++	return copy_user_generic(dst, (__force void *)src, size);
+ }
  
- 	if (current->mm->context.vdso)
- 		restorer = current->mm->context.vdso +
-@@ -489,7 +486,7 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
- 	} put_user_catch(err);
+ static __always_inline __must_check unsigned long
+ raw_copy_to_user(void __user *dst, const void *src, unsigned long size)
+ {
+-	int ret = 0;
+-
+-	if (!__builtin_constant_p(size))
+-		return copy_user_generic((__force void *)dst, src, size);
+-	switch (size) {
+-	case 1:
+-		__uaccess_begin();
+-		__put_user_asm(*(u8 *)src, (u8 __user *)dst,
+-			      ret, "b", "b", "iq", 1);
+-		__uaccess_end();
+-		return ret;
+-	case 2:
+-		__uaccess_begin();
+-		__put_user_asm(*(u16 *)src, (u16 __user *)dst,
+-			      ret, "w", "w", "ir", 2);
+-		__uaccess_end();
+-		return ret;
+-	case 4:
+-		__uaccess_begin();
+-		__put_user_asm(*(u32 *)src, (u32 __user *)dst,
+-			      ret, "l", "k", "ir", 4);
+-		__uaccess_end();
+-		return ret;
+-	case 8:
+-		__uaccess_begin();
+-		__put_user_asm(*(u64 *)src, (u64 __user *)dst,
+-			      ret, "q", "", "er", 8);
+-		__uaccess_end();
+-		return ret;
+-	case 10:
+-		__uaccess_begin();
+-		__put_user_asm(*(u64 *)src, (u64 __user *)dst,
+-			       ret, "q", "", "er", 10);
+-		if (likely(!ret)) {
+-			asm("":::"memory");
+-			__put_user_asm(4[(u16 *)src], 4 + (u16 __user *)dst,
+-				       ret, "w", "w", "ir", 2);
+-		}
+-		__uaccess_end();
+-		return ret;
+-	case 16:
+-		__uaccess_begin();
+-		__put_user_asm(*(u64 *)src, (u64 __user *)dst,
+-			       ret, "q", "", "er", 16);
+-		if (likely(!ret)) {
+-			asm("":::"memory");
+-			__put_user_asm(1[(u64 *)src], 1 + (u64 __user *)dst,
+-				       ret, "q", "", "er", 8);
+-		}
+-		__uaccess_end();
+-		return ret;
+-	default:
+-		return copy_user_generic((__force void *)dst, src, size);
+-	}
++	return copy_user_generic((__force void *)dst, src, size);
+ }
  
- 	err |= setup_sigcontext(&frame->uc.uc_mcontext, fp, regs, set->sig[0]);
--	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
-+	err |= __put_user(set->sig[0], &frame->uc.uc_sigmask.sig[0]);
- 
- 	if (err)
- 		return -EFAULT;
-@@ -575,7 +572,7 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- 
- 	err |= setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
- 				regs, set->sig[0]);
--	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
-+	err |= __put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask);
- 
- 	if (err)
- 		return -EFAULT;
-@@ -613,9 +610,8 @@ SYSCALL_DEFINE0(sigreturn)
- 
- 	if (!access_ok(frame, sizeof(*frame)))
- 		goto badframe;
--	if (__get_user(set.sig[0], &frame->sc.oldmask) || (_NSIG_WORDS > 1
--		&& __copy_from_user(&set.sig[1], &frame->extramask,
--				    sizeof(frame->extramask))))
-+	if (__get_user(set.sig[0], &frame->sc.oldmask) ||
-+	    __get_user(set.sig[1], &frame->extramask[0]))
- 		goto badframe;
- 
- 	set_current_blocked(&set);
-@@ -645,7 +641,7 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 	frame = (struct rt_sigframe __user *)(regs->sp - sizeof(long));
- 	if (!access_ok(frame, sizeof(*frame)))
- 		goto badframe;
--	if (__copy_from_user(&set, &frame->uc.uc_sigmask, sizeof(set)))
-+	if (__get_user(*(__u64 *)&set, (__u64 __user *)&frame->uc.uc_sigmask))
- 		goto badframe;
- 	if (__get_user(uc_flags, &frame->uc.uc_flags))
- 		goto badframe;
-@@ -870,7 +866,7 @@ asmlinkage long sys32_x32_rt_sigreturn(void)
- 
- 	if (!access_ok(frame, sizeof(*frame)))
- 		goto badframe;
--	if (__copy_from_user(&set, &frame->uc.uc_sigmask, sizeof(set)))
-+	if (__get_user(set.sig[0], (__u64 __user *)&frame->uc.uc_sigmask))
- 		goto badframe;
- 	if (__get_user(uc_flags, &frame->uc.uc_flags))
- 		goto badframe;
+ static __always_inline __must_check
