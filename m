@@ -2,99 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 230FB1965A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:19:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21B901965B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:22:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbgC1LSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 07:18:54 -0400
-Received: from mail-lj1-f181.google.com ([209.85.208.181]:38788 "EHLO
-        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbgC1LSy (ORCPT
+        id S1726497AbgC1LWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 07:22:15 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55652 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbgC1LWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 07:18:54 -0400
-Received: by mail-lj1-f181.google.com with SMTP id w1so12825737ljh.5;
-        Sat, 28 Mar 2020 04:18:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mn1ytLBqSAPBNw3XMPojcu/ZhP1LOxFipDY249AI3+0=;
-        b=j/vurdna05CpEPiYbgWaMbXlO1MSn4s6AHli5VB0CRBQUIL3tn/IsFdGyopV0K3H6s
-         7AXxFX+50Ui0uBudNqvmSb7LA0mF2kQiib+sKXYdbh+5mqIYBcEOLY/SUc3u+xiIva+g
-         uFRxkAE4GSZyvbU3rtCg1qZSbURWZ5emEMzXelXG2ipoCL6yM0t4hnvH7V0csTnmXW6N
-         Q5A/5z0tjCD/X9qXmobQvxl+LKG4sq7eB5C8+Zb8GImVfabGY+co+ZWkPGW0asWwx95D
-         oHolnrdhO1IEHoQyfA2ta+ueYLSHBCQ4XzFRuPGIFFfF6BhTXsJZfD5bSkHLwSxUh/Kc
-         CMPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mn1ytLBqSAPBNw3XMPojcu/ZhP1LOxFipDY249AI3+0=;
-        b=klGhelfZQWCiOGhi4+xrkjdWC4r0/maTL9BSZyS59YAYkQnJYmcF4JAIv2mAhg4rQw
-         0xHIACIMf7Of0roqe7DAh8Ky5u0ijFhF0HfnX2aGS2Ydl6SSpd9Ip435N2W5Nfep93Od
-         yaiBLpT3DtbuYys2aD5oBX2eaKRUROxRGB0+p01MACVOl+Ol0UGRC9ECqC4aInvIEx+3
-         Q46ssZyY/PgJfjIZa3yWRCOZfNnFMFEUc6kBQRAjwPRZNvPv1X1ELRQrujNd3pyHV3dE
-         JCHYRTAjUCh6M4Cu+lYaw6YxP9FAOM1JFNERKJJy/Bjods/sNYNV6G/33iMEV1zmIrX0
-         40aw==
-X-Gm-Message-State: AGi0PubX4GhuJSoNQ4HxE9SJmNcjutodynaJTQeh1sLv5eP2wbNJ3eYt
-        daHj58eGKnzKBTdWQq+8ELNa2x6sK1apBS4jx6w=
-X-Google-Smtp-Source: APiQypLE0oLlT/o3yAjG6ThkJD82LP/2VPbDKk0L+GjVnht7omgSVfHwuAggLs+wNUYJlyQmbGiwLidjVdGS9lfq8T4=
-X-Received: by 2002:a2e:9105:: with SMTP id m5mr2054389ljg.37.1585394331360;
- Sat, 28 Mar 2020 04:18:51 -0700 (PDT)
+        Sat, 28 Mar 2020 07:22:15 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jI9XY-000480-BR; Sat, 28 Mar 2020 12:22:12 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id A1A231040C1; Sat, 28 Mar 2020 12:22:11 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Jules Irenge <jbi.octave@gmail.com>, julia.lawall@lip6.fr
+Cc:     boqun.feng@gmail.com, Armijn Hemel <armijn@tjaldur.nl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Muchun Song <smuchun@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 05/10] softirq: Replace BUG() after if statement with BUG_ON
+In-Reply-To: <20200327212358.5752-6-jbi.octave@gmail.com>
+References: <20200327212358.5752-1-jbi.octave@gmail.com> <20200327212358.5752-6-jbi.octave@gmail.com>
+Date:   Sat, 28 Mar 2020 12:22:11 +0100
+Message-ID: <871rpcyba4.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <CAHCN7xJSKH-gXA5ncFS3h6_2R28rn70O3HfT=ActS1XVgCFSeg@mail.gmail.com>
-In-Reply-To: <CAHCN7xJSKH-gXA5ncFS3h6_2R28rn70O3HfT=ActS1XVgCFSeg@mail.gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Sat, 28 Mar 2020 08:18:42 -0300
-Message-ID: <CAOMZO5CZX=C2zSjXV0LTvNvAyqWkzLgR=OoRS=uY1wa4rXshVg@mail.gmail.com>
-Subject: Re: i.MX8MN Errors on 5.6-RC7
-To:     Adam Ford <aford173@gmail.com>
-Cc:     arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adam,
+Jules,
 
-On Fri, Mar 27, 2020 at 11:50 PM Adam Ford <aford173@gmail.com> wrote:
+Jules Irenge <jbi.octave@gmail.com> writes:
+> Coccinelle reports a warning tasklet_action_common()
 >
-> I am getting a few errors on the i.MX8MN:
+> WARNING: Use BUG_ON instead of if condition followed by BUG
 >
-> [    0.000368] Failed to get clock for /timer@306a0000
-> [    0.000380] Failed to initialize '/timer@306a0000': -22
-> [    7.203447] caam 30900000.caam: Failed to get clk 'ipg': -2
-> [    7.334741] caam 30900000.caam: Failed to request all necessary clocks
-> [    7.438651] caam: probe of 30900000.caam failed with error -2
-> [    7.854193] imx-cpufreq-dt: probe of imx-cpufreq-dt failed with error -2
->
-> I was curious to know if anyone else is seeing similar errors.  I
-> already submitted a proposed fix for a DMA timeout (not shown here)
-> which matched work already done on i.MX8MQ and i.MX8MM.
->
-> I am not seeing huge differences between 8MM and 8MN in the nodes
-> which address the timer, caam or imx-cpufreq-dt.
->
-> If anyone has any suggestions, I'd love to try them.
+> To fix this, BUG() is replaced by BUG_ON() with the recommended
+> suggestion
 
-I don't have access to a i.MX8MN board at the moment, but I am
-wondering if the errors could be AT-F related.
+Well, the suggestion is wrong to begin with. The suggestion should be:
 
-Which version do you use? Could you try
-https://source.codeaurora.org/external/imx/imx-atf/log/?h=imx_5.4.3_2.0.0
-?
+      Is this BUG() actually necessary and is this the only way to deal
+      with this problem?
 
-Regards,
+Only if that question can be answered with yes, then the recommended
+replacement is ok.
 
-Fabio Estevam
+BUG() is the last resort and each and every instance wants to be looked
+at and not mechanically changed to some 'better' version of it.
+
+Thanks,
+
+        tglx
