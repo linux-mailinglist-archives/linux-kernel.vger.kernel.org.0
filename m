@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A2FE196546
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:00:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC67819656F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:04:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbgC1LAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 07:00:06 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55527 "EHLO
+        id S1727883AbgC1LBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 07:01:01 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55489 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbgC1LAB (ORCPT
+        with ESMTP id S1726045AbgC1K74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 07:00:01 -0400
+        Sat, 28 Mar 2020 06:59:56 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jI9C2-0003cB-Jr; Sat, 28 Mar 2020 11:59:58 +0100
+        id 1jI9Bx-0003ZY-BT; Sat, 28 Mar 2020 11:59:53 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 30CD31C0483;
-        Sat, 28 Mar 2020 11:59:58 +0100 (CET)
-Date:   Sat, 28 Mar 2020 10:59:57 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DC6B21C03A9;
+        Sat, 28 Mar 2020 11:59:52 +0100 (CET)
+Date:   Sat, 28 Mar 2020 10:59:52 -0000
 From:   "tip-bot2 for Al Viro" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86: switch setup_sigcontext() to unsafe_put_user()
+Subject: [tip: x86/cleanups] kill uaccess_try()
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158539319784.28353.4499541834093794408.tip-bot2@tip-bot2>
+Message-ID: <158539319244.28353.11186344035492827549.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,145 +44,200 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/cleanups branch of tip:
 
-Commit-ID:     9f855c085fb150ccc208497b39b5d3542bac5322
-Gitweb:        https://git.kernel.org/tip/9f855c085fb150ccc208497b39b5d3542bac5322
+Commit-ID:     cf122cfba5b1d9daf64009d143f51dfec4b1705a
+Gitweb:        https://git.kernel.org/tip/cf122cfba5b1d9daf64009d143f51dfec4b1705a
 Author:        Al Viro <viro@zeniv.linux.org.uk>
-AuthorDate:    Sat, 15 Feb 2020 17:25:27 -05:00
+AuthorDate:    Sat, 15 Feb 2020 21:10:25 -05:00
 Committer:     Al Viro <viro@zeniv.linux.org.uk>
-CommitterDate: Wed, 18 Mar 2020 20:39:02 -04:00
+CommitterDate: Thu, 26 Mar 2020 15:02:14 -04:00
 
-x86: switch setup_sigcontext() to unsafe_put_user()
+kill uaccess_try()
+
+finally
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/include/asm/sighandling.h |  3 +-
- arch/x86/kernel/signal.c           | 88 ++++++++++++++---------------
- 2 files changed, 45 insertions(+), 46 deletions(-)
+ Documentation/x86/exception-tables.rst |  6 +--
+ arch/x86/include/asm/asm.h             |  6 +--
+ arch/x86/include/asm/processor.h       |  1 +-
+ arch/x86/include/asm/uaccess.h         | 65 +-------------------------
+ arch/x86/mm/extable.c                  | 12 +-----
+ 5 files changed, 90 deletions(-)
 
-diff --git a/arch/x86/include/asm/sighandling.h b/arch/x86/include/asm/sighandling.h
-index 2fcbd6f..35e0b57 100644
---- a/arch/x86/include/asm/sighandling.h
-+++ b/arch/x86/include/asm/sighandling.h
-@@ -14,9 +14,6 @@
- 			 X86_EFLAGS_CF | X86_EFLAGS_RF)
+diff --git a/Documentation/x86/exception-tables.rst b/Documentation/x86/exception-tables.rst
+index ed6d4b0..514f518 100644
+--- a/Documentation/x86/exception-tables.rst
++++ b/Documentation/x86/exception-tables.rst
+@@ -337,10 +337,4 @@ pointer which points to one of:
+      entry->insn. It is used to distinguish page faults from machine
+      check.
  
- void signal_fault(struct pt_regs *regs, void __user *frame, char *where);
--int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
--		     struct pt_regs *regs, unsigned long mask);
+-3) ``int ex_handler_ext(const struct exception_table_entry *fixup)``
+-     This case is used for uaccess_err ... we need to set a flag
+-     in the task structure. Before the handler functions existed this
+-     case was handled by adding a large offset to the fixup to tag
+-     it as special.
 -
+ More functions can easily be added.
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index cd339b8..0f63585 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -138,9 +138,6 @@
+ # define _ASM_EXTABLE_FAULT(from, to)				\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
  
- #ifdef CONFIG_X86_X32_ABI
- asmlinkage long sys32_x32_rt_sigreturn(void);
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 83563e9..3b4ca48 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -140,63 +140,65 @@ static int restore_sigcontext(struct pt_regs *regs,
- 			       IS_ENABLED(CONFIG_X86_32));
- }
- 
--int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
-+static int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
- 		     struct pt_regs *regs, unsigned long mask)
- {
--	int err = 0;
+-# define _ASM_EXTABLE_EX(from, to)				\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_ext)
 -
--	put_user_try {
-+	if (!user_access_begin(sc, sizeof(struct sigcontext)))
-+		return -EFAULT;
+ # define _ASM_NOKPROBE(entry)					\
+ 	.pushsection "_kprobe_blacklist","aw" ;			\
+ 	_ASM_ALIGN ;						\
+@@ -166,9 +163,6 @@
+ # define _ASM_EXTABLE_FAULT(from, to)				\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
  
+-# define _ASM_EXTABLE_EX(from, to)				\
+-	_ASM_EXTABLE_HANDLE(from, to, ex_handler_ext)
+-
+ /* For C file, we already have NOKPROBE_SYMBOL macro */
+ #endif
+ 
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 09705cc..19718fc 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -541,7 +541,6 @@ struct thread_struct {
+ 	mm_segment_t		addr_limit;
+ 
+ 	unsigned int		sig_on_uaccess_err:1;
+-	unsigned int		uaccess_err:1;	/* uaccess failed */
+ 
+ 	/* Floating point and extended processor state */
+ 	struct fpu		fpu;
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index 4dc5acc..d11662f 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -193,23 +193,12 @@ __typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
+ 		     : : "A" (x), "r" (addr)			\
+ 		     : : label)
+ 
+-#define __put_user_asm_ex_u64(x, addr)					\
+-	asm volatile("\n"						\
+-		     "1:	movl %%eax,0(%1)\n"			\
+-		     "2:	movl %%edx,4(%1)\n"			\
+-		     "3:"						\
+-		     _ASM_EXTABLE_EX(1b, 2b)				\
+-		     _ASM_EXTABLE_EX(2b, 3b)				\
+-		     : : "A" (x), "r" (addr))
+-
+ #define __put_user_x8(x, ptr, __ret_pu)				\
+ 	asm volatile("call __put_user_8" : "=a" (__ret_pu)	\
+ 		     : "A" ((typeof(*(ptr)))(x)), "c" (ptr) : "ebx")
+ #else
+ #define __put_user_goto_u64(x, ptr, label) \
+ 	__put_user_goto(x, ptr, "q", "", "er", label)
+-#define __put_user_asm_ex_u64(x, addr)	\
+-	__put_user_asm_ex(x, addr, "q", "", "er")
+ #define __put_user_x8(x, ptr, __ret_pu) __put_user_x(8, x, ptr, __ret_pu)
+ #endif
+ 
+@@ -289,31 +278,6 @@ do {									\
+ 	}								\
+ } while (0)
+ 
+-/*
+- * This doesn't do __uaccess_begin/end - the exception handling
+- * around it must do that.
+- */
+-#define __put_user_size_ex(x, ptr, size)				\
+-do {									\
+-	__chk_user_ptr(ptr);						\
+-	switch (size) {							\
+-	case 1:								\
+-		__put_user_asm_ex(x, ptr, "b", "b", "iq");		\
+-		break;							\
+-	case 2:								\
+-		__put_user_asm_ex(x, ptr, "w", "w", "ir");		\
+-		break;							\
+-	case 4:								\
+-		__put_user_asm_ex(x, ptr, "l", "k", "ir");		\
+-		break;							\
+-	case 8:								\
+-		__put_user_asm_ex_u64((__typeof__(*ptr))(x), ptr);	\
+-		break;							\
+-	default:							\
+-		__put_user_bad();					\
+-	}								\
+-} while (0)
+-
  #ifdef CONFIG_X86_32
--		put_user_ex(get_user_gs(regs), (unsigned int __user *)&sc->gs);
--		put_user_ex(regs->fs, (unsigned int __user *)&sc->fs);
--		put_user_ex(regs->es, (unsigned int __user *)&sc->es);
--		put_user_ex(regs->ds, (unsigned int __user *)&sc->ds);
-+	unsafe_put_user(get_user_gs(regs),
-+				  (unsigned int __user *)&sc->gs, Efault);
-+	unsafe_put_user(regs->fs, (unsigned int __user *)&sc->fs, Efault);
-+	unsafe_put_user(regs->es, (unsigned int __user *)&sc->es, Efault);
-+	unsafe_put_user(regs->ds, (unsigned int __user *)&sc->ds, Efault);
- #endif /* CONFIG_X86_32 */
+ #define __get_user_asm_u64(x, ptr, retval, errret)			\
+ ({									\
+@@ -430,29 +394,6 @@ struct __large_struct { unsigned long buf[100]; };
+ 	retval = __put_user_failed(x, addr, itype, rtype, ltype, errret);	\
+ } while (0)
  
--		put_user_ex(regs->di, &sc->di);
--		put_user_ex(regs->si, &sc->si);
--		put_user_ex(regs->bp, &sc->bp);
--		put_user_ex(regs->sp, &sc->sp);
--		put_user_ex(regs->bx, &sc->bx);
--		put_user_ex(regs->dx, &sc->dx);
--		put_user_ex(regs->cx, &sc->cx);
--		put_user_ex(regs->ax, &sc->ax);
-+	unsafe_put_user(regs->di, &sc->di, Efault);
-+	unsafe_put_user(regs->si, &sc->si, Efault);
-+	unsafe_put_user(regs->bp, &sc->bp, Efault);
-+	unsafe_put_user(regs->sp, &sc->sp, Efault);
-+	unsafe_put_user(regs->bx, &sc->bx, Efault);
-+	unsafe_put_user(regs->dx, &sc->dx, Efault);
-+	unsafe_put_user(regs->cx, &sc->cx, Efault);
-+	unsafe_put_user(regs->ax, &sc->ax, Efault);
- #ifdef CONFIG_X86_64
--		put_user_ex(regs->r8, &sc->r8);
--		put_user_ex(regs->r9, &sc->r9);
--		put_user_ex(regs->r10, &sc->r10);
--		put_user_ex(regs->r11, &sc->r11);
--		put_user_ex(regs->r12, &sc->r12);
--		put_user_ex(regs->r13, &sc->r13);
--		put_user_ex(regs->r14, &sc->r14);
--		put_user_ex(regs->r15, &sc->r15);
-+	unsafe_put_user(regs->r8, &sc->r8, Efault);
-+	unsafe_put_user(regs->r9, &sc->r9, Efault);
-+	unsafe_put_user(regs->r10, &sc->r10, Efault);
-+	unsafe_put_user(regs->r11, &sc->r11, Efault);
-+	unsafe_put_user(regs->r12, &sc->r12, Efault);
-+	unsafe_put_user(regs->r13, &sc->r13, Efault);
-+	unsafe_put_user(regs->r14, &sc->r14, Efault);
-+	unsafe_put_user(regs->r15, &sc->r15, Efault);
- #endif /* CONFIG_X86_64 */
- 
--		put_user_ex(current->thread.trap_nr, &sc->trapno);
--		put_user_ex(current->thread.error_code, &sc->err);
--		put_user_ex(regs->ip, &sc->ip);
-+	unsafe_put_user(current->thread.trap_nr, &sc->trapno, Efault);
-+	unsafe_put_user(current->thread.error_code, &sc->err, Efault);
-+	unsafe_put_user(regs->ip, &sc->ip, Efault);
- #ifdef CONFIG_X86_32
--		put_user_ex(regs->cs, (unsigned int __user *)&sc->cs);
--		put_user_ex(regs->flags, &sc->flags);
--		put_user_ex(regs->sp, &sc->sp_at_signal);
--		put_user_ex(regs->ss, (unsigned int __user *)&sc->ss);
-+	unsafe_put_user(regs->cs, (unsigned int __user *)&sc->cs, Efault);
-+	unsafe_put_user(regs->flags, &sc->flags, Efault);
-+	unsafe_put_user(regs->sp, &sc->sp_at_signal, Efault);
-+	unsafe_put_user(regs->ss, (unsigned int __user *)&sc->ss, Efault);
- #else /* !CONFIG_X86_32 */
--		put_user_ex(regs->flags, &sc->flags);
--		put_user_ex(regs->cs, &sc->cs);
--		put_user_ex(0, &sc->gs);
--		put_user_ex(0, &sc->fs);
--		put_user_ex(regs->ss, &sc->ss);
-+	unsafe_put_user(regs->flags, &sc->flags, Efault);
-+	unsafe_put_user(regs->cs, &sc->cs, Efault);
-+	unsafe_put_user(0, &sc->gs, Efault);
-+	unsafe_put_user(0, &sc->fs, Efault);
-+	unsafe_put_user(regs->ss, &sc->ss, Efault);
- #endif /* CONFIG_X86_32 */
- 
--		put_user_ex(fpstate, (unsigned long __user *)&sc->fpstate);
-+	unsafe_put_user(fpstate, (unsigned long __user *)&sc->fpstate, Efault);
- 
--		/* non-iBCS2 extensions.. */
--		put_user_ex(mask, &sc->oldmask);
--		put_user_ex(current->thread.cr2, &sc->cr2);
--	} put_user_catch(err);
+-#define __put_user_asm_ex(x, addr, itype, rtype, ltype)			\
+-	asm volatile("1:	mov"itype" %"rtype"0,%1\n"		\
+-		     "2:\n"						\
+-		     _ASM_EXTABLE_EX(1b, 2b)				\
+-		     : : ltype(x), "m" (__m(addr)))
 -
--	return err;
-+	/* non-iBCS2 extensions.. */
-+	unsafe_put_user(mask, &sc->oldmask, Efault);
-+	unsafe_put_user(current->thread.cr2, &sc->cr2, Efault);
-+	user_access_end();
-+	return 0;
-+Efault:
-+	user_access_end();
-+	return -EFAULT;
- }
+-/*
+- * uaccess_try and catch
+- */
+-#define uaccess_try	do {						\
+-	current->thread.uaccess_err = 0;				\
+-	__uaccess_begin();						\
+-	barrier();
+-
+-#define uaccess_try_nospec do {						\
+-	current->thread.uaccess_err = 0;				\
+-	__uaccess_begin_nospec();					\
+-
+-#define uaccess_catch(err)						\
+-	__uaccess_end();						\
+-	(err) |= (current->thread.uaccess_err ? -EFAULT : 0);		\
+-} while (0)
+-
+ /**
+  * __get_user - Get a simple variable from user space, with less checking.
+  * @x:   Variable to store result.
+@@ -502,12 +443,6 @@ struct __large_struct { unsigned long buf[100]; };
+ #define __put_user(x, ptr)						\
+ 	__put_user_nocheck((__typeof__(*(ptr)))(x), (ptr), sizeof(*(ptr)))
  
- /*
+-#define put_user_try		uaccess_try
+-#define put_user_catch(err)	uaccess_catch(err)
+-
+-#define put_user_ex(x, ptr)						\
+-	__put_user_size_ex((__typeof__(*(ptr)))(x), (ptr), sizeof(*(ptr)))
+-
+ extern unsigned long
+ copy_from_user_nmi(void *to, const void __user *from, unsigned long n);
+ extern __must_check long
+diff --git a/arch/x86/mm/extable.c b/arch/x86/mm/extable.c
+index 30bb0bd..b991aa4 100644
+--- a/arch/x86/mm/extable.c
++++ b/arch/x86/mm/extable.c
+@@ -80,18 +80,6 @@ __visible bool ex_handler_uaccess(const struct exception_table_entry *fixup,
+ }
+ EXPORT_SYMBOL(ex_handler_uaccess);
+ 
+-__visible bool ex_handler_ext(const struct exception_table_entry *fixup,
+-			      struct pt_regs *regs, int trapnr,
+-			      unsigned long error_code,
+-			      unsigned long fault_addr)
+-{
+-	/* Special hack for uaccess_err */
+-	current->thread.uaccess_err = 1;
+-	regs->ip = ex_fixup_addr(fixup);
+-	return true;
+-}
+-EXPORT_SYMBOL(ex_handler_ext);
+-
+ __visible bool ex_handler_rdmsr_unsafe(const struct exception_table_entry *fixup,
+ 				       struct pt_regs *regs, int trapnr,
+ 				       unsigned long error_code,
