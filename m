@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0266919677A
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:44:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC928196788
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:45:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbgC1QoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:44:02 -0400
+        id S1727593AbgC1Qos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:44:48 -0400
 Received: from mga14.intel.com ([192.55.52.115]:39977 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727924AbgC1Qn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727912AbgC1Qn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 28 Mar 2020 12:43:58 -0400
-IronPort-SDR: Umlb5Mo5tafBaAep/jADZsGVkosj4+JmrbtQUl6M4ejw6kkozPeSrzQMjQZnw631Vn/d9Ts6A4
- PHRZgT92UVvg==
+IronPort-SDR: /n/aLeeF8DS+pbaV6d1XiMnBVPyDrekvgPylknCnCzWID2TySPYkIx+oVASJQCEPcSx4tPnj2o
+ 1hD1V2F2D0EA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
   by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2020 09:43:58 -0700
-IronPort-SDR: +1aHGlUfJgAFkHc0hVjy/33yDp4jl3Q36pK4k3GL/NtbMpDqNIX2OD1KRkGcGHSLyfBiusDoOz
- u1VgL+AzU0Wg==
+IronPort-SDR: QbGG5IJoj2yTfK5S0+m9GXdSIt17KFRUgdInYfPzYr+6eK9XJtZqnh097e1hq+GE2dj6/wl/0U
+ U8a7HmMUDslw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,317,1580803200"; 
-   d="scan'208";a="447771156"
+   d="scan'208";a="447771159"
 Received: from yyu32-desk.sc.intel.com ([143.183.136.146])
   by fmsmga005.fm.intel.com with ESMTP; 28 Mar 2020 09:43:57 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
@@ -38,11 +38,15 @@ To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Fenghua Yu <fenghua.yu@intel.com>,
         Peter Zijlstra <peterz@infradead.org>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH v3 00/10] Support XSAVES supervisor states
-Date:   Sat, 28 Mar 2020 09:42:57 -0700
-Message-Id: <20200328164307.17497-1-yu-cheng.yu@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH v3 01/10] x86/fpu/xstate: Rename validate_xstate_header() to validate_user_xstate_header()
+Date:   Sat, 28 Mar 2020 09:42:58 -0700
+Message-Id: <20200328164307.17497-2-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20200328164307.17497-1-yu-cheng.yu@intel.com>
+References: <20200328164307.17497-1-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -50,119 +54,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes in v3:
+From: Fenghua Yu <fenghua.yu@intel.com>
 
-This version addresses the overhead of an extra XSAVES in
-__fpu__restore_sig() with additional patches:
+The function validate_xstate_header() validates an xstate header coming
+from userspace (PTRACE or sigreturn).  To make it clear, rename it to
+validate_user_xstate_header().
 
-    Patch #8: Introduce copy_supervisor_to_kernel(), which does a
-              supervisor-state-only XSAVES and then relocates the contents
-              to the standard location.
-    Patch #9: Preserve supervisor states for __fpu__restore_sig() slow path.
+v3:
+- Change validate_xstate_header_from_user() to validate_user_xstate_header().
 
-Other small changes are noted in each patch's commit log.
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/include/asm/fpu/xstate.h | 2 +-
+ arch/x86/kernel/fpu/regset.c      | 2 +-
+ arch/x86/kernel/fpu/signal.c      | 2 +-
+ arch/x86/kernel/fpu/xstate.c      | 6 +++---
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-----
-
-Changes in v2:
-
-- Split out small changes to:
-    https://lkml.kernel.org/r/20191212210855.19260-1-yu-cheng.yu@intel.com/
-
-- Fix an issue in patch #4, where fpu__clear_user_states() drops
-  supervisor xstates.
-
-- Add three patches:
-    Patch #6: Update sanitize_restored_xstate() for supervisor xstates.
-    Patch #7: Update copy_kernel_to_xregs_err() to use XRSTORS when
-              supervisor xstates are present.
-    Patch #8: Update __fpu__restore_sig() to preserve supervisor xstates.
-
-Also make some small changes in response to comments.  More details are in
-each patch's commit log.
-
-----
-
-There are two types of XSAVE-managed states (xstates): user and supervisor.
-This series introduces the supervisor xstate support in preparation for new
-features that will make use of supervisor xstates.
-
-This series has been separated for ease of review from the series that add
-supervisor xstate features [3].
-
-In current and near future generations of Intel processors there are three
-classes of objects that can be managed as supervisor xstates:
-
-- Processor Trace (PT):
-    Linux already supports PT, but PT xstates are not saved to the FPU
-    context and not context-switched by the kernel.  There are no plans to
-    integrate PT into XSAVES supervisor states.
-
-- ENQCMD Process Address Space ID (MSR_IA32_PASID):
-    ENQCMD is a new instruction and will be introduced shortly in a
-    separate series [2].
-
-- Control-flow Enforcement Technology (CET):
-    CET is being reviewed on the LKML [1] [3].
-
-Supervisor xstates can be accessed only from the kernel (PL-0) with XSAVES/
-XRSTORS instructions.  They cannot be accessed with other XSAVE*/XRSTOR*
-instructions.  MSR_IA32_XSS sets enabled supervisor xstates, while XCR0
-sets enabled user xstates.
-
-This series separates the two xstate types by declaring new macros for each
-type.  The kernel finds all available features during system initialization
-and stores them in xfeatures_mask_all.  It then retrieves perspective
-xstate type with xfeatures_mask_supervisor()/xfeatures_mask_user() for
-handling signals and PTRACE.
-
-[1] Detailed information on supervisor xstates can be found in "Intel 64
-    and IA-32 Architectures Software Developer's Manual":
-
-    https://software.intel.com/en-us/download/intel-64-and-ia-32-
-    architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4
-
-[2] Detailed information on the ENQCMD instruction and MSR_IA32_PASID can
-    be found in "Intel Architecture Instruction Set Extensions and Future
-    Features Programming Reference":
-
-    https://software.intel.com/sites/default/files/managed/c5/15/
-    architecture-instruction-set-extensions-programming-reference.pdf
-
-[3] CET patches:
-
-    https://lkml.kernel.org/r/20200205181935.3712-1-yu-cheng.yu@intel.com/
-    https://lkml.kernel.org/r/20200205182308.4028-1-yu-cheng.yu@intel.com/
-
-Fenghua Yu (3):
-  x86/fpu/xstate: Rename validate_xstate_header() to
-    validate_user_xstate_header()
-  x86/fpu/xstate: Define new macros for supervisor and user xstates
-  x86/fpu/xstate: Define new functions for clearing fpregs and xstates
-
-Yu-cheng Yu (7):
-  x86/fpu/xstate: Separate user and supervisor xfeatures mask
-  x86/fpu/xstate: Introduce XSAVES supervisor states
-  x86/fpu/xstate: Update sanitize_restored_xstate() for supervisor
-    xstates
-  x86/fpu/xstate: Update copy_kernel_to_xregs_err() for XSAVES
-    supervisor states
-  x86/fpu: Introduce copy_supervisor_to_kernel()
-  x86/fpu/xstate: Preserve supervisor states for slow path of
-    __fpu__restore_sig()
-  x86/fpu/xstate: Restore supervisor states for signal return
-
- arch/x86/include/asm/fpu/internal.h |  10 +-
- arch/x86/include/asm/fpu/xstate.h   |  52 +++++---
- arch/x86/kernel/fpu/core.c          |  49 ++++---
- arch/x86/kernel/fpu/init.c          |   3 +-
- arch/x86/kernel/fpu/regset.c        |   2 +-
- arch/x86/kernel/fpu/signal.c        | 127 +++++++++++-------
- arch/x86/kernel/fpu/xstate.c        | 199 +++++++++++++++++++++-------
- arch/x86/kernel/process.c           |   2 +-
- arch/x86/kernel/signal.c            |   2 +-
- 9 files changed, 317 insertions(+), 129 deletions(-)
-
+diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
+index c6136d79f8c0..fc4db51f3b53 100644
+--- a/arch/x86/include/asm/fpu/xstate.h
++++ b/arch/x86/include/asm/fpu/xstate.h
+@@ -56,6 +56,6 @@ int copy_kernel_to_xstate(struct xregs_state *xsave, const void *kbuf);
+ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf);
+ 
+ /* Validate an xstate header supplied by userspace (ptrace or sigreturn) */
+-extern int validate_xstate_header(const struct xstate_header *hdr);
++int validate_user_xstate_header(const struct xstate_header *hdr);
+ 
+ #endif
+diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
+index d652b939ccfb..bd1d0649f8ce 100644
+--- a/arch/x86/kernel/fpu/regset.c
++++ b/arch/x86/kernel/fpu/regset.c
+@@ -139,7 +139,7 @@ int xstateregs_set(struct task_struct *target, const struct user_regset *regset,
+ 	} else {
+ 		ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, xsave, 0, -1);
+ 		if (!ret)
+-			ret = validate_xstate_header(&xsave->header);
++			ret = validate_user_xstate_header(&xsave->header);
+ 	}
+ 
+ 	/*
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 400a05e1c1c5..585e3651b98f 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -366,7 +366,7 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 			ret = __copy_from_user(&fpu->state.xsave, buf_fx, state_size);
+ 
+ 			if (!ret && state_size > offsetof(struct xregs_state, header))
+-				ret = validate_xstate_header(&fpu->state.xsave.header);
++				ret = validate_user_xstate_header(&fpu->state.xsave.header);
+ 		}
+ 		if (ret)
+ 			goto err_out;
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 73fe5979629c..5a580e403044 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -472,7 +472,7 @@ int using_compacted_format(void)
+ }
+ 
+ /* Validate an xstate header supplied by userspace (ptrace or sigreturn) */
+-int validate_xstate_header(const struct xstate_header *hdr)
++int validate_user_xstate_header(const struct xstate_header *hdr)
+ {
+ 	/* No unknown or supervisor features may be set */
+ 	if (hdr->xfeatures & (~xfeatures_mask | XFEATURE_MASK_SUPERVISOR))
+@@ -1142,7 +1142,7 @@ int copy_kernel_to_xstate(struct xregs_state *xsave, const void *kbuf)
+ 
+ 	memcpy(&hdr, kbuf + offset, size);
+ 
+-	if (validate_xstate_header(&hdr))
++	if (validate_user_xstate_header(&hdr))
+ 		return -EINVAL;
+ 
+ 	for (i = 0; i < XFEATURE_MAX; i++) {
+@@ -1196,7 +1196,7 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
+ 	if (__copy_from_user(&hdr, ubuf + offset, size))
+ 		return -EFAULT;
+ 
+-	if (validate_xstate_header(&hdr))
++	if (validate_user_xstate_header(&hdr))
+ 		return -EINVAL;
+ 
+ 	for (i = 0; i < XFEATURE_MAX; i++) {
 -- 
 2.21.0
 
