@@ -2,221 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC1B719688F
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 19:35:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6108119689B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 19:37:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbgC1SfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 14:35:07 -0400
-Received: from mga18.intel.com ([134.134.136.126]:9124 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727125AbgC1SfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 14:35:06 -0400
-IronPort-SDR: tiJE2gxnDJYnrDA96zSP0kVO35HMx4ZouUYrBU0g2jv7TXOEvfhGLKpgjMcfioDjuROPhQUZ7/
- gMvWhf3dOT8w==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2020 11:35:05 -0700
-IronPort-SDR: ttlkMDpJKpozrfPUQ3A4AfklLwbY53yyEchoej7QU0WS3sEfl92noK3OaCRC+bAFciXNhNSabr
- ACGEe7+PS77Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,317,1580803200"; 
-   d="scan'208";a="241240987"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 28 Mar 2020 11:35:04 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1jIGIR-000AW9-Pd; Sun, 29 Mar 2020 02:35:03 +0800
-Date:   Sun, 29 Mar 2020 02:34:49 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "x86-ml" <x86@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:timers/core] BUILD SUCCESS
- 4479730e9263befbb9ce9563a09563db2acb8f7c
-Message-ID: <5e7f98c9.60FrqFMGnJ4k6/zQ%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1727356AbgC1ShJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 14:37:09 -0400
+Received: from mail-eopbgr700111.outbound.protection.outlook.com ([40.107.70.111]:17121
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725807AbgC1ShI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 14:37:08 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=V/tELEFHQYCbrYQTb3qGclLjO8WllotaHxa2+iqtqkZsKsCBNaeYTKqbZGAkX63xRl1qfmth0zUsM2MKT3/i8fVPohW+c2rKh34mUvUPUdpRYOqoIjl2MU9uPhsh1RPuSbkHKP4W1s81hVmNm2IUmEv8Zt6JyClDCQaTZ/doJhxwHPdAXjbU9Quf1Tb7yS3iXR4wr4LQ8M+i2PpFP0pFNKMud3A31hIRIAf56l0jXVdM4XDrJZCW+Mx8zDmf7JpynxxJsXOsX5d2KOHxTrj4+6Nb/OPCaBsAB2Vniyrfw4jGlM2QCPA6NAy53mHpVDLCTtmScc6LPr1kPKQ4oR9BCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GmNQA4m/DeOFszZX6hu4Z9niLSnudNQ9GkwoK+sQBwc=;
+ b=dVhlF4JlD5g+uaj+bGo7wA6Y+B9k9FnfnR49LSFHgxoQTGdmEli07q/iKzeQcSi/PrxLGjK3T5wo3lqY4TKLoNZd3zbRaHJE3Sp3+hVI3/mY+rTmrKioqFyxowsvBaR1U45DLOjSEkKqdTVI/PdR0PXIh2M1wiARHAK24ES4tYNNe0pZoXb8TMahasufqYRigM5QwseXrHznNA9mcKTOnvGvq1wTdMEue0Hr//wfB/uBI11bGoHWV7Rey463b9N1OQpBXXsySA2brHfi1VlocdSoMKvYIeKjzPfih0zbzT9lRYGc8P/9M2hKx5wCejTgSz9Rk7BHlsxkqcnvikIHVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GmNQA4m/DeOFszZX6hu4Z9niLSnudNQ9GkwoK+sQBwc=;
+ b=O9kWWN13Liq8fy9/K8RBPMiamZMA9ixrF3a6wCQzpXeMSpHkVPOLmqv0uSptH7UAooaq5t8J7gJVSg0Cr7Ccuz33FK3/M2b9KSQ3LIm5P7lLdJz3+QPh1p79ALm8CeehfcqLkP5x1lVkYGf+6jaz1D3fb5hH9NWAQYXONPfHRP8=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=hoan@os.amperecomputing.com; 
+Received: from BYAPR01MB5494.prod.exchangelabs.com (2603:10b6:a03:127::30) by
+ BYAPR01MB4423.prod.exchangelabs.com (2603:10b6:a03:97::33) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2856.19; Sat, 28 Mar 2020 18:36:27 +0000
+Received: from BYAPR01MB5494.prod.exchangelabs.com
+ ([fe80::a979:b2e2:fdaf:1ccb]) by BYAPR01MB5494.prod.exchangelabs.com
+ ([fe80::a979:b2e2:fdaf:1ccb%6]) with mapi id 15.20.2835.026; Sat, 28 Mar 2020
+ 18:36:25 +0000
+Subject: Re: [PATCH] arm64: Kconfig: Enable NODES_SPAN_OTHER_NODES config for
+ NUMA
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        patches@os.amperecomputing.com
+References: <1580759714-4614-1-git-send-email-Hoan@os.amperecomputing.com>
+ <20200206102340.GA17074@willie-the-truck>
+ <c85dbc06-a72b-9c98-fe41-b25069114b2f@os.amperecomputing.com>
+ <20200311112700.GD3216816@arrakis.emea.arm.com>
+From:   Hoan Tran <hoan@os.amperecomputing.com>
+Message-ID: <6a01350d-1fde-f8cd-ecac-471b1a4697b3@os.amperecomputing.com>
+Date:   Sat, 28 Mar 2020 11:36:22 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.6.0
+In-Reply-To: <20200311112700.GD3216816@arrakis.emea.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CY4PR22CA0073.namprd22.prod.outlook.com
+ (2603:10b6:903:ad::11) To BYAPR01MB5494.prod.exchangelabs.com
+ (2603:10b6:a03:127::30)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.0.138] (67.161.31.237) by CY4PR22CA0073.namprd22.prod.outlook.com (2603:10b6:903:ad::11) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.20 via Frontend Transport; Sat, 28 Mar 2020 18:36:24 +0000
+X-Originating-IP: [67.161.31.237]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3eac1394-ac19-4a00-9167-08d7d346ebb5
+X-MS-TrafficTypeDiagnostic: BYAPR01MB4423:
+X-Microsoft-Antispam-PRVS: <BYAPR01MB442316F14D2B564805D4733EF1CD0@BYAPR01MB4423.prod.exchangelabs.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
+X-Forefront-PRVS: 03569407CC
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR01MB5494.prod.exchangelabs.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(346002)(376002)(366004)(39830400003)(136003)(396003)(26005)(53546011)(66946007)(66476007)(16576012)(66556008)(316002)(52116002)(6916009)(966005)(5660300002)(478600001)(16526019)(2616005)(6486002)(8936002)(31696002)(107886003)(81156014)(86362001)(4326008)(31686004)(956004)(186003)(81166006)(8676002)(2906002);DIR:OUT;SFP:1102;
+Received-SPF: None (protection.outlook.com: os.amperecomputing.com does not
+ designate permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 5o3L8GvAVJDZ9Znc3ewigiJ15W9NHr26JWkC40n0kFuGGJGGGQ2tA/w/a6l3Bnaps+f1zPZXisNHZYz5SdoUNsJ8qjuSOTKCK+7g2sDuZ3UaH4gNJq/ra+ULrruBHugV9/aiKnL6pvHPKl8/ak/P1RD1/ZqZVShzigLMi2UzHMxJ6Nn58W19zp0iYCQRPHZ8c0hxMPurv2Br3rnPS7B+agd9jfcF1peCtFjA3nlqjCLm7Jp11nOZ04PUn0vlmoQVB92kG1BW6cyKpnBvC+gaIgne8KJfXDligRDkV4gc88+KmPqBW3DNCU+esL7cPzBRw8HCwhQlDNxEeBOowoOUCGbamJS9oMqWQEt6gbSHCYeA5l5i8xZQbTYb+EDFArhm04ZevX3cal0fsYE4fJYf1p36VGrNCDEavIA2xosNZLy/8wBMkC9xhriZOSUggSWTd+BbJRlADm6v6yBW3yokS/QQJ5TcEIOntky/jYQkq9KjXvURFKka1lhDMTbURNMySs2zFMBytrHRLZZZlav2Ig==
+X-MS-Exchange-AntiSpam-MessageData: c2VxZX02ewI3CBvQrNERPKX6JkCE3RZ26CnlmbqK85TA9plihFrjdBaIVSeRlhWRQyxVTpuSQ/64DTtRWo/RCXMXqQPp/OY8jiEMRfHJHlPRL+1+G4Ab8Eis5nU/dpamvFfMMiL65qLk3pP0u+KBMA==
+X-MS-Exchange-Transport-Forked: True
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3eac1394-ac19-4a00-9167-08d7d346ebb5
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2020 18:36:25.4429
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Cxpvm4EI9+38Nd8yfxhclSccZsSCbD/rmO9uIqtq6vZI7qQBbLkrrqrZ58VN+dUEOsz/KvzoacrWcK7oKb7hMQO0Zx5LNdbpeu7hdOIn0Ec=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR01MB4423
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  timers/core
-branch HEAD: 4479730e9263befbb9ce9563a09563db2acb8f7c  Revert "clocksource/drivers/timer-probe: Avoid creating dead devices"
+Hi Catalin,
 
-elapsed time: 485m
 
-configs tested: 162
-configs skipped: 0
+On 3/11/20 4:27 AM, Catalin Marinas wrote:
+> On Thu, Feb 06, 2020 at 12:01:19PM -0800, Hoan Tran wrote:
+>> Hi Will,
+>>
+>> On 2/6/20 2:23 AM, Will Deacon wrote:
+>>> On Mon, Feb 03, 2020 at 11:55:14AM -0800, Hoan Tran wrote:
+>>>> Some NUMA nodes have memory ranges that span other nodes.
+>>>> Even though a pfn is valid and between a node's start and end pfns,
+>>>> it may not reside on that node.
+>>>>
+>>>> This patch enables NODES_SPAN_OTHER_NODES config for NUMA to support
+>>>> this type of NUMA layout.
+>>>>
+>>>> Signed-off-by: Hoan Tran <Hoan@os.amperecomputing.com>
+>>>> ---
+>>>>    arch/arm64/Kconfig | 7 +++++++
+>>>>    1 file changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>>>> index e688dfa..939d28f 100644
+>>>> --- a/arch/arm64/Kconfig
+>>>> +++ b/arch/arm64/Kconfig
+>>>> @@ -959,6 +959,13 @@ config NEED_PER_CPU_EMBED_FIRST_CHUNK
+>>>>    config HOLES_IN_ZONE
+>>>>    	def_bool y
+>>>> +# Some NUMA nodes have memory ranges that span other nodes.
+>>>> +# Even though a pfn is valid and between a node's start and end pfns,
+>>>> +# it may not reside on that node.
+>>>> +config NODES_SPAN_OTHER_NODES
+>>>> +	def_bool y
+>>>> +	depends on ACPI_NUMA
+>>>> +
+>>>
+>>> I thought we agreed to do this in the core code?
+>>>
+>>> https://lore.kernel.org/lkml/1562887528-5896-1-git-send-email-Hoan@os.amperecomputing.com
+>>
+>> Yes, but it looks like Thomas didn't agree to apply this patch into
+>> x86.
+>>
+>> https://lore.kernel.org/lkml/alpine.DEB.2.21.1907152042110.1767@nanos.tec.linutronix.de/
+> 
+> Was it a clear statement that such change will not make it to x86 or a
+> request for improving the patch or the description? I'd suggest you
+> update the x86 patch comment to include the rationale as per your reply
+> to Thomas and post a new version of the generic series. If Thomas (or
+> the mm folk) reject it again, we'll revisit the arm64-specific thread.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Yes, I have just sent out a new patch for mm core.
 
-arm64                            allyesconfig
-arm                              allyesconfig
-arm64                            allmodconfig
-arm                              allmodconfig
-arm64                             allnoconfig
-arm                               allnoconfig
-arm                           efm32_defconfig
-arm                         at91_dt_defconfig
-arm                        shmobile_defconfig
-arm64                               defconfig
-arm                          exynos_defconfig
-arm                        multi_v5_defconfig
-arm                           sunxi_defconfig
-arm                        multi_v7_defconfig
-sparc                            allyesconfig
-s390                       zfcpdump_defconfig
-m68k                          multi_defconfig
-nios2                         3c120_defconfig
-i386                              allnoconfig
-i386                             allyesconfig
-i386                             alldefconfig
-i386                                defconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                              allnoconfig
-ia64                             allyesconfig
-ia64                             alldefconfig
-nios2                         10m50_defconfig
-c6x                        evmc6678_defconfig
-xtensa                          iss_defconfig
-c6x                              allyesconfig
-xtensa                       common_defconfig
-openrisc                 simple_smp_defconfig
-openrisc                    or1ksim_defconfig
-nds32                               defconfig
-nds32                             allnoconfig
-csky                                defconfig
-alpha                               defconfig
-h8300                       h8s-sim_defconfig
-h8300                     edosk2674_defconfig
-m68k                       m5475evb_defconfig
-m68k                             allmodconfig
-h8300                    h8300h-sim_defconfig
-m68k                           sun3_defconfig
-arc                                 defconfig
-arc                              allyesconfig
-powerpc                             defconfig
-powerpc                       ppc64_defconfig
-powerpc                          rhel-kconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                           allnoconfig
-mips                      fuloong2e_defconfig
-mips                      malta_kvm_defconfig
-mips                             allyesconfig
-mips                         64r6el_defconfig
-mips                              allnoconfig
-mips                           32r2_defconfig
-mips                             allmodconfig
-parisc                            allnoconfig
-parisc                generic-64bit_defconfig
-parisc                generic-32bit_defconfig
-parisc                           allyesconfig
-i386                 randconfig-a002-20200327
-i386                 randconfig-a001-20200327
-x86_64               randconfig-a002-20200327
-x86_64               randconfig-a001-20200327
-i386                 randconfig-a003-20200327
-x86_64               randconfig-a003-20200327
-mips                 randconfig-a001-20200327
-nds32                randconfig-a001-20200327
-m68k                 randconfig-a001-20200327
-parisc               randconfig-a001-20200327
-alpha                randconfig-a001-20200327
-riscv                randconfig-a001-20200327
-h8300                randconfig-a001-20200327
-microblaze           randconfig-a001-20200327
-nios2                randconfig-a001-20200327
-c6x                  randconfig-a001-20200327
-sparc64              randconfig-a001-20200327
-s390                 randconfig-a001-20200327
-xtensa               randconfig-a001-20200327
-csky                 randconfig-a001-20200327
-openrisc             randconfig-a001-20200327
-sh                   randconfig-a001-20200327
-i386                 randconfig-b003-20200327
-i386                 randconfig-b001-20200327
-x86_64               randconfig-b003-20200327
-i386                 randconfig-b002-20200327
-x86_64               randconfig-b002-20200327
-x86_64               randconfig-b001-20200327
-x86_64               randconfig-c003-20200327
-x86_64               randconfig-c001-20200327
-i386                 randconfig-c002-20200327
-x86_64               randconfig-c002-20200327
-i386                 randconfig-c003-20200327
-i386                 randconfig-c001-20200327
-i386                 randconfig-d003-20200327
-i386                 randconfig-d001-20200327
-x86_64               randconfig-d002-20200327
-x86_64               randconfig-d001-20200327
-i386                 randconfig-d002-20200327
-x86_64               randconfig-d003-20200327
-x86_64               randconfig-e001-20200327
-x86_64               randconfig-e003-20200327
-i386                 randconfig-e002-20200327
-i386                 randconfig-e003-20200327
-i386                 randconfig-e001-20200327
-x86_64               randconfig-e002-20200327
-x86_64               randconfig-f001-20200327
-x86_64               randconfig-f002-20200327
-x86_64               randconfig-f003-20200327
-i386                 randconfig-f001-20200327
-i386                 randconfig-f002-20200327
-i386                 randconfig-f003-20200327
-x86_64               randconfig-g001-20200327
-x86_64               randconfig-g002-20200327
-x86_64               randconfig-g003-20200327
-i386                 randconfig-g001-20200327
-i386                 randconfig-g002-20200327
-i386                 randconfig-g003-20200327
-x86_64               randconfig-h003-20200327
-i386                 randconfig-h003-20200327
-i386                 randconfig-h001-20200327
-x86_64               randconfig-h001-20200327
-i386                 randconfig-h002-20200327
-x86_64               randconfig-h002-20200327
-arm                  randconfig-a001-20200327
-ia64                 randconfig-a001-20200327
-sparc                randconfig-a001-20200327
-arc                  randconfig-a001-20200327
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-s390                          debug_defconfig
-s390                             allyesconfig
-s390                              allnoconfig
-s390                             allmodconfig
-s390                             alldefconfig
-s390                                defconfig
-sh                          rsk7269_defconfig
-sh                               allmodconfig
-sh                            titan_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                                allnoconfig
-sparc                               defconfig
-sparc64                             defconfig
-sparc64                           allnoconfig
-sparc64                          allyesconfig
-sparc64                          allmodconfig
-um                           x86_64_defconfig
-um                             i386_defconfig
-um                                  defconfig
-x86_64                                   rhel
-x86_64                               rhel-7.6
-x86_64                         rhel-7.2-clear
-x86_64                                    lkp
-x86_64                              fedora-25
-x86_64                                  kexec
+Regards
+Hoan
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> 
