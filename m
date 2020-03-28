@@ -2,115 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EAD31964C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 10:19:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85F5D1964D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 10:45:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbgC1JS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 05:18:59 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37172 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbgC1JS7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 05:18:59 -0400
-Received: by mail-pl1-f194.google.com with SMTP id x1so4465207plm.4;
-        Sat, 28 Mar 2020 02:18:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=uEulqnoWhYVrXbCXkjImpUi0gSJmkTSnXSHAVgk4dzk=;
-        b=VIsBg3fKj45txEWcrOyOCib8Y6r/8J7Y2RtDCyi4wSJBF2XN1ieldKVSMdGvq0b3OK
-         8ajy3jdyzWFmIJIVL/xkqzhKcutM3Dc+mSM1qD8zD7m4mnk6mVwAtrowF8rpYCYBIpui
-         JoeMiBEOLDLTsBFEIeuohyy9pNag6sjjFjfHHr+b8sXuz6Xr3zJgwWIRYr2rMyVLD260
-         HIWgYeaKwre2HdTVd/FXAGtiToX/nkjcs0ng5VqjYCDrTBaL0JhezWfDJV3JvXNbmS+E
-         /a5b+ERX5h8NEDNW26kHwiAkJeZewbLksJY5HHkk8WUQ/wAb38osOgPQV5Rl/22/MwgK
-         Pi3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=uEulqnoWhYVrXbCXkjImpUi0gSJmkTSnXSHAVgk4dzk=;
-        b=MaBGhuSutBf01gCaK57pjA2iOuomB65lOg6GjEbIzG+sQBUBs9SGgtquJ7GwqaPFSP
-         GImzrtXo86PbYsTFvL2+yHHVhh1H4QNw5c93CD+YLFIKuyElH12ol8RFPrkPcedr/clY
-         W7IjOwjd2BQcV5vPP4XJrDOK1Lg2KY8uZABEZ9KoPnJ0gNNJvRygtbcApRgddiTOhrpX
-         yFgmP/tK+Gf4+leknhWFUMgzffbjfRpve2vr/jB6a8i/N9dfHKgCTlE3ad30V+ww2bqX
-         sCOxjaWcQwajp2eRwRrSqxUnz4g9krd41mwmpipEaMAKctCElkbSDKNXEgsAAMOwzHYa
-         Y8WA==
-X-Gm-Message-State: ANhLgQ0eHdYqULq0B43xthVXR2HgC1ZL0vDDgzv28I98grLa+hK5/hXu
-        N69wZkDZXnOUkA3fMlLZugE=
-X-Google-Smtp-Source: ADFU+vs0VLGJZj1c1Mf3RkATTnXr6awH9f+oSWdL9DN5o4hQVBEOjYuAJ+yi4iZtUVJTG0iGs4AlsA==
-X-Received: by 2002:a17:902:ba08:: with SMTP id j8mr3163660pls.70.1585387136045;
-        Sat, 28 Mar 2020 02:18:56 -0700 (PDT)
-Received: from nishad ([106.51.232.103])
-        by smtp.gmail.com with ESMTPSA id x188sm5935844pfx.198.2020.03.28.02.18.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 28 Mar 2020 02:18:55 -0700 (PDT)
-Date:   Sat, 28 Mar 2020 14:48:50 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Joe Perches <joe@perches.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] USB: core: Use the correct style for SPDX License Identifier
-Message-ID: <20200328091844.GA3648@nishad>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1726258AbgC1Jpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 05:45:42 -0400
+Received: from gw.cm.dream.jp ([59.157.128.2]:51635 "EHLO vsmtp01.cm.dti.ne.jp"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725937AbgC1Jpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 05:45:42 -0400
+X-Greylist: delayed 1121 seconds by postgrey-1.27 at vger.kernel.org; Sat, 28 Mar 2020 05:45:37 EDT
+Received: from localhost (KD124210025232.ppp-bb.dion.ne.jp [124.210.25.232]) by vsmtp01.cm.dti.ne.jp (3.11v) with ESMTP AUTH id 02S9Qf22018705;Sat, 28 Mar 2020 18:26:53 +0900 (JST)
+Date:   Sat, 28 Mar 2020 18:26:40 +0900 (JST)
+Message-Id: <20200328.182640.1933740379722138264.hermes@ceres.dti.ne.jp>
+To:     linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference at
+ 00000000000000a8 in nilfs_segctor_do_construct
+From:   ARAI Shun-ichi <hermes@ceres.dti.ne.jp>
+In-Reply-To: <874kuapb2s.fsf@logand.com>
+References: <87immckp07.fsf@logand.com>
+        <87v9p2tkut.fsf@logand.com>
+        <874kuapb2s.fsf@logand.com>
+        <CAKFNMomjWkNvHvHkEp=Jv_BiGPNj=oLEChyoXX1yCj5xctAkMA@mail.gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.3
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch corrects the SPDX License Identifier style in
-header files related to USB Core.
-For C header files Documentation/process/license-rules.rst
-mandates C-like comments (opposed to C source files where
-C++ style should be used).
+In Msg <874kuapb2s.fsf@logand.com>;
+   Subject "Re: BUG: unable to handle kernel NULL pointer dereference at 00000000000000a8 in nilfs_segctor_do_construct":
 
-Changes made by using a script provided by Joe Perches here:
-https://lkml.org/lkml/2019/2/7/46.
+> Tomas Hlavaty <tom@logand.com> writes:
+>>>> 2) Can you mount the corrupted(?) partition from a recent version of
+>>>> kernel ?
+> 
+> I tried the following Linux kernel versions:
+> 
+> - v4.19
+> - v5.4
+> - v5.5.11
+> 
+> and still get the crash
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
- drivers/usb/core/hub.h           | 2 +-
- drivers/usb/core/otg_whitelist.h | 2 +-
- drivers/usb/core/usb.h           | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Ryusuke Konishi pointed out:
 
-diff --git a/drivers/usb/core/hub.h b/drivers/usb/core/hub.h
-index a97dd1ba964e..73f4482d833a 100644
---- a/drivers/usb/core/hub.h
-+++ b/drivers/usb/core/hub.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * usb hub driver head file
-  *
-diff --git a/drivers/usb/core/otg_whitelist.h b/drivers/usb/core/otg_whitelist.h
-index 2ae90158ded7..fdd4897401e2 100644
---- a/drivers/usb/core/otg_whitelist.h
-+++ b/drivers/usb/core/otg_whitelist.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0+
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * drivers/usb/core/otg_whitelist.h
-  *
-diff --git a/drivers/usb/core/usb.h b/drivers/usb/core/usb.h
-index 64ed4023a8c8..19e4c550bc73 100644
---- a/drivers/usb/core/usb.h
-+++ b/drivers/usb/core/usb.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Released under the GPLv2 only.
-  */
--- 
-2.17.1
+In Msg <CAKFNMomjWkNvHvHkEp=Jv_BiGPNj=oLEChyoXX1yCj5xctAkMA@mail.gmail.com>;
+   Subject "Re: BUG: kernel NULL pointer dereference, address: 00000000000000a8":
 
+> As the result of bisection,  it turned out that commit
+> f4bdb2697ccc9cecf1a9de86905c309ad901da4c on 5.3.y
+> ("mm/filemap.c: don't initiate writeback if mapping has no dirty pages")
+> triggers the crash.
+
+This commit modifies __filemap_fdatawrite_range() as follows.
+
+[before]
+	if (!mapping_cap_writeback_dirty(mapping))
+		return 0;
+
+[after]
+	if (!mapping_cap_writeback_dirty(mapping) ||
+	    !mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
+		return 0;
+
+I did simple test with this code (Kernel 5.5.13).
+
+[test]
+	if (!mapping_cap_writeback_dirty(mapping) ||
+	    mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK))
+		return 0;
+
+It does not cause crash by the test (without long-term operation). So,
+I think that it may be related to PAGECACHE_TAG_TOWRITE.
+
+
+One possible(?) scenario is:
+
+0. some write operation
+
+1. sync (WB_SYNC_ALL)
+
+2. tagged "PAGECACHE_TAG_TOWRITE"
+
+3. __filemap_fdatawrite_range() is called and returns successfully
+  (but no-op)
+
+4. some data is/are free-ed
+  (because of 3.)
+
+5. crash at test/setting writeback for free-ed data
+  nilfs_segctor_do_construct()
+   nilfs_segctor_prepare_write()
+    set_page_writeback()
+
+How about this?
