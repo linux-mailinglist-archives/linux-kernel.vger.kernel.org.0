@@ -2,86 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48A29196986
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 22:32:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECBA319698D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 22:42:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbgC1Vcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 17:32:50 -0400
-Received: from pb-smtp20.pobox.com ([173.228.157.52]:63114 "EHLO
-        pb-smtp20.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbgC1Vcu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 17:32:50 -0400
-Received: from pb-smtp20.pobox.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 365FDC1CA3;
-        Sat, 28 Mar 2020 17:32:48 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
-        :cc:subject:message-id:mime-version:content-type; s=sasl; bh=tuv
-        2YoU2aL/2c/u/7jXp1zqbclA=; b=E3o+qHGz8/UGzrLdSBc4UdXQWZAInqosNDD
-        nOSJ66aD+4VeWLOLC03WXeVZFZ0gOwCjNMKx+GJuo6hlt4jXeurcRJl93g8zJHl7
-        CAZkYvIzrjOUmiJ7x/EOJhYcb+0tepAw8Jx3WouQN8UxSNKLrTBg9NCrOCo2AShH
-        QhtJAttM=
-Received: from pb-smtp20.sea.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 2C468C1CA2;
-        Sat, 28 Mar 2020 17:32:48 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:message-id:mime-version:content-type;
- s=2016-12.pbsmtp; bh=t4YwzAUHQeJQ27J5HRnM1y/AWnEpgYbN1AeSv1YdeuA=;
- b=yH8DcDUoYmDzjtD1P2XAigNE7y7BVD5VE4e1C+C9ii2z1uknM88c/7P2UftIoJLKvps8hYGn7TvHW5sa3NuudidCp7YmKzO5n3lTnsHMHiaXa08z2ZvuzVc15h+9lQqZltWNQI+Yk95r1K/WDYeOkQ2CM7Jj9mGksmTk8FOtuHs=
-Received: from yoda.home (unknown [24.203.50.76])
+        id S1727717AbgC1VmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 17:42:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58134 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726604AbgC1VmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 17:42:21 -0400
+Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by pb-smtp20.pobox.com (Postfix) with ESMTPSA id 0B6A4C1CA1;
-        Sat, 28 Mar 2020 17:32:45 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTPSA id 161A82DA0174;
-        Sat, 28 Mar 2020 17:32:43 -0400 (EDT)
-Date:   Sat, 28 Mar 2020 17:32:42 -0400 (EDT)
-From:   Nicolas Pitre <nico@fluxnic.net>
-To:     gregkh@linuxfoundation.org
-cc:     Adam Borowski <kilobyte@angband.pl>,
-        Chen Wandun <chenwandun@huawei.com>, jslaby@suse.com,
-        daniel.vetter@ffwll.ch, sam@ravnborg.org, b.zolnierkie@samsung.com,
-        lukas@wunner.de, ghalat@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] vt: don't hardcode the mem allocation upper bound
-Message-ID: <nycvar.YSQ.7.76.2003281702410.2671@knanqh.ubzr>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5AF620714;
+        Sat, 28 Mar 2020 21:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585431740;
+        bh=EcJTZ6IbK6O9AEakoQvwIc0bXoD/c3hrHluspJ7kC4Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=aXTr8b4zxmZeoX6DhUXd98NZOKrTtupbvq/mPPi2XMbhRNJMRpNKka8xuhxY6NYhK
+         4Vcdep6IQFHkzucZu36WrDHy81Wt/shk+BKCjYCTbeCAHf+usLCZY5ej3VEW5B5oqB
+         oTjTgB4oO9IusnjNCRPO0IJFgdwrjdVhMkocQL5E=
+Date:   Sat, 28 Mar 2020 16:42:18 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Jon Derrick <jonathan.derrick@intel.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Pawel Baldysiak <pawel.baldysiak@intel.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: Re: [RFC 1/9] PCI: pci-bridge-emul: Update PCIe register behaviors
+Message-ID: <20200328214218.GA129350@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID: A99919B0-713B-11EA-9914-B0405B776F7B-78420484!pb-smtp20.pobox.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1581120007-5280-2-git-send-email-jonathan.derrick@intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code in vc_do_resize() bounds the memory allocation size to avoid
-exceeding MAX_ORDER down the kzalloc() call chain and generating a 
-runtime warning triggerable from user space. However, not only is it
-unwise to use a literal value here, but MAX_ORDER may also be
-configurable based on CONFIG_FORCE_MAX_ZONEORDER.
-Let's use KMALLOC_MAX_SIZE instead.
+[+cc Thomas, Russell]
 
-Note that prior commit bb1107f7c605 ("mm, slab: make sure that 
-KMALLOC_MAX_SIZE will fit into MAX_ORDER") the KMALLOC_MAX_SIZE value
-could not be relied upon.
+On Fri, Feb 07, 2020 at 04:59:59PM -0700, Jon Derrick wrote:
+> Update the PCIe register behaviors and comments for PCIe v5.0.
+> Replace the specific bit definitions with BIT and GENMASK to make
+> updating easier in the future.
 
-Signed-off-by: Nicolas Pitre <nico@fluxnic.net>
-Cc: <stable@vger.kernel.org> # v4.10+
+I think this patch makes sense on its own, independent of the rest of
+the series.  I *would* like to see it split into (a) a "no changes"
+patch that converts to BIT/GENMASK, and (b) another patch that
+contains only the PCIe r5.0 updates.
 
-
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 15d2769805..37c5f21490 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -1193,7 +1193,7 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc,
- 	if (new_cols == vc->vc_cols && new_rows == vc->vc_rows)
- 		return 0;
- 
--	if (new_screen_size > (4 << 20))
-+	if (new_screen_size > KMALLOC_MAX_SIZE)
- 		return -EINVAL;
- 	newscreen = kzalloc(new_screen_size, GFP_USER);
- 	if (!newscreen)
+> Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
+> ---
+>  drivers/pci/pci-bridge-emul.c | 54 +++++++++++++++++++++----------------------
+>  1 file changed, 27 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/pci/pci-bridge-emul.c b/drivers/pci/pci-bridge-emul.c
+> index fffa770..d065c2a 100644
+> --- a/drivers/pci/pci-bridge-emul.c
+> +++ b/drivers/pci/pci-bridge-emul.c
+> @@ -191,12 +191,12 @@ struct pci_bridge_reg_behavior {
+>  		.rw = GENMASK(15, 0),
+>  
+>  		/*
+> -		 * Device status register has 4 bits W1C, then 2 bits
+> -		 * RO, the rest is reserved
+> +		 * Device status register has bits 6 and [3:0] W1C, [5:4] RO,
+> +		 * the rest is reserved
+>  		 */
+> -		.w1c = GENMASK(19, 16),
+> -		.ro = GENMASK(20, 19),
+> -		.rsvd = GENMASK(31, 21),
+> +		.w1c = (BIT(6) | GENMASK(3, 0)) << 16,
+> +		.ro = GENMASK(5, 4) << 16,
+> +		.rsvd = GENMASK(15, 7) << 16,
+>  	},
+>  
+>  	[PCI_EXP_LNKCAP / 4] = {
+> @@ -207,15 +207,16 @@ struct pci_bridge_reg_behavior {
+>  
+>  	[PCI_EXP_LNKCTL / 4] = {
+>  		/*
+> -		 * Link control has bits [1:0] and [11:3] RW, the
+> -		 * other bits are reserved.
+> -		 * Link status has bits [13:0] RO, and bits [14:15]
+> +		 * Link control has bits [15:14], [11:3] and [1:0] RW, the
+> +		 * rest is reserved.
+> +		 *
+> +		 * Link status has bits [13:0] RO, and bits [15:14]
+>  		 * W1C.
+>  		 */
+> -		.rw = GENMASK(11, 3) | GENMASK(1, 0),
+> +		.rw = GENMASK(15, 14) | GENMASK(11, 3) | GENMASK(1, 0),
+>  		.ro = GENMASK(13, 0) << 16,
+>  		.w1c = GENMASK(15, 14) << 16,
+> -		.rsvd = GENMASK(15, 12) | BIT(2),
+> +		.rsvd = GENMASK(13, 12) | BIT(2),
+>  	},
+>  
+>  	[PCI_EXP_SLTCAP / 4] = {
+> @@ -224,19 +225,16 @@ struct pci_bridge_reg_behavior {
+>  
+>  	[PCI_EXP_SLTCTL / 4] = {
+>  		/*
+> -		 * Slot control has bits [12:0] RW, the rest is
+> +		 * Slot control has bits [14:0] RW, the rest is
+>  		 * reserved.
+>  		 *
+> -		 * Slot status has a mix of W1C and RO bits, as well
+> -		 * as reserved bits.
+> +		 * Slot status has bits 8 and [4:0] W1C, bits [7:5] RO, the
+> +		 * rest is reserved.
+>  		 */
+> -		.rw = GENMASK(12, 0),
+> -		.w1c = (PCI_EXP_SLTSTA_ABP | PCI_EXP_SLTSTA_PFD |
+> -			PCI_EXP_SLTSTA_MRLSC | PCI_EXP_SLTSTA_PDC |
+> -			PCI_EXP_SLTSTA_CC | PCI_EXP_SLTSTA_DLLSC) << 16,
+> -		.ro = (PCI_EXP_SLTSTA_MRLSS | PCI_EXP_SLTSTA_PDS |
+> -		       PCI_EXP_SLTSTA_EIS) << 16,
+> -		.rsvd = GENMASK(15, 12) | (GENMASK(15, 9) << 16),
+> +		.rw = GENMASK(14, 0),
+> +		.w1c = (BIT(8) | GENMASK(4, 0)) << 16,
+> +		.ro = GENMASK(7, 5) << 16,
+> +		.rsvd = BIT(15) | (GENMASK(15, 9) << 16),
+>  	},
+>  
+>  	[PCI_EXP_RTCTL / 4] = {
+> @@ -244,18 +242,20 @@ struct pci_bridge_reg_behavior {
+>  		 * Root control has bits [4:0] RW, the rest is
+>  		 * reserved.
+>  		 *
+> -		 * Root status has bit 0 RO, the rest is reserved.
+> +		 * Root capabilities has bit 0 RO, the rest is reserved.
+>  		 */
+> -		.rw = (PCI_EXP_RTCTL_SECEE | PCI_EXP_RTCTL_SENFEE |
+> -		       PCI_EXP_RTCTL_SEFEE | PCI_EXP_RTCTL_PMEIE |
+> -		       PCI_EXP_RTCTL_CRSSVE),
+> -		.ro = PCI_EXP_RTCAP_CRSVIS << 16,
+> +		.rw = GENMASK(4, 0),
+> +		.ro = BIT(0) << 16,
+>  		.rsvd = GENMASK(15, 5) | (GENMASK(15, 1) << 16),
+>  	},
+>  
+>  	[PCI_EXP_RTSTA / 4] = {
+> -		.ro = GENMASK(15, 0) | PCI_EXP_RTSTA_PENDING,
+> -		.w1c = PCI_EXP_RTSTA_PME,
+> +		/*
+> +		 * Root status has bits 17 and [15:0] RO, bit 16 W1C, the rest
+> +		 * is reserved.
+> +		 */
+> +		.ro = BIT(17) | GENMASK(15, 0),
+> +		.w1c = BIT(16),
+>  		.rsvd = GENMASK(31, 18),
+>  	},
+>  };
+> -- 
+> 1.8.3.1
+> 
