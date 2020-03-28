@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B204196550
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:04:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE4D196558
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:04:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbgC1LAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 07:00:02 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55516 "EHLO
+        id S1727524AbgC1LAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 07:00:11 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55577 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbgC1K76 (ORCPT
+        with ESMTP id S1727355AbgC1LAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 06:59:58 -0400
+        Sat, 28 Mar 2020 07:00:08 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jI9C0-0003bN-P7; Sat, 28 Mar 2020 11:59:56 +0100
+        id 1jI9C7-0003c9-4b; Sat, 28 Mar 2020 12:00:03 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5F7191C0470;
-        Sat, 28 Mar 2020 11:59:56 +0100 (CET)
-Date:   Sat, 28 Mar 2020 10:59:56 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C0A3F1C03A9;
+        Sat, 28 Mar 2020 11:59:57 +0100 (CET)
+Date:   Sat, 28 Mar 2020 10:59:57 -0000
 From:   "tip-bot2 for Al Viro" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86: ia32_setup_frame(): consolidate uaccess areas
+Subject: [tip: x86/cleanups] x86: switch ia32_setup_sigcontext() to unsafe_put_user()
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158539319604.28353.1393436657593143514.tip-bot2@tip-bot2>
+Message-ID: <158539319742.28353.12586384356823817522.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,90 +44,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/cleanups branch of tip:
 
-Commit-ID:     e2390741053e4931841650b5eadac32697aa88aa
-Gitweb:        https://git.kernel.org/tip/e2390741053e4931841650b5eadac32697aa88aa
+Commit-ID:     d2d2728d161cbc52739d823a7fb76f3ba2fb3519
+Gitweb:        https://git.kernel.org/tip/d2d2728d161cbc52739d823a7fb76f3ba2fb3519
 Author:        Al Viro <viro@zeniv.linux.org.uk>
-AuthorDate:    Sat, 15 Feb 2020 19:36:40 -05:00
+AuthorDate:    Sat, 15 Feb 2020 17:41:04 -05:00
 Committer:     Al Viro <viro@zeniv.linux.org.uk>
-CommitterDate: Thu, 26 Mar 2020 14:39:38 -04:00
+CommitterDate: Wed, 18 Mar 2020 20:40:56 -04:00
 
-x86: ia32_setup_frame(): consolidate uaccess areas
-
-Currently we have user_access block, followed by __put_user(),
-deciding what the restorer will be and finally a put_user_try
-block.
-
-Moving the calculation of restorer first allows the rest
-(actual copyout work) to coalesce into a single user_access block.
+x86: switch ia32_setup_sigcontext() to unsafe_put_user()
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/ia32/ia32_signal.c | 39 +++++++++++-------------------------
- 1 file changed, 12 insertions(+), 27 deletions(-)
+ arch/x86/ia32/ia32_signal.c | 64 ++++++++++++++++++------------------
+ 1 file changed, 33 insertions(+), 31 deletions(-)
 
 diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
-index 799ca5b..7018c2c 100644
+index 23e2c55..af673ec 100644
 --- a/arch/x86/ia32/ia32_signal.c
 +++ b/arch/x86/ia32/ia32_signal.c
-@@ -236,7 +236,6 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
+@@ -158,38 +158,40 @@ static int ia32_setup_sigcontext(struct sigcontext_32 __user *sc,
+ 				 void __user *fpstate,
+ 				 struct pt_regs *regs, unsigned int mask)
  {
- 	struct sigframe_ia32 __user *frame;
- 	void __user *restorer;
 -	int err = 0;
- 	void __user *fp = NULL;
- 
- 	/* copy_to_user optimizes that into a single 8 byte store */
-@@ -252,21 +251,6 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
- 
- 	frame = get_sigframe(ksig, regs, sizeof(*frame), &fp);
- 
--	if (!access_ok(frame, sizeof(*frame)))
--		return -EFAULT;
 -
--	if (__put_user(sig, &frame->sig))
--		return -EFAULT;
--
--	if (!user_access_begin(&frame->sc, sizeof(struct sigcontext_32)))
--		return -EFAULT;
--
--	unsafe_put_sigcontext32(&frame->sc, fp, regs, set, Efault);
--	user_access_end();
--
--	if (__put_user(set->sig[1], &frame->extramask[0]))
--		return -EFAULT;
--
- 	if (ksig->ka.sa.sa_flags & SA_RESTORER) {
- 		restorer = ksig->ka.sa.sa_restorer;
- 	} else {
-@@ -278,19 +262,20 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
- 			restorer = &frame->retcode;
- 	}
- 
 -	put_user_try {
--		put_user_ex(ptr_to_compat(restorer), &frame->pretcode);
+-		put_user_ex(get_user_seg(gs), (unsigned int __user *)&sc->gs);
+-		put_user_ex(get_user_seg(fs), (unsigned int __user *)&sc->fs);
+-		put_user_ex(get_user_seg(ds), (unsigned int __user *)&sc->ds);
+-		put_user_ex(get_user_seg(es), (unsigned int __user *)&sc->es);
 -
--		/*
--		 * These are actually not used anymore, but left because some
--		 * gdb versions depend on them as a marker.
--		 */
--		put_user_ex(*((u64 *)&code), (u64 __user *)frame->retcode);
+-		put_user_ex(regs->di, &sc->di);
+-		put_user_ex(regs->si, &sc->si);
+-		put_user_ex(regs->bp, &sc->bp);
+-		put_user_ex(regs->sp, &sc->sp);
+-		put_user_ex(regs->bx, &sc->bx);
+-		put_user_ex(regs->dx, &sc->dx);
+-		put_user_ex(regs->cx, &sc->cx);
+-		put_user_ex(regs->ax, &sc->ax);
+-		put_user_ex(current->thread.trap_nr, &sc->trapno);
+-		put_user_ex(current->thread.error_code, &sc->err);
+-		put_user_ex(regs->ip, &sc->ip);
+-		put_user_ex(regs->cs, (unsigned int __user *)&sc->cs);
+-		put_user_ex(regs->flags, &sc->flags);
+-		put_user_ex(regs->sp, &sc->sp_at_signal);
+-		put_user_ex(regs->ss, (unsigned int __user *)&sc->ss);
+-
+-		put_user_ex(ptr_to_compat(fpstate), &sc->fpstate);
+-
+-		/* non-iBCS2 extensions.. */
+-		put_user_ex(mask, &sc->oldmask);
+-		put_user_ex(current->thread.cr2, &sc->cr2);
 -	} put_user_catch(err);
--
--	if (err)
-+	if (!user_access_begin(frame, sizeof(*frame)))
- 		return -EFAULT;
++	if (!user_access_begin(sc, sizeof(struct sigcontext_32)))
++		return -EFAULT;
  
-+	unsafe_put_user(sig, &frame->sig, Efault);
-+	unsafe_put_sigcontext32(&frame->sc, fp, regs, set, Efault);
-+	unsafe_put_user(set->sig[1], &frame->extramask[0], Efault);
-+	unsafe_put_user(ptr_to_compat(restorer), &frame->pretcode, Efault);
-+	/*
-+	 * These are actually not used anymore, but left because some
-+	 * gdb versions depend on them as a marker.
-+	 */
-+	unsafe_put_user(*((u64 *)&code), (u64 __user *)frame->retcode, Efault);
-+	user_access_end();
+-	return err;
++	unsafe_put_user(get_user_seg(gs), (unsigned int __user *)&sc->gs, Efault);
++	unsafe_put_user(get_user_seg(fs), (unsigned int __user *)&sc->fs, Efault);
++	unsafe_put_user(get_user_seg(ds), (unsigned int __user *)&sc->ds, Efault);
++	unsafe_put_user(get_user_seg(es), (unsigned int __user *)&sc->es, Efault);
 +
- 	/* Set up registers for signal handler */
- 	regs->sp = (unsigned long) frame;
- 	regs->ip = (unsigned long) ksig->ka.sa.sa_handler;
++	unsafe_put_user(regs->di, &sc->di, Efault);
++	unsafe_put_user(regs->si, &sc->si, Efault);
++	unsafe_put_user(regs->bp, &sc->bp, Efault);
++	unsafe_put_user(regs->sp, &sc->sp, Efault);
++	unsafe_put_user(regs->bx, &sc->bx, Efault);
++	unsafe_put_user(regs->dx, &sc->dx, Efault);
++	unsafe_put_user(regs->cx, &sc->cx, Efault);
++	unsafe_put_user(regs->ax, &sc->ax, Efault);
++	unsafe_put_user(current->thread.trap_nr, &sc->trapno, Efault);
++	unsafe_put_user(current->thread.error_code, &sc->err, Efault);
++	unsafe_put_user(regs->ip, &sc->ip, Efault);
++	unsafe_put_user(regs->cs, (unsigned int __user *)&sc->cs, Efault);
++	unsafe_put_user(regs->flags, &sc->flags, Efault);
++	unsafe_put_user(regs->sp, &sc->sp_at_signal, Efault);
++	unsafe_put_user(regs->ss, (unsigned int __user *)&sc->ss, Efault);
++
++	unsafe_put_user(ptr_to_compat(fpstate), &sc->fpstate, Efault);
++
++	/* non-iBCS2 extensions.. */
++	unsafe_put_user(mask, &sc->oldmask, Efault);
++	unsafe_put_user(current->thread.cr2, &sc->cr2, Efault);
++	user_access_end();
++	return 0;
++Efault:
++	user_access_end();
++	return -EFAULT;
+ }
+ 
+ /*
