@@ -2,99 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C765196953
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 21:42:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CCC0196955
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 21:44:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbgC1UmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 16:42:21 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35806 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbgC1UmV (ORCPT
+        id S1727506AbgC1Un7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 16:43:59 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36265 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbgC1Un6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 16:42:21 -0400
-Received: by mail-io1-f65.google.com with SMTP id o3so7988249ioh.2;
-        Sat, 28 Mar 2020 13:42:21 -0700 (PDT)
+        Sat, 28 Mar 2020 16:43:58 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i13so6456299pfe.3;
+        Sat, 28 Mar 2020 13:43:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=N7xvG9iTpdQWEMJEWsqkRaeS9QN43jRl3wXFjwLF1I8=;
-        b=T7sMI+rG93ULTWcph4qWnyZ8XJcyGW83lZe/0rGPnfEnoQBezUBwj27KpS6qDQU6yr
-         JRYvlW1m6LsQaUWYwnjrNrdUsqttvjAvtmTvRxOeaUJLa7RYHtV8kFt76qDzJN/mJL/A
-         8H1WB2kMWS1ku0xzflUoZQkWBdNgsMm1P2fvpCNTcVbd+0zMHXV/8P2AQM7zTNEwMXCy
-         GRVYV1Qg14lGCpPmdbifFcLwY0eH1U5a11oGfC/K6ynlrw64OZ7Po5CMpKq7SNT+ZQO6
-         CToCKfuRntFaT3TSG4fb9YGxV0S2gf6M7Kl7UFIjwMibBASE4J5WX2O7OtheGLnVD/jH
-         Flsg==
+        bh=/KFYTP+4isYO+Nu64ocnQ9VsaDC4G9NxfTqcPGikuJs=;
+        b=Vql+JZGSmvAVWvNQMLCmmxOwBp8hkm1vmq2icYAMfmPekocTIe0TWnP0P1f66x72Rd
+         WRzklPFEhlDRhG05xIl3WKb/Ee33fkmUm7TL8DVm/6FJBJGDGqjGUuKZarRyKHrjx7FG
+         pv/qHWehTkswx9foPs0HByFifQef1fzxj708Tcktu74H664Dfsvk5+tjnq3EY2YNh5bm
+         +j0FI/Jqk7SSzZxV+4XR4ikkTRFdhcy9la5VCfAesdIOS0EcywrjCk0xvUkuTe5aP3sV
+         xuQGK8zyTub6rBEN2E6G+2+qhkiC7AH1sHF9iUEJ5SbFRLQFaR8hurdhVbApo/GlL1HY
+         gRnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=N7xvG9iTpdQWEMJEWsqkRaeS9QN43jRl3wXFjwLF1I8=;
-        b=Pk/PFCqAx9w6u8H6Yg2UC4DwS8VIHymaoszhIlnNPk2uHyRSNEX0QDsK7ZLiR6p605
-         /EI6KqsufadqpGYBeCgfMHTrWpLa5RRQPrxeQeUFmu/wWXtiU5h3pR/bN/Q/S27p9/SN
-         2aTyAWhCWCBlPR8+KEDJjhfDmjEPCS8pjwuIzXxCnBoMZ1QuXl7iiWjaI327O3C98mkJ
-         Jd31EfTM3qbOrgJxnI4VoQGwVz3Kqce2ewXrHFNC34psDKX98JTLBtoJdDsL4oTZzLXL
-         L7HUFSFC9qFgTCrwa+3RX4I0cVotXaWU0NfAFS9UolVTPzql7TB6iLc9hS7sz8ForAIf
-         JNKA==
-X-Gm-Message-State: ANhLgQ1PMdUzAWy4kKi5fGfHyQTwKYxuztbOcxp7KGyTd2BiKeG5PKrP
-        EJ2tIxZ73iQ7+c1y5Dh20GLznWKtDp092AiTmV0=
-X-Google-Smtp-Source: ADFU+vszlq5SQzNxc+Gr3yhgGp+D2TKHHbj30mtwSxk9P6r9+wr6Ba2BOwn5OhfvVI7k6SqTs1FWDLs6ieaCxP7awNk=
-X-Received: by 2002:a02:4e82:: with SMTP id r124mr4788458jaa.7.1585428140355;
- Sat, 28 Mar 2020 13:42:20 -0700 (PDT)
+        bh=/KFYTP+4isYO+Nu64ocnQ9VsaDC4G9NxfTqcPGikuJs=;
+        b=LqJ/RwGzYXyAVjfTT7GTjL4tGW8Gzn9zaI9mpijT9knmDA7128uK39uYEzYPZCOb/2
+         0G1qcn1b5V7WpUid4huMh3SrRQJ8tp/HOLBAIp0lMvkNfFiS5keD/ACWAS95hITLsG/c
+         FtuGpObzUeA3clM5WY/LtRFCZth4sP3hw+yrHJHOjJjWQGGRgHOoUeSx7+90a/zvbDSg
+         7Q8FUtCRzO0SgSvQA02zjKjJoxEU0J9dHJmhP8u5qhLf8qGicwWnnmxmwh487fMQ5Qyx
+         31ufDFBPQ0G8DU00JYv1Qy26iWmUjfkMNuP/gOZg0Zo/D3TSUfOSfMEeQ9zIqryAdo5l
+         A+kg==
+X-Gm-Message-State: ANhLgQ19Btc+QxSVy4QwOYL4diV2LxDbPhx7cn6e74/eHovsxPYaXG1V
+        mav0fCAW6Ll8qJoDO2G8rWlgQi7i+tNrCDJcBHY=
+X-Google-Smtp-Source: ADFU+vsKB4iGKQecF/EusqwlApCiHlWvxU386zM5SXxTzdTzlx3AyjA89liyhD5mK+CGJcFxZDYz9oJXwK1ffx2gimI=
+X-Received: by 2002:a63:798a:: with SMTP id u132mr6025684pgc.203.1585428237055;
+ Sat, 28 Mar 2020 13:43:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200328004832.107247-1-rajatja@google.com> <20200328072031.GA3651219@kroah.com>
-In-Reply-To: <20200328072031.GA3651219@kroah.com>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Sat, 28 Mar 2020 13:42:09 -0700
-Message-ID: <CAKdAkRQMnR1oKPnmwmj0OYg_DWBZyVbPE8McacwCeQFO2NzpRQ@mail.gmail.com>
-Subject: Re: [PATCH] Input: input-event-codes.h: Update the deprecated license
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Rajat Jain <rajatja@google.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rajat Jain <rajatxjain@gmail.com>
+References: <cover.1585343507.git.gayatri.kammela@intel.com>
+In-Reply-To: <cover.1585343507.git.gayatri.kammela@intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sat, 28 Mar 2020 22:43:44 +0200
+Message-ID: <CAHp75VcEO0udSzpWX14vaZcjLni2RA3NGXNqr50HMK=S7GWjxg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Fixes: update Tiger Lake ACPI device IDs
+To:     Gayatri Kammela <gayatri.kammela@intel.com>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Alex Hung <alex.hung@canonical.com>,
+        "Zhang, Rui" <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Mika Westerberg <mika.westerberg@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Prestopine, Charles D" <charles.d.prestopine@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
-
-On Sat, Mar 28, 2020 at 12:20 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri, Mar 27, 2020 at 11:34 PM Gayatri Kammela
+<gayatri.kammela@intel.com> wrote:
 >
-> On Fri, Mar 27, 2020 at 05:48:32PM -0700, Rajat Jain wrote:
-> > >From https://spdx.org/licenses/
-> >
-> > "Release 3.0 replaced previous Identifiers for GNU licenses with more
-> > explicit Identifiers to reflect the "this version only" or "any later
-> > version" option specific to those licenses. As such, the previously used
-> > Identifiers for those licenses are deprecated as of v3.0."
-> >
-> > Replace the
-> > /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> > with
-> > /* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
-> >
-> > Signed-off-by: Rajat Jain <rajatja@google.com>
+> Hi,
 >
-> If you like reading documentation for stuff like this, how about reading
-> LICENSES/preferred/GPL-2.0 which shows that both examples are just fine
-> and we are going to stick with that for now as we don't want to do a
-> wholesale change at this point in time.
+> The hardware IDs for devices supported by Tiger Lake for various drivers
+> such as DPTF, fan, Intel thermal and intel-hid are added with missing 'C'
+> which makes them invalid. Hence fix these IDs by updating.
 >
-> In other words, we do not follow the 3.0 version of the SPDX spec as we
-> think it's pretty silly :)
+> For instance, the updated ID now looks like
+> INT1047 --> INTC1047
+>
+> Patch 1: Update Tiger Lake ACPI device IDs for DPTF and fan drivers
+> Patch 2: Update Tiger Lake ACPI device ID for intel-hid driver
+> Patch 3: Update Tiger Lake ACPI device IDs for thermal driver
+>
 
-coreboot however does follow SPDX 3.0 and would like to be able to
-consume this file without relaxing their license checks. I do not
-think we need wholesale update, but is there reason to not update this
-particular file? I am not following SPDX development, so that's why
-you got pulled in ;)
+Please, keep the IDs sorted (INTC should go after INT, etc).
+Also I will need an Ack for patch 1 (at least).
 
-Thanks.
+> Changes since v1:
+> 1) Added fixes tag to each patch
+>
+> Gayatri Kammela (3):
+>   ACPI: fix: Update Tiger Lake ACPI device IDs
+>   platform/x86: intel-hid: fix: Update Tiger Lake ACPI device ID
+>   thermal: int340x_thermal: fix: Update Tiger Lake ACPI device IDs
+>
+>  drivers/acpi/device_pm.c                                | 2 +-
+>  drivers/acpi/dptf/dptf_power.c                          | 2 +-
+>  drivers/acpi/dptf/int340x_thermal.c                     | 8 ++++----
+>  drivers/platform/x86/intel-hid.c                        | 2 +-
+>  drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 2 +-
+>  drivers/thermal/intel/int340x_thermal/int3403_thermal.c | 2 +-
+>  6 files changed, 9 insertions(+), 9 deletions(-)
+>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> --
+> 2.17.1
+>
+
 
 -- 
-Dmitry
+With Best Regards,
+Andy Shevchenko
