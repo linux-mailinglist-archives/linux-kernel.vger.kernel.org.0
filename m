@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA60319656D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:04:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E31E19654E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:03:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbgC1LAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 07:00:55 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55494 "EHLO
+        id S1726482AbgC1K77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 06:59:59 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55504 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726202AbgC1K74 (ORCPT
+        with ESMTP id S1725973AbgC1K75 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 06:59:56 -0400
+        Sat, 28 Mar 2020 06:59:57 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jI9By-0003Zs-5z; Sat, 28 Mar 2020 11:59:54 +0100
+        id 1jI9Bz-0003aK-A5; Sat, 28 Mar 2020 11:59:55 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C82621C03A9;
-        Sat, 28 Mar 2020 11:59:53 +0100 (CET)
-Date:   Sat, 28 Mar 2020 10:59:53 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A439C1C03A9;
+        Sat, 28 Mar 2020 11:59:54 +0100 (CET)
+Date:   Sat, 28 Mar 2020 10:59:54 -0000
 From:   "tip-bot2 for Al Viro" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86: x32_setup_rt_frame(): consolidate uaccess areas
+Subject: [tip: x86/cleanups] x86: __setup_frame(): consolidate uaccess areas
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158539319344.28353.5048990216785541781.tip-bot2@tip-bot2>
+Message-ID: <158539319427.28353.11035795742218944544.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -44,61 +44,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/cleanups branch of tip:
 
-Commit-ID:     791612e9668cecbf5dd24d13400ac74e099f005c
-Gitweb:        https://git.kernel.org/tip/791612e9668cecbf5dd24d13400ac74e099f005c
+Commit-ID:     5c1f178094631e8b9acc67e4a9b6e03abfbc2529
+Gitweb:        https://git.kernel.org/tip/5c1f178094631e8b9acc67e4a9b6e03abfbc2529
 Author:        Al Viro <viro@zeniv.linux.org.uk>
-AuthorDate:    Sat, 15 Feb 2020 21:25:14 -05:00
+AuthorDate:    Sat, 15 Feb 2020 21:18:02 -05:00
 Committer:     Al Viro <viro@zeniv.linux.org.uk>
 CommitterDate: Thu, 26 Mar 2020 14:57:10 -04:00
 
-x86: x32_setup_rt_frame(): consolidate uaccess areas
+x86: __setup_frame(): consolidate uaccess areas
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/kernel/signal.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ arch/x86/kernel/signal.c | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
 diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index e37d5a1..38b3593 100644
+index f4fb00b..38ff834 100644
 --- a/arch/x86/kernel/signal.c
 +++ b/arch/x86/kernel/signal.c
-@@ -517,7 +517,6 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- 	struct rt_sigframe_x32 __user *frame;
- 	unsigned long uc_flags;
+@@ -302,25 +302,16 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
+ {
+ 	struct sigframe __user *frame;
  	void __user *restorer;
 -	int err = 0;
  	void __user *fp = NULL;
- 
- 	if (!(ksig->ka.sa.sa_flags & SA_RESTORER))
-@@ -525,14 +524,6 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
  
  	frame = get_sigframe(&ksig->ka, regs, sizeof(*frame), &fp);
  
 -	if (!access_ok(frame, sizeof(*frame)))
 -		return -EFAULT;
 -
--	if (ksig->ka.sa.sa_flags & SA_SIGINFO) {
--		if (__copy_siginfo_to_user32(&frame->info, &ksig->info, true))
--			return -EFAULT;
--	}
+-	if (__put_user(sig, &frame->sig))
++	if (!user_access_begin(frame, sizeof(*frame)))
+ 		return -EFAULT;
+ 
+-	if (!user_access_begin(&frame->sc, sizeof(struct sigcontext)))
+-		return -EFAULT;
++	unsafe_put_user(sig, &frame->sig, Efault);
+ 	unsafe_put_sigcontext(&frame->sc, fp, regs, set, Efault);
+-	user_access_end();
 -
- 	uc_flags = frame_uc_flags(regs);
+-	if (__put_user(set->sig[1], &frame->extramask[0]))
+-		return -EFAULT;
+-
++	unsafe_put_user(set->sig[1], &frame->extramask[0], Efault);
+ 	if (current->mm->context.vdso)
+ 		restorer = current->mm->context.vdso +
+ 			vdso_image_32.sym___kernel_sigreturn;
+@@ -330,7 +321,7 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
+ 		restorer = ksig->ka.sa.sa_restorer;
  
- 	if (!user_access_begin(frame, sizeof(*frame)))
-@@ -546,11 +537,13 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- 	restorer = ksig->ka.sa.sa_restorer;
- 	unsafe_put_user(restorer, (unsigned long __user *)&frame->pretcode, Efault);
- 	unsafe_put_sigcontext(&frame->uc.uc_mcontext, fp, regs, set, Efault);
-+	unsafe_put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask, Efault);
- 	user_access_end();
--	err |= __put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask);
+ 	/* Set up to return from userspace.  */
+-	err |= __put_user(restorer, &frame->pretcode);
++	unsafe_put_user(restorer, &frame->pretcode, Efault);
  
+ 	/*
+ 	 * This is popl %eax ; movl $__NR_sigreturn, %eax ; int $0x80
+@@ -339,10 +330,8 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
+ 	 * reasons and because gdb uses it as a signature to notice
+ 	 * signal handler stack frames.
+ 	 */
+-	err |= __put_user(*((u64 *)&retcode), (u64 *)frame->retcode);
+-
 -	if (err)
 -		return -EFAULT;
-+	if (ksig->ka.sa.sa_flags & SA_SIGINFO) {
-+		if (__copy_siginfo_to_user32(&frame->info, &ksig->info, true))
-+			return -EFAULT;
-+	}
++	unsafe_put_user(*((u64 *)&retcode), (u64 *)frame->retcode, Efault);
++	user_access_end();
  
  	/* Set up registers for signal handler */
- 	regs->sp = (unsigned long) frame;
+ 	regs->sp = (unsigned long)frame;
