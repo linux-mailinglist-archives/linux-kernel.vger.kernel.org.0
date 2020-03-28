@@ -2,95 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CE92196671
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 14:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF22519667F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 15:00:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbgC1N4a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 09:56:30 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:44519 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbgC1N43 (ORCPT
+        id S1726449AbgC1OAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 10:00:03 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:1942 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726045AbgC1OAC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 09:56:29 -0400
-Received: by mail-yb1-f195.google.com with SMTP id 11so6224086ybj.11
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Mar 2020 06:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=draconx-ca.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ONdMAPyiB0FQN9RfNXQDWPw1B2SNFTDlbdPq+oteUP0=;
-        b=VC1e5z6odylqRXJ01LB/715zOmiuRw6n94RE+SFPg+ccDnVRWqdVq+IU3uxFNtOl69
-         uQmXJrW85p/GN7cX3/y/9sEdlMFPGgdJAZY/A8cUINEopka2hUcQSRHHFqpVdITaPKH4
-         0Gag/Fm3S7BYiMXl4z8awVZx2ohJB8jyaILnuLZy3rbncNhc/Z1U9yIfqWg18SmOecrT
-         NEB8KlC60vhC7cokGw6TtDlXR1nTJKHYUzk0poxHkP8fhfqhiJFMefgY04eqoiRiwSkq
-         CuvI5skXFIfWW86MsVmtOXkNcFYU/trSirOjFy+kyPhn78YDhTG4igc87sVuiZ2GT5eZ
-         FSug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ONdMAPyiB0FQN9RfNXQDWPw1B2SNFTDlbdPq+oteUP0=;
-        b=kfzsqYcULHEuW3TpP9Mk/aUlOXjS87XiLqvQBnCWPBce4VdEJRBPEqMf2AuKwKrpkM
-         AM0Py34K3DZntHrJyeKuqaAXAZTRALxWeTtCc8OKoGqfbYgfFkaQnKOgCokU0JEutlK6
-         rKkAzE42LQqJAM4OHBLyT7RLLF5YnuXt0mEyWU/JCuCquRTi1XCe92qrWs7unrKo4qTB
-         BQSLJHKpWORypFX+EaeZyc+Q0ovOKMmiwYaqsq/SSH5ldbgAJJ/x5xeljBiPrGHDQzln
-         76vz9bhlCyD6Srgsao3nE5+tEjKbsIlbU5p4Lzx5km4J6/GP5HMwcV0I4l1a5GEkyAqg
-         PK6g==
-X-Gm-Message-State: ANhLgQ0PpZygdrJ7ij2rVw+9LruPvSegUVRmqtHwpVTpJ+4xIjwEZUk9
-        /2GmqAk5uhmYFDVYdVN3LymDla4zd5XDDfRk3AxUlg==
-X-Google-Smtp-Source: ADFU+vuRXCOQPyauFIJmv2m9SNnbV6hifB8BojlvTqloHfynOqJyE74a8eLVpc3XwnUnkij3d0BA0Bc1VMQYMk40TKM=
-X-Received: by 2002:a25:3701:: with SMTP id e1mr6170514yba.196.1585403788766;
- Sat, 28 Mar 2020 06:56:28 -0700 (PDT)
+        Sat, 28 Mar 2020 10:00:02 -0400
+X-IronPort-AV: E=Sophos;i="5.72,316,1580770800"; 
+   d="scan'208";a="442758002"
+Received: from abo-173-121-68.mrs.modulonet.fr (HELO hadrien) ([85.68.121.173])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Mar 2020 15:00:00 +0100
+Date:   Sat, 28 Mar 2020 15:00:00 +0100 (CET)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Markus Elfring <Markus.Elfring@web.de>
+cc:     Michel Lespinasse <walken@google.com>,
+        Coccinelle <cocci@systeme.lip6.fr>, linux-mm@kvack.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Hugh Dickins <hughd@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Liam Howlett <Liam.Howlett@oracle.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ying Han <yinghan@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [Cocci] [v3 05/10] mmap locking API: Checking the Coccinelle
+ software
+In-Reply-To: <590dbec7-341a-3480-dd47-cb3c65b023c7@web.de>
+Message-ID: <alpine.DEB.2.21.2003281459020.3005@hadrien>
+References: <20200327225102.25061-1-walken@google.com> <20200327225102.25061-6-walken@google.com> <bc2980d7-b823-2fff-d29c-57dcbc9aaf27@web.de> <CANN689H=tjNi=g6M776qo8inr+OfAu8mtL5xsJpu4F=dB6R9zA@mail.gmail.com> <3c222f3c-c8e2-660a-a348-5f3583e7e036@web.de>
+ <CANN689HyS0dYWZw3AeWGBvN6_2G4hRDzjMJQ_adHMh0ZkiACYg@mail.gmail.com> <590dbec7-341a-3480-dd47-cb3c65b023c7@web.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:a25:1941:0:0:0:0:0 with HTTP; Sat, 28 Mar 2020 06:56:28
- -0700 (PDT)
-X-Originating-IP: [24.53.240.163]
-In-Reply-To: <20200328082601.GA7658@infradead.org>
-References: <20200328050909.30639-1-nbowler@draconx.ca> <20200328050909.30639-2-nbowler@draconx.ca>
- <20200328082601.GA7658@infradead.org>
-From:   Nick Bowler <nbowler@draconx.ca>
-Date:   Sat, 28 Mar 2020 09:56:28 -0400
-Message-ID: <CADyTPEyDbV9WiOc9SOFvzPX9ccd7mhGG_Fj8QNmxGEY9UgkiRQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] nvme: Fix compat NVME_IOCTL_SUBMIT_IO numbering
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="8323329-1094119643-1585404000=:3005"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/03/2020, Christoph Hellwig <hch@infradead.org> wrote:
-> On Sat, Mar 28, 2020 at 01:09:08AM -0400, Nick Bowler wrote:
->> When __u64 has 64-bit alignment, the nvme_user_io structure has trailing
->> padding.  This causes problems in the compat case with 32-bit userspace
->> that has less strict alignment because the size of the structure differs.
->>
->> Since the NVME_IOCTL_SUBMIT_IO macro encodes the structure size itself,
->> the result is that this ioctl does not work at all in such a scenario:
->>
->>   # nvme read /dev/nvme0n1 -z 512
->>   submit-io: Inappropriate ioctl for device
->>
->> But by the same token, this makes it easy to handle both cases and
->> since the structures differ only in unused trailing padding bytes
->> we can simply not read those bytes.
->>
->> Signed-off-by: Nick Bowler <nbowler@draconx.ca>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1094119643-1585404000=:3005
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+
+> // deleted part
+> retry:
+> 	down_read(&mm->mmap_sem);
+> 	vma = find_vma(mm, address);
+> 	if (!vma)
+> 		goto bad_area;
+> // deleted part
+> }
+> // deleted part
 >
-> I think we already have a similar patch titled
-> "nvme: Add compat_ioctl handler for NVME_IOCTL_SUBMIT_IO" in
-> linux-next, with the difference of actually implementing the
-> .compat_ioctl entry point.
+>
+> Application of the software “Coccinelle 1.0.8-00029-ga549b9f0” (OCaml 4.10.0)
+>
+> elfring@Sonne:~/Projekte/Coccinelle/Probe> spatch --parse-c do_page_fault-excerpt3.c
+> …
+> NB total files = 1; perfect = 1; pbs = 0; timeout = 0; =========> 100%
+> nb good = 15,  nb passed = 1 =========> 6.25% passed
+> nb good = 15,  nb bad = 0 =========> 100.00% good or passed
+>
+>
+> The discussed transformation approach can also be reduced for a test
+> to the following script for the semantic patch language.
+>
+> @replacement@
+> expression x;
+> @@
+> -down_read
+> +mmap_read_lock
+>  (
+> - &
+>   x
+> - ->mmap_sem
+>  )
+>
+>
+> elfring@Sonne:~/Projekte/Coccinelle/Probe> spatch use_mmap_locking_API_3.cocci do_page_fault-excerpt3.c
+>
+>
+> The desired diff is not generated so far.
+> How would you like to fix this situation?
 
-OK, I found that one and it looks to solve the same problem.
+The problem can be seen with the --debug option:
 
-I'm not sure about copying the nonexistent trailing padding from 32-bit
-userspace but that may not be a problem in practice.
+FLOW: can't jump to VMALLOC_FAULT_TARGET: because we can't find this label
 
-So feel free to drop this patch.
+It's not apparent with the --parse-c option because it's not a parsing
+problem.
 
-Thanks,
-  Nick
+julia
+--8323329-1094119643-1585404000=:3005--
