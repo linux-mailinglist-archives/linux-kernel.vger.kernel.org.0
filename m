@@ -2,102 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C65721967D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 18:07:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED7DC1967CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 18:03:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbgC1RHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 13:07:15 -0400
-Received: from mx.sdf.org ([205.166.94.20]:62766 "EHLO mx.sdf.org"
+        id S1726316AbgC1RDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 13:03:53 -0400
+Received: from ms.lwn.net ([45.79.88.28]:54258 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725807AbgC1RHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 13:07:15 -0400
-Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SH7E98002914
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 17:07:15 GMT
-Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SH7EEB025951;
-        Sat, 28 Mar 2020 17:07:14 GMT
-Message-Id: <202003281707.02SH7EEB025951@sdf.org>
-From:   George Spelvin <lkml@sdf.org>
-Date:   Sun, 8 Mar 2020 09:44:59 -0400
-Subject: [RFC PATCH v1 04/50] batman-adv: fix batadv_nc_random_weight_tq
+        id S1725807AbgC1RDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 13:03:53 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id E5CAA2F3;
+        Sat, 28 Mar 2020 17:03:52 +0000 (UTC)
+Date:   Sat, 28 Mar 2020 11:03:51 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Grant Likely <grant.likely@arm.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, nd@arm.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] Add documentation on meaning of -EPROBE_DEFER
+Message-ID: <20200328110351.4e50491e@lwn.net>
+In-Reply-To: <CAGETcx_0=W6P_Zf-6fvDfncXUrPvt31bf6de-RWwHaXtwJizmQ@mail.gmail.com>
+References: <20200327170132.17275-1-grant.likely@arm.com>
+        <CAGETcx8CJqMQaHBj1r5MhNBTw7Smz4BRHPkB0kCUCJPSmW6KwA@mail.gmail.com>
+        <2885b440-77a5-f2be-7524-d5fba2b0c08a@arm.com>
+        <CAGETcx_0=W6P_Zf-6fvDfncXUrPvt31bf6de-RWwHaXtwJizmQ@mail.gmail.com>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
-To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Martin Hundeboll <martin@hundeboll.net>,
-        Marek Lindner <mareklindner@neomailbox.ch>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Antonio Quartulli <a@unstable.cc>,
-        Sven Eckelmann <sven@narfation.org>,
-        b.a.t.m.a.n@diktynna.open-mesh.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-and change to pseudorandom numbers, as this is a traffic
-dithering operation that doesn't need crypto-grade.
+On Fri, 27 Mar 2020 16:55:34 -0700
+Saravana Kannan <saravanak@google.com> wrote:
 
-The previous code operated in 4 steps:
-1) Generate a random byte 0 <= rand_tq <= 255
-2) Multiply it by BATADV_TQ_MAX_VALUE - tq
-3) Divide by 255 (= BATADV_TQ_MAX_VALUE)
-4) Return BATADV_TQ_MAX_VALUE - rand_tq
+> > > The infinite loop is a current implementation behavior. Not an
+> > > intentional choice. So, maybe we can say the behavior is undefined
+> > > instead?  
+> >
+> > If you feel strongly about it, but I don't have any problem with
+> > documenting it as the current implementation behaviour, and then
+> > changing the text if that ever changes.  
+> 
+> Assuming Greg is okay with this doc update, I'm kinda leaning towards
+> "undefined" because if documented as "infinite loop" people might be
+> hesitant towards removing that behavior. But I'll let Greg make the
+> final call. Not going to NACK for this point.
 
-This would apperar to scale (BATADV_TQ_MAX_VALUE - tq) by a random
-value between 0/255 and 255/255.
+FWIW, kernel developers have to cope with enough trouble from "undefined
+behavior" already; I don't think we should really be adding that to our
+own docs.  We can certainly document the infinite loop behavior as being
+not guaranteed as part of the API if we're worried that somebody might
+start to rely on it...:)  
 
-But!  The intermediate value between steps 3 and 4 is stored in a u8
-variable.  So it's truncated, and most of the time, is less than
-255, after which the division produces 0.  Specifically, if tq is
-odd, the product is always even, and can never be 255.  If tq is
-even, there's exactly one random byte value that will produce
-a product byte of 255.
+Thanks,
 
-Thus, the return value is 255 (511/512 of the time) or 254 (1/512
-of the time).
-
-If we assume that the truncation is a bug, and the code is meant to
-scale the input, a simpler way of looking at it is that it's
-returning a random value between tq and BATADV_TQ_MAX_VALUE,
-inclusive.
-
-Well, we have an optimized function for doing just that.
-
-Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Martin Hundebøll <martin@hundeboll.net>
-Cc: Marek Lindner <mareklindner@neomailbox.ch>
-Cc: Simon Wunderlich <sw@simonwunderlich.de>
-Cc: Antonio Quartulli <a@unstable.cc>
-Cc: Sven Eckelmann <sven@narfation.org>
-Cc: b.a.t.m.a.n@lists.open-mesh.org
----
- net/batman-adv/network-coding.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/net/batman-adv/network-coding.c b/net/batman-adv/network-coding.c
-index 580609389f0f7..70e3b161c6635 100644
---- a/net/batman-adv/network-coding.c
-+++ b/net/batman-adv/network-coding.c
-@@ -1009,15 +1009,8 @@ static struct batadv_nc_path *batadv_nc_get_path(struct batadv_priv *bat_priv,
-  */
- static u8 batadv_nc_random_weight_tq(u8 tq)
- {
--	u8 rand_val, rand_tq;
--
--	get_random_bytes(&rand_val, sizeof(rand_val));
--
- 	/* randomize the estimated packet loss (max TQ - estimated TQ) */
--	rand_tq = rand_val * (BATADV_TQ_MAX_VALUE - tq);
--
--	/* normalize the randomized packet loss */
--	rand_tq /= BATADV_TQ_MAX_VALUE;
-+	u8 rand_tq = prandom_u32_max(BATADV_TQ_MAX_VALUE + 1 - tq);
- 
- 	/* convert to (randomized) estimated tq again */
- 	return BATADV_TQ_MAX_VALUE - rand_tq;
--- 
-2.26.0
-
+jon
