@@ -2,93 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B99DC196247
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 01:12:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEAF119625D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 01:17:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgC1AMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 20:12:15 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41009 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727193AbgC1AMM (ORCPT
+        id S1726384AbgC1ARa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 20:17:30 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52418 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbgC1ARa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 20:12:12 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h9so13840265wrc.8;
-        Fri, 27 Mar 2020 17:12:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6QvXfJZlpggMK4ANi6m9pBKzrWALkcbq78l8N8OifPg=;
-        b=DdTPzQSSS2/ubRNz+h06dvMkaDyQidAdmr7yJ2mTtmmTwzoqX6EHYnr0/MwAzRwGIE
-         RlcOLbE+F3AacmuCQTK8cJEUKLDZ+4GKWInY23uvDR8OcceGXEu1iIzT8YGICQ310UD7
-         R8sUAcg2tpT4wWOBgSFav6VS+nxi7rK8To1sI4x7ydopKcNgLFJZB3X27lJqCtTd7NQV
-         wzoecopKD726yrk77Mnx14+2EyvKPbz6Zf7B2sz2Z7HuOmmrbAeWFKe55y3u48e/+hyX
-         BsohhHNKFVMeipbdBiZNDG7EogXjwZXoTtY7myZWugekXEj/1ozS2LW82aJI8P1rXddw
-         Gwrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6QvXfJZlpggMK4ANi6m9pBKzrWALkcbq78l8N8OifPg=;
-        b=b7KISZY4KukTC/TCg7eHhPfhdrLrjFCxq5ZlewscCGbzVmtdtrEajF+G+ioOeemOcd
-         vM/2I3TqaC/UFblrToRniQcYKg2kdAbDTUtBXkOrmLmUtBYJ64OhlIFNAdusvyvtSBSD
-         frp15DZ7M2WmQtv14rZqo0Vrxo80/+MsnFiJvKfj1ILVLgbm7eiX7CJOax7bVl4x0PRp
-         mRJeh+Qkb0PPDM+6atMP/k7oXuKMCiG6h86faWhZJKX9ELfin/wt6G03daqcfYU3TT3C
-         hpOgI3Sqgs+8pTBaU0+7+9bmlM7dxrq/OPeylgBo+5CgfHHiQbn3+7qHuLsxeHQjZhjZ
-         ZKww==
-X-Gm-Message-State: ANhLgQ2yemu/uw+OMX19GTQhs/kvD3n45bPEHm4ns8QbHesVeg1022Qo
-        O8rBETRjSjY6gbcUq0HIsJdKnIKzFRs=
-X-Google-Smtp-Source: ADFU+vt71LrkRSMzxCIoPkaoBOOACxjN15QoBbVzam8LUQZNktZELWKtn3lpLjnGh6viJMYFrwKTUw==
-X-Received: by 2002:adf:fc42:: with SMTP id e2mr1999357wrs.45.1585354330434;
-        Fri, 27 Mar 2020 17:12:10 -0700 (PDT)
-Received: from localhost.localdomain (p5B3F7536.dip0.t-ipconnect.de. [91.63.117.54])
-        by smtp.gmail.com with ESMTPSA id 61sm11237956wrn.82.2020.03.27.17.12.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2020 17:12:09 -0700 (PDT)
-From:   Saravanan Sekar <sravanhome@gmail.com>
-To:     lee.jones@linaro.org, andy.shevchenko@gmail.com,
-        robh+dt@kernel.org, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-pm@vger.kernel.org,
-        Saravanan Sekar <sravanhome@gmail.com>
-Subject: [PATCH v5 5/5] MAINTAINERS: Add entry for mp2629 Battery Charger driver
-Date:   Sat, 28 Mar 2020 01:11:54 +0100
-Message-Id: <20200328001154.17313-6-sravanhome@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200328001154.17313-1-sravanhome@gmail.com>
-References: <20200328001154.17313-1-sravanhome@gmail.com>
+        Fri, 27 Mar 2020 20:17:30 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02S0ECts067141;
+        Sat, 28 Mar 2020 00:17:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=TkczSJTHT6DjomI7Gw7mr8sP9DJiwrHZ4XBhfGDHUog=;
+ b=tE2x0AnFwkzquTjPYPJtSSUOTIUr5cRQKsQ6brqtxlZahHmQiWQDNndbDOlVL4RCJPHr
+ rDFSGgqeERza5Cgh8aWadUkNKf0JpDP6ImP12/AkMx9+Z2AXtjfmhpDOVKYrdAtgavij
+ fyFSq3maRkdaitDBud33m1ofY85n+ll+p0YVa4XjNssXfzj8aaRwkrnP6oAi8vBJV5Gw
+ FfVQMyPnuyHcUUZPqBgFH0/9DCcmVbOgcKiav7bi8+CmhhsUY5ZNiL334z2u2klXxnD6
+ pbpcddjahDptASZ0UAYhMZaiTayoE65khSpAxJdCnOsE1n3x+6PgvmyxsQUlQ2WvFw7l LQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 301m49hyy1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 28 Mar 2020 00:17:19 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02S0BmQ3110319;
+        Sat, 28 Mar 2020 00:17:19 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 3003gpy4q0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 28 Mar 2020 00:17:19 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02S0HGS6032130;
+        Sat, 28 Mar 2020 00:17:17 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 27 Mar 2020 17:17:16 -0700
+Date:   Fri, 27 Mar 2020 20:17:36 -0400
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Shile Zhang <shile.zhang@linux.alibaba.com>
+Cc:     Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] mm: fix tick timer stall during deferred page init
+Message-ID: <20200328001736.pxcnabxvrr3d6bty@ca-dmjordan1.us.oracle.com>
+References: <20200311123848.118638-1-shile.zhang@linux.alibaba.com>
+ <20200319190512.cwnvgvv3upzcchkm@ca-dmjordan1.us.oracle.com>
+ <20200326185822.6n56yl2llvdranur@ca-dmjordan1.us.oracle.com>
+ <CA+CK2bDQ6qPfLsx=81L3_DVzvoCjkBRKvcw0Tz4Gd=Fd6pgQ3A@mail.gmail.com>
+ <427ce795-0274-56e5-16e4-7be00c7145f7@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <427ce795-0274-56e5-16e4-7be00c7145f7@linux.alibaba.com>
+User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9573 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ phishscore=0 adultscore=0 spamscore=0 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003270199
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9573 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 clxscore=1015 bulkscore=0
+ impostorscore=0 suspectscore=0 spamscore=0 adultscore=0 phishscore=0
+ malwarescore=0 mlxlogscore=999 lowpriorityscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003270199
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MAINTAINERS entry for Monolithic Power Systems mp2629 Charger driver.
+On Fri, Mar 27, 2020 at 12:39:18PM +0800, Shile Zhang wrote:
+> On 2020/3/27 03:36, Pavel Tatashin wrote:
+> > I agree with Daniel, we should look into approach where
+> > pgdat_resize_lock is taken only for the duration of updating tracking
+> > values such as pgdat->first_deferred_pfn (perhaps we would need to add
+> > another tracker that would show chunks that are currently being worked
+> > on).
+> > 
+> > The vast duration of struct page initialization process should happen
+> > outside of this lock, and only be taken when we update globally seen
+> > data structures: lists, tracking variables. This way we can solve
+> > several problems: 1. allow interrupt threads to grow zones if
+> > required. 2. keep jiffies happy. 3. allow future scaling when we will
+> > add inner node threads to initialize struct pages (i.e. ktasks from
+> > Daniel).
+> 
+> It make sense, looking forward to the inner node parallel init.
+> 
+> @Daniel
+> Is there schedule about ktasks?
 
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
----
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
+Yep, and it's now padata multithreading instead of ktask since we already have
+'task' in the kernel.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 32a95d162f06..0f82d5a7a614 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11358,10 +11358,15 @@ F:	drivers/tty/mxser.*
- MONOLITHIC POWER SYSTEM PMIC DRIVER
- M:	Saravanan Sekar <sravanhome@gmail.com>
- S:	Maintained
-+F:	Documentation/devicetree/bindings/mfd/mps,mp2629.yaml
- F:	Documentation/devicetree/bindings/regulator/mps,mp*.yaml
-+F:	drivers/iio/adc/mp2629_adc.c
-+F:	drivers/mfd/mp2629.c
-+F:	drivers/power/supply/mp2629_charger.c
- F:	drivers/regulator/mp5416.c
- F:	drivers/regulator/mpq7920.c
- F:	drivers/regulator/mpq7920.h
-+F:	include/linux/mfd/mp2629.h
- 
- MR800 AVERMEDIA USB FM RADIO DRIVER
- M:	Alexey Klimov <klimov.linux@gmail.com>
--- 
-2.17.1
+Current plan is to start with users in the system context, that is those that
+don't require userland resource controls such as cgroup.  So I'll post a new
+version of this timestamp fix pretty soon and then likely post a series that
+multithreads page init.
 
+Future work is tentatively doing other system users, remote charging for the
+CPU controller, and then users that can be accounted with cgroup etc.
