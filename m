@@ -2,129 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B2F196821
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 18:24:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83040196825
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 18:31:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726389AbgC1RYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 13:24:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44328 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725807AbgC1RYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 13:24:55 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E28FB206F6;
-        Sat, 28 Mar 2020 17:24:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585416293;
-        bh=cfzFYS/oG1CrThIAkWAcRMT2ZQr5LIDVXad2fZshHtU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=0/Q8eIelCZltuUoVh78VwZKzuHiGLaN31hDNO4IlSEUzHTkIQOlODwGInWw3v9f01
-         w4sLdEtl1J9nomFV/j5hkc+nqUQlFIQ/unQerzO9zkEqaG2CyDIQH/kXFGKc/A3GI8
-         8DY3ppYYV5jVN6N83mJHxvnJlD4lLiMlKkFLVEAE=
-Date:   Sat, 28 Mar 2020 17:24:49 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Gwendal Grignou <gwendal@chromium.org>, bleung@chromium.org,
-        Jonathan.Cameron@huawei.com, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 12/12] iio: cros_ec: flush as hwfifo attribute
-Message-ID: <20200328172449.530b1fd8@archlinux>
-In-Reply-To: <c3609af9-42a7-8d59-f0a4-9da3badc3668@collabora.com>
-References: <20200327223443.6006-1-gwendal@chromium.org>
-        <20200327223443.6006-13-gwendal@chromium.org>
-        <c3609af9-42a7-8d59-f0a4-9da3badc3668@collabora.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726325AbgC1RaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 13:30:20 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35878 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbgC1RaU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 13:30:20 -0400
+Received: by mail-lj1-f193.google.com with SMTP id g12so13534194ljj.3
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Mar 2020 10:30:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=OA1jCHB3PV2Z6R/UiAvUOrVDEmBHG9o1r6t9YKtsNls=;
+        b=ZJks9eo9EvECZhS/IbdwwnJRwmIrDhNJCrMpaT98pwI6vPhiBeWSi/C7B5HtWuJj2l
+         nsG9QKIKMq5HPxD4FQEH3+yl5afRO6MhXQEEULvEXqZ5V7PyQ4qxZ9ZxCqfBH5HyuAca
+         6QHm7V5eItENXn2XKaTwlgIoFfMcdsFof217gXLZOVddQWzkNWvRYjCVAbVEBUAdC5Pm
+         ufkHwzEQXBQJ1OXVkPXgbwZgQVEmS1R+N91qb+WS3pdAXsVRvM97u25/SuNG6wDH30Lp
+         jTMByJ+vhakRJj2fbf7FL3AfLwNTSVY6yu9T6e7QTQeSdWfxEhQxQ7MAQnLMd/5L6iw2
+         RBCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=OA1jCHB3PV2Z6R/UiAvUOrVDEmBHG9o1r6t9YKtsNls=;
+        b=EuF1q1ty4fMkNQZm4hK1teSEiFmN7A8uWiIEq2e03IUCRrWq+k2PHsgWuAkm9EL4WV
+         ITFrQhFejlmBQ6lh/2RXlExt43I3cM9Tl/fmgOGSqBxuO/U0xLzA4xsHUrXmy/Yoea4k
+         fm94I/YP+jUqnZZCkAxmiTb5u/jx+DBanyYNhx3XTtlNSunM5A3zhYeMDIC0yBLfTyfu
+         0spt7SHXJ765tAxqMM4B9+VtlhXeo/C3H/RKferElBlyOXWkDyIA3Jsfcum1buI1NXL0
+         DtmfJ5IzXDMQ+lKymeO3Es3BTmeA4hYKTJ7+Zov8o83JOhxjNj49zAyZ2wd7g09HGsJc
+         xXyg==
+X-Gm-Message-State: AGi0PuayB4qwwNDTYSjdVgrax6BS/c0o69LGSNpfrha9oZ0qwz3Dms2v
+        IJ/zmzfu0XVfIGiorMVxS+AWe99uVojDTNpIZKg=
+X-Google-Smtp-Source: APiQypI/vxFmXYtr3imaKgi80HDpia9C4JJycn4JQT2aJACVh/YRfcUeeT7JFPwGGpiwKandhNjDZ4ULODMQKSGKw/Q=
+X-Received: by 2002:a2e:9c4:: with SMTP id 187mr2709160ljj.89.1585416618301;
+ Sat, 28 Mar 2020 10:30:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a05:6512:3051:0:0:0:0 with HTTP; Sat, 28 Mar 2020 10:30:18
+ -0700 (PDT)
+Reply-To: bankturkiskis@gmail.com
+From:   Credit Turkish Is Bank <atlbfinancialtg@gmail.com>
+Date:   Sat, 28 Mar 2020 10:30:18 -0700
+Message-ID: <CALf893XkvnORLOKGqxV5A==oLbNOnQzdskq=UcgWHyAg_opnYw@mail.gmail.com>
+Subject: RE
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 28 Mar 2020 10:14:23 +0100
-Enric Balletbo i Serra <enric.balletbo@collabora.com> wrote:
+Credit Turkish Is Bank
+Headquarters: Sultangazi  Istanbul
 
-> Hi Jonathan and Gwendal,
-> 
-> On 27/3/20 23:34, Gwendal Grignou wrote:
-> > Add buffer/hwfifo_flush. It is not part of the ABI, but it follows ST
-> > and HID lead: Tells the sensor hub to send to the host all pending
-> > sensor events.
-> > 
-> > Signed-off-by: Gwendal Grignou <gwendal@chromium.org>  
-> 
-> I need an Ack from Jonathan to pick this.
-> 
-> Jonathan, once you are fine with it, do you mind if I take the full series
-> through the platform chrome tree?
+Attention please
 
-Once 12 is sorted (or if you want to take up to 11 thats fine) then
-sure happy for you to take them.
+Your email appeared among the beneficiaries who will receive a
+part-payment of their overdue fund,($ 3.5 Million) Credited to Online
+Bank ATM Card account via Credit Turkish Is Bank, contact CEO Credit
+Turkish Is Bank  Istanbul ; Dr. Ugur Saka  on this email address with
+your full
+information, bankturkiskis@gmail.com
 
-Thanks,
+YOUR NAME;
+HOME ADDRESS;
+PHONE NUMBER;
+OCCUPATION;
+ID;
 
-Jonathan
+Yours Faithfully,
 
-> 
-> Thanks,
->  Enric
-> 
-> 
-> > ---
-> > No changes in v7.
-> > New in v6.
-> > 
-> >  .../cros_ec_sensors/cros_ec_sensors_core.c    | 28 +++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
-> > 
-> > diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> > index c831915ca7e56..aaf124a82e0e4 100644
-> > --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> > +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> > @@ -113,6 +113,33 @@ static int cros_ec_sensor_set_ec_rate(struct cros_ec_sensors_core_state *st,
-> >  	return ret;
-> >  }
-> >  
-> > +static ssize_t cros_ec_sensors_flush(struct device *dev,
-> > +				     struct device_attribute *attr,
-> > +				     const char *buf, size_t len)
-> > +{
-> > +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > +	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
-> > +	int ret = 0;
-> > +	bool flush;
-> > +
-> > +	ret = strtobool(buf, &flush);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +	if (!flush)
-> > +		return -EINVAL;
-> > +
-> > +	mutex_lock(&st->cmd_lock);
-> > +	st->param.cmd = MOTIONSENSE_CMD_FIFO_FLUSH;
-> > +	ret = cros_ec_motion_send_host_cmd(st, 0);
-> > +	if (ret != 0)
-> > +		dev_warn(&indio_dev->dev, "Unable to flush sensor\n");
-> > +	mutex_unlock(&st->cmd_lock);
-> > +	return ret ? ret : len;
-> > +}
-> > +
-> > +static IIO_DEVICE_ATTR(hwfifo_flush, 0644, NULL,
-> > +		       cros_ec_sensors_flush, 0);
-> > +
-> >  static ssize_t cros_ec_sensor_set_report_latency(struct device *dev,
-> >  						 struct device_attribute *attr,
-> >  						 const char *buf, size_t len)
-> > @@ -175,6 +202,7 @@ static ssize_t hwfifo_watermark_max_show(struct device *dev,
-> >  static IIO_DEVICE_ATTR_RO(hwfifo_watermark_max, 0);
-> >  
-> >  const struct attribute *cros_ec_sensor_fifo_attributes[] = {
-> > +	&iio_dev_attr_hwfifo_flush.dev_attr.attr,
-> >  	&iio_dev_attr_hwfifo_timeout.dev_attr.attr,
-> >  	&iio_dev_attr_hwfifo_watermark_max.dev_attr.attr,
-> >  	NULL,
-> >   
-
+Credit Turkish Is Bank
+bankturkiskis@gmail.com
