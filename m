@@ -2,191 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB7E81964FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 11:20:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF0551964FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 11:20:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbgC1KUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 06:20:08 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:36986 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725937AbgC1KUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 06:20:08 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48qF8j331szB09ZZ;
-        Sat, 28 Mar 2020 11:20:05 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=pzeBx3E1; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id WhdGRgIvWAGP; Sat, 28 Mar 2020 11:20:05 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48qF8j1h2rzB09ZY;
-        Sat, 28 Mar 2020 11:20:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1585390805; bh=VxACPXV9Gk3PymTU0gGYQHtOnnL8iszZZtDxu9OZ0d0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=pzeBx3E1l4DxzUlqcR7ySE/cgizPmWuiUQIqjWW1w+yk3T8JBL7PtAs33jhcZDPl6
-         f5Vjk7Nh8jaQ55EQV5espmk+CG9w7kDXQ7Rn3BPZ/w1S8VMPe9IknH41sTZR11XDNg
-         0Wfj7lY+WzhQUYIAeG7NM6zRaLfQgfVg0Cow0Lf8=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 56DCA8B76B;
-        Sat, 28 Mar 2020 11:20:06 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 7Hr0kWPiW8Oy; Sat, 28 Mar 2020 11:20:06 +0100 (CET)
-Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4F6668B75B;
-        Sat, 28 Mar 2020 11:20:05 +0100 (CET)
-Subject: Re: [PATCH 1/1] ppc/crash: Skip spinlocks during crash
-To:     Leonardo Bras <leonardo@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Enrico Weigelt <info@metux.net>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20200326222836.501404-1-leonardo@linux.ibm.com>
- <af505ef0-e0df-e0aa-bb83-3ed99841f151@c-s.fr>
- <56965ad674071181548d5ed4fb7c8fa08061b591.camel@linux.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <4759f5e9-24a6-7710-86a0-c8e45f5decb7@c-s.fr>
-Date:   Sat, 28 Mar 2020 10:19:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1726290AbgC1KUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 06:20:38 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46562 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbgC1KUh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 06:20:37 -0400
+Received: by mail-ed1-f66.google.com with SMTP id cf14so14561483edb.13;
+        Sat, 28 Mar 2020 03:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fe7vSqTovofs2pbqQ9vBZGE4ICdZzytA51ufbrvug5A=;
+        b=gZzoGR9pE2WwhIDeENQCW/x6kpV7USjpLVpyp0uH7+Fq6u4Pr6VyHGy5MxT65P1Jpw
+         2IwFjZAWystaYH29GKa4oevh37fKQClAFd/6sCfi35W9/6H9b2st92hznyzG7txJxifb
+         /rOL5DyfJHFcQ1DEf9C9BCL3MHhibBA+GsdlWkc2rtg4LaQNcOoG8QB05tzrj49/0eEl
+         TNgbeY007ZskTRpSiblMaihBN7H0uViDxG4hyT5N99Ih65I26eZdiIXjHM30n+J5tKLq
+         f17zIR90Cyfv7UAgzMoz+/WEq+n+OILmc0z/EbKvXtKix0P6yR+vJ4s4g6k4anerM3wJ
+         WYtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fe7vSqTovofs2pbqQ9vBZGE4ICdZzytA51ufbrvug5A=;
+        b=YbBDwKrV9IYBVKkaUDwkVgLXEAC0rPpyPGN0StswgKObohMDPESyVeM1YUQehIYWeF
+         02ZgtsRuGMHrgo8EYRNNnERF9HQdHnGoR7/kjdtmd4jqGYim3FFyKYHkkbgjO0mBUXPN
+         5r17yGLFBr1VARSuDr0CMK+abETqA5MJrSooZMqrO3L9cI/3Jdtf+L+HCMxlPbZ+NDLf
+         jpmIMPzesGuU99m2f2Fh6GRZSWoiH2jl09bQamf9XUD5eC4ciGAQolNey58i/HQ5digO
+         rpqx2IFvvvld5v9FbZC5hFV/rBijAgvdDqSwc8+szzPCMFxF0oAjfHessPCqYYPw5hVb
+         jumw==
+X-Gm-Message-State: ANhLgQ1/f4eG7oJxajsKqhc0b3umr1JeGbNGsKlkT6FVM8TaB5pzjoeP
+        31MvcyIvwfI00tIT0/FcH4Psgxa+Hoxc62z0WnE=
+X-Google-Smtp-Source: ADFU+vt+CGOstPPiyOkXccPeNwU+SbD3xZ1o9QkolQ8v/Gi9v/pdo4TjR6yY1eJHtp+rIWU3zHv5rAEhRHHb9xghbBI=
+X-Received: by 2002:a05:6402:b14:: with SMTP id bm20mr2831787edb.365.1585390835491;
+ Sat, 28 Mar 2020 03:20:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <56965ad674071181548d5ed4fb7c8fa08061b591.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200319203427.2259891-1-martin.blumenstingl@googlemail.com>
+ <20200319203427.2259891-3-martin.blumenstingl@googlemail.com>
+ <CAKGbVbtKqdCEcawkjG=7TRd30df6GJ+gagV_JegntyqRpzC4cg@mail.gmail.com> <CAKGbVbvAvk0L5sGQmuqfxeL6AwtVnSsYyCp6YBYV6ZHKepWBXg@mail.gmail.com>
+In-Reply-To: <CAKGbVbvAvk0L5sGQmuqfxeL6AwtVnSsYyCp6YBYV6ZHKepWBXg@mail.gmail.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sat, 28 Mar 2020 11:20:24 +0100
+Message-ID: <CAFBinCDUhVaky6EUA7dOAhAZM9itbydQ+w=0P-1m2u0o0HUUeA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] drm/lima: Add optional devfreq and cooling device support
+To:     Qiang Yu <yuq825@gmail.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Rob Herring <robh@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
+        linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leonardo,
+On Sat, Mar 28, 2020 at 9:40 AM Qiang Yu <yuq825@gmail.com> wrote:
+>
+> Applied to drm-misc-next.
+thank you!
 
-On 03/27/2020 03:51 PM, Leonardo Bras wrote:
-> Hello Christophe, thanks for the feedback.
-> 
-> I noticed an error in this patch and sent a v2, that can be seen here:
-> http://patchwork.ozlabs.org/patch/1262468/
-> 
-> Comments inline::
-> 
-> On Fri, 2020-03-27 at 07:50 +0100, Christophe Leroy wrote:
->>> @@ -142,6 +144,8 @@ static inline void arch_spin_lock(arch_spinlock_t *lock)
->>>    		if (likely(__arch_spin_trylock(lock) == 0))
->>>    			break;
->>>    		do {
->>> +			if (unlikely(crash_skip_spinlock))
->>> +				return;
-> 
-> Complete function for reference:
-> static inline void arch_spin_lock(arch_spinlock_t *lock)
-> {
-> 	while (1) {
-> 		if (likely(__arch_spin_trylock(lock) == 0))
-> 			break;
-> 		do {
-> 			if (unlikely(crash_skip_spinlock))
-> 				return;
-> 			HMT_low();
-> 			if (is_shared_processor())
-> 				splpar_spin_yield(lock);
-> 		} while (unlikely(lock->slock != 0));
-> 		HMT_medium();
-> 	}
-> }
-> 
->> You are adding a test that reads a global var in the middle of a so hot
->> path ? That must kill performance.
-> 
-> I thought it would, in worst case scenario, increase a maximum delay of
-> an arch_spin_lock() call 1 spin cycle. Here is what I thought:
-> 
-> - If the lock is already free, it would change nothing,
-> - Otherwise, the lock will wait.
-> - Waiting cycle just got bigger.
-> - Worst case scenario: running one more cycle, given lock->slock can
-> turn to 0 just after checking.
-> 
-> Could you please point where I failed to see the performance penalty?
-> (I need to get better at this :) )
-
-You are right that when the lock is free, it changes nothing. However 
-when it is not, it is not just one cycle.
-
-Here is arch_spin_lock() without your patch:
-
-00000440 <my_lock>:
-  440:	39 40 00 01 	li      r10,1
-  444:	7d 20 18 28 	lwarx   r9,0,r3
-  448:	2c 09 00 00 	cmpwi   r9,0
-  44c:	40 82 00 10 	bne     45c <my_lock+0x1c>
-  450:	7d 40 19 2d 	stwcx.  r10,0,r3
-  454:	40 a2 ff f0 	bne     444 <my_lock+0x4>
-  458:	4c 00 01 2c 	isync
-  45c:	2f 89 00 00 	cmpwi   cr7,r9,0
-  460:	4d be 00 20 	bclr+   12,4*cr7+eq
-  464:	7c 21 0b 78 	mr      r1,r1
-  468:	81 23 00 00 	lwz     r9,0(r3)
-  46c:	2f 89 00 00 	cmpwi   cr7,r9,0
-  470:	40 be ff f4 	bne     cr7,464 <my_lock+0x24>
-  474:	7c 42 13 78 	mr      r2,r2
-  478:	7d 20 18 28 	lwarx   r9,0,r3
-  47c:	2c 09 00 00 	cmpwi   r9,0
-  480:	40 82 00 10 	bne     490 <my_lock+0x50>
-  484:	7d 40 19 2d 	stwcx.  r10,0,r3
-  488:	40 a2 ff f0 	bne     478 <my_lock+0x38>
-  48c:	4c 00 01 2c 	isync
-  490:	2f 89 00 00 	cmpwi   cr7,r9,0
-  494:	40 be ff d0 	bne     cr7,464 <my_lock+0x24>
-  498:	4e 80 00 20 	blr
-
-Here is arch_spin_lock() with your patch. I enclose with === what comes 
-in addition:
-
-00000440 <my_lock>:
-  440:	39 40 00 01 	li      r10,1
-  444:	7d 20 18 28 	lwarx   r9,0,r3
-  448:	2c 09 00 00 	cmpwi   r9,0
-  44c:	40 82 00 10 	bne     45c <my_lock+0x1c>
-  450:	7d 40 19 2d 	stwcx.  r10,0,r3
-  454:	40 a2 ff f0 	bne     444 <my_lock+0x4>
-  458:	4c 00 01 2c 	isync
-  45c:	2f 89 00 00 	cmpwi   cr7,r9,0
-  460:	4d be 00 20 	bclr+   12,4*cr7+eq
-=====================================================
-  464:	3d 40 00 00 	lis     r10,0
-			466: R_PPC_ADDR16_HA	crash_skip_spinlock
-  468:	39 4a 00 00 	addi    r10,r10,0
-			46a: R_PPC_ADDR16_LO	crash_skip_spinlock
-  46c:	39 00 00 01 	li      r8,1
-  470:	89 2a 00 00 	lbz     r9,0(r10)
-  474:	2f 89 00 00 	cmpwi   cr7,r9,0
-  478:	4c 9e 00 20 	bnelr   cr7
-=====================================================
-  47c:	7c 21 0b 78 	mr      r1,r1
-  480:	81 23 00 00 	lwz     r9,0(r3)
-  484:	2f 89 00 00 	cmpwi   cr7,r9,0
-  488:	40 be ff f4 	bne     cr7,47c <my_lock+0x3c>
-  48c:	7c 42 13 78 	mr      r2,r2
-  490:	7d 20 18 28 	lwarx   r9,0,r3
-  494:	2c 09 00 00 	cmpwi   r9,0
-  498:	40 82 00 10 	bne     4a8 <my_lock+0x68>
-  49c:	7d 00 19 2d 	stwcx.  r8,0,r3
-  4a0:	40 a2 ff f0 	bne     490 <my_lock+0x50>
-  4a4:	4c 00 01 2c 	isync
-  4a8:	2f 89 00 00 	cmpwi   cr7,r9,0
-  4ac:	40 be ff c4 	bne     cr7,470 <my_lock+0x30>
-  4b0:	4e 80 00 20 	blr
+regarding patch #1 - can you apply this as well?
+patch #1 just takes this midgard change [0] and ports it to utgard
 
 
-Christophe
+Thank you!
+Martin
+
+
+[0] https://cgit.freedesktop.org/drm/drm-misc/commit/Documentation/devicetree/bindings/gpu?id=982c0500fd1a8012c31d3c9dd8de285129904656
