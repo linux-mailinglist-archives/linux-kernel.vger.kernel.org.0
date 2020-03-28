@@ -2,34 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DDC2196565
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:04:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A2C719655B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbgC1LAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 07:00:35 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55535 "EHLO
+        id S1727697AbgC1LAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 07:00:13 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55584 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbgC1LAE (ORCPT
+        with ESMTP id S1727387AbgC1LAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 07:00:04 -0400
+        Sat, 28 Mar 2020 07:00:09 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jI9C4-0003bt-Pj; Sat, 28 Mar 2020 12:00:00 +0100
+        id 1jI9C8-0003cD-1H; Sat, 28 Mar 2020 12:00:04 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 596451C0470;
-        Sat, 28 Mar 2020 11:59:57 +0100 (CET)
-Date:   Sat, 28 Mar 2020 10:59:57 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9C3241C0494;
+        Sat, 28 Mar 2020 11:59:58 +0100 (CET)
+Date:   Sat, 28 Mar 2020 10:59:58 -0000
 From:   "tip-bot2 for Al Viro" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86: get rid of put_user_try in
- {ia32,x32}_setup_rt_frame()
+Subject: [tip: x86/cleanups] x86: switch save_v86_state() to unsafe_put_user()
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158539319701.28353.6658289032826087569.tip-bot2@tip-bot2>
+Message-ID: <158539319827.28353.1493443524884765428.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,176 +44,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/cleanups branch of tip:
 
-Commit-ID:     39f16c1c0f14e9794545dbf6a64c909d5e16a2ea
-Gitweb:        https://git.kernel.org/tip/39f16c1c0f14e9794545dbf6a64c909d5e16a2ea
+Commit-ID:     a37d01ead405e3aa14d72d284721fe46422b3b63
+Gitweb:        https://git.kernel.org/tip/a37d01ead405e3aa14d72d284721fe46422b3b63
 Author:        Al Viro <viro@zeniv.linux.org.uk>
-AuthorDate:    Sat, 15 Feb 2020 18:39:17 -05:00
+AuthorDate:    Sat, 15 Feb 2020 13:38:18 -05:00
 Committer:     Al Viro <viro@zeniv.linux.org.uk>
-CommitterDate: Thu, 19 Mar 2020 00:37:49 -04:00
+CommitterDate: Wed, 18 Mar 2020 20:36:01 -04:00
 
-x86: get rid of put_user_try in {ia32,x32}_setup_rt_frame()
-
-Straightforward, except for compat_save_altstack_ex() stuck in those.
-Replace that thing with an analogue that would use unsafe_put_user()
-instead of put_user_ex() (called unsafe_compat_save_altstack()) and
-be done with that...
+x86: switch save_v86_state() to unsafe_put_user()
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/ia32/ia32_signal.c | 50 ++++++++++++++++++------------------
- arch/x86/kernel/signal.c    | 33 +++++++++++++-----------
- include/linux/compat.h      |  9 +++---
- 3 files changed, 49 insertions(+), 43 deletions(-)
+ arch/x86/kernel/vm86_32.c | 61 ++++++++++++++++++--------------------
+ 1 file changed, 30 insertions(+), 31 deletions(-)
 
-diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
-index af673ec..a96995a 100644
---- a/arch/x86/ia32/ia32_signal.c
-+++ b/arch/x86/ia32/ia32_signal.c
-@@ -326,35 +326,34 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
+diff --git a/arch/x86/kernel/vm86_32.c b/arch/x86/kernel/vm86_32.c
+index 49b37eb..47a8676 100644
+--- a/arch/x86/kernel/vm86_32.c
++++ b/arch/x86/kernel/vm86_32.c
+@@ -98,7 +98,6 @@ void save_v86_state(struct kernel_vm86_regs *regs, int retval)
+ 	struct task_struct *tsk = current;
+ 	struct vm86plus_struct __user *user;
+ 	struct vm86 *vm86 = current->thread.vm86;
+-	long err = 0;
  
- 	frame = get_sigframe(ksig, regs, sizeof(*frame), &fpstate);
+ 	/*
+ 	 * This gets called from entry.S with interrupts disabled, but
+@@ -114,37 +113,30 @@ void save_v86_state(struct kernel_vm86_regs *regs, int retval)
+ 	set_flags(regs->pt.flags, VEFLAGS, X86_EFLAGS_VIF | vm86->veflags_mask);
+ 	user = vm86->user_vm86;
  
--	if (!access_ok(frame, sizeof(*frame)))
-+	if (!user_access_begin(frame, sizeof(*frame)))
- 		return -EFAULT;
- 
+-	if (!access_ok(user, vm86->vm86plus.is_vm86pus ?
++	if (!user_access_begin(user, vm86->vm86plus.is_vm86pus ?
+ 		       sizeof(struct vm86plus_struct) :
+-		       sizeof(struct vm86_struct))) {
+-		pr_alert("could not access userspace vm86 info\n");
+-		do_exit(SIGSEGV);
+-	}
+-
 -	put_user_try {
--		put_user_ex(sig, &frame->sig);
--		put_user_ex(ptr_to_compat(&frame->info), &frame->pinfo);
--		put_user_ex(ptr_to_compat(&frame->uc), &frame->puc);
-+	unsafe_put_user(sig, &frame->sig, Efault);
-+	unsafe_put_user(ptr_to_compat(&frame->info), &frame->pinfo, Efault);
-+	unsafe_put_user(ptr_to_compat(&frame->uc), &frame->puc, Efault);
- 
--		/* Create the ucontext.  */
--		if (static_cpu_has(X86_FEATURE_XSAVE))
--			put_user_ex(UC_FP_XSTATE, &frame->uc.uc_flags);
--		else
--			put_user_ex(0, &frame->uc.uc_flags);
--		put_user_ex(0, &frame->uc.uc_link);
--		compat_save_altstack_ex(&frame->uc.uc_stack, regs->sp);
-+	/* Create the ucontext.  */
-+	if (static_cpu_has(X86_FEATURE_XSAVE))
-+		unsafe_put_user(UC_FP_XSTATE, &frame->uc.uc_flags, Efault);
-+	else
-+		unsafe_put_user(0, &frame->uc.uc_flags, Efault);
-+	unsafe_put_user(0, &frame->uc.uc_link, Efault);
-+	unsafe_compat_save_altstack(&frame->uc.uc_stack, regs->sp, Efault);
- 
--		if (ksig->ka.sa.sa_flags & SA_RESTORER)
--			restorer = ksig->ka.sa.sa_restorer;
--		else
--			restorer = current->mm->context.vdso +
--				vdso_image_32.sym___kernel_rt_sigreturn;
--		put_user_ex(ptr_to_compat(restorer), &frame->pretcode);
-+	if (ksig->ka.sa.sa_flags & SA_RESTORER)
-+		restorer = ksig->ka.sa.sa_restorer;
-+	else
-+		restorer = current->mm->context.vdso +
-+			vdso_image_32.sym___kernel_rt_sigreturn;
-+	unsafe_put_user(ptr_to_compat(restorer), &frame->pretcode, Efault);
- 
--		/*
--		 * Not actually used anymore, but left because some gdb
--		 * versions need it.
--		 */
--		put_user_ex(*((u64 *)&code), (u64 __user *)frame->retcode);
+-		put_user_ex(regs->pt.bx, &user->regs.ebx);
+-		put_user_ex(regs->pt.cx, &user->regs.ecx);
+-		put_user_ex(regs->pt.dx, &user->regs.edx);
+-		put_user_ex(regs->pt.si, &user->regs.esi);
+-		put_user_ex(regs->pt.di, &user->regs.edi);
+-		put_user_ex(regs->pt.bp, &user->regs.ebp);
+-		put_user_ex(regs->pt.ax, &user->regs.eax);
+-		put_user_ex(regs->pt.ip, &user->regs.eip);
+-		put_user_ex(regs->pt.cs, &user->regs.cs);
+-		put_user_ex(regs->pt.flags, &user->regs.eflags);
+-		put_user_ex(regs->pt.sp, &user->regs.esp);
+-		put_user_ex(regs->pt.ss, &user->regs.ss);
+-		put_user_ex(regs->es, &user->regs.es);
+-		put_user_ex(regs->ds, &user->regs.ds);
+-		put_user_ex(regs->fs, &user->regs.fs);
+-		put_user_ex(regs->gs, &user->regs.gs);
+-
+-		put_user_ex(vm86->screen_bitmap, &user->screen_bitmap);
 -	} put_user_catch(err);
-+	/*
-+	 * Not actually used anymore, but left because some gdb
-+	 * versions need it.
-+	 */
-+	unsafe_put_user(*((u64 *)&code), (u64 __user *)frame->retcode, Efault);
-+	user_access_end();
- 
- 	err |= __copy_siginfo_to_user32(&frame->info, &ksig->info, false);
- 	err |= ia32_setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
-@@ -380,4 +379,7 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
- 	regs->ss = __USER32_DS;
- 
- 	return 0;
-+Efault:
-+	user_access_end();
-+	return -EFAULT;
- }
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 3b4ca48..29abad2 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -529,6 +529,9 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- 	int err = 0;
- 	void __user *fpstate = NULL;
- 
-+	if (!(ksig->ka.sa.sa_flags & SA_RESTORER))
-+		return -EFAULT;
+-	if (err) {
+-		pr_alert("could not access userspace vm86 info\n");
+-		do_exit(SIGSEGV);
+-	}
++		       sizeof(struct vm86_struct)))
++		goto Efault;
 +
- 	frame = get_sigframe(&ksig->ka, regs, sizeof(*frame), &fpstate);
- 
- 	if (!access_ok(frame, sizeof(*frame)))
-@@ -541,22 +544,17 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- 
- 	uc_flags = frame_uc_flags(regs);
- 
--	put_user_try {
--		/* Create the ucontext.  */
--		put_user_ex(uc_flags, &frame->uc.uc_flags);
--		put_user_ex(0, &frame->uc.uc_link);
--		compat_save_altstack_ex(&frame->uc.uc_stack, regs->sp);
--		put_user_ex(0, &frame->uc.uc__pad0);
-+	if (!user_access_begin(frame, sizeof(*frame)))
-+		return -EFAULT;
- 
--		if (ksig->ka.sa.sa_flags & SA_RESTORER) {
--			restorer = ksig->ka.sa.sa_restorer;
--		} else {
--			/* could use a vstub here */
--			restorer = NULL;
--			err |= -EFAULT;
--		}
--		put_user_ex(restorer, (unsigned long __user *)&frame->pretcode);
--	} put_user_catch(err);
-+	/* Create the ucontext.  */
-+	unsafe_put_user(uc_flags, &frame->uc.uc_flags, Efault);
-+	unsafe_put_user(0, &frame->uc.uc_link, Efault);
-+	unsafe_compat_save_altstack(&frame->uc.uc_stack, regs->sp, Efault);
-+	unsafe_put_user(0, &frame->uc.uc__pad0, Efault);
-+	restorer = ksig->ka.sa.sa_restorer;
-+	unsafe_put_user(restorer, (unsigned long __user *)&frame->pretcode, Efault);
++	unsafe_put_user(regs->pt.bx, &user->regs.ebx, Efault_end);
++	unsafe_put_user(regs->pt.cx, &user->regs.ecx, Efault_end);
++	unsafe_put_user(regs->pt.dx, &user->regs.edx, Efault_end);
++	unsafe_put_user(regs->pt.si, &user->regs.esi, Efault_end);
++	unsafe_put_user(regs->pt.di, &user->regs.edi, Efault_end);
++	unsafe_put_user(regs->pt.bp, &user->regs.ebp, Efault_end);
++	unsafe_put_user(regs->pt.ax, &user->regs.eax, Efault_end);
++	unsafe_put_user(regs->pt.ip, &user->regs.eip, Efault_end);
++	unsafe_put_user(regs->pt.cs, &user->regs.cs, Efault_end);
++	unsafe_put_user(regs->pt.flags, &user->regs.eflags, Efault_end);
++	unsafe_put_user(regs->pt.sp, &user->regs.esp, Efault_end);
++	unsafe_put_user(regs->pt.ss, &user->regs.ss, Efault_end);
++	unsafe_put_user(regs->es, &user->regs.es, Efault_end);
++	unsafe_put_user(regs->ds, &user->regs.ds, Efault_end);
++	unsafe_put_user(regs->fs, &user->regs.fs, Efault_end);
++	unsafe_put_user(regs->gs, &user->regs.gs, Efault_end);
++	unsafe_put_user(vm86->screen_bitmap, &user->screen_bitmap, Efault_end);
++
 +	user_access_end();
  
- 	err |= setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
- 				regs, set->sig[0]);
-@@ -582,6 +580,11 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- #endif	/* CONFIG_X86_X32_ABI */
+ 	preempt_disable();
+ 	tsk->thread.sp0 = vm86->saved_sp0;
+@@ -159,6 +151,13 @@ void save_v86_state(struct kernel_vm86_regs *regs, int retval)
+ 	lazy_load_gs(vm86->regs32.gs);
  
- 	return 0;
-+#ifdef CONFIG_X86_X32_ABI
+ 	regs->pt.ax = retval;
++	return;
++
++Efault_end:
++	user_access_end();
 +Efault:
-+	user_access_end();
-+	return -EFAULT;
-+#endif
++	pr_alert("could not access userspace vm86 info\n");
++	do_exit(SIGSEGV);
  }
  
- /*
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index 11083d8..224ecb4 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -483,12 +483,13 @@ extern void __user *compat_alloc_user_space(unsigned long len);
- 
- int compat_restore_altstack(const compat_stack_t __user *uss);
- int __compat_save_altstack(compat_stack_t __user *, unsigned long);
--#define compat_save_altstack_ex(uss, sp) do { \
-+#define unsafe_compat_save_altstack(uss, sp, label) do { \
- 	compat_stack_t __user *__uss = uss; \
- 	struct task_struct *t = current; \
--	put_user_ex(ptr_to_compat((void __user *)t->sas_ss_sp), &__uss->ss_sp); \
--	put_user_ex(t->sas_ss_flags, &__uss->ss_flags); \
--	put_user_ex(t->sas_ss_size, &__uss->ss_size); \
-+	unsafe_put_user(ptr_to_compat((void __user *)t->sas_ss_sp), \
-+			&__uss->ss_sp, label); \
-+	unsafe_put_user(t->sas_ss_flags, &__uss->ss_flags, label); \
-+	unsafe_put_user(t->sas_ss_size, &__uss->ss_size, label); \
- 	if (t->sas_ss_flags & SS_AUTODISARM) \
- 		sas_ss_reset(t); \
- } while (0);
+ static void mark_screen_rdonly(struct mm_struct *mm)
