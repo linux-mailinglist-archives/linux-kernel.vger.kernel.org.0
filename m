@@ -2,78 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E1501963E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 07:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1297F1963E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 07:06:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725965AbgC1GGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 02:06:12 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42101 "EHLO
+        id S1726186AbgC1GGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 02:06:14 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38438 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbgC1GGL (ORCPT
+        with ESMTP id S1725800AbgC1GGM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 02:06:11 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h15so14296888wrx.9
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 23:06:10 -0700 (PDT)
+        Sat, 28 Mar 2020 02:06:12 -0400
+Received: by mail-wr1-f65.google.com with SMTP id s1so14321600wrv.5
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 23:06:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=1YpAucpKgiwsoc4RW0hi71eNpwhZyorDjKoSzESyn5s=;
-        b=aELxUY45UY6a2HgB3Gu9lZjc1ZKjXWZ0I9KmfTjF+I5sDAzeXDDNF7wUqCNDYry6w8
-         th1J9PJ3J7k15x5nSY4JrETpO4aMgWM+QfXEft0b+CxpiHIAhT9K9FuWMEEx6KVynItl
-         fJWWKeDh5ijhSfycEqfAN2vqaIw1jNo0TsZN8REBR8+P8MrVeoMLk5TeGKVl04c4uoId
-         HVZvmQ0VP/L30j4X3H3zgph0TrzPFpX7btyaJLCn84zZBGhdMFjd3zesCG9qltClN1Xt
-         gxcLqo6RPcz3H40fjNeA75Zd41l6yHhK8X7B481xZAT2on34l60In4MZiDvqIeIZN6xy
-         RExg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=WtlQPkdICdSif60EiclWGWU5XZBZP+qLNsbVEnNZNqA=;
+        b=Kv9L3cKqFvmEx2bcOl2zy+8nyIsg18Cn4Gv2VNxdcuX3P2x0xh2EWcGYMXgbe26TNf
+         LqipxAyjmPC18C7Zxs/jnb+k+EINirBcxEoFq7Zfk6BbK0qdArjM6V+jiVSt9F4IoaGK
+         FHRlqyXJGvN1zUDY7DPKLrfC4u3/h1G63SehM4kfjqfC/Dc4Z0prJdQA4pRLQxQ4QpEn
+         Cl9CXW3tXWgUcJVzrpG0rjWlbLOFF4JHAREVxWz8Rh5sqKGkC8IM/TtkRCVwanNVz0I3
+         Vrs49MQK69nrpjctnWPbBeP1pWkMNjZgZ2qOtOMUOHZBTgZRu9b+u8s9IoGRdJvV/vEH
+         YWTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1YpAucpKgiwsoc4RW0hi71eNpwhZyorDjKoSzESyn5s=;
-        b=N+tS/HIf/4qJZGiPVN9mU4FFxMwHeJDNfrHddINzuhxBHck177zQnIt3D25895Vz7U
-         N4cdgpDsxjw02SBviL2KkNCR7oTbf47VuC91dKEluSs6e0+OOU0Mtq5tmEkVF8Kv3Mv/
-         ZkjWCqla5bA5hXPaBcDeOYOzGPAcufKu5Cd3MFan4FbNyev9Hwtr9bQY96kpSqkjdnCx
-         RPCT82deLZv5PkGbbcao/Lh/MJKfL7Kx2i1NSH3QMdzTXm+9720wBcWAH66AuOjDgRNp
-         JNNJF1/0eB/ftWoYkZJZ8Mg67BNTn5tgY1A43GMUOs4cVflB21GGN9x0+UFIBhjjwm9B
-         Ga8Q==
-X-Gm-Message-State: ANhLgQ1lEpGLXoCavCeBCKmiQrriOw9ZC3V5fmIvXaX0Ir4bavBwmdmD
-        GwOenQ04ZH5xeGwCgW2hgig=
-X-Google-Smtp-Source: ADFU+vu6vjV33VVdjf+qxlHn4Yk1kuurtfoG+YBKbXsdJZ9JsxYuI9sHw4tUXbEobubzDBM/5HuH6A==
-X-Received: by 2002:a5d:54cb:: with SMTP id x11mr3419049wrv.179.1585375569441;
-        Fri, 27 Mar 2020 23:06:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=WtlQPkdICdSif60EiclWGWU5XZBZP+qLNsbVEnNZNqA=;
+        b=uB/2rq3I8bRNINi68xW8bm4xn6wKVkAKm5ANMuxLzK4jNWKGUrgJiYaMpjtG7hJOjf
+         WwG+Q39aMSFf9uVPHYxezdOwLyao+trSn0h2l9iRurvfVAQLt+x3Cs0JbB17aUe5Y3gs
+         QJsfCt8VhbTIgp6oY4X1o4d5SrrDklAtjXA48knghx5tc5+uugW/42TlGxrR2WTA6gdB
+         dgWURa8+AqnRcWcnad/VpvfVhII2A5sInPsDzJaKw5hmSjoR9w1XKlb+Qfg1Y/7ZT7lP
+         qy/Jj4ev0zP5Iv0Shk/xr82yR5aPFlgzBJli1rE2TGfPerm7PFBWTFoouuR4b7RZC1ut
+         XXoA==
+X-Gm-Message-State: ANhLgQ3E+XJlYeu8gAzA5gTiqlekS3UClPvbnhVOxz85TH3xZOUY7+xt
+        mWLVVpccr6NZfHxdldMsfRg=
+X-Google-Smtp-Source: ADFU+vtc/KFk/g8A31nX3lHxrJRjKhryKYhbhqJkJetNubeeO+aN4etZLQPF1fBp4kmLr/8C6l3C3Q==
+X-Received: by 2002:a5d:464e:: with SMTP id j14mr3219727wrs.339.1585375570783;
+        Fri, 27 Mar 2020 23:06:10 -0700 (PDT)
 Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id i19sm11273194wmb.44.2020.03.27.23.06.08
+        by smtp.gmail.com with ESMTPSA id w204sm11264719wma.1.2020.03.27.23.06.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Mar 2020 23:06:08 -0700 (PDT)
+        Fri, 27 Mar 2020 23:06:10 -0700 (PDT)
 From:   Wei Yang <richard.weiyang@gmail.com>
 To:     akpm@linux-foundation.org
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Wei Yang <richard.weiyang@gmail.com>
-Subject: [PATCH 0/3] Cleanup scan_swap_map_slots() a little
-Date:   Sat, 28 Mar 2020 06:05:17 +0000
-Message-Id: <20200328060520.31449-1-richard.weiyang@gmail.com>
+Subject: [PATCH 1/3] mm/swapfile.c: offset is only used when there is more slots
+Date:   Sat, 28 Mar 2020 06:05:18 +0000
+Message-Id: <20200328060520.31449-2-richard.weiyang@gmail.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20200328060520.31449-1-richard.weiyang@gmail.com>
+References: <20200328060520.31449-1-richard.weiyang@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function scan_swap_map_slots() is used to iterate swap_map[] array for an
-available swap entry. While after several optimizations, e.g. for ssd case,
-the logic of this function is a little not easy to catch.
+When si->cluster_nr is zero, function would reach done and return. The
+increased offset would not be used any more. This means we can move the
+offset increment into the if clause.
 
-This patch set tries to clean up the logic a little:
+This brings a further code cleanup possibility.
 
-  * shows the ssd/non-ssd case is handled mutually exclusively
-  * remove some unnecessary goto for ssd case
+Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+---
+ mm/swapfile.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Wei Yang (3):
-  mm/swapfile.c: offset is only used when there is more slots
-  mm/swapfile.c: explicitly show ssd/non-ssd is handled mutually
-    exclusive
-  mm/swapfile.c: remove the unnecessary goto for SSD case
-
- mm/swapfile.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
-
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 6b6e41967bf3..52afb74fc3d1 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -871,11 +871,9 @@ static int scan_swap_map_slots(struct swap_info_struct *si,
+ 		else
+ 			goto done;
+ 	}
+-	/* non-ssd case */
+-	++offset;
+ 
+ 	/* non-ssd case, still more slots in cluster? */
+-	if (si->cluster_nr && !si->swap_map[offset]) {
++	if (si->cluster_nr && !si->swap_map[++offset]) {
+ 		--si->cluster_nr;
+ 		goto checks;
+ 	}
 -- 
 2.23.0
 
