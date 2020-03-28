@@ -2,84 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 136891966EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 16:28:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07B8B1966EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 16:25:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbgC1P16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 11:27:58 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:39803 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726380AbgC1P15 (ORCPT
+        id S1726937AbgC1PZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 11:25:50 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:56560 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725807AbgC1PZt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 11:27:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585409276;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         references:references; bh=EtA1cUZ/YAmxg9mcoqMJAMjtt//Xv/eQ1J1VjHAqAgQ=;
-        b=Sqv1o01CqNXtb+Heor1vMoy717RSHZtQn74UmkOO7Rq4X8jsQaEz1x6FKwDX5D7yJgGwVd
-        8QkHugtg+Bl0L3OC0AO253K4L8LRm1xplEOxJN4Gw9jktXBq2Gde8T8sRnujpefAV/rkjM
-        5LoU+KjgE7aLCY5Um0T+5S68Gg3NrPY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-294-JI9f35o1Oe2AjDn9PWvzXw-1; Sat, 28 Mar 2020 11:27:54 -0400
-X-MC-Unique: JI9f35o1Oe2AjDn9PWvzXw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Sat, 28 Mar 2020 11:25:49 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4D9038EE182;
+        Sat, 28 Mar 2020 08:25:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1585409149;
+        bh=7ol25urUbt6cSQxZY2to1Yas4j/y3AL+k7+hznk8G0k=;
+        h=Subject:From:To:Cc:Date:From;
+        b=ufXO40vNUXvjmP6zq45Oq+xBMt3IYmqyBzxidj4D0WZiREa6hqATUYVX8hA8EVlPx
+         +89ZXfN/hTgMdFi3LqI/lxADZApgroLv4qNkq9M6O7Eq1j+caAE42vP57DCB8ezHUA
+         P0VsqMNPCoWLNiFFwHaTVFf0ByDD7aGL8l8ajiH8=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id AHvwi3JfKNAC; Sat, 28 Mar 2020 08:25:48 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8530F8017CE;
-        Sat, 28 Mar 2020 15:27:52 +0000 (UTC)
-Received: from fuller.cnet (ovpn-116-11.gru2.redhat.com [10.97.116.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1BD0660C63;
-        Sat, 28 Mar 2020 15:27:52 +0000 (UTC)
-Received: by fuller.cnet (Postfix, from userid 1000)
-        id 5615442FE774; Sat, 28 Mar 2020 12:27:27 -0300 (-03)
-Message-ID: <20200328152503.271570281@redhat.com>
-User-Agent: quilt/0.66
-Date:   Sat, 28 Mar 2020 12:21:20 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
-        Chris Friesen <chris.friesen@windriver.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jim Somerville <Jim.Somerville@windriver.com>,
-        Christoph Lameter <cl@linux.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>
-Subject: [patch 3/3] isolcpus: undeprecate on documentation
-References: <20200328152117.881555226@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id D14B18EE111;
+        Sat, 28 Mar 2020 08:25:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1585409147;
+        bh=7ol25urUbt6cSQxZY2to1Yas4j/y3AL+k7+hznk8G0k=;
+        h=Subject:From:To:Cc:Date:From;
+        b=CKm3/sKW+PbI19924tZmS+he76JP0rtTTjXUOJx2nHH9UitI6XztPmbyscq5bXHcy
+         +vRDhpyT08zTiBQtxm9d7oIZ72pJDgLLtLv2HUiUnmfSmoxaYUtZ9+h6ubQiDzeRhP
+         TDEasqZvQzJb4rhP33mnPUA6xksuEXU0CNHGrDJo=
+Message-ID: <1585409145.15200.3.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 5.6-rc7
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Sat, 28 Mar 2020 08:25:45 -0700
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-isolcpus is used to control steering of interrupts to managed_irqs and
-kernel threads, therefore its incorrect to state that its deprecated.
+Two small fixes, one in drivers (qla2xxx) and one in the core (sd) to
+try to cope with USB enclosures that silently change reported
+parameters.
 
-Remove deprecation warning.
+The patch is available here:
 
-Suggested-by: Chris Friesen <chris.friesen@windriver.com>
-Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+
+The short changelog is:
+
+Arun Easi (1):
+      scsi: qla2xxx: Fix I/Os being passed down when FC device is being deleted
+
+Martin K. Petersen (1):
+      scsi: sd: Fix optimal I/O size for devices that change reported values
+
+And the diffstat:
+
+ drivers/scsi/qla2xxx/qla_os.c | 4 ++--
+ drivers/scsi/sd.c             | 4 +++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+With full diff below.
+
+James
 
 ---
- Documentation/admin-guide/kernel-parameters.txt |    1 -
- 1 file changed, 1 deletion(-)
 
-Index: linux-2.6/Documentation/admin-guide/kernel-parameters.txt
-===================================================================
---- linux-2.6.orig/Documentation/admin-guide/kernel-parameters.txt
-+++ linux-2.6/Documentation/admin-guide/kernel-parameters.txt
-@@ -1926,7 +1926,6 @@
- 			Format: <RDP>,<reset>,<pci_scan>,<verbosity>
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index b520a980d1dc..7a94e1171c72 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -864,7 +864,7 @@ qla2xxx_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ 		goto qc24_fail_command;
+ 	}
  
- 	isolcpus=	[KNL,SMP,ISOL] Isolate a given set of CPUs from disturbance.
--			[Deprecated - use cpusets instead]
- 			Format: [flag-list,]<cpu-list>
+-	if (atomic_read(&fcport->state) != FCS_ONLINE) {
++	if (atomic_read(&fcport->state) != FCS_ONLINE || fcport->deleted) {
+ 		if (atomic_read(&fcport->state) == FCS_DEVICE_DEAD ||
+ 			atomic_read(&base_vha->loop_state) == LOOP_DEAD) {
+ 			ql_dbg(ql_dbg_io, vha, 0x3005,
+@@ -946,7 +946,7 @@ qla2xxx_mqueuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd,
+ 		goto qc24_fail_command;
+ 	}
  
- 			Specify one or more CPUs to isolate from disturbances
-
-
+-	if (atomic_read(&fcport->state) != FCS_ONLINE) {
++	if (atomic_read(&fcport->state) != FCS_ONLINE || fcport->deleted) {
+ 		if (atomic_read(&fcport->state) == FCS_DEVICE_DEAD ||
+ 			atomic_read(&base_vha->loop_state) == LOOP_DEAD) {
+ 			ql_dbg(ql_dbg_io, vha, 0x3077,
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 8ca9299ffd36..2710a0e5ae6d 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3169,9 +3169,11 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 	if (sd_validate_opt_xfer_size(sdkp, dev_max)) {
+ 		q->limits.io_opt = logical_to_bytes(sdp, sdkp->opt_xfer_blocks);
+ 		rw_max = logical_to_sectors(sdp, sdkp->opt_xfer_blocks);
+-	} else
++	} else {
++		q->limits.io_opt = 0;
+ 		rw_max = min_not_zero(logical_to_sectors(sdp, dev_max),
+ 				      (sector_t)BLK_DEF_MAX_SECTORS);
++	}
+ 
+ 	/* Do not exceed controller limit */
+ 	rw_max = min(rw_max, queue_max_hw_sectors(q));
