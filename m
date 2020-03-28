@@ -2,101 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85F5D1964D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 10:45:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A09F31964D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 10:41:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726258AbgC1Jpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 05:45:42 -0400
-Received: from gw.cm.dream.jp ([59.157.128.2]:51635 "EHLO vsmtp01.cm.dti.ne.jp"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725937AbgC1Jpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 05:45:42 -0400
-X-Greylist: delayed 1121 seconds by postgrey-1.27 at vger.kernel.org; Sat, 28 Mar 2020 05:45:37 EDT
-Received: from localhost (KD124210025232.ppp-bb.dion.ne.jp [124.210.25.232]) by vsmtp01.cm.dti.ne.jp (3.11v) with ESMTP AUTH id 02S9Qf22018705;Sat, 28 Mar 2020 18:26:53 +0900 (JST)
-Date:   Sat, 28 Mar 2020 18:26:40 +0900 (JST)
-Message-Id: <20200328.182640.1933740379722138264.hermes@ceres.dti.ne.jp>
-To:     linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference at
- 00000000000000a8 in nilfs_segctor_do_construct
-From:   ARAI Shun-ichi <hermes@ceres.dti.ne.jp>
-In-Reply-To: <874kuapb2s.fsf@logand.com>
-References: <87immckp07.fsf@logand.com>
-        <87v9p2tkut.fsf@logand.com>
-        <874kuapb2s.fsf@logand.com>
-        <CAKFNMomjWkNvHvHkEp=Jv_BiGPNj=oLEChyoXX1yCj5xctAkMA@mail.gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1726164AbgC1Jdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 05:33:45 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12211 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725865AbgC1Jdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 05:33:45 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 87C9AAC658DD25D9171B;
+        Sat, 28 Mar 2020 17:33:39 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.487.0; Sat, 28 Mar 2020 17:33:30 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: clean up {cic,dic}.ref handling
+Date:   Sat, 28 Mar 2020 17:33:23 +0800
+Message-ID: <20200328093323.130902-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In Msg <874kuapb2s.fsf@logand.com>;
-   Subject "Re: BUG: unable to handle kernel NULL pointer dereference at 00000000000000a8 in nilfs_segctor_do_construct":
+{cic,dic}.ref should be initialized to number of compressed pages,
+let's initialize it directly rather than doing w/
+f2fs_set_compressed_page().
 
-> Tomas Hlavaty <tom@logand.com> writes:
->>>> 2) Can you mount the corrupted(?) partition from a recent version of
->>>> kernel ?
-> 
-> I tried the following Linux kernel versions:
-> 
-> - v4.19
-> - v5.4
-> - v5.5.11
-> 
-> and still get the crash
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/compress.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-Ryusuke Konishi pointed out:
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 9cc279ea3bfb..c0e7ba245c74 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -55,7 +55,7 @@ bool f2fs_is_compressed_page(struct page *page)
+ }
+ 
+ static void f2fs_set_compressed_page(struct page *page,
+-		struct inode *inode, pgoff_t index, void *data, refcount_t *r)
++		struct inode *inode, pgoff_t index, void *data)
+ {
+ 	SetPagePrivate(page);
+ 	set_page_private(page, (unsigned long)data);
+@@ -63,8 +63,6 @@ static void f2fs_set_compressed_page(struct page *page,
+ 	/* i_crypto_info and iv index */
+ 	page->index = index;
+ 	page->mapping = inode->i_mapping;
+-	if (r)
+-		refcount_inc(r);
+ }
+ 
+ static void f2fs_put_compressed_page(struct page *page)
+@@ -662,7 +660,7 @@ void f2fs_decompress_pages(struct bio *bio, struct page *page, bool verity)
+ 		cops->destroy_decompress_ctx(dic);
+ out_free_dic:
+ 	if (verity)
+-		refcount_add(dic->nr_cpages - 1, &dic->ref);
++		refcount_set(&dic->ref, dic->nr_cpages);
+ 	if (!verity)
+ 		f2fs_decompress_end_io(dic->rpages, dic->cluster_size,
+ 								ret, false);
+@@ -1067,7 +1065,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+ 
+ 	cic->magic = F2FS_COMPRESSED_PAGE_MAGIC;
+ 	cic->inode = inode;
+-	refcount_set(&cic->ref, 1);
++	refcount_set(&cic->ref, cc->nr_cpages);
+ 	cic->rpages = f2fs_kzalloc(sbi, sizeof(struct page *) <<
+ 			cc->log_cluster_size, GFP_NOFS);
+ 	if (!cic->rpages)
+@@ -1077,8 +1075,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+ 
+ 	for (i = 0; i < cc->nr_cpages; i++) {
+ 		f2fs_set_compressed_page(cc->cpages[i], inode,
+-					cc->rpages[i + 1]->index,
+-					cic, i ? &cic->ref : NULL);
++					cc->rpages[i + 1]->index, cic);
+ 		fio.compressed_page = cc->cpages[i];
+ 		if (fio.encrypted) {
+ 			fio.page = cc->rpages[i + 1];
+@@ -1328,7 +1325,7 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
+ 
+ 	dic->magic = F2FS_COMPRESSED_PAGE_MAGIC;
+ 	dic->inode = cc->inode;
+-	refcount_set(&dic->ref, 1);
++	refcount_set(&dic->ref, cc->nr_cpages);
+ 	dic->cluster_idx = cc->cluster_idx;
+ 	dic->cluster_size = cc->cluster_size;
+ 	dic->log_cluster_size = cc->log_cluster_size;
+@@ -1352,8 +1349,7 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
+ 			goto out_free;
+ 
+ 		f2fs_set_compressed_page(page, cc->inode,
+-					start_idx + i + 1,
+-					dic, i ? &dic->ref : NULL);
++					start_idx + i + 1, dic);
+ 		dic->cpages[i] = page;
+ 	}
+ 
+-- 
+2.18.0.rc1
 
-In Msg <CAKFNMomjWkNvHvHkEp=Jv_BiGPNj=oLEChyoXX1yCj5xctAkMA@mail.gmail.com>;
-   Subject "Re: BUG: kernel NULL pointer dereference, address: 00000000000000a8":
-
-> As the result of bisection,  it turned out that commit
-> f4bdb2697ccc9cecf1a9de86905c309ad901da4c on 5.3.y
-> ("mm/filemap.c: don't initiate writeback if mapping has no dirty pages")
-> triggers the crash.
-
-This commit modifies __filemap_fdatawrite_range() as follows.
-
-[before]
-	if (!mapping_cap_writeback_dirty(mapping))
-		return 0;
-
-[after]
-	if (!mapping_cap_writeback_dirty(mapping) ||
-	    !mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
-		return 0;
-
-I did simple test with this code (Kernel 5.5.13).
-
-[test]
-	if (!mapping_cap_writeback_dirty(mapping) ||
-	    mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK))
-		return 0;
-
-It does not cause crash by the test (without long-term operation). So,
-I think that it may be related to PAGECACHE_TAG_TOWRITE.
-
-
-One possible(?) scenario is:
-
-0. some write operation
-
-1. sync (WB_SYNC_ALL)
-
-2. tagged "PAGECACHE_TAG_TOWRITE"
-
-3. __filemap_fdatawrite_range() is called and returns successfully
-  (but no-op)
-
-4. some data is/are free-ed
-  (because of 3.)
-
-5. crash at test/setting writeback for free-ed data
-  nilfs_segctor_do_construct()
-   nilfs_segctor_prepare_write()
-    set_page_writeback()
-
-How about this?
