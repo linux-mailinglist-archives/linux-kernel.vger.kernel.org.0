@@ -2,138 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19DE119687C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 19:32:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC1B719688F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 19:35:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbgC1Sb7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 14:31:59 -0400
-Received: from mail-co1nam11on2105.outbound.protection.outlook.com ([40.107.220.105]:37857
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727582AbgC1Sb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 14:31:57 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EAg652fvBY5yTrmiLakSK6rEmM7hFoVAgsiDWSJUCGh/GRUW+HafTaSiXszOhUyt87cBRKHLomTq5u41ehwp+pnsqqgK2akJDUFIVu9MXdHgOMciQSPqdsHAMp5Llt9WsnpxLxAMsOE8aM06QsXKOfyHD6v8M6fyVicmXvSGp7x9zV5kFS4968BaIJm20ERfm2lLm2oWgNmcQm8RtRRKLBoJ76EtqAMuAFTDZV6BfLNYumb8T4E8jCc/j6VeB6SPcFlf/IEFTVGYH/1qLZoM3hhvQ+qgWWTG30fveBQ6bWp3xwYMYIOSi09SyAMA0eRo2SfOgw8TXmr94V5MRLr6Ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rw4PdMjytCrLMPx6L+MyF+rdYwFogh2a5R4YJEVQxGI=;
- b=TsEFQBCsfOGCassESFnbyiDJ6TGrnjPdB0RrS8HfWCt/v/uKlGGvmVxYgrBEgfT4N4JhBr/yKSTy0IOaAbdqJio3uDUUTITEl27EVjc7WsrvMAzT9HB1t+b9e75mTDb1NTrXMgq+JExdl/TC7wl4cj8Gtocg5X5YvlzN9l+0q+kL31/t5pieGvC6S2C4y2MiYJLq2wwYZPSGJmLNi7FJ9bY36laI7/brSElPet2ABU/H96mIwCMHvjxmcfHmyGmL59t7q3Pw0xCktGxZ23NhiFAFq8l6egT+hR5mi/RrJbf2u5wLg46oayxmCMIzMN52oD5rvAjvIFdl/GZRDFWcJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rw4PdMjytCrLMPx6L+MyF+rdYwFogh2a5R4YJEVQxGI=;
- b=jLQBBboc1wwuH5rarwMbfGx4mhFX4JCsBTae9QlBtvYq/hjbrLSKjlqMst+JRuehViw7j30ZJdToamQNyg2B9PAXlCdLvPZ6GdhGW7RWEQ497u6WTJOOvNCS554FUgoB4Zr9gZWZksNhdOzQsqoKO7e8QP+V4VoZGMQ1L0tR648=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=hoan@os.amperecomputing.com; 
-Received: from BYAPR01MB5494.prod.exchangelabs.com (2603:10b6:a03:127::30) by
- BYAPR01MB5205.prod.exchangelabs.com (2603:10b6:a03:7f::23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2856.19; Sat, 28 Mar 2020 18:31:44 +0000
-Received: from BYAPR01MB5494.prod.exchangelabs.com
- ([fe80::a979:b2e2:fdaf:1ccb]) by BYAPR01MB5494.prod.exchangelabs.com
- ([fe80::a979:b2e2:fdaf:1ccb%6]) with mapi id 15.20.2835.026; Sat, 28 Mar 2020
- 18:31:44 +0000
-From:   Hoan Tran <Hoan@os.amperecomputing.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     linux-mm@kvack.org (open list:MEMORY MANAGEMENT),
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        lho@amperecomputing.com, mmorana@amperecomputing.com,
-        Hoan Tran <Hoan@os.amperecomputing.com>
-Subject: [PATCH v3 5/5] s390: Kconfig: Remove CONFIG_NODES_SPAN_OTHER_NODES
-Date:   Sat, 28 Mar 2020 11:31:22 -0700
-Message-Id: <1585420282-25630-6-git-send-email-Hoan@os.amperecomputing.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1585420282-25630-1-git-send-email-Hoan@os.amperecomputing.com>
-References: <1585420282-25630-1-git-send-email-Hoan@os.amperecomputing.com>
-Content-Type: text/plain
-X-ClientProxiedBy: CY4PR13CA0013.namprd13.prod.outlook.com
- (2603:10b6:903:32::23) To BYAPR01MB5494.prod.exchangelabs.com
- (2603:10b6:a03:127::30)
+        id S1727247AbgC1SfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 14:35:07 -0400
+Received: from mga18.intel.com ([134.134.136.126]:9124 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727125AbgC1SfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 14:35:06 -0400
+IronPort-SDR: tiJE2gxnDJYnrDA96zSP0kVO35HMx4ZouUYrBU0g2jv7TXOEvfhGLKpgjMcfioDjuROPhQUZ7/
+ gMvWhf3dOT8w==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2020 11:35:05 -0700
+IronPort-SDR: ttlkMDpJKpozrfPUQ3A4AfklLwbY53yyEchoej7QU0WS3sEfl92noK3OaCRC+bAFciXNhNSabr
+ ACGEe7+PS77Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,317,1580803200"; 
+   d="scan'208";a="241240987"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 28 Mar 2020 11:35:04 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jIGIR-000AW9-Pd; Sun, 29 Mar 2020 02:35:03 +0800
+Date:   Sun, 29 Mar 2020 02:34:49 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:timers/core] BUILD SUCCESS
+ 4479730e9263befbb9ce9563a09563db2acb8f7c
+Message-ID: <5e7f98c9.60FrqFMGnJ4k6/zQ%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from engdev037.mustanglab.us.amcc (4.28.12.214) by CY4PR13CA0013.namprd13.prod.outlook.com (2603:10b6:903:32::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.9 via Frontend Transport; Sat, 28 Mar 2020 18:31:41 +0000
-X-Mailer: git-send-email 1.8.3.1
-X-Originating-IP: [4.28.12.214]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3c9e8d1d-59a0-4b8e-3a97-08d7d3464408
-X-MS-TrafficTypeDiagnostic: BYAPR01MB5205:|BYAPR01MB5205:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BYAPR01MB5205A4F1AE7768E1F076C9E0F1CD0@BYAPR01MB5205.prod.exchangelabs.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3383;
-X-Forefront-PRVS: 03569407CC
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR01MB5494.prod.exchangelabs.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(376002)(396003)(136003)(39840400004)(366004)(346002)(6512007)(7416002)(107886003)(16526019)(6486002)(26005)(81166006)(4326008)(8936002)(2616005)(6666004)(186003)(956004)(8676002)(81156014)(316002)(66476007)(52116002)(6506007)(66946007)(66556008)(86362001)(478600001)(5660300002)(110136005)(2906002)(4744005)(921003)(1121003);DIR:OUT;SFP:1102;
-Received-SPF: None (protection.outlook.com: os.amperecomputing.com does not
- designate permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Y0pnK7bOi2A/yi5y4JDu0uo39Ykl2mmu0fdDBI/2CpYs+CVr9Zks8ycj5+xT8Y/QTA3v4To5IckqsOFqA6ghjeISb9LvyOlrSOm8Abs6+zS+6zUVXtKiFVbnk1h7gDAifvmv276FcKX7bC8PnV+c8mB22B4u3681HOKhbfWJAWo97KkKEaMXByY8+Yt22evOov5ufa9+lI6b7SzpBHSYVf6txendF+38QAUV52HsmBtySEg/YmdIT9kekhDgS7ABdYCJ8HhIN3t82lU9lRk95mL0Qp8Wph39+Y6iZqdQbBmrhSpmFyWCRjsGMRz5T3SCKeG8BuAJTT4R0hWRCgu1KZRTgDawAnn43IXBTNuB1TqEyGlmqLoSqrPyl+uKf5DVnskiDBuBp/HrWYuslhHlfBRASEHg34BHN1deBDYeSfU5zNGZ0d9NgMGiSZHUfpueTmuLhqHuflpd5C/ALvVS4HKvGA8jJ4B20yav5lN1mBuj26j5l6W4hnLV2O6fE7qM
-X-MS-Exchange-AntiSpam-MessageData: BjKW5oWhsYfe4/eopOrPs70cboGJdB86AknGtW4tay7PU6VXQx+ND0gc5KOu5no4javZfLPtxlWSB33qLaLpWzKSMhpyMKXp5OYS9vNyLAkYWZ3zEOiOIy3AtxGQhenHvIYFlEgqZU8NC5X7VIe6wg==
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c9e8d1d-59a0-4b8e-3a97-08d7d3464408
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2020 18:31:44.2423
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: v3n/c1kpKQoufrBc0GHP0ayssXnFamp5xikKsb0FgRJsAWOda77CtCdtQfXVmAs5gT2aPYBldvK4KSbmEYPQM5kLLQCKb+V1WIRT+JZ+x5E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR01MB5205
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove CONFIG_NODES_SPAN_OTHER_NODES as it's enabled
-by default with NUMA.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  timers/core
+branch HEAD: 4479730e9263befbb9ce9563a09563db2acb8f7c  Revert "clocksource/drivers/timer-probe: Avoid creating dead devices"
 
-Signed-off-by: Hoan Tran <Hoan@os.amperecomputing.com>
+elapsed time: 485m
+
+configs tested: 162
+configs skipped: 0
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm64                            allyesconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm                              allmodconfig
+arm64                             allnoconfig
+arm                               allnoconfig
+arm                           efm32_defconfig
+arm                         at91_dt_defconfig
+arm                        shmobile_defconfig
+arm64                               defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                           sunxi_defconfig
+arm                        multi_v7_defconfig
+sparc                            allyesconfig
+s390                       zfcpdump_defconfig
+m68k                          multi_defconfig
+nios2                         3c120_defconfig
+i386                              allnoconfig
+i386                             allyesconfig
+i386                             alldefconfig
+i386                                defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                             alldefconfig
+nios2                         10m50_defconfig
+c6x                        evmc6678_defconfig
+xtensa                          iss_defconfig
+c6x                              allyesconfig
+xtensa                       common_defconfig
+openrisc                 simple_smp_defconfig
+openrisc                    or1ksim_defconfig
+nds32                               defconfig
+nds32                             allnoconfig
+csky                                defconfig
+alpha                               defconfig
+h8300                       h8s-sim_defconfig
+h8300                     edosk2674_defconfig
+m68k                       m5475evb_defconfig
+m68k                             allmodconfig
+h8300                    h8300h-sim_defconfig
+m68k                           sun3_defconfig
+arc                                 defconfig
+arc                              allyesconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+mips                             allyesconfig
+mips                         64r6el_defconfig
+mips                              allnoconfig
+mips                           32r2_defconfig
+mips                             allmodconfig
+parisc                            allnoconfig
+parisc                generic-64bit_defconfig
+parisc                generic-32bit_defconfig
+parisc                           allyesconfig
+i386                 randconfig-a002-20200327
+i386                 randconfig-a001-20200327
+x86_64               randconfig-a002-20200327
+x86_64               randconfig-a001-20200327
+i386                 randconfig-a003-20200327
+x86_64               randconfig-a003-20200327
+mips                 randconfig-a001-20200327
+nds32                randconfig-a001-20200327
+m68k                 randconfig-a001-20200327
+parisc               randconfig-a001-20200327
+alpha                randconfig-a001-20200327
+riscv                randconfig-a001-20200327
+h8300                randconfig-a001-20200327
+microblaze           randconfig-a001-20200327
+nios2                randconfig-a001-20200327
+c6x                  randconfig-a001-20200327
+sparc64              randconfig-a001-20200327
+s390                 randconfig-a001-20200327
+xtensa               randconfig-a001-20200327
+csky                 randconfig-a001-20200327
+openrisc             randconfig-a001-20200327
+sh                   randconfig-a001-20200327
+i386                 randconfig-b003-20200327
+i386                 randconfig-b001-20200327
+x86_64               randconfig-b003-20200327
+i386                 randconfig-b002-20200327
+x86_64               randconfig-b002-20200327
+x86_64               randconfig-b001-20200327
+x86_64               randconfig-c003-20200327
+x86_64               randconfig-c001-20200327
+i386                 randconfig-c002-20200327
+x86_64               randconfig-c002-20200327
+i386                 randconfig-c003-20200327
+i386                 randconfig-c001-20200327
+i386                 randconfig-d003-20200327
+i386                 randconfig-d001-20200327
+x86_64               randconfig-d002-20200327
+x86_64               randconfig-d001-20200327
+i386                 randconfig-d002-20200327
+x86_64               randconfig-d003-20200327
+x86_64               randconfig-e001-20200327
+x86_64               randconfig-e003-20200327
+i386                 randconfig-e002-20200327
+i386                 randconfig-e003-20200327
+i386                 randconfig-e001-20200327
+x86_64               randconfig-e002-20200327
+x86_64               randconfig-f001-20200327
+x86_64               randconfig-f002-20200327
+x86_64               randconfig-f003-20200327
+i386                 randconfig-f001-20200327
+i386                 randconfig-f002-20200327
+i386                 randconfig-f003-20200327
+x86_64               randconfig-g001-20200327
+x86_64               randconfig-g002-20200327
+x86_64               randconfig-g003-20200327
+i386                 randconfig-g001-20200327
+i386                 randconfig-g002-20200327
+i386                 randconfig-g003-20200327
+x86_64               randconfig-h003-20200327
+i386                 randconfig-h003-20200327
+i386                 randconfig-h001-20200327
+x86_64               randconfig-h001-20200327
+i386                 randconfig-h002-20200327
+x86_64               randconfig-h002-20200327
+arm                  randconfig-a001-20200327
+ia64                 randconfig-a001-20200327
+sparc                randconfig-a001-20200327
+arc                  randconfig-a001-20200327
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+s390                          debug_defconfig
+s390                             allyesconfig
+s390                              allnoconfig
+s390                             allmodconfig
+s390                             alldefconfig
+s390                                defconfig
+sh                          rsk7269_defconfig
+sh                               allmodconfig
+sh                            titan_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                                allnoconfig
+sparc                               defconfig
+sparc64                             defconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                          allmodconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+um                                  defconfig
+x86_64                                   rhel
+x86_64                               rhel-7.6
+x86_64                         rhel-7.2-clear
+x86_64                                    lkp
+x86_64                              fedora-25
+x86_64                                  kexec
+
 ---
- arch/s390/Kconfig | 8 --------
- 1 file changed, 8 deletions(-)
-
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index bc88841..d86066e 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -449,14 +449,6 @@ config NR_CPUS
- config HOTPLUG_CPU
- 	def_bool y
- 
--# Some NUMA nodes have memory ranges that span
--# other nodes.	Even though a pfn is valid and
--# between a node's start and end pfns, it may not
--# reside on that node.	See memmap_init_zone()
--# for details. <- They meant memory holes!
--config NODES_SPAN_OTHER_NODES
--	def_bool NUMA
--
- config NUMA
- 	bool "NUMA support"
- 	depends on SCHED_TOPOLOGY
--- 
-1.8.3.1
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
