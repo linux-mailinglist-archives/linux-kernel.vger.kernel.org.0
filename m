@@ -2,84 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 363991964B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 10:14:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A688B1964B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 10:14:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbgC1JON (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 05:14:13 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36193 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbgC1JON (ORCPT
+        id S1726295AbgC1JO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 05:14:29 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:41424 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbgC1JO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 05:14:13 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k18so11078425oib.3;
-        Sat, 28 Mar 2020 02:14:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pKuq7d8jIrlk/0WIZMtVXkIzDVpSUtAwY67akVyTnGQ=;
-        b=BZghq3LShx2NjkLK1+E2dhJoqdO6I8mXoNsIq3/ZKpN5QmaXlb+W4biTIiUL6e9Mkj
-         2bZ6VSLGR6qF1o9fVvMicHOeH+5fNVyBYRca5hgUiTXGGaH6tl9TyH/s0kqVAhDK9Dfz
-         tJWFN2EBASMO++Yqqc4LyeBX5KWGzKjMZPJblmH7Yz0/5g5BLOgD438X+qAxj+S48+Sb
-         mxR2laxuBK13JpcjGhPpWtMDDbKvfF5LhdB4McJvWxbKVHUqUklo73Ell6vAVHLlViRs
-         TGLwhetCwMlmQsHGd6W4nBs3EhNzoxJ5veSuS0HPFzOIFZFZo50Bpd5E980JxCxpAWQe
-         33Rg==
-X-Gm-Message-State: ANhLgQ1ndGa4wLYqwcVmkXURmQFSKffRyLeKNq6F5ANYxB5lXwSoRkdh
-        a4lewt/TK7Tc9GAmwKvHiyYFkjyYenkJaBJK6sM=
-X-Google-Smtp-Source: ADFU+vsfJR2e/2aZ0DaWjMu+tQUrurQ6g1o3VVqYm7WMOdLXNBdUKFaJxhA5WPw5Gut1INgv2J6DN7h1qQGSWlRPcTw=
-X-Received: by 2002:aca:f07:: with SMTP id 7mr1821111oip.68.1585386852511;
- Sat, 28 Mar 2020 02:14:12 -0700 (PDT)
+        Sat, 28 Mar 2020 05:14:28 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id F15282967C4
+Subject: Re: [PATCH v7 12/12] iio: cros_ec: flush as hwfifo attribute
+To:     Gwendal Grignou <gwendal@chromium.org>, bleung@chromium.org,
+        Jonathan.Cameron@huawei.com
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200327223443.6006-1-gwendal@chromium.org>
+ <20200327223443.6006-13-gwendal@chromium.org>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <c3609af9-42a7-8d59-f0a4-9da3badc3668@collabora.com>
+Date:   Sat, 28 Mar 2020 10:14:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200328034706.17840-1-yuehaibing@huawei.com>
-In-Reply-To: <20200328034706.17840-1-yuehaibing@huawei.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sat, 28 Mar 2020 10:14:01 +0100
-Message-ID: <CAJZ5v0ikZoo5bgrfUsGic7FTCZQu7m_EYLDH1LMcMGNwNjtvqw@mail.gmail.com>
-Subject: Re: [PATCH -next] ACPICA: Make acpi_protocol_lengths static
-To:     YueHaibing <yuehaibing@huawei.com>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Kaneda <erik.kaneda@intel.com>
-Cc:     Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200327223443.6006-13-gwendal@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 28, 2020 at 4:47 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fix sparse warning:
->
-> drivers/acpi/acpica/exfield.c:25:10: warning:
->  symbol 'acpi_protocol_lengths' was not declared. Should it be static?
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Hi Jonathan and Gwendal,
 
-Bob, Erik, I'm leaving this one to you.
+On 27/3/20 23:34, Gwendal Grignou wrote:
+> Add buffer/hwfifo_flush. It is not part of the ABI, but it follows ST
+> and HID lead: Tells the sensor hub to send to the host all pending
+> sensor events.
+> 
+> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+
+I need an Ack from Jonathan to pick this.
+
+Jonathan, once you are fine with it, do you mind if I take the full series
+through the platform chrome tree?
+
+Thanks,
+ Enric
+
 
 > ---
->  drivers/acpi/acpica/exfield.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/acpica/exfield.c b/drivers/acpi/acpica/exfield.c
-> index e85eb31e5075..3323a2ba6a31 100644
-> --- a/drivers/acpi/acpica/exfield.c
-> +++ b/drivers/acpi/acpica/exfield.c
-> @@ -22,7 +22,7 @@ ACPI_MODULE_NAME("exfield")
->   */
->  #define ACPI_INVALID_PROTOCOL_ID        0x80
->  #define ACPI_MAX_PROTOCOL_ID            0x0F
-> -const u8 acpi_protocol_lengths[] = {
-> +static const u8 acpi_protocol_lengths[] = {
->         ACPI_INVALID_PROTOCOL_ID,       /* 0 - reserved */
->         ACPI_INVALID_PROTOCOL_ID,       /* 1 - reserved */
->         0x00,                   /* 2 - ATTRIB_QUICK */
-> --
-> 2.17.1
->
->
+> No changes in v7.
+> New in v6.
+> 
+>  .../cros_ec_sensors/cros_ec_sensors_core.c    | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> index c831915ca7e56..aaf124a82e0e4 100644
+> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> @@ -113,6 +113,33 @@ static int cros_ec_sensor_set_ec_rate(struct cros_ec_sensors_core_state *st,
+>  	return ret;
+>  }
+>  
+> +static ssize_t cros_ec_sensors_flush(struct device *dev,
+> +				     struct device_attribute *attr,
+> +				     const char *buf, size_t len)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
+> +	int ret = 0;
+> +	bool flush;
+> +
+> +	ret = strtobool(buf, &flush);
+> +	if (ret < 0)
+> +		return ret;
+> +	if (!flush)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&st->cmd_lock);
+> +	st->param.cmd = MOTIONSENSE_CMD_FIFO_FLUSH;
+> +	ret = cros_ec_motion_send_host_cmd(st, 0);
+> +	if (ret != 0)
+> +		dev_warn(&indio_dev->dev, "Unable to flush sensor\n");
+> +	mutex_unlock(&st->cmd_lock);
+> +	return ret ? ret : len;
+> +}
+> +
+> +static IIO_DEVICE_ATTR(hwfifo_flush, 0644, NULL,
+> +		       cros_ec_sensors_flush, 0);
+> +
+>  static ssize_t cros_ec_sensor_set_report_latency(struct device *dev,
+>  						 struct device_attribute *attr,
+>  						 const char *buf, size_t len)
+> @@ -175,6 +202,7 @@ static ssize_t hwfifo_watermark_max_show(struct device *dev,
+>  static IIO_DEVICE_ATTR_RO(hwfifo_watermark_max, 0);
+>  
+>  const struct attribute *cros_ec_sensor_fifo_attributes[] = {
+> +	&iio_dev_attr_hwfifo_flush.dev_attr.attr,
+>  	&iio_dev_attr_hwfifo_timeout.dev_attr.attr,
+>  	&iio_dev_attr_hwfifo_watermark_max.dev_attr.attr,
+>  	NULL,
+> 
