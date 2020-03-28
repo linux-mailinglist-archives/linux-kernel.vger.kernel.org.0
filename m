@@ -2,105 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41C5B19686D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 19:29:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9D3196872
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 19:31:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbgC1S3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 14:29:53 -0400
-Received: from mga02.intel.com ([134.134.136.20]:54936 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbgC1S3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 14:29:52 -0400
-IronPort-SDR: A0tfWluWzFJAN1qmmXhYRkMAZGq20yiH1WUpT0nFXZtwy0vFxxMH1qXswNBoKoT2WCwRFval1P
- GCQdOW2IiT/g==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2020 11:29:51 -0700
-IronPort-SDR: dZJ8l2AFLuB2WfezcrgkOfi5968u+3mDyCBouG/Kf/rrItkVep/KyH52pHpKcuUzQJpL497WJm
- g+FS51zzM+MA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,317,1580803200"; 
-   d="scan'208";a="294209453"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by FMSMGA003.fm.intel.com with ESMTP; 28 Mar 2020 11:29:51 -0700
-Date:   Sat, 28 Mar 2020 11:29:51 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Junaid Shahid <junaids@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: Re: [PATCH 3/3] KVM: x86: Sync SPTEs when injecting page/EPT fault
- into L1
-Message-ID: <20200328182951.GR8104@linux.intel.com>
-References: <20200326093516.24215-1-pbonzini@redhat.com>
- <20200326093516.24215-4-pbonzini@redhat.com>
+        id S1727397AbgC1SbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 14:31:01 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44206 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727176AbgC1SbB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 14:31:01 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b72so6279556pfb.11
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Mar 2020 11:30:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+mVck/pOJv55KYF3ZzMyTGWgs0RFVKHx1LKbGb8RbSs=;
+        b=bj4M59RKtnKKUaVQsWvI4u4nhhvyXqBegUEMmfvGKXIBT/mika1RpNwaWwGdABjLzu
+         PeSQC2Yl7lqu+IJJl8x6vzppsEG8QEMztXC0LIAjp1v9FU2NPx+XdMCJw+jmd61ds2Nl
+         iqzOUHjLA2yTibgvFUBRLUYtzTKkbmCHs/u57EqL332uswGIi+iTTmNCOAotm68VVlbd
+         VfRuNm949tV4tyVoq+ouNy1HbzLKzDE4rM6qHY5mS7PKnK64W3GrNA8geQzMiOk/BupI
+         aUBhsFQsxGhS7vjn9/PCWhe1j2VzrBOCgHUk1bGK9XJgJGBK9TyvwyNN31JojGWzluUB
+         YKEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+mVck/pOJv55KYF3ZzMyTGWgs0RFVKHx1LKbGb8RbSs=;
+        b=JSnXsp2Tqj94mhtlBFdLAywnBWF52qKfnEt7FwDTrkDIR8UKsnPaT1PG0RaRvm6FRa
+         1JTV6tpEuYvvqbqxSbhUY85RiXVeQoAjh8ke0N4eVpE7XVhuliu6nA3UWRnK73XBjgld
+         q4jLVFCddTDwEHtCoLagMkfGZRBPktW2SZr+iPM0Y4E8ABPMzowmgZuJjSEVYnJCyVau
+         G5Erv9eRamUo2g5dPWw0EHGpXz/Q3pcO8oB4eNOU/treEQigRJWQqwIX6Ei7tRERUyI0
+         1pXDdZZ3DTDTj7oKfRWz74PU5Sx/JKLhzyT1PPAtKxHFJq6yafvsavyCmh8omtvGmbc7
+         szKw==
+X-Gm-Message-State: ANhLgQ2O5Zu1c35pG9f4VNcwdHR+A7ITfHFmh29sPxW5XKCR48eBEMBB
+        7tvr65Lal6xXo/l/iUZBKLQmSw==
+X-Google-Smtp-Source: ADFU+vvaKrpy0yv4Pq6rQuQ4KMnEp88icJyuuxyYhbQEtG7ooH+mR8DMcc8VezWIPH5TZPc9M4fJiA==
+X-Received: by 2002:a63:7f05:: with SMTP id a5mr5336763pgd.327.1585420258811;
+        Sat, 28 Mar 2020 11:30:58 -0700 (PDT)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 79sm6691688pfz.23.2020.03.28.11.30.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Mar 2020 11:30:58 -0700 (PDT)
+Date:   Sat, 28 Mar 2020 11:30:55 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     pillair@codeaurora.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v7] arm64: dts: qcom: sc7180: Add WCN3990 WLAN module
+ device node
+Message-ID: <20200328183055.GA663905@yoga>
+References: <1585219723-28323-1-git-send-email-pillair@codeaurora.org>
+ <20200327230025.GJ5063@builder>
+ <000101d604f8$afc48220$0f4d8660$@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200326093516.24215-4-pbonzini@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <000101d604f8$afc48220$0f4d8660$@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 05:35:16AM -0400, Paolo Bonzini wrote:
-> From: Junaid Shahid <junaids@google.com>
+On Sat 28 Mar 05:01 PDT 2020, pillair@codeaurora.org wrote:
+
+> Hi Bjorn,
+>  Comments inline.
 > 
-> When injecting a page fault or EPT violation/misconfiguration, KVM is
-> not syncing any shadow PTEs associated with the faulting address,
-> including those in previous MMUs that are associated with L1's current
-> EPTP (in a nested EPT scenario), nor is it flushing any hardware TLB
-> entries.  All this is done by kvm_mmu_invalidate_gva.
 > 
-> Page faults that are either !PRESENT or RSVD are exempt from the flushing,
-> as the CPU is not allowed to cache such translations.
+> > -----Original Message-----
+> > From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Sent: Saturday, March 28, 2020 4:30 AM
+> > To: Rakesh Pillai <pillair@codeaurora.org>
+> > Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> linux-
+> > kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org
+> > Subject: Re: [PATCH v7] arm64: dts: qcom: sc7180: Add WCN3990 WLAN
+> > module device node
+> > 
+> > On Thu 26 Mar 03:48 PDT 2020, Rakesh Pillai wrote:
+> > 
+> > > Add device node for the ath10k SNOC platform driver probe
+> > > and add resources required for WCN3990 on sc7180 soc.
+> > >
+> > > Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
+> > > ---
+> > >
+> > > Depends on https://patchwork.kernel.org/patch/11455345/
+> > > The above patch adds the dt-bindings for wifi-firmware
+> > > subnode
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/sc7180-idp.dts |  8 ++++++++
+> > >  arch/arm64/boot/dts/qcom/sc7180.dtsi    | 27
+> > +++++++++++++++++++++++++++
+> > >  2 files changed, 35 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> > b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> > > index 043c9b9..a6168a4 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> > > +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> > > @@ -327,6 +327,14 @@
+> > >  	};
+> > >  };
+> > >
+> > > +&wifi {
+> > > +	status = "okay";
+> > > +	qcom,msa-fixed-perm;
+> > > +	wifi-firmware {
+> > > +		iommus = <&apps_smmu 0xc2 0x1>;
+> > 
+> > How is sc7180 different from sdm845, where the iommus property goes
+> > directly in the &wifi node?
 > 
-> Signed-off-by: Junaid Shahid <junaids@google.com>
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Message-Id: <20200320212833.3507-8-sean.j.christopherson@intel.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->  arch/x86/kvm/vmx/nested.c | 12 ++++++------
->  arch/x86/kvm/vmx/vmx.c    |  2 +-
->  arch/x86/kvm/x86.c        | 11 ++++++++++-
->  3 files changed, 17 insertions(+), 8 deletions(-)
+> Sc7180 IDP is a target without TrustZone support and also with S2 IOMMU
+> enabled.
+> Since in Trustzone based targets, the iommu SID configuration was done by
+> TZ, there was nothing required to be done by driver.
+> But in non-TZ based targets, the IOMMU mappings need to be done by the
+> driver.
+> Since this is the mapping of the firmware memory and to keep it different
+> from the driver memory access, a different device has been created for
+> firmware and these SIDs are configured.
 > 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 522905523bf0..dbca6c3bd0db 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -618,8 +618,17 @@ bool kvm_inject_emulated_page_fault(struct kvm_vcpu *vcpu,
->  	WARN_ON_ONCE(fault->vector != PF_VECTOR);
->  
->  	fault_mmu = fault->nested_page_fault ? vcpu->arch.mmu : vcpu->arch.walk_mmu;
-> -	fault_mmu->inject_page_fault(vcpu, fault);
->  
-> +	/*
-> +	 * Invalidate the TLB entry for the faulting address, if it exists,
-> +	 * else the access will fault indefinitely (and to emulate hardware).
-> +	 */
-> +	if ((fault->error_code & PFERR_PRESENT_MASK)
-> +	    && !(fault->error_code & PFERR_RSVD_MASK))
 
-What kind of heathen puts && on the new line?  :-D
+I see, I missed the fact that 0xc0:1 is used in the &wifi node itself.
 
-> +		kvm_mmu_invalidate_gva(vcpu, fault_mmu,
-> +				       fault->address, fault_mmu->root_hpa);
-
-Another nit, why have the new line after fault_mmu?  I.e.
-
-		kvm_mmu_invalidate_gva(vcpu, fault_mmu, fault->address,
-				       fault_mmu->root_hpa);
+So to confirm, we have streams 0xc0 and 0xc1 for data pipes and 0xc2 and
+0xc3 for some form of firmware access? And in the normal Qualcomm design
+implementation the 0c2/0xc3 stream mapping is setup by TZ, and hidden
+from Linux using the SMMU virtualisation?
 
 
-> +
-> +	fault_mmu->inject_page_fault(vcpu, fault);
->  	return fault->nested_page_fault;
->  }
->  EXPORT_SYMBOL_GPL(kvm_inject_emulated_page_fault);
-> -- 
-> 2.18.2
+Would have been nice to have some better mechanism for describing
+multi-connected hardware block, than to sprinkle dummy nodes all over
+the DT...
+
+Regards,
+Bjorn
+
+> The below ath10k series brings-in this support.
+> https://patchwork.kernel.org/project/linux-wireless/list/?series=261367&stat
+> e=* 
 > 
+> Thanks,
+> Rakesh Pillai.
+> 
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > > +	};
+> > > +};
+> > > +
+> > >  /* PINCTRL - additions to nodes defined in sc7180.dtsi */
+> > >
+> > >  &qspi_clk {
+> > > diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> > b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> > > index 998f101..2745128 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> > > @@ -83,6 +83,11 @@
+> > >  			reg = <0 0x8f600000 0 0x500000>;
+> > >  			no-map;
+> > >  		};
+> > > +
+> > > +		wlan_fw_mem: memory@94104000 {
+> > > +			reg = <0 0x94104000 0 0x200000>;
+> > > +			no-map;
+> > > +		};
+> > >  	};
+> > >
+> > >  	cpus {
+> > > @@ -835,6 +840,28 @@
+> > >  			};
+> > >  		};
+> > >
+> > > +		wifi: wifi@18800000 {
+> > > +			compatible = "qcom,wcn3990-wifi";
+> > > +			reg = <0 0x18800000 0 0x800000>;
+> > > +			reg-names = "membase";
+> > > +			iommus = <&apps_smmu 0xc0 0x1>;
+> > > +			interrupts =
+> > > +				<GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH /* CE0
+> > */ >,
+> > > +				<GIC_SPI 415 IRQ_TYPE_LEVEL_HIGH /* CE1
+> > */ >,
+> > > +				<GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH /* CE2
+> > */ >,
+> > > +				<GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH /* CE3
+> > */ >,
+> > > +				<GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH /* CE4
+> > */ >,
+> > > +				<GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH /* CE5
+> > */ >,
+> > > +				<GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH /* CE6
+> > */ >,
+> > > +				<GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH /* CE7
+> > */ >,
+> > > +				<GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH /* CE8
+> > */ >,
+> > > +				<GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH /* CE9
+> > */ >,
+> > > +				<GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH /* CE10
+> > */>,
+> > > +				<GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH /* CE11
+> > */>;
+> > > +			memory-region = <&wlan_fw_mem>;
+> > > +			status = "disabled";
+> > > +		};
+> > > +
+> > >  		config_noc: interconnect@1500000 {
+> > >  			compatible = "qcom,sc7180-config-noc";
+> > >  			reg = <0 0x01500000 0 0x28000>;
+> > > --
+> > > 2.7.4
