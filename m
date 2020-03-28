@@ -2,189 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 112EC1962D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 02:12:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6865D1962D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 02:17:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgC1BMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 21:12:43 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39831 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbgC1BMn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 21:12:43 -0400
-Received: by mail-ed1-f68.google.com with SMTP id a43so13594977edf.6
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 18:12:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VNo3FndSyfgarKuL3MCerw7v/TlJBnMEpF3pRFegZd8=;
-        b=tWtvDPulZTijBQTjNmE7bkdsRPhUcHte5hyy3c8P2W4w2wTvIPMLBmpbrc7qq3zQz/
-         n8mKnFt7gwbUSKWrjiPX5hzOCXlquyHcU4imjvsNXSmXfx4N+pCb3AA1BwpyRT7WtRFB
-         Qabnk6WQjtGOrkOjawTXG9AgidQFq3lp8Qmf1oVNzexRSnOg4PiTKv0Cx5DoDQ5vcMVd
-         lGg9MYX+G+h+CTyzVzBXQ7MYvk3G9gzmSgG/alDuTA1jk49StTfbGYZ6eYLVrMbYO8iV
-         VElIrplPuphAxfofFuo5VPPV840b0TtPzCrdoeu87k2p3mChJpbv0cwTBR11IsPvpIUt
-         tlMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VNo3FndSyfgarKuL3MCerw7v/TlJBnMEpF3pRFegZd8=;
-        b=KOCFsuT7LrIifU5QTUQNoIVME7dQHq1VfCtlOuzXu24cb8xNALNvRCojdidusUjDc/
-         N728Gq1qlsNcWfzAAuVyFZmyVT/gQU82z9KYddqcJs8pib9TUemNfOLGCC6261msDRIM
-         usZslkiEpz4SegVV3BO5LtVXge0j7IYAmD56C2iRrFLkrn3pIDNrFV3xZzWL0heV/B+H
-         fVecCYcdETXmxBIl5HKcyv1ktdhXJ9tohcxPE9qppeQU10CSb9odEPfw5TLCcCSyHTXO
-         opGRiOXVFDsgeNcXj0PwD7SEBmqGEbevO1sSCLn/s19L1CXRGnkx5paDxHViDBeMetM1
-         itAA==
-X-Gm-Message-State: ANhLgQ169Zt2xZpsR3uJk9/g2rY1tfALsQyasGgUmccotMeP+W85lR+C
-        WXkcsWpKWSr4AcQpyC04KXEISx5jRhOWV5rp1Kk=
-X-Google-Smtp-Source: ADFU+vsjkkjozkJZ/73vwdd9BT1pIEGMorPAdKeDZoa88lo1RTqQNuR1BOz9ZdZVzpaADcK0S0BRZVAFKhwKE36NQto=
-X-Received: by 2002:a50:c948:: with SMTP id p8mr1883047edh.200.1585357960413;
- Fri, 27 Mar 2020 18:12:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200327170601.18563-1-kirill.shutemov@linux.intel.com>
- <20200327170601.18563-6-kirill.shutemov@linux.intel.com> <CAHbLzkrc_QuAw2S0nNrTLRRx+EOkLodsf6W2czOFpNkryydcNQ@mail.gmail.com>
- <20200328004034.jhzpqlv4riid27mh@box>
-In-Reply-To: <20200328004034.jhzpqlv4riid27mh@box>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Fri, 27 Mar 2020 18:12:28 -0700
-Message-ID: <CAHbLzkrtCAi+uKSR77PZc8_gWGE1RjrgMZvQUNXBwt0ZHGk67Q@mail.gmail.com>
-Subject: Re: [PATCH 5/7] khugepaged: Allow to collapse PTE-mapped compound pages
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727121AbgC1BRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 21:17:52 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:53570 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726212AbgC1BRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Mar 2020 21:17:51 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9BF112003B9;
+        Sat, 28 Mar 2020 02:17:49 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 73854200069;
+        Sat, 28 Mar 2020 02:17:43 +0100 (CET)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 316B94028F;
+        Sat, 28 Mar 2020 09:17:36 +0800 (SGT)
+From:   Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
+To:     xiaoliang.yang_1@nxp.com, Jose.Abreu@synopsys.com,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, olteanv@gmail.com,
+        ivan.khoronzhuk@linaro.org, alexandre.belloni@bootlin.com,
+        andrew@lunn.ch, vivien.didelot@gmail.com, po.liu@nxp.com,
+        leoyang.li@nxp.com
+Subject: [net-next,v1] net: stmmac: support for tc mqprio offload
+Date:   Sat, 28 Mar 2020 09:14:14 +0800
+Message-Id: <20200328011414.42401-1-xiaoliang.yang_1@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 5:40 PM Kirill A. Shutemov <kirill@shutemov.name> wrote:
->
-> On Fri, Mar 27, 2020 at 01:45:55PM -0700, Yang Shi wrote:
-> > On Fri, Mar 27, 2020 at 10:06 AM Kirill A. Shutemov
-> > <kirill@shutemov.name> wrote:
-> > >
-> > > We can collapse PTE-mapped compound pages. We only need to avoid
-> > > handling them more than once: lock/unlock page only once if it's present
-> > > in the PMD range multiple times as it handled on compound level. The
-> > > same goes for LRU isolation and putpack.
-> > >
-> > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > ---
-> > >  mm/khugepaged.c | 41 +++++++++++++++++++++++++++++++----------
-> > >  1 file changed, 31 insertions(+), 10 deletions(-)
-> > >
-> > > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > > index b47edfe57f7b..c8c2c463095c 100644
-> > > --- a/mm/khugepaged.c
-> > > +++ b/mm/khugepaged.c
-> > > @@ -515,6 +515,17 @@ void __khugepaged_exit(struct mm_struct *mm)
-> > >
-> > >  static void release_pte_page(struct page *page)
-> > >  {
-> > > +       /*
-> > > +        * We need to unlock and put compound page on LRU only once.
-> > > +        * The rest of the pages have to be locked and not on LRU here.
-> > > +        */
-> > > +       VM_BUG_ON_PAGE(!PageCompound(page) &&
-> > > +                       (!PageLocked(page) && PageLRU(page)), page);
-> > > +
-> > > +       if (!PageLocked(page))
-> > > +               return;
-> > > +
-> > > +       page = compound_head(page);
-> > >         dec_node_page_state(page, NR_ISOLATED_ANON + page_is_file_cache(page));
-> > >         unlock_page(page);
-> > >         putback_lru_page(page);
-> >
-> > BTW, wouldn't this unlock the whole THP and put it back to LRU?
->
-> It is the intention.
+This patch add support for tc mqprio offload to configure multiple
+prioritized TX traffic classes with mqprio.
 
-Yes, understood. Considering the below case:
+Signed-off-by: Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
+---
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c   | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Subpages 0, 1, 2, 3 are PTE mapped. Once subpage 0 is copied
-release_pte_page() would be called then the whole THP would be
-unlocked and putback to lru, then the loop would iterate to subpage 1,
-2 and 3, but the page is not locked and on lru already. Is it
-intentional?
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 0e8c80f23557..b9dcd109a282 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4214,6 +4214,21 @@ static int stmmac_setup_tc_block_cb(enum tc_setup_type type, void *type_data,
+ 
+ static LIST_HEAD(stmmac_block_cb_list);
+ 
++static int stmmac_tc_setup_mqprio(struct net_device *ndev, void *type_data)
++{
++	struct tc_mqprio_qopt *mqprio = type_data;
++	u8 num_tc;
++	int i;
++
++	num_tc = mqprio->num_tc;
++	netif_set_real_num_tx_queues(ndev, num_tc);
++	netdev_set_num_tc(ndev, num_tc);
++	for (i = 0; i < num_tc; i++)
++		netdev_set_tc_queue(ndev, i, 1, i);
++
++	return 0;
++}
++
+ static int stmmac_setup_tc(struct net_device *ndev, enum tc_setup_type type,
+ 			   void *type_data)
+ {
+@@ -4229,6 +4244,8 @@ static int stmmac_setup_tc(struct net_device *ndev, enum tc_setup_type type,
+ 		return stmmac_tc_setup_cbs(priv, priv, type_data);
+ 	case TC_SETUP_QDISC_TAPRIO:
+ 		return stmmac_tc_setup_taprio(priv, priv, type_data);
++	case TC_SETUP_QDISC_MQPRIO:
++		return stmmac_tc_setup_mqprio(ndev, type_data);
+ 	case TC_SETUP_QDISC_ETF:
+ 		return stmmac_tc_setup_etf(priv, priv, type_data);
+ 	default:
+-- 
+2.17.1
 
->
-> > Then we may copy the following PTE mapped pages with page unlocked and
-> > on LRU. I don't see critical problem, just the pages might be on and off
-> > LRU by others, i.e. vmscan, compaction, migration, etc. But no one could
-> > take the page away since try_to_unmap() would fail, but not very
-> > productive.
-> >
-> >
-> > > @@ -537,6 +548,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
-> > >         pte_t *_pte;
-> > >         int none_or_zero = 0, result = 0, referenced = 0;
-> > >         bool writable = false;
-> > > +       LIST_HEAD(compound_pagelist);
-> > >
-> > >         for (_pte = pte; _pte < pte+HPAGE_PMD_NR;
-> > >              _pte++, address += PAGE_SIZE) {
-> > > @@ -561,13 +573,23 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
-> > >                         goto out;
-> > >                 }
-> > >
-> > > -               /* TODO: teach khugepaged to collapse THP mapped with pte */
-> > > +               VM_BUG_ON_PAGE(!PageAnon(page), page);
-> > > +
-> > >                 if (PageCompound(page)) {
-> > > -                       result = SCAN_PAGE_COMPOUND;
-> > > -                       goto out;
-> > > -               }
-> > > +                       struct page *p;
-> > > +                       page = compound_head(page);
-> > >
-> > > -               VM_BUG_ON_PAGE(!PageAnon(page), page);
-> > > +                       /*
-> > > +                        * Check if we have dealt with the compount page
-> > > +                        * already
-> > > +                        */
-> > > +                       list_for_each_entry(p, &compound_pagelist, lru) {
-> > > +                               if (page ==  p)
-> > > +                                       break;
-> > > +                       }
-> > > +                       if (page ==  p)
-> > > +                               continue;
-> > > +               }
-> > >
-> > >                 /*
-> > >                  * We can do it before isolate_lru_page because the
-> > > @@ -640,6 +662,9 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
-> > >                     page_is_young(page) || PageReferenced(page) ||
-> > >                     mmu_notifier_test_young(vma->vm_mm, address))
-> > >                         referenced++;
-> > > +
-> > > +               if (PageCompound(page))
-> > > +                       list_add_tail(&page->lru, &compound_pagelist);
-> > >         }
-> > >         if (likely(writable)) {
-> > >                 if (likely(referenced)) {
-> > > @@ -1185,11 +1210,7 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
-> > >                         goto out_unmap;
-> > >                 }
-> > >
-> > > -               /* TODO: teach khugepaged to collapse THP mapped with pte */
-> > > -               if (PageCompound(page)) {
-> > > -                       result = SCAN_PAGE_COMPOUND;
-> > > -                       goto out_unmap;
-> > > -               }
-> > > +               page = compound_head(page);
-> > >
-> > >                 /*
-> > >                  * Record which node the original page is from and save this
-> > > --
-> > > 2.26.0
-> > >
-> > >
->
-> --
->  Kirill A. Shutemov
