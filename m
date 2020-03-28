@@ -2,168 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C1E2196612
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 13:26:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0359A196615
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 13:26:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbgC1M0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 08:26:24 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55760 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbgC1M0Y (ORCPT
+        id S1726937AbgC1M03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 08:26:29 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.22]:28527 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbgC1M01 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 08:26:24 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jIAXb-0004vL-Bk; Sat, 28 Mar 2020 13:26:19 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E0D691C0470;
-        Sat, 28 Mar 2020 13:26:18 +0100 (CET)
-Date:   Sat, 28 Mar 2020 12:26:18 -0000
-From:   "tip-bot2 for Clark Williams" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] thermal/x86_pkg_temp: Make pkg_temp_lock a raw_spinlock_t
-Cc:     Clark Williams <williams@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191008110021.2j44ayunal7fkb7i@linutronix.de>
-References: <20191008110021.2j44ayunal7fkb7i@linutronix.de>
-MIME-Version: 1.0
-Message-ID: <158539837851.28353.12926101418295280116.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Sat, 28 Mar 2020 08:26:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1585398385;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:Message-Id:Cc:Date:From:Subject:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=RRAAjZ7ibcbK3nazLeHJkueAnEPgXuK0f3ZKyFebqYw=;
+        b=l1mm2gYYE4tZVc3EqsoJzlNPnB9wcBUnzmsc8RDTw6+QgEuJdZ6A9sAk86QYnqjXYg
+        T/xn2fKVsU5mjqCZmGU+0lxhl9p7Zsso5UGqQJrcaoDgDu7u05c3mpFFx5zzAnySI0MF
+        U6+lKt4C46OCxaKoVr19jQ2x8o8GYPRINq0FjR52TUMaPK/PlOfHLaJa6A7hVlPKfUKZ
+        89ySalSilms06UzcPTllWb/wkPvMj5bHPWaScICB3tzHVGmGtdmMy1vgw8WXr6Dx9Rom
+        /kKdP8e7DT2bx5iUvhx4SiUKOQ81KNlKraqVqnsi0nNim7ywSmGsk6yVXRzGdZe7zH1a
+        8Cjw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlWcXA4N8z4="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 46.2.1 DYNA|AUTH)
+        with ESMTPSA id m02241w2SCQP8yj
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Sat, 28 Mar 2020 13:26:25 +0100 (CET)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: CHKDT error by f95cad74acdb ("dt-bindings: clocks: Convert Allwinner legacy clocks to schemas")
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+Date:   Sat, 28 Mar 2020 13:26:24 +0100
+Cc:     Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A65A26D8-9F66-4D46-B1E1-84ECECF079E3@goldelico.com>
+To:     Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the locking/core branch of tip:
+Hi Rob,
+I am trying to check my new bindings with v5.6-rc7 but get this before
+the process tries mine:
 
-Commit-ID:     fc32150e6f43d6cb93ea75937bb6a88a1764cc37
-Gitweb:        https://git.kernel.org/tip/fc32150e6f43d6cb93ea75937bb6a88a1764cc37
-Author:        Clark Williams <williams@redhat.com>
-AuthorDate:    Tue, 08 Oct 2019 13:00:21 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 28 Mar 2020 13:21:08 +01:00
+make dt_binding_check dtbs_check
+...
 
-thermal/x86_pkg_temp: Make pkg_temp_lock a raw_spinlock_t
+  CHKDT   Documentation/devicetree/bindings/bus/renesas,bsc.yaml - due =
+to target missing
+  CHKDT   Documentation/devicetree/bindings/bus/simple-pm-bus.yaml - due =
+to target missing
+  CHKDT   =
+Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ahb-clk.yaml =
+- due to target missing
+=
+/Volumes/CaseSensitive/master/Documentation/devicetree/bindings/clock/allw=
+inner,sun4i-a10-ahb-clk.yaml: Additional properties are not allowed =
+('deprecated' was unexpected)
+make[2]: *** =
+[Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ahb-clk.examp=
+le.dts] Error 1
+make[1]: *** [dt_binding_check] Error 2
+make: *** [sub-make] Error 2
 
-The pkg_temp_lock spinlock is acquired in the thermal vector handler which
-is truly atomic context even on PREEMPT_RT kernels.
+What am I doing wrong?
+Is there an option to skip such errors and continue?
+Is there an option to just test my bindings and yaml file?
 
-The critical sections are tiny, so change it to a raw spinlock.
+BR and thanks,
+Nikolaus Schaller
 
-Signed-off-by: Clark Williams <williams@redhat.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20191008110021.2j44ayunal7fkb7i@linutronix.de
----
- drivers/thermal/intel/x86_pkg_temp_thermal.c | 24 +++++++++----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/thermal/intel/x86_pkg_temp_thermal.c b/drivers/thermal/intel/x86_pkg_temp_thermal.c
-index ddb4a97..e18758a 100644
---- a/drivers/thermal/intel/x86_pkg_temp_thermal.c
-+++ b/drivers/thermal/intel/x86_pkg_temp_thermal.c
-@@ -63,7 +63,7 @@ static int max_id __read_mostly;
- /* Array of zone pointers */
- static struct zone_device **zones;
- /* Serializes interrupt notification, work and hotplug */
--static DEFINE_SPINLOCK(pkg_temp_lock);
-+static DEFINE_RAW_SPINLOCK(pkg_temp_lock);
- /* Protects zone operation in the work function against hotplug removal */
- static DEFINE_MUTEX(thermal_zone_mutex);
- 
-@@ -266,12 +266,12 @@ static void pkg_temp_thermal_threshold_work_fn(struct work_struct *work)
- 	u64 msr_val, wr_val;
- 
- 	mutex_lock(&thermal_zone_mutex);
--	spin_lock_irq(&pkg_temp_lock);
-+	raw_spin_lock_irq(&pkg_temp_lock);
- 	++pkg_work_cnt;
- 
- 	zonedev = pkg_temp_thermal_get_dev(cpu);
- 	if (!zonedev) {
--		spin_unlock_irq(&pkg_temp_lock);
-+		raw_spin_unlock_irq(&pkg_temp_lock);
- 		mutex_unlock(&thermal_zone_mutex);
- 		return;
- 	}
-@@ -285,7 +285,7 @@ static void pkg_temp_thermal_threshold_work_fn(struct work_struct *work)
- 	}
- 
- 	enable_pkg_thres_interrupt();
--	spin_unlock_irq(&pkg_temp_lock);
-+	raw_spin_unlock_irq(&pkg_temp_lock);
- 
- 	/*
- 	 * If tzone is not NULL, then thermal_zone_mutex will prevent the
-@@ -310,7 +310,7 @@ static int pkg_thermal_notify(u64 msr_val)
- 	struct zone_device *zonedev;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&pkg_temp_lock, flags);
-+	raw_spin_lock_irqsave(&pkg_temp_lock, flags);
- 	++pkg_interrupt_cnt;
- 
- 	disable_pkg_thres_interrupt();
-@@ -322,7 +322,7 @@ static int pkg_thermal_notify(u64 msr_val)
- 		pkg_thermal_schedule_work(zonedev->cpu, &zonedev->work);
- 	}
- 
--	spin_unlock_irqrestore(&pkg_temp_lock, flags);
-+	raw_spin_unlock_irqrestore(&pkg_temp_lock, flags);
- 	return 0;
- }
- 
-@@ -368,9 +368,9 @@ static int pkg_temp_thermal_device_add(unsigned int cpu)
- 	      zonedev->msr_pkg_therm_high);
- 
- 	cpumask_set_cpu(cpu, &zonedev->cpumask);
--	spin_lock_irq(&pkg_temp_lock);
-+	raw_spin_lock_irq(&pkg_temp_lock);
- 	zones[id] = zonedev;
--	spin_unlock_irq(&pkg_temp_lock);
-+	raw_spin_unlock_irq(&pkg_temp_lock);
- 	return 0;
- }
- 
-@@ -407,7 +407,7 @@ static int pkg_thermal_cpu_offline(unsigned int cpu)
- 	}
- 
- 	/* Protect against work and interrupts */
--	spin_lock_irq(&pkg_temp_lock);
-+	raw_spin_lock_irq(&pkg_temp_lock);
- 
- 	/*
- 	 * Check whether this cpu was the current target and store the new
-@@ -439,9 +439,9 @@ static int pkg_thermal_cpu_offline(unsigned int cpu)
- 		 * To cancel the work we need to drop the lock, otherwise
- 		 * we might deadlock if the work needs to be flushed.
- 		 */
--		spin_unlock_irq(&pkg_temp_lock);
-+		raw_spin_unlock_irq(&pkg_temp_lock);
- 		cancel_delayed_work_sync(&zonedev->work);
--		spin_lock_irq(&pkg_temp_lock);
-+		raw_spin_lock_irq(&pkg_temp_lock);
- 		/*
- 		 * If this is not the last cpu in the package and the work
- 		 * did not run after we dropped the lock above, then we
-@@ -452,7 +452,7 @@ static int pkg_thermal_cpu_offline(unsigned int cpu)
- 			pkg_thermal_schedule_work(target, &zonedev->work);
- 	}
- 
--	spin_unlock_irq(&pkg_temp_lock);
-+	raw_spin_unlock_irq(&pkg_temp_lock);
- 
- 	/* Final cleanup if this is the last cpu */
- 	if (lastcpu)
