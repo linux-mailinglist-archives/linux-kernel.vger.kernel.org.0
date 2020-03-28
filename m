@@ -2,211 +2,278 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 580ED1968DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 20:12:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 348481968E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 20:19:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbgC1TLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 15:11:47 -0400
-Received: from mga17.intel.com ([192.55.52.151]:59253 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbgC1TLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 15:11:46 -0400
-IronPort-SDR: fTyCvMCNpI8P1AQEp+aqHVD85oUFxPkES4a/Z8dEHkLpvSk5xrc2halJSi6y9RMN7AidR1AUgd
- O+1LmvUigOQQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2020 12:11:45 -0700
-IronPort-SDR: kho3stUoABUTzayTNWqJPu9YU9HzFpqcnuqKiyDWzpxHI5kj2qzmL0QvPpioCcEMTeh6nS6PDL
- Lnz3BX8MVdXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,317,1580803200"; 
-   d="scan'208";a="421478298"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 28 Mar 2020 12:11:44 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1jIGrw-0008mT-2Z; Sun, 29 Mar 2020 03:11:44 +0800
-Date:   Sun, 29 Mar 2020 03:11:01 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "x86-ml" <x86@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:x86/cleanups] BUILD SUCCESS
- a2150327250efa866c412caee84aaf05ebff9a8f
-Message-ID: <5e7fa145.5gsByv5W/QySTmAW%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1727151AbgC1TTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 15:19:15 -0400
+Received: from smtprelay0238.hostedemail.com ([216.40.44.238]:44710 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725807AbgC1TTO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 15:19:14 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 6E1DC100E8420;
+        Sat, 28 Mar 2020 19:19:12 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:2:41:69:355:379:599:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1535:1593:1594:1605:1730:1747:1777:1792:2393:2559:2562:2693:2828:2895:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3872:3874:4050:4119:4321:4605:5007:6119:7875:7903:8660:8957:9592:10848:11026:11232:11473:11658:11914:12043:12295:12296:12297:12438:12555:12683:12740:12760:12895:13138:13148:13161:13229:13230:13231:13439:14659:21080:21451:21627:21660:21990:30012:30029:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:2:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: egg02_1607af1e1a855
+X-Filterd-Recvd-Size: 8678
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 28 Mar 2020 19:19:11 +0000 (UTC)
+Message-ID: <197b261122fc6a751a163545044195f2d98d79dc.camel@perches.com>
+Subject: Re: [PATCH v2 4/5] staging: rtl8712: fix multiline derefernce
+ warning
+From:   Joe Perches <joe@perches.com>
+To:     aimannajjar <aiman.najjar@hurranet.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Sat, 28 Mar 2020 12:17:19 -0700
+In-Reply-To: <beb6c8c826cdda751f29f985f2b5dedfd2f87914.1585353747.git.aiman.najjar@hurranet.com>
+References: <20200327080429.GB1627562@kroah.com>
+         <cover.1585353747.git.aiman.najjar@hurranet.com>
+         <beb6c8c826cdda751f29f985f2b5dedfd2f87914.1585353747.git.aiman.najjar@hurranet.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  x86/cleanups
-branch HEAD: a2150327250efa866c412caee84aaf05ebff9a8f  Merge branch 'next.uaccess-2' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs into x86/cleanups
+On Fri, 2020-03-27 at 20:08 -0400, aimannajjar wrote:
+> This patch fixes the following checkpatch warning in
+> rtl8712x_xmit.c:
+> 
+> WARNING: Avoid multiple line dereference - prefer 'psta->sta_xmitpriv.txseq_tid[pattrib->priority]'
+> 544: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:544:
+> +				pattrib->seqnum = psta->sta_xmitpriv.
+> +						 txseq_tid[pattrib->priority];
 
-elapsed time: 484m
+It's always better to try to make the code clearer than
+merely shut up checkpatch bleats.
 
-configs tested: 152
-configs skipped: 0
+> diff --git a/drivers/staging/rtl8712/rtl871x_xmit.c b/drivers/staging/rtl8712/rtl871x_xmit.c
+[]
+> @@ -479,70 +479,70 @@ static int make_wlanhdr(struct _adapter *padapter, u8 *hdr,
+>  	__le16 *fctrl = &pwlanhdr->frame_ctl;
+>  
+>  	memset(hdr, 0, WLANHDR_OFFSET);
+> -	SetFrameSubType(fctrl, pattrib->subtype);
+> -	if (pattrib->subtype & WIFI_DATA_TYPE) {
+> +	SetFrameSubType(fctrl, pattr->subtype);
+> +	if (pattr->subtype & WIFI_DATA_TYPE) {
+> 
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+The whole following block could be outdented one level
+by changing this test to
 
-arm64                            allyesconfig
-arm                              allyesconfig
-arm64                            allmodconfig
-arm64                             allnoconfig
-arm                               allnoconfig
-arm                           efm32_defconfig
-arm                         at91_dt_defconfig
-arm                        shmobile_defconfig
-arm64                               defconfig
-arm                          exynos_defconfig
-arm                        multi_v5_defconfig
-arm                           sunxi_defconfig
-arm                        multi_v7_defconfig
-sparc                            allyesconfig
-ia64                             alldefconfig
-s390                       zfcpdump_defconfig
-sparc64                             defconfig
-arc                                 defconfig
-riscv                    nommu_virt_defconfig
-i386                              allnoconfig
-i386                             allyesconfig
-i386                             alldefconfig
-i386                                defconfig
-ia64                             allmodconfig
-ia64                              allnoconfig
-ia64                             allyesconfig
-ia64                                defconfig
-arm                              allmodconfig
-nios2                         3c120_defconfig
-nios2                         10m50_defconfig
-c6x                        evmc6678_defconfig
-xtensa                          iss_defconfig
-c6x                              allyesconfig
-xtensa                       common_defconfig
-openrisc                 simple_smp_defconfig
-openrisc                    or1ksim_defconfig
-nds32                               defconfig
-nds32                             allnoconfig
-csky                                defconfig
-alpha                               defconfig
-h8300                       h8s-sim_defconfig
-h8300                     edosk2674_defconfig
-m68k                       m5475evb_defconfig
-m68k                             allmodconfig
-h8300                    h8300h-sim_defconfig
-m68k                           sun3_defconfig
-m68k                          multi_defconfig
-arc                              allyesconfig
-powerpc                             defconfig
-powerpc                       ppc64_defconfig
-powerpc                          rhel-kconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                           allnoconfig
-mips                           32r2_defconfig
-mips                         64r6el_defconfig
-mips                             allmodconfig
-mips                              allnoconfig
-mips                             allyesconfig
-mips                      fuloong2e_defconfig
-mips                      malta_kvm_defconfig
-parisc                            allnoconfig
-parisc                           allyesconfig
-parisc                generic-32bit_defconfig
-parisc                generic-64bit_defconfig
-i386                 randconfig-a002-20200327
-i386                 randconfig-a001-20200327
-x86_64               randconfig-a002-20200327
-x86_64               randconfig-a001-20200327
-i386                 randconfig-a003-20200327
-x86_64               randconfig-a003-20200327
-mips                 randconfig-a001-20200327
-nds32                randconfig-a001-20200327
-m68k                 randconfig-a001-20200327
-parisc               randconfig-a001-20200327
-alpha                randconfig-a001-20200327
-riscv                randconfig-a001-20200327
-h8300                randconfig-a001-20200327
-microblaze           randconfig-a001-20200327
-nios2                randconfig-a001-20200327
-c6x                  randconfig-a001-20200327
-sparc64              randconfig-a001-20200327
-s390                 randconfig-a001-20200327
-xtensa               randconfig-a001-20200327
-csky                 randconfig-a001-20200327
-openrisc             randconfig-a001-20200327
-sh                   randconfig-a001-20200327
-i386                 randconfig-b003-20200327
-i386                 randconfig-b001-20200327
-x86_64               randconfig-b003-20200327
-i386                 randconfig-b002-20200327
-x86_64               randconfig-b002-20200327
-x86_64               randconfig-b001-20200327
-x86_64               randconfig-c003-20200327
-x86_64               randconfig-c001-20200327
-i386                 randconfig-c002-20200327
-x86_64               randconfig-c002-20200327
-i386                 randconfig-c003-20200327
-i386                 randconfig-c001-20200327
-i386                 randconfig-d003-20200327
-i386                 randconfig-d001-20200327
-x86_64               randconfig-d002-20200327
-x86_64               randconfig-d001-20200327
-i386                 randconfig-d002-20200327
-x86_64               randconfig-d003-20200327
-x86_64               randconfig-e001-20200327
-x86_64               randconfig-e003-20200327
-i386                 randconfig-e002-20200327
-i386                 randconfig-e003-20200327
-i386                 randconfig-e001-20200327
-x86_64               randconfig-e002-20200327
-i386                 randconfig-f001-20200327
-x86_64               randconfig-h003-20200327
-i386                 randconfig-h003-20200327
-i386                 randconfig-h001-20200327
-x86_64               randconfig-h001-20200327
-i386                 randconfig-h002-20200327
-arm                  randconfig-a001-20200327
-powerpc              randconfig-a001-20200327
-ia64                 randconfig-a001-20200327
-sparc                randconfig-a001-20200327
-arc                  randconfig-a001-20200327
-arm64                randconfig-a001-20200327
-riscv                            allmodconfig
-riscv                             allnoconfig
-riscv                            allyesconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-s390                             alldefconfig
-s390                             allmodconfig
-s390                              allnoconfig
-s390                             allyesconfig
-s390                          debug_defconfig
-s390                                defconfig
-sh                               allmodconfig
-sh                                allnoconfig
-sh                          rsk7269_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                            titan_defconfig
-sparc                               defconfig
-sparc64                           allnoconfig
-sparc64                          allyesconfig
-sparc64                          allmodconfig
-um                           x86_64_defconfig
-um                             i386_defconfig
-um                                  defconfig
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                         rhel-7.2-clear
-x86_64                               rhel-7.6
+	if (!(pattr->subtype & WIFI_DATA_TYPE))
+		return 0;
+
+>  		if (check_fwstate(pmlmepriv,  WIFI_STATION_STATE)) {
+>  			/* to_ds = 1, fr_ds = 0; */
+>  			SetToDs(fctrl);
+>  			memcpy(pwlanhdr->addr1, get_bssid(pmlmepriv),
+>  				ETH_ALEN);
+The repetitive call to get_bssid(pmlmepriv) could be saved
+by performing it outside this test
+
+	u8 bssid = get_bssid(pmlmepriv);
+
+and then using bssid in each memcpy/ether_addr_copy
+
+> -			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
+> -			memcpy(pwlanhdr->addr3, pattrib->dst, ETH_ALEN);
+> +			memcpy(pwlanhdr->addr2, pattr->src, ETH_ALEN);
+> +			memcpy(pwlanhdr->addr3, pattr->dst, ETH_ALEN);
+
+All of these memcpy could probably use ether_addr_copy if
+
+	struct pkt_attrib {
+		...
+		u8      dst[ETH_ALEN];
+		...
+	};
+
+was changed to 
+
+		u8	dst[ETH_ALEN] __aligned(2);
+		
+
+so these would be
+
+			ether_addr_copy(pwlanhdr->addr2, pattr->src);
+
+and pwlanhdr isn't a particularly valuable name
+for an automatic either.  It's hungarian like.
+
+So I would suggest something like the below that
+avoids any long lines instead and also removes
+unnecessary multi-line statements without renaming.
 
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ drivers/staging/rtl8712/rtl871x_xmit.c | 123 ++++++++++++++++-----------------
+ drivers/staging/rtl8712/rtl871x_xmit.h |   2 +-
+ 2 files changed, 61 insertions(+), 64 deletions(-)
+
+diff --git a/drivers/staging/rtl8712/rtl871x_xmit.c b/drivers/staging/rtl8712/rtl871x_xmit.c
+index f0b853..3961dae 100644
+--- a/drivers/staging/rtl8712/rtl871x_xmit.c
++++ b/drivers/staging/rtl8712/rtl871x_xmit.c
+@@ -477,75 +477,72 @@ static int make_wlanhdr(struct _adapter *padapter, u8 *hdr,
+ 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+ 	struct qos_priv *pqospriv = &pmlmepriv->qospriv;
+ 	__le16 *fctrl = &pwlanhdr->frame_ctl;
++	u8 *bssid;
+ 
+ 	memset(hdr, 0, WLANHDR_OFFSET);
+ 	SetFrameSubType(fctrl, pattrib->subtype);
+-	if (pattrib->subtype & WIFI_DATA_TYPE) {
+-		if (check_fwstate(pmlmepriv,  WIFI_STATION_STATE)) {
+-			/* to_ds = 1, fr_ds = 0; */
+-			SetToDs(fctrl);
+-			memcpy(pwlanhdr->addr1, get_bssid(pmlmepriv),
+-				ETH_ALEN);
+-			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
+-			memcpy(pwlanhdr->addr3, pattrib->dst, ETH_ALEN);
+-		} else if (check_fwstate(pmlmepriv, WIFI_AP_STATE)) {
+-			/* to_ds = 0, fr_ds = 1; */
+-			SetFrDs(fctrl);
+-			memcpy(pwlanhdr->addr1, pattrib->dst, ETH_ALEN);
+-			memcpy(pwlanhdr->addr2, get_bssid(pmlmepriv),
+-				ETH_ALEN);
+-			memcpy(pwlanhdr->addr3, pattrib->src, ETH_ALEN);
+-		} else if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) ||
+-			   check_fwstate(pmlmepriv,
+-					 WIFI_ADHOC_MASTER_STATE)) {
+-			memcpy(pwlanhdr->addr1, pattrib->dst, ETH_ALEN);
+-			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
+-			memcpy(pwlanhdr->addr3, get_bssid(pmlmepriv),
+-				ETH_ALEN);
+-		} else if (check_fwstate(pmlmepriv, WIFI_MP_STATE)) {
+-			memcpy(pwlanhdr->addr1, pattrib->dst, ETH_ALEN);
+-			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
+-			memcpy(pwlanhdr->addr3, get_bssid(pmlmepriv),
+-				ETH_ALEN);
+-		} else {
+-			return -EINVAL;
+-		}
++	if (!(pattrib->subtype & WIFI_DATA_TYPE))
++		return 0;
+ 
+-		if (pattrib->encrypt)
+-			SetPrivacy(fctrl);
+-		if (pqospriv->qos_option) {
+-			qc = (unsigned short *)(hdr + pattrib->hdrlen - 2);
+-			if (pattrib->priority)
+-				SetPriority(qc, pattrib->priority);
+-			SetAckpolicy(qc, pattrib->ack_policy);
+-		}
+-		/* TODO: fill HT Control Field */
+-		/* Update Seq Num will be handled by f/w */
+-		{
+-			struct sta_info *psta;
+-			bool bmcst = is_multicast_ether_addr(pattrib->ra);
+-
+-			if (pattrib->psta) {
+-				psta = pattrib->psta;
+-			} else {
+-				if (bmcst)
+-					psta = r8712_get_bcmc_stainfo(padapter);
+-				else
+-					psta =
+-					 r8712_get_stainfo(&padapter->stapriv,
+-					 pattrib->ra);
+-			}
+-			if (psta) {
+-				psta->sta_xmitpriv.txseq_tid
+-						  [pattrib->priority]++;
+-				psta->sta_xmitpriv.txseq_tid[pattrib->priority]
+-						   &= 0xFFF;
+-				pattrib->seqnum = psta->sta_xmitpriv.
+-						  txseq_tid[pattrib->priority];
+-				SetSeqNum(hdr, pattrib->seqnum);
+-			}
++	bssid = get_bssid(pmlmepriv);
++
++	if (check_fwstate(pmlmepriv,  WIFI_STATION_STATE)) {
++		/* to_ds = 1, fr_ds = 0; */
++		SetToDs(fctrl);
++		ether_addr_copy(pwlanhdr->addr1, bssid);
++		ether_addr_copy(pwlanhdr->addr2, pattrib->src);
++		ether_addr_copy(pwlanhdr->addr3, pattrib->dst);
++	} else if (check_fwstate(pmlmepriv, WIFI_AP_STATE)) {
++		/* to_ds = 0, fr_ds = 1; */
++		SetFrDs(fctrl);
++		ether_addr_copy(pwlanhdr->addr1, pattrib->dst);
++		ether_addr_copy(pwlanhdr->addr2, bssid);
++		ether_addr_copy(pwlanhdr->addr3, pattrib->src);
++	} else if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) ||
++		   check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE)) {
++		ether_addr_copy(pwlanhdr->addr1, pattrib->dst);
++		ether_addr_copy(pwlanhdr->addr2, pattrib->src);
++		ether_addr_copy(pwlanhdr->addr3, bssid);
++	} else if (check_fwstate(pmlmepriv, WIFI_MP_STATE)) {
++		ether_addr_copy(pwlanhdr->addr1, pattrib->dst);
++		ether_addr_copy(pwlanhdr->addr2, pattrib->src);
++		ether_addr_copy(pwlanhdr->addr3, bssid);
++	} else {
++		return -EINVAL;
++	}
++
++	if (pattrib->encrypt)
++		SetPrivacy(fctrl);
++	if (pqospriv->qos_option) {
++		qc = (unsigned short *)(hdr + pattrib->hdrlen - 2);
++		if (pattrib->priority)
++			SetPriority(qc, pattrib->priority);
++		SetAckpolicy(qc, pattrib->ack_policy);
++	}
++	/* TODO: fill HT Control Field */
++	/* Update Seq Num will be handled by f/w */
++	{
++		struct sta_info *psta;
++		bool bmcst = is_multicast_ether_addr(pattrib->ra);
++
++		if (pattrib->psta)
++			psta = pattrib->psta;
++		else if (bmcst)
++			psta = r8712_get_bcmc_stainfo(padapter);
++		else
++			psta = r8712_get_stainfo(&padapter->stapriv,
++						 pattrib->ra);
++
++		if (psta) {
++			u16 *txtid = psta->sta_xmitpriv.txseq_tid;
++
++			txtid[pattrib->priority]++;
++			txtid[pattrib->priority] &= 0xFFF;
++			pattrib->seqnum = txtid[pattrib->priority];
++			SetSeqNum(hdr, pattrib->seqnum);
+ 		}
+ 	}
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/staging/rtl8712/rtl871x_xmit.h b/drivers/staging/rtl8712/rtl871x_xmit.h
+index f227828..c0c0c7 100644
+--- a/drivers/staging/rtl8712/rtl871x_xmit.h
++++ b/drivers/staging/rtl8712/rtl871x_xmit.h
+@@ -115,7 +115,7 @@ struct pkt_attrib {
+ 	u8	icv_len;
+ 	unsigned char iv[8];
+ 	unsigned char icv[8];
+-	u8	dst[ETH_ALEN];
++	u8	dst[ETH_ALEN] __aligned(2);	/* for ether_addr_copy */
+ 	u8	src[ETH_ALEN];
+ 	u8	ta[ETH_ALEN];
+ 	u8	ra[ETH_ALEN];
+
+
