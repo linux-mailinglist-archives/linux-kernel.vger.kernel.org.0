@@ -2,104 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33FF5196320
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 03:32:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD7719632D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 03:48:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbgC1CcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Mar 2020 22:32:07 -0400
-Received: from gateway21.websitewelcome.com ([192.185.46.113]:48872 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726661AbgC1CcG (ORCPT
+        id S1727151AbgC1Cs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Mar 2020 22:48:57 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:52011 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726291AbgC1Cs5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Mar 2020 22:32:06 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 6E990400C8350
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Mar 2020 21:32:05 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id I1GXjJR6zSl8qI1GXjqH0U; Fri, 27 Mar 2020 21:32:05 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=m7HVYDJnzCg+rsyE3gWKNJQWXD+U5W3Qjb0bzyPX+VI=; b=t6SDPlkPSAoKtD5BNbuwleOfsJ
-        0b8wfUDWk7K18AWjlzSg9qn3FwLIJthiFBxX8z0bnwW/zI3v1yvUtHBlMOaZaSBIF/JTy8khKotJ3
-        yPwA4dH6LU741d9pYYwAMoKuTfsbkVksa7uJii//UqC5YLv0FRmfPp10/uCEibs7FwwRCE6al+Lmd
-        bhWyJQfEJQCGDPfIhtbkixrNs0gJa22KI4dOnwF6Q//i6RT3aF3TjgBQ3l/3iEs4ndkqL5oOaYq2K
-        OQbIjfPUMbQcsgBRF2WcJx9QeOtvzRSrrVD9TAc/x1uhIcnhm9BzvW+QnbKhLgxrT9oK2ZNeRcahO
-        Zu0vnJOw==;
-Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:51192 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jI1GV-001EiJ-Ud; Fri, 27 Mar 2020 21:32:03 -0500
-Date:   Fri, 27 Mar 2020 21:35:39 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Lijun Ou <oulijun@huawei.com>,
-        "Wei Hu(Xavier)" <huwei87@hisilicon.com>,
-        Weihang Li <liweihang@huawei.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Xi Wang <wangxi11@huawei.com>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v2][next] RDMA/hns: Fix uninitialized variable bug
-Message-ID: <20200328023539.GA32016@embeddedor>
+        Fri, 27 Mar 2020 22:48:57 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585363736; h=Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Message-ID: Date: Subject: In-Reply-To: References: Cc:
+ To: From: Reply-To: Sender;
+ bh=+WpPnB0uFYRHxbJdTSXbZ3CsA3rPO9kHVEIdO35S7As=; b=vwPJhjm0j/vLl3nHGUqvZITFLtkH8Y6wN+XfVyJCpJUEr2CS8X4TVmKOteAk6PhRCCbhef83
+ fCy6ic9rbBoHo/G1pSfBX9pF/WyyLk4XyTliJKnapmyqpUmCn4OZNHY9sOOhvd6AIcZMYEr0
+ Ywc46HyYYNbrB7yMh3m9fd4oPnk=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e7ebb0a.7f57878b4260-smtp-out-n02;
+ Sat, 28 Mar 2020 02:48:42 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0E01CC4478C; Sat, 28 Mar 2020 02:48:41 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        SUSPICIOUS_RECIPS autolearn=no autolearn_force=no version=3.4.0
+Received: from BCAIN (104-54-226-75.lightspeed.austtx.sbcglobal.net [104.54.226.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bcain)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A7892C433F2;
+        Sat, 28 Mar 2020 02:48:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A7892C433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=bcain@codeaurora.org
+Reply-To: <bcain@codeaurora.org>
+From:   "Brian Cain" <bcain@codeaurora.org>
+To:     "'afzal mohammed'" <afzal.mohd.ma@gmail.com>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>
+Cc:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <x86@kernel.org>,
+        <linux-sh@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-parisc@vger.kernel.org>,
+        <linux-mips@vger.kernel.org>, <linux-m68k@lists.linux-m68k.org>,
+        <linux-ia64@vger.kernel.org>, <linux-hexagon@vger.kernel.org>,
+        <linux-c6x-dev@linux-c6x.org>, <linux-omap@vger.kernel.org>,
+        <linux-alpha@vger.kernel.org>
+References: <20200321174303.GA7930@afzalpc> <cover.1585320721.git.afzal.mohd.ma@gmail.com>
+In-Reply-To: <cover.1585320721.git.afzal.mohd.ma@gmail.com>
+Subject: RE: [PATCH 0/6] Kill setup_irq()
+Date:   Fri, 27 Mar 2020 21:48:38 -0500
+Message-ID: <059b01d604ab$637355b0$2a5a0110$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.218.116.241
-X-Source-L: No
-X-Exim-ID: 1jI1GV-001EiJ-Ud
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:51192
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain;
+        charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQH+2owB65JuA03jeOLwO39OK5TmSwJQWNztp/kerbA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a potential execution path in which variable *ret* is returned
-without being properly initialized, previously.
+> -----Original Message-----
+> From: linux-hexagon-owner@vger.kernel.org <linux-hexagon-
+> owner@vger.kernel.org> On Behalf Of afzal mohammed
+> Sent: Friday, March 27, 2020 11:08 AM
+> To: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> linux-samsung-soc@vger.kernel.org; x86@kernel.org; linux-
+> sh@vger.kernel.org; linux-s390@vger.kernel.org; linuxppc-
+> dev@lists.ozlabs.org; linux-parisc@vger.kernel.org; linux-
+> mips@vger.kernel.org; linux-m68k@lists.linux-m68k.org; linux-
+> ia64@vger.kernel.org; linux-hexagon@vger.kernel.org; linux-c6x-dev@linux-
+> c6x.org; linux-omap@vger.kernel.org; linux-alpha@vger.kernel.org
+> Subject: [PATCH 0/6] Kill setup_irq()
+...
+> Note 1: sh toolchain is available, but that will not make the  relevant
+changes
+> compile as it has dependency of 64bit arch toolchain,  did try a Kconfig
+hack
+> to make it compile w/ 32bit sh toolchain, but it  failed due to other
+reasons
+> (unknown operands), so gave up on that.
+> Note 2: hexagon final image creation fails even w/o my patch, but it  has
+> been ensured that w/ my changes relevant object files are getting  built
+w/o
+> warnings.
 
-Fix this by initializing variable *ret* to 0.
+Afzal,
 
-Addresses-Coverity-ID: 1491917 ("Uninitialized scalar variable")
-Fixes: 2f49de21f3e9 ("RDMA/hns: Optimize mhop get flow for multi-hop addressing")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v2:
- - Set ret to 0 instead of -ENODEV. Thanks Weihang Li, for the feedback.
+	What's the nature of the failure in "Note 2"?
 
- drivers/infiniband/hw/hns/hns_roce_hem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hem.c b/drivers/infiniband/hw/hns/hns_roce_hem.c
-index c96378718f88..263338b90d7a 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hem.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hem.c
-@@ -603,7 +603,7 @@ static int set_mhop_hem(struct hns_roce_dev *hr_dev,
- {
- 	struct ib_device *ibdev = &hr_dev->ib_dev;
- 	int step_idx;
--	int ret;
-+	int ret = 0;
- 
- 	if (index->inited & HEM_INDEX_L0) {
- 		ret = hr_dev->hw->set_hem(hr_dev, table, obj, 0);
--- 
-2.26.0
-
+-Brian
