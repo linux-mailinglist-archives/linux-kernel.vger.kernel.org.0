@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C20B9196555
+	by mail.lfdr.de (Postfix) with ESMTP id 51864196554
 	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:04:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbgC1LAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727464AbgC1LAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sat, 28 Mar 2020 07:00:08 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55538 "EHLO
+Received: from Galois.linutronix.de ([193.142.43.55]:55557 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727149AbgC1LAE (ORCPT
+        with ESMTP id S1727247AbgC1LAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 07:00:04 -0400
+        Sat, 28 Mar 2020 07:00:07 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jI9C5-0003dR-E8; Sat, 28 Mar 2020 12:00:01 +0100
+        id 1jI9C7-0003ew-SJ; Sat, 28 Mar 2020 12:00:04 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E2C831C0483;
-        Sat, 28 Mar 2020 11:59:59 +0100 (CET)
-Date:   Sat, 28 Mar 2020 10:59:59 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 61B491C0470;
+        Sat, 28 Mar 2020 12:00:01 +0100 (CET)
+Date:   Sat, 28 Mar 2020 11:00:00 -0000
 From:   "tip-bot2 for Al Viro" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86: get rid of get_user_ex() in
- ia32_restore_sigcontext()
+Subject: [tip: x86/cleanups] x86: switch sigframe sigset handling to explict
+ __get_user()/__put_user()
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158539319958.28353.17824653160739885760.tip-bot2@tip-bot2>
+Message-ID: <158539320093.28353.2717834444858954380.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -45,163 +45,153 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/cleanups branch of tip:
 
-Commit-ID:     978727ca331ebd8b479f6a7afd27bb2e6504b2e3
-Gitweb:        https://git.kernel.org/tip/978727ca331ebd8b479f6a7afd27bb2e6504b2e3
+Commit-ID:     71c3313a38aa09339a2442809e658fd233ab0757
+Gitweb:        https://git.kernel.org/tip/71c3313a38aa09339a2442809e658fd233ab0757
 Author:        Al Viro <viro@zeniv.linux.org.uk>
-AuthorDate:    Sat, 15 Feb 2020 12:23:36 -05:00
+AuthorDate:    Sat, 15 Feb 2020 11:43:18 -05:00
 Committer:     Al Viro <viro@zeniv.linux.org.uk>
-CommitterDate: Wed, 18 Mar 2020 20:10:27 -04:00
+CommitterDate: Wed, 18 Mar 2020 15:29:54 -04:00
 
-x86: get rid of get_user_ex() in ia32_restore_sigcontext()
+x86: switch sigframe sigset handling to explict __get_user()/__put_user()
 
-Just do copyin into a local struct and be done with that - we are
-on a shallow stack here.
-
-[reworked by tglx, removing the macro horrors while we are touching that]
+... and consolidate the definition of sigframe_ia32->extramask - it's
+always a 1-element array of 32bit unsigned.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- arch/x86/ia32/ia32_signal.c | 106 ++++++++++++++---------------------
- 1 file changed, 44 insertions(+), 62 deletions(-)
+ arch/x86/ia32/ia32_signal.c     | 16 +++++-----------
+ arch/x86/include/asm/sigframe.h |  6 +-----
+ arch/x86/kernel/signal.c        | 20 ++++++++------------
+ 3 files changed, 14 insertions(+), 28 deletions(-)
 
 diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
-index c72025d..23e2c55 100644
+index a3aefe9..c72025d 100644
 --- a/arch/x86/ia32/ia32_signal.c
 +++ b/arch/x86/ia32/ia32_signal.c
-@@ -36,70 +36,56 @@
- #include <asm/sighandling.h>
- #include <asm/smap.h>
+@@ -126,10 +126,7 @@ COMPAT_SYSCALL_DEFINE0(sigreturn)
+ 	if (!access_ok(frame, sizeof(*frame)))
+ 		goto badframe;
+ 	if (__get_user(set.sig[0], &frame->sc.oldmask)
+-	    || (_COMPAT_NSIG_WORDS > 1
+-		&& __copy_from_user((((char *) &set.sig) + 4),
+-				    &frame->extramask,
+-				    sizeof(frame->extramask))))
++	    || __get_user(((__u32 *)&set)[1], &frame->extramask[0]))
+ 		goto badframe;
  
-+static inline void reload_segments(struct sigcontext_32 *sc)
-+{
-+	unsigned int cur;
-+
-+	savesegment(gs, cur);
-+	if ((sc->gs | 0x03) != cur)
-+		load_gs_index(sc->gs | 0x03);
-+	savesegment(fs, cur);
-+	if ((sc->fs | 0x03) != cur)
-+		loadsegment(fs, sc->fs | 0x03);
-+	savesegment(ds, cur);
-+	if ((sc->ds | 0x03) != cur)
-+		loadsegment(ds, sc->ds | 0x03);
-+	savesegment(es, cur);
-+	if ((sc->es | 0x03) != cur)
-+		loadsegment(es, sc->es | 0x03);
-+}
-+
- /*
-  * Do a signal return; undo the signal stack.
-  */
--#define loadsegment_gs(v)	load_gs_index(v)
--#define loadsegment_fs(v)	loadsegment(fs, v)
--#define loadsegment_ds(v)	loadsegment(ds, v)
--#define loadsegment_es(v)	loadsegment(es, v)
--
--#define get_user_seg(seg)	({ unsigned int v; savesegment(seg, v); v; })
--#define set_user_seg(seg, v)	loadsegment_##seg(v)
--
--#define COPY(x)			{		\
--	get_user_ex(regs->x, &sc->x);		\
--}
--
--#define GET_SEG(seg)		({			\
--	unsigned short tmp;				\
--	get_user_ex(tmp, &sc->seg);			\
--	tmp;						\
--})
--
--#define COPY_SEG_CPL3(seg)	do {			\
--	regs->seg = GET_SEG(seg) | 3;			\
--} while (0)
--
--#define RELOAD_SEG(seg)		{		\
--	unsigned int pre = (seg) | 3;		\
--	unsigned int cur = get_user_seg(seg);	\
--	if (pre != cur)				\
--		set_user_seg(seg, pre);		\
--}
--
- static int ia32_restore_sigcontext(struct pt_regs *regs,
--				   struct sigcontext_32 __user *sc)
-+				   struct sigcontext_32 __user *usc)
- {
--	unsigned int tmpflags, err = 0;
--	u16 gs, fs, es, ds;
--	void __user *buf;
--	u32 tmp;
-+	struct sigcontext_32 sc;
+ 	set_current_blocked(&set);
+@@ -153,7 +150,7 @@ COMPAT_SYSCALL_DEFINE0(rt_sigreturn)
  
- 	/* Always make any pending restarted system calls return -EINTR */
- 	current->restart_block.fn = do_no_restart_syscall;
+ 	if (!access_ok(frame, sizeof(*frame)))
+ 		goto badframe;
+-	if (__copy_from_user(&set, &frame->uc.uc_sigmask, sizeof(set)))
++	if (__get_user(set.sig[0], (__u64 __user *)&frame->uc.uc_sigmask))
+ 		goto badframe;
  
--	get_user_try {
--		gs = GET_SEG(gs);
--		fs = GET_SEG(fs);
--		ds = GET_SEG(ds);
--		es = GET_SEG(es);
--
--		COPY(di); COPY(si); COPY(bp); COPY(sp); COPY(bx);
--		COPY(dx); COPY(cx); COPY(ip); COPY(ax);
--		/* Don't touch extended registers */
--
--		COPY_SEG_CPL3(cs);
--		COPY_SEG_CPL3(ss);
--
--		get_user_ex(tmpflags, &sc->flags);
--		regs->flags = (regs->flags & ~FIX_EFLAGS) | (tmpflags & FIX_EFLAGS);
--		/* disable syscall checks */
--		regs->orig_ax = -1;
-+	if (unlikely(copy_from_user(&sc, usc, sizeof(sc))))
+ 	set_current_blocked(&set);
+@@ -277,11 +274,8 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
+ 	if (ia32_setup_sigcontext(&frame->sc, fpstate, regs, set->sig[0]))
+ 		return -EFAULT;
+ 
+-	if (_COMPAT_NSIG_WORDS > 1) {
+-		if (__copy_to_user(frame->extramask, &set->sig[1],
+-				   sizeof(frame->extramask)))
+-			return -EFAULT;
+-	}
++	if (__put_user(set->sig[1], &frame->extramask[0]))
 +		return -EFAULT;
  
--		get_user_ex(tmp, &sc->fpstate);
--		buf = compat_ptr(tmp);
--	} get_user_catch(err);
-+	/* Get only the ia32 registers. */
-+	regs->bx = sc.bx;
-+	regs->cx = sc.cx;
-+	regs->dx = sc.dx;
-+	regs->si = sc.si;
-+	regs->di = sc.di;
-+	regs->bp = sc.bp;
-+	regs->ax = sc.ax;
-+	regs->sp = sc.sp;
-+	regs->ip = sc.ip;
-+
-+	/* Get CS/SS and force CPL3 */
-+	regs->cs = sc.cs | 0x03;
-+	regs->ss = sc.ss | 0x03;
-+
-+	regs->flags = (regs->flags & ~FIX_EFLAGS) | (sc.flags & FIX_EFLAGS);
-+	/* disable syscall checks */
-+	regs->orig_ax = -1;
+ 	if (ksig->ka.sa.sa_flags & SA_RESTORER) {
+ 		restorer = ksig->ka.sa.sa_restorer;
+@@ -381,7 +375,7 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
+ 	err |= __copy_siginfo_to_user32(&frame->info, &ksig->info, false);
+ 	err |= ia32_setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
+ 				     regs, set->sig[0]);
+-	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
++	err |= __put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask);
  
- 	/*
- 	 * Reload fs and gs if they have changed in the signal
-@@ -107,14 +93,8 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
- 	 * the handler, but does not clobber them at least in the
- 	 * normal case.
+ 	if (err)
+ 		return -EFAULT;
+diff --git a/arch/x86/include/asm/sigframe.h b/arch/x86/include/asm/sigframe.h
+index f176114..84eab27 100644
+--- a/arch/x86/include/asm/sigframe.h
++++ b/arch/x86/include/asm/sigframe.h
+@@ -33,11 +33,7 @@ struct sigframe_ia32 {
+ 	 * legacy application accessing/modifying it.
  	 */
--	RELOAD_SEG(gs);
--	RELOAD_SEG(fs);
--	RELOAD_SEG(ds);
--	RELOAD_SEG(es);
--
--	err |= fpu__restore_sig(buf, 1);
--
--	return err;
-+	reload_segments(&sc);
-+	return fpu__restore_sig(compat_ptr(sc.fpstate), 1);
- }
+ 	struct _fpstate_32 fpstate_unused;
+-#ifdef CONFIG_IA32_EMULATION
+-	unsigned int extramask[_COMPAT_NSIG_WORDS-1];
+-#else /* !CONFIG_IA32_EMULATION */
+-	unsigned long extramask[_NSIG_WORDS-1];
+-#endif /* CONFIG_IA32_EMULATION */
++	unsigned int extramask[1];
+ 	char retcode[8];
+ 	/* fp state follows here */
+ };
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index 8a29573..53ac66b 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -326,11 +326,8 @@ __setup_frame(int sig, struct ksignal *ksig, sigset_t *set,
+ 	if (setup_sigcontext(&frame->sc, fpstate, regs, set->sig[0]))
+ 		return -EFAULT;
  
- COMPAT_SYSCALL_DEFINE0(sigreturn)
-@@ -172,6 +152,8 @@ badframe:
-  * Set up a signal frame.
-  */
+-	if (_NSIG_WORDS > 1) {
+-		if (__copy_to_user(&frame->extramask, &set->sig[1],
+-				   sizeof(frame->extramask)))
+-			return -EFAULT;
+-	}
++	if (__put_user(set->sig[1], &frame->extramask[0]))
++		return -EFAULT;
  
-+#define get_user_seg(seg)	({ unsigned int v; savesegment(seg, v); v; })
-+
- static int ia32_setup_sigcontext(struct sigcontext_32 __user *sc,
- 				 void __user *fpstate,
- 				 struct pt_regs *regs, unsigned int mask)
+ 	if (current->mm->context.vdso)
+ 		restorer = current->mm->context.vdso +
+@@ -489,7 +486,7 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
+ 	} put_user_catch(err);
+ 
+ 	err |= setup_sigcontext(&frame->uc.uc_mcontext, fp, regs, set->sig[0]);
+-	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
++	err |= __put_user(set->sig[0], &frame->uc.uc_sigmask.sig[0]);
+ 
+ 	if (err)
+ 		return -EFAULT;
+@@ -575,7 +572,7 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
+ 
+ 	err |= setup_sigcontext(&frame->uc.uc_mcontext, fpstate,
+ 				regs, set->sig[0]);
+-	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
++	err |= __put_user(*(__u64 *)set, (__u64 __user *)&frame->uc.uc_sigmask);
+ 
+ 	if (err)
+ 		return -EFAULT;
+@@ -613,9 +610,8 @@ SYSCALL_DEFINE0(sigreturn)
+ 
+ 	if (!access_ok(frame, sizeof(*frame)))
+ 		goto badframe;
+-	if (__get_user(set.sig[0], &frame->sc.oldmask) || (_NSIG_WORDS > 1
+-		&& __copy_from_user(&set.sig[1], &frame->extramask,
+-				    sizeof(frame->extramask))))
++	if (__get_user(set.sig[0], &frame->sc.oldmask) ||
++	    __get_user(set.sig[1], &frame->extramask[0]))
+ 		goto badframe;
+ 
+ 	set_current_blocked(&set);
+@@ -645,7 +641,7 @@ SYSCALL_DEFINE0(rt_sigreturn)
+ 	frame = (struct rt_sigframe __user *)(regs->sp - sizeof(long));
+ 	if (!access_ok(frame, sizeof(*frame)))
+ 		goto badframe;
+-	if (__copy_from_user(&set, &frame->uc.uc_sigmask, sizeof(set)))
++	if (__get_user(*(__u64 *)&set, (__u64 __user *)&frame->uc.uc_sigmask))
+ 		goto badframe;
+ 	if (__get_user(uc_flags, &frame->uc.uc_flags))
+ 		goto badframe;
+@@ -870,7 +866,7 @@ asmlinkage long sys32_x32_rt_sigreturn(void)
+ 
+ 	if (!access_ok(frame, sizeof(*frame)))
+ 		goto badframe;
+-	if (__copy_from_user(&set, &frame->uc.uc_sigmask, sizeof(set)))
++	if (__get_user(set.sig[0], (__u64 __user *)&frame->uc.uc_sigmask))
+ 		goto badframe;
+ 	if (__get_user(uc_flags, &frame->uc.uc_flags))
+ 		goto badframe;
