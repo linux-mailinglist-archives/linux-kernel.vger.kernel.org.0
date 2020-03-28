@@ -2,360 +2,478 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2EDF196594
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F76F1965A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 12:21:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbgC1LLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 07:11:25 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40668 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbgC1LLY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 07:11:24 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c20so3327384pfi.7;
-        Sat, 28 Mar 2020 04:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=xruqb6jEnmWjvxMbTPam+szn/AYnmpl2M5rImhrizxc=;
-        b=YctLzhJbDzZxK5JrFGXRdp4RDARocAeMysOE9B5eGXBg3MkrbR0fIk2k/8GTO3yVia
-         JUw5mPnM+N+9Pa85YkcSRB6XFgmoew9LBVsqB4cvz708EEW76FcMgdb8uzmpMVAQ//G7
-         X1/C13LvLm8rShAmm2hwPMEBwGN/MrnLDnNxJ30CTmlbPilpIA08Q235gbBFjwJuz0bd
-         F/QvyChxuzid5YbGKmIqK8BFMOLVx0xegzmGN7OFTSgmPrEcDvinpJ3P2KkVSBIGZTqq
-         oR2xn6PQgfPZLg0+3NBYt2ACLwSnwgPURrUbKn1ell23q38KmRhiDJc1hUCsNRMI344G
-         rbBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=xruqb6jEnmWjvxMbTPam+szn/AYnmpl2M5rImhrizxc=;
-        b=CZ/DA6BU//M+2t8F9+Sdz9T7UMHQIEJNwdPSCKUUkPdgPGczjJfkVSFH12qBqy3Jhy
-         X0cwwFe1rHxfshXcfa6QUEoY2VzeeMKfDJf6NYkrtOInjaJLfdWr3LI6E24ywGuPDVa+
-         hW7ux1WeZIjlgeVa/eEvxa0ZZngDNTqcjyJPfNRmmAhXt4SJOfc3eLfTp/R0sX5NKCl5
-         Qm6Cp40iTJpVPSFh0zQPcosb9fupu8lGv3G1ERL4Yy69VHGU2DaDb1j7kxx8Yn2cV3uO
-         rfnqOwHQuR4NJlsX9h3bn4OmwLEyM/QEQEMXW7XI+mCp9af+eXsTnx7bp36L+x+9BoIX
-         /VNw==
-X-Gm-Message-State: ANhLgQ0OGhl1IS9hD5Ox4IcA12T/fNh2+CkBLPwRsZWBVr43rgjQhhe6
-        DP8ANXhnliYVdcneSes1H2VQuuQd8c8YYQ==
-X-Google-Smtp-Source: ADFU+vtdiUutUFxOOwRP56BRgZhBfVAH65AZis9CslhUHFmHGd9M3FgaTAlLudNbyjo71ZCLVbkXVg==
-X-Received: by 2002:a63:dd0a:: with SMTP id t10mr3814098pgg.50.1585393882487;
-        Sat, 28 Mar 2020 04:11:22 -0700 (PDT)
-Received: from nishad ([106.51.232.103])
-        by smtp.gmail.com with ESMTPSA id r14sm5605697pjj.48.2020.03.28.04.11.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 28 Mar 2020 04:11:22 -0700 (PDT)
-Date:   Sat, 28 Mar 2020 16:41:15 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Joe Perches <joe@perches.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] USB: gadget: Use the correct style for SPDX License
- Identifier
-Message-ID: <20200328111112.GA7219@nishad>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1726283AbgC1LVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 07:21:07 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:35808 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbgC1LVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 07:21:07 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DE6B61A0F68;
+        Sat, 28 Mar 2020 12:21:04 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 815A31A0EF7;
+        Sat, 28 Mar 2020 12:20:55 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A769B4028F;
+        Sat, 28 Mar 2020 19:20:44 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com,
+        andrew.smirnov@gmail.com, manivannan.sadhasivam@linaro.org,
+        michael@walle.cc, rjones@gateworks.com,
+        marcel.ziswiler@toradex.com, sebastien.szymanski@armadeus.com,
+        jon@solid-run.com, cosmin.stoica@nxp.com, l.stach@pengutronix.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/3] arm64: dts: imx: Add imx8dxl support
+Date:   Sat, 28 Mar 2020 19:13:33 +0800
+Message-Id: <1585394015-27825-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch corrects the SPDX License Identifier style in
-header files related to USB peripheral controller drivers.
-For C header files Documentation/process/license-rules.rst
-mandates C-like comments (opposed to C source files where
-C++ style should be used).
+i.MX8DXL is a dual Cortex-A35 proccessor with Cortex-M4 system controller
+inside. Add the SoC dtsi file support.
 
-Changes made by using a script provided by Joe Perches here:
-https://lkml.org/lkml/2019/2/7/46.
-
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/usb/gadget/function/f_uvc.h            | 2 +-
- drivers/usb/gadget/function/rndis.h            | 2 +-
- drivers/usb/gadget/function/u_audio.h          | 2 +-
- drivers/usb/gadget/function/u_ecm.h            | 2 +-
- drivers/usb/gadget/function/u_eem.h            | 2 +-
- drivers/usb/gadget/function/u_ether.h          | 2 +-
- drivers/usb/gadget/function/u_ether_configfs.h | 2 +-
- drivers/usb/gadget/function/u_fs.h             | 2 +-
- drivers/usb/gadget/function/u_gether.h         | 2 +-
- drivers/usb/gadget/function/u_hid.h            | 2 +-
- drivers/usb/gadget/function/u_midi.h           | 2 +-
- drivers/usb/gadget/function/u_ncm.h            | 2 +-
- drivers/usb/gadget/function/u_phonet.h         | 2 +-
- drivers/usb/gadget/function/u_printer.h        | 2 +-
- drivers/usb/gadget/function/u_rndis.h          | 2 +-
- drivers/usb/gadget/function/u_serial.h         | 2 +-
- drivers/usb/gadget/function/u_tcm.h            | 2 +-
- drivers/usb/gadget/function/u_uac1.h           | 2 +-
- drivers/usb/gadget/function/u_uac1_legacy.h    | 2 +-
- drivers/usb/gadget/function/u_uac2.h           | 2 +-
- drivers/usb/gadget/function/u_uvc.h            | 2 +-
- drivers/usb/gadget/function/uvc.h              | 2 +-
- drivers/usb/gadget/function/uvc_configfs.h     | 2 +-
- drivers/usb/gadget/function/uvc_v4l2.h         | 2 +-
- drivers/usb/gadget/function/uvc_video.h        | 2 +-
- 25 files changed, 25 insertions(+), 25 deletions(-)
+This patch needs pads-imx8dxl.h which is in below patch series:
+	https://patchwork.kernel.org/patch/11462211/
+---
+ arch/arm64/boot/dts/freescale/imx8dxl.dtsi | 416 +++++++++++++++++++++++++++++
+ 1 file changed, 416 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8dxl.dtsi
 
-diff --git a/drivers/usb/gadget/function/f_uvc.h b/drivers/usb/gadget/function/f_uvc.h
-index a81a17765558..1db972d4beeb 100644
---- a/drivers/usb/gadget/function/f_uvc.h
-+++ b/drivers/usb/gadget/function/f_uvc.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0+
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  *	f_uvc.h  --  USB Video Class Gadget driver
-  *
-diff --git a/drivers/usb/gadget/function/rndis.h b/drivers/usb/gadget/function/rndis.h
-index c7e3a70ce6c1..f6167f7fea82 100644
---- a/drivers/usb/gadget/function/rndis.h
-+++ b/drivers/usb/gadget/function/rndis.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * RNDIS	Definitions for Remote NDIS
-  *
-diff --git a/drivers/usb/gadget/function/u_audio.h b/drivers/usb/gadget/function/u_audio.h
-index 81d3d4ed6dfb..5ea6b86f1fda 100644
---- a/drivers/usb/gadget/function/u_audio.h
-+++ b/drivers/usb/gadget/function/u_audio.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0+
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * u_audio.h -- interface to USB gadget "ALSA sound card" utilities
-  *
-diff --git a/drivers/usb/gadget/function/u_ecm.h b/drivers/usb/gadget/function/u_ecm.h
-index 098ece573a5e..77cfb89932be 100644
---- a/drivers/usb/gadget/function/u_ecm.h
-+++ b/drivers/usb/gadget/function/u_ecm.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_ecm.h
-  *
-diff --git a/drivers/usb/gadget/function/u_eem.h b/drivers/usb/gadget/function/u_eem.h
-index 921386a375cf..3bd85dfcd71c 100644
---- a/drivers/usb/gadget/function/u_eem.h
-+++ b/drivers/usb/gadget/function/u_eem.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_eem.h
-  *
-diff --git a/drivers/usb/gadget/function/u_ether.h b/drivers/usb/gadget/function/u_ether.h
-index 332307d54292..10dd640684e2 100644
---- a/drivers/usb/gadget/function/u_ether.h
-+++ b/drivers/usb/gadget/function/u_ether.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0+
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * u_ether.h -- interface to USB gadget "ethernet link" utilities
-  *
-diff --git a/drivers/usb/gadget/function/u_ether_configfs.h b/drivers/usb/gadget/function/u_ether_configfs.h
-index d8b92485b727..bd92b5703013 100644
---- a/drivers/usb/gadget/function/u_ether_configfs.h
-+++ b/drivers/usb/gadget/function/u_ether_configfs.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_ether_configfs.h
-  *
-diff --git a/drivers/usb/gadget/function/u_fs.h b/drivers/usb/gadget/function/u_fs.h
-index f9b0cf67360d..f102ec23f3af 100644
---- a/drivers/usb/gadget/function/u_fs.h
-+++ b/drivers/usb/gadget/function/u_fs.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_fs.h
-  *
-diff --git a/drivers/usb/gadget/function/u_gether.h b/drivers/usb/gadget/function/u_gether.h
-index ce4f07626f96..2f7a373ed449 100644
---- a/drivers/usb/gadget/function/u_gether.h
-+++ b/drivers/usb/gadget/function/u_gether.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_gether.h
-  *
-diff --git a/drivers/usb/gadget/function/u_hid.h b/drivers/usb/gadget/function/u_hid.h
-index 1594bfa312eb..84e6da302499 100644
---- a/drivers/usb/gadget/function/u_hid.h
-+++ b/drivers/usb/gadget/function/u_hid.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_hid.h
-  *
-diff --git a/drivers/usb/gadget/function/u_midi.h b/drivers/usb/gadget/function/u_midi.h
-index 29bf006c0a13..f6e14af7f566 100644
---- a/drivers/usb/gadget/function/u_midi.h
-+++ b/drivers/usb/gadget/function/u_midi.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_midi.h
-  *
-diff --git a/drivers/usb/gadget/function/u_ncm.h b/drivers/usb/gadget/function/u_ncm.h
-index 70da3201a1d0..5408854d8407 100644
---- a/drivers/usb/gadget/function/u_ncm.h
-+++ b/drivers/usb/gadget/function/u_ncm.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_ncm.h
-  *
-diff --git a/drivers/usb/gadget/function/u_phonet.h b/drivers/usb/gadget/function/u_phonet.h
-index 12fb613f85d1..c53233b37192 100644
---- a/drivers/usb/gadget/function/u_phonet.h
-+++ b/drivers/usb/gadget/function/u_phonet.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0+
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * u_phonet.h - interface to Phonet
-  *
-diff --git a/drivers/usb/gadget/function/u_printer.h b/drivers/usb/gadget/function/u_printer.h
-index 78797764f478..318205fb778e 100644
---- a/drivers/usb/gadget/function/u_printer.h
-+++ b/drivers/usb/gadget/function/u_printer.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_printer.h
-  *
-diff --git a/drivers/usb/gadget/function/u_rndis.h b/drivers/usb/gadget/function/u_rndis.h
-index 1e148b76f339..a8c409b2f52f 100644
---- a/drivers/usb/gadget/function/u_rndis.h
-+++ b/drivers/usb/gadget/function/u_rndis.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_rndis.h
-  *
-diff --git a/drivers/usb/gadget/function/u_serial.h b/drivers/usb/gadget/function/u_serial.h
-index e5b08ab8cf7a..dbe75b289be6 100644
---- a/drivers/usb/gadget/function/u_serial.h
-+++ b/drivers/usb/gadget/function/u_serial.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0+
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * u_serial.h - interface to USB gadget "serial port"/TTY utilities
-  *
-diff --git a/drivers/usb/gadget/function/u_tcm.h b/drivers/usb/gadget/function/u_tcm.h
-index 3f7ccecb0f9b..2cd15d9a1c0d 100644
---- a/drivers/usb/gadget/function/u_tcm.h
-+++ b/drivers/usb/gadget/function/u_tcm.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_tcm.h
-  *
-diff --git a/drivers/usb/gadget/function/u_uac1.h b/drivers/usb/gadget/function/u_uac1.h
-index 6f1a9d73defe..39c0e29e1b46 100644
---- a/drivers/usb/gadget/function/u_uac1.h
-+++ b/drivers/usb/gadget/function/u_uac1.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_uac1.h - Utility definitions for UAC1 function
-  *
-diff --git a/drivers/usb/gadget/function/u_uac1_legacy.h b/drivers/usb/gadget/function/u_uac1_legacy.h
-index 5c1bdf46fe32..b5df9bcbbeba 100644
---- a/drivers/usb/gadget/function/u_uac1_legacy.h
-+++ b/drivers/usb/gadget/function/u_uac1_legacy.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0+
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * u_uac1.h -- interface to USB gadget "ALSA AUDIO" utilities
-  *
-diff --git a/drivers/usb/gadget/function/u_uac2.h b/drivers/usb/gadget/function/u_uac2.h
-index 82048791eb6e..b5035711172d 100644
---- a/drivers/usb/gadget/function/u_uac2.h
-+++ b/drivers/usb/gadget/function/u_uac2.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_uac2.h
-  *
-diff --git a/drivers/usb/gadget/function/u_uvc.h b/drivers/usb/gadget/function/u_uvc.h
-index 16da49a2fcf2..9a01a7d4f17f 100644
---- a/drivers/usb/gadget/function/u_uvc.h
-+++ b/drivers/usb/gadget/function/u_uvc.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * u_uvc.h
-  *
-diff --git a/drivers/usb/gadget/function/uvc.h b/drivers/usb/gadget/function/uvc.h
-index 1473d25ff17a..920763b56f2e 100644
---- a/drivers/usb/gadget/function/uvc.h
-+++ b/drivers/usb/gadget/function/uvc.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0+
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  *	uvc_gadget.h  --  USB Video Class Gadget driver
-  *
-diff --git a/drivers/usb/gadget/function/uvc_configfs.h b/drivers/usb/gadget/function/uvc_configfs.h
-index 341391dbc81f..7e1d7ca29bf2 100644
---- a/drivers/usb/gadget/function/uvc_configfs.h
-+++ b/drivers/usb/gadget/function/uvc_configfs.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * uvc_configfs.h
-  *
-diff --git a/drivers/usb/gadget/function/uvc_v4l2.h b/drivers/usb/gadget/function/uvc_v4l2.h
-index 452d71059b3f..1576005b61fd 100644
---- a/drivers/usb/gadget/function/uvc_v4l2.h
-+++ b/drivers/usb/gadget/function/uvc_v4l2.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  *	uvc_v4l2.h  --  USB Video Class Gadget driver
-  *
-diff --git a/drivers/usb/gadget/function/uvc_video.h b/drivers/usb/gadget/function/uvc_video.h
-index dff12103f696..3e87ac7e2c05 100644
---- a/drivers/usb/gadget/function/uvc_video.h
-+++ b/drivers/usb/gadget/function/uvc_video.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  *	uvc_video.h  --  USB Video Class Gadget driver
-  *
+diff --git a/arch/arm64/boot/dts/freescale/imx8dxl.dtsi b/arch/arm64/boot/dts/freescale/imx8dxl.dtsi
+new file mode 100644
+index 0000000..4d4b287
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8dxl.dtsi
+@@ -0,0 +1,416 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2019~2020 NXP
++ */
++
++#include <dt-bindings/clock/imx8-clock.h>
++#include <dt-bindings/firmware/imx/rsrc.h>
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/pinctrl/pads-imx8dxl.h>
++#include <dt-bindings/thermal/thermal.h>
++
++/ {
++	interrupt-parent = <&gic>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	aliases {
++		gpio0 = &lsio_gpio0;
++		gpio1 = &lsio_gpio1;
++		gpio2 = &lsio_gpio2;
++		gpio3 = &lsio_gpio3;
++		gpio4 = &lsio_gpio4;
++		gpio5 = &lsio_gpio5;
++		gpio6 = &lsio_gpio6;
++		gpio7 = &lsio_gpio7;
++		mmc0 = &usdhc1;
++		mmc1 = &usdhc2;
++		mu1 = &lsio_mu1;
++		serial0 = &adma_lpuart0;
++	};
++
++	cpus {
++		#address-cells = <2>;
++		#size-cells = <0>;
++
++		/* We have 1 clusters with 2 Cortex-A35 cores */
++		A35_0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a35";
++			reg = <0x0 0x0>;
++			enable-method = "psci";
++			next-level-cache = <&A35_L2>;
++			clocks = <&clk IMX_A35_CLK>;
++			operating-points-v2 = <&a35_opp_table>;
++			#cooling-cells = <2>;
++		};
++
++		A35_1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a35";
++			reg = <0x0 0x1>;
++			enable-method = "psci";
++			next-level-cache = <&A35_L2>;
++			clocks = <&clk IMX_A35_CLK>;
++			operating-points-v2 = <&a35_opp_table>;
++			#cooling-cells = <2>;
++		};
++
++		A35_L2: l2-cache0 {
++			compatible = "cache";
++		};
++	};
++
++	a35_opp_table: opp-table {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-900000000 {
++			opp-hz = /bits/ 64 <900000000>;
++			opp-microvolt = <1000000>;
++			clock-latency-ns = <150000>;
++		};
++
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1100000>;
++			clock-latency-ns = <150000>;
++			opp-suspend;
++		};
++	};
++
++	gic: interrupt-controller@51a00000 {
++		compatible = "arm,gic-v3";
++		reg = <0x0 0x51a00000 0 0x10000>, /* GIC Dist */
++		      <0x0 0x51b00000 0 0xc0000>; /* GICR (RD_base + SGI_base) */
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
++	pmu {
++		compatible = "arm,armv8-pmuv3";
++		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++	};
++
++	scu {
++		compatible = "fsl,imx-scu";
++		mbox-names = "tx0", "tx1", "tx2", "tx3",
++			     "rx0", "rx1", "rx2", "rx3",
++			     "gip3";
++		mboxes = <&lsio_mu1 0 0
++			  &lsio_mu1 0 1
++			  &lsio_mu1 0 2
++			  &lsio_mu1 0 3
++			  &lsio_mu1 1 0
++			  &lsio_mu1 1 1
++			  &lsio_mu1 1 2
++			  &lsio_mu1 1 3
++			  &lsio_mu1 3 3>;
++
++		clk: clock-controller {
++			compatible = "fsl,imx8dxl-clk", "fsl,imx8qxp-clk";
++			#clock-cells = <1>;
++			clocks = <&xtal32k &xtal24m>;
++			clock-names = "xtal_32KHz", "xtal_24Mhz";
++		};
++
++		iomuxc: pinctrl {
++			compatible = "fsl,imx8dxl-iomuxc";
++		};
++
++		ocotp: imx8qx-ocotp {
++			compatible = "fsl,imx8dxl-scu-ocotp", "fsl,imx8qxp-scu-ocotp";
++			#address-cells = <1>;
++			#size-cells = <1>;
++		};
++
++		pd: imx8qx-pd {
++			compatible = "fsl,imx8dxl-scu-pd", "fsl,imx8qxp-scu-pd";
++			#power-domain-cells = <1>;
++		};
++
++		scu_key: scu-key {
++			compatible = "fsl,imx8dxl-sc-key", "fsl,imx-sc-key";
++			linux,keycodes = <KEY_POWER>;
++			status = "disabled";
++		};
++
++		rtc: rtc {
++			compatible = "fsl,imx8dxl-sc-wdt", "fsl,imx8qxp-sc-rtc";
++		};
++
++		tsens: thermal-sensor {
++			compatible = "fsl,imx8dxl-sc-thermal", "fsl,imx-sc-thermal";
++			#thermal-sensor-cells = <1>;
++		};
++
++		watchdog {
++			compatible = "fsl,imx8dxl-sc-wdt", "fsl,imx-sc-wdt";
++			timeout-sec = <60>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>, /* Physical Secure */
++			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>, /* Physical Non-Secure */
++			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>, /* Virtual */
++			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>; /* Hypervisor */
++	};
++
++	xtal32k: clock-xtal32k {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		clock-output-names = "xtal_32KHz";
++	};
++
++	xtal24m: clock-xtal24m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24000000>;
++		clock-output-names = "xtal_24MHz";
++	};
++
++	adma_subsys: bus@59000000 {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x59000000 0x0 0x59000000 0x2000000>;
++
++		adma_lpcg: clock-controller@59000000 {
++			compatible = "fsl,imx8dxl-lpcg-adma", "fsl,imx8qxp-lpcg-adma";
++			reg = <0x59000000 0x2000000>;
++			#clock-cells = <1>;
++		};
++
++		adma_lpuart0: serial@5a060000 {
++			compatible = "fsl,imx8dxl-lpuart", "fsl,imx8qxp-lpuart";
++			reg = <0x5a060000 0x1000>;
++			interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&adma_lpcg IMX_ADMA_LPCG_UART0_IPG_CLK>,
++				 <&adma_lpcg IMX_ADMA_LPCG_UART0_BAUD_CLK>;
++			clock-names = "ipg", "baud";
++			power-domains = <&pd IMX_SC_R_UART_0>;
++			status = "disabled";
++		};
++	};
++
++	conn_subsys: bus@5b000000 {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x5b000000 0x0 0x5b000000 0x1000000>;
++
++		conn_lpcg: clock-controller@5b200000 {
++			compatible = "fsl,imx8dxl-lpcg-conn", "fsl,imx8qxp-lpcg-conn";
++			reg = <0x5b200000 0xb0000>;
++			#clock-cells = <1>;
++		};
++
++		usdhc1: mmc@5b010000 {
++			compatible = "fsl,imx8dxl-usdhc", "fsl,imx7d-usdhc";
++			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x5b010000 0x10000>;
++			clocks = <&conn_lpcg IMX_CONN_LPCG_SDHC0_IPG_CLK>,
++				 <&conn_lpcg IMX_CONN_LPCG_SDHC0_PER_CLK>,
++				 <&conn_lpcg IMX_CONN_LPCG_SDHC0_HCLK>;
++			clock-names = "ipg", "per", "ahb";
++			power-domains = <&pd IMX_SC_R_SDHC_0>;
++			status = "disabled";
++		};
++
++		usdhc2: mmc@5b020000 {
++			compatible = "fsl,imx8dxl-usdhc", "fsl,imx7d-usdhc";
++			interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x5b020000 0x10000>;
++			clocks = <&conn_lpcg IMX_CONN_LPCG_SDHC1_IPG_CLK>,
++				 <&conn_lpcg IMX_CONN_LPCG_SDHC1_PER_CLK>,
++				 <&conn_lpcg IMX_CONN_LPCG_SDHC1_HCLK>;
++			clock-names = "ipg", "per", "ahb";
++			power-domains = <&pd IMX_SC_R_SDHC_1>;
++			fsl,tuning-start-tap = <20>;
++			fsl,tuning-step= <2>;
++			status = "disabled";
++		};
++	};
++
++	lsio_subsys: bus@5d000000 {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x5d000000 0x0 0x5d000000 0x1000000>;
++
++		lsio_gpio0: gpio@5d080000 {
++			compatible = "fsl,imx8dxl-gpio", "fsl,imx35-gpio";
++			reg = <0x5d080000 0x10000>;
++			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			power-domains = <&pd IMX_SC_R_GPIO_0>;
++		};
++
++		lsio_gpio1: gpio@5d090000 {
++			compatible = "fsl,imx8dxl-gpio", "fsl,imx35-gpio";
++			reg = <0x5d090000 0x10000>;
++			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			power-domains = <&pd IMX_SC_R_GPIO_1>;
++		};
++
++		lsio_gpio2: gpio@5d0a0000 {
++			compatible = "fsl,imx8dxl-gpio", "fsl,imx35-gpio";
++			reg = <0x5d0a0000 0x10000>;
++			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			power-domains = <&pd IMX_SC_R_GPIO_2>;
++		};
++
++		lsio_gpio3: gpio@5d0b0000 {
++			compatible = "fsl,imx8dxl-gpio", "fsl,imx35-gpio";
++			reg = <0x5d0b0000 0x10000>;
++			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			power-domains = <&pd IMX_SC_R_GPIO_3>;
++		};
++
++		lsio_gpio4: gpio@5d0c0000 {
++			compatible = "fsl,imx8dxl-gpio", "fsl,imx35-gpio";
++			reg = <0x5d0c0000 0x10000>;
++			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			power-domains = <&pd IMX_SC_R_GPIO_4>;
++		};
++
++		lsio_gpio5: gpio@5d0d0000 {
++			compatible = "fsl,imx8dxl-gpio", "fsl,imx35-gpio";
++			reg = <0x5d0d0000 0x10000>;
++			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			power-domains = <&pd IMX_SC_R_GPIO_5>;
++		};
++
++		lsio_gpio6: gpio@5d0e0000 {
++			compatible = "fsl,imx8dxl-gpio", "fsl,imx35-gpio";
++			reg = <0x5d0e0000 0x10000>;
++			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			power-domains = <&pd IMX_SC_R_GPIO_6>;
++		};
++
++		lsio_gpio7: gpio@5d0f0000 {
++			compatible = "fsl,imx8dxl-gpio", "fsl,imx35-gpio";
++			reg = <0x5d0f0000 0x10000>;
++			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			power-domains = <&pd IMX_SC_R_GPIO_7>;
++		};
++
++		lsio_mu0: mailbox@5d1b0000 {
++			compatible = "fsl,imx8dxl-mu", "fsl,imx6sx-mu";
++			reg = <0x5d1b0000 0x10000>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++			status = "disabled";
++		};
++
++		lsio_mu1: mailbox@5d1c0000 {
++			compatible = "fsl,imx8dxl-mu", "fsl,imx6sx-mu";
++			reg = <0x5d1c0000 0x10000>;
++			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++		};
++
++		lsio_mu2: mailbox@5d1d0000 {
++			compatible = "fsl,imx8dxl-mu", "fsl,imx6sx-mu";
++			reg = <0x5d1d0000 0x10000>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++			status = "disabled";
++		};
++
++		lsio_mu3: mailbox@5d1e0000 {
++			compatible = "fsl,imx8dxl-mu", "fsl,imx6sx-mu";
++			reg = <0x5d1e0000 0x10000>;
++			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++			status = "disabled";
++		};
++
++		lsio_mu4: mailbox@5d1f0000 {
++			compatible = "fsl,imx8dxl-mu", "fsl,imx6sx-mu";
++			reg = <0x5d1f0000 0x10000>;
++			interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++			status = "disabled";
++		};
++
++		lsio_lpcg: clock-controller@5d400000 {
++			compatible = "fsl,imx8dxl-lpcg-lsio", "fsl,imx8qxp-lpcg-lsio";
++			reg = <0x5d400000 0x400000>;
++			#clock-cells = <1>;
++		};
++	};
++
++	thermal_zones: thermal-zones {
++		cpu-thermal0 {
++			polling-delay-passive = <250>;
++			polling-delay = <2000>;
++			thermal-sensors = <&tsens IMX_SC_R_SYSTEM>;
++
++			trips {
++				cpu_alert0: trip0 {
++					temperature = <107000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++
++				cpu_crit0: trip1 {
++					temperature = <127000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert0>;
++					cooling-device =
++						<&A35_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&A35_1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
++		};
++	};
++};
 -- 
-2.17.1
+2.7.4
 
