@@ -2,107 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F06E1196894
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 19:36:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A041A1968A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 19:41:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbgC1Sgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 14:36:55 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:36136 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbgC1Sgz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 14:36:55 -0400
-Received: by mail-il1-f195.google.com with SMTP id p13so11910901ilp.3;
-        Sat, 28 Mar 2020 11:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0HI24KR/yCjlJFsLLO6kOQCApuZY67HrR4f/HELwj00=;
-        b=Bjn3/ZMSjI5MgkcB5gKK6N4zFjMVoFTSxcltL3PA99UZvBgXDgAOataat0yBdZVoqE
-         NH/0OggUWvfgrio+/Usro0z9coMiVVo64z+Ln5aQgcxfw4feFgn+HtkwH7mrWJCnPGE2
-         HKqmsQoZGerQe6AjWMGTP1n8+SNzk6IVEChHV39pY8GLRUYnLiJwMUAZxqCourq0RyLY
-         pCPSDwMaFYSKYZfU+gkFh+BeUED8m5CfdGuTbfJazHFg5insTKlELMAZGfCPaPk0Aqk9
-         NYm6bxxNZc3SqBkQRE300iLkiF0BDCxKz1y/Kd2Stf2b1/BQQJeA1JOGYlS/PLRrlncv
-         0qzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0HI24KR/yCjlJFsLLO6kOQCApuZY67HrR4f/HELwj00=;
-        b=lx26CZDDaML69rm41uVuGH7igx2oQdBRE729WG+s4SyP3PetmO8v5YxJfbJP/wlX1s
-         yIJQGHwRK1/xr48KpCfh56rzCPKIZ2lpX2A+P9aqLmePRfDgJtvHActpu15urhU8D/QE
-         Bjy7ZIajen0HhTtEKPo8431KmoYJcTH2F9obnxPeHffw522OMHbOpcJzDOaCxihDKH0E
-         4i2xEKWCegmEQmtTj53XfTz6WlzRgdKoXzKwq93zx+IUrLaKk2zeGhcIXiIpVqpD2OCu
-         /5phwqTTRDYVbsjUmjE4I1aBUSF8QUgStUuYeitVLLIpn155MVUxWX4gP2PsOnGdne0t
-         kbcw==
-X-Gm-Message-State: ANhLgQ1Y8YFkpd8WOpjDv7I9SmraoLxTmxtVjei006DeWBgcjn4MW823
-        wgl0XUgS+teLAeS0tuI+5mivLeIFROq39sSOy44=
-X-Google-Smtp-Source: ADFU+vvj7xBW8YgzYefpKHgpnS8IasnPvFs7tQ1xw3iG07/FjIZop9WE6ytmhD+MGsO5JAtYB+aIgp90MlIPv8WqjKo=
-X-Received: by 2002:a92:cb49:: with SMTP id f9mr4613117ilq.193.1585420613730;
- Sat, 28 Mar 2020 11:36:53 -0700 (PDT)
+        id S1726912AbgC1Slu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 14:41:50 -0400
+Received: from mga01.intel.com ([192.55.52.88]:22605 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725882AbgC1Slt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 14:41:49 -0400
+IronPort-SDR: RlnRSN+pyFK1kJegySdbJRIBypfNEwgGSlc6LdmKhwyzxjn4gGfIDxYmuU3QwMWuv6LAsAgQjm
+ 8SkshtvpcDKg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2020 11:41:49 -0700
+IronPort-SDR: sdpObI+vzRvcuRArPN5Pm5hmAeAQrvPL3U7SKzrdF68D/YCGs2cDX1gUBFBJWLb3bsQ/A4O34P
+ pXiU6CCLVbTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,317,1580803200"; 
+   d="scan'208";a="236953833"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga007.jf.intel.com with ESMTP; 28 Mar 2020 11:41:49 -0700
+Date:   Sat, 28 Mar 2020 11:41:49 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Junaid Shahid <junaids@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: Re: [PATCH 2/3] KVM: x86: cleanup kvm_inject_emulated_page_fault
+Message-ID: <20200328184149.GS8104@linux.intel.com>
+References: <20200326093516.24215-1-pbonzini@redhat.com>
+ <20200326093516.24215-3-pbonzini@redhat.com>
 MIME-Version: 1.0
-References: <CGME20200327162330eucas1p1b0413e0e9887aa76d3048f86d2166dcd@eucas1p1.samsung.com>
- <20200327162126.29705-1-m.szyprowski@samsung.com> <14063C7AD467DE4B82DEDB5C278E8663FFFBFCE1@fmsmsx107.amr.corp.intel.com>
-In-Reply-To: <14063C7AD467DE4B82DEDB5C278E8663FFFBFCE1@fmsmsx107.amr.corp.intel.com>
-From:   Shane Francis <bigbeeshane@gmail.com>
-Date:   Sat, 28 Mar 2020 18:36:42 +0000
-Message-ID: <CABnpCuBLkk2RQovNmcx1U9+oou18cmrd71eQ8=O=ELOM_NcjSA@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/prime: fix extracting of the DMA addresses from a scatterlist
-To:     "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Alex Deucher <alexander.deucher@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200326093516.24215-3-pbonzini@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 6:31 PM Ruhl, Michael J
-<michael.j.ruhl@intel.com> wrote:
-> Is there an example of what the scatterlist would look like in this case?
->
-> Does each SG entry always have the page and dma info? or could you have
-> entries that have page information only, and entries that have dma info only?
->
-> If the same entry has different size info (page_len = PAGE_SIZE,
-> dma_len = 4 * PAGE_SIZE?), are we guaranteed that the arrays (page and addrs) have
-> been sized correctly?
->
-> Just trying to get my head wrapped around this.
->
-> Thanks,
->
-> Mike
->
+On Thu, Mar 26, 2020 at 05:35:15AM -0400, Paolo Bonzini wrote:
+> To reconstruct the kvm_mmu to be used for page fault injection, we
+> can simply use fault->nested_page_fault.  This matches how
+> fault->nested_page_fault is assigned in the first place by
+> FNAME(walk_addr_generic).
+> 
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>  arch/x86/kvm/mmu/mmu.c         | 6 ------
+>  arch/x86/kvm/mmu/paging_tmpl.h | 2 +-
+>  arch/x86/kvm/x86.c             | 7 +++----
+>  3 files changed, 4 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index e26c9a583e75..6250e31ac617 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -4353,12 +4353,6 @@ static unsigned long get_cr3(struct kvm_vcpu *vcpu)
+>  	return kvm_read_cr3(vcpu);
+>  }
+>  
+> -static void inject_page_fault(struct kvm_vcpu *vcpu,
+> -			      struct x86_exception *fault)
+> -{
+> -	vcpu->arch.mmu->inject_page_fault(vcpu, fault);
+> -}
+> -
+>  static bool sync_mmio_spte(struct kvm_vcpu *vcpu, u64 *sptep, gfn_t gfn,
+>  			   unsigned int access, int *nr_present)
+>  {
+> diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
+> index 1ddbfff64ccc..ae646acf6703 100644
+> --- a/arch/x86/kvm/mmu/paging_tmpl.h
+> +++ b/arch/x86/kvm/mmu/paging_tmpl.h
+> @@ -812,7 +812,7 @@ static int FNAME(page_fault)(struct kvm_vcpu *vcpu, gpa_t addr, u32 error_code,
+>  	if (!r) {
+>  		pgprintk("%s: guest page fault\n", __func__);
+>  		if (!prefault)
+> -			inject_page_fault(vcpu, &walker.fault);
+> +			kvm_inject_emulated_page_fault(vcpu, &walker.fault);
+>  
+>  		return RET_PF_RETRY;
+>  	}
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 64ed6e6e2b56..522905523bf0 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -614,12 +614,11 @@ EXPORT_SYMBOL_GPL(kvm_inject_page_fault);
+>  bool kvm_inject_emulated_page_fault(struct kvm_vcpu *vcpu,
+>  				    struct x86_exception *fault)
+>  {
+> +	struct kvm_mmu *fault_mmu;
+>  	WARN_ON_ONCE(fault->vector != PF_VECTOR);
+>  
+> -	if (mmu_is_nested(vcpu) && !fault->nested_page_fault)
+> -		vcpu->arch.nested_mmu.inject_page_fault(vcpu, fault);
+> -	else
+> -		vcpu->arch.mmu->inject_page_fault(vcpu, fault);
+> +	fault_mmu = fault->nested_page_fault ? vcpu->arch.mmu : vcpu->arch.walk_mmu;
 
-My understanding is that page_len and dma_len in this case could have
-different values (looking at iommu_dma_map_sg within dma-iommu.c),
-this seems to add some padding calculated by using the device iova
-domain to s_length but sg_dma_len is set to the original length
+Apparently I'm in a nitpicky mood.  IMO, a newline after the colon is
+easier to parse
 
-The scatterlists table can also get reduced down within
-"__finalise_sg" possibly causing (if reduced) the dma_len of the last
-table elements to be 0 (page_len would not be 0 in this case).
+	fault_mmu = fault->nested_page_fault ? vcpu->arch.mmu :
+					       vcpu->arch.walk_mmu;
 
-Documentation around looping & accessing scatterlists in DMA-API.txt
-states that  sg_dma_address() and sg_dma_len() should be used when
-accessing addr and len rather than sg->address and sg->length.
+FWIW, I really like that "inject into the nested_mmu if it's not a nested
+page fault" logic goes away.  That trips me up every time I look at it.
 
-Maybe it would be worth splitting this out into 2 functions to avoid
-potential issues with the above use case ?
-
-Regards,
-
-Shane Francis
+> +	fault_mmu->inject_page_fault(vcpu, fault);
+>  
+>  	return fault->nested_page_fault;
+>  }
+> -- 
+> 2.18.2
+> 
+> 
