@@ -2,45 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E869196627
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 13:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4064D196634
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 13:58:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbgC1Mok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 08:44:40 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55776 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbgC1Mok (ORCPT
+        id S1726415AbgC1M61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 08:58:27 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:43443 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726369AbgC1M61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 08:44:40 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jIApE-0005BZ-Rw; Sat, 28 Mar 2020 13:44:32 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 47A481040C1; Sat, 28 Mar 2020 13:44:32 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jules Irenge <jbi.octave@gmail.com>
-Cc:     Jules Irenge <jbi.octave@gmail.com>, julia.lawall@lip6.fr,
-        boqun.feng@gmail.com, Jules Irenge <jbi.octave@example.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        "open list\:LOCKING PRIMITIVES" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/10] locking/rtmutex: Remove Comparison to bool
-In-Reply-To: <alpine.LNX.2.21.1.2003281201270.20453@ninjahost.lan>
-References: <20200327212358.5752-1-jbi.octave@gmail.com> <20200327212358.5752-2-jbi.octave@gmail.com> <87y2rkwwf5.fsf@nanos.tec.linutronix.de> <alpine.LNX.2.21.1.2003281201270.20453@ninjahost.lan>
-Date:   Sat, 28 Mar 2020 13:44:32 +0100
-Message-ID: <87o8sgwswf.fsf@nanos.tec.linutronix.de>
+        Sat, 28 Mar 2020 08:58:27 -0400
+Received: from 185.80.35.16 (185.80.35.16) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id 54b4ded94d5d9511; Sat, 28 Mar 2020 13:58:25 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Doug Smythies <dsmythies@telus.net>
+Subject: [PATCH 0/2] cpufreq: intel_pstate: Run in the passive mode by default on systems without HWP
+Date:   Sat, 28 Mar 2020 13:54:35 +0100
+Message-ID: <2016232.ihCVsphvri@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jules Irenge <jbi.octave@gmail.com> writes:
-> On Sat, 28 Mar 2020, Thomas Gleixner wrote:
->> 
-> Thanks for the feedback I take good note. I will improve next time.
+Hi All,
 
-And please remove these broken From: ...@example.com lines.
+These two patches modify the intel_pstate driver to run in the passive mode by
+default on systems without HWP (refer to the changelog of patch [2/2] for the
+motivation part).
+
+Internal testing of the system performance in 5.6-rc indicates that the
+difference between the active mode with the powersave scaling algorithm and the
+passive mode with the schedutil governor should be negligible for the majority
+of users, so it should be safe to change the default behavior of the driver as
+per the above.
+
+Patch [1/2] makes changes to select the schedutil governor and set it as the
+default one when intel_pstate is selected in Kconfig.
+
+Patch [2/2] changes intel_pstate to start in the passive by default if HWP is
+not supported (or if it is disabled via the kernel command line).
+
+Please refer to the patch changelogs for more information.
+
+Thanks!
+
+
+
