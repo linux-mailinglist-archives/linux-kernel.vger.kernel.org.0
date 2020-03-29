@@ -2,86 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9B8F196FE0
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F83019701B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:27:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbgC2UVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 16:21:55 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:53763 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728393AbgC2UVz (ORCPT
+        id S1729130AbgC2U1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 16:27:46 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46050 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728863AbgC2U0Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 16:21:55 -0400
-X-Originating-IP: 50.39.173.182
-Received: from localhost (50-39-173-182.bvtn.or.frontiernet.net [50.39.173.182])
-        (Authenticated sender: josh@joshtriplett.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 6362E1C0003;
-        Sun, 29 Mar 2020 20:21:50 +0000 (UTC)
-Date:   Sun, 29 Mar 2020 13:21:41 -0700
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ext4: Fix return-value types in several function
- documentation comments
-Message-ID: <60a3f4996f4932c45515aaa6b75ca42f2a78ec9b.1585512514.git.josh@joshtriplett.org>
+        Sun, 29 Mar 2020 16:26:24 -0400
+Received: by mail-lj1-f194.google.com with SMTP id t17so15831481ljc.12
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 13:26:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tjHMmMd59/cxYEdKGlAwW6M66LpLwe3PsPILP4gPHiw=;
+        b=EdJ1prhvQM7A56Jz9+hAIwqiX6OVKihI9jXqCp4roC2tJmrzqMzJ+qbvXhVv9b0H6K
+         eJEyxncd02WGwWxSU+G76BIj++DAEHI0vwtpWMPF0beIyIyJqaS2bPyMMbmZHr+OQ7Fi
+         RzVktQp3SBbVmlEUTy8bCPfsTVneCmn3SeHog=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tjHMmMd59/cxYEdKGlAwW6M66LpLwe3PsPILP4gPHiw=;
+        b=ACl+yP1AvBZjo5ryvPndPbBoKbgtB4ONH0eTJwRYnxOTCVZw7LsP2reduQoBXUanbC
+         XZfT0SN63Yth1tkDh9XYQecK3MBvnrlaNd4+wbC9318CcBt1ivsiGM4wVlwh9BXD6HtA
+         Td56EcP92Wv5vY3Sm5sOGwC7JzAUONeoApkahhSIc+2jRoMI7y6369IF14ihJKz7eya0
+         WBXtRY4vtXROg7oexPYyNDamIwmeGuDneg8GR0o3BERXh2heTT+LQdy3KMiYK8dVjtem
+         vnr0a49tuZtvS0/WIYUxi5fnazc/kAMtb2v/w3EmE5B6HQcWoz8S1pTbQL4BOe5MAsxX
+         akmw==
+X-Gm-Message-State: AGi0Puajg6Fp7En6OzwPr3YbmUDsfdJPr7beYpCOCvPBasZP57vJN1zt
+        I4Zfhp2nXnqCLPq6yzSLqdyAPuqhQRE=
+X-Google-Smtp-Source: APiQypLCcyVJnPRod9DOqis61m9EK0EgpetLGmwj1b8bb+qJM1r8hIx4eSQlI4gdYp/2q8tTctbxuA==
+X-Received: by 2002:a2e:b5d1:: with SMTP id g17mr5205401ljn.139.1585513580319;
+        Sun, 29 Mar 2020 13:26:20 -0700 (PDT)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id y20sm5983943ljy.100.2020.03.29.13.26.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 Mar 2020 13:26:19 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id j17so12315183lfe.7
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 13:26:19 -0700 (PDT)
+X-Received: by 2002:a19:6144:: with SMTP id m4mr5937145lfk.192.1585513578763;
+ Sun, 29 Mar 2020 13:26:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <CAHk-=wjEk_smqiRh4-JosHsRxzhedJddGf5EQV0JxqZtHYMdkA@mail.gmail.com>
+ <DFA2A279-A6B4-4F0C-A8B9-38E1A7A6B400@redhat.com>
+In-Reply-To: <DFA2A279-A6B4-4F0C-A8B9-38E1A7A6B400@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 29 Mar 2020 13:26:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiGC-GDppUuAAGohy756VbzRYwsS7xxdz6j75My8YGoiQ@mail.gmail.com>
+Message-ID: <CAHk-=wiGC-GDppUuAAGohy756VbzRYwsS7xxdz6j75My8YGoiQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mm/memory_hotplug: simplify calculation of number
+ of pages in __remove_pages()
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@kernel.org>, Baoquan He <bhe@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Wei Yang <richardw.yang@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The documentation comments for ext4_read_block_bitmap_nowait and
-ext4_read_inode_bitmap describe them as returning NULL on error, but
-they return an ERR_PTR on error; update the documentation to match.
+On Sun, Mar 29, 2020 at 1:17 PM David Hildenbrand <david@redhat.com> wrote:
+>
+> Interesting, at least the patch in -next is messed up. I remember Andrew adapted some scripts, maybe this is a leftover.
 
-The documentation comment for ext4_wait_block_bitmap describes it as
-returning 1 on error, but it returns -errno on error; update the
-documentation to match.
+It does look like s broken MIME decoding script somewhere.
 
-Signed-off-by: Josh Triplett <josh@joshtriplett.org>
----
- fs/ext4/balloc.c | 4 ++--
- fs/ext4/ialloc.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+But it's odd, because as mentioned, Andrew definitely handles MIME in
+other places correctly - including your messages when it comes to the
+patch data itself. It's only the message above the patch that hasn't
+been properly decoded.
 
-diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-index 8fd0b3cdab4c..9a296008cf90 100644
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -410,7 +410,7 @@ static int ext4_validate_block_bitmap(struct super_block *sb,
-  * Read the bitmap for a given block_group,and validate the
-  * bits for block/inode/inode tables are set in the bitmaps
-  *
-- * Return buffer_head on success or NULL in case of failure.
-+ * Return buffer_head on success or an ERR_PTR in case of failure.
-  */
- struct buffer_head *
- ext4_read_block_bitmap_nowait(struct super_block *sb, ext4_group_t block_group)
-@@ -502,7 +502,7 @@ ext4_read_block_bitmap_nowait(struct super_block *sb, ext4_group_t block_group)
- 	return ERR_PTR(err);
- }
- 
--/* Returns 0 on success, 1 on error */
-+/* Returns 0 on success, -errno on error */
- int ext4_wait_block_bitmap(struct super_block *sb, ext4_group_t block_group,
- 			   struct buffer_head *bh)
- {
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index f95ee99091e4..86a96dca9ebf 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -113,7 +113,7 @@ static int ext4_validate_inode_bitmap(struct super_block *sb,
-  * Read the inode allocation bitmap for a given block_group, reading
-  * into the specified slot in the superblock's bitmap cache.
-  *
-- * Return buffer_head of bitmap on success or NULL.
-+ * Return buffer_head of bitmap on success, or an ERR_PTR on error.
-  */
- static struct buffer_head *
- ext4_read_inode_bitmap(struct super_block *sb, ext4_group_t block_group)
--- 
-2.26.0
+Curious.
 
+              Linus
