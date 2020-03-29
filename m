@@ -2,573 +2,273 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EDB3196D21
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 13:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F802196D35
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 14:12:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbgC2Lwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 07:52:33 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39365 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728201AbgC2Lw2 (ORCPT
+        id S1728172AbgC2MMQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 08:12:16 -0400
+Received: from services.gouders.net ([141.101.32.176]:33668 "EHLO
+        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727901AbgC2MMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 07:52:28 -0400
-Received: by mail-wm1-f68.google.com with SMTP id e9so6045306wme.4;
-        Sun, 29 Mar 2020 04:52:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5bw6K8Oz8DFFCkLcZUiryoZm/La42TyXetj4D6GWNZk=;
-        b=ohdQGmwZSeKWjdKhLzEoHMI2VKAqrYkDJ0LNmdbf9jz8BOPpYMSVyMokVh3BKqKqI2
-         WpSMZwdb9ldmW1T25qH+SE1pfry445PqMMbNDWsW79GkCtFL9d4EvAmlYdvHaPZNHYnR
-         ZuX0Igm/XWiQyBsfdLcRC+vgsPZsygRAbjmnX0TBSFHZ7QbVvcK4T5hnC2QBF5agjIEg
-         8s0e3Dr5HpSOmhCWFJV6w/YEUtQZiGNfqTUNbGGlhfRy73liN26Fbt/7XuP/MHYMntmp
-         093qlRS/H3aWX6VN+AjlPZToluyNY+0+Wntsp52Mpze1CNBbreJPSvJS8Ar6P94cqDta
-         pwhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=5bw6K8Oz8DFFCkLcZUiryoZm/La42TyXetj4D6GWNZk=;
-        b=QgAsNkBCjG6yV+dd2lNvTqrLlKPpR4udG2092VmfHgk5ig0qCkJvQL4a0jazST3IQv
-         J4qYZ1sPlFHNiBbP7pDi3A16D58c3h7PJ6o6ZbEdkQvYiIqNC+NPOLSdmdnUMWoun71c
-         9aBwfpBtaupF119raJYmiUCNpYE9E4fxb0lONVoOfvhjaxZWzB4URtbswh5gyRI8y6w5
-         964ms3VWocZb7HI+Y0db5f7uokeiVLs+/dYr+xOcQZAMb1TJYS3pcNCxPz3jVl/Doj2I
-         L/YESNOVYIsFEyM5BcnERNP8cS2AcVADpMjfczK+2UAu5X0vyOEu/HDE0dDHSFlNDxBf
-         o91w==
-X-Gm-Message-State: ANhLgQ3aldtKSEMjoyEF3vqKUX1t+wGAJBreM8wCsY253fW6p/dKkCOp
-        Kx4ADN7S5pBHuv4ZklH5xqo=
-X-Google-Smtp-Source: ADFU+vtQoEqr2XrCpa6kCDZnKwt/7wzfZUDYupEkuZR2yKAG/hZeZzvEmOe9fIvxCHrduom3BRwhCw==
-X-Received: by 2002:a7b:c091:: with SMTP id r17mr7972396wmh.178.1585482746087;
-        Sun, 29 Mar 2020 04:52:26 -0700 (PDT)
-Received: from localhost.localdomain (5-12-96-237.residential.rdsnet.ro. [5.12.96.237])
-        by smtp.gmail.com with ESMTPSA id 5sm14424108wrs.20.2020.03.29.04.52.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Mar 2020 04:52:25 -0700 (PDT)
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     andrew@lunn.ch, f.fainelli@gmail.com, vivien.didelot@gmail.com,
-        davem@davemloft.net
-Cc:     jiri@resnulli.us, idosch@idosch.org, kuba@kernel.org,
-        netdev@vger.kernel.org, xiaoliang.yang_1@nxp.com,
-        linux-kernel@vger.kernel.org, horatiu.vultur@microchip.com,
-        alexandre.belloni@bootlin.com, allan.nielsen@microchip.com,
-        joergen.andreasen@microchip.com, UNGLinuxDriver@microchip.com,
-        yangbo.lu@nxp.com, alexandru.marginean@nxp.com, po.liu@nxp.com,
-        claudiu.manoil@nxp.com, leoyang.li@nxp.com,
-        nikolay@cumulusnetworks.com, roopa@cumulusnetworks.com
-Subject: [PATCH v2 net-next 6/6] net: dsa: sja1105: add broadcast and per-traffic class policers
-Date:   Sun, 29 Mar 2020 14:52:02 +0300
-Message-Id: <20200329115202.16348-7-olteanv@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200329115202.16348-1-olteanv@gmail.com>
-References: <20200329115202.16348-1-olteanv@gmail.com>
+        Sun, 29 Mar 2020 08:12:16 -0400
+X-Greylist: delayed 1078 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 08:12:13 EDT
+Received: from localhost (ltea-047-066-044-139.pools.arcor-ip.net [47.66.44.139])
+        (authenticated bits=0)
+        by services.gouders.net (8.14.8/8.14.8) with ESMTP id 02TBq1Vo018294
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 29 Mar 2020 13:52:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+        t=1585482722; bh=JoYiZS8wexHrjlhH/xUQaIHQ4vaL9Ob7yhtLJygpWhI=;
+        h=From:To:Subject:Date;
+        b=T2+485Je9ZXWSrH6X0oCYIOEsMQWNmZN7lnHwRX+zXvRD/GnhH2wlL/x90+OxePaD
+         Xk9G3AmzeuaJqHCPmZj6Khm+RMnh/xjuV+i51dW1rkoUU+sE4a8nk2dvuz7HPe6NGQ
+         vGU3Vch16wYQWGNEIDw6BlhPTeK6hec254435Np4=
+From:   Dirk Gouders <dirk@gouders.net>
+To:     intel-gfx@lists.freedesktop.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Kernel 5.2 to current: possible i915 related problems
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+Date:   Sun, 29 Mar 2020 13:52:00 +0200
+Message-ID: <ghpncvidjz.fsf@gouders.net>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
+Hello,
 
-This patch adds complete support for manipulating the L2 Policing Tables
-from this switch. There are 45 table entries, one entry per each port
-and traffic class, and one dedicated entry for broadcast traffic for
-each ingress port.
+because of the current pandemic situation the usage of my laptop has
+changed.  It is now running at home 24/7 with a monitor attached to it
+and after about 12 days running a somewhat older kernel (5.2), it
+stopped working.
 
-Policing entries are shareable, and we use this functionality to support
-shared block filters.
+After a reboot I found some information in the syslog that I attach to
+this mail.  The next hang happened one day later but without any
+information.
 
-We are modeling broadcast policers as simple tc-flower matches on
-dst_mac. As for the traffic class policers, the switch only deduces the
-traffic class from the VLAN PCP field, so it makes sense to model this
-as a tc-flower match on vlan_prio.
+With a current 5.6.0-rc7+ I seem to get more frequent hangs but without any
+information in the log file and somewhat non-reproducable.  Today, I
+experienced two hangs when starting xterms or other programs but after
+this (and necessary reboots) I am unable to reproduce a hang.
 
-How to limit broadcast traffic coming from all front-panel ports to a
-cumulated total of 10 Mbit/s:
+Perhaps, someone has suggestion for me how to produce debugging
+information that survives the hangs and reboots.
 
-tc qdisc add dev sw0p0 ingress_block 1 clsact
-tc qdisc add dev sw0p1 ingress_block 1 clsact
-tc qdisc add dev sw0p2 ingress_block 1 clsact
-tc qdisc add dev sw0p3 ingress_block 1 clsact
-tc filter add block 1 flower skip_sw dst_mac ff:ff:ff:ff:ff:ff \
-	action police rate 10mbit burst 64k
+Dirk
 
-How to limit traffic with VLAN PCP 0 (also includes untagged traffic) to
-100 Mbit/s on port 0 only:
-
-tc filter add dev sw0p0 ingress protocol 802.1Q flower skip_sw \
-	vlan_prio 0 action police rate 100mbit burst 64k
-
-The broadcast, VLAN PCP and port policers are compatible with one
-another (can be installed at the same time on a port).
-
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
-Changes in v2:
-None.
-
- drivers/net/dsa/sja1105/Makefile         |   1 +
- drivers/net/dsa/sja1105/sja1105.h        |  40 +++
- drivers/net/dsa/sja1105/sja1105_flower.c | 340 +++++++++++++++++++++++
- drivers/net/dsa/sja1105/sja1105_main.c   |   4 +
- 4 files changed, 385 insertions(+)
- create mode 100644 drivers/net/dsa/sja1105/sja1105_flower.c
-
-diff --git a/drivers/net/dsa/sja1105/Makefile b/drivers/net/dsa/sja1105/Makefile
-index 66161e874344..8943d8d66f2b 100644
---- a/drivers/net/dsa/sja1105/Makefile
-+++ b/drivers/net/dsa/sja1105/Makefile
-@@ -4,6 +4,7 @@ obj-$(CONFIG_NET_DSA_SJA1105) += sja1105.o
- sja1105-objs := \
-     sja1105_spi.o \
-     sja1105_main.o \
-+    sja1105_flower.o \
-     sja1105_ethtool.o \
-     sja1105_clocking.o \
-     sja1105_static_config.o \
-diff --git a/drivers/net/dsa/sja1105/sja1105.h b/drivers/net/dsa/sja1105/sja1105.h
-index 0e5b739b2fe8..009abebbdb86 100644
---- a/drivers/net/dsa/sja1105/sja1105.h
-+++ b/drivers/net/dsa/sja1105/sja1105.h
-@@ -19,6 +19,7 @@
-  * The passed parameter is in multiples of 1 ms.
-  */
- #define SJA1105_AGEING_TIME_MS(ms)	((ms) / 10)
-+#define SJA1105_NUM_L2_POLICERS		45
- 
- typedef enum {
- 	SPI_READ = 0,
-@@ -94,6 +95,36 @@ struct sja1105_info {
- 	const char *name;
- };
- 
-+enum sja1105_rule_type {
-+	SJA1105_RULE_BCAST_POLICER,
-+	SJA1105_RULE_TC_POLICER,
-+};
-+
-+struct sja1105_rule {
-+	struct list_head list;
-+	unsigned long cookie;
-+	unsigned long port_mask;
-+	enum sja1105_rule_type type;
-+
-+	union {
-+		/* SJA1105_RULE_BCAST_POLICER */
-+		struct {
-+			int sharindx;
-+		} bcast_pol;
-+
-+		/* SJA1105_RULE_TC_POLICER */
-+		struct {
-+			int sharindx;
-+			int tc;
-+		} tc_pol;
-+	};
-+};
-+
-+struct sja1105_flow_block {
-+	struct list_head rules;
-+	bool l2_policer_used[SJA1105_NUM_L2_POLICERS];
-+};
-+
- struct sja1105_private {
- 	struct sja1105_static_config static_config;
- 	bool rgmii_rx_delay[SJA1105_NUM_PORTS];
-@@ -102,6 +133,7 @@ struct sja1105_private {
- 	struct gpio_desc *reset_gpio;
- 	struct spi_device *spidev;
- 	struct dsa_switch *ds;
-+	struct sja1105_flow_block flow_block;
- 	struct sja1105_port ports[SJA1105_NUM_PORTS];
- 	/* Serializes transmission of management frames so that
- 	 * the switch doesn't confuse them with one another.
-@@ -221,4 +253,12 @@ size_t sja1105pqrs_mac_config_entry_packing(void *buf, void *entry_ptr,
- size_t sja1105pqrs_avb_params_entry_packing(void *buf, void *entry_ptr,
- 					    enum packing_op op);
- 
-+/* From sja1105_flower.c */
-+int sja1105_cls_flower_del(struct dsa_switch *ds, int port,
-+			   struct flow_cls_offload *cls, bool ingress);
-+int sja1105_cls_flower_add(struct dsa_switch *ds, int port,
-+			   struct flow_cls_offload *cls, bool ingress);
-+void sja1105_flower_setup(struct dsa_switch *ds);
-+void sja1105_flower_teardown(struct dsa_switch *ds);
-+
- #endif
-diff --git a/drivers/net/dsa/sja1105/sja1105_flower.c b/drivers/net/dsa/sja1105/sja1105_flower.c
-new file mode 100644
-index 000000000000..5288a722e625
---- /dev/null
-+++ b/drivers/net/dsa/sja1105/sja1105_flower.c
-@@ -0,0 +1,340 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright 2020, NXP Semiconductors
-+ */
-+#include "sja1105.h"
-+
-+static struct sja1105_rule *sja1105_rule_find(struct sja1105_private *priv,
-+					      unsigned long cookie)
-+{
-+	struct sja1105_rule *rule;
-+
-+	list_for_each_entry(rule, &priv->flow_block.rules, list)
-+		if (rule->cookie == cookie)
-+			return rule;
-+
-+	return NULL;
-+}
-+
-+static int sja1105_find_free_l2_policer(struct sja1105_private *priv)
-+{
-+	int i;
-+
-+	for (i = 0; i < SJA1105_NUM_L2_POLICERS; i++)
-+		if (!priv->flow_block.l2_policer_used[i])
-+			return i;
-+
-+	return -1;
-+}
-+
-+static int sja1105_setup_bcast_policer(struct sja1105_private *priv,
-+				       struct netlink_ext_ack *extack,
-+				       unsigned long cookie, int port,
-+				       u64 rate_bytes_per_sec,
-+				       s64 burst)
-+{
-+	struct sja1105_rule *rule = sja1105_rule_find(priv, cookie);
-+	struct sja1105_l2_policing_entry *policing;
-+	bool new_rule = false;
-+	unsigned long p;
-+	int rc;
-+
-+	if (!rule) {
-+		rule = kzalloc(sizeof(*rule), GFP_KERNEL);
-+		if (!rule)
-+			return -ENOMEM;
-+
-+		rule->cookie = cookie;
-+		rule->type = SJA1105_RULE_BCAST_POLICER;
-+		rule->bcast_pol.sharindx = sja1105_find_free_l2_policer(priv);
-+		new_rule = true;
-+	}
-+
-+	if (rule->bcast_pol.sharindx == -1) {
-+		NL_SET_ERR_MSG_MOD(extack, "No more L2 policers free");
-+		rc = -ENOSPC;
-+		goto out;
-+	}
-+
-+	policing = priv->static_config.tables[BLK_IDX_L2_POLICING].entries;
-+
-+	if (policing[(SJA1105_NUM_PORTS * SJA1105_NUM_TC) + port].sharindx != port) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Port already has a broadcast policer");
-+		rc = -EEXIST;
-+		goto out;
-+	}
-+
-+	rule->port_mask |= BIT(port);
-+
-+	/* Make the broadcast policers of all ports attached to this block
-+	 * point to the newly allocated policer
-+	 */
-+	for_each_set_bit(p, &rule->port_mask, SJA1105_NUM_PORTS) {
-+		int bcast = (SJA1105_NUM_PORTS * SJA1105_NUM_TC) + p;
-+
-+		policing[bcast].sharindx = rule->bcast_pol.sharindx;
-+	}
-+
-+	policing[rule->bcast_pol.sharindx].rate = div_u64(rate_bytes_per_sec *
-+							  512, 1000000);
-+	policing[rule->bcast_pol.sharindx].smax = div_u64(rate_bytes_per_sec *
-+							  PSCHED_NS2TICKS(burst),
-+							  PSCHED_TICKS_PER_SEC);
-+	/* TODO: support per-flow MTU */
-+	policing[rule->bcast_pol.sharindx].maxlen = VLAN_ETH_FRAME_LEN +
-+						    ETH_FCS_LEN;
-+
-+	rc = sja1105_static_config_reload(priv, SJA1105_BEST_EFFORT_POLICING);
-+
-+out:
-+	if (rc == 0 && new_rule) {
-+		priv->flow_block.l2_policer_used[rule->bcast_pol.sharindx] = true;
-+		list_add(&rule->list, &priv->flow_block.rules);
-+	} else if (new_rule) {
-+		kfree(rule);
-+	}
-+
-+	return rc;
-+}
-+
-+static int sja1105_setup_tc_policer(struct sja1105_private *priv,
-+				    struct netlink_ext_ack *extack,
-+				    unsigned long cookie, int port, int tc,
-+				    u64 rate_bytes_per_sec,
-+				    s64 burst)
-+{
-+	struct sja1105_rule *rule = sja1105_rule_find(priv, cookie);
-+	struct sja1105_l2_policing_entry *policing;
-+	bool new_rule = false;
-+	unsigned long p;
-+	int rc;
-+
-+	if (!rule) {
-+		rule = kzalloc(sizeof(*rule), GFP_KERNEL);
-+		if (!rule)
-+			return -ENOMEM;
-+
-+		rule->cookie = cookie;
-+		rule->type = SJA1105_RULE_TC_POLICER;
-+		rule->tc_pol.sharindx = sja1105_find_free_l2_policer(priv);
-+		rule->tc_pol.tc = tc;
-+		new_rule = true;
-+	}
-+
-+	if (rule->tc_pol.sharindx == -1) {
-+		NL_SET_ERR_MSG_MOD(extack, "No more L2 policers free");
-+		rc = -ENOSPC;
-+		goto out;
-+	}
-+
-+	policing = priv->static_config.tables[BLK_IDX_L2_POLICING].entries;
-+
-+	if (policing[(port * SJA1105_NUM_TC) + tc].sharindx != port) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Port-TC pair already has an L2 policer");
-+		rc = -EEXIST;
-+		goto out;
-+	}
-+
-+	rule->port_mask |= BIT(port);
-+
-+	/* Make the policers for traffic class @tc of all ports attached to
-+	 * this block point to the newly allocated policer
-+	 */
-+	for_each_set_bit(p, &rule->port_mask, SJA1105_NUM_PORTS) {
-+		int index = (p * SJA1105_NUM_TC) + tc;
-+
-+		policing[index].sharindx = rule->tc_pol.sharindx;
-+	}
-+
-+	policing[rule->tc_pol.sharindx].rate = div_u64(rate_bytes_per_sec *
-+						       512, 1000000);
-+	policing[rule->tc_pol.sharindx].smax = div_u64(rate_bytes_per_sec *
-+						       PSCHED_NS2TICKS(burst),
-+						       PSCHED_TICKS_PER_SEC);
-+	/* TODO: support per-flow MTU */
-+	policing[rule->tc_pol.sharindx].maxlen = VLAN_ETH_FRAME_LEN +
-+						 ETH_FCS_LEN;
-+
-+	rc = sja1105_static_config_reload(priv, SJA1105_BEST_EFFORT_POLICING);
-+
-+out:
-+	if (rc == 0 && new_rule) {
-+		priv->flow_block.l2_policer_used[rule->tc_pol.sharindx] = true;
-+		list_add(&rule->list, &priv->flow_block.rules);
-+	} else if (new_rule) {
-+		kfree(rule);
-+	}
-+
-+	return rc;
-+}
-+
-+static int sja1105_flower_parse_policer(struct sja1105_private *priv, int port,
-+					struct netlink_ext_ack *extack,
-+					struct flow_cls_offload *cls,
-+					u64 rate_bytes_per_sec,
-+					s64 burst)
-+{
-+	struct flow_rule *rule = flow_cls_offload_flow_rule(cls);
-+	struct flow_dissector *dissector = rule->match.dissector;
-+
-+	if (dissector->used_keys &
-+	    ~(BIT(FLOW_DISSECTOR_KEY_BASIC) |
-+	      BIT(FLOW_DISSECTOR_KEY_CONTROL) |
-+	      BIT(FLOW_DISSECTOR_KEY_VLAN) |
-+	      BIT(FLOW_DISSECTOR_KEY_ETH_ADDRS))) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Unsupported keys used");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (flow_rule_match_key(rule, FLOW_DISSECTOR_KEY_BASIC)) {
-+		struct flow_match_basic match;
-+
-+		flow_rule_match_basic(rule, &match);
-+		if (match.key->n_proto) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "Matching on protocol not supported");
-+			return -EOPNOTSUPP;
-+		}
-+	}
-+
-+	if (flow_rule_match_key(rule, FLOW_DISSECTOR_KEY_ETH_ADDRS)) {
-+		u8 bcast[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-+		u8 null[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-+		struct flow_match_eth_addrs match;
-+
-+		flow_rule_match_eth_addrs(rule, &match);
-+
-+		if (!ether_addr_equal_masked(match.key->src, null,
-+					     match.mask->src)) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "Matching on source MAC not supported");
-+			return -EOPNOTSUPP;
-+		}
-+
-+		if (!ether_addr_equal_masked(match.key->dst, bcast,
-+					     match.mask->dst)) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "Only matching on broadcast DMAC is supported");
-+			return -EOPNOTSUPP;
-+		}
-+
-+		return sja1105_setup_bcast_policer(priv, extack, cls->cookie,
-+						   port, rate_bytes_per_sec,
-+						   burst);
-+	}
-+
-+	if (flow_rule_match_key(rule, FLOW_DISSECTOR_KEY_VLAN)) {
-+		struct flow_match_vlan match;
-+
-+		flow_rule_match_vlan(rule, &match);
-+
-+		if (match.key->vlan_id & match.mask->vlan_id) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "Matching on VID is not supported");
-+			return -EOPNOTSUPP;
-+		}
-+
-+		if (match.mask->vlan_priority != 0x7) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "Masked matching on PCP is not supported");
-+			return -EOPNOTSUPP;
-+		}
-+
-+		return sja1105_setup_tc_policer(priv, extack, cls->cookie, port,
-+						match.key->vlan_priority,
-+						rate_bytes_per_sec,
-+						burst);
-+	}
-+
-+	NL_SET_ERR_MSG_MOD(extack, "Not matching on any known key");
-+	return -EOPNOTSUPP;
-+}
-+
-+int sja1105_cls_flower_add(struct dsa_switch *ds, int port,
-+			   struct flow_cls_offload *cls, bool ingress)
-+{
-+	struct flow_rule *rule = flow_cls_offload_flow_rule(cls);
-+	struct netlink_ext_ack *extack = cls->common.extack;
-+	struct sja1105_private *priv = ds->priv;
-+	const struct flow_action_entry *act;
-+	int rc = -EOPNOTSUPP, i;
-+
-+	flow_action_for_each(i, act, &rule->action) {
-+		switch (act->id) {
-+		case FLOW_ACTION_POLICE:
-+			rc = sja1105_flower_parse_policer(priv, port, extack, cls,
-+							  act->police.rate_bytes_ps,
-+							  act->police.burst);
-+			break;
-+		default:
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "Action not supported");
-+			break;
-+		}
-+	}
-+
-+	return rc;
-+}
-+
-+int sja1105_cls_flower_del(struct dsa_switch *ds, int port,
-+			   struct flow_cls_offload *cls, bool ingress)
-+{
-+	struct sja1105_private *priv = ds->priv;
-+	struct sja1105_rule *rule = sja1105_rule_find(priv, cls->cookie);
-+	struct sja1105_l2_policing_entry *policing;
-+	int old_sharindx;
-+
-+	if (!rule)
-+		return 0;
-+
-+	policing = priv->static_config.tables[BLK_IDX_L2_POLICING].entries;
-+
-+	if (rule->type == SJA1105_RULE_BCAST_POLICER) {
-+		int bcast = (SJA1105_NUM_PORTS * SJA1105_NUM_TC) + port;
-+
-+		old_sharindx = policing[bcast].sharindx;
-+		policing[bcast].sharindx = port;
-+	} else if (rule->type == SJA1105_RULE_TC_POLICER) {
-+		int index = (port * SJA1105_NUM_TC) + rule->tc_pol.tc;
-+
-+		old_sharindx = policing[index].sharindx;
-+		policing[index].sharindx = port;
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	rule->port_mask &= ~BIT(port);
-+	if (!rule->port_mask) {
-+		priv->flow_block.l2_policer_used[old_sharindx] = false;
-+		list_del(&rule->list);
-+		kfree(rule);
-+	}
-+
-+	return sja1105_static_config_reload(priv, SJA1105_BEST_EFFORT_POLICING);
-+}
-+
-+void sja1105_flower_setup(struct dsa_switch *ds)
-+{
-+	struct sja1105_private *priv = ds->priv;
-+	int port;
-+
-+	INIT_LIST_HEAD(&priv->flow_block.rules);
-+
-+	for (port = 0; port < SJA1105_NUM_PORTS; port++)
-+		priv->flow_block.l2_policer_used[port] = true;
-+}
-+
-+void sja1105_flower_teardown(struct dsa_switch *ds)
-+{
-+	struct sja1105_private *priv = ds->priv;
-+	struct sja1105_rule *rule;
-+	struct list_head *pos, *n;
-+
-+	list_for_each_safe(pos, n, &priv->flow_block.rules) {
-+		rule = list_entry(pos, struct sja1105_rule, list);
-+		list_del(&rule->list);
-+		kfree(rule);
-+	}
-+}
-diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
-index 81d2e5e5ce96..472f4eb20c49 100644
---- a/drivers/net/dsa/sja1105/sja1105_main.c
-+++ b/drivers/net/dsa/sja1105/sja1105_main.c
-@@ -2021,6 +2021,7 @@ static void sja1105_teardown(struct dsa_switch *ds)
- 			kthread_destroy_worker(sp->xmit_worker);
- 	}
- 
-+	sja1105_flower_teardown(ds);
- 	sja1105_tas_teardown(ds);
- 	sja1105_ptp_clock_unregister(ds);
- 	sja1105_static_config_free(&priv->static_config);
-@@ -2356,6 +2357,8 @@ static const struct dsa_switch_ops sja1105_switch_ops = {
- 	.port_mirror_del	= sja1105_mirror_del,
- 	.port_policer_add	= sja1105_port_policer_add,
- 	.port_policer_del	= sja1105_port_policer_del,
-+	.cls_flower_add		= sja1105_cls_flower_add,
-+	.cls_flower_del		= sja1105_cls_flower_del,
- };
- 
- static int sja1105_check_device_id(struct sja1105_private *priv)
-@@ -2459,6 +2462,7 @@ static int sja1105_probe(struct spi_device *spi)
- 	mutex_init(&priv->mgmt_lock);
- 
- 	sja1105_tas_setup(ds);
-+	sja1105_flower_setup(ds);
- 
- 	rc = dsa_register_switch(priv->ds);
- 	if (rc)
--- 
-2.17.1
-
+------------------------------------------------------------------------
+Mar 27 19:36:51 lena kernel: [drm:intel_cpu_fifo_underrun_irq_handler [i915]] *ERROR* CPU pipe B FIFO underrun
+Mar 27 21:45:19 lena kernel: usb 1-1: USB disconnect, device number 15
+Mar 27 21:45:19 lena kernel: sd 2:0:0:0: [sdb] Synchronizing SCSI cache
+Mar 27 21:45:19 lena kernel: sd 2:0:0:0: [sdb] Synchronize Cache(10) failed: Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
+Mar 27 22:00:53 lena kernel: [drm:intel_cpu_fifo_underrun_irq_handler [i915]] *ERROR* CPU pipe B FIFO underrun
+Mar 27 23:46:13 lena kernel: ------------[ cut here ]------------
+Mar 27 23:46:13 lena kernel: vblank wait timed out on crtc 1
+Mar 27 23:46:13 lena kernel: WARNING: CPU: 0 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
+Mar 27 23:46:13 lena kernel: Modules linked in: usblp uas usb_storage uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common snd_hda_codec
+_hdmi snd_hda_codec_realtek snd_hda_codec_generic crc32_pclmul crc32c_intel ghash_clmulni_intel i915 aesni_intel drm_kms_helper cfbfillrect crypto_simd glue_he
+lper syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci snd_hwdep sdhci drm_panel_orientat
+ion_quirks snd_hda_core intel_gtt mmc_core xhci_hcd iosf_mbi
+Mar 27 23:46:13 lena kernel: CPU: 0 PID: 4221 Comm: X Not tainted 5.2.0+ #44
+Mar 27 23:46:13 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
+Mar 27 23:46:13 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
+Mar 27 23:46:13 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de 0d a0 e8 2e bd fc e
+0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24 28 65 48 33 04 25
+Mar 27 23:46:13 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
+Mar 27 23:46:13 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
+Mar 27 23:46:13 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277a163a0
+Mar 27 23:46:13 lena kernel: RBP: ffff888271b40000 R08: 0000000000000306 R09: 0000000000000001
+Mar 27 23:46:13 lena kernel: R10: ffffc90000e739d0 R11: 000597d6da905e00 R12: 0000000000000000
+Mar 27 23:46:13 lena kernel: R13: 0000000000bd6280 R14: ffff8882765eb160 R15: 0000000000000001
+Mar 27 23:46:13 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
+Mar 27 23:46:13 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Mar 27 23:46:13 lena kernel: CR2: 00007f6d6f20d000 CR3: 0000000268a70000 CR4: 00000000001006f0
+Mar 27 23:46:13 lena kernel: Call Trace:
+Mar 27 23:46:13 lena kernel: ? wait_woken+0x68/0x68
+Mar 27 23:46:13 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
+Mar 27 23:46:13 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
+Mar 27 23:46:13 lena kernel: ? flush_workqueue+0x2ab/0x2d4
+Mar 27 23:46:13 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
+Mar 27 23:46:13 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
+Mar 27 23:46:13 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
+Mar 27 23:46:13 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
+Mar 27 23:46:13 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
+Mar 27 23:46:13 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
+Mar 27 23:46:13 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
+Mar 27 23:46:13 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
+Mar 27 23:46:13 lena kernel: ? hrtimer_cancel+0xc/0x16
+Mar 27 23:46:13 lena kernel: ? schedule_hrtimeout_range_clock+0xb3/0xef
+Mar 27 23:46:13 lena kernel: ? hrtimer_init+0x2/0x2
+Mar 27 23:46:13 lena kernel: vfs_ioctl+0x19/0x26
+Mar 27 23:46:13 lena kernel: do_vfs_ioctl+0x52c/0x554
+Mar 27 23:46:13 lena kernel: ? wake_up_q+0x4e/0x4e
+Mar 27 23:46:13 lena kernel: ksys_ioctl+0x39/0x58
+Mar 27 23:46:13 lena kernel: __x64_sys_ioctl+0x11/0x14
+Mar 27 23:46:13 lena kernel: do_syscall_64+0x4a/0xf4
+Mar 27 23:46:13 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Mar 27 23:46:13 lena kernel: RIP: 0033:0x7f6d74ce12b7
+Mar 27 23:46:13 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00 f7 d8 64 89 01 48
+Mar 27 23:46:13 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
+Mar 27 23:46:13 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
+Mar 27 23:46:13 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
+Mar 27 23:46:13 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
+Mar 27 23:46:13 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
+Mar 27 23:46:13 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
+Mar 27 23:46:13 lena kernel: ---[ end trace 5361d6be40e0aaf8 ]---
+Mar 28 01:13:22 lena kernel: [drm:drm_atomic_helper_wait_for_flip_done [drm_kms_helper]] *ERROR* [CRTC:63:pipe B] flip_done timed out
+Mar 28 01:23:22 lena kernel: ------------[ cut here ]------------
+Mar 28 01:23:22 lena kernel: vblank wait timed out on crtc 1
+Mar 28 01:23:22 lena kernel: WARNING: CPU: 0 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
+Mar 28 01:23:22 lena kernel: Modules linked in: usblp uas usb_storage uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic crc32_pclmul crc32c_intel ghash_clmulni_intel i915 aesni_intel drm_kms_helper cfbfillrect crypto_simd glue_helper syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci snd_hwdep sdhci drm_panel_orientation_quirks snd_hda_core intel_gtt mmc_core xhci_hcd iosf_mbi
+Mar 28 01:23:22 lena kernel: CPU: 0 PID: 4221 Comm: X Tainted: G        W         5.2.0+ #44
+Mar 28 01:23:22 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
+Mar 28 01:23:22 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
+Mar 28 01:23:22 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de 0d a0 e8 2e bd fc e0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24 28 65 48 33 04 25
+Mar 28 01:23:22 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
+Mar 28 01:23:22 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
+Mar 28 01:23:22 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277a163a0
+Mar 28 01:23:22 lena kernel: RBP: ffff888271b40000 R08: 0000000000000338 R09: 0000000000000001
+Mar 28 01:23:22 lena kernel: R10: ffffc90000e739d0 R11: 0005a05257e63800 R12: 0000000000000000
+Mar 28 01:23:22 lena kernel: R13: 0000000000c25711 R14: ffff8882765eb160 R15: 0000000000000001
+Mar 28 01:23:22 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
+Mar 28 01:23:22 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Mar 28 01:23:22 lena kernel: CR2: 00007f6d6dcb0000 CR3: 0000000268a70000 CR4: 00000000001006f0
+Mar 28 01:23:22 lena kernel: Call Trace:
+Mar 28 01:23:22 lena kernel: ? wait_woken+0x68/0x68
+Mar 28 01:23:22 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
+Mar 28 01:23:22 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
+Mar 28 01:23:22 lena kernel: ? flush_workqueue+0x2ab/0x2d4
+Mar 28 01:23:22 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
+Mar 28 01:23:22 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
+Mar 28 01:23:22 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
+Mar 28 01:23:22 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
+Mar 28 01:23:22 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
+Mar 28 01:23:22 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
+Mar 28 01:23:22 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
+Mar 28 01:23:22 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
+Mar 28 01:23:22 lena kernel: ? hrtimer_cancel+0xc/0x16
+Mar 28 01:23:22 lena kernel: ? schedule_hrtimeout_range_clock+0xb3/0xef
+Mar 28 01:23:22 lena kernel: ? hrtimer_init+0x2/0x2
+Mar 28 01:23:22 lena kernel: vfs_ioctl+0x19/0x26
+Mar 28 01:23:22 lena kernel: do_vfs_ioctl+0x52c/0x554
+Mar 28 01:23:22 lena kernel: ? wake_up_q+0x4e/0x4e
+Mar 28 01:23:22 lena kernel: ksys_ioctl+0x39/0x58
+Mar 28 01:23:22 lena kernel: __x64_sys_ioctl+0x11/0x14
+Mar 28 01:23:22 lena kernel: do_syscall_64+0x4a/0xf4
+Mar 28 01:23:22 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Mar 28 01:23:22 lena kernel: RIP: 0033:0x7f6d74ce12b7
+Mar 28 01:23:22 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00 f7 d8 64 89 01 48
+Mar 28 01:23:22 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
+Mar 28 01:23:22 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
+Mar 28 01:23:22 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
+Mar 28 01:23:22 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
+Mar 28 01:23:22 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
+Mar 28 01:23:22 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
+Mar 28 01:23:22 lena kernel: ---[ end trace 5361d6be40e0aaf9 ]---
+Mar 28 02:30:26 lena syslog-ng[3629]: Log statistics; processed='global(internal_queue_length)=0', queued='global(scratch_buffers_count)=1026497183744', queued='global(scratch_buffers_bytes)=0', processed='global(msg_clones)=0', processed='center(received)=3403', processed='source(src)=3403', processed='center(queued)=6806', processed='destination(console_all)=3403', processed='src.internal(src#1)=107', stamp='src.internal(src#1)=1585315826', processed='destination(mail)=2359', processed='destination(messages)=1044', processed='global(sdata_updates)=8', processed='global(payload_reallocs)=2439'
+Mar 28 03:55:25 lena kernel: [drm:drm_atomic_helper_wait_for_flip_done [drm_kms_helper]] *ERROR* [CRTC:63:pipe B] flip_done timed out
+Mar 28 03:55:35 lena kernel: [drm:drm_atomic_helper_wait_for_dependencies [drm_kms_helper]] *ERROR* [CRTC:63:pipe B] flip_done timed out
+Mar 28 03:55:45 lena kernel: [drm:drm_atomic_helper_wait_for_dependencies [drm_kms_helper]] *ERROR* [CONNECTOR:87:HDMI-A-1] flip_done timed out
+Mar 28 03:55:55 lena kernel: [drm:drm_atomic_helper_wait_for_flip_done [drm_kms_helper]] *ERROR* [CRTC:63:pipe B] flip_done timed out
+Mar 28 04:05:55 lena kernel: ------------[ cut here ]------------
+Mar 28 04:05:55 lena kernel: vblank wait timed out on crtc 1
+Mar 28 04:05:55 lena kernel: WARNING: CPU: 0 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
+Mar 28 04:05:55 lena kernel: Modules linked in: usblp uas usb_storage uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic crc32_pclmul crc32c_intel ghash_clmulni_intel i915 aesni_intel drm_kms_helper cfbfillrect crypto_simd glue_helper syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci snd_hwdep sdhci drm_panel_orientation_quirks snd_hda_core intel_gtt mmc_core xhci_hcd iosf_mbi
+Mar 28 04:05:55 lena kernel: CPU: 0 PID: 4221 Comm: X Tainted: G        W         5.2.0+ #44
+Mar 28 04:05:55 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
+Mar 28 04:05:55 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
+Mar 28 04:05:55 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de 0d a0 e8 2e bd fc e0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24 28 65 48 33 04 25
+Mar 28 04:05:55 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
+Mar 28 04:05:55 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
+Mar 28 04:05:55 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277a163a0
+Mar 28 04:05:55 lena kernel: RBP: ffff888271b40000 R08: 000000000000036d R09: 0000000000000001
+Mar 28 04:05:55 lena kernel: R10: ffffc90000e739d0 R11: 0005ae83a6d4cf00 R12: 0000000000000000
+Mar 28 04:05:55 lena kernel: R13: 0000000000ca9ef5 R14: ffff8882765eb160 R15: 0000000000000001
+Mar 28 04:05:55 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
+Mar 28 04:05:55 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Mar 28 04:05:55 lena kernel: CR2: 00007f6d6dcb0000 CR3: 0000000268a70000 CR4: 00000000001006f0
+Mar 28 04:05:55 lena kernel: Call Trace:
+Mar 28 04:05:55 lena kernel: ? wait_woken+0x68/0x68
+Mar 28 04:05:55 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
+Mar 28 04:05:55 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
+Mar 28 04:05:55 lena kernel: ? flush_workqueue+0x2ab/0x2d4
+Mar 28 04:05:55 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
+Mar 28 04:05:55 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
+Mar 28 04:05:55 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
+Mar 28 04:05:55 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
+Mar 28 04:05:55 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
+Mar 28 04:05:55 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
+Mar 28 04:05:55 lena kernel: ? ___sys_recvmsg+0x1a0/0x1ce
+Mar 28 04:05:55 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
+Mar 28 04:05:55 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
+Mar 28 04:05:55 lena kernel: ? vfs_writev+0xd3/0x100
+Mar 28 04:05:55 lena kernel: ? timerqueue_del+0x2c/0x3a
+Mar 28 04:05:55 lena kernel: ? __remove_hrtimer+0x28/0x61
+Mar 28 04:05:55 lena kernel: vfs_ioctl+0x19/0x26
+Mar 28 04:05:55 lena kernel: do_vfs_ioctl+0x52c/0x554
+Mar 28 04:05:55 lena kernel: ? __se_sys_setitimer+0xa8/0xf0
+Mar 28 04:05:55 lena kernel: ksys_ioctl+0x39/0x58
+Mar 28 04:05:55 lena kernel: __x64_sys_ioctl+0x11/0x14
+Mar 28 04:05:55 lena kernel: do_syscall_64+0x4a/0xf4
+Mar 28 04:05:55 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Mar 28 04:05:55 lena kernel: RIP: 0033:0x7f6d74ce12b7
+Mar 28 04:05:55 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00 f7 d8 64 89 01 48
+Mar 28 04:05:55 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
+Mar 28 04:05:55 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
+Mar 28 04:05:55 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
+Mar 28 04:05:55 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
+Mar 28 04:05:55 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
+Mar 28 04:05:55 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
+Mar 28 04:05:55 lena kernel: ---[ end trace 5361d6be40e0aafa ]---
+Mar 28 04:49:14 lena kernel: ------------[ cut here ]------------
+Mar 28 04:49:14 lena kernel: vblank wait timed out on crtc 1
+Mar 28 04:49:14 lena kernel: WARNING: CPU: 2 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
+Mar 28 04:49:14 lena kernel: Modules linked in: usblp uas usb_storage uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic crc32_pclmul crc32c_intel ghash_clmulni_intel i915 aesni_intel drm_kms_helper cfbfillrect crypto_simd glue_helper syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci snd_hwdep sdhci drm_panel_orientation_quirks snd_hda_core intel_gtt mmc_core xhci_hcd iosf_mbi
+Mar 28 04:49:14 lena kernel: CPU: 2 PID: 4221 Comm: X Tainted: G        W         5.2.0+ #44
+Mar 28 04:49:14 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
+Mar 28 04:49:14 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
+Mar 28 04:49:14 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de 0d a0 e8 2e bd fc e0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24 28 65 48 33 04 25
+Mar 28 04:49:14 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
+Mar 28 04:49:14 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
+Mar 28 04:49:14 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277b163a0
+Mar 28 04:49:14 lena kernel: RBP: ffff888271b40000 R08: 000000000000039f R09: 0000000000000001
+Mar 28 04:49:14 lena kernel: R10: ffffc90000e739d0 R11: 0005b24bca063000 R12: 0000000000000000
+Mar 28 04:49:14 lena kernel: R13: 0000000000ccd1e6 R14: ffff8882765eb160 R15: 0000000000000001
+Mar 28 04:49:14 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277b00000(0000) knlGS:0000000000000000
+Mar 28 04:49:14 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Mar 28 04:49:14 lena kernel: CR2: 00007f6d6dcb0000 CR3: 0000000268a70000 CR4: 00000000001006e0
+Mar 28 04:49:14 lena kernel: Call Trace:
+Mar 28 04:49:14 lena kernel: ? wait_woken+0x68/0x68
+Mar 28 04:49:14 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
+Mar 28 04:49:14 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
+Mar 28 04:49:14 lena kernel: ? flush_workqueue+0x2ab/0x2d4
+Mar 28 04:49:14 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
+Mar 28 04:49:14 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
+Mar 28 04:49:14 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
+Mar 28 04:49:14 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
+Mar 28 04:49:14 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
+Mar 28 04:49:14 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
+Mar 28 04:49:14 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
+Mar 28 04:49:14 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
+Mar 28 04:49:14 lena kernel: ? hrtimer_cancel+0xc/0x16
+Mar 28 04:49:14 lena kernel: ? schedule_hrtimeout_range_clock+0xb3/0xef
+Mar 28 04:49:14 lena kernel: ? hrtimer_init+0x2/0x2
+Mar 28 04:49:14 lena kernel: vfs_ioctl+0x19/0x26
+Mar 28 04:49:14 lena kernel: do_vfs_ioctl+0x52c/0x554
+Mar 28 04:49:14 lena kernel: ? wake_up_q+0x4e/0x4e
+Mar 28 04:49:14 lena kernel: ksys_ioctl+0x39/0x58
+Mar 28 04:49:14 lena kernel: __x64_sys_ioctl+0x11/0x14
+Mar 28 04:49:14 lena kernel: do_syscall_64+0x4a/0xf4
+Mar 28 04:49:14 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Mar 28 04:49:14 lena kernel: RIP: 0033:0x7f6d74ce12b7
+Mar 28 04:49:14 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00 f7 d8 64 89 01 48
+Mar 28 04:49:14 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
+Mar 28 04:49:14 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
+Mar 28 04:49:14 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
+Mar 28 04:49:14 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
+Mar 28 04:49:14 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
+Mar 28 04:49:14 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
+Mar 28 04:49:14 lena kernel: ---[ end trace 5361d6be40e0aafb ]---
