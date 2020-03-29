@@ -2,97 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BD0B197115
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 01:29:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4711197125
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 01:52:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbgC2X3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 19:29:48 -0400
-Received: from mailoutvs3.siol.net ([185.57.226.194]:44343 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727263AbgC2X3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 19:29:48 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id A502E521FBD;
-        Mon, 30 Mar 2020 01:29:44 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ZWF0-JOzCeTW; Mon, 30 Mar 2020 01:29:44 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 4DA5D521FD4;
-        Mon, 30 Mar 2020 01:29:44 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe-194-152-20-232.static.triera.net [194.152.20.232])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id 934CE521FBD;
-        Mon, 30 Mar 2020 01:29:42 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Torsten Duwe <duwe@lst.de>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Samuel Holland <samuel@sholland.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Vasily Khoruzhick <anarsoul@gmail.com>
-Cc:     Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [PATCH] drm/bridge: anx6345: set correct BPC for display_info of connector
-Date:   Mon, 30 Mar 2020 01:29:42 +0200
-Message-ID: <11490050.O9o76ZdvQC@jernej-laptop>
-In-Reply-To: <20200329222253.2941405-1-anarsoul@gmail.com>
-References: <20200329222253.2941405-1-anarsoul@gmail.com>
+        id S1727384AbgC2XwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 19:52:09 -0400
+Received: from server.business2host.com ([80.244.184.168]:58553 "EHLO
+        server.business2host.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbgC2XwJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 19:52:09 -0400
+Received: from [::1] (port=40154 helo=server.business2host.com)
+        by server.business2host.com with esmtpa (Exim 4.93)
+        (envelope-from <info57@tcrctodmorden.co.uk>)
+        id 1jIX6Y-006uXF-NX; Sun, 29 Mar 2020 13:31:54 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Sun, 29 Mar 2020 13:31:53 +0100
+From:   Mr Liang Chung <info57@tcrctodmorden.co.uk>
+To:     undisclosed-recipients:;
+Subject: Good Day
+Reply-To: liangchung58@gmail.com
+Mail-Reply-To: liangchung58@gmail.com
+Message-ID: <45dee2e8d237bba57ff0ffc0361fbb24@tcrctodmorden.co.uk>
+X-Sender: info57@tcrctodmorden.co.uk
+User-Agent: Roundcube Webmail/1.3.8
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.business2host.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - tcrctodmorden.co.uk
+X-Get-Message-Sender-Via: server.business2host.com: authenticated_id: info57@tcrctodmorden.co.uk
+X-Authenticated-Sender: server.business2host.com: info57@tcrctodmorden.co.uk
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
-
-Dne ponedeljek, 30. marec 2020 ob 00:22:53 CEST je Vasily Khoruzhick 
-napisal(a):
-> Some drivers (e.g. sun4i-drm) need this info to decide whether they
-> need to enable dithering. Currently driver reports what panel supports
-> and if panel supports 8 we don't get dithering enabled.
-> 
-> Hardcode BPC to 6 for now since that's the only BPC
-> that driver supports.
-
-Acked-by: Jernej Skrabec <jernej.skrabec@siol.net>
-
-Best regards,
-Jernej
-
-> 
-> Fixes: 6aa192698089 ("drm/bridge: Add Analogix anx6345 support")
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/analogix-anx6345.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-> b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c index
-> d7cb10c599a3..ea5de9395662 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix-anx6345.c
-> @@ -494,6 +494,9 @@ static int anx6345_get_modes(struct drm_connector
-> *connector)
-> 
->  	num_modes += drm_add_edid_modes(connector, anx6345->edid);
-> 
-> +	/* Driver currently supports only 6bpc */
-> +	connector->display_info.bpc = 6;
-> +
->  unlock:
->  	if (power_off)
->  		anx6345_poweroff(anx6345);
 
 
+-- 
+Good Day,
 
+I am Mr Liang Chung, Senior Account Officer with the International bank 
+of
+Taipei, I am requesting for your partnership in re-profiling funds.
+Contact me for further details on private Email (liangchung58@gmail.com)
 
+I look forward to it.
+
+Regards,
+Liang Chung
