@@ -2,67 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E21FD197080
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 23:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B790E19708B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 23:34:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728938AbgC2VWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 17:22:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32990 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728908AbgC2VWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 17:22:13 -0400
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5457720787
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 21:22:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585516932;
-        bh=henbE984rrlQ2aisAaasFTvuukMP1h2D8fArnHeL2fE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CT0BJrt8haSInSNKAvdzi5ePELm8SItRufE5YA6TDyhxaIdAUXyIAyEu5sCQvraIO
-         7B7hzZJj1PWNebSgnBVIBZv/aOnrlDBUYtUuim18NZEbfTQRxiaKzXaywxnEAuaPyv
-         axFQSAVAd+ZWaqROX3/J7A50OAG7O8DErYQkjiyk=
-Received: by mail-wr1-f52.google.com with SMTP id h9so18779711wrc.8
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 14:22:12 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ0f5tIWOkYhbJ9pLwxpJ5N14/+cxP1NY/nHXYXRKZptfD6FJ6nm
-        B1fU/167A4mYq+J3b4RcXAyWLBvGWJBTkbkKjzPhhg==
-X-Google-Smtp-Source: ADFU+vsGnaM2PRBkeXNlpbRPMLa9FLhGvFgbGDJJhYmUAZzE3663n5gDF7Ocr08xsbfJl/xiwczBs3KLpqJZFuhia3U=
-X-Received: by 2002:adf:e901:: with SMTP id f1mr11177142wrm.75.1585516930709;
- Sun, 29 Mar 2020 14:22:10 -0700 (PDT)
+        id S1729009AbgC2VeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 17:34:07 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35631 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727370AbgC2VeG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 17:34:06 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f74so8327521wmf.0
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 14:34:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UYYymRN1K169Z7gNSCvqd3FjnJg3VLBy6qvkZ/F2c3c=;
+        b=fBwZoN4NdJySdoYnzO17+ef9G1oyuWbg2GdXXl5Uhud7wGkWIGuIxAEnyQB0rdCaTB
+         eWQR5NKDqflIVxS1fo/ODgS+2Lz3hQwZZdY3pADWCstf/SOttIIIdBX22YRjilQPJIRd
+         jKgYgQN5ZOTmCNjKGVCA/18D3rPesM+oQCes8GCJpAH77HHqm+DglwPF7h0ZQPu+O9BJ
+         CMzV0eoVor1clhL7H9kMhrnEpyDsBsdcs1h8lxQjLGK3qIebVDRKJdNXavNoQDxCIYFF
+         KGvDRQMRDFGcMbPkAC8Nhboqxq6xLWfw//Xf/dtt6XojByjHZuuVFqDZ3peuo1/tkKVK
+         vyyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UYYymRN1K169Z7gNSCvqd3FjnJg3VLBy6qvkZ/F2c3c=;
+        b=Vqj2AfLiaik4ZZZC2oXbfqNfx5oVPGFVhnzH0PsM42BU0iSzg/eQkEcqI8IzrR4ffL
+         c5NArDmixRIL/IHA2IhW/DTuYdalX1MmCNMyhB0HWa5GtJL1OUJc60mO6WgKoUu9pEQ0
+         M/uEEV1+swRExBRxqcYDO4yU4AiyhCX8d4qxLtO1UpSGST1kvUSNB8labTkXDGf55XEB
+         csu5mmgfxJi4rJ7hxk9BTOawCnpnCuQmiyPAzPDvEL43CS0n0SNEJ1slFxQCwAfULfId
+         MzAmXRm/v4vDHWxjUP6WqHBkUXPyjQ4hoDR+lnrG/lnX3JKjGSr1qBWEPghvosiBWY4+
+         q1Kw==
+X-Gm-Message-State: ANhLgQ39wzZXSw+25JwdNv7tPlkY7FuYQeNcNhma3KYbW4jgmiMsXXLd
+        ImjooZSOnVByYPF+O0/i3jS6nOToA9GarxXG+Yw=
+X-Google-Smtp-Source: ADFU+vuLjfoldny3m1JWulHO6TuKShC4MkYuMXyqzLelccEgNlHrwFZvAwuWcZ6U3v7MTT7a7wrtygDTnxJ45HE3FBA=
+X-Received: by 2002:a7b:c050:: with SMTP id u16mr10754316wmc.68.1585517642786;
+ Sun, 29 Mar 2020 14:34:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200323183620.GD23230@ZenIV.linux.org.uk> <20200323183819.250124-1-viro@ZenIV.linux.org.uk>
- <20200328104857.GA93574@gmail.com> <20200328115936.GA23230@ZenIV.linux.org.uk>
- <20200329092602.GB93574@gmail.com> <CALCETrX=nXN14fqu-yEMGwwN-vdSz=-0C3gcOMucmxrCUpevdA@mail.gmail.com>
- <489c9af889954649b3453e350bab6464@AcuMS.aculab.com> <CAHk-=whDAxb+83gYCv4=-armoqXQXgzshaVCCe9dNXZb9G_CxQ@mail.gmail.com>
- <9352bc55302d4589aaf2461c7b85fb6b@AcuMS.aculab.com> <CAHk-=wjEf+0sBkPFKWpYZK_ygS9=ig3KTZkDe5jkDj+v8i7B+w@mail.gmail.com>
-In-Reply-To: <CAHk-=wjEf+0sBkPFKWpYZK_ygS9=ig3KTZkDe5jkDj+v8i7B+w@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 29 Mar 2020 14:21:58 -0700
-X-Gmail-Original-Message-ID: <CALCETrXWKE8RMX-mZ=p5T19sfS8Rn+1b_EtJz4TXbmf57_aY5g@mail.gmail.com>
-Message-ID: <CALCETrXWKE8RMX-mZ=p5T19sfS8Rn+1b_EtJz4TXbmf57_aY5g@mail.gmail.com>
-Subject: Re: [RFC][PATCH 01/22] x86 user stack frame reads: switch to explicit __get_user()
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>
+References: <20200130192226.2776-1-krzk@kernel.org> <6e686a54-2e1c-b690-d465-369e0d712bba@cambridgegreys.com>
+In-Reply-To: <6e686a54-2e1c-b690-d465-369e0d712bba@cambridgegreys.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Sun, 29 Mar 2020 23:33:51 +0200
+Message-ID: <CAFLxGvyPRUPkEdntpiN34sviz4D275E_bYCqi0hkwmycZ+ZvTQ@mail.gmail.com>
+Subject: Re: [PATCH] um: configs: Cleanup CONFIG_IOSCHED_CFQ
+To:     Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-um <linux-um@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 29, 2020 at 11:16 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> But that magical asm-goto-with-outputs patch probably won't land
-> upstream for a couple of years.
+On Mon, Feb 10, 2020 at 3:41 PM Anton Ivanov
+<anton.ivanov@cambridgegreys.com> wrote:
+>
+>
+>
+> On 30/01/2020 19:22, Krzysztof Kozlowski wrote:
+> > CONFIG_IOSCHED_CFQ is since commit f382fb0bcef4 ("block: remove legacy
+> > IO schedulers").
+> >
+> > The IOSCHED_BFQ seems to replace IOSCHED_CFQ so select it in configs
+> > previously choosing the latter.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >   arch/um/configs/i386_defconfig   | 2 +-
+> >   arch/um/configs/x86_64_defconfig | 2 +-
+> >   2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/um/configs/i386_defconfig b/arch/um/configs/i386_defconfig
+> > index 73e98bb57bf5..fb51bd206dbe 100644
+> > --- a/arch/um/configs/i386_defconfig
+> > +++ b/arch/um/configs/i386_defconfig
+> > @@ -26,7 +26,7 @@ CONFIG_SLAB=y
+> >   CONFIG_MODULES=y
+> >   CONFIG_MODULE_UNLOAD=y
+> >   # CONFIG_BLK_DEV_BSG is not set
+> > -CONFIG_IOSCHED_CFQ=m
+> > +CONFIG_IOSCHED_BFQ=m
+> >   CONFIG_SSL=y
+> >   CONFIG_NULL_CHAN=y
+> >   CONFIG_PORT_CHAN=y
+> > diff --git a/arch/um/configs/x86_64_defconfig b/arch/um/configs/x86_64_defconfig
+> > index 3281d7600225..477b87317424 100644
+> > --- a/arch/um/configs/x86_64_defconfig
+> > +++ b/arch/um/configs/x86_64_defconfig
+> > @@ -24,7 +24,7 @@ CONFIG_SLAB=y
+> >   CONFIG_MODULES=y
+> >   CONFIG_MODULE_UNLOAD=y
+> >   # CONFIG_BLK_DEV_BSG is not set
+> > -CONFIG_IOSCHED_CFQ=m
+> > +CONFIG_IOSCHED_BFQ=m
+> >   CONFIG_SSL=y
+> >   CONFIG_NULL_CHAN=y
+> >   CONFIG_PORT_CHAN=y
+> >
+>
+> Acked-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
 
-I'm not that familiar with gcc politics, but what's the delay?  ISTM
-having an actual upstream Linux asm-goto-with-outputs that works on
-clang might help light a fire under some butts and/or convince someone
-to pay a gcc developer to implement it on gcc.
+Applied, thanks!
 
---Andy
+-- 
+Thanks,
+//richard
