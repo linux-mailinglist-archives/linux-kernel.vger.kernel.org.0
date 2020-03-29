@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ECE9197002
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C45F196FF6
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729015AbgC2U1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 16:27:03 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57073 "EHLO
+        id S1728959AbgC2U0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 16:26:40 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57074 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728913AbgC2U0d (ORCPT
+        with ESMTP id S1728916AbgC2U0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 16:26:33 -0400
+        Sun, 29 Mar 2020 16:26:34 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jIeVq-0001U2-20; Sun, 29 Mar 2020 22:26:30 +0200
+        id 1jIeVq-0001Ug-W1; Sun, 29 Mar 2020 22:26:31 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8BFCC1C07EC;
-        Sun, 29 Mar 2020 22:26:20 +0200 (CEST)
-Date:   Sun, 29 Mar 2020 20:26:20 -0000
-From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9635A1C070D;
+        Sun, 29 Mar 2020 22:26:21 +0200 (CEST)
+Date:   Sun, 29 Mar 2020 20:26:21 -0000
+From:   "tip-bot2 for Atish Patra" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/gic-v3-its: Probe ITS page size for all
- GITS_BASERn registers
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Nianyao Tang <tangnianyao@huawei.com>, x86 <x86@kernel.org>,
+Subject: [tip: irq/core] irqchip/sifive-plic: Add support for multiple PLICs
+Cc:     Atish Patra <atish.patra@wdc.com>, Marc Zyngier <maz@kernel.org>,
+        Anup Patel <anup@brainfault.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1584089195-63897-1-git-send-email-zhangshaokun@hisilicon.com>
-References: <1584089195-63897-1-git-send-email-zhangshaokun@hisilicon.com>
+In-Reply-To: <20200302231146.15530-3-atish.patra@wdc.com>
+References: <20200302231146.15530-3-atish.patra@wdc.com>
 MIME-Version: 1.0
-Message-ID: <158551358020.28353.12068573166973176178.tip-bot2@tip-bot2>
+Message-ID: <158551358111.28353.4832719273444577850.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,210 +47,214 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     d5df9dc96eb7423d3f742b13d5e1e479ff795eaa
-Gitweb:        https://git.kernel.org/tip/d5df9dc96eb7423d3f742b13d5e1e479ff795eaa
-Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Fri, 13 Mar 2020 11:01:15 
+Commit-ID:     f1ad1133b18f2aed3f6923cdb62b63da230accfd
+Gitweb:        https://git.kernel.org/tip/f1ad1133b18f2aed3f6923cdb62b63da230accfd
+Author:        Atish Patra <atish.patra@wdc.com>
+AuthorDate:    Mon, 02 Mar 2020 15:11:46 -08:00
 Committer:     Marc Zyngier <maz@kernel.org>
 CommitterDate: Mon, 16 Mar 2020 15:48:54 
 
-irqchip/gic-v3-its: Probe ITS page size for all GITS_BASERn registers
+irqchip/sifive-plic: Add support for multiple PLICs
 
-The GICv3 ITS driver assumes that once it has latched on a page size for
-a given BASER register, it can use the same page size as the maximum
-page size for all subsequent BASER registers.
+Current, PLIC driver can support only 1 PLIC on the board. However,
+there can be multiple PLICs present on a two socket systems in RISC-V.
 
-Although it worked so far, nothing in the architecture guarantees this,
-and Nianyao Tang hit this problem on some undisclosed implementation.
+Modify the driver so that each PLIC handler can have a information
+about individual PLIC registers and an irqdomain associated with it.
 
-Let's bite the bullet and probe the the supported page size on all BASER
-registers before starting to populate the tables. This simplifies the
-setup a bit, at the expense of a few additional MMIO accesses.
+Tested on two socket RISC-V system based on VCU118 FPGA connected via
+OmniXtend protocol.
 
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reported-by: Nianyao Tang <tangnianyao@huawei.com>
-Tested-by: Nianyao Tang <tangnianyao@huawei.com>
-Link: https://lore.kernel.org/r/1584089195-63897-1-git-send-email-zhangshaokun@hisilicon.com
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Link: https://lore.kernel.org/r/20200302231146.15530-3-atish.patra@wdc.com
 ---
- drivers/irqchip/irq-gic-v3-its.c | 100 +++++++++++++++++++-----------
- 1 file changed, 66 insertions(+), 34 deletions(-)
+ drivers/irqchip/irq-sifive-plic.c | 81 ++++++++++++++++++------------
+ 1 file changed, 51 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 6bb2bea..e207fbf 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2036,18 +2036,17 @@ static void its_write_baser(struct its_node *its, struct its_baser *baser,
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+index 7c7f373..c34fb3a 100644
+--- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -59,7 +59,11 @@
+ #define	PLIC_DISABLE_THRESHOLD		0xf
+ #define	PLIC_ENABLE_THRESHOLD		0
+ 
+-static void __iomem *plic_regs;
++struct plic_priv {
++	struct cpumask lmask;
++	struct irq_domain *irqdomain;
++	void __iomem *regs;
++};
+ 
+ struct plic_handler {
+ 	bool			present;
+@@ -70,6 +74,7 @@ struct plic_handler {
+ 	 */
+ 	raw_spinlock_t		enable_lock;
+ 	void __iomem		*enable_base;
++	struct plic_priv	*priv;
+ };
+ static DEFINE_PER_CPU(struct plic_handler, plic_handlers);
+ 
+@@ -88,31 +93,40 @@ static inline void plic_toggle(struct plic_handler *handler,
  }
  
- static int its_setup_baser(struct its_node *its, struct its_baser *baser,
--			   u64 cache, u64 shr, u32 psz, u32 order,
--			   bool indirect)
-+			   u64 cache, u64 shr, u32 order, bool indirect)
+ static inline void plic_irq_toggle(const struct cpumask *mask,
+-				   int hwirq, int enable)
++				   struct irq_data *d, int enable)
  {
- 	u64 val = its_read_baser(its, baser);
- 	u64 esz = GITS_BASER_ENTRY_SIZE(val);
- 	u64 type = GITS_BASER_TYPE(val);
- 	u64 baser_phys, tmp;
--	u32 alloc_pages;
-+	u32 alloc_pages, psz;
- 	struct page *page;
- 	void *base;
+ 	int cpu;
++	struct plic_priv *priv = irq_get_chip_data(d->irq);
  
--retry_alloc_baser:
-+	psz = baser->psz;
- 	alloc_pages = (PAGE_ORDER_TO_SIZE(order) / psz);
- 	if (alloc_pages > GITS_BASER_PAGES_MAX) {
- 		pr_warn("ITS@%pa: %s too large, reduce ITS pages %u->%u\n",
-@@ -2120,25 +2119,6 @@ retry_baser:
- 		goto retry_baser;
+-	writel(enable, plic_regs + PRIORITY_BASE + hwirq * PRIORITY_PER_ID);
++	writel(enable, priv->regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
+ 	for_each_cpu(cpu, mask) {
+ 		struct plic_handler *handler = per_cpu_ptr(&plic_handlers, cpu);
+ 
+-		if (handler->present)
+-			plic_toggle(handler, hwirq, enable);
++		if (handler->present &&
++		    cpumask_test_cpu(cpu, &handler->priv->lmask))
++			plic_toggle(handler, d->hwirq, enable);
  	}
+ }
  
--	if ((val ^ tmp) & GITS_BASER_PAGE_SIZE_MASK) {
--		/*
--		 * Page size didn't stick. Let's try a smaller
--		 * size and retry. If we reach 4K, then
--		 * something is horribly wrong...
--		 */
--		free_pages((unsigned long)base, order);
--		baser->base = NULL;
+ static void plic_irq_unmask(struct irq_data *d)
+ {
+-	unsigned int cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
+-					   cpu_online_mask);
++	struct cpumask amask;
++	unsigned int cpu;
++	struct plic_priv *priv = irq_get_chip_data(d->irq);
++
++	cpumask_and(&amask, &priv->lmask, cpu_online_mask);
++	cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
++					   &amask);
+ 	if (WARN_ON_ONCE(cpu >= nr_cpu_ids))
+ 		return;
+-	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
++	plic_irq_toggle(cpumask_of(cpu), d, 1);
+ }
+ 
+ static void plic_irq_mask(struct irq_data *d)
+ {
+-	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
++	struct plic_priv *priv = irq_get_chip_data(d->irq);
++
++	plic_irq_toggle(&priv->lmask, d, 0);
+ }
+ 
+ #ifdef CONFIG_SMP
+@@ -120,17 +134,21 @@ static int plic_set_affinity(struct irq_data *d,
+ 			     const struct cpumask *mask_val, bool force)
+ {
+ 	unsigned int cpu;
++	struct cpumask amask;
++	struct plic_priv *priv = irq_get_chip_data(d->irq);
++
++	cpumask_and(&amask, &priv->lmask, mask_val);
+ 
+ 	if (force)
+-		cpu = cpumask_first(mask_val);
++		cpu = cpumask_first(&amask);
+ 	else
+-		cpu = cpumask_any_and(mask_val, cpu_online_mask);
++		cpu = cpumask_any_and(&amask, cpu_online_mask);
+ 
+ 	if (cpu >= nr_cpu_ids)
+ 		return -EINVAL;
+ 
+-	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
+-	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
++	plic_irq_toggle(&priv->lmask, d, 0);
++	plic_irq_toggle(cpumask_of(cpu), d, 1);
+ 
+ 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+ 
+@@ -191,8 +209,6 @@ static const struct irq_domain_ops plic_irqdomain_ops = {
+ 	.free		= irq_domain_free_irqs_top,
+ };
+ 
+-static struct irq_domain *plic_irqdomain;
 -
--		switch (psz) {
--		case SZ_16K:
--			psz = SZ_4K;
--			goto retry_alloc_baser;
--		case SZ_64K:
--			psz = SZ_16K;
--			goto retry_alloc_baser;
--		}
+ /*
+  * Handling an interrupt is a two-step process: first you claim the interrupt
+  * by reading the claim register, then you complete the interrupt by writing
+@@ -209,7 +225,7 @@ static void plic_handle_irq(struct pt_regs *regs)
+ 
+ 	csr_clear(CSR_IE, IE_EIE);
+ 	while ((hwirq = readl(claim))) {
+-		int irq = irq_find_mapping(plic_irqdomain, hwirq);
++		int irq = irq_find_mapping(handler->priv->irqdomain, hwirq);
+ 
+ 		if (unlikely(irq <= 0))
+ 			pr_warn_ratelimited("can't find mapping for hwirq %lu\n",
+@@ -265,15 +281,17 @@ static int __init plic_init(struct device_node *node,
+ {
+ 	int error = 0, nr_contexts, nr_handlers = 0, i;
+ 	u32 nr_irqs;
++	struct plic_priv *priv;
+ 
+-	if (plic_regs) {
+-		pr_warn("PLIC already present.\n");
+-		return -ENXIO;
 -	}
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
+ 
+-	plic_regs = of_iomap(node, 0);
+-	if (WARN_ON(!plic_regs))
+-		return -EIO;
++	priv->regs = of_iomap(node, 0);
++	if (WARN_ON(!priv->regs)) {
++		error = -EIO;
++		goto out_free_priv;
++	}
+ 
+ 	error = -EINVAL;
+ 	of_property_read_u32(node, "riscv,ndev", &nr_irqs);
+@@ -287,9 +305,9 @@ static int __init plic_init(struct device_node *node,
+ 		goto out_iounmap;
+ 
+ 	error = -ENOMEM;
+-	plic_irqdomain = irq_domain_add_linear(node, nr_irqs + 1,
+-			&plic_irqdomain_ops, NULL);
+-	if (WARN_ON(!plic_irqdomain))
++	priv->irqdomain = irq_domain_add_linear(node, nr_irqs + 1,
++			&plic_irqdomain_ops, priv);
++	if (WARN_ON(!priv->irqdomain))
+ 		goto out_iounmap;
+ 
+ 	for (i = 0; i < nr_contexts; i++) {
+@@ -334,13 +352,14 @@ static int __init plic_init(struct device_node *node,
+ 			goto done;
+ 		}
+ 
++		cpumask_set_cpu(cpu, &priv->lmask);
+ 		handler->present = true;
+ 		handler->hart_base =
+-			plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
++			priv->regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
+ 		raw_spin_lock_init(&handler->enable_lock);
+ 		handler->enable_base =
+-			plic_regs + ENABLE_BASE + i * ENABLE_PER_HART;
 -
- 	if (val != tmp) {
- 		pr_err("ITS@%pa: %s doesn't stick: %llx %llx\n",
- 		       &its->phys_base, its_base_type_string[type],
-@@ -2164,13 +2144,14 @@ retry_baser:
++			priv->regs + ENABLE_BASE + i * ENABLE_PER_HART;
++		handler->priv = priv;
+ done:
+ 		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
+ 			plic_toggle(handler, hwirq, 0);
+@@ -356,7 +375,9 @@ done:
+ 	return 0;
  
- static bool its_parse_indirect_baser(struct its_node *its,
- 				     struct its_baser *baser,
--				     u32 psz, u32 *order, u32 ids)
-+				     u32 *order, u32 ids)
- {
- 	u64 tmp = its_read_baser(its, baser);
- 	u64 type = GITS_BASER_TYPE(tmp);
- 	u64 esz = GITS_BASER_ENTRY_SIZE(tmp);
- 	u64 val = GITS_BASER_InnerShareable | GITS_BASER_RaWaWb;
- 	u32 new_order = *order;
-+	u32 psz = baser->psz;
- 	bool indirect = false;
- 
- 	/* No need to enable Indirection if memory requirement < (psz*2)bytes */
-@@ -2288,11 +2269,58 @@ static void its_free_tables(struct its_node *its)
- 	}
+ out_iounmap:
+-	iounmap(plic_regs);
++	iounmap(priv->regs);
++out_free_priv:
++	kfree(priv);
+ 	return error;
  }
  
-+static int its_probe_baser_psz(struct its_node *its, struct its_baser *baser)
-+{
-+	u64 psz = SZ_64K;
-+
-+	while (psz) {
-+		u64 val, gpsz;
-+
-+		val = its_read_baser(its, baser);
-+		val &= ~GITS_BASER_PAGE_SIZE_MASK;
-+
-+		switch (psz) {
-+		case SZ_64K:
-+			gpsz = GITS_BASER_PAGE_SIZE_64K;
-+			break;
-+		case SZ_16K:
-+			gpsz = GITS_BASER_PAGE_SIZE_16K;
-+			break;
-+		case SZ_4K:
-+		default:
-+			gpsz = GITS_BASER_PAGE_SIZE_4K;
-+			break;
-+		}
-+
-+		gpsz >>= GITS_BASER_PAGE_SIZE_SHIFT;
-+
-+		val |= FIELD_PREP(GITS_BASER_PAGE_SIZE_MASK, gpsz);
-+		its_write_baser(its, baser, val);
-+
-+		if (FIELD_GET(GITS_BASER_PAGE_SIZE_MASK, baser->val) == gpsz)
-+			break;
-+
-+		switch (psz) {
-+		case SZ_64K:
-+			psz = SZ_16K;
-+			break;
-+		case SZ_16K:
-+			psz = SZ_4K;
-+			break;
-+		case SZ_4K:
-+		default:
-+			return -1;
-+		}
-+	}
-+
-+	baser->psz = psz;
-+	return 0;
-+}
-+
- static int its_alloc_tables(struct its_node *its)
- {
- 	u64 shr = GITS_BASER_InnerShareable;
- 	u64 cache = GITS_BASER_RaWaWb;
--	u32 psz = SZ_64K;
- 	int err, i;
- 
- 	if (its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_22375)
-@@ -2303,16 +2331,22 @@ static int its_alloc_tables(struct its_node *its)
- 		struct its_baser *baser = its->tables + i;
- 		u64 val = its_read_baser(its, baser);
- 		u64 type = GITS_BASER_TYPE(val);
--		u32 order = get_order(psz);
- 		bool indirect = false;
-+		u32 order;
- 
--		switch (type) {
--		case GITS_BASER_TYPE_NONE:
-+		if (type == GITS_BASER_TYPE_NONE)
- 			continue;
- 
-+		if (its_probe_baser_psz(its, baser)) {
-+			its_free_tables(its);
-+			return -ENXIO;
-+		}
-+
-+		order = get_order(baser->psz);
-+
-+		switch (type) {
- 		case GITS_BASER_TYPE_DEVICE:
--			indirect = its_parse_indirect_baser(its, baser,
--							    psz, &order,
-+			indirect = its_parse_indirect_baser(its, baser, &order,
- 							    device_ids(its));
- 			break;
- 
-@@ -2328,20 +2362,18 @@ static int its_alloc_tables(struct its_node *its)
- 				}
- 			}
- 
--			indirect = its_parse_indirect_baser(its, baser,
--							    psz, &order,
-+			indirect = its_parse_indirect_baser(its, baser, &order,
- 							    ITS_MAX_VPEID_BITS);
- 			break;
- 		}
- 
--		err = its_setup_baser(its, baser, cache, shr, psz, order, indirect);
-+		err = its_setup_baser(its, baser, cache, shr, order, indirect);
- 		if (err < 0) {
- 			its_free_tables(its);
- 			return err;
- 		}
- 
- 		/* Update settings which will be used for next BASERn */
--		psz = baser->psz;
- 		cache = baser->val & GITS_BASER_CACHEABILITY_MASK;
- 		shr = baser->val & GITS_BASER_SHAREABILITY_MASK;
- 	}
