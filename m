@@ -2,31 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BC83196E49
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 18:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16EAD196E47
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 18:04:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbgC2QEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 12:04:05 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56674 "EHLO
+        id S1728330AbgC2QD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 12:03:56 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56667 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728349AbgC2QEB (ORCPT
+        with ESMTP id S1728089AbgC2QD4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 12:04:01 -0400
+        Sun, 29 Mar 2020 12:03:56 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jIaPh-0007uo-LA; Sun, 29 Mar 2020 18:03:53 +0200
+        id 1jIaPh-0007ul-Cx; Sun, 29 Mar 2020 18:03:53 +0200
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 21D9C101178;
-        Sun, 29 Mar 2020 18:03:53 +0200 (CEST)
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id A67C8FFAA7;
+        Sun, 29 Mar 2020 18:03:52 +0200 (CEST)
 Date:   Sun, 29 Mar 2020 16:03:25 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] timers/urgent for v5.6
-References: <158549780513.2870.9873806112977909523.tglx@nanos.tec.linutronix.de>
-Message-ID: <158549780514.2870.11802053793870612265.tglx@nanos.tec.linutronix.de>
+Subject: [GIT pull] irq/urgent for v5.6
+Message-ID: <158549780513.2870.9873806112977909523.tglx@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -40,51 +39,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest timers/urgent branch from:
+please pull the latest irq/urgent branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-2020-03-29
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-2020-03-29
 
-up to:  749da8ca978f: clocksource/drivers/hyper-v: Make sched clock return nanoseconds correctly
+up to:  df81dfcfd699: genirq: Fix reference leaks on irq affinity notifiers
 
-A single fix for the Hyper-V clocksource driver to make sched clock
-actually return nanoseconds and not the virtual clock value which
-increments at 10e7 HZ (100ns).
-
+A single bugfix to prevent reference leaks in irq affinity notifiers.
 
 Thanks,
 
 	tglx
 
 ------------------>
-Yubo Xie (1):
-      clocksource/drivers/hyper-v: Make sched clock return nanoseconds correctly
+Edward Cree (1):
+      genirq: Fix reference leaks on irq affinity notifiers
 
 
- drivers/clocksource/hyperv_timer.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ kernel/irq/manage.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-index 9d808d595ca8..eb0ba7818eb0 100644
---- a/drivers/clocksource/hyperv_timer.c
-+++ b/drivers/clocksource/hyperv_timer.c
-@@ -343,7 +343,8 @@ static u64 notrace read_hv_clock_tsc_cs(struct clocksource *arg)
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 7eee98c38f25..fe40c658f86f 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -323,7 +323,11 @@ int irq_set_affinity_locked(struct irq_data *data, const struct cpumask *mask,
  
- static u64 read_hv_sched_clock_tsc(void)
- {
--	return read_hv_clock_tsc() - hv_sched_clock_offset;
-+	return (read_hv_clock_tsc() - hv_sched_clock_offset) *
-+		(NSEC_PER_SEC / HV_CLOCK_HZ);
- }
+ 	if (desc->affinity_notify) {
+ 		kref_get(&desc->affinity_notify->kref);
+-		schedule_work(&desc->affinity_notify->work);
++		if (!schedule_work(&desc->affinity_notify->work)) {
++			/* Work was already scheduled, drop our extra ref */
++			kref_put(&desc->affinity_notify->kref,
++				 desc->affinity_notify->release);
++		}
+ 	}
+ 	irqd_set(data, IRQD_AFFINITY_SET);
  
- static void suspend_hv_clock_tsc(struct clocksource *arg)
-@@ -398,7 +399,8 @@ static u64 notrace read_hv_clock_msr_cs(struct clocksource *arg)
+@@ -423,7 +427,10 @@ irq_set_affinity_notifier(unsigned int irq, struct irq_affinity_notify *notify)
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
  
- static u64 read_hv_sched_clock_msr(void)
- {
--	return read_hv_clock_msr() - hv_sched_clock_offset;
-+	return (read_hv_clock_msr() - hv_sched_clock_offset) *
-+		(NSEC_PER_SEC / HV_CLOCK_HZ);
- }
+ 	if (old_notify) {
+-		cancel_work_sync(&old_notify->work);
++		if (cancel_work_sync(&old_notify->work)) {
++			/* Pending work had a ref, put that one too */
++			kref_put(&old_notify->kref, old_notify->release);
++		}
+ 		kref_put(&old_notify->kref, old_notify->release);
+ 	}
  
- static struct clocksource hyperv_cs_msr = {
 
