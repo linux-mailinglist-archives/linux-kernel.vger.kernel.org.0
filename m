@@ -2,80 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75936196DF1
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 16:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA648196DFA
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 16:48:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbgC2Ohw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 10:37:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:59190 "EHLO foss.arm.com"
+        id S1728292AbgC2OsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 10:48:11 -0400
+Received: from mga01.intel.com ([192.55.52.88]:32557 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727488AbgC2Ohv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 10:37:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3FAC31B;
-        Sun, 29 Mar 2020 07:37:50 -0700 (PDT)
-Received: from [10.163.1.70] (unknown [10.163.1.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C1943F68F;
-        Sun, 29 Mar 2020 07:37:44 -0700 (PDT)
-Subject: Re: [mm/debug] f8bf55f05f: BUG:non-zero_pgtables_bytes_on_freeing_mm
-To:     kernel test robot <lkp@intel.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Qian Cai <cai@lca.pw>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Will Deacon <will@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
+        id S1728245AbgC2OsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 10:48:11 -0400
+IronPort-SDR: iLd7iGvGspOVEtGFXGuVAv65b7ywRNq1dQb7N0Tiw4NOA+B7tpiGYw4ndBBW07zpIm2DWnHdc9
+ Y+PtIyEcPwJQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2020 07:48:10 -0700
+IronPort-SDR: nBtIlt8xw3X87rGtSiAizW/ezAp70RXQNKCOhFd0IT1apP1sgku/UPl5TJEycg9t45f4eNxojk
+ SoiuDVtLQgOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,320,1580803200"; 
+   d="scan'208";a="272123787"
+Received: from chenyu-office.sh.intel.com ([10.239.158.173])
+  by fmsmga004.fm.intel.com with ESMTP; 29 Mar 2020 07:48:08 -0700
+From:   Chen Yu <yu.c.chen@intel.com>
+To:     linux-pm@vger.kernel.org
+Cc:     Jonathan Corbet <corbet@lwn.net>, Pavel Machek <pavel@ucw.cz>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org
-References: <20200328130737.GA11705@shao2-debian>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <fb14237e-f973-bc34-4981-280ba5e1eb92@arm.com>
-Date:   Sun, 29 Mar 2020 20:07:38 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20200328130737.GA11705@shao2-debian>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Chen Yu <yu.c.chen@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH][v2] PM / sleep: Add pm_debug_messages boot command control
+Date:   Sun, 29 Mar 2020 22:46:40 +0800
+Message-Id: <20200329144640.20536-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Debug messages from the system suspend/hibernation infrastructure
+is disabled by default, and can only be enabled after the system
+has boot up via /sys/power/pm_debug_messages. This makes the hibernation
+resume hard to track as it involves system boot up across hibernation.
+There's no chance for software_resume() to track the resume process,
+eg.
 
-On 03/28/2020 06:37 PM, kernel test robot wrote:
-> [    9.304270] debug_vm_pgtable: debug_vm_pgtable: Validating architecture page table helpers
-> [    9.306147] random: get_random_u32 called from debug_vm_pgtable+0x2c/0x6a5 with crng_init=1
-> [    9.306206] BUG: non-zero pgtables_bytes on freeing mm: -4096
+Turning on the pm_debug_messages during boot up by appending
+'pm_debug_message'.
 
-This problem is on i386 platform via CONFIG_EXPERT with CONFIG_X86_PAE
-still enabled. This particular configuration is not supported (even if
-it could be tested via CONFIG_EXPERT) with ARCH_HAS_DEBUG_VM_PGTABLE.
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+v2: According to Randy's suggestion, add the command line
+    option to Documentation/admin-guide/kernel-parameters.txt
+---
+ Documentation/admin-guide/kernel-parameters.txt | 3 +++
+ kernel/power/main.c                             | 7 +++++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index beea77046f9b..df8a19e52e82 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -61,6 +61,7 @@  config X86
- 	select ARCH_CLOCKSOURCE_INIT
- 	select ARCH_HAS_ACPI_TABLE_UPGRADE	if ACPI
- 	select ARCH_HAS_DEBUG_VIRTUAL
-+	select ARCH_HAS_DEBUG_VM_PGTABLE	if !X86_PAE
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
- 	select ARCH_HAS_ELF_RANDOMIZE
- 	select ARCH_HAS_FAST_MULTIPLIER
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index c07815d230bc..105ec73743d7 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3698,6 +3698,9 @@
+ 			Override pmtimer IOPort with a hex value.
+ 			e.g. pmtmr=0x508
+ 
++	pm_debug_message	[SUSPEND,KNL]
++			Enable suspend/resume debug messages during boot up.
++
+ 	pnp.debug=1	[PNP]
+ 			Enable PNP debug messages (depends on the
+ 			CONFIG_PNP_DEBUG_MESSAGES option).  Change at run-time
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 69b7a8aeca3b..1da3d7c15e03 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -535,6 +535,13 @@ static ssize_t pm_debug_messages_store(struct kobject *kobj,
+ 
+ power_attr(pm_debug_messages);
+ 
++static int __init pm_debug_message_setup(char *str)
++{
++	pm_debug_messages_on = true;
++	return 1;
++}
++__setup("pm_debug_message", pm_debug_message_setup);
++
+ /**
+  * __pm_pr_dbg - Print a suspend debug message to the kernel log.
+  * @defer: Whether or not to use printk_deferred() to print the message.
+-- 
+2.17.1
+
