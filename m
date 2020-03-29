@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88350197006
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D134196FFF
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:27:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbgC2U1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 16:27:07 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57043 "EHLO
+        id S1728983AbgC2U0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 16:26:47 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57096 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728893AbgC2U0a (ORCPT
+        with ESMTP id S1728946AbgC2U0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 16:26:30 -0400
+        Sun, 29 Mar 2020 16:26:38 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jIeVn-0001Uu-Bs; Sun, 29 Mar 2020 22:26:27 +0200
+        id 1jIeVt-0001VF-0v; Sun, 29 Mar 2020 22:26:33 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1282C1C07F8;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 80E0A1C0450;
         Sun, 29 Mar 2020 22:26:22 +0200 (CEST)
-Date:   Sun, 29 Mar 2020 20:26:21 -0000
-From:   "tip-bot2 for Atish Patra" <tip-bot2@linutronix.de>
+Date:   Sun, 29 Mar 2020 20:26:22 -0000
+From:   "tip-bot2 for afzal mohammed" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/sifive-plic: Enable/Disable external
- interrupts upon cpu online/offline
-Cc:     Atish Patra <atish.patra@wdc.com>, Marc Zyngier <maz@kernel.org>,
-        Anup Patel <anup@brainfault.org>, x86 <x86@kernel.org>,
+Subject: [tip: irq/core] irqchip: Replace setup_irq() by request_irq()
+Cc:     afzal mohammed <afzal.mohd.ma@gmail.com>,
+        Marc Zyngier <maz@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200302231146.15530-2-atish.patra@wdc.com>
-References: <20200302231146.15530-2-atish.patra@wdc.com>
+In-Reply-To: <20200304004839.4729-1-afzal.mohd.ma@gmail.com>
+References: <20200304004839.4729-1-afzal.mohd.ma@gmail.com>
 MIME-Version: 1.0
-Message-ID: <158551358168.28353.9864458380650988997.tip-bot2@tip-bot2>
+Message-ID: <158551358214.28353.15463615152083988179.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,145 +47,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     ccbe80bad571c2f967ad42b25bbb3ef7a4a24705
-Gitweb:        https://git.kernel.org/tip/ccbe80bad571c2f967ad42b25bbb3ef7a4a24705
-Author:        Atish Patra <atish.patra@wdc.com>
-AuthorDate:    Mon, 02 Mar 2020 15:11:45 -08:00
+Commit-ID:     2ef1cb763d92f3e212005fcf5dcc713eaf42b257
+Gitweb:        https://git.kernel.org/tip/2ef1cb763d92f3e212005fcf5dcc713eaf42b257
+Author:        afzal mohammed <afzal.mohd.ma@gmail.com>
+AuthorDate:    Wed, 04 Mar 2020 06:18:38 +05:30
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Mon, 16 Mar 2020 15:48:54 
+CommitterDate: Sun, 08 Mar 2020 14:25:46 
 
-irqchip/sifive-plic: Enable/Disable external interrupts upon cpu online/offline
+irqchip: Replace setup_irq() by request_irq()
 
-Currently, PLIC threshold is only initialized once in the beginning.
-However, threshold can be set to disabled if a CPU is marked offline with
-CPU hotplug feature. This will not allow to change the irq affinity to a
-CPU that just came online.
+request_irq() is preferred over setup_irq(). Invocations of setup_irq()
+occur after memory allocators are ready.
 
-Add PLIC specific CPU hotplug callbacks and enable the threshold when a CPU
-comes online. Take this opportunity to move the external interrupt enable
-code from trap init to PLIC driver as well. On cpu offline path, the driver
-performs the exact opposite operations i.e. disable the interrupt and
-the threshold.
+Per tglx[1], setup_irq() existed in olden days when allocators were not
+ready by the time early interrupts were initialized.
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
+Hence replace setup_irq() by request_irq().
+
+[1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
+
+Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Link: https://lore.kernel.org/r/20200302231146.15530-2-atish.patra@wdc.com
+Link: https://lore.kernel.org/r/20200304004839.4729-1-afzal.mohd.ma@gmail.com
 ---
- arch/riscv/kernel/traps.c         |  2 +-
- drivers/irqchip/irq-sifive-plic.c | 38 ++++++++++++++++++++++++++----
- include/linux/cpuhotplug.h        |  1 +-
- 3 files changed, 36 insertions(+), 5 deletions(-)
+ drivers/irqchip/irq-i8259.c   | 16 ++++++----------
+ drivers/irqchip/irq-ingenic.c |  9 +++------
+ 2 files changed, 9 insertions(+), 16 deletions(-)
 
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index ffb3d94..55ea614 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -157,5 +157,5 @@ void __init trap_init(void)
- 	/* Set the exception vector address */
- 	csr_write(CSR_TVEC, &handle_exception);
- 	/* Enable interrupts */
--	csr_write(CSR_IE, IE_SIE | IE_EIE);
-+	csr_write(CSR_IE, IE_SIE);
+diff --git a/drivers/irqchip/irq-i8259.c b/drivers/irqchip/irq-i8259.c
+index d000870..b6f6aa7 100644
+--- a/drivers/irqchip/irq-i8259.c
++++ b/drivers/irqchip/irq-i8259.c
+@@ -268,15 +268,6 @@ static void init_8259A(int auto_eoi)
+ 	raw_spin_unlock_irqrestore(&i8259A_lock, flags);
  }
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index aa4af88..7c7f373 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -4,6 +4,7 @@
-  * Copyright (C) 2018 Christoph Hellwig
+ 
+-/*
+- * IRQ2 is cascade interrupt to second interrupt controller
+- */
+-static struct irqaction irq2 = {
+-	.handler = no_action,
+-	.name = "cascade",
+-	.flags = IRQF_NO_THREAD,
+-};
+-
+ static struct resource pic1_io_resource = {
+ 	.name = "pic1",
+ 	.start = PIC_MASTER_CMD,
+@@ -311,6 +302,10 @@ static const struct irq_domain_ops i8259A_ops = {
   */
- #define pr_fmt(fmt) "plic: " fmt
-+#include <linux/cpu.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-@@ -55,6 +56,9 @@
- #define     CONTEXT_THRESHOLD		0x00
- #define     CONTEXT_CLAIM		0x04
+ struct irq_domain * __init __init_i8259_irqs(struct device_node *node)
+ {
++	/*
++	 * PIC_CASCADE_IR is cascade interrupt to second interrupt controller
++	 */
++	int irq = I8259A_IRQ_BASE + PIC_CASCADE_IR;
+ 	struct irq_domain *domain;
  
-+#define	PLIC_DISABLE_THRESHOLD		0xf
-+#define	PLIC_ENABLE_THRESHOLD		0
-+
- static void __iomem *plic_regs;
+ 	insert_resource(&ioport_resource, &pic1_io_resource);
+@@ -323,7 +318,8 @@ struct irq_domain * __init __init_i8259_irqs(struct device_node *node)
+ 	if (!domain)
+ 		panic("Failed to add i8259 IRQ domain");
  
- struct plic_handler {
-@@ -230,6 +234,32 @@ static int plic_find_hart_id(struct device_node *node)
- 	return -1;
+-	setup_irq(I8259A_IRQ_BASE + PIC_CASCADE_IR, &irq2);
++	if (request_irq(irq, no_action, IRQF_NO_THREAD, "cascade", NULL))
++		pr_err("Failed to register cascade interrupt\n");
+ 	register_syscore_ops(&i8259_syscore_ops);
+ 	return domain;
+ }
+diff --git a/drivers/irqchip/irq-ingenic.c b/drivers/irqchip/irq-ingenic.c
+index c5589ee..9f3da42 100644
+--- a/drivers/irqchip/irq-ingenic.c
++++ b/drivers/irqchip/irq-ingenic.c
+@@ -58,11 +58,6 @@ static irqreturn_t intc_cascade(int irq, void *data)
+ 	return IRQ_HANDLED;
  }
  
-+static void plic_set_threshold(struct plic_handler *handler, u32 threshold)
-+{
-+	/* priority must be > threshold to trigger an interrupt */
-+	writel(threshold, handler->hart_base + CONTEXT_THRESHOLD);
-+}
-+
-+static int plic_dying_cpu(unsigned int cpu)
-+{
-+	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
-+
-+	csr_clear(CSR_IE, IE_EIE);
-+	plic_set_threshold(handler, PLIC_DISABLE_THRESHOLD);
-+
-+	return 0;
-+}
-+
-+static int plic_starting_cpu(unsigned int cpu)
-+{
-+	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
-+
-+	csr_set(CSR_IE, IE_EIE);
-+	plic_set_threshold(handler, PLIC_ENABLE_THRESHOLD);
-+
-+	return 0;
-+}
-+
- static int __init plic_init(struct device_node *node,
- 		struct device_node *parent)
+-static struct irqaction intc_cascade_action = {
+-	.handler = intc_cascade,
+-	.name = "SoC intc cascade interrupt",
+-};
+-
+ static int __init ingenic_intc_of_init(struct device_node *node,
+ 				       unsigned num_chips)
  {
-@@ -267,7 +297,6 @@ static int __init plic_init(struct device_node *node,
- 		struct plic_handler *handler;
- 		irq_hw_number_t hwirq;
- 		int cpu, hartid;
--		u32 threshold = 0;
- 
- 		if (of_irq_parse_one(node, i, &parent)) {
- 			pr_err("failed to parse parent for context %d.\n", i);
-@@ -301,7 +330,7 @@ static int __init plic_init(struct device_node *node,
- 		handler = per_cpu_ptr(&plic_handlers, cpu);
- 		if (handler->present) {
- 			pr_warn("handler already present for context %d.\n", i);
--			threshold = 0xffffffff;
-+			plic_set_threshold(handler, PLIC_DISABLE_THRESHOLD);
- 			goto done;
- 		}
- 
-@@ -313,13 +342,14 @@ static int __init plic_init(struct device_node *node,
- 			plic_regs + ENABLE_BASE + i * ENABLE_PER_HART;
- 
- done:
--		/* priority must be > threshold to trigger an interrupt */
--		writel(threshold, handler->hart_base + CONTEXT_THRESHOLD);
- 		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
- 			plic_toggle(handler, hwirq, 0);
- 		nr_handlers++;
+@@ -130,7 +125,9 @@ static int __init ingenic_intc_of_init(struct device_node *node,
+ 		irq_reg_writel(gc, IRQ_MSK(32), JZ_REG_INTC_SET_MASK);
  	}
  
-+	cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
-+				  "irqchip/sifive/plic:starting",
-+				  plic_starting_cpu, plic_dying_cpu);
- 	pr_info("mapped %d interrupts with %d handlers for %d contexts.\n",
- 		nr_irqs, nr_handlers, nr_contexts);
- 	set_handle_irq(plic_handle_irq);
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index d37c17e..77d70b6 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -102,6 +102,7 @@ enum cpuhp_state {
- 	CPUHP_AP_IRQ_ARMADA_XP_STARTING,
- 	CPUHP_AP_IRQ_BCM2836_STARTING,
- 	CPUHP_AP_IRQ_MIPS_GIC_STARTING,
-+	CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
- 	CPUHP_AP_ARM_MVEBU_COHERENCY,
- 	CPUHP_AP_MICROCODE_LOADER,
- 	CPUHP_AP_PERF_X86_AMD_UNCORE_STARTING,
+-	setup_irq(parent_irq, &intc_cascade_action);
++	if (request_irq(parent_irq, intc_cascade, 0,
++			"SoC intc cascade interrupt", NULL))
++		pr_err("Failed to register SoC intc cascade interrupt\n");
+ 	return 0;
+ 
+ out_domain_remove:
