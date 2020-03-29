@@ -2,146 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59ACA196A32
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 01:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1247196A3B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 01:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbgC2APZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 20:15:25 -0400
-Received: from www62.your-server.de ([213.133.104.62]:58768 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbgC2APZ (ORCPT
+        id S1727791AbgC2ATk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 20:19:40 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:42105 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727701AbgC2ATj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 20:15:25 -0400
-Received: from sslproxy05.your-server.de ([78.46.172.2])
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1jILbm-0005Oc-Ov; Sun, 29 Mar 2020 01:15:22 +0100
-Received: from [178.195.186.98] (helo=pc-9.home)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1jILbm-000IV8-Bo; Sun, 29 Mar 2020 01:15:22 +0100
-Subject: Re: [PATCH bpf-next v8 0/8] MAC and Audit policy using eBPF (KRSI)
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
-        Jann Horn <jannh@google.com>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20200327192854.31150-1-kpsingh@chromium.org>
- <4e5a09bb-04c4-39b8-10d4-59496ffb5eee@iogearbox.net>
- <20200328195636.GA95544@google.com> <202003281449.333BDAF6@keescook>
- <CACYkzJ4v_X87-+GCE++g0_BkcJWFhbNePAMQmH8Ccgq7id-akA@mail.gmail.com>
- <20200329000738.GA230422@google.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <bf04019c-b0d0-5aff-be72-32e46b60daea@iogearbox.net>
-Date:   Sun, 29 Mar 2020 01:15:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Sat, 28 Mar 2020 20:19:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585441178;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vaewZEk2eYYox9uyi7WlaKYkj/uEgqOwrp4YGqapC0o=;
+        b=WcNn9SNfjezooIP5MAhyf/waif40iq0ONlfoDqpEs9aPT4FYBiVR/R8hYNpgCOmXBWqi9b
+        rCe68x3RbGg3E6uW7lvT/c2Uuemof1CUdfPEirmMv7wFksc0G24a+Fsy+wbvbMGgJz+hBx
+        /ffV/ibuD1maGgJug6LPOmfg/Awndd8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-16-ivzlOkrCNy-K-x1Z03nVDw-1; Sat, 28 Mar 2020 20:19:34 -0400
+X-MC-Unique: ivzlOkrCNy-K-x1Z03nVDw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A0BD918A8C80;
+        Sun, 29 Mar 2020 00:19:29 +0000 (UTC)
+Received: from localhost (ovpn-12-30.pek2.redhat.com [10.72.12.30])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5B78510013A1;
+        Sun, 29 Mar 2020 00:19:27 +0000 (UTC)
+Date:   Sun, 29 Mar 2020 08:19:24 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Hoan Tran <Hoan@os.amperecomputing.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        lho@amperecomputing.com, mmorana@amperecomputing.com
+Subject: Re: [PATCH v3 0/5] mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by
+ default for NUMA
+Message-ID: <20200329001924.GS3039@MiWiFi-R3L-srv>
+References: <1585420282-25630-1-git-send-email-Hoan@os.amperecomputing.com>
 MIME-Version: 1.0
-In-Reply-To: <20200329000738.GA230422@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.102.2/25765/Sat Mar 28 14:16:42 2020)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1585420282-25630-1-git-send-email-Hoan@os.amperecomputing.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/29/20 1:07 AM, KP Singh wrote:
-> On 28-Mar 23:30, KP Singh wrote:
->> On Sat, Mar 28, 2020 at 10:50 PM Kees Cook <keescook@chromium.org> wrote:
->>>
->>> On Sat, Mar 28, 2020 at 08:56:36PM +0100, KP Singh wrote:
->>>> Since the attachment succeeds and the hook does not get called, it
->>>> seems like "bpf" LSM is not being initialized and the hook, although
->>>> present, does not get called.
->>>>
->>>> This indicates that "bpf" is not in CONFIG_LSM. It should, however, be
->>>> there by default as we added it to default value of CONFIG_LSM and
->>>> also for other DEFAULT_SECURITY_* options.
->>>>
->>>> Let me know if that's the case and it fixes it.
->>>
->>> Is the selftest expected to at least fail cleanly (i.e. not segfault)
->>
->> I am not sure where the crash comes from, it does not look like it's test_lsm,
->> it seems to happen in test_overhead. Both seem to run fine for me.
+On 03/28/20 at 11:31am, Hoan Tran wrote:
+> In NUMA layout which nodes have memory ranges that span across other nodes,
+> the mm driver can detect the memory node id incorrectly.
 > 
-> So I was able to reproduce the crash:
-> 
-> * Remove "bpf" from CONFIG_LSM
-> 
-> ./test_progs -n 66,67
-> test_test_lsm:PASS:skel_load 0 nsec
-> test_test_lsm:PASS:attach 0 nsec
-> test_test_lsm:PASS:exec_cmd 0 nsec
-> test_test_lsm:FAIL:bprm_count bprm_count = 0
-> test_test_lsm:FAIL:heap_mprotect want errno=EPERM, got 0
-> #66 test_lsm:FAIL
-> Caught signal #11!
-> Stack trace:
-> ./test_progs(crash_handler+0x1f)[0x55b7f9867acf]
-> /lib/x86_64-linux-gnu/libpthread.so.0(+0x13520)[0x7fcf1467e520]
-> /lib/x86_64-linux-gnu/libc.so.6(+0x15f73d)[0x7fcf1460a73d]
-> /lib/x86_64-linux-gnu/libc.so.6(__libc_calloc+0x2ca)[0x7fcf1453286a]
-> /usr/lib/x86_64-linux-gnu/libelf.so.1(+0x37
-> 
-> [snip]
-> 
-> * The crash went away when I removed the heap_mprotect call, now the BPF
->    hook attached did not allow this operation, so it had no side-effects.
->    Which lead me to believe the crash could be a side-effect of this
->    operation. So I did:
-> 
-> --- a/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-> @@ -29,7 +29,7 @@ int heap_mprotect(void)
->          if (buf == NULL)
->                  return -ENOMEM;
-> 
-> -       ret = mprotect(buf, sz, PROT_READ | PROT_EXEC);
-> +       ret = mprotect(buf, sz, PROT_READ | PROT_WRITE | PROT_EXEC);
->          free(buf);
->          return ret;
->   }
-> 
-> and the crash went away. Which made me realize that the free
-> operation does not like memory without PROT_WRITE, So I did this:
-> 
-> diff --git a/tools/testing/selftests/bpf/prog_tests/test_lsm.c b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-> index fcd839e88540..78f125cc09b3 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-> @@ -30,7 +30,7 @@ int heap_mprotect(void)
->                  return -ENOMEM;
-> 
->          ret = mprotect(buf, sz, PROT_READ | PROT_EXEC);
-> -       free(buf);
-> +       // free(buf);
->          return ret;
->   }
-> 
-> and the crash went away as well. So it indeed was a combination of:
-> 
-> * CONFIG_LSM not enabling the hook
-> * mprotect marking the memory as non-writeable
-> * free being called on the memory.
-> 
-> I will send a v9 which has the PROT_WRITE on the mprotect. Thanks
-> for noticing this!
+> For example, with layout below
+> Node 0 address: 0000 xxxx 0000 xxxx
+> Node 1 address: xxxx 1111 xxxx 1111
 
-And also explains the stack trace for __libc_calloc() where it's trying to zero the
-area later on.
+Sorry, I read this example several times, but still don't get what it
+means. Can it be given with real hex number address as an exmaple? I
+mean just using the memory layout you have seen from some systems. The
+change looks interesting though.
 
-Thanks for the quick debugging,
-Daniel
+> 
+> Note:
+>  - Memory from low to high
+>  - 0/1: Node id
+>  - x: Invalid memory of a node
+> 
+> When mm probes the memory map, without CONFIG_NODES_SPAN_OTHER_NODES
+> config, mm only checks the memory validity but not the node id.
+> Because of that, Node 1 also detects the memory from node 0 as below
+> when it scans from the start address to the end address of node 1.
+> 
+> Node 0 address: 0000 xxxx xxxx xxxx
+> Node 1 address: xxxx 1111 1111 1111
+> 
+> This layout could occur on any architecture. Most of them enables
+> this config by default with CONFIG_NUMA. This patch, by default, enables
+> CONFIG_NODES_SPAN_OTHER_NODES or uses early_pfn_in_nid() for NUMA.
+> 
+> v3:
+>  * Revise the patch description
+> 
+> V2:
+>  * Revise the patch description
+> 
+> Hoan Tran (5):
+>   mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by default for NUMA
+>   powerpc: Kconfig: Remove CONFIG_NODES_SPAN_OTHER_NODES
+>   x86: Kconfig: Remove CONFIG_NODES_SPAN_OTHER_NODES
+>   sparc: Kconfig: Remove CONFIG_NODES_SPAN_OTHER_NODES
+>   s390: Kconfig: Remove CONFIG_NODES_SPAN_OTHER_NODES
+> 
+>  arch/powerpc/Kconfig | 9 ---------
+>  arch/s390/Kconfig    | 8 --------
+>  arch/sparc/Kconfig   | 9 ---------
+>  arch/x86/Kconfig     | 9 ---------
+>  mm/page_alloc.c      | 2 +-
+>  5 files changed, 1 insertion(+), 36 deletions(-)
+> 
+> -- 
+> 1.8.3.1
+> 
+> 
+
