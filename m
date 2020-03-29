@@ -2,91 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF381196E52
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 18:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70A74196E57
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 18:14:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728359AbgC2QMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 12:12:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49010 "EHLO
+        id S1728311AbgC2QOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 12:14:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49064 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728209AbgC2QMg (ORCPT
+        with ESMTP id S1727903AbgC2QOQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 12:12:36 -0400
+        Sun, 29 Mar 2020 12:14:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=3aGUFTlDFLNPEPyNqpXzRGp9fSJaJ2O8HpjtLH83Bzc=; b=toUsYu1doW4nFxIJJE0wkgehpy
-        8+pWXT6yv3an/sQQQiVMJwupq1G8M6yulZNNRncItGo1QciGQ+sPJqNj1MEoKE7qGcZ9ZnjqWjp3q
-        5uUS1IPd05dr2ID4F5Aqsoq/DbioJ8xsTjSM01ZmjsQWqgDesaxqv6mGB9pe2NGBSGlFTNS7rcszR
-        7hSNi5Xdju2IC0d6shFHKh8ChqYXxCSG3sTQ5satEZ0Df05HGtPptespIxivYUJGXpXsGmI7ZYeAC
-        +j1xYIr0jJY1aqNYZ9SM1VclC5a5aM0LzuHhux68gAPMbOjikBxS8iXd4SHDWM1+ECgnSh1Pfbo0q
-        J/S3YhJA==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jIaY4-0000MB-5D; Sun, 29 Mar 2020 16:12:32 +0000
-Subject: Re: mmotm 2020-03-28-22-17 uploaded (staging/octeon/)
-To:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
-References: <20200329051805.kfaUSHrn4%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-X-Enigmail-Draft-Status: N11100
-Message-ID: <873495e9-d254-cb66-7a83-2517505a2b9b@infradead.org>
-Date:   Sun, 29 Mar 2020 09:12:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=GNc+X9HG8DT1u4IwAU5h9IVe5ck8+kmkOpD7yEqvcF8=; b=huAPFZ1xjY8kKAIg+736p7/fDf
+        Yttw2uKzcijq5GyBpzzSlaAjIxjt2fKfpSxp8NdpUsm6Ri7ej3vy9oFrFET0ZfcniaBeT5F5qK4OP
+        7cH5Is1OwylJzfSk9ZH7vWLBgjFrAJBCgUVufaBYh4h5fQwsLpKuzQ60pjWTFm4wx087noN1Ob7Qq
+        y945LL2rvKRtQ5Cogetxf8xU6QscT9ix4Z78xAuKutTMxZbk382siwp0XbTFw07DnM3w6iJBpAte5
+        UPiV5Zjc9u/quuIjR9B39HfK8FzxtjhUO3hN3VNpLMxBtZ8hDT/Bv6aGTqFKlqcjciXzi/nTkjFAu
+        yQLipO3Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jIaZe-0000S1-E4; Sun, 29 Mar 2020 16:14:10 +0000
+Date:   Sun, 29 Mar 2020 09:14:10 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jaewon Kim <jaewon31.kim@samsung.com>
+Cc:     walken@google.com, bp@suse.de, akpm@linux-foundation.org,
+        srostedt@vmware.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, jaewon31.kim@gmail.com
+Subject: Re: [PATCH v3 2/2] mm: mmap: add trace point of vm_unmapped_area
+Message-ID: <20200329161410.GW22483@bombadil.infradead.org>
+References: <20200320055823.27089-1-jaewon31.kim@samsung.com>
+ <CGME20200320055839epcas1p189100549687530619d8a19919e8b5de0@epcas1p1.samsung.com>
+ <20200320055823.27089-3-jaewon31.kim@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20200329051805.kfaUSHrn4%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320055823.27089-3-jaewon31.kim@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/28/20 10:18 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2020-03-28-22-17 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (5.x
-> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
+On Fri, Mar 20, 2020 at 02:58:23PM +0900, Jaewon Kim wrote:
+> +	TP_printk("addr=%lx err=%ld total_vm=0x%lx flags=0x%lx len=0x%lx lo=0x%lx hi=0x%lx mask=0x%lx ofs=0x%lx\n",
+> +		IS_ERR_VALUE(__entry->addr) ? 0 : __entry->addr,
+> +		IS_ERR_VALUE(__entry->addr) ? __entry->addr : 0,
 
+I didn't see the IS_ERR_VALUE problem that Vlastimil mentioned get resolved?
 
-on i386 or x86_64:
+I might suggest ...
 
-../drivers/staging/octeon/ethernet-tx.c: In function ‘cvm_oct_xmit’:
-../drivers/staging/octeon/ethernet-tx.c:358:2: error: implicit declaration of function ‘skb_reset_tc’; did you mean ‘skb_reserve’? [-Werror=implicit-function-declaration]
-  skb_reset_tc(skb);
-  ^~~~~~~~~~~~
++++ b/include/linux/err.h
+@@ -19,7 +19,8 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
+-#define IS_ERR_VALUE(x) unlikely((unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO)
++#define __IS_ERR_VALUE(x) ((unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO)
++#define IS_ERR_VALUE(x) unlikely(__IS_ERR_VALUE(x))
+ 
+ static inline void * __must_check ERR_PTR(long error)
+ {
 
-It looks like this inline function has been removed from
-<net/sch_generic.h>.
-
-
-Looks like it should be this change:
-
--	skb_reset_tc(skb);
-+	skb_reset_redirect(skb);
-
-
--- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+and then you can use __IS_ERR_VALUE() which removes the unlikely() problem.
