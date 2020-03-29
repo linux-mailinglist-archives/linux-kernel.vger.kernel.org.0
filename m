@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 513DA19701F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:28:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E8419703F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:29:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbgC2U0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 16:26:19 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56924 "EHLO
+        id S1729035AbgC2U2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 16:28:33 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56922 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728725AbgC2U0O (ORCPT
+        with ESMTP id S1728719AbgC2U0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 16:26:14 -0400
+        Sun, 29 Mar 2020 16:26:13 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jIeVT-0001Jx-Qc; Sun, 29 Mar 2020 22:26:07 +0200
+        id 1jIeVU-0001KW-Oc; Sun, 29 Mar 2020 22:26:08 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 79EDA1C0450;
-        Sun, 29 Mar 2020 22:26:07 +0200 (CEST)
-Date:   Sun, 29 Mar 2020 20:26:07 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5E3841C0450;
+        Sun, 29 Mar 2020 22:26:08 +0200 (CEST)
+Date:   Sun, 29 Mar 2020 20:26:08 -0000
 From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/gic-v4.1: Plumb set_vcpu_affinity SGI callbacks
+Subject: [tip: irq/core] irqchip/gic-v4.1: Plumb mask/unmask SGI callbacks
 Cc:     Marc Zyngier <maz@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>,
         Eric Auger <eric.auger@redhat.com>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200304203330.4967-13-maz@kernel.org>
-References: <20200304203330.4967-13-maz@kernel.org>
+In-Reply-To: <20200304203330.4967-11-maz@kernel.org>
+References: <20200304203330.4967-11-maz@kernel.org>
 MIME-Version: 1.0
-Message-ID: <158551356712.28353.4186925292743494121.tip-bot2@tip-bot2>
+Message-ID: <158551356804.28353.15755655132659131079.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,87 +47,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     05d32df13c6b3c0850b68928048536e9a736d520
-Gitweb:        https://git.kernel.org/tip/05d32df13c6b3c0850b68928048536e9a736d520
+Commit-ID:     b4e8d644ec623cbb66f192a7fefbd0a66e314be8
+Gitweb:        https://git.kernel.org/tip/b4e8d644ec623cbb66f192a7fefbd0a66e314be8
 Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Wed, 04 Mar 2020 20:33:19 
+AuthorDate:    Wed, 04 Mar 2020 20:33:17 
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Tue, 24 Mar 2020 12:15:51 
+CommitterDate: Tue, 24 Mar 2020 12:05:09 
 
-irqchip/gic-v4.1: Plumb set_vcpu_affinity SGI callbacks
+irqchip/gic-v4.1: Plumb mask/unmask SGI callbacks
 
-Just like for vLPIs, there is some configuration information that cannot
-be directly communicated through the normal irqchip API, and we have to
-use our good old friend set_vcpu_affinity as a side-band communication
-mechanism.
-
-This is used to configure group and priority for a given vSGI.
+Implement mask/unmask for virtual SGIs by calling into the
+configuration helper.
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
 Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Link: https://lore.kernel.org/r/20200304203330.4967-13-maz@kernel.org
+Link: https://lore.kernel.org/r/20200304203330.4967-11-maz@kernel.org
 ---
- drivers/irqchip/irq-gic-v3-its.c   | 18 ++++++++++++++++++
- include/linux/irqchip/arm-gic-v4.h |  5 +++++
- 2 files changed, 23 insertions(+)
+ drivers/irqchip/irq-gic-v3-its.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index c614f0c..aae5332 100644
+index 28c856a..bc6666a 100644
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -4047,6 +4047,23 @@ out:
- 	return 0;
+@@ -3944,6 +3944,22 @@ static void its_configure_sgi(struct irq_data *d, bool clear)
+ 	its_send_single_vcommand(find_4_1_its(), its_build_vsgi_cmd, &desc);
  }
  
-+static int its_sgi_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
++static void its_sgi_mask_irq(struct irq_data *d)
 +{
 +	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
-+	struct its_cmd_info *info = vcpu_info;
 +
-+	switch (info->cmd_type) {
-+	case PROP_UPDATE_VSGI:
-+		vpe->sgi_config[d->hwirq].priority = info->priority;
-+		vpe->sgi_config[d->hwirq].group = info->group;
-+		its_configure_sgi(d, false);
-+		return 0;
-+
-+	default:
-+		return -EINVAL;
-+	}
++	vpe->sgi_config[d->hwirq].enabled = false;
++	its_configure_sgi(d, false);
 +}
 +
++static void its_sgi_unmask_irq(struct irq_data *d)
++{
++	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
++
++	vpe->sgi_config[d->hwirq].enabled = true;
++	its_configure_sgi(d, false);
++}
++
+ static int its_sgi_set_affinity(struct irq_data *d,
+ 				const struct cpumask *mask_val,
+ 				bool force)
+@@ -3958,6 +3974,8 @@ static int its_sgi_set_affinity(struct irq_data *d,
+ 
  static struct irq_chip its_sgi_irq_chip = {
  	.name			= "GICv4.1-sgi",
- 	.irq_mask		= its_sgi_mask_irq,
-@@ -4054,6 +4071,7 @@ static struct irq_chip its_sgi_irq_chip = {
++	.irq_mask		= its_sgi_mask_irq,
++	.irq_unmask		= its_sgi_unmask_irq,
  	.irq_set_affinity	= its_sgi_set_affinity,
- 	.irq_set_irqchip_state	= its_sgi_set_irqchip_state,
- 	.irq_get_irqchip_state	= its_sgi_get_irqchip_state,
-+	.irq_set_vcpu_affinity	= its_sgi_set_vcpu_affinity,
- };
- 
- static int its_sgi_irq_domain_alloc(struct irq_domain *domain,
-diff --git a/include/linux/irqchip/arm-gic-v4.h b/include/linux/irqchip/arm-gic-v4.h
-index 44e8c19..1b34100 100644
---- a/include/linux/irqchip/arm-gic-v4.h
-+++ b/include/linux/irqchip/arm-gic-v4.h
-@@ -103,6 +103,7 @@ enum its_vcpu_info_cmd_type {
- 	SCHEDULE_VPE,
- 	DESCHEDULE_VPE,
- 	INVALL_VPE,
-+	PROP_UPDATE_VSGI,
- };
- 
- struct its_cmd_info {
-@@ -115,6 +116,10 @@ struct its_cmd_info {
- 			bool		g0en;
- 			bool		g1en;
- 		};
-+		struct {
-+			u8		priority;
-+			bool		group;
-+		};
- 	};
  };
  
