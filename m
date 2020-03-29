@@ -2,149 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00111196ACE
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 05:17:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67246196AD9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 05:29:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbgC2DRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 23:17:30 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42664 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726899AbgC2DR3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 23:17:29 -0400
-Received: by mail-ed1-f65.google.com with SMTP id cw6so15978557edb.9
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Mar 2020 20:17:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=73jM7UJ1SiInp3qgWBqwVopBoGUW8da3yGoLPO2s510=;
-        b=hUOW7wlGLFSvtHFZFzYEk7uCZM0H4qRyVG1Nq3cJ6E529xu/itB2Sw5XZwbQ+u0atq
-         IyUnfYEn/D0SlrwCk47/eOrsUScgL3N5AGSU1dSkADlcDK/uKgu0oxbrZ7a+4AuMZ3/i
-         u+eRvLFW/3YH6/NomvPTj4lTDuRjf4b8+lzYhV5sdgOcQV5z633Ayp/5ldFb0ouvIGof
-         /UFc5isFg/YJtxKJ3Lma2Q7GC1+Cogl7V2tEkB04nQPioaCwIH+ECkq5ZE4XVZ6Ih5Vv
-         wIA1iofcg4YPsZ2gIQ5fdRfyxTKX/BpU+PLevB4xhg1RS674R3j7mNprN6l2A7i+2HnX
-         C7lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=73jM7UJ1SiInp3qgWBqwVopBoGUW8da3yGoLPO2s510=;
-        b=Kqwms59gyHvrBg0Xg2HlTwHZH+cXuENTdfrv8gE4YT/iDMEnj9ttyDzVQAOdxCUL/x
-         QrKKsazhMa74pq2pw3ofsWHVmSItooP7eARZVATf2jgbnbhMU6jqBDpChJZdLXZ5jT7Z
-         Fz9i2TQGkC19q8eynyL0SHFJwNI/ohzr4vnAAHc3IcfR1YkEDp62QjNX7qlurm5w2OCw
-         6GMsFGsyIHyADcJXqXRcRC7T6vS//xdLvC/nA7VQc7qoBmHXjV9ZN7wd4OgbavJbEjSE
-         8yYLOn2OpCig9VeS4vwjz97y35QnYlOT6SLI7Cjxs1QKsxyM572ZbgeFOepI0BUh3sEw
-         2ryA==
-X-Gm-Message-State: ANhLgQ0nHd++IzebXkQgaCE6QQy+S6fLfUUma0erB2FDy/Ema7HfpIIK
-        Q6zHuPVMC80XsLelJ2Sb2EuIkrcQ0PYQrYiZNS87
-X-Google-Smtp-Source: ADFU+vv/MFU+PUL6L3fWaCWJ+SsYWlwfM5jrj3x9inQIKOJr3keTEJ5GXU9ljVx28Cw+08JkBWPGuLw/MRT/qz+R/UQ=
-X-Received: by 2002:aa7:d2cb:: with SMTP id k11mr6032886edr.128.1585451846873;
- Sat, 28 Mar 2020 20:17:26 -0700 (PDT)
+        id S1727163AbgC2D3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 23:29:15 -0400
+Received: from mail-eopbgr00088.outbound.protection.outlook.com ([40.107.0.88]:47011
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726315AbgC2D3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 23:29:14 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IKMY6n/1hnJn9BQ23/PjERyFXJ7qL3xmrAonA5aK/Z786kFbo7TLVMyQQN0KFAk3KE6xxwtW4uATkHdeNqL75nlGjaML3Z13K6lBUzFE95YTxYbLiaS9QBBPbjMG+g6RyXbowW0ma8IRNEiHmJr1HwGIaiR9kPdXKVXbX9CY4xGekDSUVXuOrFoQ/U1YT+fTu/WvoCRKIUL7jb4ILmznMTd2E3c7goblL50EFvWNwjgVajDfF6b9UEh/N5yKnJTBOT3C8UZKTfH4FZUBgO/CR03VOxzOfT2zgNyxGq2JwzZt5yrcTjiYQ5DKZDV+/RUelCDDcU5tAZYkZIQDyHZ81Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s2fWXS6xmfJn15rnRTyiaMAue6UClySmO72gaQsHptQ=;
+ b=Gj/G0EEh4/5Tp8DZVA16K+GVPkNy0DJ8PNljZPhIF/DYhegd4zEg8T15AIsgqdl0p5mLnKGQVV42vxItQuICT6Ug6n+kkdSnNwAmGxPGtz1PAgkniiVwRdFW1wWOye/sSSF8iNjOgXbBMogwcYlOEXq1/zr6H7qo0Xu4hCJdSp7Qt0TEhC+ekuxl5Og9s8J0bmxVVAvNgWE1uC677oeQnCl49a2F09Gf+dV2/0a8Q+P4pi32+fOxtPwxyILDD4eeZPs4so935piXcH1kTGOo+ywnkWQBLkCNqPudfTsksl2TA8OBNG31XlU2VKaCFFWYFSqrdXdCjhOt0a8dZFpm2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s2fWXS6xmfJn15rnRTyiaMAue6UClySmO72gaQsHptQ=;
+ b=WUN0wBLwIm/1dqW7kU/70tY6jPxe06ekshMIihnvWcsg9nUAwVIeBP9vKhfwBoWmtSEaPgfWk0Sdqh1P5FgrR2YQV/gMkflljsXUmtgAahkqkTROL3HMUvrOfmeG/dODQO3BZGNQQAYMmY9D77eCK6Q8eAH7ow9Cl+HqDVkfsnE=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3738.eurprd04.prod.outlook.com (52.134.70.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2835.23; Sun, 29 Mar 2020 03:29:08 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::3143:c46:62e4:8a8b]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::3143:c46:62e4:8a8b%7]) with mapi id 15.20.2856.019; Sun, 29 Mar 2020
+ 03:29:08 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Adam Ford <aford173@gmail.com>
+CC:     arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: i.MX8MN Errors on 5.6-RC7
+Thread-Topic: i.MX8MN Errors on 5.6-RC7
+Thread-Index: AQHWBKuViOa/vuBTwkqHT9gRBvnGdKhd5InggAANSwCAAPjnwA==
+Date:   Sun, 29 Mar 2020 03:29:08 +0000
+Message-ID: <DB3PR0402MB3916B68A1B0F37EA34825F69F5CA0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <CAHCN7xJSKH-gXA5ncFS3h6_2R28rn70O3HfT=ActS1XVgCFSeg@mail.gmail.com>
+ <DB3PR0402MB39160D3F0D03B968B7CBE25AF5CD0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <CAHCN7xJ2m3LRB3oGBb5QKbacYyTBQK1CdzGcTh3w=hj18H=4Pw@mail.gmail.com>
+In-Reply-To: <CAHCN7xJ2m3LRB3oGBb5QKbacYyTBQK1CdzGcTh3w=hj18H=4Pw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [183.192.13.100]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: fd6fd0b6-b18c-4949-d487-08d7d3915772
+x-ms-traffictypediagnostic: DB3PR0402MB3738:|DB3PR0402MB3738:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB3PR0402MB37386B0B09AEC63B31499064F5CA0@DB3PR0402MB3738.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2958;
+x-forefront-prvs: 035748864E
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(136003)(366004)(396003)(376002)(346002)(39860400002)(44832011)(2906002)(6506007)(8676002)(33656002)(478600001)(6916009)(86362001)(26005)(71200400001)(45080400002)(81156014)(8936002)(4326008)(81166006)(186003)(316002)(52536014)(66476007)(54906003)(5660300002)(55016002)(53546011)(66446008)(7416002)(76116006)(7696005)(9686003)(66946007)(66556008)(64756008);DIR:OUT;SFP:1101;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: tWxxio5k4WhXaupmA6v8b+L8s77+X8v6+1gme4EuP9qZj6fa/7Cdmj/EKWWoQ0GdhbrrpcsciO6h+mQ0SmXoxEZPSo0OX9bkELZyYUIVyr3oT5tRfZ3fTpOhKRxVDNlzxvTsRR4kYrnSQTioHI/FgRI7eThUnDgh6unewZ9prkTP3MDp7KufIcwNPkGo/ULwY4EtdKruCEk0bRCvYl9Qlv1Cmbrf4L42Ahn7liifxp/kDCaE4HCuDq2XC8eJztvHYgbUMCqG79fX0ybmNLl/hT3FFGaTm2VEEXLJCmam6MzJTM1m81/7XYmq7hAGc2Im4rXt6uHxfW2jMapBgpiB/WgYNSZYbdglEaAq0zzABpRfMzByNFSWZ5uwRIFNay2+t3s6ICiRqCkOb+D4sLXdjKb/cITGCNmxpktrezrMZqCGsojikEUhkbflIs691mVs
+x-ms-exchange-antispam-messagedata: Cb/010jyyuBqQpuiDwYVw3facj74TV17mYwOft25DBdxT2InzrbGaKRMfa+R29wFcQ7wmmzcX/u+4Bpe9VtM+eSeJWp89sDR4/Mr/AwODD9IFc1a0rMvG0hd2A/mGRCLhn3FXfa4s2yCbeTEV+CzFQ==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <3142237.YMNxv0uec1@x2> <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
- <20200312202733.7kli64zsnqc4mrd2@madcap2.tricolour.ca> <CAHC9VhS9DtxJ4gvOfMRnzoo6ccGJVKL+uZYe6qqH+SPqD8r01Q@mail.gmail.com>
- <20200313192306.wxey3wn2h4htpccm@madcap2.tricolour.ca> <CAHC9VhQKOpVWxDg-tWuCWV22QRu8P_NpFKme==0Ot1RQKa_DWA@mail.gmail.com>
- <20200318214154.ycxy5dl4pxno6fvi@madcap2.tricolour.ca> <CAHC9VhSuMnd3-ci2Bx-xJ0yscQ=X8ZqFAcNPKpbh_ZWN3FJcuQ@mail.gmail.com>
- <20200319214759.qgxt2sfkmd6srdol@madcap2.tricolour.ca> <CAHC9VhTp25OAaTO5UMft0OzUZ=oQpZFjebkjjQP0-NrPp0bNAg@mail.gmail.com>
- <20200325122903.obkpyog7fjabzrpf@madcap2.tricolour.ca>
-In-Reply-To: <20200325122903.obkpyog7fjabzrpf@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 28 Mar 2020 23:17:15 -0400
-Message-ID: <CAHC9VhTuYYqAtoNAKLX3qja6DnqEbFuHchi9ESwbcb5WC_Mvtw@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
-        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd6fd0b6-b18c-4949-d487-08d7d3915772
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Mar 2020 03:29:08.5057
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: spIRxHkfZLjYh8UJQ06fN8REKp4Gh33AajoI/3uUJpD7NgCscRv/0LoEE5jSu7mVD4aUlwSq9vZlgy5s1Kchcg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3738
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 8:29 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-03-20 17:56, Paul Moore wrote:
-> > On Thu, Mar 19, 2020 at 5:48 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2020-03-18 17:47, Paul Moore wrote:
-> > > > On Wed, Mar 18, 2020 at 5:42 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > On 2020-03-18 17:01, Paul Moore wrote:
-> > > > > > On Fri, Mar 13, 2020 at 3:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > > > On 2020-03-13 12:42, Paul Moore wrote:
-> > > > > >
-> > > > > > ...
-> > > > > >
-> > > > > > > > The thread has had a lot of starts/stops, so I may be repeating a
-> > > > > > > > previous suggestion, but one idea would be to still emit a "death
-> > > > > > > > record" when the final task in the audit container ID does die, but
-> > > > > > > > block the particular audit container ID from reuse until it the
-> > > > > > > > SIGNAL2 info has been reported.  This gives us the timely ACID death
-> > > > > > > > notification while still preventing confusion and ambiguity caused by
-> > > > > > > > potentially reusing the ACID before the SIGNAL2 record has been sent;
-> > > > > > > > there is a small nit about the ACID being present in the SIGNAL2
-> > > > > > > > *after* its death, but I think that can be easily explained and
-> > > > > > > > understood by admins.
-> > > > > > >
-> > > > > > > Thinking quickly about possible technical solutions to this, maybe it
-> > > > > > > makes sense to have two counters on a contobj so that we know when the
-> > > > > > > last process in that container exits and can issue the death
-> > > > > > > certificate, but we still block reuse of it until all further references
-> > > > > > > to it have been resolved.  This will likely also make it possible to
-> > > > > > > report the full contid chain in SIGNAL2 records.  This will eliminate
-> > > > > > > some of the issues we are discussing with regards to passing a contobj
-> > > > > > > vs a contid to the audit_log_contid function, but won't eliminate them
-> > > > > > > all because there are still some contids that won't have an object
-> > > > > > > associated with them to make it impossible to look them up in the
-> > > > > > > contobj lists.
-> > > > > >
-> > > > > > I'm not sure you need a full second counter, I imagine a simple flag
-> > > > > > would be okay.  I think you just something to indicate that this ACID
-> > > > > > object is marked as "dead" but it still being held for sanity reasons
-> > > > > > and should not be reused.
-> > > > >
-> > > > > Ok, I see your point.  This refcount can be changed to a flag easily
-> > > > > enough without change to the api if we can be sure that more than one
-> > > > > signal can't be delivered to the audit daemon *and* collected by sig2.
-> > > > > I'll have a more careful look at the audit daemon code to see if I can
-> > > > > determine this.
-> > > >
-> > > > Maybe I'm not understanding your concern, but this isn't really
-> > > > different than any of the other things we track for the auditd signal
-> > > > sender, right?  If we are worried about multiple signals being sent
-> > > > then it applies to everything, not just the audit container ID.
-> > >
-> > > Yes, you are right.  In all other cases the information is simply
-> > > overwritten.  In the case of the audit container identifier any
-> > > previous value is put before a new one is referenced, so only the last
-> > > signal is kept.  So, we only need a flag.  Does a flag implemented with
-> > > a rcu-protected refcount sound reasonable to you?
-> >
-> > Well, if I recall correctly you still need to fix the locking in this
-> > patchset so until we see what that looks like it is hard to say for
-> > certain.  Just make sure that the flag is somehow protected from
-> > races; it is probably a lot like the "valid" flags you sometimes see
-> > with RCU protected lists.
->
-> This is like looking for a needle in a haystack.  Can you point me to
-> some code that does "valid" flags with RCU protected lists.
-
-Sigh.  Come on Richard, you've been playing in the kernel for some
-time now.  I can't think of one off the top of my head as I write
-this, but there are several resources that deal with RCU protected
-lists in the kernel, Google is your friend and Documentation/RCU is
-your friend.
-
-Spending time to learn how RCU works and how to use it properly is not
-time wasted.  It's a tricky thing to get right (I have to refresh my
-memory on some of the more subtle details each time I write/review RCU
-code), but it's very cool when done correctly.
-
--- 
-paul moore
-www.paul-moore.com
+DQoNCj4gU3ViamVjdDogUmU6IGkuTVg4TU4gRXJyb3JzIG9uIDUuNi1SQzcNCj4gDQo+IE9uIFNh
+dCwgTWFyIDI4LCAyMDIwIGF0IDc6MDcgQU0gQW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5j
+b20+DQo+IHdyb3RlOg0KPiA+DQo+ID4gSGksIEFkYW0NCj4gPg0KPiA+ID4gU3ViamVjdDogaS5N
+WDhNTiBFcnJvcnMgb24gNS42LVJDNw0KPiA+ID4NCj4gPiA+IEkgYW0gZ2V0dGluZyBhIGZldyBl
+cnJvcnMgb24gdGhlIGkuTVg4TU46DQo+ID4gPg0KPiA+ID4gWyAgICAwLjAwMDM2OF0gRmFpbGVk
+IHRvIGdldCBjbG9jayBmb3IgL3RpbWVyQDMwNmEwMDAwDQo+ID4gPiBbICAgIDAuMDAwMzgwXSBG
+YWlsZWQgdG8gaW5pdGlhbGl6ZSAnL3RpbWVyQDMwNmEwMDAwJzogLTIyDQo+ID4gPiBbICAgIDcu
+MjAzNDQ3XSBjYWFtIDMwOTAwMDAwLmNhYW06IEZhaWxlZCB0byBnZXQgY2xrICdpcGcnOiAtMg0K
+PiA+ID4gWyAgICA3LjMzNDc0MV0gY2FhbSAzMDkwMDAwMC5jYWFtOiBGYWlsZWQgdG8gcmVxdWVz
+dCBhbGwgbmVjZXNzYXJ5IGNsb2Nrcw0KPiA+ID4gWyAgICA3LjQzODY1MV0gY2FhbTogcHJvYmUg
+b2YgMzA5MDAwMDAuY2FhbSBmYWlsZWQgd2l0aCBlcnJvciAtMg0KPiA+ID4gWyAgICA3Ljg1NDE5
+M10gaW14LWNwdWZyZXEtZHQ6IHByb2JlIG9mIGlteC1jcHVmcmVxLWR0IGZhaWxlZCB3aXRoIGVy
+cm9yIC0yDQo+ID4gPg0KPiA+ID4gSSB3YXMgY3VyaW91cyB0byBrbm93IGlmIGFueW9uZSBlbHNl
+IGlzIHNlZWluZyBzaW1pbGFyIGVycm9ycy4gIEkNCj4gPiA+IGFscmVhZHkgc3VibWl0dGVkIGEg
+cHJvcG9zZWQgZml4IGZvciBhIERNQSB0aW1lb3V0IChub3Qgc2hvd24gaGVyZSkNCj4gPiA+IHdo
+aWNoIG1hdGNoZWQgd29yayBhbHJlYWR5IGRvbmUgb24gaS5NWDhNUSBhbmQgaS5NWDhNTS4NCj4g
+PiA+DQo+ID4gPiBJIGFtIG5vdCBzZWVpbmcgaHVnZSBkaWZmZXJlbmNlcyBiZXR3ZWVuIDhNTSBh
+bmQgOE1OIGluIHRoZSBub2Rlcw0KPiA+ID4gd2hpY2ggYWRkcmVzcyB0aGUgdGltZXIsIGNhYW0g
+b3IgaW14LWNwdWZyZXEtZHQuDQo+ID4gPg0KPiA+ID4gSWYgYW55b25lIGhhcyBhbnkgc3VnZ2Vz
+dGlvbnMsIEknZCBsb3ZlIHRvIHRyeSB0aGVtLg0KPiA+DQo+IA0KPiBGYWJpbywNCj4gDQo+IEkg
+dHJpZWQgeW91ciBBVEYgc3VnZ2VzdGlvbiwgYW5kIGl0IGZpeGVkIHNvbWUgaXNzdWVzIGFuZCBp
+bnRyb2R1Y2VkIG90aGVyczoNCj4gDQo+IFsgICAgMC43Njc2NzldIC0tLS0tLS0tLS0tLVsgY3V0
+IGhlcmUgXS0tLS0tLS0tLS0tLQ0KPiBbICAgIDAuNzY3Njg3XSBjb2hlcmVudCBwb29sIG5vdCBp
+bml0aWFsaXNlZCENCj4gWyAgICAwLjc2NzcxNF0gV0FSTklORzogQ1BVOiAzIFBJRDogMSBhdCBr
+ZXJuZWwvZG1hL3JlbWFwLmM6MTkwDQo+IGRtYV9hbGxvY19mcm9tX3Bvb2wrMHg5NC8weGEwDQo+
+IFsgICAgMC43Njc3MThdIE1vZHVsZXMgbGlua2VkIGluOg0KPiBbICAgIDAuNzY3NzI4XSBDUFU6
+IDMgUElEOiAxIENvbW06IHN3YXBwZXIvMCBOb3QgdGFpbnRlZA0KPiA1LjYuMC1yYzctMDA0NzEt
+Zzk3YzMzZjFhZGE1Yy1kaXJ0eSAjNQ0KPiBbICAgIDAuNzY3NzMyXSBIYXJkd2FyZSBuYW1lOiBC
+ZWFjb24gRW1iZWRkZWRXb3JrcyBpLk1YOE0gTmFubw0KPiBEZXZlbG9wbWVudCBLaXQgKERUKQ0K
+PiBbICAgIDAuNzY3NzM4XSBwc3RhdGU6IDYwMDAwMDA1IChuWkN2IGRhaWYgLVBBTiAtVUFPKQ0K
+PiBbICAgIDAuNzY3NzQ0XSBwYyA6IGRtYV9hbGxvY19mcm9tX3Bvb2wrMHg5NC8weGEwDQo+IFsg
+ICAgMC43Njc3NDldIGxyIDogZG1hX2FsbG9jX2Zyb21fcG9vbCsweDk0LzB4YTANCj4gWyAgICAw
+Ljc2Nzc1M10gc3AgOiBmZmZmODAwMDEwMDNiYTEwDQo+IFsgICAgMC43Njc3NTZdIHgyOTogZmZm
+ZjgwMDAxMDAzYmExMCB4Mjg6IGZmZmYwMDAwN2M4NjgwODANCj4gWyAgICAwLjc2Nzc2Ml0geDI3
+OiAwMDAwMDAwZmZmZmZmZmUwIHgyNjogZmZmZjAwMDA3ZmJkZDA4MA0KPiBbICAgIDAuNzY3NzY4
+XSB4MjU6IDAwMDAwMDAwMDAwMDAwMDAgeDI0OiBmZmZmODAwMDEwMTYxYjNjDQo+IFsgICAgMC43
+Njc3NzRdIHgyMzogMDAwMDAwMDAwMDAwMTAwMCB4MjI6IGZmZmYwMDAwN2M4NmJkMzgNCj4gWyAg
+ICAwLjc2Nzc4MF0geDIxOiBmZmZmODAwMDExMmJhMDAwIHgyMDogZmZmZjAwMDA3ZjZlZDQxMA0K
+PiBbICAgIDAuNzY3Nzg1XSB4MTk6IDAwMDAwMDAwMDAwMDAwMDAgeDE4OiAwMDAwMDAwMDAwMDAw
+MDEwDQo+IFsgICAgMC43Njc3OTFdIHgxNzogMDAwMDAwMDAwMDAwNDVlMCB4MTY6IDAwMDAwMDAw
+MDAwMDQ1ZDANCj4gWyAgICAwLjc2Nzc5Nl0geDE1OiBmZmZmMDAwMDdmNDcwNDcwIHgxNDogZmZm
+ZmZmZmZmZmZmZmZmZg0KPiBbICAgIDAuNzY3ODAyXSB4MTM6IGZmZmY4MDAwOTAwM2I3NzcgeDEy
+OiBmZmZmODAwMDEwMDNiNzdmDQo+IFsgICAgMC43Njc4MDddIHgxMTogZmZmZjgwMDAxMThlMTAw
+MCB4MTA6IGZmZmY4MDAwMTFhYmM2NTgNCj4gWyAgICAwLjc2NzgxM10geDkgOiAwMDAwMDAwMDAw
+MDAwMDAwIHg4IDogNjU3MzY5NmM2MTY5NzQ2OQ0KPiBbICAgIDAuNzY3ODE4XSB4NyA6IDZlNjky
+MDc0NmY2ZTIwNmMgeDYgOiAwMDAwMDAwMDAwMDAwMGE5DQo+IFsgICAgMC43Njc4MjRdIHg1IDog
+MDAwMDAwMDAwMDAwMDAwMCB4NCA6IDAwMDAwMDAwMDAwMDAwMDANCj4gWyAgICAwLjc2NzgyOV0g
+eDMgOiAwMDAwMDAwMGZmZmZmZmZmIHgyIDogZmZmZjgwMDAxMThlMWI4MA0KPiBbICAgIDAuNzY3
+ODM1XSB4MSA6IDNhNDQzNzEyNGM1YTZiMDAgeDAgOiAwMDAwMDAwMDAwMDAwMDAwDQo+IFsgICAg
+MC43Njc4NDBdIENhbGwgdHJhY2U6DQo+IFsgICAgMC43Njc4NDddICBkbWFfYWxsb2NfZnJvbV9w
+b29sKzB4OTQvMHhhMA0KPiBbICAgIDAuNzY3ODUzXSAgZG1hX2RpcmVjdF9hbGxvY19wYWdlcysw
+eDFhNC8weDFlMA0KPiBbICAgIDAuNzY3ODU4XSAgZG1hX2RpcmVjdF9hbGxvYysweGMvMHgyMA0K
+PiBbICAgIDAuNzY3ODYzXSAgZG1hX2FsbG9jX2F0dHJzKzB4N2MvMHhmMA0KPiBbICAgIDAuNzY3
+ODcwXSAgc2RtYV9wcm9iZSsweDNkNC8weDdmMA0KPiBbICAgIDAuNzY3ODc3XSAgcGxhdGZvcm1f
+ZHJ2X3Byb2JlKzB4NTAvMHhhMA0KPiBbICAgIDAuNzY3ODg1XSAgcmVhbGx5X3Byb2JlKzB4ZDQv
+MHgzMjANCj4gWyAgICAwLjc2Nzg5MV0gIGRyaXZlcl9wcm9iZV9kZXZpY2UrMHg1NC8weGYwDQo+
+IFsgICAgMC43Njc4OTddICBkZXZpY2VfZHJpdmVyX2F0dGFjaCsweDZjLzB4ODANCj4gWyAgICAw
+Ljc2NzkwM10gIF9fZHJpdmVyX2F0dGFjaCsweDU0LzB4ZDANCj4gWyAgICAwLjc2NzkwOF0gIGJ1
+c19mb3JfZWFjaF9kZXYrMHg2Yy8weGMwDQo+IFsgICAgMC43Njc5MTRdICBkcml2ZXJfYXR0YWNo
+KzB4MjAvMHgzMA0KPiBbICAgIDAuNzY3OTE5XSAgYnVzX2FkZF9kcml2ZXIrMHgxNDAvMHgxZjAN
+Cj4gWyAgICAwLjc2NzkyNV0gIGRyaXZlcl9yZWdpc3RlcisweDYwLzB4MTEwDQo+IFsgICAgMC43
+Njc5MzBdICBfX3BsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcisweDQ0LzB4NTANCj4gWyAgICAwLjc2
+NzkzOF0gIHNkbWFfZHJpdmVyX2luaXQrMHgxOC8weDIwDQo+IFsgICAgMC43Njc5NDRdICBkb19v
+bmVfaW5pdGNhbGwrMHg1MC8weDE5MA0KPiBbICAgIDAuNzY3OTUwXSAga2VybmVsX2luaXRfZnJl
+ZWFibGUrMHgxY2MvMHgyM2MNCj4gWyAgICAwLjc2Nzk1OF0gIGtlcm5lbF9pbml0KzB4MTAvMHgx
+MDANCj4gWyAgICAwLjc2Nzk2M10gIHJldF9mcm9tX2ZvcmsrMHgxMC8weDE4DQo+IFsgICAgMC43
+Njc5NzJdIC0tLVsgZW5kIHRyYWNlIDc5NmI4ZDk0OWQ5NmY1ZjYgXS0tLQ0KPiANCj4gDQo+IEFu
+c29uLA0KPiANCj4gPiBXaGljaCBib2FyZCBkaWQgeW91IHRyeT8gSSBqdXN0IHJ1biBpdCBvbiBp
+Lk1YOE1OLUVWSyBib2FyZCwgbm8gc3VjaA0KPiBmYWlsdXJlOg0KPiBJIGhhdmUgYSBib2FyZCBm
+cm9tIEJlYWNvbiBFbWJlZGRlZFdvcmtzIGJhc2VkIG9uIHRoZSBpLk1YOE1OIHdoaWNoDQo+IGlz
+IG5lYXJseSBpZGVudGljYWwgdG8gdGhlIGkuTVg4TU0gd2hpY2ggZG9lc24ndCBleGhpYml0IGFu
+eSBvZiB0aGVzZSBlcnJvcnMuDQo+IA0KPiBJIHRyaWVkIEZhYmlvJ3Mgc3VnZ2VzdGlvbiBvZiBz
+d2l0Y2hpbmcgdGhlIHZlcnNpb24gb2YgQVRGIHdoaWNoIGRpZCBmaXggdGhlDQo+IEJsdWV0b290
+aCBjb21tdW5pY2F0aW9uIGVycm9ycyBJIHdhcyBnZXR0aW5nLCBidXQgSSBkaWRuJ3Qgc2hvdyB0
+aGVtIGJlZm9yZS4NCj4gDQo+IFVuZm9ydHVuYXRlbHksIEkgZG9uJ3QgaGF2ZSB0aGUgaS5NWDhN
+Ti1FVksgcmlnaHQgbm93LCBJJ20gd29ya2luZyBvbg0KPiB0cnlpbmcgdG8gZ2V0IG9uZS4NCj4g
+DQo+IENhbiBJIGFzayB3aGljaCB2ZXJzaW9uIG9mIFUtQm9vdCBhbmQgQVRGIHlvdSdyZSB1c2lu
+Zz8gIEkgYW0gd29uZGVyaW5nIGlmIEkNCj4gbmVlZCB0byB1cGRhdGUgc29tZXRoaW5nIGVsc2Uu
+DQoNCkkgYW0gdXNpbmcgb3VyIGxhdGVzdCB1LWJvb3QgYW5kIEFURiBpbiBOWFAgaW50ZXJuYWwg
+dHJlZSwgbWF5YmUgeW91IGNhbiBnZXQgdGhlDQpsYXRlc3QgcmVsZWFzZSB0byBoYXZlIGEgdHJ5
+Lg0KDQpBbnNvbg0K
