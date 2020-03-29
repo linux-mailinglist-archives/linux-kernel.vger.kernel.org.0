@@ -2,125 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F9DE196AC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 05:12:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46AD3196AD5
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 05:19:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbgC2DLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 23:11:55 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36415 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbgC2DLz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 23:11:55 -0400
-Received: by mail-ed1-f68.google.com with SMTP id i7so11743522edq.3
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Mar 2020 20:11:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QCNJAUmnzDN9FZcZL525t31JITbaUoqdlbI+Ngrcb2Q=;
-        b=m1tGNjwy+SOvZqLF6fO17u3ClF2d67j8aXHoHY1dw1Akc1hbsGxDZMYPC2VBMObQfV
-         ova0wmjBzwcmQkBSnqv1BIYenDPMnjgFm5l+U579QF6Ziw8gRaW1IHMK5R1Rkqof/jk0
-         k02MdWhDxlczwjxkzuy/MjRfDqDVz1w8DE1pf8DCkRBRStH3S/Cj8rVhzHPa6zewSMbN
-         41OZmsDyXigpVVvfjIF7+bCqUWin8T2D0rE08sf8lEvHTDizePb4Hxf11vCqV7lbLwlN
-         nyaZ+aCdVU80g51lvj3HKJl/l7o6U5YZsi89i6/CssH3Nr+hTKMar4D17vXJEeLcmBTm
-         ScOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QCNJAUmnzDN9FZcZL525t31JITbaUoqdlbI+Ngrcb2Q=;
-        b=KWsNTgiqlaemJyt/e0okZYR4viLMvCPwXUjF3EKlUq9L8aKZfCHi0WBUS+S7WXUm2X
-         H6FZwv5huu3FRDFpJAZSMg1zQynsr/0bbpKE+LUryMSigWcuqD7laAlzaYz3mrfvF28y
-         gAPIVB9hg7bteJhAkdPPk7rh3L90cip7xKKEbHt9hmfSdcVI2IgcYimRrbrttgshu3fT
-         s19VJGoeV6aiPNlJtWoRTvlGEAXSqrgsDSG2GqWkWG95xn/8K+UwL5ndxA9wWQkvHQBZ
-         FyuWdSkvwv/j4TSky/di6o3mSK6qyIlPccMah1knLqsYGXQha1GNAjV4E5WeckZwT8Mz
-         3JeA==
-X-Gm-Message-State: ANhLgQ0E6bxvWCPMFD0jdl48zntjdlB/kj1LnnPvDUEEG8jQfFG7bHP9
-        b1jPBhqkzG7XvwnBpZwBDV7sC9GfBBbpdgpzG2qy
-X-Google-Smtp-Source: ADFU+vsO3z8fR85BdzrdW8wO5Ic5j66UK7NtBXWnojiKMj/pMltL8hW55ibXGgej7CzgWStIAOOuND+xZVVbglX1ybU=
-X-Received: by 2002:a17:906:1993:: with SMTP id g19mr5774145ejd.70.1585451512568;
- Sat, 28 Mar 2020 20:11:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca>
- <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
- <20200313185900.y44yvrfm4zxa5lfk@madcap2.tricolour.ca> <CAHC9VhR2zCCE5bjH75rSwfLC7TJGFj4RBnrtcOoUiqVp9q5TaA@mail.gmail.com>
- <20200318212630.mw2geg4ykhnbtr3k@madcap2.tricolour.ca> <CAHC9VhRYvGAru3aOMwWKCCWDktS+2pGr+=vV4SjHW_0yewD98A@mail.gmail.com>
- <20200318215550.es4stkjwnefrfen2@madcap2.tricolour.ca> <CAHC9VhSdDDP7Ec-w61NhGxZG5ZiekmrBCAg=Y=VJvEZcgQh46g@mail.gmail.com>
- <20200319220249.jyr6xmwvflya5mks@madcap2.tricolour.ca> <CAHC9VhR84aN72yNB_j61zZgrQV1y6yvrBLNY7jp7BqQiEDL+cw@mail.gmail.com>
- <20200324210152.5uydf3zqi3dwshfu@madcap2.tricolour.ca>
-In-Reply-To: <20200324210152.5uydf3zqi3dwshfu@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 28 Mar 2020 23:11:41 -0400
-Message-ID: <CAHC9VhTQUnVhoN3JXTAQ7ti+nNLfGNVXhT6D-GYJRSpJHCwDRg@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        ebiederm@xmission.com, simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727330AbgC2DTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 23:19:15 -0400
+Received: from cnc.isely.net ([75.149.91.89]:54423 "EHLO cnc.isely.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726315AbgC2DTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 23:19:15 -0400
+X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Sat, 28 Mar 2020 23:19:14 EDT
+Received: from ts3-dock2.isely.net (ts3-dock2.isely.net [::ffff:192.168.23.14])
+  (AUTH: PLAIN isely, TLS: TLSv1/SSLv3,256bits,DHE-RSA-AES256-GCM-SHA384)
+  by cnc.isely.net with ESMTPSA; Sat, 28 Mar 2020 22:14:09 -0500
+  id 0000000000146015.000000005E801281.00004342
+Date:   Sat, 28 Mar 2020 22:14:09 -0500 (CDT)
+From:   Mike Isely <isely@isely.net>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+cc:     linux-i2c@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Isely <isely@isely.net>
+Subject: Re: [PATCH 6/6] media: usb: pvrusb2: convert to use
+ i2c_new_client_device()
+In-Reply-To: <20200326210947.12747-7-wsa+renesas@sang-engineering.com>
+Message-ID: <alpine.DEB.2.21.2003282213550.11595@sheridan.isely.net>
+References: <20200326210947.12747-1-wsa+renesas@sang-engineering.com> <20200326210947.12747-7-wsa+renesas@sang-engineering.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 5:02 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-03-23 20:16, Paul Moore wrote:
-> > On Thu, Mar 19, 2020 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2020-03-18 18:06, Paul Moore wrote:
-> >
-> > ...
-> >
-> > > > I hope we can do better than string manipulations in the kernel.  I'd
-> > > > much rather defer generating the ACID list (if possible), than
-> > > > generating a list only to keep copying and editing it as the record is
-> > > > sent.
-> > >
-> > > At the moment we are stuck with a string-only format.
-> >
-> > Yes, we are.  That is another topic, and another set of changes I've
-> > been deferring so as to not disrupt the audit container ID work.
-> >
-> > I was thinking of what we do inside the kernel between when the record
-> > triggering event happens and when we actually emit the record to
-> > userspace.  Perhaps we collect the ACID information while the event is
-> > occurring, but we defer generating the record until later when we have
-> > a better understanding of what should be included in the ACID list.
-> > It is somewhat similar (but obviously different) to what we do for
-> > PATH records (we collect the pathname info when the path is being
-> > resolved).
->
-> Ok, now I understand your concern.
->
-> In the case of NETFILTER_PKT records, the CONTAINER_ID record is the
-> only other possible record and they are generated at the same time with
-> a local context.
->
-> In the case of any event involving a syscall, that CONTAINER_ID record
-> is generated at the time of the rest of the event record generation at
-> syscall exit.
->
-> The others are only generated when needed, such as the sig2 reply.
->
-> We generally just store the contobj pointer until we actually generate
-> the CONTAINER_ID (or CONTAINER_OP) record.
 
-Perhaps I'm remembering your latest spin of these patches incorrectly,
-but there is still a big gap between when the record is generated and
-when it is sent up to the audit daemon.  Most importantly in that gap
-is the whole big queue/multicast/unicast mess.
+Acked-by: Mike Isely <isely@pobox.com>
 
-You don't need to show me code, but I would like to see some sort of
-plan for dealing with multiple nested audit daemons.  Basically I just
-want to make sure we aren't painting ourselves into a corner with this
-approach; and if for some horrible reason we are, I at least want us
-to be aware of what we are getting ourselves into.
+On Thu, 26 Mar 2020, Wolfram Sang wrote:
+
+> Move away from the deprecated API.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
+> index 275394bafe7d..63db04fe12d3 100644
+> --- a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
+> +++ b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
+> @@ -564,7 +564,7 @@ static void pvr2_i2c_register_ir(struct pvr2_hdw *hdw)
+>  		strscpy(info.type, "ir_video", I2C_NAME_SIZE);
+>  		pvr2_trace(PVR2_TRACE_INFO, "Binding %s to i2c address 0x%02x.",
+>  			   info.type, info.addr);
+> -		i2c_new_device(&hdw->i2c_adap, &info);
+> +		i2c_new_client_device(&hdw->i2c_adap, &info);
+>  		break;
+>  	case PVR2_IR_SCHEME_ZILOG:     /* HVR-1950 style */
+>  	case PVR2_IR_SCHEME_24XXX_MCE: /* 24xxx MCE device */
+> @@ -579,7 +579,7 @@ static void pvr2_i2c_register_ir(struct pvr2_hdw *hdw)
+>  		strscpy(info.type, "ir_z8f0811_haup", I2C_NAME_SIZE);
+>  		pvr2_trace(PVR2_TRACE_INFO, "Binding %s to i2c address 0x%02x.",
+>  			   info.type, info.addr);
+> -		i2c_new_device(&hdw->i2c_adap, &info);
+> +		i2c_new_client_device(&hdw->i2c_adap, &info);
+>  		break;
+>  	default:
+>  		/* The device either doesn't support I2C-based IR or we
+> 
 
 -- 
-paul moore
-www.paul-moore.com
+
+Mike Isely
+isely @ isely (dot) net
+PGP: 03 54 43 4D 75 E5 CC 92 71 16 01 E2 B5 F5 C1 E8
