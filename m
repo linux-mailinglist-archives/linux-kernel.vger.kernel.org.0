@@ -2,101 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF90196F45
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:26:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A2F1196F71
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:45:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728551AbgC2S02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 14:26:28 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43781 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728467AbgC2S02 (ORCPT
+        id S1728549AbgC2SpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 14:45:25 -0400
+Received: from sender4-of-o54.zoho.com ([136.143.188.54]:21408 "EHLO
+        sender4-of-o54.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728419AbgC2SpY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 14:26:28 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m11so12425311wrx.10
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 11:26:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CzLC2qzq86wrfSK0vb/dNLSGr6D+NOIwmb/1It/LkLw=;
-        b=m2zJxeHTWnDeGv7bhlY5Fjn9Cx8uOjtraLsathguaUSeiVanKONo6XsuMy6DP3MuKe
-         AGYrs212tUiXFUx9BZDR5w/R5fGMknOeFhTavqz2DxhIqJsYltQXisQa/hUgHC2ZSt6u
-         ZzR1bpPnUCEG9yaP/9i8ISaegSvJqV3NH1M+fuollBbMJ06lQ4PVbKdq9/Rh3f8kBbGk
-         7tGDG9Th7O1hTiptUR/k/L08mSwpTgoSpCuqGrGacN4A1CuGYk0LqGpJckRZKnm9aQFr
-         pRNWbfdeunQjqTUArL8SStEXDNfl4R6qV5VCVEzNCwACB8yfXtyNOdPFIrA3pXggDw7n
-         3IYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CzLC2qzq86wrfSK0vb/dNLSGr6D+NOIwmb/1It/LkLw=;
-        b=TtgPtxLLxxJ9HAfwbcGXLZL0N5FU5NRtoVhfhTCXC5IsGJfweqNFIQp73eiJtvuVE3
-         bEgiOXCe8t8f/YXHMK7JhAlqc0/4eB0t8Lyj6OLnfSrDZq2LoyEFWS6VaYnQ0kvxZORM
-         fHW11S+lWIHl7ZUBBHbZK9/yNzqYhWdm6YvYzs0S9TJegP8b57B4uplV36fXvFIuaRs0
-         X8PVThAEdYRUc9gogs9kUBZhRekvzeuLiJ7UQnykexPSZAsxvT6w1KS+zrTemxaH3IIZ
-         1EhgUzhbUtU+bnTvim2goEvNsgrIo4V/NVaT5fkQVkt1u5PX5wM0Lnja6tELeVV+AaW6
-         EYFQ==
-X-Gm-Message-State: ANhLgQ3BRRfNvAJanu9B35QyqKRmUf1r/7cZt0pINuxlNtRu/IrADkvG
-        kHv1y+N41qKSh9+Pr17QKu4=
-X-Google-Smtp-Source: ADFU+vsF8U0a8bYHxZAV5JKKqwms8/lqsCynYG9TNVrfZAsHmRk87ZHCRpNwuIrKPKgtO+mlB/m5QQ==
-X-Received: by 2002:a5d:474b:: with SMTP id o11mr10309174wrs.4.1585506385782;
-        Sun, 29 Mar 2020 11:26:25 -0700 (PDT)
-Received: from giga-mm ([195.245.54.172])
-        by smtp.gmail.com with ESMTPSA id r9sm18226132wma.47.2020.03.29.11.26.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Mar 2020 11:26:25 -0700 (PDT)
-Date:   Sun, 29 Mar 2020 20:26:24 +0200
-From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH] random: Drop ARCH limitations for
- CONFIG_RANDOM_TRUST_CPU
-Message-Id: <20200329202624.087251ba5c6d2d9715e5710f@gmail.com>
-In-Reply-To: <20200329165624.GO53396@mit.edu>
-References: <20200329082909.193910-1-alexander.sverdlin@gmail.com>
-        <20200329165624.GO53396@mit.edu>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-unknown-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sun, 29 Mar 2020 14:45:24 -0400
+X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 14:45:24 EDT
+ARC-Seal: i=1; a=rsa-sha256; t=1585506615; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=Gnz5i7zHhx3IcbvzMlmWDQnrh0sR4zto57trVmDlWHXCoqi97GnlySWHSZwCHJVpXxoFxxRJFA79+Sc5jtaOmw+XvgCCYJ+/+0MwR4/FDAPoxnr9MYfGZTiif69skBq6lg81l31e2A840IhfQHOnnL3tSAiOKo9SPbBuV59nW1g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1585506615; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=hqPCegPJeX/Ry7agpxmBok0vX/8k1cwBMc60UNQIMGc=; 
+        b=jo1R6Ef+IV8X1KTtlIbl0iRh/hm9GeB8s4e+1FU5zCAwpXTUftK1eue2XMTj6uXlnad1dGpqe5GxCMZw+TzUoeN0dEqjDKEWuzEVnFSi5b4k3WyelLDhAtSNzVRkic2XQfQjMfXCq1GUmSDWx5JZ5xwGaW2+9NzqNtf/LizNSKo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=meresinski.eu;
+        spf=pass  smtp.mailfrom=tomasz@meresinski.eu;
+        dmarc=pass header.from=<tomasz@meresinski.eu> header.from=<tomasz@meresinski.eu>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1585506615;
+        s=zoho; d=meresinski.eu; i=tomasz@meresinski.eu;
+        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=hqPCegPJeX/Ry7agpxmBok0vX/8k1cwBMc60UNQIMGc=;
+        b=NPVa0VJstiyOaSTToNKVS1OU5UupuHHoOwXKsojUesZJEyO6AjsT9x+LpBgGB+g7
+        FV40TBOIguUZqNmzN1m3xIT6UwxwkoPsjtjotCgu8sdDKX6dyk1ms0NMeVlCubtbLz5
+        3M3VnGm/UMbnk0rKuSOKgg/R76LSXWGiCMCNR0kg=
+Received: from localhost.localdomain (78-11-200-65.static.ip.netia.com.pl [78.11.200.65]) by mx.zohomail.com
+        with SMTPS id 1585506613099417.6913837527152; Sun, 29 Mar 2020 11:30:13 -0700 (PDT)
+From:   =?UTF-8?q?Tomasz=20Meresi=C5=84ski?= <tomasz@meresinski.eu>
+To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Cc:     davem@davemloft.net, kuba@kernel.org,
+        =?UTF-8?q?Tomasz=20Meresi=C5=84ski?= <tomasz@meresinski.eu>
+Message-ID: <20200329182503.754-1-tomasz@meresinski.eu>
+Subject: [PATCH RFC net-next] af_unix: eof in recvmsg after shutdown for nonblocking dgram socket
+Date:   Sun, 29 Mar 2020 20:25:03 +0200
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Ted,
+Calling recvmsg() after shutdown(SHUT_RD) is a some kind of undocumented
+behaviour. For blocking socket it just returns 0 (EOF), but for nonblocking
+socket it returns -EAGAIN. It can cause some event loops to infinitely wait
+for an event on this socket (https://github.com/tokio-rs/tokio/issues/1679)
 
-On Sun, 29 Mar 2020 12:56:24 -0400
-"Theodore Y. Ts'o" <tytso@mit.edu> wrote:
+Simple Python test case:
+| import socket
+|
+| print('BLOCKING TEST')
+| a =3D socket.socket(family=3Dsocket.AF_UNIX, type=3Dsocket.SOCK_DGRAM)
+| a.shutdown(socket.SHUT_RD)
+|
+| result =3D a.recv(1)
+| print('recv result ', result)
+|
+| a.close()
+|
+| print('NONBLOCKING TEST')
+| type =3D socket.SOCK_DGRAM | socket.SOCK_NONBLOCK
+| a =3D socket.socket(family=3Dsocket.AF_UNIX, type=3Dtype)
+| a.shutdown(socket.SHUT_RD)
+|
+| try:
+|     result =3D a.recv(1)
+| except BlockingIOError:
+|     print('Got Blocking IO Error')
+| else:
+|     print('recv result ', result)
+|
+| a.close()
 
-> On Sun, Mar 29, 2020 at 10:29:09AM +0200, Alexander Sverdlin wrote:
-> > The option itself looks attractive for the embedded devices which often
-> > have HWRNG but less entropy from user-input. And these devices are often
-> > ARM/ARM64 or MIPS. The reason to limit it to X86/S390/PPC is not obvious.
-> > 
-> > Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> 
-> This feature is *only* applicable if the CPU supports a
-> arch_get_random_seed_long() or arch_get_random_long().  I believe
-> there are some server-class ARM64 CPU's that support such an
-> instruction, but I don't believe any of the embedded arm64 --- and
-> certainly non of the embedded arm --- SOC's support
-> arch_get_random_long().
+Signed-off-by: Tomasz Meresi=C5=84ski <tomasz@meresinski.eu>
+---
+I'm not so sure about this patch because it can be called userspace API bre=
+ak.=20
+This sequence is now some kind of undefined behaviour - it's documented now=
+here.
+In the first place, I think that shutdown(SHUT_RD) should fail here as it d=
+oes with AF_INET dgram socket.
+On the other hand, there may be some user of this kind of shutdown() behavi=
+our so it'd be too risky.
 
-you are right! Thank you for the explanation!
-I totally missed the fact that it's not connected to hwrng drivers...
-Please ignore the patch.
+The problem here is that EAGAIN errno is used in event loops as we should w=
+ait for the next events indicator.
+It's not true here because there won't be any new events with this socket a=
+s it's shut down.
 
-[...]
+ net/unix/af_unix.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> So we should either add ARM64 to the dependency list, or we could, as
-> you suggest, simply remove the dependency altogether.  The tradeoff is
-> that it will cause an extra CONFIG prompt on a number of platforms
-> (mips, arm, sparc, etc.) where it will be utterly pointless since
-> those architectures have no chance of support a RDRAND-like
-> instruction.
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 3385a7a0b231..9458b11289c2 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -2123,9 +2123,8 @@ static int unix_dgram_recvmsg(struct socket *sock, st=
+ruct msghdr *msg,
+=20
+ =09if (!skb) { /* implies iolock unlocked */
+ =09=09unix_state_lock(sk);
+-=09=09/* Signal EOF on disconnected non-blocking SEQPACKET socket. */
+-=09=09if (sk->sk_type =3D=3D SOCK_SEQPACKET && err =3D=3D -EAGAIN &&
+-=09=09    (sk->sk_shutdown & RCV_SHUTDOWN))
++=09=09/* Signal EOF on disconnected socket. */
++=09=09if (err =3D=3D -EAGAIN && (sk->sk_shutdown & RCV_SHUTDOWN))
+ =09=09=09err =3D 0;
+ =09=09unix_state_unlock(sk);
+ =09=09goto out;
+--=20
+2.17.1
 
--- 
-Alexander Sverdlin.
+
