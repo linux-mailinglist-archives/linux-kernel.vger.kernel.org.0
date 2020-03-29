@@ -2,68 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E9A6196E92
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 18:56:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ABE2196E9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 19:16:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728435AbgC2Q4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 12:56:38 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38630 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728310AbgC2Q4i (ORCPT
+        id S1728375AbgC2RQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 13:16:49 -0400
+Received: from host10-96-61-217.static.arubacloud.com ([217.61.96.10]:45704
+        "EHLO mail.richermoren.tk" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1728065AbgC2RQt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 12:56:38 -0400
-Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 02TGuOFX011538
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 29 Mar 2020 12:56:25 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 9A2A7420EBA; Sun, 29 Mar 2020 12:56:24 -0400 (EDT)
-Date:   Sun, 29 Mar 2020 12:56:24 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH] random: Drop ARCH limitations for CONFIG_RANDOM_TRUST_CPU
-Message-ID: <20200329165624.GO53396@mit.edu>
-References: <20200329082909.193910-1-alexander.sverdlin@gmail.com>
+        Sun, 29 Mar 2020 13:16:49 -0400
+X-Greylist: delayed 19578 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 13:16:49 EDT
+Received: by mail.richermoren.tk (Postfix, from userid 48)
+        id E53E37222D; Sun, 29 Mar 2020 12:34:37 -0400 (EDT)
+To:     linux-kernel@vger.kernel.org
+Subject: Request for catalog and price list
+X-PHP-Originating-Script: 0:agregesa.php
+From:   Julian Smith <juliansmith2015@mail.ru>
+Reply-To: juliansmith2015@hotmail.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200329082909.193910-1-alexander.sverdlin@gmail.com>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Message-Id: <20200329165124.E53E37222D@mail.richermoren.tk>
+Date:   Sun, 29 Mar 2020 12:34:37 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 29, 2020 at 10:29:09AM +0200, Alexander Sverdlin wrote:
-> The option itself looks attractive for the embedded devices which often
-> have HWRNG but less entropy from user-input. And these devices are often
-> ARM/ARM64 or MIPS. The reason to limit it to X86/S390/PPC is not obvious.
-> 
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Hello friend,
 
-This feature is *only* applicable if the CPU supports a
-arch_get_random_seed_long() or arch_get_random_long().  I believe
-there are some server-class ARM64 CPU's that support such an
-instruction, but I don't believe any of the embedded arm64 --- and
-certainly non of the embedded arm --- SOC's support
-arch_get_random_long().
+This is Julian Smith and i am purchasing manager from Sinara Group Co.,LTD in Russia.
+We are glad to know about your company from the web and we are interested in your products.
+Could you kindly send us your Latest catalog and price list for our trial order.
 
-The reason why we limited it to X86/S390/PPC is because those were the
-platforms which supported an RDRAND-like instruction at the time.
-Richard Henderson added support for ARM64 in commit 1a50ec0b3b2e
-("arm64: Implement archrandom.h for ARMv8.5-RNG") in late January 2020.
+Thanks and Best Regards,
 
-So we should either add ARM64 to the dependency list, or we could, as
-you suggest, simply remove the dependency altogether.  The tradeoff is
-that it will cause an extra CONFIG prompt on a number of platforms
-(mips, arm, sparc, etc.) where it will be utterly pointless since
-those architectures have no chance of support a RDRAND-like
-instruction.
+Ms. Julian Smith
+Purchasing Manager
+Sinara Group Co.,LTD
 
-Cheers,
 
-						- Ted
