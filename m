@@ -2,88 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E160196FA9
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 21:12:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C71BB196F9F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 21:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728445AbgC2TMW convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 29 Mar 2020 15:12:22 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:32844 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727606AbgC2TMW (ORCPT
+        id S1728651AbgC2TGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 15:06:37 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56824 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727775AbgC2TGg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 15:12:22 -0400
-X-Greylist: delayed 372 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 15:12:21 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 251696094C4B;
-        Sun, 29 Mar 2020 21:06:08 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id QJ2GV9CvNgMe; Sun, 29 Mar 2020 21:06:06 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id D9B5560D0873;
-        Sun, 29 Mar 2020 21:06:05 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id y4bO9EX9EtU0; Sun, 29 Mar 2020 21:06:05 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 8D17C6089320;
-        Sun, 29 Mar 2020 21:06:05 +0200 (CEST)
-Date:   Sun, 29 Mar 2020 21:06:05 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Patricia Alfonso <trishalfonso@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        anton ivanov <anton.ivanov@cambridgegreys.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        davidgow <davidgow@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-um <linux-um@lists.infradead.org>
-Message-ID: <1606942453.56384.1585508765254.JavaMail.zimbra@nod.at>
-In-Reply-To: <4b8c1696f658b4c6c393956734d580593b55c4c0.camel@sipsolutions.net>
-References: <20200226004608.8128-1-trishalfonso@google.com> <CAKFsvULd7w21T_nEn8QiofQGMovFBmi94dq2W_-DOjxf5oD-=w@mail.gmail.com> <4b8c1696f658b4c6c393956734d580593b55c4c0.camel@sipsolutions.net>
-Subject: Re: [PATCH] UML: add support for KASAN under x86_64
+        Sun, 29 Mar 2020 15:06:36 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jIdGT-0000lw-Dw; Sun, 29 Mar 2020 21:06:33 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 61B321C0334;
+        Sun, 29 Mar 2020 21:06:31 +0200 (CEST)
+Date:   Sun, 29 Mar 2020 19:06:30 -0000
+From:   "tip-bot2 for afzal mohammed" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] unicore32: Replace setup_irq() by request_irq()
+Cc:     afzal mohammed <afzal.mohd.ma@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: =?utf-8?q?=3C82667ae23520611b2a9d8db77e1d8aeb982f08e5=2E15853?=
+ =?utf-8?q?20721=2Egit=2Eafzal=2Emohd=2Ema=40gmail=2Ecom=3E?=
+References: =?utf-8?q?=3C82667ae23520611b2a9d8db77e1d8aeb982f08e5=2E158532?=
+ =?utf-8?q?0721=2Egit=2Eafzal=2Emohd=2Ema=40gmail=2Ecom=3E?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF68 (Linux)/8.8.12_GA_3809)
-Thread-Topic: add support for KASAN under x86_64
-Thread-Index: efampVW5tmWSwSdm2ja8syshwdMa9w==
+Message-ID: <158550879084.28353.14828561956279925504.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ Ursprüngliche Mail -----
-> Von: "Johannes Berg" <johannes@sipsolutions.net>
-> An: "Patricia Alfonso" <trishalfonso@google.com>, "Jeff Dike" <jdike@addtoit.com>, "richard" <richard@nod.at>, "anton
-> ivanov" <anton.ivanov@cambridgegreys.com>, "Andrey Ryabinin" <aryabinin@virtuozzo.com>, "Dmitry Vyukov"
-> <dvyukov@google.com>, "Brendan Higgins" <brendanhiggins@google.com>, "davidgow" <davidgow@google.com>
-> CC: "kasan-dev" <kasan-dev@googlegroups.com>, "linux-kernel" <linux-kernel@vger.kernel.org>, "linux-um"
-> <linux-um@lists.infradead.org>
-> Gesendet: Mittwoch, 11. März 2020 11:32:00
-> Betreff: Re: [PATCH] UML: add support for KASAN under x86_64
+The following commit has been merged into the irq/core branch of tip:
 
-> Hi,
-> 
->> Hi all, I just want to bump this so we can get all the comments while
->> this is still fresh in everyone's minds. I would love if some UML
->> maintainers could give their thoughts!
-> 
-> I'm not the maintainer, and I don't know where Richard is, but I just
-> tried with the test_kasan.ko module, and that seems to work. Did you
-> test that too? I was surprised to see this because you said you didn't
-> test modules, but surely this would've been the easiest way?
+Commit-ID:     ba947241f125b19bb6f08a78c22827b9f6a1317a
+Gitweb:        https://git.kernel.org/tip/ba947241f125b19bb6f08a78c22827b9f6a1317a
+Author:        afzal mohammed <afzal.mohd.ma@gmail.com>
+AuthorDate:    Fri, 27 Mar 2020 21:40:44 +05:30
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 29 Mar 2020 21:03:43 +02:00
 
-Sorry for vanishing.
+unicore32: Replace setup_irq() by request_irq()
 
-I read thought the discussion and it seems like the patch is not ready,
-right?
+request_irq() is preferred over setup_irq(). Invocations of setup_irq()
+occur after memory allocators are ready.
 
-Johannes, thanks a lot for pointing out all these issues.
+setup_irq() was required in older kernels as the memory allocator was not
+available during early boot.
 
-Thanks,
-//richard
+Hence replace setup_irq() by request_irq().
+
+Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/82667ae23520611b2a9d8db77e1d8aeb982f08e5.1585320721.git.afzal.mohd.ma@gmail.com
+
+---
+ arch/unicore32/kernel/time.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/arch/unicore32/kernel/time.c b/arch/unicore32/kernel/time.c
+index 8b217a7..c3a37ed 100644
+--- a/arch/unicore32/kernel/time.c
++++ b/arch/unicore32/kernel/time.c
+@@ -72,13 +72,6 @@ static struct clocksource cksrc_puv3_oscr = {
+ 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+ };
+ 
+-static struct irqaction puv3_timer_irq = {
+-	.name		= "ost0",
+-	.flags		= IRQF_TIMER | IRQF_IRQPOLL,
+-	.handler	= puv3_ost0_interrupt,
+-	.dev_id		= &ckevt_puv3_osmr0,
+-};
+-
+ void __init time_init(void)
+ {
+ 	writel(0, OST_OIER);		/* disable any timer interrupts */
+@@ -94,7 +87,9 @@ void __init time_init(void)
+ 	ckevt_puv3_osmr0.min_delta_ticks = MIN_OSCR_DELTA * 2;
+ 	ckevt_puv3_osmr0.cpumask = cpumask_of(0);
+ 
+-	setup_irq(IRQ_TIMER0, &puv3_timer_irq);
++	if (request_irq(IRQ_TIMER0, puv3_ost0_interrupt,
++			IRQF_TIMER | IRQF_IRQPOLL, "ost0", &ckevt_puv3_osmr0))
++		pr_err("Failed to register ost0 interrupt\n");
+ 
+ 	clocksource_register_hz(&cksrc_puv3_oscr, CLOCK_TICK_RATE);
+ 	clockevents_register_device(&ckevt_puv3_osmr0);
