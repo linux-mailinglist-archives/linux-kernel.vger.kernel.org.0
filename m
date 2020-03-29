@@ -2,68 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E49841970A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 23:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76D1E1970A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 23:57:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbgC2V5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 17:57:38 -0400
-Received: from sonic314-14.consmr.mail.bf2.yahoo.com ([74.6.132.124]:40927
-        "EHLO sonic314-14.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728966AbgC2V5h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 17:57:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1585519056; bh=uKvLrfbQW5ttrC8kUeRbvaFFRymjnt/GX57x38e+rD0=; h=Date:From:Reply-To:Subject:References:From:Subject; b=kz7U/8sACIRthM8AqQDhkUfNHIBQMod2TBDKYzuhzPYukWPNwcNYBWeFPisdE8IGojdan5vogKAPsv/aEewV7IN/rYjUycoB/K7ZWZzgKjzjjqO00j0xEBla1v7qQKFSOZQSwJcPkT6pgzQfJvG3NeqJwSeEZBbdUFjzSvoY5cI85i5lVt+ETsNF5eodo73zTf9znh/3LicNEjSYnWLsdmjKnjsRTbnwuYlR6rRjr3RKyeP8mWByb70V62H4NqcNUUGKW9oYks3rDO3X1J5gIt9r8ywAqTi+XTx2gGsxCuk8KeUeoRDS1VlU1QP0+9bCmVG00cIkAlYXicFxUvGaBA==
-X-YMail-OSG: wyUIS1QVM1lZi2e.agNOeQUpObaUIPc5tKYL32c.gMKTqDzt.BpjZI_e9fmgl_E
- lSBO1yxJyWF.2MWs13TYd0VIhJ65xiz4EOdWQZihOKXRFb2g1pWRgRzRClvExj7eJymBC6lj0pG9
- 1xBm_QhwVjpovPnl7XqlgKhybaOrVgN.OGiNjRRMabIgZQYzkzhWmYhJkpaL8jl.EaSRRJZTZeXb
- T.DqlBckA6dMmeEI6GjjWHeBL9dcMMD_rjrsVnvMSf9gcwtH.xyg.LJIJHG4LO4TRkiiWYIMHflg
- bedumN4_WOaCpSpz95X1vtjHw___kc.eQvPNHMl0m0EDtFD5xQvi8IP_u7dWbKwbHtxvaepoon4_
- EAVBW5w4mDS70cp3dGlwcroqU4hRcfEPfGmonin1sMgnc20u1jiBNkugl.kEbJRQ6H6zZai8oGff
- 3fxl.RPMzgWKHmYplomwwCOlMkw3qEPvC4YDWf.4fK7tvqE_EeHXhgEKm7yizK_zgw8j3PZpoFd5
- 5RRIZejdm4SfvOdrsn57xNETO4VuI9UuAdkoxTmBxlq.8LU8GHpvp.VlupXnG7tINHAfThTU6gRk
- 0fea8Ijz.JqwwtuV6djuZjRhEXa9fn3CB7hfdYYWEGGu7wVQ4tpF_1eBudlMvR7qzDIa.JgvjihN
- sjRP.T8GjGUX2oY_WtQ7fv260yWXRwM8OQ1TPumN3lT6HvRaHBUyPUMWH7t.Ps7gsVRq0AvKQJxf
- UKeDs6guoYBxo0xj.L7Jd.MRyGgleQwgqe4hx6Qlpf.WFimTBvprj.lFnl0vYUQCWyEpZenB54vY
- NJDj00i0KwARprgAriffO76.GQh7b34ql0aIhFFfCPsGYkRKlaWSIpxMIgS1MITRHoWm.2FgjQ6H
- iBysk7o4xNf9yrQii74oP63uoEwYH0.vOE2gsqWNcWc30SbpqzdEgXJ6FpWPOc9fFGoGC3.GrPjT
- 9JPZwPGHqh0.7ZriRCkWFtWRCX5DcUI2AOXyiZW0a.dZXjz9zQ7AQWRp58gIz5BPvehqzx2UxTMk
- Td5eA2H_gTeE_P3NJGaus0xHwqu3QvvbI5SrMZuSrhhJCGr5FF9JvCKadXJvK5vwbdJo7LlVsUoR
- GFzB._2K4LfIE6AdZ96CCPuNdaVMD7lTcre_1xU6rQJO9mz3xRSmbYCe9w3ejJGHYy_gRb_75RsU
- miJAXICYHfCRDcfqk4WmS.SCbtQfItRCYCIAjmG2KuY8PgxyuhBuP88LluwX9N_Gq.ss9uGdaFDw
- Mz2pCJ56r49UH7BYL9I3DA9C7rO_CmSLWZqxsY8NRoVGsSLmGc5z3XJfT07kdyncZ348-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.bf2.yahoo.com with HTTP; Sun, 29 Mar 2020 21:57:36 +0000
-Date:   Sun, 29 Mar 2020 21:57:32 +0000 (UTC)
-From:   Salif Yoda <salifyoda34@gmail.com>
-Reply-To: salifyoda34@gmail.com
-Message-ID: <2035845015.490086.1585519052555@mail.yahoo.com>
-Subject: Good News
+        id S1729204AbgC2V54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 17:57:56 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:54255 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728966AbgC2V5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 17:57:55 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48r8bN6WYnz9sR4;
+        Mon, 30 Mar 2020 08:57:52 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1585519073;
+        bh=YsqONLcUYQqleKUQ4xMM7DVzQvWlb866TQnITGGl5BI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qlge1KQcFkSMJv2lvvvCEYUPjMBzY6nHVA7J6fyOtvOpwsQ50yVYJmscRjoN9tX++
+         DmODvd2rILM+P7b/gMgrrhkO/7lYDLd74/x+LhuUxU5SKrMU0sXrRS1sRR5/yEhp0r
+         gp0MC/jD1YaTjcnpRe89AW25ePhdUfnWIwejI+0yIVueqmKhxQW61GaggSkiLUKwNF
+         ctXrURcgzDpzfOeCmPAf4L6PVLODadhBZGaTItN3mc+pIStD1TRnOa0ZJdpaFZ9sSL
+         Hi4W85BtTE1lJlZphL64NjQhsdrx3WWlInk01RZnHGcv+96VZSpDooJ/5q3WA+MBKN
+         bagNvVV6a6rLQ==
+Date:   Mon, 30 Mar 2020 08:57:47 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Steve French <smfrench@gmail.com>,
+        CIFS <linux-cifs@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the cifs tree
+Message-ID: <20200330085747.082749d4@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <2035845015.490086.1585519052555.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15555 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:74.0) Gecko/20100101 Firefox/74.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: multipart/signed; boundary="Sig_/tNyDWNd.D=YgcvIHK=z77Uv";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/tNyDWNd.D=YgcvIHK=z77Uv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
+ommit
 
-Dear Friend,
+  cfc825ccc046 ("cifs: update internal module version number")
 
- I am Mr. Salif Yoda, work with the department of Audit and accounting manager here in the Bank of Africa, There is this fund that was keep in my custody years ago, please I need your assistance for the transferring of this fund to your bank account for both of us benefit for life time investment and the amount is (US$18 MILLION DOLLARS).
+is missing a Signed-off-by from its author and committer.
 
-I have every inquiry details to make the bank believe you and release the fund to your bank account in within 7 banking working days with your full co-operation with me after success Note / 45% for you while 55% for me after success of the transfer of the funds to your bank account.
+--=20
+Cheers,
+Stephen Rothwell
 
-Below information is what I need from you so will can be reaching each other,
+--Sig_/tNyDWNd.D=YgcvIHK=z77Uv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-1) Full name ...
-2) Private telephone number...
-3) Ages...
-4) Nationalities...
-5) Occupations ...
+-----BEGIN PGP SIGNATURE-----
 
-Thanks.
-Mr. Salif Yoda,
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6BGdsACgkQAVBC80lX
+0GzU8Qf+MD1EaB5r7iE0BnP1oOMkxDY4cn4kh4Xd8K96akHQbmgcuUYQOd6IzMj9
+oWZh0o0UeqR0wXyFiTF2Dq+KHdKND+E5UYM6+mkHdJMM82kYCOP14wWNaKf/bV0q
+PD3BudWfhNXWWj5CA73DIZfieutEg3yRAKJ/D5DGeSGs+YDt0THquSPml9Jkc5kW
+/6sMlR2c8FJVLiJE2x4bFcKiOW3oTH1grQ89tmoOHCxNEW/rw9uYV3UiS8TMKnCK
+f6h+/UteUUcJ7efN+OiOSWWBOn72ix4THvndLy1ccyYBllDibwI1Vw0stF6m/Udw
+i7nGKVwqVoO+MBa1gt/70KnztrKMEQ==
+=Sg17
+-----END PGP SIGNATURE-----
+
+--Sig_/tNyDWNd.D=YgcvIHK=z77Uv--
