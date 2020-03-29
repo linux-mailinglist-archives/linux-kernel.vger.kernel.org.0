@@ -2,273 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F802196D35
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 14:12:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B61D3196D2B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 14:02:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbgC2MMQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 08:12:16 -0400
-Received: from services.gouders.net ([141.101.32.176]:33668 "EHLO
-        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727901AbgC2MMQ (ORCPT
+        id S1728089AbgC2MCU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 08:02:20 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:47067 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727965AbgC2MCU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 08:12:16 -0400
-X-Greylist: delayed 1078 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 08:12:13 EDT
-Received: from localhost (ltea-047-066-044-139.pools.arcor-ip.net [47.66.44.139])
-        (authenticated bits=0)
-        by services.gouders.net (8.14.8/8.14.8) with ESMTP id 02TBq1Vo018294
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 29 Mar 2020 13:52:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-        t=1585482722; bh=JoYiZS8wexHrjlhH/xUQaIHQ4vaL9Ob7yhtLJygpWhI=;
-        h=From:To:Subject:Date;
-        b=T2+485Je9ZXWSrH6X0oCYIOEsMQWNmZN7lnHwRX+zXvRD/GnhH2wlL/x90+OxePaD
-         Xk9G3AmzeuaJqHCPmZj6Khm+RMnh/xjuV+i51dW1rkoUU+sE4a8nk2dvuz7HPe6NGQ
-         vGU3Vch16wYQWGNEIDw6BlhPTeK6hec254435Np4=
-From:   Dirk Gouders <dirk@gouders.net>
-To:     intel-gfx@lists.freedesktop.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Kernel 5.2 to current: possible i915 related problems
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
-Date:   Sun, 29 Mar 2020 13:52:00 +0200
-Message-ID: <ghpncvidjz.fsf@gouders.net>
+        Sun, 29 Mar 2020 08:02:20 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r7so7179015ljg.13
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 05:02:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cumulusnetworks.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Cq8VIxSwvwCSuQt3WNmGkXzcdrs0outzKbdn+QVFL8s=;
+        b=C5SDUba+Fkoy2P8Hc0dS+/pcVzsmUR1V/3qsUjGDQcKAG56T6DUtDJZu9YY9ZF0ezZ
+         jwyEZ/VxLc7emmpUOm9NmpFXL1VUTcgnX2CFb5pdV/GhJ6XlGtOMa+NsBF5KLRkbu/NQ
+         X5O9GNW0nyM/erPBbBpkQYzj11e9iTQZG83xs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Cq8VIxSwvwCSuQt3WNmGkXzcdrs0outzKbdn+QVFL8s=;
+        b=hXh88xjcEtkAvLSe67K3JgnNsbDyVJK4WNBvSgSO7t9d9lOyBuxBlbY78Eu8TBuoRU
+         198W49CWbyln1i5IDYxpLOMfT38Stcyim4LdVtwWE7WNH5nEmqfqLlPEki08vfXKQ/5m
+         Og+bfuM3zCJlB5/nTXyYp6xXPK8y5xjkZ3cWwRZopzhHK0wkqj94xZKMA4RyEeOt/QAD
+         dAJQJpEZ/EKvtRKfIz1jtKxw4FE79HTLTV2ewuVWPys8jtf/9fJ6ND2H9D82OCFDX9Kq
+         O8RFGZ8BXTeZG+wINLQvyaLPZMGLTclFb6jA66Qtp5EGG714rECXjXy1srb8KbmyuB5x
+         jhbA==
+X-Gm-Message-State: AGi0PubpSeVbKal7L4/eKsPdoDtka//fvT+hlh+MWgiHp6fw29dJ5yJC
+        mn+Jwq0Isrm4EhNQnexEfjZF8g==
+X-Google-Smtp-Source: APiQypI89yqc93TSmOnJWJRnO43OWKFd7LoI5Egh4hYQIX5SifepNeFGxejqT6E5UbsuaJHsMVdoRA==
+X-Received: by 2002:a2e:9586:: with SMTP id w6mr4514883ljh.133.1585483337920;
+        Sun, 29 Mar 2020 05:02:17 -0700 (PDT)
+Received: from [192.168.0.109] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
+        by smtp.gmail.com with ESMTPSA id c13sm5328557ljj.37.2020.03.29.05.02.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 Mar 2020 05:02:17 -0700 (PDT)
+Subject: Re: [PATCH net-next 6/6] net: dsa: sja1105: add broadcast and
+ per-traffic class policers
+To:     Vladimir Oltean <olteanv@gmail.com>,
+        Ido Schimmel <idosch@idosch.org>
+Cc:     Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Jakub Kicinski <kuba@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Allan W. Nielsen" <allan.nielsen@microchip.com>,
+        Joergen Andreasen <joergen.andreasen@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        "Y.b. Lu" <yangbo.lu@nxp.com>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        Po Liu <po.liu@nxp.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>
+References: <20200329005202.17926-1-olteanv@gmail.com>
+ <20200329005202.17926-7-olteanv@gmail.com>
+ <20200329095712.GA2188467@splinter>
+ <CA+h21hoybhxhR3KgfRkAaKyPPJPesbGLWDaDp5O_2yTz05y5jQ@mail.gmail.com>
+ <CA+h21hoBp6=Zyc3mX3BVguVs0f8Un6-A3pk9YaZKPgs0efTi3g@mail.gmail.com>
+From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Message-ID: <cd6f4e55-ff5b-5f64-8211-61b4d87b1f0f@cumulusnetworks.com>
+Date:   Sun, 29 Mar 2020 15:02:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CA+h21hoBp6=Zyc3mX3BVguVs0f8Un6-A3pk9YaZKPgs0efTi3g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 29/03/2020 14:46, Vladimir Oltean wrote:
+> On Sun, 29 Mar 2020 at 14:37, Vladimir Oltean <olteanv@gmail.com> wrote:
+>>
+>> On Sun, 29 Mar 2020 at 12:57, Ido Schimmel <idosch@idosch.org> wrote:
+>>>
+>>> + Nik, Roopa
+>>>
+>>> On Sun, Mar 29, 2020 at 02:52:02AM +0200, Vladimir Oltean wrote:
+>>>> From: Vladimir Oltean <vladimir.oltean@nxp.com>
+[snip]
+>>> In the past I was thinking about ways to implement this in Linux. The
+>>> only place in the pipeline where packets are actually classified to
+>>> broadcast / unknown unicast / multicast is at bridge ingress. Therefore,
+>>
+>> Actually I think only 'unknown unicast' is tricky here, and indeed the
+>> bridge driver is the only place in the software datapath that would
+>> know that.
 
-because of the current pandemic situation the usage of my laptop has
-changed.  It is now running at home 24/7 with a monitor attached to it
-and after about 12 days running a somewhat older kernel (5.2), it
-stopped working.
+Yep, unknown unicast is hard to pass outside of the bridge, especially at ingress
+where the bridge hasn't been hit yet. One possible solution is to expose a function
+from the bridge which can make such a decision at the cost of 1 more fdb hash lookup,
+but if the packet is going to hit the bridge anyway that cost won't be that high
+since it will have to do the same. We already have some internal bridge functionality
+exposed for netfilter, tc and some drivers so it would be in line with that.
+I haven't looked into how feasible the above is, so I'm open to other ideas (the
+bridge_slave functions for example, we've discussed such extensions before in other
+contexts). But I think this can be much simpler if we just expose the unknown unicast
+information, the mcast/bcast can be decided by the classifier already or with very
+little change. I think such exposed function can be useful to netfilter as well.
 
-After a reboot I found some information in the syslog that I attach to
-this mail.  The next hang happened one day later but without any
-information.
+>> I know very little about frame classification in the Linux network
+>> stack, but would it be possible to introduce a match key in tc-flower
+>> for whether packets have a known destination or not?
+>>
+>>> my thinking was to implement these storm control policers as a
+>>> "bridge_slave" operation. It can then be offloaded to capable drivers
+>>> via the switchdev framework.
+>>>
+>>
+>> I think it would be a bit odd to duplicate tc functionality in the
+>> bridge sysfs. I don't have a better suggestion though.
+>>
+> 
+> Not to mention that for hardware like this, to have the same level of
+> flexibility via a switchdev control would mean to duplicate quite a
+> lot of tc functionality. On this 5-port switch I can put a shared
+> broadcast policer on 2 ports (via the ingress_block functionality),
+> and individual policers on the other 3, and the bandwidth budgeting is
+> separate. I can only assume that there are more switches out there
+> that allow this.
+> 
+>>> I think that if we have this implemented in the Linux bridge, then your
+>>> patch can be used to support the policing of broadcast packets while
+>>> returning an error if user tries to police unknown unicast or multicast
+>>> packets.
+>>
+>> So even if the Linux bridge gains these knobs for flood policers,
+>> still have the dst_mac ff:ff:ff:ff:ff:ff as a valid way to configure
+>> one of those knobs?
+>>
+>>> Or maybe the hardware you are working with supports these types
+>>> as well?
+>>
+>> Nope, on this hardware it's just broadcast, I just checked that. Which
+>> simplifies things quite a bit.
+>>
+>>>
+>>> WDYT?
+>>>
+>>
+>> I don't know.
+>>
+>> Thanks,
+>> -Vladimir
+> 
+> -Vladimir
+> 
 
-With a current 5.6.0-rc7+ I seem to get more frequent hangs but without any
-information in the log file and somewhat non-reproducable.  Today, I
-experienced two hangs when starting xterms or other programs but after
-this (and necessary reboots) I am unable to reproduce a hang.
-
-Perhaps, someone has suggestion for me how to produce debugging
-information that survives the hangs and reboots.
-
-Dirk
-
-------------------------------------------------------------------------
-Mar 27 19:36:51 lena kernel: [drm:intel_cpu_fifo_underrun_irq_handler [i915]] *ERROR* CPU pipe B FIFO underrun
-Mar 27 21:45:19 lena kernel: usb 1-1: USB disconnect, device number 15
-Mar 27 21:45:19 lena kernel: sd 2:0:0:0: [sdb] Synchronizing SCSI cache
-Mar 27 21:45:19 lena kernel: sd 2:0:0:0: [sdb] Synchronize Cache(10) failed: Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
-Mar 27 22:00:53 lena kernel: [drm:intel_cpu_fifo_underrun_irq_handler [i915]] *ERROR* CPU pipe B FIFO underrun
-Mar 27 23:46:13 lena kernel: ------------[ cut here ]------------
-Mar 27 23:46:13 lena kernel: vblank wait timed out on crtc 1
-Mar 27 23:46:13 lena kernel: WARNING: CPU: 0 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
-Mar 27 23:46:13 lena kernel: Modules linked in: usblp uas usb_storage uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common snd_hda_codec
-_hdmi snd_hda_codec_realtek snd_hda_codec_generic crc32_pclmul crc32c_intel ghash_clmulni_intel i915 aesni_intel drm_kms_helper cfbfillrect crypto_simd glue_he
-lper syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci snd_hwdep sdhci drm_panel_orientat
-ion_quirks snd_hda_core intel_gtt mmc_core xhci_hcd iosf_mbi
-Mar 27 23:46:13 lena kernel: CPU: 0 PID: 4221 Comm: X Not tainted 5.2.0+ #44
-Mar 27 23:46:13 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
-Mar 27 23:46:13 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
-Mar 27 23:46:13 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de 0d a0 e8 2e bd fc e
-0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24 28 65 48 33 04 25
-Mar 27 23:46:13 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
-Mar 27 23:46:13 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
-Mar 27 23:46:13 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277a163a0
-Mar 27 23:46:13 lena kernel: RBP: ffff888271b40000 R08: 0000000000000306 R09: 0000000000000001
-Mar 27 23:46:13 lena kernel: R10: ffffc90000e739d0 R11: 000597d6da905e00 R12: 0000000000000000
-Mar 27 23:46:13 lena kernel: R13: 0000000000bd6280 R14: ffff8882765eb160 R15: 0000000000000001
-Mar 27 23:46:13 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
-Mar 27 23:46:13 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Mar 27 23:46:13 lena kernel: CR2: 00007f6d6f20d000 CR3: 0000000268a70000 CR4: 00000000001006f0
-Mar 27 23:46:13 lena kernel: Call Trace:
-Mar 27 23:46:13 lena kernel: ? wait_woken+0x68/0x68
-Mar 27 23:46:13 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
-Mar 27 23:46:13 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
-Mar 27 23:46:13 lena kernel: ? flush_workqueue+0x2ab/0x2d4
-Mar 27 23:46:13 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
-Mar 27 23:46:13 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
-Mar 27 23:46:13 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
-Mar 27 23:46:13 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
-Mar 27 23:46:13 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
-Mar 27 23:46:13 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
-Mar 27 23:46:13 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
-Mar 27 23:46:13 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
-Mar 27 23:46:13 lena kernel: ? hrtimer_cancel+0xc/0x16
-Mar 27 23:46:13 lena kernel: ? schedule_hrtimeout_range_clock+0xb3/0xef
-Mar 27 23:46:13 lena kernel: ? hrtimer_init+0x2/0x2
-Mar 27 23:46:13 lena kernel: vfs_ioctl+0x19/0x26
-Mar 27 23:46:13 lena kernel: do_vfs_ioctl+0x52c/0x554
-Mar 27 23:46:13 lena kernel: ? wake_up_q+0x4e/0x4e
-Mar 27 23:46:13 lena kernel: ksys_ioctl+0x39/0x58
-Mar 27 23:46:13 lena kernel: __x64_sys_ioctl+0x11/0x14
-Mar 27 23:46:13 lena kernel: do_syscall_64+0x4a/0xf4
-Mar 27 23:46:13 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
-Mar 27 23:46:13 lena kernel: RIP: 0033:0x7f6d74ce12b7
-Mar 27 23:46:13 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00 f7 d8 64 89 01 48
-Mar 27 23:46:13 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
-Mar 27 23:46:13 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
-Mar 27 23:46:13 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
-Mar 27 23:46:13 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
-Mar 27 23:46:13 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
-Mar 27 23:46:13 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
-Mar 27 23:46:13 lena kernel: ---[ end trace 5361d6be40e0aaf8 ]---
-Mar 28 01:13:22 lena kernel: [drm:drm_atomic_helper_wait_for_flip_done [drm_kms_helper]] *ERROR* [CRTC:63:pipe B] flip_done timed out
-Mar 28 01:23:22 lena kernel: ------------[ cut here ]------------
-Mar 28 01:23:22 lena kernel: vblank wait timed out on crtc 1
-Mar 28 01:23:22 lena kernel: WARNING: CPU: 0 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
-Mar 28 01:23:22 lena kernel: Modules linked in: usblp uas usb_storage uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic crc32_pclmul crc32c_intel ghash_clmulni_intel i915 aesni_intel drm_kms_helper cfbfillrect crypto_simd glue_helper syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci snd_hwdep sdhci drm_panel_orientation_quirks snd_hda_core intel_gtt mmc_core xhci_hcd iosf_mbi
-Mar 28 01:23:22 lena kernel: CPU: 0 PID: 4221 Comm: X Tainted: G        W         5.2.0+ #44
-Mar 28 01:23:22 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
-Mar 28 01:23:22 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
-Mar 28 01:23:22 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de 0d a0 e8 2e bd fc e0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24 28 65 48 33 04 25
-Mar 28 01:23:22 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
-Mar 28 01:23:22 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
-Mar 28 01:23:22 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277a163a0
-Mar 28 01:23:22 lena kernel: RBP: ffff888271b40000 R08: 0000000000000338 R09: 0000000000000001
-Mar 28 01:23:22 lena kernel: R10: ffffc90000e739d0 R11: 0005a05257e63800 R12: 0000000000000000
-Mar 28 01:23:22 lena kernel: R13: 0000000000c25711 R14: ffff8882765eb160 R15: 0000000000000001
-Mar 28 01:23:22 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
-Mar 28 01:23:22 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Mar 28 01:23:22 lena kernel: CR2: 00007f6d6dcb0000 CR3: 0000000268a70000 CR4: 00000000001006f0
-Mar 28 01:23:22 lena kernel: Call Trace:
-Mar 28 01:23:22 lena kernel: ? wait_woken+0x68/0x68
-Mar 28 01:23:22 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
-Mar 28 01:23:22 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
-Mar 28 01:23:22 lena kernel: ? flush_workqueue+0x2ab/0x2d4
-Mar 28 01:23:22 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
-Mar 28 01:23:22 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
-Mar 28 01:23:22 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
-Mar 28 01:23:22 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
-Mar 28 01:23:22 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
-Mar 28 01:23:22 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
-Mar 28 01:23:22 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
-Mar 28 01:23:22 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
-Mar 28 01:23:22 lena kernel: ? hrtimer_cancel+0xc/0x16
-Mar 28 01:23:22 lena kernel: ? schedule_hrtimeout_range_clock+0xb3/0xef
-Mar 28 01:23:22 lena kernel: ? hrtimer_init+0x2/0x2
-Mar 28 01:23:22 lena kernel: vfs_ioctl+0x19/0x26
-Mar 28 01:23:22 lena kernel: do_vfs_ioctl+0x52c/0x554
-Mar 28 01:23:22 lena kernel: ? wake_up_q+0x4e/0x4e
-Mar 28 01:23:22 lena kernel: ksys_ioctl+0x39/0x58
-Mar 28 01:23:22 lena kernel: __x64_sys_ioctl+0x11/0x14
-Mar 28 01:23:22 lena kernel: do_syscall_64+0x4a/0xf4
-Mar 28 01:23:22 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
-Mar 28 01:23:22 lena kernel: RIP: 0033:0x7f6d74ce12b7
-Mar 28 01:23:22 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00 f7 d8 64 89 01 48
-Mar 28 01:23:22 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
-Mar 28 01:23:22 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
-Mar 28 01:23:22 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
-Mar 28 01:23:22 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
-Mar 28 01:23:22 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
-Mar 28 01:23:22 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
-Mar 28 01:23:22 lena kernel: ---[ end trace 5361d6be40e0aaf9 ]---
-Mar 28 02:30:26 lena syslog-ng[3629]: Log statistics; processed='global(internal_queue_length)=0', queued='global(scratch_buffers_count)=1026497183744', queued='global(scratch_buffers_bytes)=0', processed='global(msg_clones)=0', processed='center(received)=3403', processed='source(src)=3403', processed='center(queued)=6806', processed='destination(console_all)=3403', processed='src.internal(src#1)=107', stamp='src.internal(src#1)=1585315826', processed='destination(mail)=2359', processed='destination(messages)=1044', processed='global(sdata_updates)=8', processed='global(payload_reallocs)=2439'
-Mar 28 03:55:25 lena kernel: [drm:drm_atomic_helper_wait_for_flip_done [drm_kms_helper]] *ERROR* [CRTC:63:pipe B] flip_done timed out
-Mar 28 03:55:35 lena kernel: [drm:drm_atomic_helper_wait_for_dependencies [drm_kms_helper]] *ERROR* [CRTC:63:pipe B] flip_done timed out
-Mar 28 03:55:45 lena kernel: [drm:drm_atomic_helper_wait_for_dependencies [drm_kms_helper]] *ERROR* [CONNECTOR:87:HDMI-A-1] flip_done timed out
-Mar 28 03:55:55 lena kernel: [drm:drm_atomic_helper_wait_for_flip_done [drm_kms_helper]] *ERROR* [CRTC:63:pipe B] flip_done timed out
-Mar 28 04:05:55 lena kernel: ------------[ cut here ]------------
-Mar 28 04:05:55 lena kernel: vblank wait timed out on crtc 1
-Mar 28 04:05:55 lena kernel: WARNING: CPU: 0 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
-Mar 28 04:05:55 lena kernel: Modules linked in: usblp uas usb_storage uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic crc32_pclmul crc32c_intel ghash_clmulni_intel i915 aesni_intel drm_kms_helper cfbfillrect crypto_simd glue_helper syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci snd_hwdep sdhci drm_panel_orientation_quirks snd_hda_core intel_gtt mmc_core xhci_hcd iosf_mbi
-Mar 28 04:05:55 lena kernel: CPU: 0 PID: 4221 Comm: X Tainted: G        W         5.2.0+ #44
-Mar 28 04:05:55 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
-Mar 28 04:05:55 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
-Mar 28 04:05:55 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de 0d a0 e8 2e bd fc e0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24 28 65 48 33 04 25
-Mar 28 04:05:55 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
-Mar 28 04:05:55 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
-Mar 28 04:05:55 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277a163a0
-Mar 28 04:05:55 lena kernel: RBP: ffff888271b40000 R08: 000000000000036d R09: 0000000000000001
-Mar 28 04:05:55 lena kernel: R10: ffffc90000e739d0 R11: 0005ae83a6d4cf00 R12: 0000000000000000
-Mar 28 04:05:55 lena kernel: R13: 0000000000ca9ef5 R14: ffff8882765eb160 R15: 0000000000000001
-Mar 28 04:05:55 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
-Mar 28 04:05:55 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Mar 28 04:05:55 lena kernel: CR2: 00007f6d6dcb0000 CR3: 0000000268a70000 CR4: 00000000001006f0
-Mar 28 04:05:55 lena kernel: Call Trace:
-Mar 28 04:05:55 lena kernel: ? wait_woken+0x68/0x68
-Mar 28 04:05:55 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
-Mar 28 04:05:55 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
-Mar 28 04:05:55 lena kernel: ? flush_workqueue+0x2ab/0x2d4
-Mar 28 04:05:55 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
-Mar 28 04:05:55 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
-Mar 28 04:05:55 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
-Mar 28 04:05:55 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
-Mar 28 04:05:55 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
-Mar 28 04:05:55 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
-Mar 28 04:05:55 lena kernel: ? ___sys_recvmsg+0x1a0/0x1ce
-Mar 28 04:05:55 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
-Mar 28 04:05:55 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
-Mar 28 04:05:55 lena kernel: ? vfs_writev+0xd3/0x100
-Mar 28 04:05:55 lena kernel: ? timerqueue_del+0x2c/0x3a
-Mar 28 04:05:55 lena kernel: ? __remove_hrtimer+0x28/0x61
-Mar 28 04:05:55 lena kernel: vfs_ioctl+0x19/0x26
-Mar 28 04:05:55 lena kernel: do_vfs_ioctl+0x52c/0x554
-Mar 28 04:05:55 lena kernel: ? __se_sys_setitimer+0xa8/0xf0
-Mar 28 04:05:55 lena kernel: ksys_ioctl+0x39/0x58
-Mar 28 04:05:55 lena kernel: __x64_sys_ioctl+0x11/0x14
-Mar 28 04:05:55 lena kernel: do_syscall_64+0x4a/0xf4
-Mar 28 04:05:55 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
-Mar 28 04:05:55 lena kernel: RIP: 0033:0x7f6d74ce12b7
-Mar 28 04:05:55 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00 f7 d8 64 89 01 48
-Mar 28 04:05:55 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
-Mar 28 04:05:55 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
-Mar 28 04:05:55 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
-Mar 28 04:05:55 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
-Mar 28 04:05:55 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
-Mar 28 04:05:55 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
-Mar 28 04:05:55 lena kernel: ---[ end trace 5361d6be40e0aafa ]---
-Mar 28 04:49:14 lena kernel: ------------[ cut here ]------------
-Mar 28 04:49:14 lena kernel: vblank wait timed out on crtc 1
-Mar 28 04:49:14 lena kernel: WARNING: CPU: 2 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
-Mar 28 04:49:14 lena kernel: Modules linked in: usblp uas usb_storage uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic crc32_pclmul crc32c_intel ghash_clmulni_intel i915 aesni_intel drm_kms_helper cfbfillrect crypto_simd glue_helper syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci snd_hwdep sdhci drm_panel_orientation_quirks snd_hda_core intel_gtt mmc_core xhci_hcd iosf_mbi
-Mar 28 04:49:14 lena kernel: CPU: 2 PID: 4221 Comm: X Tainted: G        W         5.2.0+ #44
-Mar 28 04:49:14 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
-Mar 28 04:49:14 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
-Mar 28 04:49:14 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de 0d a0 e8 2e bd fc e0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24 28 65 48 33 04 25
-Mar 28 04:49:14 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
-Mar 28 04:49:14 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
-Mar 28 04:49:14 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277b163a0
-Mar 28 04:49:14 lena kernel: RBP: ffff888271b40000 R08: 000000000000039f R09: 0000000000000001
-Mar 28 04:49:14 lena kernel: R10: ffffc90000e739d0 R11: 0005b24bca063000 R12: 0000000000000000
-Mar 28 04:49:14 lena kernel: R13: 0000000000ccd1e6 R14: ffff8882765eb160 R15: 0000000000000001
-Mar 28 04:49:14 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277b00000(0000) knlGS:0000000000000000
-Mar 28 04:49:14 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Mar 28 04:49:14 lena kernel: CR2: 00007f6d6dcb0000 CR3: 0000000268a70000 CR4: 00000000001006e0
-Mar 28 04:49:14 lena kernel: Call Trace:
-Mar 28 04:49:14 lena kernel: ? wait_woken+0x68/0x68
-Mar 28 04:49:14 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
-Mar 28 04:49:14 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
-Mar 28 04:49:14 lena kernel: ? flush_workqueue+0x2ab/0x2d4
-Mar 28 04:49:14 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
-Mar 28 04:49:14 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
-Mar 28 04:49:14 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
-Mar 28 04:49:14 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
-Mar 28 04:49:14 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
-Mar 28 04:49:14 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
-Mar 28 04:49:14 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
-Mar 28 04:49:14 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
-Mar 28 04:49:14 lena kernel: ? hrtimer_cancel+0xc/0x16
-Mar 28 04:49:14 lena kernel: ? schedule_hrtimeout_range_clock+0xb3/0xef
-Mar 28 04:49:14 lena kernel: ? hrtimer_init+0x2/0x2
-Mar 28 04:49:14 lena kernel: vfs_ioctl+0x19/0x26
-Mar 28 04:49:14 lena kernel: do_vfs_ioctl+0x52c/0x554
-Mar 28 04:49:14 lena kernel: ? wake_up_q+0x4e/0x4e
-Mar 28 04:49:14 lena kernel: ksys_ioctl+0x39/0x58
-Mar 28 04:49:14 lena kernel: __x64_sys_ioctl+0x11/0x14
-Mar 28 04:49:14 lena kernel: do_syscall_64+0x4a/0xf4
-Mar 28 04:49:14 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
-Mar 28 04:49:14 lena kernel: RIP: 0033:0x7f6d74ce12b7
-Mar 28 04:49:14 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00 f7 d8 64 89 01 48
-Mar 28 04:49:14 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
-Mar 28 04:49:14 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
-Mar 28 04:49:14 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
-Mar 28 04:49:14 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
-Mar 28 04:49:14 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
-Mar 28 04:49:14 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
-Mar 28 04:49:14 lena kernel: ---[ end trace 5361d6be40e0aafb ]---
