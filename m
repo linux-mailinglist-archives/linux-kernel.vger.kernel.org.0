@@ -2,59 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8832197090
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 23:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C70E5197093
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 23:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728985AbgC2VjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 17:39:07 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36589 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727370AbgC2VjG (ORCPT
+        id S1729075AbgC2Vkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 17:40:32 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36716 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728798AbgC2Vkc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 17:39:06 -0400
-Received: by mail-wr1-f66.google.com with SMTP id 31so18856617wrs.3
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 14:39:05 -0700 (PDT)
+        Sun, 29 Mar 2020 17:40:32 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 31so18860602wrs.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 14:40:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=4+YFamD+rk3pGnPVsQCdZ4BWzaSDaazUq7GaLMAvAmQ=;
-        b=ItnsYShcZm6ooRrKDOeQxLDzvFUEHhf1luwCKa2jXLuYMQLHD3kRPw9TDOJUY05WFA
-         BRfkFkmum2aCG9ZfEepcnnnx1PQEsgX8YpLDsnPP9PYEPGwbgncnlFls1GUQVQTYM4M8
-         wiqvgw3nuQcSK5aIJD6biTbwJu6aV9VIm+7GCMbV/5A/b06Ho0OJ4VcV2kD3mJyjCluc
-         x+jmHy/iga9z0oabN/uuSn1uL/CJtvK5d/r40NG+ygCU0vsOmVXZt7PdTFhu+sj002jn
-         Z/wj1hZgO9sxhypOB/UjppXuN7X+vOLQsa5lUiU/Fn6/w6jGI6YmEWngNVItWEj6Of7p
-         fOSw==
+        bh=AgmROX3BkKzlgBc4NFWPQwQ8h8d52JCY0V2IOQ/owaI=;
+        b=qlyA4T0q4+SSHWrTFaEcJlORmZU3pRQPkEvp5F/+HEtsi5tpLFRS5PID3Ae7GG+qB9
+         eP2zfS+OHM2Q11dDi/UTDHU0ChOytMBfa9+3uCmWYIkyMuhuwzPJ5kTbVsd1G9NCNqDo
+         BwxcGxm9qerV09Wm6ZVEyH4dyKz6Pw2xsfrLVHp2TD9JsJg4vSwsw5Kn/YrAeRE/toMR
+         utWmoK9E/IGZjLiMe2sbe0FEPEjdqdF4CAc99VYUNAl/Xr7b6PyOdewihnJcIm0SLT/A
+         V9YiCZZ0GEx5J0cBWsET1u7QxNv8D3ddXFUHyt8dd2w5U68Q8zNCxTpxGV6udmEonNTW
+         hUTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4+YFamD+rk3pGnPVsQCdZ4BWzaSDaazUq7GaLMAvAmQ=;
-        b=p+03oSnC4sQTfT7PI7WlJng9mH3mUUYKQtRCale9oNByDG9unQDLPrQJhuSv8ShRfv
-         wHG8cgakbLsY1huN9099xK7UN+976Ij3RJiBc9BwMclrurvoXAXxKqfSjUEKvv8hwi2x
-         XBnxTF+Tp4EjBKenTWmYi/D3T09k3NR1C835f5qEiLTYSZS188Pjes8IeJ2n+s5jkwv0
-         ynZyCjwdg9+f1/MnBsV3b3TAeM/QWdEk0LEa87ZAbYPsWAUOpHYN1X5CXbr7DvbAI+pP
-         Y80CWeif8S86+DZoO2DOFjdDglZvRto6OiX5FTUegZo1GcH5fVYXcLqc6U+26U3LmdCj
-         NfuA==
-X-Gm-Message-State: ANhLgQ1b3ytI/ewCbL1dQPZOd2wv3MXRv4kyxmGwM1FTcPK+2NZQ0f1I
-        3EIhIpdJh1vf0gZRk+q6xZDvs+QvxiCOG2ZocFU=
-X-Google-Smtp-Source: ADFU+vu8292N+WSo2qX5+fXRx0ukzJleSgC0ZJHbXVoT6wC1iH/8UAVErvplccBL52nDTVHlBmLC0/+L4LQJg91oL+A=
-X-Received: by 2002:adf:9384:: with SMTP id 4mr11351603wrp.214.1585517944701;
- Sun, 29 Mar 2020 14:39:04 -0700 (PDT)
+        bh=AgmROX3BkKzlgBc4NFWPQwQ8h8d52JCY0V2IOQ/owaI=;
+        b=r+90YYdQLjP5ed7yUZJ1U9DYhCJiJdUOTaUGQ+I5v5ofh3VPT7nIHVNNI+8H4ra7e9
+         60d3bqNIJ4OYs9r5mT3Qy9KOlHG/4HXGmDbpm58qXPLu9yzrMF1oUpF7wJf935qowM+k
+         LOb+Agm7nBFyWOkP2GPrT6lptnfR5N2tbg2Z4p/YKaqXscZZIalFe3svIpJsVdH9Ioe9
+         KxylqoWwVx+92RQzbMjuNlQo0ZZkzY8kAg9vFa8cX/eWwuxI1Be75bdmVihcsMWpFDk2
+         x+XSn/1jB4CuLyMcsa5PcLXiAr9E7zkYVMo3VoKaEj/TwAS2C4NXpts5zF0u/McS7Bxk
+         MYww==
+X-Gm-Message-State: ANhLgQ3Qb9goH/IYuFqlm8Rn5mgPiM9foxYLzFmF9we2lxgbBknw+cdc
+        oGz//+Z0SY7gogubtzIjLVwhdHmVa1ljE7ddLUU=
+X-Google-Smtp-Source: ADFU+vsa3r9uz8suX398A2w7vjHl4H5qnIB3+tO4GIRUd/dfrUpEG+GwxbUMUQtY4clxTGn7JJBDV5I/zAk8s49ys9k=
+X-Received: by 2002:a5d:4a4d:: with SMTP id v13mr10858278wrs.85.1585518030514;
+ Sun, 29 Mar 2020 14:40:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200305183939.256241-1-davidgow@google.com> <CAFd5g45XJLXYfXB-FJhFYnBYUdqM4ztC=p=Akj3+GbHXfHxzgQ@mail.gmail.com>
-In-Reply-To: <CAFd5g45XJLXYfXB-FJhFYnBYUdqM4ztC=p=Akj3+GbHXfHxzgQ@mail.gmail.com>
+References: <20200317004507.1513370-1-krisman@collabora.com>
+In-Reply-To: <20200317004507.1513370-1-krisman@collabora.com>
 From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Sun, 29 Mar 2020 23:38:53 +0200
-Message-ID: <CAFLxGvw6Sp899NN3CMvC4R9Uz1dSiKw4mdwnKRUvnGg-mr7ttw@mail.gmail.com>
-Subject: Re: [PATCH] um: Fix overlapping ELF segments when statically linked
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     David Gow <davidgow@google.com>,
-        Patricia Alfonso <trishalfonso@google.com>,
-        Richard Weinberger <richard@nod.at>,
-        Jeff Dike <jdike@addtoit.com>,
+Date:   Sun, 29 Mar 2020 23:40:19 +0200
+Message-ID: <CAFLxGvzGo8CPbH1NAo_d2NYHaJDZjYEELz=dufKtTwcBkZif_A@mail.gmail.com>
+Subject: Re: [PATCH 0/2] fixes to the hypervisor ubd thread
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
         linux-um <linux-um@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel@collabora.com,
         Anton Ivanov <anton.ivanov@cambridgegreys.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,34 +59,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 10:24 PM Brendan Higgins
-<brendanhiggins@google.com> wrote:
+On Tue, Mar 17, 2020 at 1:45 AM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
 >
-> On Thu, Mar 5, 2020 at 10:39 AM David Gow <davidgow@google.com> wrote:
-> >
-> > When statically linked, the .text section in UML kernels is not page
-> > aligned, causing it to share a page with the executable headers. As
-> > .text and the executable headers have different permissions, this causes
-> > the kernel to wish to map the same page twice (once as headers with r--
-> > permissions, once as .text with r-x permissions), causing a segfault,
-> > and a nasty message printed to the host kernel's dmesg:
-> >
-> > "Uhuuh, elf segment at 0000000060000000 requested but the memory is
-> > mapped already"
-> >
-> > By aligning the .text to a page boundary (as in the dynamically linked
-> > version in dyn.lds.S), there is no such overlap, and the kernel runs
-> > correctly.
-> >
-> > Signed-off-by: David Gow <davidgow@google.com>
+> Hi,
 >
-> I can confirm that I am seeing this problem as well. (I know we run
-> the same Linux distro; nevertheless, this is a real problem for some
-> population of users.)
+> While debugging a somewhat related issue, I ran into two issues I
+> believe can cause the hypervisor to write garbage to the pipe.
 >
-> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+> This was find by visual inspection and is only slightly tested.  It
+> seems to partially some the problems my test case shows.
+>
+> Please, let me know what you think
 
-Applied, thanks!
+Both patches make sense. Thanks for fixing, applied.
 
 -- 
 Thanks,
