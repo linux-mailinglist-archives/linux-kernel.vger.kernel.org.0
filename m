@@ -2,145 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81D67196F97
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 21:02:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E160196FA9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 21:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbgC2TCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 15:02:55 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60165 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728316AbgC2TCz (ORCPT
+        id S1728445AbgC2TMW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 29 Mar 2020 15:12:22 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:32844 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727606AbgC2TMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 15:02:55 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mgr@pengutronix.de>)
-        id 1jIdCr-00046Z-5E; Sun, 29 Mar 2020 21:02:49 +0200
-Received: from mgr by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mgr@pengutronix.de>)
-        id 1jIdCm-0006jm-AW; Sun, 29 Mar 2020 21:02:44 +0200
-Date:   Sun, 29 Mar 2020 21:02:44 +0200
-From:   Michael Grzeschik <mgr@pengutronix.de>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     lars@metafoo.de, alexandru.Ardelean@analog.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, bigeasy@linutronix.de,
-        m.olbrich@pengutronix.de, kernel@pengutronix.de
-Subject: Re: [PATCH] usb: dwc3: gadget: don't dequeue requests on already
- disabled endpoints
-Message-ID: <20200329190244.GK27849@pengutronix.de>
-References: <dc52d6a0-12ed-a34c-01c4-0fc5ccbf7b1d@metafoo.de>
- <20200327084302.606-1-m.grzeschik@pengutronix.de>
- <875zeokhoa.fsf@kernel.org>
+        Sun, 29 Mar 2020 15:12:22 -0400
+X-Greylist: delayed 372 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 15:12:21 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 251696094C4B;
+        Sun, 29 Mar 2020 21:06:08 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id QJ2GV9CvNgMe; Sun, 29 Mar 2020 21:06:06 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id D9B5560D0873;
+        Sun, 29 Mar 2020 21:06:05 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id y4bO9EX9EtU0; Sun, 29 Mar 2020 21:06:05 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 8D17C6089320;
+        Sun, 29 Mar 2020 21:06:05 +0200 (CEST)
+Date:   Sun, 29 Mar 2020 21:06:05 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Patricia Alfonso <trishalfonso@google.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        anton ivanov <anton.ivanov@cambridgegreys.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        davidgow <davidgow@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-um <linux-um@lists.infradead.org>
+Message-ID: <1606942453.56384.1585508765254.JavaMail.zimbra@nod.at>
+In-Reply-To: <4b8c1696f658b4c6c393956734d580593b55c4c0.camel@sipsolutions.net>
+References: <20200226004608.8128-1-trishalfonso@google.com> <CAKFsvULd7w21T_nEn8QiofQGMovFBmi94dq2W_-DOjxf5oD-=w@mail.gmail.com> <4b8c1696f658b4c6c393956734d580593b55c4c0.camel@sipsolutions.net>
+Subject: Re: [PATCH] UML: add support for KASAN under x86_64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mhjHhnbe5PrRcwjY"
-Content-Disposition: inline
-In-Reply-To: <875zeokhoa.fsf@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 20:52:30 up 39 days,  2:22, 58 users,  load average: 0.13, 0.15,
- 0.11
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF68 (Linux)/8.8.12_GA_3809)
+Thread-Topic: add support for KASAN under x86_64
+Thread-Index: efampVW5tmWSwSdm2ja8syshwdMa9w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+----- Ursprüngliche Mail -----
+> Von: "Johannes Berg" <johannes@sipsolutions.net>
+> An: "Patricia Alfonso" <trishalfonso@google.com>, "Jeff Dike" <jdike@addtoit.com>, "richard" <richard@nod.at>, "anton
+> ivanov" <anton.ivanov@cambridgegreys.com>, "Andrey Ryabinin" <aryabinin@virtuozzo.com>, "Dmitry Vyukov"
+> <dvyukov@google.com>, "Brendan Higgins" <brendanhiggins@google.com>, "davidgow" <davidgow@google.com>
+> CC: "kasan-dev" <kasan-dev@googlegroups.com>, "linux-kernel" <linux-kernel@vger.kernel.org>, "linux-um"
+> <linux-um@lists.infradead.org>
+> Gesendet: Mittwoch, 11. März 2020 11:32:00
+> Betreff: Re: [PATCH] UML: add support for KASAN under x86_64
 
---mhjHhnbe5PrRcwjY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Mar 28, 2020 at 10:27:49AM +0200, Felipe Balbi wrote:
->=20
 > Hi,
->=20
-> Michael Grzeschik <m.grzeschik@pengutronix.de> writes:
-> > dwc3_gadget_ep_disable gets called before the last request gets
-> > dequeued.
-> >
-> > In __dwc3_gadget_ep_disable all started, pending and cancelled
-> > lists for this endpoint will call dwc3_gadget_giveback in
-> > dwc3_remove_requests.
-> >
-> > After that no list containing the afterwards dequed request,
-> > therefor it is not necessary to run the dequeue routine.
-> >
-> > Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-> > ---
-> > @Lars-Peter Clausen:
-> >
-> > This patch addresses the case that not queued requests get dequeued.
-> > The only case that this happens seems on disabling the gadget.
-> >
-> >  drivers/usb/dwc3/gadget.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-> > index 9a6f741d1db0dc..5d4fa8d6c93e49 100644
-> > --- a/drivers/usb/dwc3/gadget.c
-> > +++ b/drivers/usb/dwc3/gadget.c
-> > @@ -1609,6 +1609,9 @@ static int dwc3_gadget_ep_dequeue(struct usb_ep *=
-ep,
-> > =20
-> >  	trace_dwc3_ep_dequeue(req);
-> > =20
-> > +	if (!(dep->flags & DWC3_EP_ENABLED))
-> > +		return 0;
->=20
-> which driver is trying to call dequeue after the endpoint is disabled?
-> Got some tracepoints of the problem happening?
+> 
+>> Hi all, I just want to bump this so we can get all the comments while
+>> this is still fresh in everyone's minds. I would love if some UML
+>> maintainers could give their thoughts!
+> 
+> I'm not the maintainer, and I don't know where Richard is, but I just
+> tried with the test_kasan.ko module, and that seems to work. Did you
+> test that too? I was surprised to see this because you said you didn't
+> test modules, but surely this would've been the easiest way?
 
-I see the case when using uvc-gadget.
+Sorry for vanishing.
 
-Look into uvc_v4l2_release in uvc_v4l2.c:
+I read thought the discussion and it seems like the patch is not ready,
+right?
 
-uvc_function_disconnect
-   composite_disconnect
-      reset_config
-         uvc_function_disable->usb_ep_disable
+Johannes, thanks a lot for pointing out all these issues.
 
-uvcg_video_enable
-   usb_ep_dequeue
-      dwc3_gadget_ep_dequeue
-
-Regards,
-Michael
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---mhjHhnbe5PrRcwjY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAl6A8NEACgkQC+njFXoe
-LGQ0Fw/+L4PbKGZHpzrxaBgwG1dm6EU0lA3n6u3ux58FXsiXsYDXbwuzWBCgPpwJ
-xYN743ySqpShHXwsdt0z1wVYOqYy9BEtMWaUO6Ln62gwgSsHDKVZPdX182YcA2dv
-WBtgJaGdUNbIC+4Ea5QVuPBhw0LCBxoZNQ1Mm+QdjIcDWv5O8mt5ljjJEetu4M2o
-kc3Ejo2j9qlow9NLkPtrSYCim2Muopwtsh50mUOgZlrn28a3C8gW4ojFVlEqAPLU
-ru28cD7xiiyqWAaYa7Y4hsw06pd/PndtqJt9YEbv7QLIvxFpxmMDiJagEH2UWjY4
-ZjjyhWn1Ou8FztMuCvj6Jkqh7gxgVjhKmAo3/n4jnEW+MKDqrqbAcDjE7PnV/dqf
-WmRMaQCFDmvczaVlTtIP82Wo9jzc068KLfyexun0X9qb2Up+ewXVezEFeKAwSHtv
-z+PimwJcW5YLryJlvwiQEXew3ymLInsQbTCE4JU3mJjq2z4vVGTH/x1iQcXD4YXP
-7PWDVKUokGFAGeLTPc7ZrlnhuIOBd5Uv7EMk6mwMoohITPqatZ0Zwdyq5YNcgz3f
-pLt6XKvU/Xl8yp/nu5YDRHmse/cEMApp2RYSfBakb7+vKQVDp8Hh/PAa7qrenPqm
-xZmIkQHQkNdc3AfE7i5vjhgxbaYIrolJH9GTVEkWeyahgC8o2dw=
-=FcUx
------END PGP SIGNATURE-----
-
---mhjHhnbe5PrRcwjY--
+Thanks,
+//richard
