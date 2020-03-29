@@ -2,230 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6409F197074
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 23:13:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EDC2197081
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 23:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728892AbgC2VNU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 17:13:20 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:42124 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727370AbgC2VNT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 17:13:19 -0400
-IronPort-SDR: 3YnJI368AXuc/VZVshnv38KgSstQxiY20u0YKvVNGKtHV7xIx9q8wIucw5iSR7SMeGd7QRHAoC
- jip1068FJgxgm7xlFmNedyqGDu0wa7LlU25aojUcV1ohRtBb8hOzCrqOq70eCh8+v0M4ukQOCm
- UuQDrStXqsOBQabw2DMtL9fhEqAyfgYGFmgDKzVybru6LMpAZmK8hcd2nlqNoLEW7Mh/ZrzT53
- SAU2IMl+V6e1+7eQMJcoW5h8iMst8sxhBSXBADu2YmV2DuXvGmQ5VdXXxT9nXG7xvQdVH44hlU
- SP8=
-X-IronPort-AV: E=Sophos;i="5.72,321,1580799600"; 
-   d="scan'208";a="7371989"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Mar 2020 14:13:18 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Sun, 29 Mar 2020 14:13:18 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Sun, 29 Mar 2020 14:13:18 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=d1Jd2CWMwxnFzp7sh1qmkHtpflNpXFvU+3PPSvQZuMGQTqhoSyZW2bjs/PEGyTMxRCxpY6iXHGiEKlxJPY0PMd7HUQwBtd8lXZA82JFxIfeJXAJi9KOdcPBMZwT27PJKm2TVcA8XrabtiQikljtMU9ghFVngUxcZi0fzaECa6PJu+rKW3uK0mJd++AIaTT/z7RBjt1eVhaFs+6qcZXlnRoJMxpzumUw68v7hvpLr0OsQIypYSK4Vxs8vLvTfuU7TiOAvpUnrMeIjt0Q79bxQdUnnt6LAAQ81EmdKYBnJoQyQ2yHNHwESRDob7D52+B0kW41OQLXlJpYk3bxkFd4NSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0vYol5Mg3A5bc2EPTNiaWfh255Cyr1hOpMuXADUe6PM=;
- b=EGqAaQutnpnJLXR4yxg2wHv7RKrnLirIUU5XN7Kzm76u3Dtw6qTdMiVTGBGCXlH7kg7XmeMwNjnSdePiwpr2AUroq0yocB9eFDXyFy7mSzwBjq20hAjwUEGVhXimuQtk9/ZJA+m5lhLj6MKuC48UrUOSAWIbeVuh8G0Mtsd5snQa3wpGhfLsj8GXlQfFuOhiXDnDzQxnc23Jb2QQff7fX0higODj9alIdFen8XeLBApupCIZlIV9iYlcKhsC/w924Ddb6C81yPDAciTi3tVM3sP1LnDm5PJhGDA3n/bP1TLKuQ7tcImu/1fuT2CHQJx+DJbKhdtHlRi7Hk12arsEBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0vYol5Mg3A5bc2EPTNiaWfh255Cyr1hOpMuXADUe6PM=;
- b=sV4G2aHR7uPI92G+eAMt3FCs1T+oytJMvCE9BQuq9lbRngYO05+W7/z+hST4vXF7KlRShosyLm3f3ZmtjhHLR31+s1CV7MMLBkOzrVAotJp8PwquQRgHJ0lezcN0FragGBACBfPQUM84eihaChXxX1nA02SXc8WDHZA0QMdfhT8=
-Received: from DM6PR11MB2777.namprd11.prod.outlook.com (2603:10b6:5:bf::31) by
- DM6PR11MB4753.namprd11.prod.outlook.com (2603:10b6:5:2ac::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2856.19; Sun, 29 Mar 2020 21:13:15 +0000
-Received: from DM6PR11MB2777.namprd11.prod.outlook.com
- ([fe80::3903:ed89:1141:fca6]) by DM6PR11MB2777.namprd11.prod.outlook.com
- ([fe80::3903:ed89:1141:fca6%5]) with mapi id 15.20.2856.019; Sun, 29 Mar 2020
- 21:13:15 +0000
-From:   <Ludovic.Desroches@microchip.com>
-To:     <Codrin.Ciubotariu@microchip.com>, <linux-i2c@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC:     <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <robh+dt@kernel.org>, <peda@axentia.se>, <linux@armlinux.org.uk>,
-        <wsa@the-dreams.de>
-Subject: Re: [PATCH v4 1/4] i2c: at91: Send bus clear command if SDA is down
-Thread-Topic: [PATCH v4 1/4] i2c: at91: Send bus clear command if SDA is down
-Thread-Index: AQHV6/NVDTMXDOPubUuDjXQVQvQtIqhgRdwA
-Date:   Sun, 29 Mar 2020 21:13:15 +0000
-Message-ID: <3ebaa9a6-73d5-863f-bc40-e38230ab732e@microchip.com>
-References: <20200225155012.22764-1-codrin.ciubotariu@microchip.com>
-In-Reply-To: <20200225155012.22764-1-codrin.ciubotariu@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Ludovic.Desroches@microchip.com; 
-x-originating-ip: [92.150.97.227]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 67654b6d-81fe-4125-b6d3-08d7d425ff0a
-x-ms-traffictypediagnostic: DM6PR11MB4753:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM6PR11MB47538476BF56A3C50DCFE7DBEFCA0@DM6PR11MB4753.namprd11.prod.outlook.com>
-x-bypassexternaltag: True
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 035748864E
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB2777.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(366004)(396003)(376002)(346002)(39850400004)(136003)(31696002)(6506007)(53546011)(110136005)(2616005)(8676002)(6512007)(6486002)(31686004)(36756003)(86362001)(478600001)(54906003)(5660300002)(81166006)(2906002)(186003)(66446008)(26005)(316002)(66556008)(64756008)(81156014)(8936002)(76116006)(4326008)(71200400001)(66476007)(91956017)(66946007);DIR:OUT;SFP:1101;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Mn1sBrfvVqB7GzXwnwvYz2Uzrh25TXwMrcCl84B1n9FW/hQ+RNAvleGW25e6H9rdIfCv4ZOkT/20A5+NO++Qfk075n6gjkNhwhTP1dJKhllrrVyjzQSjBImLJcN9q4OL17EWwmdOXFnmeYHDEHo6HJE7JYgJw4NNQq0ucAM6rBr6aAoXrDL8oXNF7GYSG2ife02dSoUe1b38NE65eNi2Hmx1CVHc4791ZllXehI0vqT1p+r05OmspN2kh6S/LVtNfFdaR+08bTb8qrzpk3aTX6x0YE4XIyrMDGlVez4bfSH6qZ0065UTXY13AXuVQReLgHvYbUX5JBS6IGA8sj5x7P5NXBRefwfgkwq7etKVV42c4ObZnfTbtf+XQMGnCmA7ryu+RAU0kYtnqxieqKB96FGPm9sNiINuyvHSAHXU0/0+8tlrhCDexKKxY4t06bJ4
-x-ms-exchange-antispam-messagedata: og5+AZS1lzfoHlszNMVJWkGcRJFUr3W19WetmWaH3XfAcaue6SuxbzDcyJTkKIyJdAaJ14zH7Es/OmLXcDrRO0A5XBlu0aGnr8Dq1yQwYTFc53a5UXeX8GwjIs1A4abW1r+/1MHqCyc2yBTdwAbIDA==
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <632800FB3723DB43945BCCB99702CD01@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1728985AbgC2V0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 17:26:23 -0400
+Received: from mx.sdf.org ([205.166.94.20]:57945 "EHLO mx.sdf.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728769AbgC2V0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 17:26:22 -0400
+Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02TLIFW9002042
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
+        Sun, 29 Mar 2020 21:18:15 GMT
+Received: (from lkml@localhost)
+        by sdf.org (8.15.2/8.12.8/Submit) id 02TLIFVM019351;
+        Sun, 29 Mar 2020 21:18:15 GMT
+Date:   Sun, 29 Mar 2020 21:18:14 +0000
+From:   George Spelvin <lkml@SDF.ORG>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org,
+        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
+        Marek Lindner <mareklindner@neomailbox.ch>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        Antonio Quartulli <a@unstable.cc>,
+        Sven Eckelmann <sven@narfation.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-wireless@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        lkml@sdf.org
+Subject: Re: [RFC PATCH v1 13/50] Avoid some useless msecs/jiffies conversions
+Message-ID: <20200329211316.GG4675@SDF.ORG>
+References: <202003281643.02SGhBrh000992@sdf.org>
+ <s5ho8sfd2dk.wl-tiwai@suse.de>
+ <20200329121129.GC11951@SDF.ORG>
+ <s5h7dz3ccea.wl-tiwai@suse.de>
+ <20200329175032.GE4675@SDF.ORG>
+ <1585505807.4510.1.camel@HansenPartnership.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67654b6d-81fe-4125-b6d3-08d7d425ff0a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Mar 2020 21:13:15.2626
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ejy+JZr/csF+AeZLQ1uF/3nY+v3tN2+QpU++7GzUxeOp7Aq0BK/es51L/RZnWXHnyd2AiCVVGGC53NrLZELYl2fDC8Z8aS/sTMdGpWOd60I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4753
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1585505807.4510.1.camel@HansenPartnership.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMi8yNS8yMDIwIDQ6NTAgUE0sIENvZHJpbiBDaXVib3Rhcml1IHdyb3RlOg0KPiBBZnRlciBh
-IHRyYW5zZmVyIHRpbWVvdXQsIHNvbWUgZmF1bHR5IEkyQyBzbGF2ZSBkZXZpY2VzIG1pZ2h0IGhv
-bGQgZG93bg0KPiB0aGUgU0RBIHBpbi4gV2UgY2FuIGdlbmVyYXRlIGEgYnVzIGNsZWFyIGNvbW1h
-bmQsIGhvcGluZyB0aGF0IHRoZSBzbGF2ZQ0KPiBtaWdodCByZWxlYXNlIHRoZSBwaW5zLg0KPiBJ
-ZiB0aGUgQ0xFQVIgY29tbWFuZCBpcyBub3Qgc3VwcG9ydGVkLCB3ZSB3aWxsIHVzZSBncGlvIHJl
-Y292ZXJ5LCBpZg0KPiBhdmFpbGFibGUsIHRvIHJlc2V0IHRoZSBidXMuDQo+IA0KPiBTaWduZWQt
-b2ZmLWJ5OiBDb2RyaW4gQ2l1Ym90YXJpdSA8Y29kcmluLmNpdWJvdGFyaXVAbWljcm9jaGlwLmNv
-bT4NCg0KU291bmRzIGdvb2Qgc28NCkFja2VkLWJ5OiBMdWRvdmljIERlc3JvY2hlcyA8bHVkb3Zp
-Yy5kZXNyb2NoZXNAbWljcm9jaGlwLmNvbT4NCg0KV29sZnJhbSwgeW91IGhhdmUgYWNjZXB0ZWQg
-dGhlIHYzIG9mIHRoZSByZWNvdmVyeSBzdXBwb3J0IGFuZCByZXF1ZXN0ZWQgDQp0aGVzZSBjaGFu
-Z2VzLiBJdCBoYXMgYmVlbiBzZW50IGFzIGEgdjQsIGJ1dCwgaW4gZmFjdCwgdGhpcyBwYXRjaCBn
-b2VzIA0Kb24gdG9wIG9uIHYzLiBJdCBjb3VsZCwgc2hvdWxkLCBoYXZlIGJlZW4gYSBuZXcgcGF0
-Y2guDQoNClJlZ2FyZHMNCg0KTHVkb3ZpYw0KDQo+IC0tLQ0KPiANCj4gQ2hhbmdlcyBpbiB2NDoN
-Cj4gICAtIG1vdmVkIHRoZSBIVyBidXMgY2xlYXIgY29tbWFuZCBpbiBhIHJlY292ZXJfYnVzKCkg
-ZnVuY3Rpb24sIHRvIGJlIGFibGUNCj4gICAgIHRvIGp1c3QgY2FsbCBpMmNfcmVjb3Zlcl9idXMo
-KSBpZiBhIHRyYW5zZmVyIGZhaWxzOw0KPiAgIC0gcmVjb3ZlcnkgZ3Bpb3MgYXJlIG5vIGxvbmdl
-ciB0YWtlbiBpZiBIVyBidXMgY2xlYXIgY29tbWFuZCBpcw0KPiAgICAgc3VwcG9ydGVkOw0KPiAN
-Cj4gQ2hhbmdlcyBpbiB2MzoNCj4gICAtIHJlbW92ZWQgdW5uZWNlc3NhcnkgY29uZGl0aW9uIGZy
-b20gaW5mbyBwcmludDsNCj4gICAtIHJlbW92ZWQgdW5uZWRlZCBkZWNsYXJhdGlvbnM7DQo+IA0K
-PiBDaGFuZ2VzIGluIHYyOg0KPiAgIC0gY2FsbGVkIGkyY19yZWNvdmVyX2J1cygpIGFmdGVyIGFu
-IGVycm9yIG9jY3VycywgaWYgU0RBIGlzIGRvd247DQo+ICAgLSByZWxlYXNlIGdwaW9zIGlmIHJl
-Y292ZXJ5IGluZm9ybWF0aW9uIGlzIGluY29tcGxldGU7DQo+IA0KPiAgIGRyaXZlcnMvaTJjL2J1
-c3Nlcy9pMmMtYXQ5MS1jb3JlLmMgICB8ICAyICsrDQo+ICAgZHJpdmVycy9pMmMvYnVzc2VzL2ky
-Yy1hdDkxLW1hc3Rlci5jIHwgNDkgKysrKysrKysrKysrKysrKysrKysrKysrLS0tLQ0KPiAgIGRy
-aXZlcnMvaTJjL2J1c3Nlcy9pMmMtYXQ5MS5oICAgICAgICB8ICA3ICsrKy0NCj4gICAzIGZpbGVz
-IGNoYW5nZWQsIDUwIGluc2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1hdDkxLWNvcmUuYyBiL2RyaXZlcnMvaTJjL2J1
-c3Nlcy9pMmMtYXQ5MS1jb3JlLmMNCj4gaW5kZXggM2RhMWE4YWNlY2I1Li5lMTRlZGQyMzYxMDgg
-MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtYXQ5MS1jb3JlLmMNCj4gKysr
-IGIvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1hdDkxLWNvcmUuYw0KPiBAQCAtMTMxLDYgKzEzMSw3
-IEBAIHN0YXRpYyBzdHJ1Y3QgYXQ5MV90d2lfcGRhdGEgc2FtYTVkMl9jb25maWcgPSB7DQo+ICAg
-CS5oYXNfZGlnX2ZpbHRyID0gdHJ1ZSwNCj4gICAJLmhhc19hZHZfZGlnX2ZpbHRyID0gdHJ1ZSwN
-Cj4gICAJLmhhc19hbmFfZmlsdHIgPSB0cnVlLA0KPiArCS5oYXNfY2xlYXJfY21kID0gZmFsc2Us
-CS8qIGR1ZSB0byBlcnJhdGEsIENMRUFSIGNtZCBpcyBub3Qgd29ya2luZyAqLw0KPiAgIH07DQo+
-ICAgDQo+ICAgc3RhdGljIHN0cnVjdCBhdDkxX3R3aV9wZGF0YSBzYW05eDYwX2NvbmZpZyA9IHsN
-Cj4gQEAgLTE0Miw2ICsxNDMsNyBAQCBzdGF0aWMgc3RydWN0IGF0OTFfdHdpX3BkYXRhIHNhbTl4
-NjBfY29uZmlnID0gew0KPiAgIAkuaGFzX2RpZ19maWx0ciA9IHRydWUsDQo+ICAgCS5oYXNfYWR2
-X2RpZ19maWx0ciA9IHRydWUsDQo+ICAgCS5oYXNfYW5hX2ZpbHRyID0gdHJ1ZSwNCj4gKwkuaGFz
-X2NsZWFyX2NtZCA9IHRydWUsDQo+ICAgfTsNCj4gICANCj4gICBzdGF0aWMgY29uc3Qgc3RydWN0
-IG9mX2RldmljZV9pZCBhdG1lbF90d2lfZHRfaWRzW10gPSB7DQo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2kyYy9idXNzZXMvaTJjLWF0OTEtbWFzdGVyLmMgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJj
-LWF0OTEtbWFzdGVyLmMNCj4gaW5kZXggMGFiYTUxYTdkZjMyLi43NzZlOTU5NjJhYjYgMTAwNjQ0
-DQo+IC0tLSBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtYXQ5MS1tYXN0ZXIuYw0KPiArKysgYi9k
-cml2ZXJzL2kyYy9idXNzZXMvaTJjLWF0OTEtbWFzdGVyLmMNCj4gQEAgLTQ4MCw3ICs0ODAsNiBA
-QCBzdGF0aWMgaW50IGF0OTFfZG9fdHdpX3RyYW5zZmVyKHN0cnVjdCBhdDkxX3R3aV9kZXYgKmRl
-dikNCj4gICAJdW5zaWduZWQgbG9uZyB0aW1lX2xlZnQ7DQo+ICAgCWJvb2wgaGFzX3VucmVfZmxh
-ZyA9IGRldi0+cGRhdGEtPmhhc191bnJlX2ZsYWc7DQo+ICAgCWJvb2wgaGFzX2FsdF9jbWQgPSBk
-ZXYtPnBkYXRhLT5oYXNfYWx0X2NtZDsNCj4gLQlzdHJ1Y3QgaTJjX2J1c19yZWNvdmVyeV9pbmZv
-ICpyaW5mbyA9ICZkZXYtPnJpbmZvOw0KPiAgIA0KPiAgIAkvKg0KPiAgIAkgKiBXQVJOSU5HOiB0
-aGUgVFhDT01QIGJpdCBpbiB0aGUgU3RhdHVzIFJlZ2lzdGVyIGlzIE5PVCBhIGNsZWFyIG9uDQo+
-IEBAIC02NDEsMTEgKzY0MCwxMiBAQCBzdGF0aWMgaW50IGF0OTFfZG9fdHdpX3RyYW5zZmVyKHN0
-cnVjdCBhdDkxX3R3aV9kZXYgKmRldikNCj4gICAJCQkgICAgICAgQVQ5MV9UV0lfVEhSQ0xSIHwg
-QVQ5MV9UV0lfTE9DS0NMUik7DQo+ICAgCX0NCj4gICANCj4gLQlpZiAocmluZm8tPmdldF9zZGEg
-JiYgIShyaW5mby0+Z2V0X3NkYSgmZGV2LT5hZGFwdGVyKSkpIHsNCj4gLQkJZGV2X2RiZyhkZXYt
-PmRldiwNCj4gLQkJCSJTREEgaXMgZG93bjsgY2xlYXIgYnVzIHVzaW5nIGdwaW9cbiIpOw0KPiAt
-CQlpMmNfcmVjb3Zlcl9idXMoJmRldi0+YWRhcHRlcik7DQo+IC0JfQ0KPiArCS8qDQo+ICsJICog
-c29tZSBmYXVsdHkgSTJDIHNsYXZlIGRldmljZXMgbWlnaHQgaG9sZCBTREEgZG93bjsNCj4gKwkg
-KiB3ZSBjYW4gc2VuZCBhIGJ1cyBjbGVhciBjb21tYW5kLCBob3BpbmcgdGhhdCB0aGUgcGlucyB3
-aWxsIGJlDQo+ICsJICogcmVsZWFzZWQNCj4gKwkgKi8NCj4gKwlpMmNfcmVjb3Zlcl9idXMoJmRl
-di0+YWRhcHRlcik7DQo+ICAgDQo+ICAgCXJldHVybiByZXQ7DQo+ICAgfQ0KPiBAQCAtODMwLDcg
-KzgzMCw3IEBAIHN0YXRpYyB2b2lkIGF0OTFfdW5wcmVwYXJlX3R3aV9yZWNvdmVyeShzdHJ1Y3Qg
-aTJjX2FkYXB0ZXIgKmFkYXApDQo+ICAgCXBpbmN0cmxfc2VsZWN0X3N0YXRlKGRldi0+cGluY3Ry
-bCwgZGV2LT5waW5jdHJsX3BpbnNfZGVmYXVsdCk7DQo+ICAgfQ0KPiAgIA0KPiAtc3RhdGljIGlu
-dCBhdDkxX2luaXRfdHdpX3JlY292ZXJ5X2luZm8oc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRl
-diwNCj4gK3N0YXRpYyBpbnQgYXQ5MV9pbml0X3R3aV9yZWNvdmVyeV9ncGlvKHN0cnVjdCBwbGF0
-Zm9ybV9kZXZpY2UgKnBkZXYsDQo+ICAgCQkJCSAgICAgICBzdHJ1Y3QgYXQ5MV90d2lfZGV2ICpk
-ZXYpDQo+ICAgew0KPiAgIAlzdHJ1Y3QgaTJjX2J1c19yZWNvdmVyeV9pbmZvICpyaW5mbyA9ICZk
-ZXYtPnJpbmZvOw0KPiBAQCAtODgwLDYgKzg4MCw0MSBAQCBzdGF0aWMgaW50IGF0OTFfaW5pdF90
-d2lfcmVjb3ZlcnlfaW5mbyhzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2LA0KPiAgIAlyZXR1
-cm4gMDsNCj4gICB9DQo+ICAgDQo+ICtzdGF0aWMgaW50IGF0OTFfdHdpX3JlY292ZXJfYnVzX2Nt
-ZChzdHJ1Y3QgaTJjX2FkYXB0ZXIgKmFkYXApDQo+ICt7DQo+ICsJc3RydWN0IGF0OTFfdHdpX2Rl
-diAqZGV2ID0gaTJjX2dldF9hZGFwZGF0YShhZGFwKTsNCj4gKw0KPiArCWRldi0+dHJhbnNmZXJf
-c3RhdHVzIHw9IGF0OTFfdHdpX3JlYWQoZGV2LCBBVDkxX1RXSV9TUik7DQo+ICsJaWYgKCEoZGV2
-LT50cmFuc2Zlcl9zdGF0dXMgJiBBVDkxX1RXSV9TREEpKSB7DQo+ICsJCWRldl9kYmcoZGV2LT5k
-ZXYsICJTREEgaXMgZG93bjsgc2VuZGluZyBidXMgY2xlYXIgY29tbWFuZFxuIik7DQo+ICsJCWlm
-IChkZXYtPnVzZV9hbHRfY21kKSB7DQo+ICsJCQl1bnNpZ25lZCBpbnQgYWNyOw0KPiArDQo+ICsJ
-CQlhY3IgPSBhdDkxX3R3aV9yZWFkKGRldiwgQVQ5MV9UV0lfQUNSKTsNCj4gKwkJCWFjciAmPSB+
-QVQ5MV9UV0lfQUNSX0RBVEFMX01BU0s7DQo+ICsJCQlhdDkxX3R3aV93cml0ZShkZXYsIEFUOTFf
-VFdJX0FDUiwgYWNyKTsNCj4gKwkJfQ0KPiArCQlhdDkxX3R3aV93cml0ZShkZXYsIEFUOTFfVFdJ
-X0NSLCBBVDkxX1RXSV9DTEVBUik7DQo+ICsJfQ0KPiArDQo+ICsJcmV0dXJuIDA7DQo+ICt9DQo+
-ICsNCj4gK3N0YXRpYyBpbnQgYXQ5MV9pbml0X3R3aV9yZWNvdmVyeV9pbmZvKHN0cnVjdCBwbGF0
-Zm9ybV9kZXZpY2UgKnBkZXYsDQo+ICsJCQkJICAgICAgIHN0cnVjdCBhdDkxX3R3aV9kZXYgKmRl
-dikNCj4gK3sNCj4gKwlzdHJ1Y3QgaTJjX2J1c19yZWNvdmVyeV9pbmZvICpyaW5mbyA9ICZkZXYt
-PnJpbmZvOw0KPiArCWJvb2wgaGFzX2NsZWFyX2NtZCA9IGRldi0+cGRhdGEtPmhhc19jbGVhcl9j
-bWQ7DQo+ICsNCj4gKwlpZiAoIWhhc19jbGVhcl9jbWQpDQo+ICsJCXJldHVybiBhdDkxX2luaXRf
-dHdpX3JlY292ZXJ5X2dwaW8ocGRldiwgZGV2KTsNCj4gKw0KPiArCXJpbmZvLT5yZWNvdmVyX2J1
-cyA9IGF0OTFfdHdpX3JlY292ZXJfYnVzX2NtZDsNCj4gKwlkZXYtPmFkYXB0ZXIuYnVzX3JlY292
-ZXJ5X2luZm8gPSByaW5mbzsNCj4gKw0KPiArCXJldHVybiAwOw0KPiArfQ0KPiArDQo+ICAgaW50
-IGF0OTFfdHdpX3Byb2JlX21hc3RlcihzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2LA0KPiAg
-IAkJCSAgdTMyIHBoeV9hZGRyLCBzdHJ1Y3QgYXQ5MV90d2lfZGV2ICpkZXYpDQo+ICAgew0KPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1hdDkxLmggYi9kcml2ZXJzL2kyYy9i
-dXNzZXMvaTJjLWF0OTEuaA0KPiBpbmRleCBmNTdhNmNhYjk2YjQuLjdlN2I0OTU1Y2E3ZiAxMDA2
-NDQNCj4gLS0tIGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1hdDkxLmgNCj4gKysrIGIvZHJpdmVy
-cy9pMmMvYnVzc2VzL2kyYy1hdDkxLmgNCj4gQEAgLTM2LDYgKzM2LDcgQEANCj4gICAjZGVmaW5l
-CUFUOTFfVFdJX1NWRElTCQlCSVQoNSkJLyogU2xhdmUgVHJhbnNmZXIgRGlzYWJsZSAqLw0KPiAg
-ICNkZWZpbmUJQVQ5MV9UV0lfUVVJQ0sJCUJJVCg2KQkvKiBTTUJ1cyBxdWljayBjb21tYW5kICov
-DQo+ICAgI2RlZmluZQlBVDkxX1RXSV9TV1JTVAkJQklUKDcpCS8qIFNvZnR3YXJlIFJlc2V0ICov
-DQo+ICsjZGVmaW5lCUFUOTFfVFdJX0NMRUFSCQlCSVQoMTUpIC8qIEJ1cyBjbGVhciBjb21tYW5k
-ICovDQo+ICAgI2RlZmluZQlBVDkxX1RXSV9BQ01FTgkJQklUKDE2KSAvKiBBbHRlcm5hdGl2ZSBD
-b21tYW5kIE1vZGUgRW5hYmxlICovDQo+ICAgI2RlZmluZQlBVDkxX1RXSV9BQ01ESVMJCUJJVCgx
-NykgLyogQWx0ZXJuYXRpdmUgQ29tbWFuZCBNb2RlIERpc2FibGUgKi8NCj4gICAjZGVmaW5lCUFU
-OTFfVFdJX1RIUkNMUgkJQklUKDI0KSAvKiBUcmFuc21pdCBIb2xkaW5nIFJlZ2lzdGVyIENsZWFy
-ICovDQo+IEBAIC02OSw2ICs3MCw4IEBADQo+ICAgI2RlZmluZQlBVDkxX1RXSV9OQUNLCQlCSVQo
-OCkJLyogTm90IEFja25vd2xlZGdlZCAqLw0KPiAgICNkZWZpbmUJQVQ5MV9UV0lfRU9TQUNDCQlC
-SVQoMTEpCS8qIEVuZCBPZiBTbGF2ZSBBY2Nlc3MgKi8NCj4gICAjZGVmaW5lCUFUOTFfVFdJX0xP
-Q0sJCUJJVCgyMykgLyogVFdJIExvY2sgZHVlIHRvIEZyYW1lIEVycm9ycyAqLw0KPiArI2RlZmlu
-ZQlBVDkxX1RXSV9TQ0wJCUJJVCgyNCkgLyogVFdJIFNDTCBzdGF0dXMgKi8NCj4gKyNkZWZpbmUJ
-QVQ5MV9UV0lfU0RBCQlCSVQoMjUpIC8qIFRXSSBTREEgc3RhdHVzICovDQo+ICAgDQo+ICAgI2Rl
-ZmluZQlBVDkxX1RXSV9JTlRfTUFTSyBcDQo+ICAgCShBVDkxX1RXSV9UWENPTVAgfCBBVDkxX1RX
-SV9SWFJEWSB8IEFUOTFfVFdJX1RYUkRZIHwgQVQ5MV9UV0lfTkFDSyBcDQo+IEBAIC04MSw3ICs4
-NCw4IEBADQo+ICAgI2RlZmluZQlBVDkxX1RXSV9USFIJCTB4MDAzNAkvKiBUcmFuc21pdCBIb2xk
-aW5nIFJlZ2lzdGVyICovDQo+ICAgDQo+ICAgI2RlZmluZQlBVDkxX1RXSV9BQ1IJCTB4MDA0MAkv
-KiBBbHRlcm5hdGl2ZSBDb21tYW5kIFJlZ2lzdGVyICovDQo+IC0jZGVmaW5lCUFUOTFfVFdJX0FD
-Ul9EQVRBTChsZW4pCSgobGVuKSAmIDB4ZmYpDQo+ICsjZGVmaW5lCUFUOTFfVFdJX0FDUl9EQVRB
-TF9NQVNLCUdFTk1BU0soMTUsIDApDQo+ICsjZGVmaW5lCUFUOTFfVFdJX0FDUl9EQVRBTChsZW4p
-CSgobGVuKSAmIEFUOTFfVFdJX0FDUl9EQVRBTF9NQVNLKQ0KPiAgICNkZWZpbmUJQVQ5MV9UV0lf
-QUNSX0RJUglCSVQoOCkNCj4gICANCj4gICAjZGVmaW5lIEFUOTFfVFdJX0ZJTFRSCQkweDAwNDQN
-Cj4gQEAgLTExOCw2ICsxMjIsNyBAQCBzdHJ1Y3QgYXQ5MV90d2lfcGRhdGEgew0KPiAgIAlib29s
-IGhhc19kaWdfZmlsdHI7DQo+ICAgCWJvb2wgaGFzX2Fkdl9kaWdfZmlsdHI7DQo+ICAgCWJvb2wg
-aGFzX2FuYV9maWx0cjsNCj4gKwlib29sIGhhc19jbGVhcl9jbWQ7DQo+ICAgCXN0cnVjdCBhdF9k
-bWFfc2xhdmUgZG1hX3NsYXZlOw0KPiAgIH07DQo+ICAgDQo+IA0KDQo=
+On Sun, Mar 29, 2020 at 11:16:47AM -0700, James Bottomley wrote:
+> On Sun, 2020-03-29 at 17:50 +0000, George Spelvin wrote:
+>> On Sun, Mar 29, 2020 at 07:13:33PM +0200, Takashi Iwai wrote:
+>>> Fair enough.  But it's still a question whether an open code X * HZ
+>>> is good at all...
+>> 
+>> I'm sorry, I don't understand what you mean by "good at all" here.
+>> The value computed is exactly the same.
+> 
+> I think he means what the compiler does with it.
+> 
+> We all assume that msecs_to_jiffies is properly optimized so there
+> should be no need to open code it like you're proposing.  So firstly
+> can you produce the assembly that shows the worse output from
+> msecs_to_jiffies?  If there is a problem, then we should be fixing it
+> in msecs_to_jiffies, not adding open coding.
+
+Fair enough.  For the two alternative functions:
+
+#include <linux/jiffies.h>
+
+unsigned long timeout1(unsigned seconds)
+{
+	return jiffies + msecs_to_jiffies(seconds * 1000);
+}
+
+unsigned long timeout2(unsigned seconds)
+{
+	return jiffies + seconds * HZ;
+}
+
+compiled with Kbuild, the object code produced is:
+
+Disassembly of section .text:
+
+0000000000000000 <timeout1>:
+   0:	69 ff e8 03 00 00       imul   $0x3e8,%edi,%edi
+   6:	e8 00 00 00 00          callq  b <timeout1+0xb>
+                        7: R_X86_64_PLT32       __msecs_to_jiffies-0x4
+   b:	49 89 c0                mov    %rax,%r8
+   e:	48 8b 05 00 00 00 00    mov    0x0(%rip),%rax        # 15 
+<timeout1+0x15>
+                        11: R_X86_64_PC32       jiffies-0x4
+  15:	4c 01 c0                add    %r8,%rax
+  18:	c3                      retq   
+  19:	0f 1f 80 00 00 00 00    nopl   0x0(%rax)
+
+0000000000000020 <timeout2>:
+  20:	48 8b 15 00 00 00 00    mov    0x0(%rip),%rdx        # 27 
+<timeout2+0x7>
+                        23: R_X86_64_PC32       jiffies-0x4
+  27:	69 c7 2c 01 00 00       imul   $0x12c,%edi,%eax
+  2d:	48 01 d0                add    %rdx,%rax
+  30:	c3                      retq   
+
+This is the type of code I replaced: code where the number of seconds
+is not known at compile time.  Notice how the first multiplies by 1000
+and then calls __msecs_to_jiffies.  The second multiplies by 300 and
+makes no function call.
+
+__msecs_to_jiffies (from kernel/time/time.o) is:
+
+0000000000000100 <__msecs_to_jiffies>:
+     100:	48 b8 fe ff ff ff ff    movabs $0x3ffffffffffffffe,%rax
+     107:	ff ff 3f 
+     10a:	85 ff                   test   %edi,%edi
+     10c:	78 1c                   js     12a 
+<__msecs_to_jiffies+0x2a>
+     10e:	b8 9a 99 99 99          mov    $0x9999999a,%eax
+     113:	89 ff                   mov    %edi,%edi
+     115:	48 0f af f8             imul   %rax,%rdi
+     119:	48 b8 cc cc cc cc 01    movabs $0x1cccccccc,%rax
+     120:	00 00 00 
+     123:	48 01 f8                add    %rdi,%rax
+     126:	48 c1 e8 21             shr    $0x21,%rax
+     12a:	c3                      retq   
+     12b:	0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
+
+I didn't try to replace code that uses compile-time constant arguments
+such as include/linux/ceph/libceph.h.
