@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2E7C196F6B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D36B196F55
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:43:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbgC2SoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 14:44:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42924 "EHLO mail.kernel.org"
+        id S1728673AbgC2SnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 14:43:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728598AbgC2SnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728606AbgC2SnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 29 Mar 2020 14:43:18 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF0E220774;
+        by mail.kernel.org (Postfix) with ESMTPSA id CF7A220842;
         Sun, 29 Mar 2020 18:43:17 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1jIctw-002Fty-Jx; Sun, 29 Mar 2020 14:43:16 -0400
-Message-Id: <20200329184316.505376001@goodmis.org>
+        id 1jIctw-002FuU-Oz; Sun, 29 Mar 2020 14:43:16 -0400
+Message-Id: <20200329184316.644936337@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 29 Mar 2020 14:42:59 -0400
+Date:   Sun, 29 Mar 2020 14:43:00 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 07/21] ring-buffer: Have rb_iter_head_event() handle concurrent writer
+Subject: [for-next][PATCH 08/21] ring-buffer: Do not die if rb_iter_peek() fails more than thrice
 References: <20200329184252.289087453@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,216 +37,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Have the ring_buffer_iter structure have a place to store an event, such
-that it can not be overwritten by a writer, and load it in such a way via
-rb_iter_head_event() that it will return NULL and reset the iter to the
-start of the current page if a writer updated the page.
+As the iterator will be reading a live buffer, and if the event being read
+is on a page that a writer crosses, it will fail and try again, the
+condition in rb_iter_peek() that only allows a retry to happen three times
+is no longer valid. Allow rb_iter_peek() to retry more than three times
+without killing the ring buffer, but only if rb_iter_head_event() had failed
+at least once.
 
-Link: http://lkml.kernel.org/r/20200317213416.306959216@goodmis.org
+Link: http://lkml.kernel.org/r/20200317213416.452888193@goodmis.org
 
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/ring_buffer.c | 106 ++++++++++++++++++++++++++-----------
- 1 file changed, 75 insertions(+), 31 deletions(-)
+ kernel/trace/ring_buffer.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index e689bdcb53e8..3d718add73c1 100644
+index 3d718add73c1..475338fda969 100644
 --- a/kernel/trace/ring_buffer.c
 +++ b/kernel/trace/ring_buffer.c
-@@ -503,11 +503,13 @@ struct trace_buffer {
- struct ring_buffer_iter {
- 	struct ring_buffer_per_cpu	*cpu_buffer;
- 	unsigned long			head;
-+	unsigned long			next_event;
- 	struct buffer_page		*head_page;
- 	struct buffer_page		*cache_reader_page;
- 	unsigned long			cache_read;
- 	u64				read_stamp;
- 	u64				page_stamp;
-+	struct ring_buffer_event	*event;
- };
- 
- /**
-@@ -1914,15 +1916,59 @@ rb_reader_event(struct ring_buffer_per_cpu *cpu_buffer)
- 			       cpu_buffer->reader_page->read);
- }
- 
--static __always_inline struct ring_buffer_event *
--rb_iter_head_event(struct ring_buffer_iter *iter)
-+static __always_inline unsigned rb_page_commit(struct buffer_page *bpage)
- {
--	return __rb_page_index(iter->head_page, iter->head);
-+	return local_read(&bpage->page->commit);
- }
- 
--static __always_inline unsigned rb_page_commit(struct buffer_page *bpage)
-+static struct ring_buffer_event *
-+rb_iter_head_event(struct ring_buffer_iter *iter)
- {
--	return local_read(&bpage->page->commit);
-+	struct ring_buffer_event *event;
-+	struct buffer_page *iter_head_page = iter->head_page;
-+	unsigned long commit;
-+	unsigned length;
-+
-+	/*
-+	 * When the writer goes across pages, it issues a cmpxchg which
-+	 * is a mb(), which will synchronize with the rmb here.
-+	 * (see rb_tail_page_update() and __rb_reserve_next())
-+	 */
-+	commit = rb_page_commit(iter_head_page);
-+	smp_rmb();
-+	event = __rb_page_index(iter_head_page, iter->head);
-+	length = rb_event_length(event);
-+
-+	/*
-+	 * READ_ONCE() doesn't work on functions and we don't want the
-+	 * compiler doing any crazy optimizations with length.
-+	 */
-+	barrier();
-+
-+	if ((iter->head + length) > commit || length > BUF_MAX_DATA_SIZE)
-+		/* Writer corrupted the read? */
-+		goto reset;
-+
-+	memcpy(iter->event, event, length);
-+	/*
-+	 * If the page stamp is still the same after this rmb() then the
-+	 * event was safely copied without the writer entering the page.
-+	 */
-+	smp_rmb();
-+
-+	/* Make sure the page didn't change since we read this */
-+	if (iter->page_stamp != iter_head_page->page->time_stamp ||
-+	    commit > rb_page_commit(iter_head_page))
-+		goto reset;
-+
-+	iter->next_event = iter->head + length;
-+	return iter->event;
-+ reset:
-+	/* Reset to the beginning */
-+	iter->page_stamp = iter->read_stamp = iter->head_page->page->time_stamp;
-+	iter->head = 0;
-+	iter->next_event = 0;
-+	return NULL;
- }
- 
- /* Size is determined by what has been committed */
-@@ -1962,6 +2008,7 @@ static void rb_inc_iter(struct ring_buffer_iter *iter)
- 
- 	iter->page_stamp = iter->read_stamp = iter->head_page->page->time_stamp;
- 	iter->head = 0;
-+	iter->next_event = 0;
- }
- 
- /*
-@@ -3548,6 +3595,7 @@ static void rb_iter_reset(struct ring_buffer_iter *iter)
- 	/* Iterator usage is expected to have record disabled */
- 	iter->head_page = cpu_buffer->reader_page;
- 	iter->head = cpu_buffer->reader_page->read;
-+	iter->next_event = iter->head;
- 
- 	iter->cache_reader_page = iter->head_page;
- 	iter->cache_read = cpu_buffer->read;
-@@ -3625,7 +3673,7 @@ int ring_buffer_iter_empty(struct ring_buffer_iter *iter)
- 		return 0;
- 
- 	/* Still racy, as it may return a false positive, but that's OK */
--	return ((iter->head_page == commit_page && iter->head == commit) ||
-+	return ((iter->head_page == commit_page && iter->head >= commit) ||
- 		(iter->head_page == reader && commit_page == head_page &&
- 		 head_page->read == commit &&
- 		 iter->head == rb_page_commit(cpu_buffer->reader_page)));
-@@ -3853,15 +3901,22 @@ static void rb_advance_reader(struct ring_buffer_per_cpu *cpu_buffer)
- static void rb_advance_iter(struct ring_buffer_iter *iter)
- {
+@@ -4012,6 +4012,7 @@ rb_iter_peek(struct ring_buffer_iter *iter, u64 *ts)
  	struct ring_buffer_per_cpu *cpu_buffer;
--	struct ring_buffer_event *event;
--	unsigned length;
+ 	struct ring_buffer_event *event;
+ 	int nr_loops = 0;
++	bool failed = false;
  
- 	cpu_buffer = iter->cpu_buffer;
- 
-+	/* If head == next_event then we need to jump to the next event */
-+	if (iter->head == iter->next_event) {
-+		/* If the event gets overwritten again, there's nothing to do */
-+		if (rb_iter_head_event(iter) == NULL)
-+			return;
-+	}
-+
-+	iter->head = iter->next_event;
-+
- 	/*
- 	 * Check if we are at the end of the buffer.
+ 	if (ts)
+ 		*ts = 0;
+@@ -4038,10 +4039,14 @@ rb_iter_peek(struct ring_buffer_iter *iter, u64 *ts)
+ 	 * to a data event, we should never loop more than three times.
+ 	 * Once for going to next page, once on time extend, and
+ 	 * finally once to get the event.
+-	 * (We never hit the following condition more than thrice).
++	 * We should never hit the following condition more than thrice,
++	 * unless the buffer is very small, and there's a writer
++	 * that is causing the reader to fail getting an event.
  	 */
--	if (iter->head >= rb_page_size(iter->head_page)) {
-+	if (iter->next_event >= rb_page_size(iter->head_page)) {
- 		/* discarded commits can make the page empty */
- 		if (iter->head_page == cpu_buffer->commit_page)
- 			return;
-@@ -3869,27 +3924,7 @@ static void rb_advance_iter(struct ring_buffer_iter *iter)
- 		return;
- 	}
+-	if (RB_WARN_ON(cpu_buffer, ++nr_loops > 3))
++	if (++nr_loops > 3) {
++		RB_WARN_ON(cpu_buffer, !failed);
+ 		return NULL;
++	}
  
--	event = rb_iter_head_event(iter);
--
--	length = rb_event_length(event);
--
--	/*
--	 * This should not be called to advance the header if we are
--	 * at the tail of the buffer.
--	 */
--	if (RB_WARN_ON(cpu_buffer,
--		       (iter->head_page == cpu_buffer->commit_page) &&
--		       (iter->head + length > rb_commit_index(cpu_buffer))))
--		return;
--
--	rb_update_iter_read_stamp(iter, event);
--
--	iter->head += length;
--
--	/* check for end of page padding */
--	if ((iter->head >= rb_page_size(iter->head_page)) &&
--	    (iter->head_page != cpu_buffer->commit_page))
--		rb_inc_iter(iter);
-+	rb_update_iter_read_stamp(iter, iter->event);
- }
- 
- static int rb_lost_events(struct ring_buffer_per_cpu *cpu_buffer)
-@@ -4017,6 +4052,8 @@ rb_iter_peek(struct ring_buffer_iter *iter, u64 *ts)
+ 	if (rb_per_cpu_empty(cpu_buffer))
+ 		return NULL;
+@@ -4052,8 +4057,10 @@ rb_iter_peek(struct ring_buffer_iter *iter, u64 *ts)
  	}
  
  	event = rb_iter_head_event(iter);
-+	if (!event)
-+		goto again;
+-	if (!event)
++	if (!event) {
++		failed = true;
+ 		goto again;
++	}
  
  	switch (event->type_len) {
  	case RINGBUF_TYPE_PADDING:
-@@ -4233,10 +4270,16 @@ ring_buffer_read_prepare(struct trace_buffer *buffer, int cpu, gfp_t flags)
- 	if (!cpumask_test_cpu(cpu, buffer->cpumask))
- 		return NULL;
- 
--	iter = kmalloc(sizeof(*iter), flags);
-+	iter = kzalloc(sizeof(*iter), flags);
- 	if (!iter)
- 		return NULL;
- 
-+	iter->event = kmalloc(BUF_MAX_DATA_SIZE, flags);
-+	if (!iter->event) {
-+		kfree(iter);
-+		return NULL;
-+	}
-+
- 	cpu_buffer = buffer->buffers[cpu];
- 
- 	iter->cpu_buffer = cpu_buffer;
-@@ -4317,6 +4360,7 @@ ring_buffer_read_finish(struct ring_buffer_iter *iter)
- 
- 	atomic_dec(&cpu_buffer->record_disabled);
- 	atomic_dec(&cpu_buffer->buffer->resize_disabled);
-+	kfree(iter->event);
- 	kfree(iter);
- }
- EXPORT_SYMBOL_GPL(ring_buffer_read_finish);
 -- 
 2.25.1
 
