@@ -2,35 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2668196F62
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB7A0196F6D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:44:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbgC2SnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 14:43:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42810 "EHLO mail.kernel.org"
+        id S1728508AbgC2So2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 14:44:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728571AbgC2SnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 14:43:17 -0400
+        id S1728579AbgC2SnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 14:43:18 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 035D920838;
+        by mail.kernel.org (Postfix) with ESMTPSA id 21D5820848;
         Sun, 29 Mar 2020 18:43:17 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1jIctv-002FrO-Tw; Sun, 29 Mar 2020 14:43:15 -0400
-Message-Id: <20200329184315.812700260@goodmis.org>
+        id 1jIctw-002Fru-20; Sun, 29 Mar 2020 14:43:16 -0400
+Message-Id: <20200329184315.952365583@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 29 Mar 2020 14:42:54 -0400
+Date:   Sun, 29 Mar 2020 14:42:55 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [for-next][PATCH 02/21] selftest/ftrace: Fix function trigger test to handle trace not
- disabling the tracer
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 03/21] tracing: Save off entry when peeking at next entry
 References: <20200329184252.289087453@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -41,38 +37,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-The ftrace selftest "ftrace - test for function traceon/off triggers"
-enables all events and reads the trace file. Now that the trace file does
-not disable tracing, and will attempt to continually read new data that is
-added, the selftest gets stuck reading the trace file. This is because the
-data added to the trace file will fill up quicker than the reading of it.
+In order to have the iterator read the buffer even when it's still updating,
+it requires that the ring buffer iterator saves each event in a separate
+location outside the ring buffer such that its use is immutable.
 
-By only enabling scheduling events, the read can keep up with the writes.
-Instead of enabling all events, only enable the scheduler events.
+There's one use case that saves off the event returned from the ring buffer
+interator and calls it again to look at the next event, before going back to
+use the first event. As the ring buffer iterator will only have a single
+copy, this use case will no longer be supported.
 
-Link: http://lkml.kernel.org/r/20200318111345.0516642e@gandalf.local.home
+Instead, have the one use case create its own buffer to store the first
+event when looking at the next event. This way, when looking at the first
+event again, it wont be corrupted by the second read.
 
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux-kselftest@vger.kernel.org
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Link: http://lkml.kernel.org/r/20200317213415.722539921@goodmis.org
+
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc  | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/trace_events.h |  2 ++
+ kernel/trace/trace.c         | 40 +++++++++++++++++++++++++++++++++++-
+ kernel/trace/trace_output.c  | 15 ++++++--------
+ 3 files changed, 47 insertions(+), 10 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
-index 0c04282d33dd..1947387fe976 100644
---- a/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
-+++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_traceonoff_triggers.tc
-@@ -41,7 +41,7 @@ fi
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 6c7a10a6d71e..5c6943354049 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -85,6 +85,8 @@ struct trace_iterator {
+ 	struct mutex		mutex;
+ 	struct ring_buffer_iter	**buffer_iter;
+ 	unsigned long		iter_flags;
++	void			*temp;	/* temp holder */
++	unsigned int		temp_size;
  
- echo '** ENABLE EVENTS'
+ 	/* trace_seq for __print_flags() and __print_symbolic() etc. */
+ 	struct trace_seq	tmp_seq;
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 02be4ddd4ad5..819e31d0d66c 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3466,7 +3466,31 @@ __find_next_entry(struct trace_iterator *iter, int *ent_cpu,
+ struct trace_entry *trace_find_next_entry(struct trace_iterator *iter,
+ 					  int *ent_cpu, u64 *ent_ts)
+ {
+-	return __find_next_entry(iter, ent_cpu, NULL, ent_ts);
++	/* __find_next_entry will reset ent_size */
++	int ent_size = iter->ent_size;
++	struct trace_entry *entry;
++
++	/*
++	 * The __find_next_entry() may call peek_next_entry(), which may
++	 * call ring_buffer_peek() that may make the contents of iter->ent
++	 * undefined. Need to copy iter->ent now.
++	 */
++	if (iter->ent && iter->ent != iter->temp) {
++		if (!iter->temp || iter->temp_size < iter->ent_size) {
++			kfree(iter->temp);
++			iter->temp = kmalloc(iter->ent_size, GFP_KERNEL);
++			if (!iter->temp)
++				return NULL;
++		}
++		memcpy(iter->temp, iter->ent, iter->ent_size);
++		iter->temp_size = iter->ent_size;
++		iter->ent = iter->temp;
++	}
++	entry = __find_next_entry(iter, ent_cpu, NULL, ent_ts);
++	/* Put back the original ent_size */
++	iter->ent_size = ent_size;
++
++	return entry;
+ }
  
--echo 1 > events/enable
-+echo 1 > events/sched/enable
+ /* Find the next real entry, and increment the iterator to the next entry */
+@@ -4197,6 +4221,18 @@ __tracing_open(struct inode *inode, struct file *file, bool snapshot)
+ 	if (!iter->buffer_iter)
+ 		goto release;
  
- echo '** ENABLE TRACING'
- enable_tracing
++	/*
++	 * trace_find_next_entry() may need to save off iter->ent.
++	 * It will place it into the iter->temp buffer. As most
++	 * events are less than 128, allocate a buffer of that size.
++	 * If one is greater, then trace_find_next_entry() will
++	 * allocate a new buffer to adjust for the bigger iter->ent.
++	 * It's not critical if it fails to get allocated here.
++	 */
++	iter->temp = kmalloc(128, GFP_KERNEL);
++	if (iter->temp)
++		iter->temp_size = 128;
++
+ 	/*
+ 	 * We make a copy of the current tracer to avoid concurrent
+ 	 * changes on it while we are reading.
+@@ -4269,6 +4305,7 @@ __tracing_open(struct inode *inode, struct file *file, bool snapshot)
+  fail:
+ 	mutex_unlock(&trace_types_lock);
+ 	kfree(iter->trace);
++	kfree(iter->temp);
+ 	kfree(iter->buffer_iter);
+ release:
+ 	seq_release_private(inode, file);
+@@ -4344,6 +4381,7 @@ static int tracing_release(struct inode *inode, struct file *file)
+ 
+ 	mutex_destroy(&iter->mutex);
+ 	free_cpumask_var(iter->started);
++	kfree(iter->temp);
+ 	kfree(iter->trace);
+ 	kfree(iter->buffer_iter);
+ 	seq_release_private(inode, file);
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index e25a7da79c6b..9a121e147102 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -617,22 +617,19 @@ int trace_print_context(struct trace_iterator *iter)
+ 
+ int trace_print_lat_context(struct trace_iterator *iter)
+ {
++	struct trace_entry *entry, *next_entry;
+ 	struct trace_array *tr = iter->tr;
+-	/* trace_find_next_entry will reset ent_size */
+-	int ent_size = iter->ent_size;
+ 	struct trace_seq *s = &iter->seq;
+-	u64 next_ts;
+-	struct trace_entry *entry = iter->ent,
+-			   *next_entry = trace_find_next_entry(iter, NULL,
+-							       &next_ts);
+ 	unsigned long verbose = (tr->trace_flags & TRACE_ITER_VERBOSE);
++	u64 next_ts;
+ 
+-	/* Restore the original ent_size */
+-	iter->ent_size = ent_size;
+-
++	next_entry = trace_find_next_entry(iter, NULL, &next_ts);
+ 	if (!next_entry)
+ 		next_ts = iter->ts;
+ 
++	/* trace_find_next_entry() may change iter->ent */
++	entry = iter->ent;
++
+ 	if (verbose) {
+ 		char comm[TASK_COMM_LEN];
+ 
 -- 
 2.25.1
 
