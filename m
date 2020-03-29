@@ -2,84 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D9A8196F54
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0533196F53
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:43:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbgC2SnU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 14:43:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42782 "EHLO mail.kernel.org"
+        id S1728607AbgC2SnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 14:43:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727606AbgC2SnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728570AbgC2SnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 29 Mar 2020 14:43:17 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8E60206DB;
+        by mail.kernel.org (Postfix) with ESMTPSA id DAAC920784;
         Sun, 29 Mar 2020 18:43:16 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1jIctv-002FqH-Ko; Sun, 29 Mar 2020 14:43:15 -0400
-Message-Id: <20200329184252.289087453@goodmis.org>
+        id 1jIctv-002Fqq-PS; Sun, 29 Mar 2020 14:43:15 -0400
+Message-Id: <20200329184315.677608653@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 29 Mar 2020 14:42:52 -0400
+Date:   Sun, 29 Mar 2020 14:42:53 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 00/21] tracing: Updates for v5.7
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [for-next][PATCH 01/21] tracing: Use address-of operator on section symbols
+References: <20200329184252.289087453@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-for-next
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-Head SHA1: 2ab2a0924b9980551ebe1c47d2a402a94efc1835
+Clang warns:
+
+../kernel/trace/trace.c:9335:33: warning: array comparison always
+evaluates to true [-Wtautological-compare]
+        if (__stop___trace_bprintk_fmt != __start___trace_bprintk_fmt)
+                                       ^
+1 warning generated.
+
+These are not true arrays, they are linker defined symbols, which are
+just addresses. Using the address of operator silences the warning and
+does not change the runtime result of the check (tested with some print
+statements compiled in with clang + ld.lld and gcc + ld.bfd in QEMU).
+
+Link: http://lkml.kernel.org/r/20200220051011.26113-1-natechancellor@gmail.com
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/893
+Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 6b11e4e2150c..02be4ddd4ad5 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -9334,7 +9334,7 @@ __init static int tracer_alloc_buffers(void)
+ 		goto out_free_buffer_mask;
+ 
+ 	/* Only allocate trace_printk buffers if a trace_printk exists */
+-	if (__stop___trace_bprintk_fmt != __start___trace_bprintk_fmt)
++	if (&__stop___trace_bprintk_fmt != &__start___trace_bprintk_fmt)
+ 		/* Must be called before global_trace.buffer is allocated */
+ 		trace_printk_init_buffers();
+ 
+-- 
+2.25.1
 
 
-Masami Hiramatsu (1):
-      ftrace/kprobe: Show the maxactive number on kprobe_events
-
-Nathan Chancellor (1):
-      tracing: Use address-of operator on section symbols
-
-Steven Rostedt (VMware) (19):
-      selftest/ftrace: Fix function trigger test to handle trace not disabling the tracer
-      tracing: Save off entry when peeking at next entry
-      ring-buffer: Have ring_buffer_empty() not depend on tracing stopped
-      ring-buffer: Rename ring_buffer_read() to read_buffer_iter_advance()
-      ring-buffer: Add page_stamp to iterator for synchronization
-      ring-buffer: Have rb_iter_head_event() handle concurrent writer
-      ring-buffer: Do not die if rb_iter_peek() fails more than thrice
-      ring-buffer: Optimize rb_iter_head_event()
-      ring-buffer: Make resize disable per cpu buffer instead of total buffer
-      ring-buffer: Do not disable recording when there is an iterator
-      tracing: Do not disable tracing when reading the trace file
-      ring-buffer/tracing: Have iterator acknowledge dropped events
-      tracing: Have the document reflect that the trace file keeps tracing enabled
-      ftrace: Make function trace pid filtering a bit more exact
-      ftrace: Create set_ftrace_notrace_pid to not trace tasks
-      tracing: Create set_event_notrace_pid to not trace tasks
-      selftests/ftrace: Add test to test new set_ftrace_notrace_pid file
-      selftests/ftrace: Add test to test new set_event_notrace_pid file
-      tracing: Add documentation on set_ftrace_notrace_pid and set_event_notrace_pid
-
-----
- Documentation/trace/ftrace.rst                     |  50 +++-
- include/linux/ring_buffer.h                        |   4 +-
- include/linux/trace_events.h                       |   2 +
- kernel/trace/ftrace.c                              | 200 +++++++++++++--
- kernel/trace/ring_buffer.c                         | 239 ++++++++++++------
- kernel/trace/trace.c                               |  91 +++++--
- kernel/trace/trace.h                               |  32 ++-
- kernel/trace/trace_events.c                        | 280 ++++++++++++++++-----
- kernel/trace/trace_functions_graph.c               |   2 +-
- kernel/trace/trace_kprobe.c                        |   2 +
- kernel/trace/trace_output.c                        |  15 +-
- .../selftests/ftrace/test.d/event/event-no-pid.tc  | 125 +++++++++
- .../test.d/ftrace/func-filter-notrace-pid.tc       | 108 ++++++++
- .../test.d/ftrace/func_traceonoff_triggers.tc      |   2 +-
- 14 files changed, 954 insertions(+), 198 deletions(-)
- create mode 100644 tools/testing/selftests/ftrace/test.d/event/event-no-pid.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func-filter-notrace-pid.tc
