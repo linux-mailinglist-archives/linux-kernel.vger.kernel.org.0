@@ -2,98 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E5D6196F28
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:16:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D6DE196F2F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:20:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbgC2SQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 14:16:51 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:41566 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727506AbgC2SQv (ORCPT
+        id S1728517AbgC2SUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 14:20:17 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34881 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727719AbgC2SUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 14:16:51 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1A29F8EE3FB;
-        Sun, 29 Mar 2020 11:16:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1585505810;
-        bh=rBvSkEZqenHlElaAoaY3uIGBSF/hz4P4ALj5BPOQHd8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=AwaSoiQmg6hmeQbTt1xr9B09pgLQ+Iw5OlB8ltxyEVnlGLh4SbRra2jPM9eAS1c6S
-         lfjJiFM0YxHdA2lBgT5uYEEyqRZWKIjYYyLFwYaLLc4bzYJYL9HJVgSv+NLuamKgUJ
-         dxWeLxccmARVeoKF+pAsxaPsYfGYzRPTQS4U35EA=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 7D53_2EYtwap; Sun, 29 Mar 2020 11:16:49 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 148728EE109;
-        Sun, 29 Mar 2020 11:16:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1585505809;
-        bh=rBvSkEZqenHlElaAoaY3uIGBSF/hz4P4ALj5BPOQHd8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=scU+UulmbouSY9Sirt+FkSSwoV2JzDPqQb5aY8N7+68p+LrjSRWQBBN9KuxCOebLV
-         +6mt2oJZ14HHJRPk5MJFc0M9sByCZGG5CpOYWRuhMzuQ3xO0YKMOTudmKzZKFQG25Y
-         JENhpDxxEfju16KggGq6CkHEh1lNAM325v+r6Czg=
-Message-ID: <1585505807.4510.1.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH v1 13/50] Avoid some useless msecs/jiffies
- conversions
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     George Spelvin <lkml@SDF.ORG>, Takashi Iwai <tiwai@suse.de>
-Cc:     linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
-        linux-scsi@vger.kernel.org,
-        Marek Lindner <mareklindner@neomailbox.ch>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Antonio Quartulli <a@unstable.cc>,
-        Sven Eckelmann <sven@narfation.org>,
-        b.a.t.m.a.n@diktynna.open-mesh.org,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-wireless@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Date:   Sun, 29 Mar 2020 11:16:47 -0700
-In-Reply-To: <20200329175032.GE4675@SDF.ORG>
-References: <202003281643.02SGhBrh000992@sdf.org>
-         <s5ho8sfd2dk.wl-tiwai@suse.de> <20200329121129.GC11951@SDF.ORG>
-         <s5h7dz3ccea.wl-tiwai@suse.de> <20200329175032.GE4675@SDF.ORG>
+        Sun, 29 Mar 2020 14:20:16 -0400
+Received: by mail-lj1-f195.google.com with SMTP id k21so15604840ljh.2
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 11:20:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xZgVqb4y2QWgkLb7plXJBf0r4LTT7aqW4Cc9niuX5cs=;
+        b=X6rjXs8vhB27dDuIHfTaryhJH5+o9Hav/CRHSHFk5SWXqW0GsRuypXAiq0GaFA0Xwn
+         YN4+D58xzljj4iPZCYGyyAibUe7O8eMXu+eRr83DisWp0nLJ5MKuv/Mcz6Sybxmg4Bws
+         4wMdPGMB9P82xc+iqc2+Te8wAp+7H53dw482s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xZgVqb4y2QWgkLb7plXJBf0r4LTT7aqW4Cc9niuX5cs=;
+        b=b/nP5TSdOfWpj0dAjuCxo6j7G+m0q9EwawUuIr9B1xfGkOmzQjsez8yhk2kQvxcQUw
+         gNLMoiC8MqxsiJV7+0pR4SW1LkJPClo5UTt9EoXzgHWTvJ1IEKG5YAjSZy3yevrvRJCC
+         h+vSL/1QI4MEIZLXs8xCSPV/09/r0odnvgFIjDNJrxqs5Z0cHoZA9G5T3jIiMf7iVCIt
+         JnMabBmEiUexNR+q1PJ7SRlccaeZvzQp9fo17tPoDwDaTxGA48G5ud0BNe9xt4hX+39Y
+         J6QyRYQYnj2QHZZxV1iKFL4lZfwd7Gf1gzDJLp7yHAL0K8JIGkN1NBKCrh1OKc+foif4
+         snKA==
+X-Gm-Message-State: AGi0PubwNCiGSTqP5eoWnmS2hXOZuT4V+vXhI0Y9FJogmWOk0gOSm6fp
+        ALTuDE23qoS4LPh7NzK5KixVtopI/mY=
+X-Google-Smtp-Source: APiQypJITmiIFGXmd7RAmyzKzfinTGSEktwyv86pJLIo1YeYRIr7xSGkzntQlb6pksLPBFHlLjJJ9Q==
+X-Received: by 2002:a2e:8084:: with SMTP id i4mr5078821ljg.185.1585506014354;
+        Sun, 29 Mar 2020 11:20:14 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id o4sm6548983lfl.62.2020.03.29.11.20.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 Mar 2020 11:20:13 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id j17so12122658lfe.7
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 11:20:13 -0700 (PDT)
+X-Received: by 2002:a19:6144:: with SMTP id m4mr5733869lfk.192.1585506013304;
+ Sun, 29 Mar 2020 11:20:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200323183620.GD23230@ZenIV.linux.org.uk> <20200323183819.250124-1-viro@ZenIV.linux.org.uk>
+ <20200328104857.GA93574@gmail.com> <20200328115936.GA23230@ZenIV.linux.org.uk>
+ <20200329092602.GB93574@gmail.com> <CALCETrX=nXN14fqu-yEMGwwN-vdSz=-0C3gcOMucmxrCUpevdA@mail.gmail.com>
+ <489c9af889954649b3453e350bab6464@AcuMS.aculab.com> <CAHk-=whDAxb+83gYCv4=-armoqXQXgzshaVCCe9dNXZb9G_CxQ@mail.gmail.com>
+ <20200329181627.GD23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200329181627.GD23230@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 29 Mar 2020 11:19:57 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgs=mHpM3MxrHCShwo1A-U3mag1azVvKNEkQK36NroQ3A@mail.gmail.com>
+Message-ID: <CAHk-=wgs=mHpM3MxrHCShwo1A-U3mag1azVvKNEkQK36NroQ3A@mail.gmail.com>
+Subject: Re: [RFC][PATCH 01/22] x86 user stack frame reads: switch to explicit __get_user()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2020-03-29 at 17:50 +0000, George Spelvin wrote:
-> On Sun, Mar 29, 2020 at 07:13:33PM +0200, Takashi Iwai wrote:
-> > On Sun, 29 Mar 2020 14:11:29 +0200, George Spelvin wrote:
-> > > On Sun, Mar 29, 2020 at 09:52:23AM +0200, Takashi Iwai wrote:
-> > > > I thought the compiler already optimizes to the constant
-> > > > calculation
-> > > > for the above case?
-> > > 
-> > > It optimizes that if the entire argument, including "seconds", is
-> > > a compile-time constant.
-> > > 
-> > > However, given "msecs_to_jiffies(hdev->rpa_timeout * 1000);",
-> > > the computatin is non-trivial.
-> > 
-> > Fair enough.  But it's still a question whether an open code X * HZ
-> > is
-> > good at all...
-> 
-> I'm sorry, I don't understand what you mean by "good at all" here.
-> The value computed is exactly the same.
+On Sun, Mar 29, 2020 at 11:18 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Except that you'd better make that
+>         if (!user_access_begin(...))
+>                 return -EFAULT;
 
-I think he means what the compiler does with it.
+Yeah, that should teach me not to just write random code snippets in
+the mail reader rather than just cutting-and-pasting actual working
+code ;)
 
-We all assume that msecs_to_jiffies is properly optimized so there
-should be no need to open code it like you're proposing.  So firstly
-can you produce the assembly that shows the worse output from
-msecs_to_jiffies?  If there is a problem, then we should be fixing it
-in msecs_to_jiffies, not adding open coding.
-
-James
-
+                 Linus
