@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18FE5196FF0
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA37819700F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:27:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbgC2U0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 16:26:32 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57042 "EHLO
+        id S1729072AbgC2U1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 16:27:23 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57026 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728892AbgC2U0a (ORCPT
+        with ESMTP id S1728880AbgC2U01 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 16:26:30 -0400
+        Sun, 29 Mar 2020 16:26:27 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jIeVo-0001SV-1w; Sun, 29 Mar 2020 22:26:28 +0200
+        id 1jIeVl-0001TN-Ef; Sun, 29 Mar 2020 22:26:25 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1DF781C04DF;
-        Sun, 29 Mar 2020 22:26:19 +0200 (CEST)
-Date:   Sun, 29 Mar 2020 20:26:18 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1C1AB1C0334;
+        Sun, 29 Mar 2020 22:26:20 +0200 (CEST)
+Date:   Sun, 29 Mar 2020 20:26:19 -0000
 From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] ARM: sa1111: Fix irq_retrigger callback return value
+Subject: [tip: irq/core] irqchip/atmel-aic: Fix irq_retrigger callback return value
 Cc:     Marc Zyngier <maz@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200310184921.23552-4-maz@kernel.org>
-References: <20200310184921.23552-4-maz@kernel.org>
+In-Reply-To: <20200310184921.23552-2-maz@kernel.org>
+References: <20200310184921.23552-2-maz@kernel.org>
 MIME-Version: 1.0
-Message-ID: <158551357874.28353.1083544368838614452.tip-bot2@tip-bot2>
+Message-ID: <158551357965.28353.10773665129651597686.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,43 +46,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     ad00a325a09791f4637bf5d2ec627ed2c292653e
-Gitweb:        https://git.kernel.org/tip/ad00a325a09791f4637bf5d2ec627ed2c292653e
+Commit-ID:     7177144a54f594f8815b777ae647e58b07c03f86
+Gitweb:        https://git.kernel.org/tip/7177144a54f594f8815b777ae647e58b07c03f86
 Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Tue, 10 Mar 2020 18:49:20 
+AuthorDate:    Tue, 10 Mar 2020 18:49:18 
 Committer:     Marc Zyngier <maz@kernel.org>
 CommitterDate: Mon, 16 Mar 2020 15:48:54 
 
-ARM: sa1111: Fix irq_retrigger callback return value
+irqchip/atmel-aic: Fix irq_retrigger callback return value
 
 The irq_retrigger callback is supposed to return 0 when retrigger
 has failed, and a non-zero value otherwise. Tell the core code
 that the driver has succedded in using the HW to retrigger the
-interrupt (if ever).
+interrupt.
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20200310184921.23552-4-maz@kernel.org
+Link: https://lore.kernel.org/r/20200310184921.23552-2-maz@kernel.org
 ---
- arch/arm/common/sa1111.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-atmel-aic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
-index 947ef79..c98ebae 100644
---- a/arch/arm/common/sa1111.c
-+++ b/arch/arm/common/sa1111.c
-@@ -302,10 +302,13 @@ static int sa1111_retrigger_irq(struct irq_data *d)
- 			break;
- 	}
+diff --git a/drivers/irqchip/irq-atmel-aic.c b/drivers/irqchip/irq-atmel-aic.c
+index bb1ad45..2c999dc 100644
+--- a/drivers/irqchip/irq-atmel-aic.c
++++ b/drivers/irqchip/irq-atmel-aic.c
+@@ -83,7 +83,7 @@ static int aic_retrigger(struct irq_data *d)
+ 	irq_reg_writel(gc, d->mask, AT91_AIC_ISCR);
+ 	irq_gc_unlock(gc);
  
--	if (i == 8)
-+	if (i == 8) {
- 		pr_err("Danger Will Robinson: failed to re-trigger IRQ%d\n",
- 		       d->irq);
--	return i == 8 ? -1 : 0;
-+		return 0;
-+	}
-+
+-	return 0;
 +	return 1;
  }
  
- static int sa1111_type_irq(struct irq_data *d, unsigned int flags)
+ static int aic_set_type(struct irq_data *d, unsigned type)
