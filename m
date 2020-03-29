@@ -2,37 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1CE7196C36
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 11:47:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC7B4196C3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 11:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbgC2Jrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 05:47:35 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:42026 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727503AbgC2Jrf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 05:47:35 -0400
-X-IronPort-AV: E=Sophos;i="5.72,319,1580770800"; 
-   d="scan'208";a="442806325"
-Received: from abo-173-121-68.mrs.modulonet.fr (HELO hadrien) ([85.68.121.173])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Mar 2020 11:47:33 +0200
-Date:   Sun, 29 Mar 2020 11:47:33 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To:     John Wyatt <jbwyatt4@gmail.com>
-cc:     outreachy-kernel@googlegroups.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Payal Kshirsagar <payal.s.kshirsagar.98@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [Outreachy kernel] [PATCH] staging: fbtft: Replace udelay with
- preferred usleep_range
-In-Reply-To: <2fccf96c3754e6319797a10856e438e023f734a7.camel@gmail.com>
-Message-ID: <alpine.DEB.2.21.2003291144460.2990@hadrien>
-References: <20200329092204.770405-1-jbwyatt4@gmail.com>  <alpine.DEB.2.21.2003291127230.2990@hadrien> <2fccf96c3754e6319797a10856e438e023f734a7.camel@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727965AbgC2JsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 05:48:23 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:57842 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727922AbgC2JsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 05:48:23 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48qrPZ20Z7z9tyY2;
+        Sun, 29 Mar 2020 11:48:18 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=wkzIp4Sl; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id a-YX7TigDYri; Sun, 29 Mar 2020 11:48:18 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48qrPZ0n2nz9tyY1;
+        Sun, 29 Mar 2020 11:48:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1585475298; bh=QMHt+CzUvu9PdrsCMW23L7vVLi66IzMH33dqHOLEvp0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=wkzIp4SlY62kuhQIBgmcI/5xGhSRfgP+eVn0BEV3FVpr3LBYI/IWCoXN1WHiahGVV
+         FK5udao4bhdHPrDglhnRRFxvi0euUS1ekEn0hO9VtTOayLTVAocziCH8IayOWMU57Z
+         B+FBgxFb7AaVgEXuDuCQgJTig8tv9dEZNs42ZFLw=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E7BAA8B770;
+        Sun, 29 Mar 2020 11:48:19 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 2Enbwj-751-v; Sun, 29 Mar 2020 11:48:19 +0200 (CEST)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 460B28B752;
+        Sun, 29 Mar 2020 11:48:16 +0200 (CEST)
+Subject: Re: [PATCH v2] powerpc/kprobes: Blacklist functions running with MMU
+ disabled on PPC32
+To:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <3ada1af1b479c5a88bf9f3b8955bf5ba3f32f1ba.1582565849.git.christophe.leroy@c-s.fr>
+ <1585299144.f9e0pmxsgv.naveen@linux.ibm.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <9fd6134f-1807-bb49-cf6a-fa49175fdfe5@c-s.fr>
+Date:   Sun, 29 Mar 2020 11:48:09 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1585299144.f9e0pmxsgv.naveen@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -40,91 +67,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On Sun, 29 Mar 2020, John Wyatt wrote:
+Le 27/03/2020 à 10:07, Naveen N. Rao a écrit :
+> Christophe Leroy wrote:
+>> kprobe does not handle events happening in real mode, all
+>> functions running with MMU disabled have to be blacklisted.
+>>
+>> As already done for PPC64, do it for PPC32.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>> v2:
+>> - Don't rename nonrecoverable as local, mark it noprobe instead.
+>> - Add missing linux/kprobes.h include in pq2.c
+>> ---
+>>  arch/powerpc/include/asm/ppc_asm.h           | 10 +++
+>>  arch/powerpc/kernel/cpu_setup_6xx.S          |  4 +-
+>>  arch/powerpc/kernel/entry_32.S               | 65 ++++++++------------
+>>  arch/powerpc/kernel/fpu.S                    |  1 +
+>>  arch/powerpc/kernel/idle_6xx.S               |  2 +-
+>>  arch/powerpc/kernel/idle_e500.S              |  2 +-
+>>  arch/powerpc/kernel/l2cr_6xx.S               |  2 +-
+>>  arch/powerpc/kernel/misc.S                   |  2 +
+>>  arch/powerpc/kernel/misc_32.S                |  4 +-
+>>  arch/powerpc/kernel/swsusp_32.S              |  6 +-
+>>  arch/powerpc/kernel/vector.S                 |  1 +
+>>  arch/powerpc/mm/book3s32/hash_low.S          | 38 ++++++------
+>>  arch/powerpc/mm/mem.c                        |  2 +
+>>  arch/powerpc/platforms/52xx/lite5200_sleep.S |  2 +
+>>  arch/powerpc/platforms/82xx/pq2.c            |  3 +
+>>  arch/powerpc/platforms/83xx/suspend-asm.S    |  1 +
+>>  arch/powerpc/platforms/powermac/cache.S      |  2 +
+>>  arch/powerpc/platforms/powermac/sleep.S      | 13 ++--
+>>  18 files changed, 86 insertions(+), 74 deletions(-)
+>>
+>> diff --git a/arch/powerpc/include/asm/ppc_asm.h 
+>> b/arch/powerpc/include/asm/ppc_asm.h
+>> index 6b03dff61a05..e8f34ba89497 100644
+>> --- a/arch/powerpc/include/asm/ppc_asm.h
+>> +++ b/arch/powerpc/include/asm/ppc_asm.h
+>> @@ -267,8 +267,18 @@ GLUE(.,name):
+>>      .pushsection "_kprobe_blacklist","aw";        \
+>>      PPC_LONG (entry) ;                \
+>>      .popsection
+>> +#define _NOKPROBE_ENTRY(entry)                \
+>> +    _ASM_NOKPROBE_SYMBOL(entry)                \
+>> +    _ENTRY(entry)
+>> +#define _NOKPROBE_GLOBAL(entry)                \
+>> +    _ASM_NOKPROBE_SYMBOL(entry)                \
+>> +    _GLOBAL(entry)
+>>  #else
+>>  #define _ASM_NOKPROBE_SYMBOL(entry)
+>> +#define _NOKPROBE_ENTRY(entry)                \
+>> +    _ENTRY(entry)
+>> +#define _NOKPROBE_GLOBAL(entry)                \
+>> +    _GLOBAL(entry)
+>>  #endif
+> 
+> Michael hasn't preferred including NOKPROBE variants of those macros 
+> previously, since he would like to see some cleanups there:
+> https://patchwork.ozlabs.org/patch/696138/
 
-> On Sun, 2020-03-29 at 11:28 +0200, Julia Lawall wrote:
-> >
-> > On Sun, 29 Mar 2020, John B. Wyatt IV wrote:
-> >
-> > > Fix style issue with usleep_range being reported as preferred over
-> > > udelay.
-> > >
-> > > Issue reported by checkpatch.
-> > >
-> > > Please review.
-> > >
-> > > As written in Documentation/timers/timers-howto.rst udelay is the
-> > > generally preferred API. hrtimers, as noted in the docs, may be too
-> > > expensive for this short timer.
-> > >
-> > > Are the docs out of date, or, is this a checkpatch issue?
-> > >
-> > > Signed-off-by: John B. Wyatt IV <jbwyatt4@gmail.com>
-> > > ---
-> > >  drivers/staging/fbtft/fb_agm1264k-fl.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/staging/fbtft/fb_agm1264k-fl.c
-> > > b/drivers/staging/fbtft/fb_agm1264k-fl.c
-> > > index eeeeec97ad27..019c8cce6bab 100644
-> > > --- a/drivers/staging/fbtft/fb_agm1264k-fl.c
-> > > +++ b/drivers/staging/fbtft/fb_agm1264k-fl.c
-> > > @@ -85,7 +85,7 @@ static void reset(struct fbtft_par *par)
-> > >  	dev_dbg(par->info->device, "%s()\n", __func__);
-> > >
-> > >  	gpiod_set_value(par->gpio.reset, 0);
-> > > -	udelay(20);
-> > > +	usleep_range(20, 20);
-> >
-> > usleep_range should have a range, eg usleep_range(50, 100);.  But it
-> > is
-> > hard to know a priori what the range should be.  So it is probably
-> > better
-> > to leave the code alone.
->
-> Understood.
->
-> With the question I wrote in the commit message:
->
-> "As written in Documentation/timers/timers-howto.rst udelay is the
-> generally preferred API. hrtimers, as noted in the docs, may be too
-> expensive for this short timer.
->
-> Are the docs out of date, or, is this a checkpatch issue?"
->
-> Is usleep_range too expensive for this operation?
->
-> Why does checkpatch favor usleep_range while the docs favor udelay?
+Ok
 
-I don't know the answer in detail, but it is quite possible that
-checkpatch doesn't pay any attention to the delay argument.  Checkpatch is
-a perl script that highlights things that may be of concern.  It is not a
-precise static analsis tool.
+[...]
 
-As a matter of form, all of your Please review comments should have been
-put below the ---.  Currently, if someone had wanted to apply the patch,
-you would make them do extra work to remove this information.
+>> @@ -194,8 +188,7 @@ transfer_to_handler:
+>>      bt-    31-TLF_NAPPING,4f
+>>      bt-    31-TLF_SLEEPING,7f
+>>  #endif /* CONFIG_PPC_BOOK3S_32 || CONFIG_E500 */
+>> -    .globl transfer_to_handler_cont
+>> -transfer_to_handler_cont:
+>> +_NOKPROBE_ENTRY(transfer_to_handler_cont)
+>>  3:
+>>      mflr    r9
+>>      tovirt_novmstack r2, r2     /* set r2 to current */
+>> @@ -297,6 +290,7 @@ reenable_mmu:
+>>   * On kernel stack overflow, load up an initial stack pointer
+>>   * and call StackOverflow(regs), which should not return.
+>>   */
+>> +_ASM_NOKPROBE_SYMBOL(stack_ovf)
+>>  stack_ovf:
+> 
+> The current convention is to add the NOKPROBE annotation at the _end_ of 
+> the associated function/symbol...
 
-julia
+Ok. For big functions that looks unpractical, but I'll do that.
 
->
-> >
-> > julia
-> >
-> > >  	gpiod_set_value(par->gpio.reset, 1);
-> > >  	mdelay(120);
-> > >  }
-> > > --
-> > > 2.25.1
-> > >
-> > > --
-> > > You received this message because you are subscribed to the Google
-> > > Groups "outreachy-kernel" group.
-> > > To unsubscribe from this group and stop receiving emails from it,
-> > > send an email to outreachy-kernel+unsubscribe@googlegroups.com.
-> > > To view this discussion on the web visit
-> > > https://groups.google.com/d/msgid/outreachy-kernel/20200329092204.770405-1-jbwyatt4%40gmail.com
-> > > .
-> > >
->
->
+[...]
+
+>> @@ -1033,17 +1026,15 @@ exc_exit_restart_end:
+>>      li    r10, 0
+>>      stw    r10, 8(r1)
+>>      REST_2GPRS(9, r1)
+>> -    .globl exc_exit_restart
+>> +_NOKPROBE_ENTRY(exc_exit_restart)
+>>  exc_exit_restart:
+>>      lwz    r11,_NIP(r1)
+>>      lwz    r12,_MSR(r1)
+>> -exc_exit_start:
+>>      mtspr    SPRN_SRR0,r11
+>>      mtspr    SPRN_SRR1,r12
+>>      REST_2GPRS(11, r1)
+>>      lwz    r1,GPR1(r1)
+>> -    .globl exc_exit_restart_end
+>> -exc_exit_restart_end:
+>> +.Lexc_exit_restart_end:
+> 
+> I think it would be good to break this into smaller patches to handle 
+> specific code paths, if possible. At the very least, it would be good to 
+> move changes to symbol visibility to a separate patch since this also 
+> changes the names printed in a backtrace.
+
+Ok.
+
+I removed most symbol visibility changes. I only kept the ones in 
+book3s32/hash_low.S and did a separate patch for it.
+
+I split into patches per platform, then one bigger for everything in 
+arch/powerpc/kernel/ except entries, then I did one for exception entry, 
+one for syscall exit and one for exception exit.
+
+Christophe
