@@ -2,33 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35CC9196F5B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:43:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CD73196F65
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbgC2Snj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 14:43:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42908 "EHLO mail.kernel.org"
+        id S1728759AbgC2SoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 14:44:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728629AbgC2SnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728631AbgC2SnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 29 Mar 2020 14:43:20 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9977E214DB;
+        by mail.kernel.org (Postfix) with ESMTPSA id B32072145D;
         Sun, 29 Mar 2020 18:43:19 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1jIcty-002G0g-Fv; Sun, 29 Mar 2020 14:43:18 -0400
-Message-Id: <20200329184318.379484681@goodmis.org>
+        id 1jIcty-002G1C-KV; Sun, 29 Mar 2020 14:43:18 -0400
+Message-Id: <20200329184318.517382511@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 29 Mar 2020 14:43:12 -0400
+Date:   Sun, 29 Mar 2020 14:43:13 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kselftest@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-Subject: [for-next][PATCH 20/21] selftests/ftrace: Add test to test new set_event_notrace_pid file
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 21/21] tracing: Add documentation on set_ftrace_notrace_pid and
+ set_event_notrace_pid
 References: <20200329184252.289087453@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -39,150 +38,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-A new file was added to the tracing directory that will allow a user to
-place a PID into it and the task associated to that PID will not have its
-events traced.  If the event-fork option is enabled, then neither will the
-children of that task have its events traced.
+Update the tracing documentation to reflect the new files in the tracing
+directory.
 
-Cc: linux-kselftest@vger.kernel.org
-Cc: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../ftrace/test.d/event/event-no-pid.tc       | 125 ++++++++++++++++++
- 1 file changed, 125 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/event/event-no-pid.tc
+ Documentation/trace/ftrace.rst | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/event/event-no-pid.tc b/tools/testing/selftests/ftrace/test.d/event/event-no-pid.tc
-new file mode 100644
-index 000000000000..f0f366f18d0c
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/event/event-no-pid.tc
-@@ -0,0 +1,125 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: event tracing - restricts events based on pid notrace filtering
-+# flags: instance
+diff --git a/Documentation/trace/ftrace.rst b/Documentation/trace/ftrace.rst
+index 00621731bf27..3b5614b1d1a5 100644
+--- a/Documentation/trace/ftrace.rst
++++ b/Documentation/trace/ftrace.rst
+@@ -263,6 +263,20 @@ of ftrace. Here is a list of some of the key files:
+ 	traced by the function tracer as well. This option will also
+ 	cause PIDs of tasks that exit to be removed from the file.
+ 
++  set_ftrace_notrace_pid:
 +
-+do_reset() {
-+    echo > set_event
-+    echo > set_event_pid
-+    echo > set_event_notrace_pid
-+    echo 0 > options/event-fork
-+    echo 0 > events/enable
-+    clear_trace
-+    echo 1 > tracing_on
-+}
++        Have the function tracer ignore threads whose PID are listed in
++        this file.
 +
-+fail() { #msg
-+    cat trace
-+    do_reset
-+    echo $1
-+    exit_fail
-+}
++        If the "function-fork" option is set, then when a task whose
++	PID is listed in this file forks, the child's PID will
++	automatically be added to this file, and the child will not be
++	traced by the function tracer as well. This option will also
++	cause PIDs of tasks that exit to be removed from the file.
 +
-+count_pid() {
-+    pid=$@
-+    cat trace | grep -v '^#' | sed -e 's/[^-]*-\([0-9]*\).*/\1/' | grep $pid | wc -l
-+}
++        If a PID is in both this file and "set_ftrace_pid", then this
++        file takes precedence, and the thread will not be traced.
 +
-+count_no_pid() {
-+    pid=$1
-+    cat trace | grep -v '^#' | sed -e 's/[^-]*-\([0-9]*\).*/\1/' | grep -v $pid | wc -l
-+}
+   set_event_pid:
+ 
+ 	Have the events only trace a task with a PID listed in this file.
+@@ -274,6 +288,19 @@ of ftrace. Here is a list of some of the key files:
+ 	cause the PIDs of tasks to be removed from this file when the task
+ 	exits.
+ 
++  set_event_notrace_pid:
 +
-+enable_system() {
-+    system=$1
++	Have the events not trace a task with a PID listed in this file.
++	Note, sched_switch and sched_wakeup will trace threads not listed
++	in this file, even if a thread's PID is in the file if the
++        sched_switch or sched_wakeup events also trace a thread that should
++        be traced.
 +
-+    if [ -d events/$system ]; then
-+	echo 1 > events/$system/enable
-+    fi
-+}
++	To have the PIDs of children of tasks with their PID in this file
++	added on fork, enable the "event-fork" option. That option will also
++	cause the PIDs of tasks to be removed from this file when the task
++	exits.
 +
-+enable_events() {
-+    echo 0 > tracing_on
-+    # Enable common groups of events, as all events can allow for
-+    # events to be traced via scheduling that we don't care to test.
-+    enable_system syscalls
-+    enable_system rcu
-+    enable_system block
-+    enable_system exceptions
-+    enable_system irq
-+    enable_system net
-+    enable_system power
-+    enable_system signal
-+    enable_system sock
-+    enable_system timer
-+    enable_system thermal
-+    echo 1 > tracing_on
-+}
+   set_graph_function:
+ 
+ 	Functions listed in this file will cause the function graph
+@@ -1183,6 +1210,8 @@ Here are the available options:
+ 	tasks fork. Also, when tasks with PIDs in set_event_pid exit,
+ 	their PIDs will be removed from the file.
+ 
++        This affects PIDs listed in set_event_notrace_pid as well.
 +
-+if [ ! -f set_event -o ! -d events/sched ]; then
-+    echo "event tracing is not supported"
-+    exit_unsupported
-+fi
+   function-trace
+ 	The latency tracers will enable function tracing
+ 	if this option is enabled (default it is). When
+@@ -1197,6 +1226,8 @@ Here are the available options:
+ 	set_ftrace_pid exit, their PIDs will be removed from the
+ 	file.
+ 
++        This affects PIDs in set_ftrace_notrace_pid as well.
 +
-+if [ ! -f set_event_pid -o ! -f set_event_notrace_pid ]; then
-+    echo "event pid notrace filtering is not supported"
-+    exit_unsupported
-+fi
-+
-+echo 0 > options/event-fork
-+
-+do_reset
-+
-+read mypid rest < /proc/self/stat
-+
-+echo $mypid > set_event_notrace_pid
-+grep -q $mypid set_event_notrace_pid
-+
-+enable_events
-+
-+yield
-+
-+echo 0 > tracing_on
-+
-+cnt=`count_pid $mypid`
-+if [ $cnt -ne 0 ]; then
-+    fail "Filtered out task has events"
-+fi
-+
-+cnt=`count_no_pid $mypid`
-+if [ $cnt -eq 0 ]; then
-+    fail "No other events were recorded"
-+fi
-+
-+do_reset
-+
-+echo $mypid > set_event_notrace_pid
-+echo 1 > options/event-fork
-+
-+enable_events
-+
-+yield &
-+child=$!
-+echo "child = $child"
-+wait $child
-+
-+echo 0 > tracing_on
-+
-+cnt=`count_pid $mypid`
-+if [ $cnt -ne 0 ]; then
-+    fail "Filtered out task has events"
-+fi
-+
-+cnt=`count_pid $child`
-+if [ $cnt -ne 0 ]; then
-+    fail "Child of filtered out taskhas events"
-+fi
-+
-+cnt=`count_no_pid $mypid`
-+if [ $cnt -eq 0 ]; then
-+    fail "No other events were recorded"
-+fi
-+
-+do_reset
-+
-+exit 0
+   display-graph
+ 	When set, the latency tracers (irqsoff, wakeup, etc) will
+ 	use function graph tracing instead of function tracing.
 -- 
 2.25.1
 
