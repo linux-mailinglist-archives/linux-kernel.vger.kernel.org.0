@@ -2,382 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12532196C3A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 11:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00AE6196C43
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 11:56:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbgC2JsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 05:48:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727791AbgC2JsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 05:48:16 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA9DE20675;
-        Sun, 29 Mar 2020 09:48:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585475295;
-        bh=GkFELvORyF0M6b2rBZQLJy86YfPwmXvnBQAwczK16VM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GiStZpBbREOvscqidD1tqstDxHfpVwKJx5y854DAaiJPTDUq0lAD6yAFPczz4r1uR
-         SoqwQaDY0tPaEJ4L7JUsOLgbr5QtqZMJt8vp9mlgO6jOqpYHokdNZHmFAmrbDFfvJd
-         K/U5jTgreP02MLrF7en74i45lMAwf+sQ2HSbiWWI=
-Date:   Sun, 29 Mar 2020 10:48:11 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Artur Rojek <contact@artur-rojek.eu>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Heiko Stuebner <heiko@sntech.de>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/5] input: joystick: Add ADC attached joystick
- driver.
-Message-ID: <20200329104811.5c3daafc@archlinux>
-In-Reply-To: <20200324112336.29755-5-contact@artur-rojek.eu>
-References: <20200324112336.29755-1-contact@artur-rojek.eu>
-        <20200324112336.29755-5-contact@artur-rojek.eu>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727910AbgC2Jz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 05:55:59 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:52895 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbgC2Jz6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 05:55:58 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200329095555euoutp01164243b337835a9640e49d83ece273e4~AvcyrZx4X2544025440euoutp01V
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 09:55:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200329095555euoutp01164243b337835a9640e49d83ece273e4~AvcyrZx4X2544025440euoutp01V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1585475755;
+        bh=ZE/8RPCzXsNKOub72kPPybyFco+1U8wUJ08oc7Pxotc=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=bWBcgspMolpapA2FIPkBywqcySqyokj9lx2m1Ya71GO8I80yNVv2lvjwmS9CZaew5
+         MQ9THwdjlTaLsP3iFEVWwjisXhlS/Y5+QYyOTDzs4Gn5pX3SUvD2AsaSGqQAjWDGHB
+         9Hm2oOEFFqdaKlMtFZAiZHS0wKKTD2I2Vqz2EzLw=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200329095555eucas1p2b56dc2cdb4c4e2a30541b88a186b6f5a~AvcyRlgA82895928959eucas1p21;
+        Sun, 29 Mar 2020 09:55:55 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id C2.1A.60698.AA0708E5; Sun, 29
+        Mar 2020 10:55:55 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200329095554eucas1p2153edb2d11e85bb092aea8562a9357d5~AvcxlcMzH1913719137eucas1p2F;
+        Sun, 29 Mar 2020 09:55:54 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200329095554eusmtrp14d379a191ac3af5df37b5a5e6c8ed976~AvcxkwYM82129621296eusmtrp14;
+        Sun, 29 Mar 2020 09:55:54 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-6b-5e8070aa4035
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 7A.A2.08375.AA0708E5; Sun, 29
+        Mar 2020 10:55:54 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200329095553eusmtip2904d1afdb45fd775b0d195520eb39bae~Avcwz3tQu0515205152eusmtip2U;
+        Sun, 29 Mar 2020 09:55:53 +0000 (GMT)
+Subject: Re: [PATCH v2] drm/prime: fix extracting of the DMA addresses from
+ a scatterlist
+To:     "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Shane Francis <bigbeeshane@gmail.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <8a09916d-5413-f9a8-bafa-2d8f0b8f892f@samsung.com>
+Date:   Sun, 29 Mar 2020 11:55:45 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <14063C7AD467DE4B82DEDB5C278E8663FFFBFCE1@fmsmsx107.amr.corp.intel.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfyyUcRzH+z7Pc889TqfH0XymUl1pY0uMrWdlytbaU39UVv+Eri6e0eLY
+        naOrtsiPuJRkQ5eF2tCVMxzyIxuaI0VS+iWia/Irs8OWUN09/fDf5/39vD7vz+e9fSlcYha4
+        UmcUcZxSIY+SkiKitv17z/YHsYky74lSxFzr7sSY3IFGAVOZXyFgkuqvY8zP2myceTU3TTJ9
+        DQUkk9/TjDHFMzUE86LOk0nLKBEwRZUjiDFOZgv2itnUl0sk+3i+iGDrdR+F7L2mMYyt0meQ
+        bN38JwF7pzOIHbpqwtjrRj1iq7susJYqtyP2wSL/cC7qTDyn3BFwShRpWRokYi1bz9Vo27BE
+        dN9NiygKaD8o7knQIhElocsQFLZMCnkxi+DJQjLBCwuCpucVpBbZ2SZyk1JxvlGK4M2SFuPF
+        NALDazNmpZzoEBhYMBDW2plOxmA485AVwulMHEZLBnFrg6R9QDultdmK6QDQpRTYBgjaHSxL
+        1kPsqLV0KPS2ZQl4xhE6b5ltjB19DNqHDDYGpzdC3VQBztcu8N5caLsI6AwKjCWDGJ90H1zL
+        2sFHcIJxk1HI1+uhKyeT4PlkBMPd5UJeZCLou5yPeGo3DHQvkFYjnPaAioY/RoFQ2TtD8v4O
+        8HbKkb/BAW7W5uH8sxjS0yQ8vQ10JsO/tS0vXuI3kFS3IpluRRrdijS6/3uLEKFHLpxaFR3B
+        qXwVXIKXSh6tUisivMJioqvQ77/XtWyae4SaF0+3IppC0tVib80lmUQgj1dpolsRULjUWUwe
+        TpRJxOFyzXlOGXNSqY7iVK1oHUVIXcS+d8dOSOgIeRx3luNiOeXfLkbZuSaitI5G+HBr1xd9
+        SNCaSM3Eu2ANGsPjNs+6u29oGq9OWf3ZmOUcFqNduHd7s8OzUaeaUO+nfdzhavXOEX/S45vX
+        w+PfUuzD/cSyXjJn/4y6f0/U16yOKxe7k/aUHWjY5HkjfWJ/unC+YzrQeWQ5L/XCj1VNWxaV
+        XeXB/e6TR4MUB3VJUkIVKffxxJUq+S+w4yurdwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJIsWRmVeSWpSXmKPExsVy+t/xe7qrChriDH40iVj0njvJZDHtzm5W
+        i40z1rNaNO7sY7L4v20is8WVr+/ZLC7vmsNmMeP8PiaLhR+3slhc2K5l0da5jNViwcZHjBZb
+        3kxkdeD1aL30l81j77cFLB47Z91l91i85yWTx6ZVnWwe2789YPWYdzLQ4373cSaPvi2rGD02
+        n672+LxJLoA7Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1
+        SN8uQS/j8997LAWfVSq2dh1mamBcKdfFyMkhIWAiMa2xlbmLkYtDSGApo8SK922MEAkZiZPT
+        GlghbGGJP9e62CCK3jJKzDt6kgkkISwQLbFu20qwbhGBZiaJgy+6WEEcZoE+Zok39ycwQbTc
+        ZpTY1NoPNpdNwFCi6y3ILE4OXgE7iVktc1hAbBYBVYnPf9+wg9iiAjESP/d0sUDUCEqcnPkE
+        zOYUCJE4dn8dWA2zgJnEvM0PmSFseYntb+dA2eISt57MZ5rAKDQLSfssJC2zkLTMQtKygJFl
+        FaNIamlxbnpusaFecWJucWleul5yfu4mRmC0bzv2c/MOxksbgw8xCnAwKvHwGlTWxwmxJpYV
+        V+YeYpTgYFYS4WXzb4gT4k1JrKxKLcqPLyrNSS0+xGgK9NxEZinR5HxgIsoriTc0NTS3sDQ0
+        NzY3NrNQEuftEDgYIySQnliSmp2aWpBaBNPHxMEp1cDoHpG78GBamta32yVpmw1ePtp3KpbD
+        R73/wKfDTjm2GfXHc6KkJ0177yz2Qlqt9mPZ/p+yzr0xq06/Ke6vspY6ea59llbV55a9Au0M
+        bTsSDW0tVx8MmxHRvaTGQU5uR9a0P0fThdV239m9ptLakVm644jJ6SW3K88qLYhefXH5BgnT
+        Wvlfk72UWIozEg21mIuKEwErd8d6DAMAAA==
+X-CMS-MailID: 20200329095554eucas1p2153edb2d11e85bb092aea8562a9357d5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200327162330eucas1p1b0413e0e9887aa76d3048f86d2166dcd
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200327162330eucas1p1b0413e0e9887aa76d3048f86d2166dcd
+References: <CGME20200327162330eucas1p1b0413e0e9887aa76d3048f86d2166dcd@eucas1p1.samsung.com>
+        <20200327162126.29705-1-m.szyprowski@samsung.com>
+        <14063C7AD467DE4B82DEDB5C278E8663FFFBFCE1@fmsmsx107.amr.corp.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Mar 2020 12:23:36 +0100
-Artur Rojek <contact@artur-rojek.eu> wrote:
+Hi Michael,
 
-> Add a driver for joystick devices connected to ADC controllers
-> supporting the Industrial I/O subsystem.
->=20
-> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
-> Tested-by: Paul Cercueil <paul@crapouillou.net>
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+On 2020-03-27 19:31, Ruhl, Michael J wrote:
+>> -----Original Message-----
+>> From: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Sent: Friday, March 27, 2020 12:21 PM
+>> To: dri-devel@lists.freedesktop.org; linux-samsung-soc@vger.kernel.org;
+>> linux-kernel@vger.kernel.org
+>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>;
+>> stable@vger.kernel.org; Bartlomiej Zolnierkiewicz
+>> <b.zolnierkie@samsung.com>; Maarten Lankhorst
+>> <maarten.lankhorst@linux.intel.com>; Maxime Ripard
+>> <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>;
+>> David Airlie <airlied@linux.ie>; Daniel Vetter <daniel@ffwll.ch>; Alex Deucher
+>> <alexander.deucher@amd.com>; Shane Francis <bigbeeshane@gmail.com>;
+>> Ruhl, Michael J <michael.j.ruhl@intel.com>
+>> Subject: [PATCH v2] drm/prime: fix extracting of the DMA addresses from a
+>> scatterlist
+>>
+>> Scatterlist elements contains both pages and DMA addresses, but one
+>> should not assume 1:1 relation between them. The sg->length is the size
+>> of the physical memory chunk described by the sg->page, while
+>> sg_dma_len(sg) is the size of the DMA (IO virtual) chunk described by
+>> the sg_dma_address(sg).
+>>
+>> The proper way of extracting both: pages and DMA addresses of the whole
+>> buffer described by a scatterlist it to iterate independently over the
+>> sg->pages/sg->length and sg_dma_address(sg)/sg_dma_len(sg) entries.
+>>
+>> Fixes: 42e67b479eab ("drm/prime: use dma length macro when mapping sg")
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+>> ---
+>> drivers/gpu/drm/drm_prime.c | 37 +++++++++++++++++++++++++-----------
+>> -
+>> 1 file changed, 25 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+>> index 1de2cde2277c..282774e469ac 100644
+>> --- a/drivers/gpu/drm/drm_prime.c
+>> +++ b/drivers/gpu/drm/drm_prime.c
+>> @@ -962,27 +962,40 @@ int drm_prime_sg_to_page_addr_arrays(struct
+>> sg_table *sgt, struct page **pages,
+>> 	unsigned count;
+>> 	struct scatterlist *sg;
+>> 	struct page *page;
+>> -	u32 len, index;
+>> +	u32 page_len, page_index;
+>> 	dma_addr_t addr;
+>> +	u32 dma_len, dma_index;
+>>
+>> -	index = 0;
+>> +	/*
+>> +	 * Scatterlist elements contains both pages and DMA addresses, but
+>> +	 * one shoud not assume 1:1 relation between them. The sg->length
+>> is
+>> +	 * the size of the physical memory chunk described by the sg->page,
+>> +	 * while sg_dma_len(sg) is the size of the DMA (IO virtual) chunk
+>> +	 * described by the sg_dma_address(sg).
+>> +	 */
+> Is there an example of what the scatterlist would look like in this case?
 
-Whole series looks good to me. So now or the question of how to take
-it (if I've forgotten us already having this conversation please remind
-me!)
+DMA framework or IOMMU is allowed to join consecutive chunks while 
+mapping if such operation is supported by the hw. Here is the example:
 
-=46rom an IIO point of view we've missed the coming merge window.
+Lets assume that we have a scatterlist with 4 4KiB pages of the physical 
+addresses: 0x12000000, 0x13011000, 0x13012000, 0x11011000. The total 
+size of the buffer is 16KiB. After mapping this scatterlist to a device 
+behind an IOMMU it may end up as a contiguous buffer in the DMA (IOVA) 
+address space. at 0xf0010000. The scatterlist will look like this:
 
-I 'think' patches
-* 1-3 are IIO only and
-* 4-5 input only.
+sg[0].page = 0x12000000
+sg[0].len = 4096
+sg[0].dma_addr = 0xf0010000
+sg[0].dma_len = 16384
+sg[1].page = 0x13011000
+sg[1].len = 4096
+sg[1].dma_addr = 0
+sg[1].dma_len = 0
+sg[2].page = 0x13012000
+sg[2].len = 4096
+sg[2].dma_addr = 0
+sg[2].dma_len = 0
+sg[3].page = 0x11011000
+sg[3].len = 4096
+sg[3].dma_addr = 0
+sg[3].dma_len = 0
 
-It should be fine to either take them separately through the relevant
-trees.   Dmitry, would you prefer that or shall I do an immutable
-branch based on rc1 in a few weeks time?
+(I've intentionally wrote page as physical address to make it easier to 
+understand, in real SGs it is stored a struct page pointer).
 
-Jonathan
+> Does each SG entry always have the page and dma info? or could you have
+> entries that have page information only, and entries that have dma info only?
+When SG is not mapped yet it contains only the ->pages and ->len 
+entries. I'm not aware of the SGs with the DMA information only, but in 
+theory it might be possible to have such.
+> If the same entry has different size info (page_len = PAGE_SIZE,
+> dma_len = 4 * PAGE_SIZE?), are we guaranteed that the arrays (page and addrs) have
+> been sized correctly?
 
-> ---
->=20
->  v2: - sanity check supported channel format on probe,
->      - rename adc_joystick_disable to a more sensible adc_joystick_cleanu=
-p,=20
->      - enforce correct axis order by checking the `reg` property of
->        child nodes
->=20
->  v3-v5: no change
->=20
->  drivers/input/joystick/Kconfig        |  10 ++
->  drivers/input/joystick/Makefile       |   1 +
->  drivers/input/joystick/adc-joystick.c | 245 ++++++++++++++++++++++++++
->  3 files changed, 256 insertions(+)
->  create mode 100644 drivers/input/joystick/adc-joystick.c
->=20
-> diff --git a/drivers/input/joystick/Kconfig b/drivers/input/joystick/Kcon=
-fig
-> index 940b744639c7..efbc20ec5099 100644
-> --- a/drivers/input/joystick/Kconfig
-> +++ b/drivers/input/joystick/Kconfig
-> @@ -42,6 +42,16 @@ config JOYSTICK_A3D
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called a3d.
-> =20
-> +config JOYSTICK_ADC
-> +	tristate "Simple joystick connected over ADC"
-> +	depends on IIO
-> +	select IIO_BUFFER_CB
-> +	help
-> +	  Say Y here if you have a simple joystick connected over ADC.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called adc-joystick.
-> +
->  config JOYSTICK_ADI
->  	tristate "Logitech ADI digital joysticks and gamepads"
->  	select GAMEPORT
-> diff --git a/drivers/input/joystick/Makefile b/drivers/input/joystick/Mak=
-efile
-> index 8656023f6ef5..58232b3057d3 100644
-> --- a/drivers/input/joystick/Makefile
-> +++ b/drivers/input/joystick/Makefile
-> @@ -6,6 +6,7 @@
->  # Each configuration option enables a list of files.
-> =20
->  obj-$(CONFIG_JOYSTICK_A3D)		+=3D a3d.o
-> +obj-$(CONFIG_JOYSTICK_ADC)		+=3D adc-joystick.o
->  obj-$(CONFIG_JOYSTICK_ADI)		+=3D adi.o
->  obj-$(CONFIG_JOYSTICK_AMIGA)		+=3D amijoy.o
->  obj-$(CONFIG_JOYSTICK_AS5011)		+=3D as5011.o
-> diff --git a/drivers/input/joystick/adc-joystick.c b/drivers/input/joysti=
-ck/adc-joystick.c
-> new file mode 100644
-> index 000000000000..9cb9896da26e
-> --- /dev/null
-> +++ b/drivers/input/joystick/adc-joystick.c
-> @@ -0,0 +1,245 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Input driver for joysticks connected over ADC.
-> + * Copyright (c) 2019-2020 Artur Rojek <contact@artur-rojek.eu>
-> + */
-> +#include <linux/ctype.h>
-> +#include <linux/input.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/consumer.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +
-> +struct adc_joystick_axis {
-> +	u32 code;
-> +	s32 range[2];
-> +	s32 fuzz;
-> +	s32 flat;
-> +};
-> +
-> +struct adc_joystick {
-> +	struct input_dev *input;
-> +	struct iio_cb_buffer *buffer;
-> +	struct adc_joystick_axis *axes;
-> +	struct iio_channel *chans;
-> +	int num_chans;
-> +};
-> +
-> +static int adc_joystick_handle(const void *data, void *private)
-> +{
-> +	struct adc_joystick *joy =3D private;
-> +	enum iio_endian endianness;
-> +	int bytes, msb, val, i;
-> +	bool sign;
-> +
-> +	bytes =3D joy->chans[0].channel->scan_type.storagebits >> 3;
-> +
-> +	for (i =3D 0; i < joy->num_chans; ++i) {
-> +		endianness =3D joy->chans[i].channel->scan_type.endianness;
-> +		msb =3D joy->chans[i].channel->scan_type.realbits - 1;
-> +		sign =3D (tolower(joy->chans[i].channel->scan_type.sign) =3D=3D 's');
-> +
-> +		switch (bytes) {
-> +		case 1:
-> +			val =3D ((const u8 *)data)[i];
-> +			break;
-> +		case 2:
-> +			val =3D ((const u16 *)data)[i];
-> +			if (endianness =3D=3D IIO_BE)
-> +				val =3D be16_to_cpu(val);
-> +			else if (endianness =3D=3D IIO_LE)
-> +				val =3D le16_to_cpu(val);
-> +			break;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +
-> +		val >>=3D joy->chans[i].channel->scan_type.shift;
-> +		if (sign)
-> +			val =3D sign_extend32(val, msb);
-> +		else
-> +			val &=3D GENMASK(msb, 0);
-> +		input_report_abs(joy->input, joy->axes[i].code, val);
-> +	}
-> +
-> +	input_sync(joy->input);
-> +
-> +	return 0;
-> +}
-> +
-> +static int adc_joystick_open(struct input_dev *dev)
-> +{
-> +	struct adc_joystick *joy =3D input_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret =3D iio_channel_start_all_cb(joy->buffer);
-> +	if (ret)
-> +		dev_err(dev->dev.parent, "Unable to start callback buffer");
-> +
-> +	return ret;
-> +}
-> +
-> +static void adc_joystick_close(struct input_dev *dev)
-> +{
-> +	struct adc_joystick *joy =3D input_get_drvdata(dev);
-> +
-> +	iio_channel_stop_all_cb(joy->buffer);
-> +}
-> +
-> +static void adc_joystick_cleanup(void *data)
-> +{
-> +	iio_channel_release_all_cb(data);
-> +}
-> +
-> +static int adc_joystick_set_axes(struct device *dev, struct adc_joystick=
- *joy)
-> +{
-> +	struct adc_joystick_axis *axes;
-> +	struct fwnode_handle *child;
-> +	int num_axes, ret, i;
-> +
-> +	num_axes =3D device_get_child_node_count(dev);
-> +	if (!num_axes) {
-> +		dev_err(dev, "Unable to find child nodes");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (num_axes !=3D joy->num_chans) {
-> +		dev_err(dev, "Got %d child nodes for %d channels",
-> +			num_axes, joy->num_chans);
-> +		return -EINVAL;
-> +	}
-> +
-> +	axes =3D devm_kmalloc_array(dev, num_axes, sizeof(*axes), GFP_KERNEL);
-> +	if (!axes)
-> +		return -ENOMEM;
-> +
-> +	device_for_each_child_node(dev, child) {
-> +		ret =3D fwnode_property_read_u32(child, "reg", &i);
-> +		if (ret || i >=3D num_axes) {
-> +			dev_err(dev, "reg invalid or missing");
-> +			goto err;
-> +		}
-> +
-> +		if (fwnode_property_read_u32(child, "linux,code",
-> +					     &axes[i].code)) {
-> +			dev_err(dev, "linux,code invalid or missing");
-> +			goto err;
-> +		}
-> +
-> +		if (fwnode_property_read_u32_array(child, "abs-range",
-> +						   axes[i].range, 2)) {
-> +			dev_err(dev, "abs-range invalid or missing");
-> +			goto err;
-> +		}
-> +
-> +		fwnode_property_read_u32(child, "abs-fuzz",
-> +					 &axes[i].fuzz);
-> +		fwnode_property_read_u32(child, "abs-flat",
-> +					 &axes[i].flat);
-> +
-> +		input_set_abs_params(joy->input, axes[i].code,
-> +				     axes[i].range[0], axes[i].range[1],
-> +				     axes[i].fuzz,
-> +				     axes[i].flat);
-> +		input_set_capability(joy->input, EV_ABS, axes[i].code);
-> +	}
-> +
-> +	joy->axes =3D axes;
-> +
-> +	return 0;
-> +
-> +err:
-> +	fwnode_handle_put(child);
-> +	return -EINVAL;
-> +}
-> +
-> +static int adc_joystick_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct adc_joystick *joy;
-> +	struct input_dev *input;
-> +	int bits, ret, i;
-> +
-> +	joy =3D devm_kzalloc(dev, sizeof(*joy), GFP_KERNEL);
-> +	if (!joy)
-> +		return -ENOMEM;
-> +
-> +	joy->chans =3D devm_iio_channel_get_all(dev);
-> +	if (IS_ERR(joy->chans)) {
-> +		ret =3D PTR_ERR(joy->chans);
-> +		if (ret !=3D -EPROBE_DEFER)
-> +			dev_err(dev, "Unable to get IIO channels");
-> +		return ret;
-> +	}
-> +
-> +	/* Count how many channels we got. NULL terminated. */
-> +	while (joy->chans[joy->num_chans].indio_dev)
-> +		joy->num_chans++;
-> +
-> +	bits =3D joy->chans[0].channel->scan_type.storagebits;
-> +	if (!bits || (bits >> 3) > 2) {
-> +		dev_err(dev, "Unsupported channel storage size");
-> +		return -EINVAL;
-> +	}
-> +	for (i =3D 1; i < joy->num_chans; ++i)
-> +		if (joy->chans[i].channel->scan_type.storagebits !=3D bits) {
-> +			dev_err(dev, "Channels must have equal storage size");
-> +			return -EINVAL;
-> +		}
-> +
-> +	input =3D devm_input_allocate_device(dev);
-> +	if (!input) {
-> +		dev_err(dev, "Unable to allocate input device");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	joy->input =3D input;
-> +	input->name =3D pdev->name;
-> +	input->id.bustype =3D BUS_HOST;
-> +	input->open =3D adc_joystick_open;
-> +	input->close =3D adc_joystick_close;
-> +
-> +	ret =3D adc_joystick_set_axes(dev, joy);
-> +	if (ret)
-> +		return ret;
-> +
-> +	input_set_drvdata(input, joy);
-> +	ret =3D input_register_device(input);
-> +	if (ret) {
-> +		dev_err(dev, "Unable to register input device: %d", ret);
-> +		return ret;
-> +	}
-> +
-> +	joy->buffer =3D iio_channel_get_all_cb(dev, adc_joystick_handle, joy);
-> +	if (IS_ERR(joy->buffer)) {
-> +		dev_err(dev, "Unable to allocate callback buffer");
-> +		return PTR_ERR(joy->buffer);
-> +	}
-> +
-> +	ret =3D devm_add_action_or_reset(dev, adc_joystick_cleanup, joy->buffer=
-);
-> +	if (ret)
-> +		dev_err(dev, "Unable to add action");
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id adc_joystick_of_match[] =3D {
-> +	{ .compatible =3D "adc-joystick", },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, adc_joystick_of_match);
-> +
-> +static struct platform_driver adc_joystick_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "adc-joystick",
-> +		.of_match_table =3D of_match_ptr(adc_joystick_of_match),
-> +	},
-> +	.probe =3D adc_joystick_probe,
-> +};
-> +module_platform_driver(adc_joystick_driver);
-> +
-> +MODULE_DESCRIPTION("Input driver for joysticks connected over ADC");
-> +MODULE_AUTHOR("Artur Rojek <contact@artur-rojek.eu>");
-> +MODULE_LICENSE("GPL");
+There are always no more DMA related entries than the phys pages. If 
+there is 1:1 mapping between physical memory and DMA (IOVA) space, then 
+each SG entry will have len == dma_len, and dma_addr will be describing 
+the same as page entry. DMA mapping framework is allowed only to join 
+entries while mapping to DMA (IOVA).
+
+> Just trying to get my head wrapped around this.
+
+Sure, I hope my explanation helps a bit.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
