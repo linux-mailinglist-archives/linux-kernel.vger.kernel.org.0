@@ -2,149 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 326C3196E02
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 16:58:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA09C196E06
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 17:00:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbgC2O6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 10:58:49 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:54948 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbgC2O6s (ORCPT
+        id S1728267AbgC2PA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 11:00:28 -0400
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:35263 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727888AbgC2PA1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 10:58:48 -0400
-Received: by mail-pj1-f66.google.com with SMTP id np9so6391292pjb.4;
-        Sun, 29 Mar 2020 07:58:47 -0700 (PDT)
+        Sun, 29 Mar 2020 11:00:27 -0400
+Received: by mail-qv1-f67.google.com with SMTP id q73so7588270qvq.2;
+        Sun, 29 Mar 2020 08:00:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8BcxV8pGWJr7R5GyeodoBfbjlgHj70bMVXWL1P/PRiA=;
-        b=c9/0eKER41JmgTmkyLd4o0N090jCq6vEQVUWvqTldbNa/noBczXdbXylNqfn+9GDH+
-         WGXuLdCTMG//pUS+UM8lEUR7MA5baNxvn2KWJWrJr06077S5i9dmGx2pU9iPCmlo4QhD
-         cfyv9CJ5k8xLLoLOtzWh+bDRd76EN+7xuXlvkJDBFjZUxcyr2C+wiy1FA4GLjFod2sTA
-         AXv3wdotCT3B5p6HfqEMT2hGMGIhEI9LcAOzL6NmVT9wX5P6aQW/lyoljBuQw70u8AdB
-         Elc0qoUk6G7T5WEE4P4HifwYr+DwOyjh+v/bDwiACJG52nZTYo4hEJ5UADrMe7UG8P4e
-         qelw==
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rGYXAWrsWIiLxM6vPsIDZ7Rl8wO5mf18IjFe9bRFrdY=;
+        b=l1WgTAtHA2qzsTMjg9bSRxPYSmVkj+ocQcmwqNeUWqzZT2PrDU2wmSkTOXNlk8pnSd
+         Ke7q89sT/A+PdbS//C2wAsaMuxtRZtlrDcy8IL4pNhieSbhK23liAHwCIhCZtvInOXnS
+         u3UqZr/0kItiLH3hsZdHySOupM06YTyY5KhWD/OHjdAufCynTaCvMhOHwgFxv84hroTa
+         9nKqcuSGBUXYSNZQkY/8FyLK6SbjbQjcyOCxdBiqBErl6VnKiQhm9uZibZA/VBzP28mJ
+         QZSlwbziG0QbzcDWqjM8FI7mzOBKdxqqFc061tjkiYsS38AUSYvSl1mbnwQ5qen9bfbO
+         itpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8BcxV8pGWJr7R5GyeodoBfbjlgHj70bMVXWL1P/PRiA=;
-        b=Y1qatms2Q/VnstzqYToiYIBzzn/gh8oFsPqvcpmPRwwM2UedwknmJimkPgs5O5Oh4s
-         2XY+oYm3/IybLS0KkbbWahVq7cSCHgDIG848X6MUM+xQIyF1BeozfVv+tdO5uKFQYpbN
-         q2RTykIQ57qujxX6I11wV9/HqAoA9zVv2MM7PCsGtU13edHGI1J1+jNj0GiMtIx3xGqR
-         rBVg7dGNTQ18nhZw7bbI4bdqJ7eXdr0eNt841rxZpe98wBSV1nyVsFvYrBy2zANCgv2i
-         n5wMoZi+SBpFcZXn948D3jRuJ5H/vwDjGdemVx2Ql1/9Zn63jBLdEVeCXQPRRek4QRRt
-         nnpQ==
-X-Gm-Message-State: AGi0PuZFuRO+w11HOBZG/IfywQuJbDkSghEqY38dPhyhEUxIRV79JRb+
-        E23XKGH5kKmVIpMHRNh0MNakrlLL
-X-Google-Smtp-Source: APiQypJeUUa8fwtqNZ7WFemPga2cu7l9NOhSfiE3izJjKXKkOQ1zmtu+VGTFwmE2NCLNG6icNn1Bwg==
-X-Received: by 2002:a17:90a:be18:: with SMTP id a24mr3578860pjs.92.1585493927244;
-        Sun, 29 Mar 2020 07:58:47 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id j65sm7883215pgc.16.2020.03.29.07.58.43
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rGYXAWrsWIiLxM6vPsIDZ7Rl8wO5mf18IjFe9bRFrdY=;
+        b=l/tN06zE6P6TJY+08nTpTmK8Z0+IaTnoP7acsMvv0gEV8WXeBOSmC35j5TUb/aZkxQ
+         BXKgJECvglVl0/CRYWQRc+JgI03Df6IHocMdlBAymrZ8rzqlM5Ub2+XZ3pa6oc0LWAH8
+         USdD88Ih/8ns0+PlOmRfMmiaVU5jsnw2FotEHpKX7D/5i2NdM06+Gy0olz7aHm75zUlT
+         AG9hn2s+eR9URJJ4hiZIcMxox0h2KxXWuOOPabVQW16xCz8tDtS4YdZnQRJczyeBHE1Y
+         L2fHDBqBRuccE9sHHNAW4iboRuc00YS2drF28dLVKkPW3zll8P7ycq/EN5sch5GfV8d6
+         0fvA==
+X-Gm-Message-State: ANhLgQ3DTYgKdeeiqSQO7Xru163OtyPnXyNQ0l2RHsvQVQ8oWhRF6yB1
+        mSzwHYmiBaTZFu+RdweYR2I=
+X-Google-Smtp-Source: ADFU+vtYT62GFNGeoVetw+nZmaRphF0bJ+n5GbMC9MYWFGp7A0ljCgjR4ff4KGTtPm64IJAKsM79Iw==
+X-Received: by 2002:ad4:4364:: with SMTP id u4mr7593136qvt.58.1585494026561;
+        Sun, 29 Mar 2020 08:00:26 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id l62sm5281385qte.52.2020.03.29.08.00.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Mar 2020 07:58:46 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH v4] video: fbdev: vesafb: add missed release_region
-Date:   Sun, 29 Mar 2020 22:58:39 +0800
-Message-Id: <20200329145839.20076-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.26.0
+        Sun, 29 Mar 2020 08:00:26 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Sun, 29 Mar 2020 11:00:24 -0400
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-mm@kvack.org, Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Guilherme G . Piccoli" <gpiccoli@canonical.com>
+Subject: Re: [RFC v2 2/2] kernel/sysctl: support handling command line aliases
+Message-ID: <20200329150022.GA823603@rani.riverdale.lan>
+References: <20200325120345.12946-1-vbabka@suse.cz>
+ <20200325120345.12946-2-vbabka@suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200325120345.12946-2-vbabka@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver forgets to free the I/O region in remove and probe
-failure.
-Add the missed calls to fix it.
+On Wed, Mar 25, 2020 at 01:03:45PM +0100, Vlastimil Babka wrote:
+> We can now handle sysctl parameters on kernel command line, but historically
+> some parameters introduced their own command line equivalent, which we don't
+> want to remove for compatibility reasons. We can however convert them to the
+> generic infrastructure with a table translating the legacy command line
+> parameters to their sysctl names, and removing the one-off param handlers.
+> 
+> This patch adds the support and makes the first conversion to demonstrate it,
+> on the (deprecated) numa_zonelist_order parameter.
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  kernel/sysctl.c | 39 +++++++++++++++++++++++++++++++++++----
+>  mm/page_alloc.c |  9 ---------
+>  2 files changed, 35 insertions(+), 13 deletions(-)
+> 
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 18c7f5606d55..fd72853396f9 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -1971,6 +1971,22 @@ static struct ctl_table dev_table[] = {
+>  	{ }
+>  };
+>  
+> +struct sysctl_alias {
+> +	char *kernel_param;
+> +	char *sysctl_param;
+> +};
+> +
+> +/*
+> + * Historically some settings had both sysctl and a command line parameter.
+> + * With the generic sysctl. parameter support, we can handle them at a single
+> + * place and only keep the historical name for compatibility. This is not meant
+> + * to add brand new aliases.
+> + */
+> +static struct sysctl_alias sysctl_aliases[] = {
+> +	{"numa_zonelist_order",		"vm.numa_zonelist_order" },
+> +	{ }
+> +};
+> +
+>  int __init sysctl_init(void)
+>  {
+>  	struct ctl_table_header *hdr;
+> @@ -1980,6 +1996,18 @@ int __init sysctl_init(void)
+>  	return 0;
+>  }
+>  
+> +char *sysctl_find_alias(char *param)
 
-Since the success of request_region() is optional, add the "region" field
-in vesafb_par to represent whether request_region() succeeds.
-Then only call release_region() when "region" is not null.
+This function should probably be declared static?
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
-Changes in v4:
-  - Add a field in vesafb_par to represent whether request_region() succeeds.
-  - Only call release_region() when request_region() succeeds.
-  - Adjust the order in the error handler of probe.
-  - Modify commit message.
-
- drivers/video/fbdev/vesafb.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/video/fbdev/vesafb.c b/drivers/video/fbdev/vesafb.c
-index a1fe24ea869b..df6de5a9dd4c 100644
---- a/drivers/video/fbdev/vesafb.c
-+++ b/drivers/video/fbdev/vesafb.c
-@@ -32,6 +32,7 @@
- struct vesafb_par {
- 	u32 pseudo_palette[256];
- 	int wc_cookie;
-+	struct resource *region;
- };
- 
- static struct fb_var_screeninfo vesafb_defined = {
-@@ -411,7 +412,7 @@ static int vesafb_probe(struct platform_device *dev)
- 
- 	/* request failure does not faze us, as vgacon probably has this
- 	 * region already (FIXME) */
--	request_region(0x3c0, 32, "vesafb");
-+	par->region = request_region(0x3c0, 32, "vesafb");
- 
- 	if (mtrr == 3) {
- 		unsigned int temp_size = size_total;
-@@ -439,7 +440,7 @@ static int vesafb_probe(struct platform_device *dev)
- 		       "vesafb: abort, cannot ioremap video memory 0x%x @ 0x%lx\n",
- 			vesafb_fix.smem_len, vesafb_fix.smem_start);
- 		err = -EIO;
--		goto err;
-+		goto err_release_region;
- 	}
- 
- 	printk(KERN_INFO "vesafb: framebuffer at 0x%lx, mapped to 0x%p, "
-@@ -458,19 +459,22 @@ static int vesafb_probe(struct platform_device *dev)
- 
- 	if (fb_alloc_cmap(&info->cmap, 256, 0) < 0) {
- 		err = -ENOMEM;
--		goto err;
-+		goto err_release_region;
- 	}
- 	if (register_framebuffer(info)<0) {
- 		err = -EINVAL;
- 		fb_dealloc_cmap(&info->cmap);
--		goto err;
-+		goto err_release_region;
- 	}
- 	fb_info(info, "%s frame buffer device\n", info->fix.id);
- 	return 0;
--err:
-+err_release_region:
- 	arch_phys_wc_del(par->wc_cookie);
- 	if (info->screen_base)
- 		iounmap(info->screen_base);
-+	if (par->region)
-+		release_region(0x3c0, 32);
-+err:
- 	framebuffer_release(info);
- 	release_mem_region(vesafb_fix.smem_start, size_total);
- 	return err;
-@@ -481,6 +485,8 @@ static int vesafb_remove(struct platform_device *pdev)
- 	struct fb_info *info = platform_get_drvdata(pdev);
- 
- 	unregister_framebuffer(info);
-+	if (((struct vesafb_par *)(info->par))->region)
-+		release_region(0x3c0, 32);
- 	framebuffer_release(info);
- 
- 	return 0;
--- 
-2.26.0
-
+> +{
+> +	struct sysctl_alias *alias;
+> +
+> +	for (alias = &sysctl_aliases[0]; alias->kernel_param != NULL; alias++) {
+> +		if (strcmp(alias->kernel_param, param) == 0)
+> +			return alias->sysctl_param;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+>  /* Set sysctl value passed on kernel command line. */
+>  int process_sysctl_arg(char *param, char *val,
+>  			       const char *unused, void *arg)
+> @@ -1990,10 +2018,13 @@ int process_sysctl_arg(char *param, char *val,
+>  	loff_t ppos = 0;
+>  	struct ctl_table *ctl, *found = NULL;
+>  
+> -	if (strncmp(param, "sysctl.", sizeof("sysctl.") - 1))
+> -		return 0;
+> -
+> -	param += sizeof("sysctl.") - 1;
+> +	if (strncmp(param, "sysctl.", sizeof("sysctl.") - 1) == 0) {
+> +		param += sizeof("sysctl.") - 1;
+> +	} else {
+> +		param = sysctl_find_alias(param);
+> +		if (!param)
+> +			return 0;
+> +	}
+>  
+>  	remaining = param;
+>  	ctl = &sysctl_base_table[0];
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 3c4eb750a199..de7a134b1b8a 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5460,15 +5460,6 @@ static int __parse_numa_zonelist_order(char *s)
+>  	return 0;
+>  }
+>  
+> -static __init int setup_numa_zonelist_order(char *s)
+> -{
+> -	if (!s)
+> -		return 0;
+> -
+> -	return __parse_numa_zonelist_order(s);
+> -}
+> -early_param("numa_zonelist_order", setup_numa_zonelist_order);
+> -
+>  char numa_zonelist_order[] = "Node";
+>  
+>  /*
+> -- 
+> 2.25.1
+> 
