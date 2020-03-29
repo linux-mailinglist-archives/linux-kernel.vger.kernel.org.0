@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 600E2196FEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:26:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57BEC197013
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 22:27:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728884AbgC2U01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 16:26:27 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56978 "EHLO
+        id S1729092AbgC2U13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 16:27:29 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57007 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728851AbgC2U0V (ORCPT
+        with ESMTP id S1728871AbgC2U00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 16:26:21 -0400
+        Sun, 29 Mar 2020 16:26:26 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1jIeVd-0001PC-Ey; Sun, 29 Mar 2020 22:26:17 +0200
+        id 1jIeVh-0001Q0-2b; Sun, 29 Mar 2020 22:26:21 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9EA7C1C0451;
-        Sun, 29 Mar 2020 22:26:14 +0200 (CEST)
-Date:   Sun, 29 Mar 2020 20:26:14 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id ACB6F1C070D;
+        Sun, 29 Mar 2020 22:26:15 +0200 (CEST)
+Date:   Sun, 29 Mar 2020 20:26:15 -0000
 From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/gic-v4.1: Map the ITS SGIR register page
+Subject: [tip: irq/core] irqchip/gic-v4.1: Ensure mutual exclusion betwen
+ invalidations on the same RD
 Cc:     Marc Zyngier <maz@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>,
         Eric Auger <eric.auger@redhat.com>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200304203330.4967-8-maz@kernel.org>
-References: <20200304203330.4967-8-maz@kernel.org>
+In-Reply-To: <20200304203330.4967-6-maz@kernel.org>
+References: <20200304203330.4967-6-maz@kernel.org>
 MIME-Version: 1.0
-Message-ID: <158551357426.28353.16186198164469455766.tip-bot2@tip-bot2>
+Message-ID: <158551357529.28353.6897448857798291173.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,83 +48,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     5e46a48413a6660955de7e56f9f364f2b890381c
-Gitweb:        https://git.kernel.org/tip/5e46a48413a6660955de7e56f9f364f2b890381c
+Commit-ID:     9058a4e980648e7d068a7f7726a8ea4c67d0e88a
+Gitweb:        https://git.kernel.org/tip/9058a4e980648e7d068a7f7726a8ea4c67d0e88a
 Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Wed, 04 Mar 2020 20:33:14 
+AuthorDate:    Wed, 04 Mar 2020 20:33:12 
 Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Fri, 20 Mar 2020 17:48:38 
+CommitterDate: Fri, 20 Mar 2020 17:48:21 
 
-irqchip/gic-v4.1: Map the ITS SGIR register page
+irqchip/gic-v4.1: Ensure mutual exclusion betwen invalidations on the same RD
 
-One of the new features of GICv4.1 is to allow virtual SGIs to be
-directly signaled to a VPE. For that, the ITS has grown a new
-64kB page containing only a single register that is used to
-signal a SGI to a given VPE.
+The GICv4.1 spec says that it is CONTRAINED UNPREDICTABLE to write to
+any of the GICR_INV{LPI,ALL}R registers if GICR_SYNCR.Busy == 1.
 
-Add a second mapping covering this new 64kB range, and take this
-opportunity to limit the original mapping to 64kB, which is enough
-to cover the span of the ITS registers.
+To deal with it, we must ensure that only a single invalidation can
+happen at a time for a given redistributor. Add a per-RD lock to that
+effect and take it around the invalidation/syncr-read to deal with this.
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
 Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Link: https://lore.kernel.org/r/20200304203330.4967-8-maz@kernel.org
+Link: https://lore.kernel.org/r/20200304203330.4967-6-maz@kernel.org
 ---
- drivers/irqchip/irq-gic-v3-its.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c   | 6 ++++++
+ drivers/irqchip/irq-gic-v3.c       | 1 +
+ include/linux/irqchip/arm-gic-v3.h | 1 +
+ 3 files changed, 8 insertions(+)
 
 diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index bcc1a09..54d6fdf 100644
+index c843702..fc57885 100644
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -96,6 +96,7 @@ struct its_node {
- 	struct mutex		dev_alloc_lock;
- 	struct list_head	entry;
- 	void __iomem		*base;
-+	void __iomem		*sgir_base;
- 	phys_addr_t		phys_base;
- 	struct its_cmd_block	*cmd_base;
- 	struct its_cmd_block	*cmd_write;
-@@ -4456,7 +4457,7 @@ static int __init its_probe_one(struct resource *res,
- 	struct page *page;
- 	int err;
+@@ -1373,10 +1373,12 @@ static void direct_lpi_inv(struct irq_data *d)
  
--	its_base = ioremap(res->start, resource_size(res));
-+	its_base = ioremap(res->start, SZ_64K);
- 	if (!its_base) {
- 		pr_warn("ITS@%pa: Unable to map ITS registers\n", &res->start);
- 		return -ENOMEM;
-@@ -4507,6 +4508,13 @@ static int __init its_probe_one(struct resource *res,
+ 	/* Target the redistributor this LPI is currently routed to */
+ 	cpu = irq_to_cpuid_lock(d, &flags);
++	raw_spin_lock(&gic_data_rdist_cpu(cpu)->rd_lock);
+ 	rdbase = per_cpu_ptr(gic_rdists->rdist, cpu)->rd_base;
+ 	gic_write_lpir(val, rdbase + GICR_INVLPIR);
  
- 		if (is_v4_1(its)) {
- 			u32 svpet = FIELD_GET(GITS_TYPER_SVPET, typer);
-+
-+			its->sgir_base = ioremap(res->start + SZ_128K, SZ_64K);
-+			if (!its->sgir_base) {
-+				err = -ENOMEM;
-+				goto out_free_its;
-+			}
-+
- 			its->mpidr = readl_relaxed(its_base + GITS_MPIDR);
+ 	wait_for_syncr(rdbase);
++	raw_spin_unlock(&gic_data_rdist_cpu(cpu)->rd_lock);
+ 	irq_to_cpuid_unlock(d, flags);
+ }
  
- 			pr_info("ITS@%pa: Using GICv4.1 mode %08x %08x\n",
-@@ -4520,7 +4528,7 @@ static int __init its_probe_one(struct resource *res,
- 				get_order(ITS_CMD_QUEUE_SZ));
- 	if (!page) {
- 		err = -ENOMEM;
--		goto out_free_its;
-+		goto out_unmap_sgir;
+@@ -3662,9 +3664,11 @@ static void its_vpe_send_inv(struct irq_data *d)
+ 		void __iomem *rdbase;
+ 
+ 		/* Target the redistributor this VPE is currently known on */
++		raw_spin_lock(&gic_data_rdist_cpu(vpe->col_idx)->rd_lock);
+ 		rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
+ 		gic_write_lpir(d->parent_data->hwirq, rdbase + GICR_INVLPIR);
+ 		wait_for_syncr(rdbase);
++		raw_spin_unlock(&gic_data_rdist_cpu(vpe->col_idx)->rd_lock);
+ 	} else {
+ 		its_vpe_send_cmd(vpe, its_send_inv);
  	}
- 	its->cmd_base = (void *)page_address(page);
- 	its->cmd_write = its->cmd_base;
-@@ -4587,6 +4595,9 @@ out_free_tables:
- 	its_free_tables(its);
- out_free_cmd:
- 	free_pages((unsigned long)its->cmd_base, get_order(ITS_CMD_QUEUE_SZ));
-+out_unmap_sgir:
-+	if (its->sgir_base)
-+		iounmap(its->sgir_base);
- out_free_its:
- 	kfree(its);
- out_unmap:
+@@ -3825,10 +3829,12 @@ static void its_vpe_4_1_invall(struct its_vpe *vpe)
+ 	val |= FIELD_PREP(GICR_INVALLR_VPEID, vpe->vpe_id);
+ 
+ 	/* Target the redistributor this vPE is currently known on */
++	raw_spin_lock(&gic_data_rdist_cpu(vpe->col_idx)->rd_lock);
+ 	rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
+ 	gic_write_lpir(val, rdbase + GICR_INVALLR);
+ 
+ 	wait_for_syncr(rdbase);
++	raw_spin_unlock(&gic_data_rdist_cpu(vpe->col_idx)->rd_lock);
+ }
+ 
+ static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index b6b0f86..0f716c2 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -834,6 +834,7 @@ static int __gic_populate_rdist(struct redist_region *region, void __iomem *ptr)
+ 	typer = gic_read_typer(ptr + GICR_TYPER);
+ 	if ((typer >> 32) == aff) {
+ 		u64 offset = ptr - region->redist_base;
++		raw_spin_lock_init(&gic_data_rdist()->rd_lock);
+ 		gic_data_rdist_rd_base() = ptr;
+ 		gic_data_rdist()->phys_base = region->phys_base + offset;
+ 
+diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+index c29a026..b28acfa 100644
+--- a/include/linux/irqchip/arm-gic-v3.h
++++ b/include/linux/irqchip/arm-gic-v3.h
+@@ -652,6 +652,7 @@
+ 
+ struct rdists {
+ 	struct {
++		raw_spinlock_t	rd_lock;
+ 		void __iomem	*rd_base;
+ 		struct page	*pend_page;
+ 		phys_addr_t	phys_base;
