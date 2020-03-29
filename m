@@ -2,56 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27A33196C74
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 12:33:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 111E7196C77
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 12:34:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbgC2Kdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 06:33:39 -0400
-Received: from sonic314-53.consmr.mail.ne1.yahoo.com ([66.163.189.179]:41741
-        "EHLO sonic314-53.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727869AbgC2Kdj (ORCPT
+        id S1727994AbgC2KeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 06:34:09 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37348 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727869AbgC2KeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 06:33:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1585478018; bh=VQV+To5S2gWVZyYzSF6aVVNoKJSf7fw7hH7Ff0SULss=; h=Date:From:Reply-To:Subject:References:From:Subject; b=EEWdadSBaRvl2gFX/o+RLRWGE9/hDlBU57DT0EXdA0RScN3pW0bYjuHokyN4sX8CsqofrJQr+9eKapmKSAAro+8PsNshy7Dicps0edOoRPFj4N0uuJDYi8bGqLo+c0i9ah7pz2Ll1jrvrNSgOFcYJceEm+E1KcoL4PEBSdE8FBi1wsxNdWKaR8BAAO7AJ5/lorhR8nRI8e5H+FiriH8HTiEyXVCegBcD0LlVkzWmPO1EvFn42mrIG3j/LlL9fLrcir8RkI17s1XvvsIfSlP655lFccVPAk8fR2rwZByk7X5rPeiLsykaU6LGFLkG5IXRa/UcXFknfUIG9lCSVf/5Wg==
-X-YMail-OSG: M5Rq1xgVM1kW93sZuoDFa9WUXAnb6H44dGFQCjbq7liEwRM3ppreDdgntWQD23l
- xM.C7w0mTVW1D0QTUXBBwtNDccDIjeez.owivp7AMKG.fJcHU1mD3k1L8NMREp.aAYgW8847bebW
- nltCahAJLwm8Izq2aY_Mkm2R3lGtUC_CVG9T1tDVGIxG6Nmpgx71A9.7w63gtb15AHy2Mm9baZkE
- sTEmNN7gSwtnBJS6CzsbZ3L2Q4PlvWUR64Qu65X3ouoRoILTuGAh54BarVnfyPp2pHMoA1RphwC5
- NiesDjTiie2Ka950dnDuW99R6NLhP9g0F24xI4amChMlxaie4FgRAXEqs4hqpqKkoCYmzkm.u6q_
- HldDb_ASftO_8C_BiL4OCkTWjt4Vi9aYsB_ZNvgLVY8h6Mb3.Wcfa1HlAQnAlhytfCcUbzL65XYj
- bYZCSVI3YuhNDcxz_hCk.ZNYml.Xl74g42XEHTdZskmxhL.wScFziC7pheDj5HYfR0X4MfcvIod1
- b0eFI3_7T3T4tRyYCRtfzNlmq7wCrmYxBX3zKYTHKCh8UqsJhUTsh3sVneC.Gy7aSiyhvIxyRC8L
- sVb2ttAnJbB2h3KnzhRSkoYgZYuZj_5KrjeiD03aFBAnL1qMMhWJ16SmehZ00brQVAH28f5w2x7X
- iqZEcElkTqB9lncj_XZAMAJgT5T6nSEZ.apy5UIJ6TidCw345QWRxEJyjw2IpZYC_3ECqkgLN8Z7
- IYn_psjOSdHn.MTVdjY7mug0UbT3xjMX8uHyQniCCNT4V4pKkUwAyNSumO1TlJwsPi.JhJ339.TX
- hZWpd92WvigOvNEG80_BoMYbCAaswssp.9l01tEPojcoZ8.sSHUWtYDZyYQe8uX4zhDUmHgQwIct
- f7rHjYFRLNBHq_plZ.8soINGrp3hXZQ2zAkEirAK0Jfse6JuSTFz.skMiGZaMjtloOYaWoONDUS7
- 8.12iBIU1LN1AXWnGhAnzxMzfqLuyq6i4TrymKWDYjy4eLtqpVQHfdOCftC7Eb.4052C8KVsnDXP
- pCvx.9C94ILt4eVECfCHFSn7tkyWczcCP_OwmuguMcCZIbo_bCNxN_x1DlTroC.ImLtjI4QsRfXp
- 2_ae_pcNbihRcjSTu6BUB7CFs8f.VLWWgI7oRsX1F6Cr7S.DNQOTmPR6fhZZS9xA.x_QWjZyxWIg
- aqJXj4LwuIs.FMJgFPx4nFs8kpT0TkNtNfhj813y8R_aIGci2CMZ8yKV6lJXornOGyOuWSdLKssy
- h5Q_DZ_jMvCJdSrQWyEvV.neO1TJ2WjLciZq2FUH44rFp0RJzxz.aHurINPi1aVlRYAKMUZ.hxo2
- EEmXWNxiwaOLe080JscJQz9EhTHgJyA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Sun, 29 Mar 2020 10:33:38 +0000
-Date:   Sun, 29 Mar 2020 10:31:36 +0000 (UTC)
-From:   Wang Xiu Ying <fgfghfghgffg@gtxbm.net>
-Reply-To: wying353@yahoo.com
-Message-ID: <326602938.568819.1585477896915@mail.yahoo.com>
-Subject: My proposal
+        Sun, 29 Mar 2020 06:34:08 -0400
+Received: by mail-wm1-f68.google.com with SMTP id d1so17849441wmb.2;
+        Sun, 29 Mar 2020 03:34:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=FlZLcBO7OYWRZLM3fnAWMQqlsSHKvKFSKGsey7ScD04=;
+        b=cw+9tTm5CubLPa3eNghOc8/tTgz+aoRUpcGucXULJ+ldNN6QMblIQREQsUok7XYMIk
+         ha8w9p/gRDaqa39YyCeDLhRrDkt+4q+bHhHtN1N5r/GB16h5vWpaDBRYq4cWDVmCYbtI
+         LhoMLLqgM8i5JmFitQATyqoECAHnFf8DB64QFr5DeCzSyG+T485qKEWYkcGar4TPwGiY
+         D+wex9yiUq1JIyfCngOdQ58Es1pLoMF8r5KRRprvGxH8cYXUJVe2Erpsw/XHx+u9FUF8
+         Jwc3wa+e+SyDOdX3wuMhA3LWBEcccWUM7IcZdEcO1cggFTiCyd66cxF+BcCFlodaCNzn
+         aB8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=FlZLcBO7OYWRZLM3fnAWMQqlsSHKvKFSKGsey7ScD04=;
+        b=ujmJuJs5r470oALl5YZ+q1uC6o3mEjbeVopOl/2G/c7wY0z7Ia7nek6b/EIyzD8DwH
+         c8kkE33pZJG9VFN3sgw+5VNEy2OmYhlpOznz6A/5amavW+xWbIMzjQC4dxV2PQpf8fyp
+         IzPed1VJJPRWlOXXYikEGIypMkc0TxOcbiqZfV2TG2/MzJQluzwbF1BZw+iig76qxbcy
+         53QeGxLovPExByoBeYsPRPVMMUD3f0aDcAQ62/J+dtIjiDpDvVO+94eHcEc9Upz8P7un
+         ByajeBbwDMYEl9dQlU3w0zKXhO6PfswHUZXknB6VsixQ32QSmNq3M6MsyMNlETIY2foj
+         TPyw==
+X-Gm-Message-State: ANhLgQ0Ks7qGMJ/n3cVEm+zZRyrAwvAQT9Mnad1gAh/1vhI11UuA8bUW
+        so1SdlhnDNJ1KtdNk65Oz/gQuRR3
+X-Google-Smtp-Source: ADFU+vsgvkJcM76vOwqLH3zSNrn5alEJfrSXUpOh5ObS7Qs3iQPqty7+fqs4pAtBixLWjHiL2dqujw==
+X-Received: by 2002:a7b:c0d1:: with SMTP id s17mr7685443wmh.58.1585478046213;
+        Sun, 29 Mar 2020 03:34:06 -0700 (PDT)
+Received: from [192.168.0.104] (p5B3F6BD9.dip0.t-ipconnect.de. [91.63.107.217])
+        by smtp.gmail.com with ESMTPSA id m19sm16289545wml.48.2020.03.29.03.34.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 Mar 2020 03:34:05 -0700 (PDT)
+Subject: Re: [PATCH v5 4/5] power: supply: Add support for mps mp2629 battery
+ charger
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+References: <20200328001154.17313-1-sravanhome@gmail.com>
+ <20200328001154.17313-5-sravanhome@gmail.com>
+ <CAHp75VefP3oPyRJ=Z9Y5Wv3rSc-nJdKFLJ60YLdUbP5dFikS+w@mail.gmail.com>
+ <36892440-99b2-10e8-1d7c-dd8c97e03a39@gmail.com>
+ <CAHp75VdAfiSjkHhTnghZ__WAJCJTGSWBprJBPNmpkxZTjZuVgQ@mail.gmail.com>
+From:   saravanan sekar <sravanhome@gmail.com>
+Message-ID: <3d811222-68fa-0992-eeeb-97d1c6d09608@gmail.com>
+Date:   Sun, 29 Mar 2020 12:34:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAHp75VdAfiSjkHhTnghZ__WAJCJTGSWBprJBPNmpkxZTjZuVgQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-References: <326602938.568819.1585477896915.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15555 YMailNodin Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3237.0 Safari/537.36
-To:     unlisted-recipients:; (no To-header on input)
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andy,
 
+On 28/03/20 7:44 pm, Andy Shevchenko wrote:
+> On Sat, Mar 28, 2020 at 1:29 PM saravanan sekar <sravanhome@gmail.com> wrote:
+>> On 28/03/20 12:02 pm, Andy Shevchenko wrote:
+>>> On Sat, Mar 28, 2020 at 2:12 AM Saravanan Sekar <sravanhome@gmail.com> wrote:
+> ...
+>
+>>>> +       val->intval = (rval * props[fld].step) + props[fld].min;
+>>> Too many parentheses.
+>>>
+>>> ...
+>>>
+>>>> +       return ((psp == POWER_SUPPLY_PROP_PRECHARGE_CURRENT) ||
+>>>> +               (psp == POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT) ||
+>>>> +               (psp == POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT) ||
+>>>> +               (psp == POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE));
+>>> Ditto.
+>> I think I misunderstood you previous review comment "Redundant
+>> parentheses", no sure what is the expectation
+> (At least) surrounding pair is not needed, return (a == b) || (c == d);
+ok, I will remove outer ().
+>>> ...
+>>>
+>>>> +       return ((psp == POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT) ||
+>>>> +               (psp == POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT));
+>>> Ditto.
+> ...
+>
+>>>> +       struct power_supply_config psy_cfg = {NULL};
+>>> { 0 }
+>>>
+>> NULL to make compiler happy.
+> Hmm... Can you share warning / error compiler issued in 0 case?
+>
+Please see the 0-day warning.
 
-Good Day,
-I am Wang Xiu Ying, the Director for Credit & Marketing Chong Hing Bank, Hong Kong, Chong Hing Bank Center, 24 Des Voeux Road Central, Hong Kong. I have a business proposal of USD$13,991,674 All confirmable documents to back up the claims will be made availableto you prior to your acceptance and as soon as I receive your return mail.
-Best Regards,
-Wang Xiu Ying
+"Reported-by: kbuild test robot <lkp@intel.com>
+sparse warnings: (new ones prefixed by >>)
+ >> drivers/power/supply/mp2629_charger.c:584:47: sparse: sparse: Using 
+plain integer as NULL pointer"
+
