@@ -2,338 +2,319 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4EBE196CD1
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 13:08:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CE51196CDB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 13:09:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbgC2LIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 07:08:11 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:29913 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726087AbgC2LIK (ORCPT
+        id S1728101AbgC2LJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 07:09:36 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:43416 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbgC2LJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 07:08:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585480088;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=so6oPgpGKXRDWC0ZEKgrl5SvpE7BFfs77Lp0kYlyQR0=;
-        b=SMcgba5q3pPZkPwFsrQxXfhzpw5pnSeqiO0ZdeGlLFq/bBGLXdqWb2+ha0n+kan1Eih0tE
-        uCaNaIdIWUXXCot6+P+w/J7HBqf3D2qeXugS35E3r+JnxJ9Yac6N656UuG0s1IkNfXpGOl
-        etel+aR9mFk+q+q/y+SIBPYnf8P6Fp0=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-66-48tSwVEXNiCg1kT0S-exgQ-1; Sun, 29 Mar 2020 07:07:50 -0400
-X-MC-Unique: 48tSwVEXNiCg1kT0S-exgQ-1
-Received: by mail-wr1-f71.google.com with SMTP id b2so7854874wrq.8
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 04:07:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=so6oPgpGKXRDWC0ZEKgrl5SvpE7BFfs77Lp0kYlyQR0=;
-        b=DaKpJFStlmIxWebjOlJtLWylkIzs4O/x+lgeF9dM3eFZ3+K9W5HeFAkmUm6fTOze8r
-         oT9t4JAKB4nEShXITk4CfdP/Bt57yYXI/VOwkvcgdgxwcIcmIayAPqa7gv38Bq76Lypd
-         5L2PNbKRu9Llhf8mjcrFvHJiLq0CIIefA5Qnhux4HCwQR1v4R8GYZbE8Mop8I5DYqRFD
-         hZLNyXZBkZv9OT+RYs/DwT7S8CqCaSgBKu+4yXwIpqZ9LepBuwlEfZnK6VLh855BrBi8
-         IY3XO4LBVVEqPG/pDZ5ey/vMX5pdFdYL8b7kZhssvwC0+aOBkXAJgZv0c66YbEt6F2o0
-         2vwg==
-X-Gm-Message-State: ANhLgQ02UklelHgTsuSREIU7OLI1ZL8rdpjQoTFl4GfMKTfYrq7VFxlg
-        HtFucBQs3EGPttmxctLo4cPE/VbE1/aZhakjcuX4Nvx6D+PFZAQrg8N6iBIWZH9WtI9/vvK3h8c
-        GbTLNB4UZXZfmrUZrQ1g99Rl9
-X-Received: by 2002:a05:600c:2294:: with SMTP id 20mr7856646wmf.130.1585480069501;
-        Sun, 29 Mar 2020 04:07:49 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtpmHc7q71tZfa52hDIsGADz+VywTxSJQggO2ClhV/khVUbvfqHvN2yv7TOjCs3h8ScGHU9Tg==
-X-Received: by 2002:a05:600c:2294:: with SMTP id 20mr7856614wmf.130.1585480069192;
-        Sun, 29 Mar 2020 04:07:49 -0700 (PDT)
-Received: from redhat.com (bzq-79-183-139-129.red.bezeqint.net. [79.183.139.129])
-        by smtp.gmail.com with ESMTPSA id t21sm16054780wmt.43.2020.03.29.04.07.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Mar 2020 04:07:48 -0700 (PDT)
-Date:   Sun, 29 Mar 2020 07:07:44 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        jgg@mellanox.com, maxime.coquelin@redhat.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        rob.miller@broadcom.com, xiao.w.wang@intel.com,
-        lingshan.zhu@intel.com, eperezma@redhat.com, lulu@redhat.com,
-        parav@mellanox.com, kevin.tian@intel.com, stefanha@redhat.com,
-        rdunlap@infradead.org, hch@infradead.org, aadam@redhat.com,
-        jiri@mellanox.com, shahafs@mellanox.com, hanand@xilinx.com,
-        mhabets@solarflare.com, gdawar@xilinx.com, saugatm@xilinx.com,
-        vmireyno@marvell.com, zhangweining@ruijie.com.cn
-Subject: Re: [PATCH V9 0/9] vDPA support
-Message-ID: <20200329070130-mutt-send-email-mst@kernel.org>
-References: <20200326140125.19794-1-jasowang@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200326140125.19794-1-jasowang@redhat.com>
+        Sun, 29 Mar 2020 07:09:36 -0400
+Received: from grover.flets-west.jp (softbank126093124033.bbtec.net [126.93.124.33]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id 02TB8bBL015176;
+        Sun, 29 Mar 2020 20:08:37 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com 02TB8bBL015176
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585480118;
+        bh=Cg7R3QJRPJ95+EKclm15FSW94MAoCe16bg0O8GfIt6U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jPBCBrQDgnG0wdLPf2EwTGBqVSyXOaUNUQzjq4HgBBPA21LgFK5bai0aDGVKBTSt5
+         7X/LRZx+E0XEUwIUv0tjoIW6lzZP6i37e+E6SAUNuoxS6b1EIJCyDSWRAT6pOrg+jF
+         ZeUbQ1MltPJ+4TFw+v3+4NaX58Qb3RHjUjX4xdClHB4Iy71rj0qovkY9FkkLqBSocQ
+         M3WUSabsnrbI3XWTvnyDKD7VpBfeufdnHvdiW4brIpPhtUKg/EumiwVPx86Um4Vfqb
+         koFSWlEuo43Bn32swWPcZFrWZ3T62rPjyix8aib4fcdCnR3G39lm3UZawAoguesq+6
+         4sUNzMxqg9XZQ==
+X-Nifty-SrcIP: [126.93.124.33]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Emese Revfy <re.emese@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        kernel-hardening@lists.openwall.com
+Subject: [PATCH] gcc-plugins: drop support for GCC <= 4.7
+Date:   Sun, 29 Mar 2020 20:08:32 +0900
+Message-Id: <20200329110832.19961-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 10:01:16PM +0800, Jason Wang wrote:
-> Hi all:
-> 
-> This is an update version of vDPA support in kernel.
+Nobody was opposed to raising minimum GCC version to 4.8 [1]
+So, we will drop GCC <= 4.7 support sooner or later.
 
-OK I put these in my next tree, with an eye towards merging them in 5.7.
-Many thanks to everyone who reviewed the patches, especially to Jason
-Gunthorpe for reviewing multiple versions of the patches, helping locate
-and address the issues.
+We always use C++ compiler for building plugins for GCC >= 4.8.
 
+This commit drops the plugin support for GCC <= 4.7 a bit earlier,
+which allows us to dump lots of code.
 
-> vDPA device is a device that uses a datapath which complies with the
-> virtio specifications with vendor specific control path. vDPA devices
-> can be both physically located on the hardware or emulated by
-> software. vDPA hardware devices are usually implemented through PCIE
-> with the following types:
-> 
-> - PF (Physical Function) - A single Physical Function
-> - VF (Virtual Function) - Device that supports single root I/O
->   virtualization (SR-IOV). Its Virtual Function (VF) represents a
->   virtualized instance of the device that can be assigned to different
->   partitions
-> - ADI (Assignable Device Interface) and its equivalents - With
->   technologies such as Intel Scalable IOV, a virtual device (VDEV)
->   composed by host OS utilizing one or more ADIs. Or its equivalent
->   like SF (Sub function) from Mellanox.
-> 
-> >From a driver's perspective, depends on how and where the DMA
-> translation is done, vDPA devices are split into two types:
-> 
-> - Platform specific DMA translation - From the driver's perspective,
->   the device can be used on a platform where device access to data in
->   memory is limited and/or translated. An example is a PCIE vDPA whose
->   DMA request was tagged via a bus (e.g PCIE) specific way. DMA
->   translation and protection are done at PCIE bus IOMMU level.
-> - Device specific DMA translation - The device implements DMA
->   isolation and protection through its own logic. An example is a vDPA
->   device which uses on-chip IOMMU.
-> 
-> To hide the differences and complexity of the above types for a vDPA
-> device/IOMMU options and in order to present a generic virtio device
-> to the upper layer, a device agnostic framework is required.
-> 
-> This series introduces a software vDPA bus which abstracts the
-> common attributes of vDPA device, vDPA bus driver and the
-> communication method, the bus operations (vdpa_config_ops) between the
-> vDPA device abstraction and the vDPA bus driver. This allows multiple
-> types of drivers to be used for vDPA device like the virtio_vdpa and
-> vhost_vdpa driver to operate on the bus and allow vDPA device could be
-> used by either kernel virtio driver or userspace vhost drivers as:
-> 
->    virtio drivers  vhost drivers
->           |             |
->     [virtio bus]   [vhost uAPI]
->           |             |
->    virtio device   vhost device
->    virtio_vdpa drv vhost_vdpa drv
->              \       /
->             [vDPA bus]
->                  |
->             vDPA device
->             hardware drv
->                  |
->             [hardware bus]
->                  |
->             vDPA hardware
-> 
-> virtio_vdpa driver is a transport implementation for kernel virtio
-> drivers on top of vDPA bus operations. An alternative is to refactor
-> virtio bus which is sub-optimal since the bus and drivers are designed
-> to be use by kernel subsystem, a non-trivial major refactoring is
-> needed which may impact a brunches of drivers and devices
-> implementation inside the kernel. Using a new transport may grealy
-> simply both the design and changes.
-> 
-> vhost_vdpa driver is a new type of vhost device which allows userspace
-> vhost drivers to use vDPA devices via vhost uAPI (with minor
-> extension). This help to minimize the changes of existed vhost drivers
-> for using vDPA devices.
-> 
-> With the abstraction of vDPA bus and vDPA bus operations, the
-> difference and complexity of the under layer hardware is hidden from
-> upper layer. The vDPA bus drivers on top can use a unified
-> vdpa_config_ops to control different types of vDPA device.
-> 
-> Two drivers were implemented with the framework introduced in this
-> series:
-> 
-> - Intel IFC VF driver which depends on the platform IOMMU for DMA
->   translation
-> - VDPA simulator which is a software test device with an emulated
->   onchip IOMMU
-> 
-> Future work:
-> 
-> - direct doorbell mapping support
-> - control virtqueue support
-> - dirty page tracking support
-> - direct interrupt support
-> - management API (devlink)
-> 
-> Please review.
-> 
-> Thanks
-> 
-> Changes from V8:
-> 
-> - switch to use devres for PCI resoureces of IFCVF (Jason)
-> - require the caller of vdap_alloc_device() to use "struct foo"
->   instead of foo (Jason)
-> - some tweaks on the IFCVF driver
-> 
-> Changes from V7:
-> 
-> - refine kconfig to solve the dependency issues on archs that lacks of
->   CONFIG_VIRTUALIZATION (kbuild)
-> 
-> Changes from V6:
-> 
-> - vdpa_alloc_device() will allocate parent strcture (Jason)
-> - remove the vdpa core dev info in IFCVF patch (Jason)
-> - provide a free method in the vdpa bus operations for drivet to free
->   private data
-> - switch to use new layout in vdapsim and IFCVF
-> - make IFCVF depends on PCI_MSI (kbuild)
-> - some tweaks on the IFCVF driver
-> 
-> Changes from V5:
-> 
-> - include Intel IFCVF driver and vhost-vdpa drivers
-> - add the platform IOMMU support for vhost-vdpa
-> - check the return value of dev_set_name() (Jason)
-> - various tweaks and fixes
-> 
-> Changes from V4:
-> 
-> - use put_device() instead of kfree when fail to register virtio
->   device (Jason)
-> - simplify the error handling when allocating vdpasim device (Jason)
-> - don't use device_for_each_child() during module exit (Jason)
-> - correct the error checking for vdpa_alloc_device() (Harpreet, Lingshan)
-> 
-> Changes from V3:
-> 
-> - various Kconfig fixes (Randy)
-> 
-> Changes from V2:
-> 
-> - release idr in the release function for put_device() unwind (Jason)
-> - don't panic when fail to register vdpa bus (Jason)
-> - use unsigned int instead of int for ida (Jason)
-> - fix the wrong commit log in virito_vdpa patches (Jason)
-> - make vdpa_sim depends on RUNTIME_TESTING_MENU (Michael)
-> - provide a bus release function for vDPA device (Jason)
-> - fix the wrong unwind when creating devices for vDPA simulator (Jason)
-> - move vDPA simulator to a dedicated directory (Lingshan)
-> - cancel the work before release vDPA simulator
-> 
-> Changes from V1:
-> 
-> - drop sysfs API, leave the management interface to future development
->   (Michael)
-> - introduce incremental DMA ops (dma_map/dma_unmap) (Michael)
-> - introduce dma_device and use it instead of parent device for doing
->   IOMMU or DMA from bus driver (Michael, Jason, Ling Shan, Tiwei)
-> - accept parent device and dma device when register vdpa device
-> - coding style and compile fixes (Randy)
-> - using vdpa_xxx instead of xxx_vdpa (Jason)
-> - ove vDPA accessors to header and make it static inline (Jason)
-> - split vdp_register_device() into two helpers vdpa_init_device() and
->   vdpa_register_device() which allows intermediate step to be done (Jason)
-> - warn on invalidate queue state when fail to creating virtqueue (Jason)
-> - make to_virtio_vdpa_device() static (Jason)
-> - use kmalloc/kfree instead of devres for virtio vdpa device (Jason)
-> - avoid using cast in vdpa bus function (Jason)
-> - introduce module_vdpa_driver and fix module refcnt (Jason)
-> - fix returning freed address in vdapsim coherent DMA addr allocation (Dan)
-> - various other fixes and tweaks
-> 
-> V8: https://lkml.org/lkml/2020/3/25/125
-> V7: https://lkml.org/lkml/2020/3/24/21
-> V6: https://lkml.org/lkml/2020/3/18/88
-> V5: https://lkml.org/lkml/2020/2/26/58
-> V4: https://lkml.org/lkml/2020/2/20/59
-> V3: https://lkml.org/lkml/2020/2/19/1347
-> V2: https://lkml.org/lkml/2020/2/9/275
-> V1: https://lkml.org/lkml/2020/1/16/353
-> 
-> Jason Wang (7):
->   vhost: refine vhost and vringh kconfig
->   vhost: allow per device message handler
->   vhost: factor out IOTLB
->   vringh: IOTLB support
->   vDPA: introduce vDPA bus
->   virtio: introduce a vDPA based transport
->   vdpasim: vDPA device simulator
-> 
-> Tiwei Bie (1):
->   vhost: introduce vDPA-based backend
-> 
-> Zhu Lingshan (1):
->   virtio: Intel IFC VF driver for VDPA
-> 
->  MAINTAINERS                             |   2 +
->  arch/arm/kvm/Kconfig                    |   2 -
->  arch/arm64/kvm/Kconfig                  |   2 -
->  arch/mips/kvm/Kconfig                   |   2 -
->  arch/powerpc/kvm/Kconfig                |   2 -
->  arch/s390/kvm/Kconfig                   |   4 -
->  arch/x86/kvm/Kconfig                    |   4 -
->  drivers/Kconfig                         |   2 +
->  drivers/misc/mic/Kconfig                |   4 -
->  drivers/net/caif/Kconfig                |   4 -
->  drivers/vhost/Kconfig                   |  42 +-
->  drivers/vhost/Kconfig.vringh            |   6 -
->  drivers/vhost/Makefile                  |   6 +
->  drivers/vhost/iotlb.c                   | 177 +++++
->  drivers/vhost/net.c                     |   5 +-
->  drivers/vhost/scsi.c                    |   2 +-
->  drivers/vhost/vdpa.c                    | 883 ++++++++++++++++++++++++
->  drivers/vhost/vhost.c                   | 233 +++----
->  drivers/vhost/vhost.h                   |  45 +-
->  drivers/vhost/vringh.c                  | 421 ++++++++++-
->  drivers/vhost/vsock.c                   |   2 +-
->  drivers/virtio/Kconfig                  |  15 +
->  drivers/virtio/Makefile                 |   2 +
->  drivers/virtio/vdpa/Kconfig             |  37 +
->  drivers/virtio/vdpa/Makefile            |   4 +
->  drivers/virtio/vdpa/ifcvf/Makefile      |   3 +
->  drivers/virtio/vdpa/ifcvf/ifcvf_base.c  | 389 +++++++++++
->  drivers/virtio/vdpa/ifcvf/ifcvf_base.h  | 118 ++++
->  drivers/virtio/vdpa/ifcvf/ifcvf_main.c  | 435 ++++++++++++
->  drivers/virtio/vdpa/vdpa.c              | 180 +++++
->  drivers/virtio/vdpa/vdpa_sim/Makefile   |   2 +
->  drivers/virtio/vdpa/vdpa_sim/vdpa_sim.c | 629 +++++++++++++++++
->  drivers/virtio/virtio_vdpa.c            | 396 +++++++++++
->  include/linux/vdpa.h                    | 253 +++++++
->  include/linux/vhost_iotlb.h             |  47 ++
->  include/linux/vringh.h                  |  36 +
->  include/uapi/linux/vhost.h              |  24 +
->  include/uapi/linux/vhost_types.h        |   8 +
->  38 files changed, 4180 insertions(+), 248 deletions(-)
->  delete mode 100644 drivers/vhost/Kconfig.vringh
->  create mode 100644 drivers/vhost/iotlb.c
->  create mode 100644 drivers/vhost/vdpa.c
->  create mode 100644 drivers/virtio/vdpa/Kconfig
->  create mode 100644 drivers/virtio/vdpa/Makefile
->  create mode 100644 drivers/virtio/vdpa/ifcvf/Makefile
->  create mode 100644 drivers/virtio/vdpa/ifcvf/ifcvf_base.c
->  create mode 100644 drivers/virtio/vdpa/ifcvf/ifcvf_base.h
->  create mode 100644 drivers/virtio/vdpa/ifcvf/ifcvf_main.c
->  create mode 100644 drivers/virtio/vdpa/vdpa.c
->  create mode 100644 drivers/virtio/vdpa/vdpa_sim/Makefile
->  create mode 100644 drivers/virtio/vdpa/vdpa_sim/vdpa_sim.c
->  create mode 100644 drivers/virtio/virtio_vdpa.c
->  create mode 100644 include/linux/vdpa.h
->  create mode 100644 include/linux/vhost_iotlb.h
-> 
-> -- 
-> 2.20.1
+[1] https://lkml.org/lkml/2020/1/23/545
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+This patch depends on this:
+https://patchwork.kernel.org/patch/11456871/
+
+ scripts/Kconfig.include      |  3 --
+ scripts/Makefile.build       |  2 +-
+ scripts/Makefile.clean       |  1 -
+ scripts/Makefile.host        | 23 +--------------
+ scripts/gcc-plugin.sh        | 55 +++---------------------------------
+ scripts/gcc-plugins/Kconfig  | 12 ++------
+ scripts/gcc-plugins/Makefile | 21 ++++----------
+ 7 files changed, 14 insertions(+), 103 deletions(-)
+
+diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+index 496d11c92c97..033f6efd92d3 100644
+--- a/scripts/Kconfig.include
++++ b/scripts/Kconfig.include
+@@ -42,9 +42,6 @@ $(error-if,$(failure,command -v $(LD)),linker '$(LD)' not found)
+ # Fail if the linker is gold as it's not capable of linking the kernel proper
+ $(error-if,$(success, $(LD) -v | grep -q gold), gold linker '$(LD)' not supported)
+ 
+-# gcc version including patch level
+-gcc-version := $(shell,$(srctree)/scripts/gcc-version.sh $(CC))
+-
+ # machine bit flags
+ #  $(m32-flag): -m32 if the compiler supports it, or an empty string otherwise.
+ #  $(m64-flag): -m64 if the compiler supports it, or an empty string otherwise.
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 356601994f3a..9fcbfac15d1d 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -46,7 +46,7 @@ include $(kbuild-file)
+ include scripts/Makefile.lib
+ 
+ # Do not include host rules unless needed
+-ifneq ($(hostprogs)$(hostlibs-y)$(hostlibs-m)$(hostcxxlibs-y)$(hostcxxlibs-m),)
++ifneq ($(hostprogs)$(hostcxxlibs-y)$(hostcxxlibs-m),)
+ include scripts/Makefile.host
+ endif
+ 
+diff --git a/scripts/Makefile.clean b/scripts/Makefile.clean
+index 1e4206566a82..075f0cc2d8d7 100644
+--- a/scripts/Makefile.clean
++++ b/scripts/Makefile.clean
+@@ -30,7 +30,6 @@ subdir-ymn	:= $(addprefix $(obj)/,$(subdir-ymn))
+ __clean-files	:= $(extra-y) $(extra-m) $(extra-)       \
+ 		   $(always) $(always-y) $(always-m) $(always-) $(targets) $(clean-files)   \
+ 		   $(hostprogs) $(hostprogs-y) $(hostprogs-m) $(hostprogs-) \
+-		   $(hostlibs-y) $(hostlibs-m) $(hostlibs-) \
+ 		   $(hostcxxlibs-y) $(hostcxxlibs-m)
+ 
+ __clean-files   := $(filter-out $(no-clean-files), $(__clean-files))
+diff --git a/scripts/Makefile.host b/scripts/Makefile.host
+index 3b7121d43324..2045855d0b75 100644
+--- a/scripts/Makefile.host
++++ b/scripts/Makefile.host
+@@ -39,7 +39,6 @@ $(obj)/%.tab.c $(obj)/%.tab.h: $(src)/%.y FORCE
+ # They are linked as C++ code to the executable qconf
+ 
+ __hostprogs := $(sort $(hostprogs))
+-host-cshlib := $(sort $(hostlibs-y) $(hostlibs-m))
+ host-cxxshlib := $(sort $(hostcxxlibs-y) $(hostcxxlibs-m))
+ 
+ # C code
+@@ -63,7 +62,6 @@ host-cxxmulti	:= $(foreach m,$(__hostprogs),$(if $($(m)-cxxobjs),$(m)))
+ host-cxxobjs	:= $(sort $(foreach m,$(host-cxxmulti),$($(m)-cxxobjs)))
+ 
+ # Object (.o) files used by the shared libaries
+-host-cshobjs	:= $(sort $(foreach m,$(host-cshlib),$($(m:.so=-objs))))
+ host-cxxshobjs	:= $(sort $(foreach m,$(host-cxxshlib),$($(m:.so=-objs))))
+ 
+ host-csingle	:= $(addprefix $(obj)/,$(host-csingle))
+@@ -71,9 +69,7 @@ host-cmulti	:= $(addprefix $(obj)/,$(host-cmulti))
+ host-cobjs	:= $(addprefix $(obj)/,$(host-cobjs))
+ host-cxxmulti	:= $(addprefix $(obj)/,$(host-cxxmulti))
+ host-cxxobjs	:= $(addprefix $(obj)/,$(host-cxxobjs))
+-host-cshlib	:= $(addprefix $(obj)/,$(host-cshlib))
+ host-cxxshlib	:= $(addprefix $(obj)/,$(host-cxxshlib))
+-host-cshobjs	:= $(addprefix $(obj)/,$(host-cshobjs))
+ host-cxxshobjs	:= $(addprefix $(obj)/,$(host-cxxshobjs))
+ 
+ #####
+@@ -140,13 +136,6 @@ quiet_cmd_host-cxxobjs	= HOSTCXX $@
+ $(host-cxxobjs): $(obj)/%.o: $(src)/%.cc FORCE
+ 	$(call if_changed_dep,host-cxxobjs)
+ 
+-# Compile .c file, create position independent .o file
+-# host-cshobjs -> .o
+-quiet_cmd_host-cshobjs	= HOSTCC  -fPIC $@
+-      cmd_host-cshobjs	= $(HOSTCC) $(hostc_flags) -fPIC -c -o $@ $<
+-$(host-cshobjs): $(obj)/%.o: $(src)/%.c FORCE
+-	$(call if_changed_dep,host-cshobjs)
+-
+ # Compile .c file, create position independent .o file
+ # Note that plugin capable gcc versions can be either C or C++ based
+ # therefore plugin source files have to be compilable in both C and C++ mode.
+@@ -157,16 +146,6 @@ quiet_cmd_host-cxxshobjs	= HOSTCXX -fPIC $@
+ $(host-cxxshobjs): $(obj)/%.o: $(src)/%.c FORCE
+ 	$(call if_changed_dep,host-cxxshobjs)
+ 
+-# Link a shared library, based on position independent .o files
+-# *.o -> .so shared library (host-cshlib)
+-quiet_cmd_host-cshlib	= HOSTLLD -shared $@
+-      cmd_host-cshlib	= $(HOSTCC) $(KBUILD_HOSTLDFLAGS) -shared -o $@ \
+-			  $(addprefix $(obj)/, $($(target-stem)-objs)) \
+-			  $(KBUILD_HOSTLDLIBS) $(HOSTLDLIBS_$(target-stem).so)
+-$(host-cshlib): FORCE
+-	$(call if_changed,host-cshlib)
+-$(call multi_depend, $(host-cshlib), .so, -objs)
+-
+ # Link a shared library, based on position independent .o files
+ # *.o -> .so shared library (host-cxxshlib)
+ quiet_cmd_host-cxxshlib	= HOSTLLD -shared $@
+@@ -178,4 +157,4 @@ $(host-cxxshlib): FORCE
+ $(call multi_depend, $(host-cxxshlib), .so, -objs)
+ 
+ targets += $(host-csingle)  $(host-cmulti) $(host-cobjs)\
+-	   $(host-cxxmulti) $(host-cxxobjs) $(host-cshlib) $(host-cshobjs) $(host-cxxshlib) $(host-cxxshobjs)
++	   $(host-cxxmulti) $(host-cxxobjs) $(host-cxxshlib) $(host-cxxshobjs)
+diff --git a/scripts/gcc-plugin.sh b/scripts/gcc-plugin.sh
+index d3caefe53eab..b79fd0bea838 100755
+--- a/scripts/gcc-plugin.sh
++++ b/scripts/gcc-plugin.sh
+@@ -1,49 +1,14 @@
+ #!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0
+-srctree=$(dirname "$0")
+-
+-SHOW_ERROR=
+-if [ "$1" = "--show-error" ] ; then
+-	SHOW_ERROR=1
+-	shift || true
+-fi
+-
+-gccplugins_dir=$($3 -print-file-name=plugin)
+-plugincc=$($1 -E -x c++ - -o /dev/null -I"${srctree}"/gcc-plugins -I"${gccplugins_dir}"/include 2>&1 <<EOF
+-#include "gcc-common.h"
+-#if BUILDING_GCC_VERSION >= 4008 || defined(ENABLE_BUILD_WITH_CXX)
+-#warning $2 CXX
+-#else
+-#warning $1 CC
+-#endif
+-EOF
+-)
+ 
+-if [ $? -ne 0 ]
+-then
+-	if [ -n "$SHOW_ERROR" ] ; then
+-		echo "${plugincc}" >&2
+-	fi
+-	exit 1
+-fi
++set -e
+ 
+-case "$plugincc" in
+-	*"$1 CC"*)
+-		echo "$1"
+-		exit 0
+-		;;
+-
+-	*"$2 CXX"*)
+-		# the c++ compiler needs another test, see below
+-		;;
++srctree=$(dirname "$0")
+ 
+-	*)
+-		exit 1
+-		;;
+-esac
++gccplugins_dir=$($* -print-file-name=plugin)
+ 
+ # we need a c++ compiler that supports the designated initializer GNU extension
+-plugincc=$($2 -c -x c++ -std=gnu++98 - -fsyntax-only -I"${srctree}"/gcc-plugins -I"${gccplugins_dir}"/include 2>&1 <<EOF
++$HOSTCC -c -x c++ -std=gnu++98 - -fsyntax-only -I $srctree/gcc-plugins -I $gccplugins_dir/include 2>/dev/null <<EOF
+ #include "gcc-common.h"
+ class test {
+ public:
+@@ -52,15 +17,3 @@ public:
+ 	.test = 1
+ };
+ EOF
+-)
+-
+-if [ $? -eq 0 ]
+-then
+-	echo "$2"
+-	exit 0
+-fi
+-
+-if [ -n "$SHOW_ERROR" ] ; then
+-	echo "${plugincc}" >&2
+-fi
+-exit 1
+diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+index 7b63c819610c..a857d69322b4 100644
+--- a/scripts/gcc-plugins/Kconfig
++++ b/scripts/gcc-plugins/Kconfig
+@@ -1,13 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-preferred-plugin-hostcc := $(if-success,[ $(gcc-version) -ge 40800 ],$(HOSTCXX),$(HOSTCC))
+-
+-config PLUGIN_HOSTCC
+-	string
+-	default "$(shell,$(srctree)/scripts/gcc-plugin.sh "$(preferred-plugin-hostcc)" "$(HOSTCXX)" "$(CC)")" if CC_IS_GCC
+-	help
+-	  Host compiler used to build GCC plugins.  This can be $(HOSTCXX),
+-	  $(HOSTCC), or a null string if GCC plugin is unsupported.
+-
+ config HAVE_GCC_PLUGINS
+ 	bool
+ 	help
+@@ -17,7 +8,8 @@ config HAVE_GCC_PLUGINS
+ menuconfig GCC_PLUGINS
+ 	bool "GCC plugins"
+ 	depends on HAVE_GCC_PLUGINS
+-	depends on PLUGIN_HOSTCC != ""
++	depends on CC_IS_GCC && GCC_VERSION >= 40800
++	depends on $(success,$(srctree)/scripts/gcc-plugin.sh $(CC))
+ 	default y
+ 	help
+ 	  GCC plugins are loadable modules that provide extra features to the
+diff --git a/scripts/gcc-plugins/Makefile b/scripts/gcc-plugins/Makefile
+index efff00959a9c..f22858b2c3d6 100644
+--- a/scripts/gcc-plugins/Makefile
++++ b/scripts/gcc-plugins/Makefile
+@@ -1,18 +1,9 @@
+ # SPDX-License-Identifier: GPL-2.0
+-PLUGINCC := $(CONFIG_PLUGIN_HOSTCC:"%"=%)
+ GCC_PLUGINS_DIR := $(shell $(CC) -print-file-name=plugin)
+ 
+-ifeq ($(PLUGINCC),$(HOSTCC))
+-  HOSTLIBS := hostlibs
+-  HOST_EXTRACFLAGS += -I$(GCC_PLUGINS_DIR)/include -I$(src) -std=gnu99 -ggdb
+-  export HOST_EXTRACFLAGS
+-else
+-  HOSTLIBS := hostcxxlibs
+-  HOST_EXTRACXXFLAGS += -I$(GCC_PLUGINS_DIR)/include -I$(src) -std=gnu++98 -fno-rtti
+-  HOST_EXTRACXXFLAGS += -fno-exceptions -fasynchronous-unwind-tables -ggdb
+-  HOST_EXTRACXXFLAGS += -Wno-narrowing -Wno-unused-variable -Wno-c++11-compat
+-  export HOST_EXTRACXXFLAGS
+-endif
++HOST_EXTRACXXFLAGS += -I$(GCC_PLUGINS_DIR)/include -I$(src) -std=gnu++98 -fno-rtti
++HOST_EXTRACXXFLAGS += -fno-exceptions -fasynchronous-unwind-tables -ggdb
++HOST_EXTRACXXFLAGS += -Wno-narrowing -Wno-unused-variable -Wno-c++11-compat
+ 
+ $(obj)/randomize_layout_plugin.o: $(objtree)/$(obj)/randomize_layout_seed.h
+ quiet_cmd_create_randomize_layout_seed = GENSEED $@
+@@ -22,9 +13,9 @@ $(objtree)/$(obj)/randomize_layout_seed.h: FORCE
+ 	$(call if_changed,create_randomize_layout_seed)
+ targets = randomize_layout_seed.h randomize_layout_hash.h
+ 
+-$(HOSTLIBS)-y := $(foreach p,$(GCC_PLUGIN),$(if $(findstring /,$(p)),,$(p)))
+-always-y := $($(HOSTLIBS)-y)
++hostcxxlibs-y := $(foreach p,$(GCC_PLUGIN),$(if $(findstring /,$(p)),,$(p)))
++always-y := $(hostcxxlibs-y)
+ 
+-$(foreach p,$($(HOSTLIBS)-y:%.so=%),$(eval $(p)-objs := $(p).o))
++$(foreach p,$(hostcxxlibs-y:%.so=%),$(eval $(p)-objs := $(p).o))
+ 
+ clean-files += *.so
+-- 
+2.17.1
 
