@@ -2,113 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00E3B196DF7
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 16:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFBFC196E03
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 16:59:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbgC2OrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 10:47:06 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38587 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbgC2OrG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 10:47:06 -0400
-Received: by mail-oi1-f196.google.com with SMTP id w2so13449322oic.5;
-        Sun, 29 Mar 2020 07:47:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2XAc+r1WXKheiyXAD+tO9YztVYErGlJXr5LD1cuVbdk=;
-        b=V+giDJM9hafx0Gt/bGQh4dA3RbMgq2ZwWSGnSxdc35Rjixbay2fbmMrKwa7OvZv4oG
-         lLNU0Z5V3lGhcxr2mxK7rsZNxoc3tk/Dh60BoKCbtmV8EpLz7+2JYPt4PhW66Oye7T7z
-         6DPKlSvF87TvLU+YNzf0YtbKMB/ZrmcJ5N5eJjr+26leq4FrxkDmrjVvUPjwWKFH2viq
-         9JipFFPnT/rASEzJcIc3BeN92mK0b8TlzG+k0VesdiJRl2q25UKfHiZzwNJR0AUQJpjW
-         jpR7xYAwqaBqTZi0YMqGMxTxWPCi1b8meNyVmTNT1UHIAp4QAd1bzBjtsQnSNWqRNIHJ
-         BAvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2XAc+r1WXKheiyXAD+tO9YztVYErGlJXr5LD1cuVbdk=;
-        b=oUPjj8dLld23WWaFPya0T8MFWtApo1R0SVZgCDPNniQMOC19C7Ct4xuXZvrAYErgDc
-         kl1PVhjiUtPaRX8HJoI4/UBbWi3hNeVVtY7AjiFHhWuPgPQR+BovB1OnwK+CoLMQUSLl
-         vZBRZe2Au0WKH4myE7EieoieL614HeMiQd9/kxclVWm03kwYcLdeAFCHfymLRUdpqcmd
-         cycPlYneQJGMPI0uLhvLH5sWHl548dTDeIi1/4IVd3kVXX5Ag6EHPyWkQoAy06dexg/I
-         iFy2P9dZn+PD4XjsjXW388jh/6r0c8DYWXFlfI9UNCueNkyXTBOTabvrzX8dMxDYrC5U
-         YQjA==
-X-Gm-Message-State: ANhLgQ3i04PgMepxHSTf3pIrg+CROlYkK7ncVmFc8dT5/+STxHdUhc8V
-        JASrs+SNQv1LcSXNlPAMJ9E=
-X-Google-Smtp-Source: ADFU+vsrm8bF82HNWyt+p2He4J7b65vFnhlfXTVbvRrKA3Swz9X01pci1jsivdX3hFEhX9P4YQAyKA==
-X-Received: by 2002:aca:aa55:: with SMTP id t82mr4958005oie.147.1585493225116;
-        Sun, 29 Mar 2020 07:47:05 -0700 (PDT)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id d21sm1743653otp.39.2020.03.29.07.47.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 29 Mar 2020 07:47:04 -0700 (PDT)
-Date:   Sun, 29 Mar 2020 07:47:03 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Ashwini Pahuja <ashwini.linux@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH RESEND] usb: gadget: udc: bdc: Remove unnecessary NULL
- checks in bdc_req_complete
-Message-ID: <20200329144703.GA9720@ubuntu-m2-xlarge-x86>
-References: <87zhc0j2qi.fsf@kernel.org>
- <20200329011246.27599-1-natechancellor@gmail.com>
- <871rpb4nd1.fsf@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871rpb4nd1.fsf@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1728236AbgC2O7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 10:59:20 -0400
+Received: from mail.fudan.edu.cn ([202.120.224.73]:57656 "EHLO fudan.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727488AbgC2O7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 10:59:19 -0400
+Received: from localhost.localdomain (unknown [120.229.255.87])
+        by app2 (Coremail) with SMTP id XQUFCgBXXUWxt4BeeJuFAA--.1822S3;
+        Sun, 29 Mar 2020 22:59:00 +0800 (CST)
+From:   Xiyu Yang <xiyuyang19@fudan.edu.cn>
+To:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     xiyuyang19@fudan.edu.cn, yuanxzhang@fudan.edu.cn, kjlu@umn.edu,
+        Xin Tan <tanxin.ctf@gmail.com>
+Subject: [PATCH] apparmor: fix potential label refcnt leak in aa_change_profile
+Date:   Sun, 29 Mar 2020 22:57:41 +0800
+Message-Id: <1585493861-9867-1-git-send-email-xiyuyang19@fudan.edu.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: XQUFCgBXXUWxt4BeeJuFAA--.1822S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KryfGF47WF4fCr45WrW5trb_yoW8GrWDpF
+        47KF1UGFs5tFy2kF4Dta13urWak397Xr1Yva9xu3yUZrW5JayDXw1a9r17WryrurykAwsx
+        tFWayF9Y9w1UC3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+        JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+        rcIFxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+        v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+        c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+        0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
+        Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbHa0D
+        UUUUU==
+X-CM-SenderInfo: irzsiiysuqikmy6i3vldqovvfxof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 29, 2020 at 10:43:54AM +0300, Felipe Balbi wrote:
-> 
-> Hi Nathan,
-> 
-> Nathan Chancellor <natechancellor@gmail.com> writes:
-> 
-> > When building with Clang + -Wtautological-pointer-compare:
-> >
-> > drivers/usb/gadget/udc/bdc/bdc_ep.c:543:28: warning: comparison of
-> > address of 'req->queue' equal to a null pointer is always false
-> > [-Wtautological-pointer-compare]
-> >         if (req == NULL  || &req->queue == NULL || &req->usb_req == NULL)
-> >                              ~~~~~^~~~~    ~~~~
-> > drivers/usb/gadget/udc/bdc/bdc_ep.c:543:51: warning: comparison of
-> > address of 'req->usb_req' equal to a null pointer is always false
-> > [-Wtautological-pointer-compare]
-> >         if (req == NULL  || &req->queue == NULL || &req->usb_req == NULL)
-> >                                                     ~~~~~^~~~~~~    ~~~~
-> > 2 warnings generated.
-> >
-> > As it notes, these statements will always evaluate to false so remove
-> > them.
-> >
-> > Fixes: efed421a94e6 ("usb: gadget: Add UDC driver for Broadcom USB3.0 device controller IP BDC")
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/749
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> 
-> It's now in my queue for v5.8. It doesn't really look like a bug fix, so
-> it's not going in during v5.7-rc
-> 
-> -- 
-> balbi
+aa_change_profile() invokes aa_get_current_label(), which returns
+a reference of the current task's label.
 
-Thank you for picking it up. It would be nice to see it in 5.7 since
-we're enabling this warning and this is one of two outstanding
-instances in -next and the other one's patch has been picked up plus the
-patch itself is rather benign. Not to mention that I did send this patch
-back in October. However, when it is merged into Linus' tree is
-ultimately your call so I won't argue as long as it gets there
-eventually.
+According to the comment of aa_get_current_label(), the returned
+reference must be put with aa_put_label().
+However, when the original object pointed by "label" becomes
+unreachable because aa_change_profile() returns or a new object
+is assigned to "label", reference count increased by
+aa_get_current_label() is not decreased, causing a refcnt leak.
 
-Cheers,
-Nathan
+Fix this by calling aa_put_label() before the original object pointed
+by "label" becomes unreachable.
+
+Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
+---
+ security/apparmor/domain.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 6ceb74e0f789..b99145ae34c0 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -1328,6 +1328,7 @@ int aa_change_profile(const char *fqname, int flags)
+ 		ctx->nnp = aa_get_label(label);
+ 
+ 	if (!fqname || !*fqname) {
++		aa_put_label(label);
+ 		AA_DEBUG("no profile name");
+ 		return -EINVAL;
+ 	}
+@@ -1346,6 +1347,7 @@ int aa_change_profile(const char *fqname, int flags)
+ 			op = OP_CHANGE_PROFILE;
+ 	}
+ 
++	aa_put_label(label);
+ 	label = aa_get_current_label();
+ 
+ 	if (*fqname == '&') {
+-- 
+2.7.4
+
