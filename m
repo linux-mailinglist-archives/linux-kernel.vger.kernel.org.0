@@ -2,123 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2F1196F71
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF953196F49
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:32:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728549AbgC2SpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 14:45:25 -0400
-Received: from sender4-of-o54.zoho.com ([136.143.188.54]:21408 "EHLO
-        sender4-of-o54.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728419AbgC2SpY (ORCPT
+        id S1728564AbgC2ScU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 14:32:20 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:55838 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727506AbgC2ScT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 14:45:24 -0400
-X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 14:45:24 EDT
-ARC-Seal: i=1; a=rsa-sha256; t=1585506615; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=Gnz5i7zHhx3IcbvzMlmWDQnrh0sR4zto57trVmDlWHXCoqi97GnlySWHSZwCHJVpXxoFxxRJFA79+Sc5jtaOmw+XvgCCYJ+/+0MwR4/FDAPoxnr9MYfGZTiif69skBq6lg81l31e2A840IhfQHOnnL3tSAiOKo9SPbBuV59nW1g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1585506615; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
-        bh=hqPCegPJeX/Ry7agpxmBok0vX/8k1cwBMc60UNQIMGc=; 
-        b=jo1R6Ef+IV8X1KTtlIbl0iRh/hm9GeB8s4e+1FU5zCAwpXTUftK1eue2XMTj6uXlnad1dGpqe5GxCMZw+TzUoeN0dEqjDKEWuzEVnFSi5b4k3WyelLDhAtSNzVRkic2XQfQjMfXCq1GUmSDWx5JZ5xwGaW2+9NzqNtf/LizNSKo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=meresinski.eu;
-        spf=pass  smtp.mailfrom=tomasz@meresinski.eu;
-        dmarc=pass header.from=<tomasz@meresinski.eu> header.from=<tomasz@meresinski.eu>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1585506615;
-        s=zoho; d=meresinski.eu; i=tomasz@meresinski.eu;
-        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=hqPCegPJeX/Ry7agpxmBok0vX/8k1cwBMc60UNQIMGc=;
-        b=NPVa0VJstiyOaSTToNKVS1OU5UupuHHoOwXKsojUesZJEyO6AjsT9x+LpBgGB+g7
-        FV40TBOIguUZqNmzN1m3xIT6UwxwkoPsjtjotCgu8sdDKX6dyk1ms0NMeVlCubtbLz5
-        3M3VnGm/UMbnk0rKuSOKgg/R76LSXWGiCMCNR0kg=
-Received: from localhost.localdomain (78-11-200-65.static.ip.netia.com.pl [78.11.200.65]) by mx.zohomail.com
-        with SMTPS id 1585506613099417.6913837527152; Sun, 29 Mar 2020 11:30:13 -0700 (PDT)
-From:   =?UTF-8?q?Tomasz=20Meresi=C5=84ski?= <tomasz@meresinski.eu>
-To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Cc:     davem@davemloft.net, kuba@kernel.org,
-        =?UTF-8?q?Tomasz=20Meresi=C5=84ski?= <tomasz@meresinski.eu>
-Message-ID: <20200329182503.754-1-tomasz@meresinski.eu>
-Subject: [PATCH RFC net-next] af_unix: eof in recvmsg after shutdown for nonblocking dgram socket
-Date:   Sun, 29 Mar 2020 20:25:03 +0200
-X-Mailer: git-send-email 2.17.1
+        Sun, 29 Mar 2020 14:32:19 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-221-F3kvLTyUN4CuXFOWfNh4Zw-1; Sun, 29 Mar 2020 19:32:16 +0100
+X-MC-Unique: F3kvLTyUN4CuXFOWfNh4Zw-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Sun, 29 Mar 2020 19:32:10 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Sun, 29 Mar 2020 19:32:10 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>
+CC:     Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Al Viro" <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: RE: [RFC][PATCH 01/22] x86 user stack frame reads: switch to explicit
+ __get_user()
+Thread-Topic: [RFC][PATCH 01/22] x86 user stack frame reads: switch to
+ explicit __get_user()
+Thread-Index: AQHWBeo2BuGXOsXgxk+vqOM7n5IKaahf05lg///2sYCAABJhQP//8waAgAAUc7A=
+Date:   Sun, 29 Mar 2020 18:32:10 +0000
+Message-ID: <e7845564e66f41ccabbf6c23b28966ec@AcuMS.aculab.com>
+References: <20200323183620.GD23230@ZenIV.linux.org.uk>
+ <20200323183819.250124-1-viro@ZenIV.linux.org.uk>
+ <20200328104857.GA93574@gmail.com>
+ <20200328115936.GA23230@ZenIV.linux.org.uk>
+ <20200329092602.GB93574@gmail.com>
+ <CALCETrX=nXN14fqu-yEMGwwN-vdSz=-0C3gcOMucmxrCUpevdA@mail.gmail.com>
+ <489c9af889954649b3453e350bab6464@AcuMS.aculab.com>
+ <CAHk-=whDAxb+83gYCv4=-armoqXQXgzshaVCCe9dNXZb9G_CxQ@mail.gmail.com>
+ <9352bc55302d4589aaf2461c7b85fb6b@AcuMS.aculab.com>
+ <CAHk-=wjEf+0sBkPFKWpYZK_ygS9=ig3KTZkDe5jkDj+v8i7B+w@mail.gmail.com>
+In-Reply-To: <CAHk-=wjEf+0sBkPFKWpYZK_ygS9=ig3KTZkDe5jkDj+v8i7B+w@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calling recvmsg() after shutdown(SHUT_RD) is a some kind of undocumented
-behaviour. For blocking socket it just returns 0 (EOF), but for nonblocking
-socket it returns -EAGAIN. It can cause some event loops to infinitely wait
-for an event on this socket (https://github.com/tokio-rs/tokio/issues/1679)
-
-Simple Python test case:
-| import socket
-|
-| print('BLOCKING TEST')
-| a =3D socket.socket(family=3Dsocket.AF_UNIX, type=3Dsocket.SOCK_DGRAM)
-| a.shutdown(socket.SHUT_RD)
-|
-| result =3D a.recv(1)
-| print('recv result ', result)
-|
-| a.close()
-|
-| print('NONBLOCKING TEST')
-| type =3D socket.SOCK_DGRAM | socket.SOCK_NONBLOCK
-| a =3D socket.socket(family=3Dsocket.AF_UNIX, type=3Dtype)
-| a.shutdown(socket.SHUT_RD)
-|
-| try:
-|     result =3D a.recv(1)
-| except BlockingIOError:
-|     print('Got Blocking IO Error')
-| else:
-|     print('recv result ', result)
-|
-| a.close()
-
-Signed-off-by: Tomasz Meresi=C5=84ski <tomasz@meresinski.eu>
----
-I'm not so sure about this patch because it can be called userspace API bre=
-ak.=20
-This sequence is now some kind of undefined behaviour - it's documented now=
-here.
-In the first place, I think that shutdown(SHUT_RD) should fail here as it d=
-oes with AF_INET dgram socket.
-On the other hand, there may be some user of this kind of shutdown() behavi=
-our so it'd be too risky.
-
-The problem here is that EAGAIN errno is used in event loops as we should w=
-ait for the next events indicator.
-It's not true here because there won't be any new events with this socket a=
-s it's shut down.
-
- net/unix/af_unix.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 3385a7a0b231..9458b11289c2 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -2123,9 +2123,8 @@ static int unix_dgram_recvmsg(struct socket *sock, st=
-ruct msghdr *msg,
-=20
- =09if (!skb) { /* implies iolock unlocked */
- =09=09unix_state_lock(sk);
--=09=09/* Signal EOF on disconnected non-blocking SEQPACKET socket. */
--=09=09if (sk->sk_type =3D=3D SOCK_SEQPACKET && err =3D=3D -EAGAIN &&
--=09=09    (sk->sk_shutdown & RCV_SHUTDOWN))
-+=09=09/* Signal EOF on disconnected socket. */
-+=09=09if (err =3D=3D -EAGAIN && (sk->sk_shutdown & RCV_SHUTDOWN))
- =09=09=09err =3D 0;
- =09=09unix_state_unlock(sk);
- =09=09goto out;
---=20
-2.17.1
-
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjkgTWFyY2ggMjAyMCAxOToxNg0KPiBPbiBT
+dW4sIE1hciAyOSwgMjAyMCBhdCAxMTowMyBBTSBEYXZpZCBMYWlnaHQgPERhdmlkLkxhaWdodEBh
+Y3VsYWIuY29tPiB3cm90ZToNCj4gPg0KPiA+ID4gVGhhdCdzIGhvdyBnZXRfdXNlcigpIGFscmVh
+ZHkgd29ya3MuDQo+ID4gPg0KPiA+ID4gSXQgaXMgYSBwb2x5bW9ycGhpYyBmdW5jdGlvbiAoZG9u
+ZSB1c2luZyBtYWNyb3MsIHNpemVvZigpIGFuZCB1Z2x5DQo+ID4gPiBjb21waWxlciB0cmlja3Mp
+IHRoYXQgZ2VuZXJhdGVzIGEgY2FsbCwgeWVzLiBCdXQgaXQncyBub3QgYSBub3JtYWwgQw0KPiA+
+ID4gY2FsbC4gT24geDg2LTY0LCBpdCByZXR1cm5zIHRoZSBlcnJvciBjb2RlIGluICVyYXgsIGFu
+ZCB0aGUgdmFsdWUgaW4NCj4gPiA+ICVyZHgNCj4gPg0KPiA+IEkgbXVzdCBiZSBtaXMtcmVtZW1i
+ZXJpbmcgdGhlIG9iamVjdCBjb2RlIGZyb20gbGFzdCB0aW1lDQo+ID4gSSBsb29rZWQgYXQgaXQu
+DQo+IA0KPiBPbiBhbiBvYmplY3QgY29kZSBsZXZlbCwgdGhlIGVuZCByZXN1bHQgYWN0dWFsbHkg
+YWxtb3N0IGxvb2tzIGxpa2UgYQ0KPiBub3JtYWwgY2FsbCwgdW50aWwgeW91IHN0YXJ0IGxvb2tp
+bmcgYXQgdGhlIGV4YWN0IHJlZ2lzdGVyIHBhc3NpbmcNCj4gZGV0YWlscy4NCj4gDQo+IE9uIGEg
+c291cmNlIGxldmVsLCBpdCdzIGFueXRoaW5nIGJ1dC4NCj4gDQo+IFRoaXMgaXMgImdldF91c2Vy
+KCkiIG9uIHg4NjoNCj4gDQo+ICAgI2RlZmluZSBnZXRfdXNlcih4LCBwdHIpICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwNCj4gICAoeyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXA0K
+PiAgICAgICAgIGludCBfX3JldF9ndTsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBcDQo+ICAgICAgICAgcmVnaXN0ZXIgX19pbnR0eXBlKCoocHRyKSkg
+X192YWxfZ3UgYXNtKCIlIl9BU01fRFgpOyAgICAgICAgICAgIFwNCj4gICAgICAgICBfX2Noa191
+c2VyX3B0cihwdHIpOyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+XA0KPiAgICAgICAgIG1pZ2h0X2ZhdWx0KCk7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBcDQo+ICAgICAgICAgYXNtIHZvbGF0aWxlKCJjYWxsIF9fZ2V0
+X3VzZXJfJVA0IiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwNCj4gICAgICAgICAgICAg
+ICAgICAgICAgOiAiPWEiIChfX3JldF9ndSksICI9ciIgKF9fdmFsX2d1KSwgICAgICAgICAgICAg
+ICAgXA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBBU01fQ0FMTF9DT05TVFJBSU5UICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBcDQo+ICAgICAgICAgICAgICAgICAgICAgIDogIjAiIChw
+dHIpLCAiaSIgKHNpemVvZigqKHB0cikpKSk7ICAgICAgICAgICAgICAgIFwNCj4gICAgICAgICAo
+eCkgPSAoX19mb3JjZSBfX3R5cGVvZl9fKCoocHRyKSkpIF9fdmFsX2d1OyAgICAgICAgICAgICAg
+ICAgICAgXA0KPiAgICAgICAgIF9fYnVpbHRpbl9leHBlY3QoX19yZXRfZ3UsIDApOyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBcDQo+ICAgfSkNCg0KQ2FuJ3QgeW91IHNpbXBsaWZ5
+IHRoYXQgYnkgdXNpbmcgdGhlID1kIGNvbnN0cmFpbnQgcmF0aGVyDQp0aGFuIHJlbHlpbmcgb24g
+YSBhc20gcmVnaXN0ZXIgdmFyaWFibGUuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJl
+c3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsx
+IDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
