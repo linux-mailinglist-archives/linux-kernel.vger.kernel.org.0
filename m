@@ -2,107 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E891196BF4
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 10:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8043E196C07
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 11:18:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbgC2I45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 04:56:57 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42846 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727639AbgC2I45 (ORCPT
+        id S1727906AbgC2JS0 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 29 Mar 2020 05:18:26 -0400
+Received: from smtp01.webhostbox.net ([162.210.70.184]:40046 "EHLO
+        smtp01.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727882AbgC2JSZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 04:56:57 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q19so14536267ljp.9;
-        Sun, 29 Mar 2020 01:56:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=j9mujlxbObmOJIv9aY8Pv9+f4Diabo1dscBEk1uTFZ8=;
-        b=LQu+EVoLSJKX0tHv/setWOeqwKWK+bWXztDRZ5UJroVq+XxYPRIhA9sSrTKTT2ibEY
-         yB/6BCgeWRViYpqnPuBKAerGApUXQnxeG+X0WoOXn5axXbeok3hIPq11BbkPWdqDreNy
-         /THe8rlu1cI4/e6WfTUHpVqpotR7Dd2kDsVzvcEwWWDOrSWFxb3Ds6YKGThFJab8ivoO
-         daDXvYPXRAlZnzHQkB1KpdXtMB27sAdYXiBCqIHlCU7kRjveZm5jDb8J670PFFxPt6uL
-         QZDBl8oREV/wjQydRKzSSOW2PiVRbx1TEAU8mPdrUnCkZsHza59pbO832vXPFQSv8D2S
-         Vpjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=j9mujlxbObmOJIv9aY8Pv9+f4Diabo1dscBEk1uTFZ8=;
-        b=UeZNDZoG9lVqwRuuvTroGUnrGmT8JFLm4RGCz/IGwN2dH1qQduP6If64RWUz6oJ7po
-         9AVLJvTacHPWVlgwWckLl8jmhM2m2nyRL5r9kog3VGuGssr6x44c5mf2laHYe8CqjQ3R
-         zmgb2io9zw/inau6balF54ECJuc4WAcLudt1ibGaoWBaQxI3a8DbZoXDLK3uAUJ+EHZ3
-         3ItOYI6/z+gChCQj8ZUKVjesSoKwhAHAG1Tjbh5AteN7O6qytaQ7awDKCWu0U3eTkFhc
-         j8mfeA2c8truX0nb2wDsicCidLQKzyX+VZbDpMjXusMak92l0D5sbkOlEk97l8XI4SPk
-         Bu7Q==
-X-Gm-Message-State: AGi0PuZ+74ys6IDemHrKRQ2U3YqhGnPwZ2lW7XcOkF04XWiqYzDI8xLD
-        UFlZyx1zDQax3QEG/jVlQkI=
-X-Google-Smtp-Source: APiQypILmyETDoZAWXoLBcXENwr7izGJwTkjiZlQpOLwdm0cfT9q3DBAk44CF2QOzRRtVdc3Nvj7nA==
-X-Received: by 2002:a05:651c:1108:: with SMTP id d8mr4072521ljo.198.1585472214451;
-        Sun, 29 Mar 2020 01:56:54 -0700 (PDT)
-Received: from localhost (n112120135125.netvigator.com. [112.120.135.125])
-        by smtp.gmail.com with ESMTPSA id g18sm3797574lfh.1.2020.03.29.01.56.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 29 Mar 2020 01:56:53 -0700 (PDT)
-From:   Qiujun Huang <hqjagain@gmail.com>
-To:     b.zolnierkie@samsung.com
-Cc:     daniel.vetter@ffwll.ch, maarten.lankhorst@linux.intel.com,
-        sam@ravnborg.org, daniel.thompson@linaro.org, ghalat@redhat.com,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>
-Subject: [PATCH v2] fbcon: fix null-ptr-deref in fbcon_switch
-Date:   Sun, 29 Mar 2020 16:56:47 +0800
-Message-Id: <20200329085647.25133-1-hqjagain@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 29 Mar 2020 05:18:25 -0400
+X-Greylist: delayed 5000 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 05:18:25 EDT
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by smtp01.webhostbox.net (Postfix) with ESMTP id 1A0903B0FBA
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 07:01:01 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smtp01.webhostbox.net
+Received: from smtp01.webhostbox.net ([127.0.0.1])
+        by localhost (smtp01.webhostbox.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id RJLkQXk-yTev for <linux-kernel@vger.kernel.org>;
+        Sun, 29 Mar 2020 07:01:00 +0000 (UTC)
+Received: from 192-185-130-50.unifiedlayer.com (unknown [192.185.130.50])
+        by smtp01.webhostbox.net (Postfix) with ESMTP id 755363B11FA
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 07:01:00 +0000 (UTC)
+Received: from [185.92.24.20] (port=51432 helo=microframe53.icu)
+        by 192-185-130-50.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <beast3x@microframe53.icu>)
+        id 1jIRwJ-0005qS-7S
+        for linux-kernel@vger.kernel.org; Sun, 29 Mar 2020 03:00:59 -0400
+Reply-To: leoholder33@gmail.com
+From:   beast3x@microframe53.icu
+To:     linux-kernel@vger.kernel.org
+Subject: Re: investment expansion(JV) or a loan arrangement
+Date:   29 Mar 2020 14:00:58 +0700
+Message-ID: <20200329140058.4716FC129E0FBF42@microframe53.icu>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - 192-185-130-50.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - microframe53.icu
+X-Get-Message-Sender-Via: 192-185-130-50.webhostbox.net: authenticated_id: beast3x@microframe53.icu
+X-Authenticated-Sender: 192-185-130-50.webhostbox.net: beast3x@microframe53.icu
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.2 cv=NIKlwwyg c=1 sm=1 tr=0
+        a=6RzDjrs8oDOs8oiLa/uHrQ==:117 a=6RzDjrs8oDOs8oiLa/uHrQ==:17
+        a=9+rZDBEiDlHhcck0kWbJtElFXBc=:19 a=pAoBejfwREQA:10 a=IkcTkHD0fZMA:10
+        a=x7bEGLp0ZPQA:10 a=MKtGQD3n3ToA:10 a=1oJP67jkp3AA:10 a=SS2py6AdgQ4A:10
+        a=jQhvujksvf4A:10 a=ZZnuYtJkoWoA:10 a=BoqpytQKvCbXeyZLVxQA:9
+        a=RDUcLO0Fy2JGVVtp:21 a=Vth8eDIDT6PTY9An:21 a=QEXdDO2ut3YA:10
+        a=Qs6a84Zx8zhR9xoAZw0g:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set logo_shown to FBCON_LOGO_CANSHOW when the vc was deallocated.
+Hello, my name is Leo Holder; I work as an agent to a 
+representative of a group of investors and lenders, so I 
+contacted you in view of the unique opportunity that we could 
+benefit from working together.  The investors and lenders have 
+over$6.8 Billion portfolios and if you are seeking investment 
+expansion (JV) or a loan arrangement, the group is reliable and 
+has an exclusive range of a source of private investors and 
+lenders for your business/project’s needs. They can invest in 
+start-ups only if the investment proposal is logically realistic.  
+The investor(s) wants to remain anonymous because of their 
+current and previous position in the government. If you have 
+serious interest to work with the group directly or recommend a 
+company to take a private loan or investment funds from the 
+investors and lenders, me and you will be entitled to 5% of any 
+amount received by the company from the investors/or lenders, but 
+if you are taking the fund directly as a company; I will be 
+entitled to 2.5% as a commission fee. There will be a face to 
+face meeting between the investor's fiduciary facilitators and 
+the funding receiver after signing (MOU) the (ROI) should not be 
+less than3% per annum if it's a loan or direct project financing. 
+I will introduce you to the CEO representing investors/ lenders, 
+the after receiving your project summary or that of the company 
+seeking investment expansion (JV) funding or a loan arrangement.
 
-syzkaller report: https://lkml.org/lkml/2020/3/27/403
-general protection fault, probably for non-canonical address
-0xdffffc000000006c: 0000 [#1] SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000360-0x0000000000000367]
-RIP: 0010:fbcon_switch+0x28f/0x1740
-drivers/video/fbdev/core/fbcon.c:2260
+I look forward to hearing from you.
 
-Call Trace:
-redraw_screen+0x2a8/0x770 drivers/tty/vt/vt.c:1008
-vc_do_resize+0xfe7/0x1360 drivers/tty/vt/vt.c:1295
-fbcon_init+0x1221/0x1ab0 drivers/video/fbdev/core/fbcon.c:1219
-visual_init+0x305/0x5c0 drivers/tty/vt/vt.c:1062
-do_bind_con_driver+0x536/0x890 drivers/tty/vt/vt.c:3542
-do_take_over_console+0x453/0x5b0 drivers/tty/vt/vt.c:4122
-do_fbcon_takeover+0x10b/0x210 drivers/video/fbdev/core/fbcon.c:588
-fbcon_fb_registered+0x26b/0x340 drivers/video/fbdev/core/fbcon.c:3259
-do_register_framebuffer drivers/video/fbdev/core/fbmem.c:1664 [inline]
-register_framebuffer+0x56e/0x980 drivers/video/fbdev/core/fbmem.c:1832
-dlfb_usb_probe.cold+0x1743/0x1ba3 drivers/video/fbdev/udlfb.c:1735
-usb_probe_interface+0x310/0x800 drivers/usb/core/driver.c:374
+Sincerely,
 
-accessing vc_cons[logo_shown].d->vc_top causes the bug.
-
-Reported-by: syzbot+732528bae351682f1f27@syzkaller.appspotmail.com
-Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
----
- drivers/video/fbdev/core/fbcon.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index bb6ae995c2e5..5eb3fc90f9f6 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -1283,6 +1283,9 @@ static void fbcon_deinit(struct vc_data *vc)
- 	if (!con_is_bound(&fb_con))
- 		fbcon_exit();
- 
-+	if (vc->vc_num == logo_shown)
-+		logo_shown = FBCON_LOGO_CANSHOW;
-+
- 	return;
- }
- 
--- 
-2.17.1
-
+Leo Holder.
