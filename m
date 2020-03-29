@@ -2,91 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5305C196EBE
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 19:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AC18196EC1
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 19:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbgC2RgQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 13:36:16 -0400
-Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.121]:17269 "EHLO
-        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728373AbgC2RgN (ORCPT
+        id S1728535AbgC2Rg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 13:36:28 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34132 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728502AbgC2RgX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 13:36:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1585503371;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=L2+kXr3RvjPKbYTAI82Pm7Ea8M3wbjo65G4k9DdxA1Q=;
-        b=GtlD+UCfUaomIzhfiUYZBtFuNA8baL4BRZuFS+LVFoYXmi8MYooIs+ITvxoODl+p7Y
-        xeDp+gKiI+1OGaT3aPnon+gDb3zRIvphhvpP7xenED/C00FDIUH28p87YjvIpAVC4x0w
-        POAAcN/vmZkWdeERBSv2ewM8mLEjY2HbII0F/P9K2QkThw04FsbyG6pzoi6e5ZxwV6VO
-        j1UZ1nPzEnkOncF7YvCbTVl1POv9M5BMu52WeggxKBb0LXHhnTe2LdffBaAcXHpYvc94
-        yZRlQ00bLPsuhopMxXtTUCubAXZFrgD8+q5brE4LlWLZN/o5KbypjOOV9EMnQUVTCKnI
-        tPGQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0pDz2rsNxxv"
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 46.2.1 DYNA|AUTH)
-        with ESMTPSA id m02241w2THa2BMH
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Sun, 29 Mar 2020 19:36:02 +0200 (CEST)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Paul Boddie <paul@boddie.org.uk>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Kees Cook <keescook@chromium.org>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-gpio@vger.kernel.org, letux-kernel@openphoenux.org,
-        mips-creator-ci20-dev@googlegroups.com
-Subject: [RFC v3 8/8] MIPS: CI20: defconfig: configure for DRM_DW_HDMI_JZ4780
-Date:   Sun, 29 Mar 2020 19:35:54 +0200
-Message-Id: <90af93353d2624cf4f1c052990e4e1e14fcf67a4.1585503354.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1585503354.git.hns@goldelico.com>
-References: <cover.1585503354.git.hns@goldelico.com>
+        Sun, 29 Mar 2020 13:36:23 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p10so15257255ljn.1
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 10:36:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TcQyEoLt4UUXsWctY014kOQhUrjNRd8NgK7mJY68Kfo=;
+        b=c4S1GUo66CLKHtqWZrJ08l45GfFbSoNmJq7+Mk864e3HFM1z96Vt0icYOjO/zZ3OFq
+         dBmL3o8LzCXTrZx1pkWS9af6uT+g/QoAwSjdZAillv4v0C46jeVFnvQdf6JM3fhEQtpr
+         cGu5GjFuFXwCQ6z4lyM8GSScBIie8CSmYDIeQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TcQyEoLt4UUXsWctY014kOQhUrjNRd8NgK7mJY68Kfo=;
+        b=sw6baUC3oi4bufpBH71TWGnvGICpNo+uuYK8l+kY1Ep2QOWvXzFRXvtxi1JVfygz3I
+         kkru/arMnPFGk6XOQLBmQXtUO/myq4oR8nkn3H/pEnsX0xJCbQlT5sytgmFK3oBgtmBD
+         G4N7yzldWx/ucVyeXxDR8ka9c1l2ccoUgMc1a6uRngaw2mb40DadaovnFOXHbTXt5MQF
+         nyXSOtWt9TdaNwxuz6g5REp0HXXwaVhaQpixXFXMvh7CP3Uqp5S/cQeOlOtpDdnllpBO
+         xrmynNz2Es48F9aFbWhLW23EtN54I+MGhIrkPmdKjrcRrLe+mueE9Qb0F0VvMW5GMPxq
+         idxQ==
+X-Gm-Message-State: AGi0PuapUVj8rbBuaGzNJSDZMw8ePXp4Q0LqwZlNavAFuCoiXzHUoDHC
+        F73g+9Y0Nc+5MphYjDBX390VIMXtyL8=
+X-Google-Smtp-Source: APiQypIJxFJLQ06KVHcT7Kj5e5Z2mhcURiIiR5AzVE3k6e/W52jp0CMvsEJvZSJ+wZ/7eH9f1h8tfw==
+X-Received: by 2002:a05:651c:289:: with SMTP id b9mr5244710ljo.44.1585503379745;
+        Sun, 29 Mar 2020 10:36:19 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id l21sm7460542lfh.63.2020.03.29.10.36.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 Mar 2020 10:36:19 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id g27so15418496ljn.10
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 10:36:18 -0700 (PDT)
+X-Received: by 2002:a05:651c:50e:: with SMTP id o14mr4888740ljp.241.1585503378519;
+ Sun, 29 Mar 2020 10:36:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <158549780513.2870.9873806112977909523.tglx@nanos.tec.linutronix.de>
+ <158549780514.2870.16142335615120539835.tglx@nanos.tec.linutronix.de>
+In-Reply-To: <158549780514.2870.16142335615120539835.tglx@nanos.tec.linutronix.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 29 Mar 2020 10:36:02 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj0fy5-mMkfVTLd4thU7R28Zp5rFGQBLWeqbd_7PyD=hg@mail.gmail.com>
+Message-ID: <CAHk-=wj0fy5-mMkfVTLd4thU7R28Zp5rFGQBLWeqbd_7PyD=hg@mail.gmail.com>
+Subject: Re: [GIT pull] perf/urgent for v5.6
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We configure them as loadable modules by default.
+On Sun, Mar 29, 2020 at 9:03 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> please pull the latest perf/urgent branch from:
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- arch/mips/configs/ci20_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Also already sent and merged on Tuesday (commit 76ccd234269b).
 
-diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
-index be41df2a81fb..3f733a555cb2 100644
---- a/arch/mips/configs/ci20_defconfig
-+++ b/arch/mips/configs/ci20_defconfig
-@@ -103,6 +103,9 @@ CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_JZ4740=y
- CONFIG_DMADEVICES=y
- CONFIG_DMA_JZ4780=y
-+CONFIG_DRM=m
-+CONFIG_DRM_DW_HDMI_JZ4780=m
-+CONFIG_DRM_DW_HDMI=m
- # CONFIG_IOMMU_SUPPORT is not set
- CONFIG_MEMORY=y
- CONFIG_EXT4_FS=y
--- 
-2.25.1
-
+             Linus
