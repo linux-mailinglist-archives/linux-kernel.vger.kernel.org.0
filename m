@@ -2,52 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72BF61970AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 00:05:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E36E1970AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 00:05:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbgC2WFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 18:05:30 -0400
-Received: from gfdefer007.mail.goo.jp ([153.149.229.140]:45452 "EHLO
-        gfdefer007.mail.goo.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728823AbgC2WF3 (ORCPT
+        id S1729219AbgC2WFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 18:05:40 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55312 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728823AbgC2WFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 18:05:29 -0400
-X-Greylist: delayed 483 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 18:05:29 EDT
-Received: from gogw0336.mail.goo.jp (gogw0336.mail.goo.jp [153.153.64.37])
-        by gfdefer007.mail.goo.jp (Postfix) with ESMTP id 24CF070005F
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 06:57:26 +0900 (JST)
-Received: from mas-vc-mts-102c1.ocn.ad.jp (mas-vc-mts-102c1.ocn.ad.jp [153.138.237.87])
-        by gogw0336.mail.goo.jp (Postfix) with ESMTP id 36553F8024E;
-        Mon, 30 Mar 2020 06:57:23 +0900 (JST)
-Received: from vcwebmail.mail.goo.jp ([153.149.140.114])
-        by mas-vc-mts-102c1.ocn.ad.jp with ESMTP
-        id Ifvlj90KkeCSjIfvlj0amh; Mon, 30 Mar 2020 06:57:23 +0900
-Received: from md-app-cb004.noc-chibaminato.ocn.ad.jp (md-app-cb004.ocn.ad.jp [153.138.211.200])
-        by vcwebmail.mail.goo.jp (Postfix) with ESMTP;
-        Mon, 30 Mar 2020 06:57:20 +0900 (JST)
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-To:     undisclosed-recipients:;
-Subject: INVESTMENT PLAN
-From:   Richard Benson <hanahana_87310_happ@mail.goo.ne.jp>
-Reply-To: Richard Benson <pinrichardrich22@gmail.com>
-Message-ID: <158551903996.14536.15400130897321123832@mail.goo.ne.jp>
-X-Originating-IP: [104.37.190.246]
-Date:   Mon, 30 Mar 2020 06:57:20 +0900
+        Sun, 29 Mar 2020 18:05:40 -0400
+Received: by mail-wm1-f68.google.com with SMTP id z5so17760979wml.5
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 15:05:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=l9DHmEiKz6yupqFx9WrHI0MsNMx9mQaRHcz2cqVdZLE=;
+        b=JdHU3Yx4CotTcRuN+C3coH9IrxLwc1AwW8NiUAnWcmXk5TtrHAGjqQBn0silebw7J4
+         l4XGe0eMFs6Ui8GRvWBNUzK78urjhmai4UQb5Q90tDnbsBecUdLbd8X/WzhJ9rcVg3WT
+         APZELnnGVyOYgnnyTYUlLXPgMr9EgpodhFeWe7BdvrFMz9LSGkQb+hXBrOnbFQRxBkQN
+         RejdWpQJlcbotPcQFz4Ok7AZMiuNr3GDHz8A5JnAf/mYY9yeuyjX9RKQSgVWrU/+/ocf
+         n+EJ603uDEC/JleiXvZL0Nny0W16xAFn8s9G/1ZcS3jdv3eLNJ5RbYyxEbLTqN/7fCgN
+         flzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=l9DHmEiKz6yupqFx9WrHI0MsNMx9mQaRHcz2cqVdZLE=;
+        b=GnQg+qkAbpMdMS7kEeTDqV/vHNGR90ooo4hVcwP6kRyYhujJR5fvmGBlQTdCKyql3X
+         0vsYX7qF5K9rPqq8RAGNmqma7OqHDu+qoYtX6/zfAEov9NtwbjGjkRqyPkEWQhV9SasX
+         Jc9GkDqb/9+uv59VXp8IEy6F5N7RpcNDrjOFayq0ULBajnXzhCxxhRz1VGUnzvelKvzg
+         MPZhnanIFzKtTqfIUQVSW4/VAjvBaJl6obtCFjm2zZuPrWFB4sFif+oMYdx24hZrBR7F
+         3J2kOtulbg2RewUAHiVHJipuAt4T8bK1R/lIqCksYKzbydMrsHBJsgPezqac7O5KK6ty
+         A3RA==
+X-Gm-Message-State: ANhLgQ0km+nbEq2eK/DSAh4oXdmunCIGj7yzi+Tk/f131S0/eVuLJyyD
+        6kuNs7tq61ym+jI6LI0M1IYRsA==
+X-Google-Smtp-Source: ADFU+vs9p9+pplq0E9rosSzTu+qVht5suK/2lWGberAjg4WP9toV2lrY6CJKiOWPz50Xv1bXJ2K65A==
+X-Received: by 2002:a05:600c:21da:: with SMTP id x26mr9651227wmj.47.1585519538542;
+        Sun, 29 Mar 2020 15:05:38 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e34:ed2f:f020:78b1:4459:6959:42d0])
+        by smtp.gmail.com with ESMTPSA id j188sm20026740wmj.36.2020.03.29.15.05.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Mar 2020 15:05:37 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     rafael@kernel.org, robh@kernel.org
+Cc:     daniel.lezcano@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-pm@vger.kernel.org (open list:POWER MANAGEMENT CORE),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V2 1/4] powercap/drivers/idle_inject: Specify idle state max latency
+Date:   Mon, 30 Mar 2020 00:03:17 +0200
+Message-Id: <20200329220324.8785-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+Currently the idle injection framework uses the play_idle() function
+which puts the current CPU in an idle state. The idle state is the
+deepest one, as specified by the latency constraint when calling the
+subsequent play_idle_precise() function with the INT_MAX.
 
-I came across your company's profile from the foreign trade office of our Chambers of Commerce and Industry and I decided to contact you for assistance in receiving money on my behalf for a good lucrative business investment in your country. My name is Mr. Richard Benson a branch bank manager here in Ghana. I have the sum of Sixteen Million, Four Hundred Thousand US Dollars which I would like to transfer into your account and invest in your country if possible into a lucrative business that will be profitable to us.
+The idle_injection is used by the cpuidle_cooling device which
+computes the idle / run duration to mitigate the temperature by
+injecting idle cycles. The cooling device has no control on the depth
+of the idle state.
+
+Allow finer control of the idle injection mechanism by allowing to
+specify the latency for the idle state. Thus the cooling device has
+the ability to have a guarantee on the exit latency of the idle states
+it is injecting.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+  - V2:
+    - Remove the get_latency helper
+
+---
+ drivers/powercap/idle_inject.c | 16 +++++++++++++++-
+ include/linux/idle_inject.h    |  4 ++++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/powercap/idle_inject.c b/drivers/powercap/idle_inject.c
+index cd1270614cc6..49f42c475620 100644
+--- a/drivers/powercap/idle_inject.c
++++ b/drivers/powercap/idle_inject.c
+@@ -61,12 +61,14 @@ struct idle_inject_thread {
+  * @timer: idle injection period timer
+  * @idle_duration_us: duration of CPU idle time to inject
+  * @run_duration_us: duration of CPU run time to allow
++ * @latency_us: max allowed latency
+  * @cpumask: mask of CPUs affected by idle injection
+  */
+ struct idle_inject_device {
+ 	struct hrtimer timer;
+ 	unsigned int idle_duration_us;
+ 	unsigned int run_duration_us;
++	unsigned int latency_us;
+ 	unsigned long int cpumask[0];
+ };
  
-I made this money (US$16,400,000.00) out of my branch office excess profit. I choose you because I cannot be directly involved for I am still working with the bank, I hope you can understand my situation and assist me to receive and invest this money properly as this is my only hope. You will get 40% of the total fund as commission for your co-operation while 60% will be for me..
+@@ -138,7 +140,8 @@ static void idle_inject_fn(unsigned int cpu)
+ 	 */
+ 	iit->should_run = 0;
  
-I need your timely response for more details.
+-	play_idle(READ_ONCE(ii_dev->idle_duration_us));
++	play_idle_precise(READ_ONCE(ii_dev->idle_duration_us) * NSEC_PER_USEC,
++			  READ_ONCE(ii_dev->latency_us) * NSEC_PER_USEC);
+ }
  
-With regards,
-Mr. Richard Benson
-http://www.standardchartered.com
+ /**
+@@ -169,6 +172,16 @@ void idle_inject_get_duration(struct idle_inject_device *ii_dev,
+ 	*idle_duration_us = READ_ONCE(ii_dev->idle_duration_us);
+ }
+ 
++/**
++ * idle_inject_set_latency - set the maximum latency allowed
++ * @latency_us: set the latency requirement for the idle state
++ */
++void idle_inject_set_latency(struct idle_inject_device *ii_dev,
++			     unsigned int latency_us)
++{
++	WRITE_ONCE(ii_dev->latency_us, latency_us);
++}
++
+ /**
+  * idle_inject_start - start idle injections
+  * @ii_dev: idle injection control device structure
+@@ -297,6 +310,7 @@ struct idle_inject_device *idle_inject_register(struct cpumask *cpumask)
+ 	cpumask_copy(to_cpumask(ii_dev->cpumask), cpumask);
+ 	hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+ 	ii_dev->timer.function = idle_inject_timer_fn;
++	ii_dev->latency_us = UINT_MAX;
+ 
+ 	for_each_cpu(cpu, to_cpumask(ii_dev->cpumask)) {
+ 
+diff --git a/include/linux/idle_inject.h b/include/linux/idle_inject.h
+index a445cd1a36c5..91a8612b8bf9 100644
+--- a/include/linux/idle_inject.h
++++ b/include/linux/idle_inject.h
+@@ -26,4 +26,8 @@ void idle_inject_set_duration(struct idle_inject_device *ii_dev,
+ void idle_inject_get_duration(struct idle_inject_device *ii_dev,
+ 				 unsigned int *run_duration_us,
+ 				 unsigned int *idle_duration_us);
++
++void idle_inject_set_latency(struct idle_inject_device *ii_dev,
++			     unsigned int latency_ns);
++
+ #endif /* __IDLE_INJECT_H__ */
+-- 
+2.17.1
+
