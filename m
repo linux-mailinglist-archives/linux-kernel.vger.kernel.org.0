@@ -2,80 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46AD3196AD5
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 05:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF8A196AC8
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 05:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbgC2DTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 23:19:15 -0400
-Received: from cnc.isely.net ([75.149.91.89]:54423 "EHLO cnc.isely.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726315AbgC2DTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 23:19:15 -0400
-X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Sat, 28 Mar 2020 23:19:14 EDT
-Received: from ts3-dock2.isely.net (ts3-dock2.isely.net [::ffff:192.168.23.14])
-  (AUTH: PLAIN isely, TLS: TLSv1/SSLv3,256bits,DHE-RSA-AES256-GCM-SHA384)
-  by cnc.isely.net with ESMTPSA; Sat, 28 Mar 2020 22:14:09 -0500
-  id 0000000000146015.000000005E801281.00004342
-Date:   Sat, 28 Mar 2020 22:14:09 -0500 (CDT)
-From:   Mike Isely <isely@isely.net>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-cc:     linux-i2c@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Isely <isely@isely.net>
-Subject: Re: [PATCH 6/6] media: usb: pvrusb2: convert to use
- i2c_new_client_device()
-In-Reply-To: <20200326210947.12747-7-wsa+renesas@sang-engineering.com>
-Message-ID: <alpine.DEB.2.21.2003282213550.11595@sheridan.isely.net>
-References: <20200326210947.12747-1-wsa+renesas@sang-engineering.com> <20200326210947.12747-7-wsa+renesas@sang-engineering.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-Mime-Version: 1.0
+        id S1727163AbgC2DRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 23:17:09 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:37889 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbgC2DRI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 23:17:08 -0400
+Received: by mail-pj1-f65.google.com with SMTP id m15so5705168pje.3
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Mar 2020 20:17:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4II2bc92WqcI1jJHIbHJBRCr9XHybTRKP72pOZ2vBn8=;
+        b=m9oqaykcy7+GRfPUA0qekrpwJwNqG0S1mlKb9K3dSMoiUplMP4jDXKYYiUxNSn1n+v
+         4oyL3E8RvMsSp58YQD7MyGe1pOXmUDh3zVX3F14wt1es3/kyO62xLP1vqLHROC2/iG5A
+         NA5fTeT/j2lxo6j6d+AbeShqGk6CPpwln0Emo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4II2bc92WqcI1jJHIbHJBRCr9XHybTRKP72pOZ2vBn8=;
+        b=fRZn+68zB80IrZlTij07T4Y9SSu52gQlbQZzKCSHGMKYa5p1HPD04ydgjlRnHDRDMW
+         RtxAC2U32FCGcupc/jcwFVuMtZsnLy8KwFhBZMy/UP1U+6Tu0IMWfo7LKov8h/Lw5sgw
+         UmJyTdPV6OrJKG+y7NRxuxU3QxWhZdzcuLxHxViUzYeTdCyJMJnnUA8PLa1k6E9RgP3S
+         r4AFfpBJheyM9uQ6Duk9Zuit4ygO7ydFl8+x5xemVyfxlynAN7p0kbzP6Qtpcw7q3vXX
+         E36m+JqmXS9c4kwt0ocE3TF2iI7tWDTl8WI2x8hf7jg39hqiE9YPtcLGzRsSLQ8CLs6F
+         Jm9w==
+X-Gm-Message-State: ANhLgQ2ERcxZWVAjradesPwgLJaXjf4awisBxERwPybokh/l7/hi44QV
+        Gx55DHLyVT28ibPb4HBow//VbQ==
+X-Google-Smtp-Source: ADFU+vtseLSYN5So1Oobu2UiukVUxTzuZN3FTYmpLjJuga7kllNUrhEyIWnwcYJIyJMu6YW0JBI/4Q==
+X-Received: by 2002:a17:90a:7105:: with SMTP id h5mr8294662pjk.54.1585451827508;
+        Sat, 28 Mar 2020 20:17:07 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y14sm7123511pfp.127.2020.03.28.20.17.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Mar 2020 20:17:06 -0700 (PDT)
+Date:   Sat, 28 Mar 2020 20:17:05 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v10 7/9] proc: move hidepid values to uapi as they are
+ user interface to mount
+Message-ID: <202003282016.19E071712@keescook>
+References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
+ <20200327172331.418878-8-gladkov.alexey@gmail.com>
+ <202003281340.B73225DCC9@keescook>
+ <20200328212547.xxiqxqhxzwp6w5n5@comp-core-i7-2640m-0182e6>
+ <202003281453.CED94974@keescook>
+ <20200328230046.v3qbffmbtl4sd7tg@comp-core-i7-2640m-0182e6>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20200328230046.v3qbffmbtl4sd7tg@comp-core-i7-2640m-0182e6>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Acked-by: Mike Isely <isely@pobox.com>
-
-On Thu, 26 Mar 2020, Wolfram Sang wrote:
-
-> Move away from the deprecated API.
+On Sun, Mar 29, 2020 at 12:00:46AM +0100, Alexey Gladkov wrote:
+> On Sat, Mar 28, 2020 at 02:53:49PM -0700, Kees Cook wrote:
+> > > > > +/* definitions for hide_pid field */
+> > > > > +enum {
+> > > > > +	HIDEPID_OFF            = 0,
+> > > > > +	HIDEPID_NO_ACCESS      = 1,
+> > > > > +	HIDEPID_INVISIBLE      = 2,
+> > > > > +	HIDEPID_NOT_PTRACEABLE = 4,
+> > > > > +};
+> > > > Should the numeric values still be UAPI if there is string parsing now?
+> > > 
+> > > I think yes, because these are still valid hidepid= values.
+> > 
+> > But if we don't expose the values, we can do whatever we like with
+> > future numbers (e.g. the "is this a value or a bit field?" question).
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-> index 275394bafe7d..63db04fe12d3 100644
-> --- a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-> +++ b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-> @@ -564,7 +564,7 @@ static void pvr2_i2c_register_ir(struct pvr2_hdw *hdw)
->  		strscpy(info.type, "ir_video", I2C_NAME_SIZE);
->  		pvr2_trace(PVR2_TRACE_INFO, "Binding %s to i2c address 0x%02x.",
->  			   info.type, info.addr);
-> -		i2c_new_device(&hdw->i2c_adap, &info);
-> +		i2c_new_client_device(&hdw->i2c_adap, &info);
->  		break;
->  	case PVR2_IR_SCHEME_ZILOG:     /* HVR-1950 style */
->  	case PVR2_IR_SCHEME_24XXX_MCE: /* 24xxx MCE device */
-> @@ -579,7 +579,7 @@ static void pvr2_i2c_register_ir(struct pvr2_hdw *hdw)
->  		strscpy(info.type, "ir_z8f0811_haup", I2C_NAME_SIZE);
->  		pvr2_trace(PVR2_TRACE_INFO, "Binding %s to i2c address 0x%02x.",
->  			   info.type, info.addr);
-> -		i2c_new_device(&hdw->i2c_adap, &info);
-> +		i2c_new_client_device(&hdw->i2c_adap, &info);
->  		break;
->  	default:
->  		/* The device either doesn't support I2C-based IR or we
-> 
+> Alexey Dobriyan suggested to put these parameters into the UAPI and it
+> makes sense because these are user parameters.
+
+Okidokey. :) Anyway, ignore my HIDEPID_MAX idea then, since this could
+become a bitfield. Just checking for individual bits is the way to go
+for now. Sorry for the noise.
 
 -- 
-
-Mike Isely
-isely @ isely (dot) net
-PGP: 03 54 43 4D 75 E5 CC 92 71 16 01 E2 B5 F5 C1 E8
+Kees Cook
