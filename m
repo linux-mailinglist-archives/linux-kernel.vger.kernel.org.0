@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C772196F6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A200D196F5C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 20:43:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728777AbgC2Sob (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 14:44:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42862 "EHLO mail.kernel.org"
+        id S1728664AbgC2SnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 14:43:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728580AbgC2SnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 14:43:17 -0400
+        id S1728587AbgC2SnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 14:43:18 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45E60208E0;
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BA73208FE;
         Sun, 29 Mar 2020 18:43:17 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1jIctw-002FsQ-6Y; Sun, 29 Mar 2020 14:43:16 -0400
-Message-Id: <20200329184316.090316350@goodmis.org>
+        id 1jIctw-002Fsw-B8; Sun, 29 Mar 2020 14:43:16 -0400
+Message-Id: <20200329184316.229427404@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 29 Mar 2020 14:42:56 -0400
+Date:   Sun, 29 Mar 2020 14:42:57 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 04/21] ring-buffer: Have ring_buffer_empty() not depend on tracing stopped
+Subject: [for-next][PATCH 05/21] ring-buffer: Rename ring_buffer_read() to read_buffer_iter_advance()
 References: <20200329184252.289087453@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,67 +37,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-It was complained about that when the trace file is read, that the tracing
-is disabled, as the iterator expects writing to the buffer it reads is not
-updated. Several steps are needed to make the iterator handle a writer,
-by testing if things have changed as it reads.
+When the ring buffer was first created, the iterator followed the normal
+producer/consumer operations where it had both a peek() operation, that just
+returned the event at the current location, and a read(), that would return
+the event at the current location and also increment the iterator such that
+the next peek() or read() will return the next event.
 
-This step is to make ring_buffer_empty() expect the buffer to be changing.
-Note if the current location of the iterator is overwritten, then it will
-return false as new data is being added. Note, that this means that data
-will be skipped.
+The only use of the ring_buffer_read() is currently to move the iterator to
+the next location and nothing now actually reads the event it returns.
+Rename this function to its actual use case to ring_buffer_iter_advance(),
+which also adds the "iter" part to the name, which is more meaningful. As
+the timestamp returned by ring_buffer_read() was never used, there's no
+reason that this new version should bother having returning it. It will also
+become a void function.
 
-Link: http://lkml.kernel.org/r/20200317213415.870741809@goodmis.org
+Link: http://lkml.kernel.org/r/20200317213416.018928618@goodmis.org
 
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/ring_buffer.c | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+ include/linux/ring_buffer.h          |  3 +--
+ kernel/trace/ring_buffer.c           | 23 ++++++-----------------
+ kernel/trace/trace.c                 |  4 ++--
+ kernel/trace/trace_functions_graph.c |  2 +-
+ 4 files changed, 10 insertions(+), 22 deletions(-)
 
+diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
+index df0124eabece..0ae603b79b0e 100644
+--- a/include/linux/ring_buffer.h
++++ b/include/linux/ring_buffer.h
+@@ -135,8 +135,7 @@ void ring_buffer_read_finish(struct ring_buffer_iter *iter);
+ 
+ struct ring_buffer_event *
+ ring_buffer_iter_peek(struct ring_buffer_iter *iter, u64 *ts);
+-struct ring_buffer_event *
+-ring_buffer_read(struct ring_buffer_iter *iter, u64 *ts);
++void ring_buffer_iter_advance(struct ring_buffer_iter *iter);
+ void ring_buffer_iter_reset(struct ring_buffer_iter *iter);
+ int ring_buffer_iter_empty(struct ring_buffer_iter *iter);
+ 
 diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 61f0e92ace99..1718520a2809 100644
+index 1718520a2809..f57eeaa80e3e 100644
 --- a/kernel/trace/ring_buffer.c
 +++ b/kernel/trace/ring_buffer.c
-@@ -3590,16 +3590,37 @@ int ring_buffer_iter_empty(struct ring_buffer_iter *iter)
- 	struct buffer_page *reader;
- 	struct buffer_page *head_page;
- 	struct buffer_page *commit_page;
-+	struct buffer_page *curr_commit_page;
- 	unsigned commit;
-+	u64 curr_commit_ts;
-+	u64 commit_ts;
+@@ -4318,35 +4318,24 @@ ring_buffer_read_finish(struct ring_buffer_iter *iter)
+ EXPORT_SYMBOL_GPL(ring_buffer_read_finish);
  
- 	cpu_buffer = iter->cpu_buffer;
+ /**
+- * ring_buffer_read - read the next item in the ring buffer by the iterator
++ * ring_buffer_iter_advance - advance the iterator to the next location
+  * @iter: The ring buffer iterator
+- * @ts: The time stamp of the event read.
+  *
+- * This reads the next event in the ring buffer and increments the iterator.
++ * Move the location of the iterator such that the next read will
++ * be the next location of the iterator.
+  */
+-struct ring_buffer_event *
+-ring_buffer_read(struct ring_buffer_iter *iter, u64 *ts)
++void ring_buffer_iter_advance(struct ring_buffer_iter *iter)
+ {
+-	struct ring_buffer_event *event;
+ 	struct ring_buffer_per_cpu *cpu_buffer = iter->cpu_buffer;
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+- again:
+-	event = rb_iter_peek(iter, ts);
+-	if (!event)
+-		goto out;
 -
--	/* Remember, trace recording is off when iterator is in use */
- 	reader = cpu_buffer->reader_page;
- 	head_page = cpu_buffer->head_page;
- 	commit_page = cpu_buffer->commit_page;
-+	commit_ts = commit_page->page->time_stamp;
-+
-+	/*
-+	 * When the writer goes across pages, it issues a cmpxchg which
-+	 * is a mb(), which will synchronize with the rmb here.
-+	 * (see rb_tail_page_update())
-+	 */
-+	smp_rmb();
- 	commit = rb_page_commit(commit_page);
-+	/* We want to make sure that the commit page doesn't change */
-+	smp_rmb();
-+
-+	/* Make sure commit page didn't change */
-+	curr_commit_page = READ_ONCE(cpu_buffer->commit_page);
-+	curr_commit_ts = READ_ONCE(curr_commit_page->page->time_stamp);
-+
-+	/* If the commit page changed, then there's more data */
-+	if (curr_commit_page != commit_page ||
-+	    curr_commit_ts != commit_ts)
-+		return 0;
+-	if (event->type_len == RINGBUF_TYPE_PADDING)
+-		goto again;
  
-+	/* Still racy, as it may return a false positive, but that's OK */
- 	return ((iter->head_page == commit_page && iter->head == commit) ||
- 		(iter->head_page == reader && commit_page == head_page &&
- 		 head_page->read == commit &&
+ 	rb_advance_iter(iter);
+- out:
+-	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ 
+-	return event;
++	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ }
+-EXPORT_SYMBOL_GPL(ring_buffer_read);
++EXPORT_SYMBOL_GPL(ring_buffer_iter_advance);
+ 
+ /**
+  * ring_buffer_size - return the size of the ring buffer (in bytes)
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 819e31d0d66c..47889123be7f 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3378,7 +3378,7 @@ static void trace_iterator_increment(struct trace_iterator *iter)
+ 
+ 	iter->idx++;
+ 	if (buf_iter)
+-		ring_buffer_read(buf_iter, NULL);
++		ring_buffer_iter_advance(buf_iter);
+ }
+ 
+ static struct trace_entry *
+@@ -3562,7 +3562,7 @@ void tracing_iter_reset(struct trace_iterator *iter, int cpu)
+ 		if (ts >= iter->array_buffer->time_start)
+ 			break;
+ 		entries++;
+-		ring_buffer_read(buf_iter, NULL);
++		ring_buffer_iter_advance(buf_iter);
+ 	}
+ 
+ 	per_cpu_ptr(iter->array_buffer->data, cpu)->skipped_entries = entries;
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 7d71546ba00a..4a9c49c08ec9 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -482,7 +482,7 @@ get_return_for_leaf(struct trace_iterator *iter,
+ 
+ 	/* this is a leaf, now advance the iterator */
+ 	if (ring_iter)
+-		ring_buffer_read(ring_iter, NULL);
++		ring_buffer_iter_advance(ring_iter);
+ 
+ 	return next;
+ }
 -- 
 2.25.1
 
