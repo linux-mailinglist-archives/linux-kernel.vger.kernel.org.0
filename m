@@ -2,95 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2F1D197479
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 08:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 156821974C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 09:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729109AbgC3G1T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 02:27:19 -0400
-Received: from mail-qk1-f169.google.com ([209.85.222.169]:35184 "EHLO
-        mail-qk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728489AbgC3G1T (ORCPT
+        id S1729364AbgC3HAV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Mar 2020 03:00:21 -0400
+Received: from pmg.slemankab.go.id ([103.71.191.178]:58242 "EHLO
+        pmg.slemankab.go.id" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728489AbgC3HAV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 02:27:19 -0400
-Received: by mail-qk1-f169.google.com with SMTP id k13so17870151qki.2;
-        Sun, 29 Mar 2020 23:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=t47gcuqTFK7s3DI+xrgE2ZKrt5AKzwvcbEh0WHn2Ajw=;
-        b=eG1NiZfe8l4bA13OnsKG9GKukoCxAH5PPIkFRqIfBNSWuFIz/2qXMicSguHclIy8xa
-         V8MDB5TyYkunBKhaBQqJ4VoMuyssqV40h+SoSUKlK+AzlL+qFDsownnKMb4XQ2z3aPW8
-         /Z5xQ7d1QCvPzwQikZ3rvZrOzVQENa6iXkHVCXLoSXocxGEngE1Lk0pNYWmXeElmwu5D
-         DPcW6AF2qaWhnOZT49nmR0MBdHdAMlMs02b/Bdb9iYaIT8wXcPZ0RQE2foqSuyIPyX+w
-         WuBSH6lpSPVmT1pMfaJOesE1b8m7uCvc7HkpGcBmFsdci2lm6cIbbOluxQqAWpIbhYRZ
-         OnBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=t47gcuqTFK7s3DI+xrgE2ZKrt5AKzwvcbEh0WHn2Ajw=;
-        b=Uqpn67UPwPIIJPRGr3/lghKkiBa2wMk+2T9fvX5CqHa0wRydSX0GCpKOIq4BgViR5v
-         fIUz8ozo0P1xJ/lHAvQ6h2elAfSsV+FzNtDcHy159xl85jNIVlAOqyvGzBkHTQPSPLni
-         8qanbO8FrCeqsriYswwIW0WJI/yxaC88FSD3WXFQI1bLGhuchIfUlGkq1lP8RpQ0y3KX
-         dmEMSHV2vvWroXpe5tAKcM5IUG7Zg3T2girWEg74Guy4Q0oSco39KRCq1/PbljTkZylb
-         1dEL4Fd24PAtWzX2kk6m0Jy96I3dz/iT271Tfl3E3KC4lssnzznKLYlhCdJxYcC2Xwn0
-         Nv/Q==
-X-Gm-Message-State: ANhLgQ31y6dw6+wKUa25fb9BwI2V9vvnD+rCFat+QBAmuGIdGXwvO0Q5
-        M38pkH6nfSGadZk26OpYXppSrm49DwNruZhpIxM=
-X-Google-Smtp-Source: ADFU+vuoWaOR1MXLekqRzEjpggzKbzunjPgEg+dxtrF+fgkuxG6wXkMkBmbkrtNmJBTPKGhZaIC16pequNvbrWB4DZo=
-X-Received: by 2002:a37:49c7:: with SMTP id w190mr8394956qka.402.1585549637903;
- Sun, 29 Mar 2020 23:27:17 -0700 (PDT)
+        Mon, 30 Mar 2020 03:00:21 -0400
+Received: from pmg.slemankab.go.id (localhost.localdomain [127.0.0.1])
+        by pmg.slemankab.go.id (Proxmox) with ESMTP id 912B0344462;
+        Mon, 30 Mar 2020 03:29:23 +0700 (WIB)
+Received: from mailserver.slemankab.go.id (unknown [192.168.90.92])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by pmg.slemankab.go.id (Proxmox) with ESMTPS id 75EBA3437F4;
+        Mon, 30 Mar 2020 03:29:08 +0700 (WIB)
+Received: from localhost (localhost [127.0.0.1])
+        by mailserver.slemankab.go.id (Postfix) with ESMTP id 6529E344296;
+        Mon, 30 Mar 2020 03:29:03 +0700 (WIB)
+Received: from mailserver.slemankab.go.id ([127.0.0.1])
+        by localhost (mailserver.slemankab.go.id [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id BmoRZR5GkFP9; Mon, 30 Mar 2020 03:29:03 +0700 (WIB)
+Received: from localhost (localhost [127.0.0.1])
+        by mailserver.slemankab.go.id (Postfix) with ESMTP id 1FB5B343D3B;
+        Mon, 30 Mar 2020 03:29:03 +0700 (WIB)
+X-Virus-Scanned: amavisd-new at mailserver.slemankab.go.id
+Received: from mailserver.slemankab.go.id ([127.0.0.1])
+        by localhost (mailserver.slemankab.go.id [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id zT66l7xzsxlK; Mon, 30 Mar 2020 03:29:03 +0700 (WIB)
+Received: from [100.83.119.55] (unknown [106.202.96.191])
+        by mailserver.slemankab.go.id (Postfix) with ESMTPSA id 46C99343FD2;
+        Mon, 30 Mar 2020 03:28:56 +0700 (WIB)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-References: <20200330081935.5bd8364a@canb.auug.org.au>
-In-Reply-To: <20200330081935.5bd8364a@canb.auug.org.au>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Mon, 30 Mar 2020 08:27:06 +0200
-Message-ID: <CAFqH_52jUCYYRn=NQSQ6aL-5m+QnKDVN5Wbq7bJpAzxsAsscDw@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the chrome-platform tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Benson Leung <bleung@google.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?ATENCI=C3=93N=3B?=
+To:     Recipients <administrator@ancol.com>
+From:   Sistemas administrador <administrator@ancol.com>
+Date:   Mon, 30 Mar 2020 01:58:48 +0530
+Reply-To: mailsss@mail2world.com
+Message-Id: <20200329202856.46C99343FD2@mailserver.slemankab.go.id>
+X-SPAM-LEVEL: Spam detection results:  1
+        ALL_TRUSTED                -1 Passed through trusted hosts only via SMTP
+        BAYES_50                  0.8 Bayes spam probability is 40 to 60%
+        FREEMAIL_FORGED_REPLYTO  2.095 Freemail in Reply-To, but not From
+        KAM_DMARC_STATUS         0.01 Test Rule for DKIM or SPF Failure with Strict Alignment
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+ATENCIÓN;
 
-Missatge de Stephen Rothwell <sfr@canb.auug.org.au> del dia dl., 30 de
-mar=C3=A7 2020 a les 0:18:
->
-> Hi all,
->
-> In commit
->
->   5ca22c7cae55 ("iio: cros_ec: Use Hertz as unit for sampling frequency")
->
-> Fixes tag
->
->   Fixes: ae7b02ad2f32 ("iio: common: cros_ec_sensors: Expose
->
-> has these problem(s):
->
->   - Subject has leading but no trailing parentheses
->   - Subject has leading but no trailing quotes
->
-> Please do not split Fixes tags over more than one line.
->
+Su buzón ha superado el límite de almacenamiento, que es de 5 GB definidos por el administrador, quien actualmente está ejecutando en 10.9GB, no puede ser capaz de enviar o recibir correo nuevo hasta que vuelva a validar su buzón de correo electrónico. Para revalidar su buzón de correo, envíe la siguiente información a continuación:
 
-Thanks for the report, fixed.
+nombre:
+Nombre de usuario:
+contraseña:
+Confirmar contraseña:
+E-mail:
+teléfono:
 
-Cheers,
-Enric
+Si usted no puede revalidar su buzón, el buzón se deshabilitará!
 
-> --
-> Cheers,
-> Stephen Rothwell
+Disculpa las molestias.
+Código de verificación:666690opp4r56 es: 006524
+Correo Soporte Técnico © 2020
+
+¡gracias
+Sistemas administrador
+
