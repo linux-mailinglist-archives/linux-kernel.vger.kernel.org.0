@@ -2,100 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C6C196EE4
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 19:39:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3E1196F01
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Mar 2020 19:41:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728551AbgC2Ris (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 13:38:48 -0400
-Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.121]:27526 "EHLO
-        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbgC2Rio (ORCPT
+        id S1728441AbgC2RlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 13:41:17 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:36204 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727933AbgC2RlR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 13:38:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1585503521;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=zTJxk1ctAGrOp10KkkgkgVU73egsnctQj3FqkDWMCgE=;
-        b=AtgbOGxiqsVNI3l5yA7qN6FAXXQS3ZqCSg/BtFYSTo6U9NJ7ySf3JL9M35T6OyLxIV
-        MF4OsLwNLt/nm97FUz8aPDcxm4qWUg6E8znLYOMXaHz5XNf30AzujmD2pwpPjPeFKNLH
-        r7GJv+M/ozbWLKOLaoPWXBFQC0zsBQ8B6LVh3WUTxNxUwOf/o0AL5Hn0SDr1xTCpTYWR
-        phjvGDdY+ap6ssuapIH/L4Eac2gUqrNmrNsAIvtgnqamSAO5VR7tm4yomL5jze07qpoC
-        ubVeUrmGg4y7nC9ebWEbICF/DjSicwdJ96l2yaw2yF1nDf9LYEK76UrAslEiaQLVmSHG
-        ItMg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0pDz2rsNxxv"
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 46.2.1 DYNA|AUTH)
-        with ESMTPSA id m02241w2THcWBMq
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Sun, 29 Mar 2020 19:38:32 +0200 (CEST)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>
-Cc:     Philipp Rossak <embed3d@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Paul Boddie <paul@boddie.org.uk>
-Subject: [PATCH v5 8/8] MIPS: DTS: jz4780: add sgx gpu node
-Date:   Sun, 29 Mar 2020 19:38:26 +0200
-Message-Id: <894d8f16c933460639c5708afd0cabfa22b9c560.1585503505.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1585503505.git.hns@goldelico.com>
-References: <cover.1585503505.git.hns@goldelico.com>
+        Sun, 29 Mar 2020 13:41:17 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-69-rWJvp-xpNwCNUPO9Bg3Gnw-1; Sun, 29 Mar 2020 18:41:13 +0100
+X-MC-Unique: rWJvp-xpNwCNUPO9Bg3Gnw-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Sun, 29 Mar 2020 18:41:12 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Sun, 29 Mar 2020 18:41:12 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Andy Lutomirski' <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: RE: [RFC][PATCH 01/22] x86 user stack frame reads: switch to explicit
+ __get_user()
+Thread-Topic: [RFC][PATCH 01/22] x86 user stack frame reads: switch to
+ explicit __get_user()
+Thread-Index: AQHWBeo2BuGXOsXgxk+vqOM7n5IKaahf05lg
+Date:   Sun, 29 Mar 2020 17:41:12 +0000
+Message-ID: <489c9af889954649b3453e350bab6464@AcuMS.aculab.com>
+References: <20200323183620.GD23230@ZenIV.linux.org.uk>
+ <20200323183819.250124-1-viro@ZenIV.linux.org.uk>
+ <20200328104857.GA93574@gmail.com>
+ <20200328115936.GA23230@ZenIV.linux.org.uk>
+ <20200329092602.GB93574@gmail.com>
+ <CALCETrX=nXN14fqu-yEMGwwN-vdSz=-0C3gcOMucmxrCUpevdA@mail.gmail.com>
+In-Reply-To: <CALCETrX=nXN14fqu-yEMGwwN-vdSz=-0C3gcOMucmxrCUpevdA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-and add interrupt and clocks.
-
-Tested to build for CI20 board and load a driver.
-Setup can not yet be tested since there is no working
-HDMI driver for jz4780.
-
-Suggested-by: Paul Boddie <paul@boddie.org.uk>
-Tested-by: H. Nikolaus Schaller <hns@goldelico.com> # CI20.
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- arch/mips/boot/dts/ingenic/jz4780.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-index bb89653d16a3..618e48c78a87 100644
---- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-@@ -357,6 +357,17 @@ i2c4: i2c@10054000 {
- 		status = "disabled";
- 	};
- 
-+	gpu: gpu@13040000 {
-+		compatible = "ingenic,jz4780-sgx540-120", "img,sgx540-120", "img,sgx540";
-+		reg = <0x13040000 0x4000>;
-+
-+		clocks = <&cgu JZ4780_CLK_GPU>;
-+		clock-names = "gpu";
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <63>;
-+	};
-+
- 	nemc: nemc@13410000 {
- 		compatible = "ingenic,jz4780-nemc";
- 		reg = <0x13410000 0x10000>;
--- 
-2.25.1
+RnJvbTogQW5keSBMdXRvbWlyc2tpDQo+IFNlbnQ6IDI5IE1hcmNoIDIwMjAgMTc6NTENCi4uDQo+
+IE15IGluY2xpbmlhdGlvbiBpcyB0byBqdXN0IGdldCByaWQgb2YgdGhlIF9fZ2V0X3VzZXIoKS1z
+dHlsZSBBUElzLg0KPiBUaGVyZSBzaG91bGRuJ3QgYmUgYW55IF9fZ2V0X3VzZXIoKSBjYWxscyB0
+aGF0IGNhbid0IGJlIGRpcmVjdGx5DQo+IHJlcGxhY2VkIGJ5IGdldF91c2VyKCksIGFuZCBhIHNp
+bmdsZSBpbnRlZ2VyIGNvbXBhcmlzb24gaXMgbm90IHRoYXQNCj4gZXhwZW5zaXZlLiAgT24gU01B
+UCBzeXN0ZW1zLCB0aGUgc3BlZWR1cCBvZiBfX2dldF91c2VyIHZzIGdldF91c2VyIGlzDQo+IG5l
+Z2xpZ2libGUuDQoNCk9uIHg4Ni02NCAoYXQgbGVhc3QpIF9fZ2V0X3VzZXIoKSBpcyBpbmxpbmVk
+IGJ1dCBnZXRfdXNlcigpIGlzbid0Lg0KU2luY2UgZ2V0X3VzZXIoKSBoYXMgdG8gcmV0dXJuIHR3
+byB2YWx1ZXMsIG9uZSB3aWxsIGFsd2F5cyBiZQ0KYSAodXN1YWxseSkgb24tc3RhY2sgcmVhbCBt
+ZW1vcnkgbG9jYXRpb24gcmF0aGVyIHRoYW4gYSByZWdpc3Rlci4NCkZvciBmcmVxdWVudGx5IHVz
+ZSBjb2RlIHBhdGhzIHRoaXMgbWF5IGJlIG1lYXN1cmFibGUuDQpJJ20gdGhpbmtpbmcgb2YgdGhp
+bmdzIGxpa2UgZXBvbGxfd2FpdCgpIHdyaXRpbmcgb3V0IGV2ZW50cy4NCihhbHRob3VnaCB0aGF0
+IGlzIGEgcHV0X3VzZXIoKSBsb29wLi4uKQ0KDQpJdCBtYXkgYmUgd29ydGggaW1wbGVtZW50aW5n
+IGdldF91c2VyKCkgYXMgYW4gaW5saW5lDQpmdW5jdGlvbiB0aGF0IHdyaXRlcyB0aGUgcmVzdWx0
+IG9mIGFjY2Vzc19vaygpIHRvIGENCidieSByZWZlcmVuY2UnIHBhcmFtZXRlciBhbmQgdGhlbiBy
+ZXR1cm5zIHRoZSB2YWx1ZQ0KZnJvbSBhbiAncmVhbCcgX19nZXRfdXNlcigpIGZ1bmN0aW9uLg0K
+VGhlIGNvbXBpbGVyIHdpbGwgdGhlbiBvcHRpbWlzZSBhd2F5IHRoZSBtZW1vcnkgcmVmZXJlbmNl
+Lg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJv
+YWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24g
+Tm86IDEzOTczODYgKFdhbGVzKQ0K
 
