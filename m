@@ -2,70 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4324F198388
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3972119838D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:42:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbgC3Sju (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 14:39:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726385AbgC3Sjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 14:39:49 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4433920714;
-        Mon, 30 Mar 2020 18:39:49 +0000 (UTC)
-Date:   Mon, 30 Mar 2020 14:39:47 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: ftrace not showing the process names for all processes on
- syscall events
-Message-ID: <20200330143947.33515a16@gandalf.local.home>
-In-Reply-To: <ffd8aa59d88146fbb5a4cb02ea9b7440@AcuMS.aculab.com>
-References: <3cdef49951734e83a14959628233d4f0@AcuMS.aculab.com>
-        <20200330110855.437fe854@gandalf.local.home>
-        <7dec110c2dc14792ba744419a4eb907e@AcuMS.aculab.com>
-        <20200330140736.4b5f1667@gandalf.local.home>
-        <ffd8aa59d88146fbb5a4cb02ea9b7440@AcuMS.aculab.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727905AbgC3SmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 14:42:03 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38126 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727728AbgC3SmC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 14:42:02 -0400
+Received: by mail-oi1-f196.google.com with SMTP id w2so16649180oic.5
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 11:42:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bMsXSbAs23J4I+WSSJ1Kd7A3MYfRXPuuAKW5ma32u/I=;
+        b=iK+mvsHDPS4OGPtKBhNUq8BDbqZv2bYZ0L0DQw/gj5t33XpHM9/YA31DtZAD4rBMeP
+         1t8tFJ2WveKx5dFYrefqwMcbo4CSa/Y9MMF/ncPsQjG3b0p4phy6U3yL5Si/Ah1Fn43a
+         AJumYtdIg8ZPcCb3dK0nTr9VOGbQ1DaIPozIHo2ToTVkOLBstZ4z4tftDP7S9Y2rqnz0
+         hs04gOoEn5GnU6PG+pjcCeLrAkx7tSvFA+MZ2l96TcgZ8PeEf+06kP8UphWexpVJSBuO
+         jkl0hUv+2xfXwpxlu3Wfk3jNKjnyn20X/cuvPzxZQ3BU/DytfJ5qlBgwDGBHLMxSKP26
+         jPwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bMsXSbAs23J4I+WSSJ1Kd7A3MYfRXPuuAKW5ma32u/I=;
+        b=QprUP1W82RKy7sfk6mh4rVpnU6rDLyLNJFnF1crB7z80Dv/12benWASfu1m+Jxbu65
+         YQkz0+mRXJYOWgnGfJMe3S0NvEleavlBosYszL7XX+0i7AZQxKODm+InwrCaaBZhDaTp
+         Qwz7J7Q4ER4m5Lg2mQ/cRSTJageyMBD+yv4A+G+57dF7n+OsiWAjl4W6hQHJI3xaZwUU
+         XOatKWBMWEAt8McwHmNjlqduetEImn9Lct73uhc+9SX8xV+Gpd+5kQWVkV0KNL3HvEHa
+         eSX7Fv2iHIuBHpNSx1o8BST3vwYy1U8jj2TMt2jZLZMKkmRMmdtCV9pyiE2AlEDMAzcc
+         mNoQ==
+X-Gm-Message-State: ANhLgQ0k7Ba+Rr8Hw/PKZrKcH88lq/gNdnLGTj8AD7Ij10QXjooQAS+a
+        q0bZIwbLaWK/vPJ9iCdy03GBxhIDMOv+BAwBV55Ntw==
+X-Google-Smtp-Source: ADFU+vu8a0aFSp1Bsc6H0PWmUghHP16f0fOcxJ31iseInDunbVcIAiBxYijOxAbVRtDSEW4QOHql9nkcF2nT/W/I+MY=
+X-Received: by 2002:aca:f541:: with SMTP id t62mr548350oih.172.1585593721353;
+ Mon, 30 Mar 2020 11:42:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20200321210305.28937-1-saravanak@google.com> <CGME20200327102554eucas1p1f848633a39f8e158472506b84877f98c@eucas1p1.samsung.com>
+ <bd8b42d3-a35a-cc8e-0d06-2899416c2996@samsung.com> <20200327152144.GA2996253@kroah.com>
+ <CAGETcx-J+TP+0NsOe75Uu3Q8K6=qYja6eDbjNH2764QV53=nMA@mail.gmail.com> <4f3326c2-186d-2853-fcb6-1210d67a836f@samsung.com>
+In-Reply-To: <4f3326c2-186d-2853-fcb6-1210d67a836f@samsung.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 30 Mar 2020 11:41:25 -0700
+Message-ID: <CAGETcx9nhF4hjs6BQ21Ees4LJLM7kENj6Ja619Sonjvvt1o7wA@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] driver core: Set fw_devlink to "permissive"
+ behavior by default
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Mar 2020 18:14:37 +0000
-David Laight <David.Laight@ACULAB.COM> wrote:
+On Sun, Mar 29, 2020 at 11:20 PM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> Hi
+>
+> On 2020-03-27 19:30, Saravana Kannan wrote:
+> > On Fri, Mar 27, 2020 at 8:21 AM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> >> On Fri, Mar 27, 2020 at 11:25:48AM +0100, Marek Szyprowski wrote:
+> >>> On 2020-03-21 22:03, Saravana Kannan wrote:
+> >>>> Set fw_devlink to "permissive" behavior by default so that device links
+> >>>> are automatically created (with DL_FLAG_SYNC_STATE_ONLY) by scanning the
+> >>>> firmware.
+> >>>>
+> >>>> This ensures suppliers get their sync_state() calls only after all their
+> >>>> consumers have probed successfully. Without this, suppliers will get
+> >>>> their sync_state() calls at late_initcall_sync() even if their consuer
+> >>>>
+> >>>> Ideally, we'd want to set fw_devlink to "on" or "rpm" by default. But
+> >>>> that needs more testing as it's known to break some corner case
+> >>>> drivers/platforms.
+> >>>>
+> >>>> Cc: Rob Herring <robh+dt@kernel.org>
+> >>>> Cc: Frank Rowand <frowand.list@gmail.com>
+> >>>> Cc: devicetree@vger.kernel.org
+> >>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> >>> This patch has just landed in linux-next 20200326. Sadly it breaks
+> >>> booting of the Raspberry Pi3b and Pi4 boards, either in 32bit or 64bit
+> >>> mode. There is no warning nor panic message, just a silent freeze. The
+> >>> last message shown on the earlycon is:
+> >>>
+> >>> [    0.893217] Serial: 8250/16550 driver, 1 ports, IRQ sharing enabled
+> > Marek,
+> >
+> > Any chance you could get me a stack trace for when it's stuck? That'd
+> > be super helpful and I'd really appreciate it. Is it working fine on
+> > other variants of Raspberry?
+>
+> I have no access to other variants of Raspberry board.
+>
+> The issue seems to be related to bcm2835aux_serial_driver. I've added
+> "initcall_debug" and "ignore_loglevel" to kernel cmdline and I got the
+> following log:
+>
+> [    4.595353] calling  exar_pci_driver_init+0x0/0x30 @ 1
+> [    4.600597] initcall exar_pci_driver_init+0x0/0x30 returned 0 after
+> 44 usecs
+> [    4.607747] calling  bcm2835aux_serial_driver_init+0x0/0x28 @ 1
+>
+> The with some debug printk calls I've found that the clock lookup fails
+> with -517 (-EPROBE_DEFER) in bcm2835aux_serial_driver:
+> https://elixir.bootlin.com/linux/v5.6/source/drivers/tty/serial/8250/8250_bcm2835aux.c#L52
+>
+> Without this patch, the lookup works fine.
+>
+> Please let me know if you need more information. The kernel cmdline I've
+> use is: "8250.nr_uarts=1 console=ttyS0,115200n8
+> earlycon=uart8250,mmio32,0x3f215040 root=/dev/mmcblk0p2 rootwait rw",
+> kernel is compiled with bcm2835_defconfig, booted on Raspberry Pi3b+
+> with arch/arm/boot/dts/bcm2837-rpi-3-b.dtb
 
-> From: Steven Rostedt
-> > Sent: 30 March 2020 19:08
-> > On Mon, 30 Mar 2020 15:34:08 +0000
-> > David Laight <David.Laight@ACULAB.COM> wrote:
-> >   
-> > > Oh, does the 'function_graph' code ignore tail calls?  
-> > 
-> > Yes and no ;-)  It works by dumb luck. As it was a year after function
-> > graph tracing was live (some time in 2010 I believe) that someone brought
-> > up tail calls, and I had to take a look at how it never crashed, and was
-> > surprised that it "just worked". Here's a summary:  
-> 
-> 'Dumb luck' seems to be failing me :-)
-> I'll look more closely tomorrow.
+Thanks for the details! I think it gave me an idea of what might be
+going wrong here.
 
-The tl;td; version is that the function graph tracer relies on a shadow
-stack that it uses to save the original return address, as it replaces the
-original return address with the address of the fgraph return trampoline.
-
-Although a tail call causes the real stack to only contain one return
-address, the shadow stack will contain a return address for every function,
-even if it was a tail call. As that stack gets updated by the entry of the
-function not the return side. The difference is, a tail call would cause
-the shadow stack to just contain a call to the start of the fgraph return
-trampoline, and not an address into the rest of the kernel.
-
--- Steve
-
+-Saravana
