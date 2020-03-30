@@ -2,90 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7938B197F11
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E706197F14
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:54:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbgC3OyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 10:54:02 -0400
-Received: from mga05.intel.com ([192.55.52.43]:48804 "EHLO mga05.intel.com"
+        id S1728854AbgC3OyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 10:54:16 -0400
+Received: from mga01.intel.com ([192.55.52.88]:60238 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728080AbgC3OyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 10:54:02 -0400
-IronPort-SDR: bVE95S9nAHI880y/LpLOMlmtoIklyC4wJHD1AIj49tGULlfaOccTyU54+PK5QS92KXY78Avsnz
- N+qx/7JF+Bfg==
+        id S1727929AbgC3OyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 10:54:15 -0400
+IronPort-SDR: pcKkBecesCYQYAEhSLrmHhd9iAOTbxUCjmiDCmSFuMsI6cbXg6kRLy9YKYcdoDb9y/MTcXYJGu
+ SojQ5YIBZT2Q==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 07:54:01 -0700
-IronPort-SDR: 6AZb4YxdwxccLW4pzPd13dyt/rHXVVgzptn6Vdg54LA9vG/5fJTzc+V8sE6REJPm3QXDHa1ck3
- 3hn2SE3ALAzg==
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 07:54:15 -0700
+IronPort-SDR: Bs3XdiFeZtQH4K5bsHjV8wanFmSPUmzbxhxZtyTEhHLwB5ZARnEYjxFG1MUtHpz6/UQHScWbdL
+ pgandAE3rLYQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,324,1580803200"; 
-   d="scan'208";a="395146086"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 30 Mar 2020 07:54:01 -0700
-Received: from [10.252.136.240] (kliang2-mobl.ccr.corp.intel.com [10.252.136.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 0BAF25805A1;
-        Mon, 30 Mar 2020 07:54:00 -0700 (PDT)
-Subject: Re: [PATCH] perf/x86/intel: Add more available bits for
- OFFCORE_RESPONSE of Intel Tremont
-To:     peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org
-Cc:     ak@linux.intel.com, eranian@google.com, stable@vger.kernel.org
-References: <20200308125507.18670-1-kan.liang@linux.intel.com>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <0a06d798-c90f-1824-50dc-acbeae6ee18a@linux.intel.com>
-Date:   Mon, 30 Mar 2020 10:53:59 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+   d="scan'208";a="248724484"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga003.jf.intel.com with ESMTP; 30 Mar 2020 07:54:11 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jIvnq-00EEXp-1H; Mon, 30 Mar 2020 17:54:14 +0300
+Date:   Mon, 30 Mar 2020 17:54:14 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
+        matwey.kornilov@gmail.com, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lukas@wunner.de,
+        christoph.muellner@theobroma-systems.com,
+        giulio.benetti@micronovasrl.com,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+Subject: Re: [PATCH v2 5/7] dt-bindings: serial: Add binding for rs485
+ receiver enable GPIO
+Message-ID: <20200330145414.GW1922688@smile.fi.intel.com>
+References: <20200325231422.1502366-1-heiko@sntech.de>
+ <20200325231422.1502366-6-heiko@sntech.de>
 MIME-Version: 1.0
-In-Reply-To: <20200308125507.18670-1-kan.liang@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200325231422.1502366-6-heiko@sntech.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-Could you please take a look and apply the patch?
-
-Thanks,
-Kan
-
-On 3/8/2020 8:55 AM, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
+On Thu, Mar 26, 2020 at 12:14:20AM +0100, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 > 
-> The mask in the extra_regs for Intel Tremont need to be extended to
-> allow more defined bits.
+> RS485 has two signals to control transmissions "drivee enable" (RE) and
+
+drivee -> driver ?
+
+> "receiver enable" (DE). RE is already handled via the uarts RTS signal
+
+Typo in abbreviations in parentheses, you probably need to swap them.
+
+> while RE signal on most implementations doesn't get handled separately
+> at all.
 > 
-> "Outstanding Requests" (bit 63) is only available on MSR_OFFCORE_RSP0;
+> As there still will be cases where this is needed though add a gpio
+> property for declaring this signal pin.
 > 
-> Fixes: 6daeb8737f8a ("perf/x86/intel: Add Tremont core PMU support")
-> Reported-by: Stephane Eranian <eranian@google.com>
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> Cc: stable@vger.kernel.org
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 > ---
->   arch/x86/events/intel/core.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/serial/rs485.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index 3be51aa06e67..ba08ad1f560b 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -1892,8 +1892,8 @@ static __initconst const u64 tnt_hw_cache_extra_regs
->   
->   static struct extra_reg intel_tnt_extra_regs[] __read_mostly = {
->   	/* must define OFFCORE_RSP_X first, see intel_fixup_er() */
-> -	INTEL_UEVENT_EXTRA_REG(0x01b7, MSR_OFFCORE_RSP_0, 0xffffff9fffull, RSP_0),
-> -	INTEL_UEVENT_EXTRA_REG(0x02b7, MSR_OFFCORE_RSP_1, 0xffffff9fffull, RSP_1),
-> +	INTEL_UEVENT_EXTRA_REG(0x01b7, MSR_OFFCORE_RSP_0, 0x800ff0ffffff9fffull, RSP_0),
-> +	INTEL_UEVENT_EXTRA_REG(0x02b7, MSR_OFFCORE_RSP_1, 0xff0ffffff9fffull, RSP_1),
->   	EVENT_EXTRA_END
->   };
->   
+> diff --git a/Documentation/devicetree/bindings/serial/rs485.yaml b/Documentation/devicetree/bindings/serial/rs485.yaml
+> index a9ad17864889..e55730de796d 100644
+> --- a/Documentation/devicetree/bindings/serial/rs485.yaml
+> +++ b/Documentation/devicetree/bindings/serial/rs485.yaml
+> @@ -44,6 +44,10 @@ properties:
+>     description: enables the receiving of data even while sending data.
+>     $ref: /schemas/types.yaml#/definitions/flag
+>  
+> +  rs485-rx-enable-gpios:
+> +   description: GPIO to handle a separate RS485 receive enable signal
+> +   $ref: /schemas/types.yaml#/definitions/flag
+> +
+>    rs485-term-gpios:
+>      description: GPIO pin to enable RS485 bus termination.
+>      maxItems: 1
+> -- 
+> 2.24.1
 > 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
