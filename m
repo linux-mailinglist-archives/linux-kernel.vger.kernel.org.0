@@ -2,145 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF46E19871E
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 00:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44DBE19870B
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 00:11:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731022AbgC3WLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 18:11:40 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35267 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730993AbgC3WLg (ORCPT
+        id S1729841AbgC3WLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 18:11:13 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:42025 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728987AbgC3WLM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 18:11:36 -0400
-Received: by mail-wm1-f68.google.com with SMTP id i19so539145wmb.0;
-        Mon, 30 Mar 2020 15:11:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qzCUFuMkzWlLXqOmVXLBXxeE6kPrzuWsI5J2b3JrmKY=;
-        b=B1Yi4hJe9+jP1oYxumDlnQbGxnGbQdeD6mr579nVjX9OZZyUZ8ZLyJ6jYNz9MBj1bx
-         7maTetDDohQQUmSd5H3Bo71qQkiExseTWyE69vSfxXUpIQkBoYOVsVLlHvz2160L3s55
-         QaLzK0+XdB+D2QBN7ymd6vDgY6yu1wRmxSHDMRiSB9Nnqd4vMeAB7BovKAoK7v5uVF5M
-         F65EwRTVh0KZvIv/uND1prJXmqY3a7Gvnhv3sdr4QtyqwhfGlfGtEqPjiwzXgfzWyby5
-         CovMn2lfBAf/Nte7H15w0e2jvI0kcYNhtrItVakqPwm7VHgAG/xsERYOQRHXXpeCZUOW
-         ytfg==
+        Mon, 30 Mar 2020 18:11:12 -0400
+Received: by mail-il1-f193.google.com with SMTP id f16so17474886ilj.9;
+        Mon, 30 Mar 2020 15:11:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qzCUFuMkzWlLXqOmVXLBXxeE6kPrzuWsI5J2b3JrmKY=;
-        b=eF9u2Q/iLFl3NM8TKDV8vYeZDuFmOKHFTj4C5eiU1dmcIWtgbUbo4jLqOqN77oDbNv
-         ilFEdvv/eXaU1qchhNpt1VgEbmIJp36gvtCUK/xI0/dnq3GY/mbPOvKGx4n1tmNjWiV5
-         G1bKGB6ip6CK6rc7/3NKlbpNXW0JjNGJS4CrljlRzPANZYd0g9PvOdPJvWowqsHlMxjP
-         aY8AOAc5wDZ3OWOt8wPzjuPtbki/vG+z9ZcMSBLN4Xo3ZH2gzFVBDDrltEqclfyhWD7y
-         jpyjcyLbWqnioWeM/AfRKGD6pvquoRirLYNM7NMHR+lwPN45oKJRfQ/IyXdnedLszIAF
-         ewnA==
-X-Gm-Message-State: ANhLgQ0JsOw7FXHartU83Ur9fHBqVEtrHgC7Hh6wVHuT5PUOGlDceqI5
-        qJA6FKJCyjs4haJe8cgMluE=
-X-Google-Smtp-Source: ADFU+vv9tfk0eQLYelRcKNSFwd6CAWgH4qjrJ4Aiglq2T0D+CdLr1vDM+HDBUlMkqJzRgb5BkDwq+g==
-X-Received: by 2002:a1c:e203:: with SMTP id z3mr216866wmg.71.1585606293721;
-        Mon, 30 Mar 2020 15:11:33 -0700 (PDT)
-Received: from localhost.localdomain (p200300F13710ED00428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:3710:ed00:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id b187sm1260509wmc.14.2020.03.30.15.11.32
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Gej1ukEzef5kQg6YLiAXZ8FMZy3ON+jYs0LTpdTxAeY=;
+        b=ddg+Dm6XumBz1m9+finNz4C1UgrC54HxxnhC5tVQMIUTFodpo61/rUPWMF3FRZjBP1
+         uxYzrwePYzA3gxG358CgRwQHf7tT2wTFC39Pa3wfhoWbGCLu5DXmgb4figX4wxgD5xb6
+         Zkox7eI8U3i6oeITt438k0ioDnrQNvfTzD+dUm0CXC+8f/uTLJv6cA615qmyvTwgnt15
+         XyRrsCDFVDllvbneXLEBmOYBiBO96JPfNpUK0jsDlT8Ong8b792JwLoSORkaLIIsZnfZ
+         2WmlFOmCKl9MnJqo3K90exa2zbUITldd3H9i4Qy7G9nW3JoMN7klSi86Z0IoTQY0P6mQ
+         DqYw==
+X-Gm-Message-State: ANhLgQ3GkeQj88LxJiJV5bSbPESsf2vHYDuJAdT11RtK4p0rbLOeT3Ul
+        gmv/gvMIgvltVvfpkmDPjg==
+X-Google-Smtp-Source: ADFU+vseMwBWRiWNnvqHDls55gkMPjZLcdFN53VAHUJfvtwLdCe+R59lZx97hWKbGwQtot2UEN0jmg==
+X-Received: by 2002:a92:7a0d:: with SMTP id v13mr14199608ilc.175.1585606271334;
+        Mon, 30 Mar 2020 15:11:11 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id z20sm4498542ioj.4.2020.03.30.15.11.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 15:11:33 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, khilman@baylibre.com,
-        jbrunet@baylibre.com, narmstrong@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [RFC v1 5/5] arm64: dts: amlogic: meson-g12: add the Mali OPP table and use DVFS
-Date:   Tue, 31 Mar 2020 00:11:04 +0200
-Message-Id: <20200330221104.3163788-6-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200330221104.3163788-1-martin.blumenstingl@googlemail.com>
-References: <20200330221104.3163788-1-martin.blumenstingl@googlemail.com>
+        Mon, 30 Mar 2020 15:11:09 -0700 (PDT)
+Received: (nullmailer pid 17820 invoked by uid 1000);
+        Mon, 30 Mar 2020 22:11:06 -0000
+Date:   Mon, 30 Mar 2020 16:11:06 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org, joro@8bytes.org,
+        robin.murphy@arm.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org,
+        ohad@wizery.com, agross@kernel.org, dianders@chromium.org,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: remoteproc: qcom: Add iommus property
+Message-ID: <20200330221106.GA17769@bogus>
+References: <20200317150910.26053-1-sibis@codeaurora.org>
+ <20200317150910.26053-2-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200317150910.26053-2-sibis@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the OPP table for the Mali Bifrost GPU and drop the hardcoded
-initial clock configuration. This enables GPU DVFS and thus saves power
-when the GPU is not in use while still being able switch to a higher
-clock on demand.
+On Tue, 17 Mar 2020 20:39:08 +0530, Sibi Sankar wrote:
+> Add iommus property to allow Q6 modem to boot on platforms which do
+> not have trustZone.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- .../boot/dts/amlogic/meson-g12-common.dtsi    | 49 +++++++++++++------
- 1 file changed, 34 insertions(+), 15 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-index 0882ea215b88..3f2c7d0802af 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
-@@ -52,6 +52,39 @@ efuse: efuse {
- 		secure-monitor = <&sm>;
- 	};
- 
-+	gpu_opp_table: gpu-opp-table {
-+		compatible = "operating-points-v2";
-+
-+		opp-124999998 {
-+			opp-hz = /bits/ 64 <124999998>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp-249999996 {
-+			opp-hz = /bits/ 64 <249999996>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp-285714281 {
-+			opp-hz = /bits/ 64 <285714281>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp-399999994 {
-+			opp-hz = /bits/ 64 <399999994>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp-499999992 {
-+			opp-hz = /bits/ 64 <499999992>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp-666666656 {
-+			opp-hz = /bits/ 64 <666666656>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp-799999987 {
-+			opp-hz = /bits/ 64 <799999987>;
-+			opp-microvolt = <800000>;
-+		};
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
-@@ -2349,21 +2382,7 @@ mali: gpu@ffe40000 {
- 			interrupt-names = "job", "mmu", "gpu";
- 			clocks = <&clkc CLKID_MALI>;
- 			resets = <&reset RESET_DVALIN_CAPB3>, <&reset RESET_DVALIN>;
--
--			/*
--			 * Mali clocking is provided by two identical clock paths
--			 * MALI_0 and MALI_1 muxed to a single clock by a glitch
--			 * free mux to safely change frequency while running.
--			 */
--			assigned-clocks = <&clkc CLKID_MALI_0_SEL>,
--					  <&clkc CLKID_MALI_0>,
--					  <&clkc CLKID_MALI>; /* Glitch free mux */
--			assigned-clock-parents = <&clkc CLKID_FCLK_DIV2P5>,
--						 <0>, /* Do Nothing */
--						 <&clkc CLKID_MALI_0>;
--			assigned-clock-rates = <0>, /* Do Nothing */
--					       <800000000>,
--					       <0>; /* Do Nothing */
-+			operating-points-v2 = <&gpu_opp_table>;
- 			#cooling-cells = <2>;
- 		};
- 	};
--- 
-2.26.0
-
+Acked-by: Rob Herring <robh@kernel.org>
