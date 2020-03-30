@@ -2,298 +2,400 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93534197B7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 14:06:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAEF9197B8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 14:07:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730115AbgC3MGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 08:06:53 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33775 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730096AbgC3MGx (ORCPT
+        id S1730170AbgC3MHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 08:07:53 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46717 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730128AbgC3MHw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 08:06:53 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jItBj-0001ON-Sp; Mon, 30 Mar 2020 14:06:43 +0200
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1jItBi-0002a0-PG; Mon, 30 Mar 2020 14:06:42 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        David Jander <david@protonic.nl>, devicetree@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v4 5/5] ARM: dts: add Protonic RVT board
-Date:   Mon, 30 Mar 2020 14:06:40 +0200
-Message-Id: <20200330120640.9810-6-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.26.0.rc2
-In-Reply-To: <20200330120640.9810-1-o.rempel@pengutronix.de>
-References: <20200330120640.9810-1-o.rempel@pengutronix.de>
+        Mon, 30 Mar 2020 08:07:52 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q5so13903030lfb.13
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 05:07:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=0aEdtR3eqKQsfmtlRlRdfnrl5MyoxFZRcMVBqMCCoIg=;
+        b=ePPuN/y4kTzlPyjZ07MszdxhlfPTWfVcqZmfbCF+gHqBGTaA05g64grgJci8vDhhuN
+         hUF93ODLhp1Orq3qmVP3ynOSQaOm9hgrADBH1YnUOLjvEeXEUA4rimGbT1rm+j7l6VCc
+         P695jO12d3rRkDnXR1HUbW0u9LXrKficelsFGBJ8yqAtankCB9o2scuyyX9oG2pfUF8C
+         bb7/jo/vbyfPX2S5+2d85TntpNEygPZFEQhQPOtwYo3GnI+Lz96FgO7POuQNbasclV82
+         okx9+K3/wX4AuKnAO0e5x7afIC/ljnjAG09pvlbI5PiXQfzsdeJLbIGyIrsjnBcuQJJg
+         Hfbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=0aEdtR3eqKQsfmtlRlRdfnrl5MyoxFZRcMVBqMCCoIg=;
+        b=hmHCD+lkOxSVi+nBb26akHgFeVULJEQTLgA7RGpqyXZHapWcq2HN8AZpLNQqBt1MxU
+         nBkC2p831d+JnMb8C2qYFK8AjjpaSIA6AqincvccqXeuNPOwi5OcOlCyKn6LDfMGkN/t
+         3n+ZA4l333n+fIFYEnTMEvZjU0v5a1z3vsFtYCY5o5eysm/IRbzG8XNZA7MoUtzFidos
+         Titp73Oe9lg9scS+YUfjniqhWUyPs0m3GTxeCKAjSXj5EBkroG2Nr12MpZdr0gpr7txL
+         gJ0Xo6LlUt+KxU+UuRbRp8/BaKurh9wbDYl2mMq6gsTeEoQWfEzDh2slHVajV8CLFA01
+         hqAg==
+X-Gm-Message-State: AGi0PuYE2CHTcAzJit42xnqWQUQAwq/AKRjV2YMZUeQwpAOBQgQB3lQ5
+        dQW2Tnfbe1O/QjwyoV8sYyKkBg==
+X-Google-Smtp-Source: APiQypIRv6jqQL0EfgXdXkD+7L6vqnpTA1M2PeuhzB2k18Je08PoUqQPqP309s6wLGax2Bf0bv4tug==
+X-Received: by 2002:ac2:5146:: with SMTP id q6mr8077042lfd.81.1585570067951;
+        Mon, 30 Mar 2020 05:07:47 -0700 (PDT)
+Received: from localhost (h-200-138.A463.priv.bahnhof.se. [176.10.200.138])
+        by smtp.gmail.com with ESMTPSA id h16sm7617837lfp.77.2020.03.30.05.07.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 05:07:47 -0700 (PDT)
+Date:   Mon, 30 Mar 2020 14:07:45 +0200
+From:   Niklas <niklas.soderlund@ragnatech.se>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] media: rcar-vin: Add support for
+ MEDIA_BUS_FMT_SRGGB8_1X8 format
+Message-ID: <20200330120745.GA3213219@oden.dyn.berto.se>
+References: <1583838364-12932-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1583838364-12932-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200310124605.GO2975348@oden.dyn.berto.se>
+ <OSBPR01MB35905FFB621C2F4222692832AAFF0@OSBPR01MB3590.jpnprd01.prod.outlook.com>
+ <20200310140625.GA88560@oden.dyn.berto.se>
+ <CA+V-a8vsYGdx6AtgqwS0LXREn4hu-EjVh2D5Dp_rHmpazBYG5A@mail.gmail.com>
+ <20200319150329.GB3192108@oden.dyn.berto.se>
+ <CA+V-a8u8=H-6WfaYMLWH73zo5ehP8cu9D-tdGULk=Hkvq4KuAQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <CA+V-a8u8=H-6WfaYMLWH73zo5ehP8cu9D-tdGULk=Hkvq4KuAQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Protonic RVT is an internal development platform for a wireless ISObus
-Virtual Terminal based on COTS tablets, and the predecessor of the WD2
-platform.
+Hi Lad,
 
-Signed-off-by: David Jander <david@protonic.nl>
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- .../devicetree/bindings/arm/fsl.yaml          |   1 +
- arch/arm/boot/dts/Makefile                    |   1 +
- arch/arm/boot/dts/imx6dl-prtrvt.dts           | 203 ++++++++++++++++++
- 3 files changed, 205 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6dl-prtrvt.dts
+Thanks for your reply.
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index 424be1edf005..2e8a03ef5c95 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -168,6 +168,7 @@ properties:
-               - emtrion,emcon-mx6-avari   # emCON-MX6S or emCON-MX6DL SoM on Avari Base
-               - fsl,imx6dl-sabreauto      # i.MX6 DualLite/Solo SABRE Automotive Board
-               - fsl,imx6dl-sabresd        # i.MX6 DualLite SABRE Smart Device Board
-+              - prt,prtrvt                # Protonic RVT board
-               - prt,prtvt7                # Protonic VT7 board
-               - technologic,imx6dl-ts4900
-               - technologic,imx6dl-ts7970
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index e53abe1de259..afaccc9bc645 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -446,6 +446,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6dl-nitrogen6x.dtb \
- 	imx6dl-phytec-mira-rdk-nand.dtb \
- 	imx6dl-phytec-pbab01.dtb \
-+	imx6dl-prtrvt.dtb \
- 	imx6dl-prtvt7.dtb \
- 	imx6dl-rex-basic.dtb \
- 	imx6dl-riotboard.dtb \
-diff --git a/arch/arm/boot/dts/imx6dl-prtrvt.dts b/arch/arm/boot/dts/imx6dl-prtrvt.dts
-new file mode 100644
-index 000000000000..cf097437b276
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6dl-prtrvt.dts
-@@ -0,0 +1,203 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright (c) 2014 Protonic Holland
-+ */
-+
-+/dts-v1/;
-+#include "imx6dl.dtsi"
-+#include "imx6qdl-prti6q.dtsi"
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	model = "Protonic RVT board";
-+	compatible = "prt,prtrvt", "fsl,imx6dl";
-+
-+	memory@10000000 {
-+		device_type = "memory";
-+		reg = <0x10000000 0x10000000>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_leds>;
-+
-+		led-debug0 {
-+			function = LED_FUNCTION_STATUS;
-+			gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+};
-+
-+&can1 {
-+	pinctrl-0 = <&pinctrl_can1 &pinctrl_can1phy>;
-+};
-+
-+&ecspi1 {
-+	cs-gpios = <&gpio3 19 GPIO_ACTIVE_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi1>;
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "winbond,w25q64", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <20000000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				label = "boot";
-+				reg = <0x0 0x80000>;
-+			};
-+
-+			partition@80000 {
-+				label = "env";
-+				reg = <0x80000 0x10000>;
-+			};
-+
-+			partition@90000 {
-+				label = "spare";
-+				reg = <0x90000 0x370000>;
-+			};
-+		};
-+	};
-+};
-+
-+&ecspi3 {
-+	cs-gpios = <&gpio4 24 GPIO_ACTIVE_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi3>;
-+	status = "okay";
-+
-+	nfc@0 {
-+		compatible = "ti,trf7970a";
-+		reg = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_nfc>;
-+		spi-max-frequency = <2000000>;
-+		interrupts-extended = <&gpio5 14 IRQ_TYPE_LEVEL_LOW>;
-+		ti,enable-gpios = <&gpio5 12 GPIO_ACTIVE_LOW>,
-+				  <&gpio5 11 GPIO_ACTIVE_LOW>;
-+		vin-supply = <&reg_3v3>;
-+		vin-voltage-override = <3100000>;
-+		autosuspend-delay = <30000>;
-+		irq-status-read-quirk;
-+		en2-rf-quirk;
-+		t5t-rmb-extra-byte-quirk;
-+		status = "okay";
-+	};
-+};
-+
-+&i2c3 {
-+	adc@49 {
-+		compatible = "ti,ads1015";
-+		reg = <0x49>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* nc */
-+		channel@4 {
-+			reg = <4>;
-+			ti,gain = <3>;
-+			ti,datarate = <3>;
-+		};
-+
-+		/* nc */
-+		channel@5 {
-+			reg = <5>;
-+			ti,gain = <3>;
-+			ti,datarate = <3>;
-+		};
-+
-+		/* can1_l */
-+		channel@6 {
-+			reg = <6>;
-+			ti,gain = <3>;
-+			ti,datarate = <3>;
-+		};
-+
-+		/* can1_h */
-+		channel@7 {
-+			reg = <7>;
-+			ti,gain = <3>;
-+			ti,datarate = <3>;
-+		};
-+	};
-+
-+	rtc@51 {
-+		compatible = "nxp,pcf8563";
-+		reg = <0x51>;
-+	};
-+};
-+
-+&pcie {
-+	status = "okay";
-+};
-+
-+&usbh1 {
-+	status = "disabled";
-+};
-+
-+&vpu {
-+	status = "disabled";
-+};
-+
-+&iomuxc {
-+	pinctrl_can1phy: can1phy {
-+		fsl,pins = <
-+			/* CAN1_SR */
-+			MX6QDL_PAD_KEY_COL3__GPIO4_IO12	0x13070
-+			/* CAN1_TERM */
-+			MX6QDL_PAD_GPIO_0__GPIO1_IO00	0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_ecspi1: ecspi1grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_EIM_D17__ECSPI1_MISO		0x100b1
-+			MX6QDL_PAD_EIM_D18__ECSPI1_MOSI		0x100b1
-+			MX6QDL_PAD_EIM_D16__ECSPI1_SCLK		0x100b1
-+			/* CS */
-+			MX6QDL_PAD_EIM_D19__GPIO3_IO19		0x000b1
-+		>;
-+	};
-+
-+	pinctrl_ecspi3: ecspi3grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_DISP0_DAT0__ECSPI3_SCLK	0x100b1
-+			MX6QDL_PAD_DISP0_DAT1__ECSPI3_MOSI	0x100b1
-+			MX6QDL_PAD_DISP0_DAT2__ECSPI3_MISO	0x100b1
-+			MX6QDL_PAD_DISP0_DAT3__GPIO4_IO24	0x000b1
-+		>;
-+	};
-+
-+	pinctrl_leds: ledsgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_GPIO_8__GPIO1_IO08		0x1b0b0
-+		>;
-+	};
-+
-+	pinctrl_nfc: nfcgrp {
-+		fsl,pins = <
-+			/* NFC_ASK_OOK */
-+			MX6QDL_PAD_DISP0_DAT15__GPIO5_IO09	0x100b1
-+			/* NFC_PWR_EN */
-+			MX6QDL_PAD_DISP0_DAT16__GPIO5_IO10	0x100b1
-+			/* NFC_EN2 */
-+			MX6QDL_PAD_DISP0_DAT17__GPIO5_IO11	0x100b1
-+			/* NFC_EN */
-+			MX6QDL_PAD_DISP0_DAT18__GPIO5_IO12	0x100b1
-+			/* NFC_MOD */
-+			MX6QDL_PAD_DISP0_DAT19__GPIO5_IO13	0x100b1
-+			/* NFC_IRQ */
-+			MX6QDL_PAD_DISP0_DAT20__GPIO5_IO14	0x100b1
-+		>;
-+	};
-+};
+On 2020-03-27 12:59:52 +0000, Lad, Prabhakar wrote:
+> Hi Niklas,
+> 
+> On Thu, Mar 19, 2020 at 3:03 PM Niklas <niklas.soderlund@ragnatech.se> wrote:
+> >
+> > Hi Prabhakar,
+> >
+> > Thanks for the sample files, sorry I did not have time before now to
+> > look at them. After doing so I believe I know what is wrong, see bellow.
+> >
+> > On 2020-03-15 19:35:58 +0000, Lad, Prabhakar wrote:
+> > > Hi Niklas,
+> > >
+> > > On Tue, Mar 10, 2020 at 2:06 PM Niklas <niklas.soderlund@ragnatech.se> wrote:
+> > > >
+> > > > Hi Lad,
+> > > >
+> > > > On 2020-03-10 13:42:20 +0000, Prabhakar Mahadev Lad wrote:
+> > > > > Hi Niklas,
+> > > > >
+> > > > > Thank for the review.
+> > > > >
+> > > > > > -----Original Message-----
+> > > > > > From: Niklas <niklas.soderlund@ragnatech.se>
+> > > > > > Sent: 10 March 2020 12:46
+> > > > > > To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > > > Cc: Mauro Carvalho Chehab <mchehab@kernel.org>; linux-
+> > > > > > media@vger.kernel.org; linux-renesas-soc@vger.kernel.org; linux-
+> > > > > > kernel@vger.kernel.org; Lad Prabhakar <prabhakar.csengg@gmail.com>
+> > > > > > Subject: Re: [PATCH v2 2/3] media: rcar-vin: Add support for
+> > > > > > MEDIA_BUS_FMT_SRGGB8_1X8 format
+> > > > > >
+> > > > > > Hi Lad,
+> > > > > >
+> > > > > > Thanks for your work.
+> > > > > >
+> > > > > > On 2020-03-10 11:06:03 +0000, Lad Prabhakar wrote:
+> > > > > > > Add support for MEDIA_BUS_FMT_SRGGB8_1X8 format in rcar-vin by
+> > > > > > setting
+> > > > > > > format type to RAW8 in VNMC register and appropriately setting the
+> > > > > > > bpp, bytesperline to enable V4L2_PIX_FMT_SRGGB8.
+> > > > > > >
+> > > > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-
+> > > > > > lad.rj@bp.renesas.com>
+> > > > > > > ---
+> > > > > > >  drivers/media/platform/rcar-vin/rcar-core.c |  1 +
+> > > > > > > drivers/media/platform/rcar-vin/rcar-dma.c  |  9 ++++++++-
+> > > > > > > drivers/media/platform/rcar-vin/rcar-v4l2.c | 13 ++++++++++++-
+> > > > > > >  3 files changed, 21 insertions(+), 2 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
+> > > > > > > b/drivers/media/platform/rcar-vin/rcar-core.c
+> > > > > > > index 7440c89..76daf2f 100644
+> > > > > > > --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> > > > > > > +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> > > > > > > @@ -469,6 +469,7 @@ static int rvin_parallel_subdevice_attach(struct
+> > > > > > rvin_dev *vin,
+> > > > > > >  case MEDIA_BUS_FMT_UYVY8_2X8:
+> > > > > > >  case MEDIA_BUS_FMT_UYVY10_2X10:
+> > > > > > >  case MEDIA_BUS_FMT_RGB888_1X24:
+> > > > > > > +case MEDIA_BUS_FMT_SRGGB8_1X8:
+> > > > > > >  vin->mbus_code = code.code;
+> > > > > > >  vin_dbg(vin, "Found media bus format for %s: %d\n",
+> > > > > > >  subdev->name, vin->mbus_code);
+> > > > > > > diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
+> > > > > > > b/drivers/media/platform/rcar-vin/rcar-dma.c
+> > > > > > > index 1a30cd0..1c1fafa 100644
+> > > > > > > --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> > > > > > > +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> > > > > > > @@ -85,6 +85,7 @@
+> > > > > > >  #define VNMC_INF_YUV8_BT601(1 << 16)
+> > > > > > >  #define VNMC_INF_YUV10_BT656(2 << 16)
+> > > > > > >  #define VNMC_INF_YUV10_BT601(3 << 16)
+> > > > > > > +#define VNMC_INF_RAW8(4 << 16)
+> > > > > > >  #define VNMC_INF_YUV16(5 << 16)
+> > > > > > >  #define VNMC_INF_RGB888(6 << 16)
+> > > > > > >  #define VNMC_VUP(1 << 10)
+> > > > > > > @@ -587,7 +588,6 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+> > > > > > >  rvin_write(vin, vin->crop.top, VNSLPRC_REG);
+> > > > > > >  rvin_write(vin, vin->crop.top + vin->crop.height - 1, VNELPRC_REG);
+> > > > > > >
+> > > > > > > -
+> > > > > > >  /* TODO: Add support for the UDS scaler. */
+> > > > > > >  if (vin->info->model != RCAR_GEN3)
+> > > > > > >  rvin_crop_scale_comp_gen2(vin);
+> > > > > > > @@ -676,6 +676,9 @@ static int rvin_setup(struct rvin_dev *vin)
+> > > > > > >
+> > > > > > >  input_is_yuv = true;
+> > > > > > >  break;
+> > > > > > > +case MEDIA_BUS_FMT_SRGGB8_1X8:
+> > > > > > > +vnmc |= VNMC_INF_RAW8;
+> > > > > > > +break;
+> > > > > > >  default:
+> > > > > > >  break;
+> > > > > > >  }
+> > > > > > > @@ -737,6 +740,9 @@ static int rvin_setup(struct rvin_dev *vin)
+> > > > > > >  case V4L2_PIX_FMT_ABGR32:
+> > > > > > >  dmr = VNDMR_A8BIT(vin->alpha) | VNDMR_EXRGB |
+> > > > > > VNDMR_DTMD_ARGB;
+> > > > > > >  break;
+> > > > > > > +case V4L2_PIX_FMT_SRGGB8:
+> > > > > > > +dmr = 0;
+> > > > > > > +break;
+> > > > > > >  default:
+> > > > > > >  vin_err(vin, "Invalid pixelformat (0x%x)\n",
+> > > > > > >  vin->format.pixelformat);
+> > > > > > > @@ -1110,6 +1116,7 @@ static int rvin_mc_validate_format(struct
+> > > > > > rvin_dev *vin, struct v4l2_subdev *sd,
+> > > > > > >  case MEDIA_BUS_FMT_UYVY8_2X8:
+> > > > > > >  case MEDIA_BUS_FMT_UYVY10_2X10:
+> > > > > > >  case MEDIA_BUS_FMT_RGB888_1X24:
+> > > > > > > +case MEDIA_BUS_FMT_SRGGB8_1X8:
+> > > > > > >  vin->mbus_code = fmt.format.code;
+> > > > > > >  break;
+> > > > > > >  default:
+> > > > > > > diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > > > > > > b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > > > > > > index 5151a3c..4698099 100644
+> > > > > > > --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > > > > > > +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > > > > > > @@ -66,6 +66,10 @@ static const struct rvin_video_format rvin_formats[]
+> > > > > > = {
+> > > > > > >  .fourcc= V4L2_PIX_FMT_ABGR32,
+> > > > > > >  .bpp= 4,
+> > > > > > >  },
+> > > > > > > +{
+> > > > > > > +.fourcc= V4L2_PIX_FMT_SRGGB8,
+> > > > > > > +.bpp= 2,
+> > > > > >
+> > > > > > This does not look right, is not bytes-per-pixel 1 for a SRGGB8?
+> > > > > >
+> > > > > I guessed the bpp's were picked from VnIS table as I result I did the same.
+> > > > >
+> > > > > > > +},
+> > > > > > >  };
+> > > > > > >
+> > > > > > >  const struct rvin_video_format *rvin_format_from_pixel(struct
+> > > > > > > rvin_dev *vin, @@ -102,6 +106,7 @@ static u32
+> > > > > > > rvin_format_bytesperline(struct rvin_dev *vin,  {
+> > > > > > >  const struct rvin_video_format *fmt;
+> > > > > > >  u32 align;
+> > > > > > > +u8 div;
+> > > > > > >
+> > > > > > >  fmt = rvin_format_from_pixel(vin, pix->pixelformat);
+> > > > > > >
+> > > > > > > @@ -112,16 +117,22 @@ static u32 rvin_format_bytesperline(struct
+> > > > > > rvin_dev *vin,
+> > > > > > >  case V4L2_PIX_FMT_NV12:
+> > > > > > >  case V4L2_PIX_FMT_NV16:
+> > > > > > >  align = 0x20;
+> > > > > > > +div = 1;
+> > > > > > > +break;
+> > > > > > > +case V4L2_PIX_FMT_SRGGB8:
+> > > > > > > +align = 0x10;
+> > > > > > > +div = 2;
+> > > > > >
+> > > > > > Yes this does not look right at all, I think you should set bpp to 1 and drop the
+> > > > > > div handling here.
+> > > > > >
+> > > > > If I set bpp as 1 and drop the div VNIS_REG will be wrongly configured in
+> > > > > rvin_crop_scale_comp() and the image captured will be wrong.
+> > > > >
+> > > > > For example for 640x480:
+> > > > >
+> > > > > With the current patch bpp = 2:
+> > > > > bytesperline = 640
+> > > >
+> > > > This is wrong, if we have a line of 640 pixels and 2 bytes per pixel
+> > > > then bytesperline must be at least 1280 bytes right?
+> > > >
+> > > > > image size = 307200
+> > > > > stride = 320
+> > > >
+> > > > But this is incorrect, the VNIS_REG shall be at least the number of
+> > > > pixels in a line (EPPrC - SPPrC -> 640 - 0 = 640). Then we need to align
+> > > > it to the pixel unit (16, 32, 64, 128) depending on the output pixel
+> > > > format.
+> > > >
+> > > > This usually result in a stride that is larger then the line length.
+> > > > Thus you need a test application that knows the difference between width
+> > > > * bpp and bytesperline. I use qv4l2 without opengl support when I do quick
+> > > > tests and it does not support this hence I get a incorrect visual view
+> > > > of the stream when testing.
+> > > >
+> > > > How does the image capture fail with bpp = 1?
+> > > >
+> > > Attached is the captured bayer images 640x480 with bpp set to 1, for
+> > > file1bppstridediv1.raw
+> > > VNIS_REG stride set to 640 and for file file1bppstridediv2.raw
+> > > VNIS_REF stride  set to (640 * 1) / 2.
+> > > When the file1bppstridediv1.raw image is converted to png colors are incorrect
+> > > but whereas file1bppstridediv2.raw converted to png the picture is clear.
+> > >
+> > > Also while doing a loop-back to fbdevsink with the below pipeline:
+> > > gst-launch-1.0 -vvv v4l2src device=/dev/video0 io-mode=dmabuf ! 'video/x-bayer,
+> > > format=rggb,width=640,height=480,framerate=30/1' ! queue ! bayer2rgb !
+> > > videoconvert
+> > > ! fbdevsink sync=false
+> > >
+> > > width = 640 height = 480 bpp = 1, bytesperline = 640 stride = 320
+> > > works correctly
+> > > width = 640 height = 480 bpp = 1, bytesperline = 640 stride = 640
+> > > image displayed is incorrect
+> >
+> > It's very unlogical to have a stride that is less then the width, which
+> > got me interested why the second one gave you better results. I wrote a
+> > small python hack which converts the raw SRGGB8 to PNG without any
+> > debyaer, just rows of RGRGRG and BGBGBG.
+> >
+> Finally I have some information from the hardware team, the VIN process RAW8
+> in 2 pixel units as a result the stride for RAW8 needs to be
+> configured as bytesperline/2.
+
+Interesting, that is not how I have interpreted the datasheet. But 
+rereading it now after our discussion I see how it could be so. I will 
+dig into it during the week and see if I get make it all click in my 
+head. Thanks for pointing this out.
+
+> 
+> The python script which you attached doesn't seem to do the right
+> conversion. I discovered
+> that Shotwell Viewer on Ubuntu can open raw files. I also confirmed
+> this by bayer2rg [1]
+
+Oops, you are right. My bad sorry for sending you down that path.
+
+> 
+> # ./bayer2rgb --input=file1bppstridediv1.raw --output=file1.tiff
+> --width=640 --height=480 --bpp=8 --first=RGGB --method=BILINEAR --tiff
+> # ./bayer2rgb --input=file1bppstridediv2.raw --output=file2.tiff
+> --width=640 --height=480 --bpp=8 --first=RGGB --method=BILINEAR --tiff
+> 
+> # convert file1.tiff file1bppstridediv1.png
+> # convert file2.tiff file1bppstridediv2.png
+> 
+> Attached are the png images for reference.
+> 
+> > Looking at the output of that seems your sensor is not sending frames of
+> > 640x480 but 480x640. Both the raw files you sent have holes in them.
+> > The first line is always 480 pixels of data and then there are sections
+> > of no data, followed by good data. Some rows are chopped and some have
+> > their 480 bytes of good data on the "left" and some on the "right" side
+> > of the frame.
+> >
+> I can confirm the sensor is sending 640x480 as the support for same
+> was added recently in IMX219 driver
+> and  was  was tested on raspi by the maintainer.
+> 
+> [1] https://github.com/jdthomas/bayer2rgb
+> 
+> Cheers,
+> --Prabhakar
+> 
+> > So for rcar-vin I think the following settings are what you want,
+> >
+> >     width = 480 height = 640 bpp = 1, bytesperline = 480* stride = 480
+> >     * = I have not checked if this fits with alignment for VNIS
+> >
+> > I have attached the python hack and the two generated png files from
+> > your raw files so you can play with them yourself.
+> >
+> > >
+> > > Cheers,
+> > > --Prabhakar
+> > >
+> > > > >
+> > > > > And with bpp = 1 and div removed
+> > > > > bytesperline = 640
+> > > > > image size = 307200
+> > > > > stride = 640
+> > > >
+> > > >
+> > > > >
+> > > > > Cheers,
+> > > > > --Prabhakar
+> > > > >
+> > > > > > >  break;
+> > > > > > >  default:
+> > > > > > >  align = 0x10;
+> > > > > > > +div = 1;
+> > > > > > >  break;
+> > > > > > >  }
+> > > > > > >
+> > > > > > >  if (V4L2_FIELD_IS_SEQUENTIAL(pix->field))
+> > > > > > >  align = 0x80;
+> > > > > > >
+> > > > > > > -return ALIGN(pix->width, align) * fmt->bpp;
+> > > > > > > +return ALIGN(pix->width / div, align) * fmt->bpp;
+> > > > > > >  }
+> > > > > > >
+> > > > > > >  static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
+> > > > > > > --
+> > > > > > > 2.7.4
+> > > > > > >
+> > > > > >
+> > > > > > --
+> > > > > > Regards,
+> > > > > > Niklas Söderlund
+> > > > >
+> > > > >
+> > > > > Renesas Electronics Europe GmbH, Geschaeftsfuehrer/President: Carsten Jauch, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse 10, 40472 Duesseldorf, Germany, Handelsregister/Commercial Register: Duesseldorf, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr./WEEE reg. no.: DE 14978647
+> > > >
+> > > > --
+> > > > Regards,
+> > > > Niklas Söderlund
+> >
+> >
+> >
+> >
+> > --
+> > Regards,
+> > Niklas Söderlund
+
+
+
+
 -- 
-2.26.0.rc2
-
+Regards,
+Niklas Söderlund
