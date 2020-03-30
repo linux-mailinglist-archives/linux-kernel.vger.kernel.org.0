@@ -2,117 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED4ED197933
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 12:22:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96C8519793F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 12:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729897AbgC3KWJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 06:22:09 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40074 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729249AbgC3KWG (ORCPT
+        id S1729392AbgC3KYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 06:24:08 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:33906 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729121AbgC3KYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 06:22:06 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a81so21253753wmf.5;
-        Mon, 30 Mar 2020 03:22:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4vIQEBciMld0vCiDFU9TfH/0TDdbnuRcouDz7FT+Dao=;
-        b=fsu+c4P/6tAyRUitocVZp9kKKEf6AMJhKGDMC8AcCM0SLJnHTp6Vkuo+CbciFHwI6O
-         8b5YYjEVg1p7uesi3fBhQiD9EFV0RMTZD+XbK98vRqVhJME6U8250HKlzukT6EWfIPSP
-         aMq0QnRba9AtGeI7sleKPcXgqzOGkqwQO8LWgRj01yCEArGHZaHDAwmDNAjxheigoqoq
-         6IepDnkxmRIosvbJWX9TD20zwOaaA7t7Gl0Tot+CPN3KNS+QknxKlhkyfsHk+Nc0l1qq
-         AfsVvqbzy5kF1C2vUHLJSz7r42OD8ZqJXN4tWa47lb3X4xQVC1EZJEBBc+/CBCLP2lRT
-         B4Qw==
-X-Gm-Message-State: ANhLgQ3GQcYidWHrL5Qd6IoPT8ozmnkh8RuW03dDPCAVUudzdQg2Lbbk
-        nehW2G9zBpaAm2uEfFqbTJo=
-X-Google-Smtp-Source: ADFU+vuFweYk6OhehoyQZbg793z94p/aKZfJExcaGXCIEngab5qdWnPGnlE59M917AKIDjvsSPRFTQ==
-X-Received: by 2002:a05:600c:4410:: with SMTP id u16mr12292810wmn.161.1585563724488;
-        Mon, 30 Mar 2020 03:22:04 -0700 (PDT)
-Received: from debian (44.142.6.51.dyn.plus.net. [51.6.142.44])
-        by smtp.gmail.com with ESMTPSA id x11sm14972395wru.62.2020.03.30.03.22.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 03:22:03 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 11:22:01 +0100
-From:   Wei Liu <wei.liu@kernel.org>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Tianyu Lan <ltykernel@gmail.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Yubo Xie <yuboxie@microsoft.com>,
-        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        liuwe@microsoft.com, daniel.lezcano@linaro.org, tglx@linutronix.de,
-        michael.h.kelley@microsoft.com, Wei Liu <wei.liu@kernel.org>
-Subject: Re: [PATCH V2] x86/Hyper-V: Fix hv sched clock function return wrong
- time unit
-Message-ID: <20200330102201.qs2ty22zxx2n53h3@debian>
-References: <20200327021159.31429-1-Tianyu.Lan@microsoft.com>
- <87k13641rg.fsf@vitty.brq.redhat.com>
- <20200330100502.hh2yygyxctsmwd6o@debian>
+        Mon, 30 Mar 2020 06:24:07 -0400
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
+        by isilmar-4.linta.de (Postfix) with ESMTPSA id E96BA200107;
+        Mon, 30 Mar 2020 10:24:05 +0000 (UTC)
+Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
+        id 7A4912048A; Mon, 30 Mar 2020 12:23:56 +0200 (CEST)
+Date:   Mon, 30 Mar 2020 12:23:56 +0200
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     Cezary Rojewski <cezary.rojewski@intel.com>
+Cc:     Mark Brown <broonie@kernel.org>, kuninori.morimoto.gx@renesas.com,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Keyon Jie <yang.jie@linux.intel.com>,
+        alsa-devel@alsa-project.org, curtis@malainey.com,
+        linux-kernel@vger.kernel.org, tiwai@suse.com,
+        liam.r.girdwood@linux.intel.com
+Subject: Re: snd_hda_intel/sst-acpi sound breakage on suspend/resume since
+ 5.6-rc1
+Message-ID: <20200330102356.GA16588@light.dominikbrodowski.net>
+References: <20200318162029.GA3999@light.dominikbrodowski.net>
+ <e49eec28-2037-f5db-e75b-9eadf6180d81@intel.com>
+ <20200318192213.GA2987@light.dominikbrodowski.net>
+ <b352a46b-8a66-8235-3622-23e561d3728c@intel.com>
+ <20200318215218.GA2439@light.dominikbrodowski.net>
+ <e7f4f38d-b53e-8c69-8b23-454718cf92af@intel.com>
+ <20200319130049.GA2244@light.dominikbrodowski.net>
+ <20200319134139.GB3983@sirena.org.uk>
+ <a01359dc-479e-b3e3-37a6-4a9c421d18da@intel.com>
+ <20200319165157.GA2254@light.dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200330100502.hh2yygyxctsmwd6o@debian>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200319165157.GA2254@light.dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 11:05:02AM +0100, Wei Liu wrote:
-> On Fri, Mar 27, 2020 at 09:53:39AM +0100, Vitaly Kuznetsov wrote:
-> > Tianyu Lan <ltykernel@gmail.com> writes:
+On Thu, Mar 19, 2020 at 05:51:58PM +0100, Dominik Brodowski wrote:
+> On Thu, Mar 19, 2020 at 04:48:03PM +0100, Cezary Rojewski wrote:
+> > On 2020-03-19 14:41, Mark Brown wrote:
+> > > On Thu, Mar 19, 2020 at 02:00:49PM +0100, Dominik Brodowski wrote:
+> > > 
+> > > > Have some good news now, namely that a bisect is complete: That pointed to
+> > > > 1272063a7ee4 ("ASoC: soc-core: care .ignore_suspend for Component suspend");
+> > > > therefore I've added Kuninori Morimoto to this e-mail thread.
+> > > 
+> > > If that's an issue it feels more like a driver bug in that if the driver
+> > > asked for ignore_suspend then it should expect not to have the suspend
+> > > callback called.
+> > > 
 > > 
-> > > From: Yubo Xie <yuboxie@microsoft.com>
-> > >
-> > > sched clock callback should return time with nano second as unit
-> > > but current hv callback returns time with 100ns. Fix it.
-> > >
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Yubo Xie <yuboxie@microsoft.com>
-> > > Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
-> > > Fixes: bd00cd52d5be ("clocksource/drivers/hyperv: Add Hyper-V specific sched clock function")
-> > > ---
-> > > Change since v1:
-> > > 	Update fix commit number in change log. 
-> > > ---
-> > >  drivers/clocksource/hyperv_timer.c | 6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-> > > index 9d808d595ca8..662ed978fa24 100644
-> > > --- a/drivers/clocksource/hyperv_timer.c
-> > > +++ b/drivers/clocksource/hyperv_timer.c
-> > > @@ -343,7 +343,8 @@ static u64 notrace read_hv_clock_tsc_cs(struct clocksource *arg)
-> > >  
-> > >  static u64 read_hv_sched_clock_tsc(void)
-> > >  {
-> > > -	return read_hv_clock_tsc() - hv_sched_clock_offset;
-> > > +	return (read_hv_clock_tsc() - hv_sched_clock_offset)
-> > > +		* (NSEC_PER_SEC / HV_CLOCK_HZ);
-> > >  }
-> > >  
-> > >  static void suspend_hv_clock_tsc(struct clocksource *arg)
-> > > @@ -398,7 +399,8 @@ static u64 notrace read_hv_clock_msr_cs(struct clocksource *arg)
-> > >  
-> > >  static u64 read_hv_sched_clock_msr(void)
-> > >  {
-> > > -	return read_hv_clock_msr() - hv_sched_clock_offset;
-> > > +	return (read_hv_clock_msr() - hv_sched_clock_offset)
-> > > +		* (NSEC_PER_SEC / HV_CLOCK_HZ);
-> > >  }
-> > >  
-> > >  static struct clocksource hyperv_cs_msr = {
+> > Requested for tests with following diff applied:
 > > 
-> > Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> > diff --git a/sound/soc/intel/boards/broadwell.c
+> > b/sound/soc/intel/boards/broadwell.c
+> > index db7e1e87156d..6ed4c1b0a515 100644
+> > --- a/sound/soc/intel/boards/broadwell.c
+> > +++ b/sound/soc/intel/boards/broadwell.c
+> > @@ -212,7 +212,6 @@ static struct snd_soc_dai_link broadwell_rt286_dais[] =
+> > {
+> >                 .init = broadwell_rt286_codec_init,
+> >                 .dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+> >                         SND_SOC_DAIFMT_CBS_CFS,
+> > -               .ignore_suspend = 1,
+> >                 .ignore_pmdown_time = 1,
+> >                 .be_hw_params_fixup = broadwell_ssp0_fixup,
+> >                 .ops = &broadwell_rt286_ops,
 > 
-> Queued for hyperv-fixes. Thank you both.
+> That patch fixes the issue(s). I didn't even need to revert 64df6afa0dab
+> ("ASoC: Intel: broadwell: change cpu_dai and platform components for SOF")
+> on top of that. But you can assess better whether that patch needs care for
+> other reasons; for me, this one-liner you have suggested is perfect.
 
-It appears Thomas already sent this to Linus, so I will drop this from
-my branch.
+Seems this patch didn't make it into v5.6 (and neither did the other ones
+you sent relating to the "dummy" components). Can these patches therefore be
+marked for stable, please?
 
-Wei.
-
-> 
-> Wei.
+Thanks,
+	Dominik
