@@ -2,151 +2,316 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AA91198061
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 18:02:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A73198080
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 18:09:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729881AbgC3QCw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Mar 2020 12:02:52 -0400
-Received: from mga09.intel.com ([134.134.136.24]:49726 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727048AbgC3QCv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 12:02:51 -0400
-IronPort-SDR: FLdgugvh9pbk+z2JQbAPOHApnKn6vta7p/Fm3O/QZGkiE1Vyzp7RguyqN3uH5RTSw3ydEwq3oR
- GeskY5hYifHQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 09:01:59 -0700
-IronPort-SDR: Iau7ZpXWb62eiptV3lla/8YfmL6EwRsjJ7yHpysCOjjkyrTCUc9IOrfo9HZTMmp3d1y2TuDMx6
- d3a3GBNT+pUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,324,1580803200"; 
-   d="scan'208";a="421972149"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga005.jf.intel.com with ESMTP; 30 Mar 2020 09:01:59 -0700
-Date:   Mon, 30 Mar 2020 09:07:46 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 1/3] iommu/uapi: Define uapi version and capabilities
-Message-ID: <20200330090746.23c5599c@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7FE150@SHSMSX104.ccr.corp.intel.com>
-References: <1585178227-17061-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1585178227-17061-2-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20200326092316.GA31648@infradead.org>
-        <20200326094442.5be042ce@jacob-builder>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7ECB45@SHSMSX104.ccr.corp.intel.com>
-        <20200327074702.GA27959@infradead.org>
-        <20200327165335.397f24a3@jacob-builder>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7FE150@SHSMSX104.ccr.corp.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728708AbgC3QJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 12:09:06 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34081 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbgC3QJG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 12:09:06 -0400
+Received: by mail-ed1-f67.google.com with SMTP id o1so3107296edv.1;
+        Mon, 30 Mar 2020 09:09:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LYA8MGbQRaDF//+MULXJ63oqL5dh/ssnMSFqgrb33VM=;
+        b=Bw0A54BW2bD8gL8RS2N7xDi7BnVkb+FieTzIupX0gvwhckxZ4ZsSagqOokQJj756k9
+         QkpTOYQ5IBo3N1D/yxYrTIFcejFQB2P3dvY21DnLJ9hp/PUGWIxU3RVz/PqzCmXhYPNF
+         SyKrZr+J4gyGsuIh4FQnWFcRIWIL9DuVPGcMAUEjO1Wobh/70bucomrQsNG3KX2pQFlW
+         URCDFN21DXUV/4UaskuULcR6PKDWCQeWkGQhKxEIB1PCNsO1ST2Sw5LQ0wtJ21sSpM+9
+         mL7Nme05WBieDQAadSS2v4EdRwDMI2ex9zBzEc2qt5ZGYQpO3pVhv5l107IvMUgGInYc
+         2hqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LYA8MGbQRaDF//+MULXJ63oqL5dh/ssnMSFqgrb33VM=;
+        b=Zf+bOb+cuDkDTi8b33E/oshKFj85Qk/ksVE4bItS7CJOaORD2H0M8NFqw78zd+i7Fs
+         pCMjBsQ5rIF8ld/pbbzztYLCTThZouCMGRidS5Lcd+xRCr2ztC3GRjaME3PNWE4qTE4X
+         zsrTCaPAQNFtyvmpCpqscpL5duJSFojwd7VMTzWZY56FT3Cxg7mrHGdxAyXjBdWOw0Qh
+         UwFaFCSDuAk57MjivIod4+gQR0krvFJFvQYHrdW15DxWzZhHwI1ckcyDeZSfmYKUz8CX
+         Y3B9mZ7vIPHm89ZrLhi60K/bp/bMoa92Lxj4ISea/2YMCRS0xo7PckZjdWxVTWNoNoKQ
+         Y9UQ==
+X-Gm-Message-State: ANhLgQ2NN4430fXZqAM2QWllKAq4IhayuiOpJO/N1RyMjjdBnpawt2q/
+        eg4ExBcSUlOdj+7ZZWBAJP5aamzpmN0H3h+ieZ4=
+X-Google-Smtp-Source: ADFU+vtu9TORd6ctLOxjvTdQqWnnvg71MRk7K3hbBAfc24ohHk/+yziigJcjYIHMidos9JNQxx9+KcgzaZbFhH2QQ9w=
+X-Received: by 2002:a50:fa88:: with SMTP id w8mr11452920edr.183.1585584541285;
+ Mon, 30 Mar 2020 09:09:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+References: <20200330113542.181752-1-adrian.ratiu@collabora.com> <20200330113542.181752-4-adrian.ratiu@collabora.com>
+In-Reply-To: <20200330113542.181752-4-adrian.ratiu@collabora.com>
+From:   adrian61 <pop.adrian61@gmail.com>
+Date:   Mon, 30 Mar 2020 19:08:49 +0300
+Message-ID: <CAP-HsdSXPBMG5vJwtpXBuZy9zp8HA+UvYPR5hyvdyjZfz-1dww@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] drm: bridge: synopsis: add dsi v1.01 support
+To:     Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Jonas Karlman <jonas@kwiboo.se>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-imx@nxp.com,
+        kernel@collabora.com, linux-stm32@st-md-mailman.stormreply.com,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Mar 2020 05:40:40 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+Hello Adrian,
 
-> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Sent: Saturday, March 28, 2020 7:54 AM
-> > 
-> > On Fri, 27 Mar 2020 00:47:02 -0700
-> > Christoph Hellwig <hch@infradead.org> wrote:
-> >   
-> > > On Fri, Mar 27, 2020 at 02:49:55AM +0000, Tian, Kevin wrote:  
-> > > > If those API calls are inter-dependent for composing a feature
-> > > > (e.g. SVA), shouldn't we need a way to check them together
-> > > > before exposing the feature to the guest, e.g. through a
-> > > > iommu_get_uapi_capabilities interface?  
-> > >
-> > > Yes, that makes sense.  The important bit is to have a capability
-> > > flags and not version numbers.  
-> > 
-> > The challenge is that there are two consumers in the kernel for
-> > this. 1. VFIO only look for compatibility, and size of each data
-> > struct such that it can copy_from_user.
-> > 
-> > 2. IOMMU driver, the "real consumer" of the content.
-> > 
-> > For 2, I agree and we do plan to use the capability flags to check
-> > content and maintain backward compatibility etc.
-> > 
-> > For VFIO, it is difficult to do size look up based on capability
-> > flags. 
-> 
-> Can you elaborate the difficulty in VFIO? if, as Christoph Hellwig
-> pointed out, version number is already avoided everywhere, it is 
-> interesting to know whether this work becomes a real exception
-> or just requires a different mindset.
-> 
-From VFIO p.o.v. the IOMMU UAPI data is opaque, it only needs to do two
-things:
-1. is the UAPI compatible?
-2. what is the size to copy?
+Here i get a compile error:
 
-If you look at the version number, this is really a "version as size"
-lookup, as provided by the helper function in this patch. An example
-can be the newly introduced clone3 syscall.
-https://lwn.net/Articles/792628/
-In clone3, new version must have new size. The slight difference here
-is that, unlike clone3, we have multiple data structures instead of a
-single struct clone_args {}. And each struct has flags to enumerate its
-contents besides size.
+On Mon, Mar 30, 2020 at 2:36 PM Adrian Ratiu <adrian.ratiu@collabora.com> wrote:
+>
+> The Synopsis MIPI DSI v1.01 host controller is quite widely used
+> on platforms like i.mx6 and is not very different from the other
+> versions like the 1.31/1.30 used on rockchip/stm. The protocols
+> appear to be the same, only the register layout is different and
+> the newer versions have new features symbolized by new registers
+> so adding support for it is just a matter of defining the new
+> layout and adding a couple of dsi version checks.
+>
+> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> ---
+> New in v5.
+> ---
+>  drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 125 +++++++++++++++++-
+>  1 file changed, 119 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+> index 5b78ff925af0..fb9dbc4fd0f5 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+> @@ -32,6 +32,7 @@
+>
+>  #define HWVER_131                      0x31333100      /* IP version 1.31 */
+>  #define HWVER_130                      0x31333000      /* IP version 1.30 */
+> +#define HWVER_101                      0x31303000      /* IP version 1.01 */
+>
+>  #define DSI_VERSION                    0x00
+>  #define VERSION                                GENMASK(31, 8)
+> @@ -100,6 +101,25 @@
+>  #define DSI_EDPI_CMD_SIZE              0x64
+>
+>  #define DSI_CMD_MODE_CFG               0x68
+> +
+> +#define DSI_DPI_CFG                    0x0c
+> +#define DSI_TMR_LINE_CFG               0x28
+> +#define DSI_VTIMING_CFG                        0x2c
+> +#define DSI_PHY_TMR_CFG_V101           0x30
+> +#define DSI_PHY_IF_CFG_V101            0x58
+> +#define DSI_PHY_IF_CTRL                        0x5c
+> +#define DSI_PHY_RSTZ_V101              0x54
+> +#define DSI_PHY_STATUS_V101            0x60
+> +#define DSI_PHY_TST_CTRL0_V101         0x64
+> +#define DSI_GEN_HDR_V101               0x34
+> +#define DSI_GEN_PLD_DATA_V101          0x38
+> +#define DSI_CMD_MODE_CFG_V101          0x24
+> +#define DSI_CMD_PKT_STATUS_V101                0x3c
+> +#define DSI_VID_PKT_CFG                        0x20
+> +#define DSI_VID_MODE_CFG_V101          0x1c
+> +#define DSI_TO_CNT_CFG_V101            0x40
+> +#define DSI_PCKHDL_CFG_V101            0x18
+> +
+>  #define MAX_RD_PKT_SIZE_LP             BIT(24)
+>  #define DCS_LW_TX_LP                   BIT(19)
+>  #define DCS_SR_0P_TX_LP                        BIT(18)
+> @@ -127,6 +147,33 @@
+>                                          GEN_SW_1P_TX_LP | \
+>                                          GEN_SW_0P_TX_LP)
+>
+> +#define EN_TEAR_FX_V101                        BIT(14)
+> +#define DCS_LW_TX_LP_V101              BIT(12)
+> +#define GEN_LW_TX_LP_V101              BIT(11)
+> +#define MAX_RD_PKT_SIZE_LP_V101                BIT(10)
+> +#define DCS_SW_2P_TX_LP_V101           BIT(9)
+> +#define DCS_SW_1P_TX_LP_V101           BIT(8)
+> +#define DCS_SW_0P_TX_LP_V101           BIT(7)
+> +#define GEN_SR_2P_TX_LP_V101           BIT(6)
+> +#define GEN_SR_1P_TX_LP_V101           BIT(5)
+> +#define GEN_SR_0P_TX_LP_V101           BIT(4)
+> +#define GEN_SW_2P_TX_LP_V101           BIT(3)
+> +#define GEN_SW_1P_TX_LP_V101           BIT(2)
+> +#define GEN_SW_0P_TX_LP_V101           BIT(1)
+> +
+> +#define CMD_MODE_ALL_LP_V101           (DCS_LW_TX_LP_V101 | \
+> +                                        GEN_LW_TX_LP_V101 | \
+> +                                        MAX_RD_PKT_SIZE_LP_V101 | \
+> +                                        DCS_SW_2P_TX_LP_V101 | \
+> +                                        DCS_SW_1P_TX_LP_V101 | \
+> +                                        DCS_SW_0P_TX_LP_V101 | \
+> +                                        GEN_SR_2P_TX_LP_V101 | \
+> +                                        GEN_SR_1P_TX_LP_V101 | \
+> +                                        GEN_SR_0P_TX_LP_V101 | \
+> +                                        GEN_SW_2P_TX_LP_V101 | \
+> +                                        GEN_SW_1P_TX_LP_V101 | \
+> +                                        GEN_SW_0P_TX_LP_V101)
+> +
+>  #define DSI_GEN_HDR                    0x6c
+>  #define DSI_GEN_PLD_DATA               0x70
+>
+> @@ -165,6 +212,11 @@
+>  #define DSI_INT_MSK0                   0xc4
+>  #define DSI_INT_MSK1                   0xc8
+>
+> +#define DSI_ERROR_ST0_V101             0x44
+> +#define DSI_ERROR_ST1_V101             0x48
+> +#define DSI_ERROR_MSK0_V101            0x4c
+> +#define DSI_ERROR_MSK1_V101            0x50
+> +
+>  #define DSI_PHY_TMR_RD_CFG             0xf4
+>
+>  #define PHY_STATUS_TIMEOUT_US          10000
+> @@ -359,6 +411,49 @@ static const struct dw_mipi_dsi_variant dw_mipi_dsi_v130_v131_layout = {
+>         .cfg_gen_payload =              REG_FIELD(DSI_GEN_PLD_DATA, 0, 31),
+>  };
+>
+> +static const struct dw_mipi_dsi_variant dw_mipi_dsi_v101_layout = {
+> +       .cfg_dpi_vid =                  REG_FIELD(DSI_DPI_CFG, 0, 1),
+> +       .cfg_dpi_color_coding =         REG_FIELD(DSI_DPI_CFG, 2, 4),
+> +       .cfg_dpi_18loosely_en =         REG_FIELD(DSI_DPI_CFG, 10, 10),
+> +       .cfg_dpi_vsync_active_low =     REG_FIELD(DSI_DPI_CFG, 6, 6),
+> +       .cfg_dpi_hsync_active_low =     REG_FIELD(DSI_DPI_CFG, 7, 7),
+> +       .cfg_cmd_mode_en =              REG_FIELD(DSI_CMD_MODE_CFG_V101, 0, 0),
+> +       .cfg_cmd_mode_all_lp_en =       REG_FIELD(DSI_CMD_MODE_CFG_V101, 1, 12),
+> +       .cfg_cmd_mode_ack_rqst_en =     REG_FIELD(DSI_CMD_MODE_CFG_V101, 13, 13),
+> +       .cfg_cmd_pkt_status =           REG_FIELD(DSI_CMD_PKT_STATUS_V101, 0, 14),
+> +       .cfg_vid_mode_en =              REG_FIELD(DSI_VID_MODE_CFG_V101, 0, 0),
+> +       .cfg_vid_mode_type =            REG_FIELD(DSI_VID_MODE_CFG_V101, 1, 2),
+> +       .cfg_vid_mode_low_power =       REG_FIELD(DSI_VID_MODE_CFG_V101, 3, 8),
+> +       .cfg_vid_pkt_size =             REG_FIELD(DSI_VID_PKT_CFG, 0, 10),
+> +       .cfg_vid_hsa_time =             REG_FIELD(DSI_TMR_LINE_CFG, 0, 8),
+> +       .cfg_vid_hbp_time =             REG_FIELD(DSI_TMR_LINE_CFG, 9, 17),
+> +       .cfg_vid_hline_time =           REG_FIELD(DSI_TMR_LINE_CFG, 18, 31),
+> +       .cfg_vid_vsa_time =             REG_FIELD(DSI_VTIMING_CFG, 0, 3),
+> +       .cfg_vid_vbp_time =             REG_FIELD(DSI_VTIMING_CFG, 4, 9),
+> +       .cfg_vid_vfp_time =             REG_FIELD(DSI_VTIMING_CFG, 10, 15),
+> +       .cfg_vid_vactive_time =         REG_FIELD(DSI_VTIMING_CFG, 16, 26),
+> +       .cfg_phy_txrequestclkhs =       REG_FIELD(DSI_PHY_IF_CTRL, 0, 0),
+> +       .cfg_phy_bta_time =             REG_FIELD(DSI_PHY_TMR_CFG_V101, 0, 11),
+> +       .cfg_phy_lp2hs_time =           REG_FIELD(DSI_PHY_TMR_CFG_V101, 12, 19),
+> +       .cfg_phy_hs2lp_time =           REG_FIELD(DSI_PHY_TMR_CFG_V101, 20, 27),
+> +       .cfg_phy_testclr =              REG_FIELD(DSI_PHY_TST_CTRL0_V101, 0, 0),
+> +       .cfg_phy_unshutdownz =          REG_FIELD(DSI_PHY_RSTZ_V101, 0, 0),
+> +       .cfg_phy_unrstz =               REG_FIELD(DSI_PHY_RSTZ_V101, 1, 1),
+> +       .cfg_phy_enableclk =            REG_FIELD(DSI_PHY_RSTZ_V101, 2, 2),
+> +       .cfg_phy_nlanes =               REG_FIELD(DSI_PHY_IF_CFG_V101, 0, 1),
+> +       .cfg_phy_stop_wait_time =       REG_FIELD(DSI_PHY_IF_CFG_V101, 2, 9),
+> +       .cfg_phy_status =               REG_FIELD(DSI_PHY_STATUS_V101, 0, 0),
+> +       .cfg_pckhdl_cfg =               REG_FIELD(DSI_PCKHDL_CFG_V101, 0, 4),
+> +       .cfg_hstx_timeout_counter =     REG_FIELD(DSI_TO_CNT_CFG_V101, 0, 15),
+> +       .cfg_lprx_timeout_counter =     REG_FIELD(DSI_TO_CNT_CFG_V101, 16, 31),
+> +       .cfg_int_stat0 =                REG_FIELD(DSI_ERROR_ST0_V101, 0, 20),
+> +       .cfg_int_stat1 =                REG_FIELD(DSI_ERROR_ST1_V101, 0, 17),
+> +       .cfg_int_mask0 =                REG_FIELD(DSI_ERROR_MSK0_V101, 0, 20),
+> +       .cfg_int_mask1 =                REG_FIELD(DSI_ERROR_MSK1_V101, 0, 17),
+> +       .cfg_gen_hdr =                  REG_FIELD(DSI_GEN_HDR_V101, 0, 31),
+> +       .cfg_gen_payload =              REG_FIELD(DSI_GEN_PLD_DATA_V101, 0, 31),
+> +};
+> +
+>  /*
+>   * Check if either a link to a master or slave is present
+>   */
+> @@ -466,6 +561,9 @@ static void dw_mipi_message_config(struct dw_mipi_dsi *dsi,
+>         case HWVER_131:
+>                 cmd_mode_lp = CMD_MODE_ALL_LP;
+>                 break;
+> +       case HWVER_101:
+> +               cmd_mode_lp = CMD_MODE_ALL_LP_V101;
+> +               break;
+>         }
+>
+>         if (msg->flags & MIPI_DSI_MSG_REQ_ACK)
+> @@ -644,7 +742,7 @@ static void dw_mipi_dsi_video_mode_config(struct dw_mipi_dsi *dsi)
+>                                    VID_MODE_TYPE_NON_BURST_SYNC_EVENTS);
+>
+>  #ifdef CONFIG_DEBUG_FS
+> -       if (dsi->vpg) {
+> +       if (dsi->hw_version > HWVER_101 && dsi->vpg) {
+>                 regmap_field_write(dsi->regs, dsi->field_vid_mode_vpg_en, 1);
+>                 regmap_field_write(dsi->regs, dsi->field_vid_mode_vpg_horiz,
+>                                    dsi->vpg_horizontal ? 1 : 0);
 
-Besides breaching data abstraction, if VFIO has to check IOMMU flags to
-determine the sizes, it has many combinations.
+"regmap_field_write" passed 3 arguments, but takes just 2.
 
-We also separate the responsibilities into two parts
-1. compatibility - version, size by VFIO
-2. sanity check - capability flags - by IOMMU
 
-I think the latter matches what Christoph's comments. So we are in
-agreement at the IOMMU level :)
-
-For example:
-During guest PASID bind, IOMMU driver operates on the data passed from
-VFIO and check format & flags to take different code path.
-
-#define IOMMU_PASID_FORMAT_INTEL_VTD	1
-	__u32 format;
-#define IOMMU_SVA_GPASID_VAL	(1 << 0) /* guest PASID valid */
-	__u64 flags;
-
-Jacob
-
-> btw the most relevant discussion which I can find out now is here:
-> 	https://lkml.org/lkml/2020/2/3/1126
-> 
-> It mentioned 3 options for handling extension:
+> @@ -662,9 +760,15 @@ static void dw_mipi_dsi_set_mode(struct dw_mipi_dsi *dsi,
+>
+>                 dw_mipi_dsi_video_mode_config(dsi);
+>
+> +               if (dsi->hw_version == HWVER_101)
+> +                       regmap_field_write(dsi->field_vid_mode_en, 1);
+> +
+>                 regmap_field_write(dsi->field_phy_txrequestclkhs, 1);
+>         } else {
+>                 regmap_field_write(dsi->field_cmd_mode_en, 1);
+> +
+> +               if (dsi->hw_version == HWVER_101)
+> +                       regmap_field_write(dsi->field_vid_mode_en, 0);
+>         }
+>
+>         regmap_write(dsi->regs, DSI_PWR_UP, POWERUP);
+> @@ -857,9 +961,13 @@ static void dw_mipi_dsi_dphy_timing_config(struct dw_mipi_dsi *dsi)
+>         regmap_field_write(dsi->field_phy_lp2hs_time, timing.data_lp2hs);
+>         regmap_field_write(dsi->field_phy_hs2lp_time, timing.data_hs2lp);
+>
+> -       regmap_field_write(dsi->field_phy_max_rd_time, 10000);
+> -       regmap_field_write(dsi->field_phy_clkhs2lp_time, timing.clk_hs2lp);
+> -       regmap_field_write(dsi->field_phy_clklp2hs_time, timing.clk_lp2hs);
+> +       if (dsi->hw_version > HWVER_101) {
+> +               regmap_field_write(dsi->field_phy_max_rd_time, 10000);
+> +               regmap_field_write(dsi->field_phy_clkhs2lp_time,
+> +                                  timing.clk_hs2lp);
+> +               regmap_field_write(dsi->field_phy_clklp2hs_time,
+> +                                  timing.clk_lp2hs);
+> +       }
+>  }
+>
+>  static void dw_mipi_dsi_dphy_interface_config(struct dw_mipi_dsi *dsi)
+> @@ -880,7 +988,8 @@ static void dw_mipi_dsi_dphy_init(struct dw_mipi_dsi *dsi)
+>         regmap_field_write(dsi->field_phy_unrstz, 0);
+>         regmap_field_write(dsi->field_phy_unshutdownz, 0);
+>
+> -       regmap_field_write(dsi->field_phy_forcepll, 0);
+> +       if (dsi->hw_version > HWVER_101)
+> +               regmap_field_write(dsi->field_phy_forcepll, 0);
+>
+>         regmap_field_write(dsi->field_phy_testclr, 0);
+>         regmap_field_write(dsi->field_phy_testclr, 1);
+> @@ -896,7 +1005,8 @@ static void dw_mipi_dsi_dphy_enable(struct dw_mipi_dsi *dsi)
+>         regmap_field_write(dsi->field_phy_unrstz, 1);
+>         regmap_field_write(dsi->field_phy_unshutdownz, 1);
+>
+> -       regmap_field_write(dsi->field_phy_forcepll, 1);
+> +       if (dsi->hw_version > HWVER_101)
+> +               regmap_field_write(dsi->field_phy_forcepll, 1);
+>
+>         ret = regmap_field_read_poll_timeout(dsi->field_phy_status,
+>                                              val, val & PHY_LOCK,
+> @@ -1131,6 +1241,9 @@ static int dw_mipi_dsi_regmap_fields_init(struct dw_mipi_dsi *dsi)
+>         case HWVER_131:
+>                 variant = &dw_mipi_dsi_v130_v131_layout;
+>                 break;
+> +       case HWVER_101:
+> +               variant = &dw_mipi_dsi_v101_layout;
+> +               break;
+>         default:
+>                 DRM_ERROR("Unrecognized DSI host controller HW revision\n");
+>                 return -ENODEV;
 > --
-> 1. Disallow adding new members to each structure other than reuse
-> padding bits or adding union members at the end.
-> 2. Allow extension of the structures beyond union, but union size has
-> to be fixed with reserved spaces
-> 3. Adopt VFIO argsz scheme, I don't think we need version for each
-> struct anymore. argsz implies the version that user is using assuming
-> UAPI data is extension only.
-> --
-> 
-> the first two are both version-based. Looks most guys agreed with 
-> option-1 (in this v2), but Alex didn't give his opinion at the
-> moment. The last response from him was the raise of option-3 using
-> argsz to avoid version. So, we also need hear from him. Alex?
-> 
-> Thanks
-> Kevin
+> 2.26.0
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-[Jacob Pan]
+Regards,
+Adrian
