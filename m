@@ -2,99 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F62A19829C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:43:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B3851982B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:50:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730108AbgC3Rnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 13:43:55 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39855 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729685AbgC3Rny (ORCPT
+        id S1730278AbgC3RuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 13:50:01 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:50796 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730206AbgC3Rt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 13:43:54 -0400
-Received: by mail-lj1-f196.google.com with SMTP id i20so19050105ljn.6;
-        Mon, 30 Mar 2020 10:43:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dQr64dkZ4eCLxEsitWkiuUGekxkmYwIH1iRCbGD/zRE=;
-        b=ki7vetEue1PM2ZQmU/Tea9XEuoxngbiguFMhJAvBVcAG6QoFY3rOaRivwDk8flcvW6
-         vbZxcwjLOth6VX4MBq2Hub77pIR3wU/EHdwvgoKpAQOvNnNEtVOxHiYYcllHgnEBx9Rk
-         X9CwMYKEcDSKIc90c/6aK0a4CqjhTOz9/FCC6H1Rb4qAZXsXGAyX91cSmSGJ2aIC/HlU
-         E4ywKyF5VyQ7jas2D6eOj0TfDR/vycW3G3CNfpdBKhi+qhQz6rI6dHRBO/b3BRZ5B2uX
-         btmCkGjBA++krOdk6xGY9kutIEsgnypzIFFnbCGWFvgUhsvkJkYZ40PUaFU7I+m2P100
-         LEYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dQr64dkZ4eCLxEsitWkiuUGekxkmYwIH1iRCbGD/zRE=;
-        b=UeDHc20oKam4Fp3HIxAN6zCDOw1zTVohLDargPx+UzCu2anP/q6TqaMRi8HCAwCYIo
-         YokTgMCNp5IUGHiuiLg/5jMeZ8j38x626FnoWiEqKh2UXReDKAa9nVLY6UKqEjMgF2yB
-         4bH1T+OgB90+sE28MW+KBstNag/lJTUFzp1gJqNZBKYyXF8+neiynEuRyN2cfJy0sNXK
-         ZRH2rzu/+VjZYdF+EPUEbuFCZHnYzycvOThJAD9uMOG+uG/TS2T+gxOLJMaYyb1V5XYP
-         JNfngJ3l9wgH+Yv26SPLRpJB4mq3Z9Npm57sl90Pkp0TH0AWwLQIbhDDrD38YmCCPsOJ
-         x3vA==
-X-Gm-Message-State: AGi0PuZVXupeTSdZp4e4nk+3Rag2MRKY4Ru3HSaEW+tIgLJJFgGUZY3e
-        Qo3LkPyWIphnJ6Qfio7+cxI=
-X-Google-Smtp-Source: APiQypIS7HZGHphIkSiBweV8/quFCZ7OY75pszvwMH2lYCVmB+Uz9TamZO1WySO8lan1VoTgkJnfXA==
-X-Received: by 2002:a2e:888e:: with SMTP id k14mr7916833lji.4.1585590231852;
-        Mon, 30 Mar 2020 10:43:51 -0700 (PDT)
-Received: from pc636 (h5ef52e31.seluork.dyn.perspektivbredband.net. [94.245.46.49])
-        by smtp.gmail.com with ESMTPSA id 15sm8110742lfb.56.2020.03.30.10.43.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 10:43:51 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Mon, 30 Mar 2020 19:43:38 +0200
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Uladzislau Rezki <urezki@gmail.com>, kbuild-all@lists.01.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-mm@kvack.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 10/18] rcu/tree: Maintain separate array for vmalloc ptrs
-Message-ID: <20200330174338.GA3690@pc636>
-References: <20200330023248.164994-11-joel@joelfernandes.org>
- <202003301715.9gMSa9Ca%lkp@intel.com>
- <20200330152951.GA2553@pc636>
- <20200330153149.GE22483@bombadil.infradead.org>
- <20200330153702.GK19865@paulmck-ThinkPad-P72>
- <20200330171606.GA166021@google.com>
+        Mon, 30 Mar 2020 13:49:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585590598;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VXITz6a4t0dcGhoFiL5Naxzq4cQ+raar83CvULBdiIM=;
+        b=bOkPWGwRFZ2Y+Lx4JbSFU1XKq4x/Zn/YIUyu/5VAjx5qT0/Ielrms7kRGD/mWo5KBZL+Wu
+        TKmhdxrFRwqzmUYnTbabz5BNGhLfcc51HahSf/i+qHo/FhRQLXi+O5OQVExft4nXc5jU7+
+        w9IU5Ja8sBnOwXvWTDTtqAzbKi8t6Yc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-88-apH4BbMWM2eldESph-N2Pw-1; Mon, 30 Mar 2020 13:49:54 -0400
+X-MC-Unique: apH4BbMWM2eldESph-N2Pw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E72128017CC;
+        Mon, 30 Mar 2020 17:49:51 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.10.110.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4C8319128F;
+        Mon, 30 Mar 2020 17:49:40 +0000 (UTC)
+Date:   Mon, 30 Mar 2020 13:49:37 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
+        ebiederm@xmission.com, simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+Message-ID: <20200330174937.xalrsiev7q3yxsx2@madcap2.tricolour.ca>
+References: <20200318215550.es4stkjwnefrfen2@madcap2.tricolour.ca>
+ <CAHC9VhSdDDP7Ec-w61NhGxZG5ZiekmrBCAg=Y=VJvEZcgQh46g@mail.gmail.com>
+ <20200319220249.jyr6xmwvflya5mks@madcap2.tricolour.ca>
+ <CAHC9VhR84aN72yNB_j61zZgrQV1y6yvrBLNY7jp7BqQiEDL+cw@mail.gmail.com>
+ <20200324210152.5uydf3zqi3dwshfu@madcap2.tricolour.ca>
+ <CAHC9VhTQUnVhoN3JXTAQ7ti+nNLfGNVXhT6D-GYJRSpJHCwDRg@mail.gmail.com>
+ <20200330134705.jlrkoiqpgjh3rvoh@madcap2.tricolour.ca>
+ <CAHC9VhQTsEMcYAF1CSHrrVn07DR450W9j6sFVfKAQZ0VpheOfw@mail.gmail.com>
+ <20200330162156.mzh2tsnovngudlx2@madcap2.tricolour.ca>
+ <CAHC9VhTRzZXJ6yUFL+xZWHNWZFTyiizBK12ntrcSwmgmySbkWw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200330171606.GA166021@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHC9VhTRzZXJ6yUFL+xZWHNWZFTyiizBK12ntrcSwmgmySbkWw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 01:16:06PM -0400, Joel Fernandes wrote:
-> On Mon, Mar 30, 2020 at 08:37:02AM -0700, Paul E. McKenney wrote:
-> > On Mon, Mar 30, 2020 at 08:31:49AM -0700, Matthew Wilcox wrote:
-> > > On Mon, Mar 30, 2020 at 05:29:51PM +0200, Uladzislau Rezki wrote:
-> > > > Hello, Joel.
-> > > > 
-> > > > Sent out the patch fixing build error.
-> > > 
-> > > ... where?  It didn't get cc'd to linux-mm?
-> > 
-> > The kbuild test robot complained.  Prior than the build error, the
-> > patch didn't seem all that relevant to linux-mm.  ;-)
+On 2020-03-30 13:34, Paul Moore wrote:
+> On Mon, Mar 30, 2020 at 12:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2020-03-30 10:26, Paul Moore wrote:
+> > > On Mon, Mar 30, 2020 at 9:47 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > On 2020-03-28 23:11, Paul Moore wrote:
+> > > > > On Tue, Mar 24, 2020 at 5:02 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > > On 2020-03-23 20:16, Paul Moore wrote:
+> > > > > > > On Thu, Mar 19, 2020 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > > > > On 2020-03-18 18:06, Paul Moore wrote:
+> > > > > > >
+> > > > > > > ...
+> > > > > > >
+> > > > > > > > > I hope we can do better than string manipulations in the kernel.  I'd
+> > > > > > > > > much rather defer generating the ACID list (if possible), than
+> > > > > > > > > generating a list only to keep copying and editing it as the record is
+> > > > > > > > > sent.
+> > > > > > > >
+> > > > > > > > At the moment we are stuck with a string-only format.
+> > > > > > >
+> > > > > > > Yes, we are.  That is another topic, and another set of changes I've
+> > > > > > > been deferring so as to not disrupt the audit container ID work.
+> > > > > > >
+> > > > > > > I was thinking of what we do inside the kernel between when the record
+> > > > > > > triggering event happens and when we actually emit the record to
+> > > > > > > userspace.  Perhaps we collect the ACID information while the event is
+> > > > > > > occurring, but we defer generating the record until later when we have
+> > > > > > > a better understanding of what should be included in the ACID list.
+> > > > > > > It is somewhat similar (but obviously different) to what we do for
+> > > > > > > PATH records (we collect the pathname info when the path is being
+> > > > > > > resolved).
+> > > > > >
+> > > > > > Ok, now I understand your concern.
+> > > > > >
+> > > > > > In the case of NETFILTER_PKT records, the CONTAINER_ID record is the
+> > > > > > only other possible record and they are generated at the same time with
+> > > > > > a local context.
+> > > > > >
+> > > > > > In the case of any event involving a syscall, that CONTAINER_ID record
+> > > > > > is generated at the time of the rest of the event record generation at
+> > > > > > syscall exit.
+> > > > > >
+> > > > > > The others are only generated when needed, such as the sig2 reply.
+> > > > > >
+> > > > > > We generally just store the contobj pointer until we actually generate
+> > > > > > the CONTAINER_ID (or CONTAINER_OP) record.
+> > > > >
+> > > > > Perhaps I'm remembering your latest spin of these patches incorrectly,
+> > > > > but there is still a big gap between when the record is generated and
+> > > > > when it is sent up to the audit daemon.  Most importantly in that gap
+> > > > > is the whole big queue/multicast/unicast mess.
+> > > >
+> > > > So you suggest generating that record on the fly once it reaches the end
+> > > > of the audit_queue just before being sent?  That sounds...  disruptive.
+> > > > Each audit daemon is going to have its own queues, so by the time it
+> > > > ends up in a particular queue, we'll already know its scope and would
+> > > > have the right list of contids to print in that record.
+> > >
+> > > I'm not suggesting any particular solution, I'm just pointing out a
+> > > potential problem.  It isn't clear to me that you've thought about how
+> > > we generate a multiple records, each with the correct ACID list
+> > > intended for a specific audit daemon, based on a single audit event.
+> > > Explain to me how you intend that to work and we are good.  Be
+> > > specific because I'm not convinced we are talking on the same plane
+> > > here.
+> >
+> > Well, every time a record gets generated, *any* record gets generated,
+> > we'll need to check for which audit daemons this record is in scope and
+> > generate a different one for each depending on the content and whether
+> > or not the content is influenced by the scope.
 > 
-> I asked the preprocessor to tell me why I didn't hit this in my tree. Seems
-> it because vmalloc.h is included in my tree through the following includes. 
-> 
-Same to me, i did not manage to hit that build error.
+> That's the problem right there - we don't want to have to generate a
+> unique record for *each* auditd on *every* record.  That is a recipe
+> for disaster.
+
+I don't see how we can get around this.
+
+We will already have that problem for PIDs in different PID namespaces.
+
+We already need to use a different serial number in each auditd/queue,
+or else we serialize *all* audit events on the machine and either leak
+information to the nested daemons that there are other events happenning
+on the machine, or confuse the host daemon because it now thinks that we
+are losing events due to serial numbers missing because some nested
+daemon issued an event that was not relevant to the host daemon,
+consuming a globally serial audit message sequence number.
+
+> Solving this for all of the known audit records is not something we
+> need to worry about in depth at the moment (although giving it some
+> casual thought is not a bad thing), but solving this for the audit
+> container ID information *is* something we need to worry about right
+> now.
+
+If you think that a different nested contid value string per daemon is
+not acceptable, then we are back to issuing a record that has only *one*
+contid listed without any nesting information.  This brings us back to
+the original problem of keeping *all* audit log history since the boot
+of the machine to be able to track the nesting of any particular contid.
+
+What am I missing?  What do you suggest?
+
+> paul moore
+
+- RGB
 
 --
-Vlad Rezki
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
