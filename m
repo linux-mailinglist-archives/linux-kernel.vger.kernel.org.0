@@ -2,130 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F89D197FC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 17:37:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2085A197FC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 17:37:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729341AbgC3Pha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 11:37:30 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37771 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729059AbgC3Ph3 (ORCPT
+        id S1729448AbgC3Phr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 11:37:47 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:36455 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729059AbgC3Phr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 11:37:29 -0400
-Received: by mail-lf1-f67.google.com with SMTP id t11so2144887lfe.4
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 08:37:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7n3YZ9nrtrOOLXOcT8nncmyYyXz4uqz98on2S5Nc7P8=;
-        b=01eIbogv2JLufuwCILlbzumO6l4tm31Ysgk7fk42vDAxQ8S2Jzsv8Wmv4QoNc7JGoW
-         ouw5WNKmvQfSWsT0guoBS+abSnxPIUBaZq+93d3O8EtcYlHlgllZAJbG54iZ/nD5jBFn
-         OIoiFNWZu5IjFAx5DgOVhaacynAAMj+OfbkrpP/mTBee7Fz1zQVz2hquYPqLxN6BYiFw
-         kD5CEjp7KqELCqjwfe87awk3DYkzx8qV8BaYb3Z9bNrKGkVdDWSacv6Rj7ZVgaRQGRSP
-         7DwLX8kVEeiHuYvpEBIeBYkQPyLojrINApEH61LvdBgEHDiZhRApfDDwkvEg7ohY3dws
-         thEg==
+        Mon, 30 Mar 2020 11:37:47 -0400
+Received: by mail-il1-f193.google.com with SMTP id p13so16193635ilp.3;
+        Mon, 30 Mar 2020 08:37:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=7n3YZ9nrtrOOLXOcT8nncmyYyXz4uqz98on2S5Nc7P8=;
-        b=YEcs3DuqzY/bJswNNGzG1Y4VeRAXdTXx6io7wPHot2M3JxobFeTnmiZ3mRP4HTSP6k
-         a5Qe/HMN74ErB5fDHFecIpb0LJx8pZZfVhx8Y750FeoBFKCb96k/BVVSnLqR1E5wVrFx
-         72GnQ0Z+S42DBOjaQ9o5LHH46QeyvGpLAPU3vm758r3HVexjV7LE8xwtNBScudOVjGAL
-         muyr2CzYDpgsf1eXelsA0flSA6tdTPzjy1JQ+tn54qmDdds+PF6SHS4E8QeWiGOteCVU
-         8q3VSUbuPZoWbDincMmL5ndcGKc1S6klQAPxktAQEqpxSVIPEPnQiij7hOZ2mgGCZuXm
-         pxHw==
-X-Gm-Message-State: AGi0Pub8WJI9ajyAdjw8HTUreP90wWyuJ6ilHqfKusJVO2I6xUUiCKGj
-        DkeKtUzhVpsn0Dck+ytfTfymOXckIy/lfg==
-X-Google-Smtp-Source: APiQypLCq5vVr1YrIW3e4xrFpb9STHZkBueQeFK1AR43Hf0SWSWV1m1Evg2KTFYl5nebk26zdn6zwQ==
-X-Received: by 2002:ac2:48b3:: with SMTP id u19mr8289783lfg.84.1585582645078;
-        Mon, 30 Mar 2020 08:37:25 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([2a00:1fa0:654:d00e:d4e2:9dcc:b9fb:a661])
-        by smtp.gmail.com with ESMTPSA id i2sm7910219lfg.23.2020.03.30.08.37.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Mar 2020 08:37:23 -0700 (PDT)
-Subject: Re: [PATCH 4/5] MIPS: DTS: Loongson64: Add PCI Controller Node
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Huacai Chen <chenhc@lemote.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>,
-        Paul Burton <paulburton@kernel.org>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200330114239.1112759-1-jiaxun.yang@flygoat.com>
- <20200330114239.1112759-5-jiaxun.yang@flygoat.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <68446094-263d-d0d9-df00-bc1e81c1dffe@cogentembedded.com>
-Date:   Mon, 30 Mar 2020 18:37:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mkwxb5JvjMmyFZrDRCuhIwp5i7N+YTkvrCmiuVH1Fic=;
+        b=OG44WY7K6YPCEe3T/IcnhkGV25/psznkLeiKaEidX5Vovu22Y5cvf6RNM1IM9SsVZM
+         fSgmTfopqJqo6D/TGgfo2PbH5nwaZxiTMuuQdr6lF/JS9ODtCXJv/42wQmJKpZxVKrJh
+         pSxORQixh60vYEoqhc0Fie6m9ab2ItL5B5+UD+5XgNMlOyGSeuXxoOO3xRsiGYRqa8L/
+         EVcJS44pv+D5zPpn+MiHVU9pakXqMSRgDmgaaRhnuMoU3dajc9/wxR5h6J53+TX82a85
+         tZHJIzxROvWvjOkxheUkcr7yZDXFXEu0bD0Ul/qATaywHxdFOHNvzjVgmce+SlQrpZIm
+         SdOQ==
+X-Gm-Message-State: ANhLgQ1j96ZMrGxxdfJtlMmK7RZdJuU5hGF4hfh2Hrbujab6bnkt9oEU
+        oOzgknQErPnzcD9NGHOKsA==
+X-Google-Smtp-Source: ADFU+vt21JoipmYTiUdTolbv6zjigW1PlZnXRMPY/IpL+qcHi+xo9piY1XQqocbQl+43wrwQMa/9Ow==
+X-Received: by 2002:a92:8953:: with SMTP id n80mr11430471ild.5.1585582666374;
+        Mon, 30 Mar 2020 08:37:46 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id l17sm5041250ilf.28.2020.03.30.08.37.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 08:37:45 -0700 (PDT)
+Received: (nullmailer pid 18293 invoked by uid 1000);
+        Mon, 30 Mar 2020 15:37:43 -0000
+Date:   Mon, 30 Mar 2020 09:37:43 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Mike Looijmans <mike.looijmans@topic.nl>
+Cc:     devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        jic23@kernel.org, linux-kernel@vger.kernel.org, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, Mike Looijmans <mike.looijmans@topic.nl>
+Subject: Re: [PATCH v5 1/2] dt-bindings: iio: accel: Add bmi088 accelerometer
+ bindings
+Message-ID: <20200330153743.GA17787@bogus>
+References: <20200324080309.12171-1-mike.looijmans@topic.nl>
 MIME-Version: 1.0
-In-Reply-To: <20200330114239.1112759-5-jiaxun.yang@flygoat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200324080309.12171-1-mike.looijmans@topic.nl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
-
-On 03/30/2020 02:42 PM, Jiaxun Yang wrote:
-
-> Add PCI Host controller node for Loongson64 with RS780E PCH dts.
-> Note that PCI interrupts are probed via legacy way, as different
-> machine have different interrupt arrangement, we can't cover all
-> of them in dt.
+On Tue, 24 Mar 2020 09:03:07 +0100, Mike Looijmans wrote:
+> This adds the device-tree bindings for the Bosch Sensortec BMI088 IMU,
+> the accelerometer part.
 > 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 > ---
->  arch/mips/boot/dts/loongson/rs780e-pch.dtsi | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/boot/dts/loongson/rs780e-pch.dtsi b/arch/mips/boot/dts/loongson/rs780e-pch.dtsi
-> index 45c54d555fa4..f09599a4b9d7 100644
-> --- a/arch/mips/boot/dts/loongson/rs780e-pch.dtsi
-> +++ b/arch/mips/boot/dts/loongson/rs780e-pch.dtsi
-> @@ -5,10 +5,25 @@ bus@10000000 {
->  		compatible = "simple-bus";
->  		#address-cells = <2>;
->  		#size-cells = <2>;
-> -		ranges = <0 0x10000000 0 0x10000000 0 0x10000000
-> +		ranges = <0 0x00000000 0 0x00000000 0 0x00010000 /* ioports */
-> +				0 0x10000000 0 0x10000000 0 0x10000000
->  				0 0x40000000 0 0x40000000 0 0x40000000
->  				0xfd 0xfe000000 0xfd 0xfe000000  0 0x2000000 /* PCI Config Space */>;
->  
-> +		pci@1a000000 {
-> +			compatible = "loongson,rs780e-pci";
-> +			device_type = "pci";
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +			#interrupt-cells = <0x1>;
-
-   No need for 0x.
-
-> +
-> +			reg = <0 0x1a000000 0 0x02000000>;
-> +
-> +			ranges = <0x01000000 0x0 0x00004000 0x0 0x00004000  0x0 0x00004000>,
-> +				<0x02000000 0x0 0x40000000 0x0 0x40000000  0x0 0x40000000>;
-
-   No need for 0x before 0 here either. And why double spaces?
-
-> +
-> +		};
-> +
->  		isa {
->  			compatible = "isa";
->  			#address-cells = <2>;
+> v2: convert to yaml format
+> v3..v4: -
+> v5: submit together with driver code as patch series
+>  .../bindings/iio/accel/bosch,bmi088.yaml      | 38 +++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/accel/bosch,bmi088.yaml
 > 
 
-MBR, Sergei
+My bot found errors running 'make dt_binding_check' on your patch:
+
+Documentation/devicetree/bindings/iio/accel/bosch,bmi088.yaml:  while scanning a simple key
+  in "<unicode string>", line 32, column 3
+could not find expected ':'
+  in "<unicode string>", line 38, column 3
+Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/iio/accel/bosch,bmi088.example.dts' failed
+make[1]: *** [Documentation/devicetree/bindings/iio/accel/bosch,bmi088.example.dts] Error 1
+make[1]: *** Waiting for unfinished jobs....
+warning: no schema found in file: Documentation/devicetree/bindings/iio/accel/bosch,bmi088.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/iio/accel/bosch,bmi088.yaml: ignoring, error parsing file
+Makefile:1262: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
+
+See https://patchwork.ozlabs.org/patch/1260498
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure dt-schema is up to date:
+
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+
+Please check and re-submit.
