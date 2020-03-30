@@ -2,80 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CF0D198885
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D93919983B
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 16:15:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbgC3Xqc convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Mar 2020 19:46:32 -0400
-Received: from pmg.slemankab.go.id ([103.71.191.178]:48490 "EHLO
-        pmg.slemankab.go.id" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728980AbgC3Xqb (ORCPT
+        id S1730857AbgCaOPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 10:15:24 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:55074 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730466AbgCaOPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 19:46:31 -0400
-Received: from pmg.slemankab.go.id (localhost.localdomain [127.0.0.1])
-        by pmg.slemankab.go.id (Proxmox) with ESMTP id 0B421344797;
-        Mon, 30 Mar 2020 16:12:08 +0700 (WIB)
-Received: from mailserver.slemankab.go.id (unknown [192.168.90.92])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by pmg.slemankab.go.id (Proxmox) with ESMTPS id E8F7E346E12;
-        Mon, 30 Mar 2020 16:11:52 +0700 (WIB)
-Received: from localhost (localhost [127.0.0.1])
-        by mailserver.slemankab.go.id (Postfix) with ESMTP id D59D2344351;
-        Mon, 30 Mar 2020 16:11:47 +0700 (WIB)
-Received: from mailserver.slemankab.go.id ([127.0.0.1])
-        by localhost (mailserver.slemankab.go.id [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id WbBltC2o19P5; Mon, 30 Mar 2020 16:11:47 +0700 (WIB)
-Received: from localhost (localhost [127.0.0.1])
-        by mailserver.slemankab.go.id (Postfix) with ESMTP id 8DD8E34431B;
-        Mon, 30 Mar 2020 16:11:47 +0700 (WIB)
-X-Virus-Scanned: amavisd-new at mailserver.slemankab.go.id
-Received: from mailserver.slemankab.go.id ([127.0.0.1])
-        by localhost (mailserver.slemankab.go.id [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id El03ZbAlymDf; Mon, 30 Mar 2020 16:11:47 +0700 (WIB)
-Received: from [100.66.16.73] (unknown [106.210.101.197])
-        by mailserver.slemankab.go.id (Postfix) with ESMTPSA id E2FE8344325;
-        Mon, 30 Mar 2020 16:11:39 +0700 (WIB)
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 31 Mar 2020 10:15:23 -0400
+Received: by mail-pj1-f66.google.com with SMTP id np9so1124692pjb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 07:15:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zTyZUZyP+zXDM17uOl5EO7jnuzHUmLuralf0hD1C7uQ=;
+        b=X+fgDi3MlKSPCh2sgIYL+gkLlsZfyMGWwuidp67Y/1xJSJpN6GiCrcKj4vscCntt5X
+         AsoSD/y4zBkHXejpqSRnno4P4EIdp8HhS1WuvfQUKvsUfsyvyJIqVP5BNhp1WI9YXqSe
+         Z6QL0bcqJwst77oznDjNOVFNBeNpNp6rUlFeQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zTyZUZyP+zXDM17uOl5EO7jnuzHUmLuralf0hD1C7uQ=;
+        b=YvBjd9LKmw8vy4V3i2GhoVm3R3ZQ7NwM0slfJ4Yr2/QU80g60CBH52lhKaeoxq818O
+         Zg+ptt7gcfFBnjCUfxkYkX//AjmVYcBV5BVQtORcr6p2MT6Y3RzpvRG7jieEOfZWbaUH
+         HyeCF3mH+otb2MKvJ+EaXhS5hoAVyvg+inn35j7lnrf2vBXN0RaEyvDeNNyl6wuXtTcc
+         g28dYaBPH5j1FXtEW7/AqkPjGX5LgxGoi6CMSDDQQZYOkRq5yuh2d01b/dUAhVRHUp2q
+         q2ZYUm/JsyK/gJU4u0hatUrfX7cKlEPrS2TOJ0HPa/j+m8NLIHRVqVCa84Fd4+MeAxEW
+         TvSw==
+X-Gm-Message-State: AGi0Pub3z0MZtxLpXRs05zSXzW+foHPF7l1yoPcBOL2LeBSQ+mCAt2Fl
+        zuBOiLr9sxbniS3KsrGv9eKzfw==
+X-Google-Smtp-Source: APiQypIT3n7KLf8ko7LebvhJ17T7gGW5sDePBsyltHCF4aEdKZNxQ/m3qhCvFd7PBcLmqZTusgipUw==
+X-Received: by 2002:a17:90a:202f:: with SMTP id n44mr4330392pjc.150.1585664122467;
+        Tue, 31 Mar 2020 07:15:22 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c10sm5076661pgh.48.2020.03.31.07.15.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 07:15:21 -0700 (PDT)
+Date:   Mon, 30 Mar 2020 11:18:40 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Elena Reshetova <elena.reshetova@intel.com>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Alexander Potapenko <glider@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jann Horn <jannh@google.com>,
+        "Perla, Enrico" <enrico.perla@intel.com>,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] stack: Optionally randomize kernel stack offset
+ each syscall
+Message-ID: <202003301116.081DB02@keescook>
+References: <20200324203231.64324-1-keescook@chromium.org>
+ <20200324203231.64324-4-keescook@chromium.org>
+ <20200330112536.GD1309@C02TD0UTHF1T.local>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?b?QVRFTsOHw4NP?=
-To:     Recipients <administrator@ancol.com>
-From:   =?utf-8?q?Administra=C3=A7=C3=A3o_Sistemas=3Cadministrator=40ancol=2Ecom?=@mailserver.slemankab.go.id,
-        =?utf-8?q?=3E?=@mailserver.slemankab.go.id
-Date:   Mon, 30 Mar 2020 14:41:31 +0530
-Reply-To: mailsss@mail2world.com
-Message-Id: <20200330091139.E2FE8344325@mailserver.slemankab.go.id>
-X-SPAM-LEVEL: Spam detection results:  2
-        ALL_TRUSTED                -1 Passed through trusted hosts only via SMTP
-        BAYES_50                  0.8 Bayes spam probability is 40 to 60%
-        FREEMAIL_FORGED_REPLYTO  2.095 Freemail in Reply-To, but not From
-        HEADER_FROM_DIFFERENT_DOMAINS   0.25 From and EnvelopeFrom 2nd level mail domains are different
-        KAM_DMARC_STATUS         0.01 Test Rule for DKIM or SPF Failure with Strict Alignment
-        KAM_INFOUSMEBIZ          0.75 Prevalent use of .info|.us|.me|.me.uk|.biz|xyz|id|rocks|life domains in spam/malware
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200330112536.GD1309@C02TD0UTHF1T.local>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ATENÇÃO;
+On Mon, Mar 30, 2020 at 12:25:36PM +0100, Mark Rutland wrote:
+> On Tue, Mar 24, 2020 at 01:32:29PM -0700, Kees Cook wrote:
+> > +/*
+> > + * Do not use this anywhere else in the kernel. This is used here because
+> > + * it provides an arch-agnostic way to grow the stack with correct
+> > + * alignment. Also, since this use is being explicitly masked to a max of
+> > + * 10 bits, stack-clash style attacks are unlikely. For more details see
+> > + * "VLAs" in Documentation/process/deprecated.rst
+> > + */
+> > +void *__builtin_alloca(size_t size);
+> > +
+> > +#define add_random_kstack_offset() do {					\
+> > +	if (static_branch_maybe(CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT,	\
+> > +				&randomize_kstack_offset)) {		\
+> > +		u32 offset = this_cpu_read(kstack_offset);		\
+> > +		char *ptr = __builtin_alloca(offset & 0x3FF);		\
+> > +		asm volatile("" : "=m"(*ptr));				\
+> 
+> Is this asm() a homebrew OPTIMIZER_HIDE_VAR(*ptr)? If the asm
+> constraints generate metter code, could we add those as alternative
+> constraints in OPTIMIZER_HIDE_VAR() ?
 
-Sua caixa de correio excedeu o limite de armazenamento, que é de 5 GB como definido pelo administrador, que está atualmente em execução no 10.9GB, você pode não ser capaz de enviar ou receber novas mensagens até que você re-validar a sua caixa de correio. Para revalidar sua caixa de correio, envie os seguintes dados abaixo:
+Hah, yes, it is. And this produces identical asm, so I've replaced it
+with OPTIMIZER_HIDE_VAR() now. Now if I could figure out how to hide it
+from stack protector. :(
 
-nome:
-Nome de usuário:
-senha:
-Confirme a Senha :
-Endereço de e-mail:
-Telefone:
-
-Se você não conseguir revalidar sua caixa de correio, sua caixa postal vai ser desativado!
-
-Lamentamos o inconveniente.
-Código de verificação: pt:p9uyba98139>2020
-Correio Técnico Suporte ©2020
-
-obrigado
-Administrador de Sistemas
-
+-- 
+Kees Cook
