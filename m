@@ -2,111 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D682197AD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:35:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF184197AC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:34:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729931AbgC3LfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 07:35:04 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:29601 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729880AbgC3LfC (ORCPT
+        id S1729801AbgC3Leu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 07:34:50 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58998 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729237AbgC3Let (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 07:35:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585568102;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/yKFIjqFad0brG+IqtxaXWXaU5bUtQPPGHJ+K52Qhck=;
-        b=HowYcfq/dkDcdTcuiriO5m4mcOPyXGxmUotU84SAethaJYG3T2m9Qt1S4BvswPmmglicIY
-        DCL307YwQB9gEXLtvDZoufid0bNwEct2/MrxCn4IvIurI491CYhImNL+Nd6A+gFDwt/PQ+
-        bpuvfFu3yh7yqe85SdAYcIBnu4SzMus=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-241-qZAMEnE7NK6C_EuYeAOraQ-1; Mon, 30 Mar 2020 07:34:56 -0400
-X-MC-Unique: qZAMEnE7NK6C_EuYeAOraQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 711B7107ACC7;
-        Mon, 30 Mar 2020 11:34:53 +0000 (UTC)
-Received: from carbon (unknown [10.40.208.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 41E9B100EBAD;
-        Mon, 30 Mar 2020 11:34:46 +0000 (UTC)
-Date:   Mon, 30 Mar 2020 13:34:42 +0200
-From:   Jesper Dangaard Brouer <jbrouer@redhat.com>
-To:     Mao Wenan <maowenan@huawei.com>
-Cc:     <davem@davemloft.net>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <kuba@kernel.org>, <hawk@kernel.org>, <john.fastabend@gmail.com>,
-        <kafai@fb.com>, <songliubraving@fb.com>, <yhs@fb.com>,
-        <andriin@fb.com>, <jwi@linux.ibm.com>,
-        <toshiaki.makita1@gmail.com>, <jianglidong3@jd.com>,
-        <edumazet@google.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH net] veth: xdp: use head instead of hard_start
-Message-ID: <20200330133442.132bde0c@carbon>
-In-Reply-To: <20200330102631.31286-1-maowenan@huawei.com>
-References: <20200330102631.31286-1-maowenan@huawei.com>
-Organization: Red Hat Inc.
+        Mon, 30 Mar 2020 07:34:49 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: aratiu)
+        with ESMTPSA id 0545E292556
+From:   Adrian Ratiu <adrian.ratiu@collabora.com>
+To:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc:     linux-stm32@st-md-mailman.stormreply.com,
+        linux-rockchip@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, kernel@collabora.com,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH v5 0/5] Genericize DW MIPI DSI bridge and add i.MX 6 driver
+Date:   Mon, 30 Mar 2020 14:35:37 +0300
+Message-Id: <20200330113542.181752-1-adrian.ratiu@collabora.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Mar 2020 18:26:31 +0800
-Mao Wenan <maowenan@huawei.com> wrote:
+Hello everyone,
 
-> xdp.data_hard_start is mapped to the first
-> address of xdp_frame, but the pointer hard_start
-> is the offset(sizeof(struct xdp_frame)) of xdp_frame,
-> it should use head instead of hard_start to
-> set xdp.data_hard_start. Otherwise, if BPF program
-> calls helper_function such as bpf_xdp_adjust_head, it
-> will be confused for xdp_frame_end.
+The v5 series is a significantly cleaned up version from v4,
+started by Ezequiel Garcia's suggestion of splitting out the
+regmap infrastructure from the drivers (thank you!).
 
-I have noticed this[1] and have a patch in my current patchset for
-fixing this.  IMHO is is not so important fix right now, as the effect
-is that you currently only lose 32 bytes of headroom.
+Turns out no changes are required to the existing drivers and
+the bridge can transparently take care of the layout logic,
+so there's no need to expose the regmap via plat_data anymore.
 
-[1] https://lore.kernel.org/netdev/158446621887.702578.17234304084556809684.stgit@firesoul/
+Starting from this version I also opted to add per-patch
+changelogs. All review comments up to now have been addressed.
 
-Fixing this now is going to be annoying and cause merge conflicts for
-my patchset.  If you insist on fixing this now, you need to improve
-commit message and also fix patch, see below.
+Tested on IMX6DL.
 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/net/veth.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-> index d4cbb9e8c63f..5ea550884bf8 100644
-> --- a/drivers/net/veth.c
-> +++ b/drivers/net/veth.c
-> @@ -506,7 +506,7 @@ static struct sk_buff *veth_xdp_rcv_one(struct veth_rq *rq,
->  		struct xdp_buff xdp;
->  		u32 act;
->  
-> -		xdp.data_hard_start = hard_start;
-> +		xdp.data_hard_start = head;
+Adrian Ratiu (5):
+  drm: bridge: dw_mipi_dsi: add initial regmap infrastructure
+  drm: bridge: dw_mipi_dsi: abstract register access using reg_fields
+  drm: bridge: synopsis: add dsi v1.01 support
+  drm: imx: Add i.MX 6 MIPI DSI host platform driver
+  dt-bindings: display: add i.MX6 MIPI DSI host controller doc
 
-You also need update/remove the other lines doing this.
-
->  		xdp.data = frame->data;
->  		xdp.data_end = frame->data + frame->len;
->  		xdp.data_meta = frame->data - frame->metasize;
-
-
+ .../display/imx/fsl,mipi-dsi-imx6.yaml        | 134 ++++
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 683 +++++++++++++-----
+ drivers/gpu/drm/imx/Kconfig                   |   7 +
+ drivers/gpu/drm/imx/Makefile                  |   1 +
+ drivers/gpu/drm/imx/dw_mipi_dsi-imx6.c        | 399 ++++++++++
+ 5 files changed, 1049 insertions(+), 175 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,mipi-dsi-imx6.yaml
+ create mode 100644 drivers/gpu/drm/imx/dw_mipi_dsi-imx6.c
 
 -- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+2.26.0
 
