@@ -2,77 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B09C11985BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:44:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA0C1985C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbgC3UoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 16:44:20 -0400
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:4960 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728123AbgC3UoU (ORCPT
+        id S1728732AbgC3UqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 16:46:09 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:37152 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727328AbgC3UqJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 16:44:20 -0400
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 30 Mar 2020 13:44:03 -0700
-Received: from gurus-linux.qualcomm.com ([10.46.162.81])
-  by ironmsg04-sd.qualcomm.com with ESMTP; 30 Mar 2020 13:44:00 -0700
-Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
-        id F2EE44BFF; Mon, 30 Mar 2020 13:43:59 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 13:43:59 -0700
-From:   Guru Das Srinagesh <gurus@codeaurora.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux PWM List <linux-pwm@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mon, 30 Mar 2020 16:46:09 -0400
+Received: by mail-il1-f196.google.com with SMTP id a6so17273900ilr.4;
+        Mon, 30 Mar 2020 13:46:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BAHD/YUBzhydWwE/iCZpMojP/quu8HcEwcDTrZ8h834=;
+        b=qTyt2h9F/NWE5rQW6SF1OVQHhW1uAFq11I8mrVWwOzJ/HMM7PdtJLBWHNuZqOVmXQ8
+         QEtQCC2eVP4fRuzjOV0Fs1UmERC1Gjwf3k228aGdfFvle3aBEwVBcWwvOL6Xx2r6cpIe
+         cbXtprRvjjYPvSJCt214wXsToei/v3uQEj2RAnpPGjveSekNtOQkGTqe5t35q2y+NJT4
+         8U9G4ZJxytCQBY+KFc+tdwH9SX64Lav39H/rjSFmUSWUud4BfyETAkt9b3jZfDS7wKi5
+         HThfaaqwEqYi2UbHVuePmgukjA0ckX1yGqK/H/k+yFqnQm1Rm7d9ydPTJJAcjb1nR6MB
+         uAjg==
+X-Gm-Message-State: ANhLgQ0S1UtTAaVmo7dmwLo+xtYkPoy5dYwz5ZPuhRKsLTFDQSYJLNMR
+        l5ucpHzYglgPErS8m15B2w==
+X-Google-Smtp-Source: ADFU+vvlE38IaEgB1E1VNG9brIWJQdKajCluZzFENMztoPQXJvNW6huFEyZfTsPzQyXIopjuR2Ju+g==
+X-Received: by 2002:a92:6501:: with SMTP id z1mr13264790ilb.235.1585601166355;
+        Mon, 30 Mar 2020 13:46:06 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id k8sm5160637ilk.85.2020.03.30.13.46.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 13:46:05 -0700 (PDT)
+Received: (nullmailer pid 13031 invoked by uid 1000);
+        Mon, 30 Mar 2020 20:46:04 -0000
+Date:   Mon, 30 Mar 2020 14:46:04 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Igor Opaniuk <igor.opaniuk@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
         Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: Re: [PATCH v11 06/12] pwm: imx27: Use 64-bit division macro and
- function
-Message-ID: <20200330204359.GB5107@codeaurora.org>
-References: <cover.1584667964.git.gurus@codeaurora.org>
- <5aae102e21c0e63ad2588ae1e174b48b06d25e96.1584667964.git.gurus@codeaurora.org>
- <CAK8P3a0qUMMMDmbp2FM-7D-U0Ys_zv0paYguFeyifafZurndEw@mail.gmail.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 1/5] ARM: dts: imx6: Dual license adding MIT
+Message-ID: <20200330204604.GA11575@bogus>
+References: <20200317101947.27250-1-igor.opaniuk@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a0qUMMMDmbp2FM-7D-U0Ys_zv0paYguFeyifafZurndEw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20200317101947.27250-1-igor.opaniuk@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 06:09:39PM +0100, Arnd Bergmann wrote:
-> On Fri, Mar 20, 2020 at 2:42 AM Guru Das Srinagesh <gurus@codeaurora.org> wrote:
+On Tue, Mar 17, 2020 at 12:19:43PM +0200, Igor Opaniuk wrote:
+> From: Igor Opaniuk <igor.opaniuk@toradex.com>
 > 
-> > @@ -240,8 +240,7 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-> >
-> >         period_cycles /= prescale;
-> >         c = (unsigned long long)period_cycles * state->duty_cycle;
-> > -       do_div(c, state->period);
-> > -       duty_cycles = c;
-> > +       duty_cycles = div64_u64(c, state->period);
-> >
-> 
-> This change looks fine, but I wonder if the code directly above it
-> 
->         c = clk_get_rate(imx->clk_per);
->         c *= state->period;
->         do_div(c, 1000000000);
->         period_cycles = c;
-> 
-> might run into an overflow when both the clock rate and the period
-> are large numbers.
+> Dual license files adding MIT license, which will permit to re-use
+> device trees in other non-GPL OSS projects.
 
-Hmm. Seems to me like addressing this would be outside the scope of this
-patch series.
+Are you the only author on these files? If not, you don't have rights to 
+do this.
 
-Thank you.
-
-Guru Das.
+> 
+> Signed-off-by: Igor Opaniuk <igor.opaniuk@toradex.com>
+> ---
+> 
+>  arch/arm/boot/dts/imx6dl-pinfunc.h | 2 +-
+>  arch/arm/boot/dts/imx6dl.dtsi      | 2 +-
+>  arch/arm/boot/dts/imx6qdl.dtsi     | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/imx6dl-pinfunc.h b/arch/arm/boot/dts/imx6dl-pinfunc.h
+> index 9d88d09f9bf6..960d300ea9ba 100644
+> --- a/arch/arm/boot/dts/imx6dl-pinfunc.h
+> +++ b/arch/arm/boot/dts/imx6dl-pinfunc.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+>  /*
+>   * Copyright 2013 Freescale Semiconductor, Inc.
+>   */
+> diff --git a/arch/arm/boot/dts/imx6dl.dtsi b/arch/arm/boot/dts/imx6dl.dtsi
+> index 008312ee0c31..77e946b3d012 100644
+> --- a/arch/arm/boot/dts/imx6dl.dtsi
+> +++ b/arch/arm/boot/dts/imx6dl.dtsi
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>  //
+>  // Copyright 2013 Freescale Semiconductor, Inc.
+>  
+> diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+> index e6b4b8525f98..75d746952932 100644
+> --- a/arch/arm/boot/dts/imx6qdl.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl.dtsi
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0+ OR MIT
+>  //
+>  // Copyright 2011 Freescale Semiconductor, Inc.
+>  // Copyright 2011 Linaro Ltd.
+> -- 
+> 2.17.1
+> 
