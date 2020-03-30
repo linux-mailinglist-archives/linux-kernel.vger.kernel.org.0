@@ -2,96 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A05D6198561
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BA3B19856D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:38:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbgC3U3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 16:29:35 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45540 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727714AbgC3U3e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 16:29:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=e36XqhsWCmWrROgZi7Tg4ABqZPt9tjfwFEXpbviu61I=; b=ooH3Bs55FLuUTfvL66qyciHw1c
-        fR3Vhg0dqkkGeYgZYZeyIK984nNuPaRqaZBagpq7tlFRboBW0EGwSFgbKKBgqOh59CzLybquvMn5n
-        h88RLIRmv4jOwCshmFhlPGZJlGaEokL2wySLHQJ4QTQAu4Y/YrP+l8T+E4C1CHL3vq1WClOor9m1j
-        fnDor9Tc9lLpyETE2i38sV83VF6l93Rcb+iOajBcw+7WLJjiOW7wrN7b0ET7IAkgsrN57L55fzrXp
-        yEH6XgXwIsjB7EAYwVTB/wEbDUOkmoIWct52GbhiN/3SnYQtItTwMirfOVa5QoU9hTmi2S0Spaiur
-        iaPwyhuw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJ12G-0005XI-R9; Mon, 30 Mar 2020 20:29:29 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 79DD33012D8;
-        Mon, 30 Mar 2020 22:29:27 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 32FD720B15B93; Mon, 30 Mar 2020 22:29:27 +0200 (CEST)
-Date:   Mon, 30 Mar 2020 22:29:27 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org,
-        mhiramat@kernel.org, mbenes@suse.cz,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v4 01/13] objtool: Remove CFI save/restore special case
-Message-ID: <20200330202927.GF20760@hirez.programming.kicks-ass.net>
-References: <20200325174525.772641599@infradead.org>
- <20200325174605.369570202@infradead.org>
- <20200326113049.GD20696@hirez.programming.kicks-ass.net>
- <20200326135620.tlmof5fa7p5wct62@treble>
- <20200326154938.GO20713@hirez.programming.kicks-ass.net>
- <20200326195718.GD2452@worktop.programming.kicks-ass.net>
- <20200327010001.i3kebxb4um422ycb@treble>
- <20200330170200.GU20713@hirez.programming.kicks-ass.net>
- <20200330190205.k5ssixd5hpshpjjq@treble>
- <20200330200254.GV20713@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200330200254.GV20713@hirez.programming.kicks-ass.net>
+        id S1728065AbgC3Uh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 16:37:58 -0400
+Received: from mga17.intel.com ([192.55.52.151]:58490 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727276AbgC3Uh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 16:37:58 -0400
+IronPort-SDR: MN98FfpADmrgusyBtd9/P9Z8qLKPF5Xt8Xb48ZL86s9LA4tI/SL80chmIEQBO+gUjK2MCBsKxr
+ Ey3RvbhzA/sw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 13:37:58 -0700
+IronPort-SDR: CJQdaqrUSQQgilclDju/LPXmoVK/jl0KfY1ywgIPdbpVbsU8pb5eXwYaR08Z9wBUjW1FauLcmv
+ zW/pMYgTXpbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,325,1580803200"; 
+   d="scan'208";a="242143821"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga008.jf.intel.com with ESMTP; 30 Mar 2020 13:37:57 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        "H Peter Anvin" <hpa@zytor.com>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Tony Luck" <tony.luck@intel.com>,
+        "Ashok Raj" <ashok.raj@intel.com>,
+        "Jacob Jun Pan" <jacob.jun.pan@intel.com>,
+        "Dave Jiang" <dave.jiang@intel.com>,
+        "Sohil Mehta" <sohil.mehta@intel.com>,
+        "Ravi V Shankar" <ravi.v.shankar@intel.com>
+Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "x86" <x86@kernel.org>, iommu@lists.linux-foundation.org,
+        Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH 0/7] x86: tag application address space for devices
+Date:   Mon, 30 Mar 2020 12:33:01 -0700
+Message-Id: <1585596788-193989-1-git-send-email-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.5.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 10:02:54PM +0200, Peter Zijlstra wrote:
-> On Mon, Mar 30, 2020 at 02:02:05PM -0500, Josh Poimboeuf wrote:
-> > However sync_core() and ftrace_regs_caller() are very different from
-> > each other and I find the RET_TAIL hint usage to be extremely confusing.
-> 
-> I was going with the pattern:
-> 
-> 	push target
-> 	ret
-> 
-> which is an indirect tail-call that doesn't need a register. We use it
-> in various places. We use it here exactly because it preserves all
-> registers, but we use it in function-graph tracer and retprobes to
-> insert the return handler. But also in retpoline, because it uses the
-> return stack predictor, which by happy accident isn't the indirect
-> branch predictor.
-> 
-> > For example, IRETQ isn't even a tail cail.
-> 
-> It's the same indirect call, except with a bigger frame ;-)
-> 
-> 	push # ss
-> 	push # rsp
-> 	push # flags
-> 	push # cs
-> 	push # ip
-> 	iret
-> 
-> > And the need for the hint to come *before* the insn which changes the
-> > state is different from the other hints.
-> 
-> makes sense to me... but yah.
+Typical hardware devices require a driver stack to translate application
+buffers to hardware addresses, and a kernel-user transition to notify the
+hardware of new work. What if both the translation and transition overhead
+could be eliminated? This is what Shared Virtual Address (SVA) and ENQCMD
+enabled hardware like Data Streaming Accelerator (DSA) aims to achieve.
+Applications map portals in their local-address-space and directly submit
+work to them using a new instruction.
 
-Also, naturally, there are no instructions after RET to stick the
-annotation to.
+This series implements management of a new MSR (MSR_IA32_PASID). This new
+MSR allows an application address space to be associated with what the PCIe
+spec calls a Process Address Space ID (PASID). This PASID tag is carried
+along with all requests between applications and devices and allows devices
+to interact with the process address space.
+
+SVA and ENQCMD enabled device drivers will use this series in the future.
+For example, it will be used by the phase 2 DSA driver which will be
+released with SVA and ENQCMD support as explained in:
+https://01.org/blogs/2019/introducing-intel-data-streaming-accelerator
+
+This series only provides simple and basic support for the MSR as follows:
+1. Explain different various technical terms used in the series (patch 1).
+2. Enumerate support for ENQCMD in the processor (patch 2).
+3. Handle FPU PASID state and the MSR during context switch (patches 3-4).
+4. Allocate and free PASID for a process (patch 5).
+5. Fix up the PASID MSR in #GP handler when one thread in a process
+   executes ENQCMD for the first time (patches 6).
+6. Clear PASID state for forked and cloned thread (patch 7).
+
+And this patch series needs support from supervisor states patch set:
+https://lore.kernel.org/lkml/20200328164307.17497-1-yu-cheng.yu@intel.com/
+
+The v3 supervisor states series, this patch series, and DSA phase 2 series
+(to be released shortly in idxd driver) can be cloned from:
+https://github.com/intel/idxd-driver.git     idxd-stage2
+
+References:
+1. Detailed information on the ENQCMD/ENQCMDS instructions and the
+IA32_PASID MSR can be found in Intel Architecture Instruction Set
+Extensions and Future Features Programming Reference:
+https://software.intel.com/sites/default/files/managed/c5/15/architecture-instruction-set-extensions-programming-reference.pdf
+
+2. Detailed information on DSA can be found in DSA specification:
+https://software.intel.com/en-us/download/intel-data-streaming-accelerator-preliminary-architecture-specification
+
+Ashok Raj (1):
+  docs: x86: Add a documentation for ENQCMD
+
+Fenghua Yu (5):
+  x86/cpufeatures: Enumerate ENQCMD and ENQCMDS instructions
+  x86/msr-index: Define IA32_PASID MSR
+  x86/mmu: Allocate/free PASID
+  x86/traps: Fix up invalid PASID
+  x86/process: Clear PASID state for a newly forked/cloned thread
+
+Yu-cheng Yu (1):
+  x86/fpu/xstate: Add supervisor PASID state for ENQCMD feature
+
+ Documentation/x86/enqcmd.rst       | 185 +++++++++++++++++++++++++++++
+ arch/x86/include/asm/cpufeatures.h |   1 +
+ arch/x86/include/asm/fpu/types.h   |  10 ++
+ arch/x86/include/asm/fpu/xstate.h  |   2 +-
+ arch/x86/include/asm/iommu.h       |   3 +
+ arch/x86/include/asm/mmu.h         |   4 +
+ arch/x86/include/asm/mmu_context.h |  14 +++
+ arch/x86/include/asm/msr-index.h   |   3 +
+ arch/x86/kernel/cpu/cpuid-deps.c   |   1 +
+ arch/x86/kernel/fpu/xstate.c       |   4 +
+ arch/x86/kernel/process.c          |  13 ++
+ arch/x86/kernel/traps.c            |  17 +++
+ drivers/iommu/intel-svm.c          | 119 +++++++++++++++++--
+ 13 files changed, 367 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/x86/enqcmd.rst
+
+-- 
+2.19.1
 
