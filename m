@@ -2,94 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F7E8197200
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 03:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F21831971FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 03:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbgC3BZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 21:25:15 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56253 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728470AbgC3BZM (ORCPT
+        id S1728080AbgC3BY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 21:24:57 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:57282 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727830AbgC3BY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 21:25:12 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r16so298110wmg.5
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 18:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NAZ/EvfI698xE822Hbx/zffuhB7jddf4RnbK84/Pvys=;
-        b=YjMkp/aEewC+Rdoc5lMigOXs09la/xhMMHhTVtnqpJkS9BVUJ5cHWjixLCgm1oT3pc
-         u4+NF6cHnYvDDhRZARJilBYg6Te3ByREBGciPMR1CZsC+aZqc8waQOtfUqL7PAsSemgh
-         nR8ghJZTlxbmXQXDqNGNtewt3SKa6A6Vk+7ShWPS1rNf5MlW8yWyK2fsh0bmmbu9bpzo
-         zxKyJ6gzhGIxXTOQLq2FcpaGJfiFM+rQRUbyj4CnRuOKKDIMv3t1wlCRELy08eW//pKI
-         GdLyffE5dGy4/Pa3cN/3sJ7L2FJz0sku9gz1Y4IvfGy/Exzij5Xhq2qHuq6/3SGAEtrY
-         +qHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NAZ/EvfI698xE822Hbx/zffuhB7jddf4RnbK84/Pvys=;
-        b=tKZHCocE29/UD2IKeE4UnRejolgSOC0UGTnmqsBeNUeVci8/F6Ix1l5DkNh+81o8et
-         jDCoI0PZ/nvxO3jSZltTk5cPv11M0zE4hACW8/7Denh66IpV0TWoZx8hP2We1/8qoQJ9
-         lFQ8JPbXstqrvdD86LNDE83Uu7/w4Wl0paXtfC+ahmoJnnfHFZPMRA6byeXtNDpBvx9l
-         IaCKJJvK0lUAIkA4+o8q3qYorO+Jx4PpzEPr2BZrzhSC9q134v1DIngEtT2fH5oea5g0
-         ZhldHn5hYdypiLoheAFf8Md7VdUdqZ2OFqMH0tAIXcrUjRQRPM7lLwKuczD2/bIaUI9O
-         Nutg==
-X-Gm-Message-State: ANhLgQ0Q4o44Nhf0Jtx2EyebI0lq2/JOpmQ2R+Q4hc19ReDxm5ynldqA
-        DnDzZ53+fPIjrHkv1Kdc5n52wdGNIDmw
-X-Google-Smtp-Source: ADFU+vv9dAWCW/X2em/b51q1Gx2bvOi2dNvQl2ZZeByTGRDNZLUaOe+AhYqlc/NAQvrFu5sxloPRog==
-X-Received: by 2002:a1c:6885:: with SMTP id d127mr10655536wmc.33.1585531508775;
-        Sun, 29 Mar 2020 18:25:08 -0700 (PDT)
-Received: from earth.lan (host-92-23-85-227.as13285.net. [92.23.85.227])
-        by smtp.gmail.com with ESMTPSA id f12sm18679545wmh.4.2020.03.29.18.25.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Mar 2020 18:25:08 -0700 (PDT)
-From:   Jules Irenge <jbi.octave@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     julia.lawall@lip6.fr, boqun.feng@gmail.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
-Subject: [PATCH v2 4/4] locking/rtmutex: Remove Comparison to bool
-Date:   Mon, 30 Mar 2020 02:24:50 +0100
-Message-Id: <20200330012450.312155-5-jbi.octave@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200330012450.312155-1-jbi.octave@gmail.com>
-References: <0/4>
- <20200330012450.312155-1-jbi.octave@gmail.com>
+        Sun, 29 Mar 2020 21:24:57 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 48rFBD6LBGz1qrFS;
+        Mon, 30 Mar 2020 03:24:52 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 48rFBD42WBz1r0bl;
+        Mon, 30 Mar 2020 03:24:52 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id Fvub03wl5HIX; Mon, 30 Mar 2020 03:24:51 +0200 (CEST)
+X-Auth-Info: od+I4xl5ut2Q/YmRdmMDkY5JVWT6qwkF+EZ0I+fyrGA=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Mon, 30 Mar 2020 03:24:51 +0200 (CEST)
+Subject: Re: [03/12] bus: stm32-fmc2-ebi: add STM32 FMC2 EBI controller driver
+To:     Christophe Kerello <christophe.kerello@st.com>,
+        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        tony@atomide.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+References: <1584975532-8038-1-git-send-email-christophe.kerello@st.com>
+ <1584975532-8038-4-git-send-email-christophe.kerello@st.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <f6a2c766-8ae5-fab7-e2f6-db23f39b5d91@denx.de>
+Date:   Mon, 30 Mar 2020 03:24:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1584975532-8038-4-git-send-email-christophe.kerello@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Coccinelle reports a warning inside __sched rt_mutex_slowunlock()
+On 3/23/20 3:58 PM, Christophe Kerello wrote:
+> The driver adds the support for the STMicroelectronics FMC2 EBI controller
+> found on STM32MP SOCs.
+> 
 
-WARNING: Comparison to bool
+On DH STM32MP1 SoM in PDK2 carrier board,
+Tested-by: Marek Vasut <marex@denx.de>
 
-To fix this,
-a comparison (==) of a bool type function result to value true
-together with the value are removed.
+btw. it seems this sets BTRx DATLAT and CLKDIV to 0xf , it's "Don't
+care" in the datasheet for Muxed mode, but then it should probably be
+set to 0.
 
-Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
----
- kernel/locking/rtmutex.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The bindings I used are below:
 
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index 851bbb10819d..7289e7b26be4 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1378,7 +1378,7 @@ static bool __sched rt_mutex_slowunlock(struct rt_mutex *lock,
- 	 */
- 	while (!rt_mutex_has_waiters(lock)) {
- 		/* Drops lock->wait_lock ! */
--		if (unlock_rt_mutex_safe(lock, flags) == true)
-+		if (unlock_rt_mutex_safe(lock, flags))
- 			return false;
- 		/* Relock the rtmutex and try again */
- 		raw_spin_lock_irqsave(&lock->wait_lock, flags);
--- 
-2.25.1
+&fmc {
+        pinctrl-names = "default", "sleep";
+        pinctrl-0 = <&fmc_pins_b>;
+        pinctrl-1 = <&fmc_sleep_pins_b>;
+        status = "okay";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        /delete-property/interrupts;
+        /delete-property/dmas;
+        /delete-property/dma-names;
+        reg = <0x58002000 0x1000>;
+        ranges;
 
+        ebi {
+                #address-cells = <2>;
+                #size-cells = <1>;
+                compatible = "st,stm32mp1-fmc2-ebi";
+                ranges = <0 0 0x60000000 0x4000000>,
+                         <1 0 0x64000000 0x4000000>,
+                         <2 0 0x68000000 0x4000000>,
+                         <3 0 0x6c000000 0x4000000>;
+
+                ksz8851: ks8851mll@0,0 {
+                        compatible = "micrel,ks8851-mll";
+                        reg = <1 0x0 0x2 1 0x2 0x20000>;
+                        interrupt-parent = <&gpioc>;
+                        interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+                        bank-width = <2>;
+
+                        /* Timing values are in nS */
+                        st,fmc2_ebi_cs_mux_enable;
+                        st,fmc2_ebi_cs_transaction_type = <4>;
+                        st,fmc2_ebi_cs_buswidth = <16>;
+                        st,fmc2_ebi_cs_address_setup = <6>;
+                        st,fmc2_ebi_cs_address_hold = <6>;
+                        st,fmc2_ebi_cs_data_setup = <127>;
+                        st,fmc2_ebi_cs_bus_turnaround = <9>;
+                        st,fmc2_ebi_cs_data_hold = <9>;
+                };
+
+                sram@3,0 {
+                        compatible = "mtd-ram";
+                        reg = <3 0x0 0x80000>;
+                        bank-width = <2>;
+
+                        /* Timing values are in nS */
+                        st,fmc2_ebi_cs_mux_enable;
+                        st,fmc2_ebi_cs_transaction_type = <4>;
+                        st,fmc2_ebi_cs_buswidth = <16>;
+                        st,fmc2_ebi_cs_address_setup = <6>;
+                        st,fmc2_ebi_cs_address_hold = <6>;
+                        st,fmc2_ebi_cs_data_setup = <127>;
+                        st,fmc2_ebi_cs_bus_turnaround = <9>;
+                        st,fmc2_ebi_cs_data_hold = <9>;
+                };
+        };
+};
