@@ -2,304 +2,521 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DBE0197FAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 17:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A283C197FB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 17:34:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729237AbgC3Pdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 11:33:49 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44687 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728075AbgC3Pds (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 11:33:48 -0400
-Received: by mail-pl1-f193.google.com with SMTP id h11so6855055plr.11;
-        Mon, 30 Mar 2020 08:33:47 -0700 (PDT)
+        id S1729360AbgC3PeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 11:34:13 -0400
+Received: from mail-eopbgr150055.outbound.protection.outlook.com ([40.107.15.55]:50595
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728075AbgC3PeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 11:34:12 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dkyZTaP6tlZyeG/zHmJvGM0pkeCpm7Rz2wnUTv+OmTI5kQA+JdoEw62CgN4qw1y5MdQy/Z2EsnMSFpUa2s4f3ATXigXWVTtOvVuaxI27is/l8FdMC4MdmLY8D495A7VoCmzn5nyccQLH/hvYSECSngtUxB39Eeytteg420rS+xWj08fETTULXEI17z/DErlX7BLFdbf//MJy5HgKT9FVCpZ+NcAQ+w4JxmKX6Ceaq8r/Zp3UHtUkvGSF6lxrpaq90TeX7p7syUxPbZB1MT26rUvpdByR1x/sXN6UUwQxxTxtBCO3q6E7WAZ/eByQerKiWogWWfzRazV94foERnlIeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GNY2aRkYTjKXdX/Abt5fvkct+yq4nGldoe4uzqbeZJU=;
+ b=fYUBdgBeLIwsgE03oN68+4HF7MCahcvFiN3L3m+R0lAGC9Ht+TcVYkb3Zyc+sJnwHnpm0l/rLly0CaHj/lg7maS5Fify6rmZvSwRRpyMvfUgCcmjoSGWg5o2HROBTWR0K28wNOYU2//JFgNOUefxz0JBs3uhfNR5AkrQzs8liIXf/wkxDlarDBfjgCnnQ/Dxw9r9EOh7GOYYt8NiGKBXHYxMFBWpdoqVZq++sn+9Cx73ZhWuMcSx8LNEuiUpbMgkIIKEP3R+6uGKaIfEi0uuIyfQ62HqRWTWI5lkLhb3TZq+hmArTFFGcLUfhxB/P+vzOPiaD53401Z2+Gx3oZv57g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=itdev.co.uk; dmarc=pass action=none header.from=itdev.co.uk;
+ dkim=pass header.d=itdev.co.uk; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HwKNHqn/N6RNj3lw6v7dsHjBom4XvjuTe8MPW3fG2Tw=;
-        b=RkfyICSr9qxDJ5B7a6yfHVKGfdh1e4iX2dWy4mRIdTkvUqcffbCd+33XY6XP56IgwJ
-         ZoDSfGuklMGSRS0RWt8mEc69B9HsZO3EH3apyTp4mFLyVY/BvhhRjPgB0iCIspesTijl
-         wNnWzOVvGLDzLNi1tM6yhNx1S7APpt8cQP7jbx5PHdk/2ggSjVnL9isaZCGupEE4FQph
-         98h6vMiWykNPxCIA9BrLoN1fWkjRRVSSLfuZTWR9SDPGQZ9v465+477KVMehplztezia
-         Od6mJxKHJf5IwVKtDqrsXB7WiWY9cwDD4gt1geAwKgRoGU8AMAZ0mQF6GNOxQX7X1A8D
-         +Z9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=HwKNHqn/N6RNj3lw6v7dsHjBom4XvjuTe8MPW3fG2Tw=;
-        b=qWvmZTHB+qO38r07rJ80byvEshcJQX40aioNPgnDMzT8B0Bz0RfL1LVhZX2u1wvK1N
-         7mzYwn6n8ewMMY+e7vfguiFsrNDYkyYfiTLHkStQUm5Mi35rxyFLIhQ8tKKePazEa+Wf
-         6c/Q3i8fgDPNTizyQdPPQVmELjPfGPUvgG/CVxo/qBEpdiq96IDQpICKu6lmc3QCD0OA
-         9nHrZaELyzB95ceyYNaEueScIQmBqwJq1E7G4JpzlGof3IlCYQY6skmnWzBrR48y0kHd
-         EzXz90h1RdOcDvS5DKJdARrM6d52eXSjsgfArHHpZmB2q17DLE/4Yc5skqP+Hk35zTmC
-         TE4Q==
-X-Gm-Message-State: ANhLgQ3tHDn+OU0eIWdgxGk3I/EUWDLnf0decHWrjyspns/wZzh3HVNG
-        GVy44qSQ4xwQTC70SBfL0VO1FkT7
-X-Google-Smtp-Source: ADFU+vuxYahdi//XssHReya2v5pb1kUs+UOoGpqU4Dp4B2Up/zKJh4XFE7I8UR5AEqtANbpUG9eTCA==
-X-Received: by 2002:a17:90a:8e84:: with SMTP id f4mr16099547pjo.72.1585582426345;
-        Mon, 30 Mar 2020 08:33:46 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id r29sm9806495pgm.17.2020.03.30.08.33.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Mar 2020 08:33:45 -0700 (PDT)
-Subject: Re: [PATCH v3] rtc: ds1307: add support for watchdog timer on ds1388
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        wim@linux-watchdog.org
-Cc:     linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200330025500.6991-1-chris.packham@alliedtelesis.co.nz>
-From:   Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-Message-ID: <682784aa-2665-9b8e-4989-b0ef8e0b08c5@roeck-us.net>
-Date:   Mon, 30 Mar 2020 08:33:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ d=itdevltd.onmicrosoft.com; s=selector2-itdevltd-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GNY2aRkYTjKXdX/Abt5fvkct+yq4nGldoe4uzqbeZJU=;
+ b=IOSvy57wURB368jBg7PfD9cJbnZ7qXHkmh6A9IGEfrVEEJS6Ikx9sS3Gc6/sjZm/Aafb/+iUT71CfIa/7FJ3qDj0xV61BO6BjyCRBjkJ50cx85BKaSnFV5Iz1hXJ4L56t3WkCBttMl93m7XAPmeuSfm3BL6OJgCynAcvMJAFhzE=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=quentin.deslandes@itdev.co.uk; 
+Received: from DBBPR08MB4491.eurprd08.prod.outlook.com (20.179.44.144) by
+ DBBPR08MB4554.eurprd08.prod.outlook.com (20.179.44.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2856.19; Mon, 30 Mar 2020 15:34:08 +0000
+Received: from DBBPR08MB4491.eurprd08.prod.outlook.com
+ ([fe80::cce9:f055:f034:3659]) by DBBPR08MB4491.eurprd08.prod.outlook.com
+ ([fe80::cce9:f055:f034:3659%4]) with mapi id 15.20.2856.019; Mon, 30 Mar 2020
+ 15:34:07 +0000
+Date:   Mon, 30 Mar 2020 16:34:04 +0100
+From:   Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+To:     Oscar Carter <oscar.carter@gmx.com>
+Cc:     Forest Bond <forest@alittletooquiet.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Malcolm Priestley <tvboxspy@gmail.com>,
+        Amir Mahdi Ghorbanian <indigoomega021@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: vt6656: Refactor the
+ vnt_update_pre_ed_threshold function
+Message-ID: <20200330153404.GB60146@jiffies>
+References: <20200328181706.14276-1-oscar.carter@gmx.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200328181706.14276-1-oscar.carter@gmx.com>
+X-ClientProxiedBy: LO2P265CA0377.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a3::29) To DBBPR08MB4491.eurprd08.prod.outlook.com
+ (2603:10a6:10:d2::16)
 MIME-Version: 1.0
-In-Reply-To: <20200330025500.6991-1-chris.packham@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from jiffies (5.151.93.48) by LO2P265CA0377.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:a3::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.19 via Frontend Transport; Mon, 30 Mar 2020 15:34:06 +0000
+X-Originating-IP: [5.151.93.48]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: fc977f4f-ab4a-408e-435e-08d7d4bfc907
+X-MS-TrafficTypeDiagnostic: DBBPR08MB4554:
+X-Microsoft-Antispam-PRVS: <DBBPR08MB4554AF029673AA6AB5A3852EB3CB0@DBBPR08MB4554.eurprd08.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 0358535363
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR08MB4491.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(346002)(136003)(396003)(366004)(376002)(39830400003)(86362001)(66556008)(5660300002)(4326008)(66476007)(8676002)(8936002)(186003)(316002)(508600001)(1076003)(55016002)(16526019)(26005)(33656002)(9576002)(54906003)(2906002)(30864003)(81166006)(9686003)(81156014)(33716001)(53546011)(66946007)(6496006)(44832011)(956004)(6916009)(52116002)(518174003);DIR:OUT;SFP:1101;
+Received-SPF: None (protection.outlook.com: itdev.co.uk does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: P9txXLDLV6kPl/JH/o1Aakhm75pLjKw8Mz2KQwL/xEPWzW1qe3m7HftlUXPQ2SGVHk2WvKI0SjV1rOad8P/weusge8xsKN+5UDa7+DoFiktwsP+018+0fI/EYyIcuabslQ4nEqRPZro1fBDEm+5OwDrTgwFKd/UmR9I9jfYOrjHi72Av4gnESviayOOaZZNg7cEZutaIArVC7K9RPws61JRtZaNyY05xi7FJRXMSpTtrZd1WFbBXtIp5SpcgTmwpUl/+KMNEbG8o7YOk9pZqGVh8y/efpW0AnDWHDJihkVy3Xw1FyBkOUmhQHQQapsoLyIvRBEKS68Et9rQgGxtSDqzvs7u0ez1Ma+eS6izpMx9MNsKwkpvLwScIqAk7zNZszZbmkwhsP/M4ua3gnF+mM4S51LfgCtqaUsElruYiDh+zePZqmIda4ZWGCFaFE8HPCG/G6Ezx38pZOF4lqdcULyFzG4ukwIgoHYhOLaCXTCjzMomt9AexAhA6tw2cJoew
+X-MS-Exchange-AntiSpam-MessageData: kSfjyJULGHgPcELcNo9xjXrNxD+ctk3Ovqkq75zR4KWFsh8JWaIT0Af29sV+fgIzfI7JNqDmq0xnouzmROr5fP7fR+1GX+3jPX51VntFnVQhyDm229e+91zTZYt0Dbrjfykx73lrAHP8VdeWuyEQ2g==
+X-OriginatorOrg: itdev.co.uk
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc977f4f-ab4a-408e-435e-08d7d4bfc907
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2020 15:34:07.4711
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 2d2930c4-2251-45b4-ad79-3582c5f41740
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MziKk2ajQzdsHzdVb9rAErz4MdRAFGEX1RvE3t9S3bxYL+iH2pXI8nBHZ+XrJiabnko43AjmjUAJdKPNrOAwcT40s9Tn2Ds4u2pirs26cR0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB4554
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/29/20 7:55 PM, Chris Packham wrote:
-> The DS1388 variant has watchdog timer capabilities. When using a DS1388
-> and having enabled CONFIG_WATCHDOG_CORE register a watchdog device for
-> the DS1388.
+On 03/28/20 19:17:06, Oscar Carter wrote:
+> Create three arrays with the threshold data use in the switch statement
+> of the vnt_update_pre_ed_threshold function. These three arrays contains
+> elements of struct vnt_threshold new type.
 > 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> Create a for loop in the vnt_update_pre_ed_threshold function to do
+> exactly the same that the if-elseif-else statements in the switch
+> statement.
+> 
+> Also, remove the if check against the !cr_201 && !cr_206 due to now it
+> is replace by the NULL check against the threshold pointer. When this
+> pointer is NULL means that the cr_201 and cr_206 variables have not been
+> assigned, that is the same that the old comparison against cr_201 and
+> cr_206 due to these variables were initialized with 0.
+> 
+> The statistics of the old baseband object file are:
+> 
+> section              size   addr
+> .text                3415      0
+> .data                 576      0
+> .bss                    0      0
+> .rodata               120      0
+> .comment               45      0
+> .note.GNU-stack         0      0
+> .note.gnu.property     28      0
+> Total                4184
+> 
+> The statistics of the new baseband object file are:
+> 
+> section              size   addr
+> .text                2209      0
+> .data                 576      0
+> .bss                    0      0
+> .rodata               344      0
+> .comment               45      0
+> .note.GNU-stack         0      0
+> .note.gnu.property     28      0
+> Total                3202
+> 
+> With this refactoring it increase a little the readonly data but it
+> decrease much more the .text section. This refactoring decrease the
+> footprint and makes the code more clear.
+> 
+> Signed-off-by: Oscar Carter <oscar.carter@gmx.com>
 > ---
-> Changes in v3:
-> - Address review comments from Guenter. Add select WATCHDOG_CORE, remove
->   unnecessary wdt member, add set_timeout op, use devm_watchdog_register
-> Changes in v2:
-> - Address review comments from Alexandre, the only functional change is setting
->   the hundredths of seconds to 0 instead of 99.
+>  drivers/staging/vt6656/baseband.c | 335 +++++++++---------------------
+>  1 file changed, 100 insertions(+), 235 deletions(-)
 > 
->  drivers/rtc/Kconfig      |   1 +
->  drivers/rtc/rtc-ds1307.c | 115 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 116 insertions(+)
+> diff --git a/drivers/staging/vt6656/baseband.c b/drivers/staging/vt6656/baseband.c
+> index a19a563d8bcc..e03f83e1c394 100644
+> --- a/drivers/staging/vt6656/baseband.c
+> +++ b/drivers/staging/vt6656/baseband.c
+> @@ -115,6 +115,86 @@ static const u16 vnt_frame_time[MAX_RATE] = {
+>  	10, 20, 55, 110, 24, 36, 48, 72, 96, 144, 192, 216
+>  };
 > 
-> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-> index 34c8b6c7e095..729851a38511 100644
-> --- a/drivers/rtc/Kconfig
-> +++ b/drivers/rtc/Kconfig
-> @@ -241,6 +241,7 @@ config RTC_DRV_AS3722
->  config RTC_DRV_DS1307
->  	tristate "Dallas/Maxim DS1307/37/38/39/40/41, ST M41T00, EPSON RX-8025, ISL12057"
->  	select REGMAP_I2C
-> +	select WATCHDOG_CORE if WATCHDOG
->  	help
->  	  If you say yes here you get support for various compatible RTC
->  	  chips (often with battery backup) connected with I2C. This driver
-> diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-> index 31a38d468378..fad042118862 100644
-> --- a/drivers/rtc/rtc-ds1307.c
-> +++ b/drivers/rtc/rtc-ds1307.c
-> @@ -22,6 +22,7 @@
->  #include <linux/hwmon-sysfs.h>
->  #include <linux/clk-provider.h>
->  #include <linux/regmap.h>
-> +#include <linux/watchdog.h>
->  
+> +struct vnt_threshold {
+> +	u8 bb_pre_ed_rssi;
+> +	u8 cr_201;
+> +	u8 cr_206;
+> +};
+> +
+> +static const struct vnt_threshold al2230_vnt_threshold[] = {
+> +	{0, 0x00, 0x30},	/* Max sensitivity */
+> +	{68, 0x00, 0x36},
+> +	{67, 0x00, 0x43},
+> +	{66, 0x00, 0x51},
+> +	{65, 0x00, 0x62},
+> +	{64, 0x00, 0x79},
+> +	{63, 0x00, 0x93},
+> +	{62, 0x00, 0xb9},
+> +	{61, 0x00, 0xe3},
+> +	{60, 0x01, 0x18},
+> +	{59, 0x01, 0x54},
+> +	{58, 0x01, 0xa0},
+> +	{57, 0x02, 0x20},
+> +	{56, 0x02, 0xa0},
+> +	{55, 0x03, 0x00},
+> +	{53, 0x06, 0x00},
+> +	{51, 0x09, 0x00},
+> +	{49, 0x0e, 0x00},
+> +	{47, 0x15, 0x00},
+> +	{46, 0x1a, 0x00},
+> +	{45, 0xff, 0x00}
+> +};
+> +
+> +static const struct vnt_threshold vt3226_vnt_threshold[] = {
+> +	{0, 0x00, 0x24},	/* Max sensitivity */
+> +	{68, 0x00, 0x2d},
+> +	{67, 0x00, 0x36},
+> +	{66, 0x00, 0x43},
+> +	{65, 0x00, 0x52},
+> +	{64, 0x00, 0x68},
+> +	{63, 0x00, 0x80},
+> +	{62, 0x00, 0x9c},
+> +	{61, 0x00, 0xc0},
+> +	{60, 0x00, 0xea},
+> +	{59, 0x01, 0x30},
+> +	{58, 0x01, 0x70},
+> +	{57, 0x01, 0xb0},
+> +	{56, 0x02, 0x30},
+> +	{55, 0x02, 0xc0},
+> +	{53, 0x04, 0x00},
+> +	{51, 0x07, 0x00},
+> +	{49, 0x0a, 0x00},
+> +	{47, 0x11, 0x00},
+> +	{45, 0x18, 0x00},
+> +	{43, 0x26, 0x00},
+> +	{42, 0x36, 0x00},
+> +	{41, 0xff, 0x00}
+> +};
+> +
+> +static const struct vnt_threshold vt3342_vnt_threshold[] = {
+> +	{0, 0x00, 0x38},	/* Max sensitivity */
+> +	{66, 0x00, 0x43},
+> +	{65, 0x00, 0x52},
+> +	{64, 0x00, 0x68},
+> +	{63, 0x00, 0x80},
+> +	{62, 0x00, 0x9c},
+> +	{61, 0x00, 0xc0},
+> +	{60, 0x00, 0xea},
+> +	{59, 0x01, 0x30},
+> +	{58, 0x01, 0x70},
+> +	{57, 0x01, 0xb0},
+> +	{56, 0x02, 0x30},
+> +	{55, 0x02, 0xc0},
+> +	{53, 0x04, 0x00},
+> +	{51, 0x07, 0x00},
+> +	{49, 0x0a, 0x00},
+> +	{47, 0x11, 0x00},
+> +	{45, 0x18, 0x00},
+> +	{43, 0x26, 0x00},
+> +	{42, 0x36, 0x00},
+> +	{41, 0xff, 0x00}
+> +};
+> +
 >  /*
->   * We can't determine type by probing, but if we expect pre-Linux code
-> @@ -144,8 +145,15 @@ enum ds_type {
->  #	define M41TXX_BIT_CALIB_SIGN	BIT(5)
->  #	define M41TXX_M_CALIBRATION	GENMASK(4, 0)
->  
-> +#define DS1388_REG_WDOG_HUN_SECS	0x08
-> +#define DS1388_REG_WDOG_SECS		0x09
->  #define DS1388_REG_FLAG			0x0b
-> +#	define DS1388_BIT_WF		BIT(6)
->  #	define DS1388_BIT_OSF		BIT(7)
-> +#define DS1388_REG_CONTROL		0x0c
-> +#	define DS1388_BIT_RST		BIT(0)
-> +#	define DS1388_BIT_WDE		BIT(1)
-> +
->  /* negative offset step is -2.034ppm */
->  #define M41TXX_NEG_OFFSET_STEP_PPB	2034
->  /* positive offset step is +4.068ppm */
-> @@ -854,6 +862,72 @@ static int m41txx_rtc_set_offset(struct device *dev, long offset)
->  				  ctrl_reg);
->  }
->  
-> +#ifdef CONFIG_WATCHDOG_CORE
-> +static int ds1388_wdt_start(struct watchdog_device *wdt_dev)
-> +{
-> +	struct ds1307 *ds1307 = watchdog_get_drvdata(wdt_dev);
-> +	u8 regs[2];
-> +	int ret;
-> +
-> +	ret = regmap_update_bits(ds1307->regmap, DS1388_REG_FLAG,
-> +				 DS1388_BIT_WF, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_update_bits(ds1307->regmap, DS1388_REG_CONTROL,
-> +				 DS1388_BIT_WDE | DS1388_BIT_RST, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * watchdog timeouts are measured in seconds. So ignore hundredths of
-> +	 * seconds field.
-> +	 */
-> +	regs[0] = 0;
-> +	regs[1] = bin2bcd(wdt_dev->timeout);
-> +
-> +	ret = regmap_bulk_write(ds1307->regmap, DS1388_REG_WDOG_HUN_SECS, regs,
-> +				sizeof(regs));
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_update_bits(ds1307->regmap, DS1388_REG_CONTROL,
-> +				  DS1388_BIT_WDE | DS1388_BIT_RST,
-> +				  DS1388_BIT_WDE | DS1388_BIT_RST);
-> +}
-> +
-> +static int ds1388_wdt_stop(struct watchdog_device *wdt_dev)
-> +{
-> +	struct ds1307 *ds1307 = watchdog_get_drvdata(wdt_dev);
-> +
-> +	return regmap_update_bits(ds1307->regmap, DS1388_REG_CONTROL,
-> +				  DS1388_BIT_WDE | DS1388_BIT_RST, 0);
-> +}
-> +
-> +static int ds1388_wdt_ping(struct watchdog_device *wdt_dev)
-> +{
-> +	struct ds1307 *ds1307 = watchdog_get_drvdata(wdt_dev);
-> +	u8 regs[2];
-> +
-> +	return regmap_bulk_read(ds1307->regmap, DS1388_REG_WDOG_HUN_SECS, regs,
-> +				sizeof(regs));
-> +}
-> +
-> +static int ds1388_wdt_set_timeout(struct watchdog_device *wdt_dev,
-> +				  unsigned int val)
-> +{
-> +	struct ds1307 *ds1307 = watchdog_get_drvdata(wdt_dev);
-> +	u8 regs[2];
-> +
-> +	wdt_dev->timeout = val;
-> +	regs[0] = 0;
-> +	regs[1] = bin2bcd(wdt_dev->timeout);
-> +
-> +	return regmap_bulk_write(ds1307->regmap, DS1388_REG_WDOG_HUN_SECS, regs,
-> +				 sizeof(regs));
-> +}
-> +#endif
-> +
->  static const struct rtc_class_ops rx8130_rtc_ops = {
->  	.read_time      = ds1307_get_time,
->  	.set_time       = ds1307_set_time,
-> @@ -1576,6 +1650,46 @@ static void ds1307_clks_register(struct ds1307 *ds1307)
->  
->  #endif /* CONFIG_COMMON_CLK */
->  
-> +#ifdef CONFIG_WATCHDOG_CORE
-> +static const struct watchdog_info ds1388_wdt_info = {
-> +	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-> +	.identity = "DS1388 watchdog",
-> +};
-> +
-> +static const struct watchdog_ops ds1388_wdt_ops = {
-> +	.owner = THIS_MODULE,
-> +	.start = ds1388_wdt_start,
-> +	.stop = ds1388_wdt_stop,
-> +	.ping = ds1388_wdt_ping,
-> +	.set_timeout = ds1388_wdt_set_timeout,
-> +
-> +};
-> +
-> +static void ds1307_wdt_register(struct ds1307 *ds1307)
-> +{
-> +	struct watchdog_device	*wdt;
-> +
-> +	if (ds1307->type != ds_1388)
+>   * Description: Calculate data frame transmitting time
+>   *
+> @@ -572,254 +652,42 @@ int vnt_exit_deep_sleep(struct vnt_private *priv)
+> 
+>  void vnt_update_pre_ed_threshold(struct vnt_private *priv, int scanning)
+>  {
+> -	u8 cr_201 = 0x0, cr_206 = 0x0;
+> +	const struct vnt_threshold *threshold = NULL;
+> +	u8 length;
+> +	u8 cr_201, cr_206;
+>  	u8 ed_inx = priv->bb_pre_ed_index;
+> 
+>  	switch (priv->rf_type) {
+>  	case RF_AL2230:
+>  	case RF_AL2230S:
+>  	case RF_AIROHA7230:
+> -		if (scanning) { /* Max sensitivity */
+> -			ed_inx = 0;
+> -			cr_206 = 0x30;
+> -			break;
+> -		}
+> -
+> -		if (priv->bb_pre_ed_rssi <= 45) {
+> -			ed_inx = 20;
+> -			cr_201 = 0xff;
+> -		} else if (priv->bb_pre_ed_rssi <= 46) {
+> -			ed_inx = 19;
+> -			cr_201 = 0x1a;
+> -		} else if (priv->bb_pre_ed_rssi <= 47) {
+> -			ed_inx = 18;
+> -			cr_201 = 0x15;
+> -		} else if (priv->bb_pre_ed_rssi <= 49) {
+> -			ed_inx = 17;
+> -			cr_201 = 0xe;
+> -		} else if (priv->bb_pre_ed_rssi <= 51) {
+> -			ed_inx = 16;
+> -			cr_201 = 0x9;
+> -		} else if (priv->bb_pre_ed_rssi <= 53) {
+> -			ed_inx = 15;
+> -			cr_201 = 0x6;
+> -		} else if (priv->bb_pre_ed_rssi <= 55) {
+> -			ed_inx = 14;
+> -			cr_201 = 0x3;
+> -		} else if (priv->bb_pre_ed_rssi <= 56) {
+> -			ed_inx = 13;
+> -			cr_201 = 0x2;
+> -			cr_206 = 0xa0;
+> -		} else if (priv->bb_pre_ed_rssi <= 57) {
+> -			ed_inx = 12;
+> -			cr_201 = 0x2;
+> -			cr_206 = 0x20;
+> -		} else if (priv->bb_pre_ed_rssi <= 58) {
+> -			ed_inx = 11;
+> -			cr_201 = 0x1;
+> -			cr_206 = 0xa0;
+> -		} else if (priv->bb_pre_ed_rssi <= 59) {
+> -			ed_inx = 10;
+> -			cr_201 = 0x1;
+> -			cr_206 = 0x54;
+> -		} else if (priv->bb_pre_ed_rssi <= 60) {
+> -			ed_inx = 9;
+> -			cr_201 = 0x1;
+> -			cr_206 = 0x18;
+> -		} else if (priv->bb_pre_ed_rssi <= 61) {
+> -			ed_inx = 8;
+> -			cr_206 = 0xe3;
+> -		} else if (priv->bb_pre_ed_rssi <= 62) {
+> -			ed_inx = 7;
+> -			cr_206 = 0xb9;
+> -		} else if (priv->bb_pre_ed_rssi <= 63) {
+> -			ed_inx = 6;
+> -			cr_206 = 0x93;
+> -		} else if (priv->bb_pre_ed_rssi <= 64) {
+> -			ed_inx = 5;
+> -			cr_206 = 0x79;
+> -		} else if (priv->bb_pre_ed_rssi <= 65) {
+> -			ed_inx = 4;
+> -			cr_206 = 0x62;
+> -		} else if (priv->bb_pre_ed_rssi <= 66) {
+> -			ed_inx = 3;
+> -			cr_206 = 0x51;
+> -		} else if (priv->bb_pre_ed_rssi <= 67) {
+> -			ed_inx = 2;
+> -			cr_206 = 0x43;
+> -		} else if (priv->bb_pre_ed_rssi <= 68) {
+> -			ed_inx = 1;
+> -			cr_206 = 0x36;
+> -		} else {
+> -			ed_inx = 0;
+> -			cr_206 = 0x30;
+> -		}
+> +		threshold = al2230_vnt_threshold;
+> +		length = ARRAY_SIZE(al2230_vnt_threshold);
+>  		break;
+> 
+>  	case RF_VT3226:
+>  	case RF_VT3226D0:
+> -		if (scanning)	{ /* Max sensitivity */
+> -			ed_inx = 0;
+> -			cr_206 = 0x24;
+> -			break;
+> -		}
+> -
+> -		if (priv->bb_pre_ed_rssi <= 41) {
+> -			ed_inx = 22;
+> -			cr_201 = 0xff;
+> -		} else if (priv->bb_pre_ed_rssi <= 42) {
+> -			ed_inx = 21;
+> -			cr_201 = 0x36;
+> -		} else if (priv->bb_pre_ed_rssi <= 43) {
+> -			ed_inx = 20;
+> -			cr_201 = 0x26;
+> -		} else if (priv->bb_pre_ed_rssi <= 45) {
+> -			ed_inx = 19;
+> -			cr_201 = 0x18;
+> -		} else if (priv->bb_pre_ed_rssi <= 47) {
+> -			ed_inx = 18;
+> -			cr_201 = 0x11;
+> -		} else if (priv->bb_pre_ed_rssi <= 49) {
+> -			ed_inx = 17;
+> -			cr_201 = 0xa;
+> -		} else if (priv->bb_pre_ed_rssi <= 51) {
+> -			ed_inx = 16;
+> -			cr_201 = 0x7;
+> -		} else if (priv->bb_pre_ed_rssi <= 53) {
+> -			ed_inx = 15;
+> -			cr_201 = 0x4;
+> -		} else if (priv->bb_pre_ed_rssi <= 55) {
+> -			ed_inx = 14;
+> -			cr_201 = 0x2;
+> -			cr_206 = 0xc0;
+> -		} else if (priv->bb_pre_ed_rssi <= 56) {
+> -			ed_inx = 13;
+> -			cr_201 = 0x2;
+> -			cr_206 = 0x30;
+> -		} else if (priv->bb_pre_ed_rssi <= 57) {
+> -			ed_inx = 12;
+> -			cr_201 = 0x1;
+> -			cr_206 = 0xb0;
+> -		} else if (priv->bb_pre_ed_rssi <= 58) {
+> -			ed_inx = 11;
+> -			cr_201 = 0x1;
+> -			cr_206 = 0x70;
+> -		} else if (priv->bb_pre_ed_rssi <= 59) {
+> -			ed_inx = 10;
+> -			cr_201 = 0x1;
+> -			cr_206 = 0x30;
+> -		} else if (priv->bb_pre_ed_rssi <= 60) {
+> -			ed_inx = 9;
+> -			cr_206 = 0xea;
+> -		} else if (priv->bb_pre_ed_rssi <= 61) {
+> -			ed_inx = 8;
+> -			cr_206 = 0xc0;
+> -		} else if (priv->bb_pre_ed_rssi <= 62) {
+> -			ed_inx = 7;
+> -			cr_206 = 0x9c;
+> -		} else if (priv->bb_pre_ed_rssi <= 63) {
+> -			ed_inx = 6;
+> -			cr_206 = 0x80;
+> -		} else if (priv->bb_pre_ed_rssi <= 64) {
+> -			ed_inx = 5;
+> -			cr_206 = 0x68;
+> -		} else if (priv->bb_pre_ed_rssi <= 65) {
+> -			ed_inx = 4;
+> -			cr_206 = 0x52;
+> -		} else if (priv->bb_pre_ed_rssi <= 66) {
+> -			ed_inx = 3;
+> -			cr_206 = 0x43;
+> -		} else if (priv->bb_pre_ed_rssi <= 67) {
+> -			ed_inx = 2;
+> -			cr_206 = 0x36;
+> -		} else if (priv->bb_pre_ed_rssi <= 68) {
+> -			ed_inx = 1;
+> -			cr_206 = 0x2d;
+> -		} else {
+> -			ed_inx = 0;
+> -			cr_206 = 0x24;
+> -		}
+> +		threshold = vt3226_vnt_threshold;
+> +		length = ARRAY_SIZE(vt3226_vnt_threshold);
+>  		break;
+> 
+>  	case RF_VT3342A0:
+> -		if (scanning) { /* need Max sensitivity */
+> -			ed_inx = 0;
+> -			cr_206 = 0x38;
+> -			break;
+> -		}
+> -
+> -		if (priv->bb_pre_ed_rssi <= 41) {
+> -			ed_inx = 20;
+> -			cr_201 = 0xff;
+> -		} else if (priv->bb_pre_ed_rssi <= 42) {
+> -			ed_inx = 19;
+> -			cr_201 = 0x36;
+> -		} else if (priv->bb_pre_ed_rssi <= 43) {
+> -			ed_inx = 18;
+> -			cr_201 = 0x26;
+> -		} else if (priv->bb_pre_ed_rssi <= 45) {
+> -			ed_inx = 17;
+> -			cr_201 = 0x18;
+> -		} else if (priv->bb_pre_ed_rssi <= 47) {
+> -			ed_inx = 16;
+> -			cr_201 = 0x11;
+> -		} else if (priv->bb_pre_ed_rssi <= 49) {
+> -			ed_inx = 15;
+> -			cr_201 = 0xa;
+> -		} else if (priv->bb_pre_ed_rssi <= 51) {
+> -			ed_inx = 14;
+> -			cr_201 = 0x7;
+> -		} else if (priv->bb_pre_ed_rssi <= 53) {
+> -			ed_inx = 13;
+> -			cr_201 = 0x4;
+> -		} else if (priv->bb_pre_ed_rssi <= 55) {
+> -			ed_inx = 12;
+> -			cr_201 = 0x2;
+> -			cr_206 = 0xc0;
+> -		} else if (priv->bb_pre_ed_rssi <= 56) {
+> -			ed_inx = 11;
+> -			cr_201 = 0x2;
+> -			cr_206 = 0x30;
+> -		} else if (priv->bb_pre_ed_rssi <= 57) {
+> -			ed_inx = 10;
+> -			cr_201 = 0x1;
+> -			cr_206 = 0xb0;
+> -		} else if (priv->bb_pre_ed_rssi <= 58) {
+> -			ed_inx = 9;
+> -			cr_201 = 0x1;
+> -			cr_206 = 0x70;
+> -		} else if (priv->bb_pre_ed_rssi <= 59) {
+> -			ed_inx = 8;
+> -			cr_201 = 0x1;
+> -			cr_206 = 0x30;
+> -		} else if (priv->bb_pre_ed_rssi <= 60) {
+> -			ed_inx = 7;
+> -			cr_206 = 0xea;
+> -		} else if (priv->bb_pre_ed_rssi <= 61) {
+> -			ed_inx = 6;
+> -			cr_206 = 0xc0;
+> -		} else if (priv->bb_pre_ed_rssi <= 62) {
+> -			ed_inx = 5;
+> -			cr_206 = 0x9c;
+> -		} else if (priv->bb_pre_ed_rssi <= 63) {
+> -			ed_inx = 4;
+> -			cr_206 = 0x80;
+> -		} else if (priv->bb_pre_ed_rssi <= 64) {
+> -			ed_inx = 3;
+> -			cr_206 = 0x68;
+> -		} else if (priv->bb_pre_ed_rssi <= 65) {
+> -			ed_inx = 2;
+> -			cr_206 = 0x52;
+> -		} else if (priv->bb_pre_ed_rssi <= 66) {
+> -			ed_inx = 1;
+> -			cr_206 = 0x43;
+> -		} else {
+> -			ed_inx = 0;
+> -			cr_206 = 0x38;
+> -		}
+> +		threshold = vt3342_vnt_threshold;
+> +		length = ARRAY_SIZE(vt3342_vnt_threshold);
+>  		break;
+>  	}
+> 
+> +	if (!threshold)
 > +		return;
 > +
-> +	wdt = devm_kzalloc(ds1307->dev, sizeof(*wdt), GFP_KERNEL);
+> +	for (ed_inx = scanning ? 0 : length - 1; ed_inx > 0; ed_inx--) {
+> +		if (priv->bb_pre_ed_rssi <= threshold[ed_inx].bb_pre_ed_rssi)
+> +			break;
+> +	}
 > +
-> +	wdt->info = &ds1388_wdt_info;
-> +	wdt->ops = &ds1388_wdt_ops;
-> +	wdt->timeout = 99;
-> +	wdt->max_timeout = 99;
-> +	wdt->min_timeout = 1;
+> +	cr_201 = threshold[ed_inx].cr_201;
+> +	cr_206 = threshold[ed_inx].cr_206;
 > +
-> +	watchdog_init_timeout(wdt, 0, ds1307->dev);
-> +	watchdog_set_drvdata(wdt, ds1307);
-> +	devm_watchdog_register_device(ds1307->dev, wdt);
-> +}
-> +#else
-> +static void ds1307_wdt_register(struct ds1307 *ds1307)
-> +{
-> +}
-> +#endif /* CONFIG_WATCHDOG_CORE */
-> +
->  static const struct regmap_config regmap_config = {
->  	.reg_bits = 8,
->  	.val_bits = 8,
-> @@ -1865,6 +1979,7 @@ static int ds1307_probe(struct i2c_client *client,
->  
->  	ds1307_hwmon_register(ds1307);
->  	ds1307_clks_register(ds1307);
-> +	ds1307_wdt_register(ds1307);
->  
->  	return 0;
->  
+>  	if (ed_inx == priv->bb_pre_ed_index && !scanning)
+>  		return;
+> 
+> @@ -828,9 +696,6 @@ void vnt_update_pre_ed_threshold(struct vnt_private *priv, int scanning)
+>  	dev_dbg(&priv->usb->dev, "%s bb_pre_ed_rssi %d\n",
+>  		__func__, priv->bb_pre_ed_rssi);
+> 
+> -	if (!cr_201 && !cr_206)
+> -		return;
+> -
+>  	vnt_control_out_u8(priv, MESSAGE_REQUEST_BBREG, 0xc9, cr_201);
+>  	vnt_control_out_u8(priv, MESSAGE_REQUEST_BBREG, 0xce, cr_206);
+>  }
+> --
+> 2.20.1
 > 
 
+Looks good to me, nice job.
+
+Reviewed-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+
+Thanks,
+Quentin
