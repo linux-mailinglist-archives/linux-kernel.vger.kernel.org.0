@@ -2,93 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27C1119723C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 03:47:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57BF1197259
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 04:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728973AbgC3BrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 21:47:15 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53536 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727801AbgC3BrO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 21:47:14 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 3469629483D
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>, Tomasz Figa <tfiga@chromium.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>, kernel@collabora.com,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Jeffrey Kardatzke <jkardatzke@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v7 5/5] arm64: dts: rockchip: rk3399: Define the rockchip Video Decoder node
-Date:   Sun, 29 Mar 2020 22:46:16 -0300
-Message-Id: <20200330014616.10621-6-ezequiel@collabora.com>
-X-Mailer: git-send-email 2.26.0.rc2
-In-Reply-To: <20200330014616.10621-1-ezequiel@collabora.com>
-References: <20200330014616.10621-1-ezequiel@collabora.com>
+        id S1728696AbgC3CT3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 22:19:29 -0400
+Received: from m12-12.163.com ([220.181.12.12]:39856 "EHLO m12-12.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728124AbgC3CT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 22:19:29 -0400
+X-Greylist: delayed 923 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 22:19:10 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=YLkRY
+        spmaUn4AjagqkUkZTcLSwz0UO59vIe9hnXKdrw=; b=b8U+e1jb8DLxrjmg3TMWK
+        KVON0oEb+0L5GQRr5SmTe6rnowWqyi4p+2wu/NamIHCjLdNK9Uj+p++LTJGRNxWH
+        2MImBKoENyT14BPVTybqnp41KWgDCk+dZVnXNErP+CfSNaWFGJMc5xGDSf6yGRLv
+        BEwyPxBunCu9JtiHr+4ogs=
+Received: from localhost.localdomain (unknown [125.82.11.174])
+        by smtp8 (Coremail) with SMTP id DMCowAB3e2fEUoFe5nNMBQ--.2270S4;
+        Mon, 30 Mar 2020 10:00:48 +0800 (CST)
+From:   Hu Haowen <xianfengting221@163.com>
+To:     linux@dominikbrodowski.net
+Cc:     jeyu@kernel.org, maennich@google.com, axboe@kernel.dk,
+        nborisov@suse.com, josef@toxicpanda.com, stfrench@microsoft.com,
+        chris@chris-wilson.co.uk, wqu@suse.com, xiubli@redhat.com,
+        airlied@redhat.com, xianfengting221@163.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] pcmcia: remove some unused space characters
+Date:   Mon, 30 Mar 2020 10:00:24 +0800
+Message-Id: <20200330020024.8174-1-xianfengting221@163.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DMCowAB3e2fEUoFe5nNMBQ--.2270S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Zw15Zr1fuw1DtFyrCr48JFb_yoW8JFykpF
+        43Cw18AFs3ZFWUXa15Ar48ur1Sqw1ktayUtryak3y8JFyjk3srKay8u3W5ZFZ8CFZFyF1U
+        Kr45A34UuF4DXF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UDb15UUUUU=
+X-Originating-IP: [125.82.11.174]
+X-CM-SenderInfo: h0ld0wxhqj3xtqjsjii6rwjhhfrp/1tbiWwb2AFSImCKWagAAsx
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <boris.brezillon@collabora.com>
+There are a few space characters I found by chance. I think they are
+redundant, so I removed them.
 
-RK3399 has a Video decoder, define the node in the dtsi. We also add
-the missing power-domain in mmu node and enable the block.
-
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
---
-v7:
-* As noted by Johan Jonker, fix node order.
+Signed-off-by: Hu Haowen <xianfengting221@163.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3399.dtsi | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/pcmcia/sa1100_simpad.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 33cc21fcf4c1..dfb737e8ff31 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -1278,6 +1278,18 @@ vpu_mmu: iommu@ff650800 {
- 		power-domains = <&power RK3399_PD_VCODEC>;
- 	};
- 
-+	vdec: video-codec@ff660000 {
-+		compatible = "rockchip,rk3399-vdec";
-+		reg = <0x0 0xff660000 0x0 0x400>;
-+		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH 0>;
-+		interrupt-names = "vdpu";
-+		clocks = <&cru ACLK_VDU>, <&cru HCLK_VDU>,
-+			 <&cru SCLK_VDU_CA>, <&cru SCLK_VDU_CORE>;
-+		clock-names = "axi", "ahb", "cabac", "core";
-+		power-domains = <&power RK3399_PD_VDU>;
-+		iommus = <&vdec_mmu>;
-+	};
+diff --git a/drivers/pcmcia/sa1100_simpad.c b/drivers/pcmcia/sa1100_simpad.c
+index e2e8729afd9d..784ada5b8c4f 100644
+--- a/drivers/pcmcia/sa1100_simpad.c
++++ b/drivers/pcmcia/sa1100_simpad.c
+@@ -14,7 +14,7 @@
+ #include <asm/mach-types.h>
+ #include <mach/simpad.h>
+ #include "sa1100_generic.h"
+- 
 +
- 	vdec_mmu: iommu@ff660480 {
- 		compatible = "rockchip,iommu";
- 		reg = <0x0 0xff660480 0x0 0x40>, <0x0 0xff6604c0 0x0 0x40>;
-@@ -1285,8 +1297,8 @@ vdec_mmu: iommu@ff660480 {
- 		interrupt-names = "vdec_mmu";
- 		clocks = <&cru ACLK_VDU>, <&cru HCLK_VDU>;
- 		clock-names = "aclk", "iface";
-+		power-domains = <&power RK3399_PD_VDU>;
- 		#iommu-cells = <0>;
--		status = "disabled";
- 	};
+ static int simpad_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
+ {
  
- 	iep_mmu: iommu@ff670800 {
+@@ -66,7 +66,7 @@ simpad_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
+ 		simpad_clear_cs3_bit(VCC_3V_EN|VCC_5V_EN|EN0|EN1);
+ 		break;
+ 
+-	case 33:  
++	case 33:
+ 		simpad_clear_cs3_bit(VCC_3V_EN|EN1);
+ 		simpad_set_cs3_bit(VCC_5V_EN|EN0);
+ 		break;
+@@ -95,7 +95,7 @@ static void simpad_pcmcia_socket_suspend(struct soc_pcmcia_socket *skt)
+ 	simpad_set_cs3_bit(PCMCIA_RESET);
+ }
+ 
+-static struct pcmcia_low_level simpad_pcmcia_ops = { 
++static struct pcmcia_low_level simpad_pcmcia_ops = {
+ 	.owner			= THIS_MODULE,
+ 	.hw_init		= simpad_pcmcia_hw_init,
+ 	.hw_shutdown		= simpad_pcmcia_hw_shutdown,
 -- 
-2.26.0.rc2
+2.20.1
+
 
