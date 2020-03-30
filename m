@@ -2,96 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 134A61982AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B0531982B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729809AbgC3Rtx convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Mar 2020 13:49:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58158 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728124AbgC3Rtx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 13:49:53 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02UHXZET098875
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 13:49:52 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3022nmj739-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 13:49:51 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
-        Mon, 30 Mar 2020 18:49:37 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 30 Mar 2020 18:49:34 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02UHnifJ52690966
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Mar 2020 17:49:44 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BB8F8A404D;
-        Mon, 30 Mar 2020 17:49:44 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 252E0A4055;
-        Mon, 30 Mar 2020 17:49:44 +0000 (GMT)
-Received: from localhost (unknown [9.85.126.25])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 30 Mar 2020 17:49:43 +0000 (GMT)
-Date:   Mon, 30 Mar 2020 23:19:41 +0530
-From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH 06/12] powerpc/32s: Make local symbols non visible in
- hash_low.
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <dff05b59a161434a546010507000816750073f28.1585474724.git.christophe.leroy@c-s.fr>
-        <a19105b21c08020c2af9bf4a37daff8642066ef1.1585474724.git.christophe.leroy@c-s.fr>
-        <1585587984.mmaeo0dvju.naveen@linux.ibm.com>
-        <6bb184ed-b42f-f334-9445-e4fde107e8c9@c-s.fr>
-In-Reply-To: <6bb184ed-b42f-f334-9445-e4fde107e8c9@c-s.fr>
+        id S1730154AbgC3Rt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 13:49:57 -0400
+Received: from verein.lst.de ([213.95.11.211]:34955 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728903AbgC3Rty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 13:49:54 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id DB2B468B05; Mon, 30 Mar 2020 19:49:50 +0200 (CEST)
+Date:   Mon, 30 Mar 2020 19:49:50 +0200
+From:   "hch@lst.de" <hch@lst.de>
+To:     "Derrick, Jonathan" <jonathan.derrick@intel.com>
+Cc:     "helgaas@kernel.org" <helgaas@kernel.org>,
+        "mr.nuke.me@gmail.com" <mr.nuke.me@gmail.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "Baldysiak, Pawel" <pawel.baldysiak@intel.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "lukas@wunner.de" <lukas@wunner.de>,
+        "okaya@kernel.org" <okaya@kernel.org>,
+        "kbusch@kernel.org" <kbusch@kernel.org>,
+        "stuart.w.hayes@gmail.com" <stuart.w.hayes@gmail.com>
+Subject: Re: [RFC 0/9] PCIe Hotplug Slot Emulation driver
+Message-ID: <20200330174950.GA19929@lst.de>
+References: <20200328215123.GA130140@google.com> <97b916ad6ad03f39ccdf5b62fe7d7b9e10190708.camel@intel.com>
 MIME-Version: 1.0
-User-Agent: astroid/v0.15-13-gb675b421
- (https://github.com/astroidmail/astroid)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 20033017-0016-0000-0000-000002FB1E1A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20033017-0017-0000-0000-0000335ED924
-Message-Id: <1585590551.xcqq0ccw21.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-03-30_07:2020-03-30,2020-03-30 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 mlxscore=0 spamscore=0 mlxlogscore=833
- bulkscore=0 impostorscore=0 phishscore=0 priorityscore=1501 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003300154
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97b916ad6ad03f39ccdf5b62fe7d7b9e10190708.camel@intel.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy wrote:
-> 
-> 
-> Le 30/03/2020 à 19:06, Naveen N. Rao a écrit :
->> Christophe Leroy wrote:
->>> In hash_low.S, a lot of named local symbols are used instead of
->>> numbers to ease code lisibility. However, they don't need to be
->>                 ^^^^^^^^^^
->> Nit..                  visibility
-> 
-> 
-> Lol, no.
-> 
-> I mean't "lisibilité" in French, which means "readability"
+On Mon, Mar 30, 2020 at 05:43:33PM +0000, Derrick, Jonathan wrote:
+> > There's a lot of good work in here, and I don't claim to understand
+> > the use case and all the benefits.
+> I've received more info that the customer use case is an AIC that
+> breaks out 1-4 M.2 cards which have been made hotplug tolerant.
 
-Touche :D
-
-- Naveen
-
+Which sounds completely bogus.  M.2 cards are eletrically not designed
+for this at all, and neither is the AIC.  If people want to support
+similar use cases they need to get them standardized by PCI SIG
+and handled by hotplug capable slots.
