@@ -2,134 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 393D919834A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:23:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2809198355
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbgC3SXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 14:23:05 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36380 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726769AbgC3SXF (ORCPT
+        id S1727905AbgC3SYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 14:24:48 -0400
+Received: from mail-vs1-f49.google.com ([209.85.217.49]:39743 "EHLO
+        mail-vs1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbgC3SYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 14:23:05 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 31so22892272wrs.3;
-        Mon, 30 Mar 2020 11:23:03 -0700 (PDT)
+        Mon, 30 Mar 2020 14:24:46 -0400
+Received: by mail-vs1-f49.google.com with SMTP id j128so11700000vsd.6
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 11:24:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NBiWhVp0IqfyFDNmwRRGA/s+Dtxuu8Q2mjZHUKcx0uk=;
+        b=mlJLtlVPXBg1gWOsSAxsoafEcJT38NiNpF0UOqjmzXlo8GohAqgw297ZK1Swt56Bly
+         V3nGgPyqvQPMeDtng5baT7oly6ktnoBEa56u9lCaFRUnAvGmc515iPKUrcWy2Hs+fCMI
+         IFS1C4dlShgMqMwCUu2tNPruIHdi1VqoM0tac=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0jhRFYVkza+qJU3Il8/iXGVhPGBzX8dkXPD9i1bwSag=;
-        b=HcIXr8Hrwmmw5Wi5wr+oQPp0f5r7SVEypa4eQqW5Mf4OTkKkR07I7N2dGa8lQXTAzm
-         G9MLDuJhlTsCe8pMxN93AQ6yXlYl9xHv5mIVNeFJWn/s++YRKXa8YJnVOgXr09kKFhUo
-         PcQq+zg/SoXMPB3rX4FXig7id4wbZT3B5EqdLzdsmlTBf1XOfOOJ97KCYkAdqzeKNb0h
-         hhFSVw124mRpzMYyCo9WykLEFe3Y18V2m8iBasSQtNFGtyyftMwA4+kGpWEo75fQ6yja
-         7wisH2SmVT2PJfx6ABwD+AsaKsjG2KsLk/6APKLBAjCVPGs4eQchcBwGIqwqCEBeiafe
-         nFjA==
-X-Gm-Message-State: ANhLgQ14Be72ZQxblAst7bNF/iqQ4sFcVt+rRAcfmlxBTWFnCZjY3qJ2
-        9y48WK3CcpVTZuwFyuh5IGU=
-X-Google-Smtp-Source: ADFU+vv5K/FBYjKeTVX0F/L19lDVfm50dWVM5MaRN4MeyMqOqGnWTdxnNM7cmfvlZTzDum9SAd0OPg==
-X-Received: by 2002:adf:d849:: with SMTP id k9mr15996160wrl.108.1585592583199;
-        Mon, 30 Mar 2020 11:23:03 -0700 (PDT)
-Received: from localhost (ip-37-188-180-223.eurotel.cz. [37.188.180.223])
-        by smtp.gmail.com with ESMTPSA id f187sm474696wme.9.2020.03.30.11.23.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 11:23:02 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 20:23:01 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Hoan Tran <Hoan@os.amperecomputing.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        lho@amperecomputing.com, mmorana@amperecomputing.com
-Subject: Re: [PATCH v3 0/5] mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by
- default for NUMA
-Message-ID: <20200330182301.GM14243@dhcp22.suse.cz>
-References: <1585420282-25630-1-git-send-email-Hoan@os.amperecomputing.com>
- <20200330074246.GA14243@dhcp22.suse.cz>
- <20200330175100.GD30942@linux.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NBiWhVp0IqfyFDNmwRRGA/s+Dtxuu8Q2mjZHUKcx0uk=;
+        b=cDxAE+Bg4W5t/Ay4O2h3CgFa7Vx6/4xQFIlI4oUObMoMla3C1iDhkdEkvKiob9axM/
+         UGgdr6RPPCY6yyGYBtcSic9y1X8LZyvA47uBAXUXmc07HozxSTh2aBZ75/mSDnAMBoKa
+         wfKxLihZPQqib84MCNZaQRI6LZwKivLhiI1Vyjj9RK6w/N+Rsm3326A31g9NNgcWTgWf
+         mTlVVQ95tPdyfdGkKjZSY+19kl06Wh+CO8sj9srhwN/X6f+kNnLi1Y05grwMgw+O7Phc
+         hdE013LaA4S2fgTb9BoREuhldXvxfYGYNbKTV/Nv2d2SoCGOom3vaVBa50AG46Af+dU2
+         ZEbg==
+X-Gm-Message-State: AGi0PuZHk/mxVu55X+hIIGeg4NyBc+XnnYH65XXyW9KCGBIWB6lW/GGI
+        29Lt7dt9CO+LePZpxBhsDXQWLKFyg/Y=
+X-Google-Smtp-Source: APiQypJJPYo0z3QVGQck/85PaRD7teNGsgBqGnnw0D9KTvpBzevvjGzZCokODQtSse/5R3XGXLcnzg==
+X-Received: by 2002:a67:3355:: with SMTP id z82mr9517178vsz.76.1585592683679;
+        Mon, 30 Mar 2020 11:24:43 -0700 (PDT)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
+        by smtp.gmail.com with ESMTPSA id o39sm6163573uad.6.2020.03.30.11.24.42
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Mar 2020 11:24:43 -0700 (PDT)
+Received: by mail-vk1-f182.google.com with SMTP id f17so4759681vkk.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 11:24:42 -0700 (PDT)
+X-Received: by 2002:a1f:a9d2:: with SMTP id s201mr8815125vke.92.1585592681966;
+ Mon, 30 Mar 2020 11:24:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200330175100.GD30942@linux.ibm.com>
+References: <20200327132852.10352-1-saiprakash.ranjan@codeaurora.org>
+ <0023bc68-45fb-4e80-00c8-01fd0369243f@arm.com> <37db9a4d524aa4d7529ae47a8065c9e0@codeaurora.org>
+ <5858bdac-b7f9-ac26-0c0d-c9653cef841d@arm.com> <d60196b548e1241b8334fadd0e8c2fb5@codeaurora.org>
+In-Reply-To: <d60196b548e1241b8334fadd0e8c2fb5@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 30 Mar 2020 11:24:30 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WXTN6xxqtL6d6MHxG8Epuo6FSQERRPfnoSCskhjh1KeQ@mail.gmail.com>
+Message-ID: <CAD=FV=WXTN6xxqtL6d6MHxG8Epuo6FSQERRPfnoSCskhjh1KeQ@mail.gmail.com>
+Subject: Re: [PATCH] iommu/arm-smmu: Demote error messages to debug in
+ shutdown callback
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 30-03-20 20:51:00, Mike Rapoport wrote:
-> On Mon, Mar 30, 2020 at 09:42:46AM +0200, Michal Hocko wrote:
-> > On Sat 28-03-20 11:31:17, Hoan Tran wrote:
-> > > In NUMA layout which nodes have memory ranges that span across other nodes,
-> > > the mm driver can detect the memory node id incorrectly.
-> > > 
-> > > For example, with layout below
-> > > Node 0 address: 0000 xxxx 0000 xxxx
-> > > Node 1 address: xxxx 1111 xxxx 1111
-> > > 
-> > > Note:
-> > >  - Memory from low to high
-> > >  - 0/1: Node id
-> > >  - x: Invalid memory of a node
-> > > 
-> > > When mm probes the memory map, without CONFIG_NODES_SPAN_OTHER_NODES
-> > > config, mm only checks the memory validity but not the node id.
-> > > Because of that, Node 1 also detects the memory from node 0 as below
-> > > when it scans from the start address to the end address of node 1.
-> > > 
-> > > Node 0 address: 0000 xxxx xxxx xxxx
-> > > Node 1 address: xxxx 1111 1111 1111
-> > > 
-> > > This layout could occur on any architecture. Most of them enables
-> > > this config by default with CONFIG_NUMA. This patch, by default, enables
-> > > CONFIG_NODES_SPAN_OTHER_NODES or uses early_pfn_in_nid() for NUMA.
-> > 
-> > I am not opposed to this at all. It reduces the config space and that is
-> > a good thing on its own. The history has shown that meory layout might
-> > be really wild wrt NUMA. The config is only used for early_pfn_in_nid
-> > which is clearly an overkill.
-> > 
-> > Your description doesn't really explain why this is safe though. The
-> > history of this config is somehow messy, though. Mike has tried
-> > to remove it a94b3ab7eab4 ("[PATCH] mm: remove arch independent
-> > NODES_SPAN_OTHER_NODES") just to be reintroduced by 7516795739bd
-> > ("[PATCH] Reintroduce NODES_SPAN_OTHER_NODES for powerpc") without any
-> > reasoning what so ever. This doesn't make it really easy see whether
-> > reasons for reintroduction are still there. Maybe there are some subtle
-> > dependencies. I do not see any TBH but that might be burried deep in an
-> > arch specific code.
-> 
-> I've looked at this a bit more and it seems that the check for
-> early_pfn_in_nid() in memmap_init_zone() can be simply removed.
-> 
-> The commits you've mentioned were way before the addition of
-> HAVE_MEMBLOCK_NODE_MAP and the whole infrastructure that calculates zone
-> sizes and boundaries based on the memblock node map.
-> So, the memmap_init_zone() is called when zone boundaries are already
-> within a node.
+Hi,
 
-But zones from different nodes might overlap in the pfn range. And this
-check is there to skip over those overlapping areas. The only way to
-skip over this check I can see is to do a different pfn walk and go
-through memblock ranges which are guaranteed to belong to a single node.
--- 
-Michal Hocko
-SUSE Labs
+On Sat, Mar 28, 2020 at 12:35 AM Sai Prakash Ranjan
+<saiprakash.ranjan@codeaurora.org> wrote:
+>
+> > Of course the fact that in practice we'll *always* see the warning
+> > because there's no way to tear down the default DMA domains, and even
+> > if all devices *have* been nicely quiesced there's no way to tell, is
+> > certainly less than ideal. Like I say, it's not entirely clear-cut
+> > either way...
+> >
+>
+> Thanks for these examples, good to know these scenarios in case we come
+> across these.
+> However, if we see these error/warning messages appear everytime then
+> what will be
+> the credibility of these messages? We will just ignore these messages
+> when
+> these issues you mention actually appears because we see them everytime
+> on
+> reboot or shutdown.
+
+I would agree that if these messages are expected to be seen every
+time, there's no way to fix them, and they're not indicative of any
+problem then something should be done.  Seeing something printed at
+"dev_error" level with an exclamation point (!) at the end makes me
+feel like this is something that needs immediate action on my part.
+
+If we really can't do better but feel that the messages need to be
+there, at least make them dev_info and less scary like:
+
+  arm-smmu 15000000.iommu: turning off; DMA should be quiesced before now
+
+...that would still give you a hint in the logs that if you saw a DMA
+transaction after the message that it was a bug but also wouldn't
+sound scary to someone who wasn't seeing any other problems.
+
+-Doug
