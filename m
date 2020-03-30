@@ -2,135 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4ABC198194
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 18:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7368119819A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 18:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730002AbgC3Qp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 12:45:58 -0400
-Received: from mail-pg1-f178.google.com ([209.85.215.178]:37351 "EHLO
-        mail-pg1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbgC3Qp5 (ORCPT
+        id S1728261AbgC3Qqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 12:46:53 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:46723 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728760AbgC3Qqw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 12:45:57 -0400
-Received: by mail-pg1-f178.google.com with SMTP id a32so8920963pga.4
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 09:45:56 -0700 (PDT)
+        Mon, 30 Mar 2020 12:46:52 -0400
+Received: by mail-oi1-f193.google.com with SMTP id q204so16193014oia.13
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 09:46:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1jHmmqwn2svjDpJo/PqcecI2nv0o43iwqhoUvWD12Vs=;
-        b=UtaEHMs0yz7OzsCgZpF68S16mE3rpzMGRscsJpWv+NrjN1/ike3O51+Q+Wejvo0baN
-         m0UHlGFc13NiDBP55M5QExJcxOwwqQSiwT4ODoytwiX5YW75t9VaupearIW/bs/UXUak
-         iGToo5V8SQQIEquNd4I5b4wNnAQJQrgBXhpPFFzplNKWpTZoQvUpGjd918V4WKC0/6n9
-         16Edgr0PuVfUlvAJDA53+FiCxJvO6m1S5L8UnUMrnk+sHrcZyJUyRwcYpmXeMHlIDOUn
-         WAuQ8OfjPo03bghgj+9d7Vy1bvTI04+PUxWBsPxxvsjk8P9nOWk3NV71Kwwzinr9uE3A
-         kOBA==
+        d=sartura-hr.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DPz9gtxpMPf6tArK7MvaaRJYhPzPBkxkpKB6SAn10yM=;
+        b=SVW0nrw9OU8xTC4JiaLDCppad8ywA6MOGUwE5c83bNflZhIs+9J4qyevvQWlZlmS4C
+         ezl2EmbERzSzOcNNtg+HcjH3TRtM2Wfm8jWsShVPektGOLBqAu+8Zt01eYM2z7AeOZyg
+         qvcTemzaAxTjscS6yAaY6j3kX0S5B7Z0JiGW2sxNi6rdu6GBm5r9X1ZWRx43RPO+5s6b
+         nSYhh8Qvtcxv1xGir1hh/u6+sH2GEEwHYM/LCGD6awSNFWq76itiMT3PG2angx6rRXJq
+         crw4daFNWy8RgJq5YMiy6NIUvW6x90mKIh7OfPkhsBzOAHRFzQY791dg6zOtuUnWFJJi
+         ivTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1jHmmqwn2svjDpJo/PqcecI2nv0o43iwqhoUvWD12Vs=;
-        b=Y23h5PGvApGkII5foj2OindfwhAM32GLscZY1TtGstsTlFvUCtA3sn2lrI8AG7aOPt
-         qNU6384oon6ITBMkgiBue9Z/RnuNHcs/w6SRkJrX9PVqpOUb0uJTN6QGahFI+NP/vXjd
-         x1hCzmJpvu5sTqPw1wZEWbmFfDxdUFlZx+k3BCCRknt4XueubynqklL9lxMIIv8RyRk+
-         1ErPK4kiQL2V7xO8kXO2DzmNotcG1lh1h4RrCw6Trl9kTMb0wnW9fDkJVQh2cXbv6ENl
-         wTOMfBARmohkApWlNwXPtY8MqiTVb0YpmymIsVwDln31KJ2d9BI2MOctRRWClgQzQiUF
-         QcuA==
-X-Gm-Message-State: ANhLgQ2JtoCWsmefLt3eRVddArIH85Nk02tNx+hmnrUsTLD2PV58wlb/
-        OxW8LWw863tLEoZpxz6AE2Y=
-X-Google-Smtp-Source: ADFU+vtOhZClSPuPt9LL+z7Wgq9KBychguJqh6cRzsTPUxU7Inz3i+Lc6EnI2CAJBYVtbDwyze8TGQ==
-X-Received: by 2002:a05:6a00:42:: with SMTP id i2mr13604943pfk.108.1585586756115;
-        Mon, 30 Mar 2020 09:45:56 -0700 (PDT)
-Received: from OptiPlexFedora.fios-router.home ([47.144.161.84])
-        by smtp.gmail.com with ESMTPSA id d3sm56194pjz.2.2020.03.30.09.45.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 09:45:55 -0700 (PDT)
-From:   "John B. Wyatt IV" <jbwyatt4@gmail.com>
-To:     outreachy-kernel@googlegroups.com,
-        Julia Lawall <julia.lawall@inria.fr>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        Forest Bond <forest@alittletooquiet.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Quentin Deslandes <quentin.deslandes@itdev.co.uk>,
-        Colin Ian King <colin.king@canonical.com>,
-        Malcolm Priestley <tvboxspy@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     "John B. Wyatt IV" <jbwyatt4@gmail.com>
-Subject: [PATCH v4] staging: vt6656: add error code handling to unused variable
-Date:   Mon, 30 Mar 2020 09:45:30 -0700
-Message-Id: <20200330164530.2919-1-jbwyatt4@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DPz9gtxpMPf6tArK7MvaaRJYhPzPBkxkpKB6SAn10yM=;
+        b=SKXcjZL3bKT0kHPgdSjhkEYaezO8tbli0UKGYTx6bU1pKs0iOiuHI0Xzkk08MHsVzF
+         sHYCm/8bj+Su/KTrA51kF6X22w6d7CznD7rbND6jq2xSppuLY4EEQNQSS8Y67L5f2FyR
+         Re72mWdyaoIM7maEaqWuhXsEMF/LeK4YAJqurXd/PSy8XhY/F11uivbmT5D+xjK/CqyK
+         e0hNx/EsXl7ZVtILHyW+vx6sV0jYa/Z9ppuq6NV0JfDGOnUGG5xtAsjGSbbegvDE2C32
+         lvPTqio25hMFNE+gUwST0DKWHyo7LYlh9O7XK+sGY0RpccEJliHZzsHFktXW/n9qlz0f
+         tYDA==
+X-Gm-Message-State: ANhLgQ2fafWW8993VJgHZ6s7Uk8bXtqmJUmRA1A1RomIewv4RY0wgkeq
+        ynv5jQI7j/YjrGNNWsFo33K2DWbNCPCz46rgR+Uy6Q==
+X-Google-Smtp-Source: ADFU+vtUGsmlN2XFYfF62TaUwNUzBJOISRq1oEeqlaCLbMM2tYHWk9/YylsjgI6dk9sJqFOq4w9ceQfS1SA8m2ByZbA=
+X-Received: by 2002:aca:4d86:: with SMTP id a128mr182032oib.96.1585586811745;
+ Mon, 30 Mar 2020 09:46:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200328135345.695622-1-robert.marko@sartura.hr>
+ <20200328135345.695622-2-robert.marko@sartura.hr> <20200330154056.GA22114@bogus>
+In-Reply-To: <20200330154056.GA22114@bogus>
+From:   Robert Marko <robert.marko@sartura.hr>
+Date:   Mon, 30 Mar 2020 18:46:40 +0200
+Message-ID: <CA+HBbNEBCK_TfMRuKC71-dw1Wcir+43LK4ahAi9F_3kMosWJsQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] dt-bindings: phy-qcom-ipq4019-usb: add binding document
+To:     Rob Herring <robh@kernel.org>
+Cc:     agross@kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        kishon@ti.com, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, John Crispin <john@phrozen.org>,
+        Luka Perkov <luka.perkov@sartura.hr>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add error code handling to unused 'ret' variable that was never used.
-Return an error code from functions called within vnt_radio_power_on.
+On Mon, Mar 30, 2020 at 5:40 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Sat, 28 Mar 2020 14:53:49 +0100, Robert Marko wrote:
+> > This patch adds the binding documentation for the HS/SS USB PHY found
+> > inside Qualcom Dakota SoCs.
+> >
+> > Signed-off-by: John Crispin <john@phrozen.org>
+> > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+> > Cc: Luka Perkov <luka.perkov@sartura.hr>
+> > ---
+> >  .../bindings/phy/qcom-usb-ipq4019-phy.yaml    | 45 +++++++++++++++++++
+> >  1 file changed, 45 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
+> >
+>
+> My bot found errors running 'make dt_binding_check' on your patch:
+>
+> Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml:  while scanning a block scalar
+>   in "<unicode string>", line 37, column 5
+> found a tab character where an indentation space is expected
+>   in "<unicode string>", line 39, column 1
+> Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.example.dts' failed
+> make[1]: *** [Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.example.dts] Error 1
+> make[1]: *** Waiting for unfinished jobs....
+> warning: no schema found in file: Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml: ignoring, error parsing file
+> Makefile:1262: recipe for target 'dt_binding_check' failed
+> make: *** [dt_binding_check] Error 2
+>
+> See https://patchwork.ozlabs.org/patch/1263219
+>
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure dt-schema is up to date:
+>
+> pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+>
+> Please check and re-submit.
 
-Issue reported by coccinelle (coccicheck).
+Thanks,
 
-Suggested-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Suggested-by: Stefano Brivio <sbrivio@redhat.com>
-Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-Reviewed-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Signed-off-by: John B. Wyatt IV <jbwyatt4@gmail.com>
----
-v4: Move Suggested-by: Julia Lawall above seperator line.
-    Add Reviewed-by tag as requested by Quentin Deslandes.
-    Suggested-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+I fixed it and pushed v5.
 
-v3: Forgot to add v2 code changes to commit.
-
-v2: Replace goto statements with return.
-    Remove last if check because it was unneeded.
-    Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-
- drivers/staging/vt6656/card.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/staging/vt6656/card.c b/drivers/staging/vt6656/card.c
-index dc3ab10eb630..239012539e73 100644
---- a/drivers/staging/vt6656/card.c
-+++ b/drivers/staging/vt6656/card.c
-@@ -723,9 +723,13 @@ int vnt_radio_power_on(struct vnt_private *priv)
- {
- 	int ret = 0;
- 
--	vnt_exit_deep_sleep(priv);
-+	ret = vnt_exit_deep_sleep(priv);
-+	if (ret)
-+		return ret;
- 
--	vnt_mac_reg_bits_on(priv, MAC_REG_HOSTCR, HOSTCR_RXON);
-+	ret = vnt_mac_reg_bits_on(priv, MAC_REG_HOSTCR, HOSTCR_RXON);
-+	if (ret)
-+		return ret;
- 
- 	switch (priv->rf_type) {
- 	case RF_AL2230:
-@@ -734,14 +738,14 @@ int vnt_radio_power_on(struct vnt_private *priv)
- 	case RF_VT3226:
- 	case RF_VT3226D0:
- 	case RF_VT3342A0:
--		vnt_mac_reg_bits_on(priv, MAC_REG_SOFTPWRCTL,
--				    (SOFTPWRCTL_SWPE2 | SOFTPWRCTL_SWPE3));
-+		ret = vnt_mac_reg_bits_on(priv, MAC_REG_SOFTPWRCTL,
-+					 (SOFTPWRCTL_SWPE2 | SOFTPWRCTL_SWPE3));
- 		break;
- 	}
-+	if (ret)
-+		return ret;
- 
--	vnt_mac_reg_bits_off(priv, MAC_REG_GPIOCTL1, GPIO3_INTMD);
--
--	return ret;
-+	return vnt_mac_reg_bits_off(priv, MAC_REG_GPIOCTL1, GPIO3_INTMD);
- }
- 
- void vnt_set_bss_mode(struct vnt_private *priv)
--- 
-2.25.1
-
+Cheers
+Robert
