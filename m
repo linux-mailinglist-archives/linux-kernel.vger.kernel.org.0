@@ -2,58 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA887198586
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C616B19858B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:40:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbgC3UkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 16:40:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34912 "EHLO mail.kernel.org"
+        id S1728780AbgC3UkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 16:40:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727714AbgC3UkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 16:40:07 -0400
-Subject: Re: [GIT PULL] erofs updates for 5.7-rc1
+        id S1728592AbgC3UkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 16:40:08 -0400
+Subject: Re: [GIT PULL] seccomp updates for v5.7-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585600806;
-        bh=cHzfQoKbVQUqHdX+/LrYyMnzkUBykPIX2ElSc3E/KmM=;
+        s=default; t=1585600808;
+        bh=YTTTjCX8oEROf3f3IDnSDv0fSZht2D8vQsEFfJh58Fw=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=YcDeCn9GSXm1aCDZN566cLL2fkG7pRnwvJO7+wq5xigfGK9CBKRiPp0a653slMD+1
-         LK2AnFWxUXh+4luqOikeyBMBoUQnvPPuUQq9xIMFUpYWevdR3ou27OmS6yZfPuz3vl
-         sHnPFWcJhcuXhS6D4444uQdXnTcM2SJnJB10lFyc=
+        b=Fth3y3lM+ecw5bXGzFowWkS6m95hC4I1hmDiT6Cuu0HmirQ2yasUNmjbXNAkLepuZ
+         b3b7LbifBIpx3nOXXFzL/RMTYLySVOVcCLij8+SAzed6FxLN6gg4vlgBtRv/Ier8Di
+         Z1TSPxWV1f6jMtgqIxzHq/huiV+VbjWcWlhr2nkQ=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200330023830.GA5112@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <20200330023830.GA5112.ref@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20200330023830.GA5112@hsiangkao-HP-ZHAN-66-Pro-G1>
+In-Reply-To: <202003292114.2252CAEF7@keescook>
+References: <202003292114.2252CAEF7@keescook>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200330023830.GA5112@hsiangkao-HP-ZHAN-66-Pro-G1>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git
- tags/erofs-for-5.7-rc1
-X-PR-Tracked-Commit-Id: 20741a6e146cab59745c7f25abf49d891a83f8e9
+X-PR-Tracked-Message-Id: <202003292114.2252CAEF7@keescook>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
+ tags/seccomp-v5.7-rc1
+X-PR-Tracked-Commit-Id: 3db81afd99494a33f1c3839103f0429c8f30cb9d
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 377ad0c28c1df7b0634e697f34bdea8325f39a66
-Message-Id: <158560080684.3259.12757063213872171906.pr-tracker-bot@kernel.org>
-Date:   Mon, 30 Mar 2020 20:40:06 +0000
-To:     Gao Xiang <hsiangkao@aol.com>
+X-PR-Merge-Commit-Id: 78b0dedd529239332b1f8c24dfc9e6c1c322880e
+Message-Id: <158560080814.3259.2582456130067082336.pr-tracker-bot@kernel.org>
+Date:   Mon, 30 Mar 2020 20:40:08 +0000
+To:     Kees Cook <keescook@chromium.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Matthew Denton <mpdenton@google.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Tycho Andersen <tycho@tycho.ws>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 30 Mar 2020 10:38:40 +0800:
+The pull request you sent on Sun, 29 Mar 2020 21:16:07 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-5.7-rc1
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/seccomp-v5.7-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/377ad0c28c1df7b0634e697f34bdea8325f39a66
+https://git.kernel.org/torvalds/c/78b0dedd529239332b1f8c24dfc9e6c1c322880e
 
 Thank you!
 
