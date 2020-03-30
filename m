@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B6AC197EFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14D2F197F01
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:50:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728944AbgC3OuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 10:50:05 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59020 "EHLO
+        id S1728967AbgC3OuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 10:50:16 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59023 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728817AbgC3OuA (ORCPT
+        with ESMTP id S1728376AbgC3OuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 10:50:00 -0400
+        Mon, 30 Mar 2020 10:50:01 -0400
 Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jIvji-0006ub-0C; Mon, 30 Mar 2020 16:49:58 +0200
+        id 1jIvjj-0006uq-5Z; Mon, 30 Mar 2020 16:49:59 +0200
 Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id 84CBC1040EC;
-        Mon, 30 Mar 2020 16:49:57 +0200 (CEST)
-Date:   Mon, 30 Mar 2020 14:47:15 -0000
+        by nanos.tec.linutronix.de (Postfix) with ESMTP id BC3CA1040EC;
+        Mon, 30 Mar 2020 16:49:58 +0200 (CEST)
+Date:   Mon, 30 Mar 2020 14:47:16 -0000
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] x86/splitlock for v5.7
+Subject: [GIT pull] x86/timers for v5.7
 References: <158557962955.22376.9136086165862170511.tglx@nanos.tec.linutronix.de>
-Message-ID: <158557963557.22376.16443742264836974381.tglx@nanos.tec.linutronix.de>
+Message-ID: <158557963678.22376.17697748296819329736.tglx@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -37,48 +37,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest x86/splitlock branch from:
+please pull the latest x86/timers branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-splitlock-2020-03-30
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-timers-2020-03-30
 
-up to:  a6a60741035b: x86/split_lock: Avoid runtime reads of the TEST_CTRL MSR
+up to:  fac01d11722c: x86/tsc_msr: Make MSR derived TSC frequency more accurate
 
-Support for "split lock" detection:
 
-  - Atomic operations (lock prefixed instructions) which span two cache
-    lines have to acquire the global bus lock. This is at least 1k cycles
-    slower than an atomic operation within a cache line and disrupts
-    performance on other cores. Aside of performance disruption this is
-    a unpriviledged form of DoS.
+x86 timer updates:
 
-    Some newer CPUs have the capability to raise an #AC trap when such an
-    operation is attempted. The detection is by default enabled in warning
-    mode which will warn once when a user space application is caught. A
-    command line option allows to disable the detection or to select fatal
-    mode which will terminate offending applications with SIGBUS.
+  - A series of commits to make the MSR derived CPU and TSC frequency more
+    accurate.
+
+    It turned out that the frequency tables which have been taken from the
+    SDM are inaccurate because the SDM provides truncated and rounded
+    values, e.g. 83.3Mhz (83.3333...) or 116.7Mhz (116.6666...).
+
+    This causes time drift in the range of ~1 second per hour
+    (20-30 seconds per day). On some of these SoCs it's not possible to
+    recalibrate the TSC because there is no reference (PIT, HPET) available.
+
+    With some reverse engineering it was established that the possible
+    frequencies are derived from the base clock with fixed multiplier /
+    divider pairs.
+
+    For the CPU models which have a known crystal frequency the kernel now
+    uses multiplier / divider pairs which bring the frequencies closer to
+    reality and fix the observed time drift issues.
 
 Thanks,
 
 	tglx
 
 ------------------>
-Peter Zijlstra (Intel) (1):
-      x86/split_lock: Enable split lock detection by kernel
-
-Xiaoyao Li (2):
-      x86/split_lock: Rework the initialization flow of split lock detection
-      x86/split_lock: Avoid runtime reads of the TEST_CTRL MSR
+Hans de Goede (3):
+      x86/tsc_msr: Use named struct initializers
+      x86/tsc_msr: Fix MSR_FSB_FREQ mask for Cherry Trail devices
+      x86/tsc_msr: Make MSR derived TSC frequency more accurate
 
 
- Documentation/admin-guide/kernel-parameters.txt |  22 +++
- arch/x86/include/asm/cpu.h                      |  12 ++
- arch/x86/include/asm/cpufeatures.h              |   2 +
- arch/x86/include/asm/msr-index.h                |   9 ++
- arch/x86/include/asm/thread_info.h              |   4 +-
- arch/x86/kernel/cpu/common.c                    |   2 +
- arch/x86/kernel/cpu/intel.c                     | 183 ++++++++++++++++++++++++
- arch/x86/kernel/process.c                       |   3 +
- arch/x86/kernel/traps.c                         |  24 +++-
- 9 files changed, 258 insertions(+), 3 deletions(-)
+ arch/x86/kernel/tsc_msr.c | 128 ++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 112 insertions(+), 16 deletions(-)
 
 
