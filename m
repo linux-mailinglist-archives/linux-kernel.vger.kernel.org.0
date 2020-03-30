@@ -2,223 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FF601985A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:42:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F6A81985B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728715AbgC3UmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 16:42:22 -0400
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:64132 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbgC3UmW (ORCPT
+        id S1728879AbgC3Unc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 16:43:32 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:24624 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727437AbgC3Unb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 16:42:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1585600940; x=1617136940;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=pzei7EPNdSl0vQstWZdYvFBARJOekVDWFMh3y2n4Zzg=;
-  b=SoqkNnxDDNpLJEjSehgHaebK+wGoVdRSn1EUjoFNeiLFwvu+XsbQ52Wb
-   WFIYkGy9huKpC9aYl7CpIqR0zH/6qnFmDeLNj2BoAJ1/HSoJbiPbbCK7b
-   6FktbahnxEU1cznScP+FEEL1r5VaNTna9q+cTStoIFd+OZJ76CGnHqytR
-   g=;
-IronPort-SDR: ZQ+rhy1V3tG9tO8gx4zMdwYV99PRd2MSqkQa6tUb6O30D5v+rRPtyfdHoJg1n+6rvekwp2wRW2
- RRTQjGuwOMAQ==
-X-IronPort-AV: E=Sophos;i="5.72,325,1580774400"; 
-   d="scan'208";a="25953907"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 30 Mar 2020 20:42:17 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com (Postfix) with ESMTPS id C9F3AA2992;
-        Mon, 30 Mar 2020 20:42:09 +0000 (UTC)
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 30 Mar 2020 20:42:09 +0000
-Received: from 38f9d3867b82.ant.amazon.com (10.43.162.134) by
- EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Mon, 30 Mar 2020 20:42:02 +0000
-Subject: Re: [PATCH] swiotlb: Allow swiotlb to live at pre-defined address
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Kairui Song <kasong@redhat.com>, <anthony.yznaga@oracle.com>,
-        Jan Setje-Eilers <jan.setjeeilers@oracle.com>
-CC:     Dave Young <dyoung@redhat.com>, <iommu@lists.linux-foundation.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Marek Szyprowski" <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, <dwmw@amazon.com>,
-        <benh@amazon.com>, Jan Kiszka <jan.kiszka@siemens.com>,
-        <alcioa@amazon.com>, <aggh@amazon.com>, <aagch@amazon.com>,
-        <dhr@amazon.com>, Laszlo Ersek <lersek@redhat.com>,
-        Baoquan He <bhe@redhat.com>, Lianbo Jiang <lijiang@redhat.com>,
-        <brijesh.singh@amd.com>,
-        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
-        <kexec@lists.infradead.org>,
-        "Schoenherr, Jan H." <jschoenh@amazon.de>
-References: <20200326162922.27085-1-graf@amazon.com>
- <20200328115733.GA67084@dhcp-128-65.nay.redhat.com>
- <CACPcB9d_Pz9SRhSsRzqygRR6waV7r8MnGcCP952svnZtpFaxnQ@mail.gmail.com>
- <20200330134004.GA31026@char.us.oracle.com>
-From:   Alexander Graf <graf@amazon.com>
-Message-ID: <51432837-8804-0600-c7a3-8849506f999e@amazon.com>
-Date:   Mon, 30 Mar 2020 22:42:00 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <20200330134004.GA31026@char.us.oracle.com>
-Content-Language: en-US
-X-Originating-IP: [10.43.162.134]
-X-ClientProxiedBy: EX13D10UWB002.ant.amazon.com (10.43.161.130) To
- EX13D20UWC001.ant.amazon.com (10.43.162.244)
-Content-Type: text/plain; charset="windows-1252"; format="flowed"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 30 Mar 2020 16:43:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585601011;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=G8YOlQo1+Lr+V/H5HcsRFkaQvjYFkEv0+2CE1fXiBGg=;
+        b=g6G4aruQyi//D6AZKogrtCjvEg1VdzGiy2+/cJXQlMOvYolOoB3IgEeQetjyN3xUuG9iTG
+        G4M9iUu1Q8ukTVelbjOKqCoJl7fKxXLcWQzwiCA5Kj9KR6XrC0zyZHcf0HoUivajqY+FxP
+        fwxlSa5aulPMEbskYaN4I/V5WEmDzh0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-154-RvjVc_NNOZKBvwcuq9Ljgw-1; Mon, 30 Mar 2020 16:43:26 -0400
+X-MC-Unique: RvjVc_NNOZKBvwcuq9Ljgw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EA7F7108592C;
+        Mon, 30 Mar 2020 20:43:25 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-116-15.gru2.redhat.com [10.97.116.15])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 384F819C58;
+        Mon, 30 Mar 2020 20:43:14 +0000 (UTC)
+From:   Wainer dos Santos Moschetta <wainersm@redhat.com>
+To:     kvm@vger.kernel.org, pbonzini@redhat.com
+Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        david@redhat.com, drjones@redhat.com
+Subject: [PATCH 0/2] selftests: kvm: Introduce the mem_slot_test test
+Date:   Mon, 30 Mar 2020 17:43:08 -0300
+Message-Id: <20200330204310.21736-1-wainersm@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series introduces a new KVM selftest (mem_slot_test) that goal
+is to verify memory slots can be added up to the maximum allowed. An
+extra slot is attempted which should occur on error.
 
+The patch 01 is needed so that the VM fd can be accessed from the
+test code (for the ioctl call attempting to add an extra slot).
 
-On 30.03.20 15:40, Konrad Rzeszutek Wilk wrote:
-> =
+I ran the test successfully on x86_64, aarch64, and s390x.  This
+is why it is enabled to build on those arches.
 
-> =
+Finally, I hope it is useful test!
 
-> =
+Wainer dos Santos Moschetta (2):
+  selftests: kvm: Add vm_get_fd() in kvm_util
+  selftests: kvm: Add mem_slot_test test
 
-> On Mon, Mar 30, 2020 at 02:06:01PM +0800, Kairui Song wrote:
->> On Sat, Mar 28, 2020 at 7:57 PM Dave Young <dyoung@redhat.com> wrote:
->>>
->>> On 03/26/20 at 05:29pm, Alexander Graf wrote:
->>>> The swiotlb is a very convenient fallback mechanism for bounce bufferi=
-ng of
->>>> DMAable data. It is usually used for the compatibility case where devi=
-ces
->>>> can only DMA to a "low region".
->>>>
->>>> However, in some scenarios this "low region" may be bound even more
->>>> heavily. For example, there are embedded system where only an SRAM reg=
-ion
->>>> is shared between device and CPU. There are also heterogeneous computi=
-ng
->>>> scenarios where only a subset of RAM is cache coherent between the
->>>> components of the system. There are partitioning hypervisors, where
->>>> a "control VM" that implements device emulation has limited view into a
->>>> partition's memory for DMA capabilities due to safety concerns.
->>>>
->>>> This patch adds a command line driven mechanism to move all DMA memory=
- into
->>>> a predefined shared memory region which may or may not be part of the
->>>> physical address layout of the Operating System.
->>>>
->>>> Ideally, the typical path to set this configuration would be through D=
-evice
->>>> Tree or ACPI, but neither of the two mechanisms is standardized yet. A=
-lso,
->>>> in the x86 MicroVM use case, we have neither ACPI nor Device Tree, but
->>>> instead configure the system purely through kernel command line option=
-s.
->>>>
->>>> I'm sure other people will find the functionality useful going forward
->>>> though and extend it to be triggered by DT/ACPI in the future.
->>>
->>> Hmm, we have a use case for kdump, this maybe useful.  For example
->>> swiotlb is enabled by default if AMD SME/SEV is active, and in kdump
->>> kernel we have to increase the crashkernel reserved size for the extra
->>> swiotlb requirement.  I wonder if we can just reuse the old kernel's
->>> swiotlb region and pass the addr to kdump kernel.
->>>
->>
->> Yes, definitely helpful for kdump kernel. This can help reduce the
->> crashkernel value.
->>
->> Previously I was thinking about something similar, play around the
->> e820 entry passed to kdump and let it place swiotlb in wanted region.
->> Simply remap it like in this patch looks much cleaner.
->>
->> If this patch is acceptable, one more patch is needed to expose the
->> swiotlb in iomem, so kexec-tools can pass the right kernel cmdline to
->> second kernel.
-> =
+ tools/testing/selftests/kvm/.gitignore        |  1 +
+ tools/testing/selftests/kvm/Makefile          |  3 +
+ .../testing/selftests/kvm/include/kvm_util.h  |  1 +
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  5 +
+ tools/testing/selftests/kvm/mem_slot_test.c   | 92 +++++++++++++++++++
+ 5 files changed, 102 insertions(+)
+ create mode 100644 tools/testing/selftests/kvm/mem_slot_test.c
 
-> We seem to be passsing a lot of data to kexec.. Perhaps something
-> of a unified way since we seem to have a lot of things to pass - disabling
-> IOMMU, ACPI RSDT address, and then this.
-> =
-
-> CC-ing Anthony who is working on something - would you by any chance
-> have a doc on this?
-
-
-I see in general 2 use cases here:
-
-
-1) Allow for a generic mechanism to have the fully system, individual =
-
-buses, devices or functions of a device go through a particular, =
-
-self-contained bounce buffer.
-
-This sounds like the holy grail to a lot of problems. It would solve =
-
-typical embedded scenarios where you only have a shared SRAM. It solves =
-
-the safety case (to some extent) where you need to ensure that one =
-
-device interaction doesn't conflict with another device interaction. It =
-
-also solves the problem I've tried to solve with the patch here.
-
-It's unfortunately a lot harder than the patch I sent, so it will take =
-
-me some time to come up with a working patch set.. I suppose starting =
-
-with a DT binding only is sensible. Worst case, x86 does also support DT ...
-
-(And yes, I'm always happy to review patches if someone else beats me to it)
-
-
-2) Reuse the SWIOTLB from the previous boot on kexec/kdump
-
-I see little direct relation to SEV here. The only reason SEV makes it =
-
-more relevant, is that you need to have an SWIOTLB region available with =
-
-SEV while without you could live with a disabled IOMMU.
-
-However, I can definitely understand how you would want to have a way to =
-
-tell the new kexec'ed kernel where the old SWIOTLB was, so it can reuse =
-
-its memory for its own SWIOTLB. That way, you don't have to reserve =
-
-another 64MB of RAM for kdump.
-
-What I'm curious on is whether we need to be as elaborate. Can't we just =
-
-pass the old SWIOTLB as free memory to the new kexec'ed kernel and =
-
-everything else will fall into place? All that would take is a bit of =
-
-shuffling on the e820 table pass-through to the kexec'ed kernel, no?
-
-
-Thanks,
-
-Alex
-
-
-
-
-Amazon Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
-Sitz: Berlin
-Ust-ID: DE 289 237 879
-
-
+-- 
+2.17.2
 
