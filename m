@@ -2,68 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2D7B1977C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 11:23:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 982F61977D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 11:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbgC3JW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 05:22:59 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:64554 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727874AbgC3JW7 (ORCPT
+        id S1728259AbgC3J0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 05:26:18 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:59172 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727376AbgC3J0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 05:22:59 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id 02U9MRYO004012;
-        Mon, 30 Mar 2020 18:22:27 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com 02U9MRYO004012
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1585560147;
-        bh=jub3TGqtGTkZnD38uTgdfqYya/SwA1lK8vt+6CKyAds=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dR/P67Xq4lgIqq9JQjyY8WPrAMVXn0rwdrH9bH+/l6CHnhY/bS9VG1dwiApdpqrDF
-         ILRWFya0YyQsh9xf7mOowuFBMobI0Fz+O1Ixb7CYsh5yCjZxf+gANrjSdHBLX9tAIK
-         Mv5lli9eyUI9otBTv0hyKnK9ntewQSvjhHDB77PhVD/e1cvrnrOMt3FZnEQ3PrJbxx
-         caEEeYrXDWC+XsHAEfYxowuuhbWCyEEnM4iwS6WTGuw6cxPtuM1FBygPpkcN2uhwG9
-         DPdEn02ZeDbzhM0m9wltfzKXyLk94tS2ja1vGq2zWpxNwp3C7Msmam9a6bL6AR5wZB
-         59SMie8IQBEYQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: uniphier-system-bus: fix warning in the example
-Date:   Mon, 30 Mar 2020 18:22:18 +0900
-Message-Id: <20200330092218.28967-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 30 Mar 2020 05:26:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585560377;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=P7KONnLRBt7Zi6IX/bJ2rtifHakTT+zqNud06VP531U=;
+        b=ByEYRusVLs3NWG4WNPMWE7dVfN2uyuWqOvh03tk4DBTiYZLGnE2eaiw+DT0deREIN6nSED
+        0rs5YyAraUaExouH5W34GZ4yiOuWw0/dEuDw/MguMew5b+hu0+4AMISqelCqjnpJamtjAa
+        N5fSMHdi/N+OJPMiAAeBwb/+WxL/qfU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-348-v6Tx4dfaPXm-1wc0_ZqlsA-1; Mon, 30 Mar 2020 05:26:14 -0400
+X-MC-Unique: v6Tx4dfaPXm-1wc0_ZqlsA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E4A2518A552A;
+        Mon, 30 Mar 2020 09:26:10 +0000 (UTC)
+Received: from localhost (ovpn-12-53.pek2.redhat.com [10.72.12.53])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A853510027AA;
+        Mon, 30 Mar 2020 09:26:09 +0000 (UTC)
+Date:   Mon, 30 Mar 2020 17:26:06 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Hoan Tran <Hoan@os.amperecomputing.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        lho@amperecomputing.com, mmorana@amperecomputing.com
+Subject: Re: [PATCH v3 0/5] mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by
+ default for NUMA
+Message-ID: <20200330092606.GC6352@MiWiFi-R3L-srv>
+References: <1585420282-25630-1-git-send-email-Hoan@os.amperecomputing.com>
+ <20200330074246.GA14243@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200330074246.GA14243@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following warning from 'make dt_binding_check'.
+On 03/30/20 at 09:42am, Michal Hocko wrote:
+> On Sat 28-03-20 11:31:17, Hoan Tran wrote:
+> > In NUMA layout which nodes have memory ranges that span across other nodes,
+> > the mm driver can detect the memory node id incorrectly.
+> > 
+> > For example, with layout below
+> > Node 0 address: 0000 xxxx 0000 xxxx
+> > Node 1 address: xxxx 1111 xxxx 1111
+> > 
+> > Note:
+> >  - Memory from low to high
+> >  - 0/1: Node id
+> >  - x: Invalid memory of a node
+> > 
+> > When mm probes the memory map, without CONFIG_NODES_SPAN_OTHER_NODES
+> > config, mm only checks the memory validity but not the node id.
+> > Because of that, Node 1 also detects the memory from node 0 as below
+> > when it scans from the start address to the end address of node 1.
+> > 
+> > Node 0 address: 0000 xxxx xxxx xxxx
+> > Node 1 address: xxxx 1111 1111 1111
+> > 
+> > This layout could occur on any architecture. Most of them enables
+> > this config by default with CONFIG_NUMA. This patch, by default, enables
+> > CONFIG_NODES_SPAN_OTHER_NODES or uses early_pfn_in_nid() for NUMA.
+> 
+> I am not opposed to this at all. It reduces the config space and that is
+> a good thing on its own. The history has shown that meory layout might
+> be really wild wrt NUMA. The config is only used for early_pfn_in_nid
+> which is clearly an overkill.
+> 
+> Your description doesn't really explain why this is safe though. The
+> history of this config is somehow messy, though. Mike has tried
+> to remove it a94b3ab7eab4 ("[PATCH] mm: remove arch independent
+> NODES_SPAN_OTHER_NODES") just to be reintroduced by 7516795739bd
+> ("[PATCH] Reintroduce NODES_SPAN_OTHER_NODES for powerpc") without any
+> reasoning what so ever. This doesn't make it really easy see whether
+> reasons for reintroduction are still there. Maybe there are some subtle
+> dependencies. I do not see any TBH but that might be burried deep in an
+> arch specific code.
 
-Warning (unit_address_vs_reg): /example-0/system-bus: node has a reg or ranges property, but no unit name
+Since on all ARCHes NODES_SPAN_OTHER_NODES has dependency on NUMA,
+replacing it with CONFIG_NUMA seems no risk. Just for those ARCHes which
+don't have CONFIG_NODES_SPAN_OTHER_NODES before, it involves a tiny
+performance degradation. Besides, s390 has removed support of
+NODES_SPAN_OTHER_NODES already.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+commit 701dc81e7412daaf3c5bf4bc55d35c8b1525112a
+Author: Heiko Carstens <heiko.carstens@de.ibm.com>
+Date:   Wed Feb 19 13:29:15 2020 +0100
 
- .../devicetree/bindings/bus/socionext,uniphier-system-bus.yaml  | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+    s390/mm: remove fake numa support
 
-diff --git a/Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml b/Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml
-index ff9600d6de3b..c4c9119e4a20 100644
---- a/Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml
-+++ b/Documentation/devicetree/bindings/bus/socionext,uniphier-system-bus.yaml
-@@ -72,7 +72,7 @@ examples:
-     // - the UART device is connected at the offset 0x00200000 of CS5 and
-     //   mapped to 0x46200000 of the parent bus.
- 
--    system-bus {
-+    system-bus@58c00000 {
-         compatible = "socionext,uniphier-system-bus";
-         reg = <0x58c00000 0x400>;
-         #address-cells = <2>;
--- 
-2.17.1
+> 
+> > v3:
+> >  * Revise the patch description
+> > 
+> > V2:
+> >  * Revise the patch description
+> > 
+> > Hoan Tran (5):
+> >   mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by default for NUMA
+> >   powerpc: Kconfig: Remove CONFIG_NODES_SPAN_OTHER_NODES
+> >   x86: Kconfig: Remove CONFIG_NODES_SPAN_OTHER_NODES
+> >   sparc: Kconfig: Remove CONFIG_NODES_SPAN_OTHER_NODES
+> >   s390: Kconfig: Remove CONFIG_NODES_SPAN_OTHER_NODES
+> > 
+> >  arch/powerpc/Kconfig | 9 ---------
+> >  arch/s390/Kconfig    | 8 --------
+> >  arch/sparc/Kconfig   | 9 ---------
+> >  arch/x86/Kconfig     | 9 ---------
+> >  mm/page_alloc.c      | 2 +-
+> >  5 files changed, 1 insertion(+), 36 deletions(-)
+> > 
+> > -- 
+> > 1.8.3.1
+> > 
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
+> 
 
