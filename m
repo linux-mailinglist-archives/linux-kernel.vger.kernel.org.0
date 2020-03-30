@@ -2,84 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A97A1982E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB821982F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:05:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbgC3SER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 14:04:17 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43775 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726385AbgC3SEQ (ORCPT
+        id S1728056AbgC3SFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 14:05:44 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39463 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727975AbgC3SFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 14:04:16 -0400
-Received: by mail-qk1-f193.google.com with SMTP id o10so19999531qki.10
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 11:04:16 -0700 (PDT)
+        Mon, 30 Mar 2020 14:05:43 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p10so22840914wrt.6
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 11:05:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=chromium.org; s=google;
+        h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=c4hYfBPPMsnQLhbHNboJva/pkduGULtadEHE/+GQT34=;
-        b=E/UcXSV4s5eVQyTMQKe79QSsPgXJ2wOIzcOHLZBLea8gQPgvLHAwErJWFPozUT1Jth
-         n2Q1DAywnmP0TFdLlksu3SFxl8e4OK2aFcLS/COesMHooSjeDG7xtKfei8O7z6WebEdV
-         vp7U/5gpSwwY1iEJQGGlDVg+RqFlZkAPPBrVdUJ25KKjnlX1p18DMuwNIAz6jkqcGTb1
-         Dny1qA7/lawXuLuJflZdl42jd5LbTwbJpAzcq/PrCNn6ifHbsM8nSDjeGKUzWN9dvWo6
-         HiReh2wLZJcTVSw5WeDdn1FzuEm/ZMbqJfdoimsJRLi7YoDr0KRh6ZtKkPiceqTkVB7F
-         vVBQ==
+        bh=eK8x7gAXMov1inBTyCa9T4MtcTyNUJQUaxWPoEq8WPM=;
+        b=WQE+QWOmy+rAqfpi/9XWYmLS7jKwH6IbEwVcxVE/K6tVdNy/4xbN85nlusDSzm757a
+         N8Esq9fl5Qh8a89xDGWWUQzzWddG3vupEw//z1mNposwwR3yEPcMIPJRq7YVVtoKQP+p
+         SKQfYVxP6q6j+vCw/suwHBGl91DNojYqK1BMQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c4hYfBPPMsnQLhbHNboJva/pkduGULtadEHE/+GQT34=;
-        b=bPY4dD+DFdKXWk6SUX+RTNtVfkQvY92z5xp9gdQfcjVLn5LW+DbI5R+EYG+4qCssUu
-         DWBvUS/xexrHcyFGwpMyc3QQpEIX0JjvoTZF1Erf4Y24zm3Rub+m8JhNAGjKYlak7FMK
-         ChUNxaMaBIfER1XZCnqNIapQTjCR/SmkhXmIeMXxwD0QWrqOLOhv5zkkDTegMqlmq+7T
-         Vn3zjdb4UCNGoecKMyk+7G5SSZSq450hQQ5dqpNFlO4HLDYKDEcXzZzSClGdpRLV/hu3
-         3j9+uQKUi3z/IPTVB91h7DTosM+1HflS3gdDGhYtgEDF/7RxBhTMobSaM39hLqrgJSqU
-         krMw==
-X-Gm-Message-State: ANhLgQ0snlDij7r/chtNfhbIHhTaGlD98Mo4a67uoDEea643LedCxHLE
-        Z8599rV9YqpwfS67KgF0CkGteg==
-X-Google-Smtp-Source: ADFU+vslFdZMufUpGUjNF685OiAvFuwqrraXFVX1mi5EP3rlxYGLgJNHBKGy/SGMgS5a0DiGDu/+lg==
-X-Received: by 2002:a05:620a:2101:: with SMTP id l1mr1194780qkl.375.1585591455594;
-        Mon, 30 Mar 2020 11:04:15 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id r192sm10992825qke.95.2020.03.30.11.04.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Mar 2020 11:04:14 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1jIylh-000302-Ui; Mon, 30 Mar 2020 15:04:13 -0300
-Date:   Mon, 30 Mar 2020 15:04:13 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     selvin.xavier@broadcom.com, devesh.sharma@broadcom.com,
-        somnath.kotur@broadcom.com, sriharsha.basavapatna@broadcom.com,
-        dledford@redhat.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] RDMA/bnxt_re: make bnxt_re_ib_init static
-Message-ID: <20200330180413.GA11459@ziepe.ca>
-References: <20200330110219.24448-1-yuehaibing@huawei.com>
+        bh=eK8x7gAXMov1inBTyCa9T4MtcTyNUJQUaxWPoEq8WPM=;
+        b=TAiR+4rfROuFDFSH//HmJqarYSbbYy1eCMr9FTupFpeVxAycgC2qQdqPVp/hk4Etga
+         8G9/az7TOrDvt5KqGOAA+vg5Z1pBoKH5UxQZzMpS/Dm8KBbUXQQCr8y8qONPQZKEOE2j
+         tmf8WhrRbYYUzzI2FU+9WwqAGSarsaoEfRFC83snMV964BXmTqyXnAkc7Rvx1e78DJ1t
+         2GhHylm1QjqCZHZNTpSTSrhA/KkZ9EmiB5DGcas1Orea4YkuQBmDnWyeKP3K0XxlzHMq
+         dt1ST3ZPVKfPxzT23Z60FAAkxPQV3nyvTZfiCexBPv2OwR6hzzZHNQpuW6jN4JOakcCS
+         qOTA==
+X-Gm-Message-State: ANhLgQ0yWFKCeOjzjqqkj89CJwWdN5NLNolTNxhcsIjewKh3J4Yer3W/
+        YWpMgteYu+WPMY1iaKaIBtANmA==
+X-Google-Smtp-Source: ADFU+vsG5+POHNwCtn212r3+bWb5NCSQtxsMW+v/nEnnXabDTUyOReQMMj7YdyJUl9iPEcp/c2B64w==
+X-Received: by 2002:adf:e946:: with SMTP id m6mr16493103wrn.187.1585591540289;
+        Mon, 30 Mar 2020 11:05:40 -0700 (PDT)
+Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
+        by smtp.gmail.com with ESMTPSA id l4sm21826103wru.1.2020.03.30.11.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 11:05:39 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+X-Google-Original-From: KP Singh <kpsingh>
+Date:   Mon, 30 Mar 2020 20:05:38 +0200
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: linux-next: Tree for Mar 30 (bpf)
+Message-ID: <20200330180538.GA180081@google.com>
+References: <20200330204307.669bbb4d@canb.auug.org.au>
+ <86f7031a-57c6-5d50-2788-ae0e06a7c138@infradead.org>
+ <d5b4bd95-7ef9-58cb-1955-900e6edb2467@iogearbox.net>
+ <CACYkzJ72Uy9mnenO04OJaKH=Bk4ZENKJb9yw6i+EhJUa+ygngQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200330110219.24448-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CACYkzJ72Uy9mnenO04OJaKH=Bk4ZENKJb9yw6i+EhJUa+ygngQ@mail.gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 07:02:19PM +0800, YueHaibing wrote:
-> Fix sparse warning:
-> 
-> drivers/infiniband/hw/bnxt_re/main.c:1313:5:
->  warning: symbol 'bnxt_re_ib_init' was not declared. Should it be static?
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
-> ---
->  drivers/infiniband/hw/bnxt_re/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On 30-Mar 19:54, KP Singh wrote:
 
-Applied to for-next, thanks
+So, it looks like bpf_tracing_func_proto is only defined when
+CONFIG_BPF_EVENTS is set:
 
-Jason
+        obj-$(CONFIG_BPF_EVENTS) += bpf_trace.o
+
+We have a few options:
+
+* Add a __weak symbol for bpf_tracing_func_proto which we have done in
+  the past for similar issues. This however, does not make much sense,
+  as CONFIG_BPF_LSM cannot really do much without its helpers.
+* Make CONFIG_BPF_LSM depend on CONFIG_BPF_EVENTS, this should solve
+  it, but not for this particular Kconfig that was generated. Randy,
+  I am assuming if we add the dependency, this particular Kconfig
+  won't be generated.
+
+I am assuming this patch now needs to be sent for "bpf" and not
+"bpf-next" as the merge window has opened?
+
+- KP
+
+> Thanks for adding me Daniel, taking a look.
+> 
+> - KP
+> 
+> On Mon, Mar 30, 2020 at 7:25 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
+> >
+> > [Cc KP, ptal]
+> >
+> > On 3/30/20 7:15 PM, Randy Dunlap wrote:
+> > > On 3/30/20 2:43 AM, Stephen Rothwell wrote:
+> > >> Hi all,
+> > >>
+> > >> The merge window has opened, so please do not add any material for the
+> > >> next release into your linux-next included trees/branches until after
+> > >> the merge window closes.
+> > >>
+> > >> Changes since 20200327:
+> > >
+> > > (note: linux-next is based on linux 5.6-rc7)
+> > >
+> > >
+> > > on i386:
+> > >
+> > > ld: kernel/bpf/bpf_lsm.o:(.rodata+0x0): undefined reference to `bpf_tracing_func_proto'
+> > >
+> > >
+> > > Full randconfig file is attached.
+> > >
+> >
