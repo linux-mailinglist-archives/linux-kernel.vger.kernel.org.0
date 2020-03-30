@@ -2,90 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57BF1197259
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 04:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00AEB19724C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 04:06:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbgC3CT3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 22:19:29 -0400
-Received: from m12-12.163.com ([220.181.12.12]:39856 "EHLO m12-12.163.com"
+        id S1728333AbgC3CGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 22:06:48 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:36265 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728124AbgC3CT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 22:19:29 -0400
-X-Greylist: delayed 923 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Mar 2020 22:19:10 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=YLkRY
-        spmaUn4AjagqkUkZTcLSwz0UO59vIe9hnXKdrw=; b=b8U+e1jb8DLxrjmg3TMWK
-        KVON0oEb+0L5GQRr5SmTe6rnowWqyi4p+2wu/NamIHCjLdNK9Uj+p++LTJGRNxWH
-        2MImBKoENyT14BPVTybqnp41KWgDCk+dZVnXNErP+CfSNaWFGJMc5xGDSf6yGRLv
-        BEwyPxBunCu9JtiHr+4ogs=
-Received: from localhost.localdomain (unknown [125.82.11.174])
-        by smtp8 (Coremail) with SMTP id DMCowAB3e2fEUoFe5nNMBQ--.2270S4;
-        Mon, 30 Mar 2020 10:00:48 +0800 (CST)
-From:   Hu Haowen <xianfengting221@163.com>
-To:     linux@dominikbrodowski.net
-Cc:     jeyu@kernel.org, maennich@google.com, axboe@kernel.dk,
-        nborisov@suse.com, josef@toxicpanda.com, stfrench@microsoft.com,
-        chris@chris-wilson.co.uk, wqu@suse.com, xiubli@redhat.com,
-        airlied@redhat.com, xianfengting221@163.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] pcmcia: remove some unused space characters
-Date:   Mon, 30 Mar 2020 10:00:24 +0800
-Message-Id: <20200330020024.8174-1-xianfengting221@163.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727801AbgC3CGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 22:06:48 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48rG6W4swcz9sPR;
+        Mon, 30 Mar 2020 13:06:43 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1585534005;
+        bh=0y0U+Mr8OwI1iN2DZ+X0btlBxibOGWhQY/KkqJ6L2GU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=iqTUzPx+Pj3Vvc04JgYyAFf6JTcSaVBbbS5K599XRLvuy7f/o6QksUkrv75QvRL6J
+         2Gq9OeApjUvHzFoYglF302jpWYfv+A1XBEIbWCy0EKf8j8UdEKdXqKhDw5XmtNXnjn
+         i+NEwZuQGnz1CR/ZK2H5ENnZKlkjo1h1Kf6WVDbQnTrJTm21fut2ggRuWUbJuHiM3F
+         q2eOjA86RvtxIZ40exX20Pqjw70K7sQXkfIAQwUMzqhyu7vVdncXM0ZlwndDGnpFay
+         cv3iu17baKj7dy2/h7YsPrx1eJAMVSzVjJddqzbswjXjKslYcDkHxMnLtj5wHH/LVT
+         5ie0iDrdhMxug==
+Date:   Mon, 30 Mar 2020 13:06:36 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Howells <dhowells@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KP Singh <kpsingh@google.com>
+Subject: linux-next: manual merge of the keys tree with the bpf-next tree
+Message-ID: <20200330130636.0846e394@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DMCowAB3e2fEUoFe5nNMBQ--.2270S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zw15Zr1fuw1DtFyrCr48JFb_yoW8JFykpF
-        43Cw18AFs3ZFWUXa15Ar48ur1Sqw1ktayUtryak3y8JFyjk3srKay8u3W5ZFZ8CFZFyF1U
-        Kr45A34UuF4DXF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UDb15UUUUU=
-X-Originating-IP: [125.82.11.174]
-X-CM-SenderInfo: h0ld0wxhqj3xtqjsjii6rwjhhfrp/1tbiWwb2AFSImCKWagAAsx
+Content-Type: multipart/signed; boundary="Sig_/=kvtbqHtnR+XTN_0xhli37h";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a few space characters I found by chance. I think they are
-redundant, so I removed them.
+--Sig_/=kvtbqHtnR+XTN_0xhli37h
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Hu Haowen <xianfengting221@163.com>
+Hi all,
+
+Today's linux-next merge of the keys tree got a conflict in:
+
+  include/linux/lsm_hooks.h
+
+between commit:
+
+  98e828a0650f ("security: Refactor declaration of LSM hooks")
+
+from the bpf-next tree and commits:
+
+  e8fa137bb3cb ("security: Add hooks to rule on setting a watch")
+  858bc27762c1 ("security: Add a hook for the point of notification inserti=
+on")
+
+from the keys tree.
+
+I fixed it up (I used the former version of this file and added the
+following merge resolution patch) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 30 Mar 2020 12:55:31 +1100
+Subject: [PATCH] security: keys: fixup for "security: Refactor declaration =
+of
+ LSM hooks"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/pcmcia/sa1100_simpad.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/lsm_hook_defs.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/pcmcia/sa1100_simpad.c b/drivers/pcmcia/sa1100_simpad.c
-index e2e8729afd9d..784ada5b8c4f 100644
---- a/drivers/pcmcia/sa1100_simpad.c
-+++ b/drivers/pcmcia/sa1100_simpad.c
-@@ -14,7 +14,7 @@
- #include <asm/mach-types.h>
- #include <mach/simpad.h>
- #include "sa1100_generic.h"
-- 
-+
- static int simpad_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
- {
- 
-@@ -66,7 +66,7 @@ simpad_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
- 		simpad_clear_cs3_bit(VCC_3V_EN|VCC_5V_EN|EN0|EN1);
- 		break;
- 
--	case 33:  
-+	case 33:
- 		simpad_clear_cs3_bit(VCC_3V_EN|EN1);
- 		simpad_set_cs3_bit(VCC_5V_EN|EN0);
- 		break;
-@@ -95,7 +95,7 @@ static void simpad_pcmcia_socket_suspend(struct soc_pcmcia_socket *skt)
- 	simpad_set_cs3_bit(PCMCIA_RESET);
- }
- 
--static struct pcmcia_low_level simpad_pcmcia_ops = { 
-+static struct pcmcia_low_level simpad_pcmcia_ops = {
- 	.owner			= THIS_MODULE,
- 	.hw_init		= simpad_pcmcia_hw_init,
- 	.hw_shutdown		= simpad_pcmcia_hw_shutdown,
--- 
-2.20.1
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 9cd4455528e5..4f8d63fd1327 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -252,6 +252,16 @@ LSM_HOOK(int, 0, inode_notifysecctx, struct inode *ino=
+de, void *ctx, u32 ctxlen)
+ LSM_HOOK(int, 0, inode_setsecctx, struct dentry *dentry, void *ctx, u32 ct=
+xlen)
+ LSM_HOOK(int, 0, inode_getsecctx, struct inode *inode, void **ctx,
+ 	 u32 *ctxlen)
++#ifdef CONFIG_KEY_NOTIFICATIONS
++LSM_HOOK(int, 0, watch_key, struct key *key)
++#endif
++#ifdef CONFIG_DEVICE_NOTIFICATIONS
++LSM_HOOK(int, 0, watch_devices, void)
++#endif
++#ifdef CONFIG_WATCH_QUEUE
++LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
++	 const struct cred *cred, struct watch_notification *n)
++#endif
+=20
+ #ifdef CONFIG_SECURITY_NETWORK
+ LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *othe=
+r,
+--=20
+2.25.0
 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/=kvtbqHtnR+XTN_0xhli37h
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6BVCwACgkQAVBC80lX
+0GxbRAf/SOe5GZaT6ReH7/jAinE4d7OsRxl89mO6U4JsHx/OoLjs6jeSSg3axjbD
+23biOI4B0FT6r0ABXGiQ3vK39bGmDCuvhB4ZrHat4sKeIy6i175JHEO5FtQvBX0D
+HNJvhaty5MeYqyXFioLecza6fcbEgEGg+Qio477a2y6wyIu1/UqVYCOeSxfQqgkW
+o97Wy1T+UVTJCnKKG7K+lqYKfpgOASjfokqw5RVCmaEUQKVRsdQ07qb8MEmFeZTf
+ksTk5pVb6DpNyoDghy5Sz+iAZPyvgxVMCl2Um9ZI6/2sY9qbwflF9lTzBUBlmzlr
+OlFjIlU7A4Vfk+sBjWNO8pZ3KNQMGA==
+=Uhwq
+-----END PGP SIGNATURE-----
+
+--Sig_/=kvtbqHtnR+XTN_0xhli37h--
