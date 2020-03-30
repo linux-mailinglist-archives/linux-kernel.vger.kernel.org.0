@@ -2,153 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B724197CEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 15:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92C41197CF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 15:32:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbgC3NbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 09:31:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725268AbgC3NbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 09:31:01 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38D5E20716;
-        Mon, 30 Mar 2020 13:31:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585575060;
-        bh=qSfFw4Xt6kcV5uLecfdNYj4mpU1Cl5FKqVHHOIVmkPY=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=Q9HcMfLecFcko618lmMeqPiJEzubwJ5u1Ip9reIi2mnZqgzVRMJaX2TNq65jD7Uzk
-         91bigtJdPi+s48g83dv16HPxcg/D++utxWRP6/E0kgB5tIa8zTJxcBxS3FvNJtbXRY
-         KI3iTHxlNifbgQ0WIqlzhPtdUzwwROHTBhEsprZY=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 01D8835226F8; Mon, 30 Mar 2020 06:30:59 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 06:30:59 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, rcu@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: rcu_barrier() no longer allowed within mmap_sem?
-Message-ID: <20200330133059.GH19865@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <CAKMK7uGQ49JGetk3-VmHxXR0HVEoQgVxSZvX9Z0b5so8y+13cA@mail.gmail.com>
+        id S1727612AbgC3NcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 09:32:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53786 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726017AbgC3NcI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 09:32:08 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02UD3pQV126389
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 09:32:07 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3022f2b8gg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 09:32:07 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bala24@linux.ibm.com>;
+        Mon, 30 Mar 2020 14:32:03 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 30 Mar 2020 14:31:59 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02UDW0c946530604
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 30 Mar 2020 13:32:00 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 05D624C04A;
+        Mon, 30 Mar 2020 13:32:00 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 27E714C044;
+        Mon, 30 Mar 2020 13:31:58 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.88.242])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 30 Mar 2020 13:31:57 +0000 (GMT)
+Subject: Re: [PATCH v5 03/13] powerpc/ptrace: drop unnecessary #ifdefs
+ CONFIG_PPC64
+From:   Balamuruhan S <bala24@linux.ibm.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, mikey@neuling.org
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Mon, 30 Mar 2020 19:01:56 +0530
+In-Reply-To: <af38b87a7e1e3efe4f9b664eaeb029e6e7d69fdb.1582848567.git.christophe.leroy@c-s.fr>
+References: <cover.1582848567.git.christophe.leroy@c-s.fr>
+         <af38b87a7e1e3efe4f9b664eaeb029e6e7d69fdb.1582848567.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uGQ49JGetk3-VmHxXR0HVEoQgVxSZvX9Z0b5so8y+13cA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 20033013-0028-0000-0000-000003EEB596
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20033013-0029-0000-0000-000024B4344E
+Message-Id: <16b3ca310e6f5efb1ba1380e3ff80a1beea5a267.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-30_01:2020-03-27,2020-03-30 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=999
+ malwarescore=0 impostorscore=0 phishscore=0 clxscore=1011
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003300121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 03:00:35PM +0200, Daniel Vetter wrote:
-> Hi all, for all = rcu, cpuhotplug and perf maintainers
+On Fri, 2020-02-28 at 00:14 +0000, Christophe Leroy wrote:
+> Drop a bunch of #ifdefs CONFIG_PPC64 that are not vital.
 > 
-> We've hit an interesting new lockdep splat in our drm/i915 CI:
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/include/asm/ptrace.h   |  2 ++
+>  arch/powerpc/kernel/ptrace/ptrace.c | 18 +++---------------
+>  2 files changed, 5 insertions(+), 15 deletions(-)
 > 
-> https://intel-gfx-ci.01.org/tree/drm-tip/Patchwork_17096/shard-tglb7/igt@kms_frontbuffer_tracking@fbcpsr-rgb101010-draw-mmap-gtt.html#dmesg-warnings861
-> 
-> Summarizing away the driver parts we have
-> 
-> < gpu locks which are held within mm->mmap_sem in various gpu fault handlers >
-> 
-> -> #4 (&mm->mmap_sem#2){++++}:
-> <4> [604.892615] __might_fault+0x63/0x90
-> <4> [604.892617] _copy_to_user+0x1e/0x80
-> <4> [604.892619] perf_read+0x200/0x2b0
-> <4> [604.892621] vfs_read+0x96/0x160
-> <4> [604.892622] ksys_read+0x9f/0xe0
-> <4> [604.892623] do_syscall_64+0x4f/0x220
-> <4> [604.892624] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> <4> [604.892625]
-> -> #3 (&cpuctx_mutex){+.+.}:
-> <4> [604.892626] __mutex_lock+0x9a/0x9c0
-> <4> [604.892627] perf_event_init_cpu+0xa4/0x140
-> <4> [604.892629] perf_event_init+0x19d/0x1cd
-> <4> [604.892630] start_kernel+0x362/0x4e4
-> <4> [604.892631] secondary_startup_64+0xa4/0xb0
-> <4> [604.892631]
-> -> #2 (pmus_lock){+.+.}:
-> <4> [604.892633] __mutex_lock+0x9a/0x9c0
-> <4> [604.892633] perf_event_init_cpu+0x6b/0x140
-> <4> [604.892635] cpuhp_invoke_callback+0x9b/0x9d0
-> <4> [604.892636] _cpu_up+0xa2/0x140
-> <4> [604.892637] do_cpu_up+0x61/0xa0
-> <4> [604.892639] smp_init+0x57/0x96
-> <4> [604.892639] kernel_init_freeable+0x87/0x1dc
-> <4> [604.892640] kernel_init+0x5/0x100
-> <4> [604.892642] ret_from_fork+0x24/0x50
-> <4> [604.892642]
-> -> #1 (cpu_hotplug_lock.rw_sem){++++}:
-> <4> [604.892643] cpus_read_lock+0x34/0xd0
-> <4> [604.892644] rcu_barrier+0xaa/0x190
-> <4> [604.892645] kernel_init+0x21/0x100
-> <4> [604.892647] ret_from_fork+0x24/0x50
-> <4> [604.892647]
-> -> #0 (rcu_state.barrier_mutex){+.+.}:
-> <4> [604.892649] __lock_acquire+0x1328/0x15d0
-> <4> [604.892650] lock_acquire+0xa7/0x1c0
-> <4> [604.892651] __mutex_lock+0x9a/0x9c0
-> <4> [604.892652] rcu_barrier+0x23/0x190
-> <4> [604.892680] i915_gem_object_unbind+0x29d/0x3f0 [i915]
-> <4> [604.892707] i915_gem_object_pin_to_display_plane+0x141/0x270 [i915]
-> <4> [604.892737] intel_pin_and_fence_fb_obj+0xec/0x1f0 [i915]
-> <4> [604.892767] intel_plane_pin_fb+0x3f/0xd0 [i915]
-> <4> [604.892797] intel_prepare_plane_fb+0x13b/0x5c0 [i915]
-> <4> [604.892798] drm_atomic_helper_prepare_planes+0x85/0x110
-> <4> [604.892827] intel_atomic_commit+0xda/0x390 [i915]
-> <4> [604.892828] drm_atomic_helper_set_config+0x57/0xa0
-> <4> [604.892830] drm_mode_setcrtc+0x1c4/0x720
-> <4> [604.892830] drm_ioctl_kernel+0xb0/0xf0
-> <4> [604.892831] drm_ioctl+0x2e1/0x390
-> <4> [604.892833] ksys_ioctl+0x7b/0x90
-> <4> [604.892835] __x64_sys_ioctl+0x11/0x20
-> <4> [604.892835] do_syscall_64+0x4f/0x220
-> <4> [604.892836] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> The last backtrace boils down to i915 driver code which holds the same
-> locks we are holding within mm->mmap_sem, and then ends up calling
-> rcu_barrier(). From what I can see i915 is just the messenger here,
-> any driver with this pattern of a lock held within mmap_sem which also
-> has a path of calling rcu_barrier while holding that lock should be
-> hitting this splat.
-> 
-> Two questions:
-> - This suggests that calling rcu_barrier() isn't ok anymore while
-> holding mmap_sem, or anything that has a dependency upon mmap_sem. I
-> guess that's not the idea, please confirm.
-> - Assuming this depedency is indeed not intended, where should the
-> loop be broken? It goes through perf, cpuhotplug and rcu subsystems,
-> and I don't have a clue about any of those.
+> diff --git a/arch/powerpc/include/asm/ptrace.h
+> b/arch/powerpc/include/asm/ptrace.h
+> index ee3ada66deb5..8e1953d99353 100644
+> --- a/arch/powerpc/include/asm/ptrace.h
+> +++ b/arch/powerpc/include/asm/ptrace.h
+> @@ -276,6 +276,8 @@ static inline unsigned long
+> regs_get_kernel_stack_nth(struct pt_regs *regs,
+>  #endif /* __ASSEMBLY__ */
+>  
+>  #ifndef __powerpc64__
+> +/* We need PT_SOFTE defined at all time to avoid #ifdefs */
+> +#define PT_SOFTE PT_MQ
+>  #else /* __powerpc64__ */
+>  #define PT_FPSCR32 (PT_FPR0 + 2*32 + 1)	/* each FP reg occupies 2 32-
+> bit userspace slots */
+>  #define PT_VR0_32 164	/* each Vector reg occupies 4 slots in 32-bit
+> */
+> diff --git a/arch/powerpc/kernel/ptrace/ptrace.c
+> b/arch/powerpc/kernel/ptrace/ptrace.c
+> index 7ed54dbb2d7e..3dd94c296ac7 100644
+> --- a/arch/powerpc/kernel/ptrace/ptrace.c
+> +++ b/arch/powerpc/kernel/ptrace/ptrace.c
+> @@ -274,17 +274,15 @@ int ptrace_get_reg(struct task_struct *task, int regno,
+> unsigned long *data)
+>  	if (regno == PT_DSCR)
+>  		return get_user_dscr(task, data);
+>  
+> -#ifdef CONFIG_PPC64
+>  	/*
+>  	 * softe copies paca->irq_soft_mask variable state. Since irq_soft_mask
+> is
+>  	 * no more used as a flag, lets force usr to alway see the softe value
+> as 1
+>  	 * which means interrupts are not soft disabled.
+>  	 */
+> -	if (regno == PT_SOFTE) {
+> +	if (IS_ENABLED(CONFIG_PPC64) && regno == PT_SOFTE) {
+>  		*data = 1;
+>  		return  0;
+>  	}
+> -#endif
+>  
+>  	regs_max = sizeof(struct user_pt_regs) / sizeof(unsigned long);
+>  	if (regno < regs_max) {
+> @@ -1998,7 +1996,6 @@ static const struct user_regset_view
+> user_ppc_native_view = {
+>  	.regsets = native_regsets, .n = ARRAY_SIZE(native_regsets)
+>  };
+>  
+> -#ifdef CONFIG_PPC64
 
-Indeed, rcu_barrier() excludes CPU hotplug in order to eliminate a number
-of interesting races.
+should we care for this ? 
 
-Am I interpreting the above trace correctly in thinking that the various
-calls to cpus_read_lock() are with mmap_sem held?  If so, can the calls
-to rcu_barrier() be moved out from under the regions of code protected
-by cpus_read_lock()?  Invoking rcu_barrier() with cpus_read_lock() held
-is an immediate self-deadlock.
+/*
+ * These are the regset flavors matching the CONFIG_PPC32 native set.
+ */
+static const struct user_regset compat_regsets[] = {
+        [REGSET_GPR] = {
+                .core_note_type = NT_PRSTATUS, .n = ELF_NGREG,
+                .size = sizeof(compat_long_t), .align = sizeof(compat_long_t),
+                .get = gpr32_get, .set = gpr32_set
+        },
+        [REGSET_FPR] = {
+                .core_note_type = NT_PRFPREG, .n = ELF_NFPREG,
+                .size = sizeof(double), .align = sizeof(double),
+                .get = fpr_get, .set = fpr_set
+        },
 
-Or is rcu_barrier() somehow indirectly sometimes acquiring mmap_sem
-or pmus_lock?  (Not seeing it myself, but...)
+>  #include <linux/compat.h>
 
-							Thanx, Paul
+can we move it to head if we do not need the ifdef ?
+
+rest looks good to me.
+
+-- Bala
+
+>  
+>  static int gpr32_get_common(struct task_struct *target,
+> @@ -2272,14 +2269,11 @@ static const struct user_regset_view
+> user_ppc_compat_view = {
+>  	.name = "ppc", .e_machine = EM_PPC, .ei_osabi = ELF_OSABI,
+>  	.regsets = compat_regsets, .n = ARRAY_SIZE(compat_regsets)
+>  };
+> -#endif	/* CONFIG_PPC64 */
+>  
+>  const struct user_regset_view *task_user_regset_view(struct task_struct
+> *task)
+>  {
+> -#ifdef CONFIG_PPC64
+> -	if (test_tsk_thread_flag(task, TIF_32BIT))
+> +	if (IS_ENABLED(CONFIG_PPC64) && test_tsk_thread_flag(task, TIF_32BIT))
+>  		return &user_ppc_compat_view;
+> -#endif
+>  	return &user_ppc_native_view;
+>  }
+>  
+> @@ -3063,11 +3057,7 @@ long arch_ptrace(struct task_struct *child, long
+> request,
+>  		else
+>  			dbginfo.num_data_bps = 0;
+>  		dbginfo.num_condition_regs = 0;
+> -#ifdef CONFIG_PPC64
+> -		dbginfo.data_bp_alignment = 8;
+> -#else
+> -		dbginfo.data_bp_alignment = 4;
+> -#endif
+> +		dbginfo.data_bp_alignment = sizeof(long);
+>  		dbginfo.sizeof_condition = 0;
+>  #ifdef CONFIG_HAVE_HW_BREAKPOINT
+>  		dbginfo.features = PPC_DEBUG_FEATURE_DATA_BP_RANGE;
+> @@ -3304,12 +3294,10 @@ long do_syscall_trace_enter(struct pt_regs *regs)
+>  	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
+>  		trace_sys_enter(regs, regs->gpr[0]);
+>  
+> -#ifdef CONFIG_PPC64
+>  	if (!is_32bit_task())
+>  		audit_syscall_entry(regs->gpr[0], regs->gpr[3], regs->gpr[4],
+>  				    regs->gpr[5], regs->gpr[6]);
+>  	else
+> -#endif
+>  		audit_syscall_entry(regs->gpr[0],
+>  				    regs->gpr[3] & 0xffffffff,
+>  				    regs->gpr[4] & 0xffffffff,
+
