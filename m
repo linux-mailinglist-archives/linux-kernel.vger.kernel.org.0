@@ -2,78 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6BBC1976BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 10:39:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00AC1197695
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 10:38:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbgC3Ijl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 04:39:41 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37168 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729399AbgC3Ijl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 04:39:41 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 915F798D24ABF315CD1B;
-        Mon, 30 Mar 2020 16:39:35 +0800 (CST)
-Received: from localhost (10.173.223.234) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.487.0; Mon, 30 Mar 2020
- 16:39:27 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <wangzhou1@hisilicon.com>, <Jonathan.Cameron@huawei.com>,
-        <xuzaibo@huawei.com>, <shiju.jose@huawei.com>,
-        <ebiggers@google.com>, <yaohongbo@huawei.com>,
-        <maowenan@huawei.com>, <arnd@arndb.de>
-CC:     <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] crypto: hisilicon - Fix build error
-Date:   Mon, 30 Mar 2020 16:36:43 +0800
-Message-ID: <20200330083643.28824-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1729683AbgC3IiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 04:38:12 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:56073 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbgC3IiM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 04:38:12 -0400
+X-Greylist: delayed 5280 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Mar 2020 04:38:09 EDT
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id 02U8bmN8026273;
+        Mon, 30 Mar 2020 17:37:49 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 02U8bmN8026273
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585557470;
+        bh=PxRmu3HuDIYTqEJxiJ5PqE2LXmQuo3D9zlavzY5jVI4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=brVEPKJScKZunXMPy14SQD8gmdtXfD/Z7CL8ZRWvjqvg8UYOEXDjY45m6LQp+Upry
+         SgIqRIt+Vbfvxsnbg1Sa4ESbah6Ht4e+ygLsb2zMtFxzxi6m+CL+3akLM9W4IRUtrC
+         8IrkWOugyFCF6k+q9DWaJ/RylMYkLVAXmcO1Y053y79in1DJ1SYDKl6QryZcJvymZW
+         zhUI92s1QDExgPzlgqMqS+2VzRW+Hf/0CueUJkv89pUXdRGkEy/yT1U57PQSLpZHL5
+         dpuemg5XzFyFNtnhwxT9TEaThfuk/wESfJfRmQy4YDPJPK/eWz1pRIvn+23Xa8wREx
+         iiOBT5PkS+9Hg==
+X-Nifty-SrcIP: [209.85.222.47]
+Received: by mail-ua1-f47.google.com with SMTP id r47so5951861uad.11;
+        Mon, 30 Mar 2020 01:37:49 -0700 (PDT)
+X-Gm-Message-State: AGi0PuYfI1t4jOABvMJbBeheO5K31RVjKrp+v3PMdlyhGrfyx/pJ5lj8
+        56rX/6bnMc6mi60tJtnMdm1005lbsmAaPgRPoO8=
+X-Google-Smtp-Source: APiQypJeTOypTow5s/orWLiqA+luxDBNhpwR1xE86uZ7tA8NnJnWdBsJgIswlbl89EaZoapGrF/J2WDHqcRU1fH6V1M=
+X-Received: by 2002:a9f:28c5:: with SMTP id d63mr6911883uad.25.1585557468135;
+ Mon, 30 Mar 2020 01:37:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.173.223.234]
-X-CFilter-Loop: Reflected
+References: <20200325220542.19189-1-robh@kernel.org> <20200325220542.19189-5-robh@kernel.org>
+ <CAK7LNARJn4uugHxcjK+WOWBs0gPVZQsCu4y6M8hkNK1U5FehRA@mail.gmail.com>
+In-Reply-To: <CAK7LNARJn4uugHxcjK+WOWBs0gPVZQsCu4y6M8hkNK1U5FehRA@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Mon, 30 Mar 2020 17:37:11 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARXj3=1VPWL4kFmGkZuvV=yKb7gVaX2nbeiO54f-zWeHQ@mail.gmail.com>
+Message-ID: <CAK7LNARXj3=1VPWL4kFmGkZuvV=yKb7gVaX2nbeiO54f-zWeHQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] dt-bindings: Add missing 'additionalProperties: false'
+To:     Rob Herring <robh@kernel.org>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Brian Masney <masneyb@onstation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zhang Rui <rui.zhang@intel.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-iio@vger.kernel.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux PM mailing list <linux-pm@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When UACCE is m, CRYPTO_DEV_HISI_QM cannot be built-in.
-But CRYPTO_DEV_HISI_QM is selected by CRYPTO_DEV_HISI_SEC2
-and CRYPTO_DEV_HISI_HPRE unconditionally, which may leads this:
+Hi Rob,
 
-drivers/crypto/hisilicon/qm.o: In function 'qm_alloc_uacce':
-drivers/crypto/hisilicon/qm.c:1579: undefined reference to 'uacce_alloc'
+On Mon, Mar 30, 2020 at 4:09 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> On Thu, Mar 26, 2020 at 7:06 AM Rob Herring <robh@kernel.org> wrote:
+> >
+> > Setting 'additionalProperties: false' is frequently omitted, but is
+> > important in order to check that there aren't extra undocumented
+> > properties in a binding.
+> >
+> > Ideally, we'd just add this automatically and make this the default, but
+> > there's some cases where it doesn't work. For example, if a common
+> > schema is referenced, then properties in the common schema aren't part
+> > of what's considered for 'additionalProperties'. Also, sometimes there
+> > are bus specific properties such as 'spi-max-frequency' that go into
+> > bus child nodes, but aren't defined in the child node's schema.
+> >
+> > So let's stick with the json-schema defined default and add
+> > 'additionalProperties: false' where needed. This will be a continual
+> > review comment and game of wack-a-mole.
+> >
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+>
+>
+> >  .../devicetree/bindings/gpio/socionext,uniphier-gpio.yaml      | 2 ++
+>
+>
+> You may have already queue this up, but just in case.
+>
+> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Add Kconfig dependency to enforce usable configurations.
 
-Fixes: 47c16b449921 ("crypto: hisilicon - qm depends on UACCE")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/crypto/hisilicon/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
-index 095850d01dcc..f09c6cf7823e 100644
---- a/drivers/crypto/hisilicon/Kconfig
-+++ b/drivers/crypto/hisilicon/Kconfig
-@@ -27,6 +27,7 @@ config CRYPTO_DEV_HISI_SEC2
- 	select CRYPTO_SHA256
- 	select CRYPTO_SHA512
- 	depends on PCI && PCI_MSI
-+	depends on UACCE || UACCE=n
- 	depends on ARM64 || (COMPILE_TEST && 64BIT)
- 	help
- 	  Support for HiSilicon SEC Engine of version 2 in crypto subsystem.
-@@ -58,6 +59,7 @@ config CRYPTO_DEV_HISI_ZIP
- config CRYPTO_DEV_HISI_HPRE
- 	tristate "Support for HISI HPRE accelerator"
- 	depends on PCI && PCI_MSI
-+	depends on UACCE || UACCE=n
- 	depends on ARM64 || (COMPILE_TEST && 64BIT)
- 	select CRYPTO_DEV_HISI_QM
- 	select CRYPTO_DH
+I take back Ack for socionext,uniphier-gpio.yaml
+
+
+
+Now "make dt_binding_check" produces a new warning.
+
+gpio@55000000: 'interrupt-parent' does not match any of the regexes:
+'pinctrl-[0-9]+'
+
+
+This binding uses 'interrupt-parent'
+without 'interrupts'.
+
+Instead, the mapping of the interrupt numbers
+is specified by the vendor-specific property
+socionext,interrupt-ranges
+
+
+
+I cannot add   "interrupt-parent: true" because
+dt-schema/meta-schemas/interrupts.yaml
+has "interrupt-parent: false".
+
+
+Is there any solution?
+
+
+
 -- 
-2.17.1
-
-
+Best Regards
+Masahiro Yamada
