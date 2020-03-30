@@ -2,116 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79E9919868B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 23:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5795D198694
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 23:33:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729069AbgC3Vax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 17:30:53 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36848 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728901AbgC3Vax (ORCPT
+        id S1728987AbgC3Vc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 17:32:58 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:45909 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728754AbgC3Vc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 17:30:53 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: aratiu)
-        with ESMTPSA id 32AC5296540
-From:   Adrian Ratiu <adrian.ratiu@collabora.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Sjoerd Simons <sjoerd.simons@collabora.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        linux-rockchip@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>, kernel@collabora.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH v5 4/5] drm: imx: Add i.MX 6 MIPI DSI host platform driver
-In-Reply-To: <4a9d2d6e5cecbe296c14119d27a8793a7dbed7b2.camel@collabora.com>
-References: <20200330113542.181752-1-adrian.ratiu@collabora.com>
- <20200330113542.181752-5-adrian.ratiu@collabora.com>
- <CAOMZO5CEZSBfhb9xAdf=sDhUnmSeuWSsnUQArz=a1TPzytLAeQ@mail.gmail.com>
- <4a9d2d6e5cecbe296c14119d27a8793a7dbed7b2.camel@collabora.com>
-Date:   Tue, 31 Mar 2020 00:31:56 +0300
-Message-ID: <877dz134xf.fsf@collabora.com>
+        Mon, 30 Mar 2020 17:32:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585603975;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6MH2PEZ2UCGNBdroKqcrjr4buAv1ci61sXu24hVxrP0=;
+        b=J45dZtK2VE9IcnMDd/GBxlA3m/UrxIezaq/jKtlM+jUOuTcKr9urccKybkdtfcWwBBSypL
+        9n64egyAjQbrDy+hc7vBN8CqzePCeUS/a/iMruteMdBrUH0iLW00bGtrOTbhB5rSOT8h8J
+        y30cAp0BeSQjn76B+AEF9IqmnEJUF8Y=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-31-Ll1KKDgzPPyDeRX4XnlepA-1; Mon, 30 Mar 2020 17:32:50 -0400
+X-MC-Unique: Ll1KKDgzPPyDeRX4XnlepA-1
+Received: by mail-wr1-f71.google.com with SMTP id f15so12031809wrt.4
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 14:32:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6MH2PEZ2UCGNBdroKqcrjr4buAv1ci61sXu24hVxrP0=;
+        b=N6SXxTrRQIlgZlIuneYlA1Z6SvPYGBAPv1yhNNgRQ1gzBw/ACmol5cuMRsIvai4wVA
+         SYV8xEjH+9WgFUGLz5z1j0frGmR2/c7hzep+GfOnfcRk518uTNrdiLJ4Vf7sjdf9ZRgd
+         DuJxgpxKnilobDfLjHncnnBKLwE9fNLqGMFPS14zNwYfOxkC5Inmmmyvw7DRBwi9mojC
+         omlgWTZ23JIQDONFy1AzKdJCX2wLYj81up814ceprN5QeyVvhKNZi89pfaVSp0ltCnsE
+         LhYQYGwdrntRMyfKxSc0T0zqLBYeqUoTWaI6WTHXfkibCMTP7xogFPJTQMScMfWe9rWI
+         BmZQ==
+X-Gm-Message-State: ANhLgQ2OQ9xXl/Ia0XkrN/JhVFJXuqCsUJqMfgg/Zc/8HLJj8bgQCLhC
+        K7Pgd8+QCfMwfEdYOopvgh1bimFMhe7J9O8fFiWtPvSnNzDPEtOwaNH/iwIPoihZ7JgtJHyhyU3
+        iVt9L0rqrGWZZXfiiYxwxV/Xi
+X-Received: by 2002:a5d:6109:: with SMTP id v9mr17482950wrt.203.1585603968546;
+        Mon, 30 Mar 2020 14:32:48 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vvq1sRsnmZkQHsTrhozn1oQ4VTE5uwKFmrwFyUyydMsHQgFAYd/GlH3TA0vdk90t92KusM/Pw==
+X-Received: by 2002:a5d:6109:: with SMTP id v9mr17482931wrt.203.1585603968322;
+        Mon, 30 Mar 2020 14:32:48 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
+        by smtp.gmail.com with ESMTPSA id r5sm1059011wmr.15.2020.03.30.14.32.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Mar 2020 14:32:47 -0700 (PDT)
+Subject: Re: ACPI Video Driver creates backlight on desktop board
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Zhang Rui <rui.zhang@intel.com>
+Cc:     linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <75866748-f574-ae50-6183-ef6892c935c5@molgen.mpg.de>
+ <63956e11-46f2-72f4-c722-8fee2cbfbfa1@redhat.com>
+ <9a934fe8-9279-094c-e589-9e439c000b04@infradead.org>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <3981bf9d-e721-628e-b88a-c75614a5cc64@redhat.com>
+Date:   Mon, 30 Mar 2020 23:32:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
+In-Reply-To: <9a934fe8-9279-094c-e589-9e439c000b04@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Mar 2020, Ezequiel Garcia <ezequiel@collabora.com> 
-wrote:
-> Hello Fabio, Adrian: 
+Hi,
+
+On 3/30/20 11:25 PM, Randy Dunlap wrote:
+> On 3/30/20 1:51 PM, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 3/29/20 11:36 AM, Paul Menzel wrote:
+>>> Dear Linux folks,
+>>>
+>>>
+>>> On the MSI desktop board [1]
+>>>
+>>>       [    0.000000] DMI: Micro-Star International Co., Ltd. MS-7A37/B350M MORTAR (MS-7A37), BIOS 1.MR 12/02/2019
+>>>
+>>> with an AMD Ryzen 3 2200G with Radeon Vega Graphics, the ACPI Video Driver `video` is loaded and creates a backlight device.
+>>>
+>>>       $ readlink -f /sys/class/backlight/acpi_video0
+>>>       /sys/devices/pci0000:00/0000:00:08.1/0000:26:00.0/backlight/acpi_video0
+>>>
+>>> I wonder what the driver is used for as the AMDGPU driver exists for the graphics device.
+>>
+>> Backlight on x86 hw is a bit of a mess, there is an ACPI standard for accessing it
+>> and with older (Windows XP era) laptops that is the interface which usually works,
+>> then there are a bunch of vendor specific SMBIOS or WMI backlight interfaces and
+>> then there is the option of directly accessing the hardware as the amdgpu driver
+>> is doing.
+>>
+>> We have a bunch of heuristics to avoid the acpi_video driver registering a
+>> backlight interface when it should not, either because the direct hw access
+>> should be used instead; or because there simply is no builtin LCD panel and thus
+>> no backlight to control.
+>>
+>> These heuristics are failing on your board.
+>>
+>>> If it’s useful, is there a way to prevent the backlight interface from getting created?
+>>
+>> You can pass "acpi_backlight=ignore" on the kernel commandline to disable the
 > 
-> On Mon, 2020-03-30 at 08:49 -0300, Fabio Estevam wrote: 
->> Hi Adrian,  On Mon, Mar 30, 2020 at 8:34 AM Adrian Ratiu 
->> <adrian.ratiu@collabora.com> wrote: 
->> > This adds support for the Synopsis DesignWare MIPI DSI v1.01 
->> > host controller which is embedded in i.MX 6 SoCs.   Based on 
->> > following patches, but updated/extended to work with existing 
->> > support found in the kernel:  - drm: imx: Support Synopsys 
->> > DesignWare MIPI DSI host controller 
->> >   Signed-off-by: Liu Ying <Ying.Liu@freescale.com> 
->> >  - ARM: dtsi: imx6qdl: Add support for MIPI DSI host 
->> > controller 
->> >   Signed-off-by: Liu Ying <Ying.Liu@freescale.com> 
->>  This one looks like a devicetree patch, but this patch does 
->> not touch devicetree.  
->> > +       ret = clk_prepare_enable(dsi->pllref_clk); +       if 
->> > (ret) { +               dev_err(dev, "%s: Failed to enable 
->> > pllref_clk\n", __func__); +               return ret; + 
->> > } + +       dsi->mux_sel = 
->> > syscon_regmap_lookup_by_phandle(dev->of_node, "fsl,gpr"); + 
->> > if (IS_ERR(dsi->mux_sel)) { +               ret = 
->> > PTR_ERR(dsi->mux_sel); +               dev_err(dev, "%s: 
->> > Failed to get GPR regmap: %d\n", + 
->> > __func__, ret); +               return ret; 
->>  You should disable the dsi->pllref_clk clock prior to 
->> returning the error.  
+> Hi Hans,
+> Should that be "acpi_backlight=none"?  I don't see 'ignore' allowed here:
 > 
-> Another approach could be moving the clock on and off to to 
-> component_ops.{bind,unbind} (as rockhip driver does). 
+> static void acpi_video_parse_cmdline(void)
+> {
+> 	if (!strcmp("vendor", acpi_video_backlight_string))
+> 		acpi_backlight_cmdline = acpi_backlight_vendor;
+> 	if (!strcmp("video", acpi_video_backlight_string))
+> 		acpi_backlight_cmdline = acpi_backlight_video;
+> 	if (!strcmp("native", acpi_video_backlight_string))
+> 		acpi_backlight_cmdline = acpi_backlight_native;
+> 	if (!strcmp("none", acpi_video_backlight_string))
+> 		acpi_backlight_cmdline = acpi_backlight_none;
+> }
+
+Yes you are right that should be "acpi_backlight=none".
+
+> and Documentation/admin-guide/kernel-parameters.txt could stand to be updated
+> with a few of those options.
+
+Ack, I've put this on my (much too long) TODO list. Feel free to
+beat me to it.
+
+Regards,
+
+Hans
+
+
+
+
 > 
-> What exactly is the PLL clock needed for? Would it make sense to 
-> move it some of the PHY power on/off? (Maybe not, but it's 
-> worthing checking). 
 > 
-> Also, it seems the other IP blocks have this PLL clock, so maybe 
-> it could be moved to the dw_mipi_dsi core? This could be 
-> something for a follow-up, to avoid creeping this series.
+>> interface, this will stop e.g. gnome from showing a non working brightness
+>> slider in its top right system menu.
+>>
+>> If this works you can make this permanent and avoid other users from having to
+>> do the same thing by writing a patch adding a quirk for this like this one:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d21a91629f4b8e794fc4c0e0c17c85cedf1d806c
+> 
+> 
 
-Hi Ezequiel,
-
-pll is the video reference clock which drives the data lanes and 
-yes all drivers have it as it's a basic requirement, so moving it 
-to the common bridge is indeed a good idea, however this kind of 
-driver refactoring is out of scope for this specific patch series, 
-because, for now, I'd like to get the regmap and the imx6 driver 
-in, once that is done we can think how to further abstract away 
-common logic and slim down the existing drivers further.
-
-Basically I just want to avoid feature creep as I expect v6 to be 
-~ 8 patches big and the series is already over 1200 lines.
-
-Thank you,
-Adrian
-
->
-> Thanks,
-> Ezequiel
->
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
