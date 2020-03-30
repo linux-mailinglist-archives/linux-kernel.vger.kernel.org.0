@@ -2,180 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 021571976C1
+	by mail.lfdr.de (Postfix) with ESMTP id 9C34B1976C3
 	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 10:41:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbgC3IlM convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Mar 2020 04:41:12 -0400
-Received: from mga07.intel.com ([134.134.136.100]:25475 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728994AbgC3IlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 04:41:12 -0400
-IronPort-SDR: N4Ah5x9e8fGgy48tKitjM6i1kpQBZ8+OA9aHZxa36L6+vmVzjD6CrnD+ldSXulj9XtoyoFvWx4
- Hpe9yAnhsmSw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 01:41:11 -0700
-IronPort-SDR: wGVeRflbVpIH9JGxfzE+chG8cDJEH2vJJukJndIH4VToaUYWtUGnyBgb5ToVkdYz99P+KrnrCz
- RqZPZB/2TjIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,323,1580803200"; 
-   d="scan'208";a="237283947"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga007.jf.intel.com with ESMTP; 30 Mar 2020 01:41:10 -0700
-Received: from fmsmsx161.amr.corp.intel.com (10.18.125.9) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 30 Mar 2020 01:40:59 -0700
-Received: from shsmsx101.ccr.corp.intel.com (10.239.4.153) by
- FMSMSX161.amr.corp.intel.com (10.18.125.9) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 30 Mar 2020 01:40:59 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.225]) by
- SHSMSX101.ccr.corp.intel.com ([169.254.1.129]) with mapi id 14.03.0439.000;
- Mon, 30 Mar 2020 16:40:55 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     "Liu, Yi L" <yi.l.liu@intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>
-CC:     "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Tian, Jun J" <jun.j.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wu, Hao" <hao.wu@intel.com>
-Subject: RE: [PATCH v1 2/8] vfio/type1: Add vfio_iommu_type1 parameter for
- quota tuning
-Thread-Topic: [PATCH v1 2/8] vfio/type1: Add vfio_iommu_type1 parameter for
- quota tuning
-Thread-Index: AQHWAEUbX2o9koiJmUSoQpAjbhigyahg28IA
-Date:   Mon, 30 Mar 2020 08:40:55 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D7FF3C5@SHSMSX104.ccr.corp.intel.com>
-References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
- <1584880325-10561-3-git-send-email-yi.l.liu@intel.com>
-In-Reply-To: <1584880325-10561-3-git-send-email-yi.l.liu@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1729705AbgC3IlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 04:41:15 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:4998 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729398AbgC3IlN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 04:41:13 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02U8bjN7025218;
+        Mon, 30 Mar 2020 10:41:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=2zJH41YQKvQIOnb4qX0JkkMFfwGeAK8KHzh+mK7/f0U=;
+ b=HMuaE34HokD0cr+FPEqvwDu8BBhtwbDRYaBYcLO5T9g9jIAk+OHAX2m52L47n5QEC7TY
+ QgVg3IkfDlBvK6I2/feLWrmkJhwYrVxZ5nsdqHdORZFCFYEvqeV2ghPrcpLx/6Cph6Ym
+ I4/nOQZsofSmp20oPUiFA3VOOW8JEj/lcG6huI+CAB0x3VtZU8SQgrr+Brm8EnUmmvlB
+ sphMqQmuIUunO1+z2ihArln8k+7PavLjZqKQtuYBUsWWmsLyCDhAb7MFXYGgWvXdB7fV
+ UNc4NW2MB1c5UhxreFsbYnAnAaoYQtx68XjqkMk4KLjbF+jmBJ8HEE8nXp5JMx0JnXYr Ng== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 301w80rfr2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Mar 2020 10:41:02 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F315210002A;
+        Mon, 30 Mar 2020 10:41:01 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BAEB02A5528;
+        Mon, 30 Mar 2020 10:41:01 +0200 (CEST)
+Received: from [10.131.224.211] (10.75.127.47) by SFHDAG5NODE2.st.com
+ (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 30 Mar
+ 2020 10:41:00 +0200
+Subject: Re: [PATCH] i2c: stm32: don't print an error on probe deferral
+To:     Alain Volmat <alain.volmat@st.com>, <wsa@the-dreams.de>
+CC:     <alexandre.torgue@st.com>, <linux-i2c@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <fabrice.gasnier@st.com>
+References: <1584642136-15418-1-git-send-email-alain.volmat@st.com>
+From:   Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+Message-ID: <9f51c667-cb26-a087-b2a3-2cf2ddf09a87@st.com>
+Date:   Mon, 30 Mar 2020 10:40:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <1584642136-15418-1-git-send-email-alain.volmat@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-30_01:2020-03-27,2020-03-30 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Liu, Yi L <yi.l.liu@intel.com>
-> Sent: Sunday, March 22, 2020 8:32 PM
+Hello !
+
+Reviewed-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+
+Thanks
+
+On 3/19/20 7:22 PM, Alain Volmat wrote:
+> From: Etienne Carriere <etienne.carriere@st.com>
 > 
-> From: Liu Yi L <yi.l.liu@intel.com>
+> Do not print an error trace when deferring probe for some resource.
 > 
-> This patch adds a module option to make the PASID quota tunable by
-> administrator.
-> 
-> TODO: needs to think more on how to  make the tuning to be per-process.
-> 
-> Previous discussions:
-> https://patchwork.kernel.org/patch/11209429/
-> 
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> CC: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Alex Williamson <alex.williamson@redhat.com>
-> Cc: Eric Auger <eric.auger@redhat.com>
-> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
+> Signed-off-by: Alain Volmat <alain.volmat@st.com>
 > ---
->  drivers/vfio/vfio.c             | 8 +++++++-
->  drivers/vfio/vfio_iommu_type1.c | 7 ++++++-
->  include/linux/vfio.h            | 3 ++-
->  3 files changed, 15 insertions(+), 3 deletions(-)
+>  drivers/i2c/busses/i2c-stm32.c   | 10 +++++++---
+>  drivers/i2c/busses/i2c-stm32f4.c |  4 +++-
+>  drivers/i2c/busses/i2c-stm32f7.c |  7 +++++--
+>  3 files changed, 15 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
-> index d13b483..020a792 100644
-> --- a/drivers/vfio/vfio.c
-> +++ b/drivers/vfio/vfio.c
-> @@ -2217,13 +2217,19 @@ struct vfio_mm *vfio_mm_get_from_task(struct
-> task_struct *task)
->  }
->  EXPORT_SYMBOL_GPL(vfio_mm_get_from_task);
-> 
-> -int vfio_mm_pasid_alloc(struct vfio_mm *vmm, int min, int max)
-> +int vfio_mm_pasid_alloc(struct vfio_mm *vmm, int quota, int min, int max)
->  {
->  	ioasid_t pasid;
->  	int ret = -ENOSPC;
-> 
->  	mutex_lock(&vmm->pasid_lock);
-> 
-> +	/* update quota as it is tunable by admin */
-> +	if (vmm->pasid_quota != quota) {
-> +		vmm->pasid_quota = quota;
-> +		ioasid_adjust_set(vmm->ioasid_sid, quota);
-> +	}
-> +
-
-It's a bit weird to have quota adjusted in the alloc path, since the latter might
-be initiated by non-privileged users. Why not doing the simple math in vfio_
-create_mm to set the quota when the ioasid set is created? even in the future
-you may allow per-process quota setting, that should come from separate 
-privileged path instead of thru alloc...
-
->  	pasid = ioasid_alloc(vmm->ioasid_sid, min, max, NULL);
->  	if (pasid == INVALID_IOASID) {
->  		ret = -ENOSPC;
-> diff --git a/drivers/vfio/vfio_iommu_type1.c
-> b/drivers/vfio/vfio_iommu_type1.c
-> index 331ceee..e40afc0 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -60,6 +60,11 @@ module_param_named(dma_entry_limit,
-> dma_entry_limit, uint, 0644);
->  MODULE_PARM_DESC(dma_entry_limit,
->  		 "Maximum number of user DMA mappings per container
-> (65535).");
-> 
-> +static int pasid_quota = VFIO_DEFAULT_PASID_QUOTA;
-> +module_param_named(pasid_quota, pasid_quota, uint, 0644);
-> +MODULE_PARM_DESC(pasid_quota,
-> +		 "Quota of user owned PASIDs per vfio-based application
-> (1000).");
-> +
->  struct vfio_iommu {
->  	struct list_head	domain_list;
->  	struct list_head	iova_list;
-> @@ -2200,7 +2205,7 @@ static int vfio_iommu_type1_pasid_alloc(struct
-> vfio_iommu *iommu,
->  		goto out_unlock;
+> diff --git a/drivers/i2c/busses/i2c-stm32.c b/drivers/i2c/busses/i2c-stm32.c
+> index 1da347e6a358..7be559858402 100644
+> --- a/drivers/i2c/busses/i2c-stm32.c
+> +++ b/drivers/i2c/busses/i2c-stm32.c
+> @@ -25,8 +25,9 @@ struct stm32_i2c_dma *stm32_i2c_dma_request(struct device *dev,
+>  	/* Request and configure I2C TX dma channel */
+>  	dma->chan_tx = dma_request_chan(dev, "tx");
+>  	if (IS_ERR(dma->chan_tx)) {
+> -		dev_dbg(dev, "can't request DMA tx channel\n");
+>  		ret = PTR_ERR(dma->chan_tx);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_dbg(dev, "can't request DMA tx channel\n");
+>  		goto fail_al;
 >  	}
->  	if (vmm)
-> -		ret = vfio_mm_pasid_alloc(vmm, min, max);
-> +		ret = vfio_mm_pasid_alloc(vmm, pasid_quota, min, max);
->  	else
->  		ret = -EINVAL;
->  out_unlock:
-> diff --git a/include/linux/vfio.h b/include/linux/vfio.h
-> index 75f9f7f1..af2ef78 100644
-> --- a/include/linux/vfio.h
-> +++ b/include/linux/vfio.h
-> @@ -106,7 +106,8 @@ struct vfio_mm {
+>  
+> @@ -44,8 +45,10 @@ struct stm32_i2c_dma *stm32_i2c_dma_request(struct device *dev,
+>  	/* Request and configure I2C RX dma channel */
+>  	dma->chan_rx = dma_request_chan(dev, "rx");
+>  	if (IS_ERR(dma->chan_rx)) {
+> -		dev_err(dev, "can't request DMA rx channel\n");
+>  		ret = PTR_ERR(dma->chan_rx);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "can't request DMA rx channel\n");
+> +
+>  		goto fail_tx;
+>  	}
+>  
+> @@ -73,7 +76,8 @@ struct stm32_i2c_dma *stm32_i2c_dma_request(struct device *dev,
+>  	dma_release_channel(dma->chan_tx);
+>  fail_al:
+>  	devm_kfree(dev, dma);
+> -	dev_info(dev, "can't use DMA\n");
+> +	if (ret != -EPROBE_DEFER)
+> +		dev_info(dev, "can't use DMA\n");
+>  
+>  	return ERR_PTR(ret);
+>  }
+> diff --git a/drivers/i2c/busses/i2c-stm32f4.c b/drivers/i2c/busses/i2c-stm32f4.c
+> index ba600d77a3f8..1b8cad506ad7 100644
+> --- a/drivers/i2c/busses/i2c-stm32f4.c
+> +++ b/drivers/i2c/busses/i2c-stm32f4.c
+> @@ -797,8 +797,10 @@ static int stm32f4_i2c_probe(struct platform_device *pdev)
+>  
+>  	rst = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+>  	if (IS_ERR(rst)) {
+> -		dev_err(&pdev->dev, "Error: Missing controller reset\n");
+>  		ret = PTR_ERR(rst);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "Error: Missing reset ctrl\n");
+> +
+>  		goto clk_free;
+>  	}
+>  	reset_control_assert(rst);
+> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+> index 78d40a4cc282..ab95ed52a7dc 100644
+> --- a/drivers/i2c/busses/i2c-stm32f7.c
+> +++ b/drivers/i2c/busses/i2c-stm32f7.c
+> @@ -1915,7 +1915,8 @@ static int stm32f7_i2c_probe(struct platform_device *pdev)
+>  
+>  	i2c_dev->clk = devm_clk_get(&pdev->dev, NULL);
+>  	if (IS_ERR(i2c_dev->clk)) {
+> -		dev_err(&pdev->dev, "Error: Missing controller clock\n");
+> +		if (PTR_ERR(i2c_dev->clk) != -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "Failed to get controller clock\n");
+>  		return PTR_ERR(i2c_dev->clk);
+>  	}
+>  
+> @@ -1941,8 +1942,10 @@ static int stm32f7_i2c_probe(struct platform_device *pdev)
+>  
+>  	rst = devm_reset_control_get(&pdev->dev, NULL);
+>  	if (IS_ERR(rst)) {
+> -		dev_err(&pdev->dev, "Error: Missing controller reset\n");
+>  		ret = PTR_ERR(rst);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "Error: Missing reset ctrl\n");
+> +
+>  		goto clk_free;
+>  	}
+>  	reset_control_assert(rst);
 > 
->  extern struct vfio_mm *vfio_mm_get_from_task(struct task_struct *task);
->  extern void vfio_mm_put(struct vfio_mm *vmm);
-> -extern int vfio_mm_pasid_alloc(struct vfio_mm *vmm, int min, int max);
-> +extern int vfio_mm_pasid_alloc(struct vfio_mm *vmm,
-> +				int quota, int min, int max);
->  extern int vfio_mm_pasid_free(struct vfio_mm *vmm, ioasid_t pasid);
-> 
->  /*
-> --
-> 2.7.4
-
