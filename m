@@ -2,64 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 471F8197A4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F366197A4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729793AbgC3LDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 07:03:12 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46286 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729739AbgC3LDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 07:03:12 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E0DFFE931822773FA77A;
-        Mon, 30 Mar 2020 19:03:06 +0800 (CST)
-Received: from localhost (10.173.223.234) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.487.0; Mon, 30 Mar 2020
- 19:02:55 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <selvin.xavier@broadcom.com>, <devesh.sharma@broadcom.com>,
-        <somnath.kotur@broadcom.com>, <sriharsha.basavapatna@broadcom.com>,
-        <dledford@redhat.com>, <jgg@ziepe.ca>
-CC:     <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] RDMA/bnxt_re: make bnxt_re_ib_init static
-Date:   Mon, 30 Mar 2020 19:02:19 +0800
-Message-ID: <20200330110219.24448-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1729706AbgC3LCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 07:02:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50288 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729640AbgC3LCt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 07:02:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=OcosEihYBe+spE3GuKJaV12KeTRSak0CdVFTw4AqKfk=; b=OZGUqwQeHml5PPhx4r8PXY6gI0
+        LirKSPJC9jI8tfla+5PAqPW141BlQiz4lDzHRtoF8rpGUF0f9W41P8ov5iWO9oNdsrLSKQa5Muk0b
+        8i6mpo9afrmglqwsJqq4V4wHM4p7KPs8KrdsKnBrFUH/A4a7O3aV6z9beaC6NISngGm4eKQ5pYyFY
+        bHm3Rt9RfWYPXemZJnkJGoWa9g1yLhmI7ZXrjbMvSlj8cuZxcC0dZbgj8ynULFSWfBBvfGV3ZGbTf
+        XQHScF0orkNktNFPDwQrwJYUew+SN7vVlaORxLNjgbTkMy5hf8pdCLqXKg5yfLktUqvP/1O/Curu6
+        3I7aEBWQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jIsBe-0000m8-9P; Mon, 30 Mar 2020 11:02:34 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C2572303C41;
+        Mon, 30 Mar 2020 13:02:31 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8EEDA203C0A2F; Mon, 30 Mar 2020 13:02:31 +0200 (CEST)
+Date:   Mon, 30 Mar 2020 13:02:31 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Enrico Weigelt <info@metux.net>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 1/1] ppc/crash: Skip spinlocks during crash
+Message-ID: <20200330110231.GG20696@hirez.programming.kicks-ass.net>
+References: <20200326222836.501404-1-leonardo@linux.ibm.com>
+ <af505ef0-e0df-e0aa-bb83-3ed99841f151@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.173.223.234]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <af505ef0-e0df-e0aa-bb83-3ed99841f151@c-s.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warning:
+On Fri, Mar 27, 2020 at 07:50:20AM +0100, Christophe Leroy wrote:
+> 
+> 
+> Le 26/03/2020 à 23:28, Leonardo Bras a écrit :
+> > During a crash, there is chance that the cpus that handle the NMI IPI
+> > are holding a spin_lock. If this spin_lock is needed by crashing_cpu it
+> > will cause a deadlock. (rtas_lock and printk logbuf_log as of today)
+> > 
+> > This is a problem if the system has kdump set up, given if it crashes
+> > for any reason kdump may not be saved for crash analysis.
+> > 
+> > Skip spinlocks after NMI IPI is sent to all other cpus.
+> > 
+> > Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
+> > ---
+> >   arch/powerpc/include/asm/spinlock.h | 6 ++++++
+> >   arch/powerpc/kexec/crash.c          | 3 +++
+> >   2 files changed, 9 insertions(+)
+> > 
+> > diff --git a/arch/powerpc/include/asm/spinlock.h b/arch/powerpc/include/asm/spinlock.h
+> > index 860228e917dc..a6381d110795 100644
+> > --- a/arch/powerpc/include/asm/spinlock.h
+> > +++ b/arch/powerpc/include/asm/spinlock.h
+> > @@ -111,6 +111,8 @@ static inline void splpar_spin_yield(arch_spinlock_t *lock) {};
+> >   static inline void splpar_rw_yield(arch_rwlock_t *lock) {};
+> >   #endif
+> > +extern bool crash_skip_spinlock __read_mostly;
+> > +
+> >   static inline bool is_shared_processor(void)
+> >   {
+> >   #ifdef CONFIG_PPC_SPLPAR
+> > @@ -142,6 +144,8 @@ static inline void arch_spin_lock(arch_spinlock_t *lock)
+> >   		if (likely(__arch_spin_trylock(lock) == 0))
+> >   			break;
+> >   		do {
+> > +			if (unlikely(crash_skip_spinlock))
+> > +				return;
+> 
+> You are adding a test that reads a global var in the middle of a so hot path
+> ? That must kill performance. Can we do different ?
 
-drivers/infiniband/hw/bnxt_re/main.c:1313:5:
- warning: symbol 'bnxt_re_ib_init' was not declared. Should it be static?
+This; adding code to a super hot patch like this for an exceptional case
+like the crash handling seems like a very very bad trade to me.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/infiniband/hw/bnxt_re/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/bnxt_re/main.c b/drivers/infiniband/hw/bnxt_re/main.c
-index 4a8fb1ad74a8..b12fbc857f94 100644
---- a/drivers/infiniband/hw/bnxt_re/main.c
-+++ b/drivers/infiniband/hw/bnxt_re/main.c
-@@ -1310,7 +1310,7 @@ static void bnxt_re_query_hwrm_intf_version(struct bnxt_re_dev *rdev)
- 		le16_to_cpu(resp.hwrm_intf_patch);
- }
- 
--int bnxt_re_ib_init(struct bnxt_re_dev *rdev)
-+static int bnxt_re_ib_init(struct bnxt_re_dev *rdev)
- {
- 	int rc = 0;
- 	u32 event;
--- 
-2.17.1
-
-
+One possible solution is to simply write 0 to the affected spinlocks
+after sending the NMI IPI thing, no?
