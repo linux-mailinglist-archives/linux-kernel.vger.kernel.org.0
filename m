@@ -2,75 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 952D719776D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 11:05:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E93D197775
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 11:08:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729794AbgC3JF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 05:05:29 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43818 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729649AbgC3JF2 (ORCPT
+        id S1729857AbgC3JIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 05:08:18 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39565 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729827AbgC3JIS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 05:05:28 -0400
-Received: by mail-ot1-f66.google.com with SMTP id a6so17202561otb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 02:05:28 -0700 (PDT)
+        Mon, 30 Mar 2020 05:08:18 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p10so20612723wrt.6;
+        Mon, 30 Mar 2020 02:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bTYehEJibc5NpezL2miOM2UdvHHV5lxW3CvlvcvUFZc=;
+        b=skx0J5EJ+LeY2Xp5xogjkpxx/vhzk/uPCt6wTntQ2gWmUK4+NB8zoW0hukUsmSF0nD
+         zKLCtfJ8KVjrhX+J6OiYI2KvdVdUwn1+BSjCHJisv8Zc/UuYqdTnBwYfCowXEU4fuA5o
+         fQWlC0x43Lw2vGrcZjohE4mR/0bTy1D7K2FtD5Ji2ckVuqB/748Uq8wl2YGVxW66k2uM
+         UWVcapTluCjqSkBJGxoHefhA8vtEWcnnqQxBk6NnXYalpp4bL5/46MXB7xGAEG+BZyx8
+         zSJdNdeVzaFPEkrcTpyRCB1f4U3VcLIkfsqn5M7A83+nIJBFduH4VuX98dYjy0Tabvf+
+         /bJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=7jTEzJzOvQs2PCWu4X88jyDwbyYj7GS2gp6XlaD8iHU=;
-        b=sx+jnW7OEOYoeYTxFafukCqoewNkOaKvnUTydHtanc41dW3IsZ22VeKPwvP9UYRVe0
-         kwLaW6CJwrPgnzsQxd0B331JwbFmZiT8VuU17olMHXGPFl1+a6lcIZPz0J+DV0ZIUGQD
-         3V7qnAQiS7oD9DUFaL5MRwIoH6mNmuAIO9YykpqWBDa1SFv5PLMcVjmQUwnYM+mMhaLU
-         1/vK+jYfg+8Ycumj7Wl3moXzAyCEAGarckw4ltaBqwUqa83MS40kekGWDt1LXG+pkgvV
-         fgduytBzVm/febgLkkeHkzYtBZxKc7Q1iNvWAnKR7xoFP6sd9O4WUgPNiEL4L0pLgYEl
-         sEiA==
-X-Gm-Message-State: ANhLgQ1Tu+zvzSyDEcxjgQGlqR/vyzhhECH+VHxEuTXDMJ0/6werMn6P
-        B76r0KB++WqzRDjLfdrQvGYQECSAdLKEwxgxzCrgzdJP
-X-Google-Smtp-Source: ADFU+vvfQ0DvfXVzEhK2OZ05NqGmoFxGAsqcQXNzz9y3pr0qi4KVnsmMTzvT12P23eOE4aOgQX8FfIRjQ+kzUMEUI8o=
-X-Received: by 2002:a9d:7590:: with SMTP id s16mr8364554otk.250.1585559127588;
- Mon, 30 Mar 2020 02:05:27 -0700 (PDT)
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bTYehEJibc5NpezL2miOM2UdvHHV5lxW3CvlvcvUFZc=;
+        b=DaYNojXtZ2KKItaj0Sz+p9TRebhDp8ZfZsn8LoDKyRM2Yl6soKLuAOU/RlKG+anQRJ
+         HADikK8ASOuKozsdBuxUenFrsMS1IW+Y2HASqg3kmpM2VhidophTzKzsVhrGHB0ECo6d
+         DcXY3YiAAUDm3Gjklj9EpUmdtyCUqhRizr3PBzWX5ItjKWNqYzwAuTzXKiH/lCyrlr7H
+         IWt8HXXTJzLvbIB+qMNd+arRI/QsDWOadRh0TKYpGZQqae+UP1Nk48d1kz5TbpzDCaqv
+         Iks+PRlaR2eu0pD8jTHnhBvRb9WrNSTz8lB6G5m4Cj/ftFQICWBTbmysQYjzsdjSX/+B
+         WvvA==
+X-Gm-Message-State: ANhLgQ0NepTn2fjlDZQZjPulT6Hs0G1NHJHRikP7EwKwRtfxdqDsz9bv
+        Y5kTT2CB3/mjPtx84N3nRgzlLFnB
+X-Google-Smtp-Source: ADFU+vs8+HuLZBtQ3iKO2QQDWy8WQ1tzX+o4NRgABRPSTDnj27IhTo6J75JWGFZDWwYDHYbxmJVT4w==
+X-Received: by 2002:a5d:4284:: with SMTP id k4mr13569324wrq.310.1585559295971;
+        Mon, 30 Mar 2020 02:08:15 -0700 (PDT)
+Received: from ?IPv6:2001:a61:2482:101:3351:6160:8173:cc31? ([2001:a61:2482:101:3351:6160:8173:cc31])
+        by smtp.gmail.com with ESMTPSA id z1sm9323400wrp.90.2020.03.30.02.08.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Mar 2020 02:08:15 -0700 (PDT)
+Cc:     mtk.manpages@gmail.com, Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, linux-man@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH man-pages v2 2/2] openat2.2: document new openat2(2)
+ syscall
+To:     Aleksa Sarai <cyphar@cyphar.com>, Al Viro <viro@zeniv.linux.org.uk>
+References: <20200202151907.23587-1-cyphar@cyphar.com>
+ <20200202151907.23587-3-cyphar@cyphar.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <4dcea613-60b8-a8af-9688-be93858ab652@gmail.com>
+Date:   Mon, 30 Mar 2020 11:08:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-References: <20200330085854.19774-1-geert@linux-m68k.org>
-In-Reply-To: <20200330085854.19774-1-geert@linux-m68k.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 30 Mar 2020 11:05:16 +0200
-Message-ID: <CAMuHMdUXS4T_L+d9XkyrhMTkGE2iJVHCKtUoZPdxxg0+9AckpQ@mail.gmail.com>
-Subject: Re: Build regressions/improvements in v5.6
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200202151907.23587-3-cyphar@cyphar.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 11:00 AM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> JFYI, when comparing v5.6[1] to v5.6-rc7[3], the summaries are:
->   - build errors: +0/-0
->   - build warnings: +1/-0
+Hello Aleksa,
 
-FTR, this is the silly
+On 2/2/20 4:19 PM, Aleksa Sarai wrote:
+> Rather than trying to merge the new syscall documentation into open.2
+> (which would probably result in the man-page being incomprehensible),
+> instead the new syscall gets its own dedicated page with links between
+> open(2) and openat2(2) to avoid duplicating information such as the list
+> of O_* flags or common errors.
+> 
+> In addition to describing all of the key flags, information about the
+> extensibility design is provided so that users can better understand why
+> they need to pass sizeof(struct open_how) and how their programs will
+> work across kernels. After some discussions with David Laight, I also
+> included explicit instructions to zero the structure to avoid issues
+> when recompiling with new headers.>
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 
-In function 'memcpy_and_pad.constprop',
-    inlined from 'nvmet_execute_identify_ctrl' at
-/kisskb/src/drivers/nvme/target/admin-cmd.c:346:2,
-    inlined from 'nvmet_execute_identify' at
-/kisskb/src/drivers/nvme/target/admin-cmd.c:617:10:
-/kisskb/src/arch/m68k/include/asm/string.h:72:25: warning:
-'__builtin_memcpy' forming offset 8 is out of the bounds [0, 7]
-[-Warray-bounds]
+I'm just editing this page, and have a question on one piece.
 
-which happens every point release, when strlen(UTS_RELEASE) is
-smaller than 8.
+> +Unlike
+> +.BR openat (2),
+> +it is an error to provide
+> +.BR openat2 ()
+> +with a
+> +.I mode
+> +which contains bits other than
+> +.IR 0777 ,
 
-Gr{oetje,eeting}s,
+This piece appears not to be true, both from my reading of the
+source code, and from testing (i.e., I wrote a a small program that
+successfully called openat2() and created a file that had the
+set-UID, set-GID, and sticky bits set).
 
-                        Geert
+Is this a bug in the implementation or a bug in the manual page text?
+
+Thanks,
+
+Michael
+
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
