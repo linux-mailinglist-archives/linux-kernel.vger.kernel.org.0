@@ -2,71 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D96D197709
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 10:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23D4F19770E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 10:53:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729778AbgC3Iwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 04:52:47 -0400
-Received: from server.eikelenboom.it ([91.121.65.215]:58008 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728759AbgC3Iwr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 04:52:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:To:Cc:Subject:From:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=QAtEIvYX/7+xN3Mi5dcj3FKSVE3ggw0yZWWxME0VaN4=; b=D3Hvt9/iGkW4B0YmTNr3XoLgJQ
-        EYqdsFi0Ex7bCf1c5DTfPDOv7XHlI+LFhz2duIKsU7Ym8nJH5KV1BQyxkj8uLCXF4cx5SoCxgpb9R
-        sTJ+kTRXCayiNg/81JN1SsCYVWTig8EPqUohWlbRFeH77/3B+5LkALOEKGUQOaitRFY4=;
-Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:51748 helo=[172.16.1.50])
-        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <linux@eikelenboom.it>)
-        id 1jIqBu-0004Gr-PF; Mon, 30 Mar 2020 10:54:42 +0200
-From:   Sander Eikelenboom <linux@eikelenboom.it>
-Subject: Linux 5.6.0 regression: wlan0: authentication with 64:66:b3:xx:xx:xx
- timed out
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>
-Message-ID: <56dfeca2-71cc-c601-06fc-4ebe9627ba74@eikelenboom.it>
-Date:   Mon, 30 Mar 2020 10:52:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        id S1729819AbgC3Iw6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Mar 2020 04:52:58 -0400
+Received: from mga17.intel.com ([192.55.52.151]:46065 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728759AbgC3Iw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 04:52:57 -0400
+IronPort-SDR: QXpLRpUuvJqngAE/VFxwELgECsj4nQJSO3YmLU15Yd21t2hzULRSeqDvl1hyIJfya7kL8+No7h
+ lYCHPuX/uWaQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 01:52:56 -0700
+IronPort-SDR: MBiyOOxUJF6fJNTvBj5/ir061eij3yZmO1MS3Xx9sjuiUH0gDp0qknfteIzyOpCabXDvhCf68F
+ t54dPNvW9uUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,323,1580803200"; 
+   d="scan'208";a="283528198"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by fmsmga002.fm.intel.com with ESMTP; 30 Mar 2020 01:52:56 -0700
+Received: from fmsmsx114.amr.corp.intel.com (10.18.116.8) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 30 Mar 2020 01:52:56 -0700
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ FMSMSX114.amr.corp.intel.com (10.18.116.8) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 30 Mar 2020 01:52:55 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.225]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.146]) with mapi id 14.03.0439.000;
+ Mon, 30 Mar 2020 16:52:52 +0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>
+CC:     "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Tian, Jun J" <jun.j.tian@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wu, Hao" <hao.wu@intel.com>
+Subject: RE: [PATCH v1 2/8] vfio/type1: Add vfio_iommu_type1 parameter for
+ quota tuning
+Thread-Topic: [PATCH v1 2/8] vfio/type1: Add vfio_iommu_type1 parameter for
+ quota tuning
+Thread-Index: AQHWAEUbHl/tnnhWl0eaKvrwJMb1AqhgVzOAgACGb+A=
+Date:   Mon, 30 Mar 2020 08:52:51 +0000
+Message-ID: <A2975661238FB949B60364EF0F2C25743A217C68@SHSMSX104.ccr.corp.intel.com>
+References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
+ <1584880325-10561-3-git-send-email-yi.l.liu@intel.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19D7FF3C5@SHSMSX104.ccr.corp.intel.com>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7FF3C5@SHSMSX104.ccr.corp.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-L.S.,
+> From: Tian, Kevin <kevin.tian@intel.com>
+> Sent: Monday, March 30, 2020 4:41 PM
+> To: Liu, Yi L <yi.l.liu@intel.com>; alex.williamson@redhat.com;
+> Subject: RE: [PATCH v1 2/8] vfio/type1: Add vfio_iommu_type1 parameter for quota
+> tuning
+> 
+> > From: Liu, Yi L <yi.l.liu@intel.com>
+> > Sent: Sunday, March 22, 2020 8:32 PM
+> >
+> > From: Liu Yi L <yi.l.liu@intel.com>
+> >
+> > This patch adds a module option to make the PASID quota tunable by
+> > administrator.
+> >
+> > TODO: needs to think more on how to  make the tuning to be per-process.
+> >
+> > Previous discussions:
+> > https://patchwork.kernel.org/patch/11209429/
+> >
+> > Cc: Kevin Tian <kevin.tian@intel.com>
+> > CC: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Cc: Alex Williamson <alex.williamson@redhat.com>
+> > Cc: Eric Auger <eric.auger@redhat.com>
+> > Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> > ---
+> >  drivers/vfio/vfio.c             | 8 +++++++-
+> >  drivers/vfio/vfio_iommu_type1.c | 7 ++++++-
+> >  include/linux/vfio.h            | 3 ++-
+> >  3 files changed, 15 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+> > index d13b483..020a792 100644
+> > --- a/drivers/vfio/vfio.c
+> > +++ b/drivers/vfio/vfio.c
+> > @@ -2217,13 +2217,19 @@ struct vfio_mm *vfio_mm_get_from_task(struct
+> > task_struct *task)
+> >  }
+> >  EXPORT_SYMBOL_GPL(vfio_mm_get_from_task);
+> >
+> > -int vfio_mm_pasid_alloc(struct vfio_mm *vmm, int min, int max)
+> > +int vfio_mm_pasid_alloc(struct vfio_mm *vmm, int quota, int min, int max)
+> >  {
+> >  	ioasid_t pasid;
+> >  	int ret = -ENOSPC;
+> >
+> >  	mutex_lock(&vmm->pasid_lock);
+> >
+> > +	/* update quota as it is tunable by admin */
+> > +	if (vmm->pasid_quota != quota) {
+> > +		vmm->pasid_quota = quota;
+> > +		ioasid_adjust_set(vmm->ioasid_sid, quota);
+> > +	}
+> > +
+> 
+> It's a bit weird to have quota adjusted in the alloc path, since the latter might
+> be initiated by non-privileged users. Why not doing the simple math in vfio_
+> create_mm to set the quota when the ioasid set is created? even in the future
+> you may allow per-process quota setting, that should come from separate
+> privileged path instead of thru alloc..
 
-Linux 5.6.0 has a regression compared to my previous build of Linus his
-tree 5.6-rc7-ish (pulled and build on 2020-03-26), so it must be
-introduced in one of the last 2 netdev pulls.
+The reason is the kernel parameter modification has no event which
+can be used to adjust the quota. So I chose to adjust it in pasid_alloc
+path. If it's not good, how about adding one more IOCTL to let user-
+space trigger a quota adjustment event? Then even non-privileged
+user could trigger quota adjustment, the quota is actually controlled
+by privileged user. How about your opinion?
 
-Both my laptops don't connect to Wifi any more, wifi hardware is intel:
-    03:00.0 Network controller: Intel Corporation Wireless 7260 (rev 83)
-
-Logging shows a repeat of:
-    [  512.085509] wlan0: authentication with 64:66:b3:xx:xx:xx timed out
-    [  521.048959] wlan0: authenticate with 64:66:b3:be:b6:cc
-    [  521.052416] wlan0: send auth to 64:66:b3:xx:xx:xx (try 1/3)
-    [  521.053199] wlan0: send auth to 64:66:b3:xx:xx:xx (try 2/3)
-    [  521.053209] wlan0: send auth to 64:66:b3:xx:xx:xx (try 3/3)
-
-Any ideas ?
-(will probably have some time to bisect later today)
-
-
---
-Sander
-
+Regards,
+Yi Liu
