@@ -2,84 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4AE2197B48
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:52:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8002197B4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:54:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbgC3Lwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 07:52:53 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45638 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728764AbgC3Lwv (ORCPT
+        id S1730026AbgC3Lx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 07:53:57 -0400
+Received: from out28-52.mail.aliyun.com ([115.124.28.52]:59618 "EHLO
+        out28-52.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728764AbgC3Lx5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 07:52:51 -0400
-Received: by mail-pl1-f195.google.com with SMTP id t4so668263plq.12;
-        Mon, 30 Mar 2020 04:52:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Eg5ugs9X241d0CyEHmbcuFz60tm64fkmmQDdwTBJmwo=;
-        b=bx72mUxy7UhUrj/cFQtM3eS3lb41tkad+HkCfGl7ALAjXH3z2dhSxVA9srYRsjMG7g
-         EXx2GambzNP9ODeY640qVmq5Gu4R+JHDXZq+yyWf3+TIQe4xcdu6zMsJhn9aA3JRtUDQ
-         q6KxjpPJ3QoZVvkp4UJMcyNB8IsesWuOwLdHNVJxlVKwPudGdTqgVglMfsKR0EQ6bBRt
-         zID7u4h3SB9c43fysjMa2VL+L9FLQABlAXx05yJIbDxIT3cwm/ko4qIzTWXOR3w2o9/r
-         UbghdxeYQU2RR/afULeC3pRkuZ4w3C+3jQVSIOunRm2DsOA1N+J4886HS4V/iNDRtlOq
-         4bcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Eg5ugs9X241d0CyEHmbcuFz60tm64fkmmQDdwTBJmwo=;
-        b=cmqvy2z4mkoy/+BWqsfmp3o4yVHbAgidUIsvzsY0l0coIAAp65Ot/APyCvkudzASIz
-         sGmi23EwcHNkoJvvDGUIQ0N6pxEysvhNB6Elxeg6Ui+myWHcptANlvyF0RLPhLzYTo+g
-         F35nUTdn7EcB1QA4hLguJLDSaOBQ4egGIaEJOj3G/i6+SOLyfH5eEPrI6f4yJaI0bLyb
-         WWfUN0WyPWqP+ICPH1cLewfRG2gSay+HwBKoQ4gXwR2y6UmphihmP7jxmibXzmCL7wcV
-         BQfUtWc2ziQ8W9twdcBdrdZYrF+I7VDpNa3/4tyfDwpch49VS6iqX6ZfEgegdO4X2s2v
-         8BrA==
-X-Gm-Message-State: ANhLgQ3vTOpzu4e05LK+3OlkMkQNmeVKZDsiwgcumAGfgYlK1br7qjP4
-        t0/dllbX445s65Fzv2ExSg==
-X-Google-Smtp-Source: ADFU+vvHPxPL9x5Yn46J0zk4QFbJpW4YEMsI5pazZEOmCFYJZehaxlAEidJsvORcHfq26MYyODPWZw==
-X-Received: by 2002:a17:902:788e:: with SMTP id q14mr12138962pll.72.1585569169503;
-        Mon, 30 Mar 2020 04:52:49 -0700 (PDT)
-Received: from localhost.localdomain ([2402:3a80:d3b:3d6b:7942:93fd:fd15:96f0])
-        by smtp.gmail.com with ESMTPSA id i4sm10012756pfq.82.2020.03.30.04.52.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 04:52:48 -0700 (PDT)
-From:   madhuparnabhowmik10@gmail.com
-To:     gregkh@linuxfoundation.org, hariprasad.kelam@gmail.com,
-        colin.king@canonical.com, tony.olech@elandigitalsystems.com
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andrianov@ispras.ru
-Subject: Possible data-race related bug in u132_hcd module.
-Date:   Mon, 30 Mar 2020 17:22:43 +0530
-Message-Id: <20200330115243.11107-1-madhuparnabhowmik10@gmail.com>
+        Mon, 30 Mar 2020 07:53:57 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.03929106|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0110356-0.000277475-0.988687;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03308;MF=hanchuanhua@fishsemi.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.H7e-2Ko_1585569212;
+Received: from localhost.localdomain(mailfrom:hanchuanhua@fishsemi.com fp:SMTPD_---.H7e-2Ko_1585569212)
+          by smtp.aliyun-inc.com(10.147.44.118);
+          Mon, 30 Mar 2020 19:53:46 +0800
+From:   Chuanhua Han <hanchuanhua@fishsemi.com>
+To:     paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
+Cc:     akpm@linux-foundation.org, sfr@canb.auug.org.au, peterx@redhat.com,
+        shihpo.hung@sifive.com, ebiederm@xmission.com, schwab@suse.de,
+        tglx@linutronix.de, Anup.Patel@wdc.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chuanhua Han <hanchuanhua@fishsemi.com>
+Subject: [PATCH] riscv: mm: Remove the copy operation of pmd
+Date:   Mon, 30 Mar 2020 19:53:19 +0800
+Message-Id: <20200330115319.1507-1-hanchuanhua@fishsemi.com>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Since all processes share the kernel address space,
+we only need to copy pgd in case of a vmalloc page
+fault exception, the other levels of page tables are
+shared, so the operation of copying pmd is unnecessary.
 
-This bug is found by  Linux Driver Verification project (linuxtesting.org).
+Signed-off-by: Chuanhua Han <hanchuanhua@fishsemi.com>
+---
+ arch/riscv/mm/fault.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-The bug is related to the parallel execution of u132_probe() function and u132_hcd_exit() function in u132_hcd.c. In case the module is unloaded when the probe function is executing there can be data race as the mutex lock u132_module_lock is not used properly. 
+diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
+index be84e32adc4c..24f4ebfd2df8 100644
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -208,9 +208,9 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
+ vmalloc_fault:
+ 	{
+ 		pgd_t *pgd, *pgd_k;
+-		pud_t *pud, *pud_k;
+-		p4d_t *p4d, *p4d_k;
+-		pmd_t *pmd, *pmd_k;
++		pud_t *pud_k;
++		p4d_t *p4d_k;
++		pmd_t *pmd_k;
+ 		pte_t *pte_k;
+ 		int index;
+ 
+@@ -234,12 +234,10 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
+ 			goto no_context;
+ 		set_pgd(pgd, *pgd_k);
+ 
+-		p4d = p4d_offset(pgd, addr);
+ 		p4d_k = p4d_offset(pgd_k, addr);
+ 		if (!p4d_present(*p4d_k))
+ 			goto no_context;
+ 
+-		pud = pud_offset(p4d, addr);
+ 		pud_k = pud_offset(p4d_k, addr);
+ 		if (!pud_present(*pud_k))
+ 			goto no_context;
+@@ -248,11 +246,9 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
+ 		 * Since the vmalloc area is global, it is unnecessary
+ 		 * to copy individual PTEs
+ 		 */
+-		pmd = pmd_offset(pud, addr);
+ 		pmd_k = pmd_offset(pud_k, addr);
+ 		if (!pmd_present(*pmd_k))
+ 			goto no_context;
+-		set_pmd(pmd, *pmd_k);
+ 
+ 		/*
+ 		 * Make sure the actual PTE exists as well to
+-- 
+2.17.1
 
-i) Usage of mutex lock only when writing into the u132_exiting variable in u132_hcd_exit(). The lock is not used when this variable is read in u132_probe().
-
-Moreover, this variable does not serve its purpose, as even if locking is used while the u132_exiting variable is read in probe(), the function may still miss that exit function is executing if it acquires the mutex before exit() function does.
-
-How to fix this?
-
-ii) Usage of mutex while adding entries in u132_static_list in probe function but not in exit function while unregistering.
-This should be easy to fix by holding the mutex in the exit function as well.
-
-There can be other synchronization problems related to the usage of u132_module_lock in this module, I have only spotted these so far.
-
-Please let me know if this bug report is helpful and I can send a patch fixing it.
-
-Thank you,
-Madhuparna
