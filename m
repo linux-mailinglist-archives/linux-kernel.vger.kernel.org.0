@@ -2,211 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D70C6197EF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFD41197F09
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:51:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728726AbgC3Otx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 10:49:53 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45837 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728658AbgC3Otv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 10:49:51 -0400
-Received: by mail-pl1-f195.google.com with SMTP id t4so854155plq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 07:49:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dM88C1QGqBI6GelWDoTaSxU6lxBt7GdfPhOw1+SN7L4=;
-        b=bZQT8U7yeFC0d8TYNbHn5nxihcCGYzsucQuteR7S/owSBM74VPEGKfvp1QygPlLklu
-         7A8Cf+UJ2EJnU6xm+0oGKWQydb4lR8JoJNOjkbL9XKP7aFLsL40p+BMaSrDFU1lQNio9
-         7f/kbrNNjQ/MHbdaUvWE0x8rRGWFOqb6aL9sA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dM88C1QGqBI6GelWDoTaSxU6lxBt7GdfPhOw1+SN7L4=;
-        b=k6aDJinYhB/BQVutwlaujams64JncitePG6rPU5t63OwyxXoK/53lExgS4FdOS45Ma
-         RP7FjlJgD/WKpCRnDPtpSdcFeUy7zTUCSbMzsMgTI3we+gv2jtHjkwbAPGQXVrWed+lS
-         1InnaIwBqFrfQnNoExPkuzyoLd8IOgyTk7Q6YhJPnduZ7nK55FSrdKDE7eWbha159iLd
-         l/xMgKpKXq4Ayopq1kUqYdcpS9/IKh4KSwOQwH1GUi6At2DaHU3cXnkaSnAsYuk6e5+E
-         py1Zqrk90X9g/Pab1xedroC9uxzxn4sqvAP2w3MPlTrcgCG1YoJXMf4YZQLLPX5a+dMk
-         yQhg==
-X-Gm-Message-State: ANhLgQ23fLRxKvidueh7dHdQ35NzA1HNTs72mT9ZDWV9sha80DEPoirz
-        qIPKcTIChQ1qD8mHipLZpq3TmQ==
-X-Google-Smtp-Source: ADFU+vs7rQVtixqgI9wBPaqXU1+aDYgI08FylS7YrS5dAycbwFZ775FR+CDJE1eOdLSXZ5NRtFq8wA==
-X-Received: by 2002:a17:90a:7f03:: with SMTP id k3mr16139676pjl.42.1585579788982;
-        Mon, 30 Mar 2020 07:49:48 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id y198sm1460972pfg.123.2020.03.30.07.49.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 07:49:48 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     axboe@kernel.dk, jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc:     linux-block@vger.kernel.org, groeck@chromium.org,
-        paolo.valente@linaro.org, linux-scsi@vger.kernel.org,
-        sqazi@google.com, Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] scsi: core: Fix stall if two threads request budget at the same time
-Date:   Mon, 30 Mar 2020 07:49:06 -0700
-Message-Id: <20200330074856.2.I28278ef8ea27afc0ec7e597752a6d4e58c16176f@changeid>
-X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
-In-Reply-To: <20200330144907.13011-1-dianders@chromium.org>
-References: <20200330144907.13011-1-dianders@chromium.org>
+        id S1728763AbgC3OvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 10:51:04 -0400
+Received: from mga18.intel.com ([134.134.136.126]:52891 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726099AbgC3OvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 10:51:04 -0400
+IronPort-SDR: l3JrtsUXSnzSRdg6MF1Bp1wGgCNNFVTet9jSc5fNfuvUmGYe5ZYKZciS83QDQlMFK6wCazi4x0
+ kYU15aR2wtZw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 07:51:02 -0700
+IronPort-SDR: 8x6LKW1BZpgkOpaBsEsSTOpNcDwxG0kfXVvoTJrEUwHjmjGfJnE2D4EZ4Y5/3vq5ZmX6L4A6mV
+ +zYipkg/sfOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,324,1580803200"; 
+   d="scan'208";a="294602545"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by FMSMGA003.fm.intel.com with ESMTP; 30 Mar 2020 07:51:00 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jIvkk-00EEVe-Lc; Mon, 30 Mar 2020 17:51:02 +0300
+Date:   Mon, 30 Mar 2020 17:51:02 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
+        matwey.kornilov@gmail.com, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lukas@wunner.de,
+        christoph.muellner@theobroma-systems.com,
+        giulio.benetti@micronovasrl.com
+Subject: Re: [PATCH DON'T APPLY v2 3/7] serial: 8250: Support rs485 bus
+ termination GPIO
+Message-ID: <20200330145102.GU1922688@smile.fi.intel.com>
+References: <20200325231422.1502366-1-heiko@sntech.de>
+ <20200325231422.1502366-4-heiko@sntech.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200325231422.1502366-4-heiko@sntech.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is possible for two threads to be running
-blk_mq_do_dispatch_sched() at the same time with the same "hctx".
-This is because there can be more than one caller to
-__blk_mq_run_hw_queue() with the same "hctx" and hctx_lock() doesn't
-prevent more than one thread from entering.
+On Thu, Mar 26, 2020 at 12:14:18AM +0100, Heiko Stuebner wrote:
+> From: Lukas Wunner <lukas@wunner.de>
+> 
+> Amend the serial core to retrieve the rs485 bus termination GPIO from
+> the device tree (or ACPI table) and amend the default ->rs485_config()
+> callback for 8250 drivers to change the GPIO on request from user space.
 
-If more than one thread is running blk_mq_do_dispatch_sched() at the
-same time with the same "hctx", they may have contention acquiring
-budget.  The blk_mq_get_dispatch_budget() can eventually translate
-into scsi_mq_get_budget().  If the device's "queue_depth" is 1 (not
-uncommon) then only one of the two threads will be the one to
-increment "device_busy" to 1 and get the budget.
+> +	port->rs485_term_gpio = devm_gpiod_get(dev, "rs485-term",
+> +					       GPIOD_FLAGS_BIT_DIR_OUT);
+> +	if (IS_ERR(port->rs485_term_gpio)) {
+> +		ret = PTR_ERR(port->rs485_term_gpio);
+> +		port->rs485_term_gpio = NULL;
+> +		if (ret != -ENOENT) {
+> +			if (ret != -EPROBE_DEFER)
+> +				dev_err(dev, "Cannot get rs485-term-gpios\n");
+> +			return ret;
+> +		}
 
-The losing thread will break out of blk_mq_do_dispatch_sched() and
-will stop dispatching requests.  The assumption is that when more
-budget is available later (when existing transactions finish) the
-queue will be kicked again, perhaps in scsi_end_request().
+NIH of gpiod_get_optional().
 
-The winning thread now has budget and can go on to call
-dispatch_request().  If dispatch_request() returns NULL here then we
-have a potential problem.  Specifically we'll now call
-blk_mq_put_dispatch_budget() which translates into
-scsi_mq_put_budget().  That will mark the device as no longer busy but
-doesn't do anything to kick the queue.  This violates the assumption
-that the queue would be kicked when more budget was available.
+> +	} else {
+> +		ret = gpiod_get_value(port->rs485_term_gpio);
+> +		if (ret < 0) {
+> +			dev_err(dev, "Cannot get rs485-term-gpios value\n");
+> +			return ret;
+> +		}
+> +		if (ret)
+> +			rs485conf->flags |= SER_RS485_TERMINATE_BUS;
+> +	}
 
-Pictorially:
-
-Thread A                          Thread B
-================================= ==================================
-blk_mq_get_dispatch_budget() => 1
-dispatch_request() => NULL
-                                  blk_mq_get_dispatch_budget() => 0
-                                  // because Thread A marked
-                                  // "device_busy" in scsi_device
-blk_mq_put_dispatch_budget()
-
-The above case was observed in reboot tests and caused a task to hang
-forever waiting for IO to complete.  Traces showed that in fact two
-tasks were running blk_mq_do_dispatch_sched() at the same time with
-the same "hctx".  The task that got the budget did in fact see
-dispatch_request() return NULL.  Both tasks returned and the system
-went on for several minutes (until the hung task delay kicked in)
-without the given "hctx" showing up again in traces.
-
-Let's attempt to fix this problem by detecting budget contention.  If
-we're in the SCSI code's put_budget() function and we saw that someone
-else might have wanted the budget we got then we'll kick the queue.
-
-The mechanism of kicking due to budget contention has the potential to
-overcompensate and kick the queue more than strictly necessary, but it
-shouldn't hurt.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-
- drivers/scsi/scsi_lib.c    | 27 ++++++++++++++++++++++++---
- drivers/scsi/scsi_scan.c   |  1 +
- include/scsi/scsi_device.h |  2 ++
- 3 files changed, 27 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 610ee41fa54c..0530da909995 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -344,6 +344,21 @@ static void scsi_dec_host_busy(struct Scsi_Host *shost, struct scsi_cmnd *cmd)
- 	rcu_read_unlock();
- }
- 
-+static void scsi_device_dec_busy(struct scsi_device *sdev)
-+{
-+	bool was_contention;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&sdev->budget_lock, flags);
-+	atomic_dec(&sdev->device_busy);
-+	was_contention = sdev->budget_contention;
-+	sdev->budget_contention = false;
-+	spin_unlock_irqrestore(&sdev->budget_lock, flags);
-+
-+	if (was_contention)
-+		blk_mq_run_hw_queues(sdev->request_queue, true);
-+}
-+
- void scsi_device_unbusy(struct scsi_device *sdev, struct scsi_cmnd *cmd)
- {
- 	struct Scsi_Host *shost = sdev->host;
-@@ -354,7 +369,7 @@ void scsi_device_unbusy(struct scsi_device *sdev, struct scsi_cmnd *cmd)
- 	if (starget->can_queue > 0)
- 		atomic_dec(&starget->target_busy);
- 
--	atomic_dec(&sdev->device_busy);
-+	scsi_device_dec_busy(sdev);
- }
- 
- static void scsi_kick_queue(struct request_queue *q)
-@@ -1624,16 +1639,22 @@ static void scsi_mq_put_budget(struct blk_mq_hw_ctx *hctx)
- 	struct request_queue *q = hctx->queue;
- 	struct scsi_device *sdev = q->queuedata;
- 
--	atomic_dec(&sdev->device_busy);
-+	scsi_device_dec_busy(sdev);
- }
- 
- static bool scsi_mq_get_budget(struct blk_mq_hw_ctx *hctx)
- {
- 	struct request_queue *q = hctx->queue;
- 	struct scsi_device *sdev = q->queuedata;
-+	unsigned long flags;
- 
--	if (scsi_dev_queue_ready(q, sdev))
-+	spin_lock_irqsave(&sdev->budget_lock, flags);
-+	if (scsi_dev_queue_ready(q, sdev)) {
-+		spin_unlock_irqrestore(&sdev->budget_lock, flags);
- 		return true;
-+	}
-+	sdev->budget_contention = true;
-+	spin_unlock_irqrestore(&sdev->budget_lock, flags);
- 
- 	if (atomic_read(&sdev->device_busy) == 0 && !scsi_device_blocked(sdev))
- 		blk_mq_delay_run_hw_queue(hctx, SCSI_QUEUE_DELAY);
-diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
-index 058079f915f1..72f7b6faed9b 100644
---- a/drivers/scsi/scsi_scan.c
-+++ b/drivers/scsi/scsi_scan.c
-@@ -240,6 +240,7 @@ static struct scsi_device *scsi_alloc_sdev(struct scsi_target *starget,
- 	INIT_LIST_HEAD(&sdev->starved_entry);
- 	INIT_LIST_HEAD(&sdev->event_list);
- 	spin_lock_init(&sdev->list_lock);
-+	spin_lock_init(&sdev->budget_lock);
- 	mutex_init(&sdev->inquiry_mutex);
- 	INIT_WORK(&sdev->event_work, scsi_evt_thread);
- 	INIT_WORK(&sdev->requeue_work, scsi_requeue_run_queue);
-diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
-index f8312a3e5b42..3c5e0f0c8a91 100644
---- a/include/scsi/scsi_device.h
-+++ b/include/scsi/scsi_device.h
-@@ -106,6 +106,8 @@ struct scsi_device {
- 	struct list_head    siblings;   /* list of all devices on this host */
- 	struct list_head    same_target_siblings; /* just the devices sharing same target id */
- 
-+	spinlock_t budget_lock;		/* For device_busy and budget_contention */
-+	bool budget_contention;		/* Someone couldn't get budget */
- 	atomic_t device_busy;		/* commands actually active on LLDD */
- 	atomic_t device_blocked;	/* Device returned QUEUE_FULL. */
- 
 -- 
-2.26.0.rc2.310.g2932bb562d-goog
+With Best Regards,
+Andy Shevchenko
+
 
