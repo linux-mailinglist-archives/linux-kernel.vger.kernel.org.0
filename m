@@ -2,106 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D024D1974A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 08:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ABD61974A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 08:43:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbgC3Gnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 02:43:33 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:61095 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728489AbgC3Gnd (ORCPT
+        id S1729285AbgC3Gng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 02:43:36 -0400
+Received: from mail-pl1-f202.google.com ([209.85.214.202]:44725 "EHLO
+        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728489AbgC3Gnf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 02:43:33 -0400
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id 02U6hMeB020321
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 15:43:23 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 02U6hMeB020321
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1585550603;
-        bh=fe5stnF90OOGGE2G27nsV+KSX6+hF2P4th86HquOIOw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Pd1AmFvXiB8K7/u4rqX+CK7xZMIuBJQwsP05SgIoFokundBYKupb9RGS96T4winI2
-         YnrZ2vqkrA+u/2muft0V12ElfL8pOeoF5+Z/rrn1jRrVDoYOVf1h6F3IM/m0I8xRfx
-         bnUR6QE1P1XbQQ9vaz2cdHSaJ4xCEhLEElquyjo5Bh7ieoZ28VflcNAj4zmY0S8oTb
-         S7bNBcJBLbpqOvoAYCvGjtsibPDR1lHCZ34nR2ZqfcAsX8Zk1g6G4jFRTgLsdpb38L
-         KXRQ90EvJ08DDnDqWxzL/JsGmcdZ07SGYs6c0vl1ZAEGecZH/5DH1X1kgFEP338cZD
-         e/ZkoTFLheDcg==
-X-Nifty-SrcIP: [209.85.217.54]
-Received: by mail-vs1-f54.google.com with SMTP id y138so10310947vsy.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 23:43:23 -0700 (PDT)
-X-Gm-Message-State: AGi0Pub2JCWrD2mWuSkWsHDh50Bd/HdQU8diYKGkfyBj5FT/e0mklAW3
-        tCLAA2o94siTg2IesMf9tsJ9Hb1NbLACqNBoFpU=
-X-Google-Smtp-Source: APiQypKULmtvRpyh2fbQtHY9lBpL/FB1uBtWrlg/BI7wTbjTHci8OIk7fTx1FbRj/OaQ4dAHjbYzFtJgewIXXwBca+Y=
-X-Received: by 2002:a67:33cb:: with SMTP id z194mr7151865vsz.155.1585550602488;
- Sun, 29 Mar 2020 23:43:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200215063241.7437-1-masahiroy@kernel.org>
-In-Reply-To: <20200215063241.7437-1-masahiroy@kernel.org>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Mon, 30 Mar 2020 15:42:46 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ5Lt6X98+B4iADYpyG7YcJoTHZkKQ1==5B0UkAuO4uCg@mail.gmail.com>
-Message-ID: <CAK7LNAQ5Lt6X98+B4iADYpyG7YcJoTHZkKQ1==5B0UkAuO4uCg@mail.gmail.com>
-Subject: Re: [PATCH] x86/boot/build: add cpustr.h to targets and remove clean-files
-To:     X86 ML <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Mon, 30 Mar 2020 02:43:35 -0400
+Received: by mail-pl1-f202.google.com with SMTP id c7so12179032plr.11
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 23:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:cc;
+        bh=xapqDhPFeX4c/sEZFBXwtVQVL9ia2nDPE/e7jpQzTQA=;
+        b=d8hUdfNwN+8iAFJdBnwUiTZeEYcdMVOCOWJfgJWR7/vu/vixLec11deCzX+uCdblaJ
+         vKTaEhiX0gbcQtU4EApIuDXMtuTCWFoDKk4CgV8V935/DxbKWIDs72JckC3qfblOJpgk
+         G9weGGi1TLjXnb+sCyklu/HBRr22EUaVJtVA40MdyL4HyOlURlp86JTaxm5hNpkh/Ucp
+         HprDqPmzfRmnX01nh+JznDUcsbJGNU+qhqlQlILFD+CnXbBVSFh4f8+tvKF4yDKkNhJV
+         AqXyZPKRB5yIndXdCOloQ2x0tlgm5EJ08HcBtcME/64wFkfUFajpMjx7jSKtQTt64fW9
+         P6tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:cc;
+        bh=xapqDhPFeX4c/sEZFBXwtVQVL9ia2nDPE/e7jpQzTQA=;
+        b=EJQ+ppoEYkFRZex8+UMI4AiehJ86M638OREx4U83rB4XrzBAaJnc9OmIK/ljkqKE3n
+         O4ttwdNsWfzDuyhLRSN6o1scT8TEvGh7/4hUvGMyEiCMes0HS/HfEJLEAqY073LGDUq1
+         3O0w6a8hZ5u1LL3AHG9WvH/9e7M2GKX26kdxuWyMdZi6HXavKstHxeYcmKTV0N9DTKj7
+         Jf2uSmvzkYwTpU7w7JG8UTfyJQcy05Tk4qjzHPIA+Zjpku9YNEwvI7O3cpA4jTQig6vR
+         tNd2Bt37pYCc21+aoYYG3Vs0y6k4j/xvNf2DUbUg4Cp+FQAkruuYsA7rfgjU+vil+oBu
+         FsIw==
+X-Gm-Message-State: ANhLgQ35Yng2EUWh5T4zbCFkWsbl9x0GD1ngnD3XqQNuRcEZXnFgr6NO
+        hOB5zjfqGxeLetNOzFMxjymHUnOyMYy3
+X-Google-Smtp-Source: ADFU+vt/FJekYfgoafMZ/9Mp0r3DKbDy5dLBs00R2iJNcH8rD82TihvKhdtepI0FKoL9nXRN2ERfhcyim+8b
+X-Received: by 2002:a17:90a:65c8:: with SMTP id i8mr14048414pjs.156.1585550612534;
+ Sun, 29 Mar 2020 23:43:32 -0700 (PDT)
+Date:   Mon, 30 Mar 2020 08:43:19 +0200
+In-Reply-To: <20200327100801.161671-1-courbet@google.com>
+Message-Id: <20200330064323.76162-1-courbet@google.com>
+Mime-Version: 1.0
+References: <20200327100801.161671-1-courbet@google.com>
+X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
+Subject: [PATCH v2] powerpc: Make setjmp/longjmp signature standard
+From:   Clement Courbet <courbet@google.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Clement Courbet <courbet@google.com>, stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Allison Randal <allison@lohutok.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        Bruce Ashfield <bruce.ashfield@gmail.com>,
-        Daniel Kiper <daniel.kiper@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Ross Burton <ross.burton@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 15, 2020 at 3:33 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> Files in $(targets) are always cleaned up.
->
-> Move the 'targets' assignment out of the ifdef and remove 'clean-files'.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Declaring setjmp()/longjmp() as taking longs makes the signature
+non-standard, and makes clang complain. In the past, this has been
+worked around by adding -ffreestanding to the compile flags.
 
+The implementation looks like it only ever propagates the value
+(in longjmp) or sets it to 1 (in setjmp), and we only call longjmp
+with integer parameters.
 
-This is not a big deal, but let me ping just in case
-you missed it.
+This allows removing -ffreestanding from the compilation flags.
 
+Context:
+https://lore.kernel.org/patchwork/patch/1214060
+https://lore.kernel.org/patchwork/patch/1216174
 
+Signed-off-by: Clement Courbet <courbet@google.com>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
 
+---
 
+v2:
+Use and array type as suggested by Segher Boessenkool
+Cc: stable@vger.kernel.org # v4.14+
+Fixes: c9029ef9c957 ("powerpc: Avoid clang warnings around setjmp and longjmp")
+---
+ arch/powerpc/include/asm/setjmp.h | 6 ++++--
+ arch/powerpc/kexec/Makefile       | 3 ---
+ arch/powerpc/xmon/Makefile        | 3 ---
+ 3 files changed, 4 insertions(+), 8 deletions(-)
 
-> ---
->
->  arch/x86/boot/Makefile | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
-> index 012b82fc8617..050164ba3def 100644
-> --- a/arch/x86/boot/Makefile
-> +++ b/arch/x86/boot/Makefile
-> @@ -57,11 +57,10 @@ $(obj)/cpu.o: $(obj)/cpustr.h
->
->  quiet_cmd_cpustr = CPUSTR  $@
->        cmd_cpustr = $(obj)/mkcpustr > $@
-> -targets += cpustr.h
->  $(obj)/cpustr.h: $(obj)/mkcpustr FORCE
->         $(call if_changed,cpustr)
->  endif
-> -clean-files += cpustr.h
-> +targets += cpustr.h
->
->  # ---------------------------------------------------------------------------
->
-> --
-> 2.17.1
->
-
-
+diff --git a/arch/powerpc/include/asm/setjmp.h b/arch/powerpc/include/asm/setjmp.h
+index e9f81bb3f83b..f798e80e4106 100644
+--- a/arch/powerpc/include/asm/setjmp.h
++++ b/arch/powerpc/include/asm/setjmp.h
+@@ -7,7 +7,9 @@
+ 
+ #define JMP_BUF_LEN    23
+ 
+-extern long setjmp(long *) __attribute__((returns_twice));
+-extern void longjmp(long *, long) __attribute__((noreturn));
++typedef long jmp_buf[JMP_BUF_LEN];
++
++extern int setjmp(jmp_buf env) __attribute__((returns_twice));
++extern void longjmp(jmp_buf env, int val) __attribute__((noreturn));
+ 
+ #endif /* _ASM_POWERPC_SETJMP_H */
+diff --git a/arch/powerpc/kexec/Makefile b/arch/powerpc/kexec/Makefile
+index 378f6108a414..86380c69f5ce 100644
+--- a/arch/powerpc/kexec/Makefile
++++ b/arch/powerpc/kexec/Makefile
+@@ -3,9 +3,6 @@
+ # Makefile for the linux kernel.
+ #
+ 
+-# Avoid clang warnings around longjmp/setjmp declarations
+-CFLAGS_crash.o += -ffreestanding
+-
+ obj-y				+= core.o crash.o core_$(BITS).o
+ 
+ obj-$(CONFIG_PPC32)		+= relocate_32.o
+diff --git a/arch/powerpc/xmon/Makefile b/arch/powerpc/xmon/Makefile
+index c3842dbeb1b7..6f9cccea54f3 100644
+--- a/arch/powerpc/xmon/Makefile
++++ b/arch/powerpc/xmon/Makefile
+@@ -1,9 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # Makefile for xmon
+ 
+-# Avoid clang warnings around longjmp/setjmp declarations
+-subdir-ccflags-y := -ffreestanding
+-
+ GCOV_PROFILE := n
+ KCOV_INSTRUMENT := n
+ UBSAN_SANITIZE := n
 -- 
-Best Regards
-Masahiro Yamada
+2.26.0.rc2.310.g2932bb562d-goog
+
