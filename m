@@ -2,73 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD9F1197E70
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:34:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 956B2197E6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:32:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbgC3Od5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 10:33:57 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41092 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727183AbgC3Od4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 10:33:56 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id BB7AD162473A5A092442;
-        Mon, 30 Mar 2020 22:32:06 +0800 (CST)
-Received: from localhost (10.173.223.234) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.487.0; Mon, 30 Mar 2020
- 22:31:58 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <mporter@kernel.crashing.org>, <benh@kernel.crashing.org>,
-        <paulus@samba.org>, <mpe@ellerman.id.au>
-CC:     <alistair@popple.id.au>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] powerpc/44x: Make AKEBONO depends on NET
-Date:   Mon, 30 Mar 2020 22:31:53 +0800
-Message-ID: <20200330143153.32800-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.173.223.234]
-X-CFilter-Loop: Reflected
+        id S1727951AbgC3Ocq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 10:32:46 -0400
+Received: from foss.arm.com ([217.140.110.172]:55056 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726099AbgC3Ocq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 10:32:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE42F1042;
+        Mon, 30 Mar 2020 07:32:45 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F5803F71E;
+        Mon, 30 Mar 2020 07:32:45 -0700 (PDT)
+Date:   Mon, 30 Mar 2020 15:32:43 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Akshu Agrawal <akshu.agrawal@amd.com>
+Cc:     akshu.agrawal@amd.com, alsa-devel@alsa-project.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>
+Subject: Applied "ASoC: AMD: Clear format bits before setting them" to the asoc tree
+In-Reply-To:  <20200328093921.32211-1-akshu.agrawal@amd.com>
+Message-Id:  <applied-20200328093921.32211-1-akshu.agrawal@amd.com>
+X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix Kconfig warnings:
+The patch
 
-WARNING: unmet direct dependencies detected for NETDEVICES
-  Depends on [n]: NET [=n]
-  Selected by [y]:
-  - AKEBONO [=y] && PPC_47x [=y]
+   ASoC: AMD: Clear format bits before setting them
 
-WARNING: unmet direct dependencies detected for ETHERNET
-  Depends on [n]: NETDEVICES [=y] && NET [=n]
-  Selected by [y]:
-  - AKEBONO [=y] && PPC_47x [=y]
+has been applied to the asoc tree at
 
-AKEBONO select NETDEVICES and ETHERNET unconditionally,
-If NET is not set, build fails. Add this dependcy to fix this.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Fixes: 2a2c74b2efcb ("IBM Akebono: Add the Akebono platform")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From a91ab6509cd382dae4b7953155f47f276ff0d22f Mon Sep 17 00:00:00 2001
+From: Akshu Agrawal <akshu.agrawal@amd.com>
+Date: Sat, 28 Mar 2020 03:39:16 -0600
+Subject: [PATCH] ASoC: AMD: Clear format bits before setting them
+
+This avoids residual bit form previous format when the format is changed.
+Hence, the resultant format is not an invalid one.
+
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
+Link: https://lore.kernel.org/r/20200328093921.32211-1-akshu.agrawal@amd.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/powerpc/platforms/44x/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/amd/raven/acp3x-i2s.c | 1 +
+ sound/soc/amd/raven/acp3x.h     | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/arch/powerpc/platforms/44x/Kconfig b/arch/powerpc/platforms/44x/Kconfig
-index 25ebe634a661..394f662d7df2 100644
---- a/arch/powerpc/platforms/44x/Kconfig
-+++ b/arch/powerpc/platforms/44x/Kconfig
-@@ -199,6 +199,7 @@ config FSP2
- config AKEBONO
- 	bool "IBM Akebono (476gtr) Support"
- 	depends on PPC_47x
-+	depends on NET
- 	select SWIOTLB
- 	select 476FPE
- 	select PPC4xx_PCI_EXPRESS
+diff --git a/sound/soc/amd/raven/acp3x-i2s.c b/sound/soc/amd/raven/acp3x-i2s.c
+index 3a3c47e820ab..f160d35a6832 100644
+--- a/sound/soc/amd/raven/acp3x-i2s.c
++++ b/sound/soc/amd/raven/acp3x-i2s.c
+@@ -139,6 +139,7 @@ static int acp3x_i2s_hwparams(struct snd_pcm_substream *substream,
+ 		rv_writel(adata->tdm_fmt, rtd->acp3x_base + frmt_reg);
+ 	}
+ 	val = rv_readl(rtd->acp3x_base + reg_val);
++	val &= ~ACP3x_ITER_IRER_SAMP_LEN_MASK;
+ 	val = val | (rtd->xfer_resolution  << 3);
+ 	rv_writel(val, rtd->acp3x_base + reg_val);
+ 	return 0;
+diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
+index 21e7ac017f2b..03fe93913e12 100644
+--- a/sound/soc/amd/raven/acp3x.h
++++ b/sound/soc/amd/raven/acp3x.h
+@@ -76,6 +76,8 @@
+ #define ACP_POWERED_OFF			0x02
+ #define ACP_POWER_OFF_IN_PROGRESS	0x03
+ 
++#define ACP3x_ITER_IRER_SAMP_LEN_MASK	0x38
++
+ struct acp3x_platform_info {
+ 	u16 play_i2s_instance;
+ 	u16 cap_i2s_instance;
 -- 
-2.17.1
-
+2.20.1
 
