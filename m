@@ -2,73 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6885719824A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC86198254
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:27:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbgC3RZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 13:25:49 -0400
-Received: from www62.your-server.de ([213.133.104.62]:39284 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727890AbgC3RZt (ORCPT
+        id S1728804AbgC3R1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 13:27:13 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42802 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbgC3R1N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 13:25:49 -0400
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1jIyAK-0006tP-Rk; Mon, 30 Mar 2020 19:25:36 +0200
-Received: from [178.195.186.98] (helo=pc-9.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1jIyAK-000GDI-D1; Mon, 30 Mar 2020 19:25:36 +0200
-Subject: Re: linux-next: Tree for Mar 30 (bpf)
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        bpf@vger.kernel.org,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        kpsingh@chromium.org
-References: <20200330204307.669bbb4d@canb.auug.org.au>
- <86f7031a-57c6-5d50-2788-ae0e06a7c138@infradead.org>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <d5b4bd95-7ef9-58cb-1955-900e6edb2467@iogearbox.net>
-Date:   Mon, 30 Mar 2020 19:25:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 30 Mar 2020 13:27:13 -0400
+Received: by mail-lf1-f67.google.com with SMTP id s13so3738808lfb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 10:27:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=6Y5XqUlGuIAAuWRSRG0tbggZCs9jKUPbPrC2/P8pC8I=;
+        b=a0eRnKeQyRFgBQpTGW0mPKtwP4CXTLJvSKMiu6xzTbXpWz0MZTfiQMsWEs6kKO4g/w
+         Xn9jILlOh8XNyYZqZ9kywlYlJN+A9OTpv3A4dQk2E0mcHz3PHZanFtgKg5KwtSEnrOGl
+         kkhS/uts3dA1+wC1mQOHbKRqp6jRYi+48VOaqFd5z/mR2WKklPekVRgSeFPMsyYT3UPn
+         4BCVQqMcijAxOPB5Gtm4L+zVy3yf689+Xc6U74BRB219B6scg0sQzrmX4tQbbR3NDIiL
+         UYy3qLiAxdWi2EDxu6H+fq1eLw55q5lRvwOVyefzGe38oKQMIv0RX3rbr+Li3+Kyn2cZ
+         zF5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=6Y5XqUlGuIAAuWRSRG0tbggZCs9jKUPbPrC2/P8pC8I=;
+        b=ZCXW/S0wq2z0TRo6iSMEOuq3oSfVaIh1Jryz91uv9r/bmUcAIuTVnJkha26AQBtPTF
+         rCDpL8nD0sEz6fIWwpr+InjjeyASjjcYi6Iv/3YzcTHTh6NhLFG/G2peks9ron1cM4xs
+         ynzCsLQA20Q7k/Ft66jlZy61YLKHF77oiz2yEo3gObFajyZnDfAXelt7R0FfqD0AT2zY
+         iFKE7n04gmOjwlFxce228VbEmY051ipNWIWnBIklxm7CLfW4g6Bd1yUefNDR6fDaM8Yq
+         qSGKVdKaeSs9V4OYa/g4Sm55374SXTKcL9shvSYjeKEbc5pwDy/5bme5JaOEJ6UtpXuy
+         MqHg==
+X-Gm-Message-State: AGi0Pubkc3RjdVTZEYuIuACoFGXIRDIWp9A3Zq0qZ/2UeW9rM9gtH1oS
+        VkNlJw0L5Gvz26fJ4DVlZpZhg4NKDDaIwia8fFU=
+X-Google-Smtp-Source: APiQypKIgw7rMhXUv1kiplidStwxRJTS/tLltBbrxN7ASDKFd/PSuAmLvutNlF/zHyAN4/M8Wnf/r5HVQBvc6QNtsmY=
+X-Received: by 2002:a19:660a:: with SMTP id a10mr8557352lfc.9.1585589231164;
+ Mon, 30 Mar 2020 10:27:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <86f7031a-57c6-5d50-2788-ae0e06a7c138@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.102.2/25767/Mon Mar 30 15:08:30 2020)
+Received: by 2002:a2e:993:0:0:0:0:0 with HTTP; Mon, 30 Mar 2020 10:27:10 -0700 (PDT)
+Reply-To: brianjesse343@gmail.com
+From:   brianjesse <raymondmicheal541@gmail.com>
+Date:   Mon, 30 Mar 2020 18:27:10 +0100
+Message-ID: <CAMHU3-r2DHuSyoSicQs22R7z6tdteXA42QMbh=UYNjmFx_HKrg@mail.gmail.com>
+Subject: Hl
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc KP, ptal]
-
-On 3/30/20 7:15 PM, Randy Dunlap wrote:
-> On 3/30/20 2:43 AM, Stephen Rothwell wrote:
->> Hi all,
->>
->> The merge window has opened, so please do not add any material for the
->> next release into your linux-next included trees/branches until after
->> the merge window closes.
->>
->> Changes since 20200327:
-> 
-> (note: linux-next is based on linux 5.6-rc7)
-> 
-> 
-> on i386:
-> 
-> ld: kernel/bpf/bpf_lsm.o:(.rodata+0x0): undefined reference to `bpf_tracing_func_proto'
-> 
-> 
-> Full randconfig file is attached.
-> 
-
+Witaj, Uprzejmie informujemy, =C5=BCe ten e-mail, kt=C3=B3ry dotar=C5=82 do=
+ Twojej
+skrzynki pocztowej, nie jest
+b=C5=82=C4=85d, ale zosta=C5=82 specjalnie skierowany do rozpatrzenia. I
+mam propozycj=C4=99 (7,500.000,00 USD) pozostawion=C4=85 przez mojego zmar=
+=C5=82ego
+klienta in=C5=BCyniera Carlosa
+kt=C3=B3ry nosi przy tobie to samo imi=C4=99, kt=C3=B3ry pracowa=C5=82 i mi=
+eszka=C5=82 tutaj w Lom=C3=A9
+I=C5=9B=C4=87. M=C3=B3j zmar=C5=82y klient i rodzina uczestniczyli w wypadk=
+u samochodowym,
+kt=C3=B3ry mia=C5=82 miejsce
+ich =C5=BCycia. Kontaktuj=C4=99 si=C4=99 z tob=C4=85 jako najbli=C5=BCszym =
+krewnym zmar=C5=82ego, wi=C4=99c ty
+mo=C5=BCe otrzyma=C4=87 =C5=9Brodki na roszczenia. Zrobi=C4=99 to po twojej=
+ szybkiej odpowiedzi
+poinformuj=C4=99 ci=C4=99 o sposobach wykonania tego przymierza. skontaktuj=
+ si=C4=99
+ze mn=C4=85 w tej sprawie
+e-maile (brianjesse343@gmail.com)
