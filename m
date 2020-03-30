@@ -2,122 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38ACF198748
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 00:20:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E00D198758
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 00:26:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729712AbgC3WUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 18:20:16 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37143 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728857AbgC3WUQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 18:20:16 -0400
-Received: by mail-wm1-f65.google.com with SMTP id j19so547717wmi.2;
-        Mon, 30 Mar 2020 15:20:14 -0700 (PDT)
+        id S1729542AbgC3W0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 18:26:14 -0400
+Received: from mail-eopbgr690080.outbound.protection.outlook.com ([40.107.69.80]:1856
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729210AbgC3W0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 18:26:13 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HKrkTWc7oFH3d97J/K2QNmmGQLCe7IKt+MbD7hfupSxAnaZgI8nFeg8CBt5G2wikruAKfwYng9Kk4G50MNNj6/RHx6R3advpwRO9ThcasinRQRIYywgvVe+5XXYtaYWNBPezNukxVxJDZJayHRt6pqmSP6K+1eNFxh+z/vHML/bACc7ZV9WTfyMpSTFpwy/i6Mn8xbdM+Lb8g/YlkDYL7FnlmL2qfK80XG6Or7aGfoU8huWPSav7mwrI+eThGeJ9XkhFA1w2LiHAcg3dbcJ6M07CSOCn+EgbtmkoTpr0NK8v9/HaWmYR1P1o6qRk5oIuXdY1slnqSvUeTS+Qr7AN+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2ozG5w59M3QSRn+8hX5T4j3YGLUMDX23sksYDBV/xBc=;
+ b=L2riKfhmAhFh7JJCFfQxV5/CG2waCRD/Go9w27WA6THWqayWOAgw7qo9C1/tjIYbksByLUSqLiS+VVrBNFSVSeRg234phS2MY2PitPM9JaxJh4QjrSBODoUmLfcxmUM0d47aIzTW9av2GgnnIgh6FarRLT5ZxRYPrrcshsbfh/ipIhY4Bo+iQi9KPQMvGBwA2IytZyn8gGJjGoEaisau9xuWI8M0BrVTpe0lKMZpA/R7wDHg7oUh3iKAmrGkIIWR/Xqqd1oZkpT7kfweg6sSnTmenHiOcUhqE6n0WvTOW9tGDYej91cRgNr/OYykNgNdq3ptiNb41AiSjBAozz3OMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zxTDf8+MnFHubZYH4xBNOl2XtpGfjXLmP1euby1NHHI=;
-        b=XelqlNCBNrqAvwAR/h7n/I+jsAusk4uQ3gc4RmSAdCSE1MeAtafoM+J0UO6ALvWAzx
-         JU4wtAVr8yQQ6VFVag0SgNR75GoxuKhUbtgMadsd/pC+AubNJOf3fbqp1evcbKIJJv24
-         9VwvrazqeLn/qiHPpBPWvCUSfpp4J32kXw02xYPTNhWgct4wyzosiBarbdp5iootZX5g
-         jm0SblnIqO1zrrfJp0mRsWqA+Fm3DcZcZsZmx1JX7ehD8Z5/sDiMJu7ajNIdHAoOKKBP
-         rL0rrv6BQ4jc1tBY1PgFjc7NECsMVVOqFxUwkdR/12KKiKgE7pOwtb7hyThatEzQZfF1
-         k0+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zxTDf8+MnFHubZYH4xBNOl2XtpGfjXLmP1euby1NHHI=;
-        b=hJ5WDCvJz2o3N9av/M2COargggFLCIxk6Z1kBvEGW1WQhIuiIw2geQHU2ymCbltQdP
-         POyR9BJN2TK755Ly/ovfd7a5+ritqwI8RbfsmnGAS4vVN5n5aPb5l2urz9hbiXQsYQM8
-         XhUDbrwNthtcxmQGfjIo7oFfoYxQqZ6IkMldpZj6844D4FAq9P2DVQsCtIlH1S/V4z4G
-         JSHVoB63AiD25ctsQh2p7TL4YjEqmTleylYxqwlVpfKPs/l4abG1pRkDcKwQHnTsqq5L
-         i3hhCLz2kchzzw8oTKejYHy+px5gHgR7R/TGmGV+oX1mE1wUlsBjn6opUtydO1sE/jFt
-         QGIw==
-X-Gm-Message-State: ANhLgQ0QjpsiCxZGCqnxbrddzh8tkwUbAehM4F3Igky6U8gl81VR/kLF
-        jNEYmespjv6LpMZXemSV4gM=
-X-Google-Smtp-Source: ADFU+vvQIj+MUR+EYO8VdoIOGwvNsipNI0VJFCtEu0BqPBf0GZUmNJ8l9EP7fyP1NI8U+TEOwovI5Q==
-X-Received: by 2002:a7b:c24a:: with SMTP id b10mr227358wmj.61.1585606814046;
-        Mon, 30 Mar 2020 15:20:14 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a10sm15432401wrm.87.2020.03.30.15.20.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Mar 2020 15:20:13 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 22:20:13 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Wei Yang <richard.weiyang@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/9] XArray: internal node is a xa_node when it is bigger
- than XA_ZERO_ENTRY
-Message-ID: <20200330222013.34nkqen2agujhd6j@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20200330123643.17120-1-richard.weiyang@gmail.com>
- <20200330123643.17120-7-richard.weiyang@gmail.com>
- <20200330125006.GZ22483@bombadil.infradead.org>
- <20200330134519.ykdtqwqxjazqy3jm@master>
- <20200330134903.GB22483@bombadil.infradead.org>
- <20200330141350.ey77odenrbvixotb@master>
- <20200330142708.GC22483@bombadil.infradead.org>
-MIME-Version: 1.0
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2ozG5w59M3QSRn+8hX5T4j3YGLUMDX23sksYDBV/xBc=;
+ b=WwE2k8bV4YLV6MmHBdZiRqeW0pje/WZdlVkl+24SvCCg+W0rzmHWpdf3mQ0CyQ0mesyJlqfL1DEBilWYsXAlh6aus5Ujim/hv8jopKdUKhT4ia4xwVAl4E3WbovJBgQK2H/fRYIXgbex5H4A/dG7XwUyfsuKsjIQIz2sCkPbogE=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Ashish.Kalra@amd.com; 
+Received: from DM5PR12MB1386.namprd12.prod.outlook.com (2603:10b6:3:77::9) by
+ DM5PR12MB1529.namprd12.prod.outlook.com (2603:10b6:4:3::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2856.18; Mon, 30 Mar 2020 22:25:58 +0000
+Received: from DM5PR12MB1386.namprd12.prod.outlook.com
+ ([fe80::969:3d4e:6f37:c33c]) by DM5PR12MB1386.namprd12.prod.outlook.com
+ ([fe80::969:3d4e:6f37:c33c%12]) with mapi id 15.20.2856.019; Mon, 30 Mar 2020
+ 22:25:58 +0000
+Date:   Mon, 30 Mar 2020 22:25:51 +0000
+From:   Ashish Kalra <ashish.kalra@amd.com>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Konrad Rzeszutek Wilk <konrad@darnok.org>, hch@lst.de,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, luto@kernel.org, peterz@infradead.org,
+        dave.hansen@linux-intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, brijesh.singh@amd.com,
+        Thomas.Lendacky@amd.com
+Subject: Re: [PATCH v2] swiotlb: Adjust SWIOTBL bounce buffer size for SEV
+ guests.
+Message-ID: <20200330222551.GA22743@ashkalra_ubuntu_server>
+References: <20191209231346.5602-1-Ashish.Kalra@amd.com>
+ <20191220015245.GA7010@localhost.localdomain>
+ <20200121200947.GA24884@ashkalra_ubuntu_server>
+ <20200121205403.GC75374@Konrads-MacBook-Pro.local>
+ <20200124230008.GA1565@ashkalra_ubuntu_server>
+ <20200204193500.GA15564@ashkalra_ubuntu_server>
+ <20200303170353.GC31627@char.us.oracle.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200330142708.GC22483@bombadil.infradead.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20200303170353.GC31627@char.us.oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: DM6PR02CA0040.namprd02.prod.outlook.com
+ (2603:10b6:5:177::17) To DM5PR12MB1386.namprd12.prod.outlook.com
+ (2603:10b6:3:77::9)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from ashkalra_ubuntu_server (165.204.77.1) by DM6PR02CA0040.namprd02.prod.outlook.com (2603:10b6:5:177::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.18 via Frontend Transport; Mon, 30 Mar 2020 22:25:57 +0000
+X-Originating-IP: [165.204.77.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 46578906-bf3a-4ed1-1fec-08d7d4f951fc
+X-MS-TrafficTypeDiagnostic: DM5PR12MB1529:|DM5PR12MB1529:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM5PR12MB15294EE0B6237E7BFAD824C68ECB0@DM5PR12MB1529.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 0358535363
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR12MB1386.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(136003)(376002)(39860400002)(396003)(346002)(366004)(478600001)(33716001)(8676002)(44832011)(1076003)(16526019)(26005)(8936002)(4326008)(186003)(6666004)(5660300002)(2906002)(956004)(66476007)(6496006)(52116002)(7416002)(86362001)(316002)(9686003)(6916009)(55016002)(66946007)(33656002)(81166006)(81156014)(66556008);DIR:OUT;SFP:1101;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: V1eB7G48QnrtsRJcDuk9F12pAvZdUr3SiHJH+k0u1Jj+3v17+jB920DPTfx5RDvYe4EKPLcRSC4bvJQftngH6TS5KeCaNbeRg5tpOKGMzI0nPPH9GYG04A7sJJjVh4L8R7DDznNWR9v0ly/XoKlWpemISvcS9553hd6Qv3zFWt+BAk7R54B5vTBYCcTqG4gwCC53ac9+TM232gx6VQW04LPwIcd5dVe7rS/urSLie6YKPnvPnLQl5vipU9LFa2R1oXmNFDSpyqGrJeNsF6Uhw8cGh4Z8zZJ+sjd0oHdY/lQlzdllpkUqT1FaGGnz2N+bYv0rv6WFoyBCCA1RqyRG1AgVzYn7xiqwkJqRR2wyn5u/koUCRUlj3i3phcvu4g9p1+rH2qVLyqtSpJGXB5kCWbWUaTOAkf0Unz9WUdsdhKi7NwINohAHuksF5jgAQvk2
+X-MS-Exchange-AntiSpam-MessageData: jFZUvw8CreeiIy9zj2r7I7MqNB/3zFI5ncg28de0/HhpBep58lvlaV1iw8f0LoKAhr4ieJo7rssJiHUDObZwTgKIMtIPDEYMNxzN3me52ri1Cj0lYoxQfYdJvf8/gL+AlLlYopHtn2ik1JzCKknRLQ==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46578906-bf3a-4ed1-1fec-08d7d4f951fc
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2020 22:25:58.6116
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LnJbc6XInHonQTJ3JygCS0jLQj8wkU+CWOEDzPRYqWLRW36wzEwEjXgzRiXUHfh/zJn5FObg3NyesbyCeTqx1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1529
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 07:27:08AM -0700, Matthew Wilcox wrote:
->On Mon, Mar 30, 2020 at 02:13:50PM +0000, Wei Yang wrote:
->> On Mon, Mar 30, 2020 at 06:49:03AM -0700, Matthew Wilcox wrote:
->> >On Mon, Mar 30, 2020 at 01:45:19PM +0000, Wei Yang wrote:
->> >> On Mon, Mar 30, 2020 at 05:50:06AM -0700, Matthew Wilcox wrote:
->> >> >On Mon, Mar 30, 2020 at 12:36:40PM +0000, Wei Yang wrote:
->> >> >> As the comment mentioned, we reserved several ranges of internal node
->> >> >> for tree maintenance, 0-62, 256, 257. This means a node bigger than
->> >> >> XA_ZERO_ENTRY is a normal node.
->> >> >> 
->> >> >> The checked on XA_ZERO_ENTRY seems to be more meaningful.
->> >> >
->> >> >257-1023 are also reserved, they just aren't used yet.  XA_ZERO_ENTRY
->> >> >is not guaranteed to be the largest reserved entry.
->> >> 
->> >> Then why we choose 4096?
->> >
->> >Because 4096 is the smallest page size supported by Linux, so we're
->> >guaranteed that anything less than 4096 is not a valid pointer.
->> 
+Hello Konrad,
 
-So you want to say, the 4096 makes sure XArray will not store an address in
-first page? If this is the case, I have two suggestions:
+On Tue, Mar 03, 2020 at 12:03:53PM -0500, Konrad Rzeszutek Wilk wrote:
+> On Tue, Feb 04, 2020 at 07:35:00PM +0000, Ashish Kalra wrote:
+> > Hello Konrad,
+> > 
+> > Looking fwd. to your feedback regarding support of other memory
+> > encryption architectures such as Power, S390, etc.
+> > 
+> > Thanks,
+> > Ashish
+> > 
+> > On Fri, Jan 24, 2020 at 11:00:08PM +0000, Ashish Kalra wrote:
+> > > On Tue, Jan 21, 2020 at 03:54:03PM -0500, Konrad Rzeszutek Wilk wrote:
+> > > > > 
+> > > > > Additional memory calculations based on # of PCI devices and
+> > > > > their memory ranges will make it more complicated with so
+> > > > > many other permutations and combinations to explore, it is
+> > > > > essential to keep this patch as simple as possible by 
+> > > > > adjusting the bounce buffer size simply by determining it
+> > > > > from the amount of provisioned guest memory.
+> > > >> 
+> > > >> Please rework the patch to:
+> > > >> 
+> > > >>  - Use a log solution instead of the multiplication.
+> > > >>    Feel free to cap it at a sensible value.
+> > > 
+> > > Ok.
+> > > 
+> > > >> 
+> > > >>  - Also the code depends on SWIOTLB calling in to the
+> > > >>    adjust_swiotlb_default_size which looks wrong.
+> > > >> 
+> > > >>    You should not adjust io_tlb_nslabs from swiotlb_size_or_default.
+> > > 
+> > > >>    That function's purpose is to report a value.
+> > > >> 
+> > > >>  - Make io_tlb_nslabs be visible outside of the SWIOTLB code.
+> > > >> 
+> > > >>  - Can you utilize the IOMMU_INIT APIs and have your own detect which would
+> > > >>    modify the io_tlb_nslabs (and set swiotbl=1?).
+> > > 
+> > > This seems to be a nice option, but then IOMMU_INIT APIs are
+> > > x86-specific and this swiotlb buffer size adjustment is also needed
+> > > for other memory encryption architectures like Power, S390, etc.
+> 
+> Oh dear. That I hadn't considered.
+> > > 
+> > > >> 
+> > > >>    Actually you seem to be piggybacking on pci_swiotlb_detect_4gb - so
+> > > >>    perhaps add in this code ? Albeit it really should be in it's own
+> > > >>    file, not in arch/x86/kernel/pci-swiotlb.c
+> > > 
+> > > Actually, we piggyback on pci_swiotlb_detect_override which sets
+> > > swiotlb=1 as x86_64_start_kernel() and invocation of sme_early_init()
+> > > forces swiotlb on, but again this is all x86 architecture specific.
+> 
+> Then it looks like the best bet is to do it from within swiotlb_init?
+> We really can't do it from swiotlb_size_or_default - that function
+> should just return a value and nothing else.
+> 
 
-  * use PAGE_SIZE would be more verbose?
-  * a node is an internal entry, do we need to compare with xa_mk_internal()
-    instead?
+Actually, we need to do it in swiotlb_size_or_default() as this gets called by
+reserve_crashkernel_low() in arch/x86/kernel/setup.c and used to
+reserve low crashkernel memory. If we adjust swiotlb size later in
+swiotlb_init() which gets called later than reserve_crashkernel_low(),
+then any swiotlb size changes/expansion will conflict/overlap with the
+low memory reserved for crashkernel.
 
-And also suggest to add a comment on this, otherwise it seems a little magic.
-
->> I found this in xarray.rst:
->> 
->>   Normal pointers may be stored in the XArray directly.  They must be 4-byte
->>   aligned, which is true for any pointer returned from kmalloc() and
->>   alloc_page().  It isn't true for arbitrary user-space pointers,
->>   nor for function pointers.  You can store pointers to statically allocated
->>   objects, as long as those objects have an alignment of at least 4.
->> 
->> So the document here is not correct?
->
->Why do you say that?
->
->(it is slightly out of date; the XArray actually supports storing unaligned
->pointers now, but that's not relevant to this discussion)
-
-Ok, maybe this document need to update.
-
--- 
-Wei Yang
-Help you, Help me
+Thanks,
+Ashish
