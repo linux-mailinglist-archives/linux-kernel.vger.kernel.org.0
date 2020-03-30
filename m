@@ -2,185 +2,413 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7AE9198168
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 18:41:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E4EF198176
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 18:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729387AbgC3QlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 12:41:15 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:37738 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbgC3QlP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 12:41:15 -0400
-Received: by mail-io1-f69.google.com with SMTP id p4so16674743ioo.4
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 09:41:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=J392luCNfWRWxhPZVD+EzyJ0PTGAErJoBStDUC9J4Zk=;
-        b=SZ2Wkg6TfM9/uQU2Bbg6kIm3w68CnEKclCwdkUnR5/8eTpHbdVHdH3gkuilJtRNH9r
-         w+YdcGhH1Aa8QbeMGEhUbBmMTf6nNkMP/2M04I32bAmExAdYt++LR8iQRPDvOA0awe8V
-         Jnnwt2r73Z91egGf0KmIb9jeXq0+HDmmeZHbF14pfGwluTvJHnmUxy1vzKAZOd37jCs3
-         lHyj82QqCvEcvMeYpb8vVMx1m57vSNNBjQvGeJGpQmPaZ+GYSFWXIPpNSE8x0EgQYrWI
-         erMB0B5j1uHFQlpYS7XLOdc21xsfNGdnUrkqhftRfxgjXuJ2+dUM0XDN7shtm/LA+I4E
-         54uw==
-X-Gm-Message-State: ANhLgQ3EV8DllYiq3J9VwTzUOo5lrF5WimSPBZciJhUbV3DJNxTV7y3G
-        fuO/J6+BKJeeUxtpvzCztNqFE5rL3m8tPmG9Vf4rTz5sxAwd
-X-Google-Smtp-Source: ADFU+vsymLPDiPA2g5MIUzyCHCea3vA0ojr2x8lphgAtvW8cqlCQPZ3Wy9PYZav0sWndRkClAxRhE3aAfWrAQY6yvQPQ3ONDW3X+
+        id S1728539AbgC3QmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 12:42:25 -0400
+Received: from mail-dm6nam12on2096.outbound.protection.outlook.com ([40.107.243.96]:52160
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726312AbgC3QmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 12:42:24 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PJJojiQxNItS/1dEvmEsWt8XGYyC2AO8a1u5Y1M+J82fVUq3cpHB6MM+M1wNRqyaKvoYNTqp6uISRghNy+0x+Ak2JvofINmzQWHau+/cTeGTzqHIYmYDOX6uRP1CUMTw9wOjuclQnJG4TUbFumoX0B+5Qw0o9rC7lEcjz1+kp9xEzUNK3fJh/ULk5c5zL3h9oeGIFLTZWWyxkgNy6NN+HCthmHN3qQBeam6SZ2aMiUyfjQVdGCxo6VZ7DNaDid0vHROOpcAO197ADTmQfrF3PcaO7ToSyZrOokRicDDfDlKt2p6URA7Gc6DtN0Ga2/+UHIhCCoI1uKNzYi0OVCiGkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rWj0bF8ipE890O/jbsnFih2fcivS7DjKVdY20dBIjSg=;
+ b=ToLltZNOFy77bI3EQrznZF1JE73OBjRFRXcwSS7Oj2a7V3Kh+IZkItd7QHy8540nvvWZqQz9Nk8arjAjUXxcZxiIq88EgQKGeN7RYCF1ncNDhvZL1UPH7STG7TBkkoY4g3OYsADifQb70lga+E68hQqa8yFeQZy4HtmePKeX3PStJSGaH1cel6IqEPiIRSP4GQZ//ZQCZG6NmbgDLa0Z/2peQ6WkpySz/7bZML+Q2v94HIln4Br2lv4+pWlL1JiZgwZnGPGl06d+t7H0REcYxhkMUOtZPBOskFXh4YTNkbMOeo+1kPzmZEPSBkJfsFXUzA1blAE4CqtZgILrnW1uEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rWj0bF8ipE890O/jbsnFih2fcivS7DjKVdY20dBIjSg=;
+ b=dPwurX8t8XlDg8GiynwJlhJc+GS/H5EDm4dJyV4zbvfkslwriwghll483V18dIIZ3+FW43aVW64NV6ogFbmmQSUiJBY6sJCD1aLoKkQDQCQpoz1jqAwOIoCnEJVk/7iW9JbtrhmluBCmrikyxSQGutF1N/tdqWQsp/syXrO7JEk=
+Received: from MW2PR2101MB1052.namprd21.prod.outlook.com (2603:10b6:302:a::16)
+ by MW2PR2101MB1068.namprd21.prod.outlook.com (2603:10b6:302:a::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2900.2; Mon, 30 Mar
+ 2020 16:42:19 +0000
+Received: from MW2PR2101MB1052.namprd21.prod.outlook.com
+ ([fe80::71ee:121:71bd:6156]) by MW2PR2101MB1052.namprd21.prod.outlook.com
+ ([fe80::71ee:121:71bd:6156%8]) with mapi id 15.20.2878.014; Mon, 30 Mar 2020
+ 16:42:19 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     "Andrea Parri (Microsoft)" <parri.andrea@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Subject: RE: [RFC PATCH 11/11] scsi: storvsc: Re-init stor_chns when a channel
+ interrupt is re-assigned
+Thread-Topic: [RFC PATCH 11/11] scsi: storvsc: Re-init stor_chns when a
+ channel interrupt is re-assigned
+Thread-Index: AQHWAvitlhvZNTexf0e3+nkuOWs8g6hhVRzg
+Date:   Mon, 30 Mar 2020 16:42:19 +0000
+Message-ID: <MW2PR2101MB105208138683A6DE0564745AD7CB0@MW2PR2101MB1052.namprd21.prod.outlook.com>
+References: <20200325225505.23998-1-parri.andrea@gmail.com>
+ <20200325225505.23998-12-parri.andrea@gmail.com>
+In-Reply-To: <20200325225505.23998-12-parri.andrea@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2020-03-30T16:42:17.7398508Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=c1f5250c-1a4d-4e21-932e-531b00446085;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: bbd64437-7a73-403c-a973-08d7d4c9505c
+x-ms-traffictypediagnostic: MW2PR2101MB1068:|MW2PR2101MB1068:|MW2PR2101MB1068:
+x-ms-exchange-transport-forked: True
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <MW2PR2101MB1068EB0F0F1D34DA56500108D7CB0@MW2PR2101MB1068.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0358535363
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW2PR2101MB1052.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(366004)(498600001)(30864003)(10290500003)(66946007)(33656002)(82950400001)(8990500004)(82960400001)(71200400001)(186003)(55016002)(76116006)(86362001)(26005)(8676002)(54906003)(8936002)(2906002)(66556008)(64756008)(4326008)(52536014)(110136005)(6506007)(66446008)(81166006)(7696005)(81156014)(5660300002)(9686003)(66476007);DIR:OUT;SFP:1102;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: mKoY6dHdS+sYf0x+WwHde+aYDlMnP2w4tTrDZoTO3zGj/Z29EJ0Y3CpLnA8rZZSLOywDaPArNq/8seAzXMCV3P6EBkzCp/Q06p8Io/8Pvhk+N/1TP/sGy2z8fbKMJq5w6IfWBXczPPuuzposDdLxZ+JtRZ4z1r/1J41otn+to5WPniy3bG+ETtfbWEot36zdcvSvzNELhVOjGDy2EvBe7eKH5OHq663dFgCYEfNKx1BgSwYURTHsvuukdMdhRnwWPueXqUEWSqcIyp+WDw7UUcN5CQ+A7+VUMFPHjooBVhkgzSW1qCuaqEfjv1+CImA5JOLVZliMLxcVBbz4bYWgI8Xn+rDdWSvzR94T6lg+KhSKTXvikWjfugrvdf7PjZbib/fJqrhBZW/sjimSVQr7s5+cGHOBQlBK4R9IiA+3bnM+G5M0P1c5ydLZymYeOCdx
+x-ms-exchange-antispam-messagedata: Xv3bPCGh8McHNIRZ++jEQjjNbYmc08la88NWayIqNBv9TL1W/AiQLOtxlbzEU94m9O7/eDacPaDmmTDuInAXIvH0HQQlredWc1nr/55v9+mQvK0QpAqfNQM+jv9Whx54D+UI6UdqpJrMH13Gk3m9Hw==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a6b:7d0c:: with SMTP id c12mr11248274ioq.83.1585586473946;
- Mon, 30 Mar 2020 09:41:13 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 09:41:13 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008a567905a2151e07@google.com>
-Subject: KASAN: slab-out-of-bounds Read in selinux_xfrm_alloc_user
-From:   syzbot <syzbot+9bc8c4f42b3e1d0274fe@syzkaller.appspotmail.com>
-To:     eparis@parisplace.org, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, sds@tycho.nsa.gov, selinux@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bbd64437-7a73-403c-a973-08d7d4c9505c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Mar 2020 16:42:19.7329
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: UHtmAb0s59bYRQoF3LLIJXNF/QFKON/49AK19wyVyrRiE20PYxxQP6Fkk+6BnkBe11+fCJLW8kvPB5H9g2u90xgfYfllaYkuS4IymSR/yZk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1068
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Andrea Parri (Microsoft) <parri.andrea@gmail.com>  Sent: Wednesday, M=
+arch 25, 2020 3:55 PM
+>=20
+> For each storvsc_device, storvsc keeps track of the channel target CPUs
+> associated to the device (alloced_cpus) and it uses this information to
+> fill a "cache" (stor_chns) mapping CPU->channel according to a certain
+> heuristic.  Update the alloced_cpus mask and the stor_chns array when a
+> channel of the storvsc device is re-assigned to a different CPU.
+>=20
+> Signed-off-by: Andrea Parri (Microsoft) <parri.andrea@gmail.com>
+> Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+> Cc: <linux-scsi@vger.kernel.org>
+> ---
+>  drivers/hv/vmbus_drv.c     |  4 ++
+>  drivers/scsi/storvsc_drv.c | 95 ++++++++++++++++++++++++++++++++++----
+>  include/linux/hyperv.h     |  3 ++
+>  3 files changed, 94 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index 84d2f22c569aa..7199fee2b5869 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -1721,6 +1721,10 @@ static ssize_t target_cpu_store(struct vmbus_chann=
+el *channel,
+>  	 * in on a CPU that is different from the channel target_cpu value.
+>  	 */
+>=20
+> +	if (channel->change_target_cpu_callback)
+> +		(*channel->change_target_cpu_callback)(channel,
+> +				channel->target_cpu, target_cpu);
+> +
+>  	channel->target_cpu =3D target_cpu;
+>  	channel->target_vp =3D hv_cpu_number_to_vp_number(target_cpu);
+>  	channel->numa_node =3D cpu_to_node(target_cpu);
 
-syzbot found the following crash on:
-
-HEAD commit:    906c4043 Merge branch 'i2c/for-current' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14f4a825e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=27392dd2975fd692
-dashboard link: https://syzkaller.appspot.com/bug?extid=9bc8c4f42b3e1d0274fe
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1160f46de00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107c7c97e00000
-
-Bisection is inconclusive: the bug happens on the oldest tested release.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=133ca825e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=10bca825e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=173ca825e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9bc8c4f42b3e1d0274fe@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in memcpy include/linux/string.h:381 [inline]
-BUG: KASAN: slab-out-of-bounds in selinux_xfrm_alloc_user+0x23e/0x450 security/selinux/xfrm.c:99
-Read of size 768 at addr ffff88808d161934 by task syz-executor391/7036
-
-CPU: 0 PID: 7036 Comm: syz-executor391 Not tainted 5.6.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x188/0x20d lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xd3/0x315 mm/kasan/report.c:374
- __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:506
- kasan_report+0xe/0x20 mm/kasan/common.c:641
- check_memory_region_inline mm/kasan/generic.c:185 [inline]
- check_memory_region+0x128/0x190 mm/kasan/generic.c:192
- memcpy+0x20/0x50 mm/kasan/common.c:127
- memcpy include/linux/string.h:381 [inline]
- selinux_xfrm_alloc_user+0x23e/0x450 security/selinux/xfrm.c:99
- security_xfrm_policy_alloc+0x6c/0xb0 security/security.c:2263
- copy_from_user_sec_ctx net/xfrm/xfrm_user.c:1462 [inline]
- xfrm_policy_construct+0x2a8/0x660 net/xfrm/xfrm_user.c:1627
- xfrm_add_acquire+0x215/0x9f0 net/xfrm/xfrm_user.c:2280
- xfrm_user_rcv_msg+0x414/0x700 net/xfrm/xfrm_user.c:2676
- netlink_rcv_skb+0x15a/0x410 net/netlink/af_netlink.c:2469
- xfrm_netlink_rcv+0x6b/0x90 net/xfrm/xfrm_user.c:2684
- netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
- netlink_unicast+0x537/0x740 net/netlink/af_netlink.c:1329
- netlink_sendmsg+0x882/0xe10 net/netlink/af_netlink.c:1918
- sock_sendmsg_nosec net/socket.c:652 [inline]
- sock_sendmsg+0xcf/0x120 net/socket.c:672
- ____sys_sendmsg+0x6b9/0x7d0 net/socket.c:2345
- ___sys_sendmsg+0x100/0x170 net/socket.c:2399
- __sys_sendmsg+0xec/0x1b0 net/socket.c:2432
- do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4405f9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffabe06278 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004405f9
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401e80
-R13: 0000000000401f10 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 7036:
- save_stack+0x1b/0x80 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- __kasan_kmalloc mm/kasan/common.c:515 [inline]
- __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:488
- __kmalloc_reserve.isra.0+0x39/0xe0 net/core/skbuff.c:142
- __alloc_skb+0xef/0x5a0 net/core/skbuff.c:210
- alloc_skb include/linux/skbuff.h:1083 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1175 [inline]
- netlink_sendmsg+0x97b/0xe10 net/netlink/af_netlink.c:1893
- sock_sendmsg_nosec net/socket.c:652 [inline]
- sock_sendmsg+0xcf/0x120 net/socket.c:672
- ____sys_sendmsg+0x6b9/0x7d0 net/socket.c:2345
- ___sys_sendmsg+0x100/0x170 net/socket.c:2399
- __sys_sendmsg+0xec/0x1b0 net/socket.c:2432
- do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 5010:
- save_stack+0x1b/0x80 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- kasan_set_free_info mm/kasan/common.c:337 [inline]
- __kasan_slab_free+0xf7/0x140 mm/kasan/common.c:476
- __cache_free mm/slab.c:3426 [inline]
- kfree+0x109/0x2b0 mm/slab.c:3757
- skb_free_head+0x8b/0xa0 net/core/skbuff.c:590
- skb_release_data+0x42e/0x8b0 net/core/skbuff.c:610
- skb_release_all+0x46/0x60 net/core/skbuff.c:664
- __kfree_skb net/core/skbuff.c:678 [inline]
- consume_skb net/core/skbuff.c:837 [inline]
- consume_skb+0xf3/0x400 net/core/skbuff.c:831
- netlink_unicast_kernel net/netlink/af_netlink.c:1304 [inline]
- netlink_unicast+0x53f/0x740 net/netlink/af_netlink.c:1329
- netlink_sendmsg+0x882/0xe10 net/netlink/af_netlink.c:1918
- sock_sendmsg_nosec net/socket.c:652 [inline]
- sock_sendmsg+0xcf/0x120 net/socket.c:672
- ____sys_sendmsg+0x6b9/0x7d0 net/socket.c:2345
- ___sys_sendmsg+0x100/0x170 net/socket.c:2399
- __sys_sendmsg+0xec/0x1b0 net/socket.c:2432
- do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff88808d161800
- which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 308 bytes inside of
- 1024-byte region [ffff88808d161800, ffff88808d161c00)
-The buggy address belongs to the page:
-page:ffffea0002345840 refcount:1 mapcount:0 mapping:ffff8880aa000c40 index:0x0
-flags: 0xfffe0000000200(slab)
-raw: 00fffe0000000200 ffffea00023d3008 ffffea00029cb048 ffff8880aa000c40
-raw: 0000000000000000 ffff88808d161000 0000000100000002 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff88808d161b00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88808d161b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff88808d161c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                   ^
- ffff88808d161c80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88808d161d00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+I think there's an ordering problem here.  The change_target_cpu_callback
+will allow storvsc to flush the cache that it is keeping, but there's a win=
+dow
+after the storvsc callback releases the spin lock and before this function
+changes channel->target_cpu to the new value.  In that window, the cache
+could get refilled based on the old value of channel->target_cpu, which is
+exactly what we don't want.  Generally with caches, you have to set the new
+value first, then flush the cache, and I think that works in this case.  Th=
+e
+callback function doesn't depend on the value of channel->target_cpu,
+and any cache filling that might happen after channel->target_cpu is set
+to the new value but before the callback function runs is OK.   But please
+double-check my thinking. :-)
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+> index fb41636519ee8..a680592b9d32a 100644
+> --- a/drivers/scsi/storvsc_drv.c
+> +++ b/drivers/scsi/storvsc_drv.c
+> @@ -621,6 +621,63 @@ static inline struct storvsc_device *get_in_stor_dev=
+ice(
+>=20
+>  }
+>=20
+> +void storvsc_change_target_cpu(struct vmbus_channel *channel, u32 old, u=
+32 new)
+> +{
+> +	struct storvsc_device *stor_device;
+> +	struct vmbus_channel *cur_chn;
+> +	bool old_is_alloced =3D false;
+> +	struct hv_device *device;
+> +	unsigned long flags;
+> +	int cpu;
+> +
+> +	device =3D channel->primary_channel ?
+> +			channel->primary_channel->device_obj
+> +				: channel->device_obj;
+> +	stor_device =3D get_out_stor_device(device);
+> +	if (!stor_device)
+> +		return;
+> +
+> +	/* See storvsc_do_io() -> get_og_chn(). */
+> +	spin_lock_irqsave(&device->channel->lock, flags);
+> +
+> +	/*
+> +	 * Determines if the storvsc device has other channels assigned to
+> +	 * the "old" CPU to update the alloced_cpus mask and the stor_chns
+> +	 * array.
+> +	 */
+> +	if (device->channel !=3D channel && device->channel->target_cpu =3D=3D =
+old) {
+> +		cur_chn =3D device->channel;
+> +		old_is_alloced =3D true;
+> +		goto old_is_alloced;
+> +	}
+> +	list_for_each_entry(cur_chn, &device->channel->sc_list, sc_list) {
+> +		if (cur_chn =3D=3D channel)
+> +			continue;
+> +		if (cur_chn->target_cpu =3D=3D old) {
+> +			old_is_alloced =3D true;
+> +			goto old_is_alloced;
+> +		}
+> +	}
+> +
+> +old_is_alloced:
+> +	if (old_is_alloced)
+> +		WRITE_ONCE(stor_device->stor_chns[old], cur_chn);
+> +	else
+> +		cpumask_clear_cpu(old, &stor_device->alloced_cpus);
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+I think target_cpu_store() can get called in parallel on multiple CPUs for =
+different
+channels on the same storvsc device, but multiple changes to a single chann=
+el are
+serialized by higher levels of sysfs.  So this function could run after mul=
+tiple
+channels have been changed, in which case there's not just a single "old" v=
+alue,
+and the above algorithm might not work, especially if channel->target_cpu i=
+s
+updated before calling this function per my earlier comment.   I can see a
+couple of possible ways to deal with this.  One is to put the update of
+channel->target_cpu in this function, within the spin lock boundaries so
+that the cache flush and target_cpu update are atomic.  Another idea is to
+process multiple changes in this function, by building a temp copy of
+alloced_cpus by walking the channel list, use XOR to create a cpumask
+with changes, and then process all the changes in a loop instead of
+just handling a single change as with the current code at the old_is_alloce=
+d
+label.  But I haven't completely thought through this idea.
+
+> +
+> +	/* "Flush" the stor_chns array. */
+> +	for_each_possible_cpu(cpu) {
+> +		if (stor_device->stor_chns[cpu] && !cpumask_test_cpu(
+> +					cpu, &stor_device->alloced_cpus))
+> +			WRITE_ONCE(stor_device->stor_chns[cpu], NULL);
+> +	}
+> +
+> +	WRITE_ONCE(stor_device->stor_chns[new], channel);
+> +	cpumask_set_cpu(new, &stor_device->alloced_cpus);
+> +
+> +	spin_unlock_irqrestore(&device->channel->lock, flags);
+> +}
+> +
+>  static void handle_sc_creation(struct vmbus_channel *new_sc)
+>  {
+>  	struct hv_device *device =3D new_sc->primary_channel->device_obj;
+> @@ -648,6 +705,8 @@ static void handle_sc_creation(struct vmbus_channel *=
+new_sc)
+>  		return;
+>  	}
+>=20
+> +	new_sc->change_target_cpu_callback =3D storvsc_change_target_cpu;
+> +
+>  	/* Add the sub-channel to the array of available channels. */
+>  	stor_device->stor_chns[new_sc->target_cpu] =3D new_sc;
+>  	cpumask_set_cpu(new_sc->target_cpu, &stor_device->alloced_cpus);
+> @@ -876,6 +935,8 @@ static int storvsc_channel_init(struct hv_device *dev=
+ice, bool is_fc)
+>  	if (stor_device->stor_chns =3D=3D NULL)
+>  		return -ENOMEM;
+>=20
+> +	device->channel->change_target_cpu_callback =3D storvsc_change_target_c=
+pu;
+> +
+>  	stor_device->stor_chns[device->channel->target_cpu] =3D device->channel=
+;
+>  	cpumask_set_cpu(device->channel->target_cpu,
+>  			&stor_device->alloced_cpus);
+> @@ -1248,8 +1309,10 @@ static struct vmbus_channel *get_og_chn(struct sto=
+rvsc_device
+> *stor_device,
+>  	const struct cpumask *node_mask;
+>  	int num_channels, tgt_cpu;
+>=20
+> -	if (stor_device->num_sc =3D=3D 0)
+> +	if (stor_device->num_sc =3D=3D 0) {
+> +		stor_device->stor_chns[q_num] =3D stor_device->device->channel;
+>  		return stor_device->device->channel;
+> +	}
+>=20
+>  	/*
+>  	 * Our channel array is sparsley populated and we
+> @@ -1258,7 +1321,6 @@ static struct vmbus_channel *get_og_chn(struct stor=
+vsc_device
+> *stor_device,
+>  	 * The strategy is simple:
+>  	 * I. Ensure NUMA locality
+>  	 * II. Distribute evenly (best effort)
+> -	 * III. Mapping is persistent.
+>  	 */
+>=20
+>  	node_mask =3D cpumask_of_node(cpu_to_node(q_num));
+> @@ -1268,8 +1330,10 @@ static struct vmbus_channel *get_og_chn(struct sto=
+rvsc_device
+> *stor_device,
+>  		if (cpumask_test_cpu(tgt_cpu, node_mask))
+>  			num_channels++;
+>  	}
+> -	if (num_channels =3D=3D 0)
+> +	if (num_channels =3D=3D 0) {
+> +		stor_device->stor_chns[q_num] =3D stor_device->device->channel;
+
+Is the above added line just fixing a bug in the existing code?  I'm not se=
+eing how
+it would derive from the other changes in this patch.
+
+>  		return stor_device->device->channel;
+> +	}
+>=20
+>  	hash_qnum =3D q_num;
+>  	while (hash_qnum >=3D num_channels)
+> @@ -1295,6 +1359,7 @@ static int storvsc_do_io(struct hv_device *device,
+>  	struct storvsc_device *stor_device;
+>  	struct vstor_packet *vstor_packet;
+>  	struct vmbus_channel *outgoing_channel, *channel;
+> +	unsigned long flags;
+>  	int ret =3D 0;
+>  	const struct cpumask *node_mask;
+>  	int tgt_cpu;
+> @@ -1308,10 +1373,11 @@ static int storvsc_do_io(struct hv_device *device=
+,
+>=20
+>  	request->device  =3D device;
+>  	/*
+> -	 * Select an an appropriate channel to send the request out.
+> +	 * Select an appropriate channel to send the request out.
+>  	 */
+> -	if (stor_device->stor_chns[q_num] !=3D NULL) {
+> -		outgoing_channel =3D stor_device->stor_chns[q_num];
+> +	/* See storvsc_change_target_cpu(). */
+> +	outgoing_channel =3D READ_ONCE(stor_device->stor_chns[q_num]);
+> +	if (outgoing_channel !=3D NULL) {
+>  		if (outgoing_channel->target_cpu =3D=3D q_num) {
+>  			/*
+>  			 * Ideally, we want to pick a different channel if
+> @@ -1324,7 +1390,10 @@ static int storvsc_do_io(struct hv_device *device,
+>  					continue;
+>  				if (tgt_cpu =3D=3D q_num)
+>  					continue;
+> -				channel =3D stor_device->stor_chns[tgt_cpu];
+> +				channel =3D READ_ONCE(
+> +					stor_device->stor_chns[tgt_cpu]);
+> +				if (channel =3D=3D NULL)
+> +					continue;
+
+The channel =3D=3D NULL case is new because a cache flush could be happenin=
+g
+in parallel on another CPU.  I'm wondering about the tradeoffs of
+continuing in the loop (as you have coded in this patch) vs. a "goto" back =
+to
+the top level "if" statement.   With the "continue" you might finish the
+loop without finding any matches, and fall through to the next approach.
+But it's only a single I/O operation, and if it comes up with a less than
+optimal channel choice, it's no big deal.  So I guess it's really a wash.
+
+>  				if (hv_get_avail_to_write_percent(
+>  							&channel->outbound)
+>  						> ring_avail_percent_lowater) {
+> @@ -1350,7 +1419,10 @@ static int storvsc_do_io(struct hv_device *device,
+>  			for_each_cpu(tgt_cpu, &stor_device->alloced_cpus) {
+>  				if (cpumask_test_cpu(tgt_cpu, node_mask))
+>  					continue;
+> -				channel =3D stor_device->stor_chns[tgt_cpu];
+> +				channel =3D READ_ONCE(
+> +					stor_device->stor_chns[tgt_cpu]);
+> +				if (channel =3D=3D NULL)
+> +					continue;
+
+Same comment here.
+
+>  				if (hv_get_avail_to_write_percent(
+>  							&channel->outbound)
+>  						> ring_avail_percent_lowater) {
+> @@ -1360,7 +1432,14 @@ static int storvsc_do_io(struct hv_device *device,
+>  			}
+>  		}
+>  	} else {
+> +		spin_lock_irqsave(&device->channel->lock, flags);
+> +		outgoing_channel =3D stor_device->stor_chns[q_num];
+> +		if (outgoing_channel !=3D NULL) {
+> +			spin_unlock_irqrestore(&device->channel->lock, flags);
+> +			goto found_channel;
+> +		}
+>  		outgoing_channel =3D get_og_chn(stor_device, q_num);
+> +		spin_unlock_irqrestore(&device->channel->lock, flags);
+>  	}
+>=20
+>  found_channel:
+> diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
+> index edfcd42319ef3..9018b89614b78 100644
+> --- a/include/linux/hyperv.h
+> +++ b/include/linux/hyperv.h
+> @@ -773,6 +773,9 @@ struct vmbus_channel {
+>  	void (*onchannel_callback)(void *context);
+>  	void *channel_callback_context;
+>=20
+> +	void (*change_target_cpu_callback)(struct vmbus_channel *channel,
+> +			u32 old, u32 new);
+> +
+>  	/*
+>  	 * Synchronize channel scheduling and channel removal; see the inline
+>  	 * comments in vmbus_chan_sched() and vmbus_reset_channel_cb().
+> --
+> 2.24.0
+
