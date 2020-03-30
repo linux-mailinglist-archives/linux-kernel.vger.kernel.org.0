@@ -2,108 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FE4B19887B
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20CDB198882
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:46:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729360AbgC3Xpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 19:45:55 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54984 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729358AbgC3Xpv (ORCPT
+        id S1729503AbgC3Xq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 19:46:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44656 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728980AbgC3Xq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 19:45:51 -0400
-Received: by mail-wm1-f67.google.com with SMTP id c81so629518wmd.4;
-        Mon, 30 Mar 2020 16:45:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5uzSi9/VYcTraEBB9HY7h/rXS2xZdLMR03bizri5gj4=;
-        b=U4dAz5JvC5Fm0PIcTcWwiVNghqf0QdYuFyDYQm3OPsDtjHrCfMpE46Qo7orMdSK05Y
-         P5DXJy38lM1lC7YIgMPBGH16GG5xBtNDRcaO6VhqWdmxtggajwky/+qcHKKF6NYHg00G
-         W9dFPn3vX5HJ5BC7X8j9SbXwS6bz5LpzRR4vsM7CdR1Yyyr61PXhKsAsfJFGgRFavQaF
-         EZ9CIwME/Ja3sdR3Y3OZLi5gA0KPfwcKI1DMz0CqjqajGHI5/TQsHPOpEJQX0P7FH1xD
-         51fdQHUq+OFjP3ufeY+q8KJZYGaed/SA62fyiiORqKhq8vCQbVrEpKBxkAZ4+oEyOazH
-         ZXnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5uzSi9/VYcTraEBB9HY7h/rXS2xZdLMR03bizri5gj4=;
-        b=WxaEkxFQCTKSdfaJCXGIdjxg1OqNswcnvlTjAsAxmRLvHDc8QiYfx4IV1f8TS0PMly
-         at9uXGcLepjUtouOiRudcQkj7cR76x7DyjlfLQ+ABRNeQcIm5FrKWp86AamHy730hJjA
-         V+xmpS1A5NRKT6tISUbsRzK7wCC1JZQxa/wUyfhZVDA/a/Po2XNyOVZEMD+GaV6OvD2z
-         iqZdIoGzFY2/yoq7dEO79Apgtqu4PadA1ImWz20XM1a5vGBlYEzgpNgH9e6lKXBPI7P/
-         mK7KYPsmFGzkS/n7MDSstI/8yOsU+2FUZJfXZgrlpLrcFdwAdI166GVyN6fuwca2EHjS
-         iwqg==
-X-Gm-Message-State: ANhLgQ1FVaA9sqAZfQkaRtX7HPl7NPsqaIPmrvyy24x8Z7aUuc2o0EDv
-        SGJxbLesKAp9Is5PefTb6G4=
-X-Google-Smtp-Source: ADFU+vvtXm6WQtlMFz5iqFRMXzrlv57Bxn7PrxUOdXCnqT1tXpKTo5A1T4R+dQC9PFDeLc8AG/pT8Q==
-X-Received: by 2002:a1c:2484:: with SMTP id k126mr575356wmk.52.1585611949773;
-        Mon, 30 Mar 2020 16:45:49 -0700 (PDT)
-Received: from localhost.localdomain (p200300F13710ED00428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:3710:ed00:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id v186sm1392953wme.24.2020.03.30.16.45.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 16:45:49 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
-        narmstrong@baylibre.com
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 2/2] clk: meson: meson8b: make the hdmi_sys clock tree mutable
-Date:   Tue, 31 Mar 2020 01:45:35 +0200
-Message-Id: <20200330234535.3327513-3-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200330234535.3327513-1-martin.blumenstingl@googlemail.com>
-References: <20200330234535.3327513-1-martin.blumenstingl@googlemail.com>
+        Mon, 30 Mar 2020 19:46:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=vUuaS2x8JQRuzncteKDDiiu81wU7NBj9Y4r1asfsrBE=; b=hB28V+ehoXaCUU+9lmVuCckb+y
+        nobjcXFQg7hwPHve5iFTUOCYx/KkAES+Vo2dOIggBTRYQ1qL7DM/B8ZZJV4xE651fYpMfUkxZqT3F
+        kE3cfa22BFsTy+a0Ibpy66CsmdP/ViKtI6SQIJGHnW0bHRuZxTaAg3Gn5QwmcAaMw9xefW4C05p+j
+        RDjhCMQ7Qr2Wj8w59WpunP9DPex/G6rvBtBtbN/MUZ7LZ1vbq+QBGFpFwvFayyWDriA9ks1E3yQ/v
+        oGwY8n6H7TKUtTAlvFalH2G7jEayWCN1mSHqkMCaDuGgIN91BfHEUdJNzYOuSs43M4COu4IWWrvYx
+        AUhJUBrQ==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJ46q-0004vd-Lp; Mon, 30 Mar 2020 23:46:24 +0000
+Subject: Re: [GIT] Networking
+To:     Paul Bolle <pebolle@tiscali.nl>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
+References: <20200328.183923.1567579026552407300.davem@davemloft.net>
+ <CAHk-=wgoySgT5q9L5E-Bwm_Lsn3w-bzL2SBji51WF8z4bk4SEQ@mail.gmail.com>
+ <20200329.155232.1256733901524676876.davem@davemloft.net>
+ <CAHk-=wjDZTfj3wYm+HKd2tfT8j_unQwhP-t3-91Z-8qqMS=ceQ@mail.gmail.com>
+ <1a57d88410e8354d083ad31e956bb03d1a8e3c0b.camel@tiscali.nl>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <2116db06-272a-de6d-1484-b9900b018683@infradead.org>
+Date:   Mon, 30 Mar 2020 16:46:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1a57d88410e8354d083ad31e956bb03d1a8e3c0b.camel@tiscali.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HDMI TX controller requires the hdmi_sys clock to be enabled. Allow
-changing the whole clock tree now that we know that one of our drivers
-requires this.
+On 3/30/20 2:18 PM, Paul Bolle wrote:
+> [Added Johannes.]
+> 
+> Linus Torvalds schreef op zo 29-03-2020 om 15:54 [-0700]:
+>> On Sun, Mar 29, 2020 at 3:52 PM David Miller <davem@davemloft.net> wrote:
+>>> Meanwhile, we have a wireless regression, and I'll get the fix for
+>>> that to you by the end of today.
+>>
+>> Oops. This came in just after I posted the 5.6 release announcement
+>> after having said that there didn't seem to be any reason to delay.
+> 
+> If this email gets through this should be about "mac80211: fix authentication
+> with iwlwifi/mvm". Is that right?
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clk/meson/meson8b.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Yes.
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 34a70c4b4899..7c55c695cbae 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -1725,7 +1725,7 @@ static struct clk_regmap meson8b_hdmi_sys_sel = {
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_sys_sel",
--		.ops = &clk_regmap_mux_ro_ops,
-+		.ops = &clk_regmap_mux_ops,
- 		/* FIXME: all other parents are unknown */
- 		.parent_data = &(const struct clk_parent_data) {
- 			.fw_name = "xtal",
-@@ -1745,7 +1745,7 @@ static struct clk_regmap meson8b_hdmi_sys_div = {
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_sys_div",
--		.ops = &clk_regmap_divider_ro_ops,
-+		.ops = &clk_regmap_divider_ops,
- 		.parent_hws = (const struct clk_hw *[]) {
- 			&meson8b_hdmi_sys_sel.hw
- 		},
-@@ -1761,7 +1761,7 @@ static struct clk_regmap meson8b_hdmi_sys = {
- 	},
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "hdmi_sys",
--		.ops = &clk_regmap_gate_ro_ops,
-+		.ops = &clk_regmap_gate_ops,
- 		.parent_hws = (const struct clk_hw *[]) {
- 			&meson8b_hdmi_sys_div.hw
- 		},
 -- 
-2.26.0
+~Randy
 
