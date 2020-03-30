@@ -2,146 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ABD61974A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 08:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F7081974AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 08:45:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbgC3Gng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 02:43:36 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:44725 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728489AbgC3Gnf (ORCPT
+        id S1729259AbgC3Gpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 02:45:51 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:15972 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728964AbgC3Gpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 02:43:35 -0400
-Received: by mail-pl1-f202.google.com with SMTP id c7so12179032plr.11
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 23:43:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:cc;
-        bh=xapqDhPFeX4c/sEZFBXwtVQVL9ia2nDPE/e7jpQzTQA=;
-        b=d8hUdfNwN+8iAFJdBnwUiTZeEYcdMVOCOWJfgJWR7/vu/vixLec11deCzX+uCdblaJ
-         vKTaEhiX0gbcQtU4EApIuDXMtuTCWFoDKk4CgV8V935/DxbKWIDs72JckC3qfblOJpgk
-         G9weGGi1TLjXnb+sCyklu/HBRr22EUaVJtVA40MdyL4HyOlURlp86JTaxm5hNpkh/Ucp
-         HprDqPmzfRmnX01nh+JznDUcsbJGNU+qhqlQlILFD+CnXbBVSFh4f8+tvKF4yDKkNhJV
-         AqXyZPKRB5yIndXdCOloQ2x0tlgm5EJ08HcBtcME/64wFkfUFajpMjx7jSKtQTt64fW9
-         P6tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:cc;
-        bh=xapqDhPFeX4c/sEZFBXwtVQVL9ia2nDPE/e7jpQzTQA=;
-        b=EJQ+ppoEYkFRZex8+UMI4AiehJ86M638OREx4U83rB4XrzBAaJnc9OmIK/ljkqKE3n
-         O4ttwdNsWfzDuyhLRSN6o1scT8TEvGh7/4hUvGMyEiCMes0HS/HfEJLEAqY073LGDUq1
-         3O0w6a8hZ5u1LL3AHG9WvH/9e7M2GKX26kdxuWyMdZi6HXavKstHxeYcmKTV0N9DTKj7
-         Jf2uSmvzkYwTpU7w7JG8UTfyJQcy05Tk4qjzHPIA+Zjpku9YNEwvI7O3cpA4jTQig6vR
-         tNd2Bt37pYCc21+aoYYG3Vs0y6k4j/xvNf2DUbUg4Cp+FQAkruuYsA7rfgjU+vil+oBu
-         FsIw==
-X-Gm-Message-State: ANhLgQ35Yng2EUWh5T4zbCFkWsbl9x0GD1ngnD3XqQNuRcEZXnFgr6NO
-        hOB5zjfqGxeLetNOzFMxjymHUnOyMYy3
-X-Google-Smtp-Source: ADFU+vt/FJekYfgoafMZ/9Mp0r3DKbDy5dLBs00R2iJNcH8rD82TihvKhdtepI0FKoL9nXRN2ERfhcyim+8b
-X-Received: by 2002:a17:90a:65c8:: with SMTP id i8mr14048414pjs.156.1585550612534;
- Sun, 29 Mar 2020 23:43:32 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 08:43:19 +0200
-In-Reply-To: <20200327100801.161671-1-courbet@google.com>
-Message-Id: <20200330064323.76162-1-courbet@google.com>
-Mime-Version: 1.0
-References: <20200327100801.161671-1-courbet@google.com>
-X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
-Subject: [PATCH v2] powerpc: Make setjmp/longjmp signature standard
-From:   Clement Courbet <courbet@google.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Clement Courbet <courbet@google.com>, stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-To:     unlisted-recipients:; (no To-header on input)
+        Mon, 30 Mar 2020 02:45:51 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585550750; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=URzNECvAI1Ghk10GnUEl6Jn6n1Bg3PLrHrv0MX+tgvo=; b=lQKOepWZsDurrUnlESXCozudINfoAqk9g4yltyZl4NsxOFXVvWKttYofn5XFDWld5LAv5Fz1
+ aatfsF5N0Q6xdhEu7DtxFIN7FsUz6oRPAZRejUXC8Gf8XZTa9fMC0K3xtMxDebdksHqLvvNR
+ YdeYPQorcydvwFm4GKuqg0cPSs0=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e819597.7f8c311e5df8-smtp-out-n05;
+ Mon, 30 Mar 2020 06:45:43 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D57AEC4478C; Mon, 30 Mar 2020 06:45:42 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 573B4C433D2;
+        Mon, 30 Mar 2020 06:45:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 573B4C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Sahitya Tummala <stummala@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] f2fs: fix long latency due to discard during umount
+Date:   Mon, 30 Mar 2020 12:15:30 +0530
+Message-Id: <1585550730-1858-1-git-send-email-stummala@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Declaring setjmp()/longjmp() as taking longs makes the signature
-non-standard, and makes clang complain. In the past, this has been
-worked around by adding -ffreestanding to the compile flags.
+F2FS already has a default timeout of 5 secs for discards that
+can be issued during umount, but it can take more than the 5 sec
+timeout if the underlying UFS device queue is already full and there
+are no more available free tags to be used. In that case, submit_bio()
+will wait for the already queued discard requests to complete to get
+a free tag, which can potentially take way more than 5 sec.
 
-The implementation looks like it only ever propagates the value
-(in longjmp) or sets it to 1 (in setjmp), and we only call longjmp
-with integer parameters.
+Fix this by submitting the discard requests with REQ_NOWAIT
+flags during umount. This will return -EAGAIN for UFS queue/tag full
+scenario without waiting in the context of submit_bio(). The FS can
+then handle these requests by retrying again within the stipulated
+discard timeout period to avoid long latencies.
 
-This allows removing -ffreestanding from the compilation flags.
-
-Context:
-https://lore.kernel.org/patchwork/patch/1214060
-https://lore.kernel.org/patchwork/patch/1216174
-
-Signed-off-by: Clement Courbet <courbet@google.com>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
-
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 ---
+v3:
+-Handle the regression reported by Chao with v2.
+-simplify the logic to split the dc with multiple bios incase any bio returns
+ EAGAIN and retry those new dc within 5 sec timeout.
 
-v2:
-Use and array type as suggested by Segher Boessenkool
-Cc: stable@vger.kernel.org # v4.14+
-Fixes: c9029ef9c957 ("powerpc: Avoid clang warnings around setjmp and longjmp")
----
- arch/powerpc/include/asm/setjmp.h | 6 ++++--
- arch/powerpc/kexec/Makefile       | 3 ---
- arch/powerpc/xmon/Makefile        | 3 ---
- 3 files changed, 4 insertions(+), 8 deletions(-)
+ fs/f2fs/segment.c | 65 +++++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 51 insertions(+), 14 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/setjmp.h b/arch/powerpc/include/asm/setjmp.h
-index e9f81bb3f83b..f798e80e4106 100644
---- a/arch/powerpc/include/asm/setjmp.h
-+++ b/arch/powerpc/include/asm/setjmp.h
-@@ -7,7 +7,9 @@
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index fb3e531..55d18c7 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1029,13 +1029,16 @@ static void f2fs_submit_discard_endio(struct bio *bio)
+ 	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
+ 	unsigned long flags;
  
- #define JMP_BUF_LEN    23
- 
--extern long setjmp(long *) __attribute__((returns_twice));
--extern void longjmp(long *, long) __attribute__((noreturn));
-+typedef long jmp_buf[JMP_BUF_LEN];
+-	dc->error = blk_status_to_errno(bio->bi_status);
+-
+ 	spin_lock_irqsave(&dc->lock, flags);
++	if (!dc->error)
++		dc->error = blk_status_to_errno(bio->bi_status);
 +
-+extern int setjmp(jmp_buf env) __attribute__((returns_twice));
-+extern void longjmp(jmp_buf env, int val) __attribute__((noreturn));
+ 	dc->bio_ref--;
+-	if (!dc->bio_ref && dc->state == D_SUBMIT) {
+-		dc->state = D_DONE;
+-		complete_all(&dc->wait);
++	if (!dc->bio_ref) {
++		if (dc->error || dc->state == D_SUBMIT) {
++			dc->state = D_DONE;
++			complete_all(&dc->wait);
++		}
+ 	}
+ 	spin_unlock_irqrestore(&dc->lock, flags);
+ 	bio_put(bio);
+@@ -1124,10 +1127,13 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+ 	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
+ 					&(dcc->fstrim_list) : &(dcc->wait_list);
+-	int flag = dpolicy->sync ? REQ_SYNC : 0;
++	int flag;
+ 	block_t lstart, start, len, total_len;
+ 	int err = 0;
  
- #endif /* _ASM_POWERPC_SETJMP_H */
-diff --git a/arch/powerpc/kexec/Makefile b/arch/powerpc/kexec/Makefile
-index 378f6108a414..86380c69f5ce 100644
---- a/arch/powerpc/kexec/Makefile
-+++ b/arch/powerpc/kexec/Makefile
-@@ -3,9 +3,6 @@
- # Makefile for the linux kernel.
- #
++	flag = dpolicy->sync ? REQ_SYNC : 0;
++	flag |= dpolicy->type == DPOLICY_UMOUNT ? REQ_NOWAIT : 0;
++
+ 	if (dc->state != D_PREP)
+ 		return 0;
  
--# Avoid clang warnings around longjmp/setjmp declarations
--CFLAGS_crash.o += -ffreestanding
+@@ -1192,10 +1198,6 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+ 		dc->bio_ref++;
+ 		spin_unlock_irqrestore(&dc->lock, flags);
+ 
+-		atomic_inc(&dcc->queued_discard);
+-		dc->queued++;
+-		list_move_tail(&dc->list, wait_list);
 -
- obj-y				+= core.o crash.o core_$(BITS).o
+ 		/* sanity check on discard range */
+ 		__check_sit_bitmap(sbi, lstart, lstart + len);
  
- obj-$(CONFIG_PPC32)		+= relocate_32.o
-diff --git a/arch/powerpc/xmon/Makefile b/arch/powerpc/xmon/Makefile
-index c3842dbeb1b7..6f9cccea54f3 100644
---- a/arch/powerpc/xmon/Makefile
-+++ b/arch/powerpc/xmon/Makefile
-@@ -1,9 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for xmon
+@@ -1203,6 +1205,29 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+ 		bio->bi_end_io = f2fs_submit_discard_endio;
+ 		bio->bi_opf |= flag;
+ 		submit_bio(bio);
++		if (flag & REQ_NOWAIT) {
++			if (dc->error == -EAGAIN) {
++				spin_lock_irqsave(&dc->lock, flags);
++				dc->len -= len;
++				if (!dc->len) {
++					dc->len = total_len;
++					dc->state = D_PREP;
++					reinit_completion(&dc->wait);
++				} else {
++					dcc->undiscard_blks -= total_len;
++					if (dc->state == D_PARTIAL)
++						dc->state = D_SUBMIT;
++				}
++				err = dc->error;
++				dc->error = 0;
++				spin_unlock_irqrestore(&dc->lock, flags);
++				break;
++			}
++		}
++
++		atomic_inc(&dcc->queued_discard);
++		dc->queued++;
++		list_move_tail(&dc->list, wait_list);
  
--# Avoid clang warnings around longjmp/setjmp declarations
--subdir-ccflags-y := -ffreestanding
--
- GCOV_PROFILE := n
- KCOV_INSTRUMENT := n
- UBSAN_SANITIZE := n
+ 		atomic_inc(&dcc->issued_discard);
+ 
+@@ -1214,8 +1239,9 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+ 		len = total_len;
+ 	}
+ 
+-	if (!err && len)
+-		__update_discard_tree_range(sbi, bdev, lstart, start, len);
++	if ((!err || err == -EAGAIN) && total_len && dc->start != start)
++		__update_discard_tree_range(sbi, bdev, lstart, start,
++					total_len);
+ 	return err;
+ }
+ 
+@@ -1470,12 +1496,15 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 	struct list_head *pend_list;
+ 	struct discard_cmd *dc, *tmp;
+ 	struct blk_plug plug;
+-	int i, issued = 0;
++	int i, err, issued = 0;
+ 	bool io_interrupted = false;
++	bool retry;
+ 
+ 	if (dpolicy->timeout != 0)
+ 		f2fs_update_time(sbi, dpolicy->timeout);
+ 
++retry:
++	retry = false;
+ 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+ 		if (dpolicy->timeout != 0 &&
+ 				f2fs_time_over(sbi, dpolicy->timeout))
+@@ -1509,7 +1538,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 				break;
+ 			}
+ 
+-			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
++			err = __submit_discard_cmd(sbi, dpolicy, dc, &issued);
++			if (err == -EAGAIN) {
++				congestion_wait(BLK_RW_ASYNC,
++						DEFAULT_IO_TIMEOUT);
++				retry = true;
++			}
+ 
+ 			if (issued >= dpolicy->max_requests)
+ 				break;
+@@ -1522,6 +1556,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 			break;
+ 	}
+ 
++	if (retry)
++		goto retry;
++
+ 	if (!issued && io_interrupted)
+ 		issued = -1;
+ 
 -- 
-2.26.0.rc2.310.g2932bb562d-goog
-
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
