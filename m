@@ -2,89 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61104197D39
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 15:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E931197D37
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 15:43:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbgC3NnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 09:43:05 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2617 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728301AbgC3NnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 09:43:04 -0400
-Received: from lhreml724-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 4BE4F118960F3A97A5F9;
-        Mon, 30 Mar 2020 14:43:03 +0100 (IST)
-Received: from [127.0.0.1] (10.47.8.155) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 30 Mar
- 2020 14:43:01 +0100
-Subject: Re: [PATCH RFC v2 12/24] hpsa: use reserved commands
-To:     Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>
-CC:     <axboe@kernel.dk>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>, <bvanassche@acm.org>,
-        <hch@infradead.org>, <linux-block@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>,
-        <esc.storagedev@microsemi.com>, <chenxiang66@hisilicon.com>,
-        Hannes Reinecke <hare@suse.com>
-References: <1583857550-12049-1-git-send-email-john.garry@huawei.com>
- <1583857550-12049-13-git-send-email-john.garry@huawei.com>
- <20200311081059.GC31504@ming.t460p>
- <a76ab13a-85a3-0d88-595f-af13ef1b3fe3@huawei.com>
- <881b6a9b-2137-946f-a900-5c4e6cf1fe37@suse.de>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <c3f5c030-d735-c730-6ff9-19cb1cb50fe8@huawei.com>
-Date:   Mon, 30 Mar 2020 14:42:45 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1728271AbgC3Nmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 09:42:52 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:60148 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726385AbgC3Nmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 09:42:51 -0400
+Received: from zn.tnic (p200300EC2F0676006087085B094249ED.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:7600:6087:85b:942:49ed])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5188B1EC0C6D;
+        Mon, 30 Mar 2020 15:42:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1585575769;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=PnWQB32YQWUU9apHIIF6hYLEV8g87zpXf+oLOLk+Jn0=;
+        b=PI/dqZpHZ37gHwluhR9wtdZV4Bw/kEexbFP9kEs6o79i0Kcfnet4d3taRvyhdQHIDN5jky
+        KrG2WJBneEE6xXDld25iy/GPkhpQ/1RAq1pdrLioqLzpEHYCuckioo8mNx4QwA+NbOnV7/
+        j8ooSV7dHhWrraIXutWC7flBFVko/Ws=
+Date:   Mon, 30 Mar 2020 15:42:49 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Shiju Jose <shiju.jose@huawei.com>
+Cc:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "helgaas@kernel.org" <helgaas@kernel.org>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "zhangliguang@linux.alibaba.com" <zhangliguang@linux.alibaba.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Linuxarm <linuxarm@huawei.com>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        tanxiaofei <tanxiaofei@huawei.com>,
+        yangyicong <yangyicong@huawei.com>
+Subject: Re: [PATCH v6 1/2] ACPI / APEI: Add support to notify the vendor
+ specific HW errors
+Message-ID: <20200330134249.GF16242@zn.tnic>
+References: <ShijuJose>
+ <20200325164223.650-1-shiju.jose@huawei.com>
+ <20200325164223.650-2-shiju.jose@huawei.com>
+ <20200327182214.GD8015@zn.tnic>
+ <b180618fb6cb477ea7185979c11c5868@huawei.com>
+ <20200330103353.GC16242@zn.tnic>
+ <ee79588ee82445dcb76f1fe6c1082fb8@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <881b6a9b-2137-946f-a900-5c4e6cf1fe37@suse.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.47.8.155]
-X-ClientProxiedBy: lhreml727-chm.china.huawei.com (10.201.108.78) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ee79588ee82445dcb76f1fe6c1082fb8@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/03/2020 09:48, Hannes Reinecke wrote:
-> On 3/17/20 10:38 AM, John Garry wrote:
->> On 11/03/2020 08:10, Ming Lei wrote:
->>>> ands(struct ctlr_info *h)
->>>> @@ -5803,6 +5803,7 @@ static int hpsa_scsi_host_alloc(struct 
->>>> ctlr_info *h)
->>>>       sh->max_lun = HPSA_MAX_LUN;
->>>>       sh->max_id = HPSA_MAX_LUN;
->>>>       sh->can_queue = h->nr_cmds - HPSA_NRESERVED_CMDS;
->>>> +    sh->nr_reserved_cmds = HPSA_NRESERVED_CMDS;
->>> Now .nr_reserved_cmds has been passed to blk-mq, you need to increase
->>> sh->can_queue to h->nr_cmds, because .can_queue is the whole queue depth
->>> (include the part of reserved tags), otherwise, IO tags will be
->>> decreased.
->>>
->>
->> Sounds correct.
->>
-> I will have having a look at the patchset; I thought I did a patch to 
-> modify .can_queue so that it would cover only the usable tags, not the 
-> reserved ones.
-> 
+On Mon, Mar 30, 2020 at 11:55:35AM +0000, Shiju Jose wrote:
+> The idea was the error handled field will help the decoding part of
+> the rasdaemon to do the appropriate steps for logging the vendor error
+> information depending on whether a corresponding kernel driver has
+> handled the error or not.
 
-To me, it makes sense to leave .can_queue unmodified, carry it down to 
-blk-mq and allow blk_mq_init_bitmap_tags() find the queue depth:
+What's the difference for rasdaemon whether the error has been handled
+or not?
 
-static struct blk_mq_tags *blk_mq_init_bitmap_tags(struct blk_mq_tags *tags,
-   int node, int alloc_policy)
-{
-	unsigned int depth = tags->nr_tags - tags->nr_reserved_tags; *
-	bool round_robin = alloc_policy == BLK_TAG_ALLOC_RR;
+-- 
+Regards/Gruss,
+    Boris.
 
-	if (bt_alloc(&tags->bitmap_tags, depth, round_robin, node))
-		goto free_tags;
-
-Cheers,
-John
+https://people.kernel.org/tglx/notes-about-netiquette
