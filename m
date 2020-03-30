@@ -2,82 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88D85198288
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:40:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AED319828B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:41:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729685AbgC3Rki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 13:40:38 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38785 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726403AbgC3Rki (ORCPT
+        id S1729129AbgC3RlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 13:41:17 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:52556 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729745AbgC3RlP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 13:40:38 -0400
-Received: by mail-pg1-f196.google.com with SMTP id x7so9000558pgh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 10:40:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=EIazmoWr1nLxxc8KNs37fnm42F/lDdp4/gYm3JHLHek=;
-        b=IoKCdJlIr8dKSUui+FFl2O8BLgUnbJF6UcpsVTBUCUIxnVlSObs8uqbpJtVfo85MHD
-         NSMiSHyRzun2Qw2uFSqKhacVvS9T1di6LetUQD1cCrF9rPt/SGxOjvQEku1cIwKpUsK4
-         Nyhahu2qk/o5MwyQBOY1XNgL+3twDOfx4D+Ls=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=EIazmoWr1nLxxc8KNs37fnm42F/lDdp4/gYm3JHLHek=;
-        b=lswpIs17xPJDLmg2RcDf7mW0H08nPgMpIEj4nEhAPSIlrPL5tcGADBPEJYLSIAYw4g
-         4AIH2+iyszt6n0tq35w+1Wi+J5L2/5+f9VBJn00uRSB1ndpkju56oDk7X6OzfDPkizVA
-         0swu9T5W55RGNb11qBmOIbRWdWkVSCJc6mMiAhCNDXlZcrmmzgZMSjk0KDVfhDE3PPNt
-         RbZVf8Wtqu/HcrbQlzb5KA3HBtK+pCY9OB6b213+e/NnXmzdQGo/57DqM5/5JBi9yhBt
-         SrsW9U5NHXk5g6zIC03818w0cxtE2CD0jzscVH4s/4JaePQr73zROrKmT3xJ3OE2XFdh
-         evDQ==
-X-Gm-Message-State: ANhLgQ07Oxyu/EYnXVQuZqfvhunGlZ00Cml2LPN8juFYzSbNolYVCHEP
-        FBycct26V5g3EYyJZ5DC1J0W8Q==
-X-Google-Smtp-Source: ADFU+vsp6F+mnbmu4oeH1BZE4z851b8UTWueJ6LJmiWqqkcFzAPvDpoG8s71ddjkdVNmXYn/ukbhqw==
-X-Received: by 2002:a63:cf:: with SMTP id 198mr14239682pga.447.1585590035454;
-        Mon, 30 Mar 2020 10:40:35 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i2sm10410628pfr.203.2020.03.30.10.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 10:40:34 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 10:40:33 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Guilherme G . Piccoli" <gpiccoli@canonical.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Mon, 30 Mar 2020 13:41:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585590074;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YGHvH2P6nK7TQrcIUAsAOYU1x8zpv/Ba4jDsyhsFhTg=;
+        b=IxRzBpM+kz+5TXsorpzFspxithz1QaEdi3t6knzmYqK3tuNdcJjT+lykcJS0kPB9uCEY/X
+        rGRjBrJnrjSuYwcPRCYKGNO2hCqiwE4wjmGPwhagBuwIpmnzk9HmTo95v05JnIxpo/Jg2P
+        9jKRUSUpjwC81n7YbZbNf7PzdafPCnY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-109-vixzt7PyMZC7dnLS7w5LvQ-1; Mon, 30 Mar 2020 13:41:03 -0400
+X-MC-Unique: vixzt7PyMZC7dnLS7w5LvQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2189B1B2C980;
+        Mon, 30 Mar 2020 17:41:00 +0000 (UTC)
+Received: from elisabeth (unknown [10.36.110.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E96E7CDBFF;
+        Mon, 30 Mar 2020 17:40:54 +0000 (UTC)
+Date:   Mon, 30 Mar 2020 19:40:43 +0200
+From:   Stefano Brivio <sbrivio@redhat.com>
+To:     John Wyatt <jbwyatt4@gmail.com>
+Cc:     Julia Lawall <julia.lawall@inria.fr>,
+        Soumyajit Deb <debsoumyajit100@gmail.com>,
+        outreachy-kernel@googlegroups.com,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH 1/3] kernel/sysctl: support setting sysctl parameters
- from kernel command line
-Message-ID: <202003301040.E3099A957@keescook>
-References: <20200330115535.3215-1-vbabka@suse.cz>
- <20200330115535.3215-2-vbabka@suse.cz>
- <c68b1ed4-51ef-ca65-7128-ff3c8b6b54ee@suse.cz>
+        Payal Kshirsagar <payal.s.kshirsagar.98@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [Outreachy kernel] [PATCH] staging: fbtft: Replace udelay with
+ preferred usleep_range
+Message-ID: <20200330194043.56c79bb8@elisabeth>
+In-Reply-To: <alpine.DEB.2.21.2003291235590.2990@hadrien>
+References: <20200329092204.770405-1-jbwyatt4@gmail.com>
+        <alpine.DEB.2.21.2003291127230.2990@hadrien>
+        <2fccf96c3754e6319797a10856e438e023f734a7.camel@gmail.com>
+        <alpine.DEB.2.21.2003291144460.2990@hadrien>
+        <CAMS7mKBEhqFat8fWi=QiFwfLV9+skwi1hE-swg=XxU48zk=_tQ@mail.gmail.com>
+        <alpine.DEB.2.21.2003291235590.2990@hadrien>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c68b1ed4-51ef-ca65-7128-ff3c8b6b54ee@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 06:23:57PM +0200, Vlastimil Babka wrote:
-> Boo, all the error prints should terminate with \n
-> Will wait for feedback before resend.
+On Sun, 29 Mar 2020 12:37:18 +0200 (CEST)
+Julia Lawall <julia.lawall@inria.fr> wrote:
 
-eek, yes, good catch. :)
+> On Sun, 29 Mar 2020, Soumyajit Deb wrote:
+>=20
+> > I had the same doubt the other day about the replacement of udelay() wi=
+th
+> > usleep_range(). The corresponding range for the single argument value of
+> > udelay() is quite confusing as I couldn't decide the range.=C2=A0But as=
+ much as I
+> > noticed checkpatch.pl gives warning for replacing udelay() with
+> > usleep_range() by checking the argument value of udelay(). In the
+> > documentation, it is written udelay() should be used for a sleep time o=
+f at
+> > most 10 microseconds but between 10 microseconds and 20 milliseconds,
+> > usleep_range() should be used.=C2=A0
+> > I think the range is code specific and will depend on what range is
+> > acceptable and doesn't break the code.
+> > =C2=A0Please correct me if I am wrong. =20
+>=20
+> The range depends on the associated hardware.
 
--- 
-Kees Cook
+John, by the way, here you could have checked the datasheet of this LCD
+controller. It's a pair of those:
+	https://www.sparkfun.com/datasheets/LCD/ks0108b.pdf
+
+reset time is 1=C2=B5s minimum, which is the only actual constraint here.
+The rise time should then be handled by power supply and reflected
+with some appropriate usage of the regulator framework.
+
+That 120ms delay, however, must be there for a reason, that is, most
+likely to develop this quickly without exposing a proper model of the
+power supplies to the driver.
+
+So... in this case, with the datasheet alone, you won't go very far,
+you would need the actual module (probably connected to a Raspberry Pi
+to catch a typical usage). Still, it's usually worth a check. In any
+case, most likely, as Andy suggested, this function can eventually be
+dropped.
+
+--=20
+Stefano
+
