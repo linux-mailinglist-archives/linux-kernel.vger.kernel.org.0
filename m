@@ -2,73 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20CDB198882
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:46:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FE4A19888E
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:50:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729503AbgC3Xq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 19:46:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44656 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728980AbgC3Xq1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 19:46:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=vUuaS2x8JQRuzncteKDDiiu81wU7NBj9Y4r1asfsrBE=; b=hB28V+ehoXaCUU+9lmVuCckb+y
-        nobjcXFQg7hwPHve5iFTUOCYx/KkAES+Vo2dOIggBTRYQ1qL7DM/B8ZZJV4xE651fYpMfUkxZqT3F
-        kE3cfa22BFsTy+a0Ibpy66CsmdP/ViKtI6SQIJGHnW0bHRuZxTaAg3Gn5QwmcAaMw9xefW4C05p+j
-        RDjhCMQ7Qr2Wj8w59WpunP9DPex/G6rvBtBtbN/MUZ7LZ1vbq+QBGFpFwvFayyWDriA9ks1E3yQ/v
-        oGwY8n6H7TKUtTAlvFalH2G7jEayWCN1mSHqkMCaDuGgIN91BfHEUdJNzYOuSs43M4COu4IWWrvYx
-        AUhJUBrQ==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJ46q-0004vd-Lp; Mon, 30 Mar 2020 23:46:24 +0000
-Subject: Re: [GIT] Networking
-To:     Paul Bolle <pebolle@tiscali.nl>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Miller <davem@davemloft.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Netdev <netdev@vger.kernel.org>,
+        id S1729108AbgC3Xt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 19:49:58 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:58083 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728537AbgC3Xt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 19:49:57 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48rq293DXQz9sRY;
+        Tue, 31 Mar 2020 10:49:53 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1585612195;
+        bh=F6it0E2f0m4OGMWEREpO8165BbI/NOBUVZP/AbAM6pc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=grY1711BQSjvgwA4+KJQL+E3oWAUraKW0biE6fsKlj+WZu4LZnZGM5k22V1oFvDfQ
+         EJAUqhBnYlLACpDStpRZbIK9PMFda+FmW83RPOLDdFEjFym8Ze15PHzKBI7TUobF2f
+         7+MtlmWRtvcroj/wP15TaZMEcfxXa/VLfM9r5ArN0asszvWi2BcGu1RudnuzHDb9kD
+         wwiu/QwWn/DBxpSNmCbAUQcO6fM+3+XaDva2vzvlKYyLTxrHCdvTGZMPxeZvrWFhIg
+         VmtUBt74tBvqL2izVDc3vdsipwP2YF751EBUE88etDyFgvxPUaRog+WXrkxjY/DkuY
+         PU7ATVrx/UP7A==
+Date:   Tue, 31 Mar 2020 10:49:47 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>
-References: <20200328.183923.1567579026552407300.davem@davemloft.net>
- <CAHk-=wgoySgT5q9L5E-Bwm_Lsn3w-bzL2SBji51WF8z4bk4SEQ@mail.gmail.com>
- <20200329.155232.1256733901524676876.davem@davemloft.net>
- <CAHk-=wjDZTfj3wYm+HKd2tfT8j_unQwhP-t3-91Z-8qqMS=ceQ@mail.gmail.com>
- <1a57d88410e8354d083ad31e956bb03d1a8e3c0b.camel@tiscali.nl>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <2116db06-272a-de6d-1484-b9900b018683@infradead.org>
-Date:   Mon, 30 Mar 2020 16:46:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: linux-next: manual merge of the pci tree with Linus' tree
+Message-ID: <20200331104947.264c98e5@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <1a57d88410e8354d083ad31e956bb03d1a8e3c0b.camel@tiscali.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/srMXF9q3NUD8ClmVZPnEu2o";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/30/20 2:18 PM, Paul Bolle wrote:
-> [Added Johannes.]
-> 
-> Linus Torvalds schreef op zo 29-03-2020 om 15:54 [-0700]:
->> On Sun, Mar 29, 2020 at 3:52 PM David Miller <davem@davemloft.net> wrote:
->>> Meanwhile, we have a wireless regression, and I'll get the fix for
->>> that to you by the end of today.
->>
->> Oops. This came in just after I posted the 5.6 release announcement
->> after having said that there didn't seem to be any reason to delay.
-> 
-> If this email gets through this should be about "mac80211: fix authentication
-> with iwlwifi/mvm". Is that right?
+--Sig_/srMXF9q3NUD8ClmVZPnEu2o
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes.
+Hi all,
 
--- 
-~Randy
+Today's linux-next merge of the pci tree got a conflict in:
 
+  drivers/net/ethernet/intel/ice/ice_main.c
+
+between commit:
+
+  19cce2c6f6dc ("ice: Make print statements more compact")
+
+from Linus' tree and commit:
+
+  894020fdd88c ("PCI/AER: Rationalize error status register clearing")
+
+from the pci tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/ethernet/intel/ice/ice_main.c
+index 5ef28052c0f8,effca3fa92e0..000000000000
+--- a/drivers/net/ethernet/intel/ice/ice_main.c
++++ b/drivers/net/ethernet/intel/ice/ice_main.c
+@@@ -3458,9 -3495,10 +3458,9 @@@ static pci_ers_result_t ice_pci_err_slo
+  			result =3D PCI_ERS_RESULT_DISCONNECT;
+  	}
+ =20
+- 	err =3D pci_cleanup_aer_uncorrect_error_status(pdev);
++ 	err =3D pci_aer_clear_nonfatal_status(pdev);
+  	if (err)
+- 		dev_dbg(&pdev->dev, "pci_cleanup_aer_uncorrect_error_status failed, err=
+or %d\n",
+ -		dev_dbg(&pdev->dev,
+ -			"pci_aer_clear_nonfatal_status() failed, error %d\n",
+++		dev_dbg(&pdev->dev, "pci_aer_clear_nonfatal_status() failed, error %d\n=
+",
+  			err);
+  		/* non-fatal, continue */
+ =20
+
+--Sig_/srMXF9q3NUD8ClmVZPnEu2o
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6ChZsACgkQAVBC80lX
+0GxlAgf/Y5/sEI0Btcm8Ql3NzFmZADH6dx+/llBwI5PPWjomIAnApDbppd+NGqMc
+rcVIb/GwaNgJbfYW1gmOfA8rTlfk8akmYcGeUxeL21W3DQfZySVE91VLQEzHupvm
+J73VjwJP9CDLXL3z43+8sg4rjdZfe2tGQFx850OxUztUudhMG/36yTDVZXQuI8L/
+l/bkR7W5baN6fthYnoP2sH0iy/2raUK0uuN8lA8w1ZnBG9sSIjlNOXUrndUkOv44
+pGeevKzloxyDjKt9aAL9Z6DpYHto3xuT3pH51JvDXt5i90joSfNBQGgH+HRUbJ/q
+Xx9m8AEnQvWkEnglrYopbHtaisBosg==
+=s2wh
+-----END PGP SIGNATURE-----
+
+--Sig_/srMXF9q3NUD8ClmVZPnEu2o--
