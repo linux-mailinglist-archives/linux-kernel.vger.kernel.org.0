@@ -2,105 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA783198063
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 18:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA097198068
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 18:03:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729912AbgC3QDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 12:03:08 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:33530 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbgC3QDH (ORCPT
+        id S1729965AbgC3QDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 12:03:32 -0400
+Received: from netrider.rowland.org ([192.131.102.5]:53487 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727048AbgC3QDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 12:03:07 -0400
-Received: by mail-il1-f193.google.com with SMTP id k29so16303272ilg.0;
-        Mon, 30 Mar 2020 09:03:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kZgYXQbJLj89O4ta8azIBTnlwIyHbrjAjhucjQsGXzg=;
-        b=CW4VJ0idMCYzjf62SQDyAQS/eEAnjC1kEdGz2YQkxxPfox9v+F35zixPk9l2BjFI+L
-         +FF2772DsRLk1h9LAf63bldXL7m9BjvKXFpJjc3qLXQy5hWuQF49EgBUH2iEfO1LuLyb
-         53UjY3RK9hjPx6pv6aedhvm5rZuVuEASC1imsEWD/r/RWVQODA/Xv4DptgSljyIYYh6n
-         aBhz8cvJp23to/ymEAyyZL3Zg67Nf3sqKmF7kgvA0pAIXyzC69RGlX/r0savKaMGDaDf
-         AcxVqov3wJlQKbJwyYk2BbvaMQV2VfOsi2wzve4DzPCkb/vjGcspghNQLhfKFTwrWNih
-         DWfg==
-X-Gm-Message-State: ANhLgQ2esMaUEA2MOIalWhk+U4Mf43sLBUYjgPpBNFnM/RqIDlB6UDfc
-        v3y6JYP5ruvUJqgO6eDcHA==
-X-Google-Smtp-Source: ADFU+vtt+io7ja0ZorBm8+7HKHTZRk2B4475TcYlAmG8/96ZwgpGsVKBksJefrlilE/q9BHX71F3wA==
-X-Received: by 2002:a92:3ac4:: with SMTP id i65mr11307095ilf.247.1585584186563;
-        Mon, 30 Mar 2020 09:03:06 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id h29sm4989538ili.19.2020.03.30.09.03.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 09:03:05 -0700 (PDT)
-Received: (nullmailer pid 26424 invoked by uid 1000);
-        Mon, 30 Mar 2020 16:03:04 -0000
-Date:   Mon, 30 Mar 2020 10:03:04 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Tim Harvey <tharvey@gateworks.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Robert Jones <rjones@gateworks.com>
-Subject: Re: [PATCH v8 1/3] dt-bindings: mfd: Add Gateworks System Controller
- bindings
-Message-ID: <20200330160304.GA24832@bogus>
-References: <1585341214-25285-1-git-send-email-tharvey@gateworks.com>
- <1585341214-25285-2-git-send-email-tharvey@gateworks.com>
+        Mon, 30 Mar 2020 12:03:32 -0400
+Received: (qmail 20357 invoked by uid 500); 30 Mar 2020 12:03:31 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 30 Mar 2020 12:03:31 -0400
+Date:   Mon, 30 Mar 2020 12:03:31 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To:     madhuparnabhowmik10@gmail.com
+cc:     gregkh@linuxfoundation.org, <hariprasad.kelam@gmail.com>,
+        <colin.king@canonical.com>, <tony.olech@elandigitalsystems.com>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <andrianov@ispras.ru>
+Subject: Re: Possible data-race related bug in u132_hcd module.
+In-Reply-To: <20200330115243.11107-1-madhuparnabhowmik10@gmail.com>
+Message-ID: <Pine.LNX.4.44L0.2003301159170.12110-100000@netrider.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1585341214-25285-2-git-send-email-tharvey@gateworks.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 01:33:32PM -0700, Tim Harvey wrote:
-> This patch adds documentation of device-tree bindings for the
-> Gateworks System Controller (GSC).
-> 
-> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> ---
-> v8:
->  - add register to fan-controller node name
-> 
-> v7:
->  - change divider from mili-ohms to ohms
->  - add constraints for voltage divider and offset
->  - remove unnecessary ref for offset
->  - renamed fan to fan-controller and changed base prop to reg
-> 
-> v6:
->  - fix typo
->  - drop invalid description from #interrupt-cells property
->  - fix adc pattern property
->  - add unit suffix
->  - replace hwmon/adc with adc/channel
->  - changed adc type to mode and enum int
->  - add unit suffix and drop ref for voltage-divider
->  - moved fan to its own subnode with base register
-> 
-> v5:
->  - resolve dt_binding_check issues
-> 
-> v4:
->  - move to using pwm<n>_auto_point<m>_{pwm,temp} for FAN PWM
->  - remove unncessary resolution/scaling properties for ADCs
->  - update to yaml
->  - remove watchdog
-> 
-> v3:
->  - replaced _ with -
->  - remove input bindings
->  - added full description of hwmon
->  - fix unit address of hwmon child nodes
-> ---
->  .../devicetree/bindings/mfd/gateworks-gsc.yaml     | 194 +++++++++++++++++++++
->  1 file changed, 194 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/gateworks-gsc.yaml
+On Mon, 30 Mar 2020 madhuparnabhowmik10@gmail.com wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> Hi,
+> 
+> This bug is found by  Linux Driver Verification project (linuxtesting.org).
+> 
+> The bug is related to the parallel execution of u132_probe() function
+> and u132_hcd_exit() function in u132_hcd.c. In case the module is
+> unloaded when the probe function is executing there can be data race
+> as the mutex lock u132_module_lock is not used properly. 
+
+Normally drivers do not have to worry about races between their probe 
+and exit routines.  The exit routine should unregister the driver from 
+its bus subsystem, and unregistration is supposed to wait until all 
+probe and remove functions have finished executing.
+
+> i) Usage of mutex lock only when writing into the u132_exiting
+> variable in u132_hcd_exit(). The lock is not used when this variable
+> is read in u132_probe().
+
+I'm not familiar with u132_hcd, but the probe routine shouldn't need to 
+use and "exiting" variable at all.
+
+> 
+> Moreover, this variable does not serve its purpose, as even if
+> locking is used while the u132_exiting variable is read in probe(),
+> the function may still miss that exit function is executing if it
+> acquires the mutex before exit() function does.
+> 
+> How to fix this?
+
+Are you certain there really is a problem?
+
+> ii) Usage of mutex while adding entries in u132_static_list in probe
+> function but not in exit function while unregistering.
+> This should be easy to fix by holding the mutex in the exit function as well.
+
+Why does the driver need a static list?
+
+> There can be other synchronization problems related to the usage of
+> u132_module_lock in this module, I have only spotted these so far.
+
+You should look at other drivers for comparison.  They don't have to 
+face this kind of problem.  u132_hcd should be similar to them.
+
+Alan Stern
+
+
