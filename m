@@ -2,90 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E890D1985A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6377219858A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:40:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728857AbgC3Umq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 16:42:46 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35614 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbgC3Ump (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 16:42:45 -0400
-Received: by mail-lj1-f193.google.com with SMTP id k21so19678365ljh.2;
-        Mon, 30 Mar 2020 13:42:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gmG6Nw2gJlFbmNF3ZrYh4WCs9X24BSpQSwGXaDwojEM=;
-        b=EWPGpeeD9xPPFMNqQ6vW4zN9xym3eTWIch0s0QCJ2Cy+B1Py/5kXTZOs8CKstvZVGr
-         Lzg3JkHf1lrq+CYKHi7QPBwRA4glrwK2KWK4c97VpHc/U8Y3osFvCxn6O+0If0LU0FmM
-         /wcHvHhNxpY7g9jWsLg5OGhrQKREZ8ZSgGIUscqLU2yHGiQ+MYa9II4CHdnp4tOxspKh
-         mg5Kz/w1Zx7HLaPBDJHf+PMYCKapObCs1GP/IfvzRlN5KViWBgGYiY1WQ9hyC2P4gmnp
-         OPz6KVVReN7P6QL5g8NeYzB2YAXMvei9IE3tI2n4yWmMk0yLLM1cHql10O+bjuAJlocy
-         lsZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gmG6Nw2gJlFbmNF3ZrYh4WCs9X24BSpQSwGXaDwojEM=;
-        b=GdbhjVMxaf8hbSxjstmjZnO6mCrH9yFuPXvzCQHveSqoInHa1G5wgo3p+YHSe2bxNg
-         20ACIWFJ+bGhICMy17yi0be1jnAAR5Qs4Ve7ZfccIRsdz9bRtxtM9Foq+4rDLyzEksTV
-         Z9c6r95hEPenUzz6BdfEpH5oXR6tgc+Zz4BoPZ7XgcikaW5envRGs0XiQgTt7+Mt4O0N
-         kKTHIeWvrWrreb+yYs1WZPDc0VdBmWmLyNA1MMgV7T6OUvSUVzJn8+uAUvBhvJz7XVBp
-         aq2t6q0Cz4bH7mYWok+mGNRYzELDAK6nL4sZ6eHG1BL2ynYwL4FEh6KvjHD6O+NwLVxc
-         KXMQ==
-X-Gm-Message-State: AGi0PubTuV6cHTA8Od+L8QjIY1P9O3mD6MYIgzHZhA4TFnB946aiX5CR
-        Oa85Z8jSeCbMksERJmlpgBM=
-X-Google-Smtp-Source: APiQypJxE6SfhjbuHfxqVIzERON0sXL7oImWTuEjhb77hQureETdjO+AJJ/LqtZPpIH8am9utoTy5A==
-X-Received: by 2002:a2e:804a:: with SMTP id p10mr5966662ljg.289.1585600963256;
-        Mon, 30 Mar 2020 13:42:43 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.gmail.com with ESMTPSA id v22sm7287988ljj.67.2020.03.30.13.42.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 13:42:42 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/2] Support headset on Tegra boards that use WM8903
-Date:   Mon, 30 Mar 2020 23:40:09 +0300
-Message-Id: <20200330204011.18465-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729051AbgC3UkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 16:40:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728880AbgC3UkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 16:40:10 -0400
+Subject: Re: [GIT PULL] hwmon updates for v5.7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585600810;
+        bh=BnapL7PNjuiGUk5ThjG3kkJukHnsfgG0HrcNQzz9ynU=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=1wuswTZvlU5af8TaPO2wYpzYNzEIxCyX2kra6vC6I+AjYl6giHMG+2e4PlFxPL7kE
+         VKb5KEMTS4QxtP4FW2o1aXWhWuvGl5C/SXhCYKyVMRITGouRR+uBVuWx4fgBTr8s58
+         gpllzP6BgoPW3r7AO9gtCg+OWbJLBtaQI4biKSCo=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200330155124.243034-1-linux@roeck-us.net>
+References: <20200330155124.243034-1-linux@roeck-us.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200330155124.243034-1-linux@roeck-us.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git
+ hwmon-for-v5.7
+X-PR-Tracked-Commit-Id: 5b10a8194664a0d3b025f9b53de4476754ce8e41
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 47acac8cae28b36668bf89400c56b7fdebca3e75
+Message-Id: <158560081009.3259.4182950844172818914.pr-tracker-bot@kernel.org>
+Date:   Mon, 30 Mar 2020 20:40:10 +0000
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The pull request you sent on Mon, 30 Mar 2020 08:51:24 -0700:
 
-Some devices have a 4-pin jack instead of a 3-pin and currently the
-WM8903 configuration is hardcoded to the case of 3-pin jack in the
-Tegra's ASoC driver. A new device-tree property is required in order
-to convey that hardware has a 4-pin jack, and thus, microphone's
-detection needs to be done in a different way.
+> git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v5.7
 
-In particular this is needed for Acer A500 tablet device that has
-a 4-pin headset jack, otherwise userspace sees headset instead of
-headphones and internal microphone isn't enabled by ALSA UCM rule
-when it should be. Please review and apply, thanks in advance.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/47acac8cae28b36668bf89400c56b7fdebca3e75
 
-Dmitry Osipenko (2):
-  dt-bindings: sound: tegra-wm8903: Document new nvidia,headset property
-  ASoC: tegra: tegra_wm8903: Support nvidia,headset property
-
- .../devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt | 1 +
- sound/soc/tegra/tegra_wm8903.c                              | 6 +++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+Thank you!
 
 -- 
-2.25.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
