@@ -2,66 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CC9E19784C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 12:06:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0A0F197848
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 12:05:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbgC3KGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 06:06:22 -0400
-Received: from cmccmta2.chinamobile.com ([221.176.66.80]:3986 "EHLO
-        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728257AbgC3KGW (ORCPT
+        id S1729000AbgC3KFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 06:05:08 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44164 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727522AbgC3KFI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 06:06:22 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.17]) by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee55e81c491eb5-0eefa; Mon, 30 Mar 2020 18:06:09 +0800 (CST)
-X-RM-TRANSID: 2ee55e81c491eb5-0eefa
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain (unknown[223.105.0.243])
-        by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee95e81c48e035-47731;
-        Mon, 30 Mar 2020 18:06:09 +0800 (CST)
-X-RM-TRANSID: 2ee95e81c48e035-47731
-From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
-To:     robh+dt@kernel.org, frowand.list@gmail.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] of: remove unneeded variable
-Date:   Mon, 30 Mar 2020 18:05:02 +0800
-Message-Id: <1585562702-360-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 30 Mar 2020 06:05:08 -0400
+Received: by mail-wr1-f66.google.com with SMTP id m17so20791481wrw.11;
+        Mon, 30 Mar 2020 03:05:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6pTdh72K+oEbDLs+fVgY5joQamAwAbVgJ6t2Gfp85/k=;
+        b=OZSYnyELIN2Ek9FZmgq4jp8iwrkwvsXmY+LkkZ2dXYOodyn9WXgmzznGJo2uhMn0Tr
+         7xr1gVrifoDeI8wV+YkUWM0mvg23AG8WINzk5W0vv18yB0MFKvKbumR/SJog3t56Ra1e
+         adFCI1AEOWWjyMmCCmqkwWFvEMzqSX9dOHY9TyrImvoQGQEZimRjCuwzKtwAPC4j0lXc
+         wtQ72Q8/9r55ZOnWMb2NGCBMZFP1Qf02TouwOU6Wp5qTxeMmTt8v2Zu3QIeMwZ4PcKhu
+         PGKOPGDnMMw2HzEiTqQ3rv+CflZ8FL3ntwLNnD7P/461sgs3VXorDDI6W+4u3VCMg3aG
+         GfAQ==
+X-Gm-Message-State: ANhLgQ29xoLOoUUIxccfTTiTC3cubPUfQkMNzEz+yjmkVPvY+nb8TbC0
+        2UxzFFQEY5tIUs4KHNYQdg4=
+X-Google-Smtp-Source: ADFU+vuRmk+jLE95xL4mOYgXGEzAnx6j18AN4LYyrxsu70PapIZdpFsEbRbrhlB4S01at2jI8U7ZMQ==
+X-Received: by 2002:adf:dfce:: with SMTP id q14mr14694534wrn.326.1585562705638;
+        Mon, 30 Mar 2020 03:05:05 -0700 (PDT)
+Received: from debian (44.142.6.51.dyn.plus.net. [51.6.142.44])
+        by smtp.gmail.com with ESMTPSA id a10sm13190153wrm.87.2020.03.30.03.05.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 03:05:04 -0700 (PDT)
+Date:   Mon, 30 Mar 2020 11:05:02 +0100
+From:   Wei Liu <wei.liu@kernel.org>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Tianyu Lan <ltykernel@gmail.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Yubo Xie <yuboxie@microsoft.com>,
+        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        liuwe@microsoft.com, daniel.lezcano@linaro.org, tglx@linutronix.de,
+        michael.h.kelley@microsoft.com, Wei Liu <wei.liu@kernel.org>
+Subject: Re: [PATCH V2] x86/Hyper-V: Fix hv sched clock function return wrong
+ time unit
+Message-ID: <20200330100502.hh2yygyxctsmwd6o@debian>
+References: <20200327021159.31429-1-Tianyu.Lan@microsoft.com>
+ <87k13641rg.fsf@vitty.brq.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87k13641rg.fsf@vitty.brq.redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rc is unneeded, just return 0.
+On Fri, Mar 27, 2020 at 09:53:39AM +0100, Vitaly Kuznetsov wrote:
+> Tianyu Lan <ltykernel@gmail.com> writes:
+> 
+> > From: Yubo Xie <yuboxie@microsoft.com>
+> >
+> > sched clock callback should return time with nano second as unit
+> > but current hv callback returns time with 100ns. Fix it.
+> >
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Yubo Xie <yuboxie@microsoft.com>
+> > Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> > Fixes: bd00cd52d5be ("clocksource/drivers/hyperv: Add Hyper-V specific sched clock function")
+> > ---
+> > Change since v1:
+> > 	Update fix commit number in change log. 
+> > ---
+> >  drivers/clocksource/hyperv_timer.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
+> > index 9d808d595ca8..662ed978fa24 100644
+> > --- a/drivers/clocksource/hyperv_timer.c
+> > +++ b/drivers/clocksource/hyperv_timer.c
+> > @@ -343,7 +343,8 @@ static u64 notrace read_hv_clock_tsc_cs(struct clocksource *arg)
+> >  
+> >  static u64 read_hv_sched_clock_tsc(void)
+> >  {
+> > -	return read_hv_clock_tsc() - hv_sched_clock_offset;
+> > +	return (read_hv_clock_tsc() - hv_sched_clock_offset)
+> > +		* (NSEC_PER_SEC / HV_CLOCK_HZ);
+> >  }
+> >  
+> >  static void suspend_hv_clock_tsc(struct clocksource *arg)
+> > @@ -398,7 +399,8 @@ static u64 notrace read_hv_clock_msr_cs(struct clocksource *arg)
+> >  
+> >  static u64 read_hv_sched_clock_msr(void)
+> >  {
+> > -	return read_hv_clock_msr() - hv_sched_clock_offset;
+> > +	return (read_hv_clock_msr() - hv_sched_clock_offset)
+> > +		* (NSEC_PER_SEC / HV_CLOCK_HZ);
+> >  }
+> >  
+> >  static struct clocksource hyperv_cs_msr = {
+> 
+> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
----
- drivers/of/dynamic.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Queued for hyperv-fixes. Thank you both.
 
-diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index 08fd823..fe64430 100644
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -286,7 +286,6 @@ int of_detach_node(struct device_node *np)
- {
- 	struct of_reconfig_data rd;
- 	unsigned long flags;
--	int rc = 0;
- 
- 	memset(&rd, 0, sizeof(rd));
- 	rd.dn = np;
-@@ -301,7 +300,7 @@ int of_detach_node(struct device_node *np)
- 
- 	of_reconfig_notify(OF_RECONFIG_DETACH_NODE, &rd);
- 
--	return rc;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(of_detach_node);
- 
--- 
-1.9.1
-
-
-
+Wei.
