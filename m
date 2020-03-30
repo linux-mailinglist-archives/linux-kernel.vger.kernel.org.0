@@ -2,280 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBD6C199887
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 16:30:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21FCF1985F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 23:01:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731222AbgCaOa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 10:30:26 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39215 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731200AbgCaOaY (ORCPT
+        id S1728901AbgC3VBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 17:01:33 -0400
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:24098 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728165AbgC3VBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 10:30:24 -0400
-Received: by mail-pf1-f193.google.com with SMTP id k15so5271736pfh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 07:30:23 -0700 (PDT)
+        Mon, 30 Mar 2020 17:01:33 -0400
+X-Greylist: delayed 2903 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Mar 2020 17:01:33 EDT
+Received: from pps.filterd (m0098781.ppops.net [127.0.0.1])
+        by mx0a-00010702.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02UK84VV019464;
+        Mon, 30 Mar 2020 15:12:47 -0500
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2173.outbound.protection.outlook.com [104.47.55.173])
+        by mx0a-00010702.pphosted.com with ESMTP id 3022m1dn8v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Mar 2020 15:12:47 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kRwVVwsohTXsODP7kx8fP7yYq6Wmt247VRXKLfOkoOUuE3ovGD8Oozl6tbUz/xj8zorwSIPsK9/rZiGU1s1EzYw632r7Af98l6bbXxe2Ep/U9qoiGS1q75v2sLIHglNvSzJFgoVID5QCeIqm4xAPyqqhF6xMVb7FIUhSljWqfzAKr2AIca+VysT+PFDgcxSS5IWpMhaldGt8sT+V952Oj8RgKzIwtKlr2zriYveLgTXmDV0Jnay/3f+q3SM+5kX7gaBWvnydzg4Izgfd5LHEamtq5ZitskpEK/yjV8IiR2P2mfx1D9Njqq0mfWQ5gOEOkgovJWymGJmis/ThYbDioQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cUfw/vCyDAf3Te6MwylHE3EgpEc1Rc+AZWC/FpLqct4=;
+ b=Umn8rSgy9/4Qk+zJ/DcM1EUin5nehxBm4lLJVIK78Bw03IND9JELDGeKfx9F11+KpLd4s/CrqOE06cXOJ5YVHjBBXbqrNwTy22yuELEV20LQRMcbGL/TLmiIlpcm3QdP7hbVDObbKGiNlhUuuHekW0QIUrCdBY6U3ag+oPgijMMnvc/J87FEN/nKXQCzWuteO14QFfJpjicR7zr8VUNl3yP5LMeJ9J+dQUy+qvi6MkmIJDWY5LIdi/Pmi6xpnIb0fiEdzFMQeXtzCXuDxf2LNcsg4l5kfJkM3HqzzDnUfN0GyxAdnjq4/SBI9CJ/jfnriCbOXuaiq+/6y116zBuTKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ni.com; dmarc=pass action=none header.from=ni.com; dkim=pass
+ header.d=ni.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/n+qve4SniWFSRmYvckAN/LnaECN5T+Gq4nGnMGTL00=;
-        b=J+OlEOjLVC4lBj0sou5m5X2IO/NKqdZmwZ51wZbZpqZw2IpJoCYRcNwcGPuVA4+UwM
-         eQs6b/bniTGUEtYNapEXmg2/5hP8DPiKEBtT6mHeK5Mc8Vpm7DCOpnvAzJV0KBQpglMY
-         uwVPoIreOmzGNRN47ivmfUpToqhSAAVOTO9XQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/n+qve4SniWFSRmYvckAN/LnaECN5T+Gq4nGnMGTL00=;
-        b=kAsF9bzufftTQobdnyiudS4F1JUuS6JV5SjABVLNnUb2+y8Vvc3i0uBnY7sym2VByw
-         VLKtbbWY2pizVLhF5wl76jKq4nwX0DBviL2pfYonpKj1W2m2TiGGS3W/EezQkgQw30It
-         e/eS/mtjpZvsQ4EwcF9MWnf5wYXSptr/UlM6WbUkggNxex64jBWAuYs93svSyDISV2FB
-         n12d6U6oGzXi1/ZIj5L7LRexI4C6LWlyHMvsj9ZB2Pz2+vK3bQ+5K15VtGgsKBjN9c3x
-         KAF0Kacjer3vfg1zwjG4VIGRJWU5IcndEc+du+cWZ4E6napBDBFlPdD7Xg7v9oy+sEHc
-         NJEw==
-X-Gm-Message-State: ANhLgQ2R0jHVqbjOAZ7vd4k9E3HsEqRBXjT4xS+tiGh1UXkuNvpwJl/+
-        dmZ4bxBoO3lLacD8SfNGUANkcw==
-X-Google-Smtp-Source: ADFU+vvUMI1TPg8uRAgz/rPaz4QjTNZEjCs+2nSpTpVAyZt0xOSR0S9kmKitT5jYL5dMOM3JW/bvaw==
-X-Received: by 2002:a62:4e57:: with SMTP id c84mr19582064pfb.156.1585665022300;
-        Tue, 31 Mar 2020 07:30:22 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id f8sm12699568pfq.178.2020.03.31.07.30.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 07:30:21 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 11:33:49 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v11 8/9] proc: use human-readable values for hidehid
-Message-ID: <202003301132.EDD8329@keescook>
-References: <20200327172331.418878-9-gladkov.alexey@gmail.com>
- <20200330111235.154182-1-gladkov.alexey@gmail.com>
-MIME-Version: 1.0
+ d=nio365.onmicrosoft.com; s=selector2-nio365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cUfw/vCyDAf3Te6MwylHE3EgpEc1Rc+AZWC/FpLqct4=;
+ b=RNQakyY9NR74tg3YU4i1ZImXG4uTVmSOILMvRb4CWIK6T8hdCtay86qbO+AsBP4rldtzz2QN+PqNIFkE51qFR4ySo665h6JYsdfb4cYmlhG10jOcVXR+z1H2bwgRFSiBQT++cyCRWSs92/BRbdRdsn28PJL6XhYxoboe/qpV/J8=
+Received: from SN4PR0401MB3646.namprd04.prod.outlook.com
+ (2603:10b6:803:4b::29) by SN4PR0401MB3645.namprd04.prod.outlook.com
+ (2603:10b6:803:45::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.20; Mon, 30 Mar
+ 2020 20:12:44 +0000
+Received: from SN4PR0401MB3646.namprd04.prod.outlook.com
+ ([fe80::d05b:1953:4111:38e4]) by SN4PR0401MB3646.namprd04.prod.outlook.com
+ ([fe80::d05b:1953:4111:38e4%5]) with mapi id 15.20.2856.019; Mon, 30 Mar 2020
+ 20:12:44 +0000
+Date:   Mon, 30 Mar 2020 15:12:43 -0500
+From:   Michael Auchter <michael.auchter@ni.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Stefan Popa <stefan.popa@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>
+Message-ID: <20200330201243.GA22106@xaphan>
+References: <20200317135649.8876-1-michael.auchter@ni.com>
+ <20200317145113.12413-1-michael.auchter@ni.com>
+ <CAHp75Veh3QRfqVFOpYbuuxcPqirc1_YrF-iZfRjNsYk7DWqYpQ@mail.gmail.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200330111235.154182-1-gladkov.alexey@gmail.com>
+In-Reply-To: <CAHp75Veh3QRfqVFOpYbuuxcPqirc1_YrF-iZfRjNsYk7DWqYpQ@mail.gmail.com>
+X-ClientProxiedBy: DM6PR17CA0008.namprd17.prod.outlook.com
+ (2603:10b6:5:1b3::21) To SN4PR0401MB3646.namprd04.prod.outlook.com
+ (2603:10b6:803:4b::29)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost (66.90.216.181) by DM6PR17CA0008.namprd17.prod.outlook.com (2603:10b6:5:1b3::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.19 via Frontend Transport; Mon, 30 Mar 2020 20:12:44 +0000
+X-Originating-IP: [66.90.216.181]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c13d9d8c-3684-4ef0-f62e-08d7d4e6b53e
+X-MS-TrafficTypeDiagnostic: SN4PR0401MB3645:
+X-Microsoft-Antispam-PRVS: <SN4PR0401MB3645B71943CA665E95115C5287CB0@SN4PR0401MB3645.namprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-Forefront-PRVS: 0358535363
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3646.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(7916004)(4636009)(366004)(136003)(39860400002)(396003)(346002)(376002)(186003)(5660300002)(6486002)(2906002)(1076003)(9686003)(8676002)(52116002)(81166006)(86362001)(54906003)(66476007)(66556008)(956004)(316002)(16526019)(66946007)(478600001)(6916009)(4326008)(81156014)(53546011)(8936002)(6496006)(33656002)(44832011)(7416002)(26005)(33716001);DIR:OUT;SFP:1102;
+Received-SPF: None (protection.outlook.com: ni.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: n0hKGSbrryno2PpC4j4L5CmiMHcMP/IP+pkgN3CNC+rUhtQfOUP9j4pYMrcgKzwHRAbLxJqZIqmR5EP+Bu+krP6yDMjjTFNbb5x4rUvSyFERAMUTTf2wnRbma1TaZV4mWLOiPRWonpzOUtDx5RBeD2Wf9VuCO0svxjrtIqIjquKzdvT2t/TR9U5yxyQYZYnOVaNGHqgPMbY5ro2KukX6WJSqFMqd8tJvYJJlLxThcIElD7xzd/p9IqikQuM14hhIaLgnQumGPzQz/YylpYNLnHtXMvRk1E2MDCaysMYxUD+CIseqJ2u7rCJWPlC6Gje9i5X4Jb9wH/z0F8nx1k4tjbDPEFnipQrLca3hTwmMBmwqIUd7JwGFYTeRLfoaZ8PDRBCvWhc1h2l9x3O6fGBQRoYfYw3WHqEfcKzdyAUinRGfuxyvo+RR8qb2V+wSniia
+X-MS-Exchange-AntiSpam-MessageData: +nztp3rKfXZJqFzWjJCq6abq149HqJopeY3yYC8Ce2odvgHKYN9xE0n38hkDlUDZ/JopQdF1dk0OqKoEN7IvMPlW1jfPNmx2M/ikgwpWciNjwq22uZzGwENDCXoIX7tUPIoSkdGuR6HRaiNQoIrqNw==
+X-OriginatorOrg: ni.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c13d9d8c-3684-4ef0-f62e-08d7d4e6b53e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2020 20:12:44.7521
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4PAIJ7XlXnpEx/Z7b2NYyUNNcBElSabi6hK4wsF5fefcN7H6p+fuS/pCDXr7vr2fH7PK+mx6Dew/+gkU2PCQqA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3645
+Subject: Re: Re: [PATCH v2 1/2] iio: adc: ad7291: convert to device tree
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-03-30_07:2020-03-30,2020-03-30 signatures=0
+X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30 malwarescore=0
+ impostorscore=0 mlxscore=0 mlxlogscore=999 clxscore=1011
+ lowpriorityscore=0 suspectscore=1 spamscore=0 priorityscore=1501
+ bulkscore=0 adultscore=0 phishscore=0 classifier=spam adjust=30 reason=mlx
+ scancount=1 engine=8.12.0-2003020000 definitions=main-2003300171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 01:12:35PM +0200, Alexey Gladkov wrote:
-> The hidepid parameter values are becoming more and more and it becomes
-> difficult to remember what each new magic number means.
+Hello Andy,
+
+Thanks for the review!
+
+On Sun, Mar 22, 2020 at 01:46:21AM +0200, Andy Shevchenko wrote:
+> On Tue, Mar 17, 2020 at 4:53 PM Michael Auchter <michael.auchter@ni.com> wrote:
+> >
+> > There are no in-tree users of the platform data for this driver, so
+> > remove it and convert the driver to use device tree instead.
 > 
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
-> ---
->  Documentation/filesystems/proc.txt | 52 +++++++++++++++---------------
->  fs/proc/inode.c                    | 15 ++++++++-
->  fs/proc/root.c                     | 36 +++++++++++++++++++--
->  3 files changed, 73 insertions(+), 30 deletions(-)
+> ...
 > 
-> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-> index bd0e0ab85048..af47672cb2cb 100644
-> --- a/Documentation/filesystems/proc.txt
-> +++ b/Documentation/filesystems/proc.txt
-> @@ -2025,28 +2025,28 @@ The following mount options are supported:
->  	gid=		Set the group authorized to learn processes information.
->  	subset=		Show only the specified subset of procfs.
->  
-> -hidepid=0 means classic mode - everybody may access all /proc/<pid>/ directories
-> -(default).
-> -
-> -hidepid=1 means users may not access any /proc/<pid>/ directories but their
-> -own.  Sensitive files like cmdline, sched*, status are now protected against
-> -other users.  This makes it impossible to learn whether any user runs
-> -specific program (given the program doesn't reveal itself by its behaviour).
-> -As an additional bonus, as /proc/<pid>/cmdline is unaccessible for other users,
-> -poorly written programs passing sensitive information via program arguments are
-> -now protected against local eavesdroppers.
-> -
-> -hidepid=2 means hidepid=1 plus all /proc/<pid>/ will be fully invisible to other
-> -users.  It doesn't mean that it hides a fact whether a process with a specific
-> -pid value exists (it can be learned by other means, e.g. by "kill -0 $PID"),
-> -but it hides process' uid and gid, which may be learned by stat()'ing
-> -/proc/<pid>/ otherwise.  It greatly complicates an intruder's task of gathering
-> -information about running processes, whether some daemon runs with elevated
-> -privileges, whether other user runs some sensitive program, whether other users
-> -run any program at all, etc.
-> -
-> -hidepid=4 means that procfs should only contain /proc/<pid>/ directories
-> -that the caller can ptrace.
-> +hidepid=off or hidepid=0 means classic mode - everybody may access all
-> +/proc/<pid>/ directories (default).
-> +
-> +hidepid=noaccess or hidepid=1 means users may not access any /proc/<pid>/
-> +directories but their own.  Sensitive files like cmdline, sched*, status are now
-> +protected against other users.  This makes it impossible to learn whether any
-> +user runs specific program (given the program doesn't reveal itself by its
-> +behaviour).  As an additional bonus, as /proc/<pid>/cmdline is unaccessible for
-> +other users, poorly written programs passing sensitive information via program
-> +arguments are now protected against local eavesdroppers.
-> +
-> +hidepid=invisible or hidepid=2 means hidepid=noaccess plus all /proc/<pid>/ will
-> +be fully invisible to other users.  It doesn't mean that it hides a fact whether
-> +a process with a specific pid value exists (it can be learned by other means,
-> +e.g. by "kill -0 $PID"), but it hides process' uid and gid, which may be learned
-> +by stat()'ing /proc/<pid>/ otherwise.  It greatly complicates an intruder's task
-> +of gathering information about running processes, whether some daemon runs with
-> +elevated privileges, whether other user runs some sensitive program, whether
-> +other users run any program at all, etc.
-> +
-> +hidepid=ptraceable or hidepid=4 means that procfs should only contain
-> +/proc/<pid>/ directories that the caller can ptrace.
->  
->  gid= defines a group authorized to learn processes information otherwise
->  prohibited by hidepid=.  If you use some daemon like identd which needs to learn
-> @@ -2093,8 +2093,8 @@ creates a new procfs instance. Mount options affect own procfs instance.
->  It means that it became possible to have several procfs instances
->  displaying tasks with different filtering options in one pid namespace.
->  
-> -# mount -o hidepid=2 -t proc proc /proc
-> -# mount -o hidepid=1 -t proc proc /tmp/proc
-> +# mount -o hidepid=invisible -t proc proc /proc
-> +# mount -o hidepid=noaccess -t proc proc /tmp/proc
->  # grep ^proc /proc/mounts
-> -proc /proc proc rw,relatime,hidepid=2 0 0
-> -proc /tmp/proc proc rw,relatime,hidepid=1 0 0
-> +proc /proc proc rw,relatime,hidepid=invisible 0 0
-> +proc /tmp/proc proc rw,relatime,hidepid=noaccess 0 0
-> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-> index e6577ce6027b..d38a9e592352 100644
-> --- a/fs/proc/inode.c
-> +++ b/fs/proc/inode.c
-> @@ -24,6 +24,7 @@
->  #include <linux/seq_file.h>
->  #include <linux/slab.h>
->  #include <linux/mount.h>
-> +#include <linux/bug.h>
->  
->  #include <linux/uaccess.h>
->  
-> @@ -165,6 +166,18 @@ void proc_invalidate_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock
->  		deactivate_super(old_sb);
->  }
->  
-> +static inline const char *hidepid2str(int v)
-> +{
-> +	switch (v) {
-> +		case HIDEPID_OFF: return "off";
-> +		case HIDEPID_NO_ACCESS: return "noaccess";
-> +		case HIDEPID_INVISIBLE: return "invisible";
-> +		case HIDEPID_NOT_PTRACEABLE: return "ptraceable";
-> +	}
-> +	WARN_ONCE(1, "bad hide_pid value: %d\n", v);
-> +	return "unknown";
-> +}
-> +
->  static int proc_show_options(struct seq_file *seq, struct dentry *root)
->  {
->  	struct proc_fs_info *fs_info = proc_sb_info(root->d_sb);
-> @@ -172,7 +185,7 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
->  	if (!gid_eq(fs_info->pid_gid, GLOBAL_ROOT_GID))
->  		seq_printf(seq, ",gid=%u", from_kgid_munged(&init_user_ns, fs_info->pid_gid));
->  	if (fs_info->hide_pid != HIDEPID_OFF)
-> -		seq_printf(seq, ",hidepid=%u", fs_info->hide_pid);
-> +		seq_printf(seq, ",hidepid=%s", hidepid2str(fs_info->hide_pid));
->  	if (fs_info->pidonly != PROC_PIDONLY_OFF)
->  		seq_printf(seq, ",subset=pid");
->  
-> diff --git a/fs/proc/root.c b/fs/proc/root.c
-> index dbcd96f07c7a..ba782d6e6197 100644
-> --- a/fs/proc/root.c
-> +++ b/fs/proc/root.c
-> @@ -45,7 +45,7 @@ enum proc_param {
->  
->  static const struct fs_parameter_spec proc_fs_parameters[] = {
->  	fsparam_u32("gid",	Opt_gid),
-> -	fsparam_u32("hidepid",	Opt_hidepid),
-> +	fsparam_string("hidepid",	Opt_hidepid),
->  	fsparam_string("subset",	Opt_subset),
->  	{}
->  };
-> @@ -58,6 +58,35 @@ static inline int valid_hidepid(unsigned int value)
->  		value == HIDEPID_NOT_PTRACEABLE);
->  }
->  
-> +static int proc_parse_hidepid_param(struct fs_context *fc, struct fs_parameter *param)
-> +{
-> +	struct proc_fs_context *ctx = fc->fs_private;
-> +	struct fs_parameter_spec hidepid_u32_spec = fsparam_u32("hidepid", Opt_hidepid);
-> +	struct fs_parse_result result;
-> +	int base = (unsigned long)hidepid_u32_spec.data;
-> +
-> +	if (param->type != fs_value_is_string)
-> +		return invalf(fc, "proc: unexpected type of hidepid value\n");
-> +
-> +	if (!kstrtouint(param->string, base, &result.uint_32)) {
-> +		ctx->hidepid = result.uint_32;
-
-If it were me, I'd put this valid_hidepid() test inside here, then the
-parsing really is entirely done by this function. Otherwise, the
-validation is spread into proc_parse_param() which seems weird.
-
-But either way:
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
-> +		return 0;
-> +	}
-> +
-> +	if (!strcmp(param->string, "off"))
-> +		ctx->hidepid = HIDEPID_OFF;
-> +	else if (!strcmp(param->string, "noaccess"))
-> +		ctx->hidepid = HIDEPID_NO_ACCESS;
-> +	else if (!strcmp(param->string, "invisible"))
-> +		ctx->hidepid = HIDEPID_INVISIBLE;
-> +	else if (!strcmp(param->string, "ptraceable"))
-> +		ctx->hidepid = HIDEPID_NOT_PTRACEABLE;
-> +	else
-> +		return invalf(fc, "proc: unknown value of hidepid - %s\n", param->string);
-> +
-> +	return 0;
-> +}
-> +
->  static int proc_parse_subset_param(struct fs_context *fc, char *value)
->  {
->  	struct proc_fs_context *ctx = fc->fs_private;
-> @@ -97,9 +126,10 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
->  		break;
->  
->  	case Opt_hidepid:
-> -		if (!valid_hidepid(result.uint_32))
-> +		if (proc_parse_hidepid_param(fc, param))
-> +			return -EINVAL;
-> +		if (!valid_hidepid(ctx->hidepid))
->  			return invalf(fc, "proc: unknown value of hidepid.\n");
-> -		ctx->hidepid = result.uint_32;
->  		break;
->  
->  	case Opt_subset:
-> -- 
-> 2.25.2
+> > +       chip->reg = devm_regulator_get_optional(&client->dev, "vref");
+> > +       if (!IS_ERR(chip->reg)) {
 > 
+> Why not to go with usual positive conditional?
 
--- 
-Kees Cook
+I took this pattern from ad7266.c which Lars pointed me to. I agree that
+a positive conditional here would probably be more natural. I'll change
+that if you'd prefer.
+
+> > +               ret = regulator_enable(chip->reg);
+> > +               if (ret)
+> > +                       return ret;
+> > +
+> >                 chip->command |= AD7291_EXT_REF;
+> > +       } else {
+> > +               if (PTR_ERR(chip->reg) != -ENODEV)
+> > +                       return PTR_ERR(chip->reg);
+> > +
+> > +               chip->reg = NULL;
+> > +       }
+> 
+> ...
+> 
+> > +static const struct of_device_id ad7291_of_match[] = {
+> > +       { .compatible = "adi,ad7291", },
+> 
+> > +       {},
+> 
+> No need for comma.
+
+Indeed, I'll drop it.
+
+> 
+> > +};
+> 
+> ...
+> 
+> > +               .of_match_table = of_match_ptr(ad7291_of_match),
+> 
+> No need to use of_match_ptr(). Haven't you got a compiler warning in !OF case?
+
+Hm, no warning as far as I can see with !OF... but agreed that this
+doesn't make much sense as-is.
+
+Is dropping of_match_ptr() the preferred route here? The driver doesn't
+depend on OF, so it seems like keeping of_match_ptr and instead guarding
+the ad7291_of_match table with #ifdef CONFIG_OF would be preferred. Of
+course, maybe that's not worth it for saving some bytes from the final
+image.
+
+Let me know which route would be preferred.
+
+Thanks again,
+ Michael
