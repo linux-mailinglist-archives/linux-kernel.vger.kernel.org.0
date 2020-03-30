@@ -2,135 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDEE0197D97
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 15:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88142197DB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 15:59:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbgC3Nyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 09:54:35 -0400
-Received: from mx1.tq-group.com ([62.157.118.193]:50877 "EHLO mx1.tq-group.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728490AbgC3Nyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 09:54:32 -0400
-IronPort-SDR: Y5EghjizNobDW5xbSwhBzX+5CWOcME1/s2KpTsQsDoGFcPB5YT/0ZqnwZqQTErkCztD8JYB5xy
- fRizms3uxT+wsADNAj+g9iw0zL8+raRRrot6e7xq00M29VI39Vm4LV2BQNOeQCBLYwBqXf/Cth
- E74Au7rwLZx24CyT1Pr1CJGu+5DpDcOyLhhPe/OcHYCkksj3tZRo4QZ7sgdVTOPxEaXBJmG8aX
- 03+Ml90lX81k9kuGiKKxK67vWSEdolIVoG/p5j/ZVCV8OHt3QtdzxHzXl41lU1GpKRofb4QAI6
- YCA=
-X-IronPort-AV: E=Sophos;i="5.72,324,1580770800"; 
-   d="scan'208";a="11606922"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 30 Mar 2020 15:54:28 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Mon, 30 Mar 2020 15:54:28 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Mon, 30 Mar 2020 15:54:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1585576468; x=1617112468;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=90m37/5zJs3kt2iYIY/hmc7I7JDo4kDC1Cx3Gz+g2qY=;
-  b=G1UesuzYvaukYDLSe5vcnWHkPKQtMgjzXjA4wcAki5bVWSdVInn8b4fV
-   VTJp/0+l3483sekMQh8WaJZFCmFmFRs+jOBSNQ9sRy/CNUB+uCH+tSV2B
-   OfJsy+jGBiL088u0UmREHEHvbrrId+xp5yd0ksqtv/r3gVCLYtJWz/UDp
-   yG1KaG7n3XCgDx/vxqDouIUUMpU6Si+GmvG1Lmdcm4zeUdB14hhUrl/9T
-   hZhZKs5w0letlh/czyM96I87tLub4wTcCRR8+BxzHiC+ucVui5uPNAEqI
-   WrYjlgPsbmopzT+RmhSfD9QPk81ngtdO/xN6aknVzTh/sj/fYvoujIsnX
-   A==;
-IronPort-SDR: jucPNaituKfnfV9Mm6EffvDpCbzsHg/c+1FXcvBGAbz9dcCWxKT9KJOs1k1H3FOaonrAQ6jB0P
- Rv0KbZw9B+NWsA1LxHrw9Tbse7ke9w3jINJ6p1ZXMhewChBEEFHGdLeA9embpCuq7VzZYBKKDn
- Jsut9Dcjmtk9kCbkO8xWgdLj3HlhJSHxoHaBLAptnW/GfBczm4Hs7jaeKBD31+8htRjU1pQNsB
- 2NiYx2rLSCqpgKx4AdI/2H5D/Au34F1M0nmjOsdj8DITPmM9HapnY0DZD93h+nRXUDq2WF0OK9
- 92I=
-X-IronPort-AV: E=Sophos;i="5.72,324,1580770800"; 
-   d="scan'208";a="11606921"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 30 Mar 2020 15:54:28 +0200
-Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id 44169280070;
-        Mon, 30 Mar 2020 15:54:33 +0200 (CEST)
-From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH net-next 4/4] net: dsa: mv88e6xxx: add support for MV88E6020 switch
-Date:   Mon, 30 Mar 2020 15:53:45 +0200
-Message-Id: <20200330135345.4361-4-matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200330135345.4361-1-matthias.schiffer@ew.tq-group.com>
-References: <20200330135345.4361-1-matthias.schiffer@ew.tq-group.com>
+        id S1728679AbgC3N7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 09:59:03 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38654 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728504AbgC3N7D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 09:59:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=iKhZXgftDGmAxrAyzuUZ0II6kxBjrrnhDkeJI23ZPuk=; b=stkTU0XaBsPQ9gLT7F1OSv2r8T
+        MwO0gEyYbNpZAldaghGnbpyLa7yWgs5GToM7+yFda4Nm5jczSvC1dLaCWJ9hyX5HGBJ7BSbhWBffa
+        2UIFyJh4tZfRvUnqcIz8IAHdE9Cu9oIueK1va8cLUF93rW9GfeCdxfRQuwgNL/FQHa+yKLl+GmQyA
+        0j+WyTHLHUomuxzkGgtwuHTFlyTvJQ+CENI/7nE5TUgrIKDZIO8nv98sbo+vT9KF3H2Zjz8hytsN5
+        XlI8vBqpHIToFb+IB9gvKOewYpOwg8uXg3d/l/KWmNCY5Y7p0ouXzsXxKHQU4ncV02vWT9kFnV30h
+        hZDk5WtQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jIuvn-0005Lc-JC; Mon, 30 Mar 2020 13:58:23 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 43936300F28;
+        Mon, 30 Mar 2020 15:58:19 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0A4CD2038CEED; Mon, 30 Mar 2020 15:58:19 +0200 (CEST)
+Date:   Mon, 30 Mar 2020 15:58:18 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, rcu@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: rcu_barrier() no longer allowed within mmap_sem?
+Message-ID: <20200330135818.GO20696@hirez.programming.kicks-ass.net>
+References: <CAKMK7uGQ49JGetk3-VmHxXR0HVEoQgVxSZvX9Z0b5so8y+13cA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uGQ49JGetk3-VmHxXR0HVEoQgVxSZvX9Z0b5so8y+13cA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A 6250 family switch with 5 internal PHYs and no PTP support.
+On Mon, Mar 30, 2020 at 03:00:35PM +0200, Daniel Vetter wrote:
+> Hi all, for all = rcu, cpuhotplug and perf maintainers
+> 
+> We've hit an interesting new lockdep splat in our drm/i915 CI:
+> 
+> https://intel-gfx-ci.01.org/tree/drm-tip/Patchwork_17096/shard-tglb7/igt@kms_frontbuffer_tracking@fbcpsr-rgb101010-draw-mmap-gtt.html#dmesg-warnings861
+> 
+> Summarizing away the driver parts we have
+> 
+> < gpu locks which are held within mm->mmap_sem in various gpu fault handlers >
+> 
+> -> #4 (&mm->mmap_sem#2){++++}:
+> <4> [604.892615] __might_fault+0x63/0x90
+> <4> [604.892617] _copy_to_user+0x1e/0x80
+> <4> [604.892619] perf_read+0x200/0x2b0
+> <4> [604.892621] vfs_read+0x96/0x160
+> <4> [604.892622] ksys_read+0x9f/0xe0
+> <4> [604.892623] do_syscall_64+0x4f/0x220
+> <4> [604.892624] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> <4> [604.892625]
+> -> #3 (&cpuctx_mutex){+.+.}:
+> <4> [604.892626] __mutex_lock+0x9a/0x9c0
+> <4> [604.892627] perf_event_init_cpu+0xa4/0x140
+> <4> [604.892629] perf_event_init+0x19d/0x1cd
+> <4> [604.892630] start_kernel+0x362/0x4e4
+> <4> [604.892631] secondary_startup_64+0xa4/0xb0
+> <4> [604.892631]
+> -> #2 (pmus_lock){+.+.}:
+> <4> [604.892633] __mutex_lock+0x9a/0x9c0
+> <4> [604.892633] perf_event_init_cpu+0x6b/0x140
+> <4> [604.892635] cpuhp_invoke_callback+0x9b/0x9d0
+> <4> [604.892636] _cpu_up+0xa2/0x140
+> <4> [604.892637] do_cpu_up+0x61/0xa0
+> <4> [604.892639] smp_init+0x57/0x96
+> <4> [604.892639] kernel_init_freeable+0x87/0x1dc
+> <4> [604.892640] kernel_init+0x5/0x100
+> <4> [604.892642] ret_from_fork+0x24/0x50
+> <4> [604.892642]
+> -> #1 (cpu_hotplug_lock.rw_sem){++++}:
+> <4> [604.892643] cpus_read_lock+0x34/0xd0
+> <4> [604.892644] rcu_barrier+0xaa/0x190
+> <4> [604.892645] kernel_init+0x21/0x100
+> <4> [604.892647] ret_from_fork+0x24/0x50
+> <4> [604.892647]
+> -> #0 (rcu_state.barrier_mutex){+.+.}:
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
- drivers/net/dsa/mv88e6xxx/chip.c | 21 +++++++++++++++++++++
- drivers/net/dsa/mv88e6xxx/chip.h |  1 +
- drivers/net/dsa/mv88e6xxx/port.h |  1 +
- 3 files changed, 23 insertions(+)
 
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-index 228c1b085b66..a72b81c9d417 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -4647,6 +4647,27 @@ static const struct mv88e6xxx_ops mv88e6390x_ops = {
- };
- 
- static const struct mv88e6xxx_info mv88e6xxx_table[] = {
-+	[MV88E6020] = {
-+		.prod_num = MV88E6XXX_PORT_SWITCH_ID_PROD_6020,
-+		.family = MV88E6XXX_FAMILY_6250,
-+		.name = "Marvell 88E6020",
-+		.num_databases = 64,
-+		.num_ports = 7,
-+		.num_internal_phys = 5,
-+		.max_vid = 4095,
-+		.port_base_addr = 0x8,
-+		.phy_base_addr = 0x0,
-+		.global1_addr = 0xf,
-+		.global2_addr = 0x7,
-+		.age_time_coeff = 15000,
-+		.g1_irqs = 9,
-+		.g2_irqs = 5,
-+		.atu_move_port_mask = 0xf,
-+		.dual_chip = true,
-+		.tag_protocol = DSA_TAG_PROTO_DSA,
-+		.ops = &mv88e6250_ops,
-+	},
-+
- 	[MV88E6085] = {
- 		.prod_num = MV88E6XXX_PORT_SWITCH_ID_PROD_6085,
- 		.family = MV88E6XXX_FAMILY_6097,
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.h b/drivers/net/dsa/mv88e6xxx/chip.h
-index 88c148a62366..f75d48427c26 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.h
-+++ b/drivers/net/dsa/mv88e6xxx/chip.h
-@@ -47,6 +47,7 @@ enum mv88e6xxx_frame_mode {
- 
- /* List of supported models */
- enum mv88e6xxx_model {
-+	MV88E6020,
- 	MV88E6085,
- 	MV88E6095,
- 	MV88E6097,
-diff --git a/drivers/net/dsa/mv88e6xxx/port.h b/drivers/net/dsa/mv88e6xxx/port.h
-index 44d76ac973f6..190d7d5568e9 100644
---- a/drivers/net/dsa/mv88e6xxx/port.h
-+++ b/drivers/net/dsa/mv88e6xxx/port.h
-@@ -101,6 +101,7 @@
- /* Offset 0x03: Switch Identifier Register */
- #define MV88E6XXX_PORT_SWITCH_ID		0x03
- #define MV88E6XXX_PORT_SWITCH_ID_PROD_MASK	0xfff0
-+#define MV88E6XXX_PORT_SWITCH_ID_PROD_6020	0x0200
- #define MV88E6XXX_PORT_SWITCH_ID_PROD_6085	0x04a0
- #define MV88E6XXX_PORT_SWITCH_ID_PROD_6095	0x0950
- #define MV88E6XXX_PORT_SWITCH_ID_PROD_6097	0x0990
--- 
-2.17.1
+> The last backtrace boils down to i915 driver code which holds the same
+> locks we are holding within mm->mmap_sem, and then ends up calling
+> rcu_barrier(). From what I can see i915 is just the messenger here,
+> any driver with this pattern of a lock held within mmap_sem which also
+> has a path of calling rcu_barrier while holding that lock should be
+> hitting this splat.
+> 
+> Two questions:
+> - This suggests that calling rcu_barrier() isn't ok anymore while
+> holding mmap_sem, or anything that has a dependency upon mmap_sem. I
+> guess that's not the idea, please confirm.
+> - Assuming this depedency is indeed not intended, where should the
+> loop be broken? It goes through perf, cpuhotplug and rcu subsystems,
+> and I don't have a clue about any of those.
+
+I wonder what is new here; the 1-4 chain there has been true for a long
+time, see also the comment at perf_event_ctx_lock_nested().
+
+That said; it _might_ be possible to break 3->4, that is, all the
+copy_{to,from}_user() usage in perf can be lifted out from under the
+various locks by re-arranging code, but I have a nagging feeling there
+was more to it than that. Of course, while I did document the locking
+rules, I seem to have forgotten to comment on exactly why these rules
+are as they are.. oh well.
+
 
