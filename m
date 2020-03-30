@@ -2,91 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 746751971C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 03:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF9E81971F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 03:11:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728820AbgC3BKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 21:10:30 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33697 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728391AbgC3BJ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 21:09:59 -0400
-Received: by mail-lf1-f66.google.com with SMTP id x200so5559416lff.0;
-        Sun, 29 Mar 2020 18:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9E7zI2IZnXV4YyjveISOsemm9R4xu7EUE6WXPbYZj5s=;
-        b=SHY9Z0NgudDm+L5mpyLB00o4AL/yhAoKr3QhYv/uGqvjwF4WtUVJvJNV4sfPZp4VYL
-         gQ+u862RKGhEHlNflC6XRFa34GlMpKu7biU4hVlvoZHgIlYg9/0jNqr8zWTVgN/fD+G5
-         17chke2o76960p5eSNsbEF2fvD5ycrj+Ev4wEpl/k4OCU+JO65D6adaYNKF82XQjdMeV
-         EiVy40M+MMGcC82Z4m+p9h1t5h+REMeOl+LLhVgSz8MDVIJD/RaihQmdSsD7ssnUvOwN
-         i71Pw9XhUawf2Zz+MNMEz+qWo1g2srkUAlnyP1M/sFKBa8wCE+AB2T33wYureSb1X/K7
-         BkDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9E7zI2IZnXV4YyjveISOsemm9R4xu7EUE6WXPbYZj5s=;
-        b=bSgyBvoQ3aqIYUz/pAQHTl2cdrglX780L9RTCIPv8hruxwYym5Z/GNzAtmY4Qy4FB7
-         3y7vg4sDO7afm68xhpsMEcZDduz3Grb5pSaV6mKJz2wgyeXc7lLflpgvjEPM703Oc87q
-         kkb/+DD7367rGj3dmzh5AXGa1lDKQ4P5QcAX6PXpVHugbC/b6qOLwKWRu8htWDZ/d7Gc
-         1TcifQS2e0fw+QHyI2M5Mo//KSbekhu6azpqfen7Z444kJhul86JzWP23AyUJ1UT7byw
-         ZyRLP6U8FwWPt6IyMNdRPFlCHIJfwNkcluc7noIeDGGe5a8QJWPl11+MhafcRQ7nNgve
-         pLkw==
-X-Gm-Message-State: AGi0PubzB084BeULJoK/piyiELUqTDd9kO2naTG+aGbjWVTygtEBrV6s
-        ygRqhXh3Q04m0/03yUu2vf8=
-X-Google-Smtp-Source: APiQypJb/KYN7Ausy9RzxNHKtBOMbGpnF36P6KkLPqb8j8gQzwiIUSVwL00ZzzFM4pP1djvb07ArDg==
-X-Received: by 2002:a05:6512:31d3:: with SMTP id j19mr6551417lfe.178.1585530597501;
-        Sun, 29 Mar 2020 18:09:57 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.gmail.com with ESMTPSA id f23sm2449005lja.60.2020.03.29.18.09.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Mar 2020 18:09:57 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 22/22] ARM: multi_v7_defconfig: Enable interconnect API
-Date:   Mon, 30 Mar 2020 04:09:04 +0300
-Message-Id: <20200330010904.27643-23-digetx@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200330010904.27643-1-digetx@gmail.com>
-References: <20200330010904.27643-1-digetx@gmail.com>
+        id S1728956AbgC3BLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 21:11:12 -0400
+Received: from mga11.intel.com ([192.55.52.93]:7816 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728129AbgC3BLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 21:11:11 -0400
+IronPort-SDR: 5n+Ld7Z3rL/vecF+yoy5byyQ7STUmqxj6qtzF09eXbMrDfw650Oul6t63zX06HQfjfaVBV6wP7
+ RQXebHx9MWNQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2020 18:11:10 -0700
+IronPort-SDR: 94ZtHd5vqXMv1OJvnLOQCLMq5tegO5pQMKrqTQKwPRRV++/my5NqSIStnFsQY1E7VHwjvAw6tR
+ 1uhKMEcCHNFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,322,1580803200"; 
+   d="scan'208";a="448086109"
+Received: from feng-iot.sh.intel.com (HELO localhost) ([10.239.13.114])
+  by fmsmga005.fm.intel.com with ESMTP; 29 Mar 2020 18:11:09 -0700
+Date:   Mon, 30 Mar 2020 09:12:54 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Chen, Rong A" <rong.a.chen@intel.com>,
+        Jann Horn <jannh@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "lkp@lists.01.org" <lkp@lists.01.org>
+Subject: Re: [LKP] Re: [mm] fd4d9c7d0c: stress-ng.switch.ops_per_sec -30.5%
+ regression
+Message-ID: <20200330011254.GA14393@feng-iot>
+References: <20200326055723.GL11705@shao2-debian>
+ <CAHk-=wi2c3UcK4fjUR2nM-7iUOAyQijq9ETfQHaN0WwFh2Bm9A@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wi2c3UcK4fjUR2nM-7iUOAyQijq9ETfQHaN0WwFh2Bm9A@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NVIDIA Tegra now has interconnect providers that are used for memory
-bandwidth allocation.
+Hi Linus,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, Mar 27, 2020 at 12:57:45AM +0800, Linus Torvalds wrote:
+> On Wed, Mar 25, 2020 at 10:57 PM kernel test robot
+> <rong.a.chen@intel.com> wrote:
+> >
+> > FYI, we noticed a -30.5% regression of stress-ng.switch.ops_per_sec due to commit:
+> >
+> > commit: fd4d9c7d0c71866ec0c2825189ebd2ce35bd95b8 ("mm: slub: add missing TID bump in kmem_cache_alloc_bulk()")
+> 
+> This looks odd.
+> 
+> I would not expect the update of c->tid to have that noticeable an
+> impact, even on a big machine that might be close to some scaling
+> limit.
+ 
+The test machin is a Cascade Lake platform, 2 sockets, 48C/96T.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index f8e45351c3f9..658b5c1892eb 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -1085,6 +1085,7 @@ CONFIG_FSI_MASTER_ASPEED=m
- CONFIG_FSI_SCOM=m
- CONFIG_FSI_SBEFIFO=m
- CONFIG_FSI_OCC=m
-+CONFIG_INTERCONNECT=y
- CONFIG_EXT4_FS=y
- CONFIG_AUTOFS4_FS=y
- CONFIG_MSDOS_FS=y
--- 
-2.25.1
+> It doesn't add any expensive atomic ops, and while it _could_ make a
+> percpu cacheline dirty, I think that cacheline should already be dirty
+> anyway under any load where this is noticeable. Plus this should be a
+> relatively cold path anyway.
+> 
+> So mind humoring me, and double-check that regression?
+> 
+> Of course, it might be another "just magic cache placement" detail
+> where code moved enough to make a difference.
+> 
+> Or maybe it really ends up causing new tid mismatches and we end up
+> failing the fast path in slub as a result. But looking at the stats
+> that changed in your message doesn't make me go "yeah, that looks like
+> a slub difference".
 
+Per our check, the code movement does exist.
+
+From the system map:
+
+old map:
+	ffffffff812a1880 T kmem_cache_alloc_bulk
+	ffffffff812a1a80 t kmalloc_large_node
+	ffffffff812a1b10 t calculate_sizes
+	ffffffff812a1eb0 t store_user_store
+	ffffffff812a1f20 t poison_store
+	ffffffff812a1f90 t red_zone_store
+	ffffffff812a2000 t order_store
+
+new map:
+	ffffffff812a1880 T kmem_cache_alloc_bulk
+	ffffffff812a1a90 t kmalloc_large_node
+	ffffffff812a1b20 T __kmalloc_node	---> relocated
+	ffffffff812a1e40 t calculate_sizes
+	ffffffff812a21e0 t store_user_store
+	ffffffff812a2250 t poison_store
+	ffffffff812a22c0 t red_zone_store
+	ffffffff812a2330 t order_store
+
+In old map the 'kmem_cache_alloc_bulk' is cache aligned, and occupies
+0x200 bytes, and the next function 'kmalloc_large_node' starts at
+an alinged address. In new map 'kmem_cache_alloc_bulk' occupies
+0x210 bytes, and offset of the alignment of many functions following
+it. (please let us know if you need the full system map for the
+2 vmlinuxs)
+
+From the objdump, the direct chagne of "c->tid = next_tid(c->tid);" 
+is one line added "49 83 40 08 01	addq   $0x1,0x8(%r8)"
+
+We did experiments to make the kernel functions 32 bytes aligned,
+----------------------------------------------------------------
+diff --git a/Makefile b/Makefile
+index 171f2b004c8a..63f28aaf78c9 100644
+--- a/Makefile
++++ b/Makefile
+ 
+ KBUILD_AFLAGS   := -D__ASSEMBLY__ -fno-PIE
+-KBUILD_CFLAGS   := -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs \
++KBUILD_CFLAGS   := -Wall -Wundef -falign-functions=32 -Werror=strict-prototypes -Wno-trigraphs \
+----------------------------------------------------------------
+ 
+the regression is reduced to about 3%:
+
+2060457 ±  4%      -3.2%    1993685 ±  2%  stress-ng.switch.ops_per_sec
+
+which is pretty small for a micro-benchmark
+
+Thanks,
+Feng
