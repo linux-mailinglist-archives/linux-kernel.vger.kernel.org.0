@@ -2,85 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BF0D197AFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC396197B0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:44:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbgC3LmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 07:42:03 -0400
-Received: from foss.arm.com ([217.140.110.172]:51342 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728764AbgC3LmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 07:42:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9CA73101E;
-        Mon, 30 Mar 2020 04:42:02 -0700 (PDT)
-Received: from a075553-lin.blr.arm.com (a075553-lin.blr.arm.com [10.162.17.24])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B84253F52E;
-        Mon, 30 Mar 2020 04:42:00 -0700 (PDT)
-From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>
-Subject: [PATCH v2 2/2] arm64: Kconfig: ptrauth: Add binutils version check to fix mismatch
-Date:   Mon, 30 Mar 2020 17:11:39 +0530
-Message-Id: <1585568499-21585-2-git-send-email-amit.kachhap@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1585568499-21585-1-git-send-email-amit.kachhap@arm.com>
-References: <1585568499-21585-1-git-send-email-amit.kachhap@arm.com>
+        id S1729928AbgC3LoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 07:44:25 -0400
+Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17803 "EHLO
+        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729871AbgC3LoY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 07:44:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1585568612;
+        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
+        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        bh=YSRf2S10R5lfweo4/h3clj4CyqQaWqLr3lMMzNGRYBY=;
+        b=gwPJW4wQ/qwVcYA7YxNkRMCoXUguo7DDjST72u6diSUbh/+ceVUV0MCoOuXzMCUm
+        atSMLhu6AjkEt/GtocsDB5hRmtfFLNuMnxmEs5RpjobYpsUdV6KWKtXE239PN9JEtSS
+        3JoLgIP1uU6GhGxHvlGu8jy1h8GBpj1yuON0hb78=
+Received: from localhost.localdomain (39.155.141.144 [39.155.141.144]) by mx.zoho.com.cn
+        with SMTPS id 1585568609395637.4466513352797; Mon, 30 Mar 2020 19:43:29 +0800 (CST)
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     linux-mips@vger.kernel.org
+Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Huacai Chen <chenhc@lemote.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Paul Burton <paulburton@kernel.org>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <20200330114239.1112759-1-jiaxun.yang@flygoat.com>
+Subject: [PATCH 0/5] Loongson64 Generic PCI driver
+Date:   Mon, 30 Mar 2020 19:42:25 +0800
+X-Mailer: git-send-email 2.26.0.rc2
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-ZohoCNMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recent addition of ARM64_PTR_AUTH exposed a mismatch issue with binutils.
-9.1+ versions of gcc inserts a section note .note.gnu.property but this
-can be used properly by binutils version greater than 2.33.1. If older
-binutils are used then the following warnings are generated,
 
-aarch64-linux-ld: warning: arch/arm64/kernel/vdso/vgettimeofday.o: unsupported GNU_PROPERTY_TYPE (5) type: 0xc0000000
-aarch64-linux-objdump: warning: arch/arm64/lib/csum.o: unsupported GNU_PROPERTY_TYPE (5) type: 0xc0000000
-aarch64-linux-nm: warning: .tmp_vmlinux1: unsupported GNU_PROPERTY_TYPE (5) type: 0xc0000000
+Jiaxun Yang (5):
+  PCI: OF: Don't remap iospace on unsupported platform
+  PCI: Add Loongson PCI Controller support
+  dt-bindings: Document Loongson PCI Host Controller
+  MIPS: DTS: Loongson64: Add PCI Controller Node
+  MIPS: Loongson64: Switch to generic PCI driver
 
-This patch enables ARM64_PTR_AUTH when gcc and binutils versions are
-compatible with each other. Older gcc which do not insert such section
-continue to work as before.
+ .../devicetree/bindings/pci/loongson.yaml     |  52 ++++
+ arch/mips/Kconfig                             |   1 +
+ arch/mips/boot/dts/loongson/rs780e-pch.dtsi   |  17 +-
+ arch/mips/loongson64/Makefile                 |   2 +-
+ arch/mips/loongson64/vbios_quirk.c            |  29 ++
+ arch/mips/pci/Makefile                        |   1 -
+ arch/mips/pci/fixup-loongson3.c               |  71 -----
+ arch/mips/pci/ops-loongson3.c                 | 116 --------
+ drivers/pci/controller/Kconfig                |  10 +
+ drivers/pci/controller/Makefile               |   1 +
+ drivers/pci/controller/pci-loongson.c         | 263 ++++++++++++++++++
+ drivers/pci/of.c                              |   9 +
+ 12 files changed, 382 insertions(+), 190 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/loongson.yaml
+ create mode 100644 arch/mips/loongson64/vbios_quirk.c
+ delete mode 100644 arch/mips/pci/fixup-loongson3.c
+ delete mode 100644 arch/mips/pci/ops-loongson3.c
+ create mode 100644 drivers/pci/controller/pci-loongson.c
 
-This scenario may not occur with clang as a recent commit 3b446c7d27ddd06
-("arm64: Kconfig: verify binutils support for ARM64_PTR_AUTH") masks
-binutils version lesser then 2.34.
+--=20
+2.26.0.rc2
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Suggested-by: Vincenzo Frascino <Vincenzo.Frascino@arm.com>
-Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
----
-Changes since v1[1]:
- * Separated GCC and CLANG checks as suggested by Catalin.
- * Added comments in Kconfig entry.
-
-[1]: https://lkml.org/lkml/2020/3/26/626 
-
- arch/arm64/Kconfig | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index e6712b6..4391a4f 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1503,7 +1503,10 @@ config ARM64_PTR_AUTH
- 	default y
- 	depends on !KVM || ARM64_VHE
- 	depends on (CC_HAS_SIGN_RETURN_ADDRESS || CC_HAS_BRANCH_PROT_PAC_RET) && AS_HAS_PAC
--	depends on CC_IS_GCC || (CC_IS_CLANG && AS_HAS_CFI_NEGATE_RA_STATE)
-+	# GCC 9.1 version inserts a section note .note.gnu.property for PAC
-+	# which can be used properly by binutils version 2.33.1 and higher.
-+	depends on !CC_IS_GCC || GCC_VERSION < 90100 || LD_VERSION >= 233010000
-+	depends on !CC_IS_CLANG || AS_HAS_CFI_NEGATE_RA_STATE
- 	depends on (!FUNCTION_GRAPH_TRACER || DYNAMIC_FTRACE_WITH_REGS)
- 	help
- 	  Pointer authentication (part of the ARMv8.3 Extensions) provides
--- 
-2.7.4
 
