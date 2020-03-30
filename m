@@ -2,159 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4121919779A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 11:16:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AA4D1977A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 11:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728257AbgC3JP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 05:15:59 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:35136 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727903AbgC3JP7 (ORCPT
+        id S1727903AbgC3JTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 05:19:20 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:23092 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726981AbgC3JTU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 05:15:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585559757;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zemqa+eFWbSRqKFbVoTd6828wtJbQvKtR1Vj/t4nfws=;
-        b=ijkjwL5FqXjDfXTK6tSFRz/dMNqOl08HOKnAvrEWech/P8+rbowSpc9X5Y++NKQ24UNB0H
-        UHbqdTyh7sFzcQGMXdOP7ltvff1g45ILPVpg/fLNMhAgkeJHpNiur7C5E3GvT2IOIVvu1X
-        MOmyTpbgMbB09RzV3mQn4YJT7agPVFk=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-213-SG8S0r-VN1ONc6mbmzLAKg-1; Mon, 30 Mar 2020 05:15:55 -0400
-X-MC-Unique: SG8S0r-VN1ONc6mbmzLAKg-1
-Received: by mail-qt1-f198.google.com with SMTP id b3so10002907qte.13
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 02:15:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zemqa+eFWbSRqKFbVoTd6828wtJbQvKtR1Vj/t4nfws=;
-        b=ZO55XHyYa9+OEujxhO7aT6N3a3r2cy7RqgKC3/JByv26dM2PC1KFnD2Fh9comztIsc
-         bnohczMSB7XHrhkG5/GxszDiR/yslyBzPjSkRPT+pU+YHHEjR2lHhGu66BClWQlQStj3
-         6FfqccoUur+yWtdy0iUjGp0CzcAYndAEZKJ1BvnxmvTZX5jzdHXDDGu4yFsP/00W9ONs
-         pYJfmKMrIixvNIpJcEl7d3QZb2lBqNVp2FOd1rh6Hj1QXuqGXeb3z/X1Zd+/y1CpSttA
-         xBlyDUDF1xKUdWD/WF+dwas61SZNDqJTsXRf1mYqHMsdIn6A43cOBeGg3uvDhimLgqjK
-         oDwA==
-X-Gm-Message-State: ANhLgQ3FMsjk6zWjj+mYazSWLgTS+NVNwzYSXMRCyHXrzsBjsgADEAQU
-        lo0dUq3ZSM0U0oqI2PcsrLOVABB9v85Vgx4HjvZ2h8MVztYTZRlcQTm+EHHLHx6pnm3rQKVpwqL
-        EdFgYsMP3HjIm3QSwZ30dztz9y0pOI+XKOyJojO1n
-X-Received: by 2002:ae9:eb12:: with SMTP id b18mr4617819qkg.168.1585559755410;
-        Mon, 30 Mar 2020 02:15:55 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtmZS/6wgLxWT3ZU/CS/qVPDcBOgRfiDiQ203JJ58Kdixi7MMbXpUC+A+8C7IiEGVQnJsaMv5FmAfbHLS/iB3g=
-X-Received: by 2002:ae9:eb12:: with SMTP id b18mr4617794qkg.168.1585559754968;
- Mon, 30 Mar 2020 02:15:54 -0700 (PDT)
+        Mon, 30 Mar 2020 05:19:20 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02U9Idm5014377;
+        Mon, 30 Mar 2020 11:18:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=Ub38GwQsQKqIBSKsE+gjD8+CY2Fdv+1zkRWPPsQFePE=;
+ b=wCho9PLMdX7pbE8u/OS2MBsRIhfy+mSq0mMnjW98WzaA8Q+zLt1eBYwlWY7lCBgR1Nfs
+ q+M+aHB3kEGWhc/VOohy8S2dCRIDmqtS1cVzNhK7816mKY5xim+cAk+0v9ppAbEMZAbS
+ GvCir6YnbUt9xzUV3eXcpuWFqxv+YKS42Yhgk+2qgElkN9hrX/GGuDWqv9+TnAJdRkqX
+ ifLPd3TI6k8+jEW+A5gWgJM4mrIj18V26jSPnMMMTH8xtrNq5Ss3rv7j/0IkpzJqBFx1
+ IlUNp1ERF9yCPH+uYuFibHeE4aZd7xHELbnWspLgDTGwNqz7a1ux6ezpPTQV4wW0NZZy BA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 302y53jt76-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Mar 2020 11:18:48 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6283C100038;
+        Mon, 30 Mar 2020 11:18:42 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 303492A6215;
+        Mon, 30 Mar 2020 11:18:42 +0200 (CEST)
+Received: from [10.211.11.146] (10.75.127.47) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 30 Mar
+ 2020 11:18:40 +0200
+Subject: Re: [02/12] mfd: stm32-fmc2: add STM32 FMC2 controller driver
+To:     Marek Vasut <marex@denx.de>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>, <lee.jones@linaro.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <tony@atomide.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1584975532-8038-1-git-send-email-christophe.kerello@st.com>
+ <1584975532-8038-3-git-send-email-christophe.kerello@st.com>
+ <a989ce31-740d-8f0f-4c55-026c65259104@denx.de>
+From:   Christophe Kerello <christophe.kerello@st.com>
+Message-ID: <38a25c89-f45b-c5cc-2618-d1ee059e6ef7@st.com>
+Date:   Mon, 30 Mar 2020 11:18:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20200329113359.30960-1-eperezma@redhat.com> <bb95e827-f219-32fd-0046-41046eec058b@de.ibm.com>
- <CAJaqyWePfMcXhYEPxKYV22J3cYtO=DUXCj1Yf=7XH+khXHop9A@mail.gmail.com> <41dfa0e5-8013-db15-cbfe-aa4574cfb9a0@de.ibm.com>
-In-Reply-To: <41dfa0e5-8013-db15-cbfe-aa4574cfb9a0@de.ibm.com>
-From:   Eugenio Perez Martin <eperezma@redhat.com>
-Date:   Mon, 30 Mar 2020 11:15:18 +0200
-Message-ID: <CAJaqyWfq3TGiQ9GSqdFVAZyydg29BoKiJFGKep+h3BoV5POLHQ@mail.gmail.com>
-Subject: Re: [PATCH 0/6] vhost: Reset batched descriptors on SET_VRING_BASE call
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a989ce31-740d-8f0f-4c55-026c65259104@denx.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-30_01:2020-03-27,2020-03-30 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 9:34 AM Christian Borntraeger
-<borntraeger@de.ibm.com> wrote:
->
->
->
-> On 30.03.20 09:18, Eugenio Perez Martin wrote:
-> > On Mon, Mar 30, 2020 at 9:14 AM Christian Borntraeger
-> > <borntraeger@de.ibm.com> wrote:
-> >>
-> >>
-> >> On 29.03.20 13:33, Eugenio P=C3=A9rez wrote:
-> >>> Vhost did not reset properly the batched descriptors on SET_VRING_BAS=
-E event. Because of that, is possible to return an invalid descriptor to th=
-e guest.
-> >>
-> >> I guess this could explain my problems that I have seen during reset?
-> >>
-> >
-> > Yes, I think so. The series has a test that should reproduce more or
-> > less what you are seeing. However, it would be useful to reproduce on
-> > your system and to know what causes qemu to send the reset :).
->
-> I do see SET_VRING_BASE in the debug output
-> [228101.438630] [2113] vhost:vhost_vring_ioctl:1668: VHOST_GET_VRING_BASE=
- [vq=3D00000000618905fc][s.index=3D1][s.num=3D42424][vq->avail_idx=3D42424]=
-[vq->last_avail_idx=3D42424][vq->ndescs=3D0][vq->first_desc=3D0]
-> [228101.438631] CPU: 54 PID: 2113 Comm: qemu-system-s39 Not tainted 5.5.0=
-+ #344
-> [228101.438632] Hardware name: IBM 3906 M04 704 (LPAR)
-> [228101.438633] Call Trace:
-> [228101.438634]  [<00000004fc71c132>] show_stack+0x8a/0xd0
-> [228101.438636]  [<00000004fd10e72a>] dump_stack+0x8a/0xb8
-> [228101.438639]  [<000003ff80377600>] vhost_vring_ioctl+0x668/0x848 [vhos=
-t]
-> [228101.438640]  [<000003ff80395fd4>] vhost_net_ioctl+0x4f4/0x570 [vhost_=
-net]
-> [228101.438642]  [<00000004fc9ccdd8>] do_vfs_ioctl+0x430/0x6f8
-> [228101.438643]  [<00000004fc9cd124>] ksys_ioctl+0x84/0xb0
-> [228101.438645]  [<00000004fc9cd1ba>] __s390x_sys_ioctl+0x2a/0x38
-> [228101.438646]  [<00000004fd12ff72>] system_call+0x2a6/0x2c8
-> [228103.682732] [2122] vhost:vhost_vring_ioctl:1653: VHOST_SET_VRING_BASE=
- [vq=3D000000009e1ac3e7][s.index=3D0][s.num=3D0][vq->avail_idx=3D27875][vq-=
->last_avail_idx=3D27709][vq->ndescs=3D65][vq->first_desc=3D22]
-> [228103.682735] CPU: 44 PID: 2122 Comm: CPU 0/KVM Not tainted 5.5.0+ #344
-> [228103.682739] Hardware name: IBM 3906 M04 704 (LPAR)
-> [228103.682741] Call Trace:
-> [228103.682748]  [<00000004fc71c132>] show_stack+0x8a/0xd0
-> [228103.682752]  [<00000004fd10e72a>] dump_stack+0x8a/0xb8
-> [228103.682761]  [<000003ff80377422>] vhost_vring_ioctl+0x48a/0x848 [vhos=
-t]
-> [228103.682764]  [<000003ff80395fd4>] vhost_net_ioctl+0x4f4/0x570 [vhost_=
-net]
-> [228103.682767]  [<00000004fc9ccdd8>] do_vfs_ioctl+0x430/0x6f8
-> [228103.682769]  [<00000004fc9cd124>] ksys_ioctl+0x84/0xb0
-> [228103.682771]  [<00000004fc9cd1ba>] __s390x_sys_ioctl+0x2a/0x38
-> [228103.682773]  [<00000004fd12ff72>] system_call+0x2a6/0x2c8
-> [228103.682794] [2122] vhost:vhost_vring_ioctl:1653: VHOST_SET_VRING_BASE=
- [vq=3D00000000618905fc][s.index=3D1][s.num=3D0][vq->avail_idx=3D42424][vq-=
->last_avail_idx=3D42424][vq->ndescs=3D0][vq->first_desc=3D0]
-> [228103.682795] CPU: 44 PID: 2122 Comm: CPU 0/KVM Not tainted 5.5.0+ #344
-> [228103.682797] Hardware name: IBM 3906 M04 704 (LPAR)
-> [228103.682797] Call Trace:
-> [228103.682799]  [<00000004fc71c132>] show_stack+0x8a/0xd0
-> [228103.682801]  [<00000004fd10e72a>] dump_stack+0x8a/0xb8
-> [228103.682804]  [<000003ff80377422>] vhost_vring_ioctl+0x48a/0x848 [vhos=
-t]
-> [228103.682806]  [<000003ff80395fd4>] vhost_net_ioctl+0x4f4/0x570 [vhost_=
-net]
-> [228103.682808]  [<00000004fc9ccdd8>] do_vfs_ioctl+0x430/0x6f8
-> [228103.682810]  [<00000004fc9cd124>] ksys_ioctl+0x84/0xb0
-> [228103.682812]  [<00000004fc9cd1ba>] __s390x_sys_ioctl+0x2a/0x38
-> [228103.682813]  [<00000004fd12ff72>] system_call+0x2a6/0x2c8
->
->
-> Isnt that triggered by resetting the virtio devices during system reboot?
->
 
-Yes. I don't know exactly why qemu is sending them, but vhost should
-be able to "protect/continue" the same way it used to be before
-batching patches.
 
-Did you lose connectivity or experienced rebooting with this patches applie=
-d?
+On 3/30/20 1:36 AM, Marek Vasut wrote:
+> On 3/23/20 3:58 PM, Christophe Kerello wrote:
+>> The driver adds the support for the STMicroelectronics FMC2 controller
+>> found on STM32MP SOCs.
+>>
+>> The FMC2 functional block makes the interface with: synchronous and
+>> asynchronous static memories (such as PSNOR, PSRAM or other
+>> memory-mapped peripherals) and NAND flash memories.
+>>
+>> Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
+> [...]
+>> +static const struct of_device_id stm32_fmc2_match[] = {
+>> +	{.compatible = "st,stm32mp1-fmc2"},
+> 
+> stm32mp151.dtsi uses "st,stm32mp15-fmc2" compatible string for FMC (with
+> extra "5" in the string).
+> 
 
-Thanks!
+Hi Marek,
 
+I have not sent in this patch set the update of the device tree files.
+Currently, for backward compatibility, the FMC2 is only supported the 
+NAND driver. We need to wait the review of the different maintainers 
+before updating the device tree files (bindings acked, ...).
+I will send a DT file update for your own test.
+
+Regards,
+Christophe Kerello.
+
+>> +	{}
+>> +};
+>> +MODULE_DEVICE_TABLE(of, stm32_fmc2_match);
+>> +
+>> +static struct platform_driver stm32_fmc2_driver = {
+>> +	.probe	= stm32_fmc2_probe,
+>> +	.driver	= {
+>> +		.name = "stm32_fmc2",
+>> +		.of_match_table = stm32_fmc2_match,
+>> +		.pm = &stm32_fmc2_pm_ops,
+>> +	},
+>> +};
+>> +module_platform_driver(stm32_fmc2_driver);
+> [...]
+> 
