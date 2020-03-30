@@ -2,84 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26328197B3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:52:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4AE2197B48
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:52:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbgC3LwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 07:52:11 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36593 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728764AbgC3LwL (ORCPT
+        id S1730003AbgC3Lwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 07:52:53 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45638 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728764AbgC3Lwv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 07:52:11 -0400
-Received: by mail-lf1-f67.google.com with SMTP id u15so4785336lfi.3;
-        Mon, 30 Mar 2020 04:52:10 -0700 (PDT)
+        Mon, 30 Mar 2020 07:52:51 -0400
+Received: by mail-pl1-f195.google.com with SMTP id t4so668263plq.12;
+        Mon, 30 Mar 2020 04:52:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oUxAOgz8NXHq1Pf5is4saO0kcIUnQRpCo7D1rQX9etA=;
-        b=RvTFD7FfX+RF2ea4gaF0j0B2FI534aB0tSVvis0sLeVy4mJcjjSl4QzkrKQxQrs/Lc
-         HnSvgz2uPVhL0YBxzkToXX0ETdvrkXkTatxWl5GYZ3Et+xaXK4x9aPAdTDpdFdBHu3LF
-         PMXP9o1RYCtkWmFsczRDmvIF/BzwpyQjLk2sSc3ltABf097AdbHhRrcgijhcCicFh6aR
-         T0JGsIhIFKx7DyT2mBRoaK6iaHLQKAK+gC/Vv15Z5kpoiAku3KSocHewLR2j8Fd3QtvF
-         t0OOgv/I94yviCfCMx7/4Wv5e9qp/KbKw9qXFzvEADHzUn0Nfjrt2u4S0sjQoIEyB6Mz
-         8r8g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Eg5ugs9X241d0CyEHmbcuFz60tm64fkmmQDdwTBJmwo=;
+        b=bx72mUxy7UhUrj/cFQtM3eS3lb41tkad+HkCfGl7ALAjXH3z2dhSxVA9srYRsjMG7g
+         EXx2GambzNP9ODeY640qVmq5Gu4R+JHDXZq+yyWf3+TIQe4xcdu6zMsJhn9aA3JRtUDQ
+         q6KxjpPJ3QoZVvkp4UJMcyNB8IsesWuOwLdHNVJxlVKwPudGdTqgVglMfsKR0EQ6bBRt
+         zID7u4h3SB9c43fysjMa2VL+L9FLQABlAXx05yJIbDxIT3cwm/ko4qIzTWXOR3w2o9/r
+         UbghdxeYQU2RR/afULeC3pRkuZ4w3C+3jQVSIOunRm2DsOA1N+J4886HS4V/iNDRtlOq
+         4bcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oUxAOgz8NXHq1Pf5is4saO0kcIUnQRpCo7D1rQX9etA=;
-        b=PVPHLXf0Ts5u3t+l3SR2QlBzMXP6JanEmOjaFtO+vjUprhtLRAuN2cEswIobbS+rgs
-         T1y0Un2LtE9VVhKs2LjDmzWdpQJztMnMP5Iwpw9FIJXpjhvsOlsFAi3Yar3w4lrIq+ED
-         VwX0eDOuHvQzoxS370Plu5XPQ0ts86YEiCNXEHBznWojwn0+qwbc2cIlvfpLoaAkgJAE
-         6YjySzsY5HsGgGRK8sGakeodpps6YFj89db2q/+sH0UUfCqQhaH+XYdSRW7o0IdxRNlN
-         Go6qb7HKm1c0ioIVv1ZER+G+b0hCHS1IVogDGxdkyT3jK3O7NCDqdQKJq3NIK2al+ALx
-         EB+w==
-X-Gm-Message-State: AGi0PuY7B1vIYiegm5k+I5BDc9enDzxLMaUd6nnBfyFkGO/+aMYSMlR9
-        xwnoPooQN4AYEXEqJkcWDi1+KSCgeWfCqE3gLd0=
-X-Google-Smtp-Source: APiQypIs6reaMQbUKLAdY3KvxuAlR9R0M+IDM0rH838tBggLkO5g/vojQtpptaZ+TdidZCUDxI0stG9ysPseXJpdgfM=
-X-Received: by 2002:a19:4cc3:: with SMTP id z186mr7582516lfa.69.1585569129458;
- Mon, 30 Mar 2020 04:52:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Eg5ugs9X241d0CyEHmbcuFz60tm64fkmmQDdwTBJmwo=;
+        b=cmqvy2z4mkoy/+BWqsfmp3o4yVHbAgidUIsvzsY0l0coIAAp65Ot/APyCvkudzASIz
+         sGmi23EwcHNkoJvvDGUIQ0N6pxEysvhNB6Elxeg6Ui+myWHcptANlvyF0RLPhLzYTo+g
+         F35nUTdn7EcB1QA4hLguJLDSaOBQ4egGIaEJOj3G/i6+SOLyfH5eEPrI6f4yJaI0bLyb
+         WWfUN0WyPWqP+ICPH1cLewfRG2gSay+HwBKoQ4gXwR2y6UmphihmP7jxmibXzmCL7wcV
+         BQfUtWc2ziQ8W9twdcBdrdZYrF+I7VDpNa3/4tyfDwpch49VS6iqX6ZfEgegdO4X2s2v
+         8BrA==
+X-Gm-Message-State: ANhLgQ3vTOpzu4e05LK+3OlkMkQNmeVKZDsiwgcumAGfgYlK1br7qjP4
+        t0/dllbX445s65Fzv2ExSg==
+X-Google-Smtp-Source: ADFU+vvHPxPL9x5Yn46J0zk4QFbJpW4YEMsI5pazZEOmCFYJZehaxlAEidJsvORcHfq26MYyODPWZw==
+X-Received: by 2002:a17:902:788e:: with SMTP id q14mr12138962pll.72.1585569169503;
+        Mon, 30 Mar 2020 04:52:49 -0700 (PDT)
+Received: from localhost.localdomain ([2402:3a80:d3b:3d6b:7942:93fd:fd15:96f0])
+        by smtp.gmail.com with ESMTPSA id i4sm10012756pfq.82.2020.03.30.04.52.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 04:52:48 -0700 (PDT)
+From:   madhuparnabhowmik10@gmail.com
+To:     gregkh@linuxfoundation.org, hariprasad.kelam@gmail.com,
+        colin.king@canonical.com, tony.olech@elandigitalsystems.com
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andrianov@ispras.ru
+Subject: Possible data-race related bug in u132_hcd module.
+Date:   Mon, 30 Mar 2020 17:22:43 +0530
+Message-Id: <20200330115243.11107-1-madhuparnabhowmik10@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20200330113542.181752-1-adrian.ratiu@collabora.com> <20200330113542.181752-6-adrian.ratiu@collabora.com>
-In-Reply-To: <20200330113542.181752-6-adrian.ratiu@collabora.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 30 Mar 2020 08:52:00 -0300
-Message-ID: <CAOMZO5CKr7hSUFtb9b05rpRtpp9mb9ZyeSVqqiDXvppHJEWu5w@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] dt-bindings: display: add i.MX6 MIPI DSI host
- controller doc
-To:     Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Sjoerd Simons <sjoerd.simons@collabora.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-rockchip@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>, kernel@collabora.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 8:35 AM Adrian Ratiu <adrian.ratiu@collabora.com> wrote:
+Hi,
 
-> +        panel@0 {
-> +            compatible = "sharp,ls032b3sx01";
-> +            reg = <0>;
-> +            reset-gpios = <&gpio6 8 GPIO_ACTIVE_LOW>;
-> +            ports {
-> +                port@0 {
+This bug is found by  Linux Driver Verification project (linuxtesting.org).
 
-There is a unit address here without a corresponding reg property.
-This gives warning with 'make dt_binding_check'
+The bug is related to the parallel execution of u132_probe() function and u132_hcd_exit() function in u132_hcd.c. In case the module is unloaded when the probe function is executing there can be data race as the mutex lock u132_module_lock is not used properly. 
+
+i) Usage of mutex lock only when writing into the u132_exiting variable in u132_hcd_exit(). The lock is not used when this variable is read in u132_probe().
+
+Moreover, this variable does not serve its purpose, as even if locking is used while the u132_exiting variable is read in probe(), the function may still miss that exit function is executing if it acquires the mutex before exit() function does.
+
+How to fix this?
+
+ii) Usage of mutex while adding entries in u132_static_list in probe function but not in exit function while unregistering.
+This should be easy to fix by holding the mutex in the exit function as well.
+
+There can be other synchronization problems related to the usage of u132_module_lock in this module, I have only spotted these so far.
+
+Please let me know if this bug report is helpful and I can send a patch fixing it.
+
+Thank you,
+Madhuparna
