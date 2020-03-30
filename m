@@ -2,76 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C1B19728A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 04:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C13819728F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 04:37:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729324AbgC3Cee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 22:34:34 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12144 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729055AbgC3Ced (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 22:34:33 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 56FE985823BD02648F9E;
-        Mon, 30 Mar 2020 10:34:31 +0800 (CST)
-Received: from localhost (10.173.223.234) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.487.0; Mon, 30 Mar 2020
- 10:34:21 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <allison@lohutok.net>, <gregkh@linuxfoundation.org>,
-        <kstewart@linuxfoundation.org>, <info@metux.net>,
-        <tglx@linutronix.de>, <yuehaibing@huawei.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] memory: tegra: mark PM functions as __maybe_unuse
-Date:   Mon, 30 Mar 2020 10:33:58 +0800
-Message-ID: <20200330023358.30100-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1728976AbgC3ChS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 22:37:18 -0400
+Received: from smtprelay0140.hostedemail.com ([216.40.44.140]:56806 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728202AbgC3ChS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 22:37:18 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 7D4E8180A8CA9;
+        Mon, 30 Mar 2020 02:37:17 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2525:2561:2564:2682:2685:2731:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:7903:8985:9025:9121:10004:10400:11233:11658:11914:12043:12297:12555:12663:12679:12760:12986:13069:13161:13229:13311:13357:13439:13868:14096:14097:14181:14659:14721:21080:21451:21627:21740:21749:21811:21987:30054:30056:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: event23_79c1558705c46
+X-Filterd-Recvd-Size: 1860
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 30 Mar 2020 02:37:16 +0000 (UTC)
+Message-ID: <f53fdf2283e1c847a4c44ea7bea4cb6600c06991.camel@perches.com>
+Subject: re: commit  23cb8490c0d3 ("MAINTAINERS: fix bad file pattern")
+From:   Joe Perches <joe@perches.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Sun, 29 Mar 2020 19:35:22 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.173.223.234]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without this, we get a couple of warnings when CONFIG_PM
-is disabled:
+   MAINTAINERS: fix bad file pattern
+    
+    Testing 'parse-maintainers' due to the previous commit shows a bad file
+    pattern for the "TI VPE/CAL DRIVERS" entry in the MAINTAINERS file.
+    
+    There's also a lot of mis-ordered entries, but I'm still a bit nervous
+    about the inevitable and annoying merge problems it would probably cause
+    to fix them up.
+    
+    The MAINTAINERS file is one of my least favorite files due to being huge
+    and centralized, but fixing it is also horribly painful for that reason.
 
-drivers/memory/tegra/tegra186.c:1578:12: warning: 'tegra186_mc_resume' defined but not used [-Wunused-function]
- static int tegra186_mc_resume(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~
-drivers/memory/tegra/tegra186.c:1573:12: warning: 'tegra186_mc_suspend' defined but not used [-Wunused-function]
- static int tegra186_mc_suspend(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~~
+The identical commit was sent at least twice.
+Once directly to you.
 
-Fixes: 177602b00641 ("memory: tegra: Add system sleep support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/memory/tegra/tegra186.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+https://patchwork.kernel.org/patch/11361131/
+https://lore.kernel.org/linux-media/20200128145828.74161-1-andriy.shevchenko@linux.intel.com/
 
-diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-index 5d53f11ca7b6..e25c954dde2e 100644
---- a/drivers/memory/tegra/tegra186.c
-+++ b/drivers/memory/tegra/tegra186.c
-@@ -1570,12 +1570,12 @@ static const struct of_device_id tegra186_mc_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, tegra186_mc_of_match);
- 
--static int tegra186_mc_suspend(struct device *dev)
-+static int __maybe_unused tegra186_mc_suspend(struct device *dev)
- {
- 	return 0;
- }
- 
--static int tegra186_mc_resume(struct device *dev)
-+static int __maybe_unused tegra186_mc_resume(struct device *dev)
- {
- 	struct tegra186_mc *mc = dev_get_drvdata(dev);
- 
--- 
-2.17.1
+
+About the pain associated to fixing the file:
+I think it would be minimally painful to run
+
+$ ./scripts/parse-maintainers.pl --input=MAINTAINERS --output=MAINTAINERS --order
+
+Immediately before an -rc1 is released.
+
+Relatively few of any pending patches to MAINTAINERS
+in -next would be impacted and there would be better
+consistency in the silly file.
 
 
