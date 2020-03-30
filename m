@@ -2,215 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF0371980BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 18:16:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 371A81980C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 18:17:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729298AbgC3QQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 12:16:25 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38159 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728165AbgC3QQY (ORCPT
+        id S1729957AbgC3QRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 12:17:20 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4053 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728165AbgC3QRU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 12:16:24 -0400
-Received: by mail-lj1-f193.google.com with SMTP id w1so18703011ljh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 09:16:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cumulusnetworks.com; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=QpOIR907T/wwW05Dr6k2YR4q9EgvViup03SDjAZ1IS8=;
-        b=dHFrXjAmgcscbhtftarqXEKgpHNJjgzLjsFlYUUJhkt7ypj5szHz/C0tGLKYgz1Vi3
-         aADxpw2+tymWuQokvjIDaWdUsfDelM6zMTWOmVeNExCybqzT3LP7UcC5Mjn0UMj2IUXb
-         nev8nr2pqUrpwP8dKOXZ4YUAjMZ+w6aO7YYIs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QpOIR907T/wwW05Dr6k2YR4q9EgvViup03SDjAZ1IS8=;
-        b=YPbm5tK1goTTcmsiWRB+HiHAKht+AWUWN/tU2IbltF10lfimxt4RZaB4V5G58pHg7E
-         /8D8wAau8VMxiVKj/xeSbRIiM/qNN5dmFUWB9vGLVd0Vp7pjQpPt1gevQLzm2tNwjwcF
-         Gt6GE/1dA03JShZoAQX7kc9w1uT86RW3MjJtUC0EFkEwBXpAxp2zeUy94zyTKkUYcFtw
-         vogUz3DwjJYMrjOyodJgEds2wiL3FpUN1dh+UWt29PlTjbSnLn80+eQGaSZxf6Ryjy7n
-         G3bskl2iDxIw3B91G1cld+tsURgN7y01UfDm/YUcRWwIh48OVoyr0sIF8g48mZFDs3UL
-         j2gA==
-X-Gm-Message-State: AGi0PuYK+uoKQNf1vpi86/rno+KLzv1xSKPtSUeMqfZ6H5kydCzs3N1s
-        E6ZkTtoTNJ8Byf9Jsyo+dFPNXg==
-X-Google-Smtp-Source: APiQypKRHK7B+ad3csMViQHoxs0tbVmW7H4M9/KVXhe2awqHXEc4j2Yy5xoqdIKOM2hWBEJ81tG9sA==
-X-Received: by 2002:a2e:97cd:: with SMTP id m13mr7795367ljj.20.1585584981318;
-        Mon, 30 Mar 2020 09:16:21 -0700 (PDT)
-Received: from [192.168.0.109] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
-        by smtp.gmail.com with ESMTPSA id i20sm476679lja.17.2020.03.30.09.16.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Mar 2020 09:16:20 -0700 (PDT)
-Subject: Re: [RFC net-next v4 8/9] bridge: mrp: Integrate MRP into the bridge
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>, davem@davemloft.net,
-        jiri@resnulli.us, ivecera@redhat.com, kuba@kernel.org,
-        roopa@cumulusnetworks.com, olteanv@gmail.com, andrew@lunn.ch,
-        UNGLinuxDriver@microchip.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bridge@lists.linux-foundation.org
-References: <20200327092126.15407-1-horatiu.vultur@microchip.com>
- <20200327092126.15407-9-horatiu.vultur@microchip.com>
-From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Message-ID: <17d9fb2a-cb48-7bb6-cb79-3876ca3a74b2@cumulusnetworks.com>
-Date:   Mon, 30 Mar 2020 19:16:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Mon, 30 Mar 2020 12:17:20 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e821b5a0000>; Mon, 30 Mar 2020 09:16:26 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 30 Mar 2020 09:16:39 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 30 Mar 2020 09:16:39 -0700
+Received: from [10.2.160.81] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 30 Mar
+ 2020 16:16:38 +0000
+Subject: Re: [RFC PATCH v5 0/9] Add Tegra driver for video capture
+To:     Hans Verkuil <hverkuil@xs4all.nl>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>,
+        <helen.koike@collabora.com>
+CC:     <digetx@gmail.com>, <sboyd@kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+ <4bb6a3b8-3332-014b-e763-bce9076179dd@xs4all.nl>
+ <5ca1583a-889e-abd0-f823-eab93f09a365@xs4all.nl>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <28ab0071-2e04-d14b-9215-db421e71b6af@nvidia.com>
+Date:   Mon, 30 Mar 2020 09:16:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200327092126.15407-9-horatiu.vultur@microchip.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <5ca1583a-889e-abd0-f823-eab93f09a365@xs4all.nl>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1585584986; bh=BDyZjLsZvX08sNWD83Q2/gdH9KJJfTOHcfzKdDEXKXk=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=rDPyTh0GtJW05IFO5iIH7jX+2ODsOj93OyBhcaFZx+w3/KiE7aTA0YABNVRxE/Xt0
+         FAhI5GAKg1hvZtculLzdFordQWyKCOqsvF4nTUpk7v0v2tsuIfwQYldWDQHw+5Gof4
+         grL50aKwTXXxNYs2fmFxx446P7OwLQjGi78iepmTFm5DzBCdDajQNrqIFGtYArra8w
+         s5c5rr6GrSsJApWMZ8mPKif8/ZHBsHfJLGa97ciz02PD2Ux0UOPzeIE150dnZbW6hY
+         GSMlq/GAUG7Ydv3MB0LsrlGoL3dNdSvVBCVJCi3fuETnQY4yvHosyDBC4bzKMKWfYs
+         c5lIAoLV+6uCw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/03/2020 11:21, Horatiu Vultur wrote:
-> To integrate MRP into the bridge, the bridge needs to do the following:
-> - add new flag(BR_MPP_AWARE) to the net bridge ports, this bit will be set when
->   the port is added to an MRP instance. In this way it knows if the frame was
->   received on MRP ring port
-> - detect if the MRP frame was received on MRP ring port in that case it would be
->   processed otherwise just forward it as usual.
-> - enable parsing of MRP
-> - before whenever the bridge was set up, it would set all the ports in
->   forwarding state. Add an extra check to not set ports in forwarding state if
->   the port is an MRP ring port. The reason of this change is that if the MRP
->   instance initially sets the port in blocked state by setting the bridge up it
->   would overwrite this setting.
-> 
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> ---
->  include/linux/if_bridge.h |  1 +
->  net/bridge/br_device.c    |  3 +++
->  net/bridge/br_input.c     |  3 +++
->  net/bridge/br_netlink.c   |  5 +++++
->  net/bridge/br_private.h   | 22 ++++++++++++++++++++++
->  net/bridge/br_stp.c       |  6 ++++++
->  6 files changed, 40 insertions(+)
-> 
-> diff --git a/include/linux/if_bridge.h b/include/linux/if_bridge.h
-> index 9e57c4411734..10baa9efdae8 100644
-> --- a/include/linux/if_bridge.h
-> +++ b/include/linux/if_bridge.h
-> @@ -47,6 +47,7 @@ struct br_ip_list {
->  #define BR_BCAST_FLOOD		BIT(14)
->  #define BR_NEIGH_SUPPRESS	BIT(15)
->  #define BR_ISOLATED		BIT(16)
-> +#define BR_MRP_AWARE		BIT(17)
->  
->  #define BR_DEFAULT_AGEING_TIME	(300 * HZ)
->  
-> diff --git a/net/bridge/br_device.c b/net/bridge/br_device.c
-> index 0e3dbc5f3c34..8ec1362588af 100644
-> --- a/net/bridge/br_device.c
-> +++ b/net/bridge/br_device.c
-> @@ -463,6 +463,9 @@ void br_dev_setup(struct net_device *dev)
->  	spin_lock_init(&br->lock);
->  	INIT_LIST_HEAD(&br->port_list);
->  	INIT_HLIST_HEAD(&br->fdb_list);
-> +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
-> +	INIT_LIST_HEAD(&br->mrp_list);
-> +#endif
->  	spin_lock_init(&br->hash_lock);
->  
->  	br->bridge_id.prio[0] = 0x80;
-> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
-> index fcc260840028..d5c34f36f0f4 100644
-> --- a/net/bridge/br_input.c
-> +++ b/net/bridge/br_input.c
-> @@ -342,6 +342,9 @@ rx_handler_result_t br_handle_frame(struct sk_buff **pskb)
->  		}
->  	}
->  
-> +	if (unlikely(br_mrp_process(p, skb)))
-> +		return RX_HANDLER_PASS;
-> +
->  forward:
->  	switch (p->state) {
->  	case BR_STATE_FORWARDING:
-> diff --git a/net/bridge/br_netlink.c b/net/bridge/br_netlink.c
-> index 43dab4066f91..77bc96745be6 100644
-> --- a/net/bridge/br_netlink.c
-> +++ b/net/bridge/br_netlink.c
-> @@ -669,6 +669,11 @@ static int br_afspec(struct net_bridge *br,
->  			if (err)
->  				return err;
->  			break;
-> +		case IFLA_BRIDGE_MRP:
-> +			err = br_mrp_parse(br, p, attr, cmd);
-> +			if (err)
-> +				return err;
-> +			break;
->  		}
->  	}
->  
-> diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
-> index 1f97703a52ff..38894f2cf98f 100644
-> --- a/net/bridge/br_private.h
-> +++ b/net/bridge/br_private.h
-> @@ -428,6 +428,10 @@ struct net_bridge {
->  	int offload_fwd_mark;
->  #endif
->  	struct hlist_head		fdb_list;
-> +
-> +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
-> +	struct list_head		__rcu mrp_list;
-> +#endif
->  };
->  
->  struct br_input_skb_cb {
-> @@ -1304,6 +1308,24 @@ unsigned long br_timer_value(const struct timer_list *timer);
->  extern int (*br_fdb_test_addr_hook)(struct net_device *dev, unsigned char *addr);
->  #endif
->  
-> +/* br_mrp.c */
-> +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
-> +int br_mrp_parse(struct net_bridge *br, struct net_bridge_port *p,
-> +		 struct nlattr *attr, int cmd);
-> +int br_mrp_process(struct net_bridge_port *p, struct sk_buff *skb);
-> +#else
-> +static inline int br_mrp_parse(struct net_bridge *br, struct net_bridge_port *p,
-> +			       struct nlattr *attr, int cmd)
-> +{
-> +	return -1;
 
-You should return proper error here.
+On 3/30/20 4:02 AM, Hans Verkuil wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> On 3/30/20 12:04 PM, Hans Verkuil wrote:
+>> Hi Sowjanya,
+>>
+>> On 3/23/20 6:52 PM, Sowjanya Komatineni wrote:
+>>> This series adds Tegra210 VI and CSI driver for built-in test pattern
+>>> generator (TPG) capture.
+>>>
+>>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+>>> CSI port is one-to-one mapped to VI channel for video capture.
+>>>
+>>> This series has TPG support only where it creates hard media links
+>>> between CSI subdevice and VI video device without device graphs.
+>>>
+>>> v4l2-compliance results are available below the patch diff.
+>>>
+>>> [v5]:        Includes,
+>>>       - v4 feedback
+>>>       - fix for venc powergate mc reset order.
+>>>       - fix to have unbind and bind work during v4l2-ctl sleep and streaming.
+>> Unfortunately, I still crash on this.
+>>
+>> I do the following:
+>>
+>> Run: v4l2-ctl --stream-mmap
+>>
+>> Then, from another shell as root:
+>>
+>> cd /sys/devices/platform/50000000.host1x/tegra-video/driver
+>> echo -n tegra-video > unbind
+>>
+>> I get this crash:
+>>
+>> [  315.691971] Unable to handle kernel NULL pointer dereference at virtual address 00000000000000b0
+>> [  315.700749] Mem abort info:
+>> [  315.703536]   ESR = 0x96000004
+>> [  315.706587]   EC = 0x25: DABT (current EL), IL = 32 bits
+>> [  315.711886]   SET = 0, FnV = 0
+>> [  315.714933]   EA = 0, S1PTW = 0
+>> [  315.718064] Data abort info:
+>> [  315.720936]   ISV = 0, ISS = 0x00000004
+>> [  315.724763]   CM = 0, WnR = 0
+>> [  315.727726] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000178ee8000
+>> [  315.734152] [00000000000000b0] pgd=0000000000000000
+>> [  315.739024] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+>> [  315.744584] Modules linked in: r8152 nouveau lp855x_bl tegra_drm ttm
+>> [  315.750942] CPU: 3 PID: 2206 Comm: bash Tainted: G        W         5.6.0-rc1-arm64 #118
+>> [  315.759017] Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
+>> [  315.764927] pstate: 20000085 (nzCv daIf -PAN -UAO)
+>> [  315.769718] pc : _raw_write_lock_irqsave+0xb0/0x2b8
+>> [  315.774590] lr : ida_free+0x48/0x158
+>> [  315.778155] sp : ffff800011d8bba0
+>> [  315.781462] x29: ffff800011d8bba0 x28: ffff0000f4095400
+>> [  315.786766] x27: 0000000000000000 x26: 0000000000000000
+>> [  315.792070] x25: 0000000000000000 x24: 0000000000000000
+>> [  315.797372] x23: ffff0000f21ad400 x22: ffff0000f5c93000
+>> [  315.802674] x21: ffff0000f4095400 x20: ffff0000f86b5540
+>> [  315.807975] x19: 0000000000000000 x18: 0000000000000000
+>> [  315.813276] x17: 0000000000000001 x16: 0000000000000019
+>> [  315.818578] x15: 000000148ccdabe2 x14: 0000000000000136
+>> [  315.823879] x13: 0000000000000001 x12: 00000000000003f8
+>> [  315.829180] x11: 0000000000000000 x10: 0000000000000000
+>> [  315.834482] x9 : ffff0000ff899990 x8 : ffff0000ff899000
+>> [  315.839784] x7 : 0000000040000000 x6 : 0000000000210d00
+>> [  315.845085] x5 : 0000000000000001 x4 : 0000000000000000
+>> [  315.850386] x3 : 00000000000000b0 x2 : 0000000000000001
+>> [  315.855687] x1 : 0000000000000000 x0 : 0000000000000001
+>> [  315.860988] Call trace:
+>> [  315.863432]  _raw_write_lock_irqsave+0xb0/0x2b8
+>> [  315.867956]  ida_free+0x48/0x158
+>> [  315.871184]  __media_device_unregister_entity+0x28/0xf0
+>> [  315.876402]  media_device_unregister+0x6c/0x148
+>> [  315.880927]  host1x_video_remove+0x20/0x48
+>> [  315.885021]  host1x_device_remove+0x1c/0x30
+>> [  315.889198]  device_release_driver_internal+0xf4/0x1c0
+>> [  315.894325]  device_driver_detach+0x14/0x20
+>> [  315.898503]  unbind_store+0xd4/0xf8
+>> [  315.901986]  drv_attr_store+0x20/0x30
+>> [  315.905645]  sysfs_kf_write+0x40/0x50
+>> [  315.909301]  kernfs_fop_write+0xf8/0x210
+>> [  315.913219]  __vfs_write+0x18/0x40
+>> [  315.916616]  vfs_write+0xdc/0x1c8
+>> [  315.919926]  ksys_write+0x68/0xf0
+>> [  315.923235]  __arm64_sys_write+0x18/0x20
+>> [  315.927154]  el0_svc_common.constprop.0+0x68/0x160
+>> [  315.931936]  do_el0_svc+0x20/0x80
+>> [  315.935246]  el0_sync_handler+0x10c/0x180
+>> [  315.939246]  el0_sync+0x140/0x180
+>> [  315.942560] Code: 8803fc02 35ffffa3 17fffda6 f9800071 (885ffc60)
+>> [  315.948644] ---[ end trace e42b943f3c1af06c ]---
+>>
+>> The following diff fixes this:
+>>
+>> ------------------ cut here ------------------
+>> diff --git a/drivers/staging/media/tegra/tegra-vi.c b/drivers/staging/media/tegra/tegra-vi.c
+>> index 9714152aa6a7..53cf37af9602 100644
+>> --- a/drivers/staging/media/tegra/tegra-vi.c
+>> +++ b/drivers/staging/media/tegra/tegra-vi.c
+>> @@ -583,7 +583,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
+>>        /* initialize the video_device */
+>>        chan->video->fops = &tegra_channel_fops;
+>>        chan->video->v4l2_dev = &vid->v4l2_dev;
+>> -     chan->video->release = video_device_release_empty;
+>> +     chan->video->release = video_device_release;
+>>        chan->video->queue = &chan->queue;
+>>        snprintf(chan->video->name, sizeof(chan->video->name), "%s-%s-%u",
+>>                 dev_name(vi->dev), "output", chan->portno);
+>> @@ -647,6 +647,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
+>>        media_entity_cleanup(&chan->video->entity);
+>>   release_vdev:
+>>        video_device_release(chan->video);
+>> +     chan->video = NULL;
+>>        return ret;
+>>   }
+>>
+>> @@ -707,7 +708,6 @@ static void tegra_vi_channels_cleanup(struct tegra_vi *vi)
+>>                        mutex_lock(&chan->video_lock);
+>>                        vb2_queue_release(&chan->queue);
+>>                        mutex_unlock(&chan->video_lock);
+>> -                     video_device_release(chan->video);
+>>                }
+>>
+>>                if (chan->frame_start_sp)
+>> ------------------ cut here ------------------
+> Note: Sakari suggested to embed struct video_device into struct tegra_vi_channel.
+> In that case chan->video->release should remain video_device_release_empty and
+> all video_device_alloc()/release() calls would have to be dropped.
 
-> +}
-> +
-> +static inline int br_mrp_process(struct net_bridge_port *p, struct sk_buff *skb)
-> +{
-> +	return -1;
+Thanks Hans. Tried several unbind/unbind not sure why it did not repro 
+during my testing.
 
-The bridge can't possibly work with MRP disabled with this.
+video device is also part of tegra_vi_channel. So, v6 will remove 
+video_device_alloc and use video_device_release_empty like I had in v3.
 
-> +}
-> +#endif
-> +
->  /* br_netlink.c */
->  extern struct rtnl_link_ops br_link_ops;
->  int br_netlink_init(void);
-> diff --git a/net/bridge/br_stp.c b/net/bridge/br_stp.c
-> index 1f14b8455345..3e88be7aa269 100644
-> --- a/net/bridge/br_stp.c
-> +++ b/net/bridge/br_stp.c
-> @@ -36,6 +36,12 @@ void br_set_state(struct net_bridge_port *p, unsigned int state)
->  	};
->  	int err;
->  
-> +	/* Don't change the state of the ports if they are driven by a different
-> +	 * protocol.
-> +	 */
-> +	if (p->flags & BR_MRP_AWARE)
-> +		return;
-> +
+This should help fix crash during unbind.
 
-Maybe disallow STP type (kernel/user-space/no-stp) changing as well, force it to no-stp.
-
->  	p->state = state;
->  	err = switchdev_port_attr_set(p->dev, &attr);
->  	if (err && err != -EOPNOTSUPP)
-> 
-
+>
+> Regards,
+>
+>          Hans
