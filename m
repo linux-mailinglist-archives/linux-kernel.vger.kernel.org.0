@@ -2,104 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36E4E19857A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADF5E198565
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 22:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728763AbgC3UiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 16:38:08 -0400
-Received: from mga17.intel.com ([192.55.52.151]:58520 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728626AbgC3UiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 16:38:04 -0400
-IronPort-SDR: VnGpjThGL5JwfsyaNhsrFPOBCI5r60uTcImYnRl3+aF7wpEew3OYFEFz01MFprQJ6QiqEgW8qv
- GNG+psn/dtyg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 13:38:04 -0700
-IronPort-SDR: CSSoTcScmVyPfUPOOfY3YTLN4JfQ2LiwNlB2QAn9UO0ffbWgKcWZRt0i4Q2gqsAMKLfRElPSQA
- soFSCKE/xZRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,325,1580803200"; 
-   d="scan'208";a="242143905"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga008.jf.intel.com with ESMTP; 30 Mar 2020 13:38:03 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        "H Peter Anvin" <hpa@zytor.com>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Tony Luck" <tony.luck@intel.com>,
-        "Ashok Raj" <ashok.raj@intel.com>,
-        "Jacob Jun Pan" <jacob.jun.pan@intel.com>,
-        "Dave Jiang" <dave.jiang@intel.com>,
-        "Sohil Mehta" <sohil.mehta@intel.com>,
-        "Ravi V Shankar" <ravi.v.shankar@intel.com>
-Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "x86" <x86@kernel.org>, iommu@lists.linux-foundation.org,
-        Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH 7/7] x86/process: Clear PASID state for a newly forked/cloned thread
-Date:   Mon, 30 Mar 2020 12:33:08 -0700
-Message-Id: <1585596788-193989-8-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
-In-Reply-To: <1585596788-193989-1-git-send-email-fenghua.yu@intel.com>
-References: <1585596788-193989-1-git-send-email-fenghua.yu@intel.com>
+        id S1728165AbgC3Ucc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 16:32:32 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41827 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727714AbgC3Ucb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 16:32:31 -0400
+Received: by mail-lj1-f196.google.com with SMTP id n17so19619235lji.8;
+        Mon, 30 Mar 2020 13:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HIsaCCDIEW9SmQsiBvg7E1N2IqSmk3N6+OhmYGlRiSo=;
+        b=R/+F+pyLp04OS/1vR4VrVxJkboIyi9bN3FNQweyDfAAMRGRgdlnmtZLmYh73kKy3qF
+         zCzNnHHlDGJzK3SzOndSoAM9bWhkxGKVkVb+Dygl9pOY8vloOZI/g1lM0adQaPg934/4
+         k90o1zA3aBMXB7qxCqHtUpMf5Hr+Q58HPiMsALvccqlkLAWDQGuaeTtHNIpaQ7OWGoyS
+         xOcP+2ZyDb3cBF6NmB9+rA9cEj/hNNXl/ZAl/WMQtkXmT3k9aBkQ5TbCnQq36nX4z76Q
+         DeY9WimafkFTng+qOyo51xAydq6Q72+dCmASBl0yg70duDstyPUhzptFkFBNOKyOVCMl
+         FN9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HIsaCCDIEW9SmQsiBvg7E1N2IqSmk3N6+OhmYGlRiSo=;
+        b=RaPfF0gUGPSjfph/pwokmqCY7SjNpWxSnqZR8K30bPE1QzF4P6mSZ7+TSVwq7c5qfQ
+         npmHXyrE4v0Zb9i/+Z4Ki/XFiqtacr42496uiPn8PtWG6vdO58AEcqKY4qrrFw7AbXaJ
+         8Gqvot9E8UgVFLdzpQzazpGBaybXtvk+8lfbMwUinyfkVpMlR6gzOy6rzWlmC3rVdF1T
+         4tLxAkrGmscwWbC8l39MX9l2mZYaddzEHHqaq9rXOfQoax9/av4yxm8xUAO7dG9X/jWC
+         dbpevx4JVlZAXLKnF7S8a8e0Sb/QVnF6miAqswkFhWV33HsqLYbv9qNOGFSJJuxRj3XN
+         bFZA==
+X-Gm-Message-State: AGi0PuaUocoSpzXWkAr7QvCAKLEpCC5nxwzFx1F3YOaugjDnHW2ErJVj
+        lPgsWDWc5BGG/6P/Y09kpL01ETE0fRZb5Gk/4S0=
+X-Google-Smtp-Source: APiQypLmrt5zNnHEcRdVznJCZ4Snr8l39IAksnSm4vOK/JzHf8Hs6mSZ0Hg6svTLRXQuVX4kN1J0nzAX/Ey/5JDTza0=
+X-Received: by 2002:a2e:7805:: with SMTP id t5mr8447085ljc.144.1585600347641;
+ Mon, 30 Mar 2020 13:32:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200330144246.338-1-kpsingh@chromium.org>
+In-Reply-To: <20200330144246.338-1-kpsingh@chromium.org>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Mon, 30 Mar 2020 13:32:16 -0700
+Message-ID: <CAADnVQLr7osE-fbvCS3Gizt1vC5x21F2iBK=n_O1v9YrKZae9A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] bpf: btf: Fix arg verification in btf_ctx_access()
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PASID state has to be cleared on forks, since the child has a
-different address space. The PASID is also cleared for thread clone. While
-it would be correct to inherit the PASID in this case, it is unknown
-whether the new task will use ENQCMD. Giving it the PASID "just in case"
-would have the downside of increased context switch overhead to setting
-the PASID MSR.
+On Mon, Mar 30, 2020 at 7:43 AM KP Singh <kpsingh@chromium.org> wrote:
+>
+> From: KP Singh <kpsingh@google.com>
+>
+> The bounds checking for the arguments accessed in the BPF program breaks
+> when the expected_attach_type is not BPF_TRACE_FEXIT, BPF_LSM_MAC or
+> BPF_MODIFY_RETURN resulting in no check being done for the default case
+> (the programs which do not receive the return value of the attached
+> function in its arguments) when the index of the argument being accessed
+> is equal to the number of arguments (nr_args).
+>
+> This was a result of a misplaced "else if" block  introduced by the
+> Commit 6ba43b761c41 ("bpf: Attachment verification for
+> BPF_MODIFY_RETURN")
+>
+> Signed-off-by: KP Singh <kpsingh@google.com>
+> Fixes: 6ba43b761c41 ("bpf: Attachment verification for BPF_MODIFY_RETURN")
+> Reported-by: Jann Horn <jannh@google.com>
 
-Since #GP faults have to be handled on any threads that were created before
-the PASID was assigned to the mm of the process, newly created threads
-might as well be treated in a consistent way.
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
----
- arch/x86/kernel/process.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 87de18c64cf5..cefdc8f7fc13 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -122,6 +122,16 @@ static int set_new_tls(struct task_struct *p, unsigned long tls)
- 		return do_set_thread_area_64(p, ARCH_SET_FS, tls);
- }
- 
-+/* Clear PASID MSR/state for the forked/cloned thread. */
-+static void clear_task_pasid(struct task_struct *task)
-+{
-+	/*
-+	 * Clear the xfeatures bit in the PASID state so that the MSR will be
-+	 * initialized to its init state (0) by XRSTORS.
-+	 */
-+	task->thread.fpu.state.xsave.header.xfeatures &= ~XFEATURE_MASK_PASID;
-+}
-+
- int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
- 		    unsigned long arg, struct task_struct *p, unsigned long tls)
- {
-@@ -175,6 +185,9 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
- 	task_user_gs(p) = get_user_gs(current_pt_regs());
- #endif
- 
-+	if (static_cpu_has(X86_FEATURE_ENQCMD))
-+		clear_task_pasid(p);
-+
- 	/* Set a new TLS for the child thread? */
- 	if (clone_flags & CLONE_SETTLS)
- 		ret = set_new_tls(p, tls);
--- 
-2.19.1
-
+Applied. Thanks
