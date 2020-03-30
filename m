@@ -2,105 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A870C197FB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 17:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49AC3197FB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 17:34:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbgC3PeO convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Mar 2020 11:34:14 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:35442 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728825AbgC3PeN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 11:34:13 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-29-3T7qKML-MqukwX-6L-zRCQ-1; Mon, 30 Mar 2020 16:34:09 +0100
-X-MC-Unique: 3T7qKML-MqukwX-6L-zRCQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 30 Mar 2020 16:34:08 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 30 Mar 2020 16:34:08 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Steven Rostedt' <rostedt@goodmis.org>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: ftrace not showing the process names for all processes on syscall
- events
-Thread-Topic: ftrace not showing the process names for all processes on
- syscall events
-Thread-Index: AdYGnj+cWqFtVCqqTmCXgoqvHM5xrf///P+A///qkvA=
-Date:   Mon, 30 Mar 2020 15:34:08 +0000
-Message-ID: <7dec110c2dc14792ba744419a4eb907e@AcuMS.aculab.com>
-References: <3cdef49951734e83a14959628233d4f0@AcuMS.aculab.com>
- <20200330110855.437fe854@gandalf.local.home>
-In-Reply-To: <20200330110855.437fe854@gandalf.local.home>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1729398AbgC3Ped (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 11:34:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729296AbgC3Pec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 11:34:32 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0745B20780;
+        Mon, 30 Mar 2020 15:34:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585582472;
+        bh=nT9E0EIzMVAN0cQacmLsqIEENgu2oOgTG3sdhXwWc7M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CFqN0lovfebTDaI6FpGHzh8WR108etKaM5Vp3J9TokvlFW/RBUPVuwqyr6YJ3MoQk
+         ShpF6tPSljJmsD1HmdQzwRGMyWTvopbbvys6HoqJbsiczRaD7JzLTD6D+CdF1jQBfi
+         J+bn3Nd8/8nFibtPhFc7d7YE87GEGFkJDa3Xl4qo=
+Date:   Mon, 30 Mar 2020 17:34:30 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, groeck@chromium.org,
+        bleung@chromium.org, dtor@chromium.org, gwendal@chromium.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        vbendeb@chromium.org, andy@infradead.org,
+        Ayman Bagabas <ayman.bagabas@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jeremy Soller <jeremy@system76.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mattias Jacobsson <2pi@mok.nu>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Rajat Jain <rajatja@google.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Yauhen Kharuzhy <jekhor@gmail.com>,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3] platform: x86: Add ACPI driver for ChromeOS
+Message-ID: <20200330153430.GA750889@kroah.com>
+References: <20200330150617.1132570-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200330150617.1132570-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt
-> Sent: 30 March 2020 16:09
-> On Mon, 30 Mar 2020 14:28:01 +0000
-> David Laight <David.Laight@ACULAB.COM> wrote:
-> 
-> > I've just updated one of my systems to 5.6.0-rc7+ (end of last week).
-> > ftrace in showing <...>-3179 in the system call events for a couple
-> > of threads of the active processes.
-> > Other threads of the same processes are fine.
-> > The scheduler process switch events also show the full name.
-> >
-> > Is this a known regression?
-> 
-> 
-> Well, that code hasn't changed in years. But can you explain more of what
-> you did? Was this the "trace" file, or "trace_pipe" file? The command names
-> are cached in an array (see /sys/kernel/tracing/saved_cmdlines) of the size
-> that is defined by the saved_cmdlines_size file.
+On Mon, Mar 30, 2020 at 05:06:17PM +0200, Enric Balletbo i Serra wrote:
+> This driver attaches to the ChromeOS ACPI device and then exports the values
+> reported by the ACPI in a sysfs directory. These values are not exported
+> via the standard ACPI tables, hence a specific driver is needed to do
+> it. The ACPI values are presented in the string form (numbers as decimal
+> values) or binary blobs, and can be accessed as the contents of the
+> appropriate read only files in the standard ACPI devices sysfs directory tree.
 
-It was the 'trace' file - ie the text formatted by the kernel.
-I've looked at a lot of traces over the last few weeks and not seen it before.
-The workload is the same, so I assumed there might be a kernel change.
-I've just updated from a 5.4-rc7 kernel to a 5.6-rc7 one.
+Any reason why you didn't send this to the ACPI maintainers and
+developer mailing list?
 
-> The cmdlines get updated via the sched_switch and sched_waking trace
-> events. The update is protected by a spinlock, which is only taken with a
-> "trylock", if the lock fails, then it does not get updated (we don't want
-> to hold back the running code just to cache the name of an event), but it
-> will try at the next sched event until it succeeds. This means that under
-> strong contention, it may fail to cache certain names.
+They would be the best ones to review this...
 
-I've not got a silly number of context switches.
-But it seemed to have consistently lost some process names even when they
-went idle and then resumed.
+thanks,
 
-I would have been tracing the schedule process wakeup and switch events,
-system call entry/exit and irq+softirq.
-
-> This is not a regression, it's really just the work load that can cause
-> event names to be missed. I could work on something that if you have the
-> sched events enabled, that the output side could do its own caching to get
-> better results.
-
-Ok if nothing has changed I'll stop worrying and work out what I've broken.
-
-Oh, does the 'function_graph' code ignore tail calls?
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+greg k-h
