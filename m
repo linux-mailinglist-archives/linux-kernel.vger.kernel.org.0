@@ -2,225 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6025198826
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:22:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B28F198846
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:28:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbgC3XWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 19:22:49 -0400
-Received: from mga14.intel.com ([192.55.52.115]:8519 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728880AbgC3XWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 19:22:48 -0400
-IronPort-SDR: CYsMc6xNSzUJP6BcYO+OLqFhmKM2adzN/8T7+KtOchMbrmFNJucRQap2I9GACQjwVxAyue0kQ7
- aXI//N/hJPgA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 16:22:48 -0700
-IronPort-SDR: sh7yWEKxwhMvfS4P1lxwEYQpxpI2vgEI9iX8UiORLi4Zxd3gfRJsmpeZvwMn5Ysg3kDeRSyUeF
- WuDqodOgyBtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,326,1580803200"; 
-   d="scan'208";a="272542078"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by fmsmga004.fm.intel.com with ESMTP; 30 Mar 2020 16:22:47 -0700
-Date:   Mon, 30 Mar 2020 16:28:34 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH V10 07/11] iommu/vt-d: Support flushing more translation
- cache types
-Message-ID: <20200330162834.5ef42700@jacob-builder>
-In-Reply-To: <c90fafad-253a-b2f5-2a6c-87bc319edd02@redhat.com>
-References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1584746861-76386-8-git-send-email-jacob.jun.pan@linux.intel.com>
-        <c90fafad-253a-b2f5-2a6c-87bc319edd02@redhat.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1729866AbgC3X2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 19:28:46 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:33060 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729024AbgC3X2q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 19:28:46 -0400
+Received: by mail-io1-f65.google.com with SMTP id o127so19777481iof.0;
+        Mon, 30 Mar 2020 16:28:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=T3SelQy49aACUXmKXVT4NOVYKNHT6s8n6dCJkbIM0m4=;
+        b=c8sFf7NIYPDsrKY+b85hj9rMyKzZTS9wzK36tDmxVgfVVOyl5gOaclLI8jWkY+C6nl
+         HJi1saglGRRwSzIvHZDRU0g3CAhzObyiMG3brssrWEyq3miP6Jmzya2oR4Wv/+ZvOPgA
+         x/b9J9XMA6qAr4ynRyl7MvzVmj635n/qk6dxGu5IpxFpmr/4WHsPFmFRScyyX6xRWQYo
+         VUCjz96mCyPG2wZ0EWGOpf4Lm8iFTD9xcAhBVv6A0OixILDMLpNrhPrYOdzb/LDvlJWM
+         XcGZ9uk1qGgBraRe0IgWKzbb3xaih/txaQ8VVHRUM3tVYrdeeooukvasD37lzTYlPkDq
+         PKLA==
+X-Gm-Message-State: ANhLgQ2FobBBvi8BmNdI/NOzG6b0XJM9pIMA81hQdtxBopdVf2x49LWz
+        xfDKwNjnTHNcC7arPxrcntiACvA=
+X-Google-Smtp-Source: ADFU+vspZXZ8V4GDKPfcghhhUe9/kcgSRNVcKdRoepeYAVHsPP4lMq1koJNZYBxxqEnNiHv91dAEaw==
+X-Received: by 2002:a05:6602:14c6:: with SMTP id b6mr12742265iow.133.1585610924975;
+        Mon, 30 Mar 2020 16:28:44 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id m14sm5432374ilr.16.2020.03.30.16.28.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 16:28:44 -0700 (PDT)
+Received: (nullmailer pid 28523 invoked by uid 1000);
+        Mon, 30 Mar 2020 23:28:42 -0000
+Date:   Mon, 30 Mar 2020 17:28:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] dt-bindings: timer: Add bindings for NVIDIA Tegra186
+ timers
+Message-ID: <20200330232842.GA25358@bogus>
+References: <20200320133452.3705040-1-thierry.reding@gmail.com>
+ <20200320133452.3705040-2-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320133452.3705040-2-thierry.reding@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Mar 2020 15:46:23 +0100
-Auger Eric <eric.auger@redhat.com> wrote:
+On Fri, Mar 20, 2020 at 02:34:46PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The NVIDIA Tegra186 SoC contains an IP block that provides a register
+> interface for ten timers with a 29-bit counter that can generate one-
+> shot, periodic or watchdog interrupts.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../bindings/timer/nvidia,tegra186-timer.yaml | 55 +++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+> new file mode 100644
+> index 000000000000..f9b55041a5ca
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra186-timer.yaml
+> @@ -0,0 +1,55 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/timer/nvidia,tegra186-timer.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra186 timers
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Jonathan Hunter <jonathanh@nvidia.com>
+> +
+> +description: |
+> +  The Tegra186 timer provides ten 29-bit timer counters and one 32-bit TSC
+> +  (timestamp counter). The timers run at either a fixed 1 MHz clock rate
+> +  derived from the oscillator clock. Each timer can be programmed to raise
+> +  one-shot, periodic, or watchdog interrupts.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - description: NVIDIA Tegra186
+> +        items:
+> +          - const: nvidia,tegra186-timer
+> +
+> +      - description: NVIDIA Tegra194
+> +        items:
+> +          - const: nvidia,tegra194-timer
+> +          - const: nvidia,tegra186-timer
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 10
 
-> Hi Jacob,
-> 
-> On 3/21/20 12:27 AM, Jacob Pan wrote:
-> > When Shared Virtual Memory is exposed to a guest via vIOMMU,
-> > scalable IOTLB invalidation may be passed down from outside IOMMU
-> > subsystems. This patch adds invalidation functions that can be used
-> > for additional translation cache types.
-> > 
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > 
-> > ---
-> > v9 -> v10:
-> > Fix off by 1 in pasid device iotlb flush
-> > 
-> > Address v7 missed review from Eric
-> > 
-> > ---
-> > ---
-> >  drivers/iommu/dmar.c        | 36
-> > ++++++++++++++++++++++++++++++++++++ drivers/iommu/intel-pasid.c |
-> > 3 ++- include/linux/intel-iommu.h | 20 ++++++++++++++++----
-> >  3 files changed, 54 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-> > index f77dae7ba7d4..4d6b7b5b37ee 100644
-> > --- a/drivers/iommu/dmar.c
-> > +++ b/drivers/iommu/dmar.c
-> > @@ -1421,6 +1421,42 @@ void qi_flush_piotlb(struct intel_iommu
-> > *iommu, u16 did, u32 pasid, u64 addr, qi_submit_sync(&desc, iommu);
-> >  }
-> >  
-> > +/* PASID-based device IOTLB Invalidate */
-> > +void qi_flush_dev_iotlb_pasid(struct intel_iommu *iommu, u16 sid,
-> > u16 pfsid,
-> > +		u32 pasid,  u16 qdep, u64 addr, unsigned
-> > size_order, u64 granu) +{
-> > +	unsigned long mask = 1UL << (VTD_PAGE_SHIFT + size_order -
-> > 1);
-> > +	struct qi_desc desc = {.qw2 = 0, .qw3 = 0};
-> > +
-> > +	desc.qw0 = QI_DEV_EIOTLB_PASID(pasid) |
-> > QI_DEV_EIOTLB_SID(sid) |
-> > +		QI_DEV_EIOTLB_QDEP(qdep) | QI_DEIOTLB_TYPE |
-> > +		QI_DEV_IOTLB_PFSID(pfsid);
-> > +	desc.qw1 = QI_DEV_EIOTLB_GLOB(granu);
-> > +
-> > +	/*
-> > +	 * If S bit is 0, we only flush a single page. If S bit is
-> > set,
-> > +	 * The least significant zero bit indicates the
-> > invalidation address
-> > +	 * range. VT-d spec 6.5.2.6.
-> > +	 * e.g. address bit 12[0] indicates 8KB, 13[0] indicates
-> > 16KB.
-> > +	 * size order = 0 is PAGE_SIZE 4KB
-> > +	 * Max Invs Pending (MIP) is set to 0 for now until we
-> > have DIT in
-> > +	 * ECAP.
-> > +	 */
-> > +	desc.qw1 |= addr & ~mask;
-> > +	if (size_order)
-> > +		desc.qw1 |= QI_DEV_EIOTLB_SIZE;
-> > +
-> > +	qi_submit_sync(&desc, iommu);
-> > +}
-> > +
-> > +void qi_flush_pasid_cache(struct intel_iommu *iommu, u16 did, u64
-> > granu, int pasid) +{
-> > +	struct qi_desc desc = {.qw1 = 0, .qw2 = 0, .qw3 = 0};
-> > +
-> > +	desc.qw0 = QI_PC_PASID(pasid) | QI_PC_DID(did) |
-> > QI_PC_GRAN(granu) | QI_PC_TYPE;
-> > +	qi_submit_sync(&desc, iommu);
-> > +}
-> > +
-> >  /*
-> >   * Disable Queued Invalidation interface.
-> >   */
-> > diff --git a/drivers/iommu/intel-pasid.c
-> > b/drivers/iommu/intel-pasid.c index 10c7856afc6b..9f6d07410722
-> > 100644 --- a/drivers/iommu/intel-pasid.c
-> > +++ b/drivers/iommu/intel-pasid.c
-> > @@ -435,7 +435,8 @@ pasid_cache_invalidation_with_pasid(struct
-> > intel_iommu *iommu, {
-> >  	struct qi_desc desc;
-> >  
-> > -	desc.qw0 = QI_PC_DID(did) | QI_PC_PASID_SEL |
-> > QI_PC_PASID(pasid);
-> > +	desc.qw0 = QI_PC_DID(did) | QI_PC_GRAN(QI_PC_PASID_SEL) |
-> > +		QI_PC_PASID(pasid) | QI_PC_TYPE;  
-> Just a nit, this fix is not documented in the commit message.
-> 
-Thanks, I just sent out this fix separately. Will remove this from the
-set.
-https://lkml.org/lkml/2020/3/30/1065
+required props?
 
-> Besides
-> Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> 
-> Thanks
-> 
-> Eric
-> 
-> >  	desc.qw1 = 0;
-> >  	desc.qw2 = 0;
-> >  	desc.qw3 = 0;
-> > diff --git a/include/linux/intel-iommu.h
-> > b/include/linux/intel-iommu.h index 85b05120940e..43539713b3b3
-> > 100644 --- a/include/linux/intel-iommu.h
-> > +++ b/include/linux/intel-iommu.h
-> > @@ -334,7 +334,7 @@ enum {
-> >  #define QI_IOTLB_GRAN(gran) 	(((u64)gran) >>
-> > (DMA_TLB_FLUSH_GRANU_OFFSET-4)) #define QI_IOTLB_ADDR(addr)
-> > (((u64)addr) & VTD_PAGE_MASK) #define
-> > QI_IOTLB_IH(ih)		(((u64)ih) << 6) -#define
-> > QI_IOTLB_AM(am)		(((u8)am)) +#define
-> > QI_IOTLB_AM(am)		(((u8)am) & 0x3f) 
-> >  #define QI_CC_FM(fm)		(((u64)fm) << 48)
-> >  #define QI_CC_SID(sid)		(((u64)sid) << 32)
-> > @@ -353,16 +353,21 @@ enum {
-> >  #define QI_PC_DID(did)		(((u64)did) << 16)
-> >  #define QI_PC_GRAN(gran)	(((u64)gran) << 4)
-> >  
-> > -#define QI_PC_ALL_PASIDS	(QI_PC_TYPE | QI_PC_GRAN(0))
-> > -#define QI_PC_PASID_SEL		(QI_PC_TYPE | QI_PC_GRAN(1))
-> > +/* PASID cache invalidation granu */
-> > +#define QI_PC_ALL_PASIDS	0
-> > +#define QI_PC_PASID_SEL		1
-> >  
-> >  #define QI_EIOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
-> >  #define QI_EIOTLB_IH(ih)	(((u64)ih) << 6)
-> > -#define QI_EIOTLB_AM(am)	(((u64)am))
-> > +#define QI_EIOTLB_AM(am)	(((u64)am) & 0x3f)
-> >  #define QI_EIOTLB_PASID(pasid) 	(((u64)pasid) << 32)
-> >  #define QI_EIOTLB_DID(did)	(((u64)did) << 16)
-> >  #define QI_EIOTLB_GRAN(gran) 	(((u64)gran) << 4)
-> >  
-> > +/* QI Dev-IOTLB inv granu */
-> > +#define QI_DEV_IOTLB_GRAN_ALL		1
-> > +#define QI_DEV_IOTLB_GRAN_PASID_SEL	0> +
-> >  #define QI_DEV_EIOTLB_ADDR(a)	((u64)(a) & VTD_PAGE_MASK)
-> >  #define QI_DEV_EIOTLB_SIZE	(((u64)1) << 11)
-> >  #define QI_DEV_EIOTLB_GLOB(g)	((u64)g)
-> > @@ -662,8 +667,15 @@ extern void qi_flush_iotlb(struct intel_iommu
-> > *iommu, u16 did, u64 addr, unsigned int size_order, u64 type);
-> >  extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid,
-> > u16 pfsid, u16 qdep, u64 addr, unsigned mask);
-> > +
-> >  void qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u32
-> > pasid, u64 addr, unsigned long npages, bool ih);
-> > +
-> > +extern void qi_flush_dev_iotlb_pasid(struct intel_iommu *iommu,
-> > u16 sid, u16 pfsid,
-> > +			u32 pasid, u16 qdep, u64 addr, unsigned
-> > size_order, u64 granu); +
-> > +extern void qi_flush_pasid_cache(struct intel_iommu *iommu, u16
-> > did, u64 granu, int pasid); +
-> >  extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu
-> > *iommu); 
-> >  extern int dmar_ir_support(void);
-> >   
-> 
+Also, add:
 
-[Jacob Pan]
+additionalProperties: false
+
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    timer@3010000 {
+> +        compatible = "nvidia,tegra186-timer";
+> +        reg = <0x03010000 0x000e0000>;
+> +        interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +        status = "disabled";
+
+Don't show status in examples.
+
+> +    };
+> -- 
+> 2.24.1
+> 
