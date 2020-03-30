@@ -2,135 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15B4E1974A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 08:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44C4E1974AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 08:46:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbgC3Gpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 02:45:39 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46415 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728733AbgC3Gpi (ORCPT
+        id S1729265AbgC3Gqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 02:46:54 -0400
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:46265 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728964AbgC3Gqy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 02:45:38 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j17so20068182wru.13
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 23:45:37 -0700 (PDT)
+        Mon, 30 Mar 2020 02:46:54 -0400
+Received: by mail-qv1-f67.google.com with SMTP id bu9so2366046qvb.13
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 23:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=V56YQ8YQXjkIauhgboyrxCMrbncDw2TqLEBJO6LLNNM=;
-        b=sQ2f+skFCCbEiOoww8kH9zZYLPWziNWtDYM/MzX1shre1CF6ETuE51sUbV60Mcbp3c
-         7ofQGCgIpUXTV10fB8GyD0slTikuSNdlePQ7vG9wO47RRcTnybZAdKTqKbhPzCIZpk8v
-         Hy6ije5XX9W48RP7H3ASmx4vFqgFf/gk/I4VS8cK396oDd/bs6+1e+/m+XdzXseQvP6g
-         hkxkwAApQvHdND1yQ4DgfVVkdUao2XNw+v5HTUR2TLdHbCGM+4Cnc3wfMniX+0A13ev+
-         CmNpK5tc1KR7tqVtcmTg0w7xWqBt2ETiw2Fgn8j2zb5UJh8aLCCVM5utDA2vJth35Hv5
-         5YKw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pjkGBS29HYPxn30VYTsUkJMT7TXHK1iqq/toMS/LCIk=;
+        b=gUG9Steaxaz7lU3gtehZO7iOgd8Bw2Tux6OQMnNPWftJ2ioh20QyAIapRiiXt2aeX4
+         YBUKUNE9GuENqpQY9hO0Wq1PCKyRNIfnUvJcnxahiqEZWlObk0QKmudvjN0B1CPP3/U3
+         347Z6U0VEDVD+37Af6nAl5Y5EPNw+WR/6Q6CG1ZB8X9n+nD01eHZ5na76GmYeVo3POfB
+         M52DyJS9FHtu6wCQb1rzqgSDobPmEKN7MnCogMjkcXc4SMBFFSVfh9RyXkea85+Pm4Gw
+         ezBmMMk5bOsobgo3N5zTwFYP7qVqNAoujE2F9JREJu2ldVApODcurFjoe26arYdRIiQS
+         JZzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=V56YQ8YQXjkIauhgboyrxCMrbncDw2TqLEBJO6LLNNM=;
-        b=r/kR3sKK3ac/39QoPQFjtRHz3mm5+evU0V9ieSYa14zFjHz/WMI6T7cGjDxiiBYStr
-         AXAqICh1ScBEWzCXgEpF5s97+oOGWwLfyn5iaeegEHNCbozchwHtjqFTNKjhBJX8pm6k
-         5DSp8aroaSVKntWp1angmhLA0BSwMstqnjc57Iqs12nXyuMSv52COhVOor7LikPXCNJq
-         VU2ZnHdrcrOQ/ZgFwg+1dOdzGJ+yOAWZH44nxh5Db+BcR4udVTd677/9s6oOcZHoeknK
-         epyKDQrju99Nggv8i5CN6yN2fmcfibC8bH3WVVcSCcmoL5tZ5foNfi4Lo+7mu4wwBKk+
-         TqZw==
-X-Gm-Message-State: ANhLgQ1VMKaybJ12KTJoGRotimwZ2FLbokClrOsSygmf2PJhU2kdvnFB
-        luC9Q0YWP319XJvbS26eyDpGRg==
-X-Google-Smtp-Source: ADFU+vsGOjMWUR3XuueAXOf+kGUjz672AeJsnP+zNGCOJq+3zYTVOE2f/ajoKzhEq5O/LNUAMeRj0A==
-X-Received: by 2002:a5d:4f92:: with SMTP id d18mr12996829wru.400.1585550737261;
-        Sun, 29 Mar 2020 23:45:37 -0700 (PDT)
-Received: from dell ([95.149.164.95])
-        by smtp.gmail.com with ESMTPSA id c23sm21059704wrb.79.2020.03.29.23.45.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Mar 2020 23:45:36 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 07:46:30 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     saravanan sekar <sravanhome@gmail.com>
-Cc:     robh+dt@kernel.org, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, sre@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] dt-bindings: mfd: add document bindings for mp2629
-Message-ID: <20200330064630.GA30614@dell>
-References: <20200322224626.13160-1-sravanhome@gmail.com>
- <20200322224626.13160-2-sravanhome@gmail.com>
- <20200327080013.GG603801@dell>
- <d449b567-bd5c-168d-83af-5ba38771f75a@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pjkGBS29HYPxn30VYTsUkJMT7TXHK1iqq/toMS/LCIk=;
+        b=MUNGAdhIisGDG4ZFldJ0GY8tJwhXGoABMlTMP0iA2nBWQYKOX5avD/rsSjVEecwkqO
+         00H4agucmYcWyDhU5YelRy/GfbBFlezWUDkBuebDhTW81eEAZEJBCSw9hsERIKAk27a4
+         DZEWMz6cmMX0K2N9SSjlv3cWEOtzuO1b024cdqRFT9TABrKNe39ke4e1aCEU9Z1lfx02
+         YN7R4Iu0rZfc9yy+W5M7NLWBqKVyv3B0vU4CcqujvdwB/d8HhbaQGhd2EJugJpwTj4Qm
+         wRnGEqkYtdeJSWFl0chG6JztWOL1jvVvhaw2VflkaxcYjNfXFuD3QbEh7zbIUSwK2Npy
+         LTow==
+X-Gm-Message-State: ANhLgQ1DReWaQ4Y24rMLGe7AntF2CSxpMCkWrQxWNjePv88wHLMsmutC
+        +YFnpjupbeTcpPJIK8dBq7J0tjnGiaGbH1fe159hitKfklk=
+X-Google-Smtp-Source: ADFU+vt9w+mfH2CS/l+Phj7i62glgWN1fk31DMpqMowVvXp42+ER/aG2dDe1mwJCsOMC/1MdhtE03Pyadevk92EqTbo=
+X-Received: by 2002:a0c:a8e2:: with SMTP id h34mr10050333qvc.22.1585550812907;
+ Sun, 29 Mar 2020 23:46:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d449b567-bd5c-168d-83af-5ba38771f75a@gmail.com>
+References: <00000000000089f61b05a20242f3@google.com>
+In-Reply-To: <00000000000089f61b05a20242f3@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 30 Mar 2020 08:46:41 +0200
+Message-ID: <CACT4Y+a9Jdd_ovUnB7fS+jkZUJYjpbNK1qwakYwy7k4WfNwg+g@mail.gmail.com>
+Subject: Re: upstream build error (9)
+To:     syzbot <syzbot+cfc21ef9f8637dfa50f9@syzkaller.appspotmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Mar 2020, saravanan sekar wrote:
-> On 27/03/20 9:00 am, Lee Jones wrote:
-> > On Sun, 22 Mar 2020, Saravanan Sekar wrote:
-> > 
-> > > Add device tree binding information for mp2629 mfd driver.
-> > > 
-> > > Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> > > ---
-> > >   .../devicetree/bindings/mfd/mps,mp2629.yaml   | 60 +++++++++++++++++++
-> > >   1 file changed, 60 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/mfd/mps,mp2629.yaml
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/mfd/mps,mp2629.yaml b/Documentation/devicetree/bindings/mfd/mps,mp2629.yaml
-> > > new file mode 100644
-> > > index 000000000000..314309ea91ac
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mfd/mps,mp2629.yaml
-> > > @@ -0,0 +1,60 @@
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/mfd/mps,mp2629.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > Are these links supposed to work?
-> Not really, but as far my understanding needed for dt-bindings check
+#syz invalid
 
-Rob, why are these here if they just result in 404s?
+nested virt again kills host on qemu instances...
 
-> > > +examples:
-> > > +  - |
-> > > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > > +    #include <dt-bindings/input/linux-event-codes.h>
-> > > +    i2c {
-> > i2c@0x????????
-> 
-> Its a I2C controller node, I don't think address is needed. Mention like
-> this my previous other driver patches,
-
-This doesn't sound right.
-
-How do you control/operate the controller?
-
-Surely you read/write from/to registers?
-
-> dt_binding_check is also passed
-> 
-> > > +        #address-cells = <1>;
-> > > +        #size-cells = <0>;
-> > > +
-> > > +        pmic@4b {
-> > > +            compatible = "mps,mp2629";
-> > > +            reg = <0x4b>;
-> > > +
-> > > +            interrupt-controller;
-> > > +            interrupt-parent = <&gpio2>;
-> > > +            #interrupt-cells = <2>;
-> > > +            interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
-> > > +        };
-> > > +    };
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+On Sun, Mar 29, 2020 at 8:11 PM syzbot
+<syzbot+cfc21ef9f8637dfa50f9@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    76ccd234 Merge branch 'perf-urgent-for-linus' of git://git..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=27bbeba43f06f835
+> dashboard link: https://syzkaller.appspot.com/bug?extid=cfc21ef9f8637dfa50f9
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> userspace arch: i386
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+cfc21ef9f8637dfa50f9@syzkaller.appspotmail.com
+>
+> timedout ["make" "oldconfig" "CC=/syzkaller/gcc/bin/gcc" "-j96"]
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000089f61b05a20242f3%40google.com.
