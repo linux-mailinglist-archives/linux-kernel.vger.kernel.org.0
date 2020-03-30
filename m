@@ -2,72 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CCB0197F4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 17:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D05EE197F52
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 17:14:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbgC3PMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 11:12:34 -0400
-Received: from mail.pqgruber.com ([52.59.78.55]:57178 "EHLO mail.pqgruber.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbgC3PMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 11:12:34 -0400
-Received: from workstation.tuxnet (213-47-165-233.cable.dynamic.surfer.at [213.47.165.233])
-        by mail.pqgruber.com (Postfix) with ESMTPSA id 81AF1C028FA;
-        Mon, 30 Mar 2020 17:12:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pqgruber.com;
-        s=mail; t=1585581152;
-        bh=owWsc4oE1uz/vgJXIvKbvjOwxqJ8BtE9s6a1tLJFCQc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i2BdfEdZXZazeotMsRW0DdmPwflxF8eSoHPIHQ0tHMUbYig+LXhUrNodmO5g1ZAm2
-         7XAVjuS392ZPa7bboNXxL0/kkYpjbxjFnobbyCYYnHXRQ6pNMPZDUyFsdT79E3A29W
-         TX0QhZ1KTNG/rdio4m41YvZ3bSlt69/xPeW+CSyo=
-Date:   Mon, 30 Mar 2020 17:12:31 +0200
-From:   Clemens Gruber <clemens.gruber@pqgruber.com>
-To:     Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, thierry.reding@gmail.com,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andy.shevchenko@gmail.com
-Subject: Re: (EXT) Re: [PATCH 1/4] pwm: pca9685: remove unused duty_cycle
- struct element
-Message-ID: <20200330151231.GA1650@workstation.tuxnet>
-References: <20200226135229.24929-1-matthias.schiffer@ew.tq-group.com>
- <20200226151034.7i3h5blmrwre2yzg@pengutronix.de>
- <32ec35c2b3da119dd2c7bc09742796a0d8a9607e.camel@ew.tq-group.com>
+        id S1728594AbgC3POP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 11:14:15 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:54783 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727696AbgC3POO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 11:14:14 -0400
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 02UFD7Hq079755;
+        Tue, 31 Mar 2020 00:13:07 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav305.sakura.ne.jp);
+ Tue, 31 Mar 2020 00:13:07 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav305.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 02UFD7n5079751
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 31 Mar 2020 00:13:07 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: kernel panic: smack: Failed to initialize cipso DOI.
+To:     syzbot <syzbot+89731ccb6fec15ce1c22@syzkaller.appspotmail.com>,
+        casey@schaufler-ca.com
+References: <000000000000db448f05a212beea@google.com>
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        serge@hallyn.com, syzkaller-bugs@googlegroups.com
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <a293a766-4329-f6de-c8a9-1a5051217c45@I-love.SAKURA.ne.jp>
+Date:   Tue, 31 Mar 2020 00:13:05 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32ec35c2b3da119dd2c7bc09742796a0d8a9607e.camel@ew.tq-group.com>
+In-Reply-To: <000000000000db448f05a212beea@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2020/03/30 22:51, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    1b649e0b Merge git://git.kernel.org/pub/scm/linux/kernel/g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14957099e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4ac76c43beddbd9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=89731ccb6fec15ce1c22
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1202c375e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1390bb03e00000
 
-On Wed, Feb 26, 2020 at 06:03:02PM +0100, Matthias Schiffer wrote:
-> As it turns out, this driver is broken in yet another way I didn't find
-> before: For changing the global prescaler the chip needs to be put into
-> sleep mode, but the driver doesn't follow the restart sequence
-> described in the datasheet when waking it back up. In consequence,
-> changing the period of one PWM does not only modify the period of all
-> PWMs (which is bad enough, but can't be avoided with this hardware),
-> but it also leaves all PWMs disabled...
+Wrong bisection. This is not a network / driver problem.
+There is a memory allocation fault injection prior to this panic.
 
-I am unable to reproduce this: If I set a specific duty cycle on a
-channel and then change the period, the channel stays active.
-I can see the brightness of an LED decrease if I increase the period.
-
-This is expected, because after the SLEEP bit is set, we wait for
-500usecs and then write to the LED ON/OFF registers.
-This leaves the channel enabled with the new period (but with old
-duty_ns value => different ratio)
-
-A few years ago, I played around with the idea of remembering the
-duty_ns to period_ns ratio and setting it accordingly after a period
-change, possibly also with a shortcut of setting the RESTART bit if the
-ratio did not change. Maybe after the switch to the atomic API, this
-would be a nice improvement.
-
-Best regards,
-Clemens
+  [ T1576] FAULT_INJECTION: forcing a failure.
+  [ T1576] Kernel panic - not syncing: smack:  Failed to initialize cipso DOI.
