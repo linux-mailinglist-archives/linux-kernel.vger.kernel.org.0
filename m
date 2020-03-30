@@ -2,128 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 626DC19832D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF529198326
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbgC3SQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 14:16:31 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:50009 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726017AbgC3SQb (ORCPT
+        id S1727962AbgC3SPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 14:15:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54044 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbgC3SPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 14:16:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585592189;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=7DjDFsYHR6g0Apa3zR6vDBd2N+92jMQpUXuk9YaC+4o=;
-        b=XvRlLVJmT+5KKxuS1Fou/4b0ZUE1kJhtqq1ganLm1aTraR0DxFrGjdpUnEa+C6nkp8jRbq
-        9Yyq0sSfal+kti+wZQ1SkiE4RTah9s0ukhVyPKEgbEBvdsCTwePXemXOO886nZjnL5puYb
-        40NwwuIxf/V6ys5VhqN2qA8REGYw1T4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-474-MQB-bG8gPSmah6nbFvMhxw-1; Mon, 30 Mar 2020 14:16:26 -0400
-X-MC-Unique: MQB-bG8gPSmah6nbFvMhxw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0694ADB60;
-        Mon, 30 Mar 2020 18:16:25 +0000 (UTC)
-Received: from kasong-rh-laptop.redhat.com (ovpn-12-175.pek2.redhat.com [10.72.12.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9806797B01;
-        Mon, 30 Mar 2020 18:16:19 +0000 (UTC)
-From:   Kairui Song <kasong@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Young <dyoung@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org, Kairui Song <kasong@redhat.com>
-Subject: [PATCH] crash_dump: remove saved_max_pfn
-Date:   Tue, 31 Mar 2020 02:15:44 +0800
-Message-Id: <20200330181544.1595733-1-kasong@redhat.com>
+        Mon, 30 Mar 2020 14:15:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=dvRAfacYVv+Eg59W06vLytYBlTZBs40NGpdohyB+NkQ=; b=fPoTDl7EdNYPZpuNoPdIeJMcPs
+        yV1QBNGt+wL39bdrB0aKvr+/q34qR3g+GOlPPkw7EUCijLY5agDcVNihR2RZIYvO4/menEVoHdl4R
+        ZQWdVPq/JCjKDx/zhmKuZbLjxZAF6xOIk0bFltJlu1X4YOPEn9hEfvwFGS+EqTEcqcDAFpdN/cpOS
+        eBhpvEqWogUgyPVsZZlLDef3UKwUjtJ1Vx8BeUwSK+WzGMdGbFLEjUDTC39w+JMYY2GNWNvjHaVV0
+        LWUXjPfry4xwYng/6WTxjWhF/ZF46QDy3+DCtrGo1oaCzSAeUTWm7WvZF0ai4ESgwCbl1RG3mtgI5
+        fOyRYRfg==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jIyws-0001iQ-9l; Mon, 30 Mar 2020 18:15:46 +0000
+Subject: Re: linux-next: Tree for Mar 30 (bpf)
+To:     KP Singh <kpsingh@chromium.org>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <20200330204307.669bbb4d@canb.auug.org.au>
+ <86f7031a-57c6-5d50-2788-ae0e06a7c138@infradead.org>
+ <d5b4bd95-7ef9-58cb-1955-900e6edb2467@iogearbox.net>
+ <CACYkzJ72Uy9mnenO04OJaKH=Bk4ZENKJb9yw6i+EhJUa+ygngQ@mail.gmail.com>
+ <20200330180538.GA180081@google.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <08026861-d198-add1-feb8-c43f2e006cb6@infradead.org>
+Date:   Mon, 30 Mar 2020 11:15:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200330180538.GA180081@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This variable is no longer used.
+On 3/30/20 11:05 AM, KP Singh wrote:
+> On 30-Mar 19:54, KP Singh wrote:
+> 
+> So, it looks like bpf_tracing_func_proto is only defined when
+> CONFIG_BPF_EVENTS is set:
+> 
+>         obj-$(CONFIG_BPF_EVENTS) += bpf_trace.o
+> 
+> We have a few options:
+> 
+> * Add a __weak symbol for bpf_tracing_func_proto which we have done in
+>   the past for similar issues. This however, does not make much sense,
+>   as CONFIG_BPF_LSM cannot really do much without its helpers.
+> * Make CONFIG_BPF_LSM depend on CONFIG_BPF_EVENTS, this should solve
+>   it, but not for this particular Kconfig that was generated. Randy,
+>   I am assuming if we add the dependency, this particular Kconfig
+>   won't be generated.
 
-saved_max_pfn was originally introduce in commit 92aa63a5a1bf ("[PATCH]
-kdump: Retrieve saved max pfn"), used to make sure that user does not
-try to read the physical memory beyond saved_max_pfn. But since
-commit 921d58c0e699 ("vmcore: remove saved_max_pfn check")
-it's no longer used for the check.
+Hi KP,
+That sounds reasonable.
 
-Only user left is Calary IOMMU, which start using it from
-commit 95b68dec0d52 ("calgary iommu: use the first kernels TCE tables
-in kdump"). But again, recently in commit 90dc392fc445 ("x86: Remove
-the calgary IOMMU driver"), Calary IOMMU is removed and this variable
-no longer have any user.
+Thanks.
 
-So just remove it.
+> 
+> I am assuming this patch now needs to be sent for "bpf" and not
+> "bpf-next" as the merge window has opened?
+> 
+> - KP
+> 
+>> Thanks for adding me Daniel, taking a look.
+>>
+>> - KP
+>>
+>> On Mon, Mar 30, 2020 at 7:25 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>>>
+>>> [Cc KP, ptal]
+>>>
+>>> On 3/30/20 7:15 PM, Randy Dunlap wrote:
+>>>> On 3/30/20 2:43 AM, Stephen Rothwell wrote:
+>>>>> Hi all,
+>>>>>
+>>>>> The merge window has opened, so please do not add any material for the
+>>>>> next release into your linux-next included trees/branches until after
+>>>>> the merge window closes.
+>>>>>
+>>>>> Changes since 20200327:
+>>>>
+>>>> (note: linux-next is based on linux 5.6-rc7)
+>>>>
+>>>>
+>>>> on i386:
+>>>>
+>>>> ld: kernel/bpf/bpf_lsm.o:(.rodata+0x0): undefined reference to `bpf_tracing_func_proto'
+>>>>
+>>>>
+>>>> Full randconfig file is attached.
 
-Signed-off-by: Kairui Song <kasong@redhat.com>
----
- arch/x86/kernel/e820.c     | 8 --------
- include/linux/crash_dump.h | 2 --
- kernel/crash_dump.c        | 6 ------
- 3 files changed, 16 deletions(-)
 
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index c5399e80c59c..4d13c57f370a 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -910,14 +910,6 @@ static int __init parse_memmap_one(char *p)
- 		return -EINVAL;
-=20
- 	if (!strncmp(p, "exactmap", 8)) {
--#ifdef CONFIG_CRASH_DUMP
--		/*
--		 * If we are doing a crash dump, we still need to know
--		 * the real memory size before the original memory map is
--		 * reset.
--		 */
--		saved_max_pfn =3D e820__end_of_ram_pfn();
--#endif
- 		e820_table->nr_entries =3D 0;
- 		userdef =3D 1;
- 		return 0;
-diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-index 4664fc1871de..bc156285d097 100644
---- a/include/linux/crash_dump.h
-+++ b/include/linux/crash_dump.h
-@@ -97,8 +97,6 @@ extern void unregister_oldmem_pfn_is_ram(void);
- static inline bool is_kdump_kernel(void) { return 0; }
- #endif /* CONFIG_CRASH_DUMP */
-=20
--extern unsigned long saved_max_pfn;
--
- /* Device Dump information to be filled by drivers */
- struct vmcoredd_data {
- 	char dump_name[VMCOREDD_MAX_NAME_BYTES]; /* Unique name of the dump */
-diff --git a/kernel/crash_dump.c b/kernel/crash_dump.c
-index 9c23ae074b40..92da32275af5 100644
---- a/kernel/crash_dump.c
-+++ b/kernel/crash_dump.c
-@@ -5,12 +5,6 @@
- #include <linux/errno.h>
- #include <linux/export.h>
-=20
--/*
-- * If we have booted due to a crash, max_pfn will be a very low value. W=
-e need
-- * to know the amount of memory that the previous kernel used.
-- */
--unsigned long saved_max_pfn;
--
- /*
-  * stores the physical address of elf header of crash image
-  *
---=20
-2.25.1
+-- 
+~Randy
 
