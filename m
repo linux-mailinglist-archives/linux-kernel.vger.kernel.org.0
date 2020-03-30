@@ -2,187 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4BA319828C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:41:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 612F7198290
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbgC3RlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 13:41:16 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33348 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727905AbgC3RlO (ORCPT
+        id S1729999AbgC3Rl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 13:41:26 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:55916 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729654AbgC3Rl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 13:41:14 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d17so9012934pgo.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 10:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9A9BFDWaBKeFJEhXv569Hcf1cU3lWJT2qzpJ99N8MCk=;
-        b=c588ptYqwCmsWEonO588jIjpypgAAMTUL58QUCwA/bBLmIORgJNEOXJxHmUoCvXzNS
-         qdwHBXTKTzAdmAMY7lWdJG4D14txV1wst9CUI7g7DNIHQb4vdQiWZpRkHcyxl4Wx8ifz
-         fwzua6wxK/EOmnxeRkV1nUTb+4EQjsgGp6C9U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9A9BFDWaBKeFJEhXv569Hcf1cU3lWJT2qzpJ99N8MCk=;
-        b=SeAs/tLGZVokPnDgrFC0F/pzVESsyHBj730X2++lS98R2UYpUHSShLD5sxXZ+xwk2e
-         iMggcqEGfWG69+2vSph2RXDdAxD1Iwh4m2AuwNgJHW3aKe1BdvU5QAUqvAYNO+PBlE+7
-         EcYTNalSb99uluf7AzjE0hSPS6sYRrhgk4tp3rmaGGnzzj80ZPzApZgCm5u7GjQ/6o1i
-         Uq7+MmRj6ifRjaU98IKMttQMbP4R7MM/W2+HaX5GMOoMr36aG/5dTlFq6RatgTDuDdaH
-         s7dR3R5oxJA6IidNt87FWFlt/3JaLv8ePiatvioiS2IXJLJFIdiWC3QhwrOo45C6TXTi
-         hSkQ==
-X-Gm-Message-State: ANhLgQ3B+F4UCEbwd3aT0Ef15wg5SeGgi8kF4IpRQkhlCk/tHTfTx02p
-        kBmbtfD8qLpYsar593cOPeTVag==
-X-Google-Smtp-Source: ADFU+vuP1FGs+E8bbM6cuPnbi2RGCCdWSTAmb5Pnlf37InzDZNSuZ3SNT/PxgA7MaMnVZYPI0R1hRQ==
-X-Received: by 2002:a63:6d02:: with SMTP id i2mr13505140pgc.267.1585590073404;
-        Mon, 30 Mar 2020 10:41:13 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x75sm10741891pfc.161.2020.03.30.10.41.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 10:41:12 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 10:41:11 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Guilherme G . Piccoli" <gpiccoli@canonical.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH 2/3] kernel/sysctl: support handling command line aliases
-Message-ID: <202003301041.86E6C7EB@keescook>
-References: <20200330115535.3215-1-vbabka@suse.cz>
- <20200330115535.3215-3-vbabka@suse.cz>
+        Mon, 30 Mar 2020 13:41:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MPknVRVqf3cjXzMTU1R+fhO3GbG3Mj56RWcr6uAPo/4=; b=jdiwFJp8wSM94WHqaxAAUF/oZ
+        qWAMC2vbKFTHvrZmSdq85MME8kz7V/8dpy/aDPNxTvz5HXiQgIpvk41xnvXCTmZCN3PcFhYGM8vU/
+        IqTDSEEiXvfioQpJCyV204YvHXjAc0uA0VjtJdtKhmSm0mTQnEgqBUXH0ojw60BQjTEvt3l/3eAK/
+        YbCb2kDlbTrBqlDtjAMq55yHXAQq6XhRTRXQ0etN5pomK50D+Jo7QYuOdnA69TP3dLIrcu5rix3zS
+        LGMvSTnW5pBJKqNrtGKpJ1p74gP22Vwf4fwhGwT/942zSuiSQf+31ZsfzmVck+3Vs9eKD50f5edew
+        9T/GlLzIw==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:39286)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1jIyPW-0003Uo-Cv; Mon, 30 Mar 2020 18:41:18 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1jIyPS-0007JO-C8; Mon, 30 Mar 2020 18:41:14 +0100
+Date:   Mon, 30 Mar 2020 18:41:14 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
+        linux-imx@nxp.com, kernel@pengutronix.de,
+        David Jander <david@protonic.nl>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v2] ARM: imx: allow to disable board specific PHY fixups
+Message-ID: <20200330174114.GG25745@shell.armlinux.org.uk>
+References: <20200329110457.4113-1-o.rempel@pengutronix.de>
+ <20200329150854.GA31812@lunn.ch>
+ <20200330052611.2bgu7x4nmimf7pru@pengutronix.de>
+ <40209d08-4acb-75c5-1766-6d39bb826ff9@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200330115535.3215-3-vbabka@suse.cz>
+In-Reply-To: <40209d08-4acb-75c5-1766-6d39bb826ff9@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 01:55:34PM +0200, Vlastimil Babka wrote:
-> We can now handle sysctl parameters on kernel command line, but historically
-> some parameters introduced their own command line equivalent, which we don't
-> want to remove for compatibility reasons. We can however convert them to the
-> generic infrastructure with a table translating the legacy command line
-> parameters to their sysctl names, and removing the one-off param handlers.
+On Mon, Mar 30, 2020 at 10:33:03AM -0700, Florian Fainelli wrote:
 > 
-> This patch adds the support and makes the first conversion to demonstrate it,
-> on the (deprecated) numa_zonelist_order parameter.
 > 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> On 3/29/2020 10:26 PM, Oleksij Rempel wrote:
+> > Hi Andrew,
+> > 
+> > On Sun, Mar 29, 2020 at 05:08:54PM +0200, Andrew Lunn wrote:
+> >> On Sun, Mar 29, 2020 at 01:04:57PM +0200, Oleksij Rempel wrote:
+> >>
+> >> Hi Oleksij
+> >>
+> >>> +config DEPRECATED_PHY_FIXUPS
+> >>> +	bool "Enable deprecated PHY fixups"
+> >>> +	default y
+> >>> +	---help---
+> >>> +	  In the early days it was common practice to configure PHYs by adding a
+> >>> +	  phy_register_fixup*() in the machine code. This practice turned out to
+> >>> +	  be potentially dangerous, because:
+> >>> +	  - it affects all PHYs in the system
+> >>> +	  - these register changes are usually not preserved during PHY reset
+> >>> +	    or suspend/resume cycle.
+> >>> +	  - it complicates debugging, since these configuration changes were not
+> >>> +	    done by the actual PHY driver.
+> >>> +	  This option allows to disable all fixups which are identified as
+> >>> +	  potentially harmful and give the developers a chance to implement the
+> >>> +	  proper configuration via the device tree (e.g.: phy-mode) and/or the
+> >>> +	  related PHY drivers.
+> >>
+> >> This appears to be an IMX only problem. Everybody else seems to of got
+> >> this right. There is no need to bother everybody with this new
+> >> option. Please put this in arch/arm/mach-mxs/Kconfig and have IMX in
+> >> the name.
+> > 
+> > Actually, all fixups seems to do wring thing:
+> > arch/arm/mach-davinci/board-dm644x-evm.c:915:		phy_register_fixup_for_uid(LXT971_PHY_ID, LXT971_PHY_MASK,
+> > 
+> > Increased MII drive strength. Should be probably enabled by the PHY
+> > driver.
+> > 
+> > arch/arm/mach-imx/mach-imx6q.c:167:		phy_register_fixup_for_uid(PHY_ID_KSZ9021, MICREL_PHY_ID_MASK,
+> > arch/arm/mach-imx/mach-imx6q.c:169:		phy_register_fixup_for_uid(PHY_ID_KSZ9031, MICREL_PHY_ID_MASK,
+> > arch/arm/mach-imx/mach-imx6q.c:171:		phy_register_fixup_for_uid(PHY_ID_AR8031, 0xffffffef,
+> > arch/arm/mach-imx/mach-imx6q.c:173:		phy_register_fixup_for_uid(PHY_ID_AR8035, 0xffffffef,
 
-Acked-by: Kees Cook <keescook@chromium.org>
+As far as I'm concerned, the AR8035 fixup is there with good reason.
+It's not just "random" but is required to make the AR8035 usable with
+the iMX6 SoCs.  Not because of a board level thing, but because it's
+required for the AR8035 to be usable with an iMX6 SoC.
 
--Kees
+So, having it registered by the iMX6 SoC code is entirely logical and
+correct.
 
-> ---
->  fs/proc/proc_sysctl.c | 48 ++++++++++++++++++++++++++++++++++++-------
->  mm/page_alloc.c       |  9 --------
->  2 files changed, 41 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 653188c9c4c9..97eb0b552bf8 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -1727,6 +1727,37 @@ int __init proc_sys_init(void)
->  	return sysctl_init();
->  }
->  
-> +struct sysctl_alias {
-> +	const char *kernel_param;
-> +	const char *sysctl_param;
-> +};
-> +
-> +/*
-> + * Historically some settings had both sysctl and a command line parameter.
-> + * With the generic sysctl. parameter support, we can handle them at a single
-> + * place and only keep the historical name for compatibility. This is not meant
-> + * to add brand new aliases. When adding existing aliases, consider whether
-> + * the possibly different moment of changing the value (e.g. from early_param
-> + * to the moment do_sysctl_args() is called) is an issue for the specific
-> + * parameter.
-> + */
-> +static const struct sysctl_alias sysctl_aliases[] = {
-> +	{"numa_zonelist_order",		"vm.numa_zonelist_order" },
-> +	{ }
-> +};
-> +
-> +static const char *sysctl_find_alias(char *param)
-> +{
-> +	const struct sysctl_alias *alias;
-> +
-> +	for (alias = &sysctl_aliases[0]; alias->kernel_param != NULL; alias++) {
-> +		if (strcmp(alias->kernel_param, param) == 0)
-> +			return alias->sysctl_param;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  /* Set sysctl value passed on kernel command line. */
->  static int process_sysctl_arg(char *param, char *val,
->  			       const char *unused, void *arg)
-> @@ -1740,15 +1771,18 @@ static int process_sysctl_arg(char *param, char *val,
->  	loff_t pos = 0;
->  	ssize_t wret;
->  
-> -	if (strncmp(param, "sysctl", sizeof("sysctl") - 1))
-> -		return 0;
-> -
-> -	param += sizeof("sysctl") - 1;
-> +	if (strncmp(param, "sysctl", sizeof("sysctl") - 1) == 0) {
-> +		param += sizeof("sysctl") - 1;
->  
-> -	if (param[0] != '/' && param[0] != '.')
-> -		return 0;
-> +		if (param[0] != '/' && param[0] != '.')
-> +			return 0;
->  
-> -	param++;
-> +		param++;
-> +	} else {
-> +		param = (char *) sysctl_find_alias(param);
-> +		if (!param)
-> +			return 0;
-> +	}
->  
->  	if (!proc_mnt) {
->  		proc_fs_type = get_fs_type("proc");
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 3c4eb750a199..de7a134b1b8a 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5460,15 +5460,6 @@ static int __parse_numa_zonelist_order(char *s)
->  	return 0;
->  }
->  
-> -static __init int setup_numa_zonelist_order(char *s)
-> -{
-> -	if (!s)
-> -		return 0;
-> -
-> -	return __parse_numa_zonelist_order(s);
-> -}
-> -early_param("numa_zonelist_order", setup_numa_zonelist_order);
-> -
->  char numa_zonelist_order[] = "Node";
->  
->  /*
-> -- 
-> 2.25.1
-> 
+That's likely true of the AR8031 situation as well.
+
+I can't speak for any of the others.
 
 -- 
-Kees Cook
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
