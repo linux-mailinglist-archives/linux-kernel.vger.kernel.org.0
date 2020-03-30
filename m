@@ -2,127 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E281987EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 060A31987F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbgC3XRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 19:17:51 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:37687 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728876AbgC3XRv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 19:17:51 -0400
-Received: by mail-il1-f193.google.com with SMTP id a6so17634628ilr.4;
-        Mon, 30 Mar 2020 16:17:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BTXjifd7ocglD8FboIBeR1N5hRHtq0vpT75Dg952cWQ=;
-        b=IxTjHjqDhMsozwd2HNXFbYcM2Rc1oO/xdRR3vMNh187q0tjc7XmpjiX0MCC8EPQoZG
-         O5+wyoD2ghu4Lq0M6/sgetwEHT69BgZrvpYWHeGVbyFlAMU4+CVPGcA2Y7wH27191HZU
-         nSDqmNLZoBWA4v0e+1lus0q75C8n+CB+i+HlJcO0hM80nja2VxWCkmNbhXL469jNQxSm
-         5dw8OC0VgAkhtPdULC8cDanANbJENlI970Bky5MLIyz56UX7UbNAO1Ljss56mBKWOAsk
-         bn8G6FgemD2x4cki9mn2JVFQG2gQ+liB8FCxPWfh1jc4JaIjGKFOBqkzkyyN3bcX37Oh
-         0Rlw==
-X-Gm-Message-State: ANhLgQ2QsdVkKJUvcwYe8aTrx2XhtPMXzHE66iefGyWonNcMpW3l/2mK
-        qBP+dDt4ME2CpObdnLKfgw==
-X-Google-Smtp-Source: ADFU+vt94dHL8ZNH73PSwCvVDGJWSHYvQZp10YVT6AUavcgqdGX/LdcbPXO/CeDpMSVuIc6hSx48Og==
-X-Received: by 2002:a92:d0c7:: with SMTP id y7mr13779079ila.56.1585610269995;
-        Mon, 30 Mar 2020 16:17:49 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id j1sm4600895iok.2.2020.03.30.16.17.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 16:17:49 -0700 (PDT)
-Received: (nullmailer pid 12466 invoked by uid 1000);
-        Mon, 30 Mar 2020 23:17:48 -0000
-Date:   Mon, 30 Mar 2020 17:17:48 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     heiko@sntech.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 1/2] dt-bindings: sram: convert rockchip-pmu-sram
- bindings to yaml
-Message-ID: <20200330231748.GA10021@bogus>
-References: <20200319161159.24548-1-jbx6244@gmail.com>
+        id S1729408AbgC3XTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 19:19:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728880AbgC3XTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 19:19:52 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5FE720675;
+        Mon, 30 Mar 2020 23:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585610391;
+        bh=knMGEU53xC+KPtKJP1jsuRoJ7sa4gkeHaJVEPUc4f7Y=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=U5XF6eygiF8K/M6F+FMs3jEOjwHcIgGS9MuHISkDZX3KyqITcsD8Xs1yD+UVKVXGM
+         tHl5zq4QhbfFv04/h+wmlll0DUgUESlTLoM1jqIkVs9LBv9cVPtQVTw1oM7Js11ZuJ
+         zKnLUqTXu2m7dAXVATi7QmOizyd+rO8Af/b1+3P0=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 80B403523140; Mon, 30 Mar 2020 16:19:51 -0700 (PDT)
+Date:   Mon, 30 Mar 2020 16:19:51 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Maddie Stone <maddiestone@google.com>,
+        Marco Elver <elver@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [RFC PATCH 07/21] Revert "list: Use WRITE_ONCE() when adding to
+ lists and hlists"
+Message-ID: <20200330231951.GB19865@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200324153643.15527-1-will@kernel.org>
+ <20200324153643.15527-8-will@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200319161159.24548-1-jbx6244@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200324153643.15527-8-will@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 05:11:58PM +0100, Johan Jonker wrote:
-> Current dts files with 'rockchip-pmu-sram' compatible nodes
-> are now verified with sram.yaml, although the original
-> text document still exists. Merge rockchip-pmu-sram.txt
-> with sram.yaml by adding it as description with an example.
+On Tue, Mar 24, 2020 at 03:36:29PM +0000, Will Deacon wrote:
+> This reverts commit 1c97be677f72b3c338312aecd36d8fff20322f32.
 > 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> There is no need to use WRITE_ONCE() for the non-RCU list and hlist
+> implementations.
+> 
+> Cc: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Will Deacon <will@kernel.org>
+
+Which means that the lockless uses of hlist_empty() will also need
+attention, correct?
+
+							Thanx, Paul
+
 > ---
-> Not tested with hardware.
+>  include/linux/list.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> Changed v2:
->   Merge with sram.yaml
-> ---
->  .../devicetree/bindings/sram/rockchip-pmu-sram.txt       | 16 ----------------
->  Documentation/devicetree/bindings/sram/sram.yaml         | 13 +++++++++++++
->  2 files changed, 13 insertions(+), 16 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt b/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
-> deleted file mode 100644
-> index 6b42fda30..000000000
-> --- a/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
-> +++ /dev/null
-> @@ -1,16 +0,0 @@
-> -Rockchip SRAM for pmu:
-> -------------------------------
-> -
-> -The sram of pmu is used to store the function of resume from maskrom(the 1st
-> -level loader). This is a common use of the "pmu-sram" because it keeps power
-> -even in low power states in the system.
-> -
-> -Required node properties:
-> -- compatible : should be "rockchip,rk3288-pmu-sram"
-> -- reg : physical base address and the size of the registers window
-> -
-> -Example:
-> -	sram@ff720000 {
-> -		compatible = "rockchip,rk3288-pmu-sram", "mmio-sram";
-> -		reg = <0xff720000 0x1000>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
-> index 7b83cc6c9..a9b1c2b74 100644
-> --- a/Documentation/devicetree/bindings/sram/sram.yaml
-> +++ b/Documentation/devicetree/bindings/sram/sram.yaml
-> @@ -224,6 +224,19 @@ examples:
->      };
+> diff --git a/include/linux/list.h b/include/linux/list.h
+> index ec1f780d1449..c7331c259792 100644
+> --- a/include/linux/list.h
+> +++ b/include/linux/list.h
+> @@ -70,7 +70,7 @@ static inline void __list_add(struct list_head *new,
+>  	next->prev = new;
+>  	new->next = next;
+>  	new->prev = prev;
+> -	WRITE_ONCE(prev->next, new);
+> +	prev->next = new;
+>  }
 >  
->    - |
-> +    // Rockchip's rk3288 SoC uses the sram of pmu to store the function of
-> +    // resume from maskrom(the 1st level loader). This is a common use of
-> +    // the "pmu-sram" because it keeps power even in low power states
-> +    // in the system.
-> +    sram@ff720000 {
-> +      compatible = "rockchip,rk3288-pmu-sram", "mmio-sram";
-
-You need to document the compatible.
-
-> +      reg = <0xff720000 0x1000>;
-> +      #address-cells = <1>;
-> +      #size-cells = <1>;
-> +      ranges = <0 0xff720000 0x1000>;
-> +    };
-> +
-> +  - |
->      // Allwinner's A80 SoC uses part of the secure sram for hotplugging of the
->      // primary core (cpu0). Once the core gets powered up it checks if a magic
->      // value is set at a specific location. If it is then the BROM will jump
+>  /**
+> @@ -843,7 +843,7 @@ static inline void hlist_add_head(struct hlist_node *n, struct hlist_head *h)
+>  	n->next = first;
+>  	if (first)
+>  		first->pprev = &n->next;
+> -	WRITE_ONCE(h->first, n);
+> +	h->first = n;
+>  	n->pprev = &h->first;
+>  }
+>  
+> @@ -858,7 +858,7 @@ static inline void hlist_add_before(struct hlist_node *n,
+>  	n->pprev = next->pprev;
+>  	n->next = next;
+>  	next->pprev = &n->next;
+> -	WRITE_ONCE(*(n->pprev), n);
+> +	*(n->pprev) = n;
+>  }
+>  
+>  /**
 > -- 
-> 2.11.0
+> 2.20.1
 > 
