@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D93919983B
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 16:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7D4919985C
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 16:25:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730857AbgCaOPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 10:15:24 -0400
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:55074 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730466AbgCaOPX (ORCPT
+        id S1730883AbgCaOZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 10:25:25 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45485 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729891AbgCaOZY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 10:15:23 -0400
-Received: by mail-pj1-f66.google.com with SMTP id np9so1124692pjb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 07:15:23 -0700 (PDT)
+        Tue, 31 Mar 2020 10:25:24 -0400
+Received: by mail-pg1-f195.google.com with SMTP id o26so10398215pgc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 07:25:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=zTyZUZyP+zXDM17uOl5EO7jnuzHUmLuralf0hD1C7uQ=;
-        b=X+fgDi3MlKSPCh2sgIYL+gkLlsZfyMGWwuidp67Y/1xJSJpN6GiCrcKj4vscCntt5X
-         AsoSD/y4zBkHXejpqSRnno4P4EIdp8HhS1WuvfQUKvsUfsyvyJIqVP5BNhp1WI9YXqSe
-         Z6QL0bcqJwst77oznDjNOVFNBeNpNp6rUlFeQ=
+        bh=zFezxGPsyLpYhR0ox7KaSCSsmOf9Nv4P7a8TQy3AEWA=;
+        b=kui63y9FrsIxlmLnNNmwJXRNc4d5KtuCI1cHY11sSFYq2KfwtdcIa936YyorHFthi2
+         u51IRjzHkfjRWkdg1nOlfPmBiFRpfWsRggkVi8wPGm7uCexv7iA+C+qluXeiGIDUXryq
+         k1YhMeoXHScS5YyYxvg51WLdW+V/wYDY0fkl4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=zTyZUZyP+zXDM17uOl5EO7jnuzHUmLuralf0hD1C7uQ=;
-        b=YvBjd9LKmw8vy4V3i2GhoVm3R3ZQ7NwM0slfJ4Yr2/QU80g60CBH52lhKaeoxq818O
-         Zg+ptt7gcfFBnjCUfxkYkX//AjmVYcBV5BVQtORcr6p2MT6Y3RzpvRG7jieEOfZWbaUH
-         HyeCF3mH+otb2MKvJ+EaXhS5hoAVyvg+inn35j7lnrf2vBXN0RaEyvDeNNyl6wuXtTcc
-         g28dYaBPH5j1FXtEW7/AqkPjGX5LgxGoi6CMSDDQQZYOkRq5yuh2d01b/dUAhVRHUp2q
-         q2ZYUm/JsyK/gJU4u0hatUrfX7cKlEPrS2TOJ0HPa/j+m8NLIHRVqVCa84Fd4+MeAxEW
-         TvSw==
-X-Gm-Message-State: AGi0Pub3z0MZtxLpXRs05zSXzW+foHPF7l1yoPcBOL2LeBSQ+mCAt2Fl
-        zuBOiLr9sxbniS3KsrGv9eKzfw==
-X-Google-Smtp-Source: APiQypIT3n7KLf8ko7LebvhJ17T7gGW5sDePBsyltHCF4aEdKZNxQ/m3qhCvFd7PBcLmqZTusgipUw==
-X-Received: by 2002:a17:90a:202f:: with SMTP id n44mr4330392pjc.150.1585664122467;
-        Tue, 31 Mar 2020 07:15:22 -0700 (PDT)
+        bh=zFezxGPsyLpYhR0ox7KaSCSsmOf9Nv4P7a8TQy3AEWA=;
+        b=nmrHlSA6nEzsyq93yDhewVFkPofAJquWxTwPUJnOMh3Uxocf2VKeEJHMXu5anIRlFm
+         rUt79+lInxY6F9bvyPGd/AIcrSmBUad4Vwd6zfqyJEe0Mm5vDbukpBfkCzKuz0CY0Qeu
+         RhoEM+ADnZyFLNiA1Mq5ZraX5NZIFfBHVJUanKIeSCD5GHcU/jvXqY5Dkrz9wpK3Lv9Y
+         jUbcNOylSVp4dwhmpoTVZ2Wb6KuwRgLUM9xP+5AFThrRP0nkmp15tprODc7OXfUiOzVx
+         HfZQ0nvjzW14fKmUQN8Et/2xwxTzktCIJtAxjXHKCIh3If/kCYjfcGQ1mGzEoKgn2cZn
+         vsng==
+X-Gm-Message-State: ANhLgQ2hN/yLSMKfs54LoKZ6SNnUYj4JgDUmL7dmPffrHWQdgOg6CA0Q
+        ftmNuIWA/5hxkw8giAdwpmXJrA==
+X-Google-Smtp-Source: ADFU+vtkTDKkSRJvhWJLA7hYxbwYlTJ0X4a7SDipA3reIPvc6zMuV2c0VM5b15ltd1k0YTjdeBT8eQ==
+X-Received: by 2002:a62:8f0c:: with SMTP id n12mr18284422pfd.226.1585664721989;
+        Tue, 31 Mar 2020 07:25:21 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c10sm5076661pgh.48.2020.03.31.07.15.20
+        by smtp.gmail.com with ESMTPSA id v42sm11945357pgn.6.2020.03.31.07.25.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 07:15:21 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 11:18:40 -0700
+        Tue, 31 Mar 2020 07:25:21 -0700 (PDT)
+Date:   Mon, 30 Mar 2020 11:27:19 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Mark Rutland <mark.rutland@arm.com>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -60,7 +60,7 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2 3/5] stack: Optionally randomize kernel stack offset
  each syscall
-Message-ID: <202003301116.081DB02@keescook>
+Message-ID: <202003301122.354B722@keescook>
 References: <20200324203231.64324-1-keescook@chromium.org>
  <20200324203231.64324-4-keescook@chromium.org>
  <20200330112536.GD1309@C02TD0UTHF1T.local>
@@ -95,9 +95,29 @@ On Mon, Mar 30, 2020 at 12:25:36PM +0100, Mark Rutland wrote:
 > constraints generate metter code, could we add those as alternative
 > constraints in OPTIMIZER_HIDE_VAR() ?
 
-Hah, yes, it is. And this produces identical asm, so I've replaced it
-with OPTIMIZER_HIDE_VAR() now. Now if I could figure out how to hide it
-from stack protector. :(
+Er, no, sorry, not the same. I disassembled the wrong binary. :)
+
+With     asm volatile("" : "=m"(*ptr))
+
+ffffffff810038bc:       48 8d 44 24 0f          lea    0xf(%rsp),%rax
+ffffffff810038c1:       48 83 e0 f0             and    $0xfffffffffffffff0,%rax
+
+
+With   __asm__ ("" : "=r" (var) : "0" (var))
+
+ffffffff810038bc:       48 8d 54 24 0f          lea    0xf(%rsp),%rdx
+ffffffff810038c1:       48 83 e2 f0             and    $0xfffffffffffffff0,%rdx
+ffffffff810038c5:       0f b6 02                movzbl (%rdx),%eax
+ffffffff810038c8:       88 02                   mov    %al,(%rdx)
+
+
+It looks like OPTIMIZER_HIDE_VAR() is basically just:
+
+	var = var;
+
+In the former case, we avoid the write and retain the allocation. So I
+think don't think OPTIMIZER_HIDE_VAR() should be used here, nor should
+OPTIMIZER_HIDE_VAR() be changed to remove the "0" (var) bit.
 
 -- 
 Kees Cook
