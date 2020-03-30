@@ -2,75 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28F4F198321
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:14:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 626DC19832D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:16:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbgC3SOm convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Mar 2020 14:14:42 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:22606 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726017AbgC3SOm (ORCPT
+        id S1728167AbgC3SQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 14:16:31 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:50009 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726017AbgC3SQb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 14:14:42 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-228-Uzzyp6fHP5iCb0krCcGUIQ-1; Mon, 30 Mar 2020 19:14:38 +0100
-X-MC-Unique: Uzzyp6fHP5iCb0krCcGUIQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 30 Mar 2020 19:14:38 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 30 Mar 2020 19:14:38 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Steven Rostedt' <rostedt@goodmis.org>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: ftrace not showing the process names for all processes on syscall
- events
-Thread-Topic: ftrace not showing the process names for all processes on
- syscall events
-Thread-Index: AdYGnj+cWqFtVCqqTmCXgoqvHM5xrf///P+A///qkvCAAEdbAP//7aKg
-Date:   Mon, 30 Mar 2020 18:14:37 +0000
-Message-ID: <ffd8aa59d88146fbb5a4cb02ea9b7440@AcuMS.aculab.com>
-References: <3cdef49951734e83a14959628233d4f0@AcuMS.aculab.com>
-        <20200330110855.437fe854@gandalf.local.home>
-        <7dec110c2dc14792ba744419a4eb907e@AcuMS.aculab.com>
- <20200330140736.4b5f1667@gandalf.local.home>
-In-Reply-To: <20200330140736.4b5f1667@gandalf.local.home>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 30 Mar 2020 14:16:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585592189;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=7DjDFsYHR6g0Apa3zR6vDBd2N+92jMQpUXuk9YaC+4o=;
+        b=XvRlLVJmT+5KKxuS1Fou/4b0ZUE1kJhtqq1ganLm1aTraR0DxFrGjdpUnEa+C6nkp8jRbq
+        9Yyq0sSfal+kti+wZQ1SkiE4RTah9s0ukhVyPKEgbEBvdsCTwePXemXOO886nZjnL5puYb
+        40NwwuIxf/V6ys5VhqN2qA8REGYw1T4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-474-MQB-bG8gPSmah6nbFvMhxw-1; Mon, 30 Mar 2020 14:16:26 -0400
+X-MC-Unique: MQB-bG8gPSmah6nbFvMhxw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0694ADB60;
+        Mon, 30 Mar 2020 18:16:25 +0000 (UTC)
+Received: from kasong-rh-laptop.redhat.com (ovpn-12-175.pek2.redhat.com [10.72.12.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9806797B01;
+        Mon, 30 Mar 2020 18:16:19 +0000 (UTC)
+From:   Kairui Song <kasong@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Young <dyoung@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org, Kairui Song <kasong@redhat.com>
+Subject: [PATCH] crash_dump: remove saved_max_pfn
+Date:   Tue, 31 Mar 2020 02:15:44 +0800
+Message-Id: <20200330181544.1595733-1-kasong@redhat.com>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt
-> Sent: 30 March 2020 19:08
-> On Mon, 30 Mar 2020 15:34:08 +0000
-> David Laight <David.Laight@ACULAB.COM> wrote:
-> 
-> > Oh, does the 'function_graph' code ignore tail calls?
-> 
-> Yes and no ;-)  It works by dumb luck. As it was a year after function
-> graph tracing was live (some time in 2010 I believe) that someone brought
-> up tail calls, and I had to take a look at how it never crashed, and was
-> surprised that it "just worked". Here's a summary:
+This variable is no longer used.
 
-'Dumb luck' seems to be failing me :-)
-I'll look more closely tomorrow.
+saved_max_pfn was originally introduce in commit 92aa63a5a1bf ("[PATCH]
+kdump: Retrieve saved max pfn"), used to make sure that user does not
+try to read the physical memory beyond saved_max_pfn. But since
+commit 921d58c0e699 ("vmcore: remove saved_max_pfn check")
+it's no longer used for the check.
 
-	David
+Only user left is Calary IOMMU, which start using it from
+commit 95b68dec0d52 ("calgary iommu: use the first kernels TCE tables
+in kdump"). But again, recently in commit 90dc392fc445 ("x86: Remove
+the calgary IOMMU driver"), Calary IOMMU is removed and this variable
+no longer have any user.
 
+So just remove it.
+
+Signed-off-by: Kairui Song <kasong@redhat.com>
+---
+ arch/x86/kernel/e820.c     | 8 --------
+ include/linux/crash_dump.h | 2 --
+ kernel/crash_dump.c        | 6 ------
+ 3 files changed, 16 deletions(-)
+
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index c5399e80c59c..4d13c57f370a 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -910,14 +910,6 @@ static int __init parse_memmap_one(char *p)
+ 		return -EINVAL;
+=20
+ 	if (!strncmp(p, "exactmap", 8)) {
+-#ifdef CONFIG_CRASH_DUMP
+-		/*
+-		 * If we are doing a crash dump, we still need to know
+-		 * the real memory size before the original memory map is
+-		 * reset.
+-		 */
+-		saved_max_pfn =3D e820__end_of_ram_pfn();
+-#endif
+ 		e820_table->nr_entries =3D 0;
+ 		userdef =3D 1;
+ 		return 0;
+diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
+index 4664fc1871de..bc156285d097 100644
+--- a/include/linux/crash_dump.h
++++ b/include/linux/crash_dump.h
+@@ -97,8 +97,6 @@ extern void unregister_oldmem_pfn_is_ram(void);
+ static inline bool is_kdump_kernel(void) { return 0; }
+ #endif /* CONFIG_CRASH_DUMP */
+=20
+-extern unsigned long saved_max_pfn;
 -
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+ /* Device Dump information to be filled by drivers */
+ struct vmcoredd_data {
+ 	char dump_name[VMCOREDD_MAX_NAME_BYTES]; /* Unique name of the dump */
+diff --git a/kernel/crash_dump.c b/kernel/crash_dump.c
+index 9c23ae074b40..92da32275af5 100644
+--- a/kernel/crash_dump.c
++++ b/kernel/crash_dump.c
+@@ -5,12 +5,6 @@
+ #include <linux/errno.h>
+ #include <linux/export.h>
+=20
+-/*
+- * If we have booted due to a crash, max_pfn will be a very low value. W=
+e need
+- * to know the amount of memory that the previous kernel used.
+- */
+-unsigned long saved_max_pfn;
+-
+ /*
+  * stores the physical address of elf header of crash image
+  *
+--=20
+2.25.1
 
