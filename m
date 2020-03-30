@@ -2,74 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 852F519768C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 10:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6BBC1976BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 10:39:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729672AbgC3Ie6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 04:34:58 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:34520 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729594AbgC3Ie5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 04:34:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585557296;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VI4VJLvwA2Wnz1xcO7Y+Io0RjGUfdGgCzJ2iSp2r2DU=;
-        b=iTKn3CoZXapbq49bu6BdujZ63BNuVMTASDQi53Sb/KRfXsKAnlLtu0w2LLe86R8Fuk4o8m
-        SDO4NDDL7a8iWmTT5RBKLafolQ/s6rBNxbXw/o4bR79jYkGnJDhlZXu9dBIzheT16N74Rc
-        2sS3JH3vNhwWdVYpCRhJwHMsRC/CMXo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-191-VzhFc2_pNWWc7DodrKjNHA-1; Mon, 30 Mar 2020 04:34:52 -0400
-X-MC-Unique: VzhFc2_pNWWc7DodrKjNHA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6191E8010C8;
-        Mon, 30 Mar 2020 08:34:50 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.195.36])
-        by smtp.corp.redhat.com (Postfix) with SMTP id ACE89100EBAF;
-        Mon, 30 Mar 2020 08:34:47 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon, 30 Mar 2020 10:34:50 +0200 (CEST)
-Date:   Mon, 30 Mar 2020 10:34:46 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Adam Zabrocki <pi3@pi3.com.pl>, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>
-Subject: Re: Curiosity around 'exec_id' and some problems associated with it
-Message-ID: <20200330083446.GA13522@redhat.com>
-References: <20200324215049.GA3710@pi3.com.pl>
- <202003291528.730A329@keescook>
+        id S1729813AbgC3Ijl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 04:39:41 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37168 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729399AbgC3Ijl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 04:39:41 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 915F798D24ABF315CD1B;
+        Mon, 30 Mar 2020 16:39:35 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.487.0; Mon, 30 Mar 2020
+ 16:39:27 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <wangzhou1@hisilicon.com>, <Jonathan.Cameron@huawei.com>,
+        <xuzaibo@huawei.com>, <shiju.jose@huawei.com>,
+        <ebiggers@google.com>, <yaohongbo@huawei.com>,
+        <maowenan@huawei.com>, <arnd@arndb.de>
+CC:     <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] crypto: hisilicon - Fix build error
+Date:   Mon, 30 Mar 2020 16:36:43 +0800
+Message-ID: <20200330083643.28824-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202003291528.730A329@keescook>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/29, Kees Cook wrote:
->
-> On Tue, Mar 24, 2020 at 10:50:49PM +0100, Adam Zabrocki wrote:
-> >
-> > In short, if you hold the file descriptor open over an execve() (e.g. share it
-> > with child) the old VM is preserved (refcounted) and might be never released.
-> > Essentially, mother process' VM will be still in memory (and pointer to it is
-> > valid) even if the mother process passed an execve().
+When UACCE is m, CRYPTO_DEV_HISI_QM cannot be built-in.
+But CRYPTO_DEV_HISI_QM is selected by CRYPTO_DEV_HISI_SEC2
+and CRYPTO_DEV_HISI_HPRE unconditionally, which may leads this:
 
-This was true after e268337dfe26dfc7efd422a804dbb27977a3cccc, but please see
-6d08f2c7139790c ("proc: make sure mem_open() doesn't pin the target's memory"),
-iir it was merged soon after the 1st commit.
+drivers/crypto/hisilicon/qm.o: In function 'qm_alloc_uacce':
+drivers/crypto/hisilicon/qm.c:1579: undefined reference to 'uacce_alloc'
 
-Oleg.
+Add Kconfig dependency to enforce usable configurations.
+
+Fixes: 47c16b449921 ("crypto: hisilicon - qm depends on UACCE")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/crypto/hisilicon/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
+index 095850d01dcc..f09c6cf7823e 100644
+--- a/drivers/crypto/hisilicon/Kconfig
++++ b/drivers/crypto/hisilicon/Kconfig
+@@ -27,6 +27,7 @@ config CRYPTO_DEV_HISI_SEC2
+ 	select CRYPTO_SHA256
+ 	select CRYPTO_SHA512
+ 	depends on PCI && PCI_MSI
++	depends on UACCE || UACCE=n
+ 	depends on ARM64 || (COMPILE_TEST && 64BIT)
+ 	help
+ 	  Support for HiSilicon SEC Engine of version 2 in crypto subsystem.
+@@ -58,6 +59,7 @@ config CRYPTO_DEV_HISI_ZIP
+ config CRYPTO_DEV_HISI_HPRE
+ 	tristate "Support for HISI HPRE accelerator"
+ 	depends on PCI && PCI_MSI
++	depends on UACCE || UACCE=n
+ 	depends on ARM64 || (COMPILE_TEST && 64BIT)
+ 	select CRYPTO_DEV_HISI_QM
+ 	select CRYPTO_DH
+-- 
+2.17.1
+
 
