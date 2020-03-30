@@ -2,89 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD4D61978A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 12:16:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C99041978A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 12:16:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbgC3KQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 06:16:27 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:40258 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728779AbgC3KQ0 (ORCPT
+        id S1729147AbgC3KQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 06:16:44 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53612 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728257AbgC3KQn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 06:16:26 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585563385; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=dQ1l+GSDnoNwDcUL5xl5hNd2b9ut5PAeUZvxWUY9fYw=; b=Lw6rh29BXsmZBTjb9LerZw3aMmoxmXca3HTMgTx4+lF2nttyinuYF5KYx6KmuAowBvcCdHVo
- s4PMdeYK8KPy112ZSxN6bwjuOUg6qm8cgZ5NRi15wvBzWjAEmH82zHVZOiwXwq3GtcRr+Fu8
- 8bNELo1qD1be9DG6y0MJ2i/MUuU=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e81c6f2.7f961592a030-smtp-out-n05;
- Mon, 30 Mar 2020 10:16:18 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8E885C44788; Mon, 30 Mar 2020 10:16:18 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from x230.qca.qualcomm.com (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 088BFC433F2;
-        Mon, 30 Mar 2020 10:16:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 088BFC433F2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Jaehoon Chung <jh80.chung@samsung.com>,
-        "open list\:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
-        "open list\:BROADCOM BRCM80211 IEEE802.11n WIRELESS DRIVER" 
-        <brcm80211-dev-list.pdl@broadcom.com>,
-        brcm80211-dev-list@cypress.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>
-Subject: Re: [PATCH] brcmfmac: fix wrong location to get firmware feature
-References: <CGME20200330052521epcas1p1eedc926d4b11513f8502cf0c90ecf433@epcas1p1.samsung.com>
-        <20200330052528.10503-1-jh80.chung@samsung.com>
-        <CAHp75Vey9VUSAT6j6NTSXqNUK1vwSqY=aSx3-WPoXgxCK33SDg@mail.gmail.com>
-Date:   Mon, 30 Mar 2020 13:16:12 +0300
-In-Reply-To: <CAHp75Vey9VUSAT6j6NTSXqNUK1vwSqY=aSx3-WPoXgxCK33SDg@mail.gmail.com>
-        (Andy Shevchenko's message of "Mon, 30 Mar 2020 12:08:27 +0300")
-Message-ID: <87r1xaf8r7.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 30 Mar 2020 06:16:43 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1jIrTD-00028t-B3; Mon, 30 Mar 2020 10:16:39 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: ethernet: ti: fix spelling mistake "rundom" -> "random"
+Date:   Mon, 30 Mar 2020 11:16:39 +0100
+Message-Id: <20200330101639.161268-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy Shevchenko <andy.shevchenko@gmail.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Mon, Mar 30, 2020 at 8:26 AM Jaehoon Chung <jh80.chung@samsung.com> wrote:
->>
->> sup_wpa feature is getting after setting feature_disable flag.
->> If firmware is supported sup_wpa feature,  it's always enabled
->> regardless of feature_disable flag.
->>
->
->> Fixes: b8a64f0e96c2 ("brcmfmac: support 4-way handshake offloading for WPA/WPA2-PSK")
->>
->> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->
-> No blank line in between. (Dunno if you need to resend, just wait what
-> maintainer says)
+There is a spelling mistake in a dev_err error message. Fix it.
 
-I can fix that during commit, no need to resend because of this.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+index 97f7385c6741..f71c15c39492 100644
+--- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
++++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+@@ -1627,7 +1627,7 @@ static int am65_cpsw_nuss_init_slave_ports(struct am65_cpsw_common *common)
+ 							   port->slave.mac_addr) ||
+ 			   !is_valid_ether_addr(port->slave.mac_addr)) {
+ 			random_ether_addr(port->slave.mac_addr);
+-			dev_err(dev, "Use rundom MAC address\n");
++			dev_err(dev, "Use random MAC address\n");
+ 		}
+ 	}
+ 	of_node_put(node);
 -- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.25.1
+
