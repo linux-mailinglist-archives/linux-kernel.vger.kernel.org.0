@@ -2,67 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8748C198681
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 23:29:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3CE1198685
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 23:30:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728955AbgC3V3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 17:29:05 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59801 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728715AbgC3V3F (ORCPT
+        id S1728997AbgC3Vad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 17:30:33 -0400
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:35211 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728047AbgC3Vad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 17:29:05 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jJ1xv-0006Am-UG; Mon, 30 Mar 2020 23:29:04 +0200
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 56365101175; Mon, 30 Mar 2020 23:29:02 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>,
-        "devi R.K" <devi.feb27@gmail.com>
-Cc:     mtk.manpages@gmail.com, linux-man@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>, arul.jeniston@gmail.com
-Subject: Re: [PATCH] timerfd_create.2: Included return value 0
-In-Reply-To: <d79b3520-77ac-199e-6576-ab9f235ac297@gmail.com>
-References: <CAJymdbxJNag1W0vR9Ysm7_y91HwLAu4QaSMKZbed4emT1DYvww@mail.gmail.com> <55aa30be-5894-ae52-ffd4-5f2a82aa5ad5@gmail.com> <CAJymdbwfm7EypQfXRqWZHbfj2SKk7PCP7SMccz6bmJWSauDqPQ@mail.gmail.com> <CAJymdby8pDASq5Xv7DeTJ5cq1NXPe1jUWwApxZ5o-huaEXUrjw@mail.gmail.com> <3cbd0919-c82a-cb21-c10f-0498433ba5d1@gmail.com> <87a73ywzbv.fsf@nanos.tec.linutronix.de> <d79b3520-77ac-199e-6576-ab9f235ac297@gmail.com>
-Date:   Mon, 30 Mar 2020 23:29:02 +0200
-Message-ID: <87wo71v8f5.fsf@nanos.tec.linutronix.de>
+        Mon, 30 Mar 2020 17:30:33 -0400
+Received: by mail-qv1-f65.google.com with SMTP id q73so9809574qvq.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 14:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ujlgDVeN5WyrhvReWMSTseHg6eFfL+O6R8lZN6GeKTM=;
+        b=Hh9Gj3cjpAEvef4tflsauVD4dbbVc+yk4Aml3cvvrfQro5VAcFEtrSB4KE8ManSdfD
+         THxmy22AdlPLQjCHWdsbQZVFUqS/IKWpxWKuX0ofapv2cddfTHHq56tMRWhfLtRgYTDb
+         n5Rix9EJBGmjk+QHAnixLL1bER0FH7qMYwtd0m3NI+bpxp01r73tAivtFSicTRhnFS8Z
+         AL4B4YZI5lAlDLXKl68w2hbZzRpIk5VZp2eualX7vJF6AL1voR3hUyC8xN1a7ANmD2RG
+         G1nQR/tpRBkm/5Xaveh6g8OmIi3pLr78b/CtQEyZ14nT83jWLfXfiwD1/yREzDognI48
+         2pfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ujlgDVeN5WyrhvReWMSTseHg6eFfL+O6R8lZN6GeKTM=;
+        b=uYcFGZ10Oj2R2RhIrlre8vy9RqUqANPqYwtzpL3VcIodLjr58gjmCTi5PCLWXiC3oa
+         FEBUG/IuVHoZdePjlByjesYzmh130Qt39WXxdARJdqi6g8l91+3EV6Q+QIH3SUfd6JBe
+         3nWvxW4/vfRyK0UW9FVBGRpHkY8FlnPnXTDnYcGJOaG+4pPVqiOanuxzu+if9CMHISZP
+         B4sII/YXRU/+jzZVlUIlml3PP1eUanazypCt0a+GCipWrJDU1XmKDBmpT20mkuc2MAnF
+         ipo2CQKMLGxeKBU6aDNjLZF+vi16J0Y2KcL7+aqMfjpSUxILAw7JGHy1sTz6yU3VhKPS
+         m+Fw==
+X-Gm-Message-State: ANhLgQ3jfawLNnW0QpPP9fGrjcie/a7OFElcDHGiWx2+Ywh9bFU2EgT1
+        AQsd9tkmoRFpt+APx3neu5tSiA==
+X-Google-Smtp-Source: ADFU+vtUbDg0A+atghZynr7NWxbJSLnJ1NzuOveWDW+Bue0PEFUbXdkQR+ayO1N1b0P2hqN3LYPyNA==
+X-Received: by 2002:a05:6214:11ec:: with SMTP id e12mr14079090qvu.89.1585603831347;
+        Mon, 30 Mar 2020 14:30:31 -0700 (PDT)
+Received: from ovpn-66-6.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id l42sm11916908qtf.51.2020.03.30.14.30.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Mar 2020 14:30:30 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     peterz@infradead.org, mingo@redhat.com
+Cc:     will@kernel.org, dbueso@suse.de, juri.lelli@redhat.com,
+        longman@redhat.com, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH -next v2] locking/percpu-rwsem: fix a task_struct refcount
+Date:   Mon, 30 Mar 2020 17:30:02 -0400
+Message-Id: <20200330213002.2374-1-cai@lca.pw>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Micheal,
+The commit 7f26482a872c ("locking/percpu-rwsem: Remove the embedded
+rwsem") introduced some task_struct memory leaks due to messing up with
+a task_struct refcount. At the beginning of
+percpu_rwsem_wake_function(), it calls get_task_struct(), but if the
+trylock failed, it will remain in the waitqueue. However, it will run
+percpu_rwsem_wake_function() again with get_task_struct() to increase
+the refcount but then only call put_task_struct() once the trylock
+succeeded.
 
-"Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com> writes:
-> On 3/30/20 12:50 AM, Thomas Gleixner wrote:
->> That's the reason why I rejected the attempt to mitigate that particular
->> 0 tick issue in timerfd as it would just scratch a particular itch but
->> still not provide any guarantee. So having the '0' return documented is
->> the right way to go.
->
-> Thanks for the incredibly detailed follow-up Thomas (which all 
-> landed in my commit message). I've applied a patch almost exactly
-> the same as the text I showed above (and it's pushed to Git).
+Fix it by adjusting percpu_rwsem_wake_function() a bit to guard against
+when percpu_rwsem_wait() observing !private, terminating the wait and
+doing a quick exit() while percpu_rwsem_wake_function() then doing
+wake_up_process(p) as a use-after-free.
 
-  "timerfd_create.2: Negetive..."
+Fixes: 7f26482a872c ("locking/percpu-rwsem: Remove the embedded rwsem")
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ kernel/locking/percpu-rwsem.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-That first word after the colon looks weird :)
+diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
+index a008a1ba21a7..8bbafe3e5203 100644
+--- a/kernel/locking/percpu-rwsem.c
++++ b/kernel/locking/percpu-rwsem.c
+@@ -118,14 +118,15 @@ static int percpu_rwsem_wake_function(struct wait_queue_entry *wq_entry,
+ 				      unsigned int mode, int wake_flags,
+ 				      void *key)
+ {
+-	struct task_struct *p = get_task_struct(wq_entry->private);
+ 	bool reader = wq_entry->flags & WQ_FLAG_CUSTOM;
+ 	struct percpu_rw_semaphore *sem = key;
++	struct task_struct *p;
+ 
+ 	/* concurrent against percpu_down_write(), can get stolen */
+ 	if (!__percpu_rwsem_trylock(sem, reader))
+ 		return 1;
+ 
++	p = get_task_struct(wq_entry->private);
+ 	list_del_init(&wq_entry->entry);
+ 	smp_store_release(&wq_entry->private, NULL);
+ 
+-- 
+2.21.0 (Apple Git-122.2)
 
->> All of 2020 is a bust, I expect. Perhaps we see us at a conference
-> in 2021 ;-).
-
-Let's see how that evolves and in the worst case we can meet for a beer
-once we gained antibodies one way or the other. For now let's stay safe
-and all I can offer is a virtual 'Prosit' :)
-
-Thanks,
-
-        tglx
