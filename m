@@ -2,81 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14D2F197F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:50:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6B4F197EF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:49:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728967AbgC3OuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 10:50:16 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59023 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728376AbgC3OuB (ORCPT
+        id S1728355AbgC3Ots (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 10:49:48 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34037 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbgC3Ots (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 10:50:01 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jIvjj-0006uq-5Z; Mon, 30 Mar 2020 16:49:59 +0200
-Received: from nanos.tec.linutronix.de (localhost [IPv6:::1])
-        by nanos.tec.linutronix.de (Postfix) with ESMTP id BC3CA1040EC;
-        Mon, 30 Mar 2020 16:49:58 +0200 (CEST)
-Date:   Mon, 30 Mar 2020 14:47:16 -0000
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] x86/timers for v5.7
-References: <158557962955.22376.9136086165862170511.tglx@nanos.tec.linutronix.de>
-Message-ID: <158557963678.22376.17697748296819329736.tglx@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 30 Mar 2020 10:49:48 -0400
+Received: by mail-pl1-f193.google.com with SMTP id a23so6821794plm.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 07:49:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wxokKJDNKMFQP8TduvPKlZRyw/xvX4p8PZKE/poLUcs=;
+        b=BI2bXz9JW0Ja3fmTC65vw+5yLxMHKax69XlM02QwBhthxk9ja8mnYC9qep7ffRQon5
+         9GpkYJeJDkAUXFRUfBvrqYVeqpKygk9VElxZDgpdD3oEtfeMhJHZqqyL3gvel4R3CR9E
+         C2n+feDGjeSD9ogfLWGTZZCf7TuF1UcFkTzGQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wxokKJDNKMFQP8TduvPKlZRyw/xvX4p8PZKE/poLUcs=;
+        b=rUw5fxottQuzfWvf99XTDp245aCF2d7xlPRsyVZd72Q4CLaNdb1pP0mWceqHMonggy
+         XYK4P9yEGYsuTAkR6VFn8y6CY/70MOnxe56kPaJ2A3CkDgg4njOe7CG6hb9oqW8vteNc
+         4p+X1fv+pVFbqWpWM843s35BEeYd/EXMEWl6CDDfDxLuq9hOnOpdS3QIoBjRUI9iLBU2
+         2KshlbFpOWjl7JlQT7y7chFW9JyGlOA/EAzF9bEjYh1GAeHbKPlEXoKa7shOOdUsx0w6
+         E175drtlenuHbPbGtTNCkkjS93NIPRqP92XJgoPxyHR+yqUWdM5waCztS8xl/XWoUKsl
+         xQww==
+X-Gm-Message-State: ANhLgQ0Sz+CpSCWOcyt/c1p5zkCYW43KacoLZA048SAZ4txN5WukwDLe
+        XUzEcEMK+H46/Xe9sm5mKzujJA==
+X-Google-Smtp-Source: ADFU+vtXgURST9UkxUGS9nBDGF1TSE53YJGFU75fkGqIG44/V0AceUy6aiiUTYuxOtuZm2nXC/glsg==
+X-Received: by 2002:a17:90b:d91:: with SMTP id bg17mr16307893pjb.70.1585579786967;
+        Mon, 30 Mar 2020 07:49:46 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id y198sm1460972pfg.123.2020.03.30.07.49.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 07:49:46 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     axboe@kernel.dk, jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc:     linux-block@vger.kernel.org, groeck@chromium.org,
+        paolo.valente@linaro.org, linux-scsi@vger.kernel.org,
+        sqazi@google.com, Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] blk-mq: Fix two causes of IO stalls found in reboot testing
+Date:   Mon, 30 Mar 2020 07:49:04 -0700
+Message-Id: <20200330144907.13011-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+While doing reboot testing, I found that occasionally my device would
+trigger the hung task detector.  Many tasks were stuck waiting for the
+a blkdev mutex, but at least one task in the system was always sitting
+waiting for IO to complete (and holding the blkdev mutex).  One
+example of a task that was just waiting for its IO to complete on one
+reboot:
 
-please pull the latest x86/timers branch from:
+ udevd           D    0  2177    306 0x00400209
+ Call trace:
+  __switch_to+0x15c/0x17c
+  __schedule+0x6e0/0x928
+  schedule+0x8c/0xbc
+  schedule_timeout+0x9c/0xfc
+  io_schedule_timeout+0x24/0x48
+  do_wait_for_common+0xd0/0x160
+  wait_for_completion_io_timeout+0x54/0x74
+  blk_execute_rq+0x9c/0xd8
+  __scsi_execute+0x104/0x198
+  scsi_test_unit_ready+0xa0/0x154
+  sd_check_events+0xb4/0x164
+  disk_check_events+0x58/0x154
+  disk_clear_events+0x74/0x110
+  check_disk_change+0x28/0x6c
+  sd_open+0x5c/0x130
+  __blkdev_get+0x20c/0x3d4
+  blkdev_get+0x74/0x170
+  blkdev_open+0x94/0xa8
+  do_dentry_open+0x268/0x3a0
+  vfs_open+0x34/0x40
+  path_openat+0x39c/0xdf4
+  do_filp_open+0x90/0x10c
+  do_sys_open+0x150/0x3c8
+  ...
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-timers-2020-03-30
+I've reproduced this on two systems: one boots from an internal UFS
+disk and one from eMMC.  Each has a card reader attached via USB with
+an SD card plugged in.  On the USB-attached SD card is a disk with 12
+partitions (a Chrome OS test image), if it matters.  The system
+doesn't do much with the USB disk other than probe it (it's plugged in
+my system to help me recover).
 
-up to:  fac01d11722c: x86/tsc_msr: Make MSR derived TSC frequency more accurate
+From digging, I believe that there are two separate but related
+issues.  Both issues relate to the SCSI code saying that there is no
+budget.  In one case it seems clear that the blk-mq code should have
+restarted itself.  In another case it seems that we have to make the
+SCSI code kick the queues.
+
+I have done testing with only one or the other of the two patches in
+this series and found that I could still encounter hung tasks if only
+one of the two patches was applied.  This deserves a bit of
+explanation.  To me, it's fairly obvious that the blk-mq wouldn't fix
+the problems talked about in the scsi patch.  However, it's less
+obvious why the scsi patch doesn't fix the problems in
+blk_mq_dispatch_rq_list().  It turns out that it _almost_ does
+(problems become much more rare), but I did manage to get a single
+trace where the "kick" scheduled by the scsi fix happened really
+quickly.  The scheduled kick then ran and found nothing to do.  This
+happened in parallel to a task running in blk_mq_dispatch_rq_list()
+which hadn't gotten around to splicing the list back into
+hctx->dispatch.  This is why we need both fixes or a heavier hammer
+where we always kick whenever two threads request budget at the same
+time.
+
+Most of my testing has been atop Chrome OS 5.4's kernel tree which
+currently has v5.4.27 merged in.  The Chrome OS 5.4 tree also has a
+patch by Salman Qazi, namely ("block: Limit number of items taken from
+the I/O scheduler in one go").  Reverting that patch didn't make the
+hung tasks go away, so I kept it in for most of my testing.
+
+I have also done some testing on mainline Linux (git describe says I'm
+on v5.6-rc7-227-gf3e69428b5e2) even without Salman's patch.  I found
+that I could reproduce the problems there and that traces looked about
+the same as I saw on the downstream branch.  These patches were also
+confirmed to fix the problems on mainline.
+
+Chrome OS is currently setup to use the BFQ scheduler and I found that
+I couldn't reproduce the problems without BFQ.  It's possible that
+other schedulers simply never trip the code sequences I ran into or
+it's possible that the timing was simply different.  One important
+note is that to reproduce the problems the I/O scheduler must have
+returned "true" for has_work() but then dispatch_request() returns
+NULL.  In any case the problems I found do seem to be real problems
+and theoretically should be possible with other schedulers.
+
+I'll insert my usual caveat that I'm sending patches to code that I
+know very little about.  If I'm making a total bozo patch here, please
+help me figure out how I should fix the problems I found in a better
+way.
+
+If you want to see a total ridiculous amount of chatter where I
+stumbled around a whole bunch trying to figure out what was wrong and
+how to fix it, feel free to read <https://crbug.com/1061950>.  I
+promise it will make your eyes glaze over right away if this cover
+letter didn't already do that.
+
+I don't know if these fixes represent a regression of some sort or are
+new.  As per above I could only reproduce with BFQ enabled which makes
+it nearly impossible to go too far back with this.  I haven't listed
+any "Fixes" tags here, but if someone felt it was appropriate to
+backport this to some stable trees that seems like it'd be nice.
+Presumably at least 5.4 stable would make sense.
+
+Thanks to Salman Qazi, Paolo Valente, and Guenter Roeck who spent a
+bunch of time helping me trawl through some of this code and reviewing
+early versions of this patch.
 
 
-x86 timer updates:
+Douglas Anderson (2):
+  blk-mq: In blk_mq_dispatch_rq_list() "no budget" is a reason to kick
+  scsi: core: Fix stall if two threads request budget at the same time
 
-  - A series of commits to make the MSR derived CPU and TSC frequency more
-    accurate.
+ block/blk-mq.c             | 11 ++++++++---
+ drivers/scsi/scsi_lib.c    | 27 ++++++++++++++++++++++++---
+ drivers/scsi/scsi_scan.c   |  1 +
+ include/scsi/scsi_device.h |  2 ++
+ 4 files changed, 35 insertions(+), 6 deletions(-)
 
-    It turned out that the frequency tables which have been taken from the
-    SDM are inaccurate because the SDM provides truncated and rounded
-    values, e.g. 83.3Mhz (83.3333...) or 116.7Mhz (116.6666...).
-
-    This causes time drift in the range of ~1 second per hour
-    (20-30 seconds per day). On some of these SoCs it's not possible to
-    recalibrate the TSC because there is no reference (PIT, HPET) available.
-
-    With some reverse engineering it was established that the possible
-    frequencies are derived from the base clock with fixed multiplier /
-    divider pairs.
-
-    For the CPU models which have a known crystal frequency the kernel now
-    uses multiplier / divider pairs which bring the frequencies closer to
-    reality and fix the observed time drift issues.
-
-Thanks,
-
-	tglx
-
------------------->
-Hans de Goede (3):
-      x86/tsc_msr: Use named struct initializers
-      x86/tsc_msr: Fix MSR_FSB_FREQ mask for Cherry Trail devices
-      x86/tsc_msr: Make MSR derived TSC frequency more accurate
-
-
- arch/x86/kernel/tsc_msr.c | 128 ++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 112 insertions(+), 16 deletions(-)
-
+-- 
+2.26.0.rc2.310.g2932bb562d-goog
 
