@@ -2,142 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5606519802C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 17:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7132198031
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 17:51:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbgC3Puq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 11:50:46 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34503 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729319AbgC3Pup (ORCPT
+        id S1729731AbgC3Pv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 11:51:27 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42268 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727952AbgC3Pv1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 11:50:45 -0400
-Received: by mail-pl1-f195.google.com with SMTP id a23so6892783plm.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 08:50:43 -0700 (PDT)
+        Mon, 30 Mar 2020 11:51:27 -0400
+Received: by mail-pl1-f196.google.com with SMTP id e1so6877028plt.9;
+        Mon, 30 Mar 2020 08:51:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dZsn4EW/SyaRsmueE+/vYE2vemazchjXW/dbHmCRlUs=;
-        b=cbD3U0SWemqC1mmtbV87ewilvyfjJ6wvBrx1Zv9z50jgAf9m1zNNdUG66wXMgyvK6w
-         ZZdtz3wzvXNip6aIDfmUPWqG85OQxDWzLAzKrN9IJ2NIzLYVNAO6ke9IydE4kwJIysFp
-         5v+XWRKX9MnKGNCQeTmnSp3izMpZzXfKXtPtc=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L9o4KRn00mDjtqt+akJWlI8f2RLZQl/VvTUHSutIqZc=;
+        b=dpI1okSXow4OOYbunaZ8VE/spoxDkrFnRnKrS/Q3aMCM4/g1GiuVrKnwrYY0r+C2iw
+         7YmAGvblhoiq0Cfm+10H2kSVAhrbudXQlQAMO/ciRQysZlfsgYM86/T1X8F9MSqMExa6
+         n/46GkZKJPLHBgs7A3TkBM3HOrCzWLiQg0ymqnUzj25rc6HEJM4HdfFATBSDlZQ3tfh2
+         Y9AA2pvVIS2dxxuevFGQktuU9UK+JdvWs/2gS6CZB/jYO5sYTdXXWjgscV5382HiLOvA
+         CZwrIwTY78IET02aKVRqznPkzQv7nTZ3x4xOSu6ac55CNrgNYVvgCqM1I3bha8knJ8Et
+         7Etg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dZsn4EW/SyaRsmueE+/vYE2vemazchjXW/dbHmCRlUs=;
-        b=qsUxydzWOjLRaAFTlDiA8VJjsFgUKQbbT3ibQXOOSuXlqruYMzae2kH3n91NOe5Z4H
-         j9ncN6b4CTz+L19dqmweni2hVMUkmkDPcH45dwt1ed9fb6DugQOCP8Ws/iprDe6B/GWn
-         waeT0QYs4bV39HwLLzoWyX7KrIeJSdw452EUsvAt+QL0XLpqqi3ULgysukJNfOGkElxh
-         wbDyNoaqLcJFZpWWqrHa6Gg7vQyXuBgcK2vqKjYYdHQxioZpAONjlU2ZODg6QTRsMz0x
-         VjgAlCQOjBAQKGxNABkSUdV/f5ytJS2afDEwwZ1aqewd/wadnvf3TUb9KywfpJENNNhE
-         BHkw==
-X-Gm-Message-State: ANhLgQ1aHH06SJ0fKZA0EdUH7eka+O4pcYYrb4sIAW4xRrxsrmzSzBge
-        g1EM2yze6IjSge5IFmtM9gtykA==
-X-Google-Smtp-Source: ADFU+vs3bQbui32mwgN4d69WBgcOI3D/G3nH3HTL6g28UawRkGYTx1Gv6AOqnTJmut2iCUcqWB559A==
-X-Received: by 2002:a17:90a:3249:: with SMTP id k67mr16585418pjb.167.1585583442859;
-        Mon, 30 Mar 2020 08:50:42 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id r7sm10438837pfg.38.2020.03.30.08.50.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Mar 2020 08:50:41 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 08:50:38 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Sandeep Maheswaram <sanm@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Chandana Kishori Chiluveru <cchiluve@codeaurora.org>
-Subject: Re: [PATCH v6 2/4] usb: dwc3: qcom: Add interconnect support in dwc3
- driver
-Message-ID: <20200330155038.GC199755@google.com>
-References: <1585302203-11008-1-git-send-email-sanm@codeaurora.org>
- <1585302203-11008-3-git-send-email-sanm@codeaurora.org>
- <20200329171756.GA199755@google.com>
- <87h7y62r28.fsf@kernel.org>
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=L9o4KRn00mDjtqt+akJWlI8f2RLZQl/VvTUHSutIqZc=;
+        b=aao03QFcHlztH3f0jmYHaNDmvxFIS7G8xpd3MTREUyU7vugT44wvlqM1C93LWgRv47
+         zDVLQw4vv6uSMH9BShY1+OybP59LBJBeP/MhQ/LGcsdFMIyBp2jkapM26C4sBssvenUS
+         +h0iD+q/0/AuPWQNAXqb5eBDb2h3oxiP2shrdglQYkAtyxY2PZKdj0D4yvQW2R3xyGxh
+         nMG/Veky6z5hGuD8c13mdBocy8VGXUuSTAqSVGA2HgCFHVsiW9VGcZoaFLciRZTWFC3W
+         3SJ/BP5Wu3xxt5ifxmLCA3BWf6yOZ9TGzY4+fV+iWYJ1vc3WxRNxZZrYjBhNlx2AoKcT
+         35IA==
+X-Gm-Message-State: ANhLgQ1XC+UPCT/7kNoAQQEl/gkskkqn2lQQQScYBIPnTo4I17aloFJW
+        cawIwob4Z/kKU06jhS2VeBxyWBMI
+X-Google-Smtp-Source: ADFU+vv9C+B1Xv0VipPjnnA/WMWiN43YowIhNsDS4hWW6fmhwtfmcDA2QmTJbFMvWFsC0gf5esa79w==
+X-Received: by 2002:a17:90a:1784:: with SMTP id q4mr16358734pja.111.1585583485967;
+        Mon, 30 Mar 2020 08:51:25 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 21sm9963781pgf.41.2020.03.30.08.51.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 30 Mar 2020 08:51:25 -0700 (PDT)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon updates for v5.7
+Date:   Mon, 30 Mar 2020 08:51:24 -0700
+Message-Id: <20200330155124.243034-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87h7y62r28.fsf@kernel.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 11:19:11AM +0300, Felipe Balbi wrote:
-> 
-> Hi,
-> 
-> Matthias Kaehlcke <mka@chromium.org> writes:
-> >> Add interconnect support in dwc3-qcom driver to vote for bus
-> >> bandwidth.
-> >> 
-> >> This requires for two different paths - from USB master to
-> >> DDR slave. The other is from APPS master to USB slave.
-> >> 
-> >> Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
-> >> Signed-off-by: Chandana Kishori Chiluveru <cchiluve@codeaurora.org>
-> >> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> >> ---
-> >>  drivers/usb/dwc3/dwc3-qcom.c | 128 ++++++++++++++++++++++++++++++++++++++++++-
-> >>  1 file changed, 126 insertions(+), 2 deletions(-)
-> >> 
-> >> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-> >> index 1dfd024..7e85fe6 100644
-> >> --- a/drivers/usb/dwc3/dwc3-qcom.c
-> >> +++ b/drivers/usb/dwc3/dwc3-qcom.c
-> >>
-> >> ...
-> >>
-> >> +/* To disable an interconnect, we just set its bandwidth to 0 */
-> >> +static int dwc3_qcom_interconnect_disable(struct dwc3_qcom *qcom)
-> >> +{
-> >> +	int ret;
-> >> +
-> >> +	ret = icc_set_bw(qcom->usb_ddr_icc_path, 0, 0);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	ret = icc_set_bw(qcom->apps_usb_icc_path, 0, 0);
-> >> +	if (ret)
-> >> +		goto err_reenable_memory_path;
-> >> +
-> >> +	return 0;
-> >> +
-> >> +	/* Re-enable things in the event of an error */
-> >> +err_reenable_memory_path:
-> >> +	ret = dwc3_qcom_interconnect_enable(qcom);
-> >
-> > This overwrites the error that led to the execution of this code path.
-> > The function should return original error, not the result of the
-> > _interconnect_enable() call.
-> >
-> > I saw Felipe queued the patch for v5.8. I think the main options to fix this
-> > are:
-> >
-> > - a v6 of this patch to replace v5 in Felipe's tree (which IIUC will be rebased
-> >   anyway once there is a v5.7-rc)
-> > - send the fix as a separate patch
-> > - Felipe amends the patch in his tree
-> >
-> > Felipe, what would work best for you?
-> 
-> Let's go for a v6, which commits should I drop? I can't find anything
-> related to $subject in my queue:
-> 
-> $ git --no-pager log --oneline HEAD ^linus/master -- drivers/usb/dwc3/dwc3-qcom.c
-> 201c26c08db4 usb: dwc3: qcom: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+Hi Linus,
 
-I thought I saw a "queued for v5.8" message from you, but can't find that back.
-I guess I saw the "queued" message for the "Add USB DWC3 support for SC7180"
-series and thought it was for this one. Sorry for the confusion.
+Please pull hwmon updates for Linux v5.7 from signed tag:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v5.7
+
+Depending on merge order, there may be a context conflict against devicetree
+in Documentation/devicetree/bindings/trivial-devices.yaml.
+
+Thanks,
+Guenter
+------
+
+The following changes since commit 2c523b344dfa65a3738e7039832044aa133c75fb:
+
+  Linux 5.6-rc5 (2020-03-08 17:44:44 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v5.7
+
+for you to fetch changes up to 5b10a8194664a0d3b025f9b53de4476754ce8e41:
+
+  docs: hwmon: Update documentation for isl68137 pmbus driver (2020-03-22 16:42:54 -0700)
+
+----------------------------------------------------------------
+hwmon patches for v5.7
+
+New driver for AXI fan control.
+Attenuator bypass support and support for inverting pwm output
+in adt7475 driver.
+Support for new power supply version in ibm-cffps driver.
+PMBus drivers:
+  Support for multi-phase chips.
+  Support for LTC2972, LTC2979, LTC3884, LTC3889, LTC7880, LTM4664,
+  LTM4677, LTM4678, LTM4680, and LTM4700 added to ltc2978 driver.
+  Support for TPS53681, TPS53647, and TPS53667 added to tps53679
+  driver.
+  Support for various 2nd Gen Renesas digital multiphase chips
+  added to isl68137 driver.
+
+Minor improvements and fixes in nct7904, ibmpowernv, lm73, ibmaem,
+and k10temp drivers.
+
+----------------------------------------------------------------
+Amy Shih (1):
+      hwmon: (nct7904) Fix the incorrect quantity for fan & temp attributes
+
+Chris Packham (2):
+      dt-bindings: hwmon: Document adt7475 pwm-active-state property
+      hwmon: (adt7475) Add support for inverting pwm output
+
+Eddie James (1):
+      hwmon: (pmbus/ibm-cffps) Add another PSU CCIN to version detection
+
+Grant Peltier (2):
+      hwmon: (pmbus) add support for 2nd Gen Renesas digital multiphase
+      docs: hwmon: Update documentation for isl68137 pmbus driver
+
+Guenter Roeck (11):
+      hwmon: (k10temp) Swap Tdie and Tctl on Family 17h CPUs
+      hwmon: (k10temp) Reorganize and simplify temperature support detection
+      hwmon: (k10temp) Update driver documentation
+      hwmon: (pmbus) Add IC_DEVICE_ID and IC_DEVICE_REV command definitions
+      hwmon: (pmbus) Add 'phase' parameter where needed for multi-phase support
+      hwmon: (pmbus) Implement multi-phase support
+      hwmon: (pmbus/tps53679) Add support for multiple chips IDs
+      hwmon: (pmbus/tps53679) Add support for IIN and PIN to TPS53679 and TPS53688
+      hwmon: (pmbus/tps53679) Add support for TPS53681
+      hwmon: (pmbus/tps53679) Add support for TPS53647 and TPS53667
+      hwmon: (pmbus/tps53679) Add documentation
+
+Gustavo A. R. Silva (1):
+      hwmon: (ibmaem) Replace zero-length array with flexible-array member
+
+Henry Shen (2):
+      dt-bindings: Add TI LM73 as a trivial device
+      hwmon: (lm73) Add support for of_match_table
+
+Logan Shaw (3):
+      dt-bindings: hwmon: Document adt7475 binding
+      dt-bindings: hwmon: Document adt7475 bypass-attenuator property
+      hwmon: (adt7475) Add attenuator bypass support
+
+Mike Jones (3):
+      docs: hwmon: (pmbus/ltc2978) Update datasheet URLs to analog.com.
+      hwmon: (pmbus/ltc2978) add support for more parts.
+      bindings: (hwmon/ltc2978.txt) add support for more parts (bindings)
+
+Nuno Sá (2):
+      hwmon: Support ADI Fan Control IP
+      dt-bindings: hwmon: Add AXI FAN Control documentation
+
+Takashi Iwai (1):
+      hwmon: (ibmpowernv) Use scnprintf() for avoiding potential buffer overflow
+
+ .../bindings/hwmon/adi,axi-fan-control.yaml        |  62 +++
+ .../devicetree/bindings/hwmon/adt7475.yaml         |  84 ++++
+ .../devicetree/bindings/hwmon/ltc2978.txt          |  22 +-
+ .../devicetree/bindings/trivial-devices.yaml       |  10 +-
+ Documentation/hwmon/index.rst                      |   1 +
+ Documentation/hwmon/isl68137.rst                   | 541 ++++++++++++++++++++-
+ Documentation/hwmon/k10temp.rst                    |  29 +-
+ Documentation/hwmon/ltc2978.rst                    | 198 ++++++--
+ Documentation/hwmon/pmbus-core.rst                 |  22 +-
+ Documentation/hwmon/pmbus.rst                      |   8 +-
+ Documentation/hwmon/tps53679.rst                   | 178 +++++++
+ MAINTAINERS                                        |   8 +
+ drivers/hwmon/Kconfig                              |   9 +
+ drivers/hwmon/Makefile                             |   1 +
+ drivers/hwmon/adt7475.c                            |  95 +++-
+ drivers/hwmon/axi-fan-control.c                    | 469 ++++++++++++++++++
+ drivers/hwmon/ibmaem.c                             |   2 +-
+ drivers/hwmon/ibmpowernv.c                         |   8 +-
+ drivers/hwmon/k10temp.c                            |  60 +--
+ drivers/hwmon/lm73.c                               |  10 +
+ drivers/hwmon/nct7904.c                            |  21 +
+ drivers/hwmon/pmbus/Kconfig                        |  21 +-
+ drivers/hwmon/pmbus/adm1275.c                      |  37 +-
+ drivers/hwmon/pmbus/ibm-cffps.c                    |  29 +-
+ drivers/hwmon/pmbus/ir35221.c                      |  23 +-
+ drivers/hwmon/pmbus/isl68137.c                     | 114 ++++-
+ drivers/hwmon/pmbus/lm25066.c                      |  39 +-
+ drivers/hwmon/pmbus/ltc2978.c                      | 130 ++++-
+ drivers/hwmon/pmbus/ltc3815.c                      |  20 +-
+ drivers/hwmon/pmbus/max16064.c                     |   7 +-
+ drivers/hwmon/pmbus/max20730.c                     |   3 +-
+ drivers/hwmon/pmbus/max31785.c                     |   6 +-
+ drivers/hwmon/pmbus/max34440.c                     |  25 +-
+ drivers/hwmon/pmbus/max8688.c                      |  17 +-
+ drivers/hwmon/pmbus/pmbus.c                        |   4 +-
+ drivers/hwmon/pmbus/pmbus.h                        |  20 +-
+ drivers/hwmon/pmbus/pmbus_core.c                   | 119 +++--
+ drivers/hwmon/pmbus/tps53679.c                     | 172 ++++++-
+ drivers/hwmon/pmbus/ucd9000.c                      |   2 +-
+ drivers/hwmon/pmbus/xdpe12284.c                    |   5 +-
+ drivers/hwmon/pmbus/zl6100.c                       |   5 +-
+ 41 files changed, 2325 insertions(+), 311 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/adi,axi-fan-control.yaml
+ create mode 100644 Documentation/devicetree/bindings/hwmon/adt7475.yaml
+ create mode 100644 Documentation/hwmon/tps53679.rst
+ create mode 100644 drivers/hwmon/axi-fan-control.c
