@@ -2,237 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37CA0198479
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 21:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19C4F1984ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 21:53:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728568AbgC3TaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 15:30:24 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50842 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727954AbgC3TaY (ORCPT
+        id S1728907AbgC3TxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 15:53:01 -0400
+Received: from mail.computer-surgery.co.uk ([82.69.253.61]:44021 "EHLO
+        nicole.computer-surgery.co.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728393AbgC3TxA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 15:30:24 -0400
-Received: by mail-wm1-f67.google.com with SMTP id t128so103307wma.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 12:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9nFnsvCKEDa/dsrzABSlGZiV3kPYg9feDGQT4TvurVU=;
-        b=iBPtY4oepJEYkAvfRbbU7YRMUkFv1yqWuCpQX+pO9q8Omi5rOKQc/eVaGFAxJxFQfm
-         G/XsQyuRqsBi4xUZfsYl0K+KNbGv8FTuQS1ezJjT5wCHOfzcicUvf+FtSLPJv+HPYavJ
-         oLc+Iwef89iiAd822jVW2YM+RKZqSibiH2B594aB100wzEAcU7dwi7Z2aaMHIwYC9HlC
-         tQwEPLdFfNrlkZak7jRrGq5UMRvkDDiU2xwTL+iYlX+u7xQUbg0RwjfKqn8SCpE7ktnE
-         PXWYxhv4RX881mw9lG9i3OmMJMqpZTNlV8PIqJSXuFQy14AuRnJgGOAd5ISVlsQ06mnL
-         vNBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9nFnsvCKEDa/dsrzABSlGZiV3kPYg9feDGQT4TvurVU=;
-        b=fD32vTsq2MMOD6bhTLsd4gqFkAovHhV7L3DXFO7VZaZoX2uQaYUP407XSIFxwnerP/
-         1PaskeBEbnGh0EihSeFID4sO+EVBUuLvimGlghW0zMcZlw3XRQVv4PLpIabnofTxWHcO
-         wfT8y6UUjDW9jUone76fOq4Xyks8KHwMwNsnfygh14MCoh+9b7BMzz1cihwR0X4JxAct
-         FRXJj1LcIq3DW4jXwHA/+F4/cPK9O/c2Z2V5tdL5+lmawBuBE+cn5ekJqIiz1e/n7YNE
-         E6w94dWQ5nLrx5NaRksh/fQSkpvGmW8WQRKu+0jklf14PPuvyL+CQ6hlx3kYZ8nxijid
-         01xQ==
-X-Gm-Message-State: ANhLgQ1tfVr7bjce5hOAGILX8XqfL/HyLi0mrTmwJcsMqowgZYhmE7nl
-        gonDcLZSBdqe9DQZ5jhEHDrFNKDLn7bUbl8x1Gxpvg==
-X-Google-Smtp-Source: ADFU+vsp/RyP5+g1X+akjm3lY9xfjCPnWJSUBQHvVMhHBYSUUyMlFlOMzxwaJ1q/Tx7niyWdi91yGz1x7sGCyvLs9ms=
-X-Received: by 2002:a1c:62c5:: with SMTP id w188mr865008wmb.112.1585596621197;
- Mon, 30 Mar 2020 12:30:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200319164227.87419-1-trishalfonso@google.com>
- <20200319164227.87419-2-trishalfonso@google.com> <alpine.LRH.2.21.2003241635230.30637@localhost>
- <CAKFsvULUx3qi_kMGJx69ndzCgq=m2xf4XWrYRYBCViud0P7qqA@mail.gmail.com>
- <alpine.LRH.2.21.2003251242200.9650@localhost> <CAKFsvU+1z-oAX81bNSVkuo_BwgxyykTwW9uJOLL6a1ZaBojJYw@mail.gmail.com>
-In-Reply-To: <CAKFsvU+1z-oAX81bNSVkuo_BwgxyykTwW9uJOLL6a1ZaBojJYw@mail.gmail.com>
-From:   Patricia Alfonso <trishalfonso@google.com>
-Date:   Mon, 30 Mar 2020 12:30:09 -0700
-Message-ID: <CAKFsvUKAThbewNmtA7S4wzXODADwG5XJgiDu9o2o5+xz5ux5fA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/3] Add KUnit Struct to Current Task
-To:     Alan Maguire <alan.maguire@oracle.com>
-Cc:     David Gow <davidgow@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        kunit-dev@googlegroups.com,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
+        Mon, 30 Mar 2020 15:53:00 -0400
+X-Greylist: delayed 2686 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Mar 2020 15:53:00 EDT
+Received: from [10.94.89.11] (helo=kilburn)
+        by nicole.computer-surgery.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <rgammans@gammascience.co.uk>)
+        id 1jIzlc-000433-3Z; Mon, 30 Mar 2020 20:08:12 +0100
+Message-ID: <fb289e488d777bd4e56befa6e8791de84a830557.camel@gammascience.co.uk>
+Subject: Re: [PATCH v4 4/4] SFH: Create HID report to Enable support of AMD
+ sensor fusion Hub (SFH)
+From:   Roger Gammans <rgammans@gammascience.co.uk>
+To:     "Singh, Sandeep" <ssingh1@amd.com>,
+        Sandeep Singh <Sandeep.Singh@amd.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org
+Date:   Mon, 30 Mar 2020 20:07:51 +0100
+In-Reply-To: <b96bb88c-dd1a-97d3-21fa-2cc60a4d6a60@amd.com>
+References: <20200329184006.GA8199@kilburn.gammascience.co.uk>
+         <b96bb88c-dd1a-97d3-21fa-2cc60a4d6a60@amd.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 12:00 PM Patricia Alfonso
-<trishalfonso@google.com> wrote:
->
-> On Wed, Mar 25, 2020 at 5:42 AM Alan Maguire <alan.maguire@oracle.com> wrote:
-> >
-> >
-> > On Tue, 24 Mar 2020, Patricia Alfonso wrote:
-> >
-> > > On Tue, Mar 24, 2020 at 9:40 AM Alan Maguire <alan.maguire@oracle.com> wrote:
-> > > >
-> > > >
-> > > > On Thu, 19 Mar 2020, Patricia Alfonso wrote:
-> > > >
-> > > > > In order to integrate debugging tools like KASAN into the KUnit
-> > > > > framework, add KUnit struct to the current task to keep track of the
-> > > > > current KUnit test.
-> > > > >
-> > > > > Signed-off-by: Patricia Alfonso <trishalfonso@google.com>
-> > > > > ---
-> > > > >  include/linux/sched.h | 4 ++++
-> > > > >  1 file changed, 4 insertions(+)
-> > > > >
-> > > > > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > > > > index 04278493bf15..1fbfa0634776 100644
-> > > > > --- a/include/linux/sched.h
-> > > > > +++ b/include/linux/sched.h
-> > > > > @@ -1180,6 +1180,10 @@ struct task_struct {
-> > > > >       unsigned int                    kasan_depth;
-> > > > >  #endif
-> > > > >
-> > > > > +#if IS_BUILTIN(CONFIG_KUNIT)
-> > > >
-> > > > This patch set looks great! You might have noticed I
-> > > > refreshed the kunit resources stuff to incorporate
-> > > > feedback from Brendan, but I don't think any API changes
-> > > > were made that should have consequences for your code
-> > > > (I'm building with your patches on top to make sure).
-> > > > I'd suggest promoting from RFC to v3 on the next round
-> > > > unless anyone objects.
-> > > >
-> > > > As Dmitry suggested, the above could likely be changed to be
-> > > > "#ifdef CONFIG_KUNIT" as kunit can be built as a
-> > > > module also. More on this in patch 2..
-> > > >
-> > > I suppose this could be changed so that this can be used in possible
-> > > future scenarios, but for now, since built-in things can't rely on
-> > > modules, the KASAN integration relies on KUnit being built-in.
-> > >
-> >
-> > I think we can get around that. I've tried tweaking the resources
-> > patchset such that the functions you need in KASAN (which
-> > is builtin) are declared as "static inline" in include/kunit/test.h;
-> > doing this allows us to build kunit and test_kasan as a
-> > module while supporting the builtin functionality required to
-> > retrieve and use kunit resources within KASAN itself.
-> >
-> Okay, great!
->
-> > The impact of this amounts to a few functions, but it would
-> > require a rebase of your changes. I'll send out a  v3 of the
-> > resources patches shortly; I just want to do some additional
-> > testing on them. I can also send you the modified versions of
-> > your patches that I used to test with.
-> >
-> That sounds good.
->
-> > With these changes I can run the tests on baremetal
-> > x86_64 by modprobe'ing test_kasan. However I see a few failures:
-> >
-> > [   87.577012]  # kasan_memchr: EXPECTATION FAILED at lib/test_kasan.c:509
-> >         Expected kasan_data->report_expected == kasan_data->report_found,
-> > but
-> >                 kasan_data->report_expected == 1
-> >                 kasan_data->report_found == 0
-> > [   87.577104]  not ok 30 - kasan_memchr
-> > [   87.603823]  # kasan_memcmp: EXPECTATION FAILED at lib/test_kasan.c:523
-> >         Expected kasan_data->report_expected == kasan_data->report_found,
-> > but
-> >                 kasan_data->report_expected == 1
-> >                 kasan_data->report_found == 0
-> > [   87.603929]  not ok 31 - kasan_memcmp
-> > [   87.630644]  # kasan_strings: EXPECTATION FAILED at
-> > lib/test_kasan.c:544
-> >         Expected kasan_data->report_expected == kasan_data->report_found,
-> > but
-> >                 kasan_data->report_expected == 1
-> >                 kasan_data->report_found == 0
-> > [   87.630910]  # kasan_strings: EXPECTATION FAILED at
-> > lib/test_kasan.c:546
-> >         Expected kasan_data->report_expected == kasan_data->report_found,
-> > but
-> >                 kasan_data->report_expected == 1
-> >                 kasan_data->report_found == 0
-> > [   87.654037]  # kasan_strings: EXPECTATION FAILED at
-> > lib/test_kasan.c:548
-> >         Expected kasan_data->report_expected == kasan_data->report_found,
-> > but
-> >                 kasan_data->report_expected == 1
-> >                 kasan_data->report_found == 0
-> > [   87.677179]  # kasan_strings: EXPECTATION FAILED at
-> > lib/test_kasan.c:550
-> >         Expected kasan_data->report_expected == kasan_data->report_found,
-> > but
-> >                 kasan_data->report_expected == 1
-> >                 kasan_data->report_found == 0
-> > [   87.700242]  # kasan_strings: EXPECTATION FAILED at
-> > lib/test_kasan.c:552
-> >         Expected kasan_data->report_expected == kasan_data->report_found,
-> > but
-> >                 kasan_data->report_expected == 1
-> >                 kasan_data->report_found == 0
-> > [   87.723336]  # kasan_strings: EXPECTATION FAILED at
-> > lib/test_kasan.c:554
-> >         Expected kasan_data->report_expected == kasan_data->report_found,
-> > but
-> >                 kasan_data->report_expected == 1
-> >                 kasan_data->report_found == 0
-> > [   87.746304]  not ok 32 - kasan_strings
-> >
-> > The above three tests consistently fail while everything
-> > else passes, and happen irrespective of whether kunit
-> > is built as a module or built-in.  Let me know if you
-> > need any more info to debug (I built the kernel with
-> > CONFIG_SLUB=y if that matters).
-> >
-> Unfortunately, I have not been able to replicate this issue and I
-> don't have a clue why these specific tests would fail with a different
-> configuration. I've tried running these tests on UML with KUnit
-> built-in with SLUB=y and SLAB=y, and I've done the same in x86_64. Let
-> me know if there's anything else that could help me debug this myself.
->
-Alan sent me the .config and I was able to replicate the test failures
-found above. I traced the problem config to CONFIG_AMD_MEM_ENCRYPT=y.
-The interesting part is that I ran the original test module with this
-config enabled and the same tests failed there too. I wonder if this
-is an expected failure or something in the test that is causing this
-problem?
+On Mon, 2020-03-30 at 09:53 +0530, Singh, Sandeep wrote:
+> Hi Roger,
+> 
+> On 3/30/2020 12:10 AM, Roger Gammans wrote:
+> > [CAUTION: External Email]
+> > 
+> > Also I don't seem to be getting any data through
+> > to monitor-sensor in user space when I do install it, but I am
+> > gettting logs of log messages similar to this:
+> > 
+> >   pcie_mp2_amd 0000:04:00.7: AMD-Vi: Event logged [IO_PAGE_FAULT
+> > domain=0x000c address=0x5267f000 flags=0x0020]
+> >   pcie_mp2_amd 0000:04:00.7: AMD-Vi: Event logged [IO_PAGE_FAULT
+> > domain=0x000c address=0x5267f000 flags=0x0020]
+> > 
+> > This is compiled against the debian 5.4.0 kernel, on a
+> >       HP ENVY x360 Convertible 15-ds0xxx, SKU 6TD07EA#ABU
+> > 
+> > I can run other tests or try other kernels if you think it might
+> > help,
+> > let me know what you need.
+> Can you disable IOMMU from bios and give a try or if your laptop
+> does 
+> not have iommu option you can pass boot parameter "iommu=soft"
 
->
-> > Thanks!
-> >
-> > Alan
-> >
-> >
-> > > > > +     struct kunit                    *kunit_test;
-> > > > > +#endif /* IS_BUILTIN(CONFIG_KUNIT) */
-> > > > > +
-> > > > >  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-> > > > >       /* Index of current stored address in ret_stack: */
-> > > > >       int                             curr_ret_stack;
-> > > > > --
-> > > > > 2.25.1.696.g5e7596f4ac-goog
-> > > > >
-> > > > >
-> > >
-> > > --
-> > > Best,
-> > > Patricia
-> > >
->
->
->
-> --
-> Best,
-> Patricia
+I couldn't find anything useful in the BIOS, so tried iommu=soft on the
+kernel command line. And that seems to have done the trick, we get
+rotation info all the way through to the userspace, and the desktop 
+does it auto-rotate magic. Thanks for all your hard work.
+
+On module inserion I have these messages if it is of any concern:-
+
+pcie_mp2_amd 0000:04:00.7: MP2 device found [1022:15e4] (rev 0)
+hid-generic 0020:03FE:0001.0003: hidraw2: <UNKNOWN> HID v0.01 Device [hid-amdtp 03FE:0001] on 
+hid-generic 0020:03FE:0001.0004: hidraw3: <UNKNOWN> HID v0.01 Device [hid-amdtp 03FE:0001] on 
+hid-generic 0020:03FE:0001.0005: hidraw4: <UNKNOWN> HID v0.01 Device [hid-amdtp 03FE:0001] on 
+
+-- 
+Roger Gammans <rgammans@gammascience.co.uk>
+
