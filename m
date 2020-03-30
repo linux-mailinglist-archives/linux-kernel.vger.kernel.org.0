@@ -2,113 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67D7219838B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C3719838E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:42:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbgC3Sl7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 14:41:59 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43804 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbgC3Sl7 (ORCPT
+        id S1727962AbgC3SmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 14:42:16 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42181 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbgC3SmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 14:41:59 -0400
-Received: by mail-ed1-f65.google.com with SMTP id bd14so21977471edb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 11:41:58 -0700 (PDT)
+        Mon, 30 Mar 2020 14:42:15 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h15so22937331wrx.9
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 11:42:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=82V2uiPsUi/5h2Z1obVyGYc68C87qoYt95tk3QJZeQc=;
-        b=FKSiivlFGGLxFugSuEF2WX8g4AFNohF4Go4nX5riJP4GbsCOoKGmNMm4OlgdyqzU7s
-         qglZ7MRKIuIAF+SVGzkGuXJhfPzZfc0am3r0uedhhkA08rS09+ltmyVSZuZQtYOWz0BE
-         mIBlIXE8f9y06jv1ClIkCFe/r/xKMJ4z5XrdDzLVsHgDciPhu8UxFJxoB8NqMAvOQ5a6
-         tBEzBdy+qM9TSdk7xhqhvz4ZJKTpc60TU2qyHR9CSAyqm+xgApdtzbT56CLg8Jg9Um8K
-         YzUdgA4PhKnGaBbKTzl7raIJOo1Um6eGQskJ/er4RacA8ZPJdJePOEmlAN86CQrv9B3S
-         APtw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8XRhKogyecKsSV4qW1x8hTrVeQGUH4iCc/CcjgU9mck=;
+        b=TisMD6pc6Nd4x3AkXj4VNDomK/Xtj35nFvmaVY4nv5rIDfxx33N2APlyiTAHrAV+VP
+         zs3VrrOhOHSW+aVcm+6AvKmp98Pt+z0Y8y5UmKhv4JeMiSxNUTUO5Ix8BJb+XZJyzhGB
+         oTMdBAs918AYZFoFmsY4UszXjdtDqyW5zEtiBETWyWNgj4TMCM+QPTIZU4rLIfzexAGa
+         BY5Ma5FjSYgeqDmOcliXyrw/KopFnuxwxjlhy3tD3YYxS6PHFG3OiL0Uyn3gJhNNc/k1
+         ljVqKTfWz0UZ7WX1nu+jqrMgspXlghGq2KicbbSiNAaNwix6NK5IiT33+wtJOyIhAV5Y
+         LYBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=82V2uiPsUi/5h2Z1obVyGYc68C87qoYt95tk3QJZeQc=;
-        b=iJN4k2uUbvmVWIGEJk6482sGWhmhGA9oEsTd1PmSCiyTeqELc+e8fZyoXQzccD0GEz
-         SQ8rSdCzfklu0LhrUWXQP5h5eeL+zlB6/166B10CvzihyKspEs1RN4LkHdtrQ0kD/ELr
-         xNGjmgRDqV9Ap4c6BKuTgUCqZUFVSvrlfa/PP740sVcG2Z4nP0sK4CSWDSNS751VOoc1
-         8X+wWX6UICtjEpFaTChEaLEE6HD0nKaUqk0DbZq7S167roF7/ARQgYtb4DtXxR2fhieM
-         6qzJ428yDone9LN8GLkABxIgc/rjvhESDu2iUTCcuwAawhpAzTQaLTzG975zeb/wZ2Nv
-         /kRw==
-X-Gm-Message-State: ANhLgQ1zB3cZ8Q9jDattz7Entidg8v3J2zz+750LXQXeNu58L7MvD5Cg
-        fhv+MK6wp/o5VaI/Dzl1wi+dG202/7ygr1lw3n8=
-X-Google-Smtp-Source: ADFU+vucxesQpx/pSt0ehsZzFwIuKyh+AB6mHBuwVgiT12sXj9/fSUvh1uUCw9ngYmsMM5saUV6HaYenqm4OhrNYV7E=
-X-Received: by 2002:aa7:d384:: with SMTP id x4mr6375157edq.256.1585593717445;
- Mon, 30 Mar 2020 11:41:57 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8XRhKogyecKsSV4qW1x8hTrVeQGUH4iCc/CcjgU9mck=;
+        b=aCA+gSQlH5KuvA3TCfRVAIlhlCqZUFcx4H+aiipELZkJI5Ek01+w0Civ2Vudhed3/I
+         JnuhKPqHuYF7XSu+g6iG4GPiSsmQbGy8a5LUFRTNyDgNg1TGmHmexrHT98OxsNafPEHN
+         FjlTF5oIhlEP3m8WR5SmLfqhW11pOHtfIlm5KqGoQT9Lj0ML6D7wgmXtnPL+7fbl2IMW
+         kUdKcl+ieOX3GNE555Dowfl0ytaZz2dI3ro99ofG1JMBOex59uDXDmZMG05nA6NR+p62
+         fXNdhqEY17gMQv8kWkn2/wLdlG/WWBmaE9hq2ZO0JCcfp/TzXRCpA3TUEv8nihLd7Ngs
+         cneQ==
+X-Gm-Message-State: ANhLgQ275N7W2QCpSYjNHWm/j3Qjy7d+qs1xkebXPOjTXukmeNLWk6Zi
+        9bcddxocZ90tVdvttLMYmXumwibY
+X-Google-Smtp-Source: ADFU+vvyblRcuB/8qGRcZ3vhqfycuOq1xwgm01TAbEu5m3oAn9STi5PDPJAm79E//bCc1ncE13UYNw==
+X-Received: by 2002:adf:fb0a:: with SMTP id c10mr16054757wrr.272.1585593731920;
+        Mon, 30 Mar 2020 11:42:11 -0700 (PDT)
+Received: from [192.168.43.227] (188.29.165.144.threembb.co.uk. [188.29.165.144])
+        by smtp.gmail.com with ESMTPSA id z12sm24608045wrt.27.2020.03.30.11.42.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Mar 2020 11:42:11 -0700 (PDT)
+Subject: Re: [Outreachy kernel] [PATCH v4] staging: vt6656: add error code
+ handling to unused variable
+To:     Stefano Brivio <sbrivio@redhat.com>,
+        "John B. Wyatt IV" <jbwyatt4@gmail.com>
+Cc:     outreachy-kernel@googlegroups.com,
+        Julia Lawall <julia.lawall@inria.fr>,
+        Forest Bond <forest@alittletooquiet.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Quentin Deslandes <quentin.deslandes@itdev.co.uk>,
+        Colin Ian King <colin.king@canonical.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20200330164530.2919-1-jbwyatt4@gmail.com>
+ <20200330191439.3bfcb658@elisabeth>
+From:   Malcolm Priestley <tvboxspy@gmail.com>
+Message-ID: <c2e96efe-64d7-61d7-0c4f-58b318b47a68@gmail.com>
+Date:   Mon, 30 Mar 2020 19:42:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200327170601.18563-1-kirill.shutemov@linux.intel.com>
- <20200327170601.18563-6-kirill.shutemov@linux.intel.com> <D5721ED6-774B-4CD3-8533-4BF9BDB2401E@nvidia.com>
- <20200328003920.xvkt3hp65uccsq7b@box> <B8EBF52B-BC6A-4778-81AA-DDEFC9BF6157@nvidia.com>
- <20200328123336.givyrh5hsscg5cpx@box>
-In-Reply-To: <20200328123336.givyrh5hsscg5cpx@box>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Mon, 30 Mar 2020 11:41:44 -0700
-Message-ID: <CAHbLzkr0X=P-xcAV7XsnfBgKz_jk-7dzYn0MMPxrN1jp4dMoqQ@mail.gmail.com>
-Subject: Re: [PATCH 5/7] khugepaged: Allow to collapse PTE-mapped compound pages
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200330191439.3bfcb658@elisabeth>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 28, 2020 at 5:33 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
->
-> On Fri, Mar 27, 2020 at 09:17:00PM -0400, Zi Yan wrote:
-> > > The compound page may be locked here if the function called for the first
-> > > time for the page and not locked after that (becouse we've unlocked it we
-> > > saw it the first time). The same with LRU.
-> > >
-> >
-> > For the first time, the compound page is locked and not on LRU, so this VM_BUG_ON passes.
-> > For the second time and so on, the compound page is unlocked and on the LRU,
-> > so this VM_BUG_ON still passes.
-> >
-> > For base page, VM_BUG_ON passes.
-> >
-> > Other unexpected situation (a compound page is locked and on LRU) triggers the VM_BU_ON,
-> > but your VM_BUG_ON will not detect this situation, right?
->
-> Right. I will rework this code. I've just realized it is racy: after
-> unlock and putback on LRU the page can be locked by somebody else and this
-> code can unlock it which completely borken.
+On 30/03/2020 18:14, Stefano Brivio wrote:
+> On Mon, 30 Mar 2020 09:45:30 -0700
+> "John B. Wyatt IV" <jbwyatt4@gmail.com> wrote:
+> 
+>> Add error code handling to unused 'ret' variable that was never used.
+>> Return an error code from functions called within vnt_radio_power_on.
+>>
+>> Issue reported by coccinelle (coccicheck).
+>>
+>> Suggested-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+>> Suggested-by: Stefano Brivio <sbrivio@redhat.com>
+>> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+>> Reviewed-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+>> Signed-off-by: John B. Wyatt IV <jbwyatt4@gmail.com>
+>> ---
+>> v4: Move Suggested-by: Julia Lawall above seperator line.
+> 
+> Actually, as Julia didn't suggest this patch, the place where you had
+> this in v3 was the right one.
+---snip
+>>   
+>>   	switch (priv->rf_type) {
+>>   	case RF_AL2230:
+>> @@ -734,14 +738,14 @@ int vnt_radio_power_on(struct vnt_private *priv)
+>>   	case RF_VT3226:
+>>   	case RF_VT3226D0:
+>>   	case RF_VT3342A0:
+>> -		vnt_mac_reg_bits_on(priv, MAC_REG_SOFTPWRCTL,
+>> -				    (SOFTPWRCTL_SWPE2 | SOFTPWRCTL_SWPE3));
+>> +		ret = vnt_mac_reg_bits_on(priv, MAC_REG_SOFTPWRCTL,
+>> +					 (SOFTPWRCTL_SWPE2 | SOFTPWRCTL_SWPE3));
+> 
+> 
+> Another thing that should be considered in this function is to restore
+> the previous hardware state on failures, but I think the way you're
+> handling this is possibly the safest, without hardware to test on.
+> 
+This section of hardware is controlled by mac80211 as is most of the driver.
 
-I'm wondering if we shall skip putting the page back to LRU. Since the
-page is about to be freed soon, so as I mentioned in the other patch
-it sounds not very productive to put it back to LRU again.
+Users can turn the wireless off then on again to try again but to date 
+this is not known to fail with the hardware I have used.
 
->
-> I'll pass down compound_pagelist to release_pte_pages() and handle the
-> situation there.
->
-> > >>>     if (likely(writable)) {
-> > >>>             if (likely(referenced)) {
-> > >>
-> > >> Do we need a list here? There should be at most one compound page we will see here, right?
-> > >
-> > > Um? It's outside the pte loop. We get here once per PMD range.
-> > >
-> > > 'page' argument to trace_mm_collapse_huge_page_isolate() is misleading:
-> > > it's just the last page handled in the loop.
-> > >
-> >
-> > Throughout the pte loop, we should only see at most one compound page, right?
->
-> No. mremap(2) opens a possibility for HPAGE_PMD_NR compound pages for
-> single PMD range.
->
->
-> --
->  Kirill A. Shutemov
->
+No problems with hardware with this patch.
+
+Tested-by: Malcolm Priestley <tvboxspy@gmail.com>
+
+
+
