@@ -2,53 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B0531982B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BDCD1982A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:45:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbgC3Rt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 13:49:57 -0400
-Received: from verein.lst.de ([213.95.11.211]:34955 "EHLO verein.lst.de"
+        id S1730166AbgC3RpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 13:45:12 -0400
+Received: from mga18.intel.com ([134.134.136.126]:10075 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728903AbgC3Rty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 13:49:54 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id DB2B468B05; Mon, 30 Mar 2020 19:49:50 +0200 (CEST)
-Date:   Mon, 30 Mar 2020 19:49:50 +0200
-From:   "hch@lst.de" <hch@lst.de>
-To:     "Derrick, Jonathan" <jonathan.derrick@intel.com>
-Cc:     "helgaas@kernel.org" <helgaas@kernel.org>,
-        "mr.nuke.me@gmail.com" <mr.nuke.me@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-        "Baldysiak, Pawel" <pawel.baldysiak@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "lukas@wunner.de" <lukas@wunner.de>,
-        "okaya@kernel.org" <okaya@kernel.org>,
-        "kbusch@kernel.org" <kbusch@kernel.org>,
-        "stuart.w.hayes@gmail.com" <stuart.w.hayes@gmail.com>
-Subject: Re: [RFC 0/9] PCIe Hotplug Slot Emulation driver
-Message-ID: <20200330174950.GA19929@lst.de>
-References: <20200328215123.GA130140@google.com> <97b916ad6ad03f39ccdf5b62fe7d7b9e10190708.camel@intel.com>
+        id S1727905AbgC3RpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 13:45:12 -0400
+IronPort-SDR: bDHF7AK9mZYpouMDPv4hs/0Lm8sqN/o5Oy4bwt2aRbrxs4nE9F6F3g6pPGCx9E/lIQYn/URLYu
+ l2Ca7yjDqvBg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 10:45:11 -0700
+IronPort-SDR: hFmrBJo7Lw54DVGU1sjW1hTTNaRCgzAIqFjN2qN/JhxkRSfx9I9NRSzPJByrrcvg0NjHEQp+ca
+ EQYXm41zyQ2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,325,1580803200"; 
+   d="scan'208";a="422004388"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga005.jf.intel.com with ESMTP; 30 Mar 2020 10:45:10 -0700
+Date:   Mon, 30 Mar 2020 10:50:57 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH V10 03/11] iommu/vt-d: Add a helper function to skip
+ agaw
+Message-ID: <20200330105057.222c5928@jacob-builder>
+In-Reply-To: <d17053c3-9a40-837a-dffa-57492cded028@linux.intel.com>
+References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1584746861-76386-4-git-send-email-jacob.jun.pan@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED8FF@SHSMSX104.ccr.corp.intel.com>
+        <d17053c3-9a40-837a-dffa-57492cded028@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <97b916ad6ad03f39ccdf5b62fe7d7b9e10190708.camel@intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 05:43:33PM +0000, Derrick, Jonathan wrote:
-> > There's a lot of good work in here, and I don't claim to understand
-> > the use case and all the benefits.
-> I've received more info that the customer use case is an AIC that
-> breaks out 1-4 M.2 cards which have been made hotplug tolerant.
+On Sun, 29 Mar 2020 15:20:55 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
-Which sounds completely bogus.  M.2 cards are eletrically not designed
-for this at all, and neither is the AIC.  If people want to support
-similar use cases they need to get them standardized by PCI SIG
-and handled by hotplug capable slots.
+> On 2020/3/27 19:53, Tian, Kevin wrote:
+> >> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> >> Sent: Saturday, March 21, 2020 7:28 AM
+> >>
+> >> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>  
+> > 
+> > could you elaborate in which scenario this helper function is
+> > required?  
+> 
+> I added below commit message:
+> 
+>      An Intel iommu domain uses 5-level page table by default. If the
+>      iommu that the domain tries to attach supports less page levels,
+>      the top level page tables should be skipped. Add a helper to do
+>      this so that it could be used in other places.
+> 
+Thanks Baolu,
+I will also add this to my v11, it might save you some time :)
+
+
+> Best regards,
+> baolu
+> 
+> >     
+> >> ---
+> >>   drivers/iommu/intel-pasid.c | 22 ++++++++++++++++++++++
+> >>   1 file changed, 22 insertions(+)
+> >>
+> >> diff --git a/drivers/iommu/intel-pasid.c
+> >> b/drivers/iommu/intel-pasid.c index 22b30f10b396..191508c7c03e
+> >> 100644 --- a/drivers/iommu/intel-pasid.c
+> >> +++ b/drivers/iommu/intel-pasid.c
+> >> @@ -500,6 +500,28 @@ int intel_pasid_setup_first_level(struct
+> >> intel_iommu *iommu,
+> >>   }
+> >>
+> >>   /*
+> >> + * Skip top levels of page tables for iommu which has less agaw
+> >> + * than default. Unnecessary for PT mode.
+> >> + */
+> >> +static inline int iommu_skip_agaw(struct dmar_domain *domain,
+> >> +				  struct intel_iommu *iommu,
+> >> +				  struct dma_pte **pgd)
+> >> +{
+> >> +	int agaw;
+> >> +
+> >> +	for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
+> >> +		*pgd = phys_to_virt(dma_pte_addr(*pgd));
+> >> +		if (!dma_pte_present(*pgd)) {
+> >> +			return -EINVAL;
+> >> +		}
+> >> +	}
+> >> +	pr_debug_ratelimited("%s: pgd: %llx, agaw %d d_agaw %d\n",
+> >> __func__, (u64)*pgd,
+> >> +		iommu->agaw, domain->agaw);
+> >> +
+> >> +	return agaw;
+> >> +}
+> >> +
+> >> +/*
+> >>    * Set up the scalable mode pasid entry for second only
+> >> translation type. */
+> >>   int intel_pasid_setup_second_level(struct intel_iommu *iommu,
+> >> --
+> >> 2.7.4  
+> >   
+
+[Jacob Pan]
