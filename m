@@ -2,100 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E92F61976D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 10:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B5391976E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 10:47:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbgC3Ion (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 04:44:43 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5600 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728759AbgC3Iol (ORCPT
+        id S1729681AbgC3Irm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 04:47:42 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:59160
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729538AbgC3Irm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 04:44:41 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e81b1190001>; Mon, 30 Mar 2020 01:43:05 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 30 Mar 2020 01:44:40 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 30 Mar 2020 01:44:40 -0700
-Received: from [10.19.66.205] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 30 Mar
- 2020 08:44:37 +0000
-Subject: Re: [PATCH V1 0/8] Tegra XUSB charger detect support
-To:     Felipe Balbi <balbi@kernel.org>, <kishon@ti.com>,
-        <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <jckuo@nvidia.com>
-References: <1584527467-8058-1-git-send-email-nkristam@nvidia.com>
- <87pncve963.fsf@kernel.org>
-X-Nvconfidentiality: public
-From:   Nagarjuna Kristam <nkristam@nvidia.com>
-Message-ID: <48fde9ce-7d40-c2c3-1a9c-994654a02367@nvidia.com>
-Date:   Mon, 30 Mar 2020 14:16:42 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Mon, 30 Mar 2020 04:47:42 -0400
+X-IronPort-AV: E=Sophos;i="5.72,323,1580770800"; 
+   d="scan'208";a="344238156"
+Received: from abo-173-121-68.mrs.modulonet.fr (HELO hadrien) ([85.68.121.173])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 10:47:39 +0200
+Date:   Mon, 30 Mar 2020 10:47:38 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Markus Elfring <Markus.Elfring@web.de>
+cc:     Michel Lespinasse <walken@google.com>,
+        Coccinelle <cocci@systeme.lip6.fr>, linux-mm@kvack.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Hugh Dickins <hughd@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Liam Howlett <Liam.Howlett@oracle.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ying Han <yinghan@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [Cocci] [v3 05/10] mmap locking API: Improving the Coccinelle
+ software
+In-Reply-To: <2c74e465-249d-eeb8-86fe-462b93bfe743@web.de>
+Message-ID: <alpine.DEB.2.21.2003301046530.2432@hadrien>
+References: <20200327225102.25061-1-walken@google.com> <20200327225102.25061-6-walken@google.com> <bc2980d7-b823-2fff-d29c-57dcbc9aaf27@web.de> <CANN689H=tjNi=g6M776qo8inr+OfAu8mtL5xsJpu4F=dB6R9zA@mail.gmail.com> <3c222f3c-c8e2-660a-a348-5f3583e7e036@web.de>
+ <CANN689HyS0dYWZw3AeWGBvN6_2G4hRDzjMJQ_adHMh0ZkiACYg@mail.gmail.com> <2c74e465-249d-eeb8-86fe-462b93bfe743@web.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <87pncve963.fsf@kernel.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1585557785; bh=1dKDEs5gWtkDsylFO2e+kSrsyDzzlh3tTKE9IwHKrPs=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=EWG4BCTr1V0RuTNLY0j/gnn3pyoRNc1+vbP86nP6hU6uLUGQ2ClNoxhMvgTaq7Sh2
-         UR0fSJ2oRmJm4LSeOj+ktG9cC3XJSqAYzScVgqZ8bacYup4u/TyAmQftR/D6KLxtFK
-         EG+1ME9eqGYB/O2FvedQC02e3RGoNMYxM02swps8ryEtdRrkXpFxKtPOoZ8JojUXqq
-         Z1Vn0oMTTqhoXiUamkHqWvVwEuajm1EcbY8OGSuLccztgIHbgMQC5p5SvZ2serCSCo
-         sBjQhc+3REeI6+7gAKqbJWzYcGez5Z0duKaDjnYgyUXmh1ClkqhXMRJNWldkFWI3cn
-         4jjYEMHVNRXRw==
+Content-Type: multipart/mixed; boundary="8323329-454865659-1585558059=:2432"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-454865659-1585558059=:2432
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
 
-On 29-03-2020 16:10, Felipe Balbi wrote:
->> This patch series adds charger detect support on XUSB hardware used in
->> Tegra210 and Tegra186 SoCs.
->>
->> This patchset is composed with :
->>   - dt bindings of XUSB Pad Controller
->>   - Tegra XUSB device mode driver to add vbus_draw support
->>   - Tegra PHY driver for charger detect support
->>
->> Tests done:
->>   - Connect USB cable from ubuntu host to micro-B port of DUT to detect
->>     SDP_TYPE charger
->>   - Connect USB cable from external powered USB hub(which inturn connects
->>     to ubuntu host) to micro-B port of DUT to detect CDP_TYPE charger.
->>   - Connect USB cable from USB charger to micro-B port of DUT to detect
->>     DCP_TYPE charger.
->> DUT: Jetson-tx1, Jetson tx2.
->>
->> Nagarjuna Kristam (8):
->>    dt-bindings: phy: tegra-xusb: Add charger-detect property
->>    usb: gadget: tegra-xudc: Add vbus_draw support
->>    phy: tegra: xusb: Add support for UTMI pad power control
->>    phy: tegra: xusb: Add USB2 pad power control support for Tegra210
->>    phy: tegra: xusb: Add soc ops API to enable UTMI PAD protection
->>    phy: tegra: xusb: Add support for charger detect
->>    phy: tegra: xusb: Enable charger detect for Tegra186
->>    phy: tegra: xusb: Enable charger detect for Tegra210
-> this doesn't apply cleanly. Could you resend after -rc1 is tagged?
-> 
-> -- balbi
 
-Sure, will send rebased patch once rc1 is available.
+On Mon, 30 Mar 2020, Markus Elfring wrote:
 
-Thanks,
-Nagarjuna
+> >> How will corresponding software development resources evolve?
+> >
+> > I don't think I understand the question, or, actually, are you asking
+> > me or the coccinelle developers ?
+>
+> I hope that more development challenges will be picked up.
+>
+> The code from a mentioned source file can be reduced to the following
+> test file.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kvm/mmu/paging_tmpl.h?id=7111951b8d4973bda27ff663f2cf18b663d15b48#n122
+>
+> // deleted part
+> static inline int FNAME(is_present_gpte)(unsigned long pte)
+> {
+> #if PTTYPE != PTTYPE_EPT
+> 	return pte & PT_PRESENT_MASK;
+> #else
+> 	return pte & 7;
+> #endif
+> }
+> // deleted part
+>
+>
+> Application of the software “Coccinelle 1.0.8-00029-ga549b9f0” (OCaml 4.10.0)
+>
+> elfring@Sonne:~/Projekte/Coccinelle/Probe> spatch --parse-c paging_tmpl-excerpt1.h
+> …
+> (ONCE) CPP-MACRO: found known macro = FNAME
+> …
+> parse error
+>  = File "paging_tmpl-excerpt1.h", line 2, column 41, charpos = 57
+>   around = 'unsigned',
+> …
+> BAD:!!!!! static inline int FNAME(is_present_gpte)(unsigned long pte)
+> …
+> NB total files = 1; perfect = 0; pbs = 1; timeout = 0; =========> 0%
+> nb good = 1,  nb passed = 1 =========> 10.00% passed
+> nb good = 1,  nb bad = 8 =========> 20.00% good or passed
+>
+>
+> How would you like to improve the affected software areas?
+
+This can be addressed by adding a macro definition to standard.h.
+
+But once the change is done, I don't see any reason to bother with this.
+
+julia
+--8323329-454865659-1585558059=:2432--
