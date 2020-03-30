@@ -2,91 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A968B197F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:52:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A58D197F12
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 16:54:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbgC3Owk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 10:52:40 -0400
-Received: from mga12.intel.com ([192.55.52.136]:64494 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728091AbgC3Owk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 10:52:40 -0400
-IronPort-SDR: MIRYyY5gaX862ksA0nrrp5J+dbtAUPZ5FOu0NRb0HzlBhHKMFR4129YBmmSgejwQTN9XlCFq4R
- JZ3fHnAkgupw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 07:52:39 -0700
-IronPort-SDR: rfW88gAjoLcRuxEMkeDyZmauk0DBi3xQ4Q1GXDFDjkXTWZvhWkbDmfca24k9dnZz35+i/xkTp/
- EroFjNmfikxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,324,1580803200"; 
-   d="scan'208";a="237374537"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007.jf.intel.com with ESMTP; 30 Mar 2020 07:52:37 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jIvmJ-00EEWj-7l; Mon, 30 Mar 2020 17:52:39 +0300
-Date:   Mon, 30 Mar 2020 17:52:39 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        matwey.kornilov@gmail.com, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lukas@wunner.de,
-        christoph.muellner@theobroma-systems.com,
-        giulio.benetti@micronovasrl.com,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: Re: [PATCH v2 4/7] serial: 8250: Handle implementations not having
- TEMT interrupt using em485
-Message-ID: <20200330145239.GV1922688@smile.fi.intel.com>
-References: <20200325231422.1502366-1-heiko@sntech.de>
- <20200325231422.1502366-5-heiko@sntech.de>
+        id S1728386AbgC3OyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 10:54:05 -0400
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:41987 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727929AbgC3OyC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 10:54:02 -0400
+Received: by mail-qv1-f67.google.com with SMTP id ca9so9028006qvb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 07:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Ku5iL1N6RANAABzr84iAJg9CN/CMxTxUbEuZrAn7SbU=;
+        b=L9/0Hme32NofXz992b6CsrXgGCn+cAPnw0YKmlXlaEVc2EdsrME7DA1dyG6E68jsb5
+         +lEdHtcSG+Jh7vGSwM5eL03dAWRakzA5SVmGtw1s2vdArPYrqPo9j0GoPl6NzQSn0anC
+         p4aaijoNZEDfjF9IzjVZRsWMrtm3Wi7rG/HP1SQ1OUc+hOa1qJouNTG9FTkRYpAKjZAD
+         jhfcB0SpfkiH+Ycu3+SACdv1LE7IqPq71vnEZTCTWrRZ1ugePDlBu4g5uFUam58Vel0g
+         pSywvkBrhQ2WvVjiobH6uT7Uyh8skIVlfpqAsGNhIiHl+BWEc20xyZzQrscHnvgbbkWb
+         yJCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Ku5iL1N6RANAABzr84iAJg9CN/CMxTxUbEuZrAn7SbU=;
+        b=DbKUGjM4y9Hg9/5d12q90LQC/AdwL/tKWsq48EasfIxaMYSgA0UQEv42XgA7i8BxQi
+         GcqFK5SAVVY7Uyrn4RsM1oUTIyLIFIcEhA5mDxBB2O06FdV1E9Rg4oW5leutq+PJZv/m
+         XkqWlX1p2MVxs7/ZlhX2ID3X6JmZUNSmoSuCfwiaasUBKHyF4PaZ34RDL69LyWi7iVHu
+         K8jEpYjixwZcw6IjmxtHp5480i4toEWE70WZRVaHtWM/DRsDyciYxJKdlcpUqk1PI7Pe
+         APFhYeE7XXJ5C2mkc3sagKuzYuQkxzpWx3QEUUt7LQ8h8HQNO2pTQgXchPoZIbygVVRW
+         PjtQ==
+X-Gm-Message-State: ANhLgQ2hWMREhJrQ+/FP2fwP2fk4ZksV8aJiUoqL+JtlS8AFmhRUEkq+
+        ZPWhXDbOILtSSRNvfxY+DdVUKXeiUJg=
+X-Google-Smtp-Source: ADFU+vvnZVsf13I2tKyzEPZbzZSTUzrSmDWcuIiitXTu0rbnYah/+4rhMe7ysN6LuRmkXvkXtRCo3Q==
+X-Received: by 2002:a0c:e08d:: with SMTP id l13mr12253135qvk.216.1585580040023;
+        Mon, 30 Mar 2020 07:54:00 -0700 (PDT)
+Received: from [192.168.1.92] (pool-71-255-246-27.washdc.fios.verizon.net. [71.255.246.27])
+        by smtp.gmail.com with ESMTPSA id 73sm10651439qkf.82.2020.03.30.07.53.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Mar 2020 07:53:59 -0700 (PDT)
+Subject: Re: [Patch v5 4/6] soc: qcom: Extend RPMh power controller driver to
+ register warming devices.
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     rui.zhang@intel.com, ulf.hansson@linaro.org,
+        daniel.lezcano@linaro.org, agross@kernel.org, robh@kernel.org,
+        amit.kucheria@verdurent.com, mark.rutland@arm.com,
+        rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200320014107.26087-1-thara.gopinath@linaro.org>
+ <20200320014107.26087-5-thara.gopinath@linaro.org>
+ <20200327225345.GH5063@builder>
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+Message-ID: <f20b4940-11ad-82b1-6ece-661a1b033df8@linaro.org>
+Date:   Mon, 30 Mar 2020 10:53:58 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200325231422.1502366-5-heiko@sntech.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200327225345.GH5063@builder>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 12:14:19AM +0100, Heiko Stuebner wrote:
-> From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+
+
+On 3/27/20 6:53 PM, Bjorn Andersson wrote:
+> On Thu 19 Mar 18:41 PDT 2020, Thara Gopinath wrote:
 > 
-> Some 8250 ports have a TEMT interrupt but it's not a part of the 8250
-> standard, instead only available on some implementations.
+>> RPMh power control hosts power domains that can be used as
+>> thermal warming devices. Register these power domains
+>> with the generic power domain warming device thermal framework.
+>>
+>> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+>> ---
+>>
+>> v3->v4:
+>> 	- Introduce a boolean value is_warming_dev in rpmhpd structure to
+>> 	  indicate if a generic power domain can be used as a warming
+>> 	  device or not.With this change, device tree no longer has to
+>> 	  specify which power domain inside the rpmh power domain provider
+>> 	  is a warming device.
+>> 	- Move registering of warming devices into a late initcall to
+>> 	  ensure that warming devices are registered after thermal
+>> 	  framework is initialized.
 > 
-> The current em485 implementation does not work on ports without it.
-> The only chance to make it work is to loop-read on LSR register.
+> This information is lost when we merge patches, as such I would like
+> such design decisions to be described in the commit message itself.
+> But...
 > 
-> So add UART_CAP_TEMT to mark 8250 uarts having this interrupt,
-> update all current em485 users with that capability and make
-> the stop_tx function loop-read on uarts not having it.
+>>
+>>   drivers/soc/qcom/rpmhpd.c | 37 ++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 36 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
+>> index 7142409a3b77..4e9c0bbb8826 100644
+>> --- a/drivers/soc/qcom/rpmhpd.c
+>> +++ b/drivers/soc/qcom/rpmhpd.c
+>> @@ -11,6 +11,7 @@
+>>   #include <linux/of_device.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/pm_opp.h>
+>> +#include <linux/pd_warming.h>
+>>   #include <soc/qcom/cmd-db.h>
+>>   #include <soc/qcom/rpmh.h>
+>>   #include <dt-bindings/power/qcom-rpmpd.h>
+>> @@ -48,6 +49,7 @@ struct rpmhpd {
+>>   	bool		enabled;
+>>   	const char	*res_name;
+>>   	u32		addr;
+>> +	bool		is_warming_dev;
+>>   };
+>>   
+>>   struct rpmhpd_desc {
+>> @@ -55,6 +57,8 @@ struct rpmhpd_desc {
+>>   	size_t num_pds;
+>>   };
+>>   
+>> +const struct rpmhpd_desc *global_desc;
+>> +
+>>   static DEFINE_MUTEX(rpmhpd_lock);
+>>   
+>>   /* SDM845 RPMH powerdomains */
+>> @@ -89,6 +93,7 @@ static struct rpmhpd sdm845_mx = {
+>>   	.pd = { .name = "mx", },
+>>   	.peer = &sdm845_mx_ao,
+>>   	.res_name = "mx.lvl",
+>> +	.is_warming_dev = true,
+>>   };
+>>   
+>>   static struct rpmhpd sdm845_mx_ao = {
+>> @@ -452,7 +457,14 @@ static int rpmhpd_probe(struct platform_device *pdev)
+>>   					       &rpmhpds[i]->pd);
+>>   	}
+>>   
+>> -	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
+>> +	ret = of_genpd_add_provider_onecell(pdev->dev.of_node, data);
+>> +
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	global_desc = desc;
+>> +
+>> +	return 0;
+>>   }
+>>   
+>>   static struct platform_driver rpmhpd_driver = {
+>> @@ -469,3 +481,26 @@ static int __init rpmhpd_init(void)
+>>   	return platform_driver_register(&rpmhpd_driver);
+>>   }
+>>   core_initcall(rpmhpd_init);
+>> +
+>> +static int __init rpmhpd_init_warming_device(void)
+>> +{
+>> +	size_t num_pds;
+>> +	struct rpmhpd **rpmhpds;
+>> +	int i;
+>> +
+>> +	if (!global_desc)
+>> +		return -EINVAL;
+>> +
+>> +	rpmhpds = global_desc->rpmhpds;
+>> +	num_pds = global_desc->num_pds;
+>> +
+>> +	if (!of_find_property(rpmhpds[0]->dev->of_node, "#cooling-cells", NULL))
+>> +		return 0;
+>> +
+>> +	for (i = 0; i < num_pds; i++)
+>> +		if (rpmhpds[i]->is_warming_dev)
+>> +			of_pd_warming_register(rpmhpds[i]->dev, i);
+>> +
+>> +	return 0;
+>> +}
+>> +late_initcall(rpmhpd_init_warming_device);
+> 
+> ...why can't this be done in rpmhpd_probe()?
+> 
+> In particular with the recent patches from John Stultz to allow rpmhpd
+> to be built as a module I don't think there's any guarantees that
+> rpmh_probe() will have succeeded before rpmhpd_init_warming_device()
+> executes.
 
-> +		if (p->capabilities & UART_CAP_TEMT) {
-> +			if ((lsr & BOTH_EMPTY) != BOTH_EMPTY)
-> +				return;
-> +		} else {
-> +			int lsr;
-> +
+It is to take care of boot order.
+So this has to happen after the thermal framework is initialized. 
+Thermal framework is initialized with core_initcall. Can I move the 
+rpmhpd init as a postcore_initcall ? Then I can get rid of this separate 
+function and keep it as part of probe.
 
-> +			if (readx_poll_timeout(__get_lsr, p, lsr,
-> +					(lsr & BOTH_EMPTY) == BOTH_EMPTY,
-> +					0, 10000) < 0)
-
-			ret = readx_poll_timeout(...);
-			if (ret)
-				...
-
-will look better.
-
-> +				pr_warn("%s: timeout waiting for fifos to empty\n",
-> +					p->port.name);
-> +		}
+> 
+> Regards,
+> Bjorn
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Warm Regards
+Thara
