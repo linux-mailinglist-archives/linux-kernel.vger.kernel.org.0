@@ -2,116 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FE4A19888E
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:50:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B789198888
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:47:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbgC3Xt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 19:49:58 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:58083 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728537AbgC3Xt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 19:49:57 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48rq293DXQz9sRY;
-        Tue, 31 Mar 2020 10:49:53 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1585612195;
-        bh=F6it0E2f0m4OGMWEREpO8165BbI/NOBUVZP/AbAM6pc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=grY1711BQSjvgwA4+KJQL+E3oWAUraKW0biE6fsKlj+WZu4LZnZGM5k22V1oFvDfQ
-         EJAUqhBnYlLACpDStpRZbIK9PMFda+FmW83RPOLDdFEjFym8Ze15PHzKBI7TUobF2f
-         7+MtlmWRtvcroj/wP15TaZMEcfxXa/VLfM9r5ArN0asszvWi2BcGu1RudnuzHDb9kD
-         wwiu/QwWn/DBxpSNmCbAUQcO6fM+3+XaDva2vzvlKYyLTxrHCdvTGZMPxeZvrWFhIg
-         VmtUBt74tBvqL2izVDc3vdsipwP2YF751EBUE88etDyFgvxPUaRog+WXrkxjY/DkuY
-         PU7ATVrx/UP7A==
-Date:   Tue, 31 Mar 2020 10:49:47 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: linux-next: manual merge of the pci tree with Linus' tree
-Message-ID: <20200331104947.264c98e5@canb.auug.org.au>
+        id S1729579AbgC3XrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 19:47:00 -0400
+Received: from gateway36.websitewelcome.com ([192.185.187.5]:16551 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729089AbgC3XrA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 19:47:00 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 5ECB2403B42DB
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 18:03:39 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id J47OjD6NLSl8qJ47OjjIOt; Mon, 30 Mar 2020 18:46:58 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=MHojYII/Ua+k7l5hgugppwNvwPqnKoi9qCSV0tIDcMY=; b=WNCS8YARVVpPBy1UXYjUAQe9YQ
+        X6c2Xd0hKDmUu0kPnKn8t41HP/yVT8sZYIkv3JeBOsbBDfRQlq5t6x+EDWmdUmriVVWbPWd5tD8xz
+        GowGlSXb5Jq+w+PtislgOHg8eZkJMcxfaoI7hvVfWWQBkBv4DAN/3QFUj3nXR6fgMjoWN1gv4aFSu
+        vBKaN2abzcQMoalF4KmdvwXhed/SlJzZHdGf07Hp+3zb+jpFW/hIlfRi8f9Z1hS76bTL735ucbXY7
+        hNmup79QHHtRJuPUt1zGPS08cYCANg4ZNbwFHa2errdAWcmg5YlblLo2ZK/6JaNOw0LV87U5n/MQi
+        cMl/vKrg==;
+Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:34376 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jJ47M-000kyx-S1; Mon, 30 Mar 2020 18:46:56 -0500
+Date:   Mon, 30 Mar 2020 18:50:40 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Tiwei Bie <tiwei.bie@intel.com>,
+        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] vhost: vdpa: remove unnecessary null check
+Message-ID: <20200330235040.GA9997@embeddedor>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/srMXF9q3NUD8ClmVZPnEu2o";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.218.116.241
+X-Source-L: No
+X-Exim-ID: 1jJ47M-000kyx-S1
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:34376
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 14
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/srMXF9q3NUD8ClmVZPnEu2o
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+container_of is never null, so this null check is
+unnecessary.
 
-Hi all,
+Addresses-Coverity-ID: 1492006 ("Logically dead code")
+Fixes: 20453a45fb06 ("vhost: introduce vDPA-based backend")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/vhost/vdpa.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Today's linux-next merge of the pci tree got a conflict in:
+diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+index 421f02a8530a..3d2cb811757a 100644
+--- a/drivers/vhost/vdpa.c
++++ b/drivers/vhost/vdpa.c
+@@ -678,8 +678,6 @@ static int vhost_vdpa_open(struct inode *inode, struct file *filep)
+ 	int nvqs, i, r, opened;
+ 
+ 	v = container_of(inode->i_cdev, struct vhost_vdpa, cdev);
+-	if (!v)
+-		return -ENODEV;
+ 
+ 	opened = atomic_cmpxchg(&v->opened, 0, 1);
+ 	if (opened)
+-- 
+2.26.0
 
-  drivers/net/ethernet/intel/ice/ice_main.c
-
-between commit:
-
-  19cce2c6f6dc ("ice: Make print statements more compact")
-
-from Linus' tree and commit:
-
-  894020fdd88c ("PCI/AER: Rationalize error status register clearing")
-
-from the pci tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/ethernet/intel/ice/ice_main.c
-index 5ef28052c0f8,effca3fa92e0..000000000000
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@@ -3458,9 -3495,10 +3458,9 @@@ static pci_ers_result_t ice_pci_err_slo
-  			result =3D PCI_ERS_RESULT_DISCONNECT;
-  	}
- =20
-- 	err =3D pci_cleanup_aer_uncorrect_error_status(pdev);
-+ 	err =3D pci_aer_clear_nonfatal_status(pdev);
-  	if (err)
-- 		dev_dbg(&pdev->dev, "pci_cleanup_aer_uncorrect_error_status failed, err=
-or %d\n",
- -		dev_dbg(&pdev->dev,
- -			"pci_aer_clear_nonfatal_status() failed, error %d\n",
-++		dev_dbg(&pdev->dev, "pci_aer_clear_nonfatal_status() failed, error %d\n=
-",
-  			err);
-  		/* non-fatal, continue */
- =20
-
---Sig_/srMXF9q3NUD8ClmVZPnEu2o
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6ChZsACgkQAVBC80lX
-0GxlAgf/Y5/sEI0Btcm8Ql3NzFmZADH6dx+/llBwI5PPWjomIAnApDbppd+NGqMc
-rcVIb/GwaNgJbfYW1gmOfA8rTlfk8akmYcGeUxeL21W3DQfZySVE91VLQEzHupvm
-J73VjwJP9CDLXL3z43+8sg4rjdZfe2tGQFx850OxUztUudhMG/36yTDVZXQuI8L/
-l/bkR7W5baN6fthYnoP2sH0iy/2raUK0uuN8lA8w1ZnBG9sSIjlNOXUrndUkOv44
-pGeevKzloxyDjKt9aAL9Z6DpYHto3xuT3pH51JvDXt5i90joSfNBQGgH+HRUbJ/q
-Xx9m8AEnQvWkEnglrYopbHtaisBosg==
-=s2wh
------END PGP SIGNATURE-----
-
---Sig_/srMXF9q3NUD8ClmVZPnEu2o--
