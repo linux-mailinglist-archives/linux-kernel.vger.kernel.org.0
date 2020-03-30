@@ -2,78 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF5BD1974BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 08:56:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7683B1974B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 08:52:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbgC3G4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 02:56:39 -0400
-Received: from mx.sdf.org ([205.166.94.20]:65413 "EHLO mx.sdf.org"
+        id S1729202AbgC3GwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 02:52:00 -0400
+Received: from foss.arm.com ([217.140.110.172]:45210 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729099AbgC3G4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 02:56:39 -0400
-Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02U6p8D4025450
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Mon, 30 Mar 2020 06:51:08 GMT
-Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02U6p5rX014028;
-        Mon, 30 Mar 2020 06:51:05 GMT
-Date:   Mon, 30 Mar 2020 06:51:05 +0000
-From:   George Spelvin <lkml@SDF.ORG>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
-        linux-scsi@vger.kernel.org,
-        Marek Lindner <mareklindner@neomailbox.ch>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Antonio Quartulli <a@unstable.cc>,
-        Sven Eckelmann <sven@narfation.org>,
-        b.a.t.m.a.n@diktynna.open-mesh.org,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-wireless@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        lkml@sdf.org
-Subject: Re: [RFC PATCH v1 13/50] Avoid some useless msecs/jiffies conversions
-Message-ID: <20200330065105.GB9333@SDF.ORG>
-References: <202003281643.02SGhBrh000992@sdf.org>
- <s5ho8sfd2dk.wl-tiwai@suse.de>
- <20200329121129.GC11951@SDF.ORG>
- <s5h7dz3ccea.wl-tiwai@suse.de>
- <20200329175032.GE4675@SDF.ORG>
- <1585505807.4510.1.camel@HansenPartnership.com>
- <s5hzhbybbnu.wl-tiwai@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s5hzhbybbnu.wl-tiwai@suse.de>
+        id S1728733AbgC3GwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 02:52:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C581A1FB;
+        Sun, 29 Mar 2020 23:51:59 -0700 (PDT)
+Received: from p8cg001049571a15.arm.com (unknown [10.163.1.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8FA673F71E;
+        Sun, 29 Mar 2020 23:56:00 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC] mm/page_alloc: Enumerate bad page reasons
+Date:   Mon, 30 Mar 2020 12:21:37 +0530
+Message-Id: <1585551097-27283-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 08:27:01AM +0200, Takashi Iwai wrote:
-> On Sun, 29 Mar 2020 20:16:47 +0200, James Bottomley wrote:
->> We all assume that msecs_to_jiffies is properly optimized so there
->> should be no need to open code it like you're proposing.
-> 
-> Yes, it'd be best if the compiler can handle it properly.
+Enumerate all existing bad page reasons which can be used in bad_page() for
+reporting via __dump_page(). Unfortunately __dump_page() cannot be changed.
+__dump_page() is called from dump_page() that accepts a raw string and is
+also an exported symbol that is currently being used from various generic
+memory functions and other drivers. This reduces code duplication while
+reporting bad pages.
 
-I've tried, and can't figure out how to get the compiler to detect this 
-special case and not invoke the general code.  In particular, for a 
-variable x, __builtin_constant_p(x * 1000 % 1000) is false.  Even if x is 
-signed and ANSI lets the compiler assume that overflow doesn't happen.
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+Boot tested on arm64 and x86 platforms (next-20200327) but has been built
+tested on many other platforms.
 
-If you can do it, I'm most curious how!
+ include/linux/memory.h | 36 ++++++++++++++++++++++++++++++++++++
+ mm/page_alloc.c        | 40 ++++++++++++++++++++--------------------
+ 2 files changed, 56 insertions(+), 20 deletions(-)
 
-> But also I meant to keep using the macro for consistency reason.
-> IIRC, we wanted to eliminate the explicit use of HZ in the past, and
-> it's how many lines have been converted with *_to_jiffies() calls.
-> I don't know whether the eliminate of HZ is still wished, but
-> reverting to the open code is a step backward for that.
+diff --git a/include/linux/memory.h b/include/linux/memory.h
+index 7914b0dbd4bb..b2fb90fda537 100644
+--- a/include/linux/memory.h
++++ b/include/linux/memory.h
+@@ -82,6 +82,42 @@ struct memory_notify {
+ struct notifier_block;
+ struct mem_section;
+ 
++/*
++ * Bad page reasons
++ */
++enum page_bad_reason {
++	PAGE_BAD_NONZERO_MAPCOUNT,
++	PAGE_BAD_NONZERO_REFCOUNT,
++	PAGE_BAD_NONNULL_MAPPING,
++	PAGE_BAD_FREE_FLAGS,
++	PAGE_BAD_PREP_FLAGS,
++	PAGE_BAD_CGROUP_CHARGED,
++	PAGE_BAD_HWPOISON,
++	PAGE_BAD_TAIL_CORRUPTED,
++	PAGE_BAD_TAIL_NOT_SET,
++	PAGE_BAD_COMPOUND_HEAD,
++	PAGE_BAD_COMPOUND_MAPCOUNT,
++};
++
++static const char *const page_bad_names[] = {
++	[PAGE_BAD_NONZERO_MAPCOUNT]  = "non-zero mapcout",
++	[PAGE_BAD_NONZERO_REFCOUNT]  = "non-zero _refcount",
++	[PAGE_BAD_NONNULL_MAPPING]   = "non-NULL mapping",
++	[PAGE_BAD_FREE_FLAGS]        = "PAGE_FLAGS_CHECK_AT_FREE flag(s) set",
++	[PAGE_BAD_PREP_FLAGS]        = "PAGE_FLAGS_CHECK_AT_PREP flag(s) set",
++	[PAGE_BAD_CGROUP_CHARGED]    = "page still charged to cgroup",
++	[PAGE_BAD_HWPOISON]          = "HWPoisoned (hardware-corrupted)",
++	[PAGE_BAD_TAIL_CORRUPTED]    = "corrupted mapping in tail page",
++	[PAGE_BAD_TAIL_NOT_SET]      = "PageTail not set",
++	[PAGE_BAD_COMPOUND_HEAD]     = "compound_head not consistent",
++	[PAGE_BAD_COMPOUND_MAPCOUNT] = "non-zero compound_mapcount",
++};
++
++static inline const char *get_page_bad(int reason)
++{
++	return page_bad_names[reason];
++}
++
+ /*
+  * Priorities for the hotplug memory callback routines (stored in decreasing
+  * order in the callback chain)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index ca1453204e66..0f05da0fdc9a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -68,6 +68,7 @@
+ #include <linux/lockdep.h>
+ #include <linux/nmi.h>
+ #include <linux/psi.h>
++#include <linux/memory.h>
+ 
+ #include <asm/sections.h>
+ #include <asm/tlbflush.h>
+@@ -609,7 +610,7 @@ static inline int __maybe_unused bad_range(struct zone *zone, struct page *page)
+ }
+ #endif
+ 
+-static void bad_page(struct page *page, const char *reason,
++static void bad_page(struct page *page, int reason,
+ 		unsigned long bad_flags)
+ {
+ 	static unsigned long resume;
+@@ -638,7 +639,7 @@ static void bad_page(struct page *page, const char *reason,
+ 
+ 	pr_alert("BUG: Bad page state in process %s  pfn:%05lx\n",
+ 		current->comm, page_to_pfn(page));
+-	__dump_page(page, reason);
++	__dump_page(page, get_page_bad(reason));
+ 	bad_flags &= page->flags;
+ 	if (bad_flags)
+ 		pr_alert("bad because of flags: %#lx(%pGp)\n",
+@@ -1079,25 +1080,24 @@ static inline bool page_expected_state(struct page *page,
+ 
+ static void free_pages_check_bad(struct page *page)
+ {
+-	const char *bad_reason;
++	int bad_reason;
+ 	unsigned long bad_flags;
+ 
+-	bad_reason = NULL;
+ 	bad_flags = 0;
+ 
+ 	if (unlikely(atomic_read(&page->_mapcount) != -1))
+-		bad_reason = "nonzero mapcount";
++		bad_reason = PAGE_BAD_NONZERO_MAPCOUNT;
+ 	if (unlikely(page->mapping != NULL))
+-		bad_reason = "non-NULL mapping";
++		bad_reason = PAGE_BAD_NONNULL_MAPPING;
+ 	if (unlikely(page_ref_count(page) != 0))
+-		bad_reason = "nonzero _refcount";
++		bad_reason = PAGE_BAD_NONZERO_REFCOUNT;
+ 	if (unlikely(page->flags & PAGE_FLAGS_CHECK_AT_FREE)) {
+-		bad_reason = "PAGE_FLAGS_CHECK_AT_FREE flag(s) set";
++		bad_reason = PAGE_BAD_FREE_FLAGS;
+ 		bad_flags = PAGE_FLAGS_CHECK_AT_FREE;
+ 	}
+ #ifdef CONFIG_MEMCG
+ 	if (unlikely(page->mem_cgroup))
+-		bad_reason = "page still charged to cgroup";
++		bad_reason = PAGE_BAD_CGROUP_CHARGED;
+ #endif
+ 	bad_page(page, bad_reason, bad_flags);
+ }
+@@ -1130,7 +1130,7 @@ static int free_tail_pages_check(struct page *head_page, struct page *page)
+ 	case 1:
+ 		/* the first tail page: ->mapping may be compound_mapcount() */
+ 		if (unlikely(compound_mapcount(page))) {
+-			bad_page(page, "nonzero compound_mapcount", 0);
++			bad_page(page, PAGE_BAD_COMPOUND_MAPCOUNT, 0);
+ 			goto out;
+ 		}
+ 		break;
+@@ -1142,17 +1142,17 @@ static int free_tail_pages_check(struct page *head_page, struct page *page)
+ 		break;
+ 	default:
+ 		if (page->mapping != TAIL_MAPPING) {
+-			bad_page(page, "corrupted mapping in tail page", 0);
++			bad_page(page, PAGE_BAD_TAIL_CORRUPTED, 0);
+ 			goto out;
+ 		}
+ 		break;
+ 	}
+ 	if (unlikely(!PageTail(page))) {
+-		bad_page(page, "PageTail not set", 0);
++		bad_page(page, PAGE_BAD_TAIL_NOT_SET, 0);
+ 		goto out;
+ 	}
+ 	if (unlikely(compound_head(page) != head_page)) {
+-		bad_page(page, "compound_head not consistent", 0);
++		bad_page(page, PAGE_BAD_COMPOUND_HEAD, 0);
+ 		goto out;
+ 	}
+ 	ret = 0;
+@@ -2110,29 +2110,29 @@ static inline void expand(struct zone *zone, struct page *page,
+ 
+ static void check_new_page_bad(struct page *page)
+ {
+-	const char *bad_reason = NULL;
++	int bad_reason;
+ 	unsigned long bad_flags = 0;
+ 
+ 	if (unlikely(atomic_read(&page->_mapcount) != -1))
+-		bad_reason = "nonzero mapcount";
++		bad_reason = PAGE_BAD_NONZERO_MAPCOUNT;
+ 	if (unlikely(page->mapping != NULL))
+-		bad_reason = "non-NULL mapping";
++		bad_reason = PAGE_BAD_NONNULL_MAPPING;
+ 	if (unlikely(page_ref_count(page) != 0))
+-		bad_reason = "nonzero _refcount";
++		bad_reason = PAGE_BAD_NONZERO_REFCOUNT;
+ 	if (unlikely(page->flags & __PG_HWPOISON)) {
+-		bad_reason = "HWPoisoned (hardware-corrupted)";
++		bad_reason = PAGE_BAD_HWPOISON;
+ 		bad_flags = __PG_HWPOISON;
+ 		/* Don't complain about hwpoisoned pages */
+ 		page_mapcount_reset(page); /* remove PageBuddy */
+ 		return;
+ 	}
+ 	if (unlikely(page->flags & PAGE_FLAGS_CHECK_AT_PREP)) {
+-		bad_reason = "PAGE_FLAGS_CHECK_AT_PREP flag set";
++		bad_reason = PAGE_BAD_PREP_FLAGS;
+ 		bad_flags = PAGE_FLAGS_CHECK_AT_PREP;
+ 	}
+ #ifdef CONFIG_MEMCG
+ 	if (unlikely(page->mem_cgroup))
+-		bad_reason = "page still charged to cgroup";
++		bad_reason = PAGE_BAD_CGROUP_CHARGED;
+ #endif
+ 	bad_page(page, bad_reason, bad_flags);
+ }
+-- 
+2.20.1
 
-Well, you could always add a secs_to_jiffies(x) wrapper.  But given
-that it expands to basically x * HZ, some people might wonder why
-you're bothering.
-
-I assumed that open-coding x * HZ was the preferred style, so that's
-what I did.
