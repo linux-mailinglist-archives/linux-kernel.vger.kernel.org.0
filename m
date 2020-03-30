@@ -2,58 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 099BB19799A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 12:46:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9166B1979EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 12:54:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729318AbgC3Kqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 06:46:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50580 "EHLO mail.kernel.org"
+        id S1729321AbgC3KyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 06:54:18 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:36550 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729181AbgC3Kqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 06:46:47 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0CFB205ED;
-        Mon, 30 Mar 2020 10:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585565207;
-        bh=hOAh2tFSSErO/EeUBVipX4uy4+g3G7RwJI25iUpOFEM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EySwtxaHh28Y725V5BdjzisZtuEEjSaqP6YfW1H/ku4GrDRucRUk69azDS9YN1VB2
-         /nKtkytYjlk+N9v5c87rB7dzsItY4LAyXhc4pbny8RjTrXxvF4Vs2CK258MAONAasE
-         dI8SyamiKnTo4utYvuN0YKgC9G5d/x8ywXUK8gdw=
-Date:   Mon, 30 Mar 2020 12:46:43 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Payal Kshirsagar <payalskshirsagar1234@gmail.com>
-Cc:     akpm@linux-foundation.org, dave@stgolabs.net,
-        viro@zeniv.linux.org.uk, elfring@users.sourceforge.net,
-        manfred@colorfullife.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
-Subject: Re: [Outreachy kernel] [PATCH] ipc: mqueue.c: avoid NULL comparison
-Message-ID: <20200330104643.GA739661@kroah.com>
-References: <20200330103826.6531-1-payalskshirsagar1234@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200330103826.6531-1-payalskshirsagar1234@gmail.com>
+        id S1729214AbgC3KyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 06:54:18 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 422B21A0467;
+        Mon, 30 Mar 2020 12:54:16 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6DF141A0485;
+        Mon, 30 Mar 2020 12:54:11 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9C675402AA;
+        Mon, 30 Mar 2020 18:54:05 +0800 (SGT)
+From:   Biwen Li <biwen.li@oss.nxp.com>
+To:     leoyang.li@nxp.com, linux@rempel-privat.de, kernel@pengutronix.de,
+        wsa@the-dreams.de
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jiafei.pan@nxp.com, Biwen Li <biwen.li@nxp.com>
+Subject: [PATCH] i2c: slave: support I2C_SLAVE_STOP event for the read transactions
+Date:   Mon, 30 Mar 2020 18:50:38 +0800
+Message-Id: <20200330105038.22546-1-biwen.li@oss.nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 04:08:26PM +0530, Payal Kshirsagar wrote:
-> Change suggested by coccinelle.
-> Avoid NULL comparison, compare using boolean negation.
-> 
-> Signed-off-by: Payal Kshirsagar <payalskshirsagar1234@gmail.com>
-> ---
->  ipc/mqueue.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+From: Biwen Li <biwen.li@nxp.com>
 
-I can not take any outreachy patches made outside of drivers/staging,
-sorry.
+Support I2C_SLAVE_STOP event for the read transactions(master read from slave)
 
-So consider this, and your other patch, dropped, sorry.
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+ drivers/i2c/busses/i2c-imx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-greg k-h
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index 62517a41b32d..1fd0d87885d5 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -1464,6 +1464,7 @@ static irqreturn_t i2c_imx_slave_isr(struct imx_i2c_struct *i2c_imx)
+ 		ctl &= ~I2CR_MTX;
+ 		imx_i2c_write_reg(ctl, i2c_imx, IMX_I2C_I2CR);
+ 		imx_i2c_read_reg(i2c_imx, IMX_I2C_I2DR);
++		i2c_slave_event(i2c_imx->slave, I2C_SLAVE_STOP, &value);
+ 	}
+ 	return IRQ_HANDLED;
+ }
+-- 
+2.17.1
+
