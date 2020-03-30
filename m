@@ -2,114 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 776CE19727E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 04:34:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1C1B19728A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 04:34:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729249AbgC3Cdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 22:33:54 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:34214 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729225AbgC3Cdu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 22:33:50 -0400
-Received: by mail-qk1-f194.google.com with SMTP id i6so17556414qke.1
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 19:33:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bIwgeh9rHwo41HBlXUss+pfAH9DbFE6iCebsly3ZN4c=;
-        b=w1Utm7e6d4/535TdQtPiMXksX4j1qcmln0qSp2Ce5ITm627q5dnSU8lnhyBq3uY9oE
-         0PhDmMsluIYgdTjcV+PSd7sVQ/WGe+IhJGHMYogCDZYqSvqJL1tsZLjyg/tB9D7Y4aYN
-         zqy3An60oNrntByo8BqUBrC2oSWocnndGjLG8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bIwgeh9rHwo41HBlXUss+pfAH9DbFE6iCebsly3ZN4c=;
-        b=rk4qa2sZLcHQyUkQMnxqtZ13mHYsAmkVNzjxPCeuvdYgfo1TgGI5m4Uhais/wwGMRr
-         CNBRNLtK4jr5R1PnNmerLlOK0AzdpgLIWXMJlvzrJ0rCqSYlEGEliVkcizqL70s7HK/p
-         4+IWgcxcux+hBAjiEuKVJmer8VXD5/ScrEQJ3aBsQXsu0Nuogk0aIIdfzAWCzdL+eNqW
-         QSvdcTm/nLE29j3I8N7nA8kV1fAILecr1UEphEIWI8DBK0humUH2ASyqcxio9mrs0/iz
-         tcHT5qSIHUd7RwBzqgphncI/6N0IjE9gPPMOqJYwMpJSW2YPYhNf41L3jzyolWk722lh
-         Hr0w==
-X-Gm-Message-State: ANhLgQ20qqOkkQk+FyhLA8ew2msPV38bSJxPqgEW6MiJB9EJov0UXbIt
-        Heh9e4WfuRBdi1jLN7hpHX7S+hPYLsU=
-X-Google-Smtp-Source: ADFU+vurXBFAw9FRqEBRvtnmRBiIAJYMQMQAx1nAenRxy7DRsubkevgiGpgtf0ZMZlIvcVQv3d7mpA==
-X-Received: by 2002:a37:a68e:: with SMTP id p136mr9993192qke.7.1585535629357;
-        Sun, 29 Mar 2020 19:33:49 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id q15sm10030625qtj.83.2020.03.29.19.33.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Mar 2020 19:33:48 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-mm@kvack.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: [PATCH 18/18] rcu/tree: Make kvfree_rcu() tolerate any alignment
-Date:   Sun, 29 Mar 2020 22:32:48 -0400
-Message-Id: <20200330023248.164994-19-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
-In-Reply-To: <20200330023248.164994-1-joel@joelfernandes.org>
-References: <20200330023248.164994-1-joel@joelfernandes.org>
+        id S1729324AbgC3Cee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 22:34:34 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12144 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729055AbgC3Ced (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Mar 2020 22:34:33 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 56FE985823BD02648F9E;
+        Mon, 30 Mar 2020 10:34:31 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.487.0; Mon, 30 Mar 2020
+ 10:34:21 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <allison@lohutok.net>, <gregkh@linuxfoundation.org>,
+        <kstewart@linuxfoundation.org>, <info@metux.net>,
+        <tglx@linutronix.de>, <yuehaibing@huawei.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] memory: tegra: mark PM functions as __maybe_unuse
+Date:   Mon, 30 Mar 2020 10:33:58 +0800
+Message-ID: <20200330023358.30100-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Handle cases where the the object being kvfree_rcu()'d is not aligned by
-2-byte boundaries.
+Without this, we get a couple of warnings when CONFIG_PM
+is disabled:
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+drivers/memory/tegra/tegra186.c:1578:12: warning: 'tegra186_mc_resume' defined but not used [-Wunused-function]
+ static int tegra186_mc_resume(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~
+drivers/memory/tegra/tegra186.c:1573:12: warning: 'tegra186_mc_suspend' defined but not used [-Wunused-function]
+ static int tegra186_mc_suspend(struct device *dev)
+            ^~~~~~~~~~~~~~~~~~~
+
+Fixes: 177602b00641 ("memory: tegra: Add system sleep support")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- kernel/rcu/tree.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/memory/tegra/tegra186.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 311d216c7faa7..d6536374d12a9 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2827,6 +2827,9 @@ struct kvfree_rcu_bulk_data {
- #define KVFREE_BULK_MAX_ENTR \
- 	((PAGE_SIZE - sizeof(struct kvfree_rcu_bulk_data)) / sizeof(void *))
+diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+index 5d53f11ca7b6..e25c954dde2e 100644
+--- a/drivers/memory/tegra/tegra186.c
++++ b/drivers/memory/tegra/tegra186.c
+@@ -1570,12 +1570,12 @@ static const struct of_device_id tegra186_mc_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, tegra186_mc_of_match);
  
-+/* Encoding the offset of a fake rcu_head to indicate the head is a wrapper. */
-+#define RCU_HEADLESS_KFREE BIT(31)
-+
- /**
-  * struct kfree_rcu_cpu_work - single batch of kfree_rcu() requests
-  * @rcu_work: Let queue_rcu_work() invoke workqueue handler after grace period
-@@ -2970,9 +2973,9 @@ static void kfree_rcu_work(struct work_struct *work)
- 		next = head->next;
+-static int tegra186_mc_suspend(struct device *dev)
++static int __maybe_unused tegra186_mc_suspend(struct device *dev)
+ {
+ 	return 0;
+ }
  
- 		/* We tag the headless object, if so adjust offset. */
--		headless = (((unsigned long) head - offset) & BIT(0));
-+		headless = !!(offset & RCU_HEADLESS_KFREE);
- 		if (headless)
--			offset -= 1;
-+			offset &= ~(RCU_HEADLESS_KFREE);
+-static int tegra186_mc_resume(struct device *dev)
++static int __maybe_unused tegra186_mc_resume(struct device *dev)
+ {
+ 	struct tegra186_mc *mc = dev_get_drvdata(dev);
  
- 		ptr = (void *) head - offset;
- 		debug_rcu_head_unqueue((struct rcu_head *)ptr);
-@@ -3221,7 +3224,7 @@ void kvfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
- 			 * to the original allocated memory, that has to be freed as
- 			 * well as dynamically attached wrapper/head.
- 			 */
--			func = (rcu_callback_t) (sizeof(unsigned long *) + 1);
-+			func = (rcu_callback_t)(sizeof(unsigned long *) | RCU_HEADLESS_KFREE);
- 		}
- 
- 		head->func = func;
 -- 
-2.26.0.rc2.310.g2932bb562d-goog
+2.17.1
+
 
