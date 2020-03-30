@@ -2,94 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30FF5198702
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 00:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9459C19870E
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 00:11:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730944AbgC3WKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 18:10:18 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41405 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729142AbgC3WKS (ORCPT
+        id S1730972AbgC3WLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 18:11:30 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39013 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728987AbgC3WLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 18:10:18 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h9so23548674wrc.8;
-        Mon, 30 Mar 2020 15:10:16 -0700 (PDT)
+        Mon, 30 Mar 2020 18:11:30 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p10so23591752wrt.6;
+        Mon, 30 Mar 2020 15:11:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=znoWPrzZPPeMBlwYAXU/ZXkwjJfA37xc5jbQZ/l+0OQ=;
-        b=G35reuvYKP/V2qYll9ynDb8qbZEFe0G7rvXJopY8cVCQgH8zHGhQXD3EWMq+YQNIVQ
-         fV3heedl2t9PMktRv2XIBxkVfZFNr6h08UaS+DFbGInp3FZuYSkgyA7U6UsFruaCSL4E
-         a61YJd3oc8EX308yNACgKiQKQaopWkTHMES8GzQSN0oSXLgW0wLXNvheTxGcKkprsuvX
-         ze8Q1IPrhUz4acS69pzyx6FG7JjcjmS0aNnRpipaeF3BoDH3Z9/cQKs7IS+Rr5dEAboJ
-         UmbShFnnPJ6l+B4tkur0PhxJ4DYFiqPOPbThqpcUOo3RQDPH/jJ6e9LLLfQOhh8vgJr0
-         KJLA==
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2VkoQedczWLBus6tX3n5y4wQRH1ftctG/cF/BNNp5TE=;
+        b=rLucE9/RYbxcQsiwyj8s+DMFOnyqScGjogDDQTt/ysPfoWFsvldH4Eb5BFVYuF1K3Y
+         Nb0YBeTl4mWGVBP84wku6pbJvTZvSP/br/lx95SLIIWji2b83He3DMHuRnNgM3tmVQgj
+         gQBj9BhZyYl9DONJppZ/Cqa71rjlTqM612S3YnpPtokD32kmU7J79ZvVjoHyuuRFZtj0
+         c9YVfGzaNMJ0GjNRwAuIsl5RKkfxf4Jc9I42GUpAMvpoDT1RxHhHWb32MdREz/TO2i6s
+         i7OJVW5mfJWPrWY3l8xLtUjpDMFMx0q0GV1rzN5I+gztT1PCQ0hPwl1zAG2LfXwX0rG2
+         ymZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=znoWPrzZPPeMBlwYAXU/ZXkwjJfA37xc5jbQZ/l+0OQ=;
-        b=harmS0AX27Nlfp4Ka6Y71g03Vn614I6Dq/TAZQJzp2mF0pxU7s5UIs1DSitGXEGPQy
-         9dDnB61MNb3hxNkLx6C2UdV9ok6T+UprIAt/lMX6YDW7jUgi8+k2ucVCx3sKIlgRsaev
-         V5IP3XaFhZh/g7+H6Umw/dal9sTUqfKhVmt5/r9vzByhkUAqSP+0Cyize1c1lACHCkcp
-         chYyCK5b/xVtwYlE8Efji7dBqxVWOmUhxw4Qc95rgC8pZJgTi32iY5FXfi0grDblgwqY
-         FXQJv0A3p/NUIOnaRkuVegJDK9lLvfOI5iE+luYzO9Pg3JiHQl8LJERO16V9ytnaLo5o
-         lImg==
-X-Gm-Message-State: ANhLgQ09QMvIO73OPcf38HvxrsMslkrr6I16eYoyhYGglEI24eyKnrgA
-        pohTje1Yrfj3M+s0CAG20rI=
-X-Google-Smtp-Source: ADFU+vvKGoP43xQtMj0sdWabkOaAX7yuRVcdGH7v+cJ0IPdXVxI3A2u8aB/f6NypUH5xb/xIN78U4A==
-X-Received: by 2002:adf:f791:: with SMTP id q17mr8654344wrp.166.1585606216219;
-        Mon, 30 Mar 2020 15:10:16 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id h81sm1195302wme.42.2020.03.30.15.10.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Mar 2020 15:10:15 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 22:10:14 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Wei Yang <richard.weiyang@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/9] XArray: entry in last level is not expected to be a
- node
-Message-ID: <20200330221014.ppabot7qef2jhwx3@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20200330123643.17120-1-richard.weiyang@gmail.com>
- <20200330123643.17120-6-richard.weiyang@gmail.com>
- <20200330124842.GY22483@bombadil.infradead.org>
- <20200330141558.soeqhstone2liqud@master>
- <20200330142821.GD22483@bombadil.infradead.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2VkoQedczWLBus6tX3n5y4wQRH1ftctG/cF/BNNp5TE=;
+        b=OwAHSfOEFQWNOwwHeY23WTan3MjcJcAIlar1kQW5TmGjsHEFVtemVl2hgUtJwz2S5M
+         JZlCtHLlkVsaNOjnQCnQhPYJWrTe/7wY+ixESDUlWGQF3pUtXhMCTRCLOsUopNMHQ7Wz
+         oIIzXRca6Y4hB/nnarR0VPqGlvmzxrDw2QM6GmkLGjZ3k1xIkkRwdA6aMhD33HcnJMSA
+         GyVVz76LLbKpe05S9DrKfuGTm4dJgGFEgqSUMNfrR8xQVjWk+b9mUey/DIZ5K4RlTPOu
+         zE2SBx1vfAGWCYrpADUmGJevGLh4GEqbxxtaoavcnqnn+SgO0fydktbbxgBEKjr2wB2n
+         B9Ig==
+X-Gm-Message-State: ANhLgQ02OU2YPmzcrsKELBphFSDXOmOBkZbrY27NEYwmr1DBcRzf+DOJ
+        ikWbAkqwL+2e35stHfmxKX40+KiF
+X-Google-Smtp-Source: ADFU+vt3Xdhd1l9/VCPq5miOEsLgn0jBbyBbBYz0y9zmPaIrN6jUxlNqvubLbBoVAA2/eXbmEAb3mw==
+X-Received: by 2002:a5d:4401:: with SMTP id z1mr16739067wrq.259.1585606288271;
+        Mon, 30 Mar 2020 15:11:28 -0700 (PDT)
+Received: from localhost.localdomain (p200300F13710ED00428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:3710:ed00:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id b187sm1260509wmc.14.2020.03.30.15.11.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 15:11:27 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, khilman@baylibre.com,
+        jbrunet@baylibre.com, narmstrong@baylibre.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [RFC v1 0/5] GPU DVFS for Meson GXBB/GXL/GXM/G12A/G12B/SM1
+Date:   Tue, 31 Mar 2020 00:10:59 +0200
+Message-Id: <20200330221104.3163788-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200330142821.GD22483@bombadil.infradead.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 07:28:21AM -0700, Matthew Wilcox wrote:
->On Mon, Mar 30, 2020 at 02:15:58PM +0000, Wei Yang wrote:
->> On Mon, Mar 30, 2020 at 05:48:42AM -0700, Matthew Wilcox wrote:
->> >On Mon, Mar 30, 2020 at 12:36:39PM +0000, Wei Yang wrote:
->> >> If an entry is at the last level, whose parent's shift is 0, it is not
->> >> expected to be a node. We can just leverage the xa_is_node() check to
->> >> break the loop instead of check shift additionally.
->> >
->> >I know you didn't run the test suite after making this change.
->> 
->> I did kernel build test, but not the test suite as you mentioned.
->> 
->> Would you mind sharing some steps on using the test suite? And which case you
->> think would trigger the problem?
->
->cd tools/testing/radix-tree/; make; ./main
->
->The IDR tests are the ones which are going to trigger on this.
+Now that we have GPU DVFS support in lima [0] (queued for Linux 5.7)
+and panfrost we can make it work on Amlogic SoCs.
 
-Thanks, I will give it a shot.
+The first two patches update the clock drivers to allow runtime
+frequency changes of the mali clock tree. This is similar to what I
+have implemented for Meson8b/Meson8m2 already.
+
+The remaining three patches add the GPU OPP tables to the .dtsi files.
+I decided to remove code duplication for the Mali-450 GPU on GXBB and
+GXL so it will be easier to maintain this. This refactoring is part of
+patch #3. Patches #4 (GXM) and #5 (G12A, G12B, SM1) are straight
+forward; it replaces the hardcoded clock settings with the the GPU OPP
+table.
+
+I used the userspace devfreq governor to cycle through all available
+GPU frequency settings on GXL, GXM and G12A (which covers all relevant
+GPU driver and clock driver combinations). I have taken the GPU OPP
+tables from Amlogic's 4.9 vendor kernel and the voltage settings
+(opp-microvolt property) from the public dataseheets for all SoCs.
+
+
+[0] https://cgit.freedesktop.org/drm-misc/commit/?id=1996970773a323533e1cc1b6b97f00a95d675f32
+
+
+Martin Blumenstingl (5):
+  clk: meson: gxbb: Prepare the GPU clock tree to change at runtime
+  clk: meson: g12a: Prepare the GPU clock tree to change at runtime
+  arm64: dts: amlogic: meson-gx: add the Mali-450 OPP table and use DVFS
+  arm64: dts: amlogic: meson-gxm: add the Mali OPP table and use DVFS
+  arm64: dts: amlogic: meson-g12: add the Mali OPP table and use DVFS
+
+ .../boot/dts/amlogic/meson-g12-common.dtsi    | 49 ++++++++++-----
+ .../boot/dts/amlogic/meson-gx-mali450.dtsi    | 61 +++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi   | 51 ++++------------
+ .../boot/dts/amlogic/meson-gxl-mali.dtsi      | 46 +++-----------
+ arch/arm64/boot/dts/amlogic/meson-gxm.dtsi    | 45 +++++++++-----
+ drivers/clk/meson/g12a.c                      | 30 ++++++---
+ drivers/clk/meson/gxbb.c                      | 40 ++++++------
+ 7 files changed, 189 insertions(+), 133 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gx-mali450.dtsi
 
 -- 
-Wei Yang
-Help you, Help me
+2.26.0
+
