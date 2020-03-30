@@ -2,82 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2AD81987E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:16:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18BB41987F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 01:20:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729788AbgC3XP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 19:15:59 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36792 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728876AbgC3XP7 (ORCPT
+        id S1729837AbgC3XUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 19:20:11 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38181 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728880AbgC3XUK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 19:15:59 -0400
-Received: by mail-io1-f68.google.com with SMTP id n10so5677516iom.3;
-        Mon, 30 Mar 2020 16:15:58 -0700 (PDT)
+        Mon, 30 Mar 2020 19:20:10 -0400
+Received: by mail-lj1-f194.google.com with SMTP id w1so19985406ljh.5;
+        Mon, 30 Mar 2020 16:20:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bE6xbA64+4/+ypbO6EikqEyAaX3P7FX1UfeFwnlD2zU=;
+        b=QBoARub8KAADOXu16KRfIrYxWSYJPJxny8zQJqUx5TWyKDx7Rl5lqGkpZ7fRmRQ5k2
+         u2L/X2gOIW3uHGoq2AG/Vzs+RCdQ1o0VDP4RBd8b7oIe9JDj1Sa4ZSSqHzHQVMbn9zVn
+         IJgsbDLH2TI/CQ7V8lqcD1WBqiEuqaNsXnmMgHlMnUqQrhcepiigtN3LqM9ZfoniLc+B
+         dL/RsqQ3wBv1nbCl2L51IkumLx57cPNEHssWxhTayVBVLT0DRPHFPxDbGOoXbZy0mYJD
+         wZ+2fSmBNUCGyQ832yeJ8leecDzKOj/zgWg1fe8AF6Z9xSxZXgwW80ZrwXgZi+GTwzpj
+         m44Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MzTiIR9WIdGk4sSFyoVRaphe8GsQGc2l1TSUK2PTluM=;
-        b=Wu2v6j9uYLsdEWaLKPPo51gZD3vTE8+XVourSfvEPRPAJBJvPCivpvEH0fNZFYD7Mi
-         5U3G+Yxeby39SyxLLrNGo79HPMNYsveuefN2mS4kAUSVrpAz3OoWgnSfYZSV0G97i2Nn
-         oMlAq5bZNgzCXbXlMs4qxkH/4/OGKyqox1YGVu/X/JP4A0e33Qya37nuIAyXj7vOgHvz
-         daQhtoqJ+aJ/o8bxFAlma7VELKI9zyR2DfuPIYJyu6uXLiswPLUzlIGtlID/MLPnrLNx
-         Zvbv/LMfV1g8gTFNrrU6ebwIIB0QpWB5ExOB8yf4+sBTnv75q+nVz2N/XfrMC10Fl5DX
-         O2mw==
-X-Gm-Message-State: ANhLgQ1MlBxecW/5uutPRHsJ1cqqmP2ckz9zYm7Z412mShniF7BarPB0
-        9B9x2ku9B4ECcq7Mo5DvpA==
-X-Google-Smtp-Source: ADFU+vt9bzeSBDXZlx6pjw+tK/wi5g5Qw+8DG1MTXxR4RKIA4KRk2Ttwqfq05dNY7X2wF9Y9Ih/Veg==
-X-Received: by 2002:a02:c605:: with SMTP id i5mr1593116jan.26.1585610158133;
-        Mon, 30 Mar 2020 16:15:58 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id q17sm5442226ilk.48.2020.03.30.16.15.56
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bE6xbA64+4/+ypbO6EikqEyAaX3P7FX1UfeFwnlD2zU=;
+        b=EyAcuMCzlK3WAMBfeo+3bu9Yc/OD0/dlbt/jaUa0vVurOU+ZVfvHY5awP/JyTp0qYa
+         AY0ZDyP93Ml3ylInE8jI6rxzuhd41WiQh+R+TTH9I9dYzAh58Cm/loQ8Ebb03RBuwV2y
+         sAvLtZRKzufB+ZH+PZuOHM8W1yb2n9Jbp51/bV4com9wdXL2ycBi/iMBxcVfQG3W1GWQ
+         MJhn4ryLBYhbzXyZfngAwLvD2wHHrWU6Cj/is3hBeF07NwR9Fm4moVhh2ROmZp7EBzU0
+         up1GJdsDagG3yycbedLNGleFfn84tzUAJqONHfJcii9qMj0iEkFDRtSDQwiZjiE/8O9x
+         5gDw==
+X-Gm-Message-State: AGi0PuZOAtVynqY0MsSB9G72D5Wb2Zd2zaNOXBnMMrwzPY57qNc5TT1C
+        x9TKjJZDLctad5jSVP3jfLw=
+X-Google-Smtp-Source: APiQypLdU3aIWu9z86/NX1JqxLKQ+dBdMwQ2HRs5P+XZUJ86A5j43R6srXcrdFpxTzks4w0GObR7fQ==
+X-Received: by 2002:a2e:81cc:: with SMTP id s12mr8513672ljg.90.1585610406263;
+        Mon, 30 Mar 2020 16:20:06 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.gmail.com with ESMTPSA id h3sm8773187lfk.30.2020.03.30.16.20.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 16:15:57 -0700 (PDT)
-Received: (nullmailer pid 9828 invoked by uid 1000);
-        Mon, 30 Mar 2020 23:15:56 -0000
-Date:   Mon, 30 Mar 2020 17:15:56 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Lad Prabhakar <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v4 1/5] media: dt-bindings: media: i2c: Deprecate usage
- of the clock-frequency property
-Message-ID: <20200330231556.GA5102@bogus>
-References: <1584620363-2255-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1584620363-2255-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Mon, 30 Mar 2020 16:20:05 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/5] NVIDIA Tegra devfreq drivers improvements
+Date:   Tue, 31 Mar 2020 02:16:12 +0300
+Message-Id: <20200330231617.17079-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1584620363-2255-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 12:19:19PM +0000, Lad Prabhakar wrote:
-> Deprecate usage of the clock-frequency property. The preferred method to
-> set clock rates is to use assigned-clock-rates.
+Hello,
 
-Somewhere here and in the subject you should have 'ov5645'. Otherwise,
+This series contains minor patches that I was going to send out a month or
+two ago, but completely forgot about. More importantly, it also contains new
+patches that are needed in order to address an upcoming problem in regards
+to adding interconnect API support for NVIDIA Tegra [1].
 
-Acked-by: Rob Herring <robh@kernel.org>
+[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=167480
 
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> ---
->  Documentation/devicetree/bindings/media/i2c/ov5645.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+The problem lies in clk_round_rate(), which rounds clock rate based on the
+min/max clk limits imposed by active clk users. This is not suitable for
+the Tegra devfreq drivers because they use clk_round_rate() for building
+OPP table, and thus, nothing should limit the clk rate, otherwise the OPP
+table values are erroneously getting limited to the clk's limits.
+
+Dmitry Osipenko (5):
+  PM / devfreq: tegra: Add Dmitry as a maintainer
+  clk: Introduce clk_round_rate_unboundly()
+  PM / devfreq: tegra20: Use clk_round_rate_unboundly()
+  PM / devfreq: tegra30: Use clk_round_rate_unboundly()
+  PM / devfreq: tegra30: Make CPUFreq notifier to take into account
+    boosting
+
+ MAINTAINERS                       |  9 ++++++
+ drivers/clk/clk.c                 | 49 ++++++++++++++++++++++++-------
+ drivers/devfreq/tegra20-devfreq.c |  4 +--
+ drivers/devfreq/tegra30-devfreq.c |  6 ++--
+ include/linux/clk.h               | 18 ++++++++++++
+ 5 files changed, 70 insertions(+), 16 deletions(-)
+
+-- 
+2.25.1
+
