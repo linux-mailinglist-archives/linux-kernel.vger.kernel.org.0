@@ -2,118 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 076131971F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 03:14:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59D181971FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 03:25:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbgC3BOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 21:14:02 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:42851 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727926AbgC3BOB (ORCPT
+        id S1728189AbgC3BZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 21:25:06 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39874 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727830AbgC3BZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 21:14:01 -0400
+        Sun, 29 Mar 2020 21:25:05 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p10so19416492wrt.6
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 18:25:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1585530841; x=1617066841;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=bHirlSaOnlkr4MhM+2h8bgaq8bwuzARgsALW27WJBYY=;
-  b=Yj3EKfqErbkt57Ba2ckDB/1hhVFoSMlUakmS14n2W1D12ue1JPnDXYE5
-   HwdcS0uMBEqLsFj3+QOrgh31HSzlZmzNPUnXFqdBzmGSzLm+zcbDFP9uQ
-   y5Gin9ShlZOibZ0lV9FWwU475Zq1/POhcQD46F4OQyXexy/rfKKPxIZiy
-   g=;
-IronPort-SDR: HH/i3QegBncWAjc3SiXzC54btnTyCH9p4vume3o2MpgQ77GLrEgBMdFA9IH7Zs0JSiTGP9NgxJ
- bXp2QZI3Lg1w==
-X-IronPort-AV: E=Sophos;i="5.72,322,1580774400"; 
-   d="scan'208";a="23646605"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-69849ee2.us-west-2.amazon.com) ([10.43.8.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 30 Mar 2020 01:13:48 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2a-69849ee2.us-west-2.amazon.com (Postfix) with ESMTPS id 57282A269B;
-        Mon, 30 Mar 2020 01:13:47 +0000 (UTC)
-Received: from EX13D01UWB002.ant.amazon.com (10.43.161.136) by
- EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 30 Mar 2020 01:13:46 +0000
-Received: from EX13D01UWB002.ant.amazon.com (10.43.161.136) by
- EX13d01UWB002.ant.amazon.com (10.43.161.136) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Mon, 30 Mar 2020 01:13:46 +0000
-Received: from EX13D01UWB002.ant.amazon.com ([10.43.161.136]) by
- EX13d01UWB002.ant.amazon.com ([10.43.161.136]) with mapi id 15.00.1497.006;
- Mon, 30 Mar 2020 01:13:46 +0000
-From:   "Singh, Balbir" <sblbir@amazon.com>
-To:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "keescook@chromium.org" <keescook@chromium.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>
-Subject: Re: [RFC PATCH v2 0/4] arch/x86: Optionally flush L1D on context
- switch
-Thread-Topic: [RFC PATCH v2 0/4] arch/x86: Optionally flush L1D on context
- switch
-Thread-Index: AQHWAnSRV8t1YBQKFU+upP2/R0lyqahgXAAA
-Date:   Mon, 30 Mar 2020 01:13:46 +0000
-Message-ID: <87e4bd4e25c81d43abb47d0e2812c21a0478869b.camel@amazon.com>
-References: <20200325071101.29556-1-sblbir@amazon.com>
-In-Reply-To: <20200325071101.29556-1-sblbir@amazon.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.162.164]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5F38399E83167F4895EF51E1E8CFE0A9@amazon.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=uL92qf5dJQGlNO9IGHOn2G/wiICxkj1gwIxnuiCxh00=;
+        b=g20xzvu1vSov7nOOikv/A8/WkrAQ8aWVTw+0yxbu/E0e09rfRn5zb1RZooVE769Ezn
+         t+pJ64W5x1/QpNgS1NNPXKpDazEkIMEJYZ7w9mEUEQ7Vin1yKKAF5hEjlWTaSwH7VVu0
+         J0qFF9oUi9rnCjhiHy2/Hi6W+5YTOixYiqpHk9cwL/r3kjoTRZFWw2u4mcOHMv/WMWYk
+         V9yDAUOIXQRHSH029so5UMcrhV1LpFCvkZZ6ItSfau2OZUB4taYrXl3MsjAqLomyire5
+         mmRGkQWFFC9SyvPqDSuaQF4iFbRf3NvT8Yvzici3W6xG+j6obZ4yjdl9woZQy0oiavUA
+         3R8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uL92qf5dJQGlNO9IGHOn2G/wiICxkj1gwIxnuiCxh00=;
+        b=eGyCV8HneZiOIctVJE0RROtgRlcdcS9cSgLiIf0/EJrcc9uHoyBL5jGiEaF6XLhkjB
+         0N8WyGBelu4sMYCefOepfCoRMcOLvbo54rHh/Po8Y0EZaLPHiJ1X8aSeCtv9O5oVRPwC
+         0NNTAGhd3KtRJiwcC2BasdirgZGiresW2YMZYYJo+iPJk5DHjngwLMiQoGTobjaXKdyS
+         G/FCi2kjkhIlRj2/Vd8/ZGrAY0qcndlaxXHcm8ej9yh4O33nvCgZMfcJbcpbQ+CiKUjy
+         G1oOKx9j9mc5KO1j34dbEZ29nKCVORA/AmH/grsLN26pSrt+Tdkc8ljX26opNh6neB1Q
+         QxCQ==
+X-Gm-Message-State: ANhLgQ10ur2AKN4RTXha6+SqeHM9fYcbWGyEW3gGbjrQjgcxZs+UYwgk
+        iQd6QC0BkOqKXJRz3VaoKd/3khP56A==
+X-Google-Smtp-Source: ADFU+vv5mG85EeIpoA5NQA3U5Pkh4vQ2pWuNASkAaNz36AL6nJ1YQjP7r7NzVa5nBH/lY5aVME2ziQ==
+X-Received: by 2002:adf:c511:: with SMTP id q17mr12349634wrf.275.1585531503360;
+        Sun, 29 Mar 2020 18:25:03 -0700 (PDT)
+Received: from earth.lan (host-92-23-85-227.as13285.net. [92.23.85.227])
+        by smtp.gmail.com with ESMTPSA id f12sm18679545wmh.4.2020.03.29.18.25.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Mar 2020 18:25:02 -0700 (PDT)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     julia.lawall@lip6.fr, boqun.feng@gmail.com
+Subject: [PATCH v2 0/4] Coccinelle cleanups
+Date:   Mon, 30 Mar 2020 02:24:46 +0100
+Message-Id: <20200330012450.312155-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <0/4>
+References: <0/4>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDIwLTAzLTI1IGF0IDE4OjEwICsxMTAwLCBCYWxiaXIgU2luZ2ggd3JvdGU6DQo+
-IFRoaXMgcGF0Y2ggaXMgYSBjb250aW51YXRpb24gb2YgUkZDL1BvQyB0byBzdGFydCB0aGUgZGlz
-Y3Vzc2lvbiBvbg0KPiBvcHRpb25hbGx5DQo+IGZsdXNoaW5nIEwxRCBjYWNoZS4gIFRoZSBnb2Fs
-IGlzIHRvIGFsbG93IHRhc2tzIHRoYXQgYXJlIHBhcmFub2lkIGR1ZSB0byB0aGUNCj4gcmVjZW50
-IHNub29wIGFzc2lzdGVkIGRhdGEgc2FtcGxpbmcgdnVsbmVyYWJpbGl0ZXMsIHRvIGZsdXNoIHRo
-ZWlyIEwxRCBvbg0KPiBiZWluZw0KPiBzd2l0Y2hlZCBvdXQuICBUaGlzIHByb3RlY3RzIHRoZWly
-IGRhdGEgZnJvbSBiZWluZyBzbm9vcGVkIG9yIGxlYWtlZCB2aWENCj4gc2lkZSBjaGFubmVscyBh
-ZnRlciB0aGUgdGFzayBoYXMgY29udGV4dCBzd2l0Y2hlZCBvdXQuDQo+IA0KPiBUaGUgcG9pbnRz
-IG9mIGRpc2N1c3Npb24vcmV2aWV3IGFyZSAod2l0aCB1cGRhdGVzKToNCj4gDQo+IDEuIERpc2N1
-c3MgdGhlIHVzZSBjYXNlIGFuZCB0aGUgcmlnaHQgYXBwcm9hY2ggdG8gYWRkcmVzcyB0aGlzDQo+
-IEEuIEdlbmVyYWxseSB0aGVyZSBzZWVtcyB0byBiZSBjb25zZW5zdXMgdGhhdCB3ZSBuZWVkIHRo
-aXMNCj4gDQo+IDIuIERvZXMgYW4gYXJjaCBwcmN0bCBhbGxvd2luZyBmb3Igb3B0LWluIGZsdXNo
-aW5nIG1ha2Ugc2Vuc2UsIHdvdWxkIG90aGVyDQo+ICAgIGFyY2hlcyBjYXJlIGFib3V0IHNvbWV0
-aGluZyBzaW1pbGFyPw0KPiBBLiBXZSBkZWZpbml0ZWx5IGJ1aWxkIHRoaXMgZm9yIHg4NiwgaGF2
-ZSBub3QgaGVhcmQgZnJvbSBhbnkgb3RoZXIgYXJjaA0KPiAgICBtYWludGFpbmVycy4gVGhlcmUg
-d2FzIHN1Z2dlc3Rpb24gdG8gbWFrZSB0aGlzIGEgcHJjdGwgYW5kIGxldCBlYWNoDQo+ICAgIGFy
-Y2ggaW1wbGVtZW50IEwxRCBmbHVzaGluZyBpZiBuZWVkZWQsIHRoZXJlIGlzIG5vIGFyY2ggYWdu
-b3N0aWMNCj4gICAgc29mdHdhcmUgTDFEIGZsdXNoLg0KPiANCj4gMy4gVGhlcmUgaXMgYSBmYWxs
-YmFjayBzb2Z0d2FyZSBMMUQgbG9hZCwgc2ltaWxhciB0byB3aGF0IEwxVEYgZG9lcywgYnV0DQo+
-ICAgIHdlIGRvbid0IHByZWZldGNoIHRoZSBUTEIsIGlzIHRoYXQgc3VmZmljaWVudD8NCj4gQS4g
-VGhlcmUgd2FzIG5vIGNvbmNsdXNpb24sIEkgc3VzcGVjdCB3ZSBkb24ndCBuZWVkIHRoaXMNCj4g
-DQo+IDQuIFNob3VsZCB3ZSBjb25zaWRlciBjbGVhbmluZyB1cCB0aGUgTDFEIG9uIGFycml2YWwg
-b2YgdGFza3M/DQo+IEEuIEZvciBub3csIHdlIHRoaW5rIHRoaXMgY2FzZSBpcyBub3QgdGhlIHBy
-aW9yaXR5IGZvciB0aGlzIHBhdGNoc2V0Lg0KPiANCj4gSW4gc3VtbWFyeSwgdGhpcyBpcyBhbiBl
-YXJseSBQb0MgdG8gc3RhcnQgdGhlIGRpc2N1c3Npb24gb24gdGhlIG5lZWQgZm9yDQo+IGNvbmRp
-dGlvbmFsIEwxRCBmbHVzaGluZyBiYXNlZCBvbiB0aGUgc2VjdXJpdHkgcG9zdHVyZSBvZiB0aGUN
-Cj4gYXBwbGljYXRpb24gYW5kIHRoZSBzZW5zaXRpdml0eSBvZiB0aGUgZGF0YSBpdCBoYXMgYWNj
-ZXNzIHRvIG9yIG1pZ2h0DQo+IGhhdmUgYWNjZXNzIHRvLg0KPiANCj4gQ2hhbmdlbG9nIHYyOg0K
-PiAgLSBSZXVzZSBleGlzdGluZyBjb2RlIGZvciBhbGxvY2F0aW9uIGFuZCBmbHVzaA0KPiAgLSBT
-aW1wbGlmeSB0aGUgZ290byBsb2dpYyBpbiB0aGUgYWN0dWFsIGwxZF9mbHVzaCBmdW5jdGlvbg0K
-PiAgLSBPcHRpbWl6ZSB0aGUgY29kZSBwYXRoIHdpdGgganVtcCBsYWJlbHMvc3RhdGljIGZ1bmN0
-aW9ucw0KPiANCj4gQ2M6IGtlZXNjb29rQGNocm9taXVtLm9yZw0KPiANCj4gQmFsYmlyIFNpbmdo
-ICg0KToNCj4gICBhcmNoL3g4Ni9rdm06IFJlZmFjdG9yIGwxZCBmbHVzaCBsaWZlY3ljbGUgbWFu
-YWdlbWVudA0KPiAgIGFyY2gveDg2OiBSZWZhY3RvciB0bGJmbHVzaCBhbmQgbDFkIGZsdXNoDQo+
-ICAgYXJjaC94ODY6IE9wdGlvbmFsbHkgZmx1c2ggTDFEIG9uIGNvbnRleHQgc3dpdGNoDQo+ICAg
-YXJjaC94ODY6IEwxRCBmbHVzaCwgb3B0aW1pemUgdGhlIGNvbnRleHQgc3dpdGNoDQo+IA0KDQpQ
-aW5nLCBsb29raW5nIGZvciBjb21tZW50cyBhbmQgY3JpdGljaXNtIG9mIHRoZSBhcHByb2FjaC4g
-SSB1bmRlcnN0YW5kIHdpdGgNCnRoZSBtZXJnZSB3aW5kb3cgYXJvdW5kIHRoZSBjb3JuZXIgZXZl
-cnlvbmUgaXMgYnVzeS4gVGhlcmUgaXMgYSBidWcgaW4gdGhlIHYyDQpSRkMgc2VyaWVzLCBJIGFt
-IGhhcHB5IHRvIHBvc3QgYSB2ZXJzaW9uIHdpdGhvdXQgdGhlIFJGQyBmb3IgYnJvYWRlciB0ZXN0
-aW5nDQphbmQgZmVlZGJhY2suDQoNCkkgYW0gcXVpdGUga2VlbiB0byBoZWFyIGFib3V0IHRoZSBp
-bnRlcmZhY2UgYW5kIGFueSBjb25jZXJucyB3aXRoIHRoZQ0KYXJjaF9wcmN0bCgpIGludGVyZmFj
-ZS4NCg0KQmFsYmlyIFNpbmdoLg0K
+This patch series clean up some warnings by the Coccinelle tool.
+
+Jules Irenge (4):
+  cpu: Remove Comparison to bool
+  rcu: Replace 1 by true
+  genirq: Replace 1 by true
+  locking/rtmutex: Remove Comparison to bool
+
+ kernel/cpu.c             | 2 +-
+ kernel/irq/spurious.c    | 2 +-
+ kernel/locking/rtmutex.c | 2 +-
+ kernel/rcu/tree.c        | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+-- 
+Changes since v2:
+- Improve on commit log 
+- Correct mistake of mixing two different subsystems patches into one.
+2.25.1
+
