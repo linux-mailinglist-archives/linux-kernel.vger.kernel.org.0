@@ -2,299 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B6F21974FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 09:12:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCA3019753D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 09:14:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729448AbgC3HMQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 03:12:16 -0400
-Received: from mail-il1-f197.google.com ([209.85.166.197]:43259 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729405AbgC3HMP (ORCPT
+        id S1729442AbgC3HOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 03:14:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2972 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729377AbgC3HOF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 03:12:15 -0400
-Received: by mail-il1-f197.google.com with SMTP id o9so15740660ila.10
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 00:12:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=MFSC8P6n72+QZknw3Wa9jPREFMD3f1rap8iRXS3R1WU=;
-        b=b67KHpKmnPz6wvpvcLN6Y6CkpVSa2gCUM4ijoGvfSSZYCX8EKqe3RJyUuXUenoNtaw
-         4dTatkZ6bRYGfNPzJrMqsB9/zPiqadMTTg+T40O1lEhCmall+NIe7Ix4h0yHScyYOUs6
-         Ww0ZArrf+Dx4GvM5+wSmOcJnwIS+Bf14jnSObkRIyIt00mhxwJdOmtRH/g7tOXtHCIL9
-         NCtin8E9NG+dsCsZg4ovinE6wjQ+w82ZvOsgeP7NrhR3A2VsgekHTbP9GCrmUFc4t7Uu
-         YlobIH0rK+JGy8XuN4DsWhjqhcl3gMwBk2XEjPU6KRS3Ec/9Q7yaHYRJAqAjuLJ2WmRh
-         Js6Q==
-X-Gm-Message-State: ANhLgQ06xt06rKEQqAQGn8F7OSVAZYLLbbfIWHvJDDN+0bRQS2n+m+WB
-        hmeTGtWYUQQkUEd23gzm0GAPKNZSHD91FAPZDShHfNtsl8Pf
-X-Google-Smtp-Source: ADFU+vumZ+nATuPEvPDWPMKt+rEMY5srBlT2wE4oqm2vBndmjM1TLSxp4v1laNAacVO4kiHIe2VqRkrO59Z6MS3HywezfruYRTUu
+        Mon, 30 Mar 2020 03:14:05 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02U73kVW003587
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 03:14:04 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3020wcak0x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 03:14:04 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Mon, 30 Mar 2020 08:13:51 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 30 Mar 2020 08:13:47 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02U7Ct1t50856364
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 30 Mar 2020 07:12:55 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F3DD84C044;
+        Mon, 30 Mar 2020 07:13:57 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 778C44C040;
+        Mon, 30 Mar 2020 07:13:57 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.145.3.56])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 30 Mar 2020 07:13:57 +0000 (GMT)
+Subject: Re: [PATCH 0/6] vhost: Reset batched descriptors on SET_VRING_BASE
+ call
+To:     =?UTF-8?Q?Eugenio_P=c3=a9rez?= <eperezma@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200329113359.30960-1-eperezma@redhat.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
+Date:   Mon, 30 Mar 2020 09:13:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:3b4f:: with SMTP id i15mr9845804jaf.63.1585552333881;
- Mon, 30 Mar 2020 00:12:13 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 00:12:13 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a2490405a20d2b0f@google.com>
-Subject: WARNING in dev_watchdog (2)
-From:   syzbot <syzbot+d55372214aff0faa1f1f@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200329113359.30960-1-eperezma@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20033007-0016-0000-0000-000002FACC3C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20033007-0017-0000-0000-0000335E8408
+Message-Id: <bb95e827-f219-32fd-0046-41046eec058b@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-30_01:2020-03-27,2020-03-30 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 phishscore=0 mlxlogscore=999
+ adultscore=0 suspectscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003300062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+On 29.03.20 13:33, Eugenio Pérez wrote:
+> Vhost did not reset properly the batched descriptors on SET_VRING_BASE event. Because of that, is possible to return an invalid descriptor to the guest.
 
-HEAD commit:    76bb8b05 Merge tag 'kbuild-v5.5' of git://git.kernel.org/p..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12627e41e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dd226651cb0f364b
-dashboard link: https://syzkaller.appspot.com/bug?extid=d55372214aff0faa1f1f
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+I guess this could explain my problems that I have seen during reset?
 
-Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> This series ammend this, and creates a test to assert correct behavior. To do that, they need to expose a new function in virtio_ring, virtqueue_reset_free_head. Not sure if this can be avoided.
+> 
+> Also, change from https://lkml.org/lkml/2020/3/27/108 is not included, that avoids to update a variable in a loop where it can be updated once.
+> 
+> This is meant to be applied on top of eccb852f1fe6bede630e2e4f1a121a81e34354ab in git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git, and some commits should be squashed with that series.
+> 
+> Eugenio Pérez (6):
+>   tools/virtio: Add --batch option
+>   tools/virtio: Add --batch=random option
+>   tools/virtio: Add --reset=random
+>   tools/virtio: Make --reset reset ring idx
+>   vhost: Delete virtqueue batch_descs member
+>   fixup! vhost: batching fetches
+> 
+>  drivers/vhost/test.c         |  57 ++++++++++++++++
+>  drivers/vhost/test.h         |   1 +
+>  drivers/vhost/vhost.c        |  12 +++-
+>  drivers/vhost/vhost.h        |   1 -
+>  drivers/virtio/virtio_ring.c |  18 +++++
+>  include/linux/virtio.h       |   2 +
+>  tools/virtio/linux/virtio.h  |   2 +
+>  tools/virtio/virtio_test.c   | 123 +++++++++++++++++++++++++++++++----
+>  8 files changed, 201 insertions(+), 15 deletions(-)
+> 
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d55372214aff0faa1f1f@syzkaller.appspotmail.com
-
-hrtimer: interrupt took 23084 ns
-------------[ cut here ]------------
-NETDEV WATCHDOG: eth0 (e1000): transmit queue 0 timed out
-WARNING: CPU: 0 PID: 8061 at net/sched/sch_generic.c:442 dev_watchdog+0xaf5/0xca0 net/sched/sch_generic.c:442
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 8061 Comm: syz-executor.0 Not tainted 5.4.0-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- panic+0x2e3/0x75c kernel/panic.c:221
- __warn.cold+0x2f/0x3e kernel/panic.c:582
- report_bug+0x289/0x300 lib/bug.c:195
- fixup_bug arch/x86/kernel/traps.c:174 [inline]
- fixup_bug arch/x86/kernel/traps.c:169 [inline]
- do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
- do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
- invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:dev_watchdog+0xaf5/0xca0 net/sched/sch_generic.c:442
-Code: ff e8 8f 09 48 fb 4c 89 e7 c6 05 9b e3 26 04 01 e8 00 31 e8 ff 44 89 e9 4c 89 e6 48 c7 c7 00 34 d7 88 48 89 c2 e8 ea b3 18 fb <0f> 0b e9 06 fd ff ff 48 8b 7d d0 e8 db 79 85 fb e9 7d f8 ff ff 48
-RSP: 0018:ffffc90000007c98 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000100 RSI: ffffffff815e5a26 RDI: fffff52000000f85
-RBP: ffffc90000007d00 R08: ffff888021394140 R09: ffffed1005a46621
-R10: ffffed1005a46620 R11: ffff88802d233107 R12: ffff888027b6c000
-R13: 0000000000000000 R14: ffff888027b6c4f8 R15: ffffffffffffe721
- call_timer_fn+0x1ac/0x780 kernel/time/timer.c:1404
- expire_timers kernel/time/timer.c:1449 [inline]
- __run_timers kernel/time/timer.c:1773 [inline]
- __run_timers kernel/time/timer.c:1740 [inline]
- run_timer_softirq+0x6c3/0x1790 kernel/time/timer.c:1786
- __do_softirq+0x262/0x98c kernel/softirq.c:292
- invoke_softirq kernel/softirq.c:373 [inline]
- irq_exit+0x19b/0x1e0 kernel/softirq.c:413
- exiting_irq arch/x86/include/asm/apic.h:536 [inline]
- smp_apic_timer_interrupt+0x1a3/0x610 arch/x86/kernel/apic/apic.c:1137
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
- </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:752 [inline]
-RIP: 0010:generic_exec_single+0x33a/0x4c0 kernel/smp.c:155
-Code: 00 fc ff df 48 c1 e8 03 80 3c 10 00 0f 85 68 01 00 00 48 83 3d de 62 09 08 00 0f 84 e0 00 00 00 e8 bb 27 0b 00 48 89 df 57 9d <0f> 1f 44 00 00 45 31 ed e9 39 fe ff ff e8 a4 27 0b 00 0f 0b e9 23
-RSP: 0018:ffffc90000ea7a80 EFLAGS: 00000216 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000040000 RBX: 0000000000000216 RCX: ffffc9000397a000
-RDX: 000000000000129c RSI: ffffffff8169d2c5 RDI: 0000000000000216
-RBP: ffffc90000ea7ab0 R08: 1ffffffff16161b8 R09: fffffbfff16161b9
-R10: fffffbfff16161b8 R11: ffffffff8b0b0dc7 R12: 0000000000000200
-R13: ffffc90000ea7b00 R14: ffffc90000ea7bd0 R15: ffffffff818beee0
- smp_call_function_single+0x17c/0x480 kernel/smp.c:308
- task_function_call+0xe9/0x180 kernel/events/core.c:114
- perf_install_in_context+0x308/0x5a0 kernel/events/core.c:2746
- __do_sys_perf_event_open+0x1cbc/0x2c70 kernel/events/core.c:11543
- __se_sys_perf_event_open kernel/events/core.c:11151 [inline]
- __x64_sys_perf_event_open+0xbe/0x150 kernel/events/core.c:11151
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a759
-Code: bd b1 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 8b b1 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fa1443afc88 EFLAGS: 00000246 ORIG_RAX: 000000000000012a
-RAX: ffffffffffffffda RBX: 000000000072bf00 RCX: 000000000045a759
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000180
-RBP: 0000000000000005 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffffffffffff R11: 0000000000000246 R12: 00007fa1443b06d4
-R13: 00000000004af4bf R14: 00000000006f3b98 R15: 00000000ffffffff
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8061 at kernel/locking/mutex.c:1419 mutex_trylock+0x279/0x2f0 kernel/locking/mutex.c:1427
-Modules linked in:
-CPU: 0 PID: 8061 Comm: syz-executor.0 Not tainted 5.4.0-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-RIP: 0010:mutex_trylock+0x279/0x2f0 kernel/locking/mutex.c:1419
-Code: c9 41 b8 01 00 00 00 31 c9 ba 01 00 00 00 31 f6 e8 ac 32 99 f9 58 48 8d 65 d8 b8 01 00 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 <0f> 0b e9 0c fe ff ff 48 c7 c7 e0 e4 41 8b 48 89 4d d0 e8 e0 be f0
-RSP: 0018:ffffc90000007858 EFLAGS: 00010006
-RAX: 0000000000000103 RBX: 1ffff92000000f13 RCX: 0000000000000004
-RDX: 0000000000000100 RSI: ffffffff816be955 RDI: ffffffff897c27a0
-RBP: ffffc90000007888 R08: 0000000000000001 R09: fffffbfff12f3855
-R10: fffffbfff12f3854 R11: ffffffff8979c2a3 R12: ffffffff8b41e4e0
-R13: 0000000000000000 R14: ffffffff862cf100 R15: ffffffff897c27a0
-FS:  00007fa1443b0700(0000) GS:ffff88802d200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020001280 CR3: 0000000029896000 CR4: 00000000003406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- __crash_kexec+0x91/0x200 kernel/kexec_core.c:948
- panic+0x308/0x75c kernel/panic.c:241
- __warn.cold+0x2f/0x3e kernel/panic.c:582
- report_bug+0x289/0x300 lib/bug.c:195
- fixup_bug arch/x86/kernel/traps.c:174 [inline]
- fixup_bug arch/x86/kernel/traps.c:169 [inline]
- do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
- do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
- invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:dev_watchdog+0xaf5/0xca0 net/sched/sch_generic.c:442
-Code: ff e8 8f 09 48 fb 4c 89 e7 c6 05 9b e3 26 04 01 e8 00 31 e8 ff 44 89 e9 4c 89 e6 48 c7 c7 00 34 d7 88 48 89 c2 e8 ea b3 18 fb <0f> 0b e9 06 fd ff ff 48 8b 7d d0 e8 db 79 85 fb e9 7d f8 ff ff 48
-RSP: 0018:ffffc90000007c98 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000100 RSI: ffffffff815e5a26 RDI: fffff52000000f85
-RBP: ffffc90000007d00 R08: ffff888021394140 R09: ffffed1005a46621
-R10: ffffed1005a46620 R11: ffff88802d233107 R12: ffff888027b6c000
-R13: 0000000000000000 R14: ffff888027b6c4f8 R15: ffffffffffffe721
- call_timer_fn+0x1ac/0x780 kernel/time/timer.c:1404
- expire_timers kernel/time/timer.c:1449 [inline]
- __run_timers kernel/time/timer.c:1773 [inline]
- __run_timers kernel/time/timer.c:1740 [inline]
- run_timer_softirq+0x6c3/0x1790 kernel/time/timer.c:1786
- __do_softirq+0x262/0x98c kernel/softirq.c:292
- invoke_softirq kernel/softirq.c:373 [inline]
- irq_exit+0x19b/0x1e0 kernel/softirq.c:413
- exiting_irq arch/x86/include/asm/apic.h:536 [inline]
- smp_apic_timer_interrupt+0x1a3/0x610 arch/x86/kernel/apic/apic.c:1137
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
- </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:752 [inline]
-RIP: 0010:generic_exec_single+0x33a/0x4c0 kernel/smp.c:155
-Code: 00 fc ff df 48 c1 e8 03 80 3c 10 00 0f 85 68 01 00 00 48 83 3d de 62 09 08 00 0f 84 e0 00 00 00 e8 bb 27 0b 00 48 89 df 57 9d <0f> 1f 44 00 00 45 31 ed e9 39 fe ff ff e8 a4 27 0b 00 0f 0b e9 23
-RSP: 0018:ffffc90000ea7a80 EFLAGS: 00000216 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000040000 RBX: 0000000000000216 RCX: ffffc9000397a000
-RDX: 000000000000129c RSI: ffffffff8169d2c5 RDI: 0000000000000216
-RBP: ffffc90000ea7ab0 R08: 1ffffffff16161b8 R09: fffffbfff16161b9
-R10: fffffbfff16161b8 R11: ffffffff8b0b0dc7 R12: 0000000000000200
-R13: ffffc90000ea7b00 R14: ffffc90000ea7bd0 R15: ffffffff818beee0
- smp_call_function_single+0x17c/0x480 kernel/smp.c:308
- task_function_call+0xe9/0x180 kernel/events/core.c:114
- perf_install_in_context+0x308/0x5a0 kernel/events/core.c:2746
- __do_sys_perf_event_open+0x1cbc/0x2c70 kernel/events/core.c:11543
- __se_sys_perf_event_open kernel/events/core.c:11151 [inline]
- __x64_sys_perf_event_open+0xbe/0x150 kernel/events/core.c:11151
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a759
-Code: bd b1 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 8b b1 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fa1443afc88 EFLAGS: 00000246 ORIG_RAX: 000000000000012a
-RAX: ffffffffffffffda RBX: 000000000072bf00 RCX: 000000000045a759
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000180
-RBP: 0000000000000005 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffffffffffff R11: 0000000000000246 R12: 00007fa1443b06d4
-R13: 00000000004af4bf R14: 00000000006f3b98 R15: 00000000ffffffff
-irq event stamp: 2722971
-hardirqs last  enabled at (2722970): [<ffffffff81006743>] trace_hardirqs_on_thunk+0x1a/0x1c arch/x86/entry/thunk_64.S:41
-hardirqs last disabled at (2722971): [<ffffffff8100675f>] trace_hardirqs_off_thunk+0x1a/0x1c arch/x86/entry/thunk_64.S:42
-softirqs last  enabled at (362): [<ffffffff8731cb72>] sctp_init_sock+0xed2/0x1450 net/sctp/socket.c:5169
-softirqs last disabled at (605): [<ffffffff81475c8b>] invoke_softirq kernel/softirq.c:373 [inline]
-softirqs last disabled at (605): [<ffffffff81475c8b>] irq_exit+0x19b/0x1e0 kernel/softirq.c:413
----[ end trace 1a7cb5e7e43d5cf6 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8061 at kernel/locking/mutex.c:737 mutex_unlock+0x1d/0x30 kernel/locking/mutex.c:744
-Modules linked in:
-CPU: 0 PID: 8061 Comm: syz-executor.0 Tainted: G        W         5.4.0-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-RIP: 0010:mutex_unlock+0x1d/0x30 kernel/locking/mutex.c:737
-Code: 4c 89 ff e8 35 ca f0 f9 e9 8c fb ff ff 55 65 8b 05 b0 7d 40 78 a9 00 ff 1f 00 48 89 e5 75 0b 48 8b 75 08 e8 45 f9 ff ff 5d c3 <0f> 0b 48 8b 75 08 e8 38 f9 ff ff 5d c3 66 0f 1f 44 00 00 48 b8 00
-RSP: 0018:ffffc90000007888 EFLAGS: 00010006
-RAX: 0000000000000103 RBX: 1ffff92000000f13 RCX: ffffffff816be96d
-RDX: 0000000000000100 RSI: ffffffff816be9cf RDI: ffffffff897c27a0
-RBP: ffffc90000007888 R08: ffff888021394140 R09: fffffbfff16161ba
-R10: ffff888021394a78 R11: ffff888021394140 R12: 0000000000000001
-R13: 0000000000000000 R14: ffffffff862cf100 R15: 00000000000001ba
-FS:  00007fa1443b0700(0000) GS:ffff88802d200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020001280 CR3: 0000000029896000 CR4: 00000000003406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- __crash_kexec+0x10b/0x200 kernel/kexec_core.c:957
- panic+0x308/0x75c kernel/panic.c:241
- __warn.cold+0x2f/0x3e kernel/panic.c:582
- report_bug+0x289/0x300 lib/bug.c:195
- fixup_bug arch/x86/kernel/traps.c:174 [inline]
- fixup_bug arch/x86/kernel/traps.c:169 [inline]
- do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
- do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
- invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:dev_watchdog+0xaf5/0xca0 net/sched/sch_generic.c:442
-Code: ff e8 8f 09 48 fb 4c 89 e7 c6 05 9b e3 26 04 01 e8 00 31 e8 ff 44 89 e9 4c 89 e6 48 c7 c7 00 34 d7 88 48 89 c2 e8 ea b3 18 fb <0f> 0b e9 06 fd ff ff 48 8b 7d d0 e8 db 79 85 fb e9 7d f8 ff ff 48
-RSP: 0018:ffffc90000007c98 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000100 RSI: ffffffff815e5a26 RDI: fffff52000000f85
-RBP: ffffc90000007d00 R08: ffff888021394140 R09: ffffed1005a46621
-R10: ffffed1005a46620 R11: ffff88802d233107 R12: ffff888027b6c000
-R13: 0000000000000000 R14: ffff888027b6c4f8 R15: ffffffffffffe721
- call_timer_fn+0x1ac/0x780 kernel/time/timer.c:1404
- expire_timers kernel/time/timer.c:1449 [inline]
- __run_timers kernel/time/timer.c:1773 [inline]
- __run_timers kernel/time/timer.c:1740 [inline]
- run_timer_softirq+0x6c3/0x1790 kernel/time/timer.c:1786
- __do_softirq+0x262/0x98c kernel/softirq.c:292
- invoke_softirq kernel/softirq.c:373 [inline]
- irq_exit+0x19b/0x1e0 kernel/softirq.c:413
- exiting_irq arch/x86/include/asm/apic.h:536 [inline]
- smp_apic_timer_interrupt+0x1a3/0x610 arch/x86/kernel/apic/apic.c:1137
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
- </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:752 [inline]
-RIP: 0010:generic_exec_single+0x33a/0x4c0 kernel/smp.c:155
-Code: 00 fc ff df 48 c1 e8 03 80 3c 10 00 0f 85 68 01 00 00 48 83 3d de 62 09 08 00 0f 84 e0 00 00 00 e8 bb 27 0b 00 48 89 df 57 9d <0f> 1f 44 00 00 45 31 ed e9 39 fe ff ff e8 a4 27 0b 00 0f 0b e9 23
-RSP: 0018:ffffc90000ea7a80 EFLAGS: 00000216 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000040000 RBX: 0000000000000216 RCX: ffffc9000397a000
-RDX: 000000000000129c RSI: ffffffff8169d2c5 RDI: 0000000000000216
-RBP: ffffc90000ea7ab0 R08: 1ffffffff16161b8 R09: fffffbfff16161b9
-R10: fffffbfff16161b8 R11: ffffffff8b0b0dc7 R12: 0000000000000200
-R13: ffffc90000ea7b00 R14: ffffc90000ea7bd0 R15: ffffffff818beee0
- smp_call_function_single+0x17c/0x480 kernel/smp.c:308
- task_function_call+0xe9/0x180 kernel/events/core.c:114
- perf_install_in_context+0x308/0x5a0 kernel/events/core.c:2746
- __do_sys_perf_event_open+0x1cbc/0x2c70 kernel/events/core.c:11543
- __se_sys_perf_event_open kernel/events/core.c:11151 [inline]
- __x64_sys_perf_event_open+0xbe/0x150 kernel/events/core.c:11151
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a759
-Code: bd b1 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 8b b1 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fa1443afc88 EFLAGS: 00000246 ORIG_RAX: 000000000000012a
-RAX: ffffffffffffffda RBX: 000000000072bf00 RCX: 000000000045a759
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000180
-RBP: 0000000000000005 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffffffffffff R11: 0000000000000246 R12: 00007fa1443b06d4
-R13: 00000000004af4bf R14: 00000000006f3b98 R15: 00000000ffffffff
-irq event stamp: 2722971
-hardirqs last  enabled at (2722970): [<ffffffff81006743>] trace_hardirqs_on_thunk+0x1a/0x1c arch/x86/entry/thunk_64.S:41
-hardirqs last disabled at (2722971): [<ffffffff8100675f>] trace_hardirqs_off_thunk+0x1a/0x1c arch/x86/entry/thunk_64.S:42
-softirqs last  enabled at (362): [<ffffffff8731cb72>] sctp_init_sock+0xed2/0x1450 net/sctp/socket.c:5169
-softirqs last disabled at (605): [<ffffffff81475c8b>] invoke_softirq kernel/softirq.c:373 [inline]
-softirqs last disabled at (605): [<ffffffff81475c8b>] irq_exit+0x19b/0x1e0 kernel/softirq.c:413
----[ end trace 1a7cb5e7e43d5cf7 ]---
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
