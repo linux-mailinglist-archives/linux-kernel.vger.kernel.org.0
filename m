@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06B2319727D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 04:34:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD24C19727F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 04:34:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729267AbgC3Cdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Mar 2020 22:33:54 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42024 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729238AbgC3Cdv (ORCPT
+        id S1729271AbgC3CeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Mar 2020 22:34:01 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33105 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729211AbgC3Cdt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Mar 2020 22:33:51 -0400
-Received: by mail-qt1-f194.google.com with SMTP id t9so13906679qto.9
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 19:33:48 -0700 (PDT)
+        Sun, 29 Mar 2020 22:33:49 -0400
+Received: by mail-qt1-f195.google.com with SMTP id c14so13969411qtp.0
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Mar 2020 19:33:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bOOZauNhsuF3feRi6dtskt8y9Qi7+H8gEQhQhgkWxqI=;
-        b=IoSt4QrCLedpBvOuvuIWu3Cl4FfWPyXvbqqnuq/GaQ1HcU9khIkVEaqme/mPZxUhwv
-         kD/yTyqYJNzHz7rPyQEXhmXtMbm69VHMETJQyAIAvXcj8l0UuBlX+/nqST46f4yYXTrf
-         k0xWlyQk9oM+n+F+7at54OwU18Uv8Wr8uj0Vo=
+        bh=nfe8DrKWUp4DznQJ7QwjX25sDztlI0Q1Kzc2EbjhIfI=;
+        b=e/QROEfb5RGTR9IB9T4I6da+BeTQWc1g0g4Y4IB6QTSmalMQrHGbXLRXYVq0YbVzhs
+         tP2sTlESNLvrtJivJplrhzgd3CeNe5CxFhf+jkbqQ4hFWDiT7AJDlWveUX3cErsFRXs6
+         BxPFwUArDnqMXIc2Ozny0JZzGurm8NA5J/8uE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bOOZauNhsuF3feRi6dtskt8y9Qi7+H8gEQhQhgkWxqI=;
-        b=sYfY6xHibC+ORvmOWQf106XE64Wziexblrdty1OX7zGwxWHfAHlPbLiS4urFydG2x1
-         2NCiNCIc4+JOiYluvCqKOvyROGiVqL3VJ6pEuE15TVBQbU6RlBzO8nIH6UziPmmlh+5i
-         PXmX8NyrVrAth/NiTHjzor3NmadkeIy1Y7nCl+6lwcBxAeGTrIW0i6iezx+XPR+NZ9zG
-         feIJFNgeK7pXt6GdtwmLEpX61meeUOfC0KKcIZJh8x/APQgZ455jX0RUM56rdubKXswu
-         vofewdUjKWvRHb3n/SYE8EZPRgKYYKFx+A8sanwPoVvTfABzU1NGSfeEFHhaCDW3seOE
-         YKmA==
-X-Gm-Message-State: ANhLgQ38pdCGF9biIymCuGoSpZ8fA7o0knHfpUqcl5o19bU+bVAKjhgn
-        p6ZqDr3fCVskHHIftl2LCUQBL6wGWj4=
-X-Google-Smtp-Source: ADFU+vvpUM4thXk+u3mpgUqeS17+XJRaBpxyDXS4TQ5h4ZRtyfMYG8HpGORF6osOZmFTIBNIXOApRA==
-X-Received: by 2002:ac8:2c73:: with SMTP id e48mr9339461qta.96.1585535627462;
-        Sun, 29 Mar 2020 19:33:47 -0700 (PDT)
+        bh=nfe8DrKWUp4DznQJ7QwjX25sDztlI0Q1Kzc2EbjhIfI=;
+        b=KcviISCiq31y5bGFTS++unH0cfrQ1zHE6l1Im16MEQPsCnh8DkQL+9n1S6JNKzWKg3
+         wSDpV7RaZrLiqEhm28D2jokOsRw01UmmSiSyh/g5qbhFPQ1gTjBaG+mq9o8/iPVuaUQw
+         2zHKvJjBpIO6ljAMGxQoNujesuSNw3Ph1CuWRPRCCqN/s1iGUiAl8e8i72Fmc9vctLvk
+         pSFz9vRkTzsoY9qeJ79JHw/xkrgNBe5gaW50xrt6RIbr1XGW9e6k1aWQ8UXJRLPAgTos
+         cHQOZjhCLSdNJxzh1aTLjVuBPlEdekZGSHUM3WmgMW6uF8cTooh52edaY09QOAbVZEYt
+         xcZA==
+X-Gm-Message-State: ANhLgQ11wvDN0GUYqvuSY0XUqr/QKBa+tF5jXLjP0AlaSInSqHYV1vhb
+        NFU4npSZzxSXnl19WGt5oWYXfC0gDO4=
+X-Google-Smtp-Source: ADFU+vte8V+MFLpGv25SbcL8/a36+3V3dZDn+RHDRlNYMBkkicXPxgyi30CKdwoHh7ULy/2SwK0YqQ==
+X-Received: by 2002:ac8:922:: with SMTP id t31mr9208234qth.95.1585535628345;
+        Sun, 29 Mar 2020 19:33:48 -0700 (PDT)
 Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id q15sm10030625qtj.83.2020.03.29.19.33.46
+        by smtp.gmail.com with ESMTPSA id q15sm10030625qtj.83.2020.03.29.19.33.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Mar 2020 19:33:47 -0700 (PDT)
+        Sun, 29 Mar 2020 19:33:48 -0700 (PDT)
 From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
@@ -54,9 +54,9 @@ Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: [PATCH 16/18] rcu/tree: Remove extra next variable in kfree worker function
-Date:   Sun, 29 Mar 2020 22:32:46 -0400
-Message-Id: <20200330023248.164994-17-joel@joelfernandes.org>
+Subject: [PATCH 17/18] rcu/tree: Simplify is_vmalloc_addr expression
+Date:   Sun, 29 Mar 2020 22:32:47 -0400
+Message-Id: <20200330023248.164994-18-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
 In-Reply-To: <20200330023248.164994-1-joel@joelfernandes.org>
 References: <20200330023248.164994-1-joel@joelfernandes.org>
@@ -67,49 +67,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No change in code, small refactor.
+No code change, small refactor.
 
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- kernel/rcu/tree.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ kernel/rcu/tree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 204292378101b..56c9e102a901d 100644
+index 56c9e102a901d..311d216c7faa7 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -2889,8 +2889,7 @@ debug_rcu_bhead_unqueue(struct kvfree_rcu_bulk_data *bhead)
- static void kfree_rcu_work(struct work_struct *work)
- {
- 	unsigned long flags;
--	struct kvfree_rcu_bulk_data *bkhead, *bknext;
--	struct kvfree_rcu_bulk_data *bvhead, *bvnext;
-+	struct kvfree_rcu_bulk_data *bkhead, *bvhead, *bnext;
- 	struct rcu_head *head, *next;
- 	struct kfree_rcu_cpu *krcp;
- 	struct kfree_rcu_cpu_work *krwp;
-@@ -2915,8 +2914,8 @@ static void kfree_rcu_work(struct work_struct *work)
- 	spin_unlock_irqrestore(&krcp->lock, flags);
+@@ -3104,7 +3104,7 @@ kvfree_call_rcu_add_ptr_to_bulk(struct kfree_rcu_cpu *krcp, void *ptr)
+ 		return false;
  
- 	/* kmalloc()/kfree() channel. */
--	for (; bkhead; bkhead = bknext) {
--		bknext = bkhead->next;
-+	for (; bkhead; bkhead = bnext) {
-+		bnext = bkhead->next;
+ 	lockdep_assert_held(&krcp->lock);
+-	idx = !is_vmalloc_addr(ptr) ? 0:1;
++	idx = !!is_vmalloc_addr(ptr);
  
- 		debug_rcu_bhead_unqueue(bkhead);
- 
-@@ -2934,8 +2933,8 @@ static void kfree_rcu_work(struct work_struct *work)
- 	}
- 
- 	/* vmalloc()/vfree() channel. */
--	for (; bvhead; bvhead = bvnext) {
--		bvnext = bvhead->next;
-+	for (; bvhead; bvhead = bnext) {
-+		bnext = bvhead->next;
- 
- 		debug_rcu_bhead_unqueue(bvhead);
- 
+ 	/* Check if a new block is required. */
+ 	if (!krcp->bkvhead[idx] ||
 -- 
 2.26.0.rc2.310.g2932bb562d-goog
 
