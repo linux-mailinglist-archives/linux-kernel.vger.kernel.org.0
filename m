@@ -2,191 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D508319832B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:16:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25105198338
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 20:18:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbgC3SQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 14:16:21 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42051 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbgC3SQV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 14:16:21 -0400
-Received: by mail-ot1-f68.google.com with SMTP id z5so18872056oth.9;
-        Mon, 30 Mar 2020 11:16:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=hc3WCyyOJyVb1bVm2+erTwMdDqb8JOvqNVevK3r7VwI=;
-        b=ai6wI+ycqrkzpl/S2YJzZdSui/OqHxW+zs9NCXGh7U6Ao8RzV+b6ZH92pP+mJSeMDg
-         3zFsBbaW5dHtjdptA2ZKynOAnrY/IFF/rbTO3di295t+BhXrNfSP1TZfcKFLzaaoOfUV
-         bVKuFgdn0MvaqJSHswPZS+XldoySduiB80LONN0NvR4dSXufP5iF9jGiXSGWYDD9cBxG
-         xAJILj6xA/q3qaZGqm/kdv34TUUojc70Ogmsn38uo995wLI4LwNDS5srJoxLtqNTnQ0w
-         U9IlzFhfaJqL2AEjBt3teQ6hoVJOurZOyN+6s5i5g5RZL39LrAlRA3Usk0jJOm4IPLXJ
-         aPDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=hc3WCyyOJyVb1bVm2+erTwMdDqb8JOvqNVevK3r7VwI=;
-        b=EdvLemNxXnJ1LftsQOzPMFhujmuITyTJPbPfpiajmjYWdrJ7hZosla/6BYRmaZvKRz
-         6QWDBemcsgxjzgvkAmCrWE6GXun1MQ0HKsP+Z2x/Z9+bYwFFoIrGWa8O8TDBUbf70+xN
-         +Id8faID04DU50Vmfh/NlcxEhGtE9sPtABREMOiCZrLouR3XVtt3/6MU4pGfuMQKbcFN
-         nR+zRQEbMMO2VEBavxrElyYVy4D0nDc8wo6fe9UQnCJHtkTS5Izp0ayVSXFKWrU7siXe
-         ZxDc4NLwIYccXcCH3/WVkv9S86b69QfDGfxcNzhS1iKkACcjfaRmxRJRzvO5XPgooMzk
-         Zs6w==
-X-Gm-Message-State: ANhLgQ3OJ2hE+9CTE5b/UQqVmRCa10ZGkzCS2FQY1NBqOo3wZeiTDt3e
-        s+qcr7CgpqRopmBYAZ9lgKQqKXWfzx0=
-X-Google-Smtp-Source: ADFU+vvlSpRwHKn4r6g703Ne60gh2l2x19YSD2cUdpHUPeweDs5ZyHaHm8b4wc+Bl5wfRYsNGn1JCA==
-X-Received: by 2002:a05:6830:10a:: with SMTP id i10mr10498831otp.190.1585592178291;
-        Mon, 30 Mar 2020 11:16:18 -0700 (PDT)
-Received: from andrews-mbp-2.attlocal.net ([2600:1700:19e0:3310:81db:d33f:7ec:a679])
-        by smtp.gmail.com with ESMTPSA id o1sm4480246otl.49.2020.03.30.11.16.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Mar 2020 11:16:17 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [PATCH 2/2] ARM: dts: aspeed: zaius: Add gpio line names
-From:   Andrew Geissler <geissonator@gmail.com>
-In-Reply-To: <294a52cd-2f60-41e5-a58f-a74151a83b08@www.fastmail.com>
-Date:   Mon, 30 Mar 2020 13:16:16 -0500
-Cc:     Joel Stanley <joel@jms.id.au>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, openbmc@lists.ozlabs.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9360D2B2-8242-4BA1-BF06-8916E87EDE67@gmail.com>
-References: <20200306170218.79698-1-geissonator@yahoo.com>
- <20200306170218.79698-2-geissonator@yahoo.com>
- <294a52cd-2f60-41e5-a58f-a74151a83b08@www.fastmail.com>
-To:     Andrew Jeffery <andrew@aj.id.au>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        id S1727406AbgC3SST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 14:18:19 -0400
+Received: from mga17.intel.com ([192.55.52.151]:34687 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726017AbgC3SSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 14:18:18 -0400
+IronPort-SDR: joF6WDlCLRRK9NNzG1tYDp8qMrSmjpLGCUu5W5KoD1INXh4inMqNZMBFcNe04hkUFBDPabmAQ+
+ dsY6dtM4Yucg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 11:18:18 -0700
+IronPort-SDR: WmN/SopwCkB+jXOVQA/B2L9XXeMO6v9/7PwXugU1SMzx48q8SClGyKBFZH3pFWjHwYN3onQ0z5
+ cr7q3nWvJP4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,325,1580803200"; 
+   d="scan'208";a="267005886"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga002.jf.intel.com with ESMTP; 30 Mar 2020 11:18:18 -0700
+Date:   Mon, 30 Mar 2020 11:18:17 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Xiaoyao Li <xiaoyao.li@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [PATCH v7 2/2] x86/split_lock: Avoid runtime reads of the
+ TEST_CTRL MSR
+Message-ID: <20200330181817.GH24988@linux.intel.com>
+References: <20200325030924.132881-1-xiaoyao.li@intel.com>
+ <20200325030924.132881-3-xiaoyao.li@intel.com>
+ <20200328163412.GJ8104@linux.intel.com>
+ <e641c746-0dde-cfb8-ea23-45c011174b08@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e641c746-0dde-cfb8-ea23-45c011174b08@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Mar 29, 2020 at 05:13:23PM +0800, Xiaoyao Li wrote:
+> On 3/29/2020 12:34 AM, Sean Christopherson wrote:
+> >On Wed, Mar 25, 2020 at 11:09:24AM +0800, Xiaoyao Li wrote:
+> >>In a context switch from a task that is detecting split locks
+> >>to one that is not (or vice versa) we need to update the TEST_CTRL
+> >>MSR. Currently this is done with the common sequence:
+> >>	read the MSR
+> >>	flip the bit
+> >>	write the MSR
+> >>in order to avoid changing the value of any reserved bits in the MSR.
+> >>
+> >>Cache unused and reserved bits of TEST_CTRL MSR with SPLIT_LOCK_DETECT
+> >>bit cleared during initialization, so we can avoid an expensive RDMSR
+> >>instruction during context switch.
+> >>
+> >>Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> >>Originally-by: Tony Luck <tony.luck@intel.com>
+> >>Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> >>---
+> >>  arch/x86/kernel/cpu/intel.c | 9 ++++-----
+> >>  1 file changed, 4 insertions(+), 5 deletions(-)
+> >>
+> >>diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+> >>index deb5c42c2089..1f414578899c 100644
+> >>--- a/arch/x86/kernel/cpu/intel.c
+> >>+++ b/arch/x86/kernel/cpu/intel.c
+> >>@@ -45,6 +45,7 @@ enum split_lock_detect_state {
+> >>   * split lock detect, unless there is a command line override.
+> >>   */
+> >>  static enum split_lock_detect_state sld_state __ro_after_init = sld_off;
+> >>+static u64 msr_test_ctrl_cache __ro_after_init;
+> >
+> >What about using "msr_test_ctrl_base_value", or something along those lines?
+> >"cache" doesn't make it clear that SPLIT_LOCK_DETECT is guaranteed to be
+> >zero in this variable.
+> >
+> >>  /*
+> >>   * Processors which have self-snooping capability can handle conflicting
+> >>@@ -1037,6 +1038,8 @@ static void __init split_lock_setup(void)
+> >>  		break;
+> >>  	}
+> >>+	rdmsrl(MSR_TEST_CTRL, msr_test_ctrl_cache);
+> >
+> >If we're going to bother skipping the RDMSR if state=sld_off on the command
+> >line then it also makes sense to skip it if enabling fails, i.e. move this
+> >below split_lock_verify_msr(true).
+> 
+> OK.
+> 
+> Then, the sld bit is 1 for msr_test_ctrl_base_value. Do you think
+> "msr_test_ctrl_base_value" still make sense?
 
+Ah, I missed that (obviously).  An alternative (to keeping the rdmsr() where
+it is) would be to explicitly clear SLD in the base value after the rdmsr().
+That'd double as documentation of what is stored in msr_test_ctrl_base_value.
 
-> On Mar 26, 2020, at 6:20 PM, Andrew Jeffery <andrew@aj.id.au> wrote:
->=20
->=20
->=20
-> On Sat, 7 Mar 2020, at 03:32, Andrew Geissler wrote:
->> Name the GPIOs to help userspace work with them. The names describe =
-the
->> functionality the lines provide, not the net or ball name. This makes =
-it
->> easier to share userspace code across different systems and makes the
->> use of the lines more obvious.
->>=20
->> Signed-off-by: Andrew Geissler <geissonator@yahoo.com>
->=20
-> So we're creating a bit of an ad-hoc ABI here between the DT and =
-userspace.
->=20
-> Where are we documenting it?
+But, the location of rdmsr() is a nit, it can certainly stay where it is if
+someone else has a strong preference.
 
-Yeah, so far it=E2=80=99s basically design by precedent. If you want =
-your OpenBMC
-function to work then follow the standards we're setting in other =
-dts=E2=80=99s.
+> or we keep the "else" branch in sld_update_msr() to not rely on the sld bit
+> in the base_value?
 
-Is there a good place to document this? I could create a OpenBMC design
-doc but that would not address non-OpenBMC areas.
+IMO it's better to have SLD=0 in the base value, regardless of how we make
+that happen.
 
->=20
-> Generally I think the idea is good though, so:
->=20
-> Acked-by: Andrew Jeffery <andrew@aj.id.au>
-
-Thanks
-
->=20
->> ---
->> arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts | 37 =
-+++++++++++++++++++---
->> 1 file changed, 33 insertions(+), 4 deletions(-)
->>=20
->> diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts=20
->> b/arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts
->> index bc60ec291681..4bcc82046362 100644
->> --- a/arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts
->> +++ b/arch/arm/boot/dts/aspeed-bmc-opp-zaius.dts
->> @@ -478,32 +478,61 @@
->> 	pinctrl-names =3D "default";
->> 	pinctrl-0 =3D <&pinctrl_gpioh_unbiased>;
->>=20
->> +	gpio-line-names =3D
->> +	/*A0-A7*/	"","cfam-reset","","","","","","",
->> +	/*B0-B7*/	"","","","","","","","",
->> +	/*C0-C7*/	"","","","","","","","",
->> +	/*D0-D7*/	=
-"fsi-enable","","","","","led-sys-boot-status","led-attention",
->> +				"led-fault",
->> +	/*E0-E7*/	"","","","","","","","presence-pcie-e2b",
->> +	/*F0-F7*/	"","","","","","","","checkstop",
->> +	/*G0-G7*/	"fsi-clock","fsi-data","","","","","","",
->> +	/*H0-H7*/	=
-"onewire0","onewire1","onewire2","onewire3","","","","",
->> +	/*I0-I7*/	"","","","power-button","","","","",
->> +	/*J0-J7*/	"","","","","","","","",
->> +	/*K0-K7*/	"","","","","","","","",
->> +	/*L0-L7*/	"","","","","","","","",
->> +	/*M0-M7*/	"","","","","","","","",
->> +	/*N0-N7*/	"","","","","","","","",
->> +	/*O0-O7*/	"","","","","iso_u164_en","","fsi-trans","",
->> +	/*P0-P7*/	=
-"ncsi_mux_en_n","bmc_i2c2_sw_rst_n","","bmc_i2c5_sw_rst_n","",
->> +				"","fsi-mux","",
->> +	/*Q0-Q7*/	"","","","","","","","",
->> +	/*R0-R7*/	"","","","","","","","",
->> +	/*S0-S7*/	"","","","","","","","",
->> +	/*T0-T7*/	"","","","","","","","",
->> +	/*U0-U7*/	"","","","","","","","",
->> +	/*V0-V7*/	"","","","","","","","",
->> +	/*W0-W7*/	"","","","","","","","",
->> +	/*X0-X7*/	"","","","","","","","",
->> +	/*Y0-Y7*/	"","","","","","","","",
->> +	/*Z0-Z7*/	"","","","","","","","",
->> +	/*AA0-AA7*/	"","","led-hdd-fault","","","","","",
->> +	/*AB0-AB7*/	"","","","","","","","",
->> +	/*AC0-AC7*/	"","","","","","","","";
->> +
->> 	line_iso_u146_en {
->> 		gpio-hog;
->> 		gpios =3D <ASPEED_GPIO(O, 4) GPIO_ACTIVE_HIGH>;
->> 		output-high;
->> -		line-name =3D "iso_u164_en";
->> 	};
->>=20
->> 	ncsi_mux_en_n {
->> 		gpio-hog;
->> 		gpios =3D <ASPEED_GPIO(P, 0) GPIO_ACTIVE_HIGH>;
->> 		output-low;
->> -		line-name =3D "ncsi_mux_en_n";
->> 	};
->>=20
->> 	line_bmc_i2c2_sw_rst_n {
->> 		gpio-hog;
->> 		gpios =3D <ASPEED_GPIO(P, 1) GPIO_ACTIVE_HIGH>;
->> 		output-high;
->> -		line-name =3D "bmc_i2c2_sw_rst_n";
->> 	};
->>=20
->> 	line_bmc_i2c5_sw_rst_n {
->> 		gpio-hog;
->> 		gpios =3D <ASPEED_GPIO(P, 3) GPIO_ACTIVE_HIGH>;
->> 		output-high;
->> -		line-name =3D "bmc_i2c5_sw_rst_n";
->> 	};
->> };
->>=20
->> --=20
->> 2.21.0 (Apple Git-122)
->>=20
->>=20
-
+> >>+
+> >>  	if (!split_lock_verify_msr(true)) {
+> >>  		pr_info("MSR access failed: Disabled\n");
+> >>  		return;
+> >>@@ -1053,14 +1056,10 @@ static void __init split_lock_setup(void)
+> >>   */
+> >>  static void sld_update_msr(bool on)
+> >>  {
+> >>-	u64 test_ctrl_val;
+> >>-
+> >>-	rdmsrl(MSR_TEST_CTRL, test_ctrl_val);
+> >>+	u64 test_ctrl_val = msr_test_ctrl_cache;
+> >>  	if (on)
+> >>  		test_ctrl_val |= MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
+> >>-	else
+> >>-		test_ctrl_val &= ~MSR_TEST_CTRL_SPLIT_LOCK_DETECT;
+> >>  	wrmsrl(MSR_TEST_CTRL, test_ctrl_val);
+> >>  }
+> >>-- 
+> >>2.20.1
+> >>
+> 
