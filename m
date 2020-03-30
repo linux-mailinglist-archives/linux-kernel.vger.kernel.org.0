@@ -2,49 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE30F198222
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:22:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 114A5198227
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 19:22:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729092AbgC3RWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 13:22:00 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:39852 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728907AbgC3RV7 (ORCPT
+        id S1729224AbgC3RWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 13:22:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60620 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727255AbgC3RWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 13:21:59 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id DD57715C02518;
-        Mon, 30 Mar 2020 10:21:58 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 10:21:58 -0700 (PDT)
-Message-Id: <20200330.102158.1919004361246721356.davem@davemloft.net>
-To:     colin.king@canonical.com
-Cc:     grygorii.strashko@ti.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: ethernet: ti: fix spelling mistake "rundom"
- -> "random"
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200330101639.161268-1-colin.king@canonical.com>
-References: <20200330101639.161268-1-colin.king@canonical.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Mon, 30 Mar 2020 13:22:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=RTo/l3mApqYi+FAC2NhO4jmI7vS3v+umdzjqut0gXrs=; b=epXZGh7AJkvwaCOfIcKqPes0O/
+        TZITBPLJ88zQPtBJYZxf/f+N9pIbvNHDFyWCZ0wjXtVdOjKd25Vc73LrepJ+kipztOfwjgUSVaryX
+        UG1rbVv8MnGL4HsfqIyw4Vh4iTHJCIU+4PhLMEhCEGoEC7az/TGfhzvfj0bNUpgc97iNQ8YDWnq5b
+        PRY3uA5tZ5rVg9ltHXbwyZolCXHdXcxmEXPANZeWq5aCsZrN1iq/sa05mLZwQMRu/PCBFRcpwsB3u
+        9nxP4tCR5U9Vp2iowEfYq/89hQp9GeyDH74PDtlQbZc8ZW54JObpESALTg8+N9k+oNVirfOtM2WJ0
+        Yp9p0LdA==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jIy7E-0005n4-7Q; Mon, 30 Mar 2020 17:22:24 +0000
+Subject: Re: linux-next: Tree for Mar 30 (vhost)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        KVM <kvm@vger.kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>
+References: <20200330204307.669bbb4d@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <347c851a-b9f6-0046-f6c8-1db0b42be213@infradead.org>
+Date:   Mon, 30 Mar 2020 10:22:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+MIME-Version: 1.0
+In-Reply-To: <20200330204307.669bbb4d@canb.auug.org.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 30 Mar 2020 10:21:59 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Mon, 30 Mar 2020 11:16:39 +0100
-
-> From: Colin Ian King <colin.king@canonical.com>
+On 3/30/20 2:43 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> There is a spelling mistake in a dev_err error message. Fix it.
+> The merge window has opened, so please do not add any material for the
+> next release into your linux-next included trees/branches until after
+> the merge window closes.
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Changes since 20200327:
+> 
+> The vhost tree gained a conflict against the kvm-arm tree.
+> 
 
-Applied, thank you.
+(note: today's linux-next is on 5.6-rc7.)
+
+on x86_64:
+
+# CONFIG_EVENTFD is not set
+
+../drivers/vhost/vhost.c: In function 'vhost_vring_ioctl':
+../drivers/vhost/vhost.c:1577:33: error: implicit declaration of function 'eventfd_fget'; did you mean 'eventfd_signal'? [-Werror=implicit-function-declaration]
+   eventfp = f.fd == -1 ? NULL : eventfd_fget(f.fd);
+                                 ^~~~~~~~~~~~
+                                 eventfd_signal
+../drivers/vhost/vhost.c:1577:31: warning: pointer/integer type mismatch in conditional expression
+   eventfp = f.fd == -1 ? NULL : eventfd_fget(f.fd);
+                               ^
+
+-- 
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
