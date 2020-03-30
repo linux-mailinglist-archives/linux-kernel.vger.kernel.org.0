@@ -2,303 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB198197DB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 15:58:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B02F197D28
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 15:40:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbgC3N6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 09:58:30 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:54390 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbgC3N63 (ORCPT
+        id S1728169AbgC3Nkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 09:40:31 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36176 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727437AbgC3Nkb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 09:58:29 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02UDdY7V026505;
-        Mon, 30 Mar 2020 13:40:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=ydgsqhArEdAPBPPymxIJ1axqtgIEVoHgn8s/XOMQLYI=;
- b=JIk0r7M5s9Uq99WtXRS46PnzFnilicuzjGFxo7Wa0XZSJ0x/c3rHtO/pjGsOBUC1vNZp
- 8ZPhECpjPZUXulqaWvnZOBVdq8pVEMFcnenOL9fhdG4SbDVnJeztACxMvWLCUm/cdJBx
- LIbcDxNuv4yQquxZKwwqkFaBbLqciRdz1DAt1rIWtDbO8ZwpSfRQRaGD6YkiTWno6Bph
- Nme82sUXLu7/vqJ22se8dHScQzAf/e1UYNUwcR0/odqg2wNMUFKy0x7g+oNtc3O4C67v
- ftXBmYr4dBya+d5fGBTzwXh07pcY7xK6WZc2fYTh3Z6BRzsHJnkXp6nOL+kVF+jvK22S wg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 303ceusq76-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Mar 2020 13:40:06 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02UDauMf050806;
-        Mon, 30 Mar 2020 13:40:05 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 302gc9bhcm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Mar 2020 13:40:05 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02UDe0El004741;
-        Mon, 30 Mar 2020 13:40:00 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Mar 2020 06:39:59 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id D84776A00D7; Mon, 30 Mar 2020 09:40:04 -0400 (EDT)
-Date:   Mon, 30 Mar 2020 09:40:04 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Kairui Song <kasong@redhat.com>, anthony.yznaga@oracle.com,
-        Jan Setje-Eilers <jan.setjeeilers@oracle.com>
-Cc:     Dave Young <dyoung@redhat.com>, Alexander Graf <graf@amazon.com>,
-        iommu@lists.linux-foundation.org,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>, linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, dwmw@amazon.com,
-        benh@amazon.com, Jan Kiszka <jan.kiszka@siemens.com>,
-        alcioa@amazon.com, aggh@amazon.com, aagch@amazon.com,
-        dhr@amazon.com, Laszlo Ersek <lersek@redhat.com>,
-        Baoquan He <bhe@redhat.com>, Lianbo Jiang <lijiang@redhat.com>,
-        brijesh.singh@amd.com,
-        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
-        kexec@lists.infradead.org
-Subject: Re: [PATCH] swiotlb: Allow swiotlb to live at pre-defined address
-Message-ID: <20200330134004.GA31026@char.us.oracle.com>
-References: <20200326162922.27085-1-graf@amazon.com>
- <20200328115733.GA67084@dhcp-128-65.nay.redhat.com>
- <CACPcB9d_Pz9SRhSsRzqygRR6waV7r8MnGcCP952svnZtpFaxnQ@mail.gmail.com>
+        Mon, 30 Mar 2020 09:40:31 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02UDSjd2004381;
+        Mon, 30 Mar 2020 15:40:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=05Cp8FHkCUAY1uBXkh3rN+fUJ2vNWzHm6qdMX+Azm+8=;
+ b=Y88gBSDr5K8hhZANqaYvDTtojUfVlgBBXc5IyuwCP4B4YeCVaOERix6AX09FKDLfYmGf
+ +7cbnbh+dbZxc8q9q6IfHqBEx3pjS0BstS0EQUsfOpoPG2gwQydfAKWZMCvK8aF+Nse7
+ kdF7VFtvSfZ9FcXzJMYSMCdLV7hzDD17L7WBRFhKVAenBNq1p6PWVvT2K52XpcAQYafC
+ a/hE2nKc9BgVs/uW7soyEtGl71/H6A6GkTud8EysfPJsGCpIA47pgGx7wfX2y6t1eQj8
+ eT4hBW2WTjWC553Qg48Xj7PmhxigaAuobJ2cuVedWdzmxXv9FkD39zwnjrLUTCV6ow/f 1Q== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 301xbm9p1n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Mar 2020 15:40:13 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 35F8D10002A;
+        Mon, 30 Mar 2020 15:40:13 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 053992BC7AC;
+        Mon, 30 Mar 2020 15:40:13 +0200 (CEST)
+Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 30 Mar
+ 2020 15:40:12 +0200
+Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
+ SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
+ 15.00.1473.003; Mon, 30 Mar 2020 15:40:12 +0200
+From:   Philippe CORNU <philippe.cornu@st.com>
+To:     Yannick FERTRE <yannick.fertre@st.com>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre TORGUE" <alexandre.torgue@st.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] drm/stm: ltdc: check number of endpoints
+Thread-Topic: [PATCH] drm/stm: ltdc: check number of endpoints
+Thread-Index: AQHV7g4ofITfVj+w50Wq5yte7qHdC6hhVL8Q
+Date:   Mon, 30 Mar 2020 13:40:12 +0000
+Message-ID: <6a14216d33374f6d8d8a5653cad683e9@SFHDAG6NODE3.st.com>
+References: <1582877258-1112-1-git-send-email-yannick.fertre@st.com>
+In-Reply-To: <1582877258-1112-1-git-send-email-yannick.fertre@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.46]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACPcB9d_Pz9SRhSsRzqygRR6waV7r8MnGcCP952svnZtpFaxnQ@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9575 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 malwarescore=0
- mlxlogscore=999 adultscore=0 suspectscore=0 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003300130
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9575 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 adultscore=0
- clxscore=1011 phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
- suspectscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003300130
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-30_01:2020-03-27,2020-03-30 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 02:06:01PM +0800, Kairui Song wrote:
-> On Sat, Mar 28, 2020 at 7:57 PM Dave Young <dyoung@redhat.com> wrote:
-> >
-> > On 03/26/20 at 05:29pm, Alexander Graf wrote:
-> > > The swiotlb is a very convenient fallback mechanism for bounce buffering of
-> > > DMAable data. It is usually used for the compatibility case where devices
-> > > can only DMA to a "low region".
-> > >
-> > > However, in some scenarios this "low region" may be bound even more
-> > > heavily. For example, there are embedded system where only an SRAM region
-> > > is shared between device and CPU. There are also heterogeneous computing
-> > > scenarios where only a subset of RAM is cache coherent between the
-> > > components of the system. There are partitioning hypervisors, where
-> > > a "control VM" that implements device emulation has limited view into a
-> > > partition's memory for DMA capabilities due to safety concerns.
-> > >
-> > > This patch adds a command line driven mechanism to move all DMA memory into
-> > > a predefined shared memory region which may or may not be part of the
-> > > physical address layout of the Operating System.
-> > >
-> > > Ideally, the typical path to set this configuration would be through Device
-> > > Tree or ACPI, but neither of the two mechanisms is standardized yet. Also,
-> > > in the x86 MicroVM use case, we have neither ACPI nor Device Tree, but
-> > > instead configure the system purely through kernel command line options.
-> > >
-> > > I'm sure other people will find the functionality useful going forward
-> > > though and extend it to be triggered by DT/ACPI in the future.
-> >
-> > Hmm, we have a use case for kdump, this maybe useful.  For example
-> > swiotlb is enabled by default if AMD SME/SEV is active, and in kdump
-> > kernel we have to increase the crashkernel reserved size for the extra
-> > swiotlb requirement.  I wonder if we can just reuse the old kernel's
-> > swiotlb region and pass the addr to kdump kernel.
-> >
-> 
-> Yes, definitely helpful for kdump kernel. This can help reduce the
-> crashkernel value.
-> 
-> Previously I was thinking about something similar, play around the
-> e820 entry passed to kdump and let it place swiotlb in wanted region.
-> Simply remap it like in this patch looks much cleaner.
-> 
-> If this patch is acceptable, one more patch is needed to expose the
-> swiotlb in iomem, so kexec-tools can pass the right kernel cmdline to
-> second kernel.
-
-We seem to be passsing a lot of data to kexec.. Perhaps something
-of a unified way since we seem to have a lot of things to pass - disabling
-IOMMU, ACPI RSDT address, and then this.
-
-CC-ing Anthony who is working on something - would you by any chance
-have a doc on this?
-
-Thanks!
-> 
-> > >
-> > > Signed-off-by: Alexander Graf <graf@amazon.com>
-> > > ---
-> > >  Documentation/admin-guide/kernel-parameters.txt |  3 +-
-> > >  Documentation/x86/x86_64/boot-options.rst       |  4 ++-
-> > >  kernel/dma/swiotlb.c                            | 46 +++++++++++++++++++++++--
-> > >  3 files changed, 49 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > > index c07815d230bc..d085d55c3cbe 100644
-> > > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > > @@ -4785,11 +4785,12 @@
-> > >                       it if 0 is given (See Documentation/admin-guide/cgroup-v1/memory.rst)
-> > >
-> > >       swiotlb=        [ARM,IA-64,PPC,MIPS,X86]
-> > > -                     Format: { <int> | force | noforce }
-> > > +                     Format: { <int> | force | noforce | addr=<phys addr> }
-> > >                       <int> -- Number of I/O TLB slabs
-> > >                       force -- force using of bounce buffers even if they
-> > >                                wouldn't be automatically used by the kernel
-> > >                       noforce -- Never use bounce buffers (for debugging)
-> > > +                     addr=<phys addr> -- Try to allocate SWIOTLB at defined address
-> > >
-> > >       switches=       [HW,M68k]
-> > >
-> > > diff --git a/Documentation/x86/x86_64/boot-options.rst b/Documentation/x86/x86_64/boot-options.rst
-> > > index 2b98efb5ba7f..ca46c57b68c9 100644
-> > > --- a/Documentation/x86/x86_64/boot-options.rst
-> > > +++ b/Documentation/x86/x86_64/boot-options.rst
-> > > @@ -297,11 +297,13 @@ iommu options only relevant to the AMD GART hardware IOMMU:
-> > >  iommu options only relevant to the software bounce buffering (SWIOTLB) IOMMU
-> > >  implementation:
-> > >
-> > > -    swiotlb=<pages>[,force]
-> > > +    swiotlb=<pages>[,force][,addr=<phys addr>]
-> > >        <pages>
-> > >          Prereserve that many 128K pages for the software IO bounce buffering.
-> > >        force
-> > >          Force all IO through the software TLB.
-> > > +      addr=<phys addr>
-> > > +        Try to allocate SWIOTLB at defined address
-> > >
-> > >  Settings for the IBM Calgary hardware IOMMU currently found in IBM
-> > >  pSeries and xSeries machines
-> > > diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> > > index c19379fabd20..83da0caa2f93 100644
-> > > --- a/kernel/dma/swiotlb.c
-> > > +++ b/kernel/dma/swiotlb.c
-> > > @@ -46,6 +46,7 @@
-> > >  #include <linux/init.h>
-> > >  #include <linux/memblock.h>
-> > >  #include <linux/iommu-helper.h>
-> > > +#include <linux/io.h>
-> > >
-> > >  #define CREATE_TRACE_POINTS
-> > >  #include <trace/events/swiotlb.h>
-> > > @@ -102,6 +103,12 @@ unsigned int max_segment;
-> > >  #define INVALID_PHYS_ADDR (~(phys_addr_t)0)
-> > >  static phys_addr_t *io_tlb_orig_addr;
-> > >
-> > > +/*
-> > > + * The TLB phys addr may be defined on the command line. Store it here if it is.
-> > > + */
-> > > +static phys_addr_t io_tlb_addr = INVALID_PHYS_ADDR;
-> > > +
-> > > +
-> > >  /*
-> > >   * Protect the above data structures in the map and unmap calls
-> > >   */
-> > > @@ -119,11 +126,23 @@ setup_io_tlb_npages(char *str)
-> > >       }
-> > >       if (*str == ',')
-> > >               ++str;
-> > > -     if (!strcmp(str, "force")) {
-> > > +     if (!strncmp(str, "force", 5)) {
-> > >               swiotlb_force = SWIOTLB_FORCE;
-> > > -     } else if (!strcmp(str, "noforce")) {
-> > > +             str += 5;
-> > > +     } else if (!strncmp(str, "noforce", 7)) {
-> > >               swiotlb_force = SWIOTLB_NO_FORCE;
-> > >               io_tlb_nslabs = 1;
-> > > +             str += 7;
-> > > +     }
-> > > +
-> > > +     if (*str == ',')
-> > > +             ++str;
-> > > +     if (!strncmp(str, "addr=", 5)) {
-> > > +             char *addrstr = str + 5;
-> > > +
-> > > +             io_tlb_addr = kstrtoul(addrstr, 0, &str);
-> > > +             if (addrstr == str)
-> > > +                     io_tlb_addr = INVALID_PHYS_ADDR;
-> > >       }
-> > >
-> > >       return 0;
-> > > @@ -239,6 +258,25 @@ int __init swiotlb_init_with_tbl(char *tlb, unsigned long nslabs, int verbose)
-> > >       return 0;
-> > >  }
-> > >
-> > > +static int __init swiotlb_init_io(int verbose, unsigned long bytes)
-> > > +{
-> > > +     unsigned __iomem char *vstart;
-> > > +
-> > > +     if (io_tlb_addr == INVALID_PHYS_ADDR)
-> > > +             return -EINVAL;
-> > > +
-> > > +     vstart = memremap(io_tlb_addr, bytes, MEMREMAP_WB);
-> > > +     if (!vstart)
-> > > +             return -EINVAL;
-> > > +
-> > > +     if (swiotlb_init_with_tbl(vstart, io_tlb_nslabs, verbose)) {
-> > > +             memunmap(vstart);
-> > > +             return -EINVAL;
-> > > +     }
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > >  /*
-> > >   * Statically reserve bounce buffer space and initialize bounce buffer data
-> > >   * structures for the software IO TLB used to implement the DMA API.
-> > > @@ -257,6 +295,10 @@ swiotlb_init(int verbose)
-> > >
-> > >       bytes = io_tlb_nslabs << IO_TLB_SHIFT;
-> > >
-> > > +     /* Map IO TLB from device memory */
-> > > +     if (!swiotlb_init_io(verbose, bytes))
-> > > +             return;
-> > > +
-> > >       /* Get IO TLB memory from the low pages */
-> > >       vstart = memblock_alloc_low(PAGE_ALIGN(bytes), PAGE_SIZE);
-> > >       if (vstart && !swiotlb_init_with_tbl(vstart, io_tlb_nslabs, verbose))
-> > > --
-> > > 2.16.4
-> > >
-> > >
-> > >
-> > >
-> > > Amazon Development Center Germany GmbH
-> > > Krausenstr. 38
-> > > 10117 Berlin
-> > > Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-> > > Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
-> > > Sitz: Berlin
-> > > Ust-ID: DE 289 237 879
-> > >
-> > >
-> > >
-> >
-> > Thanks
-> > Dave
-> >
-> 
-> 
-> -- 
-> Best Regards,
-> Kairui Song
-> 
+RGVhciBZYW5uaWNrLA0KVGhhbmsgeW91IGZvciB5b3VyIHBhdGNoLA0KQWNrZWQtYnk6IFBoaWxp
+cHBlIENvcm51IDxwaGlsaXBwZS5jb3JudUBzdC5jb20+DQooc29ycnkgZm9yIHRoZSBlbWFpbCBm
+b3JtYXQpDQpQaGlsaXBwZSA6LSkNCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206
+IFlhbm5pY2sgRkVSVFJFIDx5YW5uaWNrLmZlcnRyZUBzdC5jb20+IA0KU2VudDogRnJpZGF5LCBG
+ZWJydWFyeSAyOCwgMjAyMCAwOTowOA0KVG86IFlhbm5pY2sgRkVSVFJFIDx5YW5uaWNrLmZlcnRy
+ZUBzdC5jb20+OyBQaGlsaXBwZSBDT1JOVSA8cGhpbGlwcGUuY29ybnVAc3QuY29tPjsgQmVuamFt
+aW4gR0FJR05BUkQgPGJlbmphbWluLmdhaWduYXJkQHN0LmNvbT47IERhdmlkIEFpcmxpZSA8YWly
+bGllZEBsaW51eC5pZT47IERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD47IE1heGltZSBD
+b3F1ZWxpbiA8bWNvcXVlbGluLnN0bTMyQGdtYWlsLmNvbT47IEFsZXhhbmRyZSBUT1JHVUUgPGFs
+ZXhhbmRyZS50b3JndWVAc3QuY29tPjsgZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZzsg
+bGludXgtc3RtMzJAc3QtbWQtbWFpbG1hbi5zdG9ybXJlcGx5LmNvbTsgbGludXgtYXJtLWtlcm5l
+bEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQpTdWJq
+ZWN0OiBbUEFUQ0hdIGRybS9zdG06IGx0ZGM6IGNoZWNrIG51bWJlciBvZiBlbmRwb2ludHMNCg0K
+TnVtYmVyIG9mIGVuZHBvaW50cyBjb3VsZCBleGNlZWQgdGhlIGZpeCB2YWx1ZSBNQVhfRU5EUE9J
+TlRTKDIpLg0KSW5zdGVhZCBvZiBpbmNyZWFzZSBzaW1wbHkgdGhpcyB2YWx1ZSwgdGhlIG51bWJl
+ciBvZiBlbmRwb2ludCBjb3VsZCBiZSByZWFkIGZyb20gZGV2aWNlIHRyZWUuIExvYWQgc2VxdWVu
+Y2UgaGFzIGJlZW4gYSBsaXR0bGUgcmV3b3JrIHRvIHRha2UgY2FyZSBvZiBzZXZlcmFsIHBhbmVs
+IG9yIGJyaWRnZSB3aGljaCBjYW4gYmUgY29ubmVjdGVkL2Rpc2Nvbm5lY3RlZCBvciBlbmFibGUv
+ZGlzYWJsZS4NCg0KU2lnbmVkLW9mZi1ieTogWWFubmljayBGZXJ0cmUgPHlhbm5pY2suZmVydHJl
+QHN0LmNvbT4NCi0tLQ0KIGRyaXZlcnMvZ3B1L2RybS9zdG0vbHRkYy5jIHwgMTAyICsrKysrKysr
+KysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCA1
+MiBpbnNlcnRpb25zKCspLCA1MCBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9zdG0vbHRkYy5jIGIvZHJpdmVycy9ncHUvZHJtL3N0bS9sdGRjLmMgaW5kZXggZGY1
+ODVmZS4uZjg5NDk2OCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9zdG0vbHRkYy5jDQor
+KysgYi9kcml2ZXJzL2dwdS9kcm0vc3RtL2x0ZGMuYw0KQEAgLTQyLDggKzQyLDYgQEANCg0KICNk
+ZWZpbmUgTUFYX0lSUSA0DQoNCi0jZGVmaW5lIE1BWF9FTkRQT0lOVFMgMg0KLQ0KICNkZWZpbmUg
+SFdWRVJfMTAyMDAgMHgwMTAyMDANCiAjZGVmaW5lIEhXVkVSXzEwMzAwIDB4MDEwMzAwDQogI2Rl
+ZmluZSBIV1ZFUl8yMDEwMSAweDAyMDEwMQ0KQEAgLTEyMDEsMzYgKzExOTksMjAgQEAgaW50IGx0
+ZGNfbG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZGRldikNCiAJc3RydWN0IGx0ZGNfZGV2aWNlICps
+ZGV2ID0gZGRldi0+ZGV2X3ByaXZhdGU7DQogCXN0cnVjdCBkZXZpY2UgKmRldiA9IGRkZXYtPmRl
+djsNCiAJc3RydWN0IGRldmljZV9ub2RlICpucCA9IGRldi0+b2Zfbm9kZTsNCi0Jc3RydWN0IGRy
+bV9icmlkZ2UgKmJyaWRnZVtNQVhfRU5EUE9JTlRTXSA9IHtOVUxMfTsNCi0Jc3RydWN0IGRybV9w
+YW5lbCAqcGFuZWxbTUFYX0VORFBPSU5UU10gPSB7TlVMTH07DQorCXN0cnVjdCBkcm1fYnJpZGdl
+ICpicmlkZ2U7DQorCXN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsOw0KIAlzdHJ1Y3QgZHJtX2NydGMg
+KmNydGM7DQogCXN0cnVjdCByZXNldF9jb250cm9sICpyc3RjOw0KIAlzdHJ1Y3QgcmVzb3VyY2Ug
+KnJlczsNCi0JaW50IGlycSwgcmV0LCBpLCBlbmRwb2ludF9ub3RfcmVhZHkgPSAtRU5PREVWOw0K
+KwlpbnQgaXJxLCBpLCBuYl9lbmRwb2ludHM7DQorCWludCByZXQgPSAtRU5PREVWOw0KDQogCURS
+TV9ERUJVR19EUklWRVIoIlxuIik7DQoNCi0JLyogR2V0IGVuZHBvaW50cyBpZiBhbnkgKi8NCi0J
+Zm9yIChpID0gMDsgaSA8IE1BWF9FTkRQT0lOVFM7IGkrKykgew0KLQkJcmV0ID0gZHJtX29mX2Zp
+bmRfcGFuZWxfb3JfYnJpZGdlKG5wLCAwLCBpLCAmcGFuZWxbaV0sDQotCQkJCQkJICAmYnJpZGdl
+W2ldKTsNCi0NCi0JCS8qDQotCQkgKiBJZiBhdCBsZWFzdCBvbmUgZW5kcG9pbnQgaXMgLUVQUk9C
+RV9ERUZFUiwgZGVmZXIgcHJvYmluZywNCi0JCSAqIGVsc2UgaWYgYXQgbGVhc3Qgb25lIGVuZHBv
+aW50IGlzIHJlYWR5LCBjb250aW51ZSBwcm9iaW5nLg0KLQkJICovDQotCQlpZiAocmV0ID09IC1F
+UFJPQkVfREVGRVIpDQotCQkJcmV0dXJuIHJldDsNCi0JCWVsc2UgaWYgKCFyZXQpDQotCQkJZW5k
+cG9pbnRfbm90X3JlYWR5ID0gMDsNCi0JfQ0KLQ0KLQlpZiAoZW5kcG9pbnRfbm90X3JlYWR5KQ0K
+LQkJcmV0dXJuIGVuZHBvaW50X25vdF9yZWFkeTsNCi0NCi0JcnN0YyA9IGRldm1fcmVzZXRfY29u
+dHJvbF9nZXRfZXhjbHVzaXZlKGRldiwgTlVMTCk7DQotDQotCW11dGV4X2luaXQoJmxkZXYtPmVy
+cl9sb2NrKTsNCisJLyogR2V0IG51bWJlciBvZiBlbmRwb2ludHMgKi8NCisJbmJfZW5kcG9pbnRz
+ID0gb2ZfZ3JhcGhfZ2V0X2VuZHBvaW50X2NvdW50KG5wKTsNCisJaWYgKCFuYl9lbmRwb2ludHMp
+DQorCQlyZXR1cm4gLUVOT0RFVjsNCg0KIAlsZGV2LT5waXhlbF9jbGsgPSBkZXZtX2Nsa19nZXQo
+ZGV2LCAibGNkIik7DQogCWlmIChJU19FUlIobGRldi0+cGl4ZWxfY2xrKSkgew0KQEAgLTEyNDQs
+NiArMTIyNiw0MyBAQCBpbnQgbHRkY19sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkZGV2KQ0KIAkJ
+cmV0dXJuIC1FTk9ERVY7DQogCX0NCg0KKwkvKiBHZXQgZW5kcG9pbnRzIGlmIGFueSAqLw0KKwlm
+b3IgKGkgPSAwOyBpIDwgbmJfZW5kcG9pbnRzOyBpKyspIHsNCisJCXJldCA9IGRybV9vZl9maW5k
+X3BhbmVsX29yX2JyaWRnZShucCwgMCwgaSwgJnBhbmVsLCAmYnJpZGdlKTsNCisNCisJCS8qDQor
+CQkgKiBJZiBhdCBsZWFzdCBvbmUgZW5kcG9pbnQgaXMgLUVOT0RFViwgY29udGludWUgcHJvYmlu
+ZywNCisJCSAqIGVsc2UgaWYgYXQgbGVhc3Qgb25lIGVuZHBvaW50IHJldHVybmVkIGFuIGVycm9y
+DQorCQkgKiAoaWUgLUVQUk9CRV9ERUZFUikgdGhlbiBzdG9wIHByb2JpbmcuDQorCQkgKi8NCisJ
+CWlmIChyZXQgPT0gLUVOT0RFVikNCisJCQljb250aW51ZTsNCisJCWVsc2UgaWYgKHJldCkNCisJ
+CQlnb3RvIGVycjsNCisNCisJCWlmIChwYW5lbCkgew0KKwkJCWJyaWRnZSA9IGRybV9wYW5lbF9i
+cmlkZ2VfYWRkX3R5cGVkKHBhbmVsLA0KKwkJCQkJCQkgICAgRFJNX01PREVfQ09OTkVDVE9SX0RQ
+SSk7DQorCQkJaWYgKElTX0VSUihicmlkZ2UpKSB7DQorCQkJCURSTV9FUlJPUigicGFuZWwtYnJp
+ZGdlIGVuZHBvaW50ICVkXG4iLCBpKTsNCisJCQkJcmV0ID0gUFRSX0VSUihicmlkZ2UpOw0KKwkJ
+CQlnb3RvIGVycjsNCisJCQl9DQorCQl9DQorDQorCQlpZiAoYnJpZGdlKSB7DQorCQkJcmV0ID0g
+bHRkY19lbmNvZGVyX2luaXQoZGRldiwgYnJpZGdlKTsNCisJCQlpZiAocmV0KSB7DQorCQkJCURS
+TV9FUlJPUigiaW5pdCBlbmNvZGVyIGVuZHBvaW50ICVkXG4iLCBpKTsNCisJCQkJZ290byBlcnI7
+DQorCQkJfQ0KKwkJfQ0KKwl9DQorDQorCXJzdGMgPSBkZXZtX3Jlc2V0X2NvbnRyb2xfZ2V0X2V4
+Y2x1c2l2ZShkZXYsIE5VTEwpOw0KKw0KKwltdXRleF9pbml0KCZsZGV2LT5lcnJfbG9jayk7DQor
+DQogCWlmICghSVNfRVJSKHJzdGMpKSB7DQogCQlyZXNldF9jb250cm9sX2Fzc2VydChyc3RjKTsN
+CiAJCXVzbGVlcF9yYW5nZSgxMCwgMjApOw0KQEAgLTEyODUsMjcgKzEzMDQsNyBAQCBpbnQgbHRk
+Y19sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkZGV2KQ0KIAkJCURSTV9FUlJPUigiRmFpbGVkIHRv
+IHJlZ2lzdGVyIExUREMgaW50ZXJydXB0XG4iKTsNCiAJCQlnb3RvIGVycjsNCiAJCX0NCi0JfQ0K
+DQotCS8qIEFkZCBlbmRwb2ludHMgcGFuZWxzIG9yIGJyaWRnZXMgaWYgYW55ICovDQotCWZvciAo
+aSA9IDA7IGkgPCBNQVhfRU5EUE9JTlRTOyBpKyspIHsNCi0JCWlmIChwYW5lbFtpXSkgew0KLQkJ
+CWJyaWRnZVtpXSA9IGRybV9wYW5lbF9icmlkZ2VfYWRkX3R5cGVkKHBhbmVsW2ldLA0KLQkJCQkJ
+CQkgICAgICAgRFJNX01PREVfQ09OTkVDVE9SX0RQSSk7DQotCQkJaWYgKElTX0VSUihicmlkZ2Vb
+aV0pKSB7DQotCQkJCURSTV9FUlJPUigicGFuZWwtYnJpZGdlIGVuZHBvaW50ICVkXG4iLCBpKTsN
+Ci0JCQkJcmV0ID0gUFRSX0VSUihicmlkZ2VbaV0pOw0KLQkJCQlnb3RvIGVycjsNCi0JCQl9DQot
+CQl9DQotDQotCQlpZiAoYnJpZGdlW2ldKSB7DQotCQkJcmV0ID0gbHRkY19lbmNvZGVyX2luaXQo
+ZGRldiwgYnJpZGdlW2ldKTsNCi0JCQlpZiAocmV0KSB7DQotCQkJCURSTV9FUlJPUigiaW5pdCBl
+bmNvZGVyIGVuZHBvaW50ICVkXG4iLCBpKTsNCi0JCQkJZ290byBlcnI7DQotCQkJfQ0KLQkJfQ0K
+IAl9DQoNCiAJY3J0YyA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqY3J0YyksIEdGUF9LRVJO
+RUwpOyBAQCAtMTM0MCw4ICsxMzM5LDggQEAgaW50IGx0ZGNfbG9hZChzdHJ1Y3QgZHJtX2Rldmlj
+ZSAqZGRldikNCg0KIAlyZXR1cm4gMDsNCiBlcnI6DQotCWZvciAoaSA9IDA7IGkgPCBNQVhfRU5E
+UE9JTlRTOyBpKyspDQotCQlkcm1fcGFuZWxfYnJpZGdlX3JlbW92ZShicmlkZ2VbaV0pOw0KKwlm
+b3IgKGkgPSAwOyBpIDwgbmJfZW5kcG9pbnRzOyBpKyspDQorCQlkcm1fb2ZfcGFuZWxfYnJpZGdl
+X3JlbW92ZShkZGV2LT5kZXYtPm9mX25vZGUsIDAsIGkpOw0KDQogCWNsa19kaXNhYmxlX3VucHJl
+cGFyZShsZGV2LT5waXhlbF9jbGspOw0KDQpAQCAtMTM1MCwxMSArMTM0OSwxNCBAQCBpbnQgbHRk
+Y19sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkZGV2KQ0KDQogdm9pZCBsdGRjX3VubG9hZChzdHJ1
+Y3QgZHJtX2RldmljZSAqZGRldikgIHsNCi0JaW50IGk7DQorCXN0cnVjdCBkZXZpY2UgKmRldiA9
+IGRkZXYtPmRldjsNCisJaW50IG5iX2VuZHBvaW50cywgaTsNCg0KIAlEUk1fREVCVUdfRFJJVkVS
+KCJcbiIpOw0KDQotCWZvciAoaSA9IDA7IGkgPCBNQVhfRU5EUE9JTlRTOyBpKyspDQorCW5iX2Vu
+ZHBvaW50cyA9IG9mX2dyYXBoX2dldF9lbmRwb2ludF9jb3VudChkZXYtPm9mX25vZGUpOw0KKw0K
+Kwlmb3IgKGkgPSAwOyBpIDwgbmJfZW5kcG9pbnRzOyBpKyspDQogCQlkcm1fb2ZfcGFuZWxfYnJp
+ZGdlX3JlbW92ZShkZGV2LT5kZXYtPm9mX25vZGUsIDAsIGkpOw0KDQogCXBtX3J1bnRpbWVfZGlz
+YWJsZShkZGV2LT5kZXYpOw0KLS0NCjIuNy40DQoNCg==
