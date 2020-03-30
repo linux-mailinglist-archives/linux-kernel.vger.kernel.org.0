@@ -2,236 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93ACC1974B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 08:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D732E1974C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 08:59:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729237AbgC3Gxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 02:53:55 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:26570 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728997AbgC3Gxz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 02:53:55 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585551234; h=In-Reply-To: Content-Type: MIME-Version:
- References: Message-ID: Subject: Cc: To: From: Date: Sender;
- bh=NxnZdIQiHu9SdYni9w/ASzbt88VeS0n25G+4IoCyDSY=; b=Bw4JdP70zSP5vbJHRNWECMjBZSFvYYByG66W/7JWaRw8XenhoFxi4NtpfLnEAggOz7/i/jey
- Ss1fTMEN9wdPiqHzItk6SgrzZkUhe+lUYa1sO2G41++28SNv7k4vBckcLfSVkZSf/tvd7K5P
- 88+hShqqyF5cegkFk87izqn7Des=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e819775.7f3accc6ca08-smtp-out-n03;
- Mon, 30 Mar 2020 06:53:41 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E012DC433D2; Mon, 30 Mar 2020 06:53:41 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4F10BC433F2;
-        Mon, 30 Mar 2020 06:53:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F10BC433F2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-Date:   Mon, 30 Mar 2020 12:23:35 +0530
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, stummala@codeaurora.org
-Subject: Re: [PATCH] f2fs: fix long latency due to discard during umount
-Message-ID: <20200330065335.GT20234@codeaurora.org>
-References: <1584506689-5041-1-git-send-email-stummala@codeaurora.org>
- <29d4adc4-482d-3d92-1470-3405989ea231@huawei.com>
- <20200326133700.GR20234@codeaurora.org>
- <2b0d8d4c-a981-4edc-d8ca-fe199a63ea79@huawei.com>
- <20200327030542.GS20234@codeaurora.org>
+        id S1729340AbgC3G7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 02:59:35 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37560 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728489AbgC3G7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 02:59:34 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A0189230DE2128303A08;
+        Mon, 30 Mar 2020 14:59:15 +0800 (CST)
+Received: from [127.0.0.1] (10.173.223.234) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.487.0; Mon, 30 Mar 2020
+ 14:59:09 +0800
+Subject: Re: [PATCH -next] dmaengine: hisilicon: Fix build error without
+ PCI_MSI
+To:     Zhou Wang <wangzhou1@hisilicon.com>, <dan.j.williams@intel.com>,
+        <vkoul@kernel.org>, <qiuzhenfa@hisilicon.com>
+References: <20200328114133.17560-1-yuehaibing@huawei.com>
+ <5E815BDD.8050908@hisilicon.com>
+CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <16ccc33f-d394-b59a-b3ee-65488595580f@huawei.com>
+Date:   Mon, 30 Mar 2020 14:59:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200327030542.GS20234@codeaurora.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <5E815BDD.8050908@hisilicon.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
-
-On Fri, Mar 27, 2020 at 08:35:42AM +0530, Sahitya Tummala wrote:
-> On Fri, Mar 27, 2020 at 09:51:43AM +0800, Chao Yu wrote:
-> > 
-> > With this patch, most of xfstest cases cost 5 * n second longer than before.
-> > 
-> > E.g. generic/003, during umount(), we looped into retrying one bio
-> > submission.
-> > 
-> > [61279.829724] F2FS-fs (zram1): Found nat_bits in checkpoint
-> > [61279.885337] F2FS-fs (zram1): Mounted with checkpoint version = 5cf3cb8e
-> > [61281.912832] submit discard bio start [23555,1]
-> > [61281.912835] f2fs_submit_discard_endio [23555,1] err:-11
-> > [61281.912836] submit discard bio end [23555,1]
-> > [61281.912836] move dc to retry list [23555,1]
-> > 
-> > ...
-> > 
-> > [61286.881212] submit discard bio start [23555,1]
-> > [61286.881217] f2fs_submit_discard_endio [23555,1] err:-11
-> > [61286.881223] submit discard bio end [23555,1]
-> > [61286.881224] move dc to retry list [23555,1]
-> > [61286.905198] submit discard bio start [23555,1]
-> > [61286.905203] f2fs_submit_discard_endio [23555,1] err:-11
-> > [61286.905205] submit discard bio end [23555,1]
-> > [61286.905206] move dc to retry list [23555,1]
-> > [61286.929157] F2FS-fs (zram1): Issue discard(23555, 23555, 1) failed, ret: -11
-> > 
-> > Could you take a look at this issue?
+On 2020/3/30 10:39, Zhou Wang wrote:
+> On 2020/3/28 19:41, YueHaibing wrote:
+>> If PCI_MSI is not set, building fais:
+>>
+>> drivers/dma/hisi_dma.c: In function ‘hisi_dma_free_irq_vectors’:
+>> drivers/dma/hisi_dma.c:138:2: error: implicit declaration of function ‘pci_free_irq_vectors’;
+>>  did you mean ‘pci_alloc_irq_vectors’? [-Werror=implicit-function-declaration]
+>>   pci_free_irq_vectors(data);
+>>   ^~~~~~~~~~~~~~~~~~~~
+>>
+>> Make HISI_DMA depends on PCI_MSI to fix this.
 > 
-> Let me check and get back on this.
+> In ARM64, it will appear this compile error if PCI disables.
+> How about adding depends on PCI && PCI_MSI here?
 
-I found the issue. The dc with multiple bios is getting requeued again and
-again in case if one of its bio gets -EAGAIN error. Even the successfully
-completed bios are getting requeued again resulting into long latency.
-I have fixed it by splitting the dc in such case so that we can requeue only
-the leftover bios into a new dc and retry that later within the 5 sec timeout.
+PCI_MSI depends on PCI， while PCI is not set, PCI_MSI will never be set
 
-Please help to review v3 posted and if it looks good, I would like to request
-you to test the earlier regression scenario with it to check the result again?
-
-thanks,
+so depends on PCI_MSI is enough.
 
 > 
-> Thanks,
+> Best,
+> Zhou
 > 
-> > 
-> > Thanks,
-> > 
-> > > 
-> > > Thanks,
-> > > 
-> > >> Thanks,
-> > >>
-> > >>> +				break;
-> > >>> +			}
-> > >>> +		}
-> > >>>  
-> > >>>  		atomic_inc(&dcc->issued_discard);
-> > >>>  
-> > >>> @@ -1463,6 +1477,40 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
-> > >>>  	return issued;
-> > >>>  }
-> > >>>  
-> > >>> +static bool __should_discard_retry(struct f2fs_sb_info *sbi,
-> > > s> > +		struct discard_policy *dpolicy)
-> > >>> +{
-> > >>> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> > >>> +	struct discard_cmd *dc, *tmp;
-> > >>> +	bool retry = false;
-> > >>> +	unsigned long flags;
-> > >>> +
-> > >>> +	if (dpolicy->type != DPOLICY_UMOUNT)
-> > >>> +		f2fs_bug_on(sbi, 1);
-> > >>> +
-> > >>> +	mutex_lock(&dcc->cmd_lock);
-> > >>> +	list_for_each_entry_safe(dc, tmp, &(dcc->retry_list), list) {
-> > >>> +		if (dpolicy->timeout != 0 &&
-> > >>> +			f2fs_time_over(sbi, dpolicy->timeout)) {
-> > >>> +			retry = false;
-> > >>> +			break;
-> > >>> +		}
-> > >>> +
-> > >>> +		spin_lock_irqsave(&dc->lock, flags);
-> > >>> +		if (!dc->bio_ref) {
-> > >>> +			dc->state = D_PREP;
-> > >>> +			dc->error = 0;
-> > >>> +			reinit_completion(&dc->wait);
-> > >>> +			__relocate_discard_cmd(dcc, dc);
-> > >>> +			retry = true;
-> > >>> +		}
-> > >>> +		spin_unlock_irqrestore(&dc->lock, flags);
-> > >>> +	}
-> > >>> +	mutex_unlock(&dcc->cmd_lock);
-> > >>> +
-> > >>> +	return retry;
-> > >>> +}
-> > >>> +
-> > >>>  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> > >>>  					struct discard_policy *dpolicy)
-> > >>>  {
-> > >>> @@ -1470,12 +1518,13 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> > >>>  	struct list_head *pend_list;
-> > >>>  	struct discard_cmd *dc, *tmp;
-> > >>>  	struct blk_plug plug;
-> > >>> -	int i, issued = 0;
-> > >>> +	int i, err, issued = 0;
-> > >>>  	bool io_interrupted = false;
-> > >>>  
-> > >>>  	if (dpolicy->timeout != 0)
-> > >>>  		f2fs_update_time(sbi, dpolicy->timeout);
-> > >>>  
-> > >>> +retry:
-> > >>>  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
-> > >>>  		if (dpolicy->timeout != 0 &&
-> > >>>  				f2fs_time_over(sbi, dpolicy->timeout))
-> > >>> @@ -1509,7 +1558,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> > >>>  				break;
-> > >>>  			}
-> > >>>  
-> > >>> -			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
-> > >>> +			err = __submit_discard_cmd(sbi, dpolicy, dc, &issued);
-> > >>> +			if (err == -EAGAIN)
-> > >>> +				congestion_wait(BLK_RW_ASYNC,
-> > >>> +						DEFAULT_IO_TIMEOUT);
-> > >>>  
-> > >>>  			if (issued >= dpolicy->max_requests)
-> > >>>  				break;
-> > >>> @@ -1522,6 +1574,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> > >>>  			break;
-> > >>>  	}
-> > >>>  
-> > >>> +	if (!list_empty(&dcc->retry_list) &&
-> > >>> +		__should_discard_retry(sbi, dpolicy))
-> > >>> +		goto retry;
-> > >>> +
-> > >>>  	if (!issued && io_interrupted)
-> > >>>  		issued = -1;
-> > >>>  
-> > >>> @@ -1613,6 +1669,12 @@ static unsigned int __wait_discard_cmd_range(struct f2fs_sb_info *sbi,
-> > >>>  		goto next;
-> > >>>  	}
-> > >>>  
-> > >>> +	if (dpolicy->type == DPOLICY_UMOUNT &&
-> > >>> +		!list_empty(&dcc->retry_list)) {
-> > >>> +		wait_list = &dcc->retry_list;
-> > >>> +		goto next;
-> > >>> +	}
-> > >>> +
-> > >>>  	return trimmed;
-> > >>>  }
-> > >>>  
-> > >>> @@ -2051,6 +2113,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
-> > >>>  	for (i = 0; i < MAX_PLIST_NUM; i++)
-> > >>>  		INIT_LIST_HEAD(&dcc->pend_list[i]);
-> > >>>  	INIT_LIST_HEAD(&dcc->wait_list);
-> > >>> +	INIT_LIST_HEAD(&dcc->retry_list);
-> > >>>  	INIT_LIST_HEAD(&dcc->fstrim_list);
-> > >>>  	mutex_init(&dcc->cmd_lock);
-> > >>>  	atomic_set(&dcc->issued_discard, 0);
-> > >>>
-> > > 
+>>
+>> Fixes: e9f08b65250d ("dmaengine: hisilicon: Add Kunpeng DMA engine support")
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  drivers/dma/Kconfig | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+>> index 092483644315..023db6883d05 100644
+>> --- a/drivers/dma/Kconfig
+>> +++ b/drivers/dma/Kconfig
+>> @@ -241,7 +241,8 @@ config FSL_RAID
+>>  
+>>  config HISI_DMA
+>>  	tristate "HiSilicon DMA Engine support"
+>> -	depends on ARM64 || (COMPILE_TEST && PCI_MSI)
+>> +	depends on ARM64 || COMPILE_TEST
+>> +	depends on PCI_MSI
+>>  	select DMA_ENGINE
+>>  	select DMA_VIRTUAL_CHANNELS
+>>  	help
+>>
 > 
-> -- 
-> --
-> Sent by a consultant of the Qualcomm Innovation Center, Inc.
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+> 
+> .
+> 
 
--- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
