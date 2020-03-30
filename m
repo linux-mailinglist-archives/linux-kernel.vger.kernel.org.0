@@ -2,216 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60A5E1983E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 21:03:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 023141983E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 21:03:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbgC3TDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 15:03:47 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:49381 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726518AbgC3TDq (ORCPT
+        id S1728152AbgC3TDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 15:03:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38308 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbgC3TDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 15:03:46 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585595025; h=Message-ID: References: In-Reply-To: Subject:
- To: From: Date: Content-Transfer-Encoding: Content-Type: MIME-Version:
- Sender; bh=AQGiG5GDREzTfhSq9CASDUgd4b4IkanSkzsRnrcZxMs=; b=OmXL0tBiC8cQKq78SxbE6PKh5NW7SXXI2Y/Kc1YFiwJYqteBr/1SgIVjqdeet+hVJP4o0Z+F
- fl6cuOAc3qyJLo0tm6dG5ZVLCq0FA90vwGZIlwnOW1biiz4vSrp20C4OeqOYGC3pTiE0sP4E
- EKu8puLhDdWgfANBwpMLm57eJY0=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e824284.7f655b780ed8-smtp-out-n02;
- Mon, 30 Mar 2020 19:03:32 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 337E9C43636; Mon, 30 Mar 2020 19:03:32 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5CF7EC433BA;
-        Mon, 30 Mar 2020 19:03:30 +0000 (UTC)
+        Mon, 30 Mar 2020 15:03:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=TQ9cYkWVRMY5HM+PVzYLu4H7z2n9HAf8wAGBPwbykN4=; b=n2UiTkYaKNMRkhxvNvOONgFBJX
+        tKGNJfEho4dR45vF9PtV8trcvHo+CGSa6Ux8eCcbOWCyelt2DIHyBm6bxCjWQl2xt8iFFWdVOnl5t
+        sFqyUn6q/JIrdOv/lI2VsJfjy2KLn18LgHylbdACnFpJmoI1ctBOnA5W6EyWt4kYh9CkQnDpihITV
+        1GqprvOK95H7ueJ4mcj0dVCAh+rEnyFJeN3EuSDFWyn+OgKl48o2AIS6KI0k/KOkVDReCOhCBqinY
+        k7K2oXZqA3kcMCDxvz0rwMndL+cNi3hHfVVEXzBrHXZUEY1BbLFftE8QsxcPxNHzXBKY0QpM5zYfP
+        eZQAz3BA==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jIzhD-00011g-HA; Mon, 30 Mar 2020 19:03:39 +0000
+Subject: Re: [PATCH 1/1] mnt: add support for non-rootfs initramfs
+To:     Ignat Korchagin <ignat@cloudflare.com>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     kernel-team@cloudflare.com
+References: <20200330131439.2405-1-ignat@cloudflare.com>
+ <20200330131439.2405-2-ignat@cloudflare.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <f96ad8b8-0a26-448a-4a27-8712a82001c4@infradead.org>
+Date:   Mon, 30 Mar 2020 12:03:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20200330131439.2405-2-ignat@cloudflare.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 30 Mar 2020 12:03:30 -0700
-From:   rishabhb@codeaurora.org
-To:     undisclosed-recipients:;
-Subject: Re: [PATCH 1/2] remoteproc: qcom: Add bus scaling capability during
- bootup
-In-Reply-To: <CANLsYkzNKDwL6PSSagvk6YWRedLKmW80ji3nOYy1VrPQ3cP-8w@mail.gmail.com>
-References: <1585357147-4616-1-git-send-email-rishabhb@codeaurora.org>
- <CANLsYkxV7xWUkggBXF=ziGfmLs-EZewuzCzZ3fq56CR+xA0poQ@mail.gmail.com>
- <CANLsYkzNKDwL6PSSagvk6YWRedLKmW80ji3nOYy1VrPQ3cP-8w@mail.gmail.com>
-Message-ID: <f049524d9789d005ba83b51d30011bcb@codeaurora.org>
-X-Sender: rishabhb@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-03-30 09:13, Mathieu Poirier wrote:
-> On Mon, 30 Mar 2020 at 10:06, Mathieu Poirier
-> <mathieu.poirier@linaro.org> wrote:
->> 
->> Hi Rishabh,
->> 
->> On Fri, 27 Mar 2020 at 18:59, Rishabh Bhatnagar 
->> <rishabhb@codeaurora.org> wrote:
->> >
->> > During bootup since remote processors cannot request for
->> > additional bus bandwidth from the interconect framework,
->> > platform driver should provide the proxy resources. This
->> > is useful for scenarios where the Q6 tries to access the DDR
->> > memory in the initial stages of bootup. For e.g. during
->> > bootup or after recovery modem Q6 tries to zero out the bss
->> > section in the DDR. Since this is a big chunk of memory if
->> > don't bump up the bandwidth we might encounter timeout issues.
->> > This patch makes a proxy vote for maximizing the bus bandwidth
->> > during bootup and removes it once processor is up.
->> >
->> > Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
->> 
->> The title of this patch contains "[PATCH 1/2]" but only one patch was
->> sent to the linux-remoteproc mailing list.  Is this a mistake and this
->> is a stand alone patch or another patch did not reach the list?
->> 
+On 3/30/20 6:14 AM, Ignat Korchagin wrote:
+> The main need for this is to support container runtimes on stateless Linux
+> system (pivot_root system call from initramfs).
 > 
-> I see that you sent another patch [1] that seems to be stand alone but
-> when looking into the code function of_icc_get() is called, which does
-> reference the bindings in [1].
+> Normally, the task of initramfs is to mount and switch to a "real" root
+> filesystem. However, on stateless systems (booting over the network) it is just
+> convenient to have your "real" filesystem as initramfs from the start.
 > 
-> [1]. https://patchwork.kernel.org/patch/11463381/
+> This, however, breaks different container runtimes, because they usually use
+> pivot_root system call after creating their mount namespace. But pivot_root does
+> not work from initramfs, because initramfs runs form rootfs, which is the root
+> of the mount tree and can't be unmounted.
 > 
->> Thanks,
->> Mathieu
-Yes its supposed to be a patchset of 2, somehow the numbering got messed 
-up.
-I'll resend the two patches so that you can take a look.
->> 
->> > ---
->> >  drivers/remoteproc/qcom_q6v5_pas.c | 43 +++++++++++++++++++++++++++++++++++++-
->> >  1 file changed, 42 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
->> > index edf9d0e..8f5db8d 100644
->> > --- a/drivers/remoteproc/qcom_q6v5_pas.c
->> > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
->> > @@ -20,6 +20,7 @@
->> >  #include <linux/qcom_scm.h>
->> >  #include <linux/regulator/consumer.h>
->> >  #include <linux/remoteproc.h>
->> > +#include <linux/interconnect.h>
->> >  #include <linux/soc/qcom/mdt_loader.h>
->> >  #include <linux/soc/qcom/smem.h>
->> >  #include <linux/soc/qcom/smem_state.h>
->> > @@ -28,6 +29,9 @@
->> >  #include "qcom_q6v5.h"
->> >  #include "remoteproc_internal.h"
->> >
->> > +#define PIL_TZ_AVG_BW  0
->> > +#define PIL_TZ_PEAK_BW UINT_MAX
->> > +
->> >  struct adsp_data {
->> >         int crash_reason_smem;
->> >         const char *firmware_name;
->> > @@ -62,6 +66,7 @@ struct qcom_adsp {
->> >         int proxy_pd_count;
->> >
->> >         int pas_id;
->> > +       struct icc_path *bus_client;
->> >         int crash_reason_smem;
->> >         bool has_aggre2_clk;
->> >
->> > @@ -124,6 +129,25 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
->> >
->> >  }
->> >
->> > +static int do_bus_scaling(struct qcom_adsp *adsp, bool enable)
->> > +{
->> > +       int rc;
->> > +       u32 avg_bw = enable ? PIL_TZ_AVG_BW : 0;
->> > +       u32 peak_bw = enable ? PIL_TZ_PEAK_BW : 0;
->> > +
->> > +       if (adsp->bus_client) {
->> > +               rc = icc_set_bw(adsp->bus_client, avg_bw, peak_bw);
->> > +               if (rc) {
->> > +                       dev_err(adsp->dev, "bandwidth request failed(rc:%d)\n",
->> > +                               rc);
->> > +                       return rc;
->> > +               }
->> > +       } else
->> > +               dev_info(adsp->dev, "Bus scaling not setup for %s\n",
->> > +                       adsp->rproc->name);
->> > +       return 0;
->> > +}
->> > +
->> >  static int adsp_start(struct rproc *rproc)
->> >  {
->> >         struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
->> > @@ -131,9 +155,13 @@ static int adsp_start(struct rproc *rproc)
->> >
->> >         qcom_q6v5_prepare(&adsp->q6v5);
->> >
->> > +       ret = do_bus_scaling(adsp, true);
->> > +       if (ret)
->> > +               goto disable_irqs;
->> > +
->> >         ret = adsp_pds_enable(adsp, adsp->active_pds, adsp->active_pd_count);
->> >         if (ret < 0)
->> > -               goto disable_irqs;
->> > +               goto unscale_bus;
->> >
->> >         ret = adsp_pds_enable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
->> >         if (ret < 0)
->> > @@ -183,6 +211,8 @@ static int adsp_start(struct rproc *rproc)
->> >         adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
->> >  disable_active_pds:
->> >         adsp_pds_disable(adsp, adsp->active_pds, adsp->active_pd_count);
->> > +unscale_bus:
->> > +       do_bus_scaling(adsp, false);
->> >  disable_irqs:
->> >         qcom_q6v5_unprepare(&adsp->q6v5);
->> >
->> > @@ -198,6 +228,7 @@ static void qcom_pas_handover(struct qcom_q6v5 *q6v5)
->> >         clk_disable_unprepare(adsp->aggre2_clk);
->> >         clk_disable_unprepare(adsp->xo);
->> >         adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
->> > +       do_bus_scaling(adsp, false);
->> >  }
->> >
->> >  static int adsp_stop(struct rproc *rproc)
->> > @@ -280,6 +311,14 @@ static int adsp_init_regulator(struct qcom_adsp *adsp)
->> >         return PTR_ERR_OR_ZERO(adsp->px_supply);
->> >  }
->> >
->> > +static void adsp_init_bus_scaling(struct qcom_adsp *adsp)
->> > +{
->> > +       adsp->bus_client = of_icc_get(adsp->dev, NULL);
->> > +       if (!adsp->bus_client)
->> > +               dev_warn(adsp->dev, "%s: unable to get bus client \n",
->> > +                       __func__);
->> > +}
->> > +
->> >  static int adsp_pds_attach(struct device *dev, struct device **devs,
->> >                            char **pd_names)
->> >  {
->> > @@ -410,6 +449,8 @@ static int adsp_probe(struct platform_device *pdev)
->> >         if (ret)
->> >                 goto free_rproc;
->> >
->> > +       adsp_init_bus_scaling(adsp);
->> > +
->> >         ret = adsp_pds_attach(&pdev->dev, adsp->active_pds,
->> >                               desc->active_pd_names);
->> >         if (ret < 0)
->> > --
->> > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->> > a Linux Foundation Collaborative Project
+> One workaround is to do:
+> 
+>   mount --bind / /
+> 
+> However, that defeats one of the purposes of using pivot_root in the cloned
+> containers: get rid of host root filesystem, should the code somehow escapes the
+> chroot.
+> 
+> There is a way to solve this problem from userspace, but it is much more
+> cumbersome:
+>   * either have to create a multilayered archive for initramfs, where the outer
+>     layer creates a tmpfs filesystem and unpacks the inner layer, switches root
+>     and does not forget to properly cleanup the old rootfs
+>   * or we need to use keepinitrd kernel cmdline option, unpack initramfs to
+>     rootfs, run a script to create our target tmpfs root, unpack the same
+>     initramfs there, switch root to it and again properly cleanup the old root,
+>     thus unpacking the same archive twice and also wasting memory, because
+>     the kernel stores compressed initramfs image indefinitely.
+> 
+> With this change we can ask the kernel (by specifying nonroot_initramfs kernel
+> cmdline option) to create a "leaf" tmpfs mount for us and switch root to it
+> before the initramfs handling code, so initramfs gets unpacked directly into
+> the "leaf" tmpfs with rootfs being empty and no need to clean up anything.
+> 
+> This also bring the behaviour in line with the older style initrd, where the
+> initrd is located on some leaf filesystem in the mount tree and rootfs remaining
+> empty.
+> 
+> Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
+> ---
+>  fs/namespace.c | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+
+Hi,
+Please document "nonroot_initramfs" in
+Documentation/admin-guide/kernel-parameters.txt.
+
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 85b5f7bea82e..a1ec862e8146 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -3701,6 +3701,49 @@ static void __init init_mount_tree(void)
+>  	set_fs_root(current->fs, &root);
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_TMPFS)
+> +static int __initdata nonroot_initramfs;
+> +
+> +static int __init nonroot_initramfs_param(char *str)
+> +{
+> +	if (*str)
+> +		return 0;
+> +	nonroot_initramfs = 1;
+> +	return 1;
+> +}
+> +__setup("nonroot_initramfs", nonroot_initramfs_param);
+> +
+> +static void __init init_nonroot_initramfs(void)
+> +{
+> +	int err;
+> +
+> +	if (!nonroot_initramfs)
+> +		return;
+> +
+> +	err = ksys_mkdir("/root", 0700);
+> +	if (err < 0)
+> +		goto out;
+> +
+> +	err = do_mount("tmpfs", "/root", "tmpfs", 0, NULL);
+> +	if (err)
+> +		goto out;
+> +
+> +	err = ksys_chdir("/root");
+> +	if (err)
+> +		goto out;
+> +
+> +	err = do_mount(".", "/", NULL, MS_MOVE, NULL);
+> +	if (err)
+> +		goto out;
+> +
+> +	err = ksys_chroot(".");
+> +	if (!err)
+> +		return;
+> +out:
+> +	printk(KERN_WARNING "Failed to create a non-root filesystem for initramfs\n");
+> +}
+> +#endif /* IS_ENABLED(CONFIG_TMPFS) */
+> +
+>  void __init mnt_init(void)
+>  {
+>  	int err;
+> @@ -3734,6 +3777,10 @@ void __init mnt_init(void)
+>  	shmem_init();
+>  	init_rootfs();
+>  	init_mount_tree();
+> +
+> +#if IS_ENABLED(CONFIG_TMPFS)
+> +	init_nonroot_initramfs();
+> +#endif
+>  }
+>  
+>  void put_mnt_ns(struct mnt_namespace *ns)
+> 
+
+thanks.
+-- 
+~Randy
+
