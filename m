@@ -2,175 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28A30197664
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 10:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D38B19766D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 10:28:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbgC3IZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 04:25:57 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42637 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729594AbgC3IZ4 (ORCPT
+        id S1729655AbgC3I2f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 04:28:35 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:45284 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729594AbgC3I2f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 04:25:56 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mgr@pengutronix.de>)
-        id 1jIpjy-00021V-UM; Mon, 30 Mar 2020 10:25:50 +0200
-Received: from mgr by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mgr@pengutronix.de>)
-        id 1jIpjw-0002dB-LS; Mon, 30 Mar 2020 10:25:48 +0200
-Date:   Mon, 30 Mar 2020 10:25:48 +0200
-From:   Michael Grzeschik <mgr@pengutronix.de>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     lars@metafoo.de, alexandru.Ardelean@analog.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, bigeasy@linutronix.de,
-        m.olbrich@pengutronix.de, kernel@pengutronix.de
-Subject: Re: [PATCH] usb: dwc3: gadget: don't dequeue requests on already
- disabled endpoints
-Message-ID: <20200330082548.GL27849@pengutronix.de>
-References: <dc52d6a0-12ed-a34c-01c4-0fc5ccbf7b1d@metafoo.de>
- <20200327084302.606-1-m.grzeschik@pengutronix.de>
- <875zeokhoa.fsf@kernel.org>
- <20200329190244.GK27849@pengutronix.de>
- <87sghq2tum.fsf@kernel.org>
+        Mon, 30 Mar 2020 04:28:35 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02U8SERF110283;
+        Mon, 30 Mar 2020 03:28:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1585556894;
+        bh=1YfcS38BPhZe/p5W8i5G+38GAG3OkNcS1KKAWP4M02Q=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=Dx268NtKt8MNlm4k8PX37tpHEKSLzyMAmWYnugW6ihPQBOfctEiBLCWkYklM6/8/h
+         DWwzVspu4bdTCGIzHkXMNM5E2n3h3k/azSnILrmah1lW3fxAB8dqNUonZm4d1k5FmW
+         JyGPMDgUB8xzEQNPvm3067KxHIEVykRbugwFnZT4=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02U8SE8F019493
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 30 Mar 2020 03:28:14 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 30
+ Mar 2020 03:28:14 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 30 Mar 2020 03:28:14 -0500
+Received: from [10.24.69.198] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02U8S902055047;
+        Mon, 30 Mar 2020 03:28:10 -0500
+Subject: Re: [PATCH net-next v6 00/11] net: ethernet: ti: add networking
+ support for k3 am65x/j721e soc
+From:   Sekhar Nori <nsekhar@ti.com>
+To:     Tero Kristo <t-kristo@ti.com>, Vladimir Oltean <olteanv@gmail.com>,
+        David Miller <davem@davemloft.net>
+CC:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        <peter.ujfalusi@ti.com>, Rob Herring <robh@kernel.org>,
+        netdev <netdev@vger.kernel.org>, <rogerq@ti.com>,
+        <devicetree@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+        Murali Karicheri <m-karicheri2@ti.com>, <kishon@ti.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+References: <20200323225254.12759-1-grygorii.strashko@ti.com>
+ <20200326.200136.1601946994817303021.davem@davemloft.net>
+ <CA+h21hr8G24ddEgAbU_TfoNAe0fqUJ0_Uyp54Gxn5cvPrM6u9g@mail.gmail.com>
+ <8f5e981a-193c-0c1e-1e0a-b0380b2e6a9c@ti.com>
+ <2d305c89-601c-5dee-06be-30257a26a392@ti.com>
+Message-ID: <cac3d501-cc36-73c5-eea8-aaa2d10105b0@ti.com>
+Date:   Mon, 30 Mar 2020 13:58:08 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wZdghQXYJzyo6AGC"
-Content-Disposition: inline
-In-Reply-To: <87sghq2tum.fsf@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 09:41:05 up 39 days, 15:11, 80 users,  load average: 1.00, 0.56,
- 0.31
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <2d305c89-601c-5dee-06be-30257a26a392@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 30/03/20 1:06 PM, Sekhar Nori wrote:
+> On 30/03/20 12:45 PM, Tero Kristo wrote:
+>> On 28/03/2020 03:53, Vladimir Oltean wrote:
+>>> Hi David,
+>>>
+>>> On Fri, 27 Mar 2020 at 05:02, David Miller <davem@davemloft.net> wrote:
+>>>>
+>>>> From: Grygorii Strashko <grygorii.strashko@ti.com>
+>>>> Date: Tue, 24 Mar 2020 00:52:43 +0200
+>>>>
+>>>>> This v6 series adds basic networking support support TI K3
+>>>>> AM654x/J721E SoC which
+>>>>> have integrated Gigabit Ethernet MAC (Media Access Controller) into
+>>>>> device MCU
+>>>>> domain and named MCU_CPSW0 (CPSW2G NUSS).
+>>>>   ...
+>>>>
+>>>> Series applied, thank you.
+>>>
+>>> The build is now broken on net-next:
+>>>
+>>> arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi:303.23-309.6: ERROR
+>>> (phandle_references):
+>>> /interconnect@100000/interconnect@28380000/ethernet@46000000/ethernet-ports/port@1:
+>>>
+>>> Reference to non-existent node
+>>> or label "mcu_conf"
+>>>
+>>>    also defined at
+>>> arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts:471.13-474.3
+>>> arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi:303.23-309.6: ERROR
+>>> (phandle_references):
+>>> /interconnect@100000/interconnect@28380000/ethernet@46000000/ethernet-ports/port@1:
+>>>
+>>> Reference to non-existent node
+>>> or label "phy_gmii_sel"
+>>>
+>>>    also defined at
+>>> arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts:471.13-474.3
+>>>
+>>> As Grygorii said:
+>>>
+>>> Patches 1-6 are intended for netdev, Patches 7-11 are intended for K3
+>>> Platform
+>>> tree and provided here for testing purposes.
+>>
+>> Yeah, I think you are missing a dependency that was applied via the K3
+>> branch earlier. They are in linux-next now, but I am not so sure how
+>> much that is going to help you.
+>>
+>> You could just drop the DT patches from this merge and let me apply them
+>> via the platform branch.
+> 
+> One other option would be that Dave merges your K3 tag which was sent to
+> ARM SoC to net-next. Its based on v5.6-rc1, has no other dependencies,
+> is already in linux-next, should be immutable and safe to merge. This
+> has the advantage that no rebase is necessary on net-next.
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/kristo/linux
+> tags/ti-k3-soc-for-v5.7
 
---wZdghQXYJzyo6AGC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Mar 30, 2020 at 10:18:57AM +0300, Felipe Balbi wrote:
->=20
-> Hi,
->=20
-> Michael Grzeschik <mgr@pengutronix.de> writes:
-> >> > dwc3_gadget_ep_disable gets called before the last request gets
-> >> > dequeued.
-> >> >
-> >> > In __dwc3_gadget_ep_disable all started, pending and cancelled
-> >> > lists for this endpoint will call dwc3_gadget_giveback in
-> >> > dwc3_remove_requests.
-> >> >
-> >> > After that no list containing the afterwards dequed request,
-> >> > therefor it is not necessary to run the dequeue routine.
-> >> >
-> >> > Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-> >> > ---
-> >> > @Lars-Peter Clausen:
-> >> >
-> >> > This patch addresses the case that not queued requests get dequeued.
-> >> > The only case that this happens seems on disabling the gadget.
-> >> >
-> >> >  drivers/usb/dwc3/gadget.c | 3 +++
-> >> >  1 file changed, 3 insertions(+)
-> >> >
-> >> > diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-> >> > index 9a6f741d1db0dc..5d4fa8d6c93e49 100644
-> >> > --- a/drivers/usb/dwc3/gadget.c
-> >> > +++ b/drivers/usb/dwc3/gadget.c
-> >> > @@ -1609,6 +1609,9 @@ static int dwc3_gadget_ep_dequeue(struct usb_e=
-p *ep,
-> >> > =20
-> >> >  	trace_dwc3_ep_dequeue(req);
-> >> > =20
-> >> > +	if (!(dep->flags & DWC3_EP_ENABLED))
-> >> > +		return 0;
-> >>=20
-> >> which driver is trying to call dequeue after the endpoint is disabled?
-> >> Got some tracepoints of the problem happening?
-> >
-> > I see the case when using uvc-gadget.
-> >
-> > Look into uvc_v4l2_release in uvc_v4l2.c:
-> >
-> > uvc_function_disconnect
-> >    composite_disconnect
-> >       reset_config
-> >          uvc_function_disable->usb_ep_disable
-> >
-> > uvcg_video_enable
-> >    usb_ep_dequeue
-> >       dwc3_gadget_ep_dequeue
->=20
-> Oh, I see what you mean. We get a disconnect, which disables the
-> endpoints, which forces all requests to be dequeued. Now I remember why
-> this exists: we giveback the requests from disconnect because not all
-> gadget drivers will call usb_ep_dequeue() if simply told about the
-> disconnect. Then UDC drivers have to be a little more careful and make
-> sure that all requests are givenback.
->=20
-> In any case, why is it a problem to call usb_ep_dequeue()? Is it only
-> because of that dev_err()? We could just remove that message,
-> really.
-
-In my case, it is not a problem removing the dev_err. The ep_dequeue
-will only be called once for each request at the stream end. I don't
-know about the case Lars has mentioned.
-
-If we have to search all lists for the request every n times while in
-traffic, only to find out that it was not enqueued, I think it would be
-worth it to keep the dev_err and let these cases trigger so we have an
-option to find and avoid/fix these.
-
-> Eventually, I want to move more of this logic into UDC core so
-> udc drivers can be simplified. For that work, though, first we would
-> have to add a "generic" struct usb_ep_hw implementation and manage list
-> of requests as part of UDC core as well.
-
-I don't know about the cases you plan to abstract but it sounds
-like a good idea to get some gadget logic out of the drivers.
+FWIW, I was able to reproduce the build failure reported by Vladimir on
+net-next, merge Tero's tag (above) cleanly into it, and see that ARM64
+defconfig build on net-next succeeds after the merge.
 
 Thanks,
-Michael
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---wZdghQXYJzyo6AGC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAl6BrQUACgkQC+njFXoe
-LGTnRQ/+MzuaYcXWW6Wcfj5AJjiqb9RuzdHPUCrc48bZJFhaDOoJwO/eJ9C9zZM0
-/AAXJi9e/f89wRvMAQ1CyN6qT2SPqYxlZSKO4zuFyjyuslfujPCg4r372zisXFQJ
-mJpLileNOs8meBP4jfaD6ikGC5Vqb4J1YK7JX7dWAiqOKeJ1xFWTaU/QrQxwYVzU
-uL8PB/EZf/Y8EQrYIOaln0DvbJuVNllpK2uzwkjSnEe1lM9VCeiMcD+GJB+kkkNd
-dpATvxEqhVBWq9Xu0biwcWWrDfLtYBccxNd77Qy7IPIYWTiWHJaQFrkijsj5TevY
-oGWIZ/UvzUrSssu6VUgLXhoi1xaizjnGprL9WY2vx6E5nOiuUpWqQ8A/ahukuG58
-S01liCaic7NjcNyPtAO+zLaZt+oR06WO/t2B7GArhnTY7o4l69zGIIkRvUhYc94z
-o42iUvghfbCXHmQaqK9ar3cT0brFmYDTm7vEJxpAPJbKKkgkmqPCqSqQOKp3iYF7
-dgrVLdC1tvtoCiA51OPitqVttoyJZsLmRTGQbvExI54sqgh4ynJh7031SbPEd59Z
-T8oCl/fAoTZG4xWthYZUFP+uXAF/ALzMIyi3ggwJA4dJKc1q8GZ7aCOV52na8Lpl
-sqoEAw20vuLEXDfuwKT5FkyCWIQ6szWYn+U5wExMzV7zdvjZxg8=
-=ON5s
------END PGP SIGNATURE-----
-
---wZdghQXYJzyo6AGC--
+Sekhar
