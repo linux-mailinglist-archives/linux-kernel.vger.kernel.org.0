@@ -2,84 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4A3C197B91
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 14:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AF5A197BB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 14:19:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730108AbgC3MJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 08:09:43 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:51715 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729627AbgC3MJm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 08:09:42 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0Tu2RGTX_1585570174;
-Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0Tu2RGTX_1585570174)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 30 Mar 2020 20:09:34 +0800
-Subject: Re: [RFC PATCH v1 29/50] fs/ocfs2/journal: Use prandom_u32() and not
- /dev/random for timeout
-To:     George Spelvin <lkml@sdf.org>, linux-kernel@vger.kernel.org
-Cc:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-        ocfs2-devel@oss.oracle.com
-References: <202003281643.02SGhIOY022599@sdf.org>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-Message-ID: <016c2bdc-68eb-245f-2292-d00d0d8e45a5@linux.alibaba.com>
-Date:   Mon, 30 Mar 2020 20:09:33 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
- Gecko/20100101 Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <202003281643.02SGhIOY022599@sdf.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1729976AbgC3MTZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 08:19:25 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:58472 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729705AbgC3MTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 08:19:25 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EE1722004B4;
+        Mon, 30 Mar 2020 14:19:23 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8FEF82004AE;
+        Mon, 30 Mar 2020 14:19:19 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D58E140297;
+        Mon, 30 Mar 2020 20:19:13 +0800 (SGT)
+From:   Biwen Li <biwen.li@oss.nxp.com>
+To:     leoyang.li@nxp.com, linux@rempel-privat.de, kernel@pengutronix.de,
+        wsa@the-dreams.de
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jiafei.pan@nxp.com, Biwen Li <biwen.li@nxp.com>
+Subject: [PATCH] i2c: imx: add shutdown interface
+Date:   Mon, 30 Mar 2020 20:15:46 +0800
+Message-Id: <20200330121546.23872-1-biwen.li@oss.nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for the late reply since I might miss this mail.
+From: Biwen Li <biwen.li@nxp.com>
 
-On 2019/3/21 11:07, George Spelvin wrote:
-> get_random_bytes() is expensive crypto-quality random numbers.
-> If we're just doing random backoff, prandom_u32() is plenty.
-> 
-> (Not to mention fetching 8 bytes of seed material only to
-> reduce it modulo 5000 is a huge waste.)
-> 
-> Also, convert timeouts to jiffies at compile time; convert
-> milliseconds to jiffies before picking a random number in the
-> range to take advantage of compile-time constant folding.
-> 
-> Signed-off-by: George Spelvin <lkml@sdf.org>
-> Cc: Mark Fasheh <mark@fasheh.com>
-> Cc: Joel Becker <jlbec@evilplan.org>
-> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
-> Cc: ocfs2-devel@oss.oracle.com
-> ---
->  fs/ocfs2/journal.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
-> index 68ba354cf3610..939a12e57fa8b 100644
-> --- a/fs/ocfs2/journal.c
-> +++ b/fs/ocfs2/journal.c
-> @@ -1884,11 +1884,8 @@ int ocfs2_mark_dead_nodes(struct ocfs2_super *osb)
->   */
->  static inline unsigned long ocfs2_orphan_scan_timeout(void)
->  {
-> -	unsigned long time;
-> -
-> -	get_random_bytes(&time, sizeof(time));
-> -	time = ORPHAN_SCAN_SCHEDULE_TIMEOUT + (time % 5000);
-> -	return msecs_to_jiffies(time);
-> +	return msecs_to_jiffies(ORPHAN_SCAN_SCHEDULE_TIMEOUT) +
-> +		prandom_u32_max(5 * HZ);
+Add shutdown interface
 
-Seems better include the prandom_u32_max() into msecs_to_jiffies()?
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+ drivers/i2c/busses/i2c-imx.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Thanks,
-Joseph
->  }
->  
->  /*
-> 
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index 0ab5381aa012..07da42cb0be4 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -1281,6 +1281,16 @@ static int i2c_imx_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static void i2c_imx_shutdown(struct platform_device *pdev)
++{
++	struct imx_i2c_struct *i2c_imx = platform_get_drvdata(pdev);
++
++	imx_i2c_write_reg(0, i2c_imx, IMX_I2C_IADR);
++	imx_i2c_write_reg(i2c_imx->hwdata->i2cr_ien_opcode ^ I2CR_IEN,
++			i2c_imx, IMX_I2C_I2CR);
++	imx_i2c_write_reg(i2c_imx->hwdata->i2sr_clr_opcode, i2c_imx, IMX_I2C_I2SR);
++}
++
+ static int __maybe_unused i2c_imx_runtime_suspend(struct device *dev)
+ {
+ 	struct imx_i2c_struct *i2c_imx = dev_get_drvdata(dev);
+@@ -1310,6 +1320,7 @@ static const struct dev_pm_ops i2c_imx_pm_ops = {
+ static struct platform_driver i2c_imx_driver = {
+ 	.probe = i2c_imx_probe,
+ 	.remove = i2c_imx_remove,
++	.shutdown = i2c_imx_shutdown,
+ 	.driver = {
+ 		.name = DRIVER_NAME,
+ 		.pm = &i2c_imx_pm_ops,
+-- 
+2.17.1
+
