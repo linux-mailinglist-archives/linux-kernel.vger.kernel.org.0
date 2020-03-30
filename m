@@ -2,191 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3398197B04
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:44:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 737AE197B21
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Mar 2020 13:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbgC3LoO convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Mar 2020 07:44:14 -0400
-Received: from mga11.intel.com ([192.55.52.93]:45279 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729669AbgC3LoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 07:44:13 -0400
-IronPort-SDR: fGrK7Kx3S7D9LmqV3mu5mJgnsFxR2Kw/gA0lXMESdzBNzxaVctWArifmVfg36mzV2KXHP8KJMC
- OnmKjdTaebFA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 04:44:13 -0700
-IronPort-SDR: pap6UxZaH8kyXeJT1F0+Vr+6mRxFVAyDMde9bFQMLJzIDazoAMWUPvunXXv3N8tciS0IQ9lqVh
- t2Cc7iV78mHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,324,1580803200"; 
-   d="scan'208";a="421900900"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by orsmga005.jf.intel.com with ESMTP; 30 Mar 2020 04:44:12 -0700
-Received: from fmsmsx113.amr.corp.intel.com (10.18.116.7) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 30 Mar 2020 04:44:12 -0700
-Received: from shsmsx153.ccr.corp.intel.com (10.239.6.53) by
- FMSMSX113.amr.corp.intel.com (10.18.116.7) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 30 Mar 2020 04:44:12 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.225]) by
- SHSMSX153.ccr.corp.intel.com ([169.254.12.89]) with mapi id 14.03.0439.000;
- Mon, 30 Mar 2020 19:44:08 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     "Liu, Yi L" <yi.l.liu@intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>
-CC:     "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Tian, Jun J" <jun.j.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wu, Hao" <hao.wu@intel.com>
-Subject: RE: [PATCH v1 2/8] vfio/type1: Add vfio_iommu_type1 parameter for
- quota tuning
-Thread-Topic: [PATCH v1 2/8] vfio/type1: Add vfio_iommu_type1 parameter for
- quota tuning
-Thread-Index: AQHWAEUbX2o9koiJmUSoQpAjbhigyahg28IA//9+x4CAAI0HsP//fHmAgACn7gA=
-Date:   Mon, 30 Mar 2020 11:44:08 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D7FF888@SHSMSX104.ccr.corp.intel.com>
-References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
- <1584880325-10561-3-git-send-email-yi.l.liu@intel.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D19D7FF3C5@SHSMSX104.ccr.corp.intel.com>
- <A2975661238FB949B60364EF0F2C25743A217C68@SHSMSX104.ccr.corp.intel.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D19D7FF46F@SHSMSX104.ccr.corp.intel.com>
- <A2975661238FB949B60364EF0F2C25743A217D97@SHSMSX104.ccr.corp.intel.com>
-In-Reply-To: <A2975661238FB949B60364EF0F2C25743A217D97@SHSMSX104.ccr.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1729855AbgC3LqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 07:46:11 -0400
+Received: from mail-eopbgr40062.outbound.protection.outlook.com ([40.107.4.62]:55387
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728764AbgC3LqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 07:46:10 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Hgg0FKwTadNBqDNLFZVC7jQPBhVTWaVWRhMxbRQlaFl84VGGpK0XX1KMEI0Bj6VN1s9AFFCYvIOeYE1FBP9ItDBVj9/Se47c2sjcIz4on8o2181SOmNsi1vtBYL7i2XJ+Wn5XMNJUlfTvWOLN0IwNCA9mE8tt5DJAf2K+FwFsPMJibfW7SIkdPKDpGUFgEFz9Wowd7Iz8rLBnavRfdLf3drZz8EhPdDJBcR0bMPB1uSSglWtRsumAn7F0NBr0QVBmsJhJNrV/XnDjR1wV99R4FBtNxGDETDHQTsqWCOZXmbg9aSvQJvMtVdtjBmvWty9bHlaEc1MbQSrqzwquuxQJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R1M9OIXFMvno7+qcD2ZC5RToymn/NcIiDGpLNH/06JA=;
+ b=QhewnuipxHsTPQvIEB0nRT5cFjBiDiOnWLP4XQMfsIFtHCE+2zrlObwXXidENOKqvD59vaOB/ZINMFLWaZV81DoqTdCM3RnV9zo0ju9erDqnrxmYH+Qc8/G1XxgMcarXRGJ9gPtWF3FLNTmS9OJFa4a+OhOPdFTtJKzCqnIw8d1s3Gkn3kXeS6QYddFRdKmKj3wPK0G540/NkpdWGDBZ+4q5nRHSjWJY2Tg206UtoYIOiWNYDsGmS9L3YAcMU9F9W1Sjx+7e3FcC2zKUk8CRJyBzez2WzjaTrwYfybZs3N9RAcV7l8fr0Fzizw5oHjR0B5ucJLwjNSlKcvOl4AwRMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=itdev.co.uk; dmarc=pass action=none header.from=itdev.co.uk;
+ dkim=pass header.d=itdev.co.uk; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=itdevltd.onmicrosoft.com; s=selector2-itdevltd-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R1M9OIXFMvno7+qcD2ZC5RToymn/NcIiDGpLNH/06JA=;
+ b=RaEo5aI9U9r6V/jWV6rODxqRDgsnXNiQqGbRgTY1w3Dd2bZC7Vtr0N1Jme7TYnvcFkwKtx0qUxETsPD8yMc0g4VDcKKwlidSQuluGVDvMG/2tw4urPYh6GC7xrNNuMfABhJAhLkflCBkpyO+eOrm/TopP94wy2KL2AUrchFXxHg=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=quentin.deslandes@itdev.co.uk; 
+Received: from DBBPR08MB4491.eurprd08.prod.outlook.com (20.179.44.144) by
+ DBBPR08MB4789.eurprd08.prod.outlook.com (10.255.79.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2856.20; Mon, 30 Mar 2020 11:46:07 +0000
+Received: from DBBPR08MB4491.eurprd08.prod.outlook.com
+ ([fe80::cce9:f055:f034:3659]) by DBBPR08MB4491.eurprd08.prod.outlook.com
+ ([fe80::cce9:f055:f034:3659%4]) with mapi id 15.20.2856.019; Mon, 30 Mar 2020
+ 11:46:06 +0000
+Date:   Mon, 30 Mar 2020 12:46:04 +0100
+From:   Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+To:     Oscar Carter <oscar.carter@gmx.com>
+Cc:     Forest Bond <forest@alittletooquiet.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: vt6656: Define EnCFG_BBType_MASK as OR between
+ previous defines
+Message-ID: <20200330114604.GA52025@jiffies>
+References: <20200327165802.8445-1-oscar.carter@gmx.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200327165802.8445-1-oscar.carter@gmx.com>
+X-ClientProxiedBy: LO2P265CA0342.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:d::18) To DBBPR08MB4491.eurprd08.prod.outlook.com
+ (2603:10a6:10:d2::16)
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from jiffies (5.151.93.48) by LO2P265CA0342.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:d::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.20 via Frontend Transport; Mon, 30 Mar 2020 11:46:06 +0000
+X-Originating-IP: [5.151.93.48]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: fe282265-44d6-445d-86db-08d7d49feec2
+X-MS-TrafficTypeDiagnostic: DBBPR08MB4789:
+X-Microsoft-Antispam-PRVS: <DBBPR08MB4789BFFA0F9A572C11F32B50B3CB0@DBBPR08MB4789.eurprd08.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
+X-Forefront-PRVS: 0358535363
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR08MB4491.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(136003)(366004)(376002)(346002)(39830400003)(396003)(53546011)(33656002)(81166006)(9686003)(508600001)(6916009)(8676002)(55016002)(81156014)(33716001)(2906002)(86362001)(316002)(52116002)(66946007)(6496006)(54906003)(5660300002)(66476007)(8936002)(4326008)(186003)(1076003)(956004)(9576002)(16526019)(26005)(66556008)(44832011)(518174003);DIR:OUT;SFP:1101;
+Received-SPF: None (protection.outlook.com: itdev.co.uk does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: T7293nycefwjs83W9fd0+ucNFCZ5xBbzwGhpBt8xvKzzfpJ407Pyh0JIcnXUo+0t3QMhJtYBKYYE+8y3cTYMBoFJ7jcghzkhpdZoVk1Zz/Qj4e+goFWO531DcKJRhhLxQSJgnvl8+GmpJrSYqOsCYaIUY7Xva7oFITKF21HsRuFNPDTr78HXZNc7hjHdrX8bXl0cAvxy7lOjzHgjvj7ochtFuscUe1UTwfE8aBQVeMFBveFGzvKDOQbXpFctEGnwUyTtw6XNBEKCHru6OYW3lrvoOItuYr1r1n1DFNvJtBaG4dK79nUdIiMRqpp2oGpEXUeKwf2Tyhpo3wTMnSgbzwRjLT0nTyLq5OviZevBsOSOQBzez1Lwqfy1yxL+J2Zra4aSgLzQg47ZAR3m8HfJN9Oe7byXiU3JBQl1sz9dEKGBHX8kgRsh40J5tuIDKyAltlH3BFuArIz1Ue+NRWOx7O+waX0V1WP7Kf9kDU1JT5URSlGNhUb3GGwa8hQkZa4V
+X-MS-Exchange-AntiSpam-MessageData: zQJ6Z8rXJ2Lu/Drtc/iorheXtjMp1Oq8aSGaNaz0YZQEijpBIzgVx8zlOGtotyMShJUKy4MseLLKKh90iGnV4OgKVIjG9/ViC2R2OZUNRzkw0Z+UU54TlywfenIQyyH8YbJcj5C3ZrWs1VlnYig8og==
+X-OriginatorOrg: itdev.co.uk
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe282265-44d6-445d-86db-08d7d49feec2
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2020 11:46:06.8458
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 2d2930c4-2251-45b4-ad79-3582c5f41740
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /qsR7SR+f7k0noula9GyUxbkUS5h5i77UmXXviu+BS7OrUghoGCwG/1IM3ypeZN9xmQ4R0pei1DfPykTJ/Itw++1ublywNnI9Zrl3UuPdRU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB4789
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Liu, Yi L <yi.l.liu@intel.com>
-> Sent: Monday, March 30, 2020 5:27 PM
+On 03/27/20 17:58:02, Oscar Carter wrote:
+> Define the EnCFG_BBType_MASK bit as an OR operation between two previous
+> defines instead of using the OR between two new BIT macros. Thus, the
+> code is more clear.
 > 
-> > From: Tian, Kevin <kevin.tian@intel.com>
-> > Sent: Monday, March 30, 2020 5:20 PM
-> > To: Liu, Yi L <yi.l.liu@intel.com>; alex.williamson@redhat.com;
-> > Subject: RE: [PATCH v1 2/8] vfio/type1: Add vfio_iommu_type1 parameter
-> for quota
-> > tuning
-> >
-> > > From: Liu, Yi L <yi.l.liu@intel.com>
-> > > Sent: Monday, March 30, 2020 4:53 PM
-> > >
-> > > > From: Tian, Kevin <kevin.tian@intel.com>
-> > > > Sent: Monday, March 30, 2020 4:41 PM
-> > > > To: Liu, Yi L <yi.l.liu@intel.com>; alex.williamson@redhat.com;
-> > > > Subject: RE: [PATCH v1 2/8] vfio/type1: Add vfio_iommu_type1
-> > > > parameter
-> > > for quota
-> > > > tuning
-> > > >
-> > > > > From: Liu, Yi L <yi.l.liu@intel.com>
-> > > > > Sent: Sunday, March 22, 2020 8:32 PM
-> > > > >
-> > > > > From: Liu Yi L <yi.l.liu@intel.com>
-> > > > >
-> > > > > This patch adds a module option to make the PASID quota tunable by
-> > > > > administrator.
-> > > > >
-> > > > > TODO: needs to think more on how to  make the tuning to be per-
-> process.
-> > > > >
-> > > > > Previous discussions:
-> > > > > https://patchwork.kernel.org/patch/11209429/
-> > > > >
-> > > > > Cc: Kevin Tian <kevin.tian@intel.com>
-> > > > > CC: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > > > > Cc: Alex Williamson <alex.williamson@redhat.com>
-> > > > > Cc: Eric Auger <eric.auger@redhat.com>
-> > > > > Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> > > > > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-> > > > > ---
-> > > > >  drivers/vfio/vfio.c             | 8 +++++++-
-> > > > >  drivers/vfio/vfio_iommu_type1.c | 7 ++++++-
-> > > > >  include/linux/vfio.h            | 3 ++-
-> > > > >  3 files changed, 15 insertions(+), 3 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c index
-> > > > > d13b483..020a792 100644
-> > > > > --- a/drivers/vfio/vfio.c
-> > > > > +++ b/drivers/vfio/vfio.c
-> > > > > @@ -2217,13 +2217,19 @@ struct vfio_mm
-> > > *vfio_mm_get_from_task(struct
-> > > > > task_struct *task)
-> > > > >  }
-> > > > >  EXPORT_SYMBOL_GPL(vfio_mm_get_from_task);
-> > > > >
-> > > > > -int vfio_mm_pasid_alloc(struct vfio_mm *vmm, int min, int max)
-> > > > > +int vfio_mm_pasid_alloc(struct vfio_mm *vmm, int quota, int min,
-> > > > > +int
-> > > max)
-> > > > >  {
-> > > > >  	ioasid_t pasid;
-> > > > >  	int ret = -ENOSPC;
-> > > > >
-> > > > >  	mutex_lock(&vmm->pasid_lock);
-> > > > >
-> > > > > +	/* update quota as it is tunable by admin */
-> > > > > +	if (vmm->pasid_quota != quota) {
-> > > > > +		vmm->pasid_quota = quota;
-> > > > > +		ioasid_adjust_set(vmm->ioasid_sid, quota);
-> > > > > +	}
-> > > > > +
-> > > >
-> > > > It's a bit weird to have quota adjusted in the alloc path, since the
-> > > > latter
-> > > might
-> > > > be initiated by non-privileged users. Why not doing the simple math
-> > > > in
-> > > vfio_
-> > > > create_mm to set the quota when the ioasid set is created? even in
-> > > > the
-> > > future
-> > > > you may allow per-process quota setting, that should come from
-> > > > separate privileged path instead of thru alloc..
-> > >
-> > > The reason is the kernel parameter modification has no event which can
-> > > be used to adjust the quota. So I chose to adjust it in pasid_alloc
-> > > path. If it's not good, how about adding one more IOCTL to let user-
-> > > space trigger a quota adjustment event? Then even non-privileged user
-> > > could trigger quota adjustment, the quota is actually controlled by
-> > > privileged user. How about your opinion?
-> > >
-> >
-> > why do you need an event to adjust? As I said, you can set the quota when
-> the set is
-> > created in vfio_create_mm...
+> Fixes: a74081b44291 ("staging: vt6656: Use BIT() macro instead of hex value")
+> Signed-off-by: Oscar Carter <oscar.carter@gmx.com>
+> Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/staging/vt6656/mac.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> oh, it's to support runtime adjustments. I guess it may be helpful to let
-> per-VM quota tunable even the VM is running. If just set the quota in
-> vfio_create_mm(), it is not able to adjust at runtime.
+> diff --git a/drivers/staging/vt6656/mac.h b/drivers/staging/vt6656/mac.h
+> index c532b27de37f..b01d9ee8677e 100644
+> --- a/drivers/staging/vt6656/mac.h
+> +++ b/drivers/staging/vt6656/mac.h
+> @@ -177,7 +177,7 @@
+>  #define EnCFG_BBType_a		0x00
+>  #define EnCFG_BBType_b		BIT(0)
+>  #define EnCFG_BBType_g		BIT(1)
+> -#define EnCFG_BBType_MASK	(BIT(0) | BIT(1))
+> +#define EnCFG_BBType_MASK	(EnCFG_BBType_b | EnCFG_BBType_g)
+>  #define EnCFG_ProtectMd		BIT(5)
+> 
+>  /* Bits in the EnhanceCFG_1 register */
+> --
+> 2.20.1
 > 
 
-ok, I didn't note the module parameter was granted with a write permission.
-However there is a further problem. We cannot support PASID reclaim now.
-What about the admin sets a quota smaller than previous value while some
-IOASID sets already exceed the new quota? I'm not sure how to fail a runtime
-module parameter change due to that situation. possibly a normal sysfs 
-node better suites the runtime change requirement...
+Reviewed-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
 
-Thanks
-Kevin
+Thanks,
+Quentin
