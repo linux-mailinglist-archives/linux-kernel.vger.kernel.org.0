@@ -2,58 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4781D19A011
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 22:47:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 901E219A017
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 22:47:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730677AbgCaUrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 16:47:13 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40207 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728091AbgCaUrM (ORCPT
+        id S1731259AbgCaUrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 16:47:15 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52535 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730829AbgCaUrO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 16:47:12 -0400
-Received: by mail-wr1-f68.google.com with SMTP id u10so27805550wro.7
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 13:47:11 -0700 (PDT)
+        Tue, 31 Mar 2020 16:47:14 -0400
+Received: by mail-wm1-f68.google.com with SMTP id t8so700922wmi.2;
+        Tue, 31 Mar 2020 13:47:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8k+54bJLm5Dimlr1t4QPDlPtUOMnAoAxS5SgsOogOlY=;
-        b=LmGBVg1DOtZ60gIw/g8eHRv8xijyuEXXEGTfmgCrKTE7TgqKrhTVuPbg8yPR9Z8GP8
-         GVDkgq6dyazGS18fGc5bFZzWzkPIU8iUgJLqkmoa+PcX3yJAFK+V75LHofKOWECeBh4m
-         CHqn4DVddZGKH+IVh47loGOM3pKMGkVww+OnTOsP01Mlp/n8jqJR2FZqp+NDEuBfjJrS
-         L6deDlux7K6StgIe45wBc5xZZVUKcxvSSfjUG/lowiYbH8OUptPmqBCJRd/vZ3t7LTOt
-         TzoEDOgtFFbN7737oh7bPqnBLW+WPCzNE9MUD7hNovi0a02R1pEHcJQ1rwCKKQmLBx7Y
-         QAPA==
+        bh=9pqr4LoLjaDLiZNl5zhVO+6x9Rgi07DZM6v33kTSHwU=;
+        b=mkT9qPlSEyyDPDBiySMwbTeFCtCft4P6CbyCSlSZrsnZQ0x7nybYiQd45J2GYRbKYw
+         QenF2i43dgS7P64TcUVHmb5sG7UaLyEpD8AcEwLhI2WJkzhV1/MuR4ImiV2/FfOGnCr6
+         BLzM8S7t2+EmBSerDbeY/Cp8Lo2plfJcdpd/4rH4K3xSwXTNbOUfITEDiG/6CljjXHu0
+         iNIKNrPCki/FiGrWTzswdtOdzMTYostyAJKuo4kxaj9rUvHl+SAuB+R0BJiUKcjBKqiK
+         xoKzH5rkuvsV076WRBLpnTbMiLIKBJmBkOyuY/C9wjsHzp1DnrodXKUFrLcCKaB3RZRH
+         YQqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8k+54bJLm5Dimlr1t4QPDlPtUOMnAoAxS5SgsOogOlY=;
-        b=EdZSXxgm6jRvIrkEFlsp44QwAodpNDnNQDiazp6s7TINNAYN5+WRCRITvxbK82FKF/
-         CQb6OLSH1EuyQhrU5gS1LIvCTAigdvP5TQyJ8EBIajd9hKG9EJ7aL4aq1QCclGuqntJj
-         pJDuSIvoirfxTTi0MOwuhhJ7MiPNpB0WhBj83z7G5rbd8oncbH1gvigDC3CYBUHF8d97
-         NqaWEHsxQLmkvAOnCx3fDBKRc/e57133WcfCy2bPKXQHbE/iRzCbLfGcD2M/GlfMjxbl
-         O0jyBcG78gIY76udwlS7necm7GZxzXbyVYG2zxiwJmHLIGWKoeLIfuKKFBudcUnYZgdJ
-         NCyg==
-X-Gm-Message-State: ANhLgQ2vLg+lwG37QFAG4yTq1IDKS70Zsi1BMrUAvJMh6DYXPtK8PcT1
-        LsAuf6hcsjfAlC5TM8yobWLH+nkkVA==
-X-Google-Smtp-Source: ADFU+vs5RXE42yBjrb5nzjeGuLVck2ZDHTOsCG6POLyFiGSeEb79xvLH320mEkvypfrPoX6obW/c9g==
-X-Received: by 2002:adf:a343:: with SMTP id d3mr21150628wrb.50.1585687630505;
-        Tue, 31 Mar 2020 13:47:10 -0700 (PDT)
+        bh=9pqr4LoLjaDLiZNl5zhVO+6x9Rgi07DZM6v33kTSHwU=;
+        b=RCZ+cpItRoc17V0vA4ldAOpmvGuAQtrSHbKkPQdifeUfcAnKX9p3yL/mCSJVXdz/vk
+         w3GeB7R/vyehL6yQ/kPvg5gyl3nWR+mjJOQkd5wc9e7y81zj7mDkEuELxg6u/ljSY4Qn
+         79ppjwvG1pwxWLYsP38XqvafBNPePhX1GactKBgFlk2C5oLjtYtHT712AT1yNg1Cnzq7
+         V1QvYSqdl2hq7RaJ9dSBd2HBQr7vomlimANgoIO1WNTLbRlqdMQE4Mgyqgok94foUcG+
+         Bk/p6Q0nhoxt+KetgpHvYenXHqSSs8oqNESjVyuyypUKtjp7YdsGSRyP3qLW5aGPWFub
+         WI1g==
+X-Gm-Message-State: AGi0PuYABpJD59AmIOkq/sZmqiqcdiC8T32cA994u1ktAAH8P4s7zbI/
+        ifjLwGaUNsehbJCaTuLizMyGiNu9pQ==
+X-Google-Smtp-Source: APiQypKILmhixo4bPDa+CotQ/wKbhVUvuBuivhTflRw7OPJSHU0jvlpRscLBsW37+C+3wmTAqH2mFQ==
+X-Received: by 2002:a1c:ba04:: with SMTP id k4mr684690wmf.165.1585687631534;
+        Tue, 31 Mar 2020 13:47:11 -0700 (PDT)
 Received: from ninjahost.lan (host-92-23-85-227.as13285.net. [92.23.85.227])
-        by smtp.gmail.com with ESMTPSA id o9sm28335491wrx.48.2020.03.31.13.47.09
+        by smtp.gmail.com with ESMTPSA id o9sm28335491wrx.48.2020.03.31.13.47.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 13:47:09 -0700 (PDT)
+        Tue, 31 Mar 2020 13:47:11 -0700 (PDT)
 From:   Jules Irenge <jbi.octave@gmail.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     boqun.feng@gmail.com
-Subject: [PATCH 0/7] Lock warnings cleanup
-Date:   Tue, 31 Mar 2020 21:46:36 +0100
-Message-Id: <20200331204643.11262-1-jbi.octave@gmail.com>
+Cc:     boqun.feng@gmail.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and
+        infrastructure))
+Subject: [PATCH 1/7] fs: Add missing annotation for iput_final()
+Date:   Tue, 31 Mar 2020 21:46:37 +0100
+Message-Id: <20200331204643.11262-2-jbi.octave@gmail.com>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <0/7>
+In-Reply-To: <20200331204643.11262-1-jbi.octave@gmail.com>
 References: <0/7>
+ <20200331204643.11262-1-jbi.octave@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,29 +64,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds missing annotations to various functions,
-that register warnings of context imbalance when built with Sparse tool.
-The adds fix the warnings, improve on readability odf the code
-and give better insight or directive on what the functions are actually doing.
+Sparse reports a warning at iput_final()
 
-Jules Irenge (7):
-  fs: Add missing annotation for iput_final()
-  fsnotify: Add missing annotation for fsnotify_finish_user_wait()
-  dax: Add missing annotation for wait_entry_unlocked()
-  sysctl: Add missing annotation for start_unregistering()
-  btrfs: Add missing annotation for btrfs_lock_cluster()
-  btrfs: Add missing annotation for btrfs_tree_lock()
-  tty: serial_core: Add missing annotation for _unlock_and_check_sysrq()
+warning: context imbalance in iput_final() - unexpected unlock
 
- drivers/tty/serial/serial_core.c | 1 +
- fs/btrfs/extent-tree.c           | 1 +
- fs/btrfs/locking.c               | 1 +
- fs/dax.c                         | 1 +
- fs/inode.c                       | 1 +
- fs/notify/mark.c                 | 1 +
- fs/proc/proc_sysctl.c            | 1 +
- 7 files changed, 7 insertions(+)
+The root cause is the missing annotation at input_final()
+Add the missing __releases(&inode->i_lock) annotation
 
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+---
+ fs/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 3b06c5c59883..6902e39a4298 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1536,6 +1536,7 @@ EXPORT_SYMBOL(generic_delete_inode);
+  * shutting down.
+  */
+ static void iput_final(struct inode *inode)
++	__releases(&inode->i_lock)
+ {
+ 	struct super_block *sb = inode->i_sb;
+ 	const struct super_operations *op = inode->i_sb->s_op;
 -- 
 2.24.1
 
