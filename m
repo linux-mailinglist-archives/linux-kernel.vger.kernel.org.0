@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0E9F198FBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:06:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52B99199096
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:13:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730437AbgCaJFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:05:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47014 "EHLO mail.kernel.org"
+        id S1730398AbgCaJM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:12:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730053AbgCaJFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:05:51 -0400
+        id S1730328AbgCaJMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:12:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BA4220B1F;
-        Tue, 31 Mar 2020 09:05:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21AD020787;
+        Tue, 31 Mar 2020 09:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645549;
-        bh=TJQTlco6/TsVQswAqImirXtZQeLLhrJeiZHNKt0POek=;
+        s=default; t=1585645974;
+        bh=upmdMxCOQwLw4/80vqIIQ9aPaJZjTLkqmq0BnGCdU9w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nqbPSEGI7GTYYbFo0Ywel9f+NiKOnmb8c4HSu/QEQNTo3zOngHxXVqviKDrT/Pz0t
-         3pi/e9qVUeXEdJl5+e+vAlHvrS70Qy/FQpa0G/XkLiMSfSZY03leDJEJuedHiXciW2
-         dtVdlzNUtaurv5Y7Ble+TKJBxtMK8IAzXQrPByao=
+        b=aw3Oc0E5Ay0qP+IkZKbPl/Y8FR1tdrZqkJWTrQTx6wABNJY+AfV563KbDQpFo4lhs
+         8BuwGq8U1nrLT4y6+Vv1V34waVIJC1uBIaAiY3a1Uv4Edf5fHBoUR1GcHjlaUufIVF
+         Y4GCZRPk3YXmg52KxIq2QvWKuGW5VdvWBZBJvtbk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Leung <martin.leung@amd.com>,
-        Jun Lei <Jun.Lei@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 070/170] drm/amd/display: update soc bb for nv14
-Date:   Tue, 31 Mar 2020 10:58:04 +0200
-Message-Id: <20200331085431.832144377@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+1b4ebf4dae4e510dd219@syzkaller.appspotmail.com,
+        Petr Machata <petrm@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 045/155] net: ip_gre: Accept IFLA_INFO_DATA-less configuration
+Date:   Tue, 31 Mar 2020 10:58:05 +0200
+Message-Id: <20200331085423.486368957@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
+References: <20200331085418.274292403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,161 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Leung <martin.leung@amd.com>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit d5349775c1726ce997b8eb4982cd85a01f1c8b42 ]
+[ Upstream commit 32ca98feab8c9076c89c0697c5a85e46fece809d ]
 
-[why]
-nv14 previously inherited soc bb from generic dcn 2, did not match
-watermark values according to memory team
+The fix referenced below causes a crash when an ERSPAN tunnel is created
+without passing IFLA_INFO_DATA. Fix by validating passed-in data in the
+same way as ipgre does.
 
-[how]
-add nv14 specific soc bb: copy nv2 generic that it was
-using from before, but changed num channels to 8
-
-Signed-off-by: Martin Leung <martin.leung@amd.com>
-Reviewed-by: Jun Lei <Jun.Lei@amd.com>
-Acked-by: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: e1f8f78ffe98 ("net: ip_gre: Separate ERSPAN newlink / changelink callbacks")
+Reported-by: syzbot+1b4ebf4dae4e510dd219@syzkaller.appspotmail.com
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- .../drm/amd/display/dc/dcn20/dcn20_resource.c | 114 ++++++++++++++++++
- 1 file changed, 114 insertions(+)
+ net/ipv4/ip_gre.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
-index 23ff2f1c75b5c..41c4ee84f8bb5 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
-@@ -337,6 +337,117 @@ struct _vcs_dpi_soc_bounding_box_st dcn2_0_soc = {
- 	.use_urgent_burst_bw = 0
- };
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -1164,6 +1164,8 @@ static int erspan_netlink_parms(struct n
+ 	err = ipgre_netlink_parms(dev, data, tb, parms, fwmark);
+ 	if (err)
+ 		return err;
++	if (!data)
++		return 0;
  
-+struct _vcs_dpi_soc_bounding_box_st dcn2_0_nv14_soc = {
-+	.clock_limits = {
-+			{
-+				.state = 0,
-+				.dcfclk_mhz = 560.0,
-+				.fabricclk_mhz = 560.0,
-+				.dispclk_mhz = 513.0,
-+				.dppclk_mhz = 513.0,
-+				.phyclk_mhz = 540.0,
-+				.socclk_mhz = 560.0,
-+				.dscclk_mhz = 171.0,
-+				.dram_speed_mts = 8960.0,
-+			},
-+			{
-+				.state = 1,
-+				.dcfclk_mhz = 694.0,
-+				.fabricclk_mhz = 694.0,
-+				.dispclk_mhz = 642.0,
-+				.dppclk_mhz = 642.0,
-+				.phyclk_mhz = 600.0,
-+				.socclk_mhz = 694.0,
-+				.dscclk_mhz = 214.0,
-+				.dram_speed_mts = 11104.0,
-+			},
-+			{
-+				.state = 2,
-+				.dcfclk_mhz = 875.0,
-+				.fabricclk_mhz = 875.0,
-+				.dispclk_mhz = 734.0,
-+				.dppclk_mhz = 734.0,
-+				.phyclk_mhz = 810.0,
-+				.socclk_mhz = 875.0,
-+				.dscclk_mhz = 245.0,
-+				.dram_speed_mts = 14000.0,
-+			},
-+			{
-+				.state = 3,
-+				.dcfclk_mhz = 1000.0,
-+				.fabricclk_mhz = 1000.0,
-+				.dispclk_mhz = 1100.0,
-+				.dppclk_mhz = 1100.0,
-+				.phyclk_mhz = 810.0,
-+				.socclk_mhz = 1000.0,
-+				.dscclk_mhz = 367.0,
-+				.dram_speed_mts = 16000.0,
-+			},
-+			{
-+				.state = 4,
-+				.dcfclk_mhz = 1200.0,
-+				.fabricclk_mhz = 1200.0,
-+				.dispclk_mhz = 1284.0,
-+				.dppclk_mhz = 1284.0,
-+				.phyclk_mhz = 810.0,
-+				.socclk_mhz = 1200.0,
-+				.dscclk_mhz = 428.0,
-+				.dram_speed_mts = 16000.0,
-+			},
-+			/*Extra state, no dispclk ramping*/
-+			{
-+				.state = 5,
-+				.dcfclk_mhz = 1200.0,
-+				.fabricclk_mhz = 1200.0,
-+				.dispclk_mhz = 1284.0,
-+				.dppclk_mhz = 1284.0,
-+				.phyclk_mhz = 810.0,
-+				.socclk_mhz = 1200.0,
-+				.dscclk_mhz = 428.0,
-+				.dram_speed_mts = 16000.0,
-+			},
-+		},
-+	.num_states = 5,
-+	.sr_exit_time_us = 8.6,
-+	.sr_enter_plus_exit_time_us = 10.9,
-+	.urgent_latency_us = 4.0,
-+	.urgent_latency_pixel_data_only_us = 4.0,
-+	.urgent_latency_pixel_mixed_with_vm_data_us = 4.0,
-+	.urgent_latency_vm_data_only_us = 4.0,
-+	.urgent_out_of_order_return_per_channel_pixel_only_bytes = 4096,
-+	.urgent_out_of_order_return_per_channel_pixel_and_vm_bytes = 4096,
-+	.urgent_out_of_order_return_per_channel_vm_only_bytes = 4096,
-+	.pct_ideal_dram_sdp_bw_after_urgent_pixel_only = 40.0,
-+	.pct_ideal_dram_sdp_bw_after_urgent_pixel_and_vm = 40.0,
-+	.pct_ideal_dram_sdp_bw_after_urgent_vm_only = 40.0,
-+	.max_avg_sdp_bw_use_normal_percent = 40.0,
-+	.max_avg_dram_bw_use_normal_percent = 40.0,
-+	.writeback_latency_us = 12.0,
-+	.ideal_dram_bw_after_urgent_percent = 40.0,
-+	.max_request_size_bytes = 256,
-+	.dram_channel_width_bytes = 2,
-+	.fabric_datapath_to_dcn_data_return_bytes = 64,
-+	.dcn_downspread_percent = 0.5,
-+	.downspread_percent = 0.38,
-+	.dram_page_open_time_ns = 50.0,
-+	.dram_rw_turnaround_time_ns = 17.5,
-+	.dram_return_buffer_per_channel_bytes = 8192,
-+	.round_trip_ping_latency_dcfclk_cycles = 131,
-+	.urgent_out_of_order_return_per_channel_bytes = 256,
-+	.channel_interleave_bytes = 256,
-+	.num_banks = 8,
-+	.num_chans = 8,
-+	.vmm_page_size_bytes = 4096,
-+	.dram_clock_change_latency_us = 404.0,
-+	.dummy_pstate_latency_us = 5.0,
-+	.writeback_dram_clock_change_latency_us = 23.0,
-+	.return_bus_width_bytes = 64,
-+	.dispclk_dppclk_vco_speed_mhz = 3850,
-+	.xfc_bus_transport_time_us = 20,
-+	.xfc_xbuf_latency_tolerance_us = 4,
-+	.use_urgent_burst_bw = 0
-+};
-+
- struct _vcs_dpi_soc_bounding_box_st dcn2_0_nv12_soc = { 0 };
- 
- #ifndef mmDP0_DP_DPHY_INTERNAL_CTRL
-@@ -3282,6 +3393,9 @@ void dcn20_patch_bounding_box(struct dc *dc, struct _vcs_dpi_soc_bounding_box_st
- static struct _vcs_dpi_soc_bounding_box_st *get_asic_rev_soc_bb(
- 	uint32_t hw_internal_rev)
- {
-+	if (ASICREV_IS_NAVI14_M(hw_internal_rev))
-+		return &dcn2_0_nv14_soc;
-+
- 	if (ASICREV_IS_NAVI12_P(hw_internal_rev))
- 		return &dcn2_0_nv12_soc;
- 
--- 
-2.20.1
-
+ 	if (data[IFLA_GRE_ERSPAN_VER]) {
+ 		t->erspan_ver = nla_get_u8(data[IFLA_GRE_ERSPAN_VER]);
 
 
