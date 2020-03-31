@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B48819900A
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9181198F11
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:00:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731357AbgCaJI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:08:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50930 "EHLO mail.kernel.org"
+        id S1730390AbgCaJAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:00:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730679AbgCaJI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:08:28 -0400
+        id S1729425AbgCaJAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:00:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B3212072E;
-        Tue, 31 Mar 2020 09:08:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DFD7212CC;
+        Tue, 31 Mar 2020 09:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645707;
-        bh=bZoCsEb7wD0uIXnpD9U+XVKOmILOUBspGxL7skoOLsU=;
+        s=default; t=1585645218;
+        bh=S0cU9DDYvyVnOlgsVaMqyTWdnfL+vSj4C8Kbg/3E/6o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JHNUeYyry4anYjjtyfOclsYFn14yBgEY1IQ3I6YKYpGuG6vEdf2yFaLAdOZfaxbDj
-         LMNo/nK6E5aiZzVTYyJjt/6sqWfVcK4k0ozELmPvV+INBDooBHfj3aFvSNvsq9mJPj
-         U1uwNQlZGB3L98me39Wfp2dd8b5Ih3tjtLcNAeb8=
+        b=B2VYqskXLlbDWOJFP7+Whs8mFBjd3L76x4wrRQ1XfMtSJNfOzecR1elwcAq/Aki2Q
+         YLjysxluEPJ4CFXAKISjMH/V57ATt1wuEZNwlgrsdATejv0Rb792xBzj4QtyX5ypAZ
+         gmQJSjKD4dzbpSmbJVHo8NChAmXtK+TP8WrrpWmo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Ajay Gupta <ajayg@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 5.5 139/170] i2c: nvidia-gpu: Handle timeout correctly in gpu_i2c_check_status()
-Date:   Tue, 31 Mar 2020 10:59:13 +0200
-Message-Id: <20200331085438.227950831@linuxfoundation.org>
+        stable@vger.kernel.org, Cezary Jackiewicz <cezary@eko.one.pl>,
+        Pawel Dembicki <paweldembicki@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.6 02/23] USB: serial: option: add support for ASKEY WWHC050
+Date:   Tue, 31 Mar 2020 10:59:14 +0200
+Message-Id: <20200331085310.008932600@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085308.098696461@linuxfoundation.org>
+References: <20200331085308.098696461@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,66 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Pawel Dembicki <paweldembicki@gmail.com>
 
-commit d944b27df121e2ee854a6c2fad13d6c6300792d4 upstream.
+commit 007d20dca2376a751b1dad03442f118438b7e65e upstream.
 
-Nvidia card may come with a "phantom" UCSI device, and its driver gets
-stuck in probe routine, prevents any system PM operations like suspend.
+ASKEY WWHC050 is a mcie LTE modem.
+The oem configuration states:
 
-There's an unaccounted case that the target time can equal to jiffies in
-gpu_i2c_check_status(), let's solve that by using readl_poll_timeout()
-instead of jiffies comparison functions.
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=1690 ProdID=7588 Rev=ff.ff
+S:  Manufacturer=Android
+S:  Product=Android
+S:  SerialNumber=813f0eef6e6e
+C:* #Ifs= 6 Cfg#= 1 Atr=80 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+E:  Ad=88(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
+E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 5 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=(none)
+E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=125us
 
-Fixes: c71bcdcb42a7 ("i2c: add i2c bus driver for NVIDIA GPU")
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Ajay Gupta <ajayg@nvidia.com>
-Tested-by: Ajay Gupta <ajayg@nvidia.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Tested on openwrt distribution.
+
+Co-developed-by: Cezary Jackiewicz <cezary@eko.one.pl>
+Signed-off-by: Cezary Jackiewicz <cezary@eko.one.pl>
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-nvidia-gpu.c |   18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ drivers/usb/serial/option.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/i2c/busses/i2c-nvidia-gpu.c
-+++ b/drivers/i2c/busses/i2c-nvidia-gpu.c
-@@ -8,6 +8,7 @@
- #include <linux/delay.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
-+#include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-@@ -75,20 +76,15 @@ static void gpu_enable_i2c_bus(struct gp
- 
- static int gpu_i2c_check_status(struct gpu_i2c_dev *i2cd)
- {
--	unsigned long target = jiffies + msecs_to_jiffies(1000);
- 	u32 val;
-+	int ret;
- 
--	do {
--		val = readl(i2cd->regs + I2C_MST_CNTL);
--		if (!(val & I2C_MST_CNTL_CYCLE_TRIGGER))
--			break;
--		if ((val & I2C_MST_CNTL_STATUS) !=
--				I2C_MST_CNTL_STATUS_BUS_BUSY)
--			break;
--		usleep_range(500, 600);
--	} while (time_is_after_jiffies(target));
-+	ret = readl_poll_timeout(i2cd->regs + I2C_MST_CNTL, val,
-+				 !(val & I2C_MST_CNTL_CYCLE_TRIGGER) ||
-+				 (val & I2C_MST_CNTL_STATUS) != I2C_MST_CNTL_STATUS_BUS_BUSY,
-+				 500, 1000 * USEC_PER_MSEC);
- 
--	if (time_is_before_jiffies(target)) {
-+	if (ret) {
- 		dev_err(i2cd->dev, "i2c timeout error %x\n", val);
- 		return -ETIMEDOUT;
- 	}
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1992,6 +1992,8 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e01, 0xff, 0xff, 0xff) },	/* D-Link DWM-152/C1 */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e02, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/C1 */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x7e11, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/A3 */
++	{ USB_DEVICE_INTERFACE_CLASS(0x1690, 0x7588, 0xff),			/* ASKEY WWHC050 */
++	  .driver_info = RSVD(1) | RSVD(4) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x2031, 0xff),			/* Olicard 600 */
+ 	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x2060, 0xff),			/* BroadMobi BM818 */
 
 
