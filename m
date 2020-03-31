@@ -2,107 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CDF9199BDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 18:39:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64DBA199BE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 18:41:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731273AbgCaQjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 12:39:46 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42387 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731254AbgCaQjp (ORCPT
+        id S1731189AbgCaQlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 12:41:23 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:48759 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730442AbgCaQlW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 12:39:45 -0400
-Received: by mail-ot1-f67.google.com with SMTP id z5so22441410oth.9
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 09:39:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura-hr.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ov6AG3nE3+MtOCiHDlj60sdbUhq5hEaFe9zVBx+P27w=;
-        b=l+VQkb6bwKJOThmnyCC10CwEOtsZOP24hLYtTswccJePRSil3fW6xjYocjY0fJk+X4
-         JkD/9byEVa1zeQnAL/sAb5fQTlQkcNf1lZBgVVSG+g2vah16TUT0jTubRean+hWjbPO6
-         AA2OTsI3+PvkPu8mutfpmH9E5wz94DuX+/q8H97WrRMjpGACpvEfC2WiKUfAdTw/CP0u
-         9F3Z4KkFo5fkNfRvSVT8dq7bgH1lxXPYsvwehvnLx/3F7oSwxAReWrvoOVQIcak01bEW
-         hewmwMYcekmYnYoR+/iMSkVDfVoksK+NTbCNugA/yh8VS8+gDCV4Ms1tiwdIQWOpCoyZ
-         2O7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ov6AG3nE3+MtOCiHDlj60sdbUhq5hEaFe9zVBx+P27w=;
-        b=sMQrrfykG/QCKxDl+Csl9sboUmKfGEv1sPekZGjg3+Oht9d0KOFAeG/ElsF5YkrEAj
-         k10+yxrwmW5WR3k7nxhgDkSU5O5Afr57tFDOkJQauPn4EidrFex8rKZNpFSWKicsbRkg
-         Tv67H02wq87Dx6Bhgeh1P/N3E4Ur7YGRV5v980HNbx7Am/zPS+20B5QMOuT0SNQO2RM8
-         0sG8qol2AtadbRRznpKVjl5lCHH1Ol62hHH69m5ZqzYY2oqK1VzY2xvsxsxvQUddXg3r
-         AhyJUQCuEHXmnNE+Nfwj7mmytKSDIqJN2txHnn45ktdjdyg+Sh7mks6m+H7lmclEnpxm
-         5Lbg==
-X-Gm-Message-State: ANhLgQ15QrastDozpZFPgl6YIC9AO5ILLO2JqhW/d6QIwi5p0fNnTUqu
-        hdUV66VhIIW2AENAXAMMraS+OW3qKwEKV4o0o4r7nA==
-X-Google-Smtp-Source: ADFU+vscDcSfsWlh1Nmpu15Lpf59l4utYcpIPnNeUyJPDiys2SdwfpqoLIizgcnX4KY1Lx+tscetaPUvaZiLHnnXYa0=
-X-Received: by 2002:a9d:4506:: with SMTP id w6mr2571484ote.94.1585672784543;
- Tue, 31 Mar 2020 09:39:44 -0700 (PDT)
+        Tue, 31 Mar 2020 12:41:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585672881;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+        bh=nd7Gh30+KWUdOyvGmSbatOjKf7ovcNZnk/aeAwQ6Fao=;
+        b=Jsf7tieB6j70F0l6ViJQ2vnmiN15Wgw2zUX6KCMsZMJepyY6z9VFhdsmYzGu5bl4N8e2es
+        nhzwTSNuvDSmj1aE7iftt9yFA4Lbvlauypnpa/jy6p77PDN9mS1BVPm5lfKX2rMtRVh6Ps
+        BH6t0wJjsV1ZUMruHAwfqWsn1TgYsF4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-352-GneUZMFCObGSONu0jxtUkw-1; Tue, 31 Mar 2020 12:41:19 -0400
+X-MC-Unique: GneUZMFCObGSONu0jxtUkw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D0ECC1937FF9;
+        Tue, 31 Mar 2020 16:40:49 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C7E595D9CA;
+        Tue, 31 Mar 2020 16:40:49 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id B612086392;
+        Tue, 31 Mar 2020 16:40:49 +0000 (UTC)
+Date:   Tue, 31 Mar 2020 12:40:49 -0400 (EDT)
+From:   Bob Peterson <rpeterso@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     cluster-devel <cluster-devel@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <328533763.19799053.1585672849599.JavaMail.zimbra@redhat.com>
+In-Reply-To: <1136650016.19797621.1585672680530.JavaMail.zimbra@redhat.com>
+Subject: GFS2 changes for the 5.7 merge window
 MIME-Version: 1.0
-References: <20200330164328.2944505-1-robert.marko@sartura.hr>
- <20200330164328.2944505-2-robert.marko@sartura.hr> <20200331163103.GA27585@bogus>
-In-Reply-To: <20200331163103.GA27585@bogus>
-From:   Robert Marko <robert.marko@sartura.hr>
-Date:   Tue, 31 Mar 2020 18:39:33 +0200
-Message-ID: <CA+HBbNEnH+0g0GK+xMGF48vJbLH3Ud2VY6yDOAxdgbRra3Y25A@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] dt-bindings: phy-qcom-ipq4019-usb: add binding document
-To:     Rob Herring <robh@kernel.org>
-Cc:     agross@kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
-        kishon@ti.com, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        John Crispin <john@phrozen.org>,
-        Luka Perkov <luka.perkov@sartura.hr>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.3.112.79, 10.4.195.15]
+Thread-Topic: GFS2 changes for the 5.7 merge window
+Thread-Index: 7YnYufhNdP3LDDib+sLMkcBQ+0495Q==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 6:31 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Mon, 30 Mar 2020 18:43:29 +0200, Robert Marko wrote:
-> > This patch adds the binding documentation for the HS/SS USB PHY found
-> > inside Qualcom Dakota SoCs.
-> >
-> > Signed-off-by: John Crispin <john@phrozen.org>
-> > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> > Cc: Luka Perkov <luka.perkov@sartura.hr>
-> > ---
-> > Changes from v4 to v5:
-> > * Replace tabs with whitespaces
-> > * Add maintainer property
-> >
-> >  .../bindings/phy/qcom-usb-ipq4019-phy.yaml    | 48 +++++++++++++++++++
-> >  1 file changed, 48 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
-> >
->
-> My bot found errors running 'make dt_binding_check' on your patch:
->
-> Error: Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.example.dts:21.25-26 syntax error
-> FATAL ERROR: Unable to parse input tree
-> scripts/Makefile.lib:311: recipe for target 'Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.example.dt.yaml' failed
-> make[1]: *** [Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.example.dt.yaml] Error 1
-> make[1]: *** Waiting for unfinished jobs....
-> Makefile:1262: recipe for target 'dt_binding_check' failed
-> make: *** [dt_binding_check] Error 2
->
-> See https://patchwork.ozlabs.org/patch/1264091
->
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure dt-schema is up to date:
->
-> pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
->
-> Please check and re-submit.
-Hi Rob,
-I tested locally before submitting and it will pass.
-It appears that the bot will fail in your tree as a patch to add DT
-nodes is part of the series and not yet upstream.
+Hi Linus,
 
-Best regards
-Robert
+Could you please pull the following changes for gfs2?
+
+Thanks,
+
+Bob Peterson
+
+The following changes since commit 6e5e41e2dc4e4413296d5a4af54ac92d7cd52317:
+
+  gfs2: fix O_SYNC write handling (2020-02-06 18:49:41 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-for-5.7
+
+for you to fetch changes up to 75b46c437f6b0f8e37032a407c7373f85f5c26a8:
+
+  gfs2: Fix oversight in gfs2_ail1_flush (2020-03-30 07:55:35 -0500)
+
+----------------------------------------------------------------
+We've got a lot of patches (39) for this merge window. Most of these patches
+are related to corruption that occurs when journals are replayed.
+For example:
+
+   1. A node fails while writing to the file system.
+   2. Other nodes use the metadata that was once used by the failed node.
+   3. When the node returns to the cluster, its journal is replayed,
+      but the older metadata blocks overwrite the changes from step 2.
+
+- Fixed the recovery sequence to prevent corruption during journal replay.
+- Many bug fixes found during recovery testing.
+- New improved file system withdraw sequence.
+- Fixed how resource group buffers are managed.
+- Fixed how metadata revokes are tracked and written.
+- Improve processing of IO errors hit by daemons like logd and quotad.
+- Improved error checking in metadata writes.
+- Fixed how qadata quota data structures are managed.
+
+----------------------------------------------------------------
+Andreas Gruenbacher (9):
+      gfs2: Split gfs2_lm_withdraw into two functions
+      gfs2: Report errors before withdraw
+      gfs2: Remove usused cluster_wide arguments of gfs2_consist functions
+      gfs2: Turn gfs2_consist into void functions
+      gfs2: Return bool from gfs2_assert functions
+      gfs2: Clean up inode initialization and teardown
+      gfs2: Switch to list_{first,last}_entry
+      gfs2: Split gfs2_rsqa_delete into gfs2_rs_delete and gfs2_qa_put
+      gfs2: Remove unnecessary gfs2_qa_{get,put} pairs
+
+Bob Peterson (30):
+      gfs2: Introduce concept of a pending withdraw
+      gfs2: clear ail1 list when gfs2 withdraws
+      gfs2: Rework how rgrp buffer_heads are managed
+      gfs2: log error reform
+      gfs2: Only complain the first time an io error occurs in quota or log
+      gfs2: Ignore dlm recovery requests if gfs2 is withdrawn
+      gfs2: move check_journal_clean to util.c for future use
+      gfs2: Allow some glocks to be used during withdraw
+      gfs2: Force withdraw to replay journals and wait for it to finish
+      gfs2: fix infinite loop when checking ail item count before go_inval
+      gfs2: Add verbose option to check_journal_clean
+      gfs2: Issue revokes more intelligently
+      gfs2: Prepare to withdraw as soon as an IO error occurs in log write
+      gfs2: Check for log write errors before telling dlm to unlock
+      gfs2: Do log_flush in gfs2_ail_empty_gl even if ail list is empty
+      gfs2: Withdraw in gfs2_ail1_flush if write_cache_pages fails
+      gfs2: drain the ail2 list after io errors
+      gfs2: Don't demote a glock until its revokes are written
+      gfs2: Do proper error checking for go_sync family of glops functions
+      gfs2: flesh out delayed withdraw for gfs2_log_flush
+      gfs2: don't allow releasepage to free bd still used for revokes
+      gfs2: allow journal replay to hold sd_log_flush_lock
+      gfs2: leaf_dealloc needs to allocate one more revoke
+      gfs2: Additional information when gfs2_ail1_flush withdraws
+      gfs2: eliminate gfs2_rsqa_alloc in favor of gfs2_qa_alloc
+      gfs2: Change inode qa_data to allow multiple users
+      gfs2: don't lock sd_log_flush_lock in try_rgrp_unlink
+      gfs2: instrumentation wrt ail1 stuck
+      gfs2: change from write to read lock for sd_log_flush_lock in journal replay
+      gfs2: Fix oversight in gfs2_ail1_flush
+
+ fs/gfs2/acl.c        |   7 +-
+ fs/gfs2/aops.c       |  11 +-
+ fs/gfs2/bmap.c       |   9 +-
+ fs/gfs2/dir.c        |   3 +-
+ fs/gfs2/file.c       |  43 +++---
+ fs/gfs2/glock.c      | 137 ++++++++++++++---
+ fs/gfs2/glops.c      | 157 +++++++++++++++----
+ fs/gfs2/incore.h     |  27 +++-
+ fs/gfs2/inode.c      |  53 +++----
+ fs/gfs2/lock_dlm.c   |  52 +++++++
+ fs/gfs2/log.c        | 288 ++++++++++++++++++++++++-----------
+ fs/gfs2/log.h        |   1 +
+ fs/gfs2/lops.c       |  14 +-
+ fs/gfs2/meta_io.c    |   3 +-
+ fs/gfs2/ops_fstype.c |  59 ++------
+ fs/gfs2/quota.c      |  76 ++++++----
+ fs/gfs2/quota.h      |   4 +-
+ fs/gfs2/recovery.c   |  12 +-
+ fs/gfs2/rgrp.c       |  88 ++++-------
+ fs/gfs2/rgrp.h       |   4 +-
+ fs/gfs2/super.c      | 112 +++++++++-----
+ fs/gfs2/super.h      |   1 -
+ fs/gfs2/sys.c        |   5 +-
+ fs/gfs2/trans.c      |   4 +
+ fs/gfs2/util.c       | 419 ++++++++++++++++++++++++++++++++++++++++-----------
+ fs/gfs2/util.h       |  76 +++++++---
+ fs/gfs2/xattr.c      |  12 +-
+ 27 files changed, 1168 insertions(+), 509 deletions(-)
+
