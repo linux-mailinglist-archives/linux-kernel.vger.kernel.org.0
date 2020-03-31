@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8283199035
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:10:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7E45199151
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731296AbgCaJKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:10:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53542 "EHLO mail.kernel.org"
+        id S1732177AbgCaJS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:18:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730626AbgCaJKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:10:00 -0400
+        id S1731957AbgCaJS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:18:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFD61208E0;
-        Tue, 31 Mar 2020 09:09:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51DA1208E0;
+        Tue, 31 Mar 2020 09:18:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645800;
-        bh=M2XYznMyPl5ilmTJqLhupO6Wszm9njVFjh1r0tDOHOI=;
+        s=default; t=1585646335;
+        bh=7GkF9U1QC4/acQ/zYteAI1o0BdFXo/0FC7l9Hnlp3EQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gBEGZYjM4NaN84E8nLvy6UAD1Plw3a/Iy6IeIhA9RWQLHbjLJ+19GofFqeh371L/R
-         xPxl3ZDKbviLCAPRjXuLmqF3op2clmsPHMj8qvx9Fw0btO1+6HF2i6behXsAtIyiMm
-         XPr1/1pnDzO6eU9j+xrTlNYZofrUCFI4dg0QrMSk=
+        b=1eo9nDXHPjAyisca7cnijgVop/QVVHm2b9tYS0Pp6Dh97yq7ystKpL+h40hi+STcZ
+         JrfslD0GpUJ/dUELRv1x+e9guhrzuvLm8XpR/FDYaL5339wQ1XdyyZZQj5F9SueRzd
+         7R/U2SqufRv1gRtJHn7Cb/1IdT1WFsz7pK5tIoYs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Johan Hovold <johan@kernel.org>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Lubomir Rintel <lkundrak@v3.sk>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 5.5 169/170] media: xirlink_cit: add missing descriptor sanity checks
-Date:   Tue, 31 Mar 2020 10:59:43 +0200
-Message-Id: <20200331085440.578410893@linuxfoundation.org>
+Subject: [PATCH 5.4 144/155] media: usbtv: fix control-message timeouts
+Date:   Tue, 31 Mar 2020 10:59:44 +0200
+Message-Id: <20200331085434.288946133@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
+References: <20200331085418.274292403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,80 +47,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit a246b4d547708f33ff4d4b9a7a5dbac741dc89d8 upstream.
+commit 536f561d871c5781bc33d26d415685211b94032e upstream.
 
-Make sure to check that we have two alternate settings and at least one
-endpoint before accessing the second altsetting structure and
-dereferencing the endpoint arrays.
+The driver was issuing synchronous uninterruptible control requests
+without using a timeout. This could lead to the driver hanging on
+various user requests due to a malfunctioning (or malicious) device
+until the device is physically disconnected.
 
-This specifically avoids dereferencing NULL-pointers or corrupting
-memory when a device does not have the expected descriptors.
+The USB upper limit of five seconds per request should be more than
+enough.
 
-Note that the sanity check in cit_get_packet_size() is not redundant as
-the driver is mixing looking up altsettings by index and by number,
-which may not coincide.
-
-Fixes: 659fefa0eb17 ("V4L/DVB: gspca_xirlink_cit: Add support for camera with a bcd version of 0.01")
-Fixes: 59f8b0bf3c12 ("V4L/DVB: gspca_xirlink_cit: support bandwidth changing for devices with 1 alt setting")
-Cc: stable <stable@vger.kernel.org>     # 2.6.37
-Cc: Hans de Goede <hdegoede@redhat.com>
+Fixes: f3d27f34fdd7 ("[media] usbtv: Add driver for Fushicai USBTV007 video frame grabber")
+Fixes: c53a846c48f2 ("[media] usbtv: add video controls")
+Cc: stable <stable@vger.kernel.org>     # 3.11
 Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Lubomir Rintel <lkundrak@v3.sk>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/gspca/xirlink_cit.c |   18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ drivers/media/usb/usbtv/usbtv-core.c  |    2 +-
+ drivers/media/usb/usbtv/usbtv-video.c |    5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/media/usb/gspca/xirlink_cit.c
-+++ b/drivers/media/usb/gspca/xirlink_cit.c
-@@ -1442,6 +1442,9 @@ static int cit_get_packet_size(struct gs
- 		return -EIO;
+--- a/drivers/media/usb/usbtv/usbtv-core.c
++++ b/drivers/media/usb/usbtv/usbtv-core.c
+@@ -56,7 +56,7 @@ int usbtv_set_regs(struct usbtv *usbtv,
+ 
+ 		ret = usb_control_msg(usbtv->udev, pipe, USBTV_REQUEST_REG,
+ 			USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
+-			value, index, NULL, 0, 0);
++			value, index, NULL, 0, USB_CTRL_GET_TIMEOUT);
+ 		if (ret < 0)
+ 			return ret;
  	}
- 
-+	if (alt->desc.bNumEndpoints < 1)
-+		return -ENODEV;
-+
- 	return le16_to_cpu(alt->endpoint[0].desc.wMaxPacketSize);
- }
- 
-@@ -2626,6 +2629,7 @@ static int sd_start(struct gspca_dev *gs
- 
- static int sd_isoc_init(struct gspca_dev *gspca_dev)
- {
-+	struct usb_interface_cache *intfc;
- 	struct usb_host_interface *alt;
- 	int max_packet_size;
- 
-@@ -2641,8 +2645,17 @@ static int sd_isoc_init(struct gspca_dev
- 		break;
+--- a/drivers/media/usb/usbtv/usbtv-video.c
++++ b/drivers/media/usb/usbtv/usbtv-video.c
+@@ -800,7 +800,8 @@ static int usbtv_s_ctrl(struct v4l2_ctrl
+ 		ret = usb_control_msg(usbtv->udev,
+ 			usb_rcvctrlpipe(usbtv->udev, 0), USBTV_CONTROL_REG,
+ 			USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
+-			0, USBTV_BASE + 0x0244, (void *)data, 3, 0);
++			0, USBTV_BASE + 0x0244, (void *)data, 3,
++			USB_CTRL_GET_TIMEOUT);
+ 		if (ret < 0)
+ 			goto error;
  	}
+@@ -851,7 +852,7 @@ static int usbtv_s_ctrl(struct v4l2_ctrl
+ 	ret = usb_control_msg(usbtv->udev, usb_sndctrlpipe(usbtv->udev, 0),
+ 			USBTV_CONTROL_REG,
+ 			USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
+-			0, index, (void *)data, size, 0);
++			0, index, (void *)data, size, USB_CTRL_SET_TIMEOUT);
  
-+	intfc = gspca_dev->dev->actconfig->intf_cache[0];
-+
-+	if (intfc->num_altsetting < 2)
-+		return -ENODEV;
-+
-+	alt = &intfc->altsetting[1];
-+
-+	if (alt->desc.bNumEndpoints < 1)
-+		return -ENODEV;
-+
- 	/* Start isoc bandwidth "negotiation" at max isoc bandwidth */
--	alt = &gspca_dev->dev->actconfig->intf_cache[0]->altsetting[1];
- 	alt->endpoint[0].desc.wMaxPacketSize = cpu_to_le16(max_packet_size);
- 
- 	return 0;
-@@ -2665,6 +2678,9 @@ static int sd_isoc_nego(struct gspca_dev
- 		break;
- 	}
- 
-+	/*
-+	 * Existence of altsetting and endpoint was verified in sd_isoc_init()
-+	 */
- 	alt = &gspca_dev->dev->actconfig->intf_cache[0]->altsetting[1];
- 	packet_size = le16_to_cpu(alt->endpoint[0].desc.wMaxPacketSize);
- 	if (packet_size <= min_packet_size)
+ error:
+ 	if (ret < 0)
 
 
