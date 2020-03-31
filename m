@@ -2,39 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3152198FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34E221991E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731251AbgCaJHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:07:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49230 "EHLO mail.kernel.org"
+        id S1731298AbgCaJIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:08:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731235AbgCaJH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:07:26 -0400
+        id S1731116AbgCaJH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:07:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C37C20675;
-        Tue, 31 Mar 2020 09:07:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70BB6208E0;
+        Tue, 31 Mar 2020 09:07:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645645;
-        bh=bg3dzst6b/qDwfReX3F+WLNx7bdv+k/dh8LP372xMk8=;
+        s=default; t=1585645677;
+        bh=Lv7nxzimjNgk53yfuPokPVQ0E1KBKMsOch6WH/viC2o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TsnD06R8HDaEDyrV6VM66vG4vToXdBuqQ2EJJCxzuB6CYhms/N67XW31tmhHKS4Mz
-         C/xMuglQScvHzZL4eZLj7t3j9uYRQ/TNkkUC4w7BjQgm1d9P4rVM2lr3Y73mHXP0MW
-         3TKLewLcAKrbJ0SNiHLk/AEYDxCn8tvVs2WeW2t8=
+        b=LkZpxZOv2vHa9nouNyBxXcO14mMpL82/luYk9O95Kcmj5omHKUoBeHo8z3jECf4pw
+         nrLQKDD/nsOJxmSUob2vtyxYWNWbtjzzTUbtNxUxI1pZrmTjgW6qFcyFK2n6RFBgpx
+         GQzVw0dyycIeh0uVwsUPQejkwhTApK/rd6cVeyuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>,
+        stable@vger.kernel.org,
+        "Scargall, Steve" <steve.scargall@intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Qais Youef <qais.yousef@arm.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
+        Nathan Fontenot <ndfont@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Badari Pulavarty <pbadari@us.ibm.com>,
+        Robert Jennings <rcj@linux.vnet.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Karel Zak <kzak@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.5 111/170] mm/swapfile.c: move inode_lock out of claim_swapfile
-Date:   Tue, 31 Mar 2020 10:58:45 +0200
-Message-Id: <20200331085435.972835256@linuxfoundation.org>
+Subject: [PATCH 5.5 112/170] drivers/base/memory.c: indicate all memory blocks as removable
+Date:   Tue, 31 Mar 2020 10:58:46 +0200
+Message-Id: <20200331085436.087249164@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
 References: <20200331085423.990189598@linuxfoundation.org>
@@ -47,202 +55,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naohiro Aota <naohiro.aota@wdc.com>
+From: David Hildenbrand <david@redhat.com>
 
-commit d795a90e2ba024dbf2f22107ae89c210b98b08b8 upstream.
+commit 53cdc1cb29e87ce5a61de5bb393eb08925d14ede upstream.
 
-claim_swapfile() currently keeps the inode locked when it is successful,
-or the file is already swapfile (with -EBUSY).  And, on the other error
-cases, it does not lock the inode.
+We see multiple issues with the implementation/interface to compute
+whether a memory block can be offlined (exposed via
+/sys/devices/system/memory/memoryX/removable) and would like to simplify
+it (remove the implementation).
 
-This inconsistency of the lock state and return value is quite confusing
-and actually causing a bad unlock balance as below in the "bad_swap"
-section of __do_sys_swapon().
+1. It runs basically lockless. While this might be good for performance,
+   we see possible races with memory offlining that will require at
+   least some sort of locking to fix.
 
-This commit fixes this issue by moving the inode_lock() and IS_SWAPFILE
-check out of claim_swapfile().  The inode is unlocked in
-"bad_swap_unlock_inode" section, so that the inode is ensured to be
-unlocked at "bad_swap".  Thus, error handling codes after the locking now
-jumps to "bad_swap_unlock_inode" instead of "bad_swap".
+2. Nowadays, more false positives are possible. No arch-specific checks
+   are performed that validate if memory offlining will not be denied
+   right away (and such check will require locking). For example, arm64
+   won't allow to offline any memory block that was added during boot -
+   which will imply a very high error rate. Other archs have other
+   constraints.
 
-    =====================================
-    WARNING: bad unlock balance detected!
-    5.5.0-rc7+ #176 Not tainted
-    -------------------------------------
-    swapon/4294 is trying to release lock (&sb->s_type->i_mutex_key) at: __do_sys_swapon+0x94b/0x3550
-    but there are no more locks to release!
+3. The interface is inherently racy. E.g., if a memory block is detected
+   to be removable (and was not a false positive at that time), there is
+   still no guarantee that offlining will actually succeed. So any
+   caller already has to deal with false positives.
 
-    other info that might help us debug this:
-    no locks held by swapon/4294.
+4. It is unclear which performance benefit this interface actually
+   provides. The introducing commit 5c755e9fd813 ("memory-hotplug: add
+   sysfs removable attribute for hotplug memory remove") mentioned
 
-    stack backtrace:
-    CPU: 5 PID: 4294 Comm: swapon Not tainted 5.5.0-rc7-BTRFS-ZNS+ #176
-    Hardware name: ASUS All Series/H87-PRO, BIOS 2102 07/29/2014
-    Call Trace:
-     dump_stack+0xa1/0xea
-     print_unlock_imbalance_bug.cold+0x114/0x123
-     lock_release+0x562/0xed0
-     up_write+0x2d/0x490
-     __do_sys_swapon+0x94b/0x3550
-     __x64_sys_swapon+0x54/0x80
-     do_syscall_64+0xa4/0x4b0
-     entry_SYSCALL_64_after_hwframe+0x49/0xbe
-    RIP: 0033:0x7f15da0a0dc7
+	"A user-level agent must be able to identify which sections
+	 of memory are likely to be removable before attempting the
+	 potentially expensive operation."
 
-Fixes: 1638045c3677 ("mm: set S_SWAPFILE on blockdev swap devices")
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+   However, no actual performance comparison was included.
+
+Known users:
+
+ - lsmem: Will group memory blocks based on the "removable" property. [1]
+
+ - chmem: Indirect user. It has a RANGE mode where one can specify
+          removable ranges identified via lsmem to be offlined. However,
+          it also has a "SIZE" mode, which allows a sysadmin to skip the
+          manual "identify removable blocks" step. [2]
+
+ - powerpc-utils: Uses the "removable" attribute to skip some memory
+          blocks right away when trying to find some to offline+remove.
+          However, with ballooning enabled, it already skips this
+          information completely (because it once resulted in many false
+          negatives). Therefore, the implementation can deal with false
+          positives properly already. [3]
+
+According to Nathan Fontenot, DLPAR on powerpc is nowadays no longer
+driven from userspace via the drmgr command (powerpc-utils).  Nowadays
+it's managed in the kernel - including onlining/offlining of memory
+blocks - triggered by drmgr writing to /sys/kernel/dlpar.  So the
+affected legacy userspace handling is only active on old kernels.  Only
+very old versions of drmgr on a new kernel (unlikely) might execute
+slower - totally acceptable.
+
+With CONFIG_MEMORY_HOTREMOVE, always indicating "removable" should not
+break any user space tool.  We implement a very bad heuristic now.
+Without CONFIG_MEMORY_HOTREMOVE we cannot offline anything, so report
+"not removable" as before.
+
+Original discussion can be found in [4] ("[PATCH RFC v1] mm:
+is_mem_section_removable() overhaul").
+
+Other users of is_mem_section_removable() will be removed next, so that
+we can remove is_mem_section_removable() completely.
+
+[1] http://man7.org/linux/man-pages/man1/lsmem.1.html
+[2] http://man7.org/linux/man-pages/man8/chmem.8.html
+[3] https://github.com/ibm-power-utilities/powerpc-utils
+[4] https://lkml.kernel.org/r/20200117105759.27905-1-david@redhat.com
+
+Also, this patch probably fixes a crash reported by Steve.
+http://lkml.kernel.org/r/CAPcyv4jpdaNvJ67SkjyUJLBnBnXXQv686BiVW042g03FUmWLXw@mail.gmail.com
+
+Reported-by: "Scargall, Steve" <steve.scargall@intel.com>
+Suggested-by: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Tested-by: Qais Youef <qais.yousef@arm.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>
+Reviewed-by: Nathan Fontenot <ndfont@gmail.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Badari Pulavarty <pbadari@us.ibm.com>
+Cc: Robert Jennings <rcj@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Karel Zak <kzak@redhat.com>
 Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20200206090132.154869-1-naohiro.aota@wdc.com
+Link: http://lkml.kernel.org/r/20200128093542.6908-1-david@redhat.com
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/swapfile.c |   39 +++++++++++++++++++--------------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
+ drivers/base/memory.c |   23 +++--------------------
+ 1 file changed, 3 insertions(+), 20 deletions(-)
 
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2899,10 +2899,6 @@ static int claim_swapfile(struct swap_in
- 		p->bdev = inode->i_sb->s_bdev;
- 	}
- 
--	inode_lock(inode);
--	if (IS_SWAPFILE(inode))
--		return -EBUSY;
--
- 	return 0;
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -111,30 +111,13 @@ static ssize_t phys_index_show(struct de
  }
  
-@@ -3157,17 +3153,22 @@ SYSCALL_DEFINE2(swapon, const char __use
- 	mapping = swap_file->f_mapping;
- 	inode = mapping->host;
- 
--	/* If S_ISREG(inode->i_mode) will do inode_lock(inode); */
- 	error = claim_swapfile(p, inode);
- 	if (unlikely(error))
- 		goto bad_swap;
- 
-+	inode_lock(inode);
-+	if (IS_SWAPFILE(inode)) {
-+		error = -EBUSY;
-+		goto bad_swap_unlock_inode;
-+	}
-+
- 	/*
- 	 * Read the swap header.
- 	 */
- 	if (!mapping->a_ops->readpage) {
- 		error = -EINVAL;
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 	}
- 	page = read_mapping_page(mapping, 0, swap_file);
- 	if (IS_ERR(page)) {
-@@ -3179,14 +3180,14 @@ SYSCALL_DEFINE2(swapon, const char __use
- 	maxpages = read_swap_header(p, swap_header, inode);
- 	if (unlikely(!maxpages)) {
- 		error = -EINVAL;
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 	}
- 
- 	/* OK, set up the swap map and apply the bad block list */
- 	swap_map = vzalloc(maxpages);
- 	if (!swap_map) {
- 		error = -ENOMEM;
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 	}
- 
- 	if (bdi_cap_stable_pages_required(inode_to_bdi(inode)))
-@@ -3211,7 +3212,7 @@ SYSCALL_DEFINE2(swapon, const char __use
- 					GFP_KERNEL);
- 		if (!cluster_info) {
- 			error = -ENOMEM;
--			goto bad_swap;
-+			goto bad_swap_unlock_inode;
- 		}
- 
- 		for (ci = 0; ci < nr_cluster; ci++)
-@@ -3220,7 +3221,7 @@ SYSCALL_DEFINE2(swapon, const char __use
- 		p->percpu_cluster = alloc_percpu(struct percpu_cluster);
- 		if (!p->percpu_cluster) {
- 			error = -ENOMEM;
--			goto bad_swap;
-+			goto bad_swap_unlock_inode;
- 		}
- 		for_each_possible_cpu(cpu) {
- 			struct percpu_cluster *cluster;
-@@ -3234,13 +3235,13 @@ SYSCALL_DEFINE2(swapon, const char __use
- 
- 	error = swap_cgroup_swapon(p->type, maxpages);
- 	if (error)
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 
- 	nr_extents = setup_swap_map_and_extents(p, swap_header, swap_map,
- 		cluster_info, maxpages, &span);
- 	if (unlikely(nr_extents < 0)) {
- 		error = nr_extents;
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 	}
- 	/* frontswap enabled? set up bit-per-page map for frontswap */
- 	if (IS_ENABLED(CONFIG_FRONTSWAP))
-@@ -3280,7 +3281,7 @@ SYSCALL_DEFINE2(swapon, const char __use
- 
- 	error = init_swap_address_space(p->type, maxpages);
- 	if (error)
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 
- 	/*
- 	 * Flush any pending IO and dirty mappings before we start using this
-@@ -3290,7 +3291,7 @@ SYSCALL_DEFINE2(swapon, const char __use
- 	error = inode_drain_writes(inode);
- 	if (error) {
- 		inode->i_flags &= ~S_SWAPFILE;
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 	}
- 
- 	mutex_lock(&swapon_mutex);
-@@ -3315,6 +3316,8 @@ SYSCALL_DEFINE2(swapon, const char __use
- 
- 	error = 0;
- 	goto out;
-+bad_swap_unlock_inode:
-+	inode_unlock(inode);
- bad_swap:
- 	free_percpu(p->percpu_cluster);
- 	p->percpu_cluster = NULL;
-@@ -3322,6 +3325,7 @@ bad_swap:
- 		set_blocksize(p->bdev, p->old_block_size);
- 		blkdev_put(p->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
- 	}
-+	inode = NULL;
- 	destroy_swap_extents(p);
- 	swap_cgroup_swapoff(p->type);
- 	spin_lock(&swap_lock);
-@@ -3333,13 +3337,8 @@ bad_swap:
- 	kvfree(frontswap_map);
- 	if (inced_nr_rotate_swap)
- 		atomic_dec(&nr_rotate_swap);
--	if (swap_file) {
--		if (inode) {
--			inode_unlock(inode);
--			inode = NULL;
--		}
-+	if (swap_file)
- 		filp_close(swap_file, NULL);
+ /*
+- * Show whether the memory block is likely to be offlineable (or is already
+- * offline). Once offline, the memory block could be removed. The return
+- * value does, however, not indicate that there is a way to remove the
+- * memory block.
++ * Legacy interface that we cannot remove. Always indicate "removable"
++ * with CONFIG_MEMORY_HOTREMOVE - bad heuristic.
+  */
+ static ssize_t removable_show(struct device *dev, struct device_attribute *attr,
+ 			      char *buf)
+ {
+-	struct memory_block *mem = to_memory_block(dev);
+-	unsigned long pfn;
+-	int ret = 1, i;
+-
+-	if (mem->state != MEM_ONLINE)
+-		goto out;
+-
+-	for (i = 0; i < sections_per_block; i++) {
+-		if (!present_section_nr(mem->start_section_nr + i))
+-			continue;
+-		pfn = section_nr_to_pfn(mem->start_section_nr + i);
+-		ret &= is_mem_section_removable(pfn, PAGES_PER_SECTION);
 -	}
- out:
- 	if (page && !IS_ERR(page)) {
- 		kunmap(page);
+-
+-out:
+-	return sprintf(buf, "%d\n", ret);
++	return sprintf(buf, "%d\n", (int)IS_ENABLED(CONFIG_MEMORY_HOTREMOVE));
+ }
+ 
+ /*
 
 
