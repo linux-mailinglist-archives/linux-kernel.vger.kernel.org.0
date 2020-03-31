@@ -2,187 +2,316 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AFDC199909
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 16:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A53A4199906
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 16:56:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731054AbgCaO4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 10:56:18 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46306 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730511AbgCaO4S (ORCPT
+        id S1730664AbgCaO4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 10:56:06 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38250 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730511AbgCaO4G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 10:56:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=M3iZZ9XdnTzC9WaVpzkUyV5Li5vQ/KX3VC2mSf/zdQE=; b=jmmwHcaYqgkxezlT63UqFj8jQN
-        Jq5a66LpEzj55rRgY8448z4pMuI260o+A+kSF96xVJCsqePAY0p+8qqA9P03KHmcCzCTuQCRi1a9B
-        eh+qXVPULKX2Kw4sgj3yhsc5M0OPrycrBafN27k+c86R/pbQ+D8yTtXZH9LxT5OdYtATIWD83F1mR
-        XdaNCR4jIsl0+RaqEctpsVDZnXwmZcIi2+pr2fYjHUz9iLUmeV7q3rlo0QKT7Ny3BHOKojAzWpXLJ
-        rJRy/U05ZtvxnIyaw5BR5YzSTlKG3vi9WYEXOywOetThW5Hhxv31SH9zwC2mD3C7Q+oiTlmDsNl1D
-        KJSkKs3g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJIIR-0004dd-9g; Tue, 31 Mar 2020 14:55:19 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E4E9C304DB2;
-        Tue, 31 Mar 2020 16:55:15 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C570A29D71B7A; Tue, 31 Mar 2020 16:55:15 +0200 (CEST)
-Date:   Tue, 31 Mar 2020 16:55:15 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH 6/9] lockdep: Introduce wait-type checks
-Message-ID: <20200331145515.GR20730@hirez.programming.kicks-ass.net>
-References: <20200313174701.148376-1-bigeasy@linutronix.de>
- <20200313174701.148376-7-bigeasy@linutronix.de>
- <CAMuHMdU6s1F=DnaguZXrV4sWzEO-EqTaGQ=N7zyhgGq1M+Q1Ug@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU6s1F=DnaguZXrV4sWzEO-EqTaGQ=N7zyhgGq1M+Q1Ug@mail.gmail.com>
+        Tue, 31 Mar 2020 10:56:06 -0400
+Received: by mail-wr1-f68.google.com with SMTP id c7so357448wrx.5
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 07:56:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=RotBY2/n7MqumxpiEiIUgwj/O+Jw9v6dfbvSaS8JkQM=;
+        b=AGLdA5fBKrFo7a1CWVQEVN7BnOcF4R+IxBspD8Km+HuxoBzk3cRqtZRsV6pvMwEPjj
+         ikZS0+c0DqEm3gpNZlWLJ4aPy/vkVeLxMCnYxMenj6eJ60JKtMJeLnlJnwiawtCE1AOy
+         aqeE3+qnsOJ1RLR+wtMxwKOww/drqpTuO8mOO737aJ4HpqUbEpaiwa4ZwCzegBJXSgoH
+         acRiTKYhgMO1ZDCXwZMU7sdVtoghetlBzCeacVBKm3fTbe6F0120CAIgIj1rs8j5Js2A
+         Dc/0LDeGNSPQ3gEegZM5M3SPv05h4xXsa/u24V/2wxMwlP8oYNwJG1gjY9sGKA6vEv4M
+         BPIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RotBY2/n7MqumxpiEiIUgwj/O+Jw9v6dfbvSaS8JkQM=;
+        b=KhfXW/WZsbVXykEeuHyHjMivHFRC34IgFSBzF7iPhSnQ5bwbfaxGIwvh2hUwE9fJDT
+         8MnuJYwWKRxHaoqggfXfq6S529KUrXIWLMtCb1LjUV7x4jNsQCDXWOKzI8U+YSE3MQ4/
+         MGnzY2ikG8Q72tfob0RTDfE4GmJ3BzVGzfROyCJjAPExrBfLXS8oJQfzqYZsamxTF1ty
+         sEJnTi/uvRuIx4f+q18of/BS9HqT9AlgDkZwRka30razHCdUx4nUSwBcO8S56Q5l/Vyb
+         7IlhoDyNY6A2lpRuTnYzcsshCIr8Z8XUTj7ZgYSxJzHWTDD8QbTUxDO2+L9+dxpOfMsO
+         SDsA==
+X-Gm-Message-State: ANhLgQ1Pw1grP3EHxCTZNirdAyjORmONNVBAoCkArjsAXJTbnWexmzmO
+        GKUwCGrrsks3yZIZCyzEbRtlXbST
+X-Google-Smtp-Source: ADFU+vu8SnlFhI8fh6lDdQf5r3qsyJ2R9NjhTeDcJCOFD3X09qbS3uceDVziHSivuEADxczr2Z9e/Q==
+X-Received: by 2002:adf:e807:: with SMTP id o7mr21921937wrm.77.1585666563747;
+        Tue, 31 Mar 2020 07:56:03 -0700 (PDT)
+Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
+        by smtp.gmail.com with ESMTPSA id r3sm27118507wrm.35.2020.03.31.07.56.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 07:56:02 -0700 (PDT)
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+To:     linux-kernel@vger.kernel.org, oshpigelman@habana.ai,
+        ttayar@habana.ai
+Cc:     gregkh@linuxfoundation.org
+Subject: [PATCH 1/2] habanalabs: retrieve DMA mask indication from firmware
+Date:   Tue, 31 Mar 2020 17:55:59 +0300
+Message-Id: <20200331145600.768-1-oded.gabbay@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 03:25:21PM +0200, Geert Uytterhoeven wrote:
-> On arm64 (e.g. R-Car H3 ES2.0):
-> 
-> +=============================
-> +[ BUG: Invalid wait context ]
-> +5.6.0-salvator-x-09423-gb29514ba13a9c459-dirty #679 Not tainted
-> +-----------------------------
-> +swapper/5/0 is trying to lock:
-> +ffffff86ff76f398 (&pool->lock){..-.}-{3:3}, at: __queue_work+0x134/0x430
-> +other info that might help us debug this:
-> +1 lock held by swapper/5/0:
-> + #0: ffffffc01103a4a0 (rcu_read_lock){....}-{1:3}, at:
-> rcu_lock_acquire.constprop.59+0x0/0x38
-> +stack backtrace:
-> +CPU: 5 PID: 0 Comm: swapper/5 Not tainted
-> 5.6.0-salvator-x-09423-gb29514ba13a9c459-dirty #679
-> +Hardware name: Renesas Salvator-X 2nd version board based on r8a77951 (DT)
-> +Call trace:
-> + dump_backtrace+0x0/0x180
-> + show_stack+0x14/0x1c
-> + dump_stack+0xdc/0x12c
-> + __lock_acquire+0x37c/0xf9c
-> + lock_acquire+0x258/0x288
-> + _raw_spin_lock+0x34/0x48
-> + __queue_work+0x134/0x430
-> + queue_work_on+0x48/0x8c
-> + timers_update_nohz+0x24/0x2c
-> + tick_nohz_activate.isra.15.part.16+0x5c/0x80
-> + tick_setup_sched_timer+0xe0/0xf0
-> + hrtimer_run_queues+0x88/0xf8
+Retrieve from the firmware the DMA mask value we need to set according to
+the device's PCI controller configuration. This is needed when working on
+POWER9 machines, as the device's PCI controller is configured in a
+different way in those machines.
 
-So this is complaining that it cannot take pool->lock, which is
-WAIT_CONFIG while holding RCU, which presents a WAIT_CONFIG context.
-
-This seems to implicate something is amiss, because that should be
-allowed. The thing it doesn't print is the context, which in the above
-case is a (hrtimer) interrupt.
-
-I suspect this really is a hardirq context and the next patch won't cure
-things. It looks nohz (full?) related.
-
-Frederic, can you untangle this?
-
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
+ drivers/misc/habanalabs/goya/goya.c          | 19 +++++-
+ drivers/misc/habanalabs/habanalabs.h         |  9 ++-
+ drivers/misc/habanalabs/include/hl_boot_if.h |  1 +
+ drivers/misc/habanalabs/pci.c                | 63 +++++++++-----------
+ 4 files changed, 53 insertions(+), 39 deletions(-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 1511690e4de7..ac10db66cc63 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3952,10 +3952,36 @@ static int mark_lock(struct task_struct *curr, struct held_lock *this,
- 	return ret;
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index a0a96ca31757..85f29cb7d67b 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -531,7 +531,7 @@ static int goya_early_init(struct hl_device *hdev)
+ 
+ 	prop->dram_pci_bar_size = pci_resource_len(pdev, DDR_BAR_ID);
+ 
+-	rc = hl_pci_init(hdev, 48);
++	rc = hl_pci_init(hdev);
+ 	if (rc)
+ 		return rc;
+ 
+@@ -5185,6 +5185,20 @@ u32 goya_get_queue_id_for_cq(struct hl_device *hdev, u32 cq_idx)
+ 	return cq_idx;
  }
  
-+static inline short task_wait_context(struct task_struct *curr)
++static void goya_set_dma_mask_from_fw(struct hl_device *hdev)
 +{
-+	/*
-+	 * Set appropriate wait type for the context; for IRQs we have to take
-+	 * into account force_irqthread as that is implied by PREEMPT_RT.
-+	 */
-+	if (curr->hardirq_context) {
-+		/*
-+		 * Check if force_irqthreads will run us threaded.
-+		 */
-+		if (curr->hardirq_threaded || curr->irq_config)
-+			return LD_WAIT_CONFIG;
-+
-+		return LD_WAIT_SPIN;
-+	} else if (curr->softirq_context) {
-+		/*
-+		 * Softirqs are always threaded.
-+		 */
-+		return LD_WAIT_CONFIG;
++	if (RREG32(mmPSOC_GLOBAL_CONF_NON_RST_FLOPS_0) ==
++							HL_POWER9_HOST_MAGIC) {
++		dev_dbg(hdev->dev, "Working in 64-bit DMA mode\n");
++		hdev->power9_64bit_dma_enable = 1;
++		hdev->dma_mask = 64;
++	} else {
++		dev_dbg(hdev->dev, "Working in 48-bit DMA mode\n");
++		hdev->power9_64bit_dma_enable = 0;
++		hdev->dma_mask = 48;
 +	}
-+
-+	return LD_WAIT_MAX;
 +}
 +
- static int
- print_lock_invalid_wait_context(struct task_struct *curr,
- 				struct held_lock *hlock)
+ static const struct hl_asic_funcs goya_funcs = {
+ 	.early_init = goya_early_init,
+ 	.early_fini = goya_early_fini,
+@@ -5247,7 +5261,8 @@ static const struct hl_asic_funcs goya_funcs = {
+ 	.get_clk_rate = goya_get_clk_rate,
+ 	.get_queue_id_for_cq = goya_get_queue_id_for_cq,
+ 	.read_device_fw_version = goya_read_device_fw_version,
+-	.load_firmware_to_device = goya_load_firmware_to_device
++	.load_firmware_to_device = goya_load_firmware_to_device,
++	.set_dma_mask_from_fw = goya_set_dma_mask_from_fw
+ };
+ 
+ /*
+diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
+index 6c54d0ba0a1d..29b9767387af 100644
+--- a/drivers/misc/habanalabs/habanalabs.h
++++ b/drivers/misc/habanalabs/habanalabs.h
+@@ -552,6 +552,8 @@ enum hl_pll_frequency {
+  * @read_device_fw_version: read the device's firmware versions that are
+  *                          contained in registers
+  * @load_firmware_to_device: load the firmware to the device's memory
++ * @set_dma_mask_from_fw: set the DMA mask in the driver according to the
++ *                        firmware configuration
+  */
+ struct hl_asic_funcs {
+ 	int (*early_init)(struct hl_device *hdev);
+@@ -642,6 +644,7 @@ struct hl_asic_funcs {
+ 	void (*read_device_fw_version)(struct hl_device *hdev,
+ 					enum hl_fw_component fwc);
+ 	int (*load_firmware_to_device)(struct hl_device *hdev);
++	void (*set_dma_mask_from_fw)(struct hl_device *hdev);
+ };
+ 
+ 
+@@ -1321,6 +1324,8 @@ struct hl_device_idle_busy_ts {
+  * @dma_mask: the dma mask that was set for this device
+  * @in_debug: is device under debug. This, together with fpriv_list, enforces
+  *            that only a single user is configuring the debug infrastructure.
++ * @power9_64bit_dma_enable: true to enable 64-bit DMA mask support. Relevant
++ *                           only to POWER9 machines.
+  * @cdev_sysfs_created: were char devices and sysfs nodes created.
+  * @stop_on_err: true if engines should stop on error.
+  */
+@@ -1402,6 +1407,7 @@ struct hl_device {
+ 	u8				device_cpu_disabled;
+ 	u8				dma_mask;
+ 	u8				in_debug;
++	u8                              power9_64bit_dma_enable;
+ 	u8				cdev_sysfs_created;
+ 	u8				stop_on_err;
+ 
+@@ -1632,9 +1638,8 @@ int hl_pci_set_dram_bar_base(struct hl_device *hdev, u8 inbound_region, u8 bar,
+ int hl_pci_init_iatu(struct hl_device *hdev, u64 sram_base_address,
+ 			u64 dram_base_address, u64 host_phys_base_address,
+ 			u64 host_phys_size);
+-int hl_pci_init(struct hl_device *hdev, u8 dma_mask);
++int hl_pci_init(struct hl_device *hdev);
+ void hl_pci_fini(struct hl_device *hdev);
+-int hl_pci_set_dma_mask(struct hl_device *hdev, u8 dma_mask);
+ 
+ long hl_get_frequency(struct hl_device *hdev, u32 pll_index, bool curr);
+ void hl_set_frequency(struct hl_device *hdev, u32 pll_index, u64 freq);
+diff --git a/drivers/misc/habanalabs/include/hl_boot_if.h b/drivers/misc/habanalabs/include/hl_boot_if.h
+index 660550604362..7106315fc92e 100644
+--- a/drivers/misc/habanalabs/include/hl_boot_if.h
++++ b/drivers/misc/habanalabs/include/hl_boot_if.h
+@@ -9,6 +9,7 @@
+ #define HL_BOOT_IF_H
+ 
+ #define LKD_HARD_RESET_MAGIC		0xED7BD694
++#define HL_POWER9_HOST_MAGIC		0x1DA30009
+ 
+ /*
+  * CPU error bits in BOOT_ERROR registers
+diff --git a/drivers/misc/habanalabs/pci.c b/drivers/misc/habanalabs/pci.c
+index c98d88c7a5c6..0aef4af9f5ec 100644
+--- a/drivers/misc/habanalabs/pci.c
++++ b/drivers/misc/habanalabs/pci.c
+@@ -267,6 +267,12 @@ int hl_pci_init_iatu(struct hl_device *hdev, u64 sram_base_address,
+ 	/* Enable + Bar match + match enable */
+ 	rc |= hl_pci_iatu_write(hdev, 0x104, 0xC0080000);
+ 
++	/* Return the DBI window to the default location */
++	rc |= hl_pci_elbi_write(hdev, prop->pcie_aux_dbi_reg_addr, 0);
++	rc |= hl_pci_elbi_write(hdev, prop->pcie_aux_dbi_reg_addr + 4, 0);
++
++	hdev->asic_funcs->set_dma_mask_from_fw(hdev);
++
+ 	/* Point to DRAM */
+ 	if (!hdev->asic_funcs->set_dram_bar_base)
+ 		return -EINVAL;
+@@ -274,7 +280,6 @@ int hl_pci_init_iatu(struct hl_device *hdev, u64 sram_base_address,
+ 								U64_MAX)
+ 		return -EIO;
+ 
+-
+ 	/* Outbound Region 0 - Point to Host */
+ 	host_phys_end_addr = host_phys_base_address + host_phys_size - 1;
+ 	rc |= hl_pci_iatu_write(hdev, 0x008,
+@@ -283,7 +288,12 @@ int hl_pci_init_iatu(struct hl_device *hdev, u64 sram_base_address,
+ 				upper_32_bits(host_phys_base_address));
+ 	rc |= hl_pci_iatu_write(hdev, 0x010, lower_32_bits(host_phys_end_addr));
+ 	rc |= hl_pci_iatu_write(hdev, 0x014, 0);
+-	rc |= hl_pci_iatu_write(hdev, 0x018, 0);
++
++	if ((hdev->power9_64bit_dma_enable) && (hdev->dma_mask == 64))
++		rc |= hl_pci_iatu_write(hdev, 0x018, 0x08000000);
++	else
++		rc |= hl_pci_iatu_write(hdev, 0x018, 0);
++
+ 	rc |= hl_pci_iatu_write(hdev, 0x020, upper_32_bits(host_phys_end_addr));
+ 	/* Increase region size */
+ 	rc |= hl_pci_iatu_write(hdev, 0x000, 0x00002000);
+@@ -310,41 +320,25 @@ int hl_pci_init_iatu(struct hl_device *hdev, u64 sram_base_address,
+  *
+  * Return: 0 on success, non-zero for failure.
+  */
+-int hl_pci_set_dma_mask(struct hl_device *hdev, u8 dma_mask)
++int hl_pci_set_dma_mask(struct hl_device *hdev)
  {
-+	short curr_inner;
-+
- 	if (!debug_locks_off())
- 		return 0;
- 	if (debug_locks_silent)
-@@ -3971,6 +3997,10 @@ print_lock_invalid_wait_context(struct task_struct *curr,
- 	print_lock(hlock);
+ 	struct pci_dev *pdev = hdev->pdev;
+ 	int rc;
  
- 	pr_warn("other info that might help us debug this:\n");
-+
-+	curr_inner = task_wait_context(curr);
-+	pr_warn("context-{%d:%d}\n", curr_inner, curr_inner);
-+
- 	lockdep_print_held_locks(curr);
- 
- 	pr_warn("stack backtrace:\n");
-@@ -4017,26 +4047,7 @@ static int check_wait_context(struct task_struct *curr, struct held_lock *next)
+ 	/* set DMA mask */
+-	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(dma_mask));
++	rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(hdev->dma_mask));
+ 	if (rc) {
+-		dev_warn(hdev->dev,
++		dev_err(hdev->dev,
+ 			"Failed to set pci dma mask to %d bits, error %d\n",
+-			dma_mask, rc);
+-
+-		dma_mask = hdev->dma_mask;
+-
+-		rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(dma_mask));
+-		if (rc) {
+-			dev_err(hdev->dev,
+-				"Failed to set pci dma mask to %d bits, error %d\n",
+-				dma_mask, rc);
+-			return rc;
+-		}
++			hdev->dma_mask, rc);
++		return rc;
  	}
- 	depth++;
  
 -	/*
--	 * Set appropriate wait type for the context; for IRQs we have to take
--	 * into account force_irqthread as that is implied by PREEMPT_RT.
+-	 * We managed to set the dma mask, so update the dma mask field. If
+-	 * the set to the coherent mask will fail with that mask, we will
+-	 * fail the entire function
 -	 */
--	if (curr->hardirq_context) {
--		/*
--		 * Check if force_irqthreads will run us threaded.
--		 */
--		if (curr->hardirq_threaded || curr->irq_config)
--			curr_inner = LD_WAIT_CONFIG;
--		else
--			curr_inner = LD_WAIT_SPIN;
--	} else if (curr->softirq_context) {
--		/*
--		 * Softirqs are always threaded.
--		 */
--		curr_inner = LD_WAIT_CONFIG;
--	} else {
--		curr_inner = LD_WAIT_MAX;
--	}
-+	curr_inner = task_wait_context(curr);
+-	hdev->dma_mask = dma_mask;
+-
+-	rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(dma_mask));
++	rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(hdev->dma_mask));
+ 	if (rc) {
+ 		dev_err(hdev->dev,
+ 			"Failed to set pci consistent dma mask to %d bits, error %d\n",
+-			dma_mask, rc);
++			hdev->dma_mask, rc);
+ 		return rc;
+ 	}
  
- 	for (; depth < curr->lockdep_depth; depth++) {
- 		struct held_lock *prev = curr->held_locks + depth;
+@@ -354,21 +348,16 @@ int hl_pci_set_dma_mask(struct hl_device *hdev, u8 dma_mask)
+ /**
+  * hl_pci_init() - PCI initialization code.
+  * @hdev: Pointer to hl_device structure.
+- * @dma_mask: number of bits for the requested dma mask.
+  *
+  * Set DMA masks, initialize the PCI controller and map the PCI BARs.
+  *
+  * Return: 0 on success, non-zero for failure.
+  */
+-int hl_pci_init(struct hl_device *hdev, u8 dma_mask)
++int hl_pci_init(struct hl_device *hdev)
+ {
+ 	struct pci_dev *pdev = hdev->pdev;
+ 	int rc;
+ 
+-	rc = hl_pci_set_dma_mask(hdev, dma_mask);
+-	if (rc)
+-		return rc;
+-
+ 	if (hdev->reset_pcilink)
+ 		hl_pci_reset_link_through_bridge(hdev);
+ 
+@@ -380,18 +369,22 @@ int hl_pci_init(struct hl_device *hdev, u8 dma_mask)
+ 
+ 	pci_set_master(pdev);
+ 
+-	rc = hdev->asic_funcs->init_iatu(hdev);
++	rc = hdev->asic_funcs->pci_bars_map(hdev);
+ 	if (rc) {
+-		dev_err(hdev->dev, "Failed to initialize iATU\n");
++		dev_err(hdev->dev, "Failed to initialize PCI BARs\n");
+ 		goto disable_device;
+ 	}
+ 
+-	rc = hdev->asic_funcs->pci_bars_map(hdev);
++	rc = hdev->asic_funcs->init_iatu(hdev);
+ 	if (rc) {
+-		dev_err(hdev->dev, "Failed to initialize PCI BARs\n");
++		dev_err(hdev->dev, "Failed to initialize iATU\n");
+ 		goto disable_device;
+ 	}
+ 
++	rc = hl_pci_set_dma_mask(hdev);
++	if (rc)
++		goto disable_device;
++
+ 	return 0;
+ 
+ disable_device:
+-- 
+2.17.1
+
