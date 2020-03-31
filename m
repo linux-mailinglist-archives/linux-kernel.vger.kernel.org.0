@@ -2,116 +2,314 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F7971997E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5A2C1997DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:52:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730919AbgCaNxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 09:53:37 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:25372 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730420AbgCaNxh (ORCPT
+        id S1731106AbgCaNwX convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 09:52:23 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:46729 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731097AbgCaNwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 09:53:37 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02VDX0hF068094;
-        Tue, 31 Mar 2020 09:52:25 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3044cgcm3k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Mar 2020 09:52:25 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 02VDZGeG076868;
-        Tue, 31 Mar 2020 09:52:25 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3044cgcm38-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Mar 2020 09:52:25 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02VDotVT028130;
-        Tue, 31 Mar 2020 13:52:24 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma02wdc.us.ibm.com with ESMTP id 301x76s7mp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Mar 2020 13:52:24 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02VDqMbQ54919466
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Mar 2020 13:52:22 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2BDFB7805F;
-        Tue, 31 Mar 2020 13:52:22 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 41F3B7805C;
-        Tue, 31 Mar 2020 13:52:16 +0000 (GMT)
-Received: from [9.85.129.243] (unknown [9.85.129.243])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 31 Mar 2020 13:52:15 +0000 (GMT)
-Subject: Re: [PATCH v4 3/7] tpm: tpm_tis: rewrite "tpm_tis_req_canceled()"
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        amirmizi6@gmail.com
-Cc:     Eyal.Cohen@nuvoton.com, oshrialkoby85@gmail.com,
-        alexander.steffen@infineon.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
-        arnd@arndb.de, gregkh@linuxfoundation.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
-        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
-        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
-        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com
-References: <20200331113207.107080-1-amirmizi6@gmail.com>
- <20200331113207.107080-4-amirmizi6@gmail.com>
- <20200331121352.GA9284@linux.intel.com>
-From:   Ken Goldman <kgold@linux.ibm.com>
-Message-ID: <774fa2af-e4a6-4577-f1f7-c786e3b5210c@linux.ibm.com>
-Date:   Tue, 31 Mar 2020 09:52:15 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <20200331121352.GA9284@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+        Tue, 31 Mar 2020 09:52:21 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-143-CV1vAavVOfKGO2gQPAvgMg-1; Tue, 31 Mar 2020 14:52:16 +0100
+X-MC-Unique: CV1vAavVOfKGO2gQPAvgMg-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 31 Mar 2020 14:52:16 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 31 Mar 2020 14:52:16 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH 09/12] fs: Use iovec_import() instead of import_iovec().
+Thread-Topic: [RFC PATCH 09/12] fs: Use iovec_import() instead of
+ import_iovec().
+Thread-Index: AdYHYu6Jf/b+zzsyTDSOH29HTRD1CA==
+Date:   Tue, 31 Mar 2020 13:52:16 +0000
+Message-ID: <a83ce4e3038a483dacb028c2f938d8c0@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-03-31_04:2020-03-31,2020-03-31 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- clxscore=1011 priorityscore=1501 impostorscore=0 mlxlogscore=999
- malwarescore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2003310120
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/31/2020 8:13 AM, Jarkko Sakkinen wrote:
-> On Tue, Mar 31, 2020 at 02:32:03PM +0300, amirmizi6@gmail.com wrote:
->> From: Amir Mizinski <amirmizi6@gmail.com>
->>
->> Using this function while read/write data resulted in aborted operation.
->> After investigating according to TCG TPM Profile (PTP) Specifications,
->> i found cancel should happen only if TPM_STS.commandReady bit is lit and
->> couldn't find a case when the current condition is valid.
->> Also only cmdReady bit need to be compared instead of the full lower status
->> register byte.
->>
->> Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
-> 
-> We don't care about spec's. We care about hardware and not all hardware
-> follows specifications.
-> 
-> Please fix the exact thing you want to fix (and please provide a fixes
-> tag).
 
-I edit the TPM main spec, not the PTP.  As I discover TPMs that don't 
-meet the spec, or where the spec has changed over time, I add 
-informative comments to guide developers.
+Signed-off-by: David Laight <david.laight@aculab.com>
+---
+ fs/aio.c        | 34 +++++++++++++---------------
+ fs/read_write.c | 69 +++++++++++++++++++++++++++++++--------------------------
+ fs/splice.c     | 22 +++++++++---------
+ 3 files changed, 65 insertions(+), 60 deletions(-)
 
-If you know of TPM hardware that does not meet the PTP specification, 
-let me know the specifics.  I can bring it to the PTP work group and try 
-to get comments added.
+diff --git a/fs/aio.c b/fs/aio.c
+index 5f3d3d8..15dc2e3 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1477,24 +1477,20 @@ static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb)
+ 	return 0;
+ }
+ 
+-static ssize_t aio_setup_rw(int rw, const struct iocb *iocb,
+-		struct iovec **iovec, bool vectored, bool compat,
++static struct iovec *aio_setup_rw(int rw, const struct iocb *iocb,
++		struct iovec_cache *cache, bool vectored, bool compat,
+ 		struct iov_iter *iter)
+ {
+ 	void __user *buf = (void __user *)(uintptr_t)iocb->aio_buf;
+ 	size_t len = iocb->aio_nbytes;
+ 
+-	if (!vectored) {
+-		ssize_t ret = import_single_range(rw, buf, len, *iovec, iter);
+-		*iovec = NULL;
+-		return ret;
+-	}
++	if (!vectored)
++		return ERR_PTR(import_single_range(rw, buf, len, cache->iov, iter));
+ #ifdef CONFIG_COMPAT
+ 	if (compat)
+-		return compat_import_iovec(rw, buf, len, UIO_FASTIOV, iovec,
+-				iter);
++		return compat_iovec_import(rw, buf, len, cache, iter);
+ #endif
+-	return import_iovec(rw, buf, len, UIO_FASTIOV, iovec, iter);
++	return iovec_import(rw, buf, len, cache, iter);
+ }
+ 
+ static inline void aio_rw_done(struct kiocb *req, ssize_t ret)
+@@ -1520,8 +1516,9 @@ static inline void aio_rw_done(struct kiocb *req, ssize_t ret)
+ static int aio_read(struct kiocb *req, const struct iocb *iocb,
+ 			bool vectored, bool compat)
+ {
+-	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
++	struct iovec_cache cache;
+ 	struct iov_iter iter;
++	struct iovec *iovec;
+ 	struct file *file;
+ 	int ret;
+ 
+@@ -1535,9 +1532,9 @@ static int aio_read(struct kiocb *req, const struct iocb *iocb,
+ 	if (unlikely(!file->f_op->read_iter))
+ 		return -EINVAL;
+ 
+-	ret = aio_setup_rw(READ, iocb, &iovec, vectored, compat, &iter);
+-	if (ret < 0)
+-		return ret;
++	iovec = aio_setup_rw(READ, iocb, &cache, vectored, compat, &iter);
++	if (IS_ERR(iovec))
++		return PTR_ERR(iovec);
+ 	ret = rw_verify_area(READ, file, &req->ki_pos, iov_iter_count(&iter));
+ 	if (!ret)
+ 		aio_rw_done(req, call_read_iter(file, req, &iter));
+@@ -1548,8 +1545,9 @@ static int aio_read(struct kiocb *req, const struct iocb *iocb,
+ static int aio_write(struct kiocb *req, const struct iocb *iocb,
+ 			 bool vectored, bool compat)
+ {
+-	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
++	struct iovec_cache cache;
+ 	struct iov_iter iter;
++	struct iovec *iovec;
+ 	struct file *file;
+ 	int ret;
+ 
+@@ -1563,9 +1561,9 @@ static int aio_write(struct kiocb *req, const struct iocb *iocb,
+ 	if (unlikely(!file->f_op->write_iter))
+ 		return -EINVAL;
+ 
+-	ret = aio_setup_rw(WRITE, iocb, &iovec, vectored, compat, &iter);
+-	if (ret < 0)
+-		return ret;
++	iovec = aio_setup_rw(WRITE, iocb, &cache, vectored, compat, &iter);
++	if (IS_ERR(iovec))
++		return PTR_ERR(iovec);
+ 	ret = rw_verify_area(WRITE, file, &req->ki_pos, iov_iter_count(&iter));
+ 	if (!ret) {
+ 		/*
+diff --git a/fs/read_write.c b/fs/read_write.c
+index a6f914c..5713032 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -864,35 +864,38 @@ ssize_t vfs_iter_write(struct file *file, struct iov_iter *iter, loff_t *ppos,
+ ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
+ 		  unsigned long vlen, loff_t *pos, rwf_t flags)
+ {
+-	struct iovec iovstack[UIO_FASTIOV];
+-	struct iovec *iov = iovstack;
++	struct iovec_cache cache;
+ 	struct iov_iter iter;
++	struct iovec *iov;
+ 	ssize_t ret;
+ 
+-	ret = import_iovec(READ, vec, vlen, ARRAY_SIZE(iovstack), &iov, &iter);
+-	if (ret >= 0) {
+-		ret = do_iter_read(file, &iter, pos, flags);
+-		kfree(iov);
+-	}
++	iov = iovec_import(READ, vec, vlen, &cache, &iter);
++	if (IS_ERR(iov))
++		return PTR_ERR(iov);
++
++	ret = do_iter_read(file, &iter, pos, flags);
+ 
++	kfree(iov);
+ 	return ret;
+ }
+ 
+ static ssize_t vfs_writev(struct file *file, const struct iovec __user *vec,
+ 		   unsigned long vlen, loff_t *pos, rwf_t flags)
+ {
+-	struct iovec iovstack[UIO_FASTIOV];
+-	struct iovec *iov = iovstack;
++	struct iovec_cache cache;
+ 	struct iov_iter iter;
++	struct iovec *iov;
+ 	ssize_t ret;
+ 
+-	ret = import_iovec(WRITE, vec, vlen, ARRAY_SIZE(iovstack), &iov, &iter);
+-	if (ret >= 0) {
+-		file_start_write(file);
+-		ret = do_iter_write(file, &iter, pos, flags);
+-		file_end_write(file);
+-		kfree(iov);
+-	}
++	iov = iovec_import(WRITE, vec, vlen, &cache, &iter);
++	if (IS_ERR(iov))
++		return PTR_ERR(iov);
++
++	file_start_write(file);
++	ret = do_iter_write(file, &iter, pos, flags);
++	file_end_write(file);
++
++	kfree(iov);
+ 	return ret;
+ }
+ 
+@@ -1053,16 +1056,17 @@ static size_t compat_readv(struct file *file,
+ 			   const struct compat_iovec __user *vec,
+ 			   unsigned long vlen, loff_t *pos, rwf_t flags)
+ {
+-	struct iovec iovstack[UIO_FASTIOV];
+-	struct iovec *iov = iovstack;
++	struct iovec_cache cache;
+ 	struct iov_iter iter;
++	struct iovec *iov;
+ 	ssize_t ret;
+ 
+-	ret = compat_import_iovec(READ, vec, vlen, UIO_FASTIOV, &iov, &iter);
+-	if (ret >= 0) {
+-		ret = do_iter_read(file, &iter, pos, flags);
+-		kfree(iov);
+-	}
++	iov = compat_iovec_import(READ, vec, vlen, &cache, &iter);
++	if (IS_ERR(iov))
++		return PTR_ERR(iov);
++
++	ret = do_iter_read(file, &iter, pos, flags);
++	kfree(iov);
+ 	if (ret > 0)
+ 		add_rchar(current, ret);
+ 	inc_syscr(current);
+@@ -1161,18 +1165,19 @@ static size_t compat_writev(struct file *file,
+ 			    const struct compat_iovec __user *vec,
+ 			    unsigned long vlen, loff_t *pos, rwf_t flags)
+ {
+-	struct iovec iovstack[UIO_FASTIOV];
+-	struct iovec *iov = iovstack;
++	struct iovec_cache cache;
+ 	struct iov_iter iter;
++	struct iovec *iov;
+ 	ssize_t ret;
+ 
+-	ret = compat_import_iovec(WRITE, vec, vlen, UIO_FASTIOV, &iov, &iter);
+-	if (ret >= 0) {
+-		file_start_write(file);
+-		ret = do_iter_write(file, &iter, pos, flags);
+-		file_end_write(file);
+-		kfree(iov);
+-	}
++	iov = compat_iovec_import(WRITE, vec, vlen, &cache, &iter);
++	if (IS_ERR(iov))
++		return PTR_ERR(iov);
++
++	file_start_write(file);
++	ret = do_iter_write(file, &iter, pos, flags);
++	file_end_write(file);
++	kfree(iov);
+ 	if (ret > 0)
+ 		add_wchar(current, ret);
+ 	inc_syscw(current);
+diff --git a/fs/splice.c b/fs/splice.c
+index d671936..444c80d 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1375,9 +1375,9 @@ static long do_vmsplice(struct file *f, struct iov_iter *iter, unsigned int flag
+ SYSCALL_DEFINE4(vmsplice, int, fd, const struct iovec __user *, uiov,
+ 		unsigned long, nr_segs, unsigned int, flags)
+ {
+-	struct iovec iovstack[UIO_FASTIOV];
+-	struct iovec *iov = iovstack;
++	struct iovec_cache cache;
+ 	struct iov_iter iter;
++	struct iovec *iov;
+ 	ssize_t error;
+ 	struct fd f;
+ 	int type;
+@@ -1387,9 +1387,10 @@ static long do_vmsplice(struct file *f, struct iov_iter *iter, unsigned int flag
+ 	if (error)
+ 		return error;
+ 
+-	error = import_iovec(type, uiov, nr_segs,
+-			     ARRAY_SIZE(iovstack), &iov, &iter);
+-	if (error >= 0) {
++	iov = iovec_import(type, uiov, nr_segs, &cache, &iter);
++	if (IS_ERR(iov)) {
++		error = PTR_ERR(iov);
++	} else {
+ 		error = do_vmsplice(f.file, &iter, flags);
+ 		kfree(iov);
+ 	}
+@@ -1401,9 +1402,9 @@ static long do_vmsplice(struct file *f, struct iov_iter *iter, unsigned int flag
+ COMPAT_SYSCALL_DEFINE4(vmsplice, int, fd, const struct compat_iovec __user *, iov32,
+ 		    unsigned int, nr_segs, unsigned int, flags)
+ {
+-	struct iovec iovstack[UIO_FASTIOV];
+-	struct iovec *iov = iovstack;
++	struct iovec_cache cache;
+ 	struct iov_iter iter;
++	struct iovec *iov;
+ 	ssize_t error;
+ 	struct fd f;
+ 	int type;
+@@ -1413,9 +1414,10 @@ static long do_vmsplice(struct file *f, struct iov_iter *iter, unsigned int flag
+ 	if (error)
+ 		return error;
+ 
+-	error = compat_import_iovec(type, iov32, nr_segs,
+-			     ARRAY_SIZE(iovstack), &iov, &iter);
+-	if (error >= 0) {
++	iov = compat_iovec_import(type, iov32, nr_segs, &cache, &iter);
++	if (IS_ERR(iov)) {
++		error = PTR_ERR(iov);
++	} else {
+ 		error = do_vmsplice(f.file, &iter, flags);
+ 		kfree(iov);
+ 	}
+-- 
+1.8.1.2
 
-I do not need to know the TPM vendor.  That information would not go 
-into the specification anyway.
-
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
