@@ -2,99 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50C6A19A248
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 01:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0111D19A239
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 01:04:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731527AbgCaXNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 19:13:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42392 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729647AbgCaXNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 19:13:34 -0400
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E93B921707;
-        Tue, 31 Mar 2020 23:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585696413;
-        bh=9XnDVeLNtXBo+7A+ymbQWmYaZXP1cYS2bkQlhtc03pg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=J7zqVWd/5lRSv44OmqCPe15cyMfA4cypk3PPuwEoI45tJ1YAoTl5Ju1ma924UCJl6
-         Z6ky4U99dLrxKDMwa+PTXGoIyPPfnsUb6LRM8u/KABhxK6I52Zyo/oUkrVgFeiVNOT
-         ND0IQRvtzFnmuXNaM15v5te9g0dWSmNYMudOjc6w=
-Received: by mail-ed1-f53.google.com with SMTP id de14so27406240edb.4;
-        Tue, 31 Mar 2020 16:13:32 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ0kEpjM6joDgA2tDHZQgypbnov2wqaCqiv5reWf1k0HTQvvf9Os
-        8SRsWVi7LObTtjSgEosbmgfE9h8PRF51tu0wsg==
-X-Google-Smtp-Source: ADFU+vsI2at//4iAqFj3XbOPyjbjd8Ju2JHJo+yfvuPMtXyncAneKqKuJ3LsmHFRegjrJGdHpUpM711na8maETHC9Bs=
-X-Received: by 2002:a50:ce01:: with SMTP id y1mr18621985edi.47.1585696411284;
- Tue, 31 Mar 2020 16:13:31 -0700 (PDT)
+        id S1731537AbgCaXEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 19:04:44 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:50518 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731523AbgCaXEn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 19:04:43 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200331230441epoutp039f1fcb01ba27f2acf315d6d1c3efa513~BhgC_JSlp1116911169epoutp03e
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 23:04:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200331230441epoutp039f1fcb01ba27f2acf315d6d1c3efa513~BhgC_JSlp1116911169epoutp03e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1585695881;
+        bh=I2qNvxYsnMhgjz7vv3e+IBnyt/mBwlreFpG3uPjXxFI=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=YT3gFZs73Ei0sXOEhJBp6XX/cV/foyR51C2DQGPnsv31QfAxS8DcL8KAfRgDwR53x
+         8OrHL4KOvK7uOuQwtuvoC78qKXmcEWrLiKIrnOFBi/0b1RxFnliTi/Y7E4VLaJyoYp
+         4QxPhfO8mgFo4YnmpKHpBZWR+pdGPwgsgVt4BXA0=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200331230440epcas1p2b4e761025fa9cd7b8a83a80d86c8aaba~BhgCciaUZ2205822058epcas1p2f;
+        Tue, 31 Mar 2020 23:04:40 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.152]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 48sPzV49M9zMqYkb; Tue, 31 Mar
+        2020 23:04:38 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        64.69.04160.68CC38E5; Wed,  1 Apr 2020 08:04:38 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200331230437epcas1p4d802f63c12e014d47fe44715ae9c6a74~Bhf-gW0WF1803018030epcas1p48;
+        Tue, 31 Mar 2020 23:04:37 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200331230437epsmtrp217a52aefc4ff1f55d78be37b6be3b948~Bhf-fIJLN0841408414epsmtrp2h;
+        Tue, 31 Mar 2020 23:04:37 +0000 (GMT)
+X-AuditID: b6c32a38-297ff70000001040-be-5e83cc867058
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C2.35.04158.58CC38E5; Wed,  1 Apr 2020 08:04:37 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200331230437epsmtip11fa331ae70de6ac5bb330de4cd2f37a9~Bhf-NdAXK2139221392epsmtip1J;
+        Tue, 31 Mar 2020 23:04:37 +0000 (GMT)
+Subject: Re: [PATCH v1 1/5] PM / devfreq: tegra: Add Dmitry as a maintainer
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <db4883d4-18b7-238a-798b-ad45aad978fc@samsung.com>
+Date:   Wed, 1 Apr 2020 08:13:43 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-References: <20200331214609.1742152-1-enric.balletbo@collabora.com> <20200331214609.1742152-4-enric.balletbo@collabora.com>
-In-Reply-To: <20200331214609.1742152-4-enric.balletbo@collabora.com>
-From:   Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date:   Wed, 1 Apr 2020 07:13:20 +0800
-X-Gmail-Original-Message-ID: <CAAOTY__9rrC3o9sTYKgSZi8n0xHdtSFoNMHOqLfQF6B_4BAGww@mail.gmail.com>
-Message-ID: <CAAOTY__9rrC3o9sTYKgSZi8n0xHdtSFoNMHOqLfQF6B_4BAGww@mail.gmail.com>
-Subject: Re: [PATCH 4/4] arm64: dts: mt8173: Fix mmsys node name
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, CK Hu <ck.hu@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        ulrich.hecht+renesas@gmail.com, devicetree@vger.kernel.org,
-        Matthias Brugger <mbrugger@suse.com>, hsinyi@chromium.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        linux-mediatek@lists.infradead.org, matthias.bgg@kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200330231617.17079-2-digetx@gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHJsWRmVeSWpSXmKPExsWy7bCmnm7bmeY4g43diharPz5mtGiZtYjF
+        4mzTG3aLjz33WC0u75rDZvG59wijReeXWWwWF0+5WtxuXMFm8e/aRhaLn7vmsThwe7y/0cru
+        sXPWXXaPTas62Tx6m9+xefRtWcXo8XmTXABbVLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZ
+        gaGuoaWFuZJCXmJuqq2Si0+ArltmDtB5SgpliTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSC
+        lJwCywK94sTc4tK8dL3k/FwrQwMDI1OgwoTsjO6lK9kLfnNV7O/fzdzA2MfZxcjBISFgIvFu
+        v04XIxeHkMAORolHb9eyQjifGCVOXF3LBOF8Y5Q4u/ktWxcjJ1jHgnn3oKr2Mkosn/6VBcJ5
+        zyhxZFkXM0iVsIC3xK83P8ASIgKLmSReb57LApJgFiiR2D3xCBOIzSagJbH/xQ2wsfwCihJX
+        fzxmBLF5Bewk5h1aBDaIRUBF4ubLO2BxUYEwiZPbWqBqBCVOznwCNpNTwExiwoV+Joj54hK3
+        nsyHsuUltr+dwwxyhITAZHaJnffvskL84CKxrWECI4QtLPHq+BZ2CFtK4vO7vVB/VkusPHmE
+        DaK5g1Fiy/4LUM3GEvuXTmYCBR+zgKbE+l36EGFFiZ2/5zJCLOaTePe1hxUSwrwSHW1CECXK
+        Epcf3GWCsCUlFrd3sk1gVJqF5J1ZSF6YheSFWQjLFjCyrGIUSy0ozk1PLTYsMEGO7k2M4LSr
+        ZbGDcc85n0OMAhyMSjy8ClbNcUKsiWXFlbmHGCU4mJVEeNn8G+KEeFMSK6tSi/Lji0pzUosP
+        MZoCQ3sis5Rocj4wJ+SVxBuaGhkbG1uYGJqZGhoqifNOvZ4TJySQnliSmp2aWpBaBNPHxMEp
+        1cCoUnVwhl7YGb/TBrPfLvLy0Q0RnLU4KcLkXl6Nca/l3akqMvKdMvVHIr41HJAxf/hw5QyG
+        ZSwOcco/a+bmy0b8zZh58J6XNkesh+xN9w3T1dbfOsB/6vPBL5ervrnWB8x75Pzu4aqaqOMn
+        Z4uF/5R9KM5Xfuiss2dRdWez7dP3JccdPLbIfzJWYinOSDTUYi4qTgQAtLOlhNEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWy7bCSnG7rmeY4gzendS1Wf3zMaNEyaxGL
+        xdmmN+wWH3vusVpc3jWHzeJz7xFGi84vs9gsLp5ytbjduILN4t+1jSwWP3fNY3Hg9nh/o5Xd
+        Y+esu+wem1Z1snn0Nr9j8+jbsorR4/MmuQC2KC6blNSczLLUIn27BK6M7qUr2Qt+c1Xs79/N
+        3MDYx9nFyMkhIWAisWDePVYQW0hgN6PEj5OsEHFJiWkXjzJ3MXIA2cIShw8XdzFyAZW8ZZTY
+        vvsBO0iNsIC3xK83P1hAEiICS5kkVtz8ApZgFiiROPHsHytEx1ZGic0f14El2AS0JPa/uMEG
+        YvMLKEpc/fGYEcTmFbCTmHdoETOIzSKgInHz5R2wuKhAmMTOJY+ZIGoEJU7OfMICYnMKmElM
+        uNDPBLFMXeLPvEvMELa4xK0n86Hi8hLb385hnsAoPAtJ+ywkLbOQtMxC0rKAkWUVo2RqQXFu
+        em6xYYFRXmq5XnFibnFpXrpecn7uJkZw/Glp7WA8cSL+EKMAB6MSD6+iVXOcEGtiWXFl7iFG
+        CQ5mJRFeNv+GOCHelMTKqtSi/Pii0pzU4kOM0hwsSuK88vnHIoUE0hNLUrNTUwtSi2CyTByc
+        Ug2Msyqmn/zotOZDnty80/z71T7UfF1UFuXFpZnCN9n95k0129eNzJeevWvRmujwbMH3/H3i
+        pd/068yF3hyx6Fh+7FT/vyTzY+cO5YrtTPBde2r17e1vFzN/vnnt8vyzch0em3ewecfcVJPP
+        9lih+W1zpd5aS/fQ03eOuKqEfTX78ruALfmiT5zuGiWW4oxEQy3mouJEAB/GwL27AgAA
+X-CMS-MailID: 20200331230437epcas1p4d802f63c12e014d47fe44715ae9c6a74
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200330232036epcas1p2cba89238a41fa0941d0abcaf2b457072
+References: <20200330231617.17079-1-digetx@gmail.com>
+        <CGME20200330232036epcas1p2cba89238a41fa0941d0abcaf2b457072@epcas1p2.samsung.com>
+        <20200330231617.17079-2-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Enric:
-
-Enric Balletbo i Serra <enric.balletbo@collabora.com> =E6=96=BC 2020=E5=B9=
-=B44=E6=9C=881=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=885:47=E5=AF=AB=
-=E9=81=93=EF=BC=9A
->
-> Node names are supposed to match the class of the device, mmsys is a
-> system controller (syscon) not a clock controller, so change the node
-> name accordingly.
-
-Reviewed-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+On 3/31/20 8:16 AM, Dmitry Osipenko wrote:
+> I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
+> want to help keep them working and evolving in the future.
+> 
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->
->  arch/arm64/boot/dts/mediatek/mt8173.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/d=
-ts/mediatek/mt8173.dtsi
-> index 8b4e806d5119..a55e8c177832 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> @@ -908,7 +908,7 @@ u2port1: usb-phy@11291000 {
->                         };
->                 };
->
-> -               mmsys: clock-controller@14000000 {
-> +               mmsys: syscon@14000000 {
->                         compatible =3D "mediatek,mt8173-mmsys", "syscon";
->                         reg =3D <0 0x14000000 0 0x1000>;
->                         power-domains =3D <&scpsys MT8173_POWER_DOMAIN_MM=
->;
-> --
-> 2.25.1
->
->
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+>  MAINTAINERS | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8b8abe756ae0..9e8b0779f6df 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10931,6 +10931,15 @@ F:	include/linux/memblock.h
+>  F:	mm/memblock.c
+>  F:	Documentation/core-api/boot-time-mm.rst
+>  
+> +MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
+> +M:	Dmitry Osipenko <digetx@gmail.com>
+> +L:	linux-pm@vger.kernel.org
+> +L:	linux-tegra@vger.kernel.org
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
+
+Need to update it as following:
+git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
+
+> +S:	Maintained
+> +F:	drivers/devfreq/tegra20-devfreq.c
+> +F:	drivers/devfreq/tegra30-devfreq.c
+> +
+>  MEMORY MANAGEMENT
+>  M:	Andrew Morton <akpm@linux-foundation.org>
+>  L:	linux-mm@kvack.org
+> 
+
+I already agreed it. To prevent the merge conflict of MAINTAINERS,
+better to be merged it to linux-pm.git maintainer. On next time,
+please add Rafael J. Wysocki to To list.
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
