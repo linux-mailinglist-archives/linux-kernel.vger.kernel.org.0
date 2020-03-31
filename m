@@ -2,221 +2,368 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B27719A02B
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 22:52:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1AE719A069
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:02:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbgCaUwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 16:52:21 -0400
-Received: from mga18.intel.com ([134.134.136.126]:27314 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727852AbgCaUwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 16:52:20 -0400
-IronPort-SDR: SftVGfW6sdgGVdl9+vqUlrXYhLVba7ROnFlq6oD+usVQ0jxgakRy1ggMYa+ne996HhphF3LrKu
- Iq/o/JWcju4g==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 13:52:20 -0700
-IronPort-SDR: 9t856pZgKTfWBnjHJFtoepGRlVzP9m2xf7nkagQHk9zegQsKXZAXpn2HoV+pDnKfBkXrh+6lmR
- UB9OEnTXfnrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,329,1580803200"; 
-   d="scan'208";a="328202815"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 31 Mar 2020 13:52:20 -0700
-Date:   Tue, 31 Mar 2020 13:58:07 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     Auger Eric <eric.auger@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH V10 08/11] iommu/vt-d: Add svm/sva invalidate function
-Message-ID: <20200331135807.4e9976ab@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D800D67@SHSMSX104.ccr.corp.intel.com>
-References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1584746861-76386-9-git-send-email-jacob.jun.pan@linux.intel.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7FA0AB@SHSMSX104.ccr.corp.intel.com>
-        <3215b83c-81f7-a30f-fe82-a51f29d7b874@redhat.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D800D67@SHSMSX104.ccr.corp.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1731236AbgCaVCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 17:02:53 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34809 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730829AbgCaVCx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 17:02:53 -0400
+Received: by mail-io1-f67.google.com with SMTP id h131so23304270iof.1;
+        Tue, 31 Mar 2020 14:02:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5M5OFYVaj+pp7i52Q4lF1Wgn8amY7YTmAivGgbF5jjs=;
+        b=TY2l2qsqZyxUhOjmBC+F+/1H7WoCkIM2TYgsv6J7tHT1AZF/3/dkptUCnZqHScCtBP
+         22bPhy/QirZJbxfMgaZiGrNJOR5kwKdroNi3pyp9tKwYcwRhhRcamIjBfLJ55SqeA3ov
+         +Afp9oHT/RzYwsCiTKyzYennQuc6gWauelAOhiERyLmA2MQue7+oksdRZwrjC9S0wkIM
+         Tyri7FZkzY4TudOIFteJ1zZwd6gqtwRuYkzwPPC7onF1tBOyrd1Ov/Qbo9JpP8VMglV6
+         2Fq2IfLT3grQi+1qpZwyNiJkhRd7Csan82oNrNqaARRQhf3RNLCm53DHOM+V3vNMXo2P
+         MCVQ==
+X-Gm-Message-State: ANhLgQ1X+VKGZK+OWHcz2m5sRQpJ6u1FYWyQAgoyW/cngJCc5/cOcN34
+        uexvZiCgRpX16QVzVdqxiA==
+X-Google-Smtp-Source: ADFU+vul8p0TCgRRT9sqmCuFslqjxW538QF1pBOyv5dfAOMhhXTJCyduY1RQDmbqPCac5hQfMfQSww==
+X-Received: by 2002:a5d:87c6:: with SMTP id q6mr12199861ios.163.1585688571170;
+        Tue, 31 Mar 2020 14:02:51 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id y71sm6197ilk.23.2020.03.31.14.02.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 14:02:50 -0700 (PDT)
+Received: (nullmailer pid 2196 invoked by uid 1000);
+        Tue, 31 Mar 2020 21:02:48 -0000
+Date:   Tue, 31 Mar 2020 15:02:48 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sergey.Semin@baikalelectronics.ru
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] dt-bindings: interrupt-controller: Convert
+ mti,gic to DT schema
+Message-ID: <20200331210248.GA27684@bogus>
+References: <20200306125622.839ED80307C4@mail.baikalelectronics.ru>
+ <20200324174325.14213-1-Sergey.Semin@baikalelectronics.ru>
+ <20200324174325.14213-3-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200324174325.14213-3-Sergey.Semin@baikalelectronics.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Mar 2020 02:49:21 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
-
-> > From: Auger Eric <eric.auger@redhat.com>
-> > Sent: Sunday, March 29, 2020 11:34 PM
-> > 
-> > Hi,
-> > 
-> > On 3/28/20 11:01 AM, Tian, Kevin wrote:  
-> > >> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > >> Sent: Saturday, March 21, 2020 7:28 AM
-> > >>
-> > >> When Shared Virtual Address (SVA) is enabled for a guest OS via
-> > >> vIOMMU, we need to provide invalidation support at IOMMU API
-> > >> and  
-> > driver  
-> > >> level. This patch adds Intel VT-d specific function to implement
-> > >> iommu passdown invalidate API for shared virtual address.
-> > >>
-> > >> The use case is for supporting caching structure invalidation
-> > >> of assigned SVM capable devices. Emulated IOMMU exposes queue  
->  [...]  
->  [...]  
-> > to  
-> > >> + * VT-d granularity. Invalidation is typically included in the
-> > >> unmap  
-> > operation  
-> > >> + * as a result of DMA or VFIO unmap. However, for assigned
-> > >> devices  
-> > guest  
-> > >> + * owns the first level page tables. Invalidations of
-> > >> translation caches in  
-> > the  
->  [...]  
->  [...]  
->  [...]  
-> > inv_type_granu_map[IOMMU_CACHE_INV_TYPE_NR][IOMMU_INV_GRANU_  
-> > >> NR] = {
-> > >> +	/*
-> > >> +	 * PASID based IOTLB invalidation: PASID selective (per
-> > >> PASID),
-> > >> +	 * page selective (address granularity)
-> > >> +	 */
-> > >> +	{0, 1, 1},
-> > >> +	/* PASID based dev TLBs, only support all PASIDs or
-> > >> single PASID */
-> > >> +	{1, 1, 0},  
-> > >
-> > > Is this combination correct? when single PASID is being
-> > > specified, it is essentially a page-selective invalidation since
-> > > you need provide Address and Size.  
-> > Isn't it the same when G=1? Still the addr/size is used. Doesn't
-> > it  
+On Tue, Mar 24, 2020 at 08:43:21PM +0300, Sergey.Semin@baikalelectronics.ru wrote:
+> From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 > 
-> I thought addr/size is not used when G=1, but it might be wrong. I'm
-> checking with our vt-d spec owner.
+> Modern device tree bindings are supposed to be created as YAML-files
+> in accordance with DT schema. This commit replaces MIPS GIC legacy bare
+> text binding with YAML file. As before the binding file states that the
+> corresponding dts node is supposed to be compatible with MIPS Global
+> Interrupt Controller indicated by the "mti,gic" compatible string and
+> to provide a mandatory interrupt-controller and '#interrupt-cells'
+> properties. There might be optional registers memory range,
+> "mti,reserved-cpu-vectors" and "mti,reserved-ipi-vectors" properties
+> specified.
 > 
-
-> > correspond to IOMMU_INV_GRANU_ADDR with
-> > IOMMU_INV_ADDR_FLAGS_PASID flag
-> > unset?
-> > 
-> > so {0, 0, 1}?  
+> MIPS GIC also includes a free-running global timer, per-CPU count/compare
+> timers, and a watchdog. Since currently the GIC Timer is only supported the
+> DT schema expects an IRQ and clock-phandler charged timer sub-node with
+> "mti,mips-gic-timer" compatible string.
 > 
-I am not sure I got your logic. The three fields correspond to 
-	IOMMU_INV_GRANU_DOMAIN,	/* domain-selective invalidation */
-	IOMMU_INV_GRANU_PASID,	/* PASID-selective invalidation */
-	IOMMU_INV_GRANU_ADDR,	/* page-selective invalidation *
-
-For devTLB, we use domain as global since there is no domain. Then I
-came up with {1, 1, 0}, which means we could have global and pasid
-granu invalidation for PASID based devTLB.
-
-If the caller also provide addr and S bit, the flush routine will put
-that into QI descriptor. I know this is a little odd, but from the
-granu translation p.o.v. VT-d spec has no G bit for page selective
-invalidation.
-
-> I have one more open:
+> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Cc: Paul Burton <paulburton@kernel.org>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-rtc@vger.kernel.org
 > 
-> How does userspace know which invalidation type/gran is supported?
-> I didn't see such capability reporting in Yi's VFIO vSVA patch set.
-> Do we want the user/kernel assume the same capability set if they are 
-> architectural? However the kernel could also do some optimization
-> e.g. hide devtlb invalidation capability given that the kernel
-> already invalidate devtlb automatically when serving iotlb
-> invalidation...
+> ---
 > 
-In general, we are trending to use VFIO capability chain to expose iommu
-capabilities.
-
-But for architectural features such as type/granu, we have to assume
-the same capability between host & guest. Granu and types are not
-enumerated on the host IOMMU either.
-
-For devTLB optimization, I agree we need to expose a capability to
-the guest stating that implicit devtlb invalidation is supported.
-Otherwise, if Linux guest runs on other OSes may not support implicit
-devtlb invalidation.
-
-Right Yi?
-
-> Thanks
-> Kevin
+> I don't really know who is the corresponding driver maintainer, so I
+> added to the maintainers schema Paul since he used to be looking for the
+> MIPS arch and Thomas looking after it now. Any idea what email should be
+> specified there instead?
 > 
-> > 
-> > Thanks
-> > 
-> > Eric
-> >   
-> > >  
-> > >> +	/* PASID cache */  
-> > >
-> > > PASID cache is fully managed by the host. Guest PASID cache
-> > > invalidation is interpreted by vIOMMU for bind and unbind
-> > > operations. I don't think we should accept any PASID cache
-> > > invalidation from userspace or guest. 
->  [...]  
-> > inv_type_granu_table[IOMMU_CACHE_INV_TYPE_NR][IOMMU_INV_GRANU  
->  [...]  
-> > >
-> > > btw do we really need both map and table here? Can't we just
-> > > use one table with unsupported granularity marked as a special
-> > > value?
-> > >  
->  [...]  
-> > >
-> > > -ENOTSUPP?
-> > >  
->  [...]  
-> > >
-> > > granularity == IOMMU_INV_GRANU_ADDR? otherwise it's unclear
-> > > why IOMMU_INV_GRANU_DOMAIN also needs size check.
-> > >  
->  [...]  
-> > >>> addr_info.addr),  
->  [...]  
->  [...]  
-> > >> +			if (info->ats_enabled) {
-> > >> +				qi_flush_dev_iotlb_pasid(iommu,
-> > >> sid, info-  
-> > >>> pfsid,  
->  [...]  
-> > >>> pfsid,  
-> > >> +
-> > >> inv_info->addr_info.pasid, info->ats_qdep,
-> > >> +
-> > >> inv_info->addr_info.addr, size,
-> > >> +						granu);  
->  [...]  
->  [...]  
-> > >>> pasid_info.pasid);  
-> > >> +  
-> > >
-> > > as earlier comment, we shouldn't allow userspace or guest to
-> > > invalidate PASID cache
-> > >  
->  [...]  
-> > >  
+> Similarly to the previous patch the "oneOf: - required: ..." pattern isn't
+> working here. Supposedly due to the script' dtschema/lib.py
+> interrupts/interrupts-extended fixup.
+> ---
+>  .../interrupt-controller/mips-gic.txt         |  67 --------
+>  .../interrupt-controller/mti,gic.yaml         | 152 ++++++++++++++++++
+>  2 files changed, 152 insertions(+), 67 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/mips-gic.txt
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/mti,gic.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/mips-gic.txt b/Documentation/devicetree/bindings/interrupt-controller/mips-gic.txt
+> deleted file mode 100644
+> index 173595305e26..000000000000
+> --- a/Documentation/devicetree/bindings/interrupt-controller/mips-gic.txt
+> +++ /dev/null
+> @@ -1,67 +0,0 @@
+> -MIPS Global Interrupt Controller (GIC)
+> -
+> -The MIPS GIC routes external interrupts to individual VPEs and IRQ pins.
+> -It also supports local (per-processor) interrupts and software-generated
+> -interrupts which can be used as IPIs.  The GIC also includes a free-running
+> -global timer, per-CPU count/compare timers, and a watchdog.
+> -
+> -Required properties:
+> -- compatible : Should be "mti,gic".
+> -- interrupt-controller : Identifies the node as an interrupt controller
+> -- #interrupt-cells : Specifies the number of cells needed to encode an
+> -  interrupt specifier.  Should be 3.
+> -  - The first cell is the type of interrupt, local or shared.
+> -    See <include/dt-bindings/interrupt-controller/mips-gic.h>.
+> -  - The second cell is the GIC interrupt number.
+> -  - The third cell encodes the interrupt flags.
+> -    See <include/dt-bindings/interrupt-controller/irq.h> for a list of valid
+> -    flags.
+> -
+> -Optional properties:
+> -- reg : Base address and length of the GIC registers.  If not present,
+> -  the base address reported by the hardware GCR_GIC_BASE will be used.
+> -- mti,reserved-cpu-vectors : Specifies the list of CPU interrupt vectors
+> -  to which the GIC may not route interrupts.  Valid values are 2 - 7.
+> -  This property is ignored if the CPU is started in EIC mode.
+> -- mti,reserved-ipi-vectors : Specifies the range of GIC interrupts that are
+> -  reserved for IPIs.
+> -  It accepts 2 values, the 1st is the starting interrupt and the 2nd is the size
+> -  of the reserved range.
+> -  If not specified, the driver will allocate the last 2 * number of VPEs in the
+> -  system.
+> -
+> -Required properties for timer sub-node:
+> -- compatible : Should be "mti,gic-timer".
+> -- interrupts : Interrupt for the GIC local timer.
+> -
+> -Optional properties for timer sub-node:
+> -- clocks : GIC timer operating clock.
+> -- clock-frequency : Clock frequency at which the GIC timers operate.
+> -
+> -Note that one of clocks or clock-frequency must be specified.
+> -
+> -Example:
+> -
+> -	gic: interrupt-controller@1bdc0000 {
+> -		compatible = "mti,gic";
+> -		reg = <0x1bdc0000 0x20000>;
+> -
+> -		interrupt-controller;
+> -		#interrupt-cells = <3>;
+> -
+> -		mti,reserved-cpu-vectors = <7>;
+> -		mti,reserved-ipi-vectors = <40 8>;
+> -
+> -		timer {
+> -			compatible = "mti,gic-timer";
+> -			interrupts = <GIC_LOCAL 1 IRQ_TYPE_NONE>;
+> -			clock-frequency = <50000000>;
+> -		};
+> -	};
+> -
+> -	uart@18101400 {
+> -		...
+> -		interrupt-parent = <&gic>;
+> -		interrupts = <GIC_SHARED 24 IRQ_TYPE_LEVEL_HIGH>;
+> -		...
+> -	};
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/mti,gic.yaml b/Documentation/devicetree/bindings/interrupt-controller/mti,gic.yaml
+> new file mode 100644
+> index 000000000000..1e47c0cdc231
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/mti,gic.yaml
+> @@ -0,0 +1,152 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 
-[Jacob Pan]
+Do you have rights to add BSD?
+
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interrupt-controller/mti,gic.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MIPS Global Interrupt Controller
+> +
+> +maintainers:
+> +  - Paul Burton <paulburton@kernel.org>
+> +  - Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> +
+> +description: |
+> +  The MIPS GIC routes external interrupts to individual VPEs and IRQ pins.
+> +  It also supports local (per-processor) interrupts and software-generated
+> +  interrupts which can be used as IPIs. The GIC also includes a free-running
+> +  global timer, per-CPU count/compare timers, and a watchdog.
+> +
+> +allOf:
+> +  - $ref: /schemas/interrupt-controller.yaml#
+
+Drop this.
+
+> +
+> +properties:
+> +  compatible:
+> +    const: mti,gic
+> +
+> +  "#interrupt-cells":
+> +    const: 3
+> +    description: |
+> +      The 1st cell is the type of interrupt: local or shared defined in the
+> +      file 'dt-bindings/interrupt-controller/mips-gic.h'. The 2nd cell is the
+> +      GIC interrupt number. The 3d cell encodes the interrupt flags setting up
+> +      the IRQ trigger modes, which are defined in the file
+> +      'dt-bindings/interrupt-controller/irq.h'.
+> +
+> +  reg:
+> +    description: |
+> +      Base address and length of the GIC registers space. If not present,
+> +      the base address reported by the hardware GCR_GIC_BASE will be used.
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
+> +
+> +  mti,reserved-cpu-vectors:
+> +    description: |
+> +      Specifies the list of CPU interrupt vectors to which the GIC may not
+> +      route interrupts. This property is ignored if the CPU is started in EIC
+> +      mode.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#definitions/uint32-array
+> +      - minItems: 1
+> +        maxItems: 6
+> +        uniqueItems: true
+> +        items:
+> +          minimum: 2
+> +          maximum: 7
+> +
+> +  mti,reserved-ipi-vectors:
+> +    description: |
+> +      Specifies the range of GIC interrupts that are reserved for IPIs.
+> +      It accepts two values: the 1st is the starting interrupt and the 2nd is
+> +      the size of the reserved range. If not specified, the driver will
+> +      allocate the last (2 * number of VPEs in the system).
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#definitions/uint32-array
+> +      - items:
+> +          - minimum: 0
+> +            maximum: 254
+> +          - minimum: 2
+> +            maximum: 254
+> +
+> +patternProperties:
+> +  "^timer(@[0-9a-f]+)?$":
+
+If you have an unit-address, then there should be a 'reg' property.
+
+Seems like this can be just 'timer'?
+
+> +    type: object
+> +    description: |
+> +      MIPS GIC includes a free-running global timer, per-CPU count/compare
+> +      timers, and a watchdog. Currently only the GIC Timer is supported.
+> +    properties:
+> +      compatible:
+> +        const: mti,gic-timer
+> +
+> +      interrupts:
+> +        description: |
+> +          Interrupt for the GIC local timer, so normally it's suppose to be of
+> +          <GIC_LOCAL X IRQ_TYPE_NONE> format.
+> +        maxItems: 1
+> +
+> +      clocks:
+> +        maxItems: 1
+> +
+> +      clock-frequency: true
+> +
+> +    required:
+> +      - compatible
+> +      - interrupts
+> +
+> +    oneOf:
+> +      - required:
+> +          - clocks
+> +      - required:
+> +          - clock-frequency
+> +
+> +    additionalProperties: false
+> +
+> +unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - "#interrupt-cells"
+> +  - interrupt-controller
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/mips-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    interrupt-controller@1bdc0000 {
+> +      compatible = "mti,gic";
+> +      reg = <0x1bdc0000 0x20000>;
+> +      interrupt-controller;
+> +      #interrupt-cells = <3>;
+> +      mti,reserved-cpu-vectors = <7>;
+> +      mti,reserved-ipi-vectors = <40 8>;
+> +
+> +      timer {
+> +        compatible = "mti,gic-timer";
+> +        interrupts = <GIC_LOCAL 1 IRQ_TYPE_NONE>;
+> +        clock-frequency = <50000000>;
+> +      };
+> +    };
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/mips-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    interrupt-controller@1bdc0000 {
+> +      compatible = "mti,gic";
+> +      reg = <0x1bdc0000 0x20000>;
+> +      interrupt-controller;
+> +      #interrupt-cells = <3>;
+> +
+> +      timer {
+> +        compatible = "mti,gic-timer";
+> +        interrupts = <GIC_LOCAL 1 IRQ_TYPE_NONE>;
+> +        clocks = <&cpu_pll>;
+> +      };
+> +    };
+> +  - |
+> +    interrupt-controller {
+> +      compatible = "mti,gic";
+> +      interrupt-controller;
+> +      #interrupt-cells = <3>;
+> +    };
+> +...
+> -- 
+> 2.25.1
+> 
