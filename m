@@ -2,761 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 307C71992BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78BEB199265
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730389AbgCaJ4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:56:01 -0400
-Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:51616 "EHLO
-        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730217AbgCaJ4B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:56:01 -0400
-X-Greylist: delayed 906 seconds by postgrey-1.27 at vger.kernel.org; Tue, 31 Mar 2020 05:56:00 EDT
-Received: from zxbjmbx2.zhaoxin.com (10.29.252.164) by ZXSHCAS1.zhaoxin.com
- (10.28.252.161) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Tue, 31 Mar
- 2020 17:40:50 +0800
-Received: from zx.zhaoxin.com (10.28.64.103) by zxbjmbx2.zhaoxin.com
- (10.29.252.164) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Tue, 31 Mar
- 2020 17:40:48 +0800
-From:   CodyYao-oc <CodyYao-oc@zhaoxin.com>
-To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-        <jolsa@redhat.com>, <namhyung@kernel.org>, <tglx@linutronix.de>,
-        <bp@alien8.de>, <hpa@zytor.com>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <cooperyan@zhaoxin.com>, CodyYao-oc <CodyYao-oc@zhaoxin.com>
-Subject: [PATCH] x86/perf: Add hardware performance events support for Zhaoxin CPU.
-Date:   Tue, 31 Mar 2020 17:39:59 +0800
-Message-ID: <1585647599-6649-1-git-send-email-CodyYao-oc@zhaoxin.com>
-X-Mailer: git-send-email 2.7.4
+        id S1730354AbgCaJkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:40:10 -0400
+Received: from mga09.intel.com ([134.134.136.24]:36429 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726299AbgCaJkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:40:10 -0400
+IronPort-SDR: vziNsvFGTfVXPx+WIwzGbDk6cUbcFS43RlBd3SaOhq3/lOdOdfz2q6k75GNcsoQnuJISp1DEMG
+ 62Ty2xuhaoMg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 02:40:09 -0700
+IronPort-SDR: NV4vtGG2cHQlGyBNpSiLKZ0Wj94HO1cL1O0pwIRnhg3rDnSVFO1xzzgkDgG+OhVV6g+ifBkhXE
+ 5qsKRoScH/gg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
+   d="scan'208";a="252181517"
+Received: from nntpdsd52-183.inn.intel.com ([10.125.52.183])
+  by orsmga006.jf.intel.com with ESMTP; 31 Mar 2020 02:40:05 -0700
+From:   roman.sudarikov@linux.intel.com
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, eranian@google.com,
+        bgregg@netflix.com, ak@linux.intel.com, kan.liang@linux.intel.com
+Cc:     alexander.antonov@intel.com, roman.sudarikov@linux.intel.com
+Subject: [PATCH v9 0/3] perf x86: Exposing IO stack to IO PMON mapping through sysfs
+Date:   Tue, 31 Mar 2020 12:40:01 +0300
+Message-Id: <20200331094004.45849-1-roman.sudarikov@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.28.64.103]
-X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
- zxbjmbx2.zhaoxin.com (10.29.252.164)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zhaoxin CPU has provided facilities for monitoring performance
-via PMU(Performance Monitor Unit), but the functionality is unused so far.
-Therefore, add support for zhaoxin pmu to make performance related
-hardware events available.
+From: Roman Sudarikov <roman.sudarikov@linux.intel.com>
 
-Signed-off-by: CodyYao-oc <CodyYao-oc@zhaoxin.com>
----
- arch/x86/events/Makefile               |   2 +
- arch/x86/events/core.c                 |   4 +
- arch/x86/events/perf_event.h           |   9 +
- arch/x86/events/zhaoxin/Makefile       |   2 +
- arch/x86/events/zhaoxin/core.c         | 618 +++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/perfctr-watchdog.c |   6 +
- 6 files changed, 641 insertions(+)
- create mode 100644 arch/x86/events/zhaoxin/Makefile
- create mode 100644 arch/x86/events/zhaoxin/core.c
+The previous version can be found at:
+v8: https://lkml.kernel.org/r/20200320073110.4761-1-roman.sudarikov@linux.intel.com/
+Changes in this revision are:
+v8 -> v9:
+- Addressed comments from Alexander Shishkin:
+  1. Improved comments and commit messages
+  2. Replacing "0444" with the S_IRUGO results in the following checkpatch
+     warning: "Symbolic permissions 'S_IRUGO' are not preferred. Consider using
+     octal permissions '0444'". Thus keeping 0444 for now.
+     Also see: https://lkml.org/lkml/2016/8/2/1945
 
-diff --git a/arch/x86/events/Makefile b/arch/x86/events/Makefile
-index 9e07f55..6f1d1fd 100644
---- a/arch/x86/events/Makefile
-+++ b/arch/x86/events/Makefile
-@@ -3,3 +3,5 @@ obj-y					+= core.o probe.o
- obj-y					+= amd/
- obj-$(CONFIG_X86_LOCAL_APIC)            += msr.o
- obj-$(CONFIG_CPU_SUP_INTEL)		+= intel/
-+obj-$(CONFIG_CPU_SUP_CENTAUR)		+= zhaoxin/
-+obj-$(CONFIG_CPU_SUP_ZHAOXIN)		+= zhaoxin/
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 3bb738f..e76048e 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1839,6 +1839,10 @@ static int __init init_hw_perf_events(void)
- 		err = amd_pmu_init();
- 		x86_pmu.name = "HYGON";
- 		break;
-+	case X86_VENDOR_ZHAOXIN:
-+	case X86_VENDOR_CENTAUR:
-+		err = zhaoxin_pmu_init();
-+		break;
- 	default:
- 		err = -ENOTSUPP;
- 	}
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index f1cd1ca..f6bbdca 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -1133,3 +1133,12 @@ static inline int is_ht_workaround_enabled(void)
- 	return 0;
- }
- #endif /* CONFIG_CPU_SUP_INTEL */
-+
-+#if ((defined CONFIG_CPU_SUP_CENTAUR) || (defined CONFIG_CPU_SUP_ZHAOXIN))
-+int zhaoxin_pmu_init(void);
-+#else
-+static inline int zhaoxin_pmu_init(void)
-+{
-+	return 0;
-+}
-+#endif /*CONFIG_CPU_SUP_CENTAUR or CONFIG_CPU_SUP_ZHAOXIN*/
-diff --git a/arch/x86/events/zhaoxin/Makefile b/arch/x86/events/zhaoxin/Makefile
-new file mode 100644
-index 0000000..642c1174
---- /dev/null
-+++ b/arch/x86/events/zhaoxin/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-y	+= core.o
-diff --git a/arch/x86/events/zhaoxin/core.c b/arch/x86/events/zhaoxin/core.c
-new file mode 100644
-index 0000000..442251a
---- /dev/null
-+++ b/arch/x86/events/zhaoxin/core.c
-@@ -0,0 +1,618 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Per cpu state
-+ *
-+ * Used to coordinate shared registers among events on a single PMU.
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/stddef.h>
-+#include <linux/types.h>
-+#include <linux/init.h>
-+#include <linux/slab.h>
-+#include <linux/export.h>
-+#include <linux/nmi.h>
-+
-+#include <asm/cpufeature.h>
-+#include <asm/hardirq.h>
-+#include <asm/apic.h>
-+
-+#include "../perf_event.h"
-+
-+/*
-+ * Zhaoxin PerfMon, used on zxc and later.
-+ */
-+static u64 zx_pmon_event_map[PERF_COUNT_HW_MAX] __read_mostly = {
-+
-+	[PERF_COUNT_HW_CPU_CYCLES]        = 0x0082,
-+	[PERF_COUNT_HW_INSTRUCTIONS]      = 0x00c0,
-+	[PERF_COUNT_HW_CACHE_REFERENCES]  = 0x0515,
-+	[PERF_COUNT_HW_CACHE_MISSES]      = 0x051a,
-+	[PERF_COUNT_HW_BUS_CYCLES]        = 0x0083,
-+};
-+
-+static struct event_constraint zxc_event_constraints[] __read_mostly = {
-+
-+	FIXED_EVENT_CONSTRAINT(0x0082, 1), /* unhalted core clock cycles */
-+	EVENT_CONSTRAINT_END
-+};
-+
-+static struct event_constraint zxd_event_constraints[] __read_mostly = {
-+
-+	FIXED_EVENT_CONSTRAINT(0x00c0, 0), /* retired instructions */
-+	FIXED_EVENT_CONSTRAINT(0x0082, 1), /* unhalted core clock cycles */
-+	FIXED_EVENT_CONSTRAINT(0x0083, 2), /* unhalted bus clock cycles */
-+	EVENT_CONSTRAINT_END
-+};
-+
-+static __initconst const u64 zxd_hw_cache_event_ids
-+				[PERF_COUNT_HW_CACHE_MAX]
-+				[PERF_COUNT_HW_CACHE_OP_MAX]
-+				[PERF_COUNT_HW_CACHE_RESULT_MAX] = {
-+[C(L1D)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = 0x0042,
-+		[C(RESULT_MISS)] = 0x0538,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = 0x0043,
-+		[C(RESULT_MISS)] = 0x0562,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+},
-+[C(L1I)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = 0x0300,
-+		[C(RESULT_MISS)] = 0x0301,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = 0x030a,
-+		[C(RESULT_MISS)] = 0x030b,
-+	},
-+},
-+[C(LL)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+},
-+[C(DTLB)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = 0x0042,
-+		[C(RESULT_MISS)] = 0x052c,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = 0x0043,
-+		[C(RESULT_MISS)] = 0x0530,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = 0x0564,
-+		[C(RESULT_MISS)] = 0x0565,
-+	},
-+},
-+[C(ITLB)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = 0x00c0,
-+		[C(RESULT_MISS)] = 0x0534,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+},
-+[C(BPU)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = 0x0700,
-+		[C(RESULT_MISS)] = 0x0709,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+},
-+[C(NODE)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+},
-+};
-+
-+static __initconst const u64 zxe_hw_cache_event_ids
-+				[PERF_COUNT_HW_CACHE_MAX]
-+				[PERF_COUNT_HW_CACHE_OP_MAX]
-+				[PERF_COUNT_HW_CACHE_RESULT_MAX] = {
-+[C(L1D)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = 0x0568,
-+		[C(RESULT_MISS)] = 0x054b,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = 0x0669,
-+		[C(RESULT_MISS)] = 0x0562,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+},
-+[C(L1I)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = 0x0300,
-+		[C(RESULT_MISS)] = 0x0301,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = 0x030a,
-+		[C(RESULT_MISS)] = 0x030b,
-+	},
-+},
-+[C(LL)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = 0x0,
-+		[C(RESULT_MISS)] = 0x0,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = 0x0,
-+		[C(RESULT_MISS)] = 0x0,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = 0x0,
-+		[C(RESULT_MISS)] = 0x0,
-+	},
-+},
-+[C(DTLB)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = 0x0568,
-+		[C(RESULT_MISS)] = 0x052c,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = 0x0669,
-+		[C(RESULT_MISS)] = 0x0530,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = 0x0564,
-+		[C(RESULT_MISS)] = 0x0565,
-+	},
-+},
-+[C(ITLB)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = 0x00c0,
-+		[C(RESULT_MISS)] = 0x0534,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+},
-+[C(BPU)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = 0x0028,
-+		[C(RESULT_MISS)] = 0x0029,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+},
-+[C(NODE)] = {
-+	[C(OP_READ)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_WRITE)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+	[C(OP_PREFETCH)] = {
-+		[C(RESULT_ACCESS)] = -1,
-+		[C(RESULT_MISS)] = -1,
-+	},
-+},
-+};
-+
-+static void zhaoxin_pmu_disable_all(void)
-+{
-+	wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL, 0);
-+}
-+
-+static void zhaoxin_pmu_enable_all(int added)
-+{
-+	wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL, x86_pmu.intel_ctrl);
-+}
-+
-+static inline u64 zhaoxin_pmu_get_status(void)
-+{
-+	u64 status;
-+
-+	rdmsrl(MSR_CORE_PERF_GLOBAL_STATUS, status);
-+
-+	return status;
-+}
-+
-+static inline void zhaoxin_pmu_ack_status(u64 ack)
-+{
-+	wrmsrl(MSR_CORE_PERF_GLOBAL_OVF_CTRL, ack);
-+}
-+
-+static void zhaoxin_pmu_disable_fixed(struct hw_perf_event *hwc)
-+{
-+	int idx = hwc->idx - INTEL_PMC_IDX_FIXED;
-+	u64 ctrl_val, mask;
-+
-+	mask = 0xfULL << (idx * 4);
-+
-+	rdmsrl(hwc->config_base, ctrl_val);
-+	ctrl_val &= ~mask;
-+	wrmsrl(hwc->config_base, ctrl_val);
-+}
-+
-+static void zhaoxin_pmu_disable_event(struct perf_event *event)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	if (unlikely(hwc->config_base == MSR_ARCH_PERFMON_FIXED_CTR_CTRL)) {
-+		zhaoxin_pmu_disable_fixed(hwc);
-+		return;
-+	}
-+
-+	x86_pmu_disable_event(event);
-+}
-+
-+static void zhaoxin_pmu_enable_fixed(struct hw_perf_event *hwc)
-+{
-+	int idx = hwc->idx - INTEL_PMC_IDX_FIXED;
-+	u64 ctrl_val, bits, mask;
-+
-+	/*
-+	 * Enable IRQ generation (0x8),
-+	 * and enable ring-3 counting (0x2) and ring-0 counting (0x1)
-+	 * if requested:
-+	 */
-+	bits = 0x8ULL;
-+	if (hwc->config & ARCH_PERFMON_EVENTSEL_USR)
-+		bits |= 0x2;
-+	if (hwc->config & ARCH_PERFMON_EVENTSEL_OS)
-+		bits |= 0x1;
-+
-+	bits <<= (idx * 4);
-+	mask = 0xfULL << (idx * 4);
-+
-+	rdmsrl(hwc->config_base, ctrl_val);
-+	ctrl_val &= ~mask;
-+	ctrl_val |= bits;
-+	wrmsrl(hwc->config_base, ctrl_val);
-+}
-+
-+static void zhaoxin_pmu_enable_event(struct perf_event *event)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
-+
-+	if (unlikely(hwc->config_base == MSR_ARCH_PERFMON_FIXED_CTR_CTRL)) {
-+		zhaoxin_pmu_enable_fixed(hwc);
-+		return;
-+	}
-+
-+	__x86_pmu_enable_event(hwc, ARCH_PERFMON_EVENTSEL_ENABLE);
-+}
-+
-+/*
-+ * This handler is triggered by the local APIC, so the APIC IRQ handling
-+ * rules apply:
-+ */
-+static int zhaoxin_pmu_handle_irq(struct pt_regs *regs)
-+{
-+	struct perf_sample_data data;
-+	struct cpu_hw_events *cpuc;
-+	int bit;
-+	u64 status;
-+	bool is_zxc;
-+	int handled = 0;
-+
-+	cpuc = this_cpu_ptr(&cpu_hw_events);
-+	apic_write(APIC_LVTPC, APIC_DM_NMI);
-+	zhaoxin_pmu_disable_all();
-+	status = zhaoxin_pmu_get_status();
-+	if (!status)
-+		goto done;
-+
-+	if (boot_cpu_data.x86 == 0x06 &&
-+		(boot_cpu_data.x86_model == 0x0f ||
-+			boot_cpu_data.x86_model == 0x19))
-+		is_zxc = true;
-+again:
-+
-+	/*Clearing status works only if the global control is enable on zxc.*/
-+	if (is_zxc)
-+		wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL, x86_pmu.intel_ctrl);
-+
-+	zhaoxin_pmu_ack_status(status);
-+
-+	if (is_zxc)
-+		wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL, 0);
-+
-+	inc_irq_stat(apic_perf_irqs);
-+
-+	/*
-+	 * CondChgd bit 63 doesn't mean any overflow status. Ignore
-+	 * and clear the bit.
-+	 */
-+	if (__test_and_clear_bit(63, (unsigned long *)&status)) {
-+		if (!status)
-+			goto done;
-+	}
-+
-+	for_each_set_bit(bit, (unsigned long *)&status, X86_PMC_IDX_MAX) {
-+		struct perf_event *event = cpuc->events[bit];
-+
-+		handled++;
-+
-+		if (!test_bit(bit, cpuc->active_mask))
-+			continue;
-+
-+		x86_perf_event_update(event);
-+		perf_sample_data_init(&data, 0, event->hw.last_period);
-+
-+		if (!x86_perf_event_set_period(event))
-+			continue;
-+
-+		if (perf_event_overflow(event, &data, regs))
-+			x86_pmu_stop(event, 0);
-+	}
-+
-+	/*
-+	 * Repeat if there is more work to be done:
-+	 */
-+	status = zhaoxin_pmu_get_status();
-+	if (status)
-+		goto again;
-+
-+done:
-+	zhaoxin_pmu_enable_all(0);
-+	return handled;
-+}
-+
-+static u64 zhaoxin_pmu_event_map(int hw_event)
-+{
-+	return zx_pmon_event_map[hw_event];
-+}
-+
-+static struct event_constraint *
-+zhaoxin_get_event_constraints(struct cpu_hw_events *cpuc, int idx,
-+			struct perf_event *event)
-+{
-+	struct event_constraint *c;
-+
-+	if (x86_pmu.event_constraints) {
-+		for_each_event_constraint(c, x86_pmu.event_constraints) {
-+			if ((event->hw.config & c->cmask) == c->code)
-+				return c;
-+		}
-+	}
-+
-+	return &unconstrained;
-+}
-+
-+PMU_FORMAT_ATTR(event,	"config:0-7");
-+PMU_FORMAT_ATTR(umask,	"config:8-15");
-+PMU_FORMAT_ATTR(edge,	"config:18");
-+PMU_FORMAT_ATTR(inv,	"config:23");
-+PMU_FORMAT_ATTR(cmask,	"config:24-31");
-+
-+static struct attribute *zx_arch_formats_attr[] = {
-+	&format_attr_event.attr,
-+	&format_attr_umask.attr,
-+	&format_attr_edge.attr,
-+	&format_attr_inv.attr,
-+	&format_attr_cmask.attr,
-+	NULL,
-+};
-+
-+static ssize_t zhaoxin_event_sysfs_show(char *page, u64 config)
-+{
-+	u64 event = (config & ARCH_PERFMON_EVENTSEL_EVENT);
-+
-+	return x86_event_sysfs_show(page, config, event);
-+}
-+
-+static const struct x86_pmu zhaoxin_pmu __initconst = {
-+	.name			= "zhaoxin",
-+	.handle_irq		= zhaoxin_pmu_handle_irq,
-+	.disable_all		= zhaoxin_pmu_disable_all,
-+	.enable_all		= zhaoxin_pmu_enable_all,
-+	.enable			= zhaoxin_pmu_enable_event,
-+	.disable		= zhaoxin_pmu_disable_event,
-+	.hw_config		= x86_pmu_hw_config,
-+	.schedule_events	= x86_schedule_events,
-+	.eventsel		= MSR_ARCH_PERFMON_EVENTSEL0,
-+	.perfctr		= MSR_ARCH_PERFMON_PERFCTR0,
-+	.event_map		= zhaoxin_pmu_event_map,
-+	.max_events		= ARRAY_SIZE(zx_pmon_event_map),
-+	.apic			= 1,
-+	/*
-+	 * For zxd/zxe, read/write operation for PMCx MSR is 48 bits.
-+	 */
-+	.max_period		= (1ULL << 47) - 1,
-+	.get_event_constraints	= zhaoxin_get_event_constraints,
-+
-+	.format_attrs		= zx_arch_formats_attr,
-+	.events_sysfs_show	= zhaoxin_event_sysfs_show,
-+};
-+
-+static const struct { int id; char *name; } zx_arch_events_map[] __initconst = {
-+	{ PERF_COUNT_HW_CPU_CYCLES, "cpu cycles" },
-+	{ PERF_COUNT_HW_INSTRUCTIONS, "instructions" },
-+	{ PERF_COUNT_HW_BUS_CYCLES, "bus cycles" },
-+	{ PERF_COUNT_HW_CACHE_REFERENCES, "cache references" },
-+	{ PERF_COUNT_HW_CACHE_MISSES, "cache misses" },
-+	{ PERF_COUNT_HW_BRANCH_INSTRUCTIONS, "branch instructions" },
-+	{ PERF_COUNT_HW_BRANCH_MISSES, "branch misses" },
-+};
-+
-+static __init void zhaoxin_arch_events_quirk(void)
-+{
-+	int bit;
-+
-+	/* disable event that reported as not presend by cpuid */
-+	for_each_set_bit(bit, x86_pmu.events_mask,
-+			ARRAY_SIZE(zx_arch_events_map)) {
-+
-+		zx_pmon_event_map[zx_arch_events_map[bit].id] = 0;
-+		pr_warn("CPUID marked event: \'%s\' unavailable\n",
-+				zx_arch_events_map[bit].name);
-+	}
-+}
-+
-+__init int zhaoxin_pmu_init(void)
-+{
-+	union cpuid10_edx edx;
-+	union cpuid10_eax eax;
-+	union cpuid10_ebx ebx;
-+	struct event_constraint *c;
-+	unsigned int unused;
-+	int version;
-+
-+	pr_info("Welcome to zhaoxin pmu!\n");
-+
-+	/*
-+	 * Check whether the Architectural PerfMon supports
-+	 * hw_event or not.
-+	 */
-+	cpuid(10, &eax.full, &ebx.full, &unused, &edx.full);
-+
-+	if (eax.split.mask_length < ARCH_PERFMON_EVENTS_COUNT - 1)
-+		return -ENODEV;
-+
-+	version = eax.split.version_id;
-+	if (version == 2) {
-+		x86_pmu = zhaoxin_pmu;
-+		pr_info("Version check pass!\n");
-+	} else
-+		return -ENODEV;
-+
-+	x86_pmu.version			= version;
-+	x86_pmu.num_counters		= eax.split.num_counters;
-+	x86_pmu.cntval_bits		= eax.split.bit_width;
-+	x86_pmu.cntval_mask		= (1ULL << eax.split.bit_width) - 1;
-+	x86_pmu.events_maskl		= ebx.full;
-+	x86_pmu.events_mask_len		= eax.split.mask_length;
-+
-+	x86_pmu.num_counters_fixed = edx.split.num_counters_fixed;
-+	x86_add_quirk(zhaoxin_arch_events_quirk);
-+
-+	switch (boot_cpu_data.x86) {
-+	case 0x06:
-+		if (boot_cpu_data.x86_model == 0x0f ||
-+			boot_cpu_data.x86_model == 0x19) {
-+
-+			x86_pmu.max_period = x86_pmu.cntval_mask >> 1;
-+
-+			x86_pmu.event_constraints = zxc_event_constraints;
-+			zx_pmon_event_map[PERF_COUNT_HW_INSTRUCTIONS] = 0;
-+			zx_pmon_event_map[PERF_COUNT_HW_CACHE_REFERENCES] = 0;
-+			zx_pmon_event_map[PERF_COUNT_HW_CACHE_MISSES] = 0;
-+			zx_pmon_event_map[PERF_COUNT_HW_BUS_CYCLES] = 0;
-+
-+			pr_cont("ZXC events, ");
-+		} else
-+			return -ENODEV;
-+		break;
-+	case 0x07:
-+		zx_pmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
-+		X86_CONFIG(.event = 0x01, .umask = 0x01, .inv = 0x01, .cmask = 0x01);
-+
-+		zx_pmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_BACKEND] =
-+		X86_CONFIG(.event = 0x0f, .umask = 0x04, .inv = 0, .cmask = 0);
-+
-+		switch (boot_cpu_data.x86_model) {
-+		case 0x1b:
-+			memcpy(hw_cache_event_ids, zxd_hw_cache_event_ids,
-+				sizeof(hw_cache_event_ids));
-+
-+			x86_pmu.event_constraints = zxd_event_constraints;
-+
-+			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_INSTRUCTIONS]
-+				= 0x0700;
-+			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_MISSES]
-+				= 0x0709;
-+
-+			pr_cont("ZXD events, ");
-+			break;
-+		case 0x3b:
-+			memcpy(hw_cache_event_ids, zxe_hw_cache_event_ids,
-+				sizeof(hw_cache_event_ids));
-+
-+			x86_pmu.event_constraints = zxd_event_constraints;
-+
-+			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_INSTRUCTIONS]
-+				= 0x0028;
-+			zx_pmon_event_map[PERF_COUNT_HW_BRANCH_MISSES]
-+				= 0x0029;
-+
-+			pr_cont("ZXE events, ");
-+			break;
-+		default:
-+			return -ENODEV;
-+		}
-+		break;
-+	default:
-+		return -ENODEV;
-+	}
-+
-+	x86_pmu.intel_ctrl = (1 << (x86_pmu.num_counters)) - 1;
-+	x86_pmu.intel_ctrl |=
-+		((1LL << x86_pmu.num_counters_fixed)-1) << INTEL_PMC_IDX_FIXED;
-+
-+	if (x86_pmu.event_constraints) {
-+		for_each_event_constraint(c, x86_pmu.event_constraints) {
-+			c->idxmsk64 |= (1ULL << x86_pmu.num_counters) - 1;
-+			c->weight += x86_pmu.num_counters;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-diff --git a/arch/x86/kernel/cpu/perfctr-watchdog.c b/arch/x86/kernel/cpu/perfctr-watchdog.c
-index 9556930..63a5828 100644
---- a/arch/x86/kernel/cpu/perfctr-watchdog.c
-+++ b/arch/x86/kernel/cpu/perfctr-watchdog.c
-@@ -63,6 +63,9 @@ static inline unsigned int nmi_perfctr_msr_to_bit(unsigned int msr)
- 		case 15:
- 			return msr - MSR_P4_BPU_PERFCTR0;
- 		}
-+	case X86_VENDOR_ZHAOXIN:
-+	case X86_VENDOR_CENTAUR:
-+		return msr - MSR_ARCH_PERFMON_PERFCTR0;
- 	}
- 	return 0;
- }
-@@ -92,6 +95,9 @@ static inline unsigned int nmi_evntsel_msr_to_bit(unsigned int msr)
- 		case 15:
- 			return msr - MSR_P4_BSU_ESCR0;
- 		}
-+	case X86_VENDOR_ZHAOXIN:
-+	case X86_VENDOR_CENTAUR:
-+		return msr - MSR_ARCH_PERFMON_EVENTSEL0;
- 	}
- 	return 0;
- 
+The previous version can be found at:
+v7: https://lkml.kernel.org/r/20200303135418.9621-1-roman.sudarikov@linux.intel.com/
+Changes in this revision are:
+v7 -> v8:
+- Addressed comments from Kan Liang:
+  1. Fixed coding style issues (gotos in error path, comments style)
+
+The previous version can be found at:
+v6: https://lkml.kernel.org/r/20200213150148.5627-1-roman.sudarikov@linux.intel.com/
+
+Changes in this revision are:
+v6 -> v7:
+- Addressed comments from Greg Kroah-Hartman:
+  1. Added proper handling of load/unload path
+  2. Simplified the mapping attribute show procedure by using the segment value
+     of the first available root bus for all mapping attributes which is safe
+     due to current implementation supports single segment configuration only
+  3. Fixed coding style issues (extra lines, gotos in error path, macros etc)
+
+The previous version can be found at:
+v5: https://lkml.kernel.org/r/20200211161549.19828-1-roman.sudarikov@linux.intel.com/
+
+Changes in this revision are:
+v5 -> v6:
+  1. Changed the mapping attribute name to "dieX"
+  2. Called sysfs_attr_init() prior to dynamically creating the mapping attrs
+  3. Removed redundant "empty" attribute
+  4. Got an agreement on the mapping attribute format
+
+The previous version can be found at:
+v4: https://lkml.kernel.org/r/20200117133759.5729-1-roman.sudarikov@linux.intel.com/
+
+Changes in this revision are:
+v4 -> v5:
+- Addressed comments from Greg Kroah-Hartman:
+  1. Using the attr_update flow for newly introduced optional attributes
+  2. No subfolder, optional attributes are created the same level as 'cpumask'
+  3. No symlinks, optional attributes are created as files
+  4. Single file for each IIO PMON block to node mapping
+  5. Added Documentation/ABI/sysfs-devices-mapping
+
+The previous version can be found at:
+v3: https://lkml.kernel.org/r/20200113135444.12027-1-roman.sudarikov@linux.intel.com
+
+Changes in this revision are:
+v3 -> v4:
+- Addressed comments from Greg Kroah-Hartman:
+  1. Reworked handling of newly introduced attribute.
+  2. Required Documentation update is expected in the follow up patchset
+
+
+The previous version can be found at:
+v2: https://lkml.kernel.org/r/20191210091451.6054-1-roman.sudarikov@linux.intel.com
+
+Changes in this revision are:
+v2 -> v3:
+  1. Addressed comments from Peter and Kan
+
+The previous version can be found at:
+v1: https://lkml.kernel.org/r/20191126163630.17300-1-roman.sudarikov@linux.intel.com
+
+Changes in this revision are:
+v1 -> v2:
+  1. Fixed process related issues;
+  2. This patch set includes kernel support for IIO stack to PMON mapping;
+  3. Stephane raised concerns regarding output format which may require
+code changes in the user space part of the feature only. We will continue
+output format discussion in the context of user space update.
+
+Intel® Xeon® Scalable processor family (code name Skylake-SP) makes
+significant changes in the integrated I/O (IIO) architecture. The new
+solution introduces IIO stacks which are responsible for managing traffic
+between the PCIe domain and the Mesh domain. Each IIO stack has its own
+PMON block and can handle either DMI port, x16 PCIe root port, MCP-Link
+or various built-in accelerators. IIO PMON blocks allow concurrent
+monitoring of I/O flows up to 4 x4 bifurcation within each IIO stack.
+
+Software is supposed to program required perf counters within each IIO
+stack and gather performance data. The tricky thing here is that IIO PMON
+reports data per IIO stack but users have no idea what IIO stacks are -
+they only know devices which are connected to the platform.
+
+Understanding IIO stack concept to find which IIO stack that particular
+IO device is connected to, or to identify an IIO PMON block to program
+for monitoring specific IIO stack assumes a lot of implicit knowledge
+about given Intel server platform architecture.
+
+This patch set introduces:
+1. An infrastructure for exposing an Uncore unit to Uncore PMON mapping
+   through sysfs-backend;
+2. A new --iiostat mode in perf stat to provide I/O performance metrics
+   per I/O device.
+
+Usage examples:
+
+1. List all devices below IIO stacks
+  ./perf stat --iiostat=show
+
+Sample output w/o libpci:
+
+    S0-RootPort0-uncore_iio_0<00:00.0>
+    S1-RootPort0-uncore_iio_0<81:00.0>
+    S0-RootPort1-uncore_iio_1<18:00.0>
+    S1-RootPort1-uncore_iio_1<86:00.0>
+    S1-RootPort1-uncore_iio_1<88:00.0>
+    S0-RootPort2-uncore_iio_2<3d:00.0>
+    S1-RootPort2-uncore_iio_2<af:00.0>
+    S1-RootPort3-uncore_iio_3<da:00.0>
+
+Sample output with libpci:
+
+    S0-RootPort0-uncore_iio_0<00:00.0 Sky Lake-E DMI3 Registers>
+    S1-RootPort0-uncore_iio_0<81:00.0 Ethernet Controller X710 for 10GbE SFP+>
+    S0-RootPort1-uncore_iio_1<18:00.0 Omni-Path HFI Silicon 100 Series [discrete]>
+    S1-RootPort1-uncore_iio_1<86:00.0 Ethernet Controller XL710 for 40GbE QSFP+>
+    S1-RootPort1-uncore_iio_1<88:00.0 Ethernet Controller XL710 for 40GbE QSFP+>
+    S0-RootPort2-uncore_iio_2<3d:00.0 Ethernet Connection X722 for 10GBASE-T>
+    S1-RootPort2-uncore_iio_2<af:00.0 Omni-Path HFI Silicon 100 Series [discrete]>
+    S1-RootPort3-uncore_iio_3<da:00.0 NVMe Datacenter SSD [Optane]>
+
+2. Collect metrics for all I/O devices below IIO stack
+
+  ./perf stat --iiostat -- dd if=/dev/zero of=/dev/nvme0n1 bs=1M oflag=direct
+    357708+0 records in
+    357707+0 records out
+    375083606016 bytes (375 GB, 349 GiB) copied, 215.381 s, 1.7 GB/s
+
+  Performance counter stats for 'system wide':
+
+     device             Inbound Read(MB)    Inbound Write(MB)    Outbound Read(MB)   Outbound Write(MB)
+    00:00.0                    0                    0                    0                    0
+    81:00.0                    0                    0                    0                    0
+    18:00.0                    0                    0                    0                    0
+    86:00.0                    0                    0                    0                    0
+    88:00.0                    0                    0                    0                    0
+    3b:00.0                    3                    0                    0                    0
+    3c:03.0                    3                    0                    0                    0
+    3d:00.0                    3                    0                    0                    0
+    af:00.0                    0                    0                    0                    0
+    da:00.0               358559                   44                    0                   22
+
+    215.383783574 seconds time elapsed
+
+
+3. Collect metrics for comma separted list of I/O devices
+
+  ./perf stat --iiostat=da:00.0 -- dd if=/dev/zero of=/dev/nvme0n1 bs=1M oflag=direct
+    381555+0 records in
+    381554+0 records out
+    400088457216 bytes (400 GB, 373 GiB) copied, 374.044 s, 1.1 GB/s
+
+  Performance counter stats for 'system wide':
+
+     device             Inbound Read(MB)    Inbound Write(MB)    Outbound Read(MB)   Outbound Write(MB)
+    da:00.0               382462                   47                    0                   23
+
+    374.045775505 seconds time elapsed
+
+Roman Sudarikov (3):
+  perf/x86/intel/uncore: Expose an Uncore unit to PMON mapping
+  perf/x86/intel/uncore: Wrap the max dies calculation into an accessor
+  perf/x86/intel/uncore: Expose an Uncore unit to IIO PMON mapping
+
+ .../ABI/testing/sysfs-devices-mapping         |  33 +++
+ arch/x86/events/intel/uncore.c                |  21 +-
+ arch/x86/events/intel/uncore.h                |  24 +++
+ arch/x86/events/intel/uncore_snbep.c          | 191 ++++++++++++++++++
+ 4 files changed, 263 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-devices-mapping
+
+
+base-commit: 6c90b86a745a446717fdf408c4a8a4631a5e8ee3
 -- 
-2.7.4
+2.19.1
 
