@@ -2,186 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61562199E1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:35:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FDC5199E25
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:38:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbgCaSfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 14:35:50 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38284 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbgCaSft (ORCPT
+        id S1727768AbgCaSiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 14:38:15 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57965 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726194AbgCaSiO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:35:49 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w3so8439937plz.5
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gpozJM30UMUeBqF42G+Q1xZ6EH+m2FBOCfWDSz6ubV4=;
-        b=gcEdN6MO2lrllAbjavG13EpK8TvOW6tpaKB24cx7orULwToRmZSMqxjy396tUOGQ+h
-         10LrpuwyCCYZEOs8QUkS7TQ0K/AgvOkY96cwBPhTFLnw4pCoti5cU/riIGnePE5V19Uw
-         sFE2z7IkmuCFqWG7vFUxB8o1I+VLgBDB0v2aCl9eo0hVSmFXJGapdRqlE161s10+SovV
-         ry6iDXy1IvZSHlz+esIkAbIJuWGCpaEAerT0ocQ6td+o5fLP0jtKuvO6G7jiA3t15eHw
-         8TRO0rWuzc3v3+dbrn/HWpVDl50/e7LPooiMRGQMNZDumOhrKWf7/3E9vEgK/C7ZlEf8
-         AiQA==
+        Tue, 31 Mar 2020 14:38:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585679892;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DCBEU8xfWPGRP7T0kzGMhyTHNf5Ar1K3myE5Isk/Yus=;
+        b=U2kQIH6QuSGzblMF5xFeKHOCx77Fb/0U+bkfuDRh1d9gVnBJHrr5SoWBrJJzf1pL/X/Qf0
+        14VnvSAJ8bQBJr4yf1U7f/v9I8TZbpooa7lIl6Nhq1M22GSaqVcHaz9We7X52Vq0hcvCVK
+        GSq9vDvVMlKEJfhWPET6EkwR/GkVM4E=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-396-t4dFhyDKO5-xkEsKZKbklg-1; Tue, 31 Mar 2020 14:38:01 -0400
+X-MC-Unique: t4dFhyDKO5-xkEsKZKbklg-1
+Received: by mail-wr1-f69.google.com with SMTP id c8so11455468wru.20
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:38:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=gpozJM30UMUeBqF42G+Q1xZ6EH+m2FBOCfWDSz6ubV4=;
-        b=GpAaxDCZ8JzeEfOpi5dWToeDS64WEBV+ZPTyREmxXfr5ICdhqQr7To61HqYA3xHNy2
-         k33bAEUFully1bxGxIT6v6NliiY/Q6UhnCggrfiV9iP4PauxlS054xFwCVSJXoWIpIrl
-         saEHQLAyVhJps3poLMtjn7qEd7isPxFvryTGrneXjcDxKbkdWSda1wEjOmgVwZPtIxzv
-         PEfhgWwhzd7tihJ6m/lsOuF/Fxhlbs2ZfdgVkWzdQbwU6G9qd/suq9+cUGwdyE/Z9LUF
-         ZfaVV8YD0W05FOyBX+buSiZ0RECJNQeXU9d16fS3isFY5li+Z0khV1CojoC2uck38QTH
-         8NZg==
-X-Gm-Message-State: AGi0Pub+85PRBP2mbWa+HTzktM6rpdyNYTip5iaH9mAgpKrqm70LDlaf
-        MitMcCMRmM4Cxftl6Mrm7SztFdJEI2g=
-X-Google-Smtp-Source: APiQypIoJKj9iSSWlAXJsCa4ODsoSGuSWZLzYZP/8m+Ca7gtEKTwNwqB5O9lzdvIuClsylswo/3BrQ==
-X-Received: by 2002:a17:902:9f95:: with SMTP id g21mr5310159plq.66.1585679747715;
-        Tue, 31 Mar 2020 11:35:47 -0700 (PDT)
-Received: from localhost (c-67-161-15-180.hsd1.ca.comcast.net. [67.161.15.180])
-        by smtp.gmail.com with ESMTPSA id i2sm12765883pfr.203.2020.03.31.11.35.45
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=DCBEU8xfWPGRP7T0kzGMhyTHNf5Ar1K3myE5Isk/Yus=;
+        b=PpjqidbUBAMDq+rW+NjDF4w++crPYn+NaoQFJFn/RDZx/rZEdJNwnpZ8j76WCXkzdz
+         JC8g/ee5cIW9FkhyoQtTrUbb7RS0cMwryKLS6XBqPahUZC+wSMWjvbDsZERCyuZZRo47
+         hIZBUeMxRyLSeD5vywS28Ot0rpGxsxsRnU0U2CLqZjwcHkLtZ75y4tf1+JO9qXTn8veV
+         20xY2uZqqHURbDJqnLb17isrz63Qd1WY4h8zcVbQm8dloOm8Hj+Qg7b6re8I8Q3pzA0a
+         eLsJ5pBIIJkIX0mBKvWip0TZvs4MTQmanZlgsB3NzGdbUWrn6Fp4f6XIaAJn+rp9SARl
+         5YXw==
+X-Gm-Message-State: ANhLgQ3EYMNWs+Lno+LNKbiPF8bLglFQVzY8iKlDp+HbfbC7tjRFnptA
+        lgxAjynARlgtF2dvRXwIKLTfZeqYgtrJg9OKujFW1vXv5pffHu3Bm59oaEI2mTX3N6cZL1TM5rT
+        Mow0DVNrpLZ6b78k0947Kd2pn
+X-Received: by 2002:a5d:470b:: with SMTP id y11mr21278434wrq.282.1585679879820;
+        Tue, 31 Mar 2020 11:37:59 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vv7BkgR0ghsMi1Xgc6DnC2NK7tqfIaM77t9wkjqEFGZ1NVpf3iEEFN2O7dAkJUYQEvEgprBcw==
+X-Received: by 2002:a5d:470b:: with SMTP id y11mr21278415wrq.282.1585679879621;
+        Tue, 31 Mar 2020 11:37:59 -0700 (PDT)
+Received: from redhat.com (bzq-79-176-51-222.red.bezeqint.net. [79.176.51.222])
+        by smtp.gmail.com with ESMTPSA id l17sm28536847wrm.57.2020.03.31.11.37.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 11:35:47 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 11:35:47 -0700 (PDT)
-X-Google-Original-Date: Tue, 31 Mar 2020 11:34:57 PDT (-0700)
-Subject:     Re: [PATCH v11 00/11] Add support for SBI v0.2 and CPU hotplug
-In-Reply-To: <20200318011144.91532-1-atish.patra@wdc.com>
-CC:     linux-kernel@vger.kernel.org, Atish Patra <Atish.Patra@wdc.com>,
-        aou@eecs.berkeley.edu, anup@brainfault.org, gary@garyguo.net,
-        greentime.hu@sifive.com, linux-riscv@lists.infradead.org,
-        han_mao@c-sky.com, rppt@linux.ibm.com, nickhu@andestech.com,
-        Paul Walmsley <paul.walmsley@sifive.com>, tglx@linutronix.de,
-        vincent.chen@sifive.com, zong.li@sifive.com, bmeng.cn@gmail.com
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     Atish Patra <Atish.Patra@wdc.com>
-Message-ID: <mhng-c3553b26-6593-4b77-9531-b8be7668adee@palmerdabbelt-glaptop1>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 31 Mar 2020 11:37:58 -0700 (PDT)
+Date:   Tue, 31 Mar 2020 14:37:56 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        virtualization@lists.linux-foundation.org,
+        Jason Wang <jasowang@redhat.com>
+Subject: Re: mmotm 2020-03-30-18-46 uploaded (VDPA + vhost)
+Message-ID: <20200331143437-mutt-send-email-mst@kernel.org>
+References: <20200331014748.ajL0G62jF%akpm@linux-foundation.org>
+ <969cacf1-d420-223d-7cc7-5b1b2405ec2a@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <969cacf1-d420-223d-7cc7-5b1b2405ec2a@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Mar 2020 18:11:33 PDT (-0700), Atish Patra wrote:
-> The Supervisor Binary Interface(SBI) specification[1] now defines a
-> base extension that provides extendability to add future extensions
-> while maintaining backward compatibility with previous versions.
-> The new version is defined as 0.2 and older version is marked as 0.1.
+On Tue, Mar 31, 2020 at 11:27:54AM -0700, Randy Dunlap wrote:
+> On 3/30/20 6:47 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2020-03-30-18-46 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> > 
+> > You will need quilt to apply these patches to the latest Linus release (5.x
+> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> > http://ozlabs.org/~akpm/mmotm/series
+> > 
+> > The file broken-out.tar.gz contains two datestamp files: .DATE and
+> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> > followed by the base kernel version against which this patch series is to
+> > be applied.
+> > 
+> > This tree is partially included in linux-next.  To see which patches are
+> > included in linux-next, consult the `series' file.  Only the patches
+> > within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+> > linux-next.
+> > 
+> > 
+> > A full copy of the full kernel tree with the linux-next and mmotm patches
+> > already applied is available through git within an hour of the mmotm
+> > release.  Individual mmotm releases are tagged.  The master branch always
+> > points to the latest release, so it's constantly rebasing.
+> > 
+> > 	https://github.com/hnaz/linux-mm
+> 
+> on i386:
+> 
+> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_init':
+> vdpa.c:(.init.text+0x52): undefined reference to `__vdpa_register_driver'
+> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_exit':
+> vdpa.c:(.exit.text+0x14): undefined reference to `vdpa_unregister_driver'
+> 
+> 
+> 
+> drivers/virtio/vdpa/ is not being built. (confusing!)
+> 
+> CONFIG_VIRTIO=m
+> # CONFIG_VIRTIO_MENU is not set
+> CONFIG_VDPA=y
 
-While 0.2 isn't official, I don't think we got any comments on 0.2-rc1 so let's
-just go ahead and release it.  I'm hoping to send my PR at the end of the week,
-I'll be sure to tag 0.2 before then -- things are still a bit of a mess here
-due to the internet issues, but I've got a bunch of networking gear coming this
-week so hopefully it'll get better...
+Hmm. OK. Can't figure it out. CONFIG_VDPA is set why isn't
+drivers/virtio/vdpa/ built?
+we have:
 
-Thanks for this!
 
->
-> This series adds following features to RISC-V Linux.
-> 1. Adds support for SBI v0.2
-> 2. A Unified calling convention implementation between 0.1 and 0.2.
-> 3. SBI Hart state management extension (HSM)
-> 4. Ordered booting of harts
-> 4. CPU hotplug
->
-> Dependencies:
-> The support for SBI v0.2 and HSM extension is already available in OpenSBI
-> master.
->
-> [1] https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc
->
-> The patches are also available in following github repositery.
->
-> Linux Kernel: https://github.com/atishp04/linux/tree/sbi_v0.2_v11
->
-> Patches 1-5 implements the SBI v0.2 and unified calling convention.
-> Patches 6-7 adds a cpu_ops method that allows different booting protocols
-> dynamically.
-> Patches 9-10 adds HSM extension and ordered hart booting support.
-> Patche  11 adds cpu hotplug support.
->
-> Changes v10->v11:
-> 1. Addressed few nitpick comments.
-> 2. Dropped plic patch as it is taken through IRQ tree.
->
-> Changes from v9->10:
-> 1. Minor copyright fixes.
-> 2. Renaming of HSM extension definitions to match the spec.
->
-> Changes from v8->v9:
-> 1. Added a sliding window hart base method to support larger hart masks.
-> 2. Added a callback to disable interrupts when cpu go offline.
-> 3. Made the HSM extension series more modular.
->
-> Changes from v7-v8:
-> 1. Refactored to code to have modular cpu_ops calls.
-> 2. Refactored HSM extension from sbi.c to cpu_ops_sbi.c.
-> 3. Fix plic driver to handle cpu hotplug.
->
-> Changes from v6-v7:
-> 1. Rebased on v5.5
-> 2. Fixed few compilation issues for !CONFIG_SMP and !CONFIG_RISCV_SBI
-> 3. Added SBI HSM extension
-> 4. Add CPU hotplug support
->
-> Changes from v5->v6
-> 1. Fixed few compilation issues around config.
-> 2. Fixed hart mask generation issues for RFENCE & IPI extensions.
->
-> Changes from v4->v5
-> 1. Fixed few minor comments related to static & inline.
-> 2. Make sure that every patch is boot tested individually.
->
-> Changes from v3->v4.
-> 1. Rebased on for-next.
-> 2. Fixed issuses with checkpatch --strict.
-> 3. Unfied all IPI/fence related functions.
-> 4. Added Hfence related SBI calls.
->
-> Changes from v2->v3.
-> 1. Moved v0.1 extensions to a new config.
-> 2. Added support for relacement extensions of v0.1 extensions.
->
-> Changes from v1->v2
-> 1. Removed the legacy calling convention.
-> 2. Moved all SBI related calls to sbi.c.
-> 3. Moved all SBI related macros to uapi.
->
-> Atish Patra (11):
-> RISC-V: Mark existing SBI as 0.1 SBI.
-> RISC-V: Add basic support for SBI v0.2
-> RISC-V: Add SBI v0.2 extension definitions
-> RISC-V: Introduce a new config for SBI v0.1
-> RISC-V: Implement new SBI v0.2 extensions
-> RISC-V: Move relocate and few other functions out of __init
-> RISC-V: Add cpu_ops and modify default booting method
-> RISC-V: Export SBI error to linux error mapping function
-> RISC-V: Add SBI HSM extension definitions
-> RISC-V: Add supported for ordered booting method using HSM
-> RISC-V: Support cpu hotplug
->
-> arch/riscv/Kconfig                   |  19 +-
-> arch/riscv/include/asm/cpu_ops.h     |  46 +++
-> arch/riscv/include/asm/sbi.h         | 195 +++++----
-> arch/riscv/include/asm/smp.h         |  24 ++
-> arch/riscv/kernel/Makefile           |   6 +
-> arch/riscv/kernel/cpu-hotplug.c      |  87 ++++
-> arch/riscv/kernel/cpu_ops.c          |  46 +++
-> arch/riscv/kernel/cpu_ops_sbi.c      | 115 ++++++
-> arch/riscv/kernel/cpu_ops_spinwait.c |  43 ++
-> arch/riscv/kernel/head.S             | 179 +++++----
-> arch/riscv/kernel/sbi.c              | 575 ++++++++++++++++++++++++++-
-> arch/riscv/kernel/setup.c            |  24 +-
-> arch/riscv/kernel/smpboot.c          |  53 ++-
-> arch/riscv/kernel/traps.c            |   2 +-
-> arch/riscv/kernel/vmlinux.lds.S      |   5 +-
-> 15 files changed, 1249 insertions(+), 170 deletions(-)
-> create mode 100644 arch/riscv/include/asm/cpu_ops.h
-> create mode 100644 arch/riscv/kernel/cpu-hotplug.c
-> create mode 100644 arch/riscv/kernel/cpu_ops.c
-> create mode 100644 arch/riscv/kernel/cpu_ops_sbi.c
-> create mode 100644 arch/riscv/kernel/cpu_ops_spinwait.c
+obj-$(CONFIG_VDPA) += vdpa/
+
+and under that:
+
+obj-$(CONFIG_VDPA) += vdpa.o
+
+
+> CONFIG_VDPA_MENU=y
+> # CONFIG_VDPA_SIM is not set
+> CONFIG_VHOST_IOTLB=y
+> CONFIG_VHOST_RING=m
+> CONFIG_VHOST=y
+> CONFIG_VHOST_SCSI=m
+> CONFIG_VHOST_VDPA=y
+> 
+> Full randconfig file is attached.
+> 
+> (This same build failure happens with today's linux-next, Mar. 31.)
+> 
+> @Yamada-san:  Is this a kbuild problem (or feature)?
+> 
+> -- 
+> ~Randy
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+
