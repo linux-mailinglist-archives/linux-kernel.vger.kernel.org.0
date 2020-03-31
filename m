@@ -2,92 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1FBD1988A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 02:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E14E1988B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 02:14:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729254AbgCaAGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 20:06:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47438 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728876AbgCaAGu (ORCPT
+        id S1729404AbgCaAO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 20:14:26 -0400
+Received: from kernel.crashing.org ([76.164.61.194]:33702 "EHLO
+        kernel.crashing.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729019AbgCaAO0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 20:06:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=VV89E7/0ITfr47FqhbuzNIICqyct8AhRAZZh1V1ewNo=; b=CWOYYkMN6YxBiPtv3S5YzHn5ld
-        hLNYvpbJBQUngQwAPYD4s2QHupCqMSm+dVq6HNhcMG4eVRibSXgDRSS0u0PhAWyZ4kE9sAx0I2GCl
-        q/6vwf9dZkFEwIHHsEiTehoHe+xHFmI7H2LY8bwoLjA/Y3EQB0fzOuXu5nbrQMtx2+Q3YGP+x29fQ
-        yU0r62kHalK9xz9UcZzNVmG0tcwNfvyImddvgQ4sRbKKOoJTGgmBF7DircAYuDCPlJFFtNi8yVtut
-        /Om7vcvM5DgEgOfXIildUIX2xwBa3U7k0zRFlNJko28n20u0Rb5hZzC9xqNPt5vLsXMNHp1eUTjMH
-        Xe3iBOdw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJ4Qb-0004SG-Lo; Tue, 31 Mar 2020 00:06:49 +0000
-Date:   Mon, 30 Mar 2020 17:06:49 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Wei Yang <richard.weiyang@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/9] XArray: internal node is a xa_node when it is bigger
- than XA_ZERO_ENTRY
-Message-ID: <20200331000649.GG22483@bombadil.infradead.org>
-References: <20200330123643.17120-1-richard.weiyang@gmail.com>
- <20200330123643.17120-7-richard.weiyang@gmail.com>
- <20200330125006.GZ22483@bombadil.infradead.org>
- <20200330134519.ykdtqwqxjazqy3jm@master>
- <20200330134903.GB22483@bombadil.infradead.org>
- <20200330141350.ey77odenrbvixotb@master>
- <20200330142708.GC22483@bombadil.infradead.org>
- <20200330222013.34nkqen2agujhd6j@master>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200330222013.34nkqen2agujhd6j@master>
+        Mon, 30 Mar 2020 20:14:26 -0400
+Received: from localhost (gate.crashing.org [63.228.1.57])
+        (authenticated bits=0)
+        by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 02V0DJbF013894
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 30 Mar 2020 19:13:23 -0500
+Message-ID: <4dc3ac910c79dcca398eb5161dde44e1cc50baca.camel@kernel.crashing.org>
+Subject: Re: [PATCH v2 6/6] dt-bindings: usb: document aspeed vhub device
+ ID/string properties
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Rob Herring <robh@kernel.org>, rentao.bupt@gmail.com
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+        taoren@fb.com
+Date:   Tue, 31 Mar 2020 11:13:17 +1100
+In-Reply-To: <20200330192347.GA6388@bogus>
+References: <20200315191632.12536-1-rentao.bupt@gmail.com>
+         <20200315191632.12536-7-rentao.bupt@gmail.com>
+         <20200330192347.GA6388@bogus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 10:20:13PM +0000, Wei Yang wrote:
-> On Mon, Mar 30, 2020 at 07:27:08AM -0700, Matthew Wilcox wrote:
-> >On Mon, Mar 30, 2020 at 02:13:50PM +0000, Wei Yang wrote:
-> >> On Mon, Mar 30, 2020 at 06:49:03AM -0700, Matthew Wilcox wrote:
-> >> >On Mon, Mar 30, 2020 at 01:45:19PM +0000, Wei Yang wrote:
-> >> >> On Mon, Mar 30, 2020 at 05:50:06AM -0700, Matthew Wilcox wrote:
-> >> >> >On Mon, Mar 30, 2020 at 12:36:40PM +0000, Wei Yang wrote:
-> >> >> >> As the comment mentioned, we reserved several ranges of internal node
-> >> >> >> for tree maintenance, 0-62, 256, 257. This means a node bigger than
-> >> >> >> XA_ZERO_ENTRY is a normal node.
-> >> >> >> 
-> >> >> >> The checked on XA_ZERO_ENTRY seems to be more meaningful.
-> >> >> >
-> >> >> >257-1023 are also reserved, they just aren't used yet.  XA_ZERO_ENTRY
-> >> >> >is not guaranteed to be the largest reserved entry.
-> >> >> 
-> >> >> Then why we choose 4096?
-> >> >
-> >> >Because 4096 is the smallest page size supported by Linux, so we're
-> >> >guaranteed that anything less than 4096 is not a valid pointer.
-> >> 
+On Mon, 2020-03-30 at 13:23 -0600, Rob Herring wrote:
+> On Sun, Mar 15, 2020 at 12:16:32PM -0700, rentao.bupt@gmail.com wrote:
+> > From: Tao Ren <rentao.bupt@gmail.com>
+> > 
+> > Update device tree binding document for aspeed vhub's device IDs and
+> > string properties.
+> > 
+> > Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
+> > ---
+> >  No change in v2:
+> >    - the patch is added into the series since v2.
+> > 
+> >  .../bindings/usb/aspeed,usb-vhub.yaml         | 68 +++++++++++++++++++
+> >  1 file changed, 68 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/usb/aspeed,usb-vhub.yaml b/Documentation/devicetree/bindings/usb/aspeed,usb-vhub.yaml
+> > index 06399ba0d9e4..5b2e8d867219 100644
+> > --- a/Documentation/devicetree/bindings/usb/aspeed,usb-vhub.yaml
+> > +++ b/Documentation/devicetree/bindings/usb/aspeed,usb-vhub.yaml
+> > @@ -52,6 +52,59 @@ properties:
+> >          minimum: 1
+> >          maximum: 21
+> >  
+> > +  vhub-vendor-id:
+> > +    description: vhub Vendor ID
+> > +    allOf:
+> > +      - $ref: /schemas/types.yaml#/definitions/uint32
+> > +      - maximum: 65535
+> > +
+> > +  vhub-product-id:
+> > +    description: vhub Product ID
+> > +    allOf:
+> > +      - $ref: /schemas/types.yaml#/definitions/uint32
+> > +      - maximum: 65535
 > 
-> So you want to say, the 4096 makes sure XArray will not store an address in
-> first page? If this is the case, I have two suggestions:
+> There's already standard 'vendor-id' and 'device-id' properties. Use 
+> those.
+
+So yes and no... I don't fundamentally object but keep in mind that
+traditionally, the properties are about matching with a physical
+hardware.
+
+In this case however, we are describing a virtual piece of HW and so
+those IDs are going to be picked up to be exposed as the USB
+vendor/device of the vhub on the USB bus.
+
+Not necessarily an issue but it's more "configuration" than "matching"
+and as such, it might make sense to expose that with a prefix, though I
+would prefer something like usb-vendor-id or usb,vendor-id...
+
+> > +
+> > +  vhub-device-revision:
 > 
->   * use PAGE_SIZE would be more verbose?
+> Specific to USB, not vhub.
 
-But also incorrect, because it'll be different on different architectures.
-It's 4096.  That's all.
+Same as the above.
 
->   * a node is an internal entry, do we need to compare with xa_mk_internal()
->     instead?
-
-No.  4096 is better because it's a number which is easily expressible in
-many CPU instruction sets.  4094 is much less likely to be an easy number
-to encode.
-
-> >(it is slightly out of date; the XArray actually supports storing unaligned
-> >pointers now, but that's not relevant to this discussion)
+> > +    description: vhub Device Revision in binary-coded decimal
+> > +    allOf:
+> > +      - $ref: /schemas/types.yaml#/definitions/uint32
+> > +      - maximum: 65535
+> > +
+> > +  vhub-strings:
+> > +    type: object
+> > +
+> > +    properties:
+> > +      '#address-cells':
+> > +        const: 1
+> > +
+> > +      '#size-cells':
+> > +        const: 0
+> > +
+> > +    patternProperties:
+> > +      '^string@[0-9a-f]+$':
+> > +        type: object
+> > +        description: string descriptors of the specific language
+> > +
+> > +        properties:
+> > +          reg:
+> > +            maxItems: 1
+> > +            description: 16-bit Language Identifier defined by USB-IF
+> > +
+> > +          manufacturer:
+> > +            description: vhub manufacturer
+> > +            allOf:
+> > +              - $ref: /schemas/types.yaml#/definitions/string
+> > +
+> > +          product:
+> > +            description: vhub product name
+> > +            allOf:
+> > +              - $ref: /schemas/types.yaml#/definitions/string
+> > +
+> > +          serial-number:
+> > +            description: vhub device serial number
+> > +            allOf:
+> > +              - $ref: /schemas/types.yaml#/definitions/string
 > 
-> Ok, maybe this document need to update.
+> For all of this, it's USB specific, not vhub specific. I'm not sure this 
+> is the right approach. It might be better to just define properties 
+> which are just raw USB descriptors rather than inventing some DT format 
+> that then has to be converted into USB descriptors.
 
-Did you want to send a patch?
+Raw blob in the DT is rather annoying and leads to hard to parse stuff
+for both humans and scripts. The main strenght of the DT is it's easy
+to read and manipulate.
+
+Also not the entire descriptor is configurable this way.
+
+That said, it could be that using  the DT for the above is overkill and
+instead, we should consider a configfs like the rest of USB gadget.
+Though it isn't obvious how to do that, the current gadget stuff
+doesn't really "fit" what we need here.
+
+Maybe we could expose the port as UDCs but not actually expose them on
+the bus until the hub is "activated" via a special configfs entry...
+
+Cheers,
+Ben.
+
+> os the 
+> Rob
+
