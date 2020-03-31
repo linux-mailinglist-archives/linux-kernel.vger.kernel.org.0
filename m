@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B87B19909D
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D14F198FE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:07:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730502AbgCaJNL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:13:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60354 "EHLO mail.kernel.org"
+        id S1731112AbgCaJHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:07:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730244AbgCaJNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:13:08 -0400
+        id S1731105AbgCaJHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:07:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02DBC20675;
-        Tue, 31 Mar 2020 09:13:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 060A120B80;
+        Tue, 31 Mar 2020 09:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645987;
-        bh=lPv5/SVxRUsJE9C6iPhlGEWnmckp85fixzSHFBBxPAU=;
+        s=default; t=1585645633;
+        bh=WQvMr/ngd0lBROOe+mFZKIghsFBX1dLvcFkiWF5f0P0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y0Gue4b2t6zI70++bUXrkhVpTEzMD+vJlPb+IVx9e6sxbWNYJyIN6kcKg2HplAOWx
-         qu93ZkHu4nQlxt1xKr2oem2g2ZtLI0GmI99uoeED06v0PqD/+SDpFKSVmYZ/YTXZ0g
-         CmoYLFf++aPuclRwkjwTVI4RA6cpKRYKH/nxPQCk=
+        b=03BzGZY2NBH5WsmohRxePFh+cWEUMEipnSdWuFABhmMf8pd+MfuugsrwRT5rArba7
+         Iepc9KrFuiigHXhM0pk26F9R3H6JPxyAWcrwCVKGcCtG7G32uO03AsQoLgYbIYZGEP
+         pDd21GujDbgKDspN7AHWQl4vc0Ydqh189N/eoG08=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 048/155] hsr: set .netnsok flag
-Date:   Tue, 31 Mar 2020 10:58:08 +0200
-Message-Id: <20200331085423.855557540@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Xiong <wenxiong@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 075/170] scsi: ipr: Fix softlockup when rescanning devices in petitboot
+Date:   Tue, 31 Mar 2020 10:58:09 +0200
+Message-Id: <20200331085432.305954337@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
-References: <20200331085418.274292403@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Wen Xiong <wenxiong@linux.vnet.ibm.com>
 
-[ Upstream commit 09e91dbea0aa32be02d8877bd50490813de56b9a ]
+[ Upstream commit 394b61711f3ce33f75bf70a3e22938464a13b3ee ]
 
-The hsr module has been supporting the list and status command.
-(HSR_C_GET_NODE_LIST and HSR_C_GET_NODE_STATUS)
-These commands send node information to the user-space via generic netlink.
-But, in the non-init_net namespace, these commands are not allowed
-because .netnsok flag is false.
-So, there is no way to get node information in the non-init_net namespace.
+When trying to rescan disks in petitboot shell, we hit the following
+softlockup stacktrace:
 
-Fixes: f421436a591d ("net/hsr: Add support for the High-availability Seamless Redundancy protocol (HSRv0)")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Kernel panic - not syncing: System is deadlocked on memory
+[  241.223394] CPU: 32 PID: 693 Comm: sh Not tainted 5.4.16-openpower1 #1
+[  241.223406] Call Trace:
+[  241.223415] [c0000003f07c3180] [c000000000493fc4] dump_stack+0xa4/0xd8 (unreliable)
+[  241.223432] [c0000003f07c31c0] [c00000000007d4ac] panic+0x148/0x3cc
+[  241.223446] [c0000003f07c3260] [c000000000114b10] out_of_memory+0x468/0x4c4
+[  241.223461] [c0000003f07c3300] [c0000000001472b0] __alloc_pages_slowpath+0x594/0x6d8
+[  241.223476] [c0000003f07c3420] [c00000000014757c] __alloc_pages_nodemask+0x188/0x1a4
+[  241.223492] [c0000003f07c34a0] [c000000000153e10] alloc_pages_current+0xcc/0xd8
+[  241.223508] [c0000003f07c34e0] [c0000000001577ac] alloc_slab_page+0x30/0x98
+[  241.223524] [c0000003f07c3520] [c0000000001597fc] new_slab+0x138/0x40c
+[  241.223538] [c0000003f07c35f0] [c00000000015b204] ___slab_alloc+0x1e4/0x404
+[  241.223552] [c0000003f07c36c0] [c00000000015b450] __slab_alloc+0x2c/0x48
+[  241.223566] [c0000003f07c36f0] [c00000000015b754] kmem_cache_alloc_node+0x9c/0x1b4
+[  241.223582] [c0000003f07c3760] [c000000000218c48] blk_alloc_queue_node+0x34/0x270
+[  241.223599] [c0000003f07c37b0] [c000000000226574] blk_mq_init_queue+0x2c/0x78
+[  241.223615] [c0000003f07c37e0] [c0000000002ff710] scsi_mq_alloc_queue+0x28/0x70
+[  241.223631] [c0000003f07c3810] [c0000000003005b8] scsi_alloc_sdev+0x184/0x264
+[  241.223647] [c0000003f07c38a0] [c000000000300ba0] scsi_probe_and_add_lun+0x288/0xa3c
+[  241.223663] [c0000003f07c3a00] [c000000000301768] __scsi_scan_target+0xcc/0x478
+[  241.223679] [c0000003f07c3b20] [c000000000301c64] scsi_scan_channel.part.9+0x74/0x7c
+[  241.223696] [c0000003f07c3b70] [c000000000301df4] scsi_scan_host_selected+0xe0/0x158
+[  241.223712] [c0000003f07c3bd0] [c000000000303f04] store_scan+0x104/0x114
+[  241.223727] [c0000003f07c3cb0] [c0000000002d5ac4] dev_attr_store+0x30/0x4c
+[  241.223741] [c0000003f07c3cd0] [c0000000001dbc34] sysfs_kf_write+0x64/0x78
+[  241.223756] [c0000003f07c3cf0] [c0000000001da858] kernfs_fop_write+0x170/0x1b8
+[  241.223773] [c0000003f07c3d40] [c0000000001621fc] __vfs_write+0x34/0x60
+[  241.223787] [c0000003f07c3d60] [c000000000163c2c] vfs_write+0xa8/0xcc
+[  241.223802] [c0000003f07c3db0] [c000000000163df4] ksys_write+0x70/0xbc
+[  241.223816] [c0000003f07c3e20] [c00000000000b40c] system_call+0x5c/0x68
+
+As a part of the scan process Linux will allocate and configure a
+scsi_device for each target to be scanned. If the device is not present,
+then the scsi_device is torn down. As a part of scsi_device teardown a
+workqueue item will be scheduled and the lockups we see are because there
+are 250k workqueue items to be processed.  Accoding to the specification of
+SIS-64 sas controller, max_channel should be decreased on SIS-64 adapters
+to 4.
+
+The patch fixes softlockup issue.
+
+Thanks for Oliver Halloran's help with debugging and explanation!
+
+Link: https://lore.kernel.org/r/1583510248-23672-1-git-send-email-wenxiong@linux.vnet.ibm.com
+Signed-off-by: Wen Xiong <wenxiong@linux.vnet.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/hsr/hsr_netlink.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/ipr.c | 3 ++-
+ drivers/scsi/ipr.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/hsr/hsr_netlink.c
-+++ b/net/hsr/hsr_netlink.c
-@@ -470,6 +470,7 @@ static struct genl_family hsr_genl_famil
- 	.version = 1,
- 	.maxattr = HSR_A_MAX,
- 	.policy = hsr_genl_policy,
-+	.netnsok = true,
- 	.module = THIS_MODULE,
- 	.ops = hsr_ops,
- 	.n_ops = ARRAY_SIZE(hsr_ops),
+diff --git a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
+index 079c04bc448af..7a57b61f0340e 100644
+--- a/drivers/scsi/ipr.c
++++ b/drivers/scsi/ipr.c
+@@ -9947,6 +9947,7 @@ static void ipr_init_ioa_cfg(struct ipr_ioa_cfg *ioa_cfg,
+ 	ioa_cfg->max_devs_supported = ipr_max_devs;
+ 
+ 	if (ioa_cfg->sis64) {
++		host->max_channel = IPR_MAX_SIS64_BUSES;
+ 		host->max_id = IPR_MAX_SIS64_TARGETS_PER_BUS;
+ 		host->max_lun = IPR_MAX_SIS64_LUNS_PER_TARGET;
+ 		if (ipr_max_devs > IPR_MAX_SIS64_DEVS)
+@@ -9955,6 +9956,7 @@ static void ipr_init_ioa_cfg(struct ipr_ioa_cfg *ioa_cfg,
+ 					   + ((sizeof(struct ipr_config_table_entry64)
+ 					       * ioa_cfg->max_devs_supported)));
+ 	} else {
++		host->max_channel = IPR_VSET_BUS;
+ 		host->max_id = IPR_MAX_NUM_TARGETS_PER_BUS;
+ 		host->max_lun = IPR_MAX_NUM_LUNS_PER_TARGET;
+ 		if (ipr_max_devs > IPR_MAX_PHYSICAL_DEVS)
+@@ -9964,7 +9966,6 @@ static void ipr_init_ioa_cfg(struct ipr_ioa_cfg *ioa_cfg,
+ 					       * ioa_cfg->max_devs_supported)));
+ 	}
+ 
+-	host->max_channel = IPR_VSET_BUS;
+ 	host->unique_id = host->host_no;
+ 	host->max_cmd_len = IPR_MAX_CDB_LEN;
+ 	host->can_queue = ioa_cfg->max_cmds;
+diff --git a/drivers/scsi/ipr.h b/drivers/scsi/ipr.h
+index a67baeb36d1f7..b97aa9ac2ffe5 100644
+--- a/drivers/scsi/ipr.h
++++ b/drivers/scsi/ipr.h
+@@ -1300,6 +1300,7 @@ struct ipr_resource_entry {
+ #define IPR_ARRAY_VIRTUAL_BUS			0x1
+ #define IPR_VSET_VIRTUAL_BUS			0x2
+ #define IPR_IOAFP_VIRTUAL_BUS			0x3
++#define IPR_MAX_SIS64_BUSES			0x4
+ 
+ #define IPR_GET_RES_PHYS_LOC(res) \
+ 	(((res)->bus << 24) | ((res)->target << 8) | (res)->lun)
+-- 
+2.20.1
+
 
 
