@@ -2,75 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04A41199301
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 12:00:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 832B0199304
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 12:00:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730436AbgCaKAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 06:00:38 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38742 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730153AbgCaKAi (ORCPT
+        id S1730273AbgCaKAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 06:00:41 -0400
+Received: from gfdefer007.mail.goo.jp ([153.149.229.140]:59628 "EHLO
+        gfdefer007.mail.goo.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730224AbgCaKAj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 06:00:38 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1jJDh8-0002Tv-TZ; Tue, 31 Mar 2020 10:00:31 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] bpf: Test_verifier: fix spelling mistake "arithmatic" -> "arithmetic"
-Date:   Tue, 31 Mar 2020 11:00:30 +0100
-Message-Id: <20200331100030.41372-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 31 Mar 2020 06:00:39 -0400
+Received: from gogw0410.mail.goo.jp (gogw0410.mail.goo.jp [153.153.65.11])
+        by gfdefer007.mail.goo.jp (Postfix) with ESMTP id CC623700527
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 19:00:37 +0900 (JST)
+Received: from mas-vc-mts-102c1.ocn.ad.jp (mas-vc-mts-102c1.ocn.ad.jp [153.138.237.87])
+        by gogw0410.mail.goo.jp (Postfix) with ESMTP id E524F580237;
+        Tue, 31 Mar 2020 19:00:34 +0900 (JST)
+Received: from vcwebmail.mail.goo.jp ([153.149.140.114])
+        by mas-vc-mts-102c1.ocn.ad.jp with ESMTP
+        id JDhAj94A5eCSjJDhAj0dWD; Tue, 31 Mar 2020 19:00:34 +0900
+Received: from md-app-cb005.noc-chibaminato.ocn.ad.jp (md-app-cb005.ocn.ad.jp [153.138.211.201])
+        by vcwebmail.mail.goo.jp (Postfix) with ESMTP;
+        Tue, 31 Mar 2020 19:00:32 +0900 (JST)
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+To:     undisclosed-recipients:;
+Subject: INVESTMENT PLAN
+From:   Richard Benson <hanahana_87310_happ@mail.goo.ne.jp>
+Reply-To: Richard Benson <pinrichardrich22@gmail.com>
+Message-ID: <158564834395.2489.15985217289756112905@mail.goo.ne.jp>
+X-Originating-IP: [104.37.190.246]
+Date:   Tue, 31 Mar 2020 19:00:32 +0900
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Dear Friend,
 
-There are a couple of spelling mistakes in two literal strings, fix them.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- tools/testing/selftests/bpf/verifier/bounds.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/verifier/bounds.c b/tools/testing/selftests/bpf/verifier/bounds.c
-index 4d0d09574bf4..a253a064e6e0 100644
---- a/tools/testing/selftests/bpf/verifier/bounds.c
-+++ b/tools/testing/selftests/bpf/verifier/bounds.c
-@@ -501,7 +501,7 @@
- 	.result = REJECT
- },
- {
--	"bounds check mixed 32bit and 64bit arithmatic. test1",
-+	"bounds check mixed 32bit and 64bit arithmetic. test1",
- 	.insns = {
- 	BPF_MOV64_IMM(BPF_REG_0, 0),
- 	BPF_MOV64_IMM(BPF_REG_1, -1),
-@@ -520,7 +520,7 @@
- 	.result = ACCEPT
- },
- {
--	"bounds check mixed 32bit and 64bit arithmatic. test2",
-+	"bounds check mixed 32bit and 64bit arithmetic. test2",
- 	.insns = {
- 	BPF_MOV64_IMM(BPF_REG_0, 0),
- 	BPF_MOV64_IMM(BPF_REG_1, -1),
--- 
-2.25.1
-
+I came across your company's profile from the foreign trade office of our Chambers of Commerce and Industry and I decided to contact you for assistance in receiving money on my behalf for a good lucrative business investment in your country. My name is Mr. Richard Benson a branch bank manager here in Ghana. I have the sum of Sixteen Million, Four Hundred Thousand US Dollars which I would like to transfer into your account and invest in your country if possible into a lucrative business that will be profitable to us.
+ 
+I made this money (US$16,400,000.00) out of my branch office excess profit. I choose you because I cannot be directly involved for I am still working with the bank, I hope you can understand my situation and assist me to receive and invest this money properly as this is my only hope. You will get 40% of the total fund as commission for your co-operation while 60% will be for me..
+ 
+I need your timely response for more details.
+ 
+With regards,
+Mr. Richard Benson
+http://www.standardchartered.com
