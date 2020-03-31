@@ -2,158 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FF1A19A1FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8185B19A1F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:31:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731270AbgCaWgl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 18:36:41 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36155 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbgCaWgl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 18:36:41 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k18so20492061oib.3
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 15:36:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=PCkuNYX5Y1DiFeU+I1dLaQDU7lZ3r1TK5BjT1r/iMHA=;
-        b=BFGazVTmhE2AtUwT4yvqeN2PkTKCLR16uj8T19NoHr9d3oTOvsU7wd3A3Oz3u1C9Ix
-         FsT53ZGHB/wvM0wwzr9e/+TUoJA3769FCKnzYAAZBYjxbwPNbiGkn0cysXs7g66si3WH
-         AD3WJXMNbzwMiGkpPiaqKZQ7sM7iwFAPEuzUBwU59jxbPfjo0ocOjCFPyxNWFLtwTlrT
-         ldwavlsc3T2IniWNkoL1K+XMc4EyJJeIdyYxxZvPgwzIY+3GKMccNN0D0NwBxrjGtxhl
-         vZfTsObBeOcDO/dHIPZitDlhUYRXYgvWYJ9tATUIlojZbBOUsWMYrxBNWq7i0kVnloCj
-         QNTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=PCkuNYX5Y1DiFeU+I1dLaQDU7lZ3r1TK5BjT1r/iMHA=;
-        b=WwrUvjJ1AS8OzdX8HZaAFeOnjQOYj0hcC+90rr/DyM8I+A3KI8Z28rBwtAZi+r/78s
-         H5BtjdDGDiPMlIqhVy+Cant/P6sBB5hbRmDpLr5uwaIu3aGK0zKewTq2x1QanRjW8pWY
-         3Whky4j8jqOX5gybacI39dwDaVHRcITnc6103jqYcTdqx8dLKTOiBWNx4ncDPKurOJHV
-         5erNvFywsPD+ymJt7+V3rYEuZRZK7sFbjgtupxZsjA8LUbfi8k/vJmrLd2SPESChBv7T
-         SngSd+aIA3MofPKxmhglKtgYYItt/X1QDbxKcF49BCPaW6RXN61cdxGnaJCOnkx0umP0
-         xwkw==
-X-Gm-Message-State: AGi0PuaYgoslRvqtK8gqgutao4bSJbtLm5jlqKOkO7dWiOoWdtZgeGjA
-        VlNc0aVBSnjnwqFtbcO9194=
-X-Google-Smtp-Source: APiQypI5yR0lu5/DY/5OQ82Zit/b/IP9uRL51fI2TCysehuUvYqw/th0kfqn69TWuUt94WqugMmVNA==
-X-Received: by 2002:aca:d68a:: with SMTP id n132mr892459oig.40.1585694200626;
-        Tue, 31 Mar 2020 15:36:40 -0700 (PDT)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id o1sm28285otl.49.2020.03.31.15.36.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 31 Mar 2020 15:36:40 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 15:36:38 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Daniel Santos <daniel.santos@pobox.com>
-Cc:     Vegard Nossum <vegard.nossum@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ian Abbott <abbotti@mev.co.uk>
-Subject: Re: [PATCH] compiler.h: fix error in BUILD_BUG_ON() reporting
-Message-ID: <20200331223638.GA53668@ubuntu-m2-xlarge-x86>
-References: <20200331112637.25047-1-vegard.nossum@oracle.com>
- <91730318-da0e-c992-f154-a74044b26650@pobox.com>
+        id S1731369AbgCaWb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 18:31:27 -0400
+Received: from mga02.intel.com ([134.134.136.20]:30096 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728840AbgCaWb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 18:31:26 -0400
+IronPort-SDR: K67Ri56rCBMZRHxJ/urqElEhdXjZpLYt47TVC/4BkzbmUve9PPqvHbw8mP7SIvUK7o5ekWPtcX
+ mQQMqtlPBVMQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 15:31:26 -0700
+IronPort-SDR: x7+9+2GyuZdKUoCr0/pqHOp/fiqSXRV71rjcAqWtV2FUjNdlw9068G2QMGr75VCvTgokzQTWXn
+ MKVsGTKeb+mA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,329,1580803200"; 
+   d="scan'208";a="249204455"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga003.jf.intel.com with ESMTP; 31 Mar 2020 15:31:26 -0700
+Date:   Tue, 31 Mar 2020 15:37:13 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Alex Williamson" <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH V10 10/11] iommu/vt-d: Enlightened PASID allocation
+Message-ID: <20200331153713.2b53e898@jacob-builder>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7FA10F@SHSMSX104.ccr.corp.intel.com>
+References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1584746861-76386-11-git-send-email-jacob.jun.pan@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D7FA10F@SHSMSX104.ccr.corp.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <91730318-da0e-c992-f154-a74044b26650@pobox.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 05:25:38PM -0500, Daniel Santos wrote:
-> On 3/31/20 6:26 AM, Vegard Nossum wrote:
-> > compiletime_assert() uses __LINE__ to create a unique function name.
-> > This means that if you have more than one BUILD_BUG_ON() in the same
-> > source line (which can happen if they appear e.g. in a macro), then
-> > the error message from the compiler might output the wrong condition.
-> >
-> > For this source file:
-> >
-> > 	#include <linux/build_bug.h>
-> >
-> > 	#define macro() \
-> > 		BUILD_BUG_ON(1); \
-> > 		BUILD_BUG_ON(0);
-> >
-> > 	void foo()
-> > 	{
-> > 		macro();
-> > 	}
-> >
-> > gcc would output:
-> >
-> > ./include/linux/compiler.h:350:38: error: call to ‘__compiletime_assert_9’ declared with attribute error: BUILD_BUG_ON failed: 0
-> >   _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-> >
-> > However, it was not the BUILD_BUG_ON(0) that failed, so it should say 1
-> > instead of 0. With this patch, we use __COUNTER__ instead of __LINE__, so
-> > each BUILD_BUG_ON() gets a different function name and the correct
-> > condition is printed:
-> >
-> > ./include/linux/compiler.h:350:38: error: call to ‘__compiletime_assert_0’ declared with attribute error: BUILD_BUG_ON failed: 1
-> >   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-> >
-> > Cc: Daniel Santos <daniel.santos@pobox.com>
-> > Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Cc: Ian Abbott <abbotti@mev.co.uk>
-> > Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
+On Sat, 28 Mar 2020 10:08:52 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
+
+> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Sent: Saturday, March 21, 2020 7:28 AM
+> > 
+> > From: Lu Baolu <baolu.lu@linux.intel.com>
+> > 
+> > Enabling IOMMU in a guest requires communication with the host
+> > driver for certain aspects. Use of PASID ID to enable Shared Virtual
+> > Addressing (SVA) requires managing PASID's in the host. VT-d 3.0
+> > spec provides a Virtual Command Register (VCMD) to facilitate this.
+> > Writes to this register in the guest are trapped by QEMU which
+> > proxies the call to the host driver.  
+> 
+> Qemu -> vIOMMU
+> 
+Sounds good. Thanks!
+> > 
+> > This virtual command interface consists of a capability register,
+> > a virtual command register, and a virtual response register. Refer
+> > to section 10.4.42, 10.4.43, 10.4.44 for more information.
+> > 
+> > This patch adds the enlightened PASID allocation/free interfaces
+> > via the virtual command interface.
+> > 
+> > Cc: Ashok Raj <ashok.raj@intel.com>
+> > Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Cc: Kevin Tian <kevin.tian@intel.com>
+> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Reviewed-by: Eric Auger <eric.auger@redhat.com>
 > > ---
-> >  include/linux/compiler.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> > index 5e88e7e33abec..034b0a644efcc 100644
-> > --- a/include/linux/compiler.h
-> > +++ b/include/linux/compiler.h
-> > @@ -347,7 +347,7 @@ static inline void *offset_to_ptr(const int *off)
-> >   * compiler has support to do so.
+> >  drivers/iommu/intel-pasid.c | 57
+> > +++++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/iommu/intel-pasid.h | 13 ++++++++++-
+> >  include/linux/intel-iommu.h |  1 +
+> >  3 files changed, 70 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iommu/intel-pasid.c
+> > b/drivers/iommu/intel-pasid.c index 9f6d07410722..e87ad67aad36
+> > 100644 --- a/drivers/iommu/intel-pasid.c
+> > +++ b/drivers/iommu/intel-pasid.c
+> > @@ -27,6 +27,63 @@
+> >  static DEFINE_SPINLOCK(pasid_lock);
+> >  u32 intel_pasid_max_id = PASID_MAX;
+> > 
+> > +int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int
+> > *pasid) +{
+> > +	unsigned long flags;
+> > +	u8 status_code;
+> > +	int ret = 0;
+> > +	u64 res;
+> > +
+> > +	raw_spin_lock_irqsave(&iommu->register_lock, flags);
+> > +	dmar_writeq(iommu->reg + DMAR_VCMD_REG,
+> > VCMD_CMD_ALLOC);
+> > +	IOMMU_WAIT_OP(iommu, DMAR_VCRSP_REG, dmar_readq,
+> > +		      !(res & VCMD_VRSP_IP), res);
+> > +	raw_spin_unlock_irqrestore(&iommu->register_lock, flags);
+> > +
+> > +	status_code = VCMD_VRSP_SC(res);
+> > +	switch (status_code) {
+> > +	case VCMD_VRSP_SC_SUCCESS:
+> > +		*pasid = VCMD_VRSP_RESULT_PASID(res);
+> > +		break;
+> > +	case VCMD_VRSP_SC_NO_PASID_AVAIL:
+> > +		pr_info("IOMMU: %s: No PASID available\n",
+> > iommu->name);
+> > +		ret = -ENOSPC;
+> > +		break;
+> > +	default:
+> > +		ret = -ENODEV;
+> > +		pr_warn("IOMMU: %s: Unexpected error code %d\n",
+> > +			iommu->name, status_code);
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +void vcmd_free_pasid(struct intel_iommu *iommu, unsigned int pasid)
+> > +{
+> > +	unsigned long flags;
+> > +	u8 status_code;
+> > +	u64 res;
+> > +
+> > +	raw_spin_lock_irqsave(&iommu->register_lock, flags);
+> > +	dmar_writeq(iommu->reg + DMAR_VCMD_REG,
+> > +		    VCMD_CMD_OPERAND(pasid) | VCMD_CMD_FREE);
+> > +	IOMMU_WAIT_OP(iommu, DMAR_VCRSP_REG, dmar_readq,
+> > +		      !(res & VCMD_VRSP_IP), res);
+> > +	raw_spin_unlock_irqrestore(&iommu->register_lock, flags);
+> > +
+> > +	status_code = VCMD_VRSP_SC(res);
+> > +	switch (status_code) {
+> > +	case VCMD_VRSP_SC_SUCCESS:
+> > +		break;
+> > +	case VCMD_VRSP_SC_INVALID_PASID:
+> > +		pr_info("IOMMU: %s: Invalid PASID\n", iommu->name);
+> > +		break;
+> > +	default:
+> > +		pr_warn("IOMMU: %s: Unexpected error code %d\n",
+> > +			iommu->name, status_code);
+> > +	}
+> > +}
+> > +
+> >  /*
+> >   * Per device pasid table management:
 > >   */
-> >  #define compiletime_assert(condition, msg) \
-> > -	_compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-> > +	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-> >  
-> >  #define compiletime_assert_atomic_type(t)				\
-> >  	compiletime_assert(__native_word(t),				\
+> > diff --git a/drivers/iommu/intel-pasid.h
+> > b/drivers/iommu/intel-pasid.h index 698015ee3f04..cd3d63f3e936
+> > 100644 --- a/drivers/iommu/intel-pasid.h
+> > +++ b/drivers/iommu/intel-pasid.h
+> > @@ -23,6 +23,16 @@
+> >  #define is_pasid_enabled(entry)		(((entry)->lo >> 3)
+> > & 0x1) #define get_pasid_dir_size(entry)	(1 <<
+> > ((((entry)->lo >> 9) & 0x7) + 7))
+> > 
+> > +/* Virtual command interface for enlightened pasid management. */
+> > +#define VCMD_CMD_ALLOC			0x1
+> > +#define VCMD_CMD_FREE			0x2
+> > +#define VCMD_VRSP_IP			0x1
+> > +#define VCMD_VRSP_SC(e)			(((e) >> 1) & 0x3)
+> > +#define VCMD_VRSP_SC_SUCCESS		0
+> > +#define VCMD_VRSP_SC_NO_PASID_AVAIL	1
+> > +#define VCMD_VRSP_SC_INVALID_PASID	1
+> > +#define VCMD_VRSP_RESULT_PASID(e)	(((e) >> 8) & 0xfffff)
+> > +#define VCMD_CMD_OPERAND(e)		((e) << 8)
+> >  /*
+> >   * Domain ID reserved for pasid entries programmed for first-level
+> >   * only and pass-through transfer modes.
+> > @@ -113,5 +123,6 @@ int intel_pasid_setup_nested(struct intel_iommu
+> > *iommu,
+> >  			int addr_width);
+> >  void intel_pasid_tear_down_entry(struct intel_iommu *iommu,
+> >  				 struct device *dev, int pasid);
+> > -
+> > +int vcmd_alloc_pasid(struct intel_iommu *iommu, unsigned int
+> > *pasid); +void vcmd_free_pasid(struct intel_iommu *iommu, unsigned
+> > int pasid); #endif /* __INTEL_PASID_H */
+> > diff --git a/include/linux/intel-iommu.h
+> > b/include/linux/intel-iommu.h index ccbf164fb711..9cbf5357138b
+> > 100644 --- a/include/linux/intel-iommu.h
+> > +++ b/include/linux/intel-iommu.h
+> > @@ -169,6 +169,7 @@
+> >  #define ecap_smpwc(e)		(((e) >> 48) & 0x1)
+> >  #define ecap_flts(e)		(((e) >> 47) & 0x1)
+> >  #define ecap_slts(e)		(((e) >> 46) & 0x1)
+> > +#define ecap_vcs(e)		(((e) >> 44) & 0x1)
+> >  #define ecap_smts(e)		(((e) >> 43) & 0x1)
+> >  #define ecap_dit(e)		((e >> 41) & 0x1)
+> >  #define ecap_pasid(e)		((e >> 40) & 0x1)
+> > --
+> > 2.7.4  
 > 
-> This will break builds using gcc 4.2 and earlier and the expectation was
-> that you don't put two of them on the same line -- not helpful in macros
-> where it all must be on the same line.  Is gcc 4.2 still supported?  If
-> so, I recommend using another macro for the unique number that uses
-> __COUNTER__ if available and __LINE__ otherwise.  This was the decision
-> for using __LINE__ when I wrote the original anyway.
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 > 
-> Also note that this construct:
-> 
-> BUILD_BUG_ON_MSG(0, "I like chicken"); BUILD_BUG_ON_MSG(1, "I don't like
-> chicken");
-> 
-> will incorrectly claim that I like chicken.  This is because of how
-> __attribute__((error)) works -- gcc will use the first declaration to
-> define the error message.
-> 
-> I couple of years ago, I almost wrote a gcc extension to get rid of this
-> whole mess and just __builtin_const_assert(cond, msg).  Maybe I'll
-> finish that this year.
-> 
-> Daniel
 
-No, GCC 4.6 is the minimum required version and it is highly likely that
-the minimum version of GCC will be raised to 4.8 soon:
-
-https://lore.kernel.org/lkml/20200123153341.19947-10-will@kernel.org/
-https://git.kernel.org/peterz/queue/c/0e75b883b400ac4b1dafafe3cbd2e0a39b714232
-
-Cheers,
-Nathan
+[Jacob Pan]
