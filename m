@@ -2,137 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 605551995C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:50:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8CA81995C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:51:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730642AbgCaLur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 07:50:47 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:20820 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730334AbgCaLuq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 07:50:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585655445;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=6rSn99Jf2Yhqj1O2XI4gkMZw531juCWPbfOI9Kxk2+Q=;
-        b=Lv1z89sYKHM6KVR4CVvGkoN5wOLa+B9aTmfoi6aci//DqV76T7z/jGs0UWE+OwXsaUJ+jc
-        xVbdcuMQ/8H2xh/TdUkLk4n/MIfjHhZsrnad2ELMEe7oD78tHugfgG51cvnRL7tgv8zaRD
-        Wxn49hxKNm8+zbyeT+C8tlz/eC6Zbh4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-399-lqV69-6ZN0Cq0oOUF3eelA-1; Tue, 31 Mar 2020 07:50:41 -0400
-X-MC-Unique: lqV69-6ZN0Cq0oOUF3eelA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DA19118CA243;
-        Tue, 31 Mar 2020 11:50:39 +0000 (UTC)
-Received: from fuller.cnet (ovpn-116-11.gru2.redhat.com [10.97.116.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 67F8319756;
-        Tue, 31 Mar 2020 11:50:39 +0000 (UTC)
-Received: by fuller.cnet (Postfix, from userid 1000)
-        id 85183418CC02; Tue, 31 Mar 2020 08:50:14 -0300 (-03)
-Date:   Tue, 31 Mar 2020 08:50:14 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Chris Friesen <chris.friesen@windriver.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jim Somerville <Jim.Somerville@windriver.com>,
-        Christoph Lameter <cl@linux.com>
-Subject: Re: [patch 2/3] isolcpus: affine kernel threads to specified cpumask
-Message-ID: <20200331115014.GA2182@fuller.cnet>
-References: <20200328152117.881555226@redhat.com>
- <20200328152503.225876188@redhat.com>
- <20200331005706.GA24647@lenoir>
+        id S1730680AbgCaLvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 07:51:43 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45530 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730619AbgCaLvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 07:51:43 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 3180AD57F30DCA01549B;
+        Tue, 31 Mar 2020 19:51:27 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.487.0; Tue, 31 Mar 2020
+ 19:51:20 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <dan.j.williams@intel.com>, <vishal.l.verma@intel.com>,
+        <dave.jiang@intel.com>, <ira.weiny@intel.com>,
+        <aneesh.kumar@linux.ibm.com>, <jmoyer@redhat.com>
+CC:     <linux-nvdimm@lists.01.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2 -next] libnvdimm/region: Fix build error
+Date:   Tue, 31 Mar 2020 19:50:24 +0800
+Message-ID: <20200331115024.31628-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20200330141943.31696-1-yuehaibing@huawei.com>
+References: <20200330141943.31696-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331005706.GA24647@lenoir>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 02:57:08AM +0200, Frederic Weisbecker wrote:
-> On Sat, Mar 28, 2020 at 12:21:19PM -0300, Marcelo Tosatti wrote:
-> > This is a kernel enhancement to configure the cpu affinity of kernel threads via kernel boot option isolcpus=no_kthreads,<isolcpus_params>,<cpulist>
-> > 
-> > When this option is specified, the cpumask is immediately applied upon
-> > thread launch. This does not affect kernel threads that specify cpu
-> > and node.
-> > 
-> > This allows CPU isolation (that is not allowing certain threads
-> > to execute on certain CPUs) without using the isolcpus=domain parameter,
-> > making it possible to enable load balancing on such CPUs
-> > during runtime (see kernel-parameters.txt).
-> > 
-> > Note-1: this is based off on Wind River's patch at
-> > https://github.com/starlingx-staging/stx-integ/blob/master/kernel/kernel-std/centos/patches/affine-compute-kernel-threads.patch
-> > 
-> > Difference being that this patch is limited to modifying
-> > kernel thread cpumask: Behaviour of other threads can
-> > be controlled via cgroups or sched_setaffinity.
-> > 
-> > Note-2: Wind River's patch was based off Christoph Lameter's patch at
-> > https://lwn.net/Articles/565932/ with the only difference being
-> > the kernel parameter changed from kthread to kthread_cpus.
-> > 
-> > Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
-> > 
-> > ---
-> >  Documentation/admin-guide/kernel-parameters.txt |    8 ++++++++
-> >  include/linux/sched/isolation.h                 |    1 +
-> >  kernel/kthread.c                                |    6 ++++--
-> >  kernel/sched/isolation.c                        |    6 ++++++
-> >  4 files changed, 19 insertions(+), 2 deletions(-)
-> > 
-> > Index: linux-2.6/Documentation/admin-guide/kernel-parameters.txt
-> > ===================================================================
-> > --- linux-2.6.orig/Documentation/admin-guide/kernel-parameters.txt
-> > +++ linux-2.6/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -1959,6 +1959,14 @@
-> >  			  the CPU affinity syscalls or cpuset.
-> >  			  <cpu number> begins at 0 and the maximum value is
-> >  			  "number of CPUs in system - 1".
-> > +			  When using cpusets, use the isolcpus option "kthread"
-> > +			  to avoid creation of kernel threads on isolated CPUs.
-> > +
-> > +			kthread
-> > +			  Adjust the CPU affinity mask of unbound kernel threads to
-> > +			  not contain CPUs on the isolated list. This complements
-> > +			  the isolation provided by the cpusets mechanism described
-> > +			  above and by managed_irq option.
+On CONFIG_PPC32=y build fails:
 
-Hi Frederic,
+drivers/nvdimm/region_devs.c:1034:14: note: in expansion of macro ‘do_div’
+  remainder = do_div(per_mapping, mappings);
+              ^~~~~~
+In file included from ./arch/powerpc/include/generated/asm/div64.h:1:0,
+                 from ./include/linux/kernel.h:18,
+                 from ./include/asm-generic/bug.h:19,
+                 from ./arch/powerpc/include/asm/bug.h:109,
+                 from ./include/linux/bug.h:5,
+                 from ./include/linux/scatterlist.h:7,
+                 from drivers/nvdimm/region_devs.c:5:
+./include/asm-generic/div64.h:243:22: error: passing argument 1 of ‘__div64_32’ from incompatible pointer type [-Werror=incompatible-pointer-types]
+   __rem = __div64_32(&(n), __base); \
 
-> So, what about what I suggested with having "unbound" instead, which
-> includes all the CPU-unbound work?
-> 
->  HK_FLAG_WQ | HK_FLAG_TIMER | HK_FLAG_RCU | HK_FLAG_MISC | HK_FLAG_KTHREAD | HK_FLAG_SCHED
+Use div_u64 instead of do_div to fix this.
 
-After more thought, it would share certain flags with nohz_full=, which
-seemed confusing.
+Fixes: 2522afb86a8c ("libnvdimm/region: Introduce an 'align' attribute")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: use div_u64_rem and code cleanup
+---
+ drivers/nvdimm/region_devs.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-> (and yes your suggestion of including HK_FLAG_SCHED is good).
-> 
-> Because I don't see the point of exposing kthread isolation alone as an ABI
-> so far.
-> 
-> Later I suspect I'll turn all these flags into a single HK_FLAG_UNBOUND.
+diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+index bf239e783940..ccbb5b43b8b2 100644
+--- a/drivers/nvdimm/region_devs.c
++++ b/drivers/nvdimm/region_devs.c
+@@ -563,8 +563,7 @@ static ssize_t align_store(struct device *dev,
+ 	 * contribute to the tail capacity in system-physical-address
+ 	 * space for the namespace.
+ 	 */
+-	dpa = val;
+-	remainder = do_div(dpa, nd_region->ndr_mappings);
++	dpa = div_u64_rem(val, nd_region->ndr_mappings, &remainder);
+ 	if (!is_power_of_2(dpa) || dpa < PAGE_SIZE
+ 			|| val > region_size(nd_region) || remainder)
+ 		return -EINVAL;
+@@ -1010,7 +1009,7 @@ EXPORT_SYMBOL(nd_region_release_lane);
+ 
+ static unsigned long default_align(struct nd_region *nd_region)
+ {
+-	unsigned long align, per_mapping;
++	unsigned long align;
+ 	int i, mappings;
+ 	u32 remainder;
+ 
+@@ -1030,8 +1029,7 @@ static unsigned long default_align(struct nd_region *nd_region)
+ 	}
+ 
+ 	mappings = max_t(u16, 1, nd_region->ndr_mappings);
+-	per_mapping = align;
+-	remainder = do_div(per_mapping, mappings);
++	div_u64_rem(align, mappings, &remainder);
+ 	if (remainder)
+ 		align *= mappings;
+ 
+-- 
+2.17.1
 
-How about keeping the flags separate, and then on top of that do
-an "unbound" flag (less typing needed).
-
-This would allow users to combine the individual flags (again, useful
-for debugging) while at the same time having an option which groups
-all the others?
 
