@@ -2,245 +2,233 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83E25198B8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 07:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6225198BB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 07:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbgCaFLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 01:11:05 -0400
-Received: from foss.arm.com ([217.140.110.172]:43762 "EHLO foss.arm.com"
+        id S1726446AbgCaFcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 01:32:05 -0400
+Received: from mga03.intel.com ([134.134.136.65]:55437 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725809AbgCaFLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 01:11:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D9371FB;
-        Mon, 30 Mar 2020 22:11:04 -0700 (PDT)
-Received: from p8cg001049571a15.arm.com (unknown [10.163.1.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 611A73F71E;
-        Mon, 30 Mar 2020 22:10:50 -0700 (PDT)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-mm@kvack.org
-Cc:     robin.murphy@arm.com, dan.j.williams@intel.com, jglisse@redhat.com,
-        jgg@mellanox.com, rcampbell@nvidia.com, aneesh.kumar@linux.ibm.com,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Yu Zhao <yuzhao@google.com>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V3 3/3] arm64/mm: Enable vmem_altmap support for vmemmap mappings
-Date:   Tue, 31 Mar 2020 10:39:47 +0530
-Message-Id: <1585631387-18819-4-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1585631387-18819-1-git-send-email-anshuman.khandual@arm.com>
-References: <1585631387-18819-1-git-send-email-anshuman.khandual@arm.com>
+        id S1726001AbgCaFcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 01:32:05 -0400
+IronPort-SDR: I3u6n3m4xSzq3L/iOKcRpbqSnMpCaV3/ELfFltvGXcdcXiFlpT/IO4bturFwIraeEwvDeaGFbz
+ theEZVlnZOrw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 22:32:04 -0700
+IronPort-SDR: SBkuA8p6OeShhufll+XxCy0kKHHejl7vhjrXSvL6B2Ghv6rC1xEIQB+AWCt2r0WHZv5AoeIRAH
+ WeAESTGWhqhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
+   d="scan'208";a="237592794"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by orsmga007.jf.intel.com with ESMTP; 30 Mar 2020 22:32:02 -0700
+Date:   Tue, 31 Mar 2020 13:10:45 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Xu Yilun <yilun.xu@intel.com>
+Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, trix@redhat.com, bhu@redhat.com,
+        Luwei Kang <luwei.kang@intel.com>
+Subject: Re: [PATCH v3 4/7] fpga: dfl: afu: add interrupt support for error
+ reporting
+Message-ID: <20200331051045.GD8468@hao-dev>
+References: <1585038763-22944-1-git-send-email-yilun.xu@intel.com>
+ <1585038763-22944-5-git-send-email-yilun.xu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1585038763-22944-5-git-send-email-yilun.xu@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Device memory ranges when getting hot added into ZONE_DEVICE, might require
-their vmemmap mapping's backing memory to be allocated from their own range
-instead of consuming system memory. This prevents large system memory usage
-for potentially large device memory ranges. Device driver communicates this
-request via vmem_altmap structure. Architecture needs to take this request
-into account while creating and tearing down vemmmap mappings.
+On Tue, Mar 24, 2020 at 04:32:40PM +0800, Xu Yilun wrote:
+> Error reporting interrupt is very useful to notify users that some
+> errors are detected by the hardware. Once users are notified, they
+> could query hardware logged error states, no need to continuously
+> poll on these states.
+> 
+> This patch follows the common DFL interrupt notification and handling
+> mechanism, implements two ioctl commands below for user to query
+> number of irqs supported, and set/unset interrupt triggers.
+> 
+>  Ioctls:
+>  * DFL_FPGA_PORT_ERR_GET_IRQ_NUM
+>    get the number of irqs, which is used to determine whether/how many
+>    interrupts error reporting feature supports.
+> 
+>  * DFL_FPGA_PORT_ERR_SET_IRQ
+>    set/unset given eventfds as error interrupt triggers.
+> 
+> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+> Signed-off-by: Wu Hao <hao.wu@intel.com>
+> Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> ----
+> v2: use DFL_FPGA_PORT_ERR_GET_IRQ_NUM instead of
+>     DFL_FPGA_PORT_ERR_GET_INFO
+>     Delete flag field for DFL_FPGA_PORT_ERR_SET_IRQ param
+> v3: put_user() instead of copy_to_user()
+>     improves comments
+> ---
+>  drivers/fpga/dfl-afu-error.c  | 60 +++++++++++++++++++++++++++++++++++++++++++
+>  drivers/fpga/dfl-afu-main.c   |  4 +++
+>  include/uapi/linux/fpga-dfl.h | 29 +++++++++++++++++++++
+>  3 files changed, 93 insertions(+)
+> 
+> diff --git a/drivers/fpga/dfl-afu-error.c b/drivers/fpga/dfl-afu-error.c
+> index c1467ae..757f9f5 100644
+> --- a/drivers/fpga/dfl-afu-error.c
+> +++ b/drivers/fpga/dfl-afu-error.c
+> @@ -15,6 +15,7 @@
+>   */
+>  
+>  #include <linux/uaccess.h>
+> +#include <linux/fpga-dfl.h>
+>  
+>  #include "dfl-afu.h"
+>  
+> @@ -219,6 +220,64 @@ static void port_err_uinit(struct platform_device *pdev,
+>  	afu_port_err_mask(&pdev->dev, true);
+>  }
+>  
+> +static long
+> +port_err_get_num_irqs(struct platform_device *pdev,
+> +		      struct dfl_feature *feature, unsigned long arg)
+> +{
+> +	return put_user(feature->nr_irqs, (__u32 __user *)arg);
+> +}
 
-This enables vmem_altmap support in vmemmap_populate() and vmemmap_free()
-which includes vmemmap_populate_basepages() used for ARM64_16K_PAGES and
-ARM64_64K_PAGES configs.
+Looks like this function is same in patch 5 and 6 too. Is it possible, we can
+share the common code? same case for below set irq function, right?
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Steve Capper <steve.capper@arm.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Yu Zhao <yuzhao@google.com>
-Cc: Hsin-Yi Wang <hsinyi@chromium.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+Thanks
+Hao
 
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- arch/arm64/mm/mmu.c | 58 +++++++++++++++++++++++++++++----------------
- 1 file changed, 38 insertions(+), 20 deletions(-)
-
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 81f88c88484f..511a69a501b6 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -727,15 +727,20 @@ int kern_addr_valid(unsigned long addr)
- }
- 
- #ifdef CONFIG_MEMORY_HOTPLUG
--static void free_hotplug_page_range(struct page *page, size_t size)
-+static void free_hotplug_page_range(struct page *page, size_t size,
-+				    struct vmem_altmap *altmap)
- {
--	WARN_ON(PageReserved(page));
--	free_pages((unsigned long)page_address(page), get_order(size));
-+	if (altmap) {
-+		vmem_altmap_free(altmap, size >> PAGE_SHIFT);
-+	} else {
-+		WARN_ON(PageReserved(page));
-+		free_pages((unsigned long)page_address(page), get_order(size));
-+	}
- }
- 
- static void free_hotplug_pgtable_page(struct page *page)
- {
--	free_hotplug_page_range(page, PAGE_SIZE);
-+	free_hotplug_page_range(page, PAGE_SIZE, NULL);
- }
- 
- static bool pgtable_range_aligned(unsigned long start, unsigned long end,
-@@ -758,7 +763,8 @@ static bool pgtable_range_aligned(unsigned long start, unsigned long end,
- }
- 
- static void unmap_hotplug_pte_range(pmd_t *pmdp, unsigned long addr,
--				    unsigned long end, bool free_mapped)
-+				    unsigned long end, bool free_mapped,
-+				    struct vmem_altmap *altmap)
- {
- 	pte_t *ptep, pte;
- 
-@@ -772,12 +778,14 @@ static void unmap_hotplug_pte_range(pmd_t *pmdp, unsigned long addr,
- 		pte_clear(&init_mm, addr, ptep);
- 		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
- 		if (free_mapped)
--			free_hotplug_page_range(pte_page(pte), PAGE_SIZE);
-+			free_hotplug_page_range(pte_page(pte),
-+						PAGE_SIZE, altmap);
- 	} while (addr += PAGE_SIZE, addr < end);
- }
- 
- static void unmap_hotplug_pmd_range(pud_t *pudp, unsigned long addr,
--				    unsigned long end, bool free_mapped)
-+				    unsigned long end, bool free_mapped,
-+				    struct vmem_altmap *altmap)
- {
- 	unsigned long next;
- 	pmd_t *pmdp, pmd;
-@@ -800,16 +808,17 @@ static void unmap_hotplug_pmd_range(pud_t *pudp, unsigned long addr,
- 			flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
- 			if (free_mapped)
- 				free_hotplug_page_range(pmd_page(pmd),
--							PMD_SIZE);
-+							PMD_SIZE, altmap);
- 			continue;
- 		}
- 		WARN_ON(!pmd_table(pmd));
--		unmap_hotplug_pte_range(pmdp, addr, next, free_mapped);
-+		unmap_hotplug_pte_range(pmdp, addr, next, free_mapped, altmap);
- 	} while (addr = next, addr < end);
- }
- 
- static void unmap_hotplug_pud_range(p4d_t *p4dp, unsigned long addr,
--				    unsigned long end, bool free_mapped)
-+				    unsigned long end, bool free_mapped,
-+				    struct vmem_altmap *altmap)
- {
- 	unsigned long next;
- 	pud_t *pudp, pud;
-@@ -832,16 +841,17 @@ static void unmap_hotplug_pud_range(p4d_t *p4dp, unsigned long addr,
- 			flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
- 			if (free_mapped)
- 				free_hotplug_page_range(pud_page(pud),
--							PUD_SIZE);
-+							PUD_SIZE, altmap);
- 			continue;
- 		}
- 		WARN_ON(!pud_table(pud));
--		unmap_hotplug_pmd_range(pudp, addr, next, free_mapped);
-+		unmap_hotplug_pmd_range(pudp, addr, next, free_mapped, altmap);
- 	} while (addr = next, addr < end);
- }
- 
- static void unmap_hotplug_p4d_range(pgd_t *pgdp, unsigned long addr,
--				    unsigned long end, bool free_mapped)
-+				    unsigned long end, bool free_mapped,
-+				    struct vmem_altmap *altmap)
- {
- 	unsigned long next;
- 	p4d_t *p4dp, p4d;
-@@ -854,16 +864,24 @@ static void unmap_hotplug_p4d_range(pgd_t *pgdp, unsigned long addr,
- 			continue;
- 
- 		WARN_ON(!p4d_present(p4d));
--		unmap_hotplug_pud_range(p4dp, addr, next, free_mapped);
-+		unmap_hotplug_pud_range(p4dp, addr, next, free_mapped, altmap);
- 	} while (addr = next, addr < end);
- }
- 
- static void unmap_hotplug_range(unsigned long addr, unsigned long end,
--				bool free_mapped)
-+				bool free_mapped, struct vmem_altmap *altmap)
- {
- 	unsigned long next;
- 	pgd_t *pgdp, pgd;
- 
-+	/*
-+	 * altmap can only be used as vmemmap mapping backing memory.
-+	 * In case the backing memory itself is not being freed, then
-+	 * altmap is irrelevant. Warn about this inconsistency when
-+	 * encountered.
-+	 */
-+	WARN_ON(!free_mapped && altmap);
-+
- 	do {
- 		next = pgd_addr_end(addr, end);
- 		pgdp = pgd_offset_k(addr);
-@@ -872,7 +890,7 @@ static void unmap_hotplug_range(unsigned long addr, unsigned long end,
- 			continue;
- 
- 		WARN_ON(!pgd_present(pgd));
--		unmap_hotplug_p4d_range(pgdp, addr, next, free_mapped);
-+		unmap_hotplug_p4d_range(pgdp, addr, next, free_mapped, altmap);
- 	} while (addr = next, addr < end);
- }
- 
-@@ -1036,7 +1054,7 @@ static void free_empty_tables(unsigned long addr, unsigned long end,
- int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
- 		struct vmem_altmap *altmap)
- {
--	return vmemmap_populate_basepages(start, end, node, NULL);
-+	return vmemmap_populate_basepages(start, end, node, altmap);
- }
- #else	/* !ARM64_SWAPPER_USES_SECTION_MAPS */
- int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
-@@ -1064,7 +1082,7 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
- 			void *p = NULL;
- 
- 			p = vmemmap_alloc_block_buf(PMD_SIZE, node,
--						    NULL, false);
-+						    altmap, false);
- 			if (!p)
- 				return -ENOMEM;
- 
-@@ -1082,7 +1100,7 @@ void vmemmap_free(unsigned long start, unsigned long end,
- #ifdef CONFIG_MEMORY_HOTPLUG
- 	WARN_ON((start < VMEMMAP_START) || (end > VMEMMAP_END));
- 
--	unmap_hotplug_range(start, end, true);
-+	unmap_hotplug_range(start, end, true, altmap);
- 	free_empty_tables(start, end, VMEMMAP_START, VMEMMAP_END);
- #endif
- }
-@@ -1370,7 +1388,7 @@ static void __remove_pgd_mapping(pgd_t *pgdir, unsigned long start, u64 size)
- 	WARN_ON(pgdir != init_mm.pgd);
- 	WARN_ON((start < PAGE_OFFSET) || (end > PAGE_END));
- 
--	unmap_hotplug_range(start, end, false);
-+	unmap_hotplug_range(start, end, false, NULL);
- 	free_empty_tables(start, end, PAGE_OFFSET, PAGE_END);
- }
- 
--- 
-2.20.1
-
+> +
+> +static long port_err_set_irq(struct platform_device *pdev,
+> +			     struct dfl_feature *feature, unsigned long arg)
+> +{
+> +	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
+> +	struct dfl_fpga_irq_set hdr;
+> +	s32 *fds;
+> +	long ret;
+> +
+> +	if (!feature->nr_irqs)
+> +		return -ENOENT;
+> +
+> +	if (copy_from_user(&hdr, (void __user *)arg, sizeof(hdr)))
+> +		return -EFAULT;
+> +
+> +	if (!hdr.count || (hdr.start + hdr.count > feature->nr_irqs) ||
+> +	    (hdr.start + hdr.count < hdr.start))
+> +		return -EINVAL;
+> +
+> +	fds = memdup_user((void __user *)(arg + sizeof(hdr)),
+> +			  hdr.count * sizeof(s32));
+> +	if (IS_ERR(fds))
+> +		return PTR_ERR(fds);
+> +
+> +	mutex_lock(&pdata->lock);
+> +	ret = dfl_fpga_set_irq_triggers(feature, hdr.start, hdr.count, fds);
+> +	mutex_unlock(&pdata->lock);
+> +
+> +	kfree(fds);
+> +	return ret;
+> +}
+> +
+> +static long
+> +port_err_ioctl(struct platform_device *pdev, struct dfl_feature *feature,
+> +	       unsigned int cmd, unsigned long arg)
+> +{
+> +	long ret = -ENODEV;
+> +
+> +	switch (cmd) {
+> +	case DFL_FPGA_PORT_ERR_GET_IRQ_NUM:
+> +		ret = port_err_get_num_irqs(pdev, feature, arg);
+> +		break;
+> +	case DFL_FPGA_PORT_ERR_SET_IRQ:
+> +		ret = port_err_set_irq(pdev, feature, arg);
+> +		break;
+> +	default:
+> +		dev_dbg(&pdev->dev, "%x cmd not handled", cmd);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  const struct dfl_feature_id port_err_id_table[] = {
+>  	{.id = PORT_FEATURE_ID_ERROR,},
+>  	{0,}
+> @@ -227,4 +286,5 @@ const struct dfl_feature_id port_err_id_table[] = {
+>  const struct dfl_feature_ops port_err_ops = {
+>  	.init = port_err_init,
+>  	.uinit = port_err_uinit,
+> +	.ioctl = port_err_ioctl,
+>  };
+> diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
+> index b0c3178..357cd5d 100644
+> --- a/drivers/fpga/dfl-afu-main.c
+> +++ b/drivers/fpga/dfl-afu-main.c
+> @@ -577,6 +577,7 @@ static int afu_release(struct inode *inode, struct file *filp)
+>  {
+>  	struct platform_device *pdev = filp->private_data;
+>  	struct dfl_feature_platform_data *pdata;
+> +	struct dfl_feature *feature;
+>  
+>  	dev_dbg(&pdev->dev, "Device File Release\n");
+>  
+> @@ -586,6 +587,9 @@ static int afu_release(struct inode *inode, struct file *filp)
+>  	dfl_feature_dev_use_end(pdata);
+>  
+>  	if (!dfl_feature_dev_use_count(pdata)) {
+> +		dfl_fpga_dev_for_each_feature(pdata, feature)
+> +			dfl_fpga_set_irq_triggers(feature, 0,
+> +						  feature->nr_irqs, NULL);
+>  		__port_reset(pdev);
+>  		afu_dma_region_destroy(pdata);
+>  	}
+> diff --git a/include/uapi/linux/fpga-dfl.h b/include/uapi/linux/fpga-dfl.h
+> index ec70a0746..9ade943 100644
+> --- a/include/uapi/linux/fpga-dfl.h
+> +++ b/include/uapi/linux/fpga-dfl.h
+> @@ -151,6 +151,35 @@ struct dfl_fpga_port_dma_unmap {
+>  
+>  #define DFL_FPGA_PORT_DMA_UNMAP		_IO(DFL_FPGA_MAGIC, DFL_PORT_BASE + 4)
+>  
+> +/**
+> + * DFL_FPGA_PORT_ERR_GET_IRQ_NUM - _IOR(DFL_FPGA_MAGIC, DFL_PORT_BASE + 5,
+> + *								__u32 num_irqs)
+> + *
+> + * Get the number of irqs supported by the fpga port error reporting private
+> + * feature. Currently hardware supports up to 1 irq.
+> + * Return: 0 on success, -errno on failure.
+> + */
+> +#define DFL_FPGA_PORT_ERR_GET_IRQ_NUM	_IOR(DFL_FPGA_MAGIC,	\
+> +					     DFL_PORT_BASE + 5, __u32)
+> +
+> +/**
+> + * DFL_FPGA_PORT_ERR_SET_IRQ - _IOW(DFL_FPGA_MAGIC, DFL_PORT_BASE + 6,
+> + *						struct dfl_fpga_irq_set)
+> + *
+> + * Set fpga port error reporting interrupt trigger if evtfds[n] is valid.
+> + * Unset related interrupt trigger if evtfds[n] is a negative value.
+> + * Return: 0 on success, -errno on failure.
+> + */
+> +struct dfl_fpga_irq_set {
+> +	__u32 start;		/* Index of the first irq */
+> +	__u32 count;		/* The number of eventfd handler */
+> +	__s32 evtfds[];		/* Eventfd handler */
+> +};
+> +
+> +#define DFL_FPGA_PORT_ERR_SET_IRQ	_IOW(DFL_FPGA_MAGIC,	\
+> +					     DFL_PORT_BASE + 6,	\
+> +					     struct dfl_fpga_irq_set)
+> +
+>  /* IOCTLs for FME file descriptor */
+>  
+>  /**
+> -- 
+> 2.7.4
