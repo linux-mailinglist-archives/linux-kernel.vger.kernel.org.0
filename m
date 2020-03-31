@@ -2,156 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42F33198EE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:55:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACB4F198EEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:56:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730192AbgCaIzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 04:55:18 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39695 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbgCaIzS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:55:18 -0400
-Received: by mail-wm1-f66.google.com with SMTP id e9so1636652wme.4;
-        Tue, 31 Mar 2020 01:55:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rTdu7oh4JjjFUdNyXovYxN1QmbRl7JqIGXsfhw5Wa0c=;
-        b=psBCthknpM7/IfGy2Y2HJrDpZ7euLtHQprV6EQF2OcQ/Z56YSt/t0Dgl7ebNEvOUNM
-         AkrDEANo0/ZO4vQelGbjtDtnw8SdAyxlj+9Viks88bqwvtDC79UTLg/5n8Heq8Y0gZ6p
-         XSl6ptBagsP5AHDWu4ruhp08gsLFYKPYk/7tA4E14sYXXQs40i/Z/W6pizvKqN+z3rDY
-         0o300+liq89Nesy36L1dcI17MP9H4743q6lXXN1iNPlYHE2cp2wajmoNUaG420VBoKFc
-         oTLygocFyYAY4SUzhbiPqzSbmXmpSA6lF9r6m04rXWIQNNxPvIsFCmLBFpNjWDRhktSh
-         XdYQ==
-X-Gm-Message-State: ANhLgQ2100yrSfUE5fISHlWua+t/dIE9TDbXcv+zrISzNMD4hYbLz2Pd
-        xutcZwAFMnzQCrNHE1jIhH4=
-X-Google-Smtp-Source: ADFU+vuscSRwsLwXmVoQv1xnwhJFZnnlCFmntVIImf+p0Rb3SHZnEYoHiIxLd4qO4YJEIRanvIyR4Q==
-X-Received: by 2002:a1c:b60b:: with SMTP id g11mr2406590wmf.175.1585644915034;
-        Tue, 31 Mar 2020 01:55:15 -0700 (PDT)
-Received: from localhost (ip-37-188-180-223.eurotel.cz. [37.188.180.223])
-        by smtp.gmail.com with ESMTPSA id v11sm26003208wrm.43.2020.03.31.01.55.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 01:55:14 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 10:55:13 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Hoan Tran <Hoan@os.amperecomputing.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        lho@amperecomputing.com, mmorana@amperecomputing.com
-Subject: Re: [PATCH v3 0/5] mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by
- default for NUMA
-Message-ID: <20200331085513.GE30449@dhcp22.suse.cz>
-References: <1585420282-25630-1-git-send-email-Hoan@os.amperecomputing.com>
- <20200330074246.GA14243@dhcp22.suse.cz>
- <20200330175100.GD30942@linux.ibm.com>
- <20200330182301.GM14243@dhcp22.suse.cz>
- <20200331081423.GE30942@linux.ibm.com>
+        id S1730273AbgCaI4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 04:56:33 -0400
+Received: from mga07.intel.com ([134.134.136.100]:36209 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726299AbgCaI4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 04:56:32 -0400
+IronPort-SDR: mK8ECY0m5cs7ahrKu5XgV9tcD46HGCq/RJ42PUfw3ECl9OvO/Qfzce63cR18iy6v1gZ/Rx83Ea
+ PAXeaDxpNI7w==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 01:56:31 -0700
+IronPort-SDR: rY2Lz/HrtN4L05LwqCHEIGPro6fjbVG88EiP8Yy2Btzm2jo0QEIOOymxovM50kXXzqYHbexX0Z
+ aYptoeE+mgFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
+   d="scan'208";a="450093037"
+Received: from yhuang-dev.sh.intel.com ([10.239.159.23])
+  by fmsmga006.fm.intel.com with ESMTP; 31 Mar 2020 01:56:28 -0700
+From:   "Huang, Ying" <ying.huang@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Zi Yan <ziy@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+Subject: [PATCH] /proc/PID/smaps: Add PMD migration entry parsing
+Date:   Tue, 31 Mar 2020 16:56:04 +0800
+Message-Id: <20200331085604.1260162-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331081423.GE30942@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 31-03-20 11:14:23, Mike Rapoport wrote:
-> On Mon, Mar 30, 2020 at 08:23:01PM +0200, Michal Hocko wrote:
-> > On Mon 30-03-20 20:51:00, Mike Rapoport wrote:
-> > > On Mon, Mar 30, 2020 at 09:42:46AM +0200, Michal Hocko wrote:
-> > > > On Sat 28-03-20 11:31:17, Hoan Tran wrote:
-> > > > > In NUMA layout which nodes have memory ranges that span across other nodes,
-> > > > > the mm driver can detect the memory node id incorrectly.
-> > > > > 
-> > > > > For example, with layout below
-> > > > > Node 0 address: 0000 xxxx 0000 xxxx
-> > > > > Node 1 address: xxxx 1111 xxxx 1111
-> > > > > 
-> > > > > Note:
-> > > > >  - Memory from low to high
-> > > > >  - 0/1: Node id
-> > > > >  - x: Invalid memory of a node
-> > > > > 
-> > > > > When mm probes the memory map, without CONFIG_NODES_SPAN_OTHER_NODES
-> > > > > config, mm only checks the memory validity but not the node id.
-> > > > > Because of that, Node 1 also detects the memory from node 0 as below
-> > > > > when it scans from the start address to the end address of node 1.
-> > > > > 
-> > > > > Node 0 address: 0000 xxxx xxxx xxxx
-> > > > > Node 1 address: xxxx 1111 1111 1111
-> > > > > 
-> > > > > This layout could occur on any architecture. Most of them enables
-> > > > > this config by default with CONFIG_NUMA. This patch, by default, enables
-> > > > > CONFIG_NODES_SPAN_OTHER_NODES or uses early_pfn_in_nid() for NUMA.
-> > > > 
-> > > > I am not opposed to this at all. It reduces the config space and that is
-> > > > a good thing on its own. The history has shown that meory layout might
-> > > > be really wild wrt NUMA. The config is only used for early_pfn_in_nid
-> > > > which is clearly an overkill.
-> > > > 
-> > > > Your description doesn't really explain why this is safe though. The
-> > > > history of this config is somehow messy, though. Mike has tried
-> > > > to remove it a94b3ab7eab4 ("[PATCH] mm: remove arch independent
-> > > > NODES_SPAN_OTHER_NODES") just to be reintroduced by 7516795739bd
-> > > > ("[PATCH] Reintroduce NODES_SPAN_OTHER_NODES for powerpc") without any
-> > > > reasoning what so ever. This doesn't make it really easy see whether
-> > > > reasons for reintroduction are still there. Maybe there are some subtle
-> > > > dependencies. I do not see any TBH but that might be burried deep in an
-> > > > arch specific code.
-> > > 
-> > > I've looked at this a bit more and it seems that the check for
-> > > early_pfn_in_nid() in memmap_init_zone() can be simply removed.
-> > > 
-> > > The commits you've mentioned were way before the addition of
-> > > HAVE_MEMBLOCK_NODE_MAP and the whole infrastructure that calculates zone
-> > > sizes and boundaries based on the memblock node map.
-> > > So, the memmap_init_zone() is called when zone boundaries are already
-> > > within a node.
-> > 
-> > But zones from different nodes might overlap in the pfn range. And this
-> > check is there to skip over those overlapping areas.
-> 
-> Maybe I mis-read the code, but I don't see how this could happen. In the
-> HAVE_MEMBLOCK_NODE_MAP=y case, free_area_init_node() calls
-> calculate_node_totalpages() that ensures that node->node_zones are entirely
-> within the node because this is checked in zone_spanned_pages_in_node().
+From: Huang Ying <ying.huang@intel.com>
 
-zone_spanned_pages_in_node does chech the zone boundaries are within the
-node boundaries. But that doesn't really tell anything about other
-potential zones interleaving with the physical memory range.
-zone->spanned_pages simply gives the physical range for the zone
-including holes. Interleaving nodes are essentially a hole
-(__absent_pages_in_range is going to skip those).
+Now, when read /proc/PID/smaps, the PMD migration entry in page table is simply
+ignored.  To improve the accuracy of /proc/PID/smaps, its parsing and processing
+is added.
 
-That means that when free_area_init_core simply goes over the whole
-physical zone range including holes and that is why we need to check
-both for physical and logical holes (aka other nodes).
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Zi Yan <ziy@nvidia.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Yang Shi <yang.shi@linux.alibaba.com>
+---
+ fs/proc/task_mmu.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-The life would be so much easier if the whole thing would simply iterate
-over memblocks...
-
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 8d382d4ec067..b5b3aef8cb3b 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -548,8 +548,17 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
+ 	bool locked = !!(vma->vm_flags & VM_LOCKED);
+ 	struct page *page;
+ 
+-	/* FOLL_DUMP will return -EFAULT on huge zero page */
+-	page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
++	if (pmd_present(*pmd)) {
++		/* FOLL_DUMP will return -EFAULT on huge zero page */
++		page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
++	} else if (unlikely(is_swap_pmd(*pmd))) {
++		swp_entry_t entry = pmd_to_swp_entry(*pmd);
++
++		VM_BUG_ON(!is_migration_entry(entry));
++		page = migration_entry_to_page(entry);
++	} else {
++		return;
++	}
+ 	if (IS_ERR_OR_NULL(page))
+ 		return;
+ 	if (PageAnon(page))
+@@ -578,8 +587,7 @@ static int smaps_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 
+ 	ptl = pmd_trans_huge_lock(pmd, vma);
+ 	if (ptl) {
+-		if (pmd_present(*pmd))
+-			smaps_pmd_entry(pmd, addr, walk);
++		smaps_pmd_entry(pmd, addr, walk);
+ 		spin_unlock(ptl);
+ 		goto out;
+ 	}
 -- 
-Michal Hocko
-SUSE Labs
+2.25.0
+
