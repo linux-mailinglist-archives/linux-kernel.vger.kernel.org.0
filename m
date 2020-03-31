@@ -2,169 +2,339 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEBB2198A59
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 05:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A464E198A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 05:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729672AbgCaDIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 23:08:04 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:35137 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727464AbgCaDID (ORCPT
+        id S1729593AbgCaDK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 23:10:57 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:48649 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727464AbgCaDK4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 23:08:03 -0400
-Received: by mail-il1-f200.google.com with SMTP id t10so18804773ilf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 20:08:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=+5vcJYsrFacweEz4W6ftdXhQocE2JVm+UGuLAzgpEEs=;
-        b=j5E4D5vXCW3wRQcBHqZ7Q5+M8nwji8NEfWjlulI5657FIl7ANWCpOQeqdak77JoP3D
-         0ZWINnFbUES0kivaZpUJeDqPnyfxzCcCtjWEyyczVTblfRgS4MZPdm2QGmCd78ib/jYv
-         ICqPAoYAatm2ToIg5aCpESl82B5ptK5B8Wfw0dDIrUzHzk9U6Ln9X12xWXNfgDTVZrOA
-         tvGDBB/xTtTLYtvmDZOEh4IZ6XKr/+9hIfpiiUtB3+Aua0NQNlbXdFSbW/n4vK2kSi+E
-         oApOq/Sj77Glw3oMlj4cGmWMxokWr0K1DseIV6g3OnE2uqtZwxhLQEorokEEjRLbJSf9
-         djwA==
-X-Gm-Message-State: ANhLgQ3ZAuIQbEd/KV3C8DwcrDlGc2/4glOFU9iQnBguspxercSk06df
-        EdflmCDQMbnTYZYFVSRponi3P7RVpFCJb4JR1XkSDVKhyHna
-X-Google-Smtp-Source: ADFU+vursDUTX1at0nNsVGNHqQuQmAA/uLz3ggv9YCyfGdWalwmRvpK1HXfMd+zmV0YdW2uWdLm9tKL/ahe0XrSjF8EzhRViZ7tO
+        Mon, 30 Mar 2020 23:10:56 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585624255; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=bcm3LyrGOQHUR76njTvQpJ4pk9O8c7rYDVbC8J3qwtk=; b=ZZ93h/G1iO2IiZ2b6KGhFr1wL5mIqOHSwQKkbjaGroYUYZY6vyXqRYpn2EEa3Y1lwNqbkdke
+ vrotqoMVxQqevF3r0vyRy5Lfl8c2uaD+gpMSQR3H/fwy2RmkdJZJWNRpdZv3WTuU+pSjJ5BW
+ WM3X6YtlhMtEPhQhU8uV38QW7AQ=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e82b4ab.7f841e625fb8-smtp-out-n05;
+ Tue, 31 Mar 2020 03:10:35 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 378D5C43637; Tue, 31 Mar 2020 03:10:34 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E6722C433F2;
+        Tue, 31 Mar 2020 03:10:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6722C433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date:   Tue, 31 Mar 2020 08:40:27 +0530
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, stummala@codeaurora.org
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix long latency due to discard during
+ umount
+Message-ID: <20200331031027.GY20234@codeaurora.org>
+References: <1584506689-5041-1-git-send-email-stummala@codeaurora.org>
+ <29d4adc4-482d-3d92-1470-3405989ea231@huawei.com>
+ <20200326133700.GR20234@codeaurora.org>
+ <2b0d8d4c-a981-4edc-d8ca-fe199a63ea79@huawei.com>
+ <20200327030542.GS20234@codeaurora.org>
+ <20200330065335.GT20234@codeaurora.org>
+ <9adc5c7e-7936-bac7-58b1-50631f8ac5eb@huawei.com>
+ <5ec3b2e1-162c-e62d-1834-100c8ae39ff7@huawei.com>
+ <20200330105122.GV20234@codeaurora.org>
+ <d65e7548-205d-ef28-e9fc-041ae1571cfd@huawei.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:8dc9:: with SMTP id p192mr12873614iod.90.1585624082745;
- Mon, 30 Mar 2020 20:08:02 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 20:08:02 -0700
-In-Reply-To: <CADG63jBgKXORSXV8zs_6QETgRGsNMOvJ8nBRn1itEjrZv5f+dA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003313e805a21de06e@google.com>
-Subject: Re: KASAN: stack-out-of-bounds Write in ath9k_hif_usb_rx_cb
-From:   syzbot <syzbot+d403396d4df67ad0bd5f@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, anenbupt@gmail.com,
-        ath9k-devel@qca.qualcomm.com, davem@davemloft.net,
-        kvalo@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d65e7548-205d-ef28-e9fc-041ae1571cfd@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot has tested the proposed patch but the reproducer still triggered crash:
-KASAN: use-after-free Read in htc_connect_service
+Sure Chao. Let us put this patch on hold for now then.
 
-usb 4-1: Service connection timeout for: 256
-==================================================================
-BUG: KASAN: use-after-free in atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
-BUG: KASAN: use-after-free in refcount_read include/linux/refcount.h:134 [inline]
-BUG: KASAN: use-after-free in skb_unref include/linux/skbuff.h:1042 [inline]
-BUG: KASAN: use-after-free in kfree_skb+0x32/0x3d0 net/core/skbuff.c:692
-Read of size 4 at addr ffff8881c7ec2d54 by task kworker/0:5/3237
+Jaeguek,
 
-CPU: 0 PID: 3237 Comm: kworker/0:5 Not tainted 5.6.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: events request_firmware_work_func
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xef/0x16e lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xd3/0x314 mm/kasan/report.c:374
- __kasan_report.cold+0x37/0x77 mm/kasan/report.c:506
- kasan_report+0xe/0x20 mm/kasan/common.c:641
- check_memory_region_inline mm/kasan/generic.c:185 [inline]
- check_memory_region+0x152/0x1c0 mm/kasan/generic.c:192
- atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
- refcount_read include/linux/refcount.h:134 [inline]
- skb_unref include/linux/skbuff.h:1042 [inline]
- kfree_skb+0x32/0x3d0 net/core/skbuff.c:692
- htc_connect_service.cold+0xa9/0x109 drivers/net/wireless/ath/ath9k/htc_hst.c:282
- ath9k_wmi_connect+0xd2/0x1a0 drivers/net/wireless/ath/ath9k/wmi.c:265
- ath9k_init_htc_services.constprop.0+0xb4/0x650 drivers/net/wireless/ath/ath9k/htc_drv_init.c:146
- ath9k_htc_probe_device+0x25a/0x1d80 drivers/net/wireless/ath/ath9k/htc_drv_init.c:959
- ath9k_htc_hw_init+0x31/0x60 drivers/net/wireless/ath/ath9k/htc_hst.c:501
- ath9k_hif_usb_firmware_cb+0x26b/0x500 drivers/net/wireless/ath/ath9k/hif_usb.c:1192
- request_firmware_work_func+0x126/0x242 drivers/base/firmware_loader/main.c:976
- process_one_work+0x94b/0x1620 kernel/workqueue.c:2266
- worker_thread+0x96/0xe20 kernel/workqueue.c:2412
- kthread+0x318/0x420 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Please drop this patch from your tree for time being as it needs
+further discussion.
 
-Allocated by task 3237:
- save_stack+0x1b/0x80 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- __kasan_kmalloc mm/kasan/common.c:515 [inline]
- __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:488
- slab_post_alloc_hook mm/slab.h:584 [inline]
- slab_alloc_node mm/slub.c:2786 [inline]
- kmem_cache_alloc_node+0xdc/0x330 mm/slub.c:2822
- __alloc_skb+0xba/0x5a0 net/core/skbuff.c:198
- alloc_skb include/linux/skbuff.h:1081 [inline]
- htc_connect_service+0x2cc/0x840 drivers/net/wireless/ath/ath9k/htc_hst.c:257
- ath9k_wmi_connect+0xd2/0x1a0 drivers/net/wireless/ath/ath9k/wmi.c:265
- ath9k_init_htc_services.constprop.0+0xb4/0x650 drivers/net/wireless/ath/ath9k/htc_drv_init.c:146
- ath9k_htc_probe_device+0x25a/0x1d80 drivers/net/wireless/ath/ath9k/htc_drv_init.c:959
- ath9k_htc_hw_init+0x31/0x60 drivers/net/wireless/ath/ath9k/htc_hst.c:501
- ath9k_hif_usb_firmware_cb+0x26b/0x500 drivers/net/wireless/ath/ath9k/hif_usb.c:1192
- request_firmware_work_func+0x126/0x242 drivers/base/firmware_loader/main.c:976
- process_one_work+0x94b/0x1620 kernel/workqueue.c:2266
- worker_thread+0x96/0xe20 kernel/workqueue.c:2412
- kthread+0x318/0x420 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Thanks,
 
-Freed by task 0:
- save_stack+0x1b/0x80 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- kasan_set_free_info mm/kasan/common.c:337 [inline]
- __kasan_slab_free+0x117/0x160 mm/kasan/common.c:476
- slab_free_hook mm/slub.c:1444 [inline]
- slab_free_freelist_hook mm/slub.c:1477 [inline]
- slab_free mm/slub.c:3034 [inline]
- kmem_cache_free+0x9b/0x360 mm/slub.c:3050
- kfree_skbmem net/core/skbuff.c:622 [inline]
- kfree_skbmem+0xef/0x1b0 net/core/skbuff.c:616
- __kfree_skb net/core/skbuff.c:679 [inline]
- kfree_skb net/core/skbuff.c:696 [inline]
- kfree_skb+0x102/0x3d0 net/core/skbuff.c:690
- ath9k_htc_txcompletion_cb+0x1f8/0x2b0 drivers/net/wireless/ath/ath9k/htc_hst.c:356
- hif_usb_regout_cb+0x10b/0x1b0 drivers/net/wireless/ath/ath9k/hif_usb.c:90
- __usb_hcd_giveback_urb+0x1f2/0x470 drivers/usb/core/hcd.c:1648
- usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1713
- dummy_timer+0x1258/0x32ae drivers/usb/gadget/udc/dummy_hcd.c:1966
- call_timer_fn+0x195/0x6f0 kernel/time/timer.c:1404
- expire_timers kernel/time/timer.c:1449 [inline]
- __run_timers kernel/time/timer.c:1773 [inline]
- __run_timers kernel/time/timer.c:1740 [inline]
- run_timer_softirq+0x5f9/0x1500 kernel/time/timer.c:1786
- __do_softirq+0x21e/0x950 kernel/softirq.c:292
+On Tue, Mar 31, 2020 at 09:46:30AM +0800, Chao Yu wrote:
+> Hi Sahitya,
+> 
+> On 2020/3/30 18:51, Sahitya Tummala wrote:
+> > Hi Chao,
+> > 
+> > On Mon, Mar 30, 2020 at 06:16:40PM +0800, Chao Yu wrote:
+> >> On 2020/3/30 16:38, Chao Yu wrote:
+> >>> Hi Sahitya,
+> >>>
+> >>> Bad news, :( I guess we didn't catch the root cause, as after applying v3,
+> >>> I still can reproduce this issue:
+> >>>
+> >>> generic/003 10s ...  30s
+> >>
+> >> I use zram as backend device of fstest,
+> >>
+> >> Call Trace:
+> >>  dump_stack+0x66/0x8b
+> >>  f2fs_submit_discard_endio+0x88/0xa0 [f2fs]
+> >>  generic_make_request_checks+0x70/0x5f0
+> >>  generic_make_request+0x3e/0x2e0
+> >>  submit_bio+0x72/0x140
+> >>  __submit_discard_cmd.isra.50+0x4a8/0x710 [f2fs]
+> >>  __issue_discard_cmd+0x171/0x3a0 [f2fs]
+> >>
+> >> Does this mean zram uses single queue, so we may always fail to submit 'nowait'
+> >> IO due to below condition:
+> >>
+> >> 	/*
+> >> 	 * Non-mq queues do not honor REQ_NOWAIT, so complete a bio
+> >> 	 * with BLK_STS_AGAIN status in order to catch -EAGAIN and
+> >> 	 * to give a chance to the caller to repeat request gracefully.
+> >> 	 */
+> >> 	if ((bio->bi_opf & REQ_NOWAIT) && !queue_is_mq(q)) {
+> >> 		status = BLK_STS_AGAIN;
+> >> 		goto end_io;
+> >> 	}
+> >>
+> > 
+> > Yes, I have also just figured out that as the reason. But most of the real block
+> > devic drivers support MQ. Can we thus fix this case by checking for MQ status
+> > before enabling REQ_NOWAIT as below? Please share your comments.
+> > 
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index cda7935..e7e2ffe 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1131,7 +1131,9 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> > 
+> >         flag = dpolicy->sync ? REQ_SYNC : 0;
+> > -       flag |= dpolicy->type == DPOLICY_UMOUNT ? REQ_NOWAIT : 0;
+> > +
+> > +       if (sbi->sb->s_bdev->bd_queue && queue_is_mq(sbi->sb->s_bdev->bd_queue))
+> > +               flag |= dpolicy->type == DPOLICY_UMOUNT ? REQ_NOWAIT : 0;
+> 
+> IMO, it's too tight to couple with block layer logic? however, I don't have
+> any better idea about the solution.
+> 
+> Anyway, I guess we can Cc to Jan and block mailing list for comments to see
+> whether there is a better solution.
+> 
+> Thoughts?
+> 
+> Thanks,
+> 
+> > 
+> >         if (dc->state != D_PREP)
+> >                 return 0;
+> > 
+> > Thanks,
+> > 
+> >>
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>> On 2020/3/30 14:53, Sahitya Tummala wrote:
+> >>>> Hi Chao,
+> >>>>
+> >>>> On Fri, Mar 27, 2020 at 08:35:42AM +0530, Sahitya Tummala wrote:
+> >>>>> On Fri, Mar 27, 2020 at 09:51:43AM +0800, Chao Yu wrote:
+> >>>>>>
+> >>>>>> With this patch, most of xfstest cases cost 5 * n second longer than before.
+> >>>>>>
+> >>>>>> E.g. generic/003, during umount(), we looped into retrying one bio
+> >>>>>> submission.
+> >>>>>>
+> >>>>>> [61279.829724] F2FS-fs (zram1): Found nat_bits in checkpoint
+> >>>>>> [61279.885337] F2FS-fs (zram1): Mounted with checkpoint version = 5cf3cb8e
+> >>>>>> [61281.912832] submit discard bio start [23555,1]
+> >>>>>> [61281.912835] f2fs_submit_discard_endio [23555,1] err:-11
+> >>>>>> [61281.912836] submit discard bio end [23555,1]
+> >>>>>> [61281.912836] move dc to retry list [23555,1]
+> >>>>>>
+> >>>>>> ...
+> >>>>>>
+> >>>>>> [61286.881212] submit discard bio start [23555,1]
+> >>>>>> [61286.881217] f2fs_submit_discard_endio [23555,1] err:-11
+> >>>>>> [61286.881223] submit discard bio end [23555,1]
+> >>>>>> [61286.881224] move dc to retry list [23555,1]
+> >>>>>> [61286.905198] submit discard bio start [23555,1]
+> >>>>>> [61286.905203] f2fs_submit_discard_endio [23555,1] err:-11
+> >>>>>> [61286.905205] submit discard bio end [23555,1]
+> >>>>>> [61286.905206] move dc to retry list [23555,1]
+> >>>>>> [61286.929157] F2FS-fs (zram1): Issue discard(23555, 23555, 1) failed, ret: -11
+> >>>>>>
+> >>>>>> Could you take a look at this issue?
+> >>>>>
+> >>>>> Let me check and get back on this.
+> >>>>
+> >>>> I found the issue. The dc with multiple bios is getting requeued again and
+> >>>> again in case if one of its bio gets -EAGAIN error. Even the successfully
+> >>>> completed bios are getting requeued again resulting into long latency.
+> >>>> I have fixed it by splitting the dc in such case so that we can requeue only
+> >>>> the leftover bios into a new dc and retry that later within the 5 sec timeout.
+> >>>>
+> >>>> Please help to review v3 posted and if it looks good, I would like to request
+> >>>> you to test the earlier regression scenario with it to check the result again?
+> >>>>
+> >>>> thanks,
+> >>>>
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>>>
+> >>>>>> Thanks,
+> >>>>>>
+> >>>>>>>
+> >>>>>>> Thanks,
+> >>>>>>>
+> >>>>>>>> Thanks,
+> >>>>>>>>
+> >>>>>>>>> +				break;
+> >>>>>>>>> +			}
+> >>>>>>>>> +		}
+> >>>>>>>>>  
+> >>>>>>>>>  		atomic_inc(&dcc->issued_discard);
+> >>>>>>>>>  
+> >>>>>>>>> @@ -1463,6 +1477,40 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+> >>>>>>>>>  	return issued;
+> >>>>>>>>>  }
+> >>>>>>>>>  
+> >>>>>>>>> +static bool __should_discard_retry(struct f2fs_sb_info *sbi,
+> >>>>>>> s> > +		struct discard_policy *dpolicy)
+> >>>>>>>>> +{
+> >>>>>>>>> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> >>>>>>>>> +	struct discard_cmd *dc, *tmp;
+> >>>>>>>>> +	bool retry = false;
+> >>>>>>>>> +	unsigned long flags;
+> >>>>>>>>> +
+> >>>>>>>>> +	if (dpolicy->type != DPOLICY_UMOUNT)
+> >>>>>>>>> +		f2fs_bug_on(sbi, 1);
+> >>>>>>>>> +
+> >>>>>>>>> +	mutex_lock(&dcc->cmd_lock);
+> >>>>>>>>> +	list_for_each_entry_safe(dc, tmp, &(dcc->retry_list), list) {
+> >>>>>>>>> +		if (dpolicy->timeout != 0 &&
+> >>>>>>>>> +			f2fs_time_over(sbi, dpolicy->timeout)) {
+> >>>>>>>>> +			retry = false;
+> >>>>>>>>> +			break;
+> >>>>>>>>> +		}
+> >>>>>>>>> +
+> >>>>>>>>> +		spin_lock_irqsave(&dc->lock, flags);
+> >>>>>>>>> +		if (!dc->bio_ref) {
+> >>>>>>>>> +			dc->state = D_PREP;
+> >>>>>>>>> +			dc->error = 0;
+> >>>>>>>>> +			reinit_completion(&dc->wait);
+> >>>>>>>>> +			__relocate_discard_cmd(dcc, dc);
+> >>>>>>>>> +			retry = true;
+> >>>>>>>>> +		}
+> >>>>>>>>> +		spin_unlock_irqrestore(&dc->lock, flags);
+> >>>>>>>>> +	}
+> >>>>>>>>> +	mutex_unlock(&dcc->cmd_lock);
+> >>>>>>>>> +
+> >>>>>>>>> +	return retry;
+> >>>>>>>>> +}
+> >>>>>>>>> +
+> >>>>>>>>>  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>>>>>>  					struct discard_policy *dpolicy)
+> >>>>>>>>>  {
+> >>>>>>>>> @@ -1470,12 +1518,13 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>>>>>>  	struct list_head *pend_list;
+> >>>>>>>>>  	struct discard_cmd *dc, *tmp;
+> >>>>>>>>>  	struct blk_plug plug;
+> >>>>>>>>> -	int i, issued = 0;
+> >>>>>>>>> +	int i, err, issued = 0;
+> >>>>>>>>>  	bool io_interrupted = false;
+> >>>>>>>>>  
+> >>>>>>>>>  	if (dpolicy->timeout != 0)
+> >>>>>>>>>  		f2fs_update_time(sbi, dpolicy->timeout);
+> >>>>>>>>>  
+> >>>>>>>>> +retry:
+> >>>>>>>>>  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+> >>>>>>>>>  		if (dpolicy->timeout != 0 &&
+> >>>>>>>>>  				f2fs_time_over(sbi, dpolicy->timeout))
+> >>>>>>>>> @@ -1509,7 +1558,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>>>>>>  				break;
+> >>>>>>>>>  			}
+> >>>>>>>>>  
+> >>>>>>>>> -			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> >>>>>>>>> +			err = __submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> >>>>>>>>> +			if (err == -EAGAIN)
+> >>>>>>>>> +				congestion_wait(BLK_RW_ASYNC,
+> >>>>>>>>> +						DEFAULT_IO_TIMEOUT);
+> >>>>>>>>>  
+> >>>>>>>>>  			if (issued >= dpolicy->max_requests)
+> >>>>>>>>>  				break;
+> >>>>>>>>> @@ -1522,6 +1574,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>>>>>>  			break;
+> >>>>>>>>>  	}
+> >>>>>>>>>  
+> >>>>>>>>> +	if (!list_empty(&dcc->retry_list) &&
+> >>>>>>>>> +		__should_discard_retry(sbi, dpolicy))
+> >>>>>>>>> +		goto retry;
+> >>>>>>>>> +
+> >>>>>>>>>  	if (!issued && io_interrupted)
+> >>>>>>>>>  		issued = -1;
+> >>>>>>>>>  
+> >>>>>>>>> @@ -1613,6 +1669,12 @@ static unsigned int __wait_discard_cmd_range(struct f2fs_sb_info *sbi,
+> >>>>>>>>>  		goto next;
+> >>>>>>>>>  	}
+> >>>>>>>>>  
+> >>>>>>>>> +	if (dpolicy->type == DPOLICY_UMOUNT &&
+> >>>>>>>>> +		!list_empty(&dcc->retry_list)) {
+> >>>>>>>>> +		wait_list = &dcc->retry_list;
+> >>>>>>>>> +		goto next;
+> >>>>>>>>> +	}
+> >>>>>>>>> +
+> >>>>>>>>>  	return trimmed;
+> >>>>>>>>>  }
+> >>>>>>>>>  
+> >>>>>>>>> @@ -2051,6 +2113,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+> >>>>>>>>>  	for (i = 0; i < MAX_PLIST_NUM; i++)
+> >>>>>>>>>  		INIT_LIST_HEAD(&dcc->pend_list[i]);
+> >>>>>>>>>  	INIT_LIST_HEAD(&dcc->wait_list);
+> >>>>>>>>> +	INIT_LIST_HEAD(&dcc->retry_list);
+> >>>>>>>>>  	INIT_LIST_HEAD(&dcc->fstrim_list);
+> >>>>>>>>>  	mutex_init(&dcc->cmd_lock);
+> >>>>>>>>>  	atomic_set(&dcc->issued_discard, 0);
+> >>>>>>>>>
+> >>>>>>>
+> >>>>>
+> >>>>> -- 
+> >>>>> --
+> >>>>> Sent by a consultant of the Qualcomm Innovation Center, Inc.
+> >>>>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+> >>>>
+> >>>
+> >>>
+> >>> _______________________________________________
+> >>> Linux-f2fs-devel mailing list
+> >>> Linux-f2fs-devel@lists.sourceforge.net
+> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>> .
+> >>>
+> > 
 
-The buggy address belongs to the object at ffff8881c7ec2c80
- which belongs to the cache skbuff_head_cache of size 224
-The buggy address is located 212 bytes inside of
- 224-byte region [ffff8881c7ec2c80, ffff8881c7ec2d60)
-The buggy address belongs to the page:
-page:ffffea00071fb080 refcount:1 mapcount:0 mapping:ffff8881da16b400 index:0x0
-flags: 0x200000000000200(slab)
-raw: 0200000000000200 dead000000000100 dead000000000122 ffff8881da16b400
-raw: 0000000000000000 00000000000c000c 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8881c7ec2c00: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8881c7ec2c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8881c7ec2d00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                                                 ^
- ffff8881c7ec2d80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
- ffff8881c7ec2e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
-Tested on:
-
-commit:         0fa84af8 Merge tag 'usb-serial-5.7-rc1' of https://git.ker..
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=17c2dadbe00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a782c087b1f425c6
-dashboard link: https://syzkaller.appspot.com/bug?extid=d403396d4df67ad0bd5f
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14b7b40be00000
-
+-- 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
