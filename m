@@ -2,93 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 276F2199E2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:39:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F16D0199E22
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:38:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbgCaSiy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 14:38:54 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:33625 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727932AbgCaSix (ORCPT
+        id S1727575AbgCaSiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 14:38:11 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46280 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbgCaSiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:38:53 -0400
-Received: from mail-qv1-f46.google.com ([209.85.219.46]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MIxBa-1jceow0gdm-00KRBo for <linux-kernel@vger.kernel.org>; Tue, 31 Mar
- 2020 20:38:52 +0200
-Received: by mail-qv1-f46.google.com with SMTP id bp12so7417514qvb.7
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:38:51 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ0tbmbAIJOt3BD5pbtSwx9MkZibq02wQ9VFN0H1ndFO9MbWSAKe
-        Rp5JqslkzbX4zKXbHhzCAOUTptOhMpmlGAsVWR8=
-X-Google-Smtp-Source: ADFU+vuTGFGpCxNIh+cobymgdpMJ4evVMQiQmSWM3uw7oyUk1XxgrJtQG+HV5AiOi7nmMntLNw37psCO8HP1MAfYp7o=
-X-Received: by 2002:a0c:f647:: with SMTP id s7mr18334119qvm.4.1585679931041;
- Tue, 31 Mar 2020 11:38:51 -0700 (PDT)
+        Tue, 31 Mar 2020 14:38:10 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r7so15405323ljg.13;
+        Tue, 31 Mar 2020 11:38:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d/jwDOe+5jnEC+le3jpCg1Ia6gNwhPXykp3nmWWhaOs=;
+        b=efL3HT8pfTGSmpyjNAyFLdEXEf+iJsj0as5yEpNO7JudauMQa/KZj6D7xFxcKKnjhV
+         iPsBeft+PnbfJC+Vp6nLBwnlZ5tKQ+8ZBNF9YgWR7+3eFhLFJVkmXf+5gj2SEd4dqa3s
+         lkgGvPRBtmheVxe7N6FgijtF4pjZ9WlVZMf8zzO5uaB3URHQiV8pFOwzP1Rvzbdv9Tr9
+         Pd3REBTMmX+KxQgz/+GobUY/Nl/bjrmfSreT2c2ZkyqAMIIyNTUESippgbxRjAskm82a
+         cb7RqxivclSsiqz92iezds6lQlwNzWvgnITilpL2P9XR8heTGadXxSI7dCJihYX/6iMf
+         HvyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d/jwDOe+5jnEC+le3jpCg1Ia6gNwhPXykp3nmWWhaOs=;
+        b=Il+9K3N2EH3lr64ps1nFPg4bqyNfRoi6lOSP6Vg+jrvv1S/9c+T4RgONi48CnhAlCi
+         4h9+fD67Xw2n9LVkVtmntwPWgTYjqeOjDGbzobUCo+LjnO6Yr4hpiKfbn3H+T2Dh6upV
+         9mfQcFWHZaNjXqivkydT9pfhfIOQBPdVRqpOYRhf2AADsNU9USx0xo51tXLV04OhdLDg
+         b0uMqB9IgJi1Q6Q6c7DFjnbYRy1FGkmAtpZfSWN4CRhDzCaix1K0p3IPcE0z5cNxJ6KZ
+         SDoLluUi9RS3ybfuDbj5dtrG0Xn8zViJvoq4wqIg1Day9YPILJ4HhRn4EEGkC+XZj9xW
+         Hlqw==
+X-Gm-Message-State: AGi0PuYOqDW7bRTOoKDcudl4f2tIcXLcgt9tOZa97CVNuNl4CiA9f9E6
+        Jy//MEwFFQ5nd8b0JPuBg4VeUTIbC8nJxWEdj1E=
+X-Google-Smtp-Source: APiQypKLpnll7mCTK5hJByNZ+I2zToNbaBev7/ujZB1Z7zORv+AAXOLY5C1GQuLB78hus+630w3uQzds8XU6gpqabLM=
+X-Received: by 2002:a2e:3c0a:: with SMTP id j10mr10921764lja.205.1585679888664;
+ Tue, 31 Mar 2020 11:38:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <698e9a42a06eb856eef4501c3c0a182c034a5d8c.1585640941.git.christophe.leroy@c-s.fr>
- <50d0ce1a96fa978cd0dfabde30cf75d23691622a.1585640942.git.christophe.leroy@c-s.fr>
- <CAK8P3a3u4y7Zm8w43QScqUk6macBL1wO3S0qPisf9+d9FqSHfw@mail.gmail.com>
- <833d63fe-3b94-a3be-1abb-a629386aa0dd@c-s.fr> <CAK8P3a244P38c+JCRnf1EscQOSzaQQNZc6b5F=LFE2a_im8AqQ@mail.gmail.com>
- <74e76b4e-5e4f-f3de-96a8-f6a451b3243a@c-s.fr>
-In-Reply-To: <74e76b4e-5e4f-f3de-96a8-f6a451b3243a@c-s.fr>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 31 Mar 2020 20:38:35 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1jM8W72iH0qmMLRBRsv8ANYdL0xro0iWty3FvM6HTd0A@mail.gmail.com>
-Message-ID: <CAK8P3a1jM8W72iH0qmMLRBRsv8ANYdL0xro0iWty3FvM6HTd0A@mail.gmail.com>
-Subject: Re: [PATCH v2 09/11] powerpc/platforms: Move files from 4xx to 44x
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20191120220559.18914-1-c-robey@ti.com> <41c73bc1-99ae-6797-5bb7-7acc0f6518c0@ti.com>
+ <20191212170452.GV35479@atomide.com>
+In-Reply-To: <20191212170452.GV35479@atomide.com>
+From:   Drew Fustini <pdp7pdp7@gmail.com>
+Date:   Tue, 31 Mar 2020 20:38:38 +0200
+Message-ID: <CAEf4M_C05Hwc_BEL6MaFNNEW0Cf2kc-LvMi9qdKxL7hVAFFDGQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: am5729: beaglebone-ai: adding device tree
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Caleb Robey <c-robey@ti.com>, linux-omap@vger.kernel.org,
+        Jason Kridner <jkridner@gmail.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>, Jason Kridner <jdk@ti.com>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Andreas Dannenberg <dannenberg@ti.com>,
+        Jean-Jacques Hiblot <jjhiblot@ti.com>,
+        Praneeth Bajjuri <praneeth@ti.com>,
+        "Andrew F . Davis" <afd@ti.com>, Tom Rini <trini@konsulko.com>,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Drew Fustini <drew@beagleboard.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:T7JWZ/SrY725G9NuCQvDKkK2WnO7EVVEYP7XBHUazcx7PU310HL
- kwfFf3Zp8xVXVUT99DuL1vxQs5fLjjHtErwUplDqIjFBQ+tyISw/EBH/ALX7Cbe1+0B5Be7
- mRKg5X2jT0Qo9RmGNFxXYA9vl76DnaSMiy984g2wVDI/pHQPw4hA3o0fbo3ua5G3E0NFT1P
- VJceP2KZASxegqQKyZ8gg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:UYlOC/DahJk=:uNYfcZDk8JgPHTauOyFLTX
- QqkdyIy3q6nPdd7Osa+aj6sT/3XdP2OyEv6kP6SsJPXmdN21Vx9B4l+AOHzC5ResMjDUeYOrs
- h1ULjClDIdqvazAyGUpCqPbkqwNK6gANew7rGB5WSui62/pkNKJn/an6U7R4Zi1QlreH1c+kf
- I5cbiY6gnslGn1VNkn4Gp9OZDTkEqDXe/IltdoLVIEhuL/DpaKU9FExrlKlaaEX0uRpo2xif0
- FgvgZ0lZOi2TllqiS9yMzxIv5ADVqr2BfnRK/EKEAswJ0zhnQDp0AcER8hUycZlsrPUJNDALK
- cjxla8a0/mHK2zhqnfuzGWO9myDnfIQeFVldPm8pT0tKvkMcgmZL9HxctntkRNwoTA8YJZ760
- JAX5+J7IXuBgxv2LnreZ/lSkOGZDLcTZlhd/cmVivEmcG1U2CyYTIf0kW4fj7CZO5RbKsb8QZ
- TVccRVGzgvtHkx81FcOR9QyHTqcehRTaBXcxDiNU4HNmUZCB9eQm0t0ZOquzZesCtCXN0+uER
- G1bd3mPe+7dSDWj8uz544YGPCmoS74Q0MCVFOZn5J5UbPjTZ1o5NFmnL3FBDEWxTlmeNiC6In
- O+rxQKCIGaq55oqXUbndjxei/3ZqJa4hJLkErysmFzxABlPSuW7s44LkbaAxY3RWl529fmHQ1
- 3O4JWZe6FkCN8Qe5GbxaVEV6Dfapm4DU55n04wrUS5p0WmLLowUcYadqBvKKmFy5ONp6WvjYC
- DzeyGA4WSWsnZj8Stxbs9VIvLrJUxixt7nhzVRg8foso74HKo82eMd486Pn3fYwchQs2BDo6J
- mfA7b8YHYFbmZ48jGGtVfZyO8P+pgjQX8BjOQ65S7a8d70sUvs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 6:19 PM Christophe Leroy
-<christophe.leroy@c-s.fr> wrote:
-> Le 31/03/2020 à 18:04, Arnd Bergmann a écrit :
-> > That has the risk of breaking user's defconfig files, but given the
-> > small number of users, it may be nicer for consistency. In either
-> > case, the two symbols should probably hang around as synonyms,
-> > the question is just which one is user visible.
+On Thu, Dec 12, 2019 at 6:06 PM Tony Lindgren <tony@atomide.com> wrote:
+> > On 21/11/2019 00:05, Caleb Robey wrote:
+> > > From: Jason Kridner <jdk@ti.com>
+> > >
+> > > BeagleBoard.org BeagleBone AI is an open source hardware single
+> > > board computer based on the Texas Instruments AM5729 SoC featuring
+> > > dual-core 1.5GHz Arm Cortex-A15 processor, dual-core C66 digital
+> > > signal processor (DSP), quad-core embedded vision engine (EVE),
+> > > Arm Cortex-M4 processors, dual programmable realtime unit
+> > > industrial control subsystems and more. The board features 1GB
+> > > DDR3L, USB3.0 Type-C, USB HS Type-A, microHDMI, 16GB eMMC flash,
+> > > 1G Ethernet, 802.11ac 2/5GHz, Bluetooth, and BeagleBone expansion
+> > > headers.
+> > >
+> > > For more information, refer to:
+> > > https://beaglebone.ai
+> > >
+> > > This patch introduces the BeagleBone AI device tree.
+> > >
+> > > Note that the device use the "ti,tpd12s016" component which is
+> > > software compatible with "ti,tpd12s015". Thus we only use the
+> > > latter driver.
 > >
+> > Ah. thanks. I see my comments resolved here.
+> > no more comments to net part from my side.
 >
-> Not sure it is a good idea to keep two synonyms. In the past we made our
-> best to remove synonyms (We had CONFIG_8xx and CONFIG_PPC_8xx being
-> synonyms, we had CONFIG_6xx and CONFIG_BOOK3S_32 and
-> CONFIG_PPC_STD_MMU_32 being synonyms).
-> I think it is a lot cleaner when we can avoid synonyms.
+> Just FYI, Jason had one pending comment on the earlier version
+> about the compatible property to use.
+>
+> So I'm assuming there will be a new version posted, tagging
+> this one as read.
 
-Ok, fair enough.
+It came to my attention today when talking with Jason Kridner and
+Robert Nelson that we did not get the BeagleBone AI device tree
+upstream yet.
 
-> By the way I already dropped CONFIG_4xx in previous patch (8/11). It was
-> not many 4xx changed to 44x. It would be a lot more in the other way
-> round I'm afraid.
+I am having trouble identifying what the pending comment was from the
+original patch series.
 
-Right. Maybe stay with 44x for both then (as in your current patches), as it
-means changing less in a part of the code that has few users anyway.
+Was it related to this compatible string?
 
-      Arnd
+> +       compatible = "beagleboard.org,am5729-beagleboneai", "ti,am5728",
+
+thanks,
+drew
+
+--
+Drew Fustini
+BeagleBoard.org Foundation
+https://beagleboard.org/about
