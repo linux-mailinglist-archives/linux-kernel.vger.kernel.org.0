@@ -2,150 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9063A198EF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A44B219907F
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730106AbgCaI5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 04:57:52 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:21336 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729624AbgCaI5w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:57:52 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585645071; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=8zUKrH2eIVqN6GKTdxqKOn/YdfA3gQCLto6btL9KOfk=; b=BV1hpcUSDkvzNSgl+uaW4ET8M+QDnKDh2zNwa6Hq/4M90pKrKtvoZxspjRywfCJwsoioN0B1
- yq4F+0kzshQeE7xeCSR3k+yUFYwhNRcmArQvVKdEdi1QKDHZX3WJBQkFJEiAJpsjnk2Bka86
- jXNGo+mPttAsBTYOc2o8g4SWveU=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e83060d.7fe39cd5b960-smtp-out-n03;
- Tue, 31 Mar 2020 08:57:49 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D8A0AC4478F; Tue, 31 Mar 2020 08:57:49 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [192.168.43.137] (unknown [106.213.183.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1731785AbgCaJMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:12:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58550 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731784AbgCaJMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:12:18 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: mkshah)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 16C5DC433F2;
-        Tue, 31 Mar 2020 08:57:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16C5DC433F2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
-Subject: Re: [PATCH v14 6/6] soc: qcom: rpmh-rsc: Allow using free WAKE TCS
- for active request
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org
-References: <1585244270-637-1-git-send-email-mkshah@codeaurora.org>
- <1585244270-637-7-git-send-email-mkshah@codeaurora.org>
- <CAD=FV=Vbo3JC6mBJXq+q+DQPC_bbNtn3bbScG5N8wzJZm87YuA@mail.gmail.com>
- <8d19958d-7334-ca4e-d7ba-f5919a56b279@codeaurora.org>
- <CAD=FV=UZTyfVN=a35hiXxdNSvdhfK60HewP_p_VvH1KdoUa1ww@mail.gmail.com>
-From:   Maulik Shah <mkshah@codeaurora.org>
-Message-ID: <65eb7236-0df0-8256-bfda-34d8d57b282d@codeaurora.org>
-Date:   Tue, 31 Mar 2020 14:27:41 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        by mail.kernel.org (Postfix) with ESMTPSA id AFF5920675;
+        Tue, 31 Mar 2020 09:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585645938;
+        bh=+SWvVj50SI0AtMxhq+kMQlX5o5yQc3CcDBwhaRxOaBE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=tfMeAJzxcWRa4wCP/Us69ORqmjd7exezEnU7CUuetde+vl32oSDNBbeeBPN/T1YGK
+         Zu/D2JC1nUCjlE+JGohwwfvvt+OM6NxoMK48175gTFMFFnS//kw9BEX98Yl85nwJOQ
+         8+sfcmUZap1Oe5AVuf4yD6oLyppESB5hQOHP0nYU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 021/155] net: mvneta: Fix the case where the last poll did not process all rx
+Date:   Tue, 31 Mar 2020 10:57:41 +0200
+Message-Id: <20200331085420.763973822@linuxfoundation.org>
+X-Mailer: git-send-email 2.26.0
+In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
+References: <20200331085418.274292403@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=UZTyfVN=a35hiXxdNSvdhfK60HewP_p_VvH1KdoUa1ww@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 
-On 3/28/2020 12:12 AM, Doug Anderson wrote:
-> Hi,
->
-> On Fri, Mar 27, 2020 at 5:04 AM Maulik Shah <mkshah@codeaurora.org> wrote:
->>> Why can't rpmh_write()
->>> / rpmh_write_async() / rpmh_write_batch() just always unconditionally
->>> mark the cache dirty?  Are there really lots of cases when those calls
->>> are made and they do nothing?
->> At rpmh.c, it doesn't know that rpmh-rsc.c worked on borrowed TCS to finish the request.
->>
->> We should not blindly mark caches dirty everytime.
-> In message ID "5a5274ac-41f4-b06d-ff49-c00cef67aa7f@codeaurora.org"
-> which seems to be missing from the archives, you said:
->
->> yes we should trust callers not to send duplicate data
-> ...you can see some reference to it in my reply:
->
-> https://lore.kernel.org/r/CAD=FV=VPSahhK71k_D+nfL1=5QE5sKMQT=6zzyEF7+JWMcTxsg@mail.gmail.com/
->
-> If callers are trusted to never send duplicate data then ever call to
-> rpmh_write() will make a change.  ...and thus the cache should always
-> be marked dirty, no?  Also note that since rpmh_write() to "active"
-> also counts as a write to "wake" even those will dirty the cache.
->
-> Which case are you expecting a rpmh_write() call to not dirty the cache?
-Ok, i will remove marking cache dirty here.
->
->
->>> ...interestingly after your patch I guess now I guess tcs_invalidate()
->>> no longer needs spinlocks since it's only ever called from PM code on
->>> the last CPU.  ...if you agree, I can always do it in my cleanup
->>> series.  See:
->>>
->>> https://lore.kernel.org/r/CAD=FV=Xp1o68HnC2-hMnffDDsi+jjgc9pNrdNuypjQZbS5K4nQ@mail.gmail.com
->>>
->>> -Doug
->> There are other RSCs which use same driver, so lets keep spinlock.
-> It is really hard to try to write keeping in mind these "other RSCs"
-> for which there is no code upstream.  IMO we should write the code
-> keeping in mind what is supported upstream and then when those "other
-> RSCs" get added we can evaluate their needs.
+[ Upstream commit 065fd83e1be2e1ba0d446a257fd86a3cc7bddb51 ]
 
-Agree but i would insist not remove locks in your cleanup/documentation 
-series which are already there.
+For the case where the last mvneta_poll did not process all
+RX packets, we need to xor the pp->cause_rx_tx or port->cause_rx_tx
+before claculating the rx_queue.
 
-These will be again need to be added.
+Fixes: 2dcf75e2793c ("net: mvneta: Associate RX queues with each CPU")
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ethernet/marvell/mvneta.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-The locks don't cause any issue being there since only last cpu is 
-invoking rpmh_flush() at present.
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -2804,11 +2804,10 @@ static int mvneta_poll(struct napi_struc
+ 	/* For the case where the last mvneta_poll did not process all
+ 	 * RX packets
+ 	 */
+-	rx_queue = fls(((cause_rx_tx >> 8) & 0xff));
+-
+ 	cause_rx_tx |= pp->neta_armada3700 ? pp->cause_rx_tx :
+ 		port->cause_rx_tx;
+ 
++	rx_queue = fls(((cause_rx_tx >> 8) & 0xff));
+ 	if (rx_queue) {
+ 		rx_queue = rx_queue - 1;
+ 		if (pp->bm_priv)
 
-Adding support for other RSCs is in my to do list, and when that is 
-being done we can re-evaluate and
 
-remove if not required.
-
->
-> Specifically when reasoning about rpmh.c and rpmh-rsc.c I can only
-> look at the code that's there now and decide whether it is race free
-> or there are races.  Back when I was analyzing the proposal to do
-> rpmh_flush() all the time (not from PM code) it felt like there were a
-> bunch of races, especially in the zero-active-TCS case.  Most of the
-> races go away when you assume that rpmh_flush() is only ever called
-> from the PM code when nobody could be in the middle of an active
-> transfer.
->
-> If we are ever planning to call rpmh_flush() from another place we
-> need to re-look at all those races.
-Sure. we can re-look all cases.
->
->
-> -Doug
-Thanks,
-Maulik
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
