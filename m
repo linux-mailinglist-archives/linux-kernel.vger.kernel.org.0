@@ -2,180 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6715D199E74
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D2E4199E7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 21:00:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbgCaS5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 14:57:53 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45169 "EHLO
+        id S1728245AbgCaTAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 15:00:18 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:25108 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726290AbgCaS5x (ORCPT
+        with ESMTP id S1726548AbgCaTAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:57:53 -0400
+        Tue, 31 Mar 2020 15:00:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585681072;
+        s=mimecast20190719; t=1585681213;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bjuPWfP4XM6yz96SvNfUrwVZXF7xkmhK3kaB303goaM=;
-        b=gp/K9vyuyJb9p3uPNSlD2VGSrGZbXlSo7zfaM+N0rRidHD8rm6ZToVE42me0Tf8JHcBBMj
-        a/QaT6JVdftykuk3L3PA0xiAp8ViVgdU4w002IKEcTDPQnPqTZk4GB9PCydAl9cLHPkV8M
-        nUnLD2FFZec+J8PB0+76wz5qSBPklNE=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-415-Or5W4E6BNn67HbY9BYG6XQ-1; Tue, 31 Mar 2020 14:57:50 -0400
-X-MC-Unique: Or5W4E6BNn67HbY9BYG6XQ-1
-Received: by mail-wr1-f71.google.com with SMTP id v17so9305341wro.21
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:57:50 -0700 (PDT)
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=EqCCvsaS7AGlrQSx9pMux9InxynW3QeXih5EQnJcqPc=;
+        b=SEODALYrtNkOHaicYMsUlGB2Xv2WzMnq1XWtI5xNoe0Uv2WjppI8iVZWXOiRfTUsqqrulb
+        WSzjIcO3NQ3tnOA4e7sgPpSTyuR4UB7rEp1pqpbndZEDKLAiLFq746dD9pHBW056qrDOiY
+        4dTkoOOAiSew33iAKy7bHm5RAKqtfxs=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-26-OIgcPVE5P1e3N2-zq5hRJQ-1; Tue, 31 Mar 2020 15:00:06 -0400
+X-MC-Unique: OIgcPVE5P1e3N2-zq5hRJQ-1
+Received: by mail-wr1-f70.google.com with SMTP id m15so13433092wrb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 12:00:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=bjuPWfP4XM6yz96SvNfUrwVZXF7xkmhK3kaB303goaM=;
-        b=Qwf5OvlEJj1y57aSHkvgtqkzWt8q/FNWrqzmPgLNDBviKx+AHz0kzmbk0BVE0oaZIv
-         g1qbvM1MGwUjx2cXWBwmWh9psBiP7YhZzMBTlBOwhpYTg4bDyggIbJrsl6SgMkaUl5hE
-         6aEzevghnS6Gqr1azhAoFMFue4XgUg6K0bACcmwNvHtZTRfVrY1ce83CGwe3jYYSCGNy
-         o9kkm3AdeWUj0/MHn3/Nwg4bFEMpLwhhCbWygPhaIuhLVBd3sk9hYLZSFeDFHUYxW2K8
-         zA5cfzxVZ2WwQzt0CtBajJdT3Aeyog0BnTk2dWdA8uF7TY59bgEB1WwEd6jthaQlKYzk
-         rMHQ==
-X-Gm-Message-State: ANhLgQ2xWB1pwmDQQHfNsl3Mq4XWCknr+pyzDXHP5UUZSO68qdAttH84
-        1rciE3vz1OPYt0Dbd8zBrruJTPqzSromuT5H60oOWdUWCa/Xocf+dTsr2Egrf7qQ0u71ksI78Tb
-        vGvyTE+/qqmDc8mozkRRwlY7G
-X-Received: by 2002:adf:a549:: with SMTP id j9mr20849169wrb.183.1585681067704;
-        Tue, 31 Mar 2020 11:57:47 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vumkiVUnoTFzxgxNV8v2tnIE0AdT7rk4DqQxWt81v0qN5/05onGh4L9duOpOsKKqaOy2HvO9w==
-X-Received: by 2002:adf:a549:: with SMTP id j9mr20849150wrb.183.1585681067499;
-        Tue, 31 Mar 2020 11:57:47 -0700 (PDT)
-Received: from redhat.com (bzq-79-176-51-222.red.bezeqint.net. [79.176.51.222])
-        by smtp.gmail.com with ESMTPSA id f13sm586160wrx.56.2020.03.31.11.57.45
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EqCCvsaS7AGlrQSx9pMux9InxynW3QeXih5EQnJcqPc=;
+        b=Nn1hJuoyznBbiozxoe2mZa0eFfwGzpt4L7DioRbLMu3TjkRvGQxrUVuN/2RPrX/j2q
+         D2VdSXu0eaWOLUmav1gN8YxcbYn+wETqDkaM6DcvjscPlMBG23zZ4XWVlnlSVUR2N96G
+         T1+id9e/sqG53nKfnlxS8vb2ukObv1wksYx95+gTx5dtYCVkE+qg/1uEwdhXyYfgUVsB
+         TlCBMhsqAQi1PIBEpV/a8xeUyIquejcFKfpQ691evo1o2a2vaA+4fBXfkc63k205uAOz
+         OLsLmeBL5MhM4d7S7NVw+Kb7s4POy42e3Q2RpP4/EQ+cQa8MzFmiwu/Oo9kSub5yyax2
+         3ETQ==
+X-Gm-Message-State: AGi0PuaQK0PzS8hlCB1PWp32/ksCO4bZ3Gd1qMyRAmy9swvxMynx/cgU
+        6FIBf17La4Ol8gFY6YbCSPGvPG6yV5mCA7gfQdpg7WzpZKxDBfU8s3yJ+VZZ7nlCx7Vi1UlyA+u
+        SeBcLAzCHkuq7d73pLfGbAWm7
+X-Received: by 2002:a1c:7e43:: with SMTP id z64mr279518wmc.45.1585681204951;
+        Tue, 31 Mar 2020 12:00:04 -0700 (PDT)
+X-Google-Smtp-Source: APiQypJRvFzKoEHXWn0ZsVj5logJ4oHj//9RzEBZbKfWFuX6NiqNOMSvgM6lJtuPuZOvt0ULVS2edA==
+X-Received: by 2002:a1c:7e43:: with SMTP id z64mr279482wmc.45.1585681204586;
+        Tue, 31 Mar 2020 12:00:04 -0700 (PDT)
+Received: from xz-x1.redhat.com ([2607:9880:19c0:32::2])
+        by smtp.gmail.com with ESMTPSA id j5sm26180404wrr.47.2020.03.31.12.00.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 11:57:46 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 14:57:43 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        virtualization@lists.linux-foundation.org,
-        Jason Wang <jasowang@redhat.com>
-Subject: Re: mmotm 2020-03-30-18-46 uploaded (VDPA + vhost)
-Message-ID: <20200331145630-mutt-send-email-mst@kernel.org>
-References: <20200331014748.ajL0G62jF%akpm@linux-foundation.org>
- <969cacf1-d420-223d-7cc7-5b1b2405ec2a@infradead.org>
- <20200331143437-mutt-send-email-mst@kernel.org>
- <9c03fee8-af1a-2035-b903-611a631094b0@infradead.org>
+        Tue, 31 Mar 2020 12:00:03 -0700 (PDT)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Kevin Tian <kevin.tian@intel.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>, peterx@redhat.com
+Subject: [PATCH v8 00/14] KVM: Dirty ring interface
+Date:   Tue, 31 Mar 2020 14:59:46 -0400
+Message-Id: <20200331190000.659614-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c03fee8-af1a-2035-b903-611a631094b0@infradead.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 11:42:47AM -0700, Randy Dunlap wrote:
-> On 3/31/20 11:37 AM, Michael S. Tsirkin wrote:
-> > On Tue, Mar 31, 2020 at 11:27:54AM -0700, Randy Dunlap wrote:
-> >> On 3/30/20 6:47 PM, akpm@linux-foundation.org wrote:
-> >>> The mm-of-the-moment snapshot 2020-03-30-18-46 has been uploaded to
-> >>>
-> >>>    http://www.ozlabs.org/~akpm/mmotm/
-> >>>
-> >>> mmotm-readme.txt says
-> >>>
-> >>> README for mm-of-the-moment:
-> >>>
-> >>> http://www.ozlabs.org/~akpm/mmotm/
-> >>>
-> >>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> >>> more than once a week.
-> >>>
-> >>> You will need quilt to apply these patches to the latest Linus release (5.x
-> >>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> >>> http://ozlabs.org/~akpm/mmotm/series
-> >>>
-> >>> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> >>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> >>> followed by the base kernel version against which this patch series is to
-> >>> be applied.
-> >>>
-> >>> This tree is partially included in linux-next.  To see which patches are
-> >>> included in linux-next, consult the `series' file.  Only the patches
-> >>> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> >>> linux-next.
-> >>>
-> >>>
-> >>> A full copy of the full kernel tree with the linux-next and mmotm patches
-> >>> already applied is available through git within an hour of the mmotm
-> >>> release.  Individual mmotm releases are tagged.  The master branch always
-> >>> points to the latest release, so it's constantly rebasing.
-> >>>
-> >>> 	https://github.com/hnaz/linux-mm
-> >>
-> >> on i386:
-> >>
-> >> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_init':
-> >> vdpa.c:(.init.text+0x52): undefined reference to `__vdpa_register_driver'
-> >> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_exit':
-> >> vdpa.c:(.exit.text+0x14): undefined reference to `vdpa_unregister_driver'
-> >>
-> >>
-> >>
-> >> drivers/virtio/vdpa/ is not being built. (confusing!)
-> >>
-> >> CONFIG_VIRTIO=m
-> >> # CONFIG_VIRTIO_MENU is not set
-> >> CONFIG_VDPA=y
-> > 
-> > Hmm. OK. Can't figure it out. CONFIG_VDPA is set why isn't
-> > drivers/virtio/vdpa/ built?
-> > we have:
-> > 
-> 
-> Ack.  Hopefully Yamada-san can tell us what is happening here.
+KVM branch:
+  https://github.com/xzpeter/linux/tree/kvm-dirty-ring
 
+QEMU branch for testing:
+  https://github.com/xzpeter/qemu/tree/kvm-dirty-ring
 
-Oh wait a second:
+v8:
+- rebase to kvm/next
+- fix test bisection issues [Drew]
+- reword comment for __x86_set_memory_region [Sean]
+- document fixup on "mutual exclusive", etc. [Sean]
 
-obj-$(CONFIG_VIRTIO)            += virtio/
+For previous versions, please refer to:
 
-So CONFIG_VIRTIO=m and build does not even interate into drivers/virtio.
+V1: https://lore.kernel.org/kvm/20191129213505.18472-1-peterx@redhat.com
+V2: https://lore.kernel.org/kvm/20191221014938.58831-1-peterx@redhat.com
+V3: https://lore.kernel.org/kvm/20200109145729.32898-1-peterx@redhat.com
+V4: https://lore.kernel.org/kvm/20200205025105.367213-1-peterx@redhat.com
+V5: https://lore.kernel.org/kvm/20200304174947.69595-1-peterx@redhat.com
+V6: https://lore.kernel.org/kvm/20200309214424.330363-1-peterx@redhat.com
+V7: https://lore.kernel.org/kvm/20200318163720.93929-1-peterx@redhat.com
 
+Overview
+============
 
+This is a continued work from Lei Cao <lei.cao@stratus.com> and Paolo
+Bonzini on the KVM dirty ring interface.
 
+The new dirty ring interface is another way to collect dirty pages for
+the virtual machines. It is different from the existing dirty logging
+interface in a few ways, majorly:
 
+  - Data format: The dirty data was in a ring format rather than a
+    bitmap format, so dirty bits to sync for dirty logging does not
+    depend on the size of guest memory any more, but speed of
+    dirtying.  Also, the dirty ring is per-vcpu, while the dirty
+    bitmap is per-vm.
 
-> > 
-> > obj-$(CONFIG_VDPA) += vdpa/
-> > 
-> > and under that:
-> > 
-> > obj-$(CONFIG_VDPA) += vdpa.o
-> > 
-> > 
-> >> CONFIG_VDPA_MENU=y
-> >> # CONFIG_VDPA_SIM is not set
-> >> CONFIG_VHOST_IOTLB=y
-> >> CONFIG_VHOST_RING=m
-> >> CONFIG_VHOST=y
-> >> CONFIG_VHOST_SCSI=m
-> >> CONFIG_VHOST_VDPA=y
-> >>
-> >> Full randconfig file is attached.
-> >>
-> >> (This same build failure happens with today's linux-next, Mar. 31.)
-> >>
-> >> @Yamada-san:  Is this a kbuild problem (or feature)?
-> >>
-> >> -- 
-> >> ~Randy
-> >> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > 
-> 
-> 
-> -- 
-> ~Randy
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+  - Data copy: The sync of dirty pages does not need data copy any more,
+    but instead the ring is shared between the userspace and kernel by
+    page sharings (mmap() on vcpu fd)
+
+  - Interface: Instead of using the old KVM_GET_DIRTY_LOG,
+    KVM_CLEAR_DIRTY_LOG interfaces, the new ring uses the new
+    KVM_RESET_DIRTY_RINGS ioctl when we want to reset the collected
+    dirty pages to protected mode again (works like
+    KVM_CLEAR_DIRTY_LOG, but ring based).  To collecting dirty bits,
+    we only need to read the ring data, no ioctl is needed.
+
+Ring Layout
+===========
+
+KVM dirty ring is per-vcpu.  Each ring is an array of kvm_dirty_gfn
+defined as:
+
+struct kvm_dirty_gfn {
+        __u32 flags;
+        __u32 slot; /* as_id | slot_id */
+        __u64 offset;
+};
+
+Each GFN is a state machine itself.  The state is embeded in the flags
+field, as defined in the uapi header:
+
+/*
+ * KVM dirty GFN flags, defined as:
+ *
+ * |---------------+---------------+--------------|
+ * | bit 1 (reset) | bit 0 (dirty) | Status       |
+ * |---------------+---------------+--------------|
+ * |             0 |             0 | Invalid GFN  |
+ * |             0 |             1 | Dirty GFN    |
+ * |             1 |             X | GFN to reset |
+ * |---------------+---------------+--------------|
+ *
+ * Lifecycle of a dirty GFN goes like:
+ *
+ *      dirtied         collected        reset
+ * 00 -----------> 01 -------------> 1X -------+
+ *  ^                                          |
+ *  |                                          |
+ *  +------------------------------------------+
+ *
+ * The userspace program is only responsible for the 01->1X state
+ * conversion (to collect dirty bits).  Also, it must not skip any
+ * dirty bits so that dirty bits are always collected in sequence.
+ */
+
+Testing
+=======
+
+This series provided both the implementation of the KVM dirty ring and
+the test case.  Also I've implemented the QEMU counterpart that can
+run with the new KVM, link can be found at the top of the cover
+letter.  However that's still a very initial version which is prone to
+change and future optimizations.
+
+I did some measurement with the new method with 24G guest running some
+dirty workload, I don't see any speedup so far, even in some heavy
+dirty load it'll be slower (e.g., when 800MB/s random dirty rate, kvm
+dirty ring takes average of ~73s to complete migration while dirty
+logging only needs average of ~55s).  However that's understandable
+because 24G guest means only 1M dirty bitmap, that's still a suitable
+case for dirty logging.  Meanwhile heavier workload means worst case
+for dirty ring.
+
+More tests are welcomed if there's bigger host/guest, especially on
+COLO-like workload.
+
+Please review, thanks.
+
+Peter Xu (14):
+  KVM: X86: Change parameter for fast_page_fault tracepoint
+  KVM: Cache as_id in kvm_memory_slot
+  KVM: X86: Don't track dirty for KVM_SET_[TSS_ADDR|IDENTITY_MAP_ADDR]
+  KVM: Pass in kvm pointer into mark_page_dirty_in_slot()
+  KVM: X86: Implement ring-based dirty memory tracking
+  KVM: Make dirty ring exclusive to dirty bitmap log
+  KVM: Don't allocate dirty bitmap if dirty ring is enabled
+  KVM: selftests: Always clear dirty bitmap after iteration
+  KVM: selftests: Sync uapi/linux/kvm.h to tools/
+  KVM: selftests: Use a single binary for dirty/clear log test
+  KVM: selftests: Introduce after_vcpu_run hook for dirty log test
+  KVM: selftests: Add dirty ring buffer test
+  KVM: selftests: Let dirty_log_test async for dirty ring test
+  KVM: selftests: Add "-c" parameter to dirty log test
+
+ Documentation/virt/kvm/api.rst                | 123 +++++
+ arch/x86/include/asm/kvm_host.h               |   6 +-
+ arch/x86/include/uapi/asm/kvm.h               |   1 +
+ arch/x86/kvm/Makefile                         |   3 +-
+ arch/x86/kvm/mmu/mmu.c                        |  10 +-
+ arch/x86/kvm/mmutrace.h                       |   9 +-
+ arch/x86/kvm/svm.c                            |   9 +-
+ arch/x86/kvm/vmx/vmx.c                        |  89 +--
+ arch/x86/kvm/x86.c                            |  48 +-
+ include/linux/kvm_dirty_ring.h                | 103 ++++
+ include/linux/kvm_host.h                      |  19 +
+ include/trace/events/kvm.h                    |  78 +++
+ include/uapi/linux/kvm.h                      |  53 ++
+ tools/include/uapi/linux/kvm.h                | 100 +++-
+ tools/testing/selftests/kvm/Makefile          |   2 -
+ .../selftests/kvm/clear_dirty_log_test.c      |   6 -
+ tools/testing/selftests/kvm/dirty_log_test.c  | 505 ++++++++++++++++--
+ .../testing/selftests/kvm/include/kvm_util.h  |   4 +
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  68 +++
+ .../selftests/kvm/lib/kvm_util_internal.h     |   4 +
+ virt/kvm/dirty_ring.c                         | 195 +++++++
+ virt/kvm/kvm_main.c                           | 162 +++++-
+ 22 files changed, 1459 insertions(+), 138 deletions(-)
+ create mode 100644 include/linux/kvm_dirty_ring.h
+ delete mode 100644 tools/testing/selftests/kvm/clear_dirty_log_test.c
+ create mode 100644 virt/kvm/dirty_ring.c
+
+-- 
+2.24.1
 
