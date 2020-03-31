@@ -2,74 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83745199554
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B41219955B
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730473AbgCaLZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 07:25:56 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41427 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730180AbgCaLZ4 (ORCPT
+        id S1730534AbgCaL2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 07:28:50 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:58098 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730418AbgCaL2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 07:25:56 -0400
-Received: by mail-lj1-f193.google.com with SMTP id n17so21578214lji.8
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 04:25:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jgIzEqM2LnXzzHvamHw2Hc0doSxZZqIged014OPYZ0c=;
-        b=N/GLW1oFEDCQ7URS2WLGzLmJwWLDAHhMdnP/DjtzUiv/pmSayZhM604q+eXRSuKSox
-         fVIur3LF2iFCCwdN9TPJmP2ZJBMiRnUUon4gjk8p4INkbpG3/wbZ4d8HaR8WjOgaR0XP
-         VX7ae0ZYBui7NTCWEUNvg9Cm4feg1FDJi+4pmphpaOBMZlVjACtYYkAdS5kPPiWJU9sa
-         vTFCuVaPHaKBshlk3/mEPamPWmBOjLqK2DzRJyP33+cHCTCBjwayCZu7YvmGkKGyVI3C
-         cdNLr7VZu3I3e1CkVMYuWphdHkkNUsRc4GvY07AMDIjH7fmxKEAQX59A7pEMYxl6Osit
-         Jkwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jgIzEqM2LnXzzHvamHw2Hc0doSxZZqIged014OPYZ0c=;
-        b=GEZkStC+oYPH6rok30+n+62S3j27bSkc19uv77SDmZbpGX+NCIeFQez78klSybyZu3
-         5wGzM7nVRY3AYkuZ9pUPncPkiVMolGNUM/hdGYHWc5AVo9xygGY7q9sZNZdDQxpxPQLc
-         eK4QoFcEgyqv0MmlfvmJYXCmvZZJXTFYlFXJrV7ZzoZVhj7F/EZ0plgCE7LN99ABgjpW
-         D+mE9PthjmtSSMFilO6UdqJoALtQ3wraWSh19mT9tHxSfaTKasQHnExtB+T6GWzOdHMQ
-         lcdo8ZfyFLXLabzHoOCZRw59qTEmnQwJD1uXDt45qEjcwJTSbRIAf9jGaz63HfG576tP
-         WS7g==
-X-Gm-Message-State: AGi0PuYExaYyByqT4sOsqsT/xdJmaXUGdK0VaDchR923U6xFdWkxJo7C
-        JVPFv6Y/7GKu7J9aSR9Tee3MQ/9bhMrKUTKScnWY2g==
-X-Google-Smtp-Source: APiQypJTsUNMZl+N2BPqArgyZP2C2flmTEyblIXo71oiZxzoozA+8v6tymPhb52VSmB4cJtT70qkRRWfTUvd6eB5w4U=
-X-Received: by 2002:a2e:9681:: with SMTP id q1mr10418971lji.179.1585653953043;
- Tue, 31 Mar 2020 04:25:53 -0700 (PDT)
+        Tue, 31 Mar 2020 07:28:50 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02VBRSSD082719;
+        Tue, 31 Mar 2020 11:28:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=CmjhbKGL3UgHlnlsAZ5WOFChMBQYcpnp75M2BI5GcX0=;
+ b=xJ3P1GrTv8jFUMMToH5kBgrA5nkBvl7gC3ssjYnvTy4//itw0jIiJZr5CtFReloA88Hz
+ Mxz0OVX1FsJI7XDeKumemYENOay5UU4iNP28KD0O8/cWBORfUBR6ZHNTdjS+DAjFnQSK
+ FoXj4lkqFNh7pLn0s4tbBnQao9+cNF0QG4fWkAIU9TdtQmHfF51QgBTLnK5urXbmMqf/
+ hfxc96UZTnBsUbqZKvD38iCdwWZBMGd/Z4dKpUVIE5QI9jmH/kkRKbIoZFi48QRuQeBD
+ LtcfGVgwSawBmqIyVeJGnM6DLrp5jvD3gorwQE1PZfEJ7nVg05BW8EoaxZpJAG7mTU/j Xg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 303ceuxytk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Mar 2020 11:28:40 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02VBMJVw034538;
+        Tue, 31 Mar 2020 11:28:40 GMT
+Received: from t460.home (dhcp-10-175-15-184.vpn.oracle.com [10.175.15.184])
+        by aserp3030.oracle.com with ESMTP id 302g4re0sx-1;
+        Tue, 31 Mar 2020 11:28:39 +0000
+From:   Vegard Nossum <vegard.nossum@oracle.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Daniel Santos <daniel.santos@pobox.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH] compiler.h: fix error in BUILD_BUG_ON() reporting
+Date:   Tue, 31 Mar 2020 13:26:37 +0200
+Message-Id: <20200331112637.25047-1-vegard.nossum@oracle.com>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9.dirty
 MIME-Version: 1.0
-References: <20200329140459.18155-1-maco@android.com> <20200330010024.GA23640@ming.t460p>
- <CAB0TPYG4N-2Gg95VwQuQBQ8rvjC=4NQJP4syJWS3Q6CO28HzTQ@mail.gmail.com> <20200331074828.GA24372@lst.de>
-In-Reply-To: <20200331074828.GA24372@lst.de>
-From:   Martijn Coenen <maco@android.com>
-Date:   Tue, 31 Mar 2020 13:25:41 +0200
-Message-ID: <CAB0TPYEwOd-jYJTkq1DYp=c7uXMKvpSpgpcpZGMwW2QsYkOtSw@mail.gmail.com>
-Subject: Re: [PATCH] loop: Add LOOP_SET_FD_WITH_OFFSET ioctl.
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9576 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 suspectscore=0
+ mlxscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003310104
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9576 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 adultscore=0
+ clxscore=1011 phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003310104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 9:48 AM Christoph Hellwig <hch@lst.de> wrote:
-> I think the full blown set fd an status would seem a lot more useful,
-> or even better a LOOP_CTL_ADD variant that sets up everything important
-> on the character device so that we avoid the half set up block devices
-> entirely.
+compiletime_assert() uses __LINE__ to create a unique function name.
+This means that if you have more than one BUILD_BUG_ON() in the same
+source line (which can happen if they appear e.g. in a macro), then
+the error message from the compiler might output the wrong condition.
 
-Thanks for the feedback, I will work on that then. I think I could do
-both - LOOP_SET_FD_AND_STATUS and a new variant of LOOP_CTL_ADD that
-calls it - the former could still be useful if the kernel pre-created
-a large amount of loop devices.
+For this source file:
 
-Martijn
+	#include <linux/build_bug.h>
+
+	#define macro() \
+		BUILD_BUG_ON(1); \
+		BUILD_BUG_ON(0);
+
+	void foo()
+	{
+		macro();
+	}
+
+gcc would output:
+
+./include/linux/compiler.h:350:38: error: call to ‘__compiletime_assert_9’ declared with attribute error: BUILD_BUG_ON failed: 0
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+
+However, it was not the BUILD_BUG_ON(0) that failed, so it should say 1
+instead of 0. With this patch, we use __COUNTER__ instead of __LINE__, so
+each BUILD_BUG_ON() gets a different function name and the correct
+condition is printed:
+
+./include/linux/compiler.h:350:38: error: call to ‘__compiletime_assert_0’ declared with attribute error: BUILD_BUG_ON failed: 1
+  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+
+Cc: Daniel Santos <daniel.santos@pobox.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Ian Abbott <abbotti@mev.co.uk>
+Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
+---
+ include/linux/compiler.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 5e88e7e33abec..034b0a644efcc 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -347,7 +347,7 @@ static inline void *offset_to_ptr(const int *off)
+  * compiler has support to do so.
+  */
+ #define compiletime_assert(condition, msg) \
+-	_compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
++	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+ 
+ #define compiletime_assert_atomic_type(t)				\
+ 	compiletime_assert(__native_word(t),				\
+-- 
+2.16.1.72.g5be1f00a9.dirty
+
