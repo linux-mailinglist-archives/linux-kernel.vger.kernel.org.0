@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D95F8198F73
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA6EE199057
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:11:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730565AbgCaJDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:03:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43104 "EHLO mail.kernel.org"
+        id S1731411AbgCaJLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:11:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730597AbgCaJDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:03:24 -0400
+        id S1731664AbgCaJLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:11:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB005208E0;
-        Tue, 31 Mar 2020 09:03:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 340F720675;
+        Tue, 31 Mar 2020 09:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645404;
-        bh=PFJ61hZlXewm98PbidinrVr4O2dRVdQs+bRrFd1QcbI=;
+        s=default; t=1585645864;
+        bh=XIJR2gHoW/6hvxlE0dAHpRFBzRsa4JGi7GcSKqz0mhM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gk+DrDXlxd3iXOvwPAD3AOGWpRvcJ3J7ipBtR1h9yvByQ6sXESMNsu7nCfBhRvvj4
-         o60SvuyyOFu7u3J2yRvqf+FgYOYqD8JjTHGB/qWQrB1J1KFYobiy37eiVcYRsWNTlj
-         FYNIt8S17+JFJOPEI6kPjzZvbnerJrPDJYAgIePE=
+        b=M1BSJTWter9rvMagNzGkLkqyOCLY7QIfV+gqhWkW8zQdav0MUcPXCgoKjiXQsDQys
+         QjJIwQjv4ZGBNDv7QIn8fq4M6VYg6AfVehWelSBysOPQquJHj59BX9ypADPpeI+hfB
+         ta7am0lq4zKlcge2zGoESXbASflWXfhh0UR4wtvk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Edwin Peer <edwin.peer@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, Andrew Smith <andrew.smith@digi.com>,
+        =?UTF-8?q?Ren=C3=A9=20van=20Dorst?= <opensource@vdorst.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 043/170] bnxt_en: fix memory leaks in bnxt_dcbnl_ieee_getets()
-Date:   Tue, 31 Mar 2020 10:57:37 +0200
-Message-Id: <20200331085429.012819417@linuxfoundation.org>
+Subject: [PATCH 5.4 018/155] net: dsa: mt7530: Change the LINK bit to reflect the link status
+Date:   Tue, 31 Mar 2020 10:57:38 +0200
+Message-Id: <20200331085420.412999332@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
+References: <20200331085418.274292403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,71 +46,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Edwin Peer <edwin.peer@broadcom.com>
+From: "René van Dorst" <opensource@vdorst.com>
 
-[ Upstream commit 62d4073e86e62e316bea2c53e77db10418fd5dd7 ]
+[ Upstream commit 22259471b51925353bd7b16f864c79fdd76e425e ]
 
-The allocated ieee_ets structure goes out of scope without being freed,
-leaking memory. Appropriate result codes should be returned so that
-callers do not rely on invalid data passed by reference.
+Andrew reported:
 
-Also cache the ETS config retrieved from the device so that it doesn't
-need to be freed. The balance of the code was clearly written with the
-intent of having the results of querying the hardware cached in the
-device structure. The commensurate store was evidently missed though.
+After a number of network port link up/down changes, sometimes the switch
+port gets stuck in a state where it thinks it is still transmitting packets
+but the cpu port is not actually transmitting anymore. In this state you
+will see a message on the console
+"mtk_soc_eth 1e100000.ethernet eth0: transmit timed out" and the Tx counter
+in ifconfig will be incrementing on virtual port, but not incrementing on
+cpu port.
 
-Fixes: 7df4ae9fe855 ("bnxt_en: Implement DCBNL to support host-based DCBX.")
-Signed-off-by: Edwin Peer <edwin.peer@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+The issue is that MAC TX/RX status has no impact on the link status or
+queue manager of the switch. So the queue manager just queues up packets
+of a disabled port and sends out pause frames when the queue is full.
+
+Change the LINK bit to reflect the link status.
+
+Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
+Reported-by: Andrew Smith <andrew.smith@digi.com>
+Signed-off-by: RenÃ© van Dorst <opensource@vdorst.com>
+Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt_dcb.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/net/dsa/mt7530.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_dcb.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_dcb.c
-@@ -479,24 +479,26 @@ static int bnxt_dcbnl_ieee_getets(struct
+--- a/drivers/net/dsa/mt7530.c
++++ b/drivers/net/dsa/mt7530.c
+@@ -566,7 +566,7 @@ mt7530_mib_reset(struct dsa_switch *ds)
+ static void
+ mt7530_port_set_status(struct mt7530_priv *priv, int port, int enable)
  {
- 	struct bnxt *bp = netdev_priv(dev);
- 	struct ieee_ets *my_ets = bp->ieee_ets;
-+	int rc;
+-	u32 mask = PMCR_TX_EN | PMCR_RX_EN;
++	u32 mask = PMCR_TX_EN | PMCR_RX_EN | PMCR_FORCE_LNK;
  
- 	ets->ets_cap = bp->max_tc;
+ 	if (enable)
+ 		mt7530_set(priv, MT7530_PMCR_P(port), mask);
+@@ -1439,7 +1439,7 @@ static void mt7530_phylink_mac_config(st
+ 	mcr_new &= ~(PMCR_FORCE_SPEED_1000 | PMCR_FORCE_SPEED_100 |
+ 		     PMCR_FORCE_FDX | PMCR_TX_FC_EN | PMCR_RX_FC_EN);
+ 	mcr_new |= PMCR_IFG_XMIT(1) | PMCR_MAC_MODE | PMCR_BACKOFF_EN |
+-		   PMCR_BACKPR_EN | PMCR_FORCE_MODE | PMCR_FORCE_LNK;
++		   PMCR_BACKPR_EN | PMCR_FORCE_MODE;
  
- 	if (!my_ets) {
--		int rc;
--
- 		if (bp->dcbx_cap & DCB_CAP_DCBX_HOST)
- 			return 0;
- 
- 		my_ets = kzalloc(sizeof(*my_ets), GFP_KERNEL);
- 		if (!my_ets)
--			return 0;
-+			return -ENOMEM;
- 		rc = bnxt_hwrm_queue_cos2bw_qcfg(bp, my_ets);
- 		if (rc)
--			return 0;
-+			goto error;
- 		rc = bnxt_hwrm_queue_pri2cos_qcfg(bp, my_ets);
- 		if (rc)
--			return 0;
-+			goto error;
-+
-+		/* cache result */
-+		bp->ieee_ets = my_ets;
- 	}
- 
- 	ets->cbs = my_ets->cbs;
-@@ -505,6 +507,9 @@ static int bnxt_dcbnl_ieee_getets(struct
- 	memcpy(ets->tc_tsa, my_ets->tc_tsa, sizeof(ets->tc_tsa));
- 	memcpy(ets->prio_tc, my_ets->prio_tc, sizeof(ets->prio_tc));
- 	return 0;
-+error:
-+	kfree(my_ets);
-+	return rc;
- }
- 
- static int bnxt_dcbnl_ieee_setets(struct net_device *dev, struct ieee_ets *ets)
+ 	/* Are we connected to external phy */
+ 	if (port == 5 && dsa_is_user_port(ds, 5))
 
 
