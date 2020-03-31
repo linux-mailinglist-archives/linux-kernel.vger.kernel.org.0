@@ -2,183 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED513199D91
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:01:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AA0619A34D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 03:30:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbgCaSAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 14:00:48 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:60463 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728245AbgCaSAp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:00:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585677644;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=odSNU5geOmU9YHlF/mn+CwIcX9ISms2I2rT8aoALY2I=;
-        b=f4FnIIFePrvfQuMXmUGeRUeQK1IsFkpJh8Ymimv94JIbMBBiYo/VM7plxhZ0Ea4lym9nMe
-        Xd3KW9uSMVTp4BkabdtydrnZOgKEHAtNXRfuM/afS3CW76YfViRGfxt7H2E0szjJdDy7OT
-        C0IXULTFF+5qwMoAcrVYoqqJmJZP5zg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-96-YQNTMUPvOGCNG-JZlwdHoA-1; Tue, 31 Mar 2020 14:00:41 -0400
-X-MC-Unique: YQNTMUPvOGCNG-JZlwdHoA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5CCEB8017CC;
-        Tue, 31 Mar 2020 18:00:40 +0000 (UTC)
-Received: from eperezma.remote.csb (ovpn-112-92.ams2.redhat.com [10.36.112.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EB395C1A2;
-        Tue, 31 Mar 2020 18:00:37 +0000 (UTC)
-From:   =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH v2 8/8] tools/virtio: Make --reset reset ring idx
-Date:   Tue, 31 Mar 2020 20:00:06 +0200
-Message-Id: <20200331180006.25829-9-eperezma@redhat.com>
-In-Reply-To: <20200331180006.25829-1-eperezma@redhat.com>
-References: <20200331180006.25829-1-eperezma@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-Content-Transfer-Encoding: quoted-printable
+        id S1731727AbgDABaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 21:30:16 -0400
+Received: from mga17.intel.com ([192.55.52.151]:12721 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731588AbgDABaQ (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 21:30:16 -0400
+IronPort-SDR: atMNJzQbiAD9/0pQRguxCjE4r0xut++via/Usws1avYTDyii1F4znAPdBFlQ7J+jssE/KQ7w5c
+ sP6cgyCrbCdw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 18:30:15 -0700
+IronPort-SDR: Wdg65KYjrayINv+syHGqV/dhqyBK+pNZ+A0IvwDBAMhGPs4RsSPGuF7vQDYdvk/KfxZzilJe1s
+ /MOpN9efi1kw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,329,1580803200"; 
+   d="scan'208";a="272969363"
+Received: from kbl-ppc.sh.intel.com ([10.239.159.47])
+  by fmsmga004.fm.intel.com with ESMTP; 31 Mar 2020 18:30:13 -0700
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH] perf stat: Fix no metric header if --per-socket and --metric-only set
+Date:   Wed,  1 Apr 2020 02:02:26 +0800
+Message-Id: <20200331180226.25915-1-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
----
- drivers/virtio/virtio_ring.c | 29 +++++++++++++++++++++++++++++
- tools/virtio/linux/virtio.h  |  2 ++
- tools/virtio/virtio_test.c   | 28 +++++++++++++++++++++++++++-
- 3 files changed, 58 insertions(+), 1 deletion(-)
+We received a report that was no metric header displayed if --per-socket
+and --metric-only were both set.
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 867c7ebd3f10..01b322ee2e04 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -1810,6 +1810,35 @@ int virtqueue_add_inbuf_ctx(struct virtqueue *vq,
- }
- EXPORT_SYMBOL_GPL(virtqueue_add_inbuf_ctx);
-=20
-+#ifndef __KERNEL__
-+
-+/**
-+ * virtqueue_reset_free_head - Reset to 0 the members of split ring.
-+ * @vq: Virtqueue to reset.
-+ *
-+ * At this moment, is only meant for debug the ring index change, do not=
- use
-+ * in production.
-+ */
-+void virtqueue_reset_free_head(struct virtqueue *_vq)
-+{
-+	struct vring_virtqueue *vq =3D to_vvq(_vq);
-+
-+	// vq->last_used_idx =3D 0;
-+	vq->num_added =3D 0;
-+
-+	vq->split.queue_size_in_bytes =3D 0;
-+	vq->split.avail_flags_shadow =3D 0;
-+	vq->split.avail_idx_shadow =3D 0;
-+
-+	memset(vq->split.desc_state, 0, vq->split.vring.num *
-+			sizeof(struct vring_desc_state_split));
-+
-+	vq->free_head =3D 0;
-+}
-+EXPORT_SYMBOL_GPL(virtqueue_reset_free_head);
-+
-+#endif
-+
- /**
-  * virtqueue_kick_prepare - first half of split virtqueue_kick call.
-  * @_vq: the struct virtqueue
-diff --git a/tools/virtio/linux/virtio.h b/tools/virtio/linux/virtio.h
-index b751350d4ce8..5d33eab6b814 100644
---- a/tools/virtio/linux/virtio.h
-+++ b/tools/virtio/linux/virtio.h
-@@ -65,4 +65,6 @@ struct virtqueue *vring_new_virtqueue(unsigned int inde=
-x,
- 				      const char *name);
- void vring_del_virtqueue(struct virtqueue *vq);
-=20
-+void virtqueue_reset_free_head(struct virtqueue *vq);
-+
- #endif
-diff --git a/tools/virtio/virtio_test.c b/tools/virtio/virtio_test.c
-index 93d81cd64ba0..bf21ece30594 100644
---- a/tools/virtio/virtio_test.c
-+++ b/tools/virtio/virtio_test.c
-@@ -49,6 +49,7 @@ struct vdev_info {
-=20
- static const struct vhost_vring_file no_backend =3D { .fd =3D -1 },
- 				     backend =3D { .fd =3D 1 };
-+static const struct vhost_vring_state null_state =3D {};
-=20
- bool vq_notify(struct virtqueue *vq)
- {
-@@ -218,10 +219,33 @@ static void run_test(struct vdev_info *dev, struct =
-vq_info *vq,
- 			}
-=20
- 			if (reset) {
-+				struct vhost_vring_state s =3D { .index =3D 0 };
-+				int i;
-+				vq->vring.avail->idx =3D 0;
-+				vq->vq->num_free =3D vq->vring.num;
-+
-+				// Put everything in free lists.
-+				for (i =3D 0; i < vq->vring.num-1; i++)
-+					vq->vring.desc[i].next =3D
-+						cpu_to_virtio16(&dev->vdev,
-+								i + 1);
-+				vq->vring.desc[vq->vring.num-1].next =3D 0;
-+				virtqueue_reset_free_head(vq->vq);
-+
-+				r =3D ioctl(dev->control, VHOST_GET_VRING_BASE,
-+					  &s);
-+				assert(!r);
-+
-+				s.num =3D 0;
-+				r =3D ioctl(dev->control, VHOST_SET_VRING_BASE,
-+					  &null_state);
-+				assert(!r);
-+
- 				r =3D ioctl(dev->control, VHOST_TEST_SET_BACKEND,
- 					  &backend);
- 				assert(!r);
-=20
-+				started =3D completed;
-                                 while (completed > next_reset)
- 					next_reset +=3D completed;
- 			}
-@@ -243,7 +267,9 @@ static void run_test(struct vdev_info *dev, struct vq=
-_info *vq,
- 	test =3D 0;
- 	r =3D ioctl(dev->control, VHOST_TEST_RUN, &test);
- 	assert(r >=3D 0);
--	fprintf(stderr, "spurious wakeups: 0x%llx\n", spurious);
-+	fprintf(stderr,
-+		"spurious wakeups: 0x%llx started=3D0x%lx completed=3D0x%lx\n",
-+		spurious, started, completed);
- }
-=20
- const char optstring[] =3D "h";
---=20
-2.18.1
+It's hard for script to parse the perf-stat output. This patch fixes this
+issue.
+
+Before:
+
+  root@kbl-ppc:~# perf stat -a -M CPI --metric-only --per-socket
+  ^C
+   Performance counter stats for 'system wide':
+
+  S0        8                  2.6
+
+         2.215270071 seconds time elapsed
+
+  root@kbl-ppc:~# perf stat -a -M CPI --metric-only --per-socket -I1000
+  #           time socket cpus
+       1.000411692 S0        8                  2.2
+       2.001547952 S0        8                  3.4
+       3.002446511 S0        8                  3.4
+       4.003346157 S0        8                  4.0
+       5.004245736 S0        8                  0.3
+
+After:
+
+  root@kbl-ppc:~# perf stat -a -M CPI --metric-only --per-socket
+  ^C
+   Performance counter stats for 'system wide':
+
+                               CPI
+  S0        8                  2.1
+
+         1.813579830 seconds time elapsed
+
+  root@kbl-ppc:~# perf stat -a -M CPI --metric-only --per-socket -I1000
+  #           time socket cpus                  CPI
+       1.000415122 S0        8                  3.2
+       2.001630051 S0        8                  2.9
+       3.002612278 S0        8                  4.3
+       4.003523594 S0        8                  3.0
+       5.004504256 S0        8                  3.7
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ tools/perf/util/stat-shadow.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
+index 0fd713d3674f..03ecb8cd0eec 100644
+--- a/tools/perf/util/stat-shadow.c
++++ b/tools/perf/util/stat-shadow.c
+@@ -803,8 +803,11 @@ static void generic_metric(struct perf_stat_config *config,
+ 				     out->force_header ?
+ 				     (metric_name ? metric_name : name) : "", 0);
+ 		}
+-	} else
+-		print_metric(config, ctxp, NULL, NULL, "", 0);
++	} else {
++		print_metric(config, ctxp, NULL, NULL,
++			     out->force_header ?
++			     (metric_name ? metric_name : name) : "", 0);
++	}
+ 
+ 	for (i = 1; i < pctx.num_ids; i++)
+ 		zfree(&pctx.ids[i].name);
+-- 
+2.17.1
 
