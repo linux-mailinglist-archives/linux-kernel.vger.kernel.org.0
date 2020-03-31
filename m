@@ -2,223 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1391419957F
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:44:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E69EA1995C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730629AbgCaLoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 07:44:06 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:57354 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730424AbgCaLoG (ORCPT
+        id S1730649AbgCaLvX convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 07:51:23 -0400
+Received: from m4a0072g.houston.softwaregrp.com ([15.124.2.130]:48902 "EHLO
+        m4a0072g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730426AbgCaLvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 07:44:06 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200331114403euoutp0210aa151d754e464ace7df85e01b678c3~BYNxhx7Yv2185821858euoutp02m;
-        Tue, 31 Mar 2020 11:44:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200331114403euoutp0210aa151d754e464ace7df85e01b678c3~BYNxhx7Yv2185821858euoutp02m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585655043;
-        bh=fLUaALAhJU0GPsppx99QNEL/LVVPbYb1Y86e+Ys2dEU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=BcjvcLxCxjZiAgS0l2JcDE4a+/1VTtpXAljpF+BNuBk/ddxbw9AaQMqc/bx+A7uO8
-         eLYS1g29m+nJM9prb9cCpQvYJDV6SZVpZvwqO50bq3xkg4Ki7KluWQKraVgIaEktEn
-         HnSEjIZeroXgtE0/8kaBIsWol9YzXRDxyc1i+MNs=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200331114403eucas1p2a2d75fd5ed7aa795b9dd75f82560f851~BYNxTCIpx2947329473eucas1p2i;
-        Tue, 31 Mar 2020 11:44:03 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 24.03.60679.30D238E5; Tue, 31
-        Mar 2020 12:44:03 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200331114402eucas1p137fa539fd8880af609c144731c2268dd~BYNw3CN3i3094030940eucas1p1p;
-        Tue, 31 Mar 2020 11:44:02 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200331114402eusmtrp16e3bcf058264987d54e7bd63976dafb8~BYNw1rUfX0209802098eusmtrp1E;
-        Tue, 31 Mar 2020 11:44:02 +0000 (GMT)
-X-AuditID: cbfec7f4-0cbff7000001ed07-4b-5e832d03104e
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 08.8B.07950.20D238E5; Tue, 31
-        Mar 2020 12:44:02 +0100 (BST)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200331114400eusmtip1324ffeb3f4a193aca8ef85f592d3f465~BYNu7A0fm3131531315eusmtip1u;
-        Tue, 31 Mar 2020 11:44:00 +0000 (GMT)
-Subject: Re: [PATCH v2 2/2] powerpc: Remove Xilinx PPC405/PPC440 support
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com,
-        sfr@canb.auug.org.au, maz@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Alistair Popple <alistair@popple.id.au>,
-        Allison Randal <allison@lohutok.net>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Desnes A. Nunes do Rosario" <desnesn@linux.ibm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Enrico Weigelt <info@metux.net>,
-        Fabio Estevam <festevam@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wei Hu <weh@microsoft.com>, YueHaibing <yuehaibing@huawei.com>,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <f29415e1-5a77-2f26-914a-91bb5a4428cc@samsung.com>
-Date:   Tue, 31 Mar 2020 13:43:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        Tue, 31 Mar 2020 07:51:23 -0400
+Received: FROM m4a0072g.houston.softwaregrp.com (15.120.17.147) BY m4a0072g.houston.softwaregrp.com WITH ESMTP;
+ Tue, 31 Mar 2020 11:49:58 +0000
+Received: from M4W0334.microfocus.com (2002:f78:1192::f78:1192) by
+ M4W0335.microfocus.com (2002:f78:1193::f78:1193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Tue, 31 Mar 2020 11:45:17 +0000
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (15.124.8.14) by
+ M4W0334.microfocus.com (15.120.17.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Tue, 31 Mar 2020 11:45:17 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LpNXfnxrzoIfviDdvcAgSpF/27SAhtE/MyyKyMLq2f9r9zhzh21ghBYT1fjkrwcxAwgcU9ceBgSA2QgpwxlYBUWFfMWnVRLrjawwLotYcSBHFBAV5spQ6aXFd8+yjByX4rQxTB4FSfJv1xWxfzSCzqKS/c8juHVu+wsJEzSnAldzQBqkYWMYVyJCx99fpisMghSuznzMPGLabFpa9Bs6QPWfQti4fymT0PXJB74vkNm/lyleqU7S2Rcpxy1mpRGhgNBIohE2eyKq6+TJeErjr50BE9Vyl1/4FQ0kT7Pfwqlhj3yEJNGjvN7ZW2IqQQqg+iFwF630s4uV+Yurwn8sng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yYFzI/P0Zi6C+qTCWxJ/YmZHIyiCzzLw9OGlec9HjAs=;
+ b=j42nqKdhSdD6cXgvlr5k0xLXMjbjGEKJFwaNc2db+YtDDRoVQ3qj/HRpm3ji+NrNM4RDWnwgezrHmugqLzJlNnkKw1hnmefxjoH27N6UHQm1AUII1gFAsquJ0Im4clayZfNsq/SK1g1lKgKo6A7klwo3NZGARTFTfS/6YtCb9nqellYLlHOZbYTElNfNuMyjyqsgYiFaPKuyvRW6MR500u561oGp3guq0Go5E/1176gnuQDyoigF4FyxD4vzgqvXG6WvYSXX9PxzaVWpl+Z2nfsIxr+83lV2aDGFoL2KKc04E7SvgszwKAVxCudK8R2rnf3s4hgbCbIymnow/J4O2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=DMueller@suse.com; 
+Received: from DM6PR18MB2458.namprd18.prod.outlook.com (2603:10b6:5:188::18)
+ by DM6PR18MB3522.namprd18.prod.outlook.com (2603:10b6:5:28e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.19; Tue, 31 Mar
+ 2020 11:45:16 +0000
+Received: from DM6PR18MB2458.namprd18.prod.outlook.com
+ ([fe80::f874:3829:ad75:5777]) by DM6PR18MB2458.namprd18.prod.outlook.com
+ ([fe80::f874:3829:ad75:5777%3]) with mapi id 15.20.2856.019; Tue, 31 Mar 2020
+ 11:45:16 +0000
+Content-Type: text/plain; charset="us-ascii"
+Subject: Re: [PATCH 5.5 102/170] scripts/dtc: Remove redundant YYLOC global
+ declaration
+From:   =?utf-8?Q?Dirk_M=C3=BCller?= <dmueller@suse.com>
+In-Reply-To: <20200331100238.GA1204199@kroah.com>
+Date:   Tue, 31 Mar 2020 13:45:09 +0200
+CC:     Nathan Chancellor <natechancellor@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Rob Herring <robh@kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-ID: <5B6493BE-F9FE-41A4-A88A-5E4DF5BCE098@suse.com>
+References: <20200331085423.990189598@linuxfoundation.org>
+ <20200331085435.053942582@linuxfoundation.org>
+ <20200331095323.GA32667@ubuntu-m2-xlarge-x86>
+ <20200331100238.GA1204199@kroah.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
+X-ClientProxiedBy: CWXP123CA0024.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:401:73::36) To DM6PR18MB2458.namprd18.prod.outlook.com
+ (2603:10b6:5:188::18)
 MIME-Version: 1.0
-In-Reply-To: <9c3e02ffa9812c6f046708b45932d40f33e8817a.1585575111.git.michal.simek@xilinx.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TbUxTZxTH89z3Niu7VgdPhGjSzRlNWpxj25ku7iVG7zeX7MOIyZhV78AN
-        0LTC5pYtUMpbB1jaIVmpgoBDSKNYK1iQjmADGmIb45Cy2Axmg+1CQatEEO1WeiXj2/8853fO
-        //w/PBypbGHXc0cKj4u6Qm2+ipFTPcOLPjWpLsvZdn+Uhpn2YRI8QQ8Ltc4KGjpvxCmoNTQS
-        8MIyzMKphcskPDSUk1BVRkBosBKB3W+kwDx7joJmr4+GP+bnGDBPVbAwNbYPTjdZEFitDgRl
-        bRcZmCjtJ6Dr7F0G/P5uFmrsBgTO+3dpOFvRTsGNuoc03OmzM7D0NE7DufHbBExNBmhw22/S
-        MBerJmA2kg3XKz00hB6NUuAqGWKgwf80cZL5XwIWwwEKHN42FsoHvCw4HQmfKwNjLFx2NpCw
-        1CiDe/MPqI80guOMAwlLzyxIOOP4QSg/ucAIpYEAI7g6JwihNVJCCfW31ILbFmSFFmeRYPRG
-        aaHtWoQQamaMtODsqmaEWZ+PFcytg+jTDfvlHxwW848Ui7rMXQfkeaZgmDn2+4bvfP5hpgTN
-        pZqQjMN8Fm7o8dMmJOeU/HmEJ9tHKKl4gvBflgApFY8Rdpp+oVZGrOVjrNToQDjYaX5ZRBG+
-        5O2jl6m1vIAHJ2Lssl7Hb8UxwzixDJF8vwKfHFpMQgy/A9dXdqFlreB3YWPpWNKC4jfhykfG
-        5PBrfDaOTV6nJWYNvvlrKMnI+BxsPF+fnCX5NPxnqJmQ9EbcG7Un78a8QY77A94ExCWK3Tjq
-        +kSKsBb/M+JiJZ2BR601lMRfQPhFVfjlcC/CHdY4I1E78T3fM2Z5EclvwRf7MqXnj/FCuJ6S
-        9qfgQHSNdEMKtvQ0ktKzAldVKCX6Tdz9WzezYmtyd5JmpLKtSmZblca2Ko3tf98WRHWhNLFI
-        X5Ar6rcXit9q9NoCfVFhrubQ0QInSvyb0fjIk6uo7/nBIcRzSPWKYnKsNEdJa4v1JwqGEOZI
-        1ToFs68kR6k4rD3xvag7+qWuKF/UD6F0jlKlKd5ujXyh5HO1x8VvRPGYqFvpEpxsfQnS7PR7
-        3qldyJgeD7uvHvi5+ha+s33bla/UHfvTNDtux79+/fE859l90Eg0u9SpXldQ2DsgDvc3fhbO
-        S5/O+LGpdXrvTPqUd89ErHlLXa/Nps6KPNj8PPXvd2ti+dT0ppRM0b0ntll2KWvje3XFr75h
-        IbM/DP30+anMa/h9t2tO26RTUfo87VtbSZ1e+x/TpcUQMwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUybVRSHc9/PlqzJuwLjBt2mTSYJkc7CgEOzocZorhozE6MhTmENewOb
-        lJJ+6WaiBVpgDZsFgmS1gzEgStME8w5x040hYGHi2jhtB04WGCxCZIWRIJudaEs14b/n3PN7
-        7r0nOTJaKXHpsqOVZtFYqatQcUnMxMbYdBaVVVv8zMLdDFjq9tMwOD3IwympjoXe8Q0GTtW0
-        UfB3s5+HTx9coGGlxkFDQy0F80P1CDxBOwOuSA8DHaMBFn5ZW+bANVvHw2zoIJz9rBlBS4sP
-        QW1XHwdT1d9S4O0McxAMfslDo6cGgTQXZqGzrpuB8dMrLPz8jYeD6PoGCz03f6JgdmaShUue
-        aywsr56kILJYBCP1gyzM359goN82zEFrcD32Jdc/FDxcmGTAN9rFg+PKKA+SL/bOV1dCPFyQ
-        WmmItsnht7XfmefUxNfuQyT6VzMi7b4PieOTBxypnpzkSH/vFEXOL9oY0nQ9i1xyT/PknGQh
-        9tF7LOm6vEiRxiU7SyTvSY5EAgGeuM4Podd3va3ebzRYzOIT5QaT+YDqkAay1ZoCUGfvK1Br
-        cvLf1WbnqvYW7j8iVhy1isa9hYfV5c7pBa7q6q4PAkE/Z0PLO5xILsPCPtziCPFOlCRTCj0I
-        R6bWY4Us1ngcj/VZE5lk/Cjs5BKZPxCO2ufYeCNZIHhoapWPc4qQiVdrblLxEC1MKHA0PEQn
-        jDsIt/RubBqcoMVN9V4UZ4VQiO3VISbOjLAH19+3b96UKhThkYvu/zLb8bUz85sZuVCM7V80
-        bZ7TQgZ+1H6DTnAa/nW+g0rwbvz1PQ/tQkr3Ft29RXFvUdxblHOI8aIU0WLSl+lN2WqTTm+y
-        VJapSw16CcX2dcD/sP8ickbeGEaCDKm2KWZC1cVKVmc1HdcPIyyjVSkK7qCtWKk4ojt+QjQa
-        SoyWCtE0jHJjwzXR6amlhtj2V5pLNLmafCjQ5Ofk5+SBKk3RIHz3jlIo05nF90SxSjT+71Ey
-        eboN/fB0qO923o6rYwPJe07vJLPbV54cT9K+FlTNpVa8bG3oN0qO8LG170mHJrNc9fxLH7fm
-        Xfepd8ofaxuo6yo9oyj68xZ+ZfHYQoH4KsXcDtx98cCd4Ju73+9u+NzbtBp4Kl17OKMk75Z0
-        wzyT9eyJy5Ef3/qosyqSJn/h0IjW34iXrNtUjKlcp8mkjSbdv/JTKejFAwAA
-X-CMS-MailID: 20200331114402eucas1p137fa539fd8880af609c144731c2268dd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200330133235eucas1p2293a8ec8af48231bf220959d21913d55
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200330133235eucas1p2293a8ec8af48231bf220959d21913d55
-References: <cover.1585575111.git.michal.simek@xilinx.com>
-        <CGME20200330133235eucas1p2293a8ec8af48231bf220959d21913d55@eucas1p2.samsung.com>
-        <9c3e02ffa9812c6f046708b45932d40f33e8817a.1585575111.git.michal.simek@xilinx.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [172.22.222.25] (95.118.34.218) by CWXP123CA0024.GBRP123.PROD.OUTLOOK.COM (2603:10a6:401:73::36) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.19 via Frontend Transport; Tue, 31 Mar 2020 11:45:14 +0000
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
+X-Originating-IP: [95.118.34.218]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2bb521a2-f4a3-4ee0-609d-08d7d568fad6
+X-MS-TrafficTypeDiagnostic: DM6PR18MB3522:
+X-Microsoft-Antispam-PRVS: <DM6PR18MB352287F8171BF3FC1708DAA2ABC80@DM6PR18MB3522.namprd18.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Forefront-PRVS: 0359162B6D
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR18MB2458.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(396003)(376002)(39860400002)(346002)(136003)(366004)(81166006)(81156014)(186003)(52116002)(36756003)(66946007)(8676002)(66556008)(66476007)(16526019)(2906002)(54906003)(478600001)(956004)(316002)(26005)(2616005)(5660300002)(4744005)(16576012)(6916009)(33656002)(86362001)(4326008)(8936002)(6666004)(6486002);DIR:OUT;SFP:1102;
+Received-SPF: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: FKsNoZa0ez/sGtsZMGlSC0QmQ4czNh//o3ku2ftuhrsxo5qraHudiwo6Se1qubEkaCTe5ptliGmCkUgmF/+EEP/j7wGXO21IBWLQRSXZzncJ+8D8fsng/RevIvSF2ZqLCdv/4t9Hv0nlG8K3LUEJvY1CEQyI7jL/Bt8JsxaxAnON6jckcHp0fK3TPxsJQv52YT5uTe3nROQY/TDuUXgk9PwZUiUuYR03sSMRlTTndwo7chZVoH2nTtCEg34ZT31LaF6ku1h1i2HtVxOqrdx7R90/s+88QxboXNBzWujK1qQXKwmRoIEsRAZHG8dgHbFOK5S+sNYyfS/XGX/iudF0dtRx7qSqGHoQEYMkFqGnOzSdf5dlSxZ4RCuEIfzwMbggaUhL2DTY6vtxqbPi2Cm491KoXusX8PA+fiDrSlR8N/HJjukqunhhgTdUimwdzRi3
+X-MS-Exchange-AntiSpam-MessageData: a7w0j/RBulvroFSHDPU1DMIS/5xz//BdfEgB4Gtomog+IGtaY27Udc+MVK515mFVGu/gNLQB+weUaUzusOYAA+I0J8fgzDKTgJ8/GAjow0d2rpXQGU4oK6YF/+C8OFpMoZjVaV9UzYezG+y7wXxo4A==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bb521a2-f4a3-4ee0-609d-08d7d568fad6
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2020 11:45:15.9152
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: n94kng65UJSdc4bmr9SLVeDdfV3kwRVxwfzzvTDkti+rd7idLxPeJ0huumz3ttHKV1TKhVc9JFnh8OCTf35oSQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR18MB3522
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Greg,
 
-On 3/30/20 3:32 PM, Michal Simek wrote:
-> The latest Xilinx design tools called ISE and EDK has been released in
-> October 2013. New tool doesn't support any PPC405/PPC440 new designs.
-> These platforms are no longer supported and tested.
-> 
-> PowerPC 405/440 port is orphan from 2013 by
-> commit cdeb89943bfc ("MAINTAINERS: Fix incorrect status tag") and
-> commit 19624236cce1 ("MAINTAINERS: Update Grant's email address and maintainership")
-> that's why it is time to remove the support fot these platforms.
-> 
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+>> $ sed -i 's;scripts/dtc/dtc-lexer.l;scripts/dtc/dtc-lexer.lex.c_shipped;g' \
+>> queue-{4.4,4.9,4.14}/scripts-dtc-remove-redundant-yyloc-global-declaration.patch
+>> If you would prefer a set of patches, let me know.
+> Should I just drop the patch from 4.4, 4.9, and 4.14 instead?
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> # for fbdev
+as the original author of the patch, I am not sure why it was backported to the LTS releases (unless enablement for gcc 10.x or
+other new toolchains is a requirement, which I'm not aware of). 
 
-> ---
-> 
-> Changes in v2:
-> - Based on my chat with Arnd I removed arch/powerpc/xmon/ changes done in
->   v1 to keep them the same as before. (kbuild reported some issues with it
->   too)
-> 
->  Documentation/devicetree/bindings/xilinx.txt | 143 ------
->  Documentation/powerpc/bootwrapper.rst        |  28 +-
->  MAINTAINERS                                  |   6 -
->  arch/powerpc/Kconfig.debug                   |   2 +-
->  arch/powerpc/boot/Makefile                   |   7 +-
->  arch/powerpc/boot/dts/Makefile               |   1 -
->  arch/powerpc/boot/dts/virtex440-ml507.dts    | 406 ----------------
->  arch/powerpc/boot/dts/virtex440-ml510.dts    | 466 -------------------
->  arch/powerpc/boot/ops.h                      |   1 -
->  arch/powerpc/boot/serial.c                   |   5 -
->  arch/powerpc/boot/uartlite.c                 |  79 ----
->  arch/powerpc/boot/virtex.c                   |  97 ----
->  arch/powerpc/boot/virtex405-head.S           |  31 --
->  arch/powerpc/boot/wrapper                    |   8 -
->  arch/powerpc/configs/40x/virtex_defconfig    |  75 ---
->  arch/powerpc/configs/44x/virtex5_defconfig   |  74 ---
->  arch/powerpc/configs/ppc40x_defconfig        |   8 -
->  arch/powerpc/configs/ppc44x_defconfig        |   8 -
->  arch/powerpc/include/asm/xilinx_intc.h       |  16 -
->  arch/powerpc/include/asm/xilinx_pci.h        |  21 -
->  arch/powerpc/kernel/cputable.c               |  39 --
->  arch/powerpc/platforms/40x/Kconfig           |  31 --
->  arch/powerpc/platforms/40x/Makefile          |   1 -
->  arch/powerpc/platforms/40x/virtex.c          |  54 ---
->  arch/powerpc/platforms/44x/Kconfig           |  37 --
->  arch/powerpc/platforms/44x/Makefile          |   2 -
->  arch/powerpc/platforms/44x/virtex.c          |  60 ---
->  arch/powerpc/platforms/44x/virtex_ml510.c    |  30 --
->  arch/powerpc/platforms/Kconfig               |   4 -
->  arch/powerpc/sysdev/Makefile                 |   2 -
->  arch/powerpc/sysdev/xilinx_intc.c            |  88 ----
->  arch/powerpc/sysdev/xilinx_pci.c             | 132 ------
->  drivers/char/Kconfig                         |   2 +-
->  drivers/video/fbdev/Kconfig                  |   2 +-
->  34 files changed, 7 insertions(+), 1959 deletions(-)
->  delete mode 100644 arch/powerpc/boot/dts/virtex440-ml507.dts
->  delete mode 100644 arch/powerpc/boot/dts/virtex440-ml510.dts
->  delete mode 100644 arch/powerpc/boot/uartlite.c
->  delete mode 100644 arch/powerpc/boot/virtex.c
->  delete mode 100644 arch/powerpc/boot/virtex405-head.S
->  delete mode 100644 arch/powerpc/configs/40x/virtex_defconfig
->  delete mode 100644 arch/powerpc/configs/44x/virtex5_defconfig
->  delete mode 100644 arch/powerpc/include/asm/xilinx_intc.h
->  delete mode 100644 arch/powerpc/include/asm/xilinx_pci.h
->  delete mode 100644 arch/powerpc/platforms/40x/virtex.c
->  delete mode 100644 arch/powerpc/platforms/44x/virtex.c
->  delete mode 100644 arch/powerpc/platforms/44x/virtex_ml510.c
->  delete mode 100644 arch/powerpc/sysdev/xilinx_intc.c
->  delete mode 100644 arch/powerpc/sysdev/xilinx_pci.c
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+However I think the sed above on the *patch* means that the patch will *only* modify the generated sources, not the input sources. I think
+it would be better to patch both *input* and *generated* sources, or backport the generate-at-runtime patch as well (which might be
+even further outside the stable policy). 
+
+Not knowing why it was backported, I would suggest to just dequeue the patch from the older trees. 
+
+Greetings,
+Dirk
+
