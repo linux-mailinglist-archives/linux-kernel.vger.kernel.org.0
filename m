@@ -2,489 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AB8C19A1E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 885B319A1DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:24:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731369AbgCaW1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 18:27:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51242 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbgCaW1Q (ORCPT
+        id S1731400AbgCaWYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 18:24:02 -0400
+Received: from gateway20.websitewelcome.com ([192.185.67.41]:19345 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727955AbgCaWYB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 18:27:16 -0400
+        Tue, 31 Mar 2020 18:24:01 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id B6E1D400CCD6F
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 16:07:53 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id JPIdjsZSM8vkBJPIdjhU8D; Tue, 31 Mar 2020 17:23:59 -0500
+X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ByEY9ZMovaRN6Wl2pi08+SRs7WS8GWHkGD4Cg+Rm/GY=; b=Usv8Wt+RcmWsbMTDYPlrn1NUSV
-        aOSXzmG1+BW09hBPtNjwTWNKq1EKTIAIwYWQ5wiPRUy1dgZ3AjIqtbpqk6CPM6eYQ+D3GudwFYWld
-        1aYYov+FsR8F5kwrltwzJVezpdnE2Q4+cWvSp+ct4X6GBBigMpmctIrJXpFhrusuL/r8Cd3vhsabF
-        WWThpL4OjBCpC4BZFhevM8h9EGJMYMycLfK95m99Yi1y8+O02ml6NHYtnWPu5pPvb1Lle2ulCWBXV
-        ylZZmypFsEIJVqBBei6XgudRfy4CQ7ji3bAm2VuWuL7QqODXu964JudZQIxc5NepY22I+V71zIfX2
-        +aP4RYfg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJPLe-0000uH-Pb; Tue, 31 Mar 2020 22:27:07 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D58DF98354A; Wed,  1 Apr 2020 00:27:03 +0200 (CEST)
-Date:   Wed, 1 Apr 2020 00:27:03 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:Cc:To:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=QtrrjhC/IDSa1E6R82Hfs8cdkKOlbKVqZ468UCH5J40=; b=nao7FYCtg+9MThAGNOZdSCpa6x
+        06cmaMhyliHKLdyZ+vRXwT27hFbS2isP7mI2jd6OJRldnRaZq8fEmicmIIgYB430lAs9p97Qf2nY3
+        cxDv79p52v2zNv+8Ei58dm1LsicC47DV9QLgYO8SeQNrnHv1lCOqBAqMMGwpEpi/skkIUWT/VSGlx
+        FDoM4/G6vfAAUqp7X3b8XvD+glUrMpGEfWZKDcbZL8tvKU4c1/fnB0TYZgAVbBB3RUmgQW/ii1+6n
+        WMD+k1T/2yp3o4nuPlNN9u07yGHPBJtx01kEDSQn6K064g1P4h5M60ohXXJipRQmuFKTCIl9KKvq9
+        ECJh5Nrw==;
+Received: from [189.218.116.241] (port=36910 helo=[192.168.0.21])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jJPId-002UdD-9g; Tue, 31 Mar 2020 17:23:59 -0500
 To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org,
-        mhiramat@kernel.org, mbenes@suse.cz,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH v2] objtool,ftrace: Implement UNWIND_HINT_RET_OFFSET
-Message-ID: <20200331222703.GH2452@worktop.programming.kicks-ass.net>
-References: <20200326195718.GD2452@worktop.programming.kicks-ass.net>
- <20200327010001.i3kebxb4um422ycb@treble>
- <20200330170200.GU20713@hirez.programming.kicks-ass.net>
- <20200330190205.k5ssixd5hpshpjjq@treble>
- <20200330200254.GV20713@hirez.programming.kicks-ass.net>
- <20200331111652.GH20760@hirez.programming.kicks-ass.net>
- <20200331202315.zialorhlxmml6ec7@treble>
- <20200331204047.GF2452@worktop.programming.kicks-ass.net>
- <20200331211755.pb7f3wa6oxzjnswc@treble>
- <20200331212040.7lrzmj7tbbx2jgrj@treble>
+Cc:     Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+References: <20200331002040.GA11302@embeddedor>
+ <20200331220405.2zopmakvcgytfze5@treble>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] objtool: check: Fix NULL pointer dereference
+Message-ID: <883f3016-5156-8b84-b6aa-4f10a3bdb4eb@embeddedor.com>
+Date:   Tue, 31 Mar 2020 17:27:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331212040.7lrzmj7tbbx2jgrj@treble>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200331220405.2zopmakvcgytfze5@treble>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.218.116.241
+X-Source-L: No
+X-Exim-ID: 1jJPId-002UdD-9g
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.21]) [189.218.116.241]:36910
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 04:20:40PM -0500, Josh Poimboeuf wrote:
-> On Tue, Mar 31, 2020 at 04:17:58PM -0500, Josh Poimboeuf wrote:
-> > > I'm not against adding a second/separate hint for this. In fact, I
-> > > almost considered teaching objtool how to interpret the whole IRET frame
-> > > so that we can do it without hints. It's just that that's too much code
-> > > for this one case.
-> > > 
-> > > HINT_IRET_SELF ?
-> > 
-> > Despite my earlier complaint about stack size knowledge, we could just
-> > forget the hint and make "iretq in C code" equivalent to "reduce stack
-> > size by arch_exception_stack_size()" and keep going.  There's
-> > file->c_file which tells you it's a C file.
+
+
+On 3/31/20 17:04, Josh Poimboeuf wrote:
+> On Mon, Mar 30, 2020 at 07:20:40PM -0500, Gustavo A. R. Silva wrote:
+>> In case func is null, there is a null pointer dereference at 2029:
+>>
+>> 2029                 WARN("%s uses BP as a scratch register",
+>> 2030                      func->name);
+>>
+>> Fix this by null-checking func.
+>>
+>> Addresses-Coverity-ID: 1492002 ("Dereference after null check")
+>> Fixes: c705cecc8431 ("objtool: Track original function across branches")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  tools/objtool/check.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+>> index e3bb76358148..182cc48fa892 100644
+>> --- a/tools/objtool/check.c
+>> +++ b/tools/objtool/check.c
+>> @@ -2025,7 +2025,7 @@ static int validate_return(struct symbol *func, struct instruction *insn, struct
+>>  		return 1;
+>>  	}
+>>  
+>> -	if (state->bp_scratch) {
+>> +	if (func && state->bp_scratch) {
+>>  		WARN("%s uses BP as a scratch register",
+>>  		     func->name);
+>>  		return 1;
 > 
-> Or maybe "iretq in an STT_FUNC" is better since this pattern could
-> presumably happen in a callable asm function.
+> We should still do the warning even if there's no func.  I'll make a
+> slightly different patch which unconditionally uses WARN_FUNC().
+> 
 
-Like so then?
+Awesome. :)
 
----
-Subject: objtool,ftrace: Implement UNWIND_HINT_RET_OFFSET
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Tue, 31 Mar 2020 13:16:52 +0200
+> I'll give you Reported-by credit and keep the coverity tag.  Thanks!
+> 
 
-This replaces the SAVE/RESTORE hints with a RET_OFFSET hint that
-applies to any instruction that terminates a function, like: RETURN
-and sibling calls. It allows the stack-frame to be off by @sp_offset,
-ie. it allows stuffing the return stack.
+Great.
 
-For ftrace_64.S we split the return path and make sure the
-ftrace_epilogue call is seen as a sibling/tail-call turning it into it's
-own function.
-
-By splitting the return path every instruction has a unique stack setup
-and ORC can generate correct unwinds. Then employ the RET_OFFSET hint to
-the tail-call exit that has the direct-call (orig_eax) stuffed on the
-return stack.
-
-For sync_core() we teach objtool that an IRET inside an STT_FUNC
-simply consumes the exception stack and continues.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/include/asm/orc_types.h       |    9 ++-
- arch/x86/include/asm/processor.h       |    2
- arch/x86/include/asm/unwind_hints.h    |   12 +---
- arch/x86/kernel/ftrace.c               |   12 ++++
- arch/x86/kernel/ftrace_64.S            |   27 ++++-------
- tools/arch/x86/include/asm/orc_types.h |    9 ++-
- tools/objtool/Makefile                 |    2
- tools/objtool/arch.h                   |    3 +
- tools/objtool/arch/x86/decode.c        |    5 +-
- tools/objtool/check.c                  |   80 ++++++++++-----------------------
- tools/objtool/check.h                  |    4 +
- 11 files changed, 74 insertions(+), 91 deletions(-)
-
---- a/arch/x86/include/asm/orc_types.h
-+++ b/arch/x86/include/asm/orc_types.h
-@@ -58,8 +58,13 @@
- #define ORC_TYPE_CALL			0
- #define ORC_TYPE_REGS			1
- #define ORC_TYPE_REGS_IRET		2
--#define UNWIND_HINT_TYPE_SAVE		3
--#define UNWIND_HINT_TYPE_RESTORE	4
-+
-+/*
-+ * RET_OFFSET: Used on instructions that terminate a function; mostly RETURN
-+ * and sibling calls. On these, sp_offset denotes the expected offset from
-+ * initial_func_cfi.
-+ */
-+#define UNWIND_HINT_TYPE_RET_OFFSET	3
-
- #ifndef __ASSEMBLY__
- /*
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -738,7 +738,6 @@ static inline void sync_core(void)
- 	unsigned int tmp;
-
- 	asm volatile (
--		UNWIND_HINT_SAVE
- 		"mov %%ss, %0\n\t"
- 		"pushq %q0\n\t"
- 		"pushq %%rsp\n\t"
-@@ -748,7 +747,6 @@ static inline void sync_core(void)
- 		"pushq %q0\n\t"
- 		"pushq $1f\n\t"
- 		"iretq\n\t"
--		UNWIND_HINT_RESTORE
- 		"1:"
- 		: "=&r" (tmp), ASM_CALL_CONSTRAINT : : "cc", "memory");
- #endif
---- a/arch/x86/include/asm/unwind_hints.h
-+++ b/arch/x86/include/asm/unwind_hints.h
-@@ -86,12 +86,8 @@
- 	UNWIND_HINT sp_offset=\sp_offset
- .endm
-
--.macro UNWIND_HINT_SAVE
--	UNWIND_HINT type=UNWIND_HINT_TYPE_SAVE
--.endm
--
--.macro UNWIND_HINT_RESTORE
--	UNWIND_HINT type=UNWIND_HINT_TYPE_RESTORE
-+.macro UNWIND_HINT_RET_OFFSET sp_offset=8
-+	UNWIND_HINT type=UNWIND_HINT_TYPE_RET_OFFSET sp_offset=\sp_offset
- .endm
-
- #else /* !__ASSEMBLY__ */
-@@ -108,9 +104,7 @@
- 	".balign 4 \n\t"					\
- 	".popsection\n\t"
-
--#define UNWIND_HINT_SAVE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_SAVE, 0)
--
--#define UNWIND_HINT_RESTORE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_RESTORE, 0)
-+#define UNWIND_HINT_RET_OFFSET(offset) UNWIND_HINT(0, (offset), UNWIND_HINT_TYPE_RET_OFFSET, 0)
-
- #endif /* __ASSEMBLY__ */
-
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -282,7 +282,8 @@ static inline void tramp_free(void *tram
-
- /* Defined as markers to the end of the ftrace default trampolines */
- extern void ftrace_regs_caller_end(void);
--extern void ftrace_epilogue(void);
-+extern void ftrace_regs_caller_ret(void);
-+extern void ftrace_caller_end(void);
- extern void ftrace_caller_op_ptr(void);
- extern void ftrace_regs_caller_op_ptr(void);
-
-@@ -334,7 +335,7 @@ create_trampoline(struct ftrace_ops *ops
- 		call_offset = (unsigned long)ftrace_regs_call;
- 	} else {
- 		start_offset = (unsigned long)ftrace_caller;
--		end_offset = (unsigned long)ftrace_epilogue;
-+		end_offset = (unsigned long)ftrace_caller_end;
- 		op_offset = (unsigned long)ftrace_caller_op_ptr;
- 		call_offset = (unsigned long)ftrace_call;
- 	}
-@@ -366,6 +367,13 @@ create_trampoline(struct ftrace_ops *ops
- 	if (WARN_ON(ret < 0))
- 		goto fail;
-
-+	if (ops->flags & FTRACE_OPS_FL_SAVE_REGS) {
-+		ip = ftrace_regs_caller_ret;
-+		ret = probe_kernel_read(ip, (void *)retq, RET_SIZE);
-+		if (WARN_ON(ret < 0))
-+			goto fail;
-+	}
-+
- 	/*
- 	 * The address of the ftrace_ops that is used for this trampoline
- 	 * is stored at the end of the trampoline. This will be used to
---- a/arch/x86/kernel/ftrace_64.S
-+++ b/arch/x86/kernel/ftrace_64.S
-@@ -157,8 +157,12 @@ SYM_INNER_LABEL(ftrace_call, SYM_L_GLOBA
- 	 * think twice before adding any new code or changing the
- 	 * layout here.
- 	 */
--SYM_INNER_LABEL(ftrace_epilogue, SYM_L_GLOBAL)
-+SYM_INNER_LABEL(ftrace_caller_end, SYM_L_GLOBAL)
-
-+	jmp ftrace_epilogue
-+SYM_FUNC_END(ftrace_caller);
-+
-+SYM_FUNC_START(ftrace_epilogue)
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- SYM_INNER_LABEL(ftrace_graph_call, SYM_L_GLOBAL)
- 	jmp ftrace_stub
-@@ -170,14 +174,12 @@ SYM_INNER_LABEL(ftrace_graph_call, SYM_L
-  */
- SYM_INNER_LABEL_ALIGN(ftrace_stub, SYM_L_WEAK)
- 	retq
--SYM_FUNC_END(ftrace_caller)
-+SYM_FUNC_END(ftrace_epilogue)
-
- SYM_FUNC_START(ftrace_regs_caller)
- 	/* Save the current flags before any operations that can change them */
- 	pushfq
-
--	UNWIND_HINT_SAVE
--
- 	/* added 8 bytes to save flags */
- 	save_mcount_regs 8
- 	/* save_mcount_regs fills in first two parameters */
-@@ -244,20 +246,14 @@ SYM_INNER_LABEL(ftrace_regs_call, SYM_L_
- 	movq %rax, MCOUNT_REG_SIZE(%rsp)
-
- 	restore_mcount_regs 8
-+	/* Restore flags */
-+	popfq
-
--	jmp	2f
-+SYM_INNER_LABEL(ftrace_regs_caller_ret, SYM_L_GLOBAL);
-+	UNWIND_HINT_RET_OFFSET
-+	jmp	ftrace_epilogue
-
- 1:	restore_mcount_regs
--
--
--2:
--	/*
--	 * The stack layout is nondetermistic here, depending on which path was
--	 * taken.  This confuses objtool and ORC, rightfully so.  For now,
--	 * pretend the stack always looks like the non-direct case.
--	 */
--	UNWIND_HINT_RESTORE
--
- 	/* Restore flags */
- 	popfq
-
-@@ -268,7 +264,6 @@ SYM_INNER_LABEL(ftrace_regs_call, SYM_L_
- 	 * to the return.
- 	 */
- SYM_INNER_LABEL(ftrace_regs_caller_end, SYM_L_GLOBAL)
--
- 	jmp ftrace_epilogue
-
- SYM_FUNC_END(ftrace_regs_caller)
---- a/tools/arch/x86/include/asm/orc_types.h
-+++ b/tools/arch/x86/include/asm/orc_types.h
-@@ -58,8 +58,13 @@
- #define ORC_TYPE_CALL			0
- #define ORC_TYPE_REGS			1
- #define ORC_TYPE_REGS_IRET		2
--#define UNWIND_HINT_TYPE_SAVE		3
--#define UNWIND_HINT_TYPE_RESTORE	4
-+
-+/*
-+ * RET_OFFSET: Used on instructions that terminate a function; mostly RETURN
-+ * and sibling calls. On these, sp_offset denotes the expected offset from
-+ * initial_func_cfi.
-+ */
-+#define UNWIND_HINT_TYPE_RET_OFFSET	3
-
- #ifndef __ASSEMBLY__
- /*
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -31,7 +31,7 @@ INCLUDES := -I$(srctree)/tools/include \
- 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
- 	    -I$(srctree)/tools/arch/$(SRCARCH)/include
- WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
--CFLAGS   := -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES) $(LIBELF_FLAGS)
-+CFLAGS   := -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -ggdb3 $(INCLUDES) $(LIBELF_FLAGS)
- LDFLAGS  += $(LIBELF_LIBS) $(LIBSUBCMD) $(KBUILD_HOSTLDFLAGS)
-
- # Allow old libelf to be used:
---- a/tools/objtool/arch.h
-+++ b/tools/objtool/arch.h
-@@ -19,6 +19,7 @@ enum insn_type {
- 	INSN_CALL,
- 	INSN_CALL_DYNAMIC,
- 	INSN_RETURN,
-+	INSN_EXCEPTION_RETURN,
- 	INSN_CONTEXT_SWITCH,
- 	INSN_STACK,
- 	INSN_BUG,
-@@ -75,4 +76,6 @@ int arch_decode_instruction(struct elf *
-
- bool arch_callee_saved_reg(unsigned char reg);
-
-+static const int arch_exception_frame_size = 5*8;
-+
- #endif /* _ARCH_H */
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -431,10 +431,13 @@ int arch_decode_instruction(struct elf *
-
- 	case 0xca: /* retf */
- 	case 0xcb: /* retf */
--	case 0xcf: /* iret */
- 		*type = INSN_CONTEXT_SWITCH;
- 		break;
-
-+	case 0xcf: /* iret */
-+		*type = INSN_EXCEPTION_RETURN;
-+		break;
-+
- 	case 0xe8:
- 		*type = INSN_CALL;
- 		break;
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1246,13 +1246,8 @@ static int read_unwind_hints(struct objt
-
- 		cfa = &insn->state.cfa;
-
--		if (hint->type == UNWIND_HINT_TYPE_SAVE) {
--			insn->save = true;
--			continue;
--
--		} else if (hint->type == UNWIND_HINT_TYPE_RESTORE) {
--			insn->restore = true;
--			insn->hint = true;
-+		if (hint->type == UNWIND_HINT_TYPE_RET_OFFSET) {
-+			insn->ret_offset = hint->sp_offset;
- 			continue;
- 		}
-
-@@ -1416,20 +1411,26 @@ static bool is_fentry_call(struct instru
- 	return false;
- }
-
--static bool has_modified_stack_frame(struct insn_state *state)
-+static bool has_modified_stack_frame(struct instruction *insn, struct insn_state *state)
- {
-+	u8 ret_offset = insn->ret_offset;
- 	int i;
-
--	if (state->cfa.base != initial_func_cfi.cfa.base ||
--	    state->cfa.offset != initial_func_cfi.cfa.offset ||
--	    state->stack_size != initial_func_cfi.cfa.offset ||
--	    state->drap)
-+	if (state->cfa.base != initial_func_cfi.cfa.base || state->drap)
-+		return true;
-+
-+	if (state->cfa.offset != initial_func_cfi.cfa.offset &&
-+	    !(ret_offset && state->cfa.offset == initial_func_cfi.cfa.offset + ret_offset))
-+		return true;
-+
-+	if (state->stack_size != initial_func_cfi.cfa.offset + ret_offset)
- 		return true;
-
--	for (i = 0; i < CFI_NUM_REGS; i++)
-+	for (i = 0; i < CFI_NUM_REGS; i++) {
- 		if (state->regs[i].base != initial_func_cfi.regs[i].base ||
- 		    state->regs[i].offset != initial_func_cfi.regs[i].offset)
- 			return true;
-+	}
-
- 	return false;
- }
-@@ -1971,7 +1972,7 @@ static int validate_call(struct instruct
-
- static int validate_sibling_call(struct instruction *insn, struct insn_state *state)
- {
--	if (has_modified_stack_frame(state)) {
-+	if (has_modified_stack_frame(insn, state)) {
- 		WARN_FUNC("sibling call from callable instruction with modified stack frame",
- 				insn->sec, insn->offset);
- 		return 1;
-@@ -2000,7 +2001,7 @@ static int validate_return(struct symbol
- 		return 1;
- 	}
-
--	if (func && has_modified_stack_frame(state)) {
-+	if (func && has_modified_stack_frame(insn, state)) {
- 		WARN_FUNC("return with modified stack frame",
- 			  insn->sec, insn->offset);
- 		return 1;
-@@ -2063,47 +2064,9 @@ static int validate_branch(struct objtoo
- 				return 0;
- 		}
-
--		if (insn->hint) {
--			if (insn->restore) {
--				struct instruction *save_insn, *i;
--
--				i = insn;
--				save_insn = NULL;
--				sym_for_each_insn_continue_reverse(file, func, i) {
--					if (i->save) {
--						save_insn = i;
--						break;
--					}
--				}
--
--				if (!save_insn) {
--					WARN_FUNC("no corresponding CFI save for CFI restore",
--						  sec, insn->offset);
--					return 1;
--				}
--
--				if (!save_insn->visited) {
--					/*
--					 * Oops, no state to copy yet.
--					 * Hopefully we can reach this
--					 * instruction from another branch
--					 * after the save insn has been
--					 * visited.
--					 */
--					if (insn == first)
--						return 0;
--
--					WARN_FUNC("objtool isn't smart enough to handle this CFI save/restore combo",
--						  sec, insn->offset);
--					return 1;
--				}
--
--				insn->state = save_insn->state;
--			}
--
-+		if (insn->hint)
- 			state = insn->state;
--
--		} else
-+		else
- 			insn->state = state;
-
- 		insn->visited |= visited;
-@@ -2185,6 +2148,13 @@ static int validate_branch(struct objtoo
-
- 			break;
-
-+		case INSN_EXCEPTION_RETURN:
-+			if (func) {
-+				state.stack_size -= arch_exception_frame_size;
-+				break;
-+			}
-+
-+			/* fallthrough */
- 		case INSN_CONTEXT_SWITCH:
- 			if (func && (!next_insn || !next_insn->hint)) {
- 				WARN_FUNC("unsupported instruction in callable function",
---- a/tools/objtool/check.h
-+++ b/tools/objtool/check.h
-@@ -33,9 +33,11 @@ struct instruction {
- 	unsigned int len;
- 	enum insn_type type;
- 	unsigned long immediate;
--	bool alt_group, dead_end, ignore, hint, save, restore, ignore_alts;
-+	bool alt_group, dead_end, ignore, ignore_alts;
-+	bool hint;
- 	bool retpoline_safe;
- 	u8 visited;
-+	u8 ret_offset;
- 	struct symbol *call_dest;
- 	struct instruction *jump_dest;
- 	struct instruction *first_jump_src;
-
+Thanks
+--
+Gustavo
