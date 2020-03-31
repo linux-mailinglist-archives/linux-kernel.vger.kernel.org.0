@@ -2,241 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33D28198C40
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 08:25:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3EE0198C46
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 08:26:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730065AbgCaGZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 02:25:07 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:51060 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729949AbgCaGYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 02:24:52 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48rznt2T4yz9v0KM;
-        Tue, 31 Mar 2020 08:24:50 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=jaKNuyK6; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 9kuhmWDyt8Bq; Tue, 31 Mar 2020 08:24:50 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48rznt15Xdz9v0KC;
-        Tue, 31 Mar 2020 08:24:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1585635890; bh=5nryEhu9ZdC3QcAPQtb5kgYfw9XZ6OdDGR/6oi4BLng=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=jaKNuyK6imUrD0z/gXSulBayGXCSDh5ddaOBzDwXFhD347QfkMc3G6yP/0mjYg7mg
-         WmhKQ2co9HZdZ3DzX3DyqGaG22Nbl/bFJ+U9ocKuUmRW2Bmua0yo/POE7imAjTVql4
-         dZ+CsL+92TSom13PA6Y1cwqI5Qlcu9nxn+yHhfbM=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C83458B784;
-        Tue, 31 Mar 2020 08:24:50 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 6QJLOOAWpn2c; Tue, 31 Mar 2020 08:24:50 +0200 (CEST)
-Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 832DD8B752;
-        Tue, 31 Mar 2020 08:24:50 +0200 (CEST)
-Received: by pc16570vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 829B865673; Tue, 31 Mar 2020 06:24:50 +0000 (UTC)
-Message-Id: <0b7974a0400563d4cd1b607462940db4d4526605.1585635837.git.christophe.leroy@c-s.fr>
-In-Reply-To: <40899eb1b8f10da3706acd06c3d46d2418c8886e.1585635837.git.christophe.leroy@c-s.fr>
-References: <40899eb1b8f10da3706acd06c3d46d2418c8886e.1585635837.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 10/10] powerpc/32: Replace RFI by rfi
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 31 Mar 2020 06:24:50 +0000 (UTC)
+        id S1730099AbgCaGZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 02:25:57 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50291 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726681AbgCaGZ5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 02:25:57 -0400
+Received: by mail-wm1-f65.google.com with SMTP id t128so1181613wma.0;
+        Mon, 30 Mar 2020 23:25:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ArVsRQLEDczzNKjhr+jbvPA9gOP9bTXo6z6wbtdEl10=;
+        b=jns4IRlGX9ipfTr9QrAL9MdEaWIkQoFyIooKuQipIVNBQSVtUMw3vCCJFj+PSX0izw
+         +M5IjJagxyUJYuSRRESQduiYnQMChrwqRwRMmueI54Njg2kqSOmeHR8E86vStL93enHf
+         nNtb1uAil9EIpv0yMCIXp5n/QJU5ZfiZSTvwzVXvhrNq6eNYO5ZvtnbQK4Y50Rg/zc2P
+         vtaXcjP2CslaNNrPwMndOFVXGoN98KaJHSKPngCN4govHd8pn3IpY6rqOFMWrPa7FGgh
+         UUbwFPoeMF2tJKPSKIH/BsQDIuuqiToYHF5QTvAkoFHKWjTbqm3fRkmDCCZF8ztugo5+
+         s2kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ArVsRQLEDczzNKjhr+jbvPA9gOP9bTXo6z6wbtdEl10=;
+        b=iqVVlfGbYviLsn3xoqgqTJNMTTTk3VnugEF57SdZWxjNJmB/fnNKYcA1vfDRTrTsqi
+         7xFoMF2pt972o/yRh38K+9YLrN11F47XcCFMWfRiB2AiPomw35I3lVlB3rwQZzUjl+RL
+         WpxDd8f0Nb7EWG8wBKH0l9vrTYS1Hlfg+JOqlKiX+ZREJoKd+hCdDaE3JX8W5nt/qX4z
+         EF9ZfAiuOctx5iZjJikeuUkr0uKKwArXdK88WgQOl5Eyn35J5s+Xn2Gdr/0+t2zQCiaq
+         PNYAkrUObIEcO7e/VZzxJi19+kPaBrttT5LlhJXtuBCqQKQEOTZ0VfdOcqMVPUoL9ZdT
+         oaHg==
+X-Gm-Message-State: ANhLgQ26ql4+ZwL3tZobFiQjhNL4/pAlppcrwjsYec2fLe1Brjjly8xB
+        rIzZUenudFmULWuECGLfWU27Qrdaz1AhbUeaVGk=
+X-Google-Smtp-Source: ADFU+vsfDb61Ldk0iX/IBTCWS+t2mAybXufGyG8yv092g0wKK9uHiwzveQnqojQSYrvCusFMdLqY+42vSuKTVOjtWOA=
+X-Received: by 2002:a1c:9c85:: with SMTP id f127mr1820416wme.91.1585635955410;
+ Mon, 30 Mar 2020 23:25:55 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200311170120.12641-1-jeyu@kernel.org> <CANcMJZDhSUV8CU_ixOSxstVVBMW3rVrrQVYMmy1fz=OdhxA_GQ@mail.gmail.com>
+In-Reply-To: <CANcMJZDhSUV8CU_ixOSxstVVBMW3rVrrQVYMmy1fz=OdhxA_GQ@mail.gmail.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Mon, 30 Mar 2020 23:25:44 -0700
+Message-ID: <CANcMJZD9Lz-J_idL5i225VR_3Mo6PcTRsYBBrGsMByX6W4jepQ@mail.gmail.com>
+Subject: Re: [PATCH v2] modpost: move the namespace field in Module.symvers last
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthias Maennich <maennich@google.com>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        stable@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RFI was a macro waving the rfi instruction for the 40x.
+On Mon, Mar 30, 2020 at 10:49 PM John Stultz <john.stultz@linaro.org> wrote:
+> On Wed, Mar 11, 2020 at 10:03 AM Jessica Yu <jeyu@kernel.org> wrote:
+> >
+> > In order to preserve backwards compatability with kmod tools, we have to
+> > move the namespace field in Module.symvers last, as the depmod -e -E
+> > option looks at the first three fields in Module.symvers to check symbol
+> > versions (and it's expected they stay in the original order of crc,
+> > symbol, module).
+> >
+> > In addition, update an ancient comment above read_dump() in modpost that
+> > suggested that the export type field in Module.symvers was optional. I
+> > suspect that there were historical reasons behind that comment that are
+> > no longer accurate. We have been unconditionally printing the export
+> > type since 2.6.18 (commit bd5cbcedf44), which is over a decade ago now.
+> >
+> > Fix up read_dump() to treat each field as non-optional. I suspect the
+> > original read_dump() code treated the export field as optional in order
+> > to support pre <= 2.6.18 Module.symvers (which did not have the export
+> > type field). Note that although symbol namespaces are optional, the
+> > field will not be omitted from Module.symvers if a symbol does not have
+> > a namespace. In this case, the field will simply be empty and the next
+> > delimiter or end of line will follow.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: cb9b55d21fe0 ("modpost: add support for symbol namespaces")
+> > Tested-by: Matthias Maennich <maennich@google.com>
+> > Reviewed-by: Matthias Maennich <maennich@google.com>
+> > Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
+> > Signed-off-by: Jessica Yu <jeyu@kernel.org>
+> > ---
+> > v2:
+> >
+> >   - Explain the changes to read_dump() and the comment (and provide
+> >     historical context) in the commit message. (Lucas De Marchi)
+> >
+> >  Documentation/kbuild/modules.rst |  4 ++--
+> >  scripts/export_report.pl         |  2 +-
+> >  scripts/mod/modpost.c            | 24 ++++++++++++------------
+> >  3 files changed, 15 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modules.rst
+> > index 69fa48ee93d6..e0b45a257f21 100644
+> > --- a/Documentation/kbuild/modules.rst
+> > +++ b/Documentation/kbuild/modules.rst
+> > @@ -470,9 +470,9 @@ build.
+> >
+> >         The syntax of the Module.symvers file is::
+> >
+> > -       <CRC>       <Symbol>          <Namespace>  <Module>                         <Export Type>
+> > +       <CRC>       <Symbol>         <Module>                         <Export Type>     <Namespace>
+> >
+> > -       0xe1cc2a05  usb_stor_suspend  USB_STORAGE  drivers/usb/storage/usb-storage  EXPORT_SYMBOL_GPL
+> > +       0xe1cc2a05  usb_stor_suspend drivers/usb/storage/usb-storage  EXPORT_SYMBOL_GPL USB_STORAGE
+> >
+> >         The fields are separated by tabs and values may be empty (e.g.
+> >         if no namespace is defined for an exported symbol).
+>
+> Despite the documentation here claiming the namespace field can be
+> empty, I'm seeing some trouble with this patch when building external
+> modules:
+>   FATAL: parse error in symbol dump file
+>
+> I've confirmed reverting it make things work again, but its not clear
+> to me quite yet why.
+>
+> The only difference I can find is that the Module.symvers in the
+> external module project doesn't seem to have a tab at the end of each
+> line (where as Module.symvers for the kernel - which doesn't seem to
+> have any namespace names - does).
+>
+> Is there something I need to tweak on the external Kbuild to get
+> Module.symvers to be generated properly (with the empty tab at the
+> end) for this new change?
+> Or does the parser need to be a bit more flexible?
+>
 
-Now that 40x is gone, rfi can be used directly.
+One extra clue on this: I noticed the external module Makefile had
+KBUILD_EXTRA_SYMBOLS="$(EXTRA_SYMBOLS)"  in the $(MAKE) string, where
+EXTRA_SYMBOLS pointed to some files that no longer exist.  I removed
+the KBUILD_EXTRA_SYMBOLS= argument, and magically, the generated
+Module.symvers now had tabs at the end of each line.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/kernel/entry_32.S | 18 +++++++++---------
- arch/powerpc/kernel/head_32.S  | 18 +++++++++---------
- 2 files changed, 18 insertions(+), 18 deletions(-)
+I wonder if there some path in the KBUILD_EXTRA_SYMBOLS= handling that
+isn't generating the output in the same way?
 
-diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
-index cae0bdc013e5..4920448f6ad9 100644
---- a/arch/powerpc/kernel/entry_32.S
-+++ b/arch/powerpc/kernel/entry_32.S
-@@ -203,7 +203,7 @@ transfer_to_handler_cont:
- 	mtspr	SPRN_SRR1,r10
- 	mtlr	r9
- 	SYNC
--	RFI				/* jump to handler, enable MMU */
-+	rfi				/* jump to handler, enable MMU */
- 
- #ifdef CONFIG_TRACE_IRQFLAGS
- 1:	/* MSR is changing, re-enable MMU so we can notify lockdep. We need to
-@@ -216,7 +216,7 @@ transfer_to_handler_cont:
- 	mtspr	SPRN_SRR0,r12
- 	mtspr	SPRN_SRR1,r0
- 	SYNC
--	RFI
-+	rfi
- 
- reenable_mmu:
- 	/*
-@@ -290,7 +290,7 @@ stack_ovf:
- 	mtspr	SPRN_SRR0,r9
- 	mtspr	SPRN_SRR1,r10
- 	SYNC
--	RFI
-+	rfi
- #endif
- 
- #ifdef CONFIG_TRACE_IRQFLAGS
-@@ -439,7 +439,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_NEED_PAIRED_STWCX)
- 	mtspr	SPRN_SRR0,r7
- 	mtspr	SPRN_SRR1,r8
- 	SYNC
--	RFI
-+	rfi
- #ifdef CONFIG_44x
- 2:	li	r7,0
- 	iccci	r0,r0
-@@ -570,7 +570,7 @@ ret_from_kernel_syscall:
- 	mtspr	SPRN_SRR0, r9
- 	mtspr	SPRN_SRR1, r10
- 	SYNC
--	RFI
-+	rfi
- 
- /*
-  * The fork/clone functions need to copy the full register set into
-@@ -773,7 +773,7 @@ fast_exception_return:
- 	REST_GPR(12, r11)
- 	lwz	r11,GPR11(r11)
- 	SYNC
--	RFI
-+	rfi
- 
- #ifndef CONFIG_BOOKE
- /* check if the exception happened in a restartable section */
-@@ -1008,7 +1008,7 @@ exc_exit_restart:
- 	.globl exc_exit_restart_end
- exc_exit_restart_end:
- 	SYNC
--	RFI
-+	rfi
- 
- #else /* !CONFIG_BOOKE */
- 	/*
-@@ -1313,7 +1313,7 @@ _GLOBAL(enter_rtas)
- 	stw	r7, THREAD + RTAS_SP(r2)
- 	mtspr	SPRN_SRR0,r8
- 	mtspr	SPRN_SRR1,r9
--	RFI
-+	rfi
- 1:	tophys_novmstack r9, r1
- #ifdef CONFIG_VMAP_STACK
- 	li	r0, MSR_KERNEL & ~MSR_IR	/* can take DTLB miss */
-@@ -1328,7 +1328,7 @@ _GLOBAL(enter_rtas)
- 	stw	r0, THREAD + RTAS_SP(r7)
- 	mtspr	SPRN_SRR0,r8
- 	mtspr	SPRN_SRR1,r9
--	RFI			/* return to caller */
-+	rfi			/* return to caller */
- 
- 	.globl	machine_check_in_rtas
- machine_check_in_rtas:
-diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
-index daaa153950c2..13866115a18a 100644
---- a/arch/powerpc/kernel/head_32.S
-+++ b/arch/powerpc/kernel/head_32.S
-@@ -220,7 +220,7 @@ turn_on_mmu:
- 	ori	r0,r0,start_here@l
- 	mtspr	SPRN_SRR0,r0
- 	SYNC
--	RFI				/* enables MMU */
-+	rfi				/* enables MMU */
- 
- /*
-  * We need __secondary_hold as a place to hold the other cpus on
-@@ -784,14 +784,14 @@ fast_hash_page_return:
- 	lwz	r11, THR11(r10)
- 	mfspr	r10, SPRN_SPRG_SCRATCH0
- 	SYNC
--	RFI
-+	rfi
- 
- 1:	/* ISI */
- 	mtcr	r11
- 	mfspr	r11, SPRN_SPRG_SCRATCH1
- 	mfspr	r10, SPRN_SPRG_SCRATCH0
- 	SYNC
--	RFI
-+	rfi
- 
- stack_overflow:
- 	vmap_stack_overflow_exception
-@@ -930,7 +930,7 @@ __secondary_start:
- 	mtspr	SPRN_SRR0,r3
- 	mtspr	SPRN_SRR1,r4
- 	SYNC
--	RFI
-+	rfi
- #endif /* CONFIG_SMP */
- 
- #ifdef CONFIG_KVM_BOOK3S_HANDLER
-@@ -1074,7 +1074,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_HPTE_TABLE)
- 	mtspr	SPRN_SRR0,r4
- 	mtspr	SPRN_SRR1,r3
- 	SYNC
--	RFI
-+	rfi
- /* Load up the kernel context */
- 2:	bl	load_up_mmu
- 
-@@ -1099,7 +1099,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_HPTE_TABLE)
- 	mtspr	SPRN_SRR0,r3
- 	mtspr	SPRN_SRR1,r4
- 	SYNC
--	RFI
-+	rfi
- 
- /*
-  * void switch_mmu_context(struct mm_struct *prev, struct mm_struct *next);
-@@ -1217,7 +1217,7 @@ _ENTRY(update_bats)
- 	mtspr	SPRN_SRR0, r4
- 	mtspr	SPRN_SRR1, r3
- 	SYNC
--	RFI
-+	rfi
- 1:	bl	clear_bats
- 	lis	r3, BATS@ha
- 	addi	r3, r3, BATS@l
-@@ -1237,7 +1237,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_USE_HIGH_BATS)
- 	mtspr	SPRN_SRR0, r7
- 	mtspr	SPRN_SRR1, r6
- 	SYNC
--	RFI
-+	rfi
- 
- flush_tlbs:
- 	lis	r10, 0x40
-@@ -1258,7 +1258,7 @@ mmu_off:
- 	mtspr	SPRN_SRR0,r4
- 	mtspr	SPRN_SRR1,r3
- 	sync
--	RFI
-+	rfi
- 
- /*
-  * On 601, we use 3 BATs to map up to 24M of RAM at _PAGE_OFFSET
--- 
-2.25.0
-
+thanks
+-john
