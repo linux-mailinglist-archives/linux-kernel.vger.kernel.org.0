@@ -2,122 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D43019A03D
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 22:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4261F19A04A
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 22:58:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731186AbgCaUzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 16:55:31 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45443 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727852AbgCaUza (ORCPT
+        id S1731224AbgCaU57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 16:57:59 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46975 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731098AbgCaU55 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 16:55:30 -0400
-Received: by mail-wr1-f67.google.com with SMTP id t7so27815610wrw.12;
-        Tue, 31 Mar 2020 13:55:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Fc3hIrkGUeKzO9HlP2wK7i0On1epT+EO4vUBDD3v+Js=;
-        b=ieUVlR2SYjqhAQj3opVq7EVf9dEqfCxvhzKHMNSj0SiNzytiIKSc1KOvMNQjdhpbZN
-         7j3siE3r/xoFuPKFXxxWiOYbuPdDtYweXPF5aatN0FwUM+7UBUvYcrX8P3WNcB6wP0k9
-         LM5+loss1ej6ifoCeuxMG5mmceb77Kh3WdhEHZV87tKQ7Ok3agX3+qHYdXAf1hr7w8df
-         HpjYyIFMcfxOV+zC8x8dEjPyB9g0U0+5E7pbCaVVGN6oWv7HLUQH2myDa2/cDbJIlitr
-         xhSIhhBb+mdsXqbx+0FjyBr1ftmbiMwBFcuqvLXW9bA/YyfXJlRqm6DwoiQKPeG258aG
-         GihA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Fc3hIrkGUeKzO9HlP2wK7i0On1epT+EO4vUBDD3v+Js=;
-        b=F+PSadKmVxIJ1JylQQDJmjlbkcJNwji7Y6jZLYOaW5/fM8B/DICvTXHoG/B1XnxPNa
-         PobpQ0hRCw+PFvTWrJWrnLE7eHjrCcYRGP0VGNKSSe87ifoKG9qCx6pSnspw0GO87cK+
-         Riu9anv+qb5S+J+DCKkd8n3x18O1dbbtL4ykH2WaP7hfqvlw+PEG8VPOgrNW3Rg1yyZz
-         cePVEWODwJF/6DEruc0pvER4zGrHgFz714RW2TGPObVJL9Rf7tN1aDFgOZm7ocyHpKqP
-         ZUDXlGHJIqH/+1QIy79nR0AXL3fI6/hyN54JHd2d04gpeahrSbfDcgyxjFqOkHlI90xc
-         +rDQ==
-X-Gm-Message-State: ANhLgQ0JzAfaW3XRANdNW1mUKXrsoPMFsS5I6003qeoGbzplGjQ6DJGX
-        w0DbQcbcvi+Nxi6mx9hz/FU=
-X-Google-Smtp-Source: ADFU+vvvQrkHvHyq/feIWUCI04feJapay9mmX5XR9URaVoaDNOH7GT/Gqep2c9V3z9dsVwsvN2mJzg==
-X-Received: by 2002:adf:ce07:: with SMTP id p7mr21880987wrn.261.1585688126525;
-        Tue, 31 Mar 2020 13:55:26 -0700 (PDT)
-Received: from localhost (p200300E41F4A9B0076D02BFFFE273F51.dip0.t-ipconnect.de. [2003:e4:1f4a:9b00:76d0:2bff:fe27:3f51])
-        by smtp.gmail.com with ESMTPSA id r11sm29657432wrn.24.2020.03.31.13.55.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 13:55:25 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 22:55:24 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH] gpio: Avoid using pin ranges with !PINCTRL
-Message-ID: <20200331205524.GE2954599@ulmo>
-References: <20200330090257.2332864-1-thierry.reding@gmail.com>
- <CAMuHMdXiK3KLU1=s4ykxmUVSsgwbnnc476w=Nnj-HsVytK2Lqg@mail.gmail.com>
+        Tue, 31 Mar 2020 16:57:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585688276;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=qXwJ6P01usnj3n8GpAUGcfZ6SN4qPkwbrrUG0deRB5k=;
+        b=BdNnGkFMPR2iTd0aYUaEuwFF0hH+PVgHUvZKoZzIjp0JxKkT3G/SOn8jtvANusvn94jbky
+        lq+iu6cVKAB0TlxqoHnp4ZuhwhNTFKtK0iQi0MQ26tgLkVzXILPltpGzQjEkS9aDSot8XN
+        cBhHv8Q4MnEYQbJJ6CauX0bMQH2kpR0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-185-Dif1_LD1PJSp7HZe4pV2Ng-1; Tue, 31 Mar 2020 16:57:49 -0400
+X-MC-Unique: Dif1_LD1PJSp7HZe4pV2Ng-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D22468018D1;
+        Tue, 31 Mar 2020 20:57:46 +0000 (UTC)
+Received: from Ruby.redhat.com (ovpn-113-88.rdu2.redhat.com [10.10.113.88])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B05D97B19;
+        Tue, 31 Mar 2020 20:57:43 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     "Pankaj Bharadiya" <pankaj.laxminarayan.bharadiya@intel.com>,
+        "Daniel Vetter" <daniel@ffwll.ch>,
+        "Alex Deucher" <alexander.deucher@amd.com>,
+        "Leo Li" <sunpeng.li@amd.com>,
+        "Mikita Lipski" <mikita.lipski@amd.com>,
+        "David Airlie" <airlied@linux.ie>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David Francis" <david.francis@amd.com>,
+        linux-kernel@vger.kernel.org,
+        "Nicholas Kazlauskas" <nicholas.kazlauskas@amd.com>,
+        "Bhawanpreet Lakha" <bhawanpreet.lakha@amd.com>,
+        "David (ChunMing) Zhou" <david1.zhou@amd.com>,
+        "Harry Wentland" <harry.wentland@amd.com>,
+        "Wenjing Liu" <wenjing.liu@amd.com>,
+        "Lyude Paul" <lyude@redhat.com>,
+        "Rodrigo Siqueira" <rodrigo.siqueira@amd.com>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        "Thomas Zimmermann" <tzimmermann@suse.de>,
+        "Maxime Ripard" <mripard@kernel.org>
+Subject: [PATCH 0/4] drm/dp_mst: Remove ->destroy_connector() callback
+Date:   Tue, 31 Mar 2020 16:57:33 -0400
+Message-Id: <20200331205740.135525-1-lyude@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d8Lz2Tf5e5STOWUP"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXiK3KLU1=s4ykxmUVSsgwbnnc476w=Nnj-HsVytK2Lqg@mail.gmail.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This finishes up the work that Pankaj Bharadiya started in:
 
---d8Lz2Tf5e5STOWUP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+https://patchwork.freedesktop.org/series/74412/
 
-On Tue, Mar 31, 2020 at 03:05:43PM +0200, Geert Uytterhoeven wrote:
-> Hi Thierry,
->=20
-> Thanks for your patch!
->=20
-> On Mon, Mar 30, 2020 at 11:03 AM Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Do not use the struct gpio_device's .pin_ranges field if the PINCTRL
-> > Kconfig symbol is not selected to avoid build failures.
-> >
-> > Fixes: d2fbe53a806e ("gpio: Support GPIO controllers without pin-ranges=
-")
->=20
-> WARNING: Unknown commit id 'd2fbe53a806e', maybe rebased or not pulled?
->=20
-> Fixes: 2ab73c6d8323fa1e ("gpio: Support GPIO controllers without pin-rang=
-es")
+And allows us to entirely remove ->destroy_connector()
 
-Yeah, it looks like I made this patch on top of my local tree but forgot
-to rebase on the latest linux-next.
+Lyude Paul (4):
+  drm/amd/amdgpu_dm/mst: Remove unneeded edid assignment when destroying
+    connectors
+  drm/amd/amdgpu_dm/mst: Remove ->destroy_connector() callback
+  drm/amd/amdgpu_dm/mst: Stop printing extra messages in
+    dm_dp_add_mst_connector()
+  drm/dp_mst: Remove drm_dp_mst_topology_cbs.destroy_connector
 
-Thierry
+ .../display/amdgpu_dm/amdgpu_dm_mst_types.c   | 45 +++++--------------
+ drivers/gpu/drm/drm_dp_mst_topology.c         | 16 ++-----
+ include/drm/drm_dp_mst_helper.h               |  2 -
+ 3 files changed, 15 insertions(+), 48 deletions(-)
 
---d8Lz2Tf5e5STOWUP
-Content-Type: application/pgp-signature; name="signature.asc"
+--=20
+2.25.1
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6DrjwACgkQ3SOs138+
-s6GmYBAAm72E9z49F2uV5boN+ycWHCndSThMfzWp4N9d1FmWBr7Qcqlgl04oBnDc
-hLBFfFbcPoUj+WOXN4pWen5c7pHkB+bjp/A5lnNp4uep4+mv1fzVYn4w0H/xs8mu
-tpHczDhqi7qNGgVLd+6+x5nJJx6llZSsTCsUITOjsVFahxwqpX983ghzTNZN0oGJ
-3dgKFuYnaaDcuM+dQM7BRoBAUIUUPGSjJlDUHEH43cvs8h1VyKxaFHmxx1WfRuSz
-VNXsNhzrBdWcEvDloCIpVWMoEcMzjZfSn/D9mRSpIm6SYdy+0p8SH6qPf7/hMRDs
-Z/XntIUnU2Muj2lpnummOMlFKNgMbSg/OpZ1y5kpRH6MT9FwYW5S4msLixUU1ZRp
-iJe4dU7bqKHXGUJhL+Mu/s4kBC4B6TVJxEYe2PGPiArLdUBJkF8GL8161iH0eHOm
-Ogn7ZbIOiDuXOld2mloJwi9IpNNfx4bQGqMQAGBKDBozhqw7Sf5k7Vplvk1l3gmB
-WKK7+wh8T+ZmywNGQOcFlHDW530Tkno4qX96s81CI7CHCWlNm5vn/Ea+63fDKxpg
-OW1TqquGljYvTwkpqRU+8iIGO/qk1xyfY+P4KusP9qyRYtIfrZ31WfYCLgJvlrNV
-sDz0rdE/fvqWSZSY8/DWviZJDQAosi9avH0lo3uFaMykyKUWEpA=
-=NuoA
------END PGP SIGNATURE-----
-
---d8Lz2Tf5e5STOWUP--
