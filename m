@@ -2,120 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9357E198E70
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59959198E89
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:32:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbgCaI35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 04:29:57 -0400
-Received: from mail-db8eur05on2085.outbound.protection.outlook.com ([40.107.20.85]:34113
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726397AbgCaI35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:29:57 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nPH8i2DQcO7/LbbxOvIVniHLyslPicyo1WGsBzFUoqemG/XC6JPnA6LqMX0yVCSyAgGgGLlbMoDFRJqknecirhPrEZD/uE4Yuheo3EazaJtlS9hkTw9r4dLRTxY+H9k0uawLr0xPVhFm1Y87aTPxNAFdEIXZRusv+kiORawY8nHkRQdrddaVNBYbLPxKjn0pmyMfkx+hjiZ34iQKavVgjeVWt71lAf22HESs7z7m8QuBcMKtDdxQGjLHj/RwMYdvZqKMl8IMuKQFfEjicHyiZ4qJuAow7R8M9xKCUAK5fNxC82Tt8vb6RdsSPnQbw87FNNI7gZXwLmpJsL33hWyI7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wav6kjNyTVj2opNC+yWLCLaK2+qyaHXK9/TSzlwy2hg=;
- b=gSjnOfWfGsISNpidC7F/Z0N4jbxjmzV8fu3Zc/zIyR9nonvTFLwIvCNoHiRrboIgKQZzPInPcxYBOmb9TZY5xamxaIokFXH+pRwGHGSZCv1lRpd2Zom3TTM/ugEHVXQViUA0gVB5dMFIkxUri4kVjPYgNbTB73cNu46WiozbW97AtedKyYc60wutl5mw6FvtF8/+VhhDRZ3XC4dvOZJ4yuCTCQYAb71yTqDN9YQBZ0Q+Vj/lQMoZUaEn6MM019wYKFtkNNcmgIUJHwnR64mu/k5ArGYPSB6CxvDe6UvDvCQiAQ5wSVEQu1UfatvFlXdB0S2VA4kRxp2pzphOxrLrFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=itdev.co.uk; dmarc=pass action=none header.from=itdev.co.uk;
- dkim=pass header.d=itdev.co.uk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=itdevltd.onmicrosoft.com; s=selector2-itdevltd-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wav6kjNyTVj2opNC+yWLCLaK2+qyaHXK9/TSzlwy2hg=;
- b=NZ9oN/5ASjNAWDl9u0l7QZAhyt5P6V+ktbPume6gMHw6Jk3EhlOAk/RuHcHlRZbl1mJWtJrIv5VMiRzBqomtFyZqOFfcxtQIvhgDWt6yxuP6oie4OfKHRUFzQkYjlcXJZCGOou1jvs8SRCEztHjcyKT5Wsd0+/y5YUwRrE6n118=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=quentin.deslandes@itdev.co.uk; 
-Received: from DBBPR08MB4491.eurprd08.prod.outlook.com (20.179.44.144) by
- DBBPR08MB4474.eurprd08.prod.outlook.com (20.179.40.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2856.20; Tue, 31 Mar 2020 08:29:54 +0000
-Received: from DBBPR08MB4491.eurprd08.prod.outlook.com
- ([fe80::cce9:f055:f034:3659]) by DBBPR08MB4491.eurprd08.prod.outlook.com
- ([fe80::cce9:f055:f034:3659%4]) with mapi id 15.20.2856.019; Tue, 31 Mar 2020
- 08:29:54 +0000
-Date:   Tue, 31 Mar 2020 09:29:52 +0100
-From:   Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-To:     Stefano Brivio <sbrivio@redhat.com>
-Cc:     "John B. Wyatt IV" <jbwyatt4@gmail.com>,
-        outreachy-kernel@googlegroups.com,
-        Julia Lawall <julia.lawall@inria.fr>,
-        Forest Bond <forest@alittletooquiet.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Malcolm Priestley <tvboxspy@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8] staging: vt6656: add error code handling to unused
- variable
-Message-ID: <20200331082952.GA13403@jiffies>
-References: <20200330233900.36938-1-jbwyatt4@gmail.com>
- <20200331020103.13008f53@elisabeth>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331020103.13008f53@elisabeth>
-X-ClientProxiedBy: CWLP265CA0336.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:57::36) To DBBPR08MB4491.eurprd08.prod.outlook.com
- (2603:10a6:10:d2::16)
+        id S1730300AbgCaIch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 04:32:37 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:33954 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729425AbgCaIcY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 04:32:24 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02V8SjZ2011728;
+        Tue, 31 Mar 2020 10:32:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=3duVQKRlkCqQDo1E3CRZnFiVn5ck9hvVRKVRTqMhtbc=;
+ b=CCaNM200syr4N0AsSmvYKxV5CIzQW/3KUTGVbqCzRe/U3y7ipCZXyxEXCdw1A6tqkqh0
+ m3gihbFetmxgIqeVlQlyh76HiLGSvZkvtekvr/udTkijCzUQF+o/N0Zbx829N3or/BH4
+ tCgcZlrPH6u/LKAOI5zKvISb8U1I/KvTUw4alrKh7OFNmd9xaHR2IS/bGzQjjsn/ho14
+ FoRYx0k9T8Lj/5sP3JRO92vuUUsVi9g93qOtWr+sLRUhQGl5qxyfuop3Y74Y7mobJs9R
+ WzkXN9JB2obsFVCL3X2/SByQjmSZgbnem15naeCdQZrWC5sHvHFmWLArUkwGvTHiJVm2 Dg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 301xbmdsun-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 Mar 2020 10:32:05 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6ED0F10002A;
+        Tue, 31 Mar 2020 10:32:00 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5283021E677;
+        Tue, 31 Mar 2020 10:32:00 +0200 (CEST)
+Received: from localhost (10.75.127.44) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 31 Mar 2020 10:31:59
+ +0200
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <fabrice.gasnier@st.com>, <lee.jones@linaro.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v5 0/6] clockevent: add low power STM32 timer
+Date:   Tue, 31 Mar 2020 10:31:40 +0200
+Message-ID: <20200331083146.10462-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from jiffies (5.151.93.48) by CWLP265CA0336.GBRP265.PROD.OUTLOOK.COM (2603:10a6:401:57::36) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.20 via Frontend Transport; Tue, 31 Mar 2020 08:29:53 +0000
-X-Originating-IP: [5.151.93.48]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 97a1b709-e73c-42eb-c306-08d7d54db049
-X-MS-TrafficTypeDiagnostic: DBBPR08MB4474:
-X-Microsoft-Antispam-PRVS: <DBBPR08MB4474B9C00C66C945F22212A9B3C80@DBBPR08MB4474.eurprd08.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3276;
-X-Forefront-PRVS: 0359162B6D
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR08MB4491.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(346002)(366004)(136003)(376002)(39830400003)(396003)(186003)(5660300002)(8676002)(1076003)(9686003)(9576002)(81166006)(4744005)(52116002)(86362001)(66946007)(66476007)(54906003)(956004)(2906002)(316002)(44832011)(33656002)(55016002)(8936002)(6496006)(81156014)(53546011)(508600001)(16526019)(26005)(4326008)(66556008)(6916009)(7416002)(33716001);DIR:OUT;SFP:1101;
-Received-SPF: None (protection.outlook.com: itdev.co.uk does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: AWmZCS+NKiYOGroA7jUSb6s87vgIZ0aaItk44lifMsaGBozUD8TGsxZBRRd4kItGStvbnezJEiJBh5vt+5O4VCRCCYDIZ4/Mo97xjWcnu4fOMHiWpOpeTEqpXvHlinEkgS6UGOHjz+7FxBWOcTAh4t2+EQAHzLLaqpHiMAGpS6UTCR2vcQRYU3DEzEqeu8vS49HbAl/TV8LtP/K45OHYJ7uHK4BDYEbp1pGXNpxrE9mpSiykKUoftS2J+HHe5D/k3MmgZbY9ja/sxI66SxvSo5f1Yd+eD2Y0CRpsgjQ1SGfBeyiPYVLtfIUxtN7u7PxXniCZ8M/1d9nhc4J9fGpey6dcBNl20ff3Sd8w1aBewGBW1IEIC7YSqfvtpxf7ivqlVV4u/gG+VgAi2XYn5Sp/xx9fUwTzR/B3G1uLQSuq69+y2kPjEmw1ySX5cI+iBd+p
-X-MS-Exchange-AntiSpam-MessageData: CGs9CA/GOqp59O0P6elyGOth+qaejZCNF3Gcpmg+l/vc/PYDIUeWoYniV84SmlBKUSqBO8GUJKtuajjHJ7n5YmGgXZbky2ry9ZzhMJ0wztr+Uuwa4+dK/4j+BoC0dddn18DIu0oe6S8OkQPxSxzmKw==
-X-OriginatorOrg: itdev.co.uk
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97a1b709-e73c-42eb-c306-08d7d54db049
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2020 08:29:54.4086
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2d2930c4-2251-45b4-ad79-3582c5f41740
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +cAhSLodrWa3NCov7Y/DuGHMWu2h8FIDXyjFQh8V4a96Zjle2Zrgjr900bqu8NTxgWTOC7MVeFp/EElijxjTod13AGZVKclS6O90VsJ1aoo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB4474
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE3.st.com
+ (10.75.127.9)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-03-31_03:2020-03-30,2020-03-31 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/31/20 02:01:03, Stefano Brivio wrote:
-> On Mon, 30 Mar 2020 16:39:00 -0700
-> "John B. Wyatt IV" <jbwyatt4@gmail.com> wrote:
-> 
-> > Add error code handling to unused 'ret' variable that was never used.
-> > Return an error code from functions called within vnt_radio_power_on.
-> > 
-> > Issue reported by coccinelle (coccicheck).
-> > 
-> > Suggested-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-> > Suggested-by: Stefano Brivio <sbrivio@redhat.com>
-> > Reviewed-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
->   ^ This should be dropped unless Quentin agrees to this version as well
-> 
-> > Signed-off-by: John B. Wyatt IV <jbwyatt4@gmail.com>
-> 
-> Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
-> 
-> -- 
-> Stefano
-> 
+This series add low power timer as boadcast clockevent device.
+Low power timer could runs even when CPUs are in idle mode and 
+could wakeup them.
 
-Just reviewed it so John doesn't need to send a v9. Everything seems
-good, I'm happy and checkpatch is too.
+version 5:
+- document interrupts and interrupt-names bindings
+- use a different wake up interrupt
+- add device-tree patch
+- make STM32MP157 select low power timer configuration flag
+- enable fast_io in regmap configuration
 
-Reviewed-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+version 4:
+- move defines in mfd/stm32-lptimer.h
+- change compatible and subnode names
+- document wakeup-source property
+- reword commit message
+- make driver Kconfig depends of MFD_STM32_LPTIMER
+- remove useless include
+- remove rate and clk fields from the private structure
+- to add comments about the registers sequence in stm32_clkevent_lp_set_timer
+- rework probe function and use devm_request_irq()
+- do not allow module to be removed
 
-Thanks,
-Quentin
+version 3:
+- fix timer set sequence
+- don't forget to free irq on remove function
+- use devm_kzalloc to simplify errors handling in probe function
+
+version 2:
+- stm32 clkevent driver is now a child of the stm32 lp timer node
+- add a probe function and adpat the driver to use regmap provide
+  by it parent
+- stop using timer_of helpers
+
+Benjamin Gaignard (6):
+  dt-bindings: mfd: Document STM32 low power timer bindings
+  ARM: dts: stm32: Add timer subnodes on stm32mp15 SoCs
+  mfd: stm32: Add defines to be used for clkevent purpose
+  mfd: stm32: enable regmap fast_io for stm32-lptimer
+  clocksource: Add Low Power STM32 timers driver
+  ARM: mach-stm32: select low power timer for STM32MP157
+
+ .../devicetree/bindings/mfd/st,stm32-lptimer.yaml  |  34 +++
+ arch/arm/boot/dts/stm32mp151.dtsi                  |  45 ++++
+ arch/arm/mach-stm32/Kconfig                        |   1 +
+ drivers/clocksource/Kconfig                        |   4 +
+ drivers/clocksource/Makefile                       |   1 +
+ drivers/clocksource/timer-stm32-lp.c               | 231 +++++++++++++++++++++
+ drivers/mfd/stm32-lptimer.c                        |   1 +
+ include/linux/mfd/stm32-lptimer.h                  |   5 +
+ 8 files changed, 322 insertions(+)
+ create mode 100644 drivers/clocksource/timer-stm32-lp.c
+
+-- 
+2.15.0
+
