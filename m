@@ -2,247 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92CEA199DB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BAF0199DB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:08:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbgCaSGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 14:06:15 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36096 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbgCaSGP (ORCPT
+        id S1727226AbgCaSIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 14:08:10 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42991 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbgCaSIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:06:15 -0400
-Received: by mail-wm1-f66.google.com with SMTP id g62so3945292wme.1
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:06:13 -0700 (PDT)
+        Tue, 31 Mar 2020 14:08:10 -0400
+Received: by mail-lj1-f195.google.com with SMTP id q19so22940528ljp.9
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:08:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=rdHIFzp6WyS0NijgnSKxc0qBm0w7b6RkFiTqIi5G0RI=;
-        b=PGbHZFmNgek1IF9cb9XkbLzdCxHpn4Gh5pLqY2lNXlPYj2wgdW2tpOyQfxRW+lADlM
-         BMGcDDbQ2/yv6YArqmRRlo7X7B7yryVBNiJbkHmb2bDeEO64PVl/wdpd5zGAvGkTqhtq
-         uYAw9gYLQAyVV8jj+4SPAqa6Ydz5DH9zM2nwcHPyYJq6Qk8Td29I8douEblKObLiexak
-         x1MpLaxLZjIScdnqlbeK0d8rCrxP/0iKBBR2PkGXXWziupX0gRV3DYVXQH+S2RMUoBpJ
-         PSLt9c3LjYT3vExYUvVEmcbD97MSoJhpftyBhiRnQgNH2lIEG+9mHNLTrHR4WN4G/HS7
-         ObIg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DVhNCBWWhqrmhwzD0I8O0Ic/nmsiw3He1JBWn/IFIGg=;
+        b=J7MsCxfDvDHJSsVI38CazslySt+gUoXu/ZKBlY7htM/gc41yUSh7NR6xMRpLk8Q1LS
+         2KxGk8DK45xbvzt+Q4HnbsAqM8xXnMFJlduwHtX1xaQXvUkiCVGB2wTzV8fXQbyJv+gy
+         0JQ5wivKByI4/57Kq6VsJu066YQLmUH3re6fGu6Qmj8Sy8qQ6iZIyTUpBQTbH46QGNLu
+         aGahdwVpDcXAxiF4x3XrW8bHuro/qOD5lk+5H/4LtlpaqSsRuy0lD/UqpptyLnO/L1sj
+         j1HXetXm6wUKWmUe+qrhM0dtgwPwWn5DXUxg19VbWhiW1GSuslcggAPC2UeipIhsS+So
+         7daQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=rdHIFzp6WyS0NijgnSKxc0qBm0w7b6RkFiTqIi5G0RI=;
-        b=UwwkuQMHjGfofghOd59fNOAPbpwf38oTcn9xF18WgXMn8jkvbk2BrBtXhwTgDoFQ3S
-         8nchDTfZ4+AXDOYDVx621MrIM7TenCcYUThJHtMVY6SYYXEpO1vVKZ23Q/UIndQPWQYn
-         WP8fPhSvP8Wd9eE2Z5MU7wKIeAzoYD9tc4YhGZkZAHtm1x29fpBJg+Y3gh4JSxoberOC
-         2gfasfglAkCF4HiKncBuqkjaqQlvcrugHS2PjTzLBwkvM9sJu1eoYKXWdeArE3abrBDH
-         cE2QefuMtHPAyIIEEOPyRfREF81JqLho9BdYfwvV9A8HDtb8n96siGVpCfWRu+jB9c86
-         RgNw==
-X-Gm-Message-State: AGi0PuY4m443zgQO4KXgpXDB2Bcx5v6PZ/eS81hK8z1GcZdZCoMUFeYO
-        /IQz4ig5vm7q0CxlEtSnZRHUzQ==
-X-Google-Smtp-Source: APiQypID0x6nOClfq+P0TTy8TSQdW9f1BCd93MzMM1F4FQaFe2EeZjymclbKAMKVAxxzX94LrjBXSQ==
-X-Received: by 2002:a05:600c:21d4:: with SMTP id x20mr23109wmj.77.1585677972371;
-        Tue, 31 Mar 2020 11:06:12 -0700 (PDT)
-Received: from [192.168.0.102] ([84.33.138.35])
-        by smtp.gmail.com with ESMTPSA id y11sm4580878wmi.13.2020.03.31.11.06.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Mar 2020 11:06:11 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH 2/2] scsi: core: Fix stall if two threads request budget
- at the same time
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <20200331014109.GA20230@ming.t460p>
-Date:   Tue, 31 Mar 2020 20:07:35 +0200
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Jens Axboe <axboe@kernel.dk>, jejb@linux.ibm.com,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        linux-scsi@vger.kernel.org, sqazi@google.com,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D38AB98D-7F6A-4C61-8A8F-C22C53671AC8@linaro.org>
-References: <20200330144907.13011-1-dianders@chromium.org>
- <20200330074856.2.I28278ef8ea27afc0ec7e597752a6d4e58c16176f@changeid>
- <20200331014109.GA20230@ming.t460p>
-To:     Ming Lei <ming.lei@redhat.com>
-X-Mailer: Apple Mail (2.3445.104.11)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DVhNCBWWhqrmhwzD0I8O0Ic/nmsiw3He1JBWn/IFIGg=;
+        b=nfSobfh2ROgpK2bHB8LzBcBI1GWnnyWibsQVi2X15Ko3B0J+HblrPl0oxnca2Q4DCm
+         DLMbY7hsGb052rkPQ0whst1/Cub/kw8AvxumYn+SrEuQiHWfwjNQ2rS9Lu5/Cd23sZZe
+         o8iMFuuktls5XlfgkODrbaT+6l/nDlSgr/b8Sx7vLnPZA4JcnQb5RlMn8m/QWk7a6ueL
+         lbC+E7xksloOS7jU9F0Wy/mi/AUFv3zP9on7bSrJsE8jOSBL/S/Q/weHeauaF62uJ2nn
+         WJiheXY+rztAZ/KI66I7+c7ie7Ply+AxqHON6BzPazizi4er4zKn9hJTAAkqbbXliNxh
+         rbtw==
+X-Gm-Message-State: AGi0PubCytxDym7bPK4Ktysx/WsDkgKWSIUhBFgex5o1OzLHEVlQkEK/
+        tyOFEPHN/App+sDb7LqLPWoX/jBwVmQQDijnNNKi9w==
+X-Google-Smtp-Source: APiQypKyNWj02m6O2+eo7TowUgPoys1dqm6YlLWwR2nN0+0/VQMpY2mP/gmN+2nUCtyDoNjDn+QfgYtycQwmL3sZNiI=
+X-Received: by 2002:a2e:8015:: with SMTP id j21mr10329966ljg.165.1585678087993;
+ Tue, 31 Mar 2020 11:08:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200331085308.098696461@linuxfoundation.org>
+In-Reply-To: <20200331085308.098696461@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 31 Mar 2020 23:37:56 +0530
+Message-ID: <CA+G9fYsZjmf34pQT1DeLN_DDwvxCWEkbzBfF0q2VERHb25dfZQ@mail.gmail.com>
+Subject: Re: [PATCH 5.6 00/23] 5.6.1-rc1 review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 31 Mar 2020 at 14:30, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.6.1 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 02 Apr 2020 08:50:37 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.6.1-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
+Perf build broken on Linux next and mainline and now on stable-rc-5.6 branch.
+where as building kernel Image is successful on arm64, arm, x86_64, and i386.
 
-> Il giorno 31 mar 2020, alle ore 03:41, Ming Lei <ming.lei@redhat.com> =
-ha scritto:
->=20
-> On Mon, Mar 30, 2020 at 07:49:06AM -0700, Douglas Anderson wrote:
->> It is possible for two threads to be running
->> blk_mq_do_dispatch_sched() at the same time with the same "hctx".
->> This is because there can be more than one caller to
->> __blk_mq_run_hw_queue() with the same "hctx" and hctx_lock() doesn't
->> prevent more than one thread from entering.
->>=20
->> If more than one thread is running blk_mq_do_dispatch_sched() at the
->> same time with the same "hctx", they may have contention acquiring
->> budget.  The blk_mq_get_dispatch_budget() can eventually translate
->> into scsi_mq_get_budget().  If the device's "queue_depth" is 1 (not
->> uncommon) then only one of the two threads will be the one to
->> increment "device_busy" to 1 and get the budget.
->>=20
->> The losing thread will break out of blk_mq_do_dispatch_sched() and
->> will stop dispatching requests.  The assumption is that when more
->> budget is available later (when existing transactions finish) the
->> queue will be kicked again, perhaps in scsi_end_request().
->>=20
->> The winning thread now has budget and can go on to call
->> dispatch_request().  If dispatch_request() returns NULL here then we
->> have a potential problem.  Specifically we'll now call
->=20
-> I guess this problem should be BFQ specific. Now there is definitely
-> requests in BFQ queue wrt. this hctx. However, looks this request is
-> only available from another loser thread, and it won't be retrieved in
-> the winning thread via e->type->ops.dispatch_request().
->=20
-> Just wondering why BFQ is implemented in this way?
->=20
+I have reported this problem on March 25th
+https://lore.kernel.org/linux-next/CA+G9fYtr+Je4=pLWUgUvPNzUSUmg04oXPJ8zFwTRKji_udcZzA@mail.gmail.com/T/#m7909c9746aceadd95d67accbbc9798ba1dd19157
 
-BFQ inherited this powerful non-working scheme from CFQ, some age ago.
-
-In more detail: if BFQ has at least one non-empty internal queue, then
-is says of course that there is work to do.  But if the currently
-in-service queue is empty, and is expected to receive new I/O, then
-BFQ plugs I/O dispatch to enforce service guarantees for the
-in-service queue, i.e., BFQ responds NULL to a dispatch request.
-
-It would be very easy to change bfq_has_work so that it returns false
-in case the in-service queue is empty, even if there is I/O
-backlogged.  My only concern is: since everything has worked with the
-current scheme for probably 15 years, are we sure that everything is
-still ok after we change this scheme?
-
-I'm confident it would be ok, because a timer fires if the in-service
-queue does not receive any I/O for too long, and the handler of the
-timer invokes blk_mq_run_hw_queues().
-
-Looking forward to your feedback before proposing a change,
-Paolo
-
->> blk_mq_put_dispatch_budget() which translates into
->> scsi_mq_put_budget().  That will mark the device as no longer busy =
-but
->> doesn't do anything to kick the queue.  This violates the assumption
->> that the queue would be kicked when more budget was available.
->>=20
->> Pictorially:
->>=20
->> Thread A                          Thread B
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> blk_mq_get_dispatch_budget() =3D> 1
->> dispatch_request() =3D> NULL
->>                                  blk_mq_get_dispatch_budget() =3D> 0
->>                                  // because Thread A marked
->>                                  // "device_busy" in scsi_device
->> blk_mq_put_dispatch_budget()
->>=20
->> The above case was observed in reboot tests and caused a task to hang
->> forever waiting for IO to complete.  Traces showed that in fact two
->> tasks were running blk_mq_do_dispatch_sched() at the same time with
->> the same "hctx".  The task that got the budget did in fact see
->> dispatch_request() return NULL.  Both tasks returned and the system
->> went on for several minutes (until the hung task delay kicked in)
->> without the given "hctx" showing up again in traces.
->>=20
->> Let's attempt to fix this problem by detecting budget contention.  If
->> we're in the SCSI code's put_budget() function and we saw that =
-someone
->> else might have wanted the budget we got then we'll kick the queue.
->>=20
->> The mechanism of kicking due to budget contention has the potential =
-to
->> overcompensate and kick the queue more than strictly necessary, but =
-it
->> shouldn't hurt.
->>=20
->> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> ---
->>=20
->> drivers/scsi/scsi_lib.c    | 27 ++++++++++++++++++++++++---
->> drivers/scsi/scsi_scan.c   |  1 +
->> include/scsi/scsi_device.h |  2 ++
->> 3 files changed, 27 insertions(+), 3 deletions(-)
->>=20
->> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
->> index 610ee41fa54c..0530da909995 100644
->> --- a/drivers/scsi/scsi_lib.c
->> +++ b/drivers/scsi/scsi_lib.c
->> @@ -344,6 +344,21 @@ static void scsi_dec_host_busy(struct Scsi_Host =
-*shost, struct scsi_cmnd *cmd)
->> 	rcu_read_unlock();
->> }
->>=20
->> +static void scsi_device_dec_busy(struct scsi_device *sdev)
->> +{
->> +	bool was_contention;
->> +	unsigned long flags;
->> +
->> +	spin_lock_irqsave(&sdev->budget_lock, flags);
->> +	atomic_dec(&sdev->device_busy);
->> +	was_contention =3D sdev->budget_contention;
->> +	sdev->budget_contention =3D false;
->> +	spin_unlock_irqrestore(&sdev->budget_lock, flags);
->> +
->> +	if (was_contention)
->> +		blk_mq_run_hw_queues(sdev->request_queue, true);
->> +}
->> +
->> void scsi_device_unbusy(struct scsi_device *sdev, struct scsi_cmnd =
-*cmd)
->> {
->> 	struct Scsi_Host *shost =3D sdev->host;
->> @@ -354,7 +369,7 @@ void scsi_device_unbusy(struct scsi_device *sdev, =
-struct scsi_cmnd *cmd)
->> 	if (starget->can_queue > 0)
->> 		atomic_dec(&starget->target_busy);
->>=20
->> -	atomic_dec(&sdev->device_busy);
->> +	scsi_device_dec_busy(sdev);
->> }
->>=20
->> static void scsi_kick_queue(struct request_queue *q)
->> @@ -1624,16 +1639,22 @@ static void scsi_mq_put_budget(struct =
-blk_mq_hw_ctx *hctx)
->> 	struct request_queue *q =3D hctx->queue;
->> 	struct scsi_device *sdev =3D q->queuedata;
->>=20
->> -	atomic_dec(&sdev->device_busy);
->> +	scsi_device_dec_busy(sdev);
->> }
->>=20
->> static bool scsi_mq_get_budget(struct blk_mq_hw_ctx *hctx)
->> {
->> 	struct request_queue *q =3D hctx->queue;
->> 	struct scsi_device *sdev =3D q->queuedata;
->> +	unsigned long flags;
->>=20
->> -	if (scsi_dev_queue_ready(q, sdev))
->> +	spin_lock_irqsave(&sdev->budget_lock, flags);
->> +	if (scsi_dev_queue_ready(q, sdev)) {
->> +		spin_unlock_irqrestore(&sdev->budget_lock, flags);
->> 		return true;
->> +	}
->> +	sdev->budget_contention =3D true;
->> +	spin_unlock_irqrestore(&sdev->budget_lock, flags);
->=20
-> No, it really hurts performance by adding one per-sdev spinlock in =
-fast path,
-> and we actually tried to kill the atomic variable of =
-'sdev->device_busy'
-> for high performance HBA.
->=20
-> Thanks,
-> Ming
-
+-- 
+https://lkft.org.linaro
+Linaro LKFT
