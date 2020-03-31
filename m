@@ -2,119 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5509D198D52
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:47:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B5BD198D5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730026AbgCaHrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 03:47:25 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53961 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbgCaHrZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 03:47:25 -0400
-Received: by mail-wm1-f65.google.com with SMTP id b12so1356095wmj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 00:47:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9TfK1u1VpPaq5iA6J1WQwLfjQ6lOwx15msGpVq0i+7c=;
-        b=Gr0LvrHjjJ5qr8lqINKW/3hKNpu+pFwzsUq58/tgAuectYIefxdFpYIe+jeXnMPUjx
-         IGmkhlcbkNL3xDq8h6ZFf0EodqpQVZ/RFZnQCKmXl8eJtE5KyCfZI3TTJfvGIjBuYZdw
-         8JKTetKFESliIYV8V4jLl7aJjPMuplmWL/SzA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=9TfK1u1VpPaq5iA6J1WQwLfjQ6lOwx15msGpVq0i+7c=;
-        b=cF5dOj9wPRTFTbwDcjIuYuhmWk+s903lEk/AdouX6LxAI/ibWz9SH11UyJGIgagqfg
-         C27FQFOhwJxESLa7oP1MnHslvi2Bd3xrEnhaxL+DrFHp/ZwJo+liQ9AIj+uXqtZfsvep
-         I6WsmBHocDIWWO6gDDlhEdpHDxKUxMwzFe0sIzXEdAXbspmzdYe5r8Hyo77KnMHz4Jiv
-         XLwa77+18o6HnNhLbKhvYQwbHHiCXNJxJ7ByPpqdQQy0HDEXAeLJr0UeBZDqwciXRod0
-         DKDwPhTGgz0DzYlhsIISXaIz0R4Cbxk2CM3iXmUad2uJ+rJjJD90KHdhXU0MNND5pEqU
-         aRLg==
-X-Gm-Message-State: ANhLgQ1c/4ANYXjq4WV+KfnoLN5OAx2sqHVLdoY/yVdnxAW0RpgDtGvs
-        CpRY0LzPJUMC6ZdZsQmHXty49g==
-X-Google-Smtp-Source: ADFU+vtayUlqbWaVjEdDpSf+eVK+fU90P3qYqeML/NIzR7pnIBLOepUFWDkVMvgCmV92cYRgJios+A==
-X-Received: by 2002:a7b:cd02:: with SMTP id f2mr1981956wmj.97.1585640843372;
-        Tue, 31 Mar 2020 00:47:23 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id t21sm2795111wmt.43.2020.03.31.00.47.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 00:47:22 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 09:47:20 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>, kbuild-all@lists.01.org,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: fix ifnullfree.cocci warnings
-Message-ID: <20200331074720.GD2363188@phenom.ffwll.local>
-Mail-Followup-To: Julia Lawall <julia.lawall@inria.fr>,
-        kbuild-all@lists.01.org, Sam Ravnborg <sam@ravnborg.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <alpine.DEB.2.21.2003270908410.2709@hadrien>
+        id S1730108AbgCaHsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 03:48:32 -0400
+Received: from verein.lst.de ([213.95.11.211]:37197 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726636AbgCaHsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 03:48:32 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id ABC3168C4E; Tue, 31 Mar 2020 09:48:28 +0200 (CEST)
+Date:   Tue, 31 Mar 2020 09:48:28 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Martijn Coenen <maco@android.com>
+Cc:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
+Subject: Re: [PATCH] loop: Add LOOP_SET_FD_WITH_OFFSET ioctl.
+Message-ID: <20200331074828.GA24372@lst.de>
+References: <20200329140459.18155-1-maco@android.com> <20200330010024.GA23640@ming.t460p> <CAB0TPYG4N-2Gg95VwQuQBQ8rvjC=4NQJP4syJWS3Q6CO28HzTQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2003270908410.2709@hadrien>
-X-Operating-System: Linux phenom 5.3.0-3-amd64 
+In-Reply-To: <CAB0TPYG4N-2Gg95VwQuQBQ8rvjC=4NQJP4syJWS3Q6CO28HzTQ@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 09:11:44AM +0100, Julia Lawall wrote:
-> NULL check before kfree is not needed.
+On Mon, Mar 30, 2020 at 10:06:41AM +0200, Martijn Coenen wrote:
+> Hi Ming,
 > 
-> Generated by: scripts/coccinelle/free/ifnullfree.cocci
+> On Mon, Mar 30, 2020 at 3:00 AM Ming Lei <ming.lei@redhat.com> wrote:
+> > The new ioctl LOOP_SET_FD_WITH_OFFSET looks not generic enough, could
+> > you consider to add one ioctl LOOP_SET_FD_AND_STATUS to cover both
+> > SET_FD and SET_STATUS so that using two ioctl() to setup loop can become
+> > deprecated finally?
 > 
-> Fixes: c6603c740e0e ("drm: add managed resources tied to drm_device")
-> Signed-off-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Julia Lawall <julia.lawall@inria.fr>
-> ---
-> 
-> tree:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+> I originally started out doing that. However, it is a significantly
+> larger refactoring of the loop driver, and it makes things like error
+> handling more complex. I thought configuring loop with an offset is
+> the most common case. But if there's a preference to do an ioctl that
+> takes the full status, I can work on that.
 
-Hm this doesn't apply anymore, the patch is for an interim state (because
-bisectability). Care to regen (the pattern still exists), I'm happy to
-apply.
--Daniel
-
-> head:   9e1ed9fb1eb0a4bc43a26365c592d3095286038b
-> commit: c6603c740e0e3492c9c95fdab833375bf7117b6b [1587/1636] drm: add managed resources tied to drm_device
-> :::::: branch date: 8 hours ago
-> :::::: commit date: 9 hours ago
-> 
-> Up to you, if you tihnk it is useful...
-> 
->  drm_drv.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> --- a/drivers/gpu/drm/drm_drv.c
-> +++ b/drivers/gpu/drm/drm_drv.c
-> @@ -837,8 +837,9 @@ static void drm_dev_release(struct kref
->  	if (!dev->driver->release && !dev->managed.final_kfree) {
->  		WARN_ON(!list_empty(&dev->managed.resources));
->  		kfree(dev);
-> -	} else if (dev->managed.final_kfree)
-> +	} else {
->  		kfree(dev->managed.final_kfree);
-> +	}
->  }
-> 
->  /**
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+I think the full blown set fd an status would seem a lot more useful,
+or even better a LOOP_CTL_ADD variant that sets up everything important
+on the character device so that we avoid the half set up block devices
+entirely.
