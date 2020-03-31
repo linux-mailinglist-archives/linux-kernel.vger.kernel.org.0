@@ -2,69 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99750199E9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 21:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F3CD199EA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 21:07:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbgCaTCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 15:02:23 -0400
-Received: from smtprelay0162.hostedemail.com ([216.40.44.162]:33844 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726295AbgCaTCX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 15:02:23 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id CDAFE182CF668;
-        Tue, 31 Mar 2020 19:02:21 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2892:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:3874:4321:5007:10004:10400:10848:11026:11232:11658:11914:12043:12297:12438:12740:12760:12895:13069:13311:13357:13439:14659:21080:21451:21627:30025:30054:30075:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: stamp41_31887f240cb3a
-X-Filterd-Recvd-Size: 1891
-Received: from XPS-9350.home (unknown [47.151.136.130])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 31 Mar 2020 19:02:20 +0000 (UTC)
-Message-ID: <ae25b7b1efcfe4eda9465c4fb4712ede928a33c4.camel@perches.com>
-Subject: Re: [PATCH] compiler.h: fix error in BUILD_BUG_ON() reporting
-From:   Joe Perches <joe@perches.com>
-To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
+        id S1728274AbgCaTHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 15:07:42 -0400
+Received: from mx.sdf.org ([205.166.94.20]:55263 "EHLO mx.sdf.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726315AbgCaTHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 15:07:42 -0400
+Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02VJ4nq9017121
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
+        Tue, 31 Mar 2020 19:04:49 GMT
+Received: (from lkml@localhost)
+        by sdf.org (8.15.2/8.12.8/Submit) id 02VJ4nMt026853;
+        Tue, 31 Mar 2020 19:04:49 GMT
+Date:   Tue, 31 Mar 2020 19:04:48 +0000
+From:   George Spelvin <lkml@SDF.ORG>
+To:     Benjamin Block <bblock@linux.ibm.com>,
+        Steffen Maier <maier@linux.ibm.com>
 Cc:     linux-kernel@vger.kernel.org,
-        Daniel Santos <daniel.santos@pobox.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ian Abbott <abbotti@mev.co.uk>
-Date:   Tue, 31 Mar 2020 12:00:25 -0700
-In-Reply-To: <123d3606-cebf-4261-4b04-7d53d1fcdb07@prevas.dk>
-References: <20200331112637.25047-1-vegard.nossum@oracle.com>
-         <dc53b8704ec674cba636b41d7f55bf507a7bd7aa.camel@perches.com>
-         <123d3606-cebf-4261-4b04-7d53d1fcdb07@prevas.dk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        lkml@sdf.org
+Subject: Re: [RFC PATCH v1 27/50] drivers/s390/scsi/zcsp_fc.c: Use
+ prandom_u32_max() for backoff
+Message-ID: <20200331190448.GB9912@SDF.ORG>
+References: <202003281643.02SGhHN7015213@sdf.org>
+ <20200331161321.GB17507@t480-pf1aa2c2>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331161321.GB17507@t480-pf1aa2c2>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-31 at 20:56 +0200, Rasmus Villemoes wrote:
-> On 31/03/2020 20.20, Joe Perches wrote:
-> > On Tue, 2020-03-31 at 13:26 +0200, Vegard Nossum wrote:
-> > >  #define compiletime_assert(condition, msg) \
-> > > -	_compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-> > > +	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-> > 
-> > This might be better using something like __LINE__ ## _ ## __COUNTER__
-> > 
-> > as line # is somewhat useful to identify the specific assert in a file.
-> > 
+On Tue, Mar 31, 2020 at 06:13:21PM +0200, Benjamin Block wrote:
+> it would be nice, if you could address the mails to the
+> driver-maintainers (`scripts/get_maintainer.pl drivers/s390/scsi/zfcp_fc.c`
+> will tell you that this is me and Steffen); I'd certainly have noticed
+> it earlier then :-).
+
+How the $%$# did I mess that up?  I know choosing recipients for
+this series was mostly manual, becase it didn't fit the usual
+pattern of the entire series going to everyone affectrd by any part
+of it.
+
+And then there waqs a whole lot of shuffling things into a logical
+order and grouping.
+
+But I checked MAINTAINERS originally, I really did.  :-(
+
+> On Fri, Nov 29, 2019 at 03:39:41PM -0500, George Spelvin wrote:
+>> diff --git a/drivers/s390/scsi/zfcp_fc.c b/drivers/s390/scsi/zfcp_fc.c
+>> index b018b61bd168e..d24cafe02708f 100644
+>> --- a/drivers/s390/scsi/zfcp_fc.c
+>> +++ b/drivers/s390/scsi/zfcp_fc.c
+>> @@ -48,7 +48,7 @@ unsigned int zfcp_fc_port_scan_backoff(void)
+>>  {
+>>  	if (!port_scan_backoff)
+>>  		return 0;
+>> -	return get_random_int() % port_scan_backoff;
+>> +	return prandom_u32_max(port_scan_backoff);
 > 
-> Eh, if the assert fires, doesn't the compiler's diagnostics already
-> contain all kinds of location information?
+> I think the change is fine. You are right, we don't need a crypto nonce
+> here.
+> 
+> I think I'd let the zero-check stand as is, because the internal
+> behaviour of prandom_u32_max() is, as you say, undocumented. This is not
+> a performance critical code-path for us anyway.
 
-I presume if that were enough,
-neither __LINE__ nor __COUNTER__
-would be useful.
+I agree.  Sorry, that comment in the commit message was a bit of
+a "not to self" that I didn't clean up.  Feel free to rm it when
+queueing if you like.
 
+> Steffen, do you have any objections? Otherwise I can queue this up -
+> minus the somewhat mangled subject - for when we send something next time.
 
+Thank you, I'll put it in my "accepted" pile.
