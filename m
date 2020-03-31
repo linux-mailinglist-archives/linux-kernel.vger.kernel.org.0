@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91D82198E8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07D94198E82
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:32:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730053AbgCaIcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 04:32:22 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:5554 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726528AbgCaIcW (ORCPT
+        id S1730182AbgCaIcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 04:32:25 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:8688 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729624AbgCaIcX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:32:22 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02V8RAxx026921;
-        Tue, 31 Mar 2020 10:32:05 +0200
+        Tue, 31 Mar 2020 04:32:23 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02V8Rq9p026602;
+        Tue, 31 Mar 2020 10:32:06 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=X8iisE1igCwvJ2PS0MtddghezBylam8p0N46lMHrHxg=;
- b=yAvTZNfIB37X4zenAhDyktg5PBGgHRcnPc9yhbeGBbjjRe++S5jNn40tmYrEp/17Nfx/
- DzUSA6nnyoCgk/MDdH2pIMvZZsk4XcCDRxDcI5iP0O2ZQUqhtyHREUcVXGac/ZyUuIGB
- HJ6Kl7wVNA8ExR25uqlsHs24MzG+8zdOGSEYAiXMzZxwC84Jk0xR3gbIEV8KpY8rgpnZ
- rpptgQfzGXYYERzO5kknDUZ1iKcUcLLRjRvgj+EOVbeEIuVrnvnPD8sM/2iNljRHy8gP
- 0OgYzmkwDwnXxAHuFU/YMJDrDVoeJICdtE675bf1dYC7uaGLucTlGkezQFvdUAP+AaQF dQ== 
+ bh=y5y8bWAzSXfW+28B5IZdTTirhUr3alseyHBXkQkA+Os=;
+ b=pIj1GH14RlT7gHtmdpCCCbQqTgPwBRGsfv4wrUf5Y2LNvqDYVYBx/jVJj0cKVTwQbyFq
+ UN+uUNP16sSHZUIfHXJmo/Q7+r70/KH/o9MSFnohrU/w3EQfzlx1KErgCdAnm970r9z+
+ qz77yFKeu8/C1Q5zwEQ1mAVnbnC/xPKMAbQDDbX7jOR/SbzJ0n3q81JroyOpimwsWmh5
+ BSZAwQyL9GWGSf1ZznC8Qh1p48MYjRyWOQeG6DYMk2BTBhfmYEjWwt+I4P9enl7ZIYNd
+ 2LCyXkZM2LE7LKEphnLzge+YXoJ4HGzM83KFncNhjbvJWAgPSoBMeZUd1+frg8GC/tcD Zg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 301vkdp6ra-1
+        by mx07-00178001.pphosted.com with ESMTP id 301w80wtpv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Mar 2020 10:32:05 +0200
+        Tue, 31 Mar 2020 10:32:06 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 38D5510003B;
-        Tue, 31 Mar 2020 10:32:04 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A91C6100034;
+        Tue, 31 Mar 2020 10:32:05 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2227221E677;
-        Tue, 31 Mar 2020 10:32:04 +0200 (CEST)
-Received: from localhost (10.75.127.45) by SFHDAG3NODE3.st.com (10.75.127.9)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 31 Mar 2020 10:32:03
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9ADCF21E676;
+        Tue, 31 Mar 2020 10:32:05 +0200 (CEST)
+Received: from localhost (10.75.127.47) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 31 Mar 2020 10:32:05
  +0200
 From:   Benjamin Gaignard <benjamin.gaignard@st.com>
 To:     <fabrice.gasnier@st.com>, <lee.jones@linaro.org>,
@@ -47,16 +47,16 @@ CC:     <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v5 3/6] mfd: stm32: Add defines to be used for clkevent purpose
-Date:   Tue, 31 Mar 2020 10:31:43 +0200
-Message-ID: <20200331083146.10462-4-benjamin.gaignard@st.com>
+Subject: [PATCH v5 4/6] mfd: stm32: enable regmap fast_io for stm32-lptimer
+Date:   Tue, 31 Mar 2020 10:31:44 +0200
+Message-ID: <20200331083146.10462-5-benjamin.gaignard@st.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20200331083146.10462-1-benjamin.gaignard@st.com>
 References: <20200331083146.10462-1-benjamin.gaignard@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG3NODE3.st.com
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG3NODE3.st.com
  (10.75.127.9)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
  definitions=2020-03-31_03:2020-03-30,2020-03-31 signatures=0
@@ -65,40 +65,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add defines to be able to enable/clear irq and configure one shot mode.
+Because stm32-lptimer need to write in registers in interrupt context
+enable regmap fast_io to use a spin_lock to protect registers access
+rather than a mutex.
 
 Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
-version 5:
-- no change
-  
-version 4:
-- move defines in mfd/stm32-lptimer.h
+ drivers/mfd/stm32-lptimer.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- include/linux/mfd/stm32-lptimer.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/include/linux/mfd/stm32-lptimer.h b/include/linux/mfd/stm32-lptimer.h
-index 605f62264825..90b20550c1c8 100644
---- a/include/linux/mfd/stm32-lptimer.h
-+++ b/include/linux/mfd/stm32-lptimer.h
-@@ -27,10 +27,15 @@
- #define STM32_LPTIM_CMPOK		BIT(3)
+diff --git a/drivers/mfd/stm32-lptimer.c b/drivers/mfd/stm32-lptimer.c
+index a00f99f36559..746e51a17cc8 100644
+--- a/drivers/mfd/stm32-lptimer.c
++++ b/drivers/mfd/stm32-lptimer.c
+@@ -17,6 +17,7 @@ static const struct regmap_config stm32_lptimer_regmap_cfg = {
+ 	.val_bits = 32,
+ 	.reg_stride = sizeof(u32),
+ 	.max_register = STM32_LPTIM_MAX_REGISTER,
++	.fast_io = true,
+ };
  
- /* STM32_LPTIM_ICR - bit fields */
-+#define STM32_LPTIM_ARRMCF		BIT(1)
- #define STM32_LPTIM_CMPOKCF_ARROKCF	GENMASK(4, 3)
- 
-+/* STM32_LPTIM_IER - bit flieds */
-+#define STM32_LPTIM_ARRMIE	BIT(1)
-+
- /* STM32_LPTIM_CR - bit fields */
- #define STM32_LPTIM_CNTSTRT	BIT(2)
-+#define STM32_LPTIM_SNGSTRT	BIT(1)
- #define STM32_LPTIM_ENABLE	BIT(0)
- 
- /* STM32_LPTIM_CFGR - bit fields */
+ static int stm32_lptimer_detect_encoder(struct stm32_lptimer *ddata)
 -- 
 2.15.0
 
