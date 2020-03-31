@@ -2,113 +2,275 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D653D199CC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 19:25:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7BB4199CCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 19:26:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbgCaRZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 13:25:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbgCaRZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 13:25:03 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726282AbgCaR0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 13:26:22 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:37466 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725947AbgCaR0V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 13:26:21 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585675580; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=DwhIqupMXC0dslLDYbxcWJRUxh3pizy7OnAeG1p59EQ=; b=l61YYZbYzrf0JzLRU+9zaaC+lirqiHHbK3gscF5z+vOiqZomk7t+AEJAKWssbXlh6e/1E8S5
+ 8S7Swwxxq/bh3rm+n5icIh32boGsHoxga8ERVat4Ajkc+I76PW+pRkYqcM3lvDHDxRovAYKS
+ ID5ph1fZYeSX5EoXjot5Ceor6es=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e837d2d.7f13f36acd50-smtp-out-n05;
+ Tue, 31 Mar 2020 17:26:05 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id C9A14C433D2; Tue, 31 Mar 2020 17:26:05 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E155220BED;
-        Tue, 31 Mar 2020 17:25:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585675502;
-        bh=fqj8rZSX2LtQTT5i1PXswN5RpOtslvLeE1KpZGlhvQM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jPP8VZGjkyxMKz4ildZObA4mn4wDlnaD5j4vTqunlzN8MIGSm/1Lxg2dEVO2atzFa
-         fjT36a9OMrjYr4JUd+iMVVUv7jlNkyp3Mhc3UL7VHzY2Mgto/Y+jGVnQBmMOnRCd2t
-         RubqfH2yZZxjid30NVtJAyK985MthNBuhydR2U9w=
-Date:   Tue, 31 Mar 2020 19:24:59 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Dave Jiang <dave.jiang@intel.com>
-Cc:     vkoul@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, bhelgaas@google.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        dmaengine@vger.kernel.org, dan.j.williams@intel.com,
-        ashok.raj@intel.com, fenghua.yu@intel.com,
-        linux-pci@vger.kernel.org, tony.luck@intel.com, jing.lin@intel.com,
-        sanjay.k.kumar@intel.com
-Subject: Re: [PATCH 2/6] device/pci: add cmdmem cap to pci_dev
-Message-ID: <20200331172459.GA1841577@kroah.com>
-References: <158560290392.6059.16921214463585182874.stgit@djiang5-desk3.ch.intel.com>
- <158560362090.6059.1762280705382158736.stgit@djiang5-desk3.ch.intel.com>
- <20200331100406.GB1204199@kroah.com>
- <00d8e780-105e-f552-daf0-9854f2e99a91@intel.com>
+        (Authenticated sender: jcrouse)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E8D03C433F2;
+        Tue, 31 Mar 2020 17:26:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E8D03C433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Tue, 31 Mar 2020 11:26:02 -0600
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Sharat Masetty <smasetty@codeaurora.org>
+Cc:     freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        dri-devel@freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mka@chromium.org,
+        sibis@codeaurora.org, saravanak@google.com, viresh.kumar@linaro.org
+Subject: Re: [PATCH 3/5] drm: msm: scale DDR BW along with GPU frequency
+Message-ID: <20200331172600.GB11573@jcrouse1-lnx.qualcomm.com>
+Mail-Followup-To: Sharat Masetty <smasetty@codeaurora.org>,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        dri-devel@freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mka@chromium.org,
+        sibis@codeaurora.org, saravanak@google.com, viresh.kumar@linaro.org
+References: <1585641353-23229-1-git-send-email-smasetty@codeaurora.org>
+ <1585641353-23229-4-git-send-email-smasetty@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00d8e780-105e-f552-daf0-9854f2e99a91@intel.com>
+In-Reply-To: <1585641353-23229-4-git-send-email-smasetty@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 10:07:07AM -0700, Dave Jiang wrote:
+On Tue, Mar 31, 2020 at 01:25:51PM +0530, Sharat Masetty wrote:
+> This patch adds support to parse the OPP tables attached the GPU device,
+> the main opp table and the DDR bandwidth opp table. Additionally, vote
+> for the GPU->DDR bandwidth when setting the GPU frequency by querying
+> the linked DDR BW opp to the GPU opp.
 > 
-> On 3/31/2020 3:04 AM, Greg KH wrote:
-> > On Mon, Mar 30, 2020 at 02:27:00PM -0700, Dave Jiang wrote:
-> > > Since the current accelerator devices do not have standard PCIe capability
-> > > enumeration for accepting ENQCMDS yet, for now an attribute of pdev->cmdmem has
-> > > been added to struct pci_dev.  Currently a PCI quirk must be used for the
-> > > devices that have such cap until the PCI cap is standardized. Add a helper
-> > > function to provide the check if a device supports the cmdmem capability.
-> > > 
-> > > Such capability is expected to be added to PCIe device cap enumeration in
-> > > the future.
-> > > 
-> > > Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-> > > ---
-> > >   drivers/base/core.c    |   13 +++++++++++++
-> > >   include/linux/device.h |    2 ++
-> > >   include/linux/pci.h    |    1 +
-> > >   3 files changed, 16 insertions(+)
-> > > 
-> > > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > > index dbb0f9130f42..cd9f5b040ed4 100644
-> > > --- a/drivers/base/core.c
-> > > +++ b/drivers/base/core.c
-> > > @@ -27,6 +27,7 @@
-> > >   #include <linux/netdevice.h>
-> > >   #include <linux/sched/signal.h>
-> > >   #include <linux/sysfs.h>
-> > > +#include <linux/pci.h>
-> > >   #include "base.h"
-> > >   #include "power/power.h"
-> > > @@ -3790,3 +3791,15 @@ int device_match_any(struct device *dev, const void *unused)
-> > >   	return 1;
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(device_match_any);
-> > > +
-> > > +bool device_supports_cmdmem(struct device *dev)
-> > > +{
-> > > +	struct pci_dev *pdev;
-> > > +
-> > > +	if (!dev_is_pci(dev))
-> > > +		return false;
-> > > +
-> > > +	pdev = to_pci_dev(dev);
-> > > +	return pdev->cmdmem;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(device_supports_cmdmem);
-> > Why would a pci-specific function like this be ok to have in the driver
-> > core?  Please keep it in the pci core code instead.
+> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c   | 41 ++++++++++++++++++++++++++----
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 44 +++++++++++++++++++++++++++++----
+>  drivers/gpu/drm/msm/msm_gpu.h           |  9 +++++++
+>  3 files changed, 84 insertions(+), 10 deletions(-)
 > 
-> The original thought was to introduce a new arch level memory mapping
-> semantic.
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> index 748cd37..489d9b6 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> @@ -100,6 +100,40 @@ bool a6xx_gmu_gx_is_on(struct a6xx_gmu *gmu)
+>  		A6XX_GMU_SPTPRAC_PWR_CLK_STATUS_GX_HM_CLK_OFF));
+>  }
+> 
+> +void a6xx_gmu_set_icc_vote(struct msm_gpu *gpu, unsigned long gpu_freq)
+> +{
+> +	struct dev_pm_opp *gpu_opp, *ddr_opp;
+> +	struct opp_table **tables = gpu->opp_tables;
+> +	unsigned long peak_bw;
+> +
+> +	if (!gpu->opp_tables[GPU_DDR_OPP_TABLE_INDEX])
+> +		goto done;
+> +
+> +	gpu_opp = dev_pm_opp_find_freq_exact(&gpu->pdev->dev, gpu_freq, true);
+> +	if (IS_ERR_OR_NULL(gpu_opp))
+> +		goto done;
+> +
+> +	ddr_opp = dev_pm_opp_xlate_required_opp(tables[GPU_OPP_TABLE_INDEX],
+> +					    tables[GPU_DDR_OPP_TABLE_INDEX],
+> +					    gpu_opp);
+> +	dev_pm_opp_put(gpu_opp);
+> +
+> +	if (IS_ERR_OR_NULL(ddr_opp))
+> +		goto done;
 
-Please do not.  Also, that's not what you are doing here from what I can
-tell.
+I think that the final approach is still up in the air but either way we're
+going to pull the bandwidth from an OPP, its just a question of which OPP.
 
-> If you feel this should be PCI exclusive, should we make the ioremap
-> routines for this memory type pci specific as well?
+> +	peak_bw = dev_pm_opp_get_bw(ddr_opp, NULL);
+> +	dev_pm_opp_put(ddr_opp);
+> +
+> +	icc_set_bw(gpu->icc_path, 0, peak_bw);
+> +	return;
+> +done:
+> +	/*
+> +	 * If there is a problem, for now leave it at max so that the
+> +	 * performance is nominal.
+> +	 */
+> +	icc_set_bw(gpu->icc_path, 0, MBps_to_icc(7216));
+> +}
+> +
+>  static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
+>  {
+>  	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+> @@ -128,11 +162,8 @@ static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
+> 
+>  	gmu->freq = gmu->gpu_freqs[index];
+> 
+> -	/*
+> -	 * Eventually we will want to scale the path vote with the frequency but
+> -	 * for now leave it at max so that the performance is nominal.
+> -	 */
+> -	icc_set_bw(gpu->icc_path, 0, MBps_to_icc(7216));
+> +	if (gpu->icc_path)
+> +		a6xx_gmu_set_icc_vote(gpu, gmu->freq);
 
-Why wouldn't it be?  Is this needed anywhere else?
+This function is annoying because we call it from two different spots, but it
+feels wasteful that devfreq gives us an OPP pointer and we go out of our way to
+not use it only to search for it again in the set_icc_vote function. I think
+maybe we should pass the OPP through from msm_gpu.c.  We could have a helper
+function to pull the initial opp in a6xx_gmu_resume to make it clean.
 
-thanks,
 
-greg k-h
+>  }
+> 
+>  void a6xx_gmu_set_freq(struct msm_gpu *gpu, unsigned long freq)
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> index 2d13694..bbbcc7a 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> @@ -882,7 +882,7 @@ static int adreno_get_pwrlevels(struct device *dev,
+>  {
+>  	unsigned long freq = ULONG_MAX;
+>  	struct dev_pm_opp *opp;
+> -	int ret;
+> +	int ret, i;
+> 
+>  	gpu->fast_rate = 0;
+> 
+> @@ -890,9 +890,29 @@ static int adreno_get_pwrlevels(struct device *dev,
+>  	if (!of_find_property(dev->of_node, "operating-points-v2", NULL))
+>  		ret = adreno_get_legacy_pwrlevels(dev);
+>  	else {
+> -		ret = dev_pm_opp_of_add_table(dev);
+> -		if (ret)
+> -			DRM_DEV_ERROR(dev, "Unable to set the OPP table\n");
+> +		int count = of_count_phandle_with_args(dev->of_node,
+> +				"operating-points-v2", NULL);
+> +
+> +		count = min(count, GPU_DDR_OPP_TABLE_INDEX + 1);
+> +		count = max(count, 1);
+> +
+> +		for (i = 0; i < count; i++) {
+> +			ret = dev_pm_opp_of_add_table_indexed(dev, i);
+> +			if (ret) {
+> +				DRM_DEV_ERROR(dev, "Add OPP table %d: failed %d\n",
+> +						i, ret);
+> +				goto err;
+> +			}
+> +
+> +			gpu->opp_tables[i] =
+> +				dev_pm_opp_get_opp_table_indexed(dev, i);
+> +			if (!gpu->opp_tables[i]) {
+> +				DRM_DEV_ERROR(dev, "Get OPP table failed index %d\n",
+> +						i);
+> +				ret = -EINVAL;
+> +				goto err;
+> +			}
+> +		}
+>  	}
+> 
+>  	if (!ret) {
+> @@ -919,12 +939,24 @@ static int adreno_get_pwrlevels(struct device *dev,
+>  		gpu->icc_path = NULL;
+> 
+>  	return 0;
+> +err:
+> +	for (; i >= 0; i--) {
+> +		if (gpu->opp_tables[i]) {
+> +			dev_pm_opp_put_opp_table(gpu->opp_tables[i]);
+> +			gpu->opp_tables[i] = NULL;
+> +		}
+> +	}
+> +
+> +	dev_pm_opp_remove_table(dev);
+> +	return ret;
+>  }
+> 
+>  int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
+>  		struct adreno_gpu *adreno_gpu,
+>  		const struct adreno_gpu_funcs *funcs, int nr_rings)
+>  {
+> +	int ret = 0;
+> +
+>  	struct adreno_platform_config *config = pdev->dev.platform_data;
+>  	struct msm_gpu_config adreno_gpu_config  = { 0 };
+>  	struct msm_gpu *gpu = &adreno_gpu->base;
+> @@ -945,7 +977,9 @@ int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
+> 
+>  	adreno_gpu_config.nr_rings = nr_rings;
+> 
+> -	adreno_get_pwrlevels(&pdev->dev, gpu);
+> +	ret = adreno_get_pwrlevels(&pdev->dev, gpu);
+> +	if (ret)
+> +		return ret;
+> 
+>  	pm_runtime_set_autosuspend_delay(&pdev->dev,
+>  		adreno_gpu->info->inactive_period);
+> diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
+> index ab8f0f9c..5b98b48 100644
+> --- a/drivers/gpu/drm/msm/msm_gpu.h
+> +++ b/drivers/gpu/drm/msm/msm_gpu.h
+> @@ -66,6 +66,12 @@ struct msm_gpu_funcs {
+>  	void (*gpu_set_freq)(struct msm_gpu *gpu, unsigned long freq);
+>  };
+> 
+> +/* opp table indices */
+> +enum {
+> +	GPU_OPP_TABLE_INDEX,
+> +	GPU_DDR_OPP_TABLE_INDEX,
+> +};
+> +
+>  struct msm_gpu {
+>  	const char *name;
+>  	struct drm_device *dev;
+> @@ -113,6 +119,9 @@ struct msm_gpu {
+> 
+>  	struct icc_path *icc_path;
+> 
+> +	/* gpu/ddr opp tables */
+> +	struct opp_table *opp_tables[2];
+
+You don't need an array here. We're not going to have that many tables.
+
+struct opp_table *gpu_opp_table;
+struct opp_table *bw_opp_table;
+
+Is sufficient and we don't need an enum.
+
+> +
+>  	/* Hang and Inactivity Detection:
+>  	 */
+>  #define DRM_MSM_INACTIVE_PERIOD   66 /* in ms (roughly four frames) */
+> --
+> 2.7.4
+> 
+
+Jordan
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
