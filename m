@@ -2,75 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 051F0198E45
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41B14198E57
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:28:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730070AbgCaI0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 04:26:24 -0400
-Received: from smtp-out.xnet.cz ([178.217.244.18]:23401 "EHLO smtp-out.xnet.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726299AbgCaI0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:26:24 -0400
-Received: from meh.true.cz (meh.true.cz [108.61.167.218])
-        (Authenticated sender: petr@true.cz)
-        by smtp-out.xnet.cz (Postfix) with ESMTPSA id 3F26340E6;
-        Tue, 31 Mar 2020 10:26:21 +0200 (CEST)
-Received: from localhost (meh.true.cz [local])
-        by meh.true.cz (OpenSMTPD) with ESMTPA id e7874178;
-        Tue, 31 Mar 2020 10:26:07 +0200 (CEST)
-Date:   Tue, 31 Mar 2020 10:26:06 +0200
-From:   Petr =?utf-8?Q?=C5=A0tetiar?= <ynezz@true.cz>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1730182AbgCaI2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 04:28:16 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:10921 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730106AbgCaI2O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 04:28:14 -0400
+X-UUID: 19d6c108d34f40ab864139469fd91c52-20200331
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=5o+60Ykpu4QaOR8sM8BtdowpYIMKFLDI/axtPlIoxEU=;
+        b=vDkn68gXSEj0djHm+u5Qh7q/2wO0ACEIP4iBaScwqfEYARDgDuIPFivoNBJgKYhqfp9/m3puOeptMuc+RIi6RIXceTCr+ch6oTUQghha+E37vVe/WT89mEQRZglhypJvCBHRwqQrhSotHNwiqga5wYNwusao6b3XkwXDrmIjnO0=;
+X-UUID: 19d6c108d34f40ab864139469fd91c52-20200331
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 991516779; Tue, 31 Mar 2020 16:27:55 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N2.mediatek.inc
+ (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 31 Mar
+ 2020 16:27:54 +0800
+Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
+ MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Tue, 31 Mar 2020 16:27:52 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: allwinner: a64: olinuxino: add user red LED
-Message-ID: <20200331082606.GD21251@meh.true.cz>
-Reply-To: Petr =?utf-8?Q?=C5=A0tetiar?= <ynezz@true.cz>
-References: <20200325205924.30736-1-ynezz@true.cz>
- <20200330175347.r4uam7cybvuxlgog@gilmour.lan>
- <CAGb2v66+oT=qfu7oHTs3d_e2hd_8Fc_0ULhHRfMLmrdcfOoe=A@mail.gmail.com>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+CC:     <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
+        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
+        <stonea168@163.com>, <huijuan.xie@mediatek.com>,
+        Jitao Shi <jitao.shi@mediatek.com>
+Subject: [PATCH v4 0/4] Config mipi tx current and impedance
+Date:   Tue, 31 Mar 2020 16:27:21 +0800
+Message-ID: <20200331082725.81048-1-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGb2v66+oT=qfu7oHTs3d_e2hd_8Fc_0ULhHRfMLmrdcfOoe=A@mail.gmail.com>
-X-PGP-Key: https://gist.githubusercontent.com/ynezz/477f6d7a1623a591b0806699f9fc8a27/raw/a0878b8ed17e56f36ebf9e06a6b888a2cd66281b/pgp-key.pub
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 765C563F980AD3CE409FCDB0899B9382D2D47E9FF25AA5CE15BD52FF03A4E3272000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Chen-Yu Tsai <wens@csie.org> [2020-03-31 09:19:57]:
+Q2hhbmdlcyBzaW5jZSB2MzoNCiAtIHJlZmluZSBkcml2ZS1zdHJlbmd0aC1taWNyb2FtcCBhcyBm
+cm9tIDMwMDAgdG8gNjAwMC4NCg0KQ2hhbmdlcyBzaW5jZSB2MjoNCiAtIGZpeCB0aGUgdGl0bGUg
+b2YgY29tbWl0IG1lc3NhZ2UuDQogLSByZW5hbWUgbWlwaXR4LWN1cnJlbnQtZHJpdmUgdG8gZHJp
+dmUtc3RyZW5ndGgtbWljcm9hbXANCg0KQ2hhbmdlcyBzaW5jZSB2MToNCiAtIGZpeCBjb2Rpbmcg
+c3R5bGUuDQogLSBjaGFuZ2UgbXRrX21pcGlfdHhfY29uZmlnX2NhbGlicmF0aW9uX2RhdGEoKSB0
+byB2b2lkDQoNCkppdGFvIFNoaSAoNCk6DQogIGR0LWJpbmRpbmdzOiBkaXNwbGF5OiBtZWRpYXRl
+azogYWRkIHByb3BlcnR5IHRvIGNvbnRyb2wgbWlwaSB0eCBkcml2ZQ0KICAgIGN1cnJlbnQNCiAg
+ZHQtYmluZGluZ3M6IGRpc3BsYXk6IG1lZGlhdGVrOiBnZXQgbWlwaXR4IGNhbGlicmF0aW9uIGRh
+dGEgZnJvbSBudm1lbQ0KICBkcm0vbWVkaWF0ZWs6IGFkZCB0aGUgbWlwaXR4IGRyaXZpbmcgY29u
+dHJvbA0KICBkcm0vbWVkaWF0ZWs6IGNvbmZpZyBtaXBpdHggaW1wZWRhbmNlIHdpdGggY2FsaWJy
+YXRpb24gZGF0YQ0KDQogLi4uL2Rpc3BsYXkvbWVkaWF0ZWsvbWVkaWF0ZWssZHNpLnR4dCAgICAg
+ICAgIHwgMTAgKysrDQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19taXBpX3R4LmMgICAg
+ICAgIHwgMTQgKysrKw0KIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfbWlwaV90eC5oICAg
+ICAgICB8ICAxICsNCiBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX210ODE4M19taXBpX3R4
+LmMgfCA2NCArKysrKysrKysrKysrKysrKysrDQogNCBmaWxlcyBjaGFuZ2VkLCA4OSBpbnNlcnRp
+b25zKCspDQoNCi0tIA0KMi4yMS4wDQo=
 
-Hi,
-
-> On Tue, Mar 31, 2020 at 1:53 AM Maxime Ripard <maxime@cerno.tech> wrote:
-> >
-> > On Wed, Mar 25, 2020 at 09:59:24PM +0100, Petr Štetiar wrote:
-> > > There is a red LED marked as `GPIO_LED1` on the silkscreen and connected
-> > > to PE17 by default. So lets add this missing bit in the current hardware
-> > > description.
-> > >
-> > > Signed-off-by: Petr Štetiar <ynezz@true.cz>
-> >
-> > QUeued for 5.8, thanks!
-> 
-> The gpio-led binding seems to prefer "led-0" up to "led-f" (^led-[0-9a-f])
-> as the child node name. This was recently brought to my attention. Do we
-> want to follow suit here?
-
-I can see following in Documentation/devicetree/bindings/leds/leds-gpio.yaml:
-
- patternProperties:
-   # The first form is preferred, but fall back to just 'led' anywhere in the
-   # node name to at least catch some child nodes.
-   "(^led-[0-9a-f]$|led)":
-
-So it seems like `led-0` is indeed preferred, should I send v2 or a new patch
-as a fix on top of the previous one?
-
--- ynezz
