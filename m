@@ -2,133 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 812D6199995
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0A5619999A
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:27:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731022AbgCaP0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 11:26:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39840 "EHLO mail.kernel.org"
+        id S1730786AbgCaP1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 11:27:14 -0400
+Received: from mga02.intel.com ([134.134.136.20]:64818 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730149AbgCaP0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 11:26:10 -0400
-Received: from localhost (mobile-166-175-186-165.mycingular.net [166.175.186.165])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CF4620786;
-        Tue, 31 Mar 2020 15:26:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585668369;
-        bh=5IJuX6AkKeckjXGkAnpY4cbNqHBPFLgHVhnLoOaMTdI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=S/oqF+T/HoROYfLFrY1ioWZF2kvgn+TqZ1BT4qOw6L5CrOyrHgE3MbMhmE8CGoJO5
-         YdrpvTO4rp0NRKQr6DqkamIxS0DWA1Byijc8wOr2ELiD+yVjDYg49zvbg7lYW3qkSa
-         EaYSi5CK3cgeHod56nIIqFUezoWvFggl0C/lpW1A=
-Date:   Tue, 31 Mar 2020 10:25:54 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     bjorn@helgaas.com, Vidya Sagar <vidyas@nvidia.com>,
-        robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        Andrew Murray <andrew.murray@arm.com>, kishon@ti.com,
-        gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        ARM <linux-arm-kernel@lists.infradead.org>, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V5 5/5] PCI: tegra: Add support for PCIe endpoint mode in
- Tegra194
-Message-ID: <20200331152554.GA188434@google.com>
+        id S1730095AbgCaP1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 11:27:14 -0400
+IronPort-SDR: cfqQBfmM0Xlcs0dPKsL7vTu237gKUZD/nMzn9ETjrHZQ+0/r24BbUJFYbY4vQ5C9vGnBZGY3Xd
+ Wjd9ZZWRQtpw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 08:27:13 -0700
+IronPort-SDR: UuJdbjlraJx+JGUo2Yu2yayxQRoFBAtc5zmMlPEkuz+mGHsjZORkPeVfp1vGB8ObCWHP+lm+T/
+ 4MzhBMvWHCqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,328,1580803200"; 
+   d="scan'208";a="252281776"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga006.jf.intel.com with ESMTP; 31 Mar 2020 08:27:12 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1jJInH-000BI8-LZ; Tue, 31 Mar 2020 23:27:11 +0800
+Date:   Tue, 31 Mar 2020 23:26:25 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ e5ff49d1dfba672fa275bd73f9626838d5529c8f
+Message-ID: <5e836121.VZ80QHYwzRDJSKiY%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331082325.GA32028@e121166-lin.cambridge.arm.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 09:23:25AM +0100, Lorenzo Pieralisi wrote:
-> On Mon, Mar 30, 2020 at 10:00:57PM -0500, Bjorn Helgaas wrote:
-> > On Mon, Mar 30, 2020 at 9:55 PM Vidya Sagar <vidyas@nvidia.com> wrote:
-> > > On 3/31/2020 3:17 AM, Bjorn Helgaas wrote:
-> > > > External email: Use caution opening links or attachments
-> > > >
-> > > >
-> > > > On Tue, Mar 03, 2020 at 11:40:52PM +0530, Vidya Sagar wrote:
-> > > >> Add support for the endpoint mode of Synopsys DesignWare core based
-> > > >> dual mode PCIe controllers present in Tegra194 SoC.
-> > > >>
-> > > >> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > > >> Acked-by: Thierry Reding <treding@nvidia.com>
-> > > >> ---
-> > > >> V5:
-> > > >> * Added Acked-by: Thierry Reding <treding@nvidia.com>
-> > > >> * Removed unwanted header file inclusion
-> > > >>
-> > > >> V4:
-> > > >> * Addressed Lorenzo's review comments
-> > > >> * Started using threaded irqs instead of kthreads
-> > > >>
-> > > >> V3:
-> > > >> * Addressed Thierry's review comments
-> > > >>
-> > > >> V2:
-> > > >> * Addressed Bjorn's review comments
-> > > >> * Made changes as part of addressing review comments for other patches
-> > > >>
-> > > >>   drivers/pci/controller/dwc/Kconfig         |  30 +-
-> > > >>   drivers/pci/controller/dwc/pcie-tegra194.c | 679 ++++++++++++++++++++-
-> > > >>   2 files changed, 691 insertions(+), 18 deletions(-)
-> > > >>
-> > > >> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> > > >> index 0830dfcfa43a..169cde58dd92 100644
-> > > >> --- a/drivers/pci/controller/dwc/Kconfig
-> > > >> +++ b/drivers/pci/controller/dwc/Kconfig
-> > > >> @@ -248,14 +248,38 @@ config PCI_MESON
-> > > >>          implement the driver.
-> > > >>
-> > > >>   config PCIE_TEGRA194
-> > > >> -     tristate "NVIDIA Tegra194 (and later) PCIe controller"
-> > > >> +     tristate
-> > > >> +
-> > > >> +config PCIE_TEGRA194_HOST
-> > > >> +     tristate "NVIDIA Tegra194 (and later) PCIe controller - Host Mode"
-> > > >>        depends on ARCH_TEGRA_194_SOC || COMPILE_TEST
-> > > >>        depends on PCI_MSI_IRQ_DOMAIN
-> > > >>        select PCIE_DW_HOST
-> > > >>        select PHY_TEGRA194_P2U
-> > > >> +     select PCIE_TEGRA194
-> > > >> +     default y
-> > > >
-> > > > Sorry I missed this before, but why is this "default y"?  From
-> > > > Documentation/kbuild/kconfig-language.rst:
-> > > >
-> > > >    The default value deliberately defaults to 'n' in order to avoid
-> > > >    bloating the build. With few exceptions, new config options should
-> > > >    not change this. The intent is for "make oldconfig" to add as little
-> > > >    as possible to the config from release to release.
-> > > >
-> > > > I do see that several other things in other drivers/pci/ Kconfig files
-> > > > are also "default y", and we should probably change some of them.  But
-> > > > I don't want to add even more unless there's a good reason.
-> > > >
-> > > > I'm not looking for more reactions like these:
-> > > >
-> > > > https://lore.kernel.org/r/CAHk-=wiZ24JuVehJ5sEC0UG1Gk2nvB363wO02RRsR1oEht6R9Q@mail.gmail.com
-> > > > https://lore.kernel.org/r/CA+55aFzPpuHU1Nqd595SEQS=F+kXMzPs0Rba9FUgTodGxmXsgg@mail.gmail.com
-> > > >
-> > > > Can you please update this patch to either remove the "default y" or
-> > > > add the rationale for keeping it?
-> > > I'm fine with removing 'default y' line.
-> > > Should I send a patch only with this change?
-> > 
-> > I think it's probably just as easy for Lorenzo to delete that line on
-> > his branch.  If not, I'll cherry-pick the patches on that branch and
-> > do it locally.
-> 
-> Done, pushed out. It is a guideline that it is worth keeping in mind
-> while I review the code, sorry for missing it.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  master
+branch HEAD: e5ff49d1dfba672fa275bd73f9626838d5529c8f  Merge branch 'locking/kcsan'
 
-Got it, thanks!  No worries, easy to fix.
+elapsed time: 481m
 
-Bjorn
+configs tested: 136
+configs skipped: 0
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
+riscv                          rv32_defconfig
+nios2                         3c120_defconfig
+ia64                                defconfig
+powerpc                             defconfig
+nios2                         10m50_defconfig
+sparc64                          allmodconfig
+i386                              allnoconfig
+i386                             allyesconfig
+i386                             alldefconfig
+i386                                defconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+c6x                        evmc6678_defconfig
+xtensa                          iss_defconfig
+c6x                              allyesconfig
+xtensa                       common_defconfig
+openrisc                 simple_smp_defconfig
+openrisc                    or1ksim_defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+arc                              allyesconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+parisc                            allnoconfig
+parisc                           allyesconfig
+parisc                generic-32bit_defconfig
+parisc                generic-64bit_defconfig
+x86_64               randconfig-a003-20200331
+x86_64               randconfig-a002-20200331
+i386                 randconfig-a001-20200331
+i386                 randconfig-a002-20200331
+i386                 randconfig-a003-20200331
+x86_64               randconfig-a001-20200331
+alpha                randconfig-a001-20200331
+m68k                 randconfig-a001-20200331
+mips                 randconfig-a001-20200331
+nds32                randconfig-a001-20200331
+parisc               randconfig-a001-20200331
+csky                 randconfig-a001-20200331
+openrisc             randconfig-a001-20200331
+s390                 randconfig-a001-20200331
+sh                   randconfig-a001-20200331
+xtensa               randconfig-a001-20200331
+x86_64               randconfig-b001-20200331
+x86_64               randconfig-b002-20200331
+x86_64               randconfig-b003-20200331
+i386                 randconfig-b001-20200331
+i386                 randconfig-b002-20200331
+i386                 randconfig-b003-20200331
+i386                 randconfig-c003-20200331
+x86_64               randconfig-c003-20200331
+x86_64               randconfig-c002-20200331
+i386                 randconfig-c002-20200331
+x86_64               randconfig-c001-20200331
+i386                 randconfig-c001-20200331
+x86_64               randconfig-e001-20200331
+x86_64               randconfig-e002-20200331
+x86_64               randconfig-e003-20200331
+i386                 randconfig-e001-20200331
+i386                 randconfig-e002-20200331
+i386                 randconfig-e003-20200331
+x86_64               randconfig-g002-20200331
+x86_64               randconfig-g003-20200331
+i386                 randconfig-g001-20200331
+sparc                randconfig-a001-20200331
+arm64                randconfig-a001-20200331
+ia64                 randconfig-a001-20200331
+arc                  randconfig-a001-20200331
+arm                  randconfig-a001-20200331
+riscv                            allmodconfig
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                               allmodconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc                            allyesconfig
+sparc                               defconfig
+sparc64                             defconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+um                                  defconfig
+x86_64                                   rhel
+x86_64                               rhel-7.6
+x86_64                         rhel-7.2-clear
+x86_64                                    lkp
+x86_64                              fedora-25
+x86_64                                  kexec
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
