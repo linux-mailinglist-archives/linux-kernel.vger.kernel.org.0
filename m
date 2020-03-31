@@ -2,75 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15794198AA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 05:54:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A62F0198AB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 05:55:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729745AbgCaDyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 23:54:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36938 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727358AbgCaDyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 23:54:20 -0400
-Received: from localhost (unknown [104.132.1.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8A412072D;
-        Tue, 31 Mar 2020 03:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585626859;
-        bh=TKTh/9sPD0psIzinZfSfayKwQQgwyOsyAnSJ/BrlOqY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cW8tGpMd0n2m42LIs3mSyPV9ZWV48h64ZooNkJZ3pbkRkYwanhso3jeRjBAvAtFf0
-         81/AwUWRodIV0LkhSn60s5JyJ8BP11lAXjObarjnHMhJ0xXAA5FseeOk5ttlRACfRQ
-         2KmETlalnf650sJTyIqnznFmXC2Xb+0RlbDZiXKk=
-Date:   Mon, 30 Mar 2020 20:54:19 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Sahitya Tummala <stummala@codeaurora.org>
-Cc:     Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: prevent meta updates while checkpoint is in
- progress
-Message-ID: <20200331035419.GB79749@google.com>
-References: <1585219019-24831-1-git-send-email-stummala@codeaurora.org>
+        id S1729928AbgCaDzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 23:55:44 -0400
+Received: from sender3-op-o12.zoho.com.cn ([124.251.121.243]:17991 "EHLO
+        sender3-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727358AbgCaDzn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 23:55:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1585626931;
+        s=mail; d=flygoat.com; i=jiaxun.yang@flygoat.com;
+        h=Date:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:To:CC:From:Message-ID;
+        bh=rj1HpV3ASlYUkr6huYlVr4mBpcCx559NMpVPDVrG8X4=;
+        b=Iyto0/u6ndyWrImBk52R0ubhmL+eTqkDlRqgBQkMocJUaCNG8fi3zU1WrwOQzDyI
+        GEVVfOEF69iNv98j3/SGMvSkhQYtLbcqBwz+Ti5sK8KCNqnbY26RmfZ7JqcCJBGGZP9
+        MvSgQHgKgdGWpDmDghcIlVeKWyJuEWyKzCf2zxMA=
+Received: from [10.233.233.252] (183.156.33.130 [183.156.33.130]) by mx.zoho.com.cn
+        with SMTPS id 1585626928522601.4005423698948; Tue, 31 Mar 2020 11:55:28 +0800 (CST)
+Date:   Tue, 31 Mar 2020 11:55:26 +0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <778df899-4dc4-c2be-5b7b-79c16223b0fb@loongson.cn>
+References: <1585557531-18849-1-git-send-email-maobibo@loongson.cn> <53CC90A0-3926-4642-91D4-F4F265F6AE90@flygoat.com> <778df899-4dc4-c2be-5b7b-79c16223b0fb@loongson.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1585219019-24831-1-git-send-email-stummala@codeaurora.org>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 02/39] MIPS: loongson64: Add header files path prefix
+To:     maobibo <maobibo@loongson.cn>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Huacai Chen <chenhc@lemote.com>
+CC:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+Message-ID: <00795E01-070C-4C45-AB33-A41058F6DD37@flygoat.com>
+X-ZohoCNMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/26, Sahitya Tummala wrote:
-> allocate_segment_for_resize() can cause metapage updates if
-> it requires to change the current node/data segments for resizing.
-> Stop these meta updates when there is a checkpoint already
-> in progress to prevent inconsistent CP data.
 
-I'd prefer to use f2fs_lock_op() in bigger coverage.
 
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> ---
->  fs/f2fs/gc.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 5bca560..6122bad 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1399,8 +1399,10 @@ static int free_segment_range(struct f2fs_sb_info *sbi, unsigned int start,
->  	int err = 0;
->  
->  	/* Move out cursegs from the target range */
-> +	f2fs_lock_op(sbi);
->  	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_TYPE; type++)
->  		allocate_segment_for_resize(sbi, type, start, end);
-> +	f2fs_unlock_op(sbi);
->  
->  	/* do GC to move out valid blocks in the range */
->  	for (segno = start; segno <= end; segno += sbi->segs_per_sec) {
-> -- 
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+=E4=BA=8E 2020=E5=B9=B43=E6=9C=8830=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=886=
+:00:19, maobibo <maobibo@loongson=2Ecn> =E5=86=99=E5=88=B0:
+>
+>
+>On 03/30/2020 04:55 PM, Jiaxun Yang wrote:
+>>=20
+>>=20
+>> =E4=BA=8E 2020=E5=B9=B43=E6=9C=8830=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=
+=884:38:51, bibo mao <maobibo@loongson=2Ecn> =E5=86=99=E5=88=B0:
+>>> Remove header files from arch/mips/include/asm/mach-loongson64
+>>> to arch/mips/loongson64/include/mach
+>>>
+>>> Signed-off-by: bibo mao <maobibo@loongson=2Ecn>
+>>=20
+>> Hi Bibo,
+>>=20
+>> Thanks for your patch=2E
+>>=20
+>> What's your intention?
+>> Did you meet any problem about headers?
+>>=20
+>
+>Hi Jiaxun,
+>
+>When I add irqchip support for mips kvm, file virt/kvm/irqchip=2Ec
+>requires local header file arch/mips/kvm/irq=2Eh, it fails to compile=2E
+>Since there is file with the same name located at:
+>  arch/mips/include/asm/mach-generic/irq=2Eh
+>  arch/mips/include/asm/mach-loongson64/irq=2Eh
+>
+>The compiler fails to choose the correct header file irq=2Eh,
+
+btw: I checked Loongson's KVM implementation in their out-of-tree 3=2E10 k=
+ernel and found they're emulating everything
+in Kernel, like csr, irqchip of LS7A, extioi of 3A4000, even cpufreq=2E
+
+This is making the whole thing unnecessarily complex=2E
+
+If you are trying to mainline Loongson KVM support then please avoid do li=
+ke this=2E
+
+Please reference how Arm define their virt machine in QEMU=2E
+
+We're not x86, we don't have to run into historical limitations=2E
+
+Thanks
+
+>
+>regards
+>bibo,mao
+>
+--=20
+Jiaxun Yang
