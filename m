@@ -2,150 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FEE9199C32
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 18:54:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A349199C4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 18:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731073AbgCaQyS convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 12:54:18 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:39116 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730149AbgCaQyS (ORCPT
+        id S1731294AbgCaQ5C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 12:57:02 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33018 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730589AbgCaQ5B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 12:54:18 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 1FE5E60A073D;
-        Tue, 31 Mar 2020 18:54:15 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id bCAazVMZJRqh; Tue, 31 Mar 2020 18:54:13 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 0280B609D2F6;
-        Tue, 31 Mar 2020 18:54:13 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 82ywUB7fjkiv; Tue, 31 Mar 2020 18:54:12 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id D47F7609D2E2;
-        Tue, 31 Mar 2020 18:54:12 +0200 (CEST)
-Date:   Tue, 31 Mar 2020 18:54:12 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Patricia Alfonso <trishalfonso@google.com>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        anton ivanov <anton.ivanov@cambridgegreys.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        davidgow <davidgow@google.com>,
-        linux-um <linux-um@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Message-ID: <418158403.63080.1585673652800.JavaMail.zimbra@nod.at>
-In-Reply-To: <CAKFsvULjkQ7T6QhspHg87nnDpo-VW1qg2M3jJGB+NcwTQNeXGQ@mail.gmail.com>
-References: <20200226004608.8128-1-trishalfonso@google.com> <CACT4Y+bdxmRmr57JO_k0whhnT2BqcSA=Jwa5M6=9wdyOryv6Ug@mail.gmail.com> <ded22d68e623d2663c96a0e1c81d660b9da747bc.camel@sipsolutions.net> <CACT4Y+YzM5bwvJ=yryrz1_y=uh=NX+2PNu4pLFaqQ2BMS39Fdg@mail.gmail.com> <2cee72779294550a3ad143146283745b5cccb5fc.camel@sipsolutions.net> <CACT4Y+YhwJK+F7Y7NaNpAwwWR-yZMfNevNp_gcBoZ+uMJRgsSA@mail.gmail.com> <a51643dbff58e16cc91f33273dbc95dded57d3e6.camel@sipsolutions.net> <CAKFsvULjkQ7T6QhspHg87nnDpo-VW1qg2M3jJGB+NcwTQNeXGQ@mail.gmail.com>
-Subject: Re: [PATCH] UML: add support for KASAN under x86_64
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF68 (Linux)/8.8.12_GA_3809)
-Thread-Topic: add support for KASAN under x86_64
-Thread-Index: PKJWQW+CVN2ItfoQyPENtJL8H3bmwg==
+        Tue, 31 Mar 2020 12:57:01 -0400
+Received: by mail-wr1-f67.google.com with SMTP id a25so26991862wrd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 09:57:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Y/abDyeAK7rGBvYDyizWyVwlF1sauFbaXbJ9R6MBx2w=;
+        b=tCL/dJ+Wt5JYGy7iTzNg1GIRUfoWm7de+Xaha+6IB5H71tL8ayUKv+ZnqKlrlyjBrU
+         /jGZDm1b0DSUeiDJQxSgIrDGOPBJlHgTpAOE5GrNI/yMSAYQysdD/39ThvKY7BPUvFrI
+         Sk07stASDb4c8s2924NzVil3jcUBKY05PGQ/IwQ0Ne0OfjYRMxFD7A2UbZhTwaeHkKSI
+         /j3HAY5BChzX5mET9uMaIS7dHTaG7xphLcXMgoR8orOXRHhijJBxGk/8nAvhxfBmS3di
+         S8G6zDjIMbF88UugwnHg6Zs4faAcUQTK9zoCtfAO2XSVhM9CedAyS5EzP9aJ9LUs3Q8d
+         QTyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Y/abDyeAK7rGBvYDyizWyVwlF1sauFbaXbJ9R6MBx2w=;
+        b=LXJQVcAxQHZiENVnyFksnb3DrIFlwDub3rgt3DzFzuT68KGOdlsRsP8PbNIXnuwLQI
+         rNf0ul7+2tTsXJl0+BfzmLPrDSf57NvGdMRQDde/dDzSGvRLwPlC03xr7IzuzJDgimJd
+         Q7Kteiy1Ls/Yp+avVSamQMlDwII7r6tNAhRNN7u+Q3V2ZzNSkoHJSPmu0hfrYpCCTFC1
+         gVzYCiI54fgTIrFFjd1tzVlescKvGImlDVsC98Zll3ilz+oCw8dkj68ez5HHUbyPYpV5
+         ENSaAttJmWoWFxNy8aBOt5BJWnMswcXVyzIciAGSVbN9b5DlYT1gyEBj9UKSDzlrePLU
+         BRCA==
+X-Gm-Message-State: ANhLgQ2z043qqd5fq3A3q1PLtqzSMblb/LUnMwWc5Sv9Lj/HQSIPPL/7
+        VQLLfsUea6o2gChk74+pB/aKXg==
+X-Google-Smtp-Source: ADFU+vux8QM/2sxcYlqspl3JXz6luUGkH5emuSBHHZxomPcWFLW+MC2/DvbE2r9M9MtiL4J/aMZ4MA==
+X-Received: by 2002:a05:6000:11c6:: with SMTP id i6mr22412859wrx.115.1585673819466;
+        Tue, 31 Mar 2020 09:56:59 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e34:ed2f:f020:497e:e6a9:b3eb:fcac])
+        by smtp.gmail.com with ESMTPSA id d7sm12925648wrr.77.2020.03.31.09.56.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 09:56:58 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     daniel.lezcano@linaro.org
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        linux-pm@vger.kernel.org (open list:THERMAL),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/2] thermal: core: Make thermal_zone_set_trips private
+Date:   Tue, 31 Mar 2020 18:54:48 +0200
+Message-Id: <20200331165449.30355-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patricia,
+The function thermal_zone_set_trips() is used by the thermal core code
+in order to update the next trip points, there are no other users.
 
------ Ursprüngliche Mail -----
-> Von: "Patricia Alfonso" <trishalfonso@google.com>
-> An: "Johannes Berg" <johannes@sipsolutions.net>
-> CC: "Dmitry Vyukov" <dvyukov@google.com>, "Jeff Dike" <jdike@addtoit.com>, "richard" <richard@nod.at>, "anton ivanov"
-> <anton.ivanov@cambridgegreys.com>, "Andrey Ryabinin" <aryabinin@virtuozzo.com>, "Brendan Higgins"
-> <brendanhiggins@google.com>, "davidgow" <davidgow@google.com>, "linux-um" <linux-um@lists.infradead.org>,
-> "linux-kernel" <linux-kernel@vger.kernel.org>, "kasan-dev" <kasan-dev@googlegroups.com>
-> Gesendet: Dienstag, 31. März 2020 18:39:21
-> Betreff: Re: [PATCH] UML: add support for KASAN under x86_64
+Move the function definition in the thermal_core.h, remove the
+EXPORT_SYMBOL_GPL and document the function.
 
-> On Mon, Mar 30, 2020 at 1:41 AM Johannes Berg <johannes@sipsolutions.net> wrote:
->>
->> On Mon, 2020-03-30 at 10:38 +0200, Dmitry Vyukov wrote:
->> > On Mon, Mar 30, 2020 at 9:44 AM Johannes Berg <johannes@sipsolutions.net> wrote:
->> > > On Fri, 2020-03-20 at 16:18 +0100, Dmitry Vyukov wrote:
->> > > > > Wait ... Now you say 0x7fbfffc000, but that is almost fine? I think you
->> > > > > confused the values - because I see, on userspace, the following:
->> > > >
->> > > > Oh, sorry, I copy-pasted wrong number. I meant 0x7fff8000.
->> > >
->> > > Right, ok.
->> > >
->> > > > Then I would expect 0x1000 0000 0000 to work, but you say it doesn't...
->> > >
->> > > So it just occurred to me - as I was mentioning this whole thing to
->> > > Richard - that there's probably somewhere some check about whether some
->> > > space is userspace or not.
->> > >
-> 
-> Yeah, it seems the "Kernel panic - not syncing: Segfault with no mm",
-> "Kernel mode fault at addr...", and "Kernel tried to access user
-> memory at addr..." errors all come from segv() in
-> arch/um/kernel/trap.c due to what I think is this type of check
-> whether the address is
-> in userspace or not.
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/thermal/thermal_core.h    |  3 +++
+ drivers/thermal/thermal_helpers.c | 13 ++++++++++++-
+ include/linux/thermal.h           |  3 ---
+ 3 files changed, 15 insertions(+), 4 deletions(-)
 
-Segfault with no mm means that a (not fixable) pagefault happened while
-kernel code ran.
+diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
+index a9bf00e91d64..37cd4e2bead2 100644
+--- a/drivers/thermal/thermal_core.h
++++ b/drivers/thermal/thermal_core.h
+@@ -69,6 +69,9 @@ void thermal_zone_device_unbind_exception(struct thermal_zone_device *,
+ int thermal_zone_device_set_policy(struct thermal_zone_device *, char *);
+ int thermal_build_list_of_policies(char *buf);
+ 
++/* Helpers */
++void thermal_zone_set_trips(struct thermal_zone_device *tz);
++
+ /* sysfs I/F */
+ int thermal_zone_create_device_groups(struct thermal_zone_device *, int);
+ void thermal_zone_destroy_device_groups(struct thermal_zone_device *);
+diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
+index 2ba756af76b7..59eaf2d0fdb3 100644
+--- a/drivers/thermal/thermal_helpers.c
++++ b/drivers/thermal/thermal_helpers.c
+@@ -113,6 +113,18 @@ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+ }
+ EXPORT_SYMBOL_GPL(thermal_zone_get_temp);
+ 
++/**
++ * thermal_zone_set_trips - Computes the next trip points for the driver
++ * @tz: a pointer to a thermal zone device structure
++ *
++ * The function computes the next temperature boundaries by browsing
++ * the trip points. The result is the closer low and high trip points
++ * to the current temperature. These values are passed to the backend
++ * driver to let it set its own notification mechanism (usually an
++ * interrupt).
++ *
++ * It does not return a value
++ */
+ void thermal_zone_set_trips(struct thermal_zone_device *tz)
+ {
+ 	int low = -INT_MAX;
+@@ -161,7 +173,6 @@ void thermal_zone_set_trips(struct thermal_zone_device *tz)
+ exit:
+ 	mutex_unlock(&tz->lock);
+ }
+-EXPORT_SYMBOL_GPL(thermal_zone_set_trips);
+ 
+ void thermal_cdev_update(struct thermal_cooling_device *cdev)
+ {
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index c91b1e344d56..448841ab0dca 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -439,7 +439,6 @@ int thermal_zone_unbind_cooling_device(struct thermal_zone_device *, int,
+ 				       struct thermal_cooling_device *);
+ void thermal_zone_device_update(struct thermal_zone_device *,
+ 				enum thermal_notify_event);
+-void thermal_zone_set_trips(struct thermal_zone_device *);
+ 
+ struct thermal_cooling_device *thermal_cooling_device_register(const char *,
+ 		void *, const struct thermal_cooling_device_ops *);
+@@ -497,8 +496,6 @@ static inline int thermal_zone_unbind_cooling_device(
+ static inline void thermal_zone_device_update(struct thermal_zone_device *tz,
+ 					      enum thermal_notify_event event)
+ { }
+-static inline void thermal_zone_set_trips(struct thermal_zone_device *tz)
+-{ }
+ static inline struct thermal_cooling_device *
+ thermal_cooling_device_register(char *type, void *devdata,
+ 	const struct thermal_cooling_device_ops *ops)
+-- 
+2.17.1
 
->> > > I'm beginning to think that we shouldn't just map this outside of the
->> > > kernel memory system, but properly treat it as part of the memory that's
->> > > inside. And also use KASAN_VMALLOC.
->> > >
->> > > We can probably still have it at 0x7fff8000, just need to make sure we
->> > > actually map it? I tried with vm_area_add_early() but it didn't really
->> > > work once you have vmalloc() stuff...
->> >
-> 
-> What x86 does when KASAN_VMALLOC is disabled is make all vmalloc
-> region accesses succeed by default
-> by using the early shadow memory to have completely unpoisoned and
-> unpoisonable read-only pages for all of vmalloc (which includes
-> modules). When KASAN_VMALLOC is enabled in x86, the shadow memory is not
-> allocated for the vmalloc region at startup. New chunks of shadow
-> memory are allocated and unpoisoned every time there's a vmalloc()
-> call. A similar thing might have to be done here by mprotect()ing
-> the vmalloc space as read only, unpoisoned without KASAN_VMALLOC. This
-> issue here is that
-> kasan_init runs so early in the process that the vmalloc region for
-> uml is not setup yet.
-> 
-> 
->> > But we do mmap it, no? See kasan_init() -> kasan_map_memory() -> mmap.
->>
->> Of course. But I meant inside the UML PTE system. We end up *unmapping*
->> it when loading modules, because it overlaps vmalloc space, and then we
->> vfree() something again, and unmap it ... because of the overlap.
->>
->> And if it's *not* in the vmalloc area, then the kernel doesn't consider
->> it valid, and we seem to often just fault when trying to determine
->> whether it's valid kernel memory or not ... Though I'm not really sure I
->> understand the failure part of this case well yet.
->>
-> 
-> I have been testing this issue in a multitude of ways and have only
-> been getting more confused. It's still very unclear where exactly the
-> problem occurs, mostly because the errors I found most frequently were
-> reported in segv(), but the stack traces never contained segv.
-> 
-> Does anyone know if/how UML determines if memory being accessed is
-> kernel or user memory?
-
-In contrast to classic x86, without KPTI and SMAP/SMEP, UML has a strong
-separation between user- and kernel-memory. This is also why copy_from/to_user()
-is so expensive.
-
-In arch/um/kernel/trap.c segv() you can see the logic.
-Also see UPT_IS_USER().
-
-Thanks,
-//richard
