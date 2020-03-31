@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9109D19903D
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:10:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8948319912A
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:18:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731583AbgCaJKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:10:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53932 "EHLO mail.kernel.org"
+        id S1732050AbgCaJRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:17:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731147AbgCaJKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:10:13 -0400
+        id S1731905AbgCaJRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:17:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A34A2072E;
-        Tue, 31 Mar 2020 09:10:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29BDA20772;
+        Tue, 31 Mar 2020 09:17:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645812;
-        bh=rAT7k9QfL/uRKMskwddcHA1BKZ5ENz8y42pgaEwLH+I=;
+        s=default; t=1585646264;
+        bh=5w5sevNTNr86mBLCTM0fpE8hoT9scPHTJ9S4JvYEowQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z09UONIayBqSaGIQp91fFrgOridDgs+gBP12ULhbczpzOXhId9dKt7KXJ7e7tz2ko
-         3oyS466P7VqXk0Zyn+Rdh8xsGqCmVj5uqdQO720zdTezbqUWEfgvS3bxlVyB6WEjjU
-         5KuXy7SAqjsnuhxrP0WeRzpOgQpqyfdTEFL/XCVw=
+        b=FtR1zbAg+DubYMeRZv6veO4I5IpoP45WHbAyoAfoIvSch3DC6w4fgw5mIKwvIktnU
+         ke7MEdTqIOKgeg6/5eKnNXIxtkU6AAIhZsKDjcT+cUAhOj/CuMrkNHWTRoLdppDhVQ
+         uxtXU5g5CDqP4t1MIEs596Xw2XcmpF42YCSBYdg4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 5.5 157/170] staging: kpc2000: prevent underflow in cpld_reconfigure()
-Date:   Tue, 31 Mar 2020 10:59:31 +0200
-Message-Id: <20200331085439.631756439@linuxfoundation.org>
+        stable@vger.kernel.org, Ondrej Jirman <megous@megous.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH 5.4 132/155] ARM: dts: sun8i-a83t-tbs-a711: Fix USB OTG mode detection
+Date:   Tue, 31 Mar 2020 10:59:32 +0200
+Message-Id: <20200331085433.075509569@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
+References: <20200331085418.274292403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,38 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Ondrej Jirman <megous@megous.com>
 
-commit 72db61d7d17a475d3cc9de1a7c871d518fcd82f0 upstream.
+commit b642d4825441bf30c72b72deb739bd2d5f53af08 upstream.
 
-This function should not allow negative values of "wr_val".  If
-negatives are allowed then capping the upper bound at 7 is
-meaningless.  Let's make it unsigned.
+USB-ID signal has a pullup on the schematic, but in reality it's not
+pulled up, so add a GPIO pullup. And we also need a usb0_vbus_power-supply
+for VBUS detection.
 
-Fixes: 7dc7967fc39a ("staging: kpc2000: add initial set of Daktronics drivers")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200224103325.hrxdnaeqsthplu42@kili.mountain
+This fixes OTG mode detection and charging issues on TBS A711 tablet.
+The issues came from ID pin reading 0, causing host mode to be enabled,
+when it should not be, leading to DRVVBUS being enabled, which disabled
+the charger.
+
+Fixes: f2f221c7810b824e ("ARM: dts: sun8i: a711: Enable USB OTG")
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/kpc2000/kpc2000/core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/kpc2000/kpc2000/core.c
-+++ b/drivers/staging/kpc2000/kpc2000/core.c
-@@ -110,10 +110,10 @@ static ssize_t cpld_reconfigure(struct d
- 				const char *buf, size_t count)
- {
- 	struct kp2000_device *pcard = dev_get_drvdata(dev);
--	long wr_val;
-+	unsigned long wr_val;
- 	int rv;
+--- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+@@ -482,7 +482,8 @@
+ };
  
--	rv = kstrtol(buf, 0, &wr_val);
-+	rv = kstrtoul(buf, 0, &wr_val);
- 	if (rv < 0)
- 		return rv;
- 	if (wr_val > 7)
+ &usbphy {
+-	usb0_id_det-gpios = <&pio 7 11 GPIO_ACTIVE_HIGH>; /* PH11 */
++	usb0_id_det-gpios = <&pio 7 11 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>; /* PH11 */
++	usb0_vbus_power-supply = <&usb_power_supply>;
+ 	usb0_vbus-supply = <&reg_drivevbus>;
+ 	usb1_vbus-supply = <&reg_vmain>;
+ 	usb2_vbus-supply = <&reg_vmain>;
 
 
