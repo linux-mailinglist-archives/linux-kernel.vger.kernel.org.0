@@ -2,98 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23926198DA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76596198DD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:00:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730216AbgCaH4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 03:56:16 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55868 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730012AbgCaH4Q (ORCPT
+        id S1730034AbgCaIA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 04:00:28 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45907 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729819AbgCaIA2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 03:56:16 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r16so1368502wmg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 00:56:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=BMUV/Hj0+3itoIbuWpbc8ypyJxaIukLES3hau8z2Dt4=;
-        b=EaRepmSfeNXXk/gcdulzVoKebyVlprb0XPhhBJpt4NYbQ1ck9FdBI7jmx8q4UnJQUX
-         h5//eSDKwIdbwFwIoDoYdCvDaL++b5kAqPkBJKnHzuo21mgwlJ66YdpmuTv/xtHIFXag
-         DbcCGEUATsbWjqVYldAP/NUN6iAsRx2KNzDhWOjrKI5SJtgeK/gIx2NHkhTGvY+RoT6z
-         Ewi+6PmIvabUfCuSOmMHpx8iNmNIJaS9ADq0pCUPB0oG3cErdLkkJU3P61IqhIiR4lxN
-         FoaVKjR81lww4qmCY4T/4ocYG6cBj27r28E2xYFDno6VdsVBdLtOth6G23so6MHUThhE
-         BL+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=BMUV/Hj0+3itoIbuWpbc8ypyJxaIukLES3hau8z2Dt4=;
-        b=Y8p0Nf/F/5VTctJijTpMV88IIdtGfHyhzBvvDfA7sUODN0ugevqDaK0kWZ4z/BpoF6
-         mXNNpGFgG9/SgbEVNDohEUocK8fD2egav7mKJwzPMrDGpOH2m/q/Pmm/DKHR9z+Rsu95
-         iV+d0eZSjUqbhAYu9jPU3fnc8YIdroOe6pMqToPSSV+5Ea9PCRGkRWoD9sJxt3Z7T8Uo
-         FQlWEMM3iwdHw2pWrw4ArYBcjiEVIWribKFXMe5f4NYrmMaFhK+Lo5eTTnR2v9I1+mE/
-         b1zEMnKDgYXs1jjcjVEdUgtTGc7YzYTwK3KhuuMdh1VMA7C0bZqtJHhFZLas3Rn+OxFy
-         dw8A==
-X-Gm-Message-State: ANhLgQ3CrjTxRzElURuYgOTI+uXU9/OLEf7bQuSrpuo3INYkt2BNbQCa
-        jgMbv69Pc+z9L85KZxUf6JkvCTxT
-X-Google-Smtp-Source: ADFU+vtHeHDjLNqrR2pFNSgHBuURQEq5elddWS9MqWZeWo2k0DdlV7nVIpvi3/7EPW6vN3WzoRMvjQ==
-X-Received: by 2002:a1c:96d1:: with SMTP id y200mr2240267wmd.114.1585641374030;
-        Tue, 31 Mar 2020 00:56:14 -0700 (PDT)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id t12sm27794500wrm.0.2020.03.31.00.56.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 00:56:13 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 09:56:11 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/build changes for v5.7
-Message-ID: <20200331075611.GA129965@gmail.com>
+        Tue, 31 Mar 2020 04:00:28 -0400
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1jJBoq-0006jV-45; Tue, 31 Mar 2020 10:00:20 +0200
+Received: from [IPv6:2a03:f580:87bc:d400:9c00:37c7:b172:db58] (unknown [IPv6:2a03:f580:87bc:d400:9c00:37c7:b172:db58])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
+        (Authenticated sender: mkl@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id DC71A4D8C70;
+        Tue, 31 Mar 2020 08:00:17 +0000 (UTC)
+Subject: Re: [PATCH v2] ARM: imx: allow to disable board specific PHY fixups
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Oleksij Rempel <o.rempel@pengutronix.de>, linux-imx@nxp.com,
+        kernel@pengutronix.de, David Jander <david@protonic.nl>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Heiner Kallweit <hkallweit1@gmail.com>
+References: <20200329110457.4113-1-o.rempel@pengutronix.de>
+ <20200329150854.GA31812@lunn.ch>
+ <20200330052611.2bgu7x4nmimf7pru@pengutronix.de>
+ <40209d08-4acb-75c5-1766-6d39bb826ff9@gmail.com>
+ <20200330174114.GG25745@shell.armlinux.org.uk>
+ <5ae5c0de-f05c-5e3f-86e1-a9afdd3e1ef1@pengutronix.de>
+ <20200331075457.GJ25745@shell.armlinux.org.uk>
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
+ mQINBFFVq30BEACtnSvtXHoeHJxG6nRULcvlkW6RuNwHKmrqoksispp43X8+nwqIFYgb8UaX
+ zu8T6kZP2wEIpM9RjEL3jdBjZNCsjSS6x1qzpc2+2ivjdiJsqeaagIgvy2JWy7vUa4/PyGfx
+ QyUeXOxdj59DvLwAx8I6hOgeHx2X/ntKAMUxwawYfPZpP3gwTNKc27dJWSomOLgp+gbmOmgc
+ 6U5KwhAxPTEb3CsT5RicsC+uQQFumdl5I6XS+pbeXZndXwnj5t84M+HEj7RN6bUfV2WZO/AB
+ Xt5+qFkC/AVUcj/dcHvZwQJlGeZxoi4veCoOT2MYqfR0ax1MmN+LVRvKm29oSyD4Ts/97cbs
+ XsZDRxnEG3z/7Winiv0ZanclA7v7CQwrzsbpCv+oj+zokGuKasofzKdpywkjAfSE1zTyF+8K
+ nxBAmzwEqeQ3iKqBc3AcCseqSPX53mPqmwvNVS2GqBpnOfY7Mxr1AEmxdEcRYbhG6Xdn+ACq
+ Dq0Db3A++3PhMSaOu125uIAIwMXRJIzCXYSqXo8NIeo9tobk0C/9w3fUfMTrBDtSviLHqlp8
+ eQEP8+TDSmRP/CwmFHv36jd+XGmBHzW5I7qw0OORRwNFYBeEuiOIgxAfjjbLGHh9SRwEqXAL
+ kw+WVTwh0MN1k7I9/CDVlGvc3yIKS0sA+wudYiselXzgLuP5cQARAQABtCZNYXJjIEtsZWlu
+ ZS1CdWRkZSA8bWtsQHBlbmd1dHJvbml4LmRlPokCVAQTAQoAPgIbAwIeAQIXgAULCQgHAwUV
+ CgkICwUWAgMBABYhBMFAC6CzmJ5vvH1bXCte4hHFiupUBQJcUsSbBQkM366zAAoJECte4hHF
+ iupUgkAP/2RdxKPZ3GMqag33jKwKAbn/fRqAFWqUH9TCsRH3h6+/uEPnZdzhkL4a9p/6OeJn
+ Z6NXqgsyRAOTZsSFcwlfxLNHVxBWm8pMwrBecdt4lzrjSt/3ws2GqxPsmza1Gs61lEdYvLST
+ Ix2vPbB4FAfE0kizKAjRZzlwOyuHOr2ilujDsKTpFtd8lV1nBNNn6HBIBR5ShvJnwyUdzuby
+ tOsSt7qJEvF1x3y49bHCy3uy+MmYuoEyG6zo9udUzhVsKe3hHYC2kfB16ZOBjFC3lH2U5An+
+ yQYIIPZrSWXUeKjeMaKGvbg6W9Oi4XEtrwpzUGhbewxCZZCIrzAH2hz0dUhacxB201Y/faY6
+ BdTS75SPs+zjTYo8yE9Y9eG7x/lB60nQjJiZVNvZ88QDfVuLl/heuIq+fyNajBbqbtBT5CWf
+ mOP4Dh4xjm3Vwlz8imWW/drEVJZJrPYqv0HdPbY8jVMpqoe5jDloyVn3prfLdXSbKPexlJaW
+ 5tnPd4lj8rqOFShRnLFCibpeHWIumqrIqIkiRA9kFW3XMgtU6JkIrQzhJb6Tc6mZg2wuYW0d
+ Wo2qvdziMgPkMFiWJpsxM9xPk9BBVwR+uojNq5LzdCsXQ2seG0dhaOTaaIDWVS8U/V8Nqjrl
+ 6bGG2quo5YzJuXKjtKjZ4R6k762pHJ3tnzI/jnlc1sXz
+Message-ID: <f1352a82-be3a-cd0a-7cba-6f338f205098@pengutronix.de>
+Date:   Tue, 31 Mar 2020 10:00:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200331075457.GJ25745@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 3/31/20 9:54 AM, Russell King - ARM Linux admin wrote:
+> On Tue, Mar 31, 2020 at 09:47:19AM +0200, Marc Kleine-Budde wrote:
+>> On 3/30/20 7:41 PM, Russell King - ARM Linux admin wrote:
+>>>>> arch/arm/mach-imx/mach-imx6q.c:167:		phy_register_fixup_for_uid(PHY_ID_KSZ9021, MICREL_PHY_ID_MASK,
+>>>>> arch/arm/mach-imx/mach-imx6q.c:169:		phy_register_fixup_for_uid(PHY_ID_KSZ9031, MICREL_PHY_ID_MASK,
+>>>>> arch/arm/mach-imx/mach-imx6q.c:171:		phy_register_fixup_for_uid(PHY_ID_AR8031, 0xffffffef,
+>>>>> arch/arm/mach-imx/mach-imx6q.c:173:		phy_register_fixup_for_uid(PHY_ID_AR8035, 0xffffffef,
+>>>
+>>> As far as I'm concerned, the AR8035 fixup is there with good reason.
+>>> It's not just "random" but is required to make the AR8035 usable with
+>>> the iMX6 SoCs.  Not because of a board level thing, but because it's
+>>> required for the AR8035 to be usable with an iMX6 SoC.
+>>
+>> Is this still ture, if the AR8035 is attached to a switch behind an iMX6?
+> 
+> Do you know of such a setup, or are you talking about theoretical
+> situations?
 
-Please pull the latest x86-build-for-linus git tree from:
+Granted, not for the AR8035, but for one of the KSZ Phys. This is why
+Oleksij started looking into this issue in the first place.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-build-for-linus
+regards,
+Marc
 
-   # HEAD: 4caffe6a28d3157c11cae923a40456a053c520ea x86/vdso: Discard .note.gnu.property sections in vDSO
-
-A handful of updates: two linker script cleanups and a stock 
-defconfig+allmodconfig bootability fix.
-
-  out-of-topic modifications in x86-build-for-linus:
-  ----------------------------------------------------
-  include/asm-generic/vmlinux.lds.h  # 84d5f77fc2ee: x86, vmlinux.lds: Add RUNTIM
-
- Thanks,
-
-	Ingo
-
------------------->
-Anders Roxell (1):
-      x86/Kconfig: Make CMDLINE_OVERRIDE depend on non-empty CMDLINE
-
-H.J. Lu (2):
-      x86, vmlinux.lds: Add RUNTIME_DISCARD_EXIT to generic DISCARDS
-      x86/vdso: Discard .note.gnu.property sections in vDSO
-
-
- arch/x86/Kconfig                      |  2 +-
- arch/x86/entry/vdso/vdso-layout.lds.S |  7 +++++++
- arch/x86/kernel/vmlinux.lds.S         |  1 +
- include/asm-generic/vmlinux.lds.h     | 11 +++++++++--
- 4 files changed, 18 insertions(+), 3 deletions(-)
-
+-- 
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
