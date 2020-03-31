@@ -2,159 +2,280 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A9D1199FCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 22:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 254E7199FCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 22:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730784AbgCaUKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 16:10:20 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52626 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727720AbgCaUKT (ORCPT
+        id S1730720AbgCaUMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 16:12:02 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38961 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbgCaUMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 16:10:19 -0400
-Received: by mail-wm1-f66.google.com with SMTP id t8so575523wmi.2;
-        Tue, 31 Mar 2020 13:10:17 -0700 (PDT)
+        Tue, 31 Mar 2020 16:12:02 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p10so27691335wrt.6;
+        Tue, 31 Mar 2020 13:12:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1ImEIaV3nXuK6yquJu5EukWx7JhTMru+TXwYXIQyAaI=;
-        b=E99eDqdY4HJGId13EKiYbpscE70iR0/OVbLNeuthXDg+Ohbo2KcDauSJWxb0ASyQVv
-         pYtqeU24eUsVwyzRPse4B/iCch2Uk9Y2SgI4Urh/RqfciqNNJz5AAtNXjBb+O+yrWJ6n
-         bgO8T3NBS3UUQ4W0W5Yma8lcQAgrKjzdJd6kAaRhhEd3taqRjHXaeFGY7CGu/qRIm4fS
-         CkdIntsYlG7ZeuCFx7F497Cg6xjaEv7c1TW3+rAaY40LzE5GnDeNjFKdoF1lF65yy4FC
-         DQOzN0AmTrCs8/iKrv5BoJ2QUvZTPDuBfqL4xq54WOFRzvOUeBfPrWOIYZ/0u6oAtGT3
-         oEbQ==
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RUmPx3cevd5HZrmJAUoNAL0yIpKXpLkOD4yFNFX1yoU=;
+        b=npyePQy8NbdBmc1YC1LMGz/bFjU+8XHeYhdTjCxlwuasRIKbBvchVKMttTRkTSRkxZ
+         2tbdIV0bW9GOyOWmN577i1quhz9M1+xoSGLzvFpJzCleJyzg2rtXfNvlMxe/FJNZ+05J
+         xMvm0UrcFusDPGkNJSr9r2xsTiu7YrafZeW1IMAf4llJ8u8yu7h6HrafmYiEZ0tDr5Zv
+         KxRJhAw/m5KAFBL+fpU9g8nUitWHiejc9F/MznGeZ6lmGQljDr3hyCQLEBvpxjX6ebHj
+         lc3n9rQPouoYxgidALQ4sfe3U62t1OGba+V/TsSJHwtKaEiBoKa1ZXYuCKo/elh44/x+
+         iZsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1ImEIaV3nXuK6yquJu5EukWx7JhTMru+TXwYXIQyAaI=;
-        b=hBgt/p88NmAwj2H0O4K9CXBSIWZfmp0jZX8zFihdWy+RGDUA/RQ4QkFe6AQ1ZWO6IB
-         F1Xmc7mzxtxvmc126x6zEZf+BSDSHP0TIn7aitaK3dntbkD9G7VtlZF7IFe/rkuZBENl
-         5ZRSVfc9nfZvFoT3OaNfNRmuBw9Aglljsc90up6p9Kyef/U0A19Y49w+f9HB7mZGErZm
-         jG0Udq6vcsi2JDGk3JeKP7YbkDOv4Lh69vLxv3VwVU8Pyt5XeyBHikTfVSOGuMbEFIY2
-         h1pK6e+j/c3FuOBCvm+MzoVc57pFrrWmsbyXurQOuUpz9B3jVxJOSAkTXcPyf/2v/YEJ
-         KRZg==
-X-Gm-Message-State: AGi0Pub4jO/GqjgiPhtQRvjgG7JTscOrGXrvsnd5I/YA3cxIgMyablVV
-        rDs65gMYBWKdMO1e/BRlnKA=
-X-Google-Smtp-Source: APiQypIXhVEBSl058ScHcaAUhfncpA1Z+DlZ2N/DTT5Emn6Kqlx3gbOH/lW9gKvpR8ZCm0MkBthHrg==
-X-Received: by 2002:a05:600c:2294:: with SMTP id 20mr565380wmf.130.1585685416991;
-        Tue, 31 Mar 2020 13:10:16 -0700 (PDT)
-Received: from localhost (p200300E41F4A9B0076D02BFFFE273F51.dip0.t-ipconnect.de. [2003:e4:1f4a:9b00:76d0:2bff:fe27:3f51])
-        by smtp.gmail.com with ESMTPSA id w9sm30494935wrk.18.2020.03.31.13.10.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 13:10:15 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 22:10:14 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Tony Lindgren <tony@atomide.com>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>
-Subject: Re: [PATCH v3 4/5] pwm: omap-dmtimer: Do not disable pwm before
- changing period/duty_cycle
-Message-ID: <20200331201014.GA2954599@ulmo>
-References: <20200312042210.17344-1-lokeshvutla@ti.com>
- <20200312042210.17344-5-lokeshvutla@ti.com>
- <20200312064042.p7himm3odxjyzroi@pengutronix.de>
- <20200330141436.GG2431644@ulmo>
- <638d7136-6a74-8069-5331-b2248c948ed4@ti.com>
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RUmPx3cevd5HZrmJAUoNAL0yIpKXpLkOD4yFNFX1yoU=;
+        b=KjkkoNkWF+JvTsPOsAjpv9tiUpjPo7d7bY0WNo/717DTQTxWM1vVCvxCMcKdlqmzQZ
+         Uq80Pu1kCItyVuSSFqaqMibqqjFf98whK4X0CnsDNcm9/mwCQcpmTmXjLXFECgdKINKO
+         MagokDol9N1dR2s3O07zrCjcMGMapzCg2xTW2VJ3Ys8nVjVNIAxQLlBfIOqtAoDU3CFt
+         3kOV5bZaC6TysFB8QtMDDx0aewvZPdSdWqMUwzF7UiATkMWT9WLd/wlVPyJZxP+D0Fm6
+         z7nRiZOXHQVF5pFn4gG/F7o49t6dsOdN+Bwb3Rim3F7Osctb8R81K/tgfJ+g3Tpq1de3
+         CZgA==
+X-Gm-Message-State: ANhLgQ1U3AcNTMwrdtAI/kZkDxb9Tyr17+Iq6AKJxNK10ZzhC6osIsK0
+        pw1tXYAHdeUyOgaiB7DoW1YDEqUn
+X-Google-Smtp-Source: ADFU+vuu2swnichiks2Lj/ihW0G02ubfVMQczz01OL3K+e+8SgMvcZ+yDC59CMOWBd7lXFOZ5gtvTA==
+X-Received: by 2002:adf:ee12:: with SMTP id y18mr21325311wrn.289.1585685519143;
+        Tue, 31 Mar 2020 13:11:59 -0700 (PDT)
+Received: from ?IPv6:2001:a61:2482:101:3351:6160:8173:cc31? ([2001:a61:2482:101:3351:6160:8173:cc31])
+        by smtp.gmail.com with ESMTPSA id m11sm5109328wmf.9.2020.03.31.13.11.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Mar 2020 13:11:58 -0700 (PDT)
+Cc:     mtk.manpages@gmail.com, tycho@tycho.ws, jannh@google.com,
+        cyphar@cyphar.com, christian.brauner@ubuntu.com, oleg@redhat.com,
+        luto@amacapital.net, viro@zeniv.linux.org.uk,
+        gpascutto@mozilla.com, ealvarez@mozilla.com, fweimer@redhat.com,
+        jld@mozilla.com, arnd@arndb.de,
+        linux-man <linux-man@vger.kernel.org>
+Subject: RFC: pidfd_getfd(2) manual page
+To:     Sargun Dhillon <sargun@sargun.me>, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200107175927.4558-1-sargun@sargun.me>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <5ea5233c-9247-aa7c-2819-51b7670de127@gmail.com>
+Date:   Tue, 31 Mar 2020 22:11:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
-Content-Disposition: inline
-In-Reply-To: <638d7136-6a74-8069-5331-b2248c948ed4@ti.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+In-Reply-To: <20200107175927.4558-1-sargun@sargun.me>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Sargun et al.
 
---BOKacYhQ+x31HxR3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I've taken a shot at writing a manual page for pidfd_getfd().
+I would be happy to receive comments, suggestions for
+improvements, etc. The text is as follows (the groff source 
+is at the foot of this mail):
 
-On Tue, Mar 31, 2020 at 08:59:47PM +0530, Lokesh Vutla wrote:
-> Hi Thierry,
->=20
-> On 30/03/20 7:44 PM, Thierry Reding wrote:
-> > On Thu, Mar 12, 2020 at 07:40:42AM +0100, Uwe Kleine-K=C3=B6nig wrote:
-> >> On Thu, Mar 12, 2020 at 09:52:09AM +0530, Lokesh Vutla wrote:
-> >>> Only the Timer control register(TCLR) cannot be updated when the timer
-> >>> is running. Registers like Counter register(TCRR), loader register(TL=
-DR),
-> >>> match register(TMAR) can be updated when the counter is running. Since
-> >>> TCLR is not updated in pwm_omap_dmtimer_config(), do not stop the
-> >>> timer for period/duty_cycle update.
-> >>
-> >> I'm not sure what is sensible here. Stopping the PWM for a short period
-> >> is bad, but maybe emitting a wrong period isn't better. You can however
-> >> optimise it if only one of period or duty_cycle changes.
-> >>
-> >> @Thierry, what is your position here? I tend to say a short stop is
-> >> preferable.
-> >=20
-> > It's not clear to me from the above description how exactly the device
-> > behaves, but I suspect that it may latch the values in those registers
-> > and only update the actual signal output once a period has finished. I
-> > know of a couple of other devices that do that, so it wouldn't be
-> > surprising.
-> >=20
-> > Even if that was not the case, I think this is just the kind of thing
-> > that we have to live with. Sometimes it just isn't possible to have all
-> > supported devices adhere strictly to an API. So I think the best we can
-> > do is have an API that loosely defines what's supposed to happen and
-> > make a best effort to implement those semantics. If a device deviates
-> > slightly from those expectations, we can always cross fingers and hope
-> > that things still work. And it looks like they are.
-> >=20
-> > So I think if Lokesh and Tony agree that this is the right thing to do
-> > and have verified that things still work after this, that's about as
-> > good as it's going to get.
->=20
-> Yes this is needed especially in the use-case[0] that I am trying to enab=
-le
-> using PWM. In this case PWM cannot be stopped in between and needs to be =
-updated
-> dynamically. Also hardware doesn't provide any restrictions on updating t=
-he
-> period. So IMHO, this might be the right thing to do.
->=20
-> Tony did provide tested-by and I measured PWM signals on scope with these
-> changes. Let me know if any thing else is required?
->=20
-> [0] https://sourceforge.net/p/linuxptp/mailman/message/36943248/
+NAME
+       pidfd_getfd  -  obtain  a  duplicate  of  another  process's  file
+       descriptor
 
-=46rom you measurements, can you tell whether or not the signal actually
-gets updated in the middle of a period, or does it only get updated at
-the end of a full period?
+SYNOPSIS
+       int pidfd_getfd(int pidfd, int targetfd, unsigned int flags);
 
-Does the reference manual document this?
+DESCRIPTION
+       The pidfd_getfd() system call allocates a new file  descriptor  in
+       the  calling  process.  This new file descriptor is a duplicate of
+       an existing file descriptor, targetfd, in the process referred  to
+       by the PID file descriptor pidfd.
 
-Thierry
+       The  duplicate  file  descriptor  refers  to  the  same  open file
+       description (see open(2)) as the original file descriptor  in  the
+       process referred to by pidfd.  The two file descriptors thus share
+       file status flags and file offset.  Furthermore, operations on the
+       underlying  file  object  (for  example, assigning an address to a
+       socket object using bind(2)) can be equally be performed  via  the
+       duplicate file descriptor.
 
---BOKacYhQ+x31HxR3
-Content-Type: application/pgp-signature; name="signature.asc"
+       The  close-on-exec  flag  (FD_CLOEXEC; see fcntl(2)) is set on the
+       file descriptor returned by pidfd_getfd().
 
------BEGIN PGP SIGNATURE-----
+       The flags argument is reserved for future use.  Currently, it must
+       be specified as 0.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6Do6YACgkQ3SOs138+
-s6GpWw/9En4Lm+RFouT2oX8bU3PqB2/Osqii7EKJN3vMtai+xafLPW9dtxA4SKqv
-+YwY883PKm0oRZZIdXu7Ul+3d01c+oMD4BA6DqQkUbi9UUd4an+Dk+lYLsy6iIjc
-4xx2ntB7GD5zpNXBqMJuU91nQ5bDiaKhp7UuwE+unO4QslHephbnyV5QGxWAUEOC
-FP+f8WBPIm/xmwNGWkgVVOrmWDPptJFLSL0j0nBGB4En9Gm7hAaNnVPJUNUeuUE2
-iNBV27uNrREKX6zUumZvTWzSABA8Cx6zd8/nA2Hra+PO2LmmDfdpl3dKqZDXuu8b
-luR+Cm0DFXpAC+3xuTD50pYqN0fWB5POvXvqBb3eZxpXd8z8vAdypgvmJi/gqb4P
-8jPgMdkeO/6ilLphZMLfyvl1AfcBp5XtZ0V70Uj75mC6MgOZAvbVqcRAT2U4ZGnn
-HI1YY8Ae/QfVqZetuK4sjIrt9h4a60RZ45CFX/+2uAo1imzYHItsk+9NtWSxr2nh
-DrzNK5RW6MfRPfyRMNhpcsbOH0wHuHAhFCDjNSzRpYmXc4C4qb1JFnkzbZng+XP+
-KcYJ1mDsJ1IfU9+mGVowb5QDPb4xo9mfn4TIqNzN0nBLFYInI/bGEz2gRtdfAT+X
-BBimFPPVbr1udSQJGTJ7Ei9wh89lmBdKW39XnVvsjI0407anivQ=
-=SKaG
------END PGP SIGNATURE-----
+       Permission  to duplicate another process's file descriptor is gov‐
+       erned by a ptrace access mode  PTRACE_MODE_ATTACH_REALCREDS  check
+       (see ptrace(2)).
 
---BOKacYhQ+x31HxR3--
+RETURN VALUE
+       On  success,  pidfd_getfd() returns a nonnegative file descriptor.
+       On error, -1 is returned and errno is set to indicate the cause of
+       the error.
+
+ERRORS
+       EBADF  pidfd is not a valid PID file descriptor.
+
+       EBADF  targetfd  is  not  an  open  file descriptor in the process
+              referred to by pidfd.
+
+       EINVAL flags is not 0.
+
+       EMFILE The per-process limit on the number of open  file  descrip‐
+              tors has been reached (see the description of RLIMIT_NOFILE
+              in getrlimit(2)).
+
+       ENFILE The system-wide limit on the total number of open files has
+              been reached.
+
+       ESRCH  The  process  referred to by pidfd does not exist (i.e., it
+              has terminated and been waited on).
+
+VERSIONS
+       pidfd_getfd() first appeared in Linux 5.6.
+
+CONFORMING TO
+       pidfd_getfd() is Linux specific.
+
+NOTES
+       Currently, there is no glibc wrapper for this system call; call it
+       using syscall(2).
+
+       For a description of PID file descriptors, see pidfd_open(2).
+
+SEE ALSO
+       clone3(2), kcmp(2), pidfd_open(2)
+
+Cheers,
+
+Michael
+
+.\" Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" %%%LICENSE_START(VERBATIM)
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one.
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" %%%LICENSE_END
+.\"
+.TH PIDFD_GETFD 2 2020-03-31 "Linux" "Linux Programmer's Manual"
+.SH NAME
+pidfd_getfd \- obtain a duplicate of another process's file descriptor
+.SH SYNOPSIS
+.nf
+.BI "int pidfd_getfd(int " pidfd ", int " targetfd ", unsigned int " flags );
+.fi
+.SH DESCRIPTION
+The
+.BR pidfd_getfd ()
+system call allocates a new file descriptor in the calling process.
+This new file descriptor is a duplicate of an existing file descriptor,
+.IR targetfd ,
+in the process referred to by the PID file descriptor
+.IR pidfd .
+.PP
+The duplicate file descriptor refers to the same open file description (see
+.BR open (2))
+as the original file descriptor in the process referred to by
+.IR pidfd .
+The two file descriptors thus share file status flags and file offset.
+Furthermore, operations on the underlying file object
+(for example, assigning an address to a socket object using
+.BR bind (2))
+can be equally be performed via the duplicate file descriptor.
+.PP
+The close-on-exec flag
+.RB ( FD_CLOEXEC ;
+see
+.BR fcntl (2))
+is set on the file descriptor returned by
+.BR pidfd_getfd ().
+.PP
+The
+.I flags
+argument is reserved for future use.
+Currently, it must be specified as 0.
+.PP
+Permission to duplicate another process's file descriptor
+is governed by a ptrace access mode
+.B PTRACE_MODE_ATTACH_REALCREDS
+check (see
+.BR ptrace (2)).
+.SH RETURN VALUE
+On success,
+.BR pidfd_getfd ()
+returns a nonnegative file descriptor.
+On error, \-1 is returned and
+.I errno
+is set to indicate the cause of the error.
+.SH ERRORS
+.TP
+.B EBADF
+.I pidfd
+is not a valid PID file descriptor.
+.TP
+.B EBADF
+.I targetfd
+is not an open file descriptor in the process referred to by
+.IR pidfd .
+.BR 
+.TP
+.B EINVAL
+.I flags
+is not 0.
+.TP
+.B EMFILE
+The per-process limit on the number of open file descriptors has been reached
+(see the description of
+.BR RLIMIT_NOFILE
+in
+.BR getrlimit (2)).
+.TP
+.B ENFILE
+The system-wide limit on the total number of open files has been reached.
+.TP
+.B ESRCH
+The process referred to by
+.I pidfd
+does not exist
+(i.e., it has terminated and been waited on).
+.SH VERSIONS
+.BR pidfd_getfd ()
+first appeared in Linux 5.6.
+.\" commit 8649c322f75c96e7ced2fec201e123b2b073bf09
+.SH CONFORMING TO
+.BR pidfd_getfd ()
+is Linux specific.
+.SH NOTES
+Currently, there is no glibc wrapper for this system call; call it using
+.BR syscall (2).
+.PP
+For a description of PID file descriptors, see
+.BR pidfd_open (2).
+.SH SEE ALSO
+.BR clone3 (2),
+.BR kcmp (2),
+.BR pidfd_open (2)
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
