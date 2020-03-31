@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4ECC19905C
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:11:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF235198F99
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:04:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731185AbgCaJLR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:11:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55688 "EHLO mail.kernel.org"
+        id S1730990AbgCaJEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:04:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731456AbgCaJLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:11:10 -0400
+        id S1730662AbgCaJEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:04:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BB09217D8;
-        Tue, 31 Mar 2020 09:11:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B2A720787;
+        Tue, 31 Mar 2020 09:04:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645869;
-        bh=o6I1deaHSF79AvmALkGyrIcRGVQXhdFIC8H98FU19rc=;
+        s=default; t=1585645478;
+        bh=IKMRmH74vmWvgonCOt9OVPayC8V5NZ4cwRm+9cNEM0k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WNdlutahkDQEM33TVmrjMavmMCUqRzUhuPuNEWmALCH4cFs0Ka0vvO3sPTrTaU+u6
-         3ghqLx3ivi6buJewz1+YufZDbLY2DovOArf5LbWsA0MPYxqJnSUyydNpg0TutWrzKW
-         MuYOeALMtM5cH3sMGF5LicX4n3fQTxds/yaNJ07Y=
+        b=Wa8gP2RyfeKaIhDNlUNtXCenrvX/DcJgxjM01HFpyBKsmwRO/9VVUKf880l5f0Rtc
+         hZrlwnZnIY40f8/xgtHJdTu1oBiXKXxRHpqtW2uuT27bIGLZ1PZTibYjjw7FH79P5T
+         qLD65Pg3d5a2ZuURCs9FbSQ2s4WE9FmXePsr+Tsc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 003/155] mmc: core: Respect MMC_CAP_NEED_RSP_BUSY for eMMC sleep command
-Date:   Tue, 31 Mar 2020 10:57:23 +0200
-Message-Id: <20200331085418.610110562@linuxfoundation.org>
+        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+653090db2562495901dc@syzkaller.appspotmail.com
+Subject: [PATCH 5.5 030/170] net_sched: hold rtnl lock in tcindex_partial_destroy_work()
+Date:   Tue, 31 Mar 2020 10:57:24 +0200
+Message-Id: <20200331085427.277734183@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
-References: <20200331085418.274292403@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 18d200460cd73636d4f20674085c39e32b4e0097 ]
+[ Upstream commit b1be2e8cd290f620777bfdb8aa00890cd2fa02b5 ]
 
-The busy timeout for the CMD5 to put the eMMC into sleep state, is specific
-to the card. Potentially the timeout may exceed the host->max_busy_timeout.
-If that becomes the case, mmc_sleep() converts from using an R1B response
-to an R1 response, as to prevent the host from doing HW busy detection.
+syzbot reported a use-after-free in tcindex_dump(). This is due to
+the lack of RTNL in the deferred rcu work. We queue this work with
+RTNL in tcindex_change(), later, tcindex_dump() is called:
 
-However, it has turned out that some hosts requires an R1B response no
-matter what, so let's respect that via checking MMC_CAP_NEED_RSP_BUSY. Note
-that, if the R1B gets enforced, the host becomes fully responsible of
-managing the needed busy timeout, in one way or the other.
+        fh = tp->ops->get(tp, t->tcm_handle);
+	...
+        err = tp->ops->change(..., &fh, ...);
+        tfilter_notify(..., fh, ...);
 
-Suggested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200311092036.16084-1-ulf.hansson@linaro.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+but there is nothing to serialize the pending
+tcindex_partial_destroy_work() with tcindex_dump().
+
+Fix this by simply holding RTNL in tcindex_partial_destroy_work(),
+so that it won't be called until RTNL is released after
+tc_new_tfilter() is completed.
+
+Reported-and-tested-by: syzbot+653090db2562495901dc@syzkaller.appspotmail.com
+Fixes: 3d210534cc93 ("net_sched: fix a race condition in tcindex_destroy()")
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/core/mmc.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/sched/cls_tcindex.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index c8804895595f4..b7159e243323b 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -1911,9 +1911,12 @@ static int mmc_sleep(struct mmc_host *host)
- 	 * If the max_busy_timeout of the host is specified, validate it against
- 	 * the sleep cmd timeout. A failure means we need to prevent the host
- 	 * from doing hw busy detection, which is done by converting to a R1
--	 * response instead of a R1B.
-+	 * response instead of a R1B. Note, some hosts requires R1B, which also
-+	 * means they are on their own when it comes to deal with the busy
-+	 * timeout.
- 	 */
--	if (host->max_busy_timeout && (timeout_ms > host->max_busy_timeout)) {
-+	if (!(host->caps & MMC_CAP_NEED_RSP_BUSY) && host->max_busy_timeout &&
-+	    (timeout_ms > host->max_busy_timeout)) {
- 		cmd.flags = MMC_RSP_R1 | MMC_CMD_AC;
- 	} else {
- 		cmd.flags = MMC_RSP_R1B | MMC_CMD_AC;
--- 
-2.20.1
-
+--- a/net/sched/cls_tcindex.c
++++ b/net/sched/cls_tcindex.c
+@@ -261,8 +261,10 @@ static void tcindex_partial_destroy_work
+ 					      struct tcindex_data,
+ 					      rwork);
+ 
++	rtnl_lock();
+ 	kfree(p->perfect);
+ 	kfree(p);
++	rtnl_unlock();
+ }
+ 
+ static void tcindex_free_perfect_hash(struct tcindex_data *cp)
 
 
