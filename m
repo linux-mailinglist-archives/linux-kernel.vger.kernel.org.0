@@ -2,144 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 892EE1992BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A38D1992C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:57:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730373AbgCaJzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:55:55 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46323 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730217AbgCaJzy (ORCPT
+        id S1730263AbgCaJ5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:57:54 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:42880 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729997AbgCaJ5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:55:54 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q3so10079133pff.13;
-        Tue, 31 Mar 2020 02:55:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OhHn08M8/D8HCM9gjXRbI/j0PhmAwA3tYAp3gRgxrKk=;
-        b=veoTVgVRtYQTK+5zN3HYDh+HdtUTeX2nPPRVzQPABdleK9zHQb4Qfl3r/T33195phu
-         DUMvCdDjmJ78SwW3P5o7zoX0gQW9ZZDwSrxEVbpixY5yShzky96M6m66YJKWwWc/MH7V
-         DTMF5UWOC4YbOb73eYMwZR65xCARdm0J/queSu86YPQrB0FH77ohZOcmu/5KUeQVQ6I4
-         nQFqCHefw2XGkVEG/L6uSEWsxvl3sjAAL6Ir2zECJfvkWLoJdbK4tzNXLmcUYsGJ/sBq
-         CPnwAaW2kHAUq3VyOfa33eKhAyvQVC0DX4/21UX9tD/bRIhnr7KrIZxDHyWY1o/jw5ul
-         +t5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OhHn08M8/D8HCM9gjXRbI/j0PhmAwA3tYAp3gRgxrKk=;
-        b=qfBNUbcbHxNKTH3tp86gb0/BWysLF7QEpcAm6XHTs+C5M462q2VxeS8OpKkVJ3bA1h
-         h0LRQ5zXQzmRvs5Sh9Dc6GIPZ+hCoArIsafUg+gIQYZz7wVRV8l76BhJNJrqw6VEEDiY
-         ktnRRZmBEZJku9HMxm45xOtBlnpKwXornjOnlFhz60WzrSEyx/I8bF9NUflaBWq79eOG
-         NsENh2s09QliQiGO91BLSnKJLO/f3Two2w0a97Sjh8MmOPr7ABNhCxu2tLdO8IT/Yxs2
-         m6pJNaSBt9S4+QPu6nI3dCcp7myluDUy4LJ8En0t7YkzMjLL5vJtq+z+fwNarlk5V8Nk
-         5/IQ==
-X-Gm-Message-State: AGi0PuZ9SaC+lbGKRngEJwuv8WZGhy8Mxn+x31QC4XAQaGTCZ0AmTwJB
-        8b8hUA02LYveYrPxrvWBADE=
-X-Google-Smtp-Source: APiQypKviN8/GNUryvnwnsY+oU28GHx/wV6pyb4CAI4uheoqqx5DsQb2OaoNtRTW26FnN4BK6da7gA==
-X-Received: by 2002:a63:8ac3:: with SMTP id y186mr4395435pgd.277.1585648552952;
-        Tue, 31 Mar 2020 02:55:52 -0700 (PDT)
-Received: from Asurada (c-73-162-191-63.hsd1.ca.comcast.net. [73.162.191.63])
-        by smtp.gmail.com with ESMTPSA id mq6sm1626110pjb.38.2020.03.31.02.55.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Mar 2020 02:55:52 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 02:55:34 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 1/7] ASoC: dt-bindings: fsl_asrc: Add new property
- fsl,asrc-format
-Message-ID: <20200331095534.GA2976@Asurada>
-References: <cover.1583725533.git.shengjiu.wang@nxp.com>
- <24f69c50925b93afd7a706bd888ee25d27247c78.1583725533.git.shengjiu.wang@nxp.com>
- <20200309211943.GB11333@Asurada-Nvidia.nvidia.com>
- <20200320173213.GA9093@bogus>
- <20200323212038.GA7527@Asurada-Nvidia.nvidia.com>
- <CAA+D8APu0JYqnUvY+fCYTcZ9U1BCv-zU8J4Zt-5doZcNkgaXFQ@mail.gmail.com>
+        Tue, 31 Mar 2020 05:57:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=iOKElgmkO7oC+ndGm2kOhGae8J3RZLJOYtpE5DlQ7Tc=; b=GhnxmH2v4xs6HeVqibsU//Qus8
+        HHcERa/r0hxFhrSPffCRqR3ExQACaXp4XksYvwq3fAIlkK9wfl1ydB2+BULoeFY+uLBMbkBrqwwk7
+        EXo/EV9zlA1cGi8oKBSIobst9kQSFCe04i6J4UOaHbgm9vsI1qA+qPmLML/tBp+1FvCns/lNImPL+
+        nKEmoU9D9Nl8FmPqZotmU344Vb9SeTkpVMieQRlTN+EP9FDUn4IBWXvzIV2y90KRjHi72FVYMCMJh
+        f7yUQaTcNIFhS7eT9zT4c+9zZ2manT/pjouyjMKRx8G6gN1jHLrlEYPMzADTzbY/C5NZhgeTZhuKz
+        pc/5OX+w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJDeN-0005Ta-MN; Tue, 31 Mar 2020 09:57:39 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 304603012D8;
+        Tue, 31 Mar 2020 11:57:37 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1A70A29C6922A; Tue, 31 Mar 2020 11:57:37 +0200 (CEST)
+Date:   Tue, 31 Mar 2020 11:57:37 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     syzbot <syzbot+e84d7ebd1361da13c356@syzkaller.appspotmail.com>
+Cc:     bp@alien8.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, x86@kernel.org
+Subject: Re: INFO: trying to register non-static key in try_to_wake_up
+Message-ID: <20200331095737.GO20730@hirez.programming.kicks-ass.net>
+References: <000000000000ec257905a21f7415@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAA+D8APu0JYqnUvY+fCYTcZ9U1BCv-zU8J4Zt-5doZcNkgaXFQ@mail.gmail.com>
-User-Agent: Mutt/1.5.22 (2013-10-16)
+In-Reply-To: <000000000000ec257905a21f7415@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 10:28:25AM +0800, Shengjiu Wang wrote:
-> Hi
+On Mon, Mar 30, 2020 at 10:01:12PM -0700, syzbot wrote:
+> Hello,
 > 
-> On Tue, Mar 24, 2020 at 5:22 AM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
-> >
-> > On Fri, Mar 20, 2020 at 11:32:13AM -0600, Rob Herring wrote:
-> > > On Mon, Mar 09, 2020 at 02:19:44PM -0700, Nicolin Chen wrote:
-> > > > On Mon, Mar 09, 2020 at 11:58:28AM +0800, Shengjiu Wang wrote:
-> > > > > In order to support new EASRC and simplify the code structure,
-> > > > > We decide to share the common structure between them. This bring
-> > > > > a problem that EASRC accept format directly from devicetree, but
-> > > > > ASRC accept width from devicetree.
-> > > > >
-> > > > > In order to align with new ESARC, we add new property fsl,asrc-format.
-> > > > > The fsl,asrc-format can replace the fsl,asrc-width, then driver
-> > > > > can accept format from devicetree, don't need to convert it to
-> > > > > format through width.
-> > > > >
-> > > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > > > ---
-> > > > >  Documentation/devicetree/bindings/sound/fsl,asrc.txt | 5 +++++
-> > > > >  1 file changed, 5 insertions(+)
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/sound/fsl,asrc.txt b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> > > > > index cb9a25165503..780455cf7f71 100644
-> > > > > --- a/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> > > > > +++ b/Documentation/devicetree/bindings/sound/fsl,asrc.txt
-> > > > > @@ -51,6 +51,11 @@ Optional properties:
-> > > > >                     will be in use as default. Otherwise, the big endian
-> > > > >                     mode will be in use for all the device registers.
-> > > > >
-> > > > > +   - fsl,asrc-format     : Defines a mutual sample format used by DPCM Back
-> > > > > +                   Ends, which can replace the fsl,asrc-width.
-> > > > > +                   The value is SNDRV_PCM_FORMAT_S16_LE, or
-> > > > > +                   SNDRV_PCM_FORMAT_S24_LE
-> > > >
-> > > > I am still holding the concern at the DT binding of this format,
-> > > > as it uses values from ASoC header file instead of a dt-binding
-> > > > header file -- not sure if we can do this. Let's wait for Rob's
-> > > > comments.
-> > >
-> > > I assume those are an ABI as well, so it's okay to copy them unless we
-> >
-> > They are defined under include/uapi. So I think we can use them?
-> >
-> > > already have some format definitions for DT. But it does need to be copy
-> > > in a header under include/dt-bindings/.
-> >
-> > Shengjiu is actually quoting those integral values, rather than
-> > those macros, so actually no need copy to include/dt-bindings,
-> > yet whoever adds this format property to a new DT would need to
-> > look up the value in a header file under include/uapi. I's just
-> > wondering if that's okay.
-> >
-> > Thanks
-> Shall I keep this change or drop this change?
+> syzbot found the following crash on:
+> 
+> HEAD commit:    9420e8ad Merge tag 'for-linus' of git://git.kernel.org/pub..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1206ed4be00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=27392dd2975fd692
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e84d7ebd1361da13c356
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+e84d7ebd1361da13c356@syzkaller.appspotmail.com
+> 
+> INFO: trying to register non-static key.
+> the code is fine but needs lockdep annotation.
+> turning off the locking correctness validator.
+> CPU: 1 PID: 1014 Comm: syz-executor.0 Not tainted 5.6.0-rc7-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  <IRQ>
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x188/0x20d lib/dump_stack.c:118
+>  assign_lock_key kernel/locking/lockdep.c:880 [inline]
+>  register_lock_class+0x14c4/0x1540 kernel/locking/lockdep.c:1189
+>  __lock_acquire+0xfc/0x3ca0 kernel/locking/lockdep.c:3836
+>  lock_acquire+0x197/0x420 kernel/locking/lockdep.c:4484
+>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>  _raw_spin_lock_irqsave+0x8c/0xbf kernel/locking/spinlock.c:159
+>  try_to_wake_up+0x9f/0x17c0 kernel/sched/core.c:2547
 
-This version of patch defines the format using those two marcos.
-So what Rob suggested is to copy those defines from uapi header
-file to dt-bindings folder. But you don't intend to do that?
+That's p->pi_lock, which gets initialized in rt_mutex_init_task() in
+copy_process(). This should be impossible. Very odd.
 
-My follow-up mail is to find if using integral values is doable.
-Yet, not seeing any reply further. I think you can make a choice
-to send it -- We will see how Rob acks eventually, or not.
+>  wake_up_worker kernel/workqueue.c:836 [inline]
+>  insert_work+0x2ad/0x3a0 kernel/workqueue.c:1337
+>  __queue_work+0x50d/0x1280 kernel/workqueue.c:1488
+>  call_timer_fn+0x195/0x760 kernel/time/timer.c:1404
+>  expire_timers kernel/time/timer.c:1444 [inline]
+>  __run_timers kernel/time/timer.c:1773 [inline]
+>  __run_timers kernel/time/timer.c:1740 [inline]
+>  run_timer_softirq+0x412/0x1600 kernel/time/timer.c:1786
+>  __do_softirq+0x26c/0x99d kernel/softirq.c:292
+>  invoke_softirq kernel/softirq.c:373 [inline]
+>  irq_exit+0x192/0x1d0 kernel/softirq.c:413
+>  exiting_irq arch/x86/include/asm/apic.h:546 [inline]
+>  smp_apic_timer_interrupt+0x19e/0x600 arch/x86/kernel/apic/apic.c:1146
+>  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+>  </IRQ>
