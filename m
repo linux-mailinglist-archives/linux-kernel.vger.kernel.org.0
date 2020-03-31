@@ -2,38 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E901198F81
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A12DD1990BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:14:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730680AbgCaJEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:04:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43776 "EHLO mail.kernel.org"
+        id S1731810AbgCaJOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:14:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730655AbgCaJD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:03:58 -0400
+        id S1731796AbgCaJOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:14:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DF7A20787;
-        Tue, 31 Mar 2020 09:03:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BA852145D;
+        Tue, 31 Mar 2020 09:14:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645436;
-        bh=53iqeY/2ZUDVwxvV3ybd+GcjsI/fnlbrKFLdNi/ocoQ=;
+        s=default; t=1585646045;
+        bh=S092gFVFtOYE7P8NHrfnFQpRTJsmjesAJzX7X3rp8K8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UueZNbPiXrsqdqUvTcrUkHRtb5vTje5czTNfErHTTLqeaK9UCoYLURXee3UGGEo6c
-         kak5i8mwavWzMj/J/5JbzoC4i/j+NDeJQ7L+rNG1kumj4E3i1dN5H9dBguzoWwF9Pn
-         5mo+IvEUE8IKF0BR7wfBA5SU4WR2cYIQFq5rOZ78=
+        b=oYDC90zS+6P0C0nG1LwvAI1feSo2DOVVcYe1LQpbLseulF/8uMsXQPxSdBNJ4QtI5
+         Q99roJvpDQcHQY8YLkmfdBlOXZFnviI3bkhC5kQFer4sEoYqnae/tY+kzSAyCKS9MK
+         qydAeOYCeYESd/BuH9b1qG3Nv/apPSguUaIIZmDs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 053/170] hsr: use rcu_read_lock() in hsr_get_node_{list/status}()
-Date:   Tue, 31 Mar 2020 10:57:47 +0200
-Message-Id: <20200331085430.058683605@linuxfoundation.org>
+        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+f9b32aaacd60305d9687@syzkaller.appspotmail.com,
+        syzbot+2f8c233f131943d6056d@syzkaller.appspotmail.com,
+        syzbot+9c2df9fd5e9445b74e01@syzkaller.appspotmail.com
+Subject: [PATCH 5.4 028/155] net_sched: cls_route: remove the right filter from hashtable
+Date:   Tue, 31 Mar 2020 10:57:48 +0200
+Message-Id: <20200331085421.551530550@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
+References: <20200331085418.274292403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,175 +49,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 173756b86803655d70af7732079b3aa935e6ab68 ]
+[ Upstream commit ef299cc3fa1a9e1288665a9fdc8bff55629fd359 ]
 
-hsr_get_node_{list/status}() are not under rtnl_lock() because
-they are callback functions of generic netlink.
-But they use __dev_get_by_index() without rtnl_lock().
-So, it would use unsafe data.
-In order to fix it, rcu_read_lock() and dev_get_by_index_rcu()
-are used instead of __dev_get_by_index().
+route4_change() allocates a new filter and copies values from
+the old one. After the new filter is inserted into the hash
+table, the old filter should be removed and freed, as the final
+step of the update.
 
-Fixes: f421436a591d ("net/hsr: Add support for the High-availability Seamless Redundancy protocol (HSRv0)")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+However, the current code mistakenly removes the new one. This
+looks apparently wrong to me, and it causes double "free" and
+use-after-free too, as reported by syzbot.
+
+Reported-and-tested-by: syzbot+f9b32aaacd60305d9687@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+2f8c233f131943d6056d@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+9c2df9fd5e9445b74e01@syzkaller.appspotmail.com
+Fixes: 1109c00547fc ("net: sched: RCU cls_route")
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Cc: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/hsr/hsr_framereg.c |    9 ++-------
- net/hsr/hsr_netlink.c  |   39 +++++++++++++++++++++------------------
- 2 files changed, 23 insertions(+), 25 deletions(-)
+ net/sched/cls_route.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/hsr/hsr_framereg.c
-+++ b/net/hsr/hsr_framereg.c
-@@ -482,12 +482,9 @@ int hsr_get_node_data(struct hsr_priv *h
- 	struct hsr_port *port;
- 	unsigned long tdiff;
- 
--	rcu_read_lock();
- 	node = find_node_by_addr_A(&hsr->node_db, addr);
--	if (!node) {
--		rcu_read_unlock();
--		return -ENOENT;	/* No such entry */
--	}
-+	if (!node)
-+		return -ENOENT;
- 
- 	ether_addr_copy(addr_b, node->macaddress_B);
- 
-@@ -522,7 +519,5 @@ int hsr_get_node_data(struct hsr_priv *h
- 		*addr_b_ifindex = -1;
- 	}
- 
--	rcu_read_unlock();
--
- 	return 0;
- }
---- a/net/hsr/hsr_netlink.c
-+++ b/net/hsr/hsr_netlink.c
-@@ -251,15 +251,16 @@ static int hsr_get_node_status(struct sk
- 	if (!na)
- 		goto invalid;
- 
--	hsr_dev = __dev_get_by_index(genl_info_net(info),
--				     nla_get_u32(info->attrs[HSR_A_IFINDEX]));
-+	rcu_read_lock();
-+	hsr_dev = dev_get_by_index_rcu(genl_info_net(info),
-+				       nla_get_u32(info->attrs[HSR_A_IFINDEX]));
- 	if (!hsr_dev)
--		goto invalid;
-+		goto rcu_unlock;
- 	if (!is_hsr_master(hsr_dev))
--		goto invalid;
-+		goto rcu_unlock;
- 
- 	/* Send reply */
--	skb_out = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-+	skb_out = genlmsg_new(NLMSG_GOODSIZE, GFP_ATOMIC);
- 	if (!skb_out) {
- 		res = -ENOMEM;
- 		goto fail;
-@@ -313,12 +314,10 @@ static int hsr_get_node_status(struct sk
- 	res = nla_put_u16(skb_out, HSR_A_IF1_SEQ, hsr_node_if1_seq);
- 	if (res < 0)
- 		goto nla_put_failure;
--	rcu_read_lock();
- 	port = hsr_port_get_hsr(hsr, HSR_PT_SLAVE_A);
- 	if (port)
- 		res = nla_put_u32(skb_out, HSR_A_IF1_IFINDEX,
- 				  port->dev->ifindex);
--	rcu_read_unlock();
- 	if (res < 0)
- 		goto nla_put_failure;
- 
-@@ -328,20 +327,22 @@ static int hsr_get_node_status(struct sk
- 	res = nla_put_u16(skb_out, HSR_A_IF2_SEQ, hsr_node_if2_seq);
- 	if (res < 0)
- 		goto nla_put_failure;
--	rcu_read_lock();
- 	port = hsr_port_get_hsr(hsr, HSR_PT_SLAVE_B);
- 	if (port)
- 		res = nla_put_u32(skb_out, HSR_A_IF2_IFINDEX,
- 				  port->dev->ifindex);
--	rcu_read_unlock();
- 	if (res < 0)
- 		goto nla_put_failure;
- 
-+	rcu_read_unlock();
-+
- 	genlmsg_end(skb_out, msg_head);
- 	genlmsg_unicast(genl_info_net(info), skb_out, info->snd_portid);
- 
- 	return 0;
- 
-+rcu_unlock:
-+	rcu_read_unlock();
- invalid:
- 	netlink_ack(skb_in, nlmsg_hdr(skb_in), -EINVAL, NULL);
- 	return 0;
-@@ -351,6 +352,7 @@ nla_put_failure:
- 	/* Fall through */
- 
- fail:
-+	rcu_read_unlock();
- 	return res;
- }
- 
-@@ -377,15 +379,16 @@ static int hsr_get_node_list(struct sk_b
- 	if (!na)
- 		goto invalid;
- 
--	hsr_dev = __dev_get_by_index(genl_info_net(info),
--				     nla_get_u32(info->attrs[HSR_A_IFINDEX]));
-+	rcu_read_lock();
-+	hsr_dev = dev_get_by_index_rcu(genl_info_net(info),
-+				       nla_get_u32(info->attrs[HSR_A_IFINDEX]));
- 	if (!hsr_dev)
--		goto invalid;
-+		goto rcu_unlock;
- 	if (!is_hsr_master(hsr_dev))
--		goto invalid;
-+		goto rcu_unlock;
- 
- 	/* Send reply */
--	skb_out = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-+	skb_out = genlmsg_new(NLMSG_GOODSIZE, GFP_ATOMIC);
- 	if (!skb_out) {
- 		res = -ENOMEM;
- 		goto fail;
-@@ -405,14 +408,11 @@ static int hsr_get_node_list(struct sk_b
- 
- 	hsr = netdev_priv(hsr_dev);
- 
--	rcu_read_lock();
- 	pos = hsr_get_next_node(hsr, NULL, addr);
- 	while (pos) {
- 		res = nla_put(skb_out, HSR_A_NODE_ADDR, ETH_ALEN, addr);
--		if (res < 0) {
--			rcu_read_unlock();
-+		if (res < 0)
- 			goto nla_put_failure;
--		}
- 		pos = hsr_get_next_node(hsr, pos, addr);
- 	}
- 	rcu_read_unlock();
-@@ -422,6 +422,8 @@ static int hsr_get_node_list(struct sk_b
- 
- 	return 0;
- 
-+rcu_unlock:
-+	rcu_read_unlock();
- invalid:
- 	netlink_ack(skb_in, nlmsg_hdr(skb_in), -EINVAL, NULL);
- 	return 0;
-@@ -431,6 +433,7 @@ nla_put_failure:
- 	/* Fall through */
- 
- fail:
-+	rcu_read_unlock();
- 	return res;
- }
- 
+--- a/net/sched/cls_route.c
++++ b/net/sched/cls_route.c
+@@ -534,8 +534,8 @@ static int route4_change(struct net *net
+ 			fp = &b->ht[h];
+ 			for (pfp = rtnl_dereference(*fp); pfp;
+ 			     fp = &pfp->next, pfp = rtnl_dereference(*fp)) {
+-				if (pfp == f) {
+-					*fp = f->next;
++				if (pfp == fold) {
++					rcu_assign_pointer(*fp, fold->next);
+ 					break;
+ 				}
+ 			}
 
 
