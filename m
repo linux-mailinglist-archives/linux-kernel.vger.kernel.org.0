@@ -2,89 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D51E919A252
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 01:14:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C6A19A248
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 01:13:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731561AbgCaXO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 19:14:27 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:55949 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731424AbgCaXO1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 19:14:27 -0400
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 02VNCsJL075329;
-        Wed, 1 Apr 2020 08:12:54 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp);
- Wed, 01 Apr 2020 08:12:54 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 02VNCsuC075325
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 1 Apr 2020 08:12:54 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: [PATCH 3/3] kernel/hung_task convert hung_task_panic boot
- parameter to sysctl
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-mm@kvack.org, Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Guilherme G . Piccoli" <gpiccoli@canonical.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-References: <20200330115535.3215-1-vbabka@suse.cz>
- <20200330115535.3215-4-vbabka@suse.cz>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <2ee52caa-0257-19bd-28ef-60a2b4041a8d@I-love.SAKURA.ne.jp>
-Date:   Wed, 1 Apr 2020 08:12:53 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1731527AbgCaXNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 19:13:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729647AbgCaXNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 19:13:34 -0400
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E93B921707;
+        Tue, 31 Mar 2020 23:13:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585696413;
+        bh=9XnDVeLNtXBo+7A+ymbQWmYaZXP1cYS2bkQlhtc03pg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=J7zqVWd/5lRSv44OmqCPe15cyMfA4cypk3PPuwEoI45tJ1YAoTl5Ju1ma924UCJl6
+         Z6ky4U99dLrxKDMwa+PTXGoIyPPfnsUb6LRM8u/KABhxK6I52Zyo/oUkrVgFeiVNOT
+         ND0IQRvtzFnmuXNaM15v5te9g0dWSmNYMudOjc6w=
+Received: by mail-ed1-f53.google.com with SMTP id de14so27406240edb.4;
+        Tue, 31 Mar 2020 16:13:32 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0kEpjM6joDgA2tDHZQgypbnov2wqaCqiv5reWf1k0HTQvvf9Os
+        8SRsWVi7LObTtjSgEosbmgfE9h8PRF51tu0wsg==
+X-Google-Smtp-Source: ADFU+vsI2at//4iAqFj3XbOPyjbjd8Ju2JHJo+yfvuPMtXyncAneKqKuJ3LsmHFRegjrJGdHpUpM711na8maETHC9Bs=
+X-Received: by 2002:a50:ce01:: with SMTP id y1mr18621985edi.47.1585696411284;
+ Tue, 31 Mar 2020 16:13:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200330115535.3215-4-vbabka@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200331214609.1742152-1-enric.balletbo@collabora.com> <20200331214609.1742152-4-enric.balletbo@collabora.com>
+In-Reply-To: <20200331214609.1742152-4-enric.balletbo@collabora.com>
+From:   Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date:   Wed, 1 Apr 2020 07:13:20 +0800
+X-Gmail-Original-Message-ID: <CAAOTY__9rrC3o9sTYKgSZi8n0xHdtSFoNMHOqLfQF6B_4BAGww@mail.gmail.com>
+Message-ID: <CAAOTY__9rrC3o9sTYKgSZi8n0xHdtSFoNMHOqLfQF6B_4BAGww@mail.gmail.com>
+Subject: Re: [PATCH 4/4] arm64: dts: mt8173: Fix mmsys node name
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, CK Hu <ck.hu@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        ulrich.hecht+renesas@gmail.com, devicetree@vger.kernel.org,
+        Matthias Brugger <mbrugger@suse.com>, hsinyi@chromium.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-mediatek@lists.infradead.org, matthias.bgg@kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/03/30 20:55, Vlastimil Babka wrote:
-> @@ -63,16 +63,6 @@ static struct task_struct *watchdog_task;
->  unsigned int __read_mostly sysctl_hung_task_panic =
->  				CONFIG_BOOTPARAM_HUNG_TASK_PANIC_VALUE;
->  
-> -static int __init hung_task_panic_setup(char *str)
-> -{
-> -	int rc = kstrtouint(str, 0, &sysctl_hung_task_panic);
-> -
-> -	if (rc)
-> -		return rc;
-> -	return 1;
-> -}
-> -__setup("hung_task_panic=", hung_task_panic_setup);
+Hi, Enric:
 
-Can we defer removal of this handler for "one release cycle" (and instead emit a line
-saying that "this parameter will be replaced by ..." during that cycle) ? I welcome
-PATCH 1/3, but kernel testing projects (e.g. syzbot) needs to update their settings
-between PATCH 1/3 was merged into linux.git and PATCH 3/3 is merged into linux.git .
+Enric Balletbo i Serra <enric.balletbo@collabora.com> =E6=96=BC 2020=E5=B9=
+=B44=E6=9C=881=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=885:47=E5=AF=AB=
+=E9=81=93=EF=BC=9A
+>
+> Node names are supposed to match the class of the device, mmsys is a
+> system controller (syscon) not a clock controller, so change the node
+> name accordingly.
 
-https://lkml.kernel.org/r/CACT4Y+YE-j5ncjTGN6UhngfCNRgVo-QDZ3VCBGACdbs9-v+axQ@mail.gmail.com says
-"Announcing unmerged changes is too early (as this patch showed). And once it's in linux-next it's already too late.."
+Reviewed-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
 
-> -
->  static int
->  hung_task_panic(struct notifier_block *this, unsigned long event, void *ptr)
->  {
-> 
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+>
+>  arch/arm64/boot/dts/mediatek/mt8173.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/d=
+ts/mediatek/mt8173.dtsi
+> index 8b4e806d5119..a55e8c177832 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> @@ -908,7 +908,7 @@ u2port1: usb-phy@11291000 {
+>                         };
+>                 };
+>
+> -               mmsys: clock-controller@14000000 {
+> +               mmsys: syscon@14000000 {
+>                         compatible =3D "mediatek,mt8173-mmsys", "syscon";
+>                         reg =3D <0 0x14000000 0 0x1000>;
+>                         power-domains =3D <&scpsys MT8173_POWER_DOMAIN_MM=
+>;
+> --
+> 2.25.1
+>
+>
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
