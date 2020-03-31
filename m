@@ -2,95 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25B961999FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C38D199A01
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:42:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731081AbgCaPmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 11:42:18 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:22074 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727703AbgCaPmR (ORCPT
+        id S1731134AbgCaPm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 11:42:28 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32798 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727703AbgCaPm2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 11:42:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585669337;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=IAa6WDZZ4aLer2WizVTUJX1pA0KvjTDINWFlSXq4eNc=;
-        b=DuCVSbSbGPoXVP0ZdSeLNSi+QC74OFcDiXvWvkot2pNL8gbNhvS+ox21jjc/Gwfs9DNTo4
-        sc1AdwXvzwAKFUeRXelQPVsjS4siBsFT1RQa0wFq3tNmtvlCdcVgJjhZd/5jdiggsuelbY
-        G/aZSVnar289q8VaAabqBa4+XVBHjGs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-226-3B-sslRmNVyH_T0pJgEOBA-1; Tue, 31 Mar 2020 11:42:13 -0400
-X-MC-Unique: 3B-sslRmNVyH_T0pJgEOBA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8D56D8017CC;
-        Tue, 31 Mar 2020 15:42:11 +0000 (UTC)
-Received: from fuller.cnet (ovpn-116-11.gru2.redhat.com [10.97.116.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 42E3C19756;
-        Tue, 31 Mar 2020 15:42:11 +0000 (UTC)
-Received: by fuller.cnet (Postfix, from userid 1000)
-        id 167EF414F66B; Tue, 31 Mar 2020 12:41:46 -0300 (-03)
-Date:   Tue, 31 Mar 2020 12:41:46 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Chris Friesen <chris.friesen@windriver.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jim Somerville <Jim.Somerville@windriver.com>,
-        Christoph Lameter <cl@linux.com>
-Subject: Re: [patch 3/3] isolcpus: undeprecate on documentation
-Message-ID: <20200331154146.GA28556@fuller.cnet>
-References: <20200328152117.881555226@redhat.com>
- <20200328152503.271570281@redhat.com>
- <20200331152217.GT20730@hirez.programming.kicks-ass.net>
+        Tue, 31 Mar 2020 11:42:28 -0400
+Received: by mail-pf1-f193.google.com with SMTP id c138so851177pfc.0;
+        Tue, 31 Mar 2020 08:42:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KDuAtBeu4SFY4sw3CxQAeDAq4uGk1/P2qv0HzJwEFlU=;
+        b=WRpjx01cpOolF5J2y/dAVjyURXCWKzu2jJsCj290P6+4pAov6zJbViFRZ1fzOlUneD
+         tH3eXVSUEmKT9lZ5HAqCTaDgYmMfWiHgUIt7WNAhK0+NMDR21ddqZy09BozRY/njfcVX
+         oBvdfl/Wf7B9I4dD/v/hmqDhiJVpCBBT39mcvpsqMElY9nScj3/unELgfVxrqKgOsXoy
+         X74Yk67wDwl8f2qf27V8zVXeycyuIBQpmwFZuyaRx2yCBfDFGCJfy/DvTB2i95gL5i6y
+         TLGsYLK31OnXg2YsRJqIFhPn4TzNgvA/Bv2YBX2nWv75lPEZW97Wlvh3FWjfXX4Q9QrH
+         EBjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KDuAtBeu4SFY4sw3CxQAeDAq4uGk1/P2qv0HzJwEFlU=;
+        b=F4pRbquDokJB+Cqep2/5EDPr7q2/BopMq77o3TB6hBBRYaOTQlwtjMajjMZuFMbRRS
+         7WD0r2dbkLwRH5etNDRT+C4QMmNaOsOIpxNBUrfGQM86qtikdbq8eWBAiSQ6trAjkhvk
+         eHknbDNlMkyuzz2Rkaw6ueBnnSJnxQL+sEQu3f7dBCTs7A8GinOCC1f7GrIbMVfiny1Q
+         OWeIqUxkwt2vGeC5KnOmDNnuF/zcZfMOfgmQg379V1wKBE4KpKp1OLq9cn5BD8VZlsuU
+         /FTbk1i0I0VFlzOtQTUKdSaGCoPXAtmkqNRJFnufXxVvMND/qAGCBdjrtaE9f5VNlTV/
+         w3Tg==
+X-Gm-Message-State: ANhLgQ3RscA1gEhZmOPqgV+suljYgbBzitcNzjAoZqWtC/0ArE/6917m
+        0wbuQzfTrpK1WC2quuFR6Sc=
+X-Google-Smtp-Source: ADFU+vuYuJFEjZbk+8RzKG2Sw2VrFMI+77eghzMHaOXXYjsecX+mY4xs5y+UkncebiilTzlanexRFQ==
+X-Received: by 2002:a63:b40d:: with SMTP id s13mr19347404pgf.268.1585669347008;
+        Tue, 31 Mar 2020 08:42:27 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g69sm2183675pje.34.2020.03.31.08.42.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Mar 2020 08:42:26 -0700 (PDT)
+Date:   Tue, 31 Mar 2020 08:42:25 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Kun Yi <kunyi@google.com>
+Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        openbmc@lists.ozlabs.org, joel@jms.id.au,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH linux hwmon-next v2 2/3] hwmon: (sbtsi) Add documentation
+Message-ID: <20200331154225.GA11562@roeck-us.net>
+References: <20200323233354.239365-1-kunyi@google.com>
+ <20200323233354.239365-3-kunyi@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200331152217.GT20730@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <20200323233354.239365-3-kunyi@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 05:22:17PM +0200, Peter Zijlstra wrote:
-> On Sat, Mar 28, 2020 at 12:21:20PM -0300, Marcelo Tosatti wrote:
-> > isolcpus is used to control steering of interrupts to managed_irqs and
-> > kernel threads, therefore its incorrect to state that its deprecated.
-> > 
-> > Remove deprecation warning.
-> > 
-> > Suggested-by: Chris Friesen <chris.friesen@windriver.com>
-> > Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
-> > 
-> > ---
-> >  Documentation/admin-guide/kernel-parameters.txt |    1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > Index: linux-2.6/Documentation/admin-guide/kernel-parameters.txt
-> > ===================================================================
-> > --- linux-2.6.orig/Documentation/admin-guide/kernel-parameters.txt
-> > +++ linux-2.6/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -1926,7 +1926,6 @@
-> >  			Format: <RDP>,<reset>,<pci_scan>,<verbosity>
-> >  
-> >  	isolcpus=	[KNL,SMP,ISOL] Isolate a given set of CPUs from disturbance.
-> > -			[Deprecated - use cpusets instead]
-> >  			Format: [flag-list,]<cpu-list>
-> >  
+On Mon, Mar 23, 2020 at 04:33:53PM -0700, Kun Yi wrote:
+> Document the SB-TSI sensor interface driver.
 > 
-> It's still an absolute horrible piece of crap though. nozh_full piling
-> more and more shit on it doesn't make it more shiny.
+> Signed-off-by: Kun Yi <kunyi@google.com>
+> Change-Id: I4b086a124d1d94a516386b0d2ff1cd7180b1dac1
+> ---
+>  Documentation/hwmon/sbtsi_temp.rst | 40 ++++++++++++++++++++++++++++++
 
-Hi Peter,
+The new file also needs to be added to Documentation/hwmon/index.rst.
 
-Why do you dislike it? What you think would be a decent approach?
-
+Guenter
