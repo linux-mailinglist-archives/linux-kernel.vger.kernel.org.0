@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CEB3198FD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:07:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 934831990C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:14:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730235AbgCaJGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:06:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47936 "EHLO mail.kernel.org"
+        id S1731476AbgCaJOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:14:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730888AbgCaJGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:06:30 -0400
+        id S1731535AbgCaJO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:14:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B93E212CC;
-        Tue, 31 Mar 2020 09:06:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2360E2072E;
+        Tue, 31 Mar 2020 09:14:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645590;
-        bh=HZ7GlHyZB6RnMvGr6cMq3mUlllhIUvbAbbr628e4hBk=;
+        s=default; t=1585646067;
+        bh=nv9bj0SckG+5zvW62Wz0XBvFku4jA7ClL8TNlF0sebE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DFwitTFHPJ+KlgMRhqfMTsN3bX6pet9TS34uw1S8f/mC5tKg73owSWtO7LIz7v/V2
-         zWZiV7poqsXs2eITRtJZU3hU0Q2nhfw+rigMq9NeZdeBV3DzJooDff1Cp5wV3DPfLm
-         VhWTR2id6So6R82pDyfKgPQfzXtPToKA+wDdzG+M=
+        b=a7Xf08SToPPH2S9ibs20jlBi/3T+3eiTMDuQ2YoMj1Z6UPzwToEJh/5m+263POX9R
+         amlpeCReQ40vKylBfr7l9MlskQ6HSEYi2qhAYTTVM0n2NVTDUCCZc0Zkz1zqasXjLj
+         4ulv5NIJBcEPm8tSMV/8VB6ZuoyQyIG9i7G1IhZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 5.5 099/170] perf probe: Do not depend on dwfl_module_addrsym()
-Date:   Tue, 31 Mar 2020 10:58:33 +0200
-Message-Id: <20200331085434.761153477@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Megha Dey <megha.dey@linux.intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 074/155] iommu/vt-d: Populate debugfs if IOMMUs are detected
+Date:   Tue, 31 Mar 2020 10:58:34 +0200
+Message-Id: <20200331085426.686573184@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
+References: <20200331085418.274292403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,63 +45,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Megha Dey <megha.dey@linux.intel.com>
 
-commit 1efde2754275dbd9d11c6e0132a4f09facf297ab upstream.
+[ Upstream commit 1da8347d8505c137fb07ff06bbcd3f2bf37409bc ]
 
-Do not depend on dwfl_module_addrsym() because it can fail on user-space
-shared libraries.
+Currently, the intel iommu debugfs directory(/sys/kernel/debug/iommu/intel)
+gets populated only when DMA remapping is enabled (dmar_disabled = 0)
+irrespective of whether interrupt remapping is enabled or not.
 
-Actually, same bug was fixed by commit 664fee3dc379 ("perf probe: Do not
-use dwfl_module_addrsym if dwarf_diename finds symbol name"), but commit
-07d369857808 ("perf probe: Fix wrong address verification) reverted to
-get actual symbol address from symtab.
+Instead, populate the intel iommu debugfs directory if any IOMMUs are
+detected.
 
-This fixes it again by getting symbol address from DIE, and only if the
-DIE has only address range, it uses dwfl_module_addrsym().
-
-Fixes: 07d369857808 ("perf probe: Fix wrong address verification)
-Reported-by: Alexandre Ghiti <alex@ghiti.fr>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sasha Levin <sashal@kernel.org>
-Link: http://lore.kernel.org/lkml/158281812176.476.14164573830975116234.stgit@devnote2
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: ee2636b8670b1 ("iommu/vt-d: Enable base Intel IOMMU debugfs support")
+Signed-off-by: Megha Dey <megha.dey@linux.intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/probe-finder.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/iommu/intel-iommu-debugfs.c |   11 ++++++++++-
+ drivers/iommu/intel-iommu.c         |    4 +++-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -636,14 +636,19 @@ static int convert_to_trace_point(Dwarf_
- 		return -EINVAL;
- 	}
+--- a/drivers/iommu/intel-iommu-debugfs.c
++++ b/drivers/iommu/intel-iommu-debugfs.c
+@@ -281,9 +281,16 @@ static int dmar_translation_struct_show(
+ {
+ 	struct dmar_drhd_unit *drhd;
+ 	struct intel_iommu *iommu;
++	u32 sts;
  
--	/* Try to get actual symbol name from symtab */
--	symbol = dwfl_module_addrsym(mod, paddr, &sym, NULL);
-+	if (dwarf_entrypc(sp_die, &eaddr) == 0) {
-+		/* If the DIE has entrypc, use it. */
-+		symbol = dwarf_diename(sp_die);
-+	} else {
-+		/* Try to get actual symbol name and address from symtab */
-+		symbol = dwfl_module_addrsym(mod, paddr, &sym, NULL);
-+		eaddr = sym.st_value;
-+	}
- 	if (!symbol) {
- 		pr_warning("Failed to find symbol at 0x%lx\n",
- 			   (unsigned long)paddr);
- 		return -ENOENT;
+ 	rcu_read_lock();
+ 	for_each_active_iommu(iommu, drhd) {
++		sts = dmar_readl(iommu->reg + DMAR_GSTS_REG);
++		if (!(sts & DMA_GSTS_TES)) {
++			seq_printf(m, "DMA Remapping is not enabled on %s\n",
++				   iommu->name);
++			continue;
++		}
+ 		root_tbl_walk(m, iommu);
+ 		seq_putc(m, '\n');
  	}
--	eaddr = sym.st_value;
+@@ -353,6 +360,7 @@ static int ir_translation_struct_show(st
+ 	struct dmar_drhd_unit *drhd;
+ 	struct intel_iommu *iommu;
+ 	u64 irta;
++	u32 sts;
  
- 	tp->offset = (unsigned long)(paddr - eaddr);
- 	tp->address = (unsigned long)paddr;
+ 	rcu_read_lock();
+ 	for_each_active_iommu(iommu, drhd) {
+@@ -362,7 +370,8 @@ static int ir_translation_struct_show(st
+ 		seq_printf(m, "Remapped Interrupt supported on IOMMU: %s\n",
+ 			   iommu->name);
+ 
+-		if (iommu->ir_table) {
++		sts = dmar_readl(iommu->reg + DMAR_GSTS_REG);
++		if (iommu->ir_table && (sts & DMA_GSTS_IRES)) {
+ 			irta = virt_to_phys(iommu->ir_table->base);
+ 			seq_printf(m, " IR table address:%llx\n", irta);
+ 			ir_tbl_remap_entry_show(m, iommu);
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -4961,6 +4961,9 @@ int __init intel_iommu_init(void)
+ 
+ 	down_write(&dmar_global_lock);
+ 
++	if (!no_iommu)
++		intel_iommu_debugfs_init();
++
+ 	if (no_iommu || dmar_disabled) {
+ 		/*
+ 		 * We exit the function here to ensure IOMMU's remapping and
+@@ -5056,7 +5059,6 @@ int __init intel_iommu_init(void)
+ 	pr_info("Intel(R) Virtualization Technology for Directed I/O\n");
+ 
+ 	intel_iommu_enabled = 1;
+-	intel_iommu_debugfs_init();
+ 
+ 	return 0;
+ 
 
 
