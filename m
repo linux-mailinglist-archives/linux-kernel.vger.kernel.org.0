@@ -2,81 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 690DE19A09F
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:20:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 075DF19A0A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:22:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731307AbgCaVUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 17:20:48 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:47156 "EHLO
+        id S1731098AbgCaVWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 17:22:43 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:37486 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727852AbgCaVUr (ORCPT
+        by vger.kernel.org with ESMTP id S1728245AbgCaVWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 17:20:47 -0400
+        Tue, 31 Mar 2020 17:22:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585689646;
+        s=mimecast20190719; t=1585689761;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=l1sC/bXso8WfBMNU+dzmS1e2mbgER1BAzZT3b2y34d0=;
-        b=H7DG0SgfjCSO3j0Ph6/RPnun5CAwqCIvDVMlxTKyG/DStyn9rRnqS7FJo7xyXWvuzmJTLO
-        C+5GCs9H32LyeEW0MtM1sX3LfxrFRTzOItYi0dcwKcUTakIRC+Hl6jQaIEZXKSLiC66eSu
-        d7bWbESI8RUD3y870WW2HM8xNNOyo2c=
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=sRghnZUn1Lcn59VJ6DHkKSsIh20b4joSKzig4G3pSxY=;
+        b=DDR5MYxpWr81cXS1sW+8E2JWp+7owe0jClZWjZ9T1ZWCJa+fI8EN76wk57ccKSdBb8He+e
+        0yxtJLFvWPA4B7VGcUT0IgAM6MRp9HJthpdDTyD70GF28MxzK9UxVAuVNcdTUQlx7hEtZo
+        D62TSdCpdNQt8K85l8PPjgekLPwhScY=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-162-Ib-n9lOpMtC0VpYryZW9KQ-1; Tue, 31 Mar 2020 17:20:45 -0400
-X-MC-Unique: Ib-n9lOpMtC0VpYryZW9KQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-395-DoS_cMkSNTCtHaVJt4nPDw-1; Tue, 31 Mar 2020 17:22:38 -0400
+X-MC-Unique: DoS_cMkSNTCtHaVJt4nPDw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8171D8017CC;
-        Tue, 31 Mar 2020 21:20:43 +0000 (UTC)
-Received: from treble (ovpn-118-135.phx2.redhat.com [10.3.118.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4E2FB5E009;
-        Tue, 31 Mar 2020 21:20:42 +0000 (UTC)
-Date:   Tue, 31 Mar 2020 16:20:40 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org,
-        mhiramat@kernel.org, mbenes@suse.cz,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC][PATCH] objtool,ftrace: Implement UNWIND_HINT_RET_OFFSET
-Message-ID: <20200331212040.7lrzmj7tbbx2jgrj@treble>
-References: <20200326154938.GO20713@hirez.programming.kicks-ass.net>
- <20200326195718.GD2452@worktop.programming.kicks-ass.net>
- <20200327010001.i3kebxb4um422ycb@treble>
- <20200330170200.GU20713@hirez.programming.kicks-ass.net>
- <20200330190205.k5ssixd5hpshpjjq@treble>
- <20200330200254.GV20713@hirez.programming.kicks-ass.net>
- <20200331111652.GH20760@hirez.programming.kicks-ass.net>
- <20200331202315.zialorhlxmml6ec7@treble>
- <20200331204047.GF2452@worktop.programming.kicks-ass.net>
- <20200331211755.pb7f3wa6oxzjnswc@treble>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8C4AF8017CE;
+        Tue, 31 Mar 2020 21:22:35 +0000 (UTC)
+Received: from Ruby.redhat.com (ovpn-113-88.rdu2.redhat.com [10.10.113.88])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 476C65C1BB;
+        Tue, 31 Mar 2020 21:22:33 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     amd-gfx@lists.freedesktop.org
+Cc:     "Pankaj Bharadiya" <pankaj.laxminarayan.bharadiya@intel.com>,
+        "Daniel Vetter" <daniel@ffwll.ch>,
+        "Alex Deucher" <alexander.deucher@amd.com>,
+        "Leo Li" <sunpeng.li@amd.com>,
+        "Mikita Lipski" <mikita.lipski@amd.com>,
+        "David Airlie" <airlied@linux.ie>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David Francis" <david.francis@amd.com>,
+        linux-kernel@vger.kernel.org,
+        "Nicholas Kazlauskas" <nicholas.kazlauskas@amd.com>,
+        dri-devel@lists.freedesktop.org,
+        "David (ChunMing) Zhou" <david1.zhou@amd.com>,
+        "Harry Wentland" <harry.wentland@amd.com>,
+        "Wenjing Liu" <wenjing.liu@amd.com>,
+        "Lyude Paul" <lyude@redhat.com>,
+        "Rodrigo Siqueira" <rodrigo.siqueira@amd.com>,
+        "Anthony Koo" <anthony.koo@amd.com>,
+        "Wyatt Wood" <wyatt.wood@amd.com>, "Aric Cyr" <aric.cyr@amd.com>
+Subject: [PATCH 0/2] drm/amdgpu: Remove duplicated DPCD logging
+Date:   Tue, 31 Mar 2020 17:22:22 -0400
+Message-Id: <20200331212228.139219-1-lyude@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200331211755.pb7f3wa6oxzjnswc@treble>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 04:17:58PM -0500, Josh Poimboeuf wrote:
-> > I'm not against adding a second/separate hint for this. In fact, I
-> > almost considered teaching objtool how to interpret the whole IRET frame
-> > so that we can do it without hints. It's just that that's too much code
-> > for this one case.
-> > 
-> > HINT_IRET_SELF ?
-> 
-> Despite my earlier complaint about stack size knowledge, we could just
-> forget the hint and make "iretq in C code" equivalent to "reduce stack
-> size by arch_exception_stack_size()" and keep going.  There's
-> file->c_file which tells you it's a C file.
+There's a bunch of messy DPCD tracing code in amdgpu that isn't needed
+since we already support this in DRM. Plus, it's really spammy. So, just
+get rid of it.
 
-Or maybe "iretq in an STT_FUNC" is better since this pattern could
-presumably happen in a callable asm function.
+Lyude Paul (2):
+  drm/amd/amdgpu_dm/mst: Remove useless sideband tracing
+  drm/amd/dc: Kill dc_conn_log_hex_linux()
 
--- 
-Josh
+ .../display/amdgpu_dm/amdgpu_dm_mst_types.c   | 43 -------------------
+ .../gpu/drm/amd/display/dc/basics/Makefile    |  3 +-
+ .../drm/amd/display/dc/basics/log_helpers.c   | 39 -----------------
+ .../amd/display/include/logger_interface.h    |  4 --
+ 4 files changed, 1 insertion(+), 88 deletions(-)
+ delete mode 100644 drivers/gpu/drm/amd/display/dc/basics/log_helpers.c
+
+--=20
+2.25.1
 
