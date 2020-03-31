@@ -2,282 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 316A219A1DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:23:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9812819A1E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:25:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731345AbgCaWXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 18:23:15 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:34055 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbgCaWXO (ORCPT
+        id S1731343AbgCaWZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 18:25:39 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53328 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbgCaWZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 18:23:14 -0400
-Received: by mail-il1-f196.google.com with SMTP id t11so21120283ils.1
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 15:23:12 -0700 (PDT)
+        Tue, 31 Mar 2020 18:25:38 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b12so4414285wmj.3
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 15:25:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ARULjoQtf8jPl9YqlhaD51ipsNLJ+vghKOqa6OLsOPo=;
-        b=dZdqLlKRkU86VDF62uJLHfuCDf8eo3GdRNsrTZtoJdBJvUnUbOllORbKn2dfSviOuj
-         jupV1jPyS46zuDcazR+NUSdOd6NADudFuOP5a2UquWQDxV6kfKoLeaEq6OlheM/uCFg3
-         8AwuJ5CIbgiesR2IRpA0jyBZq7qlnQqTDeGu3PqlmDAqyfaT8OpGBUJD6veQBRDj9HyR
-         Wi5uUZlsXbywQ5uRRRgKHnQsWQYcgqrEDAPtG8sXfZXshEfNZd6lqchfyGKE/flscyig
-         lyyU9RhCdw6Q7MSRNRqVhXkFlAOmW6T9r7OIPKll4Tw9MPOg7dD9ZEXehPOFdnZYZ8yo
-         qrfw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xSdN4Bu7ieJk7DdR7Vya+R+Xaggz1lTEs1MBPbcTcOI=;
+        b=YSmdVsQY7GpEjZZCobn8nbd2aLkQj1YokvMnqgXsuyC6tu3cIJr+yV2hivG929M1Yt
+         sZfyO2NXMM5jYmff/dH9NaKf5zzCs6pxaxgfAsbEV5/ukIw9TfaZRb3jo5h8raMXHEvD
+         ej3KERt1t36GL8rFdQ+6P7fjhk0fqPLIvLnFVl3/0cN19+GSNXOMpLe4LwT8CLlDtX9o
+         0eg8WUAjD7VsYL8GorPpIhNzGU/+Ple1Lvle0xvDVic6h/tgRPOHGT5HoXODE6TtbZe6
+         R2J6J4IuWT1BGinEoNJTu2Ht4KgtYRyvKlZQfClRATHtVqjREfg0tu1KVjhWSl7kpj7X
+         Y1Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ARULjoQtf8jPl9YqlhaD51ipsNLJ+vghKOqa6OLsOPo=;
-        b=GkqKrPIsTbHmXPnmlryjvCp0PzDtiaPfA/IEbkxm2RXElk1qxtgCd8ulf01kyep9Zc
-         Sbp0jd8RnIZlvT9GStl7ZaoVsNoVrOSinUhgniIYs/+tk2jOB69C2+JGXYFaW7Jm2qeX
-         teuxCt0KhTH9oVuqlRMjEDPUsIv3dKtXCLXZPW+45SIWitDtrudK7zw8aWmfx+K79G32
-         sh9wWWrbuu3zntNh3d7Kj7IS60NZ0RUjVUdqFcR7dkC4aYAI9GsXgoxHHOrOFYeIijft
-         7TbyNIe8cjvsZSUthev2GeNdP5P33MyiQgKRYg4QhPy+slLTsaOc7KaZ9X1zhb2TdWvx
-         wFHw==
-X-Gm-Message-State: ANhLgQ10/FeSwF7UbejuKRO0cSDHAxGtp+iIWImwFCuoLCuwRCrbyHBH
-        vH5t+81adhQdk2PtdmevZyGFwpbT94cR7qscmQ==
-X-Google-Smtp-Source: ADFU+vsj50NA2QZq5d3aXCb/oZdLL7Edfcfds9DzJKtEvNWgm5PlBDoa4mvyHeRO8QNk5V7Xfm1xJRMyK3B5/3X+FNc=
-X-Received: by 2002:a92:86d1:: with SMTP id l78mr18569494ilh.172.1585693392005;
- Tue, 31 Mar 2020 15:23:12 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xSdN4Bu7ieJk7DdR7Vya+R+Xaggz1lTEs1MBPbcTcOI=;
+        b=P9NzvVOf/5kVtWv7n9UJ/xgl1H/eCImUc4S81UtwDXPusBNDEdqy7+wIWw3ZJ1sPyR
+         AJB4AmQTgr6v0C5enlZOUKIidKcBpTpYE7qcmknApBclFNdGz7keM/JBGq/OlxlOTFpw
+         RYUr/JPie0VgFQvZo1eT7YcimU9bPqtwz+afvdbz0oNQ+YKrTCYpn1TJVk420oPjoHzS
+         Y7PYqnlBHyaim8OFcLAJJjFRvM3wQPCJkD5+ppBl2dfhOYX5LLsmO8Ad15mHpG12txC6
+         s1D0rpN0UKDAs/LF2l0d1N2rDGg7oTRiFSepDSa24fy4fEab+94HwtLQRd1rjkCg2J+8
+         cPfg==
+X-Gm-Message-State: AGi0PuZjrA//jq5IhGtnBA6bzBsCjjywYE1Cizsb6kM9cAGCcX27Th+A
+        Uyx+OSdqwDPpZdhHKhWRvzg=
+X-Google-Smtp-Source: APiQypK5u4bGsGrwHjCOm46og9UvvihBNPnQNe1CFDcp05IIiYuE4SY1mawbHnNh/4UrW0d1y7bJpg==
+X-Received: by 2002:a1c:e055:: with SMTP id x82mr1032774wmg.20.1585693537091;
+        Tue, 31 Mar 2020 15:25:37 -0700 (PDT)
+Received: from localhost (p200300E41F4A9B0076D02BFFFE273F51.dip0.t-ipconnect.de. [2003:e4:1f4a:9b00:76d0:2bff:fe27:3f51])
+        by smtp.gmail.com with ESMTPSA id d133sm22516wmd.34.2020.03.31.15.25.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 15:25:35 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 00:25:35 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clocksource: Add debugfs support
+Message-ID: <20200331222535.GF2954599@ulmo>
+References: <20200331214045.2957710-1-thierry.reding@gmail.com>
+ <CALAqxLXD78StqLMuaGqHqhSfS9L2FBfNCm6yDyWMZT_7iNX-wQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200325101431.12341-1-andrew.cooper3@citrix.com> <20200331175810.30204-1-andrew.cooper3@citrix.com>
-In-Reply-To: <20200331175810.30204-1-andrew.cooper3@citrix.com>
-From:   Brian Gerst <brgerst@gmail.com>
-Date:   Tue, 31 Mar 2020 18:23:00 -0400
-Message-ID: <CAMzpN2i6Nf0VDZ82mXyFixN879FC4eZfqe-LzWGkvygcz1gH_Q@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/smpboot: Remove 486-isms from the modern AP boot path
-To:     Andrew Cooper <andrew.cooper3@citrix.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        James Morris <jmorris@namei.org>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Josh Boyer <jwboyer@redhat.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <len.brown@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Martin Molnar <martin.molnar.programming@gmail.com>,
-        Pingfan Liu <kernelfans@gmail.com>,
-        jailhouse-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="B0nZA57HJSoPbsHY"
+Content-Disposition: inline
+In-Reply-To: <CALAqxLXD78StqLMuaGqHqhSfS9L2FBfNCm6yDyWMZT_7iNX-wQ@mail.gmail.com>
+User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 1:59 PM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
->
-> Linux has an implementation of the Universal Start-up Algorithm (MP spec,
-> Appendix B.4, Application Processor Startup), which includes unconditionally
-> writing to the Bios Data Area and CMOS registers.
->
-> The warm reset vector is only necessary in the non-integrated Local APIC case.
-> UV and Jailhouse already have an opt-out for this behaviour, but blindly using
-> the BDA and CMOS on a UEFI or other reduced hardware system isn't clever.
->
-> We could make this conditional on the integrated-ness of the Local APIC, but
-> 486-era SMP isn't supported.  Drop the logic completely, tidying up the includ
-> list and header files as appropriate.
->
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: Ingo Molnar <mingo@redhat.com>
-> CC: Borislav Petkov <bp@alien8.de>
-> CC: "H. Peter Anvin" <hpa@zytor.com>
-> CC: x86@kernel.org
-> CC: Jan Kiszka <jan.kiszka@siemens.com>
-> CC: James Morris <jmorris@namei.org>
-> CC: David Howells <dhowells@redhat.com>
-> CC: Andrew Cooper <andrew.cooper3@citrix.com>
-> CC: Matthew Garrett <mjg59@google.com>
-> CC: Josh Boyer <jwboyer@redhat.com>
-> CC: Steve Wahl <steve.wahl@hpe.com>
-> CC: Mike Travis <mike.travis@hpe.com>
-> CC: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-> CC: Arnd Bergmann <arnd@arndb.de>
-> CC: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> CC: Giovanni Gherdovich <ggherdovich@suse.cz>
-> CC: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> CC: Len Brown <len.brown@intel.com>
-> CC: Kees Cook <keescook@chromium.org>
-> CC: Martin Molnar <martin.molnar.programming@gmail.com>
-> CC: Pingfan Liu <kernelfans@gmail.com>
-> CC: linux-kernel@vger.kernel.org
-> CC: jailhouse-dev@googlegroups.com
-> Suggested-by: "H. Peter Anvin" <hpa@zytor.com>
-> Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
-> ---
-> v2:
->  * Drop logic entirely, rather than retaining support in 32bit builds.
-> ---
->  arch/x86/include/asm/apic.h        |  6 -----
->  arch/x86/include/asm/x86_init.h    |  1 -
->  arch/x86/kernel/apic/x2apic_uv_x.c |  1 -
->  arch/x86/kernel/jailhouse.c        |  1 -
->  arch/x86/kernel/platform-quirks.c  |  1 -
->  arch/x86/kernel/smpboot.c          | 50 --------------------------------------
->  6 files changed, 60 deletions(-)
->
-> diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-> index 19e94af9cc5d..5c33f9374b28 100644
-> --- a/arch/x86/include/asm/apic.h
-> +++ b/arch/x86/include/asm/apic.h
-> @@ -472,12 +472,6 @@ static inline unsigned default_get_apic_id(unsigned long x)
->                 return (x >> 24) & 0x0F;
->  }
->
-> -/*
-> - * Warm reset vector position:
-> - */
-> -#define TRAMPOLINE_PHYS_LOW            0x467
-> -#define TRAMPOLINE_PHYS_HIGH           0x469
-> -
->  extern void generic_bigsmp_probe(void);
->
->  #ifdef CONFIG_X86_LOCAL_APIC
-> diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-> index 96d9cd208610..006a5d7fd7eb 100644
-> --- a/arch/x86/include/asm/x86_init.h
-> +++ b/arch/x86/include/asm/x86_init.h
-> @@ -229,7 +229,6 @@ enum x86_legacy_i8042_state {
->  struct x86_legacy_features {
->         enum x86_legacy_i8042_state i8042;
->         int rtc;
-> -       int warm_reset;
->         int no_vga;
->         int reserve_bios_regions;
->         struct x86_legacy_devices devices;
-> diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-> index ad53b2abc859..5afcfd193592 100644
-> --- a/arch/x86/kernel/apic/x2apic_uv_x.c
-> +++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-> @@ -343,7 +343,6 @@ static int __init uv_acpi_madt_oem_check(char *_oem_id, char *_oem_table_id)
->         } else if (!strcmp(oem_table_id, "UVH")) {
->                 /* Only UV1 systems: */
->                 uv_system_type = UV_NON_UNIQUE_APIC;
-> -               x86_platform.legacy.warm_reset = 0;
->                 __this_cpu_write(x2apic_extra_bits, pnodeid << uvh_apicid.s.pnode_shift);
->                 uv_set_apicid_hibit();
->                 uv_apic = 1;
-> diff --git a/arch/x86/kernel/jailhouse.c b/arch/x86/kernel/jailhouse.c
-> index 6eb8b50ea07e..d628fe92d6af 100644
-> --- a/arch/x86/kernel/jailhouse.c
-> +++ b/arch/x86/kernel/jailhouse.c
-> @@ -210,7 +210,6 @@ static void __init jailhouse_init_platform(void)
->         x86_platform.calibrate_tsc      = jailhouse_get_tsc;
->         x86_platform.get_wallclock      = jailhouse_get_wallclock;
->         x86_platform.legacy.rtc         = 0;
-> -       x86_platform.legacy.warm_reset  = 0;
->         x86_platform.legacy.i8042       = X86_LEGACY_I8042_PLATFORM_ABSENT;
->
->         legacy_pic                      = &null_legacy_pic;
-> diff --git a/arch/x86/kernel/platform-quirks.c b/arch/x86/kernel/platform-quirks.c
-> index b348a672f71d..d922c5e0c678 100644
-> --- a/arch/x86/kernel/platform-quirks.c
-> +++ b/arch/x86/kernel/platform-quirks.c
-> @@ -9,7 +9,6 @@ void __init x86_early_init_platform_quirks(void)
->  {
->         x86_platform.legacy.i8042 = X86_LEGACY_I8042_EXPECTED_PRESENT;
->         x86_platform.legacy.rtc = 1;
-> -       x86_platform.legacy.warm_reset = 1;
->         x86_platform.legacy.reserve_bios_regions = 0;
->         x86_platform.legacy.devices.pnpbios = 1;
->
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index fe3ab9632f3b..a9f5b511d0b4 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -72,7 +72,6 @@
->  #include <asm/fpu/internal.h>
->  #include <asm/setup.h>
->  #include <asm/uv/uv.h>
-> -#include <linux/mc146818rtc.h>
->  #include <asm/i8259.h>
->  #include <asm/misc.h>
->  #include <asm/qspinlock.h>
-> @@ -119,34 +118,6 @@ int arch_update_cpu_topology(void)
->         return retval;
->  }
->
-> -static inline void smpboot_setup_warm_reset_vector(unsigned long start_eip)
-> -{
-> -       unsigned long flags;
-> -
-> -       spin_lock_irqsave(&rtc_lock, flags);
-> -       CMOS_WRITE(0xa, 0xf);
-> -       spin_unlock_irqrestore(&rtc_lock, flags);
-> -       *((volatile unsigned short *)phys_to_virt(TRAMPOLINE_PHYS_HIGH)) =
-> -                                                       start_eip >> 4;
-> -       *((volatile unsigned short *)phys_to_virt(TRAMPOLINE_PHYS_LOW)) =
-> -                                                       start_eip & 0xf;
-> -}
-> -
-> -static inline void smpboot_restore_warm_reset_vector(void)
-> -{
-> -       unsigned long flags;
-> -
-> -       /*
-> -        * Paranoid:  Set warm reset code and vector here back
-> -        * to default values.
-> -        */
-> -       spin_lock_irqsave(&rtc_lock, flags);
-> -       CMOS_WRITE(0, 0xf);
-> -       spin_unlock_irqrestore(&rtc_lock, flags);
-> -
-> -       *((volatile u32 *)phys_to_virt(TRAMPOLINE_PHYS_LOW)) = 0;
-> -}
-> -
->  static void init_freq_invariance(void);
->
->  /*
-> @@ -1049,20 +1020,6 @@ static int do_boot_cpu(int apicid, int cpu, struct task_struct *idle,
->          * the targeted processor.
->          */
->
-> -       if (x86_platform.legacy.warm_reset) {
-> -
-> -               pr_debug("Setting warm reset code and vector.\n");
-> -
-> -               smpboot_setup_warm_reset_vector(start_ip);
-> -               /*
-> -                * Be paranoid about clearing APIC errors.
-> -               */
-> -               if (APIC_INTEGRATED(boot_cpu_apic_version)) {
-> -                       apic_write(APIC_ESR, 0);
-> -                       apic_read(APIC_ESR);
-> -               }
-> -       }
-> -
->         /*
->          * AP might wait on cpu_callout_mask in cpu_init() with
->          * cpu_initialized_mask set if previous attempt to online
-> @@ -1118,13 +1075,6 @@ static int do_boot_cpu(int apicid, int cpu, struct task_struct *idle,
->                 }
->         }
->
-> -       if (x86_platform.legacy.warm_reset) {
-> -               /*
-> -                * Cleanup possible dangling ends...
-> -                */
-> -               smpboot_restore_warm_reset_vector();
-> -       }
-> -
->         return boot_error;
->  }
 
-You removed x86_platform.legacy.warm_reset in the original patch, but
-that is missing in V2.
+--B0nZA57HJSoPbsHY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---
-Brian Gerst
+On Tue, Mar 31, 2020 at 02:50:47PM -0700, John Stultz wrote:
+> On Tue, Mar 31, 2020 at 2:40 PM Thierry Reding <thierry.reding@gmail.com>=
+ wrote:
+> >
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Add a top-level "clocksource" directory to debugfs. For each clocksource
+> > registered with the system, a subdirectory will be added with attributes
+> > that can be queried to obtain information about the clocksource.
+> >
+>=20
+> Curious, what's the need/planned use for this?  I know in the past
+> folks have tried to get timekeeping internals exported to userland so
+> they could create their own parallel userland timekeeping system,
+> which I worry is a poor idea.
+
+This was meant to be purely for debugging purposes. That is as an easy
+way to check that the code was working and that the counter is properly
+updated.
+
+I certainly wasn't planning on implementing any userland on top of this.
+Well, I guess it could be useful to use these values in test scripts
+perhaps, since one of the clock sources exposed by one of the drivers I
+have been working on is used across Tegra SoCs for hardware
+timestamping. For that it might be interesting to be able to compare
+those timestamp snapshots to something that I can read from userspace
+during testing.
+
+But that's about as far as I was planning on taking this. I agree that
+basing some userland timekeeping system on a debugfs interface sounds
+like a very bad idea.
+
+Thierry
+
+--B0nZA57HJSoPbsHY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6Dw14ACgkQ3SOs138+
+s6El0w//ZaYlL011KCX6wqZ/tyPhYGHVzPc4xLPD3g1eceLbuIjBvAFE3/Wt8/mC
+uL21Jb/fY26IuxvipG3cueMy42+mKGh0qEtH+TqdCcSxKyNEordzJ7/7PGEOxt1g
+CW8UYNn1u14gr7T9tMe+9gQP5S36oWeycVECfs7kR/K2iR2W6q9fvJ1iLkzR7GZ5
+u7Aq4IUDizBmSm0/ciweQz7lG6qtgwuVTQjrLrdeFDapvWvZQIvqxBJUdNhCiWrv
+9eCZU96W+4Zz2TNej2DDqrZgEwUTirACNae8pNwh6mZXoQ3FX40cqPlNKmjWWndL
+L5q2e1MG7HnTp/nDQ7/tDRRO2s4/ZznZyLRLXEaFctp4N4VW7ZzowVntvpXaDB+k
+t2XmzbHwT9rx3NHEjoYD+8d4xsz6XWmxh9vjhJTnqN/mx1EsH1c2tltxfzn3bvez
+WdQY3/E3/GWdAXfWX1XjQtUrSq0TqF34bLE7zVHkLJLV/fdKDOncC3CljZQpDVc+
+JU3uG9ctluDjnh/wvOyhJzRa5Io/MpYQhBMh0yQdHUyW+1RFV4cKY0BdEBPeImnW
+FAdjCgAxRgp4JEjbz5q//6KIk93G1utsFUVFqn6j/S5QU7ZUdSzGO/DQLO22dWqx
+Jg35CbsEXx27HPhRAtZSqkb1l9sZR0nL01pxIUBmMCMLHOfqNBQ=
+=LW0i
+-----END PGP SIGNATURE-----
+
+--B0nZA57HJSoPbsHY--
