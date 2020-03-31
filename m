@@ -2,191 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 409C5199A34
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1B59199A6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:56:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731155AbgCaPs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 11:48:58 -0400
-Received: from mga04.intel.com ([192.55.52.120]:50171 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730562AbgCaPs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 11:48:58 -0400
-IronPort-SDR: pgbfl++4Z4HwoDTVU+JxyWQaWsDU4pMysg6vJlz1Q7WTCRp7jo7ZxpB/iHGiq6hrBaofyO1hee
- /FoR32r04/AA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 08:48:57 -0700
-IronPort-SDR: PdqC4zYT+ixmvpy4eOvwtMXdaQS3wca7lcl9W1cS1p2JTSh7Wr2FcpGOBIvKUXV0eynkw40C/S
- intzyx5ydRBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,328,1580803200"; 
-   d="scan'208";a="249100686"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga003.jf.intel.com with ESMTP; 31 Mar 2020 08:48:57 -0700
-Date:   Tue, 31 Mar 2020 08:54:44 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 1/3] iommu/uapi: Define uapi version and capabilities
-Message-ID: <20200331085444.44bee0bb@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D8011A9@SHSMSX104.ccr.corp.intel.com>
-References: <1585178227-17061-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1585178227-17061-2-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20200326092316.GA31648@infradead.org>
-        <20200326094442.5be042ce@jacob-builder>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7ECB45@SHSMSX104.ccr.corp.intel.com>
-        <20200327074702.GA27959@infradead.org>
-        <20200327165335.397f24a3@jacob-builder>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7FE150@SHSMSX104.ccr.corp.intel.com>
-        <20200330090746.23c5599c@jacob-builder>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D8011A9@SHSMSX104.ccr.corp.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1730677AbgCaP4E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 11:56:04 -0400
+Received: from mail-bn7nam10on2104.outbound.protection.outlook.com ([40.107.92.104]:62883
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730105AbgCaP4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 11:56:04 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=K3FSqN9uQF/U63iCALqJeff91O4864L2c2i5gfLOw2HoD55NnILqMq5TCOl8mr155dbQz7H1pSfBgfPb3r1lwxflpkQJ8mB9AnXXLB8+nKXm96Z3QebodxLFv9jpto3BuOP2tBA8khJ+VNz+IDKnIyMbUtA5QqXxGoHJpkZ/t4yYfONPLp9llIUEN+bHuP3OpLTYP6u8oIkzDY2Y3Nyk40MaIvLGut2HNpyxKqyylQVPl2E8IC/VejfzCfE/2uQmXwA5FFkBuxWC4lc20/4QKKasig2JF3VCMdHkMA+xXQLE0a4AtSdkrkNwvCMd5ifM8nEufcM29ROtkNOGz5b0kQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qtqx90ti8mvhcYFyuE/P7k0efM5dXkZmEu35f9mZt5k=;
+ b=VOuPiWpJaiYK4C4BxcNN2TyV7ZkTXnDlZ/X/w0TUMvnNeboYZw0Dqkjrreh0UShc+GvPrfFym70njrG8FU3bPPt1x8xIfqj+3eQ8ihO9DbFdaJuXDSUVLZE0eOF6FJeXR0OSM/g2VfzoBKIjBEcvuMOChTbAMQZarxSW6250kpTsHp+AfzCemVTpmCo9eN4578c0ctBa5bxUQ5aZ4yy50AOE1klMgGf8lpoFcIdSYvrnRnSmCN/fLWRDQPjdX25e938xVax+UcwtGd8QZ5A7xC5L/qA9JK3z57Meo5ZJqlpiCXxnBkVpIZTnDmUpFj382Q+MrNj47VL7Yh2oXdDt/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qtqx90ti8mvhcYFyuE/P7k0efM5dXkZmEu35f9mZt5k=;
+ b=ff3OArKV2vxwABCYe4/xDjKpLF6Z3r93JjnUIo4oOKgObqYGla5ozgl7DPLpYzdhdQFyJdSbw3waAea9/jflaY451rZWNtXf5bhOOhpCovEhQiq+RRiFrBM/gJc6s7bCl5JN4TmlaVKmo4oC6Zqe+XOrdAtWEs515uVoRu3yb2o=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+Received: from BN8PR21MB1139.namprd21.prod.outlook.com (2603:10b6:408:72::10)
+ by BN8PR21MB1362.namprd21.prod.outlook.com (2603:10b6:408:aa::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2900.5; Tue, 31 Mar
+ 2020 15:56:00 +0000
+Received: from BN8PR21MB1139.namprd21.prod.outlook.com
+ ([fe80::b5da:34dd:f205:560b]) by BN8PR21MB1139.namprd21.prod.outlook.com
+ ([fe80::b5da:34dd:f205:560b%5]) with mapi id 15.20.2878.013; Tue, 31 Mar 2020
+ 15:56:00 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        decui@microsoft.com
+Subject: [PATCH] PM: hibernate: Propagate the return value of hibernation_restore()
+Date:   Tue, 31 Mar 2020 08:55:25 -0700
+Message-Id: <1585670125-45987-1-git-send-email-decui@microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+Reply-To: decui@microsoft.com
+Content-Type: text/plain
+X-ClientProxiedBy: MWHPR21CA0072.namprd21.prod.outlook.com
+ (2603:10b6:300:db::34) To BN8PR21MB1139.namprd21.prod.outlook.com
+ (2603:10b6:408:72::10)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (13.77.154.182) by MWHPR21CA0072.namprd21.prod.outlook.com (2603:10b6:300:db::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2900.2 via Frontend Transport; Tue, 31 Mar 2020 15:55:59 +0000
+X-Mailer: git-send-email 1.8.3.1
+X-Originating-IP: [13.77.154.182]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 27619fe2-7030-47ea-37a5-08d7d58c01ba
+X-MS-TrafficTypeDiagnostic: BN8PR21MB1362:|BN8PR21MB1362:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <BN8PR21MB1362DCB3067F7B7448A5B4E4BFC80@BN8PR21MB1362.namprd21.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1468;
+X-Forefront-PRVS: 0359162B6D
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR21MB1139.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(396003)(346002)(39860400002)(136003)(366004)(376002)(86362001)(8676002)(36756003)(316002)(5660300002)(8936002)(66476007)(66556008)(66946007)(52116002)(81166006)(81156014)(6512007)(6486002)(6506007)(4744005)(3450700001)(2906002)(2616005)(956004)(26005)(10290500003)(82960400001)(82950400001)(478600001)(6666004)(186003)(16526019);DIR:OUT;SFP:1102;
+Received-SPF: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: sjPofr/Y5fgazFLkv3ShcQzuUoIc1tzdPeMSLOGySDkvGREjBR3dRrD7A3LqQFNEZbQ4iLL5fVJCZWfkzQqkt9vdhW1IMtWxb/a1VLiX9l645yls5lUx47I3DzX6vHxen58zsfWSQPtE3AzMfSHLsNAtD0a1OrP5GFZ1dCJnTTvH3eWF3Tpr01waNPpLz2uni3xDMtqKUQQW9uhVDfy2LBD3DaO2Iqk4OjQtotWeO7p/lggub11yurvD0to+pKLmg5o+DvwHVirjsHiKvaBUKrdzek/LjWyaMmg+D4231iTzKAXn6+KkyVL0edNLR0xHu+6m1CU0bygfygU8BLYwPkUsrxu6J5x33wasV6QK/2OR/WFaatJ/R25wpiMziRrBhgyOo75ucENULMQND3pSwgro1vOFVihKDFgj7yxgAw1OL+hEqFtTxC3P45micWX5
+X-MS-Exchange-AntiSpam-MessageData: oaKYCAgBPsI2NoQBELAXvgyg2K4kuNhzuLbrwB38lYU1NMrla71oMJy8iTsJP1AA9Io/EofDUT5j38edz9Pfq9q827IkwELzmhFtWhtjrXCs4PO3dnLcDnMPWGxwLZlQYkdJfwgxpqz5sR5PnEiWnA==
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27619fe2-7030-47ea-37a5-08d7d58c01ba
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2020 15:56:00.2450
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lprDkxnGM53Z4ymmY5D0otvKBGcxyYmIvEur7M9NxcMBcNhtP11FHOsfG0Wykfa8i++sXGrtkzdWk59y9z82VA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR21MB1362
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Mar 2020 06:06:38 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+If hibernation_restore() fails, the 'error' should not be zero.
 
-> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Sent: Tuesday, March 31, 2020 12:08 AM
-> > 
-> > On Mon, 30 Mar 2020 05:40:40 +0000
-> > "Tian, Kevin" <kevin.tian@intel.com> wrote:
-> >   
-> > > > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > > > Sent: Saturday, March 28, 2020 7:54 AM
-> > > >
-> > > > On Fri, 27 Mar 2020 00:47:02 -0700
-> > > > Christoph Hellwig <hch@infradead.org> wrote:
-> > > >  
-> > > > > On Fri, Mar 27, 2020 at 02:49:55AM +0000, Tian, Kevin wrote:  
-> > > > > > If those API calls are inter-dependent for composing a
-> > > > > > feature (e.g. SVA), shouldn't we need a way to check them
-> > > > > > together before exposing the feature to the guest, e.g.
-> > > > > > through a iommu_get_uapi_capabilities interface?  
-> > > > >
-> > > > > Yes, that makes sense.  The important bit is to have a
-> > > > > capability flags and not version numbers.  
-> > > >
-> > > > The challenge is that there are two consumers in the kernel for
-> > > > this. 1. VFIO only look for compatibility, and size of each data
-> > > > struct such that it can copy_from_user.
-> > > >
-> > > > 2. IOMMU driver, the "real consumer" of the content.
-> > > >
-> > > > For 2, I agree and we do plan to use the capability flags to
-> > > > check content and maintain backward compatibility etc.
-> > > >
-> > > > For VFIO, it is difficult to do size look up based on capability
-> > > > flags.  
-> > >
-> > > Can you elaborate the difficulty in VFIO? if, as Christoph Hellwig
-> > > pointed out, version number is already avoided everywhere, it is
-> > > interesting to know whether this work becomes a real exception
-> > > or just requires a different mindset.
-> > >  
-> > From VFIO p.o.v. the IOMMU UAPI data is opaque, it only needs to do
-> > two things:
-> > 1. is the UAPI compatible?
-> > 2. what is the size to copy?
-> > 
-> > If you look at the version number, this is really a "version as
-> > size" lookup, as provided by the helper function in this patch. An
-> > example can be the newly introduced clone3 syscall.
-> > https://lwn.net/Articles/792628/
-> > In clone3, new version must have new size. The slight difference
-> > here is that, unlike clone3, we have multiple data structures
-> > instead of a single struct clone_args {}. And each struct has flags
-> > to enumerate its contents besides size.  
-> 
-> Thanks for providing that link. However clone3 doesn't include a
-> version field to do "version as size" lookup. Instead, as you said,
-> it includes a size parameter which sounds like the option 3 (argsz)
-> listed below.
-> 
-Right, there is no version in clone3. size = version. I view this as
-a 1:1 lookup.
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+---
+ kernel/power/hibernate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > 
-> > Besides breaching data abstraction, if VFIO has to check IOMMU
-> > flags to determine the sizes, it has many combinations.
-> > 
-> > We also separate the responsibilities into two parts
-> > 1. compatibility - version, size by VFIO
-> > 2. sanity check - capability flags - by IOMMU  
-> 
-> I feel argsz+flags approach can perfectly meet above requirement. The
-> userspace set the size and flags for whatever capabilities it uses,
-> and VFIO simply copies the parameters by size and pass to IOMMU for
-> further sanity check. Of course the assumption is that we do provide
-> an interface for userspace to enumerate all supported capabilities.
-> 
-You cannot trust user for argsz. the size to be copied from user must
-be based on knowledge in kernel. That is why we have this version to
-size lookup.
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index 6dbeedb..86aba87 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -678,7 +678,7 @@ static int load_image_and_restore(void)
+ 	error = swsusp_read(&flags);
+ 	swsusp_close(FMODE_READ);
+ 	if (!error)
+-		hibernation_restore(flags & SF_PLATFORM_MODE);
++		error = hibernation_restore(flags & SF_PLATFORM_MODE);
+ 
+ 	pr_err("Failed to load image, recovering.\n");
+ 	swsusp_free();
+-- 
+1.8.3.1
 
-In VFIO, the size to copy is based on knowledge of each VFIO UAPI
-structures and VFIO flags. But here the flags are IOMMU UAPI flags. As
-you pointed out in another thread, VFIO is one user.
-
-> Is there anything that I overlooked here? I suppose there might be
-> some difficulties that block you from going the argsz way...
-> 
-> Thanks
-> Kevin
-> 
-> > 
-> > I think the latter matches what Christoph's comments. So we are in
-> > agreement at the IOMMU level :)
-> > 
-> > For example:
-> > During guest PASID bind, IOMMU driver operates on the data passed
-> > from VFIO and check format & flags to take different code path.
-> > 
-> > #define IOMMU_PASID_FORMAT_INTEL_VTD	1
-> > 	__u32 format;
-> > #define IOMMU_SVA_GPASID_VAL	(1 << 0) /* guest PASID valid */
-> > 	__u64 flags;
-> > 
-> > Jacob
-> >   
-> > > btw the most relevant discussion which I can find out now is here:
-> > > 	https://lkml.org/lkml/2020/2/3/1126
-> > >
-> > > It mentioned 3 options for handling extension:
-> > > --
-> > > 1. Disallow adding new members to each structure other than reuse
-> > > padding bits or adding union members at the end.
-> > > 2. Allow extension of the structures beyond union, but union size
-> > > has to be fixed with reserved spaces
-> > > 3. Adopt VFIO argsz scheme, I don't think we need version for each
-> > > struct anymore. argsz implies the version that user is using
-> > > assuming UAPI data is extension only.
-> > > --
-> > >
-> > > the first two are both version-based. Looks most guys agreed with
-> > > option-1 (in this v2), but Alex didn't give his opinion at the
-> > > moment. The last response from him was the raise of option-3 using
-> > > argsz to avoid version. So, we also need hear from him. Alex?
-> > >
-> > > Thanks
-> > > Kevin  
-> > 
-> > [Jacob Pan]  
-
-[Jacob Pan]
