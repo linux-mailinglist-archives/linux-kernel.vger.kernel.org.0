@@ -2,64 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C2A319A25F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 01:19:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B6F519A266
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 01:21:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731457AbgCaXTN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 19:19:13 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40053 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731259AbgCaXTM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 19:19:12 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 19so23784509ljj.7
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 16:19:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=DNZLvGPKS7ifGuavc6HxXaBrmBaYInXs47Z6xKmXacc=;
-        b=VOIY9W9yz7aKp8dPnogI0Y+SRXVPfbBixuGZxyza7lb4oloPNrQYB3RHynO7AIh3LS
-         1fv7jv3qUfyUt67cnhH5Ql1JTxuZHfpuZi6iueB3w0e+PKBfIg3FP2EFd2YbVEgdJBWF
-         A/Dsu42vzRwa63ALNlmrOa1zpmk1EKCy5qbAGGBaW/TNdqYW3hLwyDjxM+6b5uPzARPA
-         20TDwJpuyiRXupt8Heso9aokoomFq+0knjX6E+1s7/ck2sZ1fLi752RZ6nXMaaZR/KSU
-         5hdmVJq46CEJIxbar0uPv5bznP7FdsoK3DQR1F1nWZvA4DM4YWJWWjd4I38PJE1EjooG
-         8tSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DNZLvGPKS7ifGuavc6HxXaBrmBaYInXs47Z6xKmXacc=;
-        b=r1sTnOsKlC563e3hv+5fnrjdZPsvzR2P7hyCDl29dxhbmFqD1I41wKc8Zk+hVZ7Z0E
-         In4egq8XkHYGQFmPYrN0MVH5NswQHEq/z2mytvVObTn32xbRfokcCIPUPN7BOqCte/iB
-         wEDNC27jyRIfzOQPbOKiU9JNoHVQUrSvdSvX0Lg+DttD9O67hYpta4uoKFocAHXp9NNb
-         s6bSnftf45IY5jqfcp18hIDvnUluu6NN9LbNPW8Pgek1jNVP+x08eroiLEPAdvuM+V4M
-         kq5bBafS9YJMr2QomfPk+zCNj0ObZvyJRONB/27ZJHJIKrybCvRj8iv3kz/GAlrtuekG
-         Imzw==
-X-Gm-Message-State: AGi0PuZhA6Ro9ekNF97hccipYFmcVU3JIRnIxgy39wrCkevxrej7/A0g
-        nMoWL69Uo3ue9SpHRVcw8uTaUmXrxaXBcF8pumjcgv/WcNc=
-X-Google-Smtp-Source: APiQypKLQfeXmbpfCSKxjxNDfDESvbR/4c3x5o3NczPGdzzeGc2PxgmbZ0POJwPpA1OAl+xzMjMD33hImdfNEkDFqHY=
-X-Received: by 2002:a2e:700e:: with SMTP id l14mr10496920ljc.51.1585696748342;
- Tue, 31 Mar 2020 16:19:08 -0700 (PDT)
+        id S1731531AbgCaXVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 19:21:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47082 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731259AbgCaXVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 19:21:33 -0400
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9A4920787;
+        Tue, 31 Mar 2020 23:21:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585696893;
+        bh=WsfCUnixUcuW/Hxxf0cDgSU2hILcghynbB0/ocxWSWA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BSUjiGPdigzSvDZ4tnofPNAagDsoCyjzK8WO8VypFo7BVQKLeb4MLtGK3iPKrLUPR
+         GgnXsa6mIIMc6O+ZbIVKGdmokbqi1x1a5NNOkk0Hx1vjJB8QtCAhiM0wztg8SGQFMT
+         h+fhYRJLiqdNUP+02qSloeg/C6wipkNF1IgHeDNQ=
+Received: by mail-ed1-f54.google.com with SMTP id z65so27482135ede.0;
+        Tue, 31 Mar 2020 16:21:32 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ3n0s94W80UiJTqnNSWB5cePlnLiVDznKWj03LHWVyDLb3bjio9
+        sDHpE3zQFlSzsNdiQjU1Wi2lOd6KQVbc/W5d2w==
+X-Google-Smtp-Source: ADFU+vv3TGW/kwb5HMH/cRaDee3j5i5z0vjv/4XsV67d1Idq9Hu6wbNbfu8nd0HzCER7YmS8mN6zlRD2dLxeiQPcfX4=
+X-Received: by 2002:a17:906:124f:: with SMTP id u15mr17040650eja.360.1585696891114;
+ Tue, 31 Mar 2020 16:21:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200331085308.098696461@linuxfoundation.org> <CA+G9fYsZjmf34pQT1DeLN_DDwvxCWEkbzBfF0q2VERHb25dfZQ@mail.gmail.com>
- <CAHk-=whyW9TXfYxyxUW6hP9e0A=5MnOHrTarr4_k0hiddxq69Q@mail.gmail.com> <20200331192949.GN9917@kernel.org>
-In-Reply-To: <20200331192949.GN9917@kernel.org>
-From:   =?UTF-8?B?RGFuaWVsIETDrWF6?= <daniel.diaz@linaro.org>
-Date:   Tue, 31 Mar 2020 17:18:57 -0600
-Message-ID: <CAEUSe7_f8m0dLQT1jdU+87fNThnxMKuoGJkFuGpbT4OmpmE4iA@mail.gmail.com>
-Subject: Re: [PATCH 5.6 00/23] 5.6.1-rc1 review
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
+References: <20200331214609.1742152-1-enric.balletbo@collabora.com>
+In-Reply-To: <20200331214609.1742152-1-enric.balletbo@collabora.com>
+From:   Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date:   Wed, 1 Apr 2020 07:21:20 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_-=y+t1tDnV_muYs9KS_-mQK9UtRzHe_O1AnStB1XqrLg@mail.gmail.com>
+Message-ID: <CAAOTY_-=y+t1tDnV_muYs9KS_-mQK9UtRzHe_O1AnStB1XqrLg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] soc: mediatek: Enable mmsys driver by default if
+ Mediatek arch is selected
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, CK Hu <ck.hu@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        ulrich.hecht+renesas@gmail.com,
+        Matthias Brugger <mbrugger@suse.com>, hsinyi@chromium.org,
+        linux-kernel@vger.kernel.org,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-mediatek@lists.infradead.org, matthias.bgg@kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,111 +57,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+Hi, Enric:
 
-On Tue, 31 Mar 2020 at 13:29, Arnaldo Carvalho de Melo
-<arnaldo.melo@gmail.com> wrote:
+Enric Balletbo i Serra <enric.balletbo@collabora.com> =E6=96=BC 2020=E5=B9=
+=B44=E6=9C=881=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=885:46=E5=AF=AB=
+=E9=81=93=EF=BC=9A
 >
-> Em Tue, Mar 31, 2020 at 11:20:37AM -0700, Linus Torvalds escreveu:
-> > On Tue, Mar 31, 2020 at 11:08 AM Naresh Kamboju
-> > <naresh.kamboju@linaro.org> wrote:
-> > >
-> > > Perf build broken on Linux next and mainline and now on stable-rc-5.6=
- branch.
-> >
-> > Strange. What is it that triggers the problem for you? It works fine
-> > here.. The error looks like some kind of command line quoting error,
-> > but I don't see the direct cause.
-> >
-> > Have you bisected the failure? Build failures should be particularly
-> > easy and quick to bisect.
+> The mmsys driver supports only MT8173 device for now, but like other syst=
+em
+> controllers is an important piece for other Mediatek devices. Actually
+> it depends on the mt8173 clock specific driver but that dependency is
+> not real as it can build without the clock driver. Instead of depends on
+> a specific model, make the driver depends on the generic ARCH_MEDIATEK an=
+d
+> enable by default so other Mediatek devices can start using it without
+> flood the Kconfig.
+
+I've no idea about 'enable by default'. For some product which has no
+display, it does not need mmsys partition (include drm and mdp). But
+the code size of mmsys is not large, so it seems enable it by default
+has no harm. Just provide some information for you.
+
+Regards,
+Chun-Kuang.
+
 >
-> Naresh, can you try with the patch below? There was some back and forth
-> about a second patch in a series and this fell thru the cracks.
-
-I tried that patch, did not help.
-
-Bisection led to the expected merge, "perf-urgent-for-linus", so I
-went one by one and found this commit: a7ffd416d804 ("perf python: Fix
-clang detection when using CC=3Dclang-version"). Specifically, the line
-that fails is:
-
-  cc_is_clang =3D b"clang version" in Popen([cc, "-v"],
-stderr=3DPIPE).stderr.readline()
-
-with:
-
-  Traceback (most recent call last):
-    File "util/setup.py", line 6, in <module>
-      cc_is_clang =3D b"clang version" in Popen([cc, "-v"],
-stderr=3DPIPE).stderr.readline()
-    File "/oe/build/tmp/work/juno-linaro-linux/perf/1.0-r9/recipe-sysroot-n=
-ative/usr/lib/python2.7/subprocess.py",
-line 394, in __init__
-      errread, errwrite)
-    File "/oe/build/tmp/work/juno-linaro-linux/perf/1.0-r9/recipe-sysroot-n=
-ative/usr/lib/python2.7/subprocess.py",
-line 1047, in _execute_child
-      raise child_exception
-  OSError: [Errno 2] No such file or directory
-
-There, the value for CC is "aarch64-linaro-linux-gcc
---sysroot=3D/oe/build/tmp/work/juno-linaro-linux/perf/1.0-r9/recipe-sysroot=
-".
-
-> And also, BTW, can you please send me instructions on how to get hold of
-> the toolchain you use to crossbuild perf, so that I can add it to my set
-> of test build containers?
-
-It's an OE build, so it's bound to take quite a bit of space. I'll try
-to get something dockerized so that it's easier to replicate.
-
-Thanks and greetings!
-
-Daniel D=C3=ADaz
-daniel.diaz@linaro.org
-
-
-
-> - Arnaldo
->
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 > ---
 >
-> From: He Zhe <zhe.he@windriver.com>
+>  drivers/soc/mediatek/Kconfig | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >
-> The $(CC) passed to arch_errno_names.sh may include a series of parameter=
-s
-> along with gcc itself. To avoid overwriting the following parameters of
-> arch_errno_names.sh and break the build like below, we just pick up the
-> first word of the $(CC).
+> diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
+> index e84513318725..59a56cd790ec 100644
+> --- a/drivers/soc/mediatek/Kconfig
+> +++ b/drivers/soc/mediatek/Kconfig
+> @@ -46,8 +46,7 @@ config MTK_SCPSYS
 >
-> find: unknown predicate `-m64/arch'
-> x86_64-wrs-linux-gcc: warning: '-x c' after last input file has no effect
-> x86_64-wrs-linux-gcc: error: unrecognized command line option '-m64/inclu=
-de/uapi/asm-generic/errno.h'
-> x86_64-wrs-linux-gcc: fatal error: no input files
->
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> ---
->  tools/perf/Makefile.perf | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> index 3eda9d4..7114c11 100644
-> --- a/tools/perf/Makefile.perf
-> +++ b/tools/perf/Makefile.perf
-> @@ -573,7 +573,7 @@ arch_errno_hdr_dir :=3D $(srctree)/tools
->  arch_errno_tbl :=3D $(srctree)/tools/perf/trace/beauty/arch_errno_names.=
-sh
->
->  $(arch_errno_name_array): $(arch_errno_tbl)
-> -       $(Q)$(SHELL) '$(arch_errno_tbl)' $(CC) $(arch_errno_hdr_dir) > $@
-> +       $(Q)$(SHELL) '$(arch_errno_tbl)' $(firstword $(CC)) $(arch_errno_=
-hdr_dir) > $@
->
->  sync_file_range_arrays :=3D $(beauty_outdir)/sync_file_range_arrays.c
->  sync_file_range_tbls :=3D $(srctree)/tools/perf/trace/beauty/sync_file_r=
-ange.sh
+>  config MTK_MMSYS
+>         bool "MediaTek MMSYS Support"
+> -       depends on COMMON_CLK_MT8173_MMSYS
+> -       default COMMON_CLK_MT8173_MMSYS
+> +       default ARCH_MEDIATEK
+>         help
+>           Say yes here to add support for the MediaTek Multimedia
+>           Subsystem (MMSYS).
 > --
-> 2.7.4
+> 2.25.1
 >
+>
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
