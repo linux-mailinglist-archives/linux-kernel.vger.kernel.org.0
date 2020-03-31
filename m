@@ -2,123 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD98819A054
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 22:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B27719A02B
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 22:52:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731332AbgCaU6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 16:58:10 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21554 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731303AbgCaU6I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 16:58:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585688287;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nMTuWgH43GvSmLl3/vGFHtIMAhCbcDhmbQIosf8L0DQ=;
-        b=BmnABhqZkM8Ecipy/dwn2qDoMFhcCoyaQC+v7aYMSxD4GmaQeYfVq+U8Mzex1nAWRGfAGL
-        7XRl+W3xNQZfF8suFbv69LGMIGue8T4A7K3YC5L9PKaaRR5LCPmuAiix8c3gP1P8PMSJ+x
-        FCVAP6wj4X+mJzvk+gg/Z4flm2TY1So=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-15-bjSavILoN6KuVEDGmG00Ww-1; Tue, 31 Mar 2020 16:58:05 -0400
-X-MC-Unique: bjSavILoN6KuVEDGmG00Ww-1
-Received: by mail-wr1-f72.google.com with SMTP id m15so13564491wrb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 13:58:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nMTuWgH43GvSmLl3/vGFHtIMAhCbcDhmbQIosf8L0DQ=;
-        b=FI7r4tEqDtwN9TtEYQ5jdf6nYLdvqx7PpHHX3GfcDouMk3GzYrww1vXW3jAjJcMdNy
-         gt/u0yfw78NiwMWbGOqPSs8C6rnf1cuhVBnMpRjqk6XRurIACccz0wFUKiARmSBPCmce
-         YHOjLyeQBi3Wbt3Uylzc7ANfToTG+1fcoD6f9cQbFOjjw2sTDSq4Xkq55059UI+qvCD1
-         vGVGFv9n0UnKwWB/v0RIQYCQzQxxY8+EyHw10dMblY0Z8qO5CwlqPB7Fj7yTs58rHSZZ
-         0lmnyH+9JUuugZMBbuXJ0OglbnL58JNaURMr16QKM0X9ul0qDz+HZdfozvLw3eqHI5wu
-         qPGw==
-X-Gm-Message-State: ANhLgQ16BqR5a5qfZbGOVAOVhKXNl88Q/xFZQKGl0Wp9uDIReClPuh8A
-        AsOZs+FSMh1B6gkgr+EJNTHkGbPR9BSGvUySTDYSulHhbo7lNR1n/w1T2SnuABk7cTtEwawcknp
-        k9mPJqxhNuQZK2lyNQ9CX+dSm
-X-Received: by 2002:a05:6000:10c8:: with SMTP id b8mr20964628wrx.138.1585688284479;
-        Tue, 31 Mar 2020 13:58:04 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtjE8SVKcDqJXpBwY3z/nljFiImBJhiy66LJgYJ18HOdry7Gow9qqZRHMNtuEBqfbVTRq42RQ==
-X-Received: by 2002:a05:6000:10c8:: with SMTP id b8mr20964598wrx.138.1585688284037;
-        Tue, 31 Mar 2020 13:58:04 -0700 (PDT)
-Received: from xz-x1 ([2607:9880:19c0:32::2])
-        by smtp.gmail.com with ESMTPSA id e5sm27609022wru.92.2020.03.31.13.58.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 13:58:03 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 16:57:59 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>
-Subject: Re: [PATCH] sched/isolation: Allow "isolcpus=" to skip unknown
- sub-parameters
-Message-ID: <20200331205759.GA648829@xz-x1>
-References: <20200204161639.267026-1-peterx@redhat.com>
- <20200214194008.GA1193332@xz-x1>
- <877e0oud5i.fsf@nanos.tec.linutronix.de>
- <20200309151917.GB4206@xz-x1>
+        id S1730014AbgCaUwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 16:52:21 -0400
+Received: from mga18.intel.com ([134.134.136.126]:27314 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727852AbgCaUwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 16:52:20 -0400
+IronPort-SDR: SftVGfW6sdgGVdl9+vqUlrXYhLVba7ROnFlq6oD+usVQ0jxgakRy1ggMYa+ne996HhphF3LrKu
+ Iq/o/JWcju4g==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 13:52:20 -0700
+IronPort-SDR: 9t856pZgKTfWBnjHJFtoepGRlVzP9m2xf7nkagQHk9zegQsKXZAXpn2HoV+pDnKfBkXrh+6lmR
+ UB9OEnTXfnrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,329,1580803200"; 
+   d="scan'208";a="328202815"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 31 Mar 2020 13:52:20 -0700
+Date:   Tue, 31 Mar 2020 13:58:07 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     Auger Eric <eric.auger@redhat.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH V10 08/11] iommu/vt-d: Add svm/sva invalidate function
+Message-ID: <20200331135807.4e9976ab@jacob-builder>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D800D67@SHSMSX104.ccr.corp.intel.com>
+References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1584746861-76386-9-git-send-email-jacob.jun.pan@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D7FA0AB@SHSMSX104.ccr.corp.intel.com>
+        <3215b83c-81f7-a30f-fe82-a51f29d7b874@redhat.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D800D67@SHSMSX104.ccr.corp.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200309151917.GB4206@xz-x1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 11:19:17AM -0400, Peter Xu wrote:
-> On Fri, Feb 14, 2020 at 09:28:25PM +0100, Thomas Gleixner wrote:
-> > Peter Xu <peterx@redhat.com> writes:
+On Tue, 31 Mar 2020 02:49:21 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
+
+> > From: Auger Eric <eric.auger@redhat.com>
+> > Sent: Sunday, March 29, 2020 11:34 PM
 > > 
-> > > On Tue, Feb 04, 2020 at 11:16:39AM -0500, Peter Xu wrote:
-> > >> The "isolcpus=" parameter allows sub-parameters to exist before the
-> > >> cpulist is specified, and if it sees unknown sub-parameters the whole
-> > >> parameter will be ignored.  This design is incompatible with itself
-> > >> when we add more sub-parameters to "isolcpus=", because the old
-> > >> kernels will not recognize the new "isolcpus=" sub-parameters, then it
-> > >> will invalidate the whole parameter so the CPU isolation will not
-> > >> really take effect if we start to use the new sub-parameters while
-> > >> later we reboot into an old kernel. Instead we will see this when
-> > >> booting the old kernel:
-> > >> 
-> > >>     isolcpus: Error, unknown flag
-> > >> 
-> > >> The better and compatible way is to allow "isolcpus=" to skip unknown
-> > >> sub-parameters, so that even if we add new sub-parameters to it the
-> > >> old kernel will still be able to behave as usual even if with the new
-> > >> sub-parameter is specified.
-> > >> 
-> > >> Ideally this patch should be there when we introduce the first
-> > >> sub-parameter for "isolcpus=", so it's already a bit late.  However
-> > >> late is better than nothing.
+> > Hi,
+> > 
+> > On 3/28/20 11:01 AM, Tian, Kevin wrote:  
+> > >> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > >> Sent: Saturday, March 21, 2020 7:28 AM
+> > >>
+> > >> When Shared Virtual Address (SVA) is enabled for a guest OS via
+> > >> vIOMMU, we need to provide invalidation support at IOMMU API
+> > >> and  
+> > driver  
+> > >> level. This patch adds Intel VT-d specific function to implement
+> > >> iommu passdown invalidate API for shared virtual address.
+> > >>
+> > >> The use case is for supporting caching structure invalidation
+> > >> of assigned SVM capable devices. Emulated IOMMU exposes queue  
+>  [...]  
+>  [...]  
+> > to  
+> > >> + * VT-d granularity. Invalidation is typically included in the
+> > >> unmap  
+> > operation  
+> > >> + * as a result of DMA or VFIO unmap. However, for assigned
+> > >> devices  
+> > guest  
+> > >> + * owns the first level page tables. Invalidations of
+> > >> translation caches in  
+> > the  
+>  [...]  
+>  [...]  
+>  [...]  
+> > inv_type_granu_map[IOMMU_CACHE_INV_TYPE_NR][IOMMU_INV_GRANU_  
+> > >> NR] = {
+> > >> +	/*
+> > >> +	 * PASID based IOTLB invalidation: PASID selective (per
+> > >> PASID),
+> > >> +	 * page selective (address granularity)
+> > >> +	 */
+> > >> +	{0, 1, 1},
+> > >> +	/* PASID based dev TLBs, only support all PASIDs or
+> > >> single PASID */
+> > >> +	{1, 1, 0},  
 > > >
-> > > Ping - Hi, Thomas, do you have any further comment on this patch?
-> > 
-> > Fine with me.
-> > 
-> > Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+> > > Is this combination correct? when single PASID is being
+> > > specified, it is essentially a page-selective invalidation since
+> > > you need provide Address and Size.  
+> > Isn't it the same when G=1? Still the addr/size is used. Doesn't
+> > it  
 > 
-> Thanks Thomas!
+> I thought addr/size is not used when G=1, but it might be wrong. I'm
+> checking with our vt-d spec owner.
 > 
-> Does anyone like to pick this up, or does this patch needs more
-> review?
 
-Another gentle ping with the hope that this patch can be picked up.
+> > correspond to IOMMU_INV_GRANU_ADDR with
+> > IOMMU_INV_ADDR_FLAGS_PASID flag
+> > unset?
+> > 
+> > so {0, 0, 1}?  
+> 
+I am not sure I got your logic. The three fields correspond to 
+	IOMMU_INV_GRANU_DOMAIN,	/* domain-selective invalidation */
+	IOMMU_INV_GRANU_PASID,	/* PASID-selective invalidation */
+	IOMMU_INV_GRANU_ADDR,	/* page-selective invalidation *
 
-It's a very simple patch, but I really hope it can be in asap because
-the latter means the more kernel versions will be affected by this
-isolcpus incompatibility defect (and imo should consider stable too).
+For devTLB, we use domain as global since there is no domain. Then I
+came up with {1, 1, 0}, which means we could have global and pasid
+granu invalidation for PASID based devTLB.
 
-Thanks.
+If the caller also provide addr and S bit, the flush routine will put
+that into QI descriptor. I know this is a little odd, but from the
+granu translation p.o.v. VT-d spec has no G bit for page selective
+invalidation.
 
--- 
-Peter Xu
+> I have one more open:
+> 
+> How does userspace know which invalidation type/gran is supported?
+> I didn't see such capability reporting in Yi's VFIO vSVA patch set.
+> Do we want the user/kernel assume the same capability set if they are 
+> architectural? However the kernel could also do some optimization
+> e.g. hide devtlb invalidation capability given that the kernel
+> already invalidate devtlb automatically when serving iotlb
+> invalidation...
+> 
+In general, we are trending to use VFIO capability chain to expose iommu
+capabilities.
 
+But for architectural features such as type/granu, we have to assume
+the same capability between host & guest. Granu and types are not
+enumerated on the host IOMMU either.
+
+For devTLB optimization, I agree we need to expose a capability to
+the guest stating that implicit devtlb invalidation is supported.
+Otherwise, if Linux guest runs on other OSes may not support implicit
+devtlb invalidation.
+
+Right Yi?
+
+> Thanks
+> Kevin
+> 
+> > 
+> > Thanks
+> > 
+> > Eric
+> >   
+> > >  
+> > >> +	/* PASID cache */  
+> > >
+> > > PASID cache is fully managed by the host. Guest PASID cache
+> > > invalidation is interpreted by vIOMMU for bind and unbind
+> > > operations. I don't think we should accept any PASID cache
+> > > invalidation from userspace or guest. 
+>  [...]  
+> > inv_type_granu_table[IOMMU_CACHE_INV_TYPE_NR][IOMMU_INV_GRANU  
+>  [...]  
+> > >
+> > > btw do we really need both map and table here? Can't we just
+> > > use one table with unsupported granularity marked as a special
+> > > value?
+> > >  
+>  [...]  
+> > >
+> > > -ENOTSUPP?
+> > >  
+>  [...]  
+> > >
+> > > granularity == IOMMU_INV_GRANU_ADDR? otherwise it's unclear
+> > > why IOMMU_INV_GRANU_DOMAIN also needs size check.
+> > >  
+>  [...]  
+> > >>> addr_info.addr),  
+>  [...]  
+>  [...]  
+> > >> +			if (info->ats_enabled) {
+> > >> +				qi_flush_dev_iotlb_pasid(iommu,
+> > >> sid, info-  
+> > >>> pfsid,  
+>  [...]  
+> > >>> pfsid,  
+> > >> +
+> > >> inv_info->addr_info.pasid, info->ats_qdep,
+> > >> +
+> > >> inv_info->addr_info.addr, size,
+> > >> +						granu);  
+>  [...]  
+>  [...]  
+> > >>> pasid_info.pasid);  
+> > >> +  
+> > >
+> > > as earlier comment, we shouldn't allow userspace or guest to
+> > > invalidate PASID cache
+> > >  
+>  [...]  
+> > >  
+> 
+
+[Jacob Pan]
