@@ -2,136 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60552198BFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 07:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CB51198C09
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 08:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbgCaF4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 01:56:44 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:26641 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726216AbgCaF4n (ORCPT
+        id S1727018AbgCaGFU convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 02:05:20 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:43900 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbgCaGFU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 01:56:43 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585634203; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=KhlT5+PQRIk/0ZJMDG0Z38jPRs2dicpw6nQbDYSyMhU=; b=ZYmNlggm5fgY0KpUv2cse/pRAVwuZuWnnXHkR33PQYlOso/VrUR2S+VJ09moyxtdGHYGiwVY
- Jpz6ru/gzRIMmjjWPK77RQtZ9TJHcQJXOxDy26v0it+jQSr2cjvjLfHl9xK61TRDEQ7kxccu
- 3TRSEqAPHLZ4eG4NI/3PoFDyKw4=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e82db85.7fba377c3c70-smtp-out-n01;
- Tue, 31 Mar 2020 05:56:21 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id AE955C433D2; Tue, 31 Mar 2020 05:56:20 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from pillair-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pillair)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9E5B8C433F2;
-        Tue, 31 Mar 2020 05:55:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E5B8C433F2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=pillair@codeaurora.org
-From:   Rakesh Pillai <pillair@codeaurora.org>
-To:     devicetree@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Rakesh Pillai <pillair@codeaurora.org>
-Subject: [PATCH v8] arm64: dts: qcom: sc7180: Add WCN3990 WLAN module device node
-Date:   Tue, 31 Mar 2020 11:24:57 +0530
-Message-Id: <1585634097-4590-1-git-send-email-pillair@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 31 Mar 2020 02:05:20 -0400
+Received: from marcel-macpro.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 62C91CECC4;
+        Tue, 31 Mar 2020 08:14:51 +0200 (CEST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
+Subject: Re: [PATCH v4 1/2] Bluetooth: btusb: Indicate Microsoft vendor
+ extension for Intel 9460/9560 and 9160/9260
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <CABmPvSF=pcffe18iAKgbU8bwFvVDp-NKeAFGw8auKoVd1XAuTQ@mail.gmail.com>
+Date:   Tue, 31 Mar 2020 08:05:18 +0200
+Cc:     Bluetooth Kernel Mailing List <linux-bluetooth@vger.kernel.org>,
+        Alain Michaud <alainm@chromium.org>,
+        Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <852FDEFC-7AD1-4CB9-9C45-BBAB5B2A8D14@holtmann.org>
+References: <20200328074632.21907-1-mcchou@chromium.org>
+ <20200328004507.v4.1.I0e975833a6789e8acc74be7756cd54afde6ba98c@changeid>
+ <9CC14296-9A0E-4257-A388-B2F7C155CCE5@holtmann.org>
+ <CABmPvSF=pcffe18iAKgbU8bwFvVDp-NKeAFGw8auKoVd1XAuTQ@mail.gmail.com>
+To:     Miao-chen Chou <mcchou@chromium.org>
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device node for the ath10k SNOC platform driver probe
-and add resources required for WCN3990 on sc7180 soc.
+Hi Miao-chen,
 
-Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
----
+>>> This adds a bit mask of driver_info for Microsoft vendor extension and
+>>> indicates the support for Intel 9460/9560 and 9160/9260. See
+>>> https://docs.microsoft.com/en-us/windows-hardware/drivers/bluetooth/
+>>> microsoft-defined-bluetooth-hci-commands-and-events for more information
+>>> about the extension. This also add a kernel config, BT_MSFTEXT, and a
+>>> source file to facilitate Microsoft vendor extension functions.
+>>> This was verified with Intel ThunderPeak BT controller
+>>> where msft_vnd_ext_opcode is 0xFC1E.
+>>> 
+>>> Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+>>> 
+>>> Signed-off-by: Miao-chen Chou <mcchou@chromium.org>
+>>> ---
+>>> 
+>>> Changes in v4:
+>>> - Introduce CONFIG_BT_MSFTEXT as a starting point of providing a
+>>> framework to use Microsoft extension
+>>> - Create include/net/bluetooth/msft.h and net/bluetooth/msft.c to
+>>> facilitate functions of Microsoft extension.
+>>> 
+>>> Changes in v3:
+>>> - Create net/bluetooth/msft.c with struct msft_vnd_ext defined internally
+>>> and change the hdev->msft_ext field to void*.
+>>> - Define and expose msft_vnd_ext_set_opcode() for btusb use.
+>>> - Init hdev->msft_ext in hci_alloc_dev() and deinit it in hci_free_dev().
+>>> 
+>>> Changes in v2:
+>>> - Define struct msft_vnd_ext and add a field of this type to struct
+>>> hci_dev to facilitate the support of Microsoft vendor extension.
+>>> 
+>>> drivers/bluetooth/btusb.c        | 11 +++++++++--
+>>> include/net/bluetooth/hci_core.h |  4 ++++
+>> 
+>> so I don’t like the intermixing of core features and drivers unless it is needed. In this case it is not needed since we can first introduce the core support and then enable the driver to use it.
+> I will make btusb changes as a different commit in v5.
 
-Depends on https://patchwork.kernel.org/patch/11455345/
-The above patch adds the dt-bindings for wifi-firmware
-subnode
+check the series that I posted. I tested them on ThunderPeak and if it also works, we use that as a base and then go from there.
 
-Changes from v7:
-- Correct the wlan_fw_mem start address
----
- arch/arm64/boot/dts/qcom/sc7180-idp.dts |  8 ++++++++
- arch/arm64/boot/dts/qcom/sc7180.dtsi    | 27 +++++++++++++++++++++++++++
- 2 files changed, 35 insertions(+)
+>> 
+>>> net/bluetooth/Kconfig            |  9 ++++++++-
+>>> net/bluetooth/Makefile           |  1 +
+>>> net/bluetooth/msft.c             | 16 ++++++++++++++++
+>>> net/bluetooth/msft.h             | 19 +++++++++++++++++++
+>>> 6 files changed, 57 insertions(+), 3 deletions(-)
+>>> create mode 100644 net/bluetooth/msft.c
+>>> create mode 100644 net/bluetooth/msft.h
+>>> 
+>>> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+>>> index 3bdec42c9612..0fe47708d3c8 100644
+>>> --- a/drivers/bluetooth/btusb.c
+>>> +++ b/drivers/bluetooth/btusb.c
+>>> @@ -21,6 +21,7 @@
+>>> #include <net/bluetooth/bluetooth.h>
+>>> #include <net/bluetooth/hci_core.h>
+>>> 
+>>> +#include "../../net/bluetooth/msft.h"
+>> 
+>> This was my bad. I didn’t realized that drivers need to the set the opcode and not the core. I updated the patches to fix this.
+> I will move it to include/net/bluetooth/.
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-index 043c9b9..a6168a4 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-@@ -327,6 +327,14 @@
- 	};
- };
- 
-+&wifi {
-+	status = "okay";
-+	qcom,msa-fixed-perm;
-+	wifi-firmware {
-+		iommus = <&apps_smmu 0xc2 0x1>;
-+	};
-+};
-+
- /* PINCTRL - additions to nodes defined in sc7180.dtsi */
- 
- &qspi_clk {
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index 998f101..c03b6a7 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -83,6 +83,11 @@
- 			reg = <0 0x8f600000 0 0x500000>;
- 			no-map;
- 		};
-+
-+		wlan_fw_mem: memory@94100000 {
-+			reg = <0 0x94100000 0 0x200000>;
-+			no-map;
-+		};
- 	};
- 
- 	cpus {
-@@ -835,6 +840,28 @@
- 			};
- 		};
- 
-+		wifi: wifi@18800000 {
-+			compatible = "qcom,wcn3990-wifi";
-+			reg = <0 0x18800000 0 0x800000>;
-+			reg-names = "membase";
-+			iommus = <&apps_smmu 0xc0 0x1>;
-+			interrupts =
-+				<GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH /* CE0 */ >,
-+				<GIC_SPI 415 IRQ_TYPE_LEVEL_HIGH /* CE1 */ >,
-+				<GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH /* CE2 */ >,
-+				<GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH /* CE3 */ >,
-+				<GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH /* CE4 */ >,
-+				<GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH /* CE5 */ >,
-+				<GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH /* CE6 */ >,
-+				<GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH /* CE7 */ >,
-+				<GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH /* CE8 */ >,
-+				<GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH /* CE9 */ >,
-+				<GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH /* CE10 */>,
-+				<GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH /* CE11 */>;
-+			memory-region = <&wlan_fw_mem>;
-+			status = "disabled";
-+		};
-+
- 		config_noc: interconnect@1500000 {
- 			compatible = "qcom,sc7180-config-noc";
- 			reg = <0 0x01500000 0 0x28000>;
--- 
-2.7.4
+I put it in hci_core.h since don’t want to add any extra needed include for driver. They are big enough already and adding more files doesn’t really help.
+
+Regards
+
+Marcel
+
