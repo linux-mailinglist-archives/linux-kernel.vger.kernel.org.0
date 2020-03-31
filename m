@@ -2,99 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D41A1993AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 12:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F0B719930F
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 12:05:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730418AbgCaKmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 06:42:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41322 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730358AbgCaKmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 06:42:05 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 936A7208E4;
-        Tue, 31 Mar 2020 10:42:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585651325;
-        bh=MZAU576gyLJO4F4wEGfdDUQTS1+k9BE34i/jleEvrXM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R1DaSB+mTncyky8tsYLt/2VbvY124DhWGXSFbkKH/FsUb3sL2o494Xms4GD3EdOfs
-         uWL7HfRO/kMdPHq3Y6acegGr6qNXyYMNd/A0e8MdsotYW0yiJzqm1AAoV6i4o2hUah
-         Nbdgrk4B+T0wUCZQgB/PYSLJv5NQJC1UOcvvzgR0=
-Date:   Tue, 31 Mar 2020 12:04:06 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Dave Jiang <dave.jiang@intel.com>
-Cc:     vkoul@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, bhelgaas@google.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        dmaengine@vger.kernel.org, dan.j.williams@intel.com,
-        ashok.raj@intel.com, fenghua.yu@intel.com,
-        linux-pci@vger.kernel.org, tony.luck@intel.com, jing.lin@intel.com,
-        sanjay.k.kumar@intel.com
-Subject: Re: [PATCH 2/6] device/pci: add cmdmem cap to pci_dev
-Message-ID: <20200331100406.GB1204199@kroah.com>
-References: <158560290392.6059.16921214463585182874.stgit@djiang5-desk3.ch.intel.com>
- <158560362090.6059.1762280705382158736.stgit@djiang5-desk3.ch.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158560362090.6059.1762280705382158736.stgit@djiang5-desk3.ch.intel.com>
+        id S1730385AbgCaKF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 06:05:27 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:32925 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729997AbgCaKF1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 06:05:27 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d17so10143528pgo.0;
+        Tue, 31 Mar 2020 03:05:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MW/RUvnmQuaynAgrPchgXaGJmLy9K9MyZdsdP/atZxQ=;
+        b=Cmh9cw24+M8BWilx0CjDUaHf3t3v0OLeGEIO8C7anSi3OCUwApzJwB0Hw7p6WnUU2H
+         VzCDTbCiTCx7KjDthnON+VQ9NoMDSpUhT+dyRXmi24ctl3Fb0aCmyxTU/WO+Iub2adeN
+         6uWNuA1aM3OR5hjG2UcG4Lehhj4m3w3BbaM1/Y4WBCPWamS5d+6ZlHveR22Klk50zxcS
+         9+K3yze1rm4Nk9/eAQ65MJaRP7i21Szd89R3bx9w/2d9qbu+1rncnYSlV+ET69dVBcCS
+         tDRaa0fYD76+XDtusbMepi42XR2QU8i5ydYHkqzBQacptIj9jIOcyJbHHZ/fDPQZ2U64
+         aaxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MW/RUvnmQuaynAgrPchgXaGJmLy9K9MyZdsdP/atZxQ=;
+        b=QYVYRSkwl+XQvAK9AZjaoCmYH2j4pRhu0TVB5SBwLnhDgIlOoYHj4SR8r29q85XLxk
+         +nkoLKRhaRC259hmM5Kxx10sPsprXvyHHRJAzkK0+c75NtMssIH85yUVgV+F04rBJlI+
+         EtpVZ3HjdvoAayNb7BRt0D7TO3lgSNjwJvAcrD2zB8Th3uqrz9qqcBo445UwLsCJQp9e
+         mYnIwM/yiywo9Hjyze1ptbm6myxH7GQapr6X4j5NKrw6nYdgJrRiAjGZxYkEFdPhxdVW
+         pA+8qlSjcTDiqA3gxlmU1iqXn5Zm97vP4m/s6gz1aRIdKiKtG93rAW5+lcKTiiBd+u64
+         FR6w==
+X-Gm-Message-State: ANhLgQ0JQkjYZYcx74RVUUUuCPF/6kZZYjWS+8MEGG40gOu4Buje+07k
+        tFuPB32goO7r3H44nmblMyg=
+X-Google-Smtp-Source: ADFU+vvFwk9gIaYwzFtN+osinFKTYw7KGYLSDcNh/AYWbMCZViWyLramfoAPmOtxgl1fyoVsw37kdA==
+X-Received: by 2002:a62:2a8c:: with SMTP id q134mr18037787pfq.35.1585649123998;
+        Tue, 31 Mar 2020 03:05:23 -0700 (PDT)
+Received: from dev.localdomain ([203.100.54.194])
+        by smtp.gmail.com with ESMTPSA id y207sm12354592pfb.189.2020.03.31.03.05.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Mar 2020 03:05:22 -0700 (PDT)
+From:   Yafang Shao <laoar.shao@gmail.com>
+To:     hannes@cmpxchg.org, peterz@infradead.org, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v2 0/2] psi: enhance psi with the help of ebpf
+Date:   Tue, 31 Mar 2020 06:04:35 -0400
+Message-Id: <1585649077-10896-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 02:27:00PM -0700, Dave Jiang wrote:
-> Since the current accelerator devices do not have standard PCIe capability
-> enumeration for accepting ENQCMDS yet, for now an attribute of pdev->cmdmem has
-> been added to struct pci_dev.  Currently a PCI quirk must be used for the
-> devices that have such cap until the PCI cap is standardized. Add a helper
-> function to provide the check if a device supports the cmdmem capability.
-> 
-> Such capability is expected to be added to PCIe device cap enumeration in
-> the future.
-> 
-> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/base/core.c    |   13 +++++++++++++
->  include/linux/device.h |    2 ++
->  include/linux/pci.h    |    1 +
->  3 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index dbb0f9130f42..cd9f5b040ed4 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -27,6 +27,7 @@
->  #include <linux/netdevice.h>
->  #include <linux/sched/signal.h>
->  #include <linux/sysfs.h>
-> +#include <linux/pci.h>
->  
->  #include "base.h"
->  #include "power/power.h"
-> @@ -3790,3 +3791,15 @@ int device_match_any(struct device *dev, const void *unused)
->  	return 1;
->  }
->  EXPORT_SYMBOL_GPL(device_match_any);
-> +
-> +bool device_supports_cmdmem(struct device *dev)
-> +{
-> +	struct pci_dev *pdev;
-> +
-> +	if (!dev_is_pci(dev))
-> +		return false;
-> +
-> +	pdev = to_pci_dev(dev);
-> +	return pdev->cmdmem;
-> +}
-> +EXPORT_SYMBOL_GPL(device_supports_cmdmem);
+PSI gives us a powerful way to anaylze memory pressure issue, but we can
+make it more powerful with the help of tracepoint, kprobe, ebpf and etc.
+Especially with ebpf we can flexiblely get more details of the memory
+pressure.
 
-Why would a pci-specific function like this be ok to have in the driver
-core?  Please keep it in the pci core code instead.
+In orderc to achieve this goal, a new parameter is added into
+psi_memstall_{enter, leave}, which indicates the specific type of a
+memstall. There're totally ten memstalls by now,
+        MEMSTALL_KSWAPD
+        MEMSTALL_RECLAIM_DIRECT
+        MEMSTALL_RECLAIM_MEMCG
+        MEMSTALL_RECLAIM_HIGH
+        MEMSTALL_KCOMPACTD
+        MEMSTALL_COMPACT
+        MEMSTALL_WORKINGSET_REFAULT
+        MEMSTALL_WORKINGSET_THRASH
+        MEMSTALL_MEMDELAY
+        MEMSTALL_SWAPIO
+With the help of kprobe or tracepoint to trace this newly added agument we
+can know which type of memstall it is and then do corresponding
+improvement. I can also help us to analyze the latency spike caused by
+memory pressure.
 
-thanks,
+But note that we can't use it to build memory pressure for a specific type
+of memstall, e.g. memcg pressure, compaction pressure and etc, because it
+doesn't implement various types of task->in_memstall, e.g.
+task->in_memcgstall, task->in_compactionstall and etc.
 
-greg k-h
+Although there're already some tracepoints can help us to achieve this
+goal, e.g.
+        vmscan:mm_vmscan_kswapd_{wake, sleep}
+        vmscan:mm_vmscan_direct_reclaim_{begin, end}
+        vmscan:mm_vmscan_memcg_reclaim_{begin, end}
+        /* no tracepoint for memcg high reclaim*/
+        compcation:mm_compaction_kcompactd_{wake, sleep}
+        compcation:mm_compaction_begin_{begin, end}
+        /* no tracepoint for workingset refault */
+        /* no tracepoint for workingset thrashing */
+        /* no tracepoint for use memdelay */
+        /* no tracepoint for swapio */
+but psi_memstall_{enter, leave} gives us a unified entrance for all
+types of memstall and we don't need to add many begin and end tracepoints
+that hasn't been implemented yet.
+
+Patch #2 gives us an example of how to use it with ebpf. With the help of
+ebpf we can trace a specific task, application, container and etc. It also
+can help us to analyze the spread of latencies and whether they were
+clustered at a point of time or spread out over long periods of time.
+
+To summarize, with the pressure data in /proc/pressure/memroy we know that
+the system is under memory pressure, and then with the newly added tracing
+facility in this patchset we can get the reason of this memory pressure,
+and then thinks about how to make the change.
+The workflow can be illustrated as bellow.
+
+		   REASON	  ACTION
+		 | compcation	| improve compcation	|
+		 | vmscan	| improve vmscan	|
+Memory pressure -| workingset	| improve workingset	|
+		 | etc		| ...			|
+
+Yafang Shao (2):
+  psi: introduce various types of memstall
+  psi, tracepoint: introduce tracepoints for psi_memstall_{enter, leave}
+
+ block/blk-cgroup.c           |  4 ++--
+ block/blk-core.c             |  4 ++--
+ include/linux/psi.h          | 15 +++++++++++----
+ include/linux/psi_types.h    | 13 +++++++++++++
+ include/trace/events/sched.h | 41 +++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/psi.c           | 14 ++++++++++++--
+ mm/compaction.c              |  4 ++--
+ mm/filemap.c                 |  4 ++--
+ mm/memcontrol.c              |  4 ++--
+ mm/page_alloc.c              |  8 ++++----
+ mm/page_io.c                 |  4 ++--
+ mm/vmscan.c                  |  8 ++++----
+ 12 files changed, 97 insertions(+), 26 deletions(-)
+
+-- 
+2.18.2
+
