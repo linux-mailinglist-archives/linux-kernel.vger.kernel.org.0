@@ -2,125 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 920FF199585
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 860251995A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:48:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730642AbgCaLpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 07:45:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730424AbgCaLpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 07:45:14 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AE0420848;
-        Tue, 31 Mar 2020 11:45:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585655113;
-        bh=rC/38ClZ3y2/dVShjeUj2v2u6Z9jOMJyHzY+AlOMuKA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s7+C2KpVO4692yq6aLf4raZ8PL/WkSIxfSpwsjwYJJGJioffmKvzoObEE/wevNE/S
-         AK6gRkKBxtzIlVC8yTMyARLbj3aX/Qj3F7F4c8YXO5aHQEr4bvk7IKhDcqZ/GO+0Lh
-         HgEJbVzxcahHnLgZjVBNYQOuSCE8XYnqzl9Ku2pI=
-Date:   Tue, 31 Mar 2020 12:45:09 +0100
-From:   Will Deacon <will@kernel.org>
-To:     tingwei@codeaurora.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: hw_breakpoint: don't clear debug registers in
- halt mode
-Message-ID: <20200331114502.GA29553@willie-the-truck>
-References: <20200328083209.21793-1-tingwei@codeaurora.org>
- <20200330123946.GH1309@C02TD0UTHF1T.local>
- <20200330134218.GB10633@willie-the-truck>
- <2f4d076b2b21de3908f0821126d0c61e@codeaurora.org>
- <20200331074147.GA25612@willie-the-truck>
- <518d9ca9652c23bfc0e1831306144418@codeaurora.org>
+        id S1730617AbgCaLsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 07:48:04 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34726 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730424AbgCaLsE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 07:48:04 -0400
+Received: by mail-pg1-f194.google.com with SMTP id l14so3103719pgb.1;
+        Tue, 31 Mar 2020 04:48:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=++UQlU6VN9bMxqDPdQyUp42DcXToJ2hwFVgrDIaZHqs=;
+        b=DnpeTBqmQ09ZN3NXi5SsJcWx9eJloyCTDAjUGp7W3ujRWHrEAffpirrxpGE+/5NZJ/
+         PFaJh0WUYpXH8lubP3jepsiDwe0hMz5fi0RCZCk9GiB07CYck4SRY5FJSVwVZ3gPYDWZ
+         utYVBnsu18+Q1bH2PTgjL1cxFv589vbgKXcjQuhg/FE2FkR47s0xQupNWYASV1JhHH8b
+         f1b+3JrWQvXFvsI587ixk5ECRa4hhEduioP0U19lQPpMzFOhwUDokg6/p8mLMHwafS/p
+         4REYbDxZNAczqAFQUOUiyMvCuZ5ijg1cldarm0LZeiRXGYtLviEYH5OOCzijLcg/eo23
+         PIyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=++UQlU6VN9bMxqDPdQyUp42DcXToJ2hwFVgrDIaZHqs=;
+        b=omi3tWjsonmHucWgw/oHLjoXv0S5oodWV8l01wwmGI74xgYMdXTZ+wEO+RKoIVOUYW
+         FWt9U8VVd3l9GYy8LsovCBPxZZKD4X93MEATvYTCHhhqc4JhyP1kL3O9jhATSXktKxSt
+         rPRE64G0sTXBQaYU6MwzZpiqTx6KKfV3zpDNAZeagYFLN0WPnPZQN0Sgi1VAlbvrU1dm
+         z0BZzBVC2uQdvPUX7KkTNHCvw4xsAJPe3ZycyOEisHTTo3rKby6ZTM+QekTdqRflqQDN
+         lAyM23bRGsO+WX+azx8+McL5d5A/Hu2PhJ7mF+w6Qs/lGe45RSY/mnq7Oj/x+9YF65kz
+         6bsA==
+X-Gm-Message-State: AGi0Puamzqc2zcSd7ORDzQv3LfUfP4/ykWS3rr3ITzVg2A3nPpCtalzR
+        ZYmqWnEmELXN+njCmFdN1uTVbc9GDzzJWQ==
+X-Google-Smtp-Source: APiQypI54/hk+3/QJD7H5lyRnC0PFFEBG6sV3AsATVr65uXQv2wnXbSRfDI1h7izLDqdFA1uEAWb0w==
+X-Received: by 2002:a63:7159:: with SMTP id b25mr3716022pgn.72.1585655282423;
+        Tue, 31 Mar 2020 04:48:02 -0700 (PDT)
+Received: from localhost.localdomain ([122.178.242.244])
+        by smtp.gmail.com with ESMTPSA id i15sm11601220pgc.74.2020.03.31.04.47.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 04:48:01 -0700 (PDT)
+From:   Rohit Sarkar <rohitsarkar5398@gmail.com>
+To:     linux-iio@vger.kernel.org
+Cc:     dragos.bogdan@analog.com, Rohit Sarkar <rohitsarkar5398@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Stefan Popa <stefan.popa@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] use DEFINE_DEBUGFS_ATTRIBUTE instead of DEFINE_SIMPLE_ATTRIBUTE
+Date:   Tue, 31 Mar 2020 17:17:29 +0530
+Message-Id: <20200331114732.14739-1-rohitsarkar5398@gmail.com>
+X-Mailer: git-send-email 2.23.0.385.gbc12974a89
+In-Reply-To: <20200328063456.24012-1-rohitsarkar5398@gmail.com>
+References: <20200328063456.24012-1-rohitsarkar5398@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <518d9ca9652c23bfc0e1831306144418@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 07:33:38PM +0800, tingwei@codeaurora.org wrote:
-> 在 2020-03-31 15:41，Will Deacon 写道：
-> > On Tue, Mar 31, 2020 at 10:39:42AM +0800, tingwei@codeaurora.org wrote:
-> > > 在 2020-03-30 21:42，Will Deacon 写道：
-> > > > On Mon, Mar 30, 2020 at 01:39:46PM +0100, Mark Rutland wrote:
-> > > > > On Sat, Mar 28, 2020 at 04:32:09PM +0800, Tingwei Zhang wrote:
-> > > > > > If external debugger sets a breakpoint for one Kernel function
-> > > > > > when device is in bootloader mode and loads Kernel, this breakpoint
-> > > > > > will be wiped out in hw_breakpoint_reset(). To fix this, check
-> > > > > > MDSCR_EL1.HDE in hw_breakpoint_reset(). When MDSCR_EL1.HDE is
-> > > > > > 0b1, halting debug is enabled. Don't reset debug registers in this
-> > > > case.
-> > > > >
-> > > > > I don't think this is sufficient, because the kernel can still
-> > > > > subsequently mess with breakpoints, and the HW debugger might not be
-> > > > > attached at this point in time anyhow.
-> > > > >
-> > > > > I reckon this should hang off the existing "nodebumon" command line
-> > > > > option, and we shouldn't use HW breakpoints at all when that is
-> > > > > passed.
-> > > > > Then you can pass that to prevent the kernel stomping on the external
-> > > > > debugger.
-> > > > >
-> > > > > Will, thoughts?
-> > > >
-> > > > I was going to suggest the same thing, although we will also need to
-> > > > take
-> > > > care to reset the registers if "nodebugmon" is toggled at runtime via
-> > > > the
-> > > > "debug_enabled" file in debugfs.
-> > > >
-> > > Thanks for the suggestion, Mark and Will. It's a great idea to use
-> > > "nodebugmon". When "nodebugmon" is set, Kernel won't change HW
-> > > breakpoints.
-> > > 
-> > > For reset the registers after "debug_enabled" is toggled, I'm
-> > > thinking if
-> > > we are adding unnecessary complexity here.If we take that approach, we
-> > > will
-> > > hook "debug_enabled" interface and use smp_call_function_single() to
-> > > call
-> > > hw_breakpoint_reset() on each CPU. Wait for all CPUs' execution done
-> > > and
-> > > change "debug_enabled". External debugger would clear the
-> > > breakpoints when
-> > > it detaches the device and restores its breakpoints when attaches the
-> > > device.
-> > > Assume debug_enabled is changed to one after external debugger
-> > > detaches
-> > > the
-> > > device. Debugger would already clear the breakpoint registers. If
-> > > debgger
-> > > is
-> > > still attached, there's nothing Kernel can do to stop it
-> > > restores/programs
-> > > the breakpoint registers.
-> > > 
-> > > What do you think of this?
-> > 
-> > It's all a bit of a mess. Looking at it some more, why can't the
-> > external
-> > debugger simply trap access to the debug registers using EDSCR.TDA? That
-> > way, we don't have to change anything in the kernel.
-> > 
-> 
-> External debugger has the function to trap access to debug registers now.
-> What do we expect debugger to do after core is stopped? Skip that msr
-> instruction and continue to run?
+The debugfs_create_file_unsafe method does not protect the fops given to
+it from file removal. It must be used with DEFINE_DEBUGFS_ATTRIBUTE
+which makes the fops aware of the file lifetime.
 
-The nicest thing to do would probably be to record all the accesses made
-by the OS so that it can emulate reads and replay writes when external
-debugging is over. Given that you'd still be expecting to pass "nodebugmon",
-the emulation should be pretty straightforward, I think.
+Further using DEFINE_DEBUGFS_ATTRIBUTE along with
+debugfs_create_file_unsafe significantly reduces the overhead introduced by
+debugfs_create_file which creates a lifetime managing proxy around each
+fops handed in. Refer [1] for more on this.
 
-Will
+Fixes the following warnings reported by coccinelle:
+drivers/iio/imu//adis16460.c:126:0-23: WARNING: adis16460_flash_count_fops should be defined with DEFINE_DEBUGFS_ATTRIBUTE
+drivers/iio/imu//adis16460.c:108:0-23: WARNING: adis16460_product_id_fops should be defined with DEFINE_DEBUGFS_ATTRIBUTE
+drivers/iio/imu//adis16460.c:90:0-23: WARNING: adis16460_serial_number_fops should be defined with DEFINE_DEBUGFS_ATTRIBUTE
+drivers/iio/imu//adis16400.c:278:0-23: WARNING: adis16400_flash_count_fops should be defined with DEFINE_DEBUGFS_ATTRIBUTE
+drivers/iio/imu//adis16400.c:261:0-23: WARNING: adis16400_product_id_fops should be defined with DEFINE_DEBUGFS_ATTRIBUTE
+
+[1]: https://lists.gt.net/linux/kernel/2369498
+
+Changelog v1 -> v2
+* Use debugfs_create_file_unsafe instead of debugfs_create_file
+
+Rohit Sarkar (2):
+  iio: imu: adis16400: use DEFINE_DEBUGFS_ATTRIBUTE instead of
+    DEFINE_SIMPLE_ATTRIBUTE
+  iio: imu: adis16460: use DEFINE_DEBUGFS_ATTRIBUTE instead of
+    DEFINE_SIMPLE_ATTRIBUTE
+
+ drivers/iio/imu/adis16400.c | 19 ++++++++++---------
+ drivers/iio/imu/adis16460.c | 27 +++++++++++++++------------
+ 2 files changed, 25 insertions(+), 21 deletions(-)
+
+-- 
+2.23.0.385.gbc12974a89
+
