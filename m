@@ -2,128 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9812819A1E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF2819A1E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:27:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731343AbgCaWZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 18:25:39 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53328 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbgCaWZi (ORCPT
+        id S1731427AbgCaW1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 18:27:31 -0400
+Received: from pb-smtp1.pobox.com ([64.147.108.70]:58708 "EHLO
+        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbgCaW1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 18:25:38 -0400
-Received: by mail-wm1-f65.google.com with SMTP id b12so4414285wmj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 15:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xSdN4Bu7ieJk7DdR7Vya+R+Xaggz1lTEs1MBPbcTcOI=;
-        b=YSmdVsQY7GpEjZZCobn8nbd2aLkQj1YokvMnqgXsuyC6tu3cIJr+yV2hivG929M1Yt
-         sZfyO2NXMM5jYmff/dH9NaKf5zzCs6pxaxgfAsbEV5/ukIw9TfaZRb3jo5h8raMXHEvD
-         ej3KERt1t36GL8rFdQ+6P7fjhk0fqPLIvLnFVl3/0cN19+GSNXOMpLe4LwT8CLlDtX9o
-         0eg8WUAjD7VsYL8GorPpIhNzGU/+Ple1Lvle0xvDVic6h/tgRPOHGT5HoXODE6TtbZe6
-         R2J6J4IuWT1BGinEoNJTu2Ht4KgtYRyvKlZQfClRATHtVqjREfg0tu1KVjhWSl7kpj7X
-         Y1Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xSdN4Bu7ieJk7DdR7Vya+R+Xaggz1lTEs1MBPbcTcOI=;
-        b=P9NzvVOf/5kVtWv7n9UJ/xgl1H/eCImUc4S81UtwDXPusBNDEdqy7+wIWw3ZJ1sPyR
-         AJB4AmQTgr6v0C5enlZOUKIidKcBpTpYE7qcmknApBclFNdGz7keM/JBGq/OlxlOTFpw
-         RYUr/JPie0VgFQvZo1eT7YcimU9bPqtwz+afvdbz0oNQ+YKrTCYpn1TJVk420oPjoHzS
-         Y7PYqnlBHyaim8OFcLAJJjFRvM3wQPCJkD5+ppBl2dfhOYX5LLsmO8Ad15mHpG12txC6
-         s1D0rpN0UKDAs/LF2l0d1N2rDGg7oTRiFSepDSa24fy4fEab+94HwtLQRd1rjkCg2J+8
-         cPfg==
-X-Gm-Message-State: AGi0PuZjrA//jq5IhGtnBA6bzBsCjjywYE1Cizsb6kM9cAGCcX27Th+A
-        Uyx+OSdqwDPpZdhHKhWRvzg=
-X-Google-Smtp-Source: APiQypK5u4bGsGrwHjCOm46og9UvvihBNPnQNe1CFDcp05IIiYuE4SY1mawbHnNh/4UrW0d1y7bJpg==
-X-Received: by 2002:a1c:e055:: with SMTP id x82mr1032774wmg.20.1585693537091;
-        Tue, 31 Mar 2020 15:25:37 -0700 (PDT)
-Received: from localhost (p200300E41F4A9B0076D02BFFFE273F51.dip0.t-ipconnect.de. [2003:e4:1f4a:9b00:76d0:2bff:fe27:3f51])
-        by smtp.gmail.com with ESMTPSA id d133sm22516wmd.34.2020.03.31.15.25.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 15:25:35 -0700 (PDT)
-Date:   Wed, 1 Apr 2020 00:25:35 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clocksource: Add debugfs support
-Message-ID: <20200331222535.GF2954599@ulmo>
-References: <20200331214045.2957710-1-thierry.reding@gmail.com>
- <CALAqxLXD78StqLMuaGqHqhSfS9L2FBfNCm6yDyWMZT_7iNX-wQ@mail.gmail.com>
+        Tue, 31 Mar 2020 18:27:30 -0400
+Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id 71AA55E8E1;
+        Tue, 31 Mar 2020 18:27:28 -0400 (EDT)
+        (envelope-from daniel.santos@pobox.com)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=subject:to:cc
+        :references:from:message-id:date:mime-version:in-reply-to
+        :content-type:content-transfer-encoding; s=sasl; bh=tUAISgeTECuY
+        FozM2eCvQreWHGo=; b=KbV95ITg+JUShCGHOrSj7y8wcyLrS+gMEJQANLLJlcBu
+        IZ1FDL3h4p/l7EiIe2MTIDk0avSD1aVw0/+YelC+kyW85JDv56GIfNLhxkaCXYbo
+        WYGck/y7BGUri5PeYTYXH3UzF/e+HH1Y+Hg3WNkU5rG3p4kzwnG0pKi0/5hEaVA=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=subject:to:cc
+        :references:from:message-id:date:mime-version:in-reply-to
+        :content-type:content-transfer-encoding; q=dns; s=sasl; b=pKtTVz
+        pVmKpiAD46FKIPLPkbpCwYT+f1KloLBZGudrzoU463tZVoyarfFB4px6DEaxScSL
+        Jv7QgZGtRpHebTCn+2XZL4MJ7q1gSBUnzTAexjCOq1LWWoN7cV9WEWQ7Gfp7Jaqz
+        S/vHp4csFKxxIfKB5Y07BuUoZ3g8MC1TsqTW8=
+Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id 6946D5E8E0;
+        Tue, 31 Mar 2020 18:27:28 -0400 (EDT)
+        (envelope-from daniel.santos@pobox.com)
+Received: from [192.168.0.8] (unknown [76.183.130.197])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 7C4465E8DF;
+        Tue, 31 Mar 2020 18:27:27 -0400 (EDT)
+        (envelope-from daniel.santos@pobox.com)
+Subject: Re: [PATCH] compiler.h: fix error in BUILD_BUG_ON() reporting
+To:     Vegard Nossum <vegard.nossum@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ian Abbott <abbotti@mev.co.uk>
+References: <20200331112637.25047-1-vegard.nossum@oracle.com>
+From:   Daniel Santos <daniel.santos@pobox.com>
+Message-ID: <91730318-da0e-c992-f154-a74044b26650@pobox.com>
+Date:   Tue, 31 Mar 2020 17:25:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="B0nZA57HJSoPbsHY"
-Content-Disposition: inline
-In-Reply-To: <CALAqxLXD78StqLMuaGqHqhSfS9L2FBfNCm6yDyWMZT_7iNX-wQ@mail.gmail.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+In-Reply-To: <20200331112637.25047-1-vegard.nossum@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Pobox-Relay-ID: CD919292-739E-11EA-A683-C28CBED8090B-06139138!pb-smtp1.pobox.com
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 3/31/20 6:26 AM, Vegard Nossum wrote:
+> compiletime_assert() uses __LINE__ to create a unique function name.
+> This means that if you have more than one BUILD_BUG_ON() in the same
+> source line (which can happen if they appear e.g. in a macro), then
+> the error message from the compiler might output the wrong condition.
+>
+> For this source file:
+>
+> 	#include <linux/build_bug.h>
+>
+> 	#define macro() \
+> 		BUILD_BUG_ON(1); \
+> 		BUILD_BUG_ON(0);
+>
+> 	void foo()
+> 	{
+> 		macro();
+> 	}
+>
+> gcc would output:
+>
+> ./include/linux/compiler.h:350:38: error: call to =E2=80=98__compiletim=
+e_assert_9=E2=80=99 declared with attribute error: BUILD_BUG_ON failed: 0
+>   _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+>
+> However, it was not the BUILD_BUG_ON(0) that failed, so it should say 1
+> instead of 0. With this patch, we use __COUNTER__ instead of __LINE__, =
+so
+> each BUILD_BUG_ON() gets a different function name and the correct
+> condition is printed:
+>
+> ./include/linux/compiler.h:350:38: error: call to =E2=80=98__compiletim=
+e_assert_0=E2=80=99 declared with attribute error: BUILD_BUG_ON failed: 1
+>   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER_=
+_)
+>
+> Cc: Daniel Santos <daniel.santos@pobox.com>
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Ian Abbott <abbotti@mev.co.uk>
+> Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
+> ---
+>  include/linux/compiler.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index 5e88e7e33abec..034b0a644efcc 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -347,7 +347,7 @@ static inline void *offset_to_ptr(const int *off)
+>   * compiler has support to do so.
+>   */
+>  #define compiletime_assert(condition, msg) \
+> -	_compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+> +	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER_=
+_)
+> =20
+>  #define compiletime_assert_atomic_type(t)				\
+>  	compiletime_assert(__native_word(t),				\
 
---B0nZA57HJSoPbsHY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This will break builds using gcc 4.2 and earlier and the expectation was
+that you don't put two of them on the same line -- not helpful in macros
+where it all must be on the same line.=C2=A0 Is gcc 4.2 still supported?=C2=
+=A0 If
+so, I recommend using another macro for the unique number that uses
+__COUNTER__ if available and __LINE__ otherwise.=C2=A0 This was the decis=
+ion
+for using __LINE__ when I wrote the original anyway.
 
-On Tue, Mar 31, 2020 at 02:50:47PM -0700, John Stultz wrote:
-> On Tue, Mar 31, 2020 at 2:40 PM Thierry Reding <thierry.reding@gmail.com>=
- wrote:
-> >
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Add a top-level "clocksource" directory to debugfs. For each clocksource
-> > registered with the system, a subdirectory will be added with attributes
-> > that can be queried to obtain information about the clocksource.
-> >
->=20
-> Curious, what's the need/planned use for this?  I know in the past
-> folks have tried to get timekeeping internals exported to userland so
-> they could create their own parallel userland timekeeping system,
-> which I worry is a poor idea.
+Also note that this construct:
 
-This was meant to be purely for debugging purposes. That is as an easy
-way to check that the code was working and that the counter is properly
-updated.
+BUILD_BUG_ON_MSG(0, "I like chicken"); BUILD_BUG_ON_MSG(1, "I don't like
+chicken");
 
-I certainly wasn't planning on implementing any userland on top of this.
-Well, I guess it could be useful to use these values in test scripts
-perhaps, since one of the clock sources exposed by one of the drivers I
-have been working on is used across Tegra SoCs for hardware
-timestamping. For that it might be interesting to be able to compare
-those timestamp snapshots to something that I can read from userspace
-during testing.
+will incorrectly claim that I like chicken.=C2=A0 This is because of how
+__attribute__((error)) works -- gcc will use the first declaration to
+define the error message.
 
-But that's about as far as I was planning on taking this. I agree that
-basing some userland timekeeping system on a debugfs interface sounds
-like a very bad idea.
+I couple of years ago, I almost wrote a gcc extension to get rid of this
+whole mess and just __builtin_const_assert(cond, msg).=C2=A0 Maybe I'll
+finish that this year.
 
-Thierry
-
---B0nZA57HJSoPbsHY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6Dw14ACgkQ3SOs138+
-s6El0w//ZaYlL011KCX6wqZ/tyPhYGHVzPc4xLPD3g1eceLbuIjBvAFE3/Wt8/mC
-uL21Jb/fY26IuxvipG3cueMy42+mKGh0qEtH+TqdCcSxKyNEordzJ7/7PGEOxt1g
-CW8UYNn1u14gr7T9tMe+9gQP5S36oWeycVECfs7kR/K2iR2W6q9fvJ1iLkzR7GZ5
-u7Aq4IUDizBmSm0/ciweQz7lG6qtgwuVTQjrLrdeFDapvWvZQIvqxBJUdNhCiWrv
-9eCZU96W+4Zz2TNej2DDqrZgEwUTirACNae8pNwh6mZXoQ3FX40cqPlNKmjWWndL
-L5q2e1MG7HnTp/nDQ7/tDRRO2s4/ZznZyLRLXEaFctp4N4VW7ZzowVntvpXaDB+k
-t2XmzbHwT9rx3NHEjoYD+8d4xsz6XWmxh9vjhJTnqN/mx1EsH1c2tltxfzn3bvez
-WdQY3/E3/GWdAXfWX1XjQtUrSq0TqF34bLE7zVHkLJLV/fdKDOncC3CljZQpDVc+
-JU3uG9ctluDjnh/wvOyhJzRa5Io/MpYQhBMh0yQdHUyW+1RFV4cKY0BdEBPeImnW
-FAdjCgAxRgp4JEjbz5q//6KIk93G1utsFUVFqn6j/S5QU7ZUdSzGO/DQLO22dWqx
-Jg35CbsEXx27HPhRAtZSqkb1l9sZR0nL01pxIUBmMCMLHOfqNBQ=
-=LW0i
------END PGP SIGNATURE-----
-
---B0nZA57HJSoPbsHY--
+Daniel
