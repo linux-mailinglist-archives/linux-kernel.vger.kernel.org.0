@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2E89199006
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36E95199104
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:16:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731225AbgCaJIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:08:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50678 "EHLO mail.kernel.org"
+        id S1731789AbgCaJQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:16:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731328AbgCaJIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:08:20 -0400
+        id S1730328AbgCaJQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:16:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B42320787;
-        Tue, 31 Mar 2020 09:08:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F36A20675;
+        Tue, 31 Mar 2020 09:16:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645699;
-        bh=cK/T867mmCzZ7jlhvqRs6wFLYHZ3QXTaeW+I16G17lY=;
+        s=default; t=1585646191;
+        bh=sQsKAGMwDmKlXneFcDernatCFdyacNP8NlyojPzSbOg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IMTtdgO0wPRLxRz5xYt3Zk6/G38onVQPUCyz1u4HXoKMlCYBvpDEcr+Fsu5JhOfIy
-         o7gcUkE/bQCefVrpAr4GmslA13CgxgbHi21dadv6QL/efvYuT6fbLdq0+5U2FkFin2
-         PoUTPIVp2LkJCWBwtlgmccg0kFNC5tGAllyiBTz0=
+        b=JDfChuEYlpvsSrQLO/ejKviVgw3XlO59RbaozZ7FRt4idBxL/RNYdakC772YABFhs
+         77UMiyM2uQOYb+jBF5DBxsNniUeHDRN/jckOuWoa2JM6OvK9+Gmb45XIR1Ks/cUbOj
+         WHeZpXH2PS1AhopJ+/VtrR30qWmb4+Lqh6BFU3pk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Edward Cree <ecree@solarflare.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.5 136/170] netfilter: flowtable: populate addr_type mask
-Date:   Tue, 31 Mar 2020 10:59:10 +0200
-Message-Id: <20200331085437.985463513@linuxfoundation.org>
+        stable@vger.kernel.org, Raed Salem <raeds@mellanox.com>,
+        Boris Pismenny <borisp@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 5.4 111/155] xfrm: handle NETDEV_UNREGISTER for xfrm device
+Date:   Tue, 31 Mar 2020 10:59:11 +0200
+Message-Id: <20200331085431.020089093@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
+References: <20200331085418.274292403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,31 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Edward Cree <ecree@solarflare.com>
+From: Raed Salem <raeds@mellanox.com>
 
-commit 15ff197237e76c4dab06b7b518afaa4ebb1c43e0 upstream.
+commit 03891f820c2117b19e80b370281eb924a09cf79f upstream.
 
-nf_flow_rule_match() sets control.addr_type in key, so needs to also set
- the corresponding mask.  An exact match is wanted, so mask is all ones.
+This patch to handle the asynchronous unregister
+device event so the device IPsec offload resources
+could be cleanly released.
 
-Fixes: c29f74e0df7a ("netfilter: nf_flow_table: hardware offload support")
-Signed-off-by: Edward Cree <ecree@solarflare.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: e4db5b61c572 ("xfrm: policy: remove pcpu policy cache")
+Signed-off-by: Raed Salem <raeds@mellanox.com>
+Reviewed-by: Boris Pismenny <borisp@mellanox.com>
+Reviewed-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_flow_table_offload.c |    1 +
+ net/xfrm/xfrm_device.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/net/netfilter/nf_flow_table_offload.c
-+++ b/net/netfilter/nf_flow_table_offload.c
-@@ -87,6 +87,7 @@ static int nf_flow_rule_match(struct nf_
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-+	mask->control.addr_type = 0xffff;
- 	match->dissector.used_keys |= BIT(key->control.addr_type);
- 	mask->basic.n_proto = 0xffff;
+--- a/net/xfrm/xfrm_device.c
++++ b/net/xfrm/xfrm_device.c
+@@ -390,6 +390,7 @@ static int xfrm_dev_event(struct notifie
+ 		return xfrm_dev_feat_change(dev);
  
+ 	case NETDEV_DOWN:
++	case NETDEV_UNREGISTER:
+ 		return xfrm_dev_down(dev);
+ 	}
+ 	return NOTIFY_DONE;
 
 
