@@ -2,109 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C245198E5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:28:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D900A198E4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:28:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730261AbgCaI2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 04:28:30 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:51101 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729795AbgCaI23 (ORCPT
+        id S1730065AbgCaI2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 04:28:10 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:33417 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729819AbgCaI2J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:28:29 -0400
-X-UUID: 12613cb0211e47778dd9565e692788fb-20200331
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=YQ57/0uYu8e2rMbWbbfkX9m+q6kPZQyOhAzfeLnK1/g=;
-        b=KpdNB/QGALXWhAauazNBulgahq8crIoinuziaDxhTgfvtR3rUq+YdCIXDDM/nQbM14Ts0n96xFg6Tukv9IT7bGRB46M8XkxwLmNsH7+te5arUBJ5s9pVCUh6ZZzxZlzPBL25YK4LQ2i9nLI9mZxsKfx0mpF6lFn9G8SK2qky79g=;
-X-UUID: 12613cb0211e47778dd9565e692788fb-20200331
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1445999765; Tue, 31 Mar 2020 16:27:59 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 31 Mar
- 2020 16:27:59 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
- MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Tue, 31 Mar 2020 16:27:56 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC:     <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
-        <stonea168@163.com>, <huijuan.xie@mediatek.com>,
-        Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v4 4/4] drm/mediatek: config mipitx impedance with calibration data
-Date:   Tue, 31 Mar 2020 16:27:25 +0800
-Message-ID: <20200331082725.81048-5-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200331082725.81048-1-jitao.shi@mediatek.com>
-References: <20200331082725.81048-1-jitao.shi@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: AE94F9B996E80ACF14AC902A5CF3432598D7C8C9E609F120D86AFFCA9479468E2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Tue, 31 Mar 2020 04:28:09 -0400
+Received: by mail-pj1-f65.google.com with SMTP id jz1so814570pjb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 01:28:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=vvuaHKk+HlpvQjDOfBcZlMXDUHafhx6H0xOVhNlX8Y8=;
+        b=ht5AFNuS5603oSD/oK4BFIR4Iy+szv9JbbLkUO4Hgtys8CjCnV8i2B+dqAayfRbP4e
+         N1QWHs5BZlEiqd7xn/+CJH2IGbjiJXBaBuZViJ1nacDb6+SGKwN2yqhE5DTmeNFlN91n
+         8p9Y/3QjvgIpCGGc3tTllvnrb9Wz0fJ3ZTJ2rqqQIF5erYT2PVeGlIwlIZItp5dW29fR
+         PtyfdMJ17JjgkBJoSWggJEuGq1r4N2B1Hy5F8yHFP9CHAWCFV5ZVB+/Tj0nBuPXrgy0G
+         XFeeEkK+YsTQE8SsA4Krv9gmL2E3Y688pJDnvCRDQUg0eRX66Cml59Yx40VsO6pkRyM6
+         ufww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=vvuaHKk+HlpvQjDOfBcZlMXDUHafhx6H0xOVhNlX8Y8=;
+        b=rDyEh3cGUd6qI6prOI0XL5793Qzk3E2pN/YIDV8fJeTlapp7kkf2UQYUtPMBrh1Wfo
+         IU1ikfd3MEnPx+UFly7ror0YRNo0WRQ3m9lU9imOexvBWQ1q+YCKPOXP4+4KtwrsbaGF
+         7tPMr1FXvCDDXKDFzz2ZwzylbA/ANwppxeQlHi2egzxlLpAhO/9j9hI5XzHOqtNK5ie6
+         DibgbUaoFLgaErW4CkNZzdnARTvmjZ93eXUpYbC1hCe6BvcTdUqVJGdqbZaA/mPGyDYQ
+         o4pXNz4T6L81YvWvaIkq5B63QHtc9yZgQeD5B4QFSHZwl2O0aG1jmb9ZGL7HNYOzJkjG
+         4+bg==
+X-Gm-Message-State: AGi0Pua6j6H10lvTnh4GsX60lFMc3PRb5uOIfXfbO6ZPdQu4KxD9/ss5
+        ay2Nj8YMCd9hfocLA0GB4G0=
+X-Google-Smtp-Source: APiQypJuZqMrbnsNW0kwXp/mvKJzQNU9CO7+4pJ9P+iZCSECFrIhVV1gqRp9kWZMdp6CvBAblav/Yg==
+X-Received: by 2002:a17:90a:3602:: with SMTP id s2mr2487666pjb.143.1585643288402;
+        Tue, 31 Mar 2020 01:28:08 -0700 (PDT)
+Received: from localhost.localdomain.info ([103.220.76.84])
+        by smtp.gmail.com with ESMTPSA id l62sm11095775pgd.82.2020.03.31.01.28.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Mar 2020 01:28:08 -0700 (PDT)
+From:   li haoran <lhr01130208@gmail.com>
+To:     mingo@redhat.com
+Cc:     pertez@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        linux-kernel@vger.kernel.org, Li Haoran <lhr01130208@gmail.com>
+Subject: [PATCH] sched/fair: Fix a comment typo
+Date:   Tue, 31 Mar 2020 04:28:02 -0400
+Message-Id: <1585643282-1521-1-git-send-email-lhr01130208@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UmVhZCBjYWxpYnJhdGlvbiBkYXRhIGZyb20gbnZtZW0sIGFuZCBjb25maWcgbWlwaXR4IGltcGVk
-YW5jZSB3aXRoDQpjYWxpYnJhdGlvbiBkYXRhIHRvIG1ha2Ugc3VyZSB0aGVpciBpbXBlZGFuY2Ug
-YXJlIDEwMG9obS4NCg0KU2lnbmVkLW9mZi1ieTogSml0YW8gU2hpIDxqaXRhby5zaGlAbWVkaWF0
-ZWsuY29tPg0KLS0tDQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19tdDgxODNfbWlwaV90
-eC5jIHwgNTcgKysrKysrKysrKysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCA1NyBpbnNlcnRp
-b25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX210ODE4
-M19taXBpX3R4LmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX210ODE4M19taXBpX3R4
-LmMNCmluZGV4IGU0Y2M5Njc3NTBjYi4uMGY4N2NkM2QxZDdkIDEwMDY0NA0KLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL21lZGlhdGVrL210a19tdDgxODNfbWlwaV90eC5jDQorKysgYi9kcml2ZXJzL2dw
-dS9kcm0vbWVkaWF0ZWsvbXRrX210ODE4M19taXBpX3R4LmMNCkBAIC01LDYgKzUsOCBAQA0KICAq
-Lw0KIA0KICNpbmNsdWRlICJtdGtfbWlwaV90eC5oIg0KKyNpbmNsdWRlIDxsaW51eC9udm1lbS1j
-b25zdW1lci5oPg0KKyNpbmNsdWRlIDxsaW51eC9zbGFiLmg+DQogDQogI2RlZmluZSBNSVBJVFhf
-TEFORV9DT04JCTB4MDAwYw0KICNkZWZpbmUgUkdfRFNJX0NQSFlfVDFEUlZfRU4JCUJJVCgwKQ0K
-QEAgLTI4LDYgKzMwLDcgQEANCiAjZGVmaW5lIE1JUElUWF9QTExfQ09ONAkJMHgwMDNjDQogI2Rl
-ZmluZSBSR19EU0lfUExMX0lCSUFTCQkoMyA8PCAxMCkNCiANCisjZGVmaW5lIE1JUElUWF9EMlBf
-UlRDT0RFCTB4MDEwMA0KICNkZWZpbmUgTUlQSVRYX0QyX1NXX0NUTF9FTgkweDAxNDQNCiAjZGVm
-aW5lIE1JUElUWF9EMF9TV19DVExfRU4JMHgwMjQ0DQogI2RlZmluZSBNSVBJVFhfQ0tfQ0tNT0RF
-X0VOCTB4MDMyOA0KQEAgLTEwOCw2ICsxMTEsNTggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBjbGtf
-b3BzIG10a19taXBpX3R4X3BsbF9vcHMgPSB7DQogCS5yZWNhbGNfcmF0ZSA9IG10a19taXBpX3R4
-X3BsbF9yZWNhbGNfcmF0ZSwNCiB9Ow0KIA0KK3N0YXRpYyB2b2lkIG10a19taXBpX3R4X2NvbmZp
-Z19jYWxpYnJhdGlvbl9kYXRhKHN0cnVjdCBtdGtfbWlwaV90eCAqbWlwaV90eCkNCit7DQorCXUz
-MiAqYnVmOw0KKwl1MzIgcnRfY29kZVs1XTsNCisJaW50IGksIGo7DQorCXN0cnVjdCBudm1lbV9j
-ZWxsICpjZWxsOw0KKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSBtaXBpX3R4LT5kZXY7DQorCXNpemVf
-dCBsZW47DQorDQorCWNlbGwgPSBudm1lbV9jZWxsX2dldChkZXYsICJjYWxpYnJhdGlvbi1kYXRh
-Iik7DQorCWlmIChJU19FUlIoY2VsbCkpIHsNCisJCWRldl9pbmZvKGRldiwgIm52bWVtX2NlbGxf
-Z2V0IGZhaWxcbiIpOw0KKwkJcmV0dXJuOw0KKwl9DQorDQorCWJ1ZiA9ICh1MzIgKiludm1lbV9j
-ZWxsX3JlYWQoY2VsbCwgJmxlbik7DQorDQorCW52bWVtX2NlbGxfcHV0KGNlbGwpOw0KKw0KKwlp
-ZiAoSVNfRVJSKGJ1ZikpIHsNCisJCWRldl9pbmZvKGRldiwgImNhbid0IGdldCBkYXRhXG4iKTsN
-CisJCXJldHVybjsNCisJfQ0KKw0KKwlpZiAobGVuIDwgMyAqIHNpemVvZih1MzIpKSB7DQorCQlk
-ZXZfaW5mbyhkZXYsICJpbnZhbGlkIGNhbGlicmF0aW9uIGRhdGFcbiIpOw0KKwkJa2ZyZWUoYnVm
-KTsNCisJCXJldHVybjsNCisJfQ0KKw0KKwlydF9jb2RlWzBdID0gKChidWZbMF0gPj4gNiAmIDB4
-MWYpIDw8IDUpIHwgKGJ1ZlswXSA+PiAxMSAmIDB4MWYpOw0KKwlydF9jb2RlWzFdID0gKChidWZb
-MV0gPj4gMjcgJiAweDFmKSA8PCA1KSB8IChidWZbMF0gPj4gMSAmIDB4MWYpOw0KKwlydF9jb2Rl
-WzJdID0gKChidWZbMV0gPj4gMTcgJiAweDFmKSA8PCA1KSB8IChidWZbMV0gPj4gMjIgJiAweDFm
-KTsNCisJcnRfY29kZVszXSA9ICgoYnVmWzFdID4+IDcgJiAweDFmKSA8PCA1KSB8IChidWZbMV0g
-Pj4gMTIgJiAweDFmKTsNCisJcnRfY29kZVs0XSA9ICgoYnVmWzJdID4+IDI3ICYgMHgxZikgPDwg
-NSkgfCAoYnVmWzFdID4+IDIgJiAweDFmKTsNCisNCisJZm9yIChpID0gMDsgaSA8IDU7IGkrKykg
-ew0KKwkJaWYgKChydF9jb2RlW2ldICYgMHgxZikgPT0gMCkNCisJCQlydF9jb2RlW2ldIHw9IDB4
-MTA7DQorDQorCQlpZiAoKHJ0X2NvZGVbaV0gPj4gNSAmIDB4MWYpID09IDApDQorCQkJcnRfY29k
-ZVtpXSB8PSAweDEwIDw8IDU7DQorDQorCQlmb3IgKGogPSAwOyBqIDwgMTA7IGorKykNCisJCQlt
-dGtfbWlwaV90eF91cGRhdGVfYml0cyhtaXBpX3R4LA0KKwkJCQlNSVBJVFhfRDJQX1JUQ09ERSAq
-IChpICsgMSkgKyBqICogNCwNCisJCQkJMSwgcnRfY29kZVtpXSA+PiBqICYgMSk7DQorCX0NCisN
-CisJa2ZyZWUoYnVmKTsNCit9DQorDQogc3RhdGljIHZvaWQgbXRrX21pcGlfdHhfcG93ZXJfb25f
-c2lnbmFsKHN0cnVjdCBwaHkgKnBoeSkNCiB7DQogCXN0cnVjdCBtdGtfbWlwaV90eCAqbWlwaV90
-eCA9IHBoeV9nZXRfZHJ2ZGF0YShwaHkpOw0KQEAgLTEzMCw2ICsxODUsOCBAQCBzdGF0aWMgdm9p
-ZCBtdGtfbWlwaV90eF9wb3dlcl9vbl9zaWduYWwoc3RydWN0IHBoeSAqcGh5KQ0KIAkJCQlSR19E
-U0lfSFNUWF9MRE9fUkVGX1NFTCwNCiAJCQkJKG1pcGlfdHgtPm1pcGl0eF9kcml2ZSAtIDMwMDAp
-IC8gMjAwIDw8IDYpOw0KIA0KKwltdGtfbWlwaV90eF9jb25maWdfY2FsaWJyYXRpb25fZGF0YSht
-aXBpX3R4KTsNCisNCiAJbXRrX21pcGlfdHhfc2V0X2JpdHMobWlwaV90eCwgTUlQSVRYX0NLX0NL
-TU9ERV9FTiwgRFNJX0NLX0NLTU9ERV9FTik7DQogfQ0KIA0KLS0gDQoyLjIxLjANCg==
+From: Li Haoran <lhr01130208@gmail.com>
+
+Fix a comment typo in check_preempt_wakeup()
+
+Signed-off-by: Li Haoran <lhr01130208@gmail.com>
+---
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index d7fb20adabeb..7e9831831635 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6870,7 +6870,7 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
+ 
+ 	/*
+ 	 * This is possible from callers such as attach_tasks(), in which we
+-	 * unconditionally check_prempt_curr() after an enqueue (which may have
++	 * unconditionally check_preempt_curr() after an enqueue (which may have
+ 	 * lead to a throttle).  This both saves work and prevents false
+ 	 * next-buddy nomination below.
+ 	 */
+-- 
+2.17.2 (Apple Git-113)
 
