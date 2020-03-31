@@ -2,109 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 122291992B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1964A1992AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:49:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730467AbgCaJuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:50:01 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:30953 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730425AbgCaJt7 (ORCPT
+        id S1730365AbgCaJto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:49:44 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:21695 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730131AbgCaJtn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:49:59 -0400
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id 02V9nteA014517;
-        Tue, 31 Mar 2020 18:49:56 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 02V9nteA014517
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1585648196;
-        bh=PJEi61f0eXDArR9pXCoZ/Z/BGWbJnqqejf5xDCJSlfM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=stvV9/fegBpehk7fgbJMhsvCS1+6Io735ElZFseXsd7KumwfWryM3VKA7jAeDG/hO
-         7s+d0TLz3rsWV+ebVFxOU/JKKQN6IDbfb4/qquibSoYuAJML6gDvx4q8UMgjhlym0/
-         xo21BKcrjqqQckxisq5nwO6F7Kl3SBHis6G8jJq8ivwoZKY9dhFJkCSvXHFNGoDFmt
-         sbMTXSHFCiDaBcRy5lby+IH/KrdTOM+r9Gq/UOGXzTUss4I6LbSL6dzJSNuTW2pctx
-         +/ULlD2rXHjftkHCK9K1zn3PPRy5IcD5q6M4rgdXhU/EP7d3u4wQqPq9xBQqZa4WTC
-         TZeqPqc46u4Qg==
-X-Nifty-SrcIP: [209.85.222.42]
-Received: by mail-ua1-f42.google.com with SMTP id a6so7444004uao.2;
-        Tue, 31 Mar 2020 02:49:56 -0700 (PDT)
-X-Gm-Message-State: AGi0PubSeL1UXPbjIXexQbBfJNhuiqld7w1fT02DExM4+F3NSk4yJHeF
-        n0Ve2D5DTdgkBkUf7471fSZvQfC30Wr9RUGZgZM=
-X-Google-Smtp-Source: APiQypIimurUkMjDdWAC3rg/jiqG8zx6Nv5xFZ+/8O3gxpsq8vLwlbUtzCWSeJ5/ovngutBvnVuaJ+W1QeCQEx5D+Tg=
-X-Received: by 2002:ab0:28d8:: with SMTP id g24mr10825054uaq.121.1585648195026;
- Tue, 31 Mar 2020 02:49:55 -0700 (PDT)
+        Tue, 31 Mar 2020 05:49:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585648182;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z4v/YtSm7khSMtma48XmYXMI66/O3qRGCFmAxLMn+2U=;
+        b=NqjYVLaCD7agG9fI4rD9iLT4+kBSb2mKLUv53oxUlHQn5vWcLsuAUfe/WUX6itl6X6DJLw
+        r0oKHhNMH+V8idDnUbLhKl4kN/2bsacxbv0zG+LwZcpPuKFojeZwKebsdTRw62OM1tfhE3
+        SmIP7JpBr6Bw4JQLybDIH00zaOU3ck4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-479-wsmh7QxlMIexmPjb_Lr0Pw-1; Tue, 31 Mar 2020 05:49:38 -0400
+X-MC-Unique: wsmh7QxlMIexmPjb_Lr0Pw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7F5621005509;
+        Tue, 31 Mar 2020 09:49:36 +0000 (UTC)
+Received: from ws.net.home (unknown [10.40.194.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BB62598A21;
+        Tue, 31 Mar 2020 09:49:32 +0000 (UTC)
+Date:   Tue, 31 Mar 2020 11:49:30 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de, keyrings@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+Message-ID: <20200331094930.3aipm3zrydpqqhms@ws.net.home>
+References: <1445647.1585576702@warthog.procyon.org.uk>
+ <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
+ <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
+ <20200331083430.kserp35qabnxvths@ws.net.home>
+ <CAJfpegsNpabFwoLL8HffNbi_4DuGMn4eYpFc6n7223UFnEPAbA@mail.gmail.com>
 MIME-Version: 1.0
-References: <a5ce79eb-be9d-df97-0b58-5aee5a48f4d3@oracle.com>
-In-Reply-To: <a5ce79eb-be9d-df97-0b58-5aee5a48f4d3@oracle.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Tue, 31 Mar 2020 18:49:19 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ8LZMPxrjVkuLizHjVZyBtSmLFZ=EvDCCAPb-XGfJLHA@mail.gmail.com>
-Message-ID: <CAK7LNAQ8LZMPxrjVkuLizHjVZyBtSmLFZ=EvDCCAPb-XGfJLHA@mail.gmail.com>
-Subject: Re: single target builds are broken
-To:     Vegard Nossum <vegard.nossum@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsNpabFwoLL8HffNbi_4DuGMn4eYpFc6n7223UFnEPAbA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 6:16 PM Vegard Nossum <vegard.nossum@oracle.com> wrote:
->
->
-> Hi,
->
-> I often run 'make foo/bar.o' as part of my workflow, even when bar.o is
-> not specified in any kernel makefile, and this has worked just fine for
-> years.
->
-> This is broken after commit 394053f4a4b3e3eeeaa67b67fc886a9a75bd9e4d
-> (kbuild: make single targets work more correctly) and just gives an error:
->
-> $ make kernel/test.o
->    CALL    scripts/checksyscalls.sh
->    CALL    scripts/atomic/check-atomics.sh
->    DESCEND  objtool
-> make[2]: *** No rule to make target 'kernel/test.o'.  Stop.
-> scripts/Makefile.build:502: recipe for target '__build' failed
-> make[1]: *** [__build] Error 2
-> Makefile:1670: recipe for target 'kernel' failed
-> make: *** [kernel] Error 2
+On Tue, Mar 31, 2020 at 10:56:35AM +0200, Miklos Szeredi wrote:
+> I think we are approaching this from the wrong end.   Let's just
+> ignore all of the proposed interfaces for now and only concentrate on
+> what this will be used for.
+> 
+> Start with a set of use cases by all interested parties.  E.g.
+> 
+>  - systemd wants to keep track attached mounts in a namespace, as well
+> as new detached mounts created by fsmount()
+> 
+>  - systemd need to keep information (such as parent, children, mount
+> flags, fs options, etc) up to date on any change of topology or
+> attributes.
+> 
+>  - util linux needs to display the topology and state of mounts in the
+> system that corresponds to a consistent state that set of mounts
 
+  - like systemd we also need in mount/umount to query one mountpoint
+  rather than parse all /proc/self/mountinfo
 
-This is intentional to make the single target builds
-work in the same manner as the normal builds.
-
-
-The necessary CONFIG dependency must be met.
-
-obj-$(CONFIG_FOO) += foo.o
-
-foo.o can be built only when CONFIG_FOO is y/m.
-
-
-
-> For top-level objects (e.g. 'make bar.o') the situation is even worse,
-> since make exits with status 0 without building anything :-/
-
-
-There is no .c or .S file at the top-level of the kernel source tree.
-
-'make bar.o' never happens.
-
-
-
-> Is there any chance we can get this back? It was super useful for me.
-
-
-What you want is "Let's build whatever", right?
-
-No, please add 'obj-y += test.o' if you want to
-test your local file.
-
+ Karel
 
 -- 
-Best Regards
-Masahiro Yamada
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
