@@ -2,58 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4974819A1AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C4B919A1B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:13:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731427AbgCaWJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 18:09:41 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38332 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728428AbgCaWJl (ORCPT
+        id S1731364AbgCaWN1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 18:13:27 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45600 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbgCaWN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 18:09:41 -0400
-Received: by mail-ot1-f66.google.com with SMTP id t28so23826047ott.5
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 15:09:40 -0700 (PDT)
+        Tue, 31 Mar 2020 18:13:27 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v4so18658627lfo.12
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 15:13:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ifrIprtCmZCzS2rJSxbv6FFXsExlpwqRTV97NQIJ9rs=;
-        b=IgFFgsAWYaFEytOk8+1XW190BObyf7+0lOQae8kvvO91eG2YNPGCGIYDcNIgf8OD5c
-         bbzyop+Ku5KhHsy0IwV12gH+siQ4xtMhSnbz01VygvXCE/pZwMLp1dv8yTX3DpoRRrbj
-         aq+PShu3V8Rf1ggxGBtgAgMCIC40cy4erilzdOe7u4t2pmkxnzt53kuE9t9Ookgayq6u
-         zZflX3MboDDfQAo1FermwmveXvPRUp8rm1jAhl1zctqw6fw0Z+5+hYRcTlsJX39MZpBt
-         iGZUuWVvdQrz6g3XworAKW8B9XJQaUMb7R9l9cd35cM/w/g0U4TWdzrFyrqGixkH1McU
-         PSLg==
+        bh=mtbYTciJK07jpdPYpkNJRH8jV4d1kYg8E62AbUGe3pw=;
+        b=HE60VHr7dC08AjHaH2CgEeHp+dZk7gZqcXrCAw5ifgJOucC6ubxyOlVQwquxMFIsF5
+         O6NSLvh2yE3irvxWcdx+uCSeJo3zKjKq1sRi3XBH/Ek+Vj7dHkcye6EDJRRI6WOUV++t
+         61C7te9TAISjpbHISGWt0qjBDA6+IaHouXsas=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ifrIprtCmZCzS2rJSxbv6FFXsExlpwqRTV97NQIJ9rs=;
-        b=n+Tw/LO11sAZhc46D1J7rdX9pS/gZg056EkD16XMpS/4G1uDlNF3lqAVZxgiZK8xwF
-         xTqEVC3kwWFFIiNYxX7ZGT8i86Ijoe65r4oT4ufOZO2379e5pO8/Y0XAKRfO8VDyVuS2
-         +LHgVe0+GwvQsEBfdsZVNz8foWLMJ6Cprzx6HBFRC1Lh3PYOIrFYNFLOD7O59nXpAgYs
-         oltL2Xq23Y+wMiQq+sUEDy0KNJoUIXIy0yUapuutapI+Cp+Pp4k4sitZ5InRng6xcVGw
-         SZzr+OEd16Z13FT6/zp0xGnE+xQ1BBGI5KtpeDPAmQrTbqnof2+z3jMLag2haH9HB/ET
-         SyyQ==
-X-Gm-Message-State: ANhLgQ1oouavrGc6DOMZJyO8nh3u1N2jsxPKnigp/Q0ww4wHdPm22uFL
-        YRClLhusk80EoqEWgVlnlL/f4p/93x82NVWQnQaX4Q==
-X-Google-Smtp-Source: ADFU+vvQD06/XmjeJyI4FrtAXAGmuuiEX1yjtwfPNoFnp54Fkwnbl5A1nBoHeuT4QWFafHtq2rTg2jUtvFNiqwrNXOo=
-X-Received: by 2002:a9d:1920:: with SMTP id j32mr13961381ota.221.1585692580240;
- Tue, 31 Mar 2020 15:09:40 -0700 (PDT)
+        bh=mtbYTciJK07jpdPYpkNJRH8jV4d1kYg8E62AbUGe3pw=;
+        b=Up1+C8Z9ASg+/VUQN64ROJRd0No6lnnNGDhu0cQ14MxKwDbjn+wy8rC/kMPx66o8VA
+         a8OTAVgdIoQVKmn5DNATigdXx0b2Ua9BLAqyqfTXKk3VV+GskZg7xxVAcbNTdgi84jxG
+         56As+yIwNMxA7R6ymLYnrA7ruWk1mizxfeHReqVO2KLNTVYLsdxDaUl9Nj2/ljxueMnq
+         BLiz2KNGEB+hrbkK1B4iqxW2J7DMBZfA39vwt2eXFGF9hlZ3EnSMQ1OIal8OScGV7EZ/
+         dzBMD/oUA1Obs3T2vpTWKmeA9pRmCxN1kQi4ehHISBpBxILiuN1kOEfwIC58I2EeEU1W
+         ca9A==
+X-Gm-Message-State: AGi0PubvIzvD324lrLQHJlCV+j9dAJetzUYpfXjyvsHaDymSSVZsiMTy
+        rE2BhAM5pzOg4o1JaopmwMcRCWmOXP8=
+X-Google-Smtp-Source: APiQypJsb6KXHjMilNHfOE/Mblc2HDKdpOkL/lVIRmXZNDJ0/i73V6bliIOwmZ8EXVBy2H+eYX3gyQ==
+X-Received: by 2002:ac2:5327:: with SMTP id f7mr10348987lfh.214.1585692803545;
+        Tue, 31 Mar 2020 15:13:23 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id f2sm9268199ljn.101.2020.03.31.15.13.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Mar 2020 15:13:22 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id u15so9607257lfi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 15:13:22 -0700 (PDT)
+X-Received: by 2002:a19:7f96:: with SMTP id a144mr12862417lfd.31.1585692801950;
+ Tue, 31 Mar 2020 15:13:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200311170120.12641-1-jeyu@kernel.org> <CANcMJZDhSUV8CU_ixOSxstVVBMW3rVrrQVYMmy1fz=OdhxA_GQ@mail.gmail.com>
- <CANcMJZD9Lz-J_idL5i225VR_3Mo6PcTRsYBBrGsMByX6W4jepQ@mail.gmail.com> <20200331095802.GA3026@linux-8ccs>
-In-Reply-To: <20200331095802.GA3026@linux-8ccs>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Tue, 31 Mar 2020 15:09:27 -0700
-Message-ID: <CALAqxLWZ8aET=gHpYUi_v0ez-gDT5nPEnAEb+2uxebFU8D9RXg@mail.gmail.com>
-Subject: Re: [PATCH v2] modpost: move the namespace field in Module.symvers last
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Matthias Maennich <maennich@google.com>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        stable <stable@vger.kernel.org>,
+References: <CAHC9VhQoqpqiFncTP1w0+--hGTwcm57LXgrXVsGnNqcRSof1WA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQoqpqiFncTP1w0+--hGTwcm57LXgrXVsGnNqcRSof1WA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 31 Mar 2020 15:13:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgZ6WCa_8dK4=DBiFMqP5yHzmSgZHqdXuEqHUcejUtw2A@mail.gmail.com>
+Message-ID: <CAHk-=wgZ6WCa_8dK4=DBiFMqP5yHzmSgZHqdXuEqHUcejUtw2A@mail.gmail.com>
+Subject: Re: [GIT PULL] SELinux patches for v5.7
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     selinux@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,57 +65,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 2:58 AM Jessica Yu <jeyu@kernel.org> wrote:
-> +++ John Stultz [30/03/20 23:25 -0700]:
-> >On Mon, Mar 30, 2020 at 10:49 PM John Stultz <john.stultz@linaro.org> wrote:
-> >> The only difference I can find is that the Module.symvers in the
-> >> external module project doesn't seem to have a tab at the end of each
-> >> line (where as Module.symvers for the kernel - which doesn't seem to
-> >> have any namespace names - does).
-> >>
-> >> Is there something I need to tweak on the external Kbuild to get
-> >> Module.symvers to be generated properly (with the empty tab at the
-> >> end) for this new change?
-> >> Or does the parser need to be a bit more flexible?
-> >>
-> >
-> >One extra clue on this: I noticed the external module Makefile had
-> >KBUILD_EXTRA_SYMBOLS="$(EXTRA_SYMBOLS)"  in the $(MAKE) string, where
-> >EXTRA_SYMBOLS pointed to some files that no longer exist.  I removed
-> >the KBUILD_EXTRA_SYMBOLS= argument, and magically, the generated
-> >Module.symvers now had tabs at the end of each line.
-> >
-> >I wonder if there some path in the KBUILD_EXTRA_SYMBOLS= handling that
-> >isn't generating the output in the same way?
+On Mon, Mar 30, 2020 at 5:38 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> I'm afraid we're going to need some specifics on reproducing this
-> issue. Could you provide a reproducer or steps on how to reproduce? I
-> have not been able to trigger this problem even with
-> KBUILD_EXTRA_SYMBOLS pointing to an invalid path (I also tested with
-> valid paths).
->
-> I tested with a skeleton external module that exports two functions,
-> one with a namespace and one without. I built this module against the
-> latest v5.6 kernel. The generated Module.symvers was correct - the
-> namespaced function had the namespace at the end and the other
-> function without a namespace had a tab at the end.
->
-> I also tested with two external modules, one with a symbol dependency
-> on the other, so KBUILD_EXTRA_SYMBOLS usage is required here. The
-> generated Module.symvers was also correct here.
->
-> The only advice I can offer at this time is that all external modules
-> must be built against the new kernel to generate a correctly formated
-> Module.symvers file. If you have any KBUILD_EXTRA_SYMBOLS pointing to
-> an outdated Module.symvers file for example, you will see the "FATAL:
-> parse error in symbol dump file" error.
+> The merge conflict is in security/selinux/hooks.c and is against a
+> binder fs name fix we sent during the v5.6-rcX cycle; the fixup is
+> trivial but if you need me to fix it, let me know.
 
-Well, my apologies.  :(  In the light of day, this isn't reproducing
-anymore. I'm a bit at a loss as to why I was tripping over it so
-regularly before, but I suspect something in the build is leaving a
-stale Modules.symvers around from before this patch landed.
+No problem, it was as trivial as you said, and I don't think I screwed it up.
 
-Terribly sorry for the noise.
+I appreciate the heads-up, though, since not only does it mean I don't
+get nasty surprises, it also means that I get that warm and fuzzy
+feeling of knowing you're on the ball..
 
-thanks
--john
+> The maintainer
+> screw-up deals with the second patch from the top of the pull request,
+> the NFS fix.  The screw-up isn't the fact that this is a NFS patch, we
+> talked to the NFS guys and they are okay with it.  The issue is that
+> the commit date is today - during the merge window - which doesn't
+> reflect the testing the patch received.  The reality is that I merged
+> this patch back on March 12th, and it has been part of our testing
+> ever since, but when putting this pull request together I noticed that
+> I had dropped the subject line from the patch when I was merging it.
+> Not wanting a malformed commit, I popped the top two patches from the
+> stack and restored the missing subject line; this had the unfortunate
+> side effect of making it look like the two top patches were just
+> merged today - my apologies.
+
+Again, this is very much the way to let me know, so that I don't get
+that uneasy feeling about anything.
+
+Thanks.
+
+               Linus
