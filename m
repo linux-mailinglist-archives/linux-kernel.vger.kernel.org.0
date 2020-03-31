@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92ADE198F15
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F245199011
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:09:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730406AbgCaJA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:00:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39212 "EHLO mail.kernel.org"
+        id S1730919AbgCaJIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:08:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729425AbgCaJA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:00:27 -0400
+        id S1730793AbgCaJIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:08:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E6342137B;
-        Tue, 31 Mar 2020 09:00:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9E2620787;
+        Tue, 31 Mar 2020 09:08:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645225;
-        bh=zKvuJkpvTrMV1DlA6p6mT9CYfcRYC1VBuACGXS7i5uE=;
+        s=default; t=1585645722;
+        bh=1V9krcCmZuB1V+rTsau6j1FmzkI174XQlHz6yYPQc34=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hhn398TBXdnLTdyURArIeNpfIOeOFkD/NuYySiswLhMS/R5r2jGTTUwtgHDfIt/dz
-         1a+28+dMuR+/sz6lN2h0MRoUJ7J0yz3AvPsD510K27J/nu3SNrLY266I/CBfNu4Zmz
-         1p6wrreD2s7IFLIUXjHzWBtSinI6APRAiJRyWQdM=
+        b=WivyVJA8Qi19knp4hHi2iwJgP+C0YVcrTxcQfXcjlM5yTTiUARYpPBgKPAPDA793J
+         kdp9GNfvz7iING/FaHalqGJXf2uPlmpKP/Qox63Tzyar/VbpZCPWFlPY4ZcUJDWYTx
+         4+YxnxJbKS12U3UjfPouioiQD1LSZJp+QmxGBnhA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pawel Dembicki <paweldembicki@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.6 04/23] USB: serial: option: add Wistron Neweb D19Q1
-Date:   Tue, 31 Mar 2020 10:59:16 +0200
-Message-Id: <20200331085310.996795832@linuxfoundation.org>
+        stable@vger.kernel.org, Jakub Sitnicki <jakub@cloudflare.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH 5.5 143/170] bpf, sockmap: Remove bucket->lock from sock_{hash|map}_free
+Date:   Tue, 31 Mar 2020 10:59:17 +0200
+Message-Id: <20200331085438.574570462@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085308.098696461@linuxfoundation.org>
-References: <20200331085308.098696461@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,63 +44,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pawel Dembicki <paweldembicki@gmail.com>
+From: John Fastabend <john.fastabend@gmail.com>
 
-commit dfee7e2f478346b12ea651d5c28b069f6a4af563 upstream.
+commit 90db6d772f749e38171d04619a5e3cd8804a6d02 upstream.
 
-This modem is embedded on dlink dwr-960 router.
-The oem configuration states:
+The bucket->lock is not needed in the sock_hash_free and sock_map_free
+calls, in fact it is causing a splat due to being inside rcu block.
 
-T: Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 2 Spd=480 MxCh= 0
-D: Ver= 2.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs= 1
-P: Vendor=1435 ProdID=d191 Rev=ff.ff
-S: Manufacturer=Android
-S: Product=Android
-S: SerialNumber=0123456789ABCDEF
-C:* #Ifs= 6 Cfg#= 1 Atr=80 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
-E: Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E: Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
-E: Ad=84(I) Atr=03(Int.) MxPS= 10 Ivl=32ms
-E: Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=(none)
-E: Ad=86(I) Atr=03(Int.) MxPS= 10 Ivl=32ms
-E: Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-E: Ad=88(I) Atr=03(Int.) MxPS= 8 Ivl=32ms
-E: Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=(none)
-E: Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E: Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=125us
+| BUG: sleeping function called from invalid context at net/core/sock.c:2935
+| in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 62, name: kworker/0:1
+| 3 locks held by kworker/0:1/62:
+|  #0: ffff88813b019748 ((wq_completion)events){+.+.}, at: process_one_work+0x1d7/0x5e0
+|  #1: ffffc900000abe50 ((work_completion)(&map->work)){+.+.}, at: process_one_work+0x1d7/0x5e0
+|  #2: ffff8881381f6df8 (&stab->lock){+...}, at: sock_map_free+0x26/0x180
+| CPU: 0 PID: 62 Comm: kworker/0:1 Not tainted 5.5.0-04008-g7b083332376e #454
+| Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20190727_073836-buildvm-ppc64le-16.ppc.fedoraproject.org-3.fc31 04/01/2014
+| Workqueue: events bpf_map_free_deferred
+| Call Trace:
+|  dump_stack+0x71/0xa0
+|  ___might_sleep.cold+0xa6/0xb6
+|  lock_sock_nested+0x28/0x90
+|  sock_map_free+0x5f/0x180
+|  bpf_map_free_deferred+0x58/0x80
+|  process_one_work+0x260/0x5e0
+|  worker_thread+0x4d/0x3e0
+|  kthread+0x108/0x140
+|  ? process_one_work+0x5e0/0x5e0
+|  ? kthread_park+0x90/0x90
+|  ret_from_fork+0x3a/0x50
 
-Tested on openwrt distribution
+The reason we have stab->lock and bucket->locks in sockmap code is to
+handle checking EEXIST in update/delete cases. We need to be careful during
+an update operation that we check for EEXIST and we need to ensure that the
+psock object is not in some partial state of removal/insertion while we do
+this. So both map_update_common and sock_map_delete need to guard from being
+run together potentially deleting an entry we are checking, etc. But by the
+time we get to the tear-down code in sock_{ma[|hash}_free we have already
+disconnected the map and we just did synchronize_rcu() in the line above so
+no updates/deletes should be in flight. Because of this we can drop the
+bucket locks from the map free'ing code, noting no update/deletes can be
+in-flight.
 
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: 604326b41a6f ("bpf, sockmap: convert to generic sk_msg interface")
+Reported-by: Jakub Sitnicki <jakub@cloudflare.com>
+Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
+Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Link: https://lore.kernel.org/bpf/158385850787.30597.8346421465837046618.stgit@john-Precision-5820-Tower
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/core/sock_map.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1992,6 +1992,8 @@ static const struct usb_device_id option
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e01, 0xff, 0xff, 0xff) },	/* D-Link DWM-152/C1 */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e02, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/C1 */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x7e11, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/A3 */
-+	{ USB_DEVICE_INTERFACE_CLASS(0x1435, 0xd191, 0xff),			/* Wistron Neweb D19Q1 */
-+	  .driver_info = RSVD(1) | RSVD(4) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x1690, 0x7588, 0xff),			/* ASKEY WWHC050 */
- 	  .driver_info = RSVD(1) | RSVD(4) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x2031, 0xff),			/* Olicard 600 */
+--- a/net/core/sock_map.c
++++ b/net/core/sock_map.c
+@@ -233,8 +233,11 @@ static void sock_map_free(struct bpf_map
+ 	struct bpf_stab *stab = container_of(map, struct bpf_stab, map);
+ 	int i;
+ 
++	/* After the sync no updates or deletes will be in-flight so it
++	 * is safe to walk map and remove entries without risking a race
++	 * in EEXIST update case.
++	 */
+ 	synchronize_rcu();
+-	raw_spin_lock_bh(&stab->lock);
+ 	for (i = 0; i < stab->map.max_entries; i++) {
+ 		struct sock **psk = &stab->sks[i];
+ 		struct sock *sk;
+@@ -248,7 +251,6 @@ static void sock_map_free(struct bpf_map
+ 			release_sock(sk);
+ 		}
+ 	}
+-	raw_spin_unlock_bh(&stab->lock);
+ 
+ 	/* wait for psock readers accessing its map link */
+ 	synchronize_rcu();
+@@ -863,10 +865,13 @@ static void sock_hash_free(struct bpf_ma
+ 	struct hlist_node *node;
+ 	int i;
+ 
++	/* After the sync no updates or deletes will be in-flight so it
++	 * is safe to walk map and remove entries without risking a race
++	 * in EEXIST update case.
++	 */
+ 	synchronize_rcu();
+ 	for (i = 0; i < htab->buckets_num; i++) {
+ 		bucket = sock_hash_select_bucket(htab, i);
+-		raw_spin_lock_bh(&bucket->lock);
+ 		hlist_for_each_entry_safe(elem, node, &bucket->head, node) {
+ 			hlist_del_rcu(&elem->node);
+ 			lock_sock(elem->sk);
+@@ -875,7 +880,6 @@ static void sock_hash_free(struct bpf_ma
+ 			rcu_read_unlock();
+ 			release_sock(elem->sk);
+ 		}
+-		raw_spin_unlock_bh(&bucket->lock);
+ 	}
+ 
+ 	/* wait for psock readers accessing its map link */
 
 
