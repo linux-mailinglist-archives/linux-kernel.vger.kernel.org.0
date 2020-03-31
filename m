@@ -2,43 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84672199115
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7836198FFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:08:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732006AbgCaJRE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:17:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37990 "EHLO mail.kernel.org"
+        id S1731076AbgCaJIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:08:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731988AbgCaJRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:17:01 -0400
+        id S1730982AbgCaJIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:08:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D77A2072E;
-        Tue, 31 Mar 2020 09:16:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86D612137B;
+        Tue, 31 Mar 2020 09:08:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585646220;
-        bh=ui8NRiDhjZ8EF755sTN4bwzFlznjwaQN2YsTsv/7BqQ=;
+        s=default; t=1585645681;
+        bh=0wveDMe7uyg5AfVuGN/w8XtmkVLcDHD92wtygOJaXvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MG/tjyWASftjQujjrzE9zlKVLFPLO1mbKedheuHQxgBC9aGXE7zlCA+iW+Yy+zsxb
-         +zcWPDYS5IKT8qfduqSJ5wZG8HrY0Qzj2D+iB0dt2bzafflCN7gqfVYLB3aavmns4i
-         aF++h1tXSUD+aucgylCV6bgEWVgpeXDKlSwdfgiU=
+        b=DO5ZQ+RiHzo/N39oDgzlGi15iIA1fNYIUJLpiF8n2vTtBbDj0xGOLRKwWUEddqUXk
+         uNayHi8VorXxy/BIqA3bBWLNZfmY4PjenKKW3TVrhkn8XLsIV2RIvj2jpiLCHtaYPG
+         nKR8S70y4MjC2Doj20txVnuFEcwroYzKmn29d5tE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Bharata B Rao <bharata@linux.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.4 103/155] mm: fork: fix kernel_stack memcg stats for various stack implementations
-Date:   Tue, 31 Mar 2020 10:59:03 +0200
-Message-Id: <20200331085430.057608854@linuxfoundation.org>
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH 5.5 130/170] afs: Fix client call Rx-phase signal handling
+Date:   Tue, 31 Mar 2020 10:59:04 +0200
+Message-Id: <20200331085437.532150385@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
-References: <20200331085418.274292403@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,166 +42,183 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
+From: David Howells <dhowells@redhat.com>
 
-commit 8380ce479010f2f779587b462a9b4681934297c3 upstream.
+commit 7d7587db0d7fd1138f2afcffdc46a8e15630b944 upstream.
 
-Depending on CONFIG_VMAP_STACK and the THREAD_SIZE / PAGE_SIZE ratio the
-space for task stacks can be allocated using __vmalloc_node_range(),
-alloc_pages_node() and kmem_cache_alloc_node().
+Fix the handling of signals in client rxrpc calls made by the afs
+filesystem.  Ignore signals completely, leaving call abandonment or
+connection loss to be detected by timeouts inside AF_RXRPC.
 
-In the first and the second cases page->mem_cgroup pointer is set, but
-in the third it's not: memcg membership of a slab page should be
-determined using the memcg_from_slab_page() function, which looks at
-page->slab_cache->memcg_params.memcg .  In this case, using
-mod_memcg_page_state() (as in account_kernel_stack()) is incorrect:
-page->mem_cgroup pointer is NULL even for pages charged to a non-root
-memory cgroup.
+Allowing a filesystem call to be interrupted after the entire request has
+been transmitted and an abort sent means that the server may or may not
+have done the action - and we don't know.  It may even be worse than that
+for older servers.
 
-It can lead to kernel_stack per-memcg counters permanently showing 0 on
-some architectures (depending on the configuration).
-
-In order to fix it, let's introduce a mod_memcg_obj_state() helper,
-which takes a pointer to a kernel object as a first argument, uses
-mem_cgroup_from_obj() to get a RCU-protected memcg pointer and calls
-mod_memcg_state().  It allows to handle all possible configurations
-(CONFIG_VMAP_STACK and various THREAD_SIZE/PAGE_SIZE values) without
-spilling any memcg/kmem specifics into fork.c .
-
-Note: This is a special version of the patch created for stable
-backports.  It contains code from the following two patches:
-  - mm: memcg/slab: introduce mem_cgroup_from_obj()
-  - mm: fork: fix kernel_stack memcg stats for various stack implementations
-
-[guro@fb.com: introduce mem_cgroup_from_obj()]
-  Link: http://lkml.kernel.org/r/20200324004221.GA36662@carbon.dhcp.thefacebook.com
-Fixes: 4d96ba353075 ("mm: memcg/slab: stop setting page->mem_cgroup pointer for slab pages")
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Bharata B Rao <bharata@linux.ibm.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20200303233550.251375-1-guro@fb.com
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: bc5e3a546d55 ("rxrpc: Use MSG_WAITALL to tell sendmsg() to temporarily ignore signals")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/memcontrol.h |   12 ++++++++++++
- kernel/fork.c              |    4 ++--
- mm/memcontrol.c            |   38 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 52 insertions(+), 2 deletions(-)
+ fs/afs/rxrpc.c          |   34 ++--------------------------------
+ include/net/af_rxrpc.h  |    4 +---
+ net/rxrpc/af_rxrpc.c    |   33 +++------------------------------
+ net/rxrpc/ar-internal.h |    1 -
+ net/rxrpc/input.c       |    1 -
+ 5 files changed, 6 insertions(+), 67 deletions(-)
 
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -705,6 +705,7 @@ static inline unsigned long lruvec_page_
- void __mod_lruvec_state(struct lruvec *lruvec, enum node_stat_item idx,
- 			int val);
- void __mod_lruvec_slab_state(void *p, enum node_stat_item idx, int val);
-+void mod_memcg_obj_state(void *p, int idx, int val);
- 
- static inline void mod_lruvec_state(struct lruvec *lruvec,
- 				    enum node_stat_item idx, int val)
-@@ -1128,6 +1129,10 @@ static inline void __mod_lruvec_slab_sta
- 	__mod_node_page_state(page_pgdat(page), idx, val);
- }
- 
-+static inline void mod_memcg_obj_state(void *p, int idx, int val)
-+{
-+}
-+
- static inline
- unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
- 					    gfp_t gfp_mask,
-@@ -1432,6 +1437,8 @@ static inline int memcg_cache_id(struct
- 	return memcg ? memcg->kmemcg_id : -1;
- }
- 
-+struct mem_cgroup *mem_cgroup_from_obj(void *p);
-+
- #else
- 
- static inline int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
-@@ -1473,6 +1480,11 @@ static inline void memcg_put_cache_ids(v
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -603,11 +603,7 @@ call_complete:
+ long afs_wait_for_call_to_complete(struct afs_call *call,
+ 				   struct afs_addr_cursor *ac)
  {
- }
+-	signed long rtt2, timeout;
+ 	long ret;
+-	bool stalled = false;
+-	u64 rtt;
+-	u32 life, last_life;
+ 	bool rxrpc_complete = false;
  
-+static inline struct mem_cgroup *mem_cgroup_from_obj(void *p)
-+{
-+       return NULL;
-+}
-+
- #endif /* CONFIG_MEMCG_KMEM */
+ 	DECLARE_WAITQUEUE(myself, current);
+@@ -618,14 +614,6 @@ long afs_wait_for_call_to_complete(struc
+ 	if (ret < 0)
+ 		goto out;
  
- #endif /* _LINUX_MEMCONTROL_H */
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -394,8 +394,8 @@ static void account_kernel_stack(struct
- 		mod_zone_page_state(page_zone(first_page), NR_KERNEL_STACK_KB,
- 				    THREAD_SIZE / 1024 * account);
+-	rtt = rxrpc_kernel_get_rtt(call->net->socket, call->rxcall);
+-	rtt2 = nsecs_to_jiffies64(rtt) * 2;
+-	if (rtt2 < 2)
+-		rtt2 = 2;
+-
+-	timeout = rtt2;
+-	rxrpc_kernel_check_life(call->net->socket, call->rxcall, &last_life);
+-
+ 	add_wait_queue(&call->waitq, &myself);
+ 	for (;;) {
+ 		set_current_state(TASK_UNINTERRUPTIBLE);
+@@ -636,37 +624,19 @@ long afs_wait_for_call_to_complete(struc
+ 			call->need_attention = false;
+ 			__set_current_state(TASK_RUNNING);
+ 			afs_deliver_to_call(call);
+-			timeout = rtt2;
+ 			continue;
+ 		}
  
--		mod_memcg_page_state(first_page, MEMCG_KERNEL_STACK_KB,
--				     account * (THREAD_SIZE / 1024));
-+		mod_memcg_obj_state(stack, MEMCG_KERNEL_STACK_KB,
-+				    account * (THREAD_SIZE / 1024));
+ 		if (afs_check_call_state(call, AFS_CALL_COMPLETE))
+ 			break;
+ 
+-		if (!rxrpc_kernel_check_life(call->net->socket, call->rxcall, &life)) {
++		if (!rxrpc_kernel_check_life(call->net->socket, call->rxcall)) {
+ 			/* rxrpc terminated the call. */
+ 			rxrpc_complete = true;
+ 			break;
+ 		}
+ 
+-		if (call->intr && timeout == 0 &&
+-		    life == last_life && signal_pending(current)) {
+-			if (stalled)
+-				break;
+-			__set_current_state(TASK_RUNNING);
+-			rxrpc_kernel_probe_life(call->net->socket, call->rxcall);
+-			timeout = rtt2;
+-			stalled = true;
+-			continue;
+-		}
+-
+-		if (life != last_life) {
+-			timeout = rtt2;
+-			last_life = life;
+-			stalled = false;
+-		}
+-
+-		timeout = schedule_timeout(timeout);
++		schedule();
  	}
- }
  
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -786,6 +786,17 @@ void __mod_lruvec_slab_state(void *p, en
- 	rcu_read_unlock();
- }
- 
-+void mod_memcg_obj_state(void *p, int idx, int val)
-+{
-+	struct mem_cgroup *memcg;
-+
-+	rcu_read_lock();
-+	memcg = mem_cgroup_from_obj(p);
-+	if (memcg)
-+		mod_memcg_state(memcg, idx, val);
-+	rcu_read_unlock();
-+}
-+
- /**
-  * __count_memcg_events - account VM events in a cgroup
-  * @memcg: the memory cgroup
-@@ -2778,6 +2789,33 @@ static void commit_charge(struct page *p
- }
- 
- #ifdef CONFIG_MEMCG_KMEM
-+/*
-+ * Returns a pointer to the memory cgroup to which the kernel object is charged.
-+ *
-+ * The caller must ensure the memcg lifetime, e.g. by taking rcu_read_lock(),
-+ * cgroup_mutex, etc.
-+ */
-+struct mem_cgroup *mem_cgroup_from_obj(void *p)
-+{
-+	struct page *page;
-+
-+	if (mem_cgroup_disabled())
-+		return NULL;
-+
-+	page = virt_to_head_page(p);
-+
-+	/*
-+	 * Slab pages don't have page->mem_cgroup set because corresponding
-+	 * kmem caches can be reparented during the lifetime. That's why
-+	 * memcg_from_slab_page() should be used instead.
-+	 */
-+	if (PageSlab(page))
-+		return memcg_from_slab_page(page);
-+
-+	/* All other pages use page->mem_cgroup */
-+	return page->mem_cgroup;
-+}
-+
- static int memcg_alloc_cache_id(void)
+ 	remove_wait_queue(&call->waitq, &myself);
+--- a/include/net/af_rxrpc.h
++++ b/include/net/af_rxrpc.h
+@@ -58,9 +58,7 @@ int rxrpc_kernel_charge_accept(struct so
+ 			       rxrpc_user_attach_call_t, unsigned long, gfp_t,
+ 			       unsigned int);
+ void rxrpc_kernel_set_tx_length(struct socket *, struct rxrpc_call *, s64);
+-bool rxrpc_kernel_check_life(const struct socket *, const struct rxrpc_call *,
+-			     u32 *);
+-void rxrpc_kernel_probe_life(struct socket *, struct rxrpc_call *);
++bool rxrpc_kernel_check_life(const struct socket *, const struct rxrpc_call *);
+ u32 rxrpc_kernel_get_epoch(struct socket *, struct rxrpc_call *);
+ bool rxrpc_kernel_get_reply_time(struct socket *, struct rxrpc_call *,
+ 				 ktime_t *);
+--- a/net/rxrpc/af_rxrpc.c
++++ b/net/rxrpc/af_rxrpc.c
+@@ -371,45 +371,18 @@ EXPORT_SYMBOL(rxrpc_kernel_end_call);
+  * rxrpc_kernel_check_life - Check to see whether a call is still alive
+  * @sock: The socket the call is on
+  * @call: The call to check
+- * @_life: Where to store the life value
+  *
+- * Allow a kernel service to find out whether a call is still alive - ie. we're
+- * getting ACKs from the server.  Passes back in *_life a number representing
+- * the life state which can be compared to that returned by a previous call and
+- * return true if the call is still alive.
+- *
+- * If the life state stalls, rxrpc_kernel_probe_life() should be called and
+- * then 2RTT waited.
++ * Allow a kernel service to find out whether a call is still alive -
++ * ie. whether it has completed.
+  */
+ bool rxrpc_kernel_check_life(const struct socket *sock,
+-			     const struct rxrpc_call *call,
+-			     u32 *_life)
++			     const struct rxrpc_call *call)
  {
- 	int id, size;
+-	*_life = call->acks_latest;
+ 	return call->state != RXRPC_CALL_COMPLETE;
+ }
+ EXPORT_SYMBOL(rxrpc_kernel_check_life);
+ 
+ /**
+- * rxrpc_kernel_probe_life - Poke the peer to see if it's still alive
+- * @sock: The socket the call is on
+- * @call: The call to check
+- *
+- * In conjunction with rxrpc_kernel_check_life(), allow a kernel service to
+- * find out whether a call is still alive by pinging it.  This should cause the
+- * life state to be bumped in about 2*RTT.
+- *
+- * The must be called in TASK_RUNNING state on pain of might_sleep() objecting.
+- */
+-void rxrpc_kernel_probe_life(struct socket *sock, struct rxrpc_call *call)
+-{
+-	rxrpc_propose_ACK(call, RXRPC_ACK_PING, 0, true, false,
+-			  rxrpc_propose_ack_ping_for_check_life);
+-	rxrpc_send_ack_packet(call, true, NULL);
+-}
+-EXPORT_SYMBOL(rxrpc_kernel_probe_life);
+-
+-/**
+  * rxrpc_kernel_get_epoch - Retrieve the epoch value from a call.
+  * @sock: The socket the call is on
+  * @call: The call to query
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -675,7 +675,6 @@ struct rxrpc_call {
+ 
+ 	/* transmission-phase ACK management */
+ 	ktime_t			acks_latest_ts;	/* Timestamp of latest ACK received */
+-	rxrpc_serial_t		acks_latest;	/* serial number of latest ACK received */
+ 	rxrpc_seq_t		acks_lowest_nak; /* Lowest NACK in the buffer (or ==tx_hard_ack) */
+ 	rxrpc_seq_t		acks_lost_top;	/* tx_top at the time lost-ack ping sent */
+ 	rxrpc_serial_t		acks_lost_ping;	/* Serial number of probe ACK */
+--- a/net/rxrpc/input.c
++++ b/net/rxrpc/input.c
+@@ -882,7 +882,6 @@ static void rxrpc_input_ack(struct rxrpc
+ 	    before(prev_pkt, call->ackr_prev_seq))
+ 		goto out;
+ 	call->acks_latest_ts = skb->tstamp;
+-	call->acks_latest = sp->hdr.serial;
+ 
+ 	call->ackr_first_seq = first_soft_ack;
+ 	call->ackr_prev_seq = prev_pkt;
 
 
