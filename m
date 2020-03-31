@@ -2,436 +2,307 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B360199DB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:07:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41626199DDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:14:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbgCaSHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 14:07:48 -0400
-Received: from mga01.intel.com ([192.55.52.88]:33654 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726202AbgCaSHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:07:48 -0400
-IronPort-SDR: +uYI2S+0MWbulGgf++UdKu7lpjo6izDTegNJNcsgKUuEDy8o1jDdKw5QqwPAoI4p0qavond3L/
- e1PltMl3k6dw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 11:07:45 -0700
-IronPort-SDR: ozOR1wTx35jy3xePHpo2X4YB7CrAIhtAh1QTgWOqa6Y0rCeaKkXTXay4rRTx9Hg9601LpVFg0x
- mT0fE66ihrXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,328,1580803200"; 
-   d="scan'208";a="252329911"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga006.jf.intel.com with ESMTP; 31 Mar 2020 11:07:45 -0700
-Date:   Tue, 31 Mar 2020 11:13:32 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Alex Williamson" <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH V10 08/11] iommu/vt-d: Add svm/sva invalidate function
-Message-ID: <20200331111332.0718ffd2@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7FA0AB@SHSMSX104.ccr.corp.intel.com>
-References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1584746861-76386-9-git-send-email-jacob.jun.pan@linux.intel.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7FA0AB@SHSMSX104.ccr.corp.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1727674AbgCaSOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 14:14:32 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:51379 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726208AbgCaSOc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 14:14:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585678470;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TSvrVqyL1Jx5FubyVmhg6f6i8aYPPkfIz/TD3nTqZyI=;
+        b=FVZ3Ph3du9/1mXQ4x5nSIQJAMai81j63BgNGwEPF6rJEgwzGUG5YcgueSUCrDiQAjDUPko
+        fWMwZl1QWY2duRVE9ray2VwLdwfw7NBJ62pyqU7F+t18RfamsEs0JwVJbnHM1rZu9dcVpq
+        2bYQn4IwC05n5rTViTBxJbwQDCnbU0E=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-146-Evw0rzZ4NkW_V0hpiOSJ1A-1; Tue, 31 Mar 2020 14:14:28 -0400
+X-MC-Unique: Evw0rzZ4NkW_V0hpiOSJ1A-1
+Received: by mail-wr1-f70.google.com with SMTP id d1so13296183wru.15
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:14:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=TSvrVqyL1Jx5FubyVmhg6f6i8aYPPkfIz/TD3nTqZyI=;
+        b=XLt8VXyHkeprRFdWYNLmYVcokRyWd/xhYu7MYTUIRl9DpuBFMKa+ArvXmCz8vP82v8
+         3KVotyB0okma1c1PDrkgmCv/poxL43jqvDx3Lqcwb+w6fBL9ZFkRgLMCpypMv0HJqjZT
+         h19DdacKlGELX/FTYg3N0PY4ukscvI83Q1MV+B81tLynu4bjoYHF+mArUc70Y/kNT8dV
+         xdYTtHhgSU1nAnskqykXqDmPwWI7S6goZ7i9bDt5Y2QGXRPhSa8QADWXb4RUkMe2o9sD
+         SwqaCHH29dwMKOUq0qxSZBiqFGWVvLsUwiVTFA8oEwbQuGvSuMrr56gC0qxWxNUpOQx7
+         fwkw==
+X-Gm-Message-State: AGi0Pubi2ACFgbdAosQTmDDdRplY33ZmO4eDfmNHo2oJDzgL2Vb+aSp5
+        f1r5a9LfTegm6lnf706BojdCD3/MfXVA77X2Oa6aY603Cv6dIg7tWSSYrm0Dt4ZIQEiMkUESHP5
+        hX4o3PvQbxCXhYi/poN65RVV+
+X-Received: by 2002:a1c:e904:: with SMTP id q4mr133903wmc.84.1585678467306;
+        Tue, 31 Mar 2020 11:14:27 -0700 (PDT)
+X-Google-Smtp-Source: APiQypLVDQvmChaAxrN9xcoLakoPVPQCDmsEJBfNQTVUIzH6Z20zW9Y/lw5ZL804EkY8DW/XHdDNZg==
+X-Received: by 2002:a1c:e904:: with SMTP id q4mr133880wmc.84.1585678467042;
+        Tue, 31 Mar 2020 11:14:27 -0700 (PDT)
+Received: from redhat.com (bzq-79-176-51-222.red.bezeqint.net. [79.176.51.222])
+        by smtp.gmail.com with ESMTPSA id h81sm5180039wme.42.2020.03.31.11.14.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 11:14:26 -0700 (PDT)
+Date:   Tue, 31 Mar 2020 14:14:23 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: [PATCH v2 1/8] vhost: Create accessors for virtqueues
+ private_data
+Message-ID: <20200331141244-mutt-send-email-mst@kernel.org>
+References: <20200331180006.25829-1-eperezma@redhat.com>
+ <20200331180006.25829-2-eperezma@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200331180006.25829-2-eperezma@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 28 Mar 2020 10:01:42 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
-
-> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Sent: Saturday, March 21, 2020 7:28 AM
-> > 
-> > When Shared Virtual Address (SVA) is enabled for a guest OS via
-> > vIOMMU, we need to provide invalidation support at IOMMU API and
-> > driver level. This patch adds Intel VT-d specific function to
-> > implement iommu passdown invalidate API for shared virtual address.
-> > 
-> > The use case is for supporting caching structure invalidation
-> > of assigned SVM capable devices. Emulated IOMMU exposes queue  
+On Tue, Mar 31, 2020 at 07:59:59PM +0200, Eugenio Pérez wrote:
+> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
+> ---
+>  drivers/vhost/net.c   | 28 +++++++++++++++-------------
+>  drivers/vhost/vhost.h | 28 ++++++++++++++++++++++++++++
+>  drivers/vhost/vsock.c | 14 +++++++-------
+>  3 files changed, 50 insertions(+), 20 deletions(-)
 > 
-> emulated IOMMU -> vIOMMU, since virito-iommu could use the
-> interface as well.
-> 
-True, but it does not invalidate this statement about emulated IOMMU. I
-will add another statement saying "the same interface can be used for
-virtio-IOMMU as well". OK?
-
-> > invalidation capability and passes down all descriptors from the
-> > guest to the physical IOMMU.
-> > 
-> > The assumption is that guest to host device ID mapping should be
-> > resolved prior to calling IOMMU driver. Based on the device handle,
-> > host IOMMU driver can replace certain fields before submit to the
-> > invalidation queue.
-> > 
-> > ---
-> > v7 review fixed in v10
-> > ---
-> > 
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-> > Signed-off-by: Liu, Yi L <yi.l.liu@intel.com>
-> > ---
-> >  drivers/iommu/intel-iommu.c | 182
-> > ++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 182 insertions(+)
-> > 
-> > diff --git a/drivers/iommu/intel-iommu.c
-> > b/drivers/iommu/intel-iommu.c index b1477cd423dd..a76afb0fd51a
-> > 100644 --- a/drivers/iommu/intel-iommu.c
-> > +++ b/drivers/iommu/intel-iommu.c
-> > @@ -5619,6 +5619,187 @@ static void
-> > intel_iommu_aux_detach_device(struct iommu_domain *domain,
-> >  	aux_domain_remove_dev(to_dmar_domain(domain), dev);
-> >  }
-> > 
-> > +/*
-> > + * 2D array for converting and sanitizing IOMMU generic TLB
-> > granularity to
-> > + * VT-d granularity. Invalidation is typically included in the
-> > unmap operation
-> > + * as a result of DMA or VFIO unmap. However, for assigned devices
-> > guest
-> > + * owns the first level page tables. Invalidations of translation
-> > caches in the
-> > + * guest are trapped and passed down to the host.
-> > + *
-> > + * vIOMMU in the guest will only expose first level page tables,
-> > therefore
-> > + * we do not include IOTLB granularity for request without PASID
-> > (second level).  
-> 
-> I would revise above as "We do not support IOTLB granularity for
-> request without PASID (second level), therefore any vIOMMU
-> implementation that exposes the SVA capability to the guest should
-> only expose the first level page tables, implying all invalidation
-> requests from the guest will include a valid PASID"
-> 
-Sounds good.
-
-> > + *
-> > + * For example, to find the VT-d granularity encoding for IOTLB
-> > + * type and page selective granularity within PASID:
-> > + * X: indexed by iommu cache type
-> > + * Y: indexed by enum iommu_inv_granularity
-> > + * [IOMMU_CACHE_INV_TYPE_IOTLB][IOMMU_INV_GRANU_ADDR]
-> > + *
-> > + * Granu_map array indicates validity of the table. 1: valid, 0:
-> > invalid
-> > + *
-> > + */
-> > +const static int
-> > inv_type_granu_map[IOMMU_CACHE_INV_TYPE_NR][IOMMU_INV_GRANU_
-> > NR] = {
-> > +	/*
-> > +	 * PASID based IOTLB invalidation: PASID selective (per
-> > PASID),
-> > +	 * page selective (address granularity)
-> > +	 */
-> > +	{0, 1, 1},
-> > +	/* PASID based dev TLBs, only support all PASIDs or single
-> > PASID */
-> > +	{1, 1, 0},  
-> 
-> Is this combination correct? when single PASID is being specified, it
-> is essentially a page-selective invalidation since you need provide
-> Address and Size. 
-> 
-This is for translation between generic UAPI granu to VT-d granu, it
-has nothing to do with address and size.
-e.g.
-If user passes IOMMU_INV_GRANU_PASID for the single PASID case as you
-mentioned, this map table shows it is valid.
-
-Then the lookup result will get VT-d granu:
-QI_DEV_IOTLB_GRAN_PASID_SEL, which means G=0.
-
-
-> > +	/* PASID cache */  
-> 
-> PASID cache is fully managed by the host. Guest PASID cache
-> invalidation is interpreted by vIOMMU for bind and unbind operations.
-> I don't think we should accept any PASID cache invalidation from
-> userspace or guest.
-> 
-
-True for vIOMMU, this is here for completeness. Can be used by virtio
-IOMMU, since PC flush is inclusive (IOTLB, devTLB), it is more
-efficient.
-
-> > +	{1, 1, 0}
-> > +};
-> > +
-> > +const static int
-> > inv_type_granu_table[IOMMU_CACHE_INV_TYPE_NR][IOMMU_INV_GRANU
-> > _NR] = {
-> > +	/* PASID based IOTLB */
-> > +	{0, QI_GRAN_NONG_PASID, QI_GRAN_PSI_PASID},
-> > +	/* PASID based dev TLBs */
-> > +	{QI_DEV_IOTLB_GRAN_ALL, QI_DEV_IOTLB_GRAN_PASID_SEL, 0},
-> > +	/* PASID cache */
-> > +	{QI_PC_ALL_PASIDS, QI_PC_PASID_SEL, 0},
-> > +};
-> > +
-> > +static inline int to_vtd_granularity(int type, int granu, int
-> > *vtd_granu) +{
-> > +	if (type >= IOMMU_CACHE_INV_TYPE_NR || granu >=
-> > IOMMU_INV_GRANU_NR ||
-> > +		!inv_type_granu_map[type][granu])
-> > +		return -EINVAL;
-> > +
-> > +	*vtd_granu = inv_type_granu_table[type][granu];
-> > +  
-> 
-> btw do we really need both map and table here? Can't we just
-> use one table with unsupported granularity marked as a special
-> value?
-> 
-Yes, for value = 1. e.g. G=0 but still valid.
-
-> > +	return 0;
-> > +}
-> > +
-> > +static inline u64 to_vtd_size(u64 granu_size, u64 nr_granules)
-> > +{
-> > +	u64 nr_pages = (granu_size * nr_granules) >>
-> > VTD_PAGE_SHIFT; +
-> > +	/* VT-d size is encoded as 2^size of 4K pages, 0 for 4k, 9
-> > for 2MB, etc.
-> > +	 * IOMMU cache invalidate API passes granu_size in bytes,
-> > and number of
-> > +	 * granu size in contiguous memory.
-> > +	 */
-> > +	return order_base_2(nr_pages);
-> > +}
-> > +
-> > +#ifdef CONFIG_INTEL_IOMMU_SVM
-> > +static int intel_iommu_sva_invalidate(struct iommu_domain *domain,
-> > +		struct device *dev, struct
-> > iommu_cache_invalidate_info *inv_info)
-> > +{
-> > +	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
-> > +	struct device_domain_info *info;
-> > +	struct intel_iommu *iommu;
-> > +	unsigned long flags;
-> > +	int cache_type;
-> > +	u8 bus, devfn;
-> > +	u16 did, sid;
-> > +	int ret = 0;
-> > +	u64 size = 0;
-> > +
-> > +	if (!inv_info || !dmar_domain ||
-> > +		inv_info->version !=
-> > IOMMU_CACHE_INVALIDATE_INFO_VERSION_1)
-> > +		return -EINVAL;
-> > +
-> > +	if (!dev || !dev_is_pci(dev))
-> > +		return -ENODEV;
-> > +
-> > +	iommu = device_to_iommu(dev, &bus, &devfn);
-> > +	if (!iommu)
-> > +		return -ENODEV;
-> > +
-> > +	spin_lock_irqsave(&device_domain_lock, flags);
-> > +	spin_lock(&iommu->lock);
-> > +	info = iommu_support_dev_iotlb(dmar_domain, iommu, bus,
-> > devfn);
-> > +	if (!info) {
-> > +		ret = -EINVAL;
-> > +		goto out_unlock;  
-> 
-> -ENOTSUPP?
-> 
-I guess it can go either way in that the error is based on invalid
-inputs.
-
-> > +	}
-> > +	did = dmar_domain->iommu_did[iommu->seq_id];
-> > +	sid = PCI_DEVID(bus, devfn);
-> > +
-> > +	/* Size is only valid in non-PASID selective invalidation
-> > */
-> > +	if (inv_info->granularity != IOMMU_INV_GRANU_PASID)
-> > +		size =
-> > to_vtd_size(inv_info->addr_info.granule_size,
-> > +
-> > inv_info->addr_info.nb_granules); +
-> > +	for_each_set_bit(cache_type, (unsigned long
-> > *)&inv_info->cache, IOMMU_CACHE_INV_TYPE_NR) {
-> > +		int granu = 0;
-> > +		u64 pasid = 0;
-> > +
-> > +		ret = to_vtd_granularity(cache_type,
-> > inv_info->granularity, &granu);
-> > +		if (ret) {
-> > +			pr_err("Invalid cache type and granu
-> > combination %d/%d\n", cache_type,
-> > +				inv_info->granularity);
-> > +			break;
-> > +		}
-> > +
-> > +		/* PASID is stored in different locations based on
-> > granularity */
-> > +		if (inv_info->granularity == IOMMU_INV_GRANU_PASID
-> > &&
-> > +			inv_info->pasid_info.flags &
-> > IOMMU_INV_PASID_FLAGS_PASID)
-> > +			pasid = inv_info->pasid_info.pasid;
-> > +		else if (inv_info->granularity ==
-> > IOMMU_INV_GRANU_ADDR &&
-> > +			inv_info->addr_info.flags &
-> > IOMMU_INV_ADDR_FLAGS_PASID)
-> > +			pasid = inv_info->addr_info.pasid;
-> > +		else {
-> > +			pr_err("Cannot find PASID for given cache
-> > type and granularity\n");
-> > +			break;
-> > +		}
-> > +
-> > +		switch (BIT(cache_type)) {
-> > +		case IOMMU_CACHE_INV_TYPE_IOTLB:
-> > +			if ((inv_info->granularity !=
-> > IOMMU_INV_GRANU_PASID) &&  
-> 
-> granularity == IOMMU_INV_GRANU_ADDR? otherwise it's unclear
-> why IOMMU_INV_GRANU_DOMAIN also needs size check.
-> 
-Good point! will fix.
-
-> > +				size && (inv_info->addr_info.addr &
-> > ((BIT(VTD_PAGE_SHIFT + size)) - 1))) {
-> > +				pr_err("Address out of range,
-> > 0x%llx, size order %llu\n",
-> > +					inv_info->addr_info.addr,
-> > size);
-> > +				ret = -ERANGE;
-> > +				goto out_unlock;
-> > +			}
-> > +
-> > +			qi_flush_piotlb(iommu, did,
-> > +					pasid,
-> > +					mm_to_dma_pfn(inv_info-  
-> > >addr_info.addr),  
-> > +					(granu ==
-> > QI_GRAN_NONG_PASID) ? - 1 : 1 << size,
-> > +					inv_info->addr_info.flags &
-> > IOMMU_INV_ADDR_FLAGS_LEAF);
-> > +
-> > +			/*
-> > +			 * Always flush device IOTLB if ATS is
-> > enabled since guest
-> > +			 * vIOMMU exposes CM = 1, no device IOTLB
-> > flush will be passed
-> > +			 * down.
-> > +			 */  
-> 
-> Does VT-d spec mention that no device IOTLB flush is required when
-> CM=1?
-> 
-Not explicitly. Just following the guideline in CH6.1 for efficient
-virtualization. Early on, we also had discussion on supporting virtio
-where IOTLB flush is inclusive.
-Let me rephrase the comment:
-/*
- * Always flush device IOTLB if ATS is enabled. vIOMMU
- * in the guest may assume IOTLB flush is inclusive,
- * which is more efficient.
- */
+> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> index e158159671fa..6c5e7a6f712c 100644
+> --- a/drivers/vhost/net.c
+> +++ b/drivers/vhost/net.c
+> @@ -424,7 +424,7 @@ static void vhost_net_disable_vq(struct vhost_net *n,
+>  	struct vhost_net_virtqueue *nvq =
+>  		container_of(vq, struct vhost_net_virtqueue, vq);
+>  	struct vhost_poll *poll = n->poll + (nvq - n->vqs);
+> -	if (!vq->private_data)
+> +	if (!vhost_vq_get_backend_opaque(vq))
+>  		return;
+>  	vhost_poll_stop(poll);
+>  }
+> @@ -437,7 +437,7 @@ static int vhost_net_enable_vq(struct vhost_net *n,
+>  	struct vhost_poll *poll = n->poll + (nvq - n->vqs);
+>  	struct socket *sock;
+>  
+> -	sock = vq->private_data;
+> +	sock = vhost_vq_get_backend_opaque(vq);
+>  	if (!sock)
+>  		return 0;
+>  
+> @@ -524,7 +524,7 @@ static void vhost_net_busy_poll(struct vhost_net *net,
+>  		return;
+>  
+>  	vhost_disable_notify(&net->dev, vq);
+> -	sock = rvq->private_data;
+> +	sock = vhost_vq_get_backend_opaque(rvq);
+>  
+>  	busyloop_timeout = poll_rx ? rvq->busyloop_timeout:
+>  				     tvq->busyloop_timeout;
+> @@ -570,8 +570,10 @@ static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
+>  
+>  	if (r == tvq->num && tvq->busyloop_timeout) {
+>  		/* Flush batched packets first */
+> -		if (!vhost_sock_zcopy(tvq->private_data))
+> -			vhost_tx_batch(net, tnvq, tvq->private_data, msghdr);
+> +		if (!vhost_sock_zcopy(vhost_vq_get_backend_opaque(tvq)))
+> +			vhost_tx_batch(net, tnvq,
+> +				       vhost_vq_get_backend_opaque(tvq),
+> +				       msghdr);
+>  
+>  		vhost_net_busy_poll(net, rvq, tvq, busyloop_intr, false);
+>  
+> @@ -685,7 +687,7 @@ static int vhost_net_build_xdp(struct vhost_net_virtqueue *nvq,
+>  	struct vhost_virtqueue *vq = &nvq->vq;
+>  	struct vhost_net *net = container_of(vq->dev, struct vhost_net,
+>  					     dev);
+> -	struct socket *sock = vq->private_data;
+> +	struct socket *sock = vhost_vq_get_backend_opaque(vq);
+>  	struct page_frag *alloc_frag = &net->page_frag;
+>  	struct virtio_net_hdr *gso;
+>  	struct xdp_buff *xdp = &nvq->xdp[nvq->batched_xdp];
+> @@ -952,7 +954,7 @@ static void handle_tx(struct vhost_net *net)
+>  	struct socket *sock;
+>  
+>  	mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_TX);
+> -	sock = vq->private_data;
+> +	sock = vhost_vq_get_backend_opaque(vq);
+>  	if (!sock)
+>  		goto out;
+>  
+> @@ -1121,7 +1123,7 @@ static void handle_rx(struct vhost_net *net)
+>  	int recv_pkts = 0;
+>  
+>  	mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_RX);
+> -	sock = vq->private_data;
+> +	sock = vhost_vq_get_backend_opaque(vq);
+>  	if (!sock)
+>  		goto out;
+>  
+> @@ -1344,9 +1346,9 @@ static struct socket *vhost_net_stop_vq(struct vhost_net *n,
+>  		container_of(vq, struct vhost_net_virtqueue, vq);
+>  
+>  	mutex_lock(&vq->mutex);
+> -	sock = vq->private_data;
+> +	sock = vhost_vq_get_backend_opaque(vq);
+>  	vhost_net_disable_vq(n, vq);
+> -	vq->private_data = NULL;
+> +	vhost_vq_set_backend_opaque(vq, NULL);
+>  	vhost_net_buf_unproduce(nvq);
+>  	nvq->rx_ring = NULL;
+>  	mutex_unlock(&vq->mutex);
+> @@ -1528,7 +1530,7 @@ static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
+>  	}
+>  
+>  	/* start polling new socket */
+> -	oldsock = vq->private_data;
+> +	oldsock = vhost_vq_get_backend_opaque(vq);
+>  	if (sock != oldsock) {
+>  		ubufs = vhost_net_ubuf_alloc(vq,
+>  					     sock && vhost_sock_zcopy(sock));
+> @@ -1538,7 +1540,7 @@ static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
+>  		}
+>  
+>  		vhost_net_disable_vq(n, vq);
+> -		vq->private_data = sock;
+> +		vhost_vq_set_backend_opaque(vq, sock);
+>  		vhost_net_buf_unproduce(nvq);
+>  		r = vhost_vq_init_access(vq);
+>  		if (r)
+> @@ -1575,7 +1577,7 @@ static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
+>  	return 0;
+>  
+>  err_used:
+> -	vq->private_data = oldsock;
+> +	vhost_vq_set_backend_opaque(vq, oldsock);
+>  	vhost_net_enable_vq(n, vq);
+>  	if (ubufs)
+>  		vhost_net_ubuf_put_wait_and_free(ubufs);
+> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+> index a123fd70847e..0808188f7e8f 100644
+> --- a/drivers/vhost/vhost.h
+> +++ b/drivers/vhost/vhost.h
+> @@ -244,6 +244,34 @@ enum {
+>  			 (1ULL << VIRTIO_F_VERSION_1)
+>  };
+>  
+> +/**
+> + * vhost_vq_set_backend_opaque - Set backend opaque.
+> + *
+> + * @vq            Virtqueue.
+> + * @private_data  The private data.
+> + *
+> + * Context: Need to call with vq->mutex acquired.
+> + */
+> +static inline void vhost_vq_set_backend_opaque(struct vhost_virtqueue *vq,
+> +					       void *private_data)
+> +{
+> +	vq->private_data = private_data;
+> +}
+> +
+> +/**
+> + * vhost_vq_get_backend_opaque - Get backend opaque.
+> + *
+> + * @vq            Virtqueue.
+> + * @private_data  The private data.
+> + *
+> + * Context: Need to call with vq->mutex acquired.
+> + * Return: Opaque previously set with vhost_vq_set_backend_opaque.
+> + */
+> +static inline void *vhost_vq_get_backend_opaque(struct vhost_virtqueue *vq)
+> +{
+> +	return vq->private_data;
+> +}
+> +
+>  static inline bool vhost_has_feature(struct vhost_virtqueue *vq, int bit)
+>  {
+>  	return vq->acked_features & (1ULL << bit);
 
 
-> > +			if (info->ats_enabled) {
-> > +				qi_flush_dev_iotlb_pasid(iommu,
-> > sid, info-  
-> > >pfsid,  
-> > +						pasid,
-> > info->ats_qdep,
-> > +
-> > inv_info->addr_info.addr, size,
-> > +						granu);
-> > +			}
-> > +			break;
-> > +		case IOMMU_CACHE_INV_TYPE_DEV_IOTLB:
-> > +			if (info->ats_enabled) {
-> > +				qi_flush_dev_iotlb_pasid(iommu,
-> > sid, info-  
-> > >pfsid,  
-> > +
-> > inv_info->addr_info.pasid, info->ats_qdep,
-> > +
-> > inv_info->addr_info.addr, size,
-> > +						granu);  
-> 
-> I'm confused here. There are two granularities allowed for devtlb,
-> but here you only handle one of them?
-> 
-granu is passed into the flush function, which can be 1 or 0.
+I think I prefer vhost_vq_get_backend and vhost_vq_set_backend.
 
-> > +			} else
-> > +				pr_warn("Passdown device IOTLB
-> > flush w/o ATS!\n");
-> > +
-> > +			break;
-> > +		case IOMMU_CACHE_INV_TYPE_PASID:
-> > +			qi_flush_pasid_cache(iommu, did, granu,
-> > inv_info-  
-> > >pasid_info.pasid);  
-> > +  
-> 
-> as earlier comment, we shouldn't allow userspace or guest to
-> invalidate PASID cache
-> 
-same explanation :)
+"opaque" just means that it's void * that is clear from the signature
+anyway.
 
-> > +			break;
-> > +		default:
-> > +			dev_err(dev, "Unsupported IOMMU
-> > invalidation type %d\n",
-> > +				cache_type);
-> > +			ret = -EINVAL;
-> > +		}
-> > +	}
-> > +out_unlock:
-> > +	spin_unlock(&iommu->lock);
-> > +	spin_unlock_irqrestore(&device_domain_lock, flags);
-> > +
-> > +	return ret;
-> > +}
-> > +#endif
-> > +
-> >  static int intel_iommu_map(struct iommu_domain *domain,
-> >  			   unsigned long iova, phys_addr_t hpa,
-> >  			   size_t size, int iommu_prot, gfp_t gfp)
-> > @@ -6204,6 +6385,7 @@ const struct iommu_ops intel_iommu_ops = {
-> >  	.is_attach_deferred	=
-> > intel_iommu_is_attach_deferred, .pgsize_bitmap		=
-> > INTEL_IOMMU_PGSIZES, #ifdef CONFIG_INTEL_IOMMU_SVM
-> > +	.cache_invalidate	= intel_iommu_sva_invalidate,
-> >  	.sva_bind_gpasid	= intel_svm_bind_gpasid,
-> >  	.sva_unbind_gpasid	= intel_svm_unbind_gpasid,
-> >  #endif
-> > --
-> > 2.7.4  
-> 
 
-[Jacob Pan]
+> diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+> index c2d7d57e98cf..6e20dbe14acd 100644
+> --- a/drivers/vhost/vsock.c
+> +++ b/drivers/vhost/vsock.c
+> @@ -91,7 +91,7 @@ vhost_transport_do_send_pkt(struct vhost_vsock *vsock,
+>  
+>  	mutex_lock(&vq->mutex);
+>  
+> -	if (!vq->private_data)
+> +	if (!vhost_vq_get_backend_opaque(vq))
+>  		goto out;
+>  
+>  	/* Avoid further vmexits, we're already processing the virtqueue */
+> @@ -440,7 +440,7 @@ static void vhost_vsock_handle_tx_kick(struct vhost_work *work)
+>  
+>  	mutex_lock(&vq->mutex);
+>  
+> -	if (!vq->private_data)
+> +	if (!vhost_vq_get_backend_opaque(vq))
+>  		goto out;
+>  
+>  	vhost_disable_notify(&vsock->dev, vq);
+> @@ -533,8 +533,8 @@ static int vhost_vsock_start(struct vhost_vsock *vsock)
+>  			goto err_vq;
+>  		}
+>  
+> -		if (!vq->private_data) {
+> -			vq->private_data = vsock;
+> +		if (!vhost_vq_get_backend_opaque(vq)) {
+> +			vhost_vq_set_backend_opaque(vq, vsock);
+>  			ret = vhost_vq_init_access(vq);
+>  			if (ret)
+>  				goto err_vq;
+> @@ -547,14 +547,14 @@ static int vhost_vsock_start(struct vhost_vsock *vsock)
+>  	return 0;
+>  
+>  err_vq:
+> -	vq->private_data = NULL;
+> +	vhost_vq_set_backend_opaque(vq, NULL);
+>  	mutex_unlock(&vq->mutex);
+>  
+>  	for (i = 0; i < ARRAY_SIZE(vsock->vqs); i++) {
+>  		vq = &vsock->vqs[i];
+>  
+>  		mutex_lock(&vq->mutex);
+> -		vq->private_data = NULL;
+> +		vhost_vq_set_backend_opaque(vq, NULL);
+>  		mutex_unlock(&vq->mutex);
+>  	}
+>  err:
+> @@ -577,7 +577,7 @@ static int vhost_vsock_stop(struct vhost_vsock *vsock)
+>  		struct vhost_virtqueue *vq = &vsock->vqs[i];
+>  
+>  		mutex_lock(&vq->mutex);
+> -		vq->private_data = NULL;
+> +		vhost_vq_set_backend_opaque(vq, NULL);
+>  		mutex_unlock(&vq->mutex);
+>  	}
+>  
+> -- 
+> 2.18.1
+
