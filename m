@@ -2,85 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E63A6199674
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 14:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1870319960B
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 14:14:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730858AbgCaM03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 08:26:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56352 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730343AbgCaM02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 08:26:28 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2E7420848;
-        Tue, 31 Mar 2020 12:26:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585657588;
-        bh=ARYr/LKj+yZwEU4iRvbH7FzrNzmdYr/PkmH9b2I+f04=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xq3N5hZp0GIAPSlbTvfr9BXe+y4LG9Uv3UovNY6Yk0YIOKwgVfPY8EgPzaDoKW2wd
-         vSVoDGymgwdCPsZ71SZRea/1NWtuKq69d3jLgndLZgXHbCs5wgttrZgiQhTEhFWfll
-         uO8myYXyLDlkGXOuzt5Hxw9vtfHh2ORTVvvFJdpw=
-Date:   Tue, 31 Mar 2020 14:12:28 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        netfilter-devel@vger.kernel.org
-Subject: Re: [PATCH 5.5 138/170] netfilter: nft_fwd_netdev: allow to redirect
- to ifb via ingress
-Message-ID: <20200331121228.GB1617997@kroah.com>
-References: <20200331085423.990189598@linuxfoundation.org>
- <20200331085438.148415210@linuxfoundation.org>
- <20200331101603.wmsbhgmjc6vf4esk@salvia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331101603.wmsbhgmjc6vf4esk@salvia>
+        id S1730646AbgCaMOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 08:14:03 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41360 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729483AbgCaMOC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 08:14:02 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h9so25589516wrc.8;
+        Tue, 31 Mar 2020 05:14:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=RaTwRr96LXp/hTXZkNHh+ephRC8ostasbFPkQNr4Hb8=;
+        b=rgtwhkzGGRUXYxeH5bHrhNHBc+JNY4l8GMVg4YFEl5L/oeNrTK+SSQvLvLYuMs0BHU
+         /pDfG/JQYKRApYpuFaeQy9dioDlkxtTiqMM1RHkwJs5DUoEAKpq1nHUD+2Eg622wyGqu
+         KUUvLmJc8kAcsQl9D51OEqcaVKE6WU1Ie3+r9DhE+wJabKtrCaAaEXEk1KAaLNpIMnKc
+         LkNokC22Zxi2QcQxaDKXzQJfzK0ls+pE2UY5xuRCNmULNT4TvWajX6TiB/dO4bSyGxdd
+         FgAhD2+fcm+3CyUmxIYmRGemPJialzqSLq4ZUZ5K3SE8RZfeKzLFCUSPIIMFH6f75se3
+         3pMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RaTwRr96LXp/hTXZkNHh+ephRC8ostasbFPkQNr4Hb8=;
+        b=iVUlDg6+EjjNt230mWN2wyAuxrWtav3eIZkZH3W3Oh9RS5htTp+nv3wzMyiLQqmHH9
+         9MCSVFi3QSwrTPKwHbtRm7YicxIWUZX5Uh6m80SVbU5B9LWlzhajMoA6KJKXV1BxogaA
+         sApSsqywWquq2/IGRCMEw5RyjMSd1R8ULgrLCtRP7j0aBMm4feM0XIOii7kHqeuWlV6g
+         KKMljuOGgmx3XM5u+76ZydhwbA1g6PHGyMbLgPLXfW2j9qS+zLUpUgL3ScsQVQEMsanj
+         mn19U+01bw2pTZ3myiSNQWtxfuziVEwlb/zkj3fo+wtkyfOECKHeMzV1T69SGv+cwh2m
+         aLNw==
+X-Gm-Message-State: ANhLgQ0AACyB8sIeX4P+o3++C8Y5XpGGA46aYGxb2X1lCDLbYFIZAhHt
+        crs7rmmlCTZhbQcmsa7bvbs=
+X-Google-Smtp-Source: ADFU+vszFwYArrRRDeb7hvjW6c2dFE+s6oWpyrtFll1nJHKll+cyfkE5fWhk8+23o8wRsxRkmz8U1g==
+X-Received: by 2002:adf:b1d8:: with SMTP id r24mr20580572wra.266.1585656839738;
+        Tue, 31 Mar 2020 05:13:59 -0700 (PDT)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id 127sm3754936wmd.38.2020.03.31.05.13.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Mar 2020 05:13:59 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v3 1/2] dt-bindings: sram: convert rockchip-pmu-sram bindings to yaml
+Date:   Tue, 31 Mar 2020 14:13:51 +0200
+Message-Id: <20200331121352.3825-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 12:16:03PM +0200, Pablo Neira Ayuso wrote:
-> On Tue, Mar 31, 2020 at 10:59:12AM +0200, Greg Kroah-Hartman wrote:
-> > From: Pablo Neira Ayuso <pablo@netfilter.org>
-> > 
-> > commit bcfabee1afd99484b6ba067361b8678e28bbc065 upstream.
-> > 
-> > Set skb->tc_redirected to 1, otherwise the ifb driver drops the packet.
-> > Set skb->tc_from_ingress to 1 to reinject the packet back to the ingress
-> > path after leaving the ifb egress path.
-> > 
-> > This patch inconditionally sets on these two skb fields that are
-> > meaningful to the ifb driver. The existing forward action is guaranteed
-> > to run from ingress path.
-> > 
-> > Fixes: 39e6dea28adc ("netfilter: nf_tables: add forward expression to the netdev family")
-> > Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > ---
-> >  net/netfilter/nft_fwd_netdev.c |    4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > --- a/net/netfilter/nft_fwd_netdev.c
-> > +++ b/net/netfilter/nft_fwd_netdev.c
-> > @@ -28,6 +28,10 @@ static void nft_fwd_netdev_eval(const st
-> >  	struct nft_fwd_netdev *priv = nft_expr_priv(expr);
-> >  	int oif = regs->data[priv->sreg_dev];
-> >  
-> > +	/* These are used by ifb only. */
-> > +	pkt->skb->tc_redirected = 1;
-> > +	pkt->skb->tc_from_ingress = 1;
-> 
-> This patch also requires:
-> 
-> 2c64605b590e net: Fix CONFIG_NET_CLS_ACT=n and CONFIG_NFT_FWD_NETDEV={y, m} build
-> 
-> Otherwise build breaks with CONFIG_NET_CLS_ACT=n.
+Current dts files with 'rockchip-pmu-sram' compatible nodes
+are now verified with sram.yaml, although the original
+text document still exists. Merge rockchip-pmu-sram.txt
+with sram.yaml by adding it as description with an example.
 
-Thanks for the hint, will go do that now.
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+Not tested with hardware.
 
-greg k-h
+Changes v3:
+  Document the compatible
+
+Changed v2:
+  Merge with sram.yaml
+---
+ .../devicetree/bindings/sram/rockchip-pmu-sram.txt       | 16 ----------------
+ Documentation/devicetree/bindings/sram/sram.yaml         | 14 ++++++++++++++
+ 2 files changed, 14 insertions(+), 16 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
+
+diff --git a/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt b/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
+deleted file mode 100644
+index 6b42fda30..000000000
+--- a/Documentation/devicetree/bindings/sram/rockchip-pmu-sram.txt
++++ /dev/null
+@@ -1,16 +0,0 @@
+-Rockchip SRAM for pmu:
+-------------------------------
+-
+-The sram of pmu is used to store the function of resume from maskrom(the 1st
+-level loader). This is a common use of the "pmu-sram" because it keeps power
+-even in low power states in the system.
+-
+-Required node properties:
+-- compatible : should be "rockchip,rk3288-pmu-sram"
+-- reg : physical base address and the size of the registers window
+-
+-Example:
+-	sram@ff720000 {
+-		compatible = "rockchip,rk3288-pmu-sram", "mmio-sram";
+-		reg = <0xff720000 0x1000>;
+-	};
+diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
+index 7b83cc6c9..605eb1460 100644
+--- a/Documentation/devicetree/bindings/sram/sram.yaml
++++ b/Documentation/devicetree/bindings/sram/sram.yaml
+@@ -29,6 +29,7 @@ properties:
+       enum:
+         - mmio-sram
+         - atmel,sama5d2-securam
++        - rockchip,rk3288-pmu-sram
+ 
+   reg:
+     maxItems: 1
+@@ -224,6 +225,19 @@ examples:
+     };
+ 
+   - |
++    // Rockchip's rk3288 SoC uses the sram of pmu to store the function of
++    // resume from maskrom(the 1st level loader). This is a common use of
++    // the "pmu-sram" because it keeps power even in low power states
++    // in the system.
++    sram@ff720000 {
++      compatible = "rockchip,rk3288-pmu-sram", "mmio-sram";
++      reg = <0xff720000 0x1000>;
++      #address-cells = <1>;
++      #size-cells = <1>;
++      ranges = <0 0xff720000 0x1000>;
++    };
++
++  - |
+     // Allwinner's A80 SoC uses part of the secure sram for hotplugging of the
+     // primary core (cpu0). Once the core gets powered up it checks if a magic
+     // value is set at a specific location. If it is then the BROM will jump
+-- 
+2.11.0
+
