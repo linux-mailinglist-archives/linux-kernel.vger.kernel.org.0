@@ -2,53 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14EA7198939
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 02:58:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B492E19893A
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 02:58:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbgCaA6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 20:58:11 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58568 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729019AbgCaA6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 20:58:11 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2A4576F7089CB59F789B;
-        Tue, 31 Mar 2020 08:58:06 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 31 Mar
- 2020 08:58:05 +0800
-Subject: Re: [PATCH] f2fs: prevent meta updates while checkpoint is in
- progress
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <linux-kernel@vger.kernel.org>
-References: <1585219019-24831-1-git-send-email-stummala@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <8e8c3fea-9471-ffd0-3817-06b31bc4289d@huawei.com>
-Date:   Tue, 31 Mar 2020 08:58:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1729602AbgCaA6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 20:58:23 -0400
+Received: from ozlabs.org ([203.11.71.1]:55645 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729019AbgCaA6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 20:58:23 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48rrY83DPpz9sPF;
+        Tue, 31 Mar 2020 11:58:20 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1585616301;
+        bh=c8QxLZAVwZDP69eK2yRpjGsPj13bvRE+pFfd/mBq/58=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=QV3uo2UAfxzPxyIyOABda5NJBpGNlmDyTet2SWRKDOHs1a5Ce4nI1SL/YATBqmCgt
+         jAMQcdXfKec6G97JX6DM9v+2aAcI1Y0rpdn/282c1agVOr1jQAf33/sW9WA4Js2bdc
+         vMNjn/qamb82UjfKwNf5/H5RA9pEuOk6DpbH0k09WINvoLOB3TKuwiziOja3X8kqQ0
+         fKUY9cHrfQqQXQN2a8i4kOVF47+5SsayMkk1HBd0oSTogF9XXQfFKcWaldfuhTxM68
+         aKrqONAGWi3qqlcstgkCDge9jXJLoK0SBsFn85IaDNTw+qgA0/I8rdsSx6n+qozhao
+         U5etm/SZ3tIUg==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     YueHaibing <yuehaibing@huawei.com>, mporter@kernel.crashing.org,
+        benh@kernel.crashing.org, paulus@samba.org
+Cc:     alistair@popple.id.au, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+Subject: Re: [PATCH] powerpc/44x: Make AKEBONO depends on NET
+In-Reply-To: <20200330143153.32800-1-yuehaibing@huawei.com>
+References: <20200330143153.32800-1-yuehaibing@huawei.com>
+Date:   Tue, 31 Mar 2020 11:58:28 +1100
+Message-ID: <87pnctuyq3.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <1585219019-24831-1-git-send-email-stummala@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/3/26 18:36, Sahitya Tummala wrote:
-> allocate_segment_for_resize() can cause metapage updates if
-> it requires to change the current node/data segments for resizing.
-> Stop these meta updates when there is a checkpoint already
-> in progress to prevent inconsistent CP data.
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+YueHaibing <yuehaibing@huawei.com> writes:
+> Fix Kconfig warnings:
+>
+> WARNING: unmet direct dependencies detected for NETDEVICES
+>   Depends on [n]: NET [=n]
+>   Selected by [y]:
+>   - AKEBONO [=y] && PPC_47x [=y]
+>
+> WARNING: unmet direct dependencies detected for ETHERNET
+>   Depends on [n]: NETDEVICES [=y] && NET [=n]
+>   Selected by [y]:
+>   - AKEBONO [=y] && PPC_47x [=y]
+>
+> AKEBONO select NETDEVICES and ETHERNET unconditionally,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+It shouldn't do that, that's the job of a defconfig.
 
-Thanks,
+It might want to enable NET_VENDOR_IBM iff the config already has NET
+and other dependencies enabled.
+
+So the patch below might work?
+
+cheers
+
+diff --git a/arch/powerpc/platforms/44x/Kconfig b/arch/powerpc/platforms/44x/Kconfig
+index 25ebe634a661..32aac4f40f1b 100644
+--- a/arch/powerpc/platforms/44x/Kconfig
++++ b/arch/powerpc/platforms/44x/Kconfig
+@@ -207,9 +207,7 @@ config AKEBONO
+ 	select PPC4xx_HSTA_MSI
+ 	select I2C
+ 	select I2C_IBM_IIC
+-	select NETDEVICES
+-	select ETHERNET
+-	select NET_VENDOR_IBM
++	imply NET_VENDOR_IBM
+ 	select IBM_EMAC_EMAC4 if IBM_EMAC
+ 	select USB if USB_SUPPORT
+ 	select USB_OHCI_HCD_PLATFORM if USB_OHCI_HCD
+
+
+
+> If NET is not set, build fails. Add this dependcy to fix this.
+>
+> Fixes: 2a2c74b2efcb ("IBM Akebono: Add the Akebono platform")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  arch/powerpc/platforms/44x/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/powerpc/platforms/44x/Kconfig b/arch/powerpc/platforms/44x/Kconfig
+> index 25ebe634a661..394f662d7df2 100644
+> --- a/arch/powerpc/platforms/44x/Kconfig
+> +++ b/arch/powerpc/platforms/44x/Kconfig
+> @@ -199,6 +199,7 @@ config FSP2
+>  config AKEBONO
+>  	bool "IBM Akebono (476gtr) Support"
+>  	depends on PPC_47x
+> +	depends on NET
+>  	select SWIOTLB
+>  	select 476FPE
+>  	select PPC4xx_PCI_EXPRESS
+> -- 
+> 2.17.1
