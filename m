@@ -2,46 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAF72199720
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3926B199711
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:11:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730887AbgCaNLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 09:11:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39646 "EHLO mail.kernel.org"
+        id S1730933AbgCaNL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 09:11:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730543AbgCaNLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 09:11:20 -0400
+        id S1730884AbgCaNLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 09:11:25 -0400
 Received: from localhost (unknown [137.135.114.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A832620772;
-        Tue, 31 Mar 2020 13:11:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C1ED20784;
+        Tue, 31 Mar 2020 13:11:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585660279;
-        bh=PC5PgxjIj/JTw0FZeDEEoYDhnVcOZuR1qdco51kVJps=;
-        h=Date:From:To:To:To:To:CC:Cc:Cc:Cc:Cc:Cc:Cc:Cc:Subject:In-Reply-To:
-         References:From;
-        b=rirx7YUt1ZwGmSK2B8il4Thxh+D0uLDnwL+3V8E7rskXTHFBLuege4AJcC+eiiiKR
-         4eOw2u9ATDPdYmnnIjf+lIXHkzNEGgnwNh/8PPyu3ZDHuOt8S2MMmSj/u6GSBXUmGO
-         QHDnQcE2GabjBT5xLQa6Dfw1S0nBcAattrqyurdw=
-Date:   Tue, 31 Mar 2020 13:11:18 +0000
+        s=default; t=1585660284;
+        bh=FmUQVUKPYEPvynuaFcS/zDC5IwKRSHH5U73vgRduAY4=;
+        h=Date:From:To:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:
+         From;
+        b=w5O4N5t39B+GhMF69Y1Aqvnyok/MLDK7vN0vkXew8FpG3vdAHfDjFwCGew3p8VmH9
+         Wz/mf0A3ooj5WnvxUrVSflgkEMan85ukHectuBh8HcNUHPYjygLRQNFgZyM1TO8cXP
+         7FUr/omkj3aYqUGf3+EFE3SSH5qTCC3Wkubm6XE4=
+Date:   Tue, 31 Mar 2020 13:11:23 +0000
 From:   Sasha Levin <sashal@kernel.org>
 To:     Sasha Levin <sashal@kernel.org>
-To:     "Longpeng(Mike)" <longpeng2@huawei.com>
-To:     Longpeng <longpeng2@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-CC:     <kvm@vger.kernel.org>, <arei.gonglei@huawei.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Matthew Wilcox <willy@infradead.org>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>
 Cc:     stable@vger.kernel.org
 Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH v4] mm/hugetlb: fix a addressing exception caused by huge_pte_offset
-In-Reply-To: <20200327234122.1985-1-longpeng2@huawei.com>
-References: <20200327234122.1985-1-longpeng2@huawei.com>
-Message-Id: <20200331131119.A832620772@mail.kernel.org>
+Subject: Re: [for-next][PATCH 15/21] ftrace/kprobe: Show the maxactive number on kprobe_events
+In-Reply-To: <20200329184317.641598238@goodmis.org>
+References: <20200329184317.641598238@goodmis.org>
+Message-Id: <20200331131124.5C1ED20784@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -51,41 +46,42 @@ Hi
 
 [This is an automated email]
 
-This commit has been processed because it contains a -stable tag.
-The stable tag indicates that it's relevant for the following trees: all
+This commit has been processed because it contains a "Fixes:" tag
+fixing commit: 696ced4fb1d7 ("tracing/kprobes: expose maxactive for kretprobe in kprobe_events").
 
-The bot has tested the following trees: v5.5.13, v5.4.28, v4.19.113, v4.14.174, v4.9.217, v4.4.217.
+The bot has tested the following trees: v5.5.13, v5.4.28, v4.19.113, v4.14.174.
 
 v5.5.13: Build OK!
 v5.4.28: Build OK!
-v4.19.113: Build OK!
-v4.14.174: Build OK!
-v4.9.217: Failed to apply! Possible dependencies:
-    166f61b9435a ("mm: codgin-style fixes")
-    505a60e22560 ("asm-generic: introduce 5level-fixup.h")
-    82b0f8c39a38 ("mm: join struct fault_env and vm_fault")
-    953c66c2b22a ("mm: THP page cache support for ppc64")
-    c2febafc6773 ("mm: convert generic code to 5-level paging")
-    fd60775aea80 ("mm, thp: avoid unlikely branches for split_huge_pmd")
+v4.19.113: Failed to apply! Possible dependencies:
+    533059281ee5 ("tracing: probeevent: Introduce new argument fetching code")
+    56de76305279 ("tracing: probeevent: Cleanup print argument functions")
+    60c2e0cebfd0 ("tracing: probeevent: Add symbol type")
+    6212dd29683e ("tracing/kprobes: Use dyn_event framework for kprobe events")
+    a1303af5d79e ("tracing: probeevent: Add $argN for accessing function args")
+    b55ce203a8f3 ("tracing/probe: Add probe event name and group name accesses APIs")
+    f451bc89d835 ("tracing: probeevent: Unify fetch type tables")
 
-v4.4.217: Failed to apply! Possible dependencies:
-    01c8f1c44b83 ("mm, dax, gpu: convert vm_insert_mixed to pfn_t")
-    0e749e54244e ("dax: increase granularity of dax_clear_blocks() operations")
-    166f61b9435a ("mm: codgin-style fixes")
-    34c0fd540e79 ("mm, dax, pmem: introduce pfn_t")
-    505a60e22560 ("asm-generic: introduce 5level-fixup.h")
-    52db400fcd50 ("pmem, dax: clean up clear_pmem()")
-    5c6a84a3f455 ("mm/kasan: Switch to using __pa_symbol and lm_alias")
-    82b0f8c39a38 ("mm: join struct fault_env and vm_fault")
-    9973c98ecfda ("dax: add support for fsync/sync")
-    aac453635549 ("mm, oom: introduce oom reaper")
-    ac401cc78242 ("dax: New fault locking")
-    b2e0d1625e19 ("dax: fix lifetime of in-kernel dax mappings with dax_map_atomic()")
-    bae473a423f6 ("mm: introduce fault_env")
-    bc2466e42573 ("dax: Use radix tree entry lock to protect cow faults")
-    c2febafc6773 ("mm: convert generic code to 5-level paging")
-    e4b274915863 ("DAX: move RADIX_DAX_ definitions to dax.c")
-    f9fe48bece3a ("dax: support dirty DAX entries in radix tree")
+v4.14.174: Failed to apply! Possible dependencies:
+    0b4c6841fee0 ("bpf: use the same condition in perf event set/free bpf handler")
+    43fa87f7deed ("perf/core: Fix another perf,trace,cpuhp lock inversion")
+    45408c4f9250 ("tracing: kprobes: Prohibit probing on notrace function")
+    4bebdc7a85aa ("bpf: add helper bpf_perf_prog_read_value")
+    533059281ee5 ("tracing: probeevent: Introduce new argument fetching code")
+    60c2e0cebfd0 ("tracing: probeevent: Add symbol type")
+    6212dd29683e ("tracing/kprobes: Use dyn_event framework for kprobe events")
+    908432ca84fc ("bpf: add helper bpf_perf_event_read_value for perf event array map")
+    97562633bcba ("bpf: perf event change needed for subsequent bpf helpers")
+    9802d86585db ("bpf: add a bpf_override_function helper")
+    a1303af5d79e ("tracing: probeevent: Add $argN for accessing function args")
+    b4da3340eae2 ("tracing/kprobe: bpf: Check error injectable event is on function entry")
+    b55ce203a8f3 ("tracing/probe: Add probe event name and group name accesses APIs")
+    d899926f552b ("selftest/ftrace: Move kprobe selftest function to separate compile unit")
+    dd0bb688eaa2 ("bpf: add a bpf_override_function helper")
+    de8f3a83b0a0 ("bpf: add meta pointer for direct access")
+    e12f03d7031a ("perf/core: Implement the 'perf_kprobe' PMU")
+    f3edacbd697f ("bpf: Revert bpf_overrid_function() helper changes.")
+    f451bc89d835 ("tracing: probeevent: Unify fetch type tables")
 
 
 NOTE: The patch will not be queued to stable trees until it is upstream.
