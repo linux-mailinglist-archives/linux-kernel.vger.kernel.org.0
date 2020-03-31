@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FA89198FAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DA681990B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730884AbgCaJF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:05:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46414 "EHLO mail.kernel.org"
+        id S1731580AbgCaJNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:13:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730799AbgCaJFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:05:24 -0400
+        id S1731560AbgCaJNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:13:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB93B20787;
-        Tue, 31 Mar 2020 09:05:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1FE520787;
+        Tue, 31 Mar 2020 09:13:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645524;
-        bh=TXg//bs+/ZskiFsmA2fT4UWOVj10ZmFUdDtwwCgJwgg=;
+        s=default; t=1585646013;
+        bh=ePVB3mhFEyRGGn0YVF44FQkofOhQSp5ciqnPPMTYVzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kTTb6BUlXAqm5kAkyE/fyIy2vHyw+glFDi5t7FZv8Ih73nLvqR9U4rAjVOl5pwkP3
-         RrZzoxhbnKj7RSBpTceeKwMa+5QsSZwgBnfdz7vyimSc+cLjoe2t1JYyA6CatqLy9L
-         efhXIZxTyV7aYdWglvD0kGYgvEhyagN57w5hZG0E=
+        b=q3keWl6YnAxdU4QBg50QtUfJOgSQhF623DIISTaqpJj28hisAAVxC9TybIMrQreGZ
+         3NywkSm4n+veWsdbQd9DZho8Y7R0m/t2wThKe3VOueBz/8H39ihPyqv/uJ3G2clyO9
+         unhkxEMcAcSBnKvMw4pV8BZZ4OVQdly9ru/OHLJA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Megha Dey <megha.dey@linux.intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 080/170] iommu/vt-d: Populate debugfs if IOMMUs are detected
-Date:   Tue, 31 Mar 2020 10:58:14 +0200
-Message-Id: <20200331085432.821179266@linuxfoundation.org>
+        stable@vger.kernel.org, Scott Mayhew <smayhew@redhat.com>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 055/155] nfs: add minor version to nfs_server_key for fscache
+Date:   Tue, 31 Mar 2020 10:58:15 +0200
+Message-Id: <20200331085424.740778825@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
+References: <20200331085418.274292403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,89 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Megha Dey <megha.dey@linux.intel.com>
+From: Scott Mayhew <smayhew@redhat.com>
 
-[ Upstream commit 1da8347d8505c137fb07ff06bbcd3f2bf37409bc ]
+[ Upstream commit 55dee1bc0d72877b99805e42e0205087e98b9edd ]
 
-Currently, the intel iommu debugfs directory(/sys/kernel/debug/iommu/intel)
-gets populated only when DMA remapping is enabled (dmar_disabled = 0)
-irrespective of whether interrupt remapping is enabled or not.
+An NFS client that mounts multiple exports from the same NFS
+server with higher NFSv4 versions disabled (i.e. 4.2) and without
+forcing a specific NFS version results in fscache index cookie
+collisions and the following messages:
+[  570.004348] FS-Cache: Duplicate cookie detected
 
-Instead, populate the intel iommu debugfs directory if any IOMMUs are
-detected.
+Each nfs_client structure should have its own fscache index cookie,
+so add the minorversion to nfs_server_key.
 
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: ee2636b8670b1 ("iommu/vt-d: Enable base Intel IOMMU debugfs support")
-Signed-off-by: Megha Dey <megha.dey@linux.intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200145
+Signed-off-by: Scott Mayhew <smayhew@redhat.com>
+Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel-iommu-debugfs.c | 11 ++++++++++-
- drivers/iommu/intel-iommu.c         |  4 +++-
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ fs/nfs/client.c     | 1 +
+ fs/nfs/fscache.c    | 2 ++
+ fs/nfs/nfs4client.c | 1 -
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/intel-iommu-debugfs.c b/drivers/iommu/intel-iommu-debugfs.c
-index 80378c10dd77a..bdf095e9dbe03 100644
---- a/drivers/iommu/intel-iommu-debugfs.c
-+++ b/drivers/iommu/intel-iommu-debugfs.c
-@@ -281,9 +281,16 @@ static int dmar_translation_struct_show(struct seq_file *m, void *unused)
- {
- 	struct dmar_drhd_unit *drhd;
- 	struct intel_iommu *iommu;
-+	u32 sts;
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 30838304a0bf2..a05f77f9c21ed 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -153,6 +153,7 @@ struct nfs_client *nfs_alloc_client(const struct nfs_client_initdata *cl_init)
+ 	if ((clp = kzalloc(sizeof(*clp), GFP_KERNEL)) == NULL)
+ 		goto error_0;
  
- 	rcu_read_lock();
- 	for_each_active_iommu(iommu, drhd) {
-+		sts = dmar_readl(iommu->reg + DMAR_GSTS_REG);
-+		if (!(sts & DMA_GSTS_TES)) {
-+			seq_printf(m, "DMA Remapping is not enabled on %s\n",
-+				   iommu->name);
-+			continue;
-+		}
- 		root_tbl_walk(m, iommu);
- 		seq_putc(m, '\n');
- 	}
-@@ -353,6 +360,7 @@ static int ir_translation_struct_show(struct seq_file *m, void *unused)
- 	struct dmar_drhd_unit *drhd;
- 	struct intel_iommu *iommu;
- 	u64 irta;
-+	u32 sts;
++	clp->cl_minorversion = cl_init->minorversion;
+ 	clp->cl_nfs_mod = cl_init->nfs_mod;
+ 	if (!try_module_get(clp->cl_nfs_mod->owner))
+ 		goto error_dealloc;
+diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
+index 3800ab6f08fa8..a6dcc2151e779 100644
+--- a/fs/nfs/fscache.c
++++ b/fs/nfs/fscache.c
+@@ -31,6 +31,7 @@ static DEFINE_SPINLOCK(nfs_fscache_keys_lock);
+ struct nfs_server_key {
+ 	struct {
+ 		uint16_t	nfsversion;		/* NFS protocol version */
++		uint32_t	minorversion;		/* NFSv4 minor version */
+ 		uint16_t	family;			/* address family */
+ 		__be16		port;			/* IP port */
+ 	} hdr;
+@@ -55,6 +56,7 @@ void nfs_fscache_get_client_cookie(struct nfs_client *clp)
  
- 	rcu_read_lock();
- 	for_each_active_iommu(iommu, drhd) {
-@@ -362,7 +370,8 @@ static int ir_translation_struct_show(struct seq_file *m, void *unused)
- 		seq_printf(m, "Remapped Interrupt supported on IOMMU: %s\n",
- 			   iommu->name);
+ 	memset(&key, 0, sizeof(key));
+ 	key.hdr.nfsversion = clp->rpc_ops->version;
++	key.hdr.minorversion = clp->cl_minorversion;
+ 	key.hdr.family = clp->cl_addr.ss_family;
  
--		if (iommu->ir_table) {
-+		sts = dmar_readl(iommu->reg + DMAR_GSTS_REG);
-+		if (iommu->ir_table && (sts & DMA_GSTS_IRES)) {
- 			irta = virt_to_phys(iommu->ir_table->base);
- 			seq_printf(m, " IR table address:%llx\n", irta);
- 			ir_tbl_remap_entry_show(m, iommu);
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 10176d8ea3e65..7f31775e9b554 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5005,6 +5005,9 @@ int __init intel_iommu_init(void)
- 
- 	down_write(&dmar_global_lock);
- 
-+	if (!no_iommu)
-+		intel_iommu_debugfs_init();
-+
- 	if (no_iommu || dmar_disabled) {
- 		/*
- 		 * We exit the function here to ensure IOMMU's remapping and
-@@ -5100,7 +5103,6 @@ int __init intel_iommu_init(void)
- 	pr_info("Intel(R) Virtualization Technology for Directed I/O\n");
- 
- 	intel_iommu_enabled = 1;
--	intel_iommu_debugfs_init();
- 
- 	return 0;
- 
+ 	switch (clp->cl_addr.ss_family) {
+diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
+index da6204025a2db..914feab64702c 100644
+--- a/fs/nfs/nfs4client.c
++++ b/fs/nfs/nfs4client.c
+@@ -216,7 +216,6 @@ struct nfs_client *nfs4_alloc_client(const struct nfs_client_initdata *cl_init)
+ 	INIT_LIST_HEAD(&clp->cl_ds_clients);
+ 	rpc_init_wait_queue(&clp->cl_rpcwaitq, "NFS client");
+ 	clp->cl_state = 1 << NFS4CLNT_LEASE_EXPIRED;
+-	clp->cl_minorversion = cl_init->minorversion;
+ 	clp->cl_mvops = nfs_v4_minor_ops[cl_init->minorversion];
+ 	clp->cl_mig_gen = 1;
+ #if IS_ENABLED(CONFIG_NFS_V4_1)
 -- 
 2.20.1
 
