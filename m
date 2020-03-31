@@ -2,135 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63C7A198D80
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:53:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 127CA198D89
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:54:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730049AbgCaHxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 03:53:35 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:13782 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727614AbgCaHxf (ORCPT
+        id S1730168AbgCaHyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 03:54:20 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:58112 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbgCaHyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 03:53:35 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585641214; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=y+g2aIRUiXN9G3r1jVBnLvDDqFYXx0VUiwFi2S/Qu/A=;
- b=H3sLQ1CoH29ETxKLM+77eHcLhxXLiBvb49NOsnCHYI4QJZ05HDB2aVv318BxGk9l+4k+qCwW
- CQPSCAGsvcOG5OquZeabsbHAeZqdstu4MEiJG0dX5sZLD2uNIxtXwcQh9vCo6/3OGTUh7Mvz
- wsHob/VXi0QimV9NbfONeeNdJTs=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e82f6fe.7f009c56a848-smtp-out-n03;
- Tue, 31 Mar 2020 07:53:34 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E9797C43637; Tue, 31 Mar 2020 07:53:33 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 31674C433F2;
-        Tue, 31 Mar 2020 07:53:33 +0000 (UTC)
+        Tue, 31 Mar 2020 03:54:20 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02V7s6Gb056302;
+        Tue, 31 Mar 2020 02:54:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1585641246;
+        bh=1uPgCl7zqIU8IkGEGi3EPMx+udUdfvUF1olxNisngvQ=;
+        h=From:To:CC:Subject:Date;
+        b=ZfWapfoe5OiNFCrcZP0PObwnFdziWcCc6FKbPJDVMqCMLz1ezbv4kWTj0e/1H5KPu
+         eQ+wamhOPDjwWXc67kTiTcvGgSV14BetXxESEqGjF5P3EXP0rfAGE+Ki6lgRRJa2sm
+         T5JTCK2VFoFt6cLKnmgHrQTC8BivN741utTcoXfA=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02V7s6NG096904
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 31 Mar 2020 02:54:06 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 31
+ Mar 2020 02:54:06 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 31 Mar 2020 02:54:06 -0500
+Received: from a0393675ula.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02V7s2gf009443;
+        Tue, 31 Mar 2020 02:54:03 -0500
+From:   Keerthy <j-keerthy@ti.com>
+To:     <rui.zhang@intel.com>, <robh+dt@kernel.org>,
+        <daniel.lezcano@linaro.org>
+CC:     <j-keerthy@ti.com>, <amit.kucheria@verdurent.com>,
+        <t-kristo@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <mark.rutland@arm.com>
+Subject: [PATCH v5 0/4] thermal: k3: Add support for bandgap sensors
+Date:   Tue, 31 Mar 2020 13:23:52 +0530
+Message-ID: <20200331075356.19171-1-j-keerthy@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 31 Mar 2020 13:23:33 +0530
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "list@263.net:IOMMU DRIVERS , Joerg Roedel <joro@8bytes.org>," 
-        <iommu@lists.linux-foundation.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iommu/arm-smmu: Demote error messages to debug in
- shutdown callback
-In-Reply-To: <20200331074400.GB25612@willie-the-truck>
-References: <20200327132852.10352-1-saiprakash.ranjan@codeaurora.org>
- <0023bc68-45fb-4e80-00c8-01fd0369243f@arm.com>
- <37db9a4d524aa4d7529ae47a8065c9e0@codeaurora.org>
- <5858bdac-b7f9-ac26-0c0d-c9653cef841d@arm.com>
- <d60196b548e1241b8334fadd0e8c2fb5@codeaurora.org>
- <CAD=FV=WXTN6xxqtL6d6MHxG8Epuo6FSQERRPfnoSCskhjh1KeQ@mail.gmail.com>
- <890456524e2df548ba5d44752513a62c@codeaurora.org>
- <20200331074400.GB25612@willie-the-truck>
-Message-ID: <1bf04938249bcd5b2111c1921facfd25@codeaurora.org>
-X-Sender: saiprakash.ranjan@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+Add VTM thermal support. In the Voltage Thermal
+Management Module(VTM), K3 AM654 supplies a voltage
+reference and a temperature sensor feature that are gathered in the band
+gap voltage and temperature sensor (VBGAPTS) module. The band
+gap provides current and voltage reference for its internal
+circuits and other analog IP blocks. The analog-to-digital
+converter (ADC) produces an output value that is proportional
+to the silicon temperature.
 
-On 2020-03-31 13:14, Will Deacon wrote:
-> On Tue, Mar 31, 2020 at 01:06:11PM +0530, Sai Prakash Ranjan wrote:
->> On 2020-03-30 23:54, Doug Anderson wrote:
->> > On Sat, Mar 28, 2020 at 12:35 AM Sai Prakash Ranjan
->> > <saiprakash.ranjan@codeaurora.org> wrote:
->> > >
->> > > > Of course the fact that in practice we'll *always* see the warning
->> > > > because there's no way to tear down the default DMA domains, and even
->> > > > if all devices *have* been nicely quiesced there's no way to tell, is
->> > > > certainly less than ideal. Like I say, it's not entirely clear-cut
->> > > > either way...
->> > > >
->> > >
->> > > Thanks for these examples, good to know these scenarios in case we
->> > > come
->> > > across these.
->> > > However, if we see these error/warning messages appear everytime then
->> > > what will be
->> > > the credibility of these messages? We will just ignore these messages
->> > > when
->> > > these issues you mention actually appears because we see them
->> > > everytime
->> > > on
->> > > reboot or shutdown.
->> >
->> > I would agree that if these messages are expected to be seen every
->> > time, there's no way to fix them, and they're not indicative of any
->> > problem then something should be done.  Seeing something printed at
->> > "dev_error" level with an exclamation point (!) at the end makes me
->> > feel like this is something that needs immediate action on my part.
->> >
->> > If we really can't do better but feel that the messages need to be
->> > there, at least make them dev_info and less scary like:
->> >
->> >   arm-smmu 15000000.iommu: turning off; DMA should be quiesced before
->> > now
->> >
->> > ...that would still give you a hint in the logs that if you saw a DMA
->> > transaction after the message that it was a bug but also wouldn't
->> > sound scary to someone who wasn't seeing any other problems.
->> >
->> 
->> We can do this if Robin is OK?
-> 
-> It would be nice if you could figure out which domains are still live 
-> when
-> the SMMU is being shut down in your case and verify that it *is* infact
-> benign before we start making the message more friendly. As Robin said
-> earlier, rogue DMA is a real nightmare to debug.
-> 
+Add support for bandgap sensors. Currently reading temperatures
+is supported.
 
-I could see this error message for all the clients of apps_smmu.
-I checked manually enabling bypass and removing iommus dt property
-for each client of apps_smmu.
+Changes in v5:
 
-Thanks,
-Sai
+  * Removed thermal work function which was unused.
+  * Removed unused preve_tenmp and a couple more struct variables.
+  * Removed couple of redundant header function include.
+
+Changes in v4:
+
+  * Fixed comments from Daniel to remove trend function.
+  * Mostly cleaned up all the unused variables.
+  * Driver from bool to tristate.
+
+Changes in v3:
+
+  * Fixed errors seen with:
+    dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml
+
+Changes in v2:
+
+  * Fixed yaml errors
+  * renamed am654-industrial-thermal.dtsi to k3-am654-industrial-thermal.dtsi
+    to follow the convention for k3 family. 
+
+
+Keerthy (4):
+  dt-bindings: thermal: k3: Add VTM bindings documentation
+  thermal: k3: Add support for bandgap sensors
+  arm64: dts: ti: am654: Add thermal zones
+  arm64: dts: ti: am6: Add VTM node
+
+ .../bindings/thermal/ti,am654-thermal.yaml    |  56 ++++
+ arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi    |  11 +
+ .../dts/ti/k3-am654-industrial-thermal.dtsi   |  45 +++
+ drivers/thermal/Kconfig                       |  10 +
+ drivers/thermal/Makefile                      |   1 +
+ drivers/thermal/k3_bandgap.c                  | 268 ++++++++++++++++++
+ 6 files changed, 391 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am654-industrial-thermal.dtsi
+ create mode 100644 drivers/thermal/k3_bandgap.c
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.17.1
+
