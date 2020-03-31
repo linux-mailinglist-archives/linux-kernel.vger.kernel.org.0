@@ -2,116 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62CC719A021
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 22:47:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC77019A026
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 22:49:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731415AbgCaUra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 16:47:30 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:42673 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731335AbgCaUr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 16:47:28 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48sLx76Mqmz9sSw;
-        Wed,  1 Apr 2020 07:47:23 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1585687645;
-        bh=pIS6nb9vgn/2smEo5fZq7jsxhBPw73VjqzvwUwfT2qk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=G+VtWL52KBtfXeusCab+K4Z5aStqBgstaXPhckyN2w8qyDoQ8Fu02VCQ/QgmK4mKC
-         QwS2GQpnyl6pbKJiP/hKGZFOptHePBvks13vUWlo97t2znXkueboDbn6XaUUfd98G5
-         Nv+42WX14NOkrjjL/vEKccQMpLBYhngfcmNBrXoCApB5LfyxKxsZ5Tkck1xKgcbnwy
-         suB7sYjB6AKK8MYCoPKqfz0MYJ5o7PoiMYWDfommzHuVB3ZhrANk0RLI1Jy05ys8iH
-         LJrgDOZpHBV4TxMVXF4ObM8mueJ4fUqS+xyLvBYcECfs5faq0g7DCIT+C76qL7gn5y
-         PFRtTURRJnm7w==
-Date:   Wed, 1 Apr 2020 07:47:22 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stefan Asserhall <stefan.asserhall@xilinx.com>,
-        x86 <x86@kernel.org>
-Subject: Re: [tip: irq/core] irqchip/xilinx: Enable generic irq multi
- handler
-Message-ID: <20200401074722.4783de95@canb.auug.org.au>
-In-Reply-To: <2ee07d59d34be09be7653cbb553f26dc@kernel.org>
-References: <20200317125600.15913-4-mubin.usman.sayyed@xilinx.com>
-        <158551357076.28353.1716269552245308352.tip-bot2@tip-bot2>
-        <083ad708-ea4d-ed53-598e-84d911ca4177@xilinx.com>
-        <085188fea81d5ddc88b488124596a4a3@kernel.org>
-        <895eba40-2e77-db1b-ea82-035c05f0b77e@xilinx.com>
-        <ca0f62da-1e89-4fe8-5cb4-b7a86f97c5a3@xilinx.com>
-        <21f1157d885071dcfdb1de0847c19e24@kernel.org>
-        <44b64be7-9240-fd52-af90-e0245220f38b@xilinx.com>
-        <2ee07d59d34be09be7653cbb553f26dc@kernel.org>
+        id S1730095AbgCaUtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 16:49:39 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37638 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727852AbgCaUtj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 16:49:39 -0400
+Received: by mail-wm1-f65.google.com with SMTP id j19so4539598wmi.2;
+        Tue, 31 Mar 2020 13:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=X2GGUtuqPV80x5b5ujQqCYnpRIHjyJKm9Pub6eW25UY=;
+        b=KgNI6YSOTCOMSyctOP/WId8uQxhFnY81WYm/UyoylUkWXdRWYswu073xDZ/VJvuYkC
+         ZRmPLPqvJh1uH7Wj9r3B36fh0oPexN2HByev8izzhSzaYLrJewWUi4WXii/9rfydQwOy
+         EfeomR0eDDw+wXcV03aJXHz8NxVp0FR9M99MP9YBmvM8ZpaKsziRrtVKtQ3h4nCOY5wy
+         ml0/Pr5roUkxLdacGfvDDElt+vwG/Vcx+t1U057WMzW4qii9/nfXeP1p9SMai/IbCo78
+         FuzbnZEVQek52TIj32M2AbY0NRhSmjU1NbzO0qxAKiaiOLqmF+F94Z+80Meh2j6uVr3Z
+         c+8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X2GGUtuqPV80x5b5ujQqCYnpRIHjyJKm9Pub6eW25UY=;
+        b=YI7lTGyK9hxgokJSbOqYn3YcyVcw50XEoGUMudcxFO1VbhrmJDA7kgp5jDB5yfaex0
+         +zGd3qK42LSojVtIY0AM4IuIpsPb59NOLxMkdl1BJBhXHO9bNDxbzNvDTShiZiP77DLu
+         D4PQ+M3vzlnbwgVMLWVRuj1jwaRf9wsGRWKLWmhyHRnd6cmXbVrWe4NATMrfjZacuSDj
+         0HTQ1NYvCaBvrPEMp7NwWLnocMEcfeCCG5P8A6v5NX9XLE8n4KtwVR63NhAUZyd3ty6L
+         zqfGXH+ovstPFqWlJCZrS29hTGBscBaOYGILHs2UaH/epypVF9eyNkNsj7bK2sXLHdWO
+         jd0g==
+X-Gm-Message-State: AGi0Pub4nvAHDwxSoZ4p77cxemI27385THufKw4t/VzFKx81ch+uKtUv
+        FSg+yoQFzQfQMh+LSHQPLbs=
+X-Google-Smtp-Source: APiQypKFgpXradD7Y/oeeIl8Qd75lgtfcDe3ZaaJBMJFR1mcRlrBcuch5uNeJOFa1ZvxT9koqqvepg==
+X-Received: by 2002:a1c:80d3:: with SMTP id b202mr733124wmd.8.1585687775099;
+        Tue, 31 Mar 2020 13:49:35 -0700 (PDT)
+Received: from localhost (pD9E51CDC.dip0.t-ipconnect.de. [217.229.28.220])
+        by smtp.gmail.com with ESMTPSA id r3sm28241814wrm.35.2020.03.31.13.49.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 13:49:30 -0700 (PDT)
+Date:   Tue, 31 Mar 2020 22:49:29 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Guru Das Srinagesh <gurus@codeaurora.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Subject: Re: [PATCH v11 06/12] pwm: imx27: Use 64-bit division macro and
+ function
+Message-ID: <20200331204929.GC2954599@ulmo>
+References: <cover.1584667964.git.gurus@codeaurora.org>
+ <5aae102e21c0e63ad2588ae1e174b48b06d25e96.1584667964.git.gurus@codeaurora.org>
+ <CAK8P3a0qUMMMDmbp2FM-7D-U0Ys_zv0paYguFeyifafZurndEw@mail.gmail.com>
+ <20200330204359.GB5107@codeaurora.org>
+ <CAK8P3a1VC6+0Tydm=BoK2NvHB1ZCPjE1Gfi-sTE5O-xnu3Ya3A@mail.gmail.com>
+ <20200331202058.GB25781@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/1H5MB2Drzxc4D_J.vgssIZM";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PuGuTyElPB9bOcsM"
+Content-Disposition: inline
+In-Reply-To: <20200331202058.GB25781@codeaurora.org>
+User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/1H5MB2Drzxc4D_J.vgssIZM
-Content-Type: text/plain; charset=US-ASCII
+
+--PuGuTyElPB9bOcsM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Marc,
-
-On Mon, 30 Mar 2020 11:04:14 +0100 Marc Zyngier <maz@kernel.org> wrote:
->
-> On 2020-03-30 10:27, Michal Simek wrote:
-> > On 30. 03. 20 11:19, Marc Zyngier wrote: =20
-> >> On 2020-03-30 10:12, Michal Simek wrote: =20
-> >>> On 30. 03. 20 11:03, Michal Simek wrote: =20
->=20
-> [...]
->=20
-> >>> One more thing. We could also get this function back and it will be=20
-> >>> fine
-> >>> too. But up2you. =20
-> >>=20
-> >> If you leave it up to me, I'll revert the whole series right now.
-> >>=20
-> >> What I'd expect from you is to tell me exactly what is the minimal
-> >> change that keeps it working on both ARM, microblaze and PPC.
-> >> If it is a revert, tell me which patches to revert. if it is a patch
-> >> on top, send me the fix so that I can queue it now. =20
+On Tue, Mar 31, 2020 at 01:20:58PM -0700, Guru Das Srinagesh wrote:
+> On Tue, Mar 31, 2020 at 05:24:52PM +0200, Arnd Bergmann wrote:
+> > On Mon, Mar 30, 2020 at 10:44 PM Guru Das Srinagesh
+> > <gurus@codeaurora.org> wrote:
+> > >
+> > > On Fri, Mar 20, 2020 at 06:09:39PM +0100, Arnd Bergmann wrote:
+> > > > On Fri, Mar 20, 2020 at 2:42 AM Guru Das Srinagesh <gurus@codeauror=
+a.org> wrote:
+> > > >
+> > > > > @@ -240,8 +240,7 @@ static int pwm_imx27_apply(struct pwm_chip *c=
+hip, struct pwm_device *pwm,
+> > > > >
+> > > > >         period_cycles /=3D prescale;
+> > > > >         c =3D (unsigned long long)period_cycles * state->duty_cyc=
+le;
+> > > > > -       do_div(c, state->period);
+> > > > > -       duty_cycles =3D c;
+> > > > > +       duty_cycles =3D div64_u64(c, state->period);
+> > > > >
+> > > >
+> > > > This change looks fine, but I wonder if the code directly above it
+> > > >
+> > > >         c =3D clk_get_rate(imx->clk_per);
+> > > >         c *=3D state->period;
+> > > >         do_div(c, 1000000000);
+> > > >         period_cycles =3D c;
+> > > >
+> > > > might run into an overflow when both the clock rate and the period
+> > > > are large numbers.
+> > >
+> > > Hmm. Seems to me like addressing this would be outside the scope of t=
+his
+> > > patch series.
 > >=20
-> > It won't be that simple. Please revert patches
-> >=20
-> > 9c2d4f525c00 ("irqchip/xilinx: Do not call irq_set_default_host()")
-> > a0789993bf82 ("irqchip/xilinx: Enable generic irq multi handler")
-> >=20
-> > And we should be fine. =20
+> > I think it should be part of the same series, addressing bugs that
+> > were introduced
+> > by the change to 64-bit period. If it's not getting fixed along with
+> > the other regressions,
+> > I fear nobody is going to go back and fix it later.
 >=20
-> Now reverted and pushed out. I'll send a pull request to Thomas=20
-> tomorrow.
+> Makes sense, I agree. Would this be an acceptable fix?
+>=20
+> Instead of multiplying c and state->period first and then dividing by
+> 10^9, first divide state->period by 10^9 and then multiply the quotient
+> of that division with c and assign it to period_cycles. Like so:
+>=20
+> 	c =3D clk_get_rate(imx->clk_per);
+> 	c *=3D div_u64(state->period, 1000000000);
+> 	period_cycles =3D c;
+>=20
+> This should take care of overflow not happening because state->period is
+> converted from nanoseconds to seconds early on and so becomes a small
+> number.
 
-Unfortunately, those commits made it to Linus' tree without the reverts :-(
+Doesn't that mean that anything below a 1 second period will be clamped
+to just 0?
 
---=20
-Cheers,
-Stephen Rothwell
+Thierry
 
---Sig_/1H5MB2Drzxc4D_J.vgssIZM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--PuGuTyElPB9bOcsM
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6DrFoACgkQAVBC80lX
-0GydPwf/f16SxExtN814pfAzjVmhz19KKKFkJj4VWO9HtT3EwDsRz1OeVhWPBeDo
-0Cv6gywKWJBF8ZEtYPs6/CV3xU8+hed7ykk301klpy0SRAFxJOuTorITeuQ0RWOj
-A84hvaXjjcqNOj28hK7xqVlcGRDoCRxpi3h+Ki7z/x7xCvcmkYzQavHTwGzbw+5T
-aojV5z6BYPJN0Hp89tkPxJ1OGhMHo/jtC3UTAl0tB/EvRgGCt4z7ekdAoaOEDPhz
-Hj72cJgSClNM4vTxWsv2dMwH9MVDQrS1nJOT1lr1uvfLmsAXd+zTYZAUJ4ud34aa
-DdL44zrpp+a5KUG5a2fOZjhLvQ6UpA==
-=9HvH
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6DrNkACgkQ3SOs138+
+s6F2rRAArLSEhXAhgvFqFz7p1Jyl3a2QkW2gk0K5vu5cqJQzOMB/CGTnJlkpte4r
+OPEsS/IrnNJjMNvLMLZQ/92OqmWdK1ve0y8aFlhLAhGn5KdelcOcnf8Id/rxV2YJ
+BV7oMSVS9dZa5+gNJaFARNkYs+5dWAFQoKKvSxpaTMBMMMzN9TgoKZKa0W7xZQmh
+CbJve7ZWx/MsubZTneoudgf3Vi+SYak6kFEHhw/rqE9lFWb5pfKXwyVxpPHqW0uk
+ooJ1g5VkQxKPnaUtz3N2EK4+K4gUlh87myfPiH0k35FCJ9N+ENOIe9vtepJ33+u9
+UFD/GJUtPimSBDHKAcZyc0Gtvw4Cka4dmDeAgIMe+QviRjEd/pvI4MS+s8KCAYKk
+kn4AG2KDeC0w5bufJQnlXuziYw95gUYQ2nrRPFgI0yJMtdwvd+Pch5skoklz6GSZ
+2Q7Ao5wGRoRpV/cXb28lBNOgD4w0R1upufK/7I4lSwTRMBWXzBK57ItEXfeTO7V7
+2HEiAXYXt6oqM27RxedshqKGe9d5gwvdGLIy6NjfnQkJ4QySu13nLTas4yPlz3Lx
+ZTv+Cl8EElQnC7n2erxOjTcCPQaM14MslHRFhk+wtacQ3+Escb2lPndAzD8lQinS
+ncFajYcMWrIYy3l0rK0o6juMpEqV2vxl7Y8x04xvV/vr88q9OKY=
+=Ht11
 -----END PGP SIGNATURE-----
 
---Sig_/1H5MB2Drzxc4D_J.vgssIZM--
+--PuGuTyElPB9bOcsM--
