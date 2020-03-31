@@ -2,80 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD26F198B0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 06:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B433A198B03
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 06:13:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729834AbgCaEPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 00:15:19 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:46970 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729624AbgCaEPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 00:15:18 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4C5DB2007AF;
-        Tue, 31 Mar 2020 06:15:17 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 16AE62007D5;
-        Tue, 31 Mar 2020 06:15:11 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 27B5F402C8;
-        Tue, 31 Mar 2020 12:14:57 +0800 (SGT)
-From:   Yangbo Lu <yangbo.lu@nxp.com>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Yangbo Lu <yangbo.lu@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
-Subject: [v2, 7/7] net: dsa: felix: enable PTP programmable pin
-Date:   Tue, 31 Mar 2020 12:11:13 +0800
-Message-Id: <20200331041113.15873-8-yangbo.lu@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200331041113.15873-1-yangbo.lu@nxp.com>
-References: <20200331041113.15873-1-yangbo.lu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726339AbgCaENb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 00:13:31 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12659 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726001AbgCaENa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 00:13:30 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 871A1C4B5C0205A3BD76;
+        Tue, 31 Mar 2020 12:13:21 +0800 (CST)
+Received: from [127.0.0.1] (10.173.221.117) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.487.0; Tue, 31 Mar 2020
+ 12:13:13 +0800
+Subject: Re:Re: [PATCH] perf report: Fix arm64 gap between kernel start and
+ module end
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+        <peterz@infradead.org>, <mingo@redhat.com>, <mark.rutland@arm.com>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <ndesaulniers@google.com>,
+        <irogers@google.com>, <tmricht@linux.ibm.com>,
+        <hushiyuan@huawei.com>, <hewenliang4@huawei.com>
+References: <33fd24c4-0d5a-9d93-9b62-dffa97c992ca@huawei.com>
+ <20200330131129.GB31702@kernel.org>
+From:   Kemeng Shi <shikemeng@huawei.com>
+Message-ID: <24a5c3d0-184c-7606-7e44-a1586c27a6cd@huawei.com>
+Date:   Tue, 31 Mar 2020 12:13:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20200330131129.GB31702@kernel.org>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.221.117]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable PTP programmable pin.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
----
-Changes for v2:
-	- Added this patch.
----
- drivers/net/dsa/ocelot/felix.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/dsa/ocelot/felix.c b/drivers/net/dsa/ocelot/felix.c
-index e1573bc..bfa4c12 100644
---- a/drivers/net/dsa/ocelot/felix.c
-+++ b/drivers/net/dsa/ocelot/felix.c
-@@ -504,13 +504,15 @@ static struct ptp_clock_info ocelot_ptp_clock_info = {
- 	.max_adj	= 0x7fffffff,
- 	.n_alarm	= 0,
- 	.n_ext_ts	= 0,
--	.n_per_out	= 0,
--	.n_pins		= 0,
-+	.n_per_out	= OCELOT_PTP_PINS_NUM,
-+	.n_pins		= OCELOT_PTP_PINS_NUM,
- 	.pps		= 0,
- 	.gettime64	= ocelot_ptp_gettime64,
- 	.settime64	= ocelot_ptp_settime64,
- 	.adjtime	= ocelot_ptp_adjtime,
- 	.adjfine	= ocelot_ptp_adjfine,
-+	.verify		= ocelot_ptp_verify,
-+	.enable		= ocelot_ptp_enable,
- };
- 
- /* Hardware initialization done here so that we can allocate structures with
--- 
-2.7.4
+on 2020/3/30 21:11, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Mar 30, 2020 at 03:41:11PM +0800, Kemeng Shi escreveu:
+>> diff --git a/tools/perf/arch/arm64/util/Build b/tools/perf/arch/arm64/util/Build
+>> index 393b9895c..37cbfa5e9 100644
+>> --- a/tools/perf/arch/arm64/util/Build
+>> +++ b/tools/perf/arch/arm64/util/Build
+>> @@ -2,6 +2,7 @@ libperf-y += header.o
+>>  libperf-y += tsc.o
+>>  libperf-y += sym-handling.o
+>>  libperf-y += kvm-stat.o
+>> +libperf-y += machine.o
+> 
+> You made the patch against an old perf codebase, right? This libperf-y
+> above was changed to perf-y here:
+>
+I'm sorry. I checked the problem in https://github.com/torvalds/linux.git,
+but I forget to make patch against it.
+
+
+> commit 5ff328836dfde0cef9f28c8b8791a90a36d7a183
+> Author: Jiri Olsa <jolsa@kernel.org>
+> Date:   Wed Feb 13 13:32:39 2019 +0100
+> 
+>     perf tools: Rename build libperf to perf
+> 
+> ----
+> 
+> I'm fixing this up, please check my perf/core branch later to see that
+> all is working as intended.
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git perf/core
+> 
+> Thanks,
+> 
+> - Arnaldo
+> 
+I test it and it works fine, thanks for fixing up.
 
