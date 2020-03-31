@@ -2,90 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64BEE198F57
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:02:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 665D8198EF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:57:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730153AbgCaJCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:02:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42152 "EHLO mail.kernel.org"
+        id S1730348AbgCaI5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 04:57:10 -0400
+Received: from mx.sdf.org ([205.166.94.20]:59173 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730732AbgCaJCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:02:34 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E79D0208E0;
-        Tue, 31 Mar 2020 09:02:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645354;
-        bh=OOrvL+hxe4tsrCV6JNg9MTvSFyZDghtmI19y3UsQ144=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dfqhbWAaF9r2X2YbYNtzwphrzJi45GAx6VcyHq7+SLcfUzb6uO6PMoQUeHE3Pf3+O
-         h0XxHYjNWCV1WsR6ZDd+ieBtOoQvNPMXH4PHbwMrhXo5s6KDiZEtLWmGCKe/7Okm+/
-         iXTS6WX3vLpbTRPdzt1m5fybngU8HqmDO6U3mC78=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bitan Biswas <bbiswas@nvidia.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.5 005/170] mmc: sdhci-tegra: Fix busy detection by enabling MMC_CAP_NEED_RSP_BUSY
-Date:   Tue, 31 Mar 2020 10:56:59 +0200
-Message-Id: <20200331085424.690150019@linuxfoundation.org>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1729425AbgCaI5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 04:57:06 -0400
+Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02V8uxem021803
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
+        Tue, 31 Mar 2020 08:57:00 GMT
+Received: (from lkml@localhost)
+        by sdf.org (8.15.2/8.12.8/Submit) id 02V8uxMY024939;
+        Tue, 31 Mar 2020 08:56:59 GMT
+Date:   Tue, 31 Mar 2020 08:56:59 GMT
+Message-Id: <35dd80650fe673c446a5a016b51b6680ce49350d.1585644000.git.lkml@sdf.org>
+In-Reply-To: <9916203ec97be0f24886fc8478437d161b56f053.1585644000.git.lkml@sdf.org>
+References: <9916203ec97be0f24886fc8478437d161b56f053.1585644000.git.lkml@sdf.org>
+From:   George Spelvin <lkml@sdf.org>
+Subject: [PATCH 2/3] random: Factor helper calc_entropy_frac() out of
+ credit_entropy_bits()
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        linux-kernel@vger.kernel.org, lkml@sdf.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+The helper is mathematically complex, with a large comment
+explaining it.  credit_entropy_bits() has atomicity complexity.
+Breaking them apart makes both easier to read and understand.
 
-[ Upstream commit d2f8bfa4bff5028bc40ed56b4497c32e05b0178f ]
+No functional change.
 
-It has turned out that the sdhci-tegra controller requires the R1B response,
-for commands that has this response associated with them. So, converting
-from an R1B to an R1 response for a CMD6 for example, leads to problems
-with the HW busy detection support.
-
-Fix this by informing the mmc core about the requirement, via setting the
-host cap, MMC_CAP_NEED_RSP_BUSY.
-
-Reported-by: Bitan Biswas <bbiswas@nvidia.com>
-Reported-by: Peter Geis <pgwipeout@gmail.com>
-Suggested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: <stable@vger.kernel.org>
-Tested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Tested-By: Peter Geis <pgwipeout@gmail.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: George Spelvin <lkml@sdf.org>
 ---
- drivers/mmc/host/sdhci-tegra.c | 3 +++
- 1 file changed, 3 insertions(+)
+And it makes the approximation easier to change in the next patch.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 403ac44a73782..a25c3a4d3f6cb 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1552,6 +1552,9 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
- 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
+ drivers/char/random.c | 114 +++++++++++++++++++++++-------------------
+ 1 file changed, 63 insertions(+), 51 deletions(-)
+
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 273dcbb4a790..de90bab5af36 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -653,6 +653,64 @@ static void process_random_ready_list(void)
+ 	spin_unlock_irqrestore(&random_ready_list_lock, flags);
+ }
  
-+	/* R1B responses is required to properly manage HW busy detection. */
-+	host->mmc->caps |= MMC_CAP_NEED_RSP_BUSY;
++/*
++ * Add some new entropy to an existing pool with finite capacity.  We have
++ * to account for the possibility of overwriting already present entropy.
++ * Even in the ideal case of pure Shannon entropy, new contributions
++ * approach the pool capacity asymptotically:
++ *
++ * entropy += (capacity - entropy) * (1 - exp(-add/capacity))
++ *
++ * To avoid evaluating an exponential in interrupt context, we use a
++ * simple fixed-point underestimate.
++ *
++ * For add <= capacity/2 then
++ * (1 - exp(-add/capacity)) >= (add/capacity)*0.7869...
++ * so we can approximate the exponential with 3/4*add/capacity and still
++ * be on the safe side by adding at most capacity/2 at a time.
++ */
++static int calc_entropy_frac(int add, int entropy,
++			     struct entropy_store const *r)
++{
++	struct poolinfo const *info = r->poolinfo;
++	const int capacity = info->poolfracbits;
 +
- 	tegra_sdhci_parse_dt(host);
++	if (add < 0) {
++		/* Debit */
++		entropy += add;
++	} else {
++		const int s = info->poolbitshift + ENTROPY_SHIFT + 2;
++		/* The +2 corresponds to the denominator of the 3/4 */
++
++		do {
++			unsigned int frac = min(add, capacity/2);
++			unsigned int delta = ((capacity - entropy)*frac*3) >> s;
++
++			entropy += delta;
++			add -= frac;
++		} while (unlikely(add) && entropy < capacity-2);
++		/*
++		 * Because we're careful to always round down, the pool
++		 * will never be completely full.  In fact, the maximum
++		 * delta is 3/8 of the space remaining, which means that 3
++		 * fractional bits remaining will round to +1, but 2 will
++		 * round to +0, so there's no sense continuing.
++		 *
++		 * Stopping at capacity-2 also limits the loop to
++		 * log2(pool_size)/log2(5/8) = 1.475*log2(pool_size)
++		 * iterations no matter how large add is.
++		 */
++	}
++
++	if (WARN_ON(entropy < 0)) {
++		pr_warn("negative entropy/overflow: pool %s count %d\n",
++			r->name, entropy);
++		entropy = 0;
++	} else if (unlikely(entropy > capacity))
++		entropy = capacity;
++	return entropy;
++}
++
+ /*
+  * Credit (or debit) the entropy store with n bits of entropy.
+  * Use credit_entropy_bits_safe() if the value comes from userspace
+@@ -661,61 +719,15 @@ static void process_random_ready_list(void)
+ static void credit_entropy_bits(struct entropy_store *r, int nbits)
+ {
+ 	int entropy_count, orig;
+-	const int pool_size = r->poolinfo->poolfracbits;
+-	int nfrac = nbits << ENTROPY_SHIFT;
  
- 	tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
+ 	if (!nbits)
+ 		return;
+ 
+-retry:
+-	entropy_count = orig = READ_ONCE(r->entropy_count);
+-	if (nfrac < 0) {
+-		/* Debit */
+-		entropy_count += nfrac;
+-	} else {
+-		/*
+-		 * Credit: we have to account for the possibility of
+-		 * overwriting already present entropy.	 Even in the
+-		 * ideal case of pure Shannon entropy, new contributions
+-		 * approach the full value asymptotically:
+-		 *
+-		 * entropy <- entropy + (pool_size - entropy) *
+-		 *	(1 - exp(-add_entropy/pool_size))
+-		 *
+-		 * For add_entropy <= pool_size/2 then
+-		 * (1 - exp(-add_entropy/pool_size)) >=
+-		 *    (add_entropy/pool_size)*0.7869...
+-		 * so we can approximate the exponential with
+-		 * 3/4*add_entropy/pool_size and still be on the
+-		 * safe side by adding at most pool_size/2 at a time.
+-		 *
+-		 * The use of pool_size-2 in the while statement is to
+-		 * prevent rounding artifacts from making the loop
+-		 * arbitrarily long; this limits the loop to log2(pool_size)*2
+-		 * turns no matter how large nbits is.
+-		 */
+-		int pnfrac = nfrac;
+-		const int s = r->poolinfo->poolbitshift + ENTROPY_SHIFT + 2;
+-		/* The +2 corresponds to the /4 in the denominator */
+-
+-		do {
+-			unsigned int anfrac = min(pnfrac, pool_size/2);
+-			unsigned int add =
+-				((pool_size - entropy_count)*anfrac*3) >> s;
+-
+-			entropy_count += add;
+-			pnfrac -= anfrac;
+-		} while (unlikely(entropy_count < pool_size-2 && pnfrac));
+-	}
+-
+-	if (WARN_ON(entropy_count < 0)) {
+-		pr_warn("negative entropy/overflow: pool %s count %d\n",
+-			r->name, entropy_count);
+-		entropy_count = 0;
+-	} else if (entropy_count > pool_size)
+-		entropy_count = pool_size;
+-	if (cmpxchg(&r->entropy_count, orig, entropy_count) != orig)
+-		goto retry;
++	do {
++		orig = READ_ONCE(r->entropy_count);
++		entropy_count = calc_entropy_frac(nbits << ENTROPY_SHIFT,
++						  orig, r);
++	} while (cmpxchg(&r->entropy_count, orig, entropy_count) != orig);
+ 
+ 	entropy_count >>= ENTROPY_SHIFT;	/* Convert to bits */
+ 	trace_credit_entropy_bits(r->name, nbits, entropy_count, _RET_IP_);
 -- 
-2.20.1
-
-
+2.26.0
 
