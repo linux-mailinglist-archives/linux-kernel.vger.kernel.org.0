@@ -2,134 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBB9019A0E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:34:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A729419A0F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:41:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730677AbgCaVe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 17:34:57 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:15660 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727955AbgCaVe5 (ORCPT
+        id S1731357AbgCaVlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 17:41:18 -0400
+Received: from mail-a09.ithnet.com ([217.64.83.104]:51457 "EHLO
+        mail-a09.ithnet.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbgCaVlS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 17:34:57 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02VLY8AI013715;
-        Tue, 31 Mar 2020 23:34:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=hogJljl3NSx7SbRBP5t51xt8cHudqMc3OCqtkkmKgFU=;
- b=yASCTbB1xg2nlN9WKX+WEs7JcLif3yHoyl6wHzPaJ4bKHSyCL4XUx5CBtxAp9I2b5iky
- 3ZqVA7x0AReUZu5/z4zRtqJg7ubIWtsl6H71432ju/7lzvlMynigy2bNIfcgKpOfC3UH
- QfIDsLrFMS9SX2z3L3UfkZvFfK0/IYgY1P1iKbZYuyyCOf6GVHB3Xt7Iuu38JIC/EK57
- pdkjbNGHkPRsofM2PCj4NKtKxBB6jC1q2Klm4uHkGSZV5vAYWYHwscwcEAy6Gxid6cxv
- f3g880PQFPP3s7BaUx7mC1ImGdGvnnSNYxEyLMOgZKsIE8onq1I0LZRys5DCcggKAZ6f jw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 301vkdsjj2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Mar 2020 23:34:33 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E34A810002A;
-        Tue, 31 Mar 2020 23:34:28 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C08452067F3;
-        Tue, 31 Mar 2020 23:34:28 +0200 (CEST)
-Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 31 Mar
- 2020 23:34:28 +0200
-Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
- SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
- 15.00.1347.000; Tue, 31 Mar 2020 23:34:28 +0200
-From:   Benoit HOUYERE <benoit.houyere@st.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "amirmizi6@gmail.com" <amirmizi6@gmail.com>
-CC:     "Eyal.Cohen@nuvoton.com" <Eyal.Cohen@nuvoton.com>,
-        "oshrialkoby85@gmail.com" <oshrialkoby85@gmail.com>,
-        "alexander.steffen@infineon.com" <alexander.steffen@infineon.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>, "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "oshri.alkoby@nuvoton.com" <oshri.alkoby@nuvoton.com>,
-        "tmaimon77@gmail.com" <tmaimon77@gmail.com>,
-        "gcwilson@us.ibm.com" <gcwilson@us.ibm.com>,
-        "kgoldman@us.ibm.com" <kgoldman@us.ibm.com>,
-        "Dan.Morav@nuvoton.com" <Dan.Morav@nuvoton.com>,
-        "oren.tanami@nuvoton.com" <oren.tanami@nuvoton.com>,
-        "shmulik.hager@nuvoton.com" <shmulik.hager@nuvoton.com>,
-        "amir.mizinski@nuvoton.com" <amir.mizinski@nuvoton.com>,
-        Olivier COLLART <olivier.collart@st.com>,
-        Yves MAGNAUD <yves.magnaud@st.com>
-Subject: RE: [PATCH v4 4/7] tpm: tpm_tis: Fix expected bit handling and send
- all bytes in one shot without last byte in exception
-Thread-Topic: [PATCH v4 4/7] tpm: tpm_tis: Fix expected bit handling and send
- all bytes in one shot without last byte in exception
-Thread-Index: AQHWB1ZoDft9Zu6RoU68XNbFk/pAW6hjMfyw
-Date:   Tue, 31 Mar 2020 21:34:28 +0000
-Message-ID: <19c8ae3023404ae9affcb1ce04b7ee4b@SFHDAG3NODE3.st.com>
-References: <20200331113207.107080-1-amirmizi6@gmail.com>
- <20200331113207.107080-5-amirmizi6@gmail.com>
- <20200331121720.GB9284@linux.intel.com>
-In-Reply-To: <20200331121720.GB9284@linux.intel.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.48]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 31 Mar 2020 17:41:18 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Tue, 31 Mar 2020 17:41:16 EDT
+Received: (qmail 22882 invoked by uid 0); 31 Mar 2020 21:34:35 -0000
+Received: from skraw.ml@ithnet.com by mail-a09 
+ (Processed in 2.231369 secs); 31 Mar 2020 21:34:35 -0000
+X-Spam-Status: No, hits=-1.2 required=5.0
+X-Virus-Status: No
+X-ExecutableContent: No
+Received: from dialin014-sr.ithnet.com (HELO ithnet.com) (217.64.64.14)
+  by mail-a09.ithnet.com with ESMTPS (ECDHE-RSA-AES256-GCM-SHA384 encrypted); 31 Mar 2020 21:34:32 -0000
+X-Sender-Authentication: SMTP AUTH verified <skraw.ml@ithnet.com>
+Date:   Tue, 31 Mar 2020 23:34:32 +0200
+From:   Stephan von Krawczynski <skraw.ml@ithnet.com>
+To:     linux-kernel@vger.kernel.org
+Subject: Path length and filename length linux deficiency
+Message-ID: <20200331233432.372f2f68@ithnet.com>
+Organization: ith Kommunikationstechnik GmbH
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello all,
 
-> On Tue, Mar 31, 2020 at 02:32:04PM +0300, amirmizi6@gmail.com wrote:
-> > From: Amir Mizinski <amirmizi6@gmail.com>
-> >=20
-> > Today, actual implementation for send massage is not correct. We check=
-=20
-> > and loop only on TPM_STS.stsValid bit and next we single check=20
-> > TPM_STS.expect bit value.
-> > TPM_STS.expected bit shall be checked in the same time of=20
-> > TPM_STS.stsValid, and should be repeated until timeout_A.
-> > To aquire that, "wait_for_tpm_stat" function is modified to=20
-> > "wait_for_tpm_stat_result". this function read regulary status=20
-> > register and check bit defined by "mask" to reach value defined in "mas=
-k_result"
-> > (that way a bit in mask can be checked if reached 1 or 0).
-> >=20
-> > Respectively, to send message as defined in=20
-> >  TCG_DesignPrinciples_TPM2p0Driver_vp24_pubrev.pdf, all bytes should be=
-=20
-> > sent in one shot instead of sending last byte in exception.
-> >=20
-> > This improvment was suggested by Benoit Houyere.
-
->Use suggested-by tag.
-
->Also if something is not correct, please provide a fixes tag.
-
-> You are speaking now in theoretical level, which we don't really care tha=
-t much. Is this causing you real issues? If the answer is yes, please repor=
-t them. If the > >answer is no, we don't need this.
-
-> /Jarkko
-
-I2C TPM specification introduce CRC calculation on TPM command bytes. CRC c=
-alculation take place from last byte acquired to  TPM_STS.expected bit rese=
-t (=3D0) .It introduces latency and actual incorrect implementation becomes=
- visible now under I2C on the contrary before that's all.=20
-The case where TPM keeps TPM_STS.expected bit set  with TPM_STS.stsValid se=
-t after last byte reception is possible and is not an issue. It's not theor=
-etical level, it's practical level now.
-
+today I want to raise a topic that seems to have vanished completely since
+decades. It's the length limits of pathnames and filenames. One may wonder why
+to jump onto such a seemingly dead horse. But in fact it is not. We are in a
+world of continous growth of file services for clouds and other user space
+apps. And in this world a friend of mine tried to do something very simple:
+copying a file tree  ...  from a w*ndows file service to a linux server. And
+guess what: it does not work out.
+And the simple reason: the maximum path length in w*ndows systems is 32767,
+whereas linux (and POSIX) talk of a maximum of 4096 bytes. It is obvious then
+that linux is effectivly unable to hold a deep tree - whereas w*ndows can.
+Since I do know for sure it does not work, what are the true reasons?
+How can we completely drop these limits in linux (using a capable fs of
+course)?
+I already asked the samba list and was confirmed that the problem is known and
+that there is no easy solution for it.
+-- 
+Regards,
+Stephan
 
