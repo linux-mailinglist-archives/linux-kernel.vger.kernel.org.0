@@ -2,113 +2,294 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AF3B19994C
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41891199954
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:13:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730934AbgCaPLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 11:11:37 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39287 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727703AbgCaPLh (ORCPT
+        id S1730681AbgCaPNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 11:13:10 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59897 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbgCaPNK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 11:11:37 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p10so26454268wrt.6;
-        Tue, 31 Mar 2020 08:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=YYhDTmriCLA8KTnKhlbvHb66ns2uGy0fGvIYDhb16xc=;
-        b=QlxLiCgJlYgom/DQ+81Mmado/IIC3zI4QbaqcNRZL0cypCxeTZLkhFgJ7WL0u7ZLcO
-         6Fdvz6xdSBB8mYb7WtnlRYTQR02tGT241HzNUuBy+eaC1sJouiO2dflPRFL/HOEqMLea
-         +IUIqS9s14KSfBVRbNWCiDC0pTZ5Zx162nPy7Dezp+bHSqJCDBCfjJ91s1sQg8tbs/BZ
-         2WR81KRfzOQ0+FuOz69NvysUm/NT29jreAXXoPO2dGSW+TdoLV1gubqFui0hEzXD21Rj
-         RVRZp4mSvm16hPkvDkBVMgMpjoyKPBNIxEg9bf0FjOgabdzl/5WJWSDMrMS8BFxhGktt
-         hCXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=YYhDTmriCLA8KTnKhlbvHb66ns2uGy0fGvIYDhb16xc=;
-        b=Vo9j0+/kEjw5YdoWjVOjtyhUM2A5xTNAfh9eiOstCeVYXQfrbwU8FgM7zP+BIgVREw
-         2IXGWJOQSh1McMGTA02fzJRURNctq3OuDm3b9N52MqFt1Bb0QEyMWEO6XsHJeo7sn07o
-         hnK6YstkElqbtEQQ+bbxRmkQ/17tp5BgOCgjzJVt3ZPoIJD9xtYZZfXiFd6bG4oAzOSI
-         k+bbVe+36GmTA5TTvIScu4+GYFjiejzOJqUT7GQ7Z8WXcdwn9kglMB1RuKsngDfEOAjX
-         8T4VfM0srGSU+7EDmEoNIWl0pudlRVLokzsXD5j9L8ib/99c1TxXZTeBYpzeKDRQhCjO
-         s38Q==
-X-Gm-Message-State: ANhLgQ2eMV7R/cpqiTyzAFqmAcDiP886005PxpXX6xHVHL7FfelY4QDF
-        fwroHm/14Ub5RaY4NoOG4HlXBWa4FysbisfvQnc=
-X-Google-Smtp-Source: ADFU+vtP4vt6oMeO5LfNYEDj0gjnca9MI09Sub6Coviiad1q1qVMRL79d9Dmr78UBhMmNMy5fyf9s9gtLFi1o9ULx3U=
-X-Received: by 2002:adf:ef51:: with SMTP id c17mr20737459wrp.130.1585667494944;
- Tue, 31 Mar 2020 08:11:34 -0700 (PDT)
+        Tue, 31 Mar 2020 11:13:10 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1jJIZZ-0004xt-9e; Tue, 31 Mar 2020 17:13:01 +0200
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1jJIZR-00038u-QY; Tue, 31 Mar 2020 17:12:53 +0200
+Date:   Tue, 31 Mar 2020 17:12:53 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Robert Foss <robert.foss@linaro.org>
+Cc:     Dongchun Zhu <dongchun.zhu@mediatek.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 1/3] media: dt-bindings: ov8856: Document YAML bindings
+Message-ID: <20200331151253.q6ody3erhvsabznz@pengutronix.de>
+References: <20200331133346.372517-1-robert.foss@linaro.org>
+ <20200331133346.372517-2-robert.foss@linaro.org>
 MIME-Version: 1.0
-References: <CA+icZUXCn2an9aNDrm+-eneSAOyGibz0W1xYhwkA5k3B3U-5vQ@mail.gmail.com>
- <1A630698-E385-4CDF-9755-ACDAAF60DBB9@fb.com>
-In-Reply-To: <1A630698-E385-4CDF-9755-ACDAAF60DBB9@fb.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Tue, 31 Mar 2020 17:11:35 +0200
-Message-ID: <CA+icZUWBJz6765Szg65HcOfhDh9tyoarJTnZ_kmahqvB5QKU=g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] Add support for ZSTD-compressed kernel and initramfs
-To:     Nick Terrell <terrelln@fb.com>
-Cc:     Nick Terrell <nickrterrell@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chris Mason <clm@fb.com>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Petr Malat <oss@malat.biz>, Kees Cook <keescook@chromium.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Patrick Williams <patrickw3@fb.com>,
-        Michael van der Westhuizen <rmikey@fb.com>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        Patrick Williams <patrick@stwcx.xyz>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331133346.372517-2-robert.foss@linaro.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 16:59:20 up 137 days,  6:17, 160 users,  load average: 0.00, 0.03,
+ 0.03
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 6:15 AM Nick Terrell <terrelln@fb.com> wrote:
+Hi Robert,
 
-[...]
+On 20-03-31 15:33, Robert Foss wrote:
+> From: Dongchun Zhu <dongchun.zhu@mediatek.com>
+> 
+> This patch adds documentation of device tree in YAML schema for the
+> OV8856 CMOS image sensor.
+> 
+> Signed-off-by: Dongchun Zhu <dongchun.zhu@mediatek.com>
+> Signed-off-by: Robert Foss <robert.foss@linaro.org>
+> ---
+> 
+> - Changes since v5:
+>   * Add assigned-clocks and assigned-clock-rates
+>   * robher: dt-schema errors
+> 
+> - Changes since v4:
+>   * Fabio: Change reset-gpio to GPIO_ACTIVE_LOW, explain in description
+>   * Add clock-lanes property to example
+>   * robher: Fix syntax error in devicetree example
+> 
+> - Changes since v3:
+>   * robher: Fix syntax error
+>   * robher: Removed maxItems
+>   * Fixes yaml 'make dt-binding-check' errors
+> 
+> - Changes since v2:
+>   Fixes comments from from Andy, Tomasz, Sakari, Rob.
+>   * Convert text documentation to YAML schema.
+> 
+> - Changes since v1:
+>   Fixes comments from Sakari, Tomasz
+>   * Add clock-frequency and link-frequencies in DT
+> 
+>  .../devicetree/bindings/media/i2c/ov8856.yaml | 150 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 151 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/ov8856.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ov8856.yaml b/Documentation/devicetree/bindings/media/i2c/ov8856.yaml
+> new file mode 100644
+> index 000000000000..beeddfbb8709
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/ov8856.yaml
+> @@ -0,0 +1,150 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright (c) 2019 MediaTek Inc.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/i2c/ov8856.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Omnivision OV8856 CMOS Sensor Device Tree Bindings
+> +
+> +maintainers:
+> +  - Ben Kao <ben.kao@intel.com>
+> +  - Dongchun Zhu <dongchun.zhu@mediatek.com>
+> +
+> +description: |-
+> +  The Omnivision OV8856 is a high performance, 1/4-inch, 8 megapixel, CMOS
+> +  image sensor that delivers 3264x2448 at 30fps. It provides full-frame,
+> +  sub-sampled, and windowed 10-bit MIPI images in various formats via the
+> +  Serial Camera Control Bus (SCCB) interface. This chip is programmable
+> +  through I2C and two-wire SCCB. The sensor output is available via CSI-2
+> +  serial data output (up to 4-lane).
+> +
+> +properties:
+> +  compatible:
+> +    const: ovti,ov8856
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    description:
+> +      Input clock for the sensor.
+> +    items:
+> +      - const: xvclk
+> +
+> +  clock-frequency:
+> +    description:
+> +      Frequency of the xvclk clock in Hertz.
 
-> > Do you plan to push this for Linux v5.7?
->
-> I hope that it will be accepted. From my point of view this patch set is
-> ready for merge, except for the maximum window size increase
-> requested by Petr.
->
+Why do we need this here?
 
-Hi Nick,
+> +  assigned-clocks:
+> +    description:
+> +      Input clock for the sensor.
+> +
+> +  assigned-clock-rates:
+> +    description:
+> +      Frequency of the xvclk clock in Hertz.
 
-thanks for your answer.
+Also this isn't related to the chip. You need this because you are using
+a qcom platform which provides the clock.
 
-Did you send out a pull-request already?
+IMHO you only need to specify the clock. You can get the frequency with
+the clk_get_rate() function.
 
-Can you point me to that request or patch of Petr?
-Is it relevant or optional for the pull-request?
+> +  dovdd-supply:
+> +    description:
+> +      Definition of the regulator used as interface power supply.
 
-> > Feel free to add credits for the whole series:
-> >
-> >   Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
->
-> Thanks for testing the patch set Sedat!
->
+Phandle to the interface power supply regulator?
 
-I have re-tested zstd-v3 patchset with Linux version 5.6 final and
-Clang/LLD version 10.0.0 final (from Debian/unstable repository).
+> +
+> +  avdd-supply:
+> +    description:
+> +      Definition of the regulator used as analog power supply.
+> +
+> +  dvdd-supply:
+> +    description:
+> +      Definition of the regulator used as digital power supply.
+> +
+> +  reset-gpios:
+> +    description:
+> +      The phandle and specifier for the GPIO that controls sensor reset.
+> +      This corresponds to the hardware pin XSHUTDOWN which is physically
+> +      active low.
+> +
+> +  port:
+> +    type: object
+> +    additionalProperties: false
+> +    description:
+> +      A node containing input and output port nodes with endpoint definitions
+> +      as documented in
+> +      Documentation/devicetree/bindings/media/video-interfaces.txt
+> +
+> +    properties:
+> +      endpoint:
+> +        type: object
+> +
+> +        properties:
+> +          clock-lanes:
+> +            maxItems: 1
+> +
+> +          data-lanes:
+> +            maxItems: 1
+> +
+> +          remote-endpoint: true
+> +
+> +        required:
+> +          - clock-lanes
+> +          - data-lanes
+> +          - remote-endpoint
+> +
+> +    required:
+> +      - endpoint
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - clock-frequency
+> +  - assigned-clocks
+> +  - assigned-clock-rates
+> +  - dovdd-supply
+> +  - avdd-supply
+> +  - dvdd-supply
+> +  - reset-gpios
+> +  - port
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/clock/qcom,camcc-sdm845.h>
 
-Is it possible to mention that there might distro-specific changes
-needed to initramfs-handling?
-For Debian you are welcome to include below Link [1].
-Not sure I will send/ask to/on the debian-kernel mailing list in this topic.
+IMHO we should avoid examples with hardware specific includes.
 
-Thanks and bonne chance.
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        ov8856: camera@10 {
+> +            compatible = "ovti,ov8856";
+> +            reg = <0x10>;
+> +
+> +            reset-gpios = <&pio 111 GPIO_ACTIVE_LOW>;
+> +            pinctrl-names = "default";
+> +            pinctrl-0 = <&clk_24m_cam>;
+> +
+> +            clocks = <&clock_camcc CAM_CC_MCLK0_CLK>;
+> +            clock-names = "xvclk";
+> +            clock-frequency = <19200000>;
+> +            assigned-clocks = <&clock_camcc CAM_CC_MCLK0_CLK>;
+> +            assigned-clock-rates = <19200000>;
+> +
+> +            avdd-supply = <&mt6358_vcama2_reg>;
+> +            dvdd-supply = <&mt6358_vcamd_reg>;
+> +            dovdd-supply = <&mt6358_vcamio_reg>;
+> +
+> +            port {
+> +                wcam_out: endpoint {
+> +                    remote-endpoint = <&mipi_in_wcam>;
+> +                    clock-lanes = <0>;
+> +                    data-lanes = <1 2 3 4>;
+> +                    link-frequencies = /bits/ 64 <360000000 180000000>;
+
+Should we add the link-frequencies as optional param?
 
 Regards,
-- Sedat -
+  Marco
 
-[1] LINK: https://lore.kernel.org/lkml/CA+icZUXCn2an9aNDrm+-eneSAOyGibz0W1xYhwkA5k3B3U-5vQ@mail.gmail.com/
+> +                };
+> +            };
+> +        };
+> +    };
+> +...
+> \ No newline at end of file
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a6fbdf354d34..0f99e863978a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12355,6 +12355,7 @@ L:	linux-media@vger.kernel.org
+>  T:	git git://linuxtv.org/media_tree.git
+>  S:	Maintained
+>  F:	drivers/media/i2c/ov8856.c
+> +F:	Documentation/devicetree/bindings/media/i2c/ov8856.yaml
+>  
+>  OMNIVISION OV9650 SENSOR DRIVER
+>  M:	Sakari Ailus <sakari.ailus@linux.intel.com>
+> -- 
+> 2.25.1
+> 
+> 
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
