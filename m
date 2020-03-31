@@ -2,70 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9879F19960A
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 14:14:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B55519960C
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 14:14:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730473AbgCaMOB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 08:14:01 -0400
-Received: from mga17.intel.com ([192.55.52.151]:17802 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730343AbgCaMOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 08:14:01 -0400
-IronPort-SDR: fxhVUpyXLaInrVgCZ4w3bkV8UuWJhd0IsTStZPb/dFtg18vY4/pKHqBR7Vj75kZIeOfAK2TpRs
- aYJeO3Fr5o1w==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 05:14:00 -0700
-IronPort-SDR: Mk1XT5CSaErxYENmospOKj3NEgn1A3405UpKRkKu6W69I4rTAjGOOU+0gIVxfq2MFUyyfz3r+w
- xkzJ8ykAG8mA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
-   d="scan'208";a="294911570"
-Received: from tking1-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.59.94])
-  by FMSMGA003.fm.intel.com with ESMTP; 31 Mar 2020 05:13:53 -0700
-Date:   Tue, 31 Mar 2020 15:13:52 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     amirmizi6@gmail.com
-Cc:     Eyal.Cohen@nuvoton.com, oshrialkoby85@gmail.com,
-        alexander.steffen@infineon.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
-        arnd@arndb.de, gregkh@linuxfoundation.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
-        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
-        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
-        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com
-Subject: Re: [PATCH v4 3/7] tpm: tpm_tis: rewrite "tpm_tis_req_canceled()"
-Message-ID: <20200331121352.GA9284@linux.intel.com>
-References: <20200331113207.107080-1-amirmizi6@gmail.com>
- <20200331113207.107080-4-amirmizi6@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331113207.107080-4-amirmizi6@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        id S1730686AbgCaMOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 08:14:05 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41362 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730543AbgCaMOC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 08:14:02 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h9so25589576wrc.8;
+        Tue, 31 Mar 2020 05:14:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=o49PLtczjrvnDvwyYGD9D+ZfmKnK23dv8VxdMQjHLQo=;
+        b=GcBI+VTxX4A3aVLmPkgITDWYoC2Han02vraisjcoDy6dieWJWqK7aSepeeBupCGFgQ
+         ha+cEwrNujyV0gQQIpmvWoHL8bZxiS/HVBgNLhX4JuyVLXMBlp+8Om4/GZUPb1f1rgbZ
+         d+5LVd54abHb4j9SRHvr/5Zhja9h0dbPkgmCgfHWA0lL/PB4XKfJFk0StUfIO886iYxG
+         wfKrwaINP5VIYI2c3gC1GhqraRZJNiaRAz4hyRIn0foos/63M0K/2ZP1+2izbIoBNh6x
+         8ZIWMZsFqGurcUbLTezggmynH/BiIPxgJDIlD/YT+KsKlPoMgh8dIX3B2gFvpntRZ2Ku
+         9nCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=o49PLtczjrvnDvwyYGD9D+ZfmKnK23dv8VxdMQjHLQo=;
+        b=A+IqPBcJF9vDhF8psHp7vjPJ0XUAmWpbpGmoaP7lHXeAFu1WOARiJ0Vyfw0nfDvWAh
+         IGGVjORxAyGZRUuiuoomG6lpCD55kEYaOOPFkl/o34RPI3+34TUOx8uClbIRTWUh3xaw
+         HzsiZIuVDDREJHJUt4wrSFWsMU51fjOP4FHi9tCrZv7ku4jMGxo4e9r9znOE33jOMQN0
+         flO2xPyK44/A1BF82lvC4y1dBFU/IlAzbe/f7NYVbm2n/PYEwtZGJqLyTnonqTGom9+Q
+         wpypl8hjzHWrYsNztndAvhtEbf5O0GiUQIiiMzKUSo9XfqYlGKszQ4eeB7zOKAHxQJU6
+         LVBw==
+X-Gm-Message-State: ANhLgQ0Hd+5GpznHQ0LZW3LO/BBuEbUrGzwKu8+d+9q/Rkb5quwFDYgv
+        gn4KqgYh02YyBBouTIeNzU4=
+X-Google-Smtp-Source: ADFU+vuz27mAc1lNVPQfLWPm/LTORsy6muqNkMdbp2qKAPkgBcrIlks83Udd1Fa6w5TPOn0as3gJjg==
+X-Received: by 2002:a5d:4cc4:: with SMTP id c4mr19884904wrt.346.1585656840655;
+        Tue, 31 Mar 2020 05:14:00 -0700 (PDT)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id 127sm3754936wmd.38.2020.03.31.05.13.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Mar 2020 05:14:00 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v3 2/2] ARM: dts: rockchip: fix yaml warnings for rk3288-pmu-sram compatible nodes
+Date:   Tue, 31 Mar 2020 14:13:52 +0200
+Message-Id: <20200331121352.3825-2-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20200331121352.3825-1-jbx6244@gmail.com>
+References: <20200331121352.3825-1-jbx6244@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 02:32:03PM +0300, amirmizi6@gmail.com wrote:
-> From: Amir Mizinski <amirmizi6@gmail.com>
-> 
-> Using this function while read/write data resulted in aborted operation.
-> After investigating according to TCG TPM Profile (PTP) Specifications,
-> i found cancel should happen only if TPM_STS.commandReady bit is lit and
-> couldn't find a case when the current condition is valid.
-> Also only cmdReady bit need to be compared instead of the full lower status
-> register byte.
-> 
-> Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
+A test with the command below gives for example these warnings:
 
-We don't care about spec's. We care about hardware and not all hardware
-follows specifications.
+arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml: sram@ff720000:
+'#address-cells' is a required property
+arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml: sram@ff720000:
+'#size-cells' is a required property
+arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml: sram@ff720000:
+'ranges' is a required property
 
-Please fix the exact thing you want to fix (and please provide a fixes
-tag).
+Fix this error by adding '#address-cells', '#size-cells' and
+'ranges' to the 'rockchip,rk3288-pmu-sram' compatible node
+in rk3288.dtsi.
 
-/Jarkko
+make ARCH=arm dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/sram/sram.yaml
+
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+Not tested with hardware.
+
+Changed v2:
+  Fix dtsi.
+---
+ arch/arm/boot/dts/rk3288.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 9c8741bb1..f102fec69 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -730,6 +730,9 @@
+ 	pmu_sram: sram@ff720000 {
+ 		compatible = "rockchip,rk3288-pmu-sram", "mmio-sram";
+ 		reg = <0x0 0xff720000 0x0 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x0 0xff720000 0x1000>;
+ 	};
+ 
+ 	pmu: power-management@ff730000 {
+-- 
+2.11.0
+
