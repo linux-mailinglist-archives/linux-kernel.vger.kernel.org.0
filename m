@@ -2,154 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 510C5198DC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DA61198DA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:56:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730294AbgCaH5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 03:57:03 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:22357 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729425AbgCaH5C (ORCPT
+        id S1730185AbgCaH4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 03:56:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53358 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbgCaH4G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 03:57:02 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585641422; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=VT9/ErTi2g1chyk6bUNJTnT/qqr1194jK5RfTnp8tS4=; b=rvUYpuvvq/A2z/VTfnSHylJ/F5ApaTMN8dhCoU98IC6jZ3m8N95WEOUOL1IRF2B8fX9KB1vV
- zODrLPgF9+ufnAWmHZGZOL0AFZ3dktDy4GsdS3jKznb0NJEW1AtX923YGMVWfDapatBrlhgd
- 5LWIg3STUmC6jpMPjO7waTO9Suo=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e82f7c9.7f3e5fc79420-smtp-out-n03;
- Tue, 31 Mar 2020 07:56:57 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 21CD4C4478F; Tue, 31 Mar 2020 07:56:57 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from hyd-lnxbld559.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: smasetty)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 39EB0C44795;
-        Tue, 31 Mar 2020 07:56:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 39EB0C44795
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=smasetty@codeaurora.org
-From:   Sharat Masetty <smasetty@codeaurora.org>
-To:     freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc:     dri-devel@freedesktop.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jcrouse@codeaurora.org,
-        mka@chromium.org, sibis@codeaurora.org, saravanak@google.com,
-        viresh.kumar@linaro.org, Sharat Masetty <smasetty@codeaurora.org>
-Subject: [PATCH 5/5] dt-bindings: drm/msm/gpu: Document OPP phandle list for the GPU
-Date:   Tue, 31 Mar 2020 13:25:53 +0530
-Message-Id: <1585641353-23229-6-git-send-email-smasetty@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1585641353-23229-1-git-send-email-smasetty@codeaurora.org>
-References: <1585641353-23229-1-git-send-email-smasetty@codeaurora.org>
+        Tue, 31 Mar 2020 03:56:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=tVPpfazcLCn+rGmQCgJ5zFx/4NhoiRWfcsMxHXRN42o=; b=FFlNEE/nlwmrb0Bytn4bR4slz5
+        DIFgIBF6s9N6avl/FcU0oeGua2Y42YpqPuAivHRf8axXjj4MQSNcS3ne3ktFngaVB0i+Y3P2EUwWN
+        V2KClLrxzs589LKw7aEYMNJlL09rtXUi2Po090dVhWbpr40z+H/Ag4UoKqPZBQxEDdURIwGcdqkk6
+        q8EjEixndcchbHD/9Kf8bIMkWXZ03ArAmUaQ9rl7ja4K1T6yM4KUyunlW40SfWl7qiqV7rKKzYoU6
+        S16zsX2EoWgfit+02B9oGzvIfX43eDvQEiiL6ljkaebIIMhilw8jrQyo0IyP6ftKMn+nzxHpAN/ey
+        zvQoSzBg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJBkh-0001Rp-Pp; Tue, 31 Mar 2020 07:56:03 +0000
+Date:   Tue, 31 Mar 2020 00:56:03 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Liu, Yi L" <yi.l.liu@intel.com>
+Cc:     alex.williamson@redhat.com, eric.auger@redhat.com,
+        jean-philippe@linaro.org, kevin.tian@intel.com,
+        ashok.raj@intel.com, kvm@vger.kernel.org, jun.j.tian@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        yi.y.sun@intel.com, hao.wu@intel.com
+Subject: Re: [PATCH v1 7/8] vfio/type1: Add VFIO_IOMMU_CACHE_INVALIDATE
+Message-ID: <20200331075603.GB26583@infradead.org>
+References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
+ <1584880325-10561-8-git-send-email-yi.l.liu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1584880325-10561-8-git-send-email-yi.l.liu@intel.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the documentation for listing the multiple optional GPU and the
-DDR OPP tables to help enable DDR scaling.
+> @@ -2629,6 +2638,46 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
+>  		}
+>  		kfree(gbind_data);
+>  		return ret;
+> +	} else if (cmd == VFIO_IOMMU_CACHE_INVALIDATE) {
 
-Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
----
- .../devicetree/bindings/display/msm/gpu.txt        | 63 +++++++++++++++++++++-
- 1 file changed, 61 insertions(+), 2 deletions(-)
+Please refactor the spaghetti in this ioctl handler to use a switch
+statement and a helper function per command before growing it even more.
 
-diff --git a/Documentation/devicetree/bindings/display/msm/gpu.txt b/Documentation/devicetree/bindings/display/msm/gpu.txt
-index 70025cb..ff3ae1b 100644
---- a/Documentation/devicetree/bindings/display/msm/gpu.txt
-+++ b/Documentation/devicetree/bindings/display/msm/gpu.txt
-@@ -21,7 +21,10 @@ Required properties:
-   following devices should not list clocks:
-    - qcom,adreno-630.2
- - iommus: optional phandle to an adreno iommu instance
--- operating-points-v2: optional phandle to the OPP operating points
-+- operating-points-v2: optional phandles to the OPP operating point tables
-+  one for the GPU OPPs and the other for the GPU->DDR OPPs. Note that if
-+  multiple OPP tables are specified, the GPU OPP table(considered primary)
-+  should be the first in the phandle list.
- - interconnects: optional phandle to an interconnect provider.  See
-   ../interconnect/interconnect.txt for details.
- - qcom,gmu: For GMU attached devices a phandle to the GMU device that will
-@@ -75,7 +78,7 @@ Example a6xx (with GMU):
+> +		/* Get the version of struct iommu_cache_invalidate_info */
+> +		if (copy_from_user(&version,
+> +			(void __user *) (arg + minsz), sizeof(version)))
+> +			return -EFAULT;
+> +
+> +		info_size = iommu_uapi_get_data_size(
+> +					IOMMU_UAPI_CACHE_INVAL, version);
+> +
+> +		cache_info = kzalloc(info_size, GFP_KERNEL);
+> +		if (!cache_info)
+> +			return -ENOMEM;
+> +
+> +		if (copy_from_user(cache_info,
+> +			(void __user *) (arg + minsz), info_size)) {
 
- 		iommus = <&adreno_smmu 0>;
-
--		operating-points-v2 = <&gpu_opp_table>;
-+		operating-points-v2 = <&gpu_opp_table>, <&gpu_ddr_bw_opp_table>;
-
- 		interconnects = <&rsc_hlos MASTER_GFX3D &rsc_hlos SLAVE_EBI1>;
-
-@@ -85,5 +88,61 @@ Example a6xx (with GMU):
- 			memory-region = <&zap_shader_region>;
- 			firmware-name = "qcom/LENOVO/81JL/qcdxkmsuc850.mbn"
- 		};
-+
-+		gpu_opp_table: opp-table {
-+			compatible = "operating-points-v2";
-+
-+			opp-430000000 {
-+				opp-hz = /bits/ 64 <430000000>;
-+				opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+				required-opps = <&gpu_ddr_bw_opp6>;
-+			};
-+
-+			opp-355000000 {
-+				opp-hz = /bits/ 64 <355000000>;
-+				opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+				required-opps = <&gpu_ddr_bw_opp4>;
-+			};
-+
-+			opp-267000000 {
-+				opp-hz = /bits/ 64 <267000000>;
-+				opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+				required-opps = <&gpu_ddr_bw_opp4>;
-+			};
-+
-+			opp-180000000 {
-+				opp-hz = /bits/ 64 <180000000>;
-+				opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-+				required-opps = <&gpu_ddr_bw_opp2>;
-+			};
-+		};
-+
-+		gpu_ddr_bw_opp_table: gpu-ddr-bw-opp-table {
-+			compatible = "operating-points-v2";
-+
-+			gpu_ddr_bw_opp1: opp-300000000  {
-+				opp-peak-kBps =/bits/ 32 <1200000>;
-+			};
-+
-+			gpu_ddr_bw_opp2: opp-451000000  {
-+				opp-peak-kBps =/bits/ 32 <1804000>;
-+			};
-+
-+			gpu_ddr_bw_opp3: opp-547000000  {
-+				opp-peak-kBps =/bits/ 32 <2188000>;
-+			};
-+
-+			gpu_ddr_bw_opp4: opp-768000000  {
-+				opp-peak-kBps =/bits/ 32 <3072000>;
-+			};
-+
-+			gpu_ddr_bw_opp5: opp-1017000000  {
-+				opp-peak-kBps =/bits/ 32 <4068000>;
-+			};
-+
-+			gpu_ddr_bw_opp6: opp-1353000000  {
-+				opp-peak-kBps =/bits/ 32 <5412000>;
-+			};
-+		};
- 	};
- };
---
-2.7.4
+The user might have changed the version while you were allocating and
+freeing the memory, introducing potentially exploitable racing
+conditions.
