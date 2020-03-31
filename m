@@ -2,65 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA98B199BB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 18:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7FC3199B98
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 18:31:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731149AbgCaQfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 12:35:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41770 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730770AbgCaQfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 12:35:15 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F225214D8;
-        Tue, 31 Mar 2020 16:35:15 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.93)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1jJJr7-002VgC-VI; Tue, 31 Mar 2020 12:35:13 -0400
-Message-Id: <20200331163513.849449042@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Tue, 31 Mar 2020 12:34:56 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-rt-users <linux-rt-users@vger.kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        John Kacur <jkacur@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <wagi@monom.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Subject: [PATCH RT 3/3] Linux 4.19.106-rt46-rc1
-References: <20200331163453.805082089@goodmis.org>
+        id S1731062AbgCaQbY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 12:31:24 -0400
+Received: from gateway33.websitewelcome.com ([192.185.145.9]:44889 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726194AbgCaQbY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 12:31:24 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 108CA60F5B1
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:31:24 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id JJnQjlFUd8vkBJJnQjaCxg; Tue, 31 Mar 2020 11:31:24 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=EHrjxQ0PBuyIpRl7KvpdYCDJDONL0mpYpyg5zK+DvTw=; b=ElCS6utXYq4w8jevd53lQnRTLg
+        e34rAxmkiqLkbB50uJDIxzdcuFPd/i5IMpAbbyWPAQQW+kK+7j/SbmLP9bDRPd7D2AocOZNAJktA4
+        zFfLm2Sb91zq27E8scRxR+9+8cndO8BXd0lNh6FefKamEbvR5Dm3aQXjQy41xgmQzWB5yc8E9PcDf
+        b2zfbyGZbzn2TRMCGARs/1cC/Cn5Q4iXAZHKl4L7Ow/wsB0bq5mvQbDL0iDuyYiHlcFa/Nb4nL3cr
+        lduw0lvTcXk654EWLmsfqAyGsgmshe1y2mCZxow57bewu8N/kdutCOUYVyFXsB8t85XluYm0xtio9
+        gEHNEl2w==;
+Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:37440 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1jJJnO-001Mca-Dn; Tue, 31 Mar 2020 11:31:22 -0500
+Date:   Tue, 31 Mar 2020 11:35:06 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexander Aring <alex.aring@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] net: ipv6: rpl_iptunnel: Fix potential memory leak
+ in rpl_do_srh_inline
+Message-ID: <20200331163506.GA5124@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.218.116.241
+X-Source-L: No
+X-Exim-ID: 1jJJnO-001Mca-Dn
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:37440
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19.106-rt46-rc1 stable review patch.
-If anyone has any objections, please let me know.
+In case memory resources for buf were allocated, release them before
+return.
 
-------------------
-
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-
+Addresses-Coverity-ID: 1492011 ("Resource leak")
+Fixes: a7a29f9c361f ("net: ipv6: add rpl sr tunnel")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- localversion-rt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/rpl_iptunnel.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/localversion-rt b/localversion-rt
-index 38c40b21a885..2a08cf6d539b 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt45
-+-rt46-rc1
+diff --git a/net/ipv6/rpl_iptunnel.c b/net/ipv6/rpl_iptunnel.c
+index 203037afe001..a49ddc6cd020 100644
+--- a/net/ipv6/rpl_iptunnel.c
++++ b/net/ipv6/rpl_iptunnel.c
+@@ -155,8 +155,10 @@ static int rpl_do_srh_inline(struct sk_buff *skb, const struct rpl_lwt *rlwt,
+ 	hdrlen = ((csrh->hdrlen + 1) << 3);
+ 
+ 	err = skb_cow_head(skb, hdrlen + skb->mac_len);
+-	if (unlikely(err))
++	if (unlikely(err)) {
++		kfree(buf);
+ 		return err;
++	}
+ 
+ 	skb_pull(skb, sizeof(struct ipv6hdr));
+ 	skb_postpull_rcsum(skb, skb_network_header(skb),
 -- 
-2.25.1
-
+2.26.0
 
