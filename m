@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFE931997E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6640A1997E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:52:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731146AbgCaNwe convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 09:52:34 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:47400 "EHLO
+        id S1731156AbgCaNwf convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 09:52:35 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:50499 "EHLO
         eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731119AbgCaNwc (ORCPT
+        by vger.kernel.org with ESMTP id S1731130AbgCaNwd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 09:52:32 -0400
+        Tue, 31 Mar 2020 09:52:33 -0400
 Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
  TLS) by relay.mimecast.com with ESMTP id
- uk-mta-143-aaKZBYIcPiSJ7fCHXFRLoQ-2; Tue, 31 Mar 2020 14:52:28 +0100
-X-MC-Unique: aaKZBYIcPiSJ7fCHXFRLoQ-2
+ uk-mta-60-IRQvneShP9uZ8i5akNmOFQ-1; Tue, 31 Mar 2020 14:52:29 +0100
+X-MC-Unique: IRQvneShP9uZ8i5akNmOFQ-1
 Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
  AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 31 Mar 2020 14:52:25 +0100
+ Server (TLS) id 15.0.1347.2; Tue, 31 Mar 2020 14:52:29 +0100
 Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
  AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 31 Mar 2020 14:52:25 +0100
+ Tue, 31 Mar 2020 14:52:29 +0100
 From:   David Laight <David.Laight@ACULAB.COM>
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: [RFC PATCH 10/12] net/socket: Use iovec_import() instead of
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH 02/12] fs/io_uring Don't use the return value from
  import_iovec().
-Thread-Topic: [RFC PATCH 10/12] net/socket: Use iovec_import() instead of
+Thread-Topic: [RFC PATCH 02/12] fs/io_uring Don't use the return value from
  import_iovec().
-Thread-Index: AdYHY26Pn/zazxI4TBqBFviolCOniA==
-Date:   Tue, 31 Mar 2020 13:52:25 +0000
-Message-ID: <b433aca086ad4a7ba36f7559e3ccc458@AcuMS.aculab.com>
+Thread-Index: AdYHYUSKSGJaZEFfSFajLxQsesYkOQ==
+Date:   Tue, 31 Mar 2020 13:52:29 +0000
+Message-ID: <87c31730ece341b0bdf29745b9411ab8@AcuMS.aculab.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -48,283 +47,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is the only code that relies on import_iovec() returning
+iter.count on success.
+Not using the value actually saves passing it through to functions
+that are also passed the 'iter'.
+This allows a better interface to import_iovec().
 
 Signed-off-by: David Laight <david.laight@aculab.com>
 ---
- include/linux/socket.h | 14 +++++-----
- include/net/compat.h   |  4 +--
- net/compat.c           | 21 +++++++-------
- net/socket.c           | 74 ++++++++++++++++++++++----------------------------
- 4 files changed, 51 insertions(+), 62 deletions(-)
+ fs/io_uring.c | 34 ++++++++++++++--------------------
+ 1 file changed, 14 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index 15f3412..458bcf4 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -384,13 +384,13 @@ extern long __sys_recvmsg_sock(struct socket *sock, struct msghdr *msg,
- 			       struct user_msghdr __user *umsg,
- 			       struct sockaddr __user *uaddr,
- 			       unsigned int flags);
--extern int sendmsg_copy_msghdr(struct msghdr *msg,
--			       struct user_msghdr __user *umsg, unsigned flags,
--			       struct iovec **iov);
--extern int recvmsg_copy_msghdr(struct msghdr *msg,
--			       struct user_msghdr __user *umsg, unsigned flags,
--			       struct sockaddr __user **uaddr,
--			       struct iovec **iov);
-+struct iovec *sendmsg_copy_msghdr(struct msghdr *msg,
-+				  struct user_msghdr __user *umsg, unsigned flags,
-+				  struct iovec_cache *cache);
-+struct iovec *recvmsg_copy_msghdr(struct msghdr *msg,
-+				  struct user_msghdr __user *umsg, unsigned flags,
-+				  struct sockaddr __user **uaddr,
-+				  struct iovec_cache *cache);
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 3affd96..d8dc2e2 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2153,12 +2153,11 @@ static ssize_t loop_rw_iter(int rw, struct file *file, struct kiocb *kiocb,
+ 	return ret;
+ }
  
- /* helpers which do the actual work for syscalls */
- extern int __sys_recvfrom(int fd, void __user *ubuf, size_t size,
-diff --git a/include/net/compat.h b/include/net/compat.h
-index f277653..00094fb 100644
---- a/include/net/compat.h
-+++ b/include/net/compat.h
-@@ -38,8 +38,8 @@ struct compat_cmsghdr {
- #define compat_mmsghdr	mmsghdr
- #endif /* defined(CONFIG_COMPAT) */
- 
--int get_compat_msghdr(struct msghdr *, struct compat_msghdr __user *,
--		      struct sockaddr __user **, struct iovec **);
-+struct iovec *get_compat_msghdr(struct msghdr *, struct compat_msghdr __user *,
-+				struct sockaddr __user **, struct iovec_cache *);
- struct sock_fprog __user *get_compat_bpf_fprog(char __user *optval);
- int put_cmsg_compat(struct msghdr*, int, int, int, void *);
- 
-diff --git a/net/compat.c b/net/compat.c
-index 47d99c7..96bf01f 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -33,16 +33,16 @@
- #include <linux/uaccess.h>
- #include <net/compat.h>
- 
--int get_compat_msghdr(struct msghdr *kmsg,
--		      struct compat_msghdr __user *umsg,
--		      struct sockaddr __user **save_addr,
--		      struct iovec **iov)
-+struct iovec *get_compat_msghdr(struct msghdr *kmsg,
-+				struct compat_msghdr __user *umsg,
-+				struct sockaddr __user **save_addr,
-+				struct iovec_cache *cache)
+-static void io_req_map_rw(struct io_kiocb *req, ssize_t io_size,
+-			  struct iovec *iovec, struct iovec *fast_iov,
+-			  struct iov_iter *iter)
++static void io_req_map_rw(struct io_kiocb *req, struct iovec *iovec,
++			  struct iovec *fast_iov, struct iov_iter *iter)
  {
- 	struct compat_msghdr msg;
- 	ssize_t err;
+ 	req->io->rw.nr_segs = iter->nr_segs;
+-	req->io->rw.size = io_size;
++	req->io->rw.size = iter->count;
+ 	req->io->rw.iov = iovec;
+ 	if (!req->io->rw.iov) {
+ 		req->io->rw.iov = req->io->rw.fast_iov;
+@@ -2177,9 +2176,8 @@ static int io_alloc_async_ctx(struct io_kiocb *req)
+ 	return req->io == NULL;
+ }
  
- 	if (copy_from_user(&msg, umsg, sizeof(*umsg)))
--		return -EFAULT;
-+		return ERR_PTR(-EFAULT);
+-static int io_setup_async_rw(struct io_kiocb *req, ssize_t io_size,
+-			     struct iovec *iovec, struct iovec *fast_iov,
+-			     struct iov_iter *iter)
++static int io_setup_async_rw(struct io_kiocb *req, struct iovec *iovec,
++			     struct iovec *fast_iov, struct iov_iter *iter)
+ {
+ 	if (!io_op_defs[req->opcode].async_ctx)
+ 		return 0;
+@@ -2187,7 +2185,7 @@ static int io_setup_async_rw(struct io_kiocb *req, ssize_t io_size,
+ 		if (io_alloc_async_ctx(req))
+ 			return -ENOMEM;
  
- 	kmsg->msg_flags = msg.msg_flags;
- 	kmsg->msg_namelen = msg.msg_namelen;
-@@ -51,7 +51,7 @@ int get_compat_msghdr(struct msghdr *kmsg,
- 		kmsg->msg_namelen = 0;
- 
- 	if (kmsg->msg_namelen < 0)
--		return -EINVAL;
-+		return ERR_PTR(-EINVAL);
- 
- 	if (kmsg->msg_namelen > sizeof(struct sockaddr_storage))
- 		kmsg->msg_namelen = sizeof(struct sockaddr_storage);
-@@ -68,7 +68,7 @@ int get_compat_msghdr(struct msghdr *kmsg,
- 						  kmsg->msg_namelen,
- 						  kmsg->msg_name);
- 			if (err < 0)
--				return err;
-+				return ERR_PTR(err);
- 		}
- 	} else {
- 		kmsg->msg_name = NULL;
-@@ -76,14 +76,13 @@ int get_compat_msghdr(struct msghdr *kmsg,
+-		io_req_map_rw(req, io_size, iovec, fast_iov, iter);
++		io_req_map_rw(req, iovec, fast_iov, iter);
  	}
+ 	return 0;
+ }
+@@ -2218,7 +2216,7 @@ static int io_read_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	if (ret < 0)
+ 		return ret;
  
- 	if (msg.msg_iovlen > UIO_MAXIOV)
--		return -EMSGSIZE;
-+		return ERR_PTR(-EMSGSIZE);
- 
- 	kmsg->msg_iocb = NULL;
- 
--	err = compat_import_iovec(save_addr ? READ : WRITE,
-+	return compat_iovec_import(save_addr ? READ : WRITE,
- 				   compat_ptr(msg.msg_iov), msg.msg_iovlen,
--				   UIO_FASTIOV, iov, &kmsg->msg_iter);
--	return err < 0 ? err : 0;
-+				   cache, &kmsg->msg_iter);
+-	io_req_map_rw(req, ret, io->rw.iov, io->rw.fast_iov, &iter);
++	io_req_map_rw(req, io->rw.iov, io->rw.fast_iov, &iter);
+ 	return 0;
  }
  
- /* Bleech... */
-diff --git a/net/socket.c b/net/socket.c
-index 2eecf15..7431cf4 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2228,16 +2228,16 @@ struct used_address {
- 	unsigned int name_len;
- };
+@@ -2229,7 +2227,7 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	struct kiocb *kiocb = &req->rw.kiocb;
+ 	struct iov_iter iter;
+ 	size_t iov_count;
+-	ssize_t io_size, ret;
++	ssize_t ret;
  
--static int copy_msghdr_from_user(struct msghdr *kmsg,
--				 struct user_msghdr __user *umsg,
--				 struct sockaddr __user **save_addr,
--				 struct iovec **iov)
-+static struct iovec *copy_msghdr_from_user(struct msghdr *kmsg,
-+					   struct user_msghdr __user *umsg,
-+					   struct sockaddr __user **save_addr,
-+					   struct iovec_cache *cache)
- {
- 	struct user_msghdr msg;
- 	ssize_t err;
+ 	ret = io_import_iovec(READ, req, &iovec, &iter);
+ 	if (ret < 0)
+@@ -2240,9 +2238,8 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		req->rw.kiocb.ki_flags &= ~IOCB_NOWAIT;
  
- 	if (copy_from_user(&msg, umsg, sizeof(*umsg)))
--		return -EFAULT;
-+		return ERR_PTR(-EFAULT);
+ 	req->result = 0;
+-	io_size = ret;
+ 	if (req->flags & REQ_F_LINK)
+-		req->result = io_size;
++		req->result = iter.count;
  
- 	kmsg->msg_control = (void __force *)msg.msg_control;
- 	kmsg->msg_controllen = msg.msg_controllen;
-@@ -2248,7 +2248,7 @@ static int copy_msghdr_from_user(struct msghdr *kmsg,
- 		kmsg->msg_namelen = 0;
+ 	/*
+ 	 * If the file doesn't support async, mark it as REQ_F_MUST_PUNT so
+@@ -2268,8 +2265,7 @@ static int io_read(struct io_kiocb *req, struct io_kiocb **nxt,
+ 			kiocb_done(kiocb, ret2, nxt, req->in_async);
+ 		} else {
+ copy_iov:
+-			ret = io_setup_async_rw(req, io_size, iovec,
+-						inline_vecs, &iter);
++			ret = io_setup_async_rw(req, iovec, inline_vecs, &iter);
+ 			if (ret)
+ 				goto out_free;
+ 			return -EAGAIN;
+@@ -2307,7 +2303,7 @@ static int io_write_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	if (ret < 0)
+ 		return ret;
  
- 	if (kmsg->msg_namelen < 0)
--		return -EINVAL;
-+		return ERR_PTR(-EINVAL);
- 
- 	if (kmsg->msg_namelen > sizeof(struct sockaddr_storage))
- 		kmsg->msg_namelen = sizeof(struct sockaddr_storage);
-@@ -2262,7 +2262,7 @@ static int copy_msghdr_from_user(struct msghdr *kmsg,
- 						  kmsg->msg_namelen,
- 						  kmsg->msg_name);
- 			if (err < 0)
--				return err;
-+				return ERR_PTR(err);
- 		}
- 	} else {
- 		kmsg->msg_name = NULL;
-@@ -2270,14 +2270,13 @@ static int copy_msghdr_from_user(struct msghdr *kmsg,
- 	}
- 
- 	if (msg.msg_iovlen > UIO_MAXIOV)
--		return -EMSGSIZE;
-+		return ERR_PTR(-EMSGSIZE);
- 
- 	kmsg->msg_iocb = NULL;
- 
--	err = import_iovec(save_addr ? READ : WRITE,
-+	return iovec_import(save_addr ? READ : WRITE,
- 			    msg.msg_iov, msg.msg_iovlen,
--			    UIO_FASTIOV, iov, &kmsg->msg_iter);
--	return err < 0 ? err : 0;
-+			    cache, &kmsg->msg_iter);
+-	io_req_map_rw(req, ret, io->rw.iov, io->rw.fast_iov, &iter);
++	io_req_map_rw(req, io->rw.iov, io->rw.fast_iov, &iter);
+ 	return 0;
  }
  
- static int ____sys_sendmsg(struct socket *sock, struct msghdr *msg_sys,
-@@ -2361,24 +2360,18 @@ static int ____sys_sendmsg(struct socket *sock, struct msghdr *msg_sys,
- 	return err;
- }
+@@ -2318,7 +2314,7 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	struct kiocb *kiocb = &req->rw.kiocb;
+ 	struct iov_iter iter;
+ 	size_t iov_count;
+-	ssize_t ret, io_size;
++	ssize_t ret;
  
--int sendmsg_copy_msghdr(struct msghdr *msg,
--			struct user_msghdr __user *umsg, unsigned flags,
--			struct iovec **iov)
-+struct iovec *sendmsg_copy_msghdr(struct msghdr *msg,
-+				  struct user_msghdr __user *umsg,
-+				  unsigned flags, struct iovec_cache *cache)
- {
--	int err;
--
- 	if (flags & MSG_CMSG_COMPAT) {
- 		struct compat_msghdr __user *msg_compat;
+ 	ret = io_import_iovec(WRITE, req, &iovec, &iter);
+ 	if (ret < 0)
+@@ -2329,9 +2325,8 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		req->rw.kiocb.ki_flags &= ~IOCB_NOWAIT;
  
- 		msg_compat = (struct compat_msghdr __user *) umsg;
--		err = get_compat_msghdr(msg, msg_compat, NULL, iov);
-+		return get_compat_msghdr(msg, msg_compat, NULL, cache);
- 	} else {
--		err = copy_msghdr_from_user(msg, umsg, NULL, iov);
-+		return copy_msghdr_from_user(msg, umsg, NULL, cache);
- 	}
--	if (err < 0)
--		return err;
--
--	return 0;
- }
+ 	req->result = 0;
+-	io_size = ret;
+ 	if (req->flags & REQ_F_LINK)
+-		req->result = io_size;
++		req->result = iter.count;
  
- static int ___sys_sendmsg(struct socket *sock, struct user_msghdr __user *msg,
-@@ -2386,15 +2379,16 @@ static int ___sys_sendmsg(struct socket *sock, struct user_msghdr __user *msg,
- 			 struct used_address *used_address,
- 			 unsigned int allowed_msghdr_flags)
- {
-+	struct iovec_cache cache;
-+	struct iovec *iov;
- 	struct sockaddr_storage address;
--	struct iovec iovstack[UIO_FASTIOV], *iov = iovstack;
- 	ssize_t err;
- 
- 	msg_sys->msg_name = &address;
- 
--	err = sendmsg_copy_msghdr(msg_sys, msg, flags, &iov);
--	if (err < 0)
--		return err;
-+	iov = sendmsg_copy_msghdr(msg_sys, msg, flags, &cache);
-+	if (IS_ERR(iov))
-+		return PTR_ERR(iov);
- 
- 	err = ____sys_sendmsg(sock, msg_sys, flags, used_address,
- 				allowed_msghdr_flags);
-@@ -2518,25 +2512,20 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
- 	return __sys_sendmmsg(fd, mmsg, vlen, flags, true);
- }
- 
--int recvmsg_copy_msghdr(struct msghdr *msg,
--			struct user_msghdr __user *umsg, unsigned flags,
--			struct sockaddr __user **uaddr,
--			struct iovec **iov)
-+struct iovec *recvmsg_copy_msghdr(struct msghdr *msg,
-+				  struct user_msghdr __user *umsg,
-+				  unsigned flags,
-+				  struct sockaddr __user **uaddr,
-+				  struct iovec_cache *cache)
- {
--	ssize_t err;
--
- 	if (MSG_CMSG_COMPAT & flags) {
- 		struct compat_msghdr __user *msg_compat;
- 
- 		msg_compat = (struct compat_msghdr __user *) umsg;
--		err = get_compat_msghdr(msg, msg_compat, uaddr, iov);
-+		return get_compat_msghdr(msg, msg_compat, uaddr, cache);
- 	} else {
--		err = copy_msghdr_from_user(msg, umsg, uaddr, iov);
-+		return copy_msghdr_from_user(msg, umsg, uaddr, cache);
- 	}
--	if (err < 0)
--		return err;
--
--	return 0;
- }
- 
- static int ____sys_recvmsg(struct socket *sock, struct msghdr *msg_sys,
-@@ -2598,14 +2587,15 @@ static int ____sys_recvmsg(struct socket *sock, struct msghdr *msg_sys,
- static int ___sys_recvmsg(struct socket *sock, struct user_msghdr __user *msg,
- 			 struct msghdr *msg_sys, unsigned int flags, int nosec)
- {
--	struct iovec iovstack[UIO_FASTIOV], *iov = iovstack;
-+	struct iovec_cache cache;
-+	struct iovec *iov;
- 	/* user mode address pointers */
- 	struct sockaddr __user *uaddr;
- 	ssize_t err;
- 
--	err = recvmsg_copy_msghdr(msg_sys, msg, flags, &uaddr, &iov);
--	if (err < 0)
--		return err;
-+	iov = recvmsg_copy_msghdr(msg_sys, msg, flags, &uaddr, &cache);
-+	if (IS_ERR(iov))
-+		return PTR_ERR(iov);
- 
- 	err = ____sys_recvmsg(sock, msg_sys, msg, uaddr, flags, nosec);
- 	kfree(iov);
+ 	/*
+ 	 * If the file doesn't support async, mark it as REQ_F_MUST_PUNT so
+@@ -2381,8 +2376,7 @@ static int io_write(struct io_kiocb *req, struct io_kiocb **nxt,
+ 			kiocb_done(kiocb, ret2, nxt, req->in_async);
+ 		} else {
+ copy_iov:
+-			ret = io_setup_async_rw(req, io_size, iovec,
+-						inline_vecs, &iter);
++			ret = io_setup_async_rw(req, iovec, inline_vecs, &iter);
+ 			if (ret)
+ 				goto out_free;
+ 			return -EAGAIN;
 -- 
 1.8.1.2
 
