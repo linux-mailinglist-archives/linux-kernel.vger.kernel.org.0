@@ -2,74 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA97E198A6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 05:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDE55198A79
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 05:28:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbgCaDPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 23:15:01 -0400
-Received: from bmailout2.hostsharing.net ([83.223.78.240]:35485 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729221AbgCaDPA (ORCPT
+        id S1729624AbgCaD2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 23:28:25 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34554 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727358AbgCaD2Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 23:15:00 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 867812800BB33;
-        Tue, 31 Mar 2020 05:14:58 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 5534D160E21; Tue, 31 Mar 2020 05:14:58 +0200 (CEST)
-Date:   Tue, 31 Mar 2020 05:14:58 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Bjorn Helgaas <bjorn.helgaas@gmail.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the pci tree
-Message-ID: <20200331031458.x6y73bisl7cj3gpd@wunner.de>
-References: <20200331073852.54e44b21@canb.auug.org.au>
- <CABhMZUUuCRAgSd7ar90v4AC4q7u-vC04YTnX7j=a=vNaKvEY_g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABhMZUUuCRAgSd7ar90v4AC4q7u-vC04YTnX7j=a=vNaKvEY_g@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 30 Mar 2020 23:28:25 -0400
+Received: by mail-pl1-f193.google.com with SMTP id a23so7600626plm.1;
+        Mon, 30 Mar 2020 20:28:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=WhvIKiAZ62YDlD1oWveLP+fNPkAUs0qLIZB4yIs6/dg=;
+        b=bNf3rzkgLVBSncpOONhhDp4K7PRzDa+Yzl/FsqGoGmv/dtEwZ+P6HsEA2KCXF2aYXa
+         7goBcZk1N5lG2V4WWL/qySJ4mMKAsVew3ufGxgJuAa5QYsaQjC/iVmk5GzSPBpINeSaK
+         KiANoTI9nZgMqUTbjDYTVTDH+b9AbfMixl60l5p+MfJWnpPZQUQqTIF+6p79iBSPcnEf
+         Xjt9GYxR7t5eVyK8nxLrsiK/SbilC3xQ2XN1yaG4mgyhulinoYUxS9x+7V1Ktwu4dP/p
+         TNfbOD8FEXqZdXDqV34tjsug9RwixqmxgExoWEPWQYdtwANAXDC60t4Sxi71Ym9IE6ak
+         66LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WhvIKiAZ62YDlD1oWveLP+fNPkAUs0qLIZB4yIs6/dg=;
+        b=P5LS8wg8gDkCNrPYzO9ASrwsXcXiCu5BrkcfS4IUVceqaoB/v4hDpc9LOzloW/XPgW
+         38FCXUso1UQWWwhw/MDkgseqqGMZpIFxKNARiu0sadcPOOZCi0IpUl4dBtZwEyT/6HZx
+         hZm6Kc+6iDESKy5GlYnv4PRYvJd0yrUljGKihtDa0O7Wixm5p5+RB6h2K6CXoyqOREni
+         IfQZKyAPZnbE3WNT9FzSMHPXJUdh/BE5iIv7nl0ZIx/vO70QAI2Sb6LwODSHku54I8eF
+         iPhepnOrLgWrMhiCfZclfWcnevaQOAlIDieaVdwWT57uEiZWj2N8pvxypFvZWkszb3Mw
+         A2EQ==
+X-Gm-Message-State: ANhLgQ2ZVBIptdxvMj2mYh+SRgIirA/PKO4VpNu/Rv/cCFZPQ+WPZVGz
+        bAYoVYO/4B6CUOnW6E64lJga8O7M
+X-Google-Smtp-Source: ADFU+vs1bNwqTVCuFgh6LE546VHpMUSdu5Q9jb1K8Wh8hI7LsW3Q99gMy03oWAW0Bf9aW5kCaNsUww==
+X-Received: by 2002:a17:902:aa97:: with SMTP id d23mr15465999plr.244.1585625302223;
+        Mon, 30 Mar 2020 20:28:22 -0700 (PDT)
+Received: from VM_0_35_centos.localdomain ([150.109.62.251])
+        by smtp.gmail.com with ESMTPSA id v59sm761223pjb.26.2020.03.30.20.28.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Mar 2020 20:28:21 -0700 (PDT)
+From:   Qiujun Huang <hqjagain@gmail.com>
+To:     ath9k-devel@qca.qualcomm.com, kvalo@codeaurora.org
+Cc:     davem@davemloft.net, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        anenbupt@gmail.com, Qiujun Huang <hqjagain@gmail.com>
+Subject: [PATCH] ath9k: fix stack-out-of-bounds Write in ath9k_hif_usb_rx_cb
+Date:   Tue, 31 Mar 2020 11:28:16 +0800
+Message-Id: <1585625296-31013-1-git-send-email-hqjagain@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 03:53:29PM -0500, Bjorn Helgaas wrote:
-> On Mon, Mar 30, 2020 at 3:39 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote> > In commit
-> >
-> >   fb3ffadca55a ("PCI: pciehp: Fix indefinite wait on sysfs requests")
-> >
-> > Fixes tag
-> >
-> >   Fixes: 54ecb8f7028c ("PCI: pciehp: Avoid returning prematurely from sysfs requests")
-> >
-> > has these problem(s):
-> >
-> >   - Subject does not match target commit subject
-> >     Just use
-> >         git log -1 --format='Fixes: %h ("%s")'
-> >
-> > Did you mean
-> >
-> > (probably not :-))
-> > Fixes: 54ecb8f7028c ("Linux 5.4-rc1")
-> >
-> > or
-> >
-> > Fixes: 157c1062fcd8 ("PCI: pciehp: Avoid returning prematurely from sysfs requests")
-> 
-> Fixed, thanks!
+Add barrier to accessing the stack array skb_pool.
 
-Ugh, sorry about that.
+Reported-by: syzbot+d403396d4df67ad0bd5f@syzkaller.appspotmail.com
+Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+---
+ drivers/net/wireless/ath/ath9k/hif_usb.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-In case you're not aware, it's only fixed on your next branch,
-not on the pci/hotplug branch.
+diff --git a/drivers/net/wireless/ath/ath9k/hif_usb.c b/drivers/net/wireless/ath/ath9k/hif_usb.c
+index dd0c323..c4a2b72 100644
+--- a/drivers/net/wireless/ath/ath9k/hif_usb.c
++++ b/drivers/net/wireless/ath/ath9k/hif_usb.c
+@@ -612,6 +612,11 @@ static void ath9k_hif_usb_rx_stream(struct hif_device_usb *hif_dev,
+ 			hif_dev->remain_skb = nskb;
+ 			spin_unlock(&hif_dev->rx_lock);
+ 		} else {
++			if (pool_index == MAX_PKT_NUM_IN_TRANSFER) {
++				dev_err(&hif_dev->udev->dev,
++					"ath9k_htc: over RX MAX_PKT_NUM\n");
++				goto err;
++			}
+ 			nskb = __dev_alloc_skb(pkt_len + 32, GFP_ATOMIC);
+ 			if (!nskb) {
+ 				dev_err(&hif_dev->udev->dev,
+-- 
+1.8.3.1
 
-Thanks,
-
-Lukas
