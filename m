@@ -2,167 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D5E4199E35
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:39:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36D79199E3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:41:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbgCaSjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 14:39:41 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34279 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbgCaSjl (ORCPT
+        id S1728225AbgCaSkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 14:40:33 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:39814 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbgCaSkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:39:41 -0400
-Received: by mail-pg1-f194.google.com with SMTP id l14so3604230pgb.1
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:39:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SHbm0jKU3Qf278+OR+FaPiESB5wVrt4XPcJB5hVkN60=;
-        b=gzp6usWwaOaYw59h8kIkVvyKdywVJuZ3NJfd1wircVTJnmvJhRmmVES8Jd/uck+Hcj
-         ihI+fmLC9r0Fv+rle/XhuJNKG4Dhm3WrAd9b6Gcf22o9h5fjVyDFOPWL42kso1BjM5Ur
-         Aq4LNX5vpl4l7pUG4lJYmg9K8myTVDTRz/3Cb/ZLxtzl1N75YXTh7ZwYDQZnWSqTNFQ2
-         0UxAU/6LqBe2UKoLTLyqYslEIfZlCWGgoUmL1E1HN9bAfYM2qIEUaUNBIbaIBGOWuojs
-         YP2RcDR7MZJsyWmuOefOtp80GgmLixZ4eEUTEQOEyE4nnUkCANBzKbPpgq7dBHmtW9D1
-         N1yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SHbm0jKU3Qf278+OR+FaPiESB5wVrt4XPcJB5hVkN60=;
-        b=XODclHaD8Eue349bGJ4BUiCwHx95IHU19r1Sb+RgPZpCU1G4iIDhnukeLhF64tyVbZ
-         ePt40Mv7XGMYyy+tpFSIg3zQBi9H7fUmo5g4Fs0amnJJypPYdn1OY8JGhRh40gaeWzdb
-         s68XSqzdO/y0QmMDOwTSXRrcv1IeC9pPxQYxMg5ffZx6+l+fLIZYtH7ylxoHTi3eTNfO
-         b+VnMEQTEUjzP5BUIl5lc1QJ5CXBvbBnyLh8I71sCws0czUaOzmXHoDzsvpKRm59/+4k
-         UQ3rgZaI/V0pVdSV5eToPXFN3qO9xgzp30hIQCE1zLyNNHfzUj3tG1/1pwjtq7LlZAxf
-         /eqw==
-X-Gm-Message-State: ANhLgQ2N00qLvmzpS+iuFS4xAM1vA97n/0heNn7BwZg4Pepzpm5hALvb
-        6gENJKyY6uycA5cO8BW7P/eTYch+HELiUMk8GKQDrASKskY=
-X-Google-Smtp-Source: ADFU+vt+QKSB0svWikbyaxQU/tNYV7l0CyBNJzadXZUr6nAWWVA3ubW5u0JpCnXSlSUZLq70aMKxIv46KBrhiN7BU4s=
-X-Received: by 2002:a63:4e22:: with SMTP id c34mr19536884pgb.263.1585679979479;
- Tue, 31 Mar 2020 11:39:39 -0700 (PDT)
+        Tue, 31 Mar 2020 14:40:33 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02VIdgJd195343;
+        Tue, 31 Mar 2020 18:40:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ cc : references : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=Jx62qSdiTH7cXFTayvG3Y2qZ2IfJGs/x+XwHBSHDsyI=;
+ b=SPyDMkSBnWmhCjwlGEk2EHZRpKMTiObfq5i/OK7A+oGIo/JTXpedeOLCnDzK+9u30PUJ
+ XoCqy5xO8neh3BP0cSXU00SYBQg9HUh3vopHlfIMuAaFGGFmU+exe0g1uhs3KToiXgLH
+ hfMTX9WYf6eLOgOlZ7KzjoKzuwtZNqra7TydsyAVpCQwqxvjrGDzOIzly9DaJHvBmIs+
+ p1c37l5X/GrWQRNgunlCfxwZpHDR05yqDxCYLZpuJf1VAF9GP0OFxtsx27whs7V8EfHi
+ mF5QK7mZdD01Yt9i6gkzyiv0OXZAqV5+uU0APfCH72T87rw6+/GU0nxYftRLiuw5DAp9 wQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 303yun3wdy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Mar 2020 18:40:13 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02VIb89G107708;
+        Tue, 31 Mar 2020 18:40:12 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 302gcdcabh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Mar 2020 18:40:12 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02VIe8NG027868;
+        Tue, 31 Mar 2020 18:40:08 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 31 Mar 2020 11:40:08 -0700
+Subject: Re: [PATCH v2 1/2] hugetlbfs: use i_mmap_rwsem for more pmd sharing
+ synchronization
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     linux-mm <linux-mm@kvack.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A.Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        lkft-triage@lists.linaro.org
+References: <20200316205756.146666-1-mike.kravetz@oracle.com>
+ <20200316205756.146666-2-mike.kravetz@oracle.com>
+ <CA+G9fYvopJ7v2w3+8Qb+ov_Ji30=mW-DJceZfUOtHFKFMWod8Q@mail.gmail.com>
+ <CA+G9fYsJgZhhWLMzUxu_ZQ+THdCcJmFbHQ2ETA_YPP8M6yxOYA@mail.gmail.com>
+ <74d61fb3-6750-e9c4-0b42-8d811d418091@oracle.com>
+Message-ID: <650eb515-0e5a-c20e-39f1-6c08da71e7d5@oracle.com>
+Date:   Tue, 31 Mar 2020 11:40:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-References: <20200317202404.GA20746@ubuntu-m2-xlarge-x86> <20200317215515.226917-1-ndesaulniers@google.com>
- <20200327224246.GA12350@ubuntu-m2-xlarge-x86> <CAK7LNAShb1gWuZyycLAGWm19EWn17zeNcmdPyqu1o=K9XrfJbg@mail.gmail.com>
- <CAK7LNAQ3=jUu4aa=JQB8wErUGDd-Vr=cX_yZSdP_uAP6kWZ=pw@mail.gmail.com>
- <CAKwvOd=5AG1ARw6JUXmkuiftuShuYHKLk0ZnueuLhvOdMr5dOA@mail.gmail.com>
- <20200330190312.GA32257@ubuntu-m2-xlarge-x86> <CAK7LNAT1HoV5wUZRdeU0+P1nYAm2xQ4tpOG+7UtT4947QByakg@mail.gmail.com>
-In-Reply-To: <CAK7LNAT1HoV5wUZRdeU0+P1nYAm2xQ4tpOG+7UtT4947QByakg@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 31 Mar 2020 11:39:27 -0700
-Message-ID: <CAKwvOd==U6NvvYz8aUz8fUNdvz27pKrn8X5205rFadpGXzRC-Q@mail.gmail.com>
-Subject: Re: [PATCH v2] Makefile.llvm: simplify LLVM build
-To:     Masahiro Yamada <masahiroy@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Cc:     clang-built-linux <clang-built-linux@googlegroups.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sandeep Patil <sspatil@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <74d61fb3-6750-e9c4-0b42-8d811d418091@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9577 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 adultscore=0 suspectscore=0 phishscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003310155
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9577 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 lowpriorityscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
+ suspectscore=0 mlxscore=0 spamscore=0 impostorscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003310154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 11:25 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> On Tue, Mar 31, 2020 at 4:03 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > On Mon, Mar 30, 2020 at 11:58:19AM -0700, Nick Desaulniers wrote:
-> > > On Sat, Mar 28, 2020 at 6:57 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > > >
-> > > > I also had planned to provide a single switch to change
-> > > > all the tool defaults to LLVM.
-> > > >
-> > > > So, supporting 'LLVM' is fine, but I'd rather want this
-> > > > look symmetrical, and easy to understand.
-> > > >
-> > > > CPP        = $(CC) -E
-> > > > ifneq ($(LLVM),)
-> > >
-> > > Yes, a simple if statement is much simpler than the overly complex patch I had.
-> > >
-> > > > CC         = $(LLVM_DIR)clang
-> > >
-> > > Do we need $LLVM_DIR? Shouldn't users just have that in their $PATH?
-> > >
-> > > Also, I think we need to support suffixed binaries, as debian
-> > > distributes these with version suffixes, as Nathan points out.  Or do
-> > > the debian packages install suffixed binaries AND path versioned
-> > > non-suffixed binaries?
-> >
-> > I think the idea here is that ultimately, the suffixed versions of clang
-> > that Debian has in /usr/bin are symlinks to binaries in
-> > /usr/lib/llvm-#/bin; as a result, a user could say
-> > LLVM_DIR=/usr/lib/llvm-#/bin/ and all of those tools would be picked up
-> > automatically. I am not really sure what is better.
+On 3/30/20 4:35 PM, Mike Kravetz wrote:
+> On 3/30/20 7:01 AM, Naresh Kamboju wrote:
+>> FYI,
+>>
+>> The device is x86_64 device running i386 kernel image.
+>>
+>> - Naresh
+>>
+>> On Mon, 30 Mar 2020 at 19:00, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>>>
+>>> On i386 running LTP hugetlb tests found kernel BUG at fs/hugetlbfs/inode.c:458
+>>> Running Linux version 5.6.0-rc7-next-20200330
+>>> And hugemmap test failed due to ENOMEM.
+>>>
+>>> steps to reproduce:
+>>>         # cd /opt/ltp
+>>>         # ./runltp -f hugetlb
+> 
+> It took me a while to set up an environment to reproduce.  I was finally
+> able to reproduce on an x86_64 VM running a 32 bit OS/5.6.0-rc7-next-20200330
+> kernel.
+> 
+> My first attempt with PAE enabled and 8GB of memory did not reproduce.  When
+> I disabled PAE and dropped memory to 4GB, the problem reproduced.
+> 
+> After reverting this patch, and the followup in the series I was still able
+> to recreate the issue.  So, the patches are not the root cause.
+> 
+> One 'interesting' thing are the messages,
+> mm/pgtable-generic.c:50: bad pgd ...
+> These show up before the hugetlbfs BUG.
+> 
+> I will continue to investigate.  However, if the 'bad pgd ..' message provides
+> a hint to someone please let us know.
 
-$ sudo apt install clang-8
-$ which clang-8
-/usr/bin/clang-8
-$ ls -l `!!`
-/usr/bin/clang-8 -> ../lib/llvm-8/bin/clang
-$ ls /usr/lib/llvm-8/bin
-<non suffixed versions>
+As mentioned in another thread, the root cause for this issue is patch:
 
-Ok, so Nathan, it looks like we don't need the version suffixes.
-Instead, we can be more explicit with our $PATH, and only add the
-above (and bintutils).  I was thinking supporting the suffix was
-required for our CI, but it seems like maybe not.
+mm/hugetlb: fix a addressing exception caused by huge_pte_offset
 
-> I periodically build the latest llvm from the trunk,
-> and install it under my home directory.
-> So, I just thought it would be useful to
-> allow a user to specify the llvm directory.
-> Of course, I can do the equivalent by tweaking PATH, but
-> I hesitate to make the non-released version my default.
+Andrew should be removing this from the mm tree.
 
-Respectfully, I strongly disagree.  This should be handled by
-modifications to $PATH, either by your shell's .rc file when you
-always want it, or exported for a session when you want it, or
-prefixed to an invocation for the duration of that command.  We should
-not have a new variable just for the path of a few tools.
+While looking at this issue, I noticed something else.  With earlier linux-next
+i386 non-PAE kernels, I could run the ltp tests './runltp -f hugetlb' without
+issue.  However, if I then did something like compile the kernel I would get
+MCE errors such as:
 
-Rather than `make LLVM_DIR=~/llvm-project LLVM=1`, you can do
-`PATH=$PATH:~/llvm-project make LLVM=1`. (or export it manually or via
-your shell .rc, depending on how comfortable you are with that
-version).
+[  655.771878] MCE: Killing ld:14278 due to hardware memory corruption fault at 27d5284
+[  657.781429] get_swap_device: Bad swap file entry 700374d0
+[  657.782311] BUG: kernel NULL pointer dereference, address: 00000000
+[  657.783384] #PF: supervisor read access in kernel mode
+[  657.784088] #PF: error_code(0x0000) - not-present page
+[  657.784985] *pde = 00000000 
+[  657.785490] Oops: 0000 [#1] SMP
+[  657.785995] CPU: 3 PID: 14278 Comm: ld Not tainted 5.6.0-rc7-next-20200330+ #3
+[  657.787116] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20190727_073836-buildvm-ppc64le-16.ppc.fedoraproject.org-3.fc31 04/01/2014
+[  657.789234] EIP: do_swap_page+0x40a/0x8a0
+[  657.789862] Code: ba 70 24 2d da e8 26 90 ff ff 0f 0b 8d 74 26 00 89 fe c7 45 e4 10 00 00 00 e9 be fc ff ff 66 90 8b 75 e0 89 f0 e8 b6 0e 02 00 <8b> 00 f6 c4 10 0f 84 c3 00 00 00 89 f0 e8 84 df 01 00 83 f8 01 0f
+[  657.792813] EAX: 00000000 EBX: ed3adc08 ECX: f6ff12c0 EDX: 00000001
+[  657.793895] ESI: 700374d0 EDI: 00000000 EBP: ed3adbec ESP: ed3adbb4
+[  657.794935] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010246
+[  657.796084] CR0: 80050033 CR2: 00000000 CR3: 362c3000 CR4: 00140ed0
+[  657.797099] Call Trace:
+[  657.797496]  ? pipe_write+0x33f/0x530
+[  657.798092]  handle_mm_fault+0x3c8/0xb70
+[  657.798658]  ? remove_wait_queue+0x50/0x50
+[  657.799218]  __get_user_pages+0x12d/0x460
+[  657.799766]  get_dump_page+0x3c/0x60
+[  657.800251]  ? kunmap_high+0x1c/0xb0
+[  657.800776]  elf_core_dump+0x12e3/0x13c0
+[  657.801349]  ? newidle_balance+0xaa/0x440
+[  657.801896]  do_coredump+0x532/0xe60
+[  657.802410]  ? wake_up_state+0xf/0x20
+[  657.802952]  ? signal_wake_up_state+0x22/0x30
+[  657.803591]  get_signal+0x130/0x800
+[  657.804103]  do_signal+0x23/0x5b0
+[  657.804582]  ? mm_fault_error+0x18b/0x190
+[  657.805165]  exit_to_usermode_loop+0x7d/0xe0
+[  657.805776]  ? kvm_async_pf_task_wake+0xe0/0xe0
+[  657.806421]  prepare_exit_to_usermode+0x67/0xb0
+[  657.807093]  ret_from_exception+0x18/0x1d
+[  657.807778] EIP: 0xb7d028aa
+[  657.808266] Code: 55 57 56 53 e8 6e 40 0c 00 81 c3 77 b7 15 00 83 ec 2c 8b 83 60 ff ff ff 8b 4c 24 40 8b 00 85 c0 0f 85 da 00 00 00 85 c9 74 29 <8b> 71 fc 8d 51 f8 f7 c6 02 00 00 00 75 28 83 e6 04 8d 83 60 07 00
+[  657.810957] EAX: 00000000 EBX: b7e5e000 ECX: 027d5288 EDX: 027d5288
+[  657.811859] ESI: 0f61c7b0 EDI: 00000000 EBP: b7e5e000 ESP: bfa70850
+[  657.812752] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00010206
+[  657.813646] Modules linked in: ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_broute ebtable_nat ip6table_security ip6table_raw ip6table_mangle ip6table_nat iptable_security iptable_raw iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 libcrc32c nf_defrag_ipv4 ebtable_filter ebtables ip6table_filter ip6_tables sunrpc snd_hda_codec_generic snd_hda_intel snd_intel_dspcfg snd_hda_codec snd_hwdep snd_hda_core kvm_intel kvm snd_seq joydev snd_seq_device snd_pcm irqbypass crc32_pclmul snd_timer snd i2c_piix4 virtio_balloon soundcore virtio_net net_failover qxl failover virtio_console drm_ttm_helper ttm drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm 8139too virtio_pci ata_generic crc32c_intel virtio_ring pata_acpi 8139cp serio_raw virtio mii qemu_fw_cfg
+[  657.823564] CR2: 0000000000000000
+[  657.824065] ---[ end trace 3bb3cde8ebb1e195 ]---
+[  657.824722] EIP: do_swap_page+0x40a/0x8a0
+[  657.825734] Code: ba 70 24 2d da e8 26 90 ff ff 0f 0b 8d 74 26 00 89 fe c7 45 e4 10 00 00 00 e9 be fc ff ff 66 90 8b 75 e0 89 f0 e8 b6 0e 02 00 <8b> 00 f6 c4 10 0f 84 c3 00 00 00 89 f0 e8 84 df 01 00 83 f8 01 0f
+[  657.830314] EAX: 00000000 EBX: ed3adc08 ECX: f6ff12c0 EDX: 00000001
+[  657.831477] ESI: 700374d0 EDI: 00000000 EBP: ed3adbec ESP: ed3adbb4
+[  657.832689] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010246
+[  657.834071] CR0: 80050033 CR2: 00000000 CR3: 362c3000 CR4: 00140ed0
+[  907.190369] MCE: Killing pool:14285 due to hardware memory corruption fault at b46031fc
 
-> Having both LLVM_DIR and LLVM_SUFFIX seems verbose.
-
-I agree, so maybe just LLVM=y, and we can support both non-standard
-locations and debian suffixes via modifications to PATH.
-
->
-> In fact, the debian provides multiple versions of GCC.
-> For example, my machine has
->
-> masahiro@pug:~$ ls -1 /usr/bin/gcc-*
-> /usr/bin/gcc-4.8
-> /usr/bin/gcc-5
-> /usr/bin/gcc-7
-> /usr/bin/gcc-ar
-> /usr/bin/gcc-ar-4.8
-> /usr/bin/gcc-ar-5
-> /usr/bin/gcc-ar-7
-> /usr/bin/gcc-nm
-> /usr/bin/gcc-nm-4.8
-> /usr/bin/gcc-nm-5
-> /usr/bin/gcc-nm-7
-> /usr/bin/gcc-ranlib
-> /usr/bin/gcc-ranlib-4.8
-> /usr/bin/gcc-ranlib-5
-> /usr/bin/gcc-ranlib-7
->
-> But, nobody has suggested GCC_SUFFIX.
->
-> So, I guess CROSS_COMPILE was enough to
-> choose a specific tool version.
-
-Or no one was testing specific versions of gcc with more than one
-installed.  I can ask the KernelCI folks next week if this is an issue
-they face or have faced.
+This does not happen on v5.6.  So, I 'think' there is something specifically
+in next causing the issue.  It happens on earlier versions of next before
+these hugetlbfs patches.  I am trying to isolate this some more, but any help
+would be appreciated.
 -- 
-Thanks,
-~Nick Desaulniers
+Mike Kravetz
