@@ -2,174 +2,599 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB36419A165
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8221619A16B
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:56:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731463AbgCaV4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 17:56:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49516 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727955AbgCaV4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 17:56:15 -0400
-Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E505E2080C;
-        Tue, 31 Mar 2020 21:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585691773;
-        bh=I7g82WOn2+w62dXVYLDS5KJARvjoUM1nFMd8ENdLyAM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=rLVhJzgGct7D8QUiQUCK1fbc0Awb7iJWxjKn9+cY0GRUR9KYSdgx67iH8Mp1xJdKN
-         T4NpYlYf+hIGlB5923i5gqpPxNFmXMRVmrcJbWMDCvgTX8RyW45oYyrKZQWfjuysgT
-         9abL0Zllin7FiYYTuB+m4tiH1AIOhzVfs7KPVp6s=
-Subject: Re: [PATCH 4/5] dt-bindings: documentation: add clock bindings
- information for Agilex
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, mark.rutland@arm.com
-References: <20200320170212.21523-1-dinguyen@kernel.org>
- <20200320170212.21523-5-dinguyen@kernel.org> <20200331172356.GA17436@bogus>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <1904132c-9211-6c23-028a-45788a55e420@kernel.org>
-Date:   Tue, 31 Mar 2020 16:56:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1731511AbgCaV4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 17:56:39 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54312 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727955AbgCaV4h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 17:56:37 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02VLbIle089310
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 17:56:34 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3043g7m209-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 17:56:34 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 31 Mar 2020 22:56:21 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 31 Mar 2020 22:56:13 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02VLtJmT42795368
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Mar 2020 21:55:19 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A6C63A4051;
+        Tue, 31 Mar 2020 21:56:22 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2540EA4040;
+        Tue, 31 Mar 2020 21:56:20 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.148.207.69])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 31 Mar 2020 21:56:20 +0000 (GMT)
+Date:   Wed, 1 Apr 2020 00:56:18 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Hoan Tran <Hoan@os.amperecomputing.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        lho@amperecomputing.com, mmorana@amperecomputing.com
+Subject: [PATCH RFC] mm: remove CONFIG_HAVE_MEMBLOCK_NODE_MAP (was: Re:
+ [PATCH v3 0/5] mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by default for NUMA)
+References: <1585420282-25630-1-git-send-email-Hoan@os.amperecomputing.com>
+ <20200330074246.GA14243@dhcp22.suse.cz>
+ <20200330092127.GB30942@linux.ibm.com>
+ <20200330095843.GF14243@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20200331172356.GA17436@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200330095843.GF14243@dhcp22.suse.cz>
+X-TM-AS-GCONF: 00
+x-cbid: 20033121-0008-0000-0000-000003680987
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20033121-0009-0000-0000-00004A898F63
+Message-Id: <20200331215618.GG30942@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0 clxscore=1011
+ phishscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 mlxscore=0
+ suspectscore=5 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003310171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 3/31/20 12:23 PM, Rob Herring wrote:
-> On Fri, Mar 20, 2020 at 12:02:10PM -0500, Dinh Nguyen wrote:
->> Document the Agilex clock bindings, and add the clock header file. The
->> clock header is an enumeration of all the different clocks on the Agilex
->> platform.
->>
->> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
->> ---
->> v4: really fix build error(comment formatting was wrong)
->> v3: address comments from Stephen Boyd
->>     fix build error(tab removed in line 37)
->>     renamed to intel,agilex.yaml
->> v2: convert original document to YAML
->> ---
->>  .../bindings/clock/intel,agilex.yaml          | 36 ++++++++++
->>  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
->>  2 files changed, 106 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
->>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/intel,agilex.yaml b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
->> new file mode 100644
->> index 000000000000..5cf2ee5d6fcc
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
->> @@ -0,0 +1,36 @@
->> +# SPDX-License-Identifier: GPL-2.0
+On Mon, Mar 30, 2020 at 11:58:43AM +0200, Michal Hocko wrote:
 > 
-> Dual license new bindings please:
-> 
-> (GPL-2.0-only OR BSD-2-Clause)
-> 
+> What would it take to make ia64 use HAVE_MEMBLOCK_NODE_MAP? I would
+> really love to see that thing go away. It is causing problems when
+> people try to use memblock api.
 
-Okay...
+Well, it's a small patch in the end :)
 
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/intel,agilex.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Intel SoCFPGA Agilex platform clock controller binding
->> +
->> +maintainers:
->> +  - Dinh Nguyen <dinguyen@kernel.org>
->> +
->> +description:
->> +  The Intel Agilex Clock controller is an integrated clock controller, which
->> +  generates and supplies to all modules.
->> +
->> +properties:
->> +  compatible:
->> +    const: intel,agilex-clkmgr
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - '#clock-cells'
-> 
-> Add:
-> 
-> additionalProperties: false
-> 
+Currently all NUMA architectures currently enable
+CONFIG_HAVE_MEMBLOCK_NODE_MAP and use free_area_init_nodes() to initialize
+nodes and zones structures.
 
-Okay..
+On the other hand, the systems that don't have
+CONFIG_HAVE_MEMBLOCK_NODE_MAP use free_area_init() or free_area_init_node()
+for this purpose.
 
->> +
->> +examples:
->> +  # Clock controller node:
->> +  - |
->> +    clkmgr: clock-controller@ffd10000 {
->> +      compatible = "intel,agilex-clkmgr";
->> +      reg = <0xffd10000 0x1000>;
->> +      #clock-cells = <1>;
-> 
-> No clock inputs?
-> 
+With this assumptions, it's possible to make selection of the functions
+that calculate spanned and absent pages at runtime.
 
-The clock controller is fed the onboard OSC1. So yes, I'll update it.
+This patch builds for arm and x86-64 and boots on qemu-system for both.
 
-Dinh
+From f907df987db4d6735c4940b30cfb4764fc0007d4 Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.ibm.com>
+Date: Wed, 1 Apr 2020 00:27:17 +0300
+Subject: [PATCH RFC] mm: remove CONFIG_HAVE_MEMBLOCK_NODE_MAP option
+
+The CONFIG_HAVE_MEMBLOCK_NODE_MAP is used to differentiate initialization
+of nodes and zones structures between the systems that have region to node
+mapping in memblock and those that don't.
+
+Currently all the NUMA architectures enable this option and for the
+non-NUMA systems we can presume that all the memory belongs to node 0 and
+therefore the compile time configuration option is not required.
+
+Still, free_area_init_node() must have a backward compatible version
+because its semantics with and without CONFIG_HAVE_MEMBLOCK_NODE_MAP is
+different. Once all the architectures will be converted from
+free_area_init() and free_area_init_node() to free_area_init_nodes(), the
+entire compatibility layer can be dropped.
+
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ include/linux/memblock.h |  15 ------
+ include/linux/mm.h       |  16 +-----
+ include/linux/mmzone.h   |  13 -----
+ mm/memblock.c            |   9 +---
+ mm/memory_hotplug.c      |   4 --
+ mm/page_alloc.c          | 103 ++++++++++++++++++++++-----------------
+ 6 files changed, 61 insertions(+), 99 deletions(-)
+
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index 079d17d96410..9de81112447e 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -50,9 +50,7 @@ struct memblock_region {
+ 	phys_addr_t base;
+ 	phys_addr_t size;
+ 	enum memblock_flags flags;
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 	int nid;
+-#endif
+ };
+ 
+ /**
+@@ -215,7 +213,6 @@ static inline bool memblock_is_nomap(struct memblock_region *m)
+ 	return m->flags & MEMBLOCK_NOMAP;
+ }
+ 
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ int memblock_search_pfn_nid(unsigned long pfn, unsigned long *start_pfn,
+ 			    unsigned long  *end_pfn);
+ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
+@@ -234,7 +231,6 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
+ #define for_each_mem_pfn_range(i, nid, p_start, p_end, p_nid)		\
+ 	for (i = -1, __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid); \
+ 	     i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
+-#endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ 
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+ void __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+@@ -310,7 +306,6 @@ void __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+ 	for_each_mem_range_rev(i, &memblock.memory, &memblock.reserved,	\
+ 			       nid, flags, p_start, p_end, p_nid)
+ 
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ int memblock_set_node(phys_addr_t base, phys_addr_t size,
+ 		      struct memblock_type *type, int nid);
+ 
+@@ -323,16 +318,6 @@ static inline int memblock_get_region_node(const struct memblock_region *r)
+ {
+ 	return r->nid;
+ }
+-#else
+-static inline void memblock_set_region_node(struct memblock_region *r, int nid)
+-{
+-}
+-
+-static inline int memblock_get_region_node(const struct memblock_region *r)
+-{
+-	return 0;
+-}
+-#endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ 
+ /* Flags for memblock allocation APIs */
+ #define MEMBLOCK_ALLOC_ANYWHERE	(~(phys_addr_t)0)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c54fb96cb1e6..368a45d4696a 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2125,9 +2125,8 @@ static inline unsigned long get_num_physpages(void)
+ 	return phys_pages;
+ }
+ 
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ /*
+- * With CONFIG_HAVE_MEMBLOCK_NODE_MAP set, an architecture may initialise its
++ * Using memblock node mappings, an architecture may initialise its
+  * zones, allocate the backing mem_map and account for memory holes in a more
+  * architecture independent manner. This is a substitute for creating the
+  * zone_sizes[] and zholes_size[] arrays and passing them to
+@@ -2148,9 +2147,6 @@ static inline unsigned long get_num_physpages(void)
+  * registered physical page range.  Similarly
+  * sparse_memory_present_with_active_regions() calls memory_present() for
+  * each range when SPARSEMEM is enabled.
+- *
+- * See mm/page_alloc.c for more information on each function exposed by
+- * CONFIG_HAVE_MEMBLOCK_NODE_MAP.
+  */
+ extern void free_area_init_nodes(unsigned long *max_zone_pfn);
+ unsigned long node_map_pfn_alignment(void);
+@@ -2165,22 +2161,12 @@ extern void free_bootmem_with_active_regions(int nid,
+ 						unsigned long max_low_pfn);
+ extern void sparse_memory_present_with_active_regions(int nid);
+ 
+-#endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ 
+-#if !defined(CONFIG_HAVE_MEMBLOCK_NODE_MAP) && \
+-    !defined(CONFIG_HAVE_ARCH_EARLY_PFN_TO_NID)
+-static inline int __early_pfn_to_nid(unsigned long pfn,
+-					struct mminit_pfnnid_cache *state)
+-{
+-	return 0;
+-}
+-#else
+ /* please see mm/page_alloc.c */
+ extern int __meminit early_pfn_to_nid(unsigned long pfn);
+ /* there is a per-arch backend function. */
+ extern int __meminit __early_pfn_to_nid(unsigned long pfn,
+ 					struct mminit_pfnnid_cache *state);
+-#endif
+ 
+ extern void set_dma_reserve(unsigned long new_dma_reserve);
+ extern void memmap_init_zone(unsigned long, int, unsigned long, unsigned long,
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 462f6873905a..4422d1961d0e 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -917,11 +917,7 @@ extern int movable_zone;
+ #ifdef CONFIG_HIGHMEM
+ static inline int zone_movable_is_highmem(void)
+ {
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 	return movable_zone == ZONE_HIGHMEM;
+-#else
+-	return (ZONE_MOVABLE - 1) == ZONE_HIGHMEM;
+-#endif
+ }
+ #endif
+ 
+@@ -1121,15 +1117,6 @@ static inline struct zoneref *first_zones_zonelist(struct zonelist *zonelist,
+ #include <asm/sparsemem.h>
+ #endif
+ 
+-#if !defined(CONFIG_HAVE_ARCH_EARLY_PFN_TO_NID) && \
+-	!defined(CONFIG_HAVE_MEMBLOCK_NODE_MAP)
+-static inline unsigned long early_pfn_to_nid(unsigned long pfn)
+-{
+-	BUILD_BUG_ON(IS_ENABLED(CONFIG_NUMA));
+-	return 0;
+-}
+-#endif
+-
+ #ifdef CONFIG_FLATMEM
+ #define pfn_to_nid(pfn)		(0)
+ #endif
+diff --git a/mm/memblock.c b/mm/memblock.c
+index eba94ee3de0b..819441133a21 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -620,9 +620,7 @@ static int __init_memblock memblock_add_range(struct memblock_type *type,
+ 		 * area, insert that portion.
+ 		 */
+ 		if (rbase > base) {
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 			WARN_ON(nid != memblock_get_region_node(rgn));
+-#endif
+ 			WARN_ON(flags != rgn->flags);
+ 			nr_new++;
+ 			if (insert)
+@@ -1197,7 +1195,6 @@ void __init_memblock __next_mem_range_rev(u64 *idx, int nid,
+ 	*idx = ULLONG_MAX;
+ }
+ 
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ /*
+  * Common iterator interface used to define for_each_mem_pfn_range().
+  */
+@@ -1258,7 +1255,7 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
+ 	memblock_merge_regions(type);
+ 	return 0;
+ }
+-#endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
++
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+ /**
+  * __next_mem_pfn_range_in_zone - iterator for for_each_*_range_in_zone()
+@@ -1797,7 +1794,6 @@ bool __init_memblock memblock_is_map_memory(phys_addr_t addr)
+ 	return !memblock_is_nomap(&memblock.memory.regions[i]);
+ }
+ 
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ int __init_memblock memblock_search_pfn_nid(unsigned long pfn,
+ 			 unsigned long *start_pfn, unsigned long *end_pfn)
+ {
+@@ -1812,7 +1808,6 @@ int __init_memblock memblock_search_pfn_nid(unsigned long pfn,
+ 
+ 	return type->regions[mid].nid;
+ }
+-#endif
+ 
+ /**
+  * memblock_is_region_memory - check if a region is a subset of memory
+@@ -1903,11 +1898,9 @@ static void __init_memblock memblock_dump(struct memblock_type *type)
+ 		size = rgn->size;
+ 		end = base + size - 1;
+ 		flags = rgn->flags;
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 		if (memblock_get_region_node(rgn) != MAX_NUMNODES)
+ 			snprintf(nid_buf, sizeof(nid_buf), " on node %d",
+ 				 memblock_get_region_node(rgn));
+-#endif
+ 		pr_info(" %s[%#x]\t[%pa-%pa], %pa bytes%s flags: %#x\n",
+ 			type->name, idx, &base, &end, &size, nid_buf, flags);
+ 	}
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 19389cdc16a5..dc8828b087bf 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1366,11 +1366,7 @@ check_pages_isolated_cb(unsigned long start_pfn, unsigned long nr_pages,
+ 
+ static int __init cmdline_parse_movable_node(char *p)
+ {
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 	movable_node_enabled = true;
+-#else
+-	pr_warn("movable_node parameter depends on CONFIG_HAVE_MEMBLOCK_NODE_MAP to work properly\n");
+-#endif
+ 	return 0;
+ }
+ early_param("movable_node", cmdline_parse_movable_node);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 3c4eb750a199..84a69d6e7e61 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -335,7 +335,6 @@ static unsigned long nr_kernel_pages __initdata;
+ static unsigned long nr_all_pages __initdata;
+ static unsigned long dma_reserve __initdata;
+ 
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ static unsigned long arch_zone_lowest_possible_pfn[MAX_NR_ZONES] __initdata;
+ static unsigned long arch_zone_highest_possible_pfn[MAX_NR_ZONES] __initdata;
+ static unsigned long required_kernelcore __initdata;
+@@ -348,7 +347,6 @@ static bool mirrored_kernelcore __meminitdata;
+ /* movable_zone is the "real" zone pages in ZONE_MOVABLE are taken from */
+ int movable_zone;
+ EXPORT_SYMBOL(movable_zone);
+-#endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ 
+ #if MAX_NUMNODES > 1
+ unsigned int nr_node_ids __read_mostly = MAX_NUMNODES;
+@@ -1447,9 +1445,6 @@ void __free_pages_core(struct page *page, unsigned int order)
+ 	__free_pages(page, order);
+ }
+ 
+-#if defined(CONFIG_HAVE_ARCH_EARLY_PFN_TO_NID) || \
+-	defined(CONFIG_HAVE_MEMBLOCK_NODE_MAP)
+-
+ static struct mminit_pfnnid_cache early_pfnnid_cache __meminitdata;
+ 
+ int __meminit early_pfn_to_nid(unsigned long pfn)
+@@ -1465,7 +1460,6 @@ int __meminit early_pfn_to_nid(unsigned long pfn)
+ 
+ 	return nid;
+ }
+-#endif
+ 
+ #ifdef CONFIG_NODES_SPAN_OTHER_NODES
+ /* Only safe to use early in boot when initialisation is single-threaded */
+@@ -5828,7 +5822,6 @@ void __ref build_all_zonelists(pg_data_t *pgdat)
+ static bool __meminit
+ overlap_memmap_init(unsigned long zone, unsigned long *pfn)
+ {
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 	static struct memblock_region *r;
+ 
+ 	if (mirrored_kernelcore && zone == ZONE_MOVABLE) {
+@@ -5844,7 +5837,7 @@ overlap_memmap_init(unsigned long zone, unsigned long *pfn)
+ 			return true;
+ 		}
+ 	}
+-#endif
++
+ 	return false;
+ }
+ 
+@@ -6227,7 +6220,6 @@ void __meminit init_currently_empty_zone(struct zone *zone,
+ 	zone->initialized = 1;
+ }
+ 
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ #ifndef CONFIG_HAVE_ARCH_EARLY_PFN_TO_NID
+ 
+ /*
+@@ -6503,8 +6495,7 @@ static unsigned long __init zone_absent_pages_in_node(int nid,
+ 	return nr_absent;
+ }
+ 
+-#else /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+-static inline unsigned long __init zone_spanned_pages_in_node(int nid,
++static inline unsigned long __init compat_zone_spanned_pages_in_node(int nid,
+ 					unsigned long zone_type,
+ 					unsigned long node_start_pfn,
+ 					unsigned long node_end_pfn,
+@@ -6523,7 +6514,7 @@ static inline unsigned long __init zone_spanned_pages_in_node(int nid,
+ 	return zones_size[zone_type];
+ }
+ 
+-static inline unsigned long __init zone_absent_pages_in_node(int nid,
++static inline unsigned long __init compat_zone_absent_pages_in_node(int nid,
+ 						unsigned long zone_type,
+ 						unsigned long node_start_pfn,
+ 						unsigned long node_end_pfn,
+@@ -6535,13 +6526,12 @@ static inline unsigned long __init zone_absent_pages_in_node(int nid,
+ 	return zholes_size[zone_type];
+ }
+ 
+-#endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+-
+ static void __init calculate_node_totalpages(struct pglist_data *pgdat,
+ 						unsigned long node_start_pfn,
+ 						unsigned long node_end_pfn,
+ 						unsigned long *zones_size,
+-						unsigned long *zholes_size)
++						unsigned long *zholes_size,
++						bool compat)
+ {
+ 	unsigned long realtotalpages = 0, totalpages = 0;
+ 	enum zone_type i;
+@@ -6549,17 +6539,38 @@ static void __init calculate_node_totalpages(struct pglist_data *pgdat,
+ 	for (i = 0; i < MAX_NR_ZONES; i++) {
+ 		struct zone *zone = pgdat->node_zones + i;
+ 		unsigned long zone_start_pfn, zone_end_pfn;
++		unsigned long spanned, absent;
+ 		unsigned long size, real_size;
+ 
+-		size = zone_spanned_pages_in_node(pgdat->node_id, i,
+-						  node_start_pfn,
+-						  node_end_pfn,
+-						  &zone_start_pfn,
+-						  &zone_end_pfn,
+-						  zones_size);
+-		real_size = size - zone_absent_pages_in_node(pgdat->node_id, i,
+-						  node_start_pfn, node_end_pfn,
+-						  zholes_size);
++		if (compat) {
++			spanned = compat_zone_spanned_pages_in_node(
++						pgdat->node_id, i,
++						node_start_pfn,
++						node_end_pfn,
++						&zone_start_pfn,
++						&zone_end_pfn,
++						zones_size);
++			absent = compat_zone_absent_pages_in_node(
++						pgdat->node_id, i,
++						node_start_pfn,
++						node_end_pfn,
++						zholes_size);
++		} else {
++			spanned = zone_spanned_pages_in_node(pgdat->node_id, i,
++						node_start_pfn,
++						node_end_pfn,
++						&zone_start_pfn,
++						&zone_end_pfn,
++						zones_size);
++			absent = zone_absent_pages_in_node(pgdat->node_id, i,
++						node_start_pfn,
++						node_end_pfn,
++						zholes_size);
++		}
++
++		size = spanned;
++		real_size = size - absent;
++
+ 		if (size)
+ 			zone->zone_start_pfn = zone_start_pfn;
+ 		else
+@@ -6859,10 +6870,8 @@ static void __ref alloc_node_mem_map(struct pglist_data *pgdat)
+ 	 */
+ 	if (pgdat == NODE_DATA(0)) {
+ 		mem_map = NODE_DATA(0)->node_mem_map;
+-#if defined(CONFIG_HAVE_MEMBLOCK_NODE_MAP) || defined(CONFIG_FLATMEM)
+ 		if (page_to_pfn(mem_map) != pgdat->node_start_pfn)
+ 			mem_map -= offset;
+-#endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ 	}
+ #endif
+ }
+@@ -6879,9 +6888,10 @@ static inline void pgdat_set_deferred_range(pg_data_t *pgdat)
+ static inline void pgdat_set_deferred_range(pg_data_t *pgdat) {}
+ #endif
+ 
+-void __init free_area_init_node(int nid, unsigned long *zones_size,
+-				   unsigned long node_start_pfn,
+-				   unsigned long *zholes_size)
++void __init __free_area_init_node(int nid, unsigned long *zones_size,
++				  unsigned long node_start_pfn,
++				  unsigned long *zholes_size,
++				  bool compat)
+ {
+ 	pg_data_t *pgdat = NODE_DATA(nid);
+ 	unsigned long start_pfn = 0;
+@@ -6893,16 +6903,17 @@ void __init free_area_init_node(int nid, unsigned long *zones_size,
+ 	pgdat->node_id = nid;
+ 	pgdat->node_start_pfn = node_start_pfn;
+ 	pgdat->per_cpu_nodestats = NULL;
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+-	get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
+-	pr_info("Initmem setup node %d [mem %#018Lx-%#018Lx]\n", nid,
+-		(u64)start_pfn << PAGE_SHIFT,
+-		end_pfn ? ((u64)end_pfn << PAGE_SHIFT) - 1 : 0);
+-#else
+-	start_pfn = node_start_pfn;
+-#endif
++	if (!compat) {
++		get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
++		pr_info("Initmem setup node %d [mem %#018Lx-%#018Lx]\n", nid,
++			(u64)start_pfn << PAGE_SHIFT,
++			end_pfn ? ((u64)end_pfn << PAGE_SHIFT) - 1 : 0);
++	} else {
++		start_pfn = node_start_pfn;
++	}
++
+ 	calculate_node_totalpages(pgdat, start_pfn, end_pfn,
+-				  zones_size, zholes_size);
++				  zones_size, zholes_size, compat);
+ 
+ 	alloc_node_mem_map(pgdat);
+ 	pgdat_set_deferred_range(pgdat);
+@@ -6910,6 +6921,14 @@ void __init free_area_init_node(int nid, unsigned long *zones_size,
+ 	free_area_init_core(pgdat);
+ }
+ 
++void __init free_area_init_node(int nid, unsigned long *zones_size,
++				unsigned long node_start_pfn,
++				unsigned long *zholes_size)
++{
++	__free_area_init_node(nid, zones_size, node_start_pfn, zholes_size,
++			      true);
++}
++
+ #if !defined(CONFIG_FLAT_NODE_MEM_MAP)
+ /*
+  * Initialize all valid struct pages in the range [spfn, epfn) and mark them
+@@ -6993,8 +7012,6 @@ static inline void __init init_unavailable_mem(void)
+ }
+ #endif /* !CONFIG_FLAT_NODE_MEM_MAP */
+ 
+-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+-
+ #if MAX_NUMNODES > 1
+ /*
+  * Figure out the number of possible node ids.
+@@ -7423,8 +7440,8 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
+ 	init_unavailable_mem();
+ 	for_each_online_node(nid) {
+ 		pg_data_t *pgdat = NODE_DATA(nid);
+-		free_area_init_node(nid, NULL,
+-				find_min_pfn_for_node(nid), NULL);
++		__free_area_init_node(nid, NULL,
++				      find_min_pfn_for_node(nid), NULL, false);
+ 
+ 		/* Any memory on that node */
+ 		if (pgdat->node_present_pages)
+@@ -7489,8 +7506,6 @@ static int __init cmdline_parse_movablecore(char *p)
+ early_param("kernelcore", cmdline_parse_kernelcore);
+ early_param("movablecore", cmdline_parse_movablecore);
+ 
+-#endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+-
+ void adjust_managed_page_count(struct page *page, long count)
+ {
+ 	atomic_long_add(count, &page_zone(page)->managed_pages);
+-- 
+2.25.1
+
