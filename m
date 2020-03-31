@@ -2,78 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E05F19A16A
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C610319A170
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:56:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731497AbgCaV4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 17:56:36 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:42388 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731486AbgCaV4g (ORCPT
+        id S1731444AbgCaV45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 17:56:57 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33023 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbgCaV44 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 17:56:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585691795;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JBMA6jXiru2mPeg8fq1WPRUiBwr+Arv7dJnUuWmimoc=;
-        b=ASixq9DcpgDyi27m7UF9PS/TIbW+o/KwvtO/6S0Ub6UnPXw5CRMDO4iPoSokPDKrvk+AVV
-        qlJ8JSNWriDr7uDpLi0XqD8R810600VLQzqjjEbEX5JT4fKuB0Ffc8XQdNq34zWLGDTjs2
-        bb45hJn2JhQXChgsWN6DjC+Zg3Wny8I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-162-MUdl86boN4K15gh8KATflA-1; Tue, 31 Mar 2020 17:56:32 -0400
-X-MC-Unique: MUdl86boN4K15gh8KATflA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4F7A78017CE;
-        Tue, 31 Mar 2020 21:56:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-114-243.ams2.redhat.com [10.36.114.243])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 21B941A269;
-        Tue, 31 Mar 2020 21:56:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200331122554.GA27469@gardel-login>
-References: <20200331122554.GA27469@gardel-login> <1445647.1585576702@warthog.procyon.org.uk> <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com> <20200331083430.kserp35qabnxvths@ws.net.home> <CAJfpegsNpabFwoLL8HffNbi_4DuGMn4eYpFc6n7223UFnEPAbA@mail.gmail.com>
-To:     Lennart Poettering <mzxreary@0pointer.de>
-Cc:     dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Karel Zak <kzak@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
-        andres@anarazel.de, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+        Tue, 31 Mar 2020 17:56:56 -0400
+Received: by mail-io1-f66.google.com with SMTP id o127so23458396iof.0;
+        Tue, 31 Mar 2020 14:56:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4WUJcrPXs22r9JdeLAnm70kiB0BphSPIJzUg0VapEbY=;
+        b=SZoOMKFUBzfQbsJHMuXV85guvwAUNY0us6RWlY8M5l7BPCvCTr15eHZHJ+m9QAH+RX
+         VL5PJXYOhvysVzWkZ5DBZMDxVLUJjYrMx53eFGSDth4I8cAEeDhqFUuo9DP8xld1xjYL
+         wmEUQGfG0JNJ4ftVYneLtjMxwUaMCPgux82k1c57Iat97RZ5Sm9+Z4NmXtsXw2T8E0nw
+         DiYjkBSIZMMY9rjTx61nD+j9AZpQLoh+3mZCZb/x7qOEU4w17kNJ9sIsM08JbpR9wmZV
+         bdWushGk1Hj5v1X3Gz5JJsRsu8a+LrYAxvSGgVyZj6T5IsiE2Rwlma9ks3QdIZ/ZqfTv
+         xAkQ==
+X-Gm-Message-State: ANhLgQ39nT7xSfWvBdqGqSFAl8ASDrudkhRypYkRGGFswgeb9Je/bmhx
+        tNEPqBXViYqBW0D2ijfhSLD24YAk/w==
+X-Google-Smtp-Source: ADFU+vv0OawzkBUN9BFAdbkSWK1TqBslM3XoIY17+04sBZBRJwhn+CB96C91SkkB2ucf9uoqAPGiyA==
+X-Received: by 2002:a02:8798:: with SMTP id t24mr17150645jai.119.1585691814748;
+        Tue, 31 Mar 2020 14:56:54 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id e73sm42029ilg.39.2020.03.31.14.56.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 14:56:53 -0700 (PDT)
+Received: (nullmailer pid 10981 invoked by uid 1000);
+        Tue, 31 Mar 2020 21:56:52 -0000
+Date:   Tue, 31 Mar 2020 15:56:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Clement Leger <cleger@kalray.eu>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: k3-dsp: Update bindings for
+ C71x DSPs
+Message-ID: <20200331215652.GA10923@bogus>
+References: <20200325204701.16862-1-s-anna@ti.com>
+ <20200325204701.16862-2-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2418580.1585691786.1@warthog.procyon.org.uk>
-Date:   Tue, 31 Mar 2020 22:56:26 +0100
-Message-ID: <2418581.1585691786@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200325204701.16862-2-s-anna@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lennart Poettering <mzxreary@0pointer.de> wrote:
+On Wed, 25 Mar 2020 15:46:58 -0500, Suman Anna wrote:
+> Some Texas Instruments K3 family of SoCs have one of more newer
+> generation TMS320C71x CorePac processor subsystem in addition to
+> the existing TMS320C66x CorePac processor subsystems. Update the
+> device tree bindings document for the C71x DSP devices.
+> 
+> The example is also updated to show the single C71 DSP present
+> on J721E SoCs.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+>  .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 78 ++++++++++++++++---
+>  1 file changed, 69 insertions(+), 9 deletions(-)
+> 
 
-> - We also have code that needs to check if /dev/ is plain tmpfs or
->   devtmpfs. We cannot use statfs for that, since in both cases
->   TMPFS_MAGIC is reported, hence we currently parse
->   /proc/self/mountinfo for that to find the fstype string there, which
->   is different for both cases.
-
-btw, fsinfo(FSINFO_ATTR_IDS) gets you the name of the filesystem type in
-addition to the magic number.
-
-David
-
+Reviewed-by: Rob Herring <robh@kernel.org>
