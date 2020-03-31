@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CEFB19904B
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97380198F68
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:03:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731347AbgCaJKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:10:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54518 "EHLO mail.kernel.org"
+        id S1730499AbgCaJDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:03:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731624AbgCaJKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:10:42 -0400
+        id S1730498AbgCaJDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:03:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A51920675;
-        Tue, 31 Mar 2020 09:10:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A67E20B80;
+        Tue, 31 Mar 2020 09:03:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645842;
-        bh=y6fd+56DXRtMsWE2TPIWeRAL7GDXxJs9T+p42v5SGuo=;
+        s=default; t=1585645387;
+        bh=W7PuhhEN8OeZb1H3uw+mhVqvlPR/bVHCCJ5zWhVc6qo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=olLECaVnp2YiC4llm85QpPMygcKD/gS2A/3/r0XR4iwlJwtitanXCswquU4ofNiy5
-         d6zLIoa8iVWpgQ/RSHvrfohgf+8HLiTuMKz13KWTdf7GukmWJBXB6E3G71/ljC6YG4
-         mstZcHptUvBmqtX4HZl1q/WllvoFelNm2XsTzHNU=
+        b=slTHCcuMeIiIRz5mfUQPTyD1qhwnl7lC4jg6XUGo9P0i57RH7axxil6REVeoJK9EZ
+         25j8siI7zMRvnEQvJHdsHOgM4pgtA4BMszC5CeR4oqGcEOa52LO+F/MkxvCe1qz5ko
+         yfGhC8gFLgOxKxVfagxgK0p+NKtnM2EM1pY0yzK0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 011/155] ipv4: fix a RCU-list lock in inet_dump_fib()
-Date:   Tue, 31 Mar 2020 10:57:31 +0200
-Message-Id: <20200331085419.642979289@linuxfoundation.org>
+Subject: [PATCH 5.5 038/170] tcp: repair: fix TCP_QUEUE_SEQ implementation
+Date:   Tue, 31 Mar 2020 10:57:32 +0200
+Message-Id: <20200331085428.062448076@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
-References: <20200331085418.274292403@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit dddeb30bfc43926620f954266fd12c65a7206f07 ]
+[ Upstream commit 6cd6cbf593bfa3ae6fc3ed34ac21da4d35045425 ]
 
-There is a place,
+When application uses TCP_QUEUE_SEQ socket option to
+change tp->rcv_next, we must also update tp->copied_seq.
 
-inet_dump_fib()
-  fib_table_dump
-    fn_trie_dump_leaf()
-      hlist_for_each_entry_rcu()
+Otherwise, stuff relying on tcp_inq() being precise can
+eventually be confused.
 
-without rcu_read_lock() will trigger a warning,
+For example, tcp_zerocopy_receive() might crash because
+it does not expect tcp_recv_skb() to return NULL.
 
- WARNING: suspicious RCU usage
- -----------------------------
- net/ipv4/fib_trie.c:2216 RCU-list traversed in non-reader section!!
+We could add tests in various places to fix the issue,
+or simply make sure tcp_inq() wont return a random value,
+and leave fast path as it is.
 
- other info that might help us debug this:
+Note that this fixes ioctl(fd, SIOCINQ, &val) at the same
+time.
 
- rcu_scheduler_active = 2, debug_locks = 1
- 1 lock held by ip/1923:
-  #0: ffffffff8ce76e40 (rtnl_mutex){+.+.}, at: netlink_dump+0xd6/0x840
-
- Call Trace:
-  dump_stack+0xa1/0xea
-  lockdep_rcu_suspicious+0x103/0x10d
-  fn_trie_dump_leaf+0x581/0x590
-  fib_table_dump+0x15f/0x220
-  inet_dump_fib+0x4ad/0x5d0
-  netlink_dump+0x350/0x840
-  __netlink_dump_start+0x315/0x3e0
-  rtnetlink_rcv_msg+0x4d1/0x720
-  netlink_rcv_skb+0xf0/0x220
-  rtnetlink_rcv+0x15/0x20
-  netlink_unicast+0x306/0x460
-  netlink_sendmsg+0x44b/0x770
-  __sys_sendto+0x259/0x270
-  __x64_sys_sendto+0x80/0xa0
-  do_syscall_64+0x69/0xf4
-  entry_SYSCALL_64_after_hwframe+0x49/0xb3
-
-Fixes: 18a8021a7be3 ("net/ipv4: Plumb support for filtering route dumps")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Reviewed-by: David Ahern <dsahern@gmail.com>
+Fixes: ee9952831cfd ("tcp: Initial repair mode")
+Fixes: 05255b823a61 ("tcp: add TCP_ZEROCOPY_RECEIVE support for zerocopy receive")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/fib_frontend.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv4/tcp.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/ipv4/fib_frontend.c
-+++ b/net/ipv4/fib_frontend.c
-@@ -1007,7 +1007,9 @@ static int inet_dump_fib(struct sk_buff
- 			return -ENOENT;
- 		}
- 
-+		rcu_read_lock();
- 		err = fib_table_dump(tb, skb, cb, &filter);
-+		rcu_read_unlock();
- 		return skb->len ? : err;
- 	}
- 
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2947,8 +2947,10 @@ static int do_tcp_setsockopt(struct sock
+ 			err = -EPERM;
+ 		else if (tp->repair_queue == TCP_SEND_QUEUE)
+ 			WRITE_ONCE(tp->write_seq, val);
+-		else if (tp->repair_queue == TCP_RECV_QUEUE)
++		else if (tp->repair_queue == TCP_RECV_QUEUE) {
+ 			WRITE_ONCE(tp->rcv_nxt, val);
++			WRITE_ONCE(tp->copied_seq, val);
++		}
+ 		else
+ 			err = -EINVAL;
+ 		break;
 
 
