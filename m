@@ -2,106 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACB4F198EEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:56:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC382198EE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:56:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730273AbgCaI4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 04:56:33 -0400
-Received: from mga07.intel.com ([134.134.136.100]:36209 "EHLO mga07.intel.com"
+        id S1730131AbgCaI4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 04:56:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:57847 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726299AbgCaI4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:56:32 -0400
-IronPort-SDR: mK8ECY0m5cs7ahrKu5XgV9tcD46HGCq/RJ42PUfw3ECl9OvO/Qfzce63cR18iy6v1gZ/Rx83Ea
- PAXeaDxpNI7w==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 01:56:31 -0700
-IronPort-SDR: rY2Lz/HrtN4L05LwqCHEIGPro6fjbVG88EiP8Yy2Btzm2jo0QEIOOymxovM50kXXzqYHbexX0Z
- aYptoeE+mgFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
-   d="scan'208";a="450093037"
-Received: from yhuang-dev.sh.intel.com ([10.239.159.23])
-  by fmsmga006.fm.intel.com with ESMTP; 31 Mar 2020 01:56:28 -0700
-From:   "Huang, Ying" <ying.huang@intel.com>
+        id S1726299AbgCaI4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 04:56:17 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48s38Z73C3z9sR4;
+        Tue, 31 Mar 2020 19:56:14 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1585644975;
+        bh=KqGbhMnBF2j9YnXQQuOMYuwr0ZhKMQgkIB87z8RrPhc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=kvhOJMfT1PVSNBlWl/czsJ8Ts24c+9meGPOhkwP9eYvvkHvt9NyaMBPEnlbEAob3u
+         /OadihYFkLnGe5LS+F6GvHhlL2gX8EHotWf7ZpYAwsxGxDFuMc/Bh1m7ZMclFXdX1h
+         WkXh4DpD86RjKplyh81q5Lq1nNWUxFLF6iFez8c8yknNZpDxoOyQUns02aiTMrQlh1
+         LHr1XFiYq19rg08BF/fTKUQCFPLyVNKRdjF7NWvWmZkGxjXn0XeQ4CuJ2JYM8+Zfke
+         A1qUb3amxqOIbhCjZxZiAIEExOMCNXcftpB4/HtnGn222HE2JWAgqgyE6A1Shfll9K
+         wjYL8sCObVhnA==
+Date:   Tue, 31 Mar 2020 19:56:12 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Huang Ying <ying.huang@intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Zi Yan <ziy@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Subject: [PATCH] /proc/PID/smaps: Add PMD migration entry parsing
-Date:   Tue, 31 Mar 2020 16:56:04 +0800
-Message-Id: <20200331085604.1260162-1-ying.huang@intel.com>
-X-Mailer: git-send-email 2.25.0
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Longpeng <longpeng2@huawei.com>
+Subject: linux-next: build warning after merge of the akpm-current tree
+Message-ID: <20200331195612.64c06485@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/zjBK/bv5oO=dW4e0jKXEPR=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huang Ying <ying.huang@intel.com>
+--Sig_/zjBK/bv5oO=dW4e0jKXEPR=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Now, when read /proc/PID/smaps, the PMD migration entry in page table is simply
-ignored.  To improve the accuracy of /proc/PID/smaps, its parsing and processing
-is added.
+Hi all,
 
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Zi Yan <ziy@nvidia.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: Yang Shi <yang.shi@linux.alibaba.com>
----
- fs/proc/task_mmu.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+After merging the akpm-current tree, today's linux-next build (i386
+defconfig) produced this warning:
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 8d382d4ec067..b5b3aef8cb3b 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -548,8 +548,17 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
- 	bool locked = !!(vma->vm_flags & VM_LOCKED);
- 	struct page *page;
- 
--	/* FOLL_DUMP will return -EFAULT on huge zero page */
--	page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
-+	if (pmd_present(*pmd)) {
-+		/* FOLL_DUMP will return -EFAULT on huge zero page */
-+		page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
-+	} else if (unlikely(is_swap_pmd(*pmd))) {
-+		swp_entry_t entry = pmd_to_swp_entry(*pmd);
-+
-+		VM_BUG_ON(!is_migration_entry(entry));
-+		page = migration_entry_to_page(entry);
-+	} else {
-+		return;
-+	}
- 	if (IS_ERR_OR_NULL(page))
- 		return;
- 	if (PageAnon(page))
-@@ -578,8 +587,7 @@ static int smaps_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 
- 	ptl = pmd_trans_huge_lock(pmd, vma);
- 	if (ptl) {
--		if (pmd_present(*pmd))
--			smaps_pmd_entry(pmd, addr, walk);
-+		smaps_pmd_entry(pmd, addr, walk);
- 		spin_unlock(ptl);
- 		goto out;
- 	}
--- 
-2.25.0
+mm/hugetlb.c: In function 'huge_pte_offset':
+cc1: warning: function may return address of local variable [-Wreturn-local=
+-addr]
+mm/hugetlb.c:5361:14: note: declared here
+ 5361 |  pud_t *pud, pud_entry;
+      |              ^~~~~~~~~
+cc1: warning: function may return address of local variable [-Wreturn-local=
+-addr]
+mm/hugetlb.c:5360:14: note: declared here
+ 5360 |  p4d_t *p4d, p4d_entry;
+      |              ^~~~~~~~~
 
+Introduced by commit
+
+  826ddc88e2cf ("mm/hugetlb: fix a addressing exception caused by huge_pte_=
+offset")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/zjBK/bv5oO=dW4e0jKXEPR=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6DBawACgkQAVBC80lX
+0GzuMwf9HnMeZGRTCVTyUMkj09xSVS7eZTYfC/WzQzG7HczBUVXkqIdqxXwQSHKg
+2NlWyMW7vyvn4ILTnoDoZwIc1twb7SRynr52SG+uDs75LrjPuEKBhkbZPwAH541/
+yaf5NvPIYC/g+pfW7GpmguBRpHf3VBe1XlyaxkMbQ09l+wmL+J/sBNloaBUay8+O
+xGUDNvPgtRdKSr8rztJgZ+jJiwI1KuCesJiKMHeKELlmLJ5B8NdY03ycePut32c2
+5kTzyJYAsNkkmvtBNYmZSKccgPSAy4nYuKrH6gqa5F2kl6SN1UW1PDJt8sf7kZAc
+LYQRjoZxQpW1W+01u/FcXvFnoFRBNw==
+=o7iV
+-----END PGP SIGNATURE-----
+
+--Sig_/zjBK/bv5oO=dW4e0jKXEPR=--
