@@ -2,92 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49BDF199DEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:22:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E280199DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:21:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbgCaSWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 14:22:05 -0400
-Received: from smtprelay0150.hostedemail.com ([216.40.44.150]:33610 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726194AbgCaSWE (ORCPT
+        id S1726315AbgCaSU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 14:20:58 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35526 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbgCaSU6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:22:04 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 0E3D5180286D8;
-        Tue, 31 Mar 2020 18:22:04 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:152:355:379:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:6119:7903:8660:10004:10400:10848:11026:11232:11473:11658:11914:12043:12297:12438:12740:12895:13069:13095:13148:13230:13311:13357:13894:14659:14721:21063:21080:21433:21451:21627:30029:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: ice31_864618078355f
-X-Filterd-Recvd-Size: 2749
-Received: from XPS-9350.home (unknown [47.151.136.130])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 31 Mar 2020 18:22:02 +0000 (UTC)
-Message-ID: <dc53b8704ec674cba636b41d7f55bf507a7bd7aa.camel@perches.com>
-Subject: Re: [PATCH] compiler.h: fix error in BUILD_BUG_ON() reporting
-From:   Joe Perches <joe@perches.com>
-To:     Vegard Nossum <vegard.nossum@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Daniel Santos <daniel.santos@pobox.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ian Abbott <abbotti@mev.co.uk>
-Date:   Tue, 31 Mar 2020 11:20:07 -0700
-In-Reply-To: <20200331112637.25047-1-vegard.nossum@oracle.com>
-References: <20200331112637.25047-1-vegard.nossum@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        Tue, 31 Mar 2020 14:20:58 -0400
+Received: by mail-lj1-f195.google.com with SMTP id k21so23085900ljh.2
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:20:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uoULL4HJ/4Fp45aaQk4Hu/7pgyNJbne+Y7btBWjm98M=;
+        b=CmzsV6h6bpJpOjdOqIiordG7PqBedgrJWUslQaSWFFc0PsAmoW2n9Qmm4fjP+rxipj
+         KTlpTC0p6VP22xW/i/jVMikS9NwXnvvz/JiCG+nYjMhKP6k73ZUMogsKMud7bMuFkBpY
+         nQrxqOrO+CKYfRRzCAFGQ+yAFURIBGhmcQJZM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uoULL4HJ/4Fp45aaQk4Hu/7pgyNJbne+Y7btBWjm98M=;
+        b=UNLoc38tMmWRWIV+mC6H7PxRCncXPyoTSFN2Gk/s7OnAz4n8QSJcBPqDUo1hG8wlY9
+         s0qicL96DLYE+YOsInuhEmnW9btoh+7CTyR2b0Jvx/nBkffB9KPjyIuZ2f5axuwiiNL7
+         7f3NRlvxQ5rxmFSgTu3HvGTB3/m7YQZ4n/Z5Au+wzfXzG130yXiA8py5TgrGgpMEEC2g
+         2PIaTxYyQ98+QAq/4Oi0/XzN8c8LBio5wqbFw4gaW+wLcjs45kcINGf322EKCHHlgxdd
+         c24Fj+I95w/4LqerVBqIcaKByoMzpuJKTCbAQEmjqOrLe71SCj4Z7HLZx8kd/iAPSTPm
+         ukUw==
+X-Gm-Message-State: AGi0Pua9J6PyRWa/cCS7kncndc6S/R7F8lIajl+IQKBmMVzbzfmO8PR4
+        Z3NL006nAWPy3vGsbvi/XVCDAYDJ2sw=
+X-Google-Smtp-Source: APiQypKs2XyH3w24wbpfSlg9nw2StL4cRW9VN5u5eVO7hTwoC98IdlZ3g8YeR32x8/wHwTgTARTHjQ==
+X-Received: by 2002:a2e:8693:: with SMTP id l19mr11603781lji.132.1585678855821;
+        Tue, 31 Mar 2020 11:20:55 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id b193sm10299397lfd.74.2020.03.31.11.20.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Mar 2020 11:20:54 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id q19so22982534ljp.9
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:20:54 -0700 (PDT)
+X-Received: by 2002:a2e:b4cb:: with SMTP id r11mr11392287ljm.201.1585678853923;
+ Tue, 31 Mar 2020 11:20:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200331085308.098696461@linuxfoundation.org> <CA+G9fYsZjmf34pQT1DeLN_DDwvxCWEkbzBfF0q2VERHb25dfZQ@mail.gmail.com>
+In-Reply-To: <CA+G9fYsZjmf34pQT1DeLN_DDwvxCWEkbzBfF0q2VERHb25dfZQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 31 Mar 2020 11:20:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whyW9TXfYxyxUW6hP9e0A=5MnOHrTarr4_k0hiddxq69Q@mail.gmail.com>
+Message-ID: <CAHk-=whyW9TXfYxyxUW6hP9e0A=5MnOHrTarr4_k0hiddxq69Q@mail.gmail.com>
+Subject: Re: [PATCH 5.6 00/23] 5.6.1-rc1 review
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-31 at 13:26 +0200, Vegard Nossum wrote:
-> compiletime_assert() uses __LINE__ to create a unique function name.
-> This means that if you have more than one BUILD_BUG_ON() in the same
-> source line (which can happen if they appear e.g. in a macro), then
-> the error message from the compiler might output the wrong condition.
-> 
-> For this source file:
-> 
-> 	#include <linux/build_bug.h>
-> 
-> 	#define macro() \
-> 		BUILD_BUG_ON(1); \
-> 		BUILD_BUG_ON(0);
-> 
-> 	void foo()
-> 	{
-> 		macro();
-> 	}
-> 
-> gcc would output:
-> 
-> ./include/linux/compiler.h:350:38: error: call to ‘__compiletime_assert_9’ declared with attribute error: BUILD_BUG_ON failed: 0
->   _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-> 
-> However, it was not the BUILD_BUG_ON(0) that failed, so it should say 1
-> instead of 0. With this patch, we use __COUNTER__ instead of __LINE__, so
-> each BUILD_BUG_ON() gets a different function name and the correct
-> condition is printed:
-> 
-> ./include/linux/compiler.h:350:38: error: call to ‘__compiletime_assert_0’ declared with attribute error: BUILD_BUG_ON failed: 1
->   _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-[]
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-[]
-> @@ -347,7 +347,7 @@ static inline void *offset_to_ptr(const int *off)
->   * compiler has support to do so.
->   */
->  #define compiletime_assert(condition, msg) \
-> -	_compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-> +	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+On Tue, Mar 31, 2020 at 11:08 AM Naresh Kamboju
+<naresh.kamboju@linaro.org> wrote:
+>
+> Perf build broken on Linux next and mainline and now on stable-rc-5.6 branch.
 
-This might be better using something like __LINE__ ## _ ## __COUNTER__
+Strange. What is it that triggers the problem for you? It works fine
+here.. The error looks like some kind of command line quoting error,
+but I don't see the direct cause.
 
-as line # is somewhat useful to identify the specific assert in a file.
+Have you bisected the failure? Build failures should be particularly
+easy and quick to bisect.
 
-
+                Linus
