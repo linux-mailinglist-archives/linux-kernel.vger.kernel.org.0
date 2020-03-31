@@ -2,100 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A22A1988C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 02:17:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DC1F1988D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 02:22:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729221AbgCaAQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 20:16:59 -0400
-Received: from gateway21.websitewelcome.com ([192.185.46.113]:24211 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729019AbgCaAQ7 (ORCPT
+        id S1729373AbgCaAWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 20:22:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50502 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729019AbgCaAWM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 20:16:59 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id E1516400CE90D
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 19:16:57 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id J4aPji2xEAGTXJ4aPj62h2; Mon, 30 Mar 2020 19:16:57 -0500
-X-Authority-Reason: nr=8
+        Mon, 30 Mar 2020 20:22:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=6j0N9LbHibVSnYloCANn6lCCp2LfdYmLR5aYJzfpMLI=; b=wwO3l67seXH4CQYrZYqAPWIK5o
-        D/g3Xz1dTJfPpDDIUZHGTtDozF5hrSoj+pOlHIooKjQaMzfI8X294ZeKwwFf6Qi2XmqZC2zrJCoOf
-        VXgUtkIQD7B9HDWvuVHSMCGOj2K754YA5Vbtc80B7xnL8gSzMOsbx6/jCBICF1TYFx0oKB8Y/qrnL
-        +lkAagQgNqUCo8yzuGBk1kY/qIwIlVNYCWhshilbd4Rqm+jD3uyL4dldnPywDz1mu722HS95IOYI0
-        mlDc7V/kHl/zjAI0iSWJU9kKGD99owH0frwSaX4gsGiVjZOz6EMmyN9TOcTpuIRQKkr14EQfdJ0zv
-        LxYD7TEA==;
-Received: from cablelink-189-218-116-241.hosts.intercable.net ([189.218.116.241]:34772 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jJ4aO-000zm9-FS; Mon, 30 Mar 2020 19:16:56 -0500
-Date:   Mon, 30 Mar 2020 19:20:40 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] objtool: check: Fix NULL pointer dereference
-Message-ID: <20200331002040.GA11302@embeddedor>
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=0XSOCNbZBTXdqn/rb3amNpNjr6ohLZ0RVhcF9AIbeko=; b=i4r5JQDiNS06ztVk7eavaykG8U
+        ssq6JeKzZ5xcIuNvowQvHD6n92jmqG6JuAZoAt7v3V3WJbYMRo/zXgFRCi8fKZ8ZnPoy+QSrMarZf
+        3XOvcBwuL/vXWe3Xt9TEu7nXN5STpSfbvAmZp4qYg8X9PN1MBMs4wzsyQOA17PYZNvLzIgXDIeE91
+        CcVLK78ZttlXpWzV2UyiQLosDMZpO4M6t67OLIdXUEJNB27OP4WSRI0dPFr3JApJrY+e+MWR3Jl2v
+        tdNunT7XvW1dPhWHoRrQDX0wyyYyf8vE1iR8fGMKtHV4xl2+olJHMGCX/urbznT0Bikbmv7QGApJK
+        9w5TfwNA==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJ4fU-0000sL-7a; Tue, 31 Mar 2020 00:22:12 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Jiri Kosina <trivial@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH trivial] lib/bitmap.c: fix spello
+Message-ID: <532afb44-6827-81cc-b1e2-7c5c1454d3a3@infradead.org>
+Date:   Mon, 30 Mar 2020 17:22:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.218.116.241
-X-Source-L: No
-X-Exim-ID: 1jJ4aO-000zm9-FS
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink-189-218-116-241.hosts.intercable.net (embeddedor) [189.218.116.241]:34772
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case func is null, there is a null pointer dereference at 2029:
+From: Randy Dunlap <rdunlap@infradead.org>
 
-2029                 WARN("%s uses BP as a scratch register",
-2030                      func->name);
+Fix typo/spello for whitespaces.
 
-Fix this by null-checking func.
-
-Addresses-Coverity-ID: 1492002 ("Dereference after null check")
-Fixes: c705cecc8431 ("objtool: Track original function across branches")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jiri Kosina <trivial@kernel.org>
 ---
- tools/objtool/check.c | 2 +-
+ lib/bitmap.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index e3bb76358148..182cc48fa892 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2025,7 +2025,7 @@ static int validate_return(struct symbol *func, struct instruction *insn, struct
- 		return 1;
- 	}
+--- linux-next-20200330.orig/lib/bitmap.c
++++ linux-next-20200330/lib/bitmap.c
+@@ -551,7 +551,7 @@ static inline bool end_of_region(char c)
+ }
  
--	if (state->bp_scratch) {
-+	if (func && state->bp_scratch) {
- 		WARN("%s uses BP as a scratch register",
- 		     func->name);
- 		return 1;
--- 
-2.26.0
+ /*
+- * The format allows commas and whitespases at the beginning
++ * The format allows commas and whitespaces at the beginning
+  * of the region.
+  */
+ static const char *bitmap_find_region(const char *str)
 
