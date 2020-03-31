@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CC89198FAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A566198FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:05:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731058AbgCaJF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:05:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46474 "EHLO mail.kernel.org"
+        id S1731064AbgCaJFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:05:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730381AbgCaJF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:05:27 -0400
+        id S1730541AbgCaJFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:05:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 649ED20B1F;
-        Tue, 31 Mar 2020 09:05:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C735720B1F;
+        Tue, 31 Mar 2020 09:05:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645526;
-        bh=6btdPEC8CzNBTP2CSMWFjhTl0NUxOV5Iz79NasmD+tw=;
+        s=default; t=1585645530;
+        bh=R4Lc+71PGFMVycjmavRdG/jAUNmy4bDOa660TR9oaVA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H7J9mk27pITMak2Se4AFbw8VZuRjgts4ew5J9run0Y13mk/gqKZgP02Uv4qon7Cty
-         RDTPI1m0eQh4w4Ufm76QUg+uZlOVEttodZQB74inz2jze5VIW3RmTtExYO8elrYNlq
-         RRoJ5r8YDTRjrPLbDZYP64Kvp8OaG5/Qxh6InYdo=
+        b=oohEHjE1Tvrb4g4CU4cnzkq8pR/araSZlkWv2AZtnB0U0gk5xXi+MW30/1z44T1mG
+         2b3Ata4Bpf0K6cmgUg1w9UtHCduWaCLHGkvOGGRJrWJLR82WnlrRaKUZ+oFUfB6wAR
+         /sjIjMG4vzQEykXTEfPSIVlzffc5794BCImzHygo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
-Subject: [PATCH 5.5 081/170] i2c: hix5hd2: add missed clk_disable_unprepare in remove
-Date:   Tue, 31 Mar 2020 10:58:15 +0200
-Message-Id: <20200331085432.922121941@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 5.5 082/170] Input: raydium_i2c_ts - fix error codes in raydium_i2c_boot_trigger()
+Date:   Tue, 31 Mar 2020 10:58:16 +0200
+Message-Id: <20200331085433.024107683@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
 References: <20200331085423.990189598@linuxfoundation.org>
@@ -43,31 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit e1b9f99ff8c40bba6e59de9ad4a659447b1e4112 upstream.
+commit 32cf3a610c35cb21e3157f4bbf29d89960e30a36 upstream.
 
-The driver forgets to disable and unprepare clk when remove.
-Add a call to clk_disable_unprepare to fix it.
+These functions are supposed to return negative error codes but instead
+it returns true on failure and false on success.  The error codes are
+eventually propagated back to user space.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@kernel.org
+Fixes: 48a2b783483b ("Input: add Raydium I2C touchscreen driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: https://lore.kernel.org/r/20200303101306.4potflz7na2nn3od@kili.mountain
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-hix5hd2.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/touchscreen/raydium_i2c_ts.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/i2c/busses/i2c-hix5hd2.c
-+++ b/drivers/i2c/busses/i2c-hix5hd2.c
-@@ -477,6 +477,7 @@ static int hix5hd2_i2c_remove(struct pla
- 	i2c_del_adapter(&priv->adap);
- 	pm_runtime_disable(priv->dev);
- 	pm_runtime_set_suspended(priv->dev);
-+	clk_disable_unprepare(priv->clk);
- 
+--- a/drivers/input/touchscreen/raydium_i2c_ts.c
++++ b/drivers/input/touchscreen/raydium_i2c_ts.c
+@@ -432,7 +432,7 @@ static int raydium_i2c_write_object(stru
  	return 0;
  }
+ 
+-static bool raydium_i2c_boot_trigger(struct i2c_client *client)
++static int raydium_i2c_boot_trigger(struct i2c_client *client)
+ {
+ 	static const u8 cmd[7][6] = {
+ 		{ 0x08, 0x0C, 0x09, 0x00, 0x50, 0xD7 },
+@@ -457,10 +457,10 @@ static bool raydium_i2c_boot_trigger(str
+ 		}
+ 	}
+ 
+-	return false;
++	return 0;
+ }
+ 
+-static bool raydium_i2c_fw_trigger(struct i2c_client *client)
++static int raydium_i2c_fw_trigger(struct i2c_client *client)
+ {
+ 	static const u8 cmd[5][11] = {
+ 		{ 0, 0x09, 0x71, 0x0C, 0x09, 0x00, 0x50, 0xD7, 0, 0, 0 },
+@@ -483,7 +483,7 @@ static bool raydium_i2c_fw_trigger(struc
+ 		}
+ 	}
+ 
+-	return false;
++	return 0;
+ }
+ 
+ static int raydium_i2c_check_path(struct i2c_client *client)
 
 
