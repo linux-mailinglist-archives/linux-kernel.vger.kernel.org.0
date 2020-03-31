@@ -2,119 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6C0D198E05
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3123E198E12
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:14:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730107AbgCaILR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 04:11:17 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:21818 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729624AbgCaILQ (ORCPT
+        id S1730053AbgCaIOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 04:14:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37660 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726397AbgCaIOk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:11:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585642275;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yzpvZIJ+CRLVofZ/PwFWXaCWdz97NICG/y5tEVt3YUQ=;
-        b=GW8YMfVu1PTt52/GGYDBaWEgDGB8wL7VX5DNxcbm3nU+2KtaR3q6KJhjdS43q6NnkMX3q4
-        Xf2rJPkJ26e6gaUM4V8tCtrwv7ww3l4B5R8jF6MZ2gapXhxTPyJ3KWPMIcv/plyRgGOdVK
-        40J/DrUoPCC4J9DrBGJZdhhKew5BOA8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-194-ZYcL_ET-MAaE6ZBAqMMkRw-1; Tue, 31 Mar 2020 04:11:11 -0400
-X-MC-Unique: ZYcL_ET-MAaE6ZBAqMMkRw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C5D5E8017CC;
-        Tue, 31 Mar 2020 08:11:09 +0000 (UTC)
-Received: from [10.72.12.115] (ovpn-12-115.pek2.redhat.com [10.72.12.115])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BAE2619C58;
-        Tue, 31 Mar 2020 08:11:04 +0000 (UTC)
-Subject: Re: [PATCH -next] virtio: vdpa: remove unused variables 'ifcvf' and
- 'ifcvf_lm'
-To:     YueHaibing <yuehaibing@huawei.com>, mst@redhat.com,
-        tiwei.bie@intel.com, lingshan.zhu@intel.com, xiao.w.wang@intel.com
-Cc:     virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20200331080259.33056-1-yuehaibing@huawei.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <a69f59a7-f0cc-6b8b-6c3d-61ef72b3ec38@redhat.com>
-Date:   Tue, 31 Mar 2020 16:11:03 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 31 Mar 2020 04:14:40 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02V83LbH079940
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 04:14:39 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30227vtcu9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 04:14:38 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 31 Mar 2020 09:14:29 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 31 Mar 2020 09:14:22 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02V8DOkE50790826
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Mar 2020 08:13:24 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 982FCA405C;
+        Tue, 31 Mar 2020 08:14:27 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 211B9A405B;
+        Tue, 31 Mar 2020 08:14:25 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.148.207.69])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 31 Mar 2020 08:14:25 +0000 (GMT)
+Date:   Tue, 31 Mar 2020 11:14:23 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Hoan Tran <Hoan@os.amperecomputing.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        lho@amperecomputing.com, mmorana@amperecomputing.com
+Subject: Re: [PATCH v3 0/5] mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by
+ default for NUMA
+References: <1585420282-25630-1-git-send-email-Hoan@os.amperecomputing.com>
+ <20200330074246.GA14243@dhcp22.suse.cz>
+ <20200330175100.GD30942@linux.ibm.com>
+ <20200330182301.GM14243@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20200331080259.33056-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200330182301.GM14243@dhcp22.suse.cz>
+X-TM-AS-GCONF: 00
+x-cbid: 20033108-0012-0000-0000-0000039B78A8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20033108-0013-0000-0000-000021D883D5
+Message-Id: <20200331081423.GE30942@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-03-31_02:2020-03-30,2020-03-31 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 mlxscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 suspectscore=5 mlxlogscore=852
+ lowpriorityscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2003020000 definitions=main-2003310072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 30, 2020 at 08:23:01PM +0200, Michal Hocko wrote:
+> On Mon 30-03-20 20:51:00, Mike Rapoport wrote:
+> > On Mon, Mar 30, 2020 at 09:42:46AM +0200, Michal Hocko wrote:
+> > > On Sat 28-03-20 11:31:17, Hoan Tran wrote:
+> > > > In NUMA layout which nodes have memory ranges that span across other nodes,
+> > > > the mm driver can detect the memory node id incorrectly.
+> > > > 
+> > > > For example, with layout below
+> > > > Node 0 address: 0000 xxxx 0000 xxxx
+> > > > Node 1 address: xxxx 1111 xxxx 1111
+> > > > 
+> > > > Note:
+> > > >  - Memory from low to high
+> > > >  - 0/1: Node id
+> > > >  - x: Invalid memory of a node
+> > > > 
+> > > > When mm probes the memory map, without CONFIG_NODES_SPAN_OTHER_NODES
+> > > > config, mm only checks the memory validity but not the node id.
+> > > > Because of that, Node 1 also detects the memory from node 0 as below
+> > > > when it scans from the start address to the end address of node 1.
+> > > > 
+> > > > Node 0 address: 0000 xxxx xxxx xxxx
+> > > > Node 1 address: xxxx 1111 1111 1111
+> > > > 
+> > > > This layout could occur on any architecture. Most of them enables
+> > > > this config by default with CONFIG_NUMA. This patch, by default, enables
+> > > > CONFIG_NODES_SPAN_OTHER_NODES or uses early_pfn_in_nid() for NUMA.
+> > > 
+> > > I am not opposed to this at all. It reduces the config space and that is
+> > > a good thing on its own. The history has shown that meory layout might
+> > > be really wild wrt NUMA. The config is only used for early_pfn_in_nid
+> > > which is clearly an overkill.
+> > > 
+> > > Your description doesn't really explain why this is safe though. The
+> > > history of this config is somehow messy, though. Mike has tried
+> > > to remove it a94b3ab7eab4 ("[PATCH] mm: remove arch independent
+> > > NODES_SPAN_OTHER_NODES") just to be reintroduced by 7516795739bd
+> > > ("[PATCH] Reintroduce NODES_SPAN_OTHER_NODES for powerpc") without any
+> > > reasoning what so ever. This doesn't make it really easy see whether
+> > > reasons for reintroduction are still there. Maybe there are some subtle
+> > > dependencies. I do not see any TBH but that might be burried deep in an
+> > > arch specific code.
+> > 
+> > I've looked at this a bit more and it seems that the check for
+> > early_pfn_in_nid() in memmap_init_zone() can be simply removed.
+> > 
+> > The commits you've mentioned were way before the addition of
+> > HAVE_MEMBLOCK_NODE_MAP and the whole infrastructure that calculates zone
+> > sizes and boundaries based on the memblock node map.
+> > So, the memmap_init_zone() is called when zone boundaries are already
+> > within a node.
+> 
+> But zones from different nodes might overlap in the pfn range. And this
+> check is there to skip over those overlapping areas.
 
-On 2020/3/31 =E4=B8=8B=E5=8D=884:02, YueHaibing wrote:
-> drivers/virtio/vdpa/ifcvf/ifcvf_main.c:34:24:
->   warning: variable =E2=80=98ifcvf=E2=80=99 set but not used [-Wunused-=
-but-set-variable]
-> drivers/virtio/vdpa/ifcvf/ifcvf_base.c:304:31:
->   warning: variable =E2=80=98ifcvf_lm=E2=80=99 set but not used [-Wunus=
-ed-but-set-variable]
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Maybe I mis-read the code, but I don't see how this could happen. In the
+HAVE_MEMBLOCK_NODE_MAP=y case, free_area_init_node() calls
+calculate_node_totalpages() that ensures that node->node_zones are entirely
+within the node because this is checked in zone_spanned_pages_in_node().
+So, for zones from different nodes to overlap in the pfn range the nodes
+themself should overlap. Is this even possible?
 
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+> The only way to skip over this check I can see is to do a different pfn
+> walk and go through memblock ranges which are guaranteed to belong to a
+> single node.
+> -- 
+> Michal Hocko
+> SUSE Labs
 
-Thanks
-
-
-> ---
->   drivers/virtio/vdpa/ifcvf/ifcvf_base.c | 2 --
->   drivers/virtio/vdpa/ifcvf/ifcvf_main.c | 2 --
->   2 files changed, 4 deletions(-)
->
-> diff --git a/drivers/virtio/vdpa/ifcvf/ifcvf_base.c b/drivers/virtio/vd=
-pa/ifcvf/ifcvf_base.c
-> index b61b06ea26d3..e24371d644b5 100644
-> --- a/drivers/virtio/vdpa/ifcvf/ifcvf_base.c
-> +++ b/drivers/virtio/vdpa/ifcvf/ifcvf_base.c
-> @@ -301,12 +301,10 @@ int ifcvf_set_vq_state(struct ifcvf_hw *hw, u16 q=
-id, u64 num)
->  =20
->   static int ifcvf_hw_enable(struct ifcvf_hw *hw)
->   {
-> -	struct ifcvf_lm_cfg __iomem *ifcvf_lm;
->   	struct virtio_pci_common_cfg __iomem *cfg;
->   	struct ifcvf_adapter *ifcvf;
->   	u32 i;
->  =20
-> -	ifcvf_lm =3D (struct ifcvf_lm_cfg __iomem *)hw->lm_cfg;
->   	ifcvf =3D vf_to_adapter(hw);
->   	cfg =3D hw->common_cfg;
->   	ifc_iowrite16(IFCVF_MSI_CONFIG_OFF, &cfg->msix_config);
-> diff --git a/drivers/virtio/vdpa/ifcvf/ifcvf_main.c b/drivers/virtio/vd=
-pa/ifcvf/ifcvf_main.c
-> index 8d54dc5b08d2..28d9e5de5675 100644
-> --- a/drivers/virtio/vdpa/ifcvf/ifcvf_main.c
-> +++ b/drivers/virtio/vdpa/ifcvf/ifcvf_main.c
-> @@ -31,11 +31,9 @@ static irqreturn_t ifcvf_intr_handler(int irq, void =
-*arg)
->   static int ifcvf_start_datapath(void *private)
->   {
->   	struct ifcvf_hw *vf =3D ifcvf_private_to_vf(private);
-> -	struct ifcvf_adapter *ifcvf;
->   	u8 status;
->   	int ret;
->  =20
-> -	ifcvf =3D vf_to_adapter(vf);
->   	vf->nr_vring =3D IFCVF_MAX_QUEUE_PAIRS * 2;
->   	ret =3D ifcvf_start_hw(vf);
->   	if (ret < 0) {
+-- 
+Sincerely yours,
+Mike.
 
