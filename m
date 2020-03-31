@@ -2,90 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98BA7199999
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:26:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A721C19999C
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:27:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730673AbgCaP0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 11:26:43 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:42266 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730105AbgCaP0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 11:26:43 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48sCq45DKpz9v1m0;
-        Tue, 31 Mar 2020 17:26:40 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=t8Aeguib; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 8DExRBZx6m9W; Tue, 31 Mar 2020 17:26:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48sCq445KVz9v1lt;
-        Tue, 31 Mar 2020 17:26:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1585668400; bh=6GzuXtjCsiw9CH7FF8bJtqgWQkdVh/8g3MNsBbKIqes=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=t8AeguibQXTtwgtxuz/Qgy7l3pQt6IBkAXgo6w01KhY0Rk7YOyeUFk4idt9aVz7se
-         cZ8qLc46EDDfvl89JC7LHhD7CZ2R4qRCg7T80nW2Inb2BzTXbxSBornWpCeS4bpIRH
-         cC99bCmeL0PNnXHTNazRseiFDfwdchk5rz/eY1XU=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2EDFC8B868;
-        Tue, 31 Mar 2020 17:26:42 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 119REg_f9BRk; Tue, 31 Mar 2020 17:26:42 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 560438B752;
-        Tue, 31 Mar 2020 17:26:40 +0200 (CEST)
-Subject: Re: [PATCH v2 09/11] powerpc/platforms: Move files from 4xx to 44x
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-References: <698e9a42a06eb856eef4501c3c0a182c034a5d8c.1585640941.git.christophe.leroy@c-s.fr>
- <50d0ce1a96fa978cd0dfabde30cf75d23691622a.1585640942.git.christophe.leroy@c-s.fr>
- <CAK8P3a3u4y7Zm8w43QScqUk6macBL1wO3S0qPisf9+d9FqSHfw@mail.gmail.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <833d63fe-3b94-a3be-1abb-a629386aa0dd@c-s.fr>
-Date:   Tue, 31 Mar 2020 17:26:40 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1731038AbgCaP1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 11:27:23 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37448 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730095AbgCaP1X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 11:27:23 -0400
+Received: by mail-qt1-f194.google.com with SMTP id z24so17419132qtu.4
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 08:27:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=VFmTu4uYulpUU5in51vToheYdVlAq1Y7eqMyGwDEhI8=;
+        b=xvsIaGxnMknx8N7QgJaLh9AYgim3Yzr9d2ImHJb6Fm01eN61rKj0TtvbuDRcAonw05
+         ZlQT1tqS2mvg9gInk48P+SLwLCFspAXO9goQ80GzoZSYcdozAOr4AbqieMYIDBCUhEga
+         XnQao8gTvNKF0cUQ7PWdMaBP5jx9dK++L03hKkti65thILpnTTU6HPikNcaOKAOynM3i
+         Xd4RfRPHXw1kpYFicGHnWU23E+FJLXUDWavXEqCQkBYqg/E+J5JqVP+9ViwXqzToUnjM
+         Ip29GoMWHHk0bc4oAX91VvskBcLFjXK386s3VyOVm/qiKMtxsgKhOOc89QwGBMb4zNDn
+         Dhgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=VFmTu4uYulpUU5in51vToheYdVlAq1Y7eqMyGwDEhI8=;
+        b=DfddWXqF/UVz+LdjzRZO7ZTTEZvSJYwFYQyLMFMG/mTdN1BLaOebaley6iRvkfk2aW
+         lu0ibLHCfmp4opl+CNcuLVyMlrrdRV2BoskHsjB2EGPNNI8Blrx2oiopgohEFhhYL+It
+         pKn8cn7vKGQi3GkBO9IMkb0GlMly1SAT+ILxROG6+f9ViMK5zLAntpQfwDBpf+YaI3VA
+         SiHEmxpr4Pvvuoea+v+V5LbotHJJiRsEknkLTleR/o2oLu9Wk6JQNgOpukYfObKi2g1U
+         8zIxB3Pt+1IIR1rkjDV+ANMosM/1xDrHwSvyRHRrRn++GgxUJlLd3SuR0eISqR5Z2auC
+         rkZw==
+X-Gm-Message-State: ANhLgQ39GOQy6M0U1CbJFjiQTuYLR0dvMt+kysavxprjPz9lhH0ngiob
+        223vdv+CnzFvCHnwKXH28XXQKT9YaTWbKQ==
+X-Google-Smtp-Source: ADFU+vs5KHa/86yJddBLr6QS2vwH/Z2sgGhSsdkNYXC51dKELK8f6xV1wM4weTeXYx51/wy8n5E3CQ==
+X-Received: by 2002:ac8:3072:: with SMTP id g47mr5590057qte.278.1585668442641;
+        Tue, 31 Mar 2020 08:27:22 -0700 (PDT)
+Received: from localhost ([2605:a601:a664:2e00:9c27:5ab0:8441:9150])
+        by smtp.gmail.com with ESMTPSA id r29sm14079899qtj.76.2020.03.31.08.27.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 08:27:22 -0700 (PDT)
+From:   Jon Mason <jdmason@kudzu.us>
+X-Google-Original-From: Jon Mason <jdm@athena.kudzu.us>
+Date:   Tue, 31 Mar 2020 11:27:21 -0400
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com
+Subject: [GIT PULL] NTB bug fixes for v5.7
+Message-ID: <20200331152721.GA1719@athena.kudzu.us>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3u4y7Zm8w43QScqUk6macBL1wO3S0qPisf9+d9FqSHfw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Linus,
+Here are a few NTB bug fixes and AMD NTB driver changes for v5.7.  Please consider pulling them.
+
+Thanks,
+Jon
 
 
-Le 31/03/2020 à 17:14, Arnd Bergmann a écrit :
-> On Tue, Mar 31, 2020 at 9:49 AM Christophe Leroy
-> <christophe.leroy@c-s.fr> wrote:
->>
->> Only 44x uses 4xx now, so only keep one directory.
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   arch/powerpc/platforms/44x/Makefile           |  9 +++++++-
->>   arch/powerpc/platforms/{4xx => 44x}/cpm.c     |  0
-> 
-> No objections to moving everything into one place, but I wonder if the
-> combined name should be 4xx instead of 44x, given that 44x currently
-> include 46x and 47x. OTOH your approach has the advantage of
-> moving fewer files.
-> 
 
-In that case, should we also rename CONFIG_44x to CONFIG_4xx ?
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
-Christophe
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+
+are available in the Git repository at:
+
+  git://github.com/jonmason/ntb tags/ntb-5.7
+
+for you to fetch changes up to b350f0a3eb264962caefeb892af56c1b727ee03f:
+
+  NTB: add pci shutdown handler for AMD NTB (2020-03-13 10:04:20 -0400)
+
+----------------------------------------------------------------
+Bug fixes for a few printing issues, link status detection bug on AMD
+hardware, and a DMA address issue with ntb_perf.  Also, large series of
+AMD NTB patches.
+
+----------------------------------------------------------------
+Alexander Fomichev (1):
+      ntb_hw_switchtec: Fix ntb_mw_clear_trans error if size == 0
+
+Arindam Nath (15):
+      NTB: Fix access to link status and control register
+      NTB: clear interrupt status register
+      NTB: Enable link up and down event notification
+      NTB: define a new function to get link status
+      NTB: return the side info status from amd_poll_link
+      NTB: set peer_sta within event handler itself
+      NTB: remove handling of peer_sta from amd_link_is_up
+      NTB: handle link down event correctly
+      NTB: handle link up, D0 and D3 events correctly
+      NTB: move ntb_ctrl handling to init and deinit
+      NTB: add helper functions to set and clear sideinfo
+      NTB: return link up status correctly for PRI and SEC
+      NTB: remove redundant setting of DB valid mask
+      NTB: send DB event when driver is loaded or un-loaded
+      NTB: add pci shutdown handler for AMD NTB
+
+Helge Deller (1):
+      ntb_tool: Fix printk format
+
+Jiasen Lin (2):
+      NTB: Fix an error in get link status
+      NTB: ntb_perf: Fix address err in perf_copy_chunk
+
+Sanjay R Mehta (1):
+      MAINTAINERS: update maintainer list for AMD NTB driver
+
+Takashi Iwai (1):
+      NTB: ntb_transport: Use scnprintf() for avoiding potential buffer overflow
+
+ MAINTAINERS                            |   1 +
+ drivers/ntb/hw/amd/ntb_hw_amd.c        | 290 +++++++++++++++++++++++++++------
+ drivers/ntb/hw/amd/ntb_hw_amd.h        |   8 +-
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c |   2 +-
+ drivers/ntb/ntb_transport.c            |  58 +++----
+ drivers/ntb/test/ntb_perf.c            |  57 +++++--
+ drivers/ntb/test/ntb_tool.c            |  14 +-
+ 7 files changed, 332 insertions(+), 98 deletions(-)
