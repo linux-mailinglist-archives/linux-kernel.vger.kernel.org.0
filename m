@@ -2,408 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E843199593
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:46:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEDA6199561
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:33:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730766AbgCaLqm convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 07:46:42 -0400
-Received: from maillog.nuvoton.com ([202.39.227.15]:40894 "EHLO
-        maillog.nuvoton.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730490AbgCaLqX (ORCPT
+        id S1730490AbgCaLdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 07:33:50 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:23711 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730343AbgCaLdt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 07:46:23 -0400
-Received: from NTHCCAS02.nuvoton.com (nthccas02.nuvoton.com [10.1.8.29])
-        by maillog.nuvoton.com (Postfix) with ESMTP id 5A04B1C80EFC;
-        Tue, 31 Mar 2020 19:35:23 +0800 (CST)
-Received: from NTILML02.nuvoton.com (10.190.1.46) by NTHCCAS02.nuvoton.com
- (10.1.8.29) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Tue, 31 Mar 2020
- 19:35:22 +0800
-Received: from NTILML02.nuvoton.com (10.190.1.47) by NTILML02.nuvoton.com
- (10.190.1.47) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Tue, 31 Mar
- 2020 14:35:20 +0300
-Received: from taln70.nuvoton.co.il (10.191.1.70) by NTILML02.nuvoton.com
- (10.190.1.47) with Microsoft SMTP Server id 15.0.1130.7 via Frontend
- Transport; Tue, 31 Mar 2020 14:35:20 +0300
-Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
-        by taln70.nuvoton.co.il (Postfix) with ESMTP id 64F30250;
-        Tue, 31 Mar 2020 14:35:20 +0300 (IDT)
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id 97CA8639B4; Tue, 31 Mar 2020 14:34:32 +0300 (IDT)
-From:   <amirmizi6@gmail.com>
-To:     <Eyal.Cohen@nuvoton.com>, <jarkko.sakkinen@linux.intel.com>,
-        <oshrialkoby85@gmail.com>, <alexander.steffen@infineon.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <peterhuewe@gmx.de>,
-        <jgg@ziepe.ca>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <oshri.alkoby@nuvoton.com>,
-        <tmaimon77@gmail.com>, <gcwilson@us.ibm.com>,
-        <kgoldman@us.ibm.com>, <Dan.Morav@nuvoton.com>,
-        <oren.tanami@nuvoton.com>, <shmulik.hager@nuvoton.com>,
-        <amir.mizinski@nuvoton.com>, Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v4 7/7] tpm: tpm_tis: add tpm_tis_i2c driver
-Date:   Tue, 31 Mar 2020 14:32:07 +0300
-Message-ID: <20200331113207.107080-8-amirmizi6@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200331113207.107080-1-amirmizi6@gmail.com>
-References: <20200331113207.107080-1-amirmizi6@gmail.com>
+        Tue, 31 Mar 2020 07:33:49 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585654429; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=vd/RakK25qqtVWxb095aqA3ryPJv6ilQzlxzlSwno2k=;
+ b=c98iSUIAo6BeOF7//N9JYdKRSqc4jFLVPVLqyphBtEbRzCTyeWzL2TaKjPIrjL7sEAZQhmog
+ tTpnMtmiL+o/9uZrNpn6XNwLLdUIOhy/OA0B7EfVLnN9kQPxdYraIQt4bXYZ9dFRWIaA9maq
+ RrhAGQ7bTbDNc3wpJ1rA5pXV59A=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e832a93.7fa599f2e1f0-smtp-out-n02;
+ Tue, 31 Mar 2020 11:33:39 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id E951BC43636; Tue, 31 Mar 2020 11:33:38 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: tingwei)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4AFA7C433F2;
+        Tue, 31 Mar 2020 11:33:38 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Tue, 31 Mar 2020 19:33:38 +0800
+From:   tingwei@codeaurora.org
+To:     Will Deacon <will@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: hw_breakpoint: don't clear debug registers in halt
+ mode
+In-Reply-To: <20200331074147.GA25612@willie-the-truck>
+References: <20200328083209.21793-1-tingwei@codeaurora.org>
+ <20200330123946.GH1309@C02TD0UTHF1T.local>
+ <20200330134218.GB10633@willie-the-truck>
+ <2f4d076b2b21de3908f0821126d0c61e@codeaurora.org>
+ <20200331074147.GA25612@willie-the-truck>
+Message-ID: <518d9ca9652c23bfc0e1831306144418@codeaurora.org>
+X-Sender: tingwei@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amir Mizinski <amirmizi6@gmail.com>
+在 2020-03-31 15:41，Will Deacon 写道：
+> On Tue, Mar 31, 2020 at 10:39:42AM +0800, tingwei@codeaurora.org wrote:
+>> 在 2020-03-30 21:42，Will Deacon 写道：
+>> > On Mon, Mar 30, 2020 at 01:39:46PM +0100, Mark Rutland wrote:
+>> > > On Sat, Mar 28, 2020 at 04:32:09PM +0800, Tingwei Zhang wrote:
+>> > > > If external debugger sets a breakpoint for one Kernel function
+>> > > > when device is in bootloader mode and loads Kernel, this breakpoint
+>> > > > will be wiped out in hw_breakpoint_reset(). To fix this, check
+>> > > > MDSCR_EL1.HDE in hw_breakpoint_reset(). When MDSCR_EL1.HDE is
+>> > > > 0b1, halting debug is enabled. Don't reset debug registers in this
+>> > case.
+>> > >
+>> > > I don't think this is sufficient, because the kernel can still
+>> > > subsequently mess with breakpoints, and the HW debugger might not be
+>> > > attached at this point in time anyhow.
+>> > >
+>> > > I reckon this should hang off the existing "nodebumon" command line
+>> > > option, and we shouldn't use HW breakpoints at all when that is
+>> > > passed.
+>> > > Then you can pass that to prevent the kernel stomping on the external
+>> > > debugger.
+>> > >
+>> > > Will, thoughts?
+>> >
+>> > I was going to suggest the same thing, although we will also need to
+>> > take
+>> > care to reset the registers if "nodebugmon" is toggled at runtime via
+>> > the
+>> > "debug_enabled" file in debugfs.
+>> >
+>> Thanks for the suggestion, Mark and Will. It's a great idea to use
+>> "nodebugmon". When "nodebugmon" is set, Kernel won't change HW
+>> breakpoints.
+>> 
+>> For reset the registers after "debug_enabled" is toggled, I'm thinking 
+>> if
+>> we are adding unnecessary complexity here.If we take that approach, we
+>> will
+>> hook "debug_enabled" interface and use smp_call_function_single() to 
+>> call
+>> hw_breakpoint_reset() on each CPU. Wait for all CPUs' execution done 
+>> and
+>> change "debug_enabled". External debugger would clear the breakpoints 
+>> when
+>> it detaches the device and restores its breakpoints when attaches the
+>> device.
+>> Assume debug_enabled is changed to one after external debugger 
+>> detaches
+>> the
+>> device. Debugger would already clear the breakpoint registers. If 
+>> debgger
+>> is
+>> still attached, there's nothing Kernel can do to stop it 
+>> restores/programs
+>> the breakpoint registers.
+>> 
+>> What do you think of this?
+> 
+> It's all a bit of a mess. Looking at it some more, why can't the 
+> external
+> debugger simply trap access to the debug registers using EDSCR.TDA? 
+> That
+> way, we don't have to change anything in the kernel.
+> 
+> Will
 
-Implements the functionality needed to communicate with an I2C TPM
-according to the TCG TPM I2C Interface Specification.
+External debugger has the function to trap access to debug registers 
+now.
+What do we expect debugger to do after core is stopped? Skip that msr
+instruction and continue to run?
 
-Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
----
- drivers/char/tpm/Kconfig       |  12 ++
- drivers/char/tpm/Makefile      |   1 +
- drivers/char/tpm/tpm_tis_i2c.c | 292 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 305 insertions(+)
- create mode 100644 drivers/char/tpm/tpm_tis_i2c.c
-
-diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-index aacdeed..b482bbf 100644
---- a/drivers/char/tpm/Kconfig
-+++ b/drivers/char/tpm/Kconfig
-@@ -74,6 +74,18 @@ config TCG_TIS_SPI_CR50
-          If you have a H1 secure module running Cr50 firmware on SPI bus,
-          say Yes and it will be accessible from within Linux.
-
-+config TCG_TIS_I2C
-+       tristate "TPM I2C Interface Specification"
-+       depends on I2C
-+        depends on CRC_CCITT
-+       select TCG_TIS_CORE
-+       ---help---
-+         If you have a TPM security chip which is connected to a regular
-+         I2C master (i.e. most embedded platforms) that is compliant with the
-+         TCG TPM I2C Interface Specification say Yes and it will be accessible from
-+         within Linux. To compile this driver as a module, choose  M here;
-+         the module will be called tpm_tis_i2c.
-+
- config TCG_TIS_I2C_ATMEL
-        tristate "TPM Interface Specification 1.2 Interface (I2C - Atmel)"
-        depends on I2C
-diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-index 9567e51..97999cf 100644
---- a/drivers/char/tpm/Makefile
-+++ b/drivers/char/tpm/Makefile
-@@ -26,6 +26,7 @@ obj-$(CONFIG_TCG_TIS_SPI) += tpm_tis_spi.o
- tpm_tis_spi-y := tpm_tis_spi_main.o
- tpm_tis_spi-$(CONFIG_TCG_TIS_SPI_CR50) += tpm_tis_spi_cr50.o
-
-+obj-$(CONFIG_TCG_TIS_I2C) += tpm_tis_i2c.o
- obj-$(CONFIG_TCG_TIS_I2C_ATMEL) += tpm_i2c_atmel.o
- obj-$(CONFIG_TCG_TIS_I2C_INFINEON) += tpm_i2c_infineon.o
- obj-$(CONFIG_TCG_TIS_I2C_NUVOTON) += tpm_i2c_nuvoton.o
-diff --git a/drivers/char/tpm/tpm_tis_i2c.c b/drivers/char/tpm/tpm_tis_i2c.c
-new file mode 100644
-index 0000000..c10ec7e
---- /dev/null
-+++ b/drivers/char/tpm/tpm_tis_i2c.c
-@@ -0,0 +1,292 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2014-2019 Nuvoton Technology corporation
-+ *
-+ * TPM TIS I2C
-+ *
-+ * TPM TIS I2C Device Driver Interface for devices that implement the TPM I2C
-+ * Interface defined by TCG PC Client Platform TPM Profile (PTP) Specification
-+ * Revision 01.03 v22 at www.trustedcomputinggroup.org
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/slab.h>
-+#include <linux/interrupt.h>
-+#include <linux/wait.h>
-+#include <linux/acpi.h>
-+#include <linux/freezer.h>
-+#include <linux/crc-ccitt.h>
-+
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/gpio.h>
-+#include <linux/of_irq.h>
-+#include <linux/of_gpio.h>
-+#include <linux/tpm.h>
-+#include "tpm.h"
-+#include "tpm_tis_core.h"
-+
-+#define TPM_LOC_SEL                    0x04
-+#define TPM_I2C_INTERFACE_CAPABILITY   0x30
-+#define TPM_I2C_DEVICE_ADDRESS         0x38
-+#define TPM_DATA_CSUM_ENABLE           0x40
-+#define TPM_DATA_CSUM                  0x44
-+#define TPM_I2C_DID_VID                        0x48
-+#define TPM_I2C_RID                    0x4C
-+
-+//#define I2C_IS_TPM2 1
-+
-+struct tpm_tis_i2c_phy {
-+       struct tpm_tis_data priv;
-+       struct i2c_client *i2c_client;
-+       bool data_csum;
-+       u8 *iobuf;
-+};
-+
-+static inline struct tpm_tis_i2c_phy *to_tpm_tis_i2c_phy(struct tpm_tis_data *data)
-+{
-+       return container_of(data, struct tpm_tis_i2c_phy, priv);
-+}
-+
-+static u8 address_to_register(u32 addr)
-+{
-+       addr &= 0xFFF;
-+
-+       switch (addr) {
-+               // adapt register addresses that have changed compared to
-+               // older TIS versions
-+       case TPM_ACCESS(0):
-+               return 0x04;
-+       case TPM_LOC_SEL:
-+               return 0x00;
-+       case TPM_DID_VID(0):
-+               return 0x48;
-+       case TPM_RID(0):
-+               return 0x4C;
-+       default:
-+               return addr;
-+       }
-+}
-+
-+static int tpm_tis_i2c_read_bytes(struct tpm_tis_data *data, u32 addr,
-+                                 u16 len, u8 *result)
-+{
-+       struct tpm_tis_i2c_phy *phy = to_tpm_tis_i2c_phy(data);
-+       int ret = 0;
-+       int i = 0;
-+       u8 reg = address_to_register(addr);
-+       struct i2c_msg msgs[] = {
-+               {
-+                       .addr = phy->i2c_client->addr,
-+                       .len = sizeof(reg),
-+                       .buf = &reg,
-+               },
-+               {
-+                       .addr = phy->i2c_client->addr,
-+                       .len = len,
-+                       .buf = result,
-+                       .flags = I2C_M_RD,
-+               },
-+       };
-+
-+       do {
-+               ret = i2c_transfer(phy->i2c_client->adapter, msgs,
-+                                  ARRAY_SIZE(msgs));
-+               usleep_range(250, 300); // wait default GUARD_TIME of 250µs
-+
-+       } while (ret < 0 && i++ < TPM_RETRY);
-+
-+       if (ret < 0)
-+               return ret;
-+
-+
-+       return 0;
-+}
-+
-+static int tpm_tis_i2c_write_bytes(struct tpm_tis_data *data, u32 addr,
-+                                  u16 len, const u8 *value)
-+{
-+       struct tpm_tis_i2c_phy *phy = to_tpm_tis_i2c_phy(data);
-+       int ret = 0;
-+       int i = 0;
-+
-+       if (phy->iobuf) {
-+               if (len > TPM_BUFSIZE - 1)
-+                       return -EIO;
-+
-+               phy->iobuf[0] = address_to_register(addr);
-+               memcpy(phy->iobuf + 1, value, len);
-+
-+               {
-+                       struct i2c_msg msgs[] = {
-+                               {
-+                                       .addr = phy->i2c_client->addr,
-+                                       .len = len + 1,
-+                                       .buf = phy->iobuf,
-+                               },
-+                       };
-+
-+                       do {
-+                               ret = i2c_transfer(phy->i2c_client->adapter,
-+                                                  msgs, ARRAY_SIZE(msgs));
-+                               // wait default GUARD_TIME of 250µs
-+                               usleep_range(250, 300);
-+                       } while (ret < 0 && i++ < TPM_RETRY);
-+               }
-+       } else {
-+               u8 reg = address_to_register(addr);
-+
-+               struct i2c_msg msgs[] = {
-+                       {
-+                               .addr = phy->i2c_client->addr,
-+                               .len = sizeof(reg),
-+                               .buf = &reg,
-+                       },
-+                       {
-+                               .addr = phy->i2c_client->addr,
-+                               .len = len,
-+                               .buf = (u8 *)value,
-+                               .flags = I2C_M_NOSTART,
-+                       },
-+               };
-+               do {
-+                       ret = i2c_transfer(phy->i2c_client->adapter, msgs,
-+                                          ARRAY_SIZE(msgs));
-+                       // wait default GUARD_TIME of 250µs
-+                       usleep_range(250, 300);
-+               } while (ret < 0 && i++ < TPM_RETRY);
-+       }
-+
-+       if (ret < 0)
-+               return ret;
-+
-+
-+       return 0;
-+}
-+
-+static bool tpm_tis_i2c_check_data(struct tpm_tis_data *data,
-+                                  const u8 *buf, size_t len)
-+{
-+       struct tpm_tis_i2c_phy *phy = to_tpm_tis_i2c_phy(data);
-+       u16 crc, crc_tpm;
-+       int rc;
-+
-+       if (phy->data_csum) {
-+               crc = crc_ccitt(0x0000, buf, len);
-+               rc = tpm_tis_read16(data, TPM_DATA_CSUM, &crc_tpm);
-+               if (rc < 0)
-+                       return false;
-+
-+               crc_tpm = be16_to_cpu(crc_tpm);
-+               return crc == crc_tpm;
-+       }
-+
-+       return true;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
-+
-+static int csum_state_store(struct tpm_tis_data *data, u8 new_state)
-+{
-+       struct tpm_tis_i2c_phy *phy = to_tpm_tis_i2c_phy(data);
-+       u8 cur_state;
-+       int rc;
-+
-+       rc = tpm_tis_i2c_write_bytes(&phy->priv, TPM_DATA_CSUM_ENABLE,
-+                                    1, &new_state);
-+       if (rc < 0)
-+               return rc;
-+
-+       rc = tpm_tis_i2c_read_bytes(&phy->priv, TPM_DATA_CSUM_ENABLE,
-+                                   1, &cur_state);
-+       if (rc < 0)
-+               return rc;
-+
-+       if (new_state == cur_state)
-+               phy->data_csum = (bool)new_state;
-+
-+       return rc;
-+}
-+
-+static const struct tpm_tis_phy_ops tpm_i2c_phy_ops = {
-+       .read_bytes = tpm_tis_i2c_read_bytes,
-+       .write_bytes = tpm_tis_i2c_write_bytes,
-+       .check_data = tpm_tis_i2c_check_data,
-+};
-+
-+static int tpm_tis_i2c_probe(struct i2c_client *dev,
-+                            const struct i2c_device_id *id)
-+{
-+       struct tpm_tis_i2c_phy *phy;
-+       int rc;
-+       int CRC_Checksum = 0;
-+       const u8 loc_init = 0;
-+       struct device_node *np;
-+
-+       phy = devm_kzalloc(&dev->dev, sizeof(struct tpm_tis_i2c_phy),
-+                          GFP_KERNEL);
-+       if (!phy)
-+               return -ENOMEM;
-+
-+       phy->i2c_client = dev;
-+
-+       if (!i2c_check_functionality(dev->adapter, I2C_FUNC_NOSTART)) {
-+               phy->iobuf = devm_kmalloc(&dev->dev, TPM_BUFSIZE, GFP_KERNEL);
-+               if (!phy->iobuf)
-+                       return -ENOMEM;
-+       }
-+
-+       // select locality 0 (the driver will access only via locality 0)
-+       rc = tpm_tis_i2c_write_bytes(&phy->priv, TPM_LOC_SEL, 1, &loc_init);
-+       if (rc < 0)
-+               return rc;
-+
-+       // set CRC checksum calculation enable
-+       np = dev->dev.of_node;
-+       if (of_property_read_bool(np, "crc-checksum"))
-+               CRC_Checksum = 1;
-+
-+       rc = csum_state_store(&phy->priv, CRC_Checksum);
-+       if (rc < 0)
-+               return rc;
-+
-+       return tpm_tis_core_init(&dev->dev, &phy->priv, -1, &tpm_i2c_phy_ops,
-+                                       NULL);
-+}
-+
-+static const struct i2c_device_id tpm_tis_i2c_id[] = {
-+       {"tpm_tis_i2c", 0},
-+       {}
-+};
-+MODULE_DEVICE_TABLE(i2c, tpm_tis_i2c_id);
-+
-+static const struct of_device_id of_tis_i2c_match[] = {
-+       { .compatible = "tcg,tpm-tis-i2c", },
-+       {}
-+};
-+MODULE_DEVICE_TABLE(of, of_tis_i2c_match);
-+
-+static const struct acpi_device_id acpi_tis_i2c_match[] = {
-+       {"SMO0768", 0},
-+       {}
-+};
-+MODULE_DEVICE_TABLE(acpi, acpi_tis_i2c_match);
-+
-+static struct i2c_driver tpm_tis_i2c_driver = {
-+       .driver = {
-+               .owner = THIS_MODULE,
-+               .name = "tpm_tis_i2c",
-+               .pm = &tpm_tis_pm,
-+               .of_match_table = of_match_ptr(of_tis_i2c_match),
-+               .acpi_match_table = ACPI_PTR(acpi_tis_i2c_match),
-+       },
-+       .probe = tpm_tis_i2c_probe,
-+       .id_table = tpm_tis_i2c_id,
-+};
-+
-+module_i2c_driver(tpm_tis_i2c_driver);
-+
-+MODULE_DESCRIPTION("TPM Driver for native I2C access");
-+MODULE_LICENSE("GPL");
---
-2.7.4
-
-
-
-===========================================================================================
-The privileged confidential information contained in this email is intended for use only by the addressees as indicated by the original sender of this email. If you are not the addressee indicated in this email or are not responsible for delivery of the email to such a person, please kindly reply to the sender indicating this fact and delete all copies of it from your computer and network server immediately. Your cooperation is highly appreciated. It is advised that any unauthorized use of confidential information of Nuvoton is strictly prohibited; and any information in this email irrelevant to the official business of Nuvoton shall be deemed as neither given nor endorsed by Nuvoton.
+Tingwei
