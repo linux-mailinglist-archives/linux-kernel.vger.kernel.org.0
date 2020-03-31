@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE4A3198F27
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:01:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F04D6199045
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730502AbgCaJBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:01:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40050 "EHLO mail.kernel.org"
+        id S1731605AbgCaJKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:10:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730490AbgCaJBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:01:00 -0400
+        id S1730673AbgCaJK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:10:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 099D720848;
-        Tue, 31 Mar 2020 09:00:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 397D820772;
+        Tue, 31 Mar 2020 09:10:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645259;
-        bh=i54h0PpoMrZjEXGvANY6FaJbACna+TsoRHILdEn6CI4=;
+        s=default; t=1585645828;
+        bh=b6ZWle7ZBOYu+g9UPnLlqZP56bPCcSFMuarMPcHu99w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kac2VdeIeEEZNknqs026yMb/tXtTTYrfDn0lu0G/tY7gB741yRzcZiJL2mXHytMVU
-         isKBhUr631iIjJq9/DHOMTmI7KKemYF+4p5gxqURHhdA71rfWj/Uc3FEMyNUr4alk6
-         3eD4BHXHJfvnK2GtiHKLHCz8pI0AGDBoOfOyUUoE=
+        b=i2AzQDw9PIyQBe+tnj0FvuPeeEuquV07YH+KrhIGga1wriKyBK0lF1jeOM4Yqq4XY
+         imwCAOrn+MTjdFXH4diKX0/4oAiTuuwZ37iVo4BsDnM1N5yYea0ZBS9ob64FcnazAj
+         gYDpzdumOJvDHA7RQZueLA0DotI6n+57oi0yguy0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 5.6 23/23] media: v4l2-core: fix a use-after-free bug of sd->devnode
-Date:   Tue, 31 Mar 2020 10:59:35 +0200
-Message-Id: <20200331085317.704628095@linuxfoundation.org>
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= 
+        <jerome.pouiller@silabs.com>
+Subject: [PATCH 5.5 162/170] staging: wfx: fix init/remove vs IRQ race
+Date:   Tue, 31 Mar 2020 10:59:36 +0200
+Message-Id: <20200331085439.998160230@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085308.098696461@linuxfoundation.org>
-References: <20200331085308.098696461@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +45,178 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
-commit 6990570f7e0a6078e11b9c5dc13f4b6e3f49a398 upstream.
+commit 4033714d6cbe04893aa0708d1fcaa45dd8eb3f53 upstream.
 
-sd->devnode is released after calling
-v4l2_subdev_release. Therefore it should be set
-to NULL so that the subdev won't hold a pointer
-to a released object. This fixes a reference
-after free bug in function
-v4l2_device_unregister_subdev
+Current code races in init/exit with interrupt handlers. This is noticed
+by the warning below. Fix it by using devres for ordering allocations and
+IRQ de/registration.
 
-Fixes: 0e43734d4c46e ("media: v4l2-subdev: add release() internal op")
+WARNING: CPU: 0 PID: 827 at drivers/staging/wfx/bus_spi.c:142 wfx_spi_irq_handler+0x5c/0x64 [wfx]
+race condition in driver init/deinit
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Fixes: 0096214a59a7 ("staging: wfx: add support for I/O access")
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Reviewed-by: Jérôme Pouiller <jerome.pouiller@silabs.com>
+Link: https://lore.kernel.org/r/f0c66cbb3110c2736cd4357c753fba8c14ee3aee.1581416843.git.mirq-linux@rere.qmqm.pl
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/v4l2-device.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/wfx/bus_sdio.c |   15 ++++++---------
+ drivers/staging/wfx/bus_spi.c  |   27 ++++++++++++++-------------
+ drivers/staging/wfx/main.c     |   21 +++++++++++++--------
+ drivers/staging/wfx/main.h     |    1 -
+ 4 files changed, 33 insertions(+), 31 deletions(-)
 
---- a/drivers/media/v4l2-core/v4l2-device.c
-+++ b/drivers/media/v4l2-core/v4l2-device.c
-@@ -179,6 +179,7 @@ static void v4l2_subdev_release(struct v
+--- a/drivers/staging/wfx/bus_sdio.c
++++ b/drivers/staging/wfx/bus_sdio.c
+@@ -200,25 +200,23 @@ static int wfx_sdio_probe(struct sdio_fu
+ 	if (ret)
+ 		goto err0;
  
- 	if (sd->internal_ops && sd->internal_ops->release)
- 		sd->internal_ops->release(sd);
-+	sd->devnode = NULL;
- 	module_put(owner);
+-	ret = wfx_sdio_irq_subscribe(bus);
+-	if (ret)
+-		goto err1;
+-
+ 	bus->core = wfx_init_common(&func->dev, &wfx_sdio_pdata,
+ 				    &wfx_sdio_hwbus_ops, bus);
+ 	if (!bus->core) {
+ 		ret = -EIO;
+-		goto err2;
++		goto err1;
+ 	}
+ 
++	ret = wfx_sdio_irq_subscribe(bus);
++	if (ret)
++		goto err1;
++
+ 	ret = wfx_probe(bus->core);
+ 	if (ret)
+-		goto err3;
++		goto err2;
+ 
+ 	return 0;
+ 
+-err3:
+-	wfx_free_common(bus->core);
+ err2:
+ 	wfx_sdio_irq_unsubscribe(bus);
+ err1:
+@@ -234,7 +232,6 @@ static void wfx_sdio_remove(struct sdio_
+ 	struct wfx_sdio_priv *bus = sdio_get_drvdata(func);
+ 
+ 	wfx_release(bus->core);
+-	wfx_free_common(bus->core);
+ 	wfx_sdio_irq_unsubscribe(bus);
+ 	sdio_claim_host(func);
+ 	sdio_disable_func(func);
+--- a/drivers/staging/wfx/bus_spi.c
++++ b/drivers/staging/wfx/bus_spi.c
+@@ -154,6 +154,11 @@ static void wfx_spi_request_rx(struct wo
+ 	wfx_bh_request_rx(bus->core);
  }
  
++static void wfx_flush_irq_work(void *w)
++{
++	flush_work(w);
++}
++
+ static size_t wfx_spi_align_size(void *priv, size_t size)
+ {
+ 	// Most of SPI controllers avoid DMA if buffer size is not 32bit aligned
+@@ -209,22 +214,23 @@ static int wfx_spi_probe(struct spi_devi
+ 		udelay(2000);
+ 	}
+ 
+-	ret = devm_request_irq(&func->dev, func->irq, wfx_spi_irq_handler,
+-			       IRQF_TRIGGER_RISING, "wfx", bus);
+-	if (ret)
+-		return ret;
+-
+ 	INIT_WORK(&bus->request_rx, wfx_spi_request_rx);
+ 	bus->core = wfx_init_common(&func->dev, &wfx_spi_pdata,
+ 				    &wfx_spi_hwbus_ops, bus);
+ 	if (!bus->core)
+ 		return -EIO;
+ 
+-	ret = wfx_probe(bus->core);
++	ret = devm_add_action_or_reset(&func->dev, wfx_flush_irq_work,
++				       &bus->request_rx);
+ 	if (ret)
+-		wfx_free_common(bus->core);
++		return ret;
++
++	ret = devm_request_irq(&func->dev, func->irq, wfx_spi_irq_handler,
++			       IRQF_TRIGGER_RISING, "wfx", bus);
++	if (ret)
++		return ret;
+ 
+-	return ret;
++	return wfx_probe(bus->core);
+ }
+ 
+ /* Disconnect Function to be called by SPI stack when device is disconnected */
+@@ -233,11 +239,6 @@ static int wfx_spi_disconnect(struct spi
+ 	struct wfx_spi_priv *bus = spi_get_drvdata(func);
+ 
+ 	wfx_release(bus->core);
+-	wfx_free_common(bus->core);
+-	// A few IRQ will be sent during device release. Hopefully, no IRQ
+-	// should happen after wdev/wvif are released.
+-	devm_free_irq(&func->dev, func->irq, bus);
+-	flush_work(&bus->request_rx);
+ 	return 0;
+ }
+ 
+--- a/drivers/staging/wfx/main.c
++++ b/drivers/staging/wfx/main.c
+@@ -261,6 +261,16 @@ static int wfx_send_pdata_pds(struct wfx
+ 	return ret;
+ }
+ 
++static void wfx_free_common(void *data)
++{
++	struct wfx_dev *wdev = data;
++
++	mutex_destroy(&wdev->rx_stats_lock);
++	mutex_destroy(&wdev->conf_mutex);
++	wfx_tx_queues_deinit(wdev);
++	ieee80211_free_hw(wdev->hw);
++}
++
+ struct wfx_dev *wfx_init_common(struct device *dev,
+ 				const struct wfx_platform_data *pdata,
+ 				const struct hwbus_ops *hwbus_ops,
+@@ -326,15 +336,10 @@ struct wfx_dev *wfx_init_common(struct d
+ 	wfx_init_hif_cmd(&wdev->hif_cmd);
+ 	wfx_tx_queues_init(wdev);
+ 
+-	return wdev;
+-}
++	if (devm_add_action_or_reset(dev, wfx_free_common, wdev))
++		return NULL;
+ 
+-void wfx_free_common(struct wfx_dev *wdev)
+-{
+-	mutex_destroy(&wdev->rx_stats_lock);
+-	mutex_destroy(&wdev->conf_mutex);
+-	wfx_tx_queues_deinit(wdev);
+-	ieee80211_free_hw(wdev->hw);
++	return wdev;
+ }
+ 
+ int wfx_probe(struct wfx_dev *wdev)
+--- a/drivers/staging/wfx/main.h
++++ b/drivers/staging/wfx/main.h
+@@ -34,7 +34,6 @@ struct wfx_dev *wfx_init_common(struct d
+ 				const struct wfx_platform_data *pdata,
+ 				const struct hwbus_ops *hwbus_ops,
+ 				void *hwbus_priv);
+-void wfx_free_common(struct wfx_dev *wdev);
+ 
+ int wfx_probe(struct wfx_dev *wdev);
+ void wfx_release(struct wfx_dev *wdev);
 
 
