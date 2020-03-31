@@ -2,93 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5F1819A1F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 548DD19A1E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 00:27:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731345AbgCaWc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 18:32:26 -0400
-Received: from pb-smtp1.pobox.com ([64.147.108.70]:62014 "EHLO
-        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbgCaWcZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 18:32:25 -0400
-Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id 9EB225E923;
-        Tue, 31 Mar 2020 18:32:23 -0400 (EDT)
-        (envelope-from daniel.santos@pobox.com)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=subject:to:cc
-        :references:from:message-id:date:mime-version:in-reply-to
-        :content-type:content-transfer-encoding; s=sasl; bh=ij8E2mP4qn59
-        jj81vTeQK6B7GHM=; b=dXRKPE5N4m7oXAcItLUINV5/aqGBbNL9+oXl1FMODExK
-        j4cC6UHcXb9i2bFG2Sj19JpkR8aHIlskVH0wbLizueh/UA64CfMqz9tIqDyVIXZN
-        Hr2EHeGpohsN493+2FHsCl9lnoAhc5t9IH7YCeUuG6+ZvUhUF6T7d+PTR92jg1A=
-DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=subject:to:cc
-        :references:from:message-id:date:mime-version:in-reply-to
-        :content-type:content-transfer-encoding; q=dns; s=sasl; b=ikshDs
-        vqIHah/bWJ1uWaMmIWWdFR8pcP3B3w20KKbAT8SH3CEdNn9T6xX5ZNW1+Q/Dndwm
-        x1WY/CAv5Z66KQeIJpGdYxSAdCBxqFur9tboO1FiGDVoX38mEJI1kIMNZOCoBSML
-        Hih51i3nhK/SX3fkHxvHMtxwhgxF4+qgTj/ps=
-Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id 955CA5E922;
-        Tue, 31 Mar 2020 18:32:23 -0400 (EDT)
-        (envelope-from daniel.santos@pobox.com)
-Received: from [192.168.0.8] (unknown [76.183.130.197])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 64C775E921;
-        Tue, 31 Mar 2020 18:32:17 -0400 (EDT)
-        (envelope-from daniel.santos@pobox.com)
-Subject: Re: [PATCH] compiler.h: fix error in BUILD_BUG_ON() reporting
-To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Joe Perches <joe@perches.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ian Abbott <abbotti@mev.co.uk>
-References: <20200331112637.25047-1-vegard.nossum@oracle.com>
- <dc53b8704ec674cba636b41d7f55bf507a7bd7aa.camel@perches.com>
- <123d3606-cebf-4261-4b04-7d53d1fcdb07@prevas.dk>
-From:   Daniel Santos <daniel.santos@pobox.com>
-Message-ID: <7acde2e5-60dd-f384-fda7-1d018608f8e7@pobox.com>
-Date:   Tue, 31 Mar 2020 17:30:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1731460AbgCaW1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 18:27:41 -0400
+Received: from mga18.intel.com ([134.134.136.126]:33635 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730556AbgCaW1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 18:27:41 -0400
+IronPort-SDR: 6942gzEt1BCU0uMt4E3j+nw4YFwcpkxkfyho24pC/QkkOX4x6zw6lz/HJL+n9FHLM2TUM4btyE
+ 76Isutb6/XqA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 15:27:41 -0700
+IronPort-SDR: sm5w+8Oj3UiLPWOp2oWKzbwK5CAF0dUl41izCr8bm23fIOz9KrC7KNrS8TCcWxaCU/TdyyK92T
+ 0eu547XSuAoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,329,1580803200"; 
+   d="scan'208";a="295144707"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by FMSMGA003.fm.intel.com with ESMTP; 31 Mar 2020 15:27:39 -0700
+Date:   Tue, 31 Mar 2020 15:33:27 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Alex Williamson" <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH V10 09/11] iommu/vt-d: Cache virtual command capability
+ register
+Message-ID: <20200331153327.50219c12@jacob-builder>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7FA0E7@SHSMSX104.ccr.corp.intel.com>
+References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1584746861-76386-10-git-send-email-jacob.jun.pan@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D7FA0E7@SHSMSX104.ccr.corp.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <123d3606-cebf-4261-4b04-7d53d1fcdb07@prevas.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Pobox-Relay-ID: 7D88B43C-739F-11EA-BD69-C28CBED8090B-06139138!pb-smtp1.pobox.com
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 28 Mar 2020 10:04:38 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
 
+> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Sent: Saturday, March 21, 2020 7:28 AM
+> > 
+> > Virtual command registers are used in the guest only, to prevent
+> > vmexit cost, we cache the capability and store it during
+> > initialization.
+> > 
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Reviewed-by: Eric Auger <eric.auger@redhat.com>
+> > Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> > 
+> > ---
+> > v7 Reviewed by Eric & Baolu
+> > ---
+> > ---
+> >  drivers/iommu/dmar.c        | 1 +
+> >  include/linux/intel-iommu.h | 5 +++++
+> >  2 files changed, 6 insertions(+)
+> > 
+> > diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+> > index 4d6b7b5b37ee..3b36491c8bbb 100644
+> > --- a/drivers/iommu/dmar.c
+> > +++ b/drivers/iommu/dmar.c
+> > @@ -963,6 +963,7 @@ static int map_iommu(struct intel_iommu *iommu,
+> > u64 phys_addr)
+> >  		warn_invalid_dmar(phys_addr, " returns all ones");
+> >  		goto unmap;
+> >  	}
+> > +	iommu->vccap = dmar_readq(iommu->reg + DMAR_VCCAP_REG);
+> > 
+> >  	/* the registers might be more than one page */
+> >  	map_size = max_t(int, ecap_max_iotlb_offset(iommu->ecap),
+> > diff --git a/include/linux/intel-iommu.h
+> > b/include/linux/intel-iommu.h index 43539713b3b3..ccbf164fb711
+> > 100644 --- a/include/linux/intel-iommu.h
+> > +++ b/include/linux/intel-iommu.h
+> > @@ -194,6 +194,9 @@
+> >  #define ecap_max_handle_mask(e) ((e >> 20) & 0xf)
+> >  #define ecap_sc_support(e)	((e >> 7) & 0x1) /* Snooping
+> > Control */
+> > 
+> > +/* Virtual command interface capabilities */  
+> 
+> capabilities -> capability
+Will do, I was thinking the future :)
 
-On 3/31/20 1:56 PM, Rasmus Villemoes wrote:
-> On 31/03/2020 20.20, Joe Perches wrote:
->> On Tue, 2020-03-31 at 13:26 +0200, Vegard Nossum wrote:
->>>  #define compiletime_assert(condition, msg) \
->>> -	_compiletime_assert(condition, msg, __compiletime_assert_, __LINE__=
-)
->>> +	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTE=
-R__)
->> This might be better using something like __LINE__ ## _ ## __COUNTER__
->>
->> as line # is somewhat useful to identify the specific assert in a file=
-.
->>
-> Eh, if the assert fires, doesn't the compiler's diagnostics already
-> contain all kinds of location information?
->
-> Rasmus
+Thanks,
 
-Yes, the diagnostic contains the file name and line in a far more useful
-format that every IDE knows how to read.=C2=A0 __LINE__ is only used for
-uniqueness and was chosen when __COUNTER__ (introduced in gcc 4.3) was
-still somewhat new.
+Jacob
+> 
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> 
+> > +#define vccap_pasid(v)		((v & DMA_VCS_PAS)) /* PASID
+> > allocation */
+> > +
+> >  /* IOTLB_REG */
+> >  #define DMA_TLB_FLUSH_GRANU_OFFSET  60
+> >  #define DMA_TLB_GLOBAL_FLUSH (((u64)1) << 60)
+> > @@ -287,6 +290,7 @@
+> > 
+> >  /* PRS_REG */
+> >  #define DMA_PRS_PPR	((u32)1)
+> > +#define DMA_VCS_PAS	((u64)1)
+> > 
+> >  #define IOMMU_WAIT_OP(iommu, offset, op, cond, sts)
+> > 	\
+> >  do
+> > {
+> > \ @@ -537,6 +541,7 @@ struct intel_iommu { u64
+> > reg_size; /* size of hw register set */ u64		cap;
+> >  	u64		ecap;
+> > +	u64		vccap;
+> >  	u32		gcmd; /* Holds TE, EAFL. Don't need
+> > SRTP, SFL, WBF */
+> >  	raw_spinlock_t	register_lock; /* protect register
+> > handling */ int		seq_id;	/* sequence id of the
+> > iommu */ --
+> > 2.7.4  
+> 
 
-Daniel
+[Jacob Pan]
