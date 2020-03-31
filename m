@@ -2,94 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 055801993A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 12:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3D30199247
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:30:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730343AbgCaKmA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 06:42:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41204 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729925AbgCaKmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 06:42:00 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5338F20772;
-        Tue, 31 Mar 2020 10:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585651319;
-        bh=imsnPA4JCAInhZuF+6cN29LP+UEQkzirwfry5AqSjoM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m7Zg/zvTMTOmfZtJP1ZYyyktkLVY0CSxepy30ZLypgvHM4DsTyFltOlU/RhRm4f/x
-         1Oicim8UmkM2ZBnl2BUabChT+WRYIjnoExzKnyfuS2gG1dma3NnIFmQVyPhtDgp/em
-         KJ2zxOOkRZ73azXNHt9/6bZtZOnssh+mAHDsZAjo=
-Date:   Tue, 31 Mar 2020 11:30:41 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Sam Ravnborg <sam@ravnborg.org>, Nicolas Pitre <nico@fluxnic.net>,
-        Chen Wandun <chenwandun@huawei.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Jiri Slaby <jslaby@suse.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lukas Wunner <lukas@wunner.de>, ghalat@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] vt: don't use kmalloc() for the unicode screen buffer
-Message-ID: <20200331093041.GA1199411@kroah.com>
-References: <nycvar.YSQ.7.76.2003281745280.2671@knanqh.ubzr>
- <nycvar.YSQ.7.76.2003282214210.2671@knanqh.ubzr>
- <20200330190759.GE7594@ravnborg.org>
- <CAKMK7uF_mZ3yJouqAOO9v7jaso2aL6GSwRK13uOEuUsOevdUBg@mail.gmail.com>
+        id S1730342AbgCaJaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:30:24 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42427 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730217AbgCaJaX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:30:23 -0400
+Received: by mail-ed1-f68.google.com with SMTP id cw6so23531006edb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 02:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cRf4XSMOaFJMe4go+8/QY1e2A8UYJy3i4Zzxrup/Gvo=;
+        b=TCvC8IplBOkkC30T28VopRqymYOm2EFbGBHCP3eLUbu602822NIwK4+4dLt2mqYDTi
+         w+kQjpM1NkbPdazJD9AhAZs5U737ydDNfX4/zSgrVMK9klM0YaPIIdCfy1wyfP2vZAgB
+         U0kuWggt4Yldeb3LCZidaaAJW5VmrGPPLXthzX5AsNHP8jU0oIDlcmCiKwfaOTqnyqwW
+         caCTpIc6iDfy9tQd0qpaIkPWyMYC0pnuKneKPzPO+UpJCS+eFtCXi1S+QYCrmrXezLat
+         7buOEnP6awrLxpXkcnh5EKIIl6phVhG1mfn8gWhRCBJ8odlBJHcnBWwMLxLrZKKlfqBx
+         hqWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cRf4XSMOaFJMe4go+8/QY1e2A8UYJy3i4Zzxrup/Gvo=;
+        b=arsw4Vg00p9tV0rPsJ98e4f93mjp1KN/KjNQp3hNAPVzIHtVCra+jRLyGXc31ohPra
+         pnKgLNFVVKYOwY9naMxxD1wRsP23Q4BynR0wfNRK+u5FcqYPzh03TU83fsgrC6IoF717
+         9gGxx8mqmgc4NKcXURnJF9ypDg8ltoH/KEqt5KlSW8D2alNe/E2TYEvvuziFZrq1/Jqp
+         gkOCRTHjTPT9jmLBhdAANEG9yIrbua+mA7tCnR7D5MC999KAcSHjrMVdlVfFFkdNsD2a
+         DNfg/AzRPKkdYua+pLz7U3ENWFQ6TRpS1WacZREIwA7tteQXZ7fJSiKhKNFCGK6LD3sN
+         ojng==
+X-Gm-Message-State: ANhLgQ2T3uMIgqhNpk4qVr9Xy1K1LF4Sm/3UY7N6WXAnhMl5xHSmdrUN
+        uynfRLySWTHh75ecqTHoPoOdug==
+X-Google-Smtp-Source: ADFU+vvGYvR25pBE8ZqwnJMdn+n24oyddUIhZdPZjNWvdjL9iMK/eUeZkt/q7655brjEjlcis9v7Sw==
+X-Received: by 2002:a50:d613:: with SMTP id x19mr14653371edi.61.1585647021690;
+        Tue, 31 Mar 2020 02:30:21 -0700 (PDT)
+Received: from [192.168.0.38] ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id u29sm2200201edd.47.2020.03.31.02.30.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Mar 2020 02:30:21 -0700 (PDT)
+Subject: Re: [PATCH] clk: qcom: msm8916: Fix the address location of
+ pll->config_reg
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <20200329124116.4185447-1-bryan.odonoghue@linaro.org>
+ <20200330204149.GA215915@minitux>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Message-ID: <b542e78a-9fa2-c7f8-460c-6cffa47d4ef6@linaro.org>
+Date:   Tue, 31 Mar 2020 10:30:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uF_mZ3yJouqAOO9v7jaso2aL6GSwRK13uOEuUsOevdUBg@mail.gmail.com>
+In-Reply-To: <20200330204149.GA215915@minitux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 10:43:11AM +0200, Daniel Vetter wrote:
-> On Mon, Mar 30, 2020 at 9:08 PM Sam Ravnborg <sam@ravnborg.org> wrote:
-> >
-> > Hi Nicolas
-> >
-> > On Sat, Mar 28, 2020 at 10:25:11PM -0400, Nicolas Pitre wrote:
-> > > Even if the actual screen size is bounded in vc_do_resize(), the unicode
-> > > buffer is still a little more than twice the size of the glyph buffer
-> > > and may exceed MAX_ORDER down the kmalloc() path. This can be triggered
-> > > from user space.
-> > >
-> > > Since there is no point having a physically contiguous buffer here,
-> > > let's avoid the above issue as well as reducing pressure on high order
-> > > allocations by using vmalloc() instead.
-> > >
-> > > Signed-off-by: Nicolas Pitre <nico@fluxnic.net>
-> > > Cc: <stable@vger.kernel.org>
-> > >
-> > > ---
-> > >
-> > > Changes since v1:
-> > >
-> > > - Added missing include, found by kbuild test robot.
-> > >   Strange that my own build doesn't complain.
-> >
-> > When I did the drmP.h removal vmalloc was one of the header files
-> > that turned up missing in many cases - but only for some architectures.
-> > I learned to include alpha in the build.
-> > If it survived building for alpha then I had fixed the majority
-> > of the issues related to random inherited includes.
-> >
-> > The patch itself looks good.
-> >
-> > Acked-by: Sam Ravnborg <sam@ravnborg.org>
-> 
-> Greg, I'm assuming you'll pick this up through the tty tree? I kinda
-> want to stop the habit of merging vt patches, maybe then
-> get_maintainers will stop thinking I'm responsible somehow :-)
+On 30/03/2020 21:41, Bjorn Andersson wrote:
+> So while your change is correct, afaict it's a nop unless you fill out
+> the other fields as well.
 
-Yes, I'll take it, and have been taking vt patches for a few releases
-now so don't worry, you aren't responsible anymore :)
+Yes it shouldn't be a problem.
 
-thanks,
+We cloned the 8196 driver and then started adding bits. In our case we 
+need to start PLL3 and PLL4 from Linux, similar to line 3452 here
 
-greg k-h
+https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-gcc-8936.c?h=APSS.FSM.3.0
+
+which does end up calling into the PLL recalc logic.
+
+---
+bod
