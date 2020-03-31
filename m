@@ -2,109 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AA0619A34D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 03:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C27199D9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:02:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731727AbgDABaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 21:30:16 -0400
-Received: from mga17.intel.com ([192.55.52.151]:12721 "EHLO mga17.intel.com"
+        id S1726947AbgCaSCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 14:02:45 -0400
+Received: from mga06.intel.com ([134.134.136.31]:16127 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731588AbgDABaQ (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 21:30:16 -0400
-IronPort-SDR: atMNJzQbiAD9/0pQRguxCjE4r0xut++via/Usws1avYTDyii1F4znAPdBFlQ7J+jssE/KQ7w5c
- sP6cgyCrbCdw==
+        id S1726199AbgCaSCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 14:02:44 -0400
+IronPort-SDR: j2NZ3SlPxn625hqJet8G8+Vs3jyT3gZveo1kbHBzeVr1Sq3iAHkMkzORzP03etou3Uum/AALkx
+ TLEV/skRKVDw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 18:30:15 -0700
-IronPort-SDR: Wdg65KYjrayINv+syHGqV/dhqyBK+pNZ+A0IvwDBAMhGPs4RsSPGuF7vQDYdvk/KfxZzilJe1s
- /MOpN9efi1kw==
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 11:02:44 -0700
+IronPort-SDR: Xmx1u/O6AfpkZBrQjD1Mw4wxecKCMtKYwvOUKO7DlkvZwglVp87aDyPldtXFWEkyA6bcaalHGx
+ HGz90nJ1R8Yg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,329,1580803200"; 
-   d="scan'208";a="272969363"
-Received: from kbl-ppc.sh.intel.com ([10.239.159.47])
-  by fmsmga004.fm.intel.com with ESMTP; 31 Mar 2020 18:30:13 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH] perf stat: Fix no metric header if --per-socket and --metric-only set
-Date:   Wed,  1 Apr 2020 02:02:26 +0800
-Message-Id: <20200331180226.25915-1-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+X-IronPort-AV: E=Sophos;i="5.72,328,1580803200"; 
+   d="scan'208";a="240205398"
+Received: from djiang5-mobl1.amr.corp.intel.com (HELO [10.251.20.204]) ([10.251.20.204])
+  by fmsmga007.fm.intel.com with ESMTP; 31 Mar 2020 11:02:42 -0700
+Subject: Re: [PATCH 3/6] pci: add PCI quirk cmdmem fixup for Intel DSA device
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     vkoul@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, gregkh@linuxfoundation.org,
+        arnd@arndb.de, linux-kernel@vger.kernel.org, x86@kernel.org,
+        dmaengine@vger.kernel.org, dan.j.williams@intel.com,
+        ashok.raj@intel.com, fenghua.yu@intel.com,
+        linux-pci@vger.kernel.org, tony.luck@intel.com, jing.lin@intel.com,
+        sanjay.k.kumar@intel.com
+References: <20200331155906.GA191980@google.com>
+From:   Dave Jiang <dave.jiang@intel.com>
+Message-ID: <03073d25-9351-5bc7-e971-8e21b82f122f@intel.com>
+Date:   Tue, 31 Mar 2020 11:02:41 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+MIME-Version: 1.0
+In-Reply-To: <20200331155906.GA191980@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We received a report that was no metric header displayed if --per-socket
-and --metric-only were both set.
 
-It's hard for script to parse the perf-stat output. This patch fixes this
-issue.
+On 3/31/2020 8:59 AM, Bjorn Helgaas wrote:
+> Take a look and make yours match (applies to other patches in the
+> series as well):
+>
+>    $ git log --oneline drivers/pci/quirks.c
+>    299bd044a6f3 ("PCI: Add ACS quirk for Zhaoxin Root/Downstream Ports")
+>    0325837c51cb ("PCI: Add ACS quirk for Zhaoxin multi-function devices")
+>    2880325bda8d ("PCI: Avoid ASMedia XHCI USB PME# from D0 defect")
+>    b88bf6c3b6ff ("PCI: Add boot interrupt quirk mechanism for Xeon chipsets")
+>    5e89cd303e3a ("PCI: Mark AMD Navi14 GPU rev 0xc5 ATS as broken")
+>    7b90dfc4873b ("PCI: Add DMA alias quirk for PLX PEX NTB")
+>    09298542cd89 ("PCI: Add nr_devfns parameter to pci_add_dma_alias()")
+>
+> There's no need to mention "PCI" twice.  Also no need for both "quirk"
+> and "fixup".  This is all in the interest of putting more information
+> in the small space of the subject line.
+Ok I'll fix up.
+>
+> On Mon, Mar 30, 2020 at 02:27:06PM -0700, Dave Jiang wrote:
+>> Since there is no standard way that defines a PCI device that receives
+>> descriptors or commands with synchronous write operations, add quirk to set
+>> cmdmem for the Intel accelerator device that supports it.
+>>
+>> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+>> ---
+>>   drivers/pci/quirks.c |   11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+>> index 29f473ebf20f..ba0572b9b9c8 100644
+>> --- a/drivers/pci/quirks.c
+>> +++ b/drivers/pci/quirks.c
+>> @@ -5461,3 +5461,14 @@ static void quirk_reset_lenovo_thinkpad_p50_nvgpu(struct pci_dev *pdev)
+>>   DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, 0x13b1,
+>>   			      PCI_CLASS_DISPLAY_VGA, 8,
+>>   			      quirk_reset_lenovo_thinkpad_p50_nvgpu);
+>> +
+>> +/*
+>> + * Until the PCI Sig defines a standard capaiblity check that indicates a
+>> + * device has cmdmem with synchronous write capability, we'll add a quirk
+>> + * for device that supports it.
+> s/PCI Sig/PCI-SIG/
+> s/capaiblity/capability/
+>
+> It's not clear why this would need to be in drivers/pci/quirks.c as
+> opposed to being in the driver itself.
 
-Before:
+That would make the driver to set the PCI device struct cap bit instead 
+of this being set on discovery right? And if the driver isn't loaded, 
+then the cap wouldn't be set. In the future if user space wants to 
+discover this information that may be an issue.
 
-  root@kbl-ppc:~# perf stat -a -M CPI --metric-only --per-socket
-  ^C
-   Performance counter stats for 'system wide':
 
-  S0        8                  2.6
 
-         2.215270071 seconds time elapsed
-
-  root@kbl-ppc:~# perf stat -a -M CPI --metric-only --per-socket -I1000
-  #           time socket cpus
-       1.000411692 S0        8                  2.2
-       2.001547952 S0        8                  3.4
-       3.002446511 S0        8                  3.4
-       4.003346157 S0        8                  4.0
-       5.004245736 S0        8                  0.3
-
-After:
-
-  root@kbl-ppc:~# perf stat -a -M CPI --metric-only --per-socket
-  ^C
-   Performance counter stats for 'system wide':
-
-                               CPI
-  S0        8                  2.1
-
-         1.813579830 seconds time elapsed
-
-  root@kbl-ppc:~# perf stat -a -M CPI --metric-only --per-socket -I1000
-  #           time socket cpus                  CPI
-       1.000415122 S0        8                  3.2
-       2.001630051 S0        8                  2.9
-       3.002612278 S0        8                  4.3
-       4.003523594 S0        8                  3.0
-       5.004504256 S0        8                  3.7
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/util/stat-shadow.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 0fd713d3674f..03ecb8cd0eec 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -803,8 +803,11 @@ static void generic_metric(struct perf_stat_config *config,
- 				     out->force_header ?
- 				     (metric_name ? metric_name : name) : "", 0);
- 		}
--	} else
--		print_metric(config, ctxp, NULL, NULL, "", 0);
-+	} else {
-+		print_metric(config, ctxp, NULL, NULL,
-+			     out->force_header ?
-+			     (metric_name ? metric_name : name) : "", 0);
-+	}
- 
- 	for (i = 1; i < pctx.num_ids; i++)
- 		zfree(&pctx.ids[i].name);
--- 
-2.17.1
-
+>
+>> + */
+>> +static void device_cmdmem_fixup(struct pci_dev *pdev)
+>> +{
+>> +	pdev->cmdmem = 1;
+>> +}
+>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0b25, device_cmdmem_fixup);
+>>
