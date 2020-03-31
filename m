@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 958A7199185
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E36E6199024
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:09:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731931AbgCaJUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:20:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35626 "EHLO mail.kernel.org"
+        id S1731474AbgCaJJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:09:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731881AbgCaJPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:15:24 -0400
+        id S1731240AbgCaJJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:09:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E8CA20675;
-        Tue, 31 Mar 2020 09:15:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90CFA20675;
+        Tue, 31 Mar 2020 09:09:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585646123;
-        bh=PVwq12ikNVjYzL7dLyszQb2N26rWLUYHtiw4e8tlS6c=;
+        s=default; t=1585645766;
+        bh=NIEIKCy9cL7aoKh2+5n6+O8oP4NPlsO/4nHYs2/xhoM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o8Q3OArrffZllIvUD5o1dVpOn5EK/rD2QRrjwTWTdXPCnZKngzXNRvTaWI+i16ghZ
-         pjPUDtNPP2ZasIdmEUr+mBLV0M8D8DRpzfu3Aaxs8MsFiqz8uBIL+4HY8dY5KxJocQ
-         mobAzy1yqfe5ZAZyV74hUcZVd2m9vctu5hfKx27o=
+        b=gSbzZptPJGfv4ffhRQ4VBSLGVVXzI5oCMcQaNDSYrme0AJNvotgU0XnEOhFBSTKdS
+         kqgdbhRbygJmDqO/597G2k15xNrfJ5ZctRkgD4oDGe34zf62m72GdFyMsbZxzTlNVm
+         3sbqsPEz0NiMQBH3NRdeaVxTfn3uSwYULn0QI4Iw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Borislav Petkov <bp@suse.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [PATCH 5.4 090/155] x86/ioremap: Fix CONFIG_EFI=n build
-Date:   Tue, 31 Mar 2020 10:58:50 +0200
-Message-Id: <20200331085428.515591878@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 5.5 117/170] gpiolib: acpi: Add quirk to ignore EC wakeups on HP x2 10 BYT + AXP288 model
+Date:   Tue, 31 Mar 2020 10:58:51 +0200
+Message-Id: <20200331085436.577200294@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
-References: <20200331085418.274292403@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 870b4333a62e45b0b2000d14b301b7b8b8cad9da upstream.
+commit 0e91506ba00730f088961a8d39f8693b0f8e3fea upstream.
 
-In order to use efi_mem_type(), one needs CONFIG_EFI enabled. Otherwise
-that function is undefined. Use IS_ENABLED() to check and avoid the
-ifdeffery as the compiler optimizes away the following unreachable code
-then.
+Commit aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option +
+quirk mechanism") was added to deal with spurious wakeups on one specific
+model of the HP x2 10 series. In the mean time I have learned that there
+are at least 3 different HP x2 10 models:
 
-Fixes: 985e537a4082 ("x86/ioremap: Map EFI runtime services data as encrypted for SEV")
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/7561e981-0d9b-d62c-0ef2-ce6007aff1ab@infradead.org
+Bay Trail SoC + AXP288 PMIC
+Cherry Trail SoC + AXP288 PMIC
+Cherry Trail SoC + TI PMIC
+
+And the original quirk is only correct for (and only matches the)
+Cherry Trail SoC + TI PMIC model.
+
+The Bay Trail SoC + AXP288 PMIC model has different DMI strings, has
+the external EC interrupt on a different GPIO pin and only needs to ignore
+wakeups on the EC interrupt, the INT0002 device works fine on this model.
+
+This commit adds an extra DMI based quirk for the HP x2 10 BYT + AXP288
+model, ignoring wakeups for ACPI GPIO events on the EC interrupt pin
+on this model. This fixes spurious wakeups from suspend on this model.
+
+Fixes: aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option + quirk mechanism")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://lore.kernel.org/r/20200302111225.6641-3-hdegoede@redhat.com
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/ioremap.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpio/gpiolib-acpi.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -115,6 +115,9 @@ static void __ioremap_check_other(resour
- 	if (!sev_active())
- 		return;
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -1422,6 +1422,21 @@ static const struct dmi_system_id gpioli
+ 			.ignore_wake = "INT33FF:01@0,INT0002:00@2",
+ 		},
+ 	},
++	{
++		/*
++		 * HP X2 10 models with Bay Trail SoC + AXP288 PMIC use an
++		 * external embedded-controller connected via I2C + an ACPI GPIO
++		 * event handler on INT33FC:02 pin 28, causing spurious wakeups.
++		 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "HP Pavilion x2 Detachable"),
++			DMI_MATCH(DMI_BOARD_NAME, "815D"),
++		},
++		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
++			.ignore_wake = "INT33FC:02@28",
++		},
++	},
+ 	{} /* Terminating entry */
+ };
  
-+	if (!IS_ENABLED(CONFIG_EFI))
-+		return;
-+
- 	if (efi_mem_type(addr) == EFI_RUNTIME_SERVICES_DATA)
- 		desc->flags |= IORES_MAP_ENCRYPTED;
- }
 
 
