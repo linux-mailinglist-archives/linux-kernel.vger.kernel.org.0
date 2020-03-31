@@ -2,78 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9093B1994BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D92CC198A28
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 04:52:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730590AbgCaLIm convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 07:08:42 -0400
-Received: from pmg.slemankab.go.id ([103.71.191.178]:47712 "EHLO
-        pmg.slemankab.go.id" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730377AbgCaLIm (ORCPT
+        id S1729680AbgCaCwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 22:52:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40238 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727655AbgCaCwu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 07:08:42 -0400
-Received: from pmg.slemankab.go.id (localhost.localdomain [127.0.0.1])
-        by pmg.slemankab.go.id (Proxmox) with ESMTP id 8EA8934502C;
-        Tue, 31 Mar 2020 09:50:14 +0700 (WIB)
-Received: from mailserver.slemankab.go.id (unknown [192.168.90.92])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by pmg.slemankab.go.id (Proxmox) with ESMTPS id 6E5E634435D;
-        Tue, 31 Mar 2020 09:49:59 +0700 (WIB)
-Received: from localhost (localhost [127.0.0.1])
-        by mailserver.slemankab.go.id (Postfix) with ESMTP id 605DC3443B3;
-        Tue, 31 Mar 2020 09:49:54 +0700 (WIB)
-Received: from mailserver.slemankab.go.id ([127.0.0.1])
-        by localhost (mailserver.slemankab.go.id [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id zhwlJbtFmAHr; Tue, 31 Mar 2020 09:49:54 +0700 (WIB)
-Received: from localhost (localhost [127.0.0.1])
-        by mailserver.slemankab.go.id (Postfix) with ESMTP id 155093404C7;
-        Tue, 31 Mar 2020 09:49:54 +0700 (WIB)
-X-Virus-Scanned: amavisd-new at mailserver.slemankab.go.id
-Received: from mailserver.slemankab.go.id ([127.0.0.1])
-        by localhost (mailserver.slemankab.go.id [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id nbcYK2xdlcs7; Tue, 31 Mar 2020 09:49:53 +0700 (WIB)
-Received: from [100.68.190.106] (unknown [106.210.43.28])
-        by mailserver.slemankab.go.id (Postfix) with ESMTPSA id 6F68E344393;
-        Tue, 31 Mar 2020 09:49:46 +0700 (WIB)
-Content-Type: text/plain; charset="iso-8859-1"
+        Mon, 30 Mar 2020 22:52:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=vwCf88W8uI6kfyG9YNKfcw+W9JvoHdjdDO+HJg3PNl8=; b=sn1cOMq2OvxDWuQvY1sqwfGIqY
+        2peckD9Zh838ABaFcldXtRD0MvqgMI5wFlWDh5MpEkZrCxIzwAvgRqVR3idX4v+4yAd5r5V2n7Wze
+        mChwjmY/4fxP9FxzcZGwP9uiNuicvD/s3MYA4oAAOJD5EREB1cWYqvWthJHKgi3JcARtYvP+P7Hhy
+        mE7uz5mWVsIhsEDu+zwAV6mQ/Z64i6OAkhmQcrx20Nk/2L3WkHrx4aBMwumcOIt1MMssnRx517Pu7
+        yfOYQzNX1tlRlWtaOQh5t0hiPzGi2U0N2vvub8ZB37jN5sn8siFm18w2X6+FXi2CO6P78UosmjAFL
+        w1Wiv9yw==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJ71F-0003W5-Or; Tue, 31 Mar 2020 02:52:49 +0000
+Subject: Re: [PATCH] vhost: make CONFIG_VHOST depend on CONFIG_EVENTFD
+To:     Jason Wang <jasowang@redhat.com>, mst@redhat.com
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200331022902.12229-1-jasowang@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <5646e48a-b1af-6253-bc17-667ab9419fd3@infradead.org>
+Date:   Mon, 30 Mar 2020 19:52:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: PERHATIAN
-To:     Recipients <administrator@ancol.com>
-From:   Sistem Administrator <administrator@ancol.com>
-Date:   Tue, 31 Mar 2020 08:19:38 +0530
-Reply-To: mailsss@mail2world.com
-Message-Id: <20200331024946.6F68E344393@mailserver.slemankab.go.id>
-X-SPAM-LEVEL: Spam detection results:  0
-        ALL_TRUSTED                -1 Passed through trusted hosts only via SMTP
-        AWL                     0.259 Adjusted score from AWL reputation of From: address
-        BAYES_00                 -1.9 Bayes spam probability is 0 to 1%
-        FREEMAIL_FORGED_REPLYTO  2.095 Freemail in Reply-To, but not From
-        KAM_DMARC_STATUS         0.01 Test Rule for DKIM or SPF Failure with Strict Alignment
+In-Reply-To: <20200331022902.12229-1-jasowang@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PERHATIAN
+On 3/30/20 7:29 PM, Jason Wang wrote:
+> After commit ec9d8449a99b ("vhost: refine vhost and vringh kconfig"),
+> CONFIG_VHOST could be enabled independently. This means we need make
+> CONFIG_VHOST depend on CONFIG_EVENTFD, otherwise we break compiling
+> without CONFIG_EVENTFD.
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Fixes: ec9d8449a99b ("vhost: refine vhost and vringh kconfig")
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  drivers/vhost/Kconfig | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-Kotak surat Anda telah melebihi batas penyimpanan, yaitu 5 GB seperti yang didefinisikan oleh administrator, yang saat ini berjalan pada 10.9GB, Anda mungkin tidak dapat mengirim atau menerima surat baru sampai Anda kembali memvalidasi email mailbox Anda. Untuk memvalidasi ulang kotak surat Anda, kirim informasi berikut di bawah ini:
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-Nama:
-Username:
-sandi:
-Konfirmasi sandi:
-E-mail:
-telepon:
+thanks.
 
-Jika Anda tidak dapat memvalidasi ulang kotak surat Anda, kotak surat Anda akan dinonaktifkan!
-
-Maaf atas ketidaknyamanan ini.
-Kode verifikasi: en:009877777418u88..id .©2020
-Surat Dukungan Teknis ©2020
-
-terima kasih
-Sistem Administrator
+-- 
+~Randy
 
