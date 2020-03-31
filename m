@@ -2,167 +2,256 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 231F01993D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 12:48:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9E3C1993E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 12:50:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730428AbgCaKsm convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 06:48:42 -0400
-Received: from mga05.intel.com ([192.55.52.43]:52858 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730341AbgCaKsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 06:48:42 -0400
-IronPort-SDR: BEymclEx7Qu6XWtvGKhSyOA4MNOzBwVdR8L+Jr0PatHcYNZnUZqFJdhA621QQrHaPD8Tzabio+
- U52hAHKVbCNw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 03:48:41 -0700
-IronPort-SDR: /KxE8UaVN606pxVD82pMLbaBTRRjTyTVrnwsMDf2oRUpusKQ2fCmIBiu/rYtDf7mmYPvuWqPzq
- OXpLLRaayGGA==
-X-ExtLoop1: 1
+        id S1730476AbgCaKu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 06:50:58 -0400
+Received: from esa4.mentor.iphmx.com ([68.232.137.252]:43515 "EHLO
+        esa4.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730334AbgCaKu6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 06:50:58 -0400
+IronPort-SDR: g95KUfPpRhJBZqEL7Xg8HhPMBBA70G7eibD50fcNAb+rGLSupzX23HDAOQUVYbX1HAgvJ3FQqM
+ vt32HGloySCXlyGm2cH0167Fnr3S4EYeDS2cqVV4UachPJU1ID4C9sFSBC28ErO2pJyEZ0xqR5
+ AXEJchJpEMMywgXS+I+L0NRIs047AA1LrI1YbM/dkPQm2BnsW3vFp3GSdF0xNLFpE+qcfhYemy
+ UefdUk4U82Or2BZq3Bwxwi4JPfxCaWb+aopfj3HNzI1DRvieh0VqZgqH8hgUEKo34zWJyo7TcJ
+ yIQ=
 X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
-   d="scan'208";a="448624636"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga005.fm.intel.com with ESMTP; 31 Mar 2020 03:48:41 -0700
-Received: from fmsmsx102.amr.corp.intel.com (10.18.124.200) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 31 Mar 2020 03:48:41 -0700
-Received: from shsmsx153.ccr.corp.intel.com (10.239.6.53) by
- FMSMSX102.amr.corp.intel.com (10.18.124.200) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 31 Mar 2020 03:48:41 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.225]) by
- SHSMSX153.ccr.corp.intel.com ([169.254.12.89]) with mapi id 14.03.0439.000;
- Tue, 31 Mar 2020 18:48:37 +0800
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Tian, Jun J" <jun.j.tian@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>, "Wu, Hao" <hao.wu@intel.com>
-Subject: RE: [PATCH v1 7/8] vfio/type1: Add VFIO_IOMMU_CACHE_INVALIDATE
-Thread-Topic: [PATCH v1 7/8] vfio/type1: Add VFIO_IOMMU_CACHE_INVALIDATE
-Thread-Index: AQHWAEUdcc1u01skwUmp6uBHREsZ66hh3P+AgACUz4A=
-Date:   Tue, 31 Mar 2020 10:48:36 +0000
-Message-ID: <A2975661238FB949B60364EF0F2C25743A21ACC1@SHSMSX104.ccr.corp.intel.com>
-References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
- <1584880325-10561-8-git-send-email-yi.l.liu@intel.com>
- <20200331075603.GB26583@infradead.org>
-In-Reply-To: <20200331075603.GB26583@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+   d="scan'208";a="47330704"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa4.mentor.iphmx.com with ESMTP; 31 Mar 2020 02:50:57 -0800
+IronPort-SDR: 5HXooqdw3lLy4SLctRDC9U2D7KiS8bMpHv3In5VOzrqSupRMCaOiju9hGg8AEChr78sEE5gTtD
+ xBCs3Dsj5luVoLMpZ6e0isKW29U0kxuda+f1wzfJICJpinCND9TtzlpWT2otOtjQKKw1kHgKxq
+ cir/SJp5IbSZYRSA8+1owuB4jlo8qGoq0F/MNNeQ3Gc02Bxu7hvIDRyb9TDg3+EaTK9kTiH/Kr
+ ZyRrG+lgIxR6ErWvZpypxyBKCueCYGneCa8pGQtmMCSxhWf6w3lB2QfsdWPbYzo65fl30Fird3
+ WnI=
+From:   Jiada Wang <jiada_wang@mentor.com>
+To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>,
+        <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
+        <bsz@semihalf.com>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <erosca@de.adit-jv.com>, <Andrew_Gabbasov@mentor.com>,
+        <jiada_wang@mentor.com>
+Subject: [PATCH v10 00/55] atmel_mxt_ts misc
+Date:   Tue, 31 Mar 2020 03:49:56 -0700
+Message-ID: <20200331105051.58896-1-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hellwig,
+This patch-set forward ports Nick Dyer's work in ndyer/linux github
+repository as long as some other features and fixes
 
-Thanks for your review, Hellwig. :-) inline reply.
+Balasubramani Vivekanandan (2):
+  Input: atmel_mxt_ts: Limit the max bytes transferred in an i2c
+    transaction
+  Input: atmel_mxt_ts: use gpiod_set_value_cansleep for reset pin
 
-> From: Christoph Hellwig <hch@infradead.org>
-> Sent: Tuesday, March 31, 2020 3:56 PM
-> To: Liu, Yi L <yi.l.liu@intel.com>
-> Subject: Re: [PATCH v1 7/8] vfio/type1: Add VFIO_IOMMU_CACHE_INVALIDATE
-> 
-> > @@ -2629,6 +2638,46 @@ static long vfio_iommu_type1_ioctl(void
-> *iommu_data,
-> >  		}
-> >  		kfree(gbind_data);
-> >  		return ret;
-> > +	} else if (cmd == VFIO_IOMMU_CACHE_INVALIDATE) {
-> 
-> Please refactor the spaghetti in this ioctl handler to use a switch statement and a
-> helper function per command before growing it even more.
+Dean Jenkins (1):
+  Input: atmel_mxt_ts: return error from
+    mxt_process_messages_until_invalid()
 
-got it. I may get a separate refactor patch before adding my changes.
+Deepak Das (6):
+  Input: Atmel: improve error handling in mxt_start()
+  Input: Atmel: improve error handling in mxt_initialize()
+  Input: Atmel: improve error handling in mxt_update_cfg()
+  Input: Atmel: Improve error handling in mxt_initialize_input_device()
+  Input: Atmel: handle ReportID "0x00" while processing T5 messages
+  Input: Atmel: use T44 object to process T5 messages
 
-> 
-> > +		/* Get the version of struct iommu_cache_invalidate_info */
-> > +		if (copy_from_user(&version,
-> > +			(void __user *) (arg + minsz), sizeof(version)))
-> > +			return -EFAULT;
-> > +
-> > +		info_size = iommu_uapi_get_data_size(
-> > +					IOMMU_UAPI_CACHE_INVAL, version);
-> > +
-> > +		cache_info = kzalloc(info_size, GFP_KERNEL);
-> > +		if (!cache_info)
-> > +			return -ENOMEM;
-> > +
-> > +		if (copy_from_user(cache_info,
-> > +			(void __user *) (arg + minsz), info_size)) {
-> 
-> The user might have changed the version while you were allocating and
-> freeing the
-> memory, introducing potentially exploitable racing conditions.
+George G. Davis (1):
+  input: atmel_mxt_ts: export GPIO reset line via sysfs
 
-yeah, I know the @version is not welcomed in the thread Jacob is driving.
-I'll adjust the code here once the open in that thread has been solved.
+Jiada Wang (10):
+  Input: introduce input_mt_report_slot_inactive
+  dt-bindings: input: atmel: add suspend mode support
+  Input: atmel_mxt_ts: Rename mxt_fw_version_show to fw_version_show
+  Input: atmel_mxt_ts: Rename mxt_hw_version_show to hw_version_show
+  Input: atmel_mxt_ts: rename mxt_update_fw_store to update_fw_store
+  dt-bindings: input: atmel: provide name of configuration file
+  dt-bindings: input: atmel: support to specify input name
+  Input: atmel_mxt_ts - eliminate data->raw_info_block
+  dt-bindings: input: atmel: support to set max bytes transferred
+  Input: atmel_mxt_ts - Fix compilation warning
 
-But regardless of the version, I'm not sure if I 100% got your point.
-Could you elaborate a bit? BTW. The code somehow referenced the code
-below. The basic flow is copying partial data from __arg and then copy
-the rest data after figuring out how much left. The difference betwen
-below code and my code is just different way to figure out left data
-size. Since I'm not sure if I got your point. If the racing is true in
-such flow, I guess there are quite a few places need to enhance.
+Karl Tsou (1):
+  Input: atmel_mxt_ts - add debug for T92 gesture and T93 touch seq msgs
 
-vfio_pci_ioctl(){
-{
-...
-        } else if (cmd == VFIO_DEVICE_SET_IRQS) {
-                struct vfio_irq_set hdr;
-                u8 *data = NULL;
-                int max, ret = 0;
-                size_t data_size = 0;
+Kautuk Consul (2):
+  Input: atmel_mxt_ts - Change call-points of mxt_free_* functions
+  Input: atmel_mxt_ts - rely on calculated_crc rather than file
+    config_crc
 
-                minsz = offsetofend(struct vfio_irq_set, count);
+Naveen Chakka (2):
+  input: touchscreen: atmel_mxt_ts: Added sysfs entry for touchscreen
+    status
+  input: atmel_mxt_ts: added sysfs interface to update atmel T38 data
 
-                if (copy_from_user(&hdr, (void __user *)arg, minsz))
-                        return -EFAULT;
+Nick Dyer (26):
+  Input: atmel_mxt_ts - rework sysfs init/remove
+  Input: atmel_mxt_ts - only read messages in mxt_acquire_irq() when
+    necessary
+  Input: atmel_mxt_ts - split large i2c transfers into blocks
+  Input: atmel_mxt_ts - output status from T48 Noise Supression
+  Input: atmel_mxt_ts - output status from T42 Touch Suppression
+  Input: atmel_mxt_ts - implement T9 vector/orientation support
+  Input: atmel_mxt_ts - implement T15 Key Array support
+  Input: atmel_mxt_ts - handle reports from T47 Stylus object
+  Input: atmel_mxt_ts - implement support for T107 active stylus
+  Input: atmel_mxt_ts - release touch state during suspend
+  Input: atmel_mxt_ts - add regulator control support
+  Input: atmel_mxt_ts - report failures in suspend/resume
+  Input: atmel_mxt_ts - allow specification of firmware file name
+  Input: atmel_mxt_ts - handle cfg filename via pdata/sysfs
+  Input: atmel_mxt_ts - allow input name to be specified in platform
+    data
+  Input: atmel_mxt_ts - refactor firmware flash to extract context into
+    struct
+  Input: atmel_mxt_ts - refactor code to enter bootloader into separate
+    func
+  Input: atmel_mxt_ts - combine bootloader version query with probe
+  Input: atmel_mxt_ts - improve bootloader state machine handling
+  Input: atmel_mxt_ts - rename bl_completion to chg_completion
+  Input: atmel_mxt_ts - make bootloader interrupt driven
+  Input: atmel_mxt_ts - delay enabling IRQ when not using regulators
+  Input: atmel_mxt_ts - implement I2C retries
+  Input: atmel_mxt_ts - orientation is not present in hover
+  Input: atmel_mxt_ts - implement debug output for messages
+  Input: atmel_mxt_ts - implement improved debug message interface
 
-                max = vfio_pci_get_irq_count(vdev, hdr.index);
+Nikhil Ravindran (1):
+  Input: atmel_mxt_ts: Add support for run self-test routine.
 
-                ret = vfio_set_irqs_validate_and_prepare(&hdr, max,
-                                                 VFIO_PCI_NUM_IRQS, &data_size);
-                if (ret)
-                        return ret;
+Sanjeev Chugh (1):
+  Input: atmel_mxt_ts: Implement synchronization during various
+    operation
 
-                if (data_size) {
-                        data = memdup_user((void __user *)(arg + minsz),
-                                            data_size);
-                        if (IS_ERR(data))
-                                return PTR_ERR(data);
-                }
+karl tsou (1):
+  Input: atmel_mxt_ts - add config checksum attribute to sysfs
 
-                mutex_lock(&vdev->igate);
+keerthikumarp (1):
+  input: atmel_mxt_ts: Add Missing Delay for reset handling of Atmel
+    touch panel controller in detachable displays.
+---
+v10:
+Following commits have been updated
+input: touchscreen: atmel_mxt_ts: Added sysfs entry for touchscreen
+status
+dt-bindings: input: atmel: add suspend mode support
+Input: atmel_mxt_ts: Implement synchronization during various operation
 
-                ret = vfio_pci_set_irqs_ioctl(vdev, hdr.flags, hdr.index,
-                                              hdr.start, hdr.count, data);
+Re-order commits to avoid compilation error
 
-                mutex_unlock(&vdev->igate);
-                kfree(data);
+v9:
+Following commits have been added
+Input: atmel_mxt_ts: rename mxt_update_fw_store to update_fw_store
+Input: atmel_mxt_ts: Rename mxt_hw_version_show to hw_version_show
+Input: atmel_mxt_ts: Rename mxt_fw_version_show to fw_version_show
 
-                return ret;
+Addressed dev_attrs related checkpatch warnings
 
-        } else if (cmd == VFIO_DEVICE_RESET) {
-...
-}
+v8:
+Fix checkpatch errors and warnings
 
-Regards,
-Yi Liu
+Fix issue in commit (" Input: atmel_mxt_ts - only read messages in
+mxt_acquire_irq() when necessary")
+reported by Dmitry Osipenko
+
+Cleanup coding style for commits
+Input: atmel_mxt_ts - add regulator control support
+Input: atmel_mxt_ts - improve bootloader state machine handling
+
+v7:
+Fix regression found when updating firmware
+Following commits have been updated to fix regression found when
+updating firmware
+Input: atmel_mxt_ts - improve bootloader state machine handling
+Input: atmel_mxt_ts - make bootloader interrupt driven
+input: touchscreen: atmel_mxt_ts: Added sysfs entry for touchscreen
+status
+Input: atmel_mxt_ts: Implement synchronization during various operation
+
+v6:
+Fix issue in commit ("Input: introduce input_mt_report_slot_inactive")
+reported by kernel test robot
+
+v5:
+Following commits have been updated to address warnings & errors
+reported by kbuild test robot
+Input: atmel_mxt_ts - make bootloader interrupt driven
+Input: atmel_mxt_ts - add debug for T92 gesture and T93 touch seq msgs
+
+Following commit has been updated
+Input: introduce input_mt_report_slot_inactive
+
+v4:
+Following commit in v3 patch-set has been removed
+Input: switch to use return value of input_mt_report_slot_state
+
+Following commit has been updated to address checkpatch warning
+Input: atmel_mxt_ts: Implement synchronization during various operation
+
+v3:
+Following commits have been updated compared to v2 patchset
+Input: atmel_mxt_ts - implement debug output for messages
+- added inline comment
+Input: atmel_mxt_ts - add debug for T92 gesture and T93 touch seq msg
+- changed dev_info() to dev_dbg()
+
+v2:
+Following commit in v1 patchset has been split into two commits
+Input: introduce input_mt_report_slot_inactive
+
+Following commits have been updated compared to v1 patchset
+Input: atmel_mxt_ts - split large i2c transfers into blocks
+Input: atmel_mxt_ts - output status from T42 Touch Suppression
+
+Following commits in v1 patchset have been squashed
+Input: touchscreen: Atmel: Add device tree support for T15 key array
+objects
+Input: atmel_mxt_ts - check data->input_dev is not null in
+mxt_input_sync()
+Input: atmel_mxt_ts - check firmware format before entering bootloader
+Input: atmel_mxt_ts: update stale use_retrigen_workaround flag
+input: atmel_mxt_ts: move bootloader probe from mxt_initialize()
+input: Atmel: limit the max bytes transferred while reading T5 messages
+Input: atmel_mxt_ts: Use msecs_to_jiffies() instead of HZ
+Input: atmel_mxt_ts: Use complete when in_bootloader true
+Input: atmel_mxt_ts: Prevent crash due to freeing of input device
+input: atmel_mxt_ts: Add NULL check for sysfs attribute debug_msg_attr
+
+Following commits in v1 patchset have been dropped:
+Input: atmel_mxt_ts - configure and use gpios as real gpios
+Input: touchscreen: Atmel: Enable IRQ_DISABLE_UNLAZY flag for interrupt
+Input: atmel_mxt_ts - add memory access interface via sysfs
+Input: atmel_mxt_ts: Remove sysfs attributes during driver detach
+Input: atmel_mxt_ts: Avoid race condition in freeing of input device
+
+v1: initial version
+---
+ .../bindings/input/atmel,maxtouch.txt         |   17 +
+ MAINTAINERS                                   |    1 +
+ drivers/hid/hid-alps.c                        |    3 +-
+ drivers/hid/hid-multitouch.c                  |    6 +-
+ drivers/input/misc/xen-kbdfront.c             |    2 +-
+ drivers/input/mouse/elan_i2c_core.c           |    2 +-
+ drivers/input/touchscreen/atmel_mxt_ts.c      | 2270 ++++++++++++++---
+ drivers/input/touchscreen/cyttsp4_core.c      |    5 +-
+ drivers/input/touchscreen/cyttsp_core.c       |    2 +-
+ drivers/input/touchscreen/melfas_mip4.c       |    4 +-
+ drivers/input/touchscreen/mms114.c            |    2 +-
+ drivers/input/touchscreen/raspberrypi-ts.c    |    2 +-
+ drivers/input/touchscreen/stmfts.c            |    2 +-
+ include/dt-bindings/input/atmel_mxt_ts.h      |   23 +
+ include/linux/input/mt.h                      |    5 +
+ 15 files changed, 1985 insertions(+), 361 deletions(-)
+ create mode 100644 include/dt-bindings/input/atmel_mxt_ts.h
+
+-- 
+2.17.1
+
