@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C938519913D
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:19:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29934199140
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:19:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732116AbgCaJSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:18:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39848 "EHLO mail.kernel.org"
+        id S1732121AbgCaJS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:18:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730031AbgCaJSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:18:22 -0400
+        id S1732119AbgCaJS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:18:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09A322072E;
-        Tue, 31 Mar 2020 09:18:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E6B920787;
+        Tue, 31 Mar 2020 09:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585646301;
-        bh=XhM8fbEbcelh1MZoQlcLIaHd/4GVI1N06+N/RH0R/VY=;
+        s=default; t=1585646305;
+        bh=AWCdgu6dNEmRTTcrueFTFFBMA8I6/uWJz3XKank3eVQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sv5XwZthozphCMju4VXeupv4G43bBJbZFE/GAKZQj8zyyWEnF5tbVn+mKLrQmnLDF
-         Oq9a3dNhDel9vF5BhTjcoUQxvMPx2RGcjOjVr1ztvPK7QgKq8zxsR831OczmOnfRab
-         eYCiBA/HhJWxeVrVmcdt/VjM1N/TXAAH98u56Y0E=
+        b=uoXT5MhmGNcZH6QG8YYKVB0aJhLpJInJIFjGXABng3ShXkhlZNcQ2rCHZD6XnZayG
+         85JacuKoCnh+sCVszEuXSDHXcn4KkOBmoy52xMgRCl5YhotNuddCdxCd8KT548P3es
+         ZRfcqmBUiPOinqZB9OPmCA5cEnXOiUepj8HLSia0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 5.4 106/155] gpiolib: acpi: Add quirk to ignore EC wakeups on HP x2 10 BYT + AXP288 model
-Date:   Tue, 31 Mar 2020 10:59:06 +0200
-Message-Id: <20200331085430.555211375@linuxfoundation.org>
+        stable@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Roman Gushchin <guro@fb.com>
+Subject: [PATCH 5.4 107/155] bpf: Fix cgroup ref leak in cgroup_bpf_inherit on out-of-memory
+Date:   Tue, 31 Mar 2020 10:59:07 +0200
+Message-Id: <20200331085430.647094972@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
 References: <20200331085418.274292403@linuxfoundation.org>
@@ -44,64 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Andrii Nakryiko <andriin@fb.com>
 
-commit 0e91506ba00730f088961a8d39f8693b0f8e3fea upstream.
+commit 1d8006abaab4cb90f81add86e8d1bf9411add05a upstream.
 
-Commit aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option +
-quirk mechanism") was added to deal with spurious wakeups on one specific
-model of the HP x2 10 series. In the mean time I have learned that there
-are at least 3 different HP x2 10 models:
+There is no compensating cgroup_bpf_put() for each ancestor cgroup in
+cgroup_bpf_inherit(). If compute_effective_progs returns error, those cgroups
+won't be freed ever. Fix it by putting them in cleanup code path.
 
-Bay Trail SoC + AXP288 PMIC
-Cherry Trail SoC + AXP288 PMIC
-Cherry Trail SoC + TI PMIC
-
-And the original quirk is only correct for (and only matches the)
-Cherry Trail SoC + TI PMIC model.
-
-The Bay Trail SoC + AXP288 PMIC model has different DMI strings, has
-the external EC interrupt on a different GPIO pin and only needs to ignore
-wakeups on the EC interrupt, the INT0002 device works fine on this model.
-
-This commit adds an extra DMI based quirk for the HP x2 10 BYT + AXP288
-model, ignoring wakeups for ACPI GPIO events on the EC interrupt pin
-on this model. This fixes spurious wakeups from suspend on this model.
-
-Fixes: aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option + quirk mechanism")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://lore.kernel.org/r/20200302111225.6641-3-hdegoede@redhat.com
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: e10360f815ca ("bpf: cgroup: prevent out-of-order release of cgroup bpf")
+Signed-off-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Roman Gushchin <guro@fb.com>
+Link: https://lore.kernel.org/bpf/20200309224017.1063297-1-andriin@fb.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpiolib-acpi.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ kernel/bpf/cgroup.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1415,6 +1415,21 @@ static const struct dmi_system_id gpioli
- 			.ignore_wake = "INT33FF:01@0,INT0002:00@2",
- 		},
- 	},
-+	{
-+		/*
-+		 * HP X2 10 models with Bay Trail SoC + AXP288 PMIC use an
-+		 * external embedded-controller connected via I2C + an ACPI GPIO
-+		 * event handler on INT33FC:02 pin 28, causing spurious wakeups.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "HP Pavilion x2 Detachable"),
-+			DMI_MATCH(DMI_BOARD_NAME, "815D"),
-+		},
-+		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
-+			.ignore_wake = "INT33FC:02@28",
-+		},
-+	},
- 	{} /* Terminating entry */
- };
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -228,6 +228,9 @@ cleanup:
+ 	for (i = 0; i < NR; i++)
+ 		bpf_prog_array_free(arrays[i]);
  
++	for (p = cgroup_parent(cgrp); p; p = cgroup_parent(p))
++		cgroup_bpf_put(p);
++
+ 	percpu_ref_exit(&cgrp->bpf.refcnt);
+ 
+ 	return -ENOMEM;
 
 
