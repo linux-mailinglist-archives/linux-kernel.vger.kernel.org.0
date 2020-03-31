@@ -2,91 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1964A1992AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5929A1992B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:51:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730365AbgCaJto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:49:44 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:21695 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730131AbgCaJtn (ORCPT
+        id S1730319AbgCaJvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:51:43 -0400
+Received: from forwardcorp1p.mail.yandex.net ([77.88.29.217]:49642 "EHLO
+        forwardcorp1p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729425AbgCaJvn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:49:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585648182;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Z4v/YtSm7khSMtma48XmYXMI66/O3qRGCFmAxLMn+2U=;
-        b=NqjYVLaCD7agG9fI4rD9iLT4+kBSb2mKLUv53oxUlHQn5vWcLsuAUfe/WUX6itl6X6DJLw
-        r0oKHhNMH+V8idDnUbLhKl4kN/2bsacxbv0zG+LwZcpPuKFojeZwKebsdTRw62OM1tfhE3
-        SmIP7JpBr6Bw4JQLybDIH00zaOU3ck4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-479-wsmh7QxlMIexmPjb_Lr0Pw-1; Tue, 31 Mar 2020 05:49:38 -0400
-X-MC-Unique: wsmh7QxlMIexmPjb_Lr0Pw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7F5621005509;
-        Tue, 31 Mar 2020 09:49:36 +0000 (UTC)
-Received: from ws.net.home (unknown [10.40.194.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BB62598A21;
-        Tue, 31 Mar 2020 09:49:32 +0000 (UTC)
-Date:   Tue, 31 Mar 2020 11:49:30 +0200
-From:   Karel Zak <kzak@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
-        andres@anarazel.de, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lennart Poettering <lennart@poettering.net>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-Message-ID: <20200331094930.3aipm3zrydpqqhms@ws.net.home>
-References: <1445647.1585576702@warthog.procyon.org.uk>
- <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
- <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
- <20200331083430.kserp35qabnxvths@ws.net.home>
- <CAJfpegsNpabFwoLL8HffNbi_4DuGMn4eYpFc6n7223UFnEPAbA@mail.gmail.com>
+        Tue, 31 Mar 2020 05:51:43 -0400
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1p.mail.yandex.net (Yandex) with ESMTP id EF3742E1504;
+        Tue, 31 Mar 2020 12:51:39 +0300 (MSK)
+Received: from vla5-58875c36c028.qloud-c.yandex.net (vla5-58875c36c028.qloud-c.yandex.net [2a02:6b8:c18:340b:0:640:5887:5c36])
+        by mxbackcorp1g.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id CArQVUGqzG-pcNi0fcP;
+        Tue, 31 Mar 2020 12:51:39 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1585648299; bh=oQkYYgeZuBMfjooZ7ZSd3wvvQTi+KvnVK/NOemBxCwA=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=MXXwnLXnb75v33k0O/la3APncH+bRvt2dzRV0xbhvhENmtABpKlgMr4LcFFvTM0hw
+         lu7DO2cpVh9Hxj2T5IJn6c/6FWA4MDAyQycB3abfRhNe8r3d1EffQiIkV/pD08l3gN
+         55H4wqSt7ELTkA1JbZ97sdLSdBrRoGpx9aSUChcQ=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from unknown (unknown [2a02:6b8:b080:8005::1:5])
+        by vla5-58875c36c028.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id FhzmPsKgcX-pcY4Zcb2;
+        Tue, 31 Mar 2020 12:51:38 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH] /proc/PID/smaps: Add PMD migration entry parsing
+To:     "Huang, Ying" <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Zi Yan <ziy@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+References: <20200331085604.1260162-1-ying.huang@intel.com>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <49386753-5984-f708-4153-e9c6de632439@yandex-team.ru>
+Date:   Tue, 31 Mar 2020 12:51:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegsNpabFwoLL8HffNbi_4DuGMn4eYpFc6n7223UFnEPAbA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <20200331085604.1260162-1-ying.huang@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 10:56:35AM +0200, Miklos Szeredi wrote:
-> I think we are approaching this from the wrong end.   Let's just
-> ignore all of the proposed interfaces for now and only concentrate on
-> what this will be used for.
+On 31/03/2020 11.56, Huang, Ying wrote:
+> From: Huang Ying <ying.huang@intel.com>
 > 
-> Start with a set of use cases by all interested parties.  E.g.
+> Now, when read /proc/PID/smaps, the PMD migration entry in page table is simply
+> ignored.  To improve the accuracy of /proc/PID/smaps, its parsing and processing
+> is added.
 > 
->  - systemd wants to keep track attached mounts in a namespace, as well
-> as new detached mounts created by fsmount()
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Alexey Dobriyan <adobriyan@gmail.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Cc: "Jérôme Glisse" <jglisse@redhat.com>
+> Cc: Yang Shi <yang.shi@linux.alibaba.com>
+> ---
+>   fs/proc/task_mmu.c | 16 ++++++++++++----
+>   1 file changed, 12 insertions(+), 4 deletions(-)
 > 
->  - systemd need to keep information (such as parent, children, mount
-> flags, fs options, etc) up to date on any change of topology or
-> attributes.
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 8d382d4ec067..b5b3aef8cb3b 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -548,8 +548,17 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
+>   	bool locked = !!(vma->vm_flags & VM_LOCKED);
+>   	struct page *page;
+
+         struct page *page = NULL;
+
+>   
+> -	/* FOLL_DUMP will return -EFAULT on huge zero page */
+> -	page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
+> +	if (pmd_present(*pmd)) {
+> +		/* FOLL_DUMP will return -EFAULT on huge zero page */
+> +		page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
+> +	} else if (unlikely(is_swap_pmd(*pmd))) {
+> +		swp_entry_t entry = pmd_to_swp_entry(*pmd);
+> +
+> +		VM_BUG_ON(!is_migration_entry(entry));
+> +		page = migration_entry_to_page(entry);
+
+                 if (is_migration_entry(entry))
+                         page = migration_entry_to_page(entry);
+
+Seems safer and doesn't add much code.
+
+> +	} else {
+> +		return;
+> +	}
+>   	if (IS_ERR_OR_NULL(page))
+>   		return;
+>   	if (PageAnon(page))
+> @@ -578,8 +587,7 @@ static int smaps_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+>   
+>   	ptl = pmd_trans_huge_lock(pmd, vma);
+>   	if (ptl) {
+> -		if (pmd_present(*pmd))
+> -			smaps_pmd_entry(pmd, addr, walk);
+> +		smaps_pmd_entry(pmd, addr, walk);
+>   		spin_unlock(ptl);
+>   		goto out;
+>   	}
 > 
->  - util linux needs to display the topology and state of mounts in the
-> system that corresponds to a consistent state that set of mounts
-
-  - like systemd we also need in mount/umount to query one mountpoint
-  rather than parse all /proc/self/mountinfo
-
- Karel
-
--- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
-
