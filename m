@@ -2,128 +2,315 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9275199642
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 14:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A99AA1996BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 14:42:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730729AbgCaMUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 08:20:41 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33677 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730343AbgCaMUk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 08:20:40 -0400
-Received: by mail-oi1-f196.google.com with SMTP id m14so18751468oic.0;
-        Tue, 31 Mar 2020 05:20:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=26HG4zFgugkC6qzQClM9onqv7r2JKUuvQ00Kk/wIJGg=;
-        b=FXONAX0YpRtypaPZSQ3Wl+XD3tf3+JlmJqeg/M7PVGwJ6lhsSmO/xszNzUo0ZFEH7C
-         QjxAU8sb/l/5ym0tVfMZevO3fuPtaEFq85Fyk2lVDUXwUP/HlqVcG48C9u6aavlD558u
-         1Vewn+ET4rtfukpG+ZfadBHSRNXtnrqQn/FtO6yVKF93tL7NSimv4+dkpi2gcW138oCD
-         RQGPOKWeO1w9JBNtgn9C/wdWlI++DmlEZOWM/zvcpmQC7ISgpnQr5lh22R6QvPNXNGjK
-         XrwehwHU6Zw/wm4wf6FDTvQmBI0rS2XsGxCZwcOKeSuMEFIJ/guK4Yd24c+YFUFKVn3F
-         b6mQ==
-X-Gm-Message-State: ANhLgQ2xFzXvel5n+ntHqhCCoNZvzNaqaHADOoajsLlkkhRwQs0b308P
-        JLbe/qqQRP8IMU/ueFHAlEJiAOrh37Wb4DAReH8=
-X-Google-Smtp-Source: ADFU+vvJjq6t9HN5MU6KVtgDmhuo8qjq6hgZzLnrDwNCTZl1iXr18JU6fsxiGfnMFt3tCqOJSDnBy8jyMBNiZHZ3piU=
-X-Received: by 2002:aca:cdd1:: with SMTP id d200mr1719981oig.153.1585657239572;
- Tue, 31 Mar 2020 05:20:39 -0700 (PDT)
+        id S1730811AbgCaMmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 08:42:55 -0400
+Received: from mga04.intel.com ([192.55.52.120]:34998 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730753AbgCaMmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 08:42:54 -0400
+IronPort-SDR: 2JMldSsAI43rmTFe29Eo3YN5twOFEBrcLW0IkiR7Ln7wUEg83kHQUTZvBU8GYY77IW+TqOHhL8
+ DpUKfS2WojyQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 05:21:37 -0700
+IronPort-SDR: DGnBY/dtYEQBb46KreKw8hFpbZXxR9nEnLjj3WvSX+jy9oUlabqYjhshiQ6PvxjxQXqAGqiW3H
+ bii0dsTOo5hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
+   d="scan'208";a="240107704"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga007.fm.intel.com with ESMTP; 31 Mar 2020 05:21:35 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jJFtj-00EUTF-8x; Tue, 31 Mar 2020 15:21:39 +0300
+Date:   Tue, 31 Mar 2020 15:21:39 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Subject: [GIT PULL] platform-drivers-x86 for 5.7-1
+Message-ID: <20200331122139.GA3453702@smile.fi.intel.com>
 MIME-Version: 1.0
-References: <20200222014038.180923-1-saravanak@google.com> <20200222014038.180923-6-saravanak@google.com>
-In-Reply-To: <20200222014038.180923-6-saravanak@google.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 31 Mar 2020 14:20:27 +0200
-Message-ID: <CAMuHMdW_pvt1b6Y8e5j0Q5yDFMsg5z61upOo+gFaq7zf1F0V6w@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] of: property: Delete of_devlink kernel commandline option
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Len Brown <lenb@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Saravana,
+Hi Linus,
 
-On Sat, Feb 22, 2020 at 2:41 AM Saravana Kannan <saravanak@google.com> wrote:
-> With the addition of fw_devlink kernel commandline option, of_devlink is
-> redundant and not useful anymore. So, delete it.
->
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
+Few updates for PDx86 here. The merge will conflict with some updates from the
+tip and driver trees. One is in Kconfig (one line has been added in driver
+tree) and one in intel_pmc_core.c (tip tree introduced new macros to match x86
+CPUs). For your convenience I pushed an example of resolution in the branch
+test-pr-5.7-1.
 
-Thanks for your patch!
+Thanks,
 
-This is now commit e94f62b7140fa3da ("of: property: Delete of_devlink
-kernel commandline option") upstream.
+With Best Regards,
+Andy Shevchenko
 
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -3299,12 +3299,6 @@
->                         This can be set from sysctl after boot.
->                         See Documentation/admin-guide/sysctl/vm.rst for details.
->
-> -       of_devlink      [OF, KNL] Create device links between consumer and
-> -                       supplier devices by scanning the devictree to infer the
-> -                       consumer/supplier relationships.  A consumer device
-> -                       will not be probed until all the supplier devices have
-> -                       probed successfully.
-> -
->         ohci1394_dma=early      [HW] enable debugging via the ohci1394 driver.
->                         See Documentation/debugging-via-ohci1394.txt for more
->                         info.
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
-While I agree with the thunk above...
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
 
-> diff --git a/drivers/of/property.c b/drivers/of/property.c
-> index 15fc9315f1a7..f104f15b57fb 100644
-> --- a/drivers/of/property.c
-> +++ b/drivers/of/property.c
-> @@ -1299,15 +1299,9 @@ static int of_link_to_suppliers(struct device *dev,
->         return ret;
->  }
->
-> -static bool of_devlink;
-> -core_param(of_devlink, of_devlink, bool, 0);
-> -
->  static int of_fwnode_add_links(const struct fwnode_handle *fwnode,
->                                struct device *dev)
->  {
-> -       if (!of_devlink)
-> -               return 0;
-> -
->         if (unlikely(!is_of_node(fwnode)))
->                 return 0;
+are available in the Git repository at:
 
-... I have some reservations about removing the actual code.
-The "of_devlink" kernel parameter was supported in v5.5 and v5.6, so
-removing its support may silently break some setups.
+  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v5.7-1
 
-Is this likely to happen?
-Do we need a compatibility fallback that warns to user to update his kernel
-command line?
+for you to fetch changes up to d878bdfba8ffda64265c921cf7497934a607f83a:
 
-Gr{oetje,eeting}s,
+  platform/x86: surface3_power: Fix always true condition in mshw0011_space_handler() (2020-03-30 13:26:50 +0300)
 
-                        Geert
+----------------------------------------------------------------
+platform-drivers-x86 for v5.7-1
+
+* Fix for improper handling of fan_boost_mode in sysfs for ASUS laptops.
+* On newer ASUS laptops the 1st battery is named differently, here is a fix.
+* Fix Lex 2I385SW to allow both network cards to be used.
+* The power integrated circuit driver for Surface 3 has been added.
+* Refactor and clean up of Intel PMC driver and enable it on Intel Jasper Lake.
+* Clean up of Dell RBU driver.
+* Big update for Intel Speed Select technology support tool and driver.
+
+The following is an automated git shortlog grouped by driver:
+
+asus-wmi:
+ -  Support laptops where the first battery is named BATT
+ -  Fix return value of fan_boost_mode_store
+
+dell_rbu:
+ -  Unify format of the printed messages
+ -  Use max_t() to get rid of casting
+ -  Simplify cleanup code in create_packet()
+ -  don't open code list_for_each_entry*()
+ -  Use sysfs_create_group() API
+
+GPD pocket fan:
+ -  Fix error message when temp-limits are out of range
+
+i2c-multi-instantiate:
+ -  Replace zero-length array with flexible-array member
+
+intel-hid:
+ -  Move MODULE_DEVICE_TABLE() closer to the table
+
+intel_pmc_core:
+ -  Make pmc_core_substate_res_show() generic
+ -  Make pmc_core_lpm_display() generic for platforms that support sub-states
+ -  Add slp_s0_offset attribute back to tgl_reg_map
+ -  Remove duplicate 'if' to create debugfs entry
+ -  Relocate pmc_core_*_display() to outside of CONFIG_DEBUG_FS
+ -  Add debugfs support to access live status registers
+ -  Dump low power status registers on an S0ix.y failure
+ -  Add an additional parameter to pmc_core_lpm_display()
+ -  Remove slp_s0 attributes from tgl_reg_map
+ -  Refactor the driver by removing redundant code
+ -  Add debugfs entry for low power mode status registers
+ -  Add debugfs entry to access sub-state residencies
+ -  Add Atom based Jasper Lake (JSL) platform support
+
+intel-vbtn:
+ -  Move MODULE_DEVICE_TABLE() closer to the table
+
+ISST:
+ -  Fix wrong unregister type
+
+PDx86:
+ -  Kconfig: Fix a typo
+ -  Kconfig: Group modules by companies and functions
+ -  MAINTAINERS: Sort entries in database for PDx86
+ -  Makefile: Group modules by companies and functions
+
+platform/x86/intel-uncore-freq:
+ -  Add release callback
+ -  Fix static checker issue and potential race condition
+
+pmc_atom:
+ -  Add Lex 2I385SW to critclk_systems DMI table
+
+sony-laptop:
+ -  Use scnprintf() for avoiding potential buffer overflow
+
+surface3_power:
+ -  Fix always true condition in mshw0011_space_handler()
+ -  Fix Kconfig section ordering
+ -  Add missed headers
+ -  Reformat GUID assignment
+ -  Drop useless macro ACPI_PTR()
+ -  Prefix POLL_INTERVAL with SURFACE_3
+ -  Simplify mshw0011_adp_psr() to one liner
+ -  Use dev_err() instead of pr_err()
+ -  Drop unused structure definition
+ -  MSHW0011 rev-eng implementation
+
+tools/power/x86/intel-speed-select:
+ -  Fix a typo in error message
+ -  Update version
+ -  Avoid duplicate Package strings for json
+ -  Add display for enabled cpus count
+ -  Print friendly warning for bad command line
+ -  Fix avx options for turbo-freq feature
+ -  Improve CLX commands
+ -  Show error for invalid CPUs in the options
+ -  Improve core-power result and error display
+ -  Kernel interface error handling
+ -  Improve error display for turbo-freq feature
+ -  Improve error display for base-freq feature
+ -  Improve output of perf-profile commands
+ -  Enhance help for core-power assoc
+ -  Display error for invalid priority type
+ -  Check feature status first
+ -  Improve error display for perf-profile feature
+ -  Add an API for error/information print
+ -  Enhance --info option
+ -  Enhance help
+ -  Helpful warning for missing kernel interface
+ -  Store topology information
+ -  Max CPU count calculation when CPU0 is offline
+ -  Special handling for CPU 0 online/offline
+ -  Use more verbiage for clos information
+ -  Enhance core-power info command
+ -  Make target CPU optional for core-power info
+ -  Warn for invalid package id
+ -  Fix last cpu number
+ -  Fix mailbox usage for CLOS_PM_QOS_CONFIG
+ -  Avoid duplicate names for json parsing
+ -  Fix display for turbo-freq auto mode
+
+----------------------------------------------------------------
+Andy Shevchenko (19):
+      MAINTAINERS: Sort entries in database for PDx86
+      platform/x86: intel-hid: Move MODULE_DEVICE_TABLE() closer to the table
+      platform/x86: intel-vbtn: Move MODULE_DEVICE_TABLE() closer to the table
+      platform/x86: Makefile: Group modules by companies and functions
+      platform/x86: Kconfig: Group modules by companies and functions
+      platform/x86: dell_rbu: Use sysfs_create_group() API
+      platform/x86: dell_rbu: don't open code list_for_each_entry*()
+      platform/x86: dell_rbu: Simplify cleanup code in create_packet()
+      platform/x86: dell_rbu: Use max_t() to get rid of casting
+      platform/x86: dell_rbu: Unify format of the printed messages
+      platform/x86: surface3_power: Drop unused structure definition
+      platform/x86: surface3_power: Use dev_err() instead of pr_err()
+      platform/x86: surface3_power: Simplify mshw0011_adp_psr() to one liner
+      platform/x86: surface3_power: Prefix POLL_INTERVAL with SURFACE_3
+      platform/x86: surface3_power: Drop useless macro ACPI_PTR()
+      platform/x86: surface3_power: Reformat GUID assignment
+      platform/x86: surface3_power: Add missed headers
+      platform/x86: surface3_power: Fix Kconfig section ordering
+      platform/x86: surface3_power: Fix always true condition in mshw0011_space_handler()
+
+Blaž Hrastnik (1):
+      platform/x86: surface3_power: MSHW0011 rev-eng implementation
+
+Christophe JAILLET (1):
+      platform/x86: Kconfig: Fix a typo
+
+Gayatri Kammela (13):
+      platform/x86: intel_pmc_core: Add Atom based Jasper Lake (JSL) platform support
+      platform/x86: intel_pmc_core: Add debugfs entry to access sub-state residencies
+      platform/x86: intel_pmc_core: Add debugfs entry for low power mode status registers
+      platform/x86: intel_pmc_core: Refactor the driver by removing redundant code
+      platform/x86: intel_pmc_core: Remove slp_s0 attributes from tgl_reg_map
+      platform/x86: intel_pmc_core: Add an additional parameter to pmc_core_lpm_display()
+      platform/x86: intel_pmc_core: Dump low power status registers on an S0ix.y failure
+      platform/x86: intel_pmc_core: Add debugfs support to access live status registers
+      platform/x86: intel_pmc_core: Relocate pmc_core_*_display() to outside of CONFIG_DEBUG_FS
+      platform/x86: intel_pmc_core: Remove duplicate 'if' to create debugfs entry
+      platform/x86: intel_pmc_core: Add slp_s0_offset attribute back to tgl_reg_map
+      platform/x86: intel_pmc_core: Make pmc_core_lpm_display() generic for platforms that support sub-states
+      platform/x86: intel_pmc_core: Make pmc_core_substate_res_show() generic
+
+Georg Müller (1):
+      platform/x86: pmc_atom: Add Lex 2I385SW to critclk_systems DMI table
+
+Gustavo A. R. Silva (1):
+      platform/x86: i2c-multi-instantiate: Replace zero-length array with flexible-array member
+
+Hans de Goede (1):
+      platform/x86: GPD pocket fan: Fix error message when temp-limits are out of range
+
+Kristian Klausen (1):
+      platform/x86: asus-wmi: Support laptops where the first battery is named BATT
+
+Leonid Maksymchuk (1):
+      platform/x86: asus_wmi: Fix return value of fan_boost_mode_store
+
+Masanari Iida (1):
+      tools/power/x86/intel-speed-select: Fix a typo in error message
+
+Srinivas Pandruvada (34):
+      tools/power/x86/intel-speed-select: Fix display for turbo-freq auto mode
+      tools/power/x86/intel-speed-select: Avoid duplicate names for json parsing
+      platform/x86/intel-uncore-freq: Fix static checker issue and potential race condition
+      platform/x86/intel-uncore-freq: Add release callback
+      platform/x86: ISST: Fix wrong unregister type
+      tools/power/x86/intel-speed-select: Fix mailbox usage for CLOS_PM_QOS_CONFIG
+      tools/power/x86/intel-speed-select: Fix last cpu number
+      tools/power/x86/intel-speed-select: Warn for invalid package id
+      tools/power/x86/intel-speed-select: Make target CPU optional for core-power info
+      tools/power/x86/intel-speed-select: Enhance core-power info command
+      tools/power/x86/intel-speed-select: Use more verbiage for clos information
+      tools/power/x86/intel-speed-select: Special handling for CPU 0 online/offline
+      tools/power/x86/intel-speed-select: Max CPU count calculation when CPU0 is offline
+      tools/power/x86/intel-speed-select: Store topology information
+      tools/power/x86/intel-speed-select: Helpful warning for missing kernel interface
+      tools/power/x86/intel-speed-select: Enhance help
+      tools/power/x86/intel-speed-select: Enhance --info option
+      tools/power/x86/intel-speed-select: Add an API for error/information print
+      tools/power/x86/intel-speed-select: Improve error display for perf-profile feature
+      tools/power/x86/intel-speed-select: Check feature status first
+      tools/power/x86/intel-speed-select: Display error for invalid priority type
+      tools/power/x86/intel-speed-select: Enhance help for core-power assoc
+      tools/power/x86/intel-speed-select: Improve output of perf-profile commands
+      tools/power/x86/intel-speed-select: Improve error display for base-freq feature
+      tools/power/x86/intel-speed-select: Improve error display for turbo-freq feature
+      tools/power/x86/intel-speed-select: Kernel interface error handling
+      tools/power/x86/intel-speed-select: Improve core-power result and error display
+      tools/power/x86/intel-speed-select: Show error for invalid CPUs in the options
+      tools/power/x86/intel-speed-select: Improve CLX commands
+      tools/power/x86/intel-speed-select: Fix avx options for turbo-freq feature
+      tools/power/x86/intel-speed-select: Print friendly warning for bad command line
+      tools/power/x86/intel-speed-select: Add display for enabled cpus count
+      tools/power/x86/intel-speed-select: Avoid duplicate Package strings for json
+      tools/power/x86/intel-speed-select: Update version
+
+Takashi Iwai (1):
+      platform/x86: sony-laptop: Use scnprintf() for avoiding potential buffer overflow
+
+ MAINTAINERS                                        |   82 +-
+ drivers/platform/x86/Kconfig                       | 1323 ++++++++++----------
+ drivers/platform/x86/Makefile                      |  198 +--
+ drivers/platform/x86/asus-wmi.c                    |    7 +-
+ drivers/platform/x86/dell_rbu.c                    |  173 +--
+ drivers/platform/x86/gpd-pocket-fan.c              |    2 +-
+ drivers/platform/x86/i2c-multi-instantiate.c       |    2 +-
+ drivers/platform/x86/intel-hid.c                   |    2 +-
+ drivers/platform/x86/intel-uncore-frequency.c      |   51 +-
+ drivers/platform/x86/intel-vbtn.c                  |    2 +-
+ drivers/platform/x86/intel_pmc_core.c              |  343 ++++-
+ drivers/platform/x86/intel_pmc_core.h              |   29 +
+ .../x86/intel_speed_select_if/isst_if_mmio.c       |    2 +-
+ drivers/platform/x86/pmc_atom.c                    |    8 +
+ drivers/platform/x86/sony-laptop.c                 |    8 +-
+ drivers/platform/x86/surface3_power.c              |  589 +++++++++
+ tools/power/x86/intel-speed-select/isst-config.c   |  583 +++++++--
+ tools/power/x86/intel-speed-select/isst-core.c     |  117 +-
+ tools/power/x86/intel-speed-select/isst-display.c  |  278 ++--
+ tools/power/x86/intel-speed-select/isst.h          |   12 +-
+ 20 files changed, 2626 insertions(+), 1185 deletions(-)
+ create mode 100644 drivers/platform/x86/surface3_power.c
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+With Best Regards,
+Andy Shevchenko
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
