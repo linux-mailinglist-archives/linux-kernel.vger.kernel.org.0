@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64DD5198F72
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 328CB199212
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:23:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730605AbgCaJDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:03:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43198 "EHLO mail.kernel.org"
+        id S1730839AbgCaJDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:03:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730428AbgCaJD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:03:27 -0400
+        id S1730603AbgCaJDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:03:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68D75212CC;
-        Tue, 31 Mar 2020 09:03:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77AA9208E0;
+        Tue, 31 Mar 2020 09:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645406;
-        bh=P0enmRMPJSTzxpuKOpRs/bk9Xg8HJ5GL0+PLb+c5CKQ=;
+        s=default; t=1585645409;
+        bh=2vGgD4H5dto+NnkoP/8GmGv6oQW+1nr5MOXHsQ/uGgQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vBTDNYrR6EYQuFko1vz9uiGtCMu6z628ANYAwILrT3FikaKuYkp8qaionLstIUa7T
-         LkQAAmCrZMr68teTz8We1z7Ej/EmVbA6fwWBac5PbJCEnTTgtB0FleLNePmJxrEPqZ
-         JFhq1G31U2JCKCgkTYwxD9w9e8iVNz2Mfaejo9ig=
+        b=AdDA6UlWn96wI5SYsP9CCq9SD8DUN2g4kuSDB8DS61xxKm3tibNHX04LNPR01S/cY
+         /Up5PuYbjw2HM4X8CR6AZ+93xu5MD/FaYboCm3KHRhmqshT3yTZcFt7n3UZ6qAqXTn
+         rvnKsX8bqSDUv4ORaXW4t03cDgwNFzZurL5r1+3Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 044/170] bnxt_en: Return error if bnxt_alloc_ctx_mem() fails.
-Date:   Tue, 31 Mar 2020 10:57:38 +0200
-Message-Id: <20200331085429.152377971@linuxfoundation.org>
+Subject: [PATCH 5.5 045/170] bnxt_en: Free context memory after disabling PCI in probe error path.
+Date:   Tue, 31 Mar 2020 10:57:39 +0200
+Message-Id: <20200331085429.255371508@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
 References: <20200331085423.990189598@linuxfoundation.org>
@@ -45,39 +45,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit 0b5b561cea32d5bb1e0a82d65b755a3cb5212141 ]
+[ Upstream commit 62bfb932a51f6d08eb409248e69f8d6428c2cabd ]
 
-The current code ignores the return value from
-bnxt_hwrm_func_backing_store_cfg(), causing the driver to proceed in
-the init path even when this vital firmware call has failed.  Fix it
-by propagating the error code to the caller.
+Other shutdown code paths will always disable PCI first to shutdown DMA
+before freeing context memory.  Do the same sequence in the error path
+of probe to be safe and consistent.
 
-Fixes: 1b9394e5a2ad ("bnxt_en: Configure context memory on new devices.")
+Fixes: c20dc142dd7b ("bnxt_en: Disable bus master during PCI shutdown and driver unload.")
 Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
 +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -6880,12 +6880,12 @@ skip_rdma:
- 	}
- 	ena |= FUNC_BACKING_STORE_CFG_REQ_DFLT_ENABLES;
- 	rc = bnxt_hwrm_func_backing_store_cfg(bp, ena);
--	if (rc)
-+	if (rc) {
- 		netdev_err(bp->dev, "Failed configuring context mem, rc = %d.\n",
- 			   rc);
--	else
--		ctx->flags |= BNXT_CTX_FLAG_INITED;
--
-+		return rc;
-+	}
-+	ctx->flags |= BNXT_CTX_FLAG_INITED;
- 	return 0;
- }
+@@ -11959,12 +11959,12 @@ init_err_pci_clean:
+ 	bnxt_hwrm_func_drv_unrgtr(bp);
+ 	bnxt_free_hwrm_short_cmd_req(bp);
+ 	bnxt_free_hwrm_resources(bp);
+-	bnxt_free_ctx_mem(bp);
+-	kfree(bp->ctx);
+-	bp->ctx = NULL;
+ 	kfree(bp->fw_health);
+ 	bp->fw_health = NULL;
+ 	bnxt_cleanup_pci(bp);
++	bnxt_free_ctx_mem(bp);
++	kfree(bp->ctx);
++	bp->ctx = NULL;
  
+ init_err_free:
+ 	free_netdev(dev);
 
 
