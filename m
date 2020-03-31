@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16BA81990A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE10B198FE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:07:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730742AbgCaJNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:13:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60646 "EHLO mail.kernel.org"
+        id S1731236AbgCaJH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:07:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730675AbgCaJNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:13:19 -0400
+        id S1731205AbgCaJHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:07:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7867420675;
-        Tue, 31 Mar 2020 09:13:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A345520675;
+        Tue, 31 Mar 2020 09:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645997;
-        bh=f98q2bHOB/Zv/40H9W+WM3nJadh8ZSBI7JD+eH8uzwQ=;
+        s=default; t=1585645639;
+        bh=fonGa2Jo6J/Aqu3Gec9US4klKsW7E93xxowFHt7fUKw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MhZXF/lR5oE4SU9j+svd+PpxKAK3ezAnPquQmdd/QJU40c5bjFHs1zeef89BEfQpM
-         XujkgCqLkk6wcwUDvV34z8ijCkp/dIUPlyelyTdrsjxO1jX+H1Npan3fIgsPnU9ooJ
-         b9k36TkhRYSikm8GHGE3jY3qypw6TYIL8s3Lubow=
+        b=QQKRZXeqOzJuYjZAzQcqeB0Wi0PYCouLyrpDxhcbAFbl50hz7Qozp0rzsmvdxAOqc
+         ynk9UZ54QKLhmw6zINOhxevlBeqR/O/g5hT60dNUtTt8CyMrygGHohC6SUJpL/Rage
+         oxIglGeTxk5xECxz4DQu6jJ22vZWXt1T4KJY1GlI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aya Levin <ayal@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 5.4 050/155] net/mlx5e: Enhance ICOSQ WQE info fields
-Date:   Tue, 31 Mar 2020 10:58:10 +0200
-Message-Id: <20200331085424.115467794@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Madalin Bucur <madalin.bucur@oss.nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 077/170] dpaa_eth: Remove unnecessary boolean expression in dpaa_get_headroom
+Date:   Tue, 31 Mar 2020 10:58:11 +0200
+Message-Id: <20200331085432.504560513@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
-References: <20200331085418.274292403@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,88 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aya Levin <ayal@mellanox.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 1de0306c3a05d305e45b1f1fabe2f4e94222eb6b ]
+[ Upstream commit 7395f62d95aafacdb9bd4996ec2f95b4a655d7e6 ]
 
-Add number of WQEBBs (WQE's Basic Block) to WQE info struct. Set the
-number of WQEBBs on WQE post, and increment the consumer counter (cc)
-on completion.
+Clang warns:
 
-In case of error completions, the cc was mistakenly not incremented,
-keeping a gap between cc and pc (producer counter). This failed the
-recovery flow on the ICOSQ from a CQE error which timed-out waiting for
-the cc and pc to meet.
+drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:2860:9: warning:
+converting the result of '?:' with integer constants to a boolean always
+evaluates to 'true' [-Wtautological-constant-compare]
+        return DPAA_FD_DATA_ALIGNMENT ? ALIGN(headroom,
+               ^
+drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:131:34: note: expanded
+from macro 'DPAA_FD_DATA_ALIGNMENT'
+\#define DPAA_FD_DATA_ALIGNMENT  (fman_has_errata_a050385() ? 64 : 16)
+                                 ^
+1 warning generated.
 
-Fixes: be5323c8379f ("net/mlx5e: Report and recover from CQE error on ICOSQ")
-Signed-off-by: Aya Levin <ayal@mellanox.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This was exposed by commit 3c68b8fffb48 ("dpaa_eth: FMan erratum A050385
+workaround") even though it appears to have been an issue since the
+introductory commit 9ad1a3749333 ("dpaa_eth: add support for DPAA
+Ethernet") since DPAA_FD_DATA_ALIGNMENT has never been able to be zero.
+
+Just replace the whole boolean expression with the true branch, as it is
+always been true.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/928
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Madalin Bucur <madalin.bucur@oss.nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en.h      |    1 +
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c   |   11 +++++------
- drivers/net/ethernet/mellanox/mlx5/core/en_txrx.c |    1 +
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-@@ -371,6 +371,7 @@ enum {
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+index 36e2e28fa6e38..1e8dcae5f4b40 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -2845,9 +2845,7 @@ static inline u16 dpaa_get_headroom(struct dpaa_buffer_layout *bl)
+ 	headroom = (u16)(bl->priv_data_size + DPAA_PARSE_RESULTS_SIZE +
+ 		DPAA_TIME_STAMP_SIZE + DPAA_HASH_RESULTS_SIZE);
  
- struct mlx5e_sq_wqe_info {
- 	u8  opcode;
-+	u8 num_wqebbs;
- 
- 	/* Auxiliary data for different opcodes. */
- 	union {
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -477,6 +477,7 @@ static inline void mlx5e_fill_icosq_frag
- 	/* fill sq frag edge with nops to avoid wqe wrapping two pages */
- 	for (; wi < edge_wi; wi++) {
- 		wi->opcode = MLX5_OPCODE_NOP;
-+		wi->num_wqebbs = 1;
- 		mlx5e_post_nop(wq, sq->sqn, &sq->pc);
- 	}
+-	return DPAA_FD_DATA_ALIGNMENT ? ALIGN(headroom,
+-					      DPAA_FD_DATA_ALIGNMENT) :
+-					headroom;
++	return ALIGN(headroom, DPAA_FD_DATA_ALIGNMENT);
  }
-@@ -525,6 +526,7 @@ static int mlx5e_alloc_rx_mpwqe(struct m
- 	umr_wqe->uctrl.xlt_offset = cpu_to_be16(xlt_offset);
  
- 	sq->db.ico_wqe[pi].opcode = MLX5_OPCODE_UMR;
-+	sq->db.ico_wqe[pi].num_wqebbs = MLX5E_UMR_WQEBBS;
- 	sq->db.ico_wqe[pi].umr.rq = rq;
- 	sq->pc += MLX5E_UMR_WQEBBS;
- 
-@@ -628,17 +630,14 @@ void mlx5e_poll_ico_cq(struct mlx5e_cq *
- 
- 			ci = mlx5_wq_cyc_ctr2ix(&sq->wq, sqcc);
- 			wi = &sq->db.ico_wqe[ci];
-+			sqcc += wi->num_wqebbs;
- 
--			if (likely(wi->opcode == MLX5_OPCODE_UMR)) {
--				sqcc += MLX5E_UMR_WQEBBS;
-+			if (likely(wi->opcode == MLX5_OPCODE_UMR))
- 				wi->umr.rq->mpwqe.umr_completed++;
--			} else if (likely(wi->opcode == MLX5_OPCODE_NOP)) {
--				sqcc++;
--			} else {
-+			else if (unlikely(wi->opcode != MLX5_OPCODE_NOP))
- 				netdev_WARN_ONCE(cq->channel->netdev,
- 						 "Bad OPCODE in ICOSQ WQE info: 0x%x\n",
- 						 wi->opcode);
--			}
- 
- 		} while (!last_wqe);
- 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_txrx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_txrx.c
-@@ -78,6 +78,7 @@ void mlx5e_trigger_irq(struct mlx5e_icos
- 	u16 pi = mlx5_wq_cyc_ctr2ix(wq, sq->pc);
- 
- 	sq->db.ico_wqe[pi].opcode = MLX5_OPCODE_NOP;
-+	sq->db.ico_wqe[pi].num_wqebbs = 1;
- 	nopwqe = mlx5e_post_nop(wq, sq->sqn, &sq->pc);
- 	mlx5e_notify_hw(wq, sq->pc, sq->uar_map, &nopwqe->ctrl);
- }
+ static int dpaa_eth_probe(struct platform_device *pdev)
+-- 
+2.20.1
+
 
 
