@@ -2,297 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D50D199D52
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 19:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC0E199D56
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 19:59:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbgCaR6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 13:58:17 -0400
-Received: from esa5.hc3370-68.iphmx.com ([216.71.155.168]:51667 "EHLO
-        esa5.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbgCaR6R (ORCPT
+        id S1727390AbgCaR66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 13:58:58 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44006 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbgCaR66 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 13:58:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1585677496;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=ugN/+rcpfhTRDqqHKAZjxpSJT2vgLfeYiI3IivYQo/Q=;
-  b=eSg4nykTcSzNwa8iiRvFGI+c+h89qCiQeObhzepPCY3vdcNTXFKIXbXB
-   Y3/kbizih/kWgkPrHzebdDqdTwvfpDoYnAnVMOHk+CBHyTyUaszO/msqo
-   NmHNle6xjWWRZHUMviVwT9PMuruG1s6X21JcJ/ggzLp/V4ZatVcGBDJRO
-   Y=;
-Authentication-Results: esa5.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  andrew.cooper3@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="andrew.cooper3@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa5.hc3370-68.iphmx.com: domain of
-  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="Andrew.Cooper3@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: RGw3vXfJvPLWGYll59FYuAuA6EAKCWzeIq5Fl0HkNa2ni94sQboesVM0BU188NTLSn7DbvQ+3O
- w46cW+o3PzyEWAR2tzKHSx9Rrpw65z+eMqTsCeu8F6QUGeLl6CVQG7LOiyLupPZhDHYJ+pkDxT
- ak1rYwwMa2PcclAmNWf/yPHxQb8lCtg8VO4Lyf/vw1rCjmZ5WzBrKlpNlbhz7cTY0s8UBSt9ad
- 8Z8a7WnGrB4qkWsqDl+uOgikBbugwxAU8TeT0t3/yB7Bb6d2wYeQq/a2O3/gnbTK239PS51e6/
- oag=
-X-SBRS: 2.7
-X-MesageID: 15275649
-X-Ironport-Server: esa5.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.72,328,1580792400"; 
-   d="scan'208";a="15275649"
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-CC:     Andrew Cooper <andrew.cooper3@citrix.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
-        "Jan Kiszka" <jan.kiszka@siemens.com>,
-        James Morris <jmorris@namei.org>,
-        "David Howells" <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Josh Boyer <jwboyer@redhat.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        "Arnd Bergmann" <arnd@arndb.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <len.brown@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Martin Molnar <martin.molnar.programming@gmail.com>,
-        Pingfan Liu <kernelfans@gmail.com>,
-        <jailhouse-dev@googlegroups.com>
-Subject: [PATCH v2] x86/smpboot: Remove 486-isms from the modern AP boot path
-Date:   Tue, 31 Mar 2020 18:58:10 +0100
-Message-ID: <20200331175810.30204-1-andrew.cooper3@citrix.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200325101431.12341-1-andrew.cooper3@citrix.com>
-References: <20200325101431.12341-1-andrew.cooper3@citrix.com>
+        Tue, 31 Mar 2020 13:58:58 -0400
+Received: by mail-io1-f67.google.com with SMTP id x9so16241652iom.10;
+        Tue, 31 Mar 2020 10:58:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=td5o5/tiHIRBYofYMDETAP0Ltd0LRLXxBohco08C/no=;
+        b=WhQ5BXIoFNInaHzPI7eu0BM1DVTn2dclDosGzbeE5vR+Hpjzjw8uudivAYkAJi6oT8
+         o3PjdHm9DKPtVrV99xPNZ7h7pWz0TuaXOSYxlrqP2EL6C88ELRoAZ5wTWG+TQczWSRjA
+         34524e58llqubX888TK0Rh1HfkPZntJe1vBkP5bh9HvQRrzDAaZv9itHl2nfb4YUhLBe
+         qdt89Xe4smqHeFkl36YVanxA/mC/PjCqXr2UMmBuAssZYwtSuE3zNoRwTBKYe7hntR+p
+         ArWIfWYyqJgohf0u6L0Ca2gBimDmbK33jZsvOsUFOLHrV8DGmYcZ9KUEURVVxGl/7K0g
+         v2dw==
+X-Gm-Message-State: ANhLgQ3Wl16e4VW6iTq3ycVh2PwDuslBnr1Py//5M8vLZWmUto6zKOT3
+        VSuR/B/Ka2o0f3YnPRC6enLxzj4=
+X-Google-Smtp-Source: ADFU+vusw14RdmuJ7zrBadBBFp8IzG2PeGojTVZrZsBXAA0o/Wml8YZzKjsZTDX9R92K6374xp15Yw==
+X-Received: by 2002:a02:9988:: with SMTP id a8mr16525847jal.3.1585677537116;
+        Tue, 31 Mar 2020 10:58:57 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id b4sm6160512ilg.58.2020.03.31.10.58.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 10:58:56 -0700 (PDT)
+Received: (nullmailer pid 31762 invoked by uid 1000);
+        Tue, 31 Mar 2020 17:58:55 -0000
+Date:   Tue, 31 Mar 2020 11:58:55 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Daniel Campello <campello@chromium.org>
+Cc:     LKML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: iio: Add bindings for sx9310 sensor
+Message-ID: <20200331175855.GA30009@bogus>
+References: <20200323124310.1.I6ed779cd21abf3e70f21c1562bbda81f590976ab@changeid>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200323124310.1.I6ed779cd21abf3e70f21c1562bbda81f590976ab@changeid>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linux has an implementation of the Universal Start-up Algorithm (MP spec,
-Appendix B.4, Application Processor Startup), which includes unconditionally
-writing to the Bios Data Area and CMOS registers.
+On Mon, Mar 23, 2020 at 12:45:14PM -0600, Daniel Campello wrote:
+> Adds device tree bandings for sx9310 sensor.
+> 
+> Signed-off-by: Daniel Campello <campello@chromium.org>
+> ---
+> 
+>  .../iio/proximity/semtech,sx9310.yaml         | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/semtech,sx9310.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/proximity/semtech,sx9310.yaml b/Documentation/devicetree/bindings/iio/proximity/semtech,sx9310.yaml
+> new file mode 100644
+> index 00000000000000..da3424abe37e9d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/proximity/semtech,sx9310.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-The warm reset vector is only necessary in the non-integrated Local APIC case.
-UV and Jailhouse already have an opt-out for this behaviour, but blindly using
-the BDA and CMOS on a UEFI or other reduced hardware system isn't clever.
+Dual license new bindings:
 
-We could make this conditional on the integrated-ness of the Local APIC, but
-486-era SMP isn't supported.  Drop the logic completely, tidying up the includ
-list and header files as appropriate.
+(GPL-2.0-only OR BSD-2-Clause)
 
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: Borislav Petkov <bp@alien8.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: x86@kernel.org
-CC: Jan Kiszka <jan.kiszka@siemens.com>
-CC: James Morris <jmorris@namei.org>
-CC: David Howells <dhowells@redhat.com>
-CC: Andrew Cooper <andrew.cooper3@citrix.com>
-CC: Matthew Garrett <mjg59@google.com>
-CC: Josh Boyer <jwboyer@redhat.com>
-CC: Steve Wahl <steve.wahl@hpe.com>
-CC: Mike Travis <mike.travis@hpe.com>
-CC: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-CC: Arnd Bergmann <arnd@arndb.de>
-CC: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-CC: Giovanni Gherdovich <ggherdovich@suse.cz>
-CC: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-CC: Len Brown <len.brown@intel.com>
-CC: Kees Cook <keescook@chromium.org>
-CC: Martin Molnar <martin.molnar.programming@gmail.com>
-CC: Pingfan Liu <kernelfans@gmail.com>
-CC: linux-kernel@vger.kernel.org
-CC: jailhouse-dev@googlegroups.com
-Suggested-by: "H. Peter Anvin" <hpa@zytor.com>
-Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
----
-v2:
- * Drop logic entirely, rather than retaining support in 32bit builds.
----
- arch/x86/include/asm/apic.h        |  6 -----
- arch/x86/include/asm/x86_init.h    |  1 -
- arch/x86/kernel/apic/x2apic_uv_x.c |  1 -
- arch/x86/kernel/jailhouse.c        |  1 -
- arch/x86/kernel/platform-quirks.c  |  1 -
- arch/x86/kernel/smpboot.c          | 50 --------------------------------------
- 6 files changed, 60 deletions(-)
+With that,
 
-diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-index 19e94af9cc5d..5c33f9374b28 100644
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -472,12 +472,6 @@ static inline unsigned default_get_apic_id(unsigned long x)
- 		return (x >> 24) & 0x0F;
- }
- 
--/*
-- * Warm reset vector position:
-- */
--#define TRAMPOLINE_PHYS_LOW		0x467
--#define TRAMPOLINE_PHYS_HIGH		0x469
--
- extern void generic_bigsmp_probe(void);
- 
- #ifdef CONFIG_X86_LOCAL_APIC
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index 96d9cd208610..006a5d7fd7eb 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -229,7 +229,6 @@ enum x86_legacy_i8042_state {
- struct x86_legacy_features {
- 	enum x86_legacy_i8042_state i8042;
- 	int rtc;
--	int warm_reset;
- 	int no_vga;
- 	int reserve_bios_regions;
- 	struct x86_legacy_devices devices;
-diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-index ad53b2abc859..5afcfd193592 100644
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -343,7 +343,6 @@ static int __init uv_acpi_madt_oem_check(char *_oem_id, char *_oem_table_id)
- 	} else if (!strcmp(oem_table_id, "UVH")) {
- 		/* Only UV1 systems: */
- 		uv_system_type = UV_NON_UNIQUE_APIC;
--		x86_platform.legacy.warm_reset = 0;
- 		__this_cpu_write(x2apic_extra_bits, pnodeid << uvh_apicid.s.pnode_shift);
- 		uv_set_apicid_hibit();
- 		uv_apic = 1;
-diff --git a/arch/x86/kernel/jailhouse.c b/arch/x86/kernel/jailhouse.c
-index 6eb8b50ea07e..d628fe92d6af 100644
---- a/arch/x86/kernel/jailhouse.c
-+++ b/arch/x86/kernel/jailhouse.c
-@@ -210,7 +210,6 @@ static void __init jailhouse_init_platform(void)
- 	x86_platform.calibrate_tsc	= jailhouse_get_tsc;
- 	x86_platform.get_wallclock	= jailhouse_get_wallclock;
- 	x86_platform.legacy.rtc		= 0;
--	x86_platform.legacy.warm_reset	= 0;
- 	x86_platform.legacy.i8042	= X86_LEGACY_I8042_PLATFORM_ABSENT;
- 
- 	legacy_pic			= &null_legacy_pic;
-diff --git a/arch/x86/kernel/platform-quirks.c b/arch/x86/kernel/platform-quirks.c
-index b348a672f71d..d922c5e0c678 100644
---- a/arch/x86/kernel/platform-quirks.c
-+++ b/arch/x86/kernel/platform-quirks.c
-@@ -9,7 +9,6 @@ void __init x86_early_init_platform_quirks(void)
- {
- 	x86_platform.legacy.i8042 = X86_LEGACY_I8042_EXPECTED_PRESENT;
- 	x86_platform.legacy.rtc = 1;
--	x86_platform.legacy.warm_reset = 1;
- 	x86_platform.legacy.reserve_bios_regions = 0;
- 	x86_platform.legacy.devices.pnpbios = 1;
- 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index fe3ab9632f3b..a9f5b511d0b4 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -72,7 +72,6 @@
- #include <asm/fpu/internal.h>
- #include <asm/setup.h>
- #include <asm/uv/uv.h>
--#include <linux/mc146818rtc.h>
- #include <asm/i8259.h>
- #include <asm/misc.h>
- #include <asm/qspinlock.h>
-@@ -119,34 +118,6 @@ int arch_update_cpu_topology(void)
- 	return retval;
- }
- 
--static inline void smpboot_setup_warm_reset_vector(unsigned long start_eip)
--{
--	unsigned long flags;
--
--	spin_lock_irqsave(&rtc_lock, flags);
--	CMOS_WRITE(0xa, 0xf);
--	spin_unlock_irqrestore(&rtc_lock, flags);
--	*((volatile unsigned short *)phys_to_virt(TRAMPOLINE_PHYS_HIGH)) =
--							start_eip >> 4;
--	*((volatile unsigned short *)phys_to_virt(TRAMPOLINE_PHYS_LOW)) =
--							start_eip & 0xf;
--}
--
--static inline void smpboot_restore_warm_reset_vector(void)
--{
--	unsigned long flags;
--
--	/*
--	 * Paranoid:  Set warm reset code and vector here back
--	 * to default values.
--	 */
--	spin_lock_irqsave(&rtc_lock, flags);
--	CMOS_WRITE(0, 0xf);
--	spin_unlock_irqrestore(&rtc_lock, flags);
--
--	*((volatile u32 *)phys_to_virt(TRAMPOLINE_PHYS_LOW)) = 0;
--}
--
- static void init_freq_invariance(void);
- 
- /*
-@@ -1049,20 +1020,6 @@ static int do_boot_cpu(int apicid, int cpu, struct task_struct *idle,
- 	 * the targeted processor.
- 	 */
- 
--	if (x86_platform.legacy.warm_reset) {
--
--		pr_debug("Setting warm reset code and vector.\n");
--
--		smpboot_setup_warm_reset_vector(start_ip);
--		/*
--		 * Be paranoid about clearing APIC errors.
--		*/
--		if (APIC_INTEGRATED(boot_cpu_apic_version)) {
--			apic_write(APIC_ESR, 0);
--			apic_read(APIC_ESR);
--		}
--	}
--
- 	/*
- 	 * AP might wait on cpu_callout_mask in cpu_init() with
- 	 * cpu_initialized_mask set if previous attempt to online
-@@ -1118,13 +1075,6 @@ static int do_boot_cpu(int apicid, int cpu, struct task_struct *idle,
- 		}
- 	}
- 
--	if (x86_platform.legacy.warm_reset) {
--		/*
--		 * Cleanup possible dangling ends...
--		 */
--		smpboot_restore_warm_reset_vector();
--	}
--
- 	return boot_error;
- }
- 
--- 
-2.11.0
-
+Reviewed-by: Rob Herring <robh@kernel.org>
