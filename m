@@ -2,203 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45E75198D75
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:51:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04784198D7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:53:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730126AbgCaHvh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 03:51:37 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12661 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730060AbgCaHvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 03:51:36 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4AAA3FE431CC4978FE5D;
-        Tue, 31 Mar 2020 15:51:34 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 31 Mar
- 2020 15:51:30 +0800
-Subject: Re: [PATCH] f2fs: use round_up()/DIV_ROUND_UP()
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20200330100349.56127-1-yuchao0@huawei.com>
- <20200330184230.GB34947@google.com>
- <2b5ec2a6-218a-a291-a6fc-d87cd40be4db@huawei.com>
- <20200331035537.GC79749@google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <2fb61e2a-0725-2c97-8d7e-7f6b23a93ea9@huawei.com>
-Date:   Tue, 31 Mar 2020 15:51:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1730076AbgCaHxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 03:53:14 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45576 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727614AbgCaHxK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 03:53:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585641189;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=iSH8M0zcab1cNkiV4UELPul1CGDjNENFoeHyEZgGIB8=;
+        b=RncBEKCmjdcVEy1PD3YaLCjj+WVL316v7X14NnhVURfMsDl5wbiFvv4ujuIddfvLFZaMDo
+        4DSFG56UNik3cmNxpCQxU0tjJ1Mou0G6qU5OvJknDWySV23f8vGtLT4mvJWBu8v01tUFuh
+        xcqdD4vrzrPDYwp6bxiM9XAcu6276S0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-200-bZ0Wb73oM6-k8C_NCQRfsA-1; Tue, 31 Mar 2020 03:53:07 -0400
+X-MC-Unique: bZ0Wb73oM6-k8C_NCQRfsA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1DF4B8017CC;
+        Tue, 31 Mar 2020 07:53:06 +0000 (UTC)
+Received: from kamzik.brq.redhat.com (unknown [10.40.193.153])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6F30760BE0;
+        Tue, 31 Mar 2020 07:52:58 +0000 (UTC)
+Date:   Tue, 31 Mar 2020 09:52:55 +0200
+From:   Andrew Jones <drjones@redhat.com>
+To:     Wainer dos Santos Moschetta <wainersm@redhat.com>
+Cc:     kvm@vger.kernel.org, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        david@redhat.com
+Subject: Re: [PATCH 1/2] selftests: kvm: Add vm_get_fd() in kvm_util
+Message-ID: <20200331075255.w3kas64ogasqj6yq@kamzik.brq.redhat.com>
+References: <20200330204310.21736-1-wainersm@redhat.com>
+ <20200330204310.21736-2-wainersm@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200331035537.GC79749@google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200330204310.21736-2-wainersm@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/3/31 11:55, Jaegeuk Kim wrote:
-> On 03/31, Chao Yu wrote:
->> On 2020/3/31 2:42, Jaegeuk Kim wrote:
->>> On 03/30, Chao Yu wrote:
->>>> .i_cluster_size should be power of 2, so we can use round_up() instead
->>>> of roundup() to enhance the calculation.
->>>>
->>>> In addition, use DIV_ROUND_UP to clean up codes.
->>>>
->>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>>  fs/f2fs/data.c | 16 ++++++----------
->>>>  fs/f2fs/file.c | 17 +++++------------
->>>>  2 files changed, 11 insertions(+), 22 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>> index 0a829a89f596..8257d5e7aa3b 100644
->>>> --- a/fs/f2fs/data.c
->>>> +++ b/fs/f2fs/data.c
->>>> @@ -1969,8 +1969,6 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
->>>>  					bool is_readahead)
->>>>  {
->>>>  	struct bio *bio = *bio_ret;
->>>> -	const unsigned blkbits = inode->i_blkbits;
->>>> -	const unsigned blocksize = 1 << blkbits;
->>>>  	sector_t block_in_file;
->>>>  	sector_t last_block;
->>>>  	sector_t last_block_in_file;
->>>> @@ -1979,8 +1977,8 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
->>>>  
->>>>  	block_in_file = (sector_t)page_index(page);
->>>>  	last_block = block_in_file + nr_pages;
->>>> -	last_block_in_file = (f2fs_readpage_limit(inode) + blocksize - 1) >>
->>>> -							blkbits;
->>>> +	last_block_in_file = DIV_ROUND_UP(f2fs_readpage_limit(inode),
->>>> +								PAGE_SIZE);
->>>
->>> What if PAGE_SIZE is bigger than 4KB?
->>
->> We don't support 8kb+ sized-page, right?
+On Mon, Mar 30, 2020 at 05:43:09PM -0300, Wainer dos Santos Moschetta wrote:
+> Introduces the vm_get_fd() function in kvm_util which returns
+> the VM file descriptor.
 > 
-> That's only assumption below. I don't think we can just replace block with PAGE
-> in every places.
-
-Fixed,
-
-BTW, we didn't unify the usage of PAGE_SIZE/blocksize when
-calling bio_add_page(), it needs to unify to use PAGE_SIZE?
-
-f2fs_read_multi_pages()
-
-	if (bio_add_page(bio, page, blocksize, 0) < blocksize)
-
-f2fs_submit_page_write
-
-	if (bio_add_page(io->bio, bio_page, PAGE_SIZE, 0) < PAGE_SIZE) {
-
+> Signed-off-by: Wainer dos Santos Moschetta <wainersm@redhat.com>
+> ---
+>  tools/testing/selftests/kvm/include/kvm_util.h | 1 +
+>  tools/testing/selftests/kvm/lib/kvm_util.c     | 5 +++++
+>  2 files changed, 6 insertions(+)
 > 
->>
->> static int __init init_f2fs_fs(void)
->> {
->> 	int err;
->>
->> 	if (PAGE_SIZE != F2FS_BLKSIZE) {
->> 		printk("F2FS not supported on PAGE_SIZE(%lu) != %d\n",
->> 				PAGE_SIZE, F2FS_BLKSIZE);
->> 		return -EINVAL;
->> 	}
->>
->> Thanks,
->>
->>>
->>>>  	if (last_block > last_block_in_file)
->>>>  		last_block = last_block_in_file;
->>>>  
->>>> @@ -2062,7 +2060,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
->>>>  	 */
->>>>  	f2fs_wait_on_block_writeback(inode, block_nr);
->>>>  
->>>> -	if (bio_add_page(bio, page, blocksize, 0) < blocksize)
->>>> +	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE)
->>>>  		goto submit_and_realloc;
->>>>  
->>>>  	inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
->>>> @@ -2091,16 +2089,14 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
->>>>  	struct bio *bio = *bio_ret;
->>>>  	unsigned int start_idx = cc->cluster_idx << cc->log_cluster_size;
->>>>  	sector_t last_block_in_file;
->>>> -	const unsigned blkbits = inode->i_blkbits;
->>>> -	const unsigned blocksize = 1 << blkbits;
->>>>  	struct decompress_io_ctx *dic = NULL;
->>>>  	int i;
->>>>  	int ret = 0;
->>>>  
->>>>  	f2fs_bug_on(sbi, f2fs_cluster_is_empty(cc));
->>>>  
->>>> -	last_block_in_file = (f2fs_readpage_limit(inode) +
->>>> -					blocksize - 1) >> blkbits;
->>>> +	last_block_in_file = DIV_ROUND_UP(f2fs_readpage_limit(inode),
->>>> +								PAGE_SIZE);
->>>>  
->>>>  	/* get rid of pages beyond EOF */
->>>>  	for (i = 0; i < cc->cluster_size; i++) {
->>>> @@ -2197,7 +2193,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
->>>>  
->>>>  		f2fs_wait_on_block_writeback(inode, blkaddr);
->>>>  
->>>> -		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
->>>> +		if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE)
->>>>  			goto submit_and_realloc;
->>>>  
->>>>  		inc_page_count(sbi, F2FS_RD_DATA);
->>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>> index c2d38a1c4972..0f8be076620c 100644
->>>> --- a/fs/f2fs/file.c
->>>> +++ b/fs/f2fs/file.c
->>>> @@ -736,16 +736,9 @@ int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock)
->>>>  	 * for compressed file, only support cluster size
->>>>  	 * aligned truncation.
->>>>  	 */
->>>> -	if (f2fs_compressed_file(inode)) {
->>>> -		size_t cluster_shift = PAGE_SHIFT +
->>>> -					F2FS_I(inode)->i_log_cluster_size;
->>>> -		size_t cluster_mask = (1 << cluster_shift) - 1;
->>>> -
->>>> -		free_from = from >> cluster_shift;
->>>> -		if (from & cluster_mask)
->>>> -			free_from++;
->>>> -		free_from <<= cluster_shift;
->>>> -	}
->>>> +	if (f2fs_compressed_file(inode))
->>>> +		free_from = round_up(from,
->>>> +				F2FS_I(inode)->i_cluster_size << PAGE_SHIFT);
->>>>  #endif
->>>>  
->>>>  	err = f2fs_do_truncate_blocks(inode, free_from, lock);
->>>> @@ -3537,7 +3530,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
->>>>  
->>>>  		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
->>>>  		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
->>>> -		count = roundup(count, F2FS_I(inode)->i_cluster_size);
->>>> +		count = round_up(count, F2FS_I(inode)->i_cluster_size);
->>>>  
->>>>  		ret = release_compress_blocks(&dn, count);
->>>>  
->>>> @@ -3689,7 +3682,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
->>>>  
->>>>  		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
->>>>  		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
->>>> -		count = roundup(count, F2FS_I(inode)->i_cluster_size);
->>>> +		count = round_up(count, F2FS_I(inode)->i_cluster_size);
->>>>  
->>>>  		ret = reserve_compress_blocks(&dn, count);
->>>>  
->>>> -- 
->>>> 2.18.0.rc1
->>> .
->>>
-> .
-> 
+> diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
+> index ae0d14c2540a..aa4a70f969ed 100644
+> --- a/tools/testing/selftests/kvm/include/kvm_util.h
+> +++ b/tools/testing/selftests/kvm/include/kvm_util.h
+> @@ -163,6 +163,7 @@ bool vm_is_unrestricted_guest(struct kvm_vm *vm);
+>  unsigned int vm_get_page_size(struct kvm_vm *vm);
+>  unsigned int vm_get_page_shift(struct kvm_vm *vm);
+>  unsigned int vm_get_max_gfn(struct kvm_vm *vm);
+> +unsigned int vm_get_fd(struct kvm_vm *vm);
+>  
+>  struct kvm_userspace_memory_region *
+>  kvm_userspace_memory_region_find(struct kvm_vm *vm, uint64_t start,
+> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+> index a6dd0401eb50..0961986c0d74 100644
+> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
+> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+> @@ -1703,3 +1703,8 @@ unsigned int vm_get_max_gfn(struct kvm_vm *vm)
+>  {
+>  	return vm->max_gfn;
+>  }
+> +
+> +unsigned int vm_get_fd(struct kvm_vm *vm)
+> +{
+> +	return vm->fd;
+> +}
+> -- 
+> 2.17.2
+>
+
+Please use an int instead of 'unsigned int' to match the fd type.
+
+Thanks,
+drew 
+
