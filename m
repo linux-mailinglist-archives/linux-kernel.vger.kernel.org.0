@@ -2,112 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A6C619977B
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E02AC199783
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:33:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730887AbgCaNc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 09:32:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730216AbgCaNc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 09:32:59 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47A652071A;
-        Tue, 31 Mar 2020 13:32:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585661578;
-        bh=xjsNuevst2hdoei+2YBbw5AgZ2uz8egnJHzxF30a8nE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AKHoXwoa7Zff+4XX9H7YktH1P5TqfcvSPOjj3q5b12fvv7S5USQRJJavhLGvPoq1r
-         v2jq3btdOo7/KW9kO57RD6C7jxevyGTT5TsbRizoP7pFIC44Pi0ZZUz11qzo34gefh
-         WUZq/LzvwaNl+ty9qjxc3W99SMtO0ucdw+uQt5KQ=
-Date:   Tue, 31 Mar 2020 22:32:54 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Zong Li <zong.li@sifive.com>
-Cc:     palmer@dabbelt.com, paul.walmsley@sifive.com,
-        aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/9] Support strict kernel memory permissions for
- security
-Message-Id: <20200331223254.919b92750962fefed5a6646f@kernel.org>
-In-Reply-To: <cover.1583772574.git.zong.li@sifive.com>
-References: <cover.1583772574.git.zong.li@sifive.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1730975AbgCaNdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 09:33:55 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:37368 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730845AbgCaNdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 09:33:54 -0400
+Received: from linux.localdomain (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxf9+pRoNeSSIiAA--.19S2;
+        Tue, 31 Mar 2020 21:33:30 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Huacai Chen <chenhc@lemote.com>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>
+Subject: [PATCH v3 0/3] Add basic support for Loongson 7A1000 bridge chip
+Date:   Tue, 31 Mar 2020 21:33:25 +0800
+Message-Id: <1585661608-3356-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf9Dxf9+pRoNeSSIiAA--.19S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCrWfZF1DZryrZrW7Jr47urg_yoW5Ar4kpF
+        W5ua1fGr1DGr1xAas3ur18uF4Fyrn3JrZxWwsrGryUAasIqF1jqr929F15K3W2k3sa9a1U
+        Xry2g3ykK3Z8Ca7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUyG14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+        6r4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxG
+        rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+        vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
+        x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+        xKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x02
+        67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUj6pB7UUUUU==
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zong,
+The Loongson 7A1000 bridge chip has been released for several years
+since the second half of 2017, but it is not supported by the Linux
+mainline kernel while it only works well with the Loongson internal
+kernel version. When I update the latest version of Linux mainline
+kernel on the Loongson 3A3000 CPU and 7A1000 bridge chip system,
+the boot process failed and I feel depressed.
 
-On Tue, 10 Mar 2020 00:55:35 +0800
-Zong Li <zong.li@sifive.com> wrote:
+The 7A1000 bridge chip is used a lot with 3A3000 or 3A4000 CPU in
+the most Loongson desktop and sever products, it is important to
+support Loongson 7A1000 bridge chip by the Linux mainline kernel.
 
-> The main purpose of this patch series is changing the kernel mapping permission
-> , make sure that code is not writeable, data is not executable, and read-only
-> data is neither writable nor executable.
-> 
-> This patch series also supports the relevant implementations such as
-> ARCH_HAS_SET_MEMORY, ARCH_HAS_SET_DIRECT_MAP,
-> ARCH_SUPPORTS_DEBUG_PAGEALLOC and DEBUG_WX.
+This patch series adds the basic support for the Loongson 7A1000
+bridge chip, the patch about vendor ID and SATA has been merged
+into the mainline tree, the next work is to refactor the code about
+the interrupt controller, and then power management and some other
+controller device drivers.
 
-The order of the patches seems a bit strange. Since the first 7 patches
-makes kernel read-only, at that point ftrace is broken and it is fixed
-by the last 2 patches. That is not bisect-friendly. Can you move the
-last 2 patches to the top?
+By the way, if you want the boot process is successful (just for
+test) on the Loongson 3A3000 CPU and 7A1000 bridge chip system,
+you should not only apply these patches, but also need the support
+for SATA and interrupt controller in the v1 patch series.
 
-Thank you,
+This patch series is based on mips-next.
 
-> 
-> Changes in v3:
->  - Fix build error on nommu configuration. We already support nommu on
->    RISC-V, so we should consider nommu case and test not only rv32/64,
->    but also nommu.
-> 
-> Changes in v2:
->  - Use _data to specify the start of data section with write permission.
->  - Change ftrace patch text implementaion.
->  - Separate DEBUG_WX patch to another patchset.
-> 
-> Zong Li (9):
->   riscv: add ARCH_HAS_SET_MEMORY support
->   riscv: add ARCH_HAS_SET_DIRECT_MAP support
->   riscv: add ARCH_SUPPORTS_DEBUG_PAGEALLOC support
->   riscv: move exception table immediately after RO_DATA
->   riscv: add alignment for text, rodata and data sections
->   riscv: add STRICT_KERNEL_RWX support
->   riscv: add macro to get instruction length
->   riscv: introduce interfaces to patch kernel code
->   riscv: patch code by fixmap mapping
-> 
->  arch/riscv/Kconfig                  |   6 +
->  arch/riscv/include/asm/bug.h        |   8 ++
->  arch/riscv/include/asm/fixmap.h     |   2 +
->  arch/riscv/include/asm/patch.h      |  12 ++
->  arch/riscv/include/asm/set_memory.h |  48 +++++++
->  arch/riscv/kernel/Makefile          |   4 +-
->  arch/riscv/kernel/ftrace.c          |  13 +-
->  arch/riscv/kernel/patch.c           | 120 ++++++++++++++++++
->  arch/riscv/kernel/traps.c           |   3 +-
->  arch/riscv/kernel/vmlinux.lds.S     |  11 +-
->  arch/riscv/mm/Makefile              |   2 +-
->  arch/riscv/mm/init.c                |  44 +++++++
->  arch/riscv/mm/pageattr.c            | 187 ++++++++++++++++++++++++++++
->  13 files changed, 445 insertions(+), 15 deletions(-)
->  create mode 100644 arch/riscv/include/asm/patch.h
->  create mode 100644 arch/riscv/include/asm/set_memory.h
->  create mode 100644 arch/riscv/kernel/patch.c
->  create mode 100644 arch/riscv/mm/pageattr.c
-> 
-> -- 
-> 2.25.1
-> 
+If you have any questions and suggestions, please let me know.
 
+Thanks,
+
+Tiezhu Yang
+
+v2:
+  - The split patch series about Loongson vendor ID and SATA controller
+    has been merged into the linux-block.git by Jens Axboe [1].
+
+  - Think about using hierarchy IRQ domain in the patch of interrupt
+    controller, and this maybe depend on the patch series by Jiaxun
+    ("Modernize Loongson64 Machine"), so the patch about interrupt is
+    not included in this v2 patch series.
+
+v3:
+  - The split patch series about Loongson vendor ID and SATA controller
+    has been merged into the mainline tree [2]
+
+  - Modify the macro definition and add comment to make it easy to read
+
+  - Move ls7a1000_pci_class_quirk() to fixup-loongson3.c
+
+  - Use PCI_VENDOR_ID_LOONGSON in pci_ids.h instead of 0x0014
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-next&id=9acb9fe18d86
+    https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-next&id=e49bd683e00b
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9acb9fe18d86
+    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e49bd683e00b
+
+Tiezhu Yang (3):
+  MIPS: Loongson: Get host bridge information
+  MIPS: Loongson: Add DMA support for 7A1000
+  MIPS: Loongson: Add PCI support for 7A1000
+
+ arch/mips/include/asm/mach-loongson64/boot_param.h | 20 +++++++
+ arch/mips/loongson64/dma.c                         |  9 ++--
+ arch/mips/loongson64/env.c                         | 22 ++++++++
+ arch/mips/loongson64/init.c                        | 17 ++++++
+ arch/mips/pci/fixup-loongson3.c                    | 12 +++++
+ arch/mips/pci/ops-loongson3.c                      | 63 ++++++++++++++++++++--
+ 6 files changed, 136 insertions(+), 7 deletions(-)
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.1.0
+
