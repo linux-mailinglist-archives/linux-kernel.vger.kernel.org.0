@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C382199406
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 12:52:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E623D1993DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 12:50:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730691AbgCaKv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 06:51:58 -0400
-Received: from esa4.mentor.iphmx.com ([68.232.137.252]:43515 "EHLO
-        esa4.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730680AbgCaKvz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 06:51:55 -0400
-IronPort-SDR: IVrQqMxgAJxe+ql3bkIGDk9i8Y+GDbV0IwlSkZdE1QXL3PXPoZeQvS/8ysbsLvQFzJCYeohf5G
- xg00ILEYfHIPBnLm4ZQClAgBOtET3xwcHsA3HbxTIKbPY2Mp4LB7KBbyc/1JnbRjGeAxIw/hfa
- DwHPb/MUfgl1nSWUA5hnTOZPVzFtPNX2CivoKEShBIwV/JMMqcL15u0Gzyd+Sd3uUuTY9gWqbe
- x8e4NyATAq3rc8vELgSvM/PnB5kh8IvUlOf/ps/5ZaWcm3AhiLSdXo0b0fcNZhqqLbG+Ye8FSB
- uW8=
+        id S1730426AbgCaKuU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 06:50:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:60412 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730334AbgCaKuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 06:50:19 -0400
+IronPort-SDR: 6N3+p9g2GPFr213W6+QPQ5anU4prJIU0Es2HR/K4WwlVsvUrCImzRblTdC2JP/7XbtoVCncdHM
+ COCIpurndnFQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 03:50:19 -0700
+IronPort-SDR: 7ZdsGnayby9LSlUmAMcalf9gYIQYKT0i8scMQNoonNhigi0Ho0g3Qr69ndtFg+P5kFKWpyB7st
+ J43LhNPNzCBQ==
 X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
-   d="scan'208";a="47330751"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa4.mentor.iphmx.com with ESMTP; 31 Mar 2020 02:51:54 -0800
-IronPort-SDR: HPy7A/TyhWuIr46ikYVEOAU53I7xr0OgvRWGnmkxz5M7gYRzTkPDAqM6YcTMS7Ljebqq3ACl5w
- DG1TnZ4TUzoNJJ5LdbFdLadU8jLnGFZuh09Z0mKynb/e4Tf2sZ6hgeSB96So7jH+KlF84tbZrP
- E6OqUYW+vDyi1C0qGgKfYlYeyo+ZtsWR90o91ur3KAUM8/18TJm5C8G+wj6xnOlQDfcL3iE+32
- ut+6rBpjBp5Y/HA3hU13N8C+TEmnk6pn+gtE0zZ7af+H9fOA2OKY+zJFPeAint2K9vEM9tLlXo
- Dxg=
-From:   Jiada Wang <jiada_wang@mentor.com>
-To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>,
-        <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
-        <bsz@semihalf.com>
-CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <erosca@de.adit-jv.com>, <Andrew_Gabbasov@mentor.com>,
-        <jiada_wang@mentor.com>
-Subject: [PATCH v10 15/55] Input: atmel_mxt_ts - report failures in suspend/resume
-Date:   Tue, 31 Mar 2020 03:50:11 -0700
-Message-ID: <20200331105051.58896-16-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200331105051.58896-1-jiada_wang@mentor.com>
-References: <20200331105051.58896-1-jiada_wang@mentor.com>
+   d="scan'208";a="422252454"
+Received: from unknown (HELO localhost) ([10.249.38.166])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 03:50:15 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     peter@bikeshed.quignogs.org.uk, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 0/1] Compactly make code examples into literal blocks
+In-Reply-To: <20200327165022.GP22483@bombadil.infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200326192947.GM22483@bombadil.infradead.org> <20200326195156.11858-1-peter@bikeshed.quignogs.org.uk> <87imiqghop.fsf@intel.com> <20200327104126.667b5d5b@lwn.net> <20200327165022.GP22483@bombadil.infradead.org>
+Date:   Tue, 31 Mar 2020 13:50:11 +0300
+Message-ID: <87zhbwg5ng.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,136 +42,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Dyer <nick.dyer@itdev.co.uk>
+On Fri, 27 Mar 2020, Matthew Wilcox <willy@infradead.org> wrote:
+> On Fri, Mar 27, 2020 at 10:41:26AM -0600, Jonathan Corbet wrote:
+>> On Fri, 27 Mar 2020 13:28:54 +0200
+>> Jani Nikula <jani.nikula@linux.intel.com> wrote:
+>> 
+>> > IMHO the real problem is kernel-doc doing too much preprocessing on the
+>> > input, preventing us from doing what would be the sensible thing in
+>> > rst. The more we try to fix the problem by adding more kernel-doc
+>> > processing, the further we dig ourselves into this hole.
+>> > 
+>> > If kernel-doc didn't have its own notion of section headers, such as
+>> > "example:", we wouldn't have this problem to begin with. We could just
+>> > use the usual rst construct; "example::" followed by an indented block.
+>> > 
+>> > I'm not going to stand in the way of the patch, but I'm telling you,
+>> > this is going to get harder, not easier, on this path.
+>> 
+>> I agree with you in principle.  The problem, of course, is that this is a
+>> legacy gift from before the RST days and it will be hard to change.
+>> 
+>> A quick grep shows that the pattern:
+>> 
+>> 	* Example:
+>> 
+>> appears nearly 100 times in current kernels.  It is not inconceivable to
+>> make a push to get rid of all of those, turning them into ordinary RST
+>> syntax - especially since not all of those are actually kerneldoc
+>> comments.
+>> 
+>> The same quick grep says that "returns?:" appears about 10,000 times.
+>> *That* will be painful to change, and I can only imagine that some
+>> resistance would have to be overcome at some point.
+>> 
+>> So what do folks think we should do? :)
+>
+> Let me just check I understand Jani's proposal here.  You want to change
+>
+> * Return: Number of pages, or negative errno on failure
+>
+> to
+>
+> * Return
+> * ~~~~~~
+> * Number of pages, or negative errno on failure
+>
+> If so, I oppose such an increase in verbosity and I think most others
+> would too.  If not, please let me know what you're actually proposing ;-)
 
-This patch reports failures in suspend/resume
+Due to historical reasons, I think kernel-doc must handle a handful of
+special cases, as a preprocessor converting old conventions to rst. The
+title line, parameters, returns, and some in-line markup for &struct,
+etc.
 
-Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
-(cherry picked from ndyer/linux/for-upstream commit 93a57575403d)
-[gdavis: Resolve forward port conflicts due to applying upstream
-	 commit 96a938aa214e ("Input: atmel_mxt_ts - remove platform
-	 data support").]
-Signed-off-by: George G. Davis <george_davis@mentor.com>
-[jiada: Fix compilation warning
-	Add commit description]
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
----
- drivers/input/touchscreen/atmel_mxt_ts.c | 51 ++++++++++++++++++------
- 1 file changed, 39 insertions(+), 12 deletions(-)
+I'm not proposing changing "return:", because it's too widespread.
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index ef8baf64659e..f8783e37436f 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -3425,10 +3425,12 @@ static void mxt_reset_slots(struct mxt_data *data)
- 	mxt_input_sync(data);
- }
- 
--static void mxt_start(struct mxt_data *data)
-+static int mxt_start(struct mxt_data *data)
- {
-+	int ret = 0;
-+
- 	if (!data->suspended || data->in_bootloader)
--		return;
-+		return 0;
- 
- 	switch (data->suspend_mode) {
- 	case MXT_SUSPEND_T9_CTRL:
-@@ -3453,28 +3455,42 @@ static void mxt_start(struct mxt_data *data)
- 		 */
- 		mxt_process_messages_until_invalid(data);
- 
--		mxt_set_t7_power_cfg(data, MXT_POWER_CFG_RUN);
-+		ret = mxt_set_t7_power_cfg(data, MXT_POWER_CFG_RUN);
-+		if (ret)
-+			return ret;
- 
- 		/* Recalibrate since chip has been in deep sleep */
--		mxt_t6_command(data, MXT_COMMAND_CALIBRATE, 1, false);
-+		ret = mxt_t6_command(data, MXT_COMMAND_CALIBRATE, 1, false);
-+		if (ret)
-+			return ret;
-+
-+		ret = mxt_acquire_irq(data);
-+		if (ret)
-+			return ret;
- 
--		mxt_acquire_irq(data);
- 		break;
- 	}
- 
- 	data->suspended = false;
-+
-+	return 0;
- }
- 
--static void mxt_stop(struct mxt_data *data)
-+static int mxt_stop(struct mxt_data *data)
- {
-+	int ret;
-+
- 	if (data->suspended || data->in_bootloader)
--		return;
-+		return 0;
- 
- 	switch (data->suspend_mode) {
- 	case MXT_SUSPEND_T9_CTRL:
- 		/* Touch disable */
--		mxt_write_object(data,
-+		ret = mxt_write_object(data,
- 				MXT_TOUCH_MULTI_T9, MXT_T9_CTRL, 0);
-+		if (ret)
-+			return ret;
-+
- 		break;
- 
- 	case MXT_SUSPEND_REGULATOR:
-@@ -3487,29 +3503,40 @@ static void mxt_stop(struct mxt_data *data)
- 	default:
- 		disable_irq(data->irq);
- 
--		mxt_set_t7_power_cfg(data, MXT_POWER_CFG_DEEPSLEEP);
-+		ret = mxt_set_t7_power_cfg(data, MXT_POWER_CFG_DEEPSLEEP);
-+		if (ret)
-+			return ret;
- 
- 		mxt_reset_slots(data);
- 		break;
- 	}
- 
- 	data->suspended = true;
-+	return 0;
- }
- 
- static int mxt_input_open(struct input_dev *dev)
- {
- 	struct mxt_data *data = input_get_drvdata(dev);
-+	int ret;
- 
--	mxt_start(data);
-+	ret = mxt_start(data);
- 
--	return 0;
-+	if (ret)
-+		dev_err(&data->client->dev, "%s failed rc=%d\n", __func__, ret);
-+
-+	return ret;
- }
- 
- static void mxt_input_close(struct input_dev *dev)
- {
- 	struct mxt_data *data = input_get_drvdata(dev);
-+	int ret;
- 
--	mxt_stop(data);
-+	ret = mxt_stop(data);
-+
-+	if (ret)
-+		dev_err(&data->client->dev, "%s failed rc=%d\n", __func__, ret);
- }
- 
- static int mxt_parse_device_properties(struct mxt_data *data)
+I *am* questioning everything else that necessitates adding *more*
+special casing to handle things that would be easy to do in rst. I think
+we should be moving in the other direction, fixing things by removing
+special casing where we can. Case in point, "example:" as a section.
+
+Why should we be adding different ways of doing things in the
+documentation comments and the documentation files? Not having to do
+that was one of the original goals. Unify stuff to one markup. Make
+kernel-doc comments in source an extension to the documents under
+Documentation/.
+
+BR,
+Jani.
+
+
 -- 
-2.17.1
-
+Jani Nikula, Intel Open Source Graphics Center
