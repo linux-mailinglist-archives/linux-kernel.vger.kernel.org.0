@@ -2,124 +2,283 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29A2E199EA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 21:07:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E145C199EAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 21:08:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbgCaTHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 15:07:25 -0400
-Received: from mail-eopbgr1400132.outbound.protection.outlook.com ([40.107.140.132]:29728
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726315AbgCaTHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 15:07:25 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BtulbrudrUi3EZxWeMcJLKH0bMACuM3j52T52G2UHBXSE+2+/aXZpv8CRgjeLMo6C+hbben7T57FQxhp18rQnepfwZYECKCSeFVFi/1L2rOxVT4K+0vYCoQ5BeXOqnvnCRlfOAizu93kIeDnEwP/CHhu+/y7qGl8YrQtVrf68Z6p2UQtBLu8n4zqD+AtxW4go3s8xCbmB1ObiANok55dRPmbxIVKxNOh42veBhPVxct9dG1uH7g5KyEZRtzONjmzRfclyEA6muzSVwKCWg4ZcnzohLxXMab2S7y1qlJxlv3s+Bf4PeMMQt9mwrrWFKnhJQGU8xceRi7FIm5LzJOkvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0kEbQqCt4aTiNCEMnkH910syExpNJ1sXT584F6+R858=;
- b=J7qiKS0xiDj6wctN6mRvMss9CmNbEMVDMlZBcO3REma82blkyI9/LV+AxAcCnC6OMafpQEGZMx1ENwXSGmD+9eHJrxpt92iAbBDuH9GC9ej45qgr4p0/ZcxYHeZZ2z9vOKlkJo6iE+9hAqBP1NO8bK/LyGZE5q9zmrZRolP/YUlcQ1CoVyo/VrSksoHa5m3klG0f96MOZqDCtdSVXSc770GehQ+0sZ4vU6h1YcCHNAzr+dUiKQ2uwmZySBiOvOgZGcdCBTBNX50dPyj95iWGdPOMIkzHniUudrpCTe8ExEOx9vaJQAqjnzFtDx1Qct5svInNq5SUUrtSuhWIsDBcFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
+        id S1728462AbgCaTIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 15:08:12 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41900 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726548AbgCaTIM (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 15:08:12 -0400
+Received: by mail-qk1-f195.google.com with SMTP id q188so24277266qke.8
+        for <Linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 12:08:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0kEbQqCt4aTiNCEMnkH910syExpNJ1sXT584F6+R858=;
- b=TZZ9tlKuw65FNtAhs1lyNr4SncqnkbjJvr4puApiZ9nNG2nqgOirYm6mbTor7vcHjV0iNztRUrpBwNF+1rhu3ZPHy/4oTbT9ZgkIcJ8shU2nXgbibpy0S82ADzLUAzGmDIOJB/pqK5waEMXDNa9e1Wh/as3yPv6tQhYvQD55WIY=
-Received: from TYXPR01MB1568.jpnprd01.prod.outlook.com (52.133.166.145) by
- TYXPR01MB1613.jpnprd01.prod.outlook.com (52.133.166.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2878.15; Tue, 31 Mar 2020 19:07:18 +0000
-Received: from TYXPR01MB1568.jpnprd01.prod.outlook.com
- ([fe80::e9ac:8933:9767:9c69]) by TYXPR01MB1568.jpnprd01.prod.outlook.com
- ([fe80::e9ac:8933:9767:9c69%2]) with mapi id 15.20.2856.019; Tue, 31 Mar 2020
- 19:07:18 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kazuhiro Fujita <kazuhiro.fujita.jg@renesas.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hao Bui <hao.bui.yg@renesas.com>,
-        KAZUMI HARADA <kazumi.harada.rh@renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: RE: [PATCH] serial: sh-sci: Make sure status register SCxSR is read
- in correct sequence
-Thread-Topic: [PATCH] serial: sh-sci: Make sure status register SCxSR is read
- in correct sequence
-Thread-Index: AQHWBGQGJbDUemPUNEWeRBL+Vpn8T6hi1j+AgAA+RsA=
-Date:   Tue, 31 Mar 2020 19:07:18 +0000
-Message-ID: <TYXPR01MB15688F7D17F54C908C562AE38AC80@TYXPR01MB1568.jpnprd01.prod.outlook.com>
-References: <1585333048-31828-1-git-send-email-kazuhiro.fujita.jg@renesas.com>
- <CAMuHMdW+u5r6zyxFJsVzj21BYDrKCr=Q6Ojk5VeN+mkhvXX9Jw@mail.gmail.com>
-In-Reply-To: <CAMuHMdW+u5r6zyxFJsVzj21BYDrKCr=Q6Ojk5VeN+mkhvXX9Jw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctZDU1MGM4MjEtNzM4Mi0xMWVhLWFhNjAtOTRlNmY3Njc5M2FlXGFtZS10ZXN0XGQ1NTBjODIzLTczODItMTFlYS1hYTYwLTk0ZTZmNzY3OTNhZWJvZHkudHh0IiBzej0iMTQzOSIgdD0iMTMyMzAxNTUyMzYwNDk4NjQwIiBoPSJrVmVmZkVBSEdMOHI3MllIVXdGT01sUDRDbXc9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 1e05e618-7049-4b1c-e836-08d7d5a6bbcf
-x-ms-traffictypediagnostic: TYXPR01MB1613:|TYXPR01MB1613:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <TYXPR01MB16133D716B16EA07257FD4278AC80@TYXPR01MB1613.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0359162B6D
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYXPR01MB1568.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(396003)(39860400002)(346002)(136003)(376002)(366004)(110136005)(54906003)(76116006)(8676002)(4326008)(66556008)(64756008)(66446008)(478600001)(7696005)(86362001)(9686003)(2906002)(55016002)(33656002)(81156014)(81166006)(8936002)(6506007)(26005)(316002)(186003)(66946007)(6636002)(52536014)(71200400001)(66476007)(5660300002);DIR:OUT;SFP:1102;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: rqKvvyHwMgiti5deadlVXGpOvoB3fGfWuwENQ8Vr0RHYOI4J/vy34/SBEGFb4BCv7e89iA3B7YHDTdpAXbLw2YnTwouXu2qcN3CPXx5Pi9TdO3r120zimBUAKr0LtsuKG4H3pi41PdW4GgcCQN9ToPujp6hB/KJM6c8VkoJtIvmMrvTK9xuvQLJp6rnM05xIzcLz9z1v8VtVekI32S/BYH4l0Cr1ghar2VIT8dHQpZNjhxnR9YN6HVu9MSfgNH4erS6d8cISPwABAvb0J022RUeRNw8kl2boe42ytnTgXJepMXbLzKi+Flaxc+bYqSwDaKGw5PG5BV57oOkhYUzmEYpvL11GMLjX4ofCnpMWa1YykARIDWrz7u26dyrptYgK0zMiftimwqSBEISdtHAr0mNvKkYVxsuZGav2Mn8fz4Eyy2NsOUlX4kVWYdVljjuL
-x-ms-exchange-antispam-messagedata: Tp2mdY5wSFZkpPxqHdbLI7SnbT8mxZL5gqVDDQIIWryuwBQXKYaEEowC81r+a4qoj5tDHCa1yYAEEX5LMbT2LwTMn3OWVbM/U+A/Wh86H/rWdISTj72tgNZtitufhaYKxzzjSuWHDHJbjWRO3X4+Rg==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=kfxuOLi573qLCPHoRYNlv++6004OLZ/KMbmyRo3d8Kk=;
+        b=pGcQY9OVjnVnV1sFaFvIFquoRLmJQInWwu1QcoFwYJEiSXSyXs/asKSi5lqgvPUoUv
+         DhVtm9IljhhHf3poZrN+MmAMzrtVwoaKGnJlX+cG+nqyvcyfWcLsP+gJb8hIQvtFYzLv
+         X9yCeIS2n3LBVJ7Kl5C3KbNKKLEwW7N/Kwy17+hZNjVBasuCWTEMS33tFLBHtukubzSl
+         WtbixzGb/K1haxrznQHUOFnKEzxNG1A6Qv41qg+QRJv5ns+YETne2aKpczDvOPXToarK
+         Np8l2dno6zItLToHba82kaJ0a3nWEJruvtIkJDO+gWgnvry4asfsFITcc0b82+DfXQGa
+         3+CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kfxuOLi573qLCPHoRYNlv++6004OLZ/KMbmyRo3d8Kk=;
+        b=BCV7FaW+QWU1gfanyo+QOBJ9fQmIq9M9YWddhxNGh34ioIevlMNXK8mhbe20N7pEb7
+         Kx4rFhaYOkl1QqKjW6tk8eYo6o/ohhYRKohV2uuR+c+kMY/ENwLNXcqdPTt3QIDcsQ6e
+         1ah8XL/FKJg1/74G1i4tP8lzdVjPQWZi40XvFkBaDNqNQfzNW70Bs6lOhDLOiKdNmbxq
+         k3+xcPy5qvUArNb2I6P0hs+Ozdj4A02/3+N9PMxVEZUIKxRn2beHkmvJgtn4S5AGZQTC
+         6nQ3wKRZtYl87rAx22CJnuUso0FP+zv32/LsxGokhnotmGDDR8LuRbarFpVQfC0MD424
+         S70Q==
+X-Gm-Message-State: ANhLgQ3OhBJ9GjekdirKiOukWGWL4cDD4mfn89T4dwfGTyI2HVfRFAKb
+        8kd/LF6vcVhhvWio48+WdeI=
+X-Google-Smtp-Source: ADFU+vtDC6zJQQibMsUvQOk/Xdt0K84ub3VjkyznxuSBOJSmmy/tagny/QMyWx8ERGy+9af7HnnIdA==
+X-Received: by 2002:a37:514:: with SMTP id 20mr6212267qkf.420.1585681688621;
+        Tue, 31 Mar 2020 12:08:08 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.37.151])
+        by smtp.gmail.com with ESMTPSA id a200sm13387691qkc.13.2020.03.31.12.08.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 12:08:07 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 54BF3409A3; Tue, 31 Mar 2020 16:08:04 -0300 (-03)
+Date:   Tue, 31 Mar 2020 16:08:04 -0300
+To:     "Jin, Yao" <yao.jin@linux.intel.com>
+Cc:     jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf/x86/pmu-events: Use CPU_CLK_UNHALTED.THREAD in
+ Kernel_Utilization metric
+Message-ID: <20200331190804.GK9917@kernel.org>
+References: <20200309013125.7559-1-yao.jin@linux.intel.com>
+ <f335f8ec-f92e-787e-0594-00cec2e06036@linux.intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e05e618-7049-4b1c-e836-08d7d5a6bbcf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Mar 2020 19:07:18.6397
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZGBgoSMXeqqx8HxqSt1ZCcedyu3Ip5fkXgU5+Lo/qF8FqOXHbP9LqxzwKhh+OAkxFpOIdB8NpWYs6ZaJZCQsFUMwT1hVSQBVLjSTcSETKrM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYXPR01MB1613
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f335f8ec-f92e-787e-0594-00cec2e06036@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIFR1ZSwgTWFyIDMxLCAyMDIwIDEsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3
-cm90ZToNCj4gSG93ZXZlciwgdGhlIGRvY3VtZW50YXRpb24gZm9yICJTQ0lGQSIgb24gUlovQTIg
-KGZvciB3aGljaCB3ZSB1c2UNCj4gUE9SVF9TQ0lGLCBub3QgUE9SVF9TQ0lGQSwgaW4gdGhlIGRy
-aXZlcikgaGFzIGNvbmZsaWN0aW5nIGluZm9ybWF0aW9uOg0KPiAgIDEuIFNlY3Rpb24gMTcuMi43
-ICJTZXJpYWwgU3RhdHVzIFJlZ2lzdGVyIChGU1IpIiBzYXlzOg0KPiAgICAgICAgLSBBIHJlY2Vp
-dmUgZnJhbWluZy9wYXJpdHkgZXJyb3Igb2NjdXJyZWQgaW4gdGhlICJuZXh0IHJlY2VpdmUNCj4g
-ICAgICAgICAgZGF0YSByZWFkIiBmcm9tIHRoZSBGSUZPLA0KPiAgICAgICAgLSBJbmRpY2F0ZXMg
-d2hldGhlciB0aGVyZSBpcyBhIGZyYW1pbmcvcGFyaXR5IGVycm9yIGluIHRoZSBkYXRhDQo+ICAg
-ICAgICAgICJyZWFkIiBmcm9tIHRoZSBGSUZPLg0KPiAgIDIuIEZpZ3VyZSAxNy44ICJTYW1wbGUg
-Rmxvd2NoYXJ0IGZvciBSZWNlaXZpbmcgU2VyaWFsIERhdGEgaW4NCj4gICAgICBBc3luY2hyb25v
-dXMgTW9kZSAoMikiLg0KPiAgICAgICAgLSBXaGV0aGVyIGEgZnJhbWluZyBlcnJvciBvciBwYXJp
-dHkgZXJyb3IgaGFzIG9jY3VycmVkIGluIHRoZQ0KPiAgICAgICAgICByZWNlaXZlZCBkYXRhIHRo
-YXQgaXMgInJlYWQiIGZyb20gdGhlIEZJRk8uDQo+IA0KPiBTbyB3aGlsZSB0aGUgY2hhbmdlIGxv
-b2tzIE9LIGZvciBtb3N0IFJlbmVzYXMgQVJNIFNvQ3MsIHRoZSBzaXR1YXRpb24NCj4gZm9yIFJa
-L0EyIGlzIHVuY2xlYXIuDQo+IE5vdGUgdGhhdCB0aGUgYWJvdmUgZG9lcyBub3QgdGFrZSBpbnRv
-IGFjY291bnQgdmFyaWFudHMgdXNlZCBvbiBTdXBlckgNCj4gU29Dcy4NCg0KRm9yIHRoZSBSWi9B
-Mk0sIGl0IGlzIE5PVCBhICJTQ0lGQSIuLi5ldmVuIHRob3VnaCBpdCBzYXlzIHRoYXQgaW4gdGhl
-IA0KaGFyZHdhcmUgbWFudWFsLg0KDQpBbmQgaG9uZXN0bHksIEkgY291bGQgbm90IHRyYWNlIGJh
-Y2sgd2hlcmUgdGhhdCBJUCBjYW1lIGZyb20uIEl0IHdhcyANCmZyb20gc29tZXdoZXJlIGluIHRo
-ZSBNQ1UgZGVzaWduIHNlY3Rpb24gKG5vdCB0aGUgU29DIGRlc2lnbiBzZWN0aW9uKS4gDQpTb21l
-b25lIG1vZGlmaWVkIHRoZSBJUCBzbyB0aGV5IHB1dCBhbiAiQSIgYXQgdGhlIGVuZCB0byBzaG93
-IGl0IHdhcyANCmRpZmZlcmVudC4gUmVnYXJkbGVzcywgaXQgaGFzIGEgZGlmZmVyZW50IGhpc3Rv
-cnkgdGhhbiBhbGwgdGhlIG90aGVyIElQIA0Kc3VwcG9ydGVkIGJ5IHRoZSBTQ0kgZHJpdmVyLg0K
-DQpDaHJpcw0KDQo=
+Em Mon, Mar 30, 2020 at 08:38:29AM +0800, Jin, Yao escreveu:
+> Hi,
+> 
+> Any comments for this patch?
+
+Can someone help Jin reviewing this x86 specific metric?
+
+- Arnaldo
+ 
+> Thanks
+> Jin Yao
+> 
+> On 3/9/2020 9:31 AM, Jin Yao wrote:
+> > The kernel utilization metric does multiplexing currently and is somewhat
+> > unreliable. The problem is that it uses two instances of the fixed counter,
+> > and the kernel has to multipleplex which causes errors. So should use
+> > CPU_CLK_UNHALTED.THREAD instead.
+> > 
+> > Before:
+> > 
+> >    # perf stat -M Kernel_Utilization -- sleep 1
+> > 
+> >    Performance counter stats for 'sleep 1':
+> > 
+> >            1,419,425      cpu_clk_unhalted.ref_tsc:k
+> >        <not counted>      cpu_clk_unhalted.ref_tsc	(0.00%)
+> > 
+> > After:
+> > 
+> >    # perf stat -M Kernel_Utilization -- sleep 1
+> > 
+> >    Performance counter stats for 'sleep 1':
+> > 
+> >              746,688      cpu_clk_unhalted.thread:k #      0.7 Kernel_Utilization
+> >            1,088,348      cpu_clk_unhalted.thread
+> > 
+> > Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> > ---
+> >   tools/perf/pmu-events/arch/x86/broadwell/bdw-metrics.json     | 2 +-
+> >   tools/perf/pmu-events/arch/x86/broadwellde/bdwde-metrics.json | 2 +-
+> >   tools/perf/pmu-events/arch/x86/broadwellx/bdx-metrics.json    | 2 +-
+> >   tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json  | 2 +-
+> >   tools/perf/pmu-events/arch/x86/haswell/hsw-metrics.json       | 2 +-
+> >   tools/perf/pmu-events/arch/x86/haswellx/hsx-metrics.json      | 2 +-
+> >   tools/perf/pmu-events/arch/x86/ivybridge/ivb-metrics.json     | 2 +-
+> >   tools/perf/pmu-events/arch/x86/ivytown/ivt-metrics.json       | 2 +-
+> >   tools/perf/pmu-events/arch/x86/jaketown/jkt-metrics.json      | 2 +-
+> >   tools/perf/pmu-events/arch/x86/sandybridge/snb-metrics.json   | 2 +-
+> >   tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json       | 2 +-
+> >   tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json      | 2 +-
+> >   12 files changed, 12 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/tools/perf/pmu-events/arch/x86/broadwell/bdw-metrics.json b/tools/perf/pmu-events/arch/x86/broadwell/bdw-metrics.json
+> > index 45a34ce4fe89..8cdc7c13dc2a 100644
+> > --- a/tools/perf/pmu-events/arch/x86/broadwell/bdw-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/broadwell/bdw-metrics.json
+> > @@ -297,7 +297,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/bdwde-metrics.json b/tools/perf/pmu-events/arch/x86/broadwellde/bdwde-metrics.json
+> > index 961fe4395758..16fd8a7490fc 100644
+> > --- a/tools/perf/pmu-events/arch/x86/broadwellde/bdwde-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/broadwellde/bdwde-metrics.json
+> > @@ -115,7 +115,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > diff --git a/tools/perf/pmu-events/arch/x86/broadwellx/bdx-metrics.json b/tools/perf/pmu-events/arch/x86/broadwellx/bdx-metrics.json
+> > index 746734ce09be..1eb0415fa11a 100644
+> > --- a/tools/perf/pmu-events/arch/x86/broadwellx/bdx-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/broadwellx/bdx-metrics.json
+> > @@ -297,7 +297,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > diff --git a/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json b/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json
+> > index f94653229dd4..a2c32db8f14e 100644
+> > --- a/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json
+> > @@ -315,7 +315,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > diff --git a/tools/perf/pmu-events/arch/x86/haswell/hsw-metrics.json b/tools/perf/pmu-events/arch/x86/haswell/hsw-metrics.json
+> > index 5402cd3120f9..f57c5f3506c2 100644
+> > --- a/tools/perf/pmu-events/arch/x86/haswell/hsw-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/haswell/hsw-metrics.json
+> > @@ -267,7 +267,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > diff --git a/tools/perf/pmu-events/arch/x86/haswellx/hsx-metrics.json b/tools/perf/pmu-events/arch/x86/haswellx/hsx-metrics.json
+> > index 832f3cb40b34..311a005dc35b 100644
+> > --- a/tools/perf/pmu-events/arch/x86/haswellx/hsx-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/haswellx/hsx-metrics.json
+> > @@ -267,7 +267,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > diff --git a/tools/perf/pmu-events/arch/x86/ivybridge/ivb-metrics.json b/tools/perf/pmu-events/arch/x86/ivybridge/ivb-metrics.json
+> > index d69b2a8fc0bc..28e25447d3ef 100644
+> > --- a/tools/perf/pmu-events/arch/x86/ivybridge/ivb-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/ivybridge/ivb-metrics.json
+> > @@ -285,7 +285,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > diff --git a/tools/perf/pmu-events/arch/x86/ivytown/ivt-metrics.json b/tools/perf/pmu-events/arch/x86/ivytown/ivt-metrics.json
+> > index 5f465fd81315..db23db2e98be 100644
+> > --- a/tools/perf/pmu-events/arch/x86/ivytown/ivt-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/ivytown/ivt-metrics.json
+> > @@ -285,7 +285,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > diff --git a/tools/perf/pmu-events/arch/x86/jaketown/jkt-metrics.json b/tools/perf/pmu-events/arch/x86/jaketown/jkt-metrics.json
+> > index 3e909b306003..dbb33e00b72a 100644
+> > --- a/tools/perf/pmu-events/arch/x86/jaketown/jkt-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/jaketown/jkt-metrics.json
+> > @@ -171,7 +171,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > diff --git a/tools/perf/pmu-events/arch/x86/sandybridge/snb-metrics.json b/tools/perf/pmu-events/arch/x86/sandybridge/snb-metrics.json
+> > index 50c053235752..fb2d7b8875f8 100644
+> > --- a/tools/perf/pmu-events/arch/x86/sandybridge/snb-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/sandybridge/snb-metrics.json
+> > @@ -171,7 +171,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > diff --git a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
+> > index e7feb60f9fa9..e3afc3178958 100644
+> > --- a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
+> > @@ -303,7 +303,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > diff --git a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
+> > index 21d7a0c2c2e8..12d1efba79bb 100644
+> > --- a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
+> > @@ -315,7 +315,7 @@
+> >       },
+> >       {
+> >           "BriefDescription": "Fraction of cycles spent in Kernel mode",
+> > -        "MetricExpr": "CPU_CLK_UNHALTED.REF_TSC:k / CPU_CLK_UNHALTED.REF_TSC",
+> > +        "MetricExpr": "CPU_CLK_UNHALTED.THREAD:k / CPU_CLK_UNHALTED.THREAD",
+> >           "MetricGroup": "Summary",
+> >           "MetricName": "Kernel_Utilization"
+> >       },
+> > 
+
+-- 
+
+- Arnaldo
