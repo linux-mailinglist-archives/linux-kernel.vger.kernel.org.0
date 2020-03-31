@@ -2,74 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DA2D1994AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 804EE19949D
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 13:02:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730480AbgCaLEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 07:04:43 -0400
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:34203 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730377AbgCaLEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 07:04:42 -0400
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id 02VB1a4e024578;
-        Tue, 31 Mar 2020 13:01:36 +0200
-Date:   Tue, 31 Mar 2020 13:01:36 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Denis Efremov <efremov@linux.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Helge Deller <deller@gmx.de>, Ian Molton <spyro@f2s.com>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>, x86@kernel.org
-Subject: Re: [PATCH 00/23] Floppy driver cleanups
-Message-ID: <20200331110136.GB24562@1wt.eu>
-References: <20200331094054.24441-1-w@1wt.eu>
- <20200331101019.GA6299@infradead.org>
+        id S1730519AbgCaLCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 07:02:10 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:55724 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730380AbgCaLCK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 07:02:10 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02VAtkeg104245;
+        Tue, 31 Mar 2020 11:02:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=8UJKYPmVqO3q927NHBR2tIQ/sC9DY5OTafLbmNr3u9s=;
+ b=nPw94g7GH/VFVIsdAMlMKKfP/GFM6I67moeRxg+yL2bYzt1lWkYEp6aXyTP/rfz+0bfW
+ Q2utHuntLreyD5MvgIsjJYdNHXWYZOmboBekqjBAFy3YxmXsn3Z8+xHVQkrTr2SRRdsu
+ VLqxB064Fl+ZwZikV0sO4AhtyP7mwBhcporZhAPVm8wojmmtP4PeaaRegE868NTj/vSu
+ HUl11Ui43Z7+4Eb1va50J0PXUFYEpLuqCaAPtKe/E7+rGB89J5jzJhUKd5sx5VjuWIi3
+ scRhYa+AxcayhE3GCfQ2MiDYpMCcBPksa9AdhDkf6o+Zhtb3gtpXRCL/vn4WEjCEYxxl DA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 303yun1g3g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Mar 2020 11:02:06 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02VB25hU091900;
+        Tue, 31 Mar 2020 11:02:05 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 302g9x2bhs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Mar 2020 11:02:05 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02VB23SC026099;
+        Tue, 31 Mar 2020 11:02:03 GMT
+Received: from [10.175.15.184] (/10.175.15.184)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 31 Mar 2020 04:02:03 -0700
+Subject: Re: single target builds are broken
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+References: <a5ce79eb-be9d-df97-0b58-5aee5a48f4d3@oracle.com>
+ <CAK7LNAQ8LZMPxrjVkuLizHjVZyBtSmLFZ=EvDCCAPb-XGfJLHA@mail.gmail.com>
+From:   Vegard Nossum <vegard.nossum@oracle.com>
+Message-ID: <8c491e3b-a622-14c1-15c3-8cff061017ba@oracle.com>
+Date:   Tue, 31 Mar 2020 13:01:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331101019.GA6299@infradead.org>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+In-Reply-To: <CAK7LNAQ8LZMPxrjVkuLizHjVZyBtSmLFZ=EvDCCAPb-XGfJLHA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9576 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 bulkscore=0 mlxscore=0 spamscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003310100
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9576 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 lowpriorityscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
+ suspectscore=0 mlxscore=0 spamscore=0 impostorscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003310098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
 
-On Tue, Mar 31, 2020 at 03:10:19AM -0700, Christoph Hellwig wrote:
-> Hi Willy,
+On 3/31/20 11:49 AM, Masahiro Yamada wrote:
+> On Tue, Mar 31, 2020 at 6:16 PM Vegard Nossum <vegard.nossum@oracle.com> wrote:
+>>
+>>
+>> Hi,
+>>
+>> I often run 'make foo/bar.o' as part of my workflow, even when bar.o is
+>> not specified in any kernel makefile, and this has worked just fine for
+>> years.
+>>
+>> This is broken after commit 394053f4a4b3e3eeeaa67b67fc886a9a75bd9e4d
+>> (kbuild: make single targets work more correctly) and just gives an error:
+>>
+>> $ make kernel/test.o
+>>     CALL    scripts/checksyscalls.sh
+>>     CALL    scripts/atomic/check-atomics.sh
+>>     DESCEND  objtool
+>> make[2]: *** No rule to make target 'kernel/test.o'.  Stop.
+>> scripts/Makefile.build:502: recipe for target '__build' failed
+>> make[1]: *** [__build] Error 2
+>> Makefile:1670: recipe for target 'kernel' failed
+>> make: *** [kernel] Error 2
 > 
-> given that you are actively maintaining the floppy driver now,
+> 
+> This is intentional to make the single target builds
+> work in the same manner as the normal builds.
+> 
+> 
+> The necessary CONFIG dependency must be met.
+> 
+> obj-$(CONFIG_FOO) += foo.o
+> 
+> foo.o can be built only when CONFIG_FOO is y/m.
+> 
+> 
+> 
+>> For top-level objects (e.g. 'make bar.o') the situation is even worse,
+>> since make exits with status 0 without building anything :-/
+> 
+> 
+> There is no .c or .S file at the top-level of the kernel source tree.
+> 
+> 'make bar.o' never happens.
 
-No no no I'm not! Denis is :-) Really, I mean I just proposed some help
-to clean up this mess after being tricked into not believing a bug report
-just because the code was too confusing.
+It doesn't happen in mainline, but I often use that to small test things
+in an isolated source file. As just one example you can do
 
-> any
-> chance I could trick you into proper highmem handling?  I've been trying
-> to phase out block layer bounce buffering, and any help from a competent
-> maintainer to move their drivers to properly support highmem by kmapping
-> for PIO/MMIO I/O would be very helpful.
+#include <linux/sched.h>
+unsigned int task_struct_size = sizeof(struct task_struct);
 
-I'm not sure what this implies regarding this code, to be honest. It's
-very tricky and implements sort of a state machine using function pointers
-within its interrupt handler so you never know exactly what accesses what,
-and quite a part of it remains obscure to me :-/  I can accept to help, I
-can even run tests since I still have running hardware, but I'd at least
-need some guidance. And probably Denis would know better than me there.
-Also I doubt we'd get sufficient testing on less common archs. While I
-do have sparc64/parisc/alpha available, I haven't booted a recent kernel
-on any of them for a while (2.4 used to be the last ones), and I'm not
-sure it's reasonable to go into such changes without proper testing.
+and then you can look in the object file to find the size. Or any other
+of a million useful things that you might want to do without rebuilding
+an actual source file or modifying makefiles.
 
-What do you think ?
+>> Is there any chance we can get this back? It was super useful for me.
+> 
+> 
+> What you want is "Let's build whatever", right?
 
-Willy
+It's really useful to be able to build object files separately, but as
+if it was part of the kernel (so e.g. with all the gcc flags, include
+paths, etc.).
+
+> No, please add 'obj-y += test.o' if you want to
+> test your local file.
+
+This is a clear workflow regression for me. Why is it so absolutely
+necessary to break the way it used to work?
+
+At the very least, can we find a way to reduce the typing overhead for
+testing one-offs like that? 'make STANDALONE=1 test.o' or something?
+
+
+Vegard
