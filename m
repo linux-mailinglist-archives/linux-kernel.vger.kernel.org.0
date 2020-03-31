@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 206C5199029
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E125199220
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:24:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731502AbgCaJJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:09:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52892 "EHLO mail.kernel.org"
+        id S1730528AbgCaJBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:01:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731491AbgCaJJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:09:38 -0400
+        id S1730511AbgCaJBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:01:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2CD5208E0;
-        Tue, 31 Mar 2020 09:09:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8895F20B1F;
+        Tue, 31 Mar 2020 09:01:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645778;
-        bh=eaZtXvrvNclIweD2DXp8T7YbxLOfq85xDuyOa6hnfmY=;
+        s=default; t=1585645269;
+        bh=0CeNMpF2I3Al+pQh8jpMHNjh0FrwPZUcwKc7/Wt+lBg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N9wZP8gfvtff0+MP+3b7bGE4GG11jMEXPL/fYHpWjTx+2gh5/Lo7u0k2tMwiWZFSf
-         lwHMMAtz0CW0t/XURS9/0FuvLACApD5ZqPnGRTsRuMAPv6/6cWYa4Fm4LHUcD1o+pe
-         WWXYgPvoxfEx6AWPPWNvV/sD7eLfWkDTXTELaWjM=
+        b=vZHkW7pywEw7jrJUP/epusbbENeOLD5eldSRhK/H8ZhqvSM3q7LYWiy4+DZ4fgguT
+         xRSvETtkTVu9hmCJowjvGNLHLju9PCvdpJNgh57ypzvckgH2ihqqPKPLeQXO6hRWhV
+         Hzdc2bciZGNoK6JRLu6wmjoiRH6gdofFRTm509Ew=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mans Rullgard <mans@mansr.com>,
-        Bin Liu <b-liu@ti.com>
-Subject: [PATCH 5.5 154/170] usb: musb: fix crash with highmen PIO and usbmon
+        stable@vger.kernel.org,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 5.6 16/23] staging: wfx: annotate nested gc_list vs tx queue locking
 Date:   Tue, 31 Mar 2020 10:59:28 +0200
-Message-Id: <20200331085439.415444419@linuxfoundation.org>
+Message-Id: <20200331085315.519262911@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085308.098696461@linuxfoundation.org>
+References: <20200331085308.098696461@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,79 +43,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mans Rullgard <mans@mansr.com>
+From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
-commit 52974d94a206ce428d9d9b6eaa208238024be82a upstream.
+commit e2525a95cc0887c7dc0549cb5d0ac3e796e1d54c upstream.
 
-When handling a PIO bulk transfer with highmem buffer, a temporary
-mapping is assigned to urb->transfer_buffer.  After the transfer is
-complete, an invalid address is left behind in this pointer.  This is
-not ordinarily a problem since nothing touches that buffer before the
-urb is released.  However, when usbmon is active, usbmon_urb_complete()
-calls (indirectly) mon_bin_get_data() which does access the transfer
-buffer if it is set.  To prevent an invalid memory access here, reset
-urb->transfer_buffer to NULL when finished (musb_host_rx()), or do not
-set it at all (musb_host_tx()).
+Lockdep is complaining about recursive locking, because it can't make
+a difference between locked skb_queues. Annotate nested locks and avoid
+double bh_disable/enable.
 
-Fixes: 8e8a55165469 ("usb: musb: host: Handle highmem in PIO mode")
-Signed-off-by: Mans Rullgard <mans@mansr.com>
+[...]
+insmod/815 is trying to acquire lock:
+cb7d6418 (&(&list->lock)->rlock){+...}, at: wfx_tx_queues_clear+0xfc/0x198 [wfx]
+
+but task is already holding lock:
+cb7d61f4 (&(&list->lock)->rlock){+...}, at: wfx_tx_queues_clear+0xa0/0x198 [wfx]
+
+[...]
+Possible unsafe locking scenario:
+
+      CPU0
+      ----
+ lock(&(&list->lock)->rlock);
+ lock(&(&list->lock)->rlock);
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Link: https://lore.kernel.org/r/20200316211136.2274-8-b-liu@ti.com
+Fixes: 9bca45f3d692 ("staging: wfx: allow to send 802.11 frames")
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Link: https://lore.kernel.org/r/5e30397af95854b4a7deea073b730c00229f42ba.1581416843.git.mirq-linux@rere.qmqm.pl
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musb_host.c |   17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ drivers/staging/wfx/queue.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/usb/musb/musb_host.c
-+++ b/drivers/usb/musb/musb_host.c
-@@ -1462,10 +1462,7 @@ done:
- 	 * We need to map sg if the transfer_buffer is
- 	 * NULL.
- 	 */
--	if (!urb->transfer_buffer)
--		qh->use_sg = true;
--
--	if (qh->use_sg) {
-+	if (!urb->transfer_buffer) {
- 		/* sg_miter_start is already done in musb_ep_program */
- 		if (!sg_miter_next(&qh->sg_miter)) {
- 			dev_err(musb->controller, "error: sg list empty\n");
-@@ -1473,9 +1470,8 @@ done:
- 			status = -EINVAL;
- 			goto done;
- 		}
--		urb->transfer_buffer = qh->sg_miter.addr;
- 		length = min_t(u32, length, qh->sg_miter.length);
--		musb_write_fifo(hw_ep, length, urb->transfer_buffer);
-+		musb_write_fifo(hw_ep, length, qh->sg_miter.addr);
- 		qh->sg_miter.consumed = length;
- 		sg_miter_stop(&qh->sg_miter);
- 	} else {
-@@ -1484,11 +1480,6 @@ done:
+--- a/drivers/staging/wfx/queue.c
++++ b/drivers/staging/wfx/queue.c
+@@ -130,12 +130,12 @@ static void wfx_tx_queue_clear(struct wf
+ 	spin_lock_bh(&queue->queue.lock);
+ 	while ((item = __skb_dequeue(&queue->queue)) != NULL)
+ 		skb_queue_head(gc_list, item);
+-	spin_lock_bh(&stats->pending.lock);
++	spin_lock_nested(&stats->pending.lock, 1);
+ 	for (i = 0; i < ARRAY_SIZE(stats->link_map_cache); ++i) {
+ 		stats->link_map_cache[i] -= queue->link_map_cache[i];
+ 		queue->link_map_cache[i] = 0;
+ 	}
+-	spin_unlock_bh(&stats->pending.lock);
++	spin_unlock(&stats->pending.lock);
+ 	spin_unlock_bh(&queue->queue.lock);
+ }
  
- 	qh->segsize = length;
+@@ -207,9 +207,9 @@ void wfx_tx_queue_put(struct wfx_dev *wd
  
--	if (qh->use_sg) {
--		if (offset + length >= urb->transfer_buffer_length)
--			qh->use_sg = false;
--	}
--
- 	musb_ep_select(mbase, epnum);
- 	musb_writew(epio, MUSB_TXCSR,
- 			MUSB_TXCSR_H_WZC_BITS | MUSB_TXCSR_TXPKTRDY);
-@@ -2003,8 +1994,10 @@ finish:
- 	urb->actual_length += xfer_len;
- 	qh->offset += xfer_len;
- 	if (done) {
--		if (qh->use_sg)
-+		if (qh->use_sg) {
- 			qh->use_sg = false;
-+			urb->transfer_buffer = NULL;
-+		}
+ 	++queue->link_map_cache[tx_priv->link_id];
  
- 		if (urb->status == -EINPROGRESS)
- 			urb->status = status;
+-	spin_lock_bh(&stats->pending.lock);
++	spin_lock_nested(&stats->pending.lock, 1);
+ 	++stats->link_map_cache[tx_priv->link_id];
+-	spin_unlock_bh(&stats->pending.lock);
++	spin_unlock(&stats->pending.lock);
+ 	spin_unlock_bh(&queue->queue.lock);
+ }
+ 
+@@ -237,11 +237,11 @@ static struct sk_buff *wfx_tx_queue_get(
+ 		__skb_unlink(skb, &queue->queue);
+ 		--queue->link_map_cache[tx_priv->link_id];
+ 
+-		spin_lock_bh(&stats->pending.lock);
++		spin_lock_nested(&stats->pending.lock, 1);
+ 		__skb_queue_tail(&stats->pending, skb);
+ 		if (!--stats->link_map_cache[tx_priv->link_id])
+ 			wakeup_stats = true;
+-		spin_unlock_bh(&stats->pending.lock);
++		spin_unlock(&stats->pending.lock);
+ 	}
+ 	spin_unlock_bh(&queue->queue.lock);
+ 	if (wakeup_stats)
+@@ -259,10 +259,10 @@ int wfx_pending_requeue(struct wfx_dev *
+ 	spin_lock_bh(&queue->queue.lock);
+ 	++queue->link_map_cache[tx_priv->link_id];
+ 
+-	spin_lock_bh(&stats->pending.lock);
++	spin_lock_nested(&stats->pending.lock, 1);
+ 	++stats->link_map_cache[tx_priv->link_id];
+ 	__skb_unlink(skb, &stats->pending);
+-	spin_unlock_bh(&stats->pending.lock);
++	spin_unlock(&stats->pending.lock);
+ 	__skb_queue_tail(&queue->queue, skb);
+ 	spin_unlock_bh(&queue->queue.lock);
+ 	return 0;
 
 
