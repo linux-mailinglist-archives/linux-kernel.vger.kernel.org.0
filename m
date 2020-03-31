@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 959C41990B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:13:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24224198F7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:04:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731314AbgCaJNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:13:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33310 "EHLO mail.kernel.org"
+        id S1730568AbgCaJDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:03:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730704AbgCaJNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:13:46 -0400
+        id S1730391AbgCaJDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:03:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E17121582;
-        Tue, 31 Mar 2020 09:13:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 154ED20787;
+        Tue, 31 Mar 2020 09:03:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585646025;
-        bh=rmRBAXEtpYuEgr8lxSMdhfQIo4FvG4sJzuape9PRm00=;
+        s=default; t=1585645428;
+        bh=Po14qPslBUSQW5+rJhoPZzDlO390mhUWITIQyhjIjAk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1u+pdiXiz8zNfDx19b3q16pofwXKHpPQ1TEjQnX1LDP/c4VqfrDLfN1GPSyjsuMwH
-         OVQO8AaZZG271ldYx/5HN/LoiMRbJJXqGXTTSJAK0sIlohvHvKT2FFuRkO4sRUH73R
-         p+gLBwF/rOEgMqcTBCTRpJaJYPFImY8q1WjfBy7g=
+        b=pTRqATZOojkYY3PG+fHC+7h4+3W4RXfgZqLHw8U461x8Dx/TOGcj0DBlVDdJqqTL9
+         XjQApSXedqINkSZy+5GAMykOHBNpryA5Q0bUFJwF8qqC8xhDYVTzGJB/u/Q+9L34Yp
+         Be1mnPE4+moaBHk1Csi8NiRz1uBhH+Rfsyio52sY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
+        stable@vger.kernel.org, Noam Dagan <ndagan@amazon.com>,
+        Arthur Kiyanovski <akiyano@amazon.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 023/155] net: phy: dp83867: w/a for fld detect threshold bootstrapping issue
-Date:   Tue, 31 Mar 2020 10:57:43 +0200
-Message-Id: <20200331085420.995267250@linuxfoundation.org>
+Subject: [PATCH 5.5 050/170] net: ena: fix continuous keep-alive resets
+Date:   Tue, 31 Mar 2020 10:57:44 +0200
+Message-Id: <20200331085429.726319603@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
-References: <20200331085418.274292403@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,76 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: Arthur Kiyanovski <akiyano@amazon.com>
 
-[ Upstream commit 749f6f6843115b424680f1aada3c0dd613ad807c ]
+[ Upstream commit dfdde1345bc124816f0fd42fa91b8748051e758e ]
 
-When the DP83867 PHY is strapped to enable Fast Link Drop (FLD) feature
-STRAP_STS2.STRAP_ FLD (reg 0x006F bit 10), the Energy Lost Threshold for
-FLD Energy Lost Mode FLD_THR_CFG.ENERGY_LOST_FLD_THR (reg 0x002e bits 2:0)
-will be defaulted to 0x2. This may cause the phy link to be unstable. The
-new DP83867 DM recommends to always restore ENERGY_LOST_FLD_THR to 0x1.
+last_keep_alive_jiffies is updated in probe and when a keep-alive
+event is received.  In case the driver times-out on a keep-alive event,
+it has high chances of continuously timing-out on keep-alive events.
+This is because when the driver recovers from the keep-alive-timeout reset
+the value of last_keep_alive_jiffies is very old, and if a keep-alive
+event is not received before the next timer expires, the value of
+last_keep_alive_jiffies will cause another keep-alive-timeout reset
+and so forth in a loop.
 
-Hence, restore default value of FLD_THR_CFG.ENERGY_LOST_FLD_THR to 0x1 when
-FLD is enabled by bootstrapping as recommended by DM.
+Solution:
+Update last_keep_alive_jiffies whenever the device is restored after
+reset.
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Noam Dagan <ndagan@amazon.com>
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/dp83867.c |   21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/amazon/ena/ena_netdev.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/phy/dp83867.c
-+++ b/drivers/net/phy/dp83867.c
-@@ -25,7 +25,8 @@
- #define DP83867_CFG3		0x1e
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -2832,6 +2832,7 @@ static int ena_restore_device(struct ena
+ 		netif_carrier_on(adapter->netdev);
  
- /* Extended Registers */
--#define DP83867_CFG4            0x0031
-+#define DP83867_FLD_THR_CFG	0x002e
-+#define DP83867_CFG4		0x0031
- #define DP83867_CFG4_SGMII_ANEG_MASK (BIT(5) | BIT(6))
- #define DP83867_CFG4_SGMII_ANEG_TIMER_11MS   (3 << 5)
- #define DP83867_CFG4_SGMII_ANEG_TIMER_800US  (2 << 5)
-@@ -74,6 +75,7 @@
- #define DP83867_STRAP_STS2_CLK_SKEW_RX_MASK	GENMASK(2, 0)
- #define DP83867_STRAP_STS2_CLK_SKEW_RX_SHIFT	0
- #define DP83867_STRAP_STS2_CLK_SKEW_NONE	BIT(2)
-+#define DP83867_STRAP_STS2_STRAP_FLD		BIT(10)
- 
- /* PHY CTRL bits */
- #define DP83867_PHYCR_FIFO_DEPTH_SHIFT		14
-@@ -103,6 +105,9 @@
- /* CFG4 bits */
- #define DP83867_CFG4_PORT_MIRROR_EN              BIT(0)
- 
-+/* FLD_THR_CFG */
-+#define DP83867_FLD_THR_CFG_ENERGY_LOST_THR_MASK	0x7
-+
- enum {
- 	DP83867_PORT_MIRROING_KEEP,
- 	DP83867_PORT_MIRROING_EN,
-@@ -318,6 +323,20 @@ static int dp83867_config_init(struct ph
- 		phy_clear_bits_mmd(phydev, DP83867_DEVADDR, DP83867_CFG4,
- 				   BIT(7));
- 
-+	bs = phy_read_mmd(phydev, DP83867_DEVADDR, DP83867_STRAP_STS2);
-+	if (bs & DP83867_STRAP_STS2_STRAP_FLD) {
-+		/* When using strap to enable FLD, the ENERGY_LOST_FLD_THR will
-+		 * be set to 0x2. This may causes the PHY link to be unstable -
-+		 * the default value 0x1 need to be restored.
-+		 */
-+		ret = phy_modify_mmd(phydev, DP83867_DEVADDR,
-+				     DP83867_FLD_THR_CFG,
-+				     DP83867_FLD_THR_CFG_ENERGY_LOST_THR_MASK,
-+				     0x1);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	if (phy_interface_is_rgmii(phydev)) {
- 		val = phy_read(phydev, MII_DP83867_PHYCTRL);
- 		if (val < 0)
+ 	mod_timer(&adapter->timer_service, round_jiffies(jiffies + HZ));
++	adapter->last_keep_alive_jiffies = jiffies;
+ 	dev_err(&pdev->dev,
+ 		"Device reset completed successfully, Driver info: %s\n",
+ 		version);
 
 
