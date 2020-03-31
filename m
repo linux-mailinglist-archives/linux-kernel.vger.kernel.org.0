@@ -2,54 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DED7198A46
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 05:00:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE548198A4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 05:01:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730324AbgCaDAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 23:00:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57448 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729825AbgCaDAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 23:00:18 -0400
-Subject: Re: [GIT pull] x86/timers for v5.7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585623617;
-        bh=683VXuHAXDiRDZYb0vlK4a/r5inl3sDh5Auqan02+DU=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=KjDj5rp5P6cbRq7ul1MhPH45yNKWcde2hkkdu6nhaWwY/onqEOx7kfrXGRTKTqlCN
-         ERQuZHxlUaSXc1eJiGMfAuF0+SOjLongpu3a0cmR3U5PtNZmY23v2bQy3X/rhIP71t
-         HsfnrpoFDU0B7dnB9n/8vGUiMjecWb61c0NWVrtE=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <158557963678.22376.17697748296819329736.tglx@nanos.tec.linutronix.de>
-References: <158557962955.22376.9136086165862170511.tglx@nanos.tec.linutronix.de>
- <158557963678.22376.17697748296819329736.tglx@nanos.tec.linutronix.de>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <158557963678.22376.17697748296819329736.tglx@nanos.tec.linutronix.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- x86-timers-2020-03-30
-X-PR-Tracked-Commit-Id: fac01d11722c92a186b27ee26cd429a8066adfb5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 458ef2a25e0cbdc216012aa2b9cf549d64133b08
-Message-Id: <158562361778.8590.4529324346808786877.pr-tracker-bot@kernel.org>
-Date:   Tue, 31 Mar 2020 03:00:17 +0000
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
+        id S1730378AbgCaDA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 23:00:59 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:45952 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729372AbgCaDA7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 23:00:59 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id BFB1B15D1720D;
+        Mon, 30 Mar 2020 20:00:57 -0700 (PDT)
+Date:   Mon, 30 Mar 2020 20:00:56 -0700 (PDT)
+Message-Id: <20200330.200056.456632783811662995.davem@davemloft.net>
+To:     matthias.schiffer@ew.tq-group.com
+Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
+        kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/4] net: dsa: mv88e6xxx: account for PHY base
+ address offset in dual chip mode
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200330135345.4361-2-matthias.schiffer@ew.tq-group.com>
+References: <20200330135345.4361-1-matthias.schiffer@ew.tq-group.com>
+        <20200330135345.4361-2-matthias.schiffer@ew.tq-group.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 30 Mar 2020 20:00:58 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 30 Mar 2020 14:47:16 -0000:
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Date: Mon, 30 Mar 2020 15:53:43 +0200
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-timers-2020-03-30
+> diff --git a/drivers/net/dsa/mv88e6xxx/chip.h b/drivers/net/dsa/mv88e6xxx/chip.h
+> index e5430cf2ad71..88c148a62366 100644
+> --- a/drivers/net/dsa/mv88e6xxx/chip.h
+> +++ b/drivers/net/dsa/mv88e6xxx/chip.h
+> @@ -257,6 +257,7 @@ struct mv88e6xxx_chip {
+>  	const struct mv88e6xxx_bus_ops *smi_ops;
+>  	struct mii_bus *bus;
+>  	int sw_addr;
+> +	unsigned int phy_base_addr;
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/458ef2a25e0cbdc216012aa2b9cf549d64133b08
+Please preserve the reverse christmas tree ordering here.
 
-Thank you!
+And this submission was quite late and net-next is closing now so
+please resubmit this after the merge window and net-next opens again.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Thanks.
