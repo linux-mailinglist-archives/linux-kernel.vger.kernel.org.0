@@ -2,61 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B4E199C4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 18:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AEE1199C0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 18:48:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731280AbgCaQ4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 12:56:43 -0400
-Received: from pub.regulars.win ([89.163.144.234]:60628 "EHLO pub.regulars.win"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730589AbgCaQ4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 12:56:42 -0400
-X-Greylist: delayed 462 seconds by postgrey-1.27 at vger.kernel.org; Tue, 31 Mar 2020 12:56:42 EDT
-From:   Slava Bacherikov <slava@bacher09.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bacher09.org;
-        s=reg; t=1585673336;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=DmSQ2UIhT0odCb3E+9iqnV1wCWPiNesSH1XLAgRS7Jw=;
-        b=Re0+pc4fcZ/9lLyWQmpJEiEuwkWiA/rcf3G5Ovd+qNiPmIJAMU0s0l2zzXj/Xo1ahMPieK
-        WBTPVVN2hgx0dtCM96KcbSPr7bvID3Gnjcl4/tzhZZoQUSsk7JwhwmCzhj/p4nMIYH7aiJ
-        Ao/cP94gY1ZNlL/CFxY1dNgqV6s7MHo=
-To:     yamada.masahiro@socionext.com
-Cc:     andriin@fb.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net,
-        Slava Bacherikov <slava@bacher09.org>
-Subject: [PATCH] kbuild: disable DEBUG_INFO_SPLIT when BTF is on
-Date:   Tue, 31 Mar 2020 19:47:20 +0300
-Message-Id: <20200331164719.15930-1-slava@bacher09.org>
+        id S1731142AbgCaQso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 12:48:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59426 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730413AbgCaQsn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 12:48:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=iBIZjEbhUqZOtk5V18poldKYJqWr17L3xpH+eAdVvpQ=; b=VoE/pOwTmbEoLZztds+Z6FQ5Oo
+        uqKJwve38PohsGjqmKA7k0xNE+sgE/Tq3j+draqv3XUq/XZ7bZl7K18U+4GiyNjDi5zTQ+quHOrTB
+        5oddyo7yRn8muBXIkO5DRQ3juwcUS7bRtAKmlrQmEy6+ZYvnyLvgSJzjBfHm9PZx7T1rV6Klxm6ve
+        imTPF+rxbLbqtqtxPCR4DLJxiDGD1jUab3iHF6eH6rCWrf6eF4QGt197Oxh9u5cTtKCdcg9mJfKWP
+        /OTD5pQmIqLUpba7IMtZBp6X9jl9au+9LHyd86/hCnvw9AH7dyValneKa8S46/t3cQlgD54BvPoUU
+        yxFbkeKA==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJK4B-0001WE-2W; Tue, 31 Mar 2020 16:48:43 +0000
+Subject: Re: mmotm 2020-03-30-18-46 uploaded (freesync)
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
+References: <20200331014748.ajL0G62jF%akpm@linux-foundation.org>
+ <a266d6a4-6d48-aadc-afd7-af0eb7c2d9db@infradead.org>
+ <20200331073938.GA54733@ubuntu-m2-xlarge-x86>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <710856c8-b1d9-d03d-457c-99e55a2ff274@infradead.org>
+Date:   Tue, 31 Mar 2020 09:48:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200331073938.GA54733@ubuntu-m2-xlarge-x86>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently turning on DEBUG_INFO_SPLIT when DEBUG_INFO_BTF is also
-enabled will produce invalid btf file, since gen_btf function in
-link-vmlinux.sh script doesn't handle *.dwo files.
+On 3/31/20 12:39 AM, Nathan Chancellor wrote:
+> On Mon, Mar 30, 2020 at 11:18:26PM -0700, Randy Dunlap wrote:
+>> On 3/30/20 6:47 PM, akpm@linux-foundation.org wrote:
+>>> The mm-of-the-moment snapshot 2020-03-30-18-46 has been uploaded to
+>>>
+>>>    http://www.ozlabs.org/~akpm/mmotm/
+>>>
+>>> mmotm-readme.txt says
+>>>
+>>> README for mm-of-the-moment:
+>>>
+>>> http://www.ozlabs.org/~akpm/mmotm/
+>>>
+>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>>> more than once a week.
+>>>
+>>> You will need quilt to apply these patches to the latest Linus release (5.x
+>>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>>> http://ozlabs.org/~akpm/mmotm/series
+>>>
+>>
+>> on i386:
+>>
+>> ld: drivers/gpu/drm/amd/display/modules/freesync/freesync.o: in function `mod_freesync_build_vrr_params':
+>> freesync.c:(.text+0x790): undefined reference to `__udivdi3'
+>>
+>>
+>> Full randconfig file is attached.
+>>
+>> -- 
+>> ~Randy
+>> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Hi Randy,
+> 
+> I am guessing this should fix it since I ran into this on arm
+> allyesconfig:
+> 
+> https://lore.kernel.org/lkml/20200330221614.7661-1-natechancellor@gmail.com/
 
-Signed-off-by: Slava Bacherikov <slava@bacher09.org>
----
- lib/Kconfig.debug | 1 +
- 1 file changed, 1 insertion(+)
+works for me. Thanks.
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index f61d834e02fe..a9429ef5eec8 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -223,6 +223,7 @@ config DEBUG_INFO_DWARF4
- config DEBUG_INFO_BTF
- 	bool "Generate BTF typeinfo"
- 	depends on DEBUG_INFO
-+	depends on !DEBUG_INFO_SPLIT
- 	help
- 	  Generate deduplicated BTF type information from DWARF debug info.
- 	  Turning this on expects presence of pahole tool, which will convert
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+
+
+> FWIW, not an mmotm issue since the patch comes from the AMD tree.
+
+Right.
+
 -- 
-2.24.1
-
+~Randy
