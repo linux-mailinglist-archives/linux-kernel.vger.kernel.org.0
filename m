@@ -2,172 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D087F199E3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20748199E40
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:42:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbgCaSk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 14:40:29 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33816 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbgCaSk2 (ORCPT
+        id S1727575AbgCaSmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 14:42:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51016 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbgCaSmv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:40:28 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 23so10754568pfj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:40:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=BiFlrx2jci6UF/44wjMJRVvmGi3zYDtbTuZw76ofS9M=;
-        b=vTD9J09LOf7YaKpipJJDrND2YBBqrJCrokT+YirTJiDmBCrXSEte4ecos/ucAha3yU
-         Gg8STR6sCIRMljfMemjURNJ7wDHYDK6srFfQMLyVAoe7cH2R5XV25criDj6PpGB+DQDP
-         gTFjnucSamy6DZk8q/6MJ/WNjs5N1oSqTdng6KM9E+GKLjrcb27i0CddZhEDygJVLS6H
-         5LuChaiCe53Ho9X/DZtDglzHhPdz0aFauosokOuLsa941Xk659PoHyaMmNLUk7NRpzvy
-         ZQ23pmTUl9qKF5NprxcAYwfyhaxDpAVjba1eucGXDIxg1HVnVXqa3uZ4moml+KHZ91iC
-         ta8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BiFlrx2jci6UF/44wjMJRVvmGi3zYDtbTuZw76ofS9M=;
-        b=LhqWyXzEYCGeZGKa1R7mlAXXkAmC/4K+B/slemVCw9ZNRP175G2YVpuPmkQOO8sFpa
-         LTKP5dSFbJLbqauqgLBFPvqlxdVsfpCVsv+yeHlQuUj3ZgB55Z6LMSbILHXchWns/oUp
-         6wXCNr8JoEcbHhNnQlizwuc9XskX1ib+lPqk7B6j9q3i9OWfR7+UAomKjQyiCp8Pmku7
-         973MK4R6wgoEl/pLbEQlmz200BcxzOL5pWsy5th6QoESVYy5EokG5CL8Ob16mlZt4BWh
-         gU4+zYTTch4P35DDKj5m5fvJDuS9XCs+XRxYp5vHxJRm8TApjbCo4/2iMTX9DoVqawYv
-         fZHQ==
-X-Gm-Message-State: AGi0PuZr0FDceVJ5NU/ca6SqyX49VCcMDGbgwa3pNaUMUaizX1J1S1pe
-        BCeelpHyPFzu2BikKVvGVGFWKg==
-X-Google-Smtp-Source: APiQypKUNpAzOq4pKgWQBvZIXbKQl122MMmvgDMFQ7moe2HCfS52TO3xMq7di1tLyj/TuRnpFvvq6A==
-X-Received: by 2002:a62:ee15:: with SMTP id e21mr6219077pfi.90.1585680026497;
-        Tue, 31 Mar 2020 11:40:26 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id g7sm5951509pfo.85.2020.03.31.11.40.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 11:40:25 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 11:40:23 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     pillair@codeaurora.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v7] arm64: dts: qcom: sc7180: Add WCN3990 WLAN module
- device node
-Message-ID: <20200331184023.GB267644@minitux>
-References: <1585219723-28323-1-git-send-email-pillair@codeaurora.org>
- <20200327230025.GJ5063@builder>
- <000101d604f8$afc48220$0f4d8660$@codeaurora.org>
- <20200328183055.GA663905@yoga>
- <000301d605ba$3d034a10$b709de30$@codeaurora.org>
+        Tue, 31 Mar 2020 14:42:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=BUBDl8TWBoALLJ/DLYt44Ai1/mhcHhqeudMrwUyZMDY=; b=C9Ntx/2MgYNBNindlNbMzVjVVC
+        oQw6CZkC8lgWs/k2Yz4CNeAF4A0MB3zeFIfjj94hjSuuFJRUhmsUY2Ig1Wj8HJpGpPvinUwWWgEfl
+        cPv4BWq+CM1bRWBHu0RVLQT/SH1OlHJAFbohYD58pWpDdcrmDWI8potb6nIx/1IIQ7ycfdWEeTSiN
+        n+2tvFeOqk8S+jYZa7nkRXp1pKDKANAcVgqdBb1EADCOaGusInhUbvcPscEIsnDgfQViGYTUwMFXp
+        CF/KExq+yVRzDScTl0YVM6U9GFOYjy7EZPaL4q/BH8EwQRuaxRlGAK8zb6fXxmcSxAIR6nOulGrCI
+        TZaKtizw==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJLqb-0002mj-7I; Tue, 31 Mar 2020 18:42:49 +0000
+Subject: Re: mmotm 2020-03-30-18-46 uploaded (VDPA + vhost)
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        virtualization@lists.linux-foundation.org,
+        Jason Wang <jasowang@redhat.com>
+References: <20200331014748.ajL0G62jF%akpm@linux-foundation.org>
+ <969cacf1-d420-223d-7cc7-5b1b2405ec2a@infradead.org>
+ <20200331143437-mutt-send-email-mst@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9c03fee8-af1a-2035-b903-611a631094b0@infradead.org>
+Date:   Tue, 31 Mar 2020 11:42:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000301d605ba$3d034a10$b709de30$@codeaurora.org>
+In-Reply-To: <20200331143437-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 29 Mar 04:07 PDT 2020, pillair@codeaurora.org wrote:
-
-> Hi Bjorn,
+On 3/31/20 11:37 AM, Michael S. Tsirkin wrote:
+> On Tue, Mar 31, 2020 at 11:27:54AM -0700, Randy Dunlap wrote:
+>> On 3/30/20 6:47 PM, akpm@linux-foundation.org wrote:
+>>> The mm-of-the-moment snapshot 2020-03-30-18-46 has been uploaded to
+>>>
+>>>    http://www.ozlabs.org/~akpm/mmotm/
+>>>
+>>> mmotm-readme.txt says
+>>>
+>>> README for mm-of-the-moment:
+>>>
+>>> http://www.ozlabs.org/~akpm/mmotm/
+>>>
+>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>>> more than once a week.
+>>>
+>>> You will need quilt to apply these patches to the latest Linus release (5.x
+>>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>>> http://ozlabs.org/~akpm/mmotm/series
+>>>
+>>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>>> followed by the base kernel version against which this patch series is to
+>>> be applied.
+>>>
+>>> This tree is partially included in linux-next.  To see which patches are
+>>> included in linux-next, consult the `series' file.  Only the patches
+>>> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+>>> linux-next.
+>>>
+>>>
+>>> A full copy of the full kernel tree with the linux-next and mmotm patches
+>>> already applied is available through git within an hour of the mmotm
+>>> release.  Individual mmotm releases are tagged.  The master branch always
+>>> points to the latest release, so it's constantly rebasing.
+>>>
+>>> 	https://github.com/hnaz/linux-mm
+>>
+>> on i386:
+>>
+>> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_init':
+>> vdpa.c:(.init.text+0x52): undefined reference to `__vdpa_register_driver'
+>> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_exit':
+>> vdpa.c:(.exit.text+0x14): undefined reference to `vdpa_unregister_driver'
+>>
+>>
+>>
+>> drivers/virtio/vdpa/ is not being built. (confusing!)
+>>
+>> CONFIG_VIRTIO=m
+>> # CONFIG_VIRTIO_MENU is not set
+>> CONFIG_VDPA=y
 > 
-> > -----Original Message-----
-> > From: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Sent: Sunday, March 29, 2020 12:01 AM
-> > To: pillair@codeaurora.org
-> > Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> linux-
-> > kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org
-> > Subject: Re: [PATCH v7] arm64: dts: qcom: sc7180: Add WCN3990 WLAN
-> > module device node
-> > 
-> > On Sat 28 Mar 05:01 PDT 2020, pillair@codeaurora.org wrote:
-> > 
-> > > Hi Bjorn,
-> > >  Comments inline.
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > > Sent: Saturday, March 28, 2020 4:30 AM
-> > > > To: Rakesh Pillai <pillair@codeaurora.org>
-> > > > Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > > linux-
-> > > > kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org
-> > > > Subject: Re: [PATCH v7] arm64: dts: qcom: sc7180: Add WCN3990 WLAN
-> > > > module device node
-> > > >
-> > > > On Thu 26 Mar 03:48 PDT 2020, Rakesh Pillai wrote:
-> > > >
-> > > > > Add device node for the ath10k SNOC platform driver probe
-> > > > > and add resources required for WCN3990 on sc7180 soc.
-> > > > >
-> > > > > Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
-> > > > > ---
-> > > > >
-> > > > > Depends on https://patchwork.kernel.org/patch/11455345/
-> > > > > The above patch adds the dt-bindings for wifi-firmware
-> > > > > subnode
-> > > > > ---
-> > > > >  arch/arm64/boot/dts/qcom/sc7180-idp.dts |  8 ++++++++
-> > > > >  arch/arm64/boot/dts/qcom/sc7180.dtsi    | 27
-> > > > +++++++++++++++++++++++++++
-> > > > >  2 files changed, 35 insertions(+)
-> > > > >
-> > > > > diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> > > > b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> > > > > index 043c9b9..a6168a4 100644
-> > > > > --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> > > > > +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-> > > > > @@ -327,6 +327,14 @@
-> > > > >  	};
-> > > > >  };
-> > > > >
-> > > > > +&wifi {
-> > > > > +	status = "okay";
-> > > > > +	qcom,msa-fixed-perm;
-> > > > > +	wifi-firmware {
-> > > > > +		iommus = <&apps_smmu 0xc2 0x1>;
-> > > >
-> > > > How is sc7180 different from sdm845, where the iommus property goes
-> > > > directly in the &wifi node?
-> > >
-> > > Sc7180 IDP is a target without TrustZone support and also with S2 IOMMU
-> > > enabled.
-> > > Since in Trustzone based targets, the iommu SID configuration was done
-> by
-> > > TZ, there was nothing required to be done by driver.
-> > > But in non-TZ based targets, the IOMMU mappings need to be done by the
-> > > driver.
-> > > Since this is the mapping of the firmware memory and to keep it
-> different
-> > > from the driver memory access, a different device has been created for
-> > > firmware and these SIDs are configured.
-> > >
-> > 
-> > I see, I missed the fact that 0xc0:1 is used in the &wifi node itself.
-> > 
-> > So to confirm, we have streams 0xc0 and 0xc1 for data pipes and 0xc2 and
-> > 0xc3 for some form of firmware access? And in the normal Qualcomm design
-> > implementation the 0c2/0xc3 stream mapping is setup by TZ, and hidden
-> > from Linux using the SMMU virtualisation?
-> > 
-> > 
-> > Would have been nice to have some better mechanism for describing
-> > multi-connected hardware block, than to sprinkle dummy nodes all over
-> > the DT...
-> 
-> Yes, this is the firmware memory. This method is followed in the venus video
-> driver
-> https://patchwork.kernel.org/patch/11315765/
-> 
-> Do you suggest following some other mechanism ?
+> Hmm. OK. Can't figure it out. CONFIG_VDPA is set why isn't
+> drivers/virtio/vdpa/ built?
+> we have:
 > 
 
-After considering this some more, and having a quick chat with Arnd
-yesterday, I don't have any other suggestions.
+Ack.  Hopefully Yamada-san can tell us what is happening here.
 
-So I will pick up your v8.
+> 
+> obj-$(CONFIG_VDPA) += vdpa/
+> 
+> and under that:
+> 
+> obj-$(CONFIG_VDPA) += vdpa.o
+> 
+> 
+>> CONFIG_VDPA_MENU=y
+>> # CONFIG_VDPA_SIM is not set
+>> CONFIG_VHOST_IOTLB=y
+>> CONFIG_VHOST_RING=m
+>> CONFIG_VHOST=y
+>> CONFIG_VHOST_SCSI=m
+>> CONFIG_VHOST_VDPA=y
+>>
+>> Full randconfig file is attached.
+>>
+>> (This same build failure happens with today's linux-next, Mar. 31.)
+>>
+>> @Yamada-san:  Is this a kbuild problem (or feature)?
+>>
+>> -- 
+>> ~Randy
+>> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> 
 
-Thanks,
-Bjorn
+
+-- 
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
