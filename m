@@ -2,185 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B25199825
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 16:08:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C26A3199829
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 16:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731026AbgCaOIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 10:08:31 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:41646 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730919AbgCaOIb (ORCPT
+        id S1731097AbgCaOIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 10:08:37 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33660 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730913AbgCaOIb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 31 Mar 2020 10:08:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lnFeysFtcRPhC/sTyWfEszSCpKMDIewp19ccyBmKsdA=; b=RZOoQka7jEA84B6SJiEmjaPtj
-        D6aoIqSlNCoCKBfIuscCJZpPhpNmoQMrqTNzwDSqzSZIlAyC/sSHaCtU82LFQGLTi8Zfdw24PLXCU
-        YZpWF61vVHZ3gUq0Oik2MqZoPUUYPnmI8Gt81Sb5y02FwziyVxxdQ5+cGgL15hHVNhQVg7LaLKptx
-        g3UowzFw3YsBdyxGjPuHV4vi2CV10DhKr+t3dcLlacReivnjqyBxEGvfCb5Ba+2Nlh6LJSVuZMDM0
-        OO0QtZ+WBQJuI0ri804Yl4fnL3wF/SPi68gRtFrNQEp9OX+i1sNwRO/ecFs57DfOmUWJSTs5ZkXdu
-        PmCWH+o7Q==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:60398)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1jJHYy-0000Bx-Mp; Tue, 31 Mar 2020 15:08:20 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1jJHYp-0008Aa-Eb; Tue, 31 Mar 2020 15:08:11 +0100
-Date:   Tue, 31 Mar 2020 15:08:11 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        linux-imx@nxp.com, kernel@pengutronix.de,
-        David Jander <david@protonic.nl>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        mkl@pengutronix.de
-Subject: Re: [PATCH v2] ARM: imx: allow to disable board specific PHY fixups
-Message-ID: <20200331140811.GN25745@shell.armlinux.org.uk>
-References: <20200329110457.4113-1-o.rempel@pengutronix.de>
- <20200329150854.GA31812@lunn.ch>
- <20200330052611.2bgu7x4nmimf7pru@pengutronix.de>
- <40209d08-4acb-75c5-1766-6d39bb826ff9@gmail.com>
- <20200330174114.GG25745@shell.armlinux.org.uk>
- <20200331134520.GA5756@pengutronix.de>
+Received: by mail-lj1-f194.google.com with SMTP id f20so22151570ljm.0
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 07:08:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=UJGRK7ZFN5FitrI8qpwUlRmkPsdqmfO0vCxnUgHf9Us=;
+        b=gPh353fjdbNOkyslZbBShGuAS9zuf6RNoWCsVavFPeWRlLf5S8cyyvrx1Xoi8zPlUx
+         40vv3yF1wjVbfQtRZ4wRHXRcVwYjf7MPT64lB3c+cJsu94I936sH2EL4ZH0uZKmt7zze
+         nvXK1FdENxapTWOdk2AFet8Kl6ORumizHV/7jtTbQm8GvV11DSDWDzouKQNCdPqF2Tp/
+         KRU87KS3fP5KUcWU/BZIfUB9YzVp3DBCEdj4nvJ5wim3NQHhoxtFG26iTx7/9MmhCgwJ
+         HSZXBVMqNbM03iapi+UotJv3iqfz9Si0Yc8/0Gd30+1FidxTD03lySB0zVxfTuWOGaD2
+         hmBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UJGRK7ZFN5FitrI8qpwUlRmkPsdqmfO0vCxnUgHf9Us=;
+        b=VNbPL0dtsYyjh10V2vVPCvwFwvxwItL81+ZfJtSxYxrU6VI5fIERXDhW4zdMS9kikW
+         UjQCKSPmnT9qvG10P9Gda+x5jEF1D5Y2sLxg3hxA26zovgIabp5SGEVi+1sbQ+QmZfx2
+         GIaLgeiEzhh/10XqeK8rBZTTywMpDLsFjrTrEOzzB2JihfjvfjOBxP0j5Q8cmZJc5Ly+
+         Zp1FUDRnj7cndg17E1U9ADzLHFYgp78k8soPPVHsMdAmsfOHY6dZAdiadi23cL6COeUE
+         yZGpDA/U+PSaLVHwKrPBIkUHh3zvXupAXn6dWXigkIcg+tDyuxOS2btQb6Pcj36s8zX4
+         daOQ==
+X-Gm-Message-State: AGi0PuYhmzznOedmfalFWyP64PQA2DHnNkyziGybLYpXrdFJXzIE9+ap
+        nfJqZEgcxOYbIxqOl7fdS6+NoA==
+X-Google-Smtp-Source: APiQypK/nYk+A7I+aJ8g81/pNzv+sP+YhhxFRO8+TFMEwVlcvzLHQFxm8fY00+1+Jc62ylYGAyAUHw==
+X-Received: by 2002:a2e:9c9:: with SMTP id 192mr9383780ljj.77.1585663708494;
+        Tue, 31 Mar 2020 07:08:28 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id z1sm5509575lfe.49.2020.03.31.07.08.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 07:08:27 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 58368101F1E; Tue, 31 Mar 2020 17:08:28 +0300 (+03)
+Date:   Tue, 31 Mar 2020 17:08:28 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH 5/7] khugepaged: Allow to collapse PTE-mapped compound
+ pages
+Message-ID: <20200331140828.zv6ssffwys25d2t4@box>
+References: <20200327170601.18563-1-kirill.shutemov@linux.intel.com>
+ <20200327170601.18563-6-kirill.shutemov@linux.intel.com>
+ <D5721ED6-774B-4CD3-8533-4BF9BDB2401E@nvidia.com>
+ <20200328003920.xvkt3hp65uccsq7b@box>
+ <B8EBF52B-BC6A-4778-81AA-DDEFC9BF6157@nvidia.com>
+ <20200328123336.givyrh5hsscg5cpx@box>
+ <CAHbLzkqU1Aoo+SS3H=i6etT9Njfjk017M3vyCLeTptmGGFGRXw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200331134520.GA5756@pengutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHbLzkqU1Aoo+SS3H=i6etT9Njfjk017M3vyCLeTptmGGFGRXw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 03:45:20PM +0200, Oleksij Rempel wrote:
-> Hi Russell,
-> 
-> On Mon, Mar 30, 2020 at 06:41:14PM +0100, Russell King - ARM Linux admin wrote:
-> > On Mon, Mar 30, 2020 at 10:33:03AM -0700, Florian Fainelli wrote:
-> > > 
-> > > 
-> > > On 3/29/2020 10:26 PM, Oleksij Rempel wrote:
-> > > > Hi Andrew,
-> > > > 
-> > > > On Sun, Mar 29, 2020 at 05:08:54PM +0200, Andrew Lunn wrote:
-> > > >> On Sun, Mar 29, 2020 at 01:04:57PM +0200, Oleksij Rempel wrote:
+On Mon, Mar 30, 2020 at 11:50:41AM -0700, Yang Shi wrote:
+> On Sat, Mar 28, 2020 at 5:33 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> >
+> > On Fri, Mar 27, 2020 at 09:17:00PM -0400, Zi Yan wrote:
+> > > > The compound page may be locked here if the function called for the first
+> > > > time for the page and not locked after that (becouse we've unlocked it we
+> > > > saw it the first time). The same with LRU.
+> > > >
+> > >
+> > > For the first time, the compound page is locked and not on LRU, so this VM_BUG_ON passes.
+> > > For the second time and so on, the compound page is unlocked and on the LRU,
+> > > so this VM_BUG_ON still passes.
+> > >
+> > > For base page, VM_BUG_ON passes.
+> > >
+> > > Other unexpected situation (a compound page is locked and on LRU) triggers the VM_BU_ON,
+> > > but your VM_BUG_ON will not detect this situation, right?
+> >
+> > Right. I will rework this code. I've just realized it is racy: after
+> > unlock and putback on LRU the page can be locked by somebody else and this
+> > code can unlock it which completely borken.
+> >
+> > I'll pass down compound_pagelist to release_pte_pages() and handle the
+> > situation there.
+> >
+> > > >>>     if (likely(writable)) {
+> > > >>>             if (likely(referenced)) {
 > > > >>
-> > > >> Hi Oleksij
-> > > >>
-> > > >>> +config DEPRECATED_PHY_FIXUPS
-> > > >>> +	bool "Enable deprecated PHY fixups"
-> > > >>> +	default y
-> > > >>> +	---help---
-> > > >>> +	  In the early days it was common practice to configure PHYs by adding a
-> > > >>> +	  phy_register_fixup*() in the machine code. This practice turned out to
-> > > >>> +	  be potentially dangerous, because:
-> > > >>> +	  - it affects all PHYs in the system
-> > > >>> +	  - these register changes are usually not preserved during PHY reset
-> > > >>> +	    or suspend/resume cycle.
-> > > >>> +	  - it complicates debugging, since these configuration changes were not
-> > > >>> +	    done by the actual PHY driver.
-> > > >>> +	  This option allows to disable all fixups which are identified as
-> > > >>> +	  potentially harmful and give the developers a chance to implement the
-> > > >>> +	  proper configuration via the device tree (e.g.: phy-mode) and/or the
-> > > >>> +	  related PHY drivers.
-> > > >>
-> > > >> This appears to be an IMX only problem. Everybody else seems to of got
-> > > >> this right. There is no need to bother everybody with this new
-> > > >> option. Please put this in arch/arm/mach-mxs/Kconfig and have IMX in
-> > > >> the name.
-> > > > 
-> > > > Actually, all fixups seems to do wring thing:
-> > > > arch/arm/mach-davinci/board-dm644x-evm.c:915:		phy_register_fixup_for_uid(LXT971_PHY_ID, LXT971_PHY_MASK,
-> > > > 
-> > > > Increased MII drive strength. Should be probably enabled by the PHY
-> > > > driver.
-> > > > 
-> > > > arch/arm/mach-imx/mach-imx6q.c:167:		phy_register_fixup_for_uid(PHY_ID_KSZ9021, MICREL_PHY_ID_MASK,
-> > > > arch/arm/mach-imx/mach-imx6q.c:169:		phy_register_fixup_for_uid(PHY_ID_KSZ9031, MICREL_PHY_ID_MASK,
-> > > > arch/arm/mach-imx/mach-imx6q.c:171:		phy_register_fixup_for_uid(PHY_ID_AR8031, 0xffffffef,
-> > > > arch/arm/mach-imx/mach-imx6q.c:173:		phy_register_fixup_for_uid(PHY_ID_AR8035, 0xffffffef,
-> > 
-> > As far as I'm concerned, the AR8035 fixup is there with good reason.
-> > It's not just "random" but is required to make the AR8035 usable with
-> > the iMX6 SoCs.  Not because of a board level thing, but because it's
-> > required for the AR8035 to be usable with an iMX6 SoC.
-> > 
-> > So, having it registered by the iMX6 SoC code is entirely logical and
-> > correct.
-> > 
-> > That's likely true of the AR8031 situation as well.
-> > 
-> > I can't speak for any of the others.
+> > > >> Do we need a list here? There should be at most one compound page we will see here, right?
+> > > >
+> > > > Um? It's outside the pte loop. We get here once per PMD range.
+> > > >
+> > > > 'page' argument to trace_mm_collapse_huge_page_isolate() is misleading:
+> > > > it's just the last page handled in the loop.
+> > > >
+> > >
+> > > Throughout the pte loop, we should only see at most one compound page, right?
+> >
+> > No. mremap(2) opens a possibility for HPAGE_PMD_NR compound pages for
+> > single PMD range.
 > 
-> OK, let's analyze it step by step:
-> --------------------------------------------------------------------------------
-> arch/arm/mach-imx/mach-imx6q.c
-> 
-> The AR8035 fixup is doing following configurations:
-> - disable SmartEEE with following description:
->   /* Ar803x phy SmartEEE feature cause link status generates glitch,
->    * which cause ethernet link down/up issue, so disable SmartEEE
-> 
-> - enable clock output from PHY, configures it to 125Mhz and configures
->   clock skew. See the comment provided in the source code:
->   * Enable 125MHz clock from CLK_25M on the AR8031.  This
->   * is fed in to the IMX6 on the ENET_REF_CLK (V22) pad.
->   * Also, introduce a tx clock delay.
->   *
->   * This is the same as is the AR8031 fixup.
-> 
-> - powers on the PHY. Probably to make sure the clock output will run
->   before FEC is probed to avoid clock glitches.
-> 
-> The AR8031 fixup only enables clock output of PHY, configures it to
-> 125Mhz, and configures clock skew. The PHY not powered and although it
-> supports SmartEEE, it's not disabled. Let's assume the fixup author did
-> the correct configuration and SmartEEE is working without problems.
+> Do you mean every PTE in the PMD is mapped by a sub page from different THPs?
 
-I'm not arguing as a random third party.  I am the fixup author.
+Yes.
 
-SmartEEE on the Atheros PHYs is enabled by default in the hardware,
-and is a non-IEEE 802.3 approved hack to try to provide lower power
-utilisation.  However, it has been observed to cause ethernet
-corruption on SolidRun boards when connected to _some_ switches.
-It appears that the combination of Atheros SmartEEE and some switches
-introduces this problem.  This has been looked at by _three_ different
-people.
+Well, it was harder to archive than I expected, but below is a test case,
+I've come up with. It maps 512 head pages within single PMD range.
 
-The way SmartEEE works is very different from IEEE 802.3 EEE. The EEE
-is terminated at the PHY, and the Ethernet controller is supposed to
-know nothing about it.  If the link is in low power mode, then if the
-MAC wants to start transmitting, the PHY has to buffer the packet,
-wake the link up, and then pass the packet on.  There are configurable
-delays in the AR8035, and we've tried adjusting those with no success.
-
-This has nothing to do with anything at board level as far as anyone
-can work out.
-
-So, it seems entirely reasonable that the same problem would afflict
-other iMX6 designs using the AR8035.  Indeed, it already does - the
-SolidRun platforms have been through several different design
-iterations, including different board layouts, and they _all_ exhibit
-the same issue wrt SmartEEE using any of the iMX6 SoCs.
-
-There is no published information from the manufacturer that suggests
-that this is an Errata - if there were, then SolidRun being one of
-their customers would have had that information.
-
-Didn't bother to read the rest of the email, too long.
-
+diff --git a/tools/testing/selftests/vm/khugepaged.c b/tools/testing/selftests/vm/khugepaged.c
+index 3a98d5b2d6d8..9ae119234a39 100644
+--- a/tools/testing/selftests/vm/khugepaged.c
++++ b/tools/testing/selftests/vm/khugepaged.c
+@@ -703,6 +703,63 @@ static void collapse_full_of_compound(void)
+ 	munmap(p, hpage_pmd_size);
+ }
+ 
++static void collapse_compound_extreme(void)
++{
++	void *p;
++	int i;
++
++	p = alloc_mapping();
++	for (i = 0; i < hpage_pmd_nr; i++) {
++		printf("\rConstruct PTE page table full of different PTE-mapped compound pages %3d/%d...",
++				i + 1, hpage_pmd_nr);
++
++		madvise(BASE_ADDR, hpage_pmd_size, MADV_HUGEPAGE);
++		fill_memory(BASE_ADDR, 0, hpage_pmd_size);
++		if (!check_huge(BASE_ADDR)) {
++			printf("Failed to allocate huge page\n");
++			exit(EXIT_FAILURE);
++		}
++		madvise(BASE_ADDR, hpage_pmd_size, MADV_NOHUGEPAGE);
++
++		p = mremap(BASE_ADDR - i * page_size,
++				i * page_size + hpage_pmd_size,
++				(i + 1) * page_size,
++				MREMAP_MAYMOVE | MREMAP_FIXED,
++				BASE_ADDR + 2 * hpage_pmd_size);
++		if (p == MAP_FAILED) {
++			perror("mremap+unmap");
++			exit(EXIT_FAILURE);
++		}
++
++		p = mremap(BASE_ADDR + 2 * hpage_pmd_size,
++				(i + 1) * page_size,
++				(i + 1) * page_size + hpage_pmd_size,
++				MREMAP_MAYMOVE | MREMAP_FIXED,
++				BASE_ADDR - (i + 1) * page_size);
++		if (p == MAP_FAILED) {
++			perror("mremap+alloc");
++			exit(EXIT_FAILURE);
++		}
++	}
++
++	munmap(BASE_ADDR, hpage_pmd_size);
++	fill_memory(p, 0, hpage_pmd_size);
++	if (!check_huge(p))
++		success("OK");
++	else
++		fail("Fail");
++
++	if (wait_for_scan("Collapse PTE table full of different compound pages", p))
++		fail("Timeout");
++	else if (check_huge(p))
++		success("OK");
++	else
++		fail("Fail");
++
++	validate_memory(p, 0, hpage_pmd_size);
++	munmap(p, hpage_pmd_size);
++}
++
+ static void collapse_fork(void)
+ {
+ 	int wstatus;
+@@ -916,6 +973,7 @@ int main(void)
+ 	collapse_max_ptes_swap();
+ 	collapse_signle_pte_entry_compound();
+ 	collapse_full_of_compound();
++	collapse_compound_extreme();
+ 	collapse_fork();
+ 	collapse_fork_compound();
+ 	collapse_max_ptes_shared();
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
+ Kirill A. Shutemov
