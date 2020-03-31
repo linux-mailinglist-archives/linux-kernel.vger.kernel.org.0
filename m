@@ -2,96 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8FED198F79
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:03:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9063A198EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730629AbgCaJDm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:03:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730616AbgCaJDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:03:40 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730106AbgCaI5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 04:57:52 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:21336 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729624AbgCaI5w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 04:57:52 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585645071; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=8zUKrH2eIVqN6GKTdxqKOn/YdfA3gQCLto6btL9KOfk=; b=BV1hpcUSDkvzNSgl+uaW4ET8M+QDnKDh2zNwa6Hq/4M90pKrKtvoZxspjRywfCJwsoioN0B1
+ yq4F+0kzshQeE7xeCSR3k+yUFYwhNRcmArQvVKdEdi1QKDHZX3WJBQkFJEiAJpsjnk2Bka86
+ jXNGo+mPttAsBTYOc2o8g4SWveU=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e83060d.7fe39cd5b960-smtp-out-n03;
+ Tue, 31 Mar 2020 08:57:49 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D8A0AC4478F; Tue, 31 Mar 2020 08:57:49 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [192.168.43.137] (unknown [106.213.183.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28A6220787;
-        Tue, 31 Mar 2020 09:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645419;
-        bh=Zf31paX7k2ZkrtIcuW+qjbnpvFLPskIxAlURiEL6dX4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wgkYENoCXgtCMTaClTb9z/G6PHFkGIvhRSpJgoheJYb11J7vo64W1cYIZpi+2KzBy
-         rbSu4PDifiifQfyrDEUUwdKMiUD+p2QuaL/ZVL8y20Z5nCoT8tKrZ4l2SYeti0TcHe
-         uCoMCYuKAKt7wjId3hf4CXROwvoxozXfkMdVSSzE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
-        Arthur Kiyanovski <akiyano@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 047/170] net: ena: fix incorrect setting of the number of msix vectors
-Date:   Tue, 31 Mar 2020 10:57:41 +0200
-Message-Id: <20200331085429.420618706@linuxfoundation.org>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
-User-Agent: quilt/0.66
+        (Authenticated sender: mkshah)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 16C5DC433F2;
+        Tue, 31 Mar 2020 08:57:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16C5DC433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mkshah@codeaurora.org
+Subject: Re: [PATCH v14 6/6] soc: qcom: rpmh-rsc: Allow using free WAKE TCS
+ for active request
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org
+References: <1585244270-637-1-git-send-email-mkshah@codeaurora.org>
+ <1585244270-637-7-git-send-email-mkshah@codeaurora.org>
+ <CAD=FV=Vbo3JC6mBJXq+q+DQPC_bbNtn3bbScG5N8wzJZm87YuA@mail.gmail.com>
+ <8d19958d-7334-ca4e-d7ba-f5919a56b279@codeaurora.org>
+ <CAD=FV=UZTyfVN=a35hiXxdNSvdhfK60HewP_p_VvH1KdoUa1ww@mail.gmail.com>
+From:   Maulik Shah <mkshah@codeaurora.org>
+Message-ID: <65eb7236-0df0-8256-bfda-34d8d57b282d@codeaurora.org>
+Date:   Tue, 31 Mar 2020 14:27:41 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=UZTyfVN=a35hiXxdNSvdhfK60HewP_p_VvH1KdoUa1ww@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arthur Kiyanovski <akiyano@amazon.com>
+Hi,
 
-[ Upstream commit ce1f352162828ba07470328828a32f47aa759020 ]
+On 3/28/2020 12:12 AM, Doug Anderson wrote:
+> Hi,
+>
+> On Fri, Mar 27, 2020 at 5:04 AM Maulik Shah <mkshah@codeaurora.org> wrote:
+>>> Why can't rpmh_write()
+>>> / rpmh_write_async() / rpmh_write_batch() just always unconditionally
+>>> mark the cache dirty?  Are there really lots of cases when those calls
+>>> are made and they do nothing?
+>> At rpmh.c, it doesn't know that rpmh-rsc.c worked on borrowed TCS to finish the request.
+>>
+>> We should not blindly mark caches dirty everytime.
+> In message ID "5a5274ac-41f4-b06d-ff49-c00cef67aa7f@codeaurora.org"
+> which seems to be missing from the archives, you said:
+>
+>> yes we should trust callers not to send duplicate data
+> ...you can see some reference to it in my reply:
+>
+> https://lore.kernel.org/r/CAD=FV=VPSahhK71k_D+nfL1=5QE5sKMQT=6zzyEF7+JWMcTxsg@mail.gmail.com/
+>
+> If callers are trusted to never send duplicate data then ever call to
+> rpmh_write() will make a change.  ...and thus the cache should always
+> be marked dirty, no?  Also note that since rpmh_write() to "active"
+> also counts as a write to "wake" even those will dirty the cache.
+>
+> Which case are you expecting a rpmh_write() call to not dirty the cache?
+Ok, i will remove marking cache dirty here.
+>
+>
+>>> ...interestingly after your patch I guess now I guess tcs_invalidate()
+>>> no longer needs spinlocks since it's only ever called from PM code on
+>>> the last CPU.  ...if you agree, I can always do it in my cleanup
+>>> series.  See:
+>>>
+>>> https://lore.kernel.org/r/CAD=FV=Xp1o68HnC2-hMnffDDsi+jjgc9pNrdNuypjQZbS5K4nQ@mail.gmail.com
+>>>
+>>> -Doug
+>> There are other RSCs which use same driver, so lets keep spinlock.
+> It is really hard to try to write keeping in mind these "other RSCs"
+> for which there is no code upstream.  IMO we should write the code
+> keeping in mind what is supported upstream and then when those "other
+> RSCs" get added we can evaluate their needs.
 
-Overview:
-We don't frequently change the msix vectors throughout the life cycle of
-the driver. We do so in two functions: ena_probe() and ena_restore().
-ena_probe() is only called when the driver is loaded. ena_restore() on the
-other hand is called during device reset / resume operations.
+Agree but i would insist not remove locks in your cleanup/documentation 
+series which are already there.
 
-We use num_io_queues for calculating and allocating the number of msix
-vectors. At ena_probe() this value is equal to max_num_io_queues and thus
-this is not an issue, however ena_restore() might be called after the
-number of io queues has changed.
+These will be again need to be added.
 
-A possible bug scenario is as follows:
+The locks don't cause any issue being there since only last cpu is 
+invoking rpmh_flush() at present.
 
-* Change number of queues from 8 to 4.
-  (num_io_queues = 4, max_num_io_queues = 8, msix_vecs = 9,)
-* Trigger reset occurs -> ena_restore is called.
-  (num_io_queues = 4, max_num_io_queues =8 , msix_vecs = 5)
-* Change number of queues from 4 to 6.
-  (num_io_queues = 6, max_num_io_queues = 8, msix_vecs = 5)
-* The driver will reset due to failure of check_for_rx_interrupt_queue()
+Adding support for other RSCs is in my to do list, and when that is 
+being done we can re-evaluate and
 
-Fix:
-This can be easily fixed by always using max_num_io_queues to init the
-msix_vecs, since this number won't change as opposed to num_io_queues.
+remove if not required.
 
-Fixes: 4d19266022ec ("net: ena: multiple queue creation related cleanups")
-Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
-Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/amazon/ena/ena_netdev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Specifically when reasoning about rpmh.c and rpmh-rsc.c I can only
+> look at the code that's there now and decide whether it is race free
+> or there are races.  Back when I was analyzing the proposal to do
+> rpmh_flush() all the time (not from PM code) it felt like there were a
+> bunch of races, especially in the zero-active-TCS case.  Most of the
+> races go away when you assume that rpmh_flush() is only ever called
+> from the PM code when nobody could be in the middle of an active
+> transfer.
+>
+> If we are ever planning to call rpmh_flush() from another place we
+> need to re-look at all those races.
+Sure. we can re-look all cases.
+>
+>
+> -Doug
+Thanks,
+Maulik
 
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -1346,7 +1346,7 @@ static int ena_enable_msix(struct ena_ad
- 	}
- 
- 	/* Reserved the max msix vectors we might need */
--	msix_vecs = ENA_MAX_MSIX_VEC(adapter->num_io_queues);
-+	msix_vecs = ENA_MAX_MSIX_VEC(adapter->max_num_io_queues);
- 	netif_dbg(adapter, probe, adapter->netdev,
- 		  "trying to enable MSI-X, vectors %d\n", msix_vecs);
- 
-
-
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
