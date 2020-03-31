@@ -2,105 +2,271 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3DCD198FCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:07:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9149F1991D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731160AbgCaJGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:06:32 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:42494 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731138AbgCaJG3 (ORCPT
+        id S1730829AbgCaJJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:09:29 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38179 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730948AbgCaJJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:06:29 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585645589; h=In-Reply-To: Content-Type: MIME-Version:
- References: Message-ID: Subject: Cc: To: From: Date: Sender;
- bh=OlOD3aygKk+kpGLkhsVi4IEdqcNCdHsjR4aqyj00l7I=; b=Vfu1l62XiHHMnf2zhUicyFYNKe2IitASQGLGh3IrpE8wa5ySzNi31G6STNdsFZNbB+rby42U
- F/8dSaBAWa5oiKN5c8MntkHSUaj8gv+FMemVvvzW4lr4zmrnA5OP0VVIZfzOGLSTrlNMzQHd
- kPpimLBdRV7ECguN9hrVwoa4Cq8=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e830809.7f5a0b4511f0-smtp-out-n04;
- Tue, 31 Mar 2020 09:06:17 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 487DAC44792; Tue, 31 Mar 2020 09:06:17 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 52DABC433D2;
-        Tue, 31 Mar 2020 09:06:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 52DABC433D2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-Date:   Tue, 31 Mar 2020 14:36:08 +0530
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, stummala@codeaurora.org
-Subject: Re: [PATCH] f2fs: prevent meta updates while checkpoint is in
- progress
-Message-ID: <20200331090608.GZ20234@codeaurora.org>
-References: <1585219019-24831-1-git-send-email-stummala@codeaurora.org>
- <20200331035419.GB79749@google.com>
+        Tue, 31 Mar 2020 05:09:24 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f6so1689630wmj.3;
+        Tue, 31 Mar 2020 02:09:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=i22ZQA6yLmZMoZO/Ys64tPvaaV7DizoXI2gCdBKlzmw=;
+        b=VJQf9c9yp4DTJHeJnWmBct+Ii+sd87JXSUcDzExavZP19US/obSWJAde5NTQUyAUrN
+         a53aNKl0a8JOl5Mn6X6PtaW7G5/txWRli9dk9taOQgZ5AL2vt3KkSgwqsW3dCrXZAylY
+         FKAlKVnY4mYigkU4Q3S5r1YpeNpv4UMCJfYAAUfQ+FDJHWgOmiEtTIZxyjldK9LYXwn7
+         EHV0PLKKRU7bfkBjcQd8+CqRFFKl1ytuNWu7KqRDzOIMlB+EjiZocYs6X8/i0PZiFJX7
+         LxwZ9vruhgECADpLvr9/Y3BNHaEIs0jdi/rGiwh60bxVV2bh1lFaqboIUXeszI8s+mPM
+         mfng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=i22ZQA6yLmZMoZO/Ys64tPvaaV7DizoXI2gCdBKlzmw=;
+        b=PP+6WCWY2bShYcHf+30yfTXcB+bWT9u4jGQa1ZMir/QfoPXQpp+aEr51Gt7Mc5SNnb
+         +BL2F3wRIxqzrAEvXW7OlplTJBubrC9V3IygY76N2WRJ93ApeXdmrnhgyjVnyPAVs1TM
+         ricSD6aFQjr4Oe5LmgWcGolUsztkDZJ3dFhZ5i9ziprG0z+a8bxe2tFtt/Wg2zO/6/Md
+         QW4YPnLWi89zBpZ9p6LrdCqM23AB2qEay+50l6d6dA7bXnGQK1WmBcsJGzPjn2kZCOGl
+         i6bbflfnS5t4zrELZau9agbRu1A4fwQasToMP/VoYUsj2pIpdti0p3MwnUC6MlgXgfO2
+         5xRQ==
+X-Gm-Message-State: ANhLgQ1M0lLXlXH4MHxdXPos+CA/czJtcmtForje8jB0df1/gFLg1qbn
+        8kRd+tnyqqTi4e0qcb+Lbp0PSsBu
+X-Google-Smtp-Source: ADFU+vsH4BDnMYsXGWqcq35Ioc0BDHVoghojzyDrHUGfBAWWqXSVgd/W6BFq09yVFwhT/6I7e2CZEA==
+X-Received: by 2002:a1c:ba04:: with SMTP id k4mr2399511wmf.10.1585645761805;
+        Tue, 31 Mar 2020 02:09:21 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id f25sm3030600wml.11.2020.03.31.02.09.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 02:09:21 -0700 (PDT)
+Date:   Tue, 31 Mar 2020 11:09:19 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, kvm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 09/12] docs: fix broken references for ReST files that
+ moved around
+Message-ID: <20200331090919.GA18238@Red>
+References: <cover.1584450500.git.mchehab+huawei@kernel.org>
+ <6ea0adf72ae55935f3649f87e4b596830b616594.1584450500.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200331035419.GB79749@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <6ea0adf72ae55935f3649f87e4b596830b616594.1584450500.git.mchehab+huawei@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 08:54:19PM -0700, Jaegeuk Kim wrote:
-> On 03/26, Sahitya Tummala wrote:
-> > allocate_segment_for_resize() can cause metapage updates if
-> > it requires to change the current node/data segments for resizing.
-> > Stop these meta updates when there is a checkpoint already
-> > in progress to prevent inconsistent CP data.
+On Tue, Mar 17, 2020 at 02:10:48PM +0100, Mauro Carvalho Chehab wrote:
+> Some broken references happened due to shifting files around
+> and ReST renames. Those can't be auto-fixed by the script,
+> so let's fix them manually.
 > 
-> I'd prefer to use f2fs_lock_op() in bigger coverage.
-
-Do you mean to cover the entire free_segment_range() function within
-f2fs_lock_op()? Please clarify.
-
-Thanks,
-
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  Documentation/doc-guide/maintainer-profile.rst      | 2 +-
+>  Documentation/virt/kvm/mmu.rst                      | 2 +-
+>  Documentation/virt/kvm/review-checklist.rst         | 2 +-
+>  arch/x86/kvm/mmu/mmu.c                              | 2 +-
+>  drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 2 +-
+>  drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c   | 2 +-
+>  drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c | 2 +-
+>  drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c   | 2 +-
+>  drivers/media/v4l2-core/v4l2-fwnode.c               | 2 +-
+>  include/uapi/linux/kvm.h                            | 4 ++--
+>  tools/include/uapi/linux/kvm.h                      | 4 ++--
+>  11 files changed, 13 insertions(+), 13 deletions(-)
 > 
-> > 
-> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> > ---
-> >  fs/f2fs/gc.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > index 5bca560..6122bad 100644
-> > --- a/fs/f2fs/gc.c
-> > +++ b/fs/f2fs/gc.c
-> > @@ -1399,8 +1399,10 @@ static int free_segment_range(struct f2fs_sb_info *sbi, unsigned int start,
-> >  	int err = 0;
-> >  
-> >  	/* Move out cursegs from the target range */
-> > +	f2fs_lock_op(sbi);
-> >  	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_TYPE; type++)
-> >  		allocate_segment_for_resize(sbi, type, start, end);
-> > +	f2fs_unlock_op(sbi);
-> >  
-> >  	/* do GC to move out valid blocks in the range */
-> >  	for (segno = start; segno <= end; segno += sbi->segs_per_sec) {
-> > -- 
-> > Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> diff --git a/Documentation/doc-guide/maintainer-profile.rst b/Documentation/doc-guide/maintainer-profile.rst
+> index 5afc0ddba40a..755d39f0d407 100644
+> --- a/Documentation/doc-guide/maintainer-profile.rst
+> +++ b/Documentation/doc-guide/maintainer-profile.rst
+> @@ -6,7 +6,7 @@ Documentation subsystem maintainer entry profile
+>  The documentation "subsystem" is the central coordinating point for the
+>  kernel's documentation and associated infrastructure.  It covers the
+>  hierarchy under Documentation/ (with the exception of
+> -Documentation/device-tree), various utilities under scripts/ and, at least
+> +Documentation/devicetree), various utilities under scripts/ and, at least
+>  some of the time, LICENSES/.
+>  
+>  It's worth noting, though, that the boundaries of this subsystem are rather
+> diff --git a/Documentation/virt/kvm/mmu.rst b/Documentation/virt/kvm/mmu.rst
+> index 60981887d20b..46126ecc70f7 100644
+> --- a/Documentation/virt/kvm/mmu.rst
+> +++ b/Documentation/virt/kvm/mmu.rst
+> @@ -319,7 +319,7 @@ Handling a page fault is performed as follows:
+>  
+>   - If both P bit and R/W bit of error code are set, this could possibly
+>     be handled as a "fast page fault" (fixed without taking the MMU lock).  See
+> -   the description in Documentation/virt/kvm/locking.txt.
+> +   the description in Documentation/virt/kvm/locking.rst.
+>  
+>   - if needed, walk the guest page tables to determine the guest translation
+>     (gva->gpa or ngpa->gpa)
+> diff --git a/Documentation/virt/kvm/review-checklist.rst b/Documentation/virt/kvm/review-checklist.rst
+> index 1f86a9d3f705..dc01aea4057b 100644
+> --- a/Documentation/virt/kvm/review-checklist.rst
+> +++ b/Documentation/virt/kvm/review-checklist.rst
+> @@ -10,7 +10,7 @@ Review checklist for kvm patches
+>  2.  Patches should be against kvm.git master branch.
+>  
+>  3.  If the patch introduces or modifies a new userspace API:
+> -    - the API must be documented in Documentation/virt/kvm/api.txt
+> +    - the API must be documented in Documentation/virt/kvm/api.rst
+>      - the API must be discoverable using KVM_CHECK_EXTENSION
+>  
+>  4.  New state must include support for save/restore.
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 560e85ebdf22..2bd9f35e9e91 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -3586,7 +3586,7 @@ static bool fast_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+>  		/*
+>  		 * Currently, fast page fault only works for direct mapping
+>  		 * since the gfn is not stable for indirect shadow page. See
+> -		 * Documentation/virt/kvm/locking.txt to get more detail.
+> +		 * Documentation/virt/kvm/locking.rst to get more detail.
+>  		 */
+>  		fault_handled = fast_pf_fix_direct_spte(vcpu, sp,
+>  							iterator.sptep, spte,
+> diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+> index a5fd8975f3d3..a6abb701bfc6 100644
+> --- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+> +++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+> @@ -8,7 +8,7 @@
+>   * This file add support for AES cipher with 128,192,256 bits keysize in
+>   * CBC and ECB mode.
+>   *
+> - * You could find a link for the datasheet in Documentation/arm/sunxi/README
+> + * You could find a link for the datasheet in Documentation/arm/sunxi.rst
+>   */
+>  
+>  #include <linux/crypto.h>
+> diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+> index 3e4e4bbda34c..b957061424a1 100644
+> --- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+> +++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+> @@ -7,7 +7,7 @@
+>   *
+>   * Core file which registers crypto algorithms supported by the CryptoEngine.
+>   *
+> - * You could find a link for the datasheet in Documentation/arm/sunxi/README
+> + * You could find a link for the datasheet in Documentation/arm/sunxi.rst
+>   */
+>  #include <linux/clk.h>
+>  #include <linux/crypto.h>
+> diff --git a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c
+> index 84d52fc3a2da..c89cb2ee2496 100644
+> --- a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c
+> +++ b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-cipher.c
+> @@ -8,7 +8,7 @@
+>   * This file add support for AES cipher with 128,192,256 bits keysize in
+>   * CBC and ECB mode.
+>   *
+> - * You could find a link for the datasheet in Documentation/arm/sunxi/README
+> + * You could find a link for the datasheet in Documentation/arm/sunxi.rst
+>   */
+>  
+>  #include <linux/crypto.h>
+> diff --git a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+> index 6b301afffd11..8ba4f9c81dac 100644
+> --- a/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+> +++ b/drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c
+> @@ -7,7 +7,7 @@
+>   *
+>   * Core file which registers crypto algorithms supported by the SecuritySystem
+>   *
+> - * You could find a link for the datasheet in Documentation/arm/sunxi/README
+> + * You could find a link for the datasheet in Documentation/arm/sunxi.rst
+>   */
+>  #include <linux/clk.h>
+>  #include <linux/crypto.h>
+> diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+> index 97f0f8b23b5d..8a1e1b95b379 100644
+> --- a/drivers/media/v4l2-core/v4l2-fwnode.c
+> +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+> @@ -980,7 +980,7 @@ static int v4l2_fwnode_reference_parse(struct device *dev,
+>   *
+>   * THIS EXAMPLE EXISTS MERELY TO DOCUMENT THIS FUNCTION. DO NOT USE IT AS A
+>   * REFERENCE IN HOW ACPI TABLES SHOULD BE WRITTEN!! See documentation under
+> - * Documentation/acpi/dsd instead and especially graph.txt,
+> + * Documentation/firmware-guide/acpi/dsd/ instead and especially graph.txt,
+>   * data-node-references.txt and leds.txt .
+>   *
+>   *	Scope (\_SB.PCI0.I2C2)
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 5e6234cb25a6..704bd4cd3689 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -116,7 +116,7 @@ struct kvm_irq_level {
+>  	 * ACPI gsi notion of irq.
+>  	 * For IA-64 (APIC model) IOAPIC0: irq 0-23; IOAPIC1: irq 24-47..
+>  	 * For X86 (standard AT mode) PIC0/1: irq 0-15. IOAPIC0: 0-23..
+> -	 * For ARM: See Documentation/virt/kvm/api.txt
+> +	 * For ARM: See Documentation/virt/kvm/api.rst
+>  	 */
+>  	union {
+>  		__u32 irq;
+> @@ -1106,7 +1106,7 @@ struct kvm_xen_hvm_config {
+>   *
+>   * KVM_IRQFD_FLAG_RESAMPLE indicates resamplefd is valid and specifies
+>   * the irqfd to operate in resampling mode for level triggered interrupt
+> - * emulation.  See Documentation/virt/kvm/api.txt.
+> + * emulation.  See Documentation/virt/kvm/api.rst.
+>   */
+>  #define KVM_IRQFD_FLAG_RESAMPLE (1 << 1)
+>  
+> diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
+> index 4b95f9a31a2f..e5f32fcec68f 100644
+> --- a/tools/include/uapi/linux/kvm.h
+> +++ b/tools/include/uapi/linux/kvm.h
+> @@ -116,7 +116,7 @@ struct kvm_irq_level {
+>  	 * ACPI gsi notion of irq.
+>  	 * For IA-64 (APIC model) IOAPIC0: irq 0-23; IOAPIC1: irq 24-47..
+>  	 * For X86 (standard AT mode) PIC0/1: irq 0-15. IOAPIC0: 0-23..
+> -	 * For ARM: See Documentation/virt/kvm/api.txt
+> +	 * For ARM: See Documentation/virt/kvm/api.rst
+>  	 */
+>  	union {
+>  		__u32 irq;
+> @@ -1100,7 +1100,7 @@ struct kvm_xen_hvm_config {
+>   *
+>   * KVM_IRQFD_FLAG_RESAMPLE indicates resamplefd is valid and specifies
+>   * the irqfd to operate in resampling mode for level triggered interrupt
+> - * emulation.  See Documentation/virt/kvm/api.txt.
+> + * emulation.  See Documentation/virt/kvm/api.rst.
+>   */
+>  #define KVM_IRQFD_FLAG_RESAMPLE (1 << 1)
+>  
+> -- 
+> 2.24.1
+> 
 
--- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+Hello
+
+for sun8i-ss and sun8i-ce:
+Acked-by: Corentin LABBE <clabbe.montjoie@gmail.com>
+
+Thanks
