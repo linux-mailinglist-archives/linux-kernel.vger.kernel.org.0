@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EC0D1991F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:22:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E034B1990DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:15:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730830AbgCaJHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:07:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48546 "EHLO mail.kernel.org"
+        id S1731871AbgCaJO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:14:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730666AbgCaJG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:06:56 -0400
+        id S1731864AbgCaJOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:14:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACC3120675;
-        Tue, 31 Mar 2020 09:06:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3487121473;
+        Tue, 31 Mar 2020 09:14:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645616;
-        bh=8kvesJQdmcKceXcBaFDnyhVeYcYpRlzrJivzrwLtwbE=;
+        s=default; t=1585646094;
+        bh=thWdoLTQq2MkWCR3icR/UgA6IqKkV55aau8BBzxPWb0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZEJYZpgZ+s+AhTDmfI7TZqARLQxxPwZ94nAcuETfBOXT2W747oUEBWUWejkyZo19A
-         /ZF4Bw2A9CLKMJbnnWyyLAxq2ZdUIHeaKnRMnV6LRwaqPKGHW1VUK1DR2VNSuTKbLF
-         TaOom/poV09h5UXt/byM9pmmZddPRtrKehfknaDg=
+        b=Jo2xo9YAV5QqMyQC/LKsfna6o1ob9gYQQY0u1EJRWX9lP0qKJs96Ebh8BI8YmhPU4
+         oUnLZseVDuvsb5WOzB6jQXAuJdclSUKBVkUmp29tvt/HrJbHUqIsIKh7ZU85GWe/KG
+         fmmKbplHht1hbnP1RzQ4w6l872A6m0DCnob4X1MU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bryan Gurney <bgurney@redhat.com>,
-        Bernhard Sulzer <micraft.b@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.5 107/170] scsi: sd: Fix optimal I/O size for devices that change reported values
-Date:   Tue, 31 Mar 2020 10:58:41 +0200
-Message-Id: <20200331085435.564769671@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        syzbot+ab4dae63f7d310641ded@syzkaller.appspotmail.com,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.4 082/155] RDMA/core: Fix missing error check on dev_set_name()
+Date:   Tue, 31 Mar 2020 10:58:42 +0200
+Message-Id: <20200331085427.499207575@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
+References: <20200331085418.274292403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +44,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin K. Petersen <martin.petersen@oracle.com>
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-commit ea697a8bf5a4161e59806fab14f6e4a46dc7dcb0 upstream.
+commit f2f2b3bbf0d9f8d090b9a019679223b2bd1c66c4 upstream.
 
-Some USB bridge devices will return a default set of characteristics during
-initialization. And then, once an attached drive has spun up, substitute
-the actual parameters reported by the drive. According to the SCSI spec,
-the device should return a UNIT ATTENTION in case any reported parameters
-change. But in this case the change is made silently after a small window
-where default values are reported.
+If name memory allocation fails the name will be left empty and
+device_add_one() will crash:
 
-Commit a83da8a4509d ("scsi: sd: Optimal I/O size should be a multiple of
-physical block size") validated the reported optimal I/O size against the
-physical block size to overcome problems with devices reporting nonsensical
-transfer sizes. However, this validation did not account for the fact that
-aforementioned devices will return default values during a brief window
-during spin-up. The subsequent change in reported characteristics would
-invalidate the checking that had previously been performed.
+  kobject: (0000000004952746): attempted to be registered with empty name!
+  WARNING: CPU: 0 PID: 329 at lib/kobject.c:234 kobject_add_internal+0x7ac/0x9a0 lib/kobject.c:234
+  Kernel panic - not syncing: panic_on_warn set ...
+  CPU: 0 PID: 329 Comm: syz-executor.5 Not tainted 5.6.0-rc2-syzkaller #0
+  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+  Call Trace:
+   __dump_stack lib/dump_stack.c:77 [inline]
+   dump_stack+0x197/0x210 lib/dump_stack.c:118
+   panic+0x2e3/0x75c kernel/panic.c:221
+   __warn.cold+0x2f/0x3e kernel/panic.c:582
+   report_bug+0x289/0x300 lib/bug.c:195
+   fixup_bug arch/x86/kernel/traps.c:174 [inline]
+   fixup_bug arch/x86/kernel/traps.c:169 [inline]
+   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
+   do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
+   invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+  RIP: 0010:kobject_add_internal+0x7ac/0x9a0 lib/kobject.c:234
+  Code: 1a 98 ca f9 e9 f0 f8 ff ff 4c 89 f7 e8 6d 98 ca f9 e9 95 f9 ff ff e8 c3 f0 8b f9 4c 89 e6 48 c7 c7 a0 0e 1a 89 e8 e3 41 5c f9 <0f> 0b 41 bd ea ff ff ff e9 52 ff ff ff e8 a2 f0 8b f9 0f 0b e8 9b
+  RSP: 0018:ffffc90005b27908 EFLAGS: 00010286
+  RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+  RDX: 0000000000040000 RSI: ffffffff815eae46 RDI: fffff52000b64f13
+  RBP: ffffc90005b27960 R08: ffff88805aeba480 R09: ffffed1015d06659
+  R10: ffffed1015d06658 R11: ffff8880ae8332c7 R12: ffff8880a37fd000
+  R13: 0000000000000000 R14: ffff888096691780 R15: 0000000000000001
+   kobject_add_varg lib/kobject.c:390 [inline]
+   kobject_add+0x150/0x1c0 lib/kobject.c:442
+   device_add+0x3be/0x1d00 drivers/base/core.c:2412
+   add_one_compat_dev drivers/infiniband/core/device.c:901 [inline]
+   add_one_compat_dev+0x46a/0x7e0 drivers/infiniband/core/device.c:857
+   rdma_dev_init_net+0x2eb/0x490 drivers/infiniband/core/device.c:1120
+   ops_init+0xb3/0x420 net/core/net_namespace.c:137
+   setup_net+0x2d5/0x8b0 net/core/net_namespace.c:327
+   copy_net_ns+0x29e/0x5a0 net/core/net_namespace.c:468
+   create_new_namespaces+0x403/0xb50 kernel/nsproxy.c:108
+   unshare_nsproxy_namespaces+0xc2/0x200 kernel/nsproxy.c:229
+   ksys_unshare+0x444/0x980 kernel/fork.c:2955
+   __do_sys_unshare kernel/fork.c:3023 [inline]
+   __se_sys_unshare kernel/fork.c:3021 [inline]
+   __x64_sys_unshare+0x31/0x40 kernel/fork.c:3021
+   do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Unset a previously configured optimal I/O size should the sanity checking
-fail on subsequent revalidate attempts.
-
-Link: https://lore.kernel.org/r/33fb522e-4f61-1b76-914f-c9e6a3553c9b@gmail.com
-Cc: Bryan Gurney <bgurney@redhat.com>
-Cc: <stable@vger.kernel.org>
-Reported-by: Bernhard Sulzer <micraft.b@gmail.com>
-Tested-by: Bernhard Sulzer <micraft.b@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Link: https://lore.kernel.org/r/20200309193200.GA10633@ziepe.ca
+Cc: stable@kernel.org
+Fixes: 4e0f7b907072 ("RDMA/core: Implement compat device/sysfs tree in net namespace")
+Reported-by: syzbot+ab4dae63f7d310641ded@syzkaller.appspotmail.com
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sd.c |    4 +++-
+ drivers/infiniband/core/device.c |    4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -3181,9 +3181,11 @@ static int sd_revalidate_disk(struct gen
- 	if (sd_validate_opt_xfer_size(sdkp, dev_max)) {
- 		q->limits.io_opt = logical_to_bytes(sdp, sdkp->opt_xfer_blocks);
- 		rw_max = logical_to_sectors(sdp, sdkp->opt_xfer_blocks);
--	} else
-+	} else {
-+		q->limits.io_opt = 0;
- 		rw_max = min_not_zero(logical_to_sectors(sdp, dev_max),
- 				      (sector_t)BLK_DEF_MAX_SECTORS);
-+	}
+--- a/drivers/infiniband/core/device.c
++++ b/drivers/infiniband/core/device.c
+@@ -899,7 +899,9 @@ static int add_one_compat_dev(struct ib_
+ 	cdev->dev.parent = device->dev.parent;
+ 	rdma_init_coredev(cdev, device, read_pnet(&rnet->net));
+ 	cdev->dev.release = compatdev_release;
+-	dev_set_name(&cdev->dev, "%s", dev_name(&device->dev));
++	ret = dev_set_name(&cdev->dev, "%s", dev_name(&device->dev));
++	if (ret)
++		goto add_err;
  
- 	/* Do not exceed controller limit */
- 	rw_max = min(rw_max, queue_max_hw_sectors(q));
+ 	ret = device_add(&cdev->dev);
+ 	if (ret)
 
 
