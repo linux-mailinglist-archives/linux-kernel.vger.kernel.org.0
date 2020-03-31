@@ -2,147 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 291561997E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED4C81997EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:54:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731164AbgCaNwi convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 09:52:38 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:55768 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731119AbgCaNwg (ORCPT
+        id S1731021AbgCaNyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 09:54:02 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46307 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730216AbgCaNyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 09:52:36 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-137-Pg8SJePXOGqrq2w1q_kw9A-1; Tue, 31 Mar 2020 14:52:32 +0100
-X-MC-Unique: Pg8SJePXOGqrq2w1q_kw9A-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 31 Mar 2020 14:52:32 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 31 Mar 2020 14:52:32 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 01/12] mm:process_vm_access Call import_iovec() instead of
- rw_copy_check_uvector()
-Thread-Topic: [RFC PATCH 01/12] mm:process_vm_access Call import_iovec()
- instead of rw_copy_check_uvector()
-Thread-Index: AdYHYRHRKyZYcrMpTcG/7dmy3RJd8w==
-Date:   Tue, 31 Mar 2020 13:52:31 +0000
-Message-ID: <31be238f1c7542ad8e70ecd45d0e9763@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 31 Mar 2020 09:54:02 -0400
+Received: by mail-pl1-f193.google.com with SMTP id s23so8132796plq.13;
+        Tue, 31 Mar 2020 06:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eh6HoD2WSOyoYld2ZBtCaKD/ZdY+NnuzhftXLHQtZcw=;
+        b=Dgw72UMDYMek1J2mctOS59XCDcB+nQhKYfiTsgobYLQQ/vLuKHZCFx0RPHCeMNyGbS
+         Fi9isGEufr3h4mqnpBvzdn85v8BiVplFmzR5ZZcaj/wCP7Mfz2rzyWM6EF8hRUAii4Up
+         y10n0nsI2JxhTh1CHtzZJ1lSTO4m9dX4FmyMqRfcZhqEJ+g2D2ELqMcwuuM+TAkrHO3A
+         rwTi8VI6ODuCooHh5/C/tD9lNjEhUi2CaJKckqPOHtppSHh5u0iBrJ95thbEnn752HvZ
+         EMq/d95XbBuGOuvENOO8q/iGoAhUQrvVcJaFnWgMqAbJ0lHgjZyYhnMABjdbMhdd/bd6
+         /pdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eh6HoD2WSOyoYld2ZBtCaKD/ZdY+NnuzhftXLHQtZcw=;
+        b=cOp2W9tB+q1XZoUG8VlqgIu7StDXokxx8kW7WrLBwMBKjKXv+4PuJdwL4ETlz7mn11
+         oMBNqq24cZHRQSv0Q+qccirGtI/A8na10qHZXAskdBeAa0ou8aaeLjNEVUA7IzobXTjh
+         jpwjzsTIprAuaIHUfTJwi3+p5bpflmfOA17eQjC2ITURTpP9j1SuRtFy/WypWZ/ystfw
+         1yPeV/msqspKRUF15NqzjID3mNfJCku+PsssHK+jrvlvTUTy6ntS5hmX/XCjYz9ROmL5
+         UKXk9CefS4EyMnN70lCsfxSQ1GwO/MHIDQaSeNfvcNitwLQL5m6T7mSDfqf3flaEtg4o
+         W6aA==
+X-Gm-Message-State: AGi0PuaU4DCtiyMiBAP8Ogaj10ghiVxaT6pHEvzgwc4naY/wlMFsXHhD
+        +qm7Cd/8yF+HHj4N5aQOi/zSygzTbqmVaSamWRk=
+X-Google-Smtp-Source: APiQypLYRrzWxZrlbpaHLCWWd1ElKKp5WQ8rvraTOsv33YWtdO90qCriipsZO40uAtIGauLg9nTUCvQqCtacCa2Id2s=
+X-Received: by 2002:a17:902:5acb:: with SMTP id g11mr4436095plm.18.1585662841043;
+ Tue, 31 Mar 2020 06:54:01 -0700 (PDT)
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20200313110350.10864-1-robert.foss@linaro.org>
+ <20200313110350.10864-3-robert.foss@linaro.org> <CAOMZO5D9bmXt9_qGTXw+qUG6JDHfuNtx++fJPJtn+mj1Dzsbag@mail.gmail.com>
+ <CAG3jFystdBKnosNQ0LeWQfHEtMgU4iGSr_XuS2XU3-902c31nQ@mail.gmail.com> <CAOMZO5DHBCJbfS2Lt7R-3J_TUJi1is2Xn6n5iZkRwvmn5i6Dmg@mail.gmail.com>
+In-Reply-To: <CAOMZO5DHBCJbfS2Lt7R-3J_TUJi1is2Xn6n5iZkRwvmn5i6Dmg@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 31 Mar 2020 16:53:53 +0300
+Message-ID: <CAHp75VfGx0psWk-4Dc-E=HL9Gz_Cz3T46L_nsqrehVLQgkqViA@mail.gmail.com>
+Subject: Re: [v2 2/3] media: ov8856: Add devicetree support
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Robert Foss <robert.foss@linaro.org>,
+        Dongchun Zhu <dongchun.zhu@mediatek.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Tomasz Figa <tfiga@chromium.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the only direct call of rw_copy_check_uvector().
-Removing it lets rw_copy_check_uvector() be inlined into
-import_iovec() and the horrig calling conventions fixed.
+On Tue, Mar 31, 2020 at 4:43 PM Fabio Estevam <festevam@gmail.com> wrote:
+> On Tue, Mar 31, 2020 at 10:37 AM Robert Foss <robert.foss@linaro.org> wrote:
+>
+> > After testing this change, it breaks the driver during probing.
+>
+> Why exactly does it break probing? Maybe the GPIO polarity defined in
+> the device tree is wrong?
+>
+> > I had a quick look into GPIOD_OUT_HIGH & LOW definitions, and they
+> > seem to never be 0 or 1.
+>
+> If you do a grep in all gpiod_set_value_cansleep() usages in the
+> kernel tree, there is not a single case where  GPIOD_OUT_HIGH or
+> GPIOD_OUT_LOW is passed as argument of gpiod_set_value_cansleep().
 
-Signed-off-by: David Laight <david.laight@aculab.com>
----
- mm/process_vm_access.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
++1. It simple reveals the problem that is somewhere else.
 
-diff --git a/mm/process_vm_access.c b/mm/process_vm_access.c
-index de41e83..2829e26 100644
---- a/mm/process_vm_access.c
-+++ b/mm/process_vm_access.c
-@@ -264,7 +264,7 @@ static ssize_t process_vm_rw(pid_t pid,
- 	struct iovec iovstack_r[UIO_FASTIOV];
- 	struct iovec *iov_l = iovstack_l;
- 	struct iovec *iov_r = iovstack_r;
--	struct iov_iter iter;
-+	struct iov_iter iter_l, iter_r;
- 	ssize_t rc;
- 	int dir = vm_write ? WRITE : READ;
- 
-@@ -272,23 +272,24 @@ static ssize_t process_vm_rw(pid_t pid,
- 		return -EINVAL;
- 
- 	/* Check iovecs */
--	rc = import_iovec(dir, lvec, liovcnt, UIO_FASTIOV, &iov_l, &iter);
-+	rc = import_iovec(dir, lvec, liovcnt, UIO_FASTIOV, &iov_l, &iter_l);
- 	if (rc < 0)
- 		return rc;
--	if (!iov_iter_count(&iter))
-+	if (!iov_iter_count(&iter_l))
- 		goto free_iovecs;
- 
--	rc = rw_copy_check_uvector(CHECK_IOVEC_ONLY, rvec, riovcnt, UIO_FASTIOV,
--				   iovstack_r, &iov_r);
-+	rc = import_iovec(CHECK_IOVEC_ONLY, rvec, riovcnt, UIO_FASTIOV, &iov_r, &iter_r);
- 	if (rc <= 0)
- 		goto free_iovecs;
- 
--	rc = process_vm_rw_core(pid, &iter, iov_r, riovcnt, flags, vm_write);
-+	rc = process_vm_rw_core(pid, &iter_l, iter_r.iov, iter_r.nr_segs,
-+				flags, vm_write);
- 
- free_iovecs:
- 	if (iov_r != iovstack_r)
- 		kfree(iov_r);
--	kfree(iov_l);
-+	if (iov_l != iovstack_l)
-+		kfree(iov_l);
- 
- 	return rc;
- }
-@@ -322,30 +323,30 @@ static ssize_t process_vm_rw(pid_t pid,
- 	struct iovec iovstack_r[UIO_FASTIOV];
- 	struct iovec *iov_l = iovstack_l;
- 	struct iovec *iov_r = iovstack_r;
--	struct iov_iter iter;
-+	struct iov_iter iter_l, iter_r;
- 	ssize_t rc = -EFAULT;
- 	int dir = vm_write ? WRITE : READ;
- 
- 	if (flags != 0)
- 		return -EINVAL;
- 
--	rc = compat_import_iovec(dir, lvec, liovcnt, UIO_FASTIOV, &iov_l, &iter);
-+	rc = compat_import_iovec(dir, lvec, liovcnt, UIO_FASTIOV, &iov_l, &iter_l);
- 	if (rc < 0)
- 		return rc;
--	if (!iov_iter_count(&iter))
-+	if (!iov_iter_count(&iter_l))
- 		goto free_iovecs;
--	rc = compat_rw_copy_check_uvector(CHECK_IOVEC_ONLY, rvec, riovcnt,
--					  UIO_FASTIOV, iovstack_r,
--					  &iov_r);
-+	rc = compat_import_iovec(0, rvec, riovcnt, UIO_FASTIOV, &iov_r, &iter_r);
- 	if (rc <= 0)
- 		goto free_iovecs;
- 
--	rc = process_vm_rw_core(pid, &iter, iov_r, riovcnt, flags, vm_write);
-+	rc = process_vm_rw_core(pid, &iter_l, iter_r.iov, iter_r.nr_segs,
-+				flags, vm_write);
- 
- free_iovecs:
- 	if (iov_r != iovstack_r)
- 		kfree(iov_r);
--	kfree(iov_l);
-+	if (iov_l != iovstack_l)
-+		kfree(iov_l);
- 	return rc;
- }
- 
 -- 
-1.8.1.2
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+With Best Regards,
+Andy Shevchenko
