@@ -2,125 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B251198AD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 06:05:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BD1C198ADF
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 06:07:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbgCaEFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 00:05:55 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:39366 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbgCaEFz (ORCPT
+        id S1726543AbgCaEHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 00:07:54 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:51617 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725792AbgCaEHv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 00:05:55 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 614BC29497A
-Message-ID: <246bf7c71620021258355c2fc32dd38ac6b0cc45.camel@collabora.com>
-Subject: Re: [PATCH v5 4/5] drm: imx: Add i.MX 6 MIPI DSI host platform
- driver
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Sjoerd Simons <sjoerd.simons@collabora.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        linux-rockchip@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>, kernel@collabora.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        Tue, 31 Mar 2020 00:07:51 -0400
+X-UUID: 431f3b00fa2444e887b8bc81a5a01dbd-20200331
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=6cH/NQKcPKqnVf6a6IZggs62m/KD6ANc8osyacauays=;
+        b=MLrdhomltPL1bVKFbGkqFF3CNzF9snFr56BNXlWwatKHSyEHJ1RtGoleqx3wrWhXu7IS9O3iAEJeW958rUrPPwjWBhDMHujxm/vXK5GWBKZfBdxg/mSeLDUQBQVNj1+6BKCa4jTxAOJu9FLnLP9G9F8qM+qtZksZLgeCYzzoy9o=;
+X-UUID: 431f3b00fa2444e887b8bc81a5a01dbd-20200331
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <hsin-hsiung.wang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 685286035; Tue, 31 Mar 2020 12:07:47 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 31 Mar 2020 12:07:34 +0800
+Received: from mtksdaap41.mediatek.inc (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 31 Mar 2020 12:07:39 +0800
+From:   Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     Nicolas Boichat <drinkcat@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Josef Friedl <josef.friedl@speed.at>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        Ran Bi <ran.bi@mediatek.com>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 31 Mar 2020 01:05:39 -0300
-In-Reply-To: <877dz134xf.fsf@collabora.com>
-References: <20200330113542.181752-1-adrian.ratiu@collabora.com>
-         <20200330113542.181752-5-adrian.ratiu@collabora.com>
-         <CAOMZO5CEZSBfhb9xAdf=sDhUnmSeuWSsnUQArz=a1TPzytLAeQ@mail.gmail.com>
-         <4a9d2d6e5cecbe296c14119d27a8793a7dbed7b2.camel@collabora.com>
-         <877dz134xf.fsf@collabora.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.0-1 
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-rtc@vger.kernel.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH v11 0/5] Add Support for MediaTek PMIC MT6358
+Date:   Tue, 31 Mar 2020 12:07:32 +0800
+Message-ID: <1585627657-3265-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+X-Mailer: git-send-email 2.6.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 9478A9E60E7CEAB7CD3D185E20460CD264C9B82EE337357E728FF91007D8EDDE2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-03-31 at 00:31 +0300, Adrian Ratiu wrote:
-> On Mon, 30 Mar 2020, Ezequiel Garcia <ezequiel@collabora.com> 
-> wrote:
-> > Hello Fabio, Adrian: 
-> > 
-> > On Mon, 2020-03-30 at 08:49 -0300, Fabio Estevam wrote: 
-> > > Hi Adrian,  On Mon, Mar 30, 2020 at 8:34 AM Adrian Ratiu 
-> > > <adrian.ratiu@collabora.com> wrote: 
-> > > > This adds support for the Synopsis DesignWare MIPI DSI v1.01 
-> > > > host controller which is embedded in i.MX 6 SoCs.   Based on 
-> > > > following patches, but updated/extended to work with existing 
-> > > > support found in the kernel:  - drm: imx: Support Synopsys 
-> > > > DesignWare MIPI DSI host controller 
-> > > >   Signed-off-by: Liu Ying <Ying.Liu@freescale.com> 
-> > > >  - ARM: dtsi: imx6qdl: Add support for MIPI DSI host 
-> > > > controller 
-> > > >   Signed-off-by: Liu Ying <Ying.Liu@freescale.com> 
-> > >  This one looks like a devicetree patch, but this patch does 
-> > > not touch devicetree.  
-> > > > +       ret = clk_prepare_enable(dsi->pllref_clk); +       if 
-> > > > (ret) { +               dev_err(dev, "%s: Failed to enable 
-> > > > pllref_clk\n", __func__); +               return ret; + 
-> > > > } + +       dsi->mux_sel = 
-> > > > syscon_regmap_lookup_by_phandle(dev->of_node, "fsl,gpr"); + 
-> > > > if (IS_ERR(dsi->mux_sel)) { +               ret = 
-> > > > PTR_ERR(dsi->mux_sel); +               dev_err(dev, "%s: 
-> > > > Failed to get GPR regmap: %d\n", + 
-> > > > __func__, ret); +               return ret; 
-> > >  You should disable the dsi->pllref_clk clock prior to 
-> > > returning the error.  
-> > 
-> > Another approach could be moving the clock on and off to to 
-> > component_ops.{bind,unbind} (as rockhip driver does). 
-> > 
-> > What exactly is the PLL clock needed for? Would it make sense to 
-> > move it some of the PHY power on/off? (Maybe not, but it's 
-> > worthing checking). 
-> > 
-> > Also, it seems the other IP blocks have this PLL clock, so maybe 
-> > it could be moved to the dw_mipi_dsi core? This could be 
-> > something for a follow-up, to avoid creeping this series.
-> 
-> Hi Ezequiel,
-> 
-> pll is the video reference clock which drives the data lanes and 
-> yes all drivers have it as it's a basic requirement, so moving it 
-> to the common bridge is indeed a good idea, however this kind of 
-> driver refactoring is out of scope for this specific patch series, 
-> because, for now, I'd like to get the regmap and the imx6 driver 
-> in, once that is done we can think how to further abstract away 
-> common logic and slim down the existing drivers further.
-> 
-> Basically I just want to avoid feature creep as I expect v6 to be 
-> ~ 8 patches big and the series is already over 1200 lines.
-> 
-
-Oh, absolutely: if there's one thing I try to avoid is
-feature creep -- together with bikeshedding!
-
-Do note however, that you could move the PLL clock handling
-to component_ops.{bind,unbind} and maybe simplify the error
-handling.
-
-(BTW, great work!)
-
-Cheers,
-Ezequiel
-
-
+VGhpcyBwYXRjaHNldCBpbmNsdWRpbmcgbW9kaWZ5aW5nIHN1c3BlbmQvcmVzdW1lIGJlaGF2aW9y
+IGFkZCBzdXBwb3J0IHRvIE1UNjM1OCBQTUlDLg0KTVQ2MzU4IGlzIHRoZSBwcmltYXJ5IFBNSUMg
+Zm9yIE1UODE4MyBwbGF0Zm9ybS4NCg0KY2hhbmdlcyBzaW5jZSB2MTA6DQotIGdldCBtYXRjaCBk
+YXRhIHdpdGhvdXQgY2FzdCBpbiB0aGUgcnRjIGRyaXZlci4NCi0gbW92ZSBNT0RVTEVfREVWSUNF
+X1RBQkxFIHRvIHRoZSBib3R0b20gb2YgdGhlIGZpbGUgaW4gdGhlIHJ0YyBkcml2ZXIuDQoNCkhz
+aW4tSHNpdW5nIFdhbmcgKDQpOg0KICBtZmQ6IG10NjM5NzogbW9kaWZ5IHN1c3BlbmQvcmVzdW1l
+IGJlaGF2aW9yDQogIGR0LWJpbmRpbmdzOiBtZmQ6IEFkZCBjb21wYXRpYmxlIGZvciB0aGUgTWVk
+aWFUZWsgTVQ2MzU4IFBNSUMNCiAgbWZkOiBBZGQgc3VwcG9ydCBmb3IgdGhlIE1lZGlhVGVrIE1U
+NjM1OCBQTUlDDQogIGFybTY0OiBkdHM6IG10NjM1ODogYWRkIFBNSUMgTVQ2MzU4IHJlbGF0ZWQg
+bm9kZXMNCg0KUmFuIEJpICgxKToNCiAgcnRjOiBtdDYzOTc6IEFkZCBzdXBwb3J0IGZvciB0aGUg
+TWVkaWFUZWsgTVQ2MzU4IFJUQw0KDQogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L21mZC9tdDYzOTcudHh0IHwgIDE0ICstDQogYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9t
+dDYzNTguZHRzaSAgICAgICAgIHwgMzU4ICsrKysrKysrKysrKysrKysrKysrKysrDQogYXJjaC9h
+cm02NC9ib290L2R0cy9tZWRpYXRlay9tdDgxODMtZXZiLmR0cyAgICAgIHwgICAxICsNCiBkcml2
+ZXJzL21mZC9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDIgKy0NCiBk
+cml2ZXJzL21mZC9tdDYzNTgtaXJxLmMgICAgICAgICAgICAgICAgICAgICAgICAgfCAyMzYgKysr
+KysrKysrKysrKysrDQogZHJpdmVycy9tZmQvbXQ2Mzk3LWNvcmUuYyAgICAgICAgICAgICAgICAg
+ICAgICAgIHwgIDg1ICsrKy0tLQ0KIGRyaXZlcnMvbWZkL210NjM5Ny1pcnEuYyAgICAgICAgICAg
+ICAgICAgICAgICAgICB8ICAzMyArKysNCiBkcml2ZXJzL3Bvd2VyL3Jlc2V0L210NjMyMy1wb3dl
+cm9mZi5jICAgICAgICAgICAgfCAgIDIgKy0NCiBkcml2ZXJzL3J0Yy9ydGMtbXQ2Mzk3LmMgICAg
+ICAgICAgICAgICAgICAgICAgICAgfCAgMjMgKy0NCiBpbmNsdWRlL2xpbnV4L21mZC9tdDYzNTgv
+Y29yZS5oICAgICAgICAgICAgICAgICAgfCAxNTggKysrKysrKysrKw0KIGluY2x1ZGUvbGludXgv
+bWZkL210NjM1OC9yZWdpc3RlcnMuaCAgICAgICAgICAgICB8IDI4MiArKysrKysrKysrKysrKysr
+KysNCiBpbmNsdWRlL2xpbnV4L21mZC9tdDYzOTcvY29yZS5oICAgICAgICAgICAgICAgICAgfCAg
+IDUgKw0KIGluY2x1ZGUvbGludXgvbWZkL210NjM5Ny9ydGMuaCAgICAgICAgICAgICAgICAgICB8
+ICAgOSArLQ0KIDEzIGZpbGVzIGNoYW5nZWQsIDExNjMgaW5zZXJ0aW9ucygrKSwgNDUgZGVsZXRp
+b25zKC0pDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsv
+bXQ2MzU4LmR0c2kNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZmQvbXQ2MzU4LWlycS5j
+DQogY3JlYXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvbGludXgvbWZkL210NjM1OC9jb3JlLmgNCiBj
+cmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9tZmQvbXQ2MzU4L3JlZ2lzdGVycy5oDQoN
+Ci0tIA0KMi42LjQNCg==
 
