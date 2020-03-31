@@ -2,123 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F8A199702
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:10:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2ECF199710
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:11:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730835AbgCaNKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 09:10:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39362 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730473AbgCaNKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 09:10:09 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA38C206F5;
-        Tue, 31 Mar 2020 13:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585660208;
-        bh=ts/jwCIfi83GogPG5jQKnlmOLa3e5lymvLi0SUUKZxQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z4uoSLgMdWSrhvR+cLyS50YXcM/8YIApUCCqSAdaLXZzv6keHgUATjrrGX6OC9ohA
-         9LHEth9UJklbVgScbX297IS6DdvFPQKRNqNXOepFq61AnlIWxmHQMyFJ1WfYr9XJXI
-         Z1sAyxQN20CP8gTCBEE6NiK+BURMf7PGrqIaP+mc=
-Date:   Tue, 31 Mar 2020 14:10:03 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Marco Elver <elver@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Maddie Stone <maddiestone@google.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [RFC PATCH 03/21] list: Annotate lockless list primitives with
- data_race()
-Message-ID: <20200331131002.GA30975@willie-the-truck>
-References: <20200324153643.15527-1-will@kernel.org>
- <20200324153643.15527-4-will@kernel.org>
- <CANpmjNPWpkxqZQJJOwmx0oqvzfcxhtqErjCzjRO_y0BQSmre8A@mail.gmail.com>
+        id S1730909AbgCaNLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 09:11:23 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:32081 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730884AbgCaNLW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 09:11:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585660281;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=usxsvV26fFHRpbo4EPS+A1tC2Knjsvias64PeyQykb4=;
+        b=Pd09aNRTx7XGxXwLZinva4uei/9KO9yr+ZPN6NPcR3yLO9VcctJOMkfSUNUnO90XnsXe9T
+        KPZ1BizpFU+fGphUof5mKic84Vuuwa6Yl/KxHvCUf1x6DqCMf6u4pJoAd1Te6HMTAWcXs8
+        9sN524PCtu1Ht1ENULAuSUfLvWja69A=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-464-CRxOXfktMXK9yJXqxTeF2A-1; Tue, 31 Mar 2020 09:11:19 -0400
+X-MC-Unique: CRxOXfktMXK9yJXqxTeF2A-1
+Received: by mail-wr1-f70.google.com with SMTP id r15so5137649wrm.22
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 06:11:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=usxsvV26fFHRpbo4EPS+A1tC2Knjsvias64PeyQykb4=;
+        b=owf5ITV+f2eCURIriSivlpe4ZWBCQG0GeLIA160Idvub3BDXzkI9eeaoaJFFsh9Hhr
+         axmyCegYhahXkbMSRf86VufkGl3299YgaIE69tFRQLekQOKN7pP8nb71nzRf0pZk8thl
+         DD4Plaga8uJIjneePjHHejR+3ZPvxWyauWOX4gHzmyq2XE2HbiaoxWmshT28ZigFxm6k
+         iHKHSefIdXZN/3YSWIAFxeLtKBUb4Ijr+8d1u/nY48/S/N0JpPQW6+0370Ex/Bo0N2qB
+         MnNBf0+KiChGQAYM2h7AnFHKmg6yOGJhOi76yOnMeNMMc5OyJbnGk7GM/8ZKryb9xiDp
+         C/+A==
+X-Gm-Message-State: ANhLgQ22y++ohR/faT0OxBo3pEQDtXV+Eov/aq89TR3j6XtZthjkRscg
+        p6vtNq/wC6eKO+iazJgAoa0YSGU/beaXymZ+RqrR9WcXQderVY2rok12bDj8/wASXz87tfNaWBT
+        F2au7DhZJJbFizKQojaHdHG+j
+X-Received: by 2002:a5d:490f:: with SMTP id x15mr19523930wrq.47.1585660278621;
+        Tue, 31 Mar 2020 06:11:18 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vttjf+fvsMP8RlVLnva+uKSJYXT4yC5ZNHvDRMtCn+D/13PEya9eLPWLqUf0IcUzgcQvmLXLA==
+X-Received: by 2002:a5d:490f:: with SMTP id x15mr19523917wrq.47.1585660278456;
+        Tue, 31 Mar 2020 06:11:18 -0700 (PDT)
+Received: from redhat.com (bzq-79-176-51-222.red.bezeqint.net. [79.176.51.222])
+        by smtp.gmail.com with ESMTPSA id n2sm28031408wro.25.2020.03.31.06.11.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 06:11:12 -0700 (PDT)
+Date:   Tue, 31 Mar 2020 09:11:06 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        KVM <kvm@vger.kernel.org>, Jason Wang <jasowang@redhat.com>
+Subject: Re: linux-next: Tree for Mar 30 (vhost)
+Message-ID: <20200331085955-mutt-send-email-mst@kernel.org>
+References: <20200330204307.669bbb4d@canb.auug.org.au>
+ <347c851a-b9f6-0046-f6c8-1db0b42be213@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANpmjNPWpkxqZQJJOwmx0oqvzfcxhtqErjCzjRO_y0BQSmre8A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <347c851a-b9f6-0046-f6c8-1db0b42be213@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 05:23:30PM +0100, Marco Elver wrote:
-> On Tue, 24 Mar 2020 at 16:37, Will Deacon <will@kernel.org> wrote:
-> > Some list predicates can be used locklessly even with the non-RCU list
-> > implementations, since they effectively boil down to a test against
-> > NULL. For example, checking whether or not a list is empty is safe even
-> > in the presence of a concurrent, tearing write to the list head pointer.
-> > Similarly, checking whether or not an hlist node has been hashed is safe
-> > as well.
-> >
-> > Annotate these lockless list predicates with data_race() and READ_ONCE()
-> > so that KCSAN and the compiler are aware of what's going on. The writer
-> > side can then avoid having to use WRITE_ONCE() in the non-RCU
-> > implementation.
-> >
-> > Cc: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Marco Elver <elver@google.com>
-> > Signed-off-by: Will Deacon <will@kernel.org>
-> > ---
-> >  include/linux/list.h       | 10 +++++-----
-> >  include/linux/list_bl.h    |  5 +++--
-> >  include/linux/list_nulls.h |  6 +++---
-> >  include/linux/llist.h      |  2 +-
-> >  4 files changed, 12 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/include/linux/list.h b/include/linux/list.h
-> > index 4fed5a0f9b77..4d9f5f9ed1a8 100644
-> > --- a/include/linux/list.h
-> > +++ b/include/linux/list.h
-> > @@ -279,7 +279,7 @@ static inline int list_is_last(const struct list_head *list,
-> >   */
-> >  static inline int list_empty(const struct list_head *head)
-> >  {
-> > -       return READ_ONCE(head->next) == head;
-> > +       return data_race(READ_ONCE(head->next) == head);
+On Mon, Mar 30, 2020 at 10:22:22AM -0700, Randy Dunlap wrote:
+> On 3/30/20 2:43 AM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > The merge window has opened, so please do not add any material for the
+> > next release into your linux-next included trees/branches until after
+> > the merge window closes.
+> > 
+> > Changes since 20200327:
+> > 
+> > The vhost tree gained a conflict against the kvm-arm tree.
+> > 
 > 
-> Double-marking should never be necessary, at least if you want to make
-> KCSAN happy. From what I gather there is an unmarked write somewhere,
-> correct? In that case, KCSAN will still complain because if it sees a
-> race between this read and the other write, then at least one is still
-> plain (the write).
+> (note: today's linux-next is on 5.6-rc7.)
+> 
+> on x86_64:
+> 
+> # CONFIG_EVENTFD is not set
 
-Ok, then I should drop the data_race() annotation and stick to READ_ONCE(),
-I think (but see below).
+Oh, this is Jason's Kconfig refactoring. Vhost must depend on eventfd
+of course. I fixed the relevant commit up and pushed the new tree again.
+Would appreciate a report on whether any problems are left.
 
-> Then, my suggestion would be to mark the write with data_race() and
-> just leave this as a READ_ONCE(). Having a data_race() somewhere only
-> makes KCSAN stop reporting the race if the paired access is also
-> marked (be it with data_race() or _ONCE, etc.).
 
-The problem with taking that approach is that it ends up much of the
-list implementation annotated with either WRITE_ONCE() or data_race(),
-meaning that concurrent, racy list operations will no longer be reported
-by KCSAN. I think that's a pretty big deal and I'm strongly against
-annotating the internals of library code such as this because it means
-that buggy callers will largely go undetected.
+> ../drivers/vhost/vhost.c: In function 'vhost_vring_ioctl':
+> ../drivers/vhost/vhost.c:1577:33: error: implicit declaration of function 'eventfd_fget'; did you mean 'eventfd_signal'? [-Werror=implicit-function-declaration]
+>    eventfp = f.fd == -1 ? NULL : eventfd_fget(f.fd);
+>                                  ^~~~~~~~~~~~
+>                                  eventfd_signal
+> ../drivers/vhost/vhost.c:1577:31: warning: pointer/integer type mismatch in conditional expression
+>    eventfp = f.fd == -1 ? NULL : eventfd_fget(f.fd);
+>                                ^
+> 
+> -- 
+> ~Randy
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
 
-The situation we have here is that some calls, e.g. hlist_empty() are
-safe even in the presence of a racy write and I'd like to suppress KCSAN
-reports without annotating the writes at all.
-
-> Alternatively, if marking the write is impossible, you can surround
-> the access with kcsan_disable_current()/kcsan_enable_current(). Or, as
-> a last resort, just leaving as-is is fine too, because KCSAN's default
-> config (still) has KCSAN_ASSUME_PLAIN_WRITES_ATOMIC selected.
-
-Hmm, I suppose some bright spark will want to change the default at the some
-point though, no? ;) I'll look at using
-kcsan_disable_current()/kcsan_enable_current(), thanks.
-
-Will
