@@ -2,64 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 976231988FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 02:43:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47770198902
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 02:49:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729468AbgCaAna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 20:43:30 -0400
-Received: from m12-13.163.com ([220.181.12.13]:51597 "EHLO m12-13.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729019AbgCaAna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 20:43:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=XjsT7
-        mbIv2Q1KnZdpBGcBJwAuWn6TTxNoV1RazGC+qQ=; b=V4CqoOj1KAXP0u9xOkBl3
-        LTLR00BoMS4N3i4AMf6yOr+hFjaONVCvW606eYcU0GN3j7D3cU0porCDlP5Cazmg
-        Nv/i3IZiISwAzjKidKlFxL92lhjvH7H1iJpUiuQbGnbYuTO/hyeUoTsDlcAZnvh4
-        Qj9ePeCSYtO6Sc+ezaEsh4=
-Received: from [192.168.0.6] (unknown [125.82.11.174])
-        by smtp9 (Coremail) with SMTP id DcCowADHzuYokoJeji0aBw--.4264S2;
-        Tue, 31 Mar 2020 08:43:21 +0800 (CST)
-Subject: Re: [PATCH] arch/xtensa: correct an ungrammatical word
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     Chris Zankel <chris@zankel.net>,
-        "open list:TENSILICA XTENSA PORT (xtensa)" 
-        <linux-xtensa@linux-xtensa.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20200330045436.12645-1-xianfengting221@163.com>
- <CAMo8BfLQuKHsqM5yb0N6cfquCoXR17rnkt+TXG01Fkz-Po1pqw@mail.gmail.com>
-From:   Hu Haowen <xianfengting221@163.com>
-Message-ID: <a4297848-1685-a3d1-43cc-05e9f4cecbb7@163.com>
-Date:   Tue, 31 Mar 2020 08:43:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729429AbgCaAs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 20:48:56 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50580 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729019AbgCaAs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 20:48:56 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 52B3439396BD4E43F37C;
+        Tue, 31 Mar 2020 08:48:53 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 31 Mar
+ 2020 08:48:50 +0800
+Subject: Re: [PATCH] f2fs: use round_up()/DIV_ROUND_UP()
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20200330100349.56127-1-yuchao0@huawei.com>
+ <20200330184230.GB34947@google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <2b5ec2a6-218a-a291-a6fc-d87cd40be4db@huawei.com>
+Date:   Tue, 31 Mar 2020 08:48:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAMo8BfLQuKHsqM5yb0N6cfquCoXR17rnkt+TXG01Fkz-Po1pqw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200330184230.GB34947@google.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
-X-CM-TRANSID: DcCowADHzuYokoJeji0aBw--.4264S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUaAwIDUUUU
-X-Originating-IP: [125.82.11.174]
-X-CM-SenderInfo: h0ld0wxhqj3xtqjsjii6rwjhhfrp/xtbB0Qn3AFzH9HLg3gAAsM
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2020/3/31 4:33 AM, Max Filippov wrote:
-> On Sun, Mar 29, 2020 at 9:55 PM Hu Haowen <xianfengting221@163.com> wrote:
->> The word "Dont" is not grammatical. Maybe it means "Don't".
+On 2020/3/31 2:42, Jaegeuk Kim wrote:
+> On 03/30, Chao Yu wrote:
+>> .i_cluster_size should be power of 2, so we can use round_up() instead
+>> of roundup() to enhance the calculation.
 >>
->> Signed-off-by: Hu Haowen <xianfengting221@163.com>
+>> In addition, use DIV_ROUND_UP to clean up codes.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 >> ---
->>   arch/xtensa/Kconfig | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
-> Thanks, applied to my xtensa tree with a slightly modified subject
-> line/description.
->
-> -- Max
-You are welcome.
+>>  fs/f2fs/data.c | 16 ++++++----------
+>>  fs/f2fs/file.c | 17 +++++------------
+>>  2 files changed, 11 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>> index 0a829a89f596..8257d5e7aa3b 100644
+>> --- a/fs/f2fs/data.c
+>> +++ b/fs/f2fs/data.c
+>> @@ -1969,8 +1969,6 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+>>  					bool is_readahead)
+>>  {
+>>  	struct bio *bio = *bio_ret;
+>> -	const unsigned blkbits = inode->i_blkbits;
+>> -	const unsigned blocksize = 1 << blkbits;
+>>  	sector_t block_in_file;
+>>  	sector_t last_block;
+>>  	sector_t last_block_in_file;
+>> @@ -1979,8 +1977,8 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+>>  
+>>  	block_in_file = (sector_t)page_index(page);
+>>  	last_block = block_in_file + nr_pages;
+>> -	last_block_in_file = (f2fs_readpage_limit(inode) + blocksize - 1) >>
+>> -							blkbits;
+>> +	last_block_in_file = DIV_ROUND_UP(f2fs_readpage_limit(inode),
+>> +								PAGE_SIZE);
+> 
+> What if PAGE_SIZE is bigger than 4KB?
 
+We don't support 8kb+ sized-page, right?
+
+static int __init init_f2fs_fs(void)
+{
+	int err;
+
+	if (PAGE_SIZE != F2FS_BLKSIZE) {
+		printk("F2FS not supported on PAGE_SIZE(%lu) != %d\n",
+				PAGE_SIZE, F2FS_BLKSIZE);
+		return -EINVAL;
+	}
+
+Thanks,
+
+> 
+>>  	if (last_block > last_block_in_file)
+>>  		last_block = last_block_in_file;
+>>  
+>> @@ -2062,7 +2060,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+>>  	 */
+>>  	f2fs_wait_on_block_writeback(inode, block_nr);
+>>  
+>> -	if (bio_add_page(bio, page, blocksize, 0) < blocksize)
+>> +	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE)
+>>  		goto submit_and_realloc;
+>>  
+>>  	inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
+>> @@ -2091,16 +2089,14 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>>  	struct bio *bio = *bio_ret;
+>>  	unsigned int start_idx = cc->cluster_idx << cc->log_cluster_size;
+>>  	sector_t last_block_in_file;
+>> -	const unsigned blkbits = inode->i_blkbits;
+>> -	const unsigned blocksize = 1 << blkbits;
+>>  	struct decompress_io_ctx *dic = NULL;
+>>  	int i;
+>>  	int ret = 0;
+>>  
+>>  	f2fs_bug_on(sbi, f2fs_cluster_is_empty(cc));
+>>  
+>> -	last_block_in_file = (f2fs_readpage_limit(inode) +
+>> -					blocksize - 1) >> blkbits;
+>> +	last_block_in_file = DIV_ROUND_UP(f2fs_readpage_limit(inode),
+>> +								PAGE_SIZE);
+>>  
+>>  	/* get rid of pages beyond EOF */
+>>  	for (i = 0; i < cc->cluster_size; i++) {
+>> @@ -2197,7 +2193,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>>  
+>>  		f2fs_wait_on_block_writeback(inode, blkaddr);
+>>  
+>> -		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
+>> +		if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE)
+>>  			goto submit_and_realloc;
+>>  
+>>  		inc_page_count(sbi, F2FS_RD_DATA);
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index c2d38a1c4972..0f8be076620c 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -736,16 +736,9 @@ int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock)
+>>  	 * for compressed file, only support cluster size
+>>  	 * aligned truncation.
+>>  	 */
+>> -	if (f2fs_compressed_file(inode)) {
+>> -		size_t cluster_shift = PAGE_SHIFT +
+>> -					F2FS_I(inode)->i_log_cluster_size;
+>> -		size_t cluster_mask = (1 << cluster_shift) - 1;
+>> -
+>> -		free_from = from >> cluster_shift;
+>> -		if (from & cluster_mask)
+>> -			free_from++;
+>> -		free_from <<= cluster_shift;
+>> -	}
+>> +	if (f2fs_compressed_file(inode))
+>> +		free_from = round_up(from,
+>> +				F2FS_I(inode)->i_cluster_size << PAGE_SHIFT);
+>>  #endif
+>>  
+>>  	err = f2fs_do_truncate_blocks(inode, free_from, lock);
+>> @@ -3537,7 +3530,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
+>>  
+>>  		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
+>>  		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
+>> -		count = roundup(count, F2FS_I(inode)->i_cluster_size);
+>> +		count = round_up(count, F2FS_I(inode)->i_cluster_size);
+>>  
+>>  		ret = release_compress_blocks(&dn, count);
+>>  
+>> @@ -3689,7 +3682,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
+>>  
+>>  		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
+>>  		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
+>> -		count = roundup(count, F2FS_I(inode)->i_cluster_size);
+>> +		count = round_up(count, F2FS_I(inode)->i_cluster_size);
+>>  
+>>  		ret = reserve_compress_blocks(&dn, count);
+>>  
+>> -- 
+>> 2.18.0.rc1
+> .
+> 
