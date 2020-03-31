@@ -2,195 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18665198C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 08:06:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2D08198C04
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 08:04:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbgCaGGm convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 02:06:42 -0400
-Received: from mga09.intel.com ([134.134.136.24]:24050 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725809AbgCaGGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 02:06:42 -0400
-IronPort-SDR: GxQ7omR+N7vK7QYyf+F2AGR6IpBthleZ0j22UIL2kwFz2F5LSHyE7B8gI73cRdlUwrdnQCun8O
- vecp7qdD79tg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 23:06:41 -0700
-IronPort-SDR: J6huhyhGhOkmDuoqZEOkpb0JECRSVTko7DSCE/TudLhGxJ1l4uWL8X1U5Qab8kKGLjp/6wljFR
- ZCzBY0OcWWtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
-   d="scan'208";a="294830873"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by FMSMGA003.fm.intel.com with ESMTP; 30 Mar 2020 23:06:41 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 30 Mar 2020 23:06:41 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 30 Mar 2020 23:06:41 -0700
-Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Mon, 30 Mar 2020 23:06:40 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.225]) by
- SHSMSX151.ccr.corp.intel.com ([169.254.3.22]) with mapi id 14.03.0439.000;
- Tue, 31 Mar 2020 14:06:39 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>
-Subject: RE: [PATCH v2 1/3] iommu/uapi: Define uapi version and capabilities
-Thread-Topic: [PATCH v2 1/3] iommu/uapi: Define uapi version and capabilities
-Thread-Index: AQHWAvq+z2SPyfblHkGvV1oKjQsO9ahaFEoAgAB7VgCAAS14gP//zqQAgAEODYCABAXlIIAALvMAgAFssAA=
-Date:   Tue, 31 Mar 2020 06:06:38 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D8011A9@SHSMSX104.ccr.corp.intel.com>
-References: <1585178227-17061-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1585178227-17061-2-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20200326092316.GA31648@infradead.org>
-        <20200326094442.5be042ce@jacob-builder>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7ECB45@SHSMSX104.ccr.corp.intel.com>
-        <20200327074702.GA27959@infradead.org>
-        <20200327165335.397f24a3@jacob-builder>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7FE150@SHSMSX104.ccr.corp.intel.com>
- <20200330090746.23c5599c@jacob-builder>
-In-Reply-To: <20200330090746.23c5599c@jacob-builder>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726554AbgCaGEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 02:04:12 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12660 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725809AbgCaGEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 02:04:12 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 128B67015BC6416B1C16;
+        Tue, 31 Mar 2020 14:04:05 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.487.0; Tue, 31 Mar 2020 14:04:01 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <davem@davemloft.net>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <kuba@kernel.org>, <hawk@kernel.org>, <john.fastabend@gmail.com>,
+        <kafai@fb.com>, <songliubraving@fb.com>, <yhs@fb.com>,
+        <andriin@fb.com>, <jwi@linux.ibm.com>,
+        <toshiaki.makita1@gmail.com>, <jianglidong3@jd.com>,
+        <edumazet@google.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <bpf@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH net v2] veth: xdp: use head instead of hard_start
+Date:   Tue, 31 Mar 2020 14:06:41 +0800
+Message-ID: <20200331060641.79999-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <fb5ab568-9bc8-3145-a8db-3e975ccdf846@gmail.com>
+References: <fb5ab568-9bc8-3145-a8db-3e975ccdf846@gmail.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Sent: Tuesday, March 31, 2020 12:08 AM
-> 
-> On Mon, 30 Mar 2020 05:40:40 +0000
-> "Tian, Kevin" <kevin.tian@intel.com> wrote:
-> 
-> > > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > > Sent: Saturday, March 28, 2020 7:54 AM
-> > >
-> > > On Fri, 27 Mar 2020 00:47:02 -0700
-> > > Christoph Hellwig <hch@infradead.org> wrote:
-> > >
-> > > > On Fri, Mar 27, 2020 at 02:49:55AM +0000, Tian, Kevin wrote:
-> > > > > If those API calls are inter-dependent for composing a feature
-> > > > > (e.g. SVA), shouldn't we need a way to check them together
-> > > > > before exposing the feature to the guest, e.g. through a
-> > > > > iommu_get_uapi_capabilities interface?
-> > > >
-> > > > Yes, that makes sense.  The important bit is to have a capability
-> > > > flags and not version numbers.
-> > >
-> > > The challenge is that there are two consumers in the kernel for
-> > > this. 1. VFIO only look for compatibility, and size of each data
-> > > struct such that it can copy_from_user.
-> > >
-> > > 2. IOMMU driver, the "real consumer" of the content.
-> > >
-> > > For 2, I agree and we do plan to use the capability flags to check
-> > > content and maintain backward compatibility etc.
-> > >
-> > > For VFIO, it is difficult to do size look up based on capability
-> > > flags.
-> >
-> > Can you elaborate the difficulty in VFIO? if, as Christoph Hellwig
-> > pointed out, version number is already avoided everywhere, it is
-> > interesting to know whether this work becomes a real exception
-> > or just requires a different mindset.
-> >
-> From VFIO p.o.v. the IOMMU UAPI data is opaque, it only needs to do two
-> things:
-> 1. is the UAPI compatible?
-> 2. what is the size to copy?
-> 
-> If you look at the version number, this is really a "version as size"
-> lookup, as provided by the helper function in this patch. An example
-> can be the newly introduced clone3 syscall.
-> https://lwn.net/Articles/792628/
-> In clone3, new version must have new size. The slight difference here
-> is that, unlike clone3, we have multiple data structures instead of a
-> single struct clone_args {}. And each struct has flags to enumerate its
-> contents besides size.
+xdp.data_hard_start is equal to first address of
+struct xdp_frame, which is mentioned in
+convert_to_xdp_frame(). But the pointer hard_start
+in veth_xdp_rcv_one() is 32 bytes offset of frame,
+so it should use head instead of hard_start to
+set xdp.data_hard_start. Otherwise, if BPF program
+calls helper_function such as bpf_xdp_adjust_head, it
+will be confused for xdp_frame_end.
 
-Thanks for providing that link. However clone3 doesn't include a version
-field to do "version as size" lookup. Instead, as you said, it includes a
-size parameter which sounds like the option 3 (argsz) listed below.
+Fixes: 9fc8d518d9d5 ("veth: Handle xdp_frames in xdp napi ring")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v2: add fixes tag, as well as commit log.
+ drivers/net/veth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Besides breaching data abstraction, if VFIO has to check IOMMU flags to
-> determine the sizes, it has many combinations.
-> 
-> We also separate the responsibilities into two parts
-> 1. compatibility - version, size by VFIO
-> 2. sanity check - capability flags - by IOMMU
+diff --git a/drivers/net/veth.c b/drivers/net/veth.c
+index d4cbb9e8c63f..5ea550884bf8 100644
+--- a/drivers/net/veth.c
++++ b/drivers/net/veth.c
+@@ -506,7 +506,7 @@ static struct sk_buff *veth_xdp_rcv_one(struct veth_rq *rq,
+ 		struct xdp_buff xdp;
+ 		u32 act;
+ 
+-		xdp.data_hard_start = hard_start;
++		xdp.data_hard_start = head;
+ 		xdp.data = frame->data;
+ 		xdp.data_end = frame->data + frame->len;
+ 		xdp.data_meta = frame->data - frame->metasize;
+-- 
+2.20.1
 
-I feel argsz+flags approach can perfectly meet above requirement. The
-userspace set the size and flags for whatever capabilities it uses, and
-VFIO simply copies the parameters by size and pass to IOMMU for
-further sanity check. Of course the assumption is that we do provide
-an interface for userspace to enumerate all supported capabilities.
-
-Is there anything that I overlooked here? I suppose there might be
-some difficulties that block you from going the argsz way...
-
-Thanks
-Kevin
-
-> 
-> I think the latter matches what Christoph's comments. So we are in
-> agreement at the IOMMU level :)
-> 
-> For example:
-> During guest PASID bind, IOMMU driver operates on the data passed from
-> VFIO and check format & flags to take different code path.
-> 
-> #define IOMMU_PASID_FORMAT_INTEL_VTD	1
-> 	__u32 format;
-> #define IOMMU_SVA_GPASID_VAL	(1 << 0) /* guest PASID valid */
-> 	__u64 flags;
-> 
-> Jacob
-> 
-> > btw the most relevant discussion which I can find out now is here:
-> > 	https://lkml.org/lkml/2020/2/3/1126
-> >
-> > It mentioned 3 options for handling extension:
-> > --
-> > 1. Disallow adding new members to each structure other than reuse
-> > padding bits or adding union members at the end.
-> > 2. Allow extension of the structures beyond union, but union size has
-> > to be fixed with reserved spaces
-> > 3. Adopt VFIO argsz scheme, I don't think we need version for each
-> > struct anymore. argsz implies the version that user is using assuming
-> > UAPI data is extension only.
-> > --
-> >
-> > the first two are both version-based. Looks most guys agreed with
-> > option-1 (in this v2), but Alex didn't give his opinion at the
-> > moment. The last response from him was the raise of option-3 using
-> > argsz to avoid version. So, we also need hear from him. Alex?
-> >
-> > Thanks
-> > Kevin
-> 
-> [Jacob Pan]
