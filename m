@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 090001990C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F98E198FD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:07:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731844AbgCaJOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:14:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34362 "EHLO mail.kernel.org"
+        id S1731056AbgCaJGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:06:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730391AbgCaJOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:14:30 -0400
+        id S1730647AbgCaJGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:06:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B232320675;
-        Tue, 31 Mar 2020 09:14:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57567208E0;
+        Tue, 31 Mar 2020 09:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585646070;
-        bh=AmISZsjwQJs8uncXhFUtLbROEQzrDp9cPvtLrYhGCXQ=;
+        s=default; t=1585645598;
+        bh=4QJEQOKZynqx+5osBx7WAdPupqu0Gs4IifljY4vX/rU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jnwsCplORvsJOlg4MRq1gvydSFJ9Lvt7pfqQuaFZK6LPwdpWjUfyCr38fUieoQjsg
-         CTwmH2Pdz0tGBEOozIUUZQe72Uv+35glMg6EYt1sjY+bVXM+wbEPE08aR4MJiGFfKM
-         niuYfUjQ4UKiW9O1FLK4N0RA64ePAHWVMc69y7Ps=
+        b=GnXFLPzZ/FxAU9orWWV7FaA97bvc/HbU+E0K+8mZzgRGRmVcgZCBXsElFd5CHKVjE
+         dvzUgxLq2TjNgV5SenjJ93h3iM4MBL+lYyD6a/12S6wqwjs74VpgFFQaJeSsd4US03
+         5/CX/qBmU2TCtefMKeQp2LrMIs8wAABYBKP/Y9dI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Jason Andryuk <jandryuk@gmail.com>
-Subject: [PATCH 5.4 075/155] iwlwifi: mvm: fix non-ACPI function
-Date:   Tue, 31 Mar 2020 10:58:35 +0200
-Message-Id: <20200331085426.783758851@linuxfoundation.org>
+        stable@vger.kernel.org, Dirk Mueller <dmueller@suse.com>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 5.5 102/170] scripts/dtc: Remove redundant YYLOC global declaration
+Date:   Tue, 31 Mar 2020 10:58:36 +0200
+Message-Id: <20200331085435.053942582@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
-References: <20200331085418.274292403@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Dirk Mueller <dmueller@suse.com>
 
-commit 7937fd3227055892e169f4b34d21157e57d919e2 upstream.
+commit e33a814e772cdc36436c8c188d8c42d019fda639 upstream.
 
-The code now compiles without ACPI, but there's a warning since
-iwl_mvm_get_ppag_table() isn't used, and iwl_mvm_ppag_init() must
-not unconditionally fail but return success instead.
+gcc 10 will default to -fno-common, which causes this error at link
+time:
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-[Drop hunk removing iwl_mvm_get_ppag_table() since it doesn't exist in
-5.4]
-Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+  (.text+0x0): multiple definition of `yylloc'; dtc-lexer.lex.o (symbol from plugin):(.text+0x0): first defined here
+
+This is because both dtc-lexer as well as dtc-parser define the same
+global symbol yyloc. Before with -fcommon those were merged into one
+defintion. The proper solution would be to to mark this as "extern",
+however that leads to:
+
+  dtc-lexer.l:26:16: error: redundant redeclaration of 'yylloc' [-Werror=redundant-decls]
+   26 | extern YYLTYPE yylloc;
+      |                ^~~~~~
+In file included from dtc-lexer.l:24:
+dtc-parser.tab.h:127:16: note: previous declaration of 'yylloc' was here
+  127 | extern YYLTYPE yylloc;
+      |                ^~~~~~
+cc1: all warnings being treated as errors
+
+which means the declaration is completely redundant and can just be
+dropped.
+
+Signed-off-by: Dirk Mueller <dmueller@suse.com>
+Signed-off-by: David Gibson <david@gibson.dropbear.id.au>
+[robh: cherry-pick from upstream]
+Cc: stable@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/dtc/dtc-lexer.l |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@ -1181,7 +1181,7 @@ int iwl_mvm_ppag_send_cmd(struct iwl_mvm
+--- a/scripts/dtc/dtc-lexer.l
++++ b/scripts/dtc/dtc-lexer.l
+@@ -23,7 +23,6 @@ LINECOMMENT	"//".*\n
+ #include "srcpos.h"
+ #include "dtc-parser.tab.h"
  
- static int iwl_mvm_ppag_init(struct iwl_mvm *mvm)
- {
--	return -ENOENT;
-+	return 0;
- }
- #endif /* CONFIG_ACPI */
+-YYLTYPE yylloc;
+ extern bool treesource_error;
  
+ /* CAUTION: this will stop working if we ever use yyless() or yyunput() */
 
 
