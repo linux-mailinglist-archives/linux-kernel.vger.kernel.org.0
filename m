@@ -2,178 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F91198C3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 08:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3F62198C43
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 08:25:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730053AbgCaGZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 02:25:06 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:55139 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726001AbgCaGYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 02:24:52 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48rzns0Tdvz9v0KL;
-        Tue, 31 Mar 2020 08:24:49 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=fiQyu9Lg; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id f0xEd0TD0Jvh; Tue, 31 Mar 2020 08:24:49 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48rznr6T6xz9v0KC;
-        Tue, 31 Mar 2020 08:24:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1585635888; bh=8dgIh7fRtGyYIN9w8nAk5rbhZBf0YZZiQ6G2a+dxRQo=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=fiQyu9LgWVevoYe/KH3HMqAzB7EOAUgtgPgiP2Hl2bwhOso2PanYskhGe77Ngi/Gg
-         H5hwnPGZ+k/gLOV1Ij6hugVSG8dDgFvbqpMqKsfnmC9QwjEGTt7QNFdAy9ADpQs+Ez
-         P5+/88jtyEvD2aGBulgaBqTNph2bZ1J00m1ur6/U=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C1E628B784;
-        Tue, 31 Mar 2020 08:24:49 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ec39iXvv1NJY; Tue, 31 Mar 2020 08:24:49 +0200 (CEST)
-Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7A3548B752;
-        Tue, 31 Mar 2020 08:24:49 +0200 (CEST)
-Received: by pc16570vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 7AC1165673; Tue, 31 Mar 2020 06:24:49 +0000 (UTC)
-Message-Id: <dc8e597e322d9992178b3cffdc05d41bfb758e79.1585635837.git.christophe.leroy@c-s.fr>
-In-Reply-To: <40899eb1b8f10da3706acd06c3d46d2418c8886e.1585635837.git.christophe.leroy@c-s.fr>
-References: <40899eb1b8f10da3706acd06c3d46d2418c8886e.1585635837.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 09/10] powerpc/pgtable: Drop PTE_ATOMIC_UPDATES
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 31 Mar 2020 06:24:49 +0000 (UTC)
+        id S1730038AbgCaGZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 02:25:48 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:41022 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbgCaGZs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 02:25:48 -0400
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 02V6PRM2020258;
+        Tue, 31 Mar 2020 15:25:27 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 02V6PRM2020258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585635928;
+        bh=bhHDF/pmVptyuAoHUwFW/YtM1ZLRsyzSLz5SMFr9KSE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ya91m2S2ZN7KXYPVglJDOXDsplu8DdVyJFEtDyGEoOpgwfq1DBFneqEk/BwlN65ES
+         55e6i4x7DRc6cbRlCz3AkluPl0vP8M69ekNqBgDcg337mqnq3D/Zv8YdH6YibZT2b7
+         ZaRXwcDQw5yRaiv/BH1kMx8E8D/M5knpIBh/IbjbU4QYq7T97tJGjBksuiibAic57K
+         etS3EmpxeXs/onxsSAUo1g3MK8LDIi389TKRKpGhFVE6ieG7qBbqq4dNmDWwa07hxc
+         zbvM9XOOheeHMgbSlit9q93L4G6idWao9DPqLZQ7ljQTvySxbVgCwQ1bBVPdLwCR7M
+         dHt3zzqKIF7BA==
+X-Nifty-SrcIP: [209.85.221.177]
+Received: by mail-vk1-f177.google.com with SMTP id v129so5060479vkf.10;
+        Mon, 30 Mar 2020 23:25:27 -0700 (PDT)
+X-Gm-Message-State: AGi0PuYKfODBH7DsH4Up122XzqYnldVTZlx8kvMO6huJe+Jhp+ntUfMF
+        jYRajPezeBogag4YlaBBX1QWlhJFrmD0vtonszo=
+X-Google-Smtp-Source: APiQypJ6aYvHt8O+nUKi2P4e1tQlaNx841DQpH1QGjgiKd+2Tjbr2vki5+PR1yPxEfCJ/+AZxPmROqefEkc+iGZMOX8=
+X-Received: by 2002:a1f:1786:: with SMTP id 128mr10407782vkx.26.1585635926362;
+ Mon, 30 Mar 2020 23:25:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200317202404.GA20746@ubuntu-m2-xlarge-x86> <20200317215515.226917-1-ndesaulniers@google.com>
+ <20200327224246.GA12350@ubuntu-m2-xlarge-x86> <CAK7LNAShb1gWuZyycLAGWm19EWn17zeNcmdPyqu1o=K9XrfJbg@mail.gmail.com>
+ <CAK7LNAQ3=jUu4aa=JQB8wErUGDd-Vr=cX_yZSdP_uAP6kWZ=pw@mail.gmail.com>
+ <CAKwvOd=5AG1ARw6JUXmkuiftuShuYHKLk0ZnueuLhvOdMr5dOA@mail.gmail.com> <20200330190312.GA32257@ubuntu-m2-xlarge-x86>
+In-Reply-To: <20200330190312.GA32257@ubuntu-m2-xlarge-x86>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 31 Mar 2020 15:24:50 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT1HoV5wUZRdeU0+P1nYAm2xQ4tpOG+7UtT4947QByakg@mail.gmail.com>
+Message-ID: <CAK7LNAT1HoV5wUZRdeU0+P1nYAm2xQ4tpOG+7UtT4947QByakg@mail.gmail.com>
+Subject: Re: [PATCH v2] Makefile.llvm: simplify LLVM build
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sandeep Patil <sspatil@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-40x was the last user of PTE_ATOMIC_UPDATES.
+On Tue, Mar 31, 2020 at 4:03 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Mon, Mar 30, 2020 at 11:58:19AM -0700, Nick Desaulniers wrote:
+> > On Sat, Mar 28, 2020 at 6:57 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > >
+> > > I also had planned to provide a single switch to change
+> > > all the tool defaults to LLVM.
+> > >
+> > > So, supporting 'LLVM' is fine, but I'd rather want this
+> > > look symmetrical, and easy to understand.
+> > >
+> > > CPP        = $(CC) -E
+> > > ifneq ($(LLVM),)
+> >
+> > Yes, a simple if statement is much simpler than the overly complex patch I had.
+> >
+> > > CC         = $(LLVM_DIR)clang
+> >
+> > Do we need $LLVM_DIR? Shouldn't users just have that in their $PATH?
+> >
+> > Also, I think we need to support suffixed binaries, as debian
+> > distributes these with version suffixes, as Nathan points out.  Or do
+> > the debian packages install suffixed binaries AND path versioned
+> > non-suffixed binaries?
+>
+> I think the idea here is that ultimately, the suffixed versions of clang
+> that Debian has in /usr/bin are symlinks to binaries in
+> /usr/lib/llvm-#/bin; as a result, a user could say
+> LLVM_DIR=/usr/lib/llvm-#/bin/ and all of those tools would be picked up
+> automatically. I am not really sure what is better.
 
-Drop everything related to PTE_ATOMIC_UPDATES.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/nohash/32/pgtable.h | 30 --------------------
- arch/powerpc/include/asm/nohash/64/pgtable.h | 27 ------------------
- 2 files changed, 57 deletions(-)
+I periodically build the latest llvm from the trunk,
+and install it under my home directory.
 
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index 719bf09db1a6..d253ce035f72 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -224,19 +224,6 @@ static inline unsigned long pte_update(pte_t *p,
- 				       unsigned long clr,
- 				       unsigned long set)
- {
--#ifdef PTE_ATOMIC_UPDATES
--	unsigned long old, tmp;
--
--	__asm__ __volatile__("\
--1:	lwarx	%0,0,%3\n\
--	andc	%1,%0,%4\n\
--	or	%1,%1,%5\n"
--"	stwcx.	%1,0,%3\n\
--	bne-	1b"
--	: "=&r" (old), "=&r" (tmp), "=m" (*p)
--	: "r" (p), "r" (clr), "r" (set), "m" (*p)
--	: "cc" );
--#else /* PTE_ATOMIC_UPDATES */
- 	unsigned long old = pte_val(*p);
- 	unsigned long new = (old & ~clr) | set;
- 
-@@ -245,7 +232,6 @@ static inline unsigned long pte_update(pte_t *p,
- #else
- 	*p = __pte(new);
- #endif
--#endif /* !PTE_ATOMIC_UPDATES */
- 
- #ifdef CONFIG_44x
- 	if ((old & _PAGE_USER) && (old & _PAGE_EXEC))
-@@ -258,24 +244,8 @@ static inline unsigned long long pte_update(pte_t *p,
- 					    unsigned long clr,
- 					    unsigned long set)
- {
--#ifdef PTE_ATOMIC_UPDATES
--	unsigned long long old;
--	unsigned long tmp;
--
--	__asm__ __volatile__("\
--1:	lwarx	%L0,0,%4\n\
--	lwzx	%0,0,%3\n\
--	andc	%1,%L0,%5\n\
--	or	%1,%1,%6\n"
--"	stwcx.	%1,0,%4\n\
--	bne-	1b"
--	: "=&r" (old), "=&r" (tmp), "=m" (*p)
--	: "r" (p), "r" ((unsigned long)(p) + 4), "r" (clr), "r" (set), "m" (*p)
--	: "cc" );
--#else /* PTE_ATOMIC_UPDATES */
- 	unsigned long long old = pte_val(*p);
- 	*p = __pte((old & ~(unsigned long long)clr) | set);
--#endif /* !PTE_ATOMIC_UPDATES */
- 
- #ifdef CONFIG_44x
- 	if ((old & _PAGE_USER) && (old & _PAGE_EXEC))
-diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
-index 9a33b8bd842d..3cacace9bfa0 100644
---- a/arch/powerpc/include/asm/nohash/64/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
-@@ -211,22 +211,8 @@ static inline unsigned long pte_update(struct mm_struct *mm,
- 				       unsigned long set,
- 				       int huge)
- {
--#ifdef PTE_ATOMIC_UPDATES
--	unsigned long old, tmp;
--
--	__asm__ __volatile__(
--	"1:	ldarx	%0,0,%3		# pte_update\n\
--	andc	%1,%0,%4 \n\
--	or	%1,%1,%6\n\
--	stdcx.	%1,0,%3 \n\
--	bne-	1b"
--	: "=&r" (old), "=&r" (tmp), "=m" (*ptep)
--	: "r" (ptep), "r" (clr), "m" (*ptep), "r" (set)
--	: "cc" );
--#else
- 	unsigned long old = pte_val(*ptep);
- 	*ptep = __pte((old & ~clr) | set);
--#endif
- 	/* huge pages use the old page table lock */
- 	if (!huge)
- 		assert_pte_locked(mm, addr);
-@@ -310,21 +296,8 @@ static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
- 	unsigned long bits = pte_val(entry) &
- 		(_PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_RW | _PAGE_EXEC);
- 
--#ifdef PTE_ATOMIC_UPDATES
--	unsigned long old, tmp;
--
--	__asm__ __volatile__(
--	"1:	ldarx	%0,0,%4\n\
--		or	%0,%3,%0\n\
--		stdcx.	%0,0,%4\n\
--		bne-	1b"
--	:"=&r" (old), "=&r" (tmp), "=m" (*ptep)
--	:"r" (bits), "r" (ptep), "m" (*ptep)
--	:"cc");
--#else
- 	unsigned long old = pte_val(*ptep);
- 	*ptep = __pte(old | bits);
--#endif
- 
- 	flush_tlb_page(vma, address);
- }
+So, I just thought it would be useful to
+allow a user to specify the llvm directory.
+
+Of course, I can do the equivalent by tweaking PATH, but
+I hesitate to make the non-released version my default.
+
+
+
+Having both LLVM_DIR and LLVM_SUFFIX seems verbose.
+
+In fact, the debian provides multiple versions of GCC.
+For example, my machine has
+
+masahiro@pug:~$ ls -1 /usr/bin/gcc-*
+/usr/bin/gcc-4.8
+/usr/bin/gcc-5
+/usr/bin/gcc-7
+/usr/bin/gcc-ar
+/usr/bin/gcc-ar-4.8
+/usr/bin/gcc-ar-5
+/usr/bin/gcc-ar-7
+/usr/bin/gcc-nm
+/usr/bin/gcc-nm-4.8
+/usr/bin/gcc-nm-5
+/usr/bin/gcc-nm-7
+/usr/bin/gcc-ranlib
+/usr/bin/gcc-ranlib-4.8
+/usr/bin/gcc-ranlib-5
+/usr/bin/gcc-ranlib-7
+
+But, nobody has suggested GCC_SUFFIX.
+
+So, I guess CROSS_COMPILE was enough to
+choose a specific tool version.
+
+
+
+
+> I'll try to have some other comments by later today/tonight.
+>
+> > > LD         = $(LLVM_DIR)ld.lld
+> > > AR         = $(LLVM_DIR)llvm-ar
+> > > NM         = $(LLVM_DIR)llvm-nm
+> > > OBJCOPY    = $(LLVM_DIR)llvm-objcopy
+> > > OBJDUMP    = $(LLVM_DIR)llvm-objdump
+> > > READELF    = $(LLVM_DIR)llvm-readelf
+> > > OBJSIZE    = $(LLVM_DIR)llvm-size
+> > > STRIP      = $(LLVM_DIR)llvm-strip
+> > > else
+> > > CC         = $(CROSS_COMPILE)gcc
+> > > LD         = $(CROSS_COMPILE)ld
+> > > AR         = $(CROSS_COMPILE)ar
+> > > NM         = $(CROSS_COMPILE)nm
+> > > OBJCOPY    = $(CROSS_COMPILE)objcopy
+> > > OBJDUMP    = $(CROSS_COMPILE)objdump
+> > > READELF    = $(CROSS_COMPILE)readelf
+> > > OBJSIZE    = $(CROSS_COMPILE)size
+> > > STRIP      = $(CROSS_COMPILE)strip
+> > > endif
+> > >
+> > >
+> > >
+> > > I attached two patches.
+> > > Comments appreciated.
+> >
+> > I'm not sure the second one that recommends changing cc/c++ is the way
+> > to go; I think it might harm hermeticity.
+>
+> Agreed. I do not modify my host system at all for this project, just
+> relying on PATH modification. In theory, we can still override HOSTCC
+> and HOSTCXX but that would defeat the purpose of that patch.
+>
+> Cheers,
+> Nathan
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20200330190312.GA32257%40ubuntu-m2-xlarge-x86.
+
+
+
 -- 
-2.25.0
-
+Best Regards
+Masahiro Yamada
