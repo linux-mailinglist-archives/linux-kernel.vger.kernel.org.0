@@ -2,94 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B22331988D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 02:23:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 672EC1988DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 02:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729471AbgCaAXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Mar 2020 20:23:40 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:34781 "EHLO ozlabs.org"
+        id S1729602AbgCaAZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Mar 2020 20:25:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729019AbgCaAXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Mar 2020 20:23:40 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48rqn46N8rz9sSJ;
-        Tue, 31 Mar 2020 11:23:36 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1585614218;
-        bh=9r7wDHIFILZ0hqXYju725jtK4PGLc9++mStNdgrkjew=;
-        h=Date:From:To:Cc:Subject:From;
-        b=msadQkSpYy+CKYaF0PSoRTvR8gj1QlSaoTeTtdfhYz0FjO4F+Qj62Y65u+Es+gi3p
-         KP9BuIBN7OoYPZpzZiida8O5MmVSyNQtFtuSoSN6kc6O+5DqUyr53/E3d81GT1SPXP
-         R33h5C48ZPCMoej/oOM6+0+IIvTfEgNhPokCPkjm6uDNLPyl/d1PZTRKiS3treD/LO
-         VwX+tQG+zt4HJcWDak18+RrUV5S1KD1epO6dlNPuhQXqleQ5ZvFIGv0qqUq7ZNh8IT
-         YwQ5trMFAi238uC98f912is0VCDvJtg85hsOxQQlHi1LnotUJK+jJo6U/wKOdFfXRz
-         ++TVLLEJCV1bw==
-Date:   Tue, 31 Mar 2020 11:23:34 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>, Greg KH <greg@kroah.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jian Yang <jianyang@google.com>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Subject: linux-next: manual merge of the net-next tree with the spdx tree
-Message-ID: <20200331112334.213ea512@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/xF.fursOG1Ek/.9ANGWx=Gg";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1729557AbgCaAZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Mar 2020 20:25:11 -0400
+Subject: Re: [GIT PULL] core/objtool changes for v5.7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585614310;
+        bh=hZ8FQxqNkPW8MjSDdK4JyJsSr7AZb4Cuz1zjWf/8myM=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=dGL06506qGrmfUmReZN0/EsN1qW2BE8JAh6cI8RrdTWOxY5lfIEaQRh2fJhAe1RrJ
+         8iDC2RL4xBsqEzVnzr3EpcHR4SITmvgDtYj1B/8VvGCVgbkQQpPkR/MPmHrYvgABt+
+         8fC/6KmiGIVF6EvnEJyl1gYkAXS3OEKl77um0low=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200330123136.GA3021@gmail.com>
+References: <20200330123136.GA3021@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200330123136.GA3021@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+ core-objtool-for-linus
+X-PR-Tracked-Commit-Id: 350994bf95414d6da67a72f27d7ac3832ce3725d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d937a6dfc9428f470c3ce4d459c390944ddef538
+Message-Id: <158561431076.380.13810662072593063982.pr-tracker-bot@kernel.org>
+Date:   Tue, 31 Mar 2020 00:25:10 +0000
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Andrew Morton <akpm@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xF.fursOG1Ek/.9ANGWx=Gg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The pull request you sent on Mon, 30 Mar 2020 14:31:36 +0200:
 
-Hi all,
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-objtool-for-linus
 
-Today's linux-next merge of the net-next tree got a conflict in:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d937a6dfc9428f470c3ce4d459c390944ddef538
 
-  tools/testing/selftests/networking/timestamping/.gitignore
+Thank you!
 
-between commit:
-
-  d198b34f3855 (".gitignore: add SPDX License Identifier")
-
-from the spdx tree and commit:
-
-  5ef5c90e3cb3 ("selftests: move timestamping selftests to net folder")
-
-from the net-next tree.
-
-I fixed it up (I just deleted the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xF.fursOG1Ek/.9ANGWx=Gg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6CjYYACgkQAVBC80lX
-0GxUigf9HpgzmG8qDby9zCuA+R4g4pTJY9RqOIjjbSqO2+B70vYN2L3NHZiD8GI3
-SIXXZX4DTRd/p9LbHr7+ojWqR1Ru4lFQpxYh7HQnuX+rNiNwwL8N3FxNVGJ7RXwx
-LaV3EbqsLyVlNeg+OvPaqLwRRAb3/gTFg+5oWGAiM8jR674WKVTNqFMJiQgE7asZ
-mV+DNcThLxGgmqdJv2VqNJ4T1qxQ2GKZhm8TQJlyKHp6fXXgr5RKP4XzND2zTFwR
-ZGcN2kVqpg6+jyvhX7v+zbFJgVVIMUXEg02WBQMr6RGVdrx81bjs6AdzGolyIpN4
-VGKZMvdsrb/5IFIi13RlrDtR3LSMmA==
-=gT/b
------END PGP SIGNATURE-----
-
---Sig_/xF.fursOG1Ek/.9ANGWx=Gg--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
