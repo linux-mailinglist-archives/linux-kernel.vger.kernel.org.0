@@ -2,88 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81D81198E84
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:32:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C2A5198E8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:32:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730217AbgCaIc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 04:32:27 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:61219 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726397AbgCaIcZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:32:25 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02V8RqFb026609;
-        Tue, 31 Mar 2020 10:32:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=AXPGvtsGWLkKS+I+Kb5oNNnn9+C77me7iOpHlW+3zcQ=;
- b=Ik2dFwaCIuvyFsWAJweQXa25LSe/sQYl16/nENEW6qp/+KQHEr3/U1+MHTrx2yXyA9T5
- QeEdY06WYdtG5Zo5Vfki1OTmtqZe1yKLYVj1PyHuLwDEqwakJ0WrM0ywWVlHyahoZ1k1
- YQDT3hFJg3QxcVrC7Zrf8z+vUfIzfhDEyugF5v335QiAVto1NEDSUOQq1HAji/PDUBtk
- ks2j4Ay1BJPHhHGE7LCd3dLLWReOLNzKezWK9eA7xP8404jZQWb92yAzp+ZJjLTC+IPy
- SgxhuRbUnyXs5YQdCjvkWfndIc2hGy1qu8EuE749JeSce2CYHtHcF73YsDXLXxGWhB1H yA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 301w80wtq5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Mar 2020 10:32:09 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 74832100034;
-        Tue, 31 Mar 2020 10:32:08 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 65D6A21E675;
-        Tue, 31 Mar 2020 10:32:08 +0200 (CEST)
-Received: from localhost (10.75.127.47) by SFHDAG3NODE3.st.com (10.75.127.9)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 31 Mar 2020 10:32:07
- +0200
-From:   Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     <fabrice.gasnier@st.com>, <lee.jones@linaro.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v5 6/6] ARM: mach-stm32: select low power timer for STM32MP157
-Date:   Tue, 31 Mar 2020 10:31:46 +0200
-Message-ID: <20200331083146.10462-7-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20200331083146.10462-1-benjamin.gaignard@st.com>
-References: <20200331083146.10462-1-benjamin.gaignard@st.com>
+        id S1730306AbgCaIcv convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 04:32:51 -0400
+Received: from mga17.intel.com ([192.55.52.151]:3258 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726488AbgCaIcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 04:32:50 -0400
+IronPort-SDR: Foo3ae4xUHE7uZLxourCReQLSlYz/7XCMx8pTdNLc6Q1Gcmcz4/ZJ++aw74CAFMVrpXo0X3NSn
+ fVbPDI2dJ5oQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 01:32:50 -0700
+IronPort-SDR: 0Ja4CVaN91zsFRk2lw/QtnoHFKThXn0aN4aOfMIwL6lzKbuOIJ/xg0fUfXhKKoKTly6jL0sJ1Y
+ o2rvjl4rjEBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
+   d="scan'208";a="240059206"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by fmsmga007.fm.intel.com with ESMTP; 31 Mar 2020 01:32:50 -0700
+Received: from fmsmsx125.amr.corp.intel.com (10.18.125.40) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 31 Mar 2020 01:32:49 -0700
+Received: from shsmsx106.ccr.corp.intel.com (10.239.4.159) by
+ FMSMSX125.amr.corp.intel.com (10.18.125.40) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 31 Mar 2020 01:32:49 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.225]) by
+ SHSMSX106.ccr.corp.intel.com ([169.254.10.89]) with mapi id 14.03.0439.000;
+ Tue, 31 Mar 2020 16:32:46 +0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Tian, Jun J" <jun.j.tian@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>, "Wu, Hao" <hao.wu@intel.com>
+Subject: RE: [PATCH v1 1/8] vfio: Add VFIO_IOMMU_PASID_REQUEST(alloc/free)
+Thread-Topic: [PATCH v1 1/8] vfio: Add VFIO_IOMMU_PASID_REQUEST(alloc/free)
+Thread-Index: AQHWAEUbC4GB74LMekup8jIcF6WIFqhh3EqAgACPuLA=
+Date:   Tue, 31 Mar 2020 08:32:45 +0000
+Message-ID: <A2975661238FB949B60364EF0F2C25743A21A9BB@SHSMSX104.ccr.corp.intel.com>
+References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
+ <1584880325-10561-2-git-send-email-yi.l.liu@intel.com>
+ <20200331075331.GA26583@infradead.org>
+In-Reply-To: <20200331075331.GA26583@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG3NODE3.st.com
- (10.75.127.9)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-03-31_03:2020-03-30,2020-03-31 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make MACH_STM32MP157 select CLKSRC_STM32_LP to get a broadcast timer.
+> From: Christoph Hellwig <hch@infradead.org>
+> Sent: Tuesday, March 31, 2020 3:54 PM
+> To: Liu, Yi L <yi.l.liu@intel.com>
+> Subject: Re: [PATCH v1 1/8] vfio: Add VFIO_IOMMU_PASID_REQUEST(alloc/free)
+> 
+> Who is going to use thse exports?  Please submit them together with
+> a driver actually using them.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- arch/arm/mach-stm32/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Hi Hellwig,
 
-diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
-index 57699bd8f107..d78f55b7b1d0 100644
---- a/arch/arm/mach-stm32/Kconfig
-+++ b/arch/arm/mach-stm32/Kconfig
-@@ -46,6 +46,7 @@ if ARCH_MULTI_V7
- config MACH_STM32MP157
- 	bool "STMicroelectronics STM32MP157"
- 	select ARM_ERRATA_814220
-+	select CLKSRC_STM32_LP
- 	default y
- 
- endif # ARMv7-A
--- 
-2.15.0
+Sorry, maybe I misunderstood your point. Do you mean the exported symbol
+below? They are used by the vfio_iommu_type1 driver which is a separate
+driver besides the vfio.ko driver.
 
++EXPORT_SYMBOL_GPL(vfio_mm_put);
++EXPORT_SYMBOL_GPL(vfio_mm_get_from_task);
++EXPORT_SYMBOL_GPL(vfio_mm_pasid_alloc);
++EXPORT_SYMBOL_GPL(vfio_mm_pasid_free);
+
+Regards,
+Yi Liu
