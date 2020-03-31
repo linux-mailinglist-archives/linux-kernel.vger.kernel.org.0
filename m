@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D007198F1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:00:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D7A199014
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:09:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730452AbgCaJAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:00:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39546 "EHLO mail.kernel.org"
+        id S1731402AbgCaJIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:08:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730439AbgCaJAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:00:43 -0400
+        id S1730956AbgCaJIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:08:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A45E20787;
-        Tue, 31 Mar 2020 09:00:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1619208E0;
+        Tue, 31 Mar 2020 09:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645243;
-        bh=DF2vG2JENOKeJQt1F4AhXFxKkI4NDkRA7YESUG6WUw4=;
+        s=default; t=1585645731;
+        bh=e4gP1AzGAjExssar5Y8zyS0WgVBcnkIz92jxOIUyN20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0ZKMns16GecanoBmkNlxqzwq5gloCRbmPiOQWvYeWGVeQPu6hb9HATp6jgKAYcU+u
-         IB/IO6rNIPZnF2fioTyN3uGXbS8EvR581a/59men05dd0zIyTk2PWXr8ilmiSpkrdJ
-         5Xm+yl76+ppRm7l08aXkFTWZYVpQ/fwlqUSq4gnY=
+        b=vcjhbqs9CLci06eu3pdlDcwA552Qzh+SLUJqpd4NBd76xEVPV0ZrkzKeCcOFTkJcV
+         8RRkxYstgLV5lk35HjWAfOvih+yAN3CssaF0kh5RHz68N/BimCnGmTEuykt1A/r//N
+         iophog/Sy30VFzqg8Q+OAunv9Pi0y8vMDsRBejUI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        Johan Hovold <johan@kernel.org>, Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 5.6 08/23] media: flexcop-usb: fix endpoint sanity check
+        stable@vger.kernel.org, Chih-Wei Huang <cwhuang@android-x86.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 146/170] r8169: fix PHY driver check on platforms w/o module softdeps
 Date:   Tue, 31 Mar 2020 10:59:20 +0200
-Message-Id: <20200331085311.616322806@linuxfoundation.org>
+Message-Id: <20200331085438.836502509@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085308.098696461@linuxfoundation.org>
-References: <20200331085308.098696461@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-commit bca243b1ce0e46be26f7c63b5591dfbb41f558e5 upstream.
+commit 2e8c339b4946490a922a21aa8cd869c6cfad2023 upstream.
 
-commit 1b976fc6d684 ("media: b2c2-flexcop-usb: add sanity checking") added
-an endpoint sanity check to address a NULL-pointer dereference on probe.
-Unfortunately the check was done on the current altsetting which was later
-changed.
+On Android/x86 the module loading infrastructure can't deal with
+softdeps. Therefore the check for presence of the Realtek PHY driver
+module fails. mdiobus_register() will try to load the PHY driver
+module, therefore move the check to after this call and explicitly
+check that a dedicated PHY driver is bound to the PHY device.
 
-Fix this by moving the sanity check to after the altsetting is changed.
-
-Fixes: 1b976fc6d684 ("media: b2c2-flexcop-usb: add sanity checking")
-Cc: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Fixes: f32593773549 ("r8169: check that Realtek PHY driver module is loaded")
+Reported-by: Chih-Wei Huang <cwhuang@android-x86.org>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/b2c2/flexcop-usb.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/realtek/r8169_main.c |   16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
---- a/drivers/media/usb/b2c2/flexcop-usb.c
-+++ b/drivers/media/usb/b2c2/flexcop-usb.c
-@@ -511,6 +511,9 @@ static int flexcop_usb_init(struct flexc
- 		return ret;
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -6670,6 +6670,13 @@ static int r8169_mdio_register(struct rt
+ 	if (!tp->phydev) {
+ 		mdiobus_unregister(new_bus);
+ 		return -ENODEV;
++	} else if (!tp->phydev->drv) {
++		/* Most chip versions fail with the genphy driver.
++		 * Therefore ensure that the dedicated PHY driver is loaded.
++		 */
++		dev_err(&pdev->dev, "realtek.ko not loaded, maybe it needs to be added to initramfs?\n");
++		mdiobus_unregister(new_bus);
++		return -EUNATCH;
  	}
  
-+	if (fc_usb->uintf->cur_altsetting->desc.bNumEndpoints < 1)
-+		return -ENODEV;
-+
- 	switch (fc_usb->udev->speed) {
- 	case USB_SPEED_LOW:
- 		err("cannot handle USB speed because it is too slow.");
-@@ -544,9 +547,6 @@ static int flexcop_usb_probe(struct usb_
- 	struct flexcop_device *fc = NULL;
- 	int ret;
+ 	/* PHY will be woken up in rtl_open() */
+@@ -6831,15 +6838,6 @@ static int rtl_init_one(struct pci_dev *
+ 	int chipset, region;
+ 	int jumbo_max, rc;
  
--	if (intf->cur_altsetting->desc.bNumEndpoints < 1)
--		return -ENODEV;
+-	/* Some tools for creating an initramfs don't consider softdeps, then
+-	 * r8169.ko may be in initramfs, but realtek.ko not. Then the generic
+-	 * PHY driver is used that doesn't work with most chip versions.
+-	 */
+-	if (!driver_find("RTL8201CP Ethernet", &mdio_bus_type)) {
+-		dev_err(&pdev->dev, "realtek.ko not loaded, maybe it needs to be added to initramfs?\n");
+-		return -ENOENT;
+-	}
 -
- 	if ((fc = flexcop_device_kmalloc(sizeof(struct flexcop_usb))) == NULL) {
- 		err("out of memory\n");
+ 	dev = devm_alloc_etherdev(&pdev->dev, sizeof (*tp));
+ 	if (!dev)
  		return -ENOMEM;
 
 
