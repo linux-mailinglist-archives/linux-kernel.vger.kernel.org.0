@@ -2,90 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F14D3198EF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 10:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64BEE198F57
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:02:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730168AbgCaI5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 04:57:09 -0400
-Received: from mx.sdf.org ([205.166.94.20]:59171 "EHLO mx.sdf.org"
+        id S1730153AbgCaJCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:02:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726488AbgCaI5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:57:07 -0400
-Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02V8uxRt022439
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Tue, 31 Mar 2020 08:56:59 GMT
-Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02V8uxXM006430;
-        Tue, 31 Mar 2020 08:56:59 GMT
-Date:   Tue, 31 Mar 2020 08:56:59 GMT
-Message-Id: <9916203ec97be0f24886fc8478437d161b56f053.1585644000.git.lkml@sdf.org>
-From:   George Spelvin <lkml@sdf.org>
-Subject: [PATCH 1/3] random: Further dead code elimination
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        linux-kernel@vger.kernel.org, lkml@sdf.org
+        id S1730732AbgCaJCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:02:34 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E79D0208E0;
+        Tue, 31 Mar 2020 09:02:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585645354;
+        bh=OOrvL+hxe4tsrCV6JNg9MTvSFyZDghtmI19y3UsQ144=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dfqhbWAaF9r2X2YbYNtzwphrzJi45GAx6VcyHq7+SLcfUzb6uO6PMoQUeHE3Pf3+O
+         h0XxHYjNWCV1WsR6ZDd+ieBtOoQvNPMXH4PHbwMrhXo5s6KDiZEtLWmGCKe/7Okm+/
+         iXTS6WX3vLpbTRPdzt1m5fybngU8HqmDO6U3mC78=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Bitan Biswas <bbiswas@nvidia.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.5 005/170] mmc: sdhci-tegra: Fix busy detection by enabling MMC_CAP_NEED_RSP_BUSY
+Date:   Tue, 31 Mar 2020 10:56:59 +0200
+Message-Id: <20200331085424.690150019@linuxfoundation.org>
+X-Mailer: git-send-email 2.26.0
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Earlier commits left some dead code behind in credit_entropy_bits().
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-In particular, has_initialized was always zero.
+[ Upstream commit d2f8bfa4bff5028bc40ed56b4497c32e05b0178f ]
 
-Fixes: 90ea1c6436d2 ("random: remove the blocking pool")
-Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Andy Lutomirski <luto@kernel.org>
+It has turned out that the sdhci-tegra controller requires the R1B response,
+for commands that has this response associated with them. So, converting
+from an R1B to an R1 response for a CMD6 for example, leads to problems
+with the HW busy detection support.
+
+Fix this by informing the mmc core about the requirement, via setting the
+host cap, MMC_CAP_NEED_RSP_BUSY.
+
+Reported-by: Bitan Biswas <bbiswas@nvidia.com>
+Reported-by: Peter Geis <pgwipeout@gmail.com>
+Suggested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: <stable@vger.kernel.org>
+Tested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Tested-By: Peter Geis <pgwipeout@gmail.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-Just some odds & ends I noticed.
+ drivers/mmc/host/sdhci-tegra.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/char/random.c | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index c7f9584de2c8..273dcbb4a790 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -660,7 +660,7 @@ static void process_random_ready_list(void)
-  */
- static void credit_entropy_bits(struct entropy_store *r, int nbits)
- {
--	int entropy_count, orig, has_initialized = 0;
-+	int entropy_count, orig;
- 	const int pool_size = r->poolinfo->poolfracbits;
- 	int nfrac = nbits << ENTROPY_SHIFT;
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 403ac44a73782..a25c3a4d3f6cb 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -1552,6 +1552,9 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
+ 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
  
-@@ -717,24 +717,11 @@ static void credit_entropy_bits(struct entropy_store *r, int nbits)
- 	if (cmpxchg(&r->entropy_count, orig, entropy_count) != orig)
- 		goto retry;
++	/* R1B responses is required to properly manage HW busy detection. */
++	host->mmc->caps |= MMC_CAP_NEED_RSP_BUSY;
++
+ 	tegra_sdhci_parse_dt(host);
  
--	if (has_initialized) {
--		r->initialized = 1;
--		kill_fasync(&fasync, SIGIO, POLL_IN);
--	}
-+	entropy_count >>= ENTROPY_SHIFT;	/* Convert to bits */
-+	trace_credit_entropy_bits(r->name, nbits, entropy_count, _RET_IP_);
- 
--	trace_credit_entropy_bits(r->name, nbits,
--				  entropy_count >> ENTROPY_SHIFT, _RET_IP_);
--
--	if (r == &input_pool) {
--		int entropy_bits = entropy_count >> ENTROPY_SHIFT;
--
--		if (crng_init < 2) {
--			if (entropy_bits < 128)
--				return;
--			crng_reseed(&primary_crng, r);
--			entropy_bits = ENTROPY_BITS(r);
--		}
--	}
-+	if (r == &input_pool && crng_init < 2 && entropy_count >= 128)
-+		crng_reseed(&primary_crng, r);
- }
- 
- static int credit_entropy_bits_safe(struct entropy_store *r, int nbits)
+ 	tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
 -- 
-2.26.0
+2.20.1
+
+
 
