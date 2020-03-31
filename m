@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEA19199EC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 21:15:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54A8E199EC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 21:15:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731436AbgCaTPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 15:15:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60058 "EHLO mail.kernel.org"
+        id S1731444AbgCaTP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 15:15:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731425AbgCaTPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 15:15:19 -0400
-Subject: Re: [GIT PULL] arm64 updates for 5.7
+        id S1731390AbgCaTPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 15:15:18 -0400
+Subject: Re: [GIT PULL] arch/microblaze patches for 5.7-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1585682118;
-        bh=AAzPBPD0BcCQqi3lKKPQf6FDiD9SFkUUDJr4PJ0/p4M=;
+        bh=qZSb3OdmQUNfO+CyuanGJJ/FcbBBSs9CE7irqbmMU/M=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=WPZ+n40hcXTT6HcL6bN45SszxvqmHSOE141h+YrTTYACxrMn6ngwDmnspCK2kg5hv
-         LwqAjYPrGIfsYoRwUmPpuEHmOJGJHfwuAHQ/y9Y1WSS7zws/ekASn0LSuKjJvw5sld
-         aOJpS7Ku/PSuff70g9DfhUwXd8eO/vXWI/9Gr6tc=
+        b=lp0mfeviT1L+KrbkTZg7EChEHbCf21F8aZoNweq8yOSjpvju6KJE+NRSJmQrqqRQu
+         4mgrTRBoAgs46jcghrbokEiXG8ntl7cGBG5RMkaXAmGxSsx5KhpVkdidHAIrXYa4Ly
+         AG0843HBYrwPbTkTSKQqIfgeZKSe4BYuwSCY9NGQ=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200331151131.GA17516@mbp>
-References: <20200331151131.GA17516@mbp>
+In-Reply-To: <07af6b9e-1f01-0e2b-c5e0-69041eb2aca6@monstr.eu>
+References: <07af6b9e-1f01-0e2b-c5e0-69041eb2aca6@monstr.eu>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200331151131.GA17516@mbp>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-upstream
-X-PR-Tracked-Commit-Id: b2a84de2a2deb76a6a51609845341f508c518c03
+X-PR-Tracked-Message-Id: <07af6b9e-1f01-0e2b-c5e0-69041eb2aca6@monstr.eu>
+X-PR-Tracked-Remote: git://git.monstr.eu/linux-2.6-microblaze.git
+ tags/microblaze-v5.7-rc1
+X-PR-Tracked-Commit-Id: 9fd1a1c9b3f2a38a5357a13335e0b9e5f21d093b
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3cd86a58f7734bf9cef38f6f899608ebcaa3da13
-Message-Id: <158568211851.28667.8169032528868959434.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: a8222fd5b80c7ec83f257060670becbeea9b50b9
+Message-Id: <158568211814.28667.2232170284573684863.pr-tracker-bot@kernel.org>
 Date:   Tue, 31 Mar 2020 19:15:18 +0000
-To:     Catalin Marinas <catalin.marinas@arm.com>
+To:     Michal Simek <monstr@monstr.eu>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+        LKML <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 31 Mar 2020 16:11:34 +0100:
+The pull request you sent on Tue, 31 Mar 2020 16:54:39 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-upstream
+> git://git.monstr.eu/linux-2.6-microblaze.git tags/microblaze-v5.7-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3cd86a58f7734bf9cef38f6f899608ebcaa3da13
+https://git.kernel.org/torvalds/c/a8222fd5b80c7ec83f257060670becbeea9b50b9
 
 Thank you!
 
