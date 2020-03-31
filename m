@@ -2,126 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52C7E199C09
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 18:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7B4E199C4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 18:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731144AbgCaQrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 12:47:22 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:39662 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730442AbgCaQrW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 12:47:22 -0400
-Received: by mail-il1-f194.google.com with SMTP id r5so20085539ilq.6
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 09:47:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OT4pMSpiK/UC4Mr+9RHkJgxu5bDQsWsl1DR3uPPrhxA=;
-        b=vB974iQR0mwNOw4ta4Za0CbIwf55mbOkr3ld8d5uyxVx1ETSjNjcsojv8CjlVRaW0d
-         Gd/6PSilrRsC9ppGDDcw3+4Wr9f78Gl5i/HuB5ClEaIwfsiLc0DOhy1esQP7pRmCVUOt
-         KcRcAjZef+0tqaMXcKR19EGP2qhCF8eA3tPvD+EPk/xj0paOd7wC/YpE0UpQYsIjCy93
-         PWlotFT+sOebVgEqUSVEBl+mmTCf1bhkEroEw78q49EACEqSBmSD/ukqYYnN6/alzi8T
-         6pN4oM265p982ZorEQpqMrPEDrvnZQcjt2JOsabPyT3MKYdflD5v/QaIYEgkaNBAkzi9
-         ydPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OT4pMSpiK/UC4Mr+9RHkJgxu5bDQsWsl1DR3uPPrhxA=;
-        b=COQyGOhNmFLx2uFxmWnnOCt2edU7KEJyYehWzy7nD76puQWH41LCEHv+Xx7R02KB55
-         b+7AGNPF7eFMPKUvEAu89AgNO0tByFl88RLUhBBwI3TnA6elrUlZkojMzNyxb1fpQpGf
-         gNnVFegg0+ipCoiXG1v9PK8uIuTq56fDCsogPxyojJmVl5Dje8Nrv8T+Zwo06nuhsFGX
-         SjamKnyDHLg/N3v8CNtAl5EdEwFnnlONUN9CEbsFPOqsA0q3k/j/imgraNIHtgy0fYP4
-         wdDsXS+H/e0VwLDCWRdtNV1hzMb2iXqpFMlTdaMLzujNR94/2hmaJ/L1r1LFRMTvDT/H
-         HERw==
-X-Gm-Message-State: ANhLgQ0M/rIqHTODA94aDrcqg2hxHJqQE8BJ5UGoogOvgO20rdWt63gW
-        ZSn2fmeFrK+FbjrRyGBTcHmVeclzQ0lMtHQLzw8IqQ==
-X-Google-Smtp-Source: ADFU+vuv2z+RvUoyFBKFpaGQ6uQeCth3Kdb+5ldsc6qBNaQajNgyTri0JxfBs2MSQ304FwNf6wkpiR9u0IqgVt7aBz4=
-X-Received: by 2002:a92:8352:: with SMTP id f79mr16835440ild.58.1585673239840;
- Tue, 31 Mar 2020 09:47:19 -0700 (PDT)
+        id S1731280AbgCaQ4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 12:56:43 -0400
+Received: from pub.regulars.win ([89.163.144.234]:60628 "EHLO pub.regulars.win"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730589AbgCaQ4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 12:56:42 -0400
+X-Greylist: delayed 462 seconds by postgrey-1.27 at vger.kernel.org; Tue, 31 Mar 2020 12:56:42 EDT
+From:   Slava Bacherikov <slava@bacher09.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bacher09.org;
+        s=reg; t=1585673336;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=DmSQ2UIhT0odCb3E+9iqnV1wCWPiNesSH1XLAgRS7Jw=;
+        b=Re0+pc4fcZ/9lLyWQmpJEiEuwkWiA/rcf3G5Ovd+qNiPmIJAMU0s0l2zzXj/Xo1ahMPieK
+        WBTPVVN2hgx0dtCM96KcbSPr7bvID3Gnjcl4/tzhZZoQUSsk7JwhwmCzhj/p4nMIYH7aiJ
+        Ao/cP94gY1ZNlL/CFxY1dNgqV6s7MHo=
+To:     yamada.masahiro@socionext.com
+Cc:     andriin@fb.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net,
+        Slava Bacherikov <slava@bacher09.org>
+Subject: [PATCH] kbuild: disable DEBUG_INFO_SPLIT when BTF is on
+Date:   Tue, 31 Mar 2020 19:47:20 +0300
+Message-Id: <20200331164719.15930-1-slava@bacher09.org>
 MIME-Version: 1.0
-References: <1585241440-7572-1-git-send-email-rishabhb@codeaurora.org>
- <1585241440-7572-2-git-send-email-rishabhb@codeaurora.org>
- <20200330221245.GA17782@xps15> <20200330224554.GD215915@minitux>
-In-Reply-To: <20200330224554.GD215915@minitux>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 31 Mar 2020 10:47:08 -0600
-Message-ID: <CANLsYkxEA66kGZh1rToSn79fpgPHqEjMZsSw74Rx3OLwG2k35w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] remoteproc: Add userspace char device driver
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>, psodagud@codeaurora.org,
-        tsoni@codeaurora.org, Siddharth Gupta <sidgup@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Mar 2020 at 16:45, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Mon 30 Mar 15:12 PDT 2020, Mathieu Poirier wrote:
-> [..]
-> > > +   struct rproc *rproc;
-> > > +
-> > > +   rproc = container_of(inode->i_cdev, struct rproc, char_dev);
-> > > +   if (!rproc)
-> > > +           return -EINVAL;
-> > > +
-> > > +   rproc_shutdown(rproc);
-> >
-> > The scenario I see here is that a userspace program will call
-> > open(/dev/rproc_xyz, SOME_OPTION) when it is launched.  The file stays open
-> > until either the application shuts down, in which case it calls close() or it
-> > crashes.  In that case the system will automatically close all file descriptors
-> > that were open by the application, which will also call rproc_shutdown().
-> >
-> > To me the same functionality can be achieved with the current functionality
-> > provided by sysfs.
-> >
-> > When the application starts it needs to read
-> > "/sys/class/remoteproc/remoteprocX/state".  If the state is "offline" then
-> > "start" should be written to "/sys/.../state".  If the state is "running" the
-> > application just crashed and got restarted.  In which case it needs to stop the
-> > remote processor and start it again.
-> >
->
-> A case when this would be useful is the Qualcomm modem, which relies on
-> disk access through a "remote file system service" [1].
->
-> Today we register the service (a few layers ontop of rpmsg/GLINK) then
-> find the modem remoteproc and write "start" into the state sysfs file.
->
-> When we get a signal for termination we write "stop" into state to stop
-> the remoteproc before exiting.
->
-> There is however no way for us to indicate to the modem that rmtfs just
-> died, e.g. a kill -9 on the process will result in the modem continue
-> and the next IO request will fail which in most cases will be fatal.
+Currently turning on DEBUG_INFO_SPLIT when DEBUG_INFO_BTF is also
+enabled will produce invalid btf file, since gen_btf function in
+link-vmlinux.sh script doesn't handle *.dwo files.
 
-The modem will crash when attempting an IO while rmtfs is down?
+Signed-off-by: Slava Bacherikov <slava@bacher09.org>
+---
+ lib/Kconfig.debug | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> So instead having rmtfs holding /dev/rproc_foo open would upon its
-> termination cause the modem to be stopped automatically, and as the
-> system respawns rmtfs the modem would be started anew and the two sides
-> would be synced up again.
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index f61d834e02fe..a9429ef5eec8 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -223,6 +223,7 @@ config DEBUG_INFO_DWARF4
+ config DEBUG_INFO_BTF
+ 	bool "Generate BTF typeinfo"
+ 	depends on DEBUG_INFO
++	depends on !DEBUG_INFO_SPLIT
+ 	help
+ 	  Generate deduplicated BTF type information from DWARF debug info.
+ 	  Turning this on expects presence of pahole tool, which will convert
+-- 
+2.24.1
 
-I have a better idea of what is going on now - thanks for writing this up.
-
-I would make this feature a kernel configurable option as some people
-may not want it.  I also think having "/dev/remoteprocX" is fine, so
-no need to change anything currently visible in sysfs.
-
-Mathieu
-
->
-> [1] https://github.com/andersson/rmtfs
->
-> Regards,
-> Bjorn
