@@ -2,102 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D43319A0F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:40:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6696B19A0F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:42:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731331AbgCaVkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 17:40:55 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44183 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbgCaVky (ORCPT
+        id S1731259AbgCaVmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 17:42:39 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:41800 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728124AbgCaVmj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 17:40:54 -0400
-Received: by mail-il1-f194.google.com with SMTP id j69so20965285ila.11;
-        Tue, 31 Mar 2020 14:40:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eq+6A9+LczeU2VzQyTNk/9n1oBeKvi0NgSFZ/oc66oQ=;
-        b=Ap8zUEtOi2EYLmUH4H4Nt4O8w6NqZn/LYPBucU2DpkKOaKclNEc70BRDiTMEkwbxec
-         VG6GJ2gcwJ5P8IiQrFkieN56NHVYXv4mY1t0y9mZ0O3JiclLz6QsDW+mHVboW0IcsMWI
-         7YGA60KSbhmxVzj6FEAFQplr6pJfv+zBDfay2u7g7PRGYum6I79sD4f/0U1Qr6Vy/FFG
-         SojqkWyfOWCMdRkOTT+jHJuCaMWc2iUu5tSr4kTsDPyTLNtfpf9qnLHqMoMoyY4CvZ8j
-         7X2iIAiMGeMEnZywaI0AARTlRXtmhK4nb48Tztsn5T/P5fcszvUDWivgJo8wXkGy/X59
-         sYbQ==
-X-Gm-Message-State: ANhLgQ1Ax+pPpH9XvfiIcYc0QcCfHYsfjLYO+Sfunz/8YVRNQ+DOdxGk
-        6/hsiKBdKLYZqEtfp6xh0oBNAWJUzA==
-X-Google-Smtp-Source: ADFU+vssb/q/y3wnHMbcu1KcLFBTw9EarimFzfJH01AQcRsX3nDONN9ZkpJiUj9gw96009vEgGk6Xw==
-X-Received: by 2002:a92:844f:: with SMTP id l76mr19385844ild.13.1585690853355;
-        Tue, 31 Mar 2020 14:40:53 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id h9sm21895iow.37.2020.03.31.14.40.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 14:40:52 -0700 (PDT)
-Received: (nullmailer pid 20298 invoked by uid 1000);
-        Tue, 31 Mar 2020 21:40:51 -0000
-Date:   Tue, 31 Mar 2020 15:40:51 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Rakesh Pillai <pillair@codeaurora.org>
-Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: ath10k: Add wifi-firmware subnode
- for wifi node
-Message-ID: <20200331214051.GA2053@bogus>
-References: <1585134100-5944-1-git-send-email-pillair@codeaurora.org>
- <1585134100-5944-2-git-send-email-pillair@codeaurora.org>
+        Tue, 31 Mar 2020 17:42:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585690957;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iSUEPb+08epd9+83km1iAJ00vl6qYc6qO3FrpFZpauo=;
+        b=AN+vtALbwJYe8ZW4FOXrTZqoyJWwuIylsIIJ1QD0oB/BGeqwgJPVQdneXsRafMuN1ewYp1
+        361abuXlau6Jr3wq43rNvvf4NYQ1XSALQcgZvVxVAA/4sfjFhxfz/2i+SSTzpmxAi1WkBz
+        BZ5WFsqQh+pq9D/ew15c26oW1ak3N7A=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-407-WQjfUEW2N36inoIIl3taBg-1; Tue, 31 Mar 2020 17:42:35 -0400
+X-MC-Unique: WQjfUEW2N36inoIIl3taBg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 59733800D6C;
+        Tue, 31 Mar 2020 21:42:34 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-116-15.gru2.redhat.com [10.97.116.15])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 164881001B09;
+        Tue, 31 Mar 2020 21:42:23 +0000 (UTC)
+Subject: Re: [PATCH 2/2] selftests: kvm: Add mem_slot_test test
+To:     Andrew Jones <drjones@redhat.com>
+Cc:     kvm@vger.kernel.org, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        david@redhat.com
+References: <20200330204310.21736-1-wainersm@redhat.com>
+ <20200330204310.21736-3-wainersm@redhat.com>
+ <20200331081632.ithcwuzjyjhiwphy@kamzik.brq.redhat.com>
+From:   Wainer dos Santos Moschetta <wainersm@redhat.com>
+Message-ID: <b261aa4f-87d5-2ac8-9f66-9f10e1a0803a@redhat.com>
+Date:   Tue, 31 Mar 2020 18:42:21 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1585134100-5944-2-git-send-email-pillair@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200331081632.ithcwuzjyjhiwphy@kamzik.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 04:31:38PM +0530, Rakesh Pillai wrote:
-> Add a wifi-firmware subnode for the wifi node.
-> This wifi-firmware subnode is needed for the
-> targets which do not support TrustZone.
-> 
-> Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
-> ---
->  .../devicetree/bindings/net/wireless/qcom,ath10k.txt       | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-> index 71bf91f..65ee68e 100644
-> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-> @@ -96,6 +96,17 @@ Optional properties:
->  - qcom,coexist-gpio-pin : gpio pin number  information to support coex
->  			  which will be used by wifi firmware.
->  
-> +* Subnodes
-> +The ath10k wifi node can contain one optional firmware subnode.
-> +Firmware subnode is needed when the platform does not have TustZone.
-> +The firmware subnode must have:
-> +
-> +- iommus:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: A list of phandle and IOMMU specifier pairs.
-> +
-> +
->  Example (to supply PCI based wifi block details):
->  
->  In this example, the node is defined as child node of the PCI controller.
-> @@ -196,4 +207,7 @@ wifi@18000000 {
->  		memory-region = <&wifi_msa_mem>;
->  		iommus = <&apps_smmu 0x0040 0x1>;
->  		qcom,msa-fixed-perm;
-> +		wifi-firmware {
-> +			iommus = <&apps_iommu 0xc22 0x1>;
+Hi Andrew,
 
-Why can't you just add a 2nd entry to the existing 'iommus' property? 
+Nice review. Few comments below.
 
-A driver doing of_dma_configure() is generally not the right thing to 
-do.
+On 3/31/20 5:16 AM, Andrew Jones wrote:
+> On Mon, Mar 30, 2020 at 05:43:10PM -0300, Wainer dos Santos Moschetta wrote:
+>> This patch introduces the mem_slot_test test which checks
+>> an VM can have added memory slots up to the limit defined in
+>> KVM_CAP_NR_MEMSLOTS. Then attempt to add one more slot to
+>> verify it fails as expected.
+>>
+>> Signed-off-by: Wainer dos Santos Moschetta <wainersm@redhat.com>
+>> ---
+>>   tools/testing/selftests/kvm/.gitignore      |  1 +
+>>   tools/testing/selftests/kvm/Makefile        |  3 +
+>>   tools/testing/selftests/kvm/mem_slot_test.c | 92 +++++++++++++++++++++
+>>   3 files changed, 96 insertions(+)
+>>   create mode 100644 tools/testing/selftests/kvm/mem_slot_test.c
+>>
+>> diff --git a/tools/testing/selftests/kvm/.gitignore b/tools/testing/selftests/kvm/.gitignore
+>> index 30072c3f52fb..b1b94d50f6a2 100644
+>> --- a/tools/testing/selftests/kvm/.gitignore
+>> +++ b/tools/testing/selftests/kvm/.gitignore
+>> @@ -17,3 +17,4 @@
+>>   /clear_dirty_log_test
+>>   /dirty_log_test
+>>   /kvm_create_max_vcpus
+>> +/mem_slot_test
+>> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+>> index d91c53b726e6..070133349403 100644
+>> --- a/tools/testing/selftests/kvm/Makefile
+>> +++ b/tools/testing/selftests/kvm/Makefile
+>> @@ -30,16 +30,19 @@ TEST_GEN_PROGS_x86_64 += x86_64/svm_vmcall_test
+>>   TEST_GEN_PROGS_x86_64 += clear_dirty_log_test
+>>   TEST_GEN_PROGS_x86_64 += dirty_log_test
+>>   TEST_GEN_PROGS_x86_64 += kvm_create_max_vcpus
+>> +TEST_GEN_PROGS_x86_64 += mem_slot_test
+>>   
+>>   TEST_GEN_PROGS_aarch64 += clear_dirty_log_test
+>>   TEST_GEN_PROGS_aarch64 += dirty_log_test
+>>   TEST_GEN_PROGS_aarch64 += kvm_create_max_vcpus
+>> +TEST_GEN_PROGS_aarch64 += mem_slot_test
+>>   
+>>   TEST_GEN_PROGS_s390x = s390x/memop
+>>   TEST_GEN_PROGS_s390x += s390x/sync_regs_test
+>>   TEST_GEN_PROGS_s390x += s390x/resets
+>>   TEST_GEN_PROGS_s390x += dirty_log_test
+>>   TEST_GEN_PROGS_s390x += kvm_create_max_vcpus
+>> +TEST_GEN_PROGS_s390x += mem_slot_test
+>>   
+>>   TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(UNAME_M))
+>>   LIBKVM += $(LIBKVM_$(UNAME_M))
+>> diff --git a/tools/testing/selftests/kvm/mem_slot_test.c b/tools/testing/selftests/kvm/mem_slot_test.c
+>> new file mode 100644
+>> index 000000000000..75d2bbd71642
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/kvm/mem_slot_test.c
+>> @@ -0,0 +1,92 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * mem_slot_test
+>> + *
+>> + * Copyright (C) 2020, Red Hat, Inc.
+>> + *
+>> + * Test it can be added memory slots up to KVM_CAP_NR_MEMSLOTS, then any
+>> + * tentative to add further slots should fail.
+>> + */
+>> +#define _GNU_SOURCE /* for program_invocation_short_name */
+>> +#include <linux/kvm.h>
+>> +#include <sys/mman.h>
+>> +#include <unistd.h>
+>> +
+>> +#include "test_util.h"
+>> +#include "kvm_util.h"
+>> +
+>> +/* Memory region flags */
+>> +#define MEM_REG_FLAGS KVM_MEM_LOG_DIRTY_PAGES
+>> +
+>> +/* Guest VM mode */
+>> +#define GUEST_VM_MODE VM_MODE_DEFAULT
+> I'm not sure what the value of the two defines above are. I'd prefer we
+> avoid unnecessary renaming. Also, do we need KVM_MEM_LOG_DIRTY_PAGES for
+> this test?
 
-Rob
+It would be nice to exercise the code by adding slots with different 
+page flags. But for this test that simple checks the limit, the use of 
+KVM_MEM_READONLY is enough. I will change it on v2.
+
+>
+>> +
+>> +int main(int argc, char *argv[])
+>> +{
+>> +	struct kvm_vm *vm;
+>> +	/* Maximum allowed number of memory slots */
+>> +	uint32_t max_mem_slots;
+>> +	/* Slot number */
+>> +	uint32_t slot;
+>> +	/* Number of pages in a memory region */
+>> +	uint64_t mem_reg_npages;
+>> +	/* Memory region size */
+>> +	uint64_t mem_reg_size;
+>> +	/* Guest physical memory guest_address */
+>> +	uint64_t guest_addr;
+>> +	/* VM page size */
+>> +	uint64_t vm_page_size;
+> nit: IMO, the variable names above are descriptive enough to drop the
+> comments.
+>
+>> +	int ret;
+>> +
+>> +	max_mem_slots = kvm_check_cap(KVM_CAP_NR_MEMSLOTS);
+>> +	TEST_ASSERT(max_mem_slots > 0,
+>> +		    "KVM_CAP_NR_MEMSLOTS should be greater than 0");
+>> +	DEBUG("Allowed number of memory slots: %i\n", max_mem_slots);
+> DEBUG() no longer exists in kvm/queue. This should now be pr_debug().
+Great. I will rebase my code to kvm/queue...
+>
+>> +
+>> +	vm = vm_create(GUEST_VM_MODE, 0, O_RDWR);
+>> +
+>> +	/* Determine the minimal number of pages as possible per region. */
+>> +	vm_page_size = vm_get_page_size(vm);
+>> +#ifdef __s390x__
+>> +	mem_reg_size = 0x100000;
+>> +#else
+>> +	uint64_t host_page_size = sysconf(_SC_PAGESIZE);
+>> +
+>> +	mem_reg_size = (host_page_size > vm_page_size) ? host_page_size :
+>> +							 vm_page_size;
+>> +#endif
+>> +	mem_reg_npages = mem_reg_size / vm_page_size;
+> On kvm/queue the above 11 lines can now all be done with
+>
+>    mem_reg_size = SOME_ARBITRARY_MEM_REG_SIZE;
+>    mem_reg_npages = vm_calc_num_guest_pages(VM_MODE_DEFAULT, mem_reg_size);
+>
+>> +	guest_addr = 0x0;
+>> +
+>> +	/* Check it can be added memory slots up to the maximum allowed */
+>> +	DEBUG("Adding slots 0..%i, each memory region with %ldK size\n",
+>> +	      (max_mem_slots - 1), mem_reg_size >> 10);
+>> +	for (slot = 0; slot < max_mem_slots; slot++) {
+>> +		vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
+>> +					    guest_addr, slot, mem_reg_npages,
+>> +					    MEM_REG_FLAGS);
+>> +		guest_addr += mem_reg_size;
+>> +	}
+>> +
+>> +	/* Check it cannot be added memory slots beyond the limit */
+>> +	guest_addr += mem_reg_size;
+> nit: shouldn't be necessary. We already incremented guest_addr on the
+> last loop.
+Good catch.
+>
+>> +	void *mem = mmap(NULL, mem_reg_size, PROT_READ | PROT_WRITE,
+>> +			 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+>> +	TEST_ASSERT(mem != NULL, "Failed to mmap() host");
+>> +
+>> +	struct kvm_userspace_memory_region kvm_region = {
+>> +		.slot = slot,
+>> +		.flags = MEM_REG_FLAGS,
+>> +		.guest_phys_addr = guest_addr,
+>> +		.memory_size = mem_reg_size,
+>> +		.userspace_addr = (uint64_t) mem,
+>> +	};
+>> +
+>> +	ret = ioctl(vm_get_fd(vm), KVM_SET_USER_MEMORY_REGION, &kvm_region);
+>> +	TEST_ASSERT(ret == -1, "Adding one more memory slot should fail");
+> Shouldn't we also check that we get the correct errno?
+
+Good idea.
+
+In the kvm API document there isn't any mention to the errno returned 
+but looking at code it seems to be EINVAL for all errors (except for one 
+EEXIST).
+
+Thanks,
+
+Wainer
+
+>
+>> +
+>> +	munmap(mem, mem_reg_size);
+>> +	kvm_vm_free(vm);
+>> +
+>> +	return 0;
+>> +}
+>> -- 
+>> 2.17.2
+>>
+> Thanks,
+> drew
+
