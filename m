@@ -2,122 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F16D0199E22
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DDA8199E28
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbgCaSiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 14:38:11 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46280 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbgCaSiK (ORCPT
+        id S1727875AbgCaSiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 14:38:51 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44884 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbgCaSiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:38:10 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r7so15405323ljg.13;
-        Tue, 31 Mar 2020 11:38:09 -0700 (PDT)
+        Tue, 31 Mar 2020 14:38:50 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j188so18216051lfj.11
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:38:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=d/jwDOe+5jnEC+le3jpCg1Ia6gNwhPXykp3nmWWhaOs=;
-        b=efL3HT8pfTGSmpyjNAyFLdEXEf+iJsj0as5yEpNO7JudauMQa/KZj6D7xFxcKKnjhV
-         iPsBeft+PnbfJC+Vp6nLBwnlZ5tKQ+8ZBNF9YgWR7+3eFhLFJVkmXf+5gj2SEd4dqa3s
-         lkgGvPRBtmheVxe7N6FgijtF4pjZ9WlVZMf8zzO5uaB3URHQiV8pFOwzP1Rvzbdv9Tr9
-         Pd3REBTMmX+KxQgz/+GobUY/Nl/bjrmfSreT2c2ZkyqAMIIyNTUESippgbxRjAskm82a
-         cb7RqxivclSsiqz92iezds6lQlwNzWvgnITilpL2P9XR8heTGadXxSI7dCJihYX/6iMf
-         HvyA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A1iR82JLy2QBCOT69varWy2T5A5xF9bW9JJAjBNZYtw=;
+        b=AgqKOg0Xlsg+qGXoQ+t9zCBNScJcIVnuGn7QUcnP5aj8K6e742Rcu/EaX9dFEgNWBB
+         vLt6fu6VOygerOifBdA6nnhB4ysDtUoC0P1DJFSqfuuPpywvC25BwJBpffeJCIkJh8dG
+         tLUkc/jZQ3hFDfS/dw7P10lHqjs5yx7744a4h8kR+4682zw7JntAP1hQJza4+5Ku02jb
+         dNvog8Zyo5wsM5AASjRnI3cy5WnI9Gu7ncfLGtjv7HYWKTm2pQkdxBZaLHwLhXV4Ye05
+         5DmXFtwrhnbuUCpWEJdx7hpJvwEYTEu/5k+jNUlVf3VrzgCLx9kpqwanVLH5BWTzIS1P
+         mdIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d/jwDOe+5jnEC+le3jpCg1Ia6gNwhPXykp3nmWWhaOs=;
-        b=Il+9K3N2EH3lr64ps1nFPg4bqyNfRoi6lOSP6Vg+jrvv1S/9c+T4RgONi48CnhAlCi
-         4h9+fD67Xw2n9LVkVtmntwPWgTYjqeOjDGbzobUCo+LjnO6Yr4hpiKfbn3H+T2Dh6upV
-         9mfQcFWHZaNjXqivkydT9pfhfIOQBPdVRqpOYRhf2AADsNU9USx0xo51tXLV04OhdLDg
-         b0uMqB9IgJi1Q6Q6c7DFjnbYRy1FGkmAtpZfSWN4CRhDzCaix1K0p3IPcE0z5cNxJ6KZ
-         SDoLluUi9RS3ybfuDbj5dtrG0Xn8zViJvoq4wqIg1Day9YPILJ4HhRn4EEGkC+XZj9xW
-         Hlqw==
-X-Gm-Message-State: AGi0PuYOqDW7bRTOoKDcudl4f2tIcXLcgt9tOZa97CVNuNl4CiA9f9E6
-        Jy//MEwFFQ5nd8b0JPuBg4VeUTIbC8nJxWEdj1E=
-X-Google-Smtp-Source: APiQypKLpnll7mCTK5hJByNZ+I2zToNbaBev7/ujZB1Z7zORv+AAXOLY5C1GQuLB78hus+630w3uQzds8XU6gpqabLM=
-X-Received: by 2002:a2e:3c0a:: with SMTP id j10mr10921764lja.205.1585679888664;
- Tue, 31 Mar 2020 11:38:08 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A1iR82JLy2QBCOT69varWy2T5A5xF9bW9JJAjBNZYtw=;
+        b=NBWWmu8XaTI6DDdemscOuShL2kR8p0GkBeokIORildsi0xWO2Fk1jzquW/7l8xqOT/
+         yMPI+IWiiGCtzcLkVbzWk0M4M9SOK9qgAA6kWUkhP334rSGlseYCxE/rk7LjEQ57yP+p
+         w8487VTE4CzgyGWUkcu6XsnMcTbv7rmPILK3z0up4O8C4Kv7rci+q1o6LFMMrv5NtWoV
+         jGSfIfhpqEJZDXEunfUv9h18iW9GIe8zCW0dBdCyR6oBeTRyG+Xch28mM33Lct9xMr/g
+         7RvxRcK+7703ecAkRUMKG93oa3zTh2Ng6ybZtNxiBQSCx1QYtvW4RcTXCP4tDAeRieNS
+         Cr1A==
+X-Gm-Message-State: AGi0PuZOo8okFkNZbZzPTY1graJkjqReNruq/YaVF8MFUBQBKQXywVQ2
+        +zZt+SIlOjkhn0qZN+1oLB6zMQ==
+X-Google-Smtp-Source: APiQypKRx83jRA3vthxlvydh1YZb4WXvAun13NnHXa386ryuuWqw8NWW/Vu8GQtNCFg8UW/MxqPqog==
+X-Received: by 2002:a19:a409:: with SMTP id q9mr12183993lfc.71.1585679928748;
+        Tue, 31 Mar 2020 11:38:48 -0700 (PDT)
+Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
+        by smtp.gmail.com with ESMTPSA id b28sm10331849ljp.90.2020.03.31.11.38.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 11:38:47 -0700 (PDT)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Vinod Koul <vkoul@kernel.org>, Haibo Chen <haibo.chen@nxp.com>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 0/2] amba/platform: Initialize dma_parms at the bus level
+Date:   Tue, 31 Mar 2020 20:38:42 +0200
+Message-Id: <20200331183844.30488-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191120220559.18914-1-c-robey@ti.com> <41c73bc1-99ae-6797-5bb7-7acc0f6518c0@ti.com>
- <20191212170452.GV35479@atomide.com>
-In-Reply-To: <20191212170452.GV35479@atomide.com>
-From:   Drew Fustini <pdp7pdp7@gmail.com>
-Date:   Tue, 31 Mar 2020 20:38:38 +0200
-Message-ID: <CAEf4M_C05Hwc_BEL6MaFNNEW0Cf2kc-LvMi9qdKxL7hVAFFDGQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: am5729: beaglebone-ai: adding device tree
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        Caleb Robey <c-robey@ti.com>, linux-omap@vger.kernel.org,
-        Jason Kridner <jkridner@gmail.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>, Jason Kridner <jdk@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Andreas Dannenberg <dannenberg@ti.com>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        "Andrew F . Davis" <afd@ti.com>, Tom Rini <trini@konsulko.com>,
-        Robert Nelson <robertcnelson@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Drew Fustini <drew@beagleboard.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 6:06 PM Tony Lindgren <tony@atomide.com> wrote:
-> > On 21/11/2019 00:05, Caleb Robey wrote:
-> > > From: Jason Kridner <jdk@ti.com>
-> > >
-> > > BeagleBoard.org BeagleBone AI is an open source hardware single
-> > > board computer based on the Texas Instruments AM5729 SoC featuring
-> > > dual-core 1.5GHz Arm Cortex-A15 processor, dual-core C66 digital
-> > > signal processor (DSP), quad-core embedded vision engine (EVE),
-> > > Arm Cortex-M4 processors, dual programmable realtime unit
-> > > industrial control subsystems and more. The board features 1GB
-> > > DDR3L, USB3.0 Type-C, USB HS Type-A, microHDMI, 16GB eMMC flash,
-> > > 1G Ethernet, 802.11ac 2/5GHz, Bluetooth, and BeagleBone expansion
-> > > headers.
-> > >
-> > > For more information, refer to:
-> > > https://beaglebone.ai
-> > >
-> > > This patch introduces the BeagleBone AI device tree.
-> > >
-> > > Note that the device use the "ti,tpd12s016" component which is
-> > > software compatible with "ti,tpd12s015". Thus we only use the
-> > > latter driver.
-> >
-> > Ah. thanks. I see my comments resolved here.
-> > no more comments to net part from my side.
->
-> Just FYI, Jason had one pending comment on the earlier version
-> about the compatible property to use.
->
-> So I'm assuming there will be a new version posted, tagging
-> this one as read.
+It's currently the amba/platform driver's responsibility to initialize the
+pointer, dma_parms, for its corresponding struct device. The benefit with this
+approach allows us to avoid the initialization and to not waste memory for the
+struct device_dma_parameters, as this can be decided on a case by case basis.
+    
+However, it has turned out that this approach is not very practical. Not only
+does it lead to open coding, but also to real errors. In principle callers of
+dma_set_max_seg_size() doesn't check the error code, but just assumes it
+succeeds.
+    
+For these reasons, this series initializes the dma_parms from the amba/platform
+bus at the device registration point. This also follows the way the PCI devices
+are being managed, see pci_device_add().
 
-It came to my attention today when talking with Jason Kridner and
-Robert Nelson that we did not get the BeagleBone AI device tree
-upstream yet.
+If it turns out that this is an acceptable solution, we probably also want the
+changes for stable, but I am not sure if it applies without conflicts.
 
-I am having trouble identifying what the pending comment was from the
-original patch series.
+The series is based on v5.6.
 
-Was it related to this compatible string?
+Kind regards
+Ulf Hansson
 
-> +       compatible = "beagleboard.org,am5729-beagleboneai", "ti,am5728",
 
-thanks,
-drew
+Ulf Hansson (2):
+  driver core: platform: Initialize dma_parms for platform devices
+  amba: Initialize dma_parms for amba devices
 
---
-Drew Fustini
-BeagleBoard.org Foundation
-https://beagleboard.org/about
+ drivers/amba/bus.c              | 1 +
+ drivers/base/platform.c         | 2 ++
+ include/linux/amba/bus.h        | 1 +
+ include/linux/platform_device.h | 1 +
+ 4 files changed, 5 insertions(+)
+
+-- 
+2.20.1
+
