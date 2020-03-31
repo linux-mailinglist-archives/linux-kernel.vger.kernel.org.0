@@ -2,90 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AC65198CB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22302198CD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:18:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729819AbgCaHKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 03:10:35 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:47018 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726420AbgCaHKf (ORCPT
+        id S1729968AbgCaHSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 03:18:25 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:41590 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729819AbgCaHSZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 03:10:35 -0400
-X-UUID: 72369b837d594f6ba68a801989bb2769-20200331
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=tjPRKJwv3JpOCljaRUaL4xSBagZpOnRqSFRVswzw7Gs=;
-        b=pl3sFafDlzdqzPr2tiyYdnfDuM8e2VR5yyrpb56+s6YCZInYGQz7eFVwID0N/vWNuiQfSKrJ16r2al4CpLWqtCbiNnMbhtayoyFDENSBlRIOj8n088F93u2WgR7jJ774noNjnV32YfBnGiZbOJFLeJ9X+2IurBI/yb5Et7QgAoA=;
-X-UUID: 72369b837d594f6ba68a801989bb2769-20200331
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 224437747; Tue, 31 Mar 2020 15:10:23 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 31 Mar
- 2020 15:10:21 +0800
-Received: from [10.16.6.141] (10.16.6.141) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 31 Mar 2020 15:10:19 +0800
-Message-ID: <1585638593.31955.5.camel@mszsdaap41>
-Subject: Re: [PATCH v3 1/4] dt-bindings: display: mediatek: add property to
- control mipi tx drive current
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
-        <stonea168@163.com>, <huijuan.xie@mediatek.com>
-Date:   Tue, 31 Mar 2020 15:09:53 +0800
-In-Reply-To: <20200323220033.GA29463@bogus>
-References: <20200311074032.119481-1-jitao.shi@mediatek.com>
-         <20200311074032.119481-2-jitao.shi@mediatek.com>
-         <20200323220033.GA29463@bogus>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-X-TM-SNTS-SMTP: 518E88426F51400BDCEE41B35C4881984A15EE42DB8BBE274CDC847E3BBA18762000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Tue, 31 Mar 2020 03:18:25 -0400
+Received: by linux.microsoft.com (Postfix, from userid 1004)
+        id 74EC520B46F0; Tue, 31 Mar 2020 00:18:24 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 74EC520B46F0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+        s=default; t=1585639104;
+        bh=Zh/cLcI+Ah3wcuYsIdpQ01rlvOu5+wS8MBqhfVdQiOU=;
+        h=From:To:Cc:Subject:Date:Reply-To:From;
+        b=rMSDw//jQGt+IvEV719WbBHeCl6MGjNajTHyFvacQFtTY/DT9pxa2zKdgFcSYWGZe
+         n/k3RKEQjEGghDm8r4kt3bS7kywxAXjsM2h9ThIFMnHaY2GKaZRYnzf2zyXA3w3/8H
+         g3Mjy6gf1Jso3yxSLm1ri6gj53hdeWhjeO1hVHCE=
+From:   longli@linuxonhyperv.com
+To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Cc:     Long Li <longli@microsoft.com>
+Subject: [PATCH] cifs: smbd: Update receive credits before sending and deal with credits roll back on failure before sending
+Date:   Tue, 31 Mar 2020 00:18:21 -0700
+Message-Id: <1585639101-117035-1-git-send-email-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 1.8.3.1
+Reply-To: longli@microsoft.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiBNb24sIDIwMjAtMDMtMjMgYXQgMTY6MDAgLTA2MDAsIFJvYiBIZXJyaW5nIHdyb3RlOg0K
-PiBPbiBXZWQsIE1hciAxMSwgMjAyMCBhdCAwMzo0MDoyOVBNICswODAwLCBKaXRhbyBTaGkgd3Jv
-dGU6DQo+ID4gQWRkIGEgcHJvcGVydHkgdG8gY29udHJvbCBtaXBpIHR4IGRyaXZlIGN1cnJlbnQ6
-DQo+ID4gImRyaXZlLXN0cmVuZ3RoLW1pY3JvYW1wIg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6
-IEppdGFvIFNoaSA8aml0YW8uc2hpQG1lZGlhdGVrLmNvbT4NCj4gPiAtLS0NCj4gPiAgLi4uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9tZWRpYXRlay9tZWRpYXRlayxkc2kudHh0ICAgICB8
-IDQgKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4g
-ZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21l
-ZGlhdGVrL21lZGlhdGVrLGRzaS50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvZGlzcGxheS9tZWRpYXRlay9tZWRpYXRlayxkc2kudHh0DQo+ID4gaW5kZXggYTE5YTZjYzM3
-NWVkLi5kNTAxZjlmZjRiMWYgMTAwNjQ0DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2Rpc3BsYXkvbWVkaWF0ZWsvbWVkaWF0ZWssZHNpLnR4dA0KPiA+ICsrKyBi
-L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21lZGlhdGVrL21lZGlh
-dGVrLGRzaS50eHQNCj4gPiBAQCAtMzMsNiArMzMsOSBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOg0K
-PiA+ICAtICNjbG9jay1jZWxsczogbXVzdCBiZSA8MD47DQo+ID4gIC0gI3BoeS1jZWxsczogbXVz
-dCBiZSA8MD4uDQo+ID4gIA0KPiA+ICtPcHRpb25hbCBwcm9wZXJ0aWVzOg0KPiA+ICstIGRyaXZl
-LXN0cmVuZ3RoLW1pY3JvYW1wOiBhZGp1c3QgZHJpdmluZyBjdXJyZW50LCBzaG91bGQgYmUgMSB+
-IDB4Rg0KPiANCj4gVEJDLCAxLTB4ZiBpcyBpbiB1bml0cyBvZiBtaWNyb2FtcHM/IFNvIGEgbWF4
-IGRyaXZlIHN0cmVuZ3RoIG9mIDE1dUE/IA0KPiBTZWVtcyBhIGJpdCBsb3cuDQo+IA0KDQpUaGUg
-bWluaW11bSBhbXAgaXMgMzAwMCBtYWNyb2FtcHMsICBzdGVwIGlzIDIwMG1hY3JvYW1wcy4NClNv
-IHRoZSBkcml2ZSBjdXJyZW50IGlzIDMwMDAgKyAyMDAgKiBkcml2ZS1zdHJlbmd0aC1taWNyb2Ft
-cCBhbXBzLg0KDQpJIHdpbGwgdXBkYXRlICJkcml2ZS1zdHJlbmd0aC1taWNyb2FtcCIgZGVmaW5l
-IG5leHQgdmVyc2lvbi4NCg0KQlINCkppdGFvDQo+ID4gKw0KPiA+ICBFeGFtcGxlOg0KPiA+ICAN
-Cj4gPiAgbWlwaV90eDA6IG1pcGktZHBoeUAxMDIxNTAwMCB7DQo+ID4gQEAgLTQyLDYgKzQ1LDcg
-QEAgbWlwaV90eDA6IG1pcGktZHBoeUAxMDIxNTAwMCB7DQo+ID4gIAljbG9jay1vdXRwdXQtbmFt
-ZXMgPSAibWlwaV90eDBfcGxsIjsNCj4gPiAgCSNjbG9jay1jZWxscyA9IDwwPjsNCj4gPiAgCSNw
-aHktY2VsbHMgPSA8MD47DQo+ID4gKwlkcml2ZS1zdHJlbmd0aC1taWNyb2FtcCA9IDwweDg+Ow0K
-PiA+ICB9Ow0KPiA+ICANCj4gPiAgZHNpMDogZHNpQDE0MDFiMDAwIHsNCj4gPiAtLSANCj4gPiAy
-LjIxLjANCg0KDQo=
+From: Long Li <longli@microsoft.com>
+
+Recevie credits should be updated before sending the packet, not
+before a work is scheduled. Also, the value needs roll back if
+something fails and cannot send.
+
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ fs/cifs/smbdirect.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index c7ef2d7ce0ef..bdae6d41748c 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -450,8 +450,6 @@ static void smbd_post_send_credits(struct work_struct *work)
+ 	info->new_credits_offered += ret;
+ 	spin_unlock(&info->lock_new_credits_offered);
+ 
+-	atomic_add(ret, &info->receive_credits);
+-
+ 	/* Check if we can post new receive and grant credits to peer */
+ 	check_and_send_immediate(info);
+ }
+@@ -840,7 +838,7 @@ static int smbd_create_header(struct smbd_connection *info,
+ 	request = mempool_alloc(info->request_mempool, GFP_KERNEL);
+ 	if (!request) {
+ 		rc = -ENOMEM;
+-		goto err;
++		goto err_alloc;
+ 	}
+ 
+ 	request->info = info;
+@@ -851,6 +849,7 @@ static int smbd_create_header(struct smbd_connection *info,
+ 	packet->credits_granted =
+ 		cpu_to_le16(manage_credits_prior_sending(info));
+ 	info->send_immediate = false;
++	atomic_add(packet->credits_granted, &info->receive_credits);
+ 
+ 	packet->flags = 0;
+ 	if (manage_keep_alive_before_sending(info))
+@@ -887,7 +886,7 @@ static int smbd_create_header(struct smbd_connection *info,
+ 	if (ib_dma_mapping_error(info->id->device, request->sge[0].addr)) {
+ 		mempool_free(request, info->request_mempool);
+ 		rc = -EIO;
+-		goto err;
++		goto err_dma;
+ 	}
+ 
+ 	request->sge[0].length = header_length;
+@@ -896,8 +895,17 @@ static int smbd_create_header(struct smbd_connection *info,
+ 	*request_out = request;
+ 	return 0;
+ 
+-err:
++err_dma:
++	/* roll back receive credits */
++	spin_lock(&info->lock_new_credits_offered);
++	info->new_credits_offered += packet->credits_granted;
++	spin_unlock(&info->lock_new_credits_offered);
++	atomic_sub(packet->credits_granted, &info->receive_credits);
++
++err_alloc:
++	/* roll back send credits */
+ 	atomic_inc(&info->send_credits);
++
+ 	return rc;
+ }
+ 
+-- 
+2.17.1
 
