@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D4351990BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4050B1990C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:14:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731828AbgCaJOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:14:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34016 "EHLO mail.kernel.org"
+        id S1730659AbgCaJOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:14:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731821AbgCaJOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:14:14 -0400
+        id S1730452AbgCaJOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:14:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 846E1206F6;
-        Tue, 31 Mar 2020 09:14:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D72420675;
+        Tue, 31 Mar 2020 09:14:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585646054;
-        bh=b8bd6Ssb2jjKH46Qv4vM+gwNIHecKgzTwk75GCSXmV0=;
+        s=default; t=1585646058;
+        bh=xluyj0zuzesqOXbJY4Nak2oA9OlTyRQhQwI56NsHeus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PBCBDtmTlJd/6lMO1EpBtifjvEYzlYxZtsYZFhNwpW1ZCHii2c3lARfrHCpv0mbyI
-         7TYpwPDRZx8uSpT3lWgXbBaG4vcp++7z5c0t7d4z6hkgmMXd5HOh4dReqTBFnoAFsE
-         FrTzWSwCDt3oThDtsEf2s8dUlSMWpl11mtxgqJDY=
+        b=Gd5Z1YNbP2eA30xgjvS3Z5EiBdXwVu+UrcDUCwHMWBUhf0K4brarQhJA1sXE3MPJC
+         Vy1M4f0kpSjsaEhQsKhWV8jCk/Kh+3znhh6v9pU1IzQ6IM+VXoms5cDokQx+6nf5br
+         y6P6WRJchxeYu0sVf9/o9FEGuSY5UakxPwUA21Ao=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Madalin Bucur <madalin.bucur@oss.nxp.com>,
+        Dominik Czarnota <dominik.b.czarnota@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 070/155] dpaa_eth: Remove unnecessary boolean expression in dpaa_get_headroom
-Date:   Tue, 31 Mar 2020 10:58:30 +0200
-Message-Id: <20200331085426.246083132@linuxfoundation.org>
+Subject: [PATCH 5.4 071/155] sxgbe: Fix off by one in samsung driver strncpy size arg
+Date:   Tue, 31 Mar 2020 10:58:31 +0200
+Message-Id: <20200331085426.355997346@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
 References: <20200331085418.274292403@linuxfoundation.org>
@@ -46,55 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Dominik Czarnota <dominik.b.czarnota@gmail.com>
 
-[ Upstream commit 7395f62d95aafacdb9bd4996ec2f95b4a655d7e6 ]
+[ Upstream commit f3cc008bf6d59b8d93b4190e01d3e557b0040e15 ]
 
-Clang warns:
+This patch fixes an off-by-one error in strncpy size argument in
+drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c. The issue is that in:
 
-drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:2860:9: warning:
-converting the result of '?:' with integer constants to a boolean always
-evaluates to 'true' [-Wtautological-constant-compare]
-        return DPAA_FD_DATA_ALIGNMENT ? ALIGN(headroom,
-               ^
-drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:131:34: note: expanded
-from macro 'DPAA_FD_DATA_ALIGNMENT'
-\#define DPAA_FD_DATA_ALIGNMENT  (fman_has_errata_a050385() ? 64 : 16)
-                                 ^
-1 warning generated.
+        strncmp(opt, "eee_timer:", 6)
 
-This was exposed by commit 3c68b8fffb48 ("dpaa_eth: FMan erratum A050385
-workaround") even though it appears to have been an issue since the
-introductory commit 9ad1a3749333 ("dpaa_eth: add support for DPAA
-Ethernet") since DPAA_FD_DATA_ALIGNMENT has never been able to be zero.
+the passed string literal: "eee_timer:" has 10 bytes (without the NULL
+byte) and the passed size argument is 6. As a result, the logic will
+also accept other, malformed strings, e.g. "eee_tiXXX:".
 
-Just replace the whole boolean expression with the true branch, as it is
-always been true.
+This bug doesn't seem to have any security impact since its present in
+module's cmdline parsing code.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/928
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Madalin Bucur <madalin.bucur@oss.nxp.com>
+Signed-off-by: Dominik Czarnota <dominik.b.czarnota@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index e130233b50853..00c4beb760c35 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -2770,9 +2770,7 @@ static inline u16 dpaa_get_headroom(struct dpaa_buffer_layout *bl)
- 	headroom = (u16)(bl->priv_data_size + DPAA_PARSE_RESULTS_SIZE +
- 		DPAA_TIME_STAMP_SIZE + DPAA_HASH_RESULTS_SIZE);
- 
--	return DPAA_FD_DATA_ALIGNMENT ? ALIGN(headroom,
--					      DPAA_FD_DATA_ALIGNMENT) :
--					headroom;
-+	return ALIGN(headroom, DPAA_FD_DATA_ALIGNMENT);
- }
- 
- static int dpaa_eth_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
+index c56fcbb370665..38767d7979147 100644
+--- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
++++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
+@@ -2279,7 +2279,7 @@ static int __init sxgbe_cmdline_opt(char *str)
+ 	if (!str || !*str)
+ 		return -EINVAL;
+ 	while ((opt = strsep(&str, ",")) != NULL) {
+-		if (!strncmp(opt, "eee_timer:", 6)) {
++		if (!strncmp(opt, "eee_timer:", 10)) {
+ 			if (kstrtoint(opt + 10, 0, &eee_timer))
+ 				goto err;
+ 		}
 -- 
 2.20.1
 
