@@ -2,102 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F2E51991D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0143119902B
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:09:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731949AbgCaJVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:21:38 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:50816 "EHLO mail.skyhub.de"
+        id S1731516AbgCaJJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:09:45 -0400
+Received: from mx1.tq-group.com ([62.157.118.193]:51023 "EHLO mx1.tq-group.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731473AbgCaJJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:09:36 -0400
-Received: from zn.tnic (p200300EC2F0C09003D11AEAD23413CBD.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:900:3d11:aead:2341:3cbd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 65EE11EC0CBD;
-        Tue, 31 Mar 2020 11:09:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1585645774;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=IAjq8vkgmuwy5aDCdanAPTga8JYTa70hGlJvTK2iieo=;
-        b=mJDZC8MHDaOJXLbCV9bY6OQtS+NMQtl8VJzFy9IxXRsNRFMmcDI1hXEW3sx9fvxViwZqQ+
-        zaRUoDDBCBBARpOWZbSW+AgNfMQqetampHH+3rfhgtHcGFWgTYHep2T2a9mrqIZgRdtN0o
-        EPV1nJxi4h/xiUcIxBrPv7zKPSEclJw=
-Date:   Tue, 31 Mar 2020 11:09:29 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Shiju Jose <shiju.jose@huawei.com>
-Cc:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "helgaas@kernel.org" <helgaas@kernel.org>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "zhangliguang@linux.alibaba.com" <zhangliguang@linux.alibaba.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Linuxarm <linuxarm@huawei.com>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        tanxiaofei <tanxiaofei@huawei.com>,
-        yangyicong <yangyicong@huawei.com>
-Subject: Re: [PATCH v6 1/2] ACPI / APEI: Add support to notify the vendor
- specific HW errors
-Message-ID: <20200331090929.GB29131@zn.tnic>
-References: <ShijuJose>
- <20200325164223.650-1-shiju.jose@huawei.com>
- <20200325164223.650-2-shiju.jose@huawei.com>
- <20200327182214.GD8015@zn.tnic>
- <b180618fb6cb477ea7185979c11c5868@huawei.com>
- <20200330103353.GC16242@zn.tnic>
- <ee79588ee82445dcb76f1fe6c1082fb8@huawei.com>
- <20200330134249.GF16242@zn.tnic>
- <613133075a174454a88312448b9b333c@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <613133075a174454a88312448b9b333c@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731369AbgCaJJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:09:43 -0400
+IronPort-SDR: sZB/W3tX2EDNQIDG5CobiUoShToM0PuH8HJmpWULERpmgYPZ8+UaMGWL+b6t98wAYzEUtQDAq/
+ 1eSwGjkW5bpN7ipa/cExrMcyHCEn4QtAibrfBoC6aT9D/JFZXCY9eY7i3KwwDkR8KtBmTcYNjG
+ qkd+rK8faIgwKALGdqKaZcw7CoBUii40SnJLoQAoeKvy9ZO+TyEgtIldlz9Ti7/1f19JVO/+kw
+ c8VWOIrv7rIVB2UnZuSD0X06b/+/CXD8zulySRHvD1Nn0q5om+OpXQ/3V9aQBnFakg210a3og0
+ C0Q=
+X-IronPort-AV: E=Sophos;i="5.72,327,1580770800"; 
+   d="scan'208";a="11620744"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 31 Mar 2020 11:09:41 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Tue, 31 Mar 2020 11:09:41 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Tue, 31 Mar 2020 11:09:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1585645781; x=1617181781;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=AmNQ70x+U90ksL+IF0QKz+uIkUgY48xR+6uNMkj/fdc=;
+  b=hQvltprAy/j1rGp1rMrdTZlvZEFXSS2U/QgOJYKn3JIr4HGGsCbEqm/e
+   th+E9wxdkGijsprbo/4idy/1ujvsVdBTKEZ5wawX+8pahMq0+hskGngtI
+   a7IPrmdhG7f0m7DZwA+cz9s9I+KlkrKPDOVEv4blt0YVlLhQlZJJOlrF5
+   jPC2cgrWHdXG7b5ghfhhLkHMS/gga86/SnHUhHe1Ptrc5DSY4zBdKbC5x
+   o19t6TsB9m25USCPdocyFqBDh4StyJk6pPT3jeSZCGXpo2S5ry1lqy/mY
+   LfirnNm0mm0wJwbIi5f1Oo0PIyhr+hBwtjS2M2DAn5ObHAqocIIZfxWEy
+   g==;
+IronPort-SDR: BNIMxixaKYbDbaNh/qECj2bdl5U81jLwJ28F61hn/AKoqlxNFn8XZ6uA3Y2g+Md3D3flcA54+w
+ NTKCoH4ywraeauwofQxJd71PozGlxaKy7cSw0wLYgQqGJJhOtGzNjZWcLB+DyJtx/vWs2yEXtU
+ UsB8kEhOewiLKe1y7ppmassKMADNTUgBpnS6IM6+9F6Hh51xgOinshRXhVH4OiBKVpaM2gXgnE
+ gFvI8tjeRDItH2Aa2ah4tbF0EtVHuOuVbzOyu9/iMdIpmy28mbIw8iLMKa/U05NoalZVNy0uQc
+ 110=
+X-IronPort-AV: E=Sophos;i="5.72,327,1580770800"; 
+   d="scan'208";a="11620743"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 31 Mar 2020 11:09:41 +0200
+Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id ACE69280065;
+        Tue, 31 Mar 2020 11:09:46 +0200 (CEST)
+Message-ID: <a796bf7cfb1f72a888522050320624546950c281.camel@ew.tq-group.com>
+Subject: Re: (EXT) Re: [PATCH net-next 1/4] net: dsa: allow switch drivers
+ to override default slave PHY addresses
+From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andrew@lunn.ch, vivien.didelot@gmail.com, davem@davemloft.net,
+        kuba@kernel.org
+Date:   Tue, 31 Mar 2020 11:09:32 +0200
+In-Reply-To: <6a306ad4-c029-03a3-7a1c-0fdadc13d386@gmail.com>
+References: <20200330135345.4361-1-matthias.schiffer@ew.tq-group.com>
+         <6a306ad4-c029-03a3-7a1c-0fdadc13d386@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 03:44:29PM +0000, Shiju Jose wrote:
-> 1. rasdaemon need not to print the vendor error data reported by the firmware if the 
->     kernel driver already print those information. In this case rasdaemon will only need to store
->     the decoded vendor error data to the SQL database.
+On Mon, 2020-03-30 at 20:04 -0700, Florian Fainelli wrote:
+> 
+> On 3/30/2020 6:53 AM, Matthias Schiffer wrote:
+> > Avoid having to define a PHY for every physical port when PHY
+> > addresses
+> > are fixed, but port index != PHY address.
+> > 
+> > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com
+> > >
+> 
+> You could do this much more elegantly by doing this with Device Tree
+> and
+> specifying the built-in PHYs to be hanging off the switch's internal
+> MDIO bus and specifying the port to PHY address mapping, you would
+> only
+> patch #4 then.
 
-Well, there's a problem with this:
+This does work indeed, but it seems we have different ideas on
+elegance.
 
-rasdaemon printing != kernel driver printing
+I'm not happy about the fact that an implementor needs to study the
+switch manual in great detail to find out about things like the PHY
+address offsets when the driver could just to the right thing by
+default. Requiring this only for some switch configurations, while
+others work fine with the defaults, doesn't make this any less
+confusing (I'd even argue that it would be better if there weren't any
+default PHY and IRQ mappings for the switch ports, but I also
+understand that this can't easily be removed at this point...)
 
-Because printing in dmesg would need people to go grep dmesg.
+In particular when PHY IRQ support is desired (not implemented on the
+PHY driver side for this switch yet; not sure if my current project
+will require it), indices are easy to get wrong - which might not be
+noticed as long as there is no PHY driver with IRQ support for the port
+PHYs, potentially breaking existing Device Trees with future kernel
+updates. For this reason, I think at least patch #2 should be
+considered even if #1 and #3 are rejected.
 
-Printing through rasdaemon or any userspace agent, OTOH, is a lot more
-flexible wrt analyzing and collecting those error records. Especially
-if you are a data center admin and you want to collect all your error
-records: grepping dmesg simply doesn't scale versus all the rasdaemon
-agents reporting to a centrallized location.
+Kind regards,
+Matthias
 
-> 2. If the vendor kernel driver want to report extra error information through
->     the vendor specific data (though presently we do not have any such use case) for the rasdamon to log. 
->     I think the error handled status useful to indicate that the kernel driver has filled the extra information and
->     rasdaemon to decode and log them after extra data specific validity check.
-
-The kernel driver can report that extra information without the kernel
-saying that the error was handled.
-
-So I still see no sense for the kernel to tell userspace explicitly that
-it handled the error. There might be a valid reason, though, of which I
-cannot think of right now.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
