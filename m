@@ -2,121 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33EED198CCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:18:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05BFC198CDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:21:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbgCaHR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 03:17:56 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41086 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbgCaHR4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 03:17:56 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: aratiu)
-        with ESMTPSA id 867CC296952
-From:   Adrian Ratiu <adrian.ratiu@collabora.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Sjoerd Simons <sjoerd.simons@collabora.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        linux-rockchip@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>, kernel@collabora.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH v5 4/5] drm: imx: Add i.MX 6 MIPI DSI host platform driver
-In-Reply-To: <246bf7c71620021258355c2fc32dd38ac6b0cc45.camel@collabora.com>
-References: <20200330113542.181752-1-adrian.ratiu@collabora.com>
- <20200330113542.181752-5-adrian.ratiu@collabora.com>
- <CAOMZO5CEZSBfhb9xAdf=sDhUnmSeuWSsnUQArz=a1TPzytLAeQ@mail.gmail.com>
- <4a9d2d6e5cecbe296c14119d27a8793a7dbed7b2.camel@collabora.com>
- <877dz134xf.fsf@collabora.com>
- <246bf7c71620021258355c2fc32dd38ac6b0cc45.camel@collabora.com>
-Date:   Tue, 31 Mar 2020 10:19:00 +0300
-Message-ID: <874ku52dqz.fsf@collabora.com>
+        id S1729989AbgCaHVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 03:21:07 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:60752 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726216AbgCaHVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 03:21:06 -0400
+Received: from [10.130.0.79] (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Ax9ulc74JetQAiAA--.20S3;
+        Tue, 31 Mar 2020 15:21:01 +0800 (CST)
+Subject: Re: [PATCH] MIPS: Loongson: Use CONFIG_NR_CPUS_DEFAULT_64 to support
+ more CPUs
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Huacai Chen <chenhc@lemote.com>
+References: <1585638006-19439-1-git-send-email-yangtiezhu@loongson.cn>
+ <6A188705-D65C-4500-BD26-EB944EEF0B21@flygoat.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <c4520c91-5285-ca8d-c310-5354f3ef3cba@loongson.cn>
+Date:   Tue, 31 Mar 2020 15:21:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
+In-Reply-To: <6A188705-D65C-4500-BD26-EB944EEF0B21@flygoat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf9Ax9ulc74JetQAiAA--.20S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr43WrWxGr48JF1kWw45ZFb_yoW8Jw4Upr
+        4kKan2gr4v9F1YkFZYyr93urW3Zr93KrZ3Gr10yry7CF98u34DGrnYgwnFgFWUZr4kta1I
+        9F93CryYkayUCaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+        xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+        6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+        0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CE
+        bIxvr21lc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+        4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+        67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+        x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvE
+        x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+        DU0xZFpf9x0JU9o7NUUUUU=
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Mar 2020, Ezequiel Garcia <ezequiel@collabora.com> 
-wrote:
-> On Tue, 2020-03-31 at 00:31 +0300, Adrian Ratiu wrote: 
->> On Mon, 30 Mar 2020, Ezequiel Garcia <ezequiel@collabora.com> 
->> wrote: 
->> > Hello Fabio, Adrian:   On Mon, 2020-03-30 at 08:49 -0300, 
->> > Fabio Estevam wrote:  
->> > > Hi Adrian,  On Mon, Mar 30, 2020 at 8:34 AM Adrian Ratiu 
->> > > <adrian.ratiu@collabora.com> wrote:  
->> > > > This adds support for the Synopsis DesignWare MIPI DSI 
->> > > > v1.01  host controller which is embedded in i.MX 6 SoCs. 
->> > > > Based on  following patches, but updated/extended to work 
->> > > > with existing  support found in the kernel:  - drm: imx: 
->> > > > Support Synopsys  DesignWare MIPI DSI host controller  
->> > > >   Signed-off-by: Liu Ying <Ying.Liu@freescale.com>  
->> > > >  - ARM: dtsi: imx6qdl: Add support for MIPI DSI host  
->> > > > controller  
->> > > >   Signed-off-by: Liu Ying <Ying.Liu@freescale.com>  
->> > >  This one looks like a devicetree patch, but this patch 
->> > >  does  
->> > > not touch devicetree.   
->> > > > +       ret = clk_prepare_enable(dsi->pllref_clk); + 
->> > > > if  (ret) { +               dev_err(dev, "%s: Failed to 
->> > > > enable  pllref_clk\n", __func__); +               return 
->> > > > ret; +  } + +       dsi->mux_sel = 
->> > > > syscon_regmap_lookup_by_phandle(dev->of_node, "fsl,gpr"); 
->> > > > +  if (IS_ERR(dsi->mux_sel)) { +               ret = 
->> > > > PTR_ERR(dsi->mux_sel); +               dev_err(dev, "%s: 
->> > > > Failed to get GPR regmap: %d\n", +  __func__, ret); + 
->> > > > return ret;  
->> > >  You should disable the dsi->pllref_clk clock prior to  
->> > > returning the error.   
->> >  Another approach could be moving the clock on and off to to 
->> > component_ops.{bind,unbind} (as rockhip driver does).    What 
->> > exactly is the PLL clock needed for? Would it make sense to 
->> > move it some of the PHY power on/off? (Maybe not, but it's 
->> > worthing checking).    Also, it seems the other IP blocks 
->> > have this PLL clock, so maybe  it could be moved to the 
->> > dw_mipi_dsi core? This could be  something for a follow-up, 
->> > to avoid creeping this series. 
->>  Hi Ezequiel,  pll is the video reference clock which drives 
->> the data lanes and  yes all drivers have it as it's a basic 
->> requirement, so moving it  to the common bridge is indeed a 
->> good idea, however this kind of  driver refactoring is out of 
->> scope for this specific patch series,  because, for now, I'd 
->> like to get the regmap and the imx6 driver  in, once that is 
->> done we can think how to further abstract away  common logic 
->> and slim down the existing drivers further.   Basically I just 
->> want to avoid feature creep as I expect v6 to be  ~ 8 patches 
->> big and the series is already over 1200 lines.  
-> 
-> Oh, absolutely: if there's one thing I try to avoid is feature 
-> creep -- together with bikeshedding! 
-> 
-> Do note however, that you could move the PLL clock handling to 
-> component_ops.{bind,unbind} and maybe simplify the error 
-> handling. 
-> 
-> (BTW, great work!)
-
-Thanks! I'll do the bind/unbind move for the new imx6 driver which 
-I'm
-adding in this series to make it resemble the existing rockchip 
-driver a bit more, then I'll stop short of further driver 
-refactorings.
+On 03/31/2020 03:05 PM, Jiaxun Yang wrote:
 
 >
-> Cheers,
-> Ezequiel
+> 于 2020年3月31日 GMT+08:00 下午3:00:06, Tiezhu Yang <yangtiezhu@loongson.cn> 写到:
+>> When I update the mainline kernel on the Loongson 2-way platform which
+>> has 8 CPUs, it only shows 4 CPUs due to NR_CPUS is 4, this is obviously
+>> wrong.
+>>
+>> In order to support more CPUs on the Loongson platform, it is better
+>> to use CONFIG_NR_CPUS_DEFAULT_64 instead of CONFIG_NR_CPUS_DEFAULT_4
+>> to specify the maximum number of CPUs which the kernel will support.
+>>
+>> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> Would 16 be a better option?
+> We have only 4 way platform.
+
+There maybe have more than 4 cores per CPU or more than 4 ways
+in the future, so I think 64 is better, otherwise we need to
+modify this configuration once more.
+
+>
+>> ---
+>> arch/mips/Kconfig | 2 +-
+>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+>> index a1f973c..a0b11f5 100644
+>> --- a/arch/mips/Kconfig
+>> +++ b/arch/mips/Kconfig
+>> @@ -475,7 +475,7 @@ config MACH_LOONGSON64
+>> 	select ISA
+>> 	select I8259
+>> 	select IRQ_MIPS_CPU
+>> -	select NR_CPUS_DEFAULT_4
+>> +	select NR_CPUS_DEFAULT_64
+>> 	select USE_GENERIC_EARLY_PRINTK_8250
+>> 	select SYS_HAS_CPU_LOONGSON64
+>> 	select SYS_HAS_EARLY_PRINTK
+
