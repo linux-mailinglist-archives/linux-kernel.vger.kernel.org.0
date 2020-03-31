@@ -2,156 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B915C199073
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:12:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 189801990E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731563AbgCaJL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:11:57 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12662 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731592AbgCaJLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:11:52 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B173E165DEDBC9925135;
-        Tue, 31 Mar 2020 17:11:47 +0800 (CST)
-Received: from [127.0.0.1] (10.173.222.27) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.487.0; Tue, 31 Mar 2020
- 17:11:38 +0800
-Subject: Re: [PATCH] KVM: arm64: vgic-v3: Clear pending bit in guest memory
- after synchronization
-To:     Marc Zyngier <maz@kernel.org>
-CC:     <kvmarm@lists.cs.columbia.edu>, <eric.auger@redhat.com>,
-        <andre.przywara@arm.com>, <james.morse@arm.com>,
-        <julien.thierry.kdev@gmail.com>, <suzuki.poulose@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>
-References: <20200331031245.1562-1-yuzenghui@huawei.com>
- <20200331090709.17d2087d@why>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <fe30a834-fdb0-e1ca-5e4a-0c7863236c5f@huawei.com>
-Date:   Tue, 31 Mar 2020 17:11:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1730647AbgCaJPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:15:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59502 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730719AbgCaJPO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:15:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=6OrjNgWSgjsVgH6reFO8z2ixicWhI/e5FNsva6w55pc=; b=jpt/K2zABPB39L9L1UfINWG0kU
+        a0UjPT+0UTlvycvxpmjj3Mq1U8yayR5ZBsKUzFqvVDicdd32QYL8er5THUVvNLjGiyRPX6Z0kFicC
+        0RtlvWV12hqst+lQ525f5GfHeel9HHwSoCjB3llxC5VE7FRMnUyWYu3qe7XgP9eI0W9hp8Eu2kUpr
+        uIGgzewZCfwXyV/L98BrMA9AFZVx/7HoQZSCb1RBkCthBzxi4l54KdNjQIi9AwIge4lH74tkMMEBb
+        6yoBbH1EnjdQJDw9b98IH3iFRCgGvJZo/BoFJ3FRlm4BIngrmV638qrHeyqKdgUce/pjZXG2YKzTj
+        7sCTm1RA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJCzF-0004Sr-Ij; Tue, 31 Mar 2020 09:15:09 +0000
+Date:   Tue, 31 Mar 2020 02:15:09 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Liu, Yi L" <yi.l.liu@intel.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Tian, Jun J" <jun.j.tian@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>, "Wu, Hao" <hao.wu@intel.com>
+Subject: Re: [PATCH v1 1/8] vfio: Add VFIO_IOMMU_PASID_REQUEST(alloc/free)
+Message-ID: <20200331091509.GA12040@infradead.org>
+References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
+ <1584880325-10561-2-git-send-email-yi.l.liu@intel.com>
+ <20200331075331.GA26583@infradead.org>
+ <A2975661238FB949B60364EF0F2C25743A21A9BB@SHSMSX104.ccr.corp.intel.com>
+ <A2975661238FB949B60364EF0F2C25743A21A9ED@SHSMSX104.ccr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200331090709.17d2087d@why>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <A2975661238FB949B60364EF0F2C25743A21A9ED@SHSMSX104.ccr.corp.intel.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On Tue, Mar 31, 2020 at 08:36:32AM +0000, Liu, Yi L wrote:
+> > From: Liu, Yi L
+> > Sent: Tuesday, March 31, 2020 4:33 PM
+> > To: 'Christoph Hellwig' <hch@infradead.org>
+> > Subject: RE: [PATCH v1 1/8] vfio: Add VFIO_IOMMU_PASID_REQUEST(alloc/free)
+> > 
+> > > From: Christoph Hellwig <hch@infradead.org>
+> > > Sent: Tuesday, March 31, 2020 3:54 PM
+> > > To: Liu, Yi L <yi.l.liu@intel.com>
+> > > Subject: Re: [PATCH v1 1/8] vfio: Add
+> > > VFIO_IOMMU_PASID_REQUEST(alloc/free)
+> > >
+> > > Who is going to use thse exports?  Please submit them together with a
+> > > driver actually using them.
+> the user of the symbols are already in this patch. sorry for the split answer..
 
-On 2020/3/31 16:07, Marc Zyngier wrote:
-> Hi Zenghui,
-> 
-> On Tue, 31 Mar 2020 11:12:45 +0800
-> Zenghui Yu <yuzenghui@huawei.com> wrote:
-> 
->> When LPI support is enabled at redistributor level, VGIC will potentially
->> load the correspond LPI penging table and sync it into the pending_latch.
->> To avoid keeping the 'consumed' pending bits lying around in guest memory
->> (though they're not used), let's clear them after synchronization.
->>
->> The similar work had been done in vgic_v3_lpi_sync_pending_status().
->>
->> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
->> ---
->>   virt/kvm/arm/vgic/vgic-its.c | 23 +++++++++++++++++------
->>   1 file changed, 17 insertions(+), 6 deletions(-)
->>
->> diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
->> index d53d34a33e35..905760bfa404 100644
->> --- a/virt/kvm/arm/vgic/vgic-its.c
->> +++ b/virt/kvm/arm/vgic/vgic-its.c
->> @@ -435,6 +435,7 @@ static int its_sync_lpi_pending_table(struct kvm_vcpu *vcpu)
->>   
->>   	for (i = 0; i < nr_irqs; i++) {
->>   		int byte_offset, bit_nr;
->> +		bool status;
->>   
->>   		byte_offset = intids[i] / BITS_PER_BYTE;
->>   		bit_nr = intids[i] % BITS_PER_BYTE;
->> @@ -447,22 +448,32 @@ static int its_sync_lpi_pending_table(struct kvm_vcpu *vcpu)
->>   			ret = kvm_read_guest_lock(vcpu->kvm,
->>   						  pendbase + byte_offset,
->>   						  &pendmask, 1);
->> -			if (ret) {
->> -				kfree(intids);
->> -				return ret;
->> -			}
->> +			if (ret)
->> +				goto out;
->>   			last_byte_offset = byte_offset;
->>   		}
->>   
->> +		status = pendmask & (1 << bit_nr);
->> +
->>   		irq = vgic_get_irq(vcpu->kvm, NULL, intids[i]);
->>   		raw_spin_lock_irqsave(&irq->irq_lock, flags);
->> -		irq->pending_latch = pendmask & (1U << bit_nr);
->> +		irq->pending_latch = status;
->>   		vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
->>   		vgic_put_irq(vcpu->kvm, irq);
->> +
->> +		if (status) {
->> +			/* clear consumed data */
->> +			pendmask &= ~(1 << bit_nr);
->> +			ret = kvm_write_guest_lock(vcpu->kvm,
->> +						   pendbase + byte_offset,
->> +						   &pendmask, 1);
->> +			if (ret)
->> +				goto out;
->> +		}
->>   	}
->>   
->> +out:
->>   	kfree(intids);
->> -
->>   	return ret;
->>   }
->>   
-> 
-> I've been thinking about this, and I wonder why we don't simply clear
-> the whole pending table instead of carefully wiping it one bit at a
-> time. My reasoning is that if a LPI isn't mapped, then it cannot be made
-> pending the first place.
-
-A writing to GICR_CTLR.EnableLPIs can happen in parallel with MAPTI/INT
-command sequence, where the new LPI is mapped to *this* vcpu and made
-pending, wrong? I think commit 7d8b44c54e0c had described it in detail.
-
-But thinking that we cache the pending bit in pending_latch (instead of
-writing the corresponding bit in guest memory) when a LPI is made
-pending, it seems to be safe to clear the whole pending table here.
-
-> 
-> And I think there is a similar issue in vgic_v3_lpi_sync_pending_status().
-> Why sync something back from the pending table when the LPI wasn't
-> mapped yet?
-
-vgic_v3_lpi_sync_pending_status() can be called on the ITE restore path:
-vgic_its_restore_ite/vgic_add_lpi/vgic_v3_lpi_sync_pending_status.
-We should rely on it to sync the pending bit from guest memory (which
-was saved on the source side).
-
-> This seems pretty bizarre, as the GITS_TRANSLATER spec says
-> that the write to this register is ignored when:
-> 
-> "- The EventID is mapped to an Interrupt Translation Table and the
-> EventID is within the range specified by MAPD on page 5-107, but the
-> EventID is unmapped."
-> 
-> (with the added bonus in the form of a type: the first instance of
-> "EventID" here should obviously be "DeviceID").
-
-;-)
-
-
-Thanks,
-Zenghui
-
+Thanks, sorry for the noise!
