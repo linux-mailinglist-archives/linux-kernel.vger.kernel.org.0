@@ -2,73 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 189801990E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60F39199109
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:16:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730647AbgCaJPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:15:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59502 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730719AbgCaJPO (ORCPT
+        id S1731841AbgCaJQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:16:43 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52490 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730328AbgCaJQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:15:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6OrjNgWSgjsVgH6reFO8z2ixicWhI/e5FNsva6w55pc=; b=jpt/K2zABPB39L9L1UfINWG0kU
-        a0UjPT+0UTlvycvxpmjj3Mq1U8yayR5ZBsKUzFqvVDicdd32QYL8er5THUVvNLjGiyRPX6Z0kFicC
-        0RtlvWV12hqst+lQ525f5GfHeel9HHwSoCjB3llxC5VE7FRMnUyWYu3qe7XgP9eI0W9hp8Eu2kUpr
-        uIGgzewZCfwXyV/L98BrMA9AFZVx/7HoQZSCb1RBkCthBzxi4l54KdNjQIi9AwIge4lH74tkMMEBb
-        6yoBbH1EnjdQJDw9b98IH3iFRCgGvJZo/BoFJ3FRlm4BIngrmV638qrHeyqKdgUce/pjZXG2YKzTj
-        7sCTm1RA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJCzF-0004Sr-Ij; Tue, 31 Mar 2020 09:15:09 +0000
-Date:   Tue, 31 Mar 2020 02:15:09 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Liu, Yi L" <yi.l.liu@intel.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Tian, Jun J" <jun.j.tian@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>, "Wu, Hao" <hao.wu@intel.com>
-Subject: Re: [PATCH v1 1/8] vfio: Add VFIO_IOMMU_PASID_REQUEST(alloc/free)
-Message-ID: <20200331091509.GA12040@infradead.org>
-References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
- <1584880325-10561-2-git-send-email-yi.l.liu@intel.com>
- <20200331075331.GA26583@infradead.org>
- <A2975661238FB949B60364EF0F2C25743A21A9BB@SHSMSX104.ccr.corp.intel.com>
- <A2975661238FB949B60364EF0F2C25743A21A9ED@SHSMSX104.ccr.corp.intel.com>
+        Tue, 31 Mar 2020 05:16:38 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02V9BPwH080439;
+        Tue, 31 Mar 2020 09:16:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : message-id : date : mime-version : content-type :
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=soT205CLbo3pSZEAx9AVjNKeXiqZkOzPFfSpgHTqh+M=;
+ b=KKKuEq4ZbL21qiOck4SWuo0lJ4mO0T+NNuoZZdFAcdVJtohEC/BLrX0w9NUhzRiLNoOh
+ G6O+gw140niz57E14RFYNOVpM8oyF9+tHiH47ejsxspUucqxPQgsX+KPiEX0v80B2gvm
+ G2Zuu0c6Bb4BLcMPfuXvSlBC2N2aJ6rRxZOO6OdECLNnh0GS2rS3Z3jP+jk5POszxnLE
+ 4pijWU5bcmpShEn1rnX3W/UdV/upHH3sMu8QhdkxFNh0Xwcru6yuwITXesDvGZxcZqtw
+ lcMBf8iV8RmTVDeRoI3HJDEnjo/NN6esFWteR280KbCugmc75XHcTnPUpdQ9s4s4EBaT +g== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 303ceuxeg2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Mar 2020 09:16:35 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02V96ubU002205;
+        Tue, 31 Mar 2020 09:16:34 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 302g2dq5kj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Mar 2020 09:16:34 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02V9GXDA017837;
+        Tue, 31 Mar 2020 09:16:33 GMT
+Received: from [10.175.15.184] (/10.175.15.184)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 31 Mar 2020 02:16:33 -0700
+From:   Vegard Nossum <vegard.nossum@oracle.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>,
+        linux-kbuild@vger.kernel.org
+Subject: single target builds are broken
+Message-ID: <a5ce79eb-be9d-df97-0b58-5aee5a48f4d3@oracle.com>
+Date:   Tue, 31 Mar 2020 11:16:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <A2975661238FB949B60364EF0F2C25743A21A9ED@SHSMSX104.ccr.corp.intel.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9576 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 mlxscore=0
+ adultscore=0 phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003310082
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9576 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 adultscore=0
+ clxscore=1011 phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003310082
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 08:36:32AM +0000, Liu, Yi L wrote:
-> > From: Liu, Yi L
-> > Sent: Tuesday, March 31, 2020 4:33 PM
-> > To: 'Christoph Hellwig' <hch@infradead.org>
-> > Subject: RE: [PATCH v1 1/8] vfio: Add VFIO_IOMMU_PASID_REQUEST(alloc/free)
-> > 
-> > > From: Christoph Hellwig <hch@infradead.org>
-> > > Sent: Tuesday, March 31, 2020 3:54 PM
-> > > To: Liu, Yi L <yi.l.liu@intel.com>
-> > > Subject: Re: [PATCH v1 1/8] vfio: Add
-> > > VFIO_IOMMU_PASID_REQUEST(alloc/free)
-> > >
-> > > Who is going to use thse exports?  Please submit them together with a
-> > > driver actually using them.
-> the user of the symbols are already in this patch. sorry for the split answer..
 
-Thanks, sorry for the noise!
+Hi,
+
+I often run 'make foo/bar.o' as part of my workflow, even when bar.o is
+not specified in any kernel makefile, and this has worked just fine for
+years.
+
+This is broken after commit 394053f4a4b3e3eeeaa67b67fc886a9a75bd9e4d
+(kbuild: make single targets work more correctly) and just gives an error:
+
+$ make kernel/test.o
+   CALL    scripts/checksyscalls.sh
+   CALL    scripts/atomic/check-atomics.sh
+   DESCEND  objtool
+make[2]: *** No rule to make target 'kernel/test.o'.  Stop.
+scripts/Makefile.build:502: recipe for target '__build' failed
+make[1]: *** [__build] Error 2
+Makefile:1670: recipe for target 'kernel' failed
+make: *** [kernel] Error 2
+
+For top-level objects (e.g. 'make bar.o') the situation is even worse,
+since make exits with status 0 without building anything :-/
+
+Is there any chance we can get this back? It was super useful for me.
+
+
+Vegard
