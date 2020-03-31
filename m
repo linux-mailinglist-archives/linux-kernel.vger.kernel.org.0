@@ -2,98 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60F39199109
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:16:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC9181991BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:21:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731841AbgCaJQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:16:43 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52490 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730328AbgCaJQi (ORCPT
+        id S1731781AbgCaJVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:21:18 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:25339 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731773AbgCaJVP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:16:38 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02V9BPwH080439;
-        Tue, 31 Mar 2020 09:16:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : message-id : date : mime-version : content-type :
- content-transfer-encoding; s=corp-2020-01-29;
- bh=soT205CLbo3pSZEAx9AVjNKeXiqZkOzPFfSpgHTqh+M=;
- b=KKKuEq4ZbL21qiOck4SWuo0lJ4mO0T+NNuoZZdFAcdVJtohEC/BLrX0w9NUhzRiLNoOh
- G6O+gw140niz57E14RFYNOVpM8oyF9+tHiH47ejsxspUucqxPQgsX+KPiEX0v80B2gvm
- G2Zuu0c6Bb4BLcMPfuXvSlBC2N2aJ6rRxZOO6OdECLNnh0GS2rS3Z3jP+jk5POszxnLE
- 4pijWU5bcmpShEn1rnX3W/UdV/upHH3sMu8QhdkxFNh0Xwcru6yuwITXesDvGZxcZqtw
- lcMBf8iV8RmTVDeRoI3HJDEnjo/NN6esFWteR280KbCugmc75XHcTnPUpdQ9s4s4EBaT +g== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 303ceuxeg2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Mar 2020 09:16:35 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02V96ubU002205;
-        Tue, 31 Mar 2020 09:16:34 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 302g2dq5kj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Mar 2020 09:16:34 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02V9GXDA017837;
-        Tue, 31 Mar 2020 09:16:33 GMT
-Received: from [10.175.15.184] (/10.175.15.184)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 31 Mar 2020 02:16:33 -0700
-From:   Vegard Nossum <vegard.nossum@oracle.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>,
-        linux-kbuild@vger.kernel.org
-Subject: single target builds are broken
-Message-ID: <a5ce79eb-be9d-df97-0b58-5aee5a48f4d3@oracle.com>
-Date:   Tue, 31 Mar 2020 11:16:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 31 Mar 2020 05:21:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585646474;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GTjY9VYWDP/F7mEWfjv7lXAEg3SDOKfVcGPNXYsvZyU=;
+        b=PNuFd67EDDf3+0MFfSKQBc4e4VMuGXyFlkVqDH4nJh7Fb1l51lGJvRmBE48kZiYGm6lEVj
+        qB9mNDiSI64BsDUbLdGxIK94a6RYG+RPD977ZtSICV8fFYLie0gxgOf0Ugqawl6DCA5kwC
+        meyjqPvJL6evWoVU6bNdi32m6RYRo84=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-197-npjoz2J-OJeG2S4WkAFftw-1; Tue, 31 Mar 2020 05:21:11 -0400
+X-MC-Unique: npjoz2J-OJeG2S4WkAFftw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C678D8017CC;
+        Tue, 31 Mar 2020 09:21:09 +0000 (UTC)
+Received: from ws.net.home (unknown [10.40.194.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6C89919C6A;
+        Tue, 31 Mar 2020 09:21:04 +0000 (UTC)
+Date:   Tue, 31 Mar 2020 11:21:01 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+Message-ID: <20200331092101.fnipaxqewol2hzd2@ws.net.home>
+References: <1445647.1585576702@warthog.procyon.org.uk>
+ <CAJfpegvZ_qtdGcP4bNQyYt1BbgF9HdaDRsmD43a-Muxgki+wTw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9576 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 mlxscore=0
- adultscore=0 phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003310082
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9576 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 adultscore=0
- clxscore=1011 phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
- suspectscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003310082
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvZ_qtdGcP4bNQyYt1BbgF9HdaDRsmD43a-Muxgki+wTw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 30, 2020 at 10:28:56PM +0200, Miklos Szeredi wrote:
+> All this could be solved with a string key/value representation of the
+> same data, with minimal performance loss on encoding/parsing.  The
+> proposed fs interface[1] is one example of that, but I could also
+> imagine a syscall based one too.
 
-Hi,
+Yes, key/value is possible solution. The question is if we really 
+need to add extra /sys-like filesystem to get key/value ;-) I can 
+imagine key/value from FD based interface without open/read/close for
+each attribute,
 
-I often run 'make foo/bar.o' as part of my workflow, even when bar.o is
-not specified in any kernel makefile, and this has worked just fine for
-years.
+    fd = open("/mnt", O_PATH);
+    fsinfo(fd, "propagation", buf, sizeof(buf));
+    fsinfo(fd, "fstype", buf, sizeof(buf));
+    close(fd);
 
-This is broken after commit 394053f4a4b3e3eeeaa67b67fc886a9a75bd9e4d
-(kbuild: make single targets work more correctly) and just gives an error:
+why I need /mountfs/<id>/propagation and /mountfs/<id>/fstype to get
+the same? It sounds like over-engineering without any extra bonus.
 
-$ make kernel/test.o
-   CALL    scripts/checksyscalls.sh
-   CALL    scripts/atomic/check-atomics.sh
-   DESCEND  objtool
-make[2]: *** No rule to make target 'kernel/test.o'.  Stop.
-scripts/Makefile.build:502: recipe for target '__build' failed
-make[1]: *** [__build] Error 2
-Makefile:1670: recipe for target 'kernel' failed
-make: *** [kernel] Error 2
+Anyway, if we have FD based interfaces like fsopen(), fsmount(),
+open_tree() and move_mount() then it sounds strange that you cannot
+use the FD to ask kernel for the mount node attributes and you need 
+to open and read another /sys-like files. 
 
-For top-level objects (e.g. 'make bar.o') the situation is even worse,
-since make exits with status 0 without building anything :-/
+IMHO it would be nice that after open(/mnt, O_PATH) I can do whatever
+with the mount point (umount, move, reconfigure, query, etc.). Please,
+try to keep it simple and consistent ;-)
 
-Is there any chance we can get this back? It was super useful for me.
+    Karel
 
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
-Vegard
