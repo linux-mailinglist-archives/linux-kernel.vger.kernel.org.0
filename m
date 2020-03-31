@@ -2,105 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1313F19A15E
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:55:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B68219A172
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 23:57:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731452AbgCaVza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 17:55:30 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41408 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728840AbgCaVz3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 17:55:29 -0400
-Received: by mail-io1-f65.google.com with SMTP id b12so7240073ion.8;
-        Tue, 31 Mar 2020 14:55:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yCr0rURC7Raa50CQ8IdO6e5tVecgPPHvPYdeIVC6eiE=;
-        b=sLyR6I0Pqt/wA85K3A+uNB0MnGz0dbuAezGiwgonycwJxRa8tJuUNmzPWfQcOd/cZd
-         KoZTaF94txCrkZCbvFpVjEA0ayeTrHax2H+en0Bag8mGZvXsTJsR6yAe3oZ7TF/qocDM
-         9rgNE+9oghWZofU2mfJDTSk8E/rHOh9g3zBREyPsGajDvHfhrkjnHBgUXxDxN/jb2dUv
-         pQQM0LtcIsYG30+XbminrswSiiAEvmnsTLpp3l910qi5uf4LFgnrz92DnjzRsq2qfH1U
-         YZnoe+W94Pybwv1dbRppln6nqdbHuvnMQxYhnz1bUN1zGgW1+7jHUTW4kOXBaRbcX0Gj
-         qnhg==
-X-Gm-Message-State: ANhLgQ3L5JQuvr0sqZkHBeCCuVIO7/vx8B0BGcpkK9aoT30GGgjbLuN/
-        K+bxrwfqdYH3lUSamRUYiQ==
-X-Google-Smtp-Source: ADFU+vvwC0cEsQ2oSXhexAgioMtQjUohEsChYpbThieBRSP3Bx530D2FSjD7OC59CJBYMoRtXq4J0A==
-X-Received: by 2002:a6b:4905:: with SMTP id u5mr12392280iob.134.1585691728741;
-        Tue, 31 Mar 2020 14:55:28 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id l12sm38432ils.55.2020.03.31.14.55.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 14:55:28 -0700 (PDT)
-Received: (nullmailer pid 8706 invoked by uid 1000);
-        Tue, 31 Mar 2020 21:55:25 -0000
-Date:   Tue, 31 Mar 2020 15:55:25 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 11/13] dt-bindings: reset: imx8mp: Add ids for
- audiomix reset
-Message-ID: <20200331215525.GA8176@bogus>
-References: <1585150731-3354-1-git-send-email-abel.vesa@nxp.com>
- <1585150731-3354-12-git-send-email-abel.vesa@nxp.com>
+        id S1731521AbgCaV47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 17:56:59 -0400
+Received: from pub.regulars.win ([89.163.144.234]:47040 "EHLO pub.regulars.win"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727955AbgCaV46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 17:56:58 -0400
+From:   Slava Bacherikov <slava@bacher09.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bacher09.org;
+        s=reg; t=1585691814;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=YT3MtOxItDdm7TWprAjBs6HigHaG9iwHyVl+Qij+P7Q=;
+        b=sA0E+eeYQDfev3TzgMOUJL7ighcMggnMl5MnYXjtYSA9nOlaYPPtalbXpF4MzDd1DK1Vdm
+        x9LhwSZ9OPigKOjS6GPiXHp22dMJnDFWcDwsykFS9EgBoQ0b4MR4M2VaLVcMgp9mGJc54R
+        eyVOhTIXjHKjZ2LUSGqtAE4Ltsspl1Q=
+To:     andriin@fb.com
+Cc:     keescook@chromium.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jannh@google.com,
+        alexei.starovoitov@gmail.com, daniel@iogearbox.net,
+        kernel-hardening@lists.openwall.com,
+        Slava Bacherikov <slava@bacher09.org>,
+        Liu Yiding <liuyd.fnst@cn.fujitsu.com>
+Subject: [PATCH v2 bpf] kbuild: fix dependencies for DEBUG_INFO_BTF
+Date:   Wed,  1 Apr 2020 00:55:37 +0300
+Message-Id: <20200331215536.34162-1-slava@bacher09.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1585150731-3354-12-git-send-email-abel.vesa@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Spam: Yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 05:38:49PM +0200, Abel Vesa wrote:
-> Add all the reset ids for the audiomix reset.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
->  include/dt-bindings/reset/imx-audiomix-reset.h | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->  create mode 100644 include/dt-bindings/reset/imx-audiomix-reset.h
+Currently turning on DEBUG_INFO_SPLIT when DEBUG_INFO_BTF is also
+enabled will produce invalid btf file, since gen_btf function in
+link-vmlinux.sh script doesn't handle *.dwo files.
 
-This goes in the binding patch.
+Enabling DEBUG_INFO_REDUCED will also produce invalid btf file, and
+using GCC_PLUGIN_RANDSTRUCT with BTF makes no sense.
 
-> 
-> diff --git a/include/dt-bindings/reset/imx-audiomix-reset.h b/include/dt-bindings/reset/imx-audiomix-reset.h
-> new file mode 100644
-> index 00000000..571cacf
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/imx-audiomix-reset.h
-> @@ -0,0 +1,15 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright 2019 NXP.
-> + */
-> +
-> +#ifndef DT_BINDING_RESET_IMX_AUDIOMIX_H
-> +#define DT_BINDING_RESET_IMX_AUDIOMIX_H
-> +
-> +#define IMX_AUDIOMIX_EARC_RESET		0x0
-> +#define IMX_AUDIOMIX_EARC_PHY_RESET	0x1
-> +
-> +#define IMX_AUDIOMIX_RESET_NUM		2
-> +
-> +#endif
-> +
-> -- 
-> 2.7.4
-> 
+Signed-off-by: Slava Bacherikov <slava@bacher09.org>
+Reported-by: Jann Horn <jannh@google.com>
+Reported-by: Liu Yiding <liuyd.fnst@cn.fujitsu.com>
+Fixes: e83b9f55448a ("kbuild: add ability to generate BTF type info for vmlinux")
+---
+ lib/Kconfig.debug | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index f61d834e02fe..9ae288e2a6c0 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -223,6 +223,7 @@ config DEBUG_INFO_DWARF4
+ config DEBUG_INFO_BTF
+ 	bool "Generate BTF typeinfo"
+ 	depends on DEBUG_INFO
++	depends on !DEBUG_INFO_SPLIT && !DEBUG_INFO_REDUCED && !GCC_PLUGIN_RANDSTRUCT
+ 	help
+ 	  Generate deduplicated BTF type information from DWARF debug info.
+ 	  Turning this on expects presence of pahole tool, which will convert
+-- 
+2.24.1
+
