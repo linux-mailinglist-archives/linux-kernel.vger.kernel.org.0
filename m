@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A5F2199118
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:18:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0033198F0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:00:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731806AbgCaJRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:17:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38156 "EHLO mail.kernel.org"
+        id S1730366AbgCaJAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:00:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732012AbgCaJRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:17:07 -0400
+        id S1729425AbgCaJAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:00:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84B8E208E0;
-        Tue, 31 Mar 2020 09:17:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D32420848;
+        Tue, 31 Mar 2020 09:00:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585646227;
-        bh=+1xLu4UM8eC0DtDYdw0C89iwUWF2tSN4pL1u48vjWDk=;
+        s=default; t=1585645213;
+        bh=rAT7k9QfL/uRKMskwddcHA1BKZ5ENz8y42pgaEwLH+I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X7sGWK+vEzhr74ST8CJw8vY76bQETDH4gJfjAnTok/FTgeFoDO97tKHjXZeE3kxp0
-         IXyUzkxvwkVYciZnwQZAHqGkcCD5bGw2Qh7+JYLWhCD7eFrCYn5nplVlQ3R0ua+hTV
-         WVojnp5608N0oDB2bqQat7hQ1q7/4YbRa3rOsGGI=
+        b=KnWvgB+E/PTWVpz0fKFQIKrLvQk5S9kscDdGVHCWPBES+sj9uMlIbwPxFrdJGNQ49
+         ycmdrJJlRMi5J0QVTU5zbV3Jyx8ZoCMlf3zmYYMvjXJvUW+ccuIYeXOFLGOOjitUtJ
+         0pkdV/NuEG0zazwXrNaBZ9LBEgCfktcy2dtS234c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 5.4 122/155] ieee80211: fix HE SPR size calculation
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 5.6 10/23] staging: kpc2000: prevent underflow in cpld_reconfigure()
 Date:   Tue, 31 Mar 2020 10:59:22 +0200
-Message-Id: <20200331085432.059735760@linuxfoundation.org>
+Message-Id: <20200331085312.471276445@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
-References: <20200331085418.274292403@linuxfoundation.org>
+In-Reply-To: <20200331085308.098696461@linuxfoundation.org>
+References: <20200331085308.098696461@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,43 +42,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 575a97acc3b7446094b0dcaf6285c7c6934c2477 upstream.
+commit 72db61d7d17a475d3cc9de1a7c871d518fcd82f0 upstream.
 
-The he_sr_control field is just a u8, so le32_to_cpu()
-shouldn't be applied to it; this was evidently copied
-from ieee80211_he_oper_size(). Fix it, and also adjust
-the type of the local variable.
+This function should not allow negative values of "wr_val".  If
+negatives are allowed then capping the upper bound at 7 is
+meaningless.  Let's make it unsigned.
 
-Fixes: ef11a931bd1c ("mac80211: HE: add Spatial Reuse element parsing support")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Link: https://lore.kernel.org/r/20200325090918.dfe483b49e06.Ia53622f23b2610a2ae6ea39a199866196fe946c1@changeid
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: 7dc7967fc39a ("staging: kpc2000: add initial set of Daktronics drivers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200224103325.hrxdnaeqsthplu42@kili.mountain
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/ieee80211.h |    4 ++--
+ drivers/staging/kpc2000/kpc2000/core.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/linux/ieee80211.h
-+++ b/include/linux/ieee80211.h
-@@ -2102,14 +2102,14 @@ ieee80211_he_spr_size(const u8 *he_spr_i
+--- a/drivers/staging/kpc2000/kpc2000/core.c
++++ b/drivers/staging/kpc2000/kpc2000/core.c
+@@ -110,10 +110,10 @@ static ssize_t cpld_reconfigure(struct d
+ 				const char *buf, size_t count)
  {
- 	struct ieee80211_he_spr *he_spr = (void *)he_spr_ie;
- 	u8 spr_len = sizeof(struct ieee80211_he_spr);
--	u32 he_spr_params;
-+	u8 he_spr_params;
+ 	struct kp2000_device *pcard = dev_get_drvdata(dev);
+-	long wr_val;
++	unsigned long wr_val;
+ 	int rv;
  
- 	/* Make sure the input is not NULL */
- 	if (!he_spr_ie)
- 		return 0;
- 
- 	/* Calc required length */
--	he_spr_params = le32_to_cpu(he_spr->he_sr_control);
-+	he_spr_params = he_spr->he_sr_control;
- 	if (he_spr_params & IEEE80211_HE_SPR_NON_SRG_OFFSET_PRESENT)
- 		spr_len++;
- 	if (he_spr_params & IEEE80211_HE_SPR_SRG_INFORMATION_PRESENT)
+-	rv = kstrtol(buf, 0, &wr_val);
++	rv = kstrtoul(buf, 0, &wr_val);
+ 	if (rv < 0)
+ 		return rv;
+ 	if (wr_val > 7)
 
 
