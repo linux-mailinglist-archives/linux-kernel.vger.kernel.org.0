@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64837199036
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:10:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3109F199152
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:19:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731565AbgCaJKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:10:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53622 "EHLO mail.kernel.org"
+        id S1732174AbgCaJTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:19:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731558AbgCaJKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:10:03 -0400
+        id S1732176AbgCaJS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:18:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39E9720675;
-        Tue, 31 Mar 2020 09:10:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB02720772;
+        Tue, 31 Mar 2020 09:18:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645802;
-        bh=i54h0PpoMrZjEXGvANY6FaJbACna+TsoRHILdEn6CI4=;
+        s=default; t=1585646338;
+        bh=rAT7k9QfL/uRKMskwddcHA1BKZ5ENz8y42pgaEwLH+I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VHgnBh0C2mMKcnEmQIhXvB422yfh6EGALtxEmtLXzSgQZMYXHmOHJ2Jf/vcPqf1KY
-         jfiiugSz8CFzcVEDpYMOlU1XEF25M+/xG1cDwWVlTb/QYuln4Z9BsJr2bmghXLSKOQ
-         aRb6r7KtJq9wcwdDgBZoEpg7MrO/I31mHjCfQySM=
+        b=2wDzUSosVxmGkMB/GmUWlKkXZghOk3iO8V9f5m/GapAmJUSOCKohO68cgwHNK0o1/
+         5mm7zrJyIQVxlk6kHJ4uAjM8Yv6JmUgKcz6CS4FppAZh3Ym3aQNG4VLwVm0pE5H+o/
+         eUz4mxCXrabKT7b8F9HixGePiXIhL4A3hE9UPuXI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 5.5 170/170] media: v4l2-core: fix a use-after-free bug of sd->devnode
-Date:   Tue, 31 Mar 2020 10:59:44 +0200
-Message-Id: <20200331085440.662743229@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 5.4 145/155] staging: kpc2000: prevent underflow in cpld_reconfigure()
+Date:   Tue, 31 Mar 2020 10:59:45 +0200
+Message-Id: <20200331085434.378979716@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
-References: <20200331085423.990189598@linuxfoundation.org>
+In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
+References: <20200331085418.274292403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +42,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 6990570f7e0a6078e11b9c5dc13f4b6e3f49a398 upstream.
+commit 72db61d7d17a475d3cc9de1a7c871d518fcd82f0 upstream.
 
-sd->devnode is released after calling
-v4l2_subdev_release. Therefore it should be set
-to NULL so that the subdev won't hold a pointer
-to a released object. This fixes a reference
-after free bug in function
-v4l2_device_unregister_subdev
+This function should not allow negative values of "wr_val".  If
+negatives are allowed then capping the upper bound at 7 is
+meaningless.  Let's make it unsigned.
 
-Fixes: 0e43734d4c46e ("media: v4l2-subdev: add release() internal op")
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Fixes: 7dc7967fc39a ("staging: kpc2000: add initial set of Daktronics drivers")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200224103325.hrxdnaeqsthplu42@kili.mountain
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/v4l2-device.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/kpc2000/kpc2000/core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/media/v4l2-core/v4l2-device.c
-+++ b/drivers/media/v4l2-core/v4l2-device.c
-@@ -179,6 +179,7 @@ static void v4l2_subdev_release(struct v
+--- a/drivers/staging/kpc2000/kpc2000/core.c
++++ b/drivers/staging/kpc2000/kpc2000/core.c
+@@ -110,10 +110,10 @@ static ssize_t cpld_reconfigure(struct d
+ 				const char *buf, size_t count)
+ {
+ 	struct kp2000_device *pcard = dev_get_drvdata(dev);
+-	long wr_val;
++	unsigned long wr_val;
+ 	int rv;
  
- 	if (sd->internal_ops && sd->internal_ops->release)
- 		sd->internal_ops->release(sd);
-+	sd->devnode = NULL;
- 	module_put(owner);
- }
- 
+-	rv = kstrtol(buf, 0, &wr_val);
++	rv = kstrtoul(buf, 0, &wr_val);
+ 	if (rv < 0)
+ 		return rv;
+ 	if (wr_val > 7)
 
 
