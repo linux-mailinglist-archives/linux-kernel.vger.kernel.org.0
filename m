@@ -2,139 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF02C198D50
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8D49198D54
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:47:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730053AbgCaHqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 03:46:53 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50794 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726299AbgCaHqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 03:46:52 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9AD01F0DF21D4FFBF467;
-        Tue, 31 Mar 2020 15:46:47 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.487.0; Tue, 31 Mar 2020 15:46:38 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: use round_up()/DIV_ROUND_UP()
-Date:   Tue, 31 Mar 2020 15:46:28 +0800
-Message-ID: <20200331074628.25325-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        id S1730076AbgCaHrj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 03:47:39 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52011 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbgCaHrj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 03:47:39 -0400
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1jJBcO-0004m4-Me; Tue, 31 Mar 2020 09:47:28 +0200
+Received: from [IPv6:2a03:f580:87bc:d400:9c00:37c7:b172:db58] (unknown [IPv6:2a03:f580:87bc:d400:9c00:37c7:b172:db58])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
+        (Authenticated sender: mkl@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 060294D8C3A;
+        Tue, 31 Mar 2020 07:47:25 +0000 (UTC)
+Subject: Re: [PATCH v2] ARM: imx: allow to disable board specific PHY fixups
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Oleksij Rempel <o.rempel@pengutronix.de>, linux-imx@nxp.com,
+        kernel@pengutronix.de, David Jander <david@protonic.nl>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Heiner Kallweit <hkallweit1@gmail.com>
+References: <20200329110457.4113-1-o.rempel@pengutronix.de>
+ <20200329150854.GA31812@lunn.ch>
+ <20200330052611.2bgu7x4nmimf7pru@pengutronix.de>
+ <40209d08-4acb-75c5-1766-6d39bb826ff9@gmail.com>
+ <20200330174114.GG25745@shell.armlinux.org.uk>
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
+ mQINBFFVq30BEACtnSvtXHoeHJxG6nRULcvlkW6RuNwHKmrqoksispp43X8+nwqIFYgb8UaX
+ zu8T6kZP2wEIpM9RjEL3jdBjZNCsjSS6x1qzpc2+2ivjdiJsqeaagIgvy2JWy7vUa4/PyGfx
+ QyUeXOxdj59DvLwAx8I6hOgeHx2X/ntKAMUxwawYfPZpP3gwTNKc27dJWSomOLgp+gbmOmgc
+ 6U5KwhAxPTEb3CsT5RicsC+uQQFumdl5I6XS+pbeXZndXwnj5t84M+HEj7RN6bUfV2WZO/AB
+ Xt5+qFkC/AVUcj/dcHvZwQJlGeZxoi4veCoOT2MYqfR0ax1MmN+LVRvKm29oSyD4Ts/97cbs
+ XsZDRxnEG3z/7Winiv0ZanclA7v7CQwrzsbpCv+oj+zokGuKasofzKdpywkjAfSE1zTyF+8K
+ nxBAmzwEqeQ3iKqBc3AcCseqSPX53mPqmwvNVS2GqBpnOfY7Mxr1AEmxdEcRYbhG6Xdn+ACq
+ Dq0Db3A++3PhMSaOu125uIAIwMXRJIzCXYSqXo8NIeo9tobk0C/9w3fUfMTrBDtSviLHqlp8
+ eQEP8+TDSmRP/CwmFHv36jd+XGmBHzW5I7qw0OORRwNFYBeEuiOIgxAfjjbLGHh9SRwEqXAL
+ kw+WVTwh0MN1k7I9/CDVlGvc3yIKS0sA+wudYiselXzgLuP5cQARAQABtCZNYXJjIEtsZWlu
+ ZS1CdWRkZSA8bWtsQHBlbmd1dHJvbml4LmRlPokCVAQTAQoAPgIbAwIeAQIXgAULCQgHAwUV
+ CgkICwUWAgMBABYhBMFAC6CzmJ5vvH1bXCte4hHFiupUBQJcUsSbBQkM366zAAoJECte4hHF
+ iupUgkAP/2RdxKPZ3GMqag33jKwKAbn/fRqAFWqUH9TCsRH3h6+/uEPnZdzhkL4a9p/6OeJn
+ Z6NXqgsyRAOTZsSFcwlfxLNHVxBWm8pMwrBecdt4lzrjSt/3ws2GqxPsmza1Gs61lEdYvLST
+ Ix2vPbB4FAfE0kizKAjRZzlwOyuHOr2ilujDsKTpFtd8lV1nBNNn6HBIBR5ShvJnwyUdzuby
+ tOsSt7qJEvF1x3y49bHCy3uy+MmYuoEyG6zo9udUzhVsKe3hHYC2kfB16ZOBjFC3lH2U5An+
+ yQYIIPZrSWXUeKjeMaKGvbg6W9Oi4XEtrwpzUGhbewxCZZCIrzAH2hz0dUhacxB201Y/faY6
+ BdTS75SPs+zjTYo8yE9Y9eG7x/lB60nQjJiZVNvZ88QDfVuLl/heuIq+fyNajBbqbtBT5CWf
+ mOP4Dh4xjm3Vwlz8imWW/drEVJZJrPYqv0HdPbY8jVMpqoe5jDloyVn3prfLdXSbKPexlJaW
+ 5tnPd4lj8rqOFShRnLFCibpeHWIumqrIqIkiRA9kFW3XMgtU6JkIrQzhJb6Tc6mZg2wuYW0d
+ Wo2qvdziMgPkMFiWJpsxM9xPk9BBVwR+uojNq5LzdCsXQ2seG0dhaOTaaIDWVS8U/V8Nqjrl
+ 6bGG2quo5YzJuXKjtKjZ4R6k762pHJ3tnzI/jnlc1sXz
+Message-ID: <5ae5c0de-f05c-5e3f-86e1-a9afdd3e1ef1@pengutronix.de>
+Date:   Tue, 31 Mar 2020 09:47:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200330174114.GG25745@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-.i_cluster_size should be power of 2, so we can use round_up() instead
-of roundup() to enhance the calculation.
+On 3/30/20 7:41 PM, Russell King - ARM Linux admin wrote:
+>>> arch/arm/mach-imx/mach-imx6q.c:167:		phy_register_fixup_for_uid(PHY_ID_KSZ9021, MICREL_PHY_ID_MASK,
+>>> arch/arm/mach-imx/mach-imx6q.c:169:		phy_register_fixup_for_uid(PHY_ID_KSZ9031, MICREL_PHY_ID_MASK,
+>>> arch/arm/mach-imx/mach-imx6q.c:171:		phy_register_fixup_for_uid(PHY_ID_AR8031, 0xffffffef,
+>>> arch/arm/mach-imx/mach-imx6q.c:173:		phy_register_fixup_for_uid(PHY_ID_AR8035, 0xffffffef,
+> 
+> As far as I'm concerned, the AR8035 fixup is there with good reason.
+> It's not just "random" but is required to make the AR8035 usable with
+> the iMX6 SoCs.  Not because of a board level thing, but because it's
+> required for the AR8035 to be usable with an iMX6 SoC.
 
-In addition, use DIV_ROUND_UP to clean up codes.
+Is this still ture, if the AR8035 is attached to a switch behind an iMX6?
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- don't change blocksize to PAGE_SIZE
- fs/f2fs/data.c | 14 ++++++--------
- fs/f2fs/file.c | 17 +++++------------
- 2 files changed, 11 insertions(+), 20 deletions(-)
+regards,
+Marc
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 0a829a89f596..fea93719f14f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1969,8 +1969,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 					bool is_readahead)
- {
- 	struct bio *bio = *bio_ret;
--	const unsigned blkbits = inode->i_blkbits;
--	const unsigned blocksize = 1 << blkbits;
-+	const unsigned blocksize = 1 << inode->i_blkbits;
- 	sector_t block_in_file;
- 	sector_t last_block;
- 	sector_t last_block_in_file;
-@@ -1979,8 +1978,8 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 
- 	block_in_file = (sector_t)page_index(page);
- 	last_block = block_in_file + nr_pages;
--	last_block_in_file = (f2fs_readpage_limit(inode) + blocksize - 1) >>
--							blkbits;
-+	last_block_in_file = DIV_ROUND_UP(f2fs_readpage_limit(inode),
-+								blocksize);
- 	if (last_block > last_block_in_file)
- 		last_block = last_block_in_file;
- 
-@@ -2091,16 +2090,15 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 	struct bio *bio = *bio_ret;
- 	unsigned int start_idx = cc->cluster_idx << cc->log_cluster_size;
- 	sector_t last_block_in_file;
--	const unsigned blkbits = inode->i_blkbits;
--	const unsigned blocksize = 1 << blkbits;
-+	const unsigned blocksize = 1 << inode->i_blkbits;
- 	struct decompress_io_ctx *dic = NULL;
- 	int i;
- 	int ret = 0;
- 
- 	f2fs_bug_on(sbi, f2fs_cluster_is_empty(cc));
- 
--	last_block_in_file = (f2fs_readpage_limit(inode) +
--					blocksize - 1) >> blkbits;
-+	last_block_in_file = DIV_ROUND_UP(f2fs_readpage_limit(inode),
-+								blocksize);
- 
- 	/* get rid of pages beyond EOF */
- 	for (i = 0; i < cc->cluster_size; i++) {
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c2d38a1c4972..0f8be076620c 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -736,16 +736,9 @@ int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock)
- 	 * for compressed file, only support cluster size
- 	 * aligned truncation.
- 	 */
--	if (f2fs_compressed_file(inode)) {
--		size_t cluster_shift = PAGE_SHIFT +
--					F2FS_I(inode)->i_log_cluster_size;
--		size_t cluster_mask = (1 << cluster_shift) - 1;
--
--		free_from = from >> cluster_shift;
--		if (from & cluster_mask)
--			free_from++;
--		free_from <<= cluster_shift;
--	}
-+	if (f2fs_compressed_file(inode))
-+		free_from = round_up(from,
-+				F2FS_I(inode)->i_cluster_size << PAGE_SHIFT);
- #endif
- 
- 	err = f2fs_do_truncate_blocks(inode, free_from, lock);
-@@ -3537,7 +3530,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
- 
- 		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
- 		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
--		count = roundup(count, F2FS_I(inode)->i_cluster_size);
-+		count = round_up(count, F2FS_I(inode)->i_cluster_size);
- 
- 		ret = release_compress_blocks(&dn, count);
- 
-@@ -3689,7 +3682,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
- 
- 		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
- 		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
--		count = roundup(count, F2FS_I(inode)->i_cluster_size);
-+		count = round_up(count, F2FS_I(inode)->i_cluster_size);
- 
- 		ret = reserve_compress_blocks(&dn, count);
- 
 -- 
-2.18.0.rc1
-
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
