@@ -2,189 +2,366 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47C46199958
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12430199932
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:07:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730781AbgCaPNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 11:13:40 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41200 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730466AbgCaPNj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 11:13:39 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02VFD8g4118835;
-        Tue, 31 Mar 2020 10:13:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1585667588;
-        bh=RoMDzKc2+/VDiXGdwwD1RSQ05yOF2jkqG94nB8oDMZA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=kGU35WNa8EiKD9S5xaTn9wze6HFMz8Tx6CalzVqgXZLBb2NA4QGYAi/OuczfoMpXw
-         yOI6HIi/hULN0UjaXSW1Vki00b+6oishY8WVMzr1YeUm/SMkYInTbR3S17NV1vCt5q
-         6LF/ebqoo3LNiqLbkbhmzPfC8GQEgNlJZsYbE3Ms=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02VFD8W4014945
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 31 Mar 2020 10:13:08 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 31
- Mar 2020 10:13:08 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 31 Mar 2020 10:13:08 -0500
-Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02VFD7C7005470;
-        Tue, 31 Mar 2020 10:13:07 -0500
-Subject: Re: [PATCH v2] remoteproc: remove rproc_elf32_sanity_check
-To:     Clement Leger <cleger@kalray.eu>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20200331083336.7459-1-cleger@kalray.eu>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <0fc07250-c62c-cb10-58e5-04ccdd6ee176@ti.com>
-Date:   Tue, 31 Mar 2020 10:13:07 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1730607AbgCaPHo convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 11:07:44 -0400
+Received: from mga06.intel.com ([134.134.136.31]:2483 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726526AbgCaPHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 11:07:44 -0400
+IronPort-SDR: iWKFDj6NpMmlYhhHQC0VTGMBvB70zipW91RlRBPmvBMxpuV5QVQX4h+32KocV79eNHCSWXvLOK
+ SEUrQdF9XKrw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 08:07:43 -0700
+IronPort-SDR: XszIDvHCviOzufo+EruMebCUjjCbUg0ODeQ1MIpEa0gMy4MMPBL5lvRiZXtzvMx19lkQpEozd9
+ YCEYVhMo1hoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,328,1580803200"; 
+   d="scan'208";a="252274243"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga006.jf.intel.com with ESMTP; 31 Mar 2020 08:07:42 -0700
+Date:   Tue, 31 Mar 2020 08:13:29 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 08/10] iommu/ioasid: Introduce notifier APIs
+Message-ID: <20200331081329.036ca1a5@jacob-builder>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7F76B7@SHSMSX104.ccr.corp.intel.com>
+References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1585158931-1825-9-git-send-email-jacob.jun.pan@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D7ED5D6@SHSMSX104.ccr.corp.intel.com>
+        <20200327113646.3d87f17f@jacob-builder>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D7F76B7@SHSMSX104.ccr.corp.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20200331083336.7459-1-cleger@kalray.eu>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/31/20 3:33 AM, Clement Leger wrote:
-> Since checks are present in the remoteproc elf loader before calling
-> da_to_va, loading a elf64 will work on 32bits flavors of kernel.
-> Indeed, if a segment size is larger than what size_t can hold, the
-> loader will return an error so the functionality is equivalent to
-> what exists today.
-> 
-> Signed-off-by: Clement Leger <cleger@kalray.eu>
+On Sat, 28 Mar 2020 06:43:37 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
 
-Acked-by: Suman Anna <s-anna@ti.com>
-
-regards
-Suman
-
-> ---
-> Changes from v1 -> v2:
->  - Remove possibity to override sanity_check operation
+> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Sent: Saturday, March 28, 2020 2:37 AM
+> > 
+> > On Fri, 27 Mar 2020 10:03:26 +0000
+> > "Tian, Kevin" <kevin.tian@intel.com> wrote:
+> >   
+> > > > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > > > Sent: Thursday, March 26, 2020 1:55 AM
+> > > >
+> > > > IOASID users fit into the publisher-subscriber pattern, a system
+> > > > wide blocking notifier chain can be used to inform subscribers
+> > > > of state changes. Notifier mechanism also abstracts publisher
+> > > > from knowing the private context each subcriber may have.
+> > > >
+> > > > This patch adds APIs and a global notifier chain, a further
+> > > > optimization might be per set notifier for ioasid_set aware
+> > > > users.
+> > > >
+> > > > Usage example:
+> > > > KVM register notifier block such that it can keep its guest-host
+> > > > PASID translation table in sync with any IOASID updates.
+> > > >
+> > > > VFIO publish IOASID change by performing alloc/free, bind/unbind
+> > > > operations.
+> > > >
+> > > > IOMMU driver gets notified when IOASID is freed by VFIO or core
+> > > > mm code such that PASID context can be cleaned up.  
+> > >
+> > > above example looks mixed. You have KVM registers the notifier but
+> > > finally having IOMMU driver to get notified... 😊
+> > >  
+> > Right, felt like a tale of two subscribers got mixed. I meant to
+> > list a few use cases with publisher and subscriber roles separate.
+> > I will change that to "Usage examples", and explicit state each
+> > role. 
+> > > >
+> > > > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> > > > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > > > ---
+> > > >  drivers/iommu/ioasid.c | 61
+> > > > ++++++++++++++++++++++++++++++++++++++++++++++++++
+> > > >  include/linux/ioasid.h | 40 +++++++++++++++++++++++++++++++++
+> > > >  2 files changed, 101 insertions(+)
+> > > >
+> > > > diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
+> > > > index 8612fe6477dc..27dce2cb5af2 100644
+> > > > --- a/drivers/iommu/ioasid.c
+> > > > +++ b/drivers/iommu/ioasid.c
+> > > > @@ -11,6 +11,22 @@
+> > > >  #include <linux/xarray.h>
+> > > >
+> > > >  static DEFINE_XARRAY_ALLOC(ioasid_sets);
+> > > > +/*
+> > > > + * An IOASID could have multiple consumers. When a status
+> > > > change occurs,
+> > > > + * this notifier chain is used to keep them in sync. Each
+> > > > consumer of the
+> > > > + * IOASID service must register notifier block early to ensure
+> > > > no events
+> > > > + * are missed.
+> > > > + *
+> > > > + * This is a publisher-subscriber pattern where publisher can
+> > > > change the
+> > > > + * state of each IOASID, e.g. alloc/free, bind IOASID to a
+> > > > device and mm.
+> > > > + * On the other hand, subscribers gets notified for the state
+> > > > change and
+> > > > + * keep local states in sync.
+> > > > + *
+> > > > + * Currently, the notifier is global. A further optimization
+> > > > could be per
+> > > > + * IOASID set notifier chain.
+> > > > + */
+> > > > +static BLOCKING_NOTIFIER_HEAD(ioasid_chain);
+> > > > +
+> > > >  /**
+> > > >   * struct ioasid_set_data - Meta data about ioasid_set
+> > > >   *
+> > > > @@ -408,6 +424,7 @@ static void ioasid_free_locked(ioasid_t
+> > > > ioasid) {
+> > > >  	struct ioasid_data *ioasid_data;
+> > > >  	struct ioasid_set_data *sdata;
+> > > > +	struct ioasid_nb_args args;
+> > > >
+> > > >  	ioasid_data = xa_load(&active_allocator->xa, ioasid);
+> > > >  	if (!ioasid_data) {
+> > > > @@ -415,6 +432,13 @@ static void ioasid_free_locked(ioasid_t
+> > > > ioasid) return;
+> > > >  	}
+> > > >
+> > > > +	args.id = ioasid;
+> > > > +	args.sid = ioasid_data->sdata->sid;
+> > > > +	args.pdata = ioasid_data->private;
+> > > > +	args.set_token = ioasid_data->sdata->token;
+> > > > +
+> > > > +	/* Notify all users that this IOASID is being freed */
+> > > > +	blocking_notifier_call_chain(&ioasid_chain,
+> > > > IOASID_FREE, &args); active_allocator->ops->free(ioasid,
+> > > > active_allocator->ops->pdata); /* Custom allocator needs
+> > > > additional steps to free the xa element */ if
+> > > > (active_allocator->flags & IOASID_ALLOCATOR_CUSTOM) { @@ -624,6
+> > > > +648,43 @@ int ioasid_find_sid(ioasid_t ioasid) }
+> > > >  EXPORT_SYMBOL_GPL(ioasid_find_sid);
+> > > >
+> > > > +int ioasid_add_notifier(struct notifier_block *nb)
+> > > > +{
+> > > > +	return blocking_notifier_chain_register(&ioasid_chain,
+> > > > nb); +}
+> > > > +EXPORT_SYMBOL_GPL(ioasid_add_notifier);
+> > > > +
+> > > > +void ioasid_remove_notifier(struct notifier_block *nb)
+> > > > +{
+> > > > +	blocking_notifier_chain_unregister(&ioasid_chain, nb);
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(ioasid_remove_notifier);  
+> > >
+> > > register/unregister
+> > >  
+> > Sounds good.
+> >   
+> > > > +
+> > > > +int ioasid_notify(ioasid_t ioasid, enum ioasid_notify_val
+> > > > cmd)  
+> > >
+> > > add a comment on when this function should be used?
+> > >  
+> > Sure, how about:
+> > /**
+> >  * ioasid_notify - Send notification on a given IOASID for status
+> > change.
+> >  *                 Used by publishers when the status change may
+> > affect
+> >  *                 subscriber's internal state.
+> >  *
+> >  * @ioasid:	The IOASID to which the notification will send
+> >  * @cmd:	The notification event
+> >  *
+> >  */  
 > 
->  drivers/remoteproc/remoteproc_core.c       |  3 +--
->  drivers/remoteproc/remoteproc_elf_loader.c | 21 ---------------------
->  drivers/remoteproc/remoteproc_internal.h   |  1 -
->  drivers/remoteproc/st_remoteproc.c         |  2 +-
->  drivers/remoteproc/st_slim_rproc.c         |  2 +-
->  drivers/remoteproc/stm32_rproc.c           |  2 +-
->  6 files changed, 4 insertions(+), 27 deletions(-)
+> looks good.
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index a9ac1d01e09b..191560048c1a 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -2068,8 +2068,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->  		rproc->ops->load = rproc_elf_load_segments;
->  		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
->  		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
-> -		if (!rproc->ops->sanity_check)
-> -			rproc->ops->sanity_check = rproc_elf32_sanity_check;
-> +		rproc->ops->sanity_check = rproc_elf_sanity_check;
->  		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
->  	}
->  
-> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-> index 16e2c496fd45..29034f99898d 100644
-> --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> @@ -112,27 +112,6 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
->  }
->  EXPORT_SYMBOL(rproc_elf_sanity_check);
->  
-> -/**
-> - * rproc_elf_sanity_check() - Sanity Check ELF32 firmware image
-> - * @rproc: the remote processor handle
-> - * @fw: the ELF32 firmware image
-> - *
-> - * Make sure this fw image is sane.
-> - */
-> -int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw)
-> -{
-> -	int ret = rproc_elf_sanity_check(rproc, fw);
-> -
-> -	if (ret)
-> -		return ret;
-> -
-> -	if (fw_elf_get_class(fw) == ELFCLASS32)
-> -		return 0;
-> -
-> -	return -EINVAL;
-> -}
-> -EXPORT_SYMBOL(rproc_elf32_sanity_check);
-> -
->  /**
->   * rproc_elf_get_boot_addr() - Get rproc's boot address.
->   * @rproc: the remote processor handle
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index b389dc79da81..31994715fd43 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -54,7 +54,6 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len);
->  phys_addr_t rproc_va_to_pa(void *cpu_addr);
->  int rproc_trigger_recovery(struct rproc *rproc);
->  
-> -int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw);
->  int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
->  u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
->  int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
-> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-> index a6cbfa452764..a3268d95a50e 100644
-> --- a/drivers/remoteproc/st_remoteproc.c
-> +++ b/drivers/remoteproc/st_remoteproc.c
-> @@ -233,7 +233,7 @@ static const struct rproc_ops st_rproc_ops = {
->  	.parse_fw		= st_rproc_parse_fw,
->  	.load			= rproc_elf_load_segments,
->  	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
-> -	.sanity_check		= rproc_elf32_sanity_check,
-> +	.sanity_check		= rproc_elf_sanity_check,
->  	.get_boot_addr		= rproc_elf_get_boot_addr,
->  };
->  
-> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-> index 3cca8b65a8db..09bcb4d8b9e0 100644
-> --- a/drivers/remoteproc/st_slim_rproc.c
-> +++ b/drivers/remoteproc/st_slim_rproc.c
-> @@ -203,7 +203,7 @@ static const struct rproc_ops slim_rproc_ops = {
->  	.da_to_va       = slim_rproc_da_to_va,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
->  	.load		= rproc_elf_load_segments,
-> -	.sanity_check	= rproc_elf32_sanity_check,
-> +	.sanity_check	= rproc_elf_sanity_check,
->  };
->  
->  /**
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 6a66dbf2df40..2e07a95439c8 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -505,7 +505,7 @@ static struct rproc_ops st_rproc_ops = {
->  	.load		= rproc_elf_load_segments,
->  	.parse_fw	= stm32_rproc_parse_fw,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-> -	.sanity_check	= rproc_elf32_sanity_check,
-> +	.sanity_check	= rproc_elf_sanity_check,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
->  };
->  
+> >   
+> > > > +{
+> > > > +	struct ioasid_data *ioasid_data;
+> > > > +	struct ioasid_nb_args args;
+> > > > +	int ret = 0;
+> > > > +
+> > > > +	mutex_lock(&ioasid_allocator_lock);
+> > > > +	ioasid_data = xa_load(&active_allocator->xa, ioasid);
+> > > > +	if (!ioasid_data) {
+> > > > +		pr_err("Trying to free unknown IOASID %u\n",
+> > > > ioasid);  
+> > >
+> > > why is it fixed to 'free'?
+> > >  
+> > Good catch, it shouldn;t be just free. It was a relic of early test
+> > case.
+> >   
+> > > > +		mutex_unlock(&ioasid_allocator_lock);
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +
+> > > > +	args.id = ioasid;
+> > > > +	args.sid = ioasid_data->sdata->sid;
+> > > > +	args.pdata = ioasid_data->private;  
+> > >
+> > > why no token info as did in ioasid_free?
+> > >  
+> > Good catch, should include token as well. It is better to include
+> > all the data such that subscribers don't have to do any lookup
+> > which may cause race.
+> >   
+> > > > +
+> > > > +	ret = blocking_notifier_call_chain(&ioasid_chain, cmd,
+> > > > &args);
+> > > > +	mutex_unlock(&ioasid_allocator_lock);
+> > > > +
+> > > > +	return ret;
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(ioasid_notify);
+> > > > +
+> > > >  MODULE_AUTHOR("Jean-Philippe Brucker <jean-  
+> > > > philippe.brucker@arm.com>");  
+> > > >  MODULE_AUTHOR("Jacob Pan <jacob.jun.pan@linux.intel.com>");
+> > > >  MODULE_DESCRIPTION("IO Address Space ID (IOASID) allocator");
+> > > > diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
+> > > > index e19c0ad93bd7..32d032913828 100644
+> > > > --- a/include/linux/ioasid.h
+> > > > +++ b/include/linux/ioasid.h
+> > > > @@ -4,6 +4,7 @@
+> > > >
+> > > >  #include <linux/types.h>
+> > > >  #include <linux/errno.h>
+> > > > +#include <linux/notifier.h>
+> > > >
+> > > >  #define INVALID_IOASID ((ioasid_t)-1)
+> > > >  #define INVALID_IOASID_SET (-1)
+> > > > @@ -30,6 +31,27 @@ struct ioasid_allocator_ops {
+> > > >  	void *pdata;
+> > > >  };
+> > > >
+> > > > +/* Notification data when IOASID status changed */
+> > > > +enum ioasid_notify_val {
+> > > > +	IOASID_ALLOC = 1,
+> > > > +	IOASID_FREE,
+> > > > +	IOASID_BIND,
+> > > > +	IOASID_UNBIND,
+> > > > +};  
+> > >
+> > > Curious why IOASID_ALLOC is not notified aumatically within
+> > > ioasid_alloc similar to ioasid_free, while leaving to the
+> > > publisher? BIND/UNBIND is a publisher thing but a bit strange to
+> > > see ALLOC/FREE with different policy here.
+> > >  
+> > I don't see a use case for ALLOC notification yet. Any user does the
+> > allocation would the be the first and only one know about this
+> > IOASID.
+> > 
+> > Unless we have set level notifier, which may be interested in a new
+> > IOASID being allocated within the set.  
+> 
+> then remove this type until it is actually required when supporting
+> set-level notifier? 
 > 
 
+Sounds good. I will change it to:
+
+/*
+ * Notification event when IOASID status changed. Note that there is no
+ * event for ALLOC in that the allocator is the only one knows about the
+ * new IOASID.
+ */
+enum ioasid_notify_val {
+	IOASID_FREE = 1,
+	IOASID_BIND,
+	IOASID_UNBIND,
+};
+
+> >   
+> > > > +
+> > > > +/**
+> > > > + * struct ioasid_nb_args - Argument provided by IOASID core
+> > > > when notifier
+> > > > + * is called.
+> > > > + * @id:		the IOASID being notified
+> > > > + * @sid:	the IOASID set @id belongs to
+> > > > + * @pdata:	the private data attached to the IOASID
+> > > > + */
+> > > > +struct ioasid_nb_args {
+> > > > +	ioasid_t id;
+> > > > +	int sid;
+> > > > +	struct ioasid_set *set_token;
+> > > > +	void *pdata;
+> > > > +};
+> > > >  /* Shared IOASID set for reserved for host system use */
+> > > >  extern int system_ioasid_sid;
+> > > >
+> > > > @@ -43,11 +65,15 @@ void *ioasid_find(int sid, ioasid_t ioasid,
+> > > > bool (*getter)(void *));
+> > > >  int ioasid_register_allocator(struct ioasid_allocator_ops
+> > > > *allocator); void ioasid_unregister_allocator(struct
+> > > > ioasid_allocator_ops *allocator); int
+> > > > ioasid_attach_data(ioasid_t ioasid, void *data); +int
+> > > > ioasid_add_notifier(struct notifier_block *nb); +void
+> > > > ioasid_remove_notifier(struct notifier_block *nb); void
+> > > > ioasid_install_capacity(ioasid_t total); int
+> > > > ioasid_alloc_system_set(int quota); int ioasid_alloc_set(struct
+> > > > ioasid_set *token, ioasid_t quota, int *sid); void
+> > > > ioasid_free_set(int sid, bool destroy_set); int
+> > > > ioasid_find_sid(ioasid_t ioasid); +int ioasid_notify(ioasid_t
+> > > > id, enum ioasid_notify_val cmd); +
+> > > >  #else /* !CONFIG_IOASID */
+> > > >  static inline ioasid_t ioasid_alloc(int sid, ioasid_t min,
+> > > >  				    ioasid_t max, void
+> > > > *private) @@ -73,6 +99,20 @@ static inline void
+> > > > *ioasid_find(int sid, ioasid_t ioasid, bool (*getter)(void *)
+> > > >  	return NULL;
+> > > >  }
+> > > >
+> > > > +static inline int ioasid_add_notifier(struct notifier_block
+> > > > *nb) +{
+> > > > +	return -ENOTSUPP;
+> > > > +}
+> > > > +
+> > > > +static inline void ioasid_remove_notifier(struct notifier_block
+> > > > *nb) +{
+> > > > +}
+> > > > +
+> > > > +int ioasid_notify(ioasid_t ioasid, enum ioasid_notify_val cmd)
+> > > > +{
+> > > > +	return -ENOTSUPP;
+> > > > +}
+> > > > +
+> > > >  static inline int ioasid_register_allocator(struct
+> > > > ioasid_allocator_ops *allocator)
+> > > >  {
+> > > >  	return -ENOTSUPP;
+> > > > --
+> > > > 2.7.4  
+> > >  
+> > 
+> > [Jacob Pan]  
+
+[Jacob Pan]
