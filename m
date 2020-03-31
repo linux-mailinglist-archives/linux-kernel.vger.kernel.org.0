@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E125199220
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66391199038
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:10:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730528AbgCaJBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:01:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40234 "EHLO mail.kernel.org"
+        id S1731568AbgCaJKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:10:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730511AbgCaJBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:01:10 -0400
+        id S1731174AbgCaJKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:10:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8895F20B1F;
-        Tue, 31 Mar 2020 09:01:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31ED42072E;
+        Tue, 31 Mar 2020 09:10:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645269;
-        bh=0CeNMpF2I3Al+pQh8jpMHNjh0FrwPZUcwKc7/Wt+lBg=;
+        s=default; t=1585645806;
+        bh=DF2vG2JENOKeJQt1F4AhXFxKkI4NDkRA7YESUG6WUw4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vZHkW7pywEw7jrJUP/epusbbENeOLD5eldSRhK/H8ZhqvSM3q7LYWiy4+DZ4fgguT
-         xRSvETtkTVu9hmCJowjvGNLHLju9PCvdpJNgh57ypzvckgH2ihqqPKPLeQXO6hRWhV
-         Hzdc2bciZGNoK6JRLu6wmjoiRH6gdofFRTm509Ew=
+        b=0Sq/CyxHs2SW9Bgl4FeNMopcj+qoR8oA1GR5fEWN3Bt7nkSNzMrjivZPWjVVu1kaY
+         lVpCZ9g0mDG+TCm0RLMQ2SBWgJgOkIYterrn7gKkdT/LAl3WhEflZmYhQ5tt50stNr
+         0v2OblOfskGfZQRIihvCAc4qIyeOwDOhoiW4ZRtU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH 5.6 16/23] staging: wfx: annotate nested gc_list vs tx queue locking
-Date:   Tue, 31 Mar 2020 10:59:28 +0200
-Message-Id: <20200331085315.519262911@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        Johan Hovold <johan@kernel.org>, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH 5.5 155/170] media: flexcop-usb: fix endpoint sanity check
+Date:   Tue, 31 Mar 2020 10:59:29 +0200
+Message-Id: <20200331085439.486016511@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085308.098696461@linuxfoundation.org>
-References: <20200331085308.098696461@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,94 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+From: Johan Hovold <johan@kernel.org>
 
-commit e2525a95cc0887c7dc0549cb5d0ac3e796e1d54c upstream.
+commit bca243b1ce0e46be26f7c63b5591dfbb41f558e5 upstream.
 
-Lockdep is complaining about recursive locking, because it can't make
-a difference between locked skb_queues. Annotate nested locks and avoid
-double bh_disable/enable.
+commit 1b976fc6d684 ("media: b2c2-flexcop-usb: add sanity checking") added
+an endpoint sanity check to address a NULL-pointer dereference on probe.
+Unfortunately the check was done on the current altsetting which was later
+changed.
 
-[...]
-insmod/815 is trying to acquire lock:
-cb7d6418 (&(&list->lock)->rlock){+...}, at: wfx_tx_queues_clear+0xfc/0x198 [wfx]
+Fix this by moving the sanity check to after the altsetting is changed.
 
-but task is already holding lock:
-cb7d61f4 (&(&list->lock)->rlock){+...}, at: wfx_tx_queues_clear+0xa0/0x198 [wfx]
-
-[...]
-Possible unsafe locking scenario:
-
-      CPU0
-      ----
- lock(&(&list->lock)->rlock);
- lock(&(&list->lock)->rlock);
-
-Cc: stable@vger.kernel.org
-Fixes: 9bca45f3d692 ("staging: wfx: allow to send 802.11 frames")
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Link: https://lore.kernel.org/r/5e30397af95854b4a7deea073b730c00229f42ba.1581416843.git.mirq-linux@rere.qmqm.pl
+Fixes: 1b976fc6d684 ("media: b2c2-flexcop-usb: add sanity checking")
+Cc: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/wfx/queue.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/media/usb/b2c2/flexcop-usb.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/staging/wfx/queue.c
-+++ b/drivers/staging/wfx/queue.c
-@@ -130,12 +130,12 @@ static void wfx_tx_queue_clear(struct wf
- 	spin_lock_bh(&queue->queue.lock);
- 	while ((item = __skb_dequeue(&queue->queue)) != NULL)
- 		skb_queue_head(gc_list, item);
--	spin_lock_bh(&stats->pending.lock);
-+	spin_lock_nested(&stats->pending.lock, 1);
- 	for (i = 0; i < ARRAY_SIZE(stats->link_map_cache); ++i) {
- 		stats->link_map_cache[i] -= queue->link_map_cache[i];
- 		queue->link_map_cache[i] = 0;
+--- a/drivers/media/usb/b2c2/flexcop-usb.c
++++ b/drivers/media/usb/b2c2/flexcop-usb.c
+@@ -511,6 +511,9 @@ static int flexcop_usb_init(struct flexc
+ 		return ret;
  	}
--	spin_unlock_bh(&stats->pending.lock);
-+	spin_unlock(&stats->pending.lock);
- 	spin_unlock_bh(&queue->queue.lock);
- }
  
-@@ -207,9 +207,9 @@ void wfx_tx_queue_put(struct wfx_dev *wd
++	if (fc_usb->uintf->cur_altsetting->desc.bNumEndpoints < 1)
++		return -ENODEV;
++
+ 	switch (fc_usb->udev->speed) {
+ 	case USB_SPEED_LOW:
+ 		err("cannot handle USB speed because it is too slow.");
+@@ -544,9 +547,6 @@ static int flexcop_usb_probe(struct usb_
+ 	struct flexcop_device *fc = NULL;
+ 	int ret;
  
- 	++queue->link_map_cache[tx_priv->link_id];
- 
--	spin_lock_bh(&stats->pending.lock);
-+	spin_lock_nested(&stats->pending.lock, 1);
- 	++stats->link_map_cache[tx_priv->link_id];
--	spin_unlock_bh(&stats->pending.lock);
-+	spin_unlock(&stats->pending.lock);
- 	spin_unlock_bh(&queue->queue.lock);
- }
- 
-@@ -237,11 +237,11 @@ static struct sk_buff *wfx_tx_queue_get(
- 		__skb_unlink(skb, &queue->queue);
- 		--queue->link_map_cache[tx_priv->link_id];
- 
--		spin_lock_bh(&stats->pending.lock);
-+		spin_lock_nested(&stats->pending.lock, 1);
- 		__skb_queue_tail(&stats->pending, skb);
- 		if (!--stats->link_map_cache[tx_priv->link_id])
- 			wakeup_stats = true;
--		spin_unlock_bh(&stats->pending.lock);
-+		spin_unlock(&stats->pending.lock);
- 	}
- 	spin_unlock_bh(&queue->queue.lock);
- 	if (wakeup_stats)
-@@ -259,10 +259,10 @@ int wfx_pending_requeue(struct wfx_dev *
- 	spin_lock_bh(&queue->queue.lock);
- 	++queue->link_map_cache[tx_priv->link_id];
- 
--	spin_lock_bh(&stats->pending.lock);
-+	spin_lock_nested(&stats->pending.lock, 1);
- 	++stats->link_map_cache[tx_priv->link_id];
- 	__skb_unlink(skb, &stats->pending);
--	spin_unlock_bh(&stats->pending.lock);
-+	spin_unlock(&stats->pending.lock);
- 	__skb_queue_tail(&queue->queue, skb);
- 	spin_unlock_bh(&queue->queue.lock);
- 	return 0;
+-	if (intf->cur_altsetting->desc.bNumEndpoints < 1)
+-		return -ENODEV;
+-
+ 	if ((fc = flexcop_device_kmalloc(sizeof(struct flexcop_usb))) == NULL) {
+ 		err("out of memory\n");
+ 		return -ENOMEM;
 
 
