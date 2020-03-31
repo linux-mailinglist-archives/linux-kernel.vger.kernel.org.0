@@ -2,156 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FDC5199E25
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 276F2199E2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 20:39:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbgCaSiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 14:38:15 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57965 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726194AbgCaSiO (ORCPT
+        id S1728245AbgCaSiy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 31 Mar 2020 14:38:54 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:33625 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727932AbgCaSix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:38:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585679892;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DCBEU8xfWPGRP7T0kzGMhyTHNf5Ar1K3myE5Isk/Yus=;
-        b=U2kQIH6QuSGzblMF5xFeKHOCx77Fb/0U+bkfuDRh1d9gVnBJHrr5SoWBrJJzf1pL/X/Qf0
-        14VnvSAJ8bQBJr4yf1U7f/v9I8TZbpooa7lIl6Nhq1M22GSaqVcHaz9We7X52Vq0hcvCVK
-        GSq9vDvVMlKEJfhWPET6EkwR/GkVM4E=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-396-t4dFhyDKO5-xkEsKZKbklg-1; Tue, 31 Mar 2020 14:38:01 -0400
-X-MC-Unique: t4dFhyDKO5-xkEsKZKbklg-1
-Received: by mail-wr1-f69.google.com with SMTP id c8so11455468wru.20
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:38:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DCBEU8xfWPGRP7T0kzGMhyTHNf5Ar1K3myE5Isk/Yus=;
-        b=PpjqidbUBAMDq+rW+NjDF4w++crPYn+NaoQFJFn/RDZx/rZEdJNwnpZ8j76WCXkzdz
-         JC8g/ee5cIW9FkhyoQtTrUbb7RS0cMwryKLS6XBqPahUZC+wSMWjvbDsZERCyuZZRo47
-         hIZBUeMxRyLSeD5vywS28Ot0rpGxsxsRnU0U2CLqZjwcHkLtZ75y4tf1+JO9qXTn8veV
-         20xY2uZqqHURbDJqnLb17isrz63Qd1WY4h8zcVbQm8dloOm8Hj+Qg7b6re8I8Q3pzA0a
-         eLsJ5pBIIJkIX0mBKvWip0TZvs4MTQmanZlgsB3NzGdbUWrn6Fp4f6XIaAJn+rp9SARl
-         5YXw==
-X-Gm-Message-State: ANhLgQ3EYMNWs+Lno+LNKbiPF8bLglFQVzY8iKlDp+HbfbC7tjRFnptA
-        lgxAjynARlgtF2dvRXwIKLTfZeqYgtrJg9OKujFW1vXv5pffHu3Bm59oaEI2mTX3N6cZL1TM5rT
-        Mow0DVNrpLZ6b78k0947Kd2pn
-X-Received: by 2002:a5d:470b:: with SMTP id y11mr21278434wrq.282.1585679879820;
-        Tue, 31 Mar 2020 11:37:59 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vv7BkgR0ghsMi1Xgc6DnC2NK7tqfIaM77t9wkjqEFGZ1NVpf3iEEFN2O7dAkJUYQEvEgprBcw==
-X-Received: by 2002:a5d:470b:: with SMTP id y11mr21278415wrq.282.1585679879621;
-        Tue, 31 Mar 2020 11:37:59 -0700 (PDT)
-Received: from redhat.com (bzq-79-176-51-222.red.bezeqint.net. [79.176.51.222])
-        by smtp.gmail.com with ESMTPSA id l17sm28536847wrm.57.2020.03.31.11.37.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 11:37:58 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 14:37:56 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        virtualization@lists.linux-foundation.org,
-        Jason Wang <jasowang@redhat.com>
-Subject: Re: mmotm 2020-03-30-18-46 uploaded (VDPA + vhost)
-Message-ID: <20200331143437-mutt-send-email-mst@kernel.org>
-References: <20200331014748.ajL0G62jF%akpm@linux-foundation.org>
- <969cacf1-d420-223d-7cc7-5b1b2405ec2a@infradead.org>
+        Tue, 31 Mar 2020 14:38:53 -0400
+Received: from mail-qv1-f46.google.com ([209.85.219.46]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MIxBa-1jceow0gdm-00KRBo for <linux-kernel@vger.kernel.org>; Tue, 31 Mar
+ 2020 20:38:52 +0200
+Received: by mail-qv1-f46.google.com with SMTP id bp12so7417514qvb.7
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 11:38:51 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0tbmbAIJOt3BD5pbtSwx9MkZibq02wQ9VFN0H1ndFO9MbWSAKe
+        Rp5JqslkzbX4zKXbHhzCAOUTptOhMpmlGAsVWR8=
+X-Google-Smtp-Source: ADFU+vuTGFGpCxNIh+cobymgdpMJ4evVMQiQmSWM3uw7oyUk1XxgrJtQG+HV5AiOi7nmMntLNw37psCO8HP1MAfYp7o=
+X-Received: by 2002:a0c:f647:: with SMTP id s7mr18334119qvm.4.1585679931041;
+ Tue, 31 Mar 2020 11:38:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <969cacf1-d420-223d-7cc7-5b1b2405ec2a@infradead.org>
+References: <698e9a42a06eb856eef4501c3c0a182c034a5d8c.1585640941.git.christophe.leroy@c-s.fr>
+ <50d0ce1a96fa978cd0dfabde30cf75d23691622a.1585640942.git.christophe.leroy@c-s.fr>
+ <CAK8P3a3u4y7Zm8w43QScqUk6macBL1wO3S0qPisf9+d9FqSHfw@mail.gmail.com>
+ <833d63fe-3b94-a3be-1abb-a629386aa0dd@c-s.fr> <CAK8P3a244P38c+JCRnf1EscQOSzaQQNZc6b5F=LFE2a_im8AqQ@mail.gmail.com>
+ <74e76b4e-5e4f-f3de-96a8-f6a451b3243a@c-s.fr>
+In-Reply-To: <74e76b4e-5e4f-f3de-96a8-f6a451b3243a@c-s.fr>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 31 Mar 2020 20:38:35 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1jM8W72iH0qmMLRBRsv8ANYdL0xro0iWty3FvM6HTd0A@mail.gmail.com>
+Message-ID: <CAK8P3a1jM8W72iH0qmMLRBRsv8ANYdL0xro0iWty3FvM6HTd0A@mail.gmail.com>
+Subject: Re: [PATCH v2 09/11] powerpc/platforms: Move files from 4xx to 44x
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:T7JWZ/SrY725G9NuCQvDKkK2WnO7EVVEYP7XBHUazcx7PU310HL
+ kwfFf3Zp8xVXVUT99DuL1vxQs5fLjjHtErwUplDqIjFBQ+tyISw/EBH/ALX7Cbe1+0B5Be7
+ mRKg5X2jT0Qo9RmGNFxXYA9vl76DnaSMiy984g2wVDI/pHQPw4hA3o0fbo3ua5G3E0NFT1P
+ VJceP2KZASxegqQKyZ8gg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:UYlOC/DahJk=:uNYfcZDk8JgPHTauOyFLTX
+ QqkdyIy3q6nPdd7Osa+aj6sT/3XdP2OyEv6kP6SsJPXmdN21Vx9B4l+AOHzC5ResMjDUeYOrs
+ h1ULjClDIdqvazAyGUpCqPbkqwNK6gANew7rGB5WSui62/pkNKJn/an6U7R4Zi1QlreH1c+kf
+ I5cbiY6gnslGn1VNkn4Gp9OZDTkEqDXe/IltdoLVIEhuL/DpaKU9FExrlKlaaEX0uRpo2xif0
+ FgvgZ0lZOi2TllqiS9yMzxIv5ADVqr2BfnRK/EKEAswJ0zhnQDp0AcER8hUycZlsrPUJNDALK
+ cjxla8a0/mHK2zhqnfuzGWO9myDnfIQeFVldPm8pT0tKvkMcgmZL9HxctntkRNwoTA8YJZ760
+ JAX5+J7IXuBgxv2LnreZ/lSkOGZDLcTZlhd/cmVivEmcG1U2CyYTIf0kW4fj7CZO5RbKsb8QZ
+ TVccRVGzgvtHkx81FcOR9QyHTqcehRTaBXcxDiNU4HNmUZCB9eQm0t0ZOquzZesCtCXN0+uER
+ G1bd3mPe+7dSDWj8uz544YGPCmoS74Q0MCVFOZn5J5UbPjTZ1o5NFmnL3FBDEWxTlmeNiC6In
+ O+rxQKCIGaq55oqXUbndjxei/3ZqJa4hJLkErysmFzxABlPSuW7s44LkbaAxY3RWl529fmHQ1
+ 3O4JWZe6FkCN8Qe5GbxaVEV6Dfapm4DU55n04wrUS5p0WmLLowUcYadqBvKKmFy5ONp6WvjYC
+ DzeyGA4WSWsnZj8Stxbs9VIvLrJUxixt7nhzVRg8foso74HKo82eMd486Pn3fYwchQs2BDo6J
+ mfA7b8YHYFbmZ48jGGtVfZyO8P+pgjQX8BjOQ65S7a8d70sUvs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 11:27:54AM -0700, Randy Dunlap wrote:
-> On 3/30/20 6:47 PM, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2020-03-30-18-46 has been uploaded to
-> > 
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > mmotm-readme.txt says
-> > 
-> > README for mm-of-the-moment:
-> > 
-> > http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> > 
-> > You will need quilt to apply these patches to the latest Linus release (5.x
-> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> > http://ozlabs.org/~akpm/mmotm/series
-> > 
-> > The file broken-out.tar.gz contains two datestamp files: .DATE and
-> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> > followed by the base kernel version against which this patch series is to
-> > be applied.
-> > 
-> > This tree is partially included in linux-next.  To see which patches are
-> > included in linux-next, consult the `series' file.  Only the patches
-> > within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> > linux-next.
-> > 
-> > 
-> > A full copy of the full kernel tree with the linux-next and mmotm patches
-> > already applied is available through git within an hour of the mmotm
-> > release.  Individual mmotm releases are tagged.  The master branch always
-> > points to the latest release, so it's constantly rebasing.
-> > 
-> > 	https://github.com/hnaz/linux-mm
-> 
-> on i386:
-> 
-> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_init':
-> vdpa.c:(.init.text+0x52): undefined reference to `__vdpa_register_driver'
-> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_exit':
-> vdpa.c:(.exit.text+0x14): undefined reference to `vdpa_unregister_driver'
-> 
-> 
-> 
-> drivers/virtio/vdpa/ is not being built. (confusing!)
-> 
-> CONFIG_VIRTIO=m
-> # CONFIG_VIRTIO_MENU is not set
-> CONFIG_VDPA=y
+On Tue, Mar 31, 2020 at 6:19 PM Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
+> Le 31/03/2020 à 18:04, Arnd Bergmann a écrit :
+> > That has the risk of breaking user's defconfig files, but given the
+> > small number of users, it may be nicer for consistency. In either
+> > case, the two symbols should probably hang around as synonyms,
+> > the question is just which one is user visible.
+> >
+>
+> Not sure it is a good idea to keep two synonyms. In the past we made our
+> best to remove synonyms (We had CONFIG_8xx and CONFIG_PPC_8xx being
+> synonyms, we had CONFIG_6xx and CONFIG_BOOK3S_32 and
+> CONFIG_PPC_STD_MMU_32 being synonyms).
+> I think it is a lot cleaner when we can avoid synonyms.
 
-Hmm. OK. Can't figure it out. CONFIG_VDPA is set why isn't
-drivers/virtio/vdpa/ built?
-we have:
+Ok, fair enough.
 
+> By the way I already dropped CONFIG_4xx in previous patch (8/11). It was
+> not many 4xx changed to 44x. It would be a lot more in the other way
+> round I'm afraid.
 
-obj-$(CONFIG_VDPA) += vdpa/
+Right. Maybe stay with 44x for both then (as in your current patches), as it
+means changing less in a part of the code that has few users anyway.
 
-and under that:
-
-obj-$(CONFIG_VDPA) += vdpa.o
-
-
-> CONFIG_VDPA_MENU=y
-> # CONFIG_VDPA_SIM is not set
-> CONFIG_VHOST_IOTLB=y
-> CONFIG_VHOST_RING=m
-> CONFIG_VHOST=y
-> CONFIG_VHOST_SCSI=m
-> CONFIG_VHOST_VDPA=y
-> 
-> Full randconfig file is attached.
-> 
-> (This same build failure happens with today's linux-next, Mar. 31.)
-> 
-> @Yamada-san:  Is this a kbuild problem (or feature)?
-> 
-> -- 
-> ~Randy
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-
+      Arnd
