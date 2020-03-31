@@ -2,83 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08882199170
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4168198F1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:00:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732167AbgCaJS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:18:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40706 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731991AbgCaJSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:18:53 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF56020787;
-        Tue, 31 Mar 2020 09:18:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585646333;
-        bh=i54h0PpoMrZjEXGvANY6FaJbACna+TsoRHILdEn6CI4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zDPYGwlyYlh3k5laWTnOhtkJMILBuWm3rUzsXzzUPlapM9KNzQzjF6g06K2GMUZdP
-         EHmq94ehPiRT0yLYpRyKzRfOMJInM5GCOrYFlc+abS/AR3vOkBM43TbfEJQ3ZBEfwF
-         Z6OwthbMMuWv/2vgMDeyr24KBkGHQ2Apyr2P23DA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 5.4 155/155] media: v4l2-core: fix a use-after-free bug of sd->devnode
-Date:   Tue, 31 Mar 2020 10:59:55 +0200
-Message-Id: <20200331085435.385893149@linuxfoundation.org>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085418.274292403@linuxfoundation.org>
-References: <20200331085418.274292403@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1730444AbgCaJAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:00:43 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:41739 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729955AbgCaJAl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:00:41 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id EF59D5C0403;
+        Tue, 31 Mar 2020 05:00:39 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 31 Mar 2020 05:00:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=4yK+oP+E2ftKY87Z70nWv7pkOnp
+        cr42m5qvb6XN0sv8=; b=EfMEFse80Brg3++mtTk/jXn7Ia+YfgRfJP02Uqgsy7Y
+        o8HMWuvbAYTprqpTldRl0DxfEjvtRSj41/kcKZm2tu9q5AtboB5isRoepZzDYazx
+        TNS1hddO2D3lqa469nqwy0+i0whJUMrfmO5656Fa+IG6Bchi4nnwxgljHTr+bOpu
+        /n97Qw+SYQ6U5U6fX7LmXWQdlvF3/sJ/eddLY2a/QQ6HRFHmuV50Z8GwlT+C3KtG
+        CLAo6t72z9czfVGsQFx35bEjGYTz1FASVycASyKy9HW+cXXEGBMpckj+gKSgNUwR
+        8bfVUitx4y46bnXj560YaYJQX9tIG0V2vgsempKPj6A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=4yK+oP
+        +E2ftKY87Z70nWv7pkOnpcr42m5qvb6XN0sv8=; b=1XLjA/zuGwIG91NbBthKh1
+        Qd8nkCr+URZAfk9YkH2JxD2nTQ5pidhhGv5ULJ2QU0PSgb7VG7LwIclq0B6DfnlS
+        GSIOMlnF1FW+S8Zfmp6z7TwSUNL077HIsryilnR2vZsf8jIgQZ2jYEba22K8nnTp
+        8NzOlMO8WfyHGztp0NytHfKhIbdRJ2rRVzXqg0HB5brw4kIEdjmQk2T/AO6dEIJM
+        9FuuQVpTI/BYcYMvXsI97LUa7hjFIXYYdgwFLRH9M2D4s54hJTfcYH8i18A9cSLT
+        NWq52BnZpgJSwzlxc2JfwjPXFPmkRGTt4UMsiRSudLbpSpytF8wd0sCP/NXUaPww
+        ==
+X-ME-Sender: <xms:swaDXsTXGQwyQp7Ha2yKqIyxrRrdKIsHH_oAIXhEhZwH4p8xL57cFg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudeijedgudduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttdejnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
+    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:swaDXmn2HDslN0DRy-LsdgpX9lk_XN3vfss8M9RS7zsBEtMk4arEVQ>
+    <xmx:swaDXsEehcshyce6J6mSKwOCwwaaiV3-c4rQ0ZFairilIuaodId1Nw>
+    <xmx:swaDXgJ_jr3Dr5j0-MY85W1MyoRbLJRDGFEFArLDqeOX6xTUwbN1cQ>
+    <xmx:twaDXumD2A9NJS4QTAxSnmAzrqi-YSfw-LqgJ2XMlPR01cQ2pYp2JA>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4039D3280065;
+        Tue, 31 Mar 2020 05:00:35 -0400 (EDT)
+Date:   Tue, 31 Mar 2020 11:00:33 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Petr =?utf-8?Q?=C5=A0tetiar?= <ynezz@true.cz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: allwinner: a64: olinuxino: add user red LED
+Message-ID: <20200331090033.463xytloqn3fdgtz@gilmour.lan>
+References: <20200325205924.30736-1-ynezz@true.cz>
+ <20200330175347.r4uam7cybvuxlgog@gilmour.lan>
+ <CAGb2v66+oT=qfu7oHTs3d_e2hd_8Fc_0ULhHRfMLmrdcfOoe=A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="q6zww7gd7ff5vqam"
+Content-Disposition: inline
+In-Reply-To: <CAGb2v66+oT=qfu7oHTs3d_e2hd_8Fc_0ULhHRfMLmrdcfOoe=A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
 
-commit 6990570f7e0a6078e11b9c5dc13f4b6e3f49a398 upstream.
+--q6zww7gd7ff5vqam
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-sd->devnode is released after calling
-v4l2_subdev_release. Therefore it should be set
-to NULL so that the subdev won't hold a pointer
-to a released object. This fixes a reference
-after free bug in function
-v4l2_device_unregister_subdev
+On Tue, Mar 31, 2020 at 09:19:57AM +0800, Chen-Yu Tsai wrote:
+> On Tue, Mar 31, 2020 at 1:53 AM Maxime Ripard <maxime@cerno.tech> wrote:
+> >
+> > On Wed, Mar 25, 2020 at 09:59:24PM +0100, Petr =C5=A0tetiar wrote:
+> > > There is a red LED marked as `GPIO_LED1` on the silkscreen and connec=
+ted
+> > > to PE17 by default. So lets add this missing bit in the current hardw=
+are
+> > > description.
+> > >
+> > > Signed-off-by: Petr =C5=A0tetiar <ynezz@true.cz>
+> >
+> > QUeued for 5.8, thanks!
+>
+> The gpio-led binding seems to prefer "led-0" up to "led-f" (^led-[0-9a-f])
+> as the child node name. This was recently brought to my attention. Do we
+> want to follow suit here?
 
-Fixes: 0e43734d4c46e ("media: v4l2-subdev: add release() internal op")
+I've fixed it up, thanks!
+Maxime
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+--q6zww7gd7ff5vqam
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
- drivers/media/v4l2-core/v4l2-device.c |    1 +
- 1 file changed, 1 insertion(+)
+-----BEGIN PGP SIGNATURE-----
 
---- a/drivers/media/v4l2-core/v4l2-device.c
-+++ b/drivers/media/v4l2-core/v4l2-device.c
-@@ -179,6 +179,7 @@ static void v4l2_subdev_release(struct v
- 
- 	if (sd->internal_ops && sd->internal_ops->release)
- 		sd->internal_ops->release(sd);
-+	sd->devnode = NULL;
- 	module_put(owner);
- }
- 
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXoMGsQAKCRDj7w1vZxhR
+xXsgAP9qUq9MJFLKyC2XsD9mNjGT3ZF7vmPVTAVvOezdjv0BkgD7BAo+Q29VGh1q
+IISh60xTBwcV54TuffpFZIulHONf5gg=
+=qXte
+-----END PGP SIGNATURE-----
 
-
+--q6zww7gd7ff5vqam--
