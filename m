@@ -2,111 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 409B31991FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:23:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3DCD198FCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:07:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730861AbgCaJDo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:03:44 -0400
-Received: from mail-wr1-f54.google.com ([209.85.221.54]:42453 "EHLO
-        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730515AbgCaJDk (ORCPT
+        id S1731160AbgCaJGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:06:32 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:42494 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731138AbgCaJG3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:03:40 -0400
-Received: by mail-wr1-f54.google.com with SMTP id h15so24863482wrx.9
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 02:03:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Q9/XO8fYcNvTTJyLWlGUfxMTl5XPLuqywJPuPYMMlNc=;
-        b=VyxRAN1K3gGDI7rkxa6zHWAtYASTkrFHG+miBSQb4pmUNoUwt5iodVWgoYBhejxjXE
-         9lyGYHplFCDU05KW8LAxfslzYnb988kvrgya6GGf2E8xL0kyylO7mUOMLTAx+ZNZGWcN
-         5QIKHuXcKrINePtPaadGZy2CISDv2LRuABATQiegVCrg37HEOfAEavpQd4VJ6sbZZP53
-         0+WQAFUklFgczW7bzjMsZMmQAqNpwzsj0K6JxAlzVMF4kHWiTSuR24HyEm+ug/pE2u4m
-         GwW7uDiAO2j68L98AYZ6CMKcz3B8q+Wwbq7iF1qp2WiS1WHH/AIIAwUsXygT46BSXX2s
-         Tx1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=Q9/XO8fYcNvTTJyLWlGUfxMTl5XPLuqywJPuPYMMlNc=;
-        b=BjE6Hrm+2RmE7CLTr4HMlHNrtSYJ7hWSng5l4rvR9w4Swen1oeobH0X6X8UVTY4YQs
-         LIRl79BeZ71LBnEaFYF38l21g0mXIVdPLgQ/19+5RooC/1zVTYHynMybplB0FPGuASo/
-         dHRNvIm5Xirmcf5gzhSFmNmyc5wL+8w+R+7tVy3XFPI8MM2rsHWV92HXS5KAwPHuksqO
-         9gtsLOY/NI8KHVE7vdI317ABeQLabsWZP66CrsDjFyHmudxt14MQHubA061bQTfu6wUU
-         DxR3AYBIZGcCZKCz4mBqpaXeTgwe9Cv4hogj5MUgeHVn4UK+DLpfcwl+w9anaZPmB6z8
-         2Xgg==
-X-Gm-Message-State: ANhLgQ04Ah/YgJTySjPziHE3og4HfmQRdrZJmHGuICmz6AwtN1tWlTpL
-        KLogSPj1/S7J9dHEkm1jMU0=
-X-Google-Smtp-Source: ADFU+vuH5tyUSehNA7LHz3MMoXcvWLVtaxH6+r3Ul34UI8JIFyFP/C1PFyJWMFYRYXOVVaQRPpTY5w==
-X-Received: by 2002:adf:e8cc:: with SMTP id k12mr19936392wrn.144.1585645418833;
-        Tue, 31 Mar 2020 02:03:38 -0700 (PDT)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id y200sm3061785wmc.20.2020.03.31.02.03.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 02:03:38 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 11:03:36 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/mm changes for v5.7
-Message-ID: <20200331090336.GA5237@gmail.com>
+        Tue, 31 Mar 2020 05:06:29 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585645589; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=OlOD3aygKk+kpGLkhsVi4IEdqcNCdHsjR4aqyj00l7I=; b=Vfu1l62XiHHMnf2zhUicyFYNKe2IitASQGLGh3IrpE8wa5ySzNi31G6STNdsFZNbB+rby42U
+ F/8dSaBAWa5oiKN5c8MntkHSUaj8gv+FMemVvvzW4lr4zmrnA5OP0VVIZfzOGLSTrlNMzQHd
+ kPpimLBdRV7ECguN9hrVwoa4Cq8=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e830809.7f5a0b4511f0-smtp-out-n04;
+ Tue, 31 Mar 2020 09:06:17 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 487DAC44792; Tue, 31 Mar 2020 09:06:17 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 52DABC433D2;
+        Tue, 31 Mar 2020 09:06:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 52DABC433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date:   Tue, 31 Mar 2020 14:36:08 +0530
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, stummala@codeaurora.org
+Subject: Re: [PATCH] f2fs: prevent meta updates while checkpoint is in
+ progress
+Message-ID: <20200331090608.GZ20234@codeaurora.org>
+References: <1585219019-24831-1-git-send-email-stummala@codeaurora.org>
+ <20200331035419.GB79749@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200331035419.GB79749@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Mon, Mar 30, 2020 at 08:54:19PM -0700, Jaegeuk Kim wrote:
+> On 03/26, Sahitya Tummala wrote:
+> > allocate_segment_for_resize() can cause metapage updates if
+> > it requires to change the current node/data segments for resizing.
+> > Stop these meta updates when there is a checkpoint already
+> > in progress to prevent inconsistent CP data.
+> 
+> I'd prefer to use f2fs_lock_op() in bigger coverage.
 
-Please pull the latest x86-mm-for-linus git tree from:
+Do you mean to cover the entire free_segment_range() function within
+f2fs_lock_op()? Please clarify.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-mm-for-linus
+Thanks,
 
-   # HEAD: aa61ee7b9ee3cb84c0d3a842b0d17937bf024c46 x86/mm: Remove the now redundant N_MEMORY check
+> 
+> > 
+> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> > ---
+> >  fs/f2fs/gc.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index 5bca560..6122bad 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -1399,8 +1399,10 @@ static int free_segment_range(struct f2fs_sb_info *sbi, unsigned int start,
+> >  	int err = 0;
+> >  
+> >  	/* Move out cursegs from the target range */
+> > +	f2fs_lock_op(sbi);
+> >  	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_TYPE; type++)
+> >  		allocate_segment_for_resize(sbi, type, start, end);
+> > +	f2fs_unlock_op(sbi);
+> >  
+> >  	/* do GC to move out valid blocks in the range */
+> >  	for (segno = start; segno <= end; segno += sbi->segs_per_sec) {
+> > -- 
+> > Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-A handful of changes:
-
- - two memory encryption related fixes
-
- - don't display the kernel's virtual memory layout plaintext on 32-bit kernels either
-
- - two simplifications
-
-
-  out-of-topic modifications in x86-mm-for-linus:
-  -------------------------------------------------
-  kernel/dma/mapping.c               # 17c4a2ae15a7: dma-mapping: Fix dma_pgprot(
-
- Thanks,
-
-	Ingo
-
------------------->
-Arvind Sankar (1):
-      x86/mm/init/32: Stop printing the virtual memory layout
-
-Baoquan He (1):
-      x86/mm: Remove the now redundant N_MEMORY check
-
-Sebastian Andrzej Siewior (1):
-      x86/mm/kmmio: Use this_cpu_ptr() instead get_cpu_var() for kmmio_ctx
-
-Thomas Hellstrom (2):
-      x86: Don't let pgprot_modify() change the page encryption bit
-      dma-mapping: Fix dma_pgprot() for unencrypted coherent pages
-
-
- arch/x86/include/asm/pgtable.h       |  7 +++++--
- arch/x86/include/asm/pgtable_types.h |  2 +-
- arch/x86/mm/init_32.c                | 38 ------------------------------------
- arch/x86/mm/init_64.c                |  3 +--
- arch/x86/mm/kmmio.c                  | 10 +++-------
- kernel/dma/mapping.c                 |  2 ++
- 6 files changed, 12 insertions(+), 50 deletions(-)
+-- 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
