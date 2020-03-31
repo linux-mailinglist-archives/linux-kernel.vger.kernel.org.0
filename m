@@ -2,177 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C476199867
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 16:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADA5619986F
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 16:29:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731098AbgCaO0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 10:26:35 -0400
-Received: from mail-bn8nam12on2056.outbound.protection.outlook.com ([40.107.237.56]:35801
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730703AbgCaO0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 10:26:35 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YXJZztntvRuakWF7CzHIvBLv1c5hOxyTTiESvMA7LNId0IqP3fp/Jk0pT+Mgn/ImhFgUBJ3xhTIt3x4Bsz8+ZyiED+QGHQRUjEZmLR31PLkHwbdXWlKlsSpLFEicvoY6nQwFbn6exajp5l6pPzuczmYrov6PgmeUbeM5Usoy0luQrb6WvI9GwUiuxSSJQ8+DqMU2DgS2hdFfhjWcO42qLjU2SbBhKfYwE3elx/HrSae3CICIk7fEMKpGyGlX8DUzon2Xznv+SU6rLKUHXm+6mvaP0Z/5uVjA+UxOygUkcSGzKjBpe6A43jSXc5ZMr/QviOr80S0nq3Ei8jbNOSHT1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lVpGAVFLQm+BHXgN94J2WDW3z/QNoFX5VNdqVxdbl0Q=;
- b=RJ4NRViueWTCRtn1poXrMBcZkxS0sNti8f+TblgRzky40ogT5DUvQTBh2e6ro2eEGJz4IIhm4mKIOGv3DO7pRTZJZ94dDbDXKdHmGiItzrWD2v3D8gLpBhMT4xEf/5+oMqKNG19GKJpSL847SkhFRNMmcsCPpXsCqk60D5o0zzetHNvj9SRaTSpGvPunjfMhTNEl1B1nRLiT+eWTXX1VaB6bzSsUTSEzGIsbKfHmLUKEOQ6GHT0BIUKPOmqz41Z87dtXQG5uUVPE9Bj9jMVMeEzwDWoLy5sQ/U3ogDyWrwMw+rljgW3MpuSRljBufswdsugROxxbkWBchHyMGz1dAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lVpGAVFLQm+BHXgN94J2WDW3z/QNoFX5VNdqVxdbl0Q=;
- b=0biJCe+niwyvdcxeZRGF9RwyIY7J41zNiP46naKx0MI60NQCgOVeIolxoye79erUzqVZOiCM5kNZ+heHPnucm/Eiw7s8A9mY3qFjw3Bu12VzP989ls9x5IszapQwLHoBGyOLBvXwxT7pA61VugEqUJ/mxA5PRHA1ILdkQ/pc5u4=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=brijesh.singh@amd.com; 
-Received: from SA0PR12MB4400.namprd12.prod.outlook.com (2603:10b6:806:95::13)
- by SA0PR12MB4480.namprd12.prod.outlook.com (2603:10b6:806:99::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.20; Tue, 31 Mar
- 2020 14:26:31 +0000
-Received: from SA0PR12MB4400.namprd12.prod.outlook.com
- ([fe80::60d9:da58:71b4:35f3]) by SA0PR12MB4400.namprd12.prod.outlook.com
- ([fe80::60d9:da58:71b4:35f3%7]) with mapi id 15.20.2856.019; Tue, 31 Mar 2020
- 14:26:31 +0000
-Cc:     brijesh.singh@amd.com, pbonzini@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, joro@8bytes.org, bp@suse.de,
-        thomas.lendacky@amd.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rientjes@google.com,
-        srutherford@google.com, luto@kernel.org
-Subject: Re: [PATCH v6 14/14] KVM: x86: Add kexec support for SEV Live
- Migration.
-To:     Ashish Kalra <ashish.kalra@amd.com>
-References: <cover.1585548051.git.ashish.kalra@amd.com>
- <0caf809845d2fdb1a1ec17955826df9777f502fb.1585548051.git.ashish.kalra@amd.com>
- <95d6d6e3-21d5-17c3-a0a5-dc0bac6d87ca@amd.com>
- <20200330164525.GB21601@ashkalra_ubuntu_server>
-From:   Brijesh Singh <brijesh.singh@amd.com>
-Message-ID: <3dccbcc9-c9b9-c98a-357a-dafde04984f6@amd.com>
-Date:   Tue, 31 Mar 2020 09:26:26 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.6.0
-In-Reply-To: <20200330164525.GB21601@ashkalra_ubuntu_server>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ClientProxiedBy: DM5PR07CA0098.namprd07.prod.outlook.com
- (2603:10b6:4:ae::27) To SA0PR12MB4400.namprd12.prod.outlook.com
- (2603:10b6:806:95::13)
+        id S1731081AbgCaO3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 10:29:25 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:58370 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730742AbgCaO3Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 10:29:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585664963;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=Mzgr//hDkLeHQLBr90XbRT7zGijeqwN8oOrj2vqTs4c=;
+        b=fjJVh734VmF9SMKL2m8uCG0JR+3jm2FgDY9IeyVHb1TIyWEkqGpI1sFGI47ik3kZicdezk
+        8qJKCM2h0joispEnLe6AMHKDvUbrELkJDiak091flNa+FFZLYSzvbVdCWCMwx6KLPeOHg9
+        mY6DZDdDkyqR7/wL7J3hYYjzOgw5RxA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-424-iI4Mk7qJOiW353q9KqAu3A-1; Tue, 31 Mar 2020 10:29:14 -0400
+X-MC-Unique: iI4Mk7qJOiW353q9KqAu3A-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 15CD3108443F;
+        Tue, 31 Mar 2020 14:29:12 +0000 (UTC)
+Received: from [10.36.114.0] (ovpn-114-0.ams2.redhat.com [10.36.114.0])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5733D5E009;
+        Tue, 31 Mar 2020 14:29:03 +0000 (UTC)
+Subject: Re: [RFC for Linux] virtio_balloon: Add VIRTIO_BALLOON_F_THP_ORDER to
+ handle THP spilt issue
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Hui Zhu <teawater@gmail.com>, jasowang@redhat.com,
+        akpm@linux-foundation.org, pagupta@redhat.com,
+        mojha@codeaurora.org, namit@vmware.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        Hui Zhu <teawaterz@linux.alibaba.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+References: <20200326031817-mutt-send-email-mst@kernel.org>
+ <C4C6BAF7-C040-403D-997C-48C7AB5A7D6B@redhat.com>
+ <20200326054554-mutt-send-email-mst@kernel.org>
+ <f26dc94a-7296-90c9-56cd-4586b78bc03d@redhat.com>
+ <20200331091718-mutt-send-email-mst@kernel.org>
+ <02a393ce-c4b4-ede9-7671-76fa4c19097a@redhat.com>
+ <20200331093300-mutt-send-email-mst@kernel.org>
+ <b69796e0-fa41-a219-c3e5-a11e9f5f18bf@redhat.com>
+ <20200331100359-mutt-send-email-mst@kernel.org>
+ <85f699d4-459a-a319-0a8f-96c87d345c49@redhat.com>
+ <20200331101117-mutt-send-email-mst@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <118bc13b-76b2-f5a1-6aca-65bd10a22f6c@redhat.com>
+Date:   Tue, 31 Mar 2020 16:29:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from Brijeshs-MacBook-Pro.local (165.204.77.11) by DM5PR07CA0098.namprd07.prod.outlook.com (2603:10b6:4:ae::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.20 via Frontend Transport; Tue, 31 Mar 2020 14:26:28 +0000
-X-Originating-IP: [165.204.77.11]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 6ff1b7a2-3727-4768-07d9-08d7d57f81bb
-X-MS-TrafficTypeDiagnostic: SA0PR12MB4480:|SA0PR12MB4480:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <SA0PR12MB4480F8762F12F9E9921C49D2E5C80@SA0PR12MB4480.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3631;
-X-Forefront-PRVS: 0359162B6D
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4400.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(39860400002)(366004)(346002)(376002)(396003)(136003)(2906002)(44832011)(316002)(31686004)(37006003)(956004)(7416002)(478600001)(8936002)(6512007)(81166006)(6636002)(81156014)(2616005)(52116002)(16526019)(26005)(4326008)(6862004)(5660300002)(6486002)(186003)(8676002)(31696002)(66946007)(66476007)(86362001)(53546011)(66556008)(36756003)(6506007);DIR:OUT;SFP:1101;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1KxUIF9OuaYegSXPyXakDt3R+OkooZ7dzNCchx1UtXbuxKaK+jkijqUArZF3ZdbC22bls1Hcq33N2NBokQ63g1YQ7K7xEDmht9cx5Rw23KpZeTW+Wqmq76YN2RNd8eaDhj0m8K0kkMd5Uf7cSsRCy+sJPbSIckxjrrPVwG4zXmwZmhBygYu4XTpGjJoYxiyHN20n30nyhU3YnrcVYdzq/cvhKHGupP5h8kf3OwAgyRugJqKwO8qfDlY7iLnmiQXYUwUH2weL7fnSB/rFkjX3eZOfWjTqQ4xEVwyhqAehnnUmB3ynsMYcCHB9s9tMWZbvyLhP7u8I2uUANvH+YPAjZcxiY20eeNlNt0p9lIf+9vxSuAgq5whmUbgJxNepJfWqj/1AOK5IQs6sYreawW0Umq2V2qf+8VvYF03OirLQkm622K/NAVPSBMFN80Zhqcty
-X-MS-Exchange-AntiSpam-MessageData: EFjK6Gvy95RCZ0jjMmTCgedDaS1S35wr9lgdKSxG/K02GtBZM4QLHigPkR2ACWjWzJM37ystY/vIluvH3H1+2v4qMarIAFzVGYjZrbO/BKRW0GD9FhD9/lkiPVfOo0Z659MxdZObEIjCOdw5HWYBeQ==
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ff1b7a2-3727-4768-07d9-08d7d57f81bb
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2020 14:26:31.3441
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kDvq1UyHEIhjeq10C5ruyTRm5FycrBEh6EO+XXV/96JEXImvMXWrL4DCnr2r/efqcw39eMcilsrBGO7EUoNcuQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4480
+In-Reply-To: <20200331101117-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 3/30/20 11:45 AM, Ashish Kalra wrote:
-> Hello Brijesh,
->
-> On Mon, Mar 30, 2020 at 11:00:14AM -0500, Brijesh Singh wrote:
->> On 3/30/20 1:23 AM, Ashish Kalra wrote:
->>> From: Ashish Kalra <ashish.kalra@amd.com>
->>>
->>> Reset the host's page encryption bitmap related to kernel
->>> specific page encryption status settings before we load a
->>> new kernel by kexec. We cannot reset the complete
->>> page encryption bitmap here as we need to retain the
->>> UEFI/OVMF firmware specific settings.
->>>
->>> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
->>> ---
->>>  arch/x86/kernel/kvm.c | 28 ++++++++++++++++++++++++++++
->>>  1 file changed, 28 insertions(+)
->>>
->>> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
->>> index 8fcee0b45231..ba6cce3c84af 100644
->>> --- a/arch/x86/kernel/kvm.c
->>> +++ b/arch/x86/kernel/kvm.c
->>> @@ -34,6 +34,7 @@
->>>  #include <asm/hypervisor.h>
->>>  #include <asm/tlb.h>
->>>  #include <asm/cpuidle_haltpoll.h>
->>> +#include <asm/e820/api.h>
->>>  
->>>  static int kvmapf = 1;
->>>  
->>> @@ -357,6 +358,33 @@ static void kvm_pv_guest_cpu_reboot(void *unused)
->>>  	 */
->>>  	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
->>>  		wrmsrl(MSR_KVM_PV_EOI_EN, 0);
->>> +	/*
->>> +	 * Reset the host's page encryption bitmap related to kernel
->>> +	 * specific page encryption status settings before we load a
->>> +	 * new kernel by kexec. NOTE: We cannot reset the complete
->>> +	 * page encryption bitmap here as we need to retain the
->>> +	 * UEFI/OVMF firmware specific settings.
->>> +	 */
->>> +	if (kvm_para_has_feature(KVM_FEATURE_SEV_LIVE_MIGRATION) &&
->>> +		(smp_processor_id() == 0)) {
+On 31.03.20 16:18, Michael S. Tsirkin wrote:
+> On Tue, Mar 31, 2020 at 04:09:59PM +0200, David Hildenbrand wrote:
+>=20
+> ...
+>=20
+>>>>>>>>>>>>> So if we want to address this, IMHO this calls for a new AP=
+I.
+>>>>>>>>>>>>> Along the lines of
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>    struct page *alloc_page_range(gfp_t gfp, unsigned int mi=
+n_order,
+>>>>>>>>>>>>>                    unsigned int max_order, unsigned int *or=
+der)
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> the idea would then be to return at a number of pages in th=
+e given
+>>>>>>>>>>>>> range.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> What do you think? Want to try implementing that?
+>=20
+> ..
+>=20
+>> I expect the whole "steal huge pages from your guest" to be problemati=
+c,
+>> as I already mentioned to Alex. This needs a performance evaluation.
 >>
->> In patch 13/14, the KVM_FEATURE_SEV_LIVE_MIGRATION is set
->> unconditionally and because of that now the below code will be executed
->> on non-SEV guest. IMO, this feature must be cleared for non-SEV guest to
->> avoid making unnecessary hypercall's.
->>
->>
-> I will additionally add a sev_active() check here to ensure that we don't make the unnecassary hypercalls on non-SEV guests.
+>> This all smells like a lot of workload dependent fine-tuning. :)
+>=20
+>=20
+> So that's why I proposed the API above.
+>=20
+> The idea is that *if we are allocating a huge page anyway*,
+> rather than break it up let's send it whole to the device.
+> If we have smaller pages, return smaller pages.
+>=20
 
+Sorry, I still fail to see why you cannot do that with my version of
+balloon_pages_alloc(). But maybe I haven't understood the magic you
+expect to happen in alloc_page_range() :)
 
-IMO, instead of using the sev_active() we should make sure that the
-feature is not enabled when SEV is not active.
+It's just going via a different inflate queue once we have that page, as
+I stated in front of my draft patch "but with an
+optimized reporting interface".
 
+> That seems like it would always be an improvement, whatever the
+> workload.
+>=20
 
->>> +		unsigned long nr_pages;
->>> +		int i;
->>> +
->>> +		for (i = 0; i < e820_table->nr_entries; i++) {
->>> +			struct e820_entry *entry = &e820_table->entries[i];
->>> +			unsigned long start_pfn, end_pfn;
->>> +
->>> +			if (entry->type != E820_TYPE_RAM)
->>> +				continue;
->>> +
->>> +			start_pfn = entry->addr >> PAGE_SHIFT;
->>> +			end_pfn = (entry->addr + entry->size) >> PAGE_SHIFT;
->>> +			nr_pages = DIV_ROUND_UP(entry->size, PAGE_SIZE);
->>> +
->>> +			kvm_sev_hypercall3(KVM_HC_PAGE_ENC_STATUS,
->>> +				entry->addr, nr_pages, 1);
->>> +		}
->>> +	}
->>>  	kvm_pv_disable_apf();
->>>  	kvm_disable_steal_time();
->>>  }
-> Thanks,
-> Ashish
+Don't think so. Assume there are plenty of 4k pages lying around. It
+might actually be *bad* for guest performance if you take a huge page
+instead of all the leftover 4k pages that cannot be merged. Only at the
+point where you would want to break a bigger page up and report it in
+pieces, where it would definitely make no difference.
+
+I guess Hui Zhu now has something to look into/work on :)
+
+--=20
+Thanks,
+
+David / dhildenb
+
