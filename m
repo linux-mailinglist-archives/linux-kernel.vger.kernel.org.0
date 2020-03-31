@@ -2,98 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2173A199299
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:43:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9D9219926B
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:41:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730694AbgCaJnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:43:08 -0400
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:34177 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730273AbgCaJnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:43:07 -0400
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id 02V9f76u024532;
-        Tue, 31 Mar 2020 11:41:07 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Denis Efremov <efremov@linux.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Willy Tarreau <w@1wt.eu>
-Subject: [PATCH 23/23] floppy: cleanup: add a few comments about expectations in certain functions
-Date:   Tue, 31 Mar 2020 11:40:54 +0200
-Message-Id: <20200331094054.24441-24-w@1wt.eu>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20200331094054.24441-1-w@1wt.eu>
-References: <20200331094054.24441-1-w@1wt.eu>
+        id S1730363AbgCaJlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:41:12 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37255 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729425AbgCaJlL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:41:11 -0400
+Received: by mail-wr1-f66.google.com with SMTP id w10so25111858wrm.4
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 02:41:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=58+/5NefjfDBA450NHbW1G0QGlQpuiB5cRHa0KqFj8g=;
+        b=XuozW9/DUk11XbOyj7xBfY+ugEeQ4m5q4KfGjNqWWxFlV6k3SItBCHKLlvOPB+J7qi
+         oMfVwjfSMqHKgs8e545AHFLz+4epB6Ur4ZjVaIibmsy7BCThnwoIsw8mOrHgWjJamFIF
+         IcRKSRcJIv3TXkOuNERjx/dHrZpYKV8pdt9dDkl+aY8PnqrduEC6hEEzt9fnTFQ+Lz7U
+         vYQxOn2Bsr35V+fC2Fjg2/ne6ae3apec9iGj2Adb+gqIqKIUSizJt4iM9w9mxXZfhpAM
+         n4qY61reDzQCIKdLVu4w2oA79oJ7ULxhKnhQoGwbIUWJ/0lrr9ywBy6VWDmg8L1q4LfT
+         Jx3w==
+X-Gm-Message-State: ANhLgQ0z6WsQyWBu/T1TN7qSIsz40vVh5XPKWkXBFfc1jJf14eH4swQM
+        DpYZ8UhdH/cyu5bvSuLHwfTB0alI
+X-Google-Smtp-Source: ADFU+vvgYTuzWYwgm9i/rfopy7dePe+nM0xOhiNp0/W8VGm5/5vTnOxv2BssE1te4n4opGUCZo/l1g==
+X-Received: by 2002:a5d:4f08:: with SMTP id c8mr19950428wru.27.1585647670072;
+        Tue, 31 Mar 2020 02:41:10 -0700 (PDT)
+Received: from localhost (ip-37-188-180-223.eurotel.cz. [37.188.180.223])
+        by smtp.gmail.com with ESMTPSA id r5sm3188023wmr.15.2020.03.31.02.41.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 02:41:09 -0700 (PDT)
+Date:   Tue, 31 Mar 2020 11:41:08 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH] mm, trivial: Simplify swap related code in
+ try_to_unmap_one()
+Message-ID: <20200331094108.GF30449@dhcp22.suse.cz>
+References: <20200331084613.1258555-1-ying.huang@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331084613.1258555-1-ying.huang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The locking in the driver is far from being obvious, with unlocking
-automatically happening at end of operations scheduled by interrupt,
-especially for the error paths where one does not necessarily expect
-that such an interrupt may be triggered. Let's add a few comments
-about what to expect at certain places to avoid misdetecting bugs
-which are not.
+On Tue 31-03-20 16:46:13, Huang, Ying wrote:
+> From: Huang Ying <ying.huang@intel.com>
+> 
+> Because PageSwapCache() will always return false if PageSwapBacked() returns
+> false, and PageSwapBacked() will be check for MADV_FREE pages in
+> try_to_unmap_one().  The swap related code in try_to_unmap_one() can be
+> simplified to improve the readability.
 
-Signed-off-by: Willy Tarreau <w@1wt.eu>
----
- drivers/block/floppy.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+My understanding is that this is a sanity check to let us know if
+something breaks. Do we really want to get rid of it? Maybe it is not
+really useful but if that is the case then the changelog should reflect
+this fact.
 
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index 77bb9a5fcd33..07218f8b17f9 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -1791,7 +1791,9 @@ static void reset_interrupt(void)
- 
- /*
-  * reset is done by pulling bit 2 of DOR low for a while (old FDCs),
-- * or by setting the self clearing bit 7 of STATUS (newer FDCs)
-+ * or by setting the self clearing bit 7 of STATUS (newer FDCs).
-+ * This WILL trigger an interrupt, causing the handlers in the current
-+ * cont's ->redo() to be called via reset_interrupt().
-  */
- static void reset_fdc(void)
- {
-@@ -2003,6 +2005,9 @@ static const struct cont_t intr_cont = {
- 	.done		= (done_f)empty
- };
- 
-+/* schedules handler, waiting for completion. May be interrupted, will then
-+ * return -EINTR, in which case the driver will automatically be unlocked.
-+ */
- static int wait_til_done(void (*handler)(void), bool interruptible)
- {
- 	int ret;
-@@ -2842,6 +2847,9 @@ static int set_next_request(void)
- 	return current_req != NULL;
- }
- 
-+/* Starts or continues processing request. Will automatically unlock the
-+ * driver at end of request.
-+ */
- static void redo_fd_request(void)
- {
- 	int drive;
-@@ -2916,6 +2924,7 @@ static const struct cont_t rw_cont = {
- 	.done		= request_done
- };
- 
-+/* schedule the request and automatically unlock the driver on completion */
- static void process_fd_request(void)
- {
- 	cont = &rw_cont;
-@@ -3005,6 +3014,9 @@ static int user_reset_fdc(int drive, int arg, bool interruptible)
- 	if (arg == FD_RESET_ALWAYS)
- 		fdc_state[current_fdc].reset = 1;
- 	if (fdc_state[current_fdc].reset) {
-+		/* note: reset_fdc will take care of unlocking the driver
-+		 * on completion.
-+		 */
- 		cont = &reset_cont;
- 		ret = wait_til_done(reset_fdc, interruptible);
- 		if (ret == -EINTR)
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Rik van Riel <riel@surriel.com>
+> ---
+>  mm/rmap.c | 27 ++++++++++++++-------------
+>  1 file changed, 14 insertions(+), 13 deletions(-)
+> 
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index 2126fd4a254b..cd3c406aeac7 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1613,19 +1613,6 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+>  		} else if (PageAnon(page)) {
+>  			swp_entry_t entry = { .val = page_private(subpage) };
+>  			pte_t swp_pte;
+> -			/*
+> -			 * Store the swap location in the pte.
+> -			 * See handle_pte_fault() ...
+> -			 */
+> -			if (unlikely(PageSwapBacked(page) != PageSwapCache(page))) {
+> -				WARN_ON_ONCE(1);
+> -				ret = false;
+> -				/* We have to invalidate as we cleared the pte */
+> -				mmu_notifier_invalidate_range(mm, address,
+> -							address + PAGE_SIZE);
+> -				page_vma_mapped_walk_done(&pvmw);
+> -				break;
+> -			}
+>  
+>  			/* MADV_FREE page check */
+>  			if (!PageSwapBacked(page)) {
+> @@ -1648,6 +1635,20 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+>  				break;
+>  			}
+>  
+> +			/*
+> +			 * Store the swap location in the pte.
+> +			 * See handle_pte_fault() ...
+> +			 */
+> +			if (unlikely(!PageSwapCache(page))) {
+> +				WARN_ON_ONCE(1);
+> +				ret = false;
+> +				/* We have to invalidate as we cleared the pte */
+> +				mmu_notifier_invalidate_range(mm, address,
+> +							address + PAGE_SIZE);
+> +				page_vma_mapped_walk_done(&pvmw);
+> +				break;
+> +			}
+> +
+>  			if (swap_duplicate(entry) < 0) {
+>  				set_pte_at(mm, address, pvmw.pte, pteval);
+>  				ret = false;
+> -- 
+> 2.25.0
+
 -- 
-2.20.1
-
+Michal Hocko
+SUSE Labs
