@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9181198F11
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:00:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5B5219900F
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:08:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730390AbgCaJAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:00:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39062 "EHLO mail.kernel.org"
+        id S1731346AbgCaJIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:08:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729425AbgCaJAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:00:19 -0400
+        id S1730570AbgCaJIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:08:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DFD7212CC;
-        Tue, 31 Mar 2020 09:00:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B726F2072E;
+        Tue, 31 Mar 2020 09:08:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645218;
-        bh=S0cU9DDYvyVnOlgsVaMqyTWdnfL+vSj4C8Kbg/3E/6o=;
+        s=default; t=1585645714;
+        bh=Tj/iq0FRyUK/KJfzZTg+0+d4QNo001tjbb7+70vHkUY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B2VYqskXLlbDWOJFP7+Whs8mFBjd3L76x4wrRQ1XfMtSJNfOzecR1elwcAq/Aki2Q
-         YLjysxluEPJ4CFXAKISjMH/V57ATt1wuEZNwlgrsdATejv0Rb792xBzj4QtyX5ypAZ
-         gmQJSjKD4dzbpSmbJVHo8NChAmXtK+TP8WrrpWmo=
+        b=PsYS3PkFWv94gHxV+WZM2er/Dau1subeq7z3JvE54vSQ5ync4DsDzbaFmZygTMCDm
+         XGf//FPjQB77Ku4ImrMEcIW3x1OPxdHNrJQJ3DwNPITtNHExT8Cx/CCDnnPfKS7eS6
+         /PhB2xmcUMLfOLFpx38or0Zkrzc17WgvWzQOoLzc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cezary Jackiewicz <cezary@eko.one.pl>,
-        Pawel Dembicki <paweldembicki@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.6 02/23] USB: serial: option: add support for ASKEY WWHC050
+        stable@vger.kernel.org, Xi Wang <xi.wang@gmail.com>,
+        Luke Nelson <luke.r.nels@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH 5.5 140/170] bpf, x32: Fix bug with JMP32 JSET BPF_X checking upper bits
 Date:   Tue, 31 Mar 2020 10:59:14 +0200
-Message-Id: <20200331085310.008932600@linuxfoundation.org>
+Message-Id: <20200331085438.307159701@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085308.098696461@linuxfoundation.org>
-References: <20200331085308.098696461@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pawel Dembicki <paweldembicki@gmail.com>
+From: Luke Nelson <lukenels@cs.washington.edu>
 
-commit 007d20dca2376a751b1dad03442f118438b7e65e upstream.
+commit 80f1f85036355e5581ec0b99913410345ad3491b upstream.
 
-ASKEY WWHC050 is a mcie LTE modem.
-The oem configuration states:
+The current x32 BPF JIT is incorrect for JMP32 JSET BPF_X when the upper
+32 bits of operand registers are non-zero in certain situations.
 
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1690 ProdID=7588 Rev=ff.ff
-S:  Manufacturer=Android
-S:  Product=Android
-S:  SerialNumber=813f0eef6e6e
-C:* #Ifs= 6 Cfg#= 1 Atr=80 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-E:  Ad=88(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=(none)
-E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=125us
+The problem is in the following code:
 
-Tested on openwrt distribution.
+  case BPF_JMP | BPF_JSET | BPF_X:
+  case BPF_JMP32 | BPF_JSET | BPF_X:
+  ...
 
-Co-developed-by: Cezary Jackiewicz <cezary@eko.one.pl>
-Signed-off-by: Cezary Jackiewicz <cezary@eko.one.pl>
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+  /* and dreg_lo,sreg_lo */
+  EMIT2(0x23, add_2reg(0xC0, sreg_lo, dreg_lo));
+  /* and dreg_hi,sreg_hi */
+  EMIT2(0x23, add_2reg(0xC0, sreg_hi, dreg_hi));
+  /* or dreg_lo,dreg_hi */
+  EMIT2(0x09, add_2reg(0xC0, dreg_lo, dreg_hi));
+
+This code checks the upper bits of the operand registers regardless if
+the BPF instruction is BPF_JMP32 or BPF_JMP64. Registers dreg_hi and
+dreg_lo are not loaded from the stack for BPF_JMP32, however, they can
+still be polluted with values from previous instructions.
+
+The following BPF program demonstrates the bug. The jset64 instruction
+loads the temporary registers and performs the jump, since ((u64)r7 &
+(u64)r8) is non-zero. The jset32 should _not_ be taken, as the lower
+32 bits are all zero, however, the current JIT will take the branch due
+the pollution of temporary registers from the earlier jset64.
+
+  mov64    r0, 0
+  ld64     r7, 0x8000000000000000
+  ld64     r8, 0x8000000000000000
+  jset64   r7, r8, 1
+  exit
+  jset32   r7, r8, 1
+  mov64    r0, 2
+  exit
+
+The expected return value of this program is 2; under the buggy x32 JIT
+it returns 0. The fix is to skip using the upper 32 bits for jset32 and
+compare the upper 32 bits for jset64 only.
+
+All tests in test_bpf.ko and selftests/bpf/test_verifier continue to
+pass with this change.
+
+We found this bug using our automated verification tool, Serval.
+
+Fixes: 69f827eb6e14 ("x32: bpf: implement jitting of JMP32")
+Co-developed-by: Xi Wang <xi.wang@gmail.com>
+Signed-off-by: Xi Wang <xi.wang@gmail.com>
+Signed-off-by: Luke Nelson <luke.r.nels@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Link: https://lore.kernel.org/bpf/20200305234416.31597-1-luke.r.nels@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/net/bpf_jit_comp32.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1992,6 +1992,8 @@ static const struct usb_device_id option
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e01, 0xff, 0xff, 0xff) },	/* D-Link DWM-152/C1 */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e02, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/C1 */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x7e11, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/A3 */
-+	{ USB_DEVICE_INTERFACE_CLASS(0x1690, 0x7588, 0xff),			/* ASKEY WWHC050 */
-+	  .driver_info = RSVD(1) | RSVD(4) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x2031, 0xff),			/* Olicard 600 */
- 	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x2060, 0xff),			/* BroadMobi BM818 */
+--- a/arch/x86/net/bpf_jit_comp32.c
++++ b/arch/x86/net/bpf_jit_comp32.c
+@@ -2039,10 +2039,12 @@ static int do_jit(struct bpf_prog *bpf_p
+ 			}
+ 			/* and dreg_lo,sreg_lo */
+ 			EMIT2(0x23, add_2reg(0xC0, sreg_lo, dreg_lo));
+-			/* and dreg_hi,sreg_hi */
+-			EMIT2(0x23, add_2reg(0xC0, sreg_hi, dreg_hi));
+-			/* or dreg_lo,dreg_hi */
+-			EMIT2(0x09, add_2reg(0xC0, dreg_lo, dreg_hi));
++			if (is_jmp64) {
++				/* and dreg_hi,sreg_hi */
++				EMIT2(0x23, add_2reg(0xC0, sreg_hi, dreg_hi));
++				/* or dreg_lo,dreg_hi */
++				EMIT2(0x09, add_2reg(0xC0, dreg_lo, dreg_hi));
++			}
+ 			goto emit_cond_jmp;
+ 		}
+ 		case BPF_JMP | BPF_JSET | BPF_K:
 
 
