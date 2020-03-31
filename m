@@ -2,233 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 911E5199923
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA3BB199939
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 17:08:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730607AbgCaPDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 11:03:12 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:40665 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730391AbgCaPDM (ORCPT
+        id S1730673AbgCaPIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 11:08:54 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46311 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbgCaPIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 11:03:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585666991;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OuC5qdyP+Hb7LJ96xDW130ZCvd2QXz6VBqm++Yqquzk=;
-        b=c7wPsDGl6eG6ySeuNzTU9mV86zAZ4ucD5x41Jzavd4bBQRexakN/OAGVGkENDtiAV9DYFt
-        rgXdMrF5z4YQBiLIO2lcYltoDruEvbD+8eS7ybE0H3EE2O+FocnfRPVohQiUcVepgi1fWs
-        EyzVXtOUWUD1lwh/KpyP6TOOY9uNipg=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-70-VV0FLrUTNOWoxFLWwsyw6Q-1; Tue, 31 Mar 2020 11:03:09 -0400
-X-MC-Unique: VV0FLrUTNOWoxFLWwsyw6Q-1
-Received: by mail-wm1-f69.google.com with SMTP id z24so264700wml.9
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 08:03:09 -0700 (PDT)
+        Tue, 31 Mar 2020 11:08:53 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q5so17576250lfb.13;
+        Tue, 31 Mar 2020 08:08:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PwB0D934cQb5SQBA8Gssrx/QqfXAhQTzkTrY8dLc730=;
+        b=rEzm2CTKyebjiOFIvL9oF95lC8hpwBApMoUjxpdJMcRMlrMaEnaWxeCHVSvpVYrPPs
+         PVOovTtr/8XoluW1Ppmvsg+WxY/TFaftwdn9r/KhsDWVnRv/uP5TMOgBFHQwkW0eR0mr
+         YzEhrkhJpRIiVt7ZT2+JaZjYqqhG4uBpgGyeAUeiypfI5SKy6Z/+lPtDlBYdQIpa6MQr
+         umknyNjeTo4eprNsgtQ2VxguDGmyKYOULpWwEqHbyTCgBFqSs5NC8uvSjmSqO3cZ+Zb7
+         +o111W3VjCH9w7njSZrk8BlgdZnvqqXCkU43mYtqCMQ43gvKlXTr4lCUbOVEEP+nJDta
+         BWLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=OuC5qdyP+Hb7LJ96xDW130ZCvd2QXz6VBqm++Yqquzk=;
-        b=qB/bS1Bb6d9xez43hbDOOMBqHJufLVE+cK0VN+gtV0ripuhniwH8uFEiJNhX5tJElW
-         Vo/dIsxN2c3TP1/BkgRfb72iY0U+1kn2Ejmu9mjf3KQcDHTnYkfhFCId7vWQQ1cV7vwr
-         rUwPP0QjLpfgzJ/pseCuSerBdUx56pnj2SGklpHU225jv2lFlg9lm1kwo98DqPEVMsGV
-         haHh25huN24rLRQT3E0BXqWbiJfBWyAMr6jfX4CvJZyIzbAS4APvlkY/jPk9+xdJT03+
-         AQmKhMbMSXCme7MSf2axHT4UGIAgIZlJKnUnhwjIG/t/0AwyQYJEc/Pjkr/DEAHaFlzx
-         +tIA==
-X-Gm-Message-State: ANhLgQ2Qf8cP7Ducj3OrnkFc4DnhgGn7z6Bky1LRSHI6NeFwB7C2dNno
-        cNgCtUHgsldP3LfRYcDSEWTi/TdVk1F4e3EWHVSvVAI4eh1xVmUKpQLoYLLInZK07Y5WLnMzzv6
-        NCm8/8PINlnAlhCB3ji7b0OTV
-X-Received: by 2002:adf:f386:: with SMTP id m6mr21147563wro.107.1585666987780;
-        Tue, 31 Mar 2020 08:03:07 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vvUiwF3Dh/Ba/C78xkoltocbrQ7LmtXMcA3X07xNZYC6YzSnEp8XcvSsoRfiwetNJ3xcydXYw==
-X-Received: by 2002:adf:f386:: with SMTP id m6mr21147525wro.107.1585666987478;
-        Tue, 31 Mar 2020 08:03:07 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:b55d:5ed2:8a41:41ea? ([2001:b07:6468:f312:b55d:5ed2:8a41:41ea])
-        by smtp.gmail.com with ESMTPSA id k185sm4320487wmb.7.2020.03.31.08.03.06
+        bh=PwB0D934cQb5SQBA8Gssrx/QqfXAhQTzkTrY8dLc730=;
+        b=spSxySnQceUyPWdDkEfmW7SYyIFEAE0pEYDw7C1XtRDzuj125lTlv27H2osDznv8ay
+         gTDFo9ITzLFCN2y3tPkynt+RQCprz8h/BQ1yjx+3OepPLSpv2QyWxuNv1lwPQaRbSi4n
+         FQHboMyC3NgYlEPp2xErFBVGmwqlQVG0Ye66lsWdGDtaSyvW5fT483hfy6tDAbjPVmlS
+         aMc9MZU3W4ucqWs4vPsYenAP+f3r1ZVJcmun8SBP5h1KEk2ZNnQVRGAmnpEdvmf+vBLQ
+         lDUl9eS4oV6zEDEBUVDJ61VqNMhOk3a0gZ+dQh+otkPfGIUZWeJrqL7oCg5LBFmpMPJP
+         Ki3A==
+X-Gm-Message-State: AGi0Pua5Kh530Zt5AbizHMCFX5BDV8FrsQ34xVHUKCWGPf/4Ibg2k8ki
+        eXVVX9Vmgv1HWCjrhnYzs1Q=
+X-Google-Smtp-Source: APiQypLcpmzCn0bFzVZtoCpCWCXnfV+MlTf3dh/XTnKU2d7WgwjElbI9h/sk0kxLr3466BlCKYwHCg==
+X-Received: by 2002:a19:c197:: with SMTP id r145mr11841290lff.8.1585667331116;
+        Tue, 31 Mar 2020 08:08:51 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id b17sm3100929lfa.15.2020.03.31.08.08.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Mar 2020 08:03:06 -0700 (PDT)
-Subject: Re: [PATCH] KVM: VMX: Add a trampoline to fix VMREAD error handling
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200326160712.28803-1-sean.j.christopherson@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <140483ed-f1f9-067e-6b60-eccd7115bb0d@redhat.com>
-Date:   Tue, 31 Mar 2020 17:03:06 +0200
+        Tue, 31 Mar 2020 08:08:50 -0700 (PDT)
+Subject: Re: [PATCH v10 52/55] input: touchscreen: atmel_mxt_ts: Added sysfs
+ entry for touchscreen status
+To:     Jiada Wang <jiada_wang@mentor.com>, nick@shmanahar.org,
+        dmitry.torokhov@gmail.com, jikos@kernel.org,
+        benjamin.tissoires@redhat.com, bsz@semihalf.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        erosca@de.adit-jv.com, Andrew_Gabbasov@mentor.com
+References: <20200331105051.58896-1-jiada_wang@mentor.com>
+ <20200331105051.58896-53-jiada_wang@mentor.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <63336277-8ed2-a097-a983-6e8ac48d776e@gmail.com>
+Date:   Tue, 31 Mar 2020 18:08:49 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200326160712.28803-1-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20200331105051.58896-53-jiada_wang@mentor.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/03/20 17:07, Sean Christopherson wrote:
-> Add a hand coded assembly trampoline to preserve volatile registers
-> across vmread_error(), and to handle the calling convention differences
-> between 64-bit and 32-bit due to asmlinkage on vmread_error().  Pass
-> @field and @fault on the stack when invoking the trampoline to avoid
-> clobbering volatile registers in the context of the inline assembly.
-> 
-> Calling vmread_error() directly from inline assembly is partially broken
-> on 64-bit, and completely broken on 32-bit.  On 64-bit, it will clobber
-> %rdi and %rsi (used to pass @field and @fault) and any volatile regs
-> written by vmread_error().  On 32-bit, asmlinkage means vmread_error()
-> expects the parameters to be passed on the stack, not via regs.
-> 
-> Opportunistically zero out the result in the trampoline to save a few
-> bytes of code for every VMREAD.  A happy side effect of the trampoline
-> is that the inline code footprint is reduced by three bytes on 64-bit
-> due to PUSH/POP being more efficent (in terms of opcode bytes) than MOV.
-> 
-> Fixes: 6e2020977e3e6 ("KVM: VMX: Add error handling to VMREAD helper")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
-> 
-> Becuase there just isn't enough custom assembly in VMX :-)
-> 
-> Simply reverting isn't a great option because we'd lose error reporting
-> for VMREAD failure, i.e. it'd return garbage with no other indication that
-> something went awry.
-> 
-> Tested all paths (fail, fault w/o rebooting, fault w/ rebooting) on both
-> 64-bit and 32-bit.
-> 
->  arch/x86/kvm/vmx/ops.h     | 28 +++++++++++++-----
->  arch/x86/kvm/vmx/vmenter.S | 58 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 79 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx/ops.h b/arch/x86/kvm/vmx/ops.h
-> index 45eaedee2ac0..09b0937d56b1 100644
-> --- a/arch/x86/kvm/vmx/ops.h
-> +++ b/arch/x86/kvm/vmx/ops.h
-> @@ -12,7 +12,8 @@
+31.03.2020 13:50, Jiada Wang пишет:
+...
+> +static void mxt_watchdog_work(struct work_struct *work)
+> +{
+> +	struct mxt_data *data =
+> +		container_of(work, struct mxt_data, watchdog_work.work);
+> +	u16 info_buf;
+> +	int ret;
+> +
+> +	if (data->suspended || data->in_bootloader ||
+> +	    data->mxt_status.intp_triggered)
+> +		goto sched_work;
+
+Won't it become a problem if other thread puts device into suspended /
+bootloader state in the same time?
+
+> +	ret = __mxt_read_reg(data->client, 0, sizeof(info_buf), &info_buf);
+> +
+> +	if (ret) {
+> +		data->mxt_status.error_count++;
+> +		data->mxt_status.dev_status = false;
+> +	} else {
+> +		data->mxt_status.dev_status = true;
+> +	}
+> +
+> +sched_work:
+> +	schedule_delayed_work(&data->watchdog_work,
+> +			      msecs_to_jiffies(MXT_WATCHDOG_TIMEOUT));
+> +}
+...
+
+> @@ -4329,6 +4390,12 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>  		msleep(MXT_RESET_TIME);
+>  	}
 >  
->  #define __ex(x) __kvm_handle_fault_on_reboot(x)
+> +	if (debug_state) {
+> +		INIT_DELAYED_WORK(&data->watchdog_work, mxt_watchdog_work);
+> +		schedule_delayed_work(&data->watchdog_work,
+> +				      msecs_to_jiffies(MXT_WATCHDOG_TIMEOUT));
+> +	}
+> +
+>  	error = mxt_initialize(data);
+>  	if (error)
+>  		goto err_free_object;
+> @@ -4343,6 +4410,8 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>  	return 0;
 >  
-> -asmlinkage void vmread_error(unsigned long field, bool fault);
-> +__attribute__((regparm(0))) void vmread_error_trampoline(unsigned long field,
-> +							 bool fault);
->  void vmwrite_error(unsigned long field, unsigned long value);
->  void vmclear_error(struct vmcs *vmcs, u64 phys_addr);
->  void vmptrld_error(struct vmcs *vmcs, u64 phys_addr);
-> @@ -70,15 +71,28 @@ static __always_inline unsigned long __vmcs_readl(unsigned long field)
->  	asm volatile("1: vmread %2, %1\n\t"
->  		     ".byte 0x3e\n\t" /* branch taken hint */
->  		     "ja 3f\n\t"
-> -		     "mov %2, %%" _ASM_ARG1 "\n\t"
-> -		     "xor %%" _ASM_ARG2 ", %%" _ASM_ARG2 "\n\t"
-> -		     "2: call vmread_error\n\t"
-> -		     "xor %k1, %k1\n\t"
-> +
-> +		     /*
-> +		      * VMREAD failed.  Push '0' for @fault, push the failing
-> +		      * @field, and bounce through the trampoline to preserve
-> +		      * volatile registers.
-> +		      */
-> +		     "push $0\n\t"
-> +		     "push %2\n\t"
-> +		     "2:call vmread_error_trampoline\n\t"
-> +
-> +		     /*
-> +		      * Unwind the stack.  Note, the trampoline zeros out the
-> +		      * memory for @fault so that the result is '0' on error.
-> +		      */
-> +		     "pop %2\n\t"
-> +		     "pop %1\n\t"
->  		     "3:\n\t"
+>  err_free_object:
+> +	if (debug_state)
+> +		cancel_delayed_work_sync(&data->watchdog_work);
+>  	mxt_free_input_device(data);
+>  	mxt_free_object_table(data);
+>  	if (data->reset_gpio) {
+> @@ -4367,6 +4436,9 @@ static int mxt_remove(struct i2c_client *client)
+>  	mxt_free_input_device(data);
+>  	mxt_free_object_table(data);
 >  
-> +		     /* VMREAD faulted.  As above, except push '1' for @fault. */
->  		     ".pushsection .fixup, \"ax\"\n\t"
-> -		     "4: mov %2, %%" _ASM_ARG1 "\n\t"
-> -		     "mov $1, %%" _ASM_ARG2 "\n\t"
-> +		     "4: push $1\n\t"
-> +		     "push %2\n\t"
->  		     "jmp 2b\n\t"
->  		     ".popsection\n\t"
->  		     _ASM_EXTABLE(1b, 4b)
-> diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
-> index 81ada2ce99e7..861ae40e7144 100644
-> --- a/arch/x86/kvm/vmx/vmenter.S
-> +++ b/arch/x86/kvm/vmx/vmenter.S
-> @@ -234,3 +234,61 @@ SYM_FUNC_START(__vmx_vcpu_run)
->  2:	mov $1, %eax
->  	jmp 1b
->  SYM_FUNC_END(__vmx_vcpu_run)
+> +	if (debug_state)
+> +		cancel_delayed_work_sync(&data->watchdog_work);
+
+What will happen if debug_state was false during of mxt_probe() and then
+the debug_state parameter was changed to true via sysfs?
+
+I think the INIT_DELAYED_WORK() and cancel_delayed_work_sync() should be
+invoked unconditionally.
+
+>  	return 0;
+>  }
+>  
+> @@ -4463,3 +4535,7 @@ module_i2c_driver(mxt_driver);
+>  MODULE_AUTHOR("Joonyoung Shim <jy0922.shim@samsung.com>");
+>  MODULE_DESCRIPTION("Atmel maXTouch Touchscreen driver");
+>  MODULE_LICENSE("GPL");
 > +
-> +/**
-> + * vmread_error_trampoline - Trampoline from inline asm to vmread_error()
-> + * @field:	VMCS field encoding that failed
-> + * @fault:	%true if the VMREAD faulted, %false if it failed
-> +
-> + * Save and restore volatile registers across a call to vmread_error().  Note,
-> + * all parameters are passed on the stack.
-> + */
-> +SYM_FUNC_START(vmread_error_trampoline)
-> +	push %_ASM_BP
-> +	mov  %_ASM_SP, %_ASM_BP
-> +
-> +	push %_ASM_AX
-> +	push %_ASM_CX
-> +	push %_ASM_DX
-> +#ifdef CONFIG_X86_64
-> +	push %rdi
-> +	push %rsi
-> +	push %r8
-> +	push %r9
-> +	push %r10
-> +	push %r11
-> +#endif
-> +#ifdef CONFIG_X86_64
-> +	/* Load @field and @fault to arg1 and arg2 respectively. */
-> +	mov 3*WORD_SIZE(%rbp), %_ASM_ARG2
-> +	mov 2*WORD_SIZE(%rbp), %_ASM_ARG1
-> +#else
-> +	/* Parameters are passed on the stack for 32-bit (see asmlinkage). */
-> +	push 3*WORD_SIZE(%ebp)
-> +	push 2*WORD_SIZE(%ebp)
-> +#endif
-> +
-> +	call vmread_error
-> +
-> +#ifndef CONFIG_X86_64
-> +	add $8, %esp
-> +#endif
-> +
-> +	/* Zero out @fault, which will be popped into the result register. */
-> +	_ASM_MOV $0, 3*WORD_SIZE(%_ASM_BP)
-> +
-> +#ifdef CONFIG_X86_64
-> +	pop %r11
-> +	pop %r10
-> +	pop %r9
-> +	pop %r8
-> +	pop %rsi
-> +	pop %rdi
-> +#endif
-> +	pop %_ASM_DX
-> +	pop %_ASM_CX
-> +	pop %_ASM_AX
-> +	pop %_ASM_BP
-> +
-> +	ret
-> +SYM_FUNC_END(vmread_error_trampoline)
+> +module_param(debug_state, bool, 0);
+> +MODULE_PARM_DESC(debug_state, "Enable/Disable watchdog work to check device state (default="
+> +		 __MODULE_STRING(MXT_DEBUG_STATE) ")");
 > 
 
-Queued, thanks.
-
-Paolo
-
+The "default=..." part of MODULE_PARM_DESC() probably isn't really
+useful and could be omitted, don't you think so?
