@@ -2,242 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69D13198D6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 340B2198D73
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 09:51:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730259AbgCaHuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 03:50:09 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:56917 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730217AbgCaHuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 03:50:00 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48s1h51t8Bz9v2Xl;
-        Tue, 31 Mar 2020 09:49:57 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=JYGl4T9y; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id uT1uJBHRObGd; Tue, 31 Mar 2020 09:49:57 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48s1h475Sfz9v2Xj;
-        Tue, 31 Mar 2020 09:49:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1585640997; bh=5nryEhu9ZdC3QcAPQtb5kgYfw9XZ6OdDGR/6oi4BLng=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=JYGl4T9y15JMEOgfYjs7AbpT9SKocZ7E4g6LBXPl2A7xtv9byg9A6n2dmMoPF17Ll
-         tfwawkePQpk3E0GTdlRSfb1P4yAz6kjgINW4Gf4FFHLC9LtSyOae7sPz5dj6xgHkSS
-         MaOqDVyYX1KSwT/gYUTQDI9lZpwXblv39Rxcad90=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id EDD8F8B78A;
-        Tue, 31 Mar 2020 09:49:57 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id T_zcAE1ThYPh; Tue, 31 Mar 2020 09:49:57 +0200 (CEST)
-Received: from pc16570vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 26C6B8B752;
-        Tue, 31 Mar 2020 09:49:57 +0200 (CEST)
-Received: by pc16570vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 0085165676; Tue, 31 Mar 2020 07:49:56 +0000 (UTC)
-Message-Id: <a4890e3fb046950e9a62dc3eff5b37469551e823.1585640942.git.christophe.leroy@c-s.fr>
-In-Reply-To: <698e9a42a06eb856eef4501c3c0a182c034a5d8c.1585640941.git.christophe.leroy@c-s.fr>
-References: <698e9a42a06eb856eef4501c3c0a182c034a5d8c.1585640941.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 11/11] powerpc/32: Replace RFI by rfi
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, michal.simek@xilinx.com,
-        arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 31 Mar 2020 07:49:56 +0000 (UTC)
+        id S1730047AbgCaHvU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 03:51:20 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:32807 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729958AbgCaHvU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 03:51:20 -0400
+Received: by mail-io1-f69.google.com with SMTP id w25so18544953iom.0
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 00:51:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ImrKMa3+NOdhC7TK5w/1EhNipc5Vv/NoOaS4eKx7PoU=;
+        b=QozsyAMHG7feEwhbEs8twaQsA8u7R46v4BNLZTqqrVulyadaC1zokhhkIBK1K5u21c
+         Xz4Z8UC1+m7wLLTm73fMNuHT5/dHuN8BeufmDakBYKzHew9DPSVweOOW7r9quV9BFWhC
+         oTGkqPuPijLcBLV+FVziCyeAEWfaSfijTGtW+T6PnqER5u6wEmKmf1F8H8VcQLVTluya
+         8W2ol6q0u4jr/c8X+JVzw35Ay99pSVrMahDk59Robh17S4dBeFLDS6uHVbFnokvA4wwL
+         WlPgz3JYwGLmbyiqJ5rkdul8yHJzHZyku8Vba/yXJLVr7BY40JArUMB68klvMtkFbJgX
+         /y8g==
+X-Gm-Message-State: ANhLgQ18G30LVz/O/trKFC2KD0x97pH1MPsz+Gub/ttdxc8QW+60lkCy
+        Ay0EkoEWv3i+HRxrclxDc7dM9YCQhYH/FRkuqnmwqUDGZePk
+X-Google-Smtp-Source: ADFU+vvSDT0ILN24GEzPtyM3+wsLzeItjGvFwelbv5/AdND2JEv8lFrsU+N9RQv0L4v+PyZn7ej/Cgfo89SqFlT06BoHIzbac+0G
+MIME-Version: 1.0
+X-Received: by 2002:a5d:9648:: with SMTP id d8mr5608670ios.115.1585641077799;
+ Tue, 31 Mar 2020 00:51:17 -0700 (PDT)
+Date:   Tue, 31 Mar 2020 00:51:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002efe6505a221d5be@google.com>
+Subject: INFO: trying to register non-static key in io_cqring_ev_posted (2)
+From:   syzbot <syzbot+0c3370f235b74b3cfd97@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RFI was a macro waving the rfi instruction for the 40x.
+Hello,
 
-Now that 40x is gone, rfi can be used directly.
+syzbot found the following crash on:
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+HEAD commit:    673b41e0 staging/octeon: fix up merge error
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=141bd4b7e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=acf766c0e3d3f8c6
+dashboard link: https://syzkaller.appspot.com/bug?extid=0c3370f235b74b3cfd97
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13ac1b9de00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10449493e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+0c3370f235b74b3cfd97@syzkaller.appspotmail.com
+
+RSP: 002b:00007ffe08a3a528 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004412a9
+RDX: 0000000000000001 RSI: 0000000020000000 RDI: 0000000000000910
+RBP: 000000000000acfd R08: 0000000000000001 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021f0
+R13: 0000000000402280 R14: 0000000000000000 R15: 0000000000000000
+INFO: trying to register non-static key.
+the code is fine but needs lockdep annotation.
+turning off the locking correctness validator.
+CPU: 1 PID: 7017 Comm: syz-executor095 Not tainted 5.6.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1e9/0x30e lib/dump_stack.c:118
+ register_lock_class+0x76a/0x1000 kernel/locking/lockdep.c:472
+ __lock_acquire+0x102/0x2b90 kernel/locking/lockdep.c:4223
+ lock_acquire+0x169/0x480 kernel/locking/lockdep.c:4923
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x9e/0xc0 kernel/locking/spinlock.c:159
+ __wake_up_common_lock kernel/sched/wait.c:122 [inline]
+ __wake_up+0xb8/0x150 kernel/sched/wait.c:142
+ io_cqring_ev_posted+0x9f/0x1c0 fs/io_uring.c:1150
+ io_poll_remove_all fs/io_uring.c:4343 [inline]
+ io_ring_ctx_wait_and_kill+0x537/0xfd0 fs/io_uring.c:7223
+ io_uring_create fs/io_uring.c:7761 [inline]
+ io_uring_setup fs/io_uring.c:7788 [inline]
+ __do_sys_io_uring_setup fs/io_uring.c:7801 [inline]
+ __se_sys_io_uring_setup+0x1e49/0x2650 fs/io_uring.c:7798
+ do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4412a9
+Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffe08a3a528 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004412a9
+RDX: 0000000000000001 RSI: 0000000020000000 RDI: 0000000000000910
+RBP: 000000000000acfd R08: 0000000000000001 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021f0
+R13: 0000000000402280 R14: 0000000000000000 R15: 0000000000000000
+general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 PID: 7017 Comm: syz-executor095 Not tainted 5.6.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__wake_up_common+0x297/0x4d0 kernel/sched/wait.c:86
+Code: fb 01 00 00 45 31 f6 eb 13 66 2e 0f 1f 84 00 00 00 00 00 4d 39 fc 0f 84 e3 01 00 00 4c 89 fb 49 8d 6f e8 4c 89 f8 48 c1 e8 03 <80> 3c 10 00 74 12 48 89 df e8 6b b5 59 00 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc900043e7c00 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: dffffc0000000000 RSI: 0000000000000003 RDI: ffff8880a6860120
+RBP: ffffffffffffffe8 R08: 0000000000000000 R09: ffffc900043e7c68
+R10: fffff5200087cf80 R11: 0000000000000000 R12: ffff8880a6860160
+R13: 1ffff9200087cf8d R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000afd880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 00000000a6821000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ __wake_up_common_lock kernel/sched/wait.c:123 [inline]
+ __wake_up+0xd4/0x150 kernel/sched/wait.c:142
+ io_cqring_ev_posted+0x9f/0x1c0 fs/io_uring.c:1150
+ io_poll_remove_all fs/io_uring.c:4343 [inline]
+ io_ring_ctx_wait_and_kill+0x537/0xfd0 fs/io_uring.c:7223
+ io_uring_create fs/io_uring.c:7761 [inline]
+ io_uring_setup fs/io_uring.c:7788 [inline]
+ __do_sys_io_uring_setup fs/io_uring.c:7801 [inline]
+ __se_sys_io_uring_setup+0x1e49/0x2650 fs/io_uring.c:7798
+ do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4412a9
+Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffe08a3a528 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004412a9
+RDX: 0000000000000001 RSI: 0000000020000000 RDI: 0000000000000910
+RBP: 000000000000acfd R08: 0000000000000001 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021f0
+R13: 0000000000402280 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace c289123c7e157e7b ]---
+RIP: 0010:__wake_up_common+0x297/0x4d0 kernel/sched/wait.c:86
+Code: fb 01 00 00 45 31 f6 eb 13 66 2e 0f 1f 84 00 00 00 00 00 4d 39 fc 0f 84 e3 01 00 00 4c 89 fb 49 8d 6f e8 4c 89 f8 48 c1 e8 03 <80> 3c 10 00 74 12 48 89 df e8 6b b5 59 00 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc900043e7c00 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: dffffc0000000000 RSI: 0000000000000003 RDI: ffff8880a6860120
+RBP: ffffffffffffffe8 R08: 0000000000000000 R09: ffffc900043e7c68
+R10: fffff5200087cf80 R11: 0000000000000000 R12: ffff8880a6860160
+R13: 1ffff9200087cf8d R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000afd880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 00000000a6821000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- arch/powerpc/kernel/entry_32.S | 18 +++++++++---------
- arch/powerpc/kernel/head_32.S  | 18 +++++++++---------
- 2 files changed, 18 insertions(+), 18 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
-index cae0bdc013e5..4920448f6ad9 100644
---- a/arch/powerpc/kernel/entry_32.S
-+++ b/arch/powerpc/kernel/entry_32.S
-@@ -203,7 +203,7 @@ transfer_to_handler_cont:
- 	mtspr	SPRN_SRR1,r10
- 	mtlr	r9
- 	SYNC
--	RFI				/* jump to handler, enable MMU */
-+	rfi				/* jump to handler, enable MMU */
- 
- #ifdef CONFIG_TRACE_IRQFLAGS
- 1:	/* MSR is changing, re-enable MMU so we can notify lockdep. We need to
-@@ -216,7 +216,7 @@ transfer_to_handler_cont:
- 	mtspr	SPRN_SRR0,r12
- 	mtspr	SPRN_SRR1,r0
- 	SYNC
--	RFI
-+	rfi
- 
- reenable_mmu:
- 	/*
-@@ -290,7 +290,7 @@ stack_ovf:
- 	mtspr	SPRN_SRR0,r9
- 	mtspr	SPRN_SRR1,r10
- 	SYNC
--	RFI
-+	rfi
- #endif
- 
- #ifdef CONFIG_TRACE_IRQFLAGS
-@@ -439,7 +439,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_NEED_PAIRED_STWCX)
- 	mtspr	SPRN_SRR0,r7
- 	mtspr	SPRN_SRR1,r8
- 	SYNC
--	RFI
-+	rfi
- #ifdef CONFIG_44x
- 2:	li	r7,0
- 	iccci	r0,r0
-@@ -570,7 +570,7 @@ ret_from_kernel_syscall:
- 	mtspr	SPRN_SRR0, r9
- 	mtspr	SPRN_SRR1, r10
- 	SYNC
--	RFI
-+	rfi
- 
- /*
-  * The fork/clone functions need to copy the full register set into
-@@ -773,7 +773,7 @@ fast_exception_return:
- 	REST_GPR(12, r11)
- 	lwz	r11,GPR11(r11)
- 	SYNC
--	RFI
-+	rfi
- 
- #ifndef CONFIG_BOOKE
- /* check if the exception happened in a restartable section */
-@@ -1008,7 +1008,7 @@ exc_exit_restart:
- 	.globl exc_exit_restart_end
- exc_exit_restart_end:
- 	SYNC
--	RFI
-+	rfi
- 
- #else /* !CONFIG_BOOKE */
- 	/*
-@@ -1313,7 +1313,7 @@ _GLOBAL(enter_rtas)
- 	stw	r7, THREAD + RTAS_SP(r2)
- 	mtspr	SPRN_SRR0,r8
- 	mtspr	SPRN_SRR1,r9
--	RFI
-+	rfi
- 1:	tophys_novmstack r9, r1
- #ifdef CONFIG_VMAP_STACK
- 	li	r0, MSR_KERNEL & ~MSR_IR	/* can take DTLB miss */
-@@ -1328,7 +1328,7 @@ _GLOBAL(enter_rtas)
- 	stw	r0, THREAD + RTAS_SP(r7)
- 	mtspr	SPRN_SRR0,r8
- 	mtspr	SPRN_SRR1,r9
--	RFI			/* return to caller */
-+	rfi			/* return to caller */
- 
- 	.globl	machine_check_in_rtas
- machine_check_in_rtas:
-diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
-index daaa153950c2..13866115a18a 100644
---- a/arch/powerpc/kernel/head_32.S
-+++ b/arch/powerpc/kernel/head_32.S
-@@ -220,7 +220,7 @@ turn_on_mmu:
- 	ori	r0,r0,start_here@l
- 	mtspr	SPRN_SRR0,r0
- 	SYNC
--	RFI				/* enables MMU */
-+	rfi				/* enables MMU */
- 
- /*
-  * We need __secondary_hold as a place to hold the other cpus on
-@@ -784,14 +784,14 @@ fast_hash_page_return:
- 	lwz	r11, THR11(r10)
- 	mfspr	r10, SPRN_SPRG_SCRATCH0
- 	SYNC
--	RFI
-+	rfi
- 
- 1:	/* ISI */
- 	mtcr	r11
- 	mfspr	r11, SPRN_SPRG_SCRATCH1
- 	mfspr	r10, SPRN_SPRG_SCRATCH0
- 	SYNC
--	RFI
-+	rfi
- 
- stack_overflow:
- 	vmap_stack_overflow_exception
-@@ -930,7 +930,7 @@ __secondary_start:
- 	mtspr	SPRN_SRR0,r3
- 	mtspr	SPRN_SRR1,r4
- 	SYNC
--	RFI
-+	rfi
- #endif /* CONFIG_SMP */
- 
- #ifdef CONFIG_KVM_BOOK3S_HANDLER
-@@ -1074,7 +1074,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_HPTE_TABLE)
- 	mtspr	SPRN_SRR0,r4
- 	mtspr	SPRN_SRR1,r3
- 	SYNC
--	RFI
-+	rfi
- /* Load up the kernel context */
- 2:	bl	load_up_mmu
- 
-@@ -1099,7 +1099,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_HPTE_TABLE)
- 	mtspr	SPRN_SRR0,r3
- 	mtspr	SPRN_SRR1,r4
- 	SYNC
--	RFI
-+	rfi
- 
- /*
-  * void switch_mmu_context(struct mm_struct *prev, struct mm_struct *next);
-@@ -1217,7 +1217,7 @@ _ENTRY(update_bats)
- 	mtspr	SPRN_SRR0, r4
- 	mtspr	SPRN_SRR1, r3
- 	SYNC
--	RFI
-+	rfi
- 1:	bl	clear_bats
- 	lis	r3, BATS@ha
- 	addi	r3, r3, BATS@l
-@@ -1237,7 +1237,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_USE_HIGH_BATS)
- 	mtspr	SPRN_SRR0, r7
- 	mtspr	SPRN_SRR1, r6
- 	SYNC
--	RFI
-+	rfi
- 
- flush_tlbs:
- 	lis	r10, 0x40
-@@ -1258,7 +1258,7 @@ mmu_off:
- 	mtspr	SPRN_SRR0,r4
- 	mtspr	SPRN_SRR1,r3
- 	sync
--	RFI
-+	rfi
- 
- /*
-  * On 601, we use 3 BATs to map up to 24M of RAM at _PAGE_OFFSET
--- 
-2.25.0
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
