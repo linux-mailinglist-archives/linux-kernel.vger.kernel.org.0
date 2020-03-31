@@ -2,92 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4B1B198B91
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 07:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46F21198B9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 07:14:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbgCaFLY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 01:11:24 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43336 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbgCaFLY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 01:11:24 -0400
-Received: by mail-ed1-f68.google.com with SMTP id bd14so23553205edb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Mar 2020 22:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=181xT05kF3H0VD4f8J7xShi9xZwvoRHrcpvFBQLeEIA=;
-        b=m3IgsGGZrBgakxVw5if3yzczNN+msQw/g4O9F81ImNkKRl6IR0dPN9pgwGDudyXoFD
-         wIWE3Xb4wifN6VLA2/4V2jQdkh5DWnfWy9gEgEbaIM2wokowxXNZoF3v4dB085lzm0sT
-         cxBvjCc7bpBAb5dgoCxTIjslzsJDa+Q/lTfFI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=181xT05kF3H0VD4f8J7xShi9xZwvoRHrcpvFBQLeEIA=;
-        b=Ja+x7ucTZ1jnX8jFDVn9a9hCkHJ9k5RLYs8+Yamx3iaTHVzAAurAbFdutVkOnEyUd9
-         Zc0NJkDc+hrFoRjvOmRobklseZSe9TmSKAI24cvS0OK65uLbJQF8xwD5on2CJFspX3Rm
-         qidaXhBxvwTPgqglrEXq6aq1GxVU58LsRx4xniAoFPUsK2OSpbwxWIFdnd9G3AdUUNpR
-         vrIY+qDbCTMz8//FxHS+Utbt2RmYZuFXpvClJsuOItH/hY+iu+QqUqHCXJ1yMm00GlSt
-         xGDPiTPXBNWgZt66gvWkgV3yP9cmccfnwe0nHvaPpvyWhLxadB+g6mC3Jx8nN1S7Qikd
-         Zdnw==
-X-Gm-Message-State: ANhLgQ3IxUTZvh80D56USN24L29gxd+S6ezsCMUIhDjOpsXlx6aGDAyQ
-        TvIOqU8gLUW2QaUKPZ4pk7/mQcHauDtYBnR9DoFJ6g==
-X-Google-Smtp-Source: ADFU+vujD3XRyzE2A6P8XAJLarFPpIUeWPjGW5jTzW/mvrFUEb88BGcaM3HywgE+474EUtqBVDyCkVg3I0Aj9RVfp1g=
-X-Received: by 2002:a17:906:9ca:: with SMTP id r10mr13543753eje.151.1585631482578;
- Mon, 30 Mar 2020 22:11:22 -0700 (PDT)
+        id S1726406AbgCaFOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 01:14:33 -0400
+Received: from mga09.intel.com ([134.134.136.24]:21215 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725809AbgCaFOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 01:14:33 -0400
+IronPort-SDR: UlaoPy7Xjg/gIAfF1gLPV0KSEolyij5PYB6hspiukSBz4zC78uSrz3pIv1+LTX0qwyZlWR2o+l
+ OcOjOsdQMBbw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 22:14:32 -0700
+IronPort-SDR: pyOGj4JMFVgH9bKXmJht5P4G1rabdEzJO4CIyab0A0KBv4odf4m89mpUPjSkas2aWwI96II+Sg
+ RdpHozv1p8Wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,327,1580803200"; 
+   d="scan'208";a="294822776"
+Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.159.39])
+  by FMSMGA003.fm.intel.com with ESMTP; 30 Mar 2020 22:14:30 -0700
+Date:   Tue, 31 Mar 2020 13:13:51 +0800
+From:   Philip Li <philip.li@intel.com>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     Dirk Mueller <dmueller@suse.com>, kbuild-all@lists.01.org,
+        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        David Gibson <david@gibson.dropbear.id.au>
+Subject: Re: [kbuild-all] ld.lld: error:
+ drivers/staging/gdm724x/gdm_usb.o:(.rodata.str1.1): offset is outside the
+ section
+Message-ID: <20200331051351.GA13302@intel.com>
+References: <202003311137.1kHCgonh%lkp@intel.com>
 MIME-Version: 1.0
-References: <1445647.1585576702@warthog.procyon.org.uk> <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
-In-Reply-To: <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 31 Mar 2020 07:11:11 +0200
-Message-ID: <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
-        andres@anarazel.de, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lennart Poettering <lennart@poettering.net>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202003311137.1kHCgonh%lkp@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 11:17 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
+On Tue, Mar 31, 2020 at 11:14:40AM +0800, kbuild test robot wrote:
+> Hi Dirk,
+> 
+> First bad commit (maybe != root cause):
+Sorry Dirk, kindly ignore this, it was explained in early email loop
+regarding another report.
 
-> Fwiw, putting down my kernel hat and speaking as someone who maintains
-> two container runtimes and various other low-level bits and pieces in
-> userspace who'd make heavy use of this stuff I would prefer the fd-based
-> fsinfo() approach especially in the light of across namespace
-> operations, querying all properties of a mount atomically all-at-once,
+[kbuild-all] ld.lld: error: drivers/staging/rtl8192e/rtllib_wx.o:(.rodata.str1.1): offset is outside the section
 
-fsinfo(2) doesn't meet the atomically all-at-once requirement.  Sure,
-it's possible to check the various change counters before and after a
-batch of calls to check that the result is consistent.  Still, that's
-not an atomic all-at-once query, if you'd really require that, than
-fsinfo(2) as it currently stands would be inadequate.
+We will update 0-day ci build to avoid this.
 
-> and safe delegation through fds. Another heavy user of this would be
-> systemd (Cced Lennart who I've discussed this with) which would prefer
-> the fd-based approach as well. I think pulling this into a filesystem
-> and making userspace parse around in a filesystem tree to query mount
-> information is the wrong approach and will get messy pretty quickly
-> especially in the face of mount and user namespace interactions and
-> various other pitfalls.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   2ce94bc4e056d3e48291aac87a95ebd2a86348ba
+> commit: e33a814e772cdc36436c8c188d8c42d019fda639 scripts/dtc: Remove redundant YYLOC global declaration
+> date:   4 days ago
+> config: arm-allyesconfig (attached as .config)
+> compiler: clang version 11.0.0 (https://github.com/llvm/llvm-project b4695351cb4ce1c4450a029a0c226dc8bb5f5d55)
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         git checkout e33a814e772cdc36436c8c188d8c42d019fda639
+>         # save the attached .config to linux build tree
+>         COMPILER=clang make.cross ARCH=arm 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    ld.lld: error: drivers/staging/gdm724x/netlink_k.o:(.rodata.str1.1): offset is outside the section
+> >> ld.lld: error: drivers/staging/gdm724x/gdm_usb.o:(.rodata.str1.1): offset is outside the section
+>    ld.lld: error: drivers/staging/gdm724x/gdm_lte.o:(.rodata.str1.1): offset is outside the section
+> 
+> ---
+> 0-DAY CI Kernel Test Service, Intel Corporation
+> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
-Have you actually looked at my proposed patch?   Do you have concrete
-issues or just vague bad feelings?
 
-Thanks,
-Miklos
+> _______________________________________________
+> kbuild-all mailing list -- kbuild-all@lists.01.org
+> To unsubscribe send an email to kbuild-all-leave@lists.01.org
+
