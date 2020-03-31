@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CCC4198F17
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77A83199013
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 11:09:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730413AbgCaJAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 05:00:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39310 "EHLO mail.kernel.org"
+        id S1731391AbgCaJIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 05:08:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729425AbgCaJAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:00:34 -0400
+        id S1731352AbgCaJIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 05:08:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5F2220787;
-        Tue, 31 Mar 2020 09:00:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F7E42072E;
+        Tue, 31 Mar 2020 09:08:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585645233;
-        bh=Ne9+LlSQFMWHN1DGAzP8M7ivWUlamrWM9ZR/Ae2AiRA=;
+        s=default; t=1585645726;
+        bh=WQHpfKaZPBdYes8iwGGue/GugwF0UOPV/iy+iJzXrlo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BciVf1HCNPcIxkyazbhR59SldKOIC2vS2VE+kYPZD5JWILAtgLLH2gz9+zRTQwOAW
-         7x6/eAnMI55WreYzkCzQM1ilUiKOO/snHkHN0FZG1Gd7OxTnVzjIXMZ7d7t+48iOKM
-         bl4SnieZkxFgXBM+SeHQuuZHSxMJhYNZB1pwpMzo=
+        b=WFzYNMyHJMBqU2FjLpetKb5EdCPgTuoLh07XABVjRNHnRusHHGEiKrn725XFe9dOr
+         858HIC4dzwy3qmVi1FQp0FTTrifyvpL9R9tdzpR51G5cOxhKNme1jfVL3Wj5epmkml
+         c1JZRk+P0CPvoHEmmR2+NvhiMaaFNkqrpiTCNsXY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anthony Mallet <anthony.mallet@laas.fr>,
-        Oliver Neukum <oneukum@suse.com>,
-        Matthias Reichl <hias@horus.com>
-Subject: [PATCH 5.6 05/23] USB: cdc-acm: restore capability check order
-Date:   Tue, 31 Mar 2020 10:59:17 +0200
-Message-Id: <20200331085311.180066588@linuxfoundation.org>
+        stable@vger.kernel.org, Ondrej Jirman <megous@megous.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH 5.5 144/170] ARM: dts: sun8i-a83t-tbs-a711: Fix USB OTG mode detection
+Date:   Tue, 31 Mar 2020 10:59:18 +0200
+Message-Id: <20200331085438.666848167@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200331085308.098696461@linuxfoundation.org>
-References: <20200331085308.098696461@linuxfoundation.org>
+In-Reply-To: <20200331085423.990189598@linuxfoundation.org>
+References: <20200331085423.990189598@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthias Reichl <hias@horus.com>
+From: Ondrej Jirman <megous@megous.com>
 
-commit 62d65bdd9d05158aa2547f8ef72375535f3bc6e3 upstream.
+commit b642d4825441bf30c72b72deb739bd2d5f53af08 upstream.
 
-commit b401f8c4f492c ("USB: cdc-acm: fix rounding error in TIOCSSERIAL")
-introduced a regression by changing the order of capability and close
-settings change checks. When running with CAP_SYS_ADMIN setting the
-close settings to the values already set resulted in -EOPNOTSUPP.
+USB-ID signal has a pullup on the schematic, but in reality it's not
+pulled up, so add a GPIO pullup. And we also need a usb0_vbus_power-supply
+for VBUS detection.
 
-Fix this by changing the check order back to how it was before.
+This fixes OTG mode detection and charging issues on TBS A711 tablet.
+The issues came from ID pin reading 0, causing host mode to be enabled,
+when it should not be, leading to DRVVBUS being enabled, which disabled
+the charger.
 
-Fixes: b401f8c4f492c ("USB: cdc-acm: fix rounding error in TIOCSSERIAL")
-Cc: Anthony Mallet <anthony.mallet@laas.fr>
-Cc: stable <stable@vger.kernel.org>
-Cc: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: Matthias Reichl <hias@horus.com>
-Link: https://lore.kernel.org/r/20200327150350.3657-1-hias@horus.com
+Fixes: f2f221c7810b824e ("ARM: dts: sun8i: a711: Enable USB OTG")
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -923,16 +923,16 @@ static int set_serial_info(struct tty_st
+--- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+@@ -498,7 +498,8 @@
+ };
  
- 	mutex_lock(&acm->port.mutex);
- 
--	if ((ss->close_delay != old_close_delay) ||
--            (ss->closing_wait != old_closing_wait)) {
--		if (!capable(CAP_SYS_ADMIN))
-+	if (!capable(CAP_SYS_ADMIN)) {
-+		if ((ss->close_delay != old_close_delay) ||
-+		    (ss->closing_wait != old_closing_wait))
- 			retval = -EPERM;
--		else {
--			acm->port.close_delay  = close_delay;
--			acm->port.closing_wait = closing_wait;
--		}
--	} else
--		retval = -EOPNOTSUPP;
-+		else
-+			retval = -EOPNOTSUPP;
-+	} else {
-+		acm->port.close_delay  = close_delay;
-+		acm->port.closing_wait = closing_wait;
-+	}
- 
- 	mutex_unlock(&acm->port.mutex);
- 	return retval;
+ &usbphy {
+-	usb0_id_det-gpios = <&pio 7 11 GPIO_ACTIVE_HIGH>; /* PH11 */
++	usb0_id_det-gpios = <&pio 7 11 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>; /* PH11 */
++	usb0_vbus_power-supply = <&usb_power_supply>;
+ 	usb0_vbus-supply = <&reg_drivevbus>;
+ 	usb1_vbus-supply = <&reg_vmain>;
+ 	usb2_vbus-supply = <&reg_vmain>;
 
 
