@@ -2,79 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3AD91997C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30D4A1997CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 15:48:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730913AbgCaNr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 09:47:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730442AbgCaNr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 09:47:26 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        id S1730919AbgCaNse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 09:48:34 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38034 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730464AbgCaNse (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 09:48:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=S5n7yDRQamti9CgoL/ypn1YynciA+zLihEOrWDF9zgo=; b=0AASjRuFb0QrDXRVsB0bJX/FtL
+        JSRmmzAkL8BJdmtP0MwBUhWbvLXIwv40bvlX/gIAOoQqZTcDe4Kef70K8ZdIXBPCmRMd7fzY5LqZS
+        mH6VlRCkCWblJZfi0nz/CXXLbOLpoWbuR9OSE71yxKAad7NDGwpMmCVmbgEyeY70PAQ0k2+gX4evf
+        IpOHXEJBdNLbkr5WuthBjVd597SaOrLjtv2M9oAjEp2jStLGojAE/UwK6h0KtayviNT5FrSmqQdcD
+        IATwZkheUvX6XDeDub9oz7/dv7ZJXoFpkQoqRh3ORCHevrUKQn6RqZKY8iYbq4FYim8EjdzGOlYtm
+        7/WHbAdA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJHFa-0002bY-Qi; Tue, 31 Mar 2020 13:48:19 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5BB220784;
-        Tue, 31 Mar 2020 13:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585662445;
-        bh=R71iqxDbmN5qBzBbVcwabUWqDS8g8zCCaR8V499sGfs=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=fWEfKH3ToKbYebfVQboQTyMO7fnq/t781SL9RRFbS+C6jElLBCOZGi+k5yxUVv30R
-         damOI2Uip5PsVyXV5VYj/YoWrCSRRJcLdE9OVK4+o/NhTUJHUqDENdckSxjm8IkNK6
-         0lXwscxJ8QHLfuSIW2AmUWy1HugSxm+X/0fHvx1w=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 900DD35226AE; Tue, 31 Mar 2020 06:47:25 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 06:47:25 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Maddie Stone <maddiestone@google.com>,
-        Marco Elver <elver@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [RFC PATCH 08/21] Revert "list: Use WRITE_ONCE() when
- initializing list_head structures"
-Message-ID: <20200331134725.GL19865@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200324153643.15527-1-will@kernel.org>
- <20200324153643.15527-9-will@kernel.org>
- <20200330232505.GD19865@paulmck-ThinkPad-P72>
- <20200331131153.GB30975@willie-the-truck>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 03A0330477A;
+        Tue, 31 Mar 2020 15:48:13 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BC27E29DA6117; Tue, 31 Mar 2020 15:48:13 +0200 (CEST)
+Date:   Tue, 31 Mar 2020 15:48:13 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [GIT PULL] scheduler changes for v5.7
+Message-ID: <20200331134813.GQ20730@hirez.programming.kicks-ass.net>
+References: <20200330173159.GA128106@gmail.com>
+ <20200331103333.GM3772@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200331131153.GB30975@willie-the-truck>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200331103333.GM3772@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 02:11:54PM +0100, Will Deacon wrote:
-> On Mon, Mar 30, 2020 at 04:25:05PM -0700, Paul E. McKenney wrote:
-> > On Tue, Mar 24, 2020 at 03:36:30PM +0000, Will Deacon wrote:
-> > > This reverts commit 2f073848c3cc8aff2655ab7c46d8c0de90cf4e50.
-> > > 
-> > > There is no need to use WRITE_ONCE() to initialise a non-RCU 'list_head'.
-> > > 
-> > > Cc: Paul E. McKenney <paulmck@kernel.org>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Signed-off-by: Will Deacon <will@kernel.org>
+On Tue, Mar 31, 2020 at 11:33:33AM +0100, Mel Gorman wrote:
+> On Mon, Mar 30, 2020 at 07:31:59PM +0200, Ingo Molnar wrote:
+> > Linus,
 > > 
-> > And attention to lockless uses of list_empty() here, correct?
+> > Please pull the latest sched-core-for-linus git tree from:
 > > 
-> > Depending on the outcome of discussions on 3/21, I should have added in
-> > all three cases.
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-for-linus
+> > 
+> >    # HEAD: 313f16e2e35abb833eab5bdebc6ae30699adca18 Merge branch 'sched/rt' into sched/core, to pick up completed topic tree
+> > 
+> > The main changes in this cycle are:
+> > 
+> >  - Various NUMA scheduling updates: harmonize the load-balancer and NUMA 
+> >    placement logic to not work against each other. The intended result is 
+> >    better locality, better utilization and fewer migrations.
+> > 
 > 
-> Yes, patch 3 is where this will get sorted. It looks like we'll have to
-> disable KCSAN around the READ_ONCE() over there, but I also need to finish
-> wrapping my head around list_empty_careful() because I'm deeply suspicious!
+> Thanks Ingo.
+> 
+> I noticed that the following patch did not make it to the list.
+> 
+> sched/fair: Fix negative imbalance in imbalance calculation
+> https://lore.kernel.org/lkml/1585201349-70192-1-git-send-email-aubrey.li@intel.com/
 
-At the very least, it does have the disadvantage of touching an additional
-cache line, and up to two additional cache lines in the non-empty case.  :-(
-
-							Thanx, Paul
+I have it, we'll get it in before the next release.
