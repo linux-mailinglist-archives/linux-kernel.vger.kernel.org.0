@@ -2,155 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6397C199D4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 19:56:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F1C2199D53
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Mar 2020 19:58:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbgCaR4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 13:56:23 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:41618 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbgCaR4X (ORCPT
+        id S1727020AbgCaR6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 13:58:20 -0400
+Received: from smtprelay0188.hostedemail.com ([216.40.44.188]:52270 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725999AbgCaR6R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 13:56:23 -0400
-Received: by mail-il1-f194.google.com with SMTP id t6so16724137ilj.8;
-        Tue, 31 Mar 2020 10:56:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0Yp77BX0CNsI0E9W0U3Z3mSHpIexs+AJy6eqRXEJQU0=;
-        b=B1GDjomFsIguNX7u5ig6d7O9ctxoGqf5jc9PgWFWXiCfBP26efSsq7ShChVMjCE/vi
-         6qizsSu1/ENs4cj3b+EAOnd6rOHyNFhrs4OMOOWnX/7G9izb9jDizCUdGeDPG2tsOfm6
-         19l7QT5YifrmVSsVSa0XlhnoLgXEmOsxJ6ZCZgkF2WeYTxgMnagR+Jsy3RZO7ENqUxFw
-         QSl2jCQlA6MVAF9CepySPnGRAJ0bM+8/MrT/twdKVj0814p8qujNTnGfJyCDht8ix2ZL
-         SHIDdVyqaLneoI6BZWRYT18RwKZ8kbrEwHDCvncs2kK+HOmECUfKuorRYb5HOuQeaRe1
-         TFSQ==
-X-Gm-Message-State: ANhLgQ2ja4eDqaRtYkXvBPGRVkd7OOYH4Il5aIpBo10OjWYPmx/qSO3Z
-        Pd8jgMUfMGR+h6QpTeR9TA==
-X-Google-Smtp-Source: ADFU+vtpX68rVrNJUeA4Xd7HfNw0GlkZdMwR56tGbxSge2H9UtVNk87hzwLKVeKvE6Buoj/X3b/XtA==
-X-Received: by 2002:a92:5e14:: with SMTP id s20mr18027047ilb.101.1585677381521;
-        Tue, 31 Mar 2020 10:56:21 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id x4sm4742966ilj.6.2020.03.31.10.56.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 10:56:20 -0700 (PDT)
-Received: (nullmailer pid 27986 invoked by uid 1000);
-        Tue, 31 Mar 2020 17:56:19 -0000
-Date:   Tue, 31 Mar 2020 11:56:19 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Kiran Gunda <kgunda@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
-        lee.jones@linaro.org, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, daniel.thompson@linaro.org,
-        jacek.anaszewski@gmail.com, pavel@ucw.cz, mark.rutland@arm.com,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
-        linux-arm-msm@vger.kernel.org,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>
-Subject: Re: [PATCH V4 3/4] backlight: qcom-wled: Add WLED5 bindings
-Message-ID: <20200331175619.GA25466@bogus>
-References: <1584985618-25689-1-git-send-email-kgunda@codeaurora.org>
- <1584985618-25689-4-git-send-email-kgunda@codeaurora.org>
+        Tue, 31 Mar 2020 13:58:17 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 83B8C18021E49;
+        Tue, 31 Mar 2020 17:58:16 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2560:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6117:6119:7903:9025:10004:10400:10848:11232:11658:11914:12043:12297:12555:12740:12760:12895:13019:13069:13311:13357:13439:14096:14097:14181:14659:14721:14764:21080:21324:21524:21611:21627:21740:30054:30056:30060:30064:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: boys35_481ed8d64f731
+X-Filterd-Recvd-Size: 2177
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 31 Mar 2020 17:58:15 +0000 (UTC)
+Message-ID: <78a8ba04459f8a4ea6bcb8811f35490018b763f2.camel@perches.com>
+Subject: Re: single target builds are broken
+From:   Joe Perches <joe@perches.com>
+To:     Masahiro Yamada <masahiroy@kernel.org>,
+        Vegard Nossum <vegard.nossum@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Date:   Tue, 31 Mar 2020 10:56:20 -0700
+In-Reply-To: <CAK7LNAT-8TbLRPB=PNsbAORKYvYL+m3JmA-iSDieK8Uv7MAvGA@mail.gmail.com>
+References: <a5ce79eb-be9d-df97-0b58-5aee5a48f4d3@oracle.com>
+         <CAK7LNAQ8LZMPxrjVkuLizHjVZyBtSmLFZ=EvDCCAPb-XGfJLHA@mail.gmail.com>
+         <8c491e3b-a622-14c1-15c3-8cff061017ba@oracle.com>
+         <CAK7LNAT-8TbLRPB=PNsbAORKYvYL+m3JmA-iSDieK8Uv7MAvGA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1584985618-25689-4-git-send-email-kgunda@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 11:16:57PM +0530, Kiran Gunda wrote:
-> Add WLED5 specific bindings.
+On Wed, 2020-04-01 at 01:03 +0900, Masahiro Yamada wrote:
+> On Tue, Mar 31, 2020 at 8:02 PM Vegard Nossum <vegard.nossum@oracle.com> wrote:
+> > It's really useful to be able to build object files separately, but as
+> > if it was part of the kernel (so e.g. with all the gcc flags, include
+> > paths, etc.).
+[]
+> So, there were lots of cases where single builds did not work:
 > 
-
-More of the same comments here...
-
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> Signed-off-by: Subbaraman Narayanamurthy <subbaram@codeaurora.org>
-> ---
->  .../bindings/leds/backlight/qcom-wled.yaml         | 39 ++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
+> https://www.spinics.net/lists/linux-kbuild/msg21921.html
 > 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
-> index 8a388bf..159115f 100644
-> --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
-> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
-> @@ -20,6 +20,7 @@ properties:
->         - qcom,pm8941-wled
->         - qcom,pmi8998-wled
->         - qcom,pm660l-wled
-> +       - qcom,pm8150l-wled
->  
->    reg:
->      maxItems: 1
-> @@ -28,10 +29,23 @@ properties:
->      maxItems: 1
->      description:
->        brightness value on boot, value from 0-4095.
-> +      For pm8150l this value vary from 0-4095 or 0-32767
-> +      depending on the brightness control mode. If CABC is
-> +      enabled 0-4095 range is used.
-
-Constraints.
-
->      allOf:
->        - $ref: /schemas/types.yaml#/definitions/uint32
->          default: 2048
->  
-> +  max-brightness:
-> +    maxItems: 1
-> +    description:
-> +      Maximum brightness level. Allowed values are,
-> +      for pmi8998 it is  0-4095.
-> +      For pm8150l, this can be either 4095 or 32767.
-
-Constraints!
-
-> +      If CABC is enabled, this is capped to 4095.
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-
-Standard property. Assume it has a type definition.'
-
-> +
->    label:
->      maxItems: 1
->      description:
-> @@ -124,6 +138,31 @@ properties:
->        value for PM8941 from 1 to 3. Default 2
->        For PMI8998 from 1 to 4.
->  
-> +  qcom,modulator-sel:
-> +    maxItems: 1
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Selects the modulator used for brightness modulation.
-> +      Allowed values are,
-> +               0 - Modulator A
-> +               1 - Modulator B
-> +      If not specified, then modulator A will be used by default.
-> +      This property is applicable only to WLED5 peripheral.
-> +
-> +  qcom,cabc-sel:
-> +    maxItems: 1
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Selects the CABC pin signal used for brightness modulation.
-> +      Allowed values are,
-> +              0 - CABC disabled
-> +              1 - CABC 1
-> +              2 - CABC 2
-> +              3 - External signal (e.g. LPG) is used for dimming
-> +      This property is applicable only to WLED5 peripheral.
-> +
->    interrupts:
->      maxItems: 2
->      description:
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->  a Linux Foundation Collaborative Project
+> The way to do this correctly is to
+> descend directories one by one, parsing Makefiles.
 > 
+> With no entry in obj-y/m,
+> Kbuild cannot determine where to build that object.
+> 
+> > At the very least, can we find a way to reduce the typing overhead for
+> > testing one-offs like that? 'make STANDALONE=1 test.o' or something?
+> 
+> Probably, I do not want to do this.
+> 
+> Supporting everybody's demand is not a good idea.
+> So, I draw a line somewhere.
+> 
+> Saving some typing is less important.
+
+I too find this regression less than desirable.
+
+make <single_object> is/was quite useful even
+if it didn't always work.
+
+
+
