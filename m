@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E503219B08A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5132119B1AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388012AbgDAQ1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:27:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52432 "EHLO mail.kernel.org"
+        id S2388902AbgDAQg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:36:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733133AbgDAQ1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:27:35 -0400
+        id S2388500AbgDAQgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:36:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7175020BED;
-        Wed,  1 Apr 2020 16:27:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A52720658;
+        Wed,  1 Apr 2020 16:36:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758454;
-        bh=yMlkCSjAzL6i8JFG1AkNzA7dBBbdcmVAGVf1jTVVNOI=;
+        s=default; t=1585759011;
+        bh=7KbVJ4pyGWkFPAmW1q226OXHwGc6AKPnrksV39LEdrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KfKQCW9+GeYIV5yHDeWPtX4WWLwZx1hFJKelU3S6d0N3Mwirw2oHKuchc2A7ulHKU
-         S/4IYG8h0+Yz9CZMHRfpNUJCUEuduZyZZnlx/9K+T7v/dln90E9KzKSGbC8frYjb5W
-         IYtDbCSmFZnDBhWajNxqYwv3ByoixDVtJsrHjcsw=
+        b=M7LeTBr8wDXDZiUw1SciGzvilTbdEpixyie7hA4kuJm3mczp/rGk0bTi2Jf5u8AWU
+         n7bOAqlgvB97uWUoSEbeBWGKp6TtCgvkwVvRRKXW8hH2NES43nj5ucD1kRYd8TbzVX
+         tKQUvvx2YBQYuDaDZ4+qsOyJ1c5gW+sJOgrRvDwI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Johan Hovold <johan@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 4.19 095/116] media: xirlink_cit: add missing descriptor sanity checks
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 048/102] hsr: add restart routine into hsr_get_node_list()
 Date:   Wed,  1 Apr 2020 18:17:51 +0200
-Message-Id: <20200401161554.534661665@linuxfoundation.org>
+Message-Id: <20200401161542.149755699@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,82 +43,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Taehee Yoo <ap420073@gmail.com>
 
-commit a246b4d547708f33ff4d4b9a7a5dbac741dc89d8 upstream.
+[ Upstream commit ca19c70f5225771c05bcdcb832b4eb84d7271c5e ]
 
-Make sure to check that we have two alternate settings and at least one
-endpoint before accessing the second altsetting structure and
-dereferencing the endpoint arrays.
+The hsr_get_node_list() is to send node addresses to the userspace.
+If there are so many nodes, it could fail because of buffer size.
+In order to avoid this failure, the restart routine is added.
 
-This specifically avoids dereferencing NULL-pointers or corrupting
-memory when a device does not have the expected descriptors.
-
-Note that the sanity check in cit_get_packet_size() is not redundant as
-the driver is mixing looking up altsettings by index and by number,
-which may not coincide.
-
-Fixes: 659fefa0eb17 ("V4L/DVB: gspca_xirlink_cit: Add support for camera with a bcd version of 0.01")
-Fixes: 59f8b0bf3c12 ("V4L/DVB: gspca_xirlink_cit: support bandwidth changing for devices with 1 alt setting")
-Cc: stable <stable@vger.kernel.org>     # 2.6.37
-Cc: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Fixes: f421436a591d ("net/hsr: Add support for the High-availability Seamless Redundancy protocol (HSRv0)")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/usb/gspca/xirlink_cit.c |   18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ net/hsr/hsr_netlink.c |   38 ++++++++++++++++++++++++--------------
+ 1 file changed, 24 insertions(+), 14 deletions(-)
 
---- a/drivers/media/usb/gspca/xirlink_cit.c
-+++ b/drivers/media/usb/gspca/xirlink_cit.c
-@@ -1452,6 +1452,9 @@ static int cit_get_packet_size(struct gs
- 		return -EIO;
- 	}
- 
-+	if (alt->desc.bNumEndpoints < 1)
-+		return -ENODEV;
-+
- 	return le16_to_cpu(alt->endpoint[0].desc.wMaxPacketSize);
- }
- 
-@@ -2636,6 +2639,7 @@ static int sd_start(struct gspca_dev *gs
- 
- static int sd_isoc_init(struct gspca_dev *gspca_dev)
+--- a/net/hsr/hsr_netlink.c
++++ b/net/hsr/hsr_netlink.c
+@@ -371,16 +371,14 @@ fail:
+  */
+ static int hsr_get_node_list(struct sk_buff *skb_in, struct genl_info *info)
  {
-+	struct usb_interface_cache *intfc;
- 	struct usb_host_interface *alt;
- 	int max_packet_size;
+-	/* For receiving */
+-	struct nlattr *na;
++	unsigned char addr[ETH_ALEN];
+ 	struct net_device *hsr_dev;
+-
+-	/* For sending */
+ 	struct sk_buff *skb_out;
+-	void *msg_head;
+ 	struct hsr_priv *hsr;
+-	void *pos;
+-	unsigned char addr[ETH_ALEN];
++	bool restart = false;
++	struct nlattr *na;
++	void *pos = NULL;
++	void *msg_head;
+ 	int res;
  
-@@ -2651,8 +2655,17 @@ static int sd_isoc_init(struct gspca_dev
- 		break;
+ 	if (!info)
+@@ -398,8 +396,9 @@ static int hsr_get_node_list(struct sk_b
+ 	if (!is_hsr_master(hsr_dev))
+ 		goto rcu_unlock;
+ 
++restart:
+ 	/* Send reply */
+-	skb_out = genlmsg_new(NLMSG_GOODSIZE, GFP_ATOMIC);
++	skb_out = genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_ATOMIC);
+ 	if (!skb_out) {
+ 		res = -ENOMEM;
+ 		goto fail;
+@@ -413,17 +412,28 @@ static int hsr_get_node_list(struct sk_b
+ 		goto nla_put_failure;
  	}
  
-+	intfc = gspca_dev->dev->actconfig->intf_cache[0];
-+
-+	if (intfc->num_altsetting < 2)
-+		return -ENODEV;
-+
-+	alt = &intfc->altsetting[1];
-+
-+	if (alt->desc.bNumEndpoints < 1)
-+		return -ENODEV;
-+
- 	/* Start isoc bandwidth "negotiation" at max isoc bandwidth */
--	alt = &gspca_dev->dev->actconfig->intf_cache[0]->altsetting[1];
- 	alt->endpoint[0].desc.wMaxPacketSize = cpu_to_le16(max_packet_size);
+-	res = nla_put_u32(skb_out, HSR_A_IFINDEX, hsr_dev->ifindex);
+-	if (res < 0)
+-		goto nla_put_failure;
++	if (!restart) {
++		res = nla_put_u32(skb_out, HSR_A_IFINDEX, hsr_dev->ifindex);
++		if (res < 0)
++			goto nla_put_failure;
++	}
  
+ 	hsr = netdev_priv(hsr_dev);
+ 
+-	pos = hsr_get_next_node(hsr, NULL, addr);
++	if (!pos)
++		pos = hsr_get_next_node(hsr, NULL, addr);
+ 	while (pos) {
+ 		res = nla_put(skb_out, HSR_A_NODE_ADDR, ETH_ALEN, addr);
+-		if (res < 0)
++		if (res < 0) {
++			if (res == -EMSGSIZE) {
++				genlmsg_end(skb_out, msg_head);
++				genlmsg_unicast(genl_info_net(info), skb_out,
++						info->snd_portid);
++				restart = true;
++				goto restart;
++			}
+ 			goto nla_put_failure;
++		}
+ 		pos = hsr_get_next_node(hsr, pos, addr);
+ 	}
+ 	rcu_read_unlock();
+@@ -440,7 +450,7 @@ invalid:
  	return 0;
-@@ -2675,6 +2688,9 @@ static int sd_isoc_nego(struct gspca_dev
- 		break;
- 	}
  
-+	/*
-+	 * Existence of altsetting and endpoint was verified in sd_isoc_init()
-+	 */
- 	alt = &gspca_dev->dev->actconfig->intf_cache[0]->altsetting[1];
- 	packet_size = le16_to_cpu(alt->endpoint[0].desc.wMaxPacketSize);
- 	if (packet_size <= min_packet_size)
+ nla_put_failure:
+-	kfree_skb(skb_out);
++	nlmsg_free(skb_out);
+ 	/* Fall through */
+ 
+ fail:
 
 
