@@ -2,159 +2,267 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 027D419AD94
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 16:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7DB019AD9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 16:17:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732998AbgDAOPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 10:15:11 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34388 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732826AbgDAOPK (ORCPT
+        id S1732894AbgDAORy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 10:17:54 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:26188 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732205AbgDAORy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 10:15:10 -0400
-Received: by mail-pl1-f195.google.com with SMTP id a23so9689927plm.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 07:15:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nigauri-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LEOmiIfnZf4UuskndEqwJK0t3v/ejJbeSlL/pR1DNyY=;
-        b=H+s+nfy/mK20JNRHDfxWOWd+Eu1wky61/AsKXrnLiemzPhc0oG6THAVOQLhUN4ezbU
-         nLEkYb1P6HSIMGxNNd8MvbzSKzDUqxlYLqbyoV6XGa+QcAdrl/DXnGVMdq7q947FyYju
-         o6rdjgCKc7fpUgxjE7KHoGgd1tZOZcQuIA7k22VU0kDUPBs4IIpg+BCy9qW/uiN9fUSa
-         54oEd2DXtNwycXx4WJouzTnOWNnvm1dry7hX8MsulEJU9xGBxDN4D1muHElbWFsme9KR
-         XlVYMCrHajBoqBUDV4egDmJnWUZ3/p8j9W4JV1xK8bdnzNYzN9VdFbBfAeWsVt5wv5Lq
-         QQVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LEOmiIfnZf4UuskndEqwJK0t3v/ejJbeSlL/pR1DNyY=;
-        b=j9Ac67Dnb3ri2t81lvqHt/YBNF5u+T0lbFXThAGdKVbywRNW1FBc0uNef+i2FTGBGo
-         vW6OMj3nxRACjofpzMA7eERPFKGJU2dm/6FB0z57D5uuYnsXtxiGd0Y3vs03BJwf+gyF
-         z2hddXE86CiqWfxVoKSD+CceV6UaPTIx/uLaLP2RHTohckY8r2uEDVTo1d0OrPv3wNtP
-         7yZJD0JoavAHVtQCjNudgvijvx1uINncBx8U/KiEH/2X+3FIZFCCpa3eXnGFMHJlwvdI
-         suvauNb4ZqNp33nVlyMSejhPIMBs3e1LSVWP74CXo4DkTnC1Ok/0nMapxqH7OCEeiNBw
-         xNYA==
-X-Gm-Message-State: AGi0PuZ/22bkwVfrpwJozShQFD/+8bYHJQo3I5IOJe4kJnnnBcKshC5y
-        SZjM/VMV6OTwdL95q+OwwHyZ
-X-Google-Smtp-Source: APiQypLNOzalB+9BmXgPPToTEm9YjtpcDjXL+lQ7eO0oK9Emyww38AV+GlPIy2FJZ++aU4Ft04axJA==
-X-Received: by 2002:a17:90b:1888:: with SMTP id mn8mr5243859pjb.115.1585750509254;
-        Wed, 01 Apr 2020 07:15:09 -0700 (PDT)
-Received: from localhost ([2405:6581:5360:1800:bf52:1f8e:88d2:6ec])
-        by smtp.gmail.com with ESMTPSA id r59sm1805406pjb.45.2020.04.01.07.15.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 07:15:08 -0700 (PDT)
-From:   Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-To:     devicetree@vger.kernel.org
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Subject: [PATCH] dt-bindings: timer: cadence_ttc: Migrate timer-cadence-ttc documentation to YAML
-Date:   Wed,  1 Apr 2020 23:14:49 +0900
-Message-Id: <20200401141449.66905-1-iwamatsu@nigauri.org>
-X-Mailer: git-send-email 2.26.0
+        Wed, 1 Apr 2020 10:17:54 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 031EHLwk010045;
+        Wed, 1 Apr 2020 16:17:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=Z6VNMqTZ2uwRu8WKkNLiLmvYTadoYga3ntG3YOu/TiU=;
+ b=axZXezGT3396UNnC/EOneTFB4Ge+MsYYlB6WJYBw23fMIBAMstAdfT5iosNkfoeWrmiG
+ QjiVjJU3hWbDM+udH6oMluKvd6ANYjoRN5Ep0qtF3yLSKjb4FRctObHLpUrzACjiX6j/
+ xB7anIR2pyKMRB2LJEoK8ufv/H57M24T//zkoM/cohpHmJPMzjCU3QxdSx2zKW3lTcp2
+ 1qs9hBrYaFLVS3Uel2Hk3AqwX1q8m3L40579XlELlncXsvIuy1YVzRI+AtBUDOTWiqpn
+ Rh8DqbHZUf8R5jzG1lFpvVykUHWDlKGkMaqPo1Mn9l1iQOsyAFN0oKxSWXR0EuPhmEsL CQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 301vkdx483-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 16:17:34 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C603910002A;
+        Wed,  1 Apr 2020 16:17:30 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AE0A32B0D50;
+        Wed,  1 Apr 2020 16:17:30 +0200 (CEST)
+Received: from lmecxl0912.tpe.st.com (10.75.127.49) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Apr
+ 2020 16:17:23 +0200
+Subject: Re: [PATCHv2 1/1] net: ethernet: stmmac: simplify phy modes
+ management for stm32
+To:     Christophe Roullier <christophe.roullier@st.com>,
+        <robh@kernel.org>, <davem@davemloft.net>, <joabreu@synopsys.com>,
+        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <peppe.cavallaro@st.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <andrew@lunn.ch>
+References: <20200316090907.18488-1-christophe.roullier@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <cb0a5dd3-02da-7d60-7069-a8ee080ad239@st.com>
+Date:   Wed, 1 Apr 2020 16:17:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200316090907.18488-1-christophe.roullier@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-01_01:2020-03-31,2020-03-31 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The document was migrated to YAML format and renamed cdns,ttc.yaml.
-And updated the example to the latest format.
+Hi Christophe
 
-Signed-off-by: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
----
- .../bindings/timer/cadence,ttc-timer.txt      | 21 --------
- .../devicetree/bindings/timer/cdns,ttc.yaml   | 48 +++++++++++++++++++
- 2 files changed, 48 insertions(+), 21 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/timer/cadence,ttc-timer.txt
- create mode 100644 Documentation/devicetree/bindings/timer/cdns,ttc.yaml
+On 3/16/20 10:09 AM, Christophe Roullier wrote:
+> No new feature, just to simplify stm32 part to be easier to use.
+> Add by default all Ethernet clocks in DT, and activate or not in function
+> of phy mode, clock frequency, if property "st,ext-phyclk" is set or not.
+> Keep backward compatibility
+> -----------------------------------------------------------------------
+> |PHY_MODE | Normal | PHY wo crystal|   PHY wo crystal   |  No 125Mhz  |
+> |         |        |      25MHz    |        50MHz       |  from PHY   |
+> -----------------------------------------------------------------------
+> |  MII    |	 -    |     eth-ck    |       n/a          |	    n/a  |
+> |         |        | st,ext-phyclk |                    |             |
+> -----------------------------------------------------------------------
+> |  GMII   |	 -    |     eth-ck    |       n/a          |	    n/a  |
+> |         |        | st,ext-phyclk |                    |             |
+> -----------------------------------------------------------------------
+> | RGMII   |	 -    |     eth-ck    |       n/a          |      eth-ck  |
+> |         |        | st,ext-phyclk |                    |st,eth-clk-sel|
+> |         |        |               |                    |       or     |
+> |         |        |               |                    | st,ext-phyclk|
+> ------------------------------------------------------------------------
+> | RMII    |	 -    |     eth-ck    |      eth-ck        |	     n/a  |
+> |         |        | st,ext-phyclk | st,eth-ref-clk-sel |              |
+> |         |        |               | or st,ext-phyclk   |              |
+> ------------------------------------------------------------------------
+> 
+> Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
+> 
+> ---
 
-diff --git a/Documentation/devicetree/bindings/timer/cadence,ttc-timer.txt b/Documentation/devicetree/bindings/timer/cadence,ttc-timer.txt
-deleted file mode 100644
-index eeee6cd51e5ce..0000000000000
---- a/Documentation/devicetree/bindings/timer/cadence,ttc-timer.txt
-+++ /dev/null
-@@ -1,21 +0,0 @@
--Cadence TTC - Triple Timer Counter
--
--Required properties:
--- compatible : Should be "cdns,ttc".
--- reg : Specifies base physical address and size of the registers.
--- interrupts : A list of 3 interrupts; one per timer channel.
--- clocks: phandle to the source clock
--
--Optional properties:
--- timer-width: Bit width of the timer, necessary if not 16.
--
--Example:
--
--ttc0: ttc0@f8001000 {
--	interrupt-parent = <&intc>;
--	interrupts = < 0 10 4 0 11 4 0 12 4 >;
--	compatible = "cdns,ttc";
--	reg = <0xF8001000 0x1000>;
--	clocks = <&cpu_clk 3>;
--	timer-width = <32>;
--};
-diff --git a/Documentation/devicetree/bindings/timer/cdns,ttc.yaml b/Documentation/devicetree/bindings/timer/cdns,ttc.yaml
-new file mode 100644
-index 0000000000000..c532b60b9c631
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/cdns,ttc.yaml
-@@ -0,0 +1,48 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/timer/cdns,ttc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cadence TTC - Triple Timer Counter
-+
-+maintainers:
-+  - Michal Simek <michal.simek@xilinx.com>
-+
-+properties:
-+  compatible:
-+    const: cdns,ttc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    minItems: 3
-+    maxItems: 3
-+    description: |
-+      A list of 3 interrupts; one per timer channel.
-+
-+  clocks:
-+    maxItems: 1
-+
-+  timer-width:
-+    $ref: "/schemas/types.yaml#/definitions/uint32"
-+    description: |
-+      Bit width of the timer, necessary if not 16.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+examples:
-+  - |
-+    ttc0: ttc0@f8001000 {
-+        interrupt-parent = <&intc>;
-+        interrupts = <0 10 4>, <0 11 4>, <0 12 4>;
-+        compatible = "cdns,ttc";
-+        reg = <0xF8001000 0x1000>;
-+        clocks = <&cpu_clk 3>;
-+        timer-width = <32>;
-+    };
--- 
-2.26.0
+Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
 
+
+>   .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 74 +++++++++++--------
+>   1 file changed, 44 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+> index b2dc99289687..5d4df4c5254e 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+> @@ -29,6 +29,11 @@
+>   #define SYSCFG_PMCR_ETH_CLK_SEL		BIT(16)
+>   #define SYSCFG_PMCR_ETH_REF_CLK_SEL	BIT(17)
+>   
+> +/* CLOCK feed to PHY*/
+> +#define ETH_CK_F_25M	25000000
+> +#define ETH_CK_F_50M	50000000
+> +#define ETH_CK_F_125M	125000000
+> +
+>   /*  Ethernet PHY interface selection in register SYSCFG Configuration
+>    *------------------------------------------
+>    * src	 |BIT(23)| BIT(22)| BIT(21)|BIT(20)|
+> @@ -58,33 +63,20 @@
+>    *|         |        |      25MHz    |        50MHz       |                  |
+>    * ---------------------------------------------------------------------------
+>    *|  MII    |	 -   |     eth-ck    |	      n/a	  |	  n/a        |
+> - *|         |        |		     |                    |		     |
+> + *|         |        | st,ext-phyclk |                    |		     |
+>    * ---------------------------------------------------------------------------
+>    *|  GMII   |	 -   |     eth-ck    |	      n/a	  |	  n/a        |
+> - *|         |        |               |                    |		     |
+> + *|         |        | st,ext-phyclk |                    |		     |
+>    * ---------------------------------------------------------------------------
+> - *| RGMII   |	 -   |     eth-ck    |	      n/a	  |  eth-ck (no pin) |
+> - *|         |        |               |                    |  st,eth-clk-sel  |
+> + *| RGMII   |	 -   |     eth-ck    |	      n/a	  |      eth-ck      |
+> + *|         |        | st,ext-phyclk |                    | st,eth-clk-sel or|
+> + *|         |        |               |                    | st,ext-phyclk    |
+>    * ---------------------------------------------------------------------------
+>    *| RMII    |	 -   |     eth-ck    |	    eth-ck        |	  n/a        |
+> - *|         |        |		     | st,eth-ref-clk-sel |		     |
+> + *|         |        | st,ext-phyclk | st,eth-ref-clk-sel |		     |
+> + *|         |        |               | or st,ext-phyclk   |		     |
+>    * ---------------------------------------------------------------------------
+>    *
+> - * BIT(17) : set this bit in RMII mode when you have PHY without crystal 50MHz
+> - * BIT(16) : set this bit in GMII/RGMII PHY when you do not want use 125Mhz
+> - * from PHY
+> - *-----------------------------------------------------
+> - * src	 |         BIT(17)       |       BIT(16)      |
+> - *-----------------------------------------------------
+> - * MII   |           n/a	 |         n/a        |
+> - *-----------------------------------------------------
+> - * GMII  |           n/a         |   st,eth-clk-sel   |
+> - *-----------------------------------------------------
+> - * RGMII |           n/a         |   st,eth-clk-sel   |
+> - *-----------------------------------------------------
+> - * RMII  |   st,eth-ref-clk-sel	 |         n/a        |
+> - *-----------------------------------------------------
+> - *
+>    */
+>   
+>   struct stm32_dwmac {
+> @@ -93,6 +85,8 @@ struct stm32_dwmac {
+>   	struct clk *clk_eth_ck;
+>   	struct clk *clk_ethstp;
+>   	struct clk *syscfg_clk;
+> +	int ext_phyclk;
+> +	int enable_eth_ck;
+>   	int eth_clk_sel_reg;
+>   	int eth_ref_clk_sel_reg;
+>   	int irq_pwr_wakeup;
+> @@ -155,14 +149,17 @@ static int stm32mp1_clk_prepare(struct stm32_dwmac *dwmac, bool prepare)
+>   		ret = clk_prepare_enable(dwmac->syscfg_clk);
+>   		if (ret)
+>   			return ret;
+> -		ret = clk_prepare_enable(dwmac->clk_eth_ck);
+> -		if (ret) {
+> -			clk_disable_unprepare(dwmac->syscfg_clk);
+> -			return ret;
+> +		if (dwmac->enable_eth_ck) {
+> +			ret = clk_prepare_enable(dwmac->clk_eth_ck);
+> +			if (ret) {
+> +				clk_disable_unprepare(dwmac->syscfg_clk);
+> +				return ret;
+> +			}
+>   		}
+>   	} else {
+>   		clk_disable_unprepare(dwmac->syscfg_clk);
+> -		clk_disable_unprepare(dwmac->clk_eth_ck);
+> +		if (dwmac->enable_eth_ck)
+> +			clk_disable_unprepare(dwmac->clk_eth_ck);
+>   	}
+>   	return ret;
+>   }
+> @@ -170,24 +167,34 @@ static int stm32mp1_clk_prepare(struct stm32_dwmac *dwmac, bool prepare)
+>   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+>   {
+>   	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
+> -	u32 reg = dwmac->mode_reg;
+> +	u32 reg = dwmac->mode_reg, clk_rate;
+>   	int val;
+>   
+> +	clk_rate = clk_get_rate(dwmac->clk_eth_ck);
+> +	dwmac->enable_eth_ck = false;
+>   	switch (plat_dat->interface) {
+>   	case PHY_INTERFACE_MODE_MII:
+> +		if (clk_rate == ETH_CK_F_25M && dwmac->ext_phyclk)
+> +			dwmac->enable_eth_ck = true;
+>   		val = SYSCFG_PMCR_ETH_SEL_MII;
+>   		pr_debug("SYSCFG init : PHY_INTERFACE_MODE_MII\n");
+>   		break;
+>   	case PHY_INTERFACE_MODE_GMII:
+>   		val = SYSCFG_PMCR_ETH_SEL_GMII;
+> -		if (dwmac->eth_clk_sel_reg)
+> +		if (clk_rate == ETH_CK_F_25M &&
+> +		    (dwmac->eth_clk_sel_reg || dwmac->ext_phyclk)) {
+> +			dwmac->enable_eth_ck = true;
+>   			val |= SYSCFG_PMCR_ETH_CLK_SEL;
+> +		}
+>   		pr_debug("SYSCFG init : PHY_INTERFACE_MODE_GMII\n");
+>   		break;
+>   	case PHY_INTERFACE_MODE_RMII:
+>   		val = SYSCFG_PMCR_ETH_SEL_RMII;
+> -		if (dwmac->eth_ref_clk_sel_reg)
+> +		if ((clk_rate == ETH_CK_F_25M || clk_rate == ETH_CK_F_50M) &&
+> +		    (dwmac->eth_ref_clk_sel_reg || dwmac->ext_phyclk)) {
+> +			dwmac->enable_eth_ck = true;
+>   			val |= SYSCFG_PMCR_ETH_REF_CLK_SEL;
+> +		}
+>   		pr_debug("SYSCFG init : PHY_INTERFACE_MODE_RMII\n");
+>   		break;
+>   	case PHY_INTERFACE_MODE_RGMII:
+> @@ -195,8 +202,11 @@ static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+>   	case PHY_INTERFACE_MODE_RGMII_RXID:
+>   	case PHY_INTERFACE_MODE_RGMII_TXID:
+>   		val = SYSCFG_PMCR_ETH_SEL_RGMII;
+> -		if (dwmac->eth_clk_sel_reg)
+> +		if ((clk_rate == ETH_CK_F_25M || clk_rate == ETH_CK_F_125M) &&
+> +		    (dwmac->eth_clk_sel_reg || dwmac->ext_phyclk)) {
+> +			dwmac->enable_eth_ck = true;
+>   			val |= SYSCFG_PMCR_ETH_CLK_SEL;
+> +		}
+>   		pr_debug("SYSCFG init : PHY_INTERFACE_MODE_RGMII\n");
+>   		break;
+>   	default:
+> @@ -294,6 +304,9 @@ static int stm32mp1_parse_data(struct stm32_dwmac *dwmac,
+>   	struct device_node *np = dev->of_node;
+>   	int err = 0;
+>   
+> +	/* Ethernet PHY have no crystal */
+> +	dwmac->ext_phyclk = of_property_read_bool(np, "st,ext-phyclk");
+> +
+>   	/* Gigabit Ethernet 125MHz clock selection. */
+>   	dwmac->eth_clk_sel_reg = of_property_read_bool(np, "st,eth-clk-sel");
+>   
+> @@ -431,7 +444,8 @@ static int stm32mp1_suspend(struct stm32_dwmac *dwmac)
+>   
+>   	clk_disable_unprepare(dwmac->clk_tx);
+>   	clk_disable_unprepare(dwmac->syscfg_clk);
+> -	clk_disable_unprepare(dwmac->clk_eth_ck);
+> +	if (dwmac->enable_eth_ck)
+> +		clk_disable_unprepare(dwmac->clk_eth_ck);
+>   
+>   	return ret;
+>   }
+> 
