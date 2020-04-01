@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D2FA19B065
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8FF819AFE8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387912AbgDAQ0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:26:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50996 "EHLO mail.kernel.org"
+        id S1732963AbgDAQWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:22:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387481AbgDAQ0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:26:30 -0400
+        id S2387435AbgDAQWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:22:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CD1B20BED;
-        Wed,  1 Apr 2020 16:26:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FA3020857;
+        Wed,  1 Apr 2020 16:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758389;
-        bh=ww7sHcCTS6voBIpOy89eNwc/M/tgfR7bv/qFldiagXg=;
+        s=default; t=1585758125;
+        bh=teEkTjfnD/nvwev9QxvZ6FJfT9iFlPUNMj6FlN/koZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WiIGCgZ7CAs6/a3iB/Ax2ZgCn5GsfvWIOz/kWn24O7fCwhtx+OF2cdMJBBOn/facO
-         7AmeRt9N9W4cLAIgXcFP2CskyzmyjbzAX8JjWuycKzN/FuHr10sbqI+6ftT4u0/9GC
-         HKaFh9mz41CatrTZhoRdH+Af/oTls2x7vrcN4fmQ=
+        b=zoGIS5GoeLiMhFgIhlDbrbW+wanD6fEQMg+jJb460CH/x1ggRxryUsgeREIa9CNzA
+         NzX3J62QSiMb4E4AHPXfjRx+RjC92bka6r/SLLL6BUkyDlR/MIciD9eW2U9YSF9sNw
+         DaXptsLeAZXQhRrOWgA6tVc2rP1oTGTky22W25t8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Yoshiki Komachi <komachi.yoshiki@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.19 074/116] bpf/btf: Fix BTF verification of enum members in struct/union
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Woody Suwalski <terraluna977@gmail.com>
+Subject: [PATCH 5.4 02/27] mac80211: fix authentication with iwlwifi/mvm
 Date:   Wed,  1 Apr 2020 18:17:30 +0200
-Message-Id: <20200401161552.305828471@linuxfoundation.org>
+Message-Id: <20200401161417.064523514@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
+References: <20200401161414.352722470@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yoshiki Komachi <komachi.yoshiki@gmail.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit da6c7faeb103c493e505e87643272f70be586635 upstream.
+commit be8c827f50a0bcd56361b31ada11dc0a3c2fd240 upstream.
 
-btf_enum_check_member() was currently sure to recognize the size of
-"enum" type members in struct/union as the size of "int" even if
-its size was packed.
+The original patch didn't copy the ieee80211_is_data() condition
+because on most drivers the management frames don't go through
+this path. However, they do on iwlwifi/mvm, so we do need to keep
+the condition here.
 
-This patch fixes BTF enum verification to use the correct size
-of member in BPF programs.
-
-Fixes: 179cde8cef7e ("bpf: btf: Check members of struct/union")
-Signed-off-by: Yoshiki Komachi <komachi.yoshiki@gmail.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Link: https://lore.kernel.org/bpf/1583825550-18606-2-git-send-email-komachi.yoshiki@gmail.com
+Cc: stable@vger.kernel.org
+Fixes: ce2e1ca70307 ("mac80211: Check port authorization in the ieee80211_tx_dequeue() case")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Woody Suwalski <terraluna977@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/btf.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/tx.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -1763,7 +1763,7 @@ static int btf_enum_check_member(struct
- 
- 	struct_size = struct_type->size;
- 	bytes_offset = BITS_ROUNDDOWN_BYTES(struct_bits_off);
--	if (struct_size - bytes_offset < sizeof(int)) {
-+	if (struct_size - bytes_offset < member_type->size) {
- 		btf_verifier_log_member(env, struct_type, member,
- 					"Member exceeds struct_size");
- 		return -EINVAL;
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -3602,7 +3602,8 @@ begin:
+ 		 * Drop unicast frames to unauthorised stations unless they are
+ 		 * EAPOL frames from the local station.
+ 		 */
+-		if (unlikely(!ieee80211_vif_is_mesh(&tx.sdata->vif) &&
++		if (unlikely(ieee80211_is_data(hdr->frame_control) &&
++			     !ieee80211_vif_is_mesh(&tx.sdata->vif) &&
+ 			     tx.sdata->vif.type != NL80211_IFTYPE_OCB &&
+ 			     !is_multicast_ether_addr(hdr->addr1) &&
+ 			     !test_sta_flag(tx.sta, WLAN_STA_AUTHORIZED) &&
 
 
