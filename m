@@ -2,191 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4742919AFB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FAAB19AFDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732121AbgDAQUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:20:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43150 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733018AbgDAQUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:20:31 -0400
-Received: from gmail.com (unknown [104.132.1.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2387416AbgDAQVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:21:52 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:37456 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1733262AbgDAQVs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:21:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585758106;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tQ7YsYCwUcNCTF+jybOb/ca4HPlXyoFjspW9qDQhj+w=;
+        b=MrgD+Wg3AT30+xFsZX+lWl5CtNDJI6HGge9AdsA7VWb8sq6HM5J/boZgaMexfCUC2vVXzM
+        JGdjfL8wgeXnys51rxJj1vPViJa2h8al2AC1Kxy9LZ3cGnAvguiIBhQA7eH5W3rCiZb5Ry
+        8RRu7glrcwbMvm1D5TzMQ/xkWYTbq1g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-97-CBk-p1jCM4GBv7mu5hY8aQ-1; Wed, 01 Apr 2020 12:21:41 -0400
+X-MC-Unique: CBk-p1jCM4GBv7mu5hY8aQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F72020658;
-        Wed,  1 Apr 2020 16:20:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758030;
-        bh=8V5ySJp6dKmMDd4qsHqMtGhs0GOyBgG7cv8CBjvA5p0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hueEbZyr2b62S+jA7pZBn0YNOhGWyklG0QV4lQtMadslrE1yEzaiOrUCltN7ujRMN
-         M1t1aaaA4Wc2OVgk5/G4NKChua6T3CUJAI3iDU36sqkuIdcXBhGQPfkSU68knLQ2JT
-         ncj4zL9kYdqvdad6y2pYggEauqH6KuuXRgFlzKXU=
-Date:   Wed, 1 Apr 2020 09:20:28 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Marco Elver <elver@google.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+6a6bca8169ffda8ce77b@syzkaller.appspotmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: KCSAN: data-race in glue_cbc_decrypt_req_128bit /
- glue_cbc_decrypt_req_128bit
-Message-ID: <20200401162028.GA201933@gmail.com>
-References: <0000000000009d5cef05a22baa95@google.com>
- <20200331202706.GA127606@gmail.com>
- <CACT4Y+ZSTjPmPmiL_1JEdroNZXYgaKewDBEH6RugnhsDVd+bUQ@mail.gmail.com>
- <CANpmjNPkzTSwtJhRXWE0DYi8mToDufuOztjE4h9KopZ11T+q+w@mail.gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 84B74477;
+        Wed,  1 Apr 2020 16:21:40 +0000 (UTC)
+Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 09A6619C70;
+        Wed,  1 Apr 2020 16:21:39 +0000 (UTC)
+Date:   Wed, 1 Apr 2020 12:21:38 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: xfs metadata corruption since 30 March
+Message-ID: <20200401162138.GB58968@bfoster>
+References: <990EDC4E-1A4E-4AC3-84D9-078ACF5EB9CC@lca.pw>
+ <20200401123447.GA58968@bfoster>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANpmjNPkzTSwtJhRXWE0DYi8mToDufuOztjE4h9KopZ11T+q+w@mail.gmail.com>
+In-Reply-To: <20200401123447.GA58968@bfoster>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 12:24:01PM +0200, Marco Elver wrote:
-> On Wed, 1 Apr 2020 at 09:04, Dmitry Vyukov <dvyukov@google.com> wrote:
-> >
-> > On Tue, Mar 31, 2020 at 10:27 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > >
-> > > On Tue, Mar 31, 2020 at 12:35:13PM -0700, syzbot wrote:
-> > > > Hello,
-> > > >
-> > > > syzbot found the following crash on:
-> > > >
-> > > > HEAD commit:    b12d66a6 mm, kcsan: Instrument SLAB free with ASSERT_EXCLU..
-> > > > git tree:       https://github.com/google/ktsan.git kcsan
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=111f0865e00000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=10bc0131c4924ba9
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=6a6bca8169ffda8ce77b
-> > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > >
-> > > > Unfortunately, I don't have any reproducer for this crash yet.
-> > > >
-> > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > > Reported-by: syzbot+6a6bca8169ffda8ce77b@syzkaller.appspotmail.com
-> > > >
-> > > > ==================================================================
-> > > > BUG: KCSAN: data-race in glue_cbc_decrypt_req_128bit / glue_cbc_decrypt_req_128bit
-> > > >
-> > > > write to 0xffff88809966e128 of 8 bytes by task 24119 on cpu 0:
-> > > >  u128_xor include/crypto/b128ops.h:67 [inline]
-> > > >  glue_cbc_decrypt_req_128bit+0x396/0x460 arch/x86/crypto/glue_helper.c:144
-> > > >  cbc_decrypt+0x26/0x40 arch/x86/crypto/serpent_avx2_glue.c:152
-> > > >  crypto_skcipher_decrypt+0x65/0x90 crypto/skcipher.c:652
-> > > >  _skcipher_recvmsg crypto/algif_skcipher.c:142 [inline]
-> > > >  skcipher_recvmsg+0x7fa/0x8c0 crypto/algif_skcipher.c:161
-> > > >  skcipher_recvmsg_nokey+0x5e/0x80 crypto/algif_skcipher.c:279
-> > > >  sock_recvmsg_nosec net/socket.c:886 [inline]
-> > > >  sock_recvmsg net/socket.c:904 [inline]
-> > > >  sock_recvmsg+0x92/0xb0 net/socket.c:900
-> > > >  ____sys_recvmsg+0x167/0x3a0 net/socket.c:2566
-> > > >  ___sys_recvmsg+0xb2/0x100 net/socket.c:2608
-> > > >  __sys_recvmsg+0x9d/0x160 net/socket.c:2642
-> > > >  __do_sys_recvmsg net/socket.c:2652 [inline]
-> > > >  __se_sys_recvmsg net/socket.c:2649 [inline]
-> > > >  __x64_sys_recvmsg+0x51/0x70 net/socket.c:2649
-> > > >  do_syscall_64+0xcc/0x3a0 arch/x86/entry/common.c:294
-> > > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > >
-> > > > read to 0xffff88809966e128 of 8 bytes by task 24118 on cpu 1:
-> > > >  u128_xor include/crypto/b128ops.h:67 [inline]
-> > > >  glue_cbc_decrypt_req_128bit+0x37c/0x460 arch/x86/crypto/glue_helper.c:144
-> > > >  cbc_decrypt+0x26/0x40 arch/x86/crypto/serpent_avx2_glue.c:152
-> > > >  crypto_skcipher_decrypt+0x65/0x90 crypto/skcipher.c:652
-> > > >  _skcipher_recvmsg crypto/algif_skcipher.c:142 [inline]
-> > > >  skcipher_recvmsg+0x7fa/0x8c0 crypto/algif_skcipher.c:161
-> > > >  skcipher_recvmsg_nokey+0x5e/0x80 crypto/algif_skcipher.c:279
-> > > >  sock_recvmsg_nosec net/socket.c:886 [inline]
-> > > >  sock_recvmsg net/socket.c:904 [inline]
-> > > >  sock_recvmsg+0x92/0xb0 net/socket.c:900
-> > > >  ____sys_recvmsg+0x167/0x3a0 net/socket.c:2566
-> > > >  ___sys_recvmsg+0xb2/0x100 net/socket.c:2608
-> > > >  __sys_recvmsg+0x9d/0x160 net/socket.c:2642
-> > > >  __do_sys_recvmsg net/socket.c:2652 [inline]
-> > > >  __se_sys_recvmsg net/socket.c:2649 [inline]
-> > > >  __x64_sys_recvmsg+0x51/0x70 net/socket.c:2649
-> > > >  do_syscall_64+0xcc/0x3a0 arch/x86/entry/common.c:294
-> > > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > >
-> > > > Reported by Kernel Concurrency Sanitizer on:
-> > > > CPU: 1 PID: 24118 Comm: syz-executor.1 Not tainted 5.6.0-rc1-syzkaller #0
-> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > > > ==================================================================
-> > > >
-> > >
-> > > I think this is a problem for almost all the crypto code.  Due to AF_ALG, both
-> > > the source and destination buffers can be userspace pages that were gotten with
-> > > get_user_pages().  Such pages can be concurrently modified, not just by the
-> > > kernel but also by userspace.
-> > >
-> > > I'm not sure what can be done about this.
-> >
-> > Oh, I thought it's something more serious like a shared crypto object.
-> > Thanks for debugging.
-> > I think I've seen this before in another context (b/149818448):
-> >
-> > BUG: KCSAN: data-race in copyin / copyin
-> >
-> > write to 0xffff888103c8b000 of 4096 bytes by task 20917 on cpu 0:
-> >  instrument_copy_from_user include/linux/instrumented.h:106 [inline]
-> >  copyin+0xab/0xc0 lib/iov_iter.c:151
-> >  copy_page_from_iter_iovec lib/iov_iter.c:296 [inline]
-> >  copy_page_from_iter+0x23f/0x5f0 lib/iov_iter.c:942
-> >  process_vm_rw_pages mm/process_vm_access.c:46 [inline]
-> >  process_vm_rw_single_vec mm/process_vm_access.c:120 [inline]
-> >  process_vm_rw_core.isra.0+0x448/0x820 mm/process_vm_access.c:218
-> >  process_vm_rw+0x1c4/0x1e0 mm/process_vm_access.c:286
-> >  __do_sys_process_vm_writev mm/process_vm_access.c:308 [inline]
-> >  __se_sys_process_vm_writev mm/process_vm_access.c:303 [inline]
-> >  __x64_sys_process_vm_writev+0x8b/0xb0 mm/process_vm_access.c:303
-> >  do_syscall_64+0xcc/0x3a0 arch/x86/entry/common.c:294
-> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >
-> > write to 0xffff888103c8b000 of 4096 bytes by task 20918 on cpu 1:
-> >  instrument_copy_from_user include/linux/instrumented.h:106 [inline]
-> >  copyin+0xab/0xc0 lib/iov_iter.c:151
-> >  copy_page_from_iter_iovec lib/iov_iter.c:296 [inline]
-> >  copy_page_from_iter+0x23f/0x5f0 lib/iov_iter.c:942
-> >  process_vm_rw_pages mm/process_vm_access.c:46 [inline]
-> >  process_vm_rw_single_vec mm/process_vm_access.c:120 [inline]
-> >  process_vm_rw_core.isra.0+0x448/0x820 mm/process_vm_access.c:218
-> >  process_vm_rw+0x1c4/0x1e0 mm/process_vm_access.c:286
-> >  __do_sys_process_vm_writev mm/process_vm_access.c:308 [inline]
-> >  __se_sys_process_vm_writev mm/process_vm_access.c:303 [inline]
-> >  __x64_sys_process_vm_writev+0x8b/0xb0 mm/process_vm_access.c:303
-> >  do_syscall_64+0xcc/0x3a0 arch/x86/entry/common.c:294
-> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >
-> >
-> > Marco, I think we need to ignore all memory that comes from
-> > get_user_pages() somehow. Either not set watchpoints at all, or
-> > perhaps filter them out later if the check is not totally free.
+On Wed, Apr 01, 2020 at 08:34:47AM -0400, Brian Foster wrote:
+> On Tue, Mar 31, 2020 at 05:57:24PM -0400, Qian Cai wrote:
+> > Ever since two days ago, linux-next starts to trigger xfs metadata corruption
+> > during compilation workloads on both powerpc and arm64,
+> > 
+> > I suspect it could be one of those commits,
+> > 
+> > https://lore.kernel.org/linux-xfs/20200328182533.GM29339@magnolia/
+> > 
+> > Especially, those commits that would mark corruption more aggressively?
+> > 
+> >       [8d57c21600a5] xfs: add a function to deal with corrupt buffers post-verifiers
+> >       [e83cf875d67a] xfs: xfs_buf_corruption_error should take __this_address
+> >       [ce99494c9699] xfs: fix buffer corruption reporting when xfs_dir3_free_header_check fails
+> >       [1cb5deb5bc09] xfs: don't ever return a stale pointer from __xfs_dir3_free_read
+> >       [6fb5aac73310] xfs: check owner of dir3 free blocks
+> >       [a10c21ed5d52] xfs: check owner of dir3 data blocks
+> >       [1b2c1a63b678] xfs: check owner of dir3 blocks
+> >       [2e107cf869ee] xfs: mark dir corrupt when lookup-by-hash fails
+> >       [806d3909a57e] xfs: mark extended attr corrupt when lookup-by-hash fails
+> > 
+> > 
+> > [29331.182313][  T665] XFS (dm-2): Metadata corruption detected at xfs_inode_buf_verify+0x2b8/0x350 [xfs], xfs_inode block 0xa9b97900 xfs_inode_buf_verify
+> > xfs_inode_buf_verify at fs/xfs/libxfs/xfs_inode_buf.c:101
+> > [29331.182373][  T665] XFS (dm-2): Unmount and run xfs_repair
+> > [29331.182386][  T665] XFS (dm-2): First 128 bytes of corrupted metadata buffer:
+> > [29331.182402][  T665] 00000000: 2f 2a 20 53 50 44 58 2d 4c 69 63 65 6e 73 65 2d  /* SPDX-License-
+> > [29331.182426][  T665] 00000010: 49 64 65 6e 74 69 66 69 65 72 3a 20 47 50 4c 2d  Identifier: GPL-
+> > [29331.182442][  T665] 00000020: 32 2e 30 2d 6f 72 2d 6c 61 74 65 72 20 2a 2f 0a  2.0-or-later */.
+> > [29331.182467][  T665] 00000030: 2f 2a 0a 20 2a 20 44 65 66 69 6e 69 74 69 6f 6e  /*. * Definition
+> > [29331.182492][  T665] 00000040: 73 20 61 6e 64 20 70 6c 61 74 66 6f 72 6d 20 64  s and platform d
+> > [29331.182517][  T665] 00000050: 61 74 61 20 66 6f 72 20 41 6e 61 6c 6f 67 20 44  ata for Analog D
+> > [29331.182541][  T665] 00000060: 65 76 69 63 65 73 0a 20 2a 20 41 44 50 35 35 32  evices. * ADP552
+> > [29331.182566][  T665] 00000070: 30 2f 41 44 50 35 35 30 31 20 4d 46 44 20 50 4d  0/ADP5501 MFD PM
+> > [29331.182700][ T7490] XFS (dm-2): metadata I/O error in "xfs_imap_to_bp+0x88/0x130 [xfs]" at daddr 0xa9b97900 len 32 error 117
+> > xfs_trans_read_buf at fs/xfs/xfs_trans.h:209
+> > (inlined by) xfs_imap_to_bp at fs/xfs/libxfs/xfs_inode_buf.c:171
+> > [29331.182812][ T7490] XFS (dm-2): xfs_imap_to_bp: xfs_trans_read_buf() returned error -117.
+> > [29331.345347][ T7490] XFS (dm-2): xfs_do_force_shutdown(0x8) called from line 3754 of file fs/xfs/xfs_inode.c. Return address = 0000000058be213e
+> > [29331.345378][ T7490] XFS (dm-2): Corruption of in-memory data detected.  Shutting down filesystem
+> > [29331.345402][ T7490] XFS (dm-2): Please unmount the filesystem and rectify the problem(s)
 > 
-> Makes sense. We already have similar checks, and they're in the
-> slow-path, so it shouldn't be a problem. Let me investigate.
+> I've actually been seeing similar corruption errors in the past day or
+> two but I'd chalked it up to the work and testing I'm doing in my
+> development branch. I'm also on a system/storage configuration that I
+> haven't established trust in yet, fwiw. I have recently rebased to
+> for-next, so I installed that baseline kernel and hit a similar crash
+> after 20 minutes or so of running fsstress. I'm not sure how consistent
+> this failure is yet but I'll see if I can back off from there and narrow
+> it down to a patch...
 > 
 
-I'm wondering whether you really should move so soon to ignoring these races?
-They are still races; the crypto code is doing standard unannotated reads/writes
-of memory that can be concurrently modified.
+A bisect lands at commit 5806165a6663 ("xfs: factor inode lookup from
+xfs_ifree_cluster"). The exact sequence of the error is not clear to me,
+but from inspection the following seems to fix it:
 
-The issue is that fixing it would require adding READ_ONCE() / WRITE_ONCE() in
-hundreds of different places, affecting most crypto-related .c files.
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index 5c930863ed5b..a455be84b2d4 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -2512,7 +2512,7 @@ static struct xfs_inode *
+ xfs_ifree_get_one_inode(
+ 	struct xfs_perag	*pag,
+ 	struct xfs_inode	*free_ip,
+-	int			inum)
++	xfs_ino_t		inum)
+ {
+ 	struct xfs_mount	*mp = pag->pag_mount;
+ 	struct xfs_inode	*ip;
 
-Generally, since encryption and hash algorithms are designed to handle arbitrary
-data anyway, getting different values on each read won't crash the code.  So
-hopefully this isn't a "real" problem.  But it's still undefined behavior.
+Qian, care to confirm?
 
-- Eric
+Brian
+
+> Brian
+> 
+> > [29331.346474][  T498] dm-2: writeback error on inode 934606, offset 0, sector 961072
+> > [29331.346502][  T498] dm-2: writeback error on inode 934607, offset 0, sector 961080
+> > [29331.346624][  T498] dm-2: writeback error on inode 934608, offset 0, sector 961088
+> > [29331.346683][  T498] dm-2: writeback error on inode 1074331758, offset 0, sector 948449704
+> > [29331.347306][  T498] dm-2: writeback error on inode 1074331762, offset 0, sector 948558816
+> > [29331.349165][  T498] dm-2: writeback error on inode 1074331759, offset 0, sector 948560984
+> > [29331.349227][  T498] dm-2: writeback error on inode 1074331760, offset 0, sector 948562944
+> > [29331.349303][  T498] dm-2: writeback error on inode 1074331761, offset 0, sector 948568000
+> > 
+> > [ 7762.204313][T124538] XFS (dm-2): Metadata corruption detected at xfs_inode_buf_verify+0x2b8/0x350 [xfs], xfs_inode block 0x712398e0 xfs_inode_buf_verify
+> > [ 7762.204599][T124538] XFS (dm-2): Unmount and run xfs_repair
+> > [ 7762.204625][T124538] XFS (dm-2): First 128 bytes of corrupted metadata buffer:
+> > [ 7762.204654][T124538] 00000000: 77 65 72 70 63 2f 69 6e 63 6c 75 64 65 2f 67 65  werpc/include/ge
+> > [ 7762.204672][T124538] 00000010: 6e 65 72 61 74 65 64 2f 75 61 70 69 2f 61 73 6d  nerated/uapi/asm
+> > [ 7762.204699][T124538] 00000020: 2f 72 65 73 6f 75 72 63 65 2e 68 20 5c 0a 20 69  /resource.h \. i
+> > [ 7762.204727][T124538] 00000030: 6e 63 6c 75 64 65 2f 61 73 6d 2d 67 65 6e 65 72  nclude/asm-gener
+> > [ 7762.204745][T124538] 00000040: 69 63 2f 72 65 73 6f 75 72 63 65 2e 68 20 69 6e  ic/resource.h in
+> > [ 7762.204783][T124538] 00000050: 63 6c 75 64 65 2f 75 61 70 69 2f 61 73 6d 2d 67  clude/uapi/asm-g
+> > [ 7762.204820][T124538] 00000060: 65 6e 65 72 69 63 2f 72 65 73 6f 75 72 63 65 2e  eneric/resource.
+> > [ 7762.204858][T124538] 00000070: 68 20 5c 0a 20 69 6e 63 6c 75 64 65 2f 6c 69 6e  h \. include/lin
+> > [ 7762.205068][ T7510] XFS (dm-2): metadata I/O error in "xfs_imap_to_bp+0x88/0x130 [xfs]" at daddr 0x712398e0 len 32 error 117
+> > [ 7762.205466][ T7510] XFS (dm-2): xfs_imap_to_bp: xfs_trans_read_buf() returned error -117.
+> > [ 7762.219267][ T7510] XFS (dm-2): xfs_do_force_shutdown(0x8) called from line 3754 of file fs/xfs/xfs_inode.c. Return address = 000000006bce0de3
+> > [ 7762.219291][ T7510] XFS (dm-2): Corruption of in-memory data detected.  Shutting down filesystem
+> > [ 7762.219306][ T7510] XFS (dm-2): Please unmount the filesystem and rectify the problem(s)
+> > 
+> > 
+> > [ 1032.162278][ T1515] XFS (dm-2): Metadata corruption detected at xfs_inode_buf_verify+0x244/0x2bc [xfs], xfs_inode block 0xa2b75dc0 xfs_inode_buf_verify
+> > [ 1032.176156][ T1515] XFS (dm-2): Unmount and run xfs_repair
+> > [ 1032.181835][ T1515] XFS (dm-2): First 128 bytes of corrupted metadata buffer:
+> > [ 1032.189140][ T1515] 00000000: 6e 29 20 22 22 20 76 61 6c 75 65 20 22 22 20 73  n) "" value "" s
+> > [ 1032.197988][ T1515] 00000010: 75 62 73 74 72 28 6c 69 6e 65 2c 20 6c 65 6e 20  ubstr(line, len 
+> > [ 1032.206723][ T1515] 00000020: 2b 20 6b 65 79 6c 65 6e 20 2b 20 33 29 0a 20 20  + keylen + 3).  
+> > [ 1032.215675][ T1515] 00000030: 20 20 20 20 6c 65 6e 20 2b 3d 20 6c 65 6e 67 74      len += lengt
+> > [ 1032.224537][ T1515] 00000040: 68 28 76 61 6c 75 65 29 20 2b 20 6c 65 6e 67 74  h(value) + lengt
+> > [ 1032.233388][ T1515] 00000050: 68 28 66 69 65 6c 64 5b 2b 2b 69 5d 29 0a 20 20  h(field[++i]).  
+> > [ 1032.242234][ T1515] 00000060: 20 20 20 20 73 75 62 73 74 65 64 20 3d 20 31 0a      substed = 1.
+> > [ 1032.251077][ T1515] 00000070: 20 20 20 20 7d 20 65 6c 73 65 0a 20 20 20 20 20      } else.     
+> > [ 1032.260792][ T4119] XFS (dm-2): metadata I/O error in "xfs_imap_to_bp+0xd8/0x18c [xfs]" at daddr 0xa2b75dc0 len 32 error 117
+> > [ 1032.273096][ T4119] XFS (dm-2): xfs_imap_to_bp: xfs_trans_read_buf() returned error -117.
+> > [ 1032.283283][ T4119] XFS (dm-2): xfs_do_force_shutdown(0x8) called from line 3754 of file fs/xfs/xfs_inode.c. Return address = 00000000d99a2721
+> > [ 1032.296214][ T4119] XFS (dm-2): Corruption of in-memory data detected.  Shutting down filesystem
+> > [ 1032.305158][ T4119] XFS (dm-2): Please unmount the filesystem and rectify the problem(s)
+> > 
+> 
+
