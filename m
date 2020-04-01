@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9573319B1DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1816019B26C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389117AbgDAQio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:38:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38490 "EHLO mail.kernel.org"
+        id S2389522AbgDAQnv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:43:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388959AbgDAQim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:38:42 -0400
+        id S1732793AbgDAQnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:43:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F10120658;
-        Wed,  1 Apr 2020 16:38:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E3732063A;
+        Wed,  1 Apr 2020 16:43:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759121;
-        bh=IAoZwNTw/LJYfeiRAw+x03kYdpq+o+xNOD7CYcRqTAQ=;
+        s=default; t=1585759429;
+        bh=GToXniXT+TcobdymTSjFYMLoF1tRlgZ/NIKKH8vjf6Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iUU4k1VyG29hEcQB52BFLsfiQsKrzDVga8OoCUX4Dk4+QIPWL1fOv2dKTS++LntN7
-         7czRZHFYTMNAEsOqXnAzhk76GrGCdV/P1g4j+qiDXNJORPNojjrPp0vpaYi5SO2LyC
-         Nmq7tlYmgOfuvFRule7x1yimmsXVOq/9Jiu3mvZk=
+        b=H1muohoGadTXyeSADhBPRKxPcrC1PPFoGASneYb6ZUKNvjORL+lKh71EAB4MnoCla
+         z/gQRhLIZqN4/AdfCE1AX4btJrvLsYcMn0a23o7a5+PKEAVvvJeQT7yUJZ1/IUuCG/
+         M/fv8skUvb/zANp7RiIgIdVnxat5RMi2qEW4Bucw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 043/102] NFC: fdp: Fix a signedness bug in fdp_nci_send_patch()
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 074/148] cgroup-v1: cgroup_pidlist_next should update position index
 Date:   Wed,  1 Apr 2020 18:17:46 +0200
-Message-Id: <20200401161540.913982783@linuxfoundation.org>
+Message-Id: <20200401161600.483221116@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-[ Upstream commit 0dcdf9f64028ec3b75db6b691560f8286f3898bf ]
+[ Upstream commit db8dd9697238be70a6b4f9d0284cd89f59c0e070 ]
 
-The nci_conn_max_data_pkt_payload_size() function sometimes returns
--EPROTO so "max_size" needs to be signed for the error handling to
-work.  We can make "payload_size" an int as well.
+if seq_file .next fuction does not change position index,
+read after some lseek can generate unexpected output.
 
-Fixes: a06347c04c13 ("NFC: Add Intel Fields Peak NFC solution driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ # mount | grep cgroup
+ # dd if=/mnt/cgroup.procs bs=1  # normal output
+...
+1294
+1295
+1296
+1304
+1382
+584+0 records in
+584+0 records out
+584 bytes copied
+
+dd: /mnt/cgroup.procs: cannot skip to specified offset
+83  <<< generates end of last line
+1383  <<< ... and whole last line once again
+0+1 records in
+0+1 records out
+8 bytes copied
+
+dd: /mnt/cgroup.procs: cannot skip to specified offset
+1386  <<< generates last line anyway
+0+1 records in
+0+1 records out
+5 bytes copied
+
+https://bugzilla.kernel.org/show_bug.cgi?id=206283
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nfc/fdp/fdp.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ kernel/cgroup/cgroup-v1.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/nfc/fdp/fdp.c
-+++ b/drivers/nfc/fdp/fdp.c
-@@ -192,7 +192,7 @@ static int fdp_nci_send_patch(struct nci
- 	const struct firmware *fw;
- 	struct sk_buff *skb;
- 	unsigned long len;
--	u8 max_size, payload_size;
-+	int max_size, payload_size;
- 	int rc = 0;
- 
- 	if ((type == NCI_PATCH_TYPE_OTP && !info->otp_patch) ||
-@@ -215,8 +215,7 @@ static int fdp_nci_send_patch(struct nci
- 
- 	while (len) {
- 
--		payload_size = min_t(unsigned long, (unsigned long) max_size,
--				     len);
-+		payload_size = min_t(unsigned long, max_size, len);
- 
- 		skb = nci_skb_alloc(ndev, (NCI_CTRL_HDR_SIZE + payload_size),
- 				    GFP_KERNEL);
+diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
+index a2c05d2476ac5..d148965180893 100644
+--- a/kernel/cgroup/cgroup-v1.c
++++ b/kernel/cgroup/cgroup-v1.c
+@@ -501,6 +501,7 @@ static void *cgroup_pidlist_next(struct seq_file *s, void *v, loff_t *pos)
+ 	 */
+ 	p++;
+ 	if (p >= end) {
++		(*pos)++;
+ 		return NULL;
+ 	} else {
+ 		*pos = *p;
+-- 
+2.20.1
+
 
 
