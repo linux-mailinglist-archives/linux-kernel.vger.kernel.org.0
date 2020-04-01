@@ -2,125 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 454C719B43C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:00:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4742919AFB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:20:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732968AbgDAQU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:20:28 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34058 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732905AbgDAQUZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:20:25 -0400
-Received: by mail-wr1-f66.google.com with SMTP id 65so813773wrl.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:20:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qJoVQBaRHJQYbVT1GJGTHlpTo29YQGbRt1FnJ8Q12S8=;
-        b=sh8B2DiXOiWdTC/QlWSo5qJq5PlO04nPxzc5xPhwqU0fqQY8HW7uaoPnEZFA6lAqPg
-         ZMaaMUPGE2T6Y+hRWrkIqWUXep1l5SmH9O6KfhlS+iqbje7hSj4qh1IxzEnmQZLU48a8
-         rO9/WiUH6b7WNeZ8MsCj0HRUeuvJT1w+MAF9NiKGKlwkNBytTNtRobTiGx6uf0Au8elq
-         ztGVxx3us1OW9tFYn3C9AhUunrXUxsn967RZeV5aMLpxmwn/k8a8vzJLmx/w5PP9HOYL
-         ongIMp0xVXong+l/M/4jX46dIlFbb2d4YxzLNfF4C5ba2spvOOydscrC6KL1P0eaVynz
-         Gmlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qJoVQBaRHJQYbVT1GJGTHlpTo29YQGbRt1FnJ8Q12S8=;
-        b=VAnsefP/44aohK7wzZNQ8w7fpM8p3iB0lJ0VGsDbk/pZfZYzgMyF1OLn5qKILRT6Gy
-         VI2yQAW4uRTczm/aOFq6vyfDzIU7MNl1JCJhzjH1dLneRQBwcGrHY75BGHWBqvpPhPVm
-         xXoPhvbhVeGnc3HGroQLlvDPldQ1YR8Axs4jqq5nF/ZgPKZV2U920gcWcDj/IQ7KT0xt
-         MfW/7S1pf9yNuIeuwoZeVza/vRJ8BnMRCF/gUWzH86Rm9zrCo2u8BdQQdTf8a22LMoqD
-         O8hsxNG2u3Ye3OBPPgvnmajGnou4A5/nwQyQPef0uZ210DeMAzrvzfrmR7EM2N1f1vH3
-         tJ+g==
-X-Gm-Message-State: ANhLgQ3mYejQ+496YQi+BGJxgCcI9TB+nPnI/Vm+nXd7R+X2tTszjcVa
-        2mM4Vukw5zMpYc9qJCXSyAQ=
-X-Google-Smtp-Source: ADFU+vv4V0fyp0xmIa06RHGv+1mqQNSwKoo8SzC6ChqvoD/UnqpyMnlCM/3PalLUrlCNEolzghMMgw==
-X-Received: by 2002:a05:6000:1c4:: with SMTP id t4mr25772479wrx.89.1585758023215;
-        Wed, 01 Apr 2020 09:20:23 -0700 (PDT)
-Received: from localhost.localdomain ([213.137.85.32])
-        by smtp.googlemail.com with ESMTPSA id q9sm3871009wrp.84.2020.04.01.09.20.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Apr 2020 09:20:22 -0700 (PDT)
-From:   Daniel Shaulov <daniel.shaulov@gmail.com>
-X-Google-Original-From: Daniel Shaulov <daniel.shaulov@granulate.io>
-Cc:     Daniel Shaulov <daniel.shaulov@granulate.io>,
-        Peter Zijlstra <peterz@infradead.org>,
+        id S1732121AbgDAQUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:20:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43150 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733018AbgDAQUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:20:31 -0400
+Received: from gmail.com (unknown [104.132.1.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F72020658;
+        Wed,  1 Apr 2020 16:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585758030;
+        bh=8V5ySJp6dKmMDd4qsHqMtGhs0GOyBgG7cv8CBjvA5p0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hueEbZyr2b62S+jA7pZBn0YNOhGWyklG0QV4lQtMadslrE1yEzaiOrUCltN7ujRMN
+         M1t1aaaA4Wc2OVgk5/G4NKChua6T3CUJAI3iDU36sqkuIdcXBhGQPfkSU68knLQ2JT
+         ncj4zL9kYdqvdad6y2pYggEauqH6KuuXRgFlzKXU=
+Date:   Wed, 1 Apr 2020 09:20:28 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Marco Elver <elver@google.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+6a6bca8169ffda8ce77b@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] perf probe: Add support for DW_OP_call_frame_cfa vars
-Date:   Wed,  1 Apr 2020 19:19:52 +0300
-Message-Id: <20200401161954.44640-1-daniel.shaulov@granulate.io>
-X-Mailer: git-send-email 2.22.0
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: KCSAN: data-race in glue_cbc_decrypt_req_128bit /
+ glue_cbc_decrypt_req_128bit
+Message-ID: <20200401162028.GA201933@gmail.com>
+References: <0000000000009d5cef05a22baa95@google.com>
+ <20200331202706.GA127606@gmail.com>
+ <CACT4Y+ZSTjPmPmiL_1JEdroNZXYgaKewDBEH6RugnhsDVd+bUQ@mail.gmail.com>
+ <CANpmjNPkzTSwtJhRXWE0DYi8mToDufuOztjE4h9KopZ11T+q+w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNPkzTSwtJhRXWE0DYi8mToDufuOztjE4h9KopZ11T+q+w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for probes on variables with DW_OP_call_frame_cfa
-as the dwarf operation in the debug info.
+On Wed, Apr 01, 2020 at 12:24:01PM +0200, Marco Elver wrote:
+> On Wed, 1 Apr 2020 at 09:04, Dmitry Vyukov <dvyukov@google.com> wrote:
+> >
+> > On Tue, Mar 31, 2020 at 10:27 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > On Tue, Mar 31, 2020 at 12:35:13PM -0700, syzbot wrote:
+> > > > Hello,
+> > > >
+> > > > syzbot found the following crash on:
+> > > >
+> > > > HEAD commit:    b12d66a6 mm, kcsan: Instrument SLAB free with ASSERT_EXCLU..
+> > > > git tree:       https://github.com/google/ktsan.git kcsan
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=111f0865e00000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=10bc0131c4924ba9
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=6a6bca8169ffda8ce77b
+> > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > >
+> > > > Unfortunately, I don't have any reproducer for this crash yet.
+> > > >
+> > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > > Reported-by: syzbot+6a6bca8169ffda8ce77b@syzkaller.appspotmail.com
+> > > >
+> > > > ==================================================================
+> > > > BUG: KCSAN: data-race in glue_cbc_decrypt_req_128bit / glue_cbc_decrypt_req_128bit
+> > > >
+> > > > write to 0xffff88809966e128 of 8 bytes by task 24119 on cpu 0:
+> > > >  u128_xor include/crypto/b128ops.h:67 [inline]
+> > > >  glue_cbc_decrypt_req_128bit+0x396/0x460 arch/x86/crypto/glue_helper.c:144
+> > > >  cbc_decrypt+0x26/0x40 arch/x86/crypto/serpent_avx2_glue.c:152
+> > > >  crypto_skcipher_decrypt+0x65/0x90 crypto/skcipher.c:652
+> > > >  _skcipher_recvmsg crypto/algif_skcipher.c:142 [inline]
+> > > >  skcipher_recvmsg+0x7fa/0x8c0 crypto/algif_skcipher.c:161
+> > > >  skcipher_recvmsg_nokey+0x5e/0x80 crypto/algif_skcipher.c:279
+> > > >  sock_recvmsg_nosec net/socket.c:886 [inline]
+> > > >  sock_recvmsg net/socket.c:904 [inline]
+> > > >  sock_recvmsg+0x92/0xb0 net/socket.c:900
+> > > >  ____sys_recvmsg+0x167/0x3a0 net/socket.c:2566
+> > > >  ___sys_recvmsg+0xb2/0x100 net/socket.c:2608
+> > > >  __sys_recvmsg+0x9d/0x160 net/socket.c:2642
+> > > >  __do_sys_recvmsg net/socket.c:2652 [inline]
+> > > >  __se_sys_recvmsg net/socket.c:2649 [inline]
+> > > >  __x64_sys_recvmsg+0x51/0x70 net/socket.c:2649
+> > > >  do_syscall_64+0xcc/0x3a0 arch/x86/entry/common.c:294
+> > > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > > >
+> > > > read to 0xffff88809966e128 of 8 bytes by task 24118 on cpu 1:
+> > > >  u128_xor include/crypto/b128ops.h:67 [inline]
+> > > >  glue_cbc_decrypt_req_128bit+0x37c/0x460 arch/x86/crypto/glue_helper.c:144
+> > > >  cbc_decrypt+0x26/0x40 arch/x86/crypto/serpent_avx2_glue.c:152
+> > > >  crypto_skcipher_decrypt+0x65/0x90 crypto/skcipher.c:652
+> > > >  _skcipher_recvmsg crypto/algif_skcipher.c:142 [inline]
+> > > >  skcipher_recvmsg+0x7fa/0x8c0 crypto/algif_skcipher.c:161
+> > > >  skcipher_recvmsg_nokey+0x5e/0x80 crypto/algif_skcipher.c:279
+> > > >  sock_recvmsg_nosec net/socket.c:886 [inline]
+> > > >  sock_recvmsg net/socket.c:904 [inline]
+> > > >  sock_recvmsg+0x92/0xb0 net/socket.c:900
+> > > >  ____sys_recvmsg+0x167/0x3a0 net/socket.c:2566
+> > > >  ___sys_recvmsg+0xb2/0x100 net/socket.c:2608
+> > > >  __sys_recvmsg+0x9d/0x160 net/socket.c:2642
+> > > >  __do_sys_recvmsg net/socket.c:2652 [inline]
+> > > >  __se_sys_recvmsg net/socket.c:2649 [inline]
+> > > >  __x64_sys_recvmsg+0x51/0x70 net/socket.c:2649
+> > > >  do_syscall_64+0xcc/0x3a0 arch/x86/entry/common.c:294
+> > > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > > >
+> > > > Reported by Kernel Concurrency Sanitizer on:
+> > > > CPU: 1 PID: 24118 Comm: syz-executor.1 Not tainted 5.6.0-rc1-syzkaller #0
+> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> > > > ==================================================================
+> > > >
+> > >
+> > > I think this is a problem for almost all the crypto code.  Due to AF_ALG, both
+> > > the source and destination buffers can be userspace pages that were gotten with
+> > > get_user_pages().  Such pages can be concurrently modified, not just by the
+> > > kernel but also by userspace.
+> > >
+> > > I'm not sure what can be done about this.
+> >
+> > Oh, I thought it's something more serious like a shared crypto object.
+> > Thanks for debugging.
+> > I think I've seen this before in another context (b/149818448):
+> >
+> > BUG: KCSAN: data-race in copyin / copyin
+> >
+> > write to 0xffff888103c8b000 of 4096 bytes by task 20917 on cpu 0:
+> >  instrument_copy_from_user include/linux/instrumented.h:106 [inline]
+> >  copyin+0xab/0xc0 lib/iov_iter.c:151
+> >  copy_page_from_iter_iovec lib/iov_iter.c:296 [inline]
+> >  copy_page_from_iter+0x23f/0x5f0 lib/iov_iter.c:942
+> >  process_vm_rw_pages mm/process_vm_access.c:46 [inline]
+> >  process_vm_rw_single_vec mm/process_vm_access.c:120 [inline]
+> >  process_vm_rw_core.isra.0+0x448/0x820 mm/process_vm_access.c:218
+> >  process_vm_rw+0x1c4/0x1e0 mm/process_vm_access.c:286
+> >  __do_sys_process_vm_writev mm/process_vm_access.c:308 [inline]
+> >  __se_sys_process_vm_writev mm/process_vm_access.c:303 [inline]
+> >  __x64_sys_process_vm_writev+0x8b/0xb0 mm/process_vm_access.c:303
+> >  do_syscall_64+0xcc/0x3a0 arch/x86/entry/common.c:294
+> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> >
+> > write to 0xffff888103c8b000 of 4096 bytes by task 20918 on cpu 1:
+> >  instrument_copy_from_user include/linux/instrumented.h:106 [inline]
+> >  copyin+0xab/0xc0 lib/iov_iter.c:151
+> >  copy_page_from_iter_iovec lib/iov_iter.c:296 [inline]
+> >  copy_page_from_iter+0x23f/0x5f0 lib/iov_iter.c:942
+> >  process_vm_rw_pages mm/process_vm_access.c:46 [inline]
+> >  process_vm_rw_single_vec mm/process_vm_access.c:120 [inline]
+> >  process_vm_rw_core.isra.0+0x448/0x820 mm/process_vm_access.c:218
+> >  process_vm_rw+0x1c4/0x1e0 mm/process_vm_access.c:286
+> >  __do_sys_process_vm_writev mm/process_vm_access.c:308 [inline]
+> >  __se_sys_process_vm_writev mm/process_vm_access.c:303 [inline]
+> >  __x64_sys_process_vm_writev+0x8b/0xb0 mm/process_vm_access.c:303
+> >  do_syscall_64+0xcc/0x3a0 arch/x86/entry/common.c:294
+> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> >
+> >
+> > Marco, I think we need to ignore all memory that comes from
+> > get_user_pages() somehow. Either not set watchpoints at all, or
+> > perhaps filter them out later if the check is not totally free.
+> 
+> Makes sense. We already have similar checks, and they're in the
+> slow-path, so it shouldn't be a problem. Let me investigate.
+> 
 
-Some compilers (specifically Golang compiler) output
-DW_OP_call_frame_cfa instead of DW_OP_fbreg for variables
-on the stack. If DW_OP_call_frame_cfa is the only expression
-than it is the same as DW_OP_fbreg with an offset of zero.
-In the case of the Golang compiler, DW_OP_call_frame_cfa may
-be followed by DW_OP_consts, with a number and than DW_OP_plus.
-This trio is the same as DW_OP_fbreg with the number from
-DW_OP_consts as the offset.
+I'm wondering whether you really should move so soon to ignoring these races?
+They are still races; the crypto code is doing standard unannotated reads/writes
+of memory that can be concurrently modified.
 
-With this change, probing on functions in Golang with variables works.
+The issue is that fixing it would require adding READ_ONCE() / WRITE_ONCE() in
+hundreds of different places, affecting most crypto-related .c files.
 
-Signed-off-by: Daniel Shaulov <daniel.shaulov@granulate.io>
----
- tools/perf/util/probe-finder.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+Generally, since encryption and hash algorithms are designed to handle arbitrary
+data anyway, getting different values on each read won't crash the code.  So
+hopefully this isn't a "real" problem.  But it's still undefined behavior.
 
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index e4cff49384f4..866b17aea263 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -240,11 +240,23 @@ static int convert_variable_location(Dwarf_Die *vr_die, Dwarf_Addr addr,
- 	}
- 
- 	/* If this is based on frame buffer, set the offset */
--	if (op->atom == DW_OP_fbreg) {
-+	if (op->atom == DW_OP_fbreg || op->atom == DW_OP_call_frame_cfa) {
- 		if (fb_ops == NULL)
- 			return -ENOTSUP;
- 		ref = true;
--		offs = op->number;
-+		if (op->atom == DW_OP_fbreg) {
-+			offs = op->number;
-+		} else if (nops == 3) {
-+			/*
-+			 * In the case of DW_OP_call_frame_cfa, we either have
-+			 * an offset of 0 or we have two more expressions that
-+			 * add a const
-+			 */
-+			if ((op + 1)->atom != DW_OP_consts ||
-+			    (op + 2)->atom != DW_OP_plus)
-+				return -ENOTSUP;
-+			offs = (op + 1)->number;
-+		}
- 		op = &fb_ops[0];
- 	}
- 
--- 
-2.22.0
-
+- Eric
