@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78CF519B25F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4725319B0BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389619AbgDAQn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:43:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44164 "EHLO mail.kernel.org"
+        id S2387657AbgDAQ3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:29:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389459AbgDAQnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:43:24 -0400
+        id S2387558AbgDAQ3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:29:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 122302063A;
-        Wed,  1 Apr 2020 16:43:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D662420BED;
+        Wed,  1 Apr 2020 16:29:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759403;
-        bh=+4TU2j85QaBbPTyUaEv5pNZ13HPIguW05u2KrMkHw/w=;
+        s=default; t=1585758543;
+        bh=eaZtXvrvNclIweD2DXp8T7YbxLOfq85xDuyOa6hnfmY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uMN/i5A+XGiVHPr6o4RABs2aYLIgShs6j5Z6Cj5nCSx2Q8rjVpY52/b4FkzrkeaQ0
-         bHBxCAxg/8jaDvmSSr8+aD+VhvLzfHAvbfPfd4FclsSK+g8mJGE71V/uYsX43GZMln
-         jPUtVBfYp+sSdsVqEFY62lOqqSpPOlJEpuUnknD4=
+        b=u44+FdVyDhebifXLuHUunUPxkLw7z+NCZXE9YX5dK5AmCsqqUBjuEI25YdOIPMENu
+         ANg+/LIA/zMUhXbuNyDihPRn+76QOZjjLoNWqpYTULj/aXNQO3ayy/TJMlq53Vjlf3
+         rTAAxrsoDu9+P3+CGbwONfl2FUUOXFjZ45JA5mis=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Smith <andrew.smith@digi.com>,
-        =?UTF-8?q?Ren=C3=A9=20van=20Dorst?= <opensource@vdorst.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 068/148] net: dsa: mt7530: Change the LINK bit to reflect the link status
+        stable@vger.kernel.org, Mans Rullgard <mans@mansr.com>,
+        Bin Liu <b-liu@ti.com>
+Subject: [PATCH 4.19 084/116] usb: musb: fix crash with highmen PIO and usbmon
 Date:   Wed,  1 Apr 2020 18:17:40 +0200
-Message-Id: <20200401161600.097576252@linuxfoundation.org>
+Message-Id: <20200401161553.239473470@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +43,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "René van Dorst" <opensource@vdorst.com>
+From: Mans Rullgard <mans@mansr.com>
 
-[ Upstream commit 22259471b51925353bd7b16f864c79fdd76e425e ]
+commit 52974d94a206ce428d9d9b6eaa208238024be82a upstream.
 
-Andrew reported:
+When handling a PIO bulk transfer with highmem buffer, a temporary
+mapping is assigned to urb->transfer_buffer.  After the transfer is
+complete, an invalid address is left behind in this pointer.  This is
+not ordinarily a problem since nothing touches that buffer before the
+urb is released.  However, when usbmon is active, usbmon_urb_complete()
+calls (indirectly) mon_bin_get_data() which does access the transfer
+buffer if it is set.  To prevent an invalid memory access here, reset
+urb->transfer_buffer to NULL when finished (musb_host_rx()), or do not
+set it at all (musb_host_tx()).
 
-After a number of network port link up/down changes, sometimes the switch
-port gets stuck in a state where it thinks it is still transmitting packets
-but the cpu port is not actually transmitting anymore. In this state you
-will see a message on the console
-"mtk_soc_eth 1e100000.ethernet eth0: transmit timed out" and the Tx counter
-in ifconfig will be incrementing on virtual port, but not incrementing on
-cpu port.
-
-The issue is that MAC TX/RX status has no impact on the link status or
-queue manager of the switch. So the queue manager just queues up packets
-of a disabled port and sends out pause frames when the queue is full.
-
-Change the LINK bit to reflect the link status.
-
-Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
-Reported-by: Andrew Smith <andrew.smith@digi.com>
-Signed-off-by: RenÃ© van Dorst <opensource@vdorst.com>
-Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 8e8a55165469 ("usb: musb: host: Handle highmem in PIO mode")
+Signed-off-by: Mans Rullgard <mans@mansr.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Link: https://lore.kernel.org/r/20200316211136.2274-8-b-liu@ti.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/dsa/mt7530.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/dsa/mt7530.c
-+++ b/drivers/net/dsa/mt7530.c
-@@ -549,7 +549,7 @@ mt7530_mib_reset(struct dsa_switch *ds)
- static void
- mt7530_port_set_status(struct mt7530_priv *priv, int port, int enable)
- {
--	u32 mask = PMCR_TX_EN | PMCR_RX_EN;
-+	u32 mask = PMCR_TX_EN | PMCR_RX_EN | PMCR_FORCE_LNK;
+---
+ drivers/usb/musb/musb_host.c |   17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
+
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -1462,10 +1462,7 @@ done:
+ 	 * We need to map sg if the transfer_buffer is
+ 	 * NULL.
+ 	 */
+-	if (!urb->transfer_buffer)
+-		qh->use_sg = true;
+-
+-	if (qh->use_sg) {
++	if (!urb->transfer_buffer) {
+ 		/* sg_miter_start is already done in musb_ep_program */
+ 		if (!sg_miter_next(&qh->sg_miter)) {
+ 			dev_err(musb->controller, "error: sg list empty\n");
+@@ -1473,9 +1470,8 @@ done:
+ 			status = -EINVAL;
+ 			goto done;
+ 		}
+-		urb->transfer_buffer = qh->sg_miter.addr;
+ 		length = min_t(u32, length, qh->sg_miter.length);
+-		musb_write_fifo(hw_ep, length, urb->transfer_buffer);
++		musb_write_fifo(hw_ep, length, qh->sg_miter.addr);
+ 		qh->sg_miter.consumed = length;
+ 		sg_miter_stop(&qh->sg_miter);
+ 	} else {
+@@ -1484,11 +1480,6 @@ done:
  
- 	if (enable)
- 		mt7530_set(priv, MT7530_PMCR_P(port), mask);
+ 	qh->segsize = length;
+ 
+-	if (qh->use_sg) {
+-		if (offset + length >= urb->transfer_buffer_length)
+-			qh->use_sg = false;
+-	}
+-
+ 	musb_ep_select(mbase, epnum);
+ 	musb_writew(epio, MUSB_TXCSR,
+ 			MUSB_TXCSR_H_WZC_BITS | MUSB_TXCSR_TXPKTRDY);
+@@ -2003,8 +1994,10 @@ finish:
+ 	urb->actual_length += xfer_len;
+ 	qh->offset += xfer_len;
+ 	if (done) {
+-		if (qh->use_sg)
++		if (qh->use_sg) {
+ 			qh->use_sg = false;
++			urb->transfer_buffer = NULL;
++		}
+ 
+ 		if (urb->status == -EINPROGRESS)
+ 			urb->status = status;
 
 
