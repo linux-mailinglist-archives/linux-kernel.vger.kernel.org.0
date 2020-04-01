@@ -2,128 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 936BE19B5FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE93B19B603
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:54:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732543AbgDASxl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 14:53:41 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33930 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbgDASxk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 14:53:40 -0400
-Received: by mail-wm1-f66.google.com with SMTP id c195so4188293wme.1;
-        Wed, 01 Apr 2020 11:53:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gABD0nQMKQ+AayjxHslKqozn5LgoJ0N6roIyuryx81M=;
-        b=NXEWtNr0W+1Z6G7PgZVmAnAHWnbpfJtpnmkbtu76pd/ueWaYnh0jWUETLUXXzmXyP6
-         ibmyp/Pjalh95x6mLMfXRZ9L28yuNwc+ndq18+ggb4p0rZS0BYwxg49rUU2STuDC5yga
-         HzLZlP2BiHJYMJ6QrQvV5PwE3JT++lNBdvRv+q/3CkqXhmSW9/xhUKEME5wo8bNrMkIm
-         kCxpehG3OyuR8kJOsrTROI8CciI/XcfvOvuVCTaXe/MoBj1LYix++Gve9rZRDxYhY3/w
-         rQe3Ev6Y6+AqLEayJnae7rM4nLHssS+fvjj8nI22fUcpiT34yc56wfxghOBPhuNu2KlH
-         4dKw==
-X-Gm-Message-State: AGi0PuanXjKWOe3gM7FDEqgshbzVh/At2HUto62PeJxPxPft2O2YTi2g
-        kcHa4A2920qOd4prOtZ+f4M=
-X-Google-Smtp-Source: APiQypLYYrp2fUjosqz6TqlRn2Br/HKN0fbVC9t7zSABK/GBt5LHLk8cLtpJr6pH5BRTkiAE+C/aaQ==
-X-Received: by 2002:a7b:c050:: with SMTP id u16mr6117812wmc.68.1585767219131;
-        Wed, 01 Apr 2020 11:53:39 -0700 (PDT)
-Received: from debian (44.142.6.51.dyn.plus.net. [51.6.142.44])
-        by smtp.gmail.com with ESMTPSA id h132sm3977863wmf.18.2020.04.01.11.53.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 11:53:38 -0700 (PDT)
-Date:   Wed, 1 Apr 2020 19:53:36 +0100
-From:   Wei Liu <wei.liu@kernel.org>
-To:     Tianyu Lan <ltykernel@gmail.com>
-Cc:     Michael Kelley <mikelley@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <liuwe@microsoft.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        vkuznets <vkuznets@redhat.com>, Wei Liu <wei.liu@kernel.org>
-Subject: Re: [PATCH V4 6/6] x86/Hyper-V: Report crash data in die() when
- panic_on_oops is set
-Message-ID: <20200401185336.fsnwxejwn3nd5lhx@debian>
-References: <20200324075720.9462-7-Tianyu.Lan@microsoft.com>
- <20200331073832.12204-1-Tianyu.Lan@microsoft.com>
- <MW2PR2101MB1052A8FEF85F381B3EAF7D36D7C80@MW2PR2101MB1052.namprd21.prod.outlook.com>
- <9eb81216-8e00-64e5-ab1c-b363983b245e@gmail.com>
+        id S1732308AbgDASyl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 14:54:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727541AbgDASyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 14:54:40 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E8EF206F5;
+        Wed,  1 Apr 2020 18:54:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585767279;
+        bh=k7sUy1LckokKCq2t+CbZYwxrRl/pN5BuQ9TB1aBzy3s=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=MelMnNfTeXQKB2DLtL0mdeiiR66K6cabljyah83phWY7fdJUjLuPt4zCaK7fbv34z
+         sf7GNcZ4tb6Y8cyamfZeYMytmvw3aktkQ2uzTnGYopg9J4KqjlBGMnPPod5zuWLsWR
+         TQIb+KijMaQ2MXLmp8humArdY09lhSqBVn5Q2b+A=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 4314F35226B3; Wed,  1 Apr 2020 11:54:39 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 11:54:39 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        rcu@vger.kernel.org, willy@infradead.org, peterz@infradead.org,
+        neilb@suse.com, vbabka@suse.cz, mgorman@suse.de,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC] rcu/tree: Use GFP_MEMALLOC for alloc memory to free
+ memory pattern
+Message-ID: <20200401185439.GG19865@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200331131628.153118-1-joel@joelfernandes.org>
+ <20200331140433.GA26498@pc636>
+ <20200331150911.GC236678@google.com>
+ <20200331160119.GA27614@pc636>
+ <20200331183000.GD236678@google.com>
+ <20200401122550.GA32593@pc636>
+ <20200401134745.GV19865@paulmck-ThinkPad-P72>
+ <20200401181601.GA4042@pc636>
+ <20200401182615.GE19865@paulmck-ThinkPad-P72>
+ <20200401183745.GA5960@pc636>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9eb81216-8e00-64e5-ab1c-b363983b245e@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200401183745.GA5960@pc636>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 10:26:06PM +0800, Tianyu Lan wrote:
-> 
-> 
-> On 3/31/2020 9:51 PM, Michael Kelley wrote:
-> > From: Tianyu Lan <Tianyu.Lan@microsoft.com> Sent: Tuesday, March 31, 2020 12:39 AM
+On Wed, Apr 01, 2020 at 08:37:45PM +0200, Uladzislau Rezki wrote:
+> On Wed, Apr 01, 2020 at 11:26:15AM -0700, Paul E. McKenney wrote:
+> > On Wed, Apr 01, 2020 at 08:16:01PM +0200, Uladzislau Rezki wrote:
+> > > > > > 
+> > > > > > Right. Per discussion with Paul, we discussed that it is better if we
+> > > > > > pre-allocate N number of array blocks per-CPU and use it for the cache.
+> > > > > > Default for N being 1 and tunable with a boot parameter. I agree with this.
+> > > > > > 
+> > > > > As discussed before, we can make use of memory pool API for such
+> > > > > purpose. But i am not sure if it should be one pool per CPU or
+> > > > > one pool per NR_CPUS, that would contain NR_CPUS * N pre-allocated
+> > > > > blocks.
+> > > > 
+> > > > There are advantages and disadvantages either way.  The advantage of the
+> > > > per-CPU pool is that you don't have to worry about something like lock
+> > > > contention causing even more pain during an OOM event.  One potential
+> > > > problem wtih the per-CPU pool can happen when callbacks are offloaded,
+> > > > in which case the CPUs needing the memory might never be getting it,
+> > > > because in the offloaded case (RCU_NOCB_CPU=y) the CPU posting callbacks
+> > > > might never be invoking them.
+> > > > 
+> > > > But from what I know now, systems built with CONFIG_RCU_NOCB_CPU=y
+> > > > either don't have heavy callback loads (HPC systems) or are carefully
+> > > > configured (real-time systems).  Plus large systems would probably end
+> > > > up needing something pretty close to a slab allocator to keep from dying
+> > > > from lock contention, and it is hard to justify that level of complexity
+> > > > at this point.
+> > > > 
+> > > > Or is there some way to mark a specific slab allocator instance as being
+> > > > able to keep some amount of memory no matter what the OOM conditions are?
+> > > > If not, the current per-CPU pre-allocated cache is a better choice in the
+> > > > near term.
+> > > > 
+> > > As for mempool API:
 > > > 
-> > > When oops happens with panic_on_oops unset, the oops
-> > > thread is killed by die() and system continues to run.
-> > > In such case, guest should not report crash register
-> > > data to host since system still runs. Fix it.
+> > > mempool_alloc() just tries to make regular allocation taking into
+> > > account passed gfp_t bitmask. If it fails due to memory pressure,
+> > > it uses reserved preallocated pool that consists of number of
+> > > desirable elements(preallocated when a pool is created).
 > > > 
-> > > Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-> > > Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
-> > > ---
-> > > Change since v3:
-> > > 	Fix compile error
-> > > ---
-> > >   drivers/hv/vmbus_drv.c | 3 ++-
-> > >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> > > index 172ceae69abb..4bc02aea2098 100644
-> > > --- a/drivers/hv/vmbus_drv.c
-> > > +++ b/drivers/hv/vmbus_drv.c
-> > > @@ -31,6 +31,7 @@
-> > >   #include <linux/kdebug.h>
-> > >   #include <linux/efi.h>
-> > >   #include <linux/random.h>
-> > > +#include <linux/kernel.h>
+> > > mempoll_free() returns an element to to pool, if it detects that
+> > > current reserved elements are lower then minimum allowed elements,
+> > > it will add an element to reserved pool, i.e. refill it. Otherwise
+> > > just call kfree() or whatever we define as "element-freeing function."
 > > 
-> > Unfortunately, adding the #include doesn't solve the problem.  The error occurs when
-> > CONFIG_HYPERV=m, because panic_on_oops is not exported.  I haven't thought it
-> > through, but hopefully there's a solution where panic_on_oops can be tested in
-> > hyperv_report_panic() or some other Hyper-V specific function that's never in a
-> > module, so that we don't need to export panic_on_oops.
-> 
-> Yes, I don't consider modules case. I think we may introduce a check
-> function of panic_on_oops in the mshyperv.c and expose it to module.
-> 
+> > Unless I am missing something, mempool_alloc() acquires a per-mempool
+> > lock on each invocation under OOM conditions.  For our purposes, this
+> > is essentially a global lock.  This will not be at all acceptable on a
+> > large system.
+> > 
+> It uses pool->lock to access to reserved objects, so if we have one memory
+> pool per one CPU then it would be serialized.
 
-Why expose something new? You can just test panic_on_oops in
-hyperv_report_panic and bail if it is false, right?
+I am having difficulty parsing your sentence.  It looks like your thought
+is to invoke mempool_create() for each CPU, so that the locking would be
+on a per-CPU basis, as in 128 invocations of mempool_init() on a system
+having 128 hardware threads.  Is that your intent?
 
-Something like the following (not compiled) diff:
-
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index b0da5320bcff..0dc229a9142c 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -424,6 +424,9 @@ void hyperv_report_panic(struct pt_regs *regs, long err)
-        static bool panic_reported;
-        u64 guest_id;
-
-+       if (!panic_on_oops)
-+               return;
-+
-        /*
-         * We prefer to report panic on 'die' chain as we have proper
-         * registers to report, but if we miss it (e.g. on BUG()) we need
-
-I haven't checked all the error reporting paths and don't know if this
-works or not though.
-
-Wei.
+							Thanx, Paul
