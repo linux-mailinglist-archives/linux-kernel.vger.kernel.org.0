@@ -2,112 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D556519A904
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 855A919A917
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:02:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732123AbgDAJ7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 05:59:39 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41964 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbgDAJ7i (ORCPT
+        id S1732205AbgDAKCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:02:52 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45354 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbgDAKCv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 05:59:38 -0400
-Received: by mail-pf1-f195.google.com with SMTP id a24so5035504pfc.8;
-        Wed, 01 Apr 2020 02:59:36 -0700 (PDT)
+        Wed, 1 Apr 2020 06:02:51 -0400
+Received: by mail-lj1-f193.google.com with SMTP id t17so25154536ljc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 03:02:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=unikie-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id;
-        bh=ZFJYkNTLPTvW0oZP4hQZw69H17w9e4DABkwJauGrsvo=;
-        b=eL4q4H6Zt5YlAbKdGHOx9nPUwYyeVLd8gWzbyNjMb+PArhgTPXrdrN0vGoqynXZCHM
-         bTUPxgvwyvLNWUmWikJB96MLc/q7p99Whot2IDvpAIih7IkuqqqpeulUjoycInqlmtTz
-         YYmW/quAM6JvZw5EebP81bK1FWO7Or2oWQEgHHB7Qp5EucBuXAUo/tpH6nLmP4Pu4deI
-         BDr/gtXlNYrPdo6qGq+tWu/4tF/J4zy6pwOwonWdWGK1vzHLgzaTzQrugJVUQyR1Q8si
-         I18MVUBIkyFE4nbqLvVPzFJCYfNZsP2QALovJcqotQZWuZMfZsc9ilUVp6SPZcX+vOTf
-         uNwQ==
+        bh=g2acQBwSdU8TClaR1PdrlLUVyKKZBvmfDgY4bZv6CmQ=;
+        b=SQ5ypJulyOsWIY3Ku0c0sdTpo8CFdwNq9pU9PKkyuH0O1H+hNSfPsW5ofyi3gGlpSg
+         TWWLl8t2kD3LGgxzaY321b3JbSeQn2nf32tTxsePH9WxrOhaQGdU2aaG5iSCn64Jhl2K
+         MrEqIqqbs31++Hhu5bjEGF73pngDZEIqv0qRNkuyLW2bxyRgHziPvbx7m82Qvfa04+il
+         f1zVa2brw7CZy7CvX+CnT38xcJSTqXa4m8pok+HYiAOr3XDowk7T4PgmiAxXZKA1Xqbd
+         hjhDyb11yKz+n2/AnaVGej0uJAnxdmlRj833TUFoQq7HNYu6bcobre1DQEqerpcJaQGZ
+         NV0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZFJYkNTLPTvW0oZP4hQZw69H17w9e4DABkwJauGrsvo=;
-        b=WE4OWrjVgyGCl4FfBlaJCTpIcFSAljMKKuXpDy09SD57kSJoZ6amWyxhFEWqCEImHg
-         TSQs5lEDXUD6pRCdcZ+sohxWWhYsFzYKkyII0zflT3s9iYJtRY3DOzwbbosnBWU1R73I
-         QxvBcvcx5G3nNMyadRKyJD9IxPIF0n5EgKhUM7nkkVfpbQHvrVXrRqiJSQeAQ83/ubsl
-         nGo57t1pLcAYfWLL+1QnrglGXJpGF5E1AkmwAIwm2kizNM526Ut+lE/b8XnAIWencLy3
-         FO0REpeY0ILPu4XtIgANGvdLYljZBvWiVFIjM9iDxHYmQgHWoMvokXq3wrqXY658zGH2
-         t5Ow==
-X-Gm-Message-State: ANhLgQ31OEcyJexyJ4GMRXlUUdAHkt6ONDP7elvyhooEpGOyM6JyX/iI
-        08X7hDaPPhvSHUaGiR7JfhM=
-X-Google-Smtp-Source: ADFU+vu9WPaFbRtOf34kOndOIVRRGnNKP2ecacE/QeJKWr0KIdaMENcjJk3uMNIgv0dOfNUHrIEdSQ==
-X-Received: by 2002:a63:f454:: with SMTP id p20mr22194762pgk.149.1585735176370;
-        Wed, 01 Apr 2020 02:59:36 -0700 (PDT)
-Received: from sh03840pcu.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id v25sm1132712pgl.55.2020.04.01.02.59.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 01 Apr 2020 02:59:35 -0700 (PDT)
-From:   Baolin Wang <baolin.wang7@gmail.com>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang7@gmail.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Revert "gpio: eic-sprd: Use devm_platform_ioremap_resource()"
-Date:   Wed,  1 Apr 2020 17:59:25 +0800
-Message-Id: <8d3579f4b49bb675dc805035960f24852898be28.1585734060.git.baolin.wang7@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        bh=g2acQBwSdU8TClaR1PdrlLUVyKKZBvmfDgY4bZv6CmQ=;
+        b=qdGGcRTtIy/yTDIR3MN177ckme6va6Pwuqb+G5MMk77hT/m8n+98JABknyuVPo9GYV
+         AAdhBnH1qabOk6lrhrNBCDBb1wAvfSgK35Qd3Dtvb5aJlcqSfexJzFY2kfdYZKalkNcO
+         kaaNA0h/77pqN3HIV0J/e2J83usXB87FDskPeSsw4w94hJ096B0h5GCO9JqXWfxht/ZI
+         Yh5h1SMqiSoZnYMIlarbIHZq8Zhuj0YgJ3jZGWr52X8U4HavO39CWSx7BTm3Wu99Hj+b
+         Os+oKS9imiJ8WSpinnq+Kvv9wfYMLYdg9hxM0D7s1lLxEUwWZxTE0b7RHereGKcTQdsn
+         Srxg==
+X-Gm-Message-State: AGi0PuaoRiVB2pXFHAPZuNaOOHg8/aecpotETqFrj+vRPbK0SCbQjTyU
+        rJd4c8BPKA/liT+THmtmi2NpAQ==
+X-Google-Smtp-Source: APiQypIVOHoTA5JEJDVAZclyEu7xiRg0Hp96XPCiq34AJLs31TbktOyQFFcVg1/Xq9gQLD8rhGCqEg==
+X-Received: by 2002:a05:651c:404:: with SMTP id 4mr12957660lja.281.1585735368186;
+        Wed, 01 Apr 2020 03:02:48 -0700 (PDT)
+Received: from localhost.localdomain (dyvyn9m99j8s7-9xsphjt-4.rev.dnainternet.fi. [2001:14bb:440:beab:bd3f:1fbf:f66f:618f])
+        by smtp.googlemail.com with ESMTPSA id n14sm862986ljm.104.2020.04.01.03.02.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 03:02:47 -0700 (PDT)
+From:   John Mathew <john.mathew@unikie.com>
+To:     linux-doc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net, mingo@redhat.com,
+        peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, tsbogend@alpha.franken.de,
+        lukas.bulwahn@gmail.com, x86@kernel.org,
+        linux-mips@vger.kernel.org, tglx@linutronix.de,
+        mostafa.chamanara@basemark.com,
+        John Mathew <john.mathew@unikie.com>
+Subject: [RFC PATCH 0/3] Add scheduler overview documentation
+Date:   Wed,  1 Apr 2020 13:00:26 +0300
+Message-Id: <20200401100029.1445-1-john.mathew@unikie.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 0f5cb8cc27a266c81e6523b436479802e9aafc9e.
+Hi all,
 
-This commit will cause below warnings, since our EIC controller can support
-differnt banks on different Spreadtrum SoCs, and each bank has its own base
-address, we will get invalid resource warning if the bank number is less than
-SPRD_EIC_MAX_BANK on some Spreadtrum SoCs.
+Based on our investigation in the area of the MIPS scheduler context
+switch we wish to share our learnings about the kernel scheduler in
+the form of kernel documentation. Investigations were done mostly by
+stepping through the code using GDB and code inspection. The aim of
+the patchset is to provide a brief overview of the kernel scheduler
+starting from a brief history, the overview of the kernel structs
+used by the scheduler, scheduler invocation and context switch. We
+have also added a small section on scheduler state modelling
+possibilities. In order to add these subjects we have restructured
+the existing scheduler documentation so as to put them in to suitable
+sections. We hope the new structure will enable easy extension of the
+scheduler documentation.
 
-So we should not use devm_platform_ioremap_resource() here to remove the
-warnings.
+Patch 1 creates place holders and new structure for the scheduler documentation.
+The main sections are
+ - Scheduler overview: Overview of the scheduler.
+ - CFS: A section dedicated to CFS scheduler.
+ - Process context switching: Context switching overview.
+ - Scheduler features: We thought most of the existing documentation can be moved
+   here.
+ - Architecture Specific Scheduler Implementation Differences: Aimed for each
+   architecture and future updates.
+ - Scheduler Debugging Interface: For scheduler diagnostics and utilities
+ - Scheduler related functions: Scheduler API reference.
 
-[    1.118508] sprd-eic 40210000.gpio: invalid resource
-[    1.118535] sprd-eic 40210000.gpio: invalid resource
-[    1.119034] sprd-eic 40210080.gpio: invalid resource
-[    1.119055] sprd-eic 40210080.gpio: invalid resource
-[    1.119462] sprd-eic 402100a0.gpio: invalid resource
-[    1.119482] sprd-eic 402100a0.gpio: invalid resource
-[    1.119893] sprd-eic 402100c0.gpio: invalid resource
-[    1.119913] sprd-eic 402100c0.gpio: invalid resource
+Patch 2: Adds documentation for the place holders of the Scheduler overview,
+ Scheduler State Transition and CFS sections.
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
----
- drivers/gpio/gpio-eic-sprd.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Patch 3: Adds documentation for the place holder of the Process context switching
+ and add 2 new sections to for x86 and MIPS context switch.
 
-diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
-index bb287f3..8c97577 100644
---- a/drivers/gpio/gpio-eic-sprd.c
-+++ b/drivers/gpio/gpio-eic-sprd.c
-@@ -569,6 +569,7 @@ static int sprd_eic_probe(struct platform_device *pdev)
- 	const struct sprd_eic_variant_data *pdata;
- 	struct gpio_irq_chip *irq;
- 	struct sprd_eic *sprd_eic;
-+	struct resource *res;
- 	int ret, i;
- 
- 	pdata = of_device_get_match_data(&pdev->dev);
-@@ -595,9 +596,13 @@ static int sprd_eic_probe(struct platform_device *pdev)
- 		 * have one bank EIC, thus base[1] and base[2] can be
- 		 * optional.
- 		 */
--		sprd_eic->base[i] = devm_platform_ioremap_resource(pdev, i);
--		if (IS_ERR(sprd_eic->base[i]))
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
-+		if (!res)
- 			continue;
-+
-+		sprd_eic->base[i] = devm_ioremap_resource(&pdev->dev, res);
-+		if (IS_ERR(sprd_eic->base[i]))
-+			return PTR_ERR(sprd_eic->base[i]);
- 	}
- 
- 	sprd_eic->chip.label = sprd_eic_label_name[sprd_eic->type];
+
+John Mathew (3):
+  docs: scheduler: Restructure scheduler documentation.
+  docs: scheduler: Add scheduler overview documentation
+  docs: scheduler: Add introduction to scheduler context-switch
+
+ Documentation/scheduler/arch-specific.rst     |  14 +
+ Documentation/scheduler/cfs-data-structs.rst  | 208 ++++++++++++++
+ Documentation/scheduler/cfs-overview.rst      |  46 ++++
+ .../scheduler/cfs-sched-overview.rst          |  17 ++
+ Documentation/scheduler/context-switching.rst |  71 +++++
+ Documentation/scheduler/index.rst             |  31 ++-
+ .../scheduler/mips-context-switch.rst         |  78 ++++++
+ Documentation/scheduler/overview.rst          | 260 ++++++++++++++++++
+ Documentation/scheduler/sched-debugging.rst   |  14 +
+ Documentation/scheduler/sched-features.rst    |  20 ++
+ Documentation/scheduler/scheduler-api.rst     |  34 +++
+ .../scheduler/x86-context-switch.rst          |  59 ++++
+ kernel/sched/core.c                           |  36 ++-
+ 13 files changed, 867 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/scheduler/arch-specific.rst
+ create mode 100644 Documentation/scheduler/cfs-data-structs.rst
+ create mode 100644 Documentation/scheduler/cfs-overview.rst
+ create mode 100644 Documentation/scheduler/cfs-sched-overview.rst
+ create mode 100644 Documentation/scheduler/context-switching.rst
+ create mode 100644 Documentation/scheduler/mips-context-switch.rst
+ create mode 100644 Documentation/scheduler/overview.rst
+ create mode 100644 Documentation/scheduler/sched-debugging.rst
+ create mode 100644 Documentation/scheduler/sched-features.rst
+ create mode 100644 Documentation/scheduler/scheduler-api.rst
+ create mode 100644 Documentation/scheduler/x86-context-switch.rst
+
 -- 
-1.9.1
+2.17.1
 
