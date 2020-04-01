@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E98119AFEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A20A919B0FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:32:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387464AbgDAQWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:22:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45340 "EHLO mail.kernel.org"
+        id S2388145AbgDAQbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:31:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387476AbgDAQWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:22:18 -0400
+        id S2387793AbgDAQa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:30:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7455E20857;
-        Wed,  1 Apr 2020 16:22:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E90A212CC;
+        Wed,  1 Apr 2020 16:30:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758137;
-        bh=XUZVInl2yIRIheP1ctm3J4tTtc4UpxGu/clhuSn6aSc=;
+        s=default; t=1585758655;
+        bh=IVevopt4tpFjF//N5RzWcfrUTFmM9C5XwhNWWFkXLCE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1eSwn0hVygkN5PHSnUwXRueo80NKEJsq+VVMLJ4f3ec2dqCcb9mhUbNa3npYjN/0N
-         il1ePRJrC7Dl12/mr/Ndgu09jQA+FUFIYCib5kWjWOGPF4UEfALQaZufbcezmo46eE
-         Mu/yC0RrWZPqSQE5ChV62TEcs90Ts2FwmoeRRQNo=
+        b=RhjuoKuzWlcecfzvi1jgGzvbfUdugdsqm4879Q/FHzwbP/XgkxZp3qD9S6nqg4Bfj
+         bk2/DCxK/hgNIPwydwmVOruq22MRivI1pPjqGQsFb+Ho3lcpRzWItPGC1CuixHTBOl
+         9hTLm1p9D9g6JgV6gitQGjzM8nqcAE+eGUFEPaQw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Lanqing Liu <liuhhome@gmail.com>
-Subject: [PATCH 5.4 03/27] serial: sprd: Fix a dereference warning
+        stable@vger.kernel.org, Maxime Bizon <mbizon@freebox.fr>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 35/91] net: dsa: Fix duplicate frames flooded by learning
 Date:   Wed,  1 Apr 2020 18:17:31 +0200
-Message-Id: <20200401161417.599861325@linuxfoundation.org>
+Message-Id: <20200401161526.553430929@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
-References: <20200401161414.352722470@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,44 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lanqing Liu <liuhhome@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit efc176929a3505a30c3993ddd393b40893649bd2 upstream.
+[ Upstream commit 0e62f543bed03a64495bd2651d4fe1aa4bcb7fe5 ]
 
-We should validate if the 'sup' is NULL or not before freeing DMA
-memory, to fix below warning.
+When both the switch and the bridge are learning about new addresses,
+switch ports attached to the bridge would see duplicate ARP frames
+because both entities would attempt to send them.
 
-"drivers/tty/serial/sprd_serial.c:1141 sprd_remove()
- error: we previously assumed 'sup' could be null (see line 1132)"
-
-Fixes: f4487db58eb7 ("serial: sprd: Add DMA mode support")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Lanqing Liu <liuhhome@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/e2bd92691538e95b04a2c2a728f3292e1617018f.1584325957.git.liuhhome@gmail.com
+Fixes: 5037d532b83d ("net: dsa: add Broadcom tag RX/TX handler")
+Reported-by: Maxime Bizon <mbizon@freebox.fr>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/serial/sprd_serial.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/dsa/tag_brcm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/tty/serial/sprd_serial.c
-+++ b/drivers/tty/serial/sprd_serial.c
-@@ -1103,14 +1103,13 @@ static int sprd_remove(struct platform_d
- 	if (sup) {
- 		uart_remove_one_port(&sprd_uart_driver, &sup->port);
- 		sprd_port[sup->port.line] = NULL;
-+		sprd_rx_free_buf(sup);
- 		sprd_ports_num--;
- 	}
+--- a/net/dsa/tag_brcm.c
++++ b/net/dsa/tag_brcm.c
+@@ -84,6 +84,8 @@ static struct sk_buff *brcm_tag_xmit(str
+ 		brcm_tag[2] = BRCM_IG_DSTMAP2_MASK;
+ 	brcm_tag[3] = (1 << p->port) & BRCM_IG_DSTMAP1_MASK;
  
- 	if (!sprd_ports_num)
- 		uart_unregister_driver(&sprd_uart_driver);
++	skb->offload_fwd_mark = 1;
++
+ 	return skb;
  
--	sprd_rx_free_buf(sup);
--
- 	return 0;
- }
- 
+ out_free:
 
 
