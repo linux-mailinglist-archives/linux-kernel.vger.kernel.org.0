@@ -2,239 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 686FB19B3BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:53:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7059019B14D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388480AbgDAQdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:33:01 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34677 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388459AbgDAQcx (ORCPT
+        id S2388372AbgDAQdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:33:49 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44209 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388586AbgDAQdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:32:53 -0400
-Received: by mail-oi1-f196.google.com with SMTP id d3so49391oic.1;
-        Wed, 01 Apr 2020 09:32:53 -0700 (PDT)
+        Wed, 1 Apr 2020 12:33:47 -0400
+Received: by mail-lf1-f66.google.com with SMTP id 131so175091lfh.11
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:33:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cumulusnetworks.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Nq8DlIaNNyLF7eWlLEUhD4or4n0rJ1xse7pIIVitJCI=;
+        b=Pb4nhMyuivqt3fOh8k0EuOcVHafLgipojtWH3huNFNONQYto6yNpASBgO2qBOGtTg3
+         a9I866SOtBn9sD35dpgFC4o26HhzfqS77hc1yqs4/cHjH1jvfqgnMQIYfCxahfmvfO11
+         T+s7q1CMmhUb28QuN6Ckl3Rn/kCBqDtu32tGQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BQ6dbMnuQmYakwtYkaDd8ZPL0bNSKkspp4CDCfrrxEk=;
-        b=bCA41ZaOArp5tLpKVEfndDwvC46wA6b99I837JR563W7K7Gso8Z4mBsYnYmsUMYTnQ
-         vvpT4PT9jhfGVtY/ksaMGADGomGlNK0h9KjQO0NHctbg3+eN2VchxJit/BQqZOUntVGF
-         YQ4zwWvoAQkNEKM/o5g2XMnUW56eozuZN6ukKMCuOXUBifdOuEhzXWDA5J/BYIUwRsNw
-         iTaaUFWT30CR1jUT/jUAkICLs/RCYD275++136oqE7WKRk0HhA479+czAhkMmH8FrNMO
-         idTEL++Wb8lkxvz6Jul5yDhPWkEB0ADpnO6yW0fD0SK9cFwjPQ/MDjZfHbj9uFBHqICd
-         iTyQ==
-X-Gm-Message-State: AGi0PubgWls7ecBlBeSz3riKETx3UwOGwBG5kirq3BEQ7hMBPNvGDp13
-        z7CPvRtRNhxGHTCZwqmzyzGo2tvoqFKuUU/uj38=
-X-Google-Smtp-Source: APiQypIbcz5zIhvmhQId+hN/inqiB0CGc/pOWNe7i8QekTGn+0r2FRSM42dYTgD5Rp0mPjYuXdSADPqyuCaVbpfRhBE=
-X-Received: by 2002:a05:6808:8f:: with SMTP id s15mr3565793oic.110.1585758772561;
- Wed, 01 Apr 2020 09:32:52 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Nq8DlIaNNyLF7eWlLEUhD4or4n0rJ1xse7pIIVitJCI=;
+        b=YllzpTC6jjrFnyyz9hgBZlGfKVkYKLnV+EIBRbcVZtz9vouZi8zkArBEV6etuaHY8c
+         JS25bKbUeuTWkA70NTrKicWcSEfSBdmtnAity8mnhmFSO1XkqVjkoyd6m2KP7+9v12ZX
+         YtLvR5c57oIY09NaZeTLzmpzrUFh8BS5neiEsk69n/dmMR/GT9cZ2KACVuu1przY8Sem
+         SJxQjsOsDVSjyWKCOi6yA/FC3qnAtFtvKCEa0CagtqW/Uj8FkWjjT28fzoeI6uKp144W
+         E7N92RkIc5GLgdMHblC8OrykL7c9QfIkcINAS3jdh1ZlQMOFduypsDRcet4ApiTCUOpV
+         hFPw==
+X-Gm-Message-State: AGi0PuZ6P+Tpc1RNDYOX1KePzzqvh+CXKXs1n3WdUhilPLKXcFFw0bQM
+        A4l069Uksx9BO1c6uHJvPeqR5g==
+X-Google-Smtp-Source: APiQypIs0POdVCLsPljB1ug28JxGd5jhOo0cfC9cDy05i6dW4/QI3rmy0jkQvZSQkRvgHGz4vIcTog==
+X-Received: by 2002:a05:6512:3127:: with SMTP id p7mr15067473lfd.108.1585758824954;
+        Wed, 01 Apr 2020 09:33:44 -0700 (PDT)
+Received: from [192.168.0.109] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
+        by smtp.gmail.com with ESMTPSA id g5sm1536033ljl.106.2020.04.01.09.33.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Apr 2020 09:33:44 -0700 (PDT)
+Subject: Re: [RFC net-next v4 8/9] bridge: mrp: Integrate MRP into the bridge
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     davem@davemloft.net, jiri@resnulli.us, ivecera@redhat.com,
+        kuba@kernel.org, roopa@cumulusnetworks.com, olteanv@gmail.com,
+        andrew@lunn.ch, UNGLinuxDriver@microchip.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bridge@lists.linux-foundation.org
+References: <20200327092126.15407-1-horatiu.vultur@microchip.com>
+ <20200327092126.15407-9-horatiu.vultur@microchip.com>
+ <17d9fb2a-cb48-7bb6-cb79-3876ca3a74b2@cumulusnetworks.com>
+ <20200401161021.3s2sqvma7r7wpo7h@soft-dev3.microsemi.net>
+From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Message-ID: <d35f44a6-a70f-bc29-afa6-0dd04e331981@cumulusnetworks.com>
+Date:   Wed, 1 Apr 2020 19:33:42 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200329223419.122796-1-hdegoede@redhat.com> <20200329223419.122796-2-hdegoede@redhat.com>
-In-Reply-To: <20200329223419.122796-2-hdegoede@redhat.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 1 Apr 2020 18:32:41 +0200
-Message-ID: <CAJZ5v0iapuqnfsQHhTQTWXdEtzX_MMTBUqdAzCej19AF9rtrNA@mail.gmail.com>
-Subject: Re: [PATCH 5.6 regression fix 1/2] ACPI: PM: Add acpi_s2idle_register_wake_callback()
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "5 . 4+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200401161021.3s2sqvma7r7wpo7h@soft-dev3.microsemi.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 12:34 AM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Since commit fdde0ff8590b ("ACPI: PM: s2idle: Prevent spurious SCIs from
-> waking up the system") the SCI triggering without there being a wakeup
-> cause recognized by the ACPI sleep code will no longer wakeup the system.
->
-> This works as intended, but this is a problem for devices where the SCI
-> is shared with another device which is also a wakeup source.
->
-> In the past these, from the pov of the ACPI sleep code, spurious SCIs
-> would still cause a wakeup so the wakeup from the device sharing the
-> interrupt would actually wakeup the system. This now no longer works.
->
-> This is a problem on e.g. Bay Trail-T and Cherry Trail devices where
-> some peripherals (typically the XHCI controller) can signal a
-> Power Management Event (PME) to the Power Management Controller (PMC)
-> to wakeup the system, this uses the same interrupt as the SCI.
-> These wakeups are handled through a special INT0002 ACPI device which
-> checks for events in the GPE0a_STS for this and takes care of acking
-> the PME so that the shared interrupt stops triggering.
->
-> The change to the ACPI sleep code to ignore the spurious SCI, causes
-> the system to no longer wakeup on these PME events. To make things
-> worse this means that the INT0002 device driver interrupt handler will
-> no longer run, causing the PME to not get cleared and resulting in the
-> system hanging. Trying to wakeup the system after such a PME through e.g.
-> the power button no longer works.
->
-> Add an acpi_s2idle_register_wake_callback() function which registers
-> a callback to be called from acpi_s2idle_wake() and when the callback
-> returns true, return true from acpi_s2idle_wake().
->
-> The INT0002 driver will use this mechanism to check the GPE0a_STS
-> register from acpi_s2idle_wake() and to tell the system to wakeup
-> if a PME is signaled in the register.
->
-> Fixes: fdde0ff8590b ("ACPI: PM: s2idle: Prevent spurious SCIs from waking up the system")
-> Cc: 5.4+ <stable@vger.kernel.org> # 5.4+
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+On 01/04/2020 19:10, Horatiu Vultur wrote:
+> Hi Nik,
+> 
+> The 03/30/2020 19:16, Nikolay Aleksandrov wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> On 27/03/2020 11:21, Horatiu Vultur wrote:
+>>> To integrate MRP into the bridge, the bridge needs to do the following:
+>>> - add new flag(BR_MPP_AWARE) to the net bridge ports, this bit will be set when
+>>>   the port is added to an MRP instance. In this way it knows if the frame was
+>>>   received on MRP ring port
+>>> - detect if the MRP frame was received on MRP ring port in that case it would be
+>>>   processed otherwise just forward it as usual.
+>>> - enable parsing of MRP
+>>> - before whenever the bridge was set up, it would set all the ports in
+>>>   forwarding state. Add an extra check to not set ports in forwarding state if
+>>>   the port is an MRP ring port. The reason of this change is that if the MRP
+>>>   instance initially sets the port in blocked state by setting the bridge up it
+>>>   would overwrite this setting.
+>>>
+>>> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+>>> ---
+>>>  include/linux/if_bridge.h |  1 +
+>>>  net/bridge/br_device.c    |  3 +++
+>>>  net/bridge/br_input.c     |  3 +++
+>>>  net/bridge/br_netlink.c   |  5 +++++
+>>>  net/bridge/br_private.h   | 22 ++++++++++++++++++++++
+>>>  net/bridge/br_stp.c       |  6 ++++++
+>>>  6 files changed, 40 insertions(+)
+>>>
+>>> diff --git a/include/linux/if_bridge.h b/include/linux/if_bridge.h
+>>> index 9e57c4411734..10baa9efdae8 100644
+>>> --- a/include/linux/if_bridge.h
+>>> +++ b/include/linux/if_bridge.h
+>>> @@ -47,6 +47,7 @@ struct br_ip_list {
+>>>  #define BR_BCAST_FLOOD               BIT(14)
+>>>  #define BR_NEIGH_SUPPRESS    BIT(15)
+>>>  #define BR_ISOLATED          BIT(16)
+>>> +#define BR_MRP_AWARE         BIT(17)
+>>>
+>>>  #define BR_DEFAULT_AGEING_TIME       (300 * HZ)
+>>>
+>>> diff --git a/net/bridge/br_device.c b/net/bridge/br_device.c
+>>> index 0e3dbc5f3c34..8ec1362588af 100644
+>>> --- a/net/bridge/br_device.c
+>>> +++ b/net/bridge/br_device.c
+>>> @@ -463,6 +463,9 @@ void br_dev_setup(struct net_device *dev)
+>>>       spin_lock_init(&br->lock);
+>>>       INIT_LIST_HEAD(&br->port_list);
+>>>       INIT_HLIST_HEAD(&br->fdb_list);
+>>> +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
+>>> +     INIT_LIST_HEAD(&br->mrp_list);
+>>> +#endif
+>>>       spin_lock_init(&br->hash_lock);
+>>>
+>>>       br->bridge_id.prio[0] = 0x80;
+>>> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
+>>> index fcc260840028..d5c34f36f0f4 100644
+>>> --- a/net/bridge/br_input.c
+>>> +++ b/net/bridge/br_input.c
+>>> @@ -342,6 +342,9 @@ rx_handler_result_t br_handle_frame(struct sk_buff **pskb)
+>>>               }
+>>>       }
+>>>
+>>> +     if (unlikely(br_mrp_process(p, skb)))
+>>> +             return RX_HANDLER_PASS;
+>>> +
+>>>  forward:
+>>>       switch (p->state) {
+>>>       case BR_STATE_FORWARDING:
+>>> diff --git a/net/bridge/br_netlink.c b/net/bridge/br_netlink.c
+>>> index 43dab4066f91..77bc96745be6 100644
+>>> --- a/net/bridge/br_netlink.c
+>>> +++ b/net/bridge/br_netlink.c
+>>> @@ -669,6 +669,11 @@ static int br_afspec(struct net_bridge *br,
+>>>                       if (err)
+>>>                               return err;
+>>>                       break;
+>>> +             case IFLA_BRIDGE_MRP:
+>>> +                     err = br_mrp_parse(br, p, attr, cmd);
+>>> +                     if (err)
+>>> +                             return err;
+>>> +                     break;
+>>>               }
+>>>       }
+>>>
+>>> diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
+>>> index 1f97703a52ff..38894f2cf98f 100644
+>>> --- a/net/bridge/br_private.h
+>>> +++ b/net/bridge/br_private.h
+>>> @@ -428,6 +428,10 @@ struct net_bridge {
+>>>       int offload_fwd_mark;
+>>>  #endif
+>>>       struct hlist_head               fdb_list;
+>>> +
+>>> +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
+>>> +     struct list_head                __rcu mrp_list;
+>>> +#endif
+>>>  };
+>>>
+>>>  struct br_input_skb_cb {
+>>> @@ -1304,6 +1308,24 @@ unsigned long br_timer_value(const struct timer_list *timer);
+>>>  extern int (*br_fdb_test_addr_hook)(struct net_device *dev, unsigned char *addr);
+>>>  #endif
+>>>
+>>> +/* br_mrp.c */
+>>> +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
+>>> +int br_mrp_parse(struct net_bridge *br, struct net_bridge_port *p,
+>>> +              struct nlattr *attr, int cmd);
+>>> +int br_mrp_process(struct net_bridge_port *p, struct sk_buff *skb);
+>>> +#else
+>>> +static inline int br_mrp_parse(struct net_bridge *br, struct net_bridge_port *p,
+>>> +                            struct nlattr *attr, int cmd)
+>>> +{
+>>> +     return -1;
+>>
+>> You should return proper error here.
+> 
+> It will return -EOPNOTSUPP.
+> 
+>>
+>>> +}
+>>> +
+>>> +static inline int br_mrp_process(struct net_bridge_port *p, struct sk_buff *skb)
+>>> +{
+>>> +     return -1;
+>>
+>> The bridge can't possibly work with MRP disabled with this.
+> 
+> Good catch, it will return 0.
+> 
+>>
+>>> +}
+>>> +#endif
+>>> +
+>>>  /* br_netlink.c */
+>>>  extern struct rtnl_link_ops br_link_ops;
+>>>  int br_netlink_init(void);
+>>> diff --git a/net/bridge/br_stp.c b/net/bridge/br_stp.c
+>>> index 1f14b8455345..3e88be7aa269 100644
+>>> --- a/net/bridge/br_stp.c
+>>> +++ b/net/bridge/br_stp.c
+>>> @@ -36,6 +36,12 @@ void br_set_state(struct net_bridge_port *p, unsigned int state)
+>>>       };
+>>>       int err;
+>>>
+>>> +     /* Don't change the state of the ports if they are driven by a different
+>>> +      * protocol.
+>>> +      */
+>>> +     if (p->flags & BR_MRP_AWARE)
+>>> +             return;
+>>> +
+>>
+>> Maybe disallow STP type (kernel/user-space/no-stp) changing as well, force it to no-stp.
+> 
+> I am not sure that I understand completely here, do you want me to
+> disable STP if MRP is started?
+> 
 
-I generally agree with the approach, but I would make some, mostly
-cosmetic, changes.
+I think it should be one of the two since they can step on each other's toes. If MRP is
+enabled then STP must be already disabled and should not be possible to enable while MRP
+is active and vice-versa.
 
-First off, I'd put the new code into drivers/acpi/wakeup.c.
+>>
+>>>       p->state = state;
+>>>       err = switchdev_port_attr_set(p->dev, &attr);
+>>>       if (err && err != -EOPNOTSUPP)
+>>>
+>>
+> 
 
-I'd export one function from there to be called from
-acpi_s2idle_wake() and the install/uninstall routines for the users.
-
-> ---
->  drivers/acpi/sleep.c | 70 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/acpi.h |  7 +++++
->  2 files changed, 77 insertions(+)
->
-> diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-> index e5f95922bc21..e360e51afa8e 100644
-> --- a/drivers/acpi/sleep.c
-> +++ b/drivers/acpi/sleep.c
-> @@ -943,6 +943,65 @@ static struct acpi_scan_handler lps0_handler = {
->         .attach = lps0_device_attach,
->  };
->
-> +struct s2idle_wake_callback {
-
-I'd call this acpi_wakeup_handler.
-
-> +       struct list_head list;
-
-list_node?
-
-> +       bool (*function)(void *data);
-
-bool (*wakeup)(void *context)?
-
-> +       void *user_data;
-
-context?
-
-> +};
-> +
-> +static LIST_HEAD(s2idle_wake_callback_head);
-> +static DEFINE_MUTEX(s2idle_wake_callback_mutex);
-> +
-> +/*
-> + * Drivers which may share an IRQ with the SCI can use this to register
-> + * a callback which returns true when the device they are managing wants
-> + * to trigger a wakeup.
-> + */
-> +int acpi_s2idle_register_wake_callback(
-> +       int wake_irq, bool (*function)(void *data), void *user_data)
-> +{
-> +       struct s2idle_wake_callback *callback;
-> +
-> +       /*
-> +        * If the device is not sharing its IRQ with the SCI, there is no
-> +        * need to register the callback.
-> +        */
-> +       if (!acpi_sci_irq_valid() || wake_irq != acpi_sci_irq)
-> +               return 0;
-> +
-> +       callback = kmalloc(sizeof(*callback), GFP_KERNEL);
-> +       if (!callback)
-> +               return -ENOMEM;
-> +
-> +       callback->function = function;
-> +       callback->user_data = user_data;
-> +
-> +       mutex_lock(&s2idle_wake_callback_mutex);
-> +       list_add(&callback->list, &s2idle_wake_callback_head);
-> +       mutex_unlock(&s2idle_wake_callback_mutex);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(acpi_s2idle_register_wake_callback);
-> +
-> +void acpi_s2idle_unregister_wake_callback(
-> +       bool (*function)(void *data), void *user_data)
-> +{
-> +       struct s2idle_wake_callback *cb;
-> +
-> +       mutex_lock(&s2idle_wake_callback_mutex);
-> +       list_for_each_entry(cb, &s2idle_wake_callback_head, list) {
-> +               if (cb->function == function &&
-> +                   cb->user_data == user_data) {
-> +                       list_del(&cb->list);
-> +                       kfree(cb);
-> +                       break;
-> +               }
-> +       }
-> +       mutex_unlock(&s2idle_wake_callback_mutex);
-> +}
-> +EXPORT_SYMBOL_GPL(acpi_s2idle_unregister_wake_callback);
-> +
->  static int acpi_s2idle_begin(void)
->  {
->         acpi_scan_lock_acquire();
-> @@ -992,6 +1051,8 @@ static void acpi_s2idle_sync(void)
->
->  static bool acpi_s2idle_wake(void)
->  {
-> +       struct s2idle_wake_callback *cb;
-> +
->         if (!acpi_sci_irq_valid())
->                 return pm_wakeup_pending();
->
-> @@ -1025,6 +1086,15 @@ static bool acpi_s2idle_wake(void)
->                 if (acpi_any_gpe_status_set() && !acpi_ec_dispatch_gpe())
->                         return true;
->
-> +               /*
-> +                * Check callbacks registered by drivers sharing the SCI.
-> +                * Note no need to lock, nothing else is running.
-> +                */
-> +               list_for_each_entry(cb, &s2idle_wake_callback_head, list) {
-> +                       if (cb->function(cb->user_data))
-> +                               return true;
-> +               }
-
-AFAICS this needs to be done in acpi_s2idle_restore() too to clear the
-status bits in case one of these wakeup sources triggers along with a
-GPE or a fixed event and the other one wins the race.
-
-> +
->                 /*
->                  * Cancel the wakeup and process all pending events in case
->                  * there are any wakeup ones in there.
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 0f24d701fbdc..9f06e1dc79c1 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -488,6 +488,13 @@ void __init acpi_nvs_nosave_s3(void);
->  void __init acpi_sleep_no_blacklist(void);
->  #endif /* CONFIG_PM_SLEEP */
->
-> +#ifdef CONFIG_ACPI_SYSTEM_POWER_STATES_SUPPORT
-> +int acpi_s2idle_register_wake_callback(
-> +       int wake_irq, bool (*function)(void *data), void *user_data);
-> +void acpi_s2idle_unregister_wake_callback(
-> +       bool (*function)(void *data), void *user_data);
-> +#endif
-> +
->  struct acpi_osc_context {
->         char *uuid_str;                 /* UUID string */
->         int rev;
-> --
-
-Thanks!
