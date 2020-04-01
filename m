@@ -2,48 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60A5319B271
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E0819B442
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:00:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389675AbgDAQoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:44:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44898 "EHLO mail.kernel.org"
+        id S1733239AbgDAQVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:21:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389512AbgDAQn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:43:58 -0400
+        id S1732273AbgDAQUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:20:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B5E620719;
-        Wed,  1 Apr 2020 16:43:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE38320658;
+        Wed,  1 Apr 2020 16:20:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759437;
-        bh=ygHdJhsO906lJGTJ8k6CFbim+V5vV93ekw5ZmmpzKPo=;
+        s=default; t=1585758055;
+        bh=5XjkFM5wyNFBP6SLOe9dlSinzdyO5temJPYtDJ7S7Ak=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y5Rs7CVnHBkp7Uc8KkuwqVIhyqfTCFf/VJMKER/dvdkIUwzdKe4Vdbjk8tpFIlC31
-         0fWaF8NuxTodGomQJYEOqHErW2jDFOIDbuyS9NfORODZFTBcV0N+LvNPKXCbtu8ivy
-         epgx6sGQIbU6LivaICJJR3YhtVlLdIoyOBe9F494=
+        b=EKPbn95pjqt5LXWfcdgWNDKemfix1ypownDEKIBSlMBBOUoVGkLD1pZH/LaywUwPh
+         4zgS8mfdfUVVW7p8RHPr1eYLnGSRNrMJLv8anXSoWR3pvLmLqz2ngCOlSbwtpG75U6
+         3aaBBwms00ftrKqb+hPnIKwmHLLZNZX94s8Ix9TI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kernel test robot <oliver.sang@intel.com>,
-        Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 039/148] x86/mm: split vmalloc_sync_all()
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 5.5 07/30] vt: switch vt_dont_switch to bool
 Date:   Wed,  1 Apr 2020 18:17:11 +0200
-Message-Id: <20200401161556.531289960@linuxfoundation.org>
+Message-Id: <20200401161420.268112172@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
+References: <20200401161414.345528747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,205 +42,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+From: Jiri Slaby <jslaby@suse.cz>
 
-commit 763802b53a427ed3cbd419dbba255c414fdd9e7c upstream.
+commit f400991bf872debffb01c46da882dc97d7e3248e upstream.
 
-Commit 3f8fd02b1bf1 ("mm/vmalloc: Sync unmappings in
-__purge_vmap_area_lazy()") introduced a call to vmalloc_sync_all() in
-the vunmap() code-path.  While this change was necessary to maintain
-correctness on x86-32-pae kernels, it also adds additional cycles for
-architectures that don't need it.
+vt_dont_switch is pure boolean, no need for whole char.
 
-Specifically on x86-64 with CONFIG_VMAP_STACK=y some people reported
-severe performance regressions in micro-benchmarks because it now also
-calls the x86-64 implementation of vmalloc_sync_all() on vunmap().  But
-the vmalloc_sync_all() implementation on x86-64 is only needed for newly
-created mappings.
-
-To avoid the unnecessary work on x86-64 and to gain the performance
-back, split up vmalloc_sync_all() into two functions:
-
-	* vmalloc_sync_mappings(), and
-	* vmalloc_sync_unmappings()
-
-Most call-sites to vmalloc_sync_all() only care about new mappings being
-synchronized.  The only exception is the new call-site added in the
-above mentioned commit.
-
-Shile Zhang directed us to a report of an 80% regression in reaim
-throughput.
-
-Fixes: 3f8fd02b1bf1 ("mm/vmalloc: Sync unmappings in __purge_vmap_area_lazy()")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Reported-by: Shile Zhang <shile.zhang@linux.alibaba.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Tested-by: Borislav Petkov <bp@suse.de>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>	[GHES]
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20191009124418.8286-1-joro@8bytes.org
-Link: https://lists.01.org/hyperkitty/list/lkp@lists.01.org/thread/4D3JPPHBNOSPFK2KEPC6KGKS6J25AIDB/
-Link: http://lkml.kernel.org/r/20191113095530.228959-1-shile.zhang@linux.alibaba.com
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Link: https://lore.kernel.org/r/20200219073951.16151-6-jslaby@suse.cz
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/fault.c      |   26 ++++++++++++++++++++++++--
- drivers/acpi/apei/ghes.c |    2 +-
- include/linux/vmalloc.h  |    5 +++--
- kernel/notifier.c        |    2 +-
- mm/nommu.c               |   10 +++++++---
- mm/vmalloc.c             |   11 +++++++----
- 6 files changed, 43 insertions(+), 13 deletions(-)
+ drivers/tty/vt/vt_ioctl.c |    6 +++---
+ include/linux/vt_kern.h   |    2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -272,7 +272,7 @@ static inline pmd_t *vmalloc_sync_one(pg
- 	return pmd_k;
- }
+--- a/drivers/tty/vt/vt_ioctl.c
++++ b/drivers/tty/vt/vt_ioctl.c
+@@ -39,7 +39,7 @@
+ #include <linux/kbd_diacr.h>
+ #include <linux/selection.h>
  
--void vmalloc_sync_all(void)
-+static void vmalloc_sync(void)
+-char vt_dont_switch;
++bool vt_dont_switch;
+ 
+ static inline bool vt_in_use(unsigned int i)
  {
- 	unsigned long address;
+@@ -1026,12 +1026,12 @@ int vt_ioctl(struct tty_struct *tty,
+ 	case VT_LOCKSWITCH:
+ 		if (!capable(CAP_SYS_TTY_CONFIG))
+ 			return -EPERM;
+-		vt_dont_switch = 1;
++		vt_dont_switch = true;
+ 		break;
+ 	case VT_UNLOCKSWITCH:
+ 		if (!capable(CAP_SYS_TTY_CONFIG))
+ 			return -EPERM;
+-		vt_dont_switch = 0;
++		vt_dont_switch = false;
+ 		break;
+ 	case VT_GETHIFONTMASK:
+ 		ret = put_user(vc->vc_hi_font_mask,
+--- a/include/linux/vt_kern.h
++++ b/include/linux/vt_kern.h
+@@ -135,7 +135,7 @@ extern int do_unbind_con_driver(const st
+ 			     int deflt);
+ int vty_init(const struct file_operations *console_fops);
  
-@@ -299,6 +299,16 @@ void vmalloc_sync_all(void)
- 	}
- }
+-extern char vt_dont_switch;
++extern bool vt_dont_switch;
+ extern int default_utf8;
+ extern int global_cursor_default;
  
-+void vmalloc_sync_mappings(void)
-+{
-+	vmalloc_sync();
-+}
-+
-+void vmalloc_sync_unmappings(void)
-+{
-+	vmalloc_sync();
-+}
-+
- /*
-  * 32-bit:
-  *
-@@ -401,11 +411,23 @@ out:
- 
- #else /* CONFIG_X86_64: */
- 
--void vmalloc_sync_all(void)
-+void vmalloc_sync_mappings(void)
- {
-+	/*
-+	 * 64-bit mappings might allocate new p4d/pud pages
-+	 * that need to be propagated to all tasks' PGDs.
-+	 */
- 	sync_global_pgds(VMALLOC_START & PGDIR_MASK, VMALLOC_END);
- }
- 
-+void vmalloc_sync_unmappings(void)
-+{
-+	/*
-+	 * Unmappings never allocate or free p4d/pud pages.
-+	 * No work is required here.
-+	 */
-+}
-+
- /*
-  * 64-bit:
-  *
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -201,7 +201,7 @@ static int ghes_estatus_pool_expand(unsi
- 	 * New allocation must be visible in all pgd before it can be found by
- 	 * an NMI allocating from the pool.
- 	 */
--	vmalloc_sync_all();
-+	vmalloc_sync_mappings();
- 
- 	return gen_pool_add(ghes_estatus_pool, addr, PAGE_ALIGN(len), -1);
- }
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -106,8 +106,9 @@ extern int remap_vmalloc_range_partial(s
- 
- extern int remap_vmalloc_range(struct vm_area_struct *vma, void *addr,
- 							unsigned long pgoff);
--void vmalloc_sync_all(void);
-- 
-+void vmalloc_sync_mappings(void);
-+void vmalloc_sync_unmappings(void);
-+
- /*
-  *	Lowlevel-APIs (not for driver use!)
-  */
---- a/kernel/notifier.c
-+++ b/kernel/notifier.c
-@@ -552,7 +552,7 @@ NOKPROBE_SYMBOL(notify_die);
- 
- int register_die_notifier(struct notifier_block *nb)
- {
--	vmalloc_sync_all();
-+	vmalloc_sync_mappings();
- 	return atomic_notifier_chain_register(&die_chain, nb);
- }
- EXPORT_SYMBOL_GPL(register_die_notifier);
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -450,10 +450,14 @@ void vm_unmap_aliases(void)
- EXPORT_SYMBOL_GPL(vm_unmap_aliases);
- 
- /*
-- * Implement a stub for vmalloc_sync_all() if the architecture chose not to
-- * have one.
-+ * Implement a stub for vmalloc_sync_[un]mapping() if the architecture
-+ * chose not to have one.
-  */
--void __weak vmalloc_sync_all(void)
-+void __weak vmalloc_sync_mappings(void)
-+{
-+}
-+
-+void __weak vmalloc_sync_unmappings(void)
- {
- }
- 
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1769,7 +1769,7 @@ void *__vmalloc_node_range(unsigned long
- 	 * First make sure the mappings are removed from all page-tables
- 	 * before they are freed.
- 	 */
--	vmalloc_sync_all();
-+	vmalloc_sync_unmappings();
- 
- 	/*
- 	 * In this function, newly allocated vm_struct has VM_UNINITIALIZED
-@@ -2318,16 +2318,19 @@ int remap_vmalloc_range(struct vm_area_s
- EXPORT_SYMBOL(remap_vmalloc_range);
- 
- /*
-- * Implement a stub for vmalloc_sync_all() if the architecture chose not to
-- * have one.
-+ * Implement stubs for vmalloc_sync_[un]mappings () if the architecture chose
-+ * not to have one.
-  *
-  * The purpose of this function is to make sure the vmalloc area
-  * mappings are identical in all page-tables in the system.
-  */
--void __weak vmalloc_sync_all(void)
-+void __weak vmalloc_sync_mappings(void)
- {
- }
- 
-+void __weak vmalloc_sync_unmappings(void)
-+{
-+}
- 
- static int f(pte_t *pte, pgtable_t table, unsigned long addr, void *data)
- {
 
 
