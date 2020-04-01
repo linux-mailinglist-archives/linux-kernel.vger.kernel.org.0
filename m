@@ -2,145 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6448A19A517
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 08:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F396D19A51B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 08:11:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731797AbgDAGHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 02:07:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:6966 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731721AbgDAGHq (ORCPT
+        id S1731839AbgDAGLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 02:11:37 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:32349 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731589AbgDAGLg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 02:07:46 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03163hH6003637
-        for <linux-kernel@vger.kernel.org>; Wed, 1 Apr 2020 02:07:45 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 303uj41nb8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 02:07:45 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <chandan@linux.ibm.com>;
-        Wed, 1 Apr 2020 07:07:27 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 1 Apr 2020 07:07:24 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03166a6s33358136
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 Apr 2020 06:06:36 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 973E5AE045;
-        Wed,  1 Apr 2020 06:07:39 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BB6EDAE04D;
-        Wed,  1 Apr 2020 06:07:37 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.52.194])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  1 Apr 2020 06:07:37 +0000 (GMT)
-From:   Chandan Rajendra <chandan@linux.ibm.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Qian Cai <cai@lca.pw>, Christoph Hellwig <hch@lst.de>,
-        linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: xfs metadata corruption since 30 March
-Date:   Wed, 01 Apr 2020 11:40:39 +0530
-Organization: IBM
-In-Reply-To: <20200401044528.GE56958@magnolia>
-References: <990EDC4E-1A4E-4AC3-84D9-078ACF5EB9CC@lca.pw> <FDCFF269-C30C-42A8-B926-A8731E110848@lca.pw> <20200401044528.GE56958@magnolia>
+        Wed, 1 Apr 2020 02:11:36 -0400
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id 0316BTPv029946;
+        Wed, 1 Apr 2020 15:11:30 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 0316BTPv029946
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585721490;
+        bh=R55qrFxMB1D2pHAEH2G7LutEbvVqxktsxI6xh1JrVFw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mPud/LiNMFrwmYfuo2fwsbbvNXUoa/+30gdTMHCLxSs3Uz7N/g14p8NKh7Iw03WTf
+         ccPTqe8q4SusRe/0nxsMJC7IzcZcn3SX3BPBwGPIQNwh/S9KXDnGQn74BpqMiZuk6h
+         /MVbpiGYgb672yJwfIf9kUadM/dLtR1ri3A4uVWC/z8GOAOQn/KdFsYaLeJwTZn+n1
+         DRSVh+5fLGzoCC5couLEE8VMe4q/byJU2y1j5h4KC/SaKyY/VAIM/wYBm//qsEbist
+         mpJJJKnHWHG0slFQ2sQS3OFES7RHnPI/M+VOKIVb7QmbGV/gFgf7FK98JGPfc6hs/8
+         NpKraQMQss2Og==
+X-Nifty-SrcIP: [209.85.217.47]
+Received: by mail-vs1-f47.google.com with SMTP id e138so15082866vsc.11;
+        Tue, 31 Mar 2020 23:11:30 -0700 (PDT)
+X-Gm-Message-State: AGi0PuZnkZP/RNzF9m2zi/R4zCg96i9lVs+DNc/jpUIHMXX4BXVvFR7u
+        za1ulz8rQZYyZuUV7/mhbFT4ScaGyUSp22eio9c=
+X-Google-Smtp-Source: APiQypKyOsBpcEI5EI0xhWIk2qk00xcoHvAoJ8ZYj0oCranem9XpNrlzg2/Ftttj9LMlPiW2wBCw6sC1z6JjDp+vux4=
+X-Received: by 2002:a67:6542:: with SMTP id z63mr16010836vsb.179.1585721489076;
+ Tue, 31 Mar 2020 23:11:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-TM-AS-GCONF: 00
-x-cbid: 20040106-0020-0000-0000-000003BF6A9D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20040106-0021-0000-0000-000022180E96
-Message-Id: <72081949.TPG3Dqxxrz@localhost.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=56
- impostorscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 phishscore=0 clxscore=1015
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004010049
+References: <20200317202404.GA20746@ubuntu-m2-xlarge-x86> <20200317215515.226917-1-ndesaulniers@google.com>
+ <20200327224246.GA12350@ubuntu-m2-xlarge-x86> <CAK7LNAShb1gWuZyycLAGWm19EWn17zeNcmdPyqu1o=K9XrfJbg@mail.gmail.com>
+ <CAK7LNAQ3=jUu4aa=JQB8wErUGDd-Vr=cX_yZSdP_uAP6kWZ=pw@mail.gmail.com>
+ <CAKwvOd=5AG1ARw6JUXmkuiftuShuYHKLk0ZnueuLhvOdMr5dOA@mail.gmail.com>
+ <20200330190312.GA32257@ubuntu-m2-xlarge-x86> <CAK7LNAT1HoV5wUZRdeU0+P1nYAm2xQ4tpOG+7UtT4947QByakg@mail.gmail.com>
+ <CAKwvOd==U6NvvYz8aUz8fUNdvz27pKrn8X5205rFadpGXzRC-Q@mail.gmail.com>
+In-Reply-To: <CAKwvOd==U6NvvYz8aUz8fUNdvz27pKrn8X5205rFadpGXzRC-Q@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 1 Apr 2020 15:10:52 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR0PPxibFVC5F07mytz4J2BbwQkpHcquH56j7=S_Mqj2g@mail.gmail.com>
+Message-ID: <CAK7LNAR0PPxibFVC5F07mytz4J2BbwQkpHcquH56j7=S_Mqj2g@mail.gmail.com>
+Subject: Re: [PATCH v2] Makefile.llvm: simplify LLVM build
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sandeep Patil <sspatil@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, April 1, 2020 10:15 AM Darrick J. Wong wrote: 
-> On Wed, Apr 01, 2020 at 12:15:32AM -0400, Qian Cai wrote:
-> > 
-> > 
-> > > On Apr 1, 2020, at 12:14 AM, Chandan Rajendra <chandan@linux.ibm.com> wrote:
-> > > 
-> > > On Wednesday, April 1, 2020 3:27 AM Qian Cai wrote: 
-> > >> Ever since two days ago, linux-next starts to trigger xfs metadata corruption
-> > >> during compilation workloads on both powerpc and arm64,
-> > > 
-> > > Can you please provide the filesystem geometry information?
-> > > You can get that by executing "xfs_info <mount-point>" command.
-> > > 
+On Wed, Apr 1, 2020 at 3:39 AM Nick Desaulniers <ndesaulniers@google.com> wrote:
 >
+> On Mon, Mar 30, 2020 at 11:25 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> >
+> > On Tue, Mar 31, 2020 at 4:03 AM Nathan Chancellor
+> > <natechancellor@gmail.com> wrote:
+> > >
+> > > On Mon, Mar 30, 2020 at 11:58:19AM -0700, Nick Desaulniers wrote:
+> > > > On Sat, Mar 28, 2020 at 6:57 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > > > >
+> > > > > I also had planned to provide a single switch to change
+> > > > > all the tool defaults to LLVM.
+> > > > >
+> > > > > So, supporting 'LLVM' is fine, but I'd rather want this
+> > > > > look symmetrical, and easy to understand.
+> > > > >
+> > > > > CPP        = $(CC) -E
+> > > > > ifneq ($(LLVM),)
+> > > >
+> > > > Yes, a simple if statement is much simpler than the overly complex patch I had.
+> > > >
+> > > > > CC         = $(LLVM_DIR)clang
+> > > >
+> > > > Do we need $LLVM_DIR? Shouldn't users just have that in their $PATH?
+> > > >
+> > > > Also, I think we need to support suffixed binaries, as debian
+> > > > distributes these with version suffixes, as Nathan points out.  Or do
+> > > > the debian packages install suffixed binaries AND path versioned
+> > > > non-suffixed binaries?
+> > >
+> > > I think the idea here is that ultimately, the suffixed versions of clang
+> > > that Debian has in /usr/bin are symlinks to binaries in
+> > > /usr/lib/llvm-#/bin; as a result, a user could say
+> > > LLVM_DIR=/usr/lib/llvm-#/bin/ and all of those tools would be picked up
+> > > automatically. I am not really sure what is better.
+>
+> $ sudo apt install clang-8
+> $ which clang-8
+> /usr/bin/clang-8
+> $ ls -l `!!`
+> /usr/bin/clang-8 -> ../lib/llvm-8/bin/clang
+> $ ls /usr/lib/llvm-8/bin
+> <non suffixed versions>
+>
+> Ok, so Nathan, it looks like we don't need the version suffixes.
+> Instead, we can be more explicit with our $PATH, and only add the
+> above (and bintutils).  I was thinking supporting the suffix was
+> required for our CI, but it seems like maybe not.
+>
+> > I periodically build the latest llvm from the trunk,
+> > and install it under my home directory.
+> > So, I just thought it would be useful to
+> > allow a user to specify the llvm directory.
+> > Of course, I can do the equivalent by tweaking PATH, but
+> > I hesitate to make the non-released version my default.
+>
+> Respectfully, I strongly disagree.  This should be handled by
+> modifications to $PATH, either by your shell's .rc file when you
+> always want it, or exported for a session when you want it, or
+> prefixed to an invocation for the duration of that command.  We should
+> not have a new variable just for the path of a few tools.
+>
+> Rather than `make LLVM_DIR=~/llvm-project LLVM=1`, you can do
+> `PATH=$PATH:~/llvm-project make LLVM=1`. (or export it manually or via
+> your shell .rc, depending on how comfortable you are with that
+> version).
+>
+> > Having both LLVM_DIR and LLVM_SUFFIX seems verbose.
+>
+> I agree, so maybe just LLVM=y, and we can support both non-standard
+> locations and debian suffixes via modifications to PATH.
 
-I wasn't able to recreate this issue on my P8 kvm guest. Can you provide,
-1. The build command line you are using.
-2. The number of online CPUs and amount of system memory.
-2. As Darrick pointed out, Can you please provide the kconfig used (especially
-   the one used for powerpc build).
 
-> Hmm.   Do the arm/ppc systems have 64k pages?  kconfigs might be a good
-> starting place.  Also, does the xfs for-next branch exhibit this
-> problem, or is it just the big -next branch that Stephen Rothwell puts
-> out?
-> 
-> 
-> --D
-> 
-> > == arm64 ==
-> > # xfs_info /home/
-> > meta-data=/dev/mapper/rhel_hpe--apollo--cn99xx--11-home isize=512    agcount=4, agsize=113568256 blks
-> >          =                       sectsz=4096  attr=2, projid32bit=1
-> >          =                       crc=1        finobt=1, sparse=1, rmapbt=0
-> >          =                       reflink=1
-> > data     =                       bsize=4096   blocks=454273024, imaxpct=5
-> >          =                       sunit=0      swidth=0 blks
-> > naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
-> > log      =internal log           bsize=4096   blocks=221813, version=2
-> >          =                       sectsz=4096  sunit=1 blks, lazy-count=1
-> > realtime =none                   extsz=4096   blocks=0, rtextents=0
-> > 
-> > 
-> > == powerpc ==
-> > # xfs_info /home/
-> > meta-data=/dev/mapper/rhel_ibm--p9wr--01-home isize=512    agcount=4, agsize=118489856 blks
-> >          =                       sectsz=4096  attr=2, projid32bit=1
-> >          =                       crc=1        finobt=1, sparse=1, rmapbt=0
-> >          =                       reflink=1
-> > data     =                       bsize=4096   blocks=473959424, imaxpct=5
-> >          =                       sunit=0      swidth=0 blks
-> > naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
-> > log      =internal log           bsize=4096   blocks=231425, version=2
-> >          =                       sectsz=4096  sunit=1 blks, lazy-count=1
-> > realtime =none                   extsz=4096   blocks=0, rtextents=0
-> > 
-> > == x86 (not yet reproduced)  ==
-> > meta-data=/dev/mapper/rhel_hpe--dl380gen9--01-home isize=512    agcount=16, agsize=3283776 blks
-> >          =                       sectsz=512   attr=2, projid32bit=1
-> >          =                       crc=1        finobt=1, sparse=1, rmapbt=0
-> >          =                       reflink=1
-> > data     =                       bsize=4096   blocks=52540416, imaxpct=25
-> >          =                       sunit=64     swidth=64 blks
-> > naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
-> > log      =internal log           bsize=4096   blocks=25664, version=2
-> >          =                       sectsz=512   sunit=0 blks, lazy-count=1
-> > realtime =none                   extsz=4096   blocks=0, rtextents=0
-> 
+
+OK, so we will start with the boolean switch 'LLVM'.
+
+People can use PATH to cope with directory path and suffixes.
 
 
 -- 
-chandan
-
-
-
+Best Regards
+Masahiro Yamada
