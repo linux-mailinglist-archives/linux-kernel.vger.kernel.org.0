@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6324619B17D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33FC719B3E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388511AbgDAQf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:35:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34150 "EHLO mail.kernel.org"
+        id S1732498AbgDAQ0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:26:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388738AbgDAQfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:35:25 -0400
+        id S2387629AbgDAQ0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:26:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47ED7206F8;
-        Wed,  1 Apr 2020 16:35:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4491920BED;
+        Wed,  1 Apr 2020 16:26:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758924;
-        bh=F/Gy3fZ+eLJ73Pa8V1RLGOH2/lFrLfrdt909e5D8MEY=;
+        s=default; t=1585758380;
+        bh=v0htEInix3o5gc4RsvVAu/GUiZzHgtPZQ3jdjRnLrtE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PgU+RgIrdkTP2OLVBZjqPG+C4HCrBlvp2FkucLmQph7dS0xYxpcCxAUJo3oWJxuBC
-         ts61/416kLxkRh19bvVhn/5OszSNCe6fdjzUvbUjrcnK5nV8xye22p5Uhu39XJ6bzj
-         IckYKHHxs3Yu44oK6A6TF08OyrXkKSpqfOlKpGPo=
+        b=YV6aN0jvXpP/kmMJeKGretjwchPQWawuuegOAyO1xfWR2srwekOC24AE21/ENYb+C
+         7hwtN8rq+NefnuH90gjW/pxHV8CRt7ti4dQLI930vYPfjU55mW5u2UKrSBk1i8aeYV
+         Jnobt5lDAv3/pu2kS0X4RzhcN7TjofZWOMScAN/w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 023/102] rtc: max8907: add missing select REGMAP_IRQ
-Date:   Wed,  1 Apr 2020 18:17:26 +0200
-Message-Id: <20200401161537.427316084@linuxfoundation.org>
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH 4.19 071/116] afs: Fix some tracing details
+Date:   Wed,  1 Apr 2020 18:17:27 +0200
+Message-Id: <20200401161552.079867997@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +42,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corentin Labbe <clabbe@baylibre.com>
+From: David Howells <dhowells@redhat.com>
 
-commit 5d892919fdd0cefd361697472d4e1b174a594991 upstream.
+commit 4636cf184d6d9a92a56c2554681ea520dd4fe49a upstream.
 
-I have hit the following build error:
+Fix a couple of tracelines to indicate the usage count after the atomic op,
+not the usage count before it to be consistent with other afs and rxrpc
+trace lines.
 
-  armv7a-hardfloat-linux-gnueabi-ld: drivers/rtc/rtc-max8907.o: in function `max8907_rtc_probe':
-  rtc-max8907.c:(.text+0x400): undefined reference to `regmap_irq_get_virq'
+Change the wording of the afs_call_trace_work trace ID label from "WORK" to
+"QUEUE" to reflect the fact that it's queueing work, not doing work.
 
-max8907 should select REGMAP_IRQ
-
-Fixes: 94c01ab6d7544 ("rtc: add MAX8907 RTC driver")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 341f741f04be ("afs: Refcount the afs_call struct")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/rtc/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ fs/afs/rxrpc.c             |    4 ++--
+ include/trace/events/afs.h |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -304,6 +304,7 @@ config RTC_DRV_MAX6900
- config RTC_DRV_MAX8907
- 	tristate "Maxim MAX8907"
- 	depends on MFD_MAX8907
-+	select REGMAP_IRQ
- 	help
- 	  If you say yes here you will get support for the
- 	  RTC of Maxim MAX8907 PMIC.
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -159,7 +159,7 @@ void afs_put_call(struct afs_call *call)
+ 	int n = atomic_dec_return(&call->usage);
+ 	int o = atomic_read(&net->nr_outstanding_calls);
+ 
+-	trace_afs_call(call, afs_call_trace_put, n + 1, o,
++	trace_afs_call(call, afs_call_trace_put, n, o,
+ 		       __builtin_return_address(0));
+ 
+ 	ASSERTCMP(n, >=, 0);
+@@ -654,7 +654,7 @@ static void afs_wake_up_async_call(struc
+ 
+ 	u = atomic_fetch_add_unless(&call->usage, 1, 0);
+ 	if (u != 0) {
+-		trace_afs_call(call, afs_call_trace_wake, u,
++		trace_afs_call(call, afs_call_trace_wake, u + 1,
+ 			       atomic_read(&call->net->nr_outstanding_calls),
+ 			       __builtin_return_address(0));
+ 
+--- a/include/trace/events/afs.h
++++ b/include/trace/events/afs.h
+@@ -94,7 +94,7 @@ enum afs_edit_dir_reason {
+ 	EM(afs_call_trace_free,			"FREE ") \
+ 	EM(afs_call_trace_put,			"PUT  ") \
+ 	EM(afs_call_trace_wake,			"WAKE ") \
+-	E_(afs_call_trace_work,			"WORK ")
++	E_(afs_call_trace_work,			"QUEUE")
+ 
+ #define afs_fs_operations \
+ 	EM(afs_FS_FetchData,			"FS.FetchData") \
 
 
