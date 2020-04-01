@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B8AD19B1F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 141E819B2A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:47:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733261AbgDAQje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:39:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39530 "EHLO mail.kernel.org"
+        id S2389885AbgDAQpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:45:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388932AbgDAQjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:39:32 -0400
+        id S2389878AbgDAQpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:45:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6359A20719;
-        Wed,  1 Apr 2020 16:39:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 011FF206E9;
+        Wed,  1 Apr 2020 16:45:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759171;
-        bh=AemugzAZy1ghfV7RsZpaY/J/vZW9fAqxWNHOVoSlAJE=;
+        s=default; t=1585759550;
+        bh=YnotHvaB4DpvW05hOYKcaEFdPBULmNj+Gphpjt+xS1E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QDDYP0HvqpA2DyeHs7N/B3Y7f2wLUnrqKIXbFLw2mAeQedtU6OG5BlZWdkNzxuDrR
-         5LEL5xUgke4ksDhQnpmw/ujlXQRvNc38bdNc5YK27RJdEFtP4yGJsN09aI0GbuNCjG
-         MyMr7wkqTImJpXR8B42GQDezNO+W8ytrF9oW5KE8=
+        b=CJh8Ri7AaCJol2aexBSxFRyOcNS2/nzXIkeFp9DRa5baYviyW6FrF9PsKoSNEe4p5
+         D1aSCsYGCRTUwwv1wD3n76vsSzazdm1Z6U0RwToQPcrpZpPu9G4RjpX1UeVtvLytSu
+         jtM8ObUbVZhIrI6Tvv4hS3t624OOJ7kcEnWVpLAo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
-        kovi <zraetn@gmail.com>
-Subject: [PATCH 4.9 082/102] staging: rtl8188eu: Add ASUS USB-N10 Nano B1 to device table
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 113/148] afs: Fix some tracing details
 Date:   Wed,  1 Apr 2020 18:18:25 +0200
-Message-Id: <20200401161546.250014045@linuxfoundation.org>
+Message-Id: <20200401161603.386369320@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: David Howells <dhowells@redhat.com>
 
-commit 38ef48f7d4b7342f145a1b4f96023bde99aeb245 upstream.
+[ Upstream commit 4636cf184d6d9a92a56c2554681ea520dd4fe49a ]
 
-The ASUS USB-N10 Nano B1 has been reported as a new RTL8188EU device.
-Add it to the device tables.
+Fix a couple of tracelines to indicate the usage count after the atomic op,
+not the usage count before it to be consistent with other afs and rxrpc
+trace lines.
 
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Reported-by: kovi <zraetn@gmail.com>
-Cc: Stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200321180011.26153-1-Larry.Finger@lwfinger.net
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Change the wording of the afs_call_trace_work trace ID label from "WORK" to
+"QUEUE" to reflect the fact that it's queueing work, not doing work.
 
+Fixes: 341f741f04be ("afs: Refcount the afs_call struct")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/rtl8188eu/os_dep/usb_intf.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/afs/rxrpc.c             | 4 ++--
+ include/trace/events/afs.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-@@ -40,6 +40,7 @@ static struct usb_device_id rtw_usb_id_t
- 	/****** 8188EUS ********/
- 	{USB_DEVICE(0x056e, 0x4008)}, /* Elecom WDC-150SU2M */
- 	{USB_DEVICE(0x07b8, 0x8179)}, /* Abocom - Abocom */
-+	{USB_DEVICE(0x0B05, 0x18F0)}, /* ASUS USB-N10 Nano B1 */
- 	{USB_DEVICE(0x2001, 0x330F)}, /* DLink DWA-125 REV D1 */
- 	{USB_DEVICE(0x2001, 0x3310)}, /* Dlink DWA-123 REV D1 */
- 	{USB_DEVICE(0x2001, 0x3311)}, /* DLink GO-USB-N150 REV B1 */
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index ccc9c708a860a..7dc9c78a1c31c 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -173,7 +173,7 @@ void afs_put_call(struct afs_call *call)
+ 	int n = atomic_dec_return(&call->usage);
+ 	int o = atomic_read(&afs_outstanding_calls);
+ 
+-	trace_afs_call(call, afs_call_trace_put, n + 1, o,
++	trace_afs_call(call, afs_call_trace_put, n, o,
+ 		       __builtin_return_address(0));
+ 
+ 	ASSERTCMP(n, >=, 0);
+@@ -619,7 +619,7 @@ static void afs_wake_up_async_call(struct sock *sk, struct rxrpc_call *rxcall,
+ 
+ 	u = __atomic_add_unless(&call->usage, 1, 0);
+ 	if (u != 0) {
+-		trace_afs_call(call, afs_call_trace_wake, u,
++		trace_afs_call(call, afs_call_trace_wake, u + 1,
+ 			       atomic_read(&afs_outstanding_calls),
+ 			       __builtin_return_address(0));
+ 
+diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
+index 8b95c16b70454..0978bdae2243b 100644
+--- a/include/trace/events/afs.h
++++ b/include/trace/events/afs.h
+@@ -40,7 +40,7 @@ enum afs_call_trace {
+ 	EM(afs_call_trace_free,			"FREE ") \
+ 	EM(afs_call_trace_put,			"PUT  ") \
+ 	EM(afs_call_trace_wake,			"WAKE ") \
+-	E_(afs_call_trace_work,			"WORK ")
++	E_(afs_call_trace_work,			"QUEUE")
+ 
+ /*
+  * Export enum symbols via userspace.
+-- 
+2.20.1
+
 
 
