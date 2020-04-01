@@ -2,101 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8020219A947
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:16:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 427B019A94F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:17:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730720AbgDAKQ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 06:16:29 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52553 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbgDAKQ3 (ORCPT
+        id S1732158AbgDAKRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:17:39 -0400
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:55710 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732006AbgDAKRg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:16:29 -0400
-Received: by mail-wm1-f65.google.com with SMTP id t8so2563127wmi.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 03:16:26 -0700 (PDT)
+        Wed, 1 Apr 2020 06:17:36 -0400
+Received: by mail-vk1-f201.google.com with SMTP id t206so7915820vke.22
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 03:17:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=b9ohpIeggQmJPpjoz9Sh0/yq4Y/ugE9//x5YLp0N6aY=;
-        b=sSrlMl4aHEfPclgAbp0hw+YGa0B3dxwTI0V/Yeh+mIefUyRXFVJhEqzB+R7e3oI99+
-         aOiFK3uJohxgGG8GEApUx7IdPtSJ2iCBT3UOK3uCrFa3Ca5IyzXcOcP1fQTuoV4f4VKw
-         KOJU8nLgsaVg4VmziET0fe//h1tk5bdF38O9bFNDJu5RHDrgkId3rXYN5ilmpBk0f1El
-         RDSS7tvogu/1qm23tlhcfpVAEJ6lLyp3LExvhdMHSw6POg2jBp0E8+R5SMrrUxDH56Mw
-         SrWz78qOP2HfJ8IXOB/4HFhJVedz+tQCxIpwIeNvI0ZoGTLenmS9OKuSInIODd/H5osn
-         SKAw==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=bqlNdECR01eLEMLPFpBUwIDjw5hjyGCsJb8UrwtQ8N8=;
+        b=Gucp0oNn9xVn8KAbK0ZLd1fAjM5CHK9gumkh0dBMYtFotegI2VGiYKMx32uOq5f0w6
+         NAGqlNatFyjvpuV/ekiRw5vfJL+xqBjo6bZp6B3F7aOThN8U0oULLFmpocs/RgvN087x
+         6OtLMMcvT9isYkeW1FpWFeJO1cdDSSf29OFdcTIbdZMAanOz8/ihu/h4HmZJMmWqS+R0
+         3eOfsNVxBZqsCNsom30f5DrCs+1pDnJslKiQbZLU66qf916m9WPh4QUTXcX2WJ87vV6p
+         HOiUV1xfXChNBlBnC1UyUUqEcd9Nfyb9WkPu04BoUtNwzYwv6dQgRTqwu+AkLAyzPFqv
+         jUSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=b9ohpIeggQmJPpjoz9Sh0/yq4Y/ugE9//x5YLp0N6aY=;
-        b=bmHg4hUCZ3jPtqSHDOCrVK5VYoXIYQWfqed4Opm0+DQyrl0t3+4aj9btIx+6UCzwWI
-         WDz0SQpv3FtYEyJN+HoFcTcoOGp/07dr0yf/+heRVwe6L5kyQwVyk8KYA1vSwrxUEDyS
-         wPkP/47iKmiMldLpm8fRpYKeBx+E0vc8swVNxBXq9EE0KV63OIV566hSIdxMkE6RcR4k
-         CX0IT/AilX5tBfoFOJijRoqBNdX8DlEp+MvdRRifWpgQ1ayL26Zj/vimjoMmOXw7XJt/
-         MFTjN28osU2h+l+1Z7CXNwOn6cF5cExk1uBhqneKf8DeIVQf4IiHJfgvys3OfKnfSkvs
-         tiFw==
-X-Gm-Message-State: AGi0PuYMBVX38B+vA18Sj6BSYYs0nHy2WZPJzou7wM586Boam12zxfwg
-        ppNI3axv2slDzoh+PfEI2yQ=
-X-Google-Smtp-Source: APiQypLqvtaoPl6tWHtIyOhb76eFNQRYHnS71OLLlpIsY4OF8fxN7Ii+oG7jvnwZVuFM6QInSpsKpA==
-X-Received: by 2002:a7b:c002:: with SMTP id c2mr3490813wmb.123.1585736185732;
-        Wed, 01 Apr 2020 03:16:25 -0700 (PDT)
-Received: from arch-thunder.localdomain (a109-49-46-234.cpe.netcabo.pt. [109.49.46.234])
-        by smtp.gmail.com with ESMTPSA id h2sm2004921wmb.16.2020.04.01.03.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 03:16:25 -0700 (PDT)
-Date:   Wed, 1 Apr 2020 11:16:22 +0100
-From:   Rui Miguel Silva <rmfrfs@gmail.com>
-To:     Chen Zhou <chenzhou10@huawei.com>
-Cc:     johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] staging: greybus: fix a missing-check bug in
- gb_lights_light_config()
-Message-ID: <20200401101622.tj2bhnacetwt5rce@arch-thunder.localdomain>
-References: <20200401030017.100274-1-chenzhou10@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200401030017.100274-1-chenzhou10@huawei.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=bqlNdECR01eLEMLPFpBUwIDjw5hjyGCsJb8UrwtQ8N8=;
+        b=jLV6oiafYLEjc1toa4pXMBJbaeCJk8HUik6I4rMaS0ABgTcuOahffM+2eSaJE564L6
+         w3gENXaMIBDj45fKOJNSm8TE45wg2d0OPfZnlhMG0KWf92zvlunyeszjzHX+q9eX92vG
+         /CkoyahWbyVOiao14pgFpvghT8DMf9ZubVejCX/XHspvlRsR+EyBgitVm6D4oIIcb4hJ
+         JJX7bdEmX5zOc18h8iuMiX5ogWFk8AypYk+eKM974iELiZ1Rpsst9jthdfIYS+U4KUw1
+         4HbBxX126Ffoe3WceAJpj3rZ+NBy9vpP89OBupHky7r5bDjKuERt9WTHsCNYFBkcInzb
+         iQgA==
+X-Gm-Message-State: AGi0Pua9pOpkzEZthYHGncogqdUanpzxAZnherBMLwz+BKl8b88vSun9
+        pQzr++MVIzzAa+RXWbNtbyoVNPGTkw==
+X-Google-Smtp-Source: APiQypIRQDZYQx4QlK0W0hkuZ1CH69h1mXN5TDxQYxV4bkc2PmVzH03xsWjRMdXETX7ZOc5wF/+ScgTH9g==
+X-Received: by 2002:a67:647:: with SMTP id 68mr14157321vsg.23.1585736255163;
+ Wed, 01 Apr 2020 03:17:35 -0700 (PDT)
+Date:   Wed,  1 Apr 2020 12:17:14 +0200
+Message-Id: <20200401101714.44781-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
+Subject: [PATCH] checkpatch: Warn about data_race() without comment
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com
+Cc:     paulmck@kernel.org, dvyukov@google.com, glider@google.com,
+        andreyknvl@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, apw@canonical.com, joe@perches.com,
+        Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chen Zhou,
-Thanks for the patch.
+Warn about applications of data_race() without a comment, to encourage
+documenting the reasoning behind why it was deemed safe.
 
-On Wed, Apr 01, 2020 at 11:00:17AM +0800, Chen Zhou wrote:
-> In gb_lights_light_config(), 'light->name' is allocated by kstrndup().
-> It returns NULL when fails, add check for it.
-> 
-> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Suggested-by: Will Deacon <will@kernel.org>
+Signed-off-by: Marco Elver <elver@google.com>
+---
+ scripts/checkpatch.pl | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Acked-by: Rui Miguel Silva <rmfrfs@gmail.com>
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index a63380c6b0d2..48bb9508e300 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5833,6 +5833,14 @@ sub process {
+ 			}
+ 		}
+ 
++# check for data_race without a comment.
++		if ($line =~ /\bdata_race\s*\(/) {
++			if (!ctx_has_comment($first_line, $linenr)) {
++				WARN("DATA_RACE",
++				     "data_race without comment\n" . $herecurr);
++			}
++		}
++
+ # check for smp_read_barrier_depends and read_barrier_depends
+ 		if (!$file && $line =~ /\b(smp_|)read_barrier_depends\s*\(/) {
+ 			WARN("READ_BARRIER_DEPENDS",
+-- 
+2.26.0.rc2.310.g2932bb562d-goog
 
-------
-Cheers,
-     Rui
-
-> ---
->  drivers/staging/greybus/light.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
-> index d6ba25f..d2672b6 100644
-> --- a/drivers/staging/greybus/light.c
-> +++ b/drivers/staging/greybus/light.c
-> @@ -1026,7 +1026,8 @@ static int gb_lights_light_config(struct gb_lights *glights, u8 id)
->  
->  	light->channels_count = conf.channel_count;
->  	light->name = kstrndup(conf.name, NAMES_MAX, GFP_KERNEL);
-> -
-> +	if (!light->name)
-> +		return -ENOMEM;
->  	light->channels = kcalloc(light->channels_count,
->  				  sizeof(struct gb_channel), GFP_KERNEL);
->  	if (!light->channels)
-> -- 
-> 2.7.4
-> 
