@@ -2,297 +2,285 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0835919AAF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 13:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6562119AAFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 13:42:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732436AbgDALja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 07:39:30 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35094 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbgDALja (ORCPT
+        id S1732483AbgDALke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 07:40:34 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:53972 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732360AbgDALkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 07:39:30 -0400
-Received: by mail-io1-f68.google.com with SMTP id o3so19690321ioh.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 04:39:28 -0700 (PDT)
+        Wed, 1 Apr 2020 07:40:33 -0400
+Received: by mail-pj1-f66.google.com with SMTP id l36so2587130pjb.3;
+        Wed, 01 Apr 2020 04:40:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B6LtkV31Mx0Wb2yWk+q4vycLOOPy+wzd4O74v4uZk5c=;
-        b=n6roFE5dLAi4JKjmSsulf2z+8Omo6kkxYtrR1zQC48clYebJV3t5LbN0FcqhYZ9rLp
-         Q9qu6iMTDaVaWr5jo9STCgs6GkqQK0qdL5jaReYmYfpMUzSfh8LDdo6rOrfIN6yoz+7T
-         NBZnggh28MMaUluimTxJt44ZWOBkSv60Q/j0ms1mrozVASJhJOqjnKwIkjrOOf6NGABN
-         qF0VWNuJ7QL3LAEbzWipYJZLowk9oMHyjaKxmFr4j20JgvPR6wBwlSMaIepoEJPnWPKE
-         PrkT+PZIc1T8jXG270hT9KQr3X7Y9zDRNtH0DjYLe0Da8lxtpY7Vq4CD67KAa7KAABkM
-         P/6g==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=frwB9HCh+bckiKeVXR7fySiqWLZJB1ugfHiteg0Zg6A=;
+        b=uO1rue67YuGneI+FwjSH0oNn4qzb32FAY5QIxDM4BPM5usA6Lb7PjtcdiCwpCpEChd
+         ZM+Tt5RcPC8q2HWJ0QGK0WVzo8SVB4KIoHppAhEyiPTZubVgvvhI8vkKnzyUboO6TAhg
+         EpY9pjBDnGA3N+5w8yE0YqafS83l6hJo8SC6cYn4dZnzWocGzMyrCU0rh1k/k0S4rcdP
+         lWs+XOGKcPsfAx5Sd26YkgYkq9+rGQNVvIgGsolBqbYwvL3CmWJXUSPz2OQ9K9o2FQjJ
+         KAmel9efYIMF2LfVxOkyQB807tl8m6B8SHRGiqurpEhyUHghwp+oDA5XUhdz7biLrGEs
+         qkPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B6LtkV31Mx0Wb2yWk+q4vycLOOPy+wzd4O74v4uZk5c=;
-        b=d1/bj2dhCDGiBE2pxJuPYjObGbzPcYdUspuzmewyC3nL5AIIiikFtQePMrAtJdCX2X
-         ZnhIe1FP3lB7+7Spp0ZcVe6Df8z9WjOWuxzIs3YrhuqvOrYqu64q1aEoLM3obko+dO3x
-         mJkTj9hgxuU+rSeF7vyBWl5j33EEEKA6qbC9JtVJAxJtXtjv+X3BJfb4oONJ4UlguH9+
-         lLJbGOKB8yaFICSEr/KO4ouij/Cs7MkK10S6OfDk9VJDjBiP62gE78hri59PGj016ZrX
-         8n3hZD4kinfUb5HZtaO2k/X+GiVyVny/UFLVTKZZXykzQluPLZGJdYI1ZktuH0qf0sa/
-         c+XA==
-X-Gm-Message-State: ANhLgQ0Ynw3P+w3wO33FdEeyVkC/VW9LVq3A9AInMSO3/IksSZjZfTCE
-        cBlftK6bcnAGi0+bEJqQuzhQGxD6iIHNMcfXWQ==
-X-Google-Smtp-Source: ADFU+vvUtYp5erv69vCz5C7zMJFuQoYTx5bIquJakLPUKHJ9s2Ui++AVwJabmaFX5DajcUrRg9nMPrjN76MTMFJGkyY=
-X-Received: by 2002:a05:6602:2242:: with SMTP id o2mr19807209ioo.22.1585741167864;
- Wed, 01 Apr 2020 04:39:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=frwB9HCh+bckiKeVXR7fySiqWLZJB1ugfHiteg0Zg6A=;
+        b=d4SlZ0lR2vlTb+2uRZf1It+Lc1b8fZbSzVovton6s8YvAS+4CK217WI5d63m7Ow+x/
+         KPx3PbRCxJxq7s45BQORyUrkRhCu8475eVHauEnevt53r7rIMqjUcWMfqhZL4aXpIzQf
+         TmPhJIAuOWqutKVkGzET4WaPofX4HU4INDnBvZksc+oJoMqdYQWsC77bqxhkZKElxKO2
+         aVqtXlOwb5P/cVFyeE7mjiqFd5/uLZx8/0ReUSSvJeb5m5IFm/kx0XHuCNFwUzuvovGc
+         ZaSrJtKYNrQA/j02ZbiX04W6N923f0rrWjxKdl1BBDYXlhY7FONV9Zm/1/aO2Vz0OExx
+         6YyA==
+X-Gm-Message-State: AGi0Pub4KkKfx+XU6XjXFa1e69CE1Xgtt0SBa/2TgwpLCNrfNIvc18ca
+        1shMQuZXqZeD3rM7nc3JhQym014sg8c=
+X-Google-Smtp-Source: APiQypJ0ytCgLWwK/pGbVcTMZm+D7llsACYyxAi+SvlJPVMzHdnrHgN18R3C3SuNS09Mw7LpjMxbtQ==
+X-Received: by 2002:a17:90a:aa83:: with SMTP id l3mr4407221pjq.100.1585741231649;
+        Wed, 01 Apr 2020 04:40:31 -0700 (PDT)
+Received: from cnn ([2402:3a80:463:99ca:94f8:dc27:324a:484e])
+        by smtp.gmail.com with ESMTPSA id f5sm1418767pfq.63.2020.04.01.04.40.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Apr 2020 04:40:30 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 17:10:23 +0530
+From:   Manikandan Elumalai <manikandan.hcl.ers.epl@gmail.com>
+To:     andrew@aj.id.au, joel@jms.id.au
+Cc:     sdasari@fb.com, vijaykhemka@fb.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, manikandan.e@hcl.com
+Subject: [PATCH v7] ARM: dts: aspeed: Adding Facebook Yosemite V2 BMC
+Message-ID: <20200401114023.GA29180@cnn>
 MIME-Version: 1.0
-References: <20200325101431.12341-1-andrew.cooper3@citrix.com>
- <20200331175810.30204-1-andrew.cooper3@citrix.com> <CAMzpN2i6Nf0VDZ82mXyFixN879FC4eZfqe-LzWGkvygcz1gH_Q@mail.gmail.com>
- <c46bcb6d-4256-2d65-9cd9-33e010846de4@citrix.com> <CAMzpN2gdkmYYbQatFk66QMpiuZSfnUQUVtJ30VYF7nsX_+XVgA@mail.gmail.com>
- <bdf7995d-2d50-9bb9-8066-6c4ccfaa5b52@citrix.com>
-In-Reply-To: <bdf7995d-2d50-9bb9-8066-6c4ccfaa5b52@citrix.com>
-From:   Brian Gerst <brgerst@gmail.com>
-Date:   Wed, 1 Apr 2020 07:39:16 -0400
-Message-ID: <CAMzpN2g0LS5anGc7CXco4pgBHhGzc8hw+shMOg8WEWGsx+BHpg@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/smpboot: Remove 486-isms from the modern AP boot path
-To:     Andrew Cooper <andrew.cooper3@citrix.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        James Morris <jmorris@namei.org>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Josh Boyer <jwboyer@redhat.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <len.brown@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Martin Molnar <martin.molnar.programming@gmail.com>,
-        Pingfan Liu <kernelfans@gmail.com>,
-        jailhouse-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 1, 2020 at 5:22 AM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
->
-> On 31/03/2020 23:53, Brian Gerst wrote:
-> > On Tue, Mar 31, 2020 at 6:44 PM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
-> >> On 31/03/2020 23:23, Brian Gerst wrote:
-> >>> On Tue, Mar 31, 2020 at 1:59 PM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
-> >>>> Linux has an implementation of the Universal Start-up Algorithm (MP spec,
-> >>>> Appendix B.4, Application Processor Startup), which includes unconditionally
-> >>>> writing to the Bios Data Area and CMOS registers.
-> >>>>
-> >>>> The warm reset vector is only necessary in the non-integrated Local APIC case.
-> >>>> UV and Jailhouse already have an opt-out for this behaviour, but blindly using
-> >>>> the BDA and CMOS on a UEFI or other reduced hardware system isn't clever.
-> >>>>
-> >>>> We could make this conditional on the integrated-ness of the Local APIC, but
-> >>>> 486-era SMP isn't supported.  Drop the logic completely, tidying up the includ
-> >>>> list and header files as appropriate.
-> >>>>
-> >>>> CC: Thomas Gleixner <tglx@linutronix.de>
-> >>>> CC: Ingo Molnar <mingo@redhat.com>
-> >>>> CC: Borislav Petkov <bp@alien8.de>
-> >>>> CC: "H. Peter Anvin" <hpa@zytor.com>
-> >>>> CC: x86@kernel.org
-> >>>> CC: Jan Kiszka <jan.kiszka@siemens.com>
-> >>>> CC: James Morris <jmorris@namei.org>
-> >>>> CC: David Howells <dhowells@redhat.com>
-> >>>> CC: Andrew Cooper <andrew.cooper3@citrix.com>
-> >>>> CC: Matthew Garrett <mjg59@google.com>
-> >>>> CC: Josh Boyer <jwboyer@redhat.com>
-> >>>> CC: Steve Wahl <steve.wahl@hpe.com>
-> >>>> CC: Mike Travis <mike.travis@hpe.com>
-> >>>> CC: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-> >>>> CC: Arnd Bergmann <arnd@arndb.de>
-> >>>> CC: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> >>>> CC: Giovanni Gherdovich <ggherdovich@suse.cz>
-> >>>> CC: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> >>>> CC: Len Brown <len.brown@intel.com>
-> >>>> CC: Kees Cook <keescook@chromium.org>
-> >>>> CC: Martin Molnar <martin.molnar.programming@gmail.com>
-> >>>> CC: Pingfan Liu <kernelfans@gmail.com>
-> >>>> CC: linux-kernel@vger.kernel.org
-> >>>> CC: jailhouse-dev@googlegroups.com
-> >>>> Suggested-by: "H. Peter Anvin" <hpa@zytor.com>
-> >>>> Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
-> >>>> ---
-> >>>> v2:
-> >>>>  * Drop logic entirely, rather than retaining support in 32bit builds.
-> >>>> ---
-> >>>>  arch/x86/include/asm/apic.h        |  6 -----
-> >>>>  arch/x86/include/asm/x86_init.h    |  1 -
-> >>>>  arch/x86/kernel/apic/x2apic_uv_x.c |  1 -
-> >>>>  arch/x86/kernel/jailhouse.c        |  1 -
-> >>>>  arch/x86/kernel/platform-quirks.c  |  1 -
-> >>>>  arch/x86/kernel/smpboot.c          | 50 --------------------------------------
-> >>>>  6 files changed, 60 deletions(-)
-> >>>>
-> >>>> diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-> >>>> index 19e94af9cc5d..5c33f9374b28 100644
-> >>>> --- a/arch/x86/include/asm/apic.h
-> >>>> +++ b/arch/x86/include/asm/apic.h
-> >>>> @@ -472,12 +472,6 @@ static inline unsigned default_get_apic_id(unsigned long x)
-> >>>>                 return (x >> 24) & 0x0F;
-> >>>>  }
-> >>>>
-> >>>> -/*
-> >>>> - * Warm reset vector position:
-> >>>> - */
-> >>>> -#define TRAMPOLINE_PHYS_LOW            0x467
-> >>>> -#define TRAMPOLINE_PHYS_HIGH           0x469
-> >>>> -
-> >>>>  extern void generic_bigsmp_probe(void);
-> >>>>
-> >>>>  #ifdef CONFIG_X86_LOCAL_APIC
-> >>>> diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-> >>>> index 96d9cd208610..006a5d7fd7eb 100644
-> >>>> --- a/arch/x86/include/asm/x86_init.h
-> >>>> +++ b/arch/x86/include/asm/x86_init.h
-> >>>> @@ -229,7 +229,6 @@ enum x86_legacy_i8042_state {
-> >>>>  struct x86_legacy_features {
-> >>>>         enum x86_legacy_i8042_state i8042;
-> >>>>         int rtc;
-> >>>> -       int warm_reset;
-> >>>>         int no_vga;
-> >>>>         int reserve_bios_regions;
-> >>>>         struct x86_legacy_devices devices;
-> >>>> diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-> >>>> index ad53b2abc859..5afcfd193592 100644
-> >>>> --- a/arch/x86/kernel/apic/x2apic_uv_x.c
-> >>>> +++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-> >>>> @@ -343,7 +343,6 @@ static int __init uv_acpi_madt_oem_check(char *_oem_id, char *_oem_table_id)
-> >>>>         } else if (!strcmp(oem_table_id, "UVH")) {
-> >>>>                 /* Only UV1 systems: */
-> >>>>                 uv_system_type = UV_NON_UNIQUE_APIC;
-> >>>> -               x86_platform.legacy.warm_reset = 0;
-> >>>>                 __this_cpu_write(x2apic_extra_bits, pnodeid << uvh_apicid.s.pnode_shift);
-> >>>>                 uv_set_apicid_hibit();
-> >>>>                 uv_apic = 1;
-> >>>> diff --git a/arch/x86/kernel/jailhouse.c b/arch/x86/kernel/jailhouse.c
-> >>>> index 6eb8b50ea07e..d628fe92d6af 100644
-> >>>> --- a/arch/x86/kernel/jailhouse.c
-> >>>> +++ b/arch/x86/kernel/jailhouse.c
-> >>>> @@ -210,7 +210,6 @@ static void __init jailhouse_init_platform(void)
-> >>>>         x86_platform.calibrate_tsc      = jailhouse_get_tsc;
-> >>>>         x86_platform.get_wallclock      = jailhouse_get_wallclock;
-> >>>>         x86_platform.legacy.rtc         = 0;
-> >>>> -       x86_platform.legacy.warm_reset  = 0;
-> >>>>         x86_platform.legacy.i8042       = X86_LEGACY_I8042_PLATFORM_ABSENT;
-> >>>>
-> >>>>         legacy_pic                      = &null_legacy_pic;
-> >>>> diff --git a/arch/x86/kernel/platform-quirks.c b/arch/x86/kernel/platform-quirks.c
-> >>>> index b348a672f71d..d922c5e0c678 100644
-> >>>> --- a/arch/x86/kernel/platform-quirks.c
-> >>>> +++ b/arch/x86/kernel/platform-quirks.c
-> >>>> @@ -9,7 +9,6 @@ void __init x86_early_init_platform_quirks(void)
-> >>>>  {
-> >>>>         x86_platform.legacy.i8042 = X86_LEGACY_I8042_EXPECTED_PRESENT;
-> >>>>         x86_platform.legacy.rtc = 1;
-> >>>> -       x86_platform.legacy.warm_reset = 1;
-> >>>>         x86_platform.legacy.reserve_bios_regions = 0;
-> >>>>         x86_platform.legacy.devices.pnpbios = 1;
-> >>>>
-> >>>> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> >>>> index fe3ab9632f3b..a9f5b511d0b4 100644
-> >>>> --- a/arch/x86/kernel/smpboot.c
-> >>>> +++ b/arch/x86/kernel/smpboot.c
-> >>>> @@ -72,7 +72,6 @@
-> >>>>  #include <asm/fpu/internal.h>
-> >>>>  #include <asm/setup.h>
-> >>>>  #include <asm/uv/uv.h>
-> >>>> -#include <linux/mc146818rtc.h>
-> >>>>  #include <asm/i8259.h>
-> >>>>  #include <asm/misc.h>
-> >>>>  #include <asm/qspinlock.h>
-> >>>> @@ -119,34 +118,6 @@ int arch_update_cpu_topology(void)
-> >>>>         return retval;
-> >>>>  }
-> >>>>
-> >>>> -static inline void smpboot_setup_warm_reset_vector(unsigned long start_eip)
-> >>>> -{
-> >>>> -       unsigned long flags;
-> >>>> -
-> >>>> -       spin_lock_irqsave(&rtc_lock, flags);
-> >>>> -       CMOS_WRITE(0xa, 0xf);
-> >>>> -       spin_unlock_irqrestore(&rtc_lock, flags);
-> >>>> -       *((volatile unsigned short *)phys_to_virt(TRAMPOLINE_PHYS_HIGH)) =
-> >>>> -                                                       start_eip >> 4;
-> >>>> -       *((volatile unsigned short *)phys_to_virt(TRAMPOLINE_PHYS_LOW)) =
-> >>>> -                                                       start_eip & 0xf;
-> >>>> -}
-> >>>> -
-> >>>> -static inline void smpboot_restore_warm_reset_vector(void)
-> >>>> -{
-> >>>> -       unsigned long flags;
-> >>>> -
-> >>>> -       /*
-> >>>> -        * Paranoid:  Set warm reset code and vector here back
-> >>>> -        * to default values.
-> >>>> -        */
-> >>>> -       spin_lock_irqsave(&rtc_lock, flags);
-> >>>> -       CMOS_WRITE(0, 0xf);
-> >>>> -       spin_unlock_irqrestore(&rtc_lock, flags);
-> >>>> -
-> >>>> -       *((volatile u32 *)phys_to_virt(TRAMPOLINE_PHYS_LOW)) = 0;
-> >>>> -}
-> >>>> -
-> >>>>  static void init_freq_invariance(void);
-> >>>>
-> >>>>  /*
-> >>>> @@ -1049,20 +1020,6 @@ static int do_boot_cpu(int apicid, int cpu, struct task_struct *idle,
-> >>>>          * the targeted processor.
-> >>>>          */
-> >>>>
-> >>>> -       if (x86_platform.legacy.warm_reset) {
-> >>>> -
-> >>>> -               pr_debug("Setting warm reset code and vector.\n");
-> >>>> -
-> >>>> -               smpboot_setup_warm_reset_vector(start_ip);
-> >>>> -               /*
-> >>>> -                * Be paranoid about clearing APIC errors.
-> >>>> -               */
-> >>>> -               if (APIC_INTEGRATED(boot_cpu_apic_version)) {
-> >>>> -                       apic_write(APIC_ESR, 0);
-> >>>> -                       apic_read(APIC_ESR);
-> >>>> -               }
-> >>>> -       }
-> >>>> -
-> >>>>         /*
-> >>>>          * AP might wait on cpu_callout_mask in cpu_init() with
-> >>>>          * cpu_initialized_mask set if previous attempt to online
-> >>>> @@ -1118,13 +1075,6 @@ static int do_boot_cpu(int apicid, int cpu, struct task_struct *idle,
-> >>>>                 }
-> >>>>         }
-> >>>>
-> >>>> -       if (x86_platform.legacy.warm_reset) {
-> >>>> -               /*
-> >>>> -                * Cleanup possible dangling ends...
-> >>>> -                */
-> >>>> -               smpboot_restore_warm_reset_vector();
-> >>>> -       }
-> >>>> -
-> >>>>         return boot_error;
-> >>>>  }
-> >>> You removed x86_platform.legacy.warm_reset in the original patch, but
-> >>> that is missing in V2.
-> >> Second hunk?  Or are you referring to something different?
-> > Removing the warm_reset field from struct x86_legacy_features.
->
-> Ok, but that is still present as the 2nd hunk of the patch.
+The Yosemite V2 is a facebook multi-node server
+platform that host four OCP server. The BMC
+in the Yosemite V2 platform based on AST2500 SoC.
 
-My apologies, Gmail was hiding that section of the patch because it
-was a reply to the original patch.  For future reference, add the
-version number to the title when resubmitting a patch (ie. [PATCH
-v2]).
+This patch adds linux device tree entry related to
+Yosemite V2 specific devices connected to BMC SoC.
 
---
-Brian Gerst
+Signed-off-by: Manikandan Elumalai <manikandan.hcl.ers.epl@gmail.com>
+Acked-by     : Andrew Jeffery <andrew@aj.id.au>
+Reviewed-by  : Vijay Khemka <vkhemka@fb.com>
+---
+---      v7 - Added multi-host SOL feature.
+---      v6 - Added device tree property for multi-host Mellanox NIC in the ncsi driver.
+---      v5 - Spell and contributor name correction.
+---           - License identifier changed to GPL-2.0-or-later.
+---           - aspeed-gpio.h removed.
+---           - FAN2 tacho channel changed.
+---      v4 - Bootargs removed.
+---      v3 - Uart1 Debug removed .
+---      v2 - LPC and VUART removed .
+---      v1 - Initial draft.
+---
+---
+ .../boot/dts/aspeed-bmc-facebook-yosemitev2.dts    | 186 +++++++++++++++++++++
+ 1 file changed, 186 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
+
+diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
+new file mode 100644
+index 0000000..bc83901
+--- /dev/null
++++ b/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
+@@ -0,0 +1,186 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// Copyright (c) 2018 Facebook Inc.
++/dts-v1/;
++#include "aspeed-g5.dtsi"
++
++/ {
++	model = "Facebook Yosemitev2 BMC";
++	compatible = "facebook,yosemitev2-bmc", "aspeed,ast2500";
++	aliases {
++		serial4 = &uart5;
++	};
++	chosen {
++		stdout-path = &uart5;
++	};
++
++	memory@80000000 {
++		reg = <0x80000000 0x20000000>;
++	};
++
++	iio-hwmon {
++		// VOLATAGE SENSOR
++		compatible = "iio-hwmon";
++		io-channels = <&adc 0> , <&adc 1> , <&adc 2> ,  <&adc 3> ,
++		<&adc 4> , <&adc 5> , <&adc 6> ,  <&adc 7> ,
++		<&adc 8> , <&adc 9> , <&adc 10>, <&adc 11> ,
++		<&adc 12> , <&adc 13> , <&adc 14> , <&adc 15> ;
++	};
++};
++
++&fmc {
++	status = "okay";
++	flash@0 {
++		status = "okay";
++		m25p,fast-read;
++#include "openbmc-flash-layout.dtsi"
++	};
++};
++
++&spi1 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_spi1_default>;
++	flash@0 {
++		status = "okay";
++		m25p,fast-read;
++		label = "pnor";
++	};
++};
++&uart1 {
++	// Host1 Console
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_txd1_default
++		     &pinctrl_rxd1_default>;
++};
++
++&uart2 {
++	// Host2 Console
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_txd2_default
++		     &pinctrl_rxd2_default>;
++
++};
++
++&uart3 {
++	// Host3 Console
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_txd3_default
++		     &pinctrl_rxd3_default>;
++};
++
++&uart4 {
++	// Host4 Console
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_txd4_default
++		     &pinctrl_rxd4_default>;
++};
++
++&uart5 {
++	// BMC Console
++	status = "okay";
++};
++
++&vuart {
++	// Virtual UART
++	status = "okay";
++};
++
++&mac0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_rmii1_default>;
++	use-ncsi;
++	mlx,multi-host;
++};
++
++&adc {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_adc0_default
++			&pinctrl_adc1_default
++			&pinctrl_adc2_default
++			&pinctrl_adc3_default
++			&pinctrl_adc4_default
++			&pinctrl_adc5_default
++			&pinctrl_adc6_default
++			&pinctrl_adc7_default
++			&pinctrl_adc8_default
++			&pinctrl_adc9_default
++			&pinctrl_adc10_default
++			&pinctrl_adc11_default
++			&pinctrl_adc12_default
++			&pinctrl_adc13_default
++			&pinctrl_adc14_default
++			&pinctrl_adc15_default>;
++};
++
++&i2c8 {
++	status = "okay";
++	//FRU EEPROM
++	eeprom@51 {
++		compatible = "atmel,24c64";
++		reg = <0x51>;
++		pagesize = <32>;
++	};
++};
++
++&i2c9 {
++	status = "okay";
++	tmp421@4e {
++	//INLET TEMP
++		compatible = "ti,tmp421";
++		reg = <0x4e>;
++	};
++	//OUTLET TEMP
++	tmp421@4f {
++		compatible = "ti,tmp421";
++		reg = <0x4f>;
++	};
++};
++
++&i2c10 {
++	status = "okay";
++	//HSC
++	adm1278@40 {
++		compatible = "adi,adm1278";
++		reg = <0x40>;
++	};
++};
++
++&i2c11 {
++	status = "okay";
++	//MEZZ_TEMP_SENSOR
++	tmp421@1f {
++		compatible = "ti,tmp421";
++		reg = <0x1f>;
++	};
++};
++
++&i2c12 {
++	status = "okay";
++	//MEZZ_FRU
++	eeprom@51 {
++		compatible = "atmel,24c64";
++		reg = <0x51>;
++		pagesize = <32>;
++	};
++};
++
++&pwm_tacho {
++	status = "okay";
++	//FSC
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_pwm0_default &pinctrl_pwm1_default>;
++	fan@0 {
++		reg = <0x00>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
++	};
++	fan@1 {
++		reg = <0x01>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x01>;
++	};
++};
+-- 
+2.7.4
+
