@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1930919AFFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:23:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE4B919B2A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:47:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387556AbgDAQW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:22:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46098 "EHLO mail.kernel.org"
+        id S2389469AbgDAQqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:46:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387550AbgDAQWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:22:55 -0400
+        id S2389895AbgDAQp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:45:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E4622137B;
-        Wed,  1 Apr 2020 16:22:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3A7C2063A;
+        Wed,  1 Apr 2020 16:45:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758174;
-        bh=LgPj8+2ycUOEbuzcx4Slc6l4LdVpqf9vUNx2DlNUndY=;
+        s=default; t=1585759557;
+        bh=xiR447SPRj5Q7cH3/CX6Z/TdZ+9rqAJAouR0yNNLHPo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AU4vf8XgZFooSXLb+4i//KES++C82SRxRjGG+vSAuyRy6V9zlNI6aojRclq4dUBHM
-         LqfExV+3dm+YAfO5mfP7hojbujk+mw2WJczIvWye//4AibwViRZgqSjr/n3z+eg1SC
-         F4qCL8+luPfSmXjmzxmyEAi/zVwn2VMX7O3LIEBU=
+        b=siRviEIqY04p79CV7bQLgjpzdDGDI0idd0P45sFHVDpqjvO7JBlEGx2FeHWmV6QVe
+         x5nQDDgigqISeJ/QydFpF1xPeH3sflHSJiGx0cGb6w4JcuGWrrnZj+Iklox1BDSysx
+         emATvbtLBSxEYVmbVFMQ0AYNfu04RzlBefKBq8LY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 5.4 23/27] ARM: dts: imx6: phycore-som: fix arm and soc minimum voltage
+        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 079/148] arm64: dts: ls1043a: FMan erratum A050385
 Date:   Wed,  1 Apr 2020 18:17:51 +0200
-Message-Id: <20200401161433.199490420@linuxfoundation.org>
+Message-Id: <20200401161600.852649460@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
-References: <20200401161414.352722470@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Felsch <m.felsch@pengutronix.de>
+From: Madalin Bucur <madalin.bucur@nxp.com>
 
-commit 636b45b8efa91db05553840b6c0120d6fa6b94fa upstream.
+[ Upstream commit b54d3900862374e1bb2846e6b39d79c896c0b200 ]
 
-The current set minimum voltage of 730000µV seems to be wrong. I don't
-know the document which specifies that but the imx6qdl datasheets says
-that the minimum voltage should be 0.925V for VDD_ARM (LDO bypassed,
-lowest opp) and 1.15V for VDD_SOC (LDO bypassed, lowest opp).
+The LS1043A SoC is affected by the A050385 erratum stating that
+FMAN DMA read or writes under heavy traffic load may cause FMAN
+internal resource leak thus stopping further packet processing.
 
-Fixes: ddec5d1c0047 ("ARM: dts: imx6: Add initial support for phyCORE-i.MX 6 SOM")
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6qdl-phytec-phycore-som.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1043-post.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/arm/boot/dts/imx6qdl-phytec-phycore-som.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-phytec-phycore-som.dtsi
-@@ -107,14 +107,14 @@
- 		regulators {
- 			vdd_arm: buck1 {
- 				regulator-name = "vdd_arm";
--				regulator-min-microvolt = <730000>;
-+				regulator-min-microvolt = <925000>;
- 				regulator-max-microvolt = <1380000>;
- 				regulator-always-on;
- 			};
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043-post.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043-post.dtsi
+index 169e171407a63..acd205ef329f7 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043-post.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043-post.dtsi
+@@ -21,6 +21,8 @@
+ };
  
- 			vdd_soc: buck2 {
- 				regulator-name = "vdd_soc";
--				regulator-min-microvolt = <730000>;
-+				regulator-min-microvolt = <1150000>;
- 				regulator-max-microvolt = <1380000>;
- 				regulator-always-on;
- 			};
+ &fman0 {
++	fsl,erratum-a050385;
++
+ 	/* these aliases provide the FMan ports mapping */
+ 	enet0: ethernet@e0000 {
+ 	};
+-- 
+2.20.1
+
 
 
