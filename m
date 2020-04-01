@@ -2,85 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEC0119B534
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:14:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1729B19B53D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:16:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732723AbgDASO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 14:14:29 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:37464 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727723AbgDASO3 (ORCPT
+        id S1732824AbgDASQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 14:16:40 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41364 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727723AbgDASQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 14:14:29 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7991C11D69C3E;
-        Wed,  1 Apr 2020 11:14:28 -0700 (PDT)
-Date:   Wed, 01 Apr 2020 11:14:27 -0700 (PDT)
-Message-Id: <20200401.111427.789296252666544265.davem@davemloft.net>
-To:     jarod@redhat.com
-Cc:     linux-kernel@vger.kernel.org, moshele@mellanox.com,
-        stephen@networkplumber.org, mleitner@redhat.com,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net v2] ipv6: don't auto-add link-local address to lag
- ports
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200330152219.58296-1-jarod@redhat.com>
-References: <CAKfmpSd_VQTwxy-gr-jNvQu_CMFf9F2enEjyQC3+W9+Y2WO1Dg@mail.gmail.com>
-        <20200330152219.58296-1-jarod@redhat.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 01 Apr 2020 11:14:28 -0700 (PDT)
+        Wed, 1 Apr 2020 14:16:38 -0400
+Received: by mail-lf1-f66.google.com with SMTP id z23so496724lfh.8;
+        Wed, 01 Apr 2020 11:16:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ohKhIvr0zaGkZNZ8iCKmPfOv0u8WbM7PXyOQtVWyFt8=;
+        b=K+d7Rorms1Cni3yLww4dnDdrJOs14OO60FrW3zNhaJMt4znxIyzrsMPueYF6XwN29x
+         uw01a0igiJEkp4Pqos6HPFTtFqeJc7Mt/ioE/Hx+si9FW41oZ4MsMclcGXAMd+he1DyU
+         4Z6N4MWZoI64SqGI+BgU3YQ+XJxOc6wbqJQJ7X2bRJFJD4aMWPugN6dB1GfFVMWXV59V
+         FDGHyJVKb4Nhe8nvWOOZfNb+3wylIfpCjNTWAMnuwuCnxBQPuyij8XzEqEOWaqnbQqOD
+         X1azb/qNUAmS8rQAjCdXEYpBtO0M2Wtn1Lvpz0SnCUWA+8gZ85Xg/gdI0vu2RfFOti/s
+         CyUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ohKhIvr0zaGkZNZ8iCKmPfOv0u8WbM7PXyOQtVWyFt8=;
+        b=lmzj1OZuXO+RiK5cEcwOyOfAnxfLuqBlwysPEqZ1vLofZfuieqs9FOLCT2pHqNHOrc
+         qzMaoVvieMIGXS3cVlMWlCZe+5XyphLE2WLpH/0lojfaz2mmvT60/KVYaVeOl9/SxgU9
+         jEF1ichBksqaqm3jAFS+W1UZoIlESeh9sZj3g6p19k8na5d/Qzr32s5eIMOJqIOTkkg2
+         ZYBoNPScVkNbrEwaa1djfpDiOa9ct3Dec4OfkkyMp/kZR8ZApn2MzW8WfVE4VMuvyexK
+         tYw7/KDtUrVv4NOvi4NfeNm8Bhvgka9LDfsffooui87YayzKAzh6yoR9yvOnAqajsmJS
+         95Lw==
+X-Gm-Message-State: AGi0PuYURct7AvRM6WsBjtor8OFP65a21zfBV9TMEHbG03MRhDQl6ajX
+        O//Yip6i/7oqsOhfCnm95b4=
+X-Google-Smtp-Source: APiQypLUT/Urx2WPTfjLpIiARF0DyHJ3Fb08TbT+Qv/xlBHs3Zk7A9+cT+CQ8O/7hciGtwRKiKAabA==
+X-Received: by 2002:a19:4843:: with SMTP id v64mr15013886lfa.171.1585764996901;
+        Wed, 01 Apr 2020 11:16:36 -0700 (PDT)
+Received: from pc636 (h5ef52e31.seluork.dyn.perspektivbredband.net. [94.245.46.49])
+        by smtp.gmail.com with ESMTPSA id b28sm1854143ljp.90.2020.04.01.11.16.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 11:16:35 -0700 (PDT)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date:   Wed, 1 Apr 2020 20:16:01 +0200
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Uladzislau Rezki <urezki@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        rcu@vger.kernel.org, willy@infradead.org, peterz@infradead.org,
+        neilb@suse.com, vbabka@suse.cz, mgorman@suse.de,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC] rcu/tree: Use GFP_MEMALLOC for alloc memory to free
+ memory pattern
+Message-ID: <20200401181601.GA4042@pc636>
+References: <20200331131628.153118-1-joel@joelfernandes.org>
+ <20200331140433.GA26498@pc636>
+ <20200331150911.GC236678@google.com>
+ <20200331160119.GA27614@pc636>
+ <20200331183000.GD236678@google.com>
+ <20200401122550.GA32593@pc636>
+ <20200401134745.GV19865@paulmck-ThinkPad-P72>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200401134745.GV19865@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarod Wilson <jarod@redhat.com>
-Date: Mon, 30 Mar 2020 11:22:19 -0400
+> > > 
+> > > Right. Per discussion with Paul, we discussed that it is better if we
+> > > pre-allocate N number of array blocks per-CPU and use it for the cache.
+> > > Default for N being 1 and tunable with a boot parameter. I agree with this.
+> > > 
+> > As discussed before, we can make use of memory pool API for such
+> > purpose. But i am not sure if it should be one pool per CPU or
+> > one pool per NR_CPUS, that would contain NR_CPUS * N pre-allocated
+> > blocks.
+> 
+> There are advantages and disadvantages either way.  The advantage of the
+> per-CPU pool is that you don't have to worry about something like lock
+> contention causing even more pain during an OOM event.  One potential
+> problem wtih the per-CPU pool can happen when callbacks are offloaded,
+> in which case the CPUs needing the memory might never be getting it,
+> because in the offloaded case (RCU_NOCB_CPU=y) the CPU posting callbacks
+> might never be invoking them.
+> 
+> But from what I know now, systems built with CONFIG_RCU_NOCB_CPU=y
+> either don't have heavy callback loads (HPC systems) or are carefully
+> configured (real-time systems).  Plus large systems would probably end
+> up needing something pretty close to a slab allocator to keep from dying
+> from lock contention, and it is hard to justify that level of complexity
+> at this point.
+> 
+> Or is there some way to mark a specific slab allocator instance as being
+> able to keep some amount of memory no matter what the OOM conditions are?
+> If not, the current per-CPU pre-allocated cache is a better choice in the
+> near term.
+> 
+As for mempool API:
 
-> Bonding slave and team port devices should not have link-local addresses
-> automatically added to them, as it can interfere with openvswitch being
-> able to properly add tc ingress.
-> 
-> Basic reproducer, courtesy of Marcelo:
- ...
-> (above trimmed to relevant entries, obviously)
-> 
-> $ sysctl net.ipv6.conf.ens2f0np0.addr_gen_mode=0
-> net.ipv6.conf.ens2f0np0.addr_gen_mode = 0
-> $ sysctl net.ipv6.conf.ens2f1np2.addr_gen_mode=0
-> net.ipv6.conf.ens2f1np2.addr_gen_mode = 0
-> 
-> $ ip a l ens2f0np0
-> 2: ens2f0np0: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc
-> mq master bond0 state UP group default qlen 1000
->     link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
->     inet6 fe80::20f:53ff:fe2f:ea40/64 scope link tentative
->        valid_lft forever preferred_lft forever
-> $ ip a l ens2f1np2
-> 5: ens2f1np2: <NO-CARRIER,BROADCAST,MULTICAST,SLAVE,UP> mtu 1500 qdisc
-> mq master bond0 state DOWN group default qlen 1000
->     link/ether 00:0f:53:2f:ea:40 brd ff:ff:ff:ff:ff:ff
->     inet6 fe80::20f:53ff:fe2f:ea40/64 scope link tentative
->        valid_lft forever preferred_lft forever
-> 
-> Looks like addrconf_sysctl_addr_gen_mode() bypasses the original "is
-> this a slave interface?" check added by commit c2edacf80e15, and
-> results in an address getting added, while w/the proposed patch added,
-> no address gets added. This simply adds the same gating check to another
-> code path, and thus should prevent the same devices from erroneously
-> obtaining an ipv6 link-local address.
-> 
-> Fixes: d35a00b8e33d ("net/ipv6: allow sysctl to change link-local address generation mode")
-> Reported-by: Moshe Levi <moshele@mellanox.com>
-> CC: Stephen Hemminger <stephen@networkplumber.org>
-> CC: Marcelo Ricardo Leitner <mleitner@redhat.com>
-> CC: netdev@vger.kernel.org
-> Signed-off-by: Jarod Wilson <jarod@redhat.com>
+mempool_alloc() just tries to make regular allocation taking into
+account passed gfp_t bitmask. If it fails due to memory pressure,
+it uses reserved preallocated pool that consists of number of
+desirable elements(preallocated when a pool is created).
 
-Applied and queued up for -stable, thanks.
+mempoll_free() returns an element to to pool, if it detects that
+current reserved elements are lower then minimum allowed elements,
+it will add an element to reserved pool, i.e. refill it. Otherwise
+just call kfree() or whatever we define as "element-freeing function."
+
+>
+> If not, the current per-CPU pre-allocated cache is a better choice in the
+> near term.
+>
+OK. I see your point.
+
+Thank you for your comments and view :)
+
+--
+Vlad Rezki
