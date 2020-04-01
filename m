@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B9D819B28A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B38E19B135
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:33:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389794AbgDAQo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:44:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46026 "EHLO mail.kernel.org"
+        id S2388485AbgDAQdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:33:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389786AbgDAQoy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:44:54 -0400
+        id S1732540AbgDAQc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:32:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C32C120719;
-        Wed,  1 Apr 2020 16:44:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9A8120658;
+        Wed,  1 Apr 2020 16:32:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759494;
-        bh=XvHQyiQydphPefD+h6BTBcAHzrhmw4kWpystoqDYjlw=;
+        s=default; t=1585758777;
+        bh=ghDfLd7SVVS3Vf39RZ3MLTXeN9O5LKa3h+M3tjtUbtI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FmAWbIV539yb03C0gxJmVm/xyCKPHR9hgXcKZ0oCxiGe1ZbrQGIi+V0ADJfK0xj0k
-         j19MFhTA5EkCjZC2EM1fkUY2Ewl06b/4yI6e5u1SECuNe2IbS5CzPRXdpbqOEkQhl0
-         VRKOP0/U1lVL+wZw0KAKOM9Gntj8sgW8Zww8vZl8=
+        b=vLn7O2BmmJspylgr3Bt7qcnU8BEPKHnTMw79KV3+agRIH0U1MGGAXbYnUFkKtG5ea
+         thNvmhxUVqa/dIfdRHWkynUjBPpjCxveFwvVkPSKSFIZSwliVypdRILG98ZmCJpnLL
+         3E9anWjcBvAqYwNxIUbaKxGbtTIXweenVxBAvDW8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.14 097/148] mac80211: mark station unauthorized before key removal
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        Johan Hovold <johan@kernel.org>, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH 4.4 73/91] media: flexcop-usb: fix endpoint sanity check
 Date:   Wed,  1 Apr 2020 18:18:09 +0200
-Message-Id: <20200401161602.187233939@linuxfoundation.org>
+Message-Id: <20200401161537.231970310@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,45 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit b16798f5b907733966fd1a558fca823b3c67e4a1 upstream.
+commit bca243b1ce0e46be26f7c63b5591dfbb41f558e5 upstream.
 
-If a station is still marked as authorized, mark it as no longer
-so before removing its keys. This allows frames transmitted to it
-to be rejected, providing additional protection against leaking
-plain text data during the disconnection flow.
+commit 1b976fc6d684 ("media: b2c2-flexcop-usb: add sanity checking") added
+an endpoint sanity check to address a NULL-pointer dereference on probe.
+Unfortunately the check was done on the current altsetting which was later
+changed.
 
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200326155133.ccb4fb0bb356.If48f0f0504efdcf16b8921f48c6d3bb2cb763c99@changeid
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fix this by moving the sanity check to after the altsetting is changed.
+
+Fixes: 1b976fc6d684 ("media: b2c2-flexcop-usb: add sanity checking")
+Cc: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/sta_info.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/media/usb/b2c2/flexcop-usb.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/mac80211/sta_info.c
-+++ b/net/mac80211/sta_info.c
-@@ -3,6 +3,7 @@
-  * Copyright 2006-2007	Jiri Benc <jbenc@suse.cz>
-  * Copyright 2013-2014  Intel Mobile Communications GmbH
-  * Copyright (C) 2015 - 2017 Intel Deutschland GmbH
-+ * Copyright (C) 2018-2020 Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -951,6 +952,11 @@ static void __sta_info_destroy_part2(str
- 	might_sleep();
- 	lockdep_assert_held(&local->sta_mtx);
+--- a/drivers/media/usb/b2c2/flexcop-usb.c
++++ b/drivers/media/usb/b2c2/flexcop-usb.c
+@@ -481,6 +481,9 @@ static int flexcop_usb_init(struct flexc
+ 		return ret;
+ 	}
  
-+	while (sta->sta_state == IEEE80211_STA_AUTHORIZED) {
-+		ret = sta_info_move_state(sta, IEEE80211_STA_ASSOC);
-+		WARN_ON_ONCE(ret);
-+	}
++	if (fc_usb->uintf->cur_altsetting->desc.bNumEndpoints < 1)
++		return -ENODEV;
 +
- 	/* now keys can no longer be reached */
- 	ieee80211_free_sta_keys(local, sta);
+ 	switch (fc_usb->udev->speed) {
+ 	case USB_SPEED_LOW:
+ 		err("cannot handle USB speed because it is too slow.");
+@@ -514,9 +517,6 @@ static int flexcop_usb_probe(struct usb_
+ 	struct flexcop_device *fc = NULL;
+ 	int ret;
  
+-	if (intf->cur_altsetting->desc.bNumEndpoints < 1)
+-		return -ENODEV;
+-
+ 	if ((fc = flexcop_device_kmalloc(sizeof(struct flexcop_usb))) == NULL) {
+ 		err("out of memory\n");
+ 		return -ENOMEM;
 
 
