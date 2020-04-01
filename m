@@ -2,241 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7059019B14D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D40A119B38F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:52:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388372AbgDAQdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:33:49 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44209 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388586AbgDAQdr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:33:47 -0400
-Received: by mail-lf1-f66.google.com with SMTP id 131so175091lfh.11
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:33:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cumulusnetworks.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Nq8DlIaNNyLF7eWlLEUhD4or4n0rJ1xse7pIIVitJCI=;
-        b=Pb4nhMyuivqt3fOh8k0EuOcVHafLgipojtWH3huNFNONQYto6yNpASBgO2qBOGtTg3
-         a9I866SOtBn9sD35dpgFC4o26HhzfqS77hc1yqs4/cHjH1jvfqgnMQIYfCxahfmvfO11
-         T+s7q1CMmhUb28QuN6Ckl3Rn/kCBqDtu32tGQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Nq8DlIaNNyLF7eWlLEUhD4or4n0rJ1xse7pIIVitJCI=;
-        b=YllzpTC6jjrFnyyz9hgBZlGfKVkYKLnV+EIBRbcVZtz9vouZi8zkArBEV6etuaHY8c
-         JS25bKbUeuTWkA70NTrKicWcSEfSBdmtnAity8mnhmFSO1XkqVjkoyd6m2KP7+9v12ZX
-         YtLvR5c57oIY09NaZeTLzmpzrUFh8BS5neiEsk69n/dmMR/GT9cZ2KACVuu1przY8Sem
-         SJxQjsOsDVSjyWKCOi6yA/FC3qnAtFtvKCEa0CagtqW/Uj8FkWjjT28fzoeI6uKp144W
-         E7N92RkIc5GLgdMHblC8OrykL7c9QfIkcINAS3jdh1ZlQMOFduypsDRcet4ApiTCUOpV
-         hFPw==
-X-Gm-Message-State: AGi0PuZ6P+Tpc1RNDYOX1KePzzqvh+CXKXs1n3WdUhilPLKXcFFw0bQM
-        A4l069Uksx9BO1c6uHJvPeqR5g==
-X-Google-Smtp-Source: APiQypIs0POdVCLsPljB1ug28JxGd5jhOo0cfC9cDy05i6dW4/QI3rmy0jkQvZSQkRvgHGz4vIcTog==
-X-Received: by 2002:a05:6512:3127:: with SMTP id p7mr15067473lfd.108.1585758824954;
-        Wed, 01 Apr 2020 09:33:44 -0700 (PDT)
-Received: from [192.168.0.109] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
-        by smtp.gmail.com with ESMTPSA id g5sm1536033ljl.106.2020.04.01.09.33.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Apr 2020 09:33:44 -0700 (PDT)
-Subject: Re: [RFC net-next v4 8/9] bridge: mrp: Integrate MRP into the bridge
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     davem@davemloft.net, jiri@resnulli.us, ivecera@redhat.com,
-        kuba@kernel.org, roopa@cumulusnetworks.com, olteanv@gmail.com,
-        andrew@lunn.ch, UNGLinuxDriver@microchip.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bridge@lists.linux-foundation.org
-References: <20200327092126.15407-1-horatiu.vultur@microchip.com>
- <20200327092126.15407-9-horatiu.vultur@microchip.com>
- <17d9fb2a-cb48-7bb6-cb79-3876ca3a74b2@cumulusnetworks.com>
- <20200401161021.3s2sqvma7r7wpo7h@soft-dev3.microsemi.net>
-From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Message-ID: <d35f44a6-a70f-bc29-afa6-0dd04e331981@cumulusnetworks.com>
-Date:   Wed, 1 Apr 2020 19:33:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S2388585AbgDAQeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:34:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60808 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387696AbgDAQeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:34:11 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BD3A21582;
+        Wed,  1 Apr 2020 16:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585758850;
+        bh=uTdpVzB4sMS1kq2S/jZxD1mCnBHts7WJPO28p1TG1uE=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=AhSy97Z1a0DxYTbCKWG0HJI/YELNG8gYEXfmmUZX1BJgMC11K9JvlWVCo8nKsaWZo
+         rwIUvsyGwTgmJuZ0vGCLOBluG/GGOsf1rEJ+XnrLIRui/ddMT1j98D8l+VvRDCfvP7
+         I4f/4LTlxHoxJd8X6Ob88mKUCkJblsp80vb0w828=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id B64FA3522887; Wed,  1 Apr 2020 09:34:09 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 09:34:09 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] Documentation/litmus-tests: Add litmus tests for
+ atomic APIs
+Message-ID: <20200401163409.GZ19865@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200326024022.7566-1-boqun.feng@gmail.com>
+ <20200327221843.GA226939@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200401161021.3s2sqvma7r7wpo7h@soft-dev3.microsemi.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200327221843.GA226939@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/04/2020 19:10, Horatiu Vultur wrote:
-> Hi Nik,
+On Fri, Mar 27, 2020 at 06:18:43PM -0400, Joel Fernandes wrote:
+> On Thu, Mar 26, 2020 at 10:40:18AM +0800, Boqun Feng wrote:
+> > A recent discussion raises up the requirement for having test cases for
+> > atomic APIs:
+> > 
+> > 	https://lore.kernel.org/lkml/20200213085849.GL14897@hirez.programming.kicks-ass.net/
+> > 
+> > , and since we already have a way to generate a test module from a
+> > litmus test with klitmus[1]. It makes sense that we add more litmus
+> > tests for atomic APIs. And based on the previous discussion, I create a
+> > new directory Documentation/atomic-tests and put these litmus tests
+> > here.
+> > 
+> > This patchset starts the work by adding the litmus tests which are
+> > already used in atomic_t.txt, and also improve the atomic_t.txt to make
+> > it consistent with the litmus tests.
+> > 
+> > Previous version:
+> > v1: https://lore.kernel.org/linux-doc/20200214040132.91934-1-boqun.feng@gmail.com/
+> > v2: https://lore.kernel.org/lkml/20200219062627.104736-1-boqun.feng@gmail.com/
+> > v3: https://lore.kernel.org/linux-doc/20200227004049.6853-1-boqun.feng@gmail.com/
 > 
-> The 03/30/2020 19:16, Nikolay Aleksandrov wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> On 27/03/2020 11:21, Horatiu Vultur wrote:
->>> To integrate MRP into the bridge, the bridge needs to do the following:
->>> - add new flag(BR_MPP_AWARE) to the net bridge ports, this bit will be set when
->>>   the port is added to an MRP instance. In this way it knows if the frame was
->>>   received on MRP ring port
->>> - detect if the MRP frame was received on MRP ring port in that case it would be
->>>   processed otherwise just forward it as usual.
->>> - enable parsing of MRP
->>> - before whenever the bridge was set up, it would set all the ports in
->>>   forwarding state. Add an extra check to not set ports in forwarding state if
->>>   the port is an MRP ring port. The reason of this change is that if the MRP
->>>   instance initially sets the port in blocked state by setting the bridge up it
->>>   would overwrite this setting.
->>>
->>> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
->>> ---
->>>  include/linux/if_bridge.h |  1 +
->>>  net/bridge/br_device.c    |  3 +++
->>>  net/bridge/br_input.c     |  3 +++
->>>  net/bridge/br_netlink.c   |  5 +++++
->>>  net/bridge/br_private.h   | 22 ++++++++++++++++++++++
->>>  net/bridge/br_stp.c       |  6 ++++++
->>>  6 files changed, 40 insertions(+)
->>>
->>> diff --git a/include/linux/if_bridge.h b/include/linux/if_bridge.h
->>> index 9e57c4411734..10baa9efdae8 100644
->>> --- a/include/linux/if_bridge.h
->>> +++ b/include/linux/if_bridge.h
->>> @@ -47,6 +47,7 @@ struct br_ip_list {
->>>  #define BR_BCAST_FLOOD               BIT(14)
->>>  #define BR_NEIGH_SUPPRESS    BIT(15)
->>>  #define BR_ISOLATED          BIT(16)
->>> +#define BR_MRP_AWARE         BIT(17)
->>>
->>>  #define BR_DEFAULT_AGEING_TIME       (300 * HZ)
->>>
->>> diff --git a/net/bridge/br_device.c b/net/bridge/br_device.c
->>> index 0e3dbc5f3c34..8ec1362588af 100644
->>> --- a/net/bridge/br_device.c
->>> +++ b/net/bridge/br_device.c
->>> @@ -463,6 +463,9 @@ void br_dev_setup(struct net_device *dev)
->>>       spin_lock_init(&br->lock);
->>>       INIT_LIST_HEAD(&br->port_list);
->>>       INIT_HLIST_HEAD(&br->fdb_list);
->>> +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
->>> +     INIT_LIST_HEAD(&br->mrp_list);
->>> +#endif
->>>       spin_lock_init(&br->hash_lock);
->>>
->>>       br->bridge_id.prio[0] = 0x80;
->>> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
->>> index fcc260840028..d5c34f36f0f4 100644
->>> --- a/net/bridge/br_input.c
->>> +++ b/net/bridge/br_input.c
->>> @@ -342,6 +342,9 @@ rx_handler_result_t br_handle_frame(struct sk_buff **pskb)
->>>               }
->>>       }
->>>
->>> +     if (unlikely(br_mrp_process(p, skb)))
->>> +             return RX_HANDLER_PASS;
->>> +
->>>  forward:
->>>       switch (p->state) {
->>>       case BR_STATE_FORWARDING:
->>> diff --git a/net/bridge/br_netlink.c b/net/bridge/br_netlink.c
->>> index 43dab4066f91..77bc96745be6 100644
->>> --- a/net/bridge/br_netlink.c
->>> +++ b/net/bridge/br_netlink.c
->>> @@ -669,6 +669,11 @@ static int br_afspec(struct net_bridge *br,
->>>                       if (err)
->>>                               return err;
->>>                       break;
->>> +             case IFLA_BRIDGE_MRP:
->>> +                     err = br_mrp_parse(br, p, attr, cmd);
->>> +                     if (err)
->>> +                             return err;
->>> +                     break;
->>>               }
->>>       }
->>>
->>> diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
->>> index 1f97703a52ff..38894f2cf98f 100644
->>> --- a/net/bridge/br_private.h
->>> +++ b/net/bridge/br_private.h
->>> @@ -428,6 +428,10 @@ struct net_bridge {
->>>       int offload_fwd_mark;
->>>  #endif
->>>       struct hlist_head               fdb_list;
->>> +
->>> +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
->>> +     struct list_head                __rcu mrp_list;
->>> +#endif
->>>  };
->>>
->>>  struct br_input_skb_cb {
->>> @@ -1304,6 +1308,24 @@ unsigned long br_timer_value(const struct timer_list *timer);
->>>  extern int (*br_fdb_test_addr_hook)(struct net_device *dev, unsigned char *addr);
->>>  #endif
->>>
->>> +/* br_mrp.c */
->>> +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
->>> +int br_mrp_parse(struct net_bridge *br, struct net_bridge_port *p,
->>> +              struct nlattr *attr, int cmd);
->>> +int br_mrp_process(struct net_bridge_port *p, struct sk_buff *skb);
->>> +#else
->>> +static inline int br_mrp_parse(struct net_bridge *br, struct net_bridge_port *p,
->>> +                            struct nlattr *attr, int cmd)
->>> +{
->>> +     return -1;
->>
->> You should return proper error here.
+> For full series:
 > 
-> It will return -EOPNOTSUPP.
-> 
->>
->>> +}
->>> +
->>> +static inline int br_mrp_process(struct net_bridge_port *p, struct sk_buff *skb)
->>> +{
->>> +     return -1;
->>
->> The bridge can't possibly work with MRP disabled with this.
-> 
-> Good catch, it will return 0.
-> 
->>
->>> +}
->>> +#endif
->>> +
->>>  /* br_netlink.c */
->>>  extern struct rtnl_link_ops br_link_ops;
->>>  int br_netlink_init(void);
->>> diff --git a/net/bridge/br_stp.c b/net/bridge/br_stp.c
->>> index 1f14b8455345..3e88be7aa269 100644
->>> --- a/net/bridge/br_stp.c
->>> +++ b/net/bridge/br_stp.c
->>> @@ -36,6 +36,12 @@ void br_set_state(struct net_bridge_port *p, unsigned int state)
->>>       };
->>>       int err;
->>>
->>> +     /* Don't change the state of the ports if they are driven by a different
->>> +      * protocol.
->>> +      */
->>> +     if (p->flags & BR_MRP_AWARE)
->>> +             return;
->>> +
->>
->> Maybe disallow STP type (kernel/user-space/no-stp) changing as well, force it to no-stp.
-> 
-> I am not sure that I understand completely here, do you want me to
-> disable STP if MRP is started?
-> 
+> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-I think it should be one of the two since they can step on each other's toes. If MRP is
-enabled then STP must be already disabled and should not be possible to enable while MRP
-is active and vice-versa.
+Queued in place of the following commits, with Joel's and Alan's tags
+added, thank you all!
 
->>
->>>       p->state = state;
->>>       err = switchdev_port_attr_set(p->dev, &attr);
->>>       if (err && err != -EOPNOTSUPP)
->>>
->>
+							Thanx, Paul
+
+c13c55d4 tools/memory-model: Add an exception for limitations on _unless() family
+59ffd85 Documentation/locking/atomic: Fix atomic-set litmus test
+23c19c8 Documentation/locking/atomic: Introduce atomic-tests directory
+3bd201c Documentation/locking/atomic: Add a litmus test for atomic_set()
+833f53b Documentation/locking/atomic: Add a litmus test smp_mb__after_atomic()
+
+> One question I had was in the existing atomic_set() documentation, it talks
+> about atomic_add_unless() implementation based on locking could have issues.
+> It says the way to fix such cases is:
 > 
-
+> Quote:
+>     the typical solution is to then implement atomic_set{}() with
+>     atomic_xchg().
+> 
+> I didn't get how using atomic_xchg() fixes it. Is the assumption there that
+> atomic_xchg() would be implemented using locking to avoid atomic_set() having
+> issues? If so, we could clarify that in the document.
+> 
+> thanks,
+> 
+>  - Joel
+> 
+> > 
+> > Changes since v3:
+> > 
+> > *	Merge two patches on atomic-set litmus test into one as per
+> > 	Alan. (Alan, you have acked only one of the two patches, so I
+> > 	don't add you acked-by for the combined patch).
+> > 
+> > *	Move the atomic litmus tests into litmus-tests/atomic to align
+> > 	with Joel's recent patches on RCU litmus tests.
+> > 
+> > I think we still haven't reach to a conclusion for the difference of
+> > atomic_add_unless() in herdtools, and I'm currently reading the source
+> > code of herd to resovle this. This is just an updated version to resolve
+> > ealier comments and react on Joel's RCU litmus tests.
+> > 
+> > Regards,
+> > Boqun
+> > 
+> > [1]: http://diy.inria.fr/doc/litmus.html#klitmus
+> > 
+> > Boqun Feng (4):
+> >   tools/memory-model: Add an exception for limitations on _unless()
+> >     family
+> >   Documentation/litmus-tests: Introduce atomic directory
+> >   Documentation/litmus-tests/atomic: Add a test for atomic_set()
+> >   Documentation/litmus-tests/atomic: Add a test for
+> >     smp_mb__after_atomic()
+> > 
+> >  Documentation/atomic_t.txt                    | 24 +++++++-------
+> >  ...ter_atomic-is-stronger-than-acquire.litmus | 32 +++++++++++++++++++
+> >  ...c-RMW-ops-are-atomic-WRT-atomic_set.litmus | 24 ++++++++++++++
+> >  Documentation/litmus-tests/atomic/README      | 16 ++++++++++
+> >  tools/memory-model/README                     | 10 ++++--
+> >  5 files changed, 91 insertions(+), 15 deletions(-)
+> >  create mode 100644 Documentation/litmus-tests/atomic/Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.litmus
+> >  create mode 100644 Documentation/litmus-tests/atomic/Atomic-RMW-ops-are-atomic-WRT-atomic_set.litmus
+> >  create mode 100644 Documentation/litmus-tests/atomic/README
+> > 
+> > -- 
+> > 2.25.1
+> > 
