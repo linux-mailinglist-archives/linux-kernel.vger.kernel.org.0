@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C96719A9A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA80E19A9B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:38:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732219AbgDAKgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 06:36:52 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29176 "EHLO
+        id S1732166AbgDAKiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:38:23 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:30167 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732208AbgDAKgt (ORCPT
+        with ESMTP id S1727386AbgDAKiW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:36:49 -0400
+        Wed, 1 Apr 2020 06:38:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585737409;
+        s=mimecast20190719; t=1585737501;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=l+RJMlg5CK8Xf3dXFmPzqcBa4d+f+ZwsjXoAvCEpkVM=;
-        b=iVbifz4LZHMKkwAa+gnAFe/fFfXAB2IRk/iQ89R1WBUd2E7Bj4b2bA8v5dljIc0CWHaLJS
-        xy5WL/6zVzZPR3HWOavXagLu6bqyQ4lGpGzNUb3nqDoT5sx4Lg+V8mJa8BR6ev5NpcspJm
-        rLNjfyteYY3RXaKNuAkZkq5B54mmQ5g=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-7-iYesDvFIPQ6VPz646VdVHQ-1; Wed, 01 Apr 2020 06:36:47 -0400
-X-MC-Unique: iYesDvFIPQ6VPz646VdVHQ-1
-Received: by mail-wm1-f69.google.com with SMTP id s15so1649112wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 03:36:47 -0700 (PDT)
+        bh=P3l08e3NHHUaDqXrk79908dgZMwgH9sXBM13wiaRDo4=;
+        b=BlD9w5V7d94xSoTkhMAzE8FRP3gqfR0Ab2DBVxWVGtAvLjPYVrnJ7DtFEmfvwVgkTCiWev
+        1O20XXlRPElMEV70DaYCx2wA0KYPukeMpKtycpa1zZ/7YyzM8j2mQP1yHBKbW6qX5NXtHC
+        GS2oQfG65l7Fqmh4zLm7fQDm8mjxCXo=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-13--_XXpFjRODOXW3BUk5TEsg-1; Wed, 01 Apr 2020 06:38:19 -0400
+X-MC-Unique: -_XXpFjRODOXW3BUk5TEsg-1
+Received: by mail-wm1-f70.google.com with SMTP id t65so2130177wmf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 03:38:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=l+RJMlg5CK8Xf3dXFmPzqcBa4d+f+ZwsjXoAvCEpkVM=;
-        b=uoKX5Z97bPkjdHRO0at2HXDrpNvm6zFOM66l1JbPua/u70uixC7yYSeD09LYSp7N1B
-         XCLUe6tzL1fkn+CpM++oBFCklqff2f4+yD+z7y5hIL2XIaLPmek6weuekjZWn9g1zkBM
-         ACLR/SlvaLnORORM1JLWmBCYwdXiVHfUWSJ36yiaE8mFYWGbm/IpyrM0diEpUptS9j0a
-         XYFMLe3OM4HOu/NtDGiGn0a7e8TiaVFPa3e+QSQpRL6Ci+q5FUjigx+/FS2ZoHHTnV3R
-         o8HhZR8ehm0PyG7/q46xNFoEBQy+13Y51fpwkIcKgBfnTyC7XHzGBZJXwJkJw+lsXjZk
-         xqyA==
-X-Gm-Message-State: AGi0PuYYSSng9GsfHxhJvIHx2OI1szI4ycYOLEz31ek6u2/emsPD3DeF
-        wF3MoIQ/sVh5o1rNfzvqg6WIJ4AEs3Akcu8gFQVZiXpsKAN/xPxZIUY8+OMdERt7RFj94LgoXr4
-        Zv4Xf2Rk1DQkOTPTOH4M6Q18a
-X-Received: by 2002:a1c:e203:: with SMTP id z3mr3719389wmg.71.1585737406036;
-        Wed, 01 Apr 2020 03:36:46 -0700 (PDT)
-X-Google-Smtp-Source: APiQypJ1GRqYSB9mCxSqLV2KYOT5PI7lUFwv7VuBW5jCqPEGUyfyFKyo1jXzc+EY6I41a9uzyNxVOw==
-X-Received: by 2002:a1c:e203:: with SMTP id z3mr3719372wmg.71.1585737405795;
-        Wed, 01 Apr 2020 03:36:45 -0700 (PDT)
+        bh=P3l08e3NHHUaDqXrk79908dgZMwgH9sXBM13wiaRDo4=;
+        b=RDtK2yBlgIZzUIptSgpPGe0XpvzXZswajYJAMv8z2q27aczKV76zns1hlmGSTQVT6E
+         jT+gN0pPwLTsO5tOKuf8dqE5ubcrW7no6ib3NTeHaupnwfy+MvfYR9N7qX39H7HjawWU
+         BSdg8gWR0XkC32Zs07hQnJUBMNIuT28bTYpOmZqstJi9UuvJXLUixHyvo/wHt3GCL/8X
+         ZLlYmCRdWrDU50rGPprraJZRsCI/QQoCuARVFxfoA7dF32KQtlVrgX+Tj4tLZfK1Re9q
+         LJqEg93eMdqOSspuBCt+8nJn8yVh1QDWHThb/XqhwCgFpN0QRSDo2KjMJ6M+xPup3qex
+         0YAQ==
+X-Gm-Message-State: AGi0PuYMUUJ70N++YY7LIa3uhOCwFuR+mY2JKhRyddWS992ct7t0hFYs
+        8ObLT/R/ef3Q28TwuKQE3/bCUIUonzVHVMD9I5imzbHlUeHdVce8GoIv+yTnTnLO8k0msy6HL5y
+        RC8npBFHdQxoqdMME9T41YsiV
+X-Received: by 2002:a5d:544b:: with SMTP id w11mr3134799wrv.37.1585737498645;
+        Wed, 01 Apr 2020 03:38:18 -0700 (PDT)
+X-Google-Smtp-Source: APiQypLN7G4Aa0czWFigGqcuI9gJgdp31NcwN9McEtnJE8lGgECyLcFLZeBMfZYUSqBHvzZV6+uT1g==
+X-Received: by 2002:a5d:544b:: with SMTP id w11mr3134790wrv.37.1585737498476;
+        Wed, 01 Apr 2020 03:38:18 -0700 (PDT)
 Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
-        by smtp.gmail.com with ESMTPSA id b187sm2247522wmc.14.2020.04.01.03.36.44
+        by smtp.gmail.com with ESMTPSA id r3sm2380098wrm.35.2020.04.01.03.38.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 03:36:45 -0700 (PDT)
+        Wed, 01 Apr 2020 03:38:17 -0700 (PDT)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     linux-hyperv@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Wei Liu <wei.liu@kernel.org>,
@@ -60,9 +60,9 @@ Cc:     linux-kernel@vger.kernel.org, Wei Liu <wei.liu@kernel.org>,
         Haiyang Zhang <haiyangz@microsoft.com>,
         Stephen Hemminger <sthemmin@microsoft.com>,
         "Andrea Parri (Microsoft)" <parri.andrea@gmail.com>
-Subject: [PATCH 3/5] Drivers: hv: avoid passing opaque pointer to vmbus_onmessage()
-Date:   Wed,  1 Apr 2020 12:36:36 +0200
-Message-Id: <20200401103638.1406431-4-vkuznets@redhat.com>
+Subject: [PATCH 4/5] Drivers: hv: make sure that 'struct vmbus_channel_message_header' compiles correctly
+Date:   Wed,  1 Apr 2020 12:38:15 +0200
+Message-Id: <20200401103816.1406642-1-vkuznets@redhat.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200401103638.1406431-1-vkuznets@redhat.com>
 References: <20200401103638.1406431-1-vkuznets@redhat.com>
@@ -73,63 +73,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vmbus_onmessage() doesn't need the header of the message, it only
-uses it to get to the payload, we can pass the pointer to the
-payload directly.
+Strictly speaking, compiler is free to use something different from 'u32'
+for 'enum vmbus_channel_message_type' (e.g. char) but it doesn't happen in
+real life, just add a BUILD_BUG_ON() guardian.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- drivers/hv/channel_mgmt.c | 7 +------
- drivers/hv/vmbus_drv.c    | 3 ++-
- include/linux/hyperv.h    | 2 +-
- 3 files changed, 4 insertions(+), 8 deletions(-)
+ drivers/hv/vmbus_drv.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
-index 0370364169c4..c6bcfee6ac99 100644
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -1360,13 +1360,8 @@ channel_message_table[CHANNELMSG_COUNT] = {
-  *
-  * This is invoked in the vmbus worker thread context.
-  */
--void vmbus_onmessage(void *context)
-+void vmbus_onmessage(struct vmbus_channel_message_header *hdr)
- {
--	struct hv_message *msg = context;
--	struct vmbus_channel_message_header *hdr;
--
--	hdr = (struct vmbus_channel_message_header *)msg->u.payload;
--
- 	trace_vmbus_on_message(hdr);
- 
- 	/*
 diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 642782bef863..0f7bbf952d89 100644
+index 0f7bbf952d89..d684cbee7ae6 100644
 --- a/drivers/hv/vmbus_drv.c
 +++ b/drivers/hv/vmbus_drv.c
-@@ -1007,7 +1007,8 @@ static void vmbus_onmessage_work(struct work_struct *work)
+@@ -1023,6 +1023,13 @@ void vmbus_on_msg_dpc(unsigned long data)
+ 	struct onmessage_work_context *ctx;
+ 	u32 message_type = msg->header.message_type;
  
- 	ctx = container_of(work, struct onmessage_work_context,
- 			   work);
--	vmbus_onmessage(&ctx->msg);
-+	vmbus_onmessage((struct vmbus_channel_message_header *)
-+			&ctx->msg.payload);
- 	kfree(ctx);
- }
- 
-diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-index 692c89ccf5df..cbd24f4e68d1 100644
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -1017,7 +1017,7 @@ static inline void clear_low_latency_mode(struct vmbus_channel *c)
- 	c->low_latency = false;
- }
- 
--void vmbus_onmessage(void *context);
-+void vmbus_onmessage(struct vmbus_channel_message_header *hdr);
- 
- int vmbus_request_offers(void);
- 
++	/*
++	 * 'enum vmbus_channel_message_type' is supposed to always be 'u32' as
++	 * it is being used in 'struct vmbus_channel_message_header' definition
++	 * which is supposed to match hypervisor ABI.
++	 */
++	BUILD_BUG_ON(sizeof(enum vmbus_channel_message_type) != sizeof(u32));
++
+ 	if (message_type == HVMSG_NONE)
+ 		/* no msg */
+ 		return;
 -- 
 2.25.1
 
