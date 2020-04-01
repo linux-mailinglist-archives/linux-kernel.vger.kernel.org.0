@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CAE819AFF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:23:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C23EC19B1AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733119AbgDAQWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:22:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45924 "EHLO mail.kernel.org"
+        id S2388772AbgDAQhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:37:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387527AbgDAQWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:22:45 -0400
+        id S2388900AbgDAQg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:36:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F4952137B;
-        Wed,  1 Apr 2020 16:22:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 452D620658;
+        Wed,  1 Apr 2020 16:36:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758164;
-        bh=mPMg+GIZNgjPNi6MOWo6soVJy6BjBjhd20BrzjGqz2g=;
+        s=default; t=1585759016;
+        bh=JVZfJY6/5ALNIW2gEhKmn1RI1T33U9c2/ocITbeMS4A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EKJ0qQ1lb5JXgoRmvkfrwJl2xBQbElKnCUQuD/mNmw3tKOFYFkQp7Jg8UqSB9Eyab
-         ydybLfZacxrlu/7ZafjEogWbGX5odBskzX8VYDSyTrSzeecq1Xyf7U9j/7a/mZikMX
-         QIYq85NjFwv5/VsAWSvVWeL6Bm2ONws+SZmnKdHk=
+        b=Qv0OYuAg95qks8AoVilkFDDtTtOjvypmvisXDuWOUXFY4zyIYVFHeq5TN0S+hN07i
+         nbxSTnXsPUnIVf4WKV7oQxT1MqBZFdAA4d/PN8BgCcKdgSkanMj0iwC17SwPHgbMlY
+         9LEJ2/v0d+Vu5ohEQUg+rK7PoVKrUwEWpUjD5rYM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 5.4 25/27] ARM: dts: sun8i: r40: Move AHCI device node based on address order
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 050/102] KVM: VMX: Do not allow reexecute_instruction() when skipping MMIO instr
 Date:   Wed,  1 Apr 2020 18:17:53 +0200
-Message-Id: <20200401161434.337279705@linuxfoundation.org>
+Message-Id: <20200401161542.437929623@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
-References: <20200401161414.352722470@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit fe3a04824f75786e39ed74e82fb6cb2534c95fe4 upstream.
+[ Upstream commit c4409905cd6eb42cfd06126e9226b0150e05a715 ]
 
-When the AHCI device node was added, it was added in the wrong location
-in the device tree file. The device nodes should be sorted by register
-address.
+Re-execution after an emulation decode failure is only intended to
+handle a case where two or vCPUs race to write a shadowed page, i.e.
+we should never re-execute an instruction as part of MMIO emulation.
+As handle_ept_misconfig() is only used for MMIO emulation, it should
+pass EMULTYPE_NO_REEXECUTE when using the emulator to skip an instr
+in the fast-MMIO case where VM_EXIT_INSTRUCTION_LEN is invalid.
 
-Move the device node to before EHCI1, where it belongs.
+And because the cr2 value passed to x86_emulate_instruction() is only
+destined for use when retrying or reexecuting, we can simply call
+emulate_instruction().
 
-Fixes: 41c64d3318aa ("ARM: dts: sun8i: r40: add sata node")
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: d391f1207067 ("x86/kvm/vmx: do not use vm-exit instruction length
+                      for fast MMIO when running nested")
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/sun8i-r40.dtsi |   21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ arch/x86/kvm/vmx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/sun8i-r40.dtsi
-+++ b/arch/arm/boot/dts/sun8i-r40.dtsi
-@@ -266,6 +266,16 @@
- 			#phy-cells = <1>;
- 		};
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 8bd336651de52..1fa4545c55e35 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -6564,8 +6564,8 @@ static int handle_ept_misconfig(struct kvm_vcpu *vcpu)
+ 			return 1;
+ 		}
+ 		else
+-			return x86_emulate_instruction(vcpu, gpa, EMULTYPE_SKIP,
+-						       NULL, 0) == EMULATE_DONE;
++			return emulate_instruction(vcpu, EMULTYPE_SKIP) ==
++								EMULATE_DONE;
+ 	}
  
-+		ahci: sata@1c18000 {
-+			compatible = "allwinner,sun8i-r40-ahci";
-+			reg = <0x01c18000 0x1000>;
-+			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_SATA>, <&ccu CLK_SATA>;
-+			resets = <&ccu RST_BUS_SATA>;
-+			reset-names = "ahci";
-+			status = "disabled";
-+		};
-+
- 		ehci1: usb@1c19000 {
- 			compatible = "allwinner,sun8i-r40-ehci", "generic-ehci";
- 			reg = <0x01c19000 0x100>;
-@@ -557,17 +567,6 @@
- 			#size-cells = <0>;
- 		};
- 
--		ahci: sata@1c18000 {
--			compatible = "allwinner,sun8i-r40-ahci";
--			reg = <0x01c18000 0x1000>;
--			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&ccu CLK_BUS_SATA>, <&ccu CLK_SATA>;
--			resets = <&ccu RST_BUS_SATA>;
--			reset-names = "ahci";
--			status = "disabled";
--
--		};
--
- 		gmac: ethernet@1c50000 {
- 			compatible = "allwinner,sun8i-r40-gmac";
- 			syscon = <&ccu>;
+ 	ret = kvm_mmu_page_fault(vcpu, gpa, PFERR_RSVD_MASK, NULL, 0);
+-- 
+2.20.1
+
 
 
