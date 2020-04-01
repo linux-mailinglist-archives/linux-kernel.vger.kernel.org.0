@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD2FE19B460
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:00:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC24919B23B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:42:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733288AbgDAQ4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:56:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42872 "EHLO mail.kernel.org"
+        id S2389515AbgDAQmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:42:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732859AbgDAQUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:20:18 -0400
+        id S2389502AbgDAQmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:42:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E204D20658;
-        Wed,  1 Apr 2020 16:20:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E68D62063A;
+        Wed,  1 Apr 2020 16:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758018;
-        bh=Exro3RBVTcuX8IyxCG+436aDA/mC5fv5PCGXfpK/dw8=;
+        s=default; t=1585759332;
+        bh=6bU7rDiBb1wJCZS4711Koslbcjtgda7A2njGprrWFgw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bKBKGzU/4o5/rYo5jvnX4gP+ZC0DvWO+7BqVgGpwKjVrNwJAONwFu2C1lW3JzZaXK
-         SHID35ElES+/ioCJaGoGo1mvsnzEpr0BfblPErV0h8r/UkgTHD38Y/KdJGnW6Y+QbB
-         2bqMD5Xletwyi4/t9eI51b8rma+1aHb9VcVCzsGI=
+        b=wNTkZjz8IZpF1cV0vk073fRD7K//gKKCAfIO4cjT5JHfHvo0wNMMGuv4oJaY9OS50
+         mnrjxH1TRdyv6qMPOLHBjRemTQO0/REns4k5fDoS09+VfJNvglJNC067fscMkcHMVm
+         /6u8KvYNo5FnCgZQ9FjKJaHaHVSCmz97idWVOEVM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 5.5 17/30] clk: imx: Align imx sc clock msg structs to 4
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 049/148] ALSA: hda/realtek: Fix pop noise on ALC225
 Date:   Wed,  1 Apr 2020 18:17:21 +0200
-Message-Id: <20200401161429.287441961@linuxfoundation.org>
+Message-Id: <20200401161557.700566400@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
-References: <20200401161414.345528747@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit a0ae04a25650fd51b7106e742d27333e502173c6 upstream.
+commit 3b36b13d5e69d6f51ff1c55d1b404a74646c9757 upstream.
 
-The imx SC api strongly assumes that messages are composed out of
-4-bytes words but some of our message structs have odd sizeofs.
+Commit 317d9313925c ("ALSA: hda/realtek - Set default power save node to
+0") makes the ALC225 have pop noise on S3 resume and cold boot.
 
-This produces many oopses with CONFIG_KASAN=y.
+So partially revert this commit for ALC225 to fix the regression.
 
-Fix by marking with __aligned(4).
-
-Fixes: fe37b4820417 ("clk: imx: add scu clock common part")
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Link: https://lkml.kernel.org/r/10e97a04980d933b2cfecb6b124bf9046b6e4f16.1582216144.git.leonard.crestez@nxp.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 317d9313925c ("ALSA: hda/realtek - Set default power save node to 0")
+BugLink: https://bugs.launchpad.net/bugs/1866357
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Link: https://lore.kernel.org/r/20200311061328.17614-1-kai.heng.feng@canonical.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/imx/clk-scu.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/pci/hda/patch_realtek.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/clk/imx/clk-scu.c
-+++ b/drivers/clk/imx/clk-scu.c
-@@ -43,12 +43,12 @@ struct imx_sc_msg_req_set_clock_rate {
- 	__le32 rate;
- 	__le16 resource;
- 	u8 clk;
--} __packed;
-+} __packed __aligned(4);
- 
- struct req_get_clock_rate {
- 	__le16 resource;
- 	u8 clk;
--} __packed;
-+} __packed __aligned(4);
- 
- struct resp_get_clock_rate {
- 	__le32 rate;
-@@ -121,7 +121,7 @@ struct imx_sc_msg_req_clock_enable {
- 	u8 clk;
- 	u8 enable;
- 	u8 autog;
--} __packed;
-+} __packed __aligned(4);
- 
- static inline struct clk_scu *to_clk_scu(struct clk_hw *hw)
- {
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4687,6 +4687,8 @@ static void alc_determine_headset_type(s
+ 		is_ctia = (val & 0x1c02) == 0x1c02;
+ 		break;
+ 	case 0x10ec0225:
++		codec->power_save_node = 1;
++		/* fall through */
+ 	case 0x10ec0295:
+ 	case 0x10ec0299:
+ 		alc_process_coef_fw(codec, alc225_pre_hsmode);
 
 
