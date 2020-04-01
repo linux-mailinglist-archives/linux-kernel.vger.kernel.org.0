@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8FF819AFE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1454319B067
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:27:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732963AbgDAQWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:22:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45098 "EHLO mail.kernel.org"
+        id S2387724AbgDAQ0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:26:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387435AbgDAQWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:22:06 -0400
+        id S2387903AbgDAQ0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:26:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FA3020857;
-        Wed,  1 Apr 2020 16:22:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8CCF20857;
+        Wed,  1 Apr 2020 16:26:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758125;
-        bh=teEkTjfnD/nvwev9QxvZ6FJfT9iFlPUNMj6FlN/koZg=;
+        s=default; t=1585758392;
+        bh=vHUjieBU5aslM55rEOP09v3yMqm7chbEbPX1sJ1IF44=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zoGIS5GoeLiMhFgIhlDbrbW+wanD6fEQMg+jJb460CH/x1ggRxryUsgeREIa9CNzA
-         NzX3J62QSiMb4E4AHPXfjRx+RjC92bka6r/SLLL6BUkyDlR/MIciD9eW2U9YSF9sNw
-         DaXptsLeAZXQhRrOWgA6tVc2rP1oTGTky22W25t8=
+        b=VsZj9Z/F21bKtkTMxDBv1EMCrUO8L5yoVeH1U1BsTupOYV1BOyn5mL6LkPLquVazz
+         vQ1ohn7HQvtOLU7Dn3+apy3/hrub0MYSx82HKsDymXLxzkOYFfyrzq292SuD91HKqp
+         dUQxskrM16iPWymSvZuNAcQU4BFL+ZDmENatKrRc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Woody Suwalski <terraluna977@gmail.com>
-Subject: [PATCH 5.4 02/27] mac80211: fix authentication with iwlwifi/mvm
-Date:   Wed,  1 Apr 2020 18:17:30 +0200
-Message-Id: <20200401161417.064523514@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Torsten Hilbrich <torsten.hilbrich@secunet.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.19 075/116] vti6: Fix memory leak of skb if input policy check fails
+Date:   Wed,  1 Apr 2020 18:17:31 +0200
+Message-Id: <20200401161552.388956738@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
-References: <20200401161414.352722470@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Torsten Hilbrich <torsten.hilbrich@secunet.com>
 
-commit be8c827f50a0bcd56361b31ada11dc0a3c2fd240 upstream.
+commit 2a9de3af21aa8c31cd68b0b39330d69f8c1e59df upstream.
 
-The original patch didn't copy the ieee80211_is_data() condition
-because on most drivers the management frames don't go through
-this path. However, they do on iwlwifi/mvm, so we do need to keep
-the condition here.
+The vti6_rcv function performs some tests on the retrieved tunnel
+including checking the IP protocol, the XFRM input policy, the
+source and destination address.
 
-Cc: stable@vger.kernel.org
-Fixes: ce2e1ca70307 ("mac80211: Check port authorization in the ieee80211_tx_dequeue() case")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Cc: Woody Suwalski <terraluna977@gmail.com>
+In all but one places the skb is released in the error case. When
+the input policy check fails the network packet is leaked.
+
+Using the same goto-label discard in this case to fix this problem.
+
+Fixes: ed1efb2aefbb ("ipv6: Add support for IPsec virtual tunnel interfaces")
+Signed-off-by: Torsten Hilbrich <torsten.hilbrich@secunet.com>
+Reviewed-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/tx.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/ipv6/ip6_vti.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -3602,7 +3602,8 @@ begin:
- 		 * Drop unicast frames to unauthorised stations unless they are
- 		 * EAPOL frames from the local station.
- 		 */
--		if (unlikely(!ieee80211_vif_is_mesh(&tx.sdata->vif) &&
-+		if (unlikely(ieee80211_is_data(hdr->frame_control) &&
-+			     !ieee80211_vif_is_mesh(&tx.sdata->vif) &&
- 			     tx.sdata->vif.type != NL80211_IFTYPE_OCB &&
- 			     !is_multicast_ether_addr(hdr->addr1) &&
- 			     !test_sta_flag(tx.sta, WLAN_STA_AUTHORIZED) &&
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -315,7 +315,7 @@ static int vti6_rcv(struct sk_buff *skb)
+ 
+ 		if (!xfrm6_policy_check(NULL, XFRM_POLICY_IN, skb)) {
+ 			rcu_read_unlock();
+-			return 0;
++			goto discard;
+ 		}
+ 
+ 		ipv6h = ipv6_hdr(skb);
 
 
