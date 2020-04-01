@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4858719B2C0
+	by mail.lfdr.de (Postfix) with ESMTP id B16F019B2C1
 	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:47:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389965AbgDAQqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:46:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48188 "EHLO mail.kernel.org"
+        id S2389533AbgDAQqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:46:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388565AbgDAQqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:46:43 -0400
+        id S2389983AbgDAQqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:46:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 057BF20705;
-        Wed,  1 Apr 2020 16:46:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C3B120705;
+        Wed,  1 Apr 2020 16:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759603;
-        bh=62H8q4wS2U8H3WVXq49tHHl0V1M2VnJlDoEkzXF2fzQ=;
+        s=default; t=1585759607;
+        bh=YjbJkWnulZxpZ5AzBSei2JjCsNgi5cGWbkLwlh2FsTA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xcXHaqAHAy+rMT+prPhsJW17ffOTihpAEO6dBOf97CtJS84E6rnlq3sCmqBFRdPF4
-         YhAofT8/Iuyr+T056EJqJbg9J+s0h7Zeunxd0Y2Z0w5xSZFosX2aAWYkY6LQPMulz+
-         nvH6hSsCtwKkazEqzp4bIGY/q7ZWpBGZaZ7nGhoE=
+        b=m2CkVMUDqH0PQxPNK//7X2wYo22W8Gn9t7+IW7s6+G7pV78BihBHxS7gSMM2fYu4U
+         6Ov8UpLY6Ef/+tDSt0hllXIGJvEQgVUbATDNW2tyNix56NjCGI9oo2ytvGdVKEGBKQ
+         ORTGbZ59s38Rsw0pHdSwOn+IhbJjPC7vdoF03EiM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 4.14 133/148] vt: ioctl, switch VT_IS_IN_USE and VT_BUSY to inlines
-Date:   Wed,  1 Apr 2020 18:18:45 +0200
-Message-Id: <20200401161605.103099023@linuxfoundation.org>
+Subject: [PATCH 4.14 134/148] vt: switch vt_dont_switch to bool
+Date:   Wed,  1 Apr 2020 18:18:46 +0200
+Message-Id: <20200401161605.176128991@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
 References: <20200401161552.245876366@linuxfoundation.org>
@@ -44,85 +44,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Slaby <jslaby@suse.cz>
 
-commit e587e8f17433ddb26954f0edf5b2f95c42155ae9 upstream.
+commit f400991bf872debffb01c46da882dc97d7e3248e upstream.
 
-These two were macros. Switch them to static inlines, so that it's more
-understandable what they are doing.
+vt_dont_switch is pure boolean, no need for whole char.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Link: https://lore.kernel.org/r/20200219073951.16151-2-jslaby@suse.cz
+Link: https://lore.kernel.org/r/20200219073951.16151-6-jslaby@suse.cz
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt_ioctl.c |   29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+ drivers/tty/vt/vt_ioctl.c |    6 +++---
+ include/linux/vt_kern.h   |    2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 --- a/drivers/tty/vt/vt_ioctl.c
 +++ b/drivers/tty/vt/vt_ioctl.c
-@@ -40,10 +40,25 @@
+@@ -39,7 +39,7 @@
+ #include <linux/kbd_diacr.h>
  #include <linux/selection.h>
  
- char vt_dont_switch;
--extern struct tty_driver *console_driver;
+-char vt_dont_switch;
++bool vt_dont_switch;
  
--#define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
--#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_is_sel(vc_cons[i].d))
-+static inline bool vt_in_use(unsigned int i)
-+{
-+	extern struct tty_driver *console_driver;
-+
-+	return console_driver->ttys[i] && console_driver->ttys[i]->count;
-+}
-+
-+static inline bool vt_busy(int i)
-+{
-+	if (vt_in_use(i))
-+		return true;
-+	if (i == fg_console)
-+		return true;
-+	if (vc_is_sel(vc_cons[i].d))
-+		return true;
-+
-+	return false;
-+}
+ static inline bool vt_in_use(unsigned int i)
+ {
+@@ -1026,12 +1026,12 @@ int vt_ioctl(struct tty_struct *tty,
+ 	case VT_LOCKSWITCH:
+ 		if (!capable(CAP_SYS_TTY_CONFIG))
+ 			return -EPERM;
+-		vt_dont_switch = 1;
++		vt_dont_switch = true;
+ 		break;
+ 	case VT_UNLOCKSWITCH:
+ 		if (!capable(CAP_SYS_TTY_CONFIG))
+ 			return -EPERM;
+-		vt_dont_switch = 0;
++		vt_dont_switch = false;
+ 		break;
+ 	case VT_GETHIFONTMASK:
+ 		ret = put_user(vc->vc_hi_font_mask,
+--- a/include/linux/vt_kern.h
++++ b/include/linux/vt_kern.h
+@@ -142,7 +142,7 @@ static inline bool vt_force_oops_output(
+ 	return false;
+ }
  
- /*
-  * Console (vt and kd) routines, as defined by USL SVR4 manual, and by
-@@ -289,7 +304,7 @@ static int vt_disallocate(unsigned int v
- 	int ret = 0;
+-extern char vt_dont_switch;
++extern bool vt_dont_switch;
+ extern int default_utf8;
+ extern int global_cursor_default;
  
- 	console_lock();
--	if (VT_BUSY(vc_num))
-+	if (vt_busy(vc_num))
- 		ret = -EBUSY;
- 	else if (vc_num)
- 		vc = vc_deallocate(vc_num);
-@@ -311,7 +326,7 @@ static void vt_disallocate_all(void)
- 
- 	console_lock();
- 	for (i = 1; i < MAX_NR_CONSOLES; i++)
--		if (!VT_BUSY(i))
-+		if (!vt_busy(i))
- 			vc[i] = vc_deallocate(i);
- 		else
- 			vc[i] = NULL;
-@@ -648,7 +663,7 @@ int vt_ioctl(struct tty_struct *tty,
- 			state = 1;	/* /dev/tty0 is always open */
- 			for (i = 0, mask = 2; i < MAX_NR_CONSOLES && mask;
- 							++i, mask <<= 1)
--				if (VT_IS_IN_USE(i))
-+				if (vt_in_use(i))
- 					state |= mask;
- 			ret = put_user(state, &vtstat->v_state);
- 		}
-@@ -661,7 +676,7 @@ int vt_ioctl(struct tty_struct *tty,
- 	case VT_OPENQRY:
- 		/* FIXME: locking ? - but then this is a stupid API */
- 		for (i = 0; i < MAX_NR_CONSOLES; ++i)
--			if (! VT_IS_IN_USE(i))
-+			if (!vt_in_use(i))
- 				break;
- 		uival = i < MAX_NR_CONSOLES ? (i+1) : -1;
- 		goto setint;		 
 
 
