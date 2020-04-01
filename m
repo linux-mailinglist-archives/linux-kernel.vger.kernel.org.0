@@ -2,111 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FCC619A2BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 02:04:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6B619A2C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 02:04:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731634AbgDAAEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 20:04:15 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:14928 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731597AbgDAAEO (ORCPT
+        id S1731642AbgDAAEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 20:04:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37152 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731524AbgDAAEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 20:04:14 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585699453; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=H8EubTh7i79BjoFT6UN3le3v6KCqE0B7/X8zxpL77s8=; b=sEd1WeUQ+t57Enqwu/d0u8IM6thJIkD67DN0Kh8DrU695gw2isNqZ7B7gSgjO/PcwcDeo/UX
- 4wAWk5GnhbkP0nFs7MJjgQ3CkGryIhaGZVMuL/K8E/IqrpIYw6jQg5AwF2RJA1oG5rl7Mlvk
- +5ndpH4MEvQqCEKoLP2/KiJIeEU=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e83da75.7facd0458ca8-smtp-out-n04;
- Wed, 01 Apr 2020 00:04:05 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id EF1D9C433BA; Wed,  1 Apr 2020 00:04:04 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 20D6AC433BA;
-        Wed,  1 Apr 2020 00:04:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 20D6AC433BA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
-From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
-To:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        bjorn.andersson@linaro.org
-Cc:     psodagud@codeaurora.org, tsoni@codeaurora.org,
-        sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH v2 2/2] remoteproc: core: Register the character device interface
-Date:   Tue, 31 Mar 2020 17:03:58 -0700
-Message-Id: <1585699438-14394-2-git-send-email-rishabhb@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1585699438-14394-1-git-send-email-rishabhb@codeaurora.org>
-References: <1585699438-14394-1-git-send-email-rishabhb@codeaurora.org>
+        Tue, 31 Mar 2020 20:04:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5AHQT3HNoIfrpxFYcnKnT3xJDAyH56vM7k0YaLOkJVw=; b=WXHxeM0n35BJgssvOzHfB7PrVS
+        gX96MWzJMJdJqAtFWyuzP/6IVMdYm37f63ftVeAokCU66LbE3016VYkHF9XAAJ1eBev/dxbwgRJs7
+        eKChYRuBoPwOWq6s+BJO9+lV7rwoASQ82KFz+QBzDZDe626Y3w30pZVlZVZbEmsR73XYeqEAPYM0E
+        Ptwp4VN7hB3MRLPa7SxBgo93TgjhgbJxXuZDVOEpf+3ZvGWRwmkCwNd4hp76Rfps9BuBAs6G+iFKu
+        9NattIPbR5E7JQssNMR+E9s/vLQXAnsCxLs5mgiNXRMF+1a3p5H7waztpo1ty+KjCc7+oAY4PptsS
+        TI5FDsyw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJQs3-0006SZ-Pr; Wed, 01 Apr 2020 00:04:39 +0000
+Date:   Tue, 31 Mar 2020 17:04:39 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Vitor Massaru Iha <vitor@massaru.org>
+Cc:     linux-doc@vger.kernel.org, corbet@lwn.net,
+        linux-kernel@vger.kernel.org, brendanhiggins@google.com,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 1/2] Documentation: filesystems: Convert sysfs-pci to ReST
+Message-ID: <20200401000439.GE21484@bombadil.infradead.org>
+References: <cover.1585693146.git.vitor@massaru.org>
+ <637c0379a76fcf4eb6cdde0de3cc727203fd942f.1585693146.git.vitor@massaru.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <637c0379a76fcf4eb6cdde0de3cc727203fd942f.1585693146.git.vitor@massaru.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the character device during rproc_add. This would create
-a character device node at /dev/remoteproc<index>. Userspace
-applications can interact with the remote processor using this
-interface.
+On Tue, Mar 31, 2020 at 07:28:56PM -0300, Vitor Massaru Iha wrote:
+> Signed-off-by: Vitor Massaru Iha <vitor@massaru.org>
+> ---
+>  .../{sysfs-pci.txt => sysfs-pci.rst}          | 40 ++++++++++---------
+>  1 file changed, 22 insertions(+), 18 deletions(-)
+>  rename Documentation/filesystems/{sysfs-pci.txt => sysfs-pci.rst} (82%)
+> 
+> diff --git a/Documentation/filesystems/sysfs-pci.txt b/Documentation/filesystems/sysfs-pci.rst
 
-Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
----
- drivers/remoteproc/remoteproc_core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+In addition to Jon's comments, for the next version, I would suggest
+cc'ing the linux-pci@vger.kernel.org mailing list.  
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 097f33e..76ba171 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1916,6 +1916,13 @@ int rproc_add(struct rproc *rproc)
- 	/* create debugfs entries */
- 	rproc_create_debug_dir(rproc);
- 
-+	/* add char device for this remoteproc */
-+	ret = rproc_char_device_add(rproc);
-+	if (ret) {
-+		dev_err(dev, "Failed to add char dev for %s\n", rproc->name);
-+		return ret;
-+	}
-+
- 	/* if rproc is marked always-on, request it to boot */
- 	if (rproc->auto_boot) {
- 		ret = rproc_trigger_auto_boot(rproc);
-@@ -2137,6 +2144,7 @@ int rproc_del(struct rproc *rproc)
- 	mutex_unlock(&rproc->lock);
- 
- 	rproc_delete_debug_dir(rproc);
-+	rproc_char_device_remove(rproc);
- 
- 	/* the rproc is downref'ed as soon as it's removed from the klist */
- 	mutex_lock(&rproc_list_mutex);
-@@ -2220,6 +2228,7 @@ static int __init remoteproc_init(void)
- {
- 	rproc_init_sysfs();
- 	rproc_init_debugfs();
-+	rproc_init_cdev();
- 
- 	return 0;
- }
-@@ -2231,6 +2240,7 @@ static void __exit remoteproc_exit(void)
- 
- 	rproc_exit_debugfs();
- 	rproc_exit_sysfs();
-+	rproc_exit_cdev();
- }
- module_exit(remoteproc_exit);
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Also, maybe add:
+
+F: Documentation/filesystems/sysfs-pci.rst
+
+to the 'PCI SUBSYSTEM' section of MAINTAINERS.
