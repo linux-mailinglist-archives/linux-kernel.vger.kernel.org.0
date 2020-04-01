@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6CFE19B3FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09EA919B111
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:32:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387937AbgDAQyW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:54:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54732 "EHLO mail.kernel.org"
+        id S2388346AbgDAQbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:31:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732974AbgDAQ3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:29:14 -0400
+        id S2388338AbgDAQbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:31:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E32E21556;
-        Wed,  1 Apr 2020 16:29:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 908D62137B;
+        Wed,  1 Apr 2020 16:31:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758553;
-        bh=QQ6ebnUvoHQNHZ6qn9BQCIRm9XiS9wC5bt9itZPaTN4=;
+        s=default; t=1585758701;
+        bh=gKGesIHjum9IG4MYIu7b8532lXP7SNN8UJqqO0x5J88=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u23VVfiimhdMvSiiSGONrSdsdQzuqTEyKrfOP1du7n+GXhVaxoDt+BTw17UC0517Z
-         POQuzB5/grHoLSAmgFIBEn/2nXY/DEXKmYcktF2ah9xGGvo2v55rS9b6u2bF7Mfga7
-         ejcZcRsEj4Q+VOsjca5SpBMazr3a3QuOK87+6cOc=
+        b=SKGp3H0Eyh8nz1EnXVOkb/FwFohr8x9RrxLOWxa1/GvnSboWzWVimocllxNfgG2lz
+         Z2kCNnHANVyaSYSdBrprnJkDKPRbO8/A+bpOJnd3tn9WradPwJDuktCl5m2wdnELSb
+         WJAfYqHHrMyXkGzHzhVpzgoEW8WaHF5AYc/yp6j4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6d2e7f6fa90e27be9d62@syzkaller.appspotmail.com,
-        Qiujun Huang <hqjagain@gmail.com>
-Subject: [PATCH 4.19 088/116] staging: wlan-ng: fix ODEBUG bug in prism2sta_disconnect_usb
+        stable@vger.kernel.org, Matthew Wilcox <willy@linux.intel.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Kirill Shutemov <kirill.shutemov@linux.intel.com>,
+        Jan Kara <jack@suse.com>, Neil Brown <neilb@suse.de>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 48/91] drivers/hwspinlock: use correct radix tree API
 Date:   Wed,  1 Apr 2020 18:17:44 +0200
-Message-Id: <20200401161553.679384428@linuxfoundation.org>
+Message-Id: <20200401161530.338453012@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +49,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qiujun Huang <hqjagain@gmail.com>
+From: Matthew Wilcox <willy@linux.intel.com>
 
-commit a1f165a6b738f0c9d744bad4af7a53909278f5fc upstream.
+[ Upstream commit b76ba4af4ddd6a06f7f65769e7be1bc56556cdf5 ]
 
-We should cancel hw->usb_work before kfree(hw).
+radix_tree_is_indirect_ptr() is an internal API.  The correct call to
+use is radix_tree_deref_retry() which has the appropriate unlikely()
+annotation.
 
-Reported-by: syzbot+6d2e7f6fa90e27be9d62@syzkaller.appspotmail.com
-Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/1585120006-30042-1-git-send-email-hqjagain@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: c6400ba7e13a ("drivers/hwspinlock: fix race between radix tree insertion and lookup")
+Signed-off-by: Matthew Wilcox <willy@linux.intel.com>
+Cc: Konstantin Khlebnikov <koct9i@gmail.com>
+Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Jan Kara <jack@suse.com>
+Cc: Neil Brown <neilb@suse.de>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/wlan-ng/prism2usb.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/hwspinlock/hwspinlock_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/wlan-ng/prism2usb.c
-+++ b/drivers/staging/wlan-ng/prism2usb.c
-@@ -180,6 +180,7 @@ static void prism2sta_disconnect_usb(str
- 
- 		cancel_work_sync(&hw->link_bh);
- 		cancel_work_sync(&hw->commsqual_bh);
-+		cancel_work_sync(&hw->usb_work);
- 
- 		/* Now we complete any outstanding commands
- 		 * and tell everyone who is waiting for their
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index d50c701b19d67..4074441444fed 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -313,7 +313,7 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
+ 		hwlock = radix_tree_deref_slot(slot);
+ 		if (unlikely(!hwlock))
+ 			continue;
+-		if (radix_tree_is_indirect_ptr(hwlock)) {
++		if (radix_tree_deref_retry(hwlock)) {
+ 			slot = radix_tree_iter_retry(&iter);
+ 			continue;
+ 		}
+-- 
+2.20.1
+
 
 
