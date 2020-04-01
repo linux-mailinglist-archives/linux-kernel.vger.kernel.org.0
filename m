@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E6F19B33A
+	by mail.lfdr.de (Postfix) with ESMTP id ACFA019B33B
 	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:50:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389376AbgDAQk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:40:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41034 "EHLO mail.kernel.org"
+        id S2389369AbgDAQky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:40:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389197AbgDAQkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:40:49 -0400
+        id S2389363AbgDAQku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:40:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3E672063A;
-        Wed,  1 Apr 2020 16:40:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF122206F8;
+        Wed,  1 Apr 2020 16:40:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759247;
-        bh=m6uTusX3QKM1rf4TxbnopD7lVV6EztOv2sZpf0uTwsE=;
+        s=default; t=1585759250;
+        bh=ajjAGpsLaJz1GYRmdmBv7oFJ16dgb31logoJ+OLNDd8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZkJUQoc15MrI7IMXEKsW+s4rjUApJBX+PXkgbhq3oFs0khxN7/8DCn2DGlvJhKiR+
-         IkPHNt4GYMDr6TUvqXk6kpD9psXiBWFOxZ/cx6WnOeWnryuEelIMrYnBMSqu33Xizg
-         5g3FZjbnvCUxgWB1IXrJgJoRoapaWatXRtUEEYvo=
+        b=J9EAaZFcQ54rc6T+LhgwTlQM+TBN98WFFN//VZKVBX2NyHSzlaOHkS/7WrBvKsTBB
+         Mray3RLMVAjdPFxyM44noeheIC5X6zLwyPkJuJwX1SEB6UEMbrhritATUpdW//upwz
+         C01sOXS9SX4i0fU4K8tODsNM3wWFUFHr7MnQZ0Rc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alberto Mattea <alberto@mattea.info>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 020/148] usb: xhci: apply XHCI_SUSPEND_DELAY to AMD XHCI controller 1022:145c
-Date:   Wed,  1 Apr 2020 18:16:52 +0200
-Message-Id: <20200401161554.357387148@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+cce32521ee0a824c21f7@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 021/148] ALSA: line6: Fix endless MIDI read loop
+Date:   Wed,  1 Apr 2020 18:16:53 +0200
+Message-Id: <20200401161554.480454901@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
 References: <20200401161552.245876366@linuxfoundation.org>
@@ -43,39 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alberto Mattea <alberto@mattea.info>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 16263abc12d09871156a1c8650fb651f0e552f5e upstream.
+commit d683469b3c93d7e2afd39e6e1970f24700eb7a68 upstream.
 
-This controller timeouts during suspend (S3) with
-[  240.521724] xhci_hcd 0000:30:00.3: WARN: xHC save state timeout
-[  240.521729] xhci_hcd 0000:30:00.3: ERROR mismatched command completion event
-thus preventing the system from entering S3.
-Moreover it remains in an undefined state where some connected devices stop
-working until a reboot.
-Apply the XHCI_SUSPEND_DELAY quirk to make it suspend properly.
+The MIDI input event parser of the LINE6 driver may enter into an
+endless loop when the unexpected data sequence is given, as it tries
+to continue the secondary bytes without termination.  Also, when the
+input data is too short, the parser returns a negative error, while
+the caller doesn't handle it properly.  This would lead to the
+unexpected behavior as well.
 
-CC: stable@vger.kernel.org
-Signed-off-by: Alberto Mattea <alberto@mattea.info>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20200306150858.21904-3-mathias.nyman@linux.intel.com
+This patch addresses those issues by checking the return value
+correctly and handling the one-byte event in the parser properly.
+
+The bug was reported by syzkaller.
+
+Reported-by: syzbot+cce32521ee0a824c21f7@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/000000000000033087059f8f8fa3@google.com
+Link: https://lore.kernel.org/r/20200309095922.30269-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-pci.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/usb/line6/driver.c  |    2 +-
+ sound/usb/line6/midibuf.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -140,7 +140,8 @@ static void xhci_pci_quirks(struct devic
- 		xhci->quirks |= XHCI_AMD_PLL_FIX;
+--- a/sound/usb/line6/driver.c
++++ b/sound/usb/line6/driver.c
+@@ -313,7 +313,7 @@ static void line6_data_received(struct u
+ 				line6_midibuf_read(mb, line6->buffer_message,
+ 						LINE6_MIDI_MESSAGE_MAXLEN);
  
- 	if (pdev->vendor == PCI_VENDOR_ID_AMD &&
--		(pdev->device == 0x15e0 ||
-+		(pdev->device == 0x145c ||
-+		 pdev->device == 0x15e0 ||
- 		 pdev->device == 0x15e1 ||
- 		 pdev->device == 0x43bb))
- 		xhci->quirks |= XHCI_SUSPEND_DELAY;
+-			if (done == 0)
++			if (done <= 0)
+ 				break;
+ 
+ 			line6->message_length = done;
+--- a/sound/usb/line6/midibuf.c
++++ b/sound/usb/line6/midibuf.c
+@@ -163,7 +163,7 @@ int line6_midibuf_read(struct midi_buffe
+ 			int midi_length_prev =
+ 			    midibuf_message_length(this->command_prev);
+ 
+-			if (midi_length_prev > 0) {
++			if (midi_length_prev > 1) {
+ 				midi_length = midi_length_prev - 1;
+ 				repeat = 1;
+ 			} else
 
 
