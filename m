@@ -2,63 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A93ED19A71C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C09519A723
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732083AbgDAIUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:20:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42786 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728087AbgDAIUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:20:49 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 556D72078B;
-        Wed,  1 Apr 2020 08:20:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585729248;
-        bh=eFOFzuHnc4zeJvKTIWoh6Ztnd2/Z06wg6wJ16ZTmYaM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=opFNnLLbFU01fOHnCLkpWjgARva/UTy5i9K4ZG/xU4XdLBoZzPuosTpy8G/8K7Fl7
-         cMBQepuPuefqKK8jpgrjQhLUPFu3P0FCFIpA/pmYAoFxEPKMERahwW3P6vQJXBluea
-         j9aPp2j2aPFb6ICrF3pk9F1jSrbjyQ3i8FhLywkU=
-Date:   Wed, 1 Apr 2020 10:20:46 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.6 00/23] 5.6.1-rc1 review
-Message-ID: <20200401082046.GC2023509@kroah.com>
-References: <20200331085308.098696461@linuxfoundation.org>
- <2ae5cda8-b9a7-b498-ef2e-9b5a038ac36a@roeck-us.net>
+        id S1732098AbgDAIVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:21:33 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35074 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729703AbgDAIVd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 04:21:33 -0400
+Received: by mail-vs1-f68.google.com with SMTP id u11so15345560vsg.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 01:21:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TMiys8vgh/zVs+g/WqcrVmGnSmA9w/d7OqJQQ7up1M4=;
+        b=nOcgW+vJIDaeDBEdtqPJ13SjXnUQ8tvB/zXLpC8eEDmJa1qx0uTZpc4I94TQiNjE9T
+         msVtL4CTE33K//fw+xBNn9GaFPpRVLqyj5PGNxcqEoozzzRecgBLsoLIzAt/5NSW01AE
+         Ynl8VeIjsvYaiV6k4IVQfovLO0c12hxq3kZ41k3nh4TKrIk6ubCen/TswPapWoaThDNB
+         9A40s6iX1mVNOTpDe99mHNmQWlLJ2JxmLsTGu/yT5GmlhdDZoMZyZkyiPOJJq5FGqIcO
+         ti5blWz6lQahfcXM/qyBmUasrIWl9sVGvCfjPhfLX4CFLf8PQa13p+ye9/v/eTpjxdgF
+         Q1/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TMiys8vgh/zVs+g/WqcrVmGnSmA9w/d7OqJQQ7up1M4=;
+        b=KxQbxrrDY8bWbfRdHrI0n0MC2MWwPI3jMUAQ9ZV4kYMVXRUUDbgfvwE56e19lMqclU
+         rZKun/1CHuOhzD47lRUufLIywjHpIwLKQCqihS1z9cIpF6GVKjJW1FuKBCLvaVQNRgGd
+         O5+9fRzfnwETlmQ+bMuHUPti6jGTQIWHTyxSAzcUEvkS7Xqj8QSPQt3QWGNCRpsWROGj
+         UynqtVXGXty+8FK1VK/33OEhL6EzP8UXwga34rPaqfpcsdmAZSvj5s9ExuRJbuc5WEoj
+         ig8Cx+nhtRGSCQ/V+NjRqgz/ezE06Bn23Fj13xs6+XmcU/FZvBvpYgryDKekUmsNuWu/
+         CuoQ==
+X-Gm-Message-State: AGi0PuaeBTo7niRrjlstFmPTXUgJR0cOTNA0pmL05iPr5tW6M7MMm/gm
+        akg1YXRvEAaKoaokg6aMgjLzxQ8wZJlTOsegXgQFpQ==
+X-Google-Smtp-Source: APiQypIFgzuZyqDqF5vQmkoXOgF4Gs4J+CyGROUlmGOe4oP6uK3MuXRnZum585qhaQzu2hPT5+Qkz4Vz+TJF0gMrJP0=
+X-Received: by 2002:a67:69d5:: with SMTP id e204mr14355392vsc.159.1585729291733;
+ Wed, 01 Apr 2020 01:21:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2ae5cda8-b9a7-b498-ef2e-9b5a038ac36a@roeck-us.net>
+References: <20200331165449.30355-1-daniel.lezcano@linaro.org>
+In-Reply-To: <20200331165449.30355-1-daniel.lezcano@linaro.org>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Wed, 1 Apr 2020 13:51:20 +0530
+Message-ID: <CAHLCerPrCLNqcK8E1T917_HyV3uuP9U3e6sR335KiJn4ho72aw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] thermal: core: Make thermal_zone_set_trips private
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 07:25:48PM -0700, Guenter Roeck wrote:
-> On 3/31/20 1:59 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.6.1 release.
-> > There are 23 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu, 02 Apr 2020 08:50:37 +0000.
-> > Anything received after that time might be too late.
-> > 
-> 
-> Build results:
-> 	total: 155 pass: 155 fail: 0
-> Qemu test results:
-> 	total: 428 pass: 428 fail: 0
+On Tue, Mar 31, 2020 at 10:26 PM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> The function thermal_zone_set_trips() is used by the thermal core code
+> in order to update the next trip points, there are no other users.
+>
+> Move the function definition in the thermal_core.h, remove the
+> EXPORT_SYMBOL_GPL and document the function.
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
 
-Wonderful, thanks for testing these and letting me know.
-
-greg k-h
+> ---
+>  drivers/thermal/thermal_core.h    |  3 +++
+>  drivers/thermal/thermal_helpers.c | 13 ++++++++++++-
+>  include/linux/thermal.h           |  3 ---
+>  3 files changed, 15 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
+> index a9bf00e91d64..37cd4e2bead2 100644
+> --- a/drivers/thermal/thermal_core.h
+> +++ b/drivers/thermal/thermal_core.h
+> @@ -69,6 +69,9 @@ void thermal_zone_device_unbind_exception(struct thermal_zone_device *,
+>  int thermal_zone_device_set_policy(struct thermal_zone_device *, char *);
+>  int thermal_build_list_of_policies(char *buf);
+>
+> +/* Helpers */
+> +void thermal_zone_set_trips(struct thermal_zone_device *tz);
+> +
+>  /* sysfs I/F */
+>  int thermal_zone_create_device_groups(struct thermal_zone_device *, int);
+>  void thermal_zone_destroy_device_groups(struct thermal_zone_device *);
+> diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
+> index 2ba756af76b7..59eaf2d0fdb3 100644
+> --- a/drivers/thermal/thermal_helpers.c
+> +++ b/drivers/thermal/thermal_helpers.c
+> @@ -113,6 +113,18 @@ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+>  }
+>  EXPORT_SYMBOL_GPL(thermal_zone_get_temp);
+>
+> +/**
+> + * thermal_zone_set_trips - Computes the next trip points for the driver
+> + * @tz: a pointer to a thermal zone device structure
+> + *
+> + * The function computes the next temperature boundaries by browsing
+> + * the trip points. The result is the closer low and high trip points
+> + * to the current temperature. These values are passed to the backend
+> + * driver to let it set its own notification mechanism (usually an
+> + * interrupt).
+> + *
+> + * It does not return a value
+> + */
+>  void thermal_zone_set_trips(struct thermal_zone_device *tz)
+>  {
+>         int low = -INT_MAX;
+> @@ -161,7 +173,6 @@ void thermal_zone_set_trips(struct thermal_zone_device *tz)
+>  exit:
+>         mutex_unlock(&tz->lock);
+>  }
+> -EXPORT_SYMBOL_GPL(thermal_zone_set_trips);
+>
+>  void thermal_cdev_update(struct thermal_cooling_device *cdev)
+>  {
+> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> index c91b1e344d56..448841ab0dca 100644
+> --- a/include/linux/thermal.h
+> +++ b/include/linux/thermal.h
+> @@ -439,7 +439,6 @@ int thermal_zone_unbind_cooling_device(struct thermal_zone_device *, int,
+>                                        struct thermal_cooling_device *);
+>  void thermal_zone_device_update(struct thermal_zone_device *,
+>                                 enum thermal_notify_event);
+> -void thermal_zone_set_trips(struct thermal_zone_device *);
+>
+>  struct thermal_cooling_device *thermal_cooling_device_register(const char *,
+>                 void *, const struct thermal_cooling_device_ops *);
+> @@ -497,8 +496,6 @@ static inline int thermal_zone_unbind_cooling_device(
+>  static inline void thermal_zone_device_update(struct thermal_zone_device *tz,
+>                                               enum thermal_notify_event event)
+>  { }
+> -static inline void thermal_zone_set_trips(struct thermal_zone_device *tz)
+> -{ }
+>  static inline struct thermal_cooling_device *
+>  thermal_cooling_device_register(char *type, void *devdata,
+>         const struct thermal_cooling_device_ops *ops)
+> --
+> 2.17.1
+>
