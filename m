@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D0B119B138
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D397C19B1C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388524AbgDAQdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:33:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59702 "EHLO mail.kernel.org"
+        id S2389062AbgDAQiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:38:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388506AbgDAQdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:33:11 -0400
+        id S2388751AbgDAQiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:38:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 748CC20658;
-        Wed,  1 Apr 2020 16:33:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C587206F8;
+        Wed,  1 Apr 2020 16:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758790;
-        bh=LMexIkopUo954GN94LuWkdP8HZYMrYwcMo5e4teYJZM=;
+        s=default; t=1585759080;
+        bh=vHUjieBU5aslM55rEOP09v3yMqm7chbEbPX1sJ1IF44=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ohPKAsYW7jVGY9zmvLFqN3lHgiKq5ne17KN2kvk0xmmoxAaO568q2iJVHPraFMlQ5
-         rDEw+D4bH6YWbd2oefaLLKm22ncDjhxAJDOubcZzZHOcFUkOsa/718K7D3aUJzIYmH
-         Fm8E2gkOfcB52iYwqhQolRH733qLfMGpKxhEXgVY=
+        b=Gpg2W2U5QDv1NuUBUYQzxIWJ0eMemTzvBlJWtErVfTAFcUgItZ8G4NkscwuUSeLBh
+         PQ4cmdkpmZD3joqu738GU/6d2L9t3t6SoVe0+3VnU0d8tfr9Wz9GT3z2h14FPdUe5F
+         IsOoLuVwDC9NVAkKakBU/pMYjUyRnXEVUgZo1zKY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com,
-        Alexander Potapenko <glider@google.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.4 77/91] libfs: fix infoleak in simple_attr_read()
+        Torsten Hilbrich <torsten.hilbrich@secunet.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.9 070/102] vti6: Fix memory leak of skb if input policy check fails
 Date:   Wed,  1 Apr 2020 18:18:13 +0200
-Message-Id: <20200401161538.101114467@linuxfoundation.org>
+Message-Id: <20200401161544.369456064@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
-References: <20200401161512.917494101@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,79 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Torsten Hilbrich <torsten.hilbrich@secunet.com>
 
-commit a65cab7d7f05c2061a3e2490257d3086ff3202c6 upstream.
+commit 2a9de3af21aa8c31cd68b0b39330d69f8c1e59df upstream.
 
-Reading from a debugfs file at a nonzero position, without first reading
-at position 0, leaks uninitialized memory to userspace.
+The vti6_rcv function performs some tests on the retrieved tunnel
+including checking the IP protocol, the XFRM input policy, the
+source and destination address.
 
-It's a bit tricky to do this, since lseek() and pread() aren't allowed
-on these files, and write() doesn't update the position on them.  But
-writing to them with splice() *does* update the position:
+In all but one places the skb is released in the error case. When
+the input policy check fails the network packet is leaked.
 
-	#define _GNU_SOURCE 1
-	#include <fcntl.h>
-	#include <stdio.h>
-	#include <unistd.h>
-	int main()
-	{
-		int pipes[2], fd, n, i;
-		char buf[32];
+Using the same goto-label discard in this case to fix this problem.
 
-		pipe(pipes);
-		write(pipes[1], "0", 1);
-		fd = open("/sys/kernel/debug/fault_around_bytes", O_RDWR);
-		splice(pipes[0], NULL, fd, NULL, 1, 0);
-		n = read(fd, buf, sizeof(buf));
-		for (i = 0; i < n; i++)
-			printf("%02x", buf[i]);
-		printf("\n");
-	}
-
-Output:
-	5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a30
-
-Fix the infoleak by making simple_attr_read() always fill
-simple_attr::get_buf if it hasn't been filled yet.
-
-Reported-by: syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com
-Reported-by: Alexander Potapenko <glider@google.com>
-Fixes: acaefc25d21f ("[PATCH] libfs: add simple attribute files")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Link: https://lore.kernel.org/r/20200308023849.988264-1-ebiggers@kernel.org
+Fixes: ed1efb2aefbb ("ipv6: Add support for IPsec virtual tunnel interfaces")
+Signed-off-by: Torsten Hilbrich <torsten.hilbrich@secunet.com>
+Reviewed-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/libfs.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ net/ipv6/ip6_vti.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -761,7 +761,7 @@ int simple_attr_open(struct inode *inode
- {
- 	struct simple_attr *attr;
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -315,7 +315,7 @@ static int vti6_rcv(struct sk_buff *skb)
  
--	attr = kmalloc(sizeof(*attr), GFP_KERNEL);
-+	attr = kzalloc(sizeof(*attr), GFP_KERNEL);
- 	if (!attr)
- 		return -ENOMEM;
+ 		if (!xfrm6_policy_check(NULL, XFRM_POLICY_IN, skb)) {
+ 			rcu_read_unlock();
+-			return 0;
++			goto discard;
+ 		}
  
-@@ -801,9 +801,11 @@ ssize_t simple_attr_read(struct file *fi
- 	if (ret)
- 		return ret;
- 
--	if (*ppos) {		/* continued read */
-+	if (*ppos && attr->get_buf[0]) {
-+		/* continued read */
- 		size = strlen(attr->get_buf);
--	} else {		/* first read */
-+	} else {
-+		/* first read */
- 		u64 val;
- 		ret = attr->get(attr->data, &val);
- 		if (ret)
+ 		ipv6h = ipv6_hdr(skb);
 
 
