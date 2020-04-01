@@ -2,61 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8E0319A7C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 644C119A7B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732147AbgDAIt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:49:57 -0400
-Received: from mga07.intel.com ([134.134.136.100]:56685 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726536AbgDAIt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:49:57 -0400
-IronPort-SDR: yO2XkCos9TIdgL6L1Mv6SOK7HHW0BHH1aqFTHi6JrdnkdC+4DMTUBP8vzR4WwzDAlMf8FLBqos
- sZT1P5YY+9Og==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 01:49:55 -0700
-IronPort-SDR: gJZs3sQbbFrjZiCxla4KYGSWxtN0YIED8UuDXraGjsa8Zotvi6/clXarrmjWDRcovwrgzrxKvk
- ly+4e9kXxnkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,331,1580803200"; 
-   d="scan'208";a="238095823"
-Received: from vikasjox-mobl.amr.corp.intel.com (HELO localhost) ([10.249.39.53])
-  by orsmga007.jf.intel.com with ESMTP; 01 Apr 2020 01:49:53 -0700
-Date:   Wed, 1 Apr 2020 11:49:50 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v3] tpm: Add support for event log pointer found in TPM2
- ACPI table
-Message-ID: <20200401084913.GF17325@linux.intel.com>
-References: <20200331215100.883860-1-stefanb@linux.vnet.ibm.com>
+        id S1732102AbgDAIsy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:48:54 -0400
+Received: from cmccmta2.chinamobile.com ([221.176.66.80]:8371 "EHLO
+        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbgDAIsx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 04:48:53 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.11]) by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee65e8455597e4-40731; Wed, 01 Apr 2020 16:48:26 +0800 (CST)
+X-RM-TRANSID: 2ee65e8455597e4-40731
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost.localdomain (unknown[112.25.154.146])
+        by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee65e8455580bf-9490d;
+        Wed, 01 Apr 2020 16:48:25 +0800 (CST)
+X-RM-TRANSID: 2ee65e8455580bf-9490d
+From:   Tang Bin <tangbin@cmss.chinamobile.com>
+To:     axboe@kernel.dk
+Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tang Bin <tangbin@cmss.chinamobile.com>
+Subject: [PATCH] ata:ahci_xgene:use devm_platform_ioremap_resource() to simplify code
+Date:   Wed,  1 Apr 2020 16:49:52 +0800
+Message-Id: <20200401084952.5828-1-tangbin@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.20.1.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331215100.883860-1-stefanb@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 05:51:00PM -0400, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> In case a TPM2 is attached, search for a TPM2 ACPI table when trying
-> to get the event log from ACPI. If one is found, use it to get the
-> start and length of the log area. This allows non-UEFI systems, such
-> as SeaBIOS, to pass an event log when using a TPM2.
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+In this function, devm_platform_ioremap_resource() should be suitable
+to simplify code.
 
-Check the kbuild bot complain. I think otherwise this is sustainable.
-Thank you.
+Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+---
+ drivers/ata/ahci_xgene.c | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
 
-Does stock QEMU have all the support to test this?
+diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
+index 16246c843..061209275 100644
+--- a/drivers/ata/ahci_xgene.c
++++ b/drivers/ata/ahci_xgene.c
+@@ -739,7 +739,6 @@ static int xgene_ahci_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct ahci_host_priv *hpriv;
+ 	struct xgene_ahci_context *ctx;
+-	struct resource *res;
+ 	const struct of_device_id *of_devid;
+ 	enum xgene_ahci_version version = XGENE_AHCI_V1;
+ 	const struct ata_port_info *ppi[] = { &xgene_ahci_v1_port_info,
+@@ -759,32 +758,24 @@ static int xgene_ahci_probe(struct platform_device *pdev)
+ 	ctx->dev = dev;
+ 
+ 	/* Retrieve the IP core resource */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	ctx->csr_core = devm_ioremap_resource(dev, res);
++	ctx->csr_core = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(ctx->csr_core))
+ 		return PTR_ERR(ctx->csr_core);
+ 
+ 	/* Retrieve the IP diagnostic resource */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+-	ctx->csr_diag = devm_ioremap_resource(dev, res);
++	ctx->csr_diag = devm_platform_ioremap_resource(pdev, 2);
+ 	if (IS_ERR(ctx->csr_diag))
+ 		return PTR_ERR(ctx->csr_diag);
+ 
+ 	/* Retrieve the IP AXI resource */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 3);
+-	ctx->csr_axi = devm_ioremap_resource(dev, res);
++	ctx->csr_axi = devm_platform_ioremap_resource(pdev, 3);
+ 	if (IS_ERR(ctx->csr_axi))
+ 		return PTR_ERR(ctx->csr_axi);
+ 
+ 	/* Retrieve the optional IP mux resource */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 4);
+-	if (res) {
+-		void __iomem *csr = devm_ioremap_resource(dev, res);
+-		if (IS_ERR(csr))
+-			return PTR_ERR(csr);
+-
+-		ctx->csr_mux = csr;
+-	}
++	ctx->csr_mux = devm_platform_ioremap_resource(pdev, 4);
++	if (IS_ERR(ctx->csr_mux))
++		return PTR_ERR(ctx->csr_mux);
+ 
+ 	of_devid = of_match_device(xgene_ahci_of_match, dev);
+ 	if (of_devid) {
+-- 
+2.20.1.windows.1
 
-/Jarkko
+
+
