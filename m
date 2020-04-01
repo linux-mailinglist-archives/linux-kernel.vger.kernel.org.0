@@ -2,136 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC08319B5AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:38:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCDF19B5CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:41:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732355AbgDASh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 14:37:57 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45354 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbgDASh4 (ORCPT
+        id S1732537AbgDASl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 14:41:27 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46622 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727386AbgDASl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 14:37:56 -0400
-Received: by mail-lj1-f193.google.com with SMTP id t17so506713ljc.12;
-        Wed, 01 Apr 2020 11:37:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ChPzfp50uye5s6cR7YNBoT+4A3H45gyCxHFKR4xyF5U=;
-        b=o2gAp7G0cvfDzGxgy/htRMh9ZzYSROVUylzIe3v/N+3cD7IBbUIgDK/qxkgF0bnmdd
-         vwSxvZhSBUhArsXCBF4q+XqES0z4+kLFyv093glrug2o3YGYLH6Jt4kJNlqO4u2evUcx
-         vNvCArRJZSzhfFXba0n2Voebj9j6QV90zCxJCf+CuDc6ph6ItVyk5yAeI/2Kugyf5CPD
-         rA5qbTY/rOE0EkJvPapbOeNUs5C6MNtfJ785sPatfQ2BqVNSQV8Tz5Re3decS4MTAuYO
-         +wpOS0saPhG6KjRAcwADkpy9GnSHJvMXMSYpEsUwsm02oynEjqqMSYsApUV1Qm8xi+qS
-         JgIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ChPzfp50uye5s6cR7YNBoT+4A3H45gyCxHFKR4xyF5U=;
-        b=HVqC63BLp5ossSNsRFqIYWf14LRrvYiUrN8/FK73pmNv5lRtpr/yFQVkWJEDvq/c+b
-         Lsw9JpbQv0EcFpBhbsTtKCb6RRpD6QHjCwIsW5wvvdK4rhFuBfUtoXPnh8mlCnJS2AnQ
-         UHlupcVxInu1sJQjY0a3Tx+E2zV6SAMio+yukitluPw+4vVGBpCBGhhiV3OApapzy0y+
-         g3cKLPu1Xw2yMFPfRMPwOERjEwNFXO9/FkJgjMiPZ77it/Q/IO/oqRVm4GVVxrYCvzye
-         HwGDpxQREDmyyrJgEoZkilnVePAugc9FD7Kgu8/xxnmgpsrIouLnpxg3yyO0OZLZx9hY
-         JWvw==
-X-Gm-Message-State: AGi0PuZyCVnmM+NdnCLd7RrlU/WkR149z2hIzN6ZHoQVTX6nXEN6i4yR
-        XQjE4uYVyNak5lAmbQA0us8=
-X-Google-Smtp-Source: APiQypLqTbhyf8vdAzNpwruAWk6zd3Y+34qmO6h8QfNZiY6Fi0yJXRSz1JblP+I+pRCUW52i7ItVOQ==
-X-Received: by 2002:a2e:4942:: with SMTP id b2mr10128427ljd.135.1585766274540;
-        Wed, 01 Apr 2020 11:37:54 -0700 (PDT)
-Received: from pc636 (h5ef52e31.seluork.dyn.perspektivbredband.net. [94.245.46.49])
-        by smtp.gmail.com with ESMTPSA id d21sm1711255ljc.49.2020.04.01.11.37.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 11:37:53 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Wed, 1 Apr 2020 20:37:45 +0200
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        rcu@vger.kernel.org, willy@infradead.org, peterz@infradead.org,
-        neilb@suse.com, vbabka@suse.cz, mgorman@suse.de,
+        Wed, 1 Apr 2020 14:41:26 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031IdZbN048822;
+        Wed, 1 Apr 2020 18:40:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2020-01-29; bh=4EuKkI1FgDUHa7f3yhLdd4Qr6gCWZ73+BoGG9fGqtWQ=;
+ b=bpaHX75zugPD8IcwwEfSwAZbX185+ocOT3IiOb2MByRjSddFi1VkEHG5DHv2i/lw8ub1
+ qL/CsXFLjShsUv3XIAVdC3XGYVkqi5triEUjloAr5MhE6nUvx2mF0mr9Q7QKkwbAwdvG
+ MjlsdMz3TWMp02m7GRhcDcB+kBIQqSUySU145aU8eS50Ruka9n0juY1Wx6Iq3z9eFSGh
+ MBAseM+pRUmcAB+jJzf2pYQu1BeWxgfmCZmMpHP7Dmr9WaC0X7+OpSMLN5fvOu5xJ0iG
+ S9/pW8B89OAxwBZebuunnT8UJvC1XouGuocqs60tWdy65mV3b0a5wlfCV8RKGQUO1mPj Tw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 303yun9sh2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Apr 2020 18:40:38 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031IcWdc176892;
+        Wed, 1 Apr 2020 18:38:37 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 302ga0ym75-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Apr 2020 18:38:37 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 031IcSj8006092;
+        Wed, 1 Apr 2020 18:38:28 GMT
+Received: from monkey.oracle.com (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 01 Apr 2020 11:38:28 -0700
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Longpeng <longpeng2@huawei.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Mina Almasry <almasrymina@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH RFC] rcu/tree: Use GFP_MEMALLOC for alloc memory to free
- memory pattern
-Message-ID: <20200401183745.GA5960@pc636>
-References: <20200331131628.153118-1-joel@joelfernandes.org>
- <20200331140433.GA26498@pc636>
- <20200331150911.GC236678@google.com>
- <20200331160119.GA27614@pc636>
- <20200331183000.GD236678@google.com>
- <20200401122550.GA32593@pc636>
- <20200401134745.GV19865@paulmck-ThinkPad-P72>
- <20200401181601.GA4042@pc636>
- <20200401182615.GE19865@paulmck-ThinkPad-P72>
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH v2 0/4] Clean up hugetlb boot command line processing
+Date:   Wed,  1 Apr 2020 11:38:15 -0700
+Message-Id: <20200401183819.20647-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200401182615.GE19865@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 bulkscore=0 mlxscore=0 spamscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004010151
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 lowpriorityscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
+ suspectscore=0 mlxscore=0 spamscore=0 impostorscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004010150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 11:26:15AM -0700, Paul E. McKenney wrote:
-> On Wed, Apr 01, 2020 at 08:16:01PM +0200, Uladzislau Rezki wrote:
-> > > > > 
-> > > > > Right. Per discussion with Paul, we discussed that it is better if we
-> > > > > pre-allocate N number of array blocks per-CPU and use it for the cache.
-> > > > > Default for N being 1 and tunable with a boot parameter. I agree with this.
-> > > > > 
-> > > > As discussed before, we can make use of memory pool API for such
-> > > > purpose. But i am not sure if it should be one pool per CPU or
-> > > > one pool per NR_CPUS, that would contain NR_CPUS * N pre-allocated
-> > > > blocks.
-> > > 
-> > > There are advantages and disadvantages either way.  The advantage of the
-> > > per-CPU pool is that you don't have to worry about something like lock
-> > > contention causing even more pain during an OOM event.  One potential
-> > > problem wtih the per-CPU pool can happen when callbacks are offloaded,
-> > > in which case the CPUs needing the memory might never be getting it,
-> > > because in the offloaded case (RCU_NOCB_CPU=y) the CPU posting callbacks
-> > > might never be invoking them.
-> > > 
-> > > But from what I know now, systems built with CONFIG_RCU_NOCB_CPU=y
-> > > either don't have heavy callback loads (HPC systems) or are carefully
-> > > configured (real-time systems).  Plus large systems would probably end
-> > > up needing something pretty close to a slab allocator to keep from dying
-> > > from lock contention, and it is hard to justify that level of complexity
-> > > at this point.
-> > > 
-> > > Or is there some way to mark a specific slab allocator instance as being
-> > > able to keep some amount of memory no matter what the OOM conditions are?
-> > > If not, the current per-CPU pre-allocated cache is a better choice in the
-> > > near term.
-> > > 
-> > As for mempool API:
-> > 
-> > mempool_alloc() just tries to make regular allocation taking into
-> > account passed gfp_t bitmask. If it fails due to memory pressure,
-> > it uses reserved preallocated pool that consists of number of
-> > desirable elements(preallocated when a pool is created).
-> > 
-> > mempoll_free() returns an element to to pool, if it detects that
-> > current reserved elements are lower then minimum allowed elements,
-> > it will add an element to reserved pool, i.e. refill it. Otherwise
-> > just call kfree() or whatever we define as "element-freeing function."
-> 
-> Unless I am missing something, mempool_alloc() acquires a per-mempool
-> lock on each invocation under OOM conditions.  For our purposes, this
-> is essentially a global lock.  This will not be at all acceptable on a
-> large system.
-> 
-It uses pool->lock to access to reserved objects, so if we have one memory
-pool per one CPU then it would be serialized.
+v2 -
+   Fix build errors with patch 1 (Will)
+   Change arch_hugetlb_valid_size arg to unsigned long and remove
+     irrelevant 'extern' keyword (Christophe)
+   Documentation and other misc changes (Randy, Christophe, Mina)
+   Do not process command line options if !hugepages_supported()
+     (Dave, but it sounds like we may want to additional changes to
+      hugepages_supported() for x86?  If that is needed I would prefer
+      a separate patch.)
 
---
-Vlad Rezki
+Longpeng(Mike) reported a weird message from hugetlb command line processing
+and proposed a solution [1].  While the proposed patch does address the
+specific issue, there are other related issues in command line processing.
+As hugetlbfs evolved, updates to command line processing have been made to
+meet immediate needs and not necessarily in a coordinated manner.  The result
+is that some processing is done in arch specific code, some is done in arch
+independent code and coordination is problematic.  Semantics can vary between
+architectures.
+
+The patch series does the following:
+- Define arch specific arch_hugetlb_valid_size routine used to validate
+  passed huge page sizes.
+- Move hugepagesz= command line parsing out of arch specific code and into
+  an arch independent routine.
+- Clean up command line processing to follow desired semantics and
+  document those semantics.
+
+[1] https://lore.kernel.org/linux-mm/20200305033014.1152-1-longpeng2@huawei.com
+
+Mike Kravetz (4):
+  hugetlbfs: add arch_hugetlb_valid_size
+  hugetlbfs: move hugepagesz= parsing to arch independent code
+  hugetlbfs: remove hugetlb_add_hstate() warning for existing hstate
+  hugetlbfs: clean up command line processing
+
+ .../admin-guide/kernel-parameters.txt         |  35 +++--
+ Documentation/admin-guide/mm/hugetlbpage.rst  |  44 ++++++
+ arch/arm64/include/asm/hugetlb.h              |   2 +
+ arch/arm64/mm/hugetlbpage.c                   |  30 +---
+ arch/powerpc/include/asm/hugetlb.h            |   3 +
+ arch/powerpc/mm/hugetlbpage.c                 |  30 ++--
+ arch/riscv/include/asm/hugetlb.h              |   3 +
+ arch/riscv/mm/hugetlbpage.c                   |  24 +--
+ arch/s390/include/asm/hugetlb.h               |   3 +
+ arch/s390/mm/hugetlbpage.c                    |  24 +--
+ arch/sparc/include/asm/hugetlb.h              |   3 +
+ arch/sparc/mm/init_64.c                       |  43 ++----
+ arch/x86/include/asm/hugetlb.h                |   5 +
+ arch/x86/mm/hugetlbpage.c                     |  23 +--
+ include/linux/hugetlb.h                       |   8 +-
+ mm/hugetlb.c                                  | 141 ++++++++++++++----
+ 16 files changed, 252 insertions(+), 169 deletions(-)
+
+-- 
+2.25.1
+
