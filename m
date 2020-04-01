@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C539E19A94E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA25F19A962
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:18:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732131AbgDAKRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 06:17:37 -0400
+        id S1732340AbgDAKSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:18:36 -0400
 Received: from mga01.intel.com ([192.55.52.88]:34142 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725860AbgDAKRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:17:35 -0400
-IronPort-SDR: JWDxFCRFKs0bXgFuh/msX7WWfYRJA/O/1CzWSghA2hIalS4bRl3dxEe3mMgyHZuCt3Lh0Gt/6q
- NAjjCItnWI5w==
+        id S1732107AbgDAKRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 06:17:37 -0400
+IronPort-SDR: atT5Zg3jGFF9iubidjsOz3xN+ctbkEYSQ41OWZP4rCGfh7ZgvVAg6bUC+xi7f1m3GxXmZFogZ5
+ 91IUmESrkv/Q==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 03:17:33 -0700
-IronPort-SDR: /lK1sDkMDYrtPANgKYelTYuzZ/N6rbe162/l8piq6NlkAD5VW6WPkWjKRGNDhpm9/nEr+sY1PP
- /XPafS5hczDA==
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 03:17:35 -0700
+IronPort-SDR: Yc0jM+nwpjLWF3jKghwbK38EuNfAN3bUyNS3s5T4z6MuvnipWAJq7SvhqXl8W9pk04aN/J3c5H
+ N5IeMufU0Txg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,331,1580803200"; 
-   d="scan'208";a="395925473"
+   d="scan'208";a="395925478"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.87])
-  by orsmga004.jf.intel.com with ESMTP; 01 Apr 2020 03:17:32 -0700
+  by orsmga004.jf.intel.com with ESMTP; 01 Apr 2020 03:17:35 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
         linux-kernel@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH 01/16] perf auxtrace: Add ->evsel_is_auxtrace() callback
-Date:   Wed,  1 Apr 2020 13:15:58 +0300
-Message-Id: <20200401101613.6201-2-adrian.hunter@intel.com>
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: [PATCH 02/16] perf intel-pt: Implement ->evsel_is_auxtrace() callback
+Date:   Wed,  1 Apr 2020 13:15:59 +0300
+Message-Id: <20200401101613.6201-3-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200401101613.6201-1-adrian.hunter@intel.com>
 References: <20200401101613.6201-1-adrian.hunter@intel.com>
@@ -44,79 +41,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add ->evsel_is_auxtrace() callback to identify if a selected event
-is an AUX area event.
+Implement ->evsel_is_auxtrace() callback.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
 ---
- tools/perf/util/auxtrace.c |  9 +++++++++
- tools/perf/util/auxtrace.h | 12 ++++++++++++
- 2 files changed, 21 insertions(+)
+ tools/perf/util/intel-pt.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index 3571ce72ca28..2c4ad6838766 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -2577,3 +2577,12 @@ void auxtrace__free(struct perf_session *session)
- 
- 	return session->auxtrace->free(session);
- }
-+
-+bool auxtrace__evsel_is_auxtrace(struct perf_session *session,
-+				 struct evsel *evsel)
-+{
-+	if (!session->auxtrace || !session->auxtrace->evsel_is_auxtrace)
-+		return false;
-+
-+	return session->auxtrace->evsel_is_auxtrace(session, evsel);
-+}
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index e58ef160b599..db65aae5c2ea 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -21,6 +21,7 @@
- union perf_event;
- struct perf_session;
- struct evlist;
-+struct evsel;
- struct perf_tool;
- struct mmap;
- struct perf_sample;
-@@ -166,6 +167,8 @@ struct auxtrace {
- 			    struct perf_tool *tool);
- 	void (*free_events)(struct perf_session *session);
- 	void (*free)(struct perf_session *session);
-+	bool (*evsel_is_auxtrace)(struct perf_session *session,
-+				  struct evsel *evsel);
- };
- 
- /**
-@@ -584,6 +587,8 @@ void auxtrace__dump_auxtrace_sample(struct perf_session *session,
- int auxtrace__flush_events(struct perf_session *session, struct perf_tool *tool);
- void auxtrace__free_events(struct perf_session *session);
- void auxtrace__free(struct perf_session *session);
-+bool auxtrace__evsel_is_auxtrace(struct perf_session *session,
-+				 struct evsel *evsel);
- 
- #define ITRACE_HELP \
- "				i:	    		synthesize instructions events\n"		\
-@@ -749,6 +754,13 @@ void auxtrace_index__free(struct list_head *head __maybe_unused)
- {
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index 23c8289c2472..db25c77d82f3 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -2715,6 +2715,15 @@ static void intel_pt_free(struct perf_session *session)
+ 	free(pt);
  }
  
-+static inline
-+bool auxtrace__evsel_is_auxtrace(struct perf_session *session __maybe_unused,
-+				 struct evsel *evsel __maybe_unused)
++static bool intel_pt_evsel_is_auxtrace(struct perf_session *session,
++				       struct evsel *evsel)
 +{
-+	return false;
++	struct intel_pt *pt = container_of(session->auxtrace, struct intel_pt,
++					   auxtrace);
++
++	return evsel->core.attr.type == pt->pmu_type;
 +}
 +
- static inline
- int auxtrace_parse_filters(struct evlist *evlist __maybe_unused)
- {
+ static int intel_pt_process_auxtrace_event(struct perf_session *session,
+ 					   union perf_event *event,
+ 					   struct perf_tool *tool __maybe_unused)
+@@ -3310,6 +3319,7 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
+ 	pt->auxtrace.flush_events = intel_pt_flush;
+ 	pt->auxtrace.free_events = intel_pt_free_events;
+ 	pt->auxtrace.free = intel_pt_free;
++	pt->auxtrace.evsel_is_auxtrace = intel_pt_evsel_is_auxtrace;
+ 	session->auxtrace = &pt->auxtrace;
+ 
+ 	if (dump_trace)
 -- 
 2.17.1
 
