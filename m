@@ -2,95 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6229719B1C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7FFA19B1FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389056AbgDAQiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:38:04 -0400
-Received: from mga05.intel.com ([192.55.52.43]:49426 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389044AbgDAQiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:38:01 -0400
-IronPort-SDR: PVq0+WXf0/nwfyy4uySb4YlpxO8ABxpxoQ4NJLqY4D/qF+ebrNKa+CcCL8jBfscQaSPD7y5q76
- nGv8ITFlX4pA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 09:37:59 -0700
-IronPort-SDR: TGY5V1axE7pHguliK42idEKM+IAzCJiWTJiHEjfcUUXY+SgNlI/oXwCGcVLomaeMyPf6+6dyqw
- RHBxcEX01Zrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,332,1580803200"; 
-   d="scan'208";a="240559676"
-Received: from djiang5-mobl1.amr.corp.intel.com (HELO [10.134.75.181]) ([10.134.75.181])
-  by fmsmga007.fm.intel.com with ESMTP; 01 Apr 2020 09:37:58 -0700
-Subject: Re: [PATCH 2/6] device/pci: add cmdmem cap to pci_dev
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     vkoul@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, gregkh@linuxfoundation.org,
-        arnd@arndb.de, linux-kernel@vger.kernel.org, x86@kernel.org,
-        dmaengine@vger.kernel.org, dan.j.williams@intel.com,
-        ashok.raj@intel.com, fenghua.yu@intel.com,
-        linux-pci@vger.kernel.org, tony.luck@intel.com, jing.lin@intel.com,
-        sanjay.k.kumar@intel.com
-References: <20200331220006.GA37376@google.com>
-From:   Dave Jiang <dave.jiang@intel.com>
-Message-ID: <1b4fe030-97ca-6345-5775-49c39a63eb03@intel.com>
-Date:   Wed, 1 Apr 2020 09:37:36 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S2389250AbgDAQjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:39:49 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35338 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389029AbgDAQjr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:39:47 -0400
+Received: by mail-pg1-f196.google.com with SMTP id k5so328018pga.2;
+        Wed, 01 Apr 2020 09:39:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1KvnqiTwTwGyUVWVo1ohp05PHzyr/fqOgpGS9E5cA/I=;
+        b=nUYzm9tQjevOeNPGsLPIZsXkgwuQB0F7C9QXza/hqHM4+Q78jMvLHkYf9EtNeHY5R9
+         WkoostobMpjq7Lk411c7WOtNozsD6ImrzVjQdjYla6cCHnxOqSPVFQFthX88L9j+X261
+         HbOlNVWW6FqZ4CGKJEG3O5cQQBUZxQe7iYVu7RAurGXWam04lRgFvi2XwZOP+r0VBPNT
+         UQj+7L6BCrI13vG+2IUZWOpvPxdB+0nOk9oKQuolcqONcdtQf31Sa0a1O1WuFCyMkQc3
+         rg7ASPgLiNSA6mmFKFyuUQ7pX+vZt3y2twspIQKzmDOa36JzJiqLVCgI8T/qKHzD+5d+
+         ufKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1KvnqiTwTwGyUVWVo1ohp05PHzyr/fqOgpGS9E5cA/I=;
+        b=Z4pP4gVI1wywvLY8ON3/uBbVcUbt87HfFzTAGWbkMYli61uVXafq5pFocdhZyN33ek
+         atD0yyfmz0mzrRWHsC0MRGZUXOUv3ChD8CXVBB/tJPCfIangxwJ8GVKaS3mjVOuoig2s
+         ssZvak1vCvB4CN1vkY37zIvukbYwWvtZR87bVpZM7euKMy8OmbinwwWB4N8lgKYdwGwC
+         BZPNJpUGLpsQOGkrMS+8QYxott65WoqdN1+5f3B+SfnaRSa26n/PsWK/rm3DvJdLsxJ7
+         tfgurw8LnNmyi3NAfeqai3p+CE/rMi6WOFeMxMW1udY6PV2QlaJNQ90kW6hVpTRpEKy4
+         sAKQ==
+X-Gm-Message-State: AGi0PuZofVR38SLIdAhBzY9g9afMoGZYRVUoCUuMTMIXmxraxImdKfcD
+        ZGbcxWUCK9E9UZz5ZT8INEXibFf2
+X-Google-Smtp-Source: APiQypJFjgmkwYIWKxDW0nJltQbosUObrioPcvFAkb+CWEJtYbERVyIpfynLOm0BaHxU1+HaXCFJGw==
+X-Received: by 2002:a62:1648:: with SMTP id 69mr10810975pfw.14.1585759186075;
+        Wed, 01 Apr 2020 09:39:46 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id q91sm2006250pjb.11.2020.04.01.09.39.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Apr 2020 09:39:45 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 09:39:44 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Grant Peltier <grantpeltier93@gmail.com>
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        adam.vaughn.xh@renesas.com
+Subject: Re: [PATCH v3 1/2] hwmon: (pmbus) add support for 2nd Gen Renesas
+ digital multiphase
+Message-ID: <20200401163944.GA111856@roeck-us.net>
+References: <cover.1584720563.git.grantpeltier93@gmail.com>
+ <62c000adf0108aeb65d3f275f28eb26b690384aa.1584720563.git.grantpeltier93@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200331220006.GA37376@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62c000adf0108aeb65d3f275f28eb26b690384aa.1584720563.git.grantpeltier93@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 20, 2020 at 11:16:21AM -0500, Grant Peltier wrote:
+> Extend the isl68137 driver to provide support for 2nd generation Renesas
+> digital multiphase voltage regulators.
+> 
+> Signed-off-by: Grant Peltier <grantpeltier93@gmail.com>
+> ---
+[ ... ]
 
+>  
+> -static const struct i2c_device_id isl68137_id[] = {
+> -	{"isl68137", 0},
+> +static const struct i2c_device_id raa_dmpvr_id[] = {
+> +	{"isl68137", isl68137},
+> +	{"raa_dmpvr2_1rail", raa_dmpvr2_1rail},
+> +	{"raa_dmpvr2_2rail", raa_dmpvr2_2rail},
+> +	{"raa_dmpvr2_3rail", raa_dmpvr2_3rail},
+> +	{"raa_dmpvr2_hv", raa_dmpvr2_hv},
+>  	{}
 
-On 3/31/2020 3:00 PM, Bjorn Helgaas wrote:
-> On Tue, Mar 31, 2020 at 10:59:44AM -0700, Dave Jiang wrote:
->> On 3/31/2020 9:03 AM, Bjorn Helgaas wrote:
->>> On Mon, Mar 30, 2020 at 02:27:00PM -0700, Dave Jiang wrote:
->>>> Since the current accelerator devices do not have standard PCIe capability
->>>> enumeration for accepting ENQCMDS yet, for now an attribute of pdev->cmdmem has
->>>> been added to struct pci_dev.  Currently a PCI quirk must be used for the
->>>> devices that have such cap until the PCI cap is standardized. Add a helper
->>>> function to provide the check if a device supports the cmdmem capability.
->>>>
->>>> Such capability is expected to be added to PCIe device cap enumeration in
->>>> the future.
->>> This needs some sort of thumbnail description of what "synchronous
->>> write notification" and "cmdmem" mean.
->>
->> I will add more explanation.
->>
->>> Do you have a pointer to a PCI-SIG ECR or similar?
->>
->> Deferrable Memory Write (DMWr) ECR
->>
->> https://members.pcisig.com/wg/PCI-SIG/document/13747
->>
->>  From what I'm told it should be available for public review by EOW.
-> 
-> Please use terminology from the spec instead of things like
-> "synchronous write notification".
-> 
-> AIUI, ENQCMDS is an x86 instruction.  That would have no meaning in
-> the PCIe domain.
-> 
-> I'm not committing to acking any part of this before the ECR is
-> accepted, but if you're adding support for the feature described by
-> the ECR, you might as well add support for discovering the DMWr
-> capability via Device Capabilities 2 as described in the ECR.
+I clearly didn't pay attention. I2C device IDs need to match chip names,
+not functionality. Unfortunately I only realized that when I wrote the
+pull request, and I didn't want to drop the patch. I'll send a fixup
+patch later.
 
-I'll look into adding the support for the ECR.
-
-> 
-> If you have hardware that supports DMWr but doesn't advertise it via
-> Device Capabilities 2, you can always have a quirk that works around
-> that lack.
-> 
+Guenter
