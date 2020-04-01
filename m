@@ -2,53 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D722919B880
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 00:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F10DF19B887
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 00:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733281AbgDAWfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 18:35:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733254AbgDAWfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 18:35:20 -0400
-Subject: Re: [GIT PULL] HID for 5.7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585780520;
-        bh=EyhDYKYutDY7xJzUZP7IFXMKH2P0GjJOxUJbcxEI7Kw=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=uPbt3VcxLZVx39oqjA5qUMLNPXCS1VeTcaGaKB2ikI8boScSezwUyOHMaSpQCsBbm
-         X7GT1Ei18UfVe1D2ww6NtEuT37kP2pFsC4to3YCX5DH0D+N+WAPHzYND0NYjXa2b0n
-         mhSwlJ1tiZdaDG+8uifPZDjJt6yNvtHewZcS2wqs=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <nycvar.YFH.7.76.2004011353080.19500@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.2004011353080.19500@cbobk.fhfr.pm>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <nycvar.YFH.7.76.2004011353080.19500@cbobk.fhfr.pm>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
-X-PR-Tracked-Commit-Id: 4f8a21a6a9335fdf0952af3cadfa88c33dddacd6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c101e9bbce4ae2947b35a660f17d617fc3827595
-Message-Id: <158578052043.24680.1816797200540896352.pr-tracker-bot@kernel.org>
-Date:   Wed, 01 Apr 2020 22:35:20 +0000
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org
+        id S2387433AbgDAWfp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 18:35:45 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47635 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732669AbgDAWfp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 18:35:45 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1jJlxV-00030u-HX; Wed, 01 Apr 2020 22:35:41 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] PCI: endpoint: functions/pci-epf-test: fix memory leak of buf
+Date:   Wed,  1 Apr 2020 23:35:41 +0100
+Message-Id: <20200401223541.403438-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 1 Apr 2020 14:11:24 +0200 (CEST):
+From: Colin Ian King <colin.king@canonical.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
+In the case where data cannot be transferred using DMA the allocation
+of buf leaked on the error return path. Fix this by jumping to the
+label err_dma_map that kfree's buf before the return.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c101e9bbce4ae2947b35a660f17d617fc3827595
+Addresses-Coverity: ("Resource leak")
+Fixes: a558357b1b34 ("PCI: endpoint: functions/pci-epf-test: Add DMA support to transfer data")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pci/endpoint/functions/pci-epf-test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index 3b4cf7e2bc60..60330f3e3751 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -347,7 +347,7 @@ static int pci_epf_test_read(struct pci_epf_test *epf_test)
+ 		if (!epf_test->dma_supported) {
+ 			dev_err(dev, "Cannot transfer data using DMA\n");
+ 			ret = -EINVAL;
+-			goto err_map_addr;
++			goto err_dma_map;
+ 		}
+ 
+ 		dst_phys_addr = dma_map_single(dma_dev, buf, reg->size,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.25.1
+
