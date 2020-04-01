@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BEBC19B24F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D2FA19B065
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389414AbgDAQmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:42:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43464 "EHLO mail.kernel.org"
+        id S2387912AbgDAQ0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:26:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389556AbgDAQmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:42:49 -0400
+        id S2387481AbgDAQ0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:26:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C30720719;
-        Wed,  1 Apr 2020 16:42:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CD1B20BED;
+        Wed,  1 Apr 2020 16:26:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759368;
-        bh=E/byX9SXEwMNRNF7M3hp6IOB4XLc9sVP0AoWLhCugrM=;
+        s=default; t=1585758389;
+        bh=ww7sHcCTS6voBIpOy89eNwc/M/tgfR7bv/qFldiagXg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ajkEMOnZYNLteDvLW/pNvWRvEAOZlgysPZpithIs3ZSpImLGHHraQZ15eQnJ3Xp+z
-         FlkvXWFBh1Ru5h+Qek0Q8O8IaZPbp/sxb7XIHW75T2ekXxzQ+oB4OlRW9Vxo6J2epr
-         vbaB9t5lGCskjixaY67BSu4H3/Pm3t+ZBuMWqDgw=
+        b=WiIGCgZ7CAs6/a3iB/Ax2ZgCn5GsfvWIOz/kWn24O7fCwhtx+OF2cdMJBBOn/facO
+         7AmeRt9N9W4cLAIgXcFP2CskyzmyjbzAX8JjWuycKzN/FuHr10sbqI+6ftT4u0/9GC
+         HKaFh9mz41CatrTZhoRdH+Af/oTls2x7vrcN4fmQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Bizon <mbizon@freebox.fr>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 058/148] net: dsa: Fix duplicate frames flooded by learning
+        stable@vger.kernel.org,
+        Yoshiki Komachi <komachi.yoshiki@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH 4.19 074/116] bpf/btf: Fix BTF verification of enum members in struct/union
 Date:   Wed,  1 Apr 2020 18:17:30 +0200
-Message-Id: <20200401161558.509685033@linuxfoundation.org>
+Message-Id: <20200401161552.305828471@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Yoshiki Komachi <komachi.yoshiki@gmail.com>
 
-[ Upstream commit 0e62f543bed03a64495bd2651d4fe1aa4bcb7fe5 ]
+commit da6c7faeb103c493e505e87643272f70be586635 upstream.
 
-When both the switch and the bridge are learning about new addresses,
-switch ports attached to the bridge would see duplicate ARP frames
-because both entities would attempt to send them.
+btf_enum_check_member() was currently sure to recognize the size of
+"enum" type members in struct/union as the size of "int" even if
+its size was packed.
 
-Fixes: 5037d532b83d ("net: dsa: add Broadcom tag RX/TX handler")
-Reported-by: Maxime Bizon <mbizon@freebox.fr>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This patch fixes BTF enum verification to use the correct size
+of member in BPF programs.
+
+Fixes: 179cde8cef7e ("bpf: btf: Check members of struct/union")
+Signed-off-by: Yoshiki Komachi <komachi.yoshiki@gmail.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Link: https://lore.kernel.org/bpf/1583825550-18606-2-git-send-email-komachi.yoshiki@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/dsa/tag_brcm.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/net/dsa/tag_brcm.c
-+++ b/net/dsa/tag_brcm.c
-@@ -134,6 +134,8 @@ static struct sk_buff *brcm_tag_rcv(stru
+---
+ kernel/bpf/btf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -1763,7 +1763,7 @@ static int btf_enum_check_member(struct
  
- 	skb->dev = ds->ports[source_port].netdev;
- 
-+	skb->offload_fwd_mark = 1;
-+
- 	return skb;
- }
- 
+ 	struct_size = struct_type->size;
+ 	bytes_offset = BITS_ROUNDDOWN_BYTES(struct_bits_off);
+-	if (struct_size - bytes_offset < sizeof(int)) {
++	if (struct_size - bytes_offset < member_type->size) {
+ 		btf_verifier_log_member(env, struct_type, member,
+ 					"Member exceeds struct_size");
+ 		return -EINVAL;
 
 
