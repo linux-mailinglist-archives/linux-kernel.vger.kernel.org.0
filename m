@@ -2,52 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEAB019B746
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 22:50:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA91B19B749
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 22:50:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733049AbgDAUu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 16:50:26 -0400
-Received: from mga01.intel.com ([192.55.52.88]:15024 "EHLO mga01.intel.com"
+        id S1733134AbgDAUur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 16:50:47 -0400
+Received: from mga02.intel.com ([134.134.136.20]:47612 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732619AbgDAUu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 16:50:26 -0400
-IronPort-SDR: y95uyv4RLx3QfdXs9mXjuKDz/96+agxYI7IETjYUXy1QxjEn8Js126tQMnx7t6PB5N26avpeHS
- 9A4DFNAwNRVA==
+        id S1732345AbgDAUur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 16:50:47 -0400
+IronPort-SDR: Q7VYTvpHqkKzyQ80zxqPM0cIhE3tLl0OHp9uw6au9GtVFGCo8A8s+mzGCNfaoe5H15aJSnR9BB
+ +ZUSJmubm0HQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 13:50:25 -0700
-IronPort-SDR: SktnP5/rzv4X4X/BkvGlMO3MfTk1FyP5XSd4hL5/ap+KdeCvbha09J/+qeyFfqVK6j9mvTcv8Q
- 68bsfUbHTaqw==
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 13:50:46 -0700
+IronPort-SDR: 0b20xBx0A+LWhmYt/DccnKIYCYCqk/ISmwhfHQrIh/eB4ygb6we7J6eaX/VnQfIFgQBZCzysWR
+ r1vcJXjKZ5wA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,332,1580803200"; 
-   d="scan'208";a="240626846"
+   d="scan'208";a="242851775"
 Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 01 Apr 2020 13:50:25 -0700
+  by orsmga008.jf.intel.com with ESMTP; 01 Apr 2020 13:50:46 -0700
 Received: from [10.213.137.102] (abudanko-MOBL.ccr.corp.intel.com [10.213.137.102])
-        by linux.intel.com (Postfix) with ESMTP id 537EB58077B;
-        Wed,  1 Apr 2020 13:50:18 -0700 (PDT)
-Subject: Re: [PATCH v6 04/10] perf tool: extend Perf tool with CAP_PERFMON
- capability support
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        by linux.intel.com (Postfix) with ESMTP id 143425803DA;
+        Wed,  1 Apr 2020 13:50:39 -0700 (PDT)
+Subject: Re: [PATCH v4 2/9] perf/core: open access for CAP_SYS_PERFMON
+ privileged process
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@redhat.com>,
         Andi Kleen <ak@linux.intel.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        James Morris <jmorris@namei.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
-References: <74d524ab-ac11-a7b8-1052-eba10f117e09@linux.intel.com>
- <f6eee965-e35d-e4dd-d794-85b7e152c428@linux.intel.com>
+References: <c0460c78-b1a6-b5f7-7119-d97e5998f308@linux.intel.com>
+ <c93309dc-b920-f5fa-f997-e8b2faf47b88@linux.intel.com>
+ <20200108160713.GI2844@hirez.programming.kicks-ass.net>
+ <cc239899-5c52-2fd0-286d-4bff18877937@linux.intel.com>
+ <20200110140234.GO2844@hirez.programming.kicks-ass.net>
+ <20200111005213.6dfd98fb36ace098004bde0e@kernel.org>
+ <20200110164531.GA2598@kernel.org>
+ <20200111084735.0ff01c758bfbfd0ae2e1f24e@kernel.org>
+ <2B79131A-3F76-47F5-AAB4-08BCA820473F@fb.com>
+ <5e191833.1c69fb81.8bc25.a88c@mx.google.com>
+ <158a4033-f8d6-8af7-77b0-20e62ec913b0@linux.intel.com>
+ <20200114122506.3cf442dc189a649d4736f86e@kernel.org>
+ <CAADnVQLCtrvvagbbkZG4PyAKb2PWzUouxG3=nxvm8QdpgEWtGQ@mail.gmail.com>
+ <81abaa29-d1be-a888-8b2f-fdf9b7e9fde8@linux.intel.com>
+ <CAADnVQKddDCRV9Zp7N_TR51wc5rtRwFN-pSZHLiXDXe23+B_5Q@mail.gmail.com>
+ <257a949a-b7cc-5ff1-6f1a-34bc44b1efc5@linux.intel.com>
+ <CAADnVQKSb8ZEq7mG0XwGx_btLxoEU5XDTu_p6eseDGuO-G+5tw@mail.gmail.com>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <0c8daba0-bc3c-26bf-e463-b8629403beff@linux.intel.com>
-Date:   Wed, 1 Apr 2020 23:50:16 +0300
+Message-ID: <687dc836-4d86-c281-75b3-c4df451e7cd1@linux.intel.com>
+Date:   Wed, 1 Apr 2020 23:50:37 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <f6eee965-e35d-e4dd-d794-85b7e152c428@linux.intel.com>
+In-Reply-To: <CAADnVQKSb8ZEq7mG0XwGx_btLxoEU5XDTu_p6eseDGuO-G+5tw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -56,126 +71,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Alexei,
 
-Hi Arnaldo,
+On 15.01.2020 4:52, Alexei Starovoitov wrote:
+> On Tue, Jan 14, 2020 at 10:50 AM Alexey Budankov
+> <alexey.budankov@linux.intel.com> wrote:
+>>
+>>
+>> On 14.01.2020 21:06, Alexei Starovoitov wrote:
+>>> On Tue, Jan 14, 2020 at 1:47 AM Alexey Budankov
+>>> <alexey.budankov@linux.intel.com> wrote:
+>>>>>>
+>>>>>> As we talked at RFC series of CAP_SYS_TRACING last year, I just expected
+>>>>>> to open it for enabling/disabling kprobes, not for creation.
+>>>>>>
+>>>>>> If we can accept user who has no admin priviledge but the CAP_SYS_PERFMON,
+>>>>>> to shoot their foot by their own risk, I'm OK to allow it. (Even though,
+>>>>>> it should check the max number of probes to be created by something like
+>>>>>> ulimit)
+>>>>>> I think nowadays we have fixed all such kernel crash problems on x86,
+>>>>>> but not sure for other archs, especially on the devices I can not reach.
+>>>>>> I need more help to stabilize it.
+>>>>>
+>>>>> I don't see how enable/disable is any safer than creation.
+>>>>> If there are kernel bugs in kprobes the kernel will crash anyway.
+>>>>> I think such partial CAP_SYS_PERFMON would be very confusing to the users.
+>>>>> CAP_* is about delegation of root privileges to non-root.
+>>>>> Delegating some of it is ok, but disallowing creation makes it useless
+>>>>> for bpf tracing, so we would need to add another CAP later.
+>>>>> Hence I suggest to do it right away instead of breaking
+>>>>> sys_perf_even_open() access into two CAPs.
+>>>>>
+>>>>
+>>>> Alexei, Masami,
+>>>>
+>>>> Thanks for your meaningful input.
+>>>> If we know in advance that it still can crash the system in some cases and on
+>>>> some archs, even though root fully controls delegation thru CAP_SYS_PERFMON,
+>>>> such delegation looks premature until the crashes are avoided. So it looks like
+>>>> access to eBPF for CAP_SYS_PERFMON privileged processes is the subject for
+>>>> a separate patch set.
+>>>
+>>> perf_event_open is always dangerous. sw cannot guarantee non-bugginess of hw.
+>>
+>> Sure, software cannot guarantee, but known software bugs could still be fixed,
+>> that's what I meant.
+>>
+>>> imo adding a cap just for pmc is pointless.
+>>> if you add a new cap it should cover all of sys_perf_event_open syscall.
+>>> subdividing it into sw vs hw counters, kprobe create vs enable, etc will
+>>> be the source of ongoing confusion. nack to such cap.
+>>>
+>>
+>> Well, as this patch set already covers complete perf_event_open functionality,
+>> and also eBPF related parts too, could you please review and comment on it?
+>> Does the patches 2/9 and 5/9 already bring all required extentions?
+> 
+> yes. the current patches 2 and 5 look good to me.
 
-On 28.01.2020 9:09, Alexey Budankov wrote:
-> 
-> Extend error messages to mention CAP_PERFMON capability as an option
-> to substitute CAP_SYS_ADMIN capability for secure system performance
-> monitoring and observability operations. Make perf_event_paranoid_check()
-> and __cmd_ftrace() to be aware of CAP_PERFMON capability.
-> 
-> CAP_PERFMON implements the principal of least privilege for performance
-> monitoring and observability operations (POSIX IEEE 1003.1e 2.2.2.39 principle
-> of least privilege: A security design principle that states that a process
-> or program be granted only those privileges (e.g., capabilities) necessary
-> to accomplish its legitimate function, and only for the time that such
-> privileges are actually required)
-> 
-> For backward compatibility reasons access to perf_events subsystem remains
-> open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage for
-> secure perf_events monitoring is discouraged with respect to CAP_PERFMON
-> capability.
-> 
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> ---
->  tools/perf/builtin-ftrace.c |  5 +++--
->  tools/perf/design.txt       |  3 ++-
->  tools/perf/util/cap.h       |  4 ++++
->  tools/perf/util/evsel.c     | 10 +++++-----
->  tools/perf/util/util.c      |  1 +
->  5 files changed, 15 insertions(+), 8 deletions(-)
-
-Could this have you explicit Reviewed-by or Acked-by tag
-so the changes could be driven into the kernel?
-Latest v7 is here:
-https://lore.kernel.org/lkml/c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com/
+Could this have you explicit Reviewed-by or Acked-by tag so
+the changes could be driven into the kernel?
+Latest v7 is here: https://lore.kernel.org/lkml/c8de937a-0b3a-7147-f5ef-69f467e87a13@linux.intel.com/
 
 Thanks,
 Alexey
-
-
-> 
-> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-> index d5adc417a4ca..55eda54240fb 100644
-> --- a/tools/perf/builtin-ftrace.c
-> +++ b/tools/perf/builtin-ftrace.c
-> @@ -284,10 +284,11 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace, int argc, const char **argv)
->  		.events = POLLIN,
->  	};
->  
-> -	if (!perf_cap__capable(CAP_SYS_ADMIN)) {
-> +	if (!(perf_cap__capable(CAP_PERFMON) ||
-> +	      perf_cap__capable(CAP_SYS_ADMIN))) {
->  		pr_err("ftrace only works for %s!\n",
->  #ifdef HAVE_LIBCAP_SUPPORT
-> -		"users with the SYS_ADMIN capability"
-> +		"users with the CAP_PERFMON or CAP_SYS_ADMIN capability"
->  #else
->  		"root"
->  #endif
-> diff --git a/tools/perf/design.txt b/tools/perf/design.txt
-> index 0453ba26cdbd..a42fab308ff6 100644
-> --- a/tools/perf/design.txt
-> +++ b/tools/perf/design.txt
-> @@ -258,7 +258,8 @@ gets schedule to. Per task counters can be created by any user, for
->  their own tasks.
->  
->  A 'pid == -1' and 'cpu == x' counter is a per CPU counter that counts
-> -all events on CPU-x. Per CPU counters need CAP_SYS_ADMIN privilege.
-> +all events on CPU-x. Per CPU counters need CAP_PERFMON or CAP_SYS_ADMIN
-> +privilege.
->  
->  The 'flags' parameter is currently unused and must be zero.
->  
-> diff --git a/tools/perf/util/cap.h b/tools/perf/util/cap.h
-> index 051dc590ceee..ae52878c0b2e 100644
-> --- a/tools/perf/util/cap.h
-> +++ b/tools/perf/util/cap.h
-> @@ -29,4 +29,8 @@ static inline bool perf_cap__capable(int cap __maybe_unused)
->  #define CAP_SYSLOG	34
->  #endif
->  
-> +#ifndef CAP_PERFMON
-> +#define CAP_PERFMON	38
-> +#endif
-> +
->  #endif /* __PERF_CAP_H */
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index a69e64236120..a35f17723dd3 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -2491,14 +2491,14 @@ int perf_evsel__open_strerror(struct evsel *evsel, struct target *target,
->  		 "You may not have permission to collect %sstats.\n\n"
->  		 "Consider tweaking /proc/sys/kernel/perf_event_paranoid,\n"
->  		 "which controls use of the performance events system by\n"
-> -		 "unprivileged users (without CAP_SYS_ADMIN).\n\n"
-> +		 "unprivileged users (without CAP_PERFMON or CAP_SYS_ADMIN).\n\n"
->  		 "The current value is %d:\n\n"
->  		 "  -1: Allow use of (almost) all events by all users\n"
->  		 "      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK\n"
-> -		 ">= 0: Disallow ftrace function tracepoint by users without CAP_SYS_ADMIN\n"
-> -		 "      Disallow raw tracepoint access by users without CAP_SYS_ADMIN\n"
-> -		 ">= 1: Disallow CPU event access by users without CAP_SYS_ADMIN\n"
-> -		 ">= 2: Disallow kernel profiling by users without CAP_SYS_ADMIN\n\n"
-> +		 ">= 0: Disallow ftrace function tracepoint by users without CAP_PERFMON or CAP_SYS_ADMIN\n"
-> +		 "      Disallow raw tracepoint access by users without CAP_SYS_PERFMON or CAP_SYS_ADMIN\n"
-> +		 ">= 1: Disallow CPU event access by users without CAP_PERFMON or CAP_SYS_ADMIN\n"
-> +		 ">= 2: Disallow kernel profiling by users without CAP_PERFMON or CAP_SYS_ADMIN\n\n"
->  		 "To make this setting permanent, edit /etc/sysctl.conf too, e.g.:\n\n"
->  		 "	kernel.perf_event_paranoid = -1\n" ,
->  				 target->system_wide ? "system-wide " : "",
-> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-> index 969ae560dad9..51cf3071db74 100644
-> --- a/tools/perf/util/util.c
-> +++ b/tools/perf/util/util.c
-> @@ -272,6 +272,7 @@ int perf_event_paranoid(void)
->  bool perf_event_paranoid_check(int max_level)
->  {
->  	return perf_cap__capable(CAP_SYS_ADMIN) ||
-> +			perf_cap__capable(CAP_PERFMON) ||
->  			perf_event_paranoid() <= max_level;
->  }
->  
-> 
