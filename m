@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D397C19B1C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E8E819B1CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389062AbgDAQiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:38:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37460 "EHLO mail.kernel.org"
+        id S2389075AbgDAQiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:38:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388751AbgDAQiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:38:01 -0400
+        id S2389055AbgDAQiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:38:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C587206F8;
-        Wed,  1 Apr 2020 16:38:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25D05214DB;
+        Wed,  1 Apr 2020 16:38:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759080;
-        bh=vHUjieBU5aslM55rEOP09v3yMqm7chbEbPX1sJ1IF44=;
+        s=default; t=1585759083;
+        bh=ctrYX3pfBTM62WA3edoDko5eDSVbvGqOt2cG3g/6zwI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gpg2W2U5QDv1NuUBUYQzxIWJ0eMemTzvBlJWtErVfTAFcUgItZ8G4NkscwuUSeLBh
-         PQ4cmdkpmZD3joqu738GU/6d2L9t3t6SoVe0+3VnU0d8tfr9Wz9GT3z2h14FPdUe5F
-         IsOoLuVwDC9NVAkKakBU/pMYjUyRnXEVUgZo1zKY=
+        b=gRPI5tR0qlzBgnnl7mMjTE5A+hSv5440jTV42tnB9meLMNjh47y2Kr1ybo/VCXe/H
+         vzZZpV5af+TqPH9wYtn6rcsyhJx2PHYqJTXRgOEtygoT4LH1gd3O1gLCtmBJMAxXpz
+         yTdj+PdlPkf2uZCQVkjyfeL0MI/07+X65dqQimgs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Torsten Hilbrich <torsten.hilbrich@secunet.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.9 070/102] vti6: Fix memory leak of skb if input policy check fails
-Date:   Wed,  1 Apr 2020 18:18:13 +0200
-Message-Id: <20200401161544.369456064@linuxfoundation.org>
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 071/102] Input: raydium_i2c_ts - use true and false for boolean values
+Date:   Wed,  1 Apr 2020 18:18:14 +0200
+Message-Id: <20200401161544.665703693@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
 References: <20200401161530.451355388@linuxfoundation.org>
@@ -45,39 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Torsten Hilbrich <torsten.hilbrich@secunet.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 2a9de3af21aa8c31cd68b0b39330d69f8c1e59df upstream.
+[ Upstream commit 6cad4e269e25dddd7260a53e9d9d90ba3a3cc35a ]
 
-The vti6_rcv function performs some tests on the retrieved tunnel
-including checking the IP protocol, the XFRM input policy, the
-source and destination address.
+Return statements in functions returning bool should use true or false
+instead of an integer value.
 
-In all but one places the skb is released in the error case. When
-the input policy check fails the network packet is leaked.
+This code was detected with the help of Coccinelle.
 
-Using the same goto-label discard in this case to fix this problem.
-
-Fixes: ed1efb2aefbb ("ipv6: Add support for IPsec virtual tunnel interfaces")
-Signed-off-by: Torsten Hilbrich <torsten.hilbrich@secunet.com>
-Reviewed-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/ip6_vti.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/touchscreen/raydium_i2c_ts.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -315,7 +315,7 @@ static int vti6_rcv(struct sk_buff *skb)
- 
- 		if (!xfrm6_policy_check(NULL, XFRM_POLICY_IN, skb)) {
- 			rcu_read_unlock();
--			return 0;
-+			goto discard;
+diff --git a/drivers/input/touchscreen/raydium_i2c_ts.c b/drivers/input/touchscreen/raydium_i2c_ts.c
+index a99fb5cac5a0e..76cdc145c0912 100644
+--- a/drivers/input/touchscreen/raydium_i2c_ts.c
++++ b/drivers/input/touchscreen/raydium_i2c_ts.c
+@@ -466,7 +466,7 @@ static bool raydium_i2c_boot_trigger(struct i2c_client *client)
  		}
+ 	}
  
- 		ipv6h = ipv6_hdr(skb);
+-	return 0;
++	return false;
+ }
+ 
+ static bool raydium_i2c_fw_trigger(struct i2c_client *client)
+@@ -492,7 +492,7 @@ static bool raydium_i2c_fw_trigger(struct i2c_client *client)
+ 		}
+ 	}
+ 
+-	return 0;
++	return false;
+ }
+ 
+ static int raydium_i2c_check_path(struct i2c_client *client)
+-- 
+2.20.1
+
 
 
