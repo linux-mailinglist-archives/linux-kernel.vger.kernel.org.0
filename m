@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D65E19B314
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C310519B015
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:24:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388920AbgDAQlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:41:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42146 "EHLO mail.kernel.org"
+        id S2387655AbgDAQX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:23:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389438AbgDAQln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:41:43 -0400
+        id S2387647AbgDAQX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:23:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81751206F8;
-        Wed,  1 Apr 2020 16:41:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45DDC21556;
+        Wed,  1 Apr 2020 16:23:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759303;
-        bh=Wk5vG2jvv3zKm1H8ZHIEKdgfGVZnA91k1WpdRvzFCCI=;
+        s=default; t=1585758235;
+        bh=7HXrLcMrjq1vUs0dcnl4r6XQPbXaANKTiMgvquxYJkM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tfYHMleEFfSjTyFa0bmIeJFfl7mui7iq0Oy3a4E1iaNQ6UCdoNI7EbvZ7aN6PUDsV
-         EeeIja8h7OYo3gAtqM2DkN6ycLIZuBwyZ5/dtXvbRj4Rhtence6NY8QCz9aD5oXcSL
-         QZPp2ALWxDn3iiZVwOHfMb5jaQ6sttn3upwWf+so=
+        b=Ij2iRvSFZ8Ietd/DOYDs0lL8dSbGm7tW02+X1Y2IhppdMJmo9ByhzPdsUrr+1NRB5
+         WPwzQdjiu0ask9+0t4BPq7NZ9n40YU1THGXIuTOZKX97+VIUzTooNxqw/a8YkO70Vw
+         OF2YpQXAnlnyVHhnWm0Gr4WoIafIfVtDYfAUC4MQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Igor M. Liplianin" <liplianin@netup.ru>,
-        Daniel Axtens <dja@axtens.net>,
-        Kees Cook <keescook@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 009/148] altera-stapl: altera_get_note: prevent write beyond end of key
-Date:   Wed,  1 Apr 2020 18:16:41 +0200
-Message-Id: <20200401161553.112812078@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 026/116] net: phy: mdio-mux-bcm-iproc: check clk_prepare_enable() return value
+Date:   Wed,  1 Apr 2020 18:16:42 +0200
+Message-Id: <20200401161545.730602252@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,99 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Axtens <dja@axtens.net>
+From: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
 
-[ Upstream commit 3745488e9d599916a0b40d45d3f30e3d4720288e ]
+[ Upstream commit 872307abbd0d9afd72171929806c2fa33dc34179 ]
 
-altera_get_note is called from altera_init, where key is kzalloc(33).
+Check clk_prepare_enable() return value.
 
-When the allocation functions are annotated to allow the compiler to see
-the sizes of objects, and with FORTIFY_SOURCE, we see:
-
-In file included from drivers/misc/altera-stapl/altera.c:14:0:
-In function ‘strlcpy’,
-    inlined from ‘altera_init’ at drivers/misc/altera-stapl/altera.c:2189:5:
-include/linux/string.h:378:4: error: call to ‘__write_overflow’ declared with attribute error: detected write beyond size of object passed as 1st parameter
-    __write_overflow();
-    ^~~~~~~~~~~~~~~~~~
-
-That refers to this code in altera_get_note:
-
-    if (key != NULL)
-            strlcpy(key, &p[note_strings +
-                            get_unaligned_be32(
-                            &p[note_table + (8 * i)])],
-                    length);
-
-The error triggers because the length of 'key' is 33, but the copy
-uses length supplied as the 'length' parameter, which is always
-256. Split the size parameter into key_len and val_len, and use the
-appropriate length depending on what is being copied.
-
-Detected by compiler error, only compile-tested.
-
-Cc: "Igor M. Liplianin" <liplianin@netup.ru>
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Link: https://lore.kernel.org/r/20200120074344.504-2-dja@axtens.net
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Link: https://lore.kernel.org/r/202002251042.D898E67AC@keescook
+Fixes: 2c7230446bc9 ("net: phy: Add pm support to Broadcom iProc mdio mux driver")
+Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/altera-stapl/altera.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/phy/mdio-mux-bcm-iproc.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/misc/altera-stapl/altera.c b/drivers/misc/altera-stapl/altera.c
-index 494e263daa748..b7ee8043a133e 100644
---- a/drivers/misc/altera-stapl/altera.c
-+++ b/drivers/misc/altera-stapl/altera.c
-@@ -2126,8 +2126,8 @@ static int altera_execute(struct altera_state *astate,
- 	return status;
- }
+--- a/drivers/net/phy/mdio-mux-bcm-iproc.c
++++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
+@@ -301,8 +301,13 @@ static int mdio_mux_iproc_resume(struct
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
++	int rc;
  
--static int altera_get_note(u8 *p, s32 program_size,
--			s32 *offset, char *key, char *value, int length)
-+static int altera_get_note(u8 *p, s32 program_size, s32 *offset,
-+			   char *key, char *value, int keylen, int vallen)
- /*
-  * Gets key and value of NOTE fields in the JBC file.
-  * Can be called in two modes:  if offset pointer is NULL,
-@@ -2184,7 +2184,7 @@ static int altera_get_note(u8 *p, s32 program_size,
- 						&p[note_table + (8 * i) + 4])];
+-	clk_prepare_enable(md->core_clk);
++	rc = clk_prepare_enable(md->core_clk);
++	if (rc) {
++		dev_err(md->dev, "failed to enable core clk\n");
++		return rc;
++	}
+ 	mdio_mux_iproc_config(md);
  
- 				if (value != NULL)
--					strlcpy(value, value_ptr, length);
-+					strlcpy(value, value_ptr, vallen);
- 
- 			}
- 		}
-@@ -2203,13 +2203,13 @@ static int altera_get_note(u8 *p, s32 program_size,
- 				strlcpy(key, &p[note_strings +
- 						get_unaligned_be32(
- 						&p[note_table + (8 * i)])],
--					length);
-+					keylen);
- 
- 			if (value != NULL)
- 				strlcpy(value, &p[note_strings +
- 						get_unaligned_be32(
- 						&p[note_table + (8 * i) + 4])],
--					length);
-+					vallen);
- 
- 			*offset = i + 1;
- 		}
-@@ -2463,7 +2463,7 @@ int altera_init(struct altera_config *config, const struct firmware *fw)
- 			__func__, (format_version == 2) ? "Jam STAPL" :
- 						"pre-standardized Jam 1.1");
- 		while (altera_get_note((u8 *)fw->data, fw->size,
--					&offset, key, value, 256) == 0)
-+					&offset, key, value, 32, 256) == 0)
- 			printk(KERN_INFO "%s: NOTE \"%s\" = \"%s\"\n",
- 					__func__, key, value);
- 	}
--- 
-2.20.1
-
+ 	return 0;
 
 
