@@ -2,100 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 877D019A64D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:34:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BEE619A656
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:37:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731970AbgDAHez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 03:34:55 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:40034 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731910AbgDAHez (ORCPT
+        id S1731914AbgDAHhh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 03:37:37 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35524 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731680AbgDAHhh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 03:34:55 -0400
-Received: by mail-pj1-f67.google.com with SMTP id kx8so2321964pjb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 00:34:54 -0700 (PDT)
+        Wed, 1 Apr 2020 03:37:37 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d5so29355141wrn.2;
+        Wed, 01 Apr 2020 00:37:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=e9j0gXLS8BiPnG8hg4KhkQMvt4m3nuldxIMCe99NUSM=;
-        b=CzwRDrj2h0sa5kX72PUVDeT6L3fY9qudsdi8KkOaBKK9gQI9Rk35RY8a+tf/7T/90X
-         Zl5oGkGuBSVb657tgNqL16cqTQjKM3o1b6z/xqQcfhcf5YAqC/8MEoQ6vJl0xnuS4T1p
-         bLhOvG+N19w8AdK3xAI90GJXQBJzHg/Idzk0c=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=UL9L/CyBrVCzEQgwvr+OzrzI0iM1qlY+IPc8B3d54Uk=;
+        b=F4xGsdFAsV/TIjXPGAqXfSqlyGmZ30mfw39njgikMjE0/4qVNARRKCUhFTNcvs5HTH
+         T+5J2BSmhrESB3sIoug/Kk/Lli0CDqNb5OIY8Pd5dDr6u1eoZ77RASNtvfEdxMKsV9iy
+         cdXc0U/K7p1q07UqMx1aYS7oC4w0sh+XExOKCFBNaA7LshlaKCgIk1RZAOYTFGae5ibD
+         dPtgg7Y4itEheuRdbUSPwWfS+/dQJ8qVC/BkFPKEoGHPENaPDtSjfSIFwTlHRgUk9ZXL
+         r28d/c/wmK8UhrOP42pbzm3SA8mOV7J2bR8O0O/DX52LrxT+uuNX7iEEg9OmP8Q3JU0h
+         oyBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=e9j0gXLS8BiPnG8hg4KhkQMvt4m3nuldxIMCe99NUSM=;
-        b=PhVzvr2Z+20McWwCMSAqF5jJGs7W2iiXVpCeqIvalPAXRZ4X8AfRACkBkp2DKOh3YN
-         6rsPD0zyF5hhjWHDAsFk+qLWQvDG/JxAlyr9iWa4FuGBdBGkUgWNzpi6qFp0tqdEjUPx
-         IxbNMX13l1GRncF/ScdUooB99+hD/KBJE7HlFf0G2YE9V+2RyIntQpI9w4ds8HHJYhVr
-         L3uLNzlqxz4gkxOXU8PQCKfQN440PXu3Iz06GyxNp4nHVLDZtVOBEXN3ByqJsdgTtptU
-         eyMul13elqmjzCgCocdJhLBUZnBfIYuvLBCdMqHKLUIbP+4OwkCIHBYlXtaJyigxSUpR
-         aZVg==
-X-Gm-Message-State: AGi0PuZvoe6nHkLtj4Vt+FJizMfAA5vNJWk1tWsIM9BEoaXYUO5dxwZA
-        HM0iOadNSj6JR7IAxsPSYD0YXA==
-X-Google-Smtp-Source: APiQypJDNRDZ33Sc9rxPUXsp2xFXUXbugulWQqiDDPonuNaxSEsO5TuU3WlX80cycoM1zufaEYn2wA==
-X-Received: by 2002:a17:902:6acc:: with SMTP id i12mr7180158plt.61.1585726494195;
-        Wed, 01 Apr 2020 00:34:54 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w74sm948693pfd.112.2020.04.01.00.34.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 00:34:53 -0700 (PDT)
-Date:   Wed, 1 Apr 2020 00:34:52 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Slava Bacherikov <slava@bacher09.org>
-Cc:     andriin@fb.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jannh@google.com, alexei.starovoitov@gmail.com,
-        daniel@iogearbox.net, kernel-hardening@lists.openwall.com,
-        Liu Yiding <liuyd.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v2 bpf] kbuild: fix dependencies for DEBUG_INFO_BTF
-Message-ID: <202004010033.A1523890@keescook>
-References: <20200331215536.34162-1-slava@bacher09.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331215536.34162-1-slava@bacher09.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UL9L/CyBrVCzEQgwvr+OzrzI0iM1qlY+IPc8B3d54Uk=;
+        b=UN3msUZLKP87tocdUDHIt347tMkQqx2h19s/pVoM/1pfjjinYujvMSb9ucIkJ/0K13
+         kvvnE5MtPBJDj506ygqXKSzLX3ZirwogJBHmNq4n9cF7U2maA5y6guGQ3cXVkDvntFQW
+         VuQ8tRRNwRQHaVvU+Qw9+894ovQTFHt7iRP+39aRrPqpCNgfhsVh4Vlz+xzBytRwuaJM
+         ZMd++qozcA6m+8Iwd4aQFx2tCSAvUkNWvJ1uvJUd++Cyg3APW1ra2ynw7m2WHFurqxvb
+         6pgF89/pqRvM4hYnZN6c7nK/R3Pof4i7a06gVPC+gl3HV2MPQZKllf4lvpteLEFbcwle
+         Cb1A==
+X-Gm-Message-State: ANhLgQ0LjxPr54zlAO2DRYefFxLvDCn8PUhJVGF1kS03EhEeCIG/BrSn
+        V1qnuunDoDLDRipCxCyq+UE=
+X-Google-Smtp-Source: ADFU+vtwdLJ3roDKyKh7gH+Nq4Ettv7bI9BNPrDCjycpvqCdmWj6VAchRJw+IPzp8foaVLPgtOHruQ==
+X-Received: by 2002:adf:decf:: with SMTP id i15mr25756408wrn.277.1585726654815;
+        Wed, 01 Apr 2020 00:37:34 -0700 (PDT)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id g3sm1793431wrm.66.2020.04.01.00.37.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Apr 2020 00:37:33 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] ARM: dts: rockchip: add #phy-cells to all usb2-phy nodes
+Date:   Wed,  1 Apr 2020 09:37:24 +0200
+Message-Id: <20200401073725.6063-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 12:55:37AM +0300, Slava Bacherikov wrote:
-> Currently turning on DEBUG_INFO_SPLIT when DEBUG_INFO_BTF is also
-> enabled will produce invalid btf file, since gen_btf function in
-> link-vmlinux.sh script doesn't handle *.dwo files.
-> 
-> Enabling DEBUG_INFO_REDUCED will also produce invalid btf file, and
-> using GCC_PLUGIN_RANDSTRUCT with BTF makes no sense.
-> 
-> Signed-off-by: Slava Bacherikov <slava@bacher09.org>
-> Reported-by: Jann Horn <jannh@google.com>
-> Reported-by: Liu Yiding <liuyd.fnst@cn.fujitsu.com>
-> Fixes: e83b9f55448a ("kbuild: add ability to generate BTF type info for vmlinux")
-> ---
->  lib/Kconfig.debug | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index f61d834e02fe..9ae288e2a6c0 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -223,6 +223,7 @@ config DEBUG_INFO_DWARF4
->  config DEBUG_INFO_BTF
->  	bool "Generate BTF typeinfo"
->  	depends on DEBUG_INFO
-> +	depends on !DEBUG_INFO_SPLIT && !DEBUG_INFO_REDUCED && !GCC_PLUGIN_RANDSTRUCT
->  	help
->  	  Generate deduplicated BTF type information from DWARF debug info.
->  	  Turning this on expects presence of pahole tool, which will convert
+Current dts files for Rockchip with 'usb2-phy' subnodes
+are manually verified. In order to automate this process
+phy-rockchip-inno-usb2.txt has been converted to yaml.
+'usb2-phy' nodes are now checked by:
+'phy-rockchip-inno-usb2.yaml' and 'phy-provider.yaml'.
+'#phy-cells' is now required for all usb2-phy nodes,
+so add them.
 
-Please make this:
+make -k ARCH=arm dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/
+phy/phy-rockchip-inno-usb2.yaml
 
-depends on !DEBUG_INFO_SPLIT && !DEBUG_INFO_REDUCED
-depends on COMPILE_TEST || !GCC_PLUGIN_RANDSTRUCT
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ arch/arm/boot/dts/rk322x.dtsi | 2 ++
+ arch/arm/boot/dts/rv1108.dtsi | 3 ++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
--Kees
-
+diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
+index 06172ebbf..9ad32651a 100644
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -214,6 +214,7 @@
+ 			clock-names = "phyclk";
+ 			clock-output-names = "usb480m_phy0";
+ 			#clock-cells = <0>;
++			#phy-cells = <0>;
+ 			status = "disabled";
+ 
+ 			u2phy0_otg: otg-port {
+@@ -241,6 +242,7 @@
+ 			clock-names = "phyclk";
+ 			clock-output-names = "usb480m_phy1";
+ 			#clock-cells = <0>;
++			#phy-cells = <0>;
+ 			status = "disabled";
+ 
+ 			u2phy1_otg: otg-port {
+diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
+index f9cfe2c80..b453f8d0f 100644
+--- a/arch/arm/boot/dts/rv1108.dtsi
++++ b/arch/arm/boot/dts/rv1108.dtsi
+@@ -269,9 +269,10 @@
+ 			reg = <0x100 0x0c>;
+ 			clocks = <&cru SCLK_USBPHY>;
+ 			clock-names = "phyclk";
+-			#clock-cells = <0>;
+ 			clock-output-names = "usbphy";
+ 			rockchip,usbgrf = <&usbgrf>;
++			#clock-cells = <0>;
++			#phy-cells = <0>;
+ 			status = "disabled";
+ 
+ 			u2phy_otg: otg-port {
 -- 
-Kees Cook
+2.11.0
+
