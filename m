@@ -2,109 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69F2F19A5E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9115D19A5F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:10:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731975AbgDAHFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 03:05:43 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:52706 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731792AbgDAHFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 03:05:43 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48scfX1Flxz9v9vW;
-        Wed,  1 Apr 2020 09:05:40 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=TxtpxE0O; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id oUWU8ClbUtFF; Wed,  1 Apr 2020 09:05:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48scfX00mTz9v9vV;
-        Wed,  1 Apr 2020 09:05:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1585724740; bh=5Fr6a41jwvLb6f6snVAMPm05DPoHZ6HdhWE6bi2fA4Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=TxtpxE0OLS+oPjGQ+Iz3BgbbyKg98h5fUHYliby0DBphyPCEbalxpn3JVkXrUIYgw
-         bSzgVSh3F7ZLcwZ2Jn5/z7ssu1qqQzfdRvfhB4ahQVRTNYyukPkxMXADRPQakrdCIm
-         8kFRkarwSwmqcyX3ZppnB/6v4biWYs97cd+49gQE=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 993748B7B3;
-        Wed,  1 Apr 2020 09:05:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ltQB2BylwNYc; Wed,  1 Apr 2020 09:05:40 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6FB718B778;
-        Wed,  1 Apr 2020 09:05:37 +0200 (CEST)
-Subject: Re: [PATCH v2 03/16] powerpc/watchpoint: Introduce function to get nr
- watchpoints dynamically
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     mpe@ellerman.id.au, mikey@neuling.org, apopple@linux.ibm.com,
-        paulus@samba.org, npiggin@gmail.com,
-        naveen.n.rao@linux.vnet.ibm.com, peterz@infradead.org,
-        jolsa@kernel.org, oleg@redhat.com, fweisbec@gmail.com,
-        mingo@kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20200401061309.92442-1-ravi.bangoria@linux.ibm.com>
- <20200401061309.92442-4-ravi.bangoria@linux.ibm.com>
- <7851b702-8a93-11a8-6553-e0a51967dfc0@c-s.fr>
- <b6ff59ce-8251-c50f-1c0e-b1f54fccb09f@linux.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <589df2d6-8fd0-8dab-9197-497610f0873b@c-s.fr>
-Date:   Wed, 1 Apr 2020 09:05:35 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1731970AbgDAHKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 03:10:04 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51162 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731823AbgDAHKD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 03:10:03 -0400
+Received: by mail-wm1-f66.google.com with SMTP id t128so5381408wma.0;
+        Wed, 01 Apr 2020 00:10:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tKcCvBkl/5wFmhqyWXdNyuguB+1XgXDUmUQ8zhlCfl0=;
+        b=GimWW9vahLRTeKGDBwlaxrahNw06822ARp9fna0DxzM+KxmbLJ/v2mT1rj5pvcL5w+
+         CyVkT6whSkyl3bLHD74RRKwVnPQEMLY8+9Um0/+A/5KP7p7Z4LhrOEfFS1IrMFE3cRv/
+         OWvTPVIh/5RfN2HFykkj51lqDaL+eeO+ZukJeBf6QFFm8TIAAvAo5a13QJughJrqmxqn
+         o86FhKk4Pv0I+olbesVuwzNe+4lEJlJjFV3M2CZTtjVqVL51NMWv58rRdOAjTPrD6s81
+         fjaA+Zrs1NzykRLoR5SwEcSf5TdpqDWgUcUl+KtTcqHwDC6XD73eORDGsN5vzDmUDF4Z
+         sdWA==
+X-Gm-Message-State: AGi0PuZaSk2bpgbFWYwjRF36q2Sz+AQS9UdNFhHXKwELUEFNjB852Rvz
+        w99NF3o70Y/1Zh6YJNAdIes=
+X-Google-Smtp-Source: APiQypJKzF9JIQqbmrZ1L+OJq9oATJtUV+U+TwMIOVFC0ButeSV7aj/VbyF6MRit5GbMNX5BdI0M+Q==
+X-Received: by 2002:a7b:cb59:: with SMTP id v25mr2931801wmj.13.1585725001425;
+        Wed, 01 Apr 2020 00:10:01 -0700 (PDT)
+Received: from localhost (ip-37-188-180-223.eurotel.cz. [37.188.180.223])
+        by smtp.gmail.com with ESMTPSA id f141sm1517974wmf.3.2020.04.01.00.09.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 00:10:00 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 09:09:58 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        rcu@vger.kernel.org, willy@infradead.org, peterz@infradead.org,
+        neilb@suse.com, vbabka@suse.cz, mgorman@suse.de,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC] rcu/tree: Use GFP_MEMALLOC for alloc memory to free
+ memory pattern
+Message-ID: <20200401070958.GB22681@dhcp22.suse.cz>
+References: <20200331131628.153118-1-joel@joelfernandes.org>
+ <20200331145806.GB236678@google.com>
+ <20200331153450.GM30449@dhcp22.suse.cz>
+ <20200331161215.GA27676@pc636>
 MIME-Version: 1.0
-In-Reply-To: <b6ff59ce-8251-c50f-1c0e-b1f54fccb09f@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331161215.GA27676@pc636>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue 31-03-20 18:12:15, Uladzislau Rezki wrote:
+> > 
+> > __GFP_ATOMIC | __GFP_HIGH is the way to get an additional access to
+> > memory reserves regarless of the sleeping status.
+> > 
+> Michal, just one question here regarding proposed flags. Can we also
+> tight it with __GFP_RETRY_MAYFAIL flag? Means it also can repeat a few
+> times in order to increase the chance of being success.
 
+yes, __GFP_RETRY_MAYFAIL is perfectly valid with __GFP_ATOMIC. Please
+note that __GFP_ATOMIC, despite its name, doesn't imply an atomic
+allocation which cannot sleep. Quite confusing, I know. A much better
+name would be __GFP_RESERVES or something like that.
 
-Le 01/04/2020 à 08:50, Ravi Bangoria a écrit :
-> 
-> 
-> On 4/1/20 11:59 AM, Christophe Leroy wrote:
->>
->>
->> Le 01/04/2020 à 08:12, Ravi Bangoria a écrit :
->>> So far we had only one watchpoint, so we have hardcoded HBP_NUM to 1.
->>> But future Power architecture is introducing 2nd DAWR and thus kernel
->>> should be able to dynamically find actual number of watchpoints
->>> supported by hw it's running on. Introduce function for the same.
->>> Also convert HBP_NUM macro to HBP_NUM_MAX, which will now represent
->>> maximum number of watchpoints supported by Powerpc.
->>
->>
->> Everywhere else in the code, it is called 'breakpoint', not 'watchpoint'.
->>
->> Wouldn't it be more consistent to call the function nr_bp_slots() 
->> instead of nr_wp_slots() ?
->>
->> Especially as we are likely going to extend your changes to support 
->> DABR2 in addition to DABR on BOOK3S/32.
-> 
-> Sure. I don't have strong onion for nr_wp_slots() and I can rename it to
-> nr_bp_slots(). but...
-> 
-> Even though existing code uses breakpoint and watchpoint interchangeably,
-> I'm using wp/watchpoint to represent data-breakpoint, to distinguish it
-> from instruction-breakpoint (CIABR). So IMHO, nr_wp_slots() should return
-> number DAWRs/DABRs and nr_bp_slots() should return number of CIABRs. Is
-> that okay?
-> 
-
-
-Yes that makes sense too. Up to you.
-
-Christophe
+-- 
+Michal Hocko
+SUSE Labs
