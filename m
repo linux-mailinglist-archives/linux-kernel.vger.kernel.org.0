@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B87519B043
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5E5019B274
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387830AbgDAQZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:25:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49524 "EHLO mail.kernel.org"
+        id S2389282AbgDAQoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:44:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387599AbgDAQZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:25:27 -0400
+        id S2389679AbgDAQoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:44:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40B6C21582;
-        Wed,  1 Apr 2020 16:25:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B8DD20658;
+        Wed,  1 Apr 2020 16:44:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758326;
-        bh=/sxCgI7m/KNwNNLDpk1oZ+muSRGWzY76oNLMuJCpNmA=;
+        s=default; t=1585759443;
+        bh=XH7uTBcyzXV4kA3f7gcqFz4C7CleSNZ0spz90N7qeV8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qz3+sowoWhJEwmW8DyBYSNUHznKMoeIiWljZCYDwy1+hfkfwPB6lQ0SU8SHBqwJOG
-         CopaKJFQGxpNa21axl4ilp9KnWORpFizQPCv0SucKoHCfTBC9pRjkrofyZ53ZZPf94
-         IN40fjd4XQLylljQfRkXBzTb5QfptlT4E04zpVAw=
+        b=S40dy2WY6G/Tji1OjwC/P7bHUA90klR713hMP/U4l+5dhCPLSAp/3E2s1K1aEATE7
+         n9bHZd/AVoy6SmzmRwaFpHIuaWjtPt2UNPcc/pHper5xIooLN8kftcNFpw5Q5n434E
+         qpbRv0jgXA4WZ3x23iZ5C5db8LTPGHPTsIhUX+RI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dirk Mueller <dmueller@suse.com>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.19 056/116] scripts/dtc: Remove redundant YYLOC global declaration
-Date:   Wed,  1 Apr 2020 18:17:12 +0200
-Message-Id: <20200401161549.821884956@linuxfoundation.org>
+        stable@vger.kernel.org, Anthony Mallet <anthony.mallet@laas.fr>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 041/148] USB: cdc-acm: fix rounding error in TIOCSSERIAL
+Date:   Wed,  1 Apr 2020 18:17:13 +0200
+Message-Id: <20200401161556.761117969@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +43,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dirk Mueller <dmueller@suse.com>
+From: Anthony Mallet <anthony.mallet@laas.fr>
 
-commit e33a814e772cdc36436c8c188d8c42d019fda639 upstream.
+[ Upstream commit b401f8c4f492cbf74f3f59c9141e5be3071071bb ]
 
-gcc 10 will default to -fno-common, which causes this error at link
-time:
+By default, tty_port_init() initializes those parameters to a multiple
+of HZ. For instance in line 69 of tty_port.c:
+   port->close_delay = (50 * HZ) / 100;
+https://github.com/torvalds/linux/blob/master/drivers/tty/tty_port.c#L69
 
-  (.text+0x0): multiple definition of `yylloc'; dtc-lexer.lex.o (symbol from plugin):(.text+0x0): first defined here
+With e.g. CONFIG_HZ = 250 (as this is the case for Ubuntu 18.04
+linux-image-4.15.0-37-generic), the default setting for close_delay is
+thus 125.
 
-This is because both dtc-lexer as well as dtc-parser define the same
-global symbol yyloc. Before with -fcommon those were merged into one
-defintion. The proper solution would be to to mark this as "extern",
-however that leads to:
+When ioctl(fd, TIOCGSERIAL, &s) is executed, the setting returned in
+user space is '12' (125/10). When ioctl(fd, TIOCSSERIAL, &s) is then
+executed with the same setting '12', the value is interpreted as '120'
+which is different from the current setting and a EPERM error may be
+raised by set_serial_info() if !CAP_SYS_ADMIN.
+https://github.com/torvalds/linux/blob/master/drivers/usb/class/cdc-acm.c#L919
 
-  dtc-lexer.l:26:16: error: redundant redeclaration of 'yylloc' [-Werror=redundant-decls]
-   26 | extern YYLTYPE yylloc;
-      |                ^~~~~~
-In file included from dtc-lexer.l:24:
-dtc-parser.tab.h:127:16: note: previous declaration of 'yylloc' was here
-  127 | extern YYLTYPE yylloc;
-      |                ^~~~~~
-cc1: all warnings being treated as errors
-
-which means the declaration is completely redundant and can just be
-dropped.
-
-Signed-off-by: Dirk Mueller <dmueller@suse.com>
-Signed-off-by: David Gibson <david@gibson.dropbear.id.au>
-[robh: cherry-pick from upstream]
-Cc: stable@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
+Fixes: ba2d8ce9db0a6 ("cdc-acm: implement TIOCSSERIAL to avoid blocking close(2)")
+Signed-off-by: Anthony Mallet <anthony.mallet@laas.fr>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200312133101.7096-2-anthony.mallet@laas.fr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/dtc/dtc-lexer.l |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/usb/class/cdc-acm.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
---- a/scripts/dtc/dtc-lexer.l
-+++ b/scripts/dtc/dtc-lexer.l
-@@ -38,7 +38,6 @@ LINECOMMENT	"//".*\n
- #include "srcpos.h"
- #include "dtc-parser.tab.h"
+diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
+index 74d0a91e84273..30a124b74d459 100644
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -942,6 +942,7 @@ static int set_serial_info(struct acm *acm,
+ {
+ 	struct serial_struct new_serial;
+ 	unsigned int closing_wait, close_delay;
++	unsigned int old_closing_wait, old_close_delay;
+ 	int retval = 0;
  
--YYLTYPE yylloc;
- extern bool treesource_error;
+ 	if (copy_from_user(&new_serial, newinfo, sizeof(new_serial)))
+@@ -952,18 +953,24 @@ static int set_serial_info(struct acm *acm,
+ 			ASYNC_CLOSING_WAIT_NONE :
+ 			msecs_to_jiffies(new_serial.closing_wait * 10);
  
- /* CAUTION: this will stop working if we ever use yyless() or yyunput() */
++	/* we must redo the rounding here, so that the values match */
++	old_close_delay	= jiffies_to_msecs(acm->port.close_delay) / 10;
++	old_closing_wait = acm->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
++				ASYNC_CLOSING_WAIT_NONE :
++				jiffies_to_msecs(acm->port.closing_wait) / 10;
++
+ 	mutex_lock(&acm->port.mutex);
+ 
+-	if (!capable(CAP_SYS_ADMIN)) {
+-		if ((close_delay != acm->port.close_delay) ||
+-		    (closing_wait != acm->port.closing_wait))
++	if ((new_serial.close_delay != old_close_delay) ||
++            (new_serial.closing_wait != old_closing_wait)) {
++		if (!capable(CAP_SYS_ADMIN))
+ 			retval = -EPERM;
+-		else
+-			retval = -EOPNOTSUPP;
+-	} else {
+-		acm->port.close_delay  = close_delay;
+-		acm->port.closing_wait = closing_wait;
+-	}
++		else {
++			acm->port.close_delay  = close_delay;
++			acm->port.closing_wait = closing_wait;
++		}
++	} else
++		retval = -EOPNOTSUPP;
+ 
+ 	mutex_unlock(&acm->port.mutex);
+ 	return retval;
+-- 
+2.20.1
+
 
 
