@@ -2,115 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F27C19A773
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B90A19A77B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:39:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731870AbgDAIis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:38:48 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42425 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731705AbgDAIir (ORCPT
+        id S1731809AbgDAIjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:39:44 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:30290 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726368AbgDAIjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:38:47 -0400
-Received: by mail-ed1-f68.google.com with SMTP id cw6so27926042edb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 01:38:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qedAMkO7HvLO65FKGD4WHqER0H4lcOPhnGRlZf+AyX0=;
-        b=QknYesGt4YCzQ66HY2Ib7fGuiCKy+PfvdCVINGb0euPOFVRvJYagATd6VVJlU/ADs0
-         PaswJqz/nqEOnq84kRWSZonHF9sIwLNnZAgCYbFQM6E+AKpABKAvd/r2EtJRI19WS0Gy
-         v23+5hsCmcj1A0KCFQkYkZ59uMM4zZNY3Oje/ErroeTB+ZXHlpyQnt398poprX1PU5Fy
-         u0PE+t8RfsS/sW3qE+oNHdpjj8HiUCl2cmoMS211QPmffJ2bNsZ+ZI+Cj3wQJ1KCFJug
-         aSfbqBKK2wUsKwsOqRlNUFHU0mhJ/AGN5ZuTwB79+49/wYhDc2RbP8PiSoSLGCB7zIRE
-         dubw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qedAMkO7HvLO65FKGD4WHqER0H4lcOPhnGRlZf+AyX0=;
-        b=niEf2lWEM1cjk8SoIHOHZCrec20MbCorEKw0JW56OD0xikM72asUOKPKrcAt8OCp/N
-         eBP9wRxCAL9rQn5NvQAjj68ue2ClZfAQKawqtDVjAInqWiVwUhlX1vTNkX9wdwYnj7c0
-         h+L0dWRrM8bSTCBZCLdDqt1m0P4EHvZiZQAQzltHOLAjdgL5F+Nzis7nNhdW2s2q5bZ0
-         vMjik2Du5wvKNTGx23R0r1AillNHMt0570fpB4Me8KPOvQ++y0LY6NpRox4j9XskvGAa
-         kF9nPPvTU4Q9CjUAEdP+K+xCvuyB8Cucl/ombnweVH3JqVnhxOeRerIICb+RSFzATWb9
-         NQ/Q==
-X-Gm-Message-State: ANhLgQ2UpEcRWGXRwbXDa6WAhCkanE0N5UV3HOhghdErHBkaR0/jCGWB
-        smxNVJLLDRgwK0kSIWVUgZmRfzgxMwI=
-X-Google-Smtp-Source: ADFU+vuQjhmU+fjkwGa2mxV5/rznsI7j5uyBOZPzTgXx9rCsRcB7z7VeAAt8jbAodF1OBMZk0wFLzw==
-X-Received: by 2002:a50:ef16:: with SMTP id m22mr7848143eds.82.1585730326304;
-        Wed, 01 Apr 2020 01:38:46 -0700 (PDT)
-Received: from [192.168.1.4] (212-5-158-119.ip.btc-net.bg. [212.5.158.119])
-        by smtp.googlemail.com with ESMTPSA id m21sm277245edb.90.2020.04.01.01.38.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Apr 2020 01:38:45 -0700 (PDT)
-Subject: Re: [PATCH][next] media: venus: hfi_msgs.h: Replace zero-length array
- with flexible-array member
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200319222229.GA19280@embeddedor.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <edb3bc39-3f4a-362f-1432-b2675689e874@linaro.org>
-Date:   Wed, 1 Apr 2020 11:38:44 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 1 Apr 2020 04:39:43 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0318buli010433;
+        Wed, 1 Apr 2020 10:39:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=lzzw7FXM0MO9eFzpIxeWfpnrQEPQjgWmRDZU797bXb8=;
+ b=xtrcxr1EAvv7HnNqNv9zC+wI60OE8e8OmAvMRjfnYxqkn8Xaphz9JIFc/mU1K1LkZmMh
+ 5ihsorr2LVId7ONlbCmT05Jy7DYRYYNWXmleCIqweN+XizU/EOr24WuxhBW6/36YBUay
+ aN0hchzyNFAW92C7SjqCJR2a4Ke+gZUilqdwUIzYyUehmlkuJbOs7kBwJQqEM1tOT56x
+ TrRaYgUEgRnc5aNGW3bXnqHK5JvJuaSvvfHFSU9/owDtNddT6nCzKhjV2It591+wbno5
+ 3ajHWBVZba9hszEmi6E6PIj6xN8s0Mf14b35GwxkfQMX7f0Q2lUuVT5NmULsYEiY3mdK Vg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 301w813w5g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 10:39:22 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A386510002A;
+        Wed,  1 Apr 2020 10:39:21 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8BADA21CA86;
+        Wed,  1 Apr 2020 10:39:21 +0200 (CEST)
+Received: from localhost (10.75.127.47) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Apr 2020 10:39:21
+ +0200
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <fabrice.gasnier@st.com>, <lee.jones@linaro.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v6 0/6] clockevent: add low power STM32 timer
+Date:   Wed, 1 Apr 2020 10:39:03 +0200
+Message-ID: <20200401083909.18886-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-In-Reply-To: <20200319222229.GA19280@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG3NODE3.st.com
+ (10.75.127.9)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+This series add low power timer as boadcast clockevent device.
+Low power timer could runs even when CPUs are in idle mode and 
+could wakeup them.
 
-Thanks for the patch!
+version 6:
+- simplify binding, DT and code to use only one interrupt
 
-On 3/20/20 12:22 AM, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/media/platform/qcom/venus/hfi_msgs.h | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+version 5:
+- document interrupts and interrupt-names bindings
+- use a different wake up interrupt
+- add device-tree patch
+- make STM32MP157 select low power timer configuration flag
+- enable fast_io in regmap configuration
 
-Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+version 4:
+- move defines in mfd/stm32-lptimer.h
+- change compatible and subnode names
+- document wakeup-source property
+- reword commit message
+- make driver Kconfig depends of MFD_STM32_LPTIMER
+- remove useless include
+- remove rate and clk fields from the private structure
+- to add comments about the registers sequence in stm32_clkevent_lp_set_timer
+- rework probe function and use devm_request_irq()
+- do not allow module to be removed
+
+version 3:
+- fix timer set sequence
+- don't forget to free irq on remove function
+- use devm_kzalloc to simplify errors handling in probe function
+
+version 2:
+- stm32 clkevent driver is now a child of the stm32 lp timer node
+- add a probe function and adpat the driver to use regmap provide
+  by it parent
+- stop using timer_of helpers
+
+
+
+Benjamin Gaignard (6):
+  dt-bindings: mfd: Document STM32 low power timer bindings
+  ARM: dts: stm32: Add timer subnodes on stm32mp15 SoCs
+  mfd: stm32: Add defines to be used for clkevent purpose
+  mfd: stm32: enable regmap fast_io for stm32-lptimer
+  clocksource: Add Low Power STM32 timers driver
+  ARM: mach-stm32: select low power timer for STM32MP157
+
+ .../devicetree/bindings/mfd/st,stm32-lptimer.yaml  |  21 ++
+ arch/arm/boot/dts/stm32mp151.dtsi                  |  35 ++++
+ arch/arm/mach-stm32/Kconfig                        |   1 +
+ drivers/clocksource/Kconfig                        |   4 +
+ drivers/clocksource/Makefile                       |   1 +
+ drivers/clocksource/timer-stm32-lp.c               | 221 +++++++++++++++++++++
+ drivers/mfd/stm32-lptimer.c                        |   1 +
+ include/linux/mfd/stm32-lptimer.h                  |   5 +
+ 8 files changed, 289 insertions(+)
+ create mode 100644 drivers/clocksource/timer-stm32-lp.c
 
 -- 
-regards,
-Stan
+2.15.0
+
