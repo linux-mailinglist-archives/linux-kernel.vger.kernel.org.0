@@ -2,75 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC42319A986
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:25:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53B8D19A98B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732201AbgDAKZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 06:25:36 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:34744 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbgDAKZg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:25:36 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jJaYo-0007Zr-6G; Wed, 01 Apr 2020 12:25:26 +0200
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id C88B61040D2; Wed,  1 Apr 2020 12:25:25 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: linux-next: build warning after merge of the tip tree
-In-Reply-To: <20200401085753.617c1636@canb.auug.org.au>
-References: <20200330134746.627dcd93@canb.auug.org.au> <20200401085753.617c1636@canb.auug.org.au>
-Date:   Wed, 01 Apr 2020 12:25:25 +0200
-Message-ID: <877dyzv6y2.fsf@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1732146AbgDAK1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:27:34 -0400
+Received: from foss.arm.com ([217.140.110.172]:48212 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728225AbgDAK1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 06:27:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 722E11FB;
+        Wed,  1 Apr 2020 03:27:30 -0700 (PDT)
+Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 239CC3F52E;
+        Wed,  1 Apr 2020 03:27:29 -0700 (PDT)
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>, kvm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] vfio: Ignore -ENODEV when getting MSI cookie
+Date:   Wed,  1 Apr 2020 11:27:24 +0100
+Message-Id: <20200401102724.161712-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> Hi all,
->
-> On Mon, 30 Mar 2020 13:47:46 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Hi all,
->> 
->> After merging the tip tree, today's linux-next build (arm
->> multi_v7_defconfig) produced this warning:
->> 
->> kernel/futex.c: In function 'do_futex':
->> kernel/futex.c:1676:17: warning: 'oldval' may be used uninitialized in this function [-Wmaybe-uninitialized]
->>  1676 |   return oldval == cmparg;
->>       |          ~~~~~~~^~~~~~~~~
->> kernel/futex.c:1652:6: note: 'oldval' was declared here
->>  1652 |  int oldval, ret;
->>       |      ^~~~~~
->> 
->> Introduced by commit
->> 
->>   a08971e9488d ("futex: arch_futex_atomic_op_inuser() calling
->>   conventions change")
+When we try to get an MSI cookie for a VFIO device, that can fail if
+CONFIG_IOMMU_DMA is not set. In this case iommu_get_msi_cookie() returns
+-ENODEV, and that should not be fatal.
 
-Huch?
+Ignore that case and proceed with the initialisation.
+
+This fixes VFIO with a platform device on the Calxeda Midway (no MSIs).
+
+Fixes: f6810c15cf973f ("iommu/arm-smmu: Clean up early-probing workarounds")
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+---
+ drivers/vfio/vfio_iommu_type1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 9fdfae1cb17a..85b32c325282 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -1787,7 +1787,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
  
->> but I don't see how it makes this difference :-(
-
-Me neither. Which compiler version?
-
-I'm using arm-linux-gnueabi-gcc (Debian 8.3.0-2) 8.3.0 which does not
-show that oddity.
-
-Thanks,
-
-        tglx
+ 	if (resv_msi) {
+ 		ret = iommu_get_msi_cookie(domain->domain, resv_msi_base);
+-		if (ret)
++		if (ret && ret != -ENODEV)
+ 			goto out_detach;
+ 	}
+ 
+-- 
+2.17.1
 
