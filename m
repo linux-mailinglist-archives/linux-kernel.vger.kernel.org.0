@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9387419B066
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E854319B21D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387921AbgDAQ0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:26:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51180 "EHLO mail.kernel.org"
+        id S2389256AbgDAQlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:41:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387430AbgDAQ0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:26:38 -0400
+        id S2389215AbgDAQlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:41:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76DDF20BED;
-        Wed,  1 Apr 2020 16:26:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26E6A20658;
+        Wed,  1 Apr 2020 16:41:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758397;
-        bh=OtpKH4sa7WjFFEqXU6hQbOx0/zIIZm3na15gYI4GVjY=;
+        s=default; t=1585759266;
+        bh=JritSytOa17n9A8eCr1IfHZFbdBPS/YBgudn9Ph3Q20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H4hPXpoJUxNIYwW2H07HKvNUBj22hvMAB61vGX8ff0Hl29f1y9Zhs0JNF/e2gxRHJ
-         nOLhOSYIXJsBuLE5urOEVldZLZ0aTVV/GEyLcolR0RLIpUhXwvVNacKleseFxA0lL3
-         HopnGZHHJt4/Brd76QVgKSPUCOn0go6tZUk9sljw=
+        b=nNx+xDIa2HCv2FytIHtmmQjy6FAUVSHetkv3zPi1O05RM/HBrPwTFJfokX2tRaAAU
+         vEbfd/sgaX7xsY+Wc0nu9v3duHLut48FDTRe7zqOiNvUJ1+NazL3iUkwd5cwPnGlxa
+         YR+QlVZIU6c4fDtde9YT1Py7lQi0z+oyakQEvJik=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 041/116] s390/qeth: handle error when backing RX buffer
-Date:   Wed,  1 Apr 2020 18:16:57 +0200
-Message-Id: <20200401161547.682969526@linuxfoundation.org>
+        stable@vger.kernel.org, Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.14 026/148] iio: trigger: stm32-timer: disable master mode when stopping
+Date:   Wed,  1 Apr 2020 18:16:58 +0200
+Message-Id: <20200401161555.014527689@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-[ Upstream commit 17413852804d7e86e6f0576cca32c1541817800e ]
+commit 29e8c8253d7d5265f58122c0a7902e26df6c6f61 upstream.
 
-qeth_init_qdio_queues() fills the RX ring with an initial set of
-RX buffers. If qeth_init_input_buffer() fails to back one of the RX
-buffers with memory, we need to bail out and report the error.
+Master mode should be disabled when stopping. This mainly impacts
+possible other use-case after timer has been stopped. Currently,
+master mode remains set (from start routine).
 
-Fixes: 4a71df50047f ("qeth: new qeth device driver")
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 6fb34812c2a2 ("iio: stm32 trigger: Add support for TRGO2 triggers")
+
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/s390/net/qeth_core_main.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/iio/trigger/stm32-timer-trigger.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
-index d99bfbfcafb76..5f59e2dfc7db9 100644
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -2811,12 +2811,12 @@ static int qeth_init_input_buffer(struct qeth_card *card,
- 		buf->rx_skb = netdev_alloc_skb(card->dev,
- 					       QETH_RX_PULL_LEN + ETH_HLEN);
- 		if (!buf->rx_skb)
--			return 1;
-+			return -ENOMEM;
- 	}
+--- a/drivers/iio/trigger/stm32-timer-trigger.c
++++ b/drivers/iio/trigger/stm32-timer-trigger.c
+@@ -161,7 +161,8 @@ static int stm32_timer_start(struct stm3
+ 	return 0;
+ }
  
- 	pool_entry = qeth_find_free_buffer_pool_entry(card);
- 	if (!pool_entry)
--		return 1;
-+		return -ENOBUFS;
+-static void stm32_timer_stop(struct stm32_timer_trigger *priv)
++static void stm32_timer_stop(struct stm32_timer_trigger *priv,
++			     struct iio_trigger *trig)
+ {
+ 	u32 ccer, cr1;
  
- 	/*
- 	 * since the buffer is accessed only from the input_tasklet
-@@ -2848,10 +2848,15 @@ int qeth_init_qdio_queues(struct qeth_card *card)
- 	/* inbound queue */
- 	qdio_reset_buffers(card->qdio.in_q->qdio_bufs, QDIO_MAX_BUFFERS_PER_Q);
- 	memset(&card->rx, 0, sizeof(struct qeth_rx));
+@@ -179,6 +180,12 @@ static void stm32_timer_stop(struct stm3
+ 	regmap_write(priv->regmap, TIM_PSC, 0);
+ 	regmap_write(priv->regmap, TIM_ARR, 0);
+ 
++	/* Force disable master mode */
++	if (stm32_timer_is_trgo2_name(trig->name))
++		regmap_update_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS2, 0);
++	else
++		regmap_update_bits(priv->regmap, TIM_CR2, TIM_CR2_MMS, 0);
 +
- 	qeth_initialize_working_pool_list(card);
- 	/*give only as many buffers to hardware as we have buffer pool entries*/
--	for (i = 0; i < card->qdio.in_buf_pool.buf_count - 1; ++i)
--		qeth_init_input_buffer(card, &card->qdio.in_q->bufs[i]);
-+	for (i = 0; i < card->qdio.in_buf_pool.buf_count - 1; i++) {
-+		rc = qeth_init_input_buffer(card, &card->qdio.in_q->bufs[i]);
-+		if (rc)
-+			return rc;
-+	}
-+
- 	card->qdio.in_q->next_buf_to_init =
- 		card->qdio.in_buf_pool.buf_count - 1;
- 	rc = do_QDIO(CARD_DDEV(card), QDIO_FLAG_SYNC_INPUT, 0, 0,
--- 
-2.20.1
-
+ 	/* Make sure that registers are updated */
+ 	regmap_update_bits(priv->regmap, TIM_EGR, TIM_EGR_UG, TIM_EGR_UG);
+ }
+@@ -197,7 +204,7 @@ static ssize_t stm32_tt_store_frequency(
+ 		return ret;
+ 
+ 	if (freq == 0) {
+-		stm32_timer_stop(priv);
++		stm32_timer_stop(priv, trig);
+ 	} else {
+ 		ret = stm32_timer_start(priv, trig, freq);
+ 		if (ret)
 
 
