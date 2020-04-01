@@ -2,78 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB7B19AC7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 15:17:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BACD19AC73
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 15:14:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732606AbgDANR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 09:17:29 -0400
-Received: from m12-12.163.com ([220.181.12.12]:58013 "EHLO m12-12.163.com"
+        id S1732637AbgDANOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 09:14:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42172 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732166AbgDANR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 09:17:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=CRk20
-        cFC0nALLQFAPQo/Cw+GRVuwhLr6JteE5T6WcvE=; b=dwRcbTngNIEfEv2zl72E8
-        ZZwYqWexLW6Daqrh/MgaiDQXWxb/9EOSVidgZt9fieaNGbObrWh8InTbGG7Qw8cg
-        CsHaUQaTIHHIVQLE6wgQrpZOAf+GGRFMgVTVg6AxH3yDRKtjS7HF8PZxncLEayPx
-        l3WOCtuSetE9rEHQQqHYMo=
-Received: from [192.168.0.6] (unknown [125.82.11.8])
-        by smtp8 (Coremail) with SMTP id DMCowADX3n6ck4Rek3WCBg--.112S2;
-        Wed, 01 Apr 2020 21:14:05 +0800 (CST)
-Subject: Re: [PATCH] net/mlx5: improve some comments
-To:     saeedm@mellanox.com, leon@kernel.org, davem@davemloft.net
-Cc:     guoren@kernel.org, xiubli@redhat.com, jeyu@kernel.org, cai@lca.pw,
-        wqu@suse.com, stfrench@microsoft.com,
-        yamada.masahiro@socionext.com, chris@chris-wilson.co.uk,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200401125720.20276-1-xianfengting221@163.com>
-From:   Hu Haowen <xianfengting221@163.com>
-Message-ID: <16dea5e4-fb5b-d269-2dff-3349f260a13c@163.com>
-Date:   Wed, 1 Apr 2020 21:14:04 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1732252AbgDANOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 09:14:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 87DBAABAE;
+        Wed,  1 Apr 2020 13:14:31 +0000 (UTC)
+Date:   Wed, 1 Apr 2020 14:14:26 +0100
+From:   Mel Gorman <mgorman@suse.de>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        rcu@vger.kernel.org, willy@infradead.org, peterz@infradead.org,
+        neilb@suse.com, vbabka@suse.cz,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC] rcu/tree: Use GFP_MEMALLOC for alloc memory to free
+ memory pattern
+Message-ID: <20200401131426.GN3772@suse.de>
+References: <20200331131628.153118-1-joel@joelfernandes.org>
+ <20200331145806.GB236678@google.com>
+ <20200331153450.GM30449@dhcp22.suse.cz>
+ <20200331160117.GA170994@google.com>
+ <20200401072359.GC22681@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20200401125720.20276-1-xianfengting221@163.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID: DMCowADX3n6ck4Rek3WCBg--.112S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Jr4UAryDAryfur1rGFWxZwb_yoWkKFX_Cr
-        nxuw13Xw1UWr9YkrW5uw45JrWrKr4Y9rs3AF4jqay3X3yDCr4xJ34DG34UGFn7WFWjqFn8
-        A3WaqF1UA3sYvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnBOJUUUUUU==
-X-Originating-IP: [125.82.11.8]
-X-CM-SenderInfo: h0ld0wxhqj3xtqjsjii6rwjhhfrp/1tbiPh34AFxBg1tjjwAAsy
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20200401072359.GC22681@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 01, 2020 at 09:23:59AM +0200, Michal Hocko wrote:
+> > Can you suggest what prevents other users of GFP_MEMALLOC from doing that
+> > also? 
+> 
+> There is no explicit mechanism which is indeed unfortunate. The only
+> user real user of the flag is Swap over NFS AFAIK. I have never dared to
+> look into details on how the complete reserves depletion is prevented.
+> Mel would be much better fit here.
+> 
 
-On 2020/4/1 8:57 PM, Hu Haowen wrote:
-> Added a missing space character and replaced "its" with "it's".
+It's "prevented" by the fact that every other memory allocation request
+that is not involved with reclaiming memory gets stalled in the allocator
+with only the swap subsystem making any progress until the machine
+recovers. Potentially only kswapd is still running until the system
+recovers if stressed hard enough.
 
-Sorry, this patch does not include space character adding. Please
-ignore and delete that part of the commit message.
+The naming is terrible but is mased on kswapd's use of the PF_MEMALLOC
+flag. For swap-over-nfs, GFP_MEMALLOC saying "this allocation request is
+potentially needed for kswapd to make forward progress and not freeze".
 
+I would not be comfortable with kfree_rcu() doing the same thing because
+there can be many callers in parallel and it's freeing slab objects.
+Swap over NFS should free at least one page, freeing a slab object is
+not guaranteed to free anything.
 
-> Signed-off-by: Hu Haowen <xianfengting221@163.com>
-> ---
->   drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c b/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c
-> index c9c9b479bda5..0a8adda073c2 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c
-> @@ -684,7 +684,7 @@ static void mlx5_fw_tracer_handle_traces(struct work_struct *work)
->   		get_block_timestamp(tracer, &tmp_trace_block[TRACES_PER_BLOCK - 1]);
->   
->   	while (block_timestamp > tracer->last_timestamp) {
-> -		/* Check block override if its not the first block */
-> +		/* Check block override if it's not the first block */
->   		if (!tracer->last_timestamp) {
->   			u64 *ts_event;
->   			/* To avoid block override be the HW in case of buffer
-
+-- 
+Mel Gorman
+SUSE Labs
