@@ -2,130 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E1A619B421
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2311C19B463
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:00:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387604AbgDAQzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:55:55 -0400
-Received: from mout.gmx.net ([212.227.15.19]:37843 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732246AbgDAQzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:55:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1585760141;
-        bh=jufOl9LToMfDMpVOPWx78HZPLIFoXwerAO2+O83FXV4=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=XQI6xGSNwQQ+Vb7W2guxnfhA09G4esx/7qIH0ovYyGso7e7lG9NfoBhDAoKAZ0y8Q
-         eEvzdQlUtiLuQHCKXgKqHGHJyDnw/NSkMsHpeQ3ikHJNHqNSprwne8z1B9cEus5C7l
-         YjFGLEtSkwUwoXkgS0EKHJ4HUVAFcwHZ6x3KNruc=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from ubuntu ([83.52.229.196]) by mail.gmx.com (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1M6lpM-1jPkva3J3m-008Gl9; Wed, 01
- Apr 2020 18:55:40 +0200
-Date:   Wed, 1 Apr 2020 18:55:38 +0200
-From:   Oscar Carter <oscar.carter@gmx.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Oscar Carter <oscar.carter@gmx.com>,
-        Forest Bond <forest@alittletooquiet.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Malcolm Priestley <tvboxspy@gmail.com>,
-        Quentin Deslandes <quentin.deslandes@itdev.co.uk>,
-        Amir Mahdi Ghorbanian <indigoomega021@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Gabriela Bittencourt <gabrielabittencourt00@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: vt6656: Use defines in vnt_mac_reg_bits_*
- functions
-Message-ID: <20200401165537.GC3109@ubuntu>
-References: <20200328095433.7879-1-oscar.carter@gmx.com>
- <20200331102906.GA2066@kadam>
+        id S1732784AbgDAQ5I convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 1 Apr 2020 12:57:08 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41323 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733269AbgDAQ5I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:57:08 -0400
+Received: by mail-ot1-f68.google.com with SMTP id f52so237893otf.8;
+        Wed, 01 Apr 2020 09:57:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZyTZQ9ScLYyXr8uy25TVZM268D8wsSCH+8ypLUnJOFM=;
+        b=gRytOR6k+DyXweCVLepsCqlAVbnAwqt7RTLVhahoDIJXA1Hm3kdZE3UyDTjNPqNsI1
+         MFBI0/O5sCtjIpogBMNtp0at4CYx00dYBGzvOWDCDNy7iX+6q+gH7ebWh5W3JQfRuG6/
+         1ei3x3pDwHthqTQZe4gvJKkq088yd0ViPuasSfhvLO7NpyFGh98tGJAoCP+xtlmM/aGI
+         TVu+E5wXfROB/cKQ5eLdJTBulrLsexoJqQY5zFgRz+G9On+B1PvHPnmkMxNoUeqBv2Al
+         n5FXSgGrooVcnQ1g7mk1kUsU5te/CO7jJhHPIB9f/5qviHh2U3ZY/+H5eQefilja3MMk
+         5fDA==
+X-Gm-Message-State: ANhLgQ0V8D0fe16BD0lYqPnFZVQVJYJi00RXlU3mc3AuDUAKyLaZpg+u
+        PzOvQUGMAL6LrRNt6PCDC90v9Doo6ACp+b/abPM=
+X-Google-Smtp-Source: ADFU+vufihEvibArYWJjTrCmDu7dXZgc3PqH8LVxCwqiESC/QDCUaa5LpicQzIvHFS3WT4dVXp+EAe0ygrg1OSHe3UQ=
+X-Received: by 2002:a9d:76c7:: with SMTP id p7mr6414778otl.145.1585760227154;
+ Wed, 01 Apr 2020 09:57:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331102906.GA2066@kadam>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:+gPfFoS721r+mvPOMeEJLs+3wcGSjyf6c/ZvFKIvawJoJwQJjOB
- laYts9bS+jFq9IaO1hPlLoO8I1IpU79ypPH5pQNr7SrMdSIiNxkmuVcP/7lNyxQoxYuGqii
- WYTWbPvSqFgARZEuCY6XXJub6t6xpSnkIRh+ZWFYgNZKlDfj3NLI3IqEHXRXxz2gsHh+IPU
- RmK9g9WJlKuUJEJi0qDiQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:TThDrtfsJsQ=:2H6KhCTRNDVxktbJMpTT43
- lvHtTWfY88j2YOMRksIFIAYrFOTSfqr6BpAhC0Y5TNlDh5snnZkyOcER1C0C2Wvk+KJsB+7lt
- /z3i6Po6kdOQMpw2oGjOsE9mAYBITN4iBuLvne+kk7DTfQbcVQR/40p/1e2qZnBtJv4S9ULyR
- WvnD7dC6AlriMEYRBkEgzCws/vDCwHbsE9CJwx5j2CsP/bX+1mzTSjn4Sn3rLuJWSYW+gCE5z
- oi8+K7SJ1ulSfIydzwGM/86C1zaNPw2be2ForDkRsfCIPeQjuoO6PjE7/DNaFQ/5O3D0Taqvu
- UnEMzZkGnLhtF4l1JtxqqRMF2C8ee7o5GzshphljEH8G1zh/HAa5+p/aPc1QDqMsMZQ/XFj2O
- wBMWtADYK1K2Gl5ruTmUZM4XCtm0fsZNAJCPOHb7IaCURxfd+RdJ+Y8zqbd7+qAb2kAS5oUnn
- 5lr4bYA/gfZcB21qxeZX/MZqcoa7DrI0HRwRBsXJhbi0LVuHKk+UoufivarbcTR4zMLGaSofu
- mqF9yLMziE0bC+X4wIN0VmsmH6UJ1jW89NXHeUJdaKxtTdtGCCb23C3xUxSgLnZlZqQ/BR5+y
- DmReS54laoLvdc/AVQI+IvP9j38OFbXqdGwwd+Ila21pB9lFkocr2ZP9o3qG1a6lifhp6XaZb
- cpwAnDRUTklZgNJ5uFY5uIeNHe1FcTCo7MnuloMPBsE1URLhnfDLJzFsYWOtXVjeZ8cbYBrVJ
- ITVuaPype9EOk/RS5IxZb64zMGZ8IHG6wXP3G7QuFaARIQ8yrTyd/AaJ5ks70pGwEN6zkYNwN
- eJTtNSfqUDTcn5LMISiKX1bLP+3or+reJzywqxeCZlbk3IA9CNgvzk0a7G3uqDjqtLw8hZlPq
- WTxGSPOO3BTQDho7H69AElxVHfdmmejfcAQA+sq4orlkOZO95rbuvo6WVG7nZcXeqfwaXspjN
- 6JOrlK9FaTWCIscdrTRdkXUFpT5ssonN/5WSTovyEsRrfGXinY5iJYk9deH/4aRlyhQaFL7Wu
- hj8WRXAQ4L7DfHukUfSx1eG5g+xD+q+eStAww26OGgK/m23o1wuZSFOeUah206enlpuNO0p2P
- HUxa8We3NaPCf2zZMPdiIDBR2j/4lRFZtSuo/anDYCJODRdI/TWV/HWo5lUNcKGi0Zc4y3gyK
- 3KxOWqEyswL+ySn0BvCosyanMr9xYh/6W/XgPSGNh2nn5mGkkJ1UDa/O+ThPer/r3prE5r11z
- 3R7Xe1CqCzF4TcvwK
-Content-Transfer-Encoding: quoted-printable
+References: <20200401153513.423683-1-mylene.josserand@collabora.com> <20200401153513.423683-3-mylene.josserand@collabora.com>
+In-Reply-To: <20200401153513.423683-3-mylene.josserand@collabora.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 1 Apr 2020 18:56:55 +0200
+Message-ID: <CAMuHMdXvFOKqmZ-MLJV4SAeLN-PDzqPvMvbVpcD=jyip9tbdnA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: rockchip: rk3288: Handle clock tree for rk3288w
+To:     =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@collabora.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        kever.yang@rock-chips.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 01:29:06PM +0300, Dan Carpenter wrote:
-> On Sat, Mar 28, 2020 at 10:54:33AM +0100, Oscar Carter wrote:
-> > Define the necessary bits in the CHANNEL, PAPEDELAY and GPIOCTL0
-> > registers to can use them in the calls to vnt_mac_reg_bits_on and
-> > vnt_mac_reg_bits_off functions. In this way, avoid the use of BIT()
-> > macros and clarify the code.
-> >
-> > Fixes: 3017e587e368 ("staging: vt6656: Use BIT() macro in vnt_mac_reg_=
-bits_* functions")
-> > Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Oscar Carter <oscar.carter@gmx.com>
-> > ---
-> >  drivers/staging/vt6656/baseband.c |  6 ++++--
-> >  drivers/staging/vt6656/card.c     |  3 +--
-> >  drivers/staging/vt6656/mac.h      | 12 ++++++++++++
-> >  drivers/staging/vt6656/main_usb.c |  2 +-
-> >  4 files changed, 18 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/staging/vt6656/baseband.c b/drivers/staging/vt665=
-6/baseband.c
-> > index a19a563d8bcc..dd3c3bf5e8b5 100644
-> > --- a/drivers/staging/vt6656/baseband.c
-> > +++ b/drivers/staging/vt6656/baseband.c
-> > @@ -442,7 +442,8 @@ int vnt_vt3184_init(struct vnt_private *priv)
-> >  		if (ret)
-> >  			goto end;
-> >
-> > -		ret =3D vnt_mac_reg_bits_on(priv, MAC_REG_PAPEDELAY, BIT(0));
-> > +		ret =3D vnt_mac_reg_bits_on(priv, MAC_REG_PAPEDELAY,
-> > +					  PAPEDELAY_B0);
->
-> This doesn't clarify anything.  It makes it less clear because someone
-> would assume B0 means something but it's just hiding a magic number
-> behind a meaningless define.  B0 means BIT(0) which means nothing.  So
-> now we have to jump through two hoops to find out that we don't know
-> anything.
->
-I created this names due to the lack of information about the hardware. I
-searched but I did not find anything.
+Hi Mylène,
 
-> Just leave it as-is.  Same for the rest.
-Ok.
+On Wed, Apr 1, 2020 at 5:35 PM Mylène Josserand
+<mylene.josserand@collabora.com> wrote:
+> The revision rk3288w has a different clock tree about
+> "hclk_vio" clock, according to the BSP kernel code.
+>
+> This patch handles this difference by detecting which SOC it is
+> and creating the div accordingly. Because we are using
+> soc_device_match function, we need to delay the registration
+> of this clock later than others to have time to get SoC revision.
+>
+> Otherwise, because of CLK_OF_DECLARE uses, clock tree will be
+> created too soon to have time to detect SoC's revision.
+>
+> Signed-off-by: Mylène Josserand <mylene.josserand@collabora.com>
 
->
-> There problem is a hardware spec which explains what this stuff is.
->
-It's possible to find a datasheet of this hardware to make this modificati=
-on
-accordingly to the correct bit names of registers ?
+Thanks for your patch!
 
-> regards,
-> dan carpenter
+> --- a/drivers/clk/rockchip/clk-rk3288.c
+> +++ b/drivers/clk/rockchip/clk-rk3288.c
+> @@ -914,10 +923,15 @@ static struct syscore_ops rk3288_clk_syscore_ops = {
+>         .resume = rk3288_clk_resume,
+>  };
 >
-Thanks,
-oscar carter
+> +static const struct soc_device_attribute rk3288w[] = {
+> +       { .soc_id = "RK32xx", .revision = "RK3288w" },
+> +       { /* sentinel */ }
+> +};
+> +
+> +static struct rockchip_clk_provider *ctx;
+> +
+>  static void __init rk3288_clk_init(struct device_node *np)
+>  {
+> -       struct rockchip_clk_provider *ctx;
+> -
+>         rk3288_cru_base = of_iomap(np, 0);
+>         if (!rk3288_cru_base) {
+>                 pr_err("%s: could not map cru region\n", __func__);
+> @@ -955,3 +969,17 @@ static void __init rk3288_clk_init(struct device_node *np)
+>         rockchip_clk_of_add_provider(np, ctx);
+>  }
+>  CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
+> +
+> +static int __init rk3288_hclkvio_register(void)
+> +{
+
+This function will always be called, even when running a (multi-platform)
+kernel on a non-rk3288 platform.  So you need some protection against
+that.
+
+> +       /* Check for the rk3288w revision as clock tree is different */
+> +       if (soc_device_match(rk3288w))
+> +               rockchip_clk_register_branches(ctx, rk3288w_hclkvio_branch,
+> +                                              ARRAY_SIZE(rk3288w_hclkvio_branch));
+> +       else
+> +               rockchip_clk_register_branches(ctx, rk3288_hclkvio_branch,
+> +                                              ARRAY_SIZE(rk3288_hclkvio_branch));
+
+Note that soc_device_match() returns a struct soc_device_attribute
+pointer.  If you would store the rockchip_clk_branch array pointer and
+size in rk3288w[...].data (i.e. a pointer to a struct containing that
+info), for both the r83288w and normal rk3288 variants, you could
+simplify this to:
+
+    attr = soc_device_match(rk3288w);
+    if (attr) {
+            struct rk3288_branch_array *p = attr->data;
+            rockchip_clk_register_branches(ctx, p->branches, p->len);
+    }
+
+That would handle the not-running-on-rk3288 issue as well.
+
+> +
+> +       return 0;
+> +}
+> +subsys_initcall(rk3288_hclkvio_register);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
