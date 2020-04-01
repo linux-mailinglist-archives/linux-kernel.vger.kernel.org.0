@@ -2,288 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FECD19AB80
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 14:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD0919AB8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 14:20:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732342AbgDAMSa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 08:18:30 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35829 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732169AbgDAMSa (ORCPT
+        id S1732492AbgDAMUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 08:20:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46232 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732169AbgDAMUg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 08:18:30 -0400
-Received: by mail-qk1-f196.google.com with SMTP id k13so26732641qki.2;
-        Wed, 01 Apr 2020 05:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cYgn6RQydhxEk4Yg/z1Bm/e2sVRk32p5oBa766QTAqk=;
-        b=mnWZ82pqNPv0UXH2JHl3te3MYxNR553fID3X8WrACZm/1J602MoPR+mcCg7AmszPk3
-         zssmg/U6SuCeVojy8fm8nFWdO86Q13xCaXNse6jfC+hFTyOQL6btumPCb886B1/XsMJJ
-         Z343d2vMO94W49HMLzzXhHZChM6iTfzz+WX90=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cYgn6RQydhxEk4Yg/z1Bm/e2sVRk32p5oBa766QTAqk=;
-        b=VQQF6yCu0jIscFmD0PNIu6PAVtEFPAmuPdZNiyveQGcNXrvlDk9aGf9Ks5LM4gDhM+
-         L9GJ+xDUjUR5HPSocJW93fzZEdRzYGpptttTd06PXm68/w5Nho3eeZ89xJ+Sl4P+UqW7
-         fp9nfRl0T03gb6cxNT7Zoz2yIfySwBOgh6pK406RjZ2LnKcJlvCkGeDZM3u6EtioiBAG
-         MDgfeumX/1L5Mv326w2nMqVGwaDguzH9wXRAjsFzONqICYhH4lhCA65wYrtyTPrHxlbO
-         DoTDB84pibixodKv/5AEF+JH7CNDL7EcbGbq2HOp31vGnDxRvkMbDvjwwW4AIy7FOaoy
-         F+Cw==
-X-Gm-Message-State: ANhLgQ2cTQUXe/w05EJ9QxV9tAVaKk/JBEWRL2wSPhY6B2lQFGd1ypKc
-        RoZzbHYlZCOKVJMfOUj9YBYpcBQ5/eX9hMCqHI4em/sx
-X-Google-Smtp-Source: ADFU+vsGJIiZgzJs5OL/Q4JZje/tqiDApfEfPU29WwaxIGq+J9716ZkBiwCe7NGvvIhWTP92hnvGqh2b7LnBXWG2nyg=
-X-Received: by 2002:a37:61d0:: with SMTP id v199mr9555105qkb.292.1585743508846;
- Wed, 01 Apr 2020 05:18:28 -0700 (PDT)
+        Wed, 1 Apr 2020 08:20:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=h43kxp2WKc0wYft7FpSc0v72+8FHHE+TenKvMgFBfeU=; b=VkRyrz6EwfCDFollnuhikXn8Zt
+        Si+izd5tkkpUlf8ZRvp3qh+if/KWKV1o7Lpv2teeCvRo6AS4/ex8XA8Iwwikeea4QeEI2rAvnQ70/
+        dyxYFNr16SdTxTjnsJVqyT2UPO2oijT/A8QW+YVEJRP40rXGadPGBunTdOJuANsvxy6fl8grr0/JE
+        BAllE99dz8kSTIzixg2TwLmhFKfTGHX27owObq5FYoiIYFJYZmXyYulYPs3gh9t//U3WhkAd8HurT
+        ZZS87Xil3/j3A7f81y5FVIvFWn6Y9yEkblrIONEOZytfWbGku7swPijNwk/DlAY9mxSpe0ebwPKiW
+        XSnBVtlw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJcLn-0005zJ-TY; Wed, 01 Apr 2020 12:20:08 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id B47C2301631;
+        Wed,  1 Apr 2020 14:20:04 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7FD8929E261CB; Wed,  1 Apr 2020 14:20:04 +0200 (CEST)
+Date:   Wed, 1 Apr 2020 14:20:04 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Zhenyu Ye <yezhenyu2@huawei.com>
+Cc:     mark.rutland@arm.com, will@kernel.org, catalin.marinas@arm.com,
+        aneesh.kumar@linux.ibm.com, akpm@linux-foundation.org,
+        npiggin@gmail.com, arnd@arndb.de, rostedt@goodmis.org,
+        maz@kernel.org, suzuki.poulose@arm.com, tglx@linutronix.de,
+        yuzhao@google.com, Dave.Martin@arm.com, steven.price@arm.com,
+        broonie@kernel.org, guohanjun@huawei.com, corbet@lwn.net,
+        vgupta@synopsys.com, tony.luck@intel.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org, arm@kernel.org,
+        xiexiangyou@huawei.com, prime.zeng@hisilicon.com,
+        zhangshaokun@hisilicon.com, kuhn.chenqun@huawei.com
+Subject: Re: [RFC PATCH v5 4/8] mm: tlb: Pass struct mmu_gather to
+ flush_pmd_tlb_range
+Message-ID: <20200401122004.GE20713@hirez.programming.kicks-ass.net>
+References: <20200331142927.1237-1-yezhenyu2@huawei.com>
+ <20200331142927.1237-5-yezhenyu2@huawei.com>
+ <20200331151331.GS20730@hirez.programming.kicks-ass.net>
+ <fe12101e-8efe-22ad-0258-e6aeafc798cc@huawei.com>
 MIME-Version: 1.0
-References: <20200401114023.GA29180@cnn>
-In-Reply-To: <20200401114023.GA29180@cnn>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Wed, 1 Apr 2020 12:18:17 +0000
-Message-ID: <CACPK8Xf+EOUk-HroNmPe5Pjgu6BdP8VU-m6mxQMpTtL1CYBn=A@mail.gmail.com>
-Subject: Re: [PATCH v7] ARM: dts: aspeed: Adding Facebook Yosemite V2 BMC
-To:     Manikandan Elumalai <manikandan.hcl.ers.epl@gmail.com>
-Cc:     Andrew Jeffery <andrew@aj.id.au>, Sai Dasari <sdasari@fb.com>,
-        Vijay Khemka <vijaykhemka@fb.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        manikandan.e@hcl.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fe12101e-8efe-22ad-0258-e6aeafc798cc@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 Apr 2020 at 11:40, Manikandan Elumalai
-<manikandan.hcl.ers.epl@gmail.com> wrote:
->
-> The Yosemite V2 is a facebook multi-node server
-> platform that host four OCP server. The BMC
-> in the Yosemite V2 platform based on AST2500 SoC.
->
-> This patch adds linux device tree entry related to
-> Yosemite V2 specific devices connected to BMC SoC.
->
-> Signed-off-by: Manikandan Elumalai <manikandan.hcl.ers.epl@gmail.com>
-> Acked-by     : Andrew Jeffery <andrew@aj.id.au>
-> Reviewed-by  : Vijay Khemka <vkhemka@fb.com>
-> ---
-> ---      v7 - Added multi-host SOL feature.
-> ---      v6 - Added device tree property for multi-host Mellanox NIC in the ncsi driver.
-> ---      v5 - Spell and contributor name correction.
-> ---           - License identifier changed to GPL-2.0-or-later.
-> ---           - aspeed-gpio.h removed.
-> ---           - FAN2 tacho channel changed.
-> ---      v4 - Bootargs removed.
-> ---      v3 - Uart1 Debug removed .
-> ---      v2 - LPC and VUART removed .
-> ---      v1 - Initial draft.
-> ---
-> ---
->  .../boot/dts/aspeed-bmc-facebook-yosemitev2.dts    | 186 +++++++++++++++++++++
+On Wed, Apr 01, 2020 at 04:51:15PM +0800, Zhenyu Ye wrote:
+> On 2020/3/31 23:13, Peter Zijlstra wrote:
 
-You need to add the device tree to the makefile.
+> > Instead of trying to retro-fit flush_*tlb_range() to take an mmu_gather
+> > parameter, please replace them out-right.
+> > 
+> 
+> I'm sorry that I'm not sure what "replace them out-right" means.  Do you
+> mean that I should define flush_*_tlb_range like this?
+> 
+> #define flush_pmd_tlb_range(vma, addr, end)				\
+> 	do {								\
+> 		struct mmu_gather tlb;					\
+> 		tlb_gather_mmu(&tlb, (vma)->vm_mm, addr, end);		\
+> 		tlba.cleared_pmds = 1;					\
+> 		flush_tlb_range(&tlb, vma, addr, end);			\
+> 		tlb_finish_mmu(&tlb, addr, end);			\
+> 	} while (0)
+> 
 
->  1 file changed, 186 insertions(+)
->  create mode 100644 arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
->
-> diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
-> new file mode 100644
-> index 0000000..bc83901
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/aspeed-bmc-facebook-yosemitev2.dts
-> @@ -0,0 +1,186 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +// Copyright (c) 2018 Facebook Inc.
-> +/dts-v1/;
-> +#include "aspeed-g5.dtsi"
-> +
-> +/ {
-> +       model = "Facebook Yosemitev2 BMC";
-> +       compatible = "facebook,yosemitev2-bmc", "aspeed,ast2500";
-> +       aliases {
-> +               serial4 = &uart5;
-> +       };
-> +       chosen {
-> +               stdout-path = &uart5;
-> +       };
-> +
-> +       memory@80000000 {
-> +               reg = <0x80000000 0x20000000>;
-> +       };
-> +
-> +       iio-hwmon {
-> +               // VOLATAGE SENSOR
-> +               compatible = "iio-hwmon";
-> +               io-channels = <&adc 0> , <&adc 1> , <&adc 2> ,  <&adc 3> ,
-> +               <&adc 4> , <&adc 5> , <&adc 6> ,  <&adc 7> ,
-> +               <&adc 8> , <&adc 9> , <&adc 10>, <&adc 11> ,
-> +               <&adc 12> , <&adc 13> , <&adc 14> , <&adc 15> ;
-> +       };
-> +};
-> +
-> +&fmc {
-> +       status = "okay";
-> +       flash@0 {
-> +               status = "okay";
-> +               m25p,fast-read;
-> +#include "openbmc-flash-layout.dtsi"
-> +       };
-> +};
-> +
-> +&spi1 {
-> +       status = "okay";
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_spi1_default>;
-> +       flash@0 {
-> +               status = "okay";
-> +               m25p,fast-read;
-> +               label = "pnor";
-> +       };
-> +};
-> +&uart1 {
-> +       // Host1 Console
-> +       status = "okay";
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_txd1_default
-> +                    &pinctrl_rxd1_default>;
-> +};
-> +
-> +&uart2 {
-> +       // Host2 Console
-> +       status = "okay";
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_txd2_default
-> +                    &pinctrl_rxd2_default>;
-> +
-> +};
-> +
-> +&uart3 {
-> +       // Host3 Console
-> +       status = "okay";
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_txd3_default
-> +                    &pinctrl_rxd3_default>;
-> +};
-> +
-> +&uart4 {
-> +       // Host4 Console
-> +       status = "okay";
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_txd4_default
-> +                    &pinctrl_rxd4_default>;
-> +};
-> +
-> +&uart5 {
-> +       // BMC Console
-> +       status = "okay";
-> +};
-> +
-> +&vuart {
-> +       // Virtual UART
-> +       status = "okay";
-> +};
-> +
-> +&mac0 {
-> +       status = "okay";
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_rmii1_default>;
-> +       use-ncsi;
-> +       mlx,multi-host;
-> +};
-> +
-> +&adc {
-> +       status = "okay";
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_adc0_default
-> +                       &pinctrl_adc1_default
-> +                       &pinctrl_adc2_default
-> +                       &pinctrl_adc3_default
-> +                       &pinctrl_adc4_default
-> +                       &pinctrl_adc5_default
-> +                       &pinctrl_adc6_default
-> +                       &pinctrl_adc7_default
-> +                       &pinctrl_adc8_default
-> +                       &pinctrl_adc9_default
-> +                       &pinctrl_adc10_default
-> +                       &pinctrl_adc11_default
-> +                       &pinctrl_adc12_default
-> +                       &pinctrl_adc13_default
-> +                       &pinctrl_adc14_default
-> +                       &pinctrl_adc15_default>;
-> +};
-> +
-> +&i2c8 {
-> +       status = "okay";
-> +       //FRU EEPROM
-> +       eeprom@51 {
-> +               compatible = "atmel,24c64";
-> +               reg = <0x51>;
-> +               pagesize = <32>;
-> +       };
-> +};
-> +
-> +&i2c9 {
-> +       status = "okay";
-> +       tmp421@4e {
-> +       //INLET TEMP
-> +               compatible = "ti,tmp421";
-> +               reg = <0x4e>;
-> +       };
-> +       //OUTLET TEMP
-> +       tmp421@4f {
-> +               compatible = "ti,tmp421";
-> +               reg = <0x4f>;
-> +       };
-> +};
-> +
-> +&i2c10 {
-> +       status = "okay";
-> +       //HSC
-> +       adm1278@40 {
-> +               compatible = "adi,adm1278";
-> +               reg = <0x40>;
-> +       };
-> +};
-> +
-> +&i2c11 {
-> +       status = "okay";
-> +       //MEZZ_TEMP_SENSOR
-> +       tmp421@1f {
-> +               compatible = "ti,tmp421";
-> +               reg = <0x1f>;
-> +       };
-> +};
-> +
-> +&i2c12 {
-> +       status = "okay";
-> +       //MEZZ_FRU
-> +       eeprom@51 {
-> +               compatible = "atmel,24c64";
-> +               reg = <0x51>;
-> +               pagesize = <32>;
-> +       };
-> +};
-> +
-> +&pwm_tacho {
-> +       status = "okay";
-> +       //FSC
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_pwm0_default &pinctrl_pwm1_default>;
-> +       fan@0 {
-> +               reg = <0x00>;
-> +               aspeed,fan-tach-ch = /bits/ 8 <0x00>;
-> +       };
-> +       fan@1 {
-> +               reg = <0x01>;
-> +               aspeed,fan-tach-ch = /bits/ 8 <0x01>;
-> +       };
-> +};
-> --
-> 2.7.4
->
+I was thinking to remove flush_*tlb_range() entirely (from generic
+code).
+
+And specifically to not use them like the above; instead extend the
+mmu_gather API.
+
+Specifically, if you wanted to express flush_pmd_tlb_range() in mmu
+gather, you'd write it like:
+
+static inline void flush_pmd_tlb_range(struct vm_area_struct *vma, unsigned long addr, unsigned long end)
+{
+	struct mmu_gather tlb;
+
+	tlb_gather_mmu(&tlb, vma->vm_mm, addr, end);
+	tlb_start_vma(&tlb, vma);
+	tlb.cleared_pmds = 1;
+	__tlb_adjust_range(addr, end - addr);
+	tlb_end_vma(&tlb, vma);
+	tlb_finish_mmu(&tlb, addr, end);
+}
+
+Except of course, that the code between start_vma and end_vma is not a
+proper mmu_gather API.
+
+So maybe add:
+
+  tlb_flush_{pte,pmd,pud,p4d}_range()
+
+Then we can write:
+
+static inline void flush_XXX_tlb_range(struct vm_area_struct *vma, unsigned long addr, unsigned long end)
+{
+	struct mmu_gather tlb;
+
+	tlb_gather_mmu(&tlb, vma->vm_mm, addr, end);
+	tlb_start_vma(&tlb, vma);
+	tlb_flush_XXX_range(&tlb, addr, end - addr);
+	tlb_end_vma(&tlb, vma);
+	tlb_finish_mmu(&tlb, addr, end);
+}
+
+But when I look at the output of:
+
+  git grep flush_.*tlb_range -- :^arch/
+
+I doubt it makes sense to provide wrappers like the above.
+
+( Also, we should probably remove the (addr, end) arguments from
+tlb_finish_mmu(), Will? )
+
+---
+diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
+index f391f6b500b4..be5452a8efaa 100644
+--- a/include/asm-generic/tlb.h
++++ b/include/asm-generic/tlb.h
+@@ -511,6 +511,34 @@ static inline void tlb_end_vma(struct mmu_gather *tlb, struct vm_area_struct *vm
+ }
+ #endif
+ 
++static inline void tlb_flush_pte_range(struct mmu_gather *tlb,
++				       unsigned long address, unsigned long size)
++{
++	__tlb_adjust_range(tlb, address, size);
++	tlb->cleared_ptes = 1;
++}
++
++static inline void tlb_flush_pmd_range(struct mmu_gather *tlb,
++				       unsigned long address, unsigned long size)
++{
++	__tlb_adjust_range(tlb, address, size);
++	tlb->cleared_pmds = 1;
++}
++
++static inline void tlb_flush_pud_range(struct mmu_gather *tlb,
++				       unsigned long address, unsigned long size)
++{
++	__tlb_adjust_range(tlb, address, size);
++	tlb->cleared_puds = 1;
++}
++
++static inline void tlb_flush_p4d_range(struct mmu_gather *tlb,
++				       unsigned long address, unsigned long size)
++{
++	__tlb_adjust_range(tlb, address, size);
++	tlb->cleared_p4ds = 1;
++}
++
+ #ifndef __tlb_remove_tlb_entry
+ #define __tlb_remove_tlb_entry(tlb, ptep, address) do { } while (0)
+ #endif
+@@ -524,8 +552,7 @@ static inline void tlb_end_vma(struct mmu_gather *tlb, struct vm_area_struct *vm
+  */
+ #define tlb_remove_tlb_entry(tlb, ptep, address)		\
+ 	do {							\
+-		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
+-		tlb->cleared_ptes = 1;				\
++		tlb_flush_pte_range(tlb, address, PAGE_SIZE);	\
+ 		__tlb_remove_tlb_entry(tlb, ptep, address);	\
+ 	} while (0)
+ 
+@@ -550,8 +577,7 @@ static inline void tlb_end_vma(struct mmu_gather *tlb, struct vm_area_struct *vm
+ 
+ #define tlb_remove_pmd_tlb_entry(tlb, pmdp, address)			\
+ 	do {								\
+-		__tlb_adjust_range(tlb, address, HPAGE_PMD_SIZE);	\
+-		tlb->cleared_pmds = 1;					\
++		tlb_flush_pmd_range(tlb, address, HPAGE_PMD_SIZE);	\
+ 		__tlb_remove_pmd_tlb_entry(tlb, pmdp, address);		\
+ 	} while (0)
+ 
+@@ -565,8 +591,7 @@ static inline void tlb_end_vma(struct mmu_gather *tlb, struct vm_area_struct *vm
+ 
+ #define tlb_remove_pud_tlb_entry(tlb, pudp, address)			\
+ 	do {								\
+-		__tlb_adjust_range(tlb, address, HPAGE_PUD_SIZE);	\
+-		tlb->cleared_puds = 1;					\
++		tlb_flush_pud_range(tlb, address, HPAGE_PUD_SIZE);	\
+ 		__tlb_remove_pud_tlb_entry(tlb, pudp, address);		\
+ 	} while (0)
+ 
