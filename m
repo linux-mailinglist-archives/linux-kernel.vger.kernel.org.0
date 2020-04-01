@@ -2,37 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97A8E19B04C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E3EC19B100
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:32:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387616AbgDAQZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:25:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49964 "EHLO mail.kernel.org"
+        id S2388270AbgDAQbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:31:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732376AbgDAQZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:25:38 -0400
+        id S2387728AbgDAQbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:31:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F7F021582;
-        Wed,  1 Apr 2020 16:25:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1441C20658;
+        Wed,  1 Apr 2020 16:31:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758337;
-        bh=py3PbJO+718EbgHi2IRhSbWGNdFxCBeIfNnFi27bS/w=;
+        s=default; t=1585758661;
+        bh=zY/lpwFFc0E/HcNDB2+3mezhODwz8ye/Z4MUjJOMAgw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VxO+6SKPS/cyE6bg5of1EQs4K2MYIJJ8JTUaE0MfEMW7wzxFosqj8M8DCFmn1I24u
-         fZ1AFIU7cSX//tO+7vSkFHUmayE1m8v8nkuGtk/5+rZF6v4tSQP3as2+0fX03QkKzO
-         x7Zca2GEwoimR6YhjdBnmcw3xfOxINJV2mVDOfqQ=
+        b=PORJvEHTlc2Ne/Oc6a/BehK2Az7wP/cP+C5XBrBAuwK9+6Z529hlfFK0CxjowlSBc
+         NA0oBqWYlgMWeCglypQxBfFXCHLq1WkN24+3IExh+Z8P6TEV6vKVEmB7lWdcs4ICvh
+         TJSQkhpMwyKAXikEI2COxp1zdZtzr1zvl6GHAR6U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.19 059/116] mac80211: mark station unauthorized before key removal
+        stable@vger.kernel.org, Kirk Reiser <kirk@reisers.ca>,
+        Janina Sajka <janina@rednote.net>,
+        Alexandr Epaneshnikov <aarnaarn2@gmail.com>,
+        Gregory Nowak <greg@gregn.net>,
+        deedra waters <deedra@the-brannons.com>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Michael Taboada <michael@michaels.world>
+Subject: [PATCH 4.4 19/91] staging/speakup: fix get_word non-space look-ahead
 Date:   Wed,  1 Apr 2020 18:17:15 +0200
-Message-Id: <20200401161550.178503185@linuxfoundation.org>
+Message-Id: <20200401161519.933171668@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,46 +48,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
 
-commit b16798f5b907733966fd1a558fca823b3c67e4a1 upstream.
+commit 9d32c0cde4e2d1343dfb88a67b2ec6397705b32b upstream.
 
-If a station is still marked as authorized, mark it as no longer
-so before removing its keys. This allows frames transmitted to it
-to be rejected, providing additional protection against leaking
-plain text data during the disconnection flow.
+get_char was erroneously given the address of the pointer to the text
+instead of the address of the text, thus leading to random crashes when
+the user requests speaking a word while the current position is on a space
+character and say_word_ctl is not enabled.
 
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200326155133.ccb4fb0bb356.If48f0f0504efdcf16b8921f48c6d3bb2cb763c99@changeid
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Reported-on: https://github.com/bytefire/speakup/issues/1
+Reported-by: Kirk Reiser <kirk@reisers.ca>
+Reported-by: Janina Sajka <janina@rednote.net>
+Reported-by: Alexandr Epaneshnikov <aarnaarn2@gmail.com>
+Reported-by: Gregory Nowak <greg@gregn.net>
+Reported-by: deedra waters <deedra@the-brannons.com>
+Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Tested-by: Alexandr Epaneshnikov <aarnaarn2@gmail.com>
+Tested-by: Gregory Nowak <greg@gregn.net>
+Tested-by: Michael Taboada <michael@michaels.world>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200306003047.thijtmqrnayd3dmw@function
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/sta_info.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/staging/speakup/main.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/mac80211/sta_info.c
-+++ b/net/mac80211/sta_info.c
-@@ -3,7 +3,7 @@
-  * Copyright 2006-2007	Jiri Benc <jbenc@suse.cz>
-  * Copyright 2013-2014  Intel Mobile Communications GmbH
-  * Copyright (C) 2015 - 2017 Intel Deutschland GmbH
-- * Copyright (C) 2018 Intel Corporation
-+ * Copyright (C) 2018-2020 Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -979,6 +979,11 @@ static void __sta_info_destroy_part2(str
- 	might_sleep();
- 	lockdep_assert_held(&local->sta_mtx);
- 
-+	while (sta->sta_state == IEEE80211_STA_AUTHORIZED) {
-+		ret = sta_info_move_state(sta, IEEE80211_STA_ASSOC);
-+		WARN_ON_ONCE(ret);
-+	}
-+
- 	/* now keys can no longer be reached */
- 	ieee80211_free_sta_keys(local, sta);
- 
+--- a/drivers/staging/speakup/main.c
++++ b/drivers/staging/speakup/main.c
+@@ -562,8 +562,7 @@ static u_long get_word(struct vc_data *v
+ 		return 0;
+ 	} else if ((tmpx < vc->vc_cols - 2)
+ 		   && (ch == SPACE || ch == 0 || IS_WDLM(ch))
+-		   && ((char)get_char(vc, (u_short *) &tmp_pos + 1, &temp) >
+-		       SPACE)) {
++		   && ((char)get_char(vc, (u_short *)tmp_pos + 1, &temp) > SPACE)) {
+ 		tmp_pos += 2;
+ 		tmpx++;
+ 	} else
 
 
