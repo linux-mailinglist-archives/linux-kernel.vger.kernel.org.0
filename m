@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1CC619B211
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CCFA19B024
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:24:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389349AbgDAQkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:40:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40862 "EHLO mail.kernel.org"
+        id S2387518AbgDAQY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:24:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389328AbgDAQkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:40:40 -0400
+        id S2387694AbgDAQY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:24:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CB882063A;
-        Wed,  1 Apr 2020 16:40:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C9A420BED;
+        Wed,  1 Apr 2020 16:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759238;
-        bh=/89VXsffS546Tb9JnIosWXjGKC99SR3dCtBPfqrh4aw=;
+        s=default; t=1585758267;
+        bh=1vIZZUIQ9NvBWPaWtYPGp4B+x2X5+UeS5d1aLHKvgDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vJ2fPKVoIMQ4f6EwRK16n73UlIxEYNe3iFcKgI0zD0r7HN9B4dXj7JwTzM9AGnyXP
-         Th2d5j31sgwrnqkl1NUxYjJzD0oT2aNLETewZOOQiMgjoYAQsHJ75QckH2lmyofpZs
-         UF14IjmjTom23RaF4jIrBeOti9DausuubzcxZw3U=
+        b=Z4KjsIde+Es3hSS9lCuRAgUEXkl7cYgZxJOL62p3vFac7KY/Bzl74MPsJDoupOpQG
+         eP/SE+JMdl5L4yV0w2nFJvbKTxNzAzYWxqxvwGtYkCXqy6KKbEcZa+mscgiVqaZepz
+         dnuOQeYjwqhsJbnSejDEE0SVcdCdgiDDUGBP93Zc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ran Wang <ran.wang_1@nxp.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Peter Chen <peter.chen@nxp.com>
-Subject: [PATCH 4.14 018/148] usb: host: xhci-plat: add a shutdown
-Date:   Wed,  1 Apr 2020 18:16:50 +0200
-Message-Id: <20200401161554.130335859@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Gilbert <floppym@gentoo.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 035/116] cpupower: avoid multiple definition with gcc -fno-common
+Date:   Wed,  1 Apr 2020 18:16:51 +0200
+Message-Id: <20200401161546.899547771@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +44,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ran Wang <ran.wang_1@nxp.com>
+From: Mike Gilbert <floppym@gentoo.org>
 
-commit b433e340e7565110b0ce9ca4b3e26f4b97a1decf upstream.
+[ Upstream commit 2de7fb60a4740135e03cf55c1982e393ccb87b6b ]
 
-When loading new kernel via kexec, we need to shutdown host controller to
-avoid any un-expected memory accessing during new kernel boot.
+Building cpupower with -fno-common in CFLAGS results in errors due to
+multiple definitions of the 'cpu_count' and 'start_time' variables.
 
-Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-Cc: stable <stable@vger.kernel.org>
-Tested-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Peter Chen <peter.chen@nxp.com>
-Link: https://lore.kernel.org/r/20200306092328.41253-1-ran.wang_1@nxp.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+./utils/idle_monitor/snb_idle.o:./utils/idle_monitor/cpupower-monitor.h:28:
+multiple definition of `cpu_count';
+./utils/idle_monitor/nhm_idle.o:./utils/idle_monitor/cpupower-monitor.h:28:
+first defined here
+...
+./utils/idle_monitor/cpuidle_sysfs.o:./utils/idle_monitor/cpuidle_sysfs.c:22:
+multiple definition of `start_time';
+./utils/idle_monitor/amd_fam14h_idle.o:./utils/idle_monitor/amd_fam14h_idle.c:85:
+first defined here
 
+The -fno-common option will be enabled by default in GCC 10.
+
+Bug: https://bugs.gentoo.org/707462
+Signed-off-by: Mike Gilbert <floppym@gentoo.org>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-plat.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/power/cpupower/utils/idle_monitor/amd_fam14h_idle.c  | 2 +-
+ tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c    | 2 +-
+ tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c | 2 ++
+ tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h | 2 +-
+ 4 files changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -416,6 +416,7 @@ MODULE_DEVICE_TABLE(acpi, usb_xhci_acpi_
- static struct platform_driver usb_xhci_driver = {
- 	.probe	= xhci_plat_probe,
- 	.remove	= xhci_plat_remove,
-+	.shutdown = usb_hcd_platform_shutdown,
- 	.driver	= {
- 		.name = "xhci-hcd",
- 		.pm = &xhci_plat_pm_ops,
+diff --git a/tools/power/cpupower/utils/idle_monitor/amd_fam14h_idle.c b/tools/power/cpupower/utils/idle_monitor/amd_fam14h_idle.c
+index 2116df9ad8325..c097a3748674f 100644
+--- a/tools/power/cpupower/utils/idle_monitor/amd_fam14h_idle.c
++++ b/tools/power/cpupower/utils/idle_monitor/amd_fam14h_idle.c
+@@ -83,7 +83,7 @@ static struct pci_access *pci_acc;
+ static struct pci_dev *amd_fam14h_pci_dev;
+ static int nbp1_entered;
+ 
+-struct timespec start_time;
++static struct timespec start_time;
+ static unsigned long long timediff;
+ 
+ #ifdef DEBUG
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
+index 5b8c4956ff9a1..85a8f0cc01a19 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
++++ b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
+@@ -21,7 +21,7 @@ struct cpuidle_monitor cpuidle_sysfs_monitor;
+ 
+ static unsigned long long **previous_count;
+ static unsigned long long **current_count;
+-struct timespec start_time;
++static struct timespec start_time;
+ static unsigned long long timediff;
+ 
+ static int cpuidle_get_count_percent(unsigned int id, double *percent,
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+index 051da0a7c4548..4a27c55d50d80 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
++++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+@@ -29,6 +29,8 @@ struct cpuidle_monitor *all_monitors[] = {
+ 0
+ };
+ 
++int cpu_count;
++
+ static struct cpuidle_monitor *monitors[MONITORS_MAX];
+ static unsigned int avail_monitors;
+ 
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
+index 2ae50b499e0a6..06b3cd6de0180 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
++++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
+@@ -27,7 +27,7 @@
+ #endif
+ #define CSTATE_DESC_LEN 60
+ 
+-int cpu_count;
++extern int cpu_count;
+ 
+ /* Hard to define the right names ...: */
+ enum power_range_e {
+-- 
+2.20.1
+
 
 
