@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE37119B1E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1609C19B2A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388992AbgDAQjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:39:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38780 "EHLO mail.kernel.org"
+        id S2389879AbgDAQpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:45:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389146AbgDAQi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:38:56 -0400
+        id S2389403AbgDAQpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:45:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0B0920658;
-        Wed,  1 Apr 2020 16:38:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7743C206E9;
+        Wed,  1 Apr 2020 16:45:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759136;
-        bh=zfup1CbTNSFlYA0LTqaRkshjM4mNU47kNU4JMEnOTzY=;
+        s=default; t=1585759545;
+        bh=XtbEDCWV1Co2ctckCRyI2TREL9BJPN0Qv3Cmf1RhQoY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NS1r+E+LbNISs7VCV2YBRSK3wpL3MHPtG4FY9fP1aLLNmK5Ke2HbecdTW5LalG+jl
-         pFAIcuN/t7VxvjH+jG3SRVampZYkR4lcDGRiWt0aiyyZLm8f70bqNkaWQKW1xbQg63
-         +HehGEVMVbw5yxKLDZl+mK+/+lG+XPNJdj4ZZV4o=
+        b=m5QgcH5a2it4E9pPKezDNxrEepDAaV27FzNL2MNBl0BzUHaE+9MnGZWThMHSDxgbY
+         4pu055OsIYsGHqfxZitLBvi2YEeyoYT0Bv2gWc6isbVcUsIyXDsNhAB3vCv+nOcuRs
+         stNL9RhgFB0o34ENl/9RXP/xEqd/ef9/kHA93e8k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 4.9 081/102] media: usbtv: fix control-message timeouts
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 112/148] Input: raydium_i2c_ts - fix error codes in raydium_i2c_boot_trigger()
 Date:   Wed,  1 Apr 2020 18:18:24 +0200
-Message-Id: <20200401161546.116091054@linuxfoundation.org>
+Message-Id: <20200401161603.288053167@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 536f561d871c5781bc33d26d415685211b94032e upstream.
+[ Upstream commit 32cf3a610c35cb21e3157f4bbf29d89960e30a36 ]
 
-The driver was issuing synchronous uninterruptible control requests
-without using a timeout. This could lead to the driver hanging on
-various user requests due to a malfunctioning (or malicious) device
-until the device is physically disconnected.
+These functions are supposed to return negative error codes but instead
+it returns true on failure and false on success.  The error codes are
+eventually propagated back to user space.
 
-The USB upper limit of five seconds per request should be more than
-enough.
-
-Fixes: f3d27f34fdd7 ("[media] usbtv: Add driver for Fushicai USBTV007 video frame grabber")
-Fixes: c53a846c48f2 ("[media] usbtv: add video controls")
-Cc: stable <stable@vger.kernel.org>     # 3.11
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Lubomir Rintel <lkundrak@v3.sk>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 48a2b783483b ("Input: add Raydium I2C touchscreen driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: https://lore.kernel.org/r/20200303101306.4potflz7na2nn3od@kili.mountain
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/usbtv/usbtv-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/touchscreen/raydium_i2c_ts.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/media/usb/usbtv/usbtv-core.c
-+++ b/drivers/media/usb/usbtv/usbtv-core.c
-@@ -56,7 +56,7 @@ int usbtv_set_regs(struct usbtv *usbtv,
+diff --git a/drivers/input/touchscreen/raydium_i2c_ts.c b/drivers/input/touchscreen/raydium_i2c_ts.c
+index 172f66e9da2d1..7da44956555e5 100644
+--- a/drivers/input/touchscreen/raydium_i2c_ts.c
++++ b/drivers/input/touchscreen/raydium_i2c_ts.c
+@@ -441,7 +441,7 @@ static int raydium_i2c_write_object(struct i2c_client *client,
+ 	return 0;
+ }
  
- 		ret = usb_control_msg(usbtv->udev, pipe, USBTV_REQUEST_REG,
- 			USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
--			value, index, NULL, 0, 0);
-+			value, index, NULL, 0, USB_CTRL_GET_TIMEOUT);
- 		if (ret < 0)
- 			return ret;
+-static bool raydium_i2c_boot_trigger(struct i2c_client *client)
++static int raydium_i2c_boot_trigger(struct i2c_client *client)
+ {
+ 	static const u8 cmd[7][6] = {
+ 		{ 0x08, 0x0C, 0x09, 0x00, 0x50, 0xD7 },
+@@ -466,10 +466,10 @@ static bool raydium_i2c_boot_trigger(struct i2c_client *client)
+ 		}
  	}
+ 
+-	return false;
++	return 0;
+ }
+ 
+-static bool raydium_i2c_fw_trigger(struct i2c_client *client)
++static int raydium_i2c_fw_trigger(struct i2c_client *client)
+ {
+ 	static const u8 cmd[5][11] = {
+ 		{ 0, 0x09, 0x71, 0x0C, 0x09, 0x00, 0x50, 0xD7, 0, 0, 0 },
+@@ -492,7 +492,7 @@ static bool raydium_i2c_fw_trigger(struct i2c_client *client)
+ 		}
+ 	}
+ 
+-	return false;
++	return 0;
+ }
+ 
+ static int raydium_i2c_check_path(struct i2c_client *client)
+-- 
+2.20.1
+
 
 
