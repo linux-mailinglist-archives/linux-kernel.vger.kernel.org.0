@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F32F819B06B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1542D19AFD3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387937AbgDAQ0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:26:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51270 "EHLO mail.kernel.org"
+        id S1733276AbgDAQVW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:21:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387675AbgDAQ0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:26:45 -0400
+        id S1733257AbgDAQVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:21:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF14220BED;
-        Wed,  1 Apr 2020 16:26:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1863320658;
+        Wed,  1 Apr 2020 16:21:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758404;
-        bh=OVm+jbi7TFRfCADhUrWLyr18JMH1hHF+qU86kaYm5/E=;
+        s=default; t=1585758079;
+        bh=OejNDdeNHa/gavdq5Zhf+46ZKrfDI6ryuxjq7gUHOTU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jiFwkUOZrvTAGkQK53VcPTKsN78gwkOiA/aCILYobfC/Kav9txgHcqpWGPF/IdHGY
-         PRVKGP/Rjs1yP0et8fCUGl/9PH9A2EdU+nh/uXr5mJGB/JAGUTvsFcDOZzzWrOQA2O
-         eMOEKGHdTnJXtq5PKNblPcPNsUzNd7BLUCm80YbY=
+        b=qlWSangA1MqcNegwCGHPVEQal4dlVM41/WXLDEYqpaSgkJu11HmaEMj3c/O2Xb8ya
+         Gx2L/L1V+tEose8rCEZsJBtZPeIVrAHw7Bp4xjM76vbWHOtPilfqnwG3APAAO+eGxX
+         gdSPgf/xhEZQJh9janMqwMwELiTpp0SU4jBxQgXs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 078/116] mac80211: set IEEE80211_TX_CTRL_PORT_CTRL_PROTO for nl80211 TX
+        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@oss.nxp.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 30/30] arm64: dts: ls1046ardb: set RGMII interfaces to RGMII_ID mode
 Date:   Wed,  1 Apr 2020 18:17:34 +0200
-Message-Id: <20200401161552.658638343@linuxfoundation.org>
+Message-Id: <20200401161436.353926274@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
+References: <20200401161414.345528747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,61 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Madalin Bucur <madalin.bucur@oss.nxp.com>
 
-[ Upstream commit b95d2ccd2ccb834394d50347d0e40dc38a954e4a ]
+commit d79e9d7c1e4ba5f95f2ff3541880c40ea9722212 upstream.
 
-When a frame is transmitted via the nl80211 TX rather than as a
-normal frame, IEEE80211_TX_CTRL_PORT_CTRL_PROTO wasn't set and
-this will lead to wrong decisions (rate control etc.) being made
-about the frame; fix this.
+The correct setting for the RGMII ports on LS1046ARDB is to
+enable delay on both Rx and Tx so the interface mode used must
+be PHY_INTERFACE_MODE_RGMII_ID.
 
-Fixes: 911806491425 ("mac80211: Add support for tx_control_port")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Link: https://lore.kernel.org/r/20200326155333.f183f52b02f0.I4054e2a8c11c2ddcb795a0103c87be3538690243@changeid
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Since commit 1b3047b5208a80 ("net: phy: realtek: add support for
+configuring the RX delay on RTL8211F") the Realtek 8211F PHY driver
+has control over the RGMII RX delay and it is disabling it for
+RGMII_TXID. The LS1046ARDB uses two such PHYs in RGMII_ID mode but
+in the device tree the mode was described as "rgmii".
+
+Changing the phy-connection-type to "rgmii-id" to address the issue.
+
+Fixes: 3fa395d2c48a ("arm64: dts: add LS1046A DPAA FMan nodes")
+Signed-off-by: Madalin Bucur <madalin.bucur@oss.nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/mac80211/tx.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -4,7 +4,7 @@
-  * Copyright 2006-2007	Jiri Benc <jbenc@suse.cz>
-  * Copyright 2007	Johannes Berg <johannes@sipsolutions.net>
-  * Copyright 2013-2014  Intel Mobile Communications GmbH
-- * Copyright (C) 2018 Intel Corporation
-+ * Copyright (C) 2018, 2020 Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -4840,6 +4840,7 @@ int ieee80211_tx_control_port(struct wip
- 	struct ieee80211_local *local = sdata->local;
- 	struct sk_buff *skb;
- 	struct ethhdr *ehdr;
-+	u32 ctrl_flags = 0;
- 	u32 flags;
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
+@@ -131,12 +131,12 @@
+ &fman0 {
+ 	ethernet@e4000 {
+ 		phy-handle = <&rgmii_phy1>;
+-		phy-connection-type = "rgmii";
++		phy-connection-type = "rgmii-id";
+ 	};
  
- 	/* Only accept CONTROL_PORT_PROTOCOL configured in CONNECT/ASSOCIATE
-@@ -4849,6 +4850,9 @@ int ieee80211_tx_control_port(struct wip
- 	    proto != cpu_to_be16(ETH_P_PREAUTH))
- 		return -EINVAL;
+ 	ethernet@e6000 {
+ 		phy-handle = <&rgmii_phy2>;
+-		phy-connection-type = "rgmii";
++		phy-connection-type = "rgmii-id";
+ 	};
  
-+	if (proto == sdata->control_port_protocol)
-+		ctrl_flags |= IEEE80211_TX_CTRL_PORT_CTRL_PROTO;
-+
- 	if (unencrypted)
- 		flags = IEEE80211_TX_INTFL_DONT_ENCRYPT;
- 	else
-@@ -4874,7 +4878,7 @@ int ieee80211_tx_control_port(struct wip
- 	skb_reset_mac_header(skb);
- 
- 	local_bh_disable();
--	__ieee80211_subif_start_xmit(skb, skb->dev, flags, 0);
-+	__ieee80211_subif_start_xmit(skb, skb->dev, flags, ctrl_flags);
- 	local_bh_enable();
- 
- 	return 0;
+ 	ethernet@e8000 {
 
 
