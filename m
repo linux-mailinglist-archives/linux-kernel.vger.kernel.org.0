@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 503A419B296
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1930919AFFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:23:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389841AbgDAQpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:45:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46550 "EHLO mail.kernel.org"
+        id S2387556AbgDAQW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:22:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389609AbgDAQpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:45:22 -0400
+        id S2387550AbgDAQWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:22:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C02B20719;
-        Wed,  1 Apr 2020 16:45:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E4622137B;
+        Wed,  1 Apr 2020 16:22:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759520;
-        bh=njLmsz8iWCR+zUvOIucKwf9guv/H/Xgvt6PielDOdyU=;
+        s=default; t=1585758174;
+        bh=LgPj8+2ycUOEbuzcx4Slc6l4LdVpqf9vUNx2DlNUndY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fmrdhiqgF9RCefcj5kIoqh35WXQIYmcFZ6RV0lkciq7Q51uDDiGq5nb5QjQRJid82
-         va7hszxBV78n6U8Pse0/Q8LULUj9oR1S5/DKoPsSU4eixukexsqCquaI57loYMDEsa
-         +Oyw8QbBF/axC33g77Eczy4mt7lpRps43TvqER7o=
+        b=AU4vf8XgZFooSXLb+4i//KES++C82SRxRjGG+vSAuyRy6V9zlNI6aojRclq4dUBHM
+         LqfExV+3dm+YAfO5mfP7hojbujk+mw2WJczIvWye//4AibwViRZgqSjr/n3z+eg1SC
+         F4qCL8+luPfSmXjmzxmyEAi/zVwn2VMX7O3LIEBU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 078/148] dt-bindings: net: FMan erratum A050385
-Date:   Wed,  1 Apr 2020 18:17:50 +0200
-Message-Id: <20200401161600.770896752@linuxfoundation.org>
+        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 5.4 23/27] ARM: dts: imx6: phycore-som: fix arm and soc minimum voltage
+Date:   Wed,  1 Apr 2020 18:17:51 +0200
+Message-Id: <20200401161433.199490420@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
+References: <20200401161414.352722470@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,89 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madalin Bucur <madalin.bucur@nxp.com>
+From: Marco Felsch <m.felsch@pengutronix.de>
 
-[ Upstream commit 26d5bb9e4c4b541c475751e015072eb2cbf70d15 ]
+commit 636b45b8efa91db05553840b6c0120d6fa6b94fa upstream.
 
-FMAN DMA read or writes under heavy traffic load may cause FMAN
-internal resource leak; thus stopping further packet processing.
+The current set minimum voltage of 730000µV seems to be wrong. I don't
+know the document which specifies that but the imx6qdl datasheets says
+that the minimum voltage should be 0.925V for VDD_ARM (LDO bypassed,
+lowest opp) and 1.15V for VDD_SOC (LDO bypassed, lowest opp).
 
-The FMAN internal queue can overflow when FMAN splits single
-read or write transactions into multiple smaller transactions
-such that more than 17 AXI transactions are in flight from FMAN
-to interconnect. When the FMAN internal queue overflows, it can
-stall further packet processing. The issue can occur with any one
-of the following three conditions:
+Fixes: ddec5d1c0047 ("ARM: dts: imx6: Add initial support for phyCORE-i.MX 6 SOM")
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-  1. FMAN AXI transaction crosses 4K address boundary (Errata
-     A010022)
-  2. FMAN DMA address for an AXI transaction is not 16 byte
-     aligned, i.e. the last 4 bits of an address are non-zero
-  3. Scatter Gather (SG) frames have more than one SG buffer in
-     the SG list and any one of the buffers, except the last
-     buffer in the SG list has data size that is not a multiple
-     of 16 bytes, i.e., other than 16, 32, 48, 64, etc.
-
-With any one of the above three conditions present, there is
-likelihood of stalled FMAN packet processing, especially under
-stress with multiple ports injecting line-rate traffic.
-
-To avoid situations that stall FMAN packet processing, all of the
-above three conditions must be avoided; therefore, configure the
-system with the following rules:
-
-  1. Frame buffers must not span a 4KB address boundary, unless
-     the frame start address is 256 byte aligned
-  2. All FMAN DMA start addresses (for example, BMAN buffer
-     address, FD[address] + FD[offset]) are 16B aligned
-  3. SG table and buffer addresses are 16B aligned and the size
-     of SG buffers are multiple of 16 bytes, except for the last
-     SG buffer that can be of any size.
-
-Additional workaround notes:
-- Address alignment of 64 bytes is recommended for maximally
-efficient system bus transactions (although 16 byte alignment is
-sufficient to avoid the stall condition)
-- To support frame sizes that are larger than 4K bytes, there are
-two options:
-  1. Large single buffer frames that span a 4KB page boundary can
-     be converted into SG frames to avoid transaction splits at
-     the 4KB boundary,
-  2. Align the large single buffer to 256B address boundaries,
-     ensure that the frame address plus offset is 256B aligned.
-- If software generated SG frames have buffers that are unaligned
-and with random non-multiple of 16 byte lengths, before
-transmitting such frames via FMAN, frames will need to be copied
-into a new single buffer or multiple buffer SG frame that is
-compliant with the three rules listed above.
-
-Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/net/fsl-fman.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/imx6qdl-phytec-phycore-som.dtsi |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/fsl-fman.txt b/Documentation/devicetree/bindings/net/fsl-fman.txt
-index df873d1f3b7c5..2aaae210317bb 100644
---- a/Documentation/devicetree/bindings/net/fsl-fman.txt
-+++ b/Documentation/devicetree/bindings/net/fsl-fman.txt
-@@ -110,6 +110,13 @@ PROPERTIES
- 		Usage: required
- 		Definition: See soc/fsl/qman.txt and soc/fsl/bman.txt
+--- a/arch/arm/boot/dts/imx6qdl-phytec-phycore-som.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-phytec-phycore-som.dtsi
+@@ -107,14 +107,14 @@
+ 		regulators {
+ 			vdd_arm: buck1 {
+ 				regulator-name = "vdd_arm";
+-				regulator-min-microvolt = <730000>;
++				regulator-min-microvolt = <925000>;
+ 				regulator-max-microvolt = <1380000>;
+ 				regulator-always-on;
+ 			};
  
-+- fsl,erratum-a050385
-+		Usage: optional
-+		Value type: boolean
-+		Definition: A boolean property. Indicates the presence of the
-+		erratum A050385 which indicates that DMA transactions that are
-+		split can result in a FMan lock.
-+
- =============================================================================
- FMan MURAM Node
- 
--- 
-2.20.1
-
+ 			vdd_soc: buck2 {
+ 				regulator-name = "vdd_soc";
+-				regulator-min-microvolt = <730000>;
++				regulator-min-microvolt = <1150000>;
+ 				regulator-max-microvolt = <1380000>;
+ 				regulator-always-on;
+ 			};
 
 
