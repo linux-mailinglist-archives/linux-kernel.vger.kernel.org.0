@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8579619B3A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:53:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A880B19AFF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389094AbgDAQw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:52:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35080 "EHLO mail.kernel.org"
+        id S2387517AbgDAQWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:22:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388817AbgDAQgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:36:11 -0400
+        id S1732246AbgDAQWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:22:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E238620857;
-        Wed,  1 Apr 2020 16:36:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 195E6212CC;
+        Wed,  1 Apr 2020 16:22:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758970;
-        bh=A4yrwFSk3OBSP1jAMmIDEeb5DY80CtP/K/m1QWY7pdU=;
+        s=default; t=1585758155;
+        bh=xEtiESbTIcESJ4xqcCwq5ZZHvMgmrv9aSMzI+0ZLmPo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NdbxcC7wHlMGJg/Xj9jaMTbXBzObd36Oxm98dzkbhPfHV5r/1nwcWwdaJI1vikWyR
-         VwwELRltPuYRZYDC+ZQers1/i+XgDuzaPFL1k+IC5FqneaH4Usa2qePoKhxN8MTjNi
-         bhvfsVE4quowkk5KmS7G0LxgGYjwVjqBNi1FJCLE=
+        b=YqpB0QKqrS323/dWujsOJNgBGBEhYzxHuBQkjNtRnMjy9iLYQjtmqlML2ew9+dIl3
+         mjA96iTZgQeaxv9qFr7YJ4yTrdQKQvV9W2CP2U/CXe3FAgyGN6s2Mrjr6RherdnzEn
+         88XIL5zdnLaHbyV4O8f9Aa/hBcJvlN6guPcsE2Lk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Will Deacon <will@kernel.org>
-Subject: [PATCH 4.9 034/102] arm64: smp: fix smp_send_stop() behaviour
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+        Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 5.4 09/27] vt: vt_ioctl: fix use-after-free in vt_in_use()
 Date:   Wed,  1 Apr 2020 18:17:37 +0200
-Message-Id: <20200401161539.215884848@linuxfoundation.org>
+Message-Id: <20200401161422.995544906@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
+References: <20200401161414.352722470@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,115 +43,138 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cristian Marussi <cristian.marussi@arm.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit d0bab0c39e32d39a8c5cddca72e5b4a3059fe050 upstream.
+commit 7cf64b18b0b96e751178b8d0505d8466ff5a448f upstream.
 
-On a system with only one CPU online, when another one CPU panics while
-starting-up, smp_send_stop() will fail to send any STOP message to the
-other already online core, resulting in a system still responsive and
-alive at the end of the panic procedure.
+vt_in_use() dereferences console_driver->ttys[i] without proper locking.
+This is broken because the tty can be closed and freed concurrently.
 
-[  186.700083] CPU3: shutdown
-[  187.075462] CPU2: shutdown
-[  187.162869] CPU1: shutdown
-[  188.689998] ------------[ cut here ]------------
-[  188.691645] kernel BUG at arch/arm64/kernel/cpufeature.c:886!
-[  188.692079] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-[  188.692444] Modules linked in:
-[  188.693031] CPU: 3 PID: 0 Comm: swapper/3 Not tainted 5.6.0-rc4-00001-g338d25c35a98 #104
-[  188.693175] Hardware name: Foundation-v8A (DT)
-[  188.693492] pstate: 200001c5 (nzCv dAIF -PAN -UAO)
-[  188.694183] pc : has_cpuid_feature+0xf0/0x348
-[  188.694311] lr : verify_local_elf_hwcaps+0x84/0xe8
-[  188.694410] sp : ffff800011b1bf60
-[  188.694536] x29: ffff800011b1bf60 x28: 0000000000000000
-[  188.694707] x27: 0000000000000000 x26: 0000000000000000
-[  188.694801] x25: 0000000000000000 x24: ffff80001189a25c
-[  188.694905] x23: 0000000000000000 x22: 0000000000000000
-[  188.694996] x21: ffff8000114aa018 x20: ffff800011156a38
-[  188.695089] x19: ffff800010c944a0 x18: 0000000000000004
-[  188.695187] x17: 0000000000000000 x16: 0000000000000000
-[  188.695280] x15: 0000249dbde5431e x14: 0262cbe497efa1fa
-[  188.695371] x13: 0000000000000002 x12: 0000000000002592
-[  188.695472] x11: 0000000000000080 x10: 00400032b5503510
-[  188.695572] x9 : 0000000000000000 x8 : ffff800010c80204
-[  188.695659] x7 : 00000000410fd0f0 x6 : 0000000000000001
-[  188.695750] x5 : 00000000410fd0f0 x4 : 0000000000000000
-[  188.695836] x3 : 0000000000000000 x2 : ffff8000100939d8
-[  188.695919] x1 : 0000000000180420 x0 : 0000000000180480
-[  188.696253] Call trace:
-[  188.696410]  has_cpuid_feature+0xf0/0x348
-[  188.696504]  verify_local_elf_hwcaps+0x84/0xe8
-[  188.696591]  check_local_cpu_capabilities+0x44/0x128
-[  188.696666]  secondary_start_kernel+0xf4/0x188
-[  188.697150] Code: 52805001 72a00301 6b01001f 54000ec0 (d4210000)
-[  188.698639] ---[ end trace 3f12ca47652f7b72 ]---
-[  188.699160] Kernel panic - not syncing: Attempted to kill the idle task!
-[  188.699546] Kernel Offset: disabled
-[  188.699828] CPU features: 0x00004,20c02008
-[  188.700012] Memory Limit: none
-[  188.700538] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
+We could fix this by using 'READ_ONCE(console_driver->ttys[i]) != NULL'
+and skipping the check of tty_struct::count.  But, looking at
+console_driver->ttys[i] isn't really appropriate anyway because even if
+it is NULL the tty can still be in the process of being closed.
 
-[root@arch ~]# echo Helo
-Helo
-[root@arch ~]# cat /proc/cpuinfo | grep proce
-processor	: 0
+Instead, fix it by making vt_in_use() require console_lock() and check
+whether the vt is allocated and has port refcount > 1.  This works since
+following the patch "vt: vt_ioctl: fix VT_DISALLOCATE freeing in-use
+virtual console" the port refcount is incremented while the vt is open.
 
-Make smp_send_stop() account also for the online status of the calling CPU
-while evaluating how many CPUs are effectively online: this way, the right
-number of STOPs is sent, so enforcing a proper freeze of the system at the
-end of panic even under the above conditions.
+Reproducer (very unreliable, but it worked for me after a few minutes):
 
-Fixes: 08e875c16a16c ("arm64: SMP support")
-Reported-by: Dave Martin <Dave.Martin@arm.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+	#include <fcntl.h>
+	#include <linux/vt.h>
+
+	int main()
+	{
+		int fd, nproc;
+		struct vt_stat state;
+		char ttyname[16];
+
+		fd = open("/dev/tty10", O_RDONLY);
+		for (nproc = 1; nproc < 8; nproc *= 2)
+			fork();
+		for (;;) {
+			sprintf(ttyname, "/dev/tty%d", rand() % 8);
+			close(open(ttyname, O_RDONLY));
+			ioctl(fd, VT_GETSTATE, &state);
+		}
+	}
+
+KASAN report:
+
+	BUG: KASAN: use-after-free in vt_in_use drivers/tty/vt/vt_ioctl.c:48 [inline]
+	BUG: KASAN: use-after-free in vt_ioctl+0x1ad3/0x1d70 drivers/tty/vt/vt_ioctl.c:657
+	Read of size 4 at addr ffff888065722468 by task syz-vt2/132
+
+	CPU: 0 PID: 132 Comm: syz-vt2 Not tainted 5.6.0-rc5-00130-g089b6d3654916 #13
+	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20191223_100556-anatol 04/01/2014
+	Call Trace:
+	 [...]
+	 vt_in_use drivers/tty/vt/vt_ioctl.c:48 [inline]
+	 vt_ioctl+0x1ad3/0x1d70 drivers/tty/vt/vt_ioctl.c:657
+	 tty_ioctl+0x9db/0x11b0 drivers/tty/tty_io.c:2660
+	 [...]
+
+	Allocated by task 136:
+	 [...]
+	 kzalloc include/linux/slab.h:669 [inline]
+	 alloc_tty_struct+0x96/0x8a0 drivers/tty/tty_io.c:2982
+	 tty_init_dev+0x23/0x350 drivers/tty/tty_io.c:1334
+	 tty_open_by_driver drivers/tty/tty_io.c:1987 [inline]
+	 tty_open+0x3ca/0xb30 drivers/tty/tty_io.c:2035
+	 [...]
+
+	Freed by task 41:
+	 [...]
+	 kfree+0xbf/0x200 mm/slab.c:3757
+	 free_tty_struct+0x8d/0xb0 drivers/tty/tty_io.c:177
+	 release_one_tty+0x22d/0x2f0 drivers/tty/tty_io.c:1468
+	 process_one_work+0x7f1/0x14b0 kernel/workqueue.c:2264
+	 worker_thread+0x8b/0xc80 kernel/workqueue.c:2410
+	 [...]
+
+Fixes: 4001d7b7fc27 ("vt: push down the tty lock so we can see what is left to tackle")
+Cc: <stable@vger.kernel.org> # v3.4+
+Acked-by: Jiri Slaby <jslaby@suse.cz>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Link: https://lore.kernel.org/r/20200322034305.210082-3-ebiggers@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/smp.c |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/tty/vt/vt_ioctl.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -901,11 +901,22 @@ void tick_broadcast(const struct cpumask
- }
- #endif
+--- a/drivers/tty/vt/vt_ioctl.c
++++ b/drivers/tty/vt/vt_ioctl.c
+@@ -43,9 +43,15 @@ bool vt_dont_switch;
  
-+/*
-+ * The number of CPUs online, not counting this CPU (which may not be
-+ * fully online and so not counted in num_online_cpus()).
-+ */
-+static inline unsigned int num_other_online_cpus(void)
-+{
-+	unsigned int this_cpu_online = cpu_online(smp_processor_id());
-+
-+	return num_online_cpus() - this_cpu_online;
-+}
-+
- void smp_send_stop(void)
+ static inline bool vt_in_use(unsigned int i)
  {
- 	unsigned long timeout;
+-	extern struct tty_driver *console_driver;
++	const struct vc_data *vc = vc_cons[i].d;
  
--	if (num_online_cpus() > 1) {
-+	if (num_other_online_cpus()) {
- 		cpumask_t mask;
- 
- 		cpumask_copy(&mask, cpu_online_mask);
-@@ -919,10 +930,10 @@ void smp_send_stop(void)
- 
- 	/* Wait up to one second for other CPUs to stop */
- 	timeout = USEC_PER_SEC;
--	while (num_online_cpus() > 1 && timeout--)
-+	while (num_other_online_cpus() && timeout--)
- 		udelay(1);
- 
--	if (num_online_cpus() > 1)
-+	if (num_other_online_cpus())
- 		pr_warning("SMP: failed to stop secondary CPUs %*pbl\n",
- 			   cpumask_pr_args(cpu_online_mask));
+-	return console_driver->ttys[i] && console_driver->ttys[i]->count;
++	/*
++	 * console_lock must be held to prevent the vc from being deallocated
++	 * while we're checking whether it's in-use.
++	 */
++	WARN_CONSOLE_UNLOCKED();
++
++	return vc && kref_read(&vc->port.kref) > 1;
  }
+ 
+ static inline bool vt_busy(int i)
+@@ -643,15 +649,16 @@ int vt_ioctl(struct tty_struct *tty,
+ 		struct vt_stat __user *vtstat = up;
+ 		unsigned short state, mask;
+ 
+-		/* Review: FIXME: Console lock ? */
+ 		if (put_user(fg_console + 1, &vtstat->v_active))
+ 			ret = -EFAULT;
+ 		else {
+ 			state = 1;	/* /dev/tty0 is always open */
++			console_lock(); /* required by vt_in_use() */
+ 			for (i = 0, mask = 2; i < MAX_NR_CONSOLES && mask;
+ 							++i, mask <<= 1)
+ 				if (vt_in_use(i))
+ 					state |= mask;
++			console_unlock();
+ 			ret = put_user(state, &vtstat->v_state);
+ 		}
+ 		break;
+@@ -661,10 +668,11 @@ int vt_ioctl(struct tty_struct *tty,
+ 	 * Returns the first available (non-opened) console.
+ 	 */
+ 	case VT_OPENQRY:
+-		/* FIXME: locking ? - but then this is a stupid API */
++		console_lock(); /* required by vt_in_use() */
+ 		for (i = 0; i < MAX_NR_CONSOLES; ++i)
+ 			if (!vt_in_use(i))
+ 				break;
++		console_unlock();
+ 		uival = i < MAX_NR_CONSOLES ? (i+1) : -1;
+ 		goto setint;		 
+ 
 
 
