@@ -2,146 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C09519A723
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8588619A729
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:22:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732098AbgDAIVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:21:33 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:35074 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729703AbgDAIVd (ORCPT
+        id S1731729AbgDAIWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:22:43 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:46444 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbgDAIWn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:21:33 -0400
-Received: by mail-vs1-f68.google.com with SMTP id u11so15345560vsg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 01:21:32 -0700 (PDT)
+        Wed, 1 Apr 2020 04:22:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TMiys8vgh/zVs+g/WqcrVmGnSmA9w/d7OqJQQ7up1M4=;
-        b=nOcgW+vJIDaeDBEdtqPJ13SjXnUQ8tvB/zXLpC8eEDmJa1qx0uTZpc4I94TQiNjE9T
-         msVtL4CTE33K//fw+xBNn9GaFPpRVLqyj5PGNxcqEoozzzRecgBLsoLIzAt/5NSW01AE
-         Ynl8VeIjsvYaiV6k4IVQfovLO0c12hxq3kZ41k3nh4TKrIk6ubCen/TswPapWoaThDNB
-         9A40s6iX1mVNOTpDe99mHNmQWlLJ2JxmLsTGu/yT5GmlhdDZoMZyZkyiPOJJq5FGqIcO
-         ti5blWz6lQahfcXM/qyBmUasrIWl9sVGvCfjPhfLX4CFLf8PQa13p+ye9/v/eTpjxdgF
-         Q1/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TMiys8vgh/zVs+g/WqcrVmGnSmA9w/d7OqJQQ7up1M4=;
-        b=KxQbxrrDY8bWbfRdHrI0n0MC2MWwPI3jMUAQ9ZV4kYMVXRUUDbgfvwE56e19lMqclU
-         rZKun/1CHuOhzD47lRUufLIywjHpIwLKQCqihS1z9cIpF6GVKjJW1FuKBCLvaVQNRgGd
-         O5+9fRzfnwETlmQ+bMuHUPti6jGTQIWHTyxSAzcUEvkS7Xqj8QSPQt3QWGNCRpsWROGj
-         UynqtVXGXty+8FK1VK/33OEhL6EzP8UXwga34rPaqfpcsdmAZSvj5s9ExuRJbuc5WEoj
-         ig8Cx+nhtRGSCQ/V+NjRqgz/ezE06Bn23Fj13xs6+XmcU/FZvBvpYgryDKekUmsNuWu/
-         CuoQ==
-X-Gm-Message-State: AGi0PuaeBTo7niRrjlstFmPTXUgJR0cOTNA0pmL05iPr5tW6M7MMm/gm
-        akg1YXRvEAaKoaokg6aMgjLzxQ8wZJlTOsegXgQFpQ==
-X-Google-Smtp-Source: APiQypIFgzuZyqDqF5vQmkoXOgF4Gs4J+CyGROUlmGOe4oP6uK3MuXRnZum585qhaQzu2hPT5+Qkz4Vz+TJF0gMrJP0=
-X-Received: by 2002:a67:69d5:: with SMTP id e204mr14355392vsc.159.1585729291733;
- Wed, 01 Apr 2020 01:21:31 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1585729362; x=1617265362;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   mime-version;
+  bh=J0S4DL9mCxwT+hAkweovoiwr/8l14+JA8SrvT6gRPNQ=;
+  b=qPPQsTnjyDp5Mq8ISRXvB2+WOkHjEvtKmOO2RFpR7+lnD1xhGEV/zOvL
+   OdrnkS5dG2ecHe2Ncswzsmo16thS9sQ9xQimQxfDZFeR31dSIXa2Y/BWf
+   7NbY/m/nkTCWbDwdJlrC9idualfKm0ug4n3qbApKAxg60QWeoRLoWtWZ7
+   Y=;
+IronPort-SDR: s9KoWN8K5QgmRvuUHAFPWzhNO3NQk6hDfHxY0UJlBb55RZ5TdJJbJvTa9jy0J/w/eZBM2Z1Zjy
+ xo8NaQYsP+9g==
+X-IronPort-AV: E=Sophos;i="5.72,330,1580774400"; 
+   d="scan'208";a="25060967"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-67b371d8.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 01 Apr 2020 08:22:30 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1a-67b371d8.us-east-1.amazon.com (Postfix) with ESMTPS id C6450A16D3;
+        Wed,  1 Apr 2020 08:22:19 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Wed, 1 Apr 2020 08:22:19 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.134) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Wed, 1 Apr 2020 08:22:05 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+CC:     SeongJae Park <sjpark@amazon.com>,
+        <alexander.shishkin@linux.intel.com>, <linux-mm@kvack.org>,
+        <akpm@linux-foundation.org>, SeongJae Park <sjpark@amazon.de>,
+        <aarcange@redhat.com>, <acme@kernel.org>, <amit@kernel.org>,
+        <brendan.d.gregg@gmail.com>, <brendanhiggins@google.com>,
+        <cai@lca.pw>, <colin.king@canonical.com>, <corbet@lwn.net>,
+        <dwmw@amazon.com>, <jolsa@redhat.com>, <kirill@shutemov.name>,
+        <mark.rutland@arm.com>, <mgorman@suse.de>, <minchan@kernel.org>,
+        <mingo@redhat.com>, <namhyung@kernel.org>, <peterz@infradead.org>,
+        <rdunlap@infradead.org>, <riel@surriel.com>, <rientjes@google.com>,
+        <rostedt@goodmis.org>, <shakeelb@google.com>, <shuah@kernel.org>,
+        <sj38.park@gmail.com>, <vbabka@suse.cz>, <vdavydov.dev@gmail.com>,
+        <yang.shi@linux.alibaba.com>, <ying.huang@intel.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [RFC v5 0/7] Implement Data Access Monitoring-based Memory Operation Schemes
+Date:   Wed, 1 Apr 2020 10:21:50 +0200
+Message-ID: <20200401082150.21124-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200331173908.0000696f@Huawei.com> (raw)
 MIME-Version: 1.0
-References: <20200331165449.30355-1-daniel.lezcano@linaro.org>
-In-Reply-To: <20200331165449.30355-1-daniel.lezcano@linaro.org>
-From:   Amit Kucheria <amit.kucheria@verdurent.com>
-Date:   Wed, 1 Apr 2020 13:51:20 +0530
-Message-ID: <CAHLCerPrCLNqcK8E1T917_HyV3uuP9U3e6sR335KiJn4ho72aw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] thermal: core: Make thermal_zone_set_trips private
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.134]
+X-ClientProxiedBy: EX13D37UWC004.ant.amazon.com (10.43.162.212) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 10:26 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> The function thermal_zone_set_trips() is used by the thermal core code
-> in order to update the next trip points, there are no other users.
->
-> Move the function definition in the thermal_core.h, remove the
-> EXPORT_SYMBOL_GPL and document the function.
->
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+On Tue, 31 Mar 2020 17:39:08 +0100 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
 
-> ---
->  drivers/thermal/thermal_core.h    |  3 +++
->  drivers/thermal/thermal_helpers.c | 13 ++++++++++++-
->  include/linux/thermal.h           |  3 ---
->  3 files changed, 15 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
-> index a9bf00e91d64..37cd4e2bead2 100644
-> --- a/drivers/thermal/thermal_core.h
-> +++ b/drivers/thermal/thermal_core.h
-> @@ -69,6 +69,9 @@ void thermal_zone_device_unbind_exception(struct thermal_zone_device *,
->  int thermal_zone_device_set_policy(struct thermal_zone_device *, char *);
->  int thermal_build_list_of_policies(char *buf);
->
-> +/* Helpers */
-> +void thermal_zone_set_trips(struct thermal_zone_device *tz);
-> +
->  /* sysfs I/F */
->  int thermal_zone_create_device_groups(struct thermal_zone_device *, int);
->  void thermal_zone_destroy_device_groups(struct thermal_zone_device *);
-> diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
-> index 2ba756af76b7..59eaf2d0fdb3 100644
-> --- a/drivers/thermal/thermal_helpers.c
-> +++ b/drivers/thermal/thermal_helpers.c
-> @@ -113,6 +113,18 @@ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
->  }
->  EXPORT_SYMBOL_GPL(thermal_zone_get_temp);
->
-> +/**
-> + * thermal_zone_set_trips - Computes the next trip points for the driver
-> + * @tz: a pointer to a thermal zone device structure
-> + *
-> + * The function computes the next temperature boundaries by browsing
-> + * the trip points. The result is the closer low and high trip points
-> + * to the current temperature. These values are passed to the backend
-> + * driver to let it set its own notification mechanism (usually an
-> + * interrupt).
-> + *
-> + * It does not return a value
-> + */
->  void thermal_zone_set_trips(struct thermal_zone_device *tz)
->  {
->         int low = -INT_MAX;
-> @@ -161,7 +173,6 @@ void thermal_zone_set_trips(struct thermal_zone_device *tz)
->  exit:
->         mutex_unlock(&tz->lock);
->  }
-> -EXPORT_SYMBOL_GPL(thermal_zone_set_trips);
->
->  void thermal_cdev_update(struct thermal_cooling_device *cdev)
->  {
-> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index c91b1e344d56..448841ab0dca 100644
-> --- a/include/linux/thermal.h
-> +++ b/include/linux/thermal.h
-> @@ -439,7 +439,6 @@ int thermal_zone_unbind_cooling_device(struct thermal_zone_device *, int,
->                                        struct thermal_cooling_device *);
->  void thermal_zone_device_update(struct thermal_zone_device *,
->                                 enum thermal_notify_event);
-> -void thermal_zone_set_trips(struct thermal_zone_device *);
->
->  struct thermal_cooling_device *thermal_cooling_device_register(const char *,
->                 void *, const struct thermal_cooling_device_ops *);
-> @@ -497,8 +496,6 @@ static inline int thermal_zone_unbind_cooling_device(
->  static inline void thermal_zone_device_update(struct thermal_zone_device *tz,
->                                               enum thermal_notify_event event)
->  { }
-> -static inline void thermal_zone_set_trips(struct thermal_zone_device *tz)
-> -{ }
->  static inline struct thermal_cooling_device *
->  thermal_cooling_device_register(char *type, void *devdata,
->         const struct thermal_cooling_device_ops *ops)
-> --
-> 2.17.1
->
+> On Tue, 31 Mar 2020 18:18:19 +0200
+> SeongJae Park <sjpark@amazon.com> wrote:
+> 
+> > On Tue, 31 Mar 2020 16:51:55 +0100 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+> > 
+> > > On Mon, 30 Mar 2020 13:50:35 +0200
+> > > SeongJae Park <sjpark@amazon.com> wrote:
+> > >   
+> > > > From: SeongJae Park <sjpark@amazon.de>
+> > > > 
+> > > > DAMON[1] can be used as a primitive for data access awared memory management
+> > > > optimizations.  That said, users who want such optimizations should run DAMON,
+> > > > read the monitoring results, analyze it, plan a new memory management scheme,
+> > > > and apply the new scheme by themselves.  Such efforts will be inevitable for
+> > > > some complicated optimizations.
+> > > > 
+> > > > However, in many other cases, the users could simply want the system to apply a
+> > > > memory management action to a memory region of a specific size having a
+> > > > specific access frequency for a specific time.  For example, "page out a memory
+> > > > region larger than 100 MiB keeping only rare accesses more than 2 minutes", or
+> > > > "Do not use THP for a memory region larger than 2 MiB rarely accessed for more
+> > > > than 1 seconds".
+> > > > 
+> > > > This RFC patchset makes DAMON to handle such data access monitoring-based
+> > > > operation schemes.  With this change, users can do the data access awared
+> > > > optimizations by simply specifying their schemes to DAMON.  
+[...]
+> > > > 
+> > > > Efficient THP
+> > > > ~~~~~~~~~~~~~
+> > > > 
+> > > > THP 'always' enabled policy achieves 5.57% speedup but incurs 7.29% memory
+> > > > overhead.  It achieves 41.62% speedup in best case, but 79.98% memory overhead
+> > > > in worst case.  Interestingly, both the best and worst case are with
+> > > > 'splash2x/ocean_ncp').  
+> > > 
+> > > The results above don't seems to support this any more? 
+> > >   
+> > > > runtime                 orig     rec      (overhead) thp      (overhead) ethp     (overhead) prcl     (overhead)
+> > > > splash2x/ocean_ncp      86.927   87.065   (0.16)     50.747   (-41.62)   86.855   (-0.08)    199.553  (129.57)   
+> > 
+> > Hmm... But, I don't get what point you meaning...  In the data, column of 'thp'
+> > means the THP 'always' enabled policy.  And, the following column shows the
+> > overhead of it compared to that of 'orig', in percent.  Thus, the data says THP
+> > 'always' enabled policy enabled kernel consumes 50.747 seconds to finish
+> > splash2x/ocean_ncp, while THP disabled original kernel consumes 86.927 seconds.
+> 
+> ah. I got myself confused. 
+> 
+> However, I was expecting to see a significant performance advantage
+> to ethp for this particular case as we did in the previous version.
+> 
+> In the previous version (you posted in reply to v6 of Damon), for ethp we had a significant gain with:
+> 
+> runtime                 orig     rec      (overhead) thp      (overhead) ethp     (overhead) prcl     (overhead)
+> splash2x/ocean_ncp      81.360   81.434   (0.09)     51.157   (-37.12)   66.711   (-18.00)   91.611   (12.60) 
+> 
+> So, in ethp we got roughly half the performance back (at the cost of some of the memory)
+> 
+> That was a result I have been trying to replicate, hence was at the front of my mind!
+> 
+> Any idea why that changed so much? 
+
+Ah, I forgot to explain about this change.  Thank you for let me know.
+
+Overall, ETHP in DAMON-based Operations Schemes RFC v5 shows worse peak
+performance gains.
+
+For example, splash2x/fft shows best case speedup with ETHP for both this
+version and previous version.  The speedup changed from 19% to 12%.  In case of
+splash2x/ocean_ncp, it changed from 18% to only 0.08%.
+
+That said, total performance speedup is improved.  It was 1.83% before, and
+2.21% now.  Also, there are several workloads showing better speedup.  In case
+of parsec3/canneal, the speedup changed from 3.86% to 6.34%.
+
+Also note that ETHP's memory savings for the workloads showing less speedup are
+much improved.  For example, the memory overhead of ETHP for splash2x/ocean_ncp
+was 24.4% before, but only 3.5% now.
+
+This is due to the fact that I didn't update the schemes for the updated DAMON.
+Basically, the effect of the schemes are access pattern dependent.  In this
+case, because DAMON has changed so that it might report access pattern that
+different from that of previous version, the schemes should also be modified to
+make best performance.  However, I didn't update the schemes because those are
+for only proof of the concepts, not for productions.
+
+The change of report was not so huge, fortunately.  I also confirmed this with
+my human eyes by comparing the visualized access patterns of the two version.
+The overall trend (better performance, less memory overhead) also changed only
+subtle.  However, some individual workloads got some remarkable changes.
+
+
+Thanks,
+SeongJae Park
+
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+> 
+> > Thus, the overhead is ``(50.747 - 86.927) / 86.927 = -0.4162``.  In other
+> > words, 41.62% speedup.
+> > 
+> > Also, 5.57% speedup and 7.29% memory overhead is for _total_.  This data shows
+> > it.
+> > 
+> > > > runtime                 orig     rec      (overhead) thp      (overhead) ethp     (overhead) prcl     (overhead)
+> > > > total                   3020.570 3028.080 (0.25)     2852.190 (-5.57)    2953.960 (-2.21)    3276.550 (8.47)      
+> > 
+> > Maybe I made you confused by ambiguously saying this.  Sorry if so.  Or, if I'm
+> > still misunderstanding your point, please let me know.
+> 
+> 
+> > 
+> > 
+> > Thanks,
+> > SeongJae Park
+> >  
+> > [...]
+> 
