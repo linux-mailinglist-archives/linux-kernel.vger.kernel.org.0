@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8E819B1CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2999619B291
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389075AbgDAQiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:38:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37590 "EHLO mail.kernel.org"
+        id S2389596AbgDAQpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:45:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389055AbgDAQiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:38:04 -0400
+        id S2389823AbgDAQpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:45:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25D05214DB;
-        Wed,  1 Apr 2020 16:38:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A964520719;
+        Wed,  1 Apr 2020 16:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759083;
-        bh=ctrYX3pfBTM62WA3edoDko5eDSVbvGqOt2cG3g/6zwI=;
+        s=default; t=1585759509;
+        bh=FJpKdcb6Tyjk/stNLsH5eg81JaWGyK3JQadgmibkM2E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gRPI5tR0qlzBgnnl7mMjTE5A+hSv5440jTV42tnB9meLMNjh47y2Kr1ybo/VCXe/H
-         vzZZpV5af+TqPH9wYtn6rcsyhJx2PHYqJTXRgOEtygoT4LH1gd3O1gLCtmBJMAxXpz
-         yTdj+PdlPkf2uZCQVkjyfeL0MI/07+X65dqQimgs=
+        b=fb871MTD9qPWm2m1d9O/UOo92Kk/52gz+3cu5h4R1lqjqXnEcYYJ4UwxFVWUD7J1/
+         dcQ7KIFrbbtyhGz7NvOLXZSVSNcPndUvZM8IHdP8SYGMJZl0gzGw/NApKM7pyiS+qh
+         y1G2XOXDNdNpFffbSyL1bUraNf79TNEI7hq7g23M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 071/102] Input: raydium_i2c_ts - use true and false for boolean values
+        stable@vger.kernel.org, Edward Cree <ecree@solarflare.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.14 102/148] genirq: Fix reference leaks on irq affinity notifiers
 Date:   Wed,  1 Apr 2020 18:18:14 +0200
-Message-Id: <20200401161544.665703693@linuxfoundation.org>
+Message-Id: <20200401161602.552704822@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Edward Cree <ecree@solarflare.com>
 
-[ Upstream commit 6cad4e269e25dddd7260a53e9d9d90ba3a3cc35a ]
+commit df81dfcfd6991d547653d46c051bac195cd182c1 upstream.
 
-Return statements in functions returning bool should use true or false
-instead of an integer value.
+The handling of notify->work did not properly maintain notify->kref in two
+ cases:
+1) where the work was already scheduled, another irq_set_affinity_locked()
+   would get the ref and (no-op-ly) schedule the work.  Thus when
+   irq_affinity_notify() ran, it would drop the original ref but not the
+   additional one.
+2) when cancelling the (old) work in irq_set_affinity_notifier(), if there
+   was outstanding work a ref had been got for it but was never put.
+Fix both by checking the return values of the work handling functions
+ (schedule_work() for (1) and cancel_work_sync() for (2)) and put the
+ extra ref if the return value indicates preexisting work.
 
-This code was detected with the help of Coccinelle.
+Fixes: cd7eab44e994 ("genirq: Add IRQ affinity notifiers")
+Fixes: 59c39840f5ab ("genirq: Prevent use-after-free and work list corruption")
+Signed-off-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Ben Hutchings <ben@decadent.org.uk>
+Link: https://lkml.kernel.org/r/24f5983f-2ab5-e83a-44ee-a45b5f9300f5@solarflare.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/touchscreen/raydium_i2c_ts.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/irq/manage.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/touchscreen/raydium_i2c_ts.c b/drivers/input/touchscreen/raydium_i2c_ts.c
-index a99fb5cac5a0e..76cdc145c0912 100644
---- a/drivers/input/touchscreen/raydium_i2c_ts.c
-+++ b/drivers/input/touchscreen/raydium_i2c_ts.c
-@@ -466,7 +466,7 @@ static bool raydium_i2c_boot_trigger(struct i2c_client *client)
- 		}
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -224,7 +224,11 @@ int irq_set_affinity_locked(struct irq_d
+ 
+ 	if (desc->affinity_notify) {
+ 		kref_get(&desc->affinity_notify->kref);
+-		schedule_work(&desc->affinity_notify->work);
++		if (!schedule_work(&desc->affinity_notify->work)) {
++			/* Work was already scheduled, drop our extra ref */
++			kref_put(&desc->affinity_notify->kref,
++				 desc->affinity_notify->release);
++		}
+ 	}
+ 	irqd_set(data, IRQD_AFFINITY_SET);
+ 
+@@ -324,7 +328,10 @@ irq_set_affinity_notifier(unsigned int i
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
+ 
+ 	if (old_notify) {
+-		cancel_work_sync(&old_notify->work);
++		if (cancel_work_sync(&old_notify->work)) {
++			/* Pending work had a ref, put that one too */
++			kref_put(&old_notify->kref, old_notify->release);
++		}
+ 		kref_put(&old_notify->kref, old_notify->release);
  	}
  
--	return 0;
-+	return false;
- }
- 
- static bool raydium_i2c_fw_trigger(struct i2c_client *client)
-@@ -492,7 +492,7 @@ static bool raydium_i2c_fw_trigger(struct i2c_client *client)
- 		}
- 	}
- 
--	return 0;
-+	return false;
- }
- 
- static int raydium_i2c_check_path(struct i2c_client *client)
--- 
-2.20.1
-
 
 
