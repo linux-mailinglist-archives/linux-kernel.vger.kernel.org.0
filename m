@@ -2,136 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0819919B7CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 23:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4A0419B7D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 23:41:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733245AbgDAVjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 17:39:24 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:50787 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733220AbgDAVjW (ORCPT
+        id S1733043AbgDAVlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 17:41:03 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33254 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732637AbgDAVlC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 17:39:22 -0400
-Received: by mail-pf1-f202.google.com with SMTP id e18so879593pfl.17
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 14:39:21 -0700 (PDT)
+        Wed, 1 Apr 2020 17:41:02 -0400
+Received: by mail-qk1-f194.google.com with SMTP id v7so1840660qkc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 14:41:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=DdrdrRerOMvkv7vzgvI3ttukeUZ2OpdhnLu+un2eV2s=;
-        b=FeWGGGhwmXwPYJI7fgk1nXVyU38RCP6BF6eOwbkfauA5Lh/S0K7Nc0SIi0FDfzLZf/
-         bBZtA01Z+mycAmiPQF6sdgjk5IWYb+EIHKaBqeFr9fpHlHKvNDviHMxgwnRIyxJ2QR+m
-         FhGsIQS2Qu6FM71Bw7dEx5OsIbtQDambyY4fI9IepQU+Cs0Psa6YkBsLcX8FD8WIcBtp
-         vBLKQP3cpYILo3x9L44bcB2+wn09ds8LLHXl7JYuY3kZHmAMRAlkc7Jl2jKOzPh1N4mo
-         qnZvGI1i19BxSMYD89r0zKAZ5tBFZPiVCrcqrSEvreR+Eu5kKl7jbxfQkEj6DqoueZO0
-         AaSw==
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0RdWMZB6RJn98FXdUSZnSjFG7Se9Mrq9epKZxJ4TlZU=;
+        b=s8lq9KtNGitOmED9ThaQGTb5+/x0rpr3TJKyVHk/V41WssZvfEWTggpVH2Qs+oUCXQ
+         3zhK1WERFaKh2wtJ8usMb18qkenhhMbR6eEUemwBPcyrjYt0sJ5KDo1VpH86xwfB7zid
+         ugcuvNqf8khkGAEZ0WtHEHdhh0tN07ePRggoKzQa3bocnLkfVVfGKEt3fFN6lOSej2IT
+         cIpt8G9f9DnV5fLPC5Ctvsc0/ghdGF018LKW6vNrTQALlHX5wZ6O+/E7rzWH7OIQ66w5
+         /isdkpjq0WzlYNkOrWlcADEiGMujKBbHE+ByHfdaRm18AxBexuz/yBeUoOD1kdzWMDW9
+         vabA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=DdrdrRerOMvkv7vzgvI3ttukeUZ2OpdhnLu+un2eV2s=;
-        b=a8f9WqW/ZESuNvE2UNIFjrtu+DR1DlR3k0aIJnE8UbZPChNOQB8RTAXRbMfuMTgwqa
-         wXtMgujBrB30Ver9GJfTp7WO4DHtLUXN8NjUy95Mzhh6cro7fYYMPCMkw6a8aA5nHNOB
-         6+LH+fBizH8LNSrTbZqCekE1o5maVJbjVt3sHiboMbcwFQ2dfUJU0OgeA7vcp8lERrGl
-         1Fn8U2k/zrGS6wGZ3Y0O1OldJ5BhEWqBAsGukq+UQDIIDyvXbEZih8f9oO4tCBv8jNZU
-         g9xalcXg4sSWkgTuzBtrX/qrt/9J26ya1TZ6db1b1DTeXIazXA6yXqXubCtlkZfybaEn
-         VpfA==
-X-Gm-Message-State: AGi0PuYFlAez0tLUl8mFajLy+EyVXMcV+8N+M/dltadgTRX5eoMKm5mM
-        65BL3Z81ZKb1ZDQk67vBICZdw5YfvCE=
-X-Google-Smtp-Source: APiQypJjIzb/5kmrh3RqCS3HOgTi/GT8cY+ji3kV8XKRQ+4eFtBDnifNrAYKZFtkDdm/KNfMZ+0y3mX+CAA=
-X-Received: by 2002:a17:90a:2147:: with SMTP id a65mr41318pje.176.1585777160964;
- Wed, 01 Apr 2020 14:39:20 -0700 (PDT)
-Date:   Wed,  1 Apr 2020 14:39:03 -0700
-In-Reply-To: <20200401213903.182112-1-dancol@google.com>
-Message-Id: <20200401213903.182112-4-dancol@google.com>
-Mime-Version: 1.0
-References: <20200326200634.222009-1-dancol@google.com> <20200401213903.182112-1-dancol@google.com>
-X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
-Subject: [PATCH v5 3/3] Wire UFFD up to SELinux
-From:   Daniel Colascione <dancol@google.com>
-To:     timmurray@google.com, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
-        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com,
-        jmorris@namei.org
-Cc:     Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0RdWMZB6RJn98FXdUSZnSjFG7Se9Mrq9epKZxJ4TlZU=;
+        b=sBgvrFKkq45B4KGASqb0jy0otMvZRKZ6q8STNm2aTFg0BOQKTIvgHpeRGI6PZr6ugp
+         YGLwNwerBNCVIfPOSA5ysxLufYM0du6W2Cc4pKly5ZSzsiR3hLzMi9aT8lqK6by/m5eV
+         s7cSmslaH8DcB41kkrEwIgZ4m6if2Nc49EhMOuUgUq6Q1dkJ/1IvnM4Y5OtiQtNMac8I
+         xaaeUTdJtB3e7U+J/IdMmWmi3KglR15JyHiP5X5NmaqivOg1sH1KXNTxinnIcqg2iu+d
+         MU7ZFFoUZZ4tpz1GHKow58xAHpvddiGlGiZQLHZ0G26qMJCYEToDLb18eN1I9W+BtRyS
+         ixpQ==
+X-Gm-Message-State: AGi0Pub+85K84boB5Tlsd23p4zF+93dpPUTmtNqxoaB/muZrMrnxUczM
+        lh1X5+LguJ48W2YZkAwht6fEeA==
+X-Google-Smtp-Source: APiQypIxrxO6hwyk+9NdzKlR3uKKCXFELr9z5SQnOCvSSKC8X1SAAg+Q+tEpT2bf897wOLX9h+OxAg==
+X-Received: by 2002:a37:87c7:: with SMTP id j190mr434836qkd.66.1585777261160;
+        Wed, 01 Apr 2020 14:41:01 -0700 (PDT)
+Received: from ovpn-113-105.phx2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id s56sm2456990qtk.9.2020.04.01.14.40.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Apr 2020 14:41:00 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     peterz@infradead.org, mingo@redhat.com
+Cc:     juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        vincent.guittot@linaro.org, rostedt@goodmis.org,
+        bsegall@google.com, mgorman@suse.de, paulmck@kernel.org,
+        tglx@linutronix.de, mpe@ellerman.id.au,
+        James.Bottomley@HansenPartnership.com, deller@gmx.de,
+        linuxppc-dev@lists.ozlabs.org, linux-parisc@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH v2] sched/core: fix illegal RCU from offline CPUs
+Date:   Wed,  1 Apr 2020 17:40:33 -0400
+Message-Id: <20200401214033.8448-1-cai@lca.pw>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change gives userfaultfd file descriptors a real security
-context, allowing policy to act on them.
+From: Peter Zijlstra <peterz@infradead.org>
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
+In the CPU-offline process, it calls mmdrop() after idle entry and the
+subsequent call to cpuhp_report_idle_dead(). Once execution passes the
+call to rcu_report_dead(), RCU is ignoring the CPU, which results in
+lockdep complaining when mmdrop() uses RCU from either memcg or
+debugobjects below.
+
+Fix it by cleaning up the active_mm state from BP instead. Every arch
+which has CONFIG_HOTPLUG_CPU should have already called idle_task_exit()
+from AP. The only exception is parisc because it switches them to
+&init_mm unconditionally (see smp_boot_one_cpu() and smp_cpu_init()),
+but the patch will still work there because it calls mmgrab(&init_mm) in
+smp_cpu_init() and then should call mmdrop(&init_mm) in finish_cpu().
+
+WARNING: suspicious RCU usage
+-----------------------------
+kernel/workqueue.c:710 RCU or wq_pool_mutex should be held!
+
+other info that might help us debug this:
+
+RCU used illegally from offline CPU!
+Call Trace:
+ dump_stack+0xf4/0x164 (unreliable)
+ lockdep_rcu_suspicious+0x140/0x164
+ get_work_pool+0x110/0x150
+ __queue_work+0x1bc/0xca0
+ queue_work_on+0x114/0x120
+ css_release+0x9c/0xc0
+ percpu_ref_put_many+0x204/0x230
+ free_pcp_prepare+0x264/0x570
+ free_unref_page+0x38/0xf0
+ __mmdrop+0x21c/0x2c0
+ idle_task_exit+0x170/0x1b0
+ pnv_smp_cpu_kill_self+0x38/0x2e0
+ cpu_die+0x48/0x64
+ arch_cpu_idle_dead+0x30/0x50
+ do_idle+0x2f4/0x470
+ cpu_startup_entry+0x38/0x40
+ start_secondary+0x7a8/0xa80
+ start_secondary_resume+0x10/0x14
+
+<Peter to sign off here>
+Signed-off-by: Qian Cai <cai@lca.pw>
 ---
- fs/userfaultfd.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
+ arch/powerpc/platforms/powernv/smp.c |  1 -
+ include/linux/sched/mm.h             |  2 ++
+ kernel/cpu.c                         | 18 +++++++++++++++++-
+ kernel/sched/core.c                  |  5 +++--
+ 4 files changed, 22 insertions(+), 4 deletions(-)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 37df7c9eedb1..78ff5d898733 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -76,6 +76,8 @@ struct userfaultfd_ctx {
- 	bool mmap_changing;
- 	/* mm with one ore more vmas attached to this userfaultfd_ctx */
- 	struct mm_struct *mm;
-+	/* The inode that owns this context --- not a strong reference.  */
-+	const struct inode *owner;
- };
+diff --git a/arch/powerpc/platforms/powernv/smp.c b/arch/powerpc/platforms/powernv/smp.c
+index 13e251699346..b2ba3e95bda7 100644
+--- a/arch/powerpc/platforms/powernv/smp.c
++++ b/arch/powerpc/platforms/powernv/smp.c
+@@ -167,7 +167,6 @@ static void pnv_smp_cpu_kill_self(void)
+ 	/* Standard hot unplug procedure */
  
- struct userfaultfd_fork_ctx {
-@@ -1022,8 +1024,10 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
- {
- 	int fd;
+ 	idle_task_exit();
+-	current->active_mm = NULL; /* for sanity */
+ 	cpu = smp_processor_id();
+ 	DBG("CPU%d offline\n", cpu);
+ 	generic_set_cpu_dead(cpu);
+diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+index c49257a3b510..a132d875d351 100644
+--- a/include/linux/sched/mm.h
++++ b/include/linux/sched/mm.h
+@@ -49,6 +49,8 @@ static inline void mmdrop(struct mm_struct *mm)
+ 		__mmdrop(mm);
+ }
  
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, new,
--			      O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure(
-+		"[userfaultfd]", &userfaultfd_fops, new,
-+		O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS),
-+		ctx->owner);
- 	if (fd < 0)
- 		return fd;
- 
-@@ -1945,6 +1949,7 @@ static void init_once_userfaultfd_ctx(void *mem)
- 
- SYSCALL_DEFINE1(userfaultfd, int, flags)
- {
-+	struct file *file;
- 	struct userfaultfd_ctx *ctx;
- 	int fd;
- 
-@@ -1974,8 +1979,25 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	/* prevent the mm struct to be freed */
- 	mmgrab(ctx->mm);
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
--			      O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS));
-+	file = anon_inode_getfile_secure(
-+		"[userfaultfd]", &userfaultfd_fops, ctx,
-+		O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS),
-+		NULL);
-+	if (IS_ERR(file)) {
-+		fd = PTR_ERR(file);
-+		goto out;
-+	}
++void mmdrop(struct mm_struct *mm);
 +
-+	fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
-+	if (fd < 0) {
-+		fput(file);
-+		goto out;
-+	}
+ /*
+  * This has to be called after a get_task_mm()/mmget_not_zero()
+  * followed by taking the mmap_sem for writing before modifying the
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 2371292f30b0..244d30544377 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -3,6 +3,7 @@
+  *
+  * This code is licenced under the GPL.
+  */
++#include <linux/sched/mm.h>
+ #include <linux/proc_fs.h>
+ #include <linux/smp.h>
+ #include <linux/init.h>
+@@ -564,6 +565,21 @@ static int bringup_cpu(unsigned int cpu)
+ 	return bringup_wait_for_ap(cpu);
+ }
+ 
++static int finish_cpu(unsigned int cpu)
++{
++	struct task_struct *idle = idle_thread_get(cpu);
++	struct mm_struct *mm = idle->active_mm;
 +
-+	ctx->owner = file_inode(file);
-+	fd_install(fd, file);
++	/*
++	 * idle_task_exit() will have switched to &init_mm, now
++	 * clean up any remaining active_mm state.
++	 */
++	if (mm != &init_mm)
++		idle->active_mm = &init_mm;
++	mmdrop(mm);
++	return 0;
++}
 +
-+out:
- 	if (fd < 0) {
- 		mmdrop(ctx->mm);
- 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+ /*
+  * Hotplug state machine related functions
+  */
+@@ -1549,7 +1565,7 @@ static struct cpuhp_step cpuhp_hp_states[] = {
+ 	[CPUHP_BRINGUP_CPU] = {
+ 		.name			= "cpu:bringup",
+ 		.startup.single		= bringup_cpu,
+-		.teardown.single	= NULL,
++		.teardown.single	= finish_cpu,
+ 		.cant_stop		= true,
+ 	},
+ 	/* Final state before CPU kills itself */
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index a2694ba82874..8787958339d5 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6200,13 +6200,14 @@ void idle_task_exit(void)
+ 	struct mm_struct *mm = current->active_mm;
+ 
+ 	BUG_ON(cpu_online(smp_processor_id()));
++	BUG_ON(current != this_rq()->idle);
+ 
+ 	if (mm != &init_mm) {
+ 		switch_mm(mm, &init_mm, current);
+-		current->active_mm = &init_mm;
+ 		finish_arch_post_lock_switch();
+ 	}
+-	mmdrop(mm);
++
++	/* finish_cpu(), as ran on the BP, will clean up the active_mm state */
+ }
+ 
+ /*
 -- 
-2.26.0.rc2.310.g2932bb562d-goog
+2.21.0 (Apple Git-122.2)
 
