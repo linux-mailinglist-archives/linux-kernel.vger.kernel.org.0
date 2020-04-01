@@ -2,101 +2,278 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 183F319A2B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 02:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9569119A2BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 02:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731593AbgDAADW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 20:03:22 -0400
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:37002 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728840AbgDAADV (ORCPT
+        id S1731620AbgDAAEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 20:04:14 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:52733 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729514AbgDAAEO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 20:03:21 -0400
-Received: by mail-qv1-f66.google.com with SMTP id n1so11936604qvz.4;
-        Tue, 31 Mar 2020 17:03:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RmTvz/L6YmOrh3p07+F8l4GXjEVQNak2kA1fSgQ4Mjo=;
-        b=aIxiKBCsylb6yX3xKI+LsQsqD0w6HyUuOtycBCSZkXBMPqOnHc2TtCNpmmKNjSX4jz
-         E6TkCysPrh15L662DEQtnYOMpbMzgrTHXK5wlH1ZxSK49B0DvmybzIoSoUVjJ54XGjVF
-         Hrc0IC9VXLt5tbsUM8us6woO1kz1OpIhbRAbP2KvBxV6+vX0k2ozWBnhNbWvXR7/LKi5
-         +Y657UvUeShXYWfIsXFmeCc+OvGOrcRJrxnUCjrCRGiwdY6qwkrtOoIq+8UEDgFkGeli
-         xtrnkBU+0ImdgeOiXjy+I3Utt/iM9GAvVf/qRtf7hFA66IKrs8PioREy9drD+gIIklg8
-         KU6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RmTvz/L6YmOrh3p07+F8l4GXjEVQNak2kA1fSgQ4Mjo=;
-        b=mwGJJuk+SrSZupi3cNjWvRmI1zo7U8b1qRu2JiY7qSmY5mRIvHlM94NEDHrtQNxIHs
-         e+9+b7Wsy2j135PfvaSDKJa6tzGt3Mwq+katmiJYjBh5Y2DMKB1hezRLK2FrgVQCsoYL
-         yWvuGZtUfJxOov2++AB0Bfe0iBsKSklUiqXchMUmL8a7cuQmPrfnap8aFO3C2btnhxA4
-         /Icwjq2IaFCjfdi0cuMJ+a2LmN1RlgEkza6JVt9+SO80q/SCqjTRGXQzx9aU+RQwfqUK
-         Ea4XV/JFlNHnHLhsPrPHENnzHE/D01BolBpBxlcTlBcqhHeO4tuCMBcBFSgo+SAwLRav
-         7TQQ==
-X-Gm-Message-State: ANhLgQ2lQ627OkPXg9YXxxoxXZU9VNrXHUM1v2dV6f0u4u2HrDmT35rP
-        J6ZrK3dKfzPQs1ZzOAE7CF2Bdg581XT9yVdGHqw=
-X-Google-Smtp-Source: ADFU+vu6cimqTEAdtf39u8/T8WKKgNSMwihn5EK0r1F+dpBI+yAtS8ffjb/s/DQe8an3NADwSJckknxiktPrBP5Bf4E=
-X-Received: by 2002:a0c:bc15:: with SMTP id j21mr18213275qvg.228.1585699398382;
- Tue, 31 Mar 2020 17:03:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200331215536.34162-1-slava@bacher09.org>
-In-Reply-To: <20200331215536.34162-1-slava@bacher09.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Tue, 31 Mar 2020 17:03:07 -0700
-Message-ID: <CAEf4BzZXtCPhhntbgrqL0z9aX4yrNUXfFZPk+qb_5-+Nx6PRzw@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf] kbuild: fix dependencies for DEBUG_INFO_BTF
-To:     Slava Bacherikov <slava@bacher09.org>
-Cc:     Andrii Nakryiko <andriin@fb.com>,
-        Kees Cook <keescook@chromium.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        kernel-hardening@lists.openwall.com,
-        Liu Yiding <liuyd.fnst@cn.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 31 Mar 2020 20:04:14 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585699453; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=ZBJAAaa3TvwvVz/4rY37gGSVlw1f3QzL6lY3lGWRPEg=; b=nPZwfgeTtNO/xInx2PfAvI1/tnr4hi/m0TqUm8V3BH2ubWxbF0iNNHqaJKJQzzN+kudMZkoG
+ PLC1XNd88HlX8I4lIlFOYC3QDttKk8Qxsl2BH46AfxNtq5IKxMwZ8N3evNbfSHhmj4LJ5LJ7
+ +Mf+MOeEymzgUpfe1IvOtP7u1P0=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e83da75.7f8c32be4180-smtp-out-n02;
+ Wed, 01 Apr 2020 00:04:05 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0CD62C44788; Wed,  1 Apr 2020 00:04:05 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 99CA7C433D2;
+        Wed,  1 Apr 2020 00:04:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99CA7C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        bjorn.andersson@linaro.org
+Cc:     psodagud@codeaurora.org, tsoni@codeaurora.org,
+        sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v2 1/2] remoteproc: Add character device interface
+Date:   Tue, 31 Mar 2020 17:03:57 -0700
+Message-Id: <1585699438-14394-1-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 2:57 PM Slava Bacherikov <slava@bacher09.org> wrote:
->
-> Currently turning on DEBUG_INFO_SPLIT when DEBUG_INFO_BTF is also
-> enabled will produce invalid btf file, since gen_btf function in
-> link-vmlinux.sh script doesn't handle *.dwo files.
->
-> Enabling DEBUG_INFO_REDUCED will also produce invalid btf file, and
-> using GCC_PLUGIN_RANDSTRUCT with BTF makes no sense.
->
-> Signed-off-by: Slava Bacherikov <slava@bacher09.org>
-> Reported-by: Jann Horn <jannh@google.com>
-> Reported-by: Liu Yiding <liuyd.fnst@cn.fujitsu.com>
-> Fixes: e83b9f55448a ("kbuild: add ability to generate BTF type info for vmlinux")
-> ---
+Add the character device interface for userspace applications.
+This interface can be used in order to boot up and shutdown
+remote subsystems. Currently there is only a sysfs interface
+which the userspace clients can use. If a usersapce application
+crashes after booting the remote processor does not get any
+indication about the crash. It might still assume that the
+application is running. For example modem uses remotefs service
+to fetch data from disk/flash memory. If the remotefs service
+crashes, modem keeps on requesting data which might lead to a
+crash. Adding a character device interface makes the remote
+processor tightly coupled with the user space application.
+A crash of the application leads to a close on the file descriptors
+therefore shutting down the remoteproc.
 
-LGTM, but let's wait on Kees about COMPILE_TEST dependency...
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+---
+ drivers/remoteproc/Kconfig               |   9 +++
+ drivers/remoteproc/Makefile              |   1 +
+ drivers/remoteproc/remoteproc_cdev.c     | 100 +++++++++++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_internal.h |  22 +++++++
+ include/linux/remoteproc.h               |   2 +
+ 5 files changed, 134 insertions(+)
+ create mode 100644 drivers/remoteproc/remoteproc_cdev.c
 
-Acked-by: Andrii Nakryiko <andriin@fb.com>
-
->  lib/Kconfig.debug | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index f61d834e02fe..9ae288e2a6c0 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -223,6 +223,7 @@ config DEBUG_INFO_DWARF4
->  config DEBUG_INFO_BTF
->         bool "Generate BTF typeinfo"
->         depends on DEBUG_INFO
-> +       depends on !DEBUG_INFO_SPLIT && !DEBUG_INFO_REDUCED && !GCC_PLUGIN_RANDSTRUCT
->         help
->           Generate deduplicated BTF type information from DWARF debug info.
->           Turning this on expects presence of pahole tool, which will convert
-> --
-> 2.24.1
->
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index de3862c..6374b79 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -14,6 +14,15 @@ config REMOTEPROC
+ 
+ if REMOTEPROC
+ 
++config REMOTEPROC_CDEV
++	bool "Remoteproc character device interface"
++	help
++	  Say y here to have a character device interface for Remoteproc
++	  framework. Userspace can boot/shutdown remote processors through
++	  this interface.
++
++	  It's safe to say N if you don't want to use this interface.
++
+ config IMX_REMOTEPROC
+ 	tristate "IMX6/7 remoteproc support"
+ 	depends on ARCH_MXC
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index e30a1b1..b7d4f77 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -9,6 +9,7 @@ remoteproc-y				+= remoteproc_debugfs.o
+ remoteproc-y				+= remoteproc_sysfs.o
+ remoteproc-y				+= remoteproc_virtio.o
+ remoteproc-y				+= remoteproc_elf_loader.o
++obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+ obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+ obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
+ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+new file mode 100644
+index 0000000..8182bd1
+--- /dev/null
++++ b/drivers/remoteproc/remoteproc_cdev.c
+@@ -0,0 +1,100 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Character device interface driver for Remoteproc framework.
++ *
++ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/cdev.h>
++#include <linux/fs.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/remoteproc.h>
++
++#include "remoteproc_internal.h"
++
++#define NUM_RPROC_DEVICES	64
++static dev_t rproc_cdev;
++static DEFINE_IDA(cdev_minor_ida);
++
++static int rproc_cdev_open(struct inode *inode, struct file *file)
++{
++	struct rproc *rproc;
++
++	rproc = container_of(inode->i_cdev, struct rproc, char_dev);
++
++	if (!rproc)
++		return -EINVAL;
++
++	if (rproc->state == RPROC_RUNNING)
++		return -EBUSY;
++
++	return rproc_boot(rproc);
++}
++
++static int rproc_cdev_release(struct inode *inode, struct file *file)
++{
++	struct rproc *rproc;
++
++	rproc = container_of(inode->i_cdev, struct rproc, char_dev);
++
++	if (!rproc || rproc->state != RPROC_RUNNING)
++		return -EINVAL;
++
++	rproc_shutdown(rproc);
++
++	return 0;
++}
++
++static const struct file_operations rproc_fops = {
++	.open = rproc_cdev_open,
++	.release = rproc_cdev_release,
++};
++
++int rproc_char_device_add(struct rproc *rproc)
++{
++	int ret, minor;
++	dev_t cdevt;
++
++	minor = ida_simple_get(&cdev_minor_ida, 0, NUM_RPROC_DEVICES,
++			       GFP_KERNEL);
++	if (minor < 0) {
++		dev_err(&rproc->dev, "%s: No more minor numbers left! rc:%d\n",
++			__func__, minor);
++		return -ENODEV;
++	}
++
++	cdev_init(&rproc->char_dev, &rproc_fops);
++	rproc->char_dev.owner = THIS_MODULE;
++
++	cdevt = MKDEV(MAJOR(rproc_cdev), minor);
++	ret = cdev_add(&rproc->char_dev, cdevt, 1);
++	if (ret < 0)
++		ida_simple_remove(&cdev_minor_ida, minor);
++
++	rproc->dev.devt = cdevt;
++	return ret;
++}
++
++void rproc_char_device_remove(struct rproc *rproc)
++{
++	__unregister_chrdev(MAJOR(rproc->dev.devt), MINOR(rproc->dev.devt), 1,
++			    "rproc");
++	ida_simple_remove(&cdev_minor_ida, MINOR(rproc->dev.devt));
++}
++
++void __init rproc_init_cdev(void)
++{
++	int ret;
++
++	ret = alloc_chrdev_region(&rproc_cdev, 0, NUM_RPROC_DEVICES, "rproc");
++	if (ret < 0) {
++		pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
++		return;
++	}
++}
++
++void __exit rproc_exit_cdev(void)
++{
++	__unregister_chrdev(MAJOR(rproc_cdev), 0, NUM_RPROC_DEVICES, "rproc");
++}
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 493ef92..28d61a1 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -47,6 +47,27 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+ int rproc_init_sysfs(void);
+ void rproc_exit_sysfs(void);
+ 
++#ifdef CONFIG_REMOTEPROC_CDEV
++void rproc_init_cdev(void);
++void rproc_exit_cdev(void);
++int rproc_char_device_add(struct rproc *rproc);
++void rproc_char_device_remove(struct rproc *rproc);
++#else
++static inline void rproc_init_cdev(void)
++{
++}
++static inline void rproc_exit_cdev(void)
++{
++}
++static inline int rproc_char_device_add(struct rproc *rproc)
++{
++	return 0;
++}
++static inline void  rproc_char_device_remove(struct rproc *rproc)
++{
++}
++#endif
++
+ void rproc_free_vring(struct rproc_vring *rvring);
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 
+@@ -63,6 +84,7 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+ struct rproc_mem_entry *
+ rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
+ 
++
+ static inline
+ int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+ {
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 16ad666..c4ca796 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -37,6 +37,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/mutex.h>
++#include <linux/cdev.h>
+ #include <linux/virtio.h>
+ #include <linux/completion.h>
+ #include <linux/idr.h>
+@@ -514,6 +515,7 @@ struct rproc {
+ 	bool auto_boot;
+ 	struct list_head dump_segments;
+ 	int nb_vdev;
++	struct cdev char_dev;
+ };
+ 
+ /**
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
