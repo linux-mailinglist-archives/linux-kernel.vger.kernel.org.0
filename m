@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BB6019AFDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AA8319AFEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387408AbgDAQVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:21:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44106 "EHLO mail.kernel.org"
+        id S1732256AbgDAQW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:22:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733249AbgDAQVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:21:13 -0400
+        id S2387477AbgDAQWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:22:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0E3B20658;
-        Wed,  1 Apr 2020 16:21:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 791B4214D8;
+        Wed,  1 Apr 2020 16:22:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758073;
-        bh=LmBurxMh/Sd9bf9gYej2U7KzARDh0ExFrqIUqgthp0U=;
+        s=default; t=1585758142;
+        bh=62H8q4wS2U8H3WVXq49tHHl0V1M2VnJlDoEkzXF2fzQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ho4Lk+nC0r01Gf4TDGFJ/ziwLcH19ww4jmbV0ZPQvtECvgJbpE+AuIb4I3M869GAy
-         NqqWtIE225dkqwFNY5fYoxCVRzR+5E0F4iq0Hb8C6EhI97BSvG371DaJY+X7wFRzvO
-         JR/SmcPIxW7mc3wsPdmp4oEwVz/wpPvpnEdkHLl4=
+        b=xhZRbZqp5WX2wFoxg3mxHJ+E/Y6NBqte2REwMy+IMYywOL5c0LvV7jhjD6z+LUsFF
+         JRyGTIJF+XJHTbiDTGxYLy7x8RbBv73YrpbJa9HdSsVsRLM1ObbKbbDbMUpqjRvyDd
+         +T/ziMgQRE3G7fxc8TnR+6Jm/nkwM9rng/70JmrU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 5.5 28/30] ARM: dts: sun8i: r40: Move AHCI device node based on address order
-Date:   Wed,  1 Apr 2020 18:17:32 +0200
-Message-Id: <20200401161435.714652280@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 5.4 05/27] vt: ioctl, switch VT_IS_IN_USE and VT_BUSY to inlines
+Date:   Wed,  1 Apr 2020 18:17:33 +0200
+Message-Id: <20200401161419.358817229@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
-References: <20200401161414.345528747@linuxfoundation.org>
+In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
+References: <20200401161414.352722470@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +42,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Jiri Slaby <jslaby@suse.cz>
 
-commit fe3a04824f75786e39ed74e82fb6cb2534c95fe4 upstream.
+commit e587e8f17433ddb26954f0edf5b2f95c42155ae9 upstream.
 
-When the AHCI device node was added, it was added in the wrong location
-in the device tree file. The device nodes should be sorted by register
-address.
+These two were macros. Switch them to static inlines, so that it's more
+understandable what they are doing.
 
-Move the device node to before EHCI1, where it belongs.
-
-Fixes: 41c64d3318aa ("ARM: dts: sun8i: r40: add sata node")
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Link: https://lore.kernel.org/r/20200219073951.16151-2-jslaby@suse.cz
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/sun8i-r40.dtsi |   21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ drivers/tty/vt/vt_ioctl.c |   29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
---- a/arch/arm/boot/dts/sun8i-r40.dtsi
-+++ b/arch/arm/boot/dts/sun8i-r40.dtsi
-@@ -275,6 +275,16 @@
- 			resets = <&ccu RST_BUS_CE>;
- 		};
+--- a/drivers/tty/vt/vt_ioctl.c
++++ b/drivers/tty/vt/vt_ioctl.c
+@@ -40,10 +40,25 @@
+ #include <linux/selection.h>
  
-+		ahci: sata@1c18000 {
-+			compatible = "allwinner,sun8i-r40-ahci";
-+			reg = <0x01c18000 0x1000>;
-+			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_SATA>, <&ccu CLK_SATA>;
-+			resets = <&ccu RST_BUS_SATA>;
-+			reset-names = "ahci";
-+			status = "disabled";
-+		};
+ char vt_dont_switch;
+-extern struct tty_driver *console_driver;
+ 
+-#define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
+-#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_is_sel(vc_cons[i].d))
++static inline bool vt_in_use(unsigned int i)
++{
++	extern struct tty_driver *console_driver;
 +
- 		ehci1: usb@1c19000 {
- 			compatible = "allwinner,sun8i-r40-ehci", "generic-ehci";
- 			reg = <0x01c19000 0x100>;
-@@ -566,17 +576,6 @@
- 			#size-cells = <0>;
- 		};
++	return console_driver->ttys[i] && console_driver->ttys[i]->count;
++}
++
++static inline bool vt_busy(int i)
++{
++	if (vt_in_use(i))
++		return true;
++	if (i == fg_console)
++		return true;
++	if (vc_is_sel(vc_cons[i].d))
++		return true;
++
++	return false;
++}
  
--		ahci: sata@1c18000 {
--			compatible = "allwinner,sun8i-r40-ahci";
--			reg = <0x01c18000 0x1000>;
--			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&ccu CLK_BUS_SATA>, <&ccu CLK_SATA>;
--			resets = <&ccu RST_BUS_SATA>;
--			reset-names = "ahci";
--			status = "disabled";
--
--		};
--
- 		gmac: ethernet@1c50000 {
- 			compatible = "allwinner,sun8i-r40-gmac";
- 			syscon = <&ccu>;
+ /*
+  * Console (vt and kd) routines, as defined by USL SVR4 manual, and by
+@@ -289,7 +304,7 @@ static int vt_disallocate(unsigned int v
+ 	int ret = 0;
+ 
+ 	console_lock();
+-	if (VT_BUSY(vc_num))
++	if (vt_busy(vc_num))
+ 		ret = -EBUSY;
+ 	else if (vc_num)
+ 		vc = vc_deallocate(vc_num);
+@@ -311,7 +326,7 @@ static void vt_disallocate_all(void)
+ 
+ 	console_lock();
+ 	for (i = 1; i < MAX_NR_CONSOLES; i++)
+-		if (!VT_BUSY(i))
++		if (!vt_busy(i))
+ 			vc[i] = vc_deallocate(i);
+ 		else
+ 			vc[i] = NULL;
+@@ -648,7 +663,7 @@ int vt_ioctl(struct tty_struct *tty,
+ 			state = 1;	/* /dev/tty0 is always open */
+ 			for (i = 0, mask = 2; i < MAX_NR_CONSOLES && mask;
+ 							++i, mask <<= 1)
+-				if (VT_IS_IN_USE(i))
++				if (vt_in_use(i))
+ 					state |= mask;
+ 			ret = put_user(state, &vtstat->v_state);
+ 		}
+@@ -661,7 +676,7 @@ int vt_ioctl(struct tty_struct *tty,
+ 	case VT_OPENQRY:
+ 		/* FIXME: locking ? - but then this is a stupid API */
+ 		for (i = 0; i < MAX_NR_CONSOLES; ++i)
+-			if (! VT_IS_IN_USE(i))
++			if (!vt_in_use(i))
+ 				break;
+ 		uival = i < MAX_NR_CONSOLES ? (i+1) : -1;
+ 		goto setint;		 
 
 
