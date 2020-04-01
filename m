@@ -2,112 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7B0B19A846
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A5619A84D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732123AbgDAJHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 05:07:09 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:34378 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726536AbgDAJHJ (ORCPT
+        id S1731749AbgDAJJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 05:09:13 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:50824 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbgDAJJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 05:07:09 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03192xIJ005415;
-        Wed, 1 Apr 2020 11:06:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=pUAdDfLled6exIm4UEQprNwjkf9bN4q2badOB4c9Qto=;
- b=L8xIjD8MknhHPdT0rYy8MHIoHmlmI1rzGA91bzR/kSpQLIGCIB++70TZcLOkQUAL/5f0
- wqt3IXVbg6WG2RPqtp3KtS1Weiv5FeWtwBXDcAUFCHKxaU9l9sjyUyL6W7l+ZllirYON
- liszlxjdtfxgpQ7kykCuFWC68Nxmh4YOlO6EL/Bijt0jcEGi9nvT1YfRw99xQlGZBceR
- hmpxZnTGkwAiQ/joABX5oyyc/z57neg/RZClbtgP2xzrA/pmufv0AsHXxBGWu/UOGA4a
- yPqmudtlIVqLZ87RjHjqjpYfNcxtAzTclnzgSNos+qbSaV6yeuSx2Tz/RcNxWZm34uz+ RQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 301xbmm2xc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 01 Apr 2020 11:06:50 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7597310002A;
-        Wed,  1 Apr 2020 11:06:44 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5871221D6FA;
-        Wed,  1 Apr 2020 11:06:44 +0200 (CEST)
-Received: from lmecxl0912.tpe.st.com (10.75.127.46) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Apr
- 2020 11:06:39 +0200
-Subject: Re: [PATCH v2 8/8] dt-bindings: arm: stm32: document
- lxa,stm32mp157c-mc1 compatible
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC:     <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200326220213.28632-1-a.fatoum@pengutronix.de>
- <20200326220213.28632-8-a.fatoum@pengutronix.de>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <c0be1d2f-8e89-6786-86be-0f851e8b3441@st.com>
-Date:   Wed, 1 Apr 2020 11:06:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 1 Apr 2020 05:09:12 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0319937l056756;
+        Wed, 1 Apr 2020 04:09:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1585732143;
+        bh=BapP4GEMaD/hKUSz20udM/d8F9FfG6LyZICrAcSFl2c=;
+        h=From:To:CC:Subject:Date;
+        b=IIJj23PNMe0sCJogXud2CaB/x2DWAOiQIeJzYchJ1JVUXOCg2gT1+iH6Z/oM4NZMp
+         GrBjGSvVD0OR5xnj5n+Ugjp3TIibTEXHh7RRvAJDQg/Xss/AjRrEt+qDjE/J7LW+5h
+         NnKr/4kJH0r1G89OOknqr8MYMAK0LwCGAcRcFp0g=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 031993CR094643
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 1 Apr 2020 04:09:03 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 1 Apr
+ 2020 04:09:03 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 1 Apr 2020 04:09:02 -0500
+Received: from a0230074-Latitude-E7470.ent.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03198xRE032742;
+        Wed, 1 Apr 2020 04:08:59 -0500
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+CC:     <mark.rutland@arm.com>, <robh+dt@kernel.org>, <tony@atomide.com>,
+        <bcousson@baylibre.com>, <faiz_abbas@ti.com>
+Subject: [PATCH] ARM: dts: am574x-idk: Disable m_can node
+Date:   Wed, 1 Apr 2020 14:38:58 +0530
+Message-ID: <20200401090858.18523-1-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20200326220213.28632-8-a.fatoum@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ahmad
+Since commit bcbb63b80284 ("ARM: dts: dra7: Separate AM57 dtsi files"),
+the m_can node was inherited from dra76x.dtsi but the IP is not
+connected on the idk board. Disable the node to reflect this.
 
-On 3/26/20 11:02 PM, Ahmad Fatoum wrote:
-> Document the STM32MP157 based Linux Automation MC-1 device tree
-> compatible.
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-> ---
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+---
+ arch/arm/boot/dts/am574x-idk.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Sorry my mailer has lost the cover-letter mail, so consider I respond to 
-to the whole series.
+diff --git a/arch/arm/boot/dts/am574x-idk.dts b/arch/arm/boot/dts/am574x-idk.dts
+index fa0088025b2c..85c95cc551dd 100644
+--- a/arch/arm/boot/dts/am574x-idk.dts
++++ b/arch/arm/boot/dts/am574x-idk.dts
+@@ -40,3 +40,7 @@
+ 	status = "okay";
+ 	dual_emac;
+ };
++
++&m_can0 {
++	status = "disabled";
++};
+-- 
+2.17.1
 
-Thanks for adding a new stm32 board and more importantly to have 
-standardize pins name, I appreciate it.
-
-Series applied on stm32-next.
-
-Regards
-Alex
-
-
->   v1 -> v2:
->   - Added Rob's Ack
-> ---
->   Documentation/devicetree/bindings/arm/stm32/stm32.yaml | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-> index 1fcf306bd2d1..71ea3f04ab9c 100644
-> --- a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-> +++ b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-> @@ -38,6 +38,7 @@ properties:
->         - items:
->             - enum:
->                 - arrow,stm32mp157a-avenger96 # Avenger96
-> +              - lxa,stm32mp157c-mc1
->                 - st,stm32mp157c-ed1
->                 - st,stm32mp157a-dk1
->                 - st,stm32mp157c-dk2
-> 
