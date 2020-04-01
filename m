@@ -2,119 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E50B19B07E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC88619B3F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387690AbgDAQ1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:27:16 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37763 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387986AbgDAQ1O (ORCPT
+        id S2388170AbgDAQ3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:29:16 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:58319 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388148AbgDAQ3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:27:14 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g23so155638otq.4
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:27:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura-hr.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z6etzW/Wlmpzc10GfWj1n2fg+ZHJsESBLfASbR0Ngog=;
-        b=Rh7xnvV1Jjpe8HCPzeDbsT0qlX2Dq/F5CNcch7nJmW88seFl28DzOKq779NGl4fJP6
-         kZcarkrWvs2xKDSx/BKS4ljBBHTZa3AQNaNYPmVX3J+DPyequ5mn+R0wFp4kv6c27QDe
-         dg/2ayJkHU7oOEp99SLCGG+uWwa/nTVSGu3cN2AleL7/RTCojjlngMZJzKMflgnsnK04
-         5BkwdhtHZqaZJEdYHDQV7PVK/6+woacjQ1GYHHIcQTL04n4/Wfzv3fJrX9Lqy62tuMQE
-         RF+m+hIQF1zG9DSV9BNMDXSI/UKxUxCVMOae3jn6P5+1X6w6nadDPnnmashubwidiQ8N
-         Rz0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z6etzW/Wlmpzc10GfWj1n2fg+ZHJsESBLfASbR0Ngog=;
-        b=U47D1hJLX//acGBLKAMN24Z53EOjMjrW0bMYJ6hzBxgdCQPLzJkDPrhL8uyQTF7S9D
-         P6W7W082fADZe6fnOhrLf1qID4K5zUlQclSavbyELbWRYK8fjUDEMJj4EpDgltbUAbVe
-         FQoex9/7SwKUn64fom59rLo5wkBH1dTQkqo9Uzd2cakE9ojGe35TzH/8QDgPe5Hxkhi8
-         ybHKZ1jc5AdPEVwlgBglemMSknfAQTGAzrJV+vwxvpNiP+pgnogSfcUDZVkRrNnpEcps
-         1yBQkdncCzOeeQju6L9oUGbhhcbRTvtzGUsTRjUL6ekeNyEEwR+EGyzQoz9il/6GXhC4
-         LdTQ==
-X-Gm-Message-State: ANhLgQ0DuCwTVwrxse9W5PSuKTKuw08sEEE6BuR+4dW0LLfAGqJmkC1q
-        rdqHsnUkUO7iuedcYBguMPeW36pzbFIlHdoNMrfoWGqBpGQ=
-X-Google-Smtp-Source: ADFU+vvKgnFp9rspmykzhEanYhz/OKqP05HsLNsMveCdWplY4tf3BFByR2bGW/mxVNvhQGG+HpVk5gUY5nxF4PrgO+U=
-X-Received: by 2002:a05:6830:18eb:: with SMTP id d11mr17642312otf.243.1585758433464;
- Wed, 01 Apr 2020 09:27:13 -0700 (PDT)
+        Wed, 1 Apr 2020 12:29:11 -0400
+Received: from envy ([82.207.223.251]) by mrelayeu.kundenserver.de (mreue106
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1N5W0q-1jHt2y0YtW-016w4x; Wed, 01
+ Apr 2020 18:28:54 +0200
+Message-ID: <9aea760f9abdd2f90f36642af77de7bfae719485.camel@richard-neumann.de>
+Subject: Re: [PATCH v4 2/4] SFH: PCI driver to add support of AMD sensor
+ fusion Hub using HID framework
+From:   Richard Neumann <mail@richard-neumann.de>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Shah, Nehal-bakulchandra" <nehal-bakulchandra.shah@amd.com>
+Cc:     Sandeep Singh <Sandeep.Singh@amd.com>, Shyam-sundar.S-k@amd.com,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Date:   Wed, 01 Apr 2020 18:28:51 +0200
+In-Reply-To: <CAHp75Vfr6q_H6z6tRFfaKedF7oR7nhmZvRWL4mxx3W7uypUFvA@mail.gmail.com>
+References: <1582779537-25662-1-git-send-email-Sandeep.Singh@amd.com>
+         <1582779537-25662-3-git-send-email-Sandeep.Singh@amd.com>
+         <4fe47b0323c1d65d429ee89b000e8bfcd984495f.camel@richard-neumann.de>
+         <896f84bc-f0d6-59a5-c894-809695aa348f@amd.com>
+         <CAHp75Vfr6q_H6z6tRFfaKedF7oR7nhmZvRWL4mxx3W7uypUFvA@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-JMpIYctbEoNFnW+rx2oI"
+User-Agent: Evolution 3.36.1 
 MIME-Version: 1.0
-References: <20200330164328.2944505-1-robert.marko@sartura.hr>
- <20200330164328.2944505-2-robert.marko@sartura.hr> <20200331163103.GA27585@bogus>
- <CA+HBbNEnH+0g0GK+xMGF48vJbLH3Ud2VY6yDOAxdgbRra3Y25A@mail.gmail.com> <CAL_JsqL_V6Lf3-eGoL454Gtgyp7a4hBo_2SXyq1jWfqDoXdXsQ@mail.gmail.com>
-In-Reply-To: <CAL_JsqL_V6Lf3-eGoL454Gtgyp7a4hBo_2SXyq1jWfqDoXdXsQ@mail.gmail.com>
-From:   Robert Marko <robert.marko@sartura.hr>
-Date:   Wed, 1 Apr 2020 18:27:02 +0200
-Message-ID: <CA+HBbNEcrHgB1_ydaOaPKEWB6L6vrWNf=DYxt5YwdCoqYpLEqw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] dt-bindings: phy-qcom-ipq4019-usb: add binding document
-To:     Rob Herring <robh@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, John Crispin <john@phrozen.org>,
-        Luka Perkov <luka.perkov@sartura.hr>
-Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:/Iuh6Wc2OWUWANhg+i5sa8DX8+N5Q471sfzV1dJZGtvhNgn30bW
+ WFNUEw83jU+/rRD8GACG8t2TGf2kw4Z5QQLxVaB3MvjdmW+0A8XTSl1hI2iTfdflWXmcfYH
+ 1IwhXyqvBX/2rCAP5zojzlREeoMLx4pLRZg6+TbOXwHSofssNiK+0ubQ27EHfVP+wpjgfDE
+ 9haVSMVl1addbBrysAL7w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:BEgHpqVQWuA=:eab8Bjm6U04XClhfM96ei2
+ 6eVrEtmoO/i+1Z0ybln3l54Ic5d8P0vyqSGtUqDdZB+rHtFjXTtH07Hz5ZKah2Up5iX5Lo9zx
+ dWBBBxAq3tM2LhPhpwLvl25KM/fiw79mo64WUjY4SLGdy+D2FX7b5mTtRPuBCY+u06nIbBtkd
+ ZdUuVhPde03VpLsKqprLsyBP96JXvcWslukQVjTzJP9/AIaw6Mqqm5rZa/YSxck8aAYoqh5PG
+ 4f+cMMdZU89i2DRM3SAKN5MwZw2WPrRXBKHgiAZByC5834bmS2/WwbmaNjnAUKmfBvYW4VTn8
+ FixF/Of2X2CK3RXKiOx/SitiO5F76BadLahtiLOR7bM++gUyHdkbsm7sKqS2DFh4fUSdBQMNd
+ mZLHzHT9hdqNhIp224x/VeQzByHZwaPegkzUv7xWeU2QNIFAscRqcV1AooEKAAHTEBcBOyNay
+ OniuUrU51qLrVzVRZif/oO4dBoYVaHezOcZo6j8boCuTeCrpoRxqkM01iSNREWvyAc5mX06Sl
+ /kfXvsksupRk669Q08Oi/lMJwXgNaFFWryEs2nNtE/X2/FKmoPXaWhNHy8JGbntNkRovKqt6h
+ kb1ccpgMV5Il06Drok+Vcz0rNjsEMvzl6zMF+8QymF30Voc1Fo1JM7CYP4tPykr5JFhRv4Kr8
+ k9jTU2x8QxkEGuvAs+uSHJeH/Sc4d8uoLnrVw6ZKwzCMZ1qk4tK60ly4fkYe58OLQdBQvO3LX
+ eJyBw2xDeHlfCsiD1ZFPe+SSXskptFLDQ0lgJbwoE52Xkmy+ntyZWo39lQnBJlPLrPqzARLd2
+ sMeTVIZRzPwwOnT4o4/r/iRAAGDDqLL5Tw5Ts01zYC7APWmfooBVR0QejZXowu75yG0HU/d
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 1, 2020 at 5:45 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Tue, Mar 31, 2020 at 10:39 AM Robert Marko <robert.marko@sartura.hr> wrote:
-> >
-> > On Tue, Mar 31, 2020 at 6:31 PM Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Mon, 30 Mar 2020 18:43:29 +0200, Robert Marko wrote:
-> > > > This patch adds the binding documentation for the HS/SS USB PHY found
-> > > > inside Qualcom Dakota SoCs.
-> > > >
-> > > > Signed-off-by: John Crispin <john@phrozen.org>
-> > > > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> > > > Cc: Luka Perkov <luka.perkov@sartura.hr>
-> > > > ---
-> > > > Changes from v4 to v5:
-> > > > * Replace tabs with whitespaces
-> > > > * Add maintainer property
-> > > >
-> > > >  .../bindings/phy/qcom-usb-ipq4019-phy.yaml    | 48 +++++++++++++++++++
-> > > >  1 file changed, 48 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
-> > > >
-> > >
-> > > My bot found errors running 'make dt_binding_check' on your patch:
-> > >
-> > > Error: Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.example.dts:21.25-26 syntax error
-> > > FATAL ERROR: Unable to parse input tree
-> > > scripts/Makefile.lib:311: recipe for target 'Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.example.dt.yaml' failed
-> > > make[1]: *** [Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.example.dt.yaml] Error 1
-> > > make[1]: *** Waiting for unfinished jobs....
-> > > Makefile:1262: recipe for target 'dt_binding_check' failed
-> > > make: *** [dt_binding_check] Error 2
-> > >
-> > > See https://patchwork.ozlabs.org/patch/1264091
-> > >
-> > > If you already ran 'make dt_binding_check' and didn't see the above
-> > > error(s), then make sure dt-schema is up to date:
-> > >
-> > > pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
-> > >
-> > > Please check and re-submit.
-> > Hi Rob,
-> > I tested locally before submitting and it will pass.
->
-> Impossible. Your example has defines, but there are no include files listed.
-I don't know how it passed, but I definitively tested with make
-dtbs_check and then make dt_binding_check
-It could possibly be old DT schema files, I updated today and now it pops up.
-I will fix it and send a new version ASAP.
 
-Thanks
->
-> Rob
+--=-JMpIYctbEoNFnW+rx2oI
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Am Dienstag, den 31.03.2020, 20:24 +0300 schrieb Andy Shevchenko:
+> On Tue, Mar 31, 2020 at 4:26 PM Shah, Nehal-bakulchandra
+> <nehal-bakulchandra.shah@amd.com> wrote:
+> > On 3/31/2020 6:01 PM, Richard Neumann wrote:
+> > > Not a real review, but your patch series seems to be repeating a
+> > > lot
+> > > from drivers/i2c/busses/i2c-amd-mp2*.
+> > > Is there any chance we could re-use the code?
+> > > E.g. the AMD_C2P_* definitions from drivers/i2c/busses/i2c-amd-
+> > > mp2.h?
+> >=20
+> > Thanks for the mail. Yes there are some common structures, however
+> > as of now we have kept separately considering both
+> >=20
+> > are part of different sub systems. But may be will consider this
+> > input for future enhancement.
+>=20
+> It can be done in a form of shared definitions at least in
+> include/linux/platform_data/x86/amd-mp2.h or alike ...
+>=20
+
+I managed to add support for the AMD SFH PCI device to i2c-amd-mp2* and
+outsourced the headers to include/linux/i2c-amd-mp2.h. [1]
+I also refactored the patch series (excluded the documentation) [2] to
+use the PCI device now provided by i2c_amd_mp2_pci and removed some
+duplicate and unncessary code.
+The driver now consist of just one module (amd_sfhtp_hid).
+Unfortunately I was not able to solve the problem, that I get AMD-Vi
+IO_PAGE_FAULT errors when not booted with amd_iommu=3Doff.
+
+[1] https://gist.githubusercontent.com/conqp/4d726f86da8a8397d6e70091a124de=
+67/raw/f97e88a0b44d98bfa1258cb73c8afe4dce7afa87/i2c-amd-mp2.patch
+[2] https://gist.githubusercontent.com/conqp/67036e690aca89d08b958971edac28=
+3d/raw/2a1ef122f9c8c8e07164b6d597962ce7bbad6d45/amd-sfhtp.patch
+
+--=-JMpIYctbEoNFnW+rx2oI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT62wKwhMqSt8WaustMqNUjvThq9wUCXoTBQwAKCRBMqNUjvThq
+95P6AQD2f9/1gcoiIcDpJ/lT+fG8FH3cCnQqUJ7jGkVhNmZuiQD/aPm0aB1ZPd0L
+NzfP2Euf/mdDdd0WMbbsFkX4VhKSxw8=
+=0blY
+-----END PGP SIGNATURE-----
+
+--=-JMpIYctbEoNFnW+rx2oI--
+
