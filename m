@@ -2,60 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 680C319A5ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:08:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CD6C19A5FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:14:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731941AbgDAHIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 03:08:35 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:44660 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731792AbgDAHIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 03:08:35 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7813F750118036EA1333;
-        Wed,  1 Apr 2020 15:08:28 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.487.0; Wed, 1 Apr 2020 15:08:18 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <casey@schaufler-ca.com>, <jmorris@namei.org>, <serge@hallyn.com>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
-Subject: [PATCH -next] smack: fix a missing-check bug in smack_sb_eat_lsm_opts()
-Date:   Wed, 1 Apr 2020 15:10:55 +0800
-Message-ID: <20200401071055.8265-1-chenzhou10@huawei.com>
+        id S1731990AbgDAHMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 03:12:24 -0400
+Received: from mail-pj1-f53.google.com ([209.85.216.53]:52145 "EHLO
+        mail-pj1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731725AbgDAHMX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 03:12:23 -0400
+Received: by mail-pj1-f53.google.com with SMTP id w9so2313383pjh.1;
+        Wed, 01 Apr 2020 00:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Hz5qaXSjMSJnZU949MlZ213oDPmzY4IGeJxDJZAJknk=;
+        b=UO5xF0FAmdNlzWkKhIdWtLFN78GB1BDya6bho8AuomDbns3qwL9M+SXArfkRTo40t5
+         mKuoxznPxAWBjluPbVAtJfyqGWRE7t5moY6wPdxAPc2vtVL60NEX8SJ/3GgoVA5oRCgk
+         Dk1XD3h3EmFpXVxl+XYnz3hd8NhXZCneKgC6ZkZksDFYEp3rLEa+eojwCVUZCxabqUIG
+         tign7pGNpk3N8gHhPjvrf5tLmRiqr8G4uGabgCPIB9xO0JW6ELuPA4qkLnK7ZyB4Pkkd
+         vg8yNr7/szjTy/X4depKHgF9q+Wd0vcTxV5XDFuXzxGnrkm2Ww5THhKRA5LJfKnOJyQh
+         IGKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Hz5qaXSjMSJnZU949MlZ213oDPmzY4IGeJxDJZAJknk=;
+        b=U2XMXNvjJX/8L5ZMnhLtio15o77LnYXFkfsvCSmUR79Qh6UnwAPYoRMmtTUI+GabpC
+         4zGmOUHHxr+P/F/SIXmXLk4lWki0m81pgAPFd3Umf8bXZU9qbnDBVmLiexn/uhuTSihy
+         LNcZn9rpd/1lfK18qKjoHUSfeOumLWBbNUkj1CaGBngOg1mXqFAX23VcwlXWMKKMM79R
+         ILTBZHucabjxfNbqHXPVLK3sMs+RUV6OTERR2X9vqdxUIudgHzLLQG25utt1R5/KU2Gq
+         2CyHrRCMvDIg+oKoDgbFpY6QXTnyCs9T/t3E6sa3fL0Fgo6x0dujcP5DVAwDaaMXc6Af
+         /Qjg==
+X-Gm-Message-State: AGi0PuYmNsVW4lZO7hHSsNbgsGOOfR3L/QD7nxQA4xdl+uJpxNSobvz/
+        CuPQhbDVsIT8cBGbf4Efskk=
+X-Google-Smtp-Source: APiQypIV2fiRm3YAnbewgfM7H6vNYSVxWbm0IfFdgiQwFIIuspNbZmUAmgVIU4iAZXRJ0uU+PXjDQQ==
+X-Received: by 2002:a17:90a:d349:: with SMTP id i9mr2991726pjx.180.1585725140868;
+        Wed, 01 Apr 2020 00:12:20 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id n7sm784519pgm.28.2020.04.01.00.12.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 00:12:20 -0700 (PDT)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [PATCH 0/2] add clock and emmc/sd nodes for SC9863A
+Date:   Wed,  1 Apr 2020 15:11:42 +0800
+Message-Id: <20200401071144.10424-1-zhang.lyra@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In smack_sb_eat_lsm_opts(), 'arg' is allocated by kmemdup_nul().
-It returns NULL when fails, add check for it.
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- security/smack/smack_lsm.c | 2 ++
- 1 file changed, 2 insertions(+)
+SC9863A clock driver got merged, this patch-set adds clock nodes, emmc and sd card nodes,
+so that we can startup debian on SC9863A.
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 2862fc3..9ec30f3 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -731,6 +731,8 @@ static int smack_sb_eat_lsm_opts(char *options, void **mnt_opts)
- 		token = match_opt_prefix(from, len, &arg);
- 		if (token != Opt_error) {
- 			arg = kmemdup_nul(arg, from + len - arg, GFP_KERNEL);
-+			if (!arg)
-+				return -ENOMEM;
- 			rc = smack_add_opt(token, arg, mnt_opts);
- 			if (unlikely(rc)) {
- 				kfree(arg);
+Chunyan Zhang (2):
+  arm64: dts: Add SC9863A clock nodes
+  arm64: dts: Add SC9863A emmc and sd card nodes
+
+ arch/arm64/boot/dts/sprd/sc9863a.dtsi |  66 +++++++++++
+ arch/arm64/boot/dts/sprd/sharkl3.dtsi | 164 ++++++++++++++++++++++++++
+ 2 files changed, 230 insertions(+)
+
 -- 
-2.7.4
+2.20.1
 
