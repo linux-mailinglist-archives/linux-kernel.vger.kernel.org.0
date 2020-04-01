@@ -2,72 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1AE019A5A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 08:50:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04A0019A5AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 08:53:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731924AbgDAGuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 02:50:12 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36290 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731741AbgDAGuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 02:50:12 -0400
-Received: by mail-pg1-f194.google.com with SMTP id c23so3276739pgj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 23:50:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=8wSuFvt8m/ubZdKRPF3ipeuvHEeQbwu0Gagfi6R4CDM=;
-        b=UWA1KeKzvpkEB7y4nYsgfXDNSyIHXnMCZWhsXMVwfKjxjQG3AJ/PugziQjJldAs/I5
-         W6maa6RpkTHLFl4D/+8Lty3Np/m/6rqKOBsulXpKxLtAR219t00NBDnebPXdbAlL5NM+
-         YNYxAbKVHCKAz8Yc+thEtr9Ay2ekSCFQvHpW2P+lUMp9sXrXbdoKRlC5+o07nbMV+7h9
-         x+GODXa4if+sQTGnivm9VRIo+7ZAs2km9yzkYzrS96DIrQV6f+H3klU1WAs9hxJvpHtC
-         AAFLFY9R4Uet8NvyAB0TMIW8VCEzwM420KXc2smk0gN7h2C3hooajTMTfjDuCTQW5lQd
-         HiFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8wSuFvt8m/ubZdKRPF3ipeuvHEeQbwu0Gagfi6R4CDM=;
-        b=h16bbK8OPVhssIsp+pc2tysUlllCCqQINqMWwiORXPNzQjJeey+t7l94sVD2LqAc43
-         3ViitdJYsdGx05rJRrCTjyWvjw84/iJJ4fBlVXhJcyMkV+wbYWhCrMW1ooR9/t9ClDLh
-         CbK6hop9nr8Y5vWKHleUDRS8UUFmbjQfshZ3LuBf1opEWsBMxDOhnAU4HFQI3KQu3395
-         Fdx26iIg3ftK0TwZoYHEtJ+XVZAuu8Z8I15pg+mZGFuCnvlzsxwAF14KAxUQAhGP3blf
-         /QV3s47RW8dQ9I2BkYDYTU3xmfB9dCbwc8Pd9YUAgwNVCINVM/MxKz12k+KH5Pkz2T79
-         GWDg==
-X-Gm-Message-State: ANhLgQ3qyguM0fCICX7WbRiXhKN4/FTRlkBGRjRQlSf4YZ1kwjr1+o1k
-        3ZTpY2vn1uFc1HnQfJcc6vE=
-X-Google-Smtp-Source: ADFU+vsYSHCKcYWLeSQimgdMc1jwH+iCRfbwon/W1SL0diideITSA/Zy2KD0bJVvq6EgA6N8Vn1+Cw==
-X-Received: by 2002:aa7:9588:: with SMTP id z8mr20712539pfj.240.1585723809640;
-        Tue, 31 Mar 2020 23:50:09 -0700 (PDT)
-Received: from gmail.com ([2601:600:817f:a132:df3e:521d:99d5:710d])
-        by smtp.gmail.com with ESMTPSA id e8sm816515pjt.26.2020.03.31.23.50.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 23:50:08 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 23:50:05 -0700
-From:   Andrei Vagin <avagin@gmail.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dmitry Safonov <dima@arista.com>
-Subject: Re: [PATCH v2 0/6] arm64: add the time namespace support
-Message-ID: <20200401065005.GA413115@gmail.com>
-References: <20200225073731.465270-1-avagin@gmail.com>
+        id S1731900AbgDAGxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 02:53:09 -0400
+Received: from mail-mw2nam10olkn2065.outbound.protection.outlook.com ([40.92.42.65]:55393
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730426AbgDAGxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 02:53:08 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aLwZGDN42h11ZoI/NLp39HPJpu8Uz8URT0+eSFw5RVZHX/FCy0LbkUneNJN/iL65ZbM/EzhRVUbmtII2NH4Oiyd0HBmk4G9e4HlZpr/uzA28ofOGwMk1kosZQN7+QjQEcwhpKNENdd3lcdjBvKCiuHKSh4gLPzfj4s9t75CZ8ieJZXZv+BnBJmmhVXNDB2i17ErOE1Qu3ljbTdnQYBx6eCe4hTz7P4q3N1JRNXZV5mHKIMme+fFm75oQy+usBvzEquxGz13erlxRisiUbVTNfWvAT/XG8HHRZ2bp/2ee1FigbJU/Fh01A9Posql0Ii1OZ2gqObBHTolBZKA9Uo182g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Zh3zBpkMV/n9dob0IgytRzBV+W2X4eu07FXckX2VrVE=;
+ b=mAlXTFlcoCJU44o+0SRUxBlMqpeUCC+Li3gsjWunTdcGd6J6jCkEqE2K7SeYbwjpiMew/+RCtTQG/vcAl4VIVi6EeUnmJ0uVanGv7zR5cyG+I1R8fVdStGAzzm7VGKVAXHHzdBDfyczEe8GV7slVrwWA2InKsHZpa13NYSn69YR+i0vHyZ3kQpF4EgdVj32i7tUKqvR/ZWH/mB0pFz6C+7gB/UJH5K/AxS/X7YEjhiuRngX2pu/I65ttujx4Sbdq8jclZitiQVsOqL2gbF2cSDvHYw5W3owxhTJ9ano1pFAlevy+R2cdPliDJxK712y1DKO56Ev3wEfTjHZBAMHrog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=live.com; dmarc=pass action=none header.from=live.com;
+ dkim=pass header.d=live.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Zh3zBpkMV/n9dob0IgytRzBV+W2X4eu07FXckX2VrVE=;
+ b=X4xcbcgM6R06PivY1fd3D/01RADtnnCgZ+qPgHvQLHuLZCpY7Bq77ylZKofKQxDsN9GnUQW7mBQrlubVKlvpR/g72w5jLrqR14neWBcU+B80FEWzkN7TrB5wSED2lk7+AWVgBozGu3aXKyPdLYdTnJLhMGvxvQfFZ7iru2dFeZDdVYEZgofPIjsv7Mn3LFcOIrFOe9RRfehsj72btO/ZtDbPgB0hZz8E7P1GJxEWB7dgGjNRCcpVifyCngMNap6ZB/gsuqws+Tq253/23bMT02zkVV29FkdMgEjpVUIAeLUHNbAwqtpPkhhXr0OprCoWFyX5PkAQz/C7TXJ8c7gzwA==
+Received: from DM6NAM10FT030.eop-nam10.prod.protection.outlook.com
+ (2a01:111:e400:7e86::47) by
+ DM6NAM10HT068.eop-nam10.prod.protection.outlook.com (2a01:111:e400:7e86::344)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.17; Wed, 1 Apr
+ 2020 06:53:02 +0000
+Received: from DM6PR11MB3531.namprd11.prod.outlook.com
+ (2a01:111:e400:7e86::4c) by DM6NAM10FT030.mail.protection.outlook.com
+ (2a01:111:e400:7e86::224) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.15 via Frontend
+ Transport; Wed, 1 Apr 2020 06:53:02 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:D4066505403CAB775679B1C29494D8F4FAC8AB048DBCA2485858ADB8927FC8D8;UpperCasedChecksum:D30F6461EB32CA0700430A7E6720455E84BA53986A84799A256448E821CCF462;SizeAsReceived:7534;Count:47
+Received: from DM6PR11MB3531.namprd11.prod.outlook.com
+ ([fe80::c844:3598:abc4:cc3c]) by DM6PR11MB3531.namprd11.prod.outlook.com
+ ([fe80::c844:3598:abc4:cc3c%7]) with mapi id 15.20.2856.019; Wed, 1 Apr 2020
+ 06:53:02 +0000
+From:   liyueyi <liyueyi@live.com>
+To:     peterz@infradead.org, gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, liyueyi <liyueyi@xiaomi.com>
+Subject: [PATCH] kthread: set kthread state to TASK_IDLE.
+Date:   Wed,  1 Apr 2020 14:52:15 +0800
+Message-ID: <DM6PR11MB3531D3B164357B2DC476102DDFC90@DM6PR11MB3531.namprd11.prod.outlook.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: HKAPR04CA0016.apcprd04.prod.outlook.com
+ (2603:1096:203:d0::26) To DM6PR11MB3531.namprd11.prod.outlook.com
+ (2603:10b6:5:61::21)
+X-Microsoft-Original-Message-ID: <1585723935-31322-1-git-send-email-liyueyi@live.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20200225073731.465270-1-avagin@gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from liyy-linux.mioffice.cn (2408:8607:1b00:a:e654:e8ff:fe9d:faec) by HKAPR04CA0016.apcprd04.prod.outlook.com (2603:1096:203:d0::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2856.20 via Frontend Transport; Wed, 1 Apr 2020 06:52:58 +0000
+X-Mailer: git-send-email 2.7.4
+X-Microsoft-Original-Message-ID: <1585723935-31322-1-git-send-email-liyueyi@live.com>
+X-TMN:  [eaChkloj45/30i8GXw4LQVukpDMV/CdIpq8oKlad0ULKstC10cd+/p8uUDzbwBNQ]
+X-MS-PublicTrafficType: Email
+X-IncomingHeaderCount: 47
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-Correlation-Id: e62b01c5-b03d-4b6b-03f6-08d7d6095257
+X-MS-TrafficTypeDiagnostic: DM6NAM10HT068:
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: rIyk5P64tECo4bXN5gXpApoiCiqRpMhT/oNkLUWhG4w5313Ykf4UYfLGTTGJAVQ+ZtoL0JgQ6dt6/3CnuQiR9asBENJ8c5avNVzDyCHtf1HWBF06Vl15YMPgYp0D5lDGOsUd0Jp1XYIPtnKzCvtMSzMauXzCIahA//sTRGM93DDLRrWqY9QD7AviDD4zpGac
+X-MS-Exchange-AntiSpam-MessageData: wOdeWQWALWV2KT8nzPV1Xt+nt0UaqE7558TcnmoHZamM8+xV8TUkXXMp9uTMFsLul62Rtpl0LCDttSWIU1Gax+Llkm7+NCIcr5n90mslPFZMxbW+2uEPuhJP0W67oyAbAIi6X64StEdW91NQShdC4CS8f2pwt4cO3VOGDxnBgZoY5klxCDmQ1zrzeOHGCZZJMgvMB5dv0ER2NcA542felA==
+X-OriginatorOrg: live.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e62b01c5-b03d-4b6b-03f6-08d7d6095257
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2020 06:53:02.6495
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM10HT068
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincenzo,
+From: liyueyi <liyueyi@xiaomi.com>
 
-Have you had a chance to look at this series? Let me know if I need to
-rebase this patch set and resend it again.
+Currently kthread() sleeps in TASK_UNINTERRUPTIBLE state waiting
+for the first wakeup, it may be detected by DETECT_HUNG_TASK if
+the first wakeup is coming later. Since kernel has introduced
+TASK_IDLE, change kthread state to TASK_IDLE.
 
-Thanks,
-Andrei
+Signed-off-by: liyueyi <liyueyi@xiaomi.com>
+---
+ kernel/kthread.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index b262f470..f841419 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -243,7 +243,7 @@ static int kthread(void *_create)
+ 	current->vfork_done = &self->exited;
+ 
+ 	/* OK, tell user we're spawned, wait for stop or wakeup */
+-	__set_current_state(TASK_UNINTERRUPTIBLE);
++	__set_current_state(TASK_IDLE);
+ 	create->result = current;
+ 	complete(done);
+ 	schedule();
+@@ -415,7 +415,7 @@ static void __kthread_bind(struct task_struct *p, unsigned int cpu, long state)
+ 
+ void kthread_bind_mask(struct task_struct *p, const struct cpumask *mask)
+ {
+-	__kthread_bind_mask(p, mask, TASK_UNINTERRUPTIBLE);
++	__kthread_bind_mask(p, mask, TASK_IDLE);
+ }
+ 
+ /**
+@@ -429,7 +429,7 @@ void kthread_bind_mask(struct task_struct *p, const struct cpumask *mask)
+  */
+ void kthread_bind(struct task_struct *p, unsigned int cpu)
+ {
+-	__kthread_bind(p, cpu, TASK_UNINTERRUPTIBLE);
++	__kthread_bind(p, cpu, TASK_IDLE);
+ }
+ EXPORT_SYMBOL(kthread_bind);
+ 
+-- 
+2.7.4
 
