@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE9A919B3BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CAE819AFF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:23:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387865AbgDAQxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:53:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58584 "EHLO mail.kernel.org"
+        id S1733119AbgDAQWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:22:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733215AbgDAQcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:32:12 -0400
+        id S2387527AbgDAQWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:22:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEC5E2063A;
-        Wed,  1 Apr 2020 16:32:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F4952137B;
+        Wed,  1 Apr 2020 16:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758732;
-        bh=/sxCgI7m/KNwNNLDpk1oZ+muSRGWzY76oNLMuJCpNmA=;
+        s=default; t=1585758164;
+        bh=mPMg+GIZNgjPNi6MOWo6soVJy6BjBjhd20BrzjGqz2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eBBhlmJuLbFJYwU3rgwuD49DB1vM58veG2SbhcSGytD0zgZ8x8G0NKUIz9Cacxt0S
-         U56Hi09JRSoz5kFNk8lz0w9+j2XfeVxN3K6C3j7DY6Ap4KOQeYjxczhIkdiYYdrLHt
-         8w2OQCiuhxlLH1M0OPtXQXMLHFfdedQPuTF+8P1Q=
+        b=EKJ0qQ1lb5JXgoRmvkfrwJl2xBQbElKnCUQuD/mNmw3tKOFYFkQp7Jg8UqSB9Eyab
+         ydybLfZacxrlu/7ZafjEogWbGX5odBskzX8VYDSyTrSzeecq1Xyf7U9j/7a/mZikMX
+         QIYq85NjFwv5/VsAWSvVWeL6Bm2ONws+SZmnKdHk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dirk Mueller <dmueller@suse.com>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.4 57/91] scripts/dtc: Remove redundant YYLOC global declaration
+        stable@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH 5.4 25/27] ARM: dts: sun8i: r40: Move AHCI device node based on address order
 Date:   Wed,  1 Apr 2020 18:17:53 +0200
-Message-Id: <20200401161533.003207349@linuxfoundation.org>
+Message-Id: <20200401161434.337279705@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
-References: <20200401161512.917494101@linuxfoundation.org>
+In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
+References: <20200401161414.352722470@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dirk Mueller <dmueller@suse.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-commit e33a814e772cdc36436c8c188d8c42d019fda639 upstream.
+commit fe3a04824f75786e39ed74e82fb6cb2534c95fe4 upstream.
 
-gcc 10 will default to -fno-common, which causes this error at link
-time:
+When the AHCI device node was added, it was added in the wrong location
+in the device tree file. The device nodes should be sorted by register
+address.
 
-  (.text+0x0): multiple definition of `yylloc'; dtc-lexer.lex.o (symbol from plugin):(.text+0x0): first defined here
+Move the device node to before EHCI1, where it belongs.
 
-This is because both dtc-lexer as well as dtc-parser define the same
-global symbol yyloc. Before with -fcommon those were merged into one
-defintion. The proper solution would be to to mark this as "extern",
-however that leads to:
-
-  dtc-lexer.l:26:16: error: redundant redeclaration of 'yylloc' [-Werror=redundant-decls]
-   26 | extern YYLTYPE yylloc;
-      |                ^~~~~~
-In file included from dtc-lexer.l:24:
-dtc-parser.tab.h:127:16: note: previous declaration of 'yylloc' was here
-  127 | extern YYLTYPE yylloc;
-      |                ^~~~~~
-cc1: all warnings being treated as errors
-
-which means the declaration is completely redundant and can just be
-dropped.
-
-Signed-off-by: Dirk Mueller <dmueller@suse.com>
-Signed-off-by: David Gibson <david@gibson.dropbear.id.au>
-[robh: cherry-pick from upstream]
-Cc: stable@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
+Fixes: 41c64d3318aa ("ARM: dts: sun8i: r40: add sata node")
+Acked-by: Maxime Ripard <mripard@kernel.org>
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/dtc/dtc-lexer.l |    1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/sun8i-r40.dtsi |   21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
---- a/scripts/dtc/dtc-lexer.l
-+++ b/scripts/dtc/dtc-lexer.l
-@@ -38,7 +38,6 @@ LINECOMMENT	"//".*\n
- #include "srcpos.h"
- #include "dtc-parser.tab.h"
+--- a/arch/arm/boot/dts/sun8i-r40.dtsi
++++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+@@ -266,6 +266,16 @@
+ 			#phy-cells = <1>;
+ 		};
  
--YYLTYPE yylloc;
- extern bool treesource_error;
++		ahci: sata@1c18000 {
++			compatible = "allwinner,sun8i-r40-ahci";
++			reg = <0x01c18000 0x1000>;
++			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_SATA>, <&ccu CLK_SATA>;
++			resets = <&ccu RST_BUS_SATA>;
++			reset-names = "ahci";
++			status = "disabled";
++		};
++
+ 		ehci1: usb@1c19000 {
+ 			compatible = "allwinner,sun8i-r40-ehci", "generic-ehci";
+ 			reg = <0x01c19000 0x100>;
+@@ -557,17 +567,6 @@
+ 			#size-cells = <0>;
+ 		};
  
- /* CAUTION: this will stop working if we ever use yyless() or yyunput() */
+-		ahci: sata@1c18000 {
+-			compatible = "allwinner,sun8i-r40-ahci";
+-			reg = <0x01c18000 0x1000>;
+-			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&ccu CLK_BUS_SATA>, <&ccu CLK_SATA>;
+-			resets = <&ccu RST_BUS_SATA>;
+-			reset-names = "ahci";
+-			status = "disabled";
+-
+-		};
+-
+ 		gmac: ethernet@1c50000 {
+ 			compatible = "allwinner,sun8i-r40-gmac";
+ 			syscon = <&ccu>;
 
 
