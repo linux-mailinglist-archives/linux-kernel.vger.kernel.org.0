@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EC2219B28B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C87D219B368
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:51:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389801AbgDAQpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:45:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46106 "EHLO mail.kernel.org"
+        id S2389157AbgDAQvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:51:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389621AbgDAQo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:44:59 -0400
+        id S2388258AbgDAQh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:37:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABF782063A;
-        Wed,  1 Apr 2020 16:44:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0663C20772;
+        Wed,  1 Apr 2020 16:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759498;
-        bh=CHBttnsBtGK1uWWbqCGC3uECB8Xas6d7Kytb4dLhd5A=;
+        s=default; t=1585759075;
+        bh=CgY4mXuITzuTPiXbroF4GvgpCRhDYaZpzAOZmacCfns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nu2RI68bS39GE0218P3id7ay6c2lQbwS9trjxH/ucm7Tm4zBbtNO/4tAiviOLWykZ
-         IIDNRvvKl5Qc0iYcjE1YPoSxucaIFBoYaVgRoxcrsi/+dz2AehtOIxLbrF90TIDF7q
-         yTDWj6/qn+OXB1xAtlOd1S5RFnZ/O3NsUpgRD6uE=
+        b=L1U1rWfPjmYXvdvTk88MNheWUW35q3Vo62vaEd07v4NBFdFYHTe6+wXaSorVNoRDs
+         W1+2Rtev5QY27EFAz/hZAkvcPN6T1PKYgOKY3wKGhDlkvxekJtmDo37HUylxNa2PqP
+         zBLvbCJhPAwKQqxoT0Az+P0STERtxShm0qomufUU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.14 098/148] gpiolib: acpi: Correct comment for HP x2 10 honor_wakeup quirk
-Date:   Wed,  1 Apr 2020 18:18:10 +0200
-Message-Id: <20200401161602.258631106@linuxfoundation.org>
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        =?UTF-8?q?Timo=20Ter=C3=A4s?= <timo.teras@iki.fi>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.9 068/102] xfrm: policy: Fix doulbe free in xfrm_policy_timer
+Date:   Wed,  1 Apr 2020 18:18:11 +0200
+Message-Id: <20200401161544.181086408@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit efaa87fa0947d525cf7c075316adde4e3ac7720b upstream.
+commit 4c59406ed00379c8663f8663d82b2537467ce9d7 upstream.
 
-Commit aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option +
-quirk mechanism") added a quirk for some models of the HP x2 10 series.
+After xfrm_add_policy add a policy, its ref is 2, then
 
-There are 2 issues with the comment describing the quirk:
-1) The comment claims the DMI quirk applies to all Cherry Trail based HP x2
-   10 models. In the mean time I have learned that there are at least 3
-   models of the HP x2 10 models:
+                             xfrm_policy_timer
+                               read_lock
+                               xp->walk.dead is 0
+                               ....
+                               mod_timer()
+xfrm_policy_kill
+  policy->walk.dead = 1
+  ....
+  del_timer(&policy->timer)
+    xfrm_pol_put //ref is 1
+  xfrm_pol_put  //ref is 0
+    xfrm_policy_destroy
+      call_rcu
+                                 xfrm_pol_hold //ref is 1
+                               read_unlock
+                               xfrm_pol_put //ref is 0
+                                 xfrm_policy_destroy
+                                  call_rcu
 
-   Bay Trail SoC + AXP288 PMIC
-   Cherry Trail SoC + AXP288 PMIC
-   Cherry Trail SoC + TI PMIC
+xfrm_policy_destroy is called twice, which may leads to
+double free.
 
-   And this quirk's DMI matches only match the Cherry Trail SoC + TI PMIC
-   SoC, which is good because we want a slightly different quirk for the
-   others. This commit updates the comment to make it clear that the quirk
-   is only for the Cherry Trail SoC + TI PMIC models.
+Call Trace:
+RIP: 0010:refcount_warn_saturate+0x161/0x210
+...
+ xfrm_policy_timer+0x522/0x600
+ call_timer_fn+0x1b3/0x5e0
+ ? __xfrm_decode_session+0x2990/0x2990
+ ? msleep+0xb0/0xb0
+ ? _raw_spin_unlock_irq+0x24/0x40
+ ? __xfrm_decode_session+0x2990/0x2990
+ ? __xfrm_decode_session+0x2990/0x2990
+ run_timer_softirq+0x5c5/0x10e0
 
-2) The comment says that it is ok to disable wakeup on all ACPI GPIO event
-   handlers, because there is only the one for the embedded-controller
-   events. This is not true, there also is a handler for the special
-   INT0002 device which is related to USB wakeups. We need to also disable
-   wakeups on that one because the device turns of the USB-keyboard built
-   into the dock when closing the lid. The XHCI controller takes a while
-   to notice this, so it only notices it when already suspended, causing
-   a spurious wakeup because of this. So disabling wakeup on all handlers
-   is the right thing to do, but not because there only is the one handler
-   for the EC events. This commit updates the comment to correctly reflect
-   this.
+Fix this by use write_lock_bh in xfrm_policy_kill.
 
-Fixes: aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option + quirk mechanism")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://lore.kernel.org/r/20200302111225.6641-1-hdegoede@redhat.com
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: ea2dea9dacc2 ("xfrm: remove policy lock when accessing policy->walk.dead")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Timo Teräs <timo.teras@iki.fi>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpiolib-acpi.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ net/xfrm/xfrm_policy.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1348,12 +1348,14 @@ static const struct dmi_system_id gpioli
- 	},
- 	{
- 		/*
--		 * Various HP X2 10 Cherry Trail models use an external
--		 * embedded-controller connected via I2C + an ACPI GPIO
--		 * event handler. The embedded controller generates various
--		 * spurious wakeup events when suspended. So disable wakeup
--		 * for its handler (it uses the only ACPI GPIO event handler).
--		 * This breaks wakeup when opening the lid, the user needs
-+		 * HP X2 10 models with Cherry Trail SoC + TI PMIC use an
-+		 * external embedded-controller connected via I2C + an ACPI GPIO
-+		 * event handler on INT33FF:01 pin 0, causing spurious wakeups.
-+		 * When suspending by closing the LID, the power to the USB
-+		 * keyboard is turned off, causing INT0002 ACPI events to
-+		 * trigger once the XHCI controller notices the keyboard is
-+		 * gone. So INT0002 events cause spurious wakeups too. Ignoring
-+		 * EC wakes breaks wakeup when opening the lid, the user needs
- 		 * to press the power-button to wakeup the system. The
- 		 * alternative is suspend simply not working, which is worse.
- 		 */
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -336,7 +336,9 @@ EXPORT_SYMBOL(xfrm_policy_destroy);
+ 
+ static void xfrm_policy_kill(struct xfrm_policy *policy)
+ {
++	write_lock_bh(&policy->lock);
+ 	policy->walk.dead = 1;
++	write_unlock_bh(&policy->lock);
+ 
+ 	atomic_inc(&policy->genid);
+ 
 
 
