@@ -2,36 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 606DE19A825
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C405A19A82E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:03:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731749AbgDAJB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 05:01:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:46406 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726536AbgDAJB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 05:01:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11A3131B;
-        Wed,  1 Apr 2020 02:01:27 -0700 (PDT)
-Received: from [10.37.12.142] (unknown [10.37.12.142])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18C3A3F52E;
-        Wed,  1 Apr 2020 02:01:25 -0700 (PDT)
-Subject: Re: [PATCH v2 0/6] arm64: add the time namespace support
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dmitry Safonov <dima@arista.com>
-References: <20200225073731.465270-1-avagin@gmail.com>
- <20200401065005.GA413115@gmail.com>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <205b9e13-cb5f-8b65-1945-0b93e873942f@arm.com>
-Date:   Wed, 1 Apr 2020 10:02:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1731870AbgDAJDv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 05:03:51 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35955 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727627AbgDAJDv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 05:03:51 -0400
+Received: by mail-lf1-f66.google.com with SMTP id w145so613918lff.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 02:03:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=yWgHgk+jLJRzD93cqQsYsHikKuqpSq+ekt3Naao04Oo=;
+        b=sUjbTKCUQZ080lknNkmyC6/QcS4P6L6XfgHpUEcDWb73mGAeNLZUm6XP8KOt/FWHqL
+         d5QXHHQtYPjLv8S0ufHgEmvDLsvY1hpMSw2NXObmw/8HELgv/WK2duzj5czvfBpb3FAC
+         R+narAzrrP9wuJI96XSm54anJzfhOS0S819SrARvwZkk1ZNX1Gbt+kRaLS6e0bFzT/+J
+         T6EK+bsGxOWxxNt7X5iLjxvxUm5W+ZTcJ4zoeHJRjDLVo86IlowU2+681GVVDTv1XNi+
+         kQOwIT+9+MeZ2jytkxBqKP1f02T9bKzcFOMBRTYplyI+/GWNRAilh3GD//BvPq9+EjJ3
+         mnzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yWgHgk+jLJRzD93cqQsYsHikKuqpSq+ekt3Naao04Oo=;
+        b=GPtvoYzgftyc0jQzJv8rmKvniZRD1yjRJ1F1Ak7eeMWL5eSqvxtCMPw9loC31t1pIA
+         I+LYN7okqy3zB6h24n1XcZ+2eie0PsPyfUU2IdWnyrg3f02FTNBudRg57BSq3K8vXAuy
+         E/SyeTukVVXws75yXQFiQ9sf14gPeWNe75bjlVoAqIIS40NCFin8gXCvYQYJuJuN0DNC
+         XaK3Eyb1GEzIGkPxWVHs0CAi6Nod+laSmBx6D9cKqV7gFvfJ6QbRpfwInG72lLI45ofo
+         z3zpCDbQSC6OxfN7nCWva+xA7LOunF5YWANgsD5g/nLeL65+X6uVW7wgRcTa/1uyLHJr
+         AYcw==
+X-Gm-Message-State: AGi0Pubo8yoBNnoylyoYp9jUjQz+H7es2DipnKskz5j/05NwiboLHpj4
+        QLicE7e84FkSjCX1ic8eOBdEQO9nt8cIDw==
+X-Google-Smtp-Source: APiQypKRtrq5WqtNVqVAopMUXD+lr/bI4FzH75mLC1qIZpHxBGYdPZBrtqlvt+9ukJ/G0J8aZQP0UQ==
+X-Received: by 2002:ac2:5f75:: with SMTP id c21mr13824158lfc.194.1585731827671;
+        Wed, 01 Apr 2020 02:03:47 -0700 (PDT)
+Received: from ?IPv6:2a00:1fa0:245:3fc8:782f:cdd9:3f89:e462? ([2a00:1fa0:245:3fc8:782f:cdd9:3f89:e462])
+        by smtp.gmail.com with ESMTPSA id k4sm1094999lfo.47.2020.04.01.02.03.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Apr 2020 02:03:47 -0700 (PDT)
+Subject: Re: [PATCH] ata:ahci_xgene:use devm_platform_ioremap_resource() to
+ simplify code
+To:     Tang Bin <tangbin@cmss.chinamobile.com>, axboe@kernel.dk
+Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200401084952.5828-1-tangbin@cmss.chinamobile.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <c1cfde01-769d-2904-3be3-a41cc51c1519@cogentembedded.com>
+Date:   Wed, 1 Apr 2020 12:03:38 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200401065005.GA413115@gmail.com>
-Content-Type: text/plain; charset=koi8-r
+In-Reply-To: <20200401084952.5828-1-tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -39,22 +66,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrei,
+Hello!
 
-On 4/1/20 7:50 AM, Andrei Vagin wrote:
-> Hi Vincenzo,
+On 01.04.2020 11:49, Tang Bin wrote:
+
+> In this function, devm_platform_ioremap_resource() should be suitable
+> to simplify code.
 > 
-> Have you had a chance to look at this series? Let me know if I need to
-> rebase this patch set and resend it again.
+> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+> ---
+>   drivers/ata/ahci_xgene.c | 21 ++++++---------------
+>   1 file changed, 6 insertions(+), 15 deletions(-)
 > 
+> diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
+> index 16246c843..061209275 100644
+> --- a/drivers/ata/ahci_xgene.c
+> +++ b/drivers/ata/ahci_xgene.c
+[...]
+>   	/* Retrieve the optional IP mux resource */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 4);
+> -	if (res) {
+> -		void __iomem *csr = devm_ioremap_resource(dev, res);
+> -		if (IS_ERR(csr))
+> -			return PTR_ERR(csr);
+> -
+> -		ctx->csr_mux = csr;
+> -	}
+> +	ctx->csr_mux = devm_platform_ioremap_resource(pdev, 4);
+> +	if (IS_ERR(ctx->csr_mux))
+> +		return PTR_ERR(ctx->csr_mux);
 
-Sorry I still did not get the chance to have a look at your v2.
-I will try to do it by the end of this week, beginning of next.
+    The previous code allowed the memory resource #4 to be absent, the new
+code makes it mandatory? Is that intentional?
 
-> Thanks,
-> Andrei
-> 
+[...]
 
--- 
-Regards,
-Vincenzo
+MBR, Sergei
