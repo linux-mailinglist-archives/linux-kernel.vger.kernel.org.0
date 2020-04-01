@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7FF019B318
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1E8219AF99
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:19:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389496AbgDAQmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:42:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42676 "EHLO mail.kernel.org"
+        id S1732428AbgDAQTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:19:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389305AbgDAQmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:42:06 -0400
+        id S1726205AbgDAQTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:19:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B8BE20BED;
-        Wed,  1 Apr 2020 16:42:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90F7B20B1F;
+        Wed,  1 Apr 2020 16:19:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759325;
-        bh=yLdvskkSCkggu6QF1hhBAR6HeanrIgFx9HHqmZNppvQ=;
+        s=default; t=1585757971;
+        bh=VnwcAXK+UHzOBiGQchBKglHd/sU6Gq8vZVgDLz7TTZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yfTsvcN54C1NL40RGfWVIR5xjdF/PekhVa6N7izy9Xu/9MUN10ZetVwNV02JZVRew
-         PeVQAd96ceuEx6DrkHIolIA2USKkUcL0nd8Dt69HBNtJ3++4dDZEaI15ZC9gwzDfEr
-         EBrHNyPS13kjgvbo+NZTqIr7sFcYOWGnkH/aJCNc=
+        b=WaBWqGh4pWEygBRdauRHydJuJUZUmf/cfFtiPUPQ8YXqFzxW8n/QyDncyvp2KxxAN
+         AQ6jDAQhClzHQixsZR2n/8/EFPDYX0YmaZpy2QkOX7Dn4aGcj7QkOoABQmhjtBfh3e
+         kyZnxAih0YEWWPPtNHQs1m6WfRaeHf5SSU/ySozw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 047/148] Revert "vrf: mark skb for multicast or link-local as enslaved to VRF"
-Date:   Wed,  1 Apr 2020 18:17:19 +0200
-Message-Id: <20200401161557.475847079@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 5.6 04/10] vt: selection, introduce vc_is_sel
+Date:   Wed,  1 Apr 2020 18:17:20 +0200
+Message-Id: <20200401161417.613630445@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161413.974936041@linuxfoundation.org>
+References: <20200401161413.974936041@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,55 +42,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 2271c9500434af2a26b2c9eadeb3c0b075409fb5.
+From: Jiri Slaby <jslaby@suse.cz>
 
-This patch shouldn't have been backported to 4.14.
+commit dce05aa6eec977f1472abed95ccd71276b9a3864 upstream.
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Avoid global variables (namely sel_cons) by introducing vc_is_sel. It
+checks whether the parameter is the current selection console. This will
+help putting sel_cons to a struct later.
+
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Link: https://lore.kernel.org/r/20200219073951.16151-1-jslaby@suse.cz
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/vrf.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/tty/vt/selection.c |    5 +++++
+ drivers/tty/vt/vt.c        |    7 ++++---
+ drivers/tty/vt/vt_ioctl.c  |    2 +-
+ include/linux/selection.h  |    4 +++-
+ 4 files changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/vrf.c b/drivers/net/vrf.c
-index e0cea5c05f0e2..03e4fcdfeab73 100644
---- a/drivers/net/vrf.c
-+++ b/drivers/net/vrf.c
-@@ -996,23 +996,24 @@ static struct sk_buff *vrf_ip6_rcv(struct net_device *vrf_dev,
- 				   struct sk_buff *skb)
- {
- 	int orig_iif = skb->skb_iif;
--	bool need_strict = rt6_need_strict(&ipv6_hdr(skb)->daddr);
--	bool is_ndisc = ipv6_ndisc_frame(skb);
-+	bool need_strict;
+--- a/drivers/tty/vt/selection.c
++++ b/drivers/tty/vt/selection.c
+@@ -88,6 +88,11 @@ void clear_selection(void)
+ }
+ EXPORT_SYMBOL_GPL(clear_selection);
  
--	/* loopback, multicast & non-ND link-local traffic; do not push through
--	 * packet taps again. Reset pkt_type for upper layers to process skb
-+	/* loopback traffic; do not push through packet taps again.
-+	 * Reset pkt_type for upper layers to process skb
- 	 */
--	if (skb->pkt_type == PACKET_LOOPBACK || (need_strict && !is_ndisc)) {
-+	if (skb->pkt_type == PACKET_LOOPBACK) {
- 		skb->dev = vrf_dev;
- 		skb->skb_iif = vrf_dev->ifindex;
- 		IP6CB(skb)->flags |= IP6SKB_L3SLAVE;
--		if (skb->pkt_type == PACKET_LOOPBACK)
--			skb->pkt_type = PACKET_HOST;
-+		skb->pkt_type = PACKET_HOST;
- 		goto out;
++bool vc_is_sel(struct vc_data *vc)
++{
++	return vc == sel_cons;
++}
++
+ /*
+  * User settable table: what characters are to be considered alphabetic?
+  * 128 bits. Locked by the console lock.
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -890,8 +890,9 @@ static void hide_softcursor(struct vc_da
+ 
+ static void hide_cursor(struct vc_data *vc)
+ {
+-	if (vc == sel_cons)
++	if (vc_is_sel(vc))
+ 		clear_selection();
++
+ 	vc->vc_sw->con_cursor(vc, CM_ERASE);
+ 	hide_softcursor(vc);
+ }
+@@ -901,7 +902,7 @@ static void set_cursor(struct vc_data *v
+ 	if (!con_is_fg(vc) || console_blanked || vc->vc_mode == KD_GRAPHICS)
+ 		return;
+ 	if (vc->vc_deccm) {
+-		if (vc == sel_cons)
++		if (vc_is_sel(vc))
+ 			clear_selection();
+ 		add_softcursor(vc);
+ 		if ((vc->vc_cursor_type & 0x0f) != 1)
+@@ -1207,7 +1208,7 @@ static int vc_do_resize(struct tty_struc
+ 		}
  	}
  
--	/* if packet is NDISC then keep the ingress interface */
--	if (!is_ndisc) {
-+	/* if packet is NDISC or addressed to multicast or link-local
-+	 * then keep the ingress interface
-+	 */
-+	need_strict = rt6_need_strict(&ipv6_hdr(skb)->daddr);
-+	if (!ipv6_ndisc_frame(skb) && !need_strict) {
- 		vrf_rx_stats(vrf_dev, skb->len);
- 		skb->dev = vrf_dev;
- 		skb->skb_iif = vrf_dev->ifindex;
--- 
-2.20.1
-
+-	if (vc == sel_cons)
++	if (vc_is_sel(vc))
+ 		clear_selection();
+ 
+ 	old_rows = vc->vc_rows;
+--- a/drivers/tty/vt/vt_ioctl.c
++++ b/drivers/tty/vt/vt_ioctl.c
+@@ -43,7 +43,7 @@ char vt_dont_switch;
+ extern struct tty_driver *console_driver;
+ 
+ #define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
+-#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_cons[i].d == sel_cons)
++#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_is_sel(vc_cons[i].d))
+ 
+ /*
+  * Console (vt and kd) routines, as defined by USL SVR4 manual, and by
+--- a/include/linux/selection.h
++++ b/include/linux/selection.h
+@@ -11,8 +11,8 @@
+ #include <linux/tiocl.h>
+ #include <linux/vt_buffer.h>
+ 
+-extern struct vc_data *sel_cons;
+ struct tty_struct;
++struct vc_data;
+ 
+ extern void clear_selection(void);
+ extern int set_selection_user(const struct tiocl_selection __user *sel,
+@@ -24,6 +24,8 @@ extern int sel_loadlut(char __user *p);
+ extern int mouse_reporting(void);
+ extern void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry);
+ 
++bool vc_is_sel(struct vc_data *vc);
++
+ extern int console_blanked;
+ 
+ extern const unsigned char color_table[];
 
 
