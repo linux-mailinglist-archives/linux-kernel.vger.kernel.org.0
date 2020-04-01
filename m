@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3CDE19A7B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4FBE19A7B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732026AbgDAIsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:48:47 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43734 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbgDAIsr (ORCPT
+        id S1732115AbgDAIs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:48:57 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39831 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbgDAIs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:48:47 -0400
-Received: by mail-ed1-f65.google.com with SMTP id bd14so28632880edb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 01:48:44 -0700 (PDT)
+        Wed, 1 Apr 2020 04:48:56 -0400
+Received: by mail-ed1-f66.google.com with SMTP id a43so28679567edf.6
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 01:48:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NFnQtMAv52vc67tP5TFOUo3bRsY9ihV28ROS9W2huxg=;
-        b=UGfBm0OG6dm/aY2vbCbLWqdatsFbxQNSssJ6VGYhMiDq/OZ3CcwFMRXjdJP0AXYK7D
-         qh0ra8EMgQmGzX4Fxxcv2zpRpA6bvmpNcGy3vpPXv3wvgBL5g1kIy0ijObNxfTpeqLe8
-         zJQlvRgzdUnUwCw9a3vVQyhTkhOj1bGwFPHvgJUavxqHY6EN1biqXsQJEuRb2ZAx1+la
-         bIBqqpPryQe7pXTndun8sNc9rg9fyRYz2RGUeOFAXiGwD9NEgCHUS1mhusff7WG/rzRe
-         rFzKfqWGnLyr5HwxUXqFoo2mpn0Y5mBOQNJqTToIbYTuOKzCLXGk0bf6ytMk5SVA0IRX
-         r6Fw==
+        bh=nO7NvYL5YbGkypKxGoWuwxxFk6qjRVPvgK2ifgde8ys=;
+        b=nKT1PI4lZjRkGXA0qoVt39rD6dCkioi4T1wOtFKczerqB7xR37+SXrexLXVaxyRoRZ
+         P/MQ9KkylbCIRFpuT/z2h482ouR713/nq6B9H5/rP7dskLnqLtnramvo665NSX0DmbN8
+         77xpnQ9Sm/oZOinLBRsbN0Aq/CY0nAN421P4ND2RoGjW6GiHNbw4u7zITADs4vFdTR7w
+         mr9q4JNLEUMY3rKgONFt7/nL5sDfFJp+oXDZsgjhTLd41jLz9ChU3YKFsf9/4GiELmlO
+         DUygUUNqRx08PsUj63TKvtq0MTZCMgb+awXdTOjVXo/0Y7HZa/5sHB1KmL2ZXuKtyS1S
+         oDVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NFnQtMAv52vc67tP5TFOUo3bRsY9ihV28ROS9W2huxg=;
-        b=cvBlApepoCjD/NNQHsdH/2+5FwWcqLzNRRS1N7Tvf4F4LRLoLZGwLbZvK9GruxxsYV
-         24NPwz9n9z9eUTQ+pCN1YkywZkB77e7K1ud7n1055iyOlDoPE+KKuEiPLvZpQC6r5DTG
-         wZ+JWd/97dJ/32wk/Rrwb3VxfvL2Yb/judfGxnKQ8ysW4FneSIhIDBHjWTM3JfnmtDNk
-         cMk8+bYY5N/tkNXm19uEYlfXFl3sGAjrA6Z6IlDgnsEEv7dEtbGQ7STDQvXU4OftO6e7
-         P2Sy3UyhZgO/ND33471Fve2RIfLHsjvTFM8HL9HacubkxtdzJ3Tbb7J7asmPrPaAutgh
-         CdBQ==
-X-Gm-Message-State: ANhLgQ1UViaBQjx5fdVBNbwrTwyCySNgZgL1Q1LGad91dh2cBScuOclE
-        V263V2VxgolMAmyYcbSMFa2RZP/pGzvhN4gqcRZX5Q==
-X-Google-Smtp-Source: ADFU+vudGlnJtN5ZeSeIRWxrez165WdBj7a1Bu0ZFHM+ccZlxf9ge6aKX/I8+gF5fOEuZLiG5EzKhnaDmM289WwDWgA=
-X-Received: by 2002:a50:d847:: with SMTP id v7mr19478119edj.154.1585730924056;
- Wed, 01 Apr 2020 01:48:44 -0700 (PDT)
+        bh=nO7NvYL5YbGkypKxGoWuwxxFk6qjRVPvgK2ifgde8ys=;
+        b=XV1mkOl9ut0ZK+yGsY4vHYLIeGDU2R93CBJBqoFty9gv2ccrBa/vqXQItyXVlHzNIL
+         axveVj1zHuIyGtStSxRgIbQ11f/iZWEXQgseLtza2N19s+tC53i0qAwxB4ZwWynfyU5i
+         wb7ADrIxTAjA4Fi6+xgRe07Wbk37vTfs/FZzJGaRrkRnDrwbgtxSw7G6//4guHTBHX8N
+         U/nhBSEzkl/zGggyiuFk3c8xiGnl8OQ/Ydi4BvS1/QoEFiTouj/JwIlEY+BFcVE/Mokd
+         iWKC4iqK9zKiH1zycvIZU48RBFj+YyHy6RJKVBpfv8jjhd9qsK5NinWZG+j4fge2Mztz
+         zBKw==
+X-Gm-Message-State: ANhLgQ0Y/T6NumWp2oor6hHv9IMj1fqWrcdnJ4yW4xibNmF2G63MFzcu
+        0iGDxYUIrn4jZ32jRZbamrpkoUr4L8QyOGtQgFL+Uw==
+X-Google-Smtp-Source: ADFU+vufccZcs61ZBlmuOm7ukHfWC6ZhrwNFAphauzXSa/puB0SAYGjCUbhdXtkYuKjFSx5h5oNBplH8yyO/gpHPw6E=
+X-Received: by 2002:a17:906:4bc4:: with SMTP id x4mr14096929ejv.201.1585730934033;
+ Wed, 01 Apr 2020 01:48:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200327071202.2159885-1-alastair@d-silva.org> <20200327071202.2159885-4-alastair@d-silva.org>
-In-Reply-To: <20200327071202.2159885-4-alastair@d-silva.org>
+References: <20200327071202.2159885-1-alastair@d-silva.org> <20200327071202.2159885-5-alastair@d-silva.org>
+In-Reply-To: <20200327071202.2159885-5-alastair@d-silva.org>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 1 Apr 2020 01:48:32 -0700
-Message-ID: <CAPcyv4iGEHJpZctEm+Do1-kOZBUDeKKcREr=BqcK4kCvLWhAQQ@mail.gmail.com>
-Subject: Re: [PATCH v4 03/25] powerpc/powernv: Map & release OpenCAPI LPC memory
+Date:   Wed, 1 Apr 2020 01:48:42 -0700
+Message-ID: <CAPcyv4hs=4-0UF+bvFFuJb=n-VeMV62-DM_=3LUgMkro6nh2=w@mail.gmail.com>
+Subject: Re: [PATCH v4 04/25] ocxl: Remove unnecessary externs
 To:     "Alastair D'Silva" <alastair@d-silva.org>
 Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
         "Oliver O'Halloran" <oohall@gmail.com>,
@@ -89,93 +89,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sun, Mar 29, 2020 at 10:23 PM Alastair D'Silva <alastair@d-silva.org> wrote:
 >
-> This patch adds OPAL calls to powernv so that the OpenCAPI
-> driver can map & release LPC (Lowest Point of Coherency)  memory.
+> Function declarations don't need externs, remove the existing ones
+> so they are consistent with newer code
 >
 > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
+> Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
+> Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
+
+Looks good.
+
+
 > ---
->  arch/powerpc/include/asm/pnv-ocxl.h   |  2 ++
->  arch/powerpc/platforms/powernv/ocxl.c | 43 +++++++++++++++++++++++++++
->  2 files changed, 45 insertions(+)
+>  arch/powerpc/include/asm/pnv-ocxl.h | 40 ++++++++++++++---------------
+>  include/misc/ocxl.h                 |  6 ++---
+>  2 files changed, 22 insertions(+), 24 deletions(-)
 >
 > diff --git a/arch/powerpc/include/asm/pnv-ocxl.h b/arch/powerpc/include/asm/pnv-ocxl.h
-> index 7de82647e761..560a19bb71b7 100644
+> index 560a19bb71b7..205efc41a33c 100644
 > --- a/arch/powerpc/include/asm/pnv-ocxl.h
 > +++ b/arch/powerpc/include/asm/pnv-ocxl.h
-> @@ -32,5 +32,7 @@ extern int pnv_ocxl_spa_remove_pe_from_cache(void *platform_data, int pe_handle)
+> @@ -9,29 +9,27 @@
+>  #define PNV_OCXL_TL_BITS_PER_RATE       4
+>  #define PNV_OCXL_TL_RATE_BUF_SIZE       ((PNV_OCXL_TL_MAX_TEMPLATE+1) * PNV_OCXL_TL_BITS_PER_RATE / 8)
 >
->  extern int pnv_ocxl_alloc_xive_irq(u32 *irq, u64 *trigger_addr);
->  extern void pnv_ocxl_free_xive_irq(u32 irq);
-> +u64 pnv_ocxl_platform_lpc_setup(struct pci_dev *pdev, u64 size);
-> +void pnv_ocxl_platform_lpc_release(struct pci_dev *pdev);
+> -extern int pnv_ocxl_get_actag(struct pci_dev *dev, u16 *base, u16 *enabled,
+> -                       u16 *supported);
+> -extern int pnv_ocxl_get_pasid_count(struct pci_dev *dev, int *count);
+> +int pnv_ocxl_get_actag(struct pci_dev *dev, u16 *base, u16 *enabled, u16 *supported);
+> +int pnv_ocxl_get_pasid_count(struct pci_dev *dev, int *count);
 >
->  #endif /* _ASM_PNV_OCXL_H */
-> diff --git a/arch/powerpc/platforms/powernv/ocxl.c b/arch/powerpc/platforms/powernv/ocxl.c
-> index 8c65aacda9c8..f13119a7c026 100644
-> --- a/arch/powerpc/platforms/powernv/ocxl.c
-> +++ b/arch/powerpc/platforms/powernv/ocxl.c
-> @@ -475,6 +475,49 @@ void pnv_ocxl_spa_release(void *platform_data)
->  }
->  EXPORT_SYMBOL_GPL(pnv_ocxl_spa_release);
+> -extern int pnv_ocxl_get_tl_cap(struct pci_dev *dev, long *cap,
+> +int pnv_ocxl_get_tl_cap(struct pci_dev *dev, long *cap,
+>                         char *rate_buf, int rate_buf_size);
+> -extern int pnv_ocxl_set_tl_conf(struct pci_dev *dev, long cap,
+> -                       uint64_t rate_buf_phys, int rate_buf_size);
+> -
+> -extern int pnv_ocxl_get_xsl_irq(struct pci_dev *dev, int *hwirq);
+> -extern void pnv_ocxl_unmap_xsl_regs(void __iomem *dsisr, void __iomem *dar,
+> -                               void __iomem *tfc, void __iomem *pe_handle);
+> -extern int pnv_ocxl_map_xsl_regs(struct pci_dev *dev, void __iomem **dsisr,
+> -                               void __iomem **dar, void __iomem **tfc,
+> -                               void __iomem **pe_handle);
+> -
+> -extern int pnv_ocxl_spa_setup(struct pci_dev *dev, void *spa_mem, int PE_mask,
+> -                       void **platform_data);
+> -extern void pnv_ocxl_spa_release(void *platform_data);
+> -extern int pnv_ocxl_spa_remove_pe_from_cache(void *platform_data, int pe_handle);
+> -
+> -extern int pnv_ocxl_alloc_xive_irq(u32 *irq, u64 *trigger_addr);
+> -extern void pnv_ocxl_free_xive_irq(u32 irq);
+> +int pnv_ocxl_set_tl_conf(struct pci_dev *dev, long cap,
+> +                        uint64_t rate_buf_phys, int rate_buf_size);
+> +
+> +int pnv_ocxl_get_xsl_irq(struct pci_dev *dev, int *hwirq);
+> +void pnv_ocxl_unmap_xsl_regs(void __iomem *dsisr, void __iomem *dar,
+> +                            void __iomem *tfc, void __iomem *pe_handle);
+> +int pnv_ocxl_map_xsl_regs(struct pci_dev *dev, void __iomem **dsisr,
+> +                         void __iomem **dar, void __iomem **tfc,
+> +                         void __iomem **pe_handle);
+> +
+> +int pnv_ocxl_spa_setup(struct pci_dev *dev, void *spa_mem, int PE_mask, void **platform_data);
+> +void pnv_ocxl_spa_release(void *platform_data);
+> +int pnv_ocxl_spa_remove_pe_from_cache(void *platform_data, int pe_handle);
+> +
+> +int pnv_ocxl_alloc_xive_irq(u32 *irq, u64 *trigger_addr);
+> +void pnv_ocxl_free_xive_irq(u32 irq);
+>  u64 pnv_ocxl_platform_lpc_setup(struct pci_dev *pdev, u64 size);
+>  void pnv_ocxl_platform_lpc_release(struct pci_dev *pdev);
 >
-> +u64 pnv_ocxl_platform_lpc_setup(struct pci_dev *pdev, u64 size)
-> +{
-> +       struct pci_controller *hose = pci_bus_to_host(pdev->bus);
-> +       struct pnv_phb *phb = hose->private_data;
-
-Is calling the local variable 'hose' instead of 'host' on purpose?
-
-> +       u32 bdfn = pci_dev_id(pdev);
-> +       __be64 base_addr_be64;
-> +       u64 base_addr;
-> +       int rc;
-> +
-> +       rc = opal_npu_mem_alloc(phb->opal_id, bdfn, size, &base_addr_be64);
-> +       if (rc) {
-> +               dev_warn(&pdev->dev,
-> +                        "OPAL could not allocate LPC memory, rc=%d\n", rc);
-> +               return 0;
-> +       }
-> +
-> +       base_addr = be64_to_cpu(base_addr_be64);
-> +
-> +#ifdef CONFIG_MEMORY_HOTPLUG_SPARSE
-
-With the proposed cleanup in patch2 the ifdef can be elided here.
-
-> +       rc = check_hotplug_memory_addressable(base_addr >> PAGE_SHIFT,
-> +                                             size >> PAGE_SHIFT);
-> +       if (rc)
-> +               return 0;
-
-Is this an error worth logging if someone is wondering why their
-device is not showing up?
-
-
-> +#endif
-> +
-> +       return base_addr;
-> +}
-> +EXPORT_SYMBOL_GPL(pnv_ocxl_platform_lpc_setup);
-> +
-> +void pnv_ocxl_platform_lpc_release(struct pci_dev *pdev)
-> +{
-> +       struct pci_controller *hose = pci_bus_to_host(pdev->bus);
-> +       struct pnv_phb *phb = hose->private_data;
-> +       u32 bdfn = pci_dev_id(pdev);
-> +       int rc;
-> +
-> +       rc = opal_npu_mem_release(phb->opal_id, bdfn);
-> +       if (rc)
-> +               dev_warn(&pdev->dev,
-> +                        "OPAL reported rc=%d when releasing LPC memory\n", rc);
-> +}
-> +EXPORT_SYMBOL_GPL(pnv_ocxl_platform_lpc_release);
-> +
->  int pnv_ocxl_spa_remove_pe_from_cache(void *platform_data, int pe_handle)
->  {
->         struct spa_data *data = (struct spa_data *) platform_data;
+> diff --git a/include/misc/ocxl.h b/include/misc/ocxl.h
+> index 06dd5839e438..0a762e387418 100644
+> --- a/include/misc/ocxl.h
+> +++ b/include/misc/ocxl.h
+> @@ -173,7 +173,7 @@ int ocxl_context_detach(struct ocxl_context *ctx);
+>   *
+>   * Returns 0 on success, negative on failure
+>   */
+> -extern int ocxl_afu_irq_alloc(struct ocxl_context *ctx, int *irq_id);
+> +int ocxl_afu_irq_alloc(struct ocxl_context *ctx, int *irq_id);
+>
+>  /**
+>   * Frees an IRQ associated with an AFU context
+> @@ -182,7 +182,7 @@ extern int ocxl_afu_irq_alloc(struct ocxl_context *ctx, int *irq_id);
+>   *
+>   * Returns 0 on success, negative on failure
+>   */
+> -extern int ocxl_afu_irq_free(struct ocxl_context *ctx, int irq_id);
+> +int ocxl_afu_irq_free(struct ocxl_context *ctx, int irq_id);
+>
+>  /**
+>   * Gets the address of the trigger page for an IRQ
+> @@ -193,7 +193,7 @@ extern int ocxl_afu_irq_free(struct ocxl_context *ctx, int irq_id);
+>   *
+>   * returns the trigger page address, or 0 if the IRQ is not valid
+>   */
+> -extern u64 ocxl_afu_irq_get_addr(struct ocxl_context *ctx, int irq_id);
+> +u64 ocxl_afu_irq_get_addr(struct ocxl_context *ctx, int irq_id);
+>
+>  /**
+>   * Provide a callback to be called when an IRQ is triggered
 > --
 > 2.24.1
 >
