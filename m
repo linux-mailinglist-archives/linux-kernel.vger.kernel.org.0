@@ -2,127 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C35D19AEFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 17:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 066E819AF00
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 17:46:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733103AbgDAPpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 11:45:55 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42029 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732889AbgDAPpz (ORCPT
+        id S1733161AbgDAPqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 11:46:32 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35776 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732889AbgDAPqc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 11:45:55 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h15so597671wrx.9
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 08:45:53 -0700 (PDT)
+        Wed, 1 Apr 2020 11:46:32 -0400
+Received: by mail-lj1-f194.google.com with SMTP id k21so26305401ljh.2;
+        Wed, 01 Apr 2020 08:46:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eGo2AC3bFo0cX0Y80FNvQpP9bE2/c336JeB41lJRyRE=;
+        b=tZRaDOcYiY6nTed7mYmAPRDObnjaWlOo8msoex1+RLkm5gRTGA7S/T7pIUv688qVWC
+         9KQtH9PEB9F9WD9iur48UFi0rhlm5OlkBh4BC56uASN6dSjf/4yz/puLfcZwm9ovxsMm
+         ZIuNxR4sMs2HNZHIAQ05TJQbaKiy6joyqe0KXFvDo1VW/jpri9RYQJkSWFXp+91cFSO/
+         nOjcwx+pmIYUBonKXicJWR2I/gDWlGfRoOpHFdlRQmcU+llIMqvdV2pCVTPdKOBrTwvF
+         SwC51wSyLqib99jVteWF9BH+lDGytmvrIdEN5YhNrhhnsXiQyvdyOPTo/d1+eJ+0D1Ra
+         4zfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tYBj/J8veruCjTzX1o+wZprDrS+JzOwwWpvGNETVB3w=;
-        b=eYjqW+6DHgp8kAFKlmCkcnRIZZd0EIWdOD8k2HqEGiH5cLe+U9Ar/BKn1ne0Te46s5
-         9zbI6F4SCXwZo63LkLmhK1XHE29mTFgt35cqlCDVqgj2cDgpU8lfmMYsUlE9pso946r/
-         7yOfsauJD04HyJYfv0BmC6/R3M6n4Js3oXvBj2sbi+o9td9hN6Mq6jr9VAlsYgFncxfI
-         p16zMduE879jEqhPOoQ7/XY7TO1xC+4S/RJQHeqRmQQ3VY+5BIBHlV4ifi7flVTJfDrP
-         J1imRfbdUFoaPGFejjpveZiKMhdwbz6qm6csGyHsYdh+lce9XQpQK0z/eFbJPMU2d9x7
-         EdsQ==
-X-Gm-Message-State: ANhLgQ2Dz5Po8DAiaEh81VSuQYfOmWaCHtjKxKtyKMq8LFhWffhzZcBQ
-        8GHejB3NOGwtReCgwknq3Fk=
-X-Google-Smtp-Source: ADFU+vsAEDOPLXQdjBGQtq0cDsSOpGqVXNrzozCxu7TMCJPYjXlwTpGvrXv06QSo+jG2WumpyNP3Hw==
-X-Received: by 2002:adf:9d88:: with SMTP id p8mr26245360wre.257.1585755953120;
-        Wed, 01 Apr 2020 08:45:53 -0700 (PDT)
-Received: from localhost (ip-37-188-180-223.eurotel.cz. [37.188.180.223])
-        by smtp.gmail.com with ESMTPSA id b67sm3133222wmh.29.2020.04.01.08.45.52
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eGo2AC3bFo0cX0Y80FNvQpP9bE2/c336JeB41lJRyRE=;
+        b=mxfUgSQlqy6OdFE19okhc5VNUK5/1i5+knN9Vzd39EcrzlmBsQT1hudey3FsjTliLA
+         T+F0dq/8U6H3b9gozSdEvCK7hroEAiGVIPbzamRO2qfBRkr0wHv6NoSjFZfvR/jxuXme
+         70FZAsBzmzUMMPESH867hD33/ERJTodcHpjklkHSPYyXjyfjNbKiw5AmAeKkAkd1bmhw
+         MYs9s5W/QKOIysNjTolQE6w5V6bU8mk87MgfmPi24U/qn5qZkDCt4DSSuxQKm3b0PYz7
+         PnGHWuTdVlWPV4rtiev+NeyyudnVGqoqW2AGFzwrgNgQmBh1Gq1GQFHx9G2QIXlgSmGm
+         FvhA==
+X-Gm-Message-State: AGi0Pua2b/1NJo4rmcHtwivAt7+NFg95ro+ZN6D8FFur6Kb83ySUIGbR
+        FN3tdvmHStkQXWU+p3sWf9nGfOzyNQU=
+X-Google-Smtp-Source: APiQypL/Qg1CoRp9yBB1IV0crCY7gmXDJZBXEVq3T4dQMlAcRYjXGvdxK6t57DKmKs/y3+6db0r/vQ==
+X-Received: by 2002:a2e:8195:: with SMTP id e21mr13332304ljg.49.1585755989539;
+        Wed, 01 Apr 2020 08:46:29 -0700 (PDT)
+Received: from pc636 (h5ef52e31.seluork.dyn.perspektivbredband.net. [94.245.46.49])
+        by smtp.gmail.com with ESMTPSA id v20sm1839292lfe.52.2020.04.01.08.46.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 08:45:52 -0700 (PDT)
-Date:   Wed, 1 Apr 2020 17:45:49 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Wed, 01 Apr 2020 08:46:28 -0700 (PDT)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date:   Wed, 1 Apr 2020 17:46:18 +0200
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Uladzislau Rezki <urezki@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        rcu@vger.kernel.org, willy@infradead.org, peterz@infradead.org,
+        neilb@suse.com, vbabka@suse.cz, mgorman@suse.de,
         Andrew Morton <akpm@linux-foundation.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        Baoquan He <bhe@redhat.com>, Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH v1 2/2] mm/page_alloc: fix watchdog soft lockups during
- set_zone_contiguous()
-Message-ID: <20200401154549.GS22681@dhcp22.suse.cz>
-References: <20200401104156.11564-1-david@redhat.com>
- <20200401104156.11564-3-david@redhat.com>
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC] rcu/tree: Use GFP_MEMALLOC for alloc memory to free
+ memory pattern
+Message-ID: <20200401154618.GA3907@pc636>
+References: <20200331145806.GB236678@google.com>
+ <20200331153450.GM30449@dhcp22.suse.cz>
+ <20200331161215.GA27676@pc636>
+ <20200401070958.GB22681@dhcp22.suse.cz>
+ <20200401123230.GB32593@pc636>
+ <20200401125503.GJ22681@dhcp22.suse.cz>
+ <20200401130816.GA1320@pc636>
+ <20200401131528.GK22681@dhcp22.suse.cz>
+ <20200401132258.GA1953@pc636>
+ <20200401152805.GN22681@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200401104156.11564-3-david@redhat.com>
+In-Reply-To: <20200401152805.GN22681@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 01-04-20 12:41:56, David Hildenbrand wrote:
-> Without CONFIG_PREEMPT, it can happen that we get soft lockups detected,
-> e.g., while booting up.
+> > > 
+> > > OK, if you are always in the atomic context then GFP_ATOMIC is
+> > > sufficient. __GFP_RETRY_MAYFAIL will make no difference for allocations
+> > > which do not reclaim (and thus not retry). Sorry this was not clear to
+> > > me from the previous description.
+> > > 
+> > Ahh. OK. Then adding __GFP_RETRY_MAYFAIL to GFP_ATOMIC will not make any effect.
+> > 
+> > Thank you for your explanation!
 > 
-> [  105.608900] watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [swapper/0:1]
-> [  105.608933] Modules linked in:
-> [  105.608933] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.6.0-next-20200331+ #4
-> [  105.608933] Hardware name: Red Hat KVM, BIOS 1.11.1-4.module+el8.1.0+4066+0f1aadab 04/01/2014
-> [  105.608933] RIP: 0010:__pageblock_pfn_to_page+0x134/0x1c0
-> [  105.608933] Code: 85 c0 74 71 4a 8b 04 d0 48 85 c0 74 68 48 01 c1 74 63 f6 01 04 74 5e 48 c1 e7 06 4c 8b 05 cc 991
-> [  105.608933] RSP: 0000:ffffb6d94000fe60 EFLAGS: 00010286 ORIG_RAX: ffffffffffffff13
-> [  105.608933] RAX: fffff81953250000 RBX: 000000000a4c9600 RCX: ffff8fe9ff7c1990
-> [  105.608933] RDX: ffff8fe9ff7dab80 RSI: 000000000a4c95ff RDI: 0000000293250000
-> [  105.608933] RBP: ffff8fe9ff7dab80 R08: fffff816c0000000 R09: 0000000000000008
-> [  105.608933] R10: 0000000000000014 R11: 0000000000000014 R12: 0000000000000000
-> [  105.608933] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> [  105.608933] FS:  0000000000000000(0000) GS:ffff8fe1ff400000(0000) knlGS:0000000000000000
-> [  105.608933] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  105.608933] CR2: 000000000f613000 CR3: 00000088cf20a000 CR4: 00000000000006f0
-> [  105.608933] Call Trace:
-> [  105.608933]  set_zone_contiguous+0x56/0x70
-> [  105.608933]  page_alloc_init_late+0x166/0x176
-> [  105.608933]  kernel_init_freeable+0xfa/0x255
-> [  105.608933]  ? rest_init+0xaa/0xaa
-> [  105.608933]  kernel_init+0xa/0x106
-> [  105.608933]  ret_from_fork+0x35/0x40
+> Welcome. I wish all those gfp flags were really clear but I fully
+> understand that people who are not working with MM regurarly might find
+> it confusing. Btw. have __GFP_RETRY_MAYFAIL is documented in gfp.h and
+> it is documented as the reclaim modifier which should imply that it has
+> no effect when the reclaim is not allowed which is the case for any non
+> sleeping allocation. If that relation was not immediately obvious then I
+> think we need to make it explicit. Would you find it useful?
 > 
-> The issue becomes visible when having a lot of memory (e.g., 4TB)
-> assigned to a single NUMA node - a system that can easily be created
-> using QEMU. Inside VMs on a hypervisor with quite some memory
-> overcommit, this is fairly easy to trigger.
+> E.g.
 > 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
-> Cc: Shile Zhang <shile.zhang@linux.alibaba.com>
-> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Alexander Duyck <alexander.duyck@gmail.com>
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> index e3ab1c0d9140..8f09cefdfa7b 100644
+> --- a/include/linux/gfp.h
+> +++ b/include/linux/gfp.h
+> @@ -127,6 +127,8 @@ struct vm_area_struct;
+>   *
+>   * Reclaim modifiers
+>   * ~~~~~~~~~~~~~~~~~
+> + * Please note that all the folloging flags are only applicable to sleepable
+> + * allocations (e.g. %GFP_NOWAIT and %GFP_ATOMIC will ignore them).
+>   *
+>   * %__GFP_IO can start physical IO.
+>   *
+That would be definitely clear for me!
 
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  mm/page_alloc.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 084cabffc90d..cc4f07d52939 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1607,6 +1607,7 @@ void set_zone_contiguous(struct zone *zone)
->  		if (!__pageblock_pfn_to_page(block_start_pfn,
->  					     block_end_pfn, zone))
->  			return;
-> +		cond_resched();
->  	}
->  
->  	/* We confirm that there is no hole */
-> -- 
-> 2.25.1
-
--- 
-Michal Hocko
-SUSE Labs
+--
+Vlad Rezki
