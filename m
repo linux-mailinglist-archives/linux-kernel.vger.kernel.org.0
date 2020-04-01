@@ -2,226 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 664E619A871
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:17:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7A1D19A882
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:20:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731749AbgDAJRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 05:17:51 -0400
-Received: from mx04.melco.co.jp ([192.218.140.144]:60571 "EHLO
-        mx04.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbgDAJRv (ORCPT
+        id S1731850AbgDAJUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 05:20:03 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:63906 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726368AbgDAJUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 05:17:51 -0400
-Received: from mr04.melco.co.jp (mr04 [133.141.98.166])
-        by mx04.melco.co.jp (Postfix) with ESMTP id 1A8AD3A4497;
-        Wed,  1 Apr 2020 18:17:49 +0900 (JST)
-Received: from mr04.melco.co.jp (unknown [127.0.0.1])
-        by mr04.imss (Postfix) with ESMTP id 48sgb107w0zRkCp;
-        Wed,  1 Apr 2020 18:17:49 +0900 (JST)
-Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
-        by mr04.melco.co.jp (Postfix) with ESMTP id 48sgb06xV5zRkCT;
-        Wed,  1 Apr 2020 18:17:48 +0900 (JST)
-Received: from mf03.melco.co.jp (unknown [133.141.98.183])
-        by mf03_second.melco.co.jp (Postfix) with ESMTP id 48sgb06qPCzRkHS;
-        Wed,  1 Apr 2020 18:17:48 +0900 (JST)
-Received: from tux532.tad.melco.co.jp (unknown [133.141.243.226])
-        by mf03.melco.co.jp (Postfix) with ESMTP id 48sgb06M2fzRkHR;
-        Wed,  1 Apr 2020 18:17:48 +0900 (JST)
-Received:  from tux532.tad.melco.co.jp
-        by tux532.tad.melco.co.jp (unknown) with ESMTP id 0319Hm4N005340;
-        Wed, 1 Apr 2020 18:17:48 +0900
-Received: from tux390.tad.melco.co.jp (tux390.tad.melco.co.jp [127.0.0.1])
-        by postfix.imss70 (Postfix) with ESMTP id 9DABB17E075;
-        Wed,  1 Apr 2020 18:17:48 +0900 (JST)
-Received: from tux554.tad.melco.co.jp (tux100.tad.melco.co.jp [10.168.7.223])
-        by tux390.tad.melco.co.jp (Postfix) with ESMTP id 9154417E073;
-        Wed,  1 Apr 2020 18:17:48 +0900 (JST)
-Received: from tux554.tad.melco.co.jp
-        by tux554.tad.melco.co.jp (unknown) with ESMTP id 0319HmtE007069;
-        Wed, 1 Apr 2020 18:17:48 +0900
-From:   Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-To:     Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp
-Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] exfat: Unify access to the boot sector
-Date:   Wed,  1 Apr 2020 18:17:45 +0900
-Message-Id: <20200401091745.107261-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-X-Mailer: git-send-email 2.25.0
+        Wed, 1 Apr 2020 05:20:02 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03196Cq6104281
+        for <linux-kernel@vger.kernel.org>; Wed, 1 Apr 2020 05:20:01 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 301yfgncjf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 05:20:01 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 1 Apr 2020 10:19:42 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 1 Apr 2020 10:19:37 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0319Jq7S55443614
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 Apr 2020 09:19:52 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6F59B42049;
+        Wed,  1 Apr 2020 09:19:52 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 111AE42042;
+        Wed,  1 Apr 2020 09:19:49 +0000 (GMT)
+Received: from [9.199.48.114] (unknown [9.199.48.114])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  1 Apr 2020 09:19:48 +0000 (GMT)
+Subject: Re: [PATCH v2 07/16] powerpc/watchpoint: Get watchpoint count
+ dynamically while disabling them
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     mpe@ellerman.id.au, mikey@neuling.org, apopple@linux.ibm.com,
+        paulus@samba.org, npiggin@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com, peterz@infradead.org,
+        jolsa@kernel.org, oleg@redhat.com, fweisbec@gmail.com,
+        mingo@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20200401061309.92442-1-ravi.bangoria@linux.ibm.com>
+ <20200401061309.92442-8-ravi.bangoria@linux.ibm.com>
+ <3c2312bb-9689-830e-3bc8-c828eddf369c@c-s.fr>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 1 Apr 2020 14:49:48 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
+In-Reply-To: <3c2312bb-9689-830e-3bc8-c828eddf369c@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20040109-0020-0000-0000-000003BF8182
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20040109-0021-0000-0000-00002218265D
+Message-Id: <299bf5b6-a293-aa59-b27a-04b00ef7ea2c@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 impostorscore=0 mlxscore=0 phishscore=0 clxscore=1015
+ bulkscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004010078
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unify access to boot sector via 'sbi>pbr_bh'.
-This fixes vol_flags inconsistency at read failed in fs_set_vol_flags(),
-and buffer_head leak in __exfat_fill_super().
 
-Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
----
- fs/exfat/balloc.c |  3 ---
- fs/exfat/super.c  | 43 ++++++++++++++++---------------------------
- 2 files changed, 16 insertions(+), 30 deletions(-)
 
-diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
-index 6a04cc0256..6774a5a6de 100644
---- a/fs/exfat/balloc.c
-+++ b/fs/exfat/balloc.c
-@@ -91,7 +91,6 @@ static int exfat_allocate_bitmap(struct super_block *sb,
- 		}
- 	}
- 
--	sbi->pbr_bh = NULL;
- 	return 0;
- }
- 
-@@ -137,8 +136,6 @@ void exfat_free_bitmap(struct exfat_sb_info *sbi)
- {
- 	int i;
- 
--	brelse(sbi->pbr_bh);
--
- 	for (i = 0; i < sbi->map_sectors; i++)
- 		__brelse(sbi->vol_amap[i]);
- 
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 16ed202ef5..2dd62543a4 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -49,6 +49,7 @@ static void exfat_put_super(struct super_block *sb)
- 		sync_blockdev(sb->s_bdev);
- 	exfat_set_vol_flags(sb, VOL_CLEAN);
- 	exfat_free_bitmap(sbi);
-+	brelse(sbi->pbr_bh);
- 	mutex_unlock(&sbi->s_lock);
- 
- 	call_rcu(&sbi->rcu, exfat_delayed_free);
-@@ -100,7 +101,7 @@ static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
- int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag)
- {
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
--	struct pbr64 *bpb;
-+	struct pbr64 *bpb = (struct pbr64 *)sbi->pbr_bh->b_data;
- 	bool sync = 0;
- 
- 	/* flags are not changed */
-@@ -115,15 +116,6 @@ int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag)
- 	if (sb_rdonly(sb))
- 		return 0;
- 
--	if (!sbi->pbr_bh) {
--		sbi->pbr_bh = sb_bread(sb, 0);
--		if (!sbi->pbr_bh) {
--			exfat_msg(sb, KERN_ERR, "failed to read boot sector");
--			return -ENOMEM;
--		}
--	}
--
--	bpb = (struct pbr64 *)sbi->pbr_bh->b_data;
- 	bpb->bsx.vol_flags = cpu_to_le16(new_flag);
- 
- 	if (new_flag == VOL_DIRTY && !buffer_dirty(sbi->pbr_bh))
-@@ -355,10 +347,10 @@ static int exfat_read_root(struct inode *inode)
- 	return 0;
- }
- 
--static struct pbr *exfat_read_pbr_with_logical_sector(struct super_block *sb,
--		struct buffer_head **prev_bh)
-+static struct pbr *exfat_read_pbr_with_logical_sector(struct super_block *sb)
- {
--	struct pbr *p_pbr = (struct pbr *) (*prev_bh)->b_data;
-+	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-+	struct pbr *p_pbr = (struct pbr *) (sbi->pbr_bh)->b_data;
- 	unsigned short logical_sect = 0;
- 
- 	logical_sect = 1 << p_pbr->bsx.f64.sect_size_bits;
-@@ -378,26 +370,23 @@ static struct pbr *exfat_read_pbr_with_logical_sector(struct super_block *sb,
- 	}
- 
- 	if (logical_sect > sb->s_blocksize) {
--		struct buffer_head *bh = NULL;
--
--		__brelse(*prev_bh);
--		*prev_bh = NULL;
-+		brelse(sbi->pbr_bh);
-+		sbi->pbr_bh = NULL;
- 
- 		if (!sb_set_blocksize(sb, logical_sect)) {
- 			exfat_msg(sb, KERN_ERR,
- 				"unable to set blocksize %u", logical_sect);
- 			return NULL;
- 		}
--		bh = sb_bread(sb, 0);
--		if (!bh) {
-+		sbi->pbr_bh = sb_bread(sb, 0);
-+		if (!sbi->pbr_bh) {
- 			exfat_msg(sb, KERN_ERR,
- 				"unable to read boot sector (logical sector size = %lu)",
- 				sb->s_blocksize);
- 			return NULL;
- 		}
- 
--		*prev_bh = bh;
--		p_pbr = (struct pbr *) bh->b_data;
-+		p_pbr = (struct pbr *)sbi->pbr_bh->b_data;
- 	}
- 	return p_pbr;
- }
-@@ -408,21 +397,20 @@ static int __exfat_fill_super(struct super_block *sb)
- 	int ret;
- 	struct pbr *p_pbr;
- 	struct pbr64 *p_bpb;
--	struct buffer_head *bh;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 
- 	/* set block size to read super block */
- 	sb_min_blocksize(sb, 512);
- 
- 	/* read boot sector */
--	bh = sb_bread(sb, 0);
--	if (!bh) {
-+	sbi->pbr_bh = sb_bread(sb, 0);
-+	if (!sbi->pbr_bh) {
- 		exfat_msg(sb, KERN_ERR, "unable to read boot sector");
- 		return -EIO;
- 	}
- 
- 	/* PRB is read */
--	p_pbr = (struct pbr *)bh->b_data;
-+	p_pbr = (struct pbr *)sbi->pbr_bh->b_data;
- 
- 	/* check the validity of PBR */
- 	if (le16_to_cpu((p_pbr->signature)) != PBR_SIGNATURE) {
-@@ -433,7 +421,7 @@ static int __exfat_fill_super(struct super_block *sb)
- 
- 
- 	/* check logical sector size */
--	p_pbr = exfat_read_pbr_with_logical_sector(sb, &bh);
-+	p_pbr = exfat_read_pbr_with_logical_sector(sb);
- 	if (!p_pbr) {
- 		ret = -EIO;
- 		goto free_bh;
-@@ -514,7 +502,7 @@ static int __exfat_fill_super(struct super_block *sb)
- free_upcase_table:
- 	exfat_free_upcase_table(sbi);
- free_bh:
--	brelse(bh);
-+	brelse(sbi->pbr_bh);
- 	return ret;
- }
- 
-@@ -605,6 +593,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
- free_table:
- 	exfat_free_upcase_table(sbi);
- 	exfat_free_bitmap(sbi);
-+	brelse(sbi->pbr_bh);
- 
- check_nls_io:
- 	unload_nls(sbi->nls_io);
--- 
-2.25.0
+On 4/1/20 12:02 PM, Christophe Leroy wrote:
+> 
+> 
+> Le 01/04/2020 à 08:13, Ravi Bangoria a écrit :
+>> Instead of disabling only one watchpoint, get num of available
+>> watchpoints dynamically and disable all of them.
+>>
+>> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+>> ---
+>>   arch/powerpc/include/asm/hw_breakpoint.h | 15 +++++++--------
+>>   1 file changed, 7 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/powerpc/include/asm/hw_breakpoint.h b/arch/powerpc/include/asm/hw_breakpoint.h
+>> index 4e4976c3248b..fae33c729ba9 100644
+>> --- a/arch/powerpc/include/asm/hw_breakpoint.h
+>> +++ b/arch/powerpc/include/asm/hw_breakpoint.h
+>> @@ -78,14 +78,13 @@ extern void ptrace_triggered(struct perf_event *bp,
+>>               struct perf_sample_data *data, struct pt_regs *regs);
+>>   static inline void hw_breakpoint_disable(void)
+>>   {
+>> -    struct arch_hw_breakpoint brk;
+>> -
+>> -    brk.address = 0;
+>> -    brk.type = 0;
+>> -    brk.len = 0;
+>> -    brk.hw_len = 0;
+>> -    if (ppc_breakpoint_available())
+>> -        __set_breakpoint(&brk, 0);
+>> +    int i;
+>> +    struct arch_hw_breakpoint null_brk = {0};
+> 
+> Those declaration should be in the block unsigned them below.
+> 
+>> +
+>> +    if (ppc_breakpoint_available()) {
+>> +        for (i = 0; i < nr_wp_slots(); i++)
+>> +            __set_breakpoint(&null_brk, i);
+>> +    }
+> 
+> I would have had a preference to the following, but that's detail I guess:
+> 
+>      int i;
+>      struct arch_hw_breakpoint null_brk = {0};
+> 
+>      if (!ppc_breakpoint_available())
+>          return;
+> 
+>      for (i = 0; i < nr_wp_slots(); i++)
+>          __set_breakpoint(&null_brk, i);
+
+This looks more better. Will change it.
+
+Ravi
 
