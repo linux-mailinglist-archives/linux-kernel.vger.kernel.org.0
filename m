@@ -2,76 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06CE919B7E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 23:46:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1D1919B7A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 23:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733069AbgDAVqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 17:46:17 -0400
-Received: from sender4-of-o51.zoho.com ([136.143.188.51]:21194 "EHLO
-        sender4-of-o51.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732337AbgDAVqR (ORCPT
+        id S1733173AbgDAVcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 17:32:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:16120 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732337AbgDAVcQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 17:46:17 -0400
-X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Wed, 01 Apr 2020 17:46:16 EDT
-ARC-Seal: i=1; a=rsa-sha256; t=1585776653; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=QvSiCxxe2w79MR2WQA6qr5ReJVNqXpDMdsAfYYgsGDXGjmQy1yPhlQfEjyl99WRYR3x2V6j06QVfVuMy9VDeQGPTQRY31PLszJFSY8GhngRpMR4KhDA5vf9b1mE8yU+7mJIwss85tco7V4Rp26Y3sNBD5frt/iBwG6vjzpzxH5I=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1585776653; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
-        bh=Ovd3KQjj+XaAtRsbbcvIASUZe23NDleaSRa1Iv2OAes=; 
-        b=AOZ+NHrkjd3EegnNZQVoOAjJ784s8RAanHVzrSbYYuVIuETh+rWj4jb/w5YIt5wnb6GycZr2s/+3X0cbXC5kP8XzkqX2eykhkZmH6VAv3daBkaTrq2aHsYboXT5BnK/5jKaZDWQ9s5ykQAc0Wjk9Sb1M767yPTOmr8oN3VZE1J0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=zv.io;
-        spf=pass  smtp.mailfrom=me@zv.io;
-        dmarc=pass header.from=<me@zv.io> header.from=<me@zv.io>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1585776653;
-        s=zoho; d=zv.io; i=me@zv.io;
-        h=Message-ID:Subject:From:To:Cc:Date:Content-Type:Mime-Version:Content-Transfer-Encoding;
-        bh=Ovd3KQjj+XaAtRsbbcvIASUZe23NDleaSRa1Iv2OAes=;
-        b=PHr7jsq44fpSmSOvXVAbNm2tX84DDMlK4B1Eq0sEBAZ/M8fjet76eBXGjU3Z0rFE
-        T7qpq4X9GYr9es9IYOK7F14kJ+hulNyZybcrYcg9XHMhH5CTyc4EOqO6l0FR69DmnSo
-        BxDxFI2V9ZM+RR3lxWJ/Faz6N2BlB9utrtylOI+0=
-Received: from powerhouse (cpe-70-114-218-141.austin.res.rr.com [70.114.218.141]) by mx.zohomail.com
-        with SMTPS id 1585776649042727.6372832244042; Wed, 1 Apr 2020 14:30:49 -0700 (PDT)
-Message-ID: <a1f6271e7c72e49fd863efc4b7126be6598fd4f6.camel@zv.io>
-Subject: [PATCH] um: add include: memset() and memcpy() are in <string.h>
-From:   Zach van Rijn <me@zv.io>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     linux-um@lists.infradead.org, Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Date:   Wed, 01 Apr 2020 16:30:48 -0500
+        Wed, 1 Apr 2020 17:32:16 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 031L2pt6001135;
+        Wed, 1 Apr 2020 17:31:55 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3022r0rj7p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 17:31:55 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 031LNGu0074640;
+        Wed, 1 Apr 2020 17:31:54 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3022r0rj7b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 17:31:54 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 031LUZ2o009371;
+        Wed, 1 Apr 2020 21:31:53 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma05wdc.us.ibm.com with ESMTP id 301x773yp0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 21:31:53 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 031LVqks57344412
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 Apr 2020 21:31:52 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5DAB16A04F;
+        Wed,  1 Apr 2020 21:31:52 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BE2896A047;
+        Wed,  1 Apr 2020 21:31:51 +0000 (GMT)
+Received: from [9.70.82.143] (unknown [9.70.82.143])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed,  1 Apr 2020 21:31:51 +0000 (GMT)
+Subject: [PATCH v9 11/13] powerpc/vas: Do not use default credits for
+ receive window
+From:   Haren Myneni <haren@linux.ibm.com>
+To:     mpe@ellerman.id.au
+Cc:     npiggin@gmail.com, mikey@neuling.org, herbert@gondor.apana.org.au,
+        frederic.barrat@fr.ibm.com, srikar@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, hch@infradead.org, oohall@gmail.com,
+        clg@kaod.org, sukadev@linux.vnet.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, ajd@linux.ibm.com
+In-Reply-To: <1585775978.10664.438.camel@hbabu-laptop>
+References: <1585775978.10664.438.camel@hbabu-laptop>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Date:   Wed, 01 Apr 2020 14:31:06 -0700
+Message-ID: <1585776666.10664.455.camel@hbabu-laptop>
 Mime-Version: 1.0
+X-Mailer: Evolution 2.28.3 
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-01_04:2020-03-31,2020-04-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 malwarescore=0 spamscore=0 mlxlogscore=918 impostorscore=0
+ suspectscore=1 adultscore=0 clxscore=1015 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004010174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These two functions are otherwise unknown to the pedantic compiler.
-Include the correct header to enable the build to succeed.
 
-Signed-off-by: Zach van Rijn <me@zv.io>
+System checkstops if RxFIFO overruns with more requests than the
+maximum possible number of CRBs allowed in FIFO at any time. So
+max credits value (rxattr.wcreds_max) is set and is passed to
+vas_rx_win_open() by the the driver.
+
+Signed-off-by: Haren Myneni <haren@linux.ibm.com>
 ---
- arch/um/os-Linux/file.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/platforms/powernv/vas-window.c | 4 ++--
+ arch/powerpc/platforms/powernv/vas.h        | 2 --
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/um/os-Linux/file.c b/arch/um/os-Linux/file.c
-index 26ecbd64c409..044836ad7392 100644
---- a/arch/um/os-Linux/file.c
-+++ b/arch/um/os-Linux/file.c
-@@ -6,6 +6,7 @@
- #include <stdio.h>
- #include <unistd.h>
- #include <stdlib.h>
-+#include <string.h>
- #include <errno.h>
- #include <fcntl.h>
- #include <signal.h>
+diff --git a/arch/powerpc/platforms/powernv/vas-window.c b/arch/powerpc/platforms/powernv/vas-window.c
+index 33aaa7a..084e76b 100644
+--- a/arch/powerpc/platforms/powernv/vas-window.c
++++ b/arch/powerpc/platforms/powernv/vas-window.c
+@@ -772,7 +772,7 @@ static bool rx_win_args_valid(enum vas_cop_type cop,
+ 	if (attr->rx_fifo_size > VAS_RX_FIFO_SIZE_MAX)
+ 		return false;
+ 
+-	if (attr->wcreds_max > VAS_RX_WCREDS_MAX)
++	if (!attr->wcreds_max)
+ 		return false;
+ 
+ 	if (attr->nx_win) {
+@@ -877,7 +877,7 @@ struct vas_window *vas_rx_win_open(int vasid, enum vas_cop_type cop,
+ 	rxwin->nx_win = rxattr->nx_win;
+ 	rxwin->user_win = rxattr->user_win;
+ 	rxwin->cop = cop;
+-	rxwin->wcreds_max = rxattr->wcreds_max ?: VAS_WCREDS_DEFAULT;
++	rxwin->wcreds_max = rxattr->wcreds_max;
+ 
+ 	init_winctx_for_rxwin(rxwin, rxattr, &winctx);
+ 	init_winctx_regs(rxwin, &winctx);
+diff --git a/arch/powerpc/platforms/powernv/vas.h b/arch/powerpc/platforms/powernv/vas.h
+index efdaa28..32b5261 100644
+--- a/arch/powerpc/platforms/powernv/vas.h
++++ b/arch/powerpc/platforms/powernv/vas.h
+@@ -101,11 +101,9 @@
+ /*
+  * Initial per-process credits.
+  * Max send window credits:    4K-1 (12-bits in VAS_TX_WCRED)
+- * Max receive window credits: 64K-1 (16 bits in VAS_LRX_WCRED)
+  *
+  * TODO: Needs tuning for per-process credits
+  */
+-#define VAS_RX_WCREDS_MAX		((64 << 10) - 1)
+ #define VAS_TX_WCREDS_MAX		((4 << 10) - 1)
+ #define VAS_WCREDS_DEFAULT		(1 << 10)
+ 
 -- 
-2.25.1
+1.8.3.1
+
 
 
