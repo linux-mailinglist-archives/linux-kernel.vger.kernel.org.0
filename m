@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E85019B06A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E64C19AFD2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:21:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733201AbgDAQ0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:26:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51214 "EHLO mail.kernel.org"
+        id S1733266AbgDAQVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:21:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733134AbgDAQ0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:26:43 -0400
+        id S1732497AbgDAQVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:21:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67D9E20857;
-        Wed,  1 Apr 2020 16:26:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8765820658;
+        Wed,  1 Apr 2020 16:21:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758401;
-        bh=HXV7RpBGT25AERW4zD7Td0Ay2o0uP43mJJuwTAIU6WM=;
+        s=default; t=1585758077;
+        bh=yoXhOL7nTVasZHR6cKwhWMciTV/1jPkQpUjZtocCq3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PU3w5HF2Xe4PYYaJb+QNJmvRY3GipXV7VFyi838zoLicrVmJ9mQdhTvGpwGQEJBGK
-         p6W6Uh3p/1ZoOB2KgNSVjnKVRdiHPWooEzfv8fa5PGpAKiLKVGKp4CfBV1pJX81Paq
-         u5sDdUpb9bbr7SWopuWyX+dZ2+ZvEbtalgKlrI68=
+        b=NFLjohpR5Bnrjd2rCojIAnwbKpnK5UFvlVgnMIq3wefmjIKACY8E5ngtK1bvPvoG/
+         2nLcZgKSBD0W6QjoDPnXSOlSCuSzfoOgUX6IZjnG9CshtgL/dglst9jL7p5p4Y0xP9
+         o+skzfKOncPl8ETP1uoNmCTp0AhXGX2nlyJHtPyY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>,
-        Rajkumar Manoharan <rmanohar@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 077/116] mac80211: add option for setting control flags
+        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@oss.nxp.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.5 29/30] arm64: dts: ls1043a-rdb: correct RGMII delay mode to rgmii-id
 Date:   Wed,  1 Apr 2020 18:17:33 +0200
-Message-Id: <20200401161552.567123694@linuxfoundation.org>
+Message-Id: <20200401161436.096040580@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
+References: <20200401161414.345528747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,122 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajkumar Manoharan <rmanohar@codeaurora.org>
+From: Madalin Bucur <madalin.bucur@oss.nxp.com>
 
-[ Upstream commit 060167729a78d626abaee1a0ebb64b252374426e ]
+commit 4022d808c45277693ea86478fab1f081ebf997e8 upstream.
 
-Allows setting of control flags of skb cb - if needed -
-when calling ieee80211_subif_start_xmit().
+The correct setting for the RGMII ports on LS1043ARDB is to
+enable delay on both Rx and Tx so the interface mode used must
+be PHY_INTERFACE_MODE_RGMII_ID.
 
-Tested-by: Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>
-Signed-off-by: Rajkumar Manoharan <rmanohar@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Since commit 1b3047b5208a80 ("net: phy: realtek: add support for
+configuring the RX delay on RTL8211F") the Realtek 8211F PHY driver
+has control over the RGMII RX delay and it is disabling it for
+RGMII_TXID. The LS1043ARDB uses two such PHYs in RGMII_ID mode but
+in the device tree the mode was described as "rgmii_txid".
+This issue was not apparent at the time as the PHY driver took the
+same action for RGMII_TXID and RGMII_ID back then but it became
+visible (RX no longer working) after the above patch.
+
+Changing the phy-connection-type to "rgmii-id" to address the issue.
+
+Fixes: bf02f2ffe59c ("arm64: dts: add LS1043A DPAA FMan support")
+Signed-off-by: Madalin Bucur <madalin.bucur@oss.nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/mac80211/ieee80211_i.h |    3 ++-
- net/mac80211/tdls.c        |    2 +-
- net/mac80211/tx.c          |   18 +++++++++++-------
- 3 files changed, 14 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/mac80211/ieee80211_i.h
-+++ b/net/mac80211/ieee80211_i.h
-@@ -1729,7 +1729,8 @@ netdev_tx_t ieee80211_subif_start_xmit(s
- 				       struct net_device *dev);
- void __ieee80211_subif_start_xmit(struct sk_buff *skb,
- 				  struct net_device *dev,
--				  u32 info_flags);
-+				  u32 info_flags,
-+				  u32 ctrl_flags);
- void ieee80211_purge_tx_queue(struct ieee80211_hw *hw,
- 			      struct sk_buff_head *skbs);
- struct sk_buff *
---- a/net/mac80211/tdls.c
-+++ b/net/mac80211/tdls.c
-@@ -1055,7 +1055,7 @@ ieee80211_tdls_prep_mgmt_packet(struct w
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
+@@ -119,12 +119,12 @@
  
- 	/* disable bottom halves when entering the Tx path */
- 	local_bh_disable();
--	__ieee80211_subif_start_xmit(skb, dev, flags);
-+	__ieee80211_subif_start_xmit(skb, dev, flags, 0);
- 	local_bh_enable();
+ 	ethernet@e4000 {
+ 		phy-handle = <&rgmii_phy1>;
+-		phy-connection-type = "rgmii-txid";
++		phy-connection-type = "rgmii-id";
+ 	};
  
- 	return ret;
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -2399,6 +2399,7 @@ static int ieee80211_lookup_ra_sta(struc
-  * @sdata: virtual interface to build the header for
-  * @skb: the skb to build the header in
-  * @info_flags: skb flags to set
-+ * @ctrl_flags: info control flags to set
-  *
-  * This function takes the skb with 802.3 header and reformats the header to
-  * the appropriate IEEE 802.11 header based on which interface the packet is
-@@ -2414,7 +2415,7 @@ static int ieee80211_lookup_ra_sta(struc
-  */
- static struct sk_buff *ieee80211_build_hdr(struct ieee80211_sub_if_data *sdata,
- 					   struct sk_buff *skb, u32 info_flags,
--					   struct sta_info *sta)
-+					   struct sta_info *sta, u32 ctrl_flags)
- {
- 	struct ieee80211_local *local = sdata->local;
- 	struct ieee80211_tx_info *info;
-@@ -2786,6 +2787,7 @@ static struct sk_buff *ieee80211_build_h
- 	info->flags = info_flags;
- 	info->ack_frame_id = info_id;
- 	info->band = band;
-+	info->control.flags = ctrl_flags;
+ 	ethernet@e6000 {
+ 		phy-handle = <&rgmii_phy2>;
+-		phy-connection-type = "rgmii-txid";
++		phy-connection-type = "rgmii-id";
+ 	};
  
- 	return skb;
-  free:
-@@ -3595,7 +3597,8 @@ EXPORT_SYMBOL(ieee80211_tx_dequeue);
- 
- void __ieee80211_subif_start_xmit(struct sk_buff *skb,
- 				  struct net_device *dev,
--				  u32 info_flags)
-+				  u32 info_flags,
-+				  u32 ctrl_flags)
- {
- 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
- 	struct sta_info *sta;
-@@ -3666,7 +3669,8 @@ void __ieee80211_subif_start_xmit(struct
- 		skb->prev = NULL;
- 		skb->next = NULL;
- 
--		skb = ieee80211_build_hdr(sdata, skb, info_flags, sta);
-+		skb = ieee80211_build_hdr(sdata, skb, info_flags,
-+					  sta, ctrl_flags);
- 		if (IS_ERR(skb))
- 			goto out;
- 
-@@ -3806,9 +3810,9 @@ netdev_tx_t ieee80211_subif_start_xmit(s
- 		__skb_queue_head_init(&queue);
- 		ieee80211_convert_to_unicast(skb, dev, &queue);
- 		while ((skb = __skb_dequeue(&queue)))
--			__ieee80211_subif_start_xmit(skb, dev, 0);
-+			__ieee80211_subif_start_xmit(skb, dev, 0, 0);
- 	} else {
--		__ieee80211_subif_start_xmit(skb, dev, 0);
-+		__ieee80211_subif_start_xmit(skb, dev, 0, 0);
- 	}
- 
- 	return NETDEV_TX_OK;
-@@ -3833,7 +3837,7 @@ ieee80211_build_data_template(struct iee
- 		goto out;
- 	}
- 
--	skb = ieee80211_build_hdr(sdata, skb, info_flags, sta);
-+	skb = ieee80211_build_hdr(sdata, skb, info_flags, sta, 0);
- 	if (IS_ERR(skb))
- 		goto out;
- 
-@@ -4870,7 +4874,7 @@ int ieee80211_tx_control_port(struct wip
- 	skb_reset_mac_header(skb);
- 
- 	local_bh_disable();
--	__ieee80211_subif_start_xmit(skb, skb->dev, flags);
-+	__ieee80211_subif_start_xmit(skb, skb->dev, flags, 0);
- 	local_bh_enable();
- 
- 	return 0;
+ 	ethernet@e8000 {
 
 
