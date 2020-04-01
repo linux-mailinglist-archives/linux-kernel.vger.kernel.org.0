@@ -2,243 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9562019A4E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 07:43:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A5D919A4D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 07:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731823AbgDAFnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 01:43:52 -0400
-Received: from mga06.intel.com ([134.134.136.31]:58537 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731721AbgDAFnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 01:43:52 -0400
-IronPort-SDR: 9r+UcJ2kPXLmleASsmHRRIr/lQpMe36ERG/8xfuAgqO2K50F+BGWPcQYcHcn6zxw2O7iEHJX1P
- tDY4PM3A4ujg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 22:43:51 -0700
-IronPort-SDR: GcFnpFPDo6u6p+fqdxihNuEiWlnDv6OHcrnw8AT7V77kaondCJakSpbBfp35ZvJ3zMwrSwaeh9
- a0AS0tblAUpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,330,1580803200"; 
-   d="scan'208";a="395832671"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.141])
-  by orsmga004.jf.intel.com with ESMTP; 31 Mar 2020 22:43:49 -0700
-Date:   Wed, 1 Apr 2020 13:41:25 +0800
-From:   Xu Yilun <yilun.xu@intel.com>
-To:     Wu Hao <hao.wu@intel.com>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, trix@redhat.com, bhu@redhat.com,
-        Luwei Kang <luwei.kang@intel.com>
-Subject: Re: [PATCH v3 2/7] fpga: dfl: pci: add irq info for feature devices
-  enumeration
-Message-ID: <20200401054125.GB4618@yilunxu-OptiPlex-7050>
-References: <1585038763-22944-1-git-send-email-yilun.xu@intel.com>
- <1585038763-22944-3-git-send-email-yilun.xu@intel.com>
- <20200331044120.GB8468@hao-dev>
- <20200401025902.GA4212@yilunxu-OptiPlex-7050>
- <20200401034430.GB28603@hao-dev>
+        id S1731780AbgDAFmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 01:42:17 -0400
+Received: from mail-eopbgr140057.outbound.protection.outlook.com ([40.107.14.57]:3592
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731589AbgDAFmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 01:42:17 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MdvqT+ixkmgo+hbkpr27su93iJ6/Lsurl5X3kHzKwsrhTBjgk9Ve/DnoflP7uGec7yDrtqt5ACAXXxRGcRoY2U/L5QBdV4Owe/+2nRhXOfeR2QAxKrdcupbWuIlXxNlVLKCpcRG7Yzjw9jgCv/OfDvauJHDWnrz9TWHdwnPg6O8tQo2LpDm+2w0+PRjQ9QnC42M1SvC5PAC3OoVufvpo1nnD73Plhtdis+1G767jcVRPYqTNHjRvmmhYotShUHkGF2h4lD8leNKU1xygoaq3q4/ALzsytHis45Obm3iAmHAotl2YLDRoNgVwF4P53TWVYkddkKKREi6k6QwbxZCptw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hp1BpGfMM3aK5fdHC6m5G8efLg+rP5j9ptCbNB/Eyek=;
+ b=m0IRHov00S41WNHvq2DSyZDJ2by24j/GePcRsO3E82aS2y89wh8B0wK28Rzy0SoT2jwDWAtQGPxnnbOZnfKnnlp8RwxNcgUV/BHO/b2/HFY4ZjZ1hE3GhAx0hWJ/Qo8EFmH/rOYVwoO5oqr2alBAAVbzrbaJDJz5teCZtVoQanio6zyS25Ow/x9uO7wHMtTYuS63NKpfYrNvDtufv18tlGaY0uvfscyzGO8FaUWALU0qrN9ArpHm7J+ihXbI3lS+7NLbgUItW9tsYZyftdeSD+hnOlT1C60X0TsX4Zc3G6OCaeRCfySjwBtMGk/hUyYiPC+xy8T9G6ri7Uvkt8BDZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hp1BpGfMM3aK5fdHC6m5G8efLg+rP5j9ptCbNB/Eyek=;
+ b=UEv/A/0Jjs1YmAelcVoo4dSpU7S1DUEIUz9M5HlGHRL99XuDHvYthGBqiO4d5boRJJ1VK5prRDbMgJkrauQO+Y8FB/+3HJz6ltrTzX2oqo6gfq/bzo6mpr5aE10FOThewAB0HBm+Biy/3GLYx4Siqt38JXZT0Ly7qyCMniSoCb4=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4931.eurprd04.prod.outlook.com (20.176.214.206) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2856.18; Wed, 1 Apr 2020 05:42:13 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2856.019; Wed, 1 Apr 2020
+ 05:42:13 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+CC:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V7 0/4] mailbox/firmware: imx: support SCU channel type
+Thread-Topic: [PATCH V7 0/4] mailbox/firmware: imx: support SCU channel type
+Thread-Index: AQHV/cQDu85ufqDAx06lOMhNtamjbahaF9QwgAmnWACAABWP0A==
+Date:   Wed, 1 Apr 2020 05:42:13 +0000
+Message-ID: <AM0PR04MB4481F99E13F6ED8F2ED9A35A88C90@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1584604193-2945-1-git-send-email-peng.fan@nxp.com>
+ <AM0PR04MB44812577EF272CA1D457A1F788C80@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <CABb+yY3jqhQpDf3eBMrGRfYeS2-Gj7o3YfZJVkb7Tp+4i-QZ4g@mail.gmail.com>
+In-Reply-To: <CABb+yY3jqhQpDf3eBMrGRfYeS2-Gj7o3YfZJVkb7Tp+4i-QZ4g@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 9242672c-628a-4a9d-4256-08d7d5ff6e0c
+x-ms-traffictypediagnostic: AM0PR04MB4931:|AM0PR04MB4931:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB493152AB4CAF7F0F21D6F97D88C90@AM0PR04MB4931.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3044;
+x-forefront-prvs: 03607C04F0
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB4481.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(39860400002)(346002)(376002)(136003)(366004)(396003)(7696005)(44832011)(15650500001)(8676002)(64756008)(54906003)(4326008)(5660300002)(66946007)(4744005)(52536014)(66556008)(81156014)(53546011)(81166006)(76116006)(6506007)(66446008)(316002)(55016002)(478600001)(66476007)(26005)(33656002)(9686003)(6916009)(2906002)(71200400001)(8936002)(186003)(86362001);DIR:OUT;SFP:1101;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: pV6Mr6gKoB0IaLRpf9yorfWur9ds44dmGk+7ArPksDCH1x4CHTksYl5Yw1+WVHlAMxKKppFs0F+aD7zJMUrXlwUbr+ZEaN+CcQbV8vaWWj5k9C+Hb0/EGDRJLJ3gJZ0pxvLF7qtlfJZKbrO1a20NKNs1FWekiuqxiVBnUN+e7di0yUKqHxkxj8jbQypu4fxLu8miwp4IiM/nY1DCbrXLLeYL5TzJWv8JKJ5F3jFIY2umrBP9x4Dryb/a34d1DbAp9O50rk1TbTlYhB4gwAkqYrfAp3lZUEdx1h9KLLH8fBwlZUxdYnubGHF4p4XJl7bB6AxLhVAH1NN06Xi6HjVLTNQz5we47DA8xow1nq2VGGmnVghcOaxLHQr1JBsOhg+AGFX4Vgii+dTNXoZ+egVQw7r3+7Wkji9DGlWGeWushzbobXwYWbmW9huf+Qj2eWPM
+x-ms-exchange-antispam-messagedata: b8k2FSu8dtCoce8eiWFSHhl/2TcGW7o5q7ZQIL73OZRa3ajCvla1/hSUHzwrCpTUGtcRzJGhALi3NXGP7g9hAuU7vh++dSAkpOZ4G/BK47CfB2PLmnXaBP/XSIm6qLNcHC6a02tLCQaFGQyRZqTgjg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200401034430.GB28603@hao-dev>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9242672c-628a-4a9d-4256-08d7d5ff6e0c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Apr 2020 05:42:13.4659
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: m0w6ct6CRGTVWvNIh9Qgu2b5vu0sNdVaW6TkJSUKvsHxQgFrnhhygAQlOC7SAHJvz9ycKFc4OB9jnFceInlJ0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4931
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 11:44:30AM +0800, Wu Hao wrote:
-> On Wed, Apr 01, 2020 at 10:59:02AM +0800, Xu Yilun wrote:
-> > On Tue, Mar 31, 2020 at 12:41:20PM +0800, Wu Hao wrote:
-> > > On Tue, Mar 24, 2020 at 04:32:38PM +0800, Xu Yilun wrote:
-> > > > Some DFL FPGA PCIe cards (e.g. Intel FPGA Programmable Acceleration
-> > > > Card) support MSI-X based interrupts. This patch allows PCIe driver
-> > > > to prepare and pass interrupt resources to DFL via enumeration API.
-> > > > These interrupt resources could then be assigned to actual features
-> > > > which use them.
-> > > > 
-> > > > Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> > > > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> > > > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> > > > ----
-> > > > v2: put irq resources init code inside cce_enumerate_feature_dev()
-> > > >     Some minor changes for Hao's comments.
-> > > > v3: Some minor fix for Hao's comments for v2.
-> > > > ---
-> > > >  drivers/fpga/dfl-pci.c | 76 ++++++++++++++++++++++++++++++++++++++++++++------
-> > > >  1 file changed, 67 insertions(+), 9 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/fpga/dfl-pci.c b/drivers/fpga/dfl-pci.c
-> > > > index 5387550..66027aa 100644
-> > > > --- a/drivers/fpga/dfl-pci.c
-> > > > +++ b/drivers/fpga/dfl-pci.c
-> > > > @@ -39,6 +39,28 @@ static void __iomem *cci_pci_ioremap_bar(struct pci_dev *pcidev, int bar)
-> > > >  	return pcim_iomap_table(pcidev)[bar];
-> > > >  }
-> > > >  
-> > > > +static int cci_pci_alloc_irq(struct pci_dev *pcidev)
-> > > > +{
-> > > > +	int nvec = pci_msix_vec_count(pcidev);
-> > > > +	int ret;
-> > > 
-> > > maybe int ret, nvec = pci_msix..
-> > > 
-> > > > +
-> > > > +	if (nvec <= 0) {
-> > > > +		dev_dbg(&pcidev->dev, "fpga interrupt not supported\n");
-> > > > +		return 0;
-> > > > +	}
-> > > > +
-> > > > +	ret = pci_alloc_irq_vectors(pcidev, nvec, nvec, PCI_IRQ_MSIX);
-> > > > +	if (ret < 0)
-> > > > +		return ret;
-> > > > +
-> > > > +	return nvec;
-> > > > +}
-> > > > +
-> > > > +static void cci_pci_free_irq(struct pci_dev *pcidev)
-> > > > +{
-> > > > +	pci_free_irq_vectors(pcidev);
-> > > > +}
-> > > > +
-> > > >  /* PCI Device ID */
-> > > >  #define PCIE_DEVICE_ID_PF_INT_5_X	0xBCBD
-> > > >  #define PCIE_DEVICE_ID_PF_INT_6_X	0xBCC0
-> > > > @@ -78,17 +100,33 @@ static void cci_remove_feature_devs(struct pci_dev *pcidev)
-> > > >  
-> > > >  	/* remove all children feature devices */
-> > > >  	dfl_fpga_feature_devs_remove(drvdata->cdev);
-> > > > +	cci_pci_free_irq(pcidev);
-> > > > +}
-> > > > +
-> > > > +static int *cci_pci_create_irq_table(struct pci_dev *pcidev, unsigned int nvec)
-> > > > +{
-> > > > +	unsigned int i;
-> > > > +	int *table;
-> > > > +
-> > > > +	table = kcalloc(nvec, sizeof(int), GFP_KERNEL);
-> > > > +	if (table) {
-> > > > +		for (i = 0; i < nvec; i++)
-> > > > +			table[i] = pci_irq_vector(pcidev, i);
-> > > > +	}
-> > > > +
-> > > > +	return table;
-> > > >  }
-> > > >  
-> > > >  /* enumerate feature devices under pci device */
-> > > >  static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
-> > > >  {
-> > > >  	struct cci_drvdata *drvdata = pci_get_drvdata(pcidev);
-> > > > +	int port_num, bar, i, nvec, ret = 0;
-> > > >  	struct dfl_fpga_enum_info *info;
-> > > >  	struct dfl_fpga_cdev *cdev;
-> > > >  	resource_size_t start, len;
-> > > > -	int port_num, bar, i, ret = 0;
-> > > >  	void __iomem *base;
-> > > > +	int *irq_table;
-> > > >  	u32 offset;
-> > > >  	u64 v;
-> > > >  
-> > > > @@ -97,11 +135,30 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
-> > > >  	if (!info)
-> > > >  		return -ENOMEM;
-> > > >  
-> > > > +	/* add irq info for enumeration if the device support irq */
-> > > > +	nvec = cci_pci_alloc_irq(pcidev);
-> > > > +	if (nvec < 0) {
-> > > > +		dev_err(&pcidev->dev, "Fail to alloc irq %d.\n", nvec);
-> > > > +		ret = nvec;
-> > > > +		goto enum_info_free_exit;
-> > > > +	} else if (nvec) {
-> > > > +		irq_table = cci_pci_create_irq_table(pcidev, nvec);
-> > > > +		if (!irq_table) {
-> > > > +			ret = -ENOMEM;
-> > > > +			goto irq_free_exit;
-> > > > +		}
-> > > > +
-> > > > +		ret = dfl_fpga_enum_info_add_irq(info, nvec, irq_table);
-> > > > +		kfree(irq_table);
-> > > 
-> > > i see you create a function for cci_pci_free_irq instead of using kernel api
-> > > directly, to make it more readable, so why not have a remove irq table function
-> > > here too.
-> > 
-> > The irq_table is not alloced in cci_pci_alloc_irq,
-> > cci_pci_create_irq_table does. Actually cci_pci_alloc/free_irq are not
-> > related to irq_table for DFL.
-> > 
-> > So maybe we don't have to change this?
-> 
-> I mean, you have cci_pci_alloc/free_irq but cci_pci_create_irq_table/kfree.
-> why don't you use cci_pci_remove_irq_table or something instead of kfree?
-
-Sorry for my misunderstanding. I can make this change. Thanks.
-
-> 
-> Hao
-> 
-> > 
-> > > 
-> > > Actually patch looks good to me, with above minor fixes.
-> > > 
-> > > Acked-by: Wu Hao <hao.wu@intel.com>
-> > > 
-> > > Hao
-> > > 
-> > > > +		if (ret)
-> > > > +			goto irq_free_exit;
-> > > > +	}
-> > > > +
-> > > >  	/* start to find Device Feature List from Bar 0 */
-> > > >  	base = cci_pci_ioremap_bar(pcidev, 0);
-> > > >  	if (!base) {
-> > > >  		ret = -ENOMEM;
-> > > > -		goto enum_info_free_exit;
-> > > > +		goto irq_free_exit;
-> > > >  	}
-> > > >  
-> > > >  	/*
-> > > > @@ -154,7 +211,7 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
-> > > >  		dfl_fpga_enum_info_add_dfl(info, start, len, base);
-> > > >  	} else {
-> > > >  		ret = -ENODEV;
-> > > > -		goto enum_info_free_exit;
-> > > > +		goto irq_free_exit;
-> > > >  	}
-> > > >  
-> > > >  	/* start enumeration with prepared enumeration information */
-> > > > @@ -162,11 +219,14 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
-> > > >  	if (IS_ERR(cdev)) {
-> > > >  		dev_err(&pcidev->dev, "Enumeration failure\n");
-> > > >  		ret = PTR_ERR(cdev);
-> > > > -		goto enum_info_free_exit;
-> > > > +		goto irq_free_exit;
-> > > >  	}
-> > > >  
-> > > >  	drvdata->cdev = cdev;
-> > > >  
-> > > > +irq_free_exit:
-> > > > +	if (ret)
-> > > > +		cci_pci_free_irq(pcidev);
-> > > >  enum_info_free_exit:
-> > > >  	dfl_fpga_enum_info_free(info);
-> > > >  
-> > > > @@ -211,12 +271,10 @@ int cci_pci_probe(struct pci_dev *pcidev, const struct pci_device_id *pcidevid)
-> > > >  	}
-> > > >  
-> > > >  	ret = cci_enumerate_feature_devs(pcidev);
-> > > > -	if (ret) {
-> > > > -		dev_err(&pcidev->dev, "enumeration failure %d.\n", ret);
-> > > > -		goto disable_error_report_exit;
-> > > > -	}
-> > > > +	if (!ret)
-> > > > +		return ret;
-> > > >  
-> > > > -	return ret;
-> > > > +	dev_err(&pcidev->dev, "enumeration failure %d.\n", ret);
-> > > >  
-> > > >  disable_error_report_exit:
-> > > >  	pci_disable_pcie_error_reporting(pcidev);
-> > > > -- 
-> > > > 2.7.4
+PiBTdWJqZWN0OiBSZTogW1BBVENIIFY3IDAvNF0gbWFpbGJveC9maXJtd2FyZTogaW14OiBzdXBw
+b3J0IFNDVSBjaGFubmVsDQo+IHR5cGUNCj4gDQo+IE9uIFR1ZSwgTWFyIDMxLCAyMDIwIGF0IDg6
+MzQgQU0gUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gSGkgSmFz
+c2ksDQo+ID4NCj4gPiA+IFN1YmplY3Q6IFtQQVRDSCBWNyAwLzRdIG1haWxib3gvZmlybXdhcmU6
+IGlteDogc3VwcG9ydCBTQ1UgY2hhbm5lbA0KPiB0eXBlDQo+ID4NCj4gPiBBcmUgeW91IG9rIHdp
+dGggdGhlIG1haWxib3ggcGFydD8NCj4gPg0KPiBJcyB0aGVyZSBhbnl0aGluZyB5b3UgdGhpbmsg
+SSBtaWdodCBoYXZlIG92ZXJsb29rZWQ/DQo+IEkgYWxyZWFkeSBxdWV1ZWQgdGhlIHRocmVlIHBh
+dGNoZXMuLi4NCj4gICBkdC1iaW5kaW5nczogbWFpbGJveDogaW14LW11OiBhZGQgU0NVIE1VIHN1
+cHBvcnQNCj4gICBtYWlsYm94OiBpbXg6IHJlc3RydWN0dXJlIGNvZGUgdG8gbWFrZSBlYXN5IGZv
+ciBuZXcgTVUNCj4gICBtYWlsYm94OiBpbXg6IGFkZCBTQ1UgTVUgc3VwcG9ydA0KDQpTb3JyeSwg
+SSBmb3Jnb3QgdG8gY2hlY2sgeW91ciB0cmVlIGJlZm9yZSBhc2suDQoNClRoYW5rcywNClBlbmcu
+DQoNCj4gDQo+IENoZWVycyENCg==
