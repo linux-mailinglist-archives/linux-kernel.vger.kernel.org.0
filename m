@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CADC19B033
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6C6019B0E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:32:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387768AbgDAQZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:25:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48850 "EHLO mail.kernel.org"
+        id S2388255AbgDAQaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:30:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387553AbgDAQY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:24:59 -0400
+        id S2388025AbgDAQaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:30:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48D12212CC;
-        Wed,  1 Apr 2020 16:24:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E01620658;
+        Wed,  1 Apr 2020 16:30:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758298;
-        bh=VVqiKESmK0JzpP6L6hrIobYwxWE1UL9LyqmMttbagOQ=;
+        s=default; t=1585758605;
+        bh=Wk5vG2jvv3zKm1H8ZHIEKdgfGVZnA91k1WpdRvzFCCI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bo7lvsEDxxV1dcc0ipcbSrBPikzyENjBEJmoDVQrRT2FLGDbPwAz+YEvqqJrYorRa
-         chlUdNFYbYhOjBx2W/Ca31zBRquVlX3JCY+b/Z44byxfCbaACxGXoi4DTrPjMaV15M
-         u+WSC2K6e0ht9/NkMTajX3tCyyqCw9Eul0jemSLQ=
+        b=y0vYRTiRMP4BbQHaS2ViCZvufIriHmEin7EG/zErwmRrtnH/GPq2sFOxKUcdFMGB9
+         9Eer9QfVzw0h9nDDxRLhRuWF4IuSjmxVl1ywFSdHz6g7CZgLU0Rwia1344yDQlK2gQ
+         A5EQaExO1jo6oucBVB7nsHZEqPwRMoJP/1X9odzE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
-Subject: [PATCH 4.19 047/116] i2c: hix5hd2: add missed clk_disable_unprepare in remove
+        stable@vger.kernel.org, "Igor M. Liplianin" <liplianin@netup.ru>,
+        Daniel Axtens <dja@axtens.net>,
+        Kees Cook <keescook@chromium.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 07/91] altera-stapl: altera_get_note: prevent write beyond end of key
 Date:   Wed,  1 Apr 2020 18:17:03 +0200
-Message-Id: <20200401161548.544784414@linuxfoundation.org>
+Message-Id: <20200401161515.527566903@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,31 +45,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Daniel Axtens <dja@axtens.net>
 
-commit e1b9f99ff8c40bba6e59de9ad4a659447b1e4112 upstream.
+[ Upstream commit 3745488e9d599916a0b40d45d3f30e3d4720288e ]
 
-The driver forgets to disable and unprepare clk when remove.
-Add a call to clk_disable_unprepare to fix it.
+altera_get_note is called from altera_init, where key is kzalloc(33).
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@kernel.org
+When the allocation functions are annotated to allow the compiler to see
+the sizes of objects, and with FORTIFY_SOURCE, we see:
+
+In file included from drivers/misc/altera-stapl/altera.c:14:0:
+In function ‘strlcpy’,
+    inlined from ‘altera_init’ at drivers/misc/altera-stapl/altera.c:2189:5:
+include/linux/string.h:378:4: error: call to ‘__write_overflow’ declared with attribute error: detected write beyond size of object passed as 1st parameter
+    __write_overflow();
+    ^~~~~~~~~~~~~~~~~~
+
+That refers to this code in altera_get_note:
+
+    if (key != NULL)
+            strlcpy(key, &p[note_strings +
+                            get_unaligned_be32(
+                            &p[note_table + (8 * i)])],
+                    length);
+
+The error triggers because the length of 'key' is 33, but the copy
+uses length supplied as the 'length' parameter, which is always
+256. Split the size parameter into key_len and val_len, and use the
+appropriate length depending on what is being copied.
+
+Detected by compiler error, only compile-tested.
+
+Cc: "Igor M. Liplianin" <liplianin@netup.ru>
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Link: https://lore.kernel.org/r/20200120074344.504-2-dja@axtens.net
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Link: https://lore.kernel.org/r/202002251042.D898E67AC@keescook
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-hix5hd2.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/misc/altera-stapl/altera.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/i2c/busses/i2c-hix5hd2.c
-+++ b/drivers/i2c/busses/i2c-hix5hd2.c
-@@ -482,6 +482,7 @@ static int hix5hd2_i2c_remove(struct pla
- 	i2c_del_adapter(&priv->adap);
- 	pm_runtime_disable(priv->dev);
- 	pm_runtime_set_suspended(priv->dev);
-+	clk_disable_unprepare(priv->clk);
- 
- 	return 0;
+diff --git a/drivers/misc/altera-stapl/altera.c b/drivers/misc/altera-stapl/altera.c
+index 494e263daa748..b7ee8043a133e 100644
+--- a/drivers/misc/altera-stapl/altera.c
++++ b/drivers/misc/altera-stapl/altera.c
+@@ -2126,8 +2126,8 @@ static int altera_execute(struct altera_state *astate,
+ 	return status;
  }
+ 
+-static int altera_get_note(u8 *p, s32 program_size,
+-			s32 *offset, char *key, char *value, int length)
++static int altera_get_note(u8 *p, s32 program_size, s32 *offset,
++			   char *key, char *value, int keylen, int vallen)
+ /*
+  * Gets key and value of NOTE fields in the JBC file.
+  * Can be called in two modes:  if offset pointer is NULL,
+@@ -2184,7 +2184,7 @@ static int altera_get_note(u8 *p, s32 program_size,
+ 						&p[note_table + (8 * i) + 4])];
+ 
+ 				if (value != NULL)
+-					strlcpy(value, value_ptr, length);
++					strlcpy(value, value_ptr, vallen);
+ 
+ 			}
+ 		}
+@@ -2203,13 +2203,13 @@ static int altera_get_note(u8 *p, s32 program_size,
+ 				strlcpy(key, &p[note_strings +
+ 						get_unaligned_be32(
+ 						&p[note_table + (8 * i)])],
+-					length);
++					keylen);
+ 
+ 			if (value != NULL)
+ 				strlcpy(value, &p[note_strings +
+ 						get_unaligned_be32(
+ 						&p[note_table + (8 * i) + 4])],
+-					length);
++					vallen);
+ 
+ 			*offset = i + 1;
+ 		}
+@@ -2463,7 +2463,7 @@ int altera_init(struct altera_config *config, const struct firmware *fw)
+ 			__func__, (format_version == 2) ? "Jam STAPL" :
+ 						"pre-standardized Jam 1.1");
+ 		while (altera_get_note((u8 *)fw->data, fw->size,
+-					&offset, key, value, 256) == 0)
++					&offset, key, value, 32, 256) == 0)
+ 			printk(KERN_INFO "%s: NOTE \"%s\" = \"%s\"\n",
+ 					__func__, key, value);
+ 	}
+-- 
+2.20.1
+
 
 
