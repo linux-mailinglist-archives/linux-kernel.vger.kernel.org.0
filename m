@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E94AE19A955
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:18:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C59EA19A953
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:17:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732250AbgDAKRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 06:17:54 -0400
+        id S1732259AbgDAKRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:17:55 -0400
 Received: from mga01.intel.com ([192.55.52.88]:34152 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727541AbgDAKRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:17:51 -0400
-IronPort-SDR: xW5WFBz0BaIl8WTt/W6TJTHYTYtyVAfXx5ZP6GuQNFEaXosoOTnTPSwRbiqi9F/lfcayR/x6cF
- PXw7ipxTvcFA==
+        id S1732241AbgDAKRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 06:17:53 -0400
+IronPort-SDR: uwi6iFDb35GfQlhMkXMJzPEcpkKT79yxIogyq33fmBlJzV9DCWfcFSughCp9JN0nST+qMYDAc8
+ rOlu+CtyCBmQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 03:17:49 -0700
-IronPort-SDR: ZAWlKZHZRJZOOrk8xqtsqOIyFPEVW8w3oYwmt7RPiup67+JGrHYQPkjZD/ec1MjoqLAS+rxsv0
- ZmqWIsoLgQCQ==
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 03:17:51 -0700
+IronPort-SDR: HQ7ev7S2ehkI8t6nWVEsj3HbOqEu2Dgcd6qYrTN8Q6LOTLRxoqgdjtB5jXIBm/zt8sROevLHTE
+ Q5lMBiQ9mjew==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,331,1580803200"; 
-   d="scan'208";a="395925545"
+   d="scan'208";a="395925558"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.87])
-  by orsmga004.jf.intel.com with ESMTP; 01 Apr 2020 03:17:49 -0700
+  by orsmga004.jf.intel.com with ESMTP; 01 Apr 2020 03:17:51 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
         linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 09/16] perf thread-stack: Add thread_stack__sample_late()
-Date:   Wed,  1 Apr 2020 13:16:06 +0300
-Message-Id: <20200401101613.6201-10-adrian.hunter@intel.com>
+Subject: [PATCH 10/16] perf tools: Add support for synthesized sample type
+Date:   Wed,  1 Apr 2020 13:16:07 +0300
+Message-Id: <20200401101613.6201-11-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200401101613.6201-1-adrian.hunter@intel.com>
 References: <20200401101613.6201-1-adrian.hunter@intel.com>
@@ -41,97 +41,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a thread stack function to create a call chain for hardware events
-where the sample records get created some time after the event occurred.
+For reporting purposes, an evsel sample can have a callchain synthesized
+from AUX area data. Add support for keeping track of synthesized sample
+types. Note, the recorded sample_type cannot be changed because it is
+needed to continue to parse events.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/util/thread-stack.c | 57 ++++++++++++++++++++++++++++++++++
- tools/perf/util/thread-stack.h |  3 ++
- 2 files changed, 60 insertions(+)
+ tools/perf/util/evsel.c |  2 +-
+ tools/perf/util/evsel.h | 15 ++++++++++++++-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index 0885967d5bc3..83f6c83f5617 100644
---- a/tools/perf/util/thread-stack.c
-+++ b/tools/perf/util/thread-stack.c
-@@ -497,6 +497,63 @@ void thread_stack__sample(struct thread *thread, int cpu,
- 	chain->nr = i;
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index eb880efbce16..60e6cd49dee3 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -2136,7 +2136,7 @@ int perf_evsel__parse_sample(struct evsel *evsel, union perf_event *event,
+ 		}
+ 	}
+ 
+-	if (evsel__has_callchain(evsel)) {
++	if (type & PERF_SAMPLE_CALLCHAIN) {
+ 		const u64 max_callchain_nr = UINT64_MAX / sizeof(u64);
+ 
+ 		OVERFLOW_CHECK_u64(array);
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 53187c501ee8..e64ed4202cab 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -104,6 +104,14 @@ struct evsel {
+ 		perf_evsel__sb_cb_t	*cb;
+ 		void			*data;
+ 	} side_band;
++	/*
++	 * For reporting purposes, an evsel sample can have a callchain
++	 * synthesized from AUX area data. Keep track of synthesized sample
++	 * types here. Note, the recorded sample_type cannot be changed because
++	 * it is needed to continue to parse events.
++	 * See also evsel__has_callchain().
++	 */
++	__u64			synth_sample_type;
+ };
+ 
+ struct perf_missing_features {
+@@ -398,7 +406,12 @@ static inline bool perf_evsel__has_branch_hw_idx(const struct evsel *evsel)
+ 
+ static inline bool evsel__has_callchain(const struct evsel *evsel)
+ {
+-	return (evsel->core.attr.sample_type & PERF_SAMPLE_CALLCHAIN) != 0;
++	/*
++	 * For reporting purposes, an evsel sample can have a recorded callchain
++	 * or a callchain synthesized from AUX area data.
++	 */
++	return evsel->core.attr.sample_type & PERF_SAMPLE_CALLCHAIN ||
++	       evsel->synth_sample_type & PERF_SAMPLE_CALLCHAIN;
  }
  
-+/*
-+ * Hardware sample records, created some time after the event occurred, need to
-+ * have subsequent addresses removed from the call chain.
-+ */
-+void thread_stack__sample_late(struct thread *thread, int cpu,
-+			       struct ip_callchain *chain, size_t sz,
-+			       u64 sample_ip, u64 kernel_start)
-+{
-+	struct thread_stack *ts = thread__stack(thread, cpu);
-+	u64 sample_context = callchain_context(sample_ip, kernel_start);
-+	u64 last_context, context, ip;
-+	size_t nr = 0, j;
-+
-+	if (sz < 2) {
-+		chain->nr = 0;
-+		return;
-+	}
-+
-+	if (!ts)
-+		goto out;
-+
-+	/*
-+	 * When tracing kernel space, kernel addresses occur at the top of the
-+	 * call chain after the event occurred but before tracing stopped.
-+	 * Skip them.
-+	 */
-+	for (j = 1; j <= ts->cnt; j++) {
-+		ip = ts->stack[ts->cnt - j].ret_addr;
-+		context = callchain_context(ip, kernel_start);
-+		if (context == PERF_CONTEXT_USER ||
-+		    (context == sample_context && ip == sample_ip))
-+			break;
-+	}
-+
-+	last_context = sample_ip; /* Use sample_ip as an invalid context */
-+
-+	for (; nr < sz && j <= ts->cnt; nr++, j++) {
-+		ip = ts->stack[ts->cnt - j].ret_addr;
-+		context = callchain_context(ip, kernel_start);
-+		if (context != last_context) {
-+			if (nr >= sz - 1)
-+				break;
-+			chain->ips[nr++] = context;
-+			last_context = context;
-+		}
-+		chain->ips[nr] = ip;
-+	}
-+out:
-+	if (nr) {
-+		chain->nr = nr;
-+	} else {
-+		chain->ips[0] = sample_context;
-+		chain->ips[1] = sample_ip;
-+		chain->nr = 2;
-+	}
-+}
-+
- struct call_return_processor *
- call_return_processor__new(int (*process)(struct call_return *cr, u64 *parent_db_id, void *data),
- 			   void *data)
-diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
-index e1ec5a58f1b2..8962ddc4e1ab 100644
---- a/tools/perf/util/thread-stack.h
-+++ b/tools/perf/util/thread-stack.h
-@@ -85,6 +85,9 @@ int thread_stack__event(struct thread *thread, int cpu, u32 flags, u64 from_ip,
- void thread_stack__set_trace_nr(struct thread *thread, int cpu, u64 trace_nr);
- void thread_stack__sample(struct thread *thread, int cpu, struct ip_callchain *chain,
- 			  size_t sz, u64 ip, u64 kernel_start);
-+void thread_stack__sample_late(struct thread *thread, int cpu,
-+			       struct ip_callchain *chain, size_t sz, u64 ip,
-+			       u64 kernel_start);
- int thread_stack__flush(struct thread *thread);
- void thread_stack__free(struct thread *thread);
- size_t thread_stack__depth(struct thread *thread, int cpu);
+ struct perf_env *perf_evsel__env(struct evsel *evsel);
 -- 
 2.17.1
 
