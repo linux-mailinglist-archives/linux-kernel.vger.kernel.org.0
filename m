@@ -2,344 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 494E819B91D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:53:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84F4119B921
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:54:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387419AbgDAXxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 19:53:32 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:61060 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732989AbgDAXxb (ORCPT
+        id S2387502AbgDAXyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 19:54:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46802 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732682AbgDAXye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 19:53:31 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585785210; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=AxlPvDNFAnlaO5kN8Ue2z7R5/mFEDs7cI6QoEP369TQ=;
- b=LYHBS0tEcWUN0l1GVLTMOp/novz3ZxOsLKMxUOWT6hz0OAOC3SmMS3x+4Ym17/e78M6hnmaA
- g2Vgt0Q6Kl43ToJ31Vi+GhqCCkKXEWG3PXxiTXN73fFljxSkXUhnMN3MSHWS7h83zHHv0hhB
- vdNJnW8tj2NEHtJuFm1Cnf8EMW4=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e852976.7fa860237378-smtp-out-n04;
- Wed, 01 Apr 2020 23:53:26 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 9B97DC433BA; Wed,  1 Apr 2020 23:53:26 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: rishabhb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 92968C433F2;
-        Wed,  1 Apr 2020 23:53:25 +0000 (UTC)
+        Wed, 1 Apr 2020 19:54:34 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 031NYt6D027340;
+        Wed, 1 Apr 2020 19:53:49 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 304gsstyww-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 19:53:49 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 031NpI4U002885;
+        Wed, 1 Apr 2020 23:53:48 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma01dal.us.ibm.com with ESMTP id 301x77nuq5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 23:53:48 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 031NrlTM57082224
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 Apr 2020 23:53:47 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EC82E7805E;
+        Wed,  1 Apr 2020 23:53:46 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3EA327805F;
+        Wed,  1 Apr 2020 23:53:40 +0000 (GMT)
+Received: from LeoBras (unknown [9.85.162.156])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed,  1 Apr 2020 23:53:39 +0000 (GMT)
+Message-ID: <e304952f5177f85faff4560ded5aa1dad7af5fe2.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 1/1] ppc/crash: Reset spinlocks during crash
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Enrico Weigelt <info@metux.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Wed, 01 Apr 2020 20:53:31 -0300
+In-Reply-To: <20200401092618.GW20713@hirez.programming.kicks-ass.net>
+References: <20200401000020.590447-1-leonardo@linux.ibm.com>
+         <20200401092618.GW20713@hirez.programming.kicks-ass.net>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-KDf7FjQwdoNO4X4hfXtK"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 01 Apr 2020 16:53:25 -0700
-From:   rishabhb@codeaurora.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        psodagud@codeaurora.org, tsoni@codeaurora.org,
-        sidgup@codeaurora.org
-Subject: Re: [PATCH v2 1/2] remoteproc: Add character device interface
-In-Reply-To: <20200401200827.GF267644@minitux>
-References: <1585699438-14394-1-git-send-email-rishabhb@codeaurora.org>
- <20200401200827.GF267644@minitux>
-Message-ID: <27cae9aae50385f9123cb0987edeec1c@codeaurora.org>
-X-Sender: rishabhb@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-01_04:2020-03-31,2020-04-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
+ phishscore=0 clxscore=1015 mlxlogscore=879 mlxscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004010191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-04-01 13:08, Bjorn Andersson wrote:
-> On Tue 31 Mar 17:03 PDT 2020, Rishabh Bhatnagar wrote:
-> 
->> Add the character device interface for userspace applications.
->> This interface can be used in order to boot up and shutdown
->> remote subsystems. Currently there is only a sysfs interface
->> which the userspace clients can use. If a usersapce application
->> crashes after booting the remote processor does not get any
->> indication about the crash. It might still assume that the
->> application is running. For example modem uses remotefs service
->> to fetch data from disk/flash memory. If the remotefs service
->> crashes, modem keeps on requesting data which might lead to a
->> crash. Adding a character device interface makes the remote
->> processor tightly coupled with the user space application.
->> A crash of the application leads to a close on the file descriptors
->> therefore shutting down the remoteproc.
->> 
->> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
->> ---
->>  drivers/remoteproc/Kconfig               |   9 +++
->>  drivers/remoteproc/Makefile              |   1 +
->>  drivers/remoteproc/remoteproc_cdev.c     | 100 
->> +++++++++++++++++++++++++++++++
->>  drivers/remoteproc/remoteproc_internal.h |  22 +++++++
->>  include/linux/remoteproc.h               |   2 +
->>  5 files changed, 134 insertions(+)
->>  create mode 100644 drivers/remoteproc/remoteproc_cdev.c
->> 
->> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
->> index de3862c..6374b79 100644
->> --- a/drivers/remoteproc/Kconfig
->> +++ b/drivers/remoteproc/Kconfig
->> @@ -14,6 +14,15 @@ config REMOTEPROC
->> 
->>  if REMOTEPROC
->> 
->> +config REMOTEPROC_CDEV
->> +	bool "Remoteproc character device interface"
->> +	help
->> +	  Say y here to have a character device interface for Remoteproc
->> +	  framework. Userspace can boot/shutdown remote processors through
->> +	  this interface.
->> +
->> +	  It's safe to say N if you don't want to use this interface.
->> +
->>  config IMX_REMOTEPROC
->>  	tristate "IMX6/7 remoteproc support"
->>  	depends on ARCH_MXC
->> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
->> index e30a1b1..b7d4f77 100644
->> --- a/drivers/remoteproc/Makefile
->> +++ b/drivers/remoteproc/Makefile
->> @@ -9,6 +9,7 @@ remoteproc-y				+= remoteproc_debugfs.o
->>  remoteproc-y				+= remoteproc_sysfs.o
->>  remoteproc-y				+= remoteproc_virtio.o
->>  remoteproc-y				+= remoteproc_elf_loader.o
->> +obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
->>  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
->>  obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
->>  obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
->> diff --git a/drivers/remoteproc/remoteproc_cdev.c 
->> b/drivers/remoteproc/remoteproc_cdev.c
->> new file mode 100644
->> index 0000000..8182bd1
->> --- /dev/null
->> +++ b/drivers/remoteproc/remoteproc_cdev.c
->> @@ -0,0 +1,100 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Character device interface driver for Remoteproc framework.
->> + *
->> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/cdev.h>
->> +#include <linux/fs.h>
->> +#include <linux/module.h>
->> +#include <linux/mutex.h>
->> +#include <linux/remoteproc.h>
->> +
->> +#include "remoteproc_internal.h"
->> +
->> +#define NUM_RPROC_DEVICES	64
->> +static dev_t rproc_cdev;
->> +static DEFINE_IDA(cdev_minor_ida);
->> +
->> +static int rproc_cdev_open(struct inode *inode, struct file *file)
->> +{
->> +	struct rproc *rproc;
->> +
->> +	rproc = container_of(inode->i_cdev, struct rproc, char_dev);
-> 
-> I would prefer this to be a on a single line
-> 	struct rproc *rproc = container_of(..);
-> 
->> +
->> +	if (!rproc)
-> 
-> I don't think this is possible.
-> 
->> +		return -EINVAL;
->> +
->> +	if (rproc->state == RPROC_RUNNING)
->> +		return -EBUSY;
->> +
-> 
-> This is racy, it's possible that state wasn't RUNNING, but at the time
-> we're entering rproc_boot() it is - or as Clement correctly points out,
-> the core might be in CRASHED state.
-> 
-I can check for OFFLINE state and only then call rproc_boot.
-But we would need to check inside rproc_boot if the state was OFFLINE as 
-well.
-Same issue we might need to fix for sysfs interface?
->> +	return rproc_boot(rproc);
-> 
-> Feels like we would want a variant of rproc_boot() that doesn't do
-> refcounting... Maybe a rproc_boot_exclusive() that takes the mutex and
-> then fails if the core is refcounted already?
-> 
->> +}
->> +
->> +static int rproc_cdev_release(struct inode *inode, struct file *file)
->> +{
->> +	struct rproc *rproc;
->> +
->> +	rproc = container_of(inode->i_cdev, struct rproc, char_dev);
->> +
->> +	if (!rproc || rproc->state != RPROC_RUNNING)
->> +		return -EINVAL;
-> 
-> rproc can't be NULL here and the core might be in CRASHED state here, 
-> in
-> which case we still want to abort that and shut down the core...
-> 
-> Note that in the event of calling close() the return value is discarded
-> on the way to userspace and in the event that the process is killed we
-> still expect the remoteproc to be shut down (if the refcount hit 0).
-> 
->> +
->> +	rproc_shutdown(rproc);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct file_operations rproc_fops = {
->> +	.open = rproc_cdev_open,
->> +	.release = rproc_cdev_release,
->> +};
->> +
->> +int rproc_char_device_add(struct rproc *rproc)
->> +{
->> +	int ret, minor;
->> +	dev_t cdevt;
->> +
->> +	minor = ida_simple_get(&cdev_minor_ida, 0, NUM_RPROC_DEVICES,
-> 
-> Can't you use rproc->index as minor?
-> 
->> +			       GFP_KERNEL);
->> +	if (minor < 0) {
->> +		dev_err(&rproc->dev, "%s: No more minor numbers left! rc:%d\n",
->> +			__func__, minor);
->> +		return -ENODEV;
->> +	}
->> +
->> +	cdev_init(&rproc->char_dev, &rproc_fops);
->> +	rproc->char_dev.owner = THIS_MODULE;
->> +
->> +	cdevt = MKDEV(MAJOR(rproc_cdev), minor);
->> +	ret = cdev_add(&rproc->char_dev, cdevt, 1);
->> +	if (ret < 0)
->> +		ida_simple_remove(&cdev_minor_ida, minor);
->> +
->> +	rproc->dev.devt = cdevt;
->> +	return ret;
->> +}
->> +
->> +void rproc_char_device_remove(struct rproc *rproc)
->> +{
->> +	__unregister_chrdev(MAJOR(rproc->dev.devt), MINOR(rproc->dev.devt), 
->> 1,
->> +			    "rproc");
-> 
-> Shouldn't this be cdev_del()?
-_unregist_chrdev should delete the cdev internally.
-> 
->> +	ida_simple_remove(&cdev_minor_ida, MINOR(rproc->dev.devt));
->> +}
->> +
->> +void __init rproc_init_cdev(void)
->> +{
->> +	int ret;
->> +
->> +	ret = alloc_chrdev_region(&rproc_cdev, 0, NUM_RPROC_DEVICES, 
->> "rproc");
->> +	if (ret < 0) {
->> +		pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
->> +		return;
-> 
-> Drop this return, and hence the {}
-> 
->> +	}
->> +}
->> +
->> +void __exit rproc_exit_cdev(void)
->> +{
->> +	__unregister_chrdev(MAJOR(rproc_cdev), 0, NUM_RPROC_DEVICES, 
->> "rproc");
-> 
-> unregister_chrdev_region();
-> 
-we might want to delete character devices as well, which is done by 
-__unregister_chrdev
->> +}
->> diff --git a/drivers/remoteproc/remoteproc_internal.h 
->> b/drivers/remoteproc/remoteproc_internal.h
->> index 493ef92..28d61a1 100644
->> --- a/drivers/remoteproc/remoteproc_internal.h
->> +++ b/drivers/remoteproc/remoteproc_internal.h
->> @@ -47,6 +47,27 @@ struct dentry *rproc_create_trace_file(const char 
->> *name, struct rproc *rproc,
->>  int rproc_init_sysfs(void);
->>  void rproc_exit_sysfs(void);
->> 
->> +#ifdef CONFIG_REMOTEPROC_CDEV
->> +void rproc_init_cdev(void);
->> +void rproc_exit_cdev(void);
->> +int rproc_char_device_add(struct rproc *rproc);
->> +void rproc_char_device_remove(struct rproc *rproc);
->> +#else
->> +static inline void rproc_init_cdev(void)
->> +{
->> +}
->> +static inline void rproc_exit_cdev(void)
->> +{
->> +}
->> +static inline int rproc_char_device_add(struct rproc *rproc)
->> +{
->> +	return 0;
->> +}
->> +static inline void  rproc_char_device_remove(struct rproc *rproc)
->> +{
->> +}
->> +#endif
->> +
->>  void rproc_free_vring(struct rproc_vring *rvring);
->>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
->> 
->> @@ -63,6 +84,7 @@ struct resource_table 
->> *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
->>  struct rproc_mem_entry *
->>  rproc_find_carveout_by_name(struct rproc *rproc, const char *name, 
->> ...);
->> 
->> +
->>  static inline
->>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware 
->> *fw)
->>  {
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index 16ad666..c4ca796 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -37,6 +37,7 @@
->> 
->>  #include <linux/types.h>
->>  #include <linux/mutex.h>
->> +#include <linux/cdev.h>
->>  #include <linux/virtio.h>
->>  #include <linux/completion.h>
->>  #include <linux/idr.h>
->> @@ -514,6 +515,7 @@ struct rproc {
->>  	bool auto_boot;
->>  	struct list_head dump_segments;
->>  	int nb_vdev;
->> +	struct cdev char_dev;
->>  };
->> 
->>  /**
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum,
->> a Linux Foundation Collaborative Project
+
+--=-KDf7FjQwdoNO4X4hfXtK
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hello Peter,=20
+
+On Wed, 2020-04-01 at 11:26 +0200, Peter Zijlstra wrote:
+> You might want to add a note to your asm/spinlock.h that you rely on
+> spin_unlock() unconditionally clearing a lock.
+>=20
+> This isn't naturally true for all lock implementations. Consider ticket
+> locks, doing a surplus unlock will wreck your lock state in that case.
+> So anybody poking at the powerpc spinlock implementation had better know
+> you rely on this.
+
+Good idea. I will add this to my changes and generate a v4.
+
+Thank you,
+
+--=-KDf7FjQwdoNO4X4hfXtK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl6FKXsACgkQlQYWtz9S
+ttT6PRAAlfpMg9qZK9Q7d5BJCzhUZdsE2wsPmmI7ynbk+XKYd4VHECBE6Lf7u1t+
+ShKanwxHRz0Bk1UxzP3UBLP5e7twvXcmgrZehNaT2kQd457B40Oli44JsBFZXsi4
+inN/HVcPaI+c5imygIb9tlae7hNX6XBfdj0sH4uRXcgafm/dJIRzc8OHUrfPBh7G
+GEDP72loBYwOqqt7n6nz03GCeHvV97Lq4frpx8fca70+u7+JH4gK9Hv21/gwuwSA
+yfF6vgY4xBMN7aWpeE+lw1A0xVfQv4aw6d4SgkDVUKTPV1jhWP44EfURwcyRl7ID
+OhOQ2ppYkuH7AIjCgaAYKClJ9JU/9TCRz2gJJ0/5ebZ6sPdD8fhcpz6WSQQMES6g
+mxhjXi2uram2KPf6OCA2TIyxgkRsez8XODU6qqxhV9QPxJjt8x0KeL2oHkl1SU7U
+H4u/ckxesRL0eFT/BbMCFaksPyQP9+GgzvRSPqueQHjjsqLf6zotwRCHVdF1diYg
+7FWKuFfNLHz19aq7M427+AhNTXhkSqzE5c2qa6MU+DMc31r1XRTJ9nCGB0omQ7h6
+NRaBkvn0ZXI0NlTBQXMVtrLfPJucsVM14PbTSgayttDQThAG9ulIHmeFsxQypTv/
+pB6LDSZVOdhFNI+RX/hG6GVIXpBoz7yZxeExeFWEYjYoOqMkKu0=
+=Ustc
+-----END PGP SIGNATURE-----
+
+--=-KDf7FjQwdoNO4X4hfXtK--
+
