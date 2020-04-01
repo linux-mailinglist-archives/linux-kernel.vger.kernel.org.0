@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CECB19B058
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED83819B12A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:33:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732148AbgDAQ0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:26:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50438 "EHLO mail.kernel.org"
+        id S2387777AbgDAQch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:32:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387868AbgDAQ0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:26:04 -0400
+        id S2388431AbgDAQcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:32:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41C45212CC;
-        Wed,  1 Apr 2020 16:26:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BF7E2137B;
+        Wed,  1 Apr 2020 16:32:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758361;
-        bh=HLkyMYABj1W/nqkEG7+IVskAU2nhYu7XZVp+KIkbBEE=;
+        s=default; t=1585758751;
+        bh=27tOJ/fqaKJz1WNpw0k9xBEiOTjwYrhPMg+mkJLaie4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d6Mk5FMf3rGDvqj8ovZiQo9A3CnZyvoE88q91N8qFeXmtnAY9bb/PCEhIGtFH5dBF
-         7ZNdqSlmrTGxZ/y8yeqS8kwVzZwuaMpXe1oBX80nbAZs2pRcg3sYRt4YGVX4AiEIk2
-         qeXA1WfkEhzBhrzcDSWuFaZpfjiH244ornpYerVU=
+        b=uvJYlnLZRn1ztY6YLOiD7GwsmHo1/AfEvhVNklzouoXkFGaybnD11ytInpvyKeqr9
+         0oSiZf4qkNDy6P4zv16y9O0XUT8T4LIdwnRjSSCeysasydRowV0yWREExfRrJgo9mD
+         yYH4eNdpmpId2l3b5dlYKdKoOGYeYcvI+S6IT6+k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.19 066/116] vti[6]: fix packet tx through bpf_redirect() in XinY cases
+        stable@vger.kernel.org, Anthony Mallet <anthony.mallet@laas.fr>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 26/91] USB: cdc-acm: fix close_delay and closing_wait units in TIOCSSERIAL
 Date:   Wed,  1 Apr 2020 18:17:22 +0200
-Message-Id: <20200401161551.770608190@linuxfoundation.org>
+Message-Id: <20200401161521.999221772@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,124 +43,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+From: Anthony Mallet <anthony.mallet@laas.fr>
 
-commit f1ed10264ed6b66b9cd5e8461cffce69be482356 upstream.
+[ Upstream commit 633e2b2ded739a34bd0fb1d8b5b871f7e489ea29 ]
 
-I forgot the 4in6/6in4 cases in my previous patch. Let's fix them.
+close_delay and closing_wait are specified in hundredth of a second but stored
+internally in jiffies. Use the jiffies_to_msecs() and msecs_to_jiffies()
+functions to convert from each other.
 
-Fixes: 95224166a903 ("vti[6]: fix packet tx through bpf_redirect()")
-Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Anthony Mallet <anthony.mallet@laas.fr>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200312133101.7096-1-anthony.mallet@laas.fr
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/Kconfig   |    1 +
- net/ipv4/ip_vti.c  |   36 +++++++++++++++++++++++++++++-------
- net/ipv6/ip6_vti.c |   32 +++++++++++++++++++++++++-------
- 3 files changed, 55 insertions(+), 14 deletions(-)
+ drivers/usb/class/cdc-acm.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/net/ipv4/Kconfig
-+++ b/net/ipv4/Kconfig
-@@ -302,6 +302,7 @@ config SYN_COOKIES
+diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
+index 1930a8ec4b67d..3cb7a23e1253f 100644
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -841,10 +841,10 @@ static int get_serial_info(struct acm *acm, struct serial_struct __user *info)
+ 	tmp.flags = ASYNC_LOW_LATENCY;
+ 	tmp.xmit_fifo_size = acm->writesize;
+ 	tmp.baud_base = le32_to_cpu(acm->line.dwDTERate);
+-	tmp.close_delay	= acm->port.close_delay / 10;
++	tmp.close_delay	= jiffies_to_msecs(acm->port.close_delay) / 10;
+ 	tmp.closing_wait = acm->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
+ 				ASYNC_CLOSING_WAIT_NONE :
+-				acm->port.closing_wait / 10;
++				jiffies_to_msecs(acm->port.closing_wait) / 10;
  
- config NET_IPVTI
- 	tristate "Virtual (secure) IP: tunneling"
-+	depends on IPV6 || IPV6=n
- 	select INET_TUNNEL
- 	select NET_IP_TUNNEL
- 	depends on INET_XFRM_MODE_TUNNEL
---- a/net/ipv4/ip_vti.c
-+++ b/net/ipv4/ip_vti.c
-@@ -208,17 +208,39 @@ static netdev_tx_t vti_xmit(struct sk_bu
- 	int mtu;
+ 	if (copy_to_user(info, &tmp, sizeof(tmp)))
+ 		return -EFAULT;
+@@ -862,9 +862,10 @@ static int set_serial_info(struct acm *acm,
+ 	if (copy_from_user(&new_serial, newinfo, sizeof(new_serial)))
+ 		return -EFAULT;
  
- 	if (!dst) {
--		struct rtable *rt;
-+		switch (skb->protocol) {
-+		case htons(ETH_P_IP): {
-+			struct rtable *rt;
+-	close_delay = new_serial.close_delay * 10;
++	close_delay = msecs_to_jiffies(new_serial.close_delay * 10);
+ 	closing_wait = new_serial.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
+-			ASYNC_CLOSING_WAIT_NONE : new_serial.closing_wait * 10;
++			ASYNC_CLOSING_WAIT_NONE :
++			msecs_to_jiffies(new_serial.closing_wait * 10);
  
--		fl->u.ip4.flowi4_oif = dev->ifindex;
--		fl->u.ip4.flowi4_flags |= FLOWI_FLAG_ANYSRC;
--		rt = __ip_route_output_key(dev_net(dev), &fl->u.ip4);
--		if (IS_ERR(rt)) {
-+			fl->u.ip4.flowi4_oif = dev->ifindex;
-+			fl->u.ip4.flowi4_flags |= FLOWI_FLAG_ANYSRC;
-+			rt = __ip_route_output_key(dev_net(dev), &fl->u.ip4);
-+			if (IS_ERR(rt)) {
-+				dev->stats.tx_carrier_errors++;
-+				goto tx_error_icmp;
-+			}
-+			dst = &rt->dst;
-+			skb_dst_set(skb, dst);
-+			break;
-+		}
-+#if IS_ENABLED(CONFIG_IPV6)
-+		case htons(ETH_P_IPV6):
-+			fl->u.ip6.flowi6_oif = dev->ifindex;
-+			fl->u.ip6.flowi6_flags |= FLOWI_FLAG_ANYSRC;
-+			dst = ip6_route_output(dev_net(dev), NULL, &fl->u.ip6);
-+			if (dst->error) {
-+				dst_release(dst);
-+				dst = NULL;
-+				dev->stats.tx_carrier_errors++;
-+				goto tx_error_icmp;
-+			}
-+			skb_dst_set(skb, dst);
-+			break;
-+#endif
-+		default:
- 			dev->stats.tx_carrier_errors++;
- 			goto tx_error_icmp;
- 		}
--		dst = &rt->dst;
--		skb_dst_set(skb, dst);
- 	}
+ 	mutex_lock(&acm->port.mutex);
  
- 	dst_hold(dst);
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -454,15 +454,33 @@ vti6_xmit(struct sk_buff *skb, struct ne
- 	int mtu;
- 
- 	if (!dst) {
--		fl->u.ip6.flowi6_oif = dev->ifindex;
--		fl->u.ip6.flowi6_flags |= FLOWI_FLAG_ANYSRC;
--		dst = ip6_route_output(dev_net(dev), NULL, &fl->u.ip6);
--		if (dst->error) {
--			dst_release(dst);
--			dst = NULL;
-+		switch (skb->protocol) {
-+		case htons(ETH_P_IP): {
-+			struct rtable *rt;
-+
-+			fl->u.ip4.flowi4_oif = dev->ifindex;
-+			fl->u.ip4.flowi4_flags |= FLOWI_FLAG_ANYSRC;
-+			rt = __ip_route_output_key(dev_net(dev), &fl->u.ip4);
-+			if (IS_ERR(rt))
-+				goto tx_err_link_failure;
-+			dst = &rt->dst;
-+			skb_dst_set(skb, dst);
-+			break;
-+		}
-+		case htons(ETH_P_IPV6):
-+			fl->u.ip6.flowi6_oif = dev->ifindex;
-+			fl->u.ip6.flowi6_flags |= FLOWI_FLAG_ANYSRC;
-+			dst = ip6_route_output(dev_net(dev), NULL, &fl->u.ip6);
-+			if (dst->error) {
-+				dst_release(dst);
-+				dst = NULL;
-+				goto tx_err_link_failure;
-+			}
-+			skb_dst_set(skb, dst);
-+			break;
-+		default:
- 			goto tx_err_link_failure;
- 		}
--		skb_dst_set(skb, dst);
- 	}
- 
- 	dst_hold(dst);
+-- 
+2.20.1
+
 
 
