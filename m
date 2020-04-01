@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C23EC19B1AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13DA119AFFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388772AbgDAQhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:37:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36048 "EHLO mail.kernel.org"
+        id S1732460AbgDAQWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:22:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388900AbgDAQg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:36:57 -0400
+        id S1732328AbgDAQWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:22:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 452D620658;
-        Wed,  1 Apr 2020 16:36:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26AD72137B;
+        Wed,  1 Apr 2020 16:22:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759016;
-        bh=JVZfJY6/5ALNIW2gEhKmn1RI1T33U9c2/ocITbeMS4A=;
+        s=default; t=1585758167;
+        bh=yoXhOL7nTVasZHR6cKwhWMciTV/1jPkQpUjZtocCq3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qv0OYuAg95qks8AoVilkFDDtTtOjvypmvisXDuWOUXFY4zyIYVFHeq5TN0S+hN07i
-         nbxSTnXsPUnIVf4WKV7oQxT1MqBZFdAA4d/PN8BgCcKdgSkanMj0iwC17SwPHgbMlY
-         9LEJ2/v0d+Vu5ohEQUg+rK7PoVKrUwEWpUjD5rYM=
+        b=lETU3sk6JxZO84U4Q0RMtaLe1G8jo3NMLX2vMONAY88JvEmyDfw1LFKVT7l5FjXUl
+         jVD43yfuNi9J/TfMBjSfVIJ7tPBP+Gt03+PaD4dx/5IrfzBDuhUd5KF4C4V/p//XKk
+         vMcP8UOIAVlAJYL+Wi/rNE+PO4H3pEEgtmckWXLo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 050/102] KVM: VMX: Do not allow reexecute_instruction() when skipping MMIO instr
-Date:   Wed,  1 Apr 2020 18:17:53 +0200
-Message-Id: <20200401161542.437929623@linuxfoundation.org>
+        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@oss.nxp.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 26/27] arm64: dts: ls1043a-rdb: correct RGMII delay mode to rgmii-id
+Date:   Wed,  1 Apr 2020 18:17:54 +0200
+Message-Id: <20200401161434.983235078@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
+References: <20200401161414.352722470@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Madalin Bucur <madalin.bucur@oss.nxp.com>
 
-[ Upstream commit c4409905cd6eb42cfd06126e9226b0150e05a715 ]
+commit 4022d808c45277693ea86478fab1f081ebf997e8 upstream.
 
-Re-execution after an emulation decode failure is only intended to
-handle a case where two or vCPUs race to write a shadowed page, i.e.
-we should never re-execute an instruction as part of MMIO emulation.
-As handle_ept_misconfig() is only used for MMIO emulation, it should
-pass EMULTYPE_NO_REEXECUTE when using the emulator to skip an instr
-in the fast-MMIO case where VM_EXIT_INSTRUCTION_LEN is invalid.
+The correct setting for the RGMII ports on LS1043ARDB is to
+enable delay on both Rx and Tx so the interface mode used must
+be PHY_INTERFACE_MODE_RGMII_ID.
 
-And because the cr2 value passed to x86_emulate_instruction() is only
-destined for use when retrying or reexecuting, we can simply call
-emulate_instruction().
+Since commit 1b3047b5208a80 ("net: phy: realtek: add support for
+configuring the RX delay on RTL8211F") the Realtek 8211F PHY driver
+has control over the RGMII RX delay and it is disabling it for
+RGMII_TXID. The LS1043ARDB uses two such PHYs in RGMII_ID mode but
+in the device tree the mode was described as "rgmii_txid".
+This issue was not apparent at the time as the PHY driver took the
+same action for RGMII_TXID and RGMII_ID back then but it became
+visible (RX no longer working) after the above patch.
 
-Fixes: d391f1207067 ("x86/kvm/vmx: do not use vm-exit instruction length
-                      for fast MMIO when running nested")
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Changing the phy-connection-type to "rgmii-id" to address the issue.
+
+Fixes: bf02f2ffe59c ("arm64: dts: add LS1043A DPAA FMan support")
+Signed-off-by: Madalin Bucur <madalin.bucur@oss.nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/x86/kvm/vmx.c | 4 ++--
+ arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 8bd336651de52..1fa4545c55e35 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -6564,8 +6564,8 @@ static int handle_ept_misconfig(struct kvm_vcpu *vcpu)
- 			return 1;
- 		}
- 		else
--			return x86_emulate_instruction(vcpu, gpa, EMULTYPE_SKIP,
--						       NULL, 0) == EMULATE_DONE;
-+			return emulate_instruction(vcpu, EMULTYPE_SKIP) ==
-+								EMULATE_DONE;
- 	}
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
+@@ -119,12 +119,12 @@
  
- 	ret = kvm_mmu_page_fault(vcpu, gpa, PFERR_RSVD_MASK, NULL, 0);
--- 
-2.20.1
-
+ 	ethernet@e4000 {
+ 		phy-handle = <&rgmii_phy1>;
+-		phy-connection-type = "rgmii-txid";
++		phy-connection-type = "rgmii-id";
+ 	};
+ 
+ 	ethernet@e6000 {
+ 		phy-handle = <&rgmii_phy2>;
+-		phy-connection-type = "rgmii-txid";
++		phy-connection-type = "rgmii-id";
+ 	};
+ 
+ 	ethernet@e8000 {
 
 
