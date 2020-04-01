@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 069C819B07C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18F6F19B2B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387999AbgDAQ1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:27:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51980 "EHLO mail.kernel.org"
+        id S2389500AbgDAQq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:46:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733256AbgDAQ1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:27:13 -0400
+        id S2389934AbgDAQqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:46:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A4C72137B;
-        Wed,  1 Apr 2020 16:27:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 362DB2063A;
+        Wed,  1 Apr 2020 16:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758432;
-        bh=geW8g/zgMtpsvWyl8WVV6/zn4IibVD0sHG7/PIWjju0=;
+        s=default; t=1585759583;
+        bh=EY5R1QC2UFt4ZgEOuanrzEih+GHs096R2FsqatSo/3w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lYS3zwEuJ52KexXsgU7kNTeNvIKFjHM6HmgVbg9C1AASV6xvgQdkx2g1zjDrthRJh
-         wV9awTctH+8yesiWZqVOeQ3eAtLebVYu2HbrpRn5SBBNOaCLGcpEqRj8k0jj4+PKfn
-         /oaCS4ISSjzQBMt0aI0Sm6AjQ9P7cONjQJha+ZKc=
+        b=preZccWftvEH++3qt4VoN2MY1xdXE5FAcdIttiDSf6uXtbEMZ/6qOUiKSo6TzuYHL
+         fmP+ueI6XyNoJS0zKRu0lLB1CUMnE7DLiR27b8622KwPY3kOGqdellDaQFPYHSU23m
+         RkiGGzvEfl20Cub2ECpuucKVNKIKXaycASrMlFNY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 090/116] ahci: Add Intel Comet Lake H RAID PCI ID
-Date:   Wed,  1 Apr 2020 18:17:46 +0200
-Message-Id: <20200401161553.919143189@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Gilbert <floppym@gentoo.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 075/148] cpupower: avoid multiple definition with gcc -fno-common
+Date:   Wed,  1 Apr 2020 18:17:47 +0200
+Message-Id: <20200401161600.559036786@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,30 +44,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Mike Gilbert <floppym@gentoo.org>
 
-commit 32d2545462c6cede998267b86e57cda5d1dc2225 upstream.
+[ Upstream commit 2de7fb60a4740135e03cf55c1982e393ccb87b6b ]
 
-Add the PCI ID to the driver list to support this new device.
+Building cpupower with -fno-common in CFLAGS results in errors due to
+multiple definitions of the 'cpu_count' and 'start_time' variables.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+./utils/idle_monitor/snb_idle.o:./utils/idle_monitor/cpupower-monitor.h:28:
+multiple definition of `cpu_count';
+./utils/idle_monitor/nhm_idle.o:./utils/idle_monitor/cpupower-monitor.h:28:
+first defined here
+...
+./utils/idle_monitor/cpuidle_sysfs.o:./utils/idle_monitor/cpuidle_sysfs.c:22:
+multiple definition of `start_time';
+./utils/idle_monitor/amd_fam14h_idle.o:./utils/idle_monitor/amd_fam14h_idle.c:85:
+first defined here
 
+The -fno-common option will be enabled by default in GCC 10.
+
+Bug: https://bugs.gentoo.org/707462
+Signed-off-by: Mike Gilbert <floppym@gentoo.org>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/ahci.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/power/cpupower/utils/idle_monitor/amd_fam14h_idle.c  | 2 +-
+ tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c    | 2 +-
+ tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c | 2 ++
+ tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h | 2 +-
+ 4 files changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -409,6 +409,7 @@ static const struct pci_device_id ahci_p
- 	{ PCI_VDEVICE(INTEL, 0xa252), board_ahci }, /* Lewisburg RAID*/
- 	{ PCI_VDEVICE(INTEL, 0xa256), board_ahci }, /* Lewisburg RAID*/
- 	{ PCI_VDEVICE(INTEL, 0xa356), board_ahci }, /* Cannon Lake PCH-H RAID */
-+	{ PCI_VDEVICE(INTEL, 0x06d7), board_ahci }, /* Comet Lake-H RAID */
- 	{ PCI_VDEVICE(INTEL, 0x0f22), board_ahci_mobile }, /* Bay Trail AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x0f23), board_ahci_mobile }, /* Bay Trail AHCI */
- 	{ PCI_VDEVICE(INTEL, 0x22a3), board_ahci_mobile }, /* Cherry Tr. AHCI */
+diff --git a/tools/power/cpupower/utils/idle_monitor/amd_fam14h_idle.c b/tools/power/cpupower/utils/idle_monitor/amd_fam14h_idle.c
+index 2116df9ad8325..c097a3748674f 100644
+--- a/tools/power/cpupower/utils/idle_monitor/amd_fam14h_idle.c
++++ b/tools/power/cpupower/utils/idle_monitor/amd_fam14h_idle.c
+@@ -83,7 +83,7 @@ static struct pci_access *pci_acc;
+ static struct pci_dev *amd_fam14h_pci_dev;
+ static int nbp1_entered;
+ 
+-struct timespec start_time;
++static struct timespec start_time;
+ static unsigned long long timediff;
+ 
+ #ifdef DEBUG
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
+index 5b3205f162174..5277df27191f3 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
++++ b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
+@@ -21,7 +21,7 @@ struct cpuidle_monitor cpuidle_sysfs_monitor;
+ 
+ static unsigned long long **previous_count;
+ static unsigned long long **current_count;
+-struct timespec start_time;
++static struct timespec start_time;
+ static unsigned long long timediff;
+ 
+ static int cpuidle_get_count_percent(unsigned int id, double *percent,
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+index 05f953f0f0a0c..80a21cb67d94f 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
++++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+@@ -29,6 +29,8 @@ struct cpuidle_monitor *all_monitors[] = {
+ 0
+ };
+ 
++int cpu_count;
++
+ static struct cpuidle_monitor *monitors[MONITORS_MAX];
+ static unsigned int avail_monitors;
+ 
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
+index 9e43f3371fbc6..3558bbae2b5dc 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
++++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
+@@ -18,7 +18,7 @@
+ #define CSTATE_NAME_LEN 5
+ #define CSTATE_DESC_LEN 60
+ 
+-int cpu_count;
++extern int cpu_count;
+ 
+ /* Hard to define the right names ...: */
+ enum power_range_e {
+-- 
+2.20.1
+
 
 
