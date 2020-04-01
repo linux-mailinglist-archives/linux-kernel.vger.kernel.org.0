@@ -2,110 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA6D519AE7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 17:06:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D129019AE7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 17:06:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732795AbgDAPGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 11:06:18 -0400
-Received: from mail.baikalelectronics.com ([87.245.175.226]:57442 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732554AbgDAPGR (ORCPT
+        id S1733166AbgDAPGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 11:06:30 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:53132 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732551AbgDAPGa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 11:06:17 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id B59E88030890;
-        Wed,  1 Apr 2020 15:06:09 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id o7swTIfdtaeL; Wed,  1 Apr 2020 18:06:08 +0300 (MSK)
-Date:   Wed, 1 Apr 2020 18:06:12 +0300
-From:   Sergey Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
-        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
-        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>, SoC Team <soc@kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
+        Wed, 1 Apr 2020 11:06:30 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 031F6IrT103459;
+        Wed, 1 Apr 2020 10:06:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1585753578;
+        bh=rpGOkl7+au8ZR5Xc81hv83OdjAR+iCGu/F9rpYgq2M4=;
+        h=To:CC:From:Subject:Date;
+        b=MO5I1n8IQO/HQNfC4Nc/PKY9H5Jw5OetvV5ztUszr20sJ9ooYGOAQRz/O1n7w78Hx
+         6XmVOed0vtael3AH6JtsVOLddUaUNr4nLqVT+ravD8aZ1Iz6UXb9jl9vsu1mVj1cXH
+         3a02A+9Pk2c0tFABqwjQNMlmP8B1ocsrhNUZyblQ=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 031F6Isx103822;
+        Wed, 1 Apr 2020 10:06:18 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 1 Apr
+ 2020 10:06:18 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 1 Apr 2020 10:06:18 -0500
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 031F6Fc5125236;
+        Wed, 1 Apr 2020 10:06:16 -0500
+To:     <linux-rt-users@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/6] soc: Add Baikal-T1 SoC APB/AXI EHB and L2-cache
- drivers
-Message-ID: <20200401150612.addu2gzahrarpgep@ubsrv2.baikal.int>
-References: <20200306130731.938808030702@mail.baikalelectronics.ru>
- <20200306153246.9373B80307C4@mail.baikalelectronics.ru>
+CC:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Nori, Sekhar" <nsekhar@ti.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [v5.4.28-rt19] ARM64: nfs boot issues
+Message-ID: <0d05e716-5575-d4bd-64be-187c85244c12@ti.com>
+Date:   Wed, 1 Apr 2020 18:06:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20200306153246.9373B80307C4@mail.baikalelectronics.ru>
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Arnd,
+Hi All,
 
-On Fri, Mar 06, 2020 at 04:19:47PM +0100, Arnd Bergmann wrote:
-> On Fri, Mar 6, 2020 at 2:07 PM <Sergey.Semin@baikalelectronics.ru> wrote:
-> >
-> > From: Serge Semin <fancer.lancer@gmail.com>
-> >
-> > Aside from PCIe/SATA/DDR/I2C/CPU-reboot specific settings the Baikal-T1
-> > system controller provides three vendor-specific blocks. In particular
-> > there are two Errors Handler Blocks to detect and report an info regarding
-> > any problems discovered on the AXI and APB buses. These are the main buses
-> > utilized by the SoC devices to interact with each other. In addition there
-> > is a way to tune the MIPS P5600 CM2 L2-cache up by setting the Tag/Data/WS
-> > L2-to-RAM latencies. All of this functionality is implemented in the
-> > APB/AXI EHB and L2-cache control block drivers to be a part of the kernel soc
-> > subsystem (as being specific to the Baikal-T1 SoC) and introduced in the
-> > framework of this patchset.
-> >
-> > This patchset is rebased and tested on the mainline Linux kernel 5.6-rc4:
-> > commit 98d54f81e36b ("Linux 5.6-rc4").
-> 
-> I have no objection to the drivers, but I wonder if these should be
-> in drivers/bus and drivers/memory instead of drivers/soc, which have
-> similar drivers already. The driver for the L2 cache is not really a
-> memory controller driver, but it may be close enough, and we
-> already have a couple of different things in there.
-> 
->           Arnd
+We now observe NFS boot issues with TI RT Kernel (last merged tag v5.4.28-rt19) on TI (ARM64) AM654x/J721E platforms.
+It's just stack (100%) silently right after Kernel init (log1) or in the middle of the boot (log2).
 
-Sorry for a delay. I was analyzing and fixing comments, which were raised
-in the framework of anther patchsets I've submitted. Some of them including
-yours cause bigger changes than just a few fixups and might be resolved
-at once by a solution I've described in RFC: https://lkml.org/lkml/2020/3/22/393
-You've been in Cc there, so feel free to send your comments.
+I'm trying to investigate an issue and I'd like to ask if anybody else observed the same?
 
-Regarding ehb drivers. You are right. They should be moved to the drivers/bus
-(it has also been described in the RFC). It is more suitable place for them.
-I'll do it in v2.
+Few notes:
+- I can not test clear rt-devel/linux-5.4.y-rt as above TI platform not fully supported there
+- ARM32 platforms not affected
+- Disabling CONFIG_PREEMPT_RT=n with CONFIG_PREEMPT=y makes NFS boot work again
+- non RT Kernel has no issues
 
-Regarding l2 driver. Do you really think that L2 cache should be in
-drivers/memory? First there is no any cache-related drivers in that
-subsystem (at least I couldn't find any). Second the Baikal-T1
-L2-cache-RAM config block has just indirect connection with RAM.
-The block just tunes the L2-cache<->RAM stall clock cycles up on
-WS/Tag/Data RAM IO-operations. This config seems more SoC-specific,
-than memory-like. Do you think that the driver should still be in
-drivers/memory?
+NFS configuration:
+  rw rootfstype=nfs root=/dev/nfs rw nfsroot=192.168.0.110:/mnt/am65xx-evm,nolock,v3,tcp,rsize=4096,wsize=4096 ip=dhcp
 
-On the other hand the block is part of the System Controller. I could
-just embed the l2-cache driver functionality into the System Controller
-MFD driver. Though honestly IMHO the functionality should live in
-a dedicated driver and drivers/soc is a better place for it. I also have
-doubts this part will be well accepted by Lee (drivers/mfd maintainer).
+===== Log1:
+[   13.423029] 000: am65-cpsw-nuss 46000000.ethernet eth0: Link is Up - 100Mbps/Full - flow control off
+[   13.449187] 003: Sending DHCP requests .
+[   13.457269] 002: ,
+[   13.965284] 001:  OK
+[   13.965769] 001: IP-Config: Got DHCP answer from 192.168.0.1, my address is 192.168.0.105
+[   13.965788] 001: IP-Config: Complete:
+[   13.965794] 001:      device=eth0, hwaddr=f4:84:4c:eb:a0:00, ipaddr=192.168.0.105, mask=255.255.255.0, gw=192.168.0.1
+[   13.965804] 001:      host=192.168.0.105, domain=, nis-domain=(none)
+[   13.965814] 001:      bootserver=0.0.0.0, rootserver=192.168.0.110, rootpath=
+[   13.965821] 001:      nameserver0=192.168.0.1, nameserver1=0.0.0.0
+[   13.999107] 001: ALSA device list:
+[   13.999725] 001:   No soundcards found.
+[   14.121815] 001: VFS: Mounted root (nfs filesystem) on device 0:21.
+[   14.126072] 001: devtmpfs: mounted
+[   14.139110] 001: Freeing unused kernel memory: 2688K
+[   14.150126] 000: Run /sbin/init as init process
+[  195.694278] 002: nfs: server 192.168.0.110 not responding, still trying
+[  195.694314] 003: nfs: server 192.168.0.110 not responding, still trying
+[  195.694875] 000: nfs: server 192.168.0.110 not responding, still trying
+[  195.694921] 003: nfs: server 192.168.0.110 not responding, still trying
+^^^
 
-So what do you think?
+===== Log2:
+[  OK  ] Stopped Network Time Synchronization.
+          Starting Network Time Synchronization...
+[  OK  ] Found device /dev/ttyS2.
+[  OK  ] Started Network Service.
+[FAILED] Failed to start Network Time Synchronization.
+See 'systemctl status systemd-timesyncd.service' for details.
+[   97.141595] 000: sysrq: This sysrq operation is disabled.
+[  191.511935] 001: nfs: server 192.168.0.110 not responding, still trying
+[  191.511995] 003: nfs: server 192.168.0.110 not responding, still trying
+[  191.512001] 002: nfs: server 192.168.0.110 not responding, still trying
+   
+^^^
 
-Regards,
--Sergey
+-- 
+Best regards,
+grygorii
