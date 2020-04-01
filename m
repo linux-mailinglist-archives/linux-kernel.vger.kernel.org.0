@@ -2,165 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AE1719A915
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:02:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 616C019A931
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:09:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732067AbgDAKCq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 06:02:46 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38616 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbgDAKCp (ORCPT
+        id S1732115AbgDAKJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:09:27 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33474 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbgDAKJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:02:45 -0400
-Received: by mail-wm1-f68.google.com with SMTP id f6so6453024wmj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 03:02:44 -0700 (PDT)
+        Wed, 1 Apr 2020 06:09:26 -0400
+Received: by mail-qk1-f195.google.com with SMTP id v7so26436766qkc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 03:09:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/JUjrVIAN05JaqOZ81e9IeMVI4IIpPJGuXB/jnNFM7c=;
+        b=FzxJt0Nt0NgAOpqNI+AdrmKN0ewi+HoB2BYl1EDjlDDlCJbGfSSc3nt2OmQM8v08KX
+         iSUuKe/+Ujy5NZxR2ldOqTxUSAp4hWsKkaxOTuxqLDX7dgCLt9yBU0Lpf/xKG8I/gBrp
+         PHaK3fs5zyk12tmLZEuCpGQmwJ75uxSLvB8L8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l+NuImXGHyqbLPK7qk/fnkfWqM1yyeCrvbhKbbFgkRc=;
-        b=oot5Z84iQ4jUrqJYRboYktG3gU9Haj44tI1yaaGljmhLIoEMvdnibdKelSQN7PFE4B
-         Tjl9uM1ryHmnSSRmIoKd1CX687Vvnut4wzTnw3cdP+CBS1cqhEynafno66BJ48ZIsscx
-         UaTxlVafAxxqSbZCBoQ2tN6zLWskyDcH74ujTO7oJx/GbI97kAgXL6iCKd1mbZAGsnG3
-         lYl1DP8oP7qnl39/Yg446URe6DflVYJhw6l5CrRgHjjJrYjGPRP9+WAU8xL1RJI4uIWO
-         PP01w4wQLrr98mWPxzUTALegvP9BM/pIAWKMYGeZQ9oNaejoU0OhJlnjvDy/+vsgUwJf
-         BnGw==
-X-Gm-Message-State: AGi0PuY6MNf4eSauyMrJwERXnKJGP34bBGz6fNqhZMYZEwQbUrqd7uv+
-        QQGJsvKdWpoan+XwjYgWl0w=
-X-Google-Smtp-Source: APiQypIWkniodw9O1D8mDGzIsjhoH6bNEgJBg8D5BpaUzTdYR6XpQEs2xXMX+iFlm/oIBarcX4mQeg==
-X-Received: by 2002:a1c:6505:: with SMTP id z5mr3761401wmb.137.1585735363958;
-        Wed, 01 Apr 2020 03:02:43 -0700 (PDT)
-Received: from piling.lan (80-71-134-83.u.parknet.dk. [80.71.134.83])
-        by smtp.gmail.com with ESMTPSA id f62sm1901272wmf.44.2020.04.01.03.02.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 03:02:42 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Subject: [PATCH] mtd: Fix mtd not the same name not registered if nvmem
-Date:   Wed,  1 Apr 2020 12:02:40 +0200
-Message-Id: <20200401100240.445447-1-ribalda@kernel.org>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/JUjrVIAN05JaqOZ81e9IeMVI4IIpPJGuXB/jnNFM7c=;
+        b=l/C7NNZB8y8+SRN34QUYIKnUTp+FsQdyM8GLMfLex9SIkfvLT9Klw1UpgEkXvfZM30
+         rdeXJSkm0Lkth4hwiVVYq3mRYrpAGKmQ0s9YZBarj2fX5uRlSc0yU1jtI3UjtgfOfZq6
+         0wDrKOIbpm99ccuYmEDmEWZkDiJn2MREu9SnCNc5TXbCEOToLck0q6+W9oIhbh4YLbtZ
+         V2dkZhnGHSYFybGE6gs8XcKgWZNYwVII51VFLGWat3y5Xh4xj/uUP4DsRcEfnP2DqUmd
+         jvoDPpmoKBMe8v73gNlRltT2DoEELYEFXa5JGKuQsQQMK8hcMlgJDsTJCQwqEQ5PXEk0
+         9L6Q==
+X-Gm-Message-State: ANhLgQ3lqXh98bJC5mD+atRsT+NQvnTXDCtSoD7KlO+ZWK9ioVI3jDdb
+        1ekkZl1ymFXH9PXJ2HZ6y1S7a56cBtTFzd04f+AGsA==
+X-Google-Smtp-Source: ADFU+vtPd4E+NnE4TazTxijuOX3MAT9DQTdGDWseHds1p8VHfgot0c3aogWL65bsNKSGf7OpXSolx0nI1ArWW2w+E6o=
+X-Received: by 2002:a37:6cb:: with SMTP id 194mr9284729qkg.235.1585735765690;
+ Wed, 01 Apr 2020 03:09:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200331124017.2252-1-ignat@cloudflare.com> <20200331124017.2252-2-ignat@cloudflare.com>
+ <20200401063620.catm73fbp5n4wv5r@yavin.dot.cyphar.com> <20200401063806.5crx6pnm6vzuc3la@yavin.dot.cyphar.com>
+ <CALrw=nFmi_f-c3fbU5ZizP228y4R2LxHdN8eQ1ht3YVBW0CWjA@mail.gmail.com>
+In-Reply-To: <CALrw=nFmi_f-c3fbU5ZizP228y4R2LxHdN8eQ1ht3YVBW0CWjA@mail.gmail.com>
+From:   Marek Majkowski <marek@cloudflare.com>
+Date:   Wed, 1 Apr 2020 11:09:14 +0100
+Message-ID: <CAJPywT+WHZadscThYD2Y=K3q5DUUyHp1UFMtoCyXMU_+AbvDoA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] mnt: add support for non-rootfs initramfs
+To:     Ignat Korchagin <ignat@cloudflare.com>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@cloudflare.com>,
+        containers@lists.linux-foundation.org, christian.brauner@ubuntu.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the nvmem framework is enabled, a nvmem device is created per mtd
-device/partition.
+> However now we see more and more cases needing this and the
+> boilerplate code and the additional memory copying (and sometimes
+> security issues like you mentioned), which can handle this from the
+> userspace becomes too much. I understand the simplicity reasons
+> described in [1] ("You can't unmount rootfs for approximately the same
+> reason you can't kill the init process..."), but to support this
+> simplicity as well as the new containerised Linux world the kernel
+> should give us a hand.
 
-It is not uncommon that a device can have multiple mtd devices with
-partitions that have the same name. Eg, when there DT overlay is allowed
-and the same device with mtd is attached twice.
+"You can't unmount rootfs for approximately the same reason you can't
+kill the init process"
 
-Under that circumstances, the mtd fails to register due to a name
-duplication on the nvmem framework.
+Pardon my ignorance but this explanation in docs never made any sense
+to me. Rootfs is pretty much the same as tmpfs. I don't understand why
+we can't do pivot_root on it and why, we can't unmount it later. I
+must be missing some context. Can someone explain what is the reason
+for rootfs to be restricted like that? Perhaps we could just relax
+rootfs limits....
 
-With this patch we add a _1, _2, _X to the subsequent names if there is
-a collition, and throw a warning, instead of not starting the mtd
-device.
-
-[    8.948991] sysfs: cannot create duplicate filename '/bus/nvmem/devices/Production Data'
-[    8.948992] CPU: 7 PID: 246 Comm: systemd-udevd Not tainted 5.5.0-qtec-standard #13
-[    8.948993] Hardware name: AMD Dibbler/Dibbler, BIOS 05.22.04.0019 10/26/2019
-[    8.948994] Call Trace:
-[    8.948996]  dump_stack+0x50/0x70
-[    8.948998]  sysfs_warn_dup.cold+0x17/0x2d
-[    8.949000]  sysfs_do_create_link_sd.isra.0+0xc2/0xd0
-[    8.949002]  bus_add_device+0x74/0x140
-[    8.949004]  device_add+0x34b/0x850
-[    8.949006]  nvmem_register.part.0+0x1bf/0x640
-...
-[    8.948926] mtd mtd8: Failed to register NVMEM device
-
-Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
----
- drivers/mtd/mtdcore.c | 36 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 5fac4355b9c2..7653d45a470a 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -28,6 +28,7 @@
- #include <linux/leds.h>
- #include <linux/debugfs.h>
- #include <linux/nvmem-provider.h>
-+#include <linux/nvmem-consumer.h>
- 
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/partitions.h>
-@@ -545,13 +546,34 @@ static int mtd_nvmem_reg_read(void *priv, unsigned int offset,
- 	return retlen == bytes ? 0 : -EIO;
- }
- 
-+static int nvmem_next_name(const char *init_name, char *name, size_t len)
-+{
-+	unsigned int i = 0;
-+	int ret = 0;
-+	struct nvmem_device *dev = NULL;
-+
-+	strlcpy(name, init_name, len);
-+
-+	while ((ret < len) &&
-+	       !IS_ERR(dev = nvmem_device_find(name, device_match_name))) {
-+		nvmem_device_put(dev);
-+		ret = snprintf(name, len, "%s_%u", init_name, ++i);
-+	}
-+
-+	if (ret >= len)
-+		return -ENOMEM;
-+
-+	return i;
-+}
-+
- static int mtd_nvmem_add(struct mtd_info *mtd)
- {
- 	struct nvmem_config config = {};
-+	char name[128];
-+	int ret = 0;
- 
- 	config.id = -1;
- 	config.dev = &mtd->dev;
--	config.name = mtd->name;
- 	config.owner = THIS_MODULE;
- 	config.reg_read = mtd_nvmem_reg_read;
- 	config.size = mtd->size;
-@@ -562,6 +584,13 @@ static int mtd_nvmem_add(struct mtd_info *mtd)
- 	config.no_of_node = true;
- 	config.priv = mtd;
- 
-+	if (mtd->name) {
-+		ret = nvmem_next_name(mtd->name, name, sizeof(name));
-+		if (ret < 0)
-+			return ret;
-+		config.name = name;
-+	}
-+
- 	mtd->nvmem = nvmem_register(&config);
- 	if (IS_ERR(mtd->nvmem)) {
- 		/* Just ignore if there is no NVMEM support in the kernel */
-@@ -569,10 +598,15 @@ static int mtd_nvmem_add(struct mtd_info *mtd)
- 			mtd->nvmem = NULL;
- 		} else {
- 			dev_err(&mtd->dev, "Failed to register NVMEM device\n");
-+			mtd->nvmem = NULL;
- 			return PTR_ERR(mtd->nvmem);
- 		}
- 	}
- 
-+	if (ret)
-+		dev_warn(&mtd->dev, "mtdev %s renamed to %s due to name collision",
-+				mtd->name, nvmem_dev_name(mtd->nvmem));
-+
- 	return 0;
- }
- 
--- 
-2.25.1
-
+Marek
