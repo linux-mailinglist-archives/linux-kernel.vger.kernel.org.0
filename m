@@ -2,39 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 572A019B1FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70A0219B156
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389240AbgDAQjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:39:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39812 "EHLO mail.kernel.org"
+        id S2388458AbgDAQeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:34:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387964AbgDAQjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:39:45 -0400
+        id S2388194AbgDAQeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:34:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A9642063A;
-        Wed,  1 Apr 2020 16:39:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27F4C2063A;
+        Wed,  1 Apr 2020 16:34:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759185;
-        bh=czNnYhZCIR0owLlyGh6iNgbaZ96RDbl26VfpnZQE6OM=;
+        s=default; t=1585758847;
+        bh=Tmn5oleCgqpuxbdTFU9DQWUHW4JqZTaDz7bSMafc/Eo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GPV7FIg7m45j/PzaRBB9CtN/x+YYr5tiV+wES6uSQq8D6sqnlCr4TfFYf8O6KITIL
-         2rzG6eyfjVWY0ayTWqVDJptQaVXrmemsrfaMXaeMJou1ZjWiB9D072ITzC+b6R2UL2
-         AQWVLY9GdK+AZpwxn4ckvWkaB2oEkb0N6TNBE1k8=
+        b=g7moX7g5++nD4lVsmLg/f1/XIc/elxt1gy0P9bm022imSLmzLbQTjOoZO1LomD4Yf
+         tQrh+kq56EtSeI6rekqvN6BhNwa19sCyxU1EDITPPIbJAzDOQH8vXhRxEkSBcgVNar
+         AN0z7ON5oqKf4Ef5AVzDIsOYNMWchkfs36P2dp3U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+6d2e7f6fa90e27be9d62@syzkaller.appspotmail.com,
-        Qiujun Huang <hqjagain@gmail.com>
-Subject: [PATCH 4.9 083/102] staging: wlan-ng: fix ODEBUG bug in prism2sta_disconnect_usb
-Date:   Wed,  1 Apr 2020 18:18:26 +0200
-Message-Id: <20200401161546.381443645@linuxfoundation.org>
+        disconnect3d <dominik.b.czarnota@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Changbin Du <changbin.du@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, John Keeping <john@metanate.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Lentine <mlentine@google.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.4 91/91] perf map: Fix off by one in strncpy() size argument
+Date:   Wed,  1 Apr 2020 18:18:27 +0200
+Message-Id: <20200401161540.700043497@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +53,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qiujun Huang <hqjagain@gmail.com>
+From: disconnect3d <dominik.b.czarnota@gmail.com>
 
-commit a1f165a6b738f0c9d744bad4af7a53909278f5fc upstream.
+commit db2c549407d4a76563c579e4768f7d6d32afefba upstream.
 
-We should cancel hw->usb_work before kfree(hw).
+This patch fixes an off-by-one error in strncpy size argument in
+tools/perf/util/map.c. The issue is that in:
 
-Reported-by: syzbot+6d2e7f6fa90e27be9d62@syzkaller.appspotmail.com
-Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/1585120006-30042-1-git-send-email-hqjagain@gmail.com
+        strncmp(filename, "/system/lib/", 11)
+
+the passed string literal: "/system/lib/" has 12 bytes (without the NULL
+byte) and the passed size argument is 11. As a result, the logic won't
+match the ending "/" byte and will pass filepaths that are stored in
+other directories e.g. "/system/libmalicious/bin" or just
+"/system/libmalicious".
+
+This functionality seems to be present only on Android. I assume the
+/system/ directory is only writable by the root user, so I don't think
+this bug has much (or any) security impact.
+
+Fixes: eca818369996 ("perf tools: Add automatic remapping of Android libraries")
+Signed-off-by: disconnect3d <dominik.b.czarnota@gmail.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Changbin Du <changbin.du@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: John Keeping <john@metanate.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Michael Lentine <mlentine@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lore.kernel.org/lkml/20200309104855.3775-1-dominik.b.czarnota@gmail.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/wlan-ng/prism2usb.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/map.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/wlan-ng/prism2usb.c
-+++ b/drivers/staging/wlan-ng/prism2usb.c
-@@ -179,6 +179,7 @@ static void prism2sta_disconnect_usb(str
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -85,7 +85,7 @@ static inline bool replace_android_lib(c
+ 		return true;
+ 	}
  
- 		cancel_work_sync(&hw->link_bh);
- 		cancel_work_sync(&hw->commsqual_bh);
-+		cancel_work_sync(&hw->usb_work);
- 
- 		/* Now we complete any outstanding commands
- 		 * and tell everyone who is waiting for their
+-	if (!strncmp(filename, "/system/lib/", 11)) {
++	if (!strncmp(filename, "/system/lib/", 12)) {
+ 		char *ndk, *app;
+ 		const char *arch;
+ 		size_t ndk_length;
 
 
