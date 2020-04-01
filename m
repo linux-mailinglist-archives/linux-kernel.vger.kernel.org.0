@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F30019B1DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56BD919B3A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:53:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389109AbgDAQil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:38:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38348 "EHLO mail.kernel.org"
+        id S2387616AbgDAQw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:52:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387520AbgDAQif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:38:35 -0400
+        id S2388283AbgDAQdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:33:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66A0020658;
-        Wed,  1 Apr 2020 16:38:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22EF120658;
+        Wed,  1 Apr 2020 16:33:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759114;
-        bh=Jb477QnmVOumNiQUhTwmrb7ruwSZE2FwDmZGJD3j1d4=;
+        s=default; t=1585758825;
+        bh=zI1L8fWuxnVasn0HN2osMoOEJhb/uWGdUVBR50usJHc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K+7ktAI8vaDdio9psPxFwv5oEEfvAQwnXDYCr8muZk6RHdlWmHwzC1QRW2bMdPpW7
-         SWLTKi94+OzBhMehpXHdBtfocfHZ5Kmx9hK60sywxnXxvSbimq+Og28S/7lKFwqQBJ
-         kHX2+dT/n0ZJa0oyk8qzr8RAf7nxN37b/FayKCNQ=
+        b=dUT3xlbxXxI21O+OXBBVZukXKHsz9beg/darQMDeA5iNrfXVtT7ZTG6ZDw3x6Y8+Y
+         VhjA7+bakiKJJ4RCXDugsA8u1Ru1n0opFkpSVo/IRdpQCPcmbVCNxHJI77ejYC+e2C
+         dGmXT+CJm6b5suAakucdSTmlqqcglRGzJ9QRvb4I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mans Rullgard <mans@mansr.com>,
-        Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.9 079/102] usb: musb: fix crash with highmen PIO and usbmon
-Date:   Wed,  1 Apr 2020 18:18:22 +0200
-Message-Id: <20200401161545.845950601@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 87/91] locking/atomic, kref: Add kref_read()
+Date:   Wed,  1 Apr 2020 18:18:23 +0200
+Message-Id: <20200401161539.844562724@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,79 +48,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mans Rullgard <mans@mansr.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 52974d94a206ce428d9d9b6eaa208238024be82a upstream.
+commit 2c935bc57221cc2edc787c72ea0e2d30cdcd3d5e upstream.
 
-When handling a PIO bulk transfer with highmem buffer, a temporary
-mapping is assigned to urb->transfer_buffer.  After the transfer is
-complete, an invalid address is left behind in this pointer.  This is
-not ordinarily a problem since nothing touches that buffer before the
-urb is released.  However, when usbmon is active, usbmon_urb_complete()
-calls (indirectly) mon_bin_get_data() which does access the transfer
-buffer if it is set.  To prevent an invalid memory access here, reset
-urb->transfer_buffer to NULL when finished (musb_host_rx()), or do not
-set it at all (musb_host_tx()).
+Since we need to change the implementation, stop exposing internals.
 
-Fixes: 8e8a55165469 ("usb: musb: host: Handle highmem in PIO mode")
-Signed-off-by: Mans Rullgard <mans@mansr.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Link: https://lore.kernel.org/r/20200316211136.2274-8-b-liu@ti.com
+Provide kref_read() to read the current reference count; typically
+used for debug messages.
+
+Kills two anti-patterns:
+
+	atomic_read(&kref->refcount)
+	kref->refcount.counter
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[only add kref_read() to kref.h for stable backports - gregkh]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musb_host.c |   17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ include/linux/kref.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/usb/musb/musb_host.c
-+++ b/drivers/usb/musb/musb_host.c
-@@ -1494,10 +1494,7 @@ done:
- 	 * We need to map sg if the transfer_buffer is
- 	 * NULL.
- 	 */
--	if (!urb->transfer_buffer)
--		qh->use_sg = true;
--
--	if (qh->use_sg) {
-+	if (!urb->transfer_buffer) {
- 		/* sg_miter_start is already done in musb_ep_program */
- 		if (!sg_miter_next(&qh->sg_miter)) {
- 			dev_err(musb->controller, "error: sg list empty\n");
-@@ -1505,9 +1502,8 @@ done:
- 			status = -EINVAL;
- 			goto done;
- 		}
--		urb->transfer_buffer = qh->sg_miter.addr;
- 		length = min_t(u32, length, qh->sg_miter.length);
--		musb_write_fifo(hw_ep, length, urb->transfer_buffer);
-+		musb_write_fifo(hw_ep, length, qh->sg_miter.addr);
- 		qh->sg_miter.consumed = length;
- 		sg_miter_stop(&qh->sg_miter);
- 	} else {
-@@ -1516,11 +1512,6 @@ done:
+--- a/include/linux/kref.h
++++ b/include/linux/kref.h
+@@ -33,6 +33,11 @@ static inline void kref_init(struct kref
+ 	atomic_set(&kref->refcount, 1);
+ }
  
- 	qh->segsize = length;
- 
--	if (qh->use_sg) {
--		if (offset + length >= urb->transfer_buffer_length)
--			qh->use_sg = false;
--	}
--
- 	musb_ep_select(mbase, epnum);
- 	musb_writew(epio, MUSB_TXCSR,
- 			MUSB_TXCSR_H_WZC_BITS | MUSB_TXCSR_TXPKTRDY);
-@@ -2040,8 +2031,10 @@ finish:
- 	urb->actual_length += xfer_len;
- 	qh->offset += xfer_len;
- 	if (done) {
--		if (qh->use_sg)
-+		if (qh->use_sg) {
- 			qh->use_sg = false;
-+			urb->transfer_buffer = NULL;
-+		}
- 
- 		if (urb->status == -EINPROGRESS)
- 			urb->status = status;
++static inline int kref_read(const struct kref *kref)
++{
++	return atomic_read(&kref->refcount);
++}
++
+ /**
+  * kref_get - increment refcount for object.
+  * @kref: object.
 
 
