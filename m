@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF4C019AFB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CECB19B058
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732147AbgDAQUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:20:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42928 "EHLO mail.kernel.org"
+        id S1732148AbgDAQ0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:26:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732879AbgDAQUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:20:21 -0400
+        id S2387868AbgDAQ0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:26:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D44120857;
-        Wed,  1 Apr 2020 16:20:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41C45212CC;
+        Wed,  1 Apr 2020 16:26:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758020;
-        bh=nnRmublHebH8tVwLmAi+UQ/zgzXNjJ2XDyx3i9qUhW8=;
+        s=default; t=1585758361;
+        bh=HLkyMYABj1W/nqkEG7+IVskAU2nhYu7XZVp+KIkbBEE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mDz2gcUaFSYZI3eInFS7xdD0J4BDsGpZlfmmZNfVXcOEaPK2mVAJc0H6sZnD9lrvY
-         JvGycoBvfAAPZlYDTYW4RtJWX2m+jiXgbeLLm/JoF5frToc1E5kZeXj/3M81HpUpka
-         GQSjtaWwqJkcJVNz1jYNg21Egrx8Tp3TVkC8fGpo=
+        b=d6Mk5FMf3rGDvqj8ovZiQo9A3CnZyvoE88q91N8qFeXmtnAY9bb/PCEhIGtFH5dBF
+         7ZNdqSlmrTGxZ/y8yeqS8kwVzZwuaMpXe1oBX80nbAZs2pRcg3sYRt4YGVX4AiEIk2
+         qeXA1WfkEhzBhrzcDSWuFaZpfjiH244ornpYerVU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 5.5 18/30] clk: imx: Align imx sc clock parent msg structs to 4
+        stable@vger.kernel.org,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.19 066/116] vti[6]: fix packet tx through bpf_redirect() in XinY cases
 Date:   Wed,  1 Apr 2020 18:17:22 +0200
-Message-Id: <20200401161429.561629963@linuxfoundation.org>
+Message-Id: <20200401161551.770608190@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
-References: <20200401161414.345528747@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +44,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 
-commit 8400ab8896324641243b57fc49b448023c07409a upstream.
+commit f1ed10264ed6b66b9cd5e8461cffce69be482356 upstream.
 
-The imx SC api strongly assumes that messages are composed out of
-4-bytes words but some of our message structs have odd sizeofs.
+I forgot the 4in6/6in4 cases in my previous patch. Let's fix them.
 
-This produces many oopses with CONFIG_KASAN=y.
-
-Fix by marking with __aligned(4).
-
-Fixes: 666aed2d13ee ("clk: imx: scu: add set parent support")
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Link: https://lkml.kernel.org/r/aad021e432b3062c142973d09b766656eec18fde.1582216144.git.leonard.crestez@nxp.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 95224166a903 ("vti[6]: fix packet tx through bpf_redirect()")
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/imx/clk-scu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/Kconfig   |    1 +
+ net/ipv4/ip_vti.c  |   36 +++++++++++++++++++++++++++++-------
+ net/ipv6/ip6_vti.c |   32 +++++++++++++++++++++++++-------
+ 3 files changed, 55 insertions(+), 14 deletions(-)
 
---- a/drivers/clk/imx/clk-scu.c
-+++ b/drivers/clk/imx/clk-scu.c
-@@ -84,7 +84,7 @@ struct imx_sc_msg_get_clock_parent {
- 		struct req_get_clock_parent {
- 			__le16 resource;
- 			u8 clk;
--		} __packed req;
-+		} __packed __aligned(4) req;
- 		struct resp_get_clock_parent {
- 			u8 parent;
- 		} resp;
+--- a/net/ipv4/Kconfig
++++ b/net/ipv4/Kconfig
+@@ -302,6 +302,7 @@ config SYN_COOKIES
+ 
+ config NET_IPVTI
+ 	tristate "Virtual (secure) IP: tunneling"
++	depends on IPV6 || IPV6=n
+ 	select INET_TUNNEL
+ 	select NET_IP_TUNNEL
+ 	depends on INET_XFRM_MODE_TUNNEL
+--- a/net/ipv4/ip_vti.c
++++ b/net/ipv4/ip_vti.c
+@@ -208,17 +208,39 @@ static netdev_tx_t vti_xmit(struct sk_bu
+ 	int mtu;
+ 
+ 	if (!dst) {
+-		struct rtable *rt;
++		switch (skb->protocol) {
++		case htons(ETH_P_IP): {
++			struct rtable *rt;
+ 
+-		fl->u.ip4.flowi4_oif = dev->ifindex;
+-		fl->u.ip4.flowi4_flags |= FLOWI_FLAG_ANYSRC;
+-		rt = __ip_route_output_key(dev_net(dev), &fl->u.ip4);
+-		if (IS_ERR(rt)) {
++			fl->u.ip4.flowi4_oif = dev->ifindex;
++			fl->u.ip4.flowi4_flags |= FLOWI_FLAG_ANYSRC;
++			rt = __ip_route_output_key(dev_net(dev), &fl->u.ip4);
++			if (IS_ERR(rt)) {
++				dev->stats.tx_carrier_errors++;
++				goto tx_error_icmp;
++			}
++			dst = &rt->dst;
++			skb_dst_set(skb, dst);
++			break;
++		}
++#if IS_ENABLED(CONFIG_IPV6)
++		case htons(ETH_P_IPV6):
++			fl->u.ip6.flowi6_oif = dev->ifindex;
++			fl->u.ip6.flowi6_flags |= FLOWI_FLAG_ANYSRC;
++			dst = ip6_route_output(dev_net(dev), NULL, &fl->u.ip6);
++			if (dst->error) {
++				dst_release(dst);
++				dst = NULL;
++				dev->stats.tx_carrier_errors++;
++				goto tx_error_icmp;
++			}
++			skb_dst_set(skb, dst);
++			break;
++#endif
++		default:
+ 			dev->stats.tx_carrier_errors++;
+ 			goto tx_error_icmp;
+ 		}
+-		dst = &rt->dst;
+-		skb_dst_set(skb, dst);
+ 	}
+ 
+ 	dst_hold(dst);
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -454,15 +454,33 @@ vti6_xmit(struct sk_buff *skb, struct ne
+ 	int mtu;
+ 
+ 	if (!dst) {
+-		fl->u.ip6.flowi6_oif = dev->ifindex;
+-		fl->u.ip6.flowi6_flags |= FLOWI_FLAG_ANYSRC;
+-		dst = ip6_route_output(dev_net(dev), NULL, &fl->u.ip6);
+-		if (dst->error) {
+-			dst_release(dst);
+-			dst = NULL;
++		switch (skb->protocol) {
++		case htons(ETH_P_IP): {
++			struct rtable *rt;
++
++			fl->u.ip4.flowi4_oif = dev->ifindex;
++			fl->u.ip4.flowi4_flags |= FLOWI_FLAG_ANYSRC;
++			rt = __ip_route_output_key(dev_net(dev), &fl->u.ip4);
++			if (IS_ERR(rt))
++				goto tx_err_link_failure;
++			dst = &rt->dst;
++			skb_dst_set(skb, dst);
++			break;
++		}
++		case htons(ETH_P_IPV6):
++			fl->u.ip6.flowi6_oif = dev->ifindex;
++			fl->u.ip6.flowi6_flags |= FLOWI_FLAG_ANYSRC;
++			dst = ip6_route_output(dev_net(dev), NULL, &fl->u.ip6);
++			if (dst->error) {
++				dst_release(dst);
++				dst = NULL;
++				goto tx_err_link_failure;
++			}
++			skb_dst_set(skb, dst);
++			break;
++		default:
+ 			goto tx_err_link_failure;
+ 		}
+-		skb_dst_set(skb, dst);
+ 	}
+ 
+ 	dst_hold(dst);
 
 
