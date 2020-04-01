@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F76B19A787
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C88419A78A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:40:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732006AbgDAIjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:39:51 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:30396 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726368AbgDAIjt (ORCPT
+        id S1732088AbgDAIjy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:39:54 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:14888 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726368AbgDAIjx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:39:49 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0318cr5K028133;
+        Wed, 1 Apr 2020 04:39:53 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0318bETg029934;
         Wed, 1 Apr 2020 10:39:37 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-type; s=STMicroelectronics;
- bh=qWbSrOJCI90YANyiMWSeBsBNnDP7Y5LT4/yIPcQXcb4=;
- b=vJPkEeJ1tq13Gf3gmUvInOrPmt92KtOS4VIptuWs8OsdY3Tp8MM+RY0gKkaLN4qqx/IZ
- Zm4jGHI0TEmvX2kloUlQIpyDYJA4veKdvEcuSpo+hn5Ub84LdZ00GNllm7xX4OLEjPU+
- 45OdGZHk5muRW8gpayvGXPkbGQOQlnpDuGZbNb883amyX2Fqc4w+PGE+nko3LkT0otEe
- 5oH/cMlkNCR17N+KL393LjWu52fHK2rUvWFzYC1A4i246b3beI6LqMI3e0fpQZoo5LEv
- 7qNaTrDRTHLe7YQ2o+mN1+DPbw6YHn+ugngiCKLILHzdA7Gdg/u8KftjulsZz6kdX5vr 9Q== 
+ bh=na/oKumJJlSOAsC4yLKxdvbCb8WJgv/VEAjKtvvJjY0=;
+ b=yYkdbvycJiGc349n5Huur97tzbGMxNG5IIqp+sKnhXkV8S8g838vVKx6TZUSkg2id7/H
+ oqOZQUxHYlJmvXfVDUZkxr66BsaK5ttR1oVWOW0ZTPmcFUyWcbboK9a6GVxy/JAfYz+g
+ HxM2Ur6tNeMOM4ir4UY/1CGSlaelKt1mJIbtFojO4zW2XZXdrNME/viJgkFiyviR6jLL
+ /VsBb1+lozKUvZT3+E1tRdM/WGudDDTo6YVwbKxIe86xWqQKBiY7PjPsamjzzpSfJoV9
+ 0hSf6ZeFtX1DFkDD8XQoOhMi2RU2dIidAflOoC6Amqa8IukrY/zaOOmN+nso0ulT0ceO 4w== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 302y53x221-1
+        by mx07-00178001.pphosted.com with ESMTP id 301vkdvaht-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Wed, 01 Apr 2020 10:39:37 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0A77B100034;
-        Wed,  1 Apr 2020 10:39:35 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 426B410003B;
+        Wed,  1 Apr 2020 10:39:36 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F197C21CA8F;
-        Wed,  1 Apr 2020 10:39:34 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3507121CA8F;
+        Wed,  1 Apr 2020 10:39:36 +0200 (CEST)
 Received: from localhost (10.75.127.44) by SFHDAG3NODE3.st.com (10.75.127.9)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Apr 2020 10:39:34
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Apr 2020 10:39:35
  +0200
 From:   Benjamin Gaignard <benjamin.gaignard@st.com>
 To:     <fabrice.gasnier@st.com>, <lee.jones@linaro.org>,
@@ -47,9 +47,9 @@ CC:     <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v6 1/6] dt-bindings: mfd: Document STM32 low power timer bindings
-Date:   Wed, 1 Apr 2020 10:39:04 +0200
-Message-ID: <20200401083909.18886-2-benjamin.gaignard@st.com>
+Subject: [PATCH v6 2/6] ARM: dts: stm32: Add timer subnodes on stm32mp15 SoCs
+Date:   Wed, 1 Apr 2020 10:39:05 +0200
+Message-ID: <20200401083909.18886-3-benjamin.gaignard@st.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20200401083909.18886-1-benjamin.gaignard@st.com>
 References: <20200401083909.18886-1-benjamin.gaignard@st.com>
@@ -65,89 +65,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a subnode to STM low power timer bindings to support timer driver
+Add timer subnode and interrupts to low power timer nodes for
+all stm32mp15x SoCs.
 
 Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-version 6:
-- only use one interrupt
+ arch/arm/boot/dts/stm32mp151.dtsi | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-version 5:
-- the previous has been acked-by Rob but since I have docummented
-  interrupts and interrupt-names properties I haven't applied it here.
-
-version 4:
-- change compatible and subnode names
-- document wakeup-source property
-
- .../devicetree/bindings/mfd/st,stm32-lptimer.yaml   | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml b/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
-index 1a4cc5f3fb33..2a99b2296d2b 100644
---- a/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
-+++ b/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
-@@ -33,12 +33,17 @@ properties:
-     items:
-       - const: mux
+diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
+index fb41d0778b00..09e2dc209976 100644
+--- a/arch/arm/boot/dts/stm32mp151.dtsi
++++ b/arch/arm/boot/dts/stm32mp151.dtsi
+@@ -358,6 +358,8 @@
+ 			reg = <0x40009000 0x400>;
+ 			clocks = <&rcc LPTIM1_K>;
+ 			clock-names = "mux";
++			interrupts-extended = <&exti 47 IRQ_TYPE_LEVEL_HIGH>;
++			wakeup-source;
+ 			status = "disabled";
  
-+  interrupts:
-+    maxItems: 1
+ 			pwm {
+@@ -376,6 +378,11 @@
+ 				compatible = "st,stm32-lptimer-counter";
+ 				status = "disabled";
+ 			};
 +
-   "#address-cells":
-     const: 1
++			timer {
++				compatible = "st,stm32-lptimer-timer";
++				status = "disabled";
++			};
+ 		};
  
-   "#size-cells":
-     const: 0
+ 		spi2: spi@4000b000 {
+@@ -1135,6 +1142,8 @@
+ 			reg = <0x50021000 0x400>;
+ 			clocks = <&rcc LPTIM2_K>;
+ 			clock-names = "mux";
++			interrupts-extended = <&exti 48 IRQ_TYPE_LEVEL_HIGH>;
++			wakeup-source;
+ 			status = "disabled";
  
-+  wakeup-source: true
+ 			pwm {
+@@ -1153,6 +1162,11 @@
+ 				compatible = "st,stm32-lptimer-counter";
+ 				status = "disabled";
+ 			};
 +
-   pwm:
-     type: object
++			timer {
++				compatible = "st,stm32-lptimer-timer";
++				status = "disabled";
++			};
+ 		};
  
-@@ -81,6 +86,16 @@ patternProperties:
-     required:
-       - compatible
+ 		lptimer3: timer@50022000 {
+@@ -1162,6 +1176,8 @@
+ 			reg = <0x50022000 0x400>;
+ 			clocks = <&rcc LPTIM3_K>;
+ 			clock-names = "mux";
++			interrupts-extended = <&exti 50 IRQ_TYPE_LEVEL_HIGH>;
++			wakeup-source;
+ 			status = "disabled";
  
-+  timer:
-+    type: object
+ 			pwm {
+@@ -1175,6 +1191,11 @@
+ 				reg = <2>;
+ 				status = "disabled";
+ 			};
 +
-+    properties:
-+      compatible:
-+        const: st,stm32-lptimer-timer
-+
-+    required:
-+      - compatible
-+
- required:
-   - "#address-cells"
-   - "#size-cells"
-@@ -94,11 +109,13 @@ additionalProperties: false
- examples:
-   - |
-     #include <dt-bindings/clock/stm32mp1-clks.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-     timer@40002400 {
-       compatible = "st,stm32-lptimer";
-       reg = <0x40002400 0x400>;
-       clocks = <&timer_clk>;
-       clock-names = "mux";
-+      interrupts-extended = <&exti 47 IRQ_TYPE_LEVEL_HIGH>;
-       #address-cells = <1>;
-       #size-cells = <0>;
++			timer {
++				compatible = "st,stm32-lptimer-timer";
++				status = "disabled";
++			};
+ 		};
  
-@@ -115,6 +132,10 @@ examples:
-       counter {
-         compatible = "st,stm32-lptimer-counter";
-       };
-+
-+      timer {
-+        compatible = "st,stm32-lptimer-timer";
-+      };
-     };
+ 		lptimer4: timer@50023000 {
+@@ -1182,6 +1203,8 @@
+ 			reg = <0x50023000 0x400>;
+ 			clocks = <&rcc LPTIM4_K>;
+ 			clock-names = "mux";
++			interrupts-extended = <&exti 52 IRQ_TYPE_LEVEL_HIGH>;
++			wakeup-source;
+ 			status = "disabled";
  
- ...
+ 			pwm {
+@@ -1189,6 +1212,11 @@
+ 				#pwm-cells = <3>;
+ 				status = "disabled";
+ 			};
++
++			timer {
++				compatible = "st,stm32-lptimer-timer";
++				status = "disabled";
++			};
+ 		};
+ 
+ 		lptimer5: timer@50024000 {
+@@ -1196,6 +1224,8 @@
+ 			reg = <0x50024000 0x400>;
+ 			clocks = <&rcc LPTIM5_K>;
+ 			clock-names = "mux";
++			interrupts-extended = <&exti 53 IRQ_TYPE_LEVEL_HIGH>;
++			wakeup-source;
+ 			status = "disabled";
+ 
+ 			pwm {
+@@ -1203,6 +1233,11 @@
+ 				#pwm-cells = <3>;
+ 				status = "disabled";
+ 			};
++
++			timer {
++				compatible = "st,stm32-lptimer-timer";
++				status = "disabled";
++			};
+ 		};
+ 
+ 		vrefbuf: vrefbuf@50025000 {
 -- 
 2.15.0
 
