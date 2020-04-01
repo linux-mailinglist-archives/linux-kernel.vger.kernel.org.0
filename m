@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E64C19AFD2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:21:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3FDC19B18E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733266AbgDAQVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:21:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44160 "EHLO mail.kernel.org"
+        id S2388691AbgDAQgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:36:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732497AbgDAQVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:21:17 -0400
+        id S2388557AbgDAQgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:36:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8765820658;
-        Wed,  1 Apr 2020 16:21:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2977120BED;
+        Wed,  1 Apr 2020 16:35:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758077;
-        bh=yoXhOL7nTVasZHR6cKwhWMciTV/1jPkQpUjZtocCq3M=;
+        s=default; t=1585758959;
+        bh=y93Yqnkx4Hl3ZA0sTp1vcKVcdEB/pEvRT2wpcf1fUPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NFLjohpR5Bnrjd2rCojIAnwbKpnK5UFvlVgnMIq3wefmjIKACY8E5ngtK1bvPvoG/
-         2nLcZgKSBD0W6QjoDPnXSOlSCuSzfoOgUX6IZjnG9CshtgL/dglst9jL7p5p4Y0xP9
-         o+skzfKOncPl8ETP1uoNmCTp0AhXGX2nlyJHtPyY=
+        b=Lf6Q6a708oqWAE/ywEjYDyDsHCJ6nqWAzWL5UzlxK+OUZPb3cWQjOQYb7zrALTAj9
+         T9Ve/Wow9va2e6wCxZRPJo+wRTJoyaMWyyqBgsKvMXuJmLWZdH49h83+CwupVUF+cX
+         whBbrBp7hxXnzrnRE4YXVM9l3UvMbJZZGUopXeXQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@oss.nxp.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.5 29/30] arm64: dts: ls1043a-rdb: correct RGMII delay mode to rgmii-id
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 030/102] kbuild: Disable -Wpointer-to-enum-cast
 Date:   Wed,  1 Apr 2020 18:17:33 +0200
-Message-Id: <20200401161436.096040580@linuxfoundation.org>
+Message-Id: <20200401161538.731202411@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
-References: <20200401161414.345528747@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madalin Bucur <madalin.bucur@oss.nxp.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 4022d808c45277693ea86478fab1f081ebf997e8 upstream.
+commit 82f2bc2fcc0160d6f82dd1ac64518ae0a4dd183f upstream.
 
-The correct setting for the RGMII ports on LS1043ARDB is to
-enable delay on both Rx and Tx so the interface mode used must
-be PHY_INTERFACE_MODE_RGMII_ID.
+Clang's -Wpointer-to-int-cast deviates from GCC in that it warns when
+casting to enums. The kernel does this in certain places, such as device
+tree matches to set the version of the device being used, which allows
+the kernel to avoid using a gigantic union.
 
-Since commit 1b3047b5208a80 ("net: phy: realtek: add support for
-configuring the RX delay on RTL8211F") the Realtek 8211F PHY driver
-has control over the RGMII RX delay and it is disabling it for
-RGMII_TXID. The LS1043ARDB uses two such PHYs in RGMII_ID mode but
-in the device tree the mode was described as "rgmii_txid".
-This issue was not apparent at the time as the PHY driver took the
-same action for RGMII_TXID and RGMII_ID back then but it became
-visible (RX no longer working) after the above patch.
+https://elixir.bootlin.com/linux/v5.5.8/source/drivers/ata/ahci_brcm.c#L428
+https://elixir.bootlin.com/linux/v5.5.8/source/drivers/ata/ahci_brcm.c#L402
+https://elixir.bootlin.com/linux/v5.5.8/source/include/linux/mod_devicetable.h#L264
 
-Changing the phy-connection-type to "rgmii-id" to address the issue.
+To avoid a ton of false positive warnings, disable this particular part
+of the warning, which has been split off into a separate diagnostic so
+that the entire warning does not need to be turned off for clang. It
+will be visible under W=1 in case people want to go about fixing these
+easily and enabling the warning treewide.
 
-Fixes: bf02f2ffe59c ("arm64: dts: add LS1043A DPAA FMan support")
-Signed-off-by: Madalin Bucur <madalin.bucur@oss.nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: stable@vger.kernel.org
+Link: https://github.com/ClangBuiltLinux/linux/issues/887
+Link: https://github.com/llvm/llvm-project/commit/2a41b31fcdfcb67ab7038fc2ffb606fd50b83a84
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ scripts/Makefile.extrawarn | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
-@@ -119,12 +119,12 @@
- 
- 	ethernet@e4000 {
- 		phy-handle = <&rgmii_phy1>;
--		phy-connection-type = "rgmii-txid";
-+		phy-connection-type = "rgmii-id";
- 	};
- 
- 	ethernet@e6000 {
- 		phy-handle = <&rgmii_phy2>;
--		phy-connection-type = "rgmii-txid";
-+		phy-connection-type = "rgmii-id";
- 	};
- 
- 	ethernet@e8000 {
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index d08b6fbdfa853..1532038f60055 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -70,5 +70,6 @@ KBUILD_CFLAGS += $(call cc-disable-warning, format)
+ KBUILD_CFLAGS += $(call cc-disable-warning, sign-compare)
+ KBUILD_CFLAGS += $(call cc-disable-warning, format-zero-length)
+ KBUILD_CFLAGS += $(call cc-disable-warning, uninitialized)
++KBUILD_CFLAGS += $(call cc-disable-warning, pointer-to-enum-cast)
+ endif
+ endif
+-- 
+2.20.1
+
 
 
