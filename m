@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AA2519B1DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 875AD19AFEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389140AbgDAQiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:38:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38654 "EHLO mail.kernel.org"
+        id S2387472AbgDAQWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:22:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388445AbgDAQiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:38:50 -0400
+        id S1733043AbgDAQWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:22:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29D0D20772;
-        Wed,  1 Apr 2020 16:38:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6757E20658;
+        Wed,  1 Apr 2020 16:22:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759129;
-        bh=9nHvcvoqUiKWJeWDOWu5BylYcXFsA0LaM6M0TJnmo6s=;
+        s=default; t=1585758133;
+        bh=2m4phitjhFbrsAJcF3uiJiiQDobncxewRiAT1Y8YfC0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xzLIuv9wzN4Iax1jGxfdbjBXfVOhvmmQ/kLMaXEiheZxeHHXyQNlr8i4mUmEVBYs+
-         2WRt/REIbyPzI19XoZw1BIzg1jGpiH6NQWKGXnbWisLsawhe8IkfUICZhoLR7MYu8R
-         SVc76r9KFoTsPxjxNazWI6UXSAOen1NjIsAznrGc=
+        b=wcutdLpxv+kIJcaJEpnhfUrJceuSobl4nNV9tzxFe/TgOPMMnNr8aP7wxHYdPLE0j
+         m+pXtmqm3NyJ58MhE7AROjPwtTtE2BvGNNfNlYujk3lQmuzoG0Tubz4rss4c9zPgyb
+         k7i4RGixgcQrUAey/OLHjUHMozvzLKSsXPydX7H8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 046/102] net: mvneta: Fix the case where the last poll did not process all rx
-Date:   Wed,  1 Apr 2020 18:17:49 +0200
-Message-Id: <20200401161541.515027954@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Hudson <skrll@netbsd.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH 5.4 22/27] ARM: bcm2835-rpi-zero-w: Add missing pinctrl name
+Date:   Wed,  1 Apr 2020 18:17:50 +0200
+Message-Id: <20200401161432.262458405@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
+References: <20200401161414.352722470@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+From: Nick Hudson <skrll@netbsd.org>
 
-[ Upstream commit 065fd83e1be2e1ba0d446a257fd86a3cc7bddb51 ]
+commit 6687c201fdc3139315c2ea7ef96c157672805cdc upstream.
 
-For the case where the last mvneta_poll did not process all
-RX packets, we need to xor the pp->cause_rx_tx or port->cause_rx_tx
-before claculating the rx_queue.
+Define the sdhci pinctrl state as "default" so it gets applied
+correctly and to match all other RPis.
 
-Fixes: 2dcf75e2793c ("net: mvneta: Associate RX queues with each CPU")
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2c7c040c73e9 ("ARM: dts: bcm2835: Add Raspberry Pi Zero W")
+Signed-off-by: Nick Hudson <skrll@netbsd.org>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/marvell/mvneta.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -2690,10 +2690,9 @@ static int mvneta_poll(struct napi_struc
- 	/* For the case where the last mvneta_poll did not process all
- 	 * RX packets
- 	 */
--	rx_queue = fls(((cause_rx_tx >> 8) & 0xff));
--
- 	cause_rx_tx |= port->cause_rx_tx;
- 
-+	rx_queue = fls(((cause_rx_tx >> 8) & 0xff));
- 	if (rx_queue) {
- 		rx_queue = rx_queue - 1;
- 		if (pp->bm_priv)
+---
+ arch/arm/boot/dts/bcm2835-rpi-zero-w.dts |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/arm/boot/dts/bcm2835-rpi-zero-w.dts
++++ b/arch/arm/boot/dts/bcm2835-rpi-zero-w.dts
+@@ -112,6 +112,7 @@
+ &sdhci {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
++	pinctrl-names = "default";
+ 	pinctrl-0 = <&emmc_gpio34 &gpclk2_gpio43>;
+ 	bus-width = <4>;
+ 	mmc-pwrseq = <&wifi_pwrseq>;
 
 
