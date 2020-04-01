@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF2219B136
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:33:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1F2419B1C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388502AbgDAQdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:33:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59574 "EHLO mail.kernel.org"
+        id S2389037AbgDAQiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:38:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388490AbgDAQdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:33:04 -0400
+        id S2388751AbgDAQh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:37:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50FE42063A;
-        Wed,  1 Apr 2020 16:33:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF34420BED;
+        Wed,  1 Apr 2020 16:37:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758783;
-        bh=RgEC/UFyDfA3IWS/jjbLRXkhkFbRjA5TDwmOQTQociQ=;
+        s=default; t=1585759078;
+        bh=IpskLDqHHZRm9edhwLu30IHxKAr24vBmtaA+c2F/oaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IqGZkEf2LyJQNPHPfAU3a0MjBnFLnaAN6UN8hUy1vlQv7+36L5d8uLWZtKW4z5rPO
-         t4MXP+XCpVY09Xlps7KwevdaxX3kKxthNDrhcOlnZkJIJiF1C0DtDcdaTz7+qkppNr
-         oMkf3Xqerktoez2gDI0Oms0rjhq125VqLcR7BqJM=
+        b=m0z4GsTw82U6q81wsX1TY5tC7/mMIc60R3qAzjnXV/XOANuVgbBIsxXOtbMK3E2j3
+         M0fvngYzt+1/Bc8NmDxJ8XwR7/FSWPpoU1ABo/o58YaARc5rwCyhKKNMvOIjSX4naX
+         gskFD6FwDNRfem3Ws+DslzoEoAgUpcysa6Sllu80=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
-        kovi <zraetn@gmail.com>
-Subject: [PATCH 4.4 75/91] staging: rtl8188eu: Add ASUS USB-N10 Nano B1 to device table
-Date:   Wed,  1 Apr 2020 18:18:11 +0200
-Message-Id: <20200401161537.682766898@linuxfoundation.org>
+        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.9 069/102] netfilter: nft_fwd_netdev: validate family and chain type
+Date:   Wed,  1 Apr 2020 18:18:12 +0200
+Message-Id: <20200401161544.267072629@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
-References: <20200401161512.917494101@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +42,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-commit 38ef48f7d4b7342f145a1b4f96023bde99aeb245 upstream.
+commit 76a109fac206e158eb3c967af98c178cff738e6a upstream.
 
-The ASUS USB-N10 Nano B1 has been reported as a new RTL8188EU device.
-Add it to the device tables.
+Make sure the forward action is only used from ingress.
 
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Reported-by: kovi <zraetn@gmail.com>
-Cc: Stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200321180011.26153-1-Larry.Finger@lwfinger.net
+Fixes: 39e6dea28adc ("netfilter: nf_tables: add forward expression to the netdev family")
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rtl8188eu/os_dep/usb_intf.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/netfilter/nft_fwd_netdev.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-@@ -44,6 +44,7 @@ static struct usb_device_id rtw_usb_id_t
- 	/****** 8188EUS ********/
- 	{USB_DEVICE(0x056e, 0x4008)}, /* Elecom WDC-150SU2M */
- 	{USB_DEVICE(0x07b8, 0x8179)}, /* Abocom - Abocom */
-+	{USB_DEVICE(0x0B05, 0x18F0)}, /* ASUS USB-N10 Nano B1 */
- 	{USB_DEVICE(0x2001, 0x330F)}, /* DLink DWA-125 REV D1 */
- 	{USB_DEVICE(0x2001, 0x3310)}, /* Dlink DWA-123 REV D1 */
- 	{USB_DEVICE(0x2001, 0x3311)}, /* DLink GO-USB-N150 REV B1 */
+--- a/net/netfilter/nft_fwd_netdev.c
++++ b/net/netfilter/nft_fwd_netdev.c
+@@ -62,6 +62,13 @@ nla_put_failure:
+ 	return -1;
+ }
+ 
++static int nft_fwd_validate(const struct nft_ctx *ctx,
++			    const struct nft_expr *expr,
++			    const struct nft_data **data)
++{
++	return nft_chain_validate_hooks(ctx->chain, (1 << NF_NETDEV_INGRESS));
++}
++
+ static struct nft_expr_type nft_fwd_netdev_type;
+ static const struct nft_expr_ops nft_fwd_netdev_ops = {
+ 	.type		= &nft_fwd_netdev_type,
+@@ -69,6 +76,7 @@ static const struct nft_expr_ops nft_fwd
+ 	.eval		= nft_fwd_netdev_eval,
+ 	.init		= nft_fwd_netdev_init,
+ 	.dump		= nft_fwd_netdev_dump,
++	.validate	= nft_fwd_validate,
+ };
+ 
+ static struct nft_expr_type nft_fwd_netdev_type __read_mostly = {
 
 
