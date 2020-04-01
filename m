@@ -2,47 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F1B219B551
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:24:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67CB419B553
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:24:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732880AbgDASXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 14:23:43 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:40286 "EHLO
+        id S1732945AbgDASXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 14:23:50 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:37440 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732498AbgDASXm (ORCPT
+        by vger.kernel.org with ESMTP id S1732579AbgDASXq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 14:23:42 -0400
+        Wed, 1 Apr 2020 14:23:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585765421;
+        s=mimecast20190719; t=1585765425;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4VtK5O6CtT6IFSJujN8Ou5Ycvv+Ua1bFKIedLGVkrzE=;
-        b=Df4c9yTb7oaxLFzSp9YMXUIBx2hQkp0N2KH4Bs36ahNa2fU0paigvZbTltu0jbZ/sq3ju3
-        Q9P0Kwx/vh42bEWJjdKCcwX7F+AzM1gfnwGe9p2L+4zJXyMXFt3wuisDZ/B6h8ZcWz5xNW
-        rOUWzyeWHSZHExW0zjaG2SXFDd4KHG8=
+        bh=ed86f8mBs636MCN5s8u0lJs9+rF7ja9CVlRZvAQrmco=;
+        b=eqLd52KQvWsNYywZyf0LeeUwzKkwk9N+sm2rE2F0qHm6HKIkd+5/6/bHr53mRaJvckW//1
+        dlmQNgbiFjiduFMnJokNZmJVYCNzBAeMMALfc6ln2bHtfRzh63T+mGboVqHUJ5TQgTKT+T
+        mvKRHxNvPYbUBRHeJlKAB1HC4IB1jwI=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-167-1yNWy08vPQqTSplQx0tZAg-1; Wed, 01 Apr 2020 14:23:39 -0400
-X-MC-Unique: 1yNWy08vPQqTSplQx0tZAg-1
+ us-mta-112-Xyq8AVtaPfmN7ONLCbH9cQ-1; Wed, 01 Apr 2020 14:23:41 -0400
+X-MC-Unique: Xyq8AVtaPfmN7ONLCbH9cQ-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A20D5DB21;
-        Wed,  1 Apr 2020 18:23:38 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E9BD018A8C80;
+        Wed,  1 Apr 2020 18:23:39 +0000 (UTC)
 Received: from treble.redhat.com (ovpn-118-135.phx2.redhat.com [10.3.118.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1AD4060BEC;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C185A60BEC;
         Wed,  1 Apr 2020 18:23:38 +0000 (UTC)
 From:   Josh Poimboeuf <jpoimboe@redhat.com>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Miroslav Benes <mbenes@suse.cz>,
-        Julien Thierry <jthierry@redhat.com>
-Subject: [PATCH 2/5] objtool: Support Clang non-section symbols in ORC dump
-Date:   Wed,  1 Apr 2020 13:23:26 -0500
-Message-Id: <b811b5eb1a42602c3b523576dc5efab9ad1c174d.1585761021.git.jpoimboe@redhat.com>
+        Julien Thierry <jthierry@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Dmitry Golovin <dima@golovin.in>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 3/5] objtool: Support Clang non-section symbols in ORC generation
+Date:   Wed,  1 Apr 2020 13:23:27 -0500
+Message-Id: <9a9cae7fcf628843aabe5a086b1a3c5bf50f42e8.1585761021.git.jpoimboe@redhat.com>
 In-Reply-To: <cover.1585761021.git.jpoimboe@redhat.com>
 References: <cover.1585761021.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
@@ -53,100 +56,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Historically, the relocation symbols for ORC entries have only been
-section symbols:
+When compiling the kernel with AS=3Dclang, objtool produces a lot of
+warnings:
 
-  .text+0: sp:sp+8 bp:(und) type:call end:0
+  warning: objtool: missing symbol for section .text
+  warning: objtool: missing symbol for section .init.text
+  warning: objtool: missing symbol for section .ref.text
 
-However, the Clang assembler is aggressive about stripping section
-symbols.  In that case we will need to use function symbols:
+It then fails to generate the ORC table.
 
-  freezing_slow_path+0: sp:sp+8 bp:(und) type:call end:0
+The problem is that objtool assumes text section symbols always exist.
+But the Clang assembler is aggressive about removing them.
 
-In preparation for the generation of such entries in "objtool orc
-generate", add support for reading them in "objtool orc dump".
+When generating relocations for the ORC table, objtool always tries to
+reference instructions by their section symbol offset.  If the section
+symbol doesn't exist, it bails.
 
+Do a fallback: when a section symbol isn't available, reference a
+function symbol instead.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/669
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Reported-by: Dmitry Golovin <dima@golovin.in>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- tools/objtool/orc_dump.c | 44 ++++++++++++++++++++++++----------------
- 1 file changed, 27 insertions(+), 17 deletions(-)
+ tools/objtool/orc_gen.c | 33 ++++++++++++++++++++++++++-------
+ 1 file changed, 26 insertions(+), 7 deletions(-)
 
-diff --git a/tools/objtool/orc_dump.c b/tools/objtool/orc_dump.c
-index 13ccf775a83a..ba4cbb1cdd63 100644
---- a/tools/objtool/orc_dump.c
-+++ b/tools/objtool/orc_dump.c
-@@ -66,7 +66,7 @@ int orc_dump(const char *_objname)
- 	char *name;
- 	size_t nr_sections;
- 	Elf64_Addr orc_ip_addr =3D 0;
--	size_t shstrtab_idx;
-+	size_t shstrtab_idx, strtab_idx =3D 0;
- 	Elf *elf;
- 	Elf_Scn *scn;
- 	GElf_Shdr sh;
-@@ -127,6 +127,8 @@ int orc_dump(const char *_objname)
+diff --git a/tools/objtool/orc_gen.c b/tools/objtool/orc_gen.c
+index 41e4a2754da4..4c0dabd28000 100644
+--- a/tools/objtool/orc_gen.c
++++ b/tools/objtool/orc_gen.c
+@@ -88,11 +88,6 @@ static int create_orc_entry(struct elf *elf, struct se=
+ction *u_sec, struct secti
+ 	struct orc_entry *orc;
+ 	struct rela *rela;
 =20
- 		if (!strcmp(name, ".symtab")) {
- 			symtab =3D data;
-+		} else if (!strcmp(name, ".strtab")) {
-+			strtab_idx =3D i;
- 		} else if (!strcmp(name, ".orc_unwind")) {
- 			orc =3D data->d_buf;
- 			orc_size =3D sh.sh_size;
-@@ -138,7 +140,7 @@ int orc_dump(const char *_objname)
- 		}
+-	if (!insn_sec->sym) {
+-		WARN("missing symbol for section %s", insn_sec->name);
+-		return -1;
+-	}
+-
+ 	/* populate ORC data */
+ 	orc =3D (struct orc_entry *)u_sec->data->d_buf + idx;
+ 	memcpy(orc, o, sizeof(*orc));
+@@ -105,8 +100,32 @@ static int create_orc_entry(struct elf *elf, struct =
+section *u_sec, struct secti
  	}
+ 	memset(rela, 0, sizeof(*rela));
 =20
--	if (!symtab || !orc || !orc_ip)
-+	if (!symtab || !strtab_idx || !orc || !orc_ip)
- 		return 0;
-=20
- 	if (orc_size % sizeof(*orc) !=3D 0) {
-@@ -159,21 +161,29 @@ int orc_dump(const char *_objname)
- 				return -1;
- 			}
-=20
--			scn =3D elf_getscn(elf, sym.st_shndx);
--			if (!scn) {
--				WARN_ELF("elf_getscn");
--				return -1;
--			}
--
--			if (!gelf_getshdr(scn, &sh)) {
--				WARN_ELF("gelf_getshdr");
--				return -1;
--			}
--
--			name =3D elf_strptr(elf, shstrtab_idx, sh.sh_name);
--			if (!name || !*name) {
--				WARN_ELF("elf_strptr");
--				return -1;
-+			if (GELF_ST_TYPE(sym.st_info) =3D=3D STT_SECTION) {
-+				scn =3D elf_getscn(elf, sym.st_shndx);
-+				if (!scn) {
-+					WARN_ELF("elf_getscn");
-+					return -1;
-+				}
+-	rela->sym =3D insn_sec->sym;
+-	rela->addend =3D insn_off;
++	if (insn_sec->sym) {
++		rela->sym =3D insn_sec->sym;
++		rela->addend =3D insn_off;
++	} else {
++		/*
++		 * The Clang assembler doesn't produce section symbols, so we
++		 * have to reference the function symbol instead:
++		 */
++		rela->sym =3D find_symbol_containing(insn_sec, insn_off);
++		if (!rela->sym) {
++			/*
++			 * Hack alert.  This happens when we need to reference
++			 * the NOP pad insn immediately after the function.
++			 */
++			rela->sym =3D find_symbol_containing(insn_sec,
++							   insn_off - 1);
++		}
++		if (!rela->sym) {
++			WARN("missing symbol for insn at offset 0x%lx\n",
++			     insn_off);
++			return -1;
++		}
 +
-+				if (!gelf_getshdr(scn, &sh)) {
-+					WARN_ELF("gelf_getshdr");
-+					return -1;
-+				}
++		rela->addend =3D insn_off - rela->sym->offset;
++	}
 +
-+				name =3D elf_strptr(elf, shstrtab_idx, sh.sh_name);
-+				if (!name) {
-+					WARN_ELF("elf_strptr");
-+					return -1;
-+				}
-+			} else {
-+				name =3D elf_strptr(elf, strtab_idx, sym.st_name);
-+				if (!name) {
-+					WARN_ELF("elf_strptr");
-+					return -1;
-+				}
- 			}
-=20
- 			printf("%s+%llx:", name, (unsigned long long)rela.r_addend);
+ 	rela->type =3D R_X86_64_PC32;
+ 	rela->offset =3D idx * sizeof(int);
+ 	rela->sec =3D ip_relasec;
 --=20
 2.21.1
 
