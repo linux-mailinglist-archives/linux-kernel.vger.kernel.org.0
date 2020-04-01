@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0930319B257
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF28B19B193
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389590AbgDAQnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:43:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43802 "EHLO mail.kernel.org"
+        id S2388816AbgDAQgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:36:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728427AbgDAQnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:43:05 -0400
+        id S2388803AbgDAQgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:36:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BA74206F8;
-        Wed,  1 Apr 2020 16:43:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFD57206F8;
+        Wed,  1 Apr 2020 16:36:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759383;
-        bh=7mfy4fSdxAxVX+fr5TtvWmNH7XNHRqCj0umSIz4FlwQ=;
+        s=default; t=1585758965;
+        bh=kwfdmyOyKsHxsGInYzGNknrEDmNZxretW2FYu9TVLxo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zwPMGLjh20LZGpJ3sSjvYAzFoCunczjHsCrzaKQ9KnQctxk5RCW6pT3lAErIcbjg1
-         5qSQ5+xm3jkQQPrBX7tw2vwr/0oxYPFE78OMH5ygHi+2HPcJW/OjfBNSbndtraEdqT
-         y+mFLc2CJMgVt8BhmFD1kAb7BAV4GrxlfDayyghQ=
+        b=Qfj8G/RJuTfTJMltI1ZzmxO746xBQ6OgLSEqBfOk6AahcTl2NfqDUupfmEg0xeHoE
+         uXeFyj9yrB82wXbyibRV8ThFtHF9qw4C45C0tA17mrpMNoa3PBnz/07lOEQ7mjFKzq
+         QJ8an1dCTQOccgyWllLj+G2yUCQ9CVQmUjEQz2TU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+f9b32aaacd60305d9687@syzkaller.appspotmail.com,
-        syzbot+2f8c233f131943d6056d@syzkaller.appspotmail.com,
-        syzbot+9c2df9fd5e9445b74e01@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 062/148] net_sched: cls_route: remove the right filter from hashtable
-Date:   Wed,  1 Apr 2020 18:17:34 +0200
-Message-Id: <20200401161559.395807151@linuxfoundation.org>
+        stable@vger.kernel.org, Rong Chen <rong.a.chen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 032/102] futex: Unbreak futex hashing
+Date:   Wed,  1 Apr 2020 18:17:35 +0200
+Message-Id: <20200401161539.048152724@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,45 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit ef299cc3fa1a9e1288665a9fdc8bff55629fd359 ]
+commit 8d67743653dce5a0e7aa500fcccb237cde7ad88e upstream.
 
-route4_change() allocates a new filter and copies values from
-the old one. After the new filter is inserted into the hash
-table, the old filter should be removed and freed, as the final
-step of the update.
+The recent futex inode life time fix changed the ordering of the futex key
+union struct members, but forgot to adjust the hash function accordingly,
 
-However, the current code mistakenly removes the new one. This
-looks apparently wrong to me, and it causes double "free" and
-use-after-free too, as reported by syzbot.
+As a result the hashing omits the leading 64bit and even hashes beyond the
+futex key causing a bad hash distribution which led to a ~100% performance
+regression.
 
-Reported-and-tested-by: syzbot+f9b32aaacd60305d9687@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+2f8c233f131943d6056d@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+9c2df9fd5e9445b74e01@syzkaller.appspotmail.com
-Fixes: 1109c00547fc ("net: sched: RCU cls_route")
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>
-Cc: Jiri Pirko <jiri@resnulli.us>
-Cc: John Fastabend <john.fastabend@gmail.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Hand in the futex key pointer instead of a random struct member and make
+the size calculation based of the struct offset.
+
+Fixes: 8019ad13ef7f ("futex: Fix inode life-time issue")
+Reported-by: Rong Chen <rong.a.chen@intel.com>
+Decoded-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Rong Chen <rong.a.chen@intel.com>
+Link: https://lkml.kernel.org/r/87h7yy90ve.fsf@nanos.tec.linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/sched/cls_route.c |    4 ++--
+ kernel/futex.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/sched/cls_route.c
-+++ b/net/sched/cls_route.c
-@@ -539,8 +539,8 @@ static int route4_change(struct net *net
- 			fp = &b->ht[h];
- 			for (pfp = rtnl_dereference(*fp); pfp;
- 			     fp = &pfp->next, pfp = rtnl_dereference(*fp)) {
--				if (pfp == f) {
--					*fp = f->next;
-+				if (pfp == fold) {
-+					rcu_assign_pointer(*fp, fold->next);
- 					break;
- 				}
- 			}
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -390,9 +390,9 @@ static inline int hb_waiters_pending(str
+  */
+ static struct futex_hash_bucket *hash_futex(union futex_key *key)
+ {
+-	u32 hash = jhash2((u32*)&key->both.word,
+-			  (sizeof(key->both.word)+sizeof(key->both.ptr))/4,
++	u32 hash = jhash2((u32 *)key, offsetof(typeof(*key), both.offset) / 4,
+ 			  key->both.offset);
++
+ 	return &futex_queues[hash & (futex_hashsize - 1)];
+ }
+ 
 
 
