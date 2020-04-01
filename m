@@ -2,157 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D40A119B38F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:52:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B0CB19B396
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:52:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388585AbgDAQeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:34:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60808 "EHLO mail.kernel.org"
+        id S2388664AbgDAQec convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 1 Apr 2020 12:34:32 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:40862 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387696AbgDAQeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:34:11 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BD3A21582;
-        Wed,  1 Apr 2020 16:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758850;
-        bh=uTdpVzB4sMS1kq2S/jZxD1mCnBHts7WJPO28p1TG1uE=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=AhSy97Z1a0DxYTbCKWG0HJI/YELNG8gYEXfmmUZX1BJgMC11K9JvlWVCo8nKsaWZo
-         rwIUvsyGwTgmJuZ0vGCLOBluG/GGOsf1rEJ+XnrLIRui/ddMT1j98D8l+VvRDCfvP7
-         I4f/4LTlxHoxJd8X6Ob88mKUCkJblsp80vb0w828=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id B64FA3522887; Wed,  1 Apr 2020 09:34:09 -0700 (PDT)
-Date:   Wed, 1 Apr 2020 09:34:09 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] Documentation/litmus-tests: Add litmus tests for
- atomic APIs
-Message-ID: <20200401163409.GZ19865@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200326024022.7566-1-boqun.feng@gmail.com>
- <20200327221843.GA226939@google.com>
+        id S1732532AbgDAQe3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:34:29 -0400
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1jJgJl-0003TS-Fj; Wed, 01 Apr 2020 18:34:17 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     =?ISO-8859-1?Q?Myl=E8ne?= Josserand 
+        <mylene.josserand@collabora.com>
+Cc:     linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        kernel@collabora.com, kever.yang@rock-chips.com,
+        geert@linux-m68k.org
+Subject: Re: [PATCH v2 1/2] soc: rockchip: Register a soc_device to retrieve revision
+Date:   Wed, 01 Apr 2020 18:34:16 +0200
+Message-ID: <5143930.cPWVAAQKI9@diego>
+In-Reply-To: <20200401153513.423683-2-mylene.josserand@collabora.com>
+References: <20200401153513.423683-1-mylene.josserand@collabora.com> <20200401153513.423683-2-mylene.josserand@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200327221843.GA226939@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 06:18:43PM -0400, Joel Fernandes wrote:
-> On Thu, Mar 26, 2020 at 10:40:18AM +0800, Boqun Feng wrote:
-> > A recent discussion raises up the requirement for having test cases for
-> > atomic APIs:
-> > 
-> > 	https://lore.kernel.org/lkml/20200213085849.GL14897@hirez.programming.kicks-ass.net/
-> > 
-> > , and since we already have a way to generate a test module from a
-> > litmus test with klitmus[1]. It makes sense that we add more litmus
-> > tests for atomic APIs. And based on the previous discussion, I create a
-> > new directory Documentation/atomic-tests and put these litmus tests
-> > here.
-> > 
-> > This patchset starts the work by adding the litmus tests which are
-> > already used in atomic_t.txt, and also improve the atomic_t.txt to make
-> > it consistent with the litmus tests.
-> > 
-> > Previous version:
-> > v1: https://lore.kernel.org/linux-doc/20200214040132.91934-1-boqun.feng@gmail.com/
-> > v2: https://lore.kernel.org/lkml/20200219062627.104736-1-boqun.feng@gmail.com/
-> > v3: https://lore.kernel.org/linux-doc/20200227004049.6853-1-boqun.feng@gmail.com/
-> 
-> For full series:
-> 
-> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Hi Mylène,
 
-Queued in place of the following commits, with Joel's and Alan's tags
-added, thank you all!
+Am Mittwoch, 1. April 2020, 17:35:12 CEST schrieb Mylène Josserand:
+> Determine which revision of rk3288 by checking the HDMI version.
+> According to the Rockchip BSP kernel/u-boot, on rk3288w, the HDMI
+> revision equals 0x1A which is not the case for the rk3288.
+> 
+> As these SOC have some differences, this driver will help us
+> to know on which revision we are by using 'soc_device' registration
+> to be able to use 'soc_device_match' to detect rk3288/rk3288w.
+> 
+> Signed-off-by: Mylène Josserand <mylene.josserand@collabora.com>
 
-							Thanx, Paul
+I like your new approach quite a lot :-)
 
-c13c55d4 tools/memory-model: Add an exception for limitations on _unless() family
-59ffd85 Documentation/locking/atomic: Fix atomic-set litmus test
-23c19c8 Documentation/locking/atomic: Introduce atomic-tests directory
-3bd201c Documentation/locking/atomic: Add a litmus test for atomic_set()
-833f53b Documentation/locking/atomic: Add a litmus test smp_mb__after_atomic()
+There are some things we need to take into account though, see below.
 
-> One question I had was in the existing atomic_set() documentation, it talks
-> about atomic_add_unless() implementation based on locking could have issues.
-> It says the way to fix such cases is:
+
+> ---
+>  drivers/soc/rockchip/Makefile |   1 +
+>  drivers/soc/rockchip/rk3288.c | 125 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 126 insertions(+)
+>  create mode 100644 drivers/soc/rockchip/rk3288.c
 > 
-> Quote:
->     the typical solution is to then implement atomic_set{}() with
->     atomic_xchg().
-> 
-> I didn't get how using atomic_xchg() fixes it. Is the assumption there that
-> atomic_xchg() would be implemented using locking to avoid atomic_set() having
-> issues? If so, we could clarify that in the document.
-> 
-> thanks,
-> 
->  - Joel
-> 
-> > 
-> > Changes since v3:
-> > 
-> > *	Merge two patches on atomic-set litmus test into one as per
-> > 	Alan. (Alan, you have acked only one of the two patches, so I
-> > 	don't add you acked-by for the combined patch).
-> > 
-> > *	Move the atomic litmus tests into litmus-tests/atomic to align
-> > 	with Joel's recent patches on RCU litmus tests.
-> > 
-> > I think we still haven't reach to a conclusion for the difference of
-> > atomic_add_unless() in herdtools, and I'm currently reading the source
-> > code of herd to resovle this. This is just an updated version to resolve
-> > ealier comments and react on Joel's RCU litmus tests.
-> > 
-> > Regards,
-> > Boqun
-> > 
-> > [1]: http://diy.inria.fr/doc/litmus.html#klitmus
-> > 
-> > Boqun Feng (4):
-> >   tools/memory-model: Add an exception for limitations on _unless()
-> >     family
-> >   Documentation/litmus-tests: Introduce atomic directory
-> >   Documentation/litmus-tests/atomic: Add a test for atomic_set()
-> >   Documentation/litmus-tests/atomic: Add a test for
-> >     smp_mb__after_atomic()
-> > 
-> >  Documentation/atomic_t.txt                    | 24 +++++++-------
-> >  ...ter_atomic-is-stronger-than-acquire.litmus | 32 +++++++++++++++++++
-> >  ...c-RMW-ops-are-atomic-WRT-atomic_set.litmus | 24 ++++++++++++++
-> >  Documentation/litmus-tests/atomic/README      | 16 ++++++++++
-> >  tools/memory-model/README                     | 10 ++++--
-> >  5 files changed, 91 insertions(+), 15 deletions(-)
-> >  create mode 100644 Documentation/litmus-tests/atomic/Atomic-RMW+mb__after_atomic-is-stronger-than-acquire.litmus
-> >  create mode 100644 Documentation/litmus-tests/atomic/Atomic-RMW-ops-are-atomic-WRT-atomic_set.litmus
-> >  create mode 100644 Documentation/litmus-tests/atomic/README
-> > 
-> > -- 
-> > 2.25.1
-> > 
+> diff --git a/drivers/soc/rockchip/Makefile b/drivers/soc/rockchip/Makefile
+> index afca0a4c4b72..9dbf12913512 100644
+> --- a/drivers/soc/rockchip/Makefile
+> +++ b/drivers/soc/rockchip/Makefile
+> @@ -2,5 +2,6 @@
+>  #
+>  # Rockchip Soc drivers
+>  #
+> +obj-$(CONFIG_ARCH_ROCKCHIP) += rk3288.o
+>  obj-$(CONFIG_ROCKCHIP_GRF) += grf.o
+>  obj-$(CONFIG_ROCKCHIP_PM_DOMAINS) += pm_domains.o
+> diff --git a/drivers/soc/rockchip/rk3288.c b/drivers/soc/rockchip/rk3288.c
+
+I'd really like this to be a soc.c instead of rk3288.c ;-)
+
+
+> new file mode 100644
+> index 000000000000..83379ba2b31b
+> --- /dev/null
+> +++ b/drivers/soc/rockchip/rk3288.c
+> @@ -0,0 +1,125 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2020 Collabora Ltd
+> + * Author: Mylene Josserand <mylene.josserand@collabora.com>
+> + */
+> +
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/of_address.h>
+> +#include <linux/sys_soc.h>
+> +#include <linux/slab.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of.h>
+> +
+> +#define RK3288_HDMI_REV_REG	0x04
+> +#define RK3288W_HDMI_REV	0x1A
+> +
+> +enum rk3288_soc_rev {
+> +	RK3288_SOC_REV_NOT_DETECT,
+> +	RK3288_SOC_REV_RK3288,
+> +	RK3288_SOC_REV_RK3288W,
+> +};
+> +
+> +static int rk3288_revision(void)
+> +{
+> +	static int revision = RK3288_SOC_REV_NOT_DETECT;
+> +	struct device_node *dn;
+> +	void __iomem *hdmi_base;
+> +
+> +	if (revision != RK3288_SOC_REV_NOT_DETECT)
+> +		return revision;
+> +
+> +	dn = of_find_compatible_node(NULL, NULL, "rockchip,rk3288-dw-hdmi");
+> +	if (!dn) {
+> +		pr_err("%s: Couldn't find HDMI node\n", __func__);
+> +		return -EINVAL;
+> +	}
+> +
+> +	hdmi_base = of_iomap(dn, 0);
+> +	of_node_put(dn);
+> +
+> +	if (!hdmi_base) {
+> +		pr_err("%s: Couldn't map %pOF regs\n", __func__,
+> +		       hdmi_base);
+> +		return -ENXIO;
+> +	}
+
+The possible problem I see here is clocking and power-domain of the hdmi
+controller in corner-cases. In the past we already had a lot of fun with
+kexec, which also indicates that people actually use kexec productively.
+
+So while all clocks are ungated and all power-domains are powered on first
+boot, on a system without graphics the pclk+power-domain could be off when
+doing a kexec into a second kernel, which then would probably hang here.
+
+
+Of course with the hdmi-pclk being sourced from hclk_vio we run into a
+chicken-egg-problem, as we need pclk_hdmi_ctrl to register hclk_vio at all.
+
+So I guess one way out of this could be to
+- amend rk3288_clk_shutdown() to also ungate the hdmi-pclk on shutdown
+- add a shutdown mechanism to the power-domain driver so that it can
+  enable PD_VIO on shutdown
+
+> +
+> +	if (readl_relaxed(hdmi_base + RK3288_HDMI_REV_REG)
+> +	    == RK3288W_HDMI_REV)
+
+nit: a nicer look would be something like
+	val = readl_relaxed(hdmi_base + RK3288_HDMI_REV_REG);
+	if (val == RK3288W_HDMI_REV)
+
+> +		revision = RK3288_SOC_REV_RK3288W;
+> +	else
+> +		revision = RK3288_SOC_REV_RK3288;
+> +
+> +	iounmap(hdmi_base);
+> +
+> +	return revision;
+> +}
+> +
+> +static const char *rk3288_socinfo_revision(u32 rev)
+> +{
+> +	const char *soc_rev;
+> +
+> +	switch (rev) {
+> +	case RK3288_SOC_REV_RK3288:
+> +		soc_rev = "RK3288";
+> +		break;
+> +
+> +	case RK3288_SOC_REV_RK3288W:
+> +		soc_rev = "RK3288w";
+
+can we maybe use lower-case letters for all here?
+
+> +		break;
+> +
+> +	case RK3288_SOC_REV_NOT_DETECT:
+> +		soc_rev = "";
+> +		break;
+> +
+> +	default:
+> +		soc_rev = "unknown";
+> +		break;
+> +	}
+> +
+> +	return kstrdup_const(soc_rev, GFP_KERNEL);
+> +}
+> +
+> +static const struct of_device_id rk3288_soc_match[] = {
+> +	{ .compatible = "rockchip,rk3288", },
+> +	{ }
+> +};
+> +
+> +static int __init rk3288_soc_init(void)
+
+as noted at the top, I'd really like to see this more generalized so that
+other socs can just hook in there with a revision callback in a
+rockchip_soc_data struct.
+
+
+> +{
+> +	struct soc_device_attribute *soc_dev_attr;
+> +	struct soc_device *soc_dev;
+> +	struct device_node *np;
+> +
+> +	np = of_find_matching_node(NULL, rk3288_soc_match);
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+> +	if (!soc_dev_attr)
+> +		return -ENOMEM;
+> +
+> +	soc_dev_attr->family = "Rockchip";
+> +	soc_dev_attr->soc_id = "RK32xx";
+
+nit: rk3288 instead of "32xx" please
+
+> +
+> +	np = of_find_node_by_path("/");
+> +	of_property_read_string(np, "model", &soc_dev_attr->machine);
+> +	of_node_put(np);
+> +
+> +	soc_dev_attr->revision = rk3288_socinfo_revision(rk3288_revision());
+> +
+> +	soc_dev = soc_device_register(soc_dev_attr);
+> +	if (IS_ERR(soc_dev)) {
+> +		kfree_const(soc_dev_attr->revision);
+> +		kfree_const(soc_dev_attr->soc_id);
+> +		kfree(soc_dev_attr);
+> +		return PTR_ERR(soc_dev);
+> +	}
+> +
+> +	dev_info(soc_device_to_device(soc_dev), "Rockchip %s %s detected\n",
+> +		 soc_dev_attr->soc_id, soc_dev_attr->revision);
+
+nit: dev_dbg should be enough, that information doesn't really matter for
+most people, as it's only relevant to clock internals.
+
+
+Heiko
+
+
