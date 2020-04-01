@@ -2,127 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E2F819AD57
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 16:05:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 008FC19AD5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 16:05:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732881AbgDAOF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 10:05:26 -0400
-Received: from retiisi.org.uk ([95.216.213.190]:59294 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732791AbgDAOFZ (ORCPT
+        id S1732920AbgDAOFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 10:05:49 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34887 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732854AbgDAOFs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 10:05:25 -0400
-Received: from lanttu.localdomain (lanttu-e.localdomain [192.168.1.64])
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTP id 51CD1634C87;
-        Wed,  1 Apr 2020 17:04:41 +0300 (EEST)
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-media@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com,
-        mchehab@kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH 1/1] lib/vsprintf: Add support for printing V4L2 and DRM fourccs
-Date:   Wed,  1 Apr 2020 17:05:22 +0300
-Message-Id: <20200401140522.966-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 1 Apr 2020 10:05:48 -0400
+Received: by mail-lj1-f195.google.com with SMTP id k21so25921193ljh.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 07:05:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=DX54l6mXZgvg8fNpjxDfkSkS7a7YXpNmjQ66Zp5QZwk=;
+        b=jfklC9tXAS2ZFL+y9Q7gH4nZZ7YnfJHqPBdCK1oMtQTsFEAaEdcWhbSxHq9hmP0Lpl
+         GV5N6ZofZpSSv9pg0jxtoYArNo3d+4ZDGUkXSkHuknLnSDOLQJAMHN4buq4HzDbUveED
+         aZyH4HmDjF5plF7q6ujTQzRgMt09SwHAaf6M8AKL+wRcKqVe+5xUyGX6JqVmZvKipbin
+         XHrLDj2GHRRndj9fm8ptwKmyWNOK6CwozSav+H4ChEFTRMSZVbB94fJl/L1FwUdPl6ET
+         OeBcV6N2BcItxUDf8iv0TFHg1EUHt96T1/QMrcx6Ub89/ECxQ3O7CE/FxQxEQFVJmmqw
+         /4sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=DX54l6mXZgvg8fNpjxDfkSkS7a7YXpNmjQ66Zp5QZwk=;
+        b=MPeWPHbMKct09BP1FA/NOY+bYEgkPJhZzQ9t7TqjYwM85M4Jct8DjHjMQpGt/gpaX8
+         AHgcCtedFVr87UZ8aIPGtBAMOAS45sl/SBJaVQgkE9arWnf41+iBmFM3e/wr/gT955gI
+         NxdH2prVPapgW++WhXqYDyYiKdDzBjq+KFf61UNxkZkW8NjUQZPVOC5dbIOWyyk6HDzT
+         ATyLbTIgH/yzH576YnD0vULcTdVF9l5/9QSB41U3lm3QAGNKC6pD48PHt3JT5crR5D1e
+         ZQOzGWZeri8UrR/eoO7W9xN4gb2hRI6vF5LIYW0j0525zlEJVQ0KS80g7e6rSSL4Z9FY
+         HK4w==
+X-Gm-Message-State: AGi0PubqhOj4fn3DGgg7QSjWfmD6GaH/hVA0jrumqio2RSZ11JlI0riP
+        zjzTNHAuMzKWLlexoQoFf3+nSAVbavk=
+X-Google-Smtp-Source: APiQypKHorHX7t1AMghmwqPTG5hZghSH9yGsQdrU3naHV7seLQRyJU/BjPlzWXNzLdpcl6oyqKkOgA==
+X-Received: by 2002:a05:651c:1102:: with SMTP id d2mr13519723ljo.102.1585749946356;
+        Wed, 01 Apr 2020 07:05:46 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id e1sm1297999ljo.16.2020.04.01.07.05.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 07:05:45 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 24CDE1020AE; Wed,  1 Apr 2020 17:05:44 +0300 (+03)
+Date:   Wed, 1 Apr 2020 17:05:44 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Petr Tesarik <ptesarik@suse.cz>
+Subject: Re: [PATCH] mm, dump_page(): do not crash with invalid mapping
+ pointer
+Message-ID: <20200401140544.pkhgfmo5pks3dw6v@box>
+References: <20200331165454.12263-1-vbabka@suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331165454.12263-1-vbabka@suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a printk modifier %ppf (for pixel format) for printing V4L2 and DRM
-pixel formats denoted by 4ccs. The 4cc encoding is the same for both so
-the same implementation can be used.
+On Tue, Mar 31, 2020 at 06:54:54PM +0200, Vlastimil Babka wrote:
+> We have seen a following problem on a RPi4 with 1G RAM:
+> 
+> BUG: Bad page state in process systemd-hwdb  pfn:35601
+> page:ffff7e0000d58040 refcount:15 mapcount:131221 mapping:efd8fe765bc80080 index:0x1 compound_mapcount: -32767
+> Unable to handle kernel paging request at virtual address efd8fe765bc80080
+> Mem abort info:
+>   ESR = 0x96000004
+>   Exception class = DABT (current EL), IL = 32 bits
+>   SET = 0, FnV = 0
+>   EA = 0, S1PTW = 0
+> Data abort info:
+>   ISV = 0, ISS = 0x00000004
+>   CM = 0, WnR = 0
+> [efd8fe765bc80080] address between user and kernel address ranges
+> Internal error: Oops: 96000004 [#1] SMP
+> Modules linked in: btrfs libcrc32c xor xor_neon zlib_deflate raid6_pq mmc_block xhci_pci xhci_hcd usbcore sdhci_iproc sdhci_pltfm sdhci mmc_core clk_raspberrypi gpio_raspberrypi_exp pcie_brcmstb bcm2835_dma gpio_regulator phy_generic fixed sg scsi_mod efivarfs
+> Supported: No, Unreleased kernel
+> CPU: 3 PID: 408 Comm: systemd-hwdb Not tainted 5.3.18-8-default #1 SLE15-SP2 (unreleased)
+> Hardware name: raspberrypi rpi/rpi, BIOS 2020.01 02/21/2020
+> pstate: 40000085 (nZcv daIf -PAN -UAO)
+> pc : __dump_page+0x268/0x368
+> lr : __dump_page+0xc4/0x368
+> sp : ffff000012563860
+> x29: ffff000012563860 x28: ffff80003ddc4300
+> x27: 0000000000000010 x26: 000000000000003f
+> x25: ffff7e0000d58040 x24: 000000000000000f
+> x23: efd8fe765bc80080 x22: 0000000000020095
+> x21: efd8fe765bc80080 x20: ffff000010ede8b0
+> x19: ffff7e0000d58040 x18: ffffffffffffffff
+> x17: 0000000000000001 x16: 0000000000000007
+> x15: ffff000011689708 x14: 3030386362353637
+> x13: 6566386466653a67 x12: 6e697070616d2031
+> x11: 32323133313a746e x10: 756f6370616d2035
+> x9 : ffff00001168a840 x8 : ffff00001077a670
+> x7 : 000000000000013d x6 : ffff0000118a43b5
+> x5 : 0000000000000001 x4 : ffff80003dd9e2c8
+> x3 : ffff80003dd9e2c8 x2 : 911c8d7c2f483500
+> x1 : dead000000000100 x0 : efd8fe765bc80080
+> Call trace:
+>  __dump_page+0x268/0x368
+>  bad_page+0xd4/0x168
+>  check_new_page_bad+0x80/0xb8
+>  rmqueue_bulk.constprop.26+0x4d8/0x788
+>  get_page_from_freelist+0x4d4/0x1228
+>  __alloc_pages_nodemask+0x134/0xe48
+>  alloc_pages_vma+0x198/0x1c0
+>  do_anonymous_page+0x1a4/0x4d8
+>  __handle_mm_fault+0x4e8/0x560
+>  handle_mm_fault+0x104/0x1e0
+>  do_page_fault+0x1e8/0x4c0
+>  do_translation_fault+0xb0/0xc0
+>  do_mem_abort+0x50/0xb0
+>  el0_da+0x24/0x28
+> Code: f9401025 8b8018a0 9a851005 17ffffca (f94002a0)
+> ---[ end trace 703ac54becfd8094 ]---
+> 
+> Besides the underlying issue with page->mapping containing a bogus value for
+> some reason, we can see that __dump_page() crashed by trying to read the
+> pointer at mapping->host, turning a recoverable warning into full Oops.
+> 
+> It can be expected that when page is reported as bad state for some reason, the
+> pointers there should not be trusted blindly. So this patch treats all data in
+> __dump_page() that depends on page->mapping as lava, using
+> probe_kernel_read_strict(). Ideally this would include the dentry->d_parent
+> recursively, but that would mean changing printk handler for %pd. Chances of
+> reaching the dentry printing part with an initially bogus mapping pointer
+> should be rather low, though.
+> 
+> Also prefix printing mapping->a_ops with a description of what is being
+> printed.  In case the value is bogus, %ps will print raw value instead of
+> the symbol name and then it's not obvious at all that it's printing a_ops.
+> 
+> Reported-by: Petr Tesarik <ptesarik@suse.cz>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  mm/debug.c | 56 ++++++++++++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 50 insertions(+), 6 deletions(-)
 
-Suggested-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- Documentation/core-api/printk-formats.rst | 11 +++++++++
- lib/vsprintf.c                            | 29 +++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
+I'm not sure it worth the effort. It looks way too complex for what it
+does.
 
-diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-index 8ebe46b1af39..b6249f513c09 100644
---- a/Documentation/core-api/printk-formats.rst
-+++ b/Documentation/core-api/printk-formats.rst
-@@ -545,6 +545,17 @@ For printing netdev_features_t.
- 
- Passed by reference.
- 
-+V4L2 and DRM fourcc code (pixel format)
-+---------------------------------------
-+
-+::
-+
-+	%ppf
-+
-+Print a 4cc code used by V4L2 or DRM.
-+
-+Passed by reference.
-+
- Thanks
- ======
- 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 7c488a1ce318..b39f0ac317c5 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1721,6 +1721,32 @@ char *netdev_bits(char *buf, char *end, const void *addr,
- 	return special_hex_number(buf, end, num, size);
- }
- 
-+static noinline_for_stack
-+char *pixel_format_string(char *buf, char *end, const u32 *fourcc,
-+			  struct printf_spec spec, const char *fmt)
-+{
-+	char ch[2] = { 0 };
-+	unsigned int i;
-+
-+	if (check_pointer(&buf, end, fourcc, spec))
-+		return buf;
-+
-+	switch (fmt[1]) {
-+	case 'f':
-+		for (i = 0; i < sizeof(*fourcc); i++) {
-+			ch[0] = *fourcc >> (i << 3);
-+			buf = string(buf, end, ch, spec);
-+		}
-+
-+		if (*fourcc & BIT(31))
-+			buf = string(buf, end, "-BE", spec);
-+
-+		return buf;
-+	default:
-+		return error_string(buf, end, "(%pp?)", spec);
-+	}
-+}
-+
- static noinline_for_stack
- char *address_val(char *buf, char *end, const void *addr,
- 		  struct printf_spec spec, const char *fmt)
-@@ -2131,6 +2157,7 @@ char *fwnode_string(char *buf, char *end, struct fwnode_handle *fwnode,
-  *       correctness of the format string and va_list arguments.
-  * - 'K' For a kernel pointer that should be hidden from unprivileged users
-  * - 'NF' For a netdev_features_t
-+ * - 'pf' V4L2 or DRM pixel format.
-  * - 'h[CDN]' For a variable-length buffer, it prints it as a hex string with
-  *            a certain separator (' ' by default):
-  *              C colon
-@@ -2223,6 +2250,8 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- 		return restricted_pointer(buf, end, ptr, spec);
- 	case 'N':
- 		return netdev_bits(buf, end, ptr, spec, fmt);
-+	case 'p':
-+		return pixel_format_string(buf, end, ptr, spec, fmt);
- 	case 'a':
- 		return address_val(buf, end, ptr, spec, fmt);
- 	case 'd':
+I also expect it to slowdown dump_page(), which is hotpath for some debug
+scenarios :P
+
+Maybe just move printing this info to the end, so we would see the rest
+even if ->mapping is bogus?
+
 -- 
-2.20.1
-
+ Kirill A. Shutemov
