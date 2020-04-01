@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF32619B283
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EFDE19B0A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389750AbgDAQoi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:44:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45666 "EHLO mail.kernel.org"
+        id S2387919AbgDAQ20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:28:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388617AbgDAQoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:44:37 -0400
+        id S2388104AbgDAQ2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:28:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03CB22063A;
-        Wed,  1 Apr 2020 16:44:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7833B20857;
+        Wed,  1 Apr 2020 16:28:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759476;
-        bh=tlBCLzB8KqqSYZkd4B/QOZWltHSyIudbX/rrs3U1giY=;
+        s=default; t=1585758502;
+        bh=r+e9qHmInOQJ47PfeFDi1mAZiHipiVuBXvckxLYW3bU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mDwfyZOCaOVOVlNDPcQqk0D9JY4c8Nd1LcMcJiCEQ0qesunrySGBxdC3M0zp1g9+8
-         vIdENOBqZh7CHepejOqOHLo9c9DnOHqrP0SRESwpoDHTY+Ea29FdLBvHfGRFL1tuM2
-         xyY22BDSNUYhL8d+Chvl28joqzewUGhWlW9kR0Go=
+        b=EoQkWr49OAvTdcNGod+6SVFZ9hU4pwKpIgWu6EgFdRcLBcVUT2bLCWG1AeUDfKEuQ
+         qlKKbPMs8apHT8rQxBCqA5QkUmaKtLp7rse6JAOKYRfusNiK6tkrFTiQNCfGv+PWEK
+         nGDP+bxxCmq/US1NMEZmhqEkOiEEyFpOTdWdDwjw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Roger Quadros <rogerq@ti.com>, Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.14 092/148] ARM: dts: omap5: Add bus_dma_limit for L3 bus
-Date:   Wed,  1 Apr 2020 18:18:04 +0200
-Message-Id: <20200401161601.814782206@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Ilie Halip <ilie.halip@gmail.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 4.19 109/116] arm64: alternative: fix build with clang integrated assembler
+Date:   Wed,  1 Apr 2020 18:18:05 +0200
+Message-Id: <20200401161556.080817852@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roger Quadros <rogerq@ti.com>
+From: Ilie Halip <ilie.halip@gmail.com>
 
-commit dfa7ea303f56a3a8b1ed3b91ef35af2da67ca4ee upstream.
+commit 6f5459da2b8736720afdbd67c4bd2d1edba7d0e3 upstream.
 
-The L3 interconnect's memory map is from 0x0 to
-0xffffffff. Out of this, System memory (SDRAM) can be
-accessed from 0x80000000 to 0xffffffff (2GB)
+Building an arm64 defconfig with clang's integrated assembler, this error
+occurs:
+    <instantiation>:2:2: error: unrecognized instruction mnemonic
+     _ASM_EXTABLE 9999b, 9f
+     ^
+    arch/arm64/mm/cache.S:50:1: note: while in macro instantiation
+    user_alt 9f, "dc cvau, x4", "dc civac, x4", 0
+    ^
 
-OMAP5 does support 4GB of SDRAM but upper 2GB can only be
-accessed by the MPU subsystem.
+While GNU as seems fine with case-sensitive macro instantiations, clang
+doesn't, so use the actual macro name (_asm_extable) as in the rest of
+the file.
 
-Add the dma-ranges property to reflect the physical address limit
-of the L3 bus.
+Also checked that the generated assembly matches the GCC output.
 
-Cc: stable@kernel.org
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Fixes: 290622efc76e ("arm64: fix "dc cvau" cache operation on errata-affected core")
+Link: https://github.com/ClangBuiltLinux/linux/issues/924
+Signed-off-by: Ilie Halip <ilie.halip@gmail.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/omap5.dtsi |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/include/asm/alternative.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/omap5.dtsi
-+++ b/arch/arm/boot/dts/omap5.dtsi
-@@ -131,6 +131,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0 0 0 0xc0000000>;
-+		dma-ranges = <0x80000000 0x0 0x80000000 0x80000000>;
- 		ti,hwmods = "l3_main_1", "l3_main_2", "l3_main_3";
- 		reg = <0 0x44000000 0 0x2000>,
- 		      <0 0x44800000 0 0x3000>,
+--- a/arch/arm64/include/asm/alternative.h
++++ b/arch/arm64/include/asm/alternative.h
+@@ -221,7 +221,7 @@ alternative_endif
+ 
+ .macro user_alt, label, oldinstr, newinstr, cond
+ 9999:	alternative_insn "\oldinstr", "\newinstr", \cond
+-	_ASM_EXTABLE 9999b, \label
++	_asm_extable 9999b, \label
+ .endm
+ 
+ /*
 
 
