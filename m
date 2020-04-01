@@ -2,86 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C0F19B38E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7221919B418
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733257AbgDAQwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:52:21 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43130 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388734AbgDAQwT (ORCPT
+        id S2387984AbgDAQzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:55:42 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:45731 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733298AbgDAQzi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:52:19 -0400
-Received: by mail-lf1-f68.google.com with SMTP id n20so234355lfl.10;
-        Wed, 01 Apr 2020 09:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=553GZqyaFPyqL10GOEToovkxhGg1gD8CyFbmDXNpEsw=;
-        b=Zofr2vJFHVCyXWGqu/mMhPG1Xd4CKbNXMtKR8h9hTLZwvQJa88jCBrXU/AcrpoFH5P
-         mYQ/Tlw6KbYvgQSn0qPZAs8VzO2Yt1Zfy+DOR8VCbreI2ylCrtnZGMHo44zaqd7/HYRK
-         sZbb36XpH8kM0/VCRZ3VtA8dn/SNn0GR3oe67wdRFvI0gsI7zhf/uO1usD/eOSQhO7T5
-         KYyosbohxMLYPXQIH2NML5udu4H72k9HOFvW4SORCN7Kk67l28U0U7ZUcJWA4IEn143f
-         fCVYc1fGQMezi07Vr38H3/hv9bpRjXp/9DLeE68o+nXKbDrR3bLT8undI7AlOIHxhqDf
-         BQUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=553GZqyaFPyqL10GOEToovkxhGg1gD8CyFbmDXNpEsw=;
-        b=gNfhVhk9eqOjVZiw18JPvdPabFTb8f6KYY1oNXDSiNjWb1jprP1FckJlMah6XoKXaL
-         egUVbl+gwy2CYkjjZVI5E2wNTL76Bk2k+OYLBvkzvPmNSigfX+j6PYKKHOGHNl316nT0
-         mTOq6lsgaAXxxkSHRinmA0Lhsf/X0XaJgZQxKKR91IDt+lEOnTboOaiwlJyrlKlTBjSH
-         /b7CHqIe0wbxlWnjvaz/E8vjjjldGVzn3fCKjOqgpR06NePpBXh2yEtkNUZdSWMw56nV
-         kZAWNlHiiGw0Ag8lWLcV+ry2lbAA9vGB34jhyjUmUnU65Zu+CMBG7tQ9rb57tfLOGAQ6
-         CWRw==
-X-Gm-Message-State: AGi0PuY3zQqql9fuyEVV/yWM7s7dQKtSFsPt85eIBU5TfBJ7Lc+el8K2
-        0EWK8MJdPEIJhszwqFvSLiwj6XEcmRQQoOVL0Hs=
-X-Google-Smtp-Source: APiQypKpqgYCAmngBbsQvHWSwrN84DODr5lhSm+9neIuBkZf9n631TEe2XQ2wNvQU/b7bVMLuE269O5DFA3DZd1QusM=
-X-Received: by 2002:a19:ec15:: with SMTP id b21mr15311077lfa.28.1585759936420;
- Wed, 01 Apr 2020 09:52:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191122000926.19408-1-jdk@ti.com> <20191204193421.GA15784@bogus>
-In-Reply-To: <20191204193421.GA15784@bogus>
-From:   Drew Fustini <pdp7pdp7@gmail.com>
-Date:   Wed, 1 Apr 2020 18:52:44 +0200
-Message-ID: <CAEf4M_B31u_0_oLD-1xAJ3YTfJPZYYJnganiHs9=4KqfbGFSPg@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: Add vendor prefix for BeagleBoard.org
-To:     Rob Herring <robh@kernel.org>
-Cc:     Jason Kridner <jkridner@gmail.com>, devicetree@vger.kernel.org,
-        Robert Nelson <robertcnelson@gmail.com>,
+        Wed, 1 Apr 2020 12:55:38 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id A2F2C5800E4;
+        Wed,  1 Apr 2020 12:55:36 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Wed, 01 Apr 2020 12:55:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        subject:to:cc:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm2; bh=1
+        HvVrQVgf8h1xwI4xlSisY5uAmH78ioNToEd5ZqROGo=; b=dLRSLCXF4QI/ZvstT
+        RTK/iKO7vJFrPwPmtUOFhf71BqNsFb9xL5thVfMoFcY8Z1KdDJrtiBN9x0XDxX6R
+        WDYmkfZ0VtyLDjfvKrF0t6rRZ3TUVu9kU0i2UzUWfKhSSIFbDnraFtPppKAJB7be
+        kiYF8FWjEAQR3qeifFoLajBSPF43EP0JqkTXcOq6rDlRn7s5fC1SzUIfVzVargsI
+        iuF9dj8uYJhodSktI7ajo2LwysdyM/5iDLWJhT6Ykzp5EkJef8qAR57TafoLwAuW
+        EJo5wDMk8sinT6vK9NIZcTGJ68eH8PvkpnKd1mYYwgB2p62neUW+7rpbqnU+S4Sn
+        I5vvw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=1HvVrQVgf8h1xwI4xlSisY5uAmH78ioNToEd5ZqRO
+        Go=; b=pV/3AZI7xio9jPNP/fQsHuqkYqEftJWH2VRcjCrZpmJ5hn7/JJ1nXZj0U
+        zxQq6KAnO+Dx/QIbe4KTTMGLw0OJKJ2zrwoJlHTOOhHKvWOhWPbM4t4t27hCXvBJ
+        pyd6NLuCV82QXwlN57vspRGKjTXNGtMtAxnvD24VXi9LxaKvVxM/h6rWkZ/QFiZn
+        QVvCWY8+3wP40ns/o7yt7etVkCHQ1RCk6keyLgywj1DVnd9jt3zhrPiHkBisYqNK
+        n/laYmia4QoMeAOCmU6tNTwsl2o2uVjszN6aBFwOyPE0n5oOD42i1cA6WLtvVtIF
+        x+om72uu9LgFVzPzURFYCtuScpbOg==
+X-ME-Sender: <xms:h8eEXi_AC7cBT8VflyA_pQ4vzWVbRahRqpTXNfmfILTHnHsDFFJS1g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrtddvgddutdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepuffvfhfhkffffgggjggtgfesthejredttdefjeenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecuff
+    homhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepjedtrddufeehrddugeekrdduhedu
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgrmh
+    huvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:h8eEXjA83Kbeeuchm-TFfZ-_rgepSDMLFcq6TLmo-TQ6RkH4jBXvfg>
+    <xmx:h8eEXvqjowOwm8XxVq6BQhy3O4iesWDDdywZyitqcrxONwrF05ZIow>
+    <xmx:h8eEXlEfqVLVCSou99VtCYzV9opFB3iwNNE99Q3kmsEEQolVgonZGA>
+    <xmx:iMeEXhRRLxhty-Sm4IOQ0Odd5b6pnsFRi6C9HwCwbRdbaPBi-OpyJA>
+Received: from [192.168.50.169] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id DF8CD3280065;
+        Wed,  1 Apr 2020 12:55:34 -0400 (EDT)
+Subject: Re: [PATCH v7 0/6] Allwinner sun6i message box support
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jyri Sarha <jsarha@ti.com>, linux-kernel@vger.kernel.org,
-        Caleb Robey <c-robey@ti.com>, Jason Kridner <jdk@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ondrej Jirman <megous@megous.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+References: <20200223040853.2658-1-samuel@sholland.org>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <59dc1ee9-a369-7cf9-df6a-4b5b99e24324@sholland.org>
+Date:   Wed, 1 Apr 2020 11:55:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <20200223040853.2658-1-samuel@sholland.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 8:39 PM Rob Herring <robh@kernel.org> wrote:
-> On Thu, Nov 21, 2019 at 07:09:26PM -0500, Jason Kridner wrote:
-> > Add vendor prefix for BeagleBoard.org Foundation
-> >
-> > Signed-off-by: Jason Kridner <jdk@ti.com>
-> > ---
-> > Changes in v2:
-> >   - Use 'beagle' rather than 'beagleboard.org' to be shorter and avoid
-> >     needing to quote within a yaml regular expression.
-> >   - Assign 'from' to author e-mail address.
->
-> Still not right...
+On 2/22/20 10:08 PM, Samuel Holland wrote:
+> Samuel Holland (6):
+>   dt-bindings: mailbox: Add a binding for the sun6i msgbox
+>   mailbox: sun6i-msgbox: Add a new mailbox driver
 
-Hi Rob, is the issue that it needs to be sent from "Jason Kridner
-<jdk@ti.com>" if the SoB is " Jason Kridner <jdk@ti.com>"?
+These two patches have been applied for 5.7[1], so the DTS changes should be
+ready to apply as well.
 
-Thanks,
-Drew
+[1]:
+https://lore.kernel.org/lkml/CABb+yY0-q+5+pqP-rBHCYpw-LmT+h80+OU26XL34fTrXhO+T3Q@mail.gmail.com/
+
+Cheers,
+Samuel
+
+>   ARM: dts: sunxi: a83t: Add msgbox node
+>   ARM: dts: sunxi: h3/h5: Add msgbox node
+>   arm64: dts: allwinner: a64: Add msgbox node
+>   arm64: dts: allwinner: h6: Add msgbox node
+> 
+>  .../mailbox/allwinner,sun6i-a31-msgbox.yaml   |  80 +++++
+>  arch/arm/boot/dts/sun8i-a83t.dtsi             |  10 +
+>  arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  10 +
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  10 +
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  10 +
+>  drivers/mailbox/Kconfig                       |   9 +
+>  drivers/mailbox/Makefile                      |   2 +
+>  drivers/mailbox/sun6i-msgbox.c                | 326 ++++++++++++++++++
+>  8 files changed, 457 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
+>  create mode 100644 drivers/mailbox/sun6i-msgbox.c
+> 
+
