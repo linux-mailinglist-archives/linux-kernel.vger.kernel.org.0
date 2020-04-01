@@ -2,97 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4300819B461
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EC2219B28B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387552AbgDAQ4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:56:55 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56526 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732784AbgDAQUL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:20:11 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031GIeiP192555;
-        Wed, 1 Apr 2020 16:19:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=wf5Epvd2PkMi8L7E/eRCUSR0FOvN4Hz0yrwmht90YC0=;
- b=B1OBTGwNefZz4cvyBMFGvInJhvACIyJVqEmEJQzCbvhwtMRqnux8ubHv88gUbJgRISwc
- sgQmJYNDDopM8HVE9vyndAjbTtCMdIoiwwuWNaKk9Fq4z0IJsf82fb26GoPVQzVprvNE
- jH21TQWFzyg+ARWRC5s1+eg0c1gnH48JZE/Pn220xQB2xncVFBUZfdqqti5OQqxdAP3a
- xZ8NYJsN91wJTh/BMvle72pBf1hqadkuN3ealpyD49mz+IuVUHtzBFpryfpcFtHy++I9
- gvkQFQO+C0rK+UPXM/DX+49O9GfxjF/ObUeOj/4KTwr59M/btMolfsLq8nOLGAXPI0Ow TQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 303aqhpxbu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Apr 2020 16:19:56 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031GGsu9071569;
-        Wed, 1 Apr 2020 16:17:56 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 302g2gwbn7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Apr 2020 16:17:56 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 031GHspi005974;
-        Wed, 1 Apr 2020 16:17:54 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 01 Apr 2020 09:17:54 -0700
-Date:   Wed, 1 Apr 2020 12:18:10 -0400
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Hildenbrand <david@redhat.com>,
-        Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] mm: fix tick timer stall during deferred page init
-Message-ID: <20200401161810.xvqikca2x46yqrlx@ca-dmjordan1.us.oracle.com>
-References: <20200311123848.118638-1-shile.zhang@linux.alibaba.com>
- <20200401154217.GQ22681@dhcp22.suse.cz>
- <dfc0014a-9b85-5eeb-70ea-d622ccf5d988@redhat.com>
- <20200401160048.GU22681@dhcp22.suse.cz>
- <20200401160929.jwekhr24tb44odea@ca-dmjordan1.us.oracle.com>
- <20200401161243.GW22681@dhcp22.suse.cz>
+        id S2389801AbgDAQpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:45:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46106 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389621AbgDAQo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:44:59 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABF782063A;
+        Wed,  1 Apr 2020 16:44:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585759498;
+        bh=CHBttnsBtGK1uWWbqCGC3uECB8Xas6d7Kytb4dLhd5A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Nu2RI68bS39GE0218P3id7ay6c2lQbwS9trjxH/ucm7Tm4zBbtNO/4tAiviOLWykZ
+         IIDNRvvKl5Qc0iYcjE1YPoSxucaIFBoYaVgRoxcrsi/+dz2AehtOIxLbrF90TIDF7q
+         yTDWj6/qn+OXB1xAtlOd1S5RFnZ/O3NsUpgRD6uE=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.14 098/148] gpiolib: acpi: Correct comment for HP x2 10 honor_wakeup quirk
+Date:   Wed,  1 Apr 2020 18:18:10 +0200
+Message-Id: <20200401161602.258631106@linuxfoundation.org>
+X-Mailer: git-send-email 2.26.0
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200401161243.GW22681@dhcp22.suse.cz>
-User-Agent: NeoMutt/20180716
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 mlxscore=0
- adultscore=0 phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004010141
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004010141
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 06:12:43PM +0200, Michal Hocko wrote:
-> On Wed 01-04-20 12:09:29, Daniel Jordan wrote:
-> > On Wed, Apr 01, 2020 at 06:00:48PM +0200, Michal Hocko wrote:
-> > > On Wed 01-04-20 17:50:22, David Hildenbrand wrote:
-> > > > On 01.04.20 17:42, Michal Hocko wrote:
-> > > > > This needs a double checking but I strongly believe that the lock can be
-> > > > > simply dropped in this path.
-> > 
-> > This is what my fix does, it limits the time the resize lock is held.
-> 
-> Just remove it from the deferred intialization and add a comment that we
-> deliberately not taking the lock here because abc
+From: Hans de Goede <hdegoede@redhat.com>
 
-I think it has to be a little more involved because of the window where
-interrupts might allocate during deferred init, as Vlastimil pointed out a few
-years ago when the change was made.  I'll explain myself in the changelog.
+commit efaa87fa0947d525cf7c075316adde4e3ac7720b upstream.
+
+Commit aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option +
+quirk mechanism") added a quirk for some models of the HP x2 10 series.
+
+There are 2 issues with the comment describing the quirk:
+1) The comment claims the DMI quirk applies to all Cherry Trail based HP x2
+   10 models. In the mean time I have learned that there are at least 3
+   models of the HP x2 10 models:
+
+   Bay Trail SoC + AXP288 PMIC
+   Cherry Trail SoC + AXP288 PMIC
+   Cherry Trail SoC + TI PMIC
+
+   And this quirk's DMI matches only match the Cherry Trail SoC + TI PMIC
+   SoC, which is good because we want a slightly different quirk for the
+   others. This commit updates the comment to make it clear that the quirk
+   is only for the Cherry Trail SoC + TI PMIC models.
+
+2) The comment says that it is ok to disable wakeup on all ACPI GPIO event
+   handlers, because there is only the one for the embedded-controller
+   events. This is not true, there also is a handler for the special
+   INT0002 device which is related to USB wakeups. We need to also disable
+   wakeups on that one because the device turns of the USB-keyboard built
+   into the dock when closing the lid. The XHCI controller takes a while
+   to notice this, so it only notices it when already suspended, causing
+   a spurious wakeup because of this. So disabling wakeup on all handlers
+   is the right thing to do, but not because there only is the one handler
+   for the EC events. This commit updates the comment to correctly reflect
+   this.
+
+Fixes: aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option + quirk mechanism")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://lore.kernel.org/r/20200302111225.6641-1-hdegoede@redhat.com
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/gpio/gpiolib-acpi.c |   14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -1348,12 +1348,14 @@ static const struct dmi_system_id gpioli
+ 	},
+ 	{
+ 		/*
+-		 * Various HP X2 10 Cherry Trail models use an external
+-		 * embedded-controller connected via I2C + an ACPI GPIO
+-		 * event handler. The embedded controller generates various
+-		 * spurious wakeup events when suspended. So disable wakeup
+-		 * for its handler (it uses the only ACPI GPIO event handler).
+-		 * This breaks wakeup when opening the lid, the user needs
++		 * HP X2 10 models with Cherry Trail SoC + TI PMIC use an
++		 * external embedded-controller connected via I2C + an ACPI GPIO
++		 * event handler on INT33FF:01 pin 0, causing spurious wakeups.
++		 * When suspending by closing the LID, the power to the USB
++		 * keyboard is turned off, causing INT0002 ACPI events to
++		 * trigger once the XHCI controller notices the keyboard is
++		 * gone. So INT0002 events cause spurious wakeups too. Ignoring
++		 * EC wakes breaks wakeup when opening the lid, the user needs
+ 		 * to press the power-button to wakeup the system. The
+ 		 * alternative is suspend simply not working, which is worse.
+ 		 */
+
+
