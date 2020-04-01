@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44E5719B240
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:42:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD2FE19B460
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389507AbgDAQmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:42:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42748 "EHLO mail.kernel.org"
+        id S1733288AbgDAQ4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:56:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388565AbgDAQmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:42:10 -0400
+        id S1732859AbgDAQUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:20:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AD8D206F8;
-        Wed,  1 Apr 2020 16:42:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E204D20658;
+        Wed,  1 Apr 2020 16:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759329;
-        bh=I2x8+J3MZzR4qZRNlhzJ5TIhe/rgzKwxLo1kd3B50pA=;
+        s=default; t=1585758018;
+        bh=Exro3RBVTcuX8IyxCG+436aDA/mC5fv5PCGXfpK/dw8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1NaXZMQDps52K9t4m5yjG8MCI4Cx5lTCQ775XkeSI/Rkzk0fNEyBAAfbsGbFysacF
-         tuqQEHFD1S3Ff3v3vKbniq818HTbYsWDnw9yp1TpZ3QWB/QU0OmlhDjc9l0FLRN5ac
-         RcYU5iXkuWsfWv+/Cy9+xVJMerdCmiLonv3RLcU0=
+        b=bKBKGzU/4o5/rYo5jvnX4gP+ZC0DvWO+7BqVgGpwKjVrNwJAONwFu2C1lW3JzZaXK
+         SHID35ElES+/ioCJaGoGo1mvsnzEpr0BfblPErV0h8r/UkgTHD38Y/KdJGnW6Y+QbB
+         2bqMD5Xletwyi4/t9eI51b8rma+1aHb9VcVCzsGI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 048/148] Revert "ipv6: Fix handling of LLA with VRF and sockets bound to VRF"
-Date:   Wed,  1 Apr 2020 18:17:20 +0200
-Message-Id: <20200401161557.592880291@linuxfoundation.org>
+        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 5.5 17/30] clk: imx: Align imx sc clock msg structs to 4
+Date:   Wed,  1 Apr 2020 18:17:21 +0200
+Message-Id: <20200401161429.287441961@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
+References: <20200401161414.345528747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,38 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 0293f8d1bdd21b3eb71032edb5832f9090dea48e.
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-This patch shouldn't have been backported to 4.14.
+commit a0ae04a25650fd51b7106e742d27333e502173c6 upstream.
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The imx SC api strongly assumes that messages are composed out of
+4-bytes words but some of our message structs have odd sizeofs.
+
+This produces many oopses with CONFIG_KASAN=y.
+
+Fix by marking with __aligned(4).
+
+Fixes: fe37b4820417 ("clk: imx: add scu clock common part")
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Link: https://lkml.kernel.org/r/10e97a04980d933b2cfecb6b124bf9046b6e4f16.1582216144.git.leonard.crestez@nxp.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/ipv6/tcp_ipv6.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/imx/clk-scu.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 5ec73cf386dfe..7b4ce3f9e2f4e 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -718,7 +718,6 @@ static void tcp_v6_init_req(struct request_sock *req,
- 			    const struct sock *sk_listener,
- 			    struct sk_buff *skb)
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -43,12 +43,12 @@ struct imx_sc_msg_req_set_clock_rate {
+ 	__le32 rate;
+ 	__le16 resource;
+ 	u8 clk;
+-} __packed;
++} __packed __aligned(4);
+ 
+ struct req_get_clock_rate {
+ 	__le16 resource;
+ 	u8 clk;
+-} __packed;
++} __packed __aligned(4);
+ 
+ struct resp_get_clock_rate {
+ 	__le32 rate;
+@@ -121,7 +121,7 @@ struct imx_sc_msg_req_clock_enable {
+ 	u8 clk;
+ 	u8 enable;
+ 	u8 autog;
+-} __packed;
++} __packed __aligned(4);
+ 
+ static inline struct clk_scu *to_clk_scu(struct clk_hw *hw)
  {
--	bool l3_slave = ipv6_l3mdev_skb(TCP_SKB_CB(skb)->header.h6.flags);
- 	struct inet_request_sock *ireq = inet_rsk(req);
- 	const struct ipv6_pinfo *np = inet6_sk(sk_listener);
- 
-@@ -726,7 +725,7 @@ static void tcp_v6_init_req(struct request_sock *req,
- 	ireq->ir_v6_loc_addr = ipv6_hdr(skb)->daddr;
- 
- 	/* So that link locals have meaning */
--	if ((!sk_listener->sk_bound_dev_if || l3_slave) &&
-+	if (!sk_listener->sk_bound_dev_if &&
- 	    ipv6_addr_type(&ireq->ir_v6_rmt_addr) & IPV6_ADDR_LINKLOCAL)
- 		ireq->ir_iif = tcp_v6_iif(skb);
- 
--- 
-2.20.1
-
 
 
