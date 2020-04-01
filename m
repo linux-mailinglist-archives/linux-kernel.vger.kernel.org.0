@@ -2,62 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7341319B54A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B51419B550
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732867AbgDASVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 14:21:39 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:37542 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732285AbgDASVi (ORCPT
+        id S1732896AbgDASXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 14:23:43 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:20516 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732579AbgDASXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 14:21:38 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 209BC11D69C3E;
-        Wed,  1 Apr 2020 11:21:37 -0700 (PDT)
-Date:   Wed, 01 Apr 2020 11:21:36 -0700 (PDT)
-Message-Id: <20200401.112136.685481342101422062.davem@davemloft.net>
-To:     o.rempel@pengutronix.de
-Cc:     andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, s.hauer@pengutronix.de,
-        shawnguo@kernel.org, linux@armlinux.org.uk, david@protonic.nl,
-        devicetree@vger.kernel.org, festevam@gmail.com,
-        kernel@pengutronix.de, lgirdwood@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, broonie@kernel.org,
-        netdev@vger.kernel.org, philippe.schenker@toradex.com
-Subject: Re: [PATCH] net: phy: at803x: fix clock sink configuration on
- ATH8030 and ATH8035
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200401095732.23197-1-o.rempel@pengutronix.de>
-References: <20200401095732.23197-1-o.rempel@pengutronix.de>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 01 Apr 2020 11:21:38 -0700 (PDT)
+        Wed, 1 Apr 2020 14:23:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585765421;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=qsVnV5ETV+wC1OGQJYaji6oxvDTV+wJkvOYtON1RAdk=;
+        b=Rvr1iq2AMROJui7z8PuAkBejyamdf02KFH6iRMg8bmd5j187AcOEgzCrC+gwL647ZwxhAM
+        B/Rmk91jzF1ectc8i+98CoKMeEirw7gyYhpe8G9393tmkKJzDTR5FMFs86eohXecjOjUvx
+        gH/VSab6CdVNm4PvlTGu6msIEGV1uJw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-441-tMRfsWLDMnyYNimT99ZxWA-1; Wed, 01 Apr 2020 14:23:38 -0400
+X-MC-Unique: tMRfsWLDMnyYNimT99ZxWA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 249AD100727C;
+        Wed,  1 Apr 2020 18:23:37 +0000 (UTC)
+Received: from treble.redhat.com (ovpn-118-135.phx2.redhat.com [10.3.118.135])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 91E9F60BEC;
+        Wed,  1 Apr 2020 18:23:36 +0000 (UTC)
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Julien Thierry <jthierry@redhat.com>
+Subject: [PATCH 0/5] objtool fixes
+Date:   Wed,  1 Apr 2020 13:23:24 -0500
+Message-Id: <cover.1585761021.git.jpoimboe@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Date: Wed,  1 Apr 2020 11:57:32 +0200
+Some objtool fixes related to CONFIG_UBSAN_TRAP, Clang assembler, and
+more...
 
-> The masks in priv->clk_25m_reg and priv->clk_25m_mask are one-bits-set
-> for the values that comprise the fields, not zero-bits-set.
-> 
-> This patch fixes the clock frequency configuration for ATH8030 and
-> ATH8035 Atheros PHYs by removing the erroneous "~".
-> 
-> To reproduce this bug, configure the PHY  with the device tree binding
-> "qca,clk-out-frequency" and remove the machine specific PHY fixups.
-> 
-> Fixes: 2f664823a47021 ("net: phy: at803x: add device tree binding")
-> Reported-by: Russell King <linux@armlinux.org.uk>
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Josh Poimboeuf (5):
+  objtool: Fix CONFIG_UBSAN_TRAP unreachable warnings
+  objtool: Support Clang non-section symbols in ORC dump
+  objtool: Support Clang non-section symbols in ORC generation
+  objtool: Fix switch table detection in .text.unlikely
+  objtool: Make BP scratch register warning more robust
 
-Applied with Reported-by: fixed and queued up for -stable, thanks.
+ tools/objtool/check.c    | 26 ++++++++++++++++--------
+ tools/objtool/orc_dump.c | 44 ++++++++++++++++++++++++----------------
+ tools/objtool/orc_gen.c  | 33 +++++++++++++++++++++++-------
+ 3 files changed, 71 insertions(+), 32 deletions(-)
+
+--=20
+2.21.1
+
