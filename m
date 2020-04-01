@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9BCC19B2EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:48:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8977619B1E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390087AbgDAQrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:47:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49574 "EHLO mail.kernel.org"
+        id S2389172AbgDAQjL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:39:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389882AbgDAQrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:47:42 -0400
+        id S2388630AbgDAQjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:39:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E0B6206E9;
-        Wed,  1 Apr 2020 16:47:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A97320658;
+        Wed,  1 Apr 2020 16:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759662;
-        bh=QQ6ebnUvoHQNHZ6qn9BQCIRm9XiS9wC5bt9itZPaTN4=;
+        s=default; t=1585759148;
+        bh=FGNU3TYBhXMnbZGkwfxzJZXIqiI4/tL2Rs1aZdf+Y2Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v1bMtr9gt0xOtdKTYpstzN59/gl2qsxJCgihYtqKieU5L5n1ITKRlymjq8hWxTlCc
-         fjEs/pOI79fGoHjbLb74vtxbMKvpTSWEtXC9TK+St2vnphSW/2e7+48h7GM6TJKcA8
-         jCS0QkU/EpVHDjAQz1YbXU2trmhQozCezDKvKzzI=
+        b=07qjBmRgwNVPMyfWloT9wSMIOU6iEP4uhhfsSMTadJz5ozzMl8eATv6GOT4CVWRtg
+         TSSEnuK5ZhtDQP5JTiWTvu6qsKbdFNIh7RHCK669rbM4CaymcwbCcPfqADngIBxWcY
+         YgfpYVEyq/L9pvmdL89vd1qJ7cdR1EpDRiShURXU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6d2e7f6fa90e27be9d62@syzkaller.appspotmail.com,
-        Qiujun Huang <hqjagain@gmail.com>
-Subject: [PATCH 4.14 123/148] staging: wlan-ng: fix ODEBUG bug in prism2sta_disconnect_usb
-Date:   Wed,  1 Apr 2020 18:18:35 +0200
-Message-Id: <20200401161604.241662319@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 4.9 093/102] vt: ioctl, switch VT_IS_IN_USE and VT_BUSY to inlines
+Date:   Wed,  1 Apr 2020 18:18:36 +0200
+Message-Id: <20200401161547.738410989@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +42,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qiujun Huang <hqjagain@gmail.com>
+From: Jiri Slaby <jslaby@suse.cz>
 
-commit a1f165a6b738f0c9d744bad4af7a53909278f5fc upstream.
+commit e587e8f17433ddb26954f0edf5b2f95c42155ae9 upstream.
 
-We should cancel hw->usb_work before kfree(hw).
+These two were macros. Switch them to static inlines, so that it's more
+understandable what they are doing.
 
-Reported-by: syzbot+6d2e7f6fa90e27be9d62@syzkaller.appspotmail.com
-Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/1585120006-30042-1-git-send-email-hqjagain@gmail.com
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Link: https://lore.kernel.org/r/20200219073951.16151-2-jslaby@suse.cz
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/wlan-ng/prism2usb.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/tty/vt/vt_ioctl.c |   29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
---- a/drivers/staging/wlan-ng/prism2usb.c
-+++ b/drivers/staging/wlan-ng/prism2usb.c
-@@ -180,6 +180,7 @@ static void prism2sta_disconnect_usb(str
+--- a/drivers/tty/vt/vt_ioctl.c
++++ b/drivers/tty/vt/vt_ioctl.c
+@@ -39,10 +39,25 @@
+ #include <linux/selection.h>
  
- 		cancel_work_sync(&hw->link_bh);
- 		cancel_work_sync(&hw->commsqual_bh);
-+		cancel_work_sync(&hw->usb_work);
+ char vt_dont_switch;
+-extern struct tty_driver *console_driver;
  
- 		/* Now we complete any outstanding commands
- 		 * and tell everyone who is waiting for their
+-#define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
+-#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_is_sel(vc_cons[i].d))
++static inline bool vt_in_use(unsigned int i)
++{
++	extern struct tty_driver *console_driver;
++
++	return console_driver->ttys[i] && console_driver->ttys[i]->count;
++}
++
++static inline bool vt_busy(int i)
++{
++	if (vt_in_use(i))
++		return true;
++	if (i == fg_console)
++		return true;
++	if (vc_is_sel(vc_cons[i].d))
++		return true;
++
++	return false;
++}
+ 
+ /*
+  * Console (vt and kd) routines, as defined by USL SVR4 manual, and by
+@@ -292,7 +307,7 @@ static int vt_disallocate(unsigned int v
+ 	int ret = 0;
+ 
+ 	console_lock();
+-	if (VT_BUSY(vc_num))
++	if (vt_busy(vc_num))
+ 		ret = -EBUSY;
+ 	else if (vc_num)
+ 		vc = vc_deallocate(vc_num);
+@@ -314,7 +329,7 @@ static void vt_disallocate_all(void)
+ 
+ 	console_lock();
+ 	for (i = 1; i < MAX_NR_CONSOLES; i++)
+-		if (!VT_BUSY(i))
++		if (!vt_busy(i))
+ 			vc[i] = vc_deallocate(i);
+ 		else
+ 			vc[i] = NULL;
+@@ -651,7 +666,7 @@ int vt_ioctl(struct tty_struct *tty,
+ 			state = 1;	/* /dev/tty0 is always open */
+ 			for (i = 0, mask = 2; i < MAX_NR_CONSOLES && mask;
+ 							++i, mask <<= 1)
+-				if (VT_IS_IN_USE(i))
++				if (vt_in_use(i))
+ 					state |= mask;
+ 			ret = put_user(state, &vtstat->v_state);
+ 		}
+@@ -664,7 +679,7 @@ int vt_ioctl(struct tty_struct *tty,
+ 	case VT_OPENQRY:
+ 		/* FIXME: locking ? - but then this is a stupid API */
+ 		for (i = 0; i < MAX_NR_CONSOLES; ++i)
+-			if (! VT_IS_IN_USE(i))
++			if (!vt_in_use(i))
+ 				break;
+ 		uival = i < MAX_NR_CONSOLES ? (i+1) : -1;
+ 		goto setint;		 
 
 
