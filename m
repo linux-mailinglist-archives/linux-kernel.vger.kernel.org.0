@@ -2,150 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACA5E19A736
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1D5D19A712
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730875AbgDAIZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:25:52 -0400
-Received: from mail.phytec.co.uk ([217.6.246.34]:52878 "EHLO
-        lws-riedmueller.phytec.de" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726197AbgDAIZw (ORCPT
+        id S1731343AbgDAIUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:20:09 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40971 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728236AbgDAIUI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:25:52 -0400
-X-Greylist: delayed 353 seconds by postgrey-1.27 at vger.kernel.org; Wed, 01 Apr 2020 04:25:52 EDT
-Received: by lws-riedmueller.phytec.de (Postfix, from userid 20140)
-        id E13891A1626; Wed,  1 Apr 2020 10:19:57 +0200 (CEST)
-Date:   Wed, 1 Apr 2020 10:19:57 +0200
-From:   Stefan =?iso-8859-1?Q?Riedm=FCller?= <s.riedmueller@phytec.de>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stefan Riedmueller <s.riedmueller@phytec.de>
-Subject: Re: [PATCH 2/3] watchdog: da9063: Use pre configured timeout when
- watchdog is running
-Message-ID: <20200401081953.GA1585@phytec.de>
-References: <20200326150203.371673-1-s.riedmueller@phytec.de>
- <20200326150203.371673-2-s.riedmueller@phytec.de>
- <AM6PR10MB2263A1A76AFFBCE7BCC4B93880CB0@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
- <387fadc6-1eab-ada7-86dd-0e47c5e9cb9f@roeck-us.net>
+        Wed, 1 Apr 2020 04:20:08 -0400
+Received: by mail-pf1-f196.google.com with SMTP id a24so4918026pfc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 01:20:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QFO0vf8e8DojHzC7YKKnWcjJKYcUUi6BB0Xvkcc0pJc=;
+        b=w++wGeiNVTv/fz8h/D2fQ8RKq8fKC+9Jz+vX6b4AcyL8KRKHNVMEpwShLa5F1frzO1
+         Bda6A2H/HYR2+N2im+kK3SXARA+hI2/nYP3Rg/qjrlotrlctZaoI88a0rMgsB0NjJO2X
+         xRPmXljSIddgZxEaMvWQmrr/1XcL7P3b4dxEQouwsyj+M4J5AtQktI0mOLrBVSgsvfJp
+         4zgqOV4AYLL92YnuNemUsgQAuIkOdFf09marZjFENI3vt2o9eDR8YOTFrdBx/YG5oh2h
+         k91JvSYSOsM/5h40ZdcVC9RkMvm1/UgZzHQhrj89blEtyUzq19O6zUkoJ4Y0Z8uKd9o0
+         0BhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QFO0vf8e8DojHzC7YKKnWcjJKYcUUi6BB0Xvkcc0pJc=;
+        b=JxtWIcKQRu+l6hY56xqUi60ofw/SMQ0CWN75hIXji8lvUVZnwTxamb2DyYvBmFvWyk
+         1NIKDwrvzi+2g+utS9e+zJ+52K0e1GuERFgDp5WBisvOW1QKWxiarxHmNuFRLkoF53Hb
+         aBQKBoo965YGBljC/mHrs8NCZNKpJgZIHUjpsQ4U91vGcufRzzcF8GO72PbZCnoM1AlL
+         qft1FysGqgHgVSRVvTAz8Oa6VTnjoNb7gxzgdL7/yq/QJQWXGPpxU8qeQSIDkDPwcD2t
+         oC7MYA2NpQ/VV70vSi7eaLeMoDRIwk9jEH6EeYglRg8P2+HS6/wX5OQKYBcAeY6n4mFV
+         j9wg==
+X-Gm-Message-State: ANhLgQ3J3Y7blnQijdY9xCP7L/BIWxJIOUhA35gpVv0lpNwepXkiLIuT
+        KsN0RHkkpsU+0m39VxAe2Dev
+X-Google-Smtp-Source: ADFU+vvjnoX9qATo8Ax3smn2g6ng6pV6THrQwh3JlG3wMQgvz0eNY8mwOCDQ51gAvmtCVFlkWsI+zQ==
+X-Received: by 2002:aa7:962d:: with SMTP id r13mr23217262pfg.244.1585729206901;
+        Wed, 01 Apr 2020 01:20:06 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:648c:592d:1580:e843:709d:f3b5])
+        by smtp.gmail.com with ESMTPSA id j21sm908394pgn.30.2020.04.01.01.20.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Apr 2020 01:20:06 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 13:50:00 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     gregkh@linuxfoundation.org, davem@davemloft.net,
+        smohanad@codeaurora.org, jhugo@codeaurora.org,
+        kvalo@codeaurora.org, hemantk@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, clew@codeaurora.org
+Subject: Re: [PATCH 2/3] net: qrtr: Add MHI transport layer
+Message-ID: <20200401082000.GA15627@Mani-XPS-13-9360>
+References: <20200401064435.12676-1-manivannan.sadhasivam@linaro.org>
+ <20200401064435.12676-3-manivannan.sadhasivam@linaro.org>
+ <20200401071023.GD663905@yoga>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <387fadc6-1eab-ada7-86dd-0e47c5e9cb9f@roeck-us.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200401071023.GD663905@yoga>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter, Adam,
-
-Guenter Roeck <linux@roeck-us.net> wrote on Tue, 31. Mar 20 09:08:
-> On 3/30/20 9:38 AM, Adam Thomson wrote:
-> > On 26 March 2020 15:02, Stefan Riedmueller wrote:
-> > 
-> >> If the watchdog is already running during probe use its pre-configured
-> >> timeout instead of a default timeout to make sure the watchdog is pinged
-> >> in time until userspace takes over.
-> > 
-> > At least for this driver I don't think there's an issue here with regards to
-> > not pinging in time. Calling 'da9063_wdt_update_timeout()', as it currently
-> > does in the probe() when the watchdog is already active, actually disables the
-> > watchdog before then setting a new timeout value, so by that method we're
-> > avoiding a timeout and starting a new timer period.
-> > 
-> > To my mind the timeout value should come from DT if possible, which I would
-> > assume for the most part would match whatever is defined in the bootloader as
-> > well, unless I'm mistaken. If that's not available though then I would maybe
-> > agree on falling back to a value that was already programmed in the bootloader
-> > rather than the driver default which should be the last resort.
-> > 
-> Agreed.
-
-Thanks for both your feedback. I'll drop the pre-configured timeout part and
-stick with the default timeout and do the same procedure (init_timeout +
-update_timeout) for the da9062.
-
-Thanks
-Stefan
-
+On Wed, Apr 01, 2020 at 12:10:23AM -0700, Bjorn Andersson wrote:
+> On Tue 31 Mar 23:44 PDT 2020, Manivannan Sadhasivam wrote:
+> > diff --git a/net/qrtr/mhi.c b/net/qrtr/mhi.c
+> [..]
+> > +static void qcom_mhi_qrtr_ul_callback(struct mhi_device *mhi_dev,
+> > +				      struct mhi_result *mhi_res)
+> > +{
+> > +	struct sk_buff *skb = (struct sk_buff *)mhi_res->buf_addr;
+> > +
+> > +	consume_skb(skb);
+> > +	if (skb->sk)
+> > +		sock_put(skb->sk);
 > 
-> Guenter
+> Don't you need to do this in opposite order, to avoid a use after free?
 > 
-> >>
-> >> Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
-> >> ---
-> >>  drivers/watchdog/da9063_wdt.c | 29 ++++++++++++++++++-----------
-> >>  1 file changed, 18 insertions(+), 11 deletions(-)
-> >>
-> >> diff --git a/drivers/watchdog/da9063_wdt.c b/drivers/watchdog/da9063_wdt.c
-> >> index 3d65e92a4e3f..34d0c4f03814 100644
-> >> --- a/drivers/watchdog/da9063_wdt.c
-> >> +++ b/drivers/watchdog/da9063_wdt.c
-> >> @@ -46,15 +46,16 @@ static unsigned int da9063_wdt_timeout_to_sel(unsigned
-> >> int secs)
-> >>  }
-> >>
-> >>  /*
-> >> - * Return 0 if watchdog is disabled, else non zero.
-> >> + * Read the currently active timeout.
-> >> + * Zero means the watchdog is disabled.
-> >>   */
-> >> -static unsigned int da9063_wdt_is_running(struct da9063 *da9063)
-> >> +static unsigned int da9063_wdt_read_timeout(struct da9063 *da9063)
-> >>  {
-> >>  	unsigned int val;
-> >>
-> >>  	regmap_read(da9063->regmap, DA9063_REG_CONTROL_D, &val);
-> >>
-> >> -	return val & DA9063_TWDSCALE_MASK;
-> >> +	return wdt_timeout[val & DA9063_TWDSCALE_MASK];
-> >>  }
-> >>
-> >>  static int da9063_wdt_disable_timer(struct da9063 *da9063)
-> >> @@ -191,6 +192,7 @@ static int da9063_wdt_probe(struct platform_device
-> >> *pdev)
-> >>  	struct device *dev = &pdev->dev;
-> >>  	struct da9063 *da9063;
-> >>  	struct watchdog_device *wdd;
-> >> +	int timeout;
-> >>
-> >>  	if (!dev->parent)
-> >>  		return -EINVAL;
-> >> @@ -214,15 +216,20 @@ static int da9063_wdt_probe(struct platform_device
-> >> *pdev)
-> >>  	watchdog_set_restart_priority(wdd, 128);
-> >>  	watchdog_set_drvdata(wdd, da9063);
-> >>
-> >> -	/* Set default timeout, maybe override it with DT value, scale it */
-> >> -	wdd->timeout = DA9063_WDG_TIMEOUT;
-> >> -	watchdog_init_timeout(wdd, 0, dev);
-> >> -	da9063_wdt_set_timeout(wdd, wdd->timeout);
-> >> -
-> >> -	/* Change the timeout to the default value if the watchdog is running */
-> >> -	if (da9063_wdt_is_running(da9063)) {
-> >> -		da9063_wdt_update_timeout(da9063, wdd->timeout);
-> >> +	/*
-> >> +	 * Use pre-configured timeout if watchdog is already running.
-> >> +	 * Otherwise set default timeout, maybe override it with DT value,
-> >> +	 * scale it
-> >> +	 */
-> >> +	timeout = da9063_wdt_read_timeout(da9063);
-> >> +	if (timeout) {
-> >> +		wdd->timeout = timeout;
-> >>  		set_bit(WDOG_HW_RUNNING, &wdd->status);
-> >> +		dev_info(da9063->dev, "watchdog is running (%u s)", timeout);
-> >> +	} else {
-> >> +		wdd->timeout = DA9063_WDG_TIMEOUT;
-> >> +		watchdog_init_timeout(wdd, 0, dev);
-> >> +		da9063_wdt_set_timeout(wdd, wdd->timeout);
-> >>  	}
-> >>
-> >>  	return devm_watchdog_register_device(dev, wdd);
-> >> --
-> >> 2.23.0
-> > 
-> 
+
+I thought about it but the socket refcounting postulates in net/sock.h states:
+
+"sk_free is called from any context: process, BH, IRQ. When it is called,
+socket has no references from outside -> sk_free may release descendant
+resources allocated by the socket, but to the time when it is called, socket
+is NOT referenced by any hash tables, lists etc."
+
+Here the sock it still referenced by skb, so I don't exactly know if we can
+release the socket using sock_put() before consume_skb(). But on the other hand,
+once skb is freed then accessing its member is clearly a use after free issue.
+
+Maybe someone can clarify this?
+
+Thanks,
+Mani
+
+> Regards,
+> Bjorn
