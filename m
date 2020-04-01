@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1609C19B2A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B8AD19B1F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389879AbgDAQpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:45:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47018 "EHLO mail.kernel.org"
+        id S1733261AbgDAQje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:39:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389403AbgDAQpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:45:46 -0400
+        id S2388932AbgDAQjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:39:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7743C206E9;
-        Wed,  1 Apr 2020 16:45:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6359A20719;
+        Wed,  1 Apr 2020 16:39:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759545;
-        bh=XtbEDCWV1Co2ctckCRyI2TREL9BJPN0Qv3Cmf1RhQoY=;
+        s=default; t=1585759171;
+        bh=AemugzAZy1ghfV7RsZpaY/J/vZW9fAqxWNHOVoSlAJE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m5QgcH5a2it4E9pPKezDNxrEepDAaV27FzNL2MNBl0BzUHaE+9MnGZWThMHSDxgbY
-         4pu055OsIYsGHqfxZitLBvi2YEeyoYT0Bv2gWc6isbVcUsIyXDsNhAB3vCv+nOcuRs
-         stNL9RhgFB0o34ENl/9RXP/xEqd/ef9/kHA93e8k=
+        b=QDDYP0HvqpA2DyeHs7N/B3Y7f2wLUnrqKIXbFLw2mAeQedtU6OG5BlZWdkNzxuDrR
+         5LEL5xUgke4ksDhQnpmw/ujlXQRvNc38bdNc5YK27RJdEFtP4yGJsN09aI0GbuNCjG
+         MyMr7wkqTImJpXR8B42GQDezNO+W8ytrF9oW5KE8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 112/148] Input: raydium_i2c_ts - fix error codes in raydium_i2c_boot_trigger()
-Date:   Wed,  1 Apr 2020 18:18:24 +0200
-Message-Id: <20200401161603.288053167@linuxfoundation.org>
+        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
+        kovi <zraetn@gmail.com>
+Subject: [PATCH 4.9 082/102] staging: rtl8188eu: Add ASUS USB-N10 Nano B1 to device table
+Date:   Wed,  1 Apr 2020 18:18:25 +0200
+Message-Id: <20200401161546.250014045@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-[ Upstream commit 32cf3a610c35cb21e3157f4bbf29d89960e30a36 ]
+commit 38ef48f7d4b7342f145a1b4f96023bde99aeb245 upstream.
 
-These functions are supposed to return negative error codes but instead
-it returns true on failure and false on success.  The error codes are
-eventually propagated back to user space.
+The ASUS USB-N10 Nano B1 has been reported as a new RTL8188EU device.
+Add it to the device tables.
 
-Fixes: 48a2b783483b ("Input: add Raydium I2C touchscreen driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Link: https://lore.kernel.org/r/20200303101306.4potflz7na2nn3od@kili.mountain
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Reported-by: kovi <zraetn@gmail.com>
+Cc: Stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200321180011.26153-1-Larry.Finger@lwfinger.net
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/input/touchscreen/raydium_i2c_ts.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/input/touchscreen/raydium_i2c_ts.c b/drivers/input/touchscreen/raydium_i2c_ts.c
-index 172f66e9da2d1..7da44956555e5 100644
---- a/drivers/input/touchscreen/raydium_i2c_ts.c
-+++ b/drivers/input/touchscreen/raydium_i2c_ts.c
-@@ -441,7 +441,7 @@ static int raydium_i2c_write_object(struct i2c_client *client,
- 	return 0;
- }
- 
--static bool raydium_i2c_boot_trigger(struct i2c_client *client)
-+static int raydium_i2c_boot_trigger(struct i2c_client *client)
- {
- 	static const u8 cmd[7][6] = {
- 		{ 0x08, 0x0C, 0x09, 0x00, 0x50, 0xD7 },
-@@ -466,10 +466,10 @@ static bool raydium_i2c_boot_trigger(struct i2c_client *client)
- 		}
- 	}
- 
--	return false;
-+	return 0;
- }
- 
--static bool raydium_i2c_fw_trigger(struct i2c_client *client)
-+static int raydium_i2c_fw_trigger(struct i2c_client *client)
- {
- 	static const u8 cmd[5][11] = {
- 		{ 0, 0x09, 0x71, 0x0C, 0x09, 0x00, 0x50, 0xD7, 0, 0, 0 },
-@@ -492,7 +492,7 @@ static bool raydium_i2c_fw_trigger(struct i2c_client *client)
- 		}
- 	}
- 
--	return false;
-+	return 0;
- }
- 
- static int raydium_i2c_check_path(struct i2c_client *client)
--- 
-2.20.1
-
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -40,6 +40,7 @@ static struct usb_device_id rtw_usb_id_t
+ 	/****** 8188EUS ********/
+ 	{USB_DEVICE(0x056e, 0x4008)}, /* Elecom WDC-150SU2M */
+ 	{USB_DEVICE(0x07b8, 0x8179)}, /* Abocom - Abocom */
++	{USB_DEVICE(0x0B05, 0x18F0)}, /* ASUS USB-N10 Nano B1 */
+ 	{USB_DEVICE(0x2001, 0x330F)}, /* DLink DWA-125 REV D1 */
+ 	{USB_DEVICE(0x2001, 0x3310)}, /* Dlink DWA-123 REV D1 */
+ 	{USB_DEVICE(0x2001, 0x3311)}, /* DLink GO-USB-N150 REV B1 */
 
 
