@@ -2,168 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEEAE19AD8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 16:14:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 542F419AD8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 16:14:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732926AbgDAOOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 10:14:03 -0400
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:48239 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732858AbgDAOOB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 10:14:01 -0400
-Received: from [192.168.2.10] ([46.9.234.233])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id Je7rjWPinBr2bJe7vjkqWT; Wed, 01 Apr 2020 16:13:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1585750439; bh=4Z1xsv5MJPNLqbY2JbEN3CWbNZXwsTFDoO6fRUQq8Z8=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=IyNSd6itD/wGS7WzJWs/dM4HUrhm4dr8re8yF3KX4FCoMbbHfexrnHpYLL/AqOn15
-         7Lfo2bscJ5Tv+wtt0xoYuI0IbfO9NGo00WyjUGXOuMePe19bSb+rcaPnHd3sLipLQg
-         5WTK2oPH6Q3jLG8+EpWuCh+vD3EFZdkq95zWUJZ68iSo1U9Jx1dm0Yv4U/LKEniKLv
-         USlJDTN5j3fjSech4lWAie2R6+CcS+eDMlV09WLUE86/Pp4Rm1ejPnuKuhAS67NZsK
-         COwfjQx3JKInzAy8KrHtdfsO/atELkmg3UgVeybrFuPhGh3QnzHe8CcJzDuREe1z7X
-         U7R0WvPawuwTg==
-Subject: Re: [PATCH 1/1] lib/vsprintf: Add support for printing V4L2 and DRM
- fourccs
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Petr Mladek <pmladek@suse.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-media@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-References: <20200401140522.966-1-sakari.ailus@linux.intel.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <080ddddf-717e-61dc-8522-fbdbe52da94a@xs4all.nl>
-Date:   Wed, 1 Apr 2020 16:13:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1732968AbgDAOOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 10:14:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60634 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732826AbgDAOOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 10:14:15 -0400
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F2CA215A4;
+        Wed,  1 Apr 2020 14:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585750454;
+        bh=ehjUgVoB1pPIaTbQKrVmGjeYyANB+YHakHSSw4dF4Jw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mNrc+atjafoM8ozF4y5TIdwmhFigHse0PwjtshoKd6wA2jRqo5VRp/VjVePZW1BcM
+         miehZh2CfPpyFzRzMQsrq+cgxMDVlauWrdpWgK8o7E0vWpZdeTERghNla31yh/YsAY
+         BYCUZ6OEo2aUL11CiRIUTMQcYExuPfTc5XocLZyQ=
+Received: by mail-qv1-f54.google.com with SMTP id bp12so8845146qvb.7;
+        Wed, 01 Apr 2020 07:14:14 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ0Sb1j5O6oOj6wFL3DFSqjvAOvBAnbtKe0REjv9hIMyb+hn4DQW
+        N8oj9ISvayVW2ub944HebT75GR5Ajj0d5C+yjw==
+X-Google-Smtp-Source: ADFU+vvQbdamE50Ixln6DUJDoLxy8s0mcKi5FvNTsz9bq3+wKn1jVYRM4ihFk/474/yHBhU+NAE//LHvJN48JJJxemg=
+X-Received: by 2002:a0c:f207:: with SMTP id h7mr21272843qvk.20.1585750453214;
+ Wed, 01 Apr 2020 07:14:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200401140522.966-1-sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfMk1IXknwDM4YmvP/lQa3Wn+ijgDMHwhGqoI8aB+utiUiu9Lnc6n4h2UYXu7wz51oBsvbGHGG9TYwjhRmL+0U2byi27gti5Dkl55B8z7c+AVv/Q9XHj1
- o/WnC3Z/PeC0XuFKPI6wwfAhSw0G1DoS9bvK6u0X80y37pJZKxeeRwud/rg0zhMTw4O5OXrISijVnxaVcTi4HtTe0MNdDvmnfWuChnnJFTZ106nv/u6n5/9X
- lMlaHzccOrMOEYV7bCN+/KXb5yNzJcuI/8XsdTD+bjwK+BFN0AaoM0E/ek4zTkHj1Po4DKYE3oSUu+8q7AFoqQtEfRRquooJP7G7QuRmKa3XFvDz08P4XwWf
- x+YpcqQfYb8iFogqPzJVZ92BU/oVR83DeurZ80tQvCmYccUbqZVBvsAHbUGAlBTc9/MH4ygNdo8EamET9yVN5wlRVj4Xb5W6LFrq59KhLOq4KAi9m7IU65vA
- 2FO9WahGnoWuDUL/ObJyXeILYTKOF4oiV1ULv5cUH98wdR1BcfJdlBDcWed+zhkFcO1rIUePwIZzZNv1oX1qEqoAAg2KknknJiVIJPWxNfUcUbD+lfFSjjHc
- BAk=
+References: <20200306125622.839ED80307C4@mail.baikalelectronics.ru>
+ <20200324174325.14213-1-Sergey.Semin@baikalelectronics.ru>
+ <20200324174325.14213-3-Sergey.Semin@baikalelectronics.ru>
+ <20200331210248.GA27684@bogus> <20200401101930.3lk4t6wk6j5ne6ay@ubsrv2.baikal.int>
+In-Reply-To: <20200401101930.3lk4t6wk6j5ne6ay@ubsrv2.baikal.int>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 1 Apr 2020 08:13:58 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJBVTahd9uQPe6KUfVxzGPrGfFarcKBU=EPpon6Ny=Sqg@mail.gmail.com>
+Message-ID: <CAL_JsqJBVTahd9uQPe6KUfVxzGPrGfFarcKBU=EPpon6Ny=Sqg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] dt-bindings: interrupt-controller: Convert mti,gic
+ to DT schema
+To:     Sergey Semin <Sergey.Semin@baikalelectronics.ru>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        devicetree@vger.kernel.org,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/1/20 4:05 PM, Sakari Ailus wrote:
-> Add a printk modifier %ppf (for pixel format) for printing V4L2 and DRM
-> pixel formats denoted by 4ccs. The 4cc encoding is the same for both so
-> the same implementation can be used.
-> 
-> Suggested-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  Documentation/core-api/printk-formats.rst | 11 +++++++++
->  lib/vsprintf.c                            | 29 +++++++++++++++++++++++
->  2 files changed, 40 insertions(+)
-> 
-> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-> index 8ebe46b1af39..b6249f513c09 100644
-> --- a/Documentation/core-api/printk-formats.rst
-> +++ b/Documentation/core-api/printk-formats.rst
-> @@ -545,6 +545,17 @@ For printing netdev_features_t.
->  
->  Passed by reference.
->  
-> +V4L2 and DRM fourcc code (pixel format)
-> +---------------------------------------
-> +
-> +::
-> +
-> +	%ppf
-> +
-> +Print a 4cc code used by V4L2 or DRM.
+On Wed, Apr 1, 2020 at 4:19 AM Sergey Semin
+<Sergey.Semin@baikalelectronics.ru> wrote:
+>
+> On Tue, Mar 31, 2020 at 03:02:48PM -0600, Rob Herring wrote:
+> > On Tue, Mar 24, 2020 at 08:43:21PM +0300, Sergey.Semin@baikalelectronics.ru wrote:
+> > > From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> > >
+> > > Modern device tree bindings are supposed to be created as YAML-files
+> > > in accordance with DT schema. This commit replaces MIPS GIC legacy bare
+> > > text binding with YAML file. As before the binding file states that the
+> > > corresponding dts node is supposed to be compatible with MIPS Global
+> > > Interrupt Controller indicated by the "mti,gic" compatible string and
+> > > to provide a mandatory interrupt-controller and '#interrupt-cells'
+> > > properties. There might be optional registers memory range,
+> > > "mti,reserved-cpu-vectors" and "mti,reserved-ipi-vectors" properties
+> > > specified.
+> > >
+> > > MIPS GIC also includes a free-running global timer, per-CPU count/compare
+> > > timers, and a watchdog. Since currently the GIC Timer is only supported the
+> > > DT schema expects an IRQ and clock-phandler charged timer sub-node with
+> > > "mti,mips-gic-timer" compatible string.
+> > >
+> > > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> > > Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+> > > Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> > > Cc: Paul Burton <paulburton@kernel.org>
+> > > Cc: Ralf Baechle <ralf@linux-mips.org>
+> > > Cc: Alessandro Zummo <a.zummo@towertech.it>
+> > > Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > Cc: Arnd Bergmann <arnd@arndb.de>
+> > > Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > > Cc: Rob Herring <robh+dt@kernel.org>
+> > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > Cc: devicetree@vger.kernel.org
+> > > Cc: linux-rtc@vger.kernel.org
+> > >
+> > > ---
+> > >
+> > > I don't really know who is the corresponding driver maintainer, so I
+> > > added to the maintainers schema Paul since he used to be looking for the
+> > > MIPS arch and Thomas looking after it now. Any idea what email should be
+> > > specified there instead?
+> > >
+> > > Similarly to the previous patch the "oneOf: - required: ..." pattern isn't
+> > > working here. Supposedly due to the script' dtschema/lib.py
+> > > interrupts/interrupts-extended fixup.
+> > > ---
+> > >  .../interrupt-controller/mips-gic.txt         |  67 --------
+> > >  .../interrupt-controller/mti,gic.yaml         | 152 ++++++++++++++++++
+> > >  2 files changed, 152 insertions(+), 67 deletions(-)
+> > >  delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/mips-gic.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/mti,gic.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/interrupt-controller/mips-gic.txt b/Documentation/devicetree/bindings/interrupt-controller/mips-gic.txt
+> > > deleted file mode 100644
+> > > index 173595305e26..000000000000
+> > > --- a/Documentation/devicetree/bindings/interrupt-controller/mips-gic.txt
+> > > +++ /dev/null
+> > > @@ -1,67 +0,0 @@
+> > > -MIPS Global Interrupt Controller (GIC)
+> > > -
+> > > -The MIPS GIC routes external interrupts to individual VPEs and IRQ pins.
+> > > -It also supports local (per-processor) interrupts and software-generated
+> > > -interrupts which can be used as IPIs.  The GIC also includes a free-running
+> > > -global timer, per-CPU count/compare timers, and a watchdog.
+> > > -
+> > > -Required properties:
+> > > -- compatible : Should be "mti,gic".
+> > > -- interrupt-controller : Identifies the node as an interrupt controller
+> > > -- #interrupt-cells : Specifies the number of cells needed to encode an
+> > > -  interrupt specifier.  Should be 3.
+> > > -  - The first cell is the type of interrupt, local or shared.
+> > > -    See <include/dt-bindings/interrupt-controller/mips-gic.h>.
+> > > -  - The second cell is the GIC interrupt number.
+> > > -  - The third cell encodes the interrupt flags.
+> > > -    See <include/dt-bindings/interrupt-controller/irq.h> for a list of valid
+> > > -    flags.
+> > > -
+> > > -Optional properties:
+> > > -- reg : Base address and length of the GIC registers.  If not present,
+> > > -  the base address reported by the hardware GCR_GIC_BASE will be used.
+> > > -- mti,reserved-cpu-vectors : Specifies the list of CPU interrupt vectors
+> > > -  to which the GIC may not route interrupts.  Valid values are 2 - 7.
+> > > -  This property is ignored if the CPU is started in EIC mode.
+> > > -- mti,reserved-ipi-vectors : Specifies the range of GIC interrupts that are
+> > > -  reserved for IPIs.
+> > > -  It accepts 2 values, the 1st is the starting interrupt and the 2nd is the size
+> > > -  of the reserved range.
+> > > -  If not specified, the driver will allocate the last 2 * number of VPEs in the
+> > > -  system.
+> > > -
+> > > -Required properties for timer sub-node:
+> > > -- compatible : Should be "mti,gic-timer".
+> > > -- interrupts : Interrupt for the GIC local timer.
+> > > -
+> > > -Optional properties for timer sub-node:
+> > > -- clocks : GIC timer operating clock.
+> > > -- clock-frequency : Clock frequency at which the GIC timers operate.
+> > > -
+> > > -Note that one of clocks or clock-frequency must be specified.
+> > > -
+> > > -Example:
+> > > -
+> > > -   gic: interrupt-controller@1bdc0000 {
+> > > -           compatible = "mti,gic";
+> > > -           reg = <0x1bdc0000 0x20000>;
+> > > -
+> > > -           interrupt-controller;
+> > > -           #interrupt-cells = <3>;
+> > > -
+> > > -           mti,reserved-cpu-vectors = <7>;
+> > > -           mti,reserved-ipi-vectors = <40 8>;
+> > > -
+> > > -           timer {
+> > > -                   compatible = "mti,gic-timer";
+> > > -                   interrupts = <GIC_LOCAL 1 IRQ_TYPE_NONE>;
+> > > -                   clock-frequency = <50000000>;
+> > > -           };
+> > > -   };
+> > > -
+> > > -   uart@18101400 {
+> > > -           ...
+> > > -           interrupt-parent = <&gic>;
+> > > -           interrupts = <GIC_SHARED 24 IRQ_TYPE_LEVEL_HIGH>;
+> > > -           ...
+> > > -   };
+> > > diff --git a/Documentation/devicetree/bindings/interrupt-controller/mti,gic.yaml b/Documentation/devicetree/bindings/interrupt-controller/mti,gic.yaml
+> > > new file mode 100644
+> > > index 000000000000..1e47c0cdc231
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/interrupt-controller/mti,gic.yaml
+> > > @@ -0,0 +1,152 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> >
+> > Do you have rights to add BSD?
+> >
+>
+> My manager said we can submitted the DT schema bindings under both GPL and
+> BSD licenses. Though I don't know what license was of the legacy binding file.
 
-FourCC appears to be the more-or-less official name (https://en.wikipedia.org/wiki/FourCC)
+Anything in the kernel without an explicit license is GPL-2.0-only.
 
-I would explain about the -BE suffix for bigendian fourcc variants.
+> BTW Rob, you ask about the license very often whether I set pure GPL-2.0
+> or dual-license header. Just wondering is it some kind of protocol to make
+> sure a submitter has got proper rights to submit the binding?
 
-> +
-> +Passed by reference.
-> +
->  Thanks
->  ======
->  
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 7c488a1ce318..b39f0ac317c5 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -1721,6 +1721,32 @@ char *netdev_bits(char *buf, char *end, const void *addr,
->  	return special_hex_number(buf, end, num, size);
->  }
->  
-> +static noinline_for_stack
-> +char *pixel_format_string(char *buf, char *end, const u32 *fourcc,
-> +			  struct printf_spec spec, const char *fmt)
-> +{
-> +	char ch[2] = { 0 };
+New bindings should be dual GPL/BSD. Converted bindings should be
+relicensed if the authors of the original agree or you should maintain
+GPL-2.0-only.
 
-This can just be '{ };'
-
-> +	unsigned int i;
-> +
-> +	if (check_pointer(&buf, end, fourcc, spec))
-> +		return buf;
-> +
-> +	switch (fmt[1]) {
-> +	case 'f':
-> +		for (i = 0; i < sizeof(*fourcc); i++) {
-> +			ch[0] = *fourcc >> (i << 3);
-
-You need to AND with 0x7f, otherwise a big endian fourcc (bit 31 is set)
-will look wrong. Also, each character is standard 7 bit ascii, bit 7 isn't
-used except to indicate a BE variant.
-
-> +			buf = string(buf, end, ch, spec);
-> +		}
-> +
-> +		if (*fourcc & BIT(31))
-> +			buf = string(buf, end, "-BE", spec);
-> +
-> +		return buf;
-> +	default:
-> +		return error_string(buf, end, "(%pp?)", spec);
-> +	}
-> +}
-> +
->  static noinline_for_stack
->  char *address_val(char *buf, char *end, const void *addr,
->  		  struct printf_spec spec, const char *fmt)
-> @@ -2131,6 +2157,7 @@ char *fwnode_string(char *buf, char *end, struct fwnode_handle *fwnode,
->   *       correctness of the format string and va_list arguments.
->   * - 'K' For a kernel pointer that should be hidden from unprivileged users
->   * - 'NF' For a netdev_features_t
-> + * - 'pf' V4L2 or DRM pixel format.
-
-I'd say 'FourCC format' instead of 'pixel format'.
-
->   * - 'h[CDN]' For a variable-length buffer, it prints it as a hex string with
->   *            a certain separator (' ' by default):
->   *              C colon
-> @@ -2223,6 +2250,8 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
->  		return restricted_pointer(buf, end, ptr, spec);
->  	case 'N':
->  		return netdev_bits(buf, end, ptr, spec, fmt);
-> +	case 'p':
-> +		return pixel_format_string(buf, end, ptr, spec, fmt);
->  	case 'a':
->  		return address_val(buf, end, ptr, spec, fmt);
->  	case 'd':
-> 
-
-Regards,
-
-	Hans
+Rob
