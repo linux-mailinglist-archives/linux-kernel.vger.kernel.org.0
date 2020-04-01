@@ -2,139 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9A2C19A413
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 06:00:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E4E919A422
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 06:03:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbgDAEAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 00:00:42 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:41456 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbgDAEAm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 00:00:42 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0313sjWH044988;
-        Wed, 1 Apr 2020 04:00:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- message-id : date : from : to : cc : subject : references : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=obROhXjAve/kpZaKiv7NWOZ2z2jo7yzeO27qepEQr7k=;
- b=fJTI/W2EHKpH+kB3SSlDBzAj/z+tuY2wcGMI5Iyhf/pfi7/9J1WdZq2TIhdiTZV7tJeI
- AqY6m4egj4B3EnySHxxuRh0K4yKurwkmsWIa0zJ9rADKdKtmO+3ZwU2bFy3AXPPqBuq8
- v0JeiSR1X4H+wL8mvT6hEaZro2F7KFmeRQ+1w1U8TkdDMCCfmEvOHl7NEdDDEvI+to82
- kaPWDXXc/aNZ6J2E2S7XBkfiV94pA+ox4IkJUdGw40/blrox6ONxW9mB7AebiybaWKkt
- CbpUIE2jGxr+Nz7akcWjS4paSdhCaXwyhe8u1vogilr0MM+MkETQD/D722m7Fr8ifkoG SA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 303cev322q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Apr 2020 04:00:30 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0313qqwE192638;
-        Wed, 1 Apr 2020 04:00:29 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 302g2fgxjc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Apr 2020 04:00:29 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 03140Q1b001068;
-        Wed, 1 Apr 2020 04:00:26 GMT
-Received: from localhost (/67.169.218.210) by default (Oracle Beehive Gateway
- v4.0) with ESMTP ; Tue, 31 Mar 2020 21:00:23 -0700
-USER-AGENT: Mutt/1.9.4 (2018-02-28)
+        id S1727945AbgDAEDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 00:03:50 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:46067 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726375AbgDAEDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 00:03:50 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48sXcg2v0Nz9sR4;
+        Wed,  1 Apr 2020 15:03:47 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1585713827;
+        bh=2MZpAJNorevh5i7bfgHRJn+E5L04InxjRRGMpB1Sl/Q=;
+        h=Date:From:To:Cc:Subject:From;
+        b=kI4C21RLGz3qC1SCefIFV5/jslKyAAfrEFVX/rORopfM9nNp5W6TewDPV6LoDFlVh
+         IkJNP1Fc/Yz6pHb7xB+LinuNjVCL4Vaq9AQvhDU1skaE8rsRhJrJ5q1VNck4SIGJn/
+         3IfUdTx24fXl9sdl4TG3fNQt7rZh/ha3bnTPB1wpWzXJG0k9FGxlCT/y3DKhwl+PnT
+         h+s7ITBUBZY3Mkj3cT0+lfK74dJJCeO6cdRcWNOoBJq1aLY10TUQxvybz4Tn5KOZgJ
+         0TkzVqFHG68AsxXT00GXdPfnpiAdzgFyOxWt7LpYENt9quyOtkDZ2io0pLmxXwlPHF
+         Hf+f3qubqvWDw==
+Date:   Wed, 1 Apr 2020 15:03:45 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the gpio tree with Linus' tree
+Message-ID: <20200401150345.248e4610@canb.auug.org.au>
 MIME-Version: 1.0
-Message-ID: <20200401040021.GC56958@magnolia>
-Date:   Wed, 1 Apr 2020 04:00:21 +0000 (UTC)
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH V5 00/12] Enable per-file/per-directory DAX operations V5
-References: <20200227052442.22524-1-ira.weiny@intel.com>
- <20200305155144.GA5598@lst.de>
- <20200309170437.GA271052@iweiny-DESK2.sc.intel.com>
- <20200311033614.GQ1752567@magnolia> <20200311062952.GA11519@lst.de>
- <CAPcyv4h9Xg61jk=Uq17xC6AGj9yOSAJnCaTzHcfBZwOVdRF9dw@mail.gmail.com>
- <20200316095224.GF12783@quack2.suse.cz> <20200316095509.GA13788@lst.de>
-In-Reply-To: <20200316095509.GA13788@lst.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9577 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 mlxscore=0
- adultscore=0 phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004010035
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9577 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 adultscore=0
- clxscore=1011 phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
- suspectscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004010035
+Content-Type: multipart/signed; boundary="Sig_//3skiLYk4Rv9C=C0HBmwCYP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 10:55:09AM +0100, Christoph Hellwig wrote:
-> On Mon, Mar 16, 2020 at 10:52:24AM +0100, Jan Kara wrote:
-> > > This sounds reasonable to me.
-> > > 
-> > > As for deprecating the mount option, I think at a minimum it needs to
-> > > continue be accepted as an option even if it is ignored to not break
-> > > existing setups.
-> > 
-> > Agreed. But that's how we usually deprecate mount options. Also I'd say
-> > that statx() support for reporting DAX state and some education of
-> > programmers using DAX is required before we deprecate the mount option
-> > since currently applications check 'dax' mount option to determine how much
-> > memory they need to set aside for page cache before they consume everything
-> > else on the machine...
-> 
-> I don't even think we should deprecate it.  It isn't painful to maintain
-> and actually useful for testing.  Instead we should expand it into a
-> tristate:
-> 
->   dax=off
->   dax=flag
->   dax=always
-> 
-> where the existing "dax" option maps to "dax=always" and nodax maps
-> to "dax=off". and dax=flag becomes the default for DAX capable devices.
+--Sig_//3skiLYk4Rv9C=C0HBmwCYP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-That works for me.  In summary:
+Hi all,
 
- - Applications must call statx to discover the current S_DAX state.
+Today's linux-next merge of the gpio tree got a conflict in:
 
- - There exists an advisory file inode flag FS_XFLAG_DAX that can be
-   changed on files that have no blocks allocated to them.  Changing
-   this flag does not necessarily change the S_DAX state immediately
-   but programs can query the S_DAX state via statx.
+  drivers/gpio/gpiolib.c
 
-   If FS_XFLAG_DAX is set and the fs is on pmem then it will always
-   enable S_DAX at inode load time; if FS_XFLAG_DAX is not set, it will
-   never enable S_DAX.  Unless overridden...
+between commit:
 
- - There exists a dax= mount option.  dax=off means "never set S_DAX,
-   ignore FS_XFLAG_DAX"; dax=always means "always set S_DAX (at least on
-   pmem), ignore FS_XFLAG_DAX"; and dax=iflag means "follow FS_XFLAG_DAX"
-   and is the default.  "dax" by itself means "dax=always".  "nodax"
-   means "dax=off".
+  8959b304c706 ("gpiolib: Fix irq_disable() semantics")
 
- - There exists an advisory directory inode flag FS_XFLAG_DAX that can
-   be changed at any time.  The flag state is copied into any files or
-   subdirectories created within that directory.  If programs require
-   that file access runs in S_DAX mode, they'll have to create those
-   files themselves inside a directory with FS_XFLAG_DAX set, or mount
-   the fs with dax=always.
+from Linus' tree and commit:
 
-Ok?  Let's please get this part finished for 5.8, then we can get back
-to arguing about fs-rmap and reflink and dax and whatnot.
+  a0b66a73785c ("gpio: Rename variable in core APIs")
 
---D
+from the gpio tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpio/gpiolib.c
+index 00fb91feba70,c2cc437ce831..000000000000
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@@ -2304,25 -2443,18 +2443,25 @@@ static void gpiochip_irq_enable(struct=20
+ =20
+  static void gpiochip_irq_disable(struct irq_data *d)
+  {
+- 	struct gpio_chip *chip =3D irq_data_get_irq_chip_data(d);
++ 	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+ =20
+ +	/*
+ +	 * Since we override .irq_disable() we need to mimic the
+ +	 * behaviour of __irq_disable() in irq/chip.c.
+ +	 * First call .irq_disable() if it exists, else mimic the
+ +	 * behaviour of mask_irq() which calls .irq_mask() if
+ +	 * it exists.
+ +	 */
+- 	if (chip->irq.irq_disable)
+- 		chip->irq.irq_disable(d);
+- 	else if (chip->irq.chip->irq_mask)
+- 		chip->irq.chip->irq_mask(d);
+- 	gpiochip_disable_irq(chip, d->hwirq);
++ 	if (gc->irq.irq_disable)
++ 		gc->irq.irq_disable(d);
+ -	else
+++	else if (gc->irq.chip->irq_mask)
++ 		gc->irq.chip->irq_mask(d);
++ 	gpiochip_disable_irq(gc, d->hwirq);
+  }
+ =20
+- static void gpiochip_set_irq_hooks(struct gpio_chip *gpiochip)
++ static void gpiochip_set_irq_hooks(struct gpio_chip *gc)
+  {
+- 	struct irq_chip *irqchip =3D gpiochip->irq.chip;
++ 	struct irq_chip *irqchip =3D gc->irq.chip;
+ =20
+  	if (!irqchip->irq_request_resources &&
+  	    !irqchip->irq_release_resources) {
+
+--Sig_//3skiLYk4Rv9C=C0HBmwCYP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6EEqEACgkQAVBC80lX
+0Gzj5Qf/V35Jumgw4SNmy4c9WfSFgoJ71W6XmckTgvel4kX3lI5GdXX6aQ6QNsvu
+Jh9sX+KQBy0aSV2NujIXUw+fPb+XtTB3cYNCCtOnRBupv45aCcpvlgEx2U546yZi
+om14GPC8A/IKhgvSC3fthaPlrSQ9vjeoQtfZRPAo9YsuqZP6my9/uCPpY4UUfKwl
+0LPS9EZtpLMg2cy+ogsfEPmdOgfQvhY5oVeXMJ97YS6MaTb7fz6bveqk15ZXpwDT
+KFY1+fDV5XGqYHALmLfzlls2ogh7TggRf7Y22K+b0BEdybqx3mvsqGHgOVTKYiFM
+eVz0J/kri8GdlkZKpta7RNlOofefYw==
+=DPbo
+-----END PGP SIGNATURE-----
+
+--Sig_//3skiLYk4Rv9C=C0HBmwCYP--
