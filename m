@@ -2,132 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E61DE19AC2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 14:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD8FF19AC44
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 15:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732575AbgDAM5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 08:57:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732507AbgDAM5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 08:57:54 -0400
-Received: from localhost (unknown [122.167.76.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 932C920658;
-        Wed,  1 Apr 2020 12:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585745873;
-        bh=/7CdyfHR1LqxImi2jBxcvtSv+PPjOxapBSIg4fyZ97w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tt1PrdNJE62LxSxlqYUgjLQIfVkELT30zWfC2MfSXjWjYTpZqAkrPeDF7RffkyPit
-         H1Ptvid/MNDvzvBsXUAbCbXcWSvzTL4vR0+1gWz4EJ92c4RxdCCYIGB9zv0YoyUEEw
-         f3V1AoywopTN2aXyHjbEaFWPMizhhX4AZAtltrls=
-Date:   Wed, 1 Apr 2020 18:27:48 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andreas =?iso-8859-1?Q?B=F6hler?= <dev@aboehler.at>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 3/5] usb: xhci: Add support for Renesas controller
- with memory
-Message-ID: <20200401125748.GC72691@vkoul-mobl>
-References: <20200323170601.419809-1-vkoul@kernel.org>
- <20200323170601.419809-4-vkoul@kernel.org>
- <6ea778a7-6d58-6dae-bd65-3a63a945fb97@linux.intel.com>
- <20200326115117.GZ72691@vkoul-mobl>
+        id S1732625AbgDANAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 09:00:43 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:49202 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732545AbgDANAm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 09:00:42 -0400
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 031CufLh009889;
+        Wed, 1 Apr 2020 09:00:23 -0400
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 3023g5cb63-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 09:00:23 -0400
+Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 031D0L7J057278
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Wed, 1 Apr 2020 09:00:21 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Wed, 1 Apr 2020
+ 09:00:20 -0400
+Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Wed, 1 Apr 2020 09:00:20 -0400
+Received: from localhost.localdomain ([10.48.65.12])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 031D0Hmv023654;
+        Wed, 1 Apr 2020 09:00:18 -0400
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>
+CC:     <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <lorenzo.bianconi83@gmail.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH 1/3] iio: kfifo: add iio_device_attach_kfifo_buffer() helper
+Date:   Wed, 1 Apr 2020 15:59:34 +0300
+Message-ID: <20200401125936.6398-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200326115117.GZ72691@vkoul-mobl>
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-01_01:2020-03-31,2020-03-31 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1011 malwarescore=0 phishscore=0 adultscore=0 bulkscore=0
+ impostorscore=0 suspectscore=2 mlxlogscore=815 spamscore=0
+ lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2003020000 definitions=main-2004010117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26-03-20, 17:21, Vinod Koul wrote:
-> On 26-03-20, 13:29, Mathias Nyman wrote:
-> > Hi Vinod
-> > 
-> > On 23.3.2020 19.05, Vinod Koul wrote:
-> > > Some rensas controller like uPD720201 and uPD720202 need firmware to be
-> > > loaded. Add these devices in table and invoke renesas firmware loader
-> > > functions to check and load the firmware into device memory when
-> > > required.
-> > > 
-> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > > ---
-> > >  drivers/usb/host/xhci-pci-renesas.c |  1 +
-> > >  drivers/usb/host/xhci-pci.c         | 29 ++++++++++++++++++++++++++++-
-> > >  drivers/usb/host/xhci-pci.h         |  3 +++
-> > >  3 files changed, 32 insertions(+), 1 deletion(-)
-> > > 
-> > 
-> > It's unfortunate if firmware loading couldn't be initiated in a PCI fixup hook
-> > for this Renesas controller. What was the reason it failed?
-> > 
-> > Nicolas Saenz Julienne just submitted a solution like that for Raspberry Pi 4
-> > where firmware loading is initiated in pci-quirks.c quirk_usb_early_handoff()
-> > 
-> > https://lore.kernel.org/lkml/20200324182812.20420-1-nsaenzjulienne@suse.de
-> > 
-> > Is he doing something different than what was done for the Renesas controller?
-> 
-> I tried and everytime ended up not getting firmware. Though I did not
-> investigate a lot. Christian seemed to have tested sometime back as
-> well.
-> 
-> Another problem is that we dont get driver_data in the quirk and there
-> didnt seem a way to find the firmware name.
-> 
-> > > diff --git a/drivers/usb/host/xhci-pci-renesas.c b/drivers/usb/host/xhci-pci-renesas.c
-> > > index c588277ac9b8..d413d53df94b 100644
-> > > --- a/drivers/usb/host/xhci-pci-renesas.c
-> > > +++ b/drivers/usb/host/xhci-pci-renesas.c
-> > > @@ -336,6 +336,7 @@ static void renesas_fw_callback(const struct firmware *fw,
-> > >  		goto cleanup;
-> > >  	}
-> > >  
-> > > +	xhci_pci_probe(pdev, ctx->id);
-> > >  	return;
-> > 
-> > I haven't looked into this but instead of calling xhci_pci_probe() here in the async fw
-> > loading callback could we just return -EPROBE_DEFER until firmware is loaded when
-> > xhci_pci_probe() is originally called?
-> 
-> Hmm, initially my thinking was how to tell device core to probe again,
-> and then digging up I saw wait_for_device_probe() which can be used, let
-> me try that
+This change adds the iio_device_attach_kfifo_buffer() helper/short-hand,
+which groups the simple routine of allocating a kfifo buffers via
+devm_iio_kfifo_allocate() and calling iio_device_attach_buffer().
 
-Sorry to report back that it doesn't work as planned :(
+The mode_flags parameter is required. The setup_ops parameter is optional.
 
-I modified the code to invoke the request_firmware_nowait() which will load
-the firmware and provide the firmware in callback. Meanwhile return -EPROBE_DEFER.
+This function will be a bit more useful when needing to define multiple
+buffers per IIO device.
 
-After a bit, the core invokes the driver probe again and we hit the
-roadblock. The request_firmware uses devres and allocates resources for
-loading the firmware. The problem is that device core checks for this:
+One requirement [that is more a recommendation] for this helper, is to call
+it after 'indio_dev' has been populated.
 
-bus: 'pci': really_probe: probing driver xhci_hcd_pci with device 0000:01:00.0
-pci 0000:01:00.0: Resources present before probing
+Also, one consequence related to using this helper is that the resource
+management of the buffer will be tied to 'indio_dev->dev'. Previously it
+was open-coded, and each driver does it slightly differently. Most of them
+tied it to the parent device, some of them to 'indio_dev->dev'.
+This shouldn't be a problem, and may be a good idea when adding more
+buffers per-device.
 
-And here the probe fails. In some cases the firmware_callback finishes
-before this and we can probe again, but that is not very reliable.
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+ drivers/iio/buffer/kfifo_buf.c | 37 ++++++++++++++++++++++++++++++++++
+ include/linux/iio/kfifo_buf.h  |  4 ++++
+ 2 files changed, 41 insertions(+)
 
-I tested another way to use request_firmware() (sync version) and then
-load the firmware in probe and load. The request is done only for
-renesas devices if they dont have firmware already running.
-So rest of the devices wont have any impact.
-
-Now should we continue this way in the patchset or move to sync version.
-Am okay either way.
-
+diff --git a/drivers/iio/buffer/kfifo_buf.c b/drivers/iio/buffer/kfifo_buf.c
+index 3150f8ab984b..05b7c5fc6f1d 100644
+--- a/drivers/iio/buffer/kfifo_buf.c
++++ b/drivers/iio/buffer/kfifo_buf.c
+@@ -228,4 +228,41 @@ void devm_iio_kfifo_free(struct device *dev, struct iio_buffer *r)
+ }
+ EXPORT_SYMBOL(devm_iio_kfifo_free);
+ 
++/**
++ * iio_device_attach_kfifo_buffer - Allocate a kfifo buffer & attach it to an IIO device
++ * @indio_dev: The device the buffer should be attached to
++ * @mode_flags: The mode flags for this buffer (INDIO_BUFFER_SOFTWARE and/or
++ *		INDIO_BUFFER_TRIGGERED).
++ * @setup_ops: The setup_ops required to configure the HW part of the buffer (optional)
++ *
++ * This function allocates a kfifo buffer via devm_iio_kfifo_allocate() and
++ * attaches it to the IIO device via iio_device_attach_buffer().
++ * This is meant to be a bit of a short-hand/helper function as many driver
++ * seem to do this.
++ */
++int iio_device_attach_kfifo_buffer(struct iio_dev *indio_dev,
++				   int mode_flags,
++				   const struct iio_buffer_setup_ops *setup_ops)
++{
++	struct iio_buffer *buffer;
++
++	if (mode_flags)
++		mode_flags &= kfifo_access_funcs.modes;
++
++	if (!mode_flags)
++		return -EINVAL;
++
++	buffer = devm_iio_kfifo_allocate(&indio_dev->dev);
++	if (!buffer)
++		return -ENOMEM;
++
++	iio_device_attach_buffer(indio_dev, buffer);
++
++	indio_dev->modes |= mode_flags;
++	indio_dev->setup_ops = setup_ops;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(iio_device_attach_kfifo_buffer);
++
+ MODULE_LICENSE("GPL");
+diff --git a/include/linux/iio/kfifo_buf.h b/include/linux/iio/kfifo_buf.h
+index 764659e01b68..2363a931be14 100644
+--- a/include/linux/iio/kfifo_buf.h
++++ b/include/linux/iio/kfifo_buf.h
+@@ -11,4 +11,8 @@ void iio_kfifo_free(struct iio_buffer *r);
+ struct iio_buffer *devm_iio_kfifo_allocate(struct device *dev);
+ void devm_iio_kfifo_free(struct device *dev, struct iio_buffer *r);
+ 
++int iio_device_attach_kfifo_buffer(struct iio_dev *indio_dev,
++				   int mode_flags,
++				   const struct iio_buffer_setup_ops *setup_ops);
++
+ #endif
 -- 
-~Vinod
+2.17.1
+
