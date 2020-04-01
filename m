@@ -2,88 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 427B019A94F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9603819A95D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:18:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732158AbgDAKRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 06:17:39 -0400
-Received: from mail-vk1-f201.google.com ([209.85.221.201]:55710 "EHLO
-        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732006AbgDAKRg (ORCPT
+        id S1732323AbgDAKSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:18:24 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42598 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732214AbgDAKRs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:17:36 -0400
-Received: by mail-vk1-f201.google.com with SMTP id t206so7915820vke.22
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 03:17:35 -0700 (PDT)
+        Wed, 1 Apr 2020 06:17:48 -0400
+Received: by mail-ot1-f65.google.com with SMTP id z5so25088922oth.9;
+        Wed, 01 Apr 2020 03:17:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=bqlNdECR01eLEMLPFpBUwIDjw5hjyGCsJb8UrwtQ8N8=;
-        b=Gucp0oNn9xVn8KAbK0ZLd1fAjM5CHK9gumkh0dBMYtFotegI2VGiYKMx32uOq5f0w6
-         NAGqlNatFyjvpuV/ekiRw5vfJL+xqBjo6bZp6B3F7aOThN8U0oULLFmpocs/RgvN087x
-         6OtLMMcvT9isYkeW1FpWFeJO1cdDSSf29OFdcTIbdZMAanOz8/ihu/h4HmZJMmWqS+R0
-         3eOfsNVxBZqsCNsom30f5DrCs+1pDnJslKiQbZLU66qf916m9WPh4QUTXcX2WJ87vV6p
-         HOiUV1xfXChNBlBnC1UyUUqEcd9Nfyb9WkPu04BoUtNwzYwv6dQgRTqwu+AkLAyzPFqv
-         jUSQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mBqh6Ypzy/m7vLTiZswTsYxCopoXAki18qhKtEVtcHw=;
+        b=j9VTKm54KKKt/Dc89MScCIynRAjGob+IOpTDusREKFmLssJHtzxUaQ0vJSpk2LkbQo
+         RoqogApLn002HQYkwOI+8MUNkHJoQLfuUgrQX8mzCHVgOIgvb41wFLKX6npdhu2Ej9W7
+         DsFRUxac8MBHPv74ccBLZLc8L5zF8mz9Dtpy+V1+j7wG4agEjEx6gD7NN/k5T70cz5tx
+         LdPLY59MiE2TNown13V2+moLjaFSwCGzLL4QLtoB9nGJn1vYuan+pTfh0vIdMP8lWCMO
+         id68Pu7eaCgp93Y/2w/jJjRECg83F/sueLAuH5PNppYp6kQBNJsokNF1zd/oe9BabCb/
+         vdaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=bqlNdECR01eLEMLPFpBUwIDjw5hjyGCsJb8UrwtQ8N8=;
-        b=jLV6oiafYLEjc1toa4pXMBJbaeCJk8HUik6I4rMaS0ABgTcuOahffM+2eSaJE564L6
-         w3gENXaMIBDj45fKOJNSm8TE45wg2d0OPfZnlhMG0KWf92zvlunyeszjzHX+q9eX92vG
-         /CkoyahWbyVOiao14pgFpvghT8DMf9ZubVejCX/XHspvlRsR+EyBgitVm6D4oIIcb4hJ
-         JJX7bdEmX5zOc18h8iuMiX5ogWFk8AypYk+eKM974iELiZ1Rpsst9jthdfIYS+U4KUw1
-         4HbBxX126Ffoe3WceAJpj3rZ+NBy9vpP89OBupHky7r5bDjKuERt9WTHsCNYFBkcInzb
-         iQgA==
-X-Gm-Message-State: AGi0Pua9pOpkzEZthYHGncogqdUanpzxAZnherBMLwz+BKl8b88vSun9
-        pQzr++MVIzzAa+RXWbNtbyoVNPGTkw==
-X-Google-Smtp-Source: APiQypIRQDZYQx4QlK0W0hkuZ1CH69h1mXN5TDxQYxV4bkc2PmVzH03xsWjRMdXETX7ZOc5wF/+ScgTH9g==
-X-Received: by 2002:a67:647:: with SMTP id 68mr14157321vsg.23.1585736255163;
- Wed, 01 Apr 2020 03:17:35 -0700 (PDT)
-Date:   Wed,  1 Apr 2020 12:17:14 +0200
-Message-Id: <20200401101714.44781-1-elver@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
-Subject: [PATCH] checkpatch: Warn about data_race() without comment
-From:   Marco Elver <elver@google.com>
-To:     elver@google.com
-Cc:     paulmck@kernel.org, dvyukov@google.com, glider@google.com,
-        andreyknvl@google.com, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, apw@canonical.com, joe@perches.com,
-        Will Deacon <will@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mBqh6Ypzy/m7vLTiZswTsYxCopoXAki18qhKtEVtcHw=;
+        b=Geq9KhjYGCbazteZ6TTUBE/VxZNP28C6GbLUUs9Dh6eP1ALO62gV45TRWjH2r6HMNd
+         4qeIWmDJRLYhEK2h30cdUs820v+7/Ys8gev5kjaHFPScjvnNpJm4qEdVZ5iN6IMwK7AM
+         XuCP54SfLC/MLbTgYTDI08gl0Fv62cYFmdpTiCg7goJyQQyjp4klaAAHSeG9iI7P3Jm1
+         FzsOHkSpKjRRjgF1eJbPfYtr6ydFLFDzKmEK27yDOwWeQvL6yuuEz57wyYNfJFobyJFj
+         lUM6QPOJ4KrUVVvcKyBrMS6z163Ax40zThT2tp/SKD6FXaGkziK9zGVpC8iesZfgT158
+         Thyg==
+X-Gm-Message-State: ANhLgQ1huu68aOiLskPl222vce30sY9YXzdhpEg5qcWUs2RRs9IutT2/
+        alCZvDyIpiQMEISIorQuYqwZfT2pOq9f1Rs1HXk=
+X-Google-Smtp-Source: ADFU+vsqokJDJD0H6ZgmPXKH4DSiupsaCXOmvU2g/iHPni24FR6vnMyN5PaMcdlJ5f2LTgZ7CQNC8SwxSjEdppzlg38=
+X-Received: by 2002:a9d:306:: with SMTP id 6mr17124994otv.185.1585736267610;
+ Wed, 01 Apr 2020 03:17:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <1585700362-11892-1-git-send-email-wanpengli@tencent.com>
+ <1585700362-11892-2-git-send-email-wanpengli@tencent.com> <6de1a454-60fc-2bda-841d-f9ceb606d4c6@redhat.com>
+In-Reply-To: <6de1a454-60fc-2bda-841d-f9ceb606d4c6@redhat.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Wed, 1 Apr 2020 18:17:35 +0800
+Message-ID: <CANRm+CwkdO0dh2cio_dJjs=8XZMz0JFeT=fw-6sUQH9_3jxsYQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] KVM: LAPIC: Don't need to clear IPI delivery
+ status in x2apic mode
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Warn about applications of data_race() without a comment, to encourage
-documenting the reasoning behind why it was deemed safe.
+On Wed, 1 Apr 2020 at 08:35, Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 01/04/20 02:19, Wanpeng Li wrote:
+> > -             /* No delay here, so we always clear the pending bit */
+> > -             val &= ~(1 << 12);
+> > +             /* Immediately clear Delivery Status in xAPIC mode */
+> > +             if (!apic_x2apic_mode(apic))
+> > +                     val &= ~(1 << 12);
+>
+> This adds a conditional, and the old behavior was valid according to the
+> SDM: "software should not assume the value returned by reading the ICR
+> is the last written value".
 
-Suggested-by: Will Deacon <will@kernel.org>
-Signed-off-by: Marco Elver <elver@google.com>
----
- scripts/checkpatch.pl | 8 ++++++++
- 1 file changed, 8 insertions(+)
+We can queue patch 1/2 separately to catch the merge window. :)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index a63380c6b0d2..48bb9508e300 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -5833,6 +5833,14 @@ sub process {
- 			}
- 		}
- 
-+# check for data_race without a comment.
-+		if ($line =~ /\bdata_race\s*\(/) {
-+			if (!ctx_has_comment($first_line, $linenr)) {
-+				WARN("DATA_RACE",
-+				     "data_race without comment\n" . $herecurr);
-+			}
-+		}
-+
- # check for smp_read_barrier_depends and read_barrier_depends
- 		if (!$file && $line =~ /\b(smp_|)read_barrier_depends\s*\(/) {
- 			WARN("READ_BARRIER_DEPENDS",
--- 
-2.26.0.rc2.310.g2932bb562d-goog
-
+    Wanpeng
