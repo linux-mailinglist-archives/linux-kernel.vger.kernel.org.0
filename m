@@ -2,94 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADCD19B88E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 00:40:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0CC119B893
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 00:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387844AbgDAWkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 18:40:00 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:42436 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387830AbgDAWj7 (ORCPT
+        id S2387893AbgDAWkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 18:40:08 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35878 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387876AbgDAWkH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 18:39:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585780799;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=k+QivSXL5xhLG7M9lhqztlvCh/YTXTzVLqfa0HHMNH8=;
-        b=ids4QEDaAGpfUaMUzyz0WUmWZiPbIb3JzMxH/JRsCO9OAb3KyPGjRlMvX1wELi8mG6dlIS
-        AKImGokl0hHmtx+EOf1vjU1VZJAgeT276WsQfaKade2XzrFZeeGE7TiPVEPdtXY0SZnKaE
-        xIY2c2S4zQUfqoCTH2NgMG91b3CBqKk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-94-qsuGeAdaM0m_TotbpNGXTg-1; Wed, 01 Apr 2020 18:39:56 -0400
-X-MC-Unique: qsuGeAdaM0m_TotbpNGXTg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0915A800D4E;
-        Wed,  1 Apr 2020 22:39:55 +0000 (UTC)
-Received: from w520.home (ovpn-112-162.phx2.redhat.com [10.3.112.162])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 749B389F0A;
-        Wed,  1 Apr 2020 22:39:51 +0000 (UTC)
-Date:   Wed, 1 Apr 2020 16:39:50 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     Cornelia Huck <cohuck@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>, kvm@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] vfio: Ignore -ENODEV when getting MSI cookie
-Message-ID: <20200401163950.61741738@w520.home>
-In-Reply-To: <20200401102724.161712-1-andre.przywara@arm.com>
-References: <20200401102724.161712-1-andre.przywara@arm.com>
+        Wed, 1 Apr 2020 18:40:07 -0400
+Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1jJm1c-0001q4-RA; Thu, 02 Apr 2020 00:39:57 +0200
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id DC17E100D52; Thu,  2 Apr 2020 00:39:55 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: linux-next: build warning after merge of the tip tree
+In-Reply-To: <20200402090051.741905cd@canb.auug.org.au>
+References: <20200330134746.627dcd93@canb.auug.org.au> <20200401085753.617c1636@canb.auug.org.au> <877dyzv6y2.fsf@nanos.tec.linutronix.de> <20200402090051.741905cd@canb.auug.org.au>
+Date:   Thu, 02 Apr 2020 00:39:55 +0200
+Message-ID: <874ku2q18k.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  1 Apr 2020 11:27:24 +0100
-Andre Przywara <andre.przywara@arm.com> wrote:
+Stephen,
 
-> When we try to get an MSI cookie for a VFIO device, that can fail if
-> CONFIG_IOMMU_DMA is not set. In this case iommu_get_msi_cookie() returns
-> -ENODEV, and that should not be fatal.
-> 
-> Ignore that case and proceed with the initialisation.
-> 
-> This fixes VFIO with a platform device on the Calxeda Midway (no MSIs).
-> 
-> Fixes: f6810c15cf973f ("iommu/arm-smmu: Clean up early-probing workarounds")
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
-> Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> ---
->  drivers/vfio/vfio_iommu_type1.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index 9fdfae1cb17a..85b32c325282 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -1787,7 +1787,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
->  
->  	if (resv_msi) {
->  		ret = iommu_get_msi_cookie(domain->domain, resv_msi_base);
-> -		if (ret)
-> +		if (ret && ret != -ENODEV)
->  			goto out_detach;
->  	}
->  
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> On Wed, 01 Apr 2020 12:25:25 +0200 Thomas Gleixner <tglx@linutronix.de> wrote:
+>> Me neither. Which compiler version?
+>
+> arm-linux-gnueabi-gcc (Debian 9.2.1-21) 9.2.1 20191130
+>
+>> I'm using arm-linux-gnueabi-gcc (Debian 8.3.0-2) 8.3.0 which does not
+>> show that oddity.
+>
+> I assume it is because of the change to arch_futex_atomic_op_inuser()
+> for arm and the compiler is not clever enough to work out that the early
+> return from arch_futex_atomic_op_inuser() means that oldval is not
+> referenced in its caller.
 
-Applied to vfio next branch for v5.7.  Thanks,
+Actually no. It's the ASM part which causes this. With the following
+hack applied it compiles:
 
-Alex
+diff --git a/arch/arm/include/asm/futex.h b/arch/arm/include/asm/futex.h
+index e133da303a98..2c6b40f71009 100644
+--- a/arch/arm/include/asm/futex.h
++++ b/arch/arm/include/asm/futex.h
+@@ -132,7 +132,7 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
+ static inline int
+ arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
+ {
+-	int oldval = 0, ret, tmp;
++	int oldval = 0, ret;
+ 
+ 	if (!access_ok(uaddr, sizeof(u32)))
+ 		return -EFAULT;
+@@ -142,6 +142,7 @@ arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
+ #endif
+ 
+ 	switch (op) {
++#if 0
+ 	case FUTEX_OP_SET:
+ 		__futex_atomic_op("mov	%0, %4", ret, oldval, tmp, uaddr, oparg);
+ 		break;
+@@ -157,6 +158,7 @@ arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
+ 	case FUTEX_OP_XOR:
+ 		__futex_atomic_op("eor	%0, %1, %4", ret, oldval, tmp, uaddr, oparg);
+ 		break;
++#endif
+ 	default:
+ 		ret = -ENOSYS;
+ 	}
 
+but with this is emits the warning:
+
+diff --git a/arch/arm/include/asm/futex.h b/arch/arm/include/asm/futex.h
+index e133da303a98..5191d7b61b83 100644
+--- a/arch/arm/include/asm/futex.h
++++ b/arch/arm/include/asm/futex.h
+@@ -145,6 +145,7 @@ arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
+ 	case FUTEX_OP_SET:
+ 		__futex_atomic_op("mov	%0, %4", ret, oldval, tmp, uaddr, oparg);
+ 		break;
++#if 0
+ 	case FUTEX_OP_ADD:
+ 		__futex_atomic_op("add	%0, %1, %4", ret, oldval, tmp, uaddr, oparg);
+ 		break;
+@@ -157,6 +158,7 @@ arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
+ 	case FUTEX_OP_XOR:
+ 		__futex_atomic_op("eor	%0, %1, %4", ret, oldval, tmp, uaddr, oparg);
+ 		break;
++#endif
+ 	default:
+ 		ret = -ENOSYS;
+ 	}
+
+and the below proves it:
+
+diff --git a/arch/arm/include/asm/futex.h b/arch/arm/include/asm/futex.h
+index e133da303a98..a9151884bc85 100644
+--- a/arch/arm/include/asm/futex.h
++++ b/arch/arm/include/asm/futex.h
+@@ -165,8 +165,13 @@ arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
+ 	preempt_enable();
+ #endif
+ 
+-	if (!ret)
+-		*oval = oldval;
++	/*
++	 * Store unconditionally. If ret != 0 the extra store is the least
++	 * of the worries but GCC cannot figure out that __futex_atomic_op()
++	 * is either setting ret to -EFAULT or storing the old value in
++	 * oldval which results in a uninitialized warning at the call site.
++	 */
++	*oval = oldval;
+ 
+ 	return ret;
+ }
+
+I think that's the right thing to do anyway. The conditional is pointless.
+
+Thanks,
+
+        tglx
