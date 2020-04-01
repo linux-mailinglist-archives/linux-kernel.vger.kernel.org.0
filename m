@@ -2,225 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE3A919A699
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:52:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FBF919A6A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:52:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732027AbgDAHwF convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 1 Apr 2020 03:52:05 -0400
-Received: from mga02.intel.com ([134.134.136.20]:62820 "EHLO mga02.intel.com"
+        id S1732067AbgDAHwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 03:52:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731680AbgDAHwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 03:52:04 -0400
-IronPort-SDR: F6CSRIpF5bD5ZQ9zrep8BW6lnpHHABPR5cJHsIIXzKF6HvB2zwKWzVqh/+xWk9GA157pV6i0pT
- DiNhhugw7Ikg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 00:52:04 -0700
-IronPort-SDR: qjalB6i8rzSE1cNafZFtUEwCxr3AD+Ct8Vt4cK9JUv1EJgQwpxJlbROb+h7ao7o/id78UvK6qb
- ahaUhs5mco5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,330,1580803200"; 
-   d="scan'208";a="359774634"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by fmsmga001.fm.intel.com with ESMTP; 01 Apr 2020 00:52:03 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 1 Apr 2020 00:52:03 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 1 Apr 2020 00:52:03 -0700
-Received: from shsmsx101.ccr.corp.intel.com (10.239.4.153) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Wed, 1 Apr 2020 00:52:03 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.225]) by
- SHSMSX101.ccr.corp.intel.com ([169.254.1.129]) with mapi id 14.03.0439.000;
- Wed, 1 Apr 2020 15:51:59 +0800
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>
-CC:     "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Tian, Jun J" <jun.j.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wu, Hao" <hao.wu@intel.com>
-Subject: RE: [PATCH v1 8/8] vfio/type1: Add vSVA support for IOMMU-backed
- mdevs
-Thread-Topic: [PATCH v1 8/8] vfio/type1: Add vSVA support for IOMMU-backed
- mdevs
-Thread-Index: AQHWAEUdm3FJ38v7KEeZ+HXvm2TTUKhgpNwAgANOv6A=
-Date:   Wed, 1 Apr 2020 07:51:58 +0000
-Message-ID: <A2975661238FB949B60364EF0F2C25743A21D71A@SHSMSX104.ccr.corp.intel.com>
-References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
- <1584880325-10561-9-git-send-email-yi.l.liu@intel.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D19D7FFA90@SHSMSX104.ccr.corp.intel.com>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7FFA90@SHSMSX104.ccr.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1731965AbgDAHwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 03:52:36 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D9B820714;
+        Wed,  1 Apr 2020 07:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585727555;
+        bh=xTZ1OJ20xMgG+0vVGSltVt3WFRlDkw4aL+hVvsTKQ+A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qjvEo/RjEuoL33ywUci1YxjcVGDPHNgj2NkUayyMMPTjyRKmSYnexO5Mtf8XxcTxN
+         ysD4ErV/VPwrQGT3cssvMTWA3zkmZLJcmzlNMm9DjS7Dg4DOJvSjt1efEi1T9/qqph
+         fWMkja3ZOeg523YRnU6wikjHTAFm+eBjLmStcK30=
+Date:   Wed, 1 Apr 2020 09:52:33 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] USB: early: Handle AMD's spec-compliant identifiers, too
+Message-ID: <20200401075233.GB2020503@kroah.com>
+References: <20200401074619.8024-1-jannh@google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200401074619.8024-1-jannh@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Tian, Kevin <kevin.tian@intel.com>
-> Sent: Monday, March 30, 2020 9:19 PM
-> To: Liu, Yi L <yi.l.liu@intel.com>; alex.williamson@redhat.com;
-> Subject: RE: [PATCH v1 8/8] vfio/type1: Add vSVA support for IOMMU-backed
-> mdevs
+On Wed, Apr 01, 2020 at 09:46:19AM +0200, Jann Horn wrote:
+> This fixes a bug that causes the USB3 early console to freeze after
+> printing a single line on AMD machines because it can't parse the
+> Transfer TRB properly.
 > 
-> > From: Liu, Yi L <yi.l.liu@intel.com>
-> > Sent: Sunday, March 22, 2020 8:32 PM
-> >
-> > From: Liu Yi L <yi.l.liu@intel.com>
-> >
-> > Recent years, mediated device pass-through framework (e.g. vfio-mdev)
-> > are used to achieve flexible device sharing across domains (e.g. VMs).
+> The spec at
+> https://www.intel.com/content/dam/www/public/us/en/documents/technical-specifications/extensible-host-controler-interface-usb-xhci.pdf
+> says in section "4.5.1 Device Context Index" that the Context Index,
+> also known as Endpoint ID according to
+> section "1.6 Terms and Abbreviations", is normally computed as
+> `DCI = (Endpoint Number * 2) + Direction`, which matches the current
+> definitions of XDBC_EPID_OUT and XDBC_EPID_IN.
 > 
-> are->is
-
-got it.
-
-> > Also there are hardware assisted mediated pass-through solutions from
-> > platform vendors. e.g. Intel VT-d scalable mode which supports Intel
-> > Scalable I/O Virtualization technology. Such mdevs are called IOMMU-
-> > backed mdevs as there are IOMMU enforced DMA isolation for such mdevs.
-> > In kernel, IOMMU-backed mdevs are exposed to IOMMU layer by aux-
-> > domain concept, which means mdevs are protected by an iommu domain
-> > which is aux-domain of its physical device. Details can be found in
-> > the KVM
+> However, the numbering in a Debug Capability Context data structure is
+> supposed to be different:
+> Section "7.6.3.2 Endpoint Contexts and Transfer Rings" explains that a
+> Debug Capability Context data structure has the endpoints mapped to indices
+> 0 and 1.
 > 
-> "by an iommu domain which is auxiliary to the domain that the kernel driver
-> primarily uses for DMA API"
-
-yep.
-
-> > presentation from Kevin Tian. IOMMU-backed equals to IOMMU-capable.
-> >
-> > https://events19.linuxfoundation.org/wp-content/uploads/2017/12/\
-> > Hardware-Assisted-Mediated-Pass-Through-with-VFIO-Kevin-Tian-Intel.pdf
-> >
-> > This patch supports NESTING IOMMU for IOMMU-backed mdevs by figuring
-> > out the physical device of an IOMMU-backed mdev and then invoking
-> > IOMMU requests to IOMMU layer with the physical device and the mdev's
-> > aux domain info.
+> Change XDBC_EPID_OUT/XDBC_EPID_IN to the spec-compliant values, add
+> XDBC_EPID_OUT_INTEL/XDBC_EPID_IN_INTEL with Intel's incorrect values, and
+> let xdbc_handle_tx_event() handle both.
 > 
-> "and then calling into the IOMMU layer to complete the vSVA operations on the aux
-> domain associated with that mdev"
-
-got it.
-> >
-> > With this patch, vSVA (Virtual Shared Virtual Addressing) can be used
-> > on IOMMU-backed mdevs.
-> >
-> > Cc: Kevin Tian <kevin.tian@intel.com>
-> > CC: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > CC: Jun Tian <jun.j.tian@intel.com>
-> > Cc: Alex Williamson <alex.williamson@redhat.com>
-> > Cc: Eric Auger <eric.auger@redhat.com>
-> > Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-> > ---
-> >  drivers/vfio/vfio_iommu_type1.c | 23 ++++++++++++++++++++---
-> >  1 file changed, 20 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/vfio/vfio_iommu_type1.c
-> > b/drivers/vfio/vfio_iommu_type1.c index 937ec3f..d473665 100644
-> > --- a/drivers/vfio/vfio_iommu_type1.c
-> > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > @@ -132,6 +132,7 @@ struct vfio_regions {
-> >
-> >  struct domain_capsule {
-> >  	struct iommu_domain *domain;
-> > +	struct vfio_group *group;
-> >  	void *data;
-> >  };
-> >
-> > @@ -148,6 +149,7 @@ static int vfio_iommu_for_each_dev(struct
-> > vfio_iommu *iommu,
-> >  	list_for_each_entry(d, &iommu->domain_list, next) {
-> >  		dc.domain = d->domain;
-> >  		list_for_each_entry(g, &d->group_list, next) {
-> > +			dc.group = g;
-> >  			ret = iommu_group_for_each_dev(g->iommu_group,
-> >  						       &dc, fn);
-> >  			if (ret)
-> > @@ -2347,7 +2349,12 @@ static int vfio_bind_gpasid_fn(struct device
-> > *dev, void *data)
-> >  	struct iommu_gpasid_bind_data *gbind_data =
-> >  		(struct iommu_gpasid_bind_data *) dc->data;
-> >
-> > -	return iommu_sva_bind_gpasid(dc->domain, dev, gbind_data);
-> > +	if (dc->group->mdev_group)
-> > +		return iommu_sva_bind_gpasid(dc->domain,
-> > +			vfio_mdev_get_iommu_device(dev), gbind_data);
-> > +	else
-> > +		return iommu_sva_bind_gpasid(dc->domain,
-> > +						dev, gbind_data);
-> >  }
-> >
-> >  static int vfio_unbind_gpasid_fn(struct device *dev, void *data) @@
-> > -2356,8 +2363,13 @@ static int vfio_unbind_gpasid_fn(struct device
-> > *dev, void *data)
-> >  	struct iommu_gpasid_bind_data *gbind_data =
-> >  		(struct iommu_gpasid_bind_data *) dc->data;
-> >
-> > -	return iommu_sva_unbind_gpasid(dc->domain, dev,
-> > +	if (dc->group->mdev_group)
-> > +		return iommu_sva_unbind_gpasid(dc->domain,
-> > +					vfio_mdev_get_iommu_device(dev),
-> >  					gbind_data->hpasid);
-> > +	else
-> > +		return iommu_sva_unbind_gpasid(dc->domain, dev,
-> > +						gbind_data->hpasid);
-> >  }
-> >
-> >  /**
-> > @@ -2429,7 +2441,12 @@ static int vfio_cache_inv_fn(struct device
-> > *dev, void *data)
-> >  	struct iommu_cache_invalidate_info *cache_inv_info =
-> >  		(struct iommu_cache_invalidate_info *) dc->data;
-> >
-> > -	return iommu_cache_invalidate(dc->domain, dev, cache_inv_info);
-> > +	if (dc->group->mdev_group)
-> > +		return iommu_cache_invalidate(dc->domain,
-> > +			vfio_mdev_get_iommu_device(dev), cache_inv_info);
-> > +	else
-> > +		return iommu_cache_invalidate(dc->domain,
-> > +						dev, cache_inv_info);
-> >  }
+> I have verified that with this patch applied, the USB3 early console works
+> on both an Intel and an AMD machine.
 > 
-> possibly above could be simplified, e.g.
+> Fixes: aeb9dd1de98c ("usb/early: Add driver for xhci debug capability")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>  drivers/usb/early/xhci-dbc.c |  8 ++++----
+>  drivers/usb/early/xhci-dbc.h | 18 ++++++++++++++++--
+>  2 files changed, 20 insertions(+), 6 deletions(-)
 > 
-> static struct device *vfio_get_iommu_device(struct vfio_group *group,
-> 	struct device *dev)
-> {
-> 	if  (group->mdev_group)
-> 		return vfio_mdev_get_iommu_device(dev);
-> 	else
-> 		return dev;
-> }
+> diff --git a/drivers/usb/early/xhci-dbc.c b/drivers/usb/early/xhci-dbc.c
+> index cac991173ac0..5a462a1d1896 100644
+> --- a/drivers/usb/early/xhci-dbc.c
+> +++ b/drivers/usb/early/xhci-dbc.c
+> @@ -728,19 +728,19 @@ static void xdbc_handle_tx_event(struct xdbc_trb *evt_trb)
+>  	case COMP_USB_TRANSACTION_ERROR:
+>  	case COMP_STALL_ERROR:
+>  	default:
+> -		if (ep_id == XDBC_EPID_OUT)
+> +		if (ep_id == XDBC_EPID_OUT || ep_id == XDBC_EPID_OUT_INTEL)
+>  			xdbc.flags |= XDBC_FLAGS_OUT_STALL;
+> -		if (ep_id == XDBC_EPID_IN)
+> +		if (ep_id == XDBC_EPID_IN || ep_id == XDBC_EPID_IN_INTEL)
+>  			xdbc.flags |= XDBC_FLAGS_IN_STALL;
+>  
+>  		xdbc_trace("endpoint %d stalled\n", ep_id);
+>  		break;
+>  	}
+>  
+> -	if (ep_id == XDBC_EPID_IN) {
+> +	if (ep_id == XDBC_EPID_IN || ep_id == XDBC_EPID_IN_INTEL) {
+>  		xdbc.flags &= ~XDBC_FLAGS_IN_PROCESS;
+>  		xdbc_bulk_transfer(NULL, XDBC_MAX_PACKET, true);
+> -	} else if (ep_id == XDBC_EPID_OUT) {
+> +	} else if (ep_id == XDBC_EPID_OUT || ep_id == XDBC_EPID_OUT_INTEL) {
+>  		xdbc.flags &= ~XDBC_FLAGS_OUT_PROCESS;
+>  	} else {
+>  		xdbc_trace("invalid endpoint id %d\n", ep_id);
+> diff --git a/drivers/usb/early/xhci-dbc.h b/drivers/usb/early/xhci-dbc.h
+> index 673686eeddd7..6e2b7266a695 100644
+> --- a/drivers/usb/early/xhci-dbc.h
+> +++ b/drivers/usb/early/xhci-dbc.h
+> @@ -120,8 +120,22 @@ struct xdbc_ring {
+>  	u32			cycle_state;
+>  };
+>  
+> -#define XDBC_EPID_OUT		2
+> -#define XDBC_EPID_IN		3
+> +/*
+> + * These are the "Endpoint ID" (also known as "Context Index") values for the
+> + * OUT Transfer Ring and the IN Transfer Ring of a Debug Capability Context data
+> + * structure.
+> + * According to the "eXtensible Host Controller Interface for Universal Serial
+> + * Bus (xHCI)" specification, section "7.6.3.2 Endpoint Contexts and Transfer
+> + * Rings", these should be 0 and 1, and those are the values AMD machines give
+> + * you; but Intel machines seem to use the formula from section "4.5.1 Device
+> + * Context Index", which is supposed to be used for the Device Context only.
+> + * Luckily the values from Intel don't overlap with those from AMD, so we can
+> + * just test for both.
+> + */
+> +#define XDBC_EPID_OUT		0
+> +#define XDBC_EPID_IN		1
+> +#define XDBC_EPID_OUT_INTEL	2
+> +#define XDBC_EPID_IN_INTEL	3
+>  
+>  struct xdbc_state {
+>  	u16			vendor;
+> -- 
+> 2.26.0.rc2.310.g2932bb562d-goog
 > 
-> Then use it to replace plain 'dev' in all three places.
 
-yes, better for reading. thanks.
+Thanks for this, I'll queue it up after 5.7-rc1 is out.
 
-Regards,
-Yi Liu
+greg k-h
