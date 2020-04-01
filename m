@@ -2,203 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CD0919AB8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 14:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C8D19AB88
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 14:20:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732492AbgDAMUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 08:20:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46232 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732169AbgDAMUg (ORCPT
+        id S1732370AbgDAMUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 08:20:24 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37254 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732169AbgDAMUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 08:20:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=h43kxp2WKc0wYft7FpSc0v72+8FHHE+TenKvMgFBfeU=; b=VkRyrz6EwfCDFollnuhikXn8Zt
-        Si+izd5tkkpUlf8ZRvp3qh+if/KWKV1o7Lpv2teeCvRo6AS4/ex8XA8Iwwikeea4QeEI2rAvnQ70/
-        dyxYFNr16SdTxTjnsJVqyT2UPO2oijT/A8QW+YVEJRP40rXGadPGBunTdOJuANsvxy6fl8grr0/JE
-        BAllE99dz8kSTIzixg2TwLmhFKfTGHX27owObq5FYoiIYFJYZmXyYulYPs3gh9t//U3WhkAd8HurT
-        ZZS87Xil3/j3A7f81y5FVIvFWn6Y9yEkblrIONEOZytfWbGku7swPijNwk/DlAY9mxSpe0ebwPKiW
-        XSnBVtlw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJcLn-0005zJ-TY; Wed, 01 Apr 2020 12:20:08 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id B47C2301631;
-        Wed,  1 Apr 2020 14:20:04 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7FD8929E261CB; Wed,  1 Apr 2020 14:20:04 +0200 (CEST)
-Date:   Wed, 1 Apr 2020 14:20:04 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Zhenyu Ye <yezhenyu2@huawei.com>
-Cc:     mark.rutland@arm.com, will@kernel.org, catalin.marinas@arm.com,
-        aneesh.kumar@linux.ibm.com, akpm@linux-foundation.org,
-        npiggin@gmail.com, arnd@arndb.de, rostedt@goodmis.org,
-        maz@kernel.org, suzuki.poulose@arm.com, tglx@linutronix.de,
-        yuzhao@google.com, Dave.Martin@arm.com, steven.price@arm.com,
-        broonie@kernel.org, guohanjun@huawei.com, corbet@lwn.net,
-        vgupta@synopsys.com, tony.luck@intel.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org, arm@kernel.org,
-        xiexiangyou@huawei.com, prime.zeng@hisilicon.com,
-        zhangshaokun@hisilicon.com, kuhn.chenqun@huawei.com
-Subject: Re: [RFC PATCH v5 4/8] mm: tlb: Pass struct mmu_gather to
- flush_pmd_tlb_range
-Message-ID: <20200401122004.GE20713@hirez.programming.kicks-ass.net>
-References: <20200331142927.1237-1-yezhenyu2@huawei.com>
- <20200331142927.1237-5-yezhenyu2@huawei.com>
- <20200331151331.GS20730@hirez.programming.kicks-ass.net>
- <fe12101e-8efe-22ad-0258-e6aeafc798cc@huawei.com>
+        Wed, 1 Apr 2020 08:20:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585743622;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WDTPFa8ZURJktfLOzCbfsD4S80g+FQC7hULNIYlAu7Y=;
+        b=YSiPpdaD2AFYP/UwgmCUWPKK59g1V9NyzHfu+50zSp2o/CheNx+h8702hRD8hppTBJO9TZ
+        4P7pM3DIHEg+aEUPd1euyhysdT7K1lDk2sTrjlPaHLLVY2lm4ThbOas3/I3RHQPLLQ143G
+        7Z8tzaCcWp6pT9aTQy0bIPSgd1ASkdQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-246-d6DRQ9hcPvacWHDTPR7XEQ-1; Wed, 01 Apr 2020 08:20:18 -0400
+X-MC-Unique: d6DRQ9hcPvacWHDTPR7XEQ-1
+Received: by mail-wm1-f69.google.com with SMTP id y1so2384649wmj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 05:20:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=WDTPFa8ZURJktfLOzCbfsD4S80g+FQC7hULNIYlAu7Y=;
+        b=Ikm3DJ8W3ooU26NI20vLykUDQ6JPpmCj4YaIxw6rrEgv5i82EyEETI9tzCdPdWnvH+
+         p3wHkGTCdOzYJnfvUPT2i37UkQOPrAf82/AQABB9ZPaLSEWeqgdTVuBs9pjzhTQGpaqd
+         97+hG07rH6y+C1Wg0gkjOwE8MbIThdkM4gGrKNxzTmbLR6Qqew8S+Acow54KHP52OdBY
+         RB+Oq1DQzjm0eCAX60vaKhpNabMZ7+SNO19yTw9Zy5zUtdvAZbxNbkg5racVHGVWjU1l
+         GsQr0wPSefOWlgGnpqV8XeEa78jrkGUQ/3dwvdE2IctIr2R3m3W8sU8vam3NNj3qyrwB
+         /XqQ==
+X-Gm-Message-State: AGi0PuZTuz9oHK9DfIqjkvWLrz5my67hUljXT19Cu2zJbTn4+CfuALU7
+        gWh7CkYKVB/BKpAZ2ZQyu0Ow/RKkTQtBWCMhlP8V+mptdu7YO9YtVvFjHSMC8TC46THM8c+Nw8T
+        0JTKXa3oew12geRcEHQqe6QvI
+X-Received: by 2002:a1c:7216:: with SMTP id n22mr3957796wmc.41.1585743617458;
+        Wed, 01 Apr 2020 05:20:17 -0700 (PDT)
+X-Google-Smtp-Source: APiQypJGm9VynkGDD62kpREjFTDmdSlFXsNNAMFtPN11ojKIAP6F3bbB/QcM2CPWq2x/1zd9n90kRw==
+X-Received: by 2002:a1c:7216:: with SMTP id n22mr3957763wmc.41.1585743617216;
+        Wed, 01 Apr 2020 05:20:17 -0700 (PDT)
+Received: from localhost.localdomain ([151.29.194.179])
+        by smtp.gmail.com with ESMTPSA id s15sm2646131wrt.16.2020.04.01.05.20.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 05:20:16 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 14:20:14 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     John Mathew <john.mathew@unikie.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, mingo@redhat.com, peterz@infradead.org,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, tsbogend@alpha.franken.de,
+        lukas.bulwahn@gmail.com, x86@kernel.org,
+        linux-mips@vger.kernel.org, tglx@linutronix.de,
+        mostafa.chamanara@basemark.com
+Subject: Re: [RFC PATCH 2/3] docs: scheduler: Add scheduler overview
+ documentation
+Message-ID: <20200401122014.GW14300@localhost.localdomain>
+References: <20200401100029.1445-1-john.mathew@unikie.com>
+ <20200401100029.1445-3-john.mathew@unikie.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fe12101e-8efe-22ad-0258-e6aeafc798cc@huawei.com>
+In-Reply-To: <20200401100029.1445-3-john.mathew@unikie.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 04:51:15PM +0800, Zhenyu Ye wrote:
-> On 2020/3/31 23:13, Peter Zijlstra wrote:
+Hi,
 
-> > Instead of trying to retro-fit flush_*tlb_range() to take an mmu_gather
-> > parameter, please replace them out-right.
-> > 
+On 01/04/20 13:00, John Mathew wrote:
+> Add documentation for
+>  -scheduler overview
+>  -scheduler state transtion
+>  -CFS overview
+>  -CFS data structs
 > 
-> I'm sorry that I'm not sure what "replace them out-right" means.  Do you
-> mean that I should define flush_*_tlb_range like this?
+> Add rst for scheduler APIs and modify sched/core.c
+> to add kernel-doc comments.
 > 
-> #define flush_pmd_tlb_range(vma, addr, end)				\
-> 	do {								\
-> 		struct mmu_gather tlb;					\
-> 		tlb_gather_mmu(&tlb, (vma)->vm_mm, addr, end);		\
-> 		tlba.cleared_pmds = 1;					\
-> 		flush_tlb_range(&tlb, vma, addr, end);			\
-> 		tlb_finish_mmu(&tlb, addr, end);			\
-> 	} while (0)
-> 
+> Suggested-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Co-developed-by: Mostafa Chamanara <mostafa.chamanara@basemark.com>
+> Signed-off-by: Mostafa Chamanara <mostafa.chamanara@basemark.com>
+> Signed-off-by: John Mathew <john.mathew@unikie.com>
+> ---
 
-I was thinking to remove flush_*tlb_range() entirely (from generic
-code).
+[...]
 
-And specifically to not use them like the above; instead extend the
-mmu_gather API.
+> +Kernel forwards the tasks to each class based on the scheduling policy assigned
+> +to each task. Tasks assigned with SCHED_NORMAL, SCHED_IDLE and SCHED_BATCH
+> +go to fair_sched_class and tasks assigned with SCHED_RR and SCHED_FIFO go to
+> +rt_sched_class
 
-Specifically, if you wanted to express flush_pmd_tlb_range() in mmu
-gather, you'd write it like:
+I think you also need to mention that SCHED_DEADLINE goes to
+dl_sched_class.
 
-static inline void flush_pmd_tlb_range(struct vm_area_struct *vma, unsigned long addr, unsigned long end)
-{
-	struct mmu_gather tlb;
+[...]
 
-	tlb_gather_mmu(&tlb, vma->vm_mm, addr, end);
-	tlb_start_vma(&tlb, vma);
-	tlb.cleared_pmds = 1;
-	__tlb_adjust_range(addr, end - addr);
-	tlb_end_vma(&tlb, vma);
-	tlb_finish_mmu(&tlb, addr, end);
-}
+> +*poicy:* Value for scheduling policy. The possible values are:
+> +
+> +* SCHED_NORMAL: Regular tasks use this policy.
+> +
+> +* SCHED_BATCH:  Tasks which need to run longer  without pre-emption use this
+> +  policy. Suitable for batch jobs.
+> +* SCHED_IDLE: Policy used by background tasks.
+> +
+> +* SCHED_FIFO & SCHED_RR: These policies for real time tasks. Handled by real
+> +  time scheduler.
 
-Except of course, that the code between start_vma and end_vma is not a
-proper mmu_gather API.
+Here as well. Maybe add also a pointer to related documentation?
 
-So maybe add:
+Documentation/scheduler/sched-deadline.txt
 
-  tlb_flush_{pte,pmd,pud,p4d}_range()
+Thanks,
 
-Then we can write:
+Juri
 
-static inline void flush_XXX_tlb_range(struct vm_area_struct *vma, unsigned long addr, unsigned long end)
-{
-	struct mmu_gather tlb;
-
-	tlb_gather_mmu(&tlb, vma->vm_mm, addr, end);
-	tlb_start_vma(&tlb, vma);
-	tlb_flush_XXX_range(&tlb, addr, end - addr);
-	tlb_end_vma(&tlb, vma);
-	tlb_finish_mmu(&tlb, addr, end);
-}
-
-But when I look at the output of:
-
-  git grep flush_.*tlb_range -- :^arch/
-
-I doubt it makes sense to provide wrappers like the above.
-
-( Also, we should probably remove the (addr, end) arguments from
-tlb_finish_mmu(), Will? )
-
----
-diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index f391f6b500b4..be5452a8efaa 100644
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -511,6 +511,34 @@ static inline void tlb_end_vma(struct mmu_gather *tlb, struct vm_area_struct *vm
- }
- #endif
- 
-+static inline void tlb_flush_pte_range(struct mmu_gather *tlb,
-+				       unsigned long address, unsigned long size)
-+{
-+	__tlb_adjust_range(tlb, address, size);
-+	tlb->cleared_ptes = 1;
-+}
-+
-+static inline void tlb_flush_pmd_range(struct mmu_gather *tlb,
-+				       unsigned long address, unsigned long size)
-+{
-+	__tlb_adjust_range(tlb, address, size);
-+	tlb->cleared_pmds = 1;
-+}
-+
-+static inline void tlb_flush_pud_range(struct mmu_gather *tlb,
-+				       unsigned long address, unsigned long size)
-+{
-+	__tlb_adjust_range(tlb, address, size);
-+	tlb->cleared_puds = 1;
-+}
-+
-+static inline void tlb_flush_p4d_range(struct mmu_gather *tlb,
-+				       unsigned long address, unsigned long size)
-+{
-+	__tlb_adjust_range(tlb, address, size);
-+	tlb->cleared_p4ds = 1;
-+}
-+
- #ifndef __tlb_remove_tlb_entry
- #define __tlb_remove_tlb_entry(tlb, ptep, address) do { } while (0)
- #endif
-@@ -524,8 +552,7 @@ static inline void tlb_end_vma(struct mmu_gather *tlb, struct vm_area_struct *vm
-  */
- #define tlb_remove_tlb_entry(tlb, ptep, address)		\
- 	do {							\
--		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
--		tlb->cleared_ptes = 1;				\
-+		tlb_flush_pte_range(tlb, address, PAGE_SIZE);	\
- 		__tlb_remove_tlb_entry(tlb, ptep, address);	\
- 	} while (0)
- 
-@@ -550,8 +577,7 @@ static inline void tlb_end_vma(struct mmu_gather *tlb, struct vm_area_struct *vm
- 
- #define tlb_remove_pmd_tlb_entry(tlb, pmdp, address)			\
- 	do {								\
--		__tlb_adjust_range(tlb, address, HPAGE_PMD_SIZE);	\
--		tlb->cleared_pmds = 1;					\
-+		tlb_flush_pmd_range(tlb, address, HPAGE_PMD_SIZE);	\
- 		__tlb_remove_pmd_tlb_entry(tlb, pmdp, address);		\
- 	} while (0)
- 
-@@ -565,8 +591,7 @@ static inline void tlb_end_vma(struct mmu_gather *tlb, struct vm_area_struct *vm
- 
- #define tlb_remove_pud_tlb_entry(tlb, pudp, address)			\
- 	do {								\
--		__tlb_adjust_range(tlb, address, HPAGE_PUD_SIZE);	\
--		tlb->cleared_puds = 1;					\
-+		tlb_flush_pud_range(tlb, address, HPAGE_PUD_SIZE);	\
- 		__tlb_remove_pud_tlb_entry(tlb, pudp, address);		\
- 	} while (0)
- 
