@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08E1619B235
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:42:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72EE519AFA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:20:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389471AbgDAQl7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:41:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42426 "EHLO mail.kernel.org"
+        id S1732645AbgDAQUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:20:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389162AbgDAQl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:41:56 -0400
+        id S1732609AbgDAQUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:20:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B314820719;
-        Wed,  1 Apr 2020 16:41:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65AAB214D8;
+        Wed,  1 Apr 2020 16:19:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759315;
-        bh=q1aL0a/VJCfQ9m9whGxRTfJG3Nlqhr4LwQIGM1UqscI=;
+        s=default; t=1585757999;
+        bh=7degDOeCs59BBBBJ9Nmvb+EqwBBNDXJkLd6Ox/OUxjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TwXydI7m8BH4IVMRFd60BmeiWUMtmJUlA0i3JqOWqt6iZLiZk2hVCYFA643ztUZKM
-         SVuTEdLWRdC/3Oe648CDZ8LSVBX64GR3U5t83r7qUz/116wTXrOLwi6vIrRemIG2HN
-         1QtbzphdNXoxQ0TswAFe++WypzU3JhNPExPwAOmI=
+        b=YQdiTo5nqlzwEMeBbrjAOgfUTsRZFxKEbj7BilNjCq5rNzCNtYB+bPoztYVuSHcx/
+         wlK1W1qdf2D4wrgQTcch9LpeGD5ZQoWU6uqJldUZ5Q55FvVthqwdSqMV90Pd8SVgtH
+         8NSaO+d0+vFFWRMV6LIlZRViugV8Nei1W/FvMjRk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 043/148] iio: adc: at91-sama5d2_adc: fix differential channels in triggered mode
+        =?UTF-8?q?Georg=20M=C3=BCller?= <georgmueller@gmx.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 5.5 11/30] platform/x86: pmc_atom: Add Lex 2I385SW to critclk_systems DMI table
 Date:   Wed,  1 Apr 2020 18:17:15 +0200
-Message-Id: <20200401161556.982068569@linuxfoundation.org>
+Message-Id: <20200401161424.569926362@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
+References: <20200401161414.345528747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,54 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Georg Müller <georgmueller@gmx.net>
 
-[ Upstream commit a500f3bd787f8224341e44b238f318c407b10897 ]
+commit 95b31e35239e5e1689e3d965d692a313c71bd8ab upstream.
 
-The differential channels require writing the channel offset register (COR).
-Otherwise they do not work in differential mode.
-The configuration of COR is missing in triggered mode.
+The Lex 2I385SW board has two Intel I211 ethernet controllers. Without
+this patch, only the first port is usable. The second port fails to
+start with the following message:
 
-Fixes: 5e1a1da0f8c9 ("iio: adc: at91-sama5d2_adc: add hw trigger and buffer support")
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+    igb: probe of 0000:02:00.0 failed with error -2
+
+Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+Tested-by: Georg Müller <georgmueller@gmx.net>
+Signed-off-by: Georg Müller <georgmueller@gmx.net>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/iio/adc/at91-sama5d2_adc.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/platform/x86/pmc_atom.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-index 0898f40c2b892..34639ee2d2ce6 100644
---- a/drivers/iio/adc/at91-sama5d2_adc.c
-+++ b/drivers/iio/adc/at91-sama5d2_adc.c
-@@ -339,9 +339,24 @@ static int at91_adc_configure_trigger(struct iio_trigger *trig, bool state)
- 
- 	for_each_set_bit(bit, indio->active_scan_mask, indio->num_channels) {
- 		struct iio_chan_spec const *chan = at91_adc_chan_get(indio, bit);
-+		u32 cor;
- 
- 		if (!chan)
- 			continue;
-+		if (state) {
-+			cor = at91_adc_readl(st, AT91_SAMA5D2_COR);
-+
-+			if (chan->differential)
-+				cor |= (BIT(chan->channel) |
-+					BIT(chan->channel2)) <<
-+					AT91_SAMA5D2_COR_DIFF_OFFSET;
-+			else
-+				cor &= ~(BIT(chan->channel) <<
-+				       AT91_SAMA5D2_COR_DIFF_OFFSET);
-+
-+			at91_adc_writel(st, AT91_SAMA5D2_COR, cor);
-+		}
-+
- 		if (state) {
- 			at91_adc_writel(st, AT91_SAMA5D2_CHER,
- 					BIT(chan->channel));
--- 
-2.20.1
-
+--- a/drivers/platform/x86/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -385,6 +385,14 @@ static const struct dmi_system_id critcl
+ 	},
+ 	{
+ 		/* pmc_plt_clk* - are used for ethernet controllers */
++		.ident = "Lex 2I385SW",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Lex BayTrail"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "2I385SW"),
++		},
++	},
++	{
++		/* pmc_plt_clk* - are used for ethernet controllers */
+ 		.ident = "Beckhoff CB3163",
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "Beckhoff Automation"),
 
 
