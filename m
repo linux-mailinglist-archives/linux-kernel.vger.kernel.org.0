@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AAEE19B0AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 332BA19B288
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387926AbgDAQ2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:28:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54028 "EHLO mail.kernel.org"
+        id S2389785AbgDAQoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:44:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387611AbgDAQ2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:28:38 -0400
+        id S2388037AbgDAQow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:44:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7164320857;
-        Wed,  1 Apr 2020 16:28:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4928A206E9;
+        Wed,  1 Apr 2020 16:44:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758516;
-        bh=TnaegqLutaCcUAWij8JhdcO3zXmQdHFlD4ZdAEXwmjA=;
+        s=default; t=1585759491;
+        bh=jD/A6vXxrAuH6HnI+HbC6Unssbw6b5eYu6JLroXNTL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x2wWylVxEWjvTNkfpYKyIiPc8pt52lc0mFM2uaoEV+1J2zglbY75PO3U5USbLjm5t
-         ubE8MoTLNg5J/De9TUDeHQ6PydVyh1DtWLiDTx052Sm4VH449bhcvp4ti7mlx+LBfA
-         1TL8xWM30CKcUvA581W2PSfjf2x2yMRF5DGPU+NE=
+        b=ooLxLdsJmRKYCWKcDrjpsLjTS9nmoL12F/jA0gkYMfMrfquKBheXPX3M9E6+BFWdo
+         aJZTHaap/xHLMqt7im+bdjz61xXJS57podehb3LuZ9bjI7Rp2Vfix7Eao7wONW8ZRo
+         TPnP1ezGvQ6n0yaBFakBkGHBstnQccJBVbXL+2kw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Hudson <skrll@netbsd.org>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH 4.19 112/116] ARM: bcm2835-rpi-zero-w: Add missing pinctrl name
+        stable@vger.kernel.org, Bryan Gurney <bgurney@redhat.com>,
+        Bernhard Sulzer <micraft.b@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 096/148] scsi: sd: Fix optimal I/O size for devices that change reported values
 Date:   Wed,  1 Apr 2020 18:18:08 +0200
-Message-Id: <20200401161556.458997100@linuxfoundation.org>
+Message-Id: <20200401161602.116006124@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,31 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Hudson <skrll@netbsd.org>
+From: Martin K. Petersen <martin.petersen@oracle.com>
 
-commit 6687c201fdc3139315c2ea7ef96c157672805cdc upstream.
+commit ea697a8bf5a4161e59806fab14f6e4a46dc7dcb0 upstream.
 
-Define the sdhci pinctrl state as "default" so it gets applied
-correctly and to match all other RPis.
+Some USB bridge devices will return a default set of characteristics during
+initialization. And then, once an attached drive has spun up, substitute
+the actual parameters reported by the drive. According to the SCSI spec,
+the device should return a UNIT ATTENTION in case any reported parameters
+change. But in this case the change is made silently after a small window
+where default values are reported.
 
-Fixes: 2c7c040c73e9 ("ARM: dts: bcm2835: Add Raspberry Pi Zero W")
-Signed-off-by: Nick Hudson <skrll@netbsd.org>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Commit a83da8a4509d ("scsi: sd: Optimal I/O size should be a multiple of
+physical block size") validated the reported optimal I/O size against the
+physical block size to overcome problems with devices reporting nonsensical
+transfer sizes. However, this validation did not account for the fact that
+aforementioned devices will return default values during a brief window
+during spin-up. The subsequent change in reported characteristics would
+invalidate the checking that had previously been performed.
+
+Unset a previously configured optimal I/O size should the sanity checking
+fail on subsequent revalidate attempts.
+
+Link: https://lore.kernel.org/r/33fb522e-4f61-1b76-914f-c9e6a3553c9b@gmail.com
+Cc: Bryan Gurney <bgurney@redhat.com>
+Cc: <stable@vger.kernel.org>
+Reported-by: Bernhard Sulzer <micraft.b@gmail.com>
+Tested-by: Bernhard Sulzer <micraft.b@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/bcm2835-rpi-zero-w.dts |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/sd.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/bcm2835-rpi-zero-w.dts
-+++ b/arch/arm/boot/dts/bcm2835-rpi-zero-w.dts
-@@ -118,6 +118,7 @@
- &sdhci {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
-+	pinctrl-names = "default";
- 	pinctrl-0 = <&emmc_gpio34 &gpclk2_gpio43>;
- 	mmc-pwrseq = <&wifi_pwrseq>;
- 	non-removable;
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3212,9 +3212,11 @@ static int sd_revalidate_disk(struct gen
+ 	if (sd_validate_opt_xfer_size(sdkp, dev_max)) {
+ 		q->limits.io_opt = logical_to_bytes(sdp, sdkp->opt_xfer_blocks);
+ 		rw_max = logical_to_sectors(sdp, sdkp->opt_xfer_blocks);
+-	} else
++	} else {
++		q->limits.io_opt = 0;
+ 		rw_max = min_not_zero(logical_to_sectors(sdp, dev_max),
+ 				      (sector_t)BLK_DEF_MAX_SECTORS);
++	}
+ 
+ 	/* Do not exceed controller limit */
+ 	rw_max = min(rw_max, queue_max_hw_sectors(q));
 
 
