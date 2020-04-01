@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A7B319B0DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA88219B402
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388238AbgDAQaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:30:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55656 "EHLO mail.kernel.org"
+        id S2387968AbgDAQys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:54:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388221AbgDAQ3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:29:54 -0400
+        id S2387928AbgDAQ0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:26:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E33A1212CC;
-        Wed,  1 Apr 2020 16:29:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5053C20857;
+        Wed,  1 Apr 2020 16:26:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758594;
-        bh=gjhoOloQBD59gFMnNazCDCwzPSf+vl9lMqmIUM7SoHY=;
+        s=default; t=1585758410;
+        bh=e3SKlr5O2es2C5zQ7d8FF39XYpnHto5JywuVVfDrEBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CILycLgj7Pnq2cXOwiiP1eWi3M/wElQ1Ov751aq2styMQmhvpwQm2GWxfqpUlTm1t
-         9K4IcTIrYKHtBeCDvvkRpOhG40eSxiA6fgAwxFOjM9YuOMywqDKZRDXfRdpBWCARiq
-         +hHKHqHA7hFbdvbwnX7xMOcTUtF9S0Dc8DwLn3q8=
+        b=WeW+Q03xLbE/eJjhgKCZdrWCOO8Mgi2btTFYzcuaSqF9lKP8DWXcV25sqAivAdJHV
+         FeD0J9OOlx82EppnLp0j0PugfM326qCY50Rf8icLPy0TQsjskgGL/FaJqsgLnbaneX
+         SIzwUe7ey//hfV7QyBA1OFnRhwnhcMBj0u7txohA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org,
+        Nicolas Cavallari <nicolas.cavallari@green-communications.fr>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 03/91] ARM: dts: dra7: Add "dma-ranges" property to PCIe RC DT nodes
+Subject: [PATCH 4.19 043/116] mac80211: Do not send mesh HWMP PREQ if HWMP is disabled
 Date:   Wed,  1 Apr 2020 18:16:59 +0200
-Message-Id: <20200401161513.966878867@linuxfoundation.org>
+Message-Id: <20200401161547.978072699@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
-References: <20200401161512.917494101@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
 
-[ Upstream commit 27f13774654ea6bd0b6fc9b97cce8d19e5735661 ]
+[ Upstream commit ba32679cac50c38fdf488296f96b1f3175532b8e ]
 
-'dma-ranges' in a PCI bridge node does correctly set dma masks for PCI
-devices not described in the DT. Certain DRA7 platforms (e.g., DRA76)
-has RAM above 32-bit boundary (accessible with LPAE config) though the
-PCIe bridge will be able to access only 32-bits. Add 'dma-ranges'
-property in PCIe RC DT nodes to indicate the host bridge can access
-only 32 bits.
+When trying to transmit to an unknown destination, the mesh code would
+unconditionally transmit a HWMP PREQ even if HWMP is not the current
+path selection algorithm.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+Link: https://lore.kernel.org/r/20200305140409.12204-1-cavallar@lri.fr
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/dra7.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ net/mac80211/mesh_hwmp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
-index e6a3a94bac693..2cdaa38c114e8 100644
---- a/arch/arm/boot/dts/dra7.dtsi
-+++ b/arch/arm/boot/dts/dra7.dtsi
-@@ -227,6 +227,7 @@
- 				device_type = "pci";
- 				ranges = <0x81000000 0 0          0x03000 0 0x00010000
- 					  0x82000000 0 0x20013000 0x13000 0 0xffed000>;
-+				dma-ranges = <0x02000000 0x0 0x00000000 0x00000000 0x1 0x00000000>;
- 				bus-range = <0x00 0xff>;
- 				#interrupt-cells = <1>;
- 				num-lanes = <1>;
-@@ -263,6 +264,7 @@
- 				device_type = "pci";
- 				ranges = <0x81000000 0 0          0x03000 0 0x00010000
- 					  0x82000000 0 0x30013000 0x13000 0 0xffed000>;
-+				dma-ranges = <0x02000000 0x0 0x00000000 0x00000000 0x1 0x00000000>;
- 				bus-range = <0x00 0xff>;
- 				#interrupt-cells = <1>;
- 				num-lanes = <1>;
+diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
+index 740dc9fa127cd..433d136282ded 100644
+--- a/net/mac80211/mesh_hwmp.c
++++ b/net/mac80211/mesh_hwmp.c
+@@ -1137,7 +1137,8 @@ int mesh_nexthop_resolve(struct ieee80211_sub_if_data *sdata,
+ 		}
+ 	}
+ 
+-	if (!(mpath->flags & MESH_PATH_RESOLVING))
++	if (!(mpath->flags & MESH_PATH_RESOLVING) &&
++	    mesh_path_sel_is_hwmp(sdata))
+ 		mesh_queue_preq(mpath, PREQ_Q_F_START);
+ 
+ 	if (skb_queue_len(&mpath->frame_queue) >= MESH_FRAME_QUEUE_LEN)
 -- 
 2.20.1
 
