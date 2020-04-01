@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2D8C19B21F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C60619B3FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389254AbgDAQlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:41:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41444 "EHLO mail.kernel.org"
+        id S2388241AbgDAQyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:54:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389215AbgDAQlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:41:10 -0400
+        id S2388192AbgDAQ35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:29:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD3A22063A;
-        Wed,  1 Apr 2020 16:41:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D09D20658;
+        Wed,  1 Apr 2020 16:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759269;
-        bh=0jMt3WINiBPNuIRvxABQcYRodklQyBeAydkA/QOnCmQ=;
+        s=default; t=1585758596;
+        bh=ZimnssbihiT/CUcvGjrmtWm5fbdnfn+B5wH6DVTDZMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qpJvyBNwJS4TLD+XI7yYrFQQ5XqQH0RizNEkVTjCW8n+4x7m93ROhqmiJY77iFd93
-         crTPCEWe+3S/1YSKqq4bR2/f51olGXljMv/a5Kz+OL6LOAojkodMCjCDUkwQgJTj2Z
-         kongXNd5z+I/irIHuUFjB7oAZ/tNPJnz6aDZlcJ4=
+        b=Bkl0e3MQ+Y8Injaby/swcnOzVm5JBff5wxo3r9w+iA9QiKz4m/UTEr+R57/Br6ejv
+         LX4K7vsUTsz2vPch3bVShxAwDZS0Gqg1XnYBIrSFCc4UekljvJr7CwTwv771PP5DXh
+         76CDi3/vW4l73UplbuFk0K6sRm/5A2A8KE7X12l0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>,
-        Linus Waleij <linus.walleij@linaro.org>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 027/148] iio: magnetometer: ak8974: Fix negative raw values in sysfs
-Date:   Wed,  1 Apr 2020 18:16:59 +0200
-Message-Id: <20200401161555.115008972@linuxfoundation.org>
+        stable@vger.kernel.org, Thommy Jakobsson <thommyj@gmail.com>,
+        Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 04/91] spi/zynqmp: remove entry that causes a cs glitch
+Date:   Wed,  1 Apr 2020 18:17:00 +0200
+Message-Id: <20200401161514.491966420@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephan Gerhold <stephan@gerhold.net>
+From: Thommy Jakobsson <thommyj@gmail.com>
 
-commit b500c086e4110829a308c23e83a7cdc65b26228a upstream.
+[ Upstream commit 5dd8304981ecffa77bb72b1c57c4be5dfe6cfae9 ]
 
-At the moment, reading from in_magn_*_raw in sysfs tends to return
-large values around 65000, even though the output of ak8974 is actually
-limited to ±32768. This happens because the value is never converted
-to the signed 16-bit integer variant.
+In the public interface for chipselect, there is always an entry
+commented as "Dummy generic FIFO entry" pushed down to the fifo right
+after the activate/deactivate command. The dummy entry is 0x0,
+irregardless if the intention was to activate or deactive the cs. This
+causes the cs line to glitch rather than beeing activated in the case
+when there was an activate command.
 
-Add an explicit cast to s16 to fix this.
+This has been observed on oscilloscope, and have caused problems for at
+least one specific flash device type connected to the qspi port. After
+the change the glitch is gone and cs goes active when intended.
 
-Fixes: 7c94a8b2ee8c ("iio: magn: add a driver for AK8974")
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-Reviewed-by: Linus Waleij <linus.walleij@linaro.org>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The reason why this worked before (except for the glitch) was because
+when sending the actual data, the CS bits are once again set. Since
+most flashes uses mode 0, there is always a half clk period anyway for
+cs to clk active setup time. If someone would rely on timing from a
+chip_select call to a transfer_one, it would fail though.
 
+It is unknown why the dummy entry was there in the first place, git log
+seems to be of no help in this case. The reference manual gives no
+indication of the necessity of this. In fact the lower 8 bits are a
+setup (or hold in case of deactivate) time expressed in cycles. So this
+should not be needed to fulfill any setup/hold timings.
+
+Signed-off-by: Thommy Jakobsson <thommyj@gmail.com>
+Reviewed-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Link: https://lore.kernel.org/r/20200224162643.29102-1-thommyj@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/magnetometer/ak8974.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-zynqmp-gqspi.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/iio/magnetometer/ak8974.c
-+++ b/drivers/iio/magnetometer/ak8974.c
-@@ -563,7 +563,7 @@ static int ak8974_read_raw(struct iio_de
- 		 * We read all axes and discard all but one, for optimized
- 		 * reading, use the triggered buffer.
- 		 */
--		*val = le16_to_cpu(hw_values[chan->address]);
-+		*val = (s16)le16_to_cpu(hw_values[chan->address]);
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index f23f36ebaf3dc..bd3945a5660a5 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -414,9 +414,6 @@ static void zynqmp_qspi_chipselect(struct spi_device *qspi, bool is_high)
  
- 		ret = IIO_VAL_INT;
- 	}
+ 	zynqmp_gqspi_write(xqspi, GQSPI_GEN_FIFO_OFST, genfifoentry);
+ 
+-	/* Dummy generic FIFO entry */
+-	zynqmp_gqspi_write(xqspi, GQSPI_GEN_FIFO_OFST, 0x0);
+-
+ 	/* Manually start the generic FIFO command */
+ 	zynqmp_gqspi_write(xqspi, GQSPI_CONFIG_OFST,
+ 			zynqmp_gqspi_read(xqspi, GQSPI_CONFIG_OFST) |
+-- 
+2.20.1
+
 
 
