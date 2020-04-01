@@ -2,135 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1907619AE10
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 16:37:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B4ED19AE17
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 16:39:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733085AbgDAOhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 10:37:54 -0400
-Received: from pub.regulars.win ([89.163.144.234]:60824 "EHLO pub.regulars.win"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732843AbgDAOhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 10:37:53 -0400
-Subject: Re: [PATCH v3 bpf] kbuild: fix dependencies for DEBUG_INFO_BTF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bacher09.org;
-        s=reg; t=1585751870;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=/k3lR9IcabACG2QOffF9hyiS96WAwdOqQmzY+4DKcNI=;
-        b=hOq2KR0/guhm4i76eN25x8DETEzk7vaB80g1Sk+vTt3LVOJHvqScJ4nBs+MIWs/LaO7uVV
-        LQoQCJ7RzeensOrJSdA7jBgAvzXEJWRIGPg7eZQ1cI02TJKUaaxcpfA3Q3fzWvQLd0eCZg
-        n4ZH+1CFJwxQa1+5wuOz9pDHs/zSWdc=
-To:     keescook@chromium.org
-Cc:     andriin@fb.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jannh@google.com, alexei.starovoitov@gmail.com,
-        daniel@iogearbox.net, kernel-hardening@lists.openwall.com,
-        liuyd.fnst@cn.fujitsu.com, KP Singh <kpsingh@google.com>
-References: <202004010033.A1523890@keescook>
- <20200401142057.453892-1-slava@bacher09.org>
-From:   Slava Bacherikov <slava@bacher09.org>
-Autocrypt: addr=slava@bacher09.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <eba80d4e-a385-1fba-37f9-38888ae91f1e@bacher09.org>
-Date:   Wed, 1 Apr 2020 17:37:49 +0300
+        id S1733089AbgDAOjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 10:39:05 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39384 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732791AbgDAOjE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 10:39:04 -0400
+Received: by mail-io1-f66.google.com with SMTP id c16so11473505iod.6
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 07:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Bc9t147F81S9ClX5m+UTR/FQ0DxmDDOUUXqttzbZFk4=;
+        b=ek/j4h4cEOxaVs5N/K4Vix6Kj+19pTFOE0OdfE++vZf3wyhSCWwyWNnQkxKY6uy5gz
+         aiWG324ajiDbmUXZrJy5q7HFlimLks3AebOUkADIlkr4vCtpwddfmoFyaJh/EcrINSre
+         EWzZniblJgWeSbZTVprPSQ1JubFBt9iyQI67nr1hu7d5tXLnTeC4vZ5YOW0cOlNppRgz
+         a1+WqWyjq4geFceLxVFucpVrjpR2UR8pvySd3bWEFIqSAaXuH8XFBKI5ZUn2n5Ek/Bxu
+         LYceGsbvrqDIDTmvNn/GCt7vg0i8blUdHClnAXiyw+gaEor7M8ohVnC+5X2auiQMizCb
+         PIPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Bc9t147F81S9ClX5m+UTR/FQ0DxmDDOUUXqttzbZFk4=;
+        b=NxXZsmHkOXKk6YGwo87fKc2tH9/12d1W/ue20cn6F5o+pzTYzbG9aTWKBkDx9QfaBG
+         VLpLMJOjSNF0tCvQvcoj5W0FbiFNsv2C+AzXhYPONh3KntE9k7GZrYtDLYi3IQnldhYr
+         wxwyWFPCW/sKQ2nntZtcu3M8cc15Dbe0ZRv5atc9mlC+KXREFkreIIagjmsXiMbc1ALf
+         CX4c91JIyQm8CWFi687C554tKfDP1UWp9NB+MhUJf5h3T6LQ4yv5ZlS9an6pg2dmwssL
+         Ga5rmDA9qvlcDXr4IOn7XjlCZNqxnWKa685o8GZdgzGkxS90QbfEYsPz5O7kpQ7hMrg5
+         Q8WA==
+X-Gm-Message-State: ANhLgQ10ErV4GZ/bc+VwdpW1/QxWDarepFA8Akfv7iy1xV8Y5FsdfnGH
+        MM0ougQubimc1XB0NmWvYKSWav4srfAR7PejCA==
+X-Google-Smtp-Source: ADFU+vuGXZt8wQWVoZ2VWoNJf5+TwdOAKlV7w97TuYjlG5Wv2sb1OQm6NB/CILv6W1uV0ymansc69VCLvsERbMHXiJY=
+X-Received: by 2002:a6b:b512:: with SMTP id e18mr20432245iof.168.1585751942391;
+ Wed, 01 Apr 2020 07:39:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200401142057.453892-1-slava@bacher09.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200325101431.12341-1-andrew.cooper3@citrix.com>
+ <20200331175810.30204-1-andrew.cooper3@citrix.com> <CAMzpN2i6Nf0VDZ82mXyFixN879FC4eZfqe-LzWGkvygcz1gH_Q@mail.gmail.com>
+ <c46bcb6d-4256-2d65-9cd9-33e010846de4@citrix.com> <CAMzpN2gdkmYYbQatFk66QMpiuZSfnUQUVtJ30VYF7nsX_+XVgA@mail.gmail.com>
+ <bdf7995d-2d50-9bb9-8066-6c4ccfaa5b52@citrix.com> <CAMzpN2g0LS5anGc7CXco4pgBHhGzc8hw+shMOg8WEWGsx+BHpg@mail.gmail.com>
+ <b1aa5cdf-b446-17b0-6d31-fa8947f67592@citrix.com>
+In-Reply-To: <b1aa5cdf-b446-17b0-6d31-fa8947f67592@citrix.com>
+From:   Brian Gerst <brgerst@gmail.com>
+Date:   Wed, 1 Apr 2020 10:38:51 -0400
+Message-ID: <CAMzpN2h5u3gbRFfew-BSUH_=E509QirQaopiTBrVQc6Oq2AcvA@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/smpboot: Remove 486-isms from the modern AP boot path
+To:     Andrew Cooper <andrew.cooper3@citrix.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        James Morris <jmorris@namei.org>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Josh Boyer <jwboyer@redhat.com>,
+        Steve Wahl <steve.wahl@hpe.com>,
+        Mike Travis <mike.travis@hpe.com>,
+        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Len Brown <len.brown@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Martin Molnar <martin.molnar.programming@gmail.com>,
+        Pingfan Liu <kernelfans@gmail.com>,
+        jailhouse-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 1, 2020 at 8:14 AM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+>
+> On 01/04/2020 12:39, Brian Gerst wrote:
+> > On Wed, Apr 1, 2020 at 5:22 AM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+> >> On 31/03/2020 23:53, Brian Gerst wrote:
+> >>> On Tue, Mar 31, 2020 at 6:44 PM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+> >>>> On 31/03/2020 23:23, Brian Gerst wrote:
+> >>>>> On Tue, Mar 31, 2020 at 1:59 PM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+> >>>>>> Linux has an implementation of the Universal Start-up Algorithm (MP spec,
+> >>>>>> Appendix B.4, Application Processor Startup), which includes unconditionally
+> >>>>>> writing to the Bios Data Area and CMOS registers.
+> >>>>>>
+> >>>>>> The warm reset vector is only necessary in the non-integrated Local APIC case.
+> >>>>>> UV and Jailhouse already have an opt-out for this behaviour, but blindly using
+> >>>>>> the BDA and CMOS on a UEFI or other reduced hardware system isn't clever.
+> >>>>>>
+> >>>>>> We could make this conditional on the integrated-ness of the Local APIC, but
+> >>>>>> 486-era SMP isn't supported.  Drop the logic completely, tidying up the includ
+> >>>>>> list and header files as appropriate.
+> >>>>>>
 
+> >>>>> You removed x86_platform.legacy.warm_reset in the original patch, but
+> >>>>> that is missing in V2.
+> >>>> Second hunk?  Or are you referring to something different?
+> >>> Removing the warm_reset field from struct x86_legacy_features.
+> >> Ok, but that is still present as the 2nd hunk of the patch.
+> > My apologies, Gmail was hiding that section of the patch because it
+> > was a reply to the original patch.  For future reference, add the
+> > version number to the title when resubmitting a patch (ie. [PATCH
+> > v2]).
+>
+> Erm... is Gmail hiding that too?
+>
+> Lore thinks it is there:
+> https://lore.kernel.org/lkml/CAMzpN2g0LS5anGc7CXco4pgBHhGzc8hw+shMOg8WEWGsx+BHpg@mail.gmail.com/
 
-01.04.2020 17:20, Slava Bacherikov wrotes:
-> Currently turning on DEBUG_INFO_SPLIT when DEBUG_INFO_BTF is also
-> enabled will produce invalid btf file, since gen_btf function in
-> link-vmlinux.sh script doesn't handle *.dwo files.
-> 
-> Enabling DEBUG_INFO_REDUCED will also produce invalid btf file, and
-> using GCC_PLUGIN_RANDSTRUCT with BTF makes no sense.
-> 
-> Signed-off-by: Slava Bacherikov <slava@bacher09.org>
-> Reported-by: Jann Horn <jannh@google.com>
-> Reported-by: Liu Yiding <liuyd.fnst@cn.fujitsu.com>
-> Acked-by: KP Singh <kpsingh@google.com>
-> Acked-by: Andrii Nakryiko <andriin@fb.com>
-> Fixes: e83b9f55448a ("kbuild: add ability to generate BTF type info for vmlinux")
-> ---
->  lib/Kconfig.debug | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index f61d834e02fe..b94227be2d62 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -222,7 +222,9 @@ config DEBUG_INFO_DWARF4
->  
->  config DEBUG_INFO_BTF
->  	bool "Generate BTF typeinfo"
-> -	depends on DEBUG_INFO
-> +	depends on DEBUG_INFO || COMPILE_TEST
-I had to add this, since DEBUG_INFO which depends on:
+Ugh, yes.  I thought it was the title that Gmail threaded on, but it
+must be the In-Reply-To: header.  Sorry for the confusion.
 
-	DEBUG_KERNEL && !COMPILE_TEST
+That said, I think the v1 patch is probably the better way to go (but
+adjusting the comments to include early Pentium-era systems without
+integrated APICs).  Then the decision to drop support for external
+APICs could be a separate patch.
 
-would block DEBUG_INFO_BTF when COMPILE_TEST is turned on.
-
-In that case allyesconfig will emit both:
-
-CONFIG_DEBUG_INFO_BTF=y
-CONFIG_GCC_PLUGIN_RANDSTRUCT=y
-
-
-
-> +	depends on !DEBUG_INFO_SPLIT && !DEBUG_INFO_REDUCED
-> +	depends on !GCC_PLUGIN_RANDSTRUCT || COMPILE_TEST
->  	help
->  	  Generate deduplicated BTF type information from DWARF debug info.
->  	  Turning this on expects presence of pahole tool, which will convert
-> 
+--
+Brian Gerst
