@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82C2419B381
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9526019AFF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:23:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388763AbgDAQg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:36:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35998 "EHLO mail.kernel.org"
+        id S2387532AbgDAQWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:22:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388678AbgDAQgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:36:54 -0400
+        id S1732328AbgDAQWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:22:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38105206F8;
-        Wed,  1 Apr 2020 16:36:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7654212CC;
+        Wed,  1 Apr 2020 16:22:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759013;
-        bh=gUfkbDF/PluihdK8rLT2KkIrhhv+4baYHmKQun28N90=;
+        s=default; t=1585758162;
+        bh=PIZTE+EIbLccDU1QGRu3mlihSm17nSu7NpAVqp4qfqM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oO7OD/qBJbcvc1hOHknHVzqaIhUwp+nOAaw4Rc5QpoJGNx7j3cmWvVqhFs6xRm3Qj
-         f+2+w8ttLqS5pAxcPLNgh5OcFnC2E2xHtNz7zLrFDD46FhFQa3w81pL35xaOmn7gk1
-         jPCXK3eBwVi+3wouJKtAEhlsvLHNaFvpDoxEsuog=
+        b=WlZryx18NzHhbNaUW8Op+UMrw6qqSheOYMKcDXewrRvEIOkNC7dQm9d7ikL7lI4pL
+         2dDb4F1T6qHtYDjhzLSpvgA6KHDbwyHiBbKIUkN7y0ybtQsGn/iwoq/PDcx6Auhq4d
+         PggTX1ZCU44Nls22iRlKFXPvnuEXkDgpMuh5NPLA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 049/102] hsr: set .netnsok flag
+        stable@vger.kernel.org, Arthur Demchenkov <spinal.by@gmail.com>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Roger Quadros <rogerq@ti.com>, Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 5.4 24/27] ARM: dts: N900: fix onenand timings
 Date:   Wed,  1 Apr 2020 18:17:52 +0200
-Message-Id: <20200401161542.271967081@linuxfoundation.org>
+Message-Id: <20200401161433.837031632@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
+References: <20200401161414.352722470@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Arthur Demchenkov <spinal.by@gmail.com>
 
-[ Upstream commit 09e91dbea0aa32be02d8877bd50490813de56b9a ]
+commit 0c5220a3c1242c7a2451570ed5f5af69620aac75 upstream.
 
-The hsr module has been supporting the list and status command.
-(HSR_C_GET_NODE_LIST and HSR_C_GET_NODE_STATUS)
-These commands send node information to the user-space via generic netlink.
-But, in the non-init_net namespace, these commands are not allowed
-because .netnsok flag is false.
-So, there is no way to get node information in the non-init_net namespace.
+Commit a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
+started using DT specified timings for GPMC, and as a result the
+OneNAND stopped working on N900 as we had wrong values in the DT.
+Fix by updating the values to bootloader timings that have been tested
+to be working on Nokia N900 with OneNAND manufacturers: Samsung,
+Numonyx.
 
-Fixes: f421436a591d ("net/hsr: Add support for the High-availability Seamless Redundancy protocol (HSRv0)")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
+Signed-off-by: Arthur Demchenkov <spinal.by@gmail.com>
+Tested-by: Merlijn Wajer <merlijn@wizzup.org>
+Reviewed-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/hsr/hsr_netlink.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/net/hsr/hsr_netlink.c
-+++ b/net/hsr/hsr_netlink.c
-@@ -137,6 +137,7 @@ static struct genl_family hsr_genl_famil
- 	.name = "HSR",
- 	.version = 1,
- 	.maxattr = HSR_A_MAX,
-+	.netnsok = true,
- };
+---
+ arch/arm/boot/dts/omap3-n900.dts |   44 ++++++++++++++++++++++++---------------
+ 1 file changed, 28 insertions(+), 16 deletions(-)
+
+--- a/arch/arm/boot/dts/omap3-n900.dts
++++ b/arch/arm/boot/dts/omap3-n900.dts
+@@ -849,34 +849,46 @@
+ 		compatible = "ti,omap2-onenand";
+ 		reg = <0 0 0x20000>;	/* CS0, offset 0, IO size 128K */
  
- static const struct genl_multicast_group hsr_mcgrps[] = {
++		/*
++		 * These timings are based on CONFIG_OMAP_GPMC_DEBUG=y reported
++		 * bootloader set values when booted with v5.1
++		 * (OneNAND Manufacturer: Samsung):
++		 *
++		 *   cs0 GPMC_CS_CONFIG1: 0xfb001202
++		 *   cs0 GPMC_CS_CONFIG2: 0x00111100
++		 *   cs0 GPMC_CS_CONFIG3: 0x00020200
++		 *   cs0 GPMC_CS_CONFIG4: 0x11001102
++		 *   cs0 GPMC_CS_CONFIG5: 0x03101616
++		 *   cs0 GPMC_CS_CONFIG6: 0x90060000
++		 */
+ 		gpmc,sync-read;
+ 		gpmc,sync-write;
+ 		gpmc,burst-length = <16>;
+ 		gpmc,burst-read;
+ 		gpmc,burst-wrap;
+ 		gpmc,burst-write;
+-		gpmc,device-width = <2>; /* GPMC_DEVWIDTH_16BIT */
+-		gpmc,mux-add-data = <2>; /* GPMC_MUX_AD */
++		gpmc,device-width = <2>;
++		gpmc,mux-add-data = <2>;
+ 		gpmc,cs-on-ns = <0>;
+-		gpmc,cs-rd-off-ns = <87>;
+-		gpmc,cs-wr-off-ns = <87>;
++		gpmc,cs-rd-off-ns = <102>;
++		gpmc,cs-wr-off-ns = <102>;
+ 		gpmc,adv-on-ns = <0>;
+-		gpmc,adv-rd-off-ns = <10>;
+-		gpmc,adv-wr-off-ns = <10>;
+-		gpmc,oe-on-ns = <15>;
+-		gpmc,oe-off-ns = <87>;
++		gpmc,adv-rd-off-ns = <12>;
++		gpmc,adv-wr-off-ns = <12>;
++		gpmc,oe-on-ns = <12>;
++		gpmc,oe-off-ns = <102>;
+ 		gpmc,we-on-ns = <0>;
+-		gpmc,we-off-ns = <87>;
+-		gpmc,rd-cycle-ns = <112>;
+-		gpmc,wr-cycle-ns = <112>;
+-		gpmc,access-ns = <81>;
+-		gpmc,page-burst-access-ns = <15>;
++		gpmc,we-off-ns = <102>;
++		gpmc,rd-cycle-ns = <132>;
++		gpmc,wr-cycle-ns = <132>;
++		gpmc,access-ns = <96>;
++		gpmc,page-burst-access-ns = <18>;
+ 		gpmc,bus-turnaround-ns = <0>;
+ 		gpmc,cycle2cycle-delay-ns = <0>;
+ 		gpmc,wait-monitoring-ns = <0>;
+-		gpmc,clk-activation-ns = <5>;
+-		gpmc,wr-data-mux-bus-ns = <30>;
+-		gpmc,wr-access-ns = <81>;
++		gpmc,clk-activation-ns = <6>;
++		gpmc,wr-data-mux-bus-ns = <36>;
++		gpmc,wr-access-ns = <96>;
+ 		gpmc,sync-clk-ps = <15000>;
+ 
+ 		/*
 
 
