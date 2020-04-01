@@ -2,84 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6AD219B108
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90A3119B3D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:54:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388293AbgDAQbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:31:22 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43356 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388108AbgDAQbN (ORCPT
+        id S2388282AbgDAQyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:54:01 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:60014 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388271AbgDAQbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:31:13 -0400
-Received: by mail-ed1-f68.google.com with SMTP id bd14so612241edb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:31:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=z5x/eD97YYe+UtsUcQWgKp4y9byY3ksGQkwZWyGAQus=;
-        b=lgNDPXVyyGlYNRnOPf26yaHitf7+pqDoEBpBKrgXIVk39xhYHvjpaLoeMlCbYOOH35
-         gqP+GsjwCSbvRLr0P1EYmVavLSzF91XZxVs0nTVil4/5vneArq4Br9GvtOwNnp+K84fp
-         eeYPrrVySgZo3U4828x7nVKYv0l3frhycdpMM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=z5x/eD97YYe+UtsUcQWgKp4y9byY3ksGQkwZWyGAQus=;
-        b=t6DWyxQDuE0JD0RUlZtqeSB19orFX1MMJNm7GknaLLVHHnjX3xxBSHRwr/dKgdHEwX
-         2a2o6bKtbuZQMwpoXggZP7mIVKMMVKCZQ5B3wGwdWYnuG5J8mh/P5ycWoPbpVfPP9/m1
-         aj7v7TkVdYoBXKRtksEBIhkEyAeTlpmGz9yaU2Vwlkq6Kn747lGOraemKxTaZzSyh1XV
-         8CfnmJJ4F7dbzi3WKzJbspjrN/ldIb5f0Mb0kE+y45/2GhULpyS6zqjlOsvaK7viXE2E
-         hnPsRdM4zs60YjvqBjDpNdUOJCNQ88Ip/oN/xec+JkaWX3fU0mJi7VcEP/Mxl2yLWQ4E
-         4tEA==
-X-Gm-Message-State: ANhLgQ23pkZPqCcD83UDq/NlkPkh9OcygxaIt9xzaGnchpf9IuU1FxRv
-        iCZxBvSa1LdpNqGDJEt53Svrvd7D0iBk58H6EL8sYw==
-X-Google-Smtp-Source: ADFU+vuXSy+WOIY1LRGVIsjX6cs7PxeglKy6P6ZhdJuuMLQsyJawyKskAGhJxAk2Obp0S8U3eefwNGGiUrNlnslw5RY=
-X-Received: by 2002:a50:c341:: with SMTP id q1mr22249117edb.247.1585758670968;
- Wed, 01 Apr 2020 09:31:10 -0700 (PDT)
+        Wed, 1 Apr 2020 12:31:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=tp5LnUbTw56wHyeSPmfUWY8H/MgTJs6JAtDGyeNVTzc=; b=tT8N+coBdBtUClsXB6A4SoeJZ
+        hwlRmpnvuLLQSa/T0TnqqrvLH/3DFotSNFVmlrTgyuPyJWsTzc7J7rvDQmCHQePT2kqi/TW2iEcj5
+        6/SJxWwR805Zf7N0TdPtnwWqeneYvKYjC/uPyeirSmOZAqVlWlFlWi9DkJgHv6Rcogd7aqsXgpuPZ
+        0h2ij+q4rAVPqas/VGjPuxuuHCVEEHSEojiIeCk6nGtoLjqdYIJNrmnt8jaBSUYmberLkrqYshzAh
+        npGj/8O0mvkybocAtlGF1CZ1kS7uwJKcHUriIQJfG4BkHDN0tOTzuFY7+pLT+ELJH+KawSG9NihKD
+        9Ds2ZDuAA==;
+Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:60886)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1jJgGc-0006uC-Kf; Wed, 01 Apr 2020 17:31:02 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1jJgGb-0000pz-Ge; Wed, 01 Apr 2020 17:31:01 +0100
+Date:   Wed, 1 Apr 2020 17:31:01 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH] ARM: exynos: update l2c_aux_mask to fix alert message
+Message-ID: <20200401163101.GV25745@shell.armlinux.org.uk>
+References: <b29f34870380093e6268c11d3033033d6def61b7.1585756648.git.guillaume.tucker@collabora.com>
 MIME-Version: 1.0
-References: <CAJfpeguu52VuLAzjFH4rJJ7WYLB5ag8y+r3VMb-0bqH8c-uJUg@mail.gmail.com>
- <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <1445647.1585576702@warthog.procyon.org.uk>
- <2418286.1585691572@warthog.procyon.org.uk> <20200401090445.6t73dt7gz36bv4rh@ws.net.home>
- <2488530.1585749351@warthog.procyon.org.uk> <2488734.1585749502@warthog.procyon.org.uk>
- <CAJfpeguLJcAEgx2JWRNcKMkyFTWB0r4wS6F4fJHK3VHtY=EjXQ@mail.gmail.com> <2590276.1585756914@warthog.procyon.org.uk>
-In-Reply-To: <2590276.1585756914@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 1 Apr 2020 18:30:59 +0200
-Message-ID: <CAJfpeguxDiq3BW94AVFhgY75P+jy_+jk3pdyNZ5z-aJPXNvvGA@mail.gmail.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-To:     David Howells <dhowells@redhat.com>
-Cc:     Karel Zak <kzak@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
-        andres@anarazel.de, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lennart Poettering <lennart@poettering.net>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b29f34870380093e6268c11d3033033d6def61b7.1585756648.git.guillaume.tucker@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 1, 2020 at 6:02 PM David Howells <dhowells@redhat.com> wrote:
->
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> > > > But doesn't actually do what Karel asked for.  show_mountinfo() itself does
-> > > > not give you what Karel asked for.
-> >
-> > Not sure what you mean.  I think it shows precisely the information
-> > Karel asked for.
->
-> It's not atomic.
+On Wed, Apr 01, 2020 at 05:08:03PM +0100, Guillaume Tucker wrote:
+> Allow setting the number of cycles for RAM reads in the pl310 cache
+> controller L2 auxiliary control register mask (bits 0-2) since it
+> needs to be changed in software.  This only affects exynos4210 and
+> exynos4412 as they use the pl310 cache controller.
+> 
+> With the mask used until now, the following warnings were generated,
+> the 2nd one being a pr_alert():
+> 
+>   L2C: platform modifies aux control register: 0x02070000 -> 0x3e470001
+>   L2C: platform provided aux values permit register corruption.
+> 
+> This latency cycles value has always been set in software in spite of
+> the warnings.  Keep it this way but clear the alert message about
+> register corruption to acknowledge it is a valid thing to do.
 
-Yes it is.
+This is telling you that you are doing something you should not be
+doing.  The L2C controller should be configured by board firmware
+first and foremost, because if, for example, u-boot makes use of the
+L2 cache, or any other pre-main kernel code (in other words,
+decompressor) the setup of the L2 controller will be wrong.
 
-Thanks,
-Miklos
+So, NAK.
+
+> 
+> Tested on exynos4412-odroid-x2.
+> 
+> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+> Reported-by: "kernelci.org bot" <bot@kernelci.org>
+> ---
+>  arch/arm/mach-exynos/exynos.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 7a8d1555db40..ed1bba49210d 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -194,7 +194,7 @@ static void __init exynos_dt_fixup(void)
+>  
+>  DT_MACHINE_START(EXYNOS_DT, "Samsung Exynos (Flattened Device Tree)")
+>  	.l2c_aux_val	= 0x3c400001,
+> -	.l2c_aux_mask	= 0xc20fffff,
+> +	.l2c_aux_mask	= 0xc20ffff8,
+>  	.smp		= smp_ops(exynos_smp_ops),
+>  	.map_io		= exynos_init_io,
+>  	.init_early	= exynos_firmware_init,
+> -- 
+> 2.20.1
+> 
+> 
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
