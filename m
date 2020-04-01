@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABA8019B094
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A05019B12B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:33:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388059AbgDAQ14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:27:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52954 "EHLO mail.kernel.org"
+        id S2388453AbgDAQcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:32:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732286AbgDAQ1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:27:53 -0400
+        id S2388068AbgDAQci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:32:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46CB320BED;
-        Wed,  1 Apr 2020 16:27:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D42392063A;
+        Wed,  1 Apr 2020 16:32:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758472;
-        bh=YjbJkWnulZxpZ5AzBSei2JjCsNgi5cGWbkLwlh2FsTA=;
+        s=default; t=1585758758;
+        bh=JL1j4Baacd3Nm5cyUBNnMdvD7STn1dIkzds8vD8e5Oo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OPa4KHgA5476c6KuqXECkugj3I/+Y9F5tBFsPwJRjvTaCgkRqVay1G1e1vYJD/Fyb
-         FxiZYUKdj4tDIt9r89k9UsrudYka66ovrzevHd6C/hALWMokHE8YMmFuCxlr3cXkAC
-         6ed+Yqf9RCuM4WKtufKB21l+UB3WuKPZYJySRFnU=
+        b=gLKeb49pDflWahjZv4xu4+tQV+7Cbn7OvwVi9qKuOn8CZyyCZ7fA5aUtRjL3MtQMO
+         Rh1Rl57GdlMw3ohcZ4PEmmViUHojOwn9nrgwEI5YUZI74XFGKBCMJx7de07hCcg1zf
+         OIwzy11wdlHHa3OGAfVxRQuCPryFf1OjLgP9P/r0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 4.19 100/116] vt: switch vt_dont_switch to bool
+        stable@vger.kernel.org, Edward Cree <ecree@solarflare.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 60/91] genirq: Fix reference leaks on irq affinity notifiers
 Date:   Wed,  1 Apr 2020 18:17:56 +0200
-Message-Id: <20200401161555.068953071@linuxfoundation.org>
+Message-Id: <20200401161533.755031533@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,57 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Edward Cree <ecree@solarflare.com>
 
-commit f400991bf872debffb01c46da882dc97d7e3248e upstream.
+commit df81dfcfd6991d547653d46c051bac195cd182c1 upstream.
 
-vt_dont_switch is pure boolean, no need for whole char.
+The handling of notify->work did not properly maintain notify->kref in two
+ cases:
+1) where the work was already scheduled, another irq_set_affinity_locked()
+   would get the ref and (no-op-ly) schedule the work.  Thus when
+   irq_affinity_notify() ran, it would drop the original ref but not the
+   additional one.
+2) when cancelling the (old) work in irq_set_affinity_notifier(), if there
+   was outstanding work a ref had been got for it but was never put.
+Fix both by checking the return values of the work handling functions
+ (schedule_work() for (1) and cancel_work_sync() for (2)) and put the
+ extra ref if the return value indicates preexisting work.
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Link: https://lore.kernel.org/r/20200219073951.16151-6-jslaby@suse.cz
+Fixes: cd7eab44e994 ("genirq: Add IRQ affinity notifiers")
+Fixes: 59c39840f5ab ("genirq: Prevent use-after-free and work list corruption")
+Signed-off-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Ben Hutchings <ben@decadent.org.uk>
+Link: https://lkml.kernel.org/r/24f5983f-2ab5-e83a-44ee-a45b5f9300f5@solarflare.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt_ioctl.c |    6 +++---
- include/linux/vt_kern.h   |    2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ kernel/irq/manage.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -39,7 +39,7 @@
- #include <linux/kbd_diacr.h>
- #include <linux/selection.h>
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -220,7 +220,11 @@ int irq_set_affinity_locked(struct irq_d
  
--char vt_dont_switch;
-+bool vt_dont_switch;
+ 	if (desc->affinity_notify) {
+ 		kref_get(&desc->affinity_notify->kref);
+-		schedule_work(&desc->affinity_notify->work);
++		if (!schedule_work(&desc->affinity_notify->work)) {
++			/* Work was already scheduled, drop our extra ref */
++			kref_put(&desc->affinity_notify->kref,
++				 desc->affinity_notify->release);
++		}
+ 	}
+ 	irqd_set(data, IRQD_AFFINITY_SET);
  
- static inline bool vt_in_use(unsigned int i)
- {
-@@ -1026,12 +1026,12 @@ int vt_ioctl(struct tty_struct *tty,
- 	case VT_LOCKSWITCH:
- 		if (!capable(CAP_SYS_TTY_CONFIG))
- 			return -EPERM;
--		vt_dont_switch = 1;
-+		vt_dont_switch = true;
- 		break;
- 	case VT_UNLOCKSWITCH:
- 		if (!capable(CAP_SYS_TTY_CONFIG))
- 			return -EPERM;
--		vt_dont_switch = 0;
-+		vt_dont_switch = false;
- 		break;
- 	case VT_GETHIFONTMASK:
- 		ret = put_user(vc->vc_hi_font_mask,
---- a/include/linux/vt_kern.h
-+++ b/include/linux/vt_kern.h
-@@ -142,7 +142,7 @@ static inline bool vt_force_oops_output(
- 	return false;
- }
+@@ -320,7 +324,10 @@ irq_set_affinity_notifier(unsigned int i
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
  
--extern char vt_dont_switch;
-+extern bool vt_dont_switch;
- extern int default_utf8;
- extern int global_cursor_default;
+ 	if (old_notify) {
+-		cancel_work_sync(&old_notify->work);
++		if (cancel_work_sync(&old_notify->work)) {
++			/* Pending work had a ref, put that one too */
++			kref_put(&old_notify->kref, old_notify->release);
++		}
+ 		kref_put(&old_notify->kref, old_notify->release);
+ 	}
  
 
 
