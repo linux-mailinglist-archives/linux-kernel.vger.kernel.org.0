@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19B9019B0C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9387419B066
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387845AbgDAQ31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:29:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54946 "EHLO mail.kernel.org"
+        id S2387921AbgDAQ0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:26:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388178AbgDAQ3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:29:21 -0400
+        id S2387430AbgDAQ0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:26:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55F38214DB;
-        Wed,  1 Apr 2020 16:29:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76DDF20BED;
+        Wed,  1 Apr 2020 16:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758560;
-        bh=MHzvLO6pQ9hDsO4k5x5F0p44tCBqF8g2CiJnwVzl7XU=;
+        s=default; t=1585758397;
+        bh=OtpKH4sa7WjFFEqXU6hQbOx0/zIIZm3na15gYI4GVjY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tBHI++MIIhxGWkbpoLthAyapmZspxEYuChilqVc2+8l5pB78mxnxZ9vDaCR/natK6
-         piSv5/n/v0MtXJNniMD3kZrfryCghf8NdR4v64zgr8YaWGfgYFhaywsKpYCpC5KdzD
-         heafFq8RkFTgLSYIgIcLE+9RonWwCgtDSGCi18hs=
+        b=H4hPXpoJUxNIYwW2H07HKvNUBj22hvMAB61vGX8ff0Hl29f1y9Zhs0JNF/e2gxRHJ
+         nOLhOSYIXJsBuLE5urOEVldZLZ0aTVV/GEyLcolR0RLIpUhXwvVNacKleseFxA0lL3
+         HopnGZHHJt4/Brd76QVgKSPUCOn0go6tZUk9sljw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuji sasaki <sasakiy@chromium.org>,
-        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 01/91] spi: qup: call spi_qup_pm_resume_runtime before suspending
+Subject: [PATCH 4.19 041/116] s390/qeth: handle error when backing RX buffer
 Date:   Wed,  1 Apr 2020 18:16:57 +0200
-Message-Id: <20200401161513.397178567@linuxfoundation.org>
+Message-Id: <20200401161547.682969526@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
-References: <20200401161512.917494101@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,40 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuji Sasaki <sasakiy@chromium.org>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit 136b5cd2e2f97581ae560cff0db2a3b5369112da ]
+[ Upstream commit 17413852804d7e86e6f0576cca32c1541817800e ]
 
-spi_qup_suspend() will cause synchronous external abort when
-runtime suspend is enabled and applied, as it tries to
-access SPI controller register while clock is already disabled
-in spi_qup_pm_suspend_runtime().
+qeth_init_qdio_queues() fills the RX ring with an initial set of
+RX buffers. If qeth_init_input_buffer() fails to back one of the RX
+buffers with memory, we need to bail out and report the error.
 
-Signed-off-by: Yuji sasaki <sasakiy@chromium.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Link: https://lore.kernel.org/r/20200214074340.2286170-1-vkoul@kernel.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 4a71df50047f ("qeth: new qeth device driver")
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-qup.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/s390/net/qeth_core_main.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/spi/spi-qup.c b/drivers/spi/spi-qup.c
-index 810a7fae34798..2487a91c4cfdb 100644
---- a/drivers/spi/spi-qup.c
-+++ b/drivers/spi/spi-qup.c
-@@ -961,6 +961,11 @@ static int spi_qup_suspend(struct device *device)
- 	struct spi_qup *controller = spi_master_get_devdata(master);
- 	int ret;
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index d99bfbfcafb76..5f59e2dfc7db9 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -2811,12 +2811,12 @@ static int qeth_init_input_buffer(struct qeth_card *card,
+ 		buf->rx_skb = netdev_alloc_skb(card->dev,
+ 					       QETH_RX_PULL_LEN + ETH_HLEN);
+ 		if (!buf->rx_skb)
+-			return 1;
++			return -ENOMEM;
+ 	}
  
-+	if (pm_runtime_suspended(device)) {
-+		ret = spi_qup_pm_resume_runtime(device);
-+		if (ret)
-+			return ret;
+ 	pool_entry = qeth_find_free_buffer_pool_entry(card);
+ 	if (!pool_entry)
+-		return 1;
++		return -ENOBUFS;
+ 
+ 	/*
+ 	 * since the buffer is accessed only from the input_tasklet
+@@ -2848,10 +2848,15 @@ int qeth_init_qdio_queues(struct qeth_card *card)
+ 	/* inbound queue */
+ 	qdio_reset_buffers(card->qdio.in_q->qdio_bufs, QDIO_MAX_BUFFERS_PER_Q);
+ 	memset(&card->rx, 0, sizeof(struct qeth_rx));
++
+ 	qeth_initialize_working_pool_list(card);
+ 	/*give only as many buffers to hardware as we have buffer pool entries*/
+-	for (i = 0; i < card->qdio.in_buf_pool.buf_count - 1; ++i)
+-		qeth_init_input_buffer(card, &card->qdio.in_q->bufs[i]);
++	for (i = 0; i < card->qdio.in_buf_pool.buf_count - 1; i++) {
++		rc = qeth_init_input_buffer(card, &card->qdio.in_q->bufs[i]);
++		if (rc)
++			return rc;
 +	}
- 	ret = spi_master_suspend(master);
- 	if (ret)
- 		return ret;
++
+ 	card->qdio.in_q->next_buf_to_init =
+ 		card->qdio.in_buf_pool.buf_count - 1;
+ 	rc = do_QDIO(CARD_DDEV(card), QDIO_FLAG_SYNC_INPUT, 0, 0,
 -- 
 2.20.1
 
