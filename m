@@ -2,53 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D9D819B321
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02EC319AFC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:21:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389661AbgDAQn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:43:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44776 "EHLO mail.kernel.org"
+        id S1733207AbgDAQU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:20:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388012AbgDAQny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:43:54 -0400
+        id S1733191AbgDAQUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:20:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6540B20658;
-        Wed,  1 Apr 2020 16:43:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EE77212CC;
+        Wed,  1 Apr 2020 16:20:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759432;
-        bh=6XSQgvo4o579LCnRulq9Io3ACHXqq6KyZTFGZ5m1QBM=;
+        s=default; t=1585758052;
+        bh=62H8q4wS2U8H3WVXq49tHHl0V1M2VnJlDoEkzXF2fzQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0joRB7AXrildeO2ta796ppxfN3hfF1LZK4kgS00Zpj2x/WbBoDpHeX/sGXFwOLZQY
-         Z2XdWss605+szUXxRySSuA4aVObHdE7A6T/04Kv8Y6kDYuOreWRtlMXMyUWAjb9Qk6
-         7xRCcbBXG/c9pBVYCCvMEHaq+04+pTmJ84nVuHqw=
+        b=gKxrzcjk6Nap+mtaLQVwH3YJ7gdg8xi9Pup6ejh9CdFX8JfYqtMkImH7lnIUb97UF
+         LQjYEmEhXEMn5w5XiZVAXq4+9EvbneFsNCzn3q7ZJxoeB6LLpmT5OXA8EzDBCZa7pB
+         J6btmBoK6WHh7ms3d2Zcp70gc3Tp0L5KRJ7Mh8vs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        PUVICHAKRAVARTHY RAMACHANDRAN <puvichakravarthy@in.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Bharata B Rao <bharata@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Nathan Lynch <nathanl@linux.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 037/148] mm, slub: prevent kmalloc_node crashes and memory leaks
-Date:   Wed,  1 Apr 2020 18:17:09 +0200
-Message-Id: <20200401161556.297841650@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 5.5 06/30] vt: ioctl, switch VT_IS_IN_USE and VT_BUSY to inlines
+Date:   Wed,  1 Apr 2020 18:17:10 +0200
+Message-Id: <20200401161419.384314315@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
+References: <20200401161414.345528747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -58,169 +42,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vlastimil Babka <vbabka@suse.cz>
+From: Jiri Slaby <jslaby@suse.cz>
 
-commit 0715e6c516f106ed553828a671d30ad9a3431536 upstream.
+commit e587e8f17433ddb26954f0edf5b2f95c42155ae9 upstream.
 
-Sachin reports [1] a crash in SLUB __slab_alloc():
+These two were macros. Switch them to static inlines, so that it's more
+understandable what they are doing.
 
-  BUG: Kernel NULL pointer dereference on read at 0x000073b0
-  Faulting instruction address: 0xc0000000003d55f4
-  Oops: Kernel access of bad area, sig: 11 [#1]
-  LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=2048 NUMA pSeries
-  Modules linked in:
-  CPU: 19 PID: 1 Comm: systemd Not tainted 5.6.0-rc2-next-20200218-autotest #1
-  NIP:  c0000000003d55f4 LR: c0000000003d5b94 CTR: 0000000000000000
-  REGS: c0000008b37836d0 TRAP: 0300   Not tainted  (5.6.0-rc2-next-20200218-autotest)
-  MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 24004844  XER: 00000000
-  CFAR: c00000000000dec4 DAR: 00000000000073b0 DSISR: 40000000 IRQMASK: 1
-  GPR00: c0000000003d5b94 c0000008b3783960 c00000000155d400 c0000008b301f500
-  GPR04: 0000000000000dc0 0000000000000002 c0000000003443d8 c0000008bb398620
-  GPR08: 00000008ba2f0000 0000000000000001 0000000000000000 0000000000000000
-  GPR12: 0000000024004844 c00000001ec52a00 0000000000000000 0000000000000000
-  GPR16: c0000008a1b20048 c000000001595898 c000000001750c18 0000000000000002
-  GPR20: c000000001750c28 c000000001624470 0000000fffffffe0 5deadbeef0000122
-  GPR24: 0000000000000001 0000000000000dc0 0000000000000002 c0000000003443d8
-  GPR28: c0000008b301f500 c0000008bb398620 0000000000000000 c00c000002287180
-  NIP ___slab_alloc+0x1f4/0x760
-  LR __slab_alloc+0x34/0x60
-  Call Trace:
-    ___slab_alloc+0x334/0x760 (unreliable)
-    __slab_alloc+0x34/0x60
-    __kmalloc_node+0x110/0x490
-    kvmalloc_node+0x58/0x110
-    mem_cgroup_css_online+0x108/0x270
-    online_css+0x48/0xd0
-    cgroup_apply_control_enable+0x2ec/0x4d0
-    cgroup_mkdir+0x228/0x5f0
-    kernfs_iop_mkdir+0x90/0xf0
-    vfs_mkdir+0x110/0x230
-    do_mkdirat+0xb0/0x1a0
-    system_call+0x5c/0x68
-
-This is a PowerPC platform with following NUMA topology:
-
-  available: 2 nodes (0-1)
-  node 0 cpus:
-  node 0 size: 0 MB
-  node 0 free: 0 MB
-  node 1 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
-  node 1 size: 35247 MB
-  node 1 free: 30907 MB
-  node distances:
-  node   0   1
-    0:  10  40
-    1:  40  10
-
-  possible numa nodes: 0-31
-
-This only happens with a mmotm patch "mm/memcontrol.c: allocate
-shrinker_map on appropriate NUMA node" [2] which effectively calls
-kmalloc_node for each possible node.  SLUB however only allocates
-kmem_cache_node on online N_NORMAL_MEMORY nodes, and relies on
-node_to_mem_node to return such valid node for other nodes since commit
-a561ce00b09e ("slub: fall back to node_to_mem_node() node if allocating
-on memoryless node").  This is however not true in this configuration
-where the _node_numa_mem_ array is not initialized for nodes 0 and 2-31,
-thus it contains zeroes and get_partial() ends up accessing
-non-allocated kmem_cache_node.
-
-A related issue was reported by Bharata (originally by Ramachandran) [3]
-where a similar PowerPC configuration, but with mainline kernel without
-patch [2] ends up allocating large amounts of pages by kmalloc-1k
-kmalloc-512.  This seems to have the same underlying issue with
-node_to_mem_node() not behaving as expected, and might probably also
-lead to an infinite loop with CONFIG_SLUB_CPU_PARTIAL [4].
-
-This patch should fix both issues by not relying on node_to_mem_node()
-anymore and instead simply falling back to NUMA_NO_NODE, when
-kmalloc_node(node) is attempted for a node that's not online, or has no
-usable memory.  The "usable memory" condition is also changed from
-node_present_pages() to N_NORMAL_MEMORY node state, as that is exactly
-the condition that SLUB uses to allocate kmem_cache_node structures.
-The check in get_partial() is removed completely, as the checks in
-___slab_alloc() are now sufficient to prevent get_partial() being
-reached with an invalid node.
-
-[1] https://lore.kernel.org/linux-next/3381CD91-AB3D-4773-BA04-E7A072A63968@linux.vnet.ibm.com/
-[2] https://lore.kernel.org/linux-mm/fff0e636-4c36-ed10-281c-8cdb0687c839@virtuozzo.com/
-[3] https://lore.kernel.org/linux-mm/20200317092624.GB22538@in.ibm.com/
-[4] https://lore.kernel.org/linux-mm/088b5996-faae-8a56-ef9c-5b567125ae54@suse.cz/
-
-Fixes: a561ce00b09e ("slub: fall back to node_to_mem_node() node if allocating on memoryless node")
-Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Reported-by: PUVICHAKRAVARTHY RAMACHANDRAN <puvichakravarthy@in.ibm.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Tested-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Tested-by: Bharata B Rao <bharata@linux.ibm.com>
-Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Christopher Lameter <cl@linux.com>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Nathan Lynch <nathanl@linux.ibm.com>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20200320115533.9604-1-vbabka@suse.cz
-Debugged-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Link: https://lore.kernel.org/r/20200219073951.16151-2-jslaby@suse.cz
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/slub.c |   26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ drivers/tty/vt/vt_ioctl.c |   29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1923,8 +1923,6 @@ static void *get_partial(struct kmem_cac
+--- a/drivers/tty/vt/vt_ioctl.c
++++ b/drivers/tty/vt/vt_ioctl.c
+@@ -40,10 +40,25 @@
+ #include <linux/selection.h>
  
- 	if (node == NUMA_NO_NODE)
- 		searchnode = numa_mem_id();
--	else if (!node_present_pages(node))
--		searchnode = node_to_mem_node(node);
+ char vt_dont_switch;
+-extern struct tty_driver *console_driver;
  
- 	object = get_partial_node(s, get_node(s, searchnode), c, flags);
- 	if (object || node != NUMA_NO_NODE)
-@@ -2521,17 +2519,27 @@ static void *___slab_alloc(struct kmem_c
- 	struct page *page;
+-#define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
+-#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_is_sel(vc_cons[i].d))
++static inline bool vt_in_use(unsigned int i)
++{
++	extern struct tty_driver *console_driver;
++
++	return console_driver->ttys[i] && console_driver->ttys[i]->count;
++}
++
++static inline bool vt_busy(int i)
++{
++	if (vt_in_use(i))
++		return true;
++	if (i == fg_console)
++		return true;
++	if (vc_is_sel(vc_cons[i].d))
++		return true;
++
++	return false;
++}
  
- 	page = c->page;
--	if (!page)
-+	if (!page) {
-+		/*
-+		 * if the node is not online or has no normal memory, just
-+		 * ignore the node constraint
-+		 */
-+		if (unlikely(node != NUMA_NO_NODE &&
-+			     !node_state(node, N_NORMAL_MEMORY)))
-+			node = NUMA_NO_NODE;
- 		goto new_slab;
-+	}
- redo:
+ /*
+  * Console (vt and kd) routines, as defined by USL SVR4 manual, and by
+@@ -289,7 +304,7 @@ static int vt_disallocate(unsigned int v
+ 	int ret = 0;
  
- 	if (unlikely(!node_match(page, node))) {
--		int searchnode = node;
--
--		if (node != NUMA_NO_NODE && !node_present_pages(node))
--			searchnode = node_to_mem_node(node);
--
--		if (unlikely(!node_match(page, searchnode))) {
-+		/*
-+		 * same as above but node_match() being false already
-+		 * implies node != NUMA_NO_NODE
-+		 */
-+		if (!node_state(node, N_NORMAL_MEMORY)) {
-+			node = NUMA_NO_NODE;
-+			goto redo;
-+		} else {
- 			stat(s, ALLOC_NODE_MISMATCH);
- 			deactivate_slab(s, page, c->freelist, c);
- 			goto new_slab;
+ 	console_lock();
+-	if (VT_BUSY(vc_num))
++	if (vt_busy(vc_num))
+ 		ret = -EBUSY;
+ 	else if (vc_num)
+ 		vc = vc_deallocate(vc_num);
+@@ -311,7 +326,7 @@ static void vt_disallocate_all(void)
+ 
+ 	console_lock();
+ 	for (i = 1; i < MAX_NR_CONSOLES; i++)
+-		if (!VT_BUSY(i))
++		if (!vt_busy(i))
+ 			vc[i] = vc_deallocate(i);
+ 		else
+ 			vc[i] = NULL;
+@@ -648,7 +663,7 @@ int vt_ioctl(struct tty_struct *tty,
+ 			state = 1;	/* /dev/tty0 is always open */
+ 			for (i = 0, mask = 2; i < MAX_NR_CONSOLES && mask;
+ 							++i, mask <<= 1)
+-				if (VT_IS_IN_USE(i))
++				if (vt_in_use(i))
+ 					state |= mask;
+ 			ret = put_user(state, &vtstat->v_state);
+ 		}
+@@ -661,7 +676,7 @@ int vt_ioctl(struct tty_struct *tty,
+ 	case VT_OPENQRY:
+ 		/* FIXME: locking ? - but then this is a stupid API */
+ 		for (i = 0; i < MAX_NR_CONSOLES; ++i)
+-			if (! VT_IS_IN_USE(i))
++			if (!vt_in_use(i))
+ 				break;
+ 		uival = i < MAX_NR_CONSOLES ? (i+1) : -1;
+ 		goto setint;		 
 
 
