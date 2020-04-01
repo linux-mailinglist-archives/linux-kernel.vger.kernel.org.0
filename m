@@ -2,103 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1D5D19A712
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:20:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C1B19A721
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:22:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731343AbgDAIUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:20:09 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40971 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728236AbgDAIUI (ORCPT
+        id S1732004AbgDAIVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:21:24 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47564 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726197AbgDAIVY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:20:08 -0400
-Received: by mail-pf1-f196.google.com with SMTP id a24so4918026pfc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 01:20:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QFO0vf8e8DojHzC7YKKnWcjJKYcUUi6BB0Xvkcc0pJc=;
-        b=w++wGeiNVTv/fz8h/D2fQ8RKq8fKC+9Jz+vX6b4AcyL8KRKHNVMEpwShLa5F1frzO1
-         Bda6A2H/HYR2+N2im+kK3SXARA+hI2/nYP3Rg/qjrlotrlctZaoI88a0rMgsB0NjJO2X
-         xRPmXljSIddgZxEaMvWQmrr/1XcL7P3b4dxEQouwsyj+M4J5AtQktI0mOLrBVSgsvfJp
-         4zgqOV4AYLL92YnuNemUsgQAuIkOdFf09marZjFENI3vt2o9eDR8YOTFrdBx/YG5oh2h
-         k91JvSYSOsM/5h40ZdcVC9RkMvm1/UgZzHQhrj89blEtyUzq19O6zUkoJ4Y0Z8uKd9o0
-         0BhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QFO0vf8e8DojHzC7YKKnWcjJKYcUUi6BB0Xvkcc0pJc=;
-        b=JxtWIcKQRu+l6hY56xqUi60ofw/SMQ0CWN75hIXji8lvUVZnwTxamb2DyYvBmFvWyk
-         1NIKDwrvzi+2g+utS9e+zJ+52K0e1GuERFgDp5WBisvOW1QKWxiarxHmNuFRLkoF53Hb
-         aBQKBoo965YGBljC/mHrs8NCZNKpJgZIHUjpsQ4U91vGcufRzzcF8GO72PbZCnoM1AlL
-         qft1FysGqgHgVSRVvTAz8Oa6VTnjoNb7gxzgdL7/yq/QJQWXGPpxU8qeQSIDkDPwcD2t
-         oC7MYA2NpQ/VV70vSi7eaLeMoDRIwk9jEH6EeYglRg8P2+HS6/wX5OQKYBcAeY6n4mFV
-         j9wg==
-X-Gm-Message-State: ANhLgQ3J3Y7blnQijdY9xCP7L/BIWxJIOUhA35gpVv0lpNwepXkiLIuT
-        KsN0RHkkpsU+0m39VxAe2Dev
-X-Google-Smtp-Source: ADFU+vvjnoX9qATo8Ax3smn2g6ng6pV6THrQwh3JlG3wMQgvz0eNY8mwOCDQ51gAvmtCVFlkWsI+zQ==
-X-Received: by 2002:aa7:962d:: with SMTP id r13mr23217262pfg.244.1585729206901;
-        Wed, 01 Apr 2020 01:20:06 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:648c:592d:1580:e843:709d:f3b5])
-        by smtp.gmail.com with ESMTPSA id j21sm908394pgn.30.2020.04.01.01.20.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Apr 2020 01:20:06 -0700 (PDT)
-Date:   Wed, 1 Apr 2020 13:50:00 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     gregkh@linuxfoundation.org, davem@davemloft.net,
-        smohanad@codeaurora.org, jhugo@codeaurora.org,
-        kvalo@codeaurora.org, hemantk@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, clew@codeaurora.org
-Subject: Re: [PATCH 2/3] net: qrtr: Add MHI transport layer
-Message-ID: <20200401082000.GA15627@Mani-XPS-13-9360>
-References: <20200401064435.12676-1-manivannan.sadhasivam@linaro.org>
- <20200401064435.12676-3-manivannan.sadhasivam@linaro.org>
- <20200401071023.GD663905@yoga>
+        Wed, 1 Apr 2020 04:21:24 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0318Is1m016051;
+        Wed, 1 Apr 2020 10:21:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=2LCt8uA66pi/fY3wjKmgurjBraqWfS8tTA6ImKoZ4+M=;
+ b=YReJOvnM3mdzpepnWXqX+x1AX3MdpbBO910KweK2iWFva1K1R+zqB3Nx9riBzfJlXg4g
+ Mzpqx8Xdq/OTyGtVvt9ytzC5auozXjbkeGRvzPEggt/Q2xtnyA7xtAmXdAuccznKg+9G
+ YiRCW1Yhnl+Mh+3Ve+KEtOsosm5xSl/othLbb3zXvLyVrbBh4J0LSnh16wJh+WTvXUk3
+ g8BQumoLKq/xngo4vOxllOhRBlDrMNlKXPLCvLGSjqosM0k+xe2SXaINrahUYzrpErZN
+ HoX//vbhW3WBVpe/xhqjCTu5Zi5MM0K1Th/Wm4YRL0+5icBYwLIJONRrzBhIgmGWjRjW oQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 301xbmkrhj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 10:21:15 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8E106100038;
+        Wed,  1 Apr 2020 10:21:10 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 77A912126CB;
+        Wed,  1 Apr 2020 10:21:10 +0200 (CEST)
+Received: from lmecxl0912.tpe.st.com (10.75.127.46) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Apr
+ 2020 10:20:12 +0200
+Subject: Re: [PATCH] ARM: dts: stm32: add cortex-M4 pdds management in
+ Cortex-M4 node
+To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Fabien Dessenne <fabien.dessenne@st.com>
+References: <20200320125841.11059-1-arnaud.pouliquen@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <0b14ed2a-c384-af73-2e28-541eadb309e2@st.com>
+Date:   Wed, 1 Apr 2020 10:20:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200401071023.GD663905@yoga>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200320125841.11059-1-arnaud.pouliquen@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 12:10:23AM -0700, Bjorn Andersson wrote:
-> On Tue 31 Mar 23:44 PDT 2020, Manivannan Sadhasivam wrote:
-> > diff --git a/net/qrtr/mhi.c b/net/qrtr/mhi.c
-> [..]
-> > +static void qcom_mhi_qrtr_ul_callback(struct mhi_device *mhi_dev,
-> > +				      struct mhi_result *mhi_res)
-> > +{
-> > +	struct sk_buff *skb = (struct sk_buff *)mhi_res->buf_addr;
-> > +
-> > +	consume_skb(skb);
-> > +	if (skb->sk)
-> > +		sock_put(skb->sk);
+Hi Arnaud
+
+On 3/20/20 1:58 PM, Arnaud Pouliquen wrote:
+> Add declarations related to the syscon pdds for deep sleep management.
 > 
-> Don't you need to do this in opposite order, to avoid a use after free?
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> ---
+
+Can you please rebase it on top of stm32-next ?
+
+>   arch/arm/boot/dts/stm32mp151.dtsi | 6 ++++++
+>   1 file changed, 6 insertions(+)
 > 
-
-I thought about it but the socket refcounting postulates in net/sock.h states:
-
-"sk_free is called from any context: process, BH, IRQ. When it is called,
-socket has no references from outside -> sk_free may release descendant
-resources allocated by the socket, but to the time when it is called, socket
-is NOT referenced by any hash tables, lists etc."
-
-Here the sock it still referenced by skb, so I don't exactly know if we can
-release the socket using sock_put() before consume_skb(). But on the other hand,
-once skb is freed then accessing its member is clearly a use after free issue.
-
-Maybe someone can clarify this?
-
-Thanks,
-Mani
-
-> Regards,
-> Bjorn
+> diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
+> index 7b93eb4b8f49..46ea1024340e 100644
+> --- a/arch/arm/boot/dts/stm32mp151.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp151.dtsi
+> @@ -1115,6 +1115,11 @@
+>   			};
+>   		};
+>   
+> +		pwr_mcu: pwr_mcu@50001014 {
+> +			compatible = "syscon";
+> +			reg = <0x50001014 0x4>;
+> +		};
+> +
+>   		exti: interrupt-controller@5000d000 {
+>   			compatible = "st,stm32mp1-exti", "syscon";
+>   			interrupt-controller;
+> @@ -1693,6 +1698,7 @@
+>   			st,syscfg-tz = <&rcc 0x000 0x1>;
+>   			st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
+>   			st,syscfg-copro-state = <&tamp 0x148 0xFFFFFFFF>;
+> +			st,syscfg-pdds = <&pwr_mcu 0x0 0x1>;
+>   			status = "disabled";
+>   		};
+>   	};
+> 
