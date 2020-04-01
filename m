@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AA8319AFEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E85019B06A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732256AbgDAQW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:22:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45452 "EHLO mail.kernel.org"
+        id S1733201AbgDAQ0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:26:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387477AbgDAQWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:22:23 -0400
+        id S1733134AbgDAQ0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:26:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 791B4214D8;
-        Wed,  1 Apr 2020 16:22:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67D9E20857;
+        Wed,  1 Apr 2020 16:26:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758142;
-        bh=62H8q4wS2U8H3WVXq49tHHl0V1M2VnJlDoEkzXF2fzQ=;
+        s=default; t=1585758401;
+        bh=HXV7RpBGT25AERW4zD7Td0Ay2o0uP43mJJuwTAIU6WM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xhZRbZqp5WX2wFoxg3mxHJ+E/Y6NBqte2REwMy+IMYywOL5c0LvV7jhjD6z+LUsFF
-         JRyGTIJF+XJHTbiDTGxYLy7x8RbBv73YrpbJa9HdSsVsRLM1ObbKbbDbMUpqjRvyDd
-         +T/ziMgQRE3G7fxc8TnR+6Jm/nkwM9rng/70JmrU=
+        b=PU3w5HF2Xe4PYYaJb+QNJmvRY3GipXV7VFyi838zoLicrVmJ9mQdhTvGpwGQEJBGK
+         p6W6Uh3p/1ZoOB2KgNSVjnKVRdiHPWooEzfv8fa5PGpAKiLKVGKp4CfBV1pJX81Paq
+         u5sDdUpb9bbr7SWopuWyX+dZ2+ZvEbtalgKlrI68=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 5.4 05/27] vt: ioctl, switch VT_IS_IN_USE and VT_BUSY to inlines
+        stable@vger.kernel.org,
+        Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>,
+        Rajkumar Manoharan <rmanohar@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 077/116] mac80211: add option for setting control flags
 Date:   Wed,  1 Apr 2020 18:17:33 +0200
-Message-Id: <20200401161419.358817229@linuxfoundation.org>
+Message-Id: <20200401161552.567123694@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
-References: <20200401161414.352722470@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,87 +46,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Rajkumar Manoharan <rmanohar@codeaurora.org>
 
-commit e587e8f17433ddb26954f0edf5b2f95c42155ae9 upstream.
+[ Upstream commit 060167729a78d626abaee1a0ebb64b252374426e ]
 
-These two were macros. Switch them to static inlines, so that it's more
-understandable what they are doing.
+Allows setting of control flags of skb cb - if needed -
+when calling ieee80211_subif_start_xmit().
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Link: https://lore.kernel.org/r/20200219073951.16151-2-jslaby@suse.cz
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Tested-by: Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>
+Signed-off-by: Rajkumar Manoharan <rmanohar@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/vt/vt_ioctl.c |   29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+ net/mac80211/ieee80211_i.h |    3 ++-
+ net/mac80211/tdls.c        |    2 +-
+ net/mac80211/tx.c          |   18 +++++++++++-------
+ 3 files changed, 14 insertions(+), 9 deletions(-)
 
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -40,10 +40,25 @@
- #include <linux/selection.h>
+--- a/net/mac80211/ieee80211_i.h
++++ b/net/mac80211/ieee80211_i.h
+@@ -1729,7 +1729,8 @@ netdev_tx_t ieee80211_subif_start_xmit(s
+ 				       struct net_device *dev);
+ void __ieee80211_subif_start_xmit(struct sk_buff *skb,
+ 				  struct net_device *dev,
+-				  u32 info_flags);
++				  u32 info_flags,
++				  u32 ctrl_flags);
+ void ieee80211_purge_tx_queue(struct ieee80211_hw *hw,
+ 			      struct sk_buff_head *skbs);
+ struct sk_buff *
+--- a/net/mac80211/tdls.c
++++ b/net/mac80211/tdls.c
+@@ -1055,7 +1055,7 @@ ieee80211_tdls_prep_mgmt_packet(struct w
  
- char vt_dont_switch;
--extern struct tty_driver *console_driver;
+ 	/* disable bottom halves when entering the Tx path */
+ 	local_bh_disable();
+-	__ieee80211_subif_start_xmit(skb, dev, flags);
++	__ieee80211_subif_start_xmit(skb, dev, flags, 0);
+ 	local_bh_enable();
  
--#define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
--#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_is_sel(vc_cons[i].d))
-+static inline bool vt_in_use(unsigned int i)
-+{
-+	extern struct tty_driver *console_driver;
-+
-+	return console_driver->ttys[i] && console_driver->ttys[i]->count;
-+}
-+
-+static inline bool vt_busy(int i)
-+{
-+	if (vt_in_use(i))
-+		return true;
-+	if (i == fg_console)
-+		return true;
-+	if (vc_is_sel(vc_cons[i].d))
-+		return true;
-+
-+	return false;
-+}
+ 	return ret;
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -2399,6 +2399,7 @@ static int ieee80211_lookup_ra_sta(struc
+  * @sdata: virtual interface to build the header for
+  * @skb: the skb to build the header in
+  * @info_flags: skb flags to set
++ * @ctrl_flags: info control flags to set
+  *
+  * This function takes the skb with 802.3 header and reformats the header to
+  * the appropriate IEEE 802.11 header based on which interface the packet is
+@@ -2414,7 +2415,7 @@ static int ieee80211_lookup_ra_sta(struc
+  */
+ static struct sk_buff *ieee80211_build_hdr(struct ieee80211_sub_if_data *sdata,
+ 					   struct sk_buff *skb, u32 info_flags,
+-					   struct sta_info *sta)
++					   struct sta_info *sta, u32 ctrl_flags)
+ {
+ 	struct ieee80211_local *local = sdata->local;
+ 	struct ieee80211_tx_info *info;
+@@ -2786,6 +2787,7 @@ static struct sk_buff *ieee80211_build_h
+ 	info->flags = info_flags;
+ 	info->ack_frame_id = info_id;
+ 	info->band = band;
++	info->control.flags = ctrl_flags;
  
- /*
-  * Console (vt and kd) routines, as defined by USL SVR4 manual, and by
-@@ -289,7 +304,7 @@ static int vt_disallocate(unsigned int v
- 	int ret = 0;
+ 	return skb;
+  free:
+@@ -3595,7 +3597,8 @@ EXPORT_SYMBOL(ieee80211_tx_dequeue);
  
- 	console_lock();
--	if (VT_BUSY(vc_num))
-+	if (vt_busy(vc_num))
- 		ret = -EBUSY;
- 	else if (vc_num)
- 		vc = vc_deallocate(vc_num);
-@@ -311,7 +326,7 @@ static void vt_disallocate_all(void)
+ void __ieee80211_subif_start_xmit(struct sk_buff *skb,
+ 				  struct net_device *dev,
+-				  u32 info_flags)
++				  u32 info_flags,
++				  u32 ctrl_flags)
+ {
+ 	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
+ 	struct sta_info *sta;
+@@ -3666,7 +3669,8 @@ void __ieee80211_subif_start_xmit(struct
+ 		skb->prev = NULL;
+ 		skb->next = NULL;
  
- 	console_lock();
- 	for (i = 1; i < MAX_NR_CONSOLES; i++)
--		if (!VT_BUSY(i))
-+		if (!vt_busy(i))
- 			vc[i] = vc_deallocate(i);
- 		else
- 			vc[i] = NULL;
-@@ -648,7 +663,7 @@ int vt_ioctl(struct tty_struct *tty,
- 			state = 1;	/* /dev/tty0 is always open */
- 			for (i = 0, mask = 2; i < MAX_NR_CONSOLES && mask;
- 							++i, mask <<= 1)
--				if (VT_IS_IN_USE(i))
-+				if (vt_in_use(i))
- 					state |= mask;
- 			ret = put_user(state, &vtstat->v_state);
- 		}
-@@ -661,7 +676,7 @@ int vt_ioctl(struct tty_struct *tty,
- 	case VT_OPENQRY:
- 		/* FIXME: locking ? - but then this is a stupid API */
- 		for (i = 0; i < MAX_NR_CONSOLES; ++i)
--			if (! VT_IS_IN_USE(i))
-+			if (!vt_in_use(i))
- 				break;
- 		uival = i < MAX_NR_CONSOLES ? (i+1) : -1;
- 		goto setint;		 
+-		skb = ieee80211_build_hdr(sdata, skb, info_flags, sta);
++		skb = ieee80211_build_hdr(sdata, skb, info_flags,
++					  sta, ctrl_flags);
+ 		if (IS_ERR(skb))
+ 			goto out;
+ 
+@@ -3806,9 +3810,9 @@ netdev_tx_t ieee80211_subif_start_xmit(s
+ 		__skb_queue_head_init(&queue);
+ 		ieee80211_convert_to_unicast(skb, dev, &queue);
+ 		while ((skb = __skb_dequeue(&queue)))
+-			__ieee80211_subif_start_xmit(skb, dev, 0);
++			__ieee80211_subif_start_xmit(skb, dev, 0, 0);
+ 	} else {
+-		__ieee80211_subif_start_xmit(skb, dev, 0);
++		__ieee80211_subif_start_xmit(skb, dev, 0, 0);
+ 	}
+ 
+ 	return NETDEV_TX_OK;
+@@ -3833,7 +3837,7 @@ ieee80211_build_data_template(struct iee
+ 		goto out;
+ 	}
+ 
+-	skb = ieee80211_build_hdr(sdata, skb, info_flags, sta);
++	skb = ieee80211_build_hdr(sdata, skb, info_flags, sta, 0);
+ 	if (IS_ERR(skb))
+ 		goto out;
+ 
+@@ -4870,7 +4874,7 @@ int ieee80211_tx_control_port(struct wip
+ 	skb_reset_mac_header(skb);
+ 
+ 	local_bh_disable();
+-	__ieee80211_subif_start_xmit(skb, skb->dev, flags);
++	__ieee80211_subif_start_xmit(skb, skb->dev, flags, 0);
+ 	local_bh_enable();
+ 
+ 	return 0;
 
 
