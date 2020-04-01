@@ -2,132 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3723119AA29
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 13:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EDF419AA46
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 13:09:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732593AbgDALFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 07:05:36 -0400
-Received: from mail-bn7nam10on2084.outbound.protection.outlook.com ([40.107.92.84]:6083
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732561AbgDALFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 07:05:34 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CgZX1sVmmmsImtvIFJXGN68MmR6nkJUBC9vAOQj5pK0Tky998kAZXmmp5NlGf+mqmj2oUmAnnCiDgqLikEn5FqC5v1WfOnu6Z/Xid2U5AJaR7TZY7pTigbNDZBx3zem6M83OfnA+0G/YfMk8IqLdAQPK5LPiSOMIdWmvXo5iSzBt3lDLFS9p+6Fk+NACoG+LMO6br5pUzDivPO5nkxjLweEAfCTxEzf9jqG0fjU0nijiuAHNzo5i+k8VfXL2JcJEzX3y7KC+XtIY67ynJOAYiMK1lBP4d+tkFaWSy5h9WR4wgUXLfGZhvkC/qGc0exWU7WV7YdqW9hdnUrlbYP4Ybg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RPrxWdWGNJvYjUT2owohbDyOyC0Vbtfc7ra7B4ROlWQ=;
- b=BR5+gGsllV6XE30EYTOXrpuesGKnj3fu7Si7rTskYWmLcpuA0CLmdxStu7Z3fKO0Y3xMhQ+VFBr/Qf48fSsnMxPI+1+yQeEdm3o1m1sYYwuJrHuE0cRjkZs1aHIMX4LT7GCAYT7JJ3fzxUUn1G+AF8qsDmVz8LeAPkwn8TK8mj2o89wUSbbktwBBIkqk4CB97vn7PbpZvuWkKk+DnJqdunRJYSEzuNiALb0HiRzsmI+Xv0ddhJ2pDJ/BpGT+GQoRnSYPl+lRfnsLfiCvNVfOIIkN6l+7P6eEjbOqlUOb/RrsC5NV8AECcHVQ9C3+4JPELQs4XvqaKppDbRlATN7gWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=silabs.com; dmarc=pass action=none header.from=silabs.com;
- dkim=pass header.d=silabs.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=silabs.onmicrosoft.com; s=selector2-silabs-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RPrxWdWGNJvYjUT2owohbDyOyC0Vbtfc7ra7B4ROlWQ=;
- b=Y5QjFHLSt+COTKOYugvB7uaQi6yDAfdAuLXrVGaKOYzSlFK4c5+aibM8+qvWUziGzLwJNOXlErbBHcTEupDyd5QIpj24OxqYA0Mu6XffXKlQ/EoNt8i9dnlX2nGEfYDelOyRGJ/Yq7u3O9aVRKAovM61b+WstvtNdSt1US1gJCY=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jerome.Pouiller@silabs.com; 
-Received: from MN2PR11MB4063.namprd11.prod.outlook.com (2603:10b6:208:13f::22)
- by MN2PR11MB4285.namprd11.prod.outlook.com (2603:10b6:208:191::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.20; Wed, 1 Apr
- 2020 11:05:27 +0000
-Received: from MN2PR11MB4063.namprd11.prod.outlook.com
- ([fe80::ade4:5702:1c8b:a2b3]) by MN2PR11MB4063.namprd11.prod.outlook.com
- ([fe80::ade4:5702:1c8b:a2b3%7]) with mapi id 15.20.2856.019; Wed, 1 Apr 2020
- 11:05:27 +0000
-From:   Jerome Pouiller <Jerome.Pouiller@silabs.com>
-To:     devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= 
-        <jerome.pouiller@silabs.com>
-Subject: [PATCH 32/32] staging: wfx: remove hack about tx_rate policies
-Date:   Wed,  1 Apr 2020 13:04:05 +0200
-Message-Id: <20200401110405.80282-33-Jerome.Pouiller@silabs.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200401110405.80282-1-Jerome.Pouiller@silabs.com>
-References: <20200401110405.80282-1-Jerome.Pouiller@silabs.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-X-ClientProxiedBy: SN4PR0501CA0156.namprd05.prod.outlook.com
- (2603:10b6:803:2c::34) To MN2PR11MB4063.namprd11.prod.outlook.com
- (2603:10b6:208:13f::22)
+        id S1732617AbgDALF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 07:05:58 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:34824 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732191AbgDALFz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 07:05:55 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1jJbBt-000862-Lp; Wed, 01 Apr 2020 13:05:49 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1EC141C0315;
+        Wed,  1 Apr 2020 13:05:49 +0200 (CEST)
+Date:   Wed, 01 Apr 2020 11:05:48 -0000
+From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] Revert "irqchip/xilinx: Enable generic irq multi handler"
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Marc Zyngier <maz@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <44b64be7-9240-fd52-af90-e0245220f38b@xilinx.com>
+References: <44b64be7-9240-fd52-af90-e0245220f38b@xilinx.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from pc-42.silabs.com (2a01:e35:2435:66a0:1265:30ff:fefd:6e7f) by SN4PR0501CA0156.namprd05.prod.outlook.com (2603:10b6:803:2c::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.9 via Frontend Transport; Wed, 1 Apr 2020 11:05:25 +0000
-X-Mailer: git-send-email 2.25.1
-X-Originating-IP: [2a01:e35:2435:66a0:1265:30ff:fefd:6e7f]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 32e0810a-ea3f-483a-d92f-08d7d62c953a
-X-MS-TrafficTypeDiagnostic: MN2PR11MB4285:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR11MB4285F5AAEB2BEA5E1389C4A193C90@MN2PR11MB4285.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-Forefront-PRVS: 03607C04F0
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR11MB4063.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(136003)(366004)(346002)(376002)(39850400004)(396003)(7696005)(8676002)(1076003)(16526019)(186003)(6666004)(5660300002)(86362001)(4326008)(52116002)(478600001)(66946007)(66476007)(54906003)(36756003)(8936002)(316002)(81156014)(6486002)(2906002)(66556008)(107886003)(81166006)(2616005);DIR:OUT;SFP:1101;
-Received-SPF: None (protection.outlook.com: silabs.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: h1qeSPoIe//HHNak+pSUaABbmyQA0ggmemurZGzVSDHV+lsH1cpN8OAf/8aU4nhNl0W+3S0iqUzRf+2AGzPtIB8LzaAGwbi0U2IROY0z/HutS5cP1QrwhV6Bzwf2Jbgq84UJdSMBZDM/HPHK+CN2EeGiFv4X5gEndVIxxSoQPgs3zMPVtj0VtBKC+NifTRRZnUL78bUn/8KakfJc6CMldLkJ75r4hH0FV2OwO3MZ1FJw6xTCHlcAtvdgkmP3ui9VUleakgYwEaihpYz4eTr0tZOqcASrNdWYjnMImVuDpFldletzn8xt6aITj9NDg2w76doZWWs24uN0DM6NR35H/vRyNYHu+3j+zioeNVv90im0AtQu9NbXvMauWve8Il+2uogWtkVzMrnuC9W0cdl1wLy7pxk9BLl0dhYhokril2d2xDh8WaQ5c0PiS9/Vqy3T
-X-MS-Exchange-AntiSpam-MessageData: cvMgiYPn/2TlNtXfy5qZ+kggf3E9UStRlG5XJFEfPDo+64PfnBui3mS9D/ojNBsxW0L3Txg98ge5VDT8P2bdIlWbtcKymJBAyM+BBJAPG4a11S5Th6RcKlpyE4s4aYfU3cBveRbDKrKev87Fze31x51r4jwqVyqCIgCjvT1IC9CpytbrtIbDQ14EEIEkhUw/Tttaho/x7jogPwVT9usICg==
-X-OriginatorOrg: silabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32e0810a-ea3f-483a-d92f-08d7d62c953a
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2020 11:05:26.9909
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 54dbd822-5231-4b20-944d-6f4abcd541fb
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hauASE1EqdAfBmoLfcj8lpqkFGCLqgziLNRUVpvY5P57dY0ZtCHj09C+/vr5CUxg++HO6VtWmxvzV914g8KgQg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4285
+Message-ID: <158573914871.28353.6675528184869876699.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogSsOpcsO0bWUgUG91aWxsZXIgPGplcm9tZS5wb3VpbGxlckBzaWxhYnMuY29tPgoKQ3Vy
-cmVudCBjb2RlIGNvbnRhaW5zIGEgd2VpcmQgaGFjayB0byBhdm9pZCBzd2l0Y2ggZnJvbSA1NE1i
-cHMgQ1RTIHRvCjFNYnBzLiBIb3dldmVyLCB3ZSBoYXZlIG5vdCBiZWVuIGFibGUgdG8gcmVwcm9k
-dWNlIHRoZSBwcm9ibGVtIGFuZApoYXJkd2FyZSB0ZWFtIGRvbid0IGtub3cgYW55IGRlZmVjdCBv
-ZiB0aGlzIGtpbmQuIFNvLCBpdCBzZWVtcyB0aGlzIGhhY2sKaXMgbm8gbW9yZSBuZWNlc3Nhcnku
-CgpTaWduZWQtb2ZmLWJ5OiBKw6lyw7RtZSBQb3VpbGxlciA8amVyb21lLnBvdWlsbGVyQHNpbGFi
-cy5jb20+Ci0tLQogZHJpdmVycy9zdGFnaW5nL3dmeC9kYXRhX3R4LmMgfCA1MyAtLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDUzIGRlbGV0aW9ucygt
-KQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy93ZngvZGF0YV90eC5jIGIvZHJpdmVycy9z
-dGFnaW5nL3dmeC9kYXRhX3R4LmMKaW5kZXggMWQ5YTgwODlmM2QzLi45M2VkMGVkNjNiYjIgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvc3RhZ2luZy93ZngvZGF0YV90eC5jCisrKyBiL2RyaXZlcnMvc3Rh
-Z2luZy93ZngvZGF0YV90eC5jCkBAIC01MSw1OSArNTEsNiBAQCBzdGF0aWMgdm9pZCB3ZnhfdHhf
-cG9saWN5X2J1aWxkKHN0cnVjdCB3ZnhfdmlmICp3dmlmLCBzdHJ1Y3QgdHhfcG9saWN5ICpwb2xp
-Y3ksCiAJCWlmIChyYXRlc1tpXS5pZHggPCAwKQogCQkJYnJlYWs7CiAJY291bnQgPSBpOwotCi0J
-LyogSEFDSyEhISBEZXZpY2UgaGFzIHByb2JsZW1zIChhdCBsZWFzdCkgc3dpdGNoaW5nIGZyb20K
-LQkgKiA1NE1icHMgQ1RTIHRvIDFNYnBzLiBUaGlzIHN3aXRjaCB0YWtlcyBlbm9ybW91cyBhbW91
-bnQKLQkgKiBvZiB0aW1lICgxMDAtMjAwIG1zKSwgbGVhZGluZyB0byB2YWx1YWJsZSB0aHJvdWdo
-cHV0IGRyb3AuCi0JICogQXMgYSB3b3JrYXJvdW5kLCBhZGRpdGlvbmFsIGctcmF0ZXMgYXJlIGlu
-amVjdGVkIHRvIHRoZQotCSAqIHBvbGljeS4KLQkgKi8KLQlpZiAoY291bnQgPT0gMiAmJiAhKHJh
-dGVzWzBdLmZsYWdzICYgSUVFRTgwMjExX1RYX1JDX01DUykgJiYKLQkgICAgcmF0ZXNbMF0uaWR4
-ID4gNCAmJiByYXRlc1swXS5jb3VudCA+IDIgJiYKLQkgICAgcmF0ZXNbMV0uaWR4IDwgMikgewot
-CQlpbnQgbWlkX3JhdGUgPSAocmF0ZXNbMF0uaWR4ICsgNCkgPj4gMTsKLQotCQkvKiBEZWNyZWFz
-ZSBudW1iZXIgb2YgcmV0cmllcyBmb3IgdGhlIGluaXRpYWwgcmF0ZSAqLwotCQlyYXRlc1swXS5j
-b3VudCAtPSAyOwotCi0JCWlmIChtaWRfcmF0ZSAhPSA0KSB7Ci0JCQkvKiBLZWVwIGZhbGxiYWNr
-IHJhdGUgYXQgMU1icHMuICovCi0JCQlyYXRlc1szXSA9IHJhdGVzWzFdOwotCi0JCQkvKiBJbmpl
-Y3QgMSB0cmFuc21pc3Npb24gb24gbG93ZXN0IGctcmF0ZSAqLwotCQkJcmF0ZXNbMl0uaWR4ID0g
-NDsKLQkJCXJhdGVzWzJdLmNvdW50ID0gMTsKLQkJCXJhdGVzWzJdLmZsYWdzID0gcmF0ZXNbMV0u
-ZmxhZ3M7Ci0KLQkJCS8qIEluamVjdCAxIHRyYW5zbWlzc2lvbiBvbiBtaWQtcmF0ZSAqLwotCQkJ
-cmF0ZXNbMV0uaWR4ID0gbWlkX3JhdGU7Ci0JCQlyYXRlc1sxXS5jb3VudCA9IDE7Ci0KLQkJCS8q
-IEZhbGxiYWNrIHRvIDEgTWJwcyBpcyBhIHJlYWxseSBiYWQgdGhpbmcsCi0JCQkgKiBzbyBsZXQn
-cyB0cnkgdG8gaW5jcmVhc2UgcHJvYmFiaWxpdHkgb2YKLQkJCSAqIHN1Y2Nlc3NmdWwgdHJhbnNt
-aXNzaW9uIG9uIHRoZSBsb3dlc3QgZyByYXRlCi0JCQkgKiBldmVuIG1vcmUKLQkJCSAqLwotCQkJ
-aWYgKHJhdGVzWzBdLmNvdW50ID49IDMpIHsKLQkJCQktLXJhdGVzWzBdLmNvdW50OwotCQkJCSsr
-cmF0ZXNbMl0uY291bnQ7Ci0JCQl9Ci0KLQkJCS8qIEFkanVzdCBhbW91bnQgb2YgcmF0ZXMgZGVm
-aW5lZCAqLwotCQkJY291bnQgKz0gMjsKLQkJfSBlbHNlIHsKLQkJCS8qIEtlZXAgZmFsbGJhY2sg
-cmF0ZSBhdCAxTWJwcy4gKi8KLQkJCXJhdGVzWzJdID0gcmF0ZXNbMV07Ci0KLQkJCS8qIEluamVj
-dCAyIHRyYW5zbWlzc2lvbnMgb24gbG93ZXN0IGctcmF0ZSAqLwotCQkJcmF0ZXNbMV0uaWR4ID0g
-NDsKLQkJCXJhdGVzWzFdLmNvdW50ID0gMjsKLQotCQkJLyogQWRqdXN0IGFtb3VudCBvZiByYXRl
-cyBkZWZpbmVkICovCi0JCQljb3VudCArPSAxOwotCQl9Ci0JfQotCiAJZm9yIChpID0gMDsgaSA8
-IElFRUU4MDIxMV9UWF9NQVhfUkFURVM7ICsraSkgewogCQlpbnQgcmF0ZWlkOwogCQl1OCBjb3Vu
-dDsKLS0gCjIuMjUuMQoK
+The following commit has been merged into the irq/urgent branch of tip:
+
+Commit-ID:     4cea749d56bec9409f3bd126d2b2f949dc6c66e2
+Gitweb:        https://git.kernel.org/tip/4cea749d56bec9409f3bd126d2b2f949dc6c66e2
+Author:        Marc Zyngier <maz@kernel.org>
+AuthorDate:    Mon, 30 Mar 2020 10:43:59 +01:00
+Committer:     Marc Zyngier <maz@kernel.org>
+CommitterDate: Wed, 01 Apr 2020 09:12:24 +01:00
+
+Revert "irqchip/xilinx: Enable generic irq multi handler"
+
+This reverts commit a0789993bf8266e62fea6b4613945ba081c71e7d, which
+breaks a number of PPC platforms.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/44b64be7-9240-fd52-af90-e0245220f38b@xilinx.com
+---
+ arch/microblaze/Kconfig           |  2 +--
+ arch/microblaze/include/asm/irq.h |  3 +++-
+ arch/microblaze/kernel/irq.c      | 21 ++++++++++++++++++-
+ drivers/irqchip/irq-xilinx-intc.c | 34 ++++++++++++------------------
+ 4 files changed, 37 insertions(+), 23 deletions(-)
+
+diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
+index 242f58e..6a331bd 100644
+--- a/arch/microblaze/Kconfig
++++ b/arch/microblaze/Kconfig
+@@ -47,8 +47,6 @@ config MICROBLAZE
+ 	select CPU_NO_EFFICIENT_FFS
+ 	select MMU_GATHER_NO_RANGE if MMU
+ 	select SPARSE_IRQ
+-	select GENERIC_IRQ_MULTI_HANDLER
+-	select HANDLE_DOMAIN_IRQ
+ 
+ # Endianness selection
+ choice
+diff --git a/arch/microblaze/include/asm/irq.h b/arch/microblaze/include/asm/irq.h
+index 5166f08..eac2fb4 100644
+--- a/arch/microblaze/include/asm/irq.h
++++ b/arch/microblaze/include/asm/irq.h
+@@ -14,4 +14,7 @@
+ struct pt_regs;
+ extern void do_IRQ(struct pt_regs *regs);
+ 
++/* should be defined in each interrupt controller driver */
++extern unsigned int xintc_get_irq(void);
++
+ #endif /* _ASM_MICROBLAZE_IRQ_H */
+diff --git a/arch/microblaze/kernel/irq.c b/arch/microblaze/kernel/irq.c
+index 0b37dde..903dad8 100644
+--- a/arch/microblaze/kernel/irq.c
++++ b/arch/microblaze/kernel/irq.c
+@@ -20,10 +20,29 @@
+ #include <linux/irqchip.h>
+ #include <linux/of_irq.h>
+ 
++static u32 concurrent_irq;
++
+ void __irq_entry do_IRQ(struct pt_regs *regs)
+ {
++	unsigned int irq;
++	struct pt_regs *old_regs = set_irq_regs(regs);
+ 	trace_hardirqs_off();
+-	handle_arch_irq(regs);
++
++	irq_enter();
++	irq = xintc_get_irq();
++next_irq:
++	BUG_ON(!irq);
++	generic_handle_irq(irq);
++
++	irq = xintc_get_irq();
++	if (irq != -1U) {
++		pr_debug("next irq: %d\n", irq);
++		++concurrent_irq;
++		goto next_irq;
++	}
++
++	irq_exit();
++	set_irq_regs(old_regs);
+ 	trace_hardirqs_on();
+ }
+ 
+diff --git a/drivers/irqchip/irq-xilinx-intc.c b/drivers/irqchip/irq-xilinx-intc.c
+index ea74181..1d3d273 100644
+--- a/drivers/irqchip/irq-xilinx-intc.c
++++ b/drivers/irqchip/irq-xilinx-intc.c
+@@ -124,6 +124,20 @@ static unsigned int xintc_get_irq_local(struct xintc_irq_chip *irqc)
+ 	return irq;
+ }
+ 
++unsigned int xintc_get_irq(void)
++{
++	unsigned int irq = -1;
++	u32 hwirq;
++
++	hwirq = xintc_read(primary_intc, IVR);
++	if (hwirq != -1U)
++		irq = irq_find_mapping(primary_intc->root_domain, hwirq);
++
++	pr_debug("irq-xilinx: hwirq=%d, irq=%d\n", hwirq, irq);
++
++	return irq;
++}
++
+ static int xintc_map(struct irq_domain *d, unsigned int irq, irq_hw_number_t hw)
+ {
+ 	struct xintc_irq_chip *irqc = d->host_data;
+@@ -163,25 +177,6 @@ static void xil_intc_irq_handler(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
+-static void xil_intc_handle_irq(struct pt_regs *regs)
+-{
+-	u32 hwirq;
+-	struct xintc_irq_chip *irqc = primary_intc;
+-
+-	do {
+-		hwirq = xintc_read(irqc, IVR);
+-		if (likely(hwirq != -1U)) {
+-			int ret;
+-
+-			ret = handle_domain_irq(irqc->root_domain, hwirq, regs);
+-			WARN_ONCE(ret, "Unhandled HWIRQ %d\n", hwirq);
+-			continue;
+-		}
+-
+-		break;
+-	} while (1);
+-}
+-
+ static int __init xilinx_intc_of_init(struct device_node *intc,
+ 					     struct device_node *parent)
+ {
+@@ -251,7 +246,6 @@ static int __init xilinx_intc_of_init(struct device_node *intc,
+ 	} else {
+ 		primary_intc = irqc;
+ 		irq_set_default_host(primary_intc->root_domain);
+-		set_handle_irq(xil_intc_handle_irq);
+ 	}
+ 
+ 	return 0;
