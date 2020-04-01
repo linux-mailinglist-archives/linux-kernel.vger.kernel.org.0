@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D616719B28E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B8B619B28F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389327AbgDAQpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:45:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46286 "EHLO mail.kernel.org"
+        id S2389821AbgDAQpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:45:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389527AbgDAQpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:45:04 -0400
+        id S2389815AbgDAQpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:45:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C20FE2071A;
-        Wed,  1 Apr 2020 16:45:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 283FE2063A;
+        Wed,  1 Apr 2020 16:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759503;
-        bh=MfcDThaTPKmBvoit5K+m3YHIT6p5iRuI/Pc5lZ+tk3o=;
+        s=default; t=1585759506;
+        bh=O+nBFrE5K3SaGgqqy3tb0bn4XRb2uUJTw85fqQhg8VI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TUua4RUml5lUdav+A2wV7f0t04j1fituV3zoCWa8BTV5xkpjUwJ06RF/0dNZAGMfY
-         cS0YdzwxIMwJFVrbjJyw980S3LUUEt1bYmlyaNRODFt4kY9m5kcw08gqKlqpi2RPl1
-         2+SAIzbumccprkTb/zjrK1C2a9H7rMndI87e1wyU=
+        b=GGVTG1INBJw/CbzYxthi7Vun++J4uDxGE1uTtB1qNfX6EF9TqYmViWPZmjm1RMCLw
+         I8uUKpEGVDF7i7dmhwGOHElJgP7Zr7eLpWi5F6s3W/zKm2pyFJmumRefJ9fj4K54kw
+         wG7YSdx/k0aOGWPmOg0DYKReA842/1CncayWtoiY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.14 100/148] gpiolib: acpi: Add quirk to ignore EC wakeups on HP x2 10 BYT + AXP288 model
-Date:   Wed,  1 Apr 2020 18:18:12 +0200
-Message-Id: <20200401161602.404317194@linuxfoundation.org>
+        stable@vger.kernel.org, Kaike Wan <kaike.wan@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 101/148] RDMA/core: Ensure security pkey modify is not lost
+Date:   Wed,  1 Apr 2020 18:18:13 +0200
+Message-Id: <20200401161602.477152561@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
 References: <20200401161552.245876366@linuxfoundation.org>
@@ -44,64 +45,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-commit 0e91506ba00730f088961a8d39f8693b0f8e3fea upstream.
+commit 2d47fbacf2725a67869f4d3634c2415e7dfab2f4 upstream.
 
-Commit aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option +
-quirk mechanism") was added to deal with spurious wakeups on one specific
-model of the HP x2 10 series. In the mean time I have learned that there
-are at least 3 different HP x2 10 models:
+The following modify sequence (loosely based on ipoib) will lose a pkey
+modifcation:
 
-Bay Trail SoC + AXP288 PMIC
-Cherry Trail SoC + AXP288 PMIC
-Cherry Trail SoC + TI PMIC
+- Modify (pkey index, port)
+- Modify (new pkey index, NO port)
 
-And the original quirk is only correct for (and only matches the)
-Cherry Trail SoC + TI PMIC model.
+After the first modify, the qp_pps list will have saved the pkey and the
+unit on the main list.
 
-The Bay Trail SoC + AXP288 PMIC model has different DMI strings, has
-the external EC interrupt on a different GPIO pin and only needs to ignore
-wakeups on the EC interrupt, the INT0002 device works fine on this model.
+During the second modify, get_new_pps() will fetch the port from qp_pps
+and read the new pkey index from qp_attr->pkey_index.  The state will
+still be zero, or IB_PORT_PKEY_NOT_VALID. Because of the invalid state,
+the new values will never replace the one in the qp pps list, losing the
+new pkey.
 
-This commit adds an extra DMI based quirk for the HP x2 10 BYT + AXP288
-model, ignoring wakeups for ACPI GPIO events on the EC interrupt pin
-on this model. This fixes spurious wakeups from suspend on this model.
+This happens because the following if statements will never correct the
+state because the first term will be false. If the code had been executed,
+it would incorrectly overwrite valid values.
 
-Fixes: aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option + quirk mechanism")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://lore.kernel.org/r/20200302111225.6641-3-hdegoede@redhat.com
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+  if ((qp_attr_mask & IB_QP_PKEY_INDEX) && (qp_attr_mask & IB_QP_PORT))
+	  new_pps->main.state = IB_PORT_PKEY_VALID;
+
+  if (!(qp_attr_mask & (IB_QP_PKEY_INDEX | IB_QP_PORT)) && qp_pps) {
+	  new_pps->main.port_num = qp_pps->main.port_num;
+	  new_pps->main.pkey_index = qp_pps->main.pkey_index;
+	  if (qp_pps->main.state != IB_PORT_PKEY_NOT_VALID)
+		  new_pps->main.state = IB_PORT_PKEY_VALID;
+  }
+
+Fix by joining the two if statements with an or test to see if qp_pps is
+non-NULL and in the correct state.
+
+Fixes: 1dd017882e01 ("RDMA/core: Fix protection fault in get_pkey_idx_qp_list")
+Link: https://lore.kernel.org/r/20200313124704.14982.55907.stgit@awfm-01.aw.intel.com
+Reviewed-by: Kaike Wan <kaike.wan@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpiolib-acpi.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/infiniband/core/security.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1425,6 +1425,21 @@ static const struct dmi_system_id gpioli
- 			.ignore_wake = "INT33FF:01@0,INT0002:00@2",
- 		},
- 	},
-+	{
-+		/*
-+		 * HP X2 10 models with Bay Trail SoC + AXP288 PMIC use an
-+		 * external embedded-controller connected via I2C + an ACPI GPIO
-+		 * event handler on INT33FC:02 pin 28, causing spurious wakeups.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "HP Pavilion x2 Detachable"),
-+			DMI_MATCH(DMI_BOARD_NAME, "815D"),
-+		},
-+		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
-+			.ignore_wake = "INT33FC:02@28",
-+		},
-+	},
- 	{} /* Terminating entry */
- };
+--- a/drivers/infiniband/core/security.c
++++ b/drivers/infiniband/core/security.c
+@@ -348,16 +348,11 @@ static struct ib_ports_pkeys *get_new_pp
+ 	else if (qp_pps)
+ 		new_pps->main.pkey_index = qp_pps->main.pkey_index;
  
+-	if ((qp_attr_mask & IB_QP_PKEY_INDEX) && (qp_attr_mask & IB_QP_PORT))
++	if (((qp_attr_mask & IB_QP_PKEY_INDEX) &&
++	     (qp_attr_mask & IB_QP_PORT)) ||
++	    (qp_pps && qp_pps->main.state != IB_PORT_PKEY_NOT_VALID))
+ 		new_pps->main.state = IB_PORT_PKEY_VALID;
+ 
+-	if (!(qp_attr_mask & (IB_QP_PKEY_INDEX | IB_QP_PORT)) && qp_pps) {
+-		new_pps->main.port_num = qp_pps->main.port_num;
+-		new_pps->main.pkey_index = qp_pps->main.pkey_index;
+-		if (qp_pps->main.state != IB_PORT_PKEY_NOT_VALID)
+-			new_pps->main.state = IB_PORT_PKEY_VALID;
+-	}
+-
+ 	if (qp_attr_mask & IB_QP_ALT_PATH) {
+ 		new_pps->alt.port_num = qp_attr->alt_port_num;
+ 		new_pps->alt.pkey_index = qp_attr->alt_pkey_index;
 
 
