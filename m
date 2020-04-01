@@ -2,126 +2,481 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2711219A85D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:13:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9C3D19A863
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:14:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732039AbgDAJNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 05:13:10 -0400
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:36505 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbgDAJNJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 05:13:09 -0400
-Received: by mail-qv1-f68.google.com with SMTP id z13so12444485qvw.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 02:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jkMgyGLx/BAkeNtxDN6Xm/ZbanBZQvNQbU7eOJcnXos=;
-        b=gePLR3I5HlC84w7tgJzEsRDClSwTX0vkukGGPouc74j9tPxnFXOnMxG8zqKusXyLSD
-         P1CXTLsHgRD/S8Q8S5YIH4ka/bNjg1DuR3op0rVEU8qu0/3qvutPbOxc2nl/iI4PR1x3
-         kISWfSQmZqfiL2nFZ6Rb5KCWgl65Wka5UzT/xrbBgOXxVwSphSnqGCN+0f7ErOkgeCzo
-         pdkfIyKq3i2TpWjKqfjvvvBKyxACnt5KZbkN1iV4yOXUi95SDk+EdLX7WIfIWb+0/FFM
-         axOTi9LYHzFUG7NygICZeM4Vfcw9ZoImKssVQE87l7r8QgXtWFHq59KR2dylCJRYjYsK
-         0DmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jkMgyGLx/BAkeNtxDN6Xm/ZbanBZQvNQbU7eOJcnXos=;
-        b=PoZF48U52L8FDdB1zpwdzNB6+Sm2g6DV03Oc7UgRlRh0t2fe6umjqT7YgzLM4A3Eg4
-         iQ0N6/KZoecB8llwxVBGezDJBShZsu/GubP6Zq3EntY+TWcEB9/SHmFguf8Unuz5Lxgi
-         yIAoHdm3JUOb1WlehTrDv6KuMLr7PhgNVAk6R23V4QDpXgrEDL1nWMrjb2j3SZyZQ2nl
-         8uZWxGu9JKItB1ZxkgDsTOgTyXFU0SrbqPmrcsUC9SIDDwVWbJMXP1weZdmvtY4asjaL
-         u5k4Vg7hGR1TzlTtJnOuR5LI01zLTBKD5oK/PQLiYxQrkSU7lhHLuJtgWW1X99IjW/Y3
-         grAA==
-X-Gm-Message-State: ANhLgQ1ad3NTmPEGEGbUHWcHtVyxqBkdtWkkIOCCkqUhQoMgJCR7Uy6V
-        RMCoI4H4kGcM77ZFBEAv+5kw0MsqFnRJt+Zqw269Pg==
-X-Google-Smtp-Source: ADFU+vs06wImJZ2EPBdCY2ie1qh0IX+7CluGHJHL2V6FICU7OeYMC84ibT4JTW0BL1dvRyCt/qMHZuA5ONrD8dluF/U=
-X-Received: by 2002:ad4:49d1:: with SMTP id j17mr21052173qvy.80.1585732387345;
- Wed, 01 Apr 2020 02:13:07 -0700 (PDT)
+        id S1732137AbgDAJOV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 1 Apr 2020 05:14:21 -0400
+Received: from mga17.intel.com ([192.55.52.151]:41214 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726974AbgDAJOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 05:14:21 -0400
+IronPort-SDR: 0UAu0lKJl+rqqnVCIRq/cjJxPXFKncsYqmzjHKr3ky7go6myhVJV2jWXymvZ5Ipo/6iNiG7V5N
+ A812kuGLDPNw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 02:14:18 -0700
+IronPort-SDR: u8tSBPnK1bjOd51OvaZcyAoPnATINWznx0n5WdEiGirqr/d9Epbfvp7vI935bxQM0afF8Fn2Ji
+ CCb3gYJ0/rTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,331,1580803200"; 
+   d="scan'208";a="273091002"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by fmsmga004.fm.intel.com with ESMTP; 01 Apr 2020 02:14:18 -0700
+Received: from fmsmsx154.amr.corp.intel.com (10.18.116.70) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 1 Apr 2020 02:14:18 -0700
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ FMSMSX154.amr.corp.intel.com (10.18.116.70) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 1 Apr 2020 02:14:18 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.225]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.146]) with mapi id 14.03.0439.000;
+ Wed, 1 Apr 2020 17:13:07 +0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>
+CC:     "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Tian, Jun J" <jun.j.tian@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wu, Hao" <hao.wu@intel.com>
+Subject: RE: [PATCH v1 6/8] vfio/type1: Bind guest page tables to host
+Thread-Topic: [PATCH v1 6/8] vfio/type1: Bind guest page tables to host
+Thread-Index: AQHWAEUdkW8K+/kg/06c7098DvJyv6hgm8wAgANYlCA=
+Date:   Wed, 1 Apr 2020 09:13:07 +0000
+Message-ID: <A2975661238FB949B60364EF0F2C25743A21D8C6@SHSMSX104.ccr.corp.intel.com>
+References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
+ <1584880325-10561-7-git-send-email-yi.l.liu@intel.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19D7FF98F@SHSMSX104.ccr.corp.intel.com>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7FF98F@SHSMSX104.ccr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <000000000000da6059059fcfdcf9@google.com> <0000000000005b022005a22a0050@google.com>
- <20200331174116.GA1844017@kroah.com> <CANEJEGuhZChGXFzbwaEwArM4UKjUxZo=WNbREPH3887xtu62Nw@mail.gmail.com>
-In-Reply-To: <CANEJEGuhZChGXFzbwaEwArM4UKjUxZo=WNbREPH3887xtu62Nw@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 1 Apr 2020 11:12:55 +0200
-Message-ID: <CACT4Y+Yk_93iScH6F0hhR2yo+pCx_0J32TaTC-_QfXy69pauMA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in skb_release_data (2)
-To:     Grant Grundler <grundler@chromium.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        syzbot <syzbot+a66a7c2e996797bb4acb@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>, festevam@gmail.com,
-        Hayes Wang <hayeswang@realtek.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>, kernel@pengutronix.de,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-bluetooth <linux-bluetooth@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>, nishadkamdar@gmail.com,
-        peter.chen@nxp.com, Prashant Malani <pmalani@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 7:44 PM Grant Grundler <grundler@chromium.org> wrote:
->
-> On Tue, Mar 31, 2020 at 10:41 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> From: Tian, Kevin <kevin.tian@intel.com>
+> Sent: Monday, March 30, 2020 8:46 PM
+> Subject: RE: [PATCH v1 6/8] vfio/type1: Bind guest page tables to host
+> 
+> > From: Liu, Yi L <yi.l.liu@intel.com>
+> > Sent: Sunday, March 22, 2020 8:32 PM
 > >
-> > On Tue, Mar 31, 2020 at 10:36:01AM -0700, syzbot wrote:
-> > > syzbot suspects this bug was fixed by commit:
-> > >
-> > > commit d9958306d4be14f4c7466242b38ed3893a7b1386
-> > > Author: Nishad Kamdar <nishadkamdar@gmail.com>
-> > > Date:   Sun Mar 15 10:55:07 2020 +0000
-> > >
-> > >     USB: chipidea: Use the correct style for SPDX License Identifier
-> > >
-> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16d4940be00000
-> > > start commit:   63623fd4 Merge tag 'for-linus' of git://git.kernel.org/pub..
-> > > git tree:       upstream
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=5d2e033af114153f
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=a66a7c2e996797bb4acb
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c25a81e00000
-> > >
-> > > If the result looks correct, please mark the bug fixed by replying with:
-> > >
-> > > #syz fix: USB: chipidea: Use the correct style for SPDX License Identifier
+> > From: Liu Yi L <yi.l.liu@intel.com>
 > >
-> > I really doubt a comment change fixed a syzbot bug :)
->
-> Just as I don't believe the bug was caused by pmalani's patch to r8152.
->
-> syzbot is just having trouble automatically bisecting/tracking this
-> bug since it appears only intermittently.
+> > VFIO_TYPE1_NESTING_IOMMU is an IOMMU type which is backed by hardware
+> > IOMMUs that have nesting DMA translation (a.k.a dual stage address
+> > translation). For such hardware IOMMUs, there are two stages/levels of
+> > address translation, and software may let userspace/VM to own the
+> > first-
+> > level/stage-1 translation structures. Example of such usage is vSVA (
+> > virtual Shared Virtual Addressing). VM owns the first-level/stage-1
+> > translation structures and bind the structures to host, then hardware
+> > IOMMU would utilize nesting translation when doing DMA translation fo
+> > the devices behind such hardware IOMMU.
+> >
+> > This patch adds vfio support for binding guest translation (a.k.a
+> > stage 1) structure to host iommu. And for VFIO_TYPE1_NESTING_IOMMU,
+> > not only bind guest page table is needed, it also requires to expose
+> > interface to guest for iommu cache invalidation when guest modified
+> > the first-level/stage-1 translation structures since hardware needs to
+> > be notified to flush stale iotlbs. This would be introduced in next
+> > patch.
+> >
+> > In this patch, guest page table bind and unbind are done by using
+> > flags VFIO_IOMMU_BIND_GUEST_PGTBL and
+> VFIO_IOMMU_UNBIND_GUEST_PGTBL
+> > under IOCTL VFIO_IOMMU_BIND, the bind/unbind data are conveyed by
+> > struct iommu_gpasid_bind_data. Before binding guest page table to
+> > host, VM should have got a PASID allocated by host via
+> > VFIO_IOMMU_PASID_REQUEST.
+> >
+> > Bind guest translation structures (here is guest page table) to host
+> 
+> Bind -> Binding
+got it.
+> > are the first step to setup vSVA (Virtual Shared Virtual Addressing).
+> 
+> are -> is. and you already explained vSVA earlier.
+oh yes, it is.
+> >
+> > Cc: Kevin Tian <kevin.tian@intel.com>
+> > CC: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Cc: Alex Williamson <alex.williamson@redhat.com>
+> > Cc: Eric Auger <eric.auger@redhat.com>
+> > Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> > Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.com>
+> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > ---
+> >  drivers/vfio/vfio_iommu_type1.c | 158
+> > ++++++++++++++++++++++++++++++++++++++++
+> >  include/uapi/linux/vfio.h       |  46 ++++++++++++
+> >  2 files changed, 204 insertions(+)
+> >
+> > diff --git a/drivers/vfio/vfio_iommu_type1.c
+> > b/drivers/vfio/vfio_iommu_type1.c index 82a9e0b..a877747 100644
+> > --- a/drivers/vfio/vfio_iommu_type1.c
+> > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > @@ -130,6 +130,33 @@ struct vfio_regions {
+> >  #define IS_IOMMU_CAP_DOMAIN_IN_CONTAINER(iommu)	\
+> >  					(!list_empty(&iommu->domain_list))
+> >
+> > +struct domain_capsule {
+> > +	struct iommu_domain *domain;
+> > +	void *data;
+> > +};
+> > +
+> > +/* iommu->lock must be held */
+> > +static int vfio_iommu_for_each_dev(struct vfio_iommu *iommu,
+> > +		      int (*fn)(struct device *dev, void *data),
+> > +		      void *data)
+> > +{
+> > +	struct domain_capsule dc = {.data = data};
+> > +	struct vfio_domain *d;
+> > +	struct vfio_group *g;
+> > +	int ret = 0;
+> > +
+> > +	list_for_each_entry(d, &iommu->domain_list, next) {
+> > +		dc.domain = d->domain;
+> > +		list_for_each_entry(g, &d->group_list, next) {
+> > +			ret = iommu_group_for_each_dev(g->iommu_group,
+> > +						       &dc, fn);
+> > +			if (ret)
+> > +				break;
+> > +		}
+> > +	}
+> > +	return ret;
+> > +}
+> > +
+> >  static int put_pfn(unsigned long pfn, int prot);
+> >
+> >  /*
+> > @@ -2314,6 +2341,88 @@ static int
+> > vfio_iommu_info_add_nesting_cap(struct vfio_iommu *iommu,
+> >  	return 0;
+> >  }
+> >
+> > +static int vfio_bind_gpasid_fn(struct device *dev, void *data) {
+> > +	struct domain_capsule *dc = (struct domain_capsule *)data;
+> > +	struct iommu_gpasid_bind_data *gbind_data =
+> > +		(struct iommu_gpasid_bind_data *) dc->data;
+> > +
+> 
+> In Jacob's vSVA iommu series, [PATCH 06/11]:
+> 
+> +		/* REVISIT: upper layer/VFIO can track host process that bind the
+> PASID.
+> +		 * ioasid_set = mm might be sufficient for vfio to check pasid VMM
+> +		 * ownership.
+> +		 */
+> 
+> I asked him who exactly should be responsible for tracking the pasid ownership.
+> Although no response yet, I expect vfio/iommu can have a clear policy and also
+> documented here to provide consistent message.
 
-Checking if vmlinux changes after applying the patch looked like a
-smart and simple way to detect all of:
-- Comment-only change
-- Documentation-only change
-- Change to a non-current arch
-- Changed to non-enabled configs
-- Changes to tests only
+yep.
 
-But it's not working in reality, there is some bug in kernel or compiler:
-https://github.com/google/syzkaller/issues/1271#issuecomment-559093018
+> > +	return iommu_sva_bind_gpasid(dc->domain, dev, gbind_data); }
+> > +
+> > +static int vfio_unbind_gpasid_fn(struct device *dev, void *data) {
+> > +	struct domain_capsule *dc = (struct domain_capsule *)data;
+> > +	struct iommu_gpasid_bind_data *gbind_data =
+> > +		(struct iommu_gpasid_bind_data *) dc->data;
+> > +
+> > +	return iommu_sva_unbind_gpasid(dc->domain, dev,
+> > +					gbind_data->hpasid);
+> 
+> curious why we have to share the same bind_data structure between bind and
+> unbind, especially when unbind requires only one field? I didn't see a clear reason,
+> and just similar to earlier ALLOC/FREE which don't share structure either.
+> Current way simply wastes space for unbind operation...
 
-You may see in this bisection log as well:
-culprit signature:
-85ed07d5a8769c26fa0d170475624841e367ea0d08ea79f55ca450a9e97429a0
-parent  signature:
-2244116b3fcae3bb24003990bcd2b06a03861effee2d94675e527446c3da078f
+no special reason today. But the gIOVA support over nested translation
+is in plan, it may require a flag to indicate it as guest iommu driver
+may user a single PASID value(RID2PASID) for all devices in guest side.
+Especially if the RID2PASID value used for IOVA the the same with host
+side. So adding a flag to indicate the binding is for IOVA is helpful.
+For PF/VF, iommu driver just bind with the host side's RID2PASID. While
+for ADI (Assignable Device Interface),  vfio layer needs to figure out
+the default PASID stored in the aux-domain, and then iommu driver bind
+gIOVA table to the default PASID. The potential flag is required in both
+bind and unbind path. As such, it would be better to share the structure.
 
-So this commit somehow does very realistically affect the kernel
-binary. So far nobody figured out why...
+> > +}
+> > +
+> > +/**
+> > + * Unbind specific gpasid, caller of this function requires hold
+> > + * vfio_iommu->lock
+> > + */
+> > +static long vfio_iommu_type1_do_guest_unbind(struct vfio_iommu
+> > *iommu,
+> > +				struct iommu_gpasid_bind_data *gbind_data) {
+> > +	return vfio_iommu_for_each_dev(iommu,
+> > +				vfio_unbind_gpasid_fn, gbind_data); }
+> > +
+> > +static long vfio_iommu_type1_bind_gpasid(struct vfio_iommu *iommu,
+> > +				struct iommu_gpasid_bind_data *gbind_data) {
+> > +	int ret = 0;
+> > +
+> > +	mutex_lock(&iommu->lock);
+> > +	if (!IS_IOMMU_CAP_DOMAIN_IN_CONTAINER(iommu)) {
+> > +		ret = -EINVAL;
+> > +		goto out_unlock;
+> > +	}
+> > +
+> > +	ret = vfio_iommu_for_each_dev(iommu,
+> > +			vfio_bind_gpasid_fn, gbind_data);
+> > +	/*
+> > +	 * If bind failed, it may not be a total failure. Some devices
+> > +	 * within the iommu group may have bind successfully. Although
+> > +	 * we don't enable pasid capability for non-singletion iommu
+> > +	 * groups, a unbind operation would be helpful to ensure no
+> > +	 * partial binding for an iommu group.
+> > +	 */
+> > +	if (ret)
+> > +		/*
+> > +		 * Undo all binds that already succeeded, no need to
+> 
+> binds -> bindings
+got it.
+> 
+> > +		 * check the return value here since some device within
+> > +		 * the group has no successful bind when coming to this
+> > +		 * place switch.
+> > +		 */
+> 
+> remove 'switch'
+oh, yes.
 
-Before you ask, syzkaller filters out debug info, etc:
-https://github.com/google/syzkaller/blob/master/pkg/build/linux.go#L168-L178
+> 
+> > +		vfio_iommu_type1_do_guest_unbind(iommu, gbind_data);
+> > +
+> > +out_unlock:
+> > +	mutex_unlock(&iommu->lock);
+> > +	return ret;
+> > +}
+> > +
+> > +static long vfio_iommu_type1_unbind_gpasid(struct vfio_iommu *iommu,
+> > +				struct iommu_gpasid_bind_data *gbind_data) {
+> > +	int ret = 0;
+> > +
+> > +	mutex_lock(&iommu->lock);
+> > +	if (!IS_IOMMU_CAP_DOMAIN_IN_CONTAINER(iommu)) {
+> > +		ret = -EINVAL;
+> > +		goto out_unlock;
+> > +	}
+> > +
+> > +	ret = vfio_iommu_type1_do_guest_unbind(iommu, gbind_data);
+> > +
+> > +out_unlock:
+> > +	mutex_unlock(&iommu->lock);
+> > +	return ret;
+> > +}
+> > +
+> >  static long vfio_iommu_type1_ioctl(void *iommu_data,
+> >  				   unsigned int cmd, unsigned long arg)  { @@ -
+> 2471,6 +2580,55 @@
+> > static long vfio_iommu_type1_ioctl(void *iommu_data,
+> >  		default:
+> >  			return -EINVAL;
+> >  		}
+> > +
+> > +	} else if (cmd == VFIO_IOMMU_BIND) {
+> 
+> BIND what? VFIO_IOMMU_BIND_PASID sounds clearer to me.
+
+Emm, it's up to the flags to indicate bind what. It was proposed to
+cover the three cases below:
+a) BIND/UNBIND_GPASID
+b) BIND/UNBIND_GPASID_TABLE
+c) BIND/UNBIND_PROCESS
+<only a) is covered in this patch>
+So it's called VFIO_IOMMU_BIND.
+
+> 
+> > +		struct vfio_iommu_type1_bind bind;
+> > +		u32 version;
+> > +		int data_size;
+> > +		void *gbind_data;
+> > +		int ret;
+> > +
+> > +		minsz = offsetofend(struct vfio_iommu_type1_bind, flags);
+> > +
+> > +		if (copy_from_user(&bind, (void __user *)arg, minsz))
+> > +			return -EFAULT;
+> > +
+> > +		if (bind.argsz < minsz)
+> > +			return -EINVAL;
+> > +
+> > +		/* Get the version of struct iommu_gpasid_bind_data */
+> > +		if (copy_from_user(&version,
+> > +			(void __user *) (arg + minsz),
+> > +					sizeof(version)))
+> > +			return -EFAULT;
+> > +
+> > +		data_size = iommu_uapi_get_data_size(
+> > +				IOMMU_UAPI_BIND_GPASID, version);
+> > +		gbind_data = kzalloc(data_size, GFP_KERNEL);
+> > +		if (!gbind_data)
+> > +			return -ENOMEM;
+> > +
+> > +		if (copy_from_user(gbind_data,
+> > +			 (void __user *) (arg + minsz), data_size)) {
+> > +			kfree(gbind_data);
+> > +			return -EFAULT;
+> > +		}
+> > +
+> > +		switch (bind.flags & VFIO_IOMMU_BIND_MASK) {
+> > +		case VFIO_IOMMU_BIND_GUEST_PGTBL:
+> > +			ret = vfio_iommu_type1_bind_gpasid(iommu,
+> > +							   gbind_data);
+> > +			break;
+> > +		case VFIO_IOMMU_UNBIND_GUEST_PGTBL:
+> > +			ret = vfio_iommu_type1_unbind_gpasid(iommu,
+> > +							     gbind_data);
+> > +			break;
+> > +		default:
+> > +			ret = -EINVAL;
+> > +			break;
+> > +		}
+> > +		kfree(gbind_data);
+> > +		return ret;
+> >  	}
+> >
+> >  	return -ENOTTY;
+> > diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> > index ebeaf3e..2235bc6 100644
+> > --- a/include/uapi/linux/vfio.h
+> > +++ b/include/uapi/linux/vfio.h
+> > @@ -14,6 +14,7 @@
+> >
+> >  #include <linux/types.h>
+> >  #include <linux/ioctl.h>
+> > +#include <linux/iommu.h>
+> >
+> >  #define VFIO_API_VERSION	0
+> >
+> > @@ -853,6 +854,51 @@ struct vfio_iommu_type1_pasid_request {
+> >   */
+> >  #define VFIO_IOMMU_PASID_REQUEST	_IO(VFIO_TYPE, VFIO_BASE +
+> > 22)
+> >
+> > +/**
+> > + * Supported flags:
+> > + *	- VFIO_IOMMU_BIND_GUEST_PGTBL: bind guest page tables to host
+> > for
+> > + *			nesting type IOMMUs. In @data field It takes struct
+> > + *			iommu_gpasid_bind_data.
+> > + *	- VFIO_IOMMU_UNBIND_GUEST_PGTBL: undo a bind guest page
+> > table operation
+> > + *			invoked by VFIO_IOMMU_BIND_GUEST_PGTBL.
+> > + *
+> > + */
+> > +struct vfio_iommu_type1_bind {
+> > +	__u32		argsz;
+> > +	__u32		flags;
+> > +#define VFIO_IOMMU_BIND_GUEST_PGTBL	(1 << 0)
+> > +#define VFIO_IOMMU_UNBIND_GUEST_PGTBL	(1 << 1)
+> > +	__u8		data[];
+> > +};
+> > +
+> > +#define VFIO_IOMMU_BIND_MASK	(VFIO_IOMMU_BIND_GUEST_PGTBL
+> > | \
+> > +
+> > 	VFIO_IOMMU_UNBIND_GUEST_PGTBL)
+> > +
+> > +/**
+> > + * VFIO_IOMMU_BIND - _IOW(VFIO_TYPE, VFIO_BASE + 23,
+> > + *				struct vfio_iommu_type1_bind)
+> > + *
+> > + * Manage address spaces of devices in this container. Initially a
+> > +TYPE1
+> > + * container can only have one address space, managed with
+> > + * VFIO_IOMMU_MAP/UNMAP_DMA.
+> 
+> the last sentence seems irrelevant and more suitable in commit msg.
+
+oh, I could remove it.
+
+> > + *
+> > + * An IOMMU of type VFIO_TYPE1_NESTING_IOMMU can be managed by
+> > both MAP/UNMAP
+> > + * and BIND ioctls at the same time. MAP/UNMAP acts on the stage-2
+> > + (host)
+> > page
+> > + * tables, and BIND manages the stage-1 (guest) page tables. Other
+> > + types of
+> 
+> Are "other types" the counterpart to VFIO_TYPE1_NESTING_IOMMU?
+> What are those types? I thought only NESTING_IOMMU allows two stage
+> translation...
+
+it's a mistake... please ignore this message. would correct it in next version.
+
+> 
+> > + * IOMMU may allow MAP/UNMAP and BIND to coexist, where
+> 
+> The first sentence said the same thing. Then what is the exact difference?
+
+this sentence were added by mistake. will correct it.
+
+> 
+> > MAP/UNMAP controls
+> > + * the traffics only require single stage translation while BIND
+> > + controls the
+> > + * traffics require nesting translation. But this depends on the
+> > + underlying
+> > + * IOMMU architecture and isn't guaranteed. Example of this is the
+> > + guest
+> > SVA
+> > + * traffics, such traffics need nesting translation to gain gVA->gPA
+> > + and then
+> > + * gPA->hPA translation.
+> 
+> I'm a bit confused about the content since "other types of". Are they trying to state
+> some exceptions/corner cases that this API cannot resolve or explain the desired
+> behavior of the API? Especially the last example, which is worded as if the example
+> for "isn't guaranteed"
+> but isn't guest SVA the main purpose of this API?
+> 
+I think the description in original patch is bad especially with the "other types"
+phrase. How about the below description?
+
+/**
+ * VFIO_IOMMU_BIND - _IOW(VFIO_TYPE, VFIO_BASE + 23,
+ *				struct vfio_iommu_type1_bind)
+ *
+ * Manage address spaces of devices in this container when it's an IOMMU
+ * of type VFIO_TYPE1_NESTING_IOMMU. Such type IOMMU allows MAP/UNMAP and
+ * BIND to coexist, where MAP/UNMAP controls the traffics only require
+ * single stage translation while BIND controls the traffics require nesting
+ * translation.
+ *
+ * Availability of this feature depends on the device, its bus, the underlying
+ * IOMMU and the CPU architecture.
+ *
+ * returns: 0 on success, -errno on failure.
+ */
+
+Regards,
+Yi Liu
+
