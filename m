@@ -2,188 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67E1619AF85
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56BAA19AF88
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:16:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732196AbgDAQPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:15:39 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:60889 "EHLO
+        id S1732285AbgDAQQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:16:10 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44749 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728419AbgDAQPi (ORCPT
+        with ESMTP id S1726612AbgDAQQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:15:38 -0400
+        Wed, 1 Apr 2020 12:16:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585757736;
+        s=mimecast20190719; t=1585757765;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=C95Q5R2yoRf7nJ/OPhhJaaYPqUp7q75QDzRjhHMzg08=;
-        b=UNdmJIbf8cmKVSeDg4DqyIBPd8SiWXdH/Wp5IooXRMAhAV4M8JnUHRcPYFIoMKAUKmpLvm
-        EZ1dr9YwL+0jexLY/z2tFGYXKugLYsMDYt12gGJW271YoHS1/HvNubFvw9SQdMKnJ748FB
-        UpfDteRughNfvFNkaNmHme1Bbd8REV0=
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=Lu/GC0q3eyXrqT8et0mcRt8CMhdeNxfMtXje2c9rRv4=;
+        b=MUHPxcjHCsJtVoFCTZgHVPCSe6Qb+QBNlDBLWCPHw2bTitzVbYU2jcBhbZGXkjFdtmpZsf
+        OlwE6Jqs++NiQZ6xyJWe3Nyp9jIiSkcIifF1HPpU/z5Gtgt2NkdCmayvgD4j0vLiZNSkEa
+        cqLGClR8+TvZUl7NSaNP8hZNJiUhoVA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-344-fyKOq8M0PoeYyQlzPZwq1w-1; Wed, 01 Apr 2020 12:15:32 -0400
-X-MC-Unique: fyKOq8M0PoeYyQlzPZwq1w-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-494-SEp07Wr9PT6XwdQ2_OQ2NQ-1; Wed, 01 Apr 2020 12:16:04 -0400
+X-MC-Unique: SEp07Wr9PT6XwdQ2_OQ2NQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 906F8477;
-        Wed,  1 Apr 2020 16:15:28 +0000 (UTC)
-Received: from carbon (unknown [10.40.208.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6086110002AE;
-        Wed,  1 Apr 2020 16:15:19 +0000 (UTC)
-Date:   Wed, 1 Apr 2020 18:15:17 +0200
-From:   Jesper Dangaard Brouer <brouer@redhat.com>
-To:     Toshiaki Makita <toshiaki.makita1@gmail.com>
-Cc:     brouer@redhat.com, Mao Wenan <maowenan@huawei.com>,
-        davem@davemloft.net, ast@kernel.org, daniel@iogearbox.net,
-        kuba@kernel.org, hawk@kernel.org, john.fastabend@gmail.com,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
-        jwi@linux.ibm.com, jianglidong3@jd.com, edumazet@google.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net v2] veth: xdp: use head instead of hard_start
-Message-ID: <20200401181419.7acd2aa6@carbon>
-In-Reply-To: <7a1d55ad-1427-67fe-f204-4d4a0ab2c4b1@gmail.com>
-References: <fb5ab568-9bc8-3145-a8db-3e975ccdf846@gmail.com>
-        <20200331060641.79999-1-maowenan@huawei.com>
-        <7a1d55ad-1427-67fe-f204-4d4a0ab2c4b1@gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AAB101902EA9;
+        Wed,  1 Apr 2020 16:16:02 +0000 (UTC)
+Received: from [10.36.114.59] (ovpn-114-59.ams2.redhat.com [10.36.114.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C42255C1C5;
+        Wed,  1 Apr 2020 16:16:00 +0000 (UTC)
+Subject: Re: [PATCH v3] mm: fix tick timer stall during deferred page init
+To:     Michal Hocko <mhocko@kernel.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20200311123848.118638-1-shile.zhang@linux.alibaba.com>
+ <20200401154217.GQ22681@dhcp22.suse.cz>
+ <dfc0014a-9b85-5eeb-70ea-d622ccf5d988@redhat.com>
+ <20200401160048.GU22681@dhcp22.suse.cz>
+ <20200401160929.jwekhr24tb44odea@ca-dmjordan1.us.oracle.com>
+ <20200401161243.GW22681@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <92938a5c-ad19-4571-04f3-03530f687f61@redhat.com>
+Date:   Wed, 1 Apr 2020 18:15:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200401161243.GW22681@dhcp22.suse.cz>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Mar 2020 15:16:22 +0900
-Toshiaki Makita <toshiaki.makita1@gmail.com> wrote:
-
-> On 2020/03/31 15:06, Mao Wenan wrote:
-> > xdp.data_hard_start is equal to first address of
-> > struct xdp_frame, which is mentioned in
-> > convert_to_xdp_frame(). But the pointer hard_start
-> > in veth_xdp_rcv_one() is 32 bytes offset of frame,
-> > so it should use head instead of hard_start to
-> > set xdp.data_hard_start. Otherwise, if BPF program
-> > calls helper_function such as bpf_xdp_adjust_head, it
-> > will be confused for xdp_frame_end.  
+On 01.04.20 18:12, Michal Hocko wrote:
+> On Wed 01-04-20 12:09:29, Daniel Jordan wrote:
+>> On Wed, Apr 01, 2020 at 06:00:48PM +0200, Michal Hocko wrote:
+>>> On Wed 01-04-20 17:50:22, David Hildenbrand wrote:
+>>>> On 01.04.20 17:42, Michal Hocko wrote:
+>>>>> I am sorry but I have completely missed this patch.
+>>>>>
+>>>>> On Wed 11-03-20 20:38:48, Shile Zhang wrote:
+>>>>>> When 'CONFIG_DEFERRED_STRUCT_PAGE_INIT' is set, 'pgdatinit' kthread will
+>>>>>> initialise the deferred pages with local interrupts disabled. It is
+>>>>>> introduced by commit 3a2d7fa8a3d5 ("mm: disable interrupts while
+>>>>>> initializing deferred pages").
+>>>>>>
+>>>>>> On machine with NCPUS <= 2, the 'pgdatinit' kthread could be bound to
+>>>>>> the boot CPU, which could caused the tick timer long time stall, system
+>>>>>> jiffies not be updated in time.
+>>>>>>
+>>>>>> The dmesg shown that:
+>>>>>>
+>>>>>>     [    0.197975] node 0 initialised, 32170688 pages in 1ms
+>>>>>>
+>>>>>> Obviously, 1ms is unreasonable.
+>>>>>>
+>>>>>> Now, fix it by restore in the pending interrupts for every 32*1204 pages
+>>>>>> (128MB) initialized, give the chance to update the systemd jiffies.
+>>>>>> The reasonable demsg shown likes:
+>>>>>>
+>>>>>>     [    1.069306] node 0 initialised, 32203456 pages in 894ms
+>>>>>>
+>>>>>> Fixes: 3a2d7fa8a3d5 ("mm: disable interrupts while initializing deferred pages").
+>>>>>
+>>>>> I dislike this solution TBH. It effectivelly conserves the current code
+>>>>> and just works around the problem. Why do we hold the IRQ lock here in
+>>>>> the first place? This is an early init code and a very limited code is
+>>>>> running at this stage. Certainly nothing memory hotplug related which
+>>>>> should be the only path really interested in the resize lock AFAIR.
+>>>>
+>>>> Yeah, I don't think ACPI and friends are up yet.
+>>>
+>>> Just to save somebody time to check. The deferred initialization blocks
+>>> the further boot until all workders are done - see page_alloc_init_late
+>>> (kernel_init path).
+>>
+>> Ha, I just finished following all the hotplug paths to check this out, and as
+>> you all know there are a *lot* :-) Well at least we're in agreement.
 > 
-> I think you should discuss this more with Jesper before
-> submitting v2.
-> He does not like this to be included now due to merge conflict risk.
-> Basically I agree with him that we don't need to hurry with this fix.
+> Good to have it double checked!
+>  
+>>>>> This needs a double checking but I strongly believe that the lock can be
+>>>>> simply dropped in this path.
+>>
+>> This is what my fix does, it limits the time the resize lock is held.
 > 
-> Toshiaki Makita
+> Just remove it from the deferred intialization and add a comment that we
+> deliberately not taking the lock here because abc
 > 
-> > 
-> > Fixes: 9fc8d518d9d5 ("veth: Handle xdp_frames in xdp napi ring")
-> > Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> > ---
-> >   v2: add fixes tag, as well as commit log.
-> >   drivers/net/veth.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-> > index d4cbb9e8c63f..5ea550884bf8 100644
-> > --- a/drivers/net/veth.c
-> > +++ b/drivers/net/veth.c
-> > @@ -506,7 +506,7 @@ static struct sk_buff *veth_xdp_rcv_one(struct veth_rq *rq,
-> >   		struct xdp_buff xdp;
-> >   		u32 act;
-> >   
-> > -		xdp.data_hard_start = hard_start;
-> > +		xdp.data_hard_start = head;
-> >   		xdp.data = frame->data;
-> >   		xdp.data_end = frame->data + frame->len;
-> >   		xdp.data_meta = frame->data - frame->metasize;
-> >   
 
-Below is the patch that I have in my queue.  I've added a Reported-by
-tag to give you some credit, even-though I already had plans to fix
-this, as part of my XDP frame_sz work.
+We should just double check what
 
+commit 3a2d7fa8a3d5ae740bd0c21d933acc6220857ed0
+Author: Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Thu Apr 5 16:22:27 2018 -0700
 
-[PATCH RFC net-next] veth: adjust hard_start offset on redirect XDP frames
+    mm: disable interrupts while initializing deferred pages
+    
+    Vlastimil Babka reported about a window issue during which when deferred
+    pages are initialized, and the current version of on-demand
+    initialization is finished, allocations may fail.  While this is highly
+    unlikely scenario, since this kind of allocation request must be large,
+    and must come from interrupt handler, we still want to cover it.
+    
+    We solve this by initializing deferred pages with interrupts disabled,
+    and holding node_size_lock spin lock while pages in the node are being
+    initialized.  The on-demand deferred page initialization that comes
+    later will use the same lock, and thus synchronize with
+    deferred_init_memmap().
+    
+    It is unlikely for threads that initialize deferred pages to be
+    interrupted.  They run soon after smp_init(), but before modules are
+    initialized, and long before user space programs.  This is why there is
+    no adverse effect of having these threads running with interrupts
+    disabled.
 
-When native XDP redirect into a veth device, the frame arrives in the
-xdp_frame structure. It is then processed in veth_xdp_rcv_one(),
-which can run a new XDP bpf_prog on the packet. Doing so requires
-converting xdp_frame to xdp_buff, but the tricky part is that
-xdp_frame memory area is located in the top (data_hard_start) memory
-area that xdp_buff will point into.
-
-The current code tried to protect the xdp_frame area, by assigning
-xdp_buff.data_hard_start past this memory. This results in 32 bytes
-less headroom to expand into via BPF-helper bpf_xdp_adjust_head().
-
-This protect step is actually not needed, because BPF-helper
-bpf_xdp_adjust_head() already reserve this area, and don't allow
-BPF-prog to expand into it. Thus, it is safe to point data_hard_start
-directly at xdp_frame memory area.
-
-Cc: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Fixes: 9fc8d518d9d5 ("veth: Handle xdp_frames in xdp napi ring")
-Reported-by: Mao Wenan <maowenan@huawei.com>
-Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
----
- drivers/net/veth.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-index 8cdc4415fa70..2edc04a8ab8e 100644
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -493,13 +493,15 @@ static struct sk_buff *veth_xdp_rcv_one(struct veth_rq *rq,
- 					struct veth_xdp_tx_bq *bq)
- {
- 	void *hard_start = frame->data - frame->headroom;
--	void *head = hard_start - sizeof(struct xdp_frame);
- 	int len = frame->len, delta = 0;
- 	struct xdp_frame orig_frame;
- 	struct bpf_prog *xdp_prog;
- 	unsigned int headroom;
- 	struct sk_buff *skb;
- 
-+	/* bpf_xdp_adjust_head() assures BPF cannot access xdp_frame area */
-+	hard_start -= sizeof(struct xdp_frame);
-+
- 	rcu_read_lock();
- 	xdp_prog = rcu_dereference(rq->xdp_prog);
- 	if (likely(xdp_prog)) {
-@@ -521,7 +523,6 @@ static struct sk_buff *veth_xdp_rcv_one(struct veth_rq *rq,
- 			break;
- 		case XDP_TX:
- 			orig_frame = *frame;
--			xdp.data_hard_start = head;
- 			xdp.rxq->mem = frame->mem;
- 			if (unlikely(veth_xdp_tx(rq->dev, &xdp, bq) < 0)) {
- 				trace_xdp_exception(rq->dev, xdp_prog, act);
-@@ -533,7 +534,6 @@ static struct sk_buff *veth_xdp_rcv_one(struct veth_rq *rq,
- 			goto xdp_xmit;
- 		case XDP_REDIRECT:
- 			orig_frame = *frame;
--			xdp.data_hard_start = head;
- 			xdp.rxq->mem = frame->mem;
- 			if (xdp_do_redirect(rq->dev, &xdp, xdp_prog)) {
- 				frame = &orig_frame;
-@@ -555,7 +555,7 @@ static struct sk_buff *veth_xdp_rcv_one(struct veth_rq *rq,
- 	rcu_read_unlock();
- 
- 	headroom = sizeof(struct xdp_frame) + frame->headroom - delta;
--	skb = veth_build_skb(head, headroom, len, 0);
-+	skb = veth_build_skb(hard_start, headroom, len, 0);
- 	if (!skb) {
- 		xdp_return_frame(frame);
- 		goto err;
-
+tried to solve does not apply.
 
 -- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+Thanks,
+
+David / dhildenb
 
