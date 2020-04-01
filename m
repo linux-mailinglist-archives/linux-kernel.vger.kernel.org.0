@@ -2,193 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5390B19A3C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 05:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F6D19A3E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 05:11:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731670AbgDADIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 23:08:44 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:35828 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731592AbgDADIn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 23:08:43 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03138XVe083327;
-        Tue, 31 Mar 2020 22:08:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1585710513;
-        bh=QGxTvKSuMAvjN97JC/+YbiSUgKIoFS5hHdeQwmmihL8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=svH23gQL6L6RQllYde7vA4qFa7cNAFQdHgdJdaiBLrMlkuQE1Yo9V2VhWBQ93wen5
-         L37uEHT+EYnDmp/RTAGWkNhQMmGgsrB1422HGGLqXNyiFsVCnDszZcTLXZ/dK6mFhQ
-         7u6+8Afdaj/M6DWcbOD6u6OClBCE//jfthIobAeA=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03138XDk076010
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 31 Mar 2020 22:08:33 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 31
- Mar 2020 22:08:33 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 31 Mar 2020 22:08:33 -0500
-Received: from [10.250.133.232] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03138RCe023502;
-        Tue, 31 Mar 2020 22:08:30 -0500
-Subject: Re: [PATCH 1/3] dt-bindings: PCI: cadence: Deprecate inbound/outbound
- specific bindings
-To:     Rob Herring <robh@kernel.org>
-CC:     Tom Joseph <tjoseph@cadence.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <amurray@thegoodpenguin.co.uk>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200327104727.4708-1-kishon@ti.com>
- <20200327104727.4708-2-kishon@ti.com> <20200330160142.GA6259@bogus>
- <2a18a228-9248-24a8-c9cd-a041c62aa381@ti.com> <20200331164529.GA32149@bogus>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <2985575e-e079-2a8d-bf3e-b7efb7291fc3@ti.com>
-Date:   Wed, 1 Apr 2020 08:38:26 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1731713AbgDADLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 23:11:20 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:53533 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731611AbgDADLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 23:11:19 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48sWS43cL6z9sPF;
+        Wed,  1 Apr 2020 14:11:15 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1585710676;
+        bh=RCS6w+XsN2y2Hr3WJXdBqRTPgGg44FN2saBcX6nSQ+c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=KEmvZ8Mp87D1322Bw8TBxhvi/MCUlQmMlql4nUF3CqhHFTMMFBVUavMHUH7EatAyT
+         2hUWzJ1+BmWfpdq0+T5aa879I4WAoo2tuKOBVItKSFMUMk0LJQernI0fglZ4s+PYtg
+         3WcPqoRAdKgwFmV8PC0QfGAhP3Tc5CPDiD2YkXydVbI/SBqsxZmVq0+zMyS6QosE6i
+         yQQAIkQ7N1fayiEZrwKEtM9/p8Y0u3Gf7T4WXCyROVgyAww7ip//gQ1qsvBvjOegXU
+         Z+60oJHOn/oozfyxpyjfoXu5nSvVJk8vcdDG31ayl95cK5ryFck2YVleATg8sJmANe
+         oacjOGpV1Qimg==
+Date:   Wed, 1 Apr 2020 14:11:13 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Greg KH <greg@kroah.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ drivers-x86 tree
+Message-ID: <20200401141113.21014665@canb.auug.org.au>
+In-Reply-To: <20200323143816.345b3d54@canb.auug.org.au>
+References: <20200323143816.345b3d54@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20200331164529.GA32149@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; boundary="Sig_/5cBGlr0KSr6lYUqc=FgqimL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+--Sig_/5cBGlr0KSr6lYUqc=FgqimL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 3/31/2020 10:15 PM, Rob Herring wrote:
-> On Tue, Mar 31, 2020 at 09:08:12AM +0530, Kishon Vijay Abraham I wrote:
->> Hi Rob,
->>
->> On 3/30/2020 9:31 PM, Rob Herring wrote:
->>> On Fri, Mar 27, 2020 at 04:17:25PM +0530, Kishon Vijay Abraham I wrote:
->>>> Deprecate cdns,max-outbound-regions and cdns,no-bar-match-nbits for
->>>> host mode as both these could be derived from "ranges" and "dma-ranges"
->>>> property. "cdns,max-outbound-regions" property would still be required
->>>> for EP mode.
->>>>
->>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>> ---
->>>>  .../bindings/pci/cdns,cdns-pcie-ep.yaml       |  2 +-
->>>>  .../bindings/pci/cdns,cdns-pcie-host.yaml     |  3 +--
->>>>  .../devicetree/bindings/pci/cdns-pcie-ep.yaml | 25 +++++++++++++++++++
->>>>  .../bindings/pci/cdns-pcie-host.yaml          | 10 ++++++++
->>>>  .../devicetree/bindings/pci/cdns-pcie.yaml    |  8 ------
->>>>  5 files changed, 37 insertions(+), 11 deletions(-)
->>>>  create mode 100644 Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml
->>>> index 2996f8d4777c..50ce5d79d2c7 100644
->>>> --- a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml
->>>> +++ b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml
->>>> @@ -10,7 +10,7 @@ maintainers:
->>>>    - Tom Joseph <tjoseph@cadence.com>
->>>>  
->>>>  allOf:
->>>> -  - $ref: "cdns-pcie.yaml#"
->>>> +  - $ref: "cdns-pcie-ep.yaml#"
->>>>    - $ref: "pci-ep.yaml#"
->>>>  
->>>>  properties:
->>>> diff --git a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
->>>> index cabbe46ff578..84a8f095d031 100644
->>>> --- a/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
->>>> +++ b/Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.yaml
->>>> @@ -45,8 +45,6 @@ examples:
->>>>              #size-cells = <2>;
->>>>              bus-range = <0x0 0xff>;
->>>>              linux,pci-domain = <0>;
->>>> -            cdns,max-outbound-regions = <16>;
->>>> -            cdns,no-bar-match-nbits = <32>;
->>>>              vendor-id = <0x17cd>;
->>>>              device-id = <0x0200>;
->>>>  
->>>> @@ -57,6 +55,7 @@ examples:
->>>>  
->>>>              ranges = <0x02000000 0x0 0x42000000  0x0 0x42000000  0x0 0x1000000>,
->>>>                       <0x01000000 0x0 0x43000000  0x0 0x43000000  0x0 0x0010000>;
->>>> +            dma-ranges = <0x02000000 0x0 0x0 0x0 0x0 0x1 0x00000000>;
->>>>  
->>>>              #interrupt-cells = <0x1>;
->>>>  
->>>> diff --git a/Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml
->>>> new file mode 100644
->>>> index 000000000000..6150a7a7bdbf
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/pci/cdns-pcie-ep.yaml
->>>> @@ -0,0 +1,25 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: "http://devicetree.org/schemas/pci/cdns-pcie-ep.yaml#"
->>>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->>>> +
->>>> +title: Cadence PCIe Device
->>>> +
->>>> +maintainers:
->>>> +  - Tom Joseph <tjoseph@cadence.com>
->>>> +
->>>> +allOf:
->>>> +  - $ref: "cdns-pcie.yaml#"
->>>> +
->>>> +properties:
->>>> +  cdns,max-outbound-regions:
->>>> +    description: maximum number of outbound regions
->>>> +    allOf:
->>>> +      - $ref: /schemas/types.yaml#/definitions/uint32
->>>> +    minimum: 1
->>>> +    maximum: 32
->>>> +    default: 32
->>>
->>> I have a feeling that as the PCI endpoint binding evolves this won't be 
->>> necessary. I can see a common need to define the number of BARs for an 
->>> endpoint and then this will again just be error checking.
->>
->> For every buffer given by the host, we have to create a new outbound
->> translation. If there are no outbound regions, we have to report the error to
->> the endpoint function driver. At-least for reporting the error, we'd need to
->> have this binding no?
-> 
-> But isn't the endpoint defined to have some number of BARs? The PCI host 
-> doesn't decide that.
+Hi all,
 
-cdns,max-outbound-regions defined here doesn't configure the BARs. BARs provide
-an interface for the host to access the endpoints memory. IOW for BARs we
-configure the inbound address translation unit.
+On Mon, 23 Mar 2020 14:38:16 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the driver-core tree got a conflict in:
+>=20
+>   drivers/platform/x86/Kconfig
+>=20
+> between commit:
+>=20
+>   45a3d578f2ed ("platform/x86: Kconfig: Group modules by companies and fu=
+nctions")
+>=20
+> from the drivers-x86 tree and commit:
+>=20
+>   835e1b86ef8c ("platform/x86: touchscreen_dmi: Add EFI embedded firmware=
+ info support")
+>=20
+> from the driver-core tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc drivers/platform/x86/Kconfig
+> index ae75b19e8649,cd9e2758c479..000000000000
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@@ -1134,46 -978,54 +1134,47 @@@ config TOPSTAR_LAPTO
+>   	depends on ACPI
+>   	depends on INPUT
+>   	select INPUT_SPARSEKMAP
+>  -	help
+>  -	  This driver provides support for the Intel Virtual Button interface.
+>  -	  Some laptops require this driver for power button support.
+>  -
+>  -	  To compile this driver as a module, choose M here: the module will
+>  -	  be called intel_vbtn.
+>  -
+>  -config INTEL_SCU_IPC
+>  -	bool "Intel SCU IPC Support"
+>  -	depends on X86_INTEL_MID
+>  -	default y
+>  +	select LEDS_CLASS
+>  +	select NEW_LEDS
+>   	---help---
+>  -	  IPC is used to bridge the communications between kernel and SCU on
+>  -	  some embedded Intel x86 platforms. This is not needed for PC-type
+>  -	  machines.
+>  +	  This driver adds support for hotkeys found on Topstar laptops.
+>  =20
+>  -config INTEL_SCU_IPC_UTIL
+>  -	tristate "Intel SCU IPC utility driver"
+>  -	depends on INTEL_SCU_IPC
+>  -	---help---
+>  -	  The IPC Util driver provides an interface with the SCU enabling
+>  -	  low level access for debug work and updating the firmware. Say
+>  -	  N unless you will be doing this on an Intel MID platform.
+>  +	  If you have a Topstar laptop, say Y or M here.
+>  =20
+>  -config INTEL_MID_POWER_BUTTON
+>  -	tristate "power button driver for Intel MID platforms"
+>  -	depends on INTEL_SCU_IPC && INPUT
+>  +config I2C_MULTI_INSTANTIATE
+>  +	tristate "I2C multi instantiate pseudo device driver"
+>  +	depends on I2C && ACPI
+>   	help
+>  -	  This driver handles the power button on the Intel MID platforms.
+>  +	  Some ACPI-based systems list multiple i2c-devices in a single ACPI
+>  +	  firmware-node. This driver will instantiate separate i2c-clients
+>  +	  for each device in the firmware-node.
+>  =20
+>  -	  If unsure, say N.
+>  +	  To compile this driver as a module, choose M here: the module
+>  +	  will be called i2c-multi-instantiate.
+>  =20
+>  -config INTEL_MFLD_THERMAL
+>  -       tristate "Thermal driver for Intel Medfield platform"
+>  -       depends on MFD_INTEL_MSIC && THERMAL
+>  -       help
+>  -         Say Y here to enable thermal driver support for the  Intel Med=
+field
+>  -         platform.
+>  +config MLX_PLATFORM
+>  +	tristate "Mellanox Technologies platform support"
+>  +	depends on I2C && REGMAP
+>  +	---help---
+>  +	  This option enables system support for the Mellanox Technologies
+>  +	  platform. The Mellanox systems provide data center networking
+>  +	  solutions based on Virtual Protocol Interconnect (VPI) technology
+>  +	  enable seamless connectivity to 56/100Gb/s InfiniBand or 10/40/56GbE
+>  +	  connection.
+>  =20
+>  -config INTEL_IPS
+>  -	tristate "Intel Intelligent Power Sharing"
+>  -	depends on ACPI && PCI
+>  +	  If you have a Mellanox system, say Y or M here.
+>  +
+>  +config TOUCHSCREEN_DMI
+>  +	bool "DMI based touchscreen configuration info"
+>  +	depends on ACPI && DMI && I2C=3Dy && TOUCHSCREEN_SILEAD
+> ++	select EFI_EMBEDDED_FIRMWARE if EFI
+>   	---help---
+>  -	  Intel Calpella platforms support dynamic power sharing between the
+>  -	  CPU and GPU, maximizing performance in a given TDP.  This driver,
+>  -	  along with the CPU frequency and i915 drivers, provides that
+>  -	  functionality.  If in doubt, say Y here; it will only load on
+>  -	  supported platforms.
+>  +	  Certain ACPI based tablets with e.g. Silead or Chipone touchscreens
+>  +	  do not have enough data in ACPI tables for the touchscreen driver to
+>  +	  handle the touchscreen properly, as OEMs expect the data to be baked
+>  +	  into the tablet model specific version of the driver shipped with the
+>  +	  the OS-image for the device. This option supplies the missing info.
+>  +	  Enable this for x86 tablets with Silead or Chipone touchscreens.
+>  =20
+>   config INTEL_IMR
+>   	bool "Intel Isolated Memory Region support"
 
-cdns,max-outbound-regions is used while configuring the outbound address
-translation unit. Outbound regions are used while the endpoint access host
-memory and in that path endpoint BARs doesn't come.
-> 
->>>
->>> What's the result if you write to a non-existent region in register 
->>> CDNS_PCIE_AT_OB_REGION_PCI_ADDR0/1? If the register is non-existent and 
->>> doesn't abort, you could detect this instead.
->>
->> I'm not sure if we should ever try to write to a non-existent register though
->> the behavior could be different in different platforms. IMHO maximum number of
->> outbound regions is a HW property and is best described in device tree.
-> 
-> AIUI, PCI defines non-existent (config space) registers to return all 
-> 1s. Not sure if this register is in PCI config space or the host SoC bus 
-> (e.g. AXI). It seems PCI bridges get done both ways from what I've seen.
+This is now a conflict between the drivers-x86 tree and Linus' tree.
 
-All of that is correct for the Host or RC. However here
-cdns,max-outbound-regions is an endpoint specific property (defined only in
-cdns-pcie-ep.yaml) and is useful while configuring OB address translation unit
-for the endpoint to access host memory.
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks
-Kishon
+--Sig_/5cBGlr0KSr6lYUqc=FgqimL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6EBlEACgkQAVBC80lX
+0Gx3rwf8C/NMQ4Erny1vLm0SimXyCLep+qkKpsMGe/j76SLAoooPbwij3q8mc6mT
+i1EN+ruVc6M5Ur0jojmXGrjmKE5AUj3qtA1PZqfOemFixinOWPQ0RtCqdKkJpwEP
+oWsczD12KhXCfhNmWfS2KbtK10Bu7Gt4kerGyAjZuMoyuj4+RkFoXtwL+zIiVgk8
+tEArHEdkYEDJCeKdNxxBNRt++vDBRs4AUH3wTueAbHQ87lG7Rkodj2Q4jVs+rxcl
+QlbxV3RBqh02Rb/ciujFERkk/FB9KetovVxeJNy5nHXgfBz+rYXeiJGCjHEDSGII
+TqDEkJiNQvWYhS8JW2D3/rGHBcMiZA==
+=+4l/
+-----END PGP SIGNATURE-----
+
+--Sig_/5cBGlr0KSr6lYUqc=FgqimL--
