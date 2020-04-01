@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD55E19B122
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 729EB19B2DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388407AbgDAQcV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:32:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58642 "EHLO mail.kernel.org"
+        id S2389920AbgDAQqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:46:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733133AbgDAQcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:32:16 -0400
+        id S2389665AbgDAQqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:46:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9962F212CC;
-        Wed,  1 Apr 2020 16:32:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B09120784;
+        Wed,  1 Apr 2020 16:46:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758736;
-        bh=7mOO/1GKnXsj0qXC+PRMD1ZEMzw03xyoSr+lsy1aBGc=;
+        s=default; t=1585759574;
+        bh=zQXaz5RDG5zZ9BxRu11qDDNdjxUHAfWHlvQG92LbasQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dKm4QIn/s1tdGfl447EOA8hdMGRnT7K3yGCAaNekUdID6f5P1IGaZTrpOqSJEVPM1
-         KJC+MNDN8qHCsRaxC1Vrr/LQFZulgIpIzX+Zqtx2hC0Bl4CfO4pcA/nv875LhJMrjN
-         0AK/h0ZYhmKHlkujTyvRemOXG59i9y5AGWmrR3YY=
+        b=CRa4lr7fwD7S+DihRR++mrOg95Qa+1Zj621LAeIOIsy36NwDFMT+eiK0r+MoBf1T6
+         9DpVn0NQq4Z8yufWGln1RnNMZKfA6TV9H7hbtdceLTbDMrkfjnCwkmHwYk9tDcFsoI
+         lb5HrJGYQXut/MNHRY0VH++oKkbaAuEs+tN8kYv4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bryan Gurney <bgurney@redhat.com>,
-        Bernhard Sulzer <micraft.b@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 58/91] scsi: sd: Fix optimal I/O size for devices that change reported values
+        stable@vger.kernel.org,
+        Nicolas Cavallari <nicolas.cavallari@green-communications.fr>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 082/148] mac80211: Do not send mesh HWMP PREQ if HWMP is disabled
 Date:   Wed,  1 Apr 2020 18:17:54 +0200
-Message-Id: <20200401161533.313453106@linuxfoundation.org>
+Message-Id: <20200401161601.057702558@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
-References: <20200401161512.917494101@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin K. Petersen <martin.petersen@oracle.com>
+From: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
 
-commit ea697a8bf5a4161e59806fab14f6e4a46dc7dcb0 upstream.
+[ Upstream commit ba32679cac50c38fdf488296f96b1f3175532b8e ]
 
-Some USB bridge devices will return a default set of characteristics during
-initialization. And then, once an attached drive has spun up, substitute
-the actual parameters reported by the drive. According to the SCSI spec,
-the device should return a UNIT ATTENTION in case any reported parameters
-change. But in this case the change is made silently after a small window
-where default values are reported.
+When trying to transmit to an unknown destination, the mesh code would
+unconditionally transmit a HWMP PREQ even if HWMP is not the current
+path selection algorithm.
 
-Commit a83da8a4509d ("scsi: sd: Optimal I/O size should be a multiple of
-physical block size") validated the reported optimal I/O size against the
-physical block size to overcome problems with devices reporting nonsensical
-transfer sizes. However, this validation did not account for the fact that
-aforementioned devices will return default values during a brief window
-during spin-up. The subsequent change in reported characteristics would
-invalidate the checking that had previously been performed.
-
-Unset a previously configured optimal I/O size should the sanity checking
-fail on subsequent revalidate attempts.
-
-Link: https://lore.kernel.org/r/33fb522e-4f61-1b76-914f-c9e6a3553c9b@gmail.com
-Cc: Bryan Gurney <bgurney@redhat.com>
-Cc: <stable@vger.kernel.org>
-Reported-by: Bernhard Sulzer <micraft.b@gmail.com>
-Tested-by: Bernhard Sulzer <micraft.b@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+Link: https://lore.kernel.org/r/20200305140409.12204-1-cavallar@lri.fr
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/sd.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/mac80211/mesh_hwmp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -2915,9 +2915,11 @@ static int sd_revalidate_disk(struct gen
- 	    logical_to_bytes(sdp, sdkp->opt_xfer_blocks) >= PAGE_CACHE_SIZE) {
- 		q->limits.io_opt = logical_to_bytes(sdp, sdkp->opt_xfer_blocks);
- 		rw_max = logical_to_sectors(sdp, sdkp->opt_xfer_blocks);
--	} else
-+	} else {
-+		q->limits.io_opt = 0;
- 		rw_max = min_not_zero(logical_to_sectors(sdp, dev_max),
- 				      (sector_t)BLK_DEF_MAX_SECTORS);
-+	}
+diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
+index 994dde6e5f9d9..986e9b6b961d2 100644
+--- a/net/mac80211/mesh_hwmp.c
++++ b/net/mac80211/mesh_hwmp.c
+@@ -1137,7 +1137,8 @@ int mesh_nexthop_resolve(struct ieee80211_sub_if_data *sdata,
+ 		}
+ 	}
  
- 	/* Do not exceed controller limit */
- 	rw_max = min(rw_max, queue_max_hw_sectors(q));
+-	if (!(mpath->flags & MESH_PATH_RESOLVING))
++	if (!(mpath->flags & MESH_PATH_RESOLVING) &&
++	    mesh_path_sel_is_hwmp(sdata))
+ 		mesh_queue_preq(mpath, PREQ_Q_F_START);
+ 
+ 	if (skb_queue_len(&mpath->frame_queue) >= MESH_FRAME_QUEUE_LEN)
+-- 
+2.20.1
+
 
 
