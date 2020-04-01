@@ -2,148 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C93419A3E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 05:14:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C03B219A3F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 05:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731669AbgDADOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 23:14:14 -0400
-Received: from ozlabs.org ([203.11.71.1]:47957 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731556AbgDADON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 23:14:13 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48sWWQ2WXjz9sPF;
-        Wed,  1 Apr 2020 14:14:10 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1585710852;
-        bh=qppD3VaBMroI5+kNa0d+EAkJTB/0+a4Msi+tMCBmFF0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pC20x8sPHjqGIHNic38SUWahdy0y1+QHMg6pxSpzOacDGDHrYQjTXCF1HBnYdGOrF
-         24FlgA1Ssp1dvvSDYQcmCjmyFoVt5dYwcszXA5Ca6Zk5LS4lEtMsd0Fj6JJCFZn7ao
-         fGgG4xQ5nAdqID4HsOliea/xLqHnKfn1MKs3JwMNKN+AqGyfSYJZsSsz4UtSWKiT0A
-         lRC9rUVJU0ndhW3NBbhwYHjIdNcYzmkw5VJv4BfOuzhivdOEQi04J8vOyvdfZDawyr
-         Qwt79AVC6K01aBUFAgr2qFhbJ+FxuNs7qBwvTNQ/Fb3U+Vm9qqGh6uhvWDfT44vkaC
-         vchWG/iJr4k9g==
-Date:   Wed, 1 Apr 2020 14:14:09 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Gayatri Kammela <gayatri.kammela@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>
-Subject: Re: linux-next: manual merge of the drivers-x86 tree with the tip
- tree
-Message-ID: <20200401141409.446e989b@canb.auug.org.au>
-In-Reply-To: <20200326150523.02c4ec48@canb.auug.org.au>
-References: <20200326150523.02c4ec48@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/UCk/pWw7YoTr5yoPdAvwp5g";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1731658AbgDADW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 23:22:59 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:19739 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731593AbgDADW7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 23:22:59 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id 0313MSET017333;
+        Wed, 1 Apr 2020 12:22:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com 0313MSET017333
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585711350;
+        bh=6cmk4VhYcoiSK0648BJFDTb8WGo1i4aniwWtusevAaQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=n0crX8GxExB2dPg/8QhQatWt02gUfaOo6/Q6XF2RR3LPaFrXrpow0/nhIbhk9UaSp
+         a/+rhR9iy+jrfi4TIoRdURW1PVBAGPQ1E0Qbb7appR14bGzqqheIN3+Tx7tsYwceEx
+         mQJxi6OQmpZb6Nar5VNm/dmqec/IsB23ZD5zBEZG7VFGh1uBd2BGZXjlY06PyQGSak
+         7xgUgyNtqdbz+b1rgf6jKiqrYZsw273kOa1j7abnHphGqOx+Ff8e6bVIajur46u3j7
+         LWs5x+R6+Vo36uvL3YHv/n2qz6z9yTXvH54CSJPzjKW07NcFPpKL7LMbISOrkFEyh6
+         924kwGhB0OP7Q==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: dma: uniphier-xdmac: switch to single reg region
+Date:   Wed,  1 Apr 2020 12:21:50 +0900
+Message-Id: <20200401032150.19767-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/UCk/pWw7YoTr5yoPdAvwp5g
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The reg in the example "<0x5fc10000 0x1000>, <0x5fc20000 0x800>"
+is wrong. The register region of this controller is much smaller,
+and there is no other hardware register interleaved. There is no
+good reason to split it into two regions.
 
-Hi all,
+Just use a single, contiguous register region.
 
-On Thu, 26 Mar 2020 15:05:23 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the drivers-x86 tree got a conflict in:
->=20
->   drivers/platform/x86/intel_pmc_core.c
->=20
-> between commit:
->=20
->   a69b3b1d4cf0 ("platform/x86: Convert to new CPU match macros")
->=20
-> from the tip tree and commit:
->=20
->   16292bed9c56 ("platform/x86: intel_pmc_core: Add Atom based Jasper Lake=
- (JSL) platform support")
->=20
-> from the drivers-x86 tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc drivers/platform/x86/intel_pmc_core.c
-> index 3df33ff50faa,d265cd5b1f45..000000000000
-> --- a/drivers/platform/x86/intel_pmc_core.c
-> +++ b/drivers/platform/x86/intel_pmc_core.c
-> @@@ -871,18 -1144,19 +1144,19 @@@ static inline void pmc_core_dbgfs_unreg
->   #endif /* CONFIG_DEBUG_FS */
->  =20
->   static const struct x86_cpu_id intel_pmc_core_ids[] =3D {
->  -	INTEL_CPU_FAM6(SKYLAKE_L, spt_reg_map),
->  -	INTEL_CPU_FAM6(SKYLAKE, spt_reg_map),
->  -	INTEL_CPU_FAM6(KABYLAKE_L, spt_reg_map),
->  -	INTEL_CPU_FAM6(KABYLAKE, spt_reg_map),
->  -	INTEL_CPU_FAM6(CANNONLAKE_L, cnp_reg_map),
->  -	INTEL_CPU_FAM6(ICELAKE_L, icl_reg_map),
->  -	INTEL_CPU_FAM6(ICELAKE_NNPI, icl_reg_map),
->  -	INTEL_CPU_FAM6(COMETLAKE, cnp_reg_map),
->  -	INTEL_CPU_FAM6(COMETLAKE_L, cnp_reg_map),
->  -	INTEL_CPU_FAM6(TIGERLAKE_L, tgl_reg_map),
->  -	INTEL_CPU_FAM6(TIGERLAKE, tgl_reg_map),
->  -	INTEL_CPU_FAM6(ATOM_TREMONT, tgl_reg_map),
->  -	INTEL_CPU_FAM6(ATOM_TREMONT_L, tgl_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE_L,		&spt_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(SKYLAKE,		&spt_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE_L,		&spt_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE,		&spt_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(CANNONLAKE_L,	&cnp_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_L,		&icl_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_NNPI,	&icl_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(COMETLAKE,		&cnp_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(COMETLAKE_L,		&cnp_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(TIGERLAKE_L,		&tgl_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(TIGERLAKE,		&tgl_reg_map),
->  +	X86_MATCH_INTEL_FAM6_MODEL(ATOM_TREMONT,	&tgl_reg_map),
-> ++	X86_MATCH_INTEL_FAM6_MODEL(ATOM_TREMONT_L,	&tgl_reg_map),
->   	{}
->   };
->  =20
+While I am here, I made the 'dma-channels' property mandatory because
+otherwise there is no way to determine the number of the channels.
+
+Please note the original binding was merged recently. Since there
+is no user yet, this change has no actual impact.
+
+Fixes: b9fb56b6ba8a ("dt-bindings: dmaengine: Add UniPhier external DMA controller bindings")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+We do not need to touch the driver either because the second
+region is not used.
 
 
-This is now a conflict between the drivers-x86 tree and Linus' tree.
---=20
-Cheers,
-Stephen Rothwell
+ .../devicetree/bindings/dma/socionext,uniphier-xdmac.yaml  | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---Sig_/UCk/pWw7YoTr5yoPdAvwp5g
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+diff --git a/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml b/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
+index 86cfb599256e..371f18773198 100644
+--- a/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
++++ b/Documentation/devicetree/bindings/dma/socionext,uniphier-xdmac.yaml
+@@ -22,9 +22,7 @@ properties:
+     const: socionext,uniphier-xdmac
+ 
+   reg:
+-    items:
+-      - description: XDMAC base register region (offset and length)
+-      - description: XDMAC extension register region (offset and length)
++    maxItems: 1
+ 
+   interrupts:
+     maxItems: 1
+@@ -49,12 +47,13 @@ required:
+   - reg
+   - interrupts
+   - "#dma-cells"
++  - dma-channels
+ 
+ examples:
+   - |
+     xdmac: dma-controller@5fc10000 {
+         compatible = "socionext,uniphier-xdmac";
+-        reg = <0x5fc10000 0x1000>, <0x5fc20000 0x800>;
++        reg = <0x5fc10000 0x5300>;
+         interrupts = <0 188 4>;
+         #dma-cells = <2>;
+         dma-channels = <16>;
+-- 
+2.17.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6EBwEACgkQAVBC80lX
-0Gxm8wf/S+jju3n5XIGVmNeohmJdVMA6fIb3xe2owDjd5Fgb+Arkk6YFodbksHWb
-ce+Snn0W6nWyj8FjskI42ng2VQulHwWIOdEsRLEpG1bpiasMO1h2pqHNDYx28YtL
-GP2kWRLRnVT4Iw+Xjy0OlHZN8uF/o8aXc1NvhtbItdmFWpDGfrhXM4Y9RrE92oXW
-eGSkfhF0ndyC6TPlYk5yN6NWUZa7KKMYw2NIiB993xMYPzV4zK8gn1SgikoGL0gX
-AOUv5ioolioyi2QFFuBOYJJZ905TRR13ej4ea9YmYouuNlPiJ2XkLuIXZAAwNpHb
-aMG+IppKi3p8mJ3dvcFWfnc3/uP+2g==
-=hn46
------END PGP SIGNATURE-----
-
---Sig_/UCk/pWw7YoTr5yoPdAvwp5g--
