@@ -2,134 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 006E519B78B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 23:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E5E419B788
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 23:25:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733021AbgDAV1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 17:27:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:25010 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732357AbgDAV1D (ORCPT
+        id S1732821AbgDAVZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 17:25:57 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37197 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732357AbgDAVZ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 17:27:03 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 031L3aQx149987;
-        Wed, 1 Apr 2020 17:26:40 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 302070tnhw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 01 Apr 2020 17:26:40 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 031LKOR2030182;
-        Wed, 1 Apr 2020 17:26:40 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 302070tnhn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 01 Apr 2020 17:26:40 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 031LPnSN001216;
-        Wed, 1 Apr 2020 21:26:39 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma02dal.us.ibm.com with ESMTP id 301x77cybb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 01 Apr 2020 21:26:39 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 031LQbLo61079944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 Apr 2020 21:26:37 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 801267805E;
-        Wed,  1 Apr 2020 21:26:37 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B94197806B;
-        Wed,  1 Apr 2020 21:26:36 +0000 (GMT)
-Received: from [9.70.82.143] (unknown [9.70.82.143])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed,  1 Apr 2020 21:26:36 +0000 (GMT)
-Subject: [PATCH v9 02/13] powerpc/vas: Define nx_fault_stamp in
- coprocessor_request_block
-From:   Haren Myneni <haren@linux.ibm.com>
-To:     mpe@ellerman.id.au
-Cc:     npiggin@gmail.com, mikey@neuling.org, herbert@gondor.apana.org.au,
-        frederic.barrat@fr.ibm.com, srikar@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, hch@infradead.org, oohall@gmail.com,
-        clg@kaod.org, sukadev@linux.vnet.ibm.com,
-        linuxppc-dev@lists.ozlabs.org, ajd@linux.ibm.com
-In-Reply-To: <1585775978.10664.438.camel@hbabu-laptop>
-References: <1585775978.10664.438.camel@hbabu-laptop>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Wed, 01 Apr 2020 14:25:50 -0700
-Message-ID: <1585776350.10664.442.camel@hbabu-laptop>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.28.3 
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-01_04:2020-03-31,2020-04-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- spamscore=0 lowpriorityscore=0 adultscore=0 mlxlogscore=868 suspectscore=1
- bulkscore=0 phishscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004010170
+        Wed, 1 Apr 2020 17:25:57 -0400
+Received: by mail-ot1-f65.google.com with SMTP id g23so1208183otq.4;
+        Wed, 01 Apr 2020 14:25:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CxmQrvAa8GNHsreDb0m3HDvj3HWhFUiqQ7e9QqtLS8s=;
+        b=vEziVXU+PhPWjGxw/xC7aLHAsGZIYKa2oODtmbkDYY7TjvkqHfsyLFqqjkTbm1bh7a
+         GwIWWfviMwy7KYSNSVmERjfgkfn33VkZu/5gbCl7vj141PeSd8OaL/MhqS2iJ8QHzis3
+         9Jv/7hnzNa1LSMfSIXHDSKB1AlJ7YRthLzf8aDbhYXbHs5e6CgG86Mqm7YyOcwDoQ5ss
+         341M4XgoYS/QTAGPpzsXc0vnHnHx4CkgD9OTCfUiFslaSeNLW1EnMiOZVQ8SO8r5saoP
+         amlmzBtoA4Pm7Cfx0A58OKzucr5E/LKJfRTwf77Q2zsLsCoxY8KxEsSGVIn0BUsMIdLo
+         aDJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CxmQrvAa8GNHsreDb0m3HDvj3HWhFUiqQ7e9QqtLS8s=;
+        b=Pxm2smp+4lQzqJ+6zhqPnSDpiW2V1AzNJVTZzufnwTcUsqj1FhxEBzwkUYIOkDh4QR
+         aCFt7sevIh5XPVa9KM1yFA3y9IFjcxZzyiubcgt0hOcJ4HDajovVMCM19iQLrC3Me5Ja
+         W017RTB79aixqA/87bkXsHIKD0uVS+DYOCW0MHenFMjZKwt2rHJeEa+kwqL1FjNGy7a3
+         uLYVswZuPilRuOBEJBObMvgXtwHQLB7s1umZXEpziXlGJifCO3SJuad6/82KjZBWces5
+         1K5vthwLHxml+Of0TQqss8RKky/zYrRTbrbSnW1euEKZqT7Uj+VCJfY8jwKwZSiMSaUN
+         ZIjA==
+X-Gm-Message-State: ANhLgQ2ew5FHJkBmJsnxNpjKNbRUVz/5SxgLWan5HclY9vs4xYGa3r0k
+        Q9HtGNGDEpE7XelpXL1GjYb1Darg
+X-Google-Smtp-Source: ADFU+vuL72kTYj3uqbOO7/4sMcpiAe9kQNEEsm+0iR0dEGuzJSt4814GqQbDb6W2N/zzsxd0qTA2pw==
+X-Received: by 2002:a05:6830:1413:: with SMTP id v19mr17448119otp.41.1585776355915;
+        Wed, 01 Apr 2020 14:25:55 -0700 (PDT)
+Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id j90sm774717otc.21.2020.04.01.14.25.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Apr 2020 14:25:55 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 14:25:53 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Dirk Mueller <dmueller@suse.com>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 4.9 061/102] scripts/dtc: Remove redundant YYLOC global
+ declaration
+Message-ID: <20200401212553.GA43588@ubuntu-m2-xlarge-x86>
+References: <20200401161530.451355388@linuxfoundation.org>
+ <20200401161543.380204082@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200401161543.380204082@linuxfoundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 01, 2020 at 06:18:04PM +0200, Greg Kroah-Hartman wrote:
+> From: Dirk Mueller <dmueller@suse.com>
+> 
+> commit e33a814e772cdc36436c8c188d8c42d019fda639 upstream.
+> 
+> gcc 10 will default to -fno-common, which causes this error at link
+> time:
+> 
+>   (.text+0x0): multiple definition of `yylloc'; dtc-lexer.lex.o (symbol from plugin):(.text+0x0): first defined here
+> 
+> This is because both dtc-lexer as well as dtc-parser define the same
+> global symbol yyloc. Before with -fcommon those were merged into one
+> defintion. The proper solution would be to to mark this as "extern",
+> however that leads to:
+> 
+>   dtc-lexer.l:26:16: error: redundant redeclaration of 'yylloc' [-Werror=redundant-decls]
+>    26 | extern YYLTYPE yylloc;
+>       |                ^~~~~~
+> In file included from dtc-lexer.l:24:
+> dtc-parser.tab.h:127:16: note: previous declaration of 'yylloc' was here
+>   127 | extern YYLTYPE yylloc;
+>       |                ^~~~~~
+> cc1: all warnings being treated as errors
+> 
+> which means the declaration is completely redundant and can just be
+> dropped.
+> 
+> Signed-off-by: Dirk Mueller <dmueller@suse.com>
+> Signed-off-by: David Gibson <david@gibson.dropbear.id.au>
+> [robh: cherry-pick from upstream]
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  scripts/dtc/dtc-lexer.l |    1 -
+>  1 file changed, 1 deletion(-)
+> 
+> --- a/scripts/dtc/dtc-lexer.l
+> +++ b/scripts/dtc/dtc-lexer.l
+> @@ -38,7 +38,6 @@ LINECOMMENT	"//".*\n
+>  #include "srcpos.h"
+>  #include "dtc-parser.tab.h"
+>  
+> -YYLTYPE yylloc;
+>  extern bool treesource_error;
+>  
+>  /* CAUTION: this will stop working if we ever use yyless() or yyunput() */
+> 
+> 
 
-Kernel sets fault address and status in CRB for NX page fault on user
-space address after processing page fault. User space gets the signal
-and handles the fault mentioned in CRB by bringing the page in to
-memory and send NX request again.
+Hi Greg,
 
-Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Signed-off-by: Haren Myneni <haren@linux.ibm.com>
----
- arch/powerpc/include/asm/icswx.h | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+Please see my email on the 5.5 version of this patch:
 
-diff --git a/arch/powerpc/include/asm/icswx.h b/arch/powerpc/include/asm/icswx.h
-index 9872f85..965b1f3 100644
---- a/arch/powerpc/include/asm/icswx.h
-+++ b/arch/powerpc/include/asm/icswx.h
-@@ -108,6 +108,17 @@ struct data_descriptor_entry {
- 	__be64 address;
- } __packed __aligned(DDE_ALIGN);
- 
-+/* 4.3.2 NX-stamped Fault CRB */
-+
-+#define NX_STAMP_ALIGN          (0x10)
-+
-+struct nx_fault_stamp {
-+	__be64 fault_storage_addr;
-+	__be16 reserved;
-+	__u8   flags;
-+	__u8   fault_status;
-+	__be32 pswid;
-+} __packed __aligned(NX_STAMP_ALIGN);
- 
- /* Chapter 6.5.2 Coprocessor-Request Block (CRB) */
- 
-@@ -135,10 +146,15 @@ struct coprocessor_request_block {
- 
- 	struct coprocessor_completion_block ccb;
- 
--	u8 reserved[48];
-+	union {
-+		struct nx_fault_stamp nx;
-+		u8 reserved[16];
-+	} stamp;
-+
-+	u8 reserved[32];
- 
- 	struct coprocessor_status_block csb;
--} __packed __aligned(CRB_ALIGN);
-+} __packed;
- 
- 
- /* RFC02167 Initiate Coprocessor Instructions document
--- 
-1.8.3.1
+https://lore.kernel.org/stable/20200331192515.GA39354@ubuntu-m2-xlarge-x86/
 
+As it stands how, this version of the patch does nothing.
 
-
+Cheers,
+Nathan
