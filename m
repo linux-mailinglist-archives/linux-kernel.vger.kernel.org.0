@@ -2,60 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D6319B363
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:51:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FE8119B1D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388769AbgDAQvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:51:08 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41265 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388875AbgDAQiC (ORCPT
+        id S2389080AbgDAQiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:38:23 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37468 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388904AbgDAQiS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:38:02 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h9so821913wrc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:38:01 -0700 (PDT)
+        Wed, 1 Apr 2020 12:38:18 -0400
+Received: by mail-wr1-f67.google.com with SMTP id w10so858938wrm.4
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:38:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sartura-hr.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=43B7TmRxwbH0Kz6LfG5BTdU1pIGsf8HgKKgz0zV5YhQ=;
-        b=t8g4lRjSFxlPhffn+KF0Ov/OJ/X7NMp1BBL1XTnFSCRAblSqCw30mm2ZCXiWToI5/u
-         uQ55QeaBYfR5L8Ro9yETs+vvD2EZc4MyexeAo9U+xh4HovklHxTMo4IUQmEq9BII33W+
-         JtYHbcfmo6dqCOIq42B4xFAUjDUVtSuA+walfIpUwiYy+a5rbDUxgCLqNf6Ms8IxPSFg
-         7gz5vOE57n0jBIJoDROV8lC70N840KzNOxETp1MobF1bbVEDJ2Ork6pr/LsMsvsRT+OI
-         ZwGZ/y9D3xDcD5hAgtc6cz+kdelAI7iLrhzMTNe7jghavldhQgy9VCOlYkRd3SdD+ffL
-         DkIQ==
+        bh=u01MPjpNUTMHsez0F0H9AHhzrsoSor9pky3lmIVAZDI=;
+        b=qY/eIwjWTJXKU3CMhFdA1LcoLfpQ+XQGJxcAMpPitVGg7GUr0q+Gip5HQYnBJNykG9
+         wzz+YsTE/68V7BAzrlqRdKXR+UcQpvqQzlvHstuYoLqTYH3L7t8BZ+sQw9U7pEC/VSQt
+         UR+LYCtHGoOWedutWOaIJRVahsrvvioBitka8d8IdFfNA9XIDizaRUypbKgO5cVl4j4L
+         6uObLc8/uVhhZX1T8sTRUM0PcUKWt21lfBJp7yip+pP2GrjDNE37T+NNWw9qRtuHSOm3
+         CbN1UCpp1mrbdVowPqp0QPh7VVmEZQlw8rl3aVyGP9DZLiyYOJmKdIoYZ0W/190EAnHY
+         /rdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=43B7TmRxwbH0Kz6LfG5BTdU1pIGsf8HgKKgz0zV5YhQ=;
-        b=ssHc+D1acUykmR/6eB6ipzBxtvX3hRlfXXuKTyvv37+OLm6aXpKhCc0b9BtEamaZGv
-         KLMc7p57QIH7LFzsse+3eN1jWqyEtYLNst4oRs+9P8789n3T80wyJx/JCYkFcE/pYn2f
-         MVAj345UAojbR/EZM3yVRAUiJd9quqodfuxpeQ6sjKUJU3KADUrhnRyXWXNbZ5OnGsa1
-         0+nWRCRwqik15oJd72vtK/5NAhHxfHXEDTbUS7kaKlweXs39l1ylRsoKCPZq88GUAfpm
-         LMmHFplqQubXnW2M8VHKC2pkHkYTHExrg8Rzrxts0mgLXNlyx3wUAaeFZxanfyxYyY27
-         1Igw==
-X-Gm-Message-State: ANhLgQ0LvEEupz/3Xgx627vh182F4Ln0GYP5uAtJOb2LMhMXvZlWvEtT
-        qWH1tZbqcGnwsNY0gnU940o4/Q==
-X-Google-Smtp-Source: ADFU+vsttNZ8z9NKrPfiUCeOaS/Ky/EMaV1rDxbRCMDp1ELAHbDOcyAhwSzyVU7DFhRG3mSKbgXBwg==
-X-Received: by 2002:a05:6000:1251:: with SMTP id j17mr26858172wrx.228.1585759081007;
-        Wed, 01 Apr 2020 09:38:01 -0700 (PDT)
+        bh=u01MPjpNUTMHsez0F0H9AHhzrsoSor9pky3lmIVAZDI=;
+        b=FpsiULjmQfgLawzCvZkgO197GohNNSFMll4H7NjKf7V3OEKfY6fwT00ZzyJVQAVk3V
+         +slCALb+WTL4kx55X3iuwxdUlyCijdSiK1j+/3CPmoM52QXQ+09lREhsp7mDNJkLdGm/
+         IwcG07JA7CMDwA98Cdfzr6OzKMHbA6xmmu/GcEQeWixPJl7nUM6dVKxOScyRvrcIWtIK
+         TVYcMVHX+LQexOxvNkJIURaIL2aCuZUQXZI5XbJOkZ1Sa1vEO1Z6PFV2IwgD0xG6DH/j
+         NhK+04dJC6IGBiPRmdUX+AIoLC/S7twIYmQ8aeX8cfqE12juhGYjTgw55oYt4F1b64EZ
+         XpHg==
+X-Gm-Message-State: ANhLgQ3tZFN3halbFHv7H16XKjORqcm+bw0z8RSCEN93jGFSuIXRLwXy
+        xn3KvF2dF9Fs5kLRYQeYtD4VBg==
+X-Google-Smtp-Source: ADFU+vu1nqgecFP77p8CwVLBYzELE8ooG1GeOW2OyfzUyCSFMSM9HZ3jS1LNuW/MdP4VWhz9/hi/7w==
+X-Received: by 2002:adf:e403:: with SMTP id g3mr25456194wrm.333.1585759097402;
+        Wed, 01 Apr 2020 09:38:17 -0700 (PDT)
 Received: from localhost.localdomain (dh207-97-209.xnet.hr. [88.207.97.209])
-        by smtp.googlemail.com with ESMTPSA id t5sm3763573wrr.93.2020.04.01.09.37.59
+        by smtp.googlemail.com with ESMTPSA id t5sm3763573wrr.93.2020.04.01.09.38.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 09:38:00 -0700 (PDT)
+        Wed, 01 Apr 2020 09:38:14 -0700 (PDT)
 From:   Robert Marko <robert.marko@sartura.hr>
 To:     agross@kernel.org, bjorn.andersson@linaro.org, kishon@ti.com,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org
-Cc:     Robert Marko <robert.marko@sartura.hr>,
-        John Crispin <john@phrozen.org>,
+Cc:     John Crispin <john@phrozen.org>,
+        Robert Marko <robert.marko@sartura.hr>,
         Luka Perkov <luka.perkov@sartura.hr>
-Subject: [PATCH v6 2/3] dt-bindings: phy-qcom-ipq4019-usb: add binding document
-Date:   Wed,  1 Apr 2020 18:35:43 +0200
-Message-Id: <20200401163542.83278-2-robert.marko@sartura.hr>
+Subject: [PATCH v6 3/3] ARM: dts: qcom: ipq4019: add USB devicetree nodes
+Date:   Wed,  1 Apr 2020 18:35:45 +0200
+Message-Id: <20200401163542.83278-3-robert.marko@sartura.hr>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200401163542.83278-1-robert.marko@sartura.hr>
 References: <20200401163542.83278-1-robert.marko@sartura.hr>
@@ -66,81 +66,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the binding documentation for the HS/SS USB PHY found
-inside Qualcom Dakota SoCs.
+From: John Crispin <john@phrozen.org>
+
+Since we now have driver for the USB PHY, lets add the necessary nodes to DTSI.
 
 Signed-off-by: John Crispin <john@phrozen.org>
 Signed-off-by: Robert Marko <robert.marko@sartura.hr>
 Cc: Luka Perkov <luka.perkov@sartura.hr>
 ---
-Changes from v5 to v6:
-* Add missing include for reset defines in example
-* Fix warning for missing # in #phy-cells
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi | 20 +++++
+ arch/arm/boot/dts/qcom-ipq4019.dtsi           | 74 +++++++++++++++++++
+ 2 files changed, 94 insertions(+)
 
-Changes from v4 to v5:
-* Replace tabs with whitespaces
-* Add maintainer property
-
- .../bindings/phy/qcom-usb-ipq4019-phy.yaml    | 50 +++++++++++++++++++
- 1 file changed, 50 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
-
-diff --git a/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml b/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
-new file mode 100644
-index 000000000000..1118fe69b611
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/qcom-usb-ipq4019-phy.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/phy/qcom-usb-ipq4019-phy.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+index 418f9a022336..2ee5f05d5a43 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+@@ -109,5 +109,25 @@ wifi@a000000 {
+ 		wifi@a800000 {
+ 			status = "ok";
+ 		};
 +
-+title: Qualcom IPQ40xx Dakota HS/SS USB PHY
++		usb3_ss_phy: ssphy@9a000 {
++			status = "ok";
++		};
 +
-+maintainers:
-+  - Robert Marko <robert.marko@sartura.hr>
++		usb3_hs_phy: hsphy@a6000 {
++			status = "ok";
++		};
 +
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,usb-ss-ipq4019-phy
-+      - qcom,usb-hs-ipq4019-phy
++		usb3: usb3@8af8800 {
++			status = "ok";
++		};
 +
-+  reg:
-+    maxItems: 1
++		usb2_hs_phy: hsphy@a8000 {
++			status = "ok";
++		};
 +
-+  resets:
-+    maxItems: 2
++		usb2: usb2@60f8800 {
++			status = "ok";
++		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+index bfa9ce4c6e69..ee45253361cb 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+@@ -576,5 +576,79 @@ wifi1: wifi@a800000 {
+ 					  "legacy";
+ 			status = "disabled";
+ 		};
 +
-+  reset-names:
-+    items:
-+      - const: por_rst
-+      - const: srif_rst
++		usb3_ss_phy: ssphy@9a000 {
++			compatible = "qcom,usb-ss-ipq4019-phy";
++			#phy-cells = <0>;
++			reg = <0x9a000 0x800>;
++			reg-names = "phy_base";
++			resets = <&gcc USB3_UNIPHY_PHY_ARES>;
++			reset-names = "por_rst";
++			status = "disabled";
++		};
 +
-+  "#phy-cells":
-+    const: 0
++		usb3_hs_phy: hsphy@a6000 {
++			compatible = "qcom,usb-hs-ipq4019-phy";
++			#phy-cells = <0>;
++			reg = <0xa6000 0x40>;
++			reg-names = "phy_base";
++			resets = <&gcc USB3_HSPHY_POR_ARES>, <&gcc USB3_HSPHY_S_ARES>;
++			reset-names = "por_rst", "srif_rst";
++			status = "disabled";
++		};
 +
-+required:
-+  - compatible
-+  - reg
-+  - resets
-+  - reset-names
-+  - "#phy-cells"
++		usb3@8af8800 {
++			compatible = "qcom,dwc3";
++			reg = <0x8af8800 0x100>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			clocks = <&gcc GCC_USB3_MASTER_CLK>,
++				 <&gcc GCC_USB3_SLEEP_CLK>,
++				 <&gcc GCC_USB3_MOCK_UTMI_CLK>;
++			clock-names = "master", "sleep", "mock_utmi";
++			ranges;
++			status = "disabled";
 +
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-ipq4019.h>
++			dwc3@8a00000 {
++				compatible = "snps,dwc3";
++				reg = <0x8a00000 0xf8000>;
++				interrupts = <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>;
++				phys = <&usb3_hs_phy>, <&usb3_ss_phy>;
++				phy-names = "usb2-phy", "usb3-phy";
++				dr_mode = "host";
++			};
++		};
 +
-+    hsphy@a8000 {
-+      #phy-cells = <0>;
-+      compatible = "qcom,usb-hs-ipq4019-phy";
-+      reg = <0xa8000 0x40>;
-+      resets = <&gcc USB2_HSPHY_POR_ARES>,
-+               <&gcc USB2_HSPHY_S_ARES>;
-+      reset-names = "por_rst", "srif_rst";
-+    };
++		usb2_hs_phy: hsphy@a8000 {
++			compatible = "qcom,usb-hs-ipq4019-phy";
++			#phy-cells = <0>;
++			reg = <0xa8000 0x40>;
++			reg-names = "phy_base";
++			resets = <&gcc USB2_HSPHY_POR_ARES>, <&gcc USB2_HSPHY_S_ARES>;
++			reset-names = "por_rst", "srif_rst";
++			status = "disabled";
++		};
++
++		usb2@60f8800 {
++			compatible = "qcom,dwc3";
++			reg = <0x60f8800 0x100>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			clocks = <&gcc GCC_USB2_MASTER_CLK>,
++				 <&gcc GCC_USB2_SLEEP_CLK>,
++				 <&gcc GCC_USB2_MOCK_UTMI_CLK>;
++			clock-names = "master", "sleep", "mock_utmi";
++			ranges;
++			status = "disabled";
++
++			dwc3@6000000 {
++				compatible = "snps,dwc3";
++				reg = <0x6000000 0xf8000>;
++				interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
++				phys = <&usb2_hs_phy>;
++				phy-names = "usb2-phy";
++				dr_mode = "host";
++			};
++		};
+ 	};
+ };
 -- 
 2.26.0
 
