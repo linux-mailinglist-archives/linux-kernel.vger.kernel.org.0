@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 182A419B14A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:35:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D49819B1D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388575AbgDAQdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:33:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60214 "EHLO mail.kernel.org"
+        id S2389100AbgDAQih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:38:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388383AbgDAQdh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:33:37 -0400
+        id S2388962AbgDAQic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:38:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D63620658;
-        Wed,  1 Apr 2020 16:33:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB1D020772;
+        Wed,  1 Apr 2020 16:38:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758816;
-        bh=+gz3rEvWtbhTtAy+WeUnB6gS9zGckPevAbBr38f1C1A=;
+        s=default; t=1585759112;
+        bh=tet5YOIqQdCOHptiSOmkenXOZ5P8aUOSAsNdEt653NQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DM/C31bBpqACp+3oWc6VTh6spyoCmuz/r79L6GTQTR2lZQBd38JLaXT1etQSAVhIf
-         n+Wwk9AIVHzNmzdqmKYNOlbhoget7HN5f/LyUQZqj3dmWKD6jx5JuL1VYWTp/mq1H6
-         tx97S/OFqUapMgIYqAG7mp4eBV5zTKcyMRYHqA/I=
+        b=qq/ypKshbB7jWtsxz5UX4A/MH2w0yOzDzF1/ri83ph1TeC2YcNWHVLK2TmnUbHCOD
+         T4QEKhqb870C9DkjWazEywkcG5M+dfM/0kpn4gYwqQeCxmjufPj935Vg8Ui84xN7Os
+         FBiMDO6QL7f/Y4QJHYSsPGU5emlO22No5khjwkMQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 4.4 84/91] vt: switch vt_dont_switch to bool
-Date:   Wed,  1 Apr 2020 18:18:20 +0200
-Message-Id: <20200401161539.220388636@linuxfoundation.org>
+        stable@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        syzbot+37ba33391ad5f3935bbd@syzkaller.appspotmail.com
+Subject: [PATCH 4.9 078/102] USB: serial: io_edgeport: fix slab-out-of-bounds read in edge_interrupt_callback
+Date:   Wed,  1 Apr 2020 18:18:21 +0200
+Message-Id: <20200401161545.691788527@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
-References: <20200401161512.917494101@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,57 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Qiujun Huang <hqjagain@gmail.com>
 
-commit f400991bf872debffb01c46da882dc97d7e3248e upstream.
+commit 57aa9f294b09463492f604feaa5cc719beaace32 upstream.
 
-vt_dont_switch is pure boolean, no need for whole char.
+Fix slab-out-of-bounds read in the interrupt-URB completion handler.
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Link: https://lore.kernel.org/r/20200219073951.16151-6-jslaby@suse.cz
+The boundary condition should be (length - 1) as we access
+data[position + 1].
+
+Reported-and-tested-by: syzbot+37ba33391ad5f3935bbd@syzkaller.appspotmail.com
+Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt_ioctl.c |    6 +++---
- include/linux/vt_kern.h   |    2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/serial/io_edgeport.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -38,7 +38,7 @@
- #include <linux/kbd_diacr.h>
- #include <linux/selection.h>
- 
--char vt_dont_switch;
-+bool vt_dont_switch;
- 
- static inline bool vt_in_use(unsigned int i)
- {
-@@ -1035,12 +1035,12 @@ int vt_ioctl(struct tty_struct *tty,
- 	case VT_LOCKSWITCH:
- 		if (!capable(CAP_SYS_TTY_CONFIG))
- 			return -EPERM;
--		vt_dont_switch = 1;
-+		vt_dont_switch = true;
- 		break;
- 	case VT_UNLOCKSWITCH:
- 		if (!capable(CAP_SYS_TTY_CONFIG))
- 			return -EPERM;
--		vt_dont_switch = 0;
-+		vt_dont_switch = false;
- 		break;
- 	case VT_GETHIFONTMASK:
- 		ret = put_user(vc->vc_hi_font_mask,
---- a/include/linux/vt_kern.h
-+++ b/include/linux/vt_kern.h
-@@ -142,7 +142,7 @@ static inline bool vt_force_oops_output(
- 	return false;
- }
- 
--extern char vt_dont_switch;
-+extern bool vt_dont_switch;
- extern int default_utf8;
- extern int global_cursor_default;
- 
+--- a/drivers/usb/serial/io_edgeport.c
++++ b/drivers/usb/serial/io_edgeport.c
+@@ -634,7 +634,7 @@ static void edge_interrupt_callback(stru
+ 		/* grab the txcredits for the ports if available */
+ 		position = 2;
+ 		portNumber = 0;
+-		while ((position < length) &&
++		while ((position < length - 1) &&
+ 				(portNumber < edge_serial->serial->num_ports)) {
+ 			txCredits = data[position] | (data[position+1] << 8);
+ 			if (txCredits) {
 
 
