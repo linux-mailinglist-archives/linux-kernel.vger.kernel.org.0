@@ -2,79 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F04E19AA48
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 13:09:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27FEF19AA5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 13:09:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732625AbgDALGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 07:06:00 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:34827 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732335AbgDALF5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 07:05:57 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1jJbBt-000863-Uc; Wed, 01 Apr 2020 13:05:50 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8AE221C047B;
-        Wed,  1 Apr 2020 13:05:49 +0200 (CEST)
-Date:   Wed, 01 Apr 2020 11:05:49 -0000
-From:   "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] Revert "irqchip/xilinx: Do not call irq_set_default_host()"
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Marc Zyngier <maz@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <44b64be7-9240-fd52-af90-e0245220f38b@xilinx.com>
-References: <44b64be7-9240-fd52-af90-e0245220f38b@xilinx.com>
-MIME-Version: 1.0
-Message-ID: <158573914921.28353.5903314598281659290.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1732700AbgDALGy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 07:06:54 -0400
+Received: from foss.arm.com ([217.140.110.172]:49020 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732179AbgDALGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 07:06:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 16DB230E;
+        Wed,  1 Apr 2020 04:06:48 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DCA63F68F;
+        Wed,  1 Apr 2020 04:06:47 -0700 (PDT)
+Date:   Wed, 01 Apr 2020 12:06:46 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, oder_chiou@realtek.com,
+        perex@perex.cz, pierre-louis.bossart@linux.intel.com,
+        tiwai@suse.com
+Subject: Applied "ASoC: rt5682: Fix build error without CONFIG_I2C" to the asoc tree
+In-Reply-To:  <20200401091055.34112-1-yuehaibing@huawei.com>
+Message-Id:  <applied-20200401091055.34112-1-yuehaibing@huawei.com>
+X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the irq/urgent branch of tip:
+The patch
 
-Commit-ID:     e02f6c01748df77b3fe202bbf7dde0aae6ecced7
-Gitweb:        https://git.kernel.org/tip/e02f6c01748df77b3fe202bbf7dde0aae6ecced7
-Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Mon, 30 Mar 2020 10:41:58 +01:00
-Committer:     Marc Zyngier <maz@kernel.org>
-CommitterDate: Wed, 01 Apr 2020 09:10:45 +01:00
+   ASoC: rt5682: Fix build error without CONFIG_I2C
 
-Revert "irqchip/xilinx: Do not call irq_set_default_host()"
+has been applied to the asoc tree at
 
-This reverts commit 9c2d4f525c002591f4e0c14a37663663aaba1656, which
-breaks a number of PPC platforms.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/44b64be7-9240-fd52-af90-e0245220f38b@xilinx.com
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 59564e117356d5bb6df6876c03d7d650361781c9 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 1 Apr 2020 17:10:55 +0800
+Subject: [PATCH] ASoC: rt5682: Fix build error without CONFIG_I2C
+
+If I2C is n but SoundWire is m, building fails:
+
+sound/soc/codecs/rt5682.c:3716:1: warning: data definition has no type or storage class
+ module_i2c_driver(rt5682_i2c_driver);
+ ^~~~~~~~~~~~~~~~~
+sound/soc/codecs/rt5682.c:3716:1: error: type defaults to 'int' in declaration of 'module_i2c_driver' [-Werror=implicit-int]
+sound/soc/codecs/rt5682.c:3716:1: warning: parameter names (without types) in function declaration
+
+Guard this use #ifdef CONFIG_I2C.
+
+Fixes: 5549ea647997 ("ASoC: rt5682: fix unmet dependencies")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20200401091055.34112-1-yuehaibing@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/irqchip/irq-xilinx-intc.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/rt5682.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-xilinx-intc.c b/drivers/irqchip/irq-xilinx-intc.c
-index 7f811fe..ea74181 100644
---- a/drivers/irqchip/irq-xilinx-intc.c
-+++ b/drivers/irqchip/irq-xilinx-intc.c
-@@ -250,6 +250,7 @@ static int __init xilinx_intc_of_init(struct device_node *intc,
- 		}
- 	} else {
- 		primary_intc = irqc;
-+		irq_set_default_host(primary_intc->root_domain);
- 		set_handle_irq(xil_intc_handle_irq);
- 	}
+diff --git a/sound/soc/codecs/rt5682.c b/sound/soc/codecs/rt5682.c
+index c9268a230daa..d36f560ad7a8 100644
+--- a/sound/soc/codecs/rt5682.c
++++ b/sound/soc/codecs/rt5682.c
+@@ -3703,7 +3703,7 @@ static const struct acpi_device_id rt5682_acpi_match[] = {
+ MODULE_DEVICE_TABLE(acpi, rt5682_acpi_match);
+ #endif
  
+-static struct i2c_driver rt5682_i2c_driver = {
++static struct i2c_driver __maybe_unused rt5682_i2c_driver = {
+ 	.driver = {
+ 		.name = "rt5682",
+ 		.of_match_table = of_match_ptr(rt5682_of_match),
+@@ -3713,7 +3713,10 @@ static struct i2c_driver rt5682_i2c_driver = {
+ 	.shutdown = rt5682_i2c_shutdown,
+ 	.id_table = rt5682_i2c_id,
+ };
++
++#ifdef CONFIG_I2C
+ module_i2c_driver(rt5682_i2c_driver);
++#endif
+ 
+ MODULE_DESCRIPTION("ASoC RT5682 driver");
+ MODULE_AUTHOR("Bard Liao <bardliao@realtek.com>");
+-- 
+2.20.1
+
