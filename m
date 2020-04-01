@@ -2,67 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E463F19B8A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 00:49:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C01F919B899
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 00:44:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388989AbgDAWt2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 18:49:28 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47837 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388966AbgDAWt2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 18:49:28 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1jJmAj-0004nz-QG; Wed, 01 Apr 2020 22:49:21 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Faisal Latif <faisal.latif@intel.com>,
-        Shiraz Saleem <shiraz.saleem@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, sindhu.devale@intel.com,
-        linux-rdma@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] i40iw: fix null pointer dereference on a null wqe pointer
-Date:   Wed,  1 Apr 2020 23:49:21 +0100
-Message-Id: <20200401224921.405279-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.25.1
+        id S2388400AbgDAWo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 18:44:28 -0400
+Received: from mga04.intel.com ([192.55.52.120]:48593 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388386AbgDAWo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 18:44:27 -0400
+IronPort-SDR: NNSNTHSGI0Dl6w8YPN4s5KEiu5/Lyd3PTMV5+3Wd/aKAJFUmmoufShgGfz3kkH1JqJtQ+kHmhc
+ fExyRv1bV1zQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 15:44:26 -0700
+IronPort-SDR: zkdHSM9lj9RG+TCgrQGNl9DJiOh5LdoXcru112HuXNimShCk6VYW+Fmyawdg5b+53sAe07ES/A
+ wXa/65VULsgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,333,1580803200"; 
+   d="scan'208";a="284569522"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by fmsmga002.fm.intel.com with ESMTP; 01 Apr 2020 15:44:25 -0700
+Date:   Wed, 1 Apr 2020 15:50:13 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 01/10] iommu/ioasid: Introduce system-wide capacity
+Message-ID: <20200401155013.7386b2ad@jacob-builder>
+In-Reply-To: <20200401134552.GD882512@myrica>
+References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1585158931-1825-2-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20200401134552.GD882512@myrica>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Jean,
 
-Currently the null check for wqe is incorrect and lets a null wqe
-be passed to set_64bit_val and this indexes into the null pointer
-causing a null pointer dereference.  Fix this by fixing the null
-pointer check to return an error if wqe is null.
+On Wed, 1 Apr 2020 15:45:52 +0200
+Jean-Philippe Brucker <jean-philippe@linaro.org> wrote:
 
-Addresses-Coverity: ("dereference after a null check")
-Fixes: 4b34e23f4eaa ("i40iw: Report correct firmware version")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/infiniband/hw/i40iw/i40iw_ctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_ctrl.c b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-index e8b4b3743661..688f19667221 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-@@ -1046,7 +1046,7 @@ i40iw_sc_query_rdma_features(struct i40iw_sc_cqp *cqp,
- 	u64 header;
+> On Wed, Mar 25, 2020 at 10:55:22AM -0700, Jacob Pan wrote:
+> > IOASID is a limited system-wide resource that can be allocated at
+> > runtime. This limitation can be enumerated during boot. For
+> > example, on x86 platforms, PCI Process Address Space ID (PASID)
+> > allocation uses IOASID service. The number of supported PASID bits
+> > are enumerated by extended capability register as defined in the
+> > VT-d spec.
+> > 
+> > This patch adds a helper to set the system capacity, it expected to
+> > be set during boot prior to any allocation request.  
+> 
+> This one-time setting is a bit awkward. Since multiple IOMMU drivers
+> may be loaded, this can't be a module_init() thing. And we generally
+> have multiple SMMU instances in the system. So we'd need to call
+> install_capacity() only for the first SMMU loaded with an arbitrary
+> 1<<20, even though each SMMU can support different numbers of PASID
+> bits. Furthermore, modules such as iommu-sva will want to initialize
+> their IOASID set at module_init(), which will happen before the SMMU
+> can set up the capacity, so ioasid_alloc_set() will return an error.
+> 
+> How about hardcoding ioasid_capacity to 20 bits for now?  It's the
+> PCIe limit and probably won't have to increase for a while.
+> 
+Sound good. Default to 20 bits but can be adjusted if needed.
  
- 	wqe = i40iw_sc_cqp_get_next_send_wqe(cqp, scratch);
--	if (wqe)
-+	if (!wqe)
- 		return I40IW_ERR_RING_FULL;
- 
- 	set_64bit_val(wqe, 32, feat_mem->pa);
--- 
-2.25.1
 
+> Thanks,
+> Jean
+> 
+> > 
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > ---
+> >  drivers/iommu/ioasid.c | 15 +++++++++++++++
+> >  include/linux/ioasid.h |  5 ++++-
+> >  2 files changed, 19 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
+> > index 0f8dd377aada..4026e52855b9 100644
+> > --- a/drivers/iommu/ioasid.c
+> > +++ b/drivers/iommu/ioasid.c
+> > @@ -17,6 +17,21 @@ struct ioasid_data {
+> >  	struct rcu_head rcu;
+> >  };
+> >  
+> > +static ioasid_t ioasid_capacity;
+> > +static ioasid_t ioasid_capacity_avail;
+> > +
+> > +/* System capacity can only be set once */
+> > +void ioasid_install_capacity(ioasid_t total)
+> > +{
+> > +	if (ioasid_capacity) {
+> > +		pr_warn("IOASID capacity already set at %d\n",
+> > ioasid_capacity);
+> > +		return;
+> > +	}
+> > +
+> > +	ioasid_capacity = ioasid_capacity_avail = total;
+> > +}
+> > +EXPORT_SYMBOL_GPL(ioasid_install_capacity);
+> > +
+> >  /*
+> >   * struct ioasid_allocator_data - Internal data structure to hold
+> > information
+> >   * about an allocator. There are two types of allocators:
+> > diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
+> > index 6f000d7a0ddc..9711fa0dc357 100644
+> > --- a/include/linux/ioasid.h
+> > +++ b/include/linux/ioasid.h
+> > @@ -40,7 +40,7 @@ void *ioasid_find(struct ioasid_set *set,
+> > ioasid_t ioasid, int ioasid_register_allocator(struct
+> > ioasid_allocator_ops *allocator); void
+> > ioasid_unregister_allocator(struct ioasid_allocator_ops
+> > *allocator); int ioasid_set_data(ioasid_t ioasid, void *data); -
+> > +void ioasid_install_capacity(ioasid_t total);
+> >  #else /* !CONFIG_IOASID */
+> >  static inline ioasid_t ioasid_alloc(struct ioasid_set *set,
+> > ioasid_t min, ioasid_t max, void *private)
+> > @@ -72,5 +72,8 @@ static inline int ioasid_set_data(ioasid_t
+> > ioasid, void *data) return -ENOTSUPP;
+> >  }
+> >  
+> > +static inline void ioasid_install_capacity(ioasid_t total)
+> > +{
+> > +}
+> >  #endif /* CONFIG_IOASID */
+> >  #endif /* __LINUX_IOASID_H */
+> > -- 
+> > 2.7.4
+> >   
+
+[Jacob Pan]
