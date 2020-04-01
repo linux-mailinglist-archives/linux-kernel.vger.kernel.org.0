@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ADE219B275
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D80F19B085
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389707AbgDAQoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:44:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45152 "EHLO mail.kernel.org"
+        id S2387827AbgDAQ13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:27:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389690AbgDAQoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:44:11 -0400
+        id S2387488AbgDAQ1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:27:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8B812063A;
-        Wed,  1 Apr 2020 16:44:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BA55214D8;
+        Wed,  1 Apr 2020 16:27:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759450;
-        bh=r6mZS/jQtNDV6rtNX/kWpwXuUMyanIzXgkJvrL6OGnk=;
+        s=default; t=1585758442;
+        bh=h74ejmZRkUXqWK9qRDs8IjDoU7X8jdD/ST0PfyG2Zlc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d+pEHltABp/5rhQSoPF4Jm0K82zau8x97cwof1cGXf9LXjrA0KsYt8tvqo9Pvq7+Z
-         eu0770LA3Y0CaE5z/ZjZO1ZQWkXcqyZRp0rCyY7GR+ObA9PNKj86tSABKzarwo8bkh
-         gTN57Zd/INGCzR7HXGaEVpbcEFhH/EYaHQbaLQtQ=
+        b=eH7La00/zMSU06qlcwsDqgJVtB2OHaHnO5gOw0IoBde49fAaolttocZKKli2TJ6aH
+         CMxjRlQVAYYETlOI06CRjn8Jz1bO/lDZ5q/Fn8fSXAgCZkBzim7wOL/dvmfWF/l5Ls
+         nNVnhxyV0nx/TZuLab5Sq7ab+TWY1Ni0mlO1Y4/g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dajun Jin <adajunjin@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 076/148] drivers/of/of_mdio.c:fix of_mdiobus_register()
-Date:   Wed,  1 Apr 2020 18:17:48 +0200
-Message-Id: <20200401161600.621429294@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH 4.19 093/116] media: dib0700: fix rc endpoint lookup
+Date:   Wed,  1 Apr 2020 18:17:49 +0200
+Message-Id: <20200401161554.292734734@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dajun Jin <adajunjin@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 209c65b61d94344522c41a83cd6ce51aac5fd0a4 ]
+commit f52981019ad8d6718de79b425a574c6bddf81f7c upstream.
 
-When registers a phy_device successful, should terminate the loop
-or the phy_device would be registered in other addr. If there are
-multiple PHYs without reg properties, it will go wrong.
+Make sure to use the current alternate setting when verifying the
+interface descriptors to avoid submitting an URB to an invalid endpoint.
 
-Signed-off-by: Dajun Jin <adajunjin@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
+
+Fixes: c4018fa2e4c0 ("[media] dib0700: fix RC support on Hauppauge Nova-TD")
+Cc: stable <stable@vger.kernel.org>     # 3.16
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/of/of_mdio.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/usb/dvb-usb/dib0700_core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
-index fe26697d3bd72..69da2f6896dae 100644
---- a/drivers/of/of_mdio.c
-+++ b/drivers/of/of_mdio.c
-@@ -259,6 +259,7 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
- 				rc = of_mdiobus_register_phy(mdio, child, addr);
- 				if (rc && rc != -ENODEV)
- 					goto unregister;
-+				break;
- 			}
- 		}
- 	}
--- 
-2.20.1
-
+--- a/drivers/media/usb/dvb-usb/dib0700_core.c
++++ b/drivers/media/usb/dvb-usb/dib0700_core.c
+@@ -821,7 +821,7 @@ int dib0700_rc_setup(struct dvb_usb_devi
+ 
+ 	/* Starting in firmware 1.20, the RC info is provided on a bulk pipe */
+ 
+-	if (intf->altsetting[0].desc.bNumEndpoints < rc_ep + 1)
++	if (intf->cur_altsetting->desc.bNumEndpoints < rc_ep + 1)
+ 		return -ENODEV;
+ 
+ 	purb = usb_alloc_urb(0, GFP_KERNEL);
+@@ -841,7 +841,7 @@ int dib0700_rc_setup(struct dvb_usb_devi
+ 	 * Some devices like the Hauppauge NovaTD model 52009 use an interrupt
+ 	 * endpoint, while others use a bulk one.
+ 	 */
+-	e = &intf->altsetting[0].endpoint[rc_ep].desc;
++	e = &intf->cur_altsetting->endpoint[rc_ep].desc;
+ 	if (usb_endpoint_dir_in(e)) {
+ 		if (usb_endpoint_xfer_bulk(e)) {
+ 			pipe = usb_rcvbulkpipe(d->udev, rc_ep);
 
 
