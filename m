@@ -2,78 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A84EE19B90A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:40:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA3B019B914
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:52:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387522AbgDAXkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 19:40:42 -0400
-Received: from mga02.intel.com ([134.134.136.20]:57101 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387484AbgDAXkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 19:40:39 -0400
-IronPort-SDR: UMiRyoKdndtuB5afZFlySOtycAUznqAxfvaIXU8DXZEYWCNpOICvGY8Gio0dU5lQB51W70X0Gt
- ZjLqMzNsWrDQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 16:40:38 -0700
-IronPort-SDR: RlGonMBaS2L5DDZVJmlMOjYTm6IrWey3LLJVqzCi5feW9yRwImY9YJy/Qw7iYwGvhwNePw3rEX
- LtmlI1c653AA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,333,1580803200"; 
-   d="scan'208";a="252811963"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga006.jf.intel.com with ESMTP; 01 Apr 2020 16:40:38 -0700
-Received: from fmsmsx126.amr.corp.intel.com (10.18.125.43) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 1 Apr 2020 16:40:38 -0700
-Received: from fmsmsx124.amr.corp.intel.com ([169.254.8.220]) by
- FMSMSX126.amr.corp.intel.com ([169.254.1.221]) with mapi id 14.03.0439.000;
- Wed, 1 Apr 2020 16:40:38 -0700
-From:   "Saleem, Shiraz" <shiraz.saleem@intel.com>
-To:     Colin King <colin.king@canonical.com>,
-        "Latif, Faisal" <faisal.latif@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Devale, Sindhu" <sindhu.devale@intel.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH][next] i40iw: fix null pointer dereference on a null wqe
- pointer
-Thread-Topic: [PATCH][next] i40iw: fix null pointer dereference on a null
- wqe pointer
-Thread-Index: AQHWCHfMm+gLXhUTAU2UIQaZoCR1S6hk7B9Q
-Date:   Wed, 1 Apr 2020 23:40:37 +0000
-Message-ID: <9DD61F30A802C4429A01CA4200E302A7C611609E@fmsmsx124.amr.corp.intel.com>
-References: <20200401224921.405279-1-colin.king@canonical.com>
-In-Reply-To: <20200401224921.405279-1-colin.king@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.1.200.108]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1733291AbgDAXv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 19:51:59 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44030 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732872AbgDAXv6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 19:51:58 -0400
+Received: by mail-lj1-f193.google.com with SMTP id g27so1296360ljn.10
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 16:51:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H9rQ+4MX6AGqiS4gDh7zcouPJInPh/6Vm7fyt3tgD0k=;
+        b=JX+jSiMzF2RZC7X1UHsV906x8DewgkAwWN6EQ17vLXZEJQX6swhg/zVI1vxFEEZxIH
+         PbSD0KAyottCcGb/rT1bEA1sm5NRoFsrhBrQoH3A79V86rZeArdSk7sJvXfa6DN/8YJY
+         Q2hGYFvnvtsGpe9Mfmd01M2hX1hq6hVJbWiug=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H9rQ+4MX6AGqiS4gDh7zcouPJInPh/6Vm7fyt3tgD0k=;
+        b=W5J6M+KedCrXbsu2pmh9mLHHxfmoaLr2wjg6HNNZLvJxb5Xb0Q+/Ht7ASSMHHDBsxC
+         iI9wQKFqxIE+MUW6SAeofQgjorqI1NT1Cml0EAFI7u9ptvAJGs+1WawI0Q+HtVEdg4ip
+         zX2XOl0Fygun370D4yjt/7gJLSKJxF90nHxVFWHOa14SgV3SFXL4sBerpBJ76l/KBub7
+         XVdsuN2yIOFql6KC5B3O3/r+7eXGcc3eJLsJ/bA6ESVqc4yLiQX87/V3HkQYoV9J5XYL
+         e+B9ic68l9oBLVHDOb9rw6oI5cvyZFY6ndlNDb/dE6mVKcbL0z31ksCEqzLYvWXbYHBd
+         mwNA==
+X-Gm-Message-State: AGi0PuZpDEoPhyADFghdhTStg6pM59PWBiqZi9XgGI/cpnLVLRY+UENF
+        PjuFYICswl9wQSFU+2X0u+Evanv05ng=
+X-Google-Smtp-Source: APiQypLpiarPRvPKED2Ve1Wc0l8u50MEair+E8rV477f/0XPCsiIGFv+IYlfebXLiv5g4I/mIQviIA==
+X-Received: by 2002:a2e:954e:: with SMTP id t14mr326020ljh.253.1585785115610;
+        Wed, 01 Apr 2020 16:51:55 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id m8sm2070608lji.12.2020.04.01.16.51.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Apr 2020 16:51:54 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 19so1316159ljj.7
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 16:51:54 -0700 (PDT)
+X-Received: by 2002:a2e:8652:: with SMTP id i18mr373016ljj.265.1585785113845;
+ Wed, 01 Apr 2020 16:51:53 -0700 (PDT)
 MIME-Version: 1.0
+References: <20200324215049.GA3710@pi3.com.pl> <202003291528.730A329@keescook>
+ <87zhbvlyq7.fsf_-_@x220.int.ebiederm.org> <CAG48ez3nYr7dj340Rk5-QbzhsFq0JTKPf2MvVJ1-oi1Zug1ftQ@mail.gmail.com>
+In-Reply-To: <CAG48ez3nYr7dj340Rk5-QbzhsFq0JTKPf2MvVJ1-oi1Zug1ftQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 1 Apr 2020 16:51:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjz0LEi68oGJSQzZ--3JTFF+dX2yDaXDRKUpYxtBB=Zfw@mail.gmail.com>
+Message-ID: <CAHk-=wjz0LEi68oGJSQzZ--3JTFF+dX2yDaXDRKUpYxtBB=Zfw@mail.gmail.com>
+Subject: Re: [PATCH] signal: Extend exec_id to 64bits
+To:     Jann Horn <jannh@google.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Adam Zabrocki <pi3@pi3.com.pl>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBTdWJqZWN0OiBbUEFUQ0hdW25leHRdIGk0MGl3OiBmaXggbnVsbCBwb2ludGVyIGRlcmVmZXJl
-bmNlIG9uIGEgbnVsbCB3cWUgcG9pbnRlcg0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNv
-bGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gDQo+IEN1cnJlbnRseSB0aGUgbnVsbCBjaGVjayBm
-b3Igd3FlIGlzIGluY29ycmVjdCBhbmQgbGV0cyBhIG51bGwgd3FlIGJlIHBhc3NlZCB0bw0KPiBz
-ZXRfNjRiaXRfdmFsIGFuZCB0aGlzIGluZGV4ZXMgaW50byB0aGUgbnVsbCBwb2ludGVyIGNhdXNp
-bmcgYSBudWxsIHBvaW50ZXINCj4gZGVyZWZlcmVuY2UuICBGaXggdGhpcyBieSBmaXhpbmcgdGhl
-IG51bGwgcG9pbnRlciBjaGVjayB0byByZXR1cm4gYW4gZXJyb3IgaWYgd3FlIGlzDQo+IG51bGwu
-DQo+IA0KPiBBZGRyZXNzZXMtQ292ZXJpdHk6ICgiZGVyZWZlcmVuY2UgYWZ0ZXIgYSBudWxsIGNo
-ZWNrIikNCj4gRml4ZXM6IDRiMzRlMjNmNGVhYSAoImk0MGl3OiBSZXBvcnQgY29ycmVjdCBmaXJt
-d2FyZSB2ZXJzaW9uIikNCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtp
-bmdAY2Fub25pY2FsLmNvbT4NCg0KVWdoISBZZXMuIFRoYXTigJlzIGEgYmFkIG9uZS4gVGhhbmtz
-IGZvciB0aGUgZml4Lg0KDQpBY2tlZC1ieTogU2hpcmF6IFNhbGVlbSA8c2hpcmF6LnNhbGVlbUBp
-bnRlbC5jb20+DQo=
+On Wed, Apr 1, 2020 at 4:37 PM Jann Horn <jannh@google.com> wrote:
+>
+> GCC will generate code for this without complaining, but I think it'll
+> probably generate a tearing store on 32-bit platforms:
+
+This is very much a "we don't care" case.
+
+It's literally testing a sequence counter for equality. If you get
+tearing in the high bits on the write (or the read), you'd still need
+to have the low bits turn around 4G times to get a matching value.
+
+So no. We're not doing atomics for the 32-bit case. That's insane.
+
+               Linus
