@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B85D219B187
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E98119AFEB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388780AbgDAQft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:35:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34562 "EHLO mail.kernel.org"
+        id S2387464AbgDAQWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:22:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388773AbgDAQfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:35:46 -0400
+        id S2387476AbgDAQWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:22:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E067C20658;
-        Wed,  1 Apr 2020 16:35:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7455E20857;
+        Wed,  1 Apr 2020 16:22:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758945;
-        bh=oeSkHvhk+E5lKXj9sWZUu5MtAvGJsJpI7ik9znVotAw=;
+        s=default; t=1585758137;
+        bh=XUZVInl2yIRIheP1ctm3J4tTtc4UpxGu/clhuSn6aSc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y0QEVIW70+3HnMWC+m+oJuKnG3DQetVi1ta5oXHiO7TFxSerHtIQoQsL69UQ2Yb11
-         vaumvQKTPoKX5vY64XNA0SOe8WhWkgjFHClW1e0Mcrp5c5pf6YE4rI52QRbXXFz9Pt
-         lZxaQAleCJmDSltuY/EZWqwHjevZO+yJgJ37/ikw=
+        b=1eSwn0hVygkN5PHSnUwXRueo80NKEJsq+VVMLJ4f3ec2dqCcb9mhUbNa3npYjN/0N
+         il1ePRJrC7Dl12/mr/Ndgu09jQA+FUFIYCib5kWjWOGPF4UEfALQaZufbcezmo46eE
+         Mu/yC0RrWZPqSQE5ChV62TEcs90Ts2FwmoeRRQNo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anthony Mallet <anthony.mallet@laas.fr>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 028/102] USB: cdc-acm: fix close_delay and closing_wait units in TIOCSSERIAL
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Lanqing Liu <liuhhome@gmail.com>
+Subject: [PATCH 5.4 03/27] serial: sprd: Fix a dereference warning
 Date:   Wed,  1 Apr 2020 18:17:31 +0200
-Message-Id: <20200401161538.481068160@linuxfoundation.org>
+Message-Id: <20200401161417.599861325@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
+References: <20200401161414.352722470@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,55 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anthony Mallet <anthony.mallet@laas.fr>
+From: Lanqing Liu <liuhhome@gmail.com>
 
-[ Upstream commit 633e2b2ded739a34bd0fb1d8b5b871f7e489ea29 ]
+commit efc176929a3505a30c3993ddd393b40893649bd2 upstream.
 
-close_delay and closing_wait are specified in hundredth of a second but stored
-internally in jiffies. Use the jiffies_to_msecs() and msecs_to_jiffies()
-functions to convert from each other.
+We should validate if the 'sup' is NULL or not before freeing DMA
+memory, to fix below warning.
 
-Signed-off-by: Anthony Mallet <anthony.mallet@laas.fr>
+"drivers/tty/serial/sprd_serial.c:1141 sprd_remove()
+ error: we previously assumed 'sup' could be null (see line 1132)"
+
+Fixes: f4487db58eb7 ("serial: sprd: Add DMA mode support")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Lanqing Liu <liuhhome@gmail.com>
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200312133101.7096-1-anthony.mallet@laas.fr
+Link: https://lore.kernel.org/r/e2bd92691538e95b04a2c2a728f3292e1617018f.1584325957.git.liuhhome@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/usb/class/cdc-acm.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/tty/serial/sprd_serial.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
-index b2edbd4bf8c44..9fd1cd99aa977 100644
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -828,10 +828,10 @@ static int get_serial_info(struct acm *acm, struct serial_struct __user *info)
- 	tmp.flags = ASYNC_LOW_LATENCY;
- 	tmp.xmit_fifo_size = acm->writesize;
- 	tmp.baud_base = le32_to_cpu(acm->line.dwDTERate);
--	tmp.close_delay	= acm->port.close_delay / 10;
-+	tmp.close_delay	= jiffies_to_msecs(acm->port.close_delay) / 10;
- 	tmp.closing_wait = acm->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
- 				ASYNC_CLOSING_WAIT_NONE :
--				acm->port.closing_wait / 10;
-+				jiffies_to_msecs(acm->port.closing_wait) / 10;
+--- a/drivers/tty/serial/sprd_serial.c
++++ b/drivers/tty/serial/sprd_serial.c
+@@ -1103,14 +1103,13 @@ static int sprd_remove(struct platform_d
+ 	if (sup) {
+ 		uart_remove_one_port(&sprd_uart_driver, &sup->port);
+ 		sprd_port[sup->port.line] = NULL;
++		sprd_rx_free_buf(sup);
+ 		sprd_ports_num--;
+ 	}
  
- 	if (copy_to_user(info, &tmp, sizeof(tmp)))
- 		return -EFAULT;
-@@ -849,9 +849,10 @@ static int set_serial_info(struct acm *acm,
- 	if (copy_from_user(&new_serial, newinfo, sizeof(new_serial)))
- 		return -EFAULT;
+ 	if (!sprd_ports_num)
+ 		uart_unregister_driver(&sprd_uart_driver);
  
--	close_delay = new_serial.close_delay * 10;
-+	close_delay = msecs_to_jiffies(new_serial.close_delay * 10);
- 	closing_wait = new_serial.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
--			ASYNC_CLOSING_WAIT_NONE : new_serial.closing_wait * 10;
-+			ASYNC_CLOSING_WAIT_NONE :
-+			msecs_to_jiffies(new_serial.closing_wait * 10);
+-	sprd_rx_free_buf(sup);
+-
+ 	return 0;
+ }
  
- 	mutex_lock(&acm->port.mutex);
- 
--- 
-2.20.1
-
 
 
