@@ -2,258 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2037F19A3B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 04:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A737019A3BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 05:01:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731638AbgDACyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 22:54:17 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:42446 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731531AbgDACyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 22:54:17 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B3D37C7476AA77FA5ADD;
-        Wed,  1 Apr 2020 10:54:06 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 1 Apr 2020
- 10:54:01 +0800
-Subject: Re: [PATCH] f2fs: prevent meta updates while checkpoint is in
- progress
-To:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sahitya Tummala <stummala@codeaurora.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1585219019-24831-1-git-send-email-stummala@codeaurora.org>
- <20200331035419.GB79749@google.com> <20200331090608.GZ20234@codeaurora.org>
- <20200331184307.GA198665@google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <a56deb76-bf7f-dd86-301f-fbe56413ab9b@huawei.com>
-Date:   Wed, 1 Apr 2020 10:54:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1731630AbgDADB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Mar 2020 23:01:29 -0400
+Received: from mga07.intel.com ([134.134.136.100]:37860 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731556AbgDADB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Mar 2020 23:01:29 -0400
+IronPort-SDR: 5cEy5H/hFLZwnmhf1jVtThGEp9DeOlawf23SXYtZOzt+4artWJc10Ah0uIlsjXKpg6QRx9co9X
+ hyeqtcQRwNAQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 20:01:28 -0700
+IronPort-SDR: SaTzPEb1tXFSPSe3neOQwgOOJmoZxXwkJxyksdsmYveYAKHEA8F7PetwR0ooHjgpx4Y03OebbR
+ tX9ETpC2Mzmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,330,1580803200"; 
+   d="scan'208";a="249271195"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.141])
+  by orsmga003.jf.intel.com with ESMTP; 31 Mar 2020 20:01:26 -0700
+Date:   Wed, 1 Apr 2020 10:59:02 +0800
+From:   Xu Yilun <yilun.xu@intel.com>
+To:     Wu Hao <hao.wu@intel.com>
+Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, trix@redhat.com, bhu@redhat.com,
+        Luwei Kang <luwei.kang@intel.com>
+Subject: Re: [PATCH v3 2/7] fpga: dfl: pci: add irq info for feature devices
+  enumeration
+Message-ID: <20200401025902.GA4212@yilunxu-OptiPlex-7050>
+References: <1585038763-22944-1-git-send-email-yilun.xu@intel.com>
+ <1585038763-22944-3-git-send-email-yilun.xu@intel.com>
+ <20200331044120.GB8468@hao-dev>
 MIME-Version: 1.0
-In-Reply-To: <20200331184307.GA198665@google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331044120.GB8468@hao-dev>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/4/1 2:43, Jaegeuk Kim wrote:
-> On 03/31, Sahitya Tummala wrote:
->> On Mon, Mar 30, 2020 at 08:54:19PM -0700, Jaegeuk Kim wrote:
->>> On 03/26, Sahitya Tummala wrote:
->>>> allocate_segment_for_resize() can cause metapage updates if
->>>> it requires to change the current node/data segments for resizing.
->>>> Stop these meta updates when there is a checkpoint already
->>>> in progress to prevent inconsistent CP data.
->>>
->>> I'd prefer to use f2fs_lock_op() in bigger coverage.
->>
->> Do you mean to cover the entire free_segment_range() function within
->> f2fs_lock_op()? Please clarify.
+On Tue, Mar 31, 2020 at 12:41:20PM +0800, Wu Hao wrote:
+> On Tue, Mar 24, 2020 at 04:32:38PM +0800, Xu Yilun wrote:
+> > Some DFL FPGA PCIe cards (e.g. Intel FPGA Programmable Acceleration
+> > Card) support MSI-X based interrupts. This patch allows PCIe driver
+> > to prepare and pass interrupt resources to DFL via enumeration API.
+> > These interrupt resources could then be assigned to actual features
+> > which use them.
+> > 
+> > Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> > ----
+> > v2: put irq resources init code inside cce_enumerate_feature_dev()
+> >     Some minor changes for Hao's comments.
+> > v3: Some minor fix for Hao's comments for v2.
+> > ---
+> >  drivers/fpga/dfl-pci.c | 76 ++++++++++++++++++++++++++++++++++++++++++++------
+> >  1 file changed, 67 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/fpga/dfl-pci.c b/drivers/fpga/dfl-pci.c
+> > index 5387550..66027aa 100644
+> > --- a/drivers/fpga/dfl-pci.c
+> > +++ b/drivers/fpga/dfl-pci.c
+> > @@ -39,6 +39,28 @@ static void __iomem *cci_pci_ioremap_bar(struct pci_dev *pcidev, int bar)
+> >  	return pcim_iomap_table(pcidev)[bar];
+> >  }
+> >  
+> > +static int cci_pci_alloc_irq(struct pci_dev *pcidev)
+> > +{
+> > +	int nvec = pci_msix_vec_count(pcidev);
+> > +	int ret;
 > 
-> I didn't test tho, something like this?
+> maybe int ret, nvec = pci_msix..
 > 
-> ---
->  fs/f2fs/checkpoint.c        |  6 ++++--
->  fs/f2fs/f2fs.h              |  2 +-
->  fs/f2fs/gc.c                | 28 ++++++++++++++--------------
->  fs/f2fs/super.c             |  1 -
->  include/trace/events/f2fs.h |  4 +++-
->  5 files changed, 22 insertions(+), 19 deletions(-)
+> > +
+> > +	if (nvec <= 0) {
+> > +		dev_dbg(&pcidev->dev, "fpga interrupt not supported\n");
+> > +		return 0;
+> > +	}
+> > +
+> > +	ret = pci_alloc_irq_vectors(pcidev, nvec, nvec, PCI_IRQ_MSIX);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	return nvec;
+> > +}
+> > +
+> > +static void cci_pci_free_irq(struct pci_dev *pcidev)
+> > +{
+> > +	pci_free_irq_vectors(pcidev);
+> > +}
+> > +
+> >  /* PCI Device ID */
+> >  #define PCIE_DEVICE_ID_PF_INT_5_X	0xBCBD
+> >  #define PCIE_DEVICE_ID_PF_INT_6_X	0xBCC0
+> > @@ -78,17 +100,33 @@ static void cci_remove_feature_devs(struct pci_dev *pcidev)
+> >  
+> >  	/* remove all children feature devices */
+> >  	dfl_fpga_feature_devs_remove(drvdata->cdev);
+> > +	cci_pci_free_irq(pcidev);
+> > +}
+> > +
+> > +static int *cci_pci_create_irq_table(struct pci_dev *pcidev, unsigned int nvec)
+> > +{
+> > +	unsigned int i;
+> > +	int *table;
+> > +
+> > +	table = kcalloc(nvec, sizeof(int), GFP_KERNEL);
+> > +	if (table) {
+> > +		for (i = 0; i < nvec; i++)
+> > +			table[i] = pci_irq_vector(pcidev, i);
+> > +	}
+> > +
+> > +	return table;
+> >  }
+> >  
+> >  /* enumerate feature devices under pci device */
+> >  static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
+> >  {
+> >  	struct cci_drvdata *drvdata = pci_get_drvdata(pcidev);
+> > +	int port_num, bar, i, nvec, ret = 0;
+> >  	struct dfl_fpga_enum_info *info;
+> >  	struct dfl_fpga_cdev *cdev;
+> >  	resource_size_t start, len;
+> > -	int port_num, bar, i, ret = 0;
+> >  	void __iomem *base;
+> > +	int *irq_table;
+> >  	u32 offset;
+> >  	u64 v;
+> >  
+> > @@ -97,11 +135,30 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
+> >  	if (!info)
+> >  		return -ENOMEM;
+> >  
+> > +	/* add irq info for enumeration if the device support irq */
+> > +	nvec = cci_pci_alloc_irq(pcidev);
+> > +	if (nvec < 0) {
+> > +		dev_err(&pcidev->dev, "Fail to alloc irq %d.\n", nvec);
+> > +		ret = nvec;
+> > +		goto enum_info_free_exit;
+> > +	} else if (nvec) {
+> > +		irq_table = cci_pci_create_irq_table(pcidev, nvec);
+> > +		if (!irq_table) {
+> > +			ret = -ENOMEM;
+> > +			goto irq_free_exit;
+> > +		}
+> > +
+> > +		ret = dfl_fpga_enum_info_add_irq(info, nvec, irq_table);
+> > +		kfree(irq_table);
 > 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 852890b72d6ac..531995192b714 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -1553,7 +1553,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  			return 0;
->  		f2fs_warn(sbi, "Start checkpoint disabled!");
->  	}
-> -	mutex_lock(&sbi->cp_mutex);
-> +	if (cpc->reason != CP_RESIZE)
-> +		mutex_lock(&sbi->cp_mutex);
->  
->  	if (!is_sbi_flag_set(sbi, SBI_IS_DIRTY) &&
->  		((cpc->reason & CP_FASTBOOT) || (cpc->reason & CP_SYNC) ||
-> @@ -1622,7 +1623,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  	f2fs_update_time(sbi, CP_TIME);
->  	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish checkpoint");
->  out:
-> -	mutex_unlock(&sbi->cp_mutex);
-> +	if (cpc->reason != CP_RESIZE)
-> +		mutex_unlock(&sbi->cp_mutex);
->  	return err;
->  }
->  
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index c84442eefc56d..7c98dca3ec1d6 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -193,6 +193,7 @@ enum {
->  #define	CP_DISCARD	0x00000010
->  #define CP_TRIMMED	0x00000020
->  #define CP_PAUSE	0x00000040
-> +#define CP_RESIZE 	0x00000080
->  
->  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
->  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
-> @@ -1417,7 +1418,6 @@ struct f2fs_sb_info {
->  	unsigned int segs_per_sec;		/* segments per section */
->  	unsigned int secs_per_zone;		/* sections per zone */
->  	unsigned int total_sections;		/* total section count */
-> -	struct mutex resize_mutex;		/* for resize exclusion */
->  	unsigned int total_node_count;		/* total node block count */
->  	unsigned int total_valid_node_count;	/* valid node block count */
->  	loff_t max_file_blocks;			/* max block index of file */
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 26248c8936db0..1e5a06fda09d3 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1402,8 +1402,9 @@ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
->  static int free_segment_range(struct f2fs_sb_info *sbi, unsigned int start,
->  							unsigned int end)
->  {
-> -	int type;
->  	unsigned int segno, next_inuse;
-> +	struct cp_control cpc = { CP_RESIZE, 0, 0, 0 };
-> +	int type;
->  	int err = 0;
->  
->  	/* Move out cursegs from the target range */
-> @@ -1417,16 +1418,14 @@ static int free_segment_range(struct f2fs_sb_info *sbi, unsigned int start,
->  			.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
->  		};
->  
-> -		down_write(&sbi->gc_lock);
->  		do_garbage_collect(sbi, segno, &gc_list, FG_GC);
-> -		up_write(&sbi->gc_lock);
->  		put_gc_inode(&gc_list);
->  
->  		if (get_valid_blocks(sbi, segno, true))
->  			return -EAGAIN;
->  	}
->  
-> -	err = f2fs_sync_fs(sbi->sb, 1);
-> +	err = f2fs_write_checkpoint(sbi, &cpc);
->  	if (err)
->  		return err;
->  
-> @@ -1502,6 +1501,7 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
->  int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
->  {
->  	__u64 old_block_count, shrunk_blocks;
-> +	struct cp_control cpc = { CP_RESIZE, 0, 0, 0 };
->  	unsigned int secs;
->  	int gc_mode, gc_type;
->  	int err = 0;
-> @@ -1538,7 +1538,9 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
->  		return -EINVAL;
->  	}
->  
-> -	freeze_bdev(sbi->sb->s_bdev);
-> +	freeze_super(sbi->sb);
+> i see you create a function for cci_pci_free_irq instead of using kernel api
+> directly, to make it more readable, so why not have a remove irq table function
+> here too.
 
-Look at this again, I guess holding freeze lock here may cause potential
-hang task issue, imaging that in a low-end storage, shrinking large size
-address space, free_segment_range() needs very long time to migrate all
-valid blocks in the tail of device, that's why previously we do block
-migration with small gc_lock coverage.
+The irq_table is not alloced in cci_pci_alloc_irq,
+cci_pci_create_irq_table does. Actually cci_pci_alloc/free_irq are not
+related to irq_table for DFL.
 
-Quoted:
+So maybe we don't have to change this?
 
-Changelog v5 ==> v6:
- - In free_segment_range(), reduce granularity of gc_mutex.
-
-Thanks,
-
-> +	down_write(&sbi->gc_lock);
-> +	mutex_lock(&sbi->cp_mutex);
->  
->  	shrunk_blocks = old_block_count - block_count;
->  	secs = div_u64(shrunk_blocks, BLKS_PER_SEC(sbi));
-> @@ -1551,11 +1553,12 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
->  		sbi->user_block_count -= shrunk_blocks;
->  	spin_unlock(&sbi->stat_lock);
->  	if (err) {
-> -		thaw_bdev(sbi->sb->s_bdev, sbi->sb);
-> +		mutex_unlock(&sbi->cp_mutex);
-> +		up_write(&sbi->gc_lock);
-> +		thaw_super(sbi->sb);
->  		return err;
->  	}
->  
-> -	mutex_lock(&sbi->resize_mutex);
->  	set_sbi_flag(sbi, SBI_IS_RESIZEFS);
->  
->  	mutex_lock(&DIRTY_I(sbi)->seglist_lock);
-> @@ -1587,17 +1590,13 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
->  		goto out;
->  	}
->  
-> -	mutex_lock(&sbi->cp_mutex);
->  	update_fs_metadata(sbi, -secs);
->  	clear_sbi_flag(sbi, SBI_IS_RESIZEFS);
->  	set_sbi_flag(sbi, SBI_IS_DIRTY);
-> -	mutex_unlock(&sbi->cp_mutex);
->  
-> -	err = f2fs_sync_fs(sbi->sb, 1);
-> +	err = f2fs_write_checkpoint(sbi, &cpc);
->  	if (err) {
-> -		mutex_lock(&sbi->cp_mutex);
->  		update_fs_metadata(sbi, secs);
-> -		mutex_unlock(&sbi->cp_mutex);
->  		update_sb_metadata(sbi, secs);
->  		f2fs_commit_super(sbi, false);
->  	}
-> @@ -1612,7 +1611,8 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
->  		spin_unlock(&sbi->stat_lock);
->  	}
->  	clear_sbi_flag(sbi, SBI_IS_RESIZEFS);
-> -	mutex_unlock(&sbi->resize_mutex);
-> -	thaw_bdev(sbi->sb->s_bdev, sbi->sb);
-> +	mutex_unlock(&sbi->cp_mutex);
-> +	up_write(&sbi->gc_lock);
-> +	thaw_super(sbi->sb);
->  	return err;
->  }
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index b83b17b54a0a6..1e7b1d21d0177 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -3412,7 +3412,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  	init_rwsem(&sbi->gc_lock);
->  	mutex_init(&sbi->writepages);
->  	mutex_init(&sbi->cp_mutex);
-> -	mutex_init(&sbi->resize_mutex);
->  	init_rwsem(&sbi->node_write);
->  	init_rwsem(&sbi->node_change);
->  
-> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-> index d97adfc327f03..f5eb03c54e96f 100644
-> --- a/include/trace/events/f2fs.h
-> +++ b/include/trace/events/f2fs.h
-> @@ -50,6 +50,7 @@ TRACE_DEFINE_ENUM(CP_RECOVERY);
->  TRACE_DEFINE_ENUM(CP_DISCARD);
->  TRACE_DEFINE_ENUM(CP_TRIMMED);
->  TRACE_DEFINE_ENUM(CP_PAUSE);
-> +TRACE_DEFINE_ENUM(CP_RESIZE);
->  
->  #define show_block_type(type)						\
->  	__print_symbolic(type,						\
-> @@ -126,7 +127,8 @@ TRACE_DEFINE_ENUM(CP_PAUSE);
->  		{ CP_RECOVERY,	"Recovery" },				\
->  		{ CP_DISCARD,	"Discard" },				\
->  		{ CP_PAUSE,	"Pause" },				\
-> -		{ CP_TRIMMED,	"Trimmed" })
-> +		{ CP_TRIMMED,	"Trimmed" },				\
-> +		{ CP_RESIZE,	"Resize" })
->  
->  #define show_fsync_cpreason(type)					\
->  	__print_symbolic(type,						\
 > 
+> Actually patch looks good to me, with above minor fixes.
+> 
+> Acked-by: Wu Hao <hao.wu@intel.com>
+> 
+> Hao
+> 
+> > +		if (ret)
+> > +			goto irq_free_exit;
+> > +	}
+> > +
+> >  	/* start to find Device Feature List from Bar 0 */
+> >  	base = cci_pci_ioremap_bar(pcidev, 0);
+> >  	if (!base) {
+> >  		ret = -ENOMEM;
+> > -		goto enum_info_free_exit;
+> > +		goto irq_free_exit;
+> >  	}
+> >  
+> >  	/*
+> > @@ -154,7 +211,7 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
+> >  		dfl_fpga_enum_info_add_dfl(info, start, len, base);
+> >  	} else {
+> >  		ret = -ENODEV;
+> > -		goto enum_info_free_exit;
+> > +		goto irq_free_exit;
+> >  	}
+> >  
+> >  	/* start enumeration with prepared enumeration information */
+> > @@ -162,11 +219,14 @@ static int cci_enumerate_feature_devs(struct pci_dev *pcidev)
+> >  	if (IS_ERR(cdev)) {
+> >  		dev_err(&pcidev->dev, "Enumeration failure\n");
+> >  		ret = PTR_ERR(cdev);
+> > -		goto enum_info_free_exit;
+> > +		goto irq_free_exit;
+> >  	}
+> >  
+> >  	drvdata->cdev = cdev;
+> >  
+> > +irq_free_exit:
+> > +	if (ret)
+> > +		cci_pci_free_irq(pcidev);
+> >  enum_info_free_exit:
+> >  	dfl_fpga_enum_info_free(info);
+> >  
+> > @@ -211,12 +271,10 @@ int cci_pci_probe(struct pci_dev *pcidev, const struct pci_device_id *pcidevid)
+> >  	}
+> >  
+> >  	ret = cci_enumerate_feature_devs(pcidev);
+> > -	if (ret) {
+> > -		dev_err(&pcidev->dev, "enumeration failure %d.\n", ret);
+> > -		goto disable_error_report_exit;
+> > -	}
+> > +	if (!ret)
+> > +		return ret;
+> >  
+> > -	return ret;
+> > +	dev_err(&pcidev->dev, "enumeration failure %d.\n", ret);
+> >  
+> >  disable_error_report_exit:
+> >  	pci_disable_pcie_error_reporting(pcidev);
+> > -- 
+> > 2.7.4
