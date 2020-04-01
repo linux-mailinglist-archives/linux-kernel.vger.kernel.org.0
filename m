@@ -2,117 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E6A19A7EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:55:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71EF119A7CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:51:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731749AbgDAIzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:55:06 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41710 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726536AbgDAIzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:55:05 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3CB9F4174694B46C4C6F;
-        Wed,  1 Apr 2020 16:51:25 +0800 (CST)
-Received: from [127.0.0.1] (10.173.220.25) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.487.0; Wed, 1 Apr 2020
- 16:51:17 +0800
-Subject: Re: [RFC PATCH v5 4/8] mm: tlb: Pass struct mmu_gather to
- flush_pmd_tlb_range
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     <mark.rutland@arm.com>, <will@kernel.org>,
-        <catalin.marinas@arm.com>, <aneesh.kumar@linux.ibm.com>,
-        <akpm@linux-foundation.org>, <npiggin@gmail.com>, <arnd@arndb.de>,
-        <rostedt@goodmis.org>, <maz@kernel.org>, <suzuki.poulose@arm.com>,
-        <tglx@linutronix.de>, <yuzhao@google.com>, <Dave.Martin@arm.com>,
-        <steven.price@arm.com>, <broonie@kernel.org>,
-        <guohanjun@huawei.com>, <corbet@lwn.net>, <vgupta@synopsys.com>,
-        <tony.luck@intel.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <linux-mm@kvack.org>, <arm@kernel.org>, <xiexiangyou@huawei.com>,
-        <prime.zeng@hisilicon.com>, <zhangshaokun@hisilicon.com>,
-        <kuhn.chenqun@huawei.com>
-References: <20200331142927.1237-1-yezhenyu2@huawei.com>
- <20200331142927.1237-5-yezhenyu2@huawei.com>
- <20200331151331.GS20730@hirez.programming.kicks-ass.net>
-From:   Zhenyu Ye <yezhenyu2@huawei.com>
-Message-ID: <fe12101e-8efe-22ad-0258-e6aeafc798cc@huawei.com>
-Date:   Wed, 1 Apr 2020 16:51:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1732004AbgDAIvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:51:39 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:55164 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726536AbgDAIvi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 04:51:38 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0318n08e009311;
+        Wed, 1 Apr 2020 10:51:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=1rCMuLCvnLZNatxXIIxnqYRt75OvA+RZrvrTvHgGw2M=;
+ b=bjveDkYbrYq985QKvUcsGxSgwEB6kI3RynOjf+BgmY6JcHcmsjz1vvfpCAwKlgQumLXf
+ qoqoEVl3a+LqMc+6rFqMsfMa02ESV6BADRflliof5gAtGEcm/Zwp02fmmrtBCgsYlOG3
+ tVfXipak/whlCqaFFueVXQReQyElivj0SiOFJg2ldTNWzI2x+Baz4ZQWgL0sHSEvbcRg
+ Dk637If6+MD7hjTEUoLGOIIEo76lRrq0XVvq7uKnpwNDehfIu0eX1TQsg+C9hMa958fU
+ uw1JhYK7XY2wuiSCfllM1GP1yw7+FNqZxcHN+5sKRN4o5gp/y9wfQtOqxKXo3T8/L5Bf /A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 302y53x4g9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 10:51:22 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7E12610002A;
+        Wed,  1 Apr 2020 10:51:21 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3F92121CA7C;
+        Wed,  1 Apr 2020 10:51:21 +0200 (CEST)
+Received: from [10.211.14.17] (10.75.127.46) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 1 Apr
+ 2020 10:51:19 +0200
+Subject: Re: [PATCH v6 1/6] dt-bindings: mfd: Document STM32 low power timer
+ bindings
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>,
+        <lee.jones@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <daniel.lezcano@linaro.org>,
+        <tglx@linutronix.de>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200401083909.18886-1-benjamin.gaignard@st.com>
+ <20200401083909.18886-2-benjamin.gaignard@st.com>
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <2e3814e2-f6fc-038f-4fb0-87432d99edfb@st.com>
+Date:   Wed, 1 Apr 2020 10:51:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200331151331.GS20730@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="gbk"
+In-Reply-To: <20200401083909.18886-2-benjamin.gaignard@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.220.25]
-X-CFilter-Loop: Reflected
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-On 2020/3/31 23:13, Peter Zijlstra wrote:
-> On Tue, Mar 31, 2020 at 10:29:23PM +0800, Zhenyu Ye wrote:
->> diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
->> index e2e2bef07dd2..32d4661e5a56 100644
->> --- a/include/asm-generic/pgtable.h
->> +++ b/include/asm-generic/pgtable.h
->> @@ -1160,10 +1160,10 @@ static inline int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
->>   * invalidate the entire TLB which is not desitable.
->>   * e.g. see arch/arc: flush_pmd_tlb_range
->>   */
->> -#define flush_pmd_tlb_range(vma, addr, end)	flush_tlb_range(vma, addr, end)
->> +#define flush_pmd_tlb_range(tlb, vma, addr, end)	flush_tlb_range(vma, addr, end)
->>  #define flush_pud_tlb_range(vma, addr, end)	flush_tlb_range(vma, addr, end)
->>  #else
->> -#define flush_pmd_tlb_range(vma, addr, end)	BUILD_BUG()
->> +#define flush_pmd_tlb_range(tlb, vma, addr, end)	BUILD_BUG()
->>  #define flush_pud_tlb_range(vma, addr, end)	BUILD_BUG()
->>  #endif
->>  #endif
->> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
->> index 3d7c01e76efc..96c9cf77bfb5 100644
->> --- a/mm/pgtable-generic.c
->> +++ b/mm/pgtable-generic.c
->> @@ -109,8 +109,14 @@ int pmdp_set_access_flags(struct vm_area_struct *vma,
->>  	int changed = !pmd_same(*pmdp, entry);
->>  	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
->>  	if (changed) {
->> +		struct mmu_gather tlb;
->> +		unsigned long tlb_start = address;
->> +		unsigned long tlb_end = address + HPAGE_PMD_SIZE;
->>  		set_pmd_at(vma->vm_mm, address, pmdp, entry);
->> -		flush_pmd_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
->> +		tlb_gather_mmu(&tlb, vma->vm_mm, tlb_start, tlb_end);
->> +		tlb.cleared_pmds = 1;
->> +		flush_pmd_tlb_range(&tlb, vma, tlb_start, tlb_end);
->> +		tlb_finish_mmu(&tlb, tlb_start, tlb_end);
->>  	}
->>  	return changed;
->>  }
+On 4/1/20 10:39 AM, Benjamin Gaignard wrote:
+> Add a subnode to STM low power timer bindings to support timer driver
 > 
-> This is madness. Please, carefully consider what you just wrote and what
-> it will do in the generic case.
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> version 6:
+> - only use one interrupt
 > 
-> Instead of trying to retro-fit flush_*tlb_range() to take an mmu_gather
-> parameter, please replace them out-right.
+> version 5:
+> - the previous has been acked-by Rob but since I have docummented
+>   interrupts and interrupt-names properties I haven't applied it here.
+> 
+> version 4:
+> - change compatible and subnode names
+> - document wakeup-source property
+> 
+>  .../devicetree/bindings/mfd/st,stm32-lptimer.yaml   | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
 
-I'm sorry that I'm not sure what "replace them out-right" means.  Do you
-mean that I should define flush_*_tlb_range like this?
+Hi Benjamin,
 
-#define flush_pmd_tlb_range(vma, addr, end)				\
-	do {								\
-		struct mmu_gather tlb;					\
-		tlb_gather_mmu(&tlb, (vma)->vm_mm, addr, end);		\
-		tlba.cleared_pmds = 1;					\
-		flush_tlb_range(&tlb, vma, addr, end);			\
-		tlb_finish_mmu(&tlb, addr, end);			\
-	} while (0)
-
+Acked-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 
 Thanks,
-Zhenyu
+Fabrice
 
+> diff --git a/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml b/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
+> index 1a4cc5f3fb33..2a99b2296d2b 100644
+> --- a/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
+> @@ -33,12 +33,17 @@ properties:
+>      items:
+>        - const: mux
+>  
+> +  interrupts:
+> +    maxItems: 1
+> +
+>    "#address-cells":
+>      const: 1
+>  
+>    "#size-cells":
+>      const: 0
+>  
+> +  wakeup-source: true
+> +
+>    pwm:
+>      type: object
+>  
+> @@ -81,6 +86,16 @@ patternProperties:
+>      required:
+>        - compatible
+>  
+> +  timer:
+> +    type: object
+> +
+> +    properties:
+> +      compatible:
+> +        const: st,stm32-lptimer-timer
+> +
+> +    required:
+> +      - compatible
+> +
+>  required:
+>    - "#address-cells"
+>    - "#size-cells"
+> @@ -94,11 +109,13 @@ additionalProperties: false
+>  examples:
+>    - |
+>      #include <dt-bindings/clock/stm32mp1-clks.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>      timer@40002400 {
+>        compatible = "st,stm32-lptimer";
+>        reg = <0x40002400 0x400>;
+>        clocks = <&timer_clk>;
+>        clock-names = "mux";
+> +      interrupts-extended = <&exti 47 IRQ_TYPE_LEVEL_HIGH>;
+>        #address-cells = <1>;
+>        #size-cells = <0>;
+>  
+> @@ -115,6 +132,10 @@ examples:
+>        counter {
+>          compatible = "st,stm32-lptimer-counter";
+>        };
+> +
+> +      timer {
+> +        compatible = "st,stm32-lptimer-timer";
+> +      };
+>      };
+>  
+>  ...
+> 
