@@ -2,92 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17A1D19B4D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D72A819B4DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:47:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732809AbgDARp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 13:45:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47776 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732196AbgDARp6 (ORCPT
+        id S1732851AbgDARrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 13:47:12 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:33964 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732328AbgDARrM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 13:45:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=uNceod/5hgLXbYBp/2zfToAFjlO9fz87Q3vy13K6OqI=; b=BhmQU1wKVt8nenOrvdVu6ALKlS
-        DrWmBvZciEzgx7svRe+MmYK8KksPnHCxxkwotdXiStgPt4QtS7zw4Me9MgccCSHn887zH7k012Hbm
-        OHy1BKf1+yDbT2hBJBUstq7gQ3xd9xauhxIk5FXacyedq6ryAWl662JxXpJFKN6kn4qT0iExUHYZI
-        EymHJYlZuGGOF1nRPCRPQPdIGMRmkTjyJsqGQRJNpdtmJwwl9eZPP/jAYmvOLS8MeYnD1ienCU+Nd
-        EPL4PWdsJJrrWJTPoUOfgeAdI9ZKNgHiMJBl9TnI8HZJwdPAlhd8/pRF3x9f2N+jtGfJYth6GakYf
-        6WxTdOwQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJhQx-0004UC-KX; Wed, 01 Apr 2020 17:45:47 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 554DD30477A;
-        Wed,  1 Apr 2020 19:45:45 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 04B3D20418942; Wed,  1 Apr 2020 19:45:44 +0200 (CEST)
-Date:   Wed, 1 Apr 2020 19:45:44 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Julien Thierry <jthierry@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org,
-        mbenes@suse.cz
-Subject: Re: [PATCH v2] objtool,ftrace: Implement UNWIND_HINT_RET_OFFSET
-Message-ID: <20200401174544.GY20730@hirez.programming.kicks-ass.net>
-References: <20200330200254.GV20713@hirez.programming.kicks-ass.net>
- <20200331111652.GH20760@hirez.programming.kicks-ass.net>
- <20200331202315.zialorhlxmml6ec7@treble>
- <20200331204047.GF2452@worktop.programming.kicks-ass.net>
- <20200331211755.pb7f3wa6oxzjnswc@treble>
- <20200331212040.7lrzmj7tbbx2jgrj@treble>
- <20200331222703.GH2452@worktop.programming.kicks-ass.net>
- <d2cad75e-1708-f0bf-7f88-194bcb29e61d@redhat.com>
- <20200401170910.GX20730@hirez.programming.kicks-ass.net>
- <20200401133303.6773c574@gandalf.local.home>
+        Wed, 1 Apr 2020 13:47:12 -0400
+Received: by mail-il1-f195.google.com with SMTP id t11so855275ils.1;
+        Wed, 01 Apr 2020 10:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7f+oFGBz4lKq+gYaVg47iObMCSlHnFkkTWzFoO6ob70=;
+        b=pVcU+dsHG+xi+OdTaXPlzb2fvjo47FLw/EUeR34ecopFZpovwEmAGBOR1KUyZ6G3vt
+         7HV0y+QRQzVY8Lx9vEb6utqV7AIxezWlddf9ft4fmX5Kmh2JLVTeNtXRHVmARyhnmuR3
+         UJgf3w8ZuSSFEoVmtaj+a8Ljkz7vkiaRdg4wU8DLrI/3J0hAKW+GYrXM97SQQHdbriVF
+         WEh+cPxR92okd0nPKw7F/JfjrEds+3rxYkbsKM4th6lgFcURuC099Nk1SchXWqRMbUR7
+         V0GwxUcl2onS7SY10WqEbxlm3r/0+MNuObBGG11nLve5x+q8mNj3NiN4ZrDYDoVpumib
+         yrrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7f+oFGBz4lKq+gYaVg47iObMCSlHnFkkTWzFoO6ob70=;
+        b=eJV0+LUXjwgk3fXQNv1Vm/ENBar48MX0RxDEIjAB0FNJ3GnTGnqqwW2845Rk3GWmcY
+         CQIH0WtyTTojx8kWXrNXNlMP6ynAf6OHyIdgf7TeqK/Q/Y33LVMShrDWUfKe0b3HBq6L
+         Axh8Nd5vlpWxzgt6l2CNVRx5l3AVcRAwXT83YeGYZnOfq64Zkk69sM+OzPoLdSi2/71n
+         Bq55325B0y1USOM5THts1yJiFXqSfJZuAIFPDY3hYKt80qNgLIFJNpWN5/B/1VGF0GIz
+         HspyUnZEfw7PG5xr5my5KBuRVdB8/J3ix+pwB0pTecMSEQiRjodqTFnvrIzfD/TNoFki
+         +HDA==
+X-Gm-Message-State: ANhLgQ29zODoP0ogaYG0as+iHHvXYuGcbg1BM077Uqe6RPj4V7lx/UR3
+        +q0kV31gwMtg3xmaWugvZZm8AOnhvpm4/Sd18v0=
+X-Google-Smtp-Source: ADFU+vtcPRVHBDFXuLENFOQ1nGCShR+miCa33OMScUOHVZVQa44lyFKgZ0mNFPnw7ZGMLllXJbDU7a+zLtxmGrqTOGY=
+X-Received: by 2002:a05:6e02:688:: with SMTP id o8mr20983373ils.156.1585763231060;
+ Wed, 01 Apr 2020 10:47:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200401133303.6773c574@gandalf.local.home>
+References: <202004010033.A1523890@keescook> <20200401142057.453892-1-slava@bacher09.org>
+ <eba80d4e-a385-1fba-37f9-38888ae91f1e@bacher09.org>
+In-Reply-To: <eba80d4e-a385-1fba-37f9-38888ae91f1e@bacher09.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Wed, 1 Apr 2020 10:46:57 -0700
+Message-ID: <CAEf4BzYx7hffHm5RV3QQQqvgAzy-41DRgFQDKh+4xcM9OL890A@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf] kbuild: fix dependencies for DEBUG_INFO_BTF
+To:     Slava Bacherikov <slava@bacher09.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrii Nakryiko <andriin@fb.com>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Liu Yiding <liuyd.fnst@cn.fujitsu.com>,
+        KP Singh <kpsingh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 01:33:03PM -0400, Steven Rostedt wrote:
-> On Wed, 1 Apr 2020 19:09:10 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > > > +	if (state->cfa.offset != initial_func_cfi.cfa.offset &&
-> > > > +	    !(ret_offset && state->cfa.offset == initial_func_cfi.cfa.offset + ret_offset))  
-> > > 
-> > > Isn't that the same thing as "state->cfa.offset !=
-> > > initial_func_cfi.cfa.offset + ret_offset" ?  
-> > 
-> > I'm confused on what cfa.offset is, sometimes it increase with
-> > stack_size, sometimes it doesn't.
-> 
-> I believe what Julien is saying is the above logic is equivalent:
-> 
-> 	if (x != y &&
-> 	    !(z && x == y + z))
-> 
-> is the same as:
-> 
-> 	if (x != y + z)
+On Wed, Apr 1, 2020 at 7:38 AM Slava Bacherikov <slava@bacher09.org> wrote:
+>
+>
+>
+> 01.04.2020 17:20, Slava Bacherikov wrotes:
+> > Currently turning on DEBUG_INFO_SPLIT when DEBUG_INFO_BTF is also
+> > enabled will produce invalid btf file, since gen_btf function in
+> > link-vmlinux.sh script doesn't handle *.dwo files.
+> >
+> > Enabling DEBUG_INFO_REDUCED will also produce invalid btf file, and
+> > using GCC_PLUGIN_RANDSTRUCT with BTF makes no sense.
+> >
+> > Signed-off-by: Slava Bacherikov <slava@bacher09.org>
+> > Reported-by: Jann Horn <jannh@google.com>
+> > Reported-by: Liu Yiding <liuyd.fnst@cn.fujitsu.com>
+> > Acked-by: KP Singh <kpsingh@google.com>
+> > Acked-by: Andrii Nakryiko <andriin@fb.com>
+> > Fixes: e83b9f55448a ("kbuild: add ability to generate BTF type info for vmlinux")
+> > ---
+> >  lib/Kconfig.debug | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> > index f61d834e02fe..b94227be2d62 100644
+> > --- a/lib/Kconfig.debug
+> > +++ b/lib/Kconfig.debug
+> > @@ -222,7 +222,9 @@ config DEBUG_INFO_DWARF4
+> >
+> >  config DEBUG_INFO_BTF
+> >       bool "Generate BTF typeinfo"
+> > -     depends on DEBUG_INFO
+> > +     depends on DEBUG_INFO || COMPILE_TEST
+> I had to add this, since DEBUG_INFO which depends on:
+>
+>         DEBUG_KERNEL && !COMPILE_TEST
+>
+> would block DEBUG_INFO_BTF when COMPILE_TEST is turned on.
+>
 
-It is not, the former will accept either x==y || x==y+z, while the
-latter will only accept x==y+z.
+Sorry if I'm being dense here. But what's the point in enabling
+DEBUG_INFO_BTF if there is no *valid* DWARF info available for
+DWARF-to-BTF conversion?
 
-For stack_size, I'm confident in just x==y+z, for offset I saw
-conflicting things.
 
-Since the annotation is now used in only a single place, maybe x==y+z
-will just work, I'll go try once I've managed to unconfuse myself on the
-whole fp-unwind situation.
+> In that case allyesconfig will emit both:
+>
+> CONFIG_DEBUG_INFO_BTF=y
+> CONFIG_GCC_PLUGIN_RANDSTRUCT=y
+
+Which I thought is exactly what we wanted to avoid. Not sure what's
+the point of compiling kernel (even if it's the one that is not
+supposed to ever run) that apriori has broken BTF? If it was
+acceptable to not have DEBUG_INFO for COMPILE_TEST, why it's not
+acceptable to not have DEBUG_INFO_BTF in that situation as well?
+
+>
+>
+>
+> > +     depends on !DEBUG_INFO_SPLIT && !DEBUG_INFO_REDUCED
+> > +     depends on !GCC_PLUGIN_RANDSTRUCT || COMPILE_TEST
+> >       help
+> >         Generate deduplicated BTF type information from DWARF debug info.
+> >         Turning this on expects presence of pahole tool, which will convert
+> >
