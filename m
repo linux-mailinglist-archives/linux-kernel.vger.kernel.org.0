@@ -2,105 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7B5E19AE15
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 16:39:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2312A19AE18
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 16:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733043AbgDAOjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 10:39:02 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46859 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732791AbgDAOjC (ORCPT
+        id S1733096AbgDAOjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 10:39:10 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37626 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732791AbgDAOjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 10:39:02 -0400
-Received: by mail-lf1-f67.google.com with SMTP id q5so20649477lfb.13;
-        Wed, 01 Apr 2020 07:39:00 -0700 (PDT)
+        Wed, 1 Apr 2020 10:39:10 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u65so19812pfb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 07:39:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6ms88Fagr1+fPi3uSiQm0/UTpXQVGW/BeEu2iATuEKU=;
-        b=DYE9DTbzBSe5rlV3aXuF8hXHYDR+LUvProqQENESdWtbnF0+OkSU2I7+iJ0VDBJomE
-         wZDM7UlNbbAJ8WCKj4pO/N1FFC8ioMwbNRIzGq6TLyf6HTubSRMwFjA4oIJgVoyj/UrB
-         V36ZftMWmlTMIPkA9dvVFmQ2IQGcC5D0gdB1Oy9cYQrrQqRZ9uyZQZ08zCggyJdEONjb
-         7BhCtEsm8K4UVWWxPITlnlf9hpAoRBNhyhF9fl+MibQOBhS6GcD5cGMhlrdYBYARCBmC
-         alo1cuWhfbNYtWoJo99iHm9wONJGQ0oc70oy310JpGpU7/b1Oly1BrhAOlujKYTL2xE8
-         4Dyw==
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/iSahkJrDdRH98cZT/cX3kV0qB8bHq3dASQvxelaFiI=;
+        b=XDKO5hKXn2DMYhWrIMoaz0M1LCBQ5bWgbe+A9FWmdvQqBjQ5xzL4tIATz/7ApRHAe7
+         LlvzUHEdWS4WLuJd55HvvFFLehO+s4FmlKTJNmr7zec7zFmvZKL/yoCMa6PcHa/hPAMt
+         DFHNCajQW8e25GQG+2fkWC9kCI5LjlB6+p5nM2Gf7EZtyq0O1VW3KDSUyqEKc85S5Qkm
+         AvrPfq0mHHD9YCoQArnQTPk44andN4j35y7V9mjrJ0Gy1hjdLSsYTWSO+kr0JIVMB0r5
+         3dC/sadMWay83rMFwyVpqrUDOTGlw0N//Ii6kj10E45ZkxE3WXTBCOn/EwF6lb9njt7n
+         DwkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=6ms88Fagr1+fPi3uSiQm0/UTpXQVGW/BeEu2iATuEKU=;
-        b=hRaIPId4Tkudgc1vN2IC5zFpo1RshWDX7mh/VutCt6OxGFlIwR6HqK52QabjHJHNTN
-         1z7HN9IMqrcCQi2LLQ+CX7xMHxHzXIHvlZwoBpEKESZ7yV7bmCovia2axLze/ZitEHMD
-         l8JulOKpg541kKXyhft1xvT2XzMFwO+sJzpGhkDhZquLyyxz9UdLNqVhapwZLW8nad4c
-         qYidenRTqwSfmFMprxtw+szUhVLDwGsitT3h92mzNumeYmgmhGMF069xj1CQH9hyUQ4B
-         CVY0/1DRH9b6i+OaeFB9VN19DLkv02El8tjjIbGip4H1/cSXSrk48GI2De5zOuR+1/sA
-         1I5w==
-X-Gm-Message-State: AGi0PubaCgAzguYbQ6L06aSfREYD5kkiPI0J9/5zBGenesC7FpPmojAN
-        9yeQrNGiN8WBJ8j7L2G9ggM=
-X-Google-Smtp-Source: APiQypLpP/QQSR7cYkCfdkqhWQO7i7zf05IPgfBgnHJQnqy1ouCUBKcXCKi78mRkHApg3IcY6ec71w==
-X-Received: by 2002:a19:ee09:: with SMTP id g9mr15143581lfb.11.1585751939484;
-        Wed, 01 Apr 2020 07:38:59 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id h16sm1303197ljl.73.2020.04.01.07.38.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Apr 2020 07:38:58 -0700 (PDT)
-Subject: Re: [PATCH v10 43/55] dt-bindings: input: atmel: support to set max
- bytes transferred
-To:     Jiada Wang <jiada_wang@mentor.com>, nick@shmanahar.org,
-        dmitry.torokhov@gmail.com, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, bsz@semihalf.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        erosca@de.adit-jv.com, Andrew_Gabbasov@mentor.com
-References: <20200331105051.58896-1-jiada_wang@mentor.com>
- <20200331105051.58896-44-jiada_wang@mentor.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a15d312d-587e-5b10-e031-dde1965f6f89@gmail.com>
-Date:   Wed, 1 Apr 2020 17:38:57 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        bh=/iSahkJrDdRH98cZT/cX3kV0qB8bHq3dASQvxelaFiI=;
+        b=ij3AJyfBMXJ/oJhoAMFgter08Npga3FsP6BOghc7nWrfGDjo7Mdm7p8CH0lcfD+WvZ
+         caiGhO7b3ttrTlKFYjYI/NyaWZgWJ2lXeRziFK2O5uxA1DWvmIcsTfktkkgpWr/84cXr
+         FomqNgRNcih9BRZnUaSXQyxwV0VBE99ZbNAOBZNf+xdo5rtDUIh9Nc8D6KHyXRCmBIbz
+         6CC9/IXYFg4j/P0Kj1juCk5vkpM6xic0GQhB2/3fiyXoV3ygB6Buc3tjPLWOu4FZSiXt
+         yrJiLoS1K0SSG4IXVidw+Si4XTw134qmTkgYsimYd/KVu1lCR/cJp8V1Y6O8rf/7Y70S
+         KEhg==
+X-Gm-Message-State: ANhLgQ1MDErEU3mpLKCcv6AF+v0OFqxmk73fD86DAxuJF4gY4j7SL2L4
+        RCYl7bSDrD/gABLhitrQ4zUqkxM0izz9Hg==
+X-Google-Smtp-Source: ADFU+vs1K3XbUKt2pUIj6nGOeR0U4WdhzPE3aaDRwPfMWcjeCtYwU22aLlfZHAJFof/nWYI3VteC0A==
+X-Received: by 2002:aa7:9481:: with SMTP id z1mr22815516pfk.185.1585751948699;
+        Wed, 01 Apr 2020 07:39:08 -0700 (PDT)
+Received: from Mindolluin.aristanetworks.com ([2a02:8084:e84:2480:228:f8ff:fe6f:83a8])
+        by smtp.gmail.com with ESMTPSA id f45sm1765981pjg.29.2020.04.01.07.39.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 07:39:07 -0700 (PDT)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        "kernelci.org bot" <bot@kernelci.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH] tty/sysrq: Export sysrq_mask()
+Date:   Wed,  1 Apr 2020 15:39:04 +0100
+Message-Id: <20200401143904.423450-1-dima@arista.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20200331105051.58896-44-jiada_wang@mentor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-31.03.2020 13:50, Jiada Wang пишет:
-> Add support to set max bytes transferred in an i2c transaction
-> 
-> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-> ---
->  Documentation/devicetree/bindings/input/atmel,maxtouch.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-> index 126266891cdc..37a798cab0dd 100644
-> --- a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-> +++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-> @@ -45,6 +45,8 @@ Optional properties for main touchpad device:
->  
->  - atmel,input_name: Override name of input device from the default.
->  
-> +- atmel,mtu: Maximum number of bytes that can read/transferred in an i2c transaction
-> +
->  Example:
->  
->  	touch@4b {
-> @@ -52,4 +54,5 @@ Example:
->  		reg = <0x4b>;
->  		interrupt-parent = <&gpio>;
->  		interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_LEVEL_LOW>;
-> +		atmel,mtu = <200>
->  	};
-> 
+Build fix for serial_core being module:
+  ERROR: modpost: "sysrq_mask" [drivers/tty/serial/serial_core.ko] undefined!
 
-Is this a software (firmware) limitation which varies from version to
-version?
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Reported-by: "kernelci.org bot" <bot@kernelci.org>
+Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ drivers/tty/sysrq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-If the limitation is per-hardware version, then perhaps should be better
-to have a hardcoded per-hardware table of limits in the driver?
+diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+index 5e0d0813da55..a0760bcd7a97 100644
+--- a/drivers/tty/sysrq.c
++++ b/drivers/tty/sysrq.c
+@@ -74,6 +74,7 @@ int sysrq_mask(void)
+ 		return 1;
+ 	return sysrq_enabled;
+ }
++EXPORT_SYMBOL_GPL(sysrq_mask);
+ 
+ /*
+  * A value of 1 means 'all', other nonzero values are an op mask:
+-- 
+2.25.1
+
