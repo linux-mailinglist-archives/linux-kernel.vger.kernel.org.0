@@ -2,77 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E31F019AEA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 17:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4781319AE9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 17:18:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732742AbgDAPTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 11:19:51 -0400
-Received: from smtprelay0087.hostedemail.com ([216.40.44.87]:44396 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732504AbgDAPTu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 11:19:50 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id E5210180238C3;
-        Wed,  1 Apr 2020 15:19:49 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2559:2562:2828:2895:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3872:3874:4250:4321:5007:6119:7550:7903:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12297:12438:12679:12740:12760:12895:13069:13095:13311:13357:13439:14181:14659:14721:21080:21433:21451:21627:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: plane54_3880c5014bc02
-X-Filterd-Recvd-Size: 2018
-Received: from XPS-9350.home (unknown [47.151.136.130])
-        (Authenticated sender: joe@perches.com)
-        by omf01.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  1 Apr 2020 15:19:48 +0000 (UTC)
-Message-ID: <9de4fb8fa1223fc61d6d8d8c41066eea3963c12e.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: Warn about data_race() without comment
-From:   Joe Perches <joe@perches.com>
-To:     Marco Elver <elver@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     paulmck@kernel.org, dvyukov@google.com, glider@google.com,
-        andreyknvl@google.com, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, apw@canonical.com,
-        Will Deacon <will@kernel.org>
-Date:   Wed, 01 Apr 2020 08:17:52 -0700
-In-Reply-To: <20200401101714.44781-1-elver@google.com>
-References: <20200401101714.44781-1-elver@google.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1732698AbgDAPSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 11:18:20 -0400
+Received: from mga05.intel.com ([192.55.52.43]:42676 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732504AbgDAPSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 11:18:20 -0400
+IronPort-SDR: AEMiQJr9fWk8kXqf9Q3lbKKQODIEFcyiXHB6M2cDgwDQigXgehRS5m+IE7fy6rrZrkLUOpBsXi
+ 13m9209APCaA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 08:18:19 -0700
+IronPort-SDR: OIR3dx6bgM/ubb1jkXpAKqvwRt7zK6DexWasa4lQsxqVDbAS4kpU8Wbo/8vsUgCubA7WbHEOW4
+ HLIY0+xM/k8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,332,1580803200"; 
+   d="scan'208";a="450596783"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga006.fm.intel.com with ESMTP; 01 Apr 2020 08:18:19 -0700
+Date:   Wed, 1 Apr 2020 08:18:19 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Wanpeng Li <wanpengli@tencent.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: VMX: fix crash cleanup when KVM wasn't used
+Message-ID: <20200401151819.GH31660@linux.intel.com>
+References: <20200401081348.1345307-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200401081348.1345307-1-vkuznets@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-04-01 at 12:17 +0200, Marco Elver wrote:
-> Warn about applications of data_race() without a comment, to encourage
-> documenting the reasoning behind why it was deemed safe.
-[]
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -5833,6 +5833,14 @@ sub process {
->  			}
->  		}
+On Wed, Apr 01, 2020 at 10:13:48AM +0200, Vitaly Kuznetsov wrote:
+> If KVM wasn't used at all before we crash the cleanup procedure fails with
+>  BUG: unable to handle page fault for address: ffffffffffffffc8
+>  #PF: supervisor read access in kernel mode
+>  #PF: error_code(0x0000) - not-present page
+>  PGD 23215067 P4D 23215067 PUD 23217067 PMD 0
+>  Oops: 0000 [#8] SMP PTI
+>  CPU: 0 PID: 3542 Comm: bash Kdump: loaded Tainted: G      D           5.6.0-rc2+ #823
+>  RIP: 0010:crash_vmclear_local_loaded_vmcss.cold+0x19/0x51 [kvm_intel]
+> 
+> The root cause is that loaded_vmcss_on_cpu list is not yet initialized,
+> we initialize it in hardware_enable() but this only happens when we start
+> a VM.
+> 
+> Previously, we used to have a bitmap with enabled CPUs and that was
+> preventing [masking] the issue.
+> 
+> Initialized loaded_vmcss_on_cpu list earlier, right before we assign
+> crash_vmclear_loaded_vmcss pointer. blocked_vcpu_on_cpu list and
+> blocked_vcpu_on_cpu_lock are moved altogether for consistency.
+> 
+> Fixes: 31603d4fc2bb ("KVM: VMX: Always VMCLEAR in-use VMCSes during crash with kexec support")
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 3aba51d782e2..39a5dde12b79 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -2257,10 +2257,6 @@ static int hardware_enable(void)
+>  	    !hv_get_vp_assist_page(cpu))
+>  		return -EFAULT;
 >  
-> +# check for data_race without a comment.
-> +		if ($line =~ /\bdata_race\s*\(/) {
-> +			if (!ctx_has_comment($first_line, $linenr)) {
-> +				WARN("DATA_RACE",
-> +				     "data_race without comment\n" . $herecurr);
-> +			}
-> +		}
+> -	INIT_LIST_HEAD(&per_cpu(loaded_vmcss_on_cpu, cpu));
+> -	INIT_LIST_HEAD(&per_cpu(blocked_vcpu_on_cpu, cpu));
+> -	spin_lock_init(&per_cpu(blocked_vcpu_on_cpu_lock, cpu));
+> -
+>  	r = kvm_cpu_vmxon(phys_addr);
+>  	if (r)
+>  		return r;
+> @@ -8006,7 +8002,7 @@ module_exit(vmx_exit);
+>  
+>  static int __init vmx_init(void)
+>  {
+> -	int r;
+> +	int r, cpu;
+>  
+>  #if IS_ENABLED(CONFIG_HYPERV)
+>  	/*
+> @@ -8060,6 +8056,12 @@ static int __init vmx_init(void)
+>  		return r;
+>  	}
+>  
+> +	for_each_possible_cpu(cpu) {
+> +		INIT_LIST_HEAD(&per_cpu(loaded_vmcss_on_cpu, cpu));
+> +		INIT_LIST_HEAD(&per_cpu(blocked_vcpu_on_cpu, cpu));
+> +		spin_lock_init(&per_cpu(blocked_vcpu_on_cpu_lock, cpu));
+
+Hmm, part of me thinks the posted interrupt per_cpu variables should
+continue to be initialized during hardware_enable().  But it's a small
+part of me :-)
+
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+
+> +	}
 > +
->  # check for smp_read_barrier_depends and read_barrier_depends
->  		if (!$file && $line =~ /\b(smp_|)read_barrier_depends\s*\(/) {
->  			WARN("READ_BARRIER_DEPENDS",
-
-Sensible enough but it looks like ctx_has_comment should
-be updated to allow c99 comments too, but that should be
-a separate change from this patch.
-
-Otherwise, this style emits a message:
-
-WARNING: data_race without comment
-#135: FILE: kernel/rcu/tasks.h:135:
-+	int i = data_race(rtp->gp_state); // Let KCSAN detect update races
-
+>  #ifdef CONFIG_KEXEC_CORE
+>  	rcu_assign_pointer(crash_vmclear_loaded_vmcss,
+>  			   crash_vmclear_local_loaded_vmcss);
+> -- 
+> 2.25.1
+> 
