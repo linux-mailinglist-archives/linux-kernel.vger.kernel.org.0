@@ -2,171 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8E3219A68D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:50:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F6F219A682
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:48:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732078AbgDAHta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 03:49:30 -0400
-Received: from mga03.intel.com ([134.134.136.65]:23771 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731904AbgDAHt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 03:49:29 -0400
-IronPort-SDR: 356DoSE3ioZSTV1HBoh56gheFCcdU7F/GaQo+WPcCwOoy39SLqpmgDnCxbO/2cRHRBJwMVfCkH
- 2PPX+j6Ly/og==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 00:49:28 -0700
-IronPort-SDR: viX/72eZgR5TBuE+nmmuBHasyx1Gr5SSmgnAn9iq5110nLD/kkh4G/zh0p2zAcAmIIJyATsGEu
- +PsI3Y15y5uw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,330,1580803200"; 
-   d="scan'208";a="242153929"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by fmsmga008.fm.intel.com with ESMTP; 01 Apr 2020 00:49:28 -0700
-Received: from fmsmsx123.amr.corp.intel.com (10.18.125.38) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 1 Apr 2020 00:49:28 -0700
-Received: from shsmsx107.ccr.corp.intel.com (10.239.4.96) by
- fmsmsx123.amr.corp.intel.com (10.18.125.38) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 1 Apr 2020 00:49:28 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.225]) by
- SHSMSX107.ccr.corp.intel.com ([169.254.9.191]) with mapi id 14.03.0439.000;
- Wed, 1 Apr 2020 15:49:24 +0800
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>
-CC:     "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Tian, Jun J" <jun.j.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wu, Hao" <hao.wu@intel.com>
-Subject: RE: [PATCH v1 7/8] vfio/type1: Add VFIO_IOMMU_CACHE_INVALIDATE
-Thread-Topic: [PATCH v1 7/8] vfio/type1: Add VFIO_IOMMU_CACHE_INVALIDATE
-Thread-Index: AQHWAEUdcc1u01skwUmp6uBHREsZ66hgnxWAgANUS+A=
-Date:   Wed, 1 Apr 2020 07:49:24 +0000
-Message-ID: <A2975661238FB949B60364EF0F2C25743A21D6DF@SHSMSX104.ccr.corp.intel.com>
-References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
- <1584880325-10561-8-git-send-email-yi.l.liu@intel.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D19D7FF9F1@SHSMSX104.ccr.corp.intel.com>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D7FF9F1@SHSMSX104.ccr.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S1731995AbgDAHsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 03:48:18 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34665 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731870AbgDAHsR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 03:48:17 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 65so29349217wrl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 00:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Lqlo+Tn7Tg2M14wJLKEZDcQDoUNo94atXFdRfztlgjI=;
+        b=vERgFZtShKXGk8+XcSyKqRHMttP9ThUnz6Q1c5KyJ43+hp5MJhYniufdVrCsJ5nxQd
+         FU4AaMAx+O/kg3pW6PRx0AJgey+OyXMqP34/UFKXnb0QAzAfCz5DdTCxG31/Ob8iL+dV
+         FTSi15SZWQ9PYPpUodVPfYb3wMV/MMQCL6R8PMoh8EgW6+6hYO2YgRJuTD37qWAQmBpJ
+         x/M+gqmYGBGuQE2j3jcg3q6QWwJEY/EAgeb/IgLDsGGLMdpzvsNtXJvbgVrshtLnESgJ
+         GZNO/P/UCqDIfDdEiFiY6o5OdYRSdJ20imQVICakjcKcjilXHoVf59AfKeonjgFofSnB
+         ubMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Lqlo+Tn7Tg2M14wJLKEZDcQDoUNo94atXFdRfztlgjI=;
+        b=j78LSyqpeQm44TD9istYRL561w7xABdbNQkmfbNliZb9wX1Q7tPMctJfStlx1yirMt
+         Ynkye1EGK7la1pwulBQwmSDpe4ep0dF4jbaBmVIYr8unqHyyd++h7SpA+oROQXsP1GNx
+         WTE79JBuUlDy/Ncx5iMFUT3VMeXNU/zj50F1O/I76FgfW0DEuol2pWxgfzV2Rt4XUSbY
+         dzmijMK2W5IuHjq7Ek5MviHtjChBDLeDyVgGof2K/gnJ3BlBboPZd17n9lfHDEoBpvBA
+         rmFTrjRCxisGvpj45751xr8CBoSogxVwomC2wQC2X5Ua2zJGf+pSHTL+wiR33EqJrUjC
+         9mxw==
+X-Gm-Message-State: ANhLgQ1PKExVFx0ExYuRMpyLTSTjlnHrL+OF+xcvwQ3JrqRhP/dMdeIO
+        GFJrDRLgDtJg+QpC14h65kTBbQ==
+X-Google-Smtp-Source: ADFU+vu0BnN/UnzvN+DA+awjDremMq0c6GPFHN6sR1QaGITUYep+z/MlmIANQsTbRBvIoKXdZkabfQ==
+X-Received: by 2002:adf:97c8:: with SMTP id t8mr24370675wrb.319.1585727294449;
+        Wed, 01 Apr 2020 00:48:14 -0700 (PDT)
+Received: from [192.168.0.102] ([84.33.172.71])
+        by smtp.gmail.com with ESMTPSA id n2sm1891553wro.25.2020.04.01.00.48.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Apr 2020 00:48:13 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH 2/2] scsi: core: Fix stall if two threads request budget
+ at the same time
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <02968c1d-bd3a-af9c-77e7-23a9d9aa9af4@kernel.dk>
+Date:   Wed, 1 Apr 2020 09:49:40 +0200
+Cc:     Doug Anderson <dianders@chromium.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-scsi@vger.kernel.org, Salman Qazi <sqazi@google.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1D4B63FC-FA4B-4C73-B70F-6639CC41D3A6@linaro.org>
+References: <20200330144907.13011-1-dianders@chromium.org>
+ <20200330074856.2.I28278ef8ea27afc0ec7e597752a6d4e58c16176f@changeid>
+ <20200331014109.GA20230@ming.t460p>
+ <D38AB98D-7F6A-4C61-8A8F-C22C53671AC8@linaro.org>
+ <d6af2344-11f7-5862-daed-e21cbd496d92@kernel.dk>
+ <CAD=FV=WHYFDoUKLnwMCm-o=gEQDCzZFeMAvia3wpJzm9XX7Bow@mail.gmail.com>
+ <02968c1d-bd3a-af9c-77e7-23a9d9aa9af4@kernel.dk>
+To:     Jens Axboe <axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBUaWFuLCBLZXZpbiA8a2V2aW4udGlhbkBpbnRlbC5jb20+DQo+IFNlbnQ6IE1vbmRh
-eSwgTWFyY2ggMzAsIDIwMjAgODo1OCBQTQ0KPiBUbzogTGl1LCBZaSBMIDx5aS5sLmxpdUBpbnRl
-bC5jb20+OyBhbGV4LndpbGxpYW1zb25AcmVkaGF0LmNvbTsNCj4gU3ViamVjdDogUkU6IFtQQVRD
-SCB2MSA3LzhdIHZmaW8vdHlwZTE6IEFkZCBWRklPX0lPTU1VX0NBQ0hFX0lOVkFMSURBVEUNCj4g
-DQo+ID4gRnJvbTogTGl1LCBZaSBMIDx5aS5sLmxpdUBpbnRlbC5jb20+DQo+ID4gU2VudDogU3Vu
-ZGF5LCBNYXJjaCAyMiwgMjAyMCA4OjMyIFBNDQo+ID4NCj4gPiBGcm9tOiBMaXUgWWkgTCA8eWku
-bC5saXVAbGludXguaW50ZWwuY29tPg0KPiA+DQo+ID4gRm9yIFZGSU8gSU9NTVVzIHdpdGggdGhl
-IHR5cGUgVkZJT19UWVBFMV9ORVNUSU5HX0lPTU1VLCBndWVzdCAib3ducyINCj4gPiB0aGUNCj4g
-PiBmaXJzdC1sZXZlbC9zdGFnZS0xIHRyYW5zbGF0aW9uIHN0cnVjdHVyZXMsIHRoZSBob3N0IElP
-TU1VIGRyaXZlciBoYXMNCj4gPiBubyBrbm93bGVkZ2Ugb2YgZmlyc3QtbGV2ZWwvc3RhZ2UtMSBz
-dHJ1Y3R1cmUgY2FjaGUgdXBkYXRlcyB1bmxlc3MgdGhlDQo+ID4gZ3Vlc3QgaW52YWxpZGF0aW9u
-IHJlcXVlc3RzIGFyZSB0cmFwcGVkIGFuZCBwcm9wYWdhdGVkIHRvIHRoZSBob3N0Lg0KPiA+DQo+
-ID4gVGhpcyBwYXRjaCBhZGRzIGEgbmV3IElPQ1RMIFZGSU9fSU9NTVVfQ0FDSEVfSU5WQUxJREFU
-RSB0byBwcm9wYWdhdGUNCj4gPiBndWVzdA0KPiA+IGZpcnN0LWxldmVsL3N0YWdlLTEgSU9NTVUg
-Y2FjaGUgaW52YWxpZGF0aW9ucyB0byBob3N0IHRvIGVuc3VyZSBJT01NVQ0KPiA+IGNhY2hlIGNv
-cnJlY3RuZXNzLg0KPiA+DQo+ID4gV2l0aCB0aGlzIHBhdGNoLCB2U1ZBIChWaXJ0dWFsIFNoYXJl
-ZCBWaXJ0dWFsIEFkZHJlc3NpbmcpIGNhbiBiZSB1c2VkDQo+ID4gc2FmZWx5IGFzIHRoZSBob3N0
-IElPTU1VIGlvdGxiIGNvcnJlY3RuZXNzIGFyZSBlbnN1cmVkLg0KPiA+DQo+ID4gQ2M6IEtldmlu
-IFRpYW4gPGtldmluLnRpYW5AaW50ZWwuY29tPg0KPiA+IENDOiBKYWNvYiBQYW4gPGphY29iLmp1
-bi5wYW5AbGludXguaW50ZWwuY29tPg0KPiA+IENjOiBBbGV4IFdpbGxpYW1zb24gPGFsZXgud2ls
-bGlhbXNvbkByZWRoYXQuY29tPg0KPiA+IENjOiBFcmljIEF1Z2VyIDxlcmljLmF1Z2VyQHJlZGhh
-dC5jb20+DQo+ID4gQ2M6IEplYW4tUGhpbGlwcGUgQnJ1Y2tlciA8amVhbi1waGlsaXBwZUBsaW5h
-cm8ub3JnPg0KPiA+IFNpZ25lZC1vZmYtYnk6IExpdSBZaSBMIDx5aS5sLmxpdUBsaW51eC5pbnRl
-bC5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogRXJpYyBBdWdlciA8ZXJpYy5hdWdlckByZWRoYXQu
-Y29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEphY29iIFBhbiA8amFjb2IuanVuLnBhbkBsaW51eC5p
-bnRlbC5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvdmZpby92ZmlvX2lvbW11X3R5cGUxLmMg
-fCA0OQ0KPiA+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4g
-IGluY2x1ZGUvdWFwaS9saW51eC92ZmlvLmggICAgICAgfCAyMiArKysrKysrKysrKysrKysrKysN
-Cj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA3MSBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy92ZmlvL3ZmaW9faW9tbXVfdHlwZTEuYw0KPiA+IGIvZHJpdmVycy92Zmlv
-L3ZmaW9faW9tbXVfdHlwZTEuYyBpbmRleCBhODc3NzQ3Li45MzdlYzNmIDEwMDY0NA0KPiA+IC0t
-LSBhL2RyaXZlcnMvdmZpby92ZmlvX2lvbW11X3R5cGUxLmMNCj4gPiArKysgYi9kcml2ZXJzL3Zm
-aW8vdmZpb19pb21tdV90eXBlMS5jDQo+ID4gQEAgLTI0MjMsNiArMjQyMywxNSBAQCBzdGF0aWMg
-bG9uZw0KPiA+IHZmaW9faW9tbXVfdHlwZTFfdW5iaW5kX2dwYXNpZChzdHJ1Y3QgdmZpb19pb21t
-dSAqaW9tbXUsDQo+ID4gIAlyZXR1cm4gcmV0Ow0KPiA+ICB9DQo+ID4NCj4gPiArc3RhdGljIGlu
-dCB2ZmlvX2NhY2hlX2ludl9mbihzdHJ1Y3QgZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEpDQo+IA0K
-PiB2ZmlvX2lvbW11X2NhY2hlX2ludl9mbg0KDQpnb3QgaXQuDQoNCj4gPiArew0KPiA+ICsJc3Ry
-dWN0IGRvbWFpbl9jYXBzdWxlICpkYyA9IChzdHJ1Y3QgZG9tYWluX2NhcHN1bGUgKilkYXRhOw0K
-PiA+ICsJc3RydWN0IGlvbW11X2NhY2hlX2ludmFsaWRhdGVfaW5mbyAqY2FjaGVfaW52X2luZm8g
-PQ0KPiA+ICsJCShzdHJ1Y3QgaW9tbXVfY2FjaGVfaW52YWxpZGF0ZV9pbmZvICopIGRjLT5kYXRh
-Ow0KPiA+ICsNCj4gPiArCXJldHVybiBpb21tdV9jYWNoZV9pbnZhbGlkYXRlKGRjLT5kb21haW4s
-IGRldiwgY2FjaGVfaW52X2luZm8pOyB9DQo+ID4gKw0KPiA+ICBzdGF0aWMgbG9uZyB2ZmlvX2lv
-bW11X3R5cGUxX2lvY3RsKHZvaWQgKmlvbW11X2RhdGEsDQo+ID4gIAkJCQkgICB1bnNpZ25lZCBp
-bnQgY21kLCB1bnNpZ25lZCBsb25nIGFyZykgIHsgQEAgLQ0KPiAyNjI5LDYgKzI2MzgsNDYgQEAN
-Cj4gPiBzdGF0aWMgbG9uZyB2ZmlvX2lvbW11X3R5cGUxX2lvY3RsKHZvaWQgKmlvbW11X2RhdGEs
-DQo+ID4gIAkJfQ0KPiA+ICAJCWtmcmVlKGdiaW5kX2RhdGEpOw0KPiA+ICAJCXJldHVybiByZXQ7
-DQo+ID4gKwl9IGVsc2UgaWYgKGNtZCA9PSBWRklPX0lPTU1VX0NBQ0hFX0lOVkFMSURBVEUpIHsN
-Cj4gPiArCQlzdHJ1Y3QgdmZpb19pb21tdV90eXBlMV9jYWNoZV9pbnZhbGlkYXRlIGNhY2hlX2lu
-djsNCj4gPiArCQl1MzIgdmVyc2lvbjsNCj4gPiArCQlpbnQgaW5mb19zaXplOw0KPiA+ICsJCXZv
-aWQgKmNhY2hlX2luZm87DQo+ID4gKwkJaW50IHJldDsNCj4gPiArDQo+ID4gKwkJbWluc3ogPSBv
-ZmZzZXRvZmVuZChzdHJ1Y3QNCj4gPiB2ZmlvX2lvbW11X3R5cGUxX2NhY2hlX2ludmFsaWRhdGUs
-DQo+ID4gKwkJCQkgICAgZmxhZ3MpOw0KPiA+ICsNCj4gPiArCQlpZiAoY29weV9mcm9tX3VzZXIo
-JmNhY2hlX2ludiwgKHZvaWQgX191c2VyICopYXJnLCBtaW5zeikpDQo+ID4gKwkJCXJldHVybiAt
-RUZBVUxUOw0KPiA+ICsNCj4gPiArCQlpZiAoY2FjaGVfaW52LmFyZ3N6IDwgbWluc3ogfHwgY2Fj
-aGVfaW52LmZsYWdzKQ0KPiA+ICsJCQlyZXR1cm4gLUVJTlZBTDsNCj4gPiArDQo+ID4gKwkJLyog
-R2V0IHRoZSB2ZXJzaW9uIG9mIHN0cnVjdCBpb21tdV9jYWNoZV9pbnZhbGlkYXRlX2luZm8gKi8N
-Cj4gPiArCQlpZiAoY29weV9mcm9tX3VzZXIoJnZlcnNpb24sDQo+ID4gKwkJCSh2b2lkIF9fdXNl
-ciAqKSAoYXJnICsgbWluc3opLCBzaXplb2YodmVyc2lvbikpKQ0KPiA+ICsJCQlyZXR1cm4gLUVG
-QVVMVDsNCj4gPiArDQo+ID4gKwkJaW5mb19zaXplID0gaW9tbXVfdWFwaV9nZXRfZGF0YV9zaXpl
-KA0KPiA+ICsJCQkJCUlPTU1VX1VBUElfQ0FDSEVfSU5WQUwsDQo+ID4gdmVyc2lvbik7DQo+ID4g
-Kw0KPiA+ICsJCWNhY2hlX2luZm8gPSBremFsbG9jKGluZm9fc2l6ZSwgR0ZQX0tFUk5FTCk7DQo+
-ID4gKwkJaWYgKCFjYWNoZV9pbmZvKQ0KPiA+ICsJCQlyZXR1cm4gLUVOT01FTTsNCj4gPiArDQo+
-ID4gKwkJaWYgKGNvcHlfZnJvbV91c2VyKGNhY2hlX2luZm8sDQo+ID4gKwkJCSh2b2lkIF9fdXNl
-ciAqKSAoYXJnICsgbWluc3opLCBpbmZvX3NpemUpKSB7DQo+ID4gKwkJCWtmcmVlKGNhY2hlX2lu
-Zm8pOw0KPiA+ICsJCQlyZXR1cm4gLUVGQVVMVDsNCj4gPiArCQl9DQo+ID4gKw0KPiA+ICsJCW11
-dGV4X2xvY2soJmlvbW11LT5sb2NrKTsNCj4gPiArCQlyZXQgPSB2ZmlvX2lvbW11X2Zvcl9lYWNo
-X2Rldihpb21tdSwgdmZpb19jYWNoZV9pbnZfZm4sDQo+ID4gKwkJCQkJICAgIGNhY2hlX2luZm8p
-Ow0KPiA+ICsJCW11dGV4X3VubG9jaygmaW9tbXUtPmxvY2spOw0KPiA+ICsJCWtmcmVlKGNhY2hl
-X2luZm8pOw0KPiA+ICsJCXJldHVybiByZXQ7DQo+ID4gIAl9DQo+ID4NCj4gPiAgCXJldHVybiAt
-RU5PVFRZOw0KPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL3VhcGkvbGludXgvdmZpby5oIGIvaW5j
-bHVkZS91YXBpL2xpbnV4L3ZmaW8uaA0KPiA+IGluZGV4IDIyMzViYzYuLjYyY2E3OTEgMTAwNjQ0
-DQo+ID4gLS0tIGEvaW5jbHVkZS91YXBpL2xpbnV4L3ZmaW8uaA0KPiA+ICsrKyBiL2luY2x1ZGUv
-dWFwaS9saW51eC92ZmlvLmgNCj4gPiBAQCAtODk5LDYgKzg5OSwyOCBAQCBzdHJ1Y3QgdmZpb19p
-b21tdV90eXBlMV9iaW5kIHsNCj4gPiAgICovDQo+ID4gICNkZWZpbmUgVkZJT19JT01NVV9CSU5E
-CQlfSU8oVkZJT19UWVBFLCBWRklPX0JBU0UgKyAyMykNCj4gPg0KPiA+ICsvKioNCj4gPiArICog
-VkZJT19JT01NVV9DQUNIRV9JTlZBTElEQVRFIC0gX0lPVyhWRklPX1RZUEUsIFZGSU9fQkFTRSAr
-IDI0LA0KPiA+ICsgKgkJCXN0cnVjdCB2ZmlvX2lvbW11X3R5cGUxX2NhY2hlX2ludmFsaWRhdGUp
-DQo+ID4gKyAqDQo+ID4gKyAqIFByb3BhZ2F0ZSBndWVzdCBJT01NVSBjYWNoZSBpbnZhbGlkYXRp
-b24gdG8gdGhlIGhvc3QuIFRoZSBjYWNoZQ0KPiA+ICsgKiBpbnZhbGlkYXRpb24gaW5mb3JtYXRp
-b24gaXMgY29udmV5ZWQgYnkgQGNhY2hlX2luZm8sIHRoZSBjb250ZW50DQo+ID4gKyAqIGZvcm1h
-dCB3b3VsZCBiZSBzdHJ1Y3R1cmVzIGRlZmluZWQgaW4gdWFwaS9saW51eC9pb21tdS5oLiBVc2Vy
-DQo+ID4gKyAqIHNob3VsZCBiZSBhd2FyZSBvZiB0aGF0IHRoZSBzdHJ1Y3QgIGlvbW11X2NhY2hl
-X2ludmFsaWRhdGVfaW5mbw0KPiA+ICsgKiBoYXMgYSBAdmVyc2lvbiBmaWVsZCwgdmZpbyBuZWVk
-cyB0byBwYXJzZSB0aGlzIGZpZWxkIGJlZm9yZQ0KPiA+ICtnZXR0aW5nDQo+ID4gKyAqIGRhdGEg
-ZnJvbSB1c2Vyc3BhY2UuDQo+ID4gKyAqDQo+ID4gKyAqIEF2YWlsYWJpbGl0eSBvZiB0aGlzIElP
-Q1RMIGlzIGFmdGVyIFZGSU9fU0VUX0lPTU1VLg0KPiA+ICsgKg0KPiA+ICsgKiByZXR1cm5zOiAw
-IG9uIHN1Y2Nlc3MsIC1lcnJubyBvbiBmYWlsdXJlLg0KPiA+ICsgKi8NCj4gPiArc3RydWN0IHZm
-aW9faW9tbXVfdHlwZTFfY2FjaGVfaW52YWxpZGF0ZSB7DQo+ID4gKwlfX3UzMiAgIGFyZ3N6Ow0K
-PiA+ICsJX191MzIgICBmbGFnczsNCj4gPiArCXN0cnVjdAlpb21tdV9jYWNoZV9pbnZhbGlkYXRl
-X2luZm8gY2FjaGVfaW5mbzsNCj4gPiArfTsNCj4gPiArI2RlZmluZSBWRklPX0lPTU1VX0NBQ0hF
-X0lOVkFMSURBVEUgICAgICBfSU8oVkZJT19UWVBFLCBWRklPX0JBU0UgKw0KPiA+IDI0KQ0KPiA+
-ICsNCj4gPiAgLyogLS0tLS0tLS0gQWRkaXRpb25hbCBBUEkgZm9yIFNQQVBSIFRDRSAoU2VydmVy
-IFBPV0VSUEMpIElPTU1VDQo+ID4gLS0tLS0tLS0gKi8NCj4gPg0KPiA+ICAvKg0KPiA+IC0tDQo+
-ID4gMi43LjQNCj4gDQo+IFRoaXMgcGF0Y2ggbG9va3MgZ29vZCB0byBtZSBpbiBnZW5lcmFsLiBC
-dXQgc2luY2UgdGhlcmUgaXMgc3RpbGwgYSBtYWpvciBvcGVuIGFib3V0DQo+IHZlcnNpb24gY29t
-cGF0aWJpbGl0eSwgSSdsbCBob2xkIG15IHItYiB1bnRpbCB0aGF0IG9wZW4gaXMgY2xvc2VkLiDw
-n5iKDQo+IA0KDQp0aGFua3MsDQoNClJlZ2FyZHMsDQpZaSBMaXUNCg==
+
+
+> Il giorno 1 apr 2020, alle ore 03:21, Jens Axboe <axboe@kernel.dk> ha =
+scritto:
+>=20
+> On 3/31/20 5:51 PM, Doug Anderson wrote:
+>> Hi,
+>>=20
+>> On Tue, Mar 31, 2020 at 11:26 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>>=20
+>>> On 3/31/20 12:07 PM, Paolo Valente wrote:
+>>>>> Il giorno 31 mar 2020, alle ore 03:41, Ming Lei =
+<ming.lei@redhat.com> ha scritto:
+>>>>>=20
+>>>>> On Mon, Mar 30, 2020 at 07:49:06AM -0700, Douglas Anderson wrote:
+>>>>>> It is possible for two threads to be running
+>>>>>> blk_mq_do_dispatch_sched() at the same time with the same "hctx".
+>>>>>> This is because there can be more than one caller to
+>>>>>> __blk_mq_run_hw_queue() with the same "hctx" and hctx_lock() =
+doesn't
+>>>>>> prevent more than one thread from entering.
+>>>>>>=20
+>>>>>> If more than one thread is running blk_mq_do_dispatch_sched() at =
+the
+>>>>>> same time with the same "hctx", they may have contention =
+acquiring
+>>>>>> budget.  The blk_mq_get_dispatch_budget() can eventually =
+translate
+>>>>>> into scsi_mq_get_budget().  If the device's "queue_depth" is 1 =
+(not
+>>>>>> uncommon) then only one of the two threads will be the one to
+>>>>>> increment "device_busy" to 1 and get the budget.
+>>>>>>=20
+>>>>>> The losing thread will break out of blk_mq_do_dispatch_sched() =
+and
+>>>>>> will stop dispatching requests.  The assumption is that when more
+>>>>>> budget is available later (when existing transactions finish) the
+>>>>>> queue will be kicked again, perhaps in scsi_end_request().
+>>>>>>=20
+>>>>>> The winning thread now has budget and can go on to call
+>>>>>> dispatch_request().  If dispatch_request() returns NULL here then =
+we
+>>>>>> have a potential problem.  Specifically we'll now call
+>>>>>=20
+>>>>> I guess this problem should be BFQ specific. Now there is =
+definitely
+>>>>> requests in BFQ queue wrt. this hctx. However, looks this request =
+is
+>>>>> only available from another loser thread, and it won't be =
+retrieved in
+>>>>> the winning thread via e->type->ops.dispatch_request().
+>>>>>=20
+>>>>> Just wondering why BFQ is implemented in this way?
+>>>>>=20
+>>>>=20
+>>>> BFQ inherited this powerful non-working scheme from CFQ, some age =
+ago.
+>>>>=20
+>>>> In more detail: if BFQ has at least one non-empty internal queue, =
+then
+>>>> is says of course that there is work to do.  But if the currently
+>>>> in-service queue is empty, and is expected to receive new I/O, then
+>>>> BFQ plugs I/O dispatch to enforce service guarantees for the
+>>>> in-service queue, i.e., BFQ responds NULL to a dispatch request.
+>>>=20
+>>> What BFQ is doing is fine, IFF it always ensures that the queue is =
+run
+>>> at some later time, if it returns "yep I have work" yet returns NULL
+>>> when attempting to retrieve that work. Generally this should happen =
+from
+>>> subsequent IO completion, or whatever else condition will resolve =
+the
+>>> issue that is currently preventing dispatch of that request. Last =
+resort
+>>> would be a timer, but that can happen if you're slicing your =
+scheduling
+>>> somehow.
+>>=20
+>> I've been poking more at this today trying to understand why the idle
+>> timer that Paolo says is in BFQ isn't doing what it should be doing.
+>> I've been continuing to put most of my stream-of-consciousness at
+>> <https://crbug.com/1061950> to avoid so much spamming of this thread.
+>> In the trace I looked at most recently it looks like BFQ does try to
+>> ensure that the queue is run at a later time, but at least in this
+>> trace the later time is not late enough.  Specifically the quick
+>> summary of my recent trace:
+>>=20
+>> 28977309us - PID 2167 got the budget.
+>> 28977518us - BFQ told PID 2167 that there was nothing to dispatch.
+>> 28977702us - BFQ idle timer fires.
+>> 28977725us - We start to try to dispatch as a result of BFQ's idle =
+timer.
+>> 28977732us - Dispatching that was a result of BFQ's idle timer can't =
+get
+>>             budget and thus does nothing.
+>> 28977780us - PID 2167 put the budget and exits since there was =
+nothing
+>>             to dispatch.
+>>=20
+>> This is only one particular trace, but in this case BFQ did attempt =
+to
+>> rerun the queue after it returned NULL, but that ran almost
+>> immediately after it returned NULL and thus ran into the race.  :(
+>=20
+> OK, and then it doesn't trigger again? It's key that it keeps doing =
+this
+> timeout and re-dispatch if it fails, not just once.
+>=20
+
+The goal of BFQ's timer is to make BFQ switch from non-work-conserving
+to work-conserving mode, just because not doing so would cause a
+stall.  In contrast, it sounds a little weird that an I/O scheduler
+systematically kicks I/O periodically (how can BFQ know when no more
+kicking is needed?).  IOW, it doesn't seem very robust that blk-mq may
+need a series of periodic kicks to finally restart, like a flooded
+engine.
+
+Compared with this solution, I'd still prefer one where BFQ doesn't
+trigger this blk-mq stall at all.
+
+Paolo
+
+> But BFQ really should be smarter here. It's the same caller etc that
+> asks whether it has work and whether it can dispatch, yet the answer =
+is
+> different. That's just kind of silly, and it'd make more sense if BFQ
+> actually implemented the ->has_work() as a "would I actually dispatch
+> for this guy, now".
+>=20
+>>>> It would be very easy to change bfq_has_work so that it returns =
+false
+>>>> in case the in-service queue is empty, even if there is I/O
+>>>> backlogged.  My only concern is: since everything has worked with =
+the
+>>>> current scheme for probably 15 years, are we sure that everything =
+is
+>>>> still ok after we change this scheme?
+>>>=20
+>>> You're comparing apples to oranges, CFQ never worked within the =
+blk-mq
+>>> scheduling framework.
+>>>=20
+>>> That said, I don't think such a change is needed. If we currently =
+have a
+>>> hang due to this discrepancy between has_work and gets_work, then it
+>>> sounds like we're not always re-running the queue as we should. =46rom=
+ the
+>>> original patch, the budget putting is not something the scheduler is
+>>> involved with. Do we just need to ensure that if we put budget =
+without
+>>> having dispatched a request, we need to kick off dispatching again?
+>>=20
+>> By this you mean a change like this in blk_mq_do_dispatch_sched()?
+>>=20
+>>  if (!rq) {
+>>    blk_mq_put_dispatch_budget(hctx);
+>> +    ret =3D true;
+>>    break;
+>>  }
+>>=20
+>> I'm pretty sure that would fix the problems and I'd be happy to test,
+>> but it feels like a heavy hammer.  IIUC we're essentially going to go
+>> into a polling loop and keep calling has_work() and =
+dispatch_request()
+>> over and over again until has_work() returns false or we manage to
+>> dispatch something...
+>=20
+> We obviously have to be careful not to introduce a busy-loop, where we
+> just keep scheduling dispatch, only to fail.
+>=20
+> --=20
+> Jens Axboe
+
