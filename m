@@ -2,154 +2,280 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D082F19A884
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C964619A888
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:22:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731959AbgDAJU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 05:20:27 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:11052 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbgDAJU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 05:20:27 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48sgf04npTz9txmT;
-        Wed,  1 Apr 2020 11:20:24 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=XH7zg2Fd; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id LrwWMFl3-E7n; Wed,  1 Apr 2020 11:20:24 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48sgf03bt7z9txmS;
-        Wed,  1 Apr 2020 11:20:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1585732824; bh=RdCwVqnG+mgvh3hfqg59yovpqSaBby3zvQrIMEdmRpE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=XH7zg2FdzF2RS35R/gIrtumJIqP3Hvo83KJDW/dz5mimMYkfSu70Y9/6Z3S7O7zWF
-         u3dRyixL/1pDSpdDRPVf7qpFVRl4MtL/BvgBVf2Wbrm7a84WGCc54DXbhndSfyAA63
-         k8TrANwQfZKZ+/lVsp6SHURFcLuGb03DN02KwiHw=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 986F98B7B9;
-        Wed,  1 Apr 2020 11:20:25 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id N0fWgGw9nX-y; Wed,  1 Apr 2020 11:20:25 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 61D468B752;
-        Wed,  1 Apr 2020 11:20:21 +0200 (CEST)
-Subject: Re: [PATCH v2 13/16] powerpc/watchpoint: Prepare handler to handle
- more than one watcnhpoint
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     mpe@ellerman.id.au, mikey@neuling.org, apopple@linux.ibm.com,
-        paulus@samba.org, npiggin@gmail.com,
-        naveen.n.rao@linux.vnet.ibm.com, peterz@infradead.org,
-        jolsa@kernel.org, oleg@redhat.com, fweisbec@gmail.com,
-        mingo@kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20200401061309.92442-1-ravi.bangoria@linux.ibm.com>
- <20200401061309.92442-14-ravi.bangoria@linux.ibm.com>
- <6b89991b-481a-8cbd-b5b7-559e5e16cf92@c-s.fr>
- <cb2c250b-c963-45fe-f3b4-879076c495ab@linux.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <78559ff4-c2c3-e652-a906-8f40673b53d6@c-s.fr>
-Date:   Wed, 1 Apr 2020 11:20:10 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1731749AbgDAJWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 05:22:22 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:23937 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726368AbgDAJWW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 05:22:22 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585732941; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=Fr4eLSS9JjdItQxHTVAk0mj70SYgvnZ0Ya8DUUDv4RU=; b=GglleGnHXyw+ARi1UVI436bJ7eGvSt9svzoTbxUzhXIUB3liOjjK5pgqvDC4qMXCQoz5ghAr
+ o7/9E99lQw0wAv3/b5MeKs74dYjVvDuSLZesyiltgYlxLub+6mZxGSNMu6Zgucj3lHBIP9/o
+ qakFqDHTfl8fst9YOWUsencv+YM=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e845d43.7f5d79e29b90-smtp-out-n05;
+ Wed, 01 Apr 2020 09:22:11 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id EAB38C43637; Wed,  1 Apr 2020 09:22:10 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 90A72C433D2;
+        Wed,  1 Apr 2020 09:22:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 90A72C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date:   Wed, 1 Apr 2020 14:52:01 +0530
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, stummala@codeaurora.org
+Subject: Re: [PATCH v3] f2fs: fix long latency due to discard during umount
+Message-ID: <20200401092201.GB20234@codeaurora.org>
+References: <1585550730-1858-1-git-send-email-stummala@codeaurora.org>
+ <20200331184655.GB198665@google.com>
 MIME-Version: 1.0
-In-Reply-To: <cb2c250b-c963-45fe-f3b4-879076c495ab@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331184655.GB198665@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jaegeuk,
 
-
-Le 01/04/2020 à 11:13, Ravi Bangoria a écrit :
+On Tue, Mar 31, 2020 at 11:46:55AM -0700, Jaegeuk Kim wrote:
+> On 03/30, Sahitya Tummala wrote:
+> > F2FS already has a default timeout of 5 secs for discards that
+> > can be issued during umount, but it can take more than the 5 sec
+> > timeout if the underlying UFS device queue is already full and there
+> > are no more available free tags to be used. In that case, submit_bio()
+> > will wait for the already queued discard requests to complete to get
+> > a free tag, which can potentially take way more than 5 sec.
+> > 
+> > Fix this by submitting the discard requests with REQ_NOWAIT
+> > flags during umount. This will return -EAGAIN for UFS queue/tag full
+> > scenario without waiting in the context of submit_bio(). The FS can
+> > then handle these requests by retrying again within the stipulated
+> > discard timeout period to avoid long latencies.
 > 
+> Sorry, Sahitya, but, do we really need to do like this? How about just
+> controlling # of outstanding discarding bios in __issue_discard_cmd()?
+
+Do you mean something like this?
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1a62b27..860dd43 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1099,7 +1099,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+        } else if (discard_type == DPOLICY_FSTRIM) {
+                dpolicy->io_aware = false;
+        } else if (discard_type == DPOLICY_UMOUNT) {
+-               dpolicy->max_requests = UINT_MAX;
++               dpolicy->max_requests = 30;
+                dpolicy->io_aware = false;
+                /* we need to issue all to keep CP_TRIMMED_FLAG */
+                dpolicy->granularity = 1;
+@@ -1470,12 +1470,14 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+        struct list_head *pend_list;
+        struct discard_cmd *dc, *tmp;
+        struct blk_plug plug;
+-       int i, issued = 0;
++       int i, issued;
+        bool io_interrupted = false;
+
+        if (dpolicy->timeout != 0)
+                f2fs_update_time(sbi, dpolicy->timeout);
+
++retry:
++       issued = 0;
+        for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+                if (dpolicy->timeout != 0 &&
+                                f2fs_time_over(sbi, dpolicy->timeout))
+@@ -1522,6 +1524,11 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+                        break;
+        }
+
++       if (dpolicy->type == DPOLICY_UMOUNT && issued) {
++               __wait_all_discard_cmd(sbi, dpolicy);
++               goto retry;
++       }
++
+        if (!issued && io_interrupted)
+                issued = -1;
+
+Thanks,
+
 > 
-> On 4/1/20 12:20 PM, Christophe Leroy wrote:
->>
->>
->> Le 01/04/2020 à 08:13, Ravi Bangoria a écrit :
->>> Currently we assume that we have only one watchpoint supported by hw.
->>> Get rid of that assumption and use dynamic loop instead. This should
->>> make supporting more watchpoints very easy.
->>>
->>> With more than one watchpoint, exception handler need to know which
->>> DAWR caused the exception, and hw currently does not provide it. So
->>> we need sw logic for the same. To figure out which DAWR caused the
->>> exception, check all different combinations of user specified range,
->>> dawr address range, actual access range and dawrx constrains. For ex,
->>> if user specified range and actual access range overlaps but dawrx is
->>> configured for readonly watchpoint and the instruction is store, this
->>> DAWR must not have caused exception.
->>>
->>> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
->>> ---
->>>   arch/powerpc/include/asm/processor.h |   2 +-
->>>   arch/powerpc/include/asm/sstep.h     |   2 +
->>>   arch/powerpc/kernel/hw_breakpoint.c  | 396 +++++++++++++++++++++------
->>>   arch/powerpc/kernel/process.c        |   3 -
->>>   4 files changed, 313 insertions(+), 90 deletions(-)
->>>
->>
->> [...]
->>
->>> -static bool
->>> -dar_range_overlaps(unsigned long dar, int size, struct 
->>> arch_hw_breakpoint *info)
->>> +static bool dar_user_range_overlaps(unsigned long dar, int size,
->>> +                    struct arch_hw_breakpoint *info)
->>>   {
->>>       return ((dar <= info->address + info->len - 1) &&
->>>           (dar + size - 1 >= info->address));
->>>   }
->>
->> Here and several other places, I think it would be more clear if you 
->> could avoid the - 1 :
->>
->>      return ((dar < info->address + info->len) &&
->>          (dar + size > info->address));
-> 
-> Ok. see below...
-> 
->>
->>
->>> +static bool dar_in_hw_range(unsigned long dar, struct 
->>> arch_hw_breakpoint *info)
->>> +{
->>> +    unsigned long hw_start_addr, hw_end_addr;
->>> +
->>> +    hw_start_addr = ALIGN_DOWN(info->address, HW_BREAKPOINT_SIZE);
->>> +    hw_end_addr = ALIGN(info->address + info->len, 
->>> HW_BREAKPOINT_SIZE) - 1;
->>> +
->>> +    return ((hw_start_addr <= dar) && (hw_end_addr >= dar));
->>> +}
->>
->>      hw_end_addr = ALIGN(info->address + info->len, HW_BREAKPOINT_SIZE);
->>
->>      return ((hw_start_addr <= dar) && (hw_end_addr > dar));
-> 
-> I'm using -1 while calculating end address is to make it
-> inclusive. If I don't use -1, the end address points to a
-> location outside of actual range, i.e. it's not really an
-> end address.
+> > 
+> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> > ---
+> > v3:
+> > -Handle the regression reported by Chao with v2.
+> > -simplify the logic to split the dc with multiple bios incase any bio returns
+> >  EAGAIN and retry those new dc within 5 sec timeout.
+> > 
+> >  fs/f2fs/segment.c | 65 +++++++++++++++++++++++++++++++++++++++++++------------
+> >  1 file changed, 51 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index fb3e531..55d18c7 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1029,13 +1029,16 @@ static void f2fs_submit_discard_endio(struct bio *bio)
+> >  	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
+> >  	unsigned long flags;
+> >  
+> > -	dc->error = blk_status_to_errno(bio->bi_status);
+> > -
+> >  	spin_lock_irqsave(&dc->lock, flags);
+> > +	if (!dc->error)
+> > +		dc->error = blk_status_to_errno(bio->bi_status);
+> > +
+> >  	dc->bio_ref--;
+> > -	if (!dc->bio_ref && dc->state == D_SUBMIT) {
+> > -		dc->state = D_DONE;
+> > -		complete_all(&dc->wait);
+> > +	if (!dc->bio_ref) {
+> > +		if (dc->error || dc->state == D_SUBMIT) {
+> > +			dc->state = D_DONE;
+> > +			complete_all(&dc->wait);
+> > +		}
+> >  	}
+> >  	spin_unlock_irqrestore(&dc->lock, flags);
+> >  	bio_put(bio);
+> > @@ -1124,10 +1127,13 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> >  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> >  	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
+> >  					&(dcc->fstrim_list) : &(dcc->wait_list);
+> > -	int flag = dpolicy->sync ? REQ_SYNC : 0;
+> > +	int flag;
+> >  	block_t lstart, start, len, total_len;
+> >  	int err = 0;
+> >  
+> > +	flag = dpolicy->sync ? REQ_SYNC : 0;
+> > +	flag |= dpolicy->type == DPOLICY_UMOUNT ? REQ_NOWAIT : 0;
+> > +
+> >  	if (dc->state != D_PREP)
+> >  		return 0;
+> >  
+> > @@ -1192,10 +1198,6 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> >  		dc->bio_ref++;
+> >  		spin_unlock_irqrestore(&dc->lock, flags);
+> >  
+> > -		atomic_inc(&dcc->queued_discard);
+> > -		dc->queued++;
+> > -		list_move_tail(&dc->list, wait_list);
+> > -
+> >  		/* sanity check on discard range */
+> >  		__check_sit_bitmap(sbi, lstart, lstart + len);
+> >  
+> > @@ -1203,6 +1205,29 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> >  		bio->bi_end_io = f2fs_submit_discard_endio;
+> >  		bio->bi_opf |= flag;
+> >  		submit_bio(bio);
+> > +		if (flag & REQ_NOWAIT) {
+> > +			if (dc->error == -EAGAIN) {
+> > +				spin_lock_irqsave(&dc->lock, flags);
+> > +				dc->len -= len;
+> > +				if (!dc->len) {
+> > +					dc->len = total_len;
+> > +					dc->state = D_PREP;
+> > +					reinit_completion(&dc->wait);
+> > +				} else {
+> > +					dcc->undiscard_blks -= total_len;
+> > +					if (dc->state == D_PARTIAL)
+> > +						dc->state = D_SUBMIT;
+> > +				}
+> > +				err = dc->error;
+> > +				dc->error = 0;
+> > +				spin_unlock_irqrestore(&dc->lock, flags);
+> > +				break;
+> > +			}
+> > +		}
+> > +
+> > +		atomic_inc(&dcc->queued_discard);
+> > +		dc->queued++;
+> > +		list_move_tail(&dc->list, wait_list);
+> >  
+> >  		atomic_inc(&dcc->issued_discard);
+> >  
+> > @@ -1214,8 +1239,9 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> >  		len = total_len;
+> >  	}
+> >  
+> > -	if (!err && len)
+> > -		__update_discard_tree_range(sbi, bdev, lstart, start, len);
+> > +	if ((!err || err == -EAGAIN) && total_len && dc->start != start)
+> > +		__update_discard_tree_range(sbi, bdev, lstart, start,
+> > +					total_len);
+> >  	return err;
+> >  }
+> >  
+> > @@ -1470,12 +1496,15 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >  	struct list_head *pend_list;
+> >  	struct discard_cmd *dc, *tmp;
+> >  	struct blk_plug plug;
+> > -	int i, issued = 0;
+> > +	int i, err, issued = 0;
+> >  	bool io_interrupted = false;
+> > +	bool retry;
+> >  
+> >  	if (dpolicy->timeout != 0)
+> >  		f2fs_update_time(sbi, dpolicy->timeout);
+> >  
+> > +retry:
+> > +	retry = false;
+> >  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+> >  		if (dpolicy->timeout != 0 &&
+> >  				f2fs_time_over(sbi, dpolicy->timeout))
+> > @@ -1509,7 +1538,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >  				break;
+> >  			}
+> >  
+> > -			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> > +			err = __submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> > +			if (err == -EAGAIN) {
+> > +				congestion_wait(BLK_RW_ASYNC,
+> > +						DEFAULT_IO_TIMEOUT);
+> > +				retry = true;
+> > +			}
+> >  
+> >  			if (issued >= dpolicy->max_requests)
+> >  				break;
+> > @@ -1522,6 +1556,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >  			break;
+> >  	}
+> >  
+> > +	if (retry)
+> > +		goto retry;
+> > +
+> >  	if (!issued && io_interrupted)
+> >  		issued = -1;
+> >  
+> > -- 
+> > Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-But that's what is done is several places, for instance:
-
-https://elixir.bootlin.com/linux/v5.6/source/arch/powerpc/mm/dma-noncoherent.c#L22
-
-https://elixir.bootlin.com/linux/v5.6/source/arch/powerpc/include/asm/book3s/32/kup.h#L92
-
-In several places like this, end is outside of the range. My feeling is 
-that is helps with readability.
-
-Christophe
+-- 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
