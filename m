@@ -2,89 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2673919A75F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B513C19A768
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:37:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730333AbgDAIgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:36:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47626 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbgDAIgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:36:51 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE63C2073B;
-        Wed,  1 Apr 2020 08:36:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585730211;
-        bh=1XYIZp3uXSzw6Rbv2PqKuepQw6ibS/RezQqfYs3N4GQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=I7dLV/V5NycExHfqTXnYyGUtOngTPUHar9EcwbTG5NczZkh9DLgW1lgYs7UiUH/6h
-         JrXNu5P7e/VwK1ixkRYMvF3bGr9hMuTUGVfIRbjEJ25wlCcVzIVbYwR1sAf2g10adK
-         T1SQ0loNGYJjAvDz+1PVy6IDzPggrKT1rv4YqvQU=
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1jJYrg-00HRQl-N8; Wed, 01 Apr 2020 09:36:48 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Michal Simek <michal.simek@xilinx.com>,
-        Mubin Sayyed <mubin.usman.sayyed@xilinx.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Jason Cooper <jason@lakedaemon.net>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] irqchip fixes for Linux 5.7, take #1
-Date:   Wed,  1 Apr 2020 09:36:27 +0100
-Message-Id: <20200401083627.432564-1-maz@kernel.org>
-X-Mailer: git-send-email 2.25.0
+        id S1731721AbgDAIhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:37:39 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37750 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbgDAIhh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 04:37:37 -0400
+Received: by mail-ed1-f67.google.com with SMTP id de14so28644991edb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 01:37:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7Pb5WxXo01OUrPYKfuGBoAi7COZxVQpsVUvg17nkA6w=;
+        b=DCWoZP8f/dOkjW5uYoUFpfMxBGbKeZuXpLeJJK8mTpafT0iBm07aAautrwxGNxNPuH
+         kwa+oyklRAFDRmQ9G/64ndypZ3iC1AQSMWoHkTRNK/CJ98o+a+FWbDoEu0LWLRzfWA12
+         BQCicYA5Tma7uC+qkVwM5zNRNQOh9LLVhWIgE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7Pb5WxXo01OUrPYKfuGBoAi7COZxVQpsVUvg17nkA6w=;
+        b=aEEjsl5ngHPFo/RGWQEI5bxD+PDrQGWmYrnKYLvpcnlkDmWiK1pTR0e6S4WD7ZMPy2
+         ITgzSSXV9NFqIBIrICdRhPmyM8PfHO+QUDPZ3O26BrMDxoZAd2EJx3kgAXtpveSJ1HBl
+         E3L2TPQYeqzyAWMk54cxvmYH83tLN3rSlIVXpROEs9jMdIbyu0ewLJFgh6DEaH4EGeEU
+         XeILceECd3VtYZIleRRh7HWk4peMBHsYdzWxlsmzABR+/7f+U0lTgpVFx9FL4mKYPVfa
+         AO7JIIt2R3ggWZ2dvfEjcoKpKS/LS9hwCq2HhvIvdZNcD94wFwxl0ReQl0GturOAxIGw
+         SnJQ==
+X-Gm-Message-State: ANhLgQ0FahesWZoetHNXB4QISGvKvvHRffQa9i4oWCvAHZCaeGc1uFBC
+        CSEnuQBxjFXGl3MmUnaD+EWJbOJ/rPKWMCgFiLIO/g==
+X-Google-Smtp-Source: ADFU+vv25aObxVqudxs/b4t6TUDhdA8HhF0PuGfXX6HSZBIvhctUM+bsT6LQzuUGvDuTHabWaoYU8+dr8sw8QJ3EQ4c=
+X-Received: by 2002:a50:8326:: with SMTP id 35mr19766368edh.134.1585730253359;
+ Wed, 01 Apr 2020 01:37:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: tglx@linutronix.de, michal.simek@xilinx.com, mubin.usman.sayyed@xilinx.com, sfr@canb.auug.org.au, jason@lakedaemon.net, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
+ <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
+ <50caf93782ba1d66bd6acf098fb8dcb0ecc98610.camel@themaw.net>
+ <CAJfpegvvMVoNp1QeXEZiNucCeuUeDP4tKqVfq2F4koQKzjKmvw@mail.gmail.com> <2465266.1585729649@warthog.procyon.org.uk>
+In-Reply-To: <2465266.1585729649@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 1 Apr 2020 10:37:22 +0200
+Message-ID: <CAJfpegsyeJmH3zJuseaAAY06fzgavSzpOtYr-1Mw8GR0cLcQbA@mail.gmail.com>
+Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Ian Kent <raven@themaw.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Wed, Apr 1, 2020 at 10:27 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> > According to dhowell's measurements processing 100k mounts would take
+> > about a few seconds of system time (that's the time spent by the
+> > kernel to retrieve the data,
+>
+> But the inefficiency of mountfs - at least as currently implemented - scales
+> up with the number of individual values you want to retrieve, both in terms of
+> memory usage and time taken.
 
-Here's a small additional pull request, reverting two patches
-that break a number of old PPC platforms. Given that Linus'
-tree is currently broken, I'd appreciate if you could send this
-his way as soon as possible.
+I've taken that into account when guesstimating a "few seconds per
+100k entries".  My guess is that there's probably an order of
+magnitude difference between the performance of a fs based interface
+and a binary syscall based interface.  That could be reduced somewhat
+with a readfile(2) type API.
 
-Thanks, and apologies for the breakage.
+But the point is: this does not matter.  Whether it's .5s or 5s is
+completely irrelevant, as neither is going to take down the system,
+and userspace processing is probably going to take as much, if not
+more time.  And remember, we are talking about stopping and starting
+the automount daemon, which is something that happens, but it should
+not happen often by any measure.
 
-	M.
+> With fsinfo(), I've tried to batch values together where it makes sense - and
+> there's no lingering memory overhead - no extra inodes, dentries and files
+> required.
 
-The following changes since commit 771df8cf0bc3a9a94bc16a58da136cad186cea27:
+The dentries, inodes and files in your test are single use (except the
+root dentry) and can be made ephemeral if that turns out to be better.
+My guess is that dentries belonging to individual attributes should be
+deleted on final put, while the dentries belonging to the mount
+directory can be reclaimed normally.
 
-  Merge branch 'irq/gic-v4.1' into irq/irqchip-next (2020-03-24 12:43:47 +0000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git tags/irqchip-fixes-5.7-1
-
-for you to fetch changes up to 4cea749d56bec9409f3bd126d2b2f949dc6c66e2:
-
-  Revert "irqchip/xilinx: Enable generic irq multi handler" (2020-04-01 09:12:24 +0100)
-
-----------------------------------------------------------------
-irqchip fixes for Linux 5.7, take #1
-
-- Partially revert Xilinx changes that break PPC systems
-
-----------------------------------------------------------------
-Marc Zyngier (2):
-      Revert "irqchip/xilinx: Do not call irq_set_default_host()"
-      Revert "irqchip/xilinx: Enable generic irq multi handler"
-
- arch/microblaze/Kconfig           |  2 --
- arch/microblaze/include/asm/irq.h |  3 +++
- arch/microblaze/kernel/irq.c      | 21 ++++++++++++++++++++-
- drivers/irqchip/irq-xilinx-intc.c | 35 +++++++++++++++--------------------
- 4 files changed, 38 insertions(+), 23 deletions(-)
+Thanks,
+Miklos
