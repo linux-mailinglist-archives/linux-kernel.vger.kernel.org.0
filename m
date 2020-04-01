@@ -2,128 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A40F19B491
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:13:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85D1419B485
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:07:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732737AbgDARNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 13:13:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40874 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732137AbgDARNR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 13:13:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=wdgTSKNxkD1QrwAjRgDdie5nQ4gbwZFe8HVIvvfYi0s=; b=KJntRMJ8Qks9UoOE0UgBNQ4Dyr
-        oTcjRKMZ6Jf3Gk/IJlNgmVLKtTXcnPwXUsOSjEOz5uphzyUiBLQJo5o7PNsl5LrPcwVNnSiAKVvsb
-        EyuIe9gLPIJpM69FvjZNpfYVsJZoOmOs+Ik5+N0tX3FfjD3I1dSBXGZWHv9ASkPKrJValKJth9X0/
-        6qWTivVQG1Q4mPA/b4MTBvIzD3/W8/Z5t1IHR66LpXrQnSzPUGwU9UDR5BWrWiQvR8AWjNiN+T4wg
-        qrl22e1u2+csSEP8rhDaM5Xz9aNdmcjZXcpO4P4n77fobZ+0b07wCIh/WYLt/XTgeqmcKmYcvVp2R
-        +8bmJBbA==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJgvR-0000rx-7y; Wed, 01 Apr 2020 17:13:13 +0000
-Subject: Re: mmotm 2020-03-30-18-46 uploaded (VDPA + vhost)
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        virtualization@lists.linux-foundation.org,
-        Jason Wang <jasowang@redhat.com>
-References: <20200331014748.ajL0G62jF%akpm@linux-foundation.org>
- <969cacf1-d420-223d-7cc7-5b1b2405ec2a@infradead.org>
- <20200331143437-mutt-send-email-mst@kernel.org>
- <9c03fee8-af1a-2035-b903-611a631094b0@infradead.org>
- <20200331152106-mutt-send-email-mst@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <cd94bd62-57c4-b82e-0434-8a470a9ea613@infradead.org>
-Date:   Wed, 1 Apr 2020 10:13:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1732598AbgDARHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 13:07:43 -0400
+Received: from mga07.intel.com ([134.134.136.100]:21353 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732273AbgDARHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 13:07:43 -0400
+IronPort-SDR: HC3QAmG6qRIx1aO4xUx7EN0BRwf4r1fUnkuJRCHUrhH8W7cYHZoGGjBp/CHbnt/KEUrRokEuXC
+ /Cqa/RILpwdQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 10:07:42 -0700
+IronPort-SDR: oQipLpnApWd0p+CgyFBkSRZiHFTfxhOuwvsqHh1iQub51HAu+NxoD5fHDo9HsHXa60RzSslzN3
+ Yx50zav9Uwzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,332,1580803200"; 
+   d="scan'208";a="249528821"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga003.jf.intel.com with ESMTP; 01 Apr 2020 10:07:42 -0700
+Date:   Wed, 1 Apr 2020 10:13:30 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Alex Williamson" <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Jonathan Cameron" <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH V10 06/11] iommu/vt-d: Add bind guest PASID support
+Message-ID: <20200401101330.275f6e34@jacob-builder>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D800EEC@SHSMSX104.ccr.corp.intel.com>
+References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1584746861-76386-7-git-send-email-jacob.jun.pan@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D7F77B4@SHSMSX104.ccr.corp.intel.com>
+        <20200330135138.556ea8a4@jacob-builder>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D800EEC@SHSMSX104.ccr.corp.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20200331152106-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/31/20 12:22 PM, Michael S. Tsirkin wrote:
-> On Tue, Mar 31, 2020 at 11:42:47AM -0700, Randy Dunlap wrote:
->> On 3/31/20 11:37 AM, Michael S. Tsirkin wrote:
->>> On Tue, Mar 31, 2020 at 11:27:54AM -0700, Randy Dunlap wrote:
->>>> On 3/30/20 6:47 PM, akpm@linux-foundation.org wrote:
->>>>> The mm-of-the-moment snapshot 2020-03-30-18-46 has been uploaded to
->>>>>
->>>>>    http://www.ozlabs.org/~akpm/mmotm/
->>>>>
->>>>> mmotm-readme.txt says
->>>>>
->>>>> README for mm-of-the-moment:
->>>>>
->>>>> http://www.ozlabs.org/~akpm/mmotm/
->>>>>
->>>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>>>> more than once a week.
->>>>>
->>>>> You will need quilt to apply these patches to the latest Linus release (5.x
->>>>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->>>>> http://ozlabs.org/~akpm/mmotm/series
->>>>>
->>>>> The file broken-out.tar.gz contains two datestamp files: .DATE and
->>>>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
->>>>> followed by the base kernel version against which this patch series is to
->>>>> be applied.
->>>>>
->>>>> This tree is partially included in linux-next.  To see which patches are
->>>>> included in linux-next, consult the `series' file.  Only the patches
->>>>> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
->>>>> linux-next.
->>>>>
->>>>>
->>>>> A full copy of the full kernel tree with the linux-next and mmotm patches
->>>>> already applied is available through git within an hour of the mmotm
->>>>> release.  Individual mmotm releases are tagged.  The master branch always
->>>>> points to the latest release, so it's constantly rebasing.
->>>>>
->>>>> 	https://github.com/hnaz/linux-mm
->>>>
->>>> on i386:
->>>>
->>>> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_init':
->>>> vdpa.c:(.init.text+0x52): undefined reference to `__vdpa_register_driver'
->>>> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_exit':
->>>> vdpa.c:(.exit.text+0x14): undefined reference to `vdpa_unregister_driver'
->>>>
->>>>
->>>>
->>>> drivers/virtio/vdpa/ is not being built. (confusing!)
->>>>
->>>> CONFIG_VIRTIO=m
->>>> # CONFIG_VIRTIO_MENU is not set
->>>> CONFIG_VDPA=y
->>>
->>> Hmm. OK. Can't figure it out. CONFIG_VDPA is set why isn't
->>> drivers/virtio/vdpa/ built?
->>> we have:
->>>
->>
->> Ack.  Hopefully Yamada-san can tell us what is happening here.
+On Tue, 31 Mar 2020 03:43:39 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
+
+> > > >  struct intel_svm_dev {
+> > > > @@ -698,9 +700,13 @@ struct intel_svm_dev {
+> > > >  struct intel_svm {
+> > > >  	struct mmu_notifier notifier;
+> > > >  	struct mm_struct *mm;
+> > > > +
+> > > >  	struct intel_iommu *iommu;
+> > > >  	int flags;
+> > > >  	int pasid;
+> > > > +	int gpasid; /* Guest PASID in case of vSVA bind with
+> > > > non-identity host
+> > > > +		     * to guest PASID mapping.
+> > > > +		     */  
+> > >
+> > > we don't need to highlight identity or non-identity thing, since
+> > > either way shares the same infrastructure here and it is not the
+> > > knowledge that the kernel driver should assume
+> > >  
+> > Sorry, I don't get your point.
+> > 
+> > What I meant was that this field "gpasid" is only used for
+> > non-identity case. For identity case, we don't have
+> > SVM_FLAG_GUEST_PASID.  
 > 
-> OK I pushed a fix (moving the vdpa subsystem up a level) and pushed into
-> my tree, refs/heads/next .  Seems to build fine now, but I'd appreciate
-> it if you can give it a spin.
-
-This now builds successfully on linux-next of 20200401.
-
-Thanks.
-
--- 
-~Randy
-
+> what's the problem if a guest tries to set gpasid even in identity
+> case? do you want to add check to reject it? Also I remember we
+> discussed before that we want to provide a consistent interface 
+> to other consumer e.g. KVM to setup VMCS PASID translation table.
+> In that case, regardless of identity or non-identity, we need provide
+> such mapping info.
+The solution is in flux a little. For KVM to set up VMCS, we are
+planning to use IOASID set private ID as guest PASID. So this part of
+the code will go away, i.e. G-H PASID mapping will no longer stored in
+IOMMU driver. Perhaps we can address this after the transition?
