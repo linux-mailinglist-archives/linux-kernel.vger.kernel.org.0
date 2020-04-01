@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3BA219B372
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:51:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30FBC19B15A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388737AbgDAQvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:51:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36468 "EHLO mail.kernel.org"
+        id S2388626AbgDAQeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:34:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388689AbgDAQhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:37:20 -0400
+        id S2388456AbgDAQeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:34:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CA2C20772;
-        Wed,  1 Apr 2020 16:37:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0DE420658;
+        Wed,  1 Apr 2020 16:34:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759040;
-        bh=D7cfcTWcDPuK94XUyfReD3ZLUSUdLERf/5iHNX5SLsY=;
+        s=default; t=1585758855;
+        bh=l0tLtA5Kii2quGUsct2DxwWIvKr9B1x+0XIHWHO/7r0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D4k1kYw3H3v2zHTCs0nsDMvRbH1XZmmJnPNbc6DpQns9e4JlziSsRG2fsp9vH6nhO
-         FshirCZUKRqLQfnOvMjqwKqfQQZWEahB5brNJIHZH0UFOHzd8Ox0GbOOIGBOj5ZN+6
-         wN4RykOhXr5bY4kk4ZjQq6YOlGkqb5UJulzezQzc=
+        b=KQNfPArmw9ytxaHhcCi9tr6TBC7PTfaNdTJmZW4Au0UFrjy8eo8HRwn8UPXM92Vbg
+         qst8Dk9YKZnrKARQ+k2GFGiZs4C3jdHTfPkuTN8JmiKxyenbjh9wduwf64L+M9FaEF
+         ndpxtU4v/ZgpW+glZUpVjSMhE91dev0zLbizeE7I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
-Subject: [PATCH 4.9 057/102] i2c: hix5hd2: add missed clk_disable_unprepare in remove
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        =?UTF-8?q?Timo=20Ter=C3=A4s?= <timo.teras@iki.fi>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.4 64/91] xfrm: policy: Fix doulbe free in xfrm_policy_timer
 Date:   Wed,  1 Apr 2020 18:18:00 +0200
-Message-Id: <20200401161543.072380007@linuxfoundation.org>
+Message-Id: <20200401161534.840889950@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,31 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit e1b9f99ff8c40bba6e59de9ad4a659447b1e4112 upstream.
+commit 4c59406ed00379c8663f8663d82b2537467ce9d7 upstream.
 
-The driver forgets to disable and unprepare clk when remove.
-Add a call to clk_disable_unprepare to fix it.
+After xfrm_add_policy add a policy, its ref is 2, then
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@kernel.org
+                             xfrm_policy_timer
+                               read_lock
+                               xp->walk.dead is 0
+                               ....
+                               mod_timer()
+xfrm_policy_kill
+  policy->walk.dead = 1
+  ....
+  del_timer(&policy->timer)
+    xfrm_pol_put //ref is 1
+  xfrm_pol_put  //ref is 0
+    xfrm_policy_destroy
+      call_rcu
+                                 xfrm_pol_hold //ref is 1
+                               read_unlock
+                               xfrm_pol_put //ref is 0
+                                 xfrm_policy_destroy
+                                  call_rcu
+
+xfrm_policy_destroy is called twice, which may leads to
+double free.
+
+Call Trace:
+RIP: 0010:refcount_warn_saturate+0x161/0x210
+...
+ xfrm_policy_timer+0x522/0x600
+ call_timer_fn+0x1b3/0x5e0
+ ? __xfrm_decode_session+0x2990/0x2990
+ ? msleep+0xb0/0xb0
+ ? _raw_spin_unlock_irq+0x24/0x40
+ ? __xfrm_decode_session+0x2990/0x2990
+ ? __xfrm_decode_session+0x2990/0x2990
+ run_timer_softirq+0x5c5/0x10e0
+
+Fix this by use write_lock_bh in xfrm_policy_kill.
+
+Fixes: ea2dea9dacc2 ("xfrm: remove policy lock when accessing policy->walk.dead")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Timo Teräs <timo.teras@iki.fi>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-hix5hd2.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/xfrm/xfrm_policy.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/i2c/busses/i2c-hix5hd2.c
-+++ b/drivers/i2c/busses/i2c-hix5hd2.c
-@@ -498,6 +498,7 @@ static int hix5hd2_i2c_remove(struct pla
- 	i2c_del_adapter(&priv->adap);
- 	pm_runtime_disable(priv->dev);
- 	pm_runtime_set_suspended(priv->dev);
-+	clk_disable_unprepare(priv->clk);
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -330,7 +330,9 @@ EXPORT_SYMBOL(xfrm_policy_destroy);
  
- 	return 0;
- }
+ static void xfrm_policy_kill(struct xfrm_policy *policy)
+ {
++	write_lock_bh(&policy->lock);
+ 	policy->walk.dead = 1;
++	write_unlock_bh(&policy->lock);
+ 
+ 	atomic_inc(&policy->genid);
+ 
 
 
