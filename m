@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BC7219B447
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A03BE19B10E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:32:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732548AbgDAQVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:21:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44690 "EHLO mail.kernel.org"
+        id S2388332AbgDAQbj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:31:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732662AbgDAQVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:21:44 -0400
+        id S2388318AbgDAQba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:31:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E734215A4;
-        Wed,  1 Apr 2020 16:21:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA6152063A;
+        Wed,  1 Apr 2020 16:31:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758103;
-        bh=ZYO6Fm/OrSInh6/jkdhnmOJsKSV+pI6kV4FLqAAtDtg=;
+        s=default; t=1585758690;
+        bh=VsRh+mYVWjw3vw5igl7CNXGZG/GfmVCNJmJHfY/fTPU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w+3H8ZiFlgqjvijI1fCZmNjUQBOXBBRzeJiYDJQ3BSzuClp0TDcZxD/Xu34367mPn
-         rn8VZWsslUpDwxcrvdUlxuRVNcHGKlLWv7x0X34EoyeFrO6LJUC67lfSLj+wXAtJSS
-         qv7jNx/FumrfeExufpolMYNTVH2anP7xaAQhOffQ=
+        b=x768Jh3xL9+lCVSDWisBdriW/RhABiFxOnaUNZw3fu1JNT7hAH9QmwEmnxRk8i2Pm
+         Cb3vIgikpDcaJfSCUH9o1eCAbGrn8tBzobx8AZ0uhfNU/yIiqNzw+gQC7nB/E+qE9F
+         +rfEFGk3WzvvzHuult0wrrYY3rT0Dc3CdMk3qNuE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marc Lehmann <schmorp@schmorp.de>
-Subject: [PATCH 5.4 13/27] gpiolib: acpi: Add quirk to ignore EC wakeups on HP x2 10 CHT + AXP288 model
+        stable@vger.kernel.org, Alaa Hleihel <alaa@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 45/91] IB/ipoib: Do not warn if IPoIB debugfs doesnt exist
 Date:   Wed,  1 Apr 2020 18:17:41 +0200
-Message-Id: <20200401161425.626948291@linuxfoundation.org>
+Message-Id: <20200401161529.019824784@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
-References: <20200401161414.352722470@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Alaa Hleihel <alaa@mellanox.com>
 
-commit 0c625ccfe6f754d0896b8881f5c85bcb81699f1f upstream.
+[ Upstream commit 14fa91e0fef8e4d6feb8b1fa2a807828e0abe815 ]
 
-There are at least 3 models of the HP x2 10 models:
+netdev_wait_allrefs() could rebroadcast NETDEV_UNREGISTER event
+multiple times until all refs are gone, which will result in calling
+ipoib_delete_debug_files multiple times and printing a warning.
 
-Bay Trail SoC + AXP288 PMIC
-Cherry Trail SoC + AXP288 PMIC
-Cherry Trail SoC + TI PMIC
+Remove the WARN_ONCE since checks of NULL pointers before calling
+debugfs_remove are not needed.
 
-Like on the other HP x2 10 models we need to ignore wakeup for ACPI GPIO
-events on the external embedded-controller pin to avoid spurious wakeups
-on the HP x2 10 CHT + AXP288 model too.
-
-This commit adds an extra DMI based quirk for the HP x2 10 CHT + AXP288
-model, ignoring wakeups for ACPI GPIO events on the EC interrupt pin
-on this model. This fixes spurious wakeups from suspend on this model.
-
-Fixes: aa23ca3d98f7 ("gpiolib: acpi: Add honor_wakeup module-option + quirk mechanism")
-Reported-and-tested-by: Marc Lehmann <schmorp@schmorp.de>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://lore.kernel.org/r/20200302111225.6641-4-hdegoede@redhat.com
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 771a52584096 ("IB/IPoIB: ibX: failed to create mcg debug file")
+Signed-off-by: Alaa Hleihel <alaa@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib-acpi.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/infiniband/ulp/ipoib/ipoib_fs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1430,6 +1430,21 @@ static const struct dmi_system_id gpioli
- 			.ignore_wake = "INT33FC:02@28",
- 		},
- 	},
-+	{
-+		/*
-+		 * HP X2 10 models with Cherry Trail SoC + AXP288 PMIC use an
-+		 * external embedded-controller connected via I2C + an ACPI GPIO
-+		 * event handler on INT33FF:01 pin 0, causing spurious wakeups.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "HP Pavilion x2 Detachable"),
-+			DMI_MATCH(DMI_BOARD_NAME, "813E"),
-+		},
-+		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
-+			.ignore_wake = "INT33FF:01@0",
-+		},
-+	},
- 	{} /* Terminating entry */
- };
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_fs.c b/drivers/infiniband/ulp/ipoib/ipoib_fs.c
+index 09396bd7b02d2..63be3bcdc0e38 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_fs.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_fs.c
+@@ -281,8 +281,6 @@ void ipoib_delete_debug_files(struct net_device *dev)
+ {
+ 	struct ipoib_dev_priv *priv = netdev_priv(dev);
  
+-	WARN_ONCE(!priv->mcg_dentry, "null mcg debug file\n");
+-	WARN_ONCE(!priv->path_dentry, "null path debug file\n");
+ 	debugfs_remove(priv->mcg_dentry);
+ 	debugfs_remove(priv->path_dentry);
+ 	priv->mcg_dentry = priv->path_dentry = NULL;
+-- 
+2.20.1
+
 
 
