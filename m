@@ -2,119 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D05D819B924
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C18319B929
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:58:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733254AbgDAXzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 19:55:52 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35943 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732682AbgDAXzw (ORCPT
+        id S1733257AbgDAX6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 19:58:42 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34003 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732560AbgDAX6m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 19:55:52 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jJnCz-0002IU-30; Thu, 02 Apr 2020 01:55:45 +0200
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 734D5100D52; Thu,  2 Apr 2020 01:55:44 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] x86 cleanups for v5.7
-In-Reply-To: <CAHk-=wijWvUfEkqUZRpvo9FCaJNsioS_qZT+iNWUdqQ6eO8Ozw@mail.gmail.com>
-References: <20200331080111.GA20569@gmail.com> <CAHk-=wjpBohNkBSxyPfC7w8165usbU5TuLohdbPs+D0bUYqJhQ@mail.gmail.com> <CAHk-=wijWvUfEkqUZRpvo9FCaJNsioS_qZT+iNWUdqQ6eO8Ozw@mail.gmail.com>
-Date:   Thu, 02 Apr 2020 01:55:44 +0200
-Message-ID: <87v9mioj5r.fsf@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Wed, 1 Apr 2020 19:58:42 -0400
+Received: by mail-pl1-f194.google.com with SMTP id a23so646136plm.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 16:58:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=6HaOIWdsOvizBvUG72A610lipCbSG/hDyB8c4hgjxM4=;
+        b=TIDyu6sFaiElP3YA0sQ8+IyF0Dbte0xNsHwxCQVD2RygK+ekQ1sy1up8ezowMNa53O
+         BDFkGog/4C6cuAplYC1JQ+4p0ceAKuuCVgKqIXhBGw6UXB6Jk7/TphmATJnp8tl9sZaD
+         YeDYTenE0xhy511z4M3NoTSs6Pydy3mHwoEMXAg29WNYU+0WnnyuVWRK26gFAXtXuq3/
+         H4GRC4rV7VhnqZB73GB8BamTWtO7aWlPJPdo/qE6lv8/JhV8n8xMz9RXZ6Dp6G7dmDt4
+         y0d/kbespU0DOgH/PU+GhNoPWZAIzUdx8SraS1wMIuF4oOPY7O6fO6oV8PbObSV/nyn+
+         /vPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6HaOIWdsOvizBvUG72A610lipCbSG/hDyB8c4hgjxM4=;
+        b=Y1AiAJI8yT4FGj95R5AKaVm/vzNCOQ3gi/QHpBisKHW5FK2Cxi0QTbZ625hyj7Gbz7
+         s99G1NPtaIcnLivAPi92MzqFsTNE3QApw944w9NqJ6/sYpDPyThVXeRHUKs2107ZddDc
+         wmVCEOvdTyRWt/2C5vaNOqiJWJq5IgDKEIxzlzBK1RGz/FVqdVQlDEcsJhRcFp0bBIBx
+         n9bKkDnz8aVyhFa/1CEMvWYHu3edCzFNgL63EQeCvJsVlDmJJ8Y2WQJjDf19cgwYKxMT
+         98Dj+NjVtJQrTomDni+BLHRNgv1CfqbpXRQ+ofFPtKj5/LV1hWp4/th+PWUxBxYGKC3b
+         9a/w==
+X-Gm-Message-State: AGi0Pub1FXo/sZgra1mkSaSSQKL+t/kreyeE8AzfytEphh1yGeSf5Zr2
+        W5mx/mvTWE58n0BYgskZSNyA1bSO9lg=
+X-Google-Smtp-Source: APiQypLpGOrbF/srm2g4dqFOnyAzBHe5EYC1anmwa1xXj4psO2w9BNnq2XCMc/1WpyjHjShJ9LnCtw==
+X-Received: by 2002:a17:90a:71c5:: with SMTP id m5mr592961pjs.193.1585785519306;
+        Wed, 01 Apr 2020 16:58:39 -0700 (PDT)
+Received: from nuc7.sifive.com (c-24-5-48-146.hsd1.ca.comcast.net. [24.5.48.146])
+        by smtp.gmail.com with ESMTPSA id o29sm2405893pfp.208.2020.04.01.16.58.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 01 Apr 2020 16:58:38 -0700 (PDT)
+From:   Alan Mikhak <alan.mikhak@sifive.com>
+X-Google-Original-From: Alan Mikhak < alan.mikhak@sifive.com >
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        lorenzo.pieralisi@arm.com, amurray@thegoodpenguin.co.uk,
+        bhelgaas@google.com, kishon@ti.com, paul.walmsley@sifive.com
+Cc:     Alan Mikhak <alan.mikhak@sifive.com>
+Subject: [PATCH] PCI: dwc: Program outbound ATU upper limit register
+Date:   Wed,  1 Apr 2020 16:58:13 -0700
+Message-Id: <1585785493-23210-1-git-send-email-alan.mikhak@sifive.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+From: Alan Mikhak <alan.mikhak@sifive.com>
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+Function dw_pcie_prog_outbound_atu_unroll() does not program the upper
+32-bit ATU limit register. Since ATU programming functions limit the
+size of the translated region to 4GB by using a u32 size parameter,
+these issues may combine into undefined behavior for resource sizes
+with non-zero upper 32-bits.
 
-> On Tue, Mar 31, 2020 at 11:09 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> Lovely. This now makes my local boot-test tree be much closer to my
->> upstream tree, since I've had my clang asm-goto stuff in my boot tree
->> (and it had that series from Al).
->
-> Side note: I've extended on the x86 uaccess cleanups a bit with a
-> couple of commits:
->
->   x86: start using named parameters for low-level uaccess asms
->   x86: get rid of 'rtype' argument to __get_user_asm() macro
->   x86: get rid of 'rtype' argument to __put_user_goto() macro
->   x86: get rid of 'errret' argument to __get_user_xyz() macross
->   x86: remove __put_user_asm() infrastructure
+For example, a 128GB address space starting at physical CPU address of
+0x2000000000 with size of 0x2000000000 needs the following values
+programmed into the lower and upper 32-bit limit registers:
+ 0x3fffffff in the upper 32-bit limit register
+ 0xffffffff in the lower 32-bit limit register
 
-A few comments:
+Currently, only the lower 32-bit limit register is programmed with a
+value of 0xffffffff but the upper 32-bit limit register is not being
+programmed. As a result, the upper 32-bit limit register remains at its
+default value after reset of 0x0.
 
-  - x86 starts the short log after the colon with an uppercase
-    letter
+These issues may combine to produce undefined behavior since the ATU
+limit address may be lower than the ATU base address. Programming the
+upper ATU limit address register prevents such undefined behavior despite
+the region size getting truncated due to the 32-bit size limit.
 
-  - 'macross' is really gross :)
+Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
+---
+ drivers/pci/controller/dwc/pcie-designware.c | 7 +++++--
+ drivers/pci/controller/dwc/pcie-designware.h | 3 ++-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-  - All commits lack a Link:https//lore.kernel.org/r/$MSG-ID tag. That
-    might be an oversight or just reflecting the fact that these patches
-    have never seen a mailing list.
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index 681548c88282..c92496e36fd5 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -244,13 +244,16 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
+ 					     u64 pci_addr, u32 size)
+ {
+ 	u32 retries, val;
++	u64 limit_addr = cpu_addr + size - 1;
+ 
+ 	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_LOWER_BASE,
+ 				 lower_32_bits(cpu_addr));
+ 	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_UPPER_BASE,
+ 				 upper_32_bits(cpu_addr));
+-	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_LIMIT,
+-				 lower_32_bits(cpu_addr + size - 1));
++	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_LOWER_LIMIT,
++				 lower_32_bits(limit_addr));
++	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_UPPER_LIMIT,
++				 upper_32_bits(limit_addr));
+ 	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_LOWER_TARGET,
+ 				 lower_32_bits(pci_addr));
+ 	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_UPPER_TARGET,
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index a22ea5982817..5ce1aef706c5 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -112,9 +112,10 @@
+ #define PCIE_ATU_UNR_REGION_CTRL2	0x04
+ #define PCIE_ATU_UNR_LOWER_BASE		0x08
+ #define PCIE_ATU_UNR_UPPER_BASE		0x0C
+-#define PCIE_ATU_UNR_LIMIT		0x10
++#define PCIE_ATU_UNR_LOWER_LIMIT	0x10
+ #define PCIE_ATU_UNR_LOWER_TARGET	0x14
+ #define PCIE_ATU_UNR_UPPER_TARGET	0x18
++#define PCIE_ATU_UNR_UPPER_LIMIT	0x20
+ 
+ /*
+  * The default address offset between dbi_base and atu_base. Root controller
+-- 
+2.7.4
 
-    If my brain hasn't gone into complete wishful thinking mode there is
-    general consenus that we want to have visability and traceability of
-    changes including those which come from maintainers for various good
-    reasons (The obvious 'fix a typo breaking the build' exempted).
-
-    Of course that's at your discretion.
-
-> which I _tried_ to make complete no-ops (comparing code generation
-> before and after). Sadly, one of them (the "get rid of 'rtype'
-> argument to __get_user_asm" one) causes gcc to pick different
-> registers for me because now the temporary variables have different
-> sizes.
->
-> (The others cause line number data changes, of course, but I didn't
-> see any _code_ changes).
->
-> So that one commit results in a lot of small noise changes to the
-> generated code for me, but the few I looked at closer all looked the
-> same (mostly just different register, sometimes odd improvements where
-> it avoided doing a stupid "andq $0xffffffff", and in one or two cases
-> it seemed to randomly just change the stack frame size, sometimes to
-> the better, sometimes to worse).
-
-From a quick check I can confirm that the resulting text changes are
-just random noise and I did not notice anything horrible in the
-generated code either.
-
-> The others should be purely semantically identical.
->
-> It was all just small prep to make the patch I have for "asm goto with
-> outputs" have a smaller footprint - particularly when I try to then
-> make it work with compilers that don't have the capability, and I need
-> to have different output registers for that case.
->
-> I'm not planning on actually doing that patch this merge window, it's
-> just not ready enough. But just in case somebody (Al?) is still
-> working on the uaccess.h file, letting you know about my preparatory
-> cleanups.
-
-See above.
-
-Thanks,
-
-        tglx
