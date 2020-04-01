@@ -2,48 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32A9D19B0AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4425919B12F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:33:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388123AbgDAQ23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:28:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53808 "EHLO mail.kernel.org"
+        id S2388457AbgDAQcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:32:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388104AbgDAQ21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:28:27 -0400
+        id S2388063AbgDAQct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:32:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32BA120857;
-        Wed,  1 Apr 2020 16:28:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08DA820658;
+        Wed,  1 Apr 2020 16:32:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758506;
-        bh=Tmn5oleCgqpuxbdTFU9DQWUHW4JqZTaDz7bSMafc/Eo=;
+        s=default; t=1585758768;
+        bh=O4kjnvhC3zvxd7cwHWaB9JReiJed4iUZpZu3OVqfhlo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hkxaCa95Bse6LViwdzY/piHRkk13DTYzbEOabeFvTKja4AWlYL5XYfdF6YUnloU3y
-         1snFcgQUi+KTb789D6zs85FM9rDNuaH9YmsWi4DMez3o1/sE04pErvWn1UyWt2Xt4u
-         M5VRFM4nhLYIQvcrxPJHsHyASqhG79pWEsl8h0rI=
+        b=wCdB+8vi0kCi8GgfJoVOIbPTMKj5l32UBIx+WxZ2Rqet8SFBLto2N+FneEN8oACQE
+         Ne1YepOT/aON7OwB9X/IaP+b2wYRf1aazzRcSl2kIIkxdW4tFTRcLGy4vYHD/fz0ho
+         q3nXFxTwq1i9zwO/nDs28nRquccgbp7to4nP3NqE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        disconnect3d <dominik.b.czarnota@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Changbin Du <changbin.du@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, John Keeping <john@metanate.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Lentine <mlentine@google.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        Stephane Eranian <eranian@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.19 110/116] perf map: Fix off by one in strncpy() size argument
+        stable@vger.kernel.org, Anthony Mallet <anthony.mallet@laas.fr>,
+        Oliver Neukum <oneukum@suse.com>,
+        Matthias Reichl <hias@horus.com>
+Subject: [PATCH 4.4 70/91] USB: cdc-acm: restore capability check order
 Date:   Wed,  1 Apr 2020 18:18:06 +0200
-Message-Id: <20200401161556.222657643@linuxfoundation.org>
+Message-Id: <20200401161536.413344369@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,55 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: disconnect3d <dominik.b.czarnota@gmail.com>
+From: Matthias Reichl <hias@horus.com>
 
-commit db2c549407d4a76563c579e4768f7d6d32afefba upstream.
+commit 62d65bdd9d05158aa2547f8ef72375535f3bc6e3 upstream.
 
-This patch fixes an off-by-one error in strncpy size argument in
-tools/perf/util/map.c. The issue is that in:
+commit b401f8c4f492c ("USB: cdc-acm: fix rounding error in TIOCSSERIAL")
+introduced a regression by changing the order of capability and close
+settings change checks. When running with CAP_SYS_ADMIN setting the
+close settings to the values already set resulted in -EOPNOTSUPP.
 
-        strncmp(filename, "/system/lib/", 11)
+Fix this by changing the check order back to how it was before.
 
-the passed string literal: "/system/lib/" has 12 bytes (without the NULL
-byte) and the passed size argument is 11. As a result, the logic won't
-match the ending "/" byte and will pass filepaths that are stored in
-other directories e.g. "/system/libmalicious/bin" or just
-"/system/libmalicious".
-
-This functionality seems to be present only on Android. I assume the
-/system/ directory is only writable by the root user, so I don't think
-this bug has much (or any) security impact.
-
-Fixes: eca818369996 ("perf tools: Add automatic remapping of Android libraries")
-Signed-off-by: disconnect3d <dominik.b.czarnota@gmail.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Changbin Du <changbin.du@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: John Keeping <john@metanate.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Michael Lentine <mlentine@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lore.kernel.org/lkml/20200309104855.3775-1-dominik.b.czarnota@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: b401f8c4f492c ("USB: cdc-acm: fix rounding error in TIOCSSERIAL")
+Cc: Anthony Mallet <anthony.mallet@laas.fr>
+Cc: stable <stable@vger.kernel.org>
+Cc: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Matthias Reichl <hias@horus.com>
+Link: https://lore.kernel.org/r/20200327150350.3657-1-hias@horus.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/map.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/class/cdc-acm.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -85,7 +85,7 @@ static inline bool replace_android_lib(c
- 		return true;
- 	}
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -876,16 +876,16 @@ static int set_serial_info(struct acm *a
  
--	if (!strncmp(filename, "/system/lib/", 11)) {
-+	if (!strncmp(filename, "/system/lib/", 12)) {
- 		char *ndk, *app;
- 		const char *arch;
- 		size_t ndk_length;
+ 	mutex_lock(&acm->port.mutex);
+ 
+-	if ((new_serial.close_delay != old_close_delay) ||
+-            (new_serial.closing_wait != old_closing_wait)) {
+-		if (!capable(CAP_SYS_ADMIN))
++	if (!capable(CAP_SYS_ADMIN)) {
++		if ((new_serial.close_delay != old_close_delay) ||
++	            (new_serial.closing_wait != old_closing_wait))
+ 			retval = -EPERM;
+-		else {
+-			acm->port.close_delay  = close_delay;
+-			acm->port.closing_wait = closing_wait;
+-		}
+-	} else
+-		retval = -EOPNOTSUPP;
++		else
++			retval = -EOPNOTSUPP;
++	} else {
++		acm->port.close_delay  = close_delay;
++		acm->port.closing_wait = closing_wait;
++	}
+ 
+ 	mutex_unlock(&acm->port.mutex);
+ 	return retval;
 
 
