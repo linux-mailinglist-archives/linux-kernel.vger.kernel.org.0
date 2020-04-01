@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6A0219A9A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:36:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B40819A9AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:37:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732205AbgDAKgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 06:36:49 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:59898 "EHLO
+        id S1732234AbgDAKg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:36:56 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:54085 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726335AbgDAKgq (ORCPT
+        by vger.kernel.org with ESMTP id S1728419AbgDAKgs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:36:46 -0400
+        Wed, 1 Apr 2020 06:36:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585737405;
+        s=mimecast20190719; t=1585737407;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=pTMAdqU+ugzMWvGlDNrRAiYz9yYUyPqvJDeNn6ohk+E=;
-        b=jTDWWzPIKGimIpbLPB6x0hfuk2ocogAvAoHxS2tguo086X+qy7eiH2zuoNQrt//zXdEI5s
-        3ufeX8UWZy9XpeA5TpdpoyYZyNVbOHsMm7UDTVLGJTOs7Sh57gxh/IaEs+sm7Y4/ZRhIq1
-        YJSDU6i3kQ+GOmd7izvSaRxKaOxUSOg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-105-FxTSpXmGMxGSxYCpzd1xLA-1; Wed, 01 Apr 2020 06:36:44 -0400
-X-MC-Unique: FxTSpXmGMxGSxYCpzd1xLA-1
-Received: by mail-wm1-f71.google.com with SMTP id e16so1412751wmh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 03:36:44 -0700 (PDT)
+        bh=95SLTRxzNA6I7Qs5MDcrqUNSgYhms1oIYNK1Km/D7+g=;
+        b=Q025UPL7rkd/gpPIMX9a3RAtbQ1uCsb+v/IzS3zKfRFZ0J0Bi3nHwtw/2QJgC6ZAm0X3vu
+        fVwK234unpToF3LHyacL782Vj7l1LbpHb8IBjC1xu848ZZj2XP6ZvgBCmLcQueywMsz4MG
+        BV+9FCoeeEvvJC7rebtNKhJ8V4FU0hA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-424-04I3MTwBNp6C8KE4tN8pWQ-1; Wed, 01 Apr 2020 06:36:45 -0400
+X-MC-Unique: 04I3MTwBNp6C8KE4tN8pWQ-1
+Received: by mail-wm1-f72.google.com with SMTP id s22so1642067wmh.8
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 03:36:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pTMAdqU+ugzMWvGlDNrRAiYz9yYUyPqvJDeNn6ohk+E=;
-        b=DLYZPgOSdRo2m7NBxg3QDAM4GvogPjqn3rlRvxXB0GXRrd0R1ZTLtKe4PH3Eg6gKDn
-         D3ET0vsGYdQMsDDlnzovCtxtrpaT8MVxgUS+bye7XUOcGMjh/thl30WPztBR5rfEbWQF
-         ABssnAcKXuaIBtUhM9D1NZtSBJcypgMgnCMmyAQJqiNZHON6ZUokSbA/ntFL4folq+n5
-         Vhba9/IQsWjyTvhTzJOwWicGCMWNd8HHhglRVsFDto0Zh8j62ENRVS9Rqo+fLmikl+HA
-         awY3gDAV5wdeccauDoTsUF+hvd0BaIBY6IL4f3jq4kKTieKPG6jYt5Y2IFiE9MmxnmBi
-         tkdQ==
-X-Gm-Message-State: ANhLgQ2AjLg/dOXYQA9tCjHnUGZ+TaB8KgDreLPL8vslw7d0yHfbQ/YE
-        rKk3T897n/tZCffQVEq3z3KXr7xhlccwVSoJSLV6T4Vf77fAMXZGUxa++c7da6xR0f1goKas+1J
-        mxvCpxNW6N6QKJStFNdLZc6CH
-X-Received: by 2002:a05:6000:1251:: with SMTP id j17mr25360958wrx.228.1585737403125;
-        Wed, 01 Apr 2020 03:36:43 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vvAMOV86AAHVFcAO0uJb1VAvbbzxIEVyPp1fjfHoIulN0RBiry0OhOybZEb+BNwNyvFyAm+9w==
-X-Received: by 2002:a05:6000:1251:: with SMTP id j17mr25360940wrx.228.1585737402886;
-        Wed, 01 Apr 2020 03:36:42 -0700 (PDT)
+        bh=95SLTRxzNA6I7Qs5MDcrqUNSgYhms1oIYNK1Km/D7+g=;
+        b=IfoGmdt/0cAA7aT7ko2kEGqqcdL19lsCcUaHv17zPE/JJtwCsu/rE2Y3aGWQnGBzoj
+         D0U8sz99m/guPTUbQakKR+nyty6ueE0KZT04QXJr5FurE3YUAUo8MmayOL357DxL3Qij
+         TuN8mY0XB2BKLaIqXG4pkmtR3W5FENBkgvu4reH6iMGMx2+lY0s7dUqNosEufH+P84pi
+         knjzWkAMlhO3dleEasRi2CFUZYFqsM+6wfa+FHG2d7nDulsONDTLxvXs0Wr2UaH6zLUQ
+         A5SWBT4tOo6rT8/l2CKsVqtnVFQFjX/M82ThmwLIERff1fLOcU+8HRA6qCDgRj19AGts
+         aO6A==
+X-Gm-Message-State: ANhLgQ2NtwfUVVB8jAJdph8DkLnFprJEYK8CdrlKFWp612zBZEwdrTLQ
+        biiZ8GQ+4BguKjQ9RkmMw5UxB1q4CCFl1RNJC/TjfcdYs6e/WgA4IznecTs5t+3hLq9TnHx9aGh
+        3lf4BStHyOgaGMSZKpFIs2Ebs
+X-Received: by 2002:adf:f68b:: with SMTP id v11mr24104973wrp.270.1585737404484;
+        Wed, 01 Apr 2020 03:36:44 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vupbXj+AHoPKJR8dpFDHt1zLdiYOWj2Qkuu2LQbrdXTWCGsIkDoKHFfZUzBvnLpI5KUmjLZPQ==
+X-Received: by 2002:adf:f68b:: with SMTP id v11mr24104958wrp.270.1585737404297;
+        Wed, 01 Apr 2020 03:36:44 -0700 (PDT)
 Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
-        by smtp.gmail.com with ESMTPSA id b187sm2247522wmc.14.2020.04.01.03.36.41
+        by smtp.gmail.com with ESMTPSA id b187sm2247522wmc.14.2020.04.01.03.36.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 03:36:42 -0700 (PDT)
+        Wed, 01 Apr 2020 03:36:43 -0700 (PDT)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     linux-hyperv@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Wei Liu <wei.liu@kernel.org>,
@@ -60,9 +60,9 @@ Cc:     linux-kernel@vger.kernel.org, Wei Liu <wei.liu@kernel.org>,
         Haiyang Zhang <haiyangz@microsoft.com>,
         Stephen Hemminger <sthemmin@microsoft.com>,
         "Andrea Parri (Microsoft)" <parri.andrea@gmail.com>
-Subject: [PATCH 1/5] Drivers: hv: copy from message page only what's needed
-Date:   Wed,  1 Apr 2020 12:36:34 +0200
-Message-Id: <20200401103638.1406431-2-vkuznets@redhat.com>
+Subject: [PATCH 2/5] Drivers: hv: allocate the exact needed memory for messages
+Date:   Wed,  1 Apr 2020 12:36:35 +0200
+Message-Id: <20200401103638.1406431-3-vkuznets@redhat.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200401103638.1406431-1-vkuznets@redhat.com>
 References: <20200401103638.1406431-1-vkuznets@redhat.com>
@@ -73,44 +73,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hyper-V Interrupt Message Page (SIMP) has 16 256-byte slots for
-messages. Each message comes with a header (16 bytes) which specifies the
-payload length (up to 240 bytes). vmbus_on_msg_dpc(), however, doesn't
-look at the real message length and copies the whole slot to a temporary
-buffer before passing it to message handlers. This is potentially dangerous
-as hypervisor doesn't have to clean the whole slot when putting a new
-message there and a message handler can get access to some data which
-belongs to a previous message.
-
-Note, this is not currently a problem because all message handlers are
-in-kernel but eventually we may e.g. get this exported to userspace.
-
-Note also, that this is not a performance critical path: messages (unlike
-events) represent rare events so it doesn't really matter (from performance
-point of view) if we copy too much.
-
-Fix the issue by taking into account the real message length. The temporary
-buffer allocated by vmbus_on_msg_dpc() remains fixed size for now.
+When we need to pass a buffer with Hyper-V message we don't need to always
+allocate 256 bytes for the message: the real message length is known from
+the header. Change 'struct onmessage_work_context' to make it possible to
+not over-allocate.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- drivers/hv/vmbus_drv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/hv/vmbus_drv.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 029378c27421..2b5572146358 100644
+index 2b5572146358..642782bef863 100644
 --- a/drivers/hv/vmbus_drv.c
 +++ b/drivers/hv/vmbus_drv.c
-@@ -1043,7 +1043,8 @@ void vmbus_on_msg_dpc(unsigned long data)
+@@ -991,7 +991,10 @@ static struct bus_type  hv_bus = {
+ 
+ struct onmessage_work_context {
+ 	struct work_struct work;
+-	struct hv_message msg;
++	struct {
++		struct hv_message_header header;
++		u8 payload[];
++	} msg;
+ };
+ 
+ static void vmbus_onmessage_work(struct work_struct *work)
+@@ -1038,7 +1041,8 @@ void vmbus_on_msg_dpc(unsigned long data)
+ 		goto msg_handled;
+ 
+ 	if (entry->handler_type	== VMHT_BLOCKING) {
+-		ctx = kmalloc(sizeof(*ctx), GFP_ATOMIC);
++		ctx = kmalloc(sizeof(*ctx) + msg->header.payload_size,
++			      GFP_ATOMIC);
+ 		if (ctx == NULL)
  			return;
  
- 		INIT_WORK(&ctx->work, vmbus_onmessage_work);
--		memcpy(&ctx->msg, msg, sizeof(*msg));
-+		memcpy(&ctx->msg, msg, sizeof(msg->header) +
-+		       msg->header.payload_size);
+@@ -1092,10 +1096,11 @@ static void vmbus_force_channel_rescinded(struct vmbus_channel *channel)
+ 	WARN_ON(!is_hvsock_channel(channel));
  
- 		/*
- 		 * The host can generate a rescind message while we
+ 	/*
+-	 * sizeof(*ctx) is small and the allocation should really not fail,
++	 * Allocation size is small and the allocation should really not fail,
+ 	 * otherwise the state of the hv_sock connections ends up in limbo.
+ 	 */
+-	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL | __GFP_NOFAIL);
++	ctx = kzalloc(sizeof(*ctx) + sizeof(*rescind),
++		      GFP_KERNEL | __GFP_NOFAIL);
+ 
+ 	/*
+ 	 * So far, these are not really used by Linux. Just set them to the
+@@ -1105,7 +1110,7 @@ static void vmbus_force_channel_rescinded(struct vmbus_channel *channel)
+ 	ctx->msg.header.payload_size = sizeof(*rescind);
+ 
+ 	/* These values are actually used by Linux. */
+-	rescind = (struct vmbus_channel_rescind_offer *)ctx->msg.u.payload;
++	rescind = (struct vmbus_channel_rescind_offer *)ctx->msg.payload;
+ 	rescind->header.msgtype = CHANNELMSG_RESCIND_CHANNELOFFER;
+ 	rescind->child_relid = channel->offermsg.child_relid;
+ 
 -- 
 2.25.1
 
