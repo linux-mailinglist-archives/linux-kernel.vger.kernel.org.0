@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF7119B1B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6190419B27A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388958AbgDAQhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:37:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36370 "EHLO mail.kernel.org"
+        id S2389718AbgDAQoW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:44:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388942AbgDAQhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:37:15 -0400
+        id S2389691AbgDAQoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:44:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72F9B20658;
-        Wed,  1 Apr 2020 16:37:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1994D20705;
+        Wed,  1 Apr 2020 16:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759034;
-        bh=BDs+C/coW+DnubOt+dhIDCaG5Up4p/pEmCVLYl8TFMY=;
+        s=default; t=1585759459;
+        bh=3wk1i2l/6xed/usOGEbaHUqXGca5O6Lue6HwF1TsETk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KyinvpB+limXLFbLLj8LAzwfm8KSgtYelZhwp8IOhZy9c0uaw+ALxh3GaMOVNLQd0
-         HhJbhlREZjohYsgu0hpuVSOFKmqvhRogM3Ri03aZGWki6dShs8Mvg801ktmzdlFwIo
-         JhUWJEDk2B5S551lYanoe6YwJ/ekduSOEbtS4B8U=
+        b=TRY6ceQOyYBf7Lo4/6oEgtADwpq0+kVmv9gIqu70pTz3nIJ1o+rbin6fhXytzfmYc
+         l2hFk43GK+OcdTWnar76gHcMpKwj2421bi6HxdxKJh1Ipo7TJV4cjDsKK1gRqQyuy9
+         tjZsSPsL0xTubx6tdHQff7N0YqXtR4q43d1sQc0o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dominik Czarnota <dominik.b.czarnota@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 056/102] sxgbe: Fix off by one in samsung driver strncpy size arg
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.14 087/148] ftrace/x86: Anotate text_mutex split between ftrace_arch_code_modify_post_process() and ftrace_arch_code_modify_prepare()
 Date:   Wed,  1 Apr 2020 18:17:59 +0200
-Message-Id: <20200401161542.980166459@linuxfoundation.org>
+Message-Id: <20200401161601.402505957@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dominik Czarnota <dominik.b.czarnota@gmail.com>
+From: Jiri Kosina <jkosina@suse.cz>
 
-[ Upstream commit f3cc008bf6d59b8d93b4190e01d3e557b0040e15 ]
+commit 074376ac0e1d1fcd4fafebca86ee6158e7c20680 upstream.
 
-This patch fixes an off-by-one error in strncpy size argument in
-drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c. The issue is that in:
+ftrace_arch_code_modify_prepare() is acquiring text_mutex, while the
+corresponding release is happening in ftrace_arch_code_modify_post_process().
 
-        strncmp(opt, "eee_timer:", 6)
+This has already been documented in the code, but let's also make the fact
+that this is intentional clear to the semantic analysis tools such as sparse.
 
-the passed string literal: "eee_timer:" has 10 bytes (without the NULL
-byte) and the passed size argument is 6. As a result, the logic will
-also accept other, malformed strings, e.g. "eee_tiXXX:".
+Link: http://lkml.kernel.org/r/nycvar.YFH.7.76.1906292321170.27227@cbobk.fhfr.pm
 
-This bug doesn't seem to have any security impact since its present in
-module's cmdline parsing code.
+Fixes: 39611265edc1a ("ftrace/x86: Add a comment to why we take text_mutex in ftrace_arch_code_modify_prepare()")
+Fixes: d5b844a2cf507 ("ftrace/x86: Remove possible deadlock between register_kprobe() and ftrace_run_update_code()")
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Dominik Czarnota <dominik.b.czarnota@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/ftrace.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
-index ea44a2456ce16..11dd7c8d576d6 100644
---- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
-+++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
-@@ -2313,7 +2313,7 @@ static int __init sxgbe_cmdline_opt(char *str)
- 	if (!str || !*str)
- 		return -EINVAL;
- 	while ((opt = strsep(&str, ",")) != NULL) {
--		if (!strncmp(opt, "eee_timer:", 6)) {
-+		if (!strncmp(opt, "eee_timer:", 10)) {
- 			if (kstrtoint(opt + 10, 0, &eee_timer))
- 				goto err;
- 		}
--- 
-2.20.1
-
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -36,6 +36,7 @@
+ #ifdef CONFIG_DYNAMIC_FTRACE
+ 
+ int ftrace_arch_code_modify_prepare(void)
++    __acquires(&text_mutex)
+ {
+ 	mutex_lock(&text_mutex);
+ 	set_kernel_text_rw();
+@@ -44,6 +45,7 @@ int ftrace_arch_code_modify_prepare(void
+ }
+ 
+ int ftrace_arch_code_modify_post_process(void)
++    __releases(&text_mutex)
+ {
+ 	set_all_modules_text_ro();
+ 	set_kernel_text_ro();
 
 
