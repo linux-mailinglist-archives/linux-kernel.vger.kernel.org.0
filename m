@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E40EA19B18C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E43DA19B039
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388801AbgDAQf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:35:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34770 "EHLO mail.kernel.org"
+        id S2387793AbgDAQZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:25:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388795AbgDAQf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:35:56 -0400
+        id S2387783AbgDAQZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:25:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A55220857;
-        Wed,  1 Apr 2020 16:35:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CB0120BED;
+        Wed,  1 Apr 2020 16:25:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758955;
-        bh=Dxdis/KJKogw06PdKI7YE6I+j6JbrgSMNU1dghE2T48=;
+        s=default; t=1585758307;
+        bh=P7eaBlYz4GzVkyvhowH9g6w/cqbHD7kEmXW8Sh3FLOs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MTJbRmISy47bfK4xp6NBU4z6Tr0KkFwJ82zrrWv6Td0Rjrdf+0rlHgW8iXvkxg6dm
-         RFAkVUrhQwOcs1Ts8SCaRKP1QlqaixtuMOgI3/3cv5vJMB1qHZLIwDjQmLGzxQ3XDa
-         DOAn/eSH53tsEeYXjWyGiM06wq4YXvQC9jXqaY5w=
+        b=dt7NeYoSbpBtC1R+3x3QNYCLqBpjBWwdwFTPAeDwRUHEsGkcnrbaF0YvKOph3WfSs
+         8k6EZ541wHWqDAi6DRAiyaR/Id+d8lf4eb1ajAERkfcKi8qps8KYVMRL4NYee2zM63
+         C4rUNXarZTnYlgb+AYJAWY0VNX36njcB63NrVdBc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 003/102] ARM: dts: dra7: Add "dma-ranges" property to PCIe RC DT nodes
+        stable@vger.kernel.org, Eugene Syromiatnikov <esyr@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.19 050/116] Input: avoid BIT() macro usage in the serio.h UAPI header
 Date:   Wed,  1 Apr 2020 18:17:06 +0200
-Message-Id: <20200401161532.006689044@linuxfoundation.org>
+Message-Id: <20200401161548.975886443@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Eugene Syromiatnikov <esyr@redhat.com>
 
-[ Upstream commit 27f13774654ea6bd0b6fc9b97cce8d19e5735661 ]
+commit 52afa505a03d914081f40cb869a3248567a57573 upstream.
 
-'dma-ranges' in a PCI bridge node does correctly set dma masks for PCI
-devices not described in the DT. Certain DRA7 platforms (e.g., DRA76)
-has RAM above 32-bit boundary (accessible with LPAE config) though the
-PCIe bridge will be able to access only 32-bits. Add 'dma-ranges'
-property in PCIe RC DT nodes to indicate the host bridge can access
-only 32 bits.
+The commit 19ba1eb15a2a ("Input: psmouse - add a custom serio protocol
+to send extra information") introduced usage of the BIT() macro
+for SERIO_* flags; this macro is not provided in UAPI headers.
+Replace if with similarly defined _BITUL() macro defined
+in <linux/const.h>.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 19ba1eb15a2a ("Input: psmouse - add a custom serio protocol to send extra information")
+Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: <stable@vger.kernel.org> # v5.0+
+Link: https://lore.kernel.org/r/20200324041341.GA32335@asgard.redhat.com
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/dts/dra7.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ include/uapi/linux/serio.h |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
-index a1a928064b53d..f94064c687789 100644
---- a/arch/arm/boot/dts/dra7.dtsi
-+++ b/arch/arm/boot/dts/dra7.dtsi
-@@ -282,6 +282,7 @@
- 				device_type = "pci";
- 				ranges = <0x81000000 0 0          0x03000 0 0x00010000
- 					  0x82000000 0 0x20013000 0x13000 0 0xffed000>;
-+				dma-ranges = <0x02000000 0x0 0x00000000 0x00000000 0x1 0x00000000>;
- 				bus-range = <0x00 0xff>;
- 				#interrupt-cells = <1>;
- 				num-lanes = <1>;
-@@ -319,6 +320,7 @@
- 				device_type = "pci";
- 				ranges = <0x81000000 0 0          0x03000 0 0x00010000
- 					  0x82000000 0 0x30013000 0x13000 0 0xffed000>;
-+				dma-ranges = <0x02000000 0x0 0x00000000 0x00000000 0x1 0x00000000>;
- 				bus-range = <0x00 0xff>;
- 				#interrupt-cells = <1>;
- 				num-lanes = <1>;
--- 
-2.20.1
-
+--- a/include/uapi/linux/serio.h
++++ b/include/uapi/linux/serio.h
+@@ -9,7 +9,7 @@
+ #ifndef _UAPI_SERIO_H
+ #define _UAPI_SERIO_H
+ 
+-
++#include <linux/const.h>
+ #include <linux/ioctl.h>
+ 
+ #define SPIOCSTYPE	_IOW('q', 0x01, unsigned long)
+@@ -18,10 +18,10 @@
+ /*
+  * bit masks for use in "interrupt" flags (3rd argument)
+  */
+-#define SERIO_TIMEOUT	BIT(0)
+-#define SERIO_PARITY	BIT(1)
+-#define SERIO_FRAME	BIT(2)
+-#define SERIO_OOB_DATA	BIT(3)
++#define SERIO_TIMEOUT	_BITUL(0)
++#define SERIO_PARITY	_BITUL(1)
++#define SERIO_FRAME	_BITUL(2)
++#define SERIO_OOB_DATA	_BITUL(3)
+ 
+ /*
+  * Serio types
 
 
