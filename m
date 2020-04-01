@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CA1719B05F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6324619B17D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732904AbgDAQ0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:26:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50740 "EHLO mail.kernel.org"
+        id S2388511AbgDAQf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:35:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732342AbgDAQ0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:26:17 -0400
+        id S2388738AbgDAQfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:35:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5041520857;
-        Wed,  1 Apr 2020 16:26:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47ED7206F8;
+        Wed,  1 Apr 2020 16:35:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758376;
-        bh=nl2ZN3Pi4tmBVjj446X5Z8x61Da2qbmYcHGQwxUDZvY=;
+        s=default; t=1585758924;
+        bh=F/Gy3fZ+eLJ73Pa8V1RLGOH2/lFrLfrdt909e5D8MEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IhJp0mmIaOUJhyWYgW0mBG7I5fHfJSXFeL1+OfaIN3bQcyysiuVYwjxxINbpxa2kU
-         SnoP0elvhrIYMIOekBCLWuhPDZ4TkWyKLyxwTgtV5/KwBSVtoX7luqjqSA7krLPwwg
-         ARumxNsbwCYe02CNXgrKzjpiVgF55kDX8fulTLu8=
+        b=PgU+RgIrdkTP2OLVBZjqPG+C4HCrBlvp2FkucLmQph7dS0xYxpcCxAUJo3oWJxuBC
+         ts61/416kLxkRh19bvVhn/5OszSNCe6fdjzUvbUjrcnK5nV8xye22p5Uhu39XJ6bzj
+         IckYKHHxs3Yu44oK6A6TF08OyrXkKSpqfOlKpGPo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        =?UTF-8?q?Timo=20Ter=C3=A4s?= <timo.teras@iki.fi>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.19 070/116] xfrm: policy: Fix doulbe free in xfrm_policy_timer
+        stable@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 023/102] rtc: max8907: add missing select REGMAP_IRQ
 Date:   Wed,  1 Apr 2020 18:17:26 +0200
-Message-Id: <20200401161552.010151210@linuxfoundation.org>
+Message-Id: <20200401161537.427316084@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,70 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Corentin Labbe <clabbe@baylibre.com>
 
-commit 4c59406ed00379c8663f8663d82b2537467ce9d7 upstream.
+commit 5d892919fdd0cefd361697472d4e1b174a594991 upstream.
 
-After xfrm_add_policy add a policy, its ref is 2, then
+I have hit the following build error:
 
-                             xfrm_policy_timer
-                               read_lock
-                               xp->walk.dead is 0
-                               ....
-                               mod_timer()
-xfrm_policy_kill
-  policy->walk.dead = 1
-  ....
-  del_timer(&policy->timer)
-    xfrm_pol_put //ref is 1
-  xfrm_pol_put  //ref is 0
-    xfrm_policy_destroy
-      call_rcu
-                                 xfrm_pol_hold //ref is 1
-                               read_unlock
-                               xfrm_pol_put //ref is 0
-                                 xfrm_policy_destroy
-                                  call_rcu
+  armv7a-hardfloat-linux-gnueabi-ld: drivers/rtc/rtc-max8907.o: in function `max8907_rtc_probe':
+  rtc-max8907.c:(.text+0x400): undefined reference to `regmap_irq_get_virq'
 
-xfrm_policy_destroy is called twice, which may leads to
-double free.
+max8907 should select REGMAP_IRQ
 
-Call Trace:
-RIP: 0010:refcount_warn_saturate+0x161/0x210
-...
- xfrm_policy_timer+0x522/0x600
- call_timer_fn+0x1b3/0x5e0
- ? __xfrm_decode_session+0x2990/0x2990
- ? msleep+0xb0/0xb0
- ? _raw_spin_unlock_irq+0x24/0x40
- ? __xfrm_decode_session+0x2990/0x2990
- ? __xfrm_decode_session+0x2990/0x2990
- run_timer_softirq+0x5c5/0x10e0
-
-Fix this by use write_lock_bh in xfrm_policy_kill.
-
-Fixes: ea2dea9dacc2 ("xfrm: remove policy lock when accessing policy->walk.dead")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Timo Teräs <timo.teras@iki.fi>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: 94c01ab6d7544 ("rtc: add MAX8907 RTC driver")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_policy.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/rtc/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -309,7 +309,9 @@ EXPORT_SYMBOL(xfrm_policy_destroy);
- 
- static void xfrm_policy_kill(struct xfrm_policy *policy)
- {
-+	write_lock_bh(&policy->lock);
- 	policy->walk.dead = 1;
-+	write_unlock_bh(&policy->lock);
- 
- 	atomic_inc(&policy->genid);
- 
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -304,6 +304,7 @@ config RTC_DRV_MAX6900
+ config RTC_DRV_MAX8907
+ 	tristate "Maxim MAX8907"
+ 	depends on MFD_MAX8907
++	select REGMAP_IRQ
+ 	help
+ 	  If you say yes here you will get support for the
+ 	  RTC of Maxim MAX8907 PMIC.
 
 
