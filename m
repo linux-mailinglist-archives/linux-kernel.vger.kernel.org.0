@@ -2,90 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F57919B483
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:07:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B270819B488
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:09:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732503AbgDARHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 13:07:11 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41809 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732337AbgDARHK (ORCPT
+        id S1732637AbgDARJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 13:09:32 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53506 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726640AbgDARJc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 13:07:10 -0400
-Received: by mail-lj1-f195.google.com with SMTP id n17so229728lji.8
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 10:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aRrcqK5cfaNO7OpHqvvvRe3Ztegq+35dbp3U2NLv1c0=;
-        b=G9FMkwedR3xk+FnQzgPlV2dbisol5n80kNiGY5ot7hx3A6H4kpC93ptTcVIYdDw16C
-         kX1A3/EauPB/cc1mAo+0tIJH71iQ5jnG+59+9pInTUw4F+JLBhBqW+igtJzqgr5eY4/o
-         15FFI6ROfbv8hGMmdpInKNl5WV+UZ2ozcWH8s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aRrcqK5cfaNO7OpHqvvvRe3Ztegq+35dbp3U2NLv1c0=;
-        b=Wf825AtiUaDoKJAJ2eoETyoojx8UsQKlQZlzEoeAUtJq1mRTQDtRWHc8BU0hKvMvU5
-         PGCHKjMUMuDAkG50KD/YYsfQo6PdAn57BZfHuVCAEa26R1WDlfAoIuei8HjMuGOgBLLE
-         f6SZ4O11d7hvJZlAWVYtySzKELDinehWDrzzlVju/7V2gn9rDJOWUyBp1Xj1CUcIHGhV
-         G5sEVt0k32FsgGEm9//COmQ8o+/JXaeztljQ/y1lhxWX3P5ao3YjOenmKMTV0lsiuQe2
-         nMwx3PapFf5rM7qp0nKoHcWr6Vommh48llpzCwoUl6Gj7X2ftEZE8NtKG0MPWLKET2TR
-         /3YA==
-X-Gm-Message-State: AGi0Pubk76xOuIQJtcux8bukO/WJ0htBN3jOFNQMY7A+LNuBuGUhLhKQ
-        Smu09PXW2Uy9H8z+BbVgeIhb/4dR07g=
-X-Google-Smtp-Source: APiQypJjqthml/nKUqx78AurGTSEkYq24XxY9/mIKID/go9mXg5SxxR1x0aGtPiPjNs4OU/JelBL5g==
-X-Received: by 2002:a2e:2e14:: with SMTP id u20mr8807249lju.73.1585760825165;
-        Wed, 01 Apr 2020 10:07:05 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id l7sm2136373lfg.79.2020.04.01.10.07.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Apr 2020 10:07:04 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id r7so191706ljg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 10:07:03 -0700 (PDT)
-X-Received: by 2002:a2e:7c1a:: with SMTP id x26mr12738802ljc.209.1585760823439;
- Wed, 01 Apr 2020 10:07:03 -0700 (PDT)
+        Wed, 1 Apr 2020 13:09:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=LLLB/nPnohzXVBLw+q1F4J0kOnVDPE+oZqg1wawxsEc=; b=v+sEGe7RWdZZTVMC1WZ/Ezjx1Z
+        o2svukRTC364w73gl1NriNlrjBe4KsJsvy7sBvloDNsQxgWONUdo023ZTqBNhODsDV81b6VdpLLQy
+        hGhY9qoy/AIqLknyU9qYhNdihwk5qUxNXdn3FF6jIvm+wJnzzFM6DNNEzy642yfrkqFgyDdpb/KWG
+        ZdJqDdX0WuryOm8POv+sL2drUYdHrkmsMyT8I+JlDJDbtUw4YOWTvJE5txCCuN5qbJwTrlBXEJ7aR
+        DLlZ7Dd/eX9VcvQCnIs47MYCLB5zzDrOXMj1Xj6MJBf1qWJ60VRZNkYKvCCHQZ5I6yG6nrVVqqHWK
+        9pn2YMKg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJgra-0004U7-2M; Wed, 01 Apr 2020 17:09:14 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 375ED307524;
+        Wed,  1 Apr 2020 19:09:11 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 09B232042CFB8; Wed,  1 Apr 2020 19:09:11 +0200 (CEST)
+Date:   Wed, 1 Apr 2020 19:09:10 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Julien Thierry <jthierry@redhat.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org,
+        mbenes@suse.cz, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v2] objtool,ftrace: Implement UNWIND_HINT_RET_OFFSET
+Message-ID: <20200401170910.GX20730@hirez.programming.kicks-ass.net>
+References: <20200330170200.GU20713@hirez.programming.kicks-ass.net>
+ <20200330190205.k5ssixd5hpshpjjq@treble>
+ <20200330200254.GV20713@hirez.programming.kicks-ass.net>
+ <20200331111652.GH20760@hirez.programming.kicks-ass.net>
+ <20200331202315.zialorhlxmml6ec7@treble>
+ <20200331204047.GF2452@worktop.programming.kicks-ass.net>
+ <20200331211755.pb7f3wa6oxzjnswc@treble>
+ <20200331212040.7lrzmj7tbbx2jgrj@treble>
+ <20200331222703.GH2452@worktop.programming.kicks-ass.net>
+ <d2cad75e-1708-f0bf-7f88-194bcb29e61d@redhat.com>
 MIME-Version: 1.0
-References: <20200401161413.974936041@linuxfoundation.org>
-In-Reply-To: <20200401161413.974936041@linuxfoundation.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 1 Apr 2020 10:06:47 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiVBvO1b5UzfcHm6y4KLHOp3huFfGMdW21F6g25oUePLw@mail.gmail.com>
-Message-ID: <CAHk-=wiVBvO1b5UzfcHm6y4KLHOp3huFfGMdW21F6g25oUePLw@mail.gmail.com>
-Subject: Re: [PATCH 5.6 00/10] 5.6.2-rc1 review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2cad75e-1708-f0bf-7f88-194bcb29e61d@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 1, 2020 at 9:19 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.6.2 release.
+On Wed, Apr 01, 2020 at 04:43:35PM +0100, Julien Thierry wrote:
 
-Good. You made 5.6.1 so quickly that I didn't have time to react and
-say that it makes little sense without the 802.11 fix, but you're
-obviously making 5.6.2 quickly, so..
+> > +static bool has_modified_stack_frame(struct instruction *insn, struct insn_state *state)
+> >   {
+> > +	u8 ret_offset = insn->ret_offset;
+> >   	int i;
+> > 
+> > -	if (state->cfa.base != initial_func_cfi.cfa.base ||
+> > -	    state->cfa.offset != initial_func_cfi.cfa.offset ||
+> > -	    state->stack_size != initial_func_cfi.cfa.offset ||
+> > -	    state->drap)
+> > +	if (state->cfa.base != initial_func_cfi.cfa.base || state->drap)
+> > +		return true;
+> > +
+> > +	if (state->cfa.offset != initial_func_cfi.cfa.offset &&
+> > +	    !(ret_offset && state->cfa.offset == initial_func_cfi.cfa.offset + ret_offset))
+> 
+> Isn't that the same thing as "state->cfa.offset !=
+> initial_func_cfi.cfa.offset + ret_offset" ?
 
-That was just horrible timing. David's email to say "holup" came in
-literally _one_ minute after I had sent the 5.6 announcement: my
-timestamps for that unfortunate thing is "3:51 PM" for my 5.6
-announcement, and the email where David says "Meanwhile, we have a
-wireless regression, and I'll get the fix for that to you by the end
-of today" has a timestamp of "3:52 PM"
+I'm confused on what cfa.offset is, sometimes it increase with
+stack_size, sometimes it doesn't.
 
-(Ok, so me actually tagging the tree and pushing it out happened about
-half an hour earlier, so it's not like it was quite that close, but I
-found the timing of the almost-crossed emails to be funny/sad).
+ISTR that for the ftrace case it was indeed cfa.offset + 8, but for the
+IRET case below (where it is now not used anymore) it was cfa.offset
+(not cfa.offset + 40, which I was expecting).
 
-                       Linus
+> > +		return true;
+> > +
+> > +	if (state->stack_size != initial_func_cfi.cfa.offset + ret_offset)
+> >   		return true;
+> > 
+> > -	for (i = 0; i < CFI_NUM_REGS; i++)
+> > +	for (i = 0; i < CFI_NUM_REGS; i++) {
+> >   		if (state->regs[i].base != initial_func_cfi.regs[i].base ||
+> >   		    state->regs[i].offset != initial_func_cfi.regs[i].offset)
+> >   			return true;
+> > +	}
+> > 
+> >   	return false;
+> >   }
+
+> > @@ -2185,6 +2148,13 @@ static int validate_branch(struct objtoo
+> > 
+> >   			break;
+> > 
+> > +		case INSN_EXCEPTION_RETURN:
+> > +			if (func) {
+> > +				state.stack_size -= arch_exception_frame_size;
+> > +				break;
+> 
+> Why break instead of returning? Shouldn't an exception return mark the end
+> of a branch (whether inside or outside a function) ?
+> 
+> Here it seems it will continue to the next instruction which might have been
+> unreachable.
+
+The code in question (x86's sync_core()), is an exception return to
+self. It pushes an exception frame that points to right after the
+exception return instruction.
+
+This is the only usage of IRET in STT_FUNC symbols.
+
+So rather than teaching objtool how to interpret the whole
+push;push;push;push;push;iret sequence, teach it how big the frame is
+(arch_exception_frame_size) and let it continue.
+
+All the other (real) IRETs are in STT_NOTYPE in the entry assembly.
+
+> > +			}
+> > +
+> > +			/* fallthrough */
+> 
+> What is the purpose of the fallthrough here? If the exception return was in
+> a function, it carried on to the next instruction, so it won't use the
+> WARN_FUNC(). So, if I'm looking at the right version of the code only the
+> "return 0;" will be used. And, unless my previous comment is wrong, I'd
+> argue that we should return both for func and !func.
+
+That came from the fact that we split it out of INSN_CONTEXT_SWITCH.
+You're right that it has now reduced to just return 0.
+
+> >   		case INSN_CONTEXT_SWITCH:
+> >   			if (func && (!next_insn || !next_insn->hint)) {
+> >   				WARN_FUNC("unsupported instruction in callable function",
+
+
+
