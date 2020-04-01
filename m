@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1E8219AF99
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:19:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B698A19B170
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732428AbgDAQTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:19:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41850 "EHLO mail.kernel.org"
+        id S2388269AbgDAQfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:35:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbgDAQTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:19:31 -0400
+        id S2388054AbgDAQfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:35:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90F7B20B1F;
-        Wed,  1 Apr 2020 16:19:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C8B020658;
+        Wed,  1 Apr 2020 16:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585757971;
-        bh=VnwcAXK+UHzOBiGQchBKglHd/sU6Gq8vZVgDLz7TTZo=;
+        s=default; t=1585758902;
+        bh=wyLKa9e4fnj7moQyCDcCfUz9jCeCcmM9gRIIhMtIa1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WaBWqGh4pWEygBRdauRHydJuJUZUmf/cfFtiPUPQ8YXqFzxW8n/QyDncyvp2KxxAN
-         AQ6jDAQhClzHQixsZR2n/8/EFPDYX0YmaZpy2QkOX7Dn4aGcj7QkOoABQmhjtBfh3e
-         kyZnxAih0YEWWPPtNHQs1m6WfRaeHf5SSU/ySozw=
+        b=MFy2TsQwvcukvh/TeCdzkzCOEDnHizdK4cOnw/1knZj8w105RbDQlzk9Y/6TK2upb
+         cUu4izRVUS9VXempaFGWebyNLAwarad8ZzRAP3YcJd6zW/q0txsFOhbsT7VExRb21r
+         CNhtpBZYIriDSH6hnLNH5JweQoMGE3nbkweccHtI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 5.6 04/10] vt: selection, introduce vc_is_sel
+        stable@vger.kernel.org,
+        syzbot+2a59ee7a9831b264f45e@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 017/102] ALSA: pcm: oss: Remove WARNING from snd_pcm_plug_alloc() checks
 Date:   Wed,  1 Apr 2020 18:17:20 +0200
-Message-Id: <20200401161417.613630445@linuxfoundation.org>
+Message-Id: <20200401161535.494978264@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161413.974936041@linuxfoundation.org>
-References: <20200401161413.974936041@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,101 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit dce05aa6eec977f1472abed95ccd71276b9a3864 upstream.
+commit 5461e0530c222129dfc941058be114b5cbc00837 upstream.
 
-Avoid global variables (namely sel_cons) by introducing vc_is_sel. It
-checks whether the parameter is the current selection console. This will
-help putting sel_cons to a struct later.
+The return value checks in snd_pcm_plug_alloc() are covered with
+snd_BUG_ON() macro that may trigger a kernel WARNING depending on the
+kconfig.  But since the error condition can be triggered by a weird
+user space parameter passed to OSS layer, we shouldn't give the kernel
+stack trace just for that.  As it's a normal error condition, let's
+remove snd_BUG_ON() macro usage there.
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Link: https://lore.kernel.org/r/20200219073951.16151-1-jslaby@suse.cz
+Reported-by: syzbot+2a59ee7a9831b264f45e@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200312155730.7520-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/selection.c |    5 +++++
- drivers/tty/vt/vt.c        |    7 ++++---
- drivers/tty/vt/vt_ioctl.c  |    2 +-
- include/linux/selection.h  |    4 +++-
- 4 files changed, 13 insertions(+), 5 deletions(-)
+ sound/core/oss/pcm_plugin.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/vt/selection.c
-+++ b/drivers/tty/vt/selection.c
-@@ -88,6 +88,11 @@ void clear_selection(void)
- }
- EXPORT_SYMBOL_GPL(clear_selection);
- 
-+bool vc_is_sel(struct vc_data *vc)
-+{
-+	return vc == sel_cons;
-+}
-+
- /*
-  * User settable table: what characters are to be considered alphabetic?
-  * 128 bits. Locked by the console lock.
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -890,8 +890,9 @@ static void hide_softcursor(struct vc_da
- 
- static void hide_cursor(struct vc_data *vc)
- {
--	if (vc == sel_cons)
-+	if (vc_is_sel(vc))
- 		clear_selection();
-+
- 	vc->vc_sw->con_cursor(vc, CM_ERASE);
- 	hide_softcursor(vc);
- }
-@@ -901,7 +902,7 @@ static void set_cursor(struct vc_data *v
- 	if (!con_is_fg(vc) || console_blanked || vc->vc_mode == KD_GRAPHICS)
- 		return;
- 	if (vc->vc_deccm) {
--		if (vc == sel_cons)
-+		if (vc_is_sel(vc))
- 			clear_selection();
- 		add_softcursor(vc);
- 		if ((vc->vc_cursor_type & 0x0f) != 1)
-@@ -1207,7 +1208,7 @@ static int vc_do_resize(struct tty_struc
- 		}
- 	}
- 
--	if (vc == sel_cons)
-+	if (vc_is_sel(vc))
- 		clear_selection();
- 
- 	old_rows = vc->vc_rows;
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -43,7 +43,7 @@ char vt_dont_switch;
- extern struct tty_driver *console_driver;
- 
- #define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
--#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_cons[i].d == sel_cons)
-+#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_is_sel(vc_cons[i].d))
- 
- /*
-  * Console (vt and kd) routines, as defined by USL SVR4 manual, and by
---- a/include/linux/selection.h
-+++ b/include/linux/selection.h
-@@ -11,8 +11,8 @@
- #include <linux/tiocl.h>
- #include <linux/vt_buffer.h>
- 
--extern struct vc_data *sel_cons;
- struct tty_struct;
-+struct vc_data;
- 
- extern void clear_selection(void);
- extern int set_selection_user(const struct tiocl_selection __user *sel,
-@@ -24,6 +24,8 @@ extern int sel_loadlut(char __user *p);
- extern int mouse_reporting(void);
- extern void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry);
- 
-+bool vc_is_sel(struct vc_data *vc);
-+
- extern int console_blanked;
- 
- extern const unsigned char color_table[];
+--- a/sound/core/oss/pcm_plugin.c
++++ b/sound/core/oss/pcm_plugin.c
+@@ -111,7 +111,7 @@ int snd_pcm_plug_alloc(struct snd_pcm_su
+ 		while (plugin->next) {
+ 			if (plugin->dst_frames)
+ 				frames = plugin->dst_frames(plugin, frames);
+-			if (snd_BUG_ON((snd_pcm_sframes_t)frames <= 0))
++			if ((snd_pcm_sframes_t)frames <= 0)
+ 				return -ENXIO;
+ 			plugin = plugin->next;
+ 			err = snd_pcm_plugin_alloc(plugin, frames);
+@@ -123,7 +123,7 @@ int snd_pcm_plug_alloc(struct snd_pcm_su
+ 		while (plugin->prev) {
+ 			if (plugin->src_frames)
+ 				frames = plugin->src_frames(plugin, frames);
+-			if (snd_BUG_ON((snd_pcm_sframes_t)frames <= 0))
++			if ((snd_pcm_sframes_t)frames <= 0)
+ 				return -ENXIO;
+ 			plugin = plugin->prev;
+ 			err = snd_pcm_plugin_alloc(plugin, frames);
 
 
