@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0E5519B554
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:24:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E882019B552
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732968AbgDASXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 14:23:53 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:56825 "EHLO
+        id S1732925AbgDASXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 14:23:49 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:47263 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732943AbgDASXv (ORCPT
+        by vger.kernel.org with ESMTP id S1732910AbgDASXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 14:23:51 -0400
+        Wed, 1 Apr 2020 14:23:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585765430;
+        s=mimecast20190719; t=1585765427;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=g2n0Iw5Dd9JFbjZc1yj3P1KSOEihDnom0Nq536oA/X4=;
-        b=Qg1rdaZg9wBooeKpTT+DTEROnEjo1SKCtBuFQQy3CRo3u3ngsuAR7NwKGrL0ptZEibxK0u
-        h7q/2jV+5zdDOqOJtQK5WTThEC1wgz8tT5kwj+kUPCpDVIjsaHAvebM7X9cwvCnxh5rpIh
-        37/8O/HEGK1ZlyNqoj2SLS+CvCXF2no=
+        bh=8szS2/P4Z3/SR98iwz6z1Q9e8O85YRT99ZqA66Wzkvg=;
+        b=UX/9Uu0B1Wb3seIp4nFDjdqxpkOaOkGb5Kbo33ipDceJP/Bsn3j3uYQupswS+5ggahC9Mj
+        9QcXFyWEwk+WeUxriOCokQ/k3dv+awVXr40FN96UijteFmBaBmlLI8Ad4y1ZewBoo3TSLM
+        GPjyad6pW4el6KJJCYowd4Pg5piccuI=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-315-OgpYwYQqMSOkgM56PmohSg-1; Wed, 01 Apr 2020 14:23:41 -0400
-X-MC-Unique: OgpYwYQqMSOkgM56PmohSg-1
+ us-mta-485-SR-3u1lnPYadle6HyGLizQ-1; Wed, 01 Apr 2020 14:23:43 -0400
+X-MC-Unique: SR-3u1lnPYadle6HyGLizQ-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9BA7F477;
-        Wed,  1 Apr 2020 18:23:40 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 691CD18A8C82;
+        Wed,  1 Apr 2020 18:23:41 +0000 (UTC)
 Received: from treble.redhat.com (ovpn-118-135.phx2.redhat.com [10.3.118.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1537160BEC;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BADDE60BEC;
         Wed,  1 Apr 2020 18:23:40 +0000 (UTC)
 From:   Josh Poimboeuf <jpoimboe@redhat.com>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Miroslav Benes <mbenes@suse.cz>,
-        Julien Thierry <jthierry@redhat.com>
-Subject: [PATCH 4/5] objtool: Fix switch table detection in .text.unlikely
-Date:   Wed,  1 Apr 2020 13:23:28 -0500
-Message-Id: <157c35d42ca9b6354bbb1604fe9ad7d1153ccb21.1585761021.git.jpoimboe@redhat.com>
+        Julien Thierry <jthierry@redhat.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>
+Subject: [PATCH 5/5] objtool: Make BP scratch register warning more robust
+Date:   Wed,  1 Apr 2020 13:23:29 -0500
+Message-Id: <afc628693a37acd287e843bcc5c0430263d93c74.1585761021.git.jpoimboe@redhat.com>
 In-Reply-To: <cover.1585761021.git.jpoimboe@redhat.com>
 References: <cover.1585761021.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
@@ -53,45 +54,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a switch jump table's indirect branch is in a ".cold" subfunction in
-.text.unlikely, objtool doesn't detect it, and instead prints a false
-warning:
+If func is NULL, a seg fault can result.
 
-  drivers/media/v4l2-core/v4l2-ioctl.o: warning: objtool: v4l_print_forma=
-t.cold()+0xd6: sibling call from callable instruction with modified stack=
- frame
-  drivers/hwmon/max6650.o: warning: objtool: max6650_probe.cold()+0xa5: s=
-ibling call from callable instruction with modified stack frame
-  drivers/media/dvb-frontends/drxk_hard.o: warning: objtool: init_drxk.co=
-ld()+0x16f: sibling call from callable instruction with modified stack fr=
-ame
+This is a theoretical issue which was found by Coverity.
 
-Fix it by comparing the function, instead of the section and offset.
-
-Fixes: 13810435b9a7 ("objtool: Support GCC 8's cold subfunctions")
+Fixes: c705cecc8431 ("objtool: Track original function across branches")
+Addresses-Coverity-ID: 1492002 ("Dereference after null check")
+Reported-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- tools/objtool/check.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ tools/objtool/check.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index aaec5e1277ea..c681a26c25ac 100644
+index c681a26c25ac..93fa7be67e9f 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -1068,10 +1068,7 @@ static struct rela *find_jump_table(struct objtool=
-_file *file,
- 	 * it.
- 	 */
- 	for (;
--	     &insn->list !=3D &file->insn_list &&
--	     insn->sec =3D=3D func->sec &&
--	     insn->offset >=3D func->offset;
--
-+	     &insn->list !=3D &file->insn_list && insn->func && insn->func->pfu=
-nc =3D=3D func;
- 	     insn =3D insn->first_jump_src ?: list_prev_entry(insn, list)) {
+@@ -2023,8 +2023,8 @@ static int validate_return(struct symbol *func, str=
+uct instruction *insn, struct
+ 	}
 =20
- 		if (insn !=3D orig_insn && insn->type =3D=3D INSN_JUMP_DYNAMIC)
+ 	if (state->bp_scratch) {
+-		WARN("%s uses BP as a scratch register",
+-		     func->name);
++		WARN_FUNC("BP used as a scratch register",
++			  insn->sec, insn->offset);
+ 		return 1;
+ 	}
+=20
 --=20
 2.21.1
 
