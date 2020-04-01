@@ -2,131 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C795519A764
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4043B19A771
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbgDAIhg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:37:36 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44224 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730420AbgDAIhf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:37:35 -0400
-Received: by mail-ed1-f66.google.com with SMTP id i16so27718924edy.11
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 01:37:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FyEhiVQqCC0n6tZWozoPFO5HZtdSk1NEpUldzxKhYN4=;
-        b=ZTEDs2BQyN8yoxD7A5h1aiqNIAWemIBANASqEaV0nOkgN043uKgdnMoNMFNVvdWhYW
-         iFcvU6YirVUBRdBNdJ3aSOQeWtN9e3dW4IIVsAWFS7TBEmBSWjaxLPJTz5WRnegy/8ZW
-         QCy8BmMOTKyQyfEFzAFmg91p5izsezVbwT3yZjYKuX1WtXuruELJ1sCx4R5AJer2wOfL
-         MeS/MywUilRVPPFV9DHMSdzlobFLDl0+eA5N+o7scVJycty8/lY3yqLTfn8YYcecYOqp
-         iWqwny1YvJB0NacacNBG5WWUj6HLGt6JzfU8djxL4guCmxPl8id2/bLf7SgQTofZdggv
-         dsWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FyEhiVQqCC0n6tZWozoPFO5HZtdSk1NEpUldzxKhYN4=;
-        b=nhVz/XA+aT3Ja7NJwD1M8aoJh11GhvsOShbhJuO3mLDAnfaRq+YC4wvEK7WDKYXrMA
-         wDRt8v7iaj3EfVk72O4kqwGdmida3T7xRbphfsDJmzm0lYCTbCx17EcY/Zdsq/4HU9fL
-         fhKq4OoVujGApM3VfMOmU2PPs0HpNGBW+QxAj6Riu/9JNsJjwiTYMoKN1p2ey0pEKla+
-         //h7dw8r/R4Q6QzTMoqE+MR3xNiuuhg9hChQFVuN3OK7pgRwTZMwMEIgWuwUF1knvY7B
-         nuQe2sH3Shk5i5U56iNF5IudhjDsWPZOSv8Geq8TdzXOylwN+kSMxp1uq1N3+zq6EaMs
-         MCPw==
-X-Gm-Message-State: ANhLgQ06Yq0WWsNIOss/ll2DP7VnTSb4RNAqlT0+AZLpJ0BgAsKYaDgO
-        OQ0j7UXeFEzY+vjHHqT7MKNg28JwGQ4=
-X-Google-Smtp-Source: ADFU+vsEN+s8QxK70fXDxbR3lYOgf1JF4FPA31mNI6F2POdUZYpThQRmL3S6XfZBnxVykWgtSYYkDg==
-X-Received: by 2002:a17:906:1952:: with SMTP id b18mr18407508eje.216.1585730253512;
-        Wed, 01 Apr 2020 01:37:33 -0700 (PDT)
-Received: from [192.168.1.4] (212-5-158-119.ip.btc-net.bg. [212.5.158.119])
-        by smtp.googlemail.com with ESMTPSA id l62sm274693edl.89.2020.04.01.01.37.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Apr 2020 01:37:32 -0700 (PDT)
-Subject: Re: [PATCH][next] media: venus: hfi_cmds.h: Replace zero-length array
- with flexible-array member
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        id S1731608AbgDAIiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:38:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726536AbgDAIiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 04:38:24 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75CF82073B;
+        Wed,  1 Apr 2020 08:38:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585730303;
+        bh=Bvhmmc0BPGknPaf0rghM2JRllR9P2T5itF8OtzXxVa4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=J2s9ykdXJR83vU5mD6OAAenGxi5Bw2B/QKskuClc1jza0jHl4blJXrDruApIoiNgN
+         IVIMXXI/VarPS8bmC4RFYcQJu2Rrc+i/0nIrN6/uGlt54YRZuGI5y5XylmsEd0mchJ
+         tqvVb/cwwDMpD1Q1wXn+9j0WTJFPOWJGSOUsbJ7o=
+Date:   Wed, 1 Apr 2020 09:38:19 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Marco Elver <elver@google.com>
+Cc:     paulmck@kernel.org, dvyukov@google.com, glider@google.com,
+        andreyknvl@google.com, cai@lca.pw, kasan-dev@googlegroups.com,
         linux-kernel@vger.kernel.org
-References: <20200319222105.GA19104@embeddedor.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <849ddb2c-d022-bd13-89c2-b0c1a4363a23@linaro.org>
-Date:   Wed, 1 Apr 2020 11:37:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+Subject: Re: [PATCH 2/2] kcsan: Change data_race() to no longer require
+ marking racing accesses
+Message-ID: <20200401083818.GA16446@willie-the-truck>
+References: <20200331193233.15180-1-elver@google.com>
+ <20200331193233.15180-2-elver@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200319222105.GA19104@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331193233.15180-2-elver@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+On Tue, Mar 31, 2020 at 09:32:33PM +0200, Marco Elver wrote:
+> Thus far, accesses marked with data_race() would still require the
+> racing access to be marked in some way (be it with READ_ONCE(),
+> WRITE_ONCE(), or data_race() itself), as otherwise KCSAN would still
+> report a data race.  This requirement, however, seems to be unintuitive,
+> and some valid use-cases demand *not* marking other accesses, as it
+> might hide more serious bugs (e.g. diagnostic reads).
+> 
+> Therefore, this commit changes data_race() to no longer require marking
+> racing accesses (although it's still recommended if possible).
+> 
+> The alternative would have been introducing another variant of
+> data_race(), however, since usage of data_race() already needs to be
+> carefully reasoned about, distinguishing between these cases likely adds
+> more complexity in the wrong place.
 
-Thanks for the patch!
+Just a thought, but perhaps worth extending scripts/checkpatch.pl to
+check for use of data_race() without a comment? We already have that for
+memory barriers, so should be easy enough to extend with any luck.
 
-On 3/20/20 12:21 AM, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Link: https://lkml.kernel.org/r/20200331131002.GA30975@willie-the-truck
+> Signed-off-by: Marco Elver <elver@google.com>
+> Cc: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Qian Cai <cai@lca.pw>
 > ---
->  drivers/media/platform/qcom/venus/hfi_cmds.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  include/linux/compiler.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index f504edebd5d7..1729bd17e9b7 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -326,9 +326,9 @@ unsigned long read_word_at_a_time(const void *addr)
+>  #define data_race(expr)                                                        \
+>  	({                                                                     \
+>  		typeof(({ expr; })) __val;                                     \
+> -		kcsan_nestable_atomic_begin();                                 \
+> +		kcsan_disable_current();                                       \
+>  		__val = ({ expr; });                                           \
+> -		kcsan_nestable_atomic_end();                                   \
+> +		kcsan_enable_current();                                        \
+>  		__val;                                                         \
+>  	})
+>  #else
 
-Acked-by: Stanimir Varbanov <staninmir.varbanov@linaro.org>
+Acked-by: Will Deacon <will@kernel.org>
 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
-> index cae9d5d61c0c..83705e237f1c 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_cmds.h
-> +++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
-> @@ -107,7 +107,7 @@ struct hfi_session_abort_pkt {
->  struct hfi_session_set_property_pkt {
->  	struct hfi_session_hdr_pkt shdr;
->  	u32 num_properties;
-> -	u32 data[0];
-> +	u32 data[];
->  };
->  
->  struct hfi_session_set_buffers_pkt {
-> 
-
--- 
-regards,
-Stan
+Will
