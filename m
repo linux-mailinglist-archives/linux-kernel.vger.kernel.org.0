@@ -2,113 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D129019AE7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 17:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A79919AE8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 17:08:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733166AbgDAPGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 11:06:30 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:53132 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732551AbgDAPGa (ORCPT
+        id S1732752AbgDAPIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 11:08:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33124 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732687AbgDAPIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 11:06:30 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 031F6IrT103459;
-        Wed, 1 Apr 2020 10:06:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1585753578;
-        bh=rpGOkl7+au8ZR5Xc81hv83OdjAR+iCGu/F9rpYgq2M4=;
-        h=To:CC:From:Subject:Date;
-        b=MO5I1n8IQO/HQNfC4Nc/PKY9H5Jw5OetvV5ztUszr20sJ9ooYGOAQRz/O1n7w78Hx
-         6XmVOed0vtael3AH6JtsVOLddUaUNr4nLqVT+ravD8aZ1Iz6UXb9jl9vsu1mVj1cXH
-         3a02A+9Pk2c0tFABqwjQNMlmP8B1ocsrhNUZyblQ=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 031F6Isx103822;
-        Wed, 1 Apr 2020 10:06:18 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 1 Apr
- 2020 10:06:18 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 1 Apr 2020 10:06:18 -0500
-Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 031F6Fc5125236;
-        Wed, 1 Apr 2020 10:06:16 -0500
-To:     <linux-rt-users@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Nori, Sekhar" <nsekhar@ti.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [v5.4.28-rt19] ARM64: nfs boot issues
-Message-ID: <0d05e716-5575-d4bd-64be-187c85244c12@ti.com>
-Date:   Wed, 1 Apr 2020 18:06:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Wed, 1 Apr 2020 11:08:10 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 031F4I9S075063;
+        Wed, 1 Apr 2020 11:07:43 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 303uj4gujr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 11:07:43 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 031F16GH031835;
+        Wed, 1 Apr 2020 15:07:42 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma04dal.us.ibm.com with ESMTP id 301x76t8nu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 15:07:42 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 031F7fWh45613404
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 Apr 2020 15:07:41 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 60210AE05C;
+        Wed,  1 Apr 2020 15:07:41 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2AE29AE060;
+        Wed,  1 Apr 2020 15:07:38 +0000 (GMT)
+Received: from LeoBras (unknown [9.85.228.30])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  1 Apr 2020 15:07:37 +0000 (GMT)
+Message-ID: <33333c2ffe9fedbee252a1731d7c10cd3308252b.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v2 1/1] powerpc/kernel: Enables memory hot-remove
+ after reboot on pseries guests
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Anderson <andmike@linux.ibm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        bharata.rao@in.ibm.com
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Wed, 01 Apr 2020 12:07:33 -0300
+In-Reply-To: <20200305233231.174082-1-leonardo@linux.ibm.com>
+References: <20200305233231.174082-1-leonardo@linux.ibm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-VynV9rUX+88/vxShdVMp"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-01_01:2020-03-31,2020-03-31 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ impostorscore=0 adultscore=0 mlxlogscore=829 lowpriorityscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 phishscore=0 clxscore=1015
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004010130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
 
-We now observe NFS boot issues with TI RT Kernel (last merged tag v5.4.28-rt19) on TI (ARM64) AM654x/J721E platforms.
-It's just stack (100%) silently right after Kernel init (log1) or in the middle of the boot (log2).
+--=-VynV9rUX+88/vxShdVMp
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I'm trying to investigate an issue and I'd like to ask if anybody else observed the same?
+On Thu, 2020-03-05 at 20:32 -0300, Leonardo Bras wrote:
+> ---
+> The new flag was already proposed on Power Architecture documentation,
+> and it's waiting for approval.
+>=20
+> I would like to get your comments on this change, but it's still not
+> ready for being merged.
 
-Few notes:
-- I can not test clear rt-devel/linux-5.4.y-rt as above TI platform not fully supported there
-- ARM32 platforms not affected
-- Disabling CONFIG_PREEMPT_RT=n with CONFIG_PREEMPT=y makes NFS boot work again
-- non RT Kernel has no issues
+New flag got approved on the documentation.
+Please review this patch.
 
-NFS configuration:
-  rw rootfstype=nfs root=/dev/nfs rw nfsroot=192.168.0.110:/mnt/am65xx-evm,nolock,v3,tcp,rsize=4096,wsize=4096 ip=dhcp
+--=-VynV9rUX+88/vxShdVMp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-===== Log1:
-[   13.423029] 000: am65-cpsw-nuss 46000000.ethernet eth0: Link is Up - 100Mbps/Full - flow control off
-[   13.449187] 003: Sending DHCP requests .
-[   13.457269] 002: ,
-[   13.965284] 001:  OK
-[   13.965769] 001: IP-Config: Got DHCP answer from 192.168.0.1, my address is 192.168.0.105
-[   13.965788] 001: IP-Config: Complete:
-[   13.965794] 001:      device=eth0, hwaddr=f4:84:4c:eb:a0:00, ipaddr=192.168.0.105, mask=255.255.255.0, gw=192.168.0.1
-[   13.965804] 001:      host=192.168.0.105, domain=, nis-domain=(none)
-[   13.965814] 001:      bootserver=0.0.0.0, rootserver=192.168.0.110, rootpath=
-[   13.965821] 001:      nameserver0=192.168.0.1, nameserver1=0.0.0.0
-[   13.999107] 001: ALSA device list:
-[   13.999725] 001:   No soundcards found.
-[   14.121815] 001: VFS: Mounted root (nfs filesystem) on device 0:21.
-[   14.126072] 001: devtmpfs: mounted
-[   14.139110] 001: Freeing unused kernel memory: 2688K
-[   14.150126] 000: Run /sbin/init as init process
-[  195.694278] 002: nfs: server 192.168.0.110 not responding, still trying
-[  195.694314] 003: nfs: server 192.168.0.110 not responding, still trying
-[  195.694875] 000: nfs: server 192.168.0.110 not responding, still trying
-[  195.694921] 003: nfs: server 192.168.0.110 not responding, still trying
-^^^
+-----BEGIN PGP SIGNATURE-----
 
-===== Log2:
-[  OK  ] Stopped Network Time Synchronization.
-          Starting Network Time Synchronization...
-[  OK  ] Found device /dev/ttyS2.
-[  OK  ] Started Network Service.
-[FAILED] Failed to start Network Time Synchronization.
-See 'systemctl status systemd-timesyncd.service' for details.
-[   97.141595] 000: sysrq: This sysrq operation is disabled.
-[  191.511935] 001: nfs: server 192.168.0.110 not responding, still trying
-[  191.511995] 003: nfs: server 192.168.0.110 not responding, still trying
-[  191.512001] 002: nfs: server 192.168.0.110 not responding, still trying
-   
-^^^
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl6ErjUACgkQlQYWtz9S
+ttTBKhAAlHs4fzgLuSqNlQADyKsBH7BIUd0lzkGIYBuyBmswiNXSgvCNjT6Dm5MX
+o2xXMdLwhSyg4B82Vjt3ykc5OBqphBtF4X9FBGAag+D0FsodTkmSRIJZgM6uwbn+
+RSboIpXmches0B9OLGCW286RWU1aVO2hIZqhWLgORNFsnH8zzYuYHDHhaJ8gXiOA
+CrNn0IpTNtdjjsMkxtzoh3FTEgsafcQWmicMhPk3GK6SvF8BkB8xTyADqQgHV95r
+5zscp72pYhEO86m1ZEJjUCEkoL4bLlrONeVDD5ZRAG95+Okf5Q6wYDC42rCYoHhH
+CqMiLcfnBfow1DExc8nv8yIYGIaMitR2n27sGgzgg6l4CgYrZvHsMyQoxT5umXM7
+7sFOsVNND4hnMGs5WEUm5SuSn03tYaV6e59WI8ihiqOk2wsuIqmtPxP7XyA3Aw7d
+ocKqN9hajO2ylltq7NeTm1xitlWYShX+BZ0q9Z4/7iyk0Z57QRAi6GBHf+/jmCUc
+o68jcF0CIVLZFK/FyXcNMV0ndd2g0Q5OqtJLTbujtV494clWOzTa4zYB/h0QnS49
+MSElbBVgbD7JheuCSoHKj5KRL0QPHKAzmGydngqhJiV7ngC3CEbX1ddW5+euZuSb
+Hxrrbj9KUDsNm9UoqX11MMzomkjYWZxQzJEcVv1eUXdm4t0NVBs=
+=AaxG
+-----END PGP SIGNATURE-----
 
--- 
-Best regards,
-grygorii
+--=-VynV9rUX+88/vxShdVMp--
+
