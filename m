@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A62D19B112
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C336D19B269
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388356AbgDAQbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:31:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58048 "EHLO mail.kernel.org"
+        id S2389658AbgDAQnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:43:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387493AbgDAQbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:31:46 -0400
+        id S2389650AbgDAQnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:43:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6317A2063A;
-        Wed,  1 Apr 2020 16:31:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E81D62063A;
+        Wed,  1 Apr 2020 16:43:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758705;
-        bh=lAmqBsu/wsjKubuOe6/NouZ1wxhMs0q8L+D/vXUHWWk=;
+        s=default; t=1585759421;
+        bh=VqqyroAfWhyQOvnteSX/FAKaG6w+Qak3m5q11T6oLKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B+q+WYlAs/V1gLYKjDEG+4rTR3ngi0eyx+BCF3QfF43I01aPBjyygk4ZAPpx+g4Bn
-         FvyibC7briWIoGBVpAksTn6NQtCU21dDNQ88ZZG2rOtFhUkNBfajBE3h+63DHNCdRT
-         XsiGWY9dhvrB65hCYJgAHKglcoE9w1nxyLCSEXVI=
+        b=fIfJYyBegzHN6gozLHT6GJPpg5IY/Gohq4OEXBjiSwPgUxV0TcBzC3a761FaNKrvi
+         dejak29f/cyzG/VjJJLw9bkUbYVwnqe5AesEHiNfx95ceWBJSQqg4yCF7oNYOgV4X1
+         4Rzi+/xbrG1g9h9VCk91Pge7KZFR6hmSO9MMMngo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Stefano Brivio <sbrivio@redhat.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 49/91] net: ipv4: dont let PMTU updates increase route MTU
+Subject: [PATCH 4.14 073/148] net: ipv4: dont let PMTU updates increase route MTU
 Date:   Wed,  1 Apr 2020 18:17:45 +0200
-Message-Id: <20200401161530.542598128@linuxfoundation.org>
+Message-Id: <20200401161600.427535721@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
-References: <20200401161512.917494101@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -71,10 +71,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index 42132ac2c497e..988c132319c48 100644
+index 8b855d3eec9e7..05fe1d0075444 100644
 --- a/net/ipv4/route.c
 +++ b/net/ipv4/route.c
-@@ -985,21 +985,22 @@ out:	kfree_skb(skb);
+@@ -1014,21 +1014,22 @@ out:	kfree_skb(skb);
  static void __ip_rt_update_pmtu(struct rtable *rt, struct flowi4 *fl4, u32 mtu)
  {
  	struct dst_entry *dst = &rt->dst;
