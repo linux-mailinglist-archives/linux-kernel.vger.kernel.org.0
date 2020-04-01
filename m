@@ -2,165 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45C5819A96A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:21:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 702AD19A96F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:21:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732156AbgDAKUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 06:20:09 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:34417 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731839AbgDAKUI (ORCPT
+        id S1732225AbgDAKUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:20:41 -0400
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.114]:46862 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727308AbgDAKUk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:20:08 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200401102006epoutp011cea6b4bb5932b7019fc60d891068d76~BqtwgVYkT2605626056epoutp01w
-        for <linux-kernel@vger.kernel.org>; Wed,  1 Apr 2020 10:20:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200401102006epoutp011cea6b4bb5932b7019fc60d891068d76~BqtwgVYkT2605626056epoutp01w
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585736406;
-        bh=R+Qqz4SvSjIBQnrlG8V1tWDRdpWKAL9nD7564mXbppM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=KccZaX163/Wa5oKW00i9HJbB7nY0sqAyrEXIAo/wfuSwv0jinhdE+6+fdMdBSPNCw
-         EJSAW0vtpTbpsjAy3pmGIgy/cmX3s8cucgQeGN5bZTFobW/Y4uNM6YEedrootx5fHf
-         vNtToC9EMKFHHQUHa+mzIhG/ciBfQZ0Qauh/kRQo=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200401102005epcas1p3544878acb9a9d84c07b0ab212d24b265~BqtwK_Tfa2884528845epcas1p3R;
-        Wed,  1 Apr 2020 10:20:05 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 48shyp4krVzMqYkc; Wed,  1 Apr
-        2020 10:20:02 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3B.BF.04074.2DA648E5; Wed,  1 Apr 2020 19:20:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200401102001epcas1p24d1f256edb0913bd1757d2b964e40068~BqtsP-Bpm1945119451epcas1p2q;
-        Wed,  1 Apr 2020 10:20:01 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200401102001epsmtrp202938eab087c2a4a8857628c28140ee0~BqtsO114z1499614996epsmtrp2Z;
-        Wed,  1 Apr 2020 10:20:01 +0000 (GMT)
-X-AuditID: b6c32a39-58bff70000000fea-21-5e846ad2f3d7
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        20.A5.04024.1DA648E5; Wed,  1 Apr 2020 19:20:01 +0900 (KST)
-Received: from [10.113.113.235] (unknown [10.113.113.235]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200401102001epsmtip2dedecab0015cc44c0f76e474f57cb59f~BqtsCveMW0549205492epsmtip2E;
-        Wed,  1 Apr 2020 10:20:01 +0000 (GMT)
-Subject: Re: [PATCH] brcmfmac: fix wrong location to get firmware feature
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
-        "open list:BROADCOM BRCM80211 IEEE802.11n WIRELESS DRIVER" 
-        <brcm80211-dev-list.pdl@broadcom.com>,
-        brcm80211-dev-list@cypress.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>
-From:   Jaehoon Chung <jh80.chung@samsung.com>
-Message-ID: <40b711a5-869b-1dac-0ac9-e6e59d4bcd52@samsung.com>
-Date:   Wed, 1 Apr 2020 19:20:13 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <87r1xaf8r7.fsf@codeaurora.org>
+        Wed, 1 Apr 2020 06:20:40 -0400
+Received: from [100.113.5.83] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-3.bemta.az-b.eu-central-1.aws.symcld.net id E1/42-35964-5FA648E5; Wed, 01 Apr 2020 10:20:37 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA1WScVCTdRjH+e19N16J1csY8cg5i6GWxNYwvL3
+  aHZfXH60SDzn7h8R6N97YcBtz76hR2i2BjuAssFBCAdHN00KUeRHBYInEAafOQSBFJQh5IAep
+  ZN1EZ3v3otV/n+/z/b7P73vvPQQmOS9KIBi7jbGaaaNcFIXrn485rbiTX7JDVb+PoIbaD4uo0
+  eauSGqq8YKAGm9vFFCTM0HsJaHmZFOTUBMcy9B897cjUrPgXpmJZwsNZm2B/W2h/pqrGrNcjr
+  J3tqgdaI4oR1EEIl0YDDRcF/CiF4dFV7GQF2cRLO4LiDiBk30Y1BwcCcckZJUAOq7ux3jxC4J
+  f20ZQOVpGiEgKPu8bD38iJVsRBCqrcU5gZCmCAee9cCqWfBM+7poQciwlt8ODg/cxntdBVfMp
+  nGOcXAU1o1dCTBBiMgcujW3mxhLSAp6L9UJuvIxMh2+b8rkxImXw50dfh7dgZDz8PNUg4BhIE
+  pweH8ZzHMxMBoV8noH+vaOIn6fAxStTS5wIfz1YXGIZDDZULHEGTJSdwXlOhvnvD4h4psBZUR
+  puCaHGwe4iHo1wqHkdn1gDC7//uNRgBdS13I3kfgiQh3EYnL6FVSJV7X9a85wCRzpui3h+Do4
+  3zmIci8kY6P9yCj+C8K8QpbUa8vQ2E20wKlJVKkVq6guKNMX6DUr6fYVWyRQqdIzZZqVDppJ+
+  j1WyRSadMVdpZmxuFLqn3F34i21o6NQfym60nBDI48Qn3ijZIXlcW5BbpKdZ/VvWQiPDdqMVB
+  CEH8XVDyIuxMnmM/R2DMXSVD20gouVS8VheyBazFtrEGvJ4awApiMqZuqOYBDcXmJmEeHF66H
+  glJBfSF5ofrXh424NIlhArRhEREZJoC2M1GWz/92+geALJY8VZ3JZog9n26KUboRKCUIlhezF
+  Xwkb/ayU4BIW6LRcwp2CjPq7XmN2RHbj/TE+iSH3u+O4fOp88ce3SaM2erImMc7tcOWq3wn8z
+  Y9P+vczqY56stTnSpLLNe7oTNwqTZy2zQ8WdennpeffOjjv1var01+o2rO+3PNaW9IGfMM15X
+  pXdtXmUx2TTw5SPCNSmxTizF26/7qVbVjK6si2fXNZ8WumH3DR1/7bM7f7dbH7gjK5vte+mex
+  60+QVo4mVteUlc69afPqvUBN2veHdGUGzV1uLannlCq/F+8c1AzYdn53xPd6nx5opWh3TR++y
+  aTOb00QOiovZVmlvLq6cdV9eW9/ijcNf4PbMh5WSS77en3h3Bh7EnvJsmVXKc1dOpyZiVpf8B
+  ZPn5l1YEAAA=
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-4.tower-246.messagelabs.com!1585736436!1095708!1
+X-Originating-IP: [104.47.17.175]
+X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.50.1; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 19265 invoked from network); 1 Apr 2020 10:20:37 -0000
+Received: from mail-vi1eur05lp2175.outbound.protection.outlook.com (HELO EUR05-VI1-obe.outbound.protection.outlook.com) (104.47.17.175)
+  by server-4.tower-246.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 1 Apr 2020 10:20:37 -0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=W6CSgatRBrsxpVvS+BE9i0PPu0aNuZBZEAky9WqriEjXCAkDtsnMlIyNv5sJ4blAQGZYrOpTceiHABNUV467yaywxXnZhNR/tGwb7IB6rZqmDwfep4CYFjheezG7i6m6zuM6dyel/VLRTlEC8GAityPKPPJ+kOuHrKeUKfiJf4jDVY0u69XcYnmCaojsZq97Ry+QSIRAQTW+wxJLlNFVAcOIs9uQWOCdgIvJIVGaNMAoi9bsuTRwQSJPtzbDjiSXSKWv8KXdRVYZBpCKk9QA8ZzIAx7cH4svamCDublJp4WWiuJ+UGqDoG1Y5J25zMOP4mh6ByytHY5KDyUZdgNpdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I5B2QaH1bzl/LWmC6KeB2TKq4+GQSuZPWpfxNSn5CJ4=;
+ b=mOJIrF5iYFhuuDq4CPu/am8KOhtL/JdYNDpwMScRu5K+jPVZ8MHkChs+mnLBO5V98PsnKWC6c3QCn59kxZzJItRNm5F1d+J1BQfXLqMfvy+MaJVjDWPaMdTYBSUM8n/VlZ2xbSfa66NP81CQ/tn1+eoNqd6MSTHJ+pyKK2qrwEkF727Vb1j1VlnzYjPluwR88iRmTweHJBGbMlSxgvlg0Azhr8wDoDasiNIH7b9alklsYnQbqg3e8nkO7HCQnO2q6cWHBPHVO20PwHE/88RJe7EAzPFtVXf5UeK7wBZX84KVNt92zA1zVm0AzhBg7LtCp/872wGj59ahLeIvwQwKxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=diasemi.com; dmarc=pass action=none header.from=diasemi.com;
+ dkim=pass header.d=diasemi.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dialogsemiconductor.onmicrosoft.com;
+ s=selector1-dialogsemiconductor-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I5B2QaH1bzl/LWmC6KeB2TKq4+GQSuZPWpfxNSn5CJ4=;
+ b=Q7xd8I9xANBynOvXKOAr9Wa2byQWAu0okYbWVEONSTSXM0UBSbbGDCjCmrh854c+JUYn2CaM+nvGJ0JsJXV/TB9NPiRoPV+rN1cRD18y9QMdKNpEx/mncfwbM7WSpyYfYKEn669XpqDA+WrYWPe4F+3M4hKYKxx1AeRNcBSP288=
+Received: from AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM (20.177.116.141) by
+ AM6PR10MB2120.EURPRD10.PROD.OUTLOOK.COM (52.134.113.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2856.20; Wed, 1 Apr 2020 10:20:32 +0000
+Received: from AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::993f:cdb5:bb05:b01]) by AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::993f:cdb5:bb05:b01%7]) with mapi id 15.20.2856.019; Wed, 1 Apr 2020
+ 10:20:32 +0000
+From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+To:     Stefan Riedmueller <s.riedmueller@phytec.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Support Opensource <Support.Opensource@diasemi.com>
+CC:     "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 3/3] watchdog: da9062: No need to ping manually before
+ setting timeout
+Thread-Topic: [PATCH 3/3] watchdog: da9062: No need to ping manually before
+ setting timeout
+Thread-Index: AQHWA3+NbV06Uh/Df0mWcPQbot1CmahkF1Ag
+Date:   Wed, 1 Apr 2020 10:20:32 +0000
+Message-ID: <AM6PR10MB226301829B873FFEFE845FE180C90@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
+References: <20200326150203.371673-1-s.riedmueller@phytec.de>
+ <20200326150203.371673-3-s.riedmueller@phytec.de>
+In-Reply-To: <20200326150203.371673-3-s.riedmueller@phytec.de>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmnu6lrJY4g3s3VCxeTjjMaLF96RsW
-        i88tbUwWbyd+YLN42z6NyeLHohdsFj8e3WCxWLRyIZvF5V1z2CzerLjDbjH9x24mB26PWffP
-        snlc7utl8mhryvTYOesuu8fnTXIBrFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaW
-        FuZKCnmJuam2Si4+AbpumTlAlykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCiwL
-        9IoTc4tL89L1kvNzrQwNDIxMgQoTsjOOPf/IWPCbp6LlzXnmBsZTXF2MnBwSAiYSTz4uYOti
-        5OIQEtjBKLH54B5mCOcTo8S81ktMIFVCAt8YJWZdU4fpmHNgMlTRXkaJ7VMeMEI47xkl5tw+
-        wgZSJSzgKfH87D1mEFtEIETizP5nYDuYBZ4wS7z89I8FJMEmoCOx/dtxoBUcHLwCdhLzL0qC
-        hFkEVCSa310HC4sKREic/poIEuYVEJQ4OfMJWCcnUGd343qw45gFxCVuPZkPZctLbH87B+w4
-        CYFmdonH28+zQFztItFz8AcrhC0s8er4FnYIW0ri87u9bBB2tcSu5jNQzR2MEre2NTFBJIwl
-        9i+dDHYQs4CmxPpd+hBhRYmdv+cyQizmk3j3tYcVpERCgFeio00IokRF4tLrl0wwq+4++Q91
-        gofE27s72CYwKs5C8tosJO/MQvLOLITFCxhZVjGKpRYU56anFhsWmCJH9iZGcKLVstzBeOyc
-        zyFGAQ5GJR7eioyWOCHWxLLiytxDjBIczEoivLNdgEK8KYmVValF+fFFpTmpxYcYTYEBP5FZ
-        SjQ5H5gF8kriDU2NjI2NLUwMzUwNDZXEeadez4kTEkhPLEnNTk0tSC2C6WPi4JRqYNxwTn3Z
-        9BKxWQ4tB4ylF01favL2eo9rudXS3vZLH/8fb7jIvfCK85QUve7N0o+T7BoT03Jv7Nd2ajrc
-        mnVEUUWk0C+1/ZxSvdKpq+rzVod3vfD9Kyx1m0f7+leGsx0dweL7exssFodP6ou6PUNotdv8
-        raf2JXKs/K+wSY0pWL2sJOpO/YrZb5RYijMSDbWYi4oTAcFThxnKAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOIsWRmVeSWpSXmKPExsWy7bCSvO7FrJY4g6dXlCxeTjjMaLF96RsW
-        i88tbUwWbyd+YLN42z6NyeLHohdsFj8e3WCxWLRyIZvF5V1z2CzerLjDbjH9x24mB26PWffP
-        snlc7utl8mhryvTYOesuu8fnTXIBrFFcNimpOZllqUX6dglcGceef2Qs+M1T0fLmPHMD4ymu
-        LkZODgkBE4k5ByYzdzFycQgJ7GaUePyxhwUiISXx+elUti5GDiBbWOLw4WKImreMEr8WPGYD
-        qREW8JR4fvYeM4gtIhAisfdNJyNIEbPAC2aJH29fsUF0/GCU2N96H2wqm4COxPZvx5lApvIK
-        2EnMvygJEmYRUJFofnedCcQWFYiQeL79BiOIzSsgKHFy5hOwVk6g1u7G9WA1zALqEn/mXWKG
-        sMUlbj2ZDxWXl9j+dg7zBEahWUjaZyFpmYWkZRaSlgWMLKsYJVMLinPTc4sNCwzzUsv1ihNz
-        i0vz0vWS83M3MYKjS0tzB+PlJfGHGAU4GJV4eCsyWuKEWBPLiitzDzFKcDArifDOdgEK8aYk
-        VlalFuXHF5XmpBYfYpTmYFES532adyxSSCA9sSQ1OzW1ILUIJsvEwSnVwJjypuygo3EDx+6J
-        li2GPBvV+QstpNsWfjS7VSFVlHB2M3Py1VLGKRItl5t/NivUH/idvGvnVKadn5SkPs8ynuCS
-        NcPf4X240fZVF3RkV18snSfv+//iVJWb92fOkjgZrr29z36DZf5Ww+D7Kyf/lWfe3KGiPG+V
-        yjqjZR6bZXleHrUta7c576vEUpyRaKjFXFScCABPJ110qgIAAA==
-X-CMS-MailID: 20200401102001epcas1p24d1f256edb0913bd1757d2b964e40068
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200330052521epcas1p1eedc926d4b11513f8502cf0c90ecf433
-References: <CGME20200330052521epcas1p1eedc926d4b11513f8502cf0c90ecf433@epcas1p1.samsung.com>
-        <20200330052528.10503-1-jh80.chung@samsung.com>
-        <CAHp75Vey9VUSAT6j6NTSXqNUK1vwSqY=aSx3-WPoXgxCK33SDg@mail.gmail.com>
-        <87r1xaf8r7.fsf@codeaurora.org>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.225.80.64]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 399ec2d5-d0ba-41a1-b63a-08d7d6264f65
+x-ms-traffictypediagnostic: AM6PR10MB2120:
+x-ms-exchange-sharedmailbox-routingagent-processed: True
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM6PR10MB2120183A9A5F17914E1B41FDA7C90@AM6PR10MB2120.EURPRD10.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 03607C04F0
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(396003)(376002)(39850400004)(366004)(136003)(346002)(64756008)(54906003)(33656002)(5660300002)(186003)(53546011)(6506007)(6636002)(71200400001)(9686003)(26005)(110136005)(55016002)(4326008)(66556008)(66946007)(86362001)(316002)(52536014)(478600001)(66446008)(76116006)(7696005)(66476007)(2906002)(8676002)(81166006)(8936002)(81156014)(55236004);DIR:OUT;SFP:1101;
+received-spf: None (protection.outlook.com: diasemi.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: wRDkVy4zOxhvI5mpGca/sVQypxAI6//eb5DQv29f1Cu2N7UCC5l6Z3MFqGvRLxDI0QmYABa2PO844t5xGjn1i3xJI/AmiuFVY5MddhH8G6owWH/64s0/lpRFqcqQdwL7bgZz/yjCuWWuzH44Vv83a/tBn86cG6EOxNdGcxNJEYB1kJbhkZMUUGKeLwqfeHxcQJwycTBK3f5a+GKnQdXILcuSzXK6Wu630ePHyHI4MEkSP9ZJ7otqMXeKqbpJ+yTXNmBLU9zimmmvjNcCqFNvQEw0fG8CALKechjhXBg6FRc1638sWfZ5VEXcuNCWxWP9sUu82pTfsoPy7RJw+UW+U1/ykMLjTu1kUHSCYtpkQXGn6ZJGqUIJQuatwBGxafNaA55uTVc2cNH77H5L9/cNNPL5W9EQhGdiv2AOr5jrOVUBXqyCFutEGtsY5EE2uNLW
+x-ms-exchange-antispam-messagedata: aynqdGgbCnm8z8s1r3pOJi7KmilNoeF7OcrMYAMRlnhYhkF/ArRZ8SpdOvO9F/rqJD5w36E+e7LunnLXmfpCJSufh5ojdpZL8Qx0Lpqu3onWs1wM1W5ZNxwEEJqM8fQBov2m/mkM7+fFLMO+xjDVTw==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: diasemi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 399ec2d5-d0ba-41a1-b63a-08d7d6264f65
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Apr 2020 10:20:32.4582
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 511e3c0e-ee96-486e-a2ec-e272ffa37b7c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vHEYk1ECfNN6HR/kfwPTV8ktzL+YoTUsd6a1p3ciLJM/O0dZdiPic2zxST18HhJfrkctLwFDKeFyV00z7JEr/FfYWnpcNVAD26xid7wkV68=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR10MB2120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/30/20 7:16 PM, Kalle Valo wrote:
-> Andy Shevchenko <andy.shevchenko@gmail.com> writes:
-> 
->> On Mon, Mar 30, 2020 at 8:26 AM Jaehoon Chung <jh80.chung@samsung.com> wrote:
->>>
->>> sup_wpa feature is getting after setting feature_disable flag.
->>> If firmware is supported sup_wpa feature,  it's always enabled
->>> regardless of feature_disable flag.
->>>
->>
->>> Fixes: b8a64f0e96c2 ("brcmfmac: support 4-way handshake offloading for WPA/WPA2-PSK")
->>>
->>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->>
->> No blank line in between. (Dunno if you need to resend, just wait what
->> maintainer says)
-> 
-> I can fix that during commit, no need to resend because of this.
+On 26 March 2020 15:02, Stefan Riedmueller wrote:
 
-Thanks!
+> There is actually no need to ping the watchdog before disabling it
+> during timeout change. Disabling the watchdog already takes care of
+> resetting the counter.
+>=20
+> This fixes an issue during boot when the userspace watchdog handler takes
+> over and the watchdog is already running. Opening the watchdog in this ca=
+se
+> leads to the first ping and directly after that without the required
+> heartbeat delay a second ping issued by the set_timeout call. Due to the
+> missing delay this resulted in a reset.
+>=20
+> Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
 
-BTW, I have a question about brcmfmac's firmware feature.
-When i have tested on RPI4, it seems that 4-way handshake offloading feature is using.
+Thanks for the update:
 
-If I entered the wrong password, which event is triggered from firmware? 
-And how does wpa_supplicant know about wrong key?
+Reviewed-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 
-I don't have much knowledge about this..but if my analyzing is correct.
-
-<7>[  119.278494] brcmfmac: brcmf_is_nonetwork Processing failed supplicant state: 8
-...
-<7>[  119.278525] brcmfmac: brcmf_bss_connect_done Report connect result - connection failed
-...
-<7>[  119.278726] brcmfmac: brcmf_fweh_event_worker event DEAUTH_IND (6) ifidx 0 bsscfg 0 addr 70:5d:cc:6e:b5:xx
-
-<7>[  119.280966] brcmfmac: brcmf_fweh_event_worker event DEAUTH (5) ifidx 0 bsscfg 0 addr 70:5d:cc:6e:b5:xx
-
-
-firmware is indicating DEAUTH event and driver will be controlled with it, right?
-Can someone explain to me in more detail, plz? 
-
-Best Regards,
-Jaehoon Chung
-
-
-
-> 
+> ---
+>  drivers/watchdog/da9062_wdt.c | 5 -----
+>  1 file changed, 5 deletions(-)
+>=20
+> diff --git a/drivers/watchdog/da9062_wdt.c b/drivers/watchdog/da9062_wdt.=
+c
+> index 6d81b1276b87..c5bd075c8b14 100644
+> --- a/drivers/watchdog/da9062_wdt.c
+> +++ b/drivers/watchdog/da9062_wdt.c
+> @@ -66,11 +66,6 @@ static int da9062_wdt_update_timeout_register(struct
+> da9062_watchdog *wdt,
+>  					      unsigned int regval)
+>  {
+>  	struct da9062 *chip =3D wdt->hw;
+> -	int ret;
+> -
+> -	ret =3D da9062_reset_watchdog_timer(wdt);
+> -	if (ret)
+> -		return ret;
+>=20
+>  	regmap_update_bits(chip->regmap,
+>  				  DA9062AA_CONTROL_D,
+> --
+> 2.23.0
 
