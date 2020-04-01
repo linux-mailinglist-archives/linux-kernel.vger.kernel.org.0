@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D1CF19B079
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F96419B330
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387980AbgDAQ1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:27:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51828 "EHLO mail.kernel.org"
+        id S2389595AbgDAQtX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:49:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732890AbgDAQ1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:27:05 -0400
+        id S2388677AbgDAQnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:43:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4E3F20BED;
-        Wed,  1 Apr 2020 16:27:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FC6520787;
+        Wed,  1 Apr 2020 16:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758425;
-        bh=SFOWE/27zqtS1mso7mCUfh5jR+5ME//znMimyV2p3wE=;
+        s=default; t=1585759388;
+        bh=xEilnWJ17LjYXpfYjIrLh48O2kZon12YRiOCLDFS4mA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LnmwNSSbrQeUJG/zGNv/6GGHACrO4xwbhheShKX0j0VhXitpFOK0LAa8oKb/2M94I
-         uuAC7K0jShXBAykd3EJZHq4loXhryybZjTTKucgLSI2X54P7ASL5ZgJXJkpTk8idcl
-         DuXSsaKaUjhJzpFWT8Xm7DpwrYJl7BD8JhAfG9sI=
+        b=Wirpl6mGYTFFMRzdfx8QOlbxAHgOD0U4bVVSXMjoL0jyPmzXkg0/iXYAMR7us2CP8
+         pqyZPC1ZfPJZwW6fJPGx8eeeQ29m3dmGTDokSe8rdNn9rjY4nnBjr9Cftar+yicM/4
+         jpAZ5t5wODrcCTwe2mEpeVmIOYgvREwXaN9BCWao=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cezary Jackiewicz <cezary@eko.one.pl>,
-        Pawel Dembicki <paweldembicki@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 080/116] USB: serial: option: add BroadMobi BM806U
+        stable@vger.kernel.org, Emil Renner Berthing <kernel@esmil.dk>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 064/148] net: stmmac: dwmac-rk: fix error path in rk_gmac_probe
 Date:   Wed,  1 Apr 2020 18:17:36 +0200
-Message-Id: <20200401161552.836037179@linuxfoundation.org>
+Message-Id: <20200401161559.861571306@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pawel Dembicki <paweldembicki@gmail.com>
+From: Emil Renner Berthing <kernel@esmil.dk>
 
-commit 6cb2669cb97fc4fdf526127159ac59caae052247 upstream.
+[ Upstream commit 9de9aa487daff7a5c73434c24269b44ed6a428e6 ]
 
-BroadMobi BM806U is an Qualcomm MDM9225 based 3G/4G modem.
-Tested hardware BM806U is mounted on D-Link DWR-921-C3 router.
+Make sure we clean up devicetree related configuration
+also when clock init fails.
 
-T:  Bus=01 Lev=01 Prnt=01 Port=01 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
-D:  Ver= 2.01 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=2020 ProdID=2033 Rev= 2.28
-S:  Manufacturer=Mobile Connect
-S:  Product=Mobile Connect
-S:  SerialNumber=f842866cfd5a
-C:* #Ifs= 5 Cfg#= 1 Atr=80 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=87(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-E:  Ad=89(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-
-Co-developed-by: Cezary Jackiewicz <cezary@eko.one.pl>
-Signed-off-by: Cezary Jackiewicz <cezary@eko.one.pl>
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: fecd4d7eef8b ("net: stmmac: dwmac-rk: Add integrated PHY support")
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/option.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1996,6 +1996,8 @@ static const struct usb_device_id option
- 	  .driver_info = RSVD(1) | RSVD(4) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x2031, 0xff),			/* Olicard 600 */
- 	  .driver_info = RSVD(4) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x2033, 0xff),			/* BroadMobi BM806U */
-+	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x2060, 0xff),			/* BroadMobi BM818 */
- 	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x4000, 0xff) },			/* OLICARD300 - MT6225 */
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -1362,7 +1362,7 @@ static int rk_gmac_probe(struct platform
+ 
+ 	ret = rk_gmac_clk_init(plat_dat);
+ 	if (ret)
+-		return ret;
++		goto err_remove_config_dt;
+ 
+ 	ret = rk_gmac_powerup(plat_dat->bsp_priv);
+ 	if (ret)
 
 
