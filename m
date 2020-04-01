@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DDCE19B0E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E40EA19B18C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388004AbgDAQaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:30:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56060 "EHLO mail.kernel.org"
+        id S2388801AbgDAQf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:35:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388254AbgDAQaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:30:12 -0400
+        id S2388795AbgDAQf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:35:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7446420658;
-        Wed,  1 Apr 2020 16:30:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A55220857;
+        Wed,  1 Apr 2020 16:35:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758611;
-        bh=1tX4S0+QPibSqEbZo24Qo6tnbpDV2afDLlug35vQ+dI=;
+        s=default; t=1585758955;
+        bh=Dxdis/KJKogw06PdKI7YE6I+j6JbrgSMNU1dghE2T48=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a5yH9D76J/MzEYqkbUsF8bZHl2zYwmW3rk3Q6hdBo3sFwuKhUQ6FsQhdrXJsgk/20
-         elCGWDBz0WlrbSbYtTVxnXTnmzrM9y0DQJYCvsy6Khxr+ZIjUuOaNcKcM3MWj0QK+k
-         oBKa6JM1bHxSQColS6+b6wycnYZXPeyppkFc+rkw=
+        b=MTJbRmISy47bfK4xp6NBU4z6Tr0KkFwJ82zrrWv6Td0Rjrdf+0rlHgW8iXvkxg6dm
+         RFAkVUrhQwOcs1Ts8SCaRKP1QlqaixtuMOgI3/3cv5vJMB1qHZLIwDjQmLGzxQ3XDa
+         DOAn/eSH53tsEeYXjWyGiM06wq4YXvQC9jXqaY5w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, russianneuromancer@ya.ru,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 4.4 09/91] usb: quirks: add NO_LPM quirk for RTL8153 based ethernet adapters
-Date:   Wed,  1 Apr 2020 18:17:05 +0200
-Message-Id: <20200401161516.297886448@linuxfoundation.org>
+        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 003/102] ARM: dts: dra7: Add "dma-ranges" property to PCIe RC DT nodes
+Date:   Wed,  1 Apr 2020 18:17:06 +0200
+Message-Id: <20200401161532.006689044@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
-References: <20200401161512.917494101@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
 
-commit 75d7676ead19b1fbb5e0ee934c9ccddcb666b68c upstream.
+[ Upstream commit 27f13774654ea6bd0b6fc9b97cce8d19e5735661 ]
 
-We have been receiving bug reports that ethernet connections over
-RTL8153 based ethernet adapters stops working after a while with
-errors like these showing up in dmesg when the ethernet stops working:
+'dma-ranges' in a PCI bridge node does correctly set dma masks for PCI
+devices not described in the DT. Certain DRA7 platforms (e.g., DRA76)
+has RAM above 32-bit boundary (accessible with LPAE config) though the
+PCIe bridge will be able to access only 32-bits. Add 'dma-ranges'
+property in PCIe RC DT nodes to indicate the host bridge can access
+only 32 bits.
 
-[12696.189484] r8152 6-1:1.0 enp10s0u1: Tx timeout
-[12702.333456] r8152 6-1:1.0 enp10s0u1: Tx timeout
-[12707.965422] r8152 6-1:1.0 enp10s0u1: Tx timeout
-
-This has been reported on Dell WD15 docks, Belkin USB-C Express Dock 3.1
-docks and with generic USB to ethernet dongles using the RTL8153
-chipsets. Some users have tried adding usbcore.quirks=0bda:8153:k to
-the kernel commandline and all users who have tried this report that
-this fixes this.
-
-Also note that we already have an existing NO_LPM quirk for the RTL8153
-used in the Microsoft Surface Dock (where it uses a different usb-id).
-
-This commit adds a NO_LPM quirk for the generic Realtek RTL8153
-0bda:8153 usb-id, fixing the Tx timeout errors on these devices.
-
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=198931
-Cc: stable@vger.kernel.org
-Cc: russianneuromancer@ya.ru
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://lore.kernel.org/r/20200313120708.100339-1-hdegoede@redhat.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/quirks.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/dra7.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -232,6 +232,9 @@ static const struct usb_device_id usb_qu
- 	/* Realtek hub in Dell WD19 (Type-C) */
- 	{ USB_DEVICE(0x0bda, 0x0487), .driver_info = USB_QUIRK_NO_LPM },
- 
-+	/* Generic RTL8153 based ethernet adapters */
-+	{ USB_DEVICE(0x0bda, 0x8153), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* Action Semiconductor flash disk */
- 	{ USB_DEVICE(0x10d6, 0x2200), .driver_info =
- 			USB_QUIRK_STRING_FETCH_255 },
+diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
+index a1a928064b53d..f94064c687789 100644
+--- a/arch/arm/boot/dts/dra7.dtsi
++++ b/arch/arm/boot/dts/dra7.dtsi
+@@ -282,6 +282,7 @@
+ 				device_type = "pci";
+ 				ranges = <0x81000000 0 0          0x03000 0 0x00010000
+ 					  0x82000000 0 0x20013000 0x13000 0 0xffed000>;
++				dma-ranges = <0x02000000 0x0 0x00000000 0x00000000 0x1 0x00000000>;
+ 				bus-range = <0x00 0xff>;
+ 				#interrupt-cells = <1>;
+ 				num-lanes = <1>;
+@@ -319,6 +320,7 @@
+ 				device_type = "pci";
+ 				ranges = <0x81000000 0 0          0x03000 0 0x00010000
+ 					  0x82000000 0 0x30013000 0x13000 0 0xffed000>;
++				dma-ranges = <0x02000000 0x0 0x00000000 0x00000000 0x1 0x00000000>;
+ 				bus-range = <0x00 0xff>;
+ 				#interrupt-cells = <1>;
+ 				num-lanes = <1>;
+-- 
+2.20.1
+
 
 
