@@ -2,80 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEAF519A638
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E31E19A652
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:35:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731914AbgDAH3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 03:29:40 -0400
-Received: from foss.arm.com ([217.140.110.172]:44370 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731680AbgDAH3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 03:29:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B82A31B;
-        Wed,  1 Apr 2020 00:29:39 -0700 (PDT)
-Received: from [10.37.12.63] (unknown [10.37.12.63])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB4DD3F52E;
-        Wed,  1 Apr 2020 00:33:46 -0700 (PDT)
-Subject: Re: [PATCH 2/2] thermal: core: Remove pointless debug traces
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20200331165449.30355-1-daniel.lezcano@linaro.org>
- <20200331165449.30355-2-daniel.lezcano@linaro.org>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <809b3d48-b8a9-75e6-aafc-0999e78611e2@arm.com>
-Date:   Wed, 1 Apr 2020 08:29:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1732006AbgDAHfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 03:35:04 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12595 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731870AbgDAHfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 03:35:03 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 818B5F262207DA92C326;
+        Wed,  1 Apr 2020 15:35:00 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Wed, 1 Apr 2020
+ 15:34:51 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <tytso@mit.edu>, <adilger.kernel@dilger.ca>
+CC:     <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ext4: Fix build error while CONFIG_PRINTK is n
+Date:   Wed, 1 Apr 2020 15:30:38 +0800
+Message-ID: <20200401073038.33076-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20200331165449.30355-2-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+fs/ext4/balloc.c: In function ‘ext4_wait_block_bitmap’:
+fs/ext4/balloc.c:519:3: error: implicit declaration of function ‘ext4_error_err’; did you mean ‘ext4_error’? [-Werror=implicit-function-declaration]
+   ext4_error_err(sb, EIO, "Cannot read block bitmap - "
+   ^~~~~~~~~~~~~~
 
-On 3/31/20 5:54 PM, Daniel Lezcano wrote:
-> The last temperature and the current temperature are show via a
-> dev_debug. The line before, those temperature are also traced.
-> 
-> It is pointless to duplicate the traces for the temperatures,
-> remove the dev_dbg traces.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->   drivers/thermal/thermal_core.c | 6 ------
->   1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-> index 9a321dc548c8..c06550930979 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -447,12 +447,6 @@ static void update_temperature(struct thermal_zone_device *tz)
->   	mutex_unlock(&tz->lock);
->   
->   	trace_thermal_temperature(tz);
-> -	if (tz->last_temperature == THERMAL_TEMP_INVALID)
-> -		dev_dbg(&tz->device, "last_temperature N/A, current_temperature=%d\n",
-> -			tz->temperature);
-> -	else
-> -		dev_dbg(&tz->device, "last_temperature=%d, current_temperature=%d\n",
-> -			tz->last_temperature, tz->temperature);
->   }
->   
->   static void thermal_zone_device_init(struct thermal_zone_device *tz)
-> 
+Add missing stub helper and fix ext4_abort.
 
-This prints really deserve to be removed.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 2ea2fc775321 ("ext4: save all error info in save_error_info() and drop ext4_set_errno()")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/ext4/ext4.h | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index eacd2f9cc833..aa8466d28787 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2848,6 +2848,11 @@ do {									\
+ 	no_printk(fmt, ##__VA_ARGS__);					\
+ 	__ext4_error_inode(inode, "", 0, block, 0, " ");		\
+ } while (0)
++#define ext4_error_inode_err(inode, func, line, block, err, fmt, ...)	\
++do {									\
++	no_printk(fmt, ##__VA_ARGS__);					\
++	__ext4_error_inode(inode, "", 0, block, 0, " ");		\
++} while (0)
+ #define ext4_error_file(file, func, line, block, fmt, ...)		\
+ do {									\
+ 	no_printk(fmt, ##__VA_ARGS__);					\
+@@ -2858,10 +2863,15 @@ do {									\
+ 	no_printk(fmt, ##__VA_ARGS__);					\
+ 	__ext4_error(sb, "", 0, 0, 0, " ");				\
+ } while (0)
+-#define ext4_abort(sb, fmt, ...)					\
++#define ext4_error_err(sb, err, fmt, ...)				\
++do {									\
++	no_printk(fmt, ##__VA_ARGS__);					\
++	__ext4_error((sb), "", 0, 0, 0, " ");				\
++} while (0)
++#define ext4_abort(sb, err, fmt, ...)					\
+ do {									\
+ 	no_printk(fmt, ##__VA_ARGS__);					\
+-	__ext4_abort(sb, "", 0, " ");					\
++	__ext4_abort(sb, "", 0, 0, " ");				\
+ } while (0)
+ #define ext4_warning(sb, fmt, ...)					\
+ do {									\
+-- 
+2.17.1
 
-Regards,
-Lukasz
+
