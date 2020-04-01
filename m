@@ -2,504 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6B3E19B66E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 21:35:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C7E219B672
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 21:38:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732833AbgDATfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 15:35:39 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40208 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732244AbgDATfi (ORCPT
+        id S1732780AbgDATit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 15:38:49 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45753 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732637AbgDATit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 15:35:38 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w26so1306358edu.7
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 12:35:36 -0700 (PDT)
+        Wed, 1 Apr 2020 15:38:49 -0400
+Received: by mail-wr1-f65.google.com with SMTP id t7so1443148wrw.12
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 12:38:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q3jSAO8i57DbvhBfb53ktHGZ2uMKAMcCW6E8VbEgc4s=;
-        b=mjcsWDpYphXz5dA5YNqYJoMQpxtbcOHWMp/D9HjrzEb2TBLvYtHLQ9MiFW+MC+l57P
-         McztFw8XSwIRuHgGHpF4R0SwzJjRZOnE0mnEcarYU9nFgLeBatSnCqiKCAhRbEt5OZ8i
-         Ikd9F/1mTxVrHC966dn0DjsG2dA3wXrcjO6rHKNSUXQc+QEedR32ikkq/2y+h+2LN6Rp
-         1b/UVRVFzHbWQEEGLNg8s2v4TBr6j4ZtOv2qcrCl08DVT4Yv5pCFE0je/mn5MvrXJaCq
-         NGs4XOjlcAYXJoRZu93V6/plTlNLjfDWwYkgkEj1O79FFtxtfIWXh79vagMVcIn26Hxa
-         CVfA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TDGKY5QxIfDPhHRtGriV1dyv8mVg4yeuiltTMlYuWpg=;
+        b=pHsJj8e/dGUlOyMcKOnNs7DYjMar8IxtH14MFBn99rpKV5hm60COSxfYOQ2qyZuPHR
+         afL2e7VP77ycfk/gjC+z6YPTh/0TlI0k73emKvfsb1AbCTkYJgNo/8VclbxXJyT45nM6
+         pzBbDSZXOpcKSJ7iXP/krnr/pMlWlYV2T7oGHOXHBFtxE7GOThNXx0LluWaxh0eMa8hJ
+         g9Bz4bFzIzq1HnguSYW4hxdTfxPS/Ybhy77YP2ZOOnUXmN+/6OVXUEcwzm4DDOIb6n4L
+         BUBzncTT5dKjYct6BJekczZ7l+B6ite6CCqaWAgZLwqOWqQRi+bcxfyrb8ZoWDuCF9YM
+         a7qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q3jSAO8i57DbvhBfb53ktHGZ2uMKAMcCW6E8VbEgc4s=;
-        b=WdLUsy+HV7Np7cFlckOgn/VRJIUQS/dYEQnJujMJQO6xYEd3Rai9m7QYeJVGcq5fT9
-         6dnLfE6NL0RyweVuhOc6tVWjaN4UN/TUQk9Sv+cMqO1NFeGZCL/zrxF6gttReTk5iueS
-         aQBru6eEFaj+mQ0h+z/G7+mBh5SQlHQIvAA2ruc0La0oK8mJk/ex/FxL9FM2YoWaUAkk
-         Xp3VX+MkmVvy3McOo8jAG70dzHSSTRdoGuPLaDtytueZgFseGpmBy4Ci+yYxan2U5Aps
-         U3v6XRGQ0Q8+lSqX1nNYlgM4KwQ0zOvVj14wJ24454Ji2dyJ6eU7l1Aqmv7QjngFNuO5
-         2x+w==
-X-Gm-Message-State: ANhLgQ0alChVnnak/QJv26XjU+4T9ZqB9Pso66Qlc0nxmoRkLneX/HoX
-        bh3Prq2ISo+l/0uJiwD45kidIpMtrAhrYEWCWzLbnQ==
-X-Google-Smtp-Source: ADFU+vs7zqcb4vYtw0JFFUp+7vrhUNZOxwvyZ/ygpmPkcp52KXyXZx+7nxypoK8JQD5UfIspTkuezkIGVj6J1IyuTkU=
-X-Received: by 2002:a17:906:dbd4:: with SMTP id yc20mr21657879ejb.335.1585769735476;
- Wed, 01 Apr 2020 12:35:35 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=TDGKY5QxIfDPhHRtGriV1dyv8mVg4yeuiltTMlYuWpg=;
+        b=YK1F/WyvWaah5LVo3QOrk7pjMlNi8zXjPH/QKTYKp4R3a6MwTD/YXLUNlh1U5yaGgu
+         D++s7QAgoS/DVwzOf45HQj01tfV2Em+QJlUAs36h/nFiiCLIYWdwDrobqJ2eHYbGxj+l
+         3Xz52df3MLDOQt/eLoQk91d7dwfVCjgp96j40lPfdWpWRXSpQN/keX6YfJlHCYPLH6y/
+         QwUzjAbUW9hQqqO2k+vP8bvAy/hOf8vcHWmaIMWJg7LldiS27PSzlwCFJbtcqwalXMzD
+         lUWfQBArKxZOsTPRWIy9eKvPc2GG+g+W2gHM6gF9IVbKz5Jtgqy3gxGUYkMXK15Ww91m
+         ujCw==
+X-Gm-Message-State: ANhLgQ08gup2gxFTDo97K6PndX7QwC/M7vr8+fYwuk6sdSp8BKm1IahI
+        nQLuGiuqGljOV/Iw2SuwXW0=
+X-Google-Smtp-Source: ADFU+vtPYnymWSVttuqGgkVi3HH4huwbdnr/Hn8XMMGnHRtA+ZI0c5iVSWxl1LHaKHayzgYovX+ceg==
+X-Received: by 2002:a5d:6888:: with SMTP id h8mr16423601wru.159.1585769926261;
+        Wed, 01 Apr 2020 12:38:46 -0700 (PDT)
+Received: from [10.230.186.223] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id s2sm4241728wru.68.2020.04.01.12.38.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Apr 2020 12:38:45 -0700 (PDT)
+Subject: Re: [GIT PULL 1/3] bcm2835-dt-fixes-2020-03-27
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20200327211632.32346-1-nsaenzjulienne@suse.de>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <0db69929-ba6f-555f-7ed4-8a03dd398507@gmail.com>
+Date:   Wed, 1 Apr 2020 12:38:42 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Firefox/68.0 Thunderbird/68.6.0
 MIME-Version: 1.0
-References: <20200327071202.2159885-1-alastair@d-silva.org>
- <20200327071202.2159885-11-alastair@d-silva.org> <CAPcyv4gQVuHLHy7YuEEk7uTtknTugwrDzosiVQm5bMoB9udPng@mail.gmail.com>
-In-Reply-To: <CAPcyv4gQVuHLHy7YuEEk7uTtknTugwrDzosiVQm5bMoB9udPng@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 1 Apr 2020 12:35:24 -0700
-Message-ID: <CAPcyv4ia7MQ0LjmNrt82WPGhBPrJG4Y1gb5zmVkaUMNVo-EnCw@mail.gmail.com>
-Subject: Re: [PATCH v4 10/25] nvdimm: Add driver for OpenCAPI Persistent Memory
-To:     "Alastair D'Silva" <alastair@d-silva.org>
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200327211632.32346-1-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 1, 2020 at 1:49 AM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Sun, Mar 29, 2020 at 10:23 PM Alastair D'Silva <alastair@d-silva.org> wrote:
-> >
-> > This driver exposes LPC memory on OpenCAPI pmem cards
-> > as an NVDIMM, allowing the existing nvram infrastructure
-> > to be used.
-> >
-> > Namespace metadata is stored on the media itself, so
-> > scm_reserve_metadata() maps 1 section's worth of PMEM storage
-> > at the start to hold this. The rest of the PMEM range is registered
-> > with libnvdimm as an nvdimm. ndctl_config_read/write/size() provide
-> > callbacks to libnvdimm to access the metadata.
-> >
-> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > ---
-> >  drivers/nvdimm/Kconfig         |   2 +
-> >  drivers/nvdimm/Makefile        |   1 +
-> >  drivers/nvdimm/ocxl/Kconfig    |  15 ++
-> >  drivers/nvdimm/ocxl/Makefile   |   7 +
-> >  drivers/nvdimm/ocxl/main.c     | 476 +++++++++++++++++++++++++++++++++
-> >  drivers/nvdimm/ocxl/ocxlpmem.h |  23 ++
-> >  6 files changed, 524 insertions(+)
-> >  create mode 100644 drivers/nvdimm/ocxl/Kconfig
-> >  create mode 100644 drivers/nvdimm/ocxl/Makefile
-> >  create mode 100644 drivers/nvdimm/ocxl/main.c
-> >  create mode 100644 drivers/nvdimm/ocxl/ocxlpmem.h
-> >
-> > diff --git a/drivers/nvdimm/Kconfig b/drivers/nvdimm/Kconfig
-> > index b7d1eb38b27d..368328637182 100644
-> > --- a/drivers/nvdimm/Kconfig
-> > +++ b/drivers/nvdimm/Kconfig
-> > @@ -131,4 +131,6 @@ config NVDIMM_TEST_BUILD
-> >           core devm_memremap_pages() implementation and other
-> >           infrastructure.
-> >
-> > +source "drivers/nvdimm/ocxl/Kconfig"
-> > +
-> >  endif
-> > diff --git a/drivers/nvdimm/Makefile b/drivers/nvdimm/Makefile
-> > index 29203f3d3069..bc02be11c794 100644
-> > --- a/drivers/nvdimm/Makefile
-> > +++ b/drivers/nvdimm/Makefile
-> > @@ -33,3 +33,4 @@ libnvdimm-$(CONFIG_NVDIMM_KEYS) += security.o
-> >  TOOLS := ../../tools
-> >  TEST_SRC := $(TOOLS)/testing/nvdimm/test
-> >  obj-$(CONFIG_NVDIMM_TEST_BUILD) += $(TEST_SRC)/iomap.o
-> > +obj-$(CONFIG_LIBNVDIMM) += ocxl/
-> > diff --git a/drivers/nvdimm/ocxl/Kconfig b/drivers/nvdimm/ocxl/Kconfig
-> > new file mode 100644
-> > index 000000000000..c5d927520920
-> > --- /dev/null
-> > +++ b/drivers/nvdimm/ocxl/Kconfig
-> > @@ -0,0 +1,15 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +if LIBNVDIMM
-> > +
-> > +config OCXL_PMEM
-> > +       tristate "OpenCAPI Persistent Memory"
-> > +       depends on LIBNVDIMM && PPC_POWERNV && PCI && EEH && ZONE_DEVICE && OCXL
->
-> Does OXCL_PMEM itself have any CONFIG_ZONE_DEVICE dependencies? That's
-> more a function of CONFIG_DEV_DAX and CONFIG_FS_DAX. Doesn't OCXL
-> already depend on CONFIG_PCI?
->
->
-> > +       help
-> > +         Exposes devices that implement the OpenCAPI Storage Class Memory
-> > +         specification as persistent memory regions. You may also want
-> > +         DEV_DAX, DEV_DAX_PMEM & FS_DAX if you plan on using DAX devices
-> > +         stacked on top of this driver.
-> > +
-> > +         Select N if unsure.
-> > +
-> > +endif
-> > diff --git a/drivers/nvdimm/ocxl/Makefile b/drivers/nvdimm/ocxl/Makefile
-> > new file mode 100644
-> > index 000000000000..e0e8ade1987a
-> > --- /dev/null
-> > +++ b/drivers/nvdimm/ocxl/Makefile
-> > @@ -0,0 +1,7 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +ccflags-$(CONFIG_PPC_WERROR)   += -Werror
-> > +
-> > +obj-$(CONFIG_OCXL_PMEM) += ocxlpmem.o
-> > +
-> > +ocxlpmem-y := main.o
-> > \ No newline at end of file
-> > diff --git a/drivers/nvdimm/ocxl/main.c b/drivers/nvdimm/ocxl/main.c
-> > new file mode 100644
-> > index 000000000000..c0066fedf9cc
-> > --- /dev/null
-> > +++ b/drivers/nvdimm/ocxl/main.c
-> > @@ -0,0 +1,476 @@
-> > +// SPDX-License-Identifier: GPL-2.0+
-> > +// Copyright 2020 IBM Corp.
-> > +
-> > +/*
-> > + * A driver for OpenCAPI devices that implement the Storage Class
-> > + * Memory specification.
-> > + */
-> > +
-> > +#include <linux/module.h>
-> > +#include <misc/ocxl.h>
-> > +#include <linux/ndctl.h>
-> > +#include <linux/mm_types.h>
-> > +#include <linux/memory_hotplug.h>
-> > +#include "ocxlpmem.h"
-> > +
-> > +static const struct pci_device_id pci_tbl[] = {
-> > +       { PCI_DEVICE(PCI_VENDOR_ID_IBM, 0x0625), },
-> > +       { }
-> > +};
-> > +
-> > +MODULE_DEVICE_TABLE(pci, pci_tbl);
-> > +
-> > +#define NUM_MINORS 256 // Total to reserve
-> > +
-> > +static dev_t ocxlpmem_dev;
-> > +static struct class *ocxlpmem_class;
-> > +static struct mutex minors_idr_lock;
-> > +static struct idr minors_idr;
-> > +
-> > +/**
-> > + * ndctl_config_write() - Handle a ND_CMD_SET_CONFIG_DATA command from ndctl
-> > + * @ocxlpmem: the device metadata
-> > + * @command: the incoming data to write
-> > + * Return: 0 on success, negative on failure
-> > + */
-> > +static int ndctl_config_write(struct ocxlpmem *ocxlpmem,
-> > +                             struct nd_cmd_set_config_hdr *command)
-> > +{
-> > +       if (command->in_offset + command->in_length > LABEL_AREA_SIZE)
-> > +               return -EINVAL;
-> > +
-> > +       memcpy_flushcache(ocxlpmem->metadata_addr + command->in_offset,
-> > +                         command->in_buf, command->in_length);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +/**
-> > + * ndctl_config_read() - Handle a ND_CMD_GET_CONFIG_DATA command from ndctl
-> > + * @ocxlpmem: the device metadata
-> > + * @command: the read request
-> > + * Return: 0 on success, negative on failure
-> > + */
-> > +static int ndctl_config_read(struct ocxlpmem *ocxlpmem,
-> > +                            struct nd_cmd_get_config_data_hdr *command)
-> > +{
-> > +       if (command->in_offset + command->in_length > LABEL_AREA_SIZE)
-> > +               return -EINVAL;
-> > +
-> > +       memcpy_mcsafe(command->out_buf,
-> > +                     ocxlpmem->metadata_addr + command->in_offset,
-> > +                     command->in_length);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +/**
-> > + * ndctl_config_size() - Handle a ND_CMD_GET_CONFIG_SIZE command from ndctl
-> > + * @command: the read request
-> > + * Return: 0 on success, negative on failure
-> > + */
-> > +static int ndctl_config_size(struct nd_cmd_get_config_size *command)
-> > +{
-> > +       command->status = 0;
-> > +       command->config_size = LABEL_AREA_SIZE;
-> > +       command->max_xfer = PAGE_SIZE;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int ndctl(struct nvdimm_bus_descriptor *nd_desc,
-> > +                struct nvdimm *nvdimm,
-> > +                unsigned int cmd, void *buf, unsigned int buf_len, int *cmd_rc)
-> > +{
-> > +       struct ocxlpmem *ocxlpmem = container_of(nd_desc,
-> > +                                                struct ocxlpmem, bus_desc);
-> > +
-> > +       switch (cmd) {
-> > +       case ND_CMD_GET_CONFIG_SIZE:
-> > +               *cmd_rc = ndctl_config_size(buf);
-> > +               return 0;
-> > +
-> > +       case ND_CMD_GET_CONFIG_DATA:
-> > +               *cmd_rc = ndctl_config_read(ocxlpmem, buf);
-> > +               return 0;
-> > +
-> > +       case ND_CMD_SET_CONFIG_DATA:
-> > +               *cmd_rc = ndctl_config_write(ocxlpmem, buf);
-> > +               return 0;
-> > +
-> > +       default:
-> > +               return -ENOTTY;
-> > +       }
-> > +}
-> > +
-> > +/**
-> > + * reserve_metadata() - Reserve space for nvdimm metadata
-> > + * @ocxlpmem: the device metadata
-> > + * @lpc_mem: The resource representing the LPC memory of the OpenCAPI device
-> > + */
-> > +static int reserve_metadata(struct ocxlpmem *ocxlpmem,
-> > +                           struct resource *lpc_mem)
-> > +{
-> > +       ocxlpmem->metadata_addr = devm_memremap(&ocxlpmem->dev, lpc_mem->start,
-> > +                                               LABEL_AREA_SIZE, MEMREMAP_WB);
-> > +       if (IS_ERR(ocxlpmem->metadata_addr))
-> > +               return PTR_ERR(ocxlpmem->metadata_addr);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +/**
-> > + * register_lpc_mem() - Discover persistent memory on a device and register it with the NVDIMM subsystem
-> > + * @ocxlpmem: the device metadata
-> > + * Return: 0 on success
-> > + */
-> > +static int register_lpc_mem(struct ocxlpmem *ocxlpmem)
-> > +{
-> > +       struct nd_region_desc region_desc;
-> > +       struct nd_mapping_desc nd_mapping_desc;
-> > +       struct resource *lpc_mem;
-> > +       const struct ocxl_afu_config *config;
-> > +       const struct ocxl_fn_config *fn_config;
-> > +       int rc;
-> > +       unsigned long nvdimm_cmd_mask = 0;
-> > +       unsigned long nvdimm_flags = 0;
-> > +       int target_node;
-> > +       char serial[16 + 1];
-> > +
-> > +       // Set up the reserved metadata area
-> > +       rc = ocxl_afu_map_lpc_mem(ocxlpmem->ocxl_afu);
-> > +       if (rc < 0)
-> > +               return rc;
-> > +
-> > +       lpc_mem = ocxl_afu_lpc_mem(ocxlpmem->ocxl_afu);
-> > +       if (!lpc_mem || !lpc_mem->start)
-> > +               return -EINVAL;
-> > +
-> > +       config = ocxl_afu_config(ocxlpmem->ocxl_afu);
-> > +       fn_config = ocxl_function_config(ocxlpmem->ocxl_fn);
-> > +
-> > +       rc = reserve_metadata(ocxlpmem, lpc_mem);
-> > +       if (rc)
-> > +               return rc;
-> > +
-> > +       ocxlpmem->bus_desc.provider_name = "ocxlpmem";
-> > +       ocxlpmem->bus_desc.ndctl = ndctl;
-> > +       ocxlpmem->bus_desc.module = THIS_MODULE;
-> > +
-> > +       ocxlpmem->nvdimm_bus = nvdimm_bus_register(&ocxlpmem->dev,
-> > +                                                  &ocxlpmem->bus_desc);
-> > +       if (!ocxlpmem->nvdimm_bus)
-> > +               return -EINVAL;
-> > +
-> > +       ocxlpmem->pmem_res.start = (u64)lpc_mem->start + LABEL_AREA_SIZE;
-> > +       ocxlpmem->pmem_res.end = (u64)lpc_mem->start + config->lpc_mem_size - 1;
-> > +       ocxlpmem->pmem_res.name = "OpenCAPI persistent memory";
-> > +
-> > +       set_bit(ND_CMD_GET_CONFIG_SIZE, &nvdimm_cmd_mask);
-> > +       set_bit(ND_CMD_GET_CONFIG_DATA, &nvdimm_cmd_mask);
-> > +       set_bit(ND_CMD_SET_CONFIG_DATA, &nvdimm_cmd_mask);
-> > +
-> > +       set_bit(NDD_ALIASING, &nvdimm_flags);
-> > +
-> > +       snprintf(serial, sizeof(serial), "%llx", fn_config->serial);
-> > +       nd_mapping_desc.nvdimm = nvdimm_create(ocxlpmem->nvdimm_bus, ocxlpmem,
-> > +                                              NULL, nvdimm_flags,
-> > +                                              nvdimm_cmd_mask, 0, NULL);
-> > +       if (!nd_mapping_desc.nvdimm)
-> > +               return -ENOMEM;
-> > +
-> > +       if (nvdimm_bus_check_dimm_count(ocxlpmem->nvdimm_bus, 1))
-> > +               return -EINVAL;
-> > +
-> > +       nd_mapping_desc.start = ocxlpmem->pmem_res.start;
-> > +       nd_mapping_desc.size = resource_size(&ocxlpmem->pmem_res);
-> > +       nd_mapping_desc.position = 0;
-> > +
-> > +       ocxlpmem->nd_set.cookie1 = fn_config->serial;
-> > +       ocxlpmem->nd_set.cookie2 = fn_config->serial;
-> > +
-> > +       target_node = of_node_to_nid(ocxlpmem->pdev->dev.of_node);
-> > +
-> > +       memset(&region_desc, 0, sizeof(region_desc));
-> > +       region_desc.res = &ocxlpmem->pmem_res;
-> > +       region_desc.numa_node = NUMA_NO_NODE;
-> > +       region_desc.target_node = target_node;
-> > +       region_desc.num_mappings = 1;
-> > +       region_desc.mapping = &nd_mapping_desc;
-> > +       region_desc.nd_set = &ocxlpmem->nd_set;
-> > +
-> > +       set_bit(ND_REGION_PAGEMAP, &region_desc.flags);
-> > +       /*
-> > +        * NB: libnvdimm copies the data from ndr_desc into it's own
-> > +        * structures so passing a stack pointer is fine.
-> > +        */
-> > +       ocxlpmem->nd_region = nvdimm_pmem_region_create(ocxlpmem->nvdimm_bus,
-> > +                                                       &region_desc);
-> > +       if (!ocxlpmem->nd_region)
-> > +               return -EINVAL;
-> > +
-> > +       dev_info(&ocxlpmem->dev,
-> > +                "Onlining %lluMB of persistent memory\n",
-> > +                nd_mapping_desc.size / SZ_1M);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +/**
-> > + * allocate_minor() - Allocate a minor number to use for an OpenCAPI pmem device
-> > + * @ocxlpmem: the device metadata
-> > + * Return: the allocated minor number
-> > + */
-> > +static int allocate_minor(struct ocxlpmem *ocxlpmem)
-> > +{
-> > +       int minor;
-> > +
-> > +       mutex_lock(&minors_idr_lock);
-> > +       minor = idr_alloc(&minors_idr, ocxlpmem, 0, NUM_MINORS, GFP_KERNEL);
-> > +       mutex_unlock(&minors_idr_lock);
-> > +       return minor;
-> > +}
-> > +
-> > +static void free_minor(struct ocxlpmem *ocxlpmem)
-> > +{
-> > +       mutex_lock(&minors_idr_lock);
-> > +       idr_remove(&minors_idr, MINOR(ocxlpmem->dev.devt));
-> > +       mutex_unlock(&minors_idr_lock);
-> > +}
-> > +
-> > +/**
-> > + * free_ocxlpmem() - Free all members of an ocxlpmem struct
-> > + * @ocxlpmem: the device struct to clear
-> > + */
-> > +static void free_ocxlpmem(struct ocxlpmem *ocxlpmem)
-> > +{
-> > +       int rc;
-> > +
-> > +       free_minor(ocxlpmem);
-> > +
-> > +       if (ocxlpmem->ocxl_context) {
-> > +               rc = ocxl_context_detach(ocxlpmem->ocxl_context);
-> > +               if (rc == -EBUSY)
-> > +                       dev_warn(&ocxlpmem->dev, "Timeout detaching ocxl context\n");
-> > +               else
-> > +                       ocxl_context_free(ocxlpmem->ocxl_context);
-> > +       }
-> > +
-> > +       if (ocxlpmem->ocxl_afu)
-> > +               ocxl_afu_put(ocxlpmem->ocxl_afu);
-> > +
-> > +       if (ocxlpmem->ocxl_fn)
-> > +               ocxl_function_close(ocxlpmem->ocxl_fn);
-> > +
-> > +       pci_dev_put(ocxlpmem->pdev);
-> > +
-> > +       kfree(ocxlpmem);
-> > +}
-> > +
-> > +/**
-> > + * free_ocxlpmem_dev() - Free an OpenCAPI persistent memory device
-> > + * @dev: The device struct
-> > + */
-> > +static void free_ocxlpmem_dev(struct device *dev)
-> > +{
-> > +       struct ocxlpmem *ocxlpmem = container_of(dev, struct ocxlpmem, dev);
-> > +
-> > +       free_ocxlpmem(ocxlpmem);
-> > +}
-> > +
-> > +/**
-> > + * ocxlpmem_register() - Register an OpenCAPI pmem device with the kernel
-> > + * @ocxlpmem: the device metadata
-> > + * Return: 0 on success, negative on failure
-> > + */
-> > +static int ocxlpmem_register(struct ocxlpmem *ocxlpmem)
-> > +{
-> > +       int rc;
-> > +       int minor = allocate_minor(ocxlpmem);
-> > +
-> > +       if (minor < 0)
-> > +               return minor;
-> > +
-> > +       ocxlpmem->dev.release = free_ocxlpmem_dev;
-> > +       rc = dev_set_name(&ocxlpmem->dev, "ocxlpmem%d", minor);
-> > +       if (rc < 0)
-> > +               return rc;
-> > +
-> > +       ocxlpmem->dev.devt = MKDEV(MAJOR(ocxlpmem_dev), minor);
-> > +       ocxlpmem->dev.class = ocxlpmem_class;
-> > +       ocxlpmem->dev.parent = &ocxlpmem->pdev->dev;
-> > +
-> > +       return device_register(&ocxlpmem->dev);
->
-> You lost me, why does this need it's own ioctl path and device node?
-> I'd expect you you'd tunnel the commands you need through the existing
-> infrastructure ideally with an eye for cross-arch compatibility. This
-> is a fundamental concern that probably has significant implications
-> for what follows.
 
-At a minimum this device registration should move to the end of the
-patchset once all the libnvdimm generic enabling is done. Even then I
-think the libnvdimm core has all the hooks you need to provide device
-specific enabling *through* the existing interfaces. Have a look at
-the how the ACPI NFIT bus driver provides "nfit/" scoped sysfs
-attributes and tunnels "struct nd_cmd_pkg" ioctl invocations to either
-the bus or "dimm" level device objects. The dimm security model is an
-example of an implementation that wraps a libnvdimm-generic sysfs
-front-end to an intel-specific-device backend. It would be unfortunate
-to need to invent another ABI.
+
+On 3/27/2020 2:16 PM, Nicolas Saenz Julienne wrote:
+> Hi Florian,
+> 
+> The following changes since commit 55c7c0621078bd73e9d4d2a11eb36e61bc6fe998:
+> 
+>   ARM: dts: bcm283x: Fix vc4's firmware bus DMA limitations (2020-03-22 14:45:24 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/nsaenz/linux-rpi.git tags/bcm2835-dt-fixes-2020-03-27
+
+You would want to provide a public fetch URL for next pull requests, I
+fetched your tree so this is fine, but in case someone processes those
+messages in a semi automated way, they would not be able to pull from
+your tree here.
+
+> 
+> for you to fetch changes up to be08d278eb09210fefbad4c9b27d7843f1c096b2:
+> 
+>   ARM: dts: bcm283x: Add cells encoding format to firmware bus (2020-03-27 21:36:17 +0100)
+> 
+> ----------------------------------------------------------------
+> This patch is to be squashed into 55c7c0621078 ("ARM: dts: bcm283x: Fix
+> vc4's firmware bus DMA limitations") as it turned out to be faulty
+> 
+> ----------------------------------------------------------------
+
+Merged into devicetree/fixes, thanks Nicolas, looks like the offending
+commit has already been applied, though I had not gotten an email about
+it, so the fixup in place is no longer an option.
+
+> Nicolas Saenz Julienne (1):
+>       ARM: dts: bcm283x: Add cells encoding format to firmware bus
+> 
+>  arch/arm/boot/dts/bcm2835-rpi.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+
+-- 
+Florian
