@@ -2,143 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3164819AB57
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 14:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A957D19AB79
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 14:16:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732452AbgDAMJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 08:09:59 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38916 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732273AbgDAMJ7 (ORCPT
+        id S1732537AbgDAMPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 08:15:42 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36544 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732496AbgDAMPf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 08:09:59 -0400
-Received: by mail-wm1-f68.google.com with SMTP id e9so6916316wme.4;
-        Wed, 01 Apr 2020 05:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:references:in-reply-to:subject:date:message-id
-         :mime-version:content-transfer-encoding:content-language
-         :thread-index;
-        bh=PU0qVr5nPkx5o+ufW3vb8KGQq695uV/03Y7NY5/Qzn4=;
-        b=ILmjXN8caMMj52xFvubitRb1AiZdfxDDUrsnMSYpdbcu3uIjKvPD9I28x8hds5yno/
-         PAmel+QXqgeGw1XmLW6RZqDra/krmOO+1ECKgsK3eKAnV7Hf0aGpZFnU9iUkKPGA45MA
-         AgVYRLu5OAaYfj20hpYXcoWc9rqbrUot56sjn4hK6iQPEs3WajKIRZ8Wn9VSzqNOgqDj
-         llz4R2Lxp2auGdmnDIZiLuyV4ReFDpW1L3sSm0x6sdx1NdC+ZZmT8pXUyv+lVnBv6DLh
-         xkZTtrUb2YMZ4JvHIkoxDOexX8Zo2LkHf1zFev8TmD1/8vd7mgBiwpfptzmDc4HLqY0r
-         RusQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:references:in-reply-to:subject:date
-         :message-id:mime-version:content-transfer-encoding:content-language
-         :thread-index;
-        bh=PU0qVr5nPkx5o+ufW3vb8KGQq695uV/03Y7NY5/Qzn4=;
-        b=JgVf50HCVPzVkd5Ye+l88ZfRG38ZhS6jgJEmkvH4XviubNWOiz/X0cHYPLPv8fx78Q
-         Nl21+33ByClWO007rvA7jN4VTYL7mYTfloJcufHoV2wm1lHggBynbGyd68VWChLss1hm
-         dt1JNMOf9nFASlrGCAlNnpLCMMTBevbdkvMyFz4wjeiaCPjoDIhOph35xEqcZcltttP/
-         6vedNuQw/vzjYGdctzvbybyOTpUZJaIcqEnG0emhk59lAB9Ft86MvBnWIsf7+VvFybQ3
-         QEe/kintkKf0sEkaGlPRm2bpSiiNpDxULp0Ixm4Vw5oY58FeR8sLnoOWB0qncBy2ndLe
-         jaIw==
-X-Gm-Message-State: AGi0Pua8tBlEPBTFxhtKg+kCFATrsrardDtZzAzxrawcWTcAgpomx8sc
-        w8WvO7uKe/Xh3TWOrW0XLsI=
-X-Google-Smtp-Source: APiQypLPuhTh2gyvjFErd3SXKSjXWWVPFQbYzmQNmDCWTxCJLVc0uH7H6CFQmbjK42jGjvax+4s0JQ==
-X-Received: by 2002:a7b:c185:: with SMTP id y5mr4191618wmi.90.1585742996497;
-        Wed, 01 Apr 2020 05:09:56 -0700 (PDT)
-Received: from AnsuelXPS (host3-220-static.183-80-b.business.telecomitalia.it. [80.183.220.3])
-        by smtp.gmail.com with ESMTPSA id w66sm2504621wma.38.2020.04.01.05.09.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Apr 2020 05:09:55 -0700 (PDT)
-From:   <ansuelsmth@gmail.com>
-To:     "'Rob Herring'" <robh@kernel.org>
-Cc:     "'Stanimir Varbanov'" <svarbanov@mm-sol.com>,
-        "'Andy Gross'" <agross@kernel.org>,
-        "'Bjorn Andersson'" <bjorn.andersson@linaro.org>,
-        "'Bjorn Helgaas'" <bhelgaas@google.com>,
-        "'Mark Rutland'" <mark.rutland@arm.com>,
-        "'Lorenzo Pieralisi'" <lorenzo.pieralisi@arm.com>,
-        "'Andrew Murray'" <amurray@thegoodpenguin.co.uk>,
-        "'Philipp Zabel'" <p.zabel@pengutronix.de>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200320183455.21311-1-ansuelsmth@gmail.com> <20200320183455.21311-8-ansuelsmth@gmail.com> <20200331173241.GA25681@bogus>
-In-Reply-To: <20200331173241.GA25681@bogus>
-Subject: R: [PATCH 08/12] devicetree: bindings: pci: add phy-tx0-term-offset to qcom,pcie
-Date:   Wed, 1 Apr 2020 14:09:54 +0200
-Message-ID: <013b01d6081e$74e3b710$5eab2530$@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: it
-Thread-Index: AQF7DJ39byRpk4MoIUXZtcQDafvd5gI+20GLAtWBGGmo8YCbwA==
+        Wed, 1 Apr 2020 08:15:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585743335;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=gKRsQzj1wHjyshbJp6pZihNgfn9EIDeX0M9nbIEjc5U=;
+        b=ThHm2dCInLrHkhS1SPzI1aaL8dOVK9ix8TdltEwnNOpxBB0sGWz1TLsndGQI5eIbSfi8A7
+        EnCU6l5n82Efi14aE/U9WPVcmkIk2/8HeQAyba1jP5lwbp5IQruk+2DBfe72j52g8sXGxp
+        bpgk+lK3kY56OZWuTOkkWa0L4jMuADI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-476-RVWAq1UwPIyVYY5wkF0cbA-1; Wed, 01 Apr 2020 08:15:31 -0400
+X-MC-Unique: RVWAq1UwPIyVYY5wkF0cbA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D4D62107ACCA;
+        Wed,  1 Apr 2020 12:15:29 +0000 (UTC)
+Received: from fuller.cnet (ovpn-116-11.gru2.redhat.com [10.97.116.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3B67419C70;
+        Wed,  1 Apr 2020 12:15:29 +0000 (UTC)
+Received: by fuller.cnet (Postfix, from userid 1000)
+        id B113F418CC3E; Wed,  1 Apr 2020 09:15:03 -0300 (-03)
+Message-ID: <20200401121018.104226700@redhat.com>
+User-Agent: quilt/0.66
+Date:   Wed, 01 Apr 2020 09:10:18 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
+        Chris Friesen <chris.friesen@windriver.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jim Somerville <Jim.Somerville@windriver.com>,
+        Christoph Lameter <cl@linux.com>
+Subject: [patch 0/4] affine kernel threads to nohz_full= cpumask (v4)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is a kernel enhancement that configures the cpu affinity of kernel
+threads via kernel boot option nohz_full=.
 
+When this option is specified, the cpumask is immediately applied upon
+thread launch. This does not affect kernel threads that specify cpu
+and node.
 
-> -----Messaggio originale-----
-> Da: Rob Herring <robh@kernel.org>
-> Inviato: marted=EC 31 marzo 2020 19:33
-> A: Ansuel Smith <ansuelsmth@gmail.com>
-> Cc: Stanimir Varbanov <svarbanov@mm-sol.com>; Andy Gross
-> <agross@kernel.org>; Bjorn Andersson <bjorn.andersson@linaro.org>;
-> Bjorn Helgaas <bhelgaas@google.com>; Mark Rutland
-> <mark.rutland@arm.com>; Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>;
-> Andrew Murray <amurray@thegoodpenguin.co.uk>; Philipp Zabel
-> <p.zabel@pengutronix.de>; linux-arm-msm@vger.kernel.org; linux-
-> pci@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Oggetto: Re: [PATCH 08/12] devicetree: bindings: pci: add =
-phy-tx0-term-
-> offset to qcom,pcie
->=20
-> On Fri, Mar 20, 2020 at 07:34:50PM +0100, Ansuel Smith wrote:
-> > Document phy-tx0-term-offset propriety to qcom pcie driver
->=20
-> propriety?
->=20
-> >
-> > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > ---
-> >  Documentation/devicetree/bindings/pci/qcom,pcie.txt | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-> b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-> > index 6efcef040741..8c1d014f37b0 100644
-> > --- a/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-> > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-> > @@ -254,6 +254,12 @@
-> >  			- "perst-gpios"	PCIe endpoint reset signal line
-> >  			- "wake-gpios"	PCIe endpoint wake signal line
-> >
-> > +- phy-tx0-term-offset:
->=20
-> Needs a vendor prefix.
->=20
+This allows CPU isolation (that is not allowing certain threads
+to execute on certain CPUs) without using the isolcpus=domain parameter,
+making it possible to enable load balancing on such CPUs
+during runtime (see kernel-parameters.txt).
 
-So I should change to qcom,phy-tx0-term-offset  right?
+Note-1: this is based off on Wind River's patch at
+https://github.com/starlingx-staging/stx-integ/blob/master/kernel/kernel-std/centos/patches/affine-compute-kernel-threads.patch
 
-> > +	Usage: optional
-> > +	Value type: <u32>
-> > +	Definition: If not defined is 0. In ipq806x is set to 7. In newer
-> > +				revision (v2.0) the offset is zero.
-> > +
-> >  * Example for ipq/apq8064
-> >  	pcie@1b500000 {
-> >  		compatible =3D "qcom,pcie-apq8064", "qcom,pcie-ipq8064",
-> "snps,dw-pcie";
-> > @@ -293,6 +299,7 @@
-> >  		reset-names =3D "axi", "ahb", "por", "pci", "phy", "ext";
-> >  		pinctrl-0 =3D <&pcie_pins_default>;
-> >  		pinctrl-names =3D "default";
-> > +		phy-tx0-term-offset =3D <7>;
-> >  	};
-> >
-> >  * Example for apq8084
-> > --
-> > 2.25.1
-> >
+Difference being that this patch is limited to modifying
+kernel thread cpumask: Behaviour of other threads can
+be controlled via cgroups or sched_setaffinity.
+
+Note-2: Wind River's patch was based off Christoph Lameter's patch at
+https://lwn.net/Articles/565932/ with the only difference being
+the kernel parameter changed from kthread to kthread_cpus.
+
+v2: use isolcpus= subcommand (Thomas Gleixner)
+
+v3: s/MontaVista/Wind River/ on changelog (Chris Friesen)
+    documentation updates                 (Chris Friesen)
+    undeprecate isolcpus                  (Chris Friesen)
+    general cleanups                      (Frederic Weisbecker)
+    separate cpu_possible_mask kthread
+    mask change                           (Frederic Weisbecker)
+
+v4: disable idle load balancing for nohz_full=
+    use nohz_full= option for kthread isolation (Frederic Weisbecker)
 
