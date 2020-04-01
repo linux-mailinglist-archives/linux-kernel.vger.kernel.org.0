@@ -2,114 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D834F19B89F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 00:45:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F9BB19B892
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 00:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388540AbgDAWpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 18:45:46 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35097 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387467AbgDAWpp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 18:45:45 -0400
-Received: by mail-lj1-f194.google.com with SMTP id k21so1246364ljh.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 15:45:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9c8qE3qcn/L/b5/Y0N7wYbMH02+9//QHBv0eQQ/FuU4=;
-        b=H/wJ4p8U+3BtQeYyXOMSFkuPezkyzi2+f8geb/E5TjtsL26u79zAu4vV+a/MyRvEXG
-         oyifgLlndtUxR5iodJdHnv07AGwyiKZshXBAomJte1RgCuT/uT/vKnDbnJLFfSRbQl75
-         DHD6mW2/OaqjbNNx5KNTt9kenv463q5xVd7Js=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9c8qE3qcn/L/b5/Y0N7wYbMH02+9//QHBv0eQQ/FuU4=;
-        b=Ha6+oKWL8U6j0XM0UL0E6Jkr4tG1jdhXQK0p6a5l35CTaGnMdXp7QF14fgyD47w+Qq
-         OOa+9JkRJsFdWnzFEMFC6dWW0n4RPxCHD19QFoXqE+KoeM7sWOQf9mgj6Y4Q12E1fuM6
-         ofDA8VMI2GoxsQrsDnZZJvDvPs49IhNTbQ/imi9v1anQX1zSpBkZApoRbQJXbShaJs+n
-         kxSOR6l+2xeF9Q7zfVdgxsx0vuEQKdUrsX2KUsa8i02IhzvzbZvM2hAuZyCEbzBCnPIU
-         yMf2XZBp6CBpoF0lhdq5QXqM68jngDLMfyAJfwZJnD1CcZsZkK4WQLmXaxLVaO8PgojA
-         mcsA==
-X-Gm-Message-State: AGi0PubOjPKm92iPCf11PdWunfGUl28uNMASonolvAnmzXzDoAGzf0iZ
-        YQRLInPxcV9W4INeTOyUZS6ZFFyo/Tc=
-X-Google-Smtp-Source: APiQypIw/lstPU0LI6/99LSjehU/+/+hX2zt4dtXX1/i3YjMNa+9td0VhO0yckXMDhubnisrrqoFrg==
-X-Received: by 2002:a2e:8246:: with SMTP id j6mr263484ljh.162.1585781143271;
-        Wed, 01 Apr 2020 15:45:43 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id h9sm1907552ljk.96.2020.04.01.15.45.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Apr 2020 15:45:42 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id g27so1173442ljn.10
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 15:45:41 -0700 (PDT)
-X-Received: by 2002:a05:651c:50e:: with SMTP id o14mr247886ljp.241.1585781141160;
- Wed, 01 Apr 2020 15:45:41 -0700 (PDT)
+        id S2387866AbgDAWkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 18:40:03 -0400
+Received: from mga12.intel.com ([192.55.52.136]:35883 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387854AbgDAWkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 18:40:03 -0400
+IronPort-SDR: pmx6LV7zty16kp3d743RranwYvgRwX5OojLt0wSaTlh1Ga2PaVlvGLQ/zcQDfcIjyA3k9McFGH
+ 2xWaFZf1ewrQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 15:40:02 -0700
+IronPort-SDR: wON8Mv2Y7vmNMgxffq6zVTWfkWxEp8c5nNy1rnrGL8PZHtpcaJbZ8VCC4w+pQacKjCPq0zOzu2
+ 5Jrbr6onsAug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,333,1580803200"; 
+   d="scan'208";a="328616975"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 01 Apr 2020 15:40:02 -0700
+Date:   Wed, 1 Apr 2020 15:45:50 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 06/10] iommu/ioasid: Convert to set aware allocations
+Message-ID: <20200401154550.3775be8f@jacob-builder>
+In-Reply-To: <20200401135525.GG882512@myrica>
+References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1585158931-1825-7-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20200401135525.GG882512@myrica>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20200331080111.GA20569@gmail.com> <CAHk-=wjpBohNkBSxyPfC7w8165usbU5TuLohdbPs+D0bUYqJhQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wjpBohNkBSxyPfC7w8165usbU5TuLohdbPs+D0bUYqJhQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 1 Apr 2020 15:45:25 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wijWvUfEkqUZRpvo9FCaJNsioS_qZT+iNWUdqQ6eO8Ozw@mail.gmail.com>
-Message-ID: <CAHk-=wijWvUfEkqUZRpvo9FCaJNsioS_qZT+iNWUdqQ6eO8Ozw@mail.gmail.com>
-Subject: Re: [GIT PULL] x86 cleanups for v5.7
-To:     Ingo Molnar <mingo@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 11:09 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Lovely. This now makes my local boot-test tree be much closer to my
-> upstream tree, since I've had my clang asm-goto stuff in my boot tree
-> (and it had that series from Al).
+On Wed, 1 Apr 2020 15:55:25 +0200
+Jean-Philippe Brucker <jean-philippe@linaro.org> wrote:
 
-Side note: I've extended on the x86 uaccess cleanups a bit with a
-couple of commits:
-
-  x86: start using named parameters for low-level uaccess asms
-  x86: get rid of 'rtype' argument to __get_user_asm() macro
-  x86: get rid of 'rtype' argument to __put_user_goto() macro
-  x86: get rid of 'errret' argument to __get_user_xyz() macross
-  x86: remove __put_user_asm() infrastructure
-
-which I _tried_ to make complete no-ops (comparing code generation
-before and after). Sadly, one of them (the "get rid of 'rtype'
-argument to __get_user_asm" one) causes gcc to pick different
-registers for me because now the temporary variables have different
-sizes.
-
-(The others cause line number data changes, of course, but I didn't
-see any _code_ changes).
-
-So that one commit results in a lot of small noise changes to the
-generated code for me, but the few I looked at closer all looked the
-same (mostly just different register, sometimes odd improvements where
-it avoided doing a stupid "andq $0xffffffff", and in one or two cases
-it seemed to randomly just change the stack frame size, sometimes to
-the better, sometimes to worse).
-
-The others should be purely semantically identical.
-
-It was all just small prep to make the patch I have for "asm goto with
-outputs" have a smaller footprint - particularly when I try to then
-make it work with compilers that don't have the capability, and I need
-to have different output registers for that case.
-
-I'm not planning on actually doing that patch this merge window, it's
-just not ready enough. But just in case somebody (Al?) is still
-working on the uaccess.h file, letting you know about my preparatory
-cleanups.
-
-                Linus
+> On Wed, Mar 25, 2020 at 10:55:27AM -0700, Jacob Pan wrote:
+> > The current ioasid_alloc function takes a token/ioasid_set then
+> > record it on the IOASID being allocated. There is no alloc/free on
+> > the ioasid_set.
+> > 
+> > With the IOASID set APIs, callers must allocate an ioasid_set before
+> > allocate IOASIDs within the set. Quota and other ioasid_set level
+> > activities can then be enforced.
+> > 
+> > This patch converts existing API to the new ioasid_set model.
+> > 
+> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>  
+> 
+> [...]
+> 
+> > @@ -379,6 +391,9 @@ ioasid_t ioasid_alloc(struct ioasid_set *set,
+> > ioasid_t min, ioasid_t max, }
+> >  	data->id = id;
+> >  
+> > +	/* Store IOASID in the per set data */
+> > +	xa_store(&sdata->xa, id, data, GFP_KERNEL);  
+> 
+> I couldn't figure out why you're maintaining an additional xarray for
+> each set. We're already storing that data in active_allocator->xa,
+> why the duplication?  If it's for the gPASID -> hPASID translation
+> mentioned by the cover letter, maybe you could add this xa when
+> introducing that change?
+> 
+Sounds good. I will add that later. I was hoping to get common code in
+place.
