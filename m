@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5448919A952
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:17:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E94AE19A955
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:18:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732239AbgDAKRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 06:17:52 -0400
-Received: from mga01.intel.com ([192.55.52.88]:34151 "EHLO mga01.intel.com"
+        id S1732250AbgDAKRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:17:54 -0400
+Received: from mga01.intel.com ([192.55.52.88]:34152 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732226AbgDAKRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:17:49 -0400
-IronPort-SDR: YLrfEumNpouf0tf9u8xz1eKMAuWVk63OzrLnlEwrHDt/mA7qiktm+/qD+u0hDDHMzp+pXD9ptT
- LBU058ZRuG3w==
+        id S1727541AbgDAKRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 06:17:51 -0400
+IronPort-SDR: xW5WFBz0BaIl8WTt/W6TJTHYTYtyVAfXx5ZP6GuQNFEaXosoOTnTPSwRbiqi9F/lfcayR/x6cF
+ PXw7ipxTvcFA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 03:17:47 -0700
-IronPort-SDR: DGYCJ/gbsAgYA3Mo2l41iwmT6bMuQt9B5A7iKrLg6ViDdQDu/OyI1ksGrJUrouJZkddiYXOjrT
- sVuJT+X7o11Q==
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 03:17:49 -0700
+IronPort-SDR: ZAWlKZHZRJZOOrk8xqtsqOIyFPEVW8w3oYwmt7RPiup67+JGrHYQPkjZD/ec1MjoqLAS+rxsv0
+ ZmqWIsoLgQCQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,331,1580803200"; 
-   d="scan'208";a="395925534"
+   d="scan'208";a="395925545"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.87])
-  by orsmga004.jf.intel.com with ESMTP; 01 Apr 2020 03:17:47 -0700
+  by orsmga004.jf.intel.com with ESMTP; 01 Apr 2020 03:17:49 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
         linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 08/16] perf auxtrace: Add an option to synthesize callchains for regular events
-Date:   Wed,  1 Apr 2020 13:16:05 +0300
-Message-Id: <20200401101613.6201-9-adrian.hunter@intel.com>
+Subject: [PATCH 09/16] perf thread-stack: Add thread_stack__sample_late()
+Date:   Wed,  1 Apr 2020 13:16:06 +0300
+Message-Id: <20200401101613.6201-10-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200401101613.6201-1-adrian.hunter@intel.com>
 References: <20200401101613.6201-1-adrian.hunter@intel.com>
@@ -41,116 +41,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, callchains can be synthesized only for synthesized events. Add
-an itrace option to synthesize callchains for regular events.
+Add a thread stack function to create a call chain for hardware events
+where the sample records get created some time after the event occurred.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/Documentation/itrace.txt | 1 +
- tools/perf/builtin-report.c         | 3 ++-
- tools/perf/builtin-script.c         | 2 +-
- tools/perf/util/auxtrace.c          | 6 +++++-
- tools/perf/util/auxtrace.h          | 2 ++
- tools/perf/util/s390-cpumsf.c       | 2 +-
- 6 files changed, 12 insertions(+), 4 deletions(-)
+ tools/perf/util/thread-stack.c | 57 ++++++++++++++++++++++++++++++++++
+ tools/perf/util/thread-stack.h |  3 ++
+ 2 files changed, 60 insertions(+)
 
-diff --git a/tools/perf/Documentation/itrace.txt b/tools/perf/Documentation/itrace.txt
-index 82ff7dad40c2..671e154ede03 100644
---- a/tools/perf/Documentation/itrace.txt
-+++ b/tools/perf/Documentation/itrace.txt
-@@ -10,6 +10,7 @@
- 		e	synthesize error events
- 		d	create a debug log
- 		g	synthesize a call chain (use with i or x)
-+		G	synthesize a call chain on existing event records
- 		l	synthesize last branch entries (use with i or x)
- 		s       skip initial number of events
+diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+index 0885967d5bc3..83f6c83f5617 100644
+--- a/tools/perf/util/thread-stack.c
++++ b/tools/perf/util/thread-stack.c
+@@ -497,6 +497,63 @@ void thread_stack__sample(struct thread *thread, int cpu,
+ 	chain->nr = i;
+ }
  
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 26d8fc27e427..c0cebd53ecf9 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -339,6 +339,7 @@ static int report__setup_sample_type(struct report *rep)
- 	bool is_pipe = perf_data__is_pipe(session->data);
- 
- 	if (session->itrace_synth_opts->callchain ||
-+	    session->itrace_synth_opts->add_callchain ||
- 	    (!is_pipe &&
- 	     perf_header__has_feat(&session->header, HEADER_AUXTRACE) &&
- 	     !session->itrace_synth_opts->set))
-@@ -1332,7 +1333,7 @@ int cmd_report(int argc, const char **argv)
- 	if (symbol_conf.cumulate_callchain && !callchain_param.order_set)
- 		callchain_param.order = ORDER_CALLER;
- 
--	if (itrace_synth_opts.callchain &&
-+	if ((itrace_synth_opts.callchain || itrace_synth_opts.add_callchain) &&
- 	    (int)itrace_synth_opts.callchain_sz > report.max_stack)
- 		report.max_stack = itrace_synth_opts.callchain_sz;
- 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 186ebf827fa1..a0dc118e987b 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -3709,7 +3709,7 @@ int cmd_script(int argc, const char **argv)
- 		return -1;
- 	}
- 
--	if (itrace_synth_opts.callchain &&
-+	if ((itrace_synth_opts.callchain || itrace_synth_opts.add_callchain) &&
- 	    itrace_synth_opts.callchain_sz > scripting_max_stack)
- 		scripting_max_stack = itrace_synth_opts.callchain_sz;
- 
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index b60bae8e395c..809a09e75c55 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -1462,8 +1462,12 @@ int itrace_parse_synth_opts(const struct option *opt, const char *str,
- 			synth_opts->branches = true;
- 			synth_opts->returns = true;
- 			break;
-+		case 'G':
- 		case 'g':
--			synth_opts->callchain = true;
-+			if (p[-1] == 'G')
-+				synth_opts->add_callchain = true;
-+			else
-+				synth_opts->callchain = true;
- 			synth_opts->callchain_sz =
- 					PERF_ITRACE_DEFAULT_CALLCHAIN_SZ;
- 			while (*p == ' ' || *p == ',')
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index db65aae5c2ea..dd8a4ff8209e 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -74,6 +74,7 @@ enum itrace_period_type {
-  * @calls: limit branch samples to calls (can be combined with @returns)
-  * @returns: limit branch samples to returns (can be combined with @calls)
-  * @callchain: add callchain to 'instructions' events
-+ * @add_callchain: add callchain to existing event records
-  * @thread_stack: feed branches to the thread_stack
-  * @last_branch: add branch context to 'instruction' events
-  * @callchain_sz: maximum callchain size
-@@ -101,6 +102,7 @@ struct itrace_synth_opts {
- 	bool			calls;
- 	bool			returns;
- 	bool			callchain;
-+	bool			add_callchain;
- 	bool			thread_stack;
- 	bool			last_branch;
- 	unsigned int		callchain_sz;
-diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-index d7779e48652f..38a942881d1a 100644
---- a/tools/perf/util/s390-cpumsf.c
-+++ b/tools/perf/util/s390-cpumsf.c
-@@ -1079,7 +1079,7 @@ static bool check_auxtrace_itrace(struct itrace_synth_opts *itops)
- 		itops->pwr_events || itops->errors ||
- 		itops->dont_decode || itops->calls || itops->returns ||
- 		itops->callchain || itops->thread_stack ||
--		itops->last_branch;
-+		itops->last_branch || itops->add_callchain;
- 	if (!ison)
- 		return true;
- 	pr_err("Unsupported --itrace options specified\n");
++/*
++ * Hardware sample records, created some time after the event occurred, need to
++ * have subsequent addresses removed from the call chain.
++ */
++void thread_stack__sample_late(struct thread *thread, int cpu,
++			       struct ip_callchain *chain, size_t sz,
++			       u64 sample_ip, u64 kernel_start)
++{
++	struct thread_stack *ts = thread__stack(thread, cpu);
++	u64 sample_context = callchain_context(sample_ip, kernel_start);
++	u64 last_context, context, ip;
++	size_t nr = 0, j;
++
++	if (sz < 2) {
++		chain->nr = 0;
++		return;
++	}
++
++	if (!ts)
++		goto out;
++
++	/*
++	 * When tracing kernel space, kernel addresses occur at the top of the
++	 * call chain after the event occurred but before tracing stopped.
++	 * Skip them.
++	 */
++	for (j = 1; j <= ts->cnt; j++) {
++		ip = ts->stack[ts->cnt - j].ret_addr;
++		context = callchain_context(ip, kernel_start);
++		if (context == PERF_CONTEXT_USER ||
++		    (context == sample_context && ip == sample_ip))
++			break;
++	}
++
++	last_context = sample_ip; /* Use sample_ip as an invalid context */
++
++	for (; nr < sz && j <= ts->cnt; nr++, j++) {
++		ip = ts->stack[ts->cnt - j].ret_addr;
++		context = callchain_context(ip, kernel_start);
++		if (context != last_context) {
++			if (nr >= sz - 1)
++				break;
++			chain->ips[nr++] = context;
++			last_context = context;
++		}
++		chain->ips[nr] = ip;
++	}
++out:
++	if (nr) {
++		chain->nr = nr;
++	} else {
++		chain->ips[0] = sample_context;
++		chain->ips[1] = sample_ip;
++		chain->nr = 2;
++	}
++}
++
+ struct call_return_processor *
+ call_return_processor__new(int (*process)(struct call_return *cr, u64 *parent_db_id, void *data),
+ 			   void *data)
+diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
+index e1ec5a58f1b2..8962ddc4e1ab 100644
+--- a/tools/perf/util/thread-stack.h
++++ b/tools/perf/util/thread-stack.h
+@@ -85,6 +85,9 @@ int thread_stack__event(struct thread *thread, int cpu, u32 flags, u64 from_ip,
+ void thread_stack__set_trace_nr(struct thread *thread, int cpu, u64 trace_nr);
+ void thread_stack__sample(struct thread *thread, int cpu, struct ip_callchain *chain,
+ 			  size_t sz, u64 ip, u64 kernel_start);
++void thread_stack__sample_late(struct thread *thread, int cpu,
++			       struct ip_callchain *chain, size_t sz, u64 ip,
++			       u64 kernel_start);
+ int thread_stack__flush(struct thread *thread);
+ void thread_stack__free(struct thread *thread);
+ size_t thread_stack__depth(struct thread *thread, int cpu);
 -- 
 2.17.1
 
