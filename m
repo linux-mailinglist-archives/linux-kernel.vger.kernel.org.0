@@ -2,309 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20EC319B403
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44D7219B3EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388073AbgDAQyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:54:50 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:25805 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387740AbgDAQ0v (ORCPT
+        id S2387955AbgDAQ1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:27:01 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46430 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387661AbgDAQ1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:26:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585758409;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=j4AR5r17BWV2Q3tJVUOU56LC0f5zCeG7TGv0ZIShdr4=;
-        b=EKKwcaWShwD6E+AIOX3mTPeTShFr7jSGTztUHyIilB/vtL0L5EuyRki8Vk9qGtGuDKqTpX
-        8N/tx3XsKczq1z0j15EUKJg8eRLnRanvo7HkOThMFQbbGv4IL4OuOnrUAcr3AVKvP+Gp8U
-        tg6u4Tc358gkVcnURFsqPFR6isjuh/g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-383-vsVvsof0PX69idRJKXN5EA-1; Wed, 01 Apr 2020 12:26:48 -0400
-X-MC-Unique: vsVvsof0PX69idRJKXN5EA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 648951005509;
-        Wed,  1 Apr 2020 16:26:46 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2963D60C05;
-        Wed,  1 Apr 2020 16:26:43 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 031GQghf007465;
-        Wed, 1 Apr 2020 12:26:42 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 031GQfMp007461;
-        Wed, 1 Apr 2020 12:26:42 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 1 Apr 2020 12:26:41 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Dan Williams <dan.j.williams@intel.com>
-cc:     "Elliott, Robert (Servers)" <elliott@hpe.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Mike Snitzer <msnitzer@redhat.com>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] memcpy_flushcache: use cache flusing for larger
- lengths
-In-Reply-To: <CAPcyv4ijR185RLmtT+A+WZxJs309qPfdqj5eUDEkMgFbxsV+uw@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.2004010941310.23210@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.2003291625590.32108@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2003300729320.9938@file01.intranet.prod.int.rdu2.redhat.com> <CS1PR8401MB12377197482867F688BF93F7ABC80@CS1PR8401MB1237.NAMPRD84.PROD.OUTLOOK.COM>
- <alpine.LRH.2.02.2003310709090.2117@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4ijR185RLmtT+A+WZxJs309qPfdqj5eUDEkMgFbxsV+uw@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Wed, 1 Apr 2020 12:27:00 -0400
+Received: by mail-wr1-f65.google.com with SMTP id j17so731413wru.13
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:26:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=5o65WF39ZTwNaQXXfGkY0C2ezkDV3cJK8zkl+Yba67k=;
+        b=tUT5zpi1DyEwy9utUcX8lWJ1Gke/dmAaD/Z/92ZxfCOooP06FqRvm8AeOOIITLnlHL
+         3rZbniG1XjtG7hNUiSxR+w2/Q2Hgi43Awgw8FadmzZ8Oz/A0QUykOWUZ1QU79jfJQgzC
+         vO9STBbeo17RIssqXFaFj1mT3af2JqPDIv9crkuOM0mk09AngXflMS+4W6M2/pRm+VuO
+         p/j8lD4l7hy7sqeZQgbR/hc/hno/Wp09RQb0AxbCuZILpXVa4HrZQVmX7/pWFKcaiLTt
+         gymyOLOTy46ELzcnBImR4u57zUrC2WFFDt3tGmLN7HbRBmvtPN2lhnEdbfnp6DJp/pkI
+         d/yA==
+X-Gm-Message-State: AGi0PuYRRzuoJerUrhFNavSzLjjWPCQOu5RzkaMg5ajsenEh7P5yHqrD
+        mwO0rnDg95hA1G0suWwRSvc=
+X-Google-Smtp-Source: APiQypIzVS6Ypqmag+o84P4FAzvoeTwfZ/4rIAQ1v95KbNZdM46U22WRQG7EITfBWMushOM2t8LZ3Q==
+X-Received: by 2002:a05:6000:108f:: with SMTP id y15mr4809824wrw.423.1585758418302;
+        Wed, 01 Apr 2020 09:26:58 -0700 (PDT)
+Received: from localhost (ip-37-188-180-223.eurotel.cz. [37.188.180.223])
+        by smtp.gmail.com with ESMTPSA id a82sm6434836wmh.0.2020.04.01.09.26.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 09:26:57 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 18:26:55 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] mm: fix tick timer stall during deferred page init
+Message-ID: <20200401162655.GX22681@dhcp22.suse.cz>
+References: <20200311123848.118638-1-shile.zhang@linux.alibaba.com>
+ <20200401154217.GQ22681@dhcp22.suse.cz>
+ <dfc0014a-9b85-5eeb-70ea-d622ccf5d988@redhat.com>
+ <20200401160048.GU22681@dhcp22.suse.cz>
+ <20200401160929.jwekhr24tb44odea@ca-dmjordan1.us.oracle.com>
+ <20200401161243.GW22681@dhcp22.suse.cz>
+ <20200401161810.xvqikca2x46yqrlx@ca-dmjordan1.us.oracle.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200401161810.xvqikca2x46yqrlx@ca-dmjordan1.us.oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Tue, 31 Mar 2020, Dan Williams wrote:
-
-> > The benchmark shows that 64-byte non-temporal avx512 vmovntdq is as good
-> > as 8, 16 or 32-bytes writes.
-> >                                          ram            nvdimm
-> > sequential write-nt 4 bytes              4.1 GB/s       1.3 GB/s
-> > sequential write-nt 8 bytes              4.1 GB/s       1.3 GB/s
-> > sequential write-nt 16 bytes (sse)       4.1 GB/s       1.3 GB/s
-> > sequential write-nt 32 bytes (avx)       4.2 GB/s       1.3 GB/s
-> > sequential write-nt 64 bytes (avx512)    4.1 GB/s       1.3 GB/s
-> >
-> > With cached writes (where each cache line is immediatelly followed by clwb
-> > or clflushopt), 8, 16 or 32-byte write performs better than non-temporal
-> > stores and avx512 performs worse.
-> >
-> > sequential write 8 + clwb                5.1 GB/s       1.6 GB/s
-> > sequential write 16 (sse) + clwb         5.1 GB/s       1.6 GB/s
-> > sequential write 32 (avx) + clwb         4.4 GB/s       1.5 GB/s
-> > sequential write 64 (avx512) + clwb      1.7 GB/s       0.6 GB/s
+On Wed 01-04-20 12:18:10, Daniel Jordan wrote:
+> On Wed, Apr 01, 2020 at 06:12:43PM +0200, Michal Hocko wrote:
+> > On Wed 01-04-20 12:09:29, Daniel Jordan wrote:
+> > > On Wed, Apr 01, 2020 at 06:00:48PM +0200, Michal Hocko wrote:
+> > > > On Wed 01-04-20 17:50:22, David Hildenbrand wrote:
+> > > > > On 01.04.20 17:42, Michal Hocko wrote:
+> > > > > > This needs a double checking but I strongly believe that the lock can be
+> > > > > > simply dropped in this path.
+> > > 
+> > > This is what my fix does, it limits the time the resize lock is held.
+> > 
+> > Just remove it from the deferred intialization and add a comment that we
+> > deliberately not taking the lock here because abc
 > 
-> This is indeed compelling straight-line data. My concern, similar to
-> Robert's, is what it does to the rest of the system. In addition to
-> increasing cache pollution, which I agree is difficult to quantify, it
+> I think it has to be a little more involved because of the window where
+> interrupts might allocate during deferred init, as Vlastimil pointed out a few
+> years ago when the change was made.
 
-I've made this program that measures cache pollution:
-    http://people.redhat.com/~mpatocka/testcases/pmem/misc/l1-test.c
-- it fills the L1 cache with random pointers, so that memory prediction 
-won't help, and then walks these pointers before and after the task that 
-we want to measure.
+I do not remember any details but do we have any actual real allocation
+failure or was this mostly a theoretical concern. Vlastimil? For your
+context we are talking about 3a2d7fa8a3d5 ("mm: disable interrupts while
+initializing deferred pages")
 
-The results are:
+> I'll explain myself in the changelog.
 
-on RAM, there is not much difference - i.e. nt write is flushing cache as 
-much as clflushopt and clwb:
-nt write:	8514 - 21034
-clflushopt:	8516 - 21798
-clwb:		8516 - 22882
-
-But on PMEM, non-temporal stores perform much better and they perform 
-	even better than on RAM:
-nt write:	8514 - 11694
-clflushopt:	8514 - 20816
-clwb:		8514 - 21480
-
-However, both dm-writecache and the nova filesystem perform better if we 
-use cache flushing instead of nt writes:
-  http://people.redhat.com/~mpatocka/testcases/pmem/benchmarks/fs-bench.txt
-
-> may also increase read-for-ownership traffic. Could you collect 'perf
-> stat' for this clwb vs nt comparison to check if any of this
-> incidental overhead effect shows up in the numbers? Here is a 'perf
-> stat' line that might capture that.
-> 
-> perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses
-> -r 5 $benchmark
-> 
-> In both cases nt and explicit clwb there's nothing that prevents the
-> dirty-cacheline, or the fill buffer from being written-back / flushed
-> before the full line is populated and maybe you are hitting that
-> scenario differently with the two approaches? I did not immediately
-> see a perf counter for events like this. Going forward I think this
-> gets better with the movdir64b instruction because that can guarantee
-> full-line-sized store-buffer writes.
-> 
-> Maybe the perf data can help make a decision about whether we go with
-> your patch in the near term?
-
-These are results for 6 tests:
-1. movntiq on pmem
-2. 8 writes + clflushopt on pmem
-3. 8 writes + clwb on pmem
-4. movntiq on ram
-5. 8 writes + clflushopt on ram
-6. 8 writes + clwb on ram
-
-perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-nt-8 /dev/dax3.0
-thr: 1.280840 GB/s, lat: 6.245904 nsec
-thr: 1.281988 GB/s, lat: 6.240310 nsec
-thr: 1.281000 GB/s, lat: 6.245120 nsec
-thr: 1.278589 GB/s, lat: 6.256896 nsec
-thr: 1.280094 GB/s, lat: 6.249541 nsec
-
- Performance counter stats for './thrp-write-nt-8 /dev/dax3.0' (5 runs):
-
-         814899605      L1-dcache-loads                                               ( +-  0.04% )  (42.86%)
-           8924277      L1-dcache-load-misses     #    1.10% of all L1-dcache hits    ( +-  0.19% )  (57.15%)
-         810672184      L1-dcache-stores                                              ( +-  0.02% )  (57.15%)
-   <not supported>      L1-dcache-store-misses
-   <not supported>      L1-dcache-prefetch-misses
-            100254      LLC-loads                                                     ( +-  9.58% )  (57.15%)
-              6990      LLC-load-misses           #    6.97% of all LL-cache hits     ( +-  5.08% )  (57.14%)
-             16509      LLC-stores                                                    ( +-  1.38% )  (28.57%)
-              5070      LLC-store-misses                                              ( +-  3.28% )  (28.57%)
-   <not supported>      LLC-prefetch-misses
-
-           5.62889 +- 0.00357 seconds time elapsed  ( +-  0.06% )
-
-
-perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-8-clflushopt /dev/dax3.0
-thr: 1.611084 GB/s, lat: 4.965600 nsec
-thr: 1.598570 GB/s, lat: 5.004474 nsec
-thr: 1.600563 GB/s, lat: 4.998243 nsec
-thr: 1.596818 GB/s, lat: 5.009964 nsec
-thr: 1.593989 GB/s, lat: 5.018856 nsec
-
- Performance counter stats for './thrp-write-8-clflushopt /dev/dax3.0' (5 runs):
-
-         137415972      L1-dcache-loads                                               ( +-  1.28% )  (42.84%)
-         136513938      L1-dcache-load-misses     #   99.34% of all L1-dcache hits    ( +-  1.24% )  (57.13%)
-        1153397051      L1-dcache-stores                                              ( +-  1.29% )  (57.14%)
-   <not supported>      L1-dcache-store-misses
-   <not supported>      L1-dcache-prefetch-misses
-            168100      LLC-loads                                                     ( +-  0.84% )  (57.15%)
-              3975      LLC-load-misses           #    2.36% of all LL-cache hits     ( +-  2.41% )  (57.16%)
-          58441682      LLC-stores                                                    ( +-  1.38% )  (28.57%)
-              2493      LLC-store-misses                                              ( +-  6.80% )  (28.56%)
-   <not supported>      LLC-prefetch-misses
-
-            5.7029 +- 0.0582 seconds time elapsed  ( +-  1.02% )
-
-
-perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-8-clwb /dev/dax3.0
-thr: 1.595520 GB/s, lat: 5.014039 nsec
-thr: 1.598659 GB/s, lat: 5.004194 nsec
-thr: 1.599901 GB/s, lat: 5.000309 nsec
-thr: 1.603323 GB/s, lat: 4.989636 nsec
-thr: 1.608657 GB/s, lat: 4.973093 nsec
-
- Performance counter stats for './thrp-write-8-clwb /dev/dax3.0' (5 runs):
-
-         135421993      L1-dcache-loads                                               ( +-  0.06% )  (42.85%)
-         134869685      L1-dcache-load-misses     #   99.59% of all L1-dcache hits    ( +-  0.02% )  (57.14%)
-        1138042172      L1-dcache-stores                                              ( +-  0.02% )  (57.14%)
-   <not supported>      L1-dcache-store-misses
-   <not supported>      L1-dcache-prefetch-misses
-            184600      LLC-loads                                                     ( +-  0.79% )  (57.15%)
-              5756      LLC-load-misses           #    3.12% of all LL-cache hits     ( +-  5.23% )  (57.15%)
-          55755196      LLC-stores                                                    ( +-  0.04% )  (28.57%)
-              4928      LLC-store-misses                                              ( +-  4.19% )  (28.56%)
-   <not supported>      LLC-prefetch-misses
-
-           5.63954 +- 0.00987 seconds time elapsed  ( +-  0.18% )
-
-perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-nt-8 /dev/ram0
-thr: 4.156424 GB/s, lat: 1.924732 nsec
-thr: 4.156363 GB/s, lat: 1.924760 nsec
-thr: 4.159350 GB/s, lat: 1.923377 nsec
-thr: 4.162535 GB/s, lat: 1.921906 nsec
-thr: 4.158470 GB/s, lat: 1.923784 nsec
-
- Performance counter stats for './thrp-write-nt-8 /dev/ram0' (5 runs):
-
-        3077534777      L1-dcache-loads                                               ( +-  0.14% )  (42.85%)
-          49870893      L1-dcache-load-misses     #    1.62% of all L1-dcache hits    ( +-  0.82% )  (57.14%)
-        2854270644      L1-dcache-stores                                              ( +-  0.01% )  (57.14%)
-   <not supported>      L1-dcache-store-misses
-   <not supported>      L1-dcache-prefetch-misses
-           5391862      LLC-loads                                                     ( +-  0.29% )  (57.15%)
-           5190166      LLC-load-misses           #   96.26% of all LL-cache hits     ( +-  0.23% )  (57.15%)
-           5694448      LLC-stores                                                    ( +-  0.39% )  (28.57%)
-           5544968      LLC-store-misses                                              ( +-  0.37% )  (28.56%)
-   <not supported>      LLC-prefetch-misses
-
-           5.61044 +- 0.00145 seconds time elapsed  ( +-  0.03% )
-
-
-perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-8-clflushopt /dev/ram0
-thr: 5.923164 GB/s, lat: 1.350629 nsec
-thr: 5.922262 GB/s, lat: 1.350835 nsec
-thr: 5.921674 GB/s, lat: 1.350969 nsec
-thr: 5.922305 GB/s, lat: 1.350825 nsec
-thr: 5.921393 GB/s, lat: 1.351033 nsec
-
- Performance counter stats for './thrp-write-8-clflushopt /dev/ram0' (5 runs):
-
-         935965584      L1-dcache-loads                                               ( +-  0.34% )  (42.85%)
-         521443969      L1-dcache-load-misses     #   55.71% of all L1-dcache hits    ( +-  0.05% )  (57.15%)
-        4460590261      L1-dcache-stores                                              ( +-  0.01% )  (57.15%)
-   <not supported>      L1-dcache-store-misses
-   <not supported>      L1-dcache-prefetch-misses
-           6242393      LLC-loads                                                     ( +-  0.32% )  (57.15%)
-           5727982      LLC-load-misses           #   91.76% of all LL-cache hits     ( +-  0.27% )  (57.15%)
-          54576336      LLC-stores                                                    ( +-  0.05% )  (28.57%)
-          54056225      LLC-store-misses                                              ( +-  0.04% )  (28.57%)
-   <not supported>      LLC-prefetch-misses
-
-           5.79196 +- 0.00105 seconds time elapsed  ( +-  0.02% )
-
-
-perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-8-clwb /dev/ram0
-thr: 5.821923 GB/s, lat: 1.374116 nsec
-thr: 5.818980 GB/s, lat: 1.374811 nsec
-thr: 5.821207 GB/s, lat: 1.374285 nsec
-thr: 5.818583 GB/s, lat: 1.374905 nsec
-thr: 5.820813 GB/s, lat: 1.374379 nsec
-
- Performance counter stats for './thrp-write-8-clwb /dev/ram0' (5 runs):
-
-         951910720      L1-dcache-loads                                               ( +-  0.31% )  (42.84%)
-         512771268      L1-dcache-load-misses     #   53.87% of all L1-dcache hits    ( +-  0.03% )  (57.13%)
-        4390478387      L1-dcache-stores                                              ( +-  0.02% )  (57.15%)
-   <not supported>      L1-dcache-store-misses
-   <not supported>      L1-dcache-prefetch-misses
-           5614628      LLC-loads                                                     ( +-  0.24% )  (57.16%)
-           5200663      LLC-load-misses           #   92.63% of all LL-cache hits     ( +-  0.09% )  (57.16%)
-          52627554      LLC-stores                                                    ( +-  0.10% )  (28.56%)
-          52108200      LLC-store-misses                                              ( +-  0.16% )  (28.55%)
-   <not supported>      LLC-prefetch-misses
-
-          5.646728 +- 0.000438 seconds time elapsed  ( +-  0.01% )
-
-
-
-
-> > > In user space, glibc faces similar choices for its memcpy() functions;
-> > > glibc memcpy() uses non-temporal stores for transfers > 75% of the
-> > > L3 cache size divided by the number of cores. For example, with
-> > > glibc-2.216-16.fc27 (August 2017), on a Broadwell system with
-> > > E5-2699 36 cores 45 MiB L3 cache, non-temporal stores are used
-> > > for memcpy()s over 36 MiB.
-> >
-> > BTW. what does glibc do with reads? Does it flush them from the cache
-> > after they are consumed?
-> >
-> > AFAIK glibc doesn't support persistent memory - i.e. there is no function
-> > that flushes data and the user has to use inline assembly for that.
-> 
-> Yes, and I don't know of any copy routines that try to limit the cache
-> pollution of pulling the source data for a copy, only the destination.
-> 
-> > > It'd be nice if glibc, PMDK, and the kernel used the same algorithms.
-> 
-> Yes, it would. Although I think PMDK would make a different decision
-> than the kernel when optimizing for highest bandwidth for the local
-> application vs bandwidth efficiency across all applications.
-
-Mikulas
-
+OK, I will wait for the patch.
+-- 
+Michal Hocko
+SUSE Labs
