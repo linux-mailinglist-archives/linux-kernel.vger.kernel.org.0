@@ -2,210 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C836619B920
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:54:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0234319B925
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:56:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387482AbgDAXyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 19:54:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38802 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732682AbgDAXyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 19:54:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9C669ACE3;
-        Wed,  1 Apr 2020 23:54:14 +0000 (UTC)
-From:   NeilBrown <neilb@suse.de>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        "Anna.Schumaker\@Netapp.com" <Anna.Schumaker@Netapp.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>
-Date:   Thu, 02 Apr 2020 10:54:07 +1100
-Cc:     linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] Deprecate NR_UNSTABLE_NFS, use NR_WRITEBACK
-In-Reply-To: <87sghmyd8v.fsf@notabene.neil.brown.name>
-References: <87tv2b7q72.fsf@notabene.neil.brown.name> <87v9miydai.fsf@notabene.neil.brown.name> <87sghmyd8v.fsf@notabene.neil.brown.name>
-Message-ID: <87pncqyd7k.fsf@notabene.neil.brown.name>
+        id S2387403AbgDAX4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 19:56:02 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38933 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732682AbgDAX4C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 19:56:02 -0400
+Received: by mail-lj1-f194.google.com with SMTP id i20so1335557ljn.6
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 16:56:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/BfWZS5+9as5lD6vEMwl/6xxGz06a9gloYkQ+RKeiao=;
+        b=JfE6FWMW0WrTIHwAtwqL3bo+qhTInr5LXI005KEawz6BRmX/rJrge8UmPsiMK5pPpc
+         uTi9rFGFrfCf6pGgobgz2x2SN1yInjn8O4MwUNtnjY4Fxxg3pNbTXYvif4DrVZeLWFYk
+         NwMooEZifjvk8bHNwWTVKU9ykqNbijKLOcb/k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/BfWZS5+9as5lD6vEMwl/6xxGz06a9gloYkQ+RKeiao=;
+        b=YU2MYCumhCxn+JS5IPD5n29dsRIk0+otE2Pxd/IU6dXUs3YUdttyXlFgFaSCllzg/2
+         egu5ighlEZSAivDGLfMHKiv59w0MaVHJVW+qVpYK4t0gRgqVUv2f3Wi2yF8At7q8cb+b
+         EhgHvszxBBXiOeI5APaWidyw9Qpv5qpe+hOkB7ha9BHg+LEmYRedZFZnaS9K6vBKO+lz
+         AUzH6APKhic5BzF/3ivBZAr4xwzOriIAiSRv0v8aTAdfjNnqMQW20oXkVT9WWAxSksiN
+         HbKaiB8NB01EYlCyI2nkNWdKqlHFj2kJiJpx0dr2Q9h/rRU3KN2Fwh7pkBwgDRToOhwu
+         mNGg==
+X-Gm-Message-State: AGi0Pub321KyI+6BUOpYCWObDY9ePzenRjyF2QcLxjToZxj8xqdXyJde
+        FHiPHkeiVcdVfgdF08r/d60jn6DQ380=
+X-Google-Smtp-Source: APiQypJ583oXCoga9l1vThnpP9mBE227RekpIi+UWs8sEri5o4eWlzjUnfisQi3B9VrbyxCjxuaQxQ==
+X-Received: by 2002:a05:651c:404:: with SMTP id 4mr365946lja.281.1585785359846;
+        Wed, 01 Apr 2020 16:55:59 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id 6sm2634827lft.83.2020.04.01.16.55.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Apr 2020 16:55:59 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id k21so1376216ljh.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 16:55:58 -0700 (PDT)
+X-Received: by 2002:a2e:b4cb:: with SMTP id r11mr371604ljm.201.1585785358260;
+ Wed, 01 Apr 2020 16:55:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <20200324215049.GA3710@pi3.com.pl> <202003291528.730A329@keescook>
+ <87zhbvlyq7.fsf_-_@x220.int.ebiederm.org> <CAG48ez3nYr7dj340Rk5-QbzhsFq0JTKPf2MvVJ1-oi1Zug1ftQ@mail.gmail.com>
+ <CAHk-=wjz0LEi68oGJSQzZ--3JTFF+dX2yDaXDRKUpYxtBB=Zfw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjz0LEi68oGJSQzZ--3JTFF+dX2yDaXDRKUpYxtBB=Zfw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 1 Apr 2020 16:55:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgM3qZeChs_1yFt8p8ye1pOaM_cX57BZ_0+qdEPcAiaCQ@mail.gmail.com>
+Message-ID: <CAHk-=wgM3qZeChs_1yFt8p8ye1pOaM_cX57BZ_0+qdEPcAiaCQ@mail.gmail.com>
+Subject: Re: [PATCH] signal: Extend exec_id to 64bits
+To:     Jann Horn <jannh@google.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Adam Zabrocki <pi3@pi3.com.pl>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Wed, Apr 1, 2020 at 4:51 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> It's literally testing a sequence counter for equality. If you get
+> tearing in the high bits on the write (or the read), you'd still need
+> to have the low bits turn around 4G times to get a matching value.
 
+Put another way: first you'd have to work however many weeks to do 4
+billion execve() calls, and then you need to hit basically a
+single-instruction race to take advantage of it.
 
-After an NFS page has been written it is considered "unstable" until a
-COMMIT request succeeds.  If the COMMIT fails, the page will be
-re-written.
+Good luck with that. If you have that kind of God-like capability,
+whoever you're attacking stands no chance in the first place.
 
-These "unstable" pages are currently accounted as "reclaimable",
-either in WB_RECLAIMABLE, or in NR_UNSTABLE_NFS which is included in a
-'reclaimable' count.  This might have made sense when sending the COMMIT
-required a separate action by the VFS/MM (e.g. releasepage() used to
-send a COMMIT).  However now that all writes generated by ->writepages()
-will automatically be followed by a COMMIT, it makes more sense to
-treat them as writeback pages.
-
-So this page deprecates NR_UNSTABLE_NFS and accounts unstable pages in
-NR_WRITEBACK and WB_WRITEBACK.
-
-A particular effect of this change is that when
-wb_check_background_flush() calls wb_over_bg_threshold(), the latter
-will report 'true' a lot less often as the 'unstable' pages are no
-longer considered 'dirty' (and there is nothing that writeback can do
-about them anyway).
-
-Currently wb_check_background_flush() will trigger writeback to NFS even
-when there are relatively few dirty pages (if there are lots of unstable
-pages), this can result in small writes going to the server (10s of
-Kilobytes rather than a Megabyte) which hurts throughput.
-With this that, there are fewer writes which are each larger on average.
-
-Signed-off-by: NeilBrown <neilb@suse.de>
-=2D--
- fs/fs-writeback.c      | 1 -
- fs/nfs/internal.h      | 7 +++++--
- fs/nfs/write.c         | 4 ++--
- include/linux/mmzone.h | 2 +-
- mm/memcontrol.c        | 1 -
- mm/page-writeback.c    | 7 ++-----
- 6 files changed, 10 insertions(+), 12 deletions(-)
-
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 76ac9c7d32ec..c5bdf46e3b4b 100644
-=2D-- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1070,7 +1070,6 @@ static void bdi_split_work_to_wbs(struct backing_dev_=
-info *bdi,
- static unsigned long get_nr_dirty_pages(void)
- {
- 	return global_node_page_state(NR_FILE_DIRTY) +
-=2D		global_node_page_state(NR_UNSTABLE_NFS) +
- 		get_nr_dirty_inodes();
- }
-=20
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index f80c47d5ff27..ba1ff5adeccd 100644
-=2D-- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -660,8 +660,11 @@ void nfs_mark_page_unstable(struct page *page, struct =
-nfs_commit_info *cinfo)
- 	if (!cinfo->dreq) {
- 		struct inode *inode =3D page_file_mapping(page)->host;
-=20
-=2D		inc_node_page_state(page, NR_UNSTABLE_NFS);
-=2D		inc_wb_stat(&inode_to_bdi(inode)->wb, WB_RECLAIMABLE);
-+		/* This page is really still in write-back - just that the
-+		 * writeback is happening on the server now.
-+		 */
-+		inc_node_page_state(page, NR_WRITEBACK);
-+		inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
- 		__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
- 	}
- }
-diff --git a/fs/nfs/write.c b/fs/nfs/write.c
-index c478b772cc49..2e15a56620b3 100644
-=2D-- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -958,9 +958,9 @@ nfs_mark_request_commit(struct nfs_page *req, struct pn=
-fs_layout_segment *lseg,
- static void
- nfs_clear_page_commit(struct page *page)
- {
-=2D	dec_node_page_state(page, NR_UNSTABLE_NFS);
-+	dec_node_page_state(page, NR_WRITEBACK);
- 	dec_wb_stat(&inode_to_bdi(page_file_mapping(page)->host)->wb,
-=2D		    WB_RECLAIMABLE);
-+		    WB_WRITEBACK);
- }
-=20
- /* Called holding the request lock on @req */
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 462f6873905a..227fcb8cd0e6 100644
-=2D-- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -237,7 +237,7 @@ enum node_stat_item {
- 	NR_FILE_THPS,
- 	NR_FILE_PMDMAPPED,
- 	NR_ANON_THPS,
-=2D	NR_UNSTABLE_NFS,	/* NFS unstable pages */
-+	NR_UNSTABLE_NFS,	/* NFS unstable pages - DEPRECATED DO NOT USE */
- 	NR_VMSCAN_WRITE,
- 	NR_VMSCAN_IMMEDIATE,	/* Prioritise for reclaim when writeback ends */
- 	NR_DIRTIED,		/* page dirtyings since bootup */
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 7ddf91c4295f..fad8e8a23235 100644
-=2D-- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4317,7 +4317,6 @@ void mem_cgroup_wb_stats(struct bdi_writeback *wb, un=
-signed long *pfilepages,
-=20
- 	*pdirty =3D memcg_exact_page_state(memcg, NR_FILE_DIRTY);
-=20
-=2D	/* this should eventually include NR_UNSTABLE_NFS */
- 	*pwriteback =3D memcg_exact_page_state(memcg, NR_WRITEBACK);
- 	*pfilepages =3D memcg_exact_page_state(memcg, NR_INACTIVE_FILE) +
- 			memcg_exact_page_state(memcg, NR_ACTIVE_FILE);
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 2afb09fa2fe0..d1f03c799d11 100644
-=2D-- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -504,7 +504,6 @@ bool node_dirty_ok(struct pglist_data *pgdat)
- 	unsigned long nr_pages =3D 0;
-=20
- 	nr_pages +=3D node_page_state(pgdat, NR_FILE_DIRTY);
-=2D	nr_pages +=3D node_page_state(pgdat, NR_UNSTABLE_NFS);
- 	nr_pages +=3D node_page_state(pgdat, NR_WRITEBACK);
-=20
- 	return nr_pages <=3D limit;
-@@ -1595,8 +1594,7 @@ static void balance_dirty_pages(struct bdi_writeback =
-*wb,
- 		 * written to the server's write cache, but has not yet
- 		 * been flushed to permanent storage.
- 		 */
-=2D		nr_reclaimable =3D global_node_page_state(NR_FILE_DIRTY) +
-=2D					global_node_page_state(NR_UNSTABLE_NFS);
-+		nr_reclaimable =3D global_node_page_state(NR_FILE_DIRTY);
- 		gdtc->avail =3D global_dirtyable_memory();
- 		gdtc->dirty =3D nr_reclaimable + global_node_page_state(NR_WRITEBACK);
-=20
-@@ -1940,8 +1938,7 @@ bool wb_over_bg_thresh(struct bdi_writeback *wb)
- 	 * as we're trying to decide whether to put more under writeback.
- 	 */
- 	gdtc->avail =3D global_dirtyable_memory();
-=2D	gdtc->dirty =3D global_node_page_state(NR_FILE_DIRTY) +
-=2D		      global_node_page_state(NR_UNSTABLE_NFS);
-+	gdtc->dirty =3D global_node_page_state(NR_FILE_DIRTY);
- 	domain_dirty_limits(gdtc);
-=20
- 	if (gdtc->dirty > gdtc->bg_thresh)
-=2D-=20
-2.26.0
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl6FKZ8ACgkQOeye3VZi
-gblLJA/9Gfox05USaTaiOe2VF+TKwLQmcTQoIIkSD/9KH4RCz4kenbeVDitMuU3G
-0sNCkE6Ug4aWGQtHsJ+o9IhdwuLG8mN+4GfNt1fRoV3/JUEmNyIaE9HB5ZYAyOCK
-ahLPXBkhKW2ISGyweva/ic1FIsEIFz6NmOaUFM5ulFLMfoSRTTMTyUbZGZrUzVbI
-C6S9PXACbOYkVmSXxUOMcO04pleJzhyB0zkykWPkDenwleB4rBCw6I6YOdpf1EXp
-HCMMXwJTfzgFYXuN5wClvRxp3SSsWoyR/do+IR+I7xGRFotHT4f3zdM85f4PhEeI
-LBoGykHo/c38RySt3fnraDiGrokHGM3n8SIxVIHCnu5lssCuZgMW9QEmX3R1NBIs
-3U/fXAbSiGkXYAWscDKQhOMFZFBvLMSdu719EcbsuuRuMMNKvjNyHXiQyLdiX/hn
-veUgBytz/7fio+WfhC2h+xLZKqkLTU0tuO4rSNopADnZfWl9ieQPE4G88eP6LeIS
-/WNgdmY1Mh2/0AsZtny4oWQskpm+T8ahAcS6zz5MlQu9Qtk7hxMEbBIYkHrepH8D
-D6MMJMCEViCF2UZUb+FHNjbqJeVoaD8VvuAQL9PHVL72Kxg1N0HUOI25piszdGmI
-q4Dq9wkeEzMt6KnFivkqRMQJClziBcQe6Qk0/7izZCBdPWTLORk=
-=+oK6
------END PGP SIGNATURE-----
---=-=-=--
+                  Linus
