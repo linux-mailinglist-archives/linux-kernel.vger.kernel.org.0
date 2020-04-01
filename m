@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 516BA19B2FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D905B19B08C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387520AbgDAQsn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:48:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47462 "EHLO mail.kernel.org"
+        id S2388028AbgDAQ1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:27:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389669AbgDAQqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:46:10 -0400
+        id S2387850AbgDAQ1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:27:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 738D121D7F;
-        Wed,  1 Apr 2020 16:46:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 177C620857;
+        Wed,  1 Apr 2020 16:27:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759569;
-        bh=5fy+DpjSqmh99XFyScJ450EPzLn3lYCObsESE/dMIBs=;
+        s=default; t=1585758457;
+        bh=ir7hZzhLHTgj+JI3LhcJCr1TBbLgHw4uZM6ow7QWwZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xomS0Lm91rKHPhzjOr7pjVSuiKdRr4XNTIfFqywg+W0skD0LKnG+QaGeratf4pmLI
-         zUjfFwUjVQyLt7VNZDnT7MkmuH07cZ1LjIn99+BwWcDxH+yGHELfX3ptSp5qgs/bSC
-         IHbiCLpjrfhGH+UTqt3aMHgbFc5aEXim8G368SZ4=
+        b=s/eIhE18wD4cmaUZjHk2f9EyLdoRn4ZC6dUmgr6CnfM+tFJDNuxop3QR8GPzXzhj6
+         G3zhbYD9Yx0T36TvVPWihRbvEZPHOBNB4FJ2C9Q+Od+rkpUL0KIKi3213eP12dqJGW
+         9XbxLg3hRJrxp3qjfRGShHF4s+psM88CACrc8OpE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 080/148] fsl/fman: detect FMan erratum A050385
+        stable@vger.kernel.org, Jouni Malinen <jouni@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.19 096/116] mac80211: Check port authorization in the ieee80211_tx_dequeue() case
 Date:   Wed,  1 Apr 2020 18:17:52 +0200
-Message-Id: <20200401161600.921135761@linuxfoundation.org>
+Message-Id: <20200401161554.642230437@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,130 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madalin Bucur <madalin.bucur@nxp.com>
+From: Jouni Malinen <jouni@codeaurora.org>
 
-[ Upstream commit b281f7b93b258ce1419043bbd898a29254d5c9c7 ]
+commit ce2e1ca703071723ca2dd94d492a5ab6d15050da upstream.
 
-Detect the presence of the A050385 erratum.
+mac80211 used to check port authorization in the Data frame enqueue case
+when going through start_xmit(). However, that authorization status may
+change while the frame is waiting in a queue. Add a similar check in the
+dequeue case to avoid sending previously accepted frames after
+authorization change. This provides additional protection against
+potential leaking of frames after a station has been disconnected and
+the keys for it are being removed.
 
-Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
+Link: https://lore.kernel.org/r/20200326155133.ced84317ea29.I34d4c47cd8cc8a4042b38a76f16a601fbcbfd9b3@changeid
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/freescale/fman/Kconfig | 28 +++++++++++++++++++++
- drivers/net/ethernet/freescale/fman/fman.c  | 18 +++++++++++++
- drivers/net/ethernet/freescale/fman/fman.h  |  5 ++++
- 3 files changed, 51 insertions(+)
+ net/mac80211/tx.c |   19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/fman/Kconfig b/drivers/net/ethernet/freescale/fman/Kconfig
-index 8870a9a798ca4..91437b94bfcb6 100644
---- a/drivers/net/ethernet/freescale/fman/Kconfig
-+++ b/drivers/net/ethernet/freescale/fman/Kconfig
-@@ -8,3 +8,31 @@ config FSL_FMAN
- 	help
- 		Freescale Data-Path Acceleration Architecture Frame Manager
- 		(FMan) support
-+
-+config DPAA_ERRATUM_A050385
-+	bool
-+	depends on ARM64 && FSL_DPAA
-+	default y
-+	help
-+		DPAA FMan erratum A050385 software workaround implementation:
-+		align buffers, data start, SG fragment length to avoid FMan DMA
-+		splits.
-+		FMAN DMA read or writes under heavy traffic load may cause FMAN
-+		internal resource leak thus stopping further packet processing.
-+		The FMAN internal queue can overflow when FMAN splits single
-+		read or write transactions into multiple smaller transactions
-+		such that more than 17 AXI transactions are in flight from FMAN
-+		to interconnect. When the FMAN internal queue overflows, it can
-+		stall further packet processing. The issue can occur with any
-+		one of the following three conditions:
-+		1. FMAN AXI transaction crosses 4K address boundary (Errata
-+		A010022)
-+		2. FMAN DMA address for an AXI transaction is not 16 byte
-+		aligned, i.e. the last 4 bits of an address are non-zero
-+		3. Scatter Gather (SG) frames have more than one SG buffer in
-+		the SG list and any one of the buffers, except the last
-+		buffer in the SG list has data size that is not a multiple
-+		of 16 bytes, i.e., other than 16, 32, 48, 64, etc.
-+		With any one of the above three conditions present, there is
-+		likelihood of stalled FMAN packet processing, especially under
-+		stress with multiple ports injecting line-rate traffic.
-diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
-index 97425d94e280d..9080d2332d030 100644
---- a/drivers/net/ethernet/freescale/fman/fman.c
-+++ b/drivers/net/ethernet/freescale/fman/fman.c
-@@ -1,5 +1,6 @@
- /*
-  * Copyright 2008-2015 Freescale Semiconductor Inc.
-+ * Copyright 2020 NXP
-  *
-  * Redistribution and use in source and binary forms, with or without
-  * modification, are permitted provided that the following conditions are met:
-@@ -566,6 +567,10 @@ struct fman_cfg {
- 	u32 qmi_def_tnums_thresh;
- };
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -3513,8 +3513,25 @@ begin:
+ 	tx.skb = skb;
+ 	tx.sdata = vif_to_sdata(info->control.vif);
  
-+#ifdef CONFIG_DPAA_ERRATUM_A050385
-+static bool fman_has_err_a050385;
-+#endif
-+
- static irqreturn_t fman_exceptions(struct fman *fman,
- 				   enum fman_exceptions exception)
- {
-@@ -2517,6 +2522,14 @@ struct fman *fman_bind(struct device *fm_dev)
- }
- EXPORT_SYMBOL(fman_bind);
+-	if (txq->sta)
++	if (txq->sta) {
+ 		tx.sta = container_of(txq->sta, struct sta_info, sta);
++		/*
++		 * Drop unicast frames to unauthorised stations unless they are
++		 * EAPOL frames from the local station.
++		 */
++		if (unlikely(!ieee80211_vif_is_mesh(&tx.sdata->vif) &&
++			     tx.sdata->vif.type != NL80211_IFTYPE_OCB &&
++			     !is_multicast_ether_addr(hdr->addr1) &&
++			     !test_sta_flag(tx.sta, WLAN_STA_AUTHORIZED) &&
++			     (!(info->control.flags &
++				IEEE80211_TX_CTRL_PORT_CTRL_PROTO) ||
++			      !ether_addr_equal(tx.sdata->vif.addr,
++						hdr->addr2)))) {
++			I802_DEBUG_INC(local->tx_handlers_drop_unauth_port);
++			ieee80211_free_txskb(&local->hw, skb);
++			goto begin;
++		}
++	}
  
-+#ifdef CONFIG_DPAA_ERRATUM_A050385
-+bool fman_has_errata_a050385(void)
-+{
-+	return fman_has_err_a050385;
-+}
-+EXPORT_SYMBOL(fman_has_errata_a050385);
-+#endif
-+
- static irqreturn_t fman_err_irq(int irq, void *handle)
- {
- 	struct fman *fman = (struct fman *)handle;
-@@ -2843,6 +2856,11 @@ static struct fman *read_dts_node(struct platform_device *of_dev)
- 		goto fman_free;
- 	}
- 
-+#ifdef CONFIG_DPAA_ERRATUM_A050385
-+	fman_has_err_a050385 =
-+		of_property_read_bool(fm_node, "fsl,erratum-a050385");
-+#endif
-+
- 	return fman;
- 
- fman_node_put:
-diff --git a/drivers/net/ethernet/freescale/fman/fman.h b/drivers/net/ethernet/freescale/fman/fman.h
-index bfa02e0014ae0..693401994fa2d 100644
---- a/drivers/net/ethernet/freescale/fman/fman.h
-+++ b/drivers/net/ethernet/freescale/fman/fman.h
-@@ -1,5 +1,6 @@
- /*
-  * Copyright 2008-2015 Freescale Semiconductor Inc.
-+ * Copyright 2020 NXP
-  *
-  * Redistribution and use in source and binary forms, with or without
-  * modification, are permitted provided that the following conditions are met:
-@@ -397,6 +398,10 @@ u16 fman_get_max_frm(void);
- 
- int fman_get_rx_extra_headroom(void);
- 
-+#ifdef CONFIG_DPAA_ERRATUM_A050385
-+bool fman_has_errata_a050385(void);
-+#endif
-+
- struct fman *fman_bind(struct device *dev);
- 
- #endif /* __FM_H */
--- 
-2.20.1
-
+ 	/*
+ 	 * The key can be removed while the packet was queued, so need to call
 
 
