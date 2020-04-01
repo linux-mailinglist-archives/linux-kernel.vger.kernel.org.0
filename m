@@ -2,151 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B335D19A941
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:15:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC24A19A94C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbgDAKPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 06:15:19 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:57998 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbgDAKPS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:15:18 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 031AFB50074640;
-        Wed, 1 Apr 2020 05:15:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1585736111;
-        bh=VHWDppBeZMnct+fmlb85sd/m6PVJpfigJspsPqyup8Y=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=QSpSRc4hvstCrq8bCBJgAGMf+nwXD9BVZFiWhDPTG8iTSasO43GTpmRL5uCpgNDOv
-         JQAdqyVILFKk97QretLTYP9rYwnhjv9EH6SxaZszW8Whs6D5mD6zA96DAOTe7hzxY6
-         k3G1CDcHs+GXkYZoiJuUFvlXlAgyt/cOISrEdmAc=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 031AFAVn071292
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 1 Apr 2020 05:15:11 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 1 Apr
- 2020 05:15:10 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 1 Apr 2020 05:15:10 -0500
-Received: from [10.24.69.20] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 031AF7q6122698;
-        Wed, 1 Apr 2020 05:15:08 -0500
-Subject: Re: [PATCH v3 4/5] pwm: omap-dmtimer: Do not disable pwm before
- changing period/duty_cycle
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>
-References: <20200312042210.17344-1-lokeshvutla@ti.com>
- <20200312042210.17344-5-lokeshvutla@ti.com>
- <20200312064042.p7himm3odxjyzroi@pengutronix.de>
- <20200330141436.GG2431644@ulmo> <638d7136-6a74-8069-5331-b2248c948ed4@ti.com>
- <20200331201014.GA2954599@ulmo>
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-Message-ID: <57ce30f0-00e1-cbe6-8412-5461b412b361@ti.com>
-Date:   Wed, 1 Apr 2020 15:45:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20200331201014.GA2954599@ulmo>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1731842AbgDAKRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:17:33 -0400
+Received: from mga01.intel.com ([192.55.52.88]:34142 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725860AbgDAKRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 06:17:33 -0400
+IronPort-SDR: yTYzyF+dGYD6rRcI/8gf01PGgcLLjm6f8gM2dGjhUHhOGM+JnncNU4j8RoKO+hfKsaUxkKnErf
+ ArRy/72NJnZg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 03:17:31 -0700
+IronPort-SDR: MbmP2s2t4a2a/ElccBqSIdGlVafEm4qRUUWGetqaqSfo0ZWCUfWd8CJHbPHpnKHJANSbZ5bm+6
+ vtypDT1PygUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,331,1580803200"; 
+   d="scan'208";a="395925464"
+Received: from ahunter-desktop.fi.intel.com ([10.237.72.87])
+  by orsmga004.jf.intel.com with ESMTP; 01 Apr 2020 03:17:30 -0700
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: [PATCH 00/16] perf intel-pt: Sampling improvements
+Date:   Wed,  1 Apr 2020 13:15:57 +0300
+Message-Id: <20200401101613.6201-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.17.1
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thierry,
+Hi
 
-On 01/04/20 1:40 AM, Thierry Reding wrote:
-> On Tue, Mar 31, 2020 at 08:59:47PM +0530, Lokesh Vutla wrote:
->> Hi Thierry,
->>
->> On 30/03/20 7:44 PM, Thierry Reding wrote:
->>> On Thu, Mar 12, 2020 at 07:40:42AM +0100, Uwe Kleine-König wrote:
->>>> On Thu, Mar 12, 2020 at 09:52:09AM +0530, Lokesh Vutla wrote:
->>>>> Only the Timer control register(TCLR) cannot be updated when the timer
->>>>> is running. Registers like Counter register(TCRR), loader register(TLDR),
->>>>> match register(TMAR) can be updated when the counter is running. Since
->>>>> TCLR is not updated in pwm_omap_dmtimer_config(), do not stop the
->>>>> timer for period/duty_cycle update.
->>>>
->>>> I'm not sure what is sensible here. Stopping the PWM for a short period
->>>> is bad, but maybe emitting a wrong period isn't better. You can however
->>>> optimise it if only one of period or duty_cycle changes.
->>>>
->>>> @Thierry, what is your position here? I tend to say a short stop is
->>>> preferable.
->>>
->>> It's not clear to me from the above description how exactly the device
->>> behaves, but I suspect that it may latch the values in those registers
->>> and only update the actual signal output once a period has finished. I
->>> know of a couple of other devices that do that, so it wouldn't be
->>> surprising.
->>>
->>> Even if that was not the case, I think this is just the kind of thing
->>> that we have to live with. Sometimes it just isn't possible to have all
->>> supported devices adhere strictly to an API. So I think the best we can
->>> do is have an API that loosely defines what's supposed to happen and
->>> make a best effort to implement those semantics. If a device deviates
->>> slightly from those expectations, we can always cross fingers and hope
->>> that things still work. And it looks like they are.
->>>
->>> So I think if Lokesh and Tony agree that this is the right thing to do
->>> and have verified that things still work after this, that's about as
->>> good as it's going to get.
->>
->> Yes this is needed especially in the use-case[0] that I am trying to enable
->> using PWM. In this case PWM cannot be stopped in between and needs to be updated
->> dynamically. Also hardware doesn't provide any restrictions on updating the
->> period. So IMHO, this might be the right thing to do.
->>
->> Tony did provide tested-by and I measured PWM signals on scope with these
->> changes. Let me know if any thing else is required?
->>
->> [0] https://sourceforge.net/p/linuxptp/mailman/message/36943248/
-> 
-> From you measurements, can you tell whether or not the signal actually
-> gets updated in the middle of a period, or does it only get updated at
-> the end of a full period?
+Here are 3 sampling improvements for Intel PT:
 
-There is a corner case where period/duty-cycle gets updated in the middle of the
-cycle. So let me give more details on how it works:
+1. Patches 1 to 7
+   For reporting purposes, un-group AUX area event
+   Please example in patch 7
 
-OMAP dual-mode timers with a upward  timer counter, can be configured in PWM
-mode. When the timer counter overflows it gets reloaded with the load value(Load
-register) and the pwm output goes up. When counter matches with match register,
-the output goes down. So the load register is used to calculate the period and
-similarly match register for duty cycle.
+2. Patches 8 to 11
+   Add support for synthesizing callchains for regular events
+   Please see example in patch 11
 
-When PWM is running and changing both duty cycle and period, we cannot prevent
-in software that the output might produce a period with mixed settings.
-Especially when the PWM signal is high the following cases can happen:
-1) When signal is high and new match value is > current timer counter. Then the
-duty cycle gets reflected in the current cycle.(Duty_cycle for current period=
-new match value -  previous load  value).
-2) When signal is high and new match value is < current timer counter. Then the
-period and duty cycle for the current cycle gets effected as well. Because the
-signal is pulled down only when counter matches with match register, and this
-happens only in the next cycle(after timer counter overflows). Then:
-	- new Period for current cycle = (current period + new period)
-	- new duty cycle for current cycle =  (current period + new duty_cycle).
+3. Patches 12 to 16
+   Add support for leader-sampling with AUX area event
+   Please see example in patch 16
 
-Rest all the cases the values gets reflected in the next cycle.
+Patches also found here:
 
-As advised by Uwe, I have updated all these details in driver.
-
-Thanks and regards,
-Lokesh
+   git.infradead.org:/srv/git/users/ahunter/linux-perf.git callchain
 
 
+Adrian Hunter (16):
+      perf auxtrace: Add ->evsel_is_auxtrace() callback
+      perf intel-pt: Implement ->evsel_is_auxtrace() callback
+      perf intel-bts: Implement ->evsel_is_auxtrace() callback
+      perf arm-spe: Implement ->evsel_is_auxtrace() callback
+      perf cs-etm: Implement ->evsel_is_auxtrace() callback
+      perf s390-cpumsf: Implement ->evsel_is_auxtrace() callback
+      perf auxtrace: For reporting purposes, un-group AUX area event
+      perf auxtrace: Add an option to synthesize callchains for regular events
+      perf thread-stack: Add thread_stack__sample_late()
+      perf tools: Add support for synthesized sample type
+      perf intel-pt: Add support for synthesizing callchains for regular events
+      perf tools: Move and globalize perf_evsel__find_pmu() and perf_evsel__is_aux_event()
+      perf tools: Move leader-sampling configuration
+      perf tools: Rearrange perf_evsel__config_leader_sampling()
+      perf tools: Allow multiple read formats
+      perf tools: Add support for leader-sampling with AUX area events
+
+ tools/perf/Documentation/itrace.txt    |  1 +
+ tools/perf/Documentation/perf-list.txt |  3 ++
+ tools/perf/builtin-report.c            |  3 +-
+ tools/perf/builtin-script.c            |  2 +-
+ tools/perf/util/arm-spe.c              | 10 ++++
+ tools/perf/util/auxtrace.c             | 94 +++++++++++++++++++++++++---------
+ tools/perf/util/auxtrace.h             | 14 +++++
+ tools/perf/util/cs-etm.c               | 11 ++++
+ tools/perf/util/evlist.c               |  6 ++-
+ tools/perf/util/evsel.c                | 41 +++++++--------
+ tools/perf/util/evsel.h                | 18 ++++++-
+ tools/perf/util/intel-bts.c            | 10 ++++
+ tools/perf/util/intel-pt.c             | 78 +++++++++++++++++++++++++---
+ tools/perf/util/record.c               | 62 ++++++++++++++++++++++
+ tools/perf/util/s390-cpumcf-kernel.h   |  1 +
+ tools/perf/util/s390-cpumsf.c          | 11 +++-
+ tools/perf/util/thread-stack.c         | 57 +++++++++++++++++++++
+ tools/perf/util/thread-stack.h         |  3 ++
+ 18 files changed, 367 insertions(+), 58 deletions(-)
+
+
+
+Regards
+Adrian
