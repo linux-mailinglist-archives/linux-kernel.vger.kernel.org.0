@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C88619B0C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F246619B3C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:53:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387892AbgDAQ3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:29:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54606 "EHLO mail.kernel.org"
+        id S2388147AbgDAQxn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:53:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388005AbgDAQ3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:29:10 -0400
+        id S2388328AbgDAQbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:31:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6766B21655;
-        Wed,  1 Apr 2020 16:29:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 228B12063A;
+        Wed,  1 Apr 2020 16:31:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758548;
-        bh=o8CUVi0fdWWfvSg6PIN70YV9m5JLDzeptZWGTdWagWU=;
+        s=default; t=1585758698;
+        bh=mtfkkCt5SFGhLPN1U7MCkZ3jcSv/3FhZA5jJUw2+TxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2TYPSg5VyijlUThJ7eGTY562ApYKMxPCKAEfVBQmxvBTTDRAKQA9QuhS+cHl2SsRU
-         oVxWfQgLNOXiSJXN3ABfLyWZyJUFkN96RGB6icFfZZJbr+5Kk56k2DYhH/cYPjPu3W
-         P+9sJij6S5PNI2w0W2uiZlk3JcOUCN7ogQCb66ww=
+        b=dOXJbAU6S/pg/fW0wQ4ib5dnwpjCZgDCWwUd1azR5hfbxGIG5TvJsslwslNSCLBVP
+         Spl2WOM1ig9nNXwnF3cv9xNapHciXwP1g8QwBfpewbrf2DdpPNSn8f5kglBFpXcIzu
+         TfC0vzxNgdgLKdqL3yjMrOxfXLtXVqK4M3/+my6s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 4.19 086/116] media: usbtv: fix control-message timeouts
-Date:   Wed,  1 Apr 2020 18:17:42 +0200
-Message-Id: <20200401161553.455218600@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 47/91] KVM: VMX: Do not allow reexecute_instruction() when skipping MMIO instr
+Date:   Wed,  1 Apr 2020 18:17:43 +0200
+Message-Id: <20200401161529.578652949@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,64 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 536f561d871c5781bc33d26d415685211b94032e upstream.
+[ Upstream commit c4409905cd6eb42cfd06126e9226b0150e05a715 ]
 
-The driver was issuing synchronous uninterruptible control requests
-without using a timeout. This could lead to the driver hanging on
-various user requests due to a malfunctioning (or malicious) device
-until the device is physically disconnected.
+Re-execution after an emulation decode failure is only intended to
+handle a case where two or vCPUs race to write a shadowed page, i.e.
+we should never re-execute an instruction as part of MMIO emulation.
+As handle_ept_misconfig() is only used for MMIO emulation, it should
+pass EMULTYPE_NO_REEXECUTE when using the emulator to skip an instr
+in the fast-MMIO case where VM_EXIT_INSTRUCTION_LEN is invalid.
 
-The USB upper limit of five seconds per request should be more than
-enough.
+And because the cr2 value passed to x86_emulate_instruction() is only
+destined for use when retrying or reexecuting, we can simply call
+emulate_instruction().
 
-Fixes: f3d27f34fdd7 ("[media] usbtv: Add driver for Fushicai USBTV007 video frame grabber")
-Fixes: c53a846c48f2 ("[media] usbtv: add video controls")
-Cc: stable <stable@vger.kernel.org>     # 3.11
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Lubomir Rintel <lkundrak@v3.sk>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: d391f1207067 ("x86/kvm/vmx: do not use vm-exit instruction length
+                      for fast MMIO when running nested")
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/usbtv/usbtv-core.c  |    2 +-
- drivers/media/usb/usbtv/usbtv-video.c |    5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ arch/x86/kvm/vmx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/media/usb/usbtv/usbtv-core.c
-+++ b/drivers/media/usb/usbtv/usbtv-core.c
-@@ -56,7 +56,7 @@ int usbtv_set_regs(struct usbtv *usbtv,
- 
- 		ret = usb_control_msg(usbtv->udev, pipe, USBTV_REQUEST_REG,
- 			USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
--			value, index, NULL, 0, 0);
-+			value, index, NULL, 0, USB_CTRL_GET_TIMEOUT);
- 		if (ret < 0)
- 			return ret;
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 78daf891abec8..2634b45562026 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -6187,8 +6187,8 @@ static int handle_ept_misconfig(struct kvm_vcpu *vcpu)
+ 			return 1;
+ 		}
+ 		else
+-			return x86_emulate_instruction(vcpu, gpa, EMULTYPE_SKIP,
+-						       NULL, 0) == EMULATE_DONE;
++			return emulate_instruction(vcpu, EMULTYPE_SKIP) ==
++								EMULATE_DONE;
  	}
---- a/drivers/media/usb/usbtv/usbtv-video.c
-+++ b/drivers/media/usb/usbtv/usbtv-video.c
-@@ -805,7 +805,8 @@ static int usbtv_s_ctrl(struct v4l2_ctrl
- 		ret = usb_control_msg(usbtv->udev,
- 			usb_rcvctrlpipe(usbtv->udev, 0), USBTV_CONTROL_REG,
- 			USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
--			0, USBTV_BASE + 0x0244, (void *)data, 3, 0);
-+			0, USBTV_BASE + 0x0244, (void *)data, 3,
-+			USB_CTRL_GET_TIMEOUT);
- 		if (ret < 0)
- 			goto error;
- 	}
-@@ -856,7 +857,7 @@ static int usbtv_s_ctrl(struct v4l2_ctrl
- 	ret = usb_control_msg(usbtv->udev, usb_sndctrlpipe(usbtv->udev, 0),
- 			USBTV_CONTROL_REG,
- 			USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
--			0, index, (void *)data, size, 0);
-+			0, index, (void *)data, size, USB_CTRL_SET_TIMEOUT);
  
- error:
- 	if (ret < 0)
+ 	ret = handle_mmio_page_fault(vcpu, gpa, true);
+-- 
+2.20.1
+
 
 
