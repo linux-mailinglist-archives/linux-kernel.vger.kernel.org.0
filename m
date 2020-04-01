@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B90A19A77B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:39:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F76B19A787
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:40:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731809AbgDAIjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:39:44 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:30290 "EHLO
+        id S1732006AbgDAIjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:39:51 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:30396 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726368AbgDAIjn (ORCPT
+        by vger.kernel.org with ESMTP id S1726368AbgDAIjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:39:43 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0318buli010433;
-        Wed, 1 Apr 2020 10:39:22 +0200
+        Wed, 1 Apr 2020 04:39:49 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0318cr5K028133;
+        Wed, 1 Apr 2020 10:39:37 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=lzzw7FXM0MO9eFzpIxeWfpnrQEPQjgWmRDZU797bXb8=;
- b=xtrcxr1EAvv7HnNqNv9zC+wI60OE8e8OmAvMRjfnYxqkn8Xaphz9JIFc/mU1K1LkZmMh
- 5ihsorr2LVId7ONlbCmT05Jy7DYRYYNWXmleCIqweN+XizU/EOr24WuxhBW6/36YBUay
- aN0hchzyNFAW92C7SjqCJR2a4Ke+gZUilqdwUIzYyUehmlkuJbOs7kBwJQqEM1tOT56x
- TrRaYgUEgRnc5aNGW3bXnqHK5JvJuaSvvfHFSU9/owDtNddT6nCzKhjV2It591+wbno5
- 3ajHWBVZba9hszEmi6E6PIj6xN8s0Mf14b35GwxkfQMX7f0Q2lUuVT5NmULsYEiY3mdK Vg== 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=STMicroelectronics;
+ bh=qWbSrOJCI90YANyiMWSeBsBNnDP7Y5LT4/yIPcQXcb4=;
+ b=vJPkEeJ1tq13Gf3gmUvInOrPmt92KtOS4VIptuWs8OsdY3Tp8MM+RY0gKkaLN4qqx/IZ
+ Zm4jGHI0TEmvX2kloUlQIpyDYJA4veKdvEcuSpo+hn5Ub84LdZ00GNllm7xX4OLEjPU+
+ 45OdGZHk5muRW8gpayvGXPkbGQOQlnpDuGZbNb883amyX2Fqc4w+PGE+nko3LkT0otEe
+ 5oH/cMlkNCR17N+KL393LjWu52fHK2rUvWFzYC1A4i246b3beI6LqMI3e0fpQZoo5LEv
+ 7qNaTrDRTHLe7YQ2o+mN1+DPbw6YHn+ugngiCKLILHzdA7Gdg/u8KftjulsZz6kdX5vr 9Q== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 301w813w5g-1
+        by mx07-00178001.pphosted.com with ESMTP id 302y53x221-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 01 Apr 2020 10:39:22 +0200
+        Wed, 01 Apr 2020 10:39:37 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A386510002A;
-        Wed,  1 Apr 2020 10:39:21 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0A77B100034;
+        Wed,  1 Apr 2020 10:39:35 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8BADA21CA86;
-        Wed,  1 Apr 2020 10:39:21 +0200 (CEST)
-Received: from localhost (10.75.127.47) by SFHDAG3NODE3.st.com (10.75.127.9)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Apr 2020 10:39:21
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F197C21CA8F;
+        Wed,  1 Apr 2020 10:39:34 +0200 (CEST)
+Received: from localhost (10.75.127.44) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Apr 2020 10:39:34
  +0200
 From:   Benjamin Gaignard <benjamin.gaignard@st.com>
 To:     <fabrice.gasnier@st.com>, <lee.jones@linaro.org>,
@@ -46,14 +47,16 @@ CC:     <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v6 0/6] clockevent: add low power STM32 timer
-Date:   Wed, 1 Apr 2020 10:39:03 +0200
-Message-ID: <20200401083909.18886-1-benjamin.gaignard@st.com>
+Subject: [PATCH v6 1/6] dt-bindings: mfd: Document STM32 low power timer bindings
+Date:   Wed, 1 Apr 2020 10:39:04 +0200
+Message-ID: <20200401083909.18886-2-benjamin.gaignard@st.com>
 X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20200401083909.18886-1-benjamin.gaignard@st.com>
+References: <20200401083909.18886-1-benjamin.gaignard@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG3NODE3.st.com
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG3NODE3.st.com
  (10.75.127.9)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
  definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
@@ -62,64 +65,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series add low power timer as boadcast clockevent device.
-Low power timer could runs even when CPUs are in idle mode and 
-could wakeup them.
+Add a subnode to STM low power timer bindings to support timer driver
 
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
 version 6:
-- simplify binding, DT and code to use only one interrupt
+- only use one interrupt
 
 version 5:
-- document interrupts and interrupt-names bindings
-- use a different wake up interrupt
-- add device-tree patch
-- make STM32MP157 select low power timer configuration flag
-- enable fast_io in regmap configuration
+- the previous has been acked-by Rob but since I have docummented
+  interrupts and interrupt-names properties I haven't applied it here.
 
 version 4:
-- move defines in mfd/stm32-lptimer.h
 - change compatible and subnode names
 - document wakeup-source property
-- reword commit message
-- make driver Kconfig depends of MFD_STM32_LPTIMER
-- remove useless include
-- remove rate and clk fields from the private structure
-- to add comments about the registers sequence in stm32_clkevent_lp_set_timer
-- rework probe function and use devm_request_irq()
-- do not allow module to be removed
 
-version 3:
-- fix timer set sequence
-- don't forget to free irq on remove function
-- use devm_kzalloc to simplify errors handling in probe function
+ .../devicetree/bindings/mfd/st,stm32-lptimer.yaml   | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-version 2:
-- stm32 clkevent driver is now a child of the stm32 lp timer node
-- add a probe function and adpat the driver to use regmap provide
-  by it parent
-- stop using timer_of helpers
-
-
-
-Benjamin Gaignard (6):
-  dt-bindings: mfd: Document STM32 low power timer bindings
-  ARM: dts: stm32: Add timer subnodes on stm32mp15 SoCs
-  mfd: stm32: Add defines to be used for clkevent purpose
-  mfd: stm32: enable regmap fast_io for stm32-lptimer
-  clocksource: Add Low Power STM32 timers driver
-  ARM: mach-stm32: select low power timer for STM32MP157
-
- .../devicetree/bindings/mfd/st,stm32-lptimer.yaml  |  21 ++
- arch/arm/boot/dts/stm32mp151.dtsi                  |  35 ++++
- arch/arm/mach-stm32/Kconfig                        |   1 +
- drivers/clocksource/Kconfig                        |   4 +
- drivers/clocksource/Makefile                       |   1 +
- drivers/clocksource/timer-stm32-lp.c               | 221 +++++++++++++++++++++
- drivers/mfd/stm32-lptimer.c                        |   1 +
- include/linux/mfd/stm32-lptimer.h                  |   5 +
- 8 files changed, 289 insertions(+)
- create mode 100644 drivers/clocksource/timer-stm32-lp.c
-
+diff --git a/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml b/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
+index 1a4cc5f3fb33..2a99b2296d2b 100644
+--- a/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
++++ b/Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml
+@@ -33,12 +33,17 @@ properties:
+     items:
+       - const: mux
+ 
++  interrupts:
++    maxItems: 1
++
+   "#address-cells":
+     const: 1
+ 
+   "#size-cells":
+     const: 0
+ 
++  wakeup-source: true
++
+   pwm:
+     type: object
+ 
+@@ -81,6 +86,16 @@ patternProperties:
+     required:
+       - compatible
+ 
++  timer:
++    type: object
++
++    properties:
++      compatible:
++        const: st,stm32-lptimer-timer
++
++    required:
++      - compatible
++
+ required:
+   - "#address-cells"
+   - "#size-cells"
+@@ -94,11 +109,13 @@ additionalProperties: false
+ examples:
+   - |
+     #include <dt-bindings/clock/stm32mp1-clks.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
+     timer@40002400 {
+       compatible = "st,stm32-lptimer";
+       reg = <0x40002400 0x400>;
+       clocks = <&timer_clk>;
+       clock-names = "mux";
++      interrupts-extended = <&exti 47 IRQ_TYPE_LEVEL_HIGH>;
+       #address-cells = <1>;
+       #size-cells = <0>;
+ 
+@@ -115,6 +132,10 @@ examples:
+       counter {
+         compatible = "st,stm32-lptimer-counter";
+       };
++
++      timer {
++        compatible = "st,stm32-lptimer-timer";
++      };
+     };
+ 
+ ...
 -- 
 2.15.0
 
