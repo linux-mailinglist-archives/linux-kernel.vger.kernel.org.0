@@ -2,198 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8824A19B763
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 23:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8E3619B768
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 23:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732793AbgDAVBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 17:01:53 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42123 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732441AbgDAVBx (ORCPT
+        id S1732864AbgDAVGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 17:06:04 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:38318 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732337AbgDAVGE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 17:01:53 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q19so944768ljp.9
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 14:01:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kZZLw38OvfX0LdWZiTiDgV/9bUny0StnlwiaNs/2Ufc=;
-        b=aly7ulvt+vfPUTikm4mltTkCbIZstebjkVao345asWRzgWwNr8HXzV9jvOV7qGfvlv
-         UShoBmXhYLIDKE25KPNXRT3UYhD9ms32o+X2UsiGs7IVWDcUlmAveM5vTn3hox+wRzrj
-         +6g3z+A2EulG+uY85yfZmgAuVmP8aMoXv7Av3iExS/HEjdAxDOu8N03VSkGIV2DsrPPN
-         /aPw2Y6KLq1biHJFmaxinaPrVzFEBYkVcvRsTSg6B1skCt92JIZrn8HBKG3aj40G1f+g
-         XMRw/JUp5To7tjRdK/WcREvMxKWN5WVPrYT53f+O6xhXut+ZBK8KmQCrycPFZ4Da0X+Q
-         FAzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kZZLw38OvfX0LdWZiTiDgV/9bUny0StnlwiaNs/2Ufc=;
-        b=P/Fg+feY+6XIrddpLCF4tGmRe9tJz6+TibS0HNNBiOLWyUu+GoN67MKpf1TSCPD5LB
-         W7YojX6AaYoYcmzbzLxYgH4wG6GIm2kRHwuu9zCxr9FdAP6owR0t/GGTk96a9KsWLJ9a
-         Yfo1Nft/d70vQV+VLoF7pyYUyqvSwmw/726eNsFCRQZEgSOS8E8qpr3NYYFGkVFAVThB
-         A8pdVsGBfGhLpnqDSFP12Xysf4NL/025cvGralOj5pBslmDk0rvA/svfgxkjhknQl3z6
-         FZ1mHz0REs+s0z3aKQLSNEczSOJzXkJh3grV3km35uzR4DURersPfbVnqwEvWpmCaHsG
-         Y/SA==
-X-Gm-Message-State: AGi0PuboQ94sl7dtBeR8w0rwjldVTnKH/U40i5Z+Pid5E8MLD+k914OP
-        VCoOHa0NS8KeSGz1pK4kW0ZbYBUVScUUZgpAHV+6RA==
-X-Google-Smtp-Source: APiQypLuReragKbcrqSe+rqgG3qRRihsgQSHTzTSOLa5Yu/J0N6qri7PBN+y0fmZ3DegD+ZCs5PqSYhGIcO4IBpg4dI=
-X-Received: by 2002:a2e:8410:: with SMTP id z16mr75114ljg.197.1585774907722;
- Wed, 01 Apr 2020 14:01:47 -0700 (PDT)
+        Wed, 1 Apr 2020 17:06:04 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jJkYl-0004ja-6c; Wed, 01 Apr 2020 15:06:03 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jJkYk-0006fM-EY; Wed, 01 Apr 2020 15:06:03 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Adam Zabrocki <pi3@pi3.com.pl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>
+References: <20200324215049.GA3710@pi3.com.pl> <202003291528.730A329@keescook>
+        <87zhbvlyq7.fsf_-_@x220.int.ebiederm.org>
+        <CAHk-=wihrtjjSsF6mGc7wjrtVQ-pha9ZAeo1rQAeuO1hr+i1qw@mail.gmail.com>
+Date:   Wed, 01 Apr 2020 16:03:20 -0500
+In-Reply-To: <CAHk-=wihrtjjSsF6mGc7wjrtVQ-pha9ZAeo1rQAeuO1hr+i1qw@mail.gmail.com>
+        (Linus Torvalds's message of "Wed, 1 Apr 2020 13:55:11 -0700")
+Message-ID: <87sghmnckn.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <CABEDWGzfTDtmq==j-GcK3YYbdPX4-Ms=PDuDEiQusV78bUGvDA@mail.gmail.com>
- <20200401202937.GA130497@google.com>
-In-Reply-To: <20200401202937.GA130497@google.com>
-From:   Alan Mikhak <alan.mikhak@sifive.com>
-Date:   Wed, 1 Apr 2020 14:01:36 -0700
-Message-ID: <CABEDWGxTifrvYVF7B2geN7K4Uhor-JcHK95L60T_xQar4XTqBQ@mail.gmail.com>
-Subject: Re: [PATCH] PCI: Warn about MEM resource size being too big
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        lorenzo.pieralisi@arm.com, amurray@thegoodpenguin.co.uk,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1jJkYk-0006fM-EY;;;mid=<87sghmnckn.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+c7hhxNri2jefkPydPIS+82k6pfB21yV8=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 389 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 11 (2.7%), b_tie_ro: 9 (2.4%), parse: 0.71 (0.2%),
+         extract_message_metadata: 12 (3.2%), get_uri_detail_list: 0.65 (0.2%),
+         tests_pri_-1000: 23 (5.8%), tests_pri_-950: 1.22 (0.3%),
+        tests_pri_-900: 0.99 (0.3%), tests_pri_-90: 87 (22.4%), check_bayes:
+        86 (22.0%), b_tokenize: 4.8 (1.2%), b_tok_get_all: 6 (1.5%),
+        b_comp_prob: 1.63 (0.4%), b_tok_touch_all: 70 (18.0%), b_finish: 0.89
+        (0.2%), tests_pri_0: 239 (61.5%), check_dkim_signature: 0.45 (0.1%),
+        check_dkim_adsp: 2.3 (0.6%), poll_dns_idle: 0.75 (0.2%), tests_pri_10:
+        3.1 (0.8%), tests_pri_500: 9 (2.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] signal: Extend exec_id to 64bits
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 1, 2020 at 1:29 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+
+> On Wed, Apr 1, 2020 at 1:50 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>> I have updated the update of exec_id on exec to use WRITE_ONCE
+>> and the read of exec_id in do_notify_parent to use READ_ONCE
+>> to make it clear that there is no locking between these two
+>> locations.
 >
-> On Tue, Mar 31, 2020 at 01:36:04PM -0700, Alan Mikhak wrote:
-> > On Tue, Mar 31, 2020 at 1:12 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > On Mon, Mar 30, 2020 at 05:19:47PM -0700, Alan Mikhak wrote:
-> > > > Output a warning for MEM resource size with
-> > > > non-zero upper 32-bits.
-> > > >
-> > > > ATU programming functions limit the size of
-> > > > the translated region to 4GB by using a u32 size
-> > > > parameter. Function dw_pcie_prog_outbound_atu()
-> > > > does not program the upper 32-bit ATU limit
-> > > > register. This may result in undefined behavior
-> > > > for resource sizes with non-zero upper 32-bits.
-> > > >
-> > > > For example, a 128GB address space starting at
-> > > > physical CPU address of 0x2000000000 with size of
-> > > > 0x2000000000 needs the following values programmed
-> > > > into the lower and upper 32-bit limit registers:
-> > > >  0x3fffffff in the upper 32-bit limit register
-> > > >  0xffffffff in the lower 32-bit limit register
-> > > >
-> > > > Currently, only the lower 32-bit limit register is
-> > > > programmed with a value of 0xffffffff but the upper
-> > > > 32-bit limit register is not being programmed.
-> > > > As a result, the upper 32-bit limit register remains
-> > > > at its default value after reset of 0x0. This would
-> > > > be a problem for a 128GB PCIe space because in
-> > > > effect its size gets reduced to 4GB.
-> > > >
-> > > > ATU programming functions can be changed to
-> > > > specify a u64 size parameter for the translated
-> > > > region. Along with this change, the internal
-> > > > calculation of the limit address, the address of
-> > > > the last byte in the translated region, needs to
-> > > > change such that both the lower 32-bit and upper
-> > > > 32-bit limit registers can be programmed correctly.
-> > > >
-> > > > Changing the ATU programming functions is high
-> > > > impact. Without change, this issue can go
-> > > > unnoticed. A warning may prompt the user to
-> > > > look into possible issues.
-> > >
-> > > So this is basically a warning, and we could actually *fix* the
-> > > problem with more effort?  I vote for the fix.
-> >
-> > The fix would impact all PCIe drivers that depend on dwc.
+> Ack, makes sense to me.
 >
-> Is that another way of saying "the fix would *fix* all the drivers
-> that depend on dwc"?
+> Just put it in your branch, this doesn't look urgent, considering that
+> it's something that has been around forever.
 
-Thanks Bjorn for your comments.
+Done
 
-Not at all. I'm not suggesting that. I'm just stating the dilemma.
-
-One option is, as you may be alluding, the *fix* would include
-modification to all drivers that depend on dwc to at least not break
-the build.. Whoever embarks on such a *fix* would have to take
-that on before submitting the patch.
-
-Another option is to produce an alternate ATU programming
-API for the Linux PCI sub-system to support u64 size. That
-way individual driver owners can choose if and when to migrate
-their drivers to the new API on their own timeline. Such an
-alternative API can also be generic to support not only
-Designware PCIe controllers but others.
-
->
-> > I would have no way of validating such a fix without
-> > breaking it for everyone let alone the bandwidth it needs.
-> > All drivers that depend on dwc seem to be currently happy
-> > with the u32 size limit. I suggest we add the warning but
-> > keep this issue in mind for a solution that allows existing
-> > PCe drivers to phase into the fix on their own individual
-> > schedules, if they need to.
->
-> Obviously it would *nice* to test all the drivers that depend on dwc,
-> but if you're fixing a problem, you verify the fix on your system, and
-> the relevant people review it, I don't think exhaustive testing is a
-> hard requirement, and I certainly wouldn't expect you to do it.
-
-That is a relief for whoever commits to take this on.
-
->
-> If we want to live with a 32-bit limit, I think we should change the
-> relevant interfaces to use u32 so there's not a way to venture into
-> this region of undefined behavior.  I don't think "warning + undefined
-> behavior" is a very maintainable situation.
-
-I cannot live with the 32-bit limit. I need a 64-bit solution. I had
-to implement a solution that suits my needs. I have worked
-out some of the issue. It is generic enough for my use with PCIe
-controllers from more than one vendor. But, it requires pulling a
-lot of code from Designware layer into a separate framework
-which I believe can become common for Linux PCI subsystem.
-If it gets in, others who need 64-bit can migrate over to it without
-being migrated involuntarily.
-
->
-> > > > This limitation also means that multiple ATUs
-> > > > would need to be used to map larger regions.
-> > > >
-> > > > Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
-> > > > ---
-> > > >  drivers/pci/controller/dwc/pcie-designware-host.c | 6 +++++-
-> > > >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > index 395feb8ca051..37a8c71ef89a 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > @@ -325,6 +325,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
-> > > >       struct pci_bus *child;
-> > > >       struct pci_host_bridge *bridge;
-> > > >       struct resource *cfg_res;
-> > > > +     resource_size_t mem_size;
-> > > >       u32 hdr_type;
-> > > >       int ret;
-> > > >
-> > > > @@ -362,7 +363,10 @@ int dw_pcie_host_init(struct pcie_port *pp)
-> > > >               case IORESOURCE_MEM:
-> > > >                       pp->mem = win->res;
-> > > >                       pp->mem->name = "MEM";
-> > > > -                     pp->mem_size = resource_size(pp->mem);
-> > > > +                     mem_size = resource_size(pp->mem);
-> > > > +                     if (upper_32_bits(mem_size))
-> > > > +                             dev_warn(dev, "MEM resource size too big\n");
-> > > > +                     pp->mem_size = mem_size;
-> > > >                       pp->mem_bus_addr = pp->mem->start - win->offset;
-> > > >                       break;
-> > > >               case 0:
-> > > > --
-> > > > 2.7.4
-> > > >
+Eric
