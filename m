@@ -2,82 +2,244 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1F1F19B82C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 00:10:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE00319B833
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 00:14:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733218AbgDAWKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 18:10:41 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51694 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733182AbgDAWKk (ORCPT
+        id S1733044AbgDAWOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 18:14:18 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:4704 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732560AbgDAWOR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 18:10:40 -0400
-Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2C4F1E28;
-        Thu,  2 Apr 2020 00:10:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1585779037;
-        bh=m4io9vMcfz3TaImIe8GuwtNOerRyfAuyN51YzVVrUe8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D2hSFPOm+IXg83+pGcJLgJHr7fi4aS3bUt78szzCn9P3XUEvvVreTPvba/InhxH9O
-         NvHchb45CaRiupmq2AMKJ55clR0Gu265sd8D6BQ3W9quboq214iiCImSSFvk7si6uU
-         +tQ8Og8di/lXEfWzcYpPwpT+jVMnl02RyhA2uGV4=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH v7 3/3] arm64: dts: zynqmp: Add GTR transceivers
-Date:   Thu,  2 Apr 2020 01:10:25 +0300
-Message-Id: <20200401221025.26087-4-laurent.pinchart@ideasonboard.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200401221025.26087-1-laurent.pinchart@ideasonboard.com>
-References: <20200401221025.26087-1-laurent.pinchart@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 1 Apr 2020 18:14:17 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 031M56Lh065305;
+        Wed, 1 Apr 2020 18:13:59 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 305165kfv2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 18:13:59 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 031M6QR8070448;
+        Wed, 1 Apr 2020 18:13:58 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 305165kfur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 18:13:58 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 031M9eFW012375;
+        Wed, 1 Apr 2020 22:13:57 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma05wdc.us.ibm.com with ESMTP id 301x7746tb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Apr 2020 22:13:57 +0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 031MDuJU40763670
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 Apr 2020 22:13:56 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 57C626F35A;
+        Wed,  1 Apr 2020 22:13:56 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8EDEC6F359;
+        Wed,  1 Apr 2020 22:13:55 +0000 (GMT)
+Received: from [9.70.82.143] (unknown [9.70.82.143])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed,  1 Apr 2020 22:13:55 +0000 (GMT)
+Subject: [PATCH v9 06/13] powerpc/vas: Take reference to PID and mm for
+ user space windows
+From:   Haren Myneni <haren@linux.ibm.com>
+To:     mpe@ellerman.id.au
+Cc:     mikey@neuling.org, srikar@linux.vnet.ibm.com,
+        frederic.barrat@fr.ibm.com, ajd@linux.ibm.com,
+        linux-kernel@vger.kernel.org, npiggin@gmail.com, hch@infradead.org,
+        oohall@gmail.com, clg@kaod.org, sukadev@linux.vnet.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, herbert@gondor.apana.org.au
+In-Reply-To: <1585776497.10664.448.camel@hbabu-laptop>
+References: <1585775978.10664.438.camel@hbabu-laptop>
+         <1585776497.10664.448.camel@hbabu-laptop>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 01 Apr 2020 15:13:54 -0700
+Message-ID: <1585779234.2275.8.camel@hbabu-laptop>
+Mime-Version: 1.0
+X-Mailer: Evolution 2.28.3 
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-01_04:2020-03-31,2020-04-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ impostorscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ clxscore=1015 lowpriorityscore=0 suspectscore=3 bulkscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004010179
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a DT node for the PS-GTR transceivers.
+(sorry reposting. version string missed)
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Michal Simek <michal.simek@xilinx.com>
+When process opens a window, its pid and tgid will be saved in the
+vas_window struct. This window will be closed when the process exits.
+The kernel handles NX faults by updating CSB or send SEGV signal to pid
+of the process if the user space csb addr is invalid.
+
+In multi-thread applications, a window can be opened by a child thread,
+but it will not be closed when this thread exits. It is expected that
+the parent will clean up all resources including NX windows opened by
+child threads. A child thread can send NX requests using this window
+and could be killed before completion is reported. If the pid assigned
+to this thread is reused while requests are pending, a failure SEGV
+would be directed to the wrong place.
+
+To prevent reusing the pid, take references to pid and mm when the window
+is opened and release them when when the window is closed. Then if child
+thread is not running, SEGV signal will be sent to thread group leader
+(tgid).
+
+Signed-off-by: Haren Myneni <haren@linux.ibm.com>
 ---
- arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/powerpc/platforms/powernv/vas-debug.c  |  2 +-
+ arch/powerpc/platforms/powernv/vas-window.c | 53 ++++++++++++++++++++++++++---
+ arch/powerpc/platforms/powernv/vas.h        |  9 ++++-
+ 3 files changed, 57 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-index 2e284eb8d3c1..5e06e4c19d94 100644
---- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-@@ -13,6 +13,7 @@
-  */
+diff --git a/arch/powerpc/platforms/powernv/vas-debug.c b/arch/powerpc/platforms/powernv/vas-debug.c
+index 09e63df..ef9a717 100644
+--- a/arch/powerpc/platforms/powernv/vas-debug.c
++++ b/arch/powerpc/platforms/powernv/vas-debug.c
+@@ -38,7 +38,7 @@ static int info_show(struct seq_file *s, void *private)
  
- #include <dt-bindings/power/xlnx-zynqmp-power.h>
-+#include <dt-bindings/reset/xlnx-zynqmp-resets.h>
+ 	seq_printf(s, "Type: %s, %s\n", cop_to_str(window->cop),
+ 					window->tx_win ? "Send" : "Receive");
+-	seq_printf(s, "Pid : %d\n", window->pid);
++	seq_printf(s, "Pid : %d\n", vas_window_pid(window));
  
- / {
- 	compatible = "xlnx,zynqmp";
-@@ -564,6 +565,15 @@ pcie_intc: legacy-interrupt-controller {
- 			};
- 		};
+ unlock:
+ 	mutex_unlock(&vas_mutex);
+diff --git a/arch/powerpc/platforms/powernv/vas-window.c b/arch/powerpc/platforms/powernv/vas-window.c
+index dc46bf6..7054cd4 100644
+--- a/arch/powerpc/platforms/powernv/vas-window.c
++++ b/arch/powerpc/platforms/powernv/vas-window.c
+@@ -12,6 +12,8 @@
+ #include <linux/log2.h>
+ #include <linux/rcupdate.h>
+ #include <linux/cred.h>
++#include <linux/sched/mm.h>
++#include <linux/mmu_context.h>
+ #include <asm/switch_to.h>
+ #include <asm/ppc-opcode.h>
+ #include "vas.h"
+@@ -876,8 +878,6 @@ struct vas_window *vas_rx_win_open(int vasid, enum vas_cop_type cop,
+ 	rxwin->user_win = rxattr->user_win;
+ 	rxwin->cop = cop;
+ 	rxwin->wcreds_max = rxattr->wcreds_max ?: VAS_WCREDS_DEFAULT;
+-	if (rxattr->user_win)
+-		rxwin->pid = task_pid_vnr(current);
  
-+		psgtr: phy@fd400000 {
-+			compatible = "xlnx,zynqmp-psgtr-v1.1";
-+			status = "disabled";
-+			reg = <0x0 0xfd400000 0x0 0x40000>,
-+			      <0x0 0xfd3d0000 0x0 0x1000>;
-+			reg-names = "serdes", "siou";
-+			#phy-cells = <4>;
-+		};
+ 	init_winctx_for_rxwin(rxwin, rxattr, &winctx);
+ 	init_winctx_regs(rxwin, &winctx);
+@@ -1027,7 +1027,6 @@ struct vas_window *vas_tx_win_open(int vasid, enum vas_cop_type cop,
+ 	txwin->tx_win = 1;
+ 	txwin->rxwin = rxwin;
+ 	txwin->nx_win = txwin->rxwin->nx_win;
+-	txwin->pid = attr->pid;
+ 	txwin->user_win = attr->user_win;
+ 	txwin->wcreds_max = attr->wcreds_max ?: VAS_WCREDS_DEFAULT;
+ 
+@@ -1059,8 +1058,43 @@ struct vas_window *vas_tx_win_open(int vasid, enum vas_cop_type cop,
+ 			goto free_window;
+ 	}
+ 
+-	set_vinst_win(vinst, txwin);
++	if (txwin->user_win) {
++		/*
++		 * Window opened by a child thread may not be closed when
++		 * it exits. So take reference to its pid and release it
++		 * when the window is free by parent thread.
++		 * Acquire a reference to the task's pid to make sure
++		 * pid will not be re-used - needed only for multithread
++		 * applications.
++		 */
++		txwin->pid = get_task_pid(current, PIDTYPE_PID);
++		/*
++		 * Acquire a reference to the task's mm.
++		 */
++		txwin->mm = get_task_mm(current);
+ 
++		if (!txwin->mm) {
++			put_pid(txwin->pid);
++			pr_err("VAS: pid(%d): mm_struct is not found\n",
++					current->pid);
++			rc = -EPERM;
++			goto free_window;
++		}
 +
- 		rtc: rtc@ffa60000 {
- 			compatible = "xlnx,zynqmp-rtc";
- 			status = "disabled";
++		mmgrab(txwin->mm);
++		mmput(txwin->mm);
++		mm_context_add_copro(txwin->mm);
++		/*
++		 * Process closes window during exit. In the case of
++		 * multithread application, the child thread can open
++		 * window and can exit without closing it. Expects parent
++		 * thread to use and close the window. So do not need
++		 * to take pid reference for parent thread.
++		 */
++		txwin->tgid = find_get_pid(task_tgid_vnr(current));
++	}
++
++	set_vinst_win(vinst, txwin);
+ 	return txwin;
+ 
+ free_window:
+@@ -1257,8 +1291,17 @@ int vas_win_close(struct vas_window *window)
+ 	poll_window_castout(window);
+ 
+ 	/* if send window, drop reference to matching receive window */
+-	if (window->tx_win)
++	if (window->tx_win) {
++		if (window->user_win) {
++			/* Drop references to pid and mm */
++			put_pid(window->pid);
++			if (window->mm) {
++				mm_context_remove_copro(window->mm);
++				mmdrop(window->mm);
++			}
++		}
+ 		put_rx_win(window->rxwin);
++	}
+ 
+ 	vas_window_free(window);
+ 
+diff --git a/arch/powerpc/platforms/powernv/vas.h b/arch/powerpc/platforms/powernv/vas.h
+index 88d084d..2a04072 100644
+--- a/arch/powerpc/platforms/powernv/vas.h
++++ b/arch/powerpc/platforms/powernv/vas.h
+@@ -355,7 +355,9 @@ struct vas_window {
+ 	bool user_win;		/* True if user space window */
+ 	void *hvwc_map;		/* HV window context */
+ 	void *uwc_map;		/* OS/User window context */
+-	pid_t pid;		/* Linux process id of owner */
++	struct pid *pid;	/* Linux process id of owner */
++	struct pid *tgid;	/* Thread group ID of owner */
++	struct mm_struct *mm;	/* Linux process mm_struct */
+ 	int wcreds_max;		/* Window credits */
+ 
+ 	char *dbgname;
+@@ -430,6 +432,11 @@ struct vas_winctx {
+ extern void vas_window_free_dbgdir(struct vas_window *win);
+ extern int vas_setup_fault_window(struct vas_instance *vinst);
+ 
++static inline int vas_window_pid(struct vas_window *window)
++{
++	return pid_vnr(window->pid);
++}
++
+ static inline void vas_log_write(struct vas_window *win, char *name,
+ 			void *regptr, u64 val)
+ {
 -- 
-Regards,
+1.8.3.1
 
-Laurent Pinchart
+
 
