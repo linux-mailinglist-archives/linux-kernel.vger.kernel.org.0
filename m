@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C8F19B41E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E8F19B00E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733254AbgDAQXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:23:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46856 "EHLO mail.kernel.org"
+        id S1733302AbgDAQXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:23:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733213AbgDAQXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:23:32 -0400
+        id S2387610AbgDAQXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:23:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE6A6212CC;
-        Wed,  1 Apr 2020 16:23:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F2412137B;
+        Wed,  1 Apr 2020 16:23:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758211;
-        bh=IAoZwNTw/LJYfeiRAw+x03kYdpq+o+xNOD7CYcRqTAQ=;
+        s=default; t=1585758217;
+        bh=nhJQxQCFLz20+3m0GlqbdNdv+16PiSrAntecgskSFgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v0l2XCgeaypnrteW1ljHhFKYjbyKgTv7JtH31t0J1pBiaxN1ibv5fzkLbFgKKc4yx
-         DQ+K0gYMyWDlQ8aCqoZoyvku2UeHpOdqW2EJZy/5yjSikAxCFxJ6ONGdkZsx5e0IH5
-         wmgKue3APSWn3nkjMazR9b/lfhzNcVLBzkOCywpw=
+        b=iZjFAJGbt/vM6DQmWGuN088CzD4y+Vidrq8VZg6QGZIjBafpHHfLdv0LiVwtU6vo5
+         2AI7VR86HVd6P2rAYezyWCG7PhJAJ1KOf2knKDiGJRd93XTsrPxyAiN3Qb/fBEgG2r
+         lxj2i5EJMKDo+VG81FXyZ8k4t/HdKeNXwC0T2A0s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, yangerkun <yangerkun@huawei.com>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 019/116] NFC: fdp: Fix a signedness bug in fdp_nci_send_patch()
-Date:   Wed,  1 Apr 2020 18:16:35 +0200
-Message-Id: <20200401161544.727136967@linuxfoundation.org>
+Subject: [PATCH 4.19 020/116] slcan: not call free_netdev before rtnl_unlock in slcan_open
+Date:   Wed,  1 Apr 2020 18:16:36 +0200
+Message-Id: <20200401161544.816097128@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
 References: <20200401161542.669484650@linuxfoundation.org>
@@ -43,42 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-[ Upstream commit 0dcdf9f64028ec3b75db6b691560f8286f3898bf ]
+[ Upstream commit 2091a3d42b4f339eaeed11228e0cbe9d4f92f558 ]
 
-The nci_conn_max_data_pkt_payload_size() function sometimes returns
--EPROTO so "max_size" needs to be signed for the error handling to
-work.  We can make "payload_size" an int as well.
+As the description before netdev_run_todo, we cannot call free_netdev
+before rtnl_unlock, fix it by reorder the code.
 
-Fixes: a06347c04c13 ("NFC: Add Intel Fields Peak NFC solution driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This patch is a 1:1 copy of upstream slip.c commit f596c87005f7
+("slip: not call free_netdev before rtnl_unlock in slip_open").
+
+Reported-by: yangerkun <yangerkun@huawei.com>
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nfc/fdp/fdp.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/can/slcan.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/nfc/fdp/fdp.c
-+++ b/drivers/nfc/fdp/fdp.c
-@@ -192,7 +192,7 @@ static int fdp_nci_send_patch(struct nci
- 	const struct firmware *fw;
- 	struct sk_buff *skb;
- 	unsigned long len;
--	u8 max_size, payload_size;
-+	int max_size, payload_size;
- 	int rc = 0;
+--- a/drivers/net/can/slcan.c
++++ b/drivers/net/can/slcan.c
+@@ -621,7 +621,10 @@ err_free_chan:
+ 	tty->disc_data = NULL;
+ 	clear_bit(SLF_INUSE, &sl->flags);
+ 	slc_free_netdev(sl->dev);
++	/* do not call free_netdev before rtnl_unlock */
++	rtnl_unlock();
+ 	free_netdev(sl->dev);
++	return err;
  
- 	if ((type == NCI_PATCH_TYPE_OTP && !info->otp_patch) ||
-@@ -215,8 +215,7 @@ static int fdp_nci_send_patch(struct nci
- 
- 	while (len) {
- 
--		payload_size = min_t(unsigned long, (unsigned long) max_size,
--				     len);
-+		payload_size = min_t(unsigned long, max_size, len);
- 
- 		skb = nci_skb_alloc(ndev, (NCI_CTRL_HDR_SIZE + payload_size),
- 				    GFP_KERNEL);
+ err_exit:
+ 	rtnl_unlock();
 
 
