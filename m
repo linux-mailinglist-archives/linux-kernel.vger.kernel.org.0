@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0478C19B331
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:50:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01FCB19B035
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389155AbgDAQtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:49:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42268 "EHLO mail.kernel.org"
+        id S2387782AbgDAQZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:25:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389447AbgDAQlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:41:49 -0400
+        id S2387764AbgDAQZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:25:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45CC520658;
-        Wed,  1 Apr 2020 16:41:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DEED212CC;
+        Wed,  1 Apr 2020 16:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759308;
-        bh=ZCfgKqcp5k9H0mwLFlSfobUCxNr6mraV7kp7uz4Nar4=;
+        s=default; t=1585758303;
+        bh=/iKgduoUkNVKU9ZrPkIW5sERPFZkvrGAQfa5/ot1PG8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hCVeg2s0BO7kxrpmlNtJMpsdtWcXU/nwFmHm2fx5gFP0YHJaAv/YKaLkhsBeSiJgV
-         fDWBLV3tTZbpZDPerFcSWSsm8L/SZ4/UKjLIb0Gvy0QNxuMMAV+LMRdQTRDCi3IJU6
-         3OFvjKQ1MaIJmiuf7m9lYZiOBoIJEZQCTrFpbwKo=
+        b=Ua2sUK2cINfhm4dXTM6fR88oU6AypLKxT/tUx6emTV1IHiRPcCqipu/zv59+QvdMv
+         WP0QTkZ3wNtxo7BpR1ANf4wV4XKQ50gOMqvXw+LJBXiw5exbBRBvJ9wp7lcu6HYE1d
+         1qgG4Xzrjh35Ml68omCKtfwoCxiZFn++gpKJF4nY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 033/148] rtc: max8907: add missing select REGMAP_IRQ
+        stable@vger.kernel.org, Yussuf Khalil <dev@pp3345.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.19 049/116] Input: synaptics - enable RMI on HP Envy 13-ad105ng
 Date:   Wed,  1 Apr 2020 18:17:05 +0200
-Message-Id: <20200401161555.808094271@linuxfoundation.org>
+Message-Id: <20200401161548.842612542@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corentin Labbe <clabbe@baylibre.com>
+From: Yussuf Khalil <dev@pp3345.net>
 
-commit 5d892919fdd0cefd361697472d4e1b174a594991 upstream.
+commit 1369d0abe469fb4cdea8a5bce219d38cb857a658 upstream.
 
-I have hit the following build error:
+This laptop (and perhaps other variants of the same model) reports an
+SMBus-capable Synaptics touchpad. Everything (including suspend and
+resume) works fine when RMI is enabled via the kernel command line, so
+let's add it to the whitelist.
 
-  armv7a-hardfloat-linux-gnueabi-ld: drivers/rtc/rtc-max8907.o: in function `max8907_rtc_probe':
-  rtc-max8907.c:(.text+0x400): undefined reference to `regmap_irq_get_virq'
-
-max8907 should select REGMAP_IRQ
-
-Fixes: 94c01ab6d7544 ("rtc: add MAX8907 RTC driver")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Yussuf Khalil <dev@pp3345.net>
+Link: https://lore.kernel.org/r/20200307213508.267187-1-dev@pp3345.net
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/rtc/Kconfig |    1 +
+ drivers/input/mouse/synaptics.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -323,6 +323,7 @@ config RTC_DRV_MAX6900
- config RTC_DRV_MAX8907
- 	tristate "Maxim MAX8907"
- 	depends on MFD_MAX8907 || COMPILE_TEST
-+	select REGMAP_IRQ
- 	help
- 	  If you say yes here you will get support for the
- 	  RTC of Maxim MAX8907 PMIC.
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -189,6 +189,7 @@ static const char * const smbus_pnp_ids[
+ 	"SYN3052", /* HP EliteBook 840 G4 */
+ 	"SYN3221", /* HP 15-ay000 */
+ 	"SYN323d", /* HP Spectre X360 13-w013dx */
++	"SYN3257", /* HP Envy 13-ad105ng */
+ 	NULL
+ };
+ 
 
 
