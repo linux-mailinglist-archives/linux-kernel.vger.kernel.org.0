@@ -2,78 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE6E719AC0C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 14:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B9019AC10
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 14:53:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732370AbgDAMwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 08:52:37 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48592 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732166AbgDAMwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 08:52:36 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 59BA9BD97E6FA23F202D;
-        Wed,  1 Apr 2020 20:52:32 +0800 (CST)
-Received: from [127.0.0.1] (10.173.222.27) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.487.0; Wed, 1 Apr 2020
- 20:52:22 +0800
-Subject: Re: [PATCH] KVM: arm64: vgic-v3: Clear pending bit in guest memory
- after synchronization
-To:     Marc Zyngier <maz@kernel.org>
-CC:     <kvmarm@lists.cs.columbia.edu>, <eric.auger@redhat.com>,
-        <andre.przywara@arm.com>, <james.morse@arm.com>,
-        <julien.thierry.kdev@gmail.com>, <suzuki.poulose@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>
-References: <20200331031245.1562-1-yuzenghui@huawei.com>
- <20200331090709.17d2087d@why>
- <fe30a834-fdb0-e1ca-5e4a-0c7863236c5f@huawei.com>
- <20200401112757.6716cbf3@why>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <bb59df5a-be43-1132-e78a-3c6b354694d6@huawei.com>
-Date:   Wed, 1 Apr 2020 20:52:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
-MIME-Version: 1.0
-In-Reply-To: <20200401112757.6716cbf3@why>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+        id S1732577AbgDAMxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 08:53:11 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:46271 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732435AbgDAMxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 08:53:11 -0400
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 48smMS2jDxz9sT6; Wed,  1 Apr 2020 23:53:07 +1100 (AEDT)
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: a7032637b54186e5649917679727d7feaec932b1
+In-Reply-To: <20190812215052.71840-10-ndesaulniers@google.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>,
+        akpm@linux-foundation.org
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc:     Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Rob Herring <robh@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        clang-built-linux@googlegroups.com, yhs@fb.com,
+        jpoimboe@redhat.com, sedat.dilek@gmail.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Geoff Levand <geoff@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Martin KaFai Lau <kafai@fb.com>
+Subject: Re: [PATCH 10/16] powerpc: prefer __section and __printf from compiler_attributes.h
+Message-Id: <48smMS2jDxz9sT6@ozlabs.org>
+Date:   Wed,  1 Apr 2020 23:53:07 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/4/1 18:27, Marc Zyngier wrote:
+On Mon, 2019-08-12 at 21:50:43 UTC, Nick Desaulniers wrote:
+> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 
->>> And I think there is a similar issue in vgic_v3_lpi_sync_pending_status().
->>> Why sync something back from the pending table when the LPI wasn't
->>> mapped yet?
->>
->> vgic_v3_lpi_sync_pending_status() can be called on the ITE restore path:
->> vgic_its_restore_ite/vgic_add_lpi/vgic_v3_lpi_sync_pending_status.
->> We should rely on it to sync the pending bit from guest memory (which
->> was saved on the source side).
-> 
-> The fact that we have *two* paths to restore pending bits is pretty
-> annoying. There is certainly some scope for simplification here.
+Applied to powerpc next, thanks.
 
-One thing need to be clarified first (if we're going to do some 
-simplification here) is that if we follow the "ITS Restore Sequence"
-rule (in Documentation/virt/kvm/devices/arm-vgic-its.rst, which says
-that all redistributors are restored *before* ITS table data), then
-the pending bits will *only* be restored on the ITE restore path.
+https://git.kernel.org/powerpc/c/a7032637b54186e5649917679727d7feaec932b1
 
-When we're restoring the GICR_CTLR, we invoke vgic_enable_lpis()->
-its_sync_lpi_pending_table(). But since no LPI has been restored yet,
-we will get an empty lpi_list snapshot from vgic_copy_lpi_list().
-No pending table synchronization will happen on this path.
-
-I think this is what we have in the current code.
-
-
-Thanks,
-Zenghui
-
+cheers
