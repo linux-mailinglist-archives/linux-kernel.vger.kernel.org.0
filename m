@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97D9319B1DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CABE719AFE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388779AbgDAQiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:38:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38544 "EHLO mail.kernel.org"
+        id S2387443AbgDAQWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:22:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389114AbgDAQio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:38:44 -0400
+        id S2387434AbgDAQWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:22:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B4C020658;
-        Wed,  1 Apr 2020 16:38:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF37020658;
+        Wed,  1 Apr 2020 16:22:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759124;
-        bh=nhJQxQCFLz20+3m0GlqbdNdv+16PiSrAntecgskSFgI=;
+        s=default; t=1585758123;
+        bh=r+e9qHmInOQJ47PfeFDi1mAZiHipiVuBXvckxLYW3bU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sq5GEn8dffsbC8X6ak0/EbluNk5CuednwJafdSosUNFbdxqsjFE8PPt3b/Zb1Ii9p
-         hW6Ykg3MQl8qJKFh0IHeb6Tadau0O4gbHDH0cLOe1vnnFOMP+IPc+Jti4fZO5ADkyx
-         ryly0M+Bi6s+lh+cJ33AOIPW75QIMpdAhQcbDPAQ=
+        b=fu5I0QpEMWlh+X+u4JfRvUOkQ+nxHPJN5G1Jhw+N64uY2/Lb6PyReW7x3mmR1z49F
+         vb1GlDBDTRlAYxqPAY9ZMH/noB7GMdCyw6KSgSh9ZPsBfFDTvenFueXZ0TIO0pCbeJ
+         b8v7CSBV8vQyyOTtgbjPbwg1B1tJ/ntRA4idXj8w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, yangerkun <yangerkun@huawei.com>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 044/102] slcan: not call free_netdev before rtnl_unlock in slcan_open
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Ilie Halip <ilie.halip@gmail.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 5.4 19/27] arm64: alternative: fix build with clang integrated assembler
 Date:   Wed,  1 Apr 2020 18:17:47 +0200
-Message-Id: <20200401161541.094258753@linuxfoundation.org>
+Message-Id: <20200401161431.059776937@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
+References: <20200401161414.352722470@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Hartkopp <socketcan@hartkopp.net>
+From: Ilie Halip <ilie.halip@gmail.com>
 
-[ Upstream commit 2091a3d42b4f339eaeed11228e0cbe9d4f92f558 ]
+commit 6f5459da2b8736720afdbd67c4bd2d1edba7d0e3 upstream.
 
-As the description before netdev_run_todo, we cannot call free_netdev
-before rtnl_unlock, fix it by reorder the code.
+Building an arm64 defconfig with clang's integrated assembler, this error
+occurs:
+    <instantiation>:2:2: error: unrecognized instruction mnemonic
+     _ASM_EXTABLE 9999b, 9f
+     ^
+    arch/arm64/mm/cache.S:50:1: note: while in macro instantiation
+    user_alt 9f, "dc cvau, x4", "dc civac, x4", 0
+    ^
 
-This patch is a 1:1 copy of upstream slip.c commit f596c87005f7
-("slip: not call free_netdev before rtnl_unlock in slip_open").
+While GNU as seems fine with case-sensitive macro instantiations, clang
+doesn't, so use the actual macro name (_asm_extable) as in the rest of
+the file.
 
-Reported-by: yangerkun <yangerkun@huawei.com>
-Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Also checked that the generated assembly matches the GCC output.
+
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Fixes: 290622efc76e ("arm64: fix "dc cvau" cache operation on errata-affected core")
+Link: https://github.com/ClangBuiltLinux/linux/issues/924
+Signed-off-by: Ilie Halip <ilie.halip@gmail.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/can/slcan.c |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/drivers/net/can/slcan.c
-+++ b/drivers/net/can/slcan.c
-@@ -621,7 +621,10 @@ err_free_chan:
- 	tty->disc_data = NULL;
- 	clear_bit(SLF_INUSE, &sl->flags);
- 	slc_free_netdev(sl->dev);
-+	/* do not call free_netdev before rtnl_unlock */
-+	rtnl_unlock();
- 	free_netdev(sl->dev);
-+	return err;
+---
+ arch/arm64/include/asm/alternative.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/arm64/include/asm/alternative.h
++++ b/arch/arm64/include/asm/alternative.h
+@@ -221,7 +221,7 @@ alternative_endif
  
- err_exit:
- 	rtnl_unlock();
+ .macro user_alt, label, oldinstr, newinstr, cond
+ 9999:	alternative_insn "\oldinstr", "\newinstr", \cond
+-	_ASM_EXTABLE 9999b, \label
++	_asm_extable 9999b, \label
+ .endm
+ 
+ /*
 
 
