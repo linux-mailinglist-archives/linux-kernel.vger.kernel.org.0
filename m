@@ -2,740 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA6EA19B126
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 686FB19B3BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:53:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388429AbgDAQcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:32:31 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35138 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388378AbgDAQc2 (ORCPT
+        id S2388480AbgDAQdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:33:01 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34677 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388459AbgDAQcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:32:28 -0400
-Received: by mail-lf1-f66.google.com with SMTP id t16so230422lfl.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:32:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cumulusnetworks.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cmHHozYYaanvKzd1GrUiq8s3Xoe7rA4crvUkNSK+fU0=;
-        b=d7ZH3bujNB3TotvLPj0G9LdIfWdtkIZRfOYphAUQnAeRERJjMQe/JkQesyC4YA7QPm
-         tIsj32Gai2JmS1UtJneHwqRTVz/yJR2M6EMMgf4OkD7WPYg+5OS1yGxQjt3Wk0lbDnE3
-         sMqktSRtUX4iCruW8R3RoSW+qSFgKo3PJG5zo=
+        Wed, 1 Apr 2020 12:32:53 -0400
+Received: by mail-oi1-f196.google.com with SMTP id d3so49391oic.1;
+        Wed, 01 Apr 2020 09:32:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cmHHozYYaanvKzd1GrUiq8s3Xoe7rA4crvUkNSK+fU0=;
-        b=imnQ9TDTj2lpZsnhbtklxvt7wZi3PkDGYn5Cyx6CMtyltSGH5ddn63bH2L9R2KcIWR
-         kQ0FMGzbNVnhCY7En42QsKGdjcP/+5OgOFJ3RWPlesCZOeEoy7Xmc01zVTEBm0yc3zUZ
-         JYQ9nyaV1Hrzc1VTORdHcLnH1gOXqTDtRsaoVR+zLl+P2F28n+dOU7wmMvMJ1DEhbOik
-         MXv42xrgYx+O5Izd0m91v2SP66DFlGKlQkm/vl9/w9Sv/OZFfiXOMDkMdrs+wQbuPbXV
-         XJiGDfdIeDohY2G8xsoIhkThtHh9049eoPaCO/32LyrOBH6I5THNM5hQiAE/cCCm1a/Z
-         wF5Q==
-X-Gm-Message-State: AGi0PuZYHgDilRqQ7dJ69RFv2SGQVtb3eFnL5w2aBCodye/A/uF2BOUS
-        VmFm3F62U0qPqiF5/P5OycXPDg==
-X-Google-Smtp-Source: APiQypJlrfu9Wlml90X7hR+KgpEVUftbdTGoE4IAZNTLis8EIWNXCcIYB0yIePj2INeL4HkK3MUZ4g==
-X-Received: by 2002:a19:5519:: with SMTP id n25mr12875452lfe.198.1585758745531;
-        Wed, 01 Apr 2020 09:32:25 -0700 (PDT)
-Received: from [192.168.0.109] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
-        by smtp.gmail.com with ESMTPSA id o5sm2203358lfb.0.2020.04.01.09.32.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Apr 2020 09:32:24 -0700 (PDT)
-Subject: Re: [RFC net-next v4 7/9] bridge: mrp: Connect MRP api with the
- switchev API
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     davem@davemloft.net, jiri@resnulli.us, ivecera@redhat.com,
-        kuba@kernel.org, roopa@cumulusnetworks.com, olteanv@gmail.com,
-        andrew@lunn.ch, UNGLinuxDriver@microchip.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bridge@lists.linux-foundation.org
-References: <20200327092126.15407-1-horatiu.vultur@microchip.com>
- <20200327092126.15407-8-horatiu.vultur@microchip.com>
- <7e85b9fe-f518-0c5a-0891-6f64755407c3@cumulusnetworks.com>
- <20200401160621.4fq66xwamuhmzxdb@soft-dev3.microsemi.net>
-From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Message-ID: <98fb3248-687d-f6c1-cc0b-1c96423d82ca@cumulusnetworks.com>
-Date:   Wed, 1 Apr 2020 19:32:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BQ6dbMnuQmYakwtYkaDd8ZPL0bNSKkspp4CDCfrrxEk=;
+        b=bCA41ZaOArp5tLpKVEfndDwvC46wA6b99I837JR563W7K7Gso8Z4mBsYnYmsUMYTnQ
+         vvpT4PT9jhfGVtY/ksaMGADGomGlNK0h9KjQO0NHctbg3+eN2VchxJit/BQqZOUntVGF
+         YQ4zwWvoAQkNEKM/o5g2XMnUW56eozuZN6ukKMCuOXUBifdOuEhzXWDA5J/BYIUwRsNw
+         iTaaUFWT30CR1jUT/jUAkICLs/RCYD275++136oqE7WKRk0HhA479+czAhkMmH8FrNMO
+         idTEL++Wb8lkxvz6Jul5yDhPWkEB0ADpnO6yW0fD0SK9cFwjPQ/MDjZfHbj9uFBHqICd
+         iTyQ==
+X-Gm-Message-State: AGi0PubgWls7ecBlBeSz3riKETx3UwOGwBG5kirq3BEQ7hMBPNvGDp13
+        z7CPvRtRNhxGHTCZwqmzyzGo2tvoqFKuUU/uj38=
+X-Google-Smtp-Source: APiQypIbcz5zIhvmhQId+hN/inqiB0CGc/pOWNe7i8QekTGn+0r2FRSM42dYTgD5Rp0mPjYuXdSADPqyuCaVbpfRhBE=
+X-Received: by 2002:a05:6808:8f:: with SMTP id s15mr3565793oic.110.1585758772561;
+ Wed, 01 Apr 2020 09:32:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200401160621.4fq66xwamuhmzxdb@soft-dev3.microsemi.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200329223419.122796-1-hdegoede@redhat.com> <20200329223419.122796-2-hdegoede@redhat.com>
+In-Reply-To: <20200329223419.122796-2-hdegoede@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 1 Apr 2020 18:32:41 +0200
+Message-ID: <CAJZ5v0iapuqnfsQHhTQTWXdEtzX_MMTBUqdAzCej19AF9rtrNA@mail.gmail.com>
+Subject: Re: [PATCH 5.6 regression fix 1/2] ACPI: PM: Add acpi_s2idle_register_wake_callback()
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "5 . 4+" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/04/2020 19:06, Horatiu Vultur wrote:
-> The 03/30/2020 19:11, Nikolay Aleksandrov wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> On 27/03/2020 11:21, Horatiu Vultur wrote:
->>> Implement the MRP api.
->>>
->>> In case the HW can't generate MRP Test frames then the SW will try to generate
->>> the frames. In case that also the SW will fail in generating the frames then a
->>> error is return to the userspace. The userspace is responsible to generate all
->>> the other MRP frames regardless if the test frames are generated by HW or SW.
->>>
->>> The forwarding/termination of MRP frames is happening in the kernel and is done
->>> by the MRP instance. The userspace application doesn't do the forwarding.
->>>
->>> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
->>> ---
->>>  net/bridge/br_mrp.c | 514 ++++++++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 514 insertions(+)
->>>  create mode 100644 net/bridge/br_mrp.c
->>>
->>
->> Hi,
-> 
-> Hi Nik,
-> 
->> In general the RCU usage needs more work.
-> 
-> Thanks for the detailed review, this is my first time when I use the RCU,
-> so I might need to spend more time on time.
-> 
->> Also I might've missed it, but where do you
->> handle bridge port delete which is used in mrp ?
-> 
-> When a port is deleted, then the userspace application will be notified
-> and then the userspace will remove the MRP instance. Because there is no
-> point to have a MRP instance with only 1 port. And the function that
-> delets the MRP instance is br_mrp_del.
-> 
+On Mon, Mar 30, 2020 at 12:34 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Since commit fdde0ff8590b ("ACPI: PM: s2idle: Prevent spurious SCIs from
+> waking up the system") the SCI triggering without there being a wakeup
+> cause recognized by the ACPI sleep code will no longer wakeup the system.
+>
+> This works as intended, but this is a problem for devices where the SCI
+> is shared with another device which is also a wakeup source.
+>
+> In the past these, from the pov of the ACPI sleep code, spurious SCIs
+> would still cause a wakeup so the wakeup from the device sharing the
+> interrupt would actually wakeup the system. This now no longer works.
+>
+> This is a problem on e.g. Bay Trail-T and Cherry Trail devices where
+> some peripherals (typically the XHCI controller) can signal a
+> Power Management Event (PME) to the Power Management Controller (PMC)
+> to wakeup the system, this uses the same interrupt as the SCI.
+> These wakeups are handled through a special INT0002 ACPI device which
+> checks for events in the GPE0a_STS for this and takes care of acking
+> the PME so that the shared interrupt stops triggering.
+>
+> The change to the ACPI sleep code to ignore the spurious SCI, causes
+> the system to no longer wakeup on these PME events. To make things
+> worse this means that the INT0002 device driver interrupt handler will
+> no longer run, causing the PME to not get cleared and resulting in the
+> system hanging. Trying to wakeup the system after such a PME through e.g.
+> the power button no longer works.
+>
+> Add an acpi_s2idle_register_wake_callback() function which registers
+> a callback to be called from acpi_s2idle_wake() and when the callback
+> returns true, return true from acpi_s2idle_wake().
+>
+> The INT0002 driver will use this mechanism to check the GPE0a_STS
+> register from acpi_s2idle_wake() and to tell the system to wakeup
+> if a PME is signaled in the register.
+>
+> Fixes: fdde0ff8590b ("ACPI: PM: s2idle: Prevent spurious SCIs from waking up the system")
+> Cc: 5.4+ <stable@vger.kernel.org> # 5.4+
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-How would you execute br_mrp_del() if the port is already deleted from the bridge ?
-Nothing prevents the port to disappear and then you lose all bridge callbacks.
+I generally agree with the approach, but I would make some, mostly
+cosmetic, changes.
 
->> Also do you actually need the mrp->lock ?
-> 
-> I think I should be fine not to use mrp->lock because already the rtnl
-> lock is taken.
-> >>
->>> diff --git a/net/bridge/br_mrp.c b/net/bridge/br_mrp.c
->>> new file mode 100644
->>> index 000000000000..f1de792d7a6e
->>> --- /dev/null
->>> +++ b/net/bridge/br_mrp.c
->>> @@ -0,0 +1,514 @@
->>> +// SPDX-License-Identifier: GPL-2.0-or-later
->>> +
->>> +#include "br_private_mrp.h"
->>> +
->>> +static const u8 mrp_test_dmac[ETH_ALEN] = { 0x1, 0x15, 0x4e, 0x0, 0x0, 0x1 };
->>> +
->>> +static struct net_bridge_port *br_mrp_get_port(struct net_bridge *br,
->>> +                                            u32 ifindex)
->>> +{
->>> +     struct net_bridge_port *res = NULL;
->>> +     struct net_bridge_port *port;
->>> +
->>> +     spin_lock_bh(&br->lock);
->>> +
->>
->> This is called under RTNL, you don't need the br->lock.
-> 
-> Will be fix in the next patch series.
->>
->>> +     list_for_each_entry(port, &br->port_list, list) {
->>> +             if (port->dev->ifindex == ifindex) {
->>> +                     res = port;
->>> +                     break;
->>> +             }
->>> +     }
->>> +
->>> +     spin_unlock_bh(&br->lock);
->>> +
->>> +     return res;
->>> +}
->>> +
->>> +static struct br_mrp *br_mrp_find_id(struct net_bridge *br, u32 ring_id)
->>> +{
->>> +     struct br_mrp *res = NULL;
->>> +     struct br_mrp *mrp;
->>> +
->>> +     rcu_read_lock();
->>> +
->>
->> This is generally a bad pattern because it can hide legitimate bugs and make
->> it harder to debug.
-> 
-> Can you give me a little more details why is a bad pattern?
-> I have tried to read about rcu from here[1][2]. But I couldn't see
-> anything about this.
-> 
+First off, I'd put the new code into drivers/acpi/wakeup.c.
 
-In general you should know the context the function is used in, you cannot use the
-pointer obtained from this search after the rcu_read_unlock(). If this function is
-ever used in context which doesn't have rcu read lock or the writer lock then you'll
-mask the bug here. If you know it is always called from RCU context then just drop
-these, if not then add the proper lockdep annotations so they can be checked.
+I'd export one function from there to be called from
+acpi_s2idle_wake() and the install/uninstall routines for the users.
 
->>
->>> +     list_for_each_entry_rcu(mrp, &br->mrp_list, list) {
->>> +             if (mrp->ring_id == ring_id) {
->>> +                     res = mrp;
->>> +                     break;
->>> +             }
->>> +     }
->>> +
->>> +     rcu_read_unlock();
->>> +
->>> +     return res;
->>> +}
->>> +
->>> +static struct br_mrp *br_mrp_find_port(struct net_bridge *br,
->>> +                                    struct net_bridge_port *p)
->>> +{
->>> +     struct br_mrp *res = NULL;
->>> +     struct br_mrp *mrp;
->>> +
->>> +     rcu_read_lock();
->>> +
->>> +     list_for_each_entry_rcu(mrp, &br->mrp_list, list) {
->>> +             if (rcu_dereference(mrp->p_port) == p ||
->>> +                 rcu_dereference(mrp->s_port) == p) {
->>
->> rcu_access_pointer() is ok for comparisons
-> 
-> Will be fix in the next patch series.
->>
->>> +                     res = mrp;
->>> +                     break;
->>> +             }
->>> +     }
->>> +
->>> +     rcu_read_unlock();
->>> +
->>> +     return res;
->>> +}
->>> +
->>> +static int br_mrp_next_seq(struct br_mrp *mrp)
->>> +{
->>> +     mrp->seq_id++;
->>> +     return mrp->seq_id;
->>> +}
->>> +
->>> +static struct sk_buff *br_mrp_skb_alloc(struct net_bridge_port *p,
->>> +                                     const u8 *src, const u8 *dst)
->>> +{
->>> +     struct ethhdr *eth_hdr;
->>> +     struct sk_buff *skb;
->>> +     u16 *version;
->>> +
->>> +     skb = dev_alloc_skb(MRP_MAX_FRAME_LENGTH);
->>> +     if (!skb)
->>> +             return NULL;
->>> +
->>> +     skb->dev = p->dev;
->>> +     skb->protocol = htons(ETH_P_MRP);
->>> +     skb->priority = MRP_FRAME_PRIO;
->>> +     skb_reserve(skb, sizeof(*eth_hdr));
->>> +
->>> +     eth_hdr = skb_push(skb, sizeof(*eth_hdr));
->>> +     ether_addr_copy(eth_hdr->h_dest, dst);
->>> +     ether_addr_copy(eth_hdr->h_source, src);
->>> +     eth_hdr->h_proto = htons(ETH_P_MRP);
->>> +
->>> +     version = skb_put(skb, sizeof(*version));
->>> +     *version = cpu_to_be16(MRP_VERSION);
->>> +
->>> +     return skb;
->>> +}
->>> +
->>> +static void br_mrp_skb_tlv(struct sk_buff *skb,
->>> +                        enum br_mrp_tlv_header_type type,
->>> +                        u8 length)
->>> +{
->>> +     struct br_mrp_tlv_hdr *hdr;
->>> +
->>> +     hdr = skb_put(skb, sizeof(*hdr));
->>> +     hdr->type = type;
->>> +     hdr->length = length;
->>> +}
->>> +
->>> +static void br_mrp_skb_common(struct sk_buff *skb, struct br_mrp *mrp)
->>> +{
->>> +     struct br_mrp_common_hdr *hdr;
->>> +
->>> +     br_mrp_skb_tlv(skb, BR_MRP_TLV_HEADER_COMMON, sizeof(*hdr));
->>> +
->>> +     hdr = skb_put(skb, sizeof(*hdr));
->>> +     hdr->seq_id = cpu_to_be16(br_mrp_next_seq(mrp));
->>> +     memset(hdr->domain, 0xff, MRP_DOMAIN_UUID_LENGTH);
->>> +}
->>> +
->>> +static struct sk_buff *br_mrp_alloc_test_skb(struct br_mrp *mrp,
->>> +                                          struct net_device *dev,
->>> +                                          enum br_mrp_port_role_type port_role)
->>> +{
->>> +     struct net_bridge_port *p = br_port_get_rtnl(dev);
->>> +     struct br_mrp_ring_test_hdr *hdr = NULL;
->>> +     struct net_bridge *br = p->br;
->>> +     struct sk_buff *skb = NULL;
->>> +
->>> +     if (!p)
->>> +             return NULL;
->>> +
->>> +     br = p->br;
->>> +
->>> +     skb = br_mrp_skb_alloc(p, p->dev->dev_addr, mrp_test_dmac);
->>> +     if (!skb)
->>> +             return NULL;
->>> +
->>> +     br_mrp_skb_tlv(skb, BR_MRP_TLV_HEADER_RING_TEST, sizeof(*hdr));
->>> +     hdr = skb_put(skb, sizeof(*hdr));
->>> +
->>> +     hdr->prio = cpu_to_be16(MRP_DEFAULT_PRIO);
->>> +     ether_addr_copy(hdr->sa, p->br->dev->dev_addr);
->>> +     hdr->port_role = cpu_to_be16(port_role);
->>> +     hdr->state = cpu_to_be16(mrp->ring_state);
->>> +     hdr->transitions = cpu_to_be16(mrp->ring_transitions);
->>> +     hdr->timestamp = cpu_to_be32(jiffies_to_msecs(jiffies));
->>> +
->>> +     br_mrp_skb_common(skb, mrp);
->>> +     br_mrp_skb_tlv(skb, BR_MRP_TLV_HEADER_END, 0x0);
->>> +
->>> +     return skb;
->>> +}
->>> +
->>> +static void br_mrp_test_work_expired(struct work_struct *work)
->>> +{
->>> +     struct delayed_work *del_work = to_delayed_work(work);
->>> +     struct br_mrp *mrp = container_of(del_work, struct br_mrp, test_work);
->>> +     bool notify_open = false;
->>> +     struct sk_buff *skb;
->>> +
->>
->> Since this runs asynchronously what happens if the port is deleted ?
-> 
-> Later I have checks to see if the port is no NULL. Is not good enough?
-> I have these rcu_access_pointer checks and before that I disable the
-> interrupts and get the rcu lock.
-> 
+> ---
+>  drivers/acpi/sleep.c | 70 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/acpi.h |  7 +++++
+>  2 files changed, 77 insertions(+)
+>
+> diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
+> index e5f95922bc21..e360e51afa8e 100644
+> --- a/drivers/acpi/sleep.c
+> +++ b/drivers/acpi/sleep.c
+> @@ -943,6 +943,65 @@ static struct acpi_scan_handler lps0_handler = {
+>         .attach = lps0_device_attach,
+>  };
+>
+> +struct s2idle_wake_callback {
 
-That is not safe because you dereference the pointer again after the check
-and it may become NULL between those. You could do ptr = rcu_dereference();
-if (!ptr) and if non-null then continue accessing that memory through ptr. 
+I'd call this acpi_wakeup_handler.
 
->>
->>> +     if (time_before_eq(mrp->test_end, jiffies))
->>> +             return;
->>> +
->>> +     if (mrp->test_count_miss < mrp->test_max_miss) {
->>> +             mrp->test_count_miss++;
->>> +     } else {
->>> +             /* Notify that the ring is open only if the ring state is
->>> +              * closed, otherwise it would continue to notify at every
->>> +              * interval.
->>> +              */
->>> +             if (mrp->ring_state == BR_MRP_RING_STATE_CLOSED)
->>> +                     notify_open = true;
->>> +     }
->>> +
->>> +     local_bh_disable();
->>> +     rcu_read_lock();
->>> +
->>> +     if (!rcu_access_pointer(mrp->p_port) ||
->>> +         !rcu_access_pointer(mrp->s_port))
->>> +             goto out;
->>> +
->>> +     /* Is it possible here to get call to delete the bridge port? If yes
->>> +      * I need to protect it
->>> +      */
->>> +     dev_hold(rcu_dereference(mrp->p_port)->dev);
->>> +
->>
->> This looks all wrong, p_port can become NULL here and you'll deref it.
-> 
-> By disabling the interrupts and taking the rcu read lock, will I not be
-> sure that no one can access the p_port?
+> +       struct list_head list;
 
-No. You should read more about how RCU operates.
+list_node?
 
-> If is not true, how the p_port can become NULL?
-> 
+> +       bool (*function)(void *data);
 
-Readers and writer run concurrently.
+bool (*wakeup)(void *context)?
 
->>
->>> +     skb = br_mrp_alloc_test_skb(mrp, rcu_dereference(mrp->p_port)->dev,
->>> +                                 BR_MRP_PORT_ROLE_PRIMARY);
->>> +     if (!skb)
->>> +             goto out;
->>> +
->>> +     skb_reset_network_header(skb);
->>> +     dev_queue_xmit(skb);
->>> +
->>> +     if (notify_open && !mrp->ring_role_offloaded)
->>> +             br_mrp_port_open(rcu_dereference(mrp->p_port)->dev, true);
->>> +
->>> +     dev_put(rcu_dereference(mrp->p_port)->dev);
->>> +
->>> +     dev_hold(rcu_dereference(mrp->s_port)->dev);
->>> +
->>
->> same here
->>
->>> +     skb = br_mrp_alloc_test_skb(mrp, rcu_dereference(mrp->s_port)->dev,
->>> +                                 BR_MRP_PORT_ROLE_SECONDARY);
->>> +     if (!skb)
->>> +             goto out;
->>> +
->>> +     skb_reset_network_header(skb);
->>> +     dev_queue_xmit(skb);
->>> +
->>> +     if (notify_open && !mrp->ring_role_offloaded)
->>> +             br_mrp_port_open(rcu_dereference(mrp->s_port)->dev, true);
->>> +
->>> +     dev_put(rcu_dereference(mrp->s_port)->dev);
->>> +
->>> +out:
->>> +     rcu_read_unlock();
->>> +     local_bh_enable();
->>> +
->>> +     queue_delayed_work(system_wq, &mrp->test_work,
->>> +                        usecs_to_jiffies(mrp->test_interval));
->>> +}
->>> +
->>> +/* Adds a new MRP instance.
->>> + * note: called under rtnl_lock
->>> + */
->>> +int br_mrp_add(struct net_bridge *br, struct br_mrp_instance *instance)
->>> +{
->>> +     struct net_bridge_port *p;
->>> +     struct br_mrp *mrp;
->>> +
->>> +     /* If the ring exists, it is not possible to create another one with the
->>> +      * same ring_id
->>> +      */
->>> +     mrp = br_mrp_find_id(br, instance->ring_id);
->>> +     if (mrp)
->>> +             return -EINVAL;
->>> +
->>> +     if (!br_mrp_get_port(br, instance->p_ifindex) ||
->>> +         !br_mrp_get_port(br, instance->s_ifindex))
->>> +             return -EINVAL;
->>> +
->>> +     mrp = devm_kzalloc(&br->dev->dev, sizeof(struct br_mrp), GFP_KERNEL);
->>> +     if (!mrp)
->>> +             return -ENOMEM;
->>> +
->>> +     /* I think is not needed because this can be replaced with rtnl lock*/
->>> +     spin_lock_init(&mrp->lock);
->>> +     spin_lock(&mrp->lock);
->>> +
->>> +     mrp->br = br;
->>
->> Is this field (mrp->br) used anywhere ?
-> 
-> Not anymore. I can remove it in the next patch series.
-> 
->>
->>> +     mrp->ring_id = instance->ring_id;
->>> +
->>> +     p = br_mrp_get_port(br, instance->p_ifindex);
->>> +     p->state = BR_STATE_FORWARDING;
->>> +     p->flags |= BR_MRP_AWARE;
->>> +     rcu_assign_pointer(mrp->p_port, p);
->>> +
->>> +     p = br_mrp_get_port(br, instance->s_ifindex);
->>> +     p->state = BR_STATE_FORWARDING;
->>> +     p->flags |= BR_MRP_AWARE;
->>> +     rcu_assign_pointer(mrp->s_port, p);
->>> +
->>> +     br_mrp_switchdev_add(mrp);
->>> +
->>> +     spin_unlock(&mrp->lock);
->>> +     synchronize_rcu();
->>
->> Why do you need the synchronize here?
-> 
-> Actually this shouldn't be after the list_add_tail_rcu? Because I am
-> thinking that some can read the list at the same time I am change it.
+> +       void *user_data;
 
-That doesn't help, rcu primitives are already safe to run concurrently with readers.
+context?
 
-> 
->>
->>> +
->>> +     list_add_tail_rcu(&mrp->list, &br->mrp_list);
->>> +     INIT_DELAYED_WORK(&mrp->test_work, br_mrp_test_work_expired);
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +/* Deletes existing MRP instance.
->>> + * note: called under rtnl_lock
->>> + */
->>> +int br_mrp_del(struct net_bridge *br, struct br_mrp_instance *instance)
->>> +{
->>> +     struct br_mrp *mrp = br_mrp_find_id(br, instance->ring_id);
->>> +     struct net_bridge_port *p;
->>> +
->>> +     if (!mrp)
->>> +             return -EINVAL;
->>> +
->>> +     /* Stop sending MRP_Test frames */
->>> +     cancel_delayed_work(&mrp->test_work);
->>
->> cancel_delayed_work_sync() if you'd like to make sure it's stopped and finished (if it was running
->> during this)
-> 
-> Will be fixed in the next patch series.
->>
->>> +     br_mrp_switchdev_send_ring_test(mrp, 0, 0, 0);
->>> +
->>> +     spin_lock(&mrp->lock);
->>> +
->>> +     br_mrp_switchdev_del(mrp);
->>> +
->>> +     /* Reset the ports */
->>> +     p = rcu_dereference_protected(mrp->p_port, lockdep_is_held(&mrp->lock));
->>> +     if (p) {
->>> +             spin_lock(&br->lock);
->>> +             p->state = BR_STATE_FORWARDING;
->>> +             p->flags &= ~BR_MRP_AWARE;
->>> +             br_mrp_port_switchdev_set_state(p, BR_STATE_FORWARDING);
->>> +             rcu_assign_pointer(mrp->p_port, NULL);
->>> +             spin_unlock(&br->lock);
->>> +     }
->>> +
->>> +     p = rcu_dereference_protected(mrp->s_port, lockdep_is_held(&mrp->lock));
->>> +     if (p) {
->>> +             spin_lock(&br->lock);
->>> +             p->state = BR_STATE_FORWARDING;
->>> +             p->flags &= ~BR_MRP_AWARE;
->>> +             br_mrp_port_switchdev_set_state(p, BR_STATE_FORWARDING);
->>> +             rcu_assign_pointer(mrp->s_port, NULL);
->>> +             spin_unlock(&br->lock);
->>> +     }
->>> +
->>> +     /* Destroy the ring */
->>> +     mrp->br = NULL;
->>> +
->>> +     spin_unlock(&mrp->lock);
->>> +     synchronize_rcu();
->>> +
->>> +     list_del_rcu(&mrp->list);
->>> +     devm_kfree(&br->dev->dev, mrp);
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +int br_mrp_set_port_state(struct net_bridge_port *p,
->>> +                       enum br_mrp_port_state_type state)
->>> +{
->>> +     spin_lock(&p->br->lock);
->>> +
->>> +     if (state == BR_MRP_PORT_STATE_FORWARDING)
->>> +             p->state = BR_STATE_FORWARDING;
->>> +     else
->>> +             p->state = BR_STATE_BLOCKING;
->>> +
->>> +     br_mrp_port_switchdev_set_state(p, state);
->>> +
->>> +     spin_unlock(&p->br->lock);
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +int br_mrp_set_port_role(struct net_bridge_port *p,
->>> +                      u32 ring_id, enum br_mrp_port_role_type role)
->>> +{
->>> +     struct br_mrp *mrp = br_mrp_find_id(p->br, ring_id);
->>> +
->>> +     if (!mrp)
->>> +             return -EINVAL;
->>> +
->>> +     spin_lock(&mrp->lock);
->>> +
->>> +     if (role == BR_MRP_PORT_ROLE_PRIMARY)
->>> +             rcu_assign_pointer(mrp->p_port, p);
->>> +     if (role == BR_MRP_PORT_ROLE_SECONDARY)
->>> +             rcu_assign_pointer(mrp->s_port, p);
->>> +
->>> +     br_mrp_port_switchdev_set_role(p, role);
->>> +
->>> +     spin_unlock(&mrp->lock);
->>> +     synchronize_rcu();
->>
->> Why do you need to synchronize here?
-> 
-> Actually this is not needed.
->>
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +int br_mrp_set_ring_state(struct net_bridge *br, u32 ring_id,
->>> +                       enum br_mrp_ring_state_type state)
->>> +{
->>> +     struct br_mrp *mrp = br_mrp_find_id(br, ring_id);
->>> +
->>> +     if (!mrp)
->>> +             return -EINVAL;
->>> +
->>> +     if (mrp->ring_state == BR_MRP_RING_STATE_CLOSED &&
->>> +         state != BR_MRP_RING_STATE_CLOSED)
->>> +             mrp->ring_transitions++;
->>> +
->>> +     mrp->ring_state = state;
->>> +
->>> +     br_mrp_switchdev_set_ring_state(mrp, state);
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +int br_mrp_set_ring_role(struct net_bridge *br, u32 ring_id,
->>> +                      enum br_mrp_ring_role_type role)
->>> +{
->>> +     struct br_mrp *mrp = br_mrp_find_id(br, ring_id);
->>> +     int err;
->>> +
->>> +     if (!mrp)
->>> +             return -EINVAL;
->>> +
->>> +     mrp->ring_role = role;
->>> +
->>> +     /* If there is an error just bailed out */
->>> +     err = br_mrp_switchdev_set_ring_role(mrp, role);
->>> +     if (err && err != -EOPNOTSUPP)
->>> +             return err;
->>> +
->>> +     /* Now detect if the HW actually applied the role or not. If the HW
->>> +      * applied the role it means that the SW will not to do those operations
->>> +      * anymore. For example if the role ir MRM then the HW will notify the
->>> +      * SW when ring is open, but if the is not pushed to the HW the SW will
->>> +      * need to detect when the ring is open
->>> +      */
->>> +     mrp->ring_role_offloaded = err == -EOPNOTSUPP ? 0 : 1;
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +int br_mrp_start_test(struct net_bridge *br, u32 ring_id, u32 interval,
->>> +                   u8 max_miss, u32 period)
->>> +{
->>> +     struct br_mrp *mrp = br_mrp_find_id(br, ring_id);
->>> +
->>> +     if (!mrp)
->>> +             return -EINVAL;
->>> +
->>> +     /* Try to push is to the HW and if it fails then continue to generate in
->>> +      * SW and if that also fails then return error
->>> +      */
->>> +     if (!br_mrp_switchdev_send_ring_test(mrp, interval, max_miss, period))
->>> +             return 0;
->>> +
->>> +     mrp->test_interval = interval;
->>> +     mrp->test_end = jiffies + usecs_to_jiffies(period);
->>> +     mrp->test_max_miss = max_miss;
->>> +     mrp->test_count_miss = 0;
->>> +     queue_delayed_work(system_wq, &mrp->test_work,
->>> +                        usecs_to_jiffies(interval));
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +/* Process only MRP Test frame. All the other MRP frames are processed by
->>> + * userspace application
->>> + * note: already called with rcu_read_lock
->>> + */
->>> +static void br_mrp_mrm_process(struct br_mrp *mrp, struct sk_buff *skb)
->>> +{
->>> +     struct br_mrp_tlv_hdr *hdr;
->>> +
->>> +     hdr = (struct br_mrp_tlv_hdr *)(skb->data + sizeof(uint16_t));
->>> +
->>> +     if (hdr->type != BR_MRP_TLV_HEADER_RING_TEST)
->>> +             return;
->>> +
->>> +     mrp->test_count_miss = 0;
->>> +
->>> +     br_mrp_port_open(rcu_dereference(mrp->p_port)->dev, false);
->>> +     br_mrp_port_open(rcu_dereference(mrp->s_port)->dev, false);
->>> +}
->>> +
->>> +/* This will just forward the frame to the other mrp ring port(MRC role) or will
->>> + * not do anything.
->>> + * note: already called with rcu_read_lock
->>> + */
->>> +static int br_mrp_rcv(struct net_bridge_port *p,
->>> +                   struct sk_buff *skb, struct net_device *dev)
->>> +{
->>> +     struct net_device *s_dev, *p_dev, *d_dev;
->>> +     struct net_bridge *br;
->>> +     struct sk_buff *nskb;
->>> +     struct br_mrp *mrp;
->>> +
->>> +     /* If port is disable don't accept any frames */
->>> +     if (p->state == BR_STATE_DISABLED)
->>> +             return 0;
->>> +
->>> +     br = p->br;
->>> +     mrp =  br_mrp_find_port(br, p);
->>> +     if (unlikely(!mrp))
->>> +             return 0;
->>> +
->>> +     /* If the role is MRM then don't forward the frames */
->>> +     if (mrp->ring_role == BR_MRP_RING_ROLE_MRM) {
->>> +             br_mrp_mrm_process(mrp, skb);
->>> +             return 1;
->>> +     }
->>> +
->>> +     nskb = skb_clone(skb, GFP_ATOMIC);
->>> +     if (!nskb)
->>> +             return 0;
->>> +
->>> +     p_dev = rcu_dereference(mrp->p_port)->dev;
->>> +     s_dev = rcu_dereference(mrp->s_port)->dev;
->>> +
->>
->> Not safe, could deref null.
-> 
-> Will be fixed in the next patch series.
-> 
->>
->>> +     if (p_dev == dev)
->>> +             d_dev = s_dev;
->>> +     else
->>> +             d_dev = p_dev;
->>> +
->>> +     nskb->dev = d_dev;
->>> +     skb_push(nskb, ETH_HLEN);
->>> +     dev_queue_xmit(nskb);
->>> +
->>> +     return 1;
->>> +}
->>> +
->>> +int br_mrp_process(struct net_bridge_port *p, struct sk_buff *skb)
->>> +{
->>> +     /* If there is no MRP instance do normal forwarding */
->>> +     if (unlikely(!(p->flags & BR_MRP_AWARE)))
->>
->> Shouldn't this one be likely() ?
-> 
-> Yes, this should be likely.
->>
->>> +             goto out;
->>> +
->>> +     if (unlikely(skb->protocol == htons(ETH_P_MRP)))
->>> +             return br_mrp_rcv(p, skb, p->dev);
->>> +
->>> +out:
->>> +     return 0;
->>> +}
->>>
->>
-> 
-> [1] https://lwn.net/Articles/262464/
-> [2] https://www.kernel.org/doc/html/latest/RCU/listRCU.html
-> 
+> +};
+> +
+> +static LIST_HEAD(s2idle_wake_callback_head);
+> +static DEFINE_MUTEX(s2idle_wake_callback_mutex);
+> +
+> +/*
+> + * Drivers which may share an IRQ with the SCI can use this to register
+> + * a callback which returns true when the device they are managing wants
+> + * to trigger a wakeup.
+> + */
+> +int acpi_s2idle_register_wake_callback(
+> +       int wake_irq, bool (*function)(void *data), void *user_data)
+> +{
+> +       struct s2idle_wake_callback *callback;
+> +
+> +       /*
+> +        * If the device is not sharing its IRQ with the SCI, there is no
+> +        * need to register the callback.
+> +        */
+> +       if (!acpi_sci_irq_valid() || wake_irq != acpi_sci_irq)
+> +               return 0;
+> +
+> +       callback = kmalloc(sizeof(*callback), GFP_KERNEL);
+> +       if (!callback)
+> +               return -ENOMEM;
+> +
+> +       callback->function = function;
+> +       callback->user_data = user_data;
+> +
+> +       mutex_lock(&s2idle_wake_callback_mutex);
+> +       list_add(&callback->list, &s2idle_wake_callback_head);
+> +       mutex_unlock(&s2idle_wake_callback_mutex);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(acpi_s2idle_register_wake_callback);
+> +
+> +void acpi_s2idle_unregister_wake_callback(
+> +       bool (*function)(void *data), void *user_data)
+> +{
+> +       struct s2idle_wake_callback *cb;
+> +
+> +       mutex_lock(&s2idle_wake_callback_mutex);
+> +       list_for_each_entry(cb, &s2idle_wake_callback_head, list) {
+> +               if (cb->function == function &&
+> +                   cb->user_data == user_data) {
+> +                       list_del(&cb->list);
+> +                       kfree(cb);
+> +                       break;
+> +               }
+> +       }
+> +       mutex_unlock(&s2idle_wake_callback_mutex);
+> +}
+> +EXPORT_SYMBOL_GPL(acpi_s2idle_unregister_wake_callback);
+> +
+>  static int acpi_s2idle_begin(void)
+>  {
+>         acpi_scan_lock_acquire();
+> @@ -992,6 +1051,8 @@ static void acpi_s2idle_sync(void)
+>
+>  static bool acpi_s2idle_wake(void)
+>  {
+> +       struct s2idle_wake_callback *cb;
+> +
+>         if (!acpi_sci_irq_valid())
+>                 return pm_wakeup_pending();
+>
+> @@ -1025,6 +1086,15 @@ static bool acpi_s2idle_wake(void)
+>                 if (acpi_any_gpe_status_set() && !acpi_ec_dispatch_gpe())
+>                         return true;
+>
+> +               /*
+> +                * Check callbacks registered by drivers sharing the SCI.
+> +                * Note no need to lock, nothing else is running.
+> +                */
+> +               list_for_each_entry(cb, &s2idle_wake_callback_head, list) {
+> +                       if (cb->function(cb->user_data))
+> +                               return true;
+> +               }
 
+AFAICS this needs to be done in acpi_s2idle_restore() too to clear the
+status bits in case one of these wakeup sources triggers along with a
+GPE or a fixed event and the other one wins the race.
+
+> +
+>                 /*
+>                  * Cancel the wakeup and process all pending events in case
+>                  * there are any wakeup ones in there.
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 0f24d701fbdc..9f06e1dc79c1 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -488,6 +488,13 @@ void __init acpi_nvs_nosave_s3(void);
+>  void __init acpi_sleep_no_blacklist(void);
+>  #endif /* CONFIG_PM_SLEEP */
+>
+> +#ifdef CONFIG_ACPI_SYSTEM_POWER_STATES_SUPPORT
+> +int acpi_s2idle_register_wake_callback(
+> +       int wake_irq, bool (*function)(void *data), void *user_data);
+> +void acpi_s2idle_unregister_wake_callback(
+> +       bool (*function)(void *data), void *user_data);
+> +#endif
+> +
+>  struct acpi_osc_context {
+>         char *uuid_str;                 /* UUID string */
+>         int rev;
+> --
+
+Thanks!
