@@ -2,82 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C73519B389
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C0F19B38E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:52:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388690AbgDAQwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:52:11 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43749 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387444AbgDAQwJ (ORCPT
+        id S1733257AbgDAQwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:52:21 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43130 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388734AbgDAQwT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:52:09 -0400
-Received: by mail-ed1-f67.google.com with SMTP id bd14so691283edb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:52:08 -0700 (PDT)
+        Wed, 1 Apr 2020 12:52:19 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n20so234355lfl.10;
+        Wed, 01 Apr 2020 09:52:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zxAHZMB3P7yemdxIkt4vzJJqSZh7+SRQmJTgBhu3ZC4=;
-        b=iQ8P0o5Lcw3JW6EArdliAxxbSUsS53/a5RuXf6cPfLAgAB3HtdBre2hHs9UVqpeY+8
-         Ls7Xo6o2CkvGoZeX9P9GymfYDZu/XQiV6feOl9/iKR5+dP5RI68em61mqQEaO07tO/xF
-         DhjBHgnb+eSXwn3bqvdtEKt1WCdXQlX9StQDkAQqSGPR4/Rq9pE40qYhwj69RYWYOuqH
-         hhYojVv/EPXQ6dX6rSacTwnYRnjGQS7st1sPiuh4/tRAcaxGhVUud9sxV7gI1yF/t8Zq
-         KyOb9hR8h5nrjs+7+gSJbmX88/nfQfHhvZzKSkhKyZP6n5/8OPw4N5VUT1hvGt+k4JRM
-         NaaA==
+        bh=553GZqyaFPyqL10GOEToovkxhGg1gD8CyFbmDXNpEsw=;
+        b=Zofr2vJFHVCyXWGqu/mMhPG1Xd4CKbNXMtKR8h9hTLZwvQJa88jCBrXU/AcrpoFH5P
+         mYQ/Tlw6KbYvgQSn0qPZAs8VzO2Yt1Zfy+DOR8VCbreI2ylCrtnZGMHo44zaqd7/HYRK
+         sZbb36XpH8kM0/VCRZ3VtA8dn/SNn0GR3oe67wdRFvI0gsI7zhf/uO1usD/eOSQhO7T5
+         KYyosbohxMLYPXQIH2NML5udu4H72k9HOFvW4SORCN7Kk67l28U0U7ZUcJWA4IEn143f
+         fCVYc1fGQMezi07Vr38H3/hv9bpRjXp/9DLeE68o+nXKbDrR3bLT8undI7AlOIHxhqDf
+         BQUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zxAHZMB3P7yemdxIkt4vzJJqSZh7+SRQmJTgBhu3ZC4=;
-        b=Cz4P/z4K/CYHooDzPjBvTkU72sewP4e+64IZwkxNs63wiTIJQvl00RKmbYG97/47PI
-         PW+GQTIzJQyFQKiOzKSMFYh1EjIE79PlJDGyLSs7TR3UEWaMaDm9v0SqsnYEjGU0wCHh
-         eDRNFGgEyzQDkfsQDg0iUmRZ8Ep0f4bi3TuoPQyRfWmFx7YBjEKSSYPSq6VkpINAhf7c
-         FxaopszutBaoycCo1DbMNA1JifYbLorX6zP9YlB44LL3eorwVKB8UpM1CfQnJs7PjGos
-         N0bpIJE8+4nVNCauyfiLznwSVULnCOjUXiLXmG1sqaJFtmWRRMKKWTY+nz2TDimuhkLK
-         NExA==
-X-Gm-Message-State: ANhLgQ3arCI1Kaf46vdInQVSqT3C1vxO5bRF7kgd4iCCct+WooMCSuMX
-        FC5mbU8hZRkOkPZJuFgJRsVmCVis5bsGZtxVyEXVqA==
-X-Google-Smtp-Source: ADFU+vuVpMe/hjYycPBUcJTSJrMd3zMxZKNcPfopDiEvgMF/laDQbj3sNMjztAxqNc/bUeFitH6ag3fui6K9vZtu0Zc=
-X-Received: by 2002:a17:906:65ca:: with SMTP id z10mr20461333ejn.368.1585759927596;
- Wed, 01 Apr 2020 09:52:07 -0700 (PDT)
+        bh=553GZqyaFPyqL10GOEToovkxhGg1gD8CyFbmDXNpEsw=;
+        b=gNfhVhk9eqOjVZiw18JPvdPabFTb8f6KYY1oNXDSiNjWb1jprP1FckJlMah6XoKXaL
+         egUVbl+gwy2CYkjjZVI5E2wNTL76Bk2k+OYLBvkzvPmNSigfX+j6PYKKHOGHNl316nT0
+         mTOq6lsgaAXxxkSHRinmA0Lhsf/X0XaJgZQxKKR91IDt+lEOnTboOaiwlJyrlKlTBjSH
+         /b7CHqIe0wbxlWnjvaz/E8vjjjldGVzn3fCKjOqgpR06NePpBXh2yEtkNUZdSWMw56nV
+         kZAWNlHiiGw0Ag8lWLcV+ry2lbAA9vGB34jhyjUmUnU65Zu+CMBG7tQ9rb57tfLOGAQ6
+         CWRw==
+X-Gm-Message-State: AGi0PuY3zQqql9fuyEVV/yWM7s7dQKtSFsPt85eIBU5TfBJ7Lc+el8K2
+        0EWK8MJdPEIJhszwqFvSLiwj6XEcmRQQoOVL0Hs=
+X-Google-Smtp-Source: APiQypKpqgYCAmngBbsQvHWSwrN84DODr5lhSm+9neIuBkZf9n631TEe2XQ2wNvQU/b7bVMLuE269O5DFA3DZd1QusM=
+X-Received: by 2002:a19:ec15:: with SMTP id b21mr15311077lfa.28.1585759936420;
+ Wed, 01 Apr 2020 09:52:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200311123848.118638-1-shile.zhang@linux.alibaba.com>
- <20200401154217.GQ22681@dhcp22.suse.cz> <dfc0014a-9b85-5eeb-70ea-d622ccf5d988@redhat.com>
- <20200401160048.GU22681@dhcp22.suse.cz> <20200401160929.jwekhr24tb44odea@ca-dmjordan1.us.oracle.com>
- <20200401161243.GW22681@dhcp22.suse.cz> <20200401161810.xvqikca2x46yqrlx@ca-dmjordan1.us.oracle.com>
- <20200401162655.GX22681@dhcp22.suse.cz> <CA+CK2bCGpG6kBjkGd-QP06kNtwezj8mW13Jdvbxs6ExzRaJSpQ@mail.gmail.com>
- <20200401164654.GY22681@dhcp22.suse.cz>
-In-Reply-To: <20200401164654.GY22681@dhcp22.suse.cz>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Wed, 1 Apr 2020 12:51:56 -0400
-Message-ID: <CA+CK2bCKxok9Ho2NJd0kWR=YCi+eQqyfv6fg1Je3Lmov9PqzwQ@mail.gmail.com>
-Subject: Re: [PATCH v3] mm: fix tick timer stall during deferred page init
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20191122000926.19408-1-jdk@ti.com> <20191204193421.GA15784@bogus>
+In-Reply-To: <20191204193421.GA15784@bogus>
+From:   Drew Fustini <pdp7pdp7@gmail.com>
+Date:   Wed, 1 Apr 2020 18:52:44 +0200
+Message-ID: <CAEf4M_B31u_0_oLD-1xAJ3YTfJPZYYJnganiHs9=4KqfbGFSPg@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: Add vendor prefix for BeagleBoard.org
+To:     Rob Herring <robh@kernel.org>
+Cc:     Jason Kridner <jkridner@gmail.com>, devicetree@vger.kernel.org,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jyri Sarha <jsarha@ti.com>, linux-kernel@vger.kernel.org,
+        Caleb Robey <c-robey@ti.com>, Jason Kridner <jdk@ti.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > I do not remember seeing any real failures, this was a theoretical
-> > window. So, we could potentially simply remove these locks until we
-> > see a real boot failure in some interrupt thread. The allocation has
-> > to be rather large as well.
+On Wed, Dec 4, 2019 at 8:39 PM Rob Herring <robh@kernel.org> wrote:
+> On Thu, Nov 21, 2019 at 07:09:26PM -0500, Jason Kridner wrote:
+> > Add vendor prefix for BeagleBoard.org Foundation
+> >
+> > Signed-off-by: Jason Kridner <jdk@ti.com>
+> > ---
+> > Changes in v2:
+> >   - Use 'beagle' rather than 'beagleboard.org' to be shorter and avoid
+> >     needing to quote within a yaml regular expression.
+> >   - Assign 'from' to author e-mail address.
 >
-> Yes please! We are really great at over complicating and over
-> engineering stuff based on theoretical issues and build on top of that
-> and make the code even more complex because nobody dares to re-evaluate
-> and so on.
+> Still not right...
 
-I will submit a patch (or revert) whichever is cleaner.
+Hi Rob, is the issue that it needs to be sent from "Jason Kridner
+<jdk@ti.com>" if the SoB is " Jason Kridner <jdk@ti.com>"?
 
-Pasha
+Thanks,
+Drew
