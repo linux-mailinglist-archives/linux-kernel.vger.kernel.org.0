@@ -2,247 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B0CB19B396
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:52:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF5F819B180
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388664AbgDAQec convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 1 Apr 2020 12:34:32 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:40862 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732532AbgDAQe3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:34:29 -0400
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1jJgJl-0003TS-Fj; Wed, 01 Apr 2020 18:34:17 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     =?ISO-8859-1?Q?Myl=E8ne?= Josserand 
-        <mylene.josserand@collabora.com>
-Cc:     linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-        kernel@collabora.com, kever.yang@rock-chips.com,
-        geert@linux-m68k.org
-Subject: Re: [PATCH v2 1/2] soc: rockchip: Register a soc_device to retrieve revision
-Date:   Wed, 01 Apr 2020 18:34:16 +0200
-Message-ID: <5143930.cPWVAAQKI9@diego>
-In-Reply-To: <20200401153513.423683-2-mylene.josserand@collabora.com>
-References: <20200401153513.423683-1-mylene.josserand@collabora.com> <20200401153513.423683-2-mylene.josserand@collabora.com>
+        id S2388753AbgDAQf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:35:29 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36007 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388749AbgDAQf1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:35:27 -0400
+Received: by mail-pf1-f193.google.com with SMTP id n10so198199pff.3;
+        Wed, 01 Apr 2020 09:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Nv0PB7OQMBhmTUY0yfkOYmQ8lz6lTwWj9RPSvbAhmZg=;
+        b=lneG3+bylYOe+VWYyx4URUoJhBOrtwSx6J84qh6JImO1KXK/y81BfpHS4Nk6jmrx6f
+         FwQKNwiRF3ngj47XOZFQOlKHuobZfGkexsOKYMu7HCsMKMxgSTAtSQaoEAm4Gh9YxNEX
+         GLYGo2iIEac6fJtC9JZJmUUYPwPBoI6ATPHgnT4YGLXqWydHtqaVR879GefrAbQ919Yc
+         3FQgClxUMNncLsRQfiyCg5EyGg+5Npvbi7xzcXRdQ7tRjKxdTHLmsCn/1lIn44HWaUlF
+         dNOgBL/Hg5vUKGc/7Ve/y8ao6GKTalXDk5WU2q6bJPMQ9PoC/wqQqj0wzfGWB8IujmLm
+         +dXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Nv0PB7OQMBhmTUY0yfkOYmQ8lz6lTwWj9RPSvbAhmZg=;
+        b=Wc/Y7/PMd/bq/1DMeR7iS81uSq+B38hPcLIV0Ne9V6fNhVfn0XMlHFroP1aWVrGRLC
+         /fPF+za3A1LadFrKbBLRKsoI4gcwlgkqRda7BMeot/fs0DeYKUS+HDiwg77Ln5kHWksj
+         r6eRY9Afdx+vCtyq+E/0DyyjX3SHKS5LkOYh0k8VIdIZL7njwO3yHPN/GehN9lGSU8rY
+         XxWesk4uJqMsj1inApwrJQ2IUtAN2kh+5oKdNReHaf/EIpB11wdBpi44xhLz9/OFgBly
+         yeth6APBaXONaotyhDF8KbeIp5z7KJ1LRuj038TmIpXqYmStoqaRbsp/ouzu6nieFttf
+         /JcQ==
+X-Gm-Message-State: AGi0PuZHvsVup4LfqluyGZHeia6uu28491FAQQ5puog08m88VNCtm2ig
+        DmoZYKD57DaaMJWaNDluQKg/btUFmrNN+KtxPrE=
+X-Google-Smtp-Source: APiQypIYInYnpmxVEVR4+As3ewJkYDPICTo9pnPQ8lnEBYfZhcIldzFXAraLEALorMmUdTYnZ6YizL46WjW0pqghLyM=
+X-Received: by 2002:a63:5859:: with SMTP id i25mr9501810pgm.74.1585758926434;
+ Wed, 01 Apr 2020 09:35:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+References: <20200401162416.24474-1-i.mikhaylov@yadro.com> <20200401162416.24474-3-i.mikhaylov@yadro.com>
+In-Reply-To: <20200401162416.24474-3-i.mikhaylov@yadro.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 1 Apr 2020 19:35:19 +0300
+Message-ID: <CAHp75VcdDR-owtFuFMqNLFh_-L902fXODG14_6Dh416tTwjidA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] iio: proximity: Add driver support for vcnl3020
+ proximity sensor
+To:     Ivan Mikhaylov <i.mikhaylov@yadro.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mylène,
+On Wed, Apr 1, 2020 at 7:24 PM Ivan Mikhaylov <i.mikhaylov@yadro.com> wrote:
+>
+> Proximity sensor driver based on light/vcnl4000.c code.
+> For now supports only the single on-demand measurement.
+>
+> The VCNL3020 is a fully integrated proximity sensor. Fully
+> integrated means that the infrared emitter is included in the
+> package. It has 16-bit resolution. It includes a signal
+> processing IC and features standard I2C communication
+> interface. It features an interrupt function.
 
-Am Mittwoch, 1. April 2020, 17:35:12 CEST schrieb Mylène Josserand:
-> Determine which revision of rk3288 by checking the HDMI version.
-> According to the Rockchip BSP kernel/u-boot, on rk3288w, the HDMI
-> revision equals 0x1A which is not the case for the rk3288.
-> 
-> As these SOC have some differences, this driver will help us
-> to know on which revision we are by using 'soc_device' registration
-> to be able to use 'soc_device_match' to detect rk3288/rk3288w.
-> 
-> Signed-off-by: Mylène Josserand <mylene.josserand@collabora.com>
+Thank you for an update, my comments below.
 
-I like your new approach quite a lot :-)
+...
 
-There are some things we need to take into account though, see below.
-
-
-> ---
->  drivers/soc/rockchip/Makefile |   1 +
->  drivers/soc/rockchip/rk3288.c | 125 ++++++++++++++++++++++++++++++++++
->  2 files changed, 126 insertions(+)
->  create mode 100644 drivers/soc/rockchip/rk3288.c
-> 
-> diff --git a/drivers/soc/rockchip/Makefile b/drivers/soc/rockchip/Makefile
-> index afca0a4c4b72..9dbf12913512 100644
-> --- a/drivers/soc/rockchip/Makefile
-> +++ b/drivers/soc/rockchip/Makefile
-> @@ -2,5 +2,6 @@
->  #
->  # Rockchip Soc drivers
->  #
-> +obj-$(CONFIG_ARCH_ROCKCHIP) += rk3288.o
->  obj-$(CONFIG_ROCKCHIP_GRF) += grf.o
->  obj-$(CONFIG_ROCKCHIP_PM_DOMAINS) += pm_domains.o
-> diff --git a/drivers/soc/rockchip/rk3288.c b/drivers/soc/rockchip/rk3288.c
-
-I'd really like this to be a soc.c instead of rk3288.c ;-)
-
-
-> new file mode 100644
-> index 000000000000..83379ba2b31b
-> --- /dev/null
-> +++ b/drivers/soc/rockchip/rk3288.c
-> @@ -0,0 +1,125 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2020 Collabora Ltd
-> + * Author: Mylene Josserand <mylene.josserand@collabora.com>
-> + */
-> +
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/of_address.h>
-> +#include <linux/sys_soc.h>
-> +#include <linux/slab.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/of.h>
-> +
-> +#define RK3288_HDMI_REV_REG	0x04
-> +#define RK3288W_HDMI_REV	0x1A
-> +
-> +enum rk3288_soc_rev {
-> +	RK3288_SOC_REV_NOT_DETECT,
-> +	RK3288_SOC_REV_RK3288,
-> +	RK3288_SOC_REV_RK3288W,
-> +};
-> +
-> +static int rk3288_revision(void)
+> +static int get_and_apply_property(struct vcnl3020_data *data, const char *prop,
+> +                                 u32 reg)
 > +{
-> +	static int revision = RK3288_SOC_REV_NOT_DETECT;
-> +	struct device_node *dn;
-> +	void __iomem *hdmi_base;
+> +       int rc;
+> +       u32 val;
 > +
-> +	if (revision != RK3288_SOC_REV_NOT_DETECT)
-> +		return revision;
+> +       rc = device_property_read_u32(data->dev, prop, &val);
+> +       if (rc)
+> +               return 0;
 > +
-> +	dn = of_find_compatible_node(NULL, NULL, "rockchip,rk3288-dw-hdmi");
-> +	if (!dn) {
-> +		pr_err("%s: Couldn't find HDMI node\n", __func__);
-> +		return -EINVAL;
-> +	}
-> +
-> +	hdmi_base = of_iomap(dn, 0);
-> +	of_node_put(dn);
-> +
-> +	if (!hdmi_base) {
-> +		pr_err("%s: Couldn't map %pOF regs\n", __func__,
-> +		       hdmi_base);
-> +		return -ENXIO;
-> +	}
+> +       rc = regmap_write(data->regmap, reg, val);
+> +       if (rc)
 
-The possible problem I see here is clocking and power-domain of the hdmi
-controller in corner-cases. In the past we already had a lot of fun with
-kexec, which also indicates that people actually use kexec productively.
+> +               dev_err(data->dev, "Error (%d) setting property (%s)",
+> +                       rc, prop);
 
-So while all clocks are ungated and all power-domains are powered on first
-boot, on a system without graphics the pclk+power-domain could be off when
-doing a kexec into a second kernel, which then would probably hang here.
+This requires {} according to the coding style.
 
-
-Of course with the hdmi-pclk being sourced from hclk_vio we run into a
-chicken-egg-problem, as we need pclk_hdmi_ctrl to register hclk_vio at all.
-
-So I guess one way out of this could be to
-- amend rk3288_clk_shutdown() to also ungate the hdmi-pclk on shutdown
-- add a shutdown mechanism to the power-domain driver so that it can
-  enable PD_VIO on shutdown
-
-> +
-> +	if (readl_relaxed(hdmi_base + RK3288_HDMI_REV_REG)
-> +	    == RK3288W_HDMI_REV)
-
-nit: a nicer look would be something like
-	val = readl_relaxed(hdmi_base + RK3288_HDMI_REV_REG);
-	if (val == RK3288W_HDMI_REV)
-
-> +		revision = RK3288_SOC_REV_RK3288W;
-> +	else
-> +		revision = RK3288_SOC_REV_RK3288;
-> +
-> +	iounmap(hdmi_base);
-> +
-> +	return revision;
+> +       return rc;
 > +}
-> +
-> +static const char *rk3288_socinfo_revision(u32 rev)
+
+...
+
+> +static int vcnl3020_probe(struct i2c_client *client)
 > +{
-> +	const char *soc_rev;
-> +
-> +	switch (rev) {
-> +	case RK3288_SOC_REV_RK3288:
-> +		soc_rev = "RK3288";
-> +		break;
-> +
-> +	case RK3288_SOC_REV_RK3288W:
-> +		soc_rev = "RK3288w";
 
-can we maybe use lower-case letters for all here?
+> +       indio_dev->name = VCNL_DRV_NAME;
 
-> +		break;
-> +
-> +	case RK3288_SOC_REV_NOT_DETECT:
-> +		soc_rev = "";
-> +		break;
-> +
-> +	default:
-> +		soc_rev = "unknown";
-> +		break;
-> +	}
-> +
-> +	return kstrdup_const(soc_rev, GFP_KERNEL);
+It's definitely not a driver name. You have to put part number here.
+
 > +}
-> +
-> +static const struct of_device_id rk3288_soc_match[] = {
-> +	{ .compatible = "rockchip,rk3288", },
-> +	{ }
+
+...
+
+> +static struct i2c_driver vcnl3020_driver = {
+> +       .driver = {
+
+> +               .name   = VCNL_DRV_NAME,
+
+Better to spell it explicitly.
+
+> +               .of_match_table = vcnl3020_of_match,
+> +       },
+> +       .probe_new  = vcnl3020_probe,
 > +};
-> +
-> +static int __init rk3288_soc_init(void)
 
-as noted at the top, I'd really like to see this more generalized so that
-other socs can just hook in there with a revision callback in a
-rockchip_soc_data struct.
-
-
-> +{
-> +	struct soc_device_attribute *soc_dev_attr;
-> +	struct soc_device *soc_dev;
-> +	struct device_node *np;
-> +
-> +	np = of_find_matching_node(NULL, rk3288_soc_match);
-> +	if (!np)
-> +		return -ENODEV;
-> +
-> +	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-> +	if (!soc_dev_attr)
-> +		return -ENOMEM;
-> +
-> +	soc_dev_attr->family = "Rockchip";
-> +	soc_dev_attr->soc_id = "RK32xx";
-
-nit: rk3288 instead of "32xx" please
-
-> +
-> +	np = of_find_node_by_path("/");
-> +	of_property_read_string(np, "model", &soc_dev_attr->machine);
-> +	of_node_put(np);
-> +
-> +	soc_dev_attr->revision = rk3288_socinfo_revision(rk3288_revision());
-> +
-> +	soc_dev = soc_device_register(soc_dev_attr);
-> +	if (IS_ERR(soc_dev)) {
-> +		kfree_const(soc_dev_attr->revision);
-> +		kfree_const(soc_dev_attr->soc_id);
-> +		kfree(soc_dev_attr);
-> +		return PTR_ERR(soc_dev);
-> +	}
-> +
-> +	dev_info(soc_device_to_device(soc_dev), "Rockchip %s %s detected\n",
-> +		 soc_dev_attr->soc_id, soc_dev_attr->revision);
-
-nit: dev_dbg should be enough, that information doesn't really matter for
-most people, as it's only relevant to clock internals.
-
-
-Heiko
-
-
+-- 
+With Best Regards,
+Andy Shevchenko
