@@ -2,406 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4853319AC54
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 15:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FD8A19AC4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 15:01:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732632AbgDANDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 09:03:13 -0400
-Received: from services.gouders.net ([141.101.32.176]:46995 "EHLO
-        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732560AbgDANDN (ORCPT
+        id S1732674AbgDANBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 09:01:33 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45717 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732575AbgDANBc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 09:03:13 -0400
-Received: from localhost (ltea-047-066-044-139.pools.arcor-ip.net [47.66.44.139])
-        (authenticated bits=0)
-        by services.gouders.net (8.14.8/8.14.8) with ESMTP id 031D0NRL024575
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 Apr 2020 15:00:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-        t=1585746024; bh=RDvD6auZ4VgR4BzDvLKY30811+TIXRk5J5N5mwOY3Q0=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date;
-        b=DIxjdVqY1c0XoexcEBpeYWYhYdtCDz7zqyjwDTMIdgAYfwA1oRipBnKahSVTMi+No
-         /Ul4lFgTTquYIjLsD6rbIr+Wju5OEAR3IaRks+GBawOc3oQd22dvWWow8lh20lkyxp
-         Q4K3oWJLVe3zufzryngVDT+hSf2SEJQCRZvjTqU4=
-From:   Dirk Gouders <dirk@gouders.net>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     intel-gfx@lists.freedesktop.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: Re: Kernel 5.2 to current: possible i915 related problems
-In-Reply-To: <87imikfp75.fsf@intel.com> (Jani Nikula's message of "Tue, 31 Mar
-        2020 19:45:34 +0300")
-References: <ghpncvidjz.fsf@gouders.net> <gh369q99tp.fsf@gouders.net>
-        <gheetajj0z.fsf@gouders.net> <87imikfp75.fsf@intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
-Date:   Wed, 01 Apr 2020 15:00:23 +0200
-Message-ID: <ghzhbv7448.fsf@gouders.net>
+        Wed, 1 Apr 2020 09:01:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585746090;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=zKnrkes6duPnh7WRFHiitDNcRHlVg7gWo+yEaEr5RVY=;
+        b=aXPNemUmCL+eGPg7g6gl8q/X8W/C35tSuTAuWDqH2HqYdpnVJ87o2lI6PRVqqkX5PEr0qX
+        fh7svj01UEH7ebDz6d/JPXRWnc88sBENBosfNec7dHgjbF745E7EHv81EOxM9txY/3OH2D
+        rubuKxMSmcmI/Fy3AF4qVdPdej4rAak=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-458-gGle2qAOM_O7Y-Yt6NQ1fQ-1; Wed, 01 Apr 2020 09:01:29 -0400
+X-MC-Unique: gGle2qAOM_O7Y-Yt6NQ1fQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B32321085981;
+        Wed,  1 Apr 2020 13:01:22 +0000 (UTC)
+Received: from [10.36.112.58] (ovpn-112-58.ams2.redhat.com [10.36.112.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EC0DA61072;
+        Wed,  1 Apr 2020 13:01:13 +0000 (UTC)
+Subject: Re: [PATCH v1 5/8] vfio/type1: Report 1st-level/stage-1 format to
+ userspace
+To:     "Liu, Yi L" <yi.l.liu@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Tian, Jun J" <jun.j.tian@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wu, Hao" <hao.wu@intel.com>
+References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
+ <1584880325-10561-6-git-send-email-yi.l.liu@intel.com>
+ <cb68e9ab-77b0-7e97-a661-4836962041d9@redhat.com>
+ <A2975661238FB949B60364EF0F2C25743A21DB4E@SHSMSX104.ccr.corp.intel.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <b47891b1-ece6-c263-9c07-07c09c7d3752@redhat.com>
+Date:   Wed, 1 Apr 2020 15:01:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <A2975661238FB949B60364EF0F2C25743A21DB4E@SHSMSX104.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jani Nikula <jani.nikula@linux.intel.com> writes:
+Hi Yi,
 
-> On Mon, 30 Mar 2020, Dirk Gouders <dirk@gouders.net> wrote:
->> Dirk Gouders <dirk@gouders.net> writes:
+On 4/1/20 2:51 PM, Liu, Yi L wrote:
+> Hi Eric,
+> 
+>> From: Auger Eric <eric.auger@redhat.com>
+>> Sent: Wednesday, April 1, 2020 4:51 PM
+>> To: Liu, Yi L <yi.l.liu@intel.com>; alex.williamson@redhat.com
+>> Subject: Re: [PATCH v1 5/8] vfio/type1: Report 1st-level/stage-1 format to
+>> userspace
 >>
->>> Some additional information:
+>> Hi Yi,
+>> On 3/22/20 1:32 PM, Liu, Yi L wrote:
+>>> From: Liu Yi L <yi.l.liu@intel.com>
 >>>
->>> I tried to get more information by using netconsole with kernel
->>> 5.6.0-rc7+.  After some time, the system stopped to respond and I
->>> checked the messages sent to the remote machine.  Unfortunately they
->>> gave no other information than the local logfile.
+>>> VFIO exposes IOMMU nesting translation (a.k.a dual stage translation)
+>>> capability to userspace. Thus applications like QEMU could support
+>>> vIOMMU with hardware's nesting translation capability for pass-through
+>>> devices. Before setting up nesting translation for pass-through devices,
+>>> QEMU and other applications need to learn the supported 1st-lvl/stage-1
+>>> translation structure format like page table format.
 >>>
->>> Dirk
+>>> Take vSVA (virtual Shared Virtual Addressing) as an example, to support
+>>> vSVA for pass-through devices, QEMU setup nesting translation for pass-
+>>> through devices. The guest page table are configured to host as 1st-lvl/
+>>> stage-1 page table. Therefore, guest format should be compatible with
+>>> host side.
 >>>
->>> Dirk Gouders <dirk@gouders.net> writes:
+>>> This patch reports the supported 1st-lvl/stage-1 page table format on the
+>>> current platform to userspace. QEMU and other alike applications should
+>>> use this format info when trying to setup IOMMU nesting translation on
+>>> host IOMMU.
 >>>
->>>> Hello,
->>>>
->>>> because of the current pandemic situation the usage of my laptop has
->>>> changed.  It is now running at home 24/7 with a monitor attached to it
->>>> and after about 12 days running a somewhat older kernel (5.2), it
->>>> stopped working.
->>>>
->>>> After a reboot I found some information in the syslog that I attach to
->>>> this mail.  The next hang happened one day later but without any
->>>> information.
->>>>
->>>> With a current 5.6.0-rc7+ I seem to get more frequent hangs but without any
->>>> information in the log file and somewhat non-reproducable.  Today, I
->>>> experienced two hangs when starting xterms or other programs but after
->>>> this (and necessary reboots) I am unable to reproduce a hang.
->>>>
->>>> Perhaps, someone has suggestion for me how to produce debugging
->>>> information that survives the hangs and reboots.
->>>>
->>
->> This time, I have some information from a hang with the current kernel
->> 5.6.0-rc7+ that obviously could be written to the logfile while the
->> system was starting to get problems.  A minute later or so, it
->> completely stopped to respond and a hard reset was necessary:
->>
->> Mar 30 10:37:52 lena kernel: i915 0000:00:02.0: GPU HANG: ecode 8:1:85dffff9, in X [4278]
->> Mar 30 10:37:52 lena kernel: GPU hangs can indicate a bug anywhere in the entire gfx stack, including userspace.
->> Mar 30 10:37:52 lena kernel: Please file a _new_ bug report at https://gitlab.freedesktop.org/drm/intel/issues/new.
->> Mar 30 10:37:52 lena kernel: Please see
-> https://gitlab.freedesktop.org/drm/intel/-/wikis/How-to-file-i915-bugs
-> for details.
->> Mar 30 10:37:52 lena kernel: drm/i915 developers can then reassign to the right component if it's not a kernel issue.
->> Mar 30 10:37:52 lena kernel: The GPU crash dump is required to analyze GPU hangs, so please always attach it.
->> Mar 30 10:37:52 lena kernel: GPU crash dump saved to /sys/class/drm/card0/error
->> Mar 30 10:37:52 lena kernel: i915 0000:00:02.0: Resetting rcs0 for stopped heartbeat on rcs0
->> Mar 30 10:37:52 lena kernel: i915 0000:00:02.0: X[4278] context reset due to GPU hang
->>
->> Adding the i915 maintainers because I doubt the data in
->> /sys/class/drm/card0/error is useful after a reboot.  Should I file a
->> bug report as suggested above, anyway?
->
-> Please do.
+>>> Cc: Kevin Tian <kevin.tian@intel.com>
+>>> CC: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>> Cc: Alex Williamson <alex.williamson@redhat.com>
+>>> Cc: Eric Auger <eric.auger@redhat.com>
+>>> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+>>> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+>>> ---
+>>>  drivers/vfio/vfio_iommu_type1.c | 56
+>> +++++++++++++++++++++++++++++++++++++++++
+>>>  include/uapi/linux/vfio.h       |  1 +
+>>>  2 files changed, 57 insertions(+)
+>>>
+>>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+>>> index 9aa2a67..82a9e0b 100644
+>>> --- a/drivers/vfio/vfio_iommu_type1.c
+>>> +++ b/drivers/vfio/vfio_iommu_type1.c
+>>> @@ -2234,11 +2234,66 @@ static int vfio_iommu_type1_pasid_free(struct
+>> vfio_iommu *iommu,
+>>>  	return ret;
+>>>  }
+>>>
+>>> +static int vfio_iommu_get_stage1_format(struct vfio_iommu *iommu,
+>>> +					 u32 *stage1_format)
+>> vfio_pasid_format() to be homogeneous with vfio_pgsize_bitmap() which
+>> does the same kind of enumeration of the vfio_iommu domains
+> 
+> yes, similar.
+> 
+>>> +{
+>>> +	struct vfio_domain *domain;
+>>> +	u32 format = 0, tmp_format = 0;
+>>> +	int ret;
+>> ret = -EINVAL;
+> 
+> got it.
+> 
+>>> +
+>>> +	mutex_lock(&iommu->lock);
+>>> +	if (list_empty(&iommu->domain_list)) {
+>> goto out_unlock;
+> 
+> right.
+>>> +		mutex_unlock(&iommu->lock);
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>> +	list_for_each_entry(domain, &iommu->domain_list, next) {
+>>> +		if (iommu_domain_get_attr(domain->domain,
+>>> +			DOMAIN_ATTR_PASID_FORMAT, &format)) {
+>> I can find DOMAIN_ATTR_PASID_FORMAT in Jacob's v9 but not in v10
+> 
+> oops, I guess he somehow missed. you may find it in below link.
+> 
+> https://github.com/luxis1999/linux-vsva/commit/bf14b11a12f74d58ad3ee626a5d891de395082eb
+> 
+>>> +			ret = -EINVAL;
+>> could be removed
+> 
+> sure.
+> 
+>>> +			format = 0;
+>>> +			goto out_unlock;
+>>> +		}
+>>> +		/*
+>>> +		 * format is always non-zero (the first format is
+>>> +		 * IOMMU_PASID_FORMAT_INTEL_VTD which is 1). For
+>>> +		 * the reason of potential different backed IOMMU
+>>> +		 * formats, here we expect to have identical formats
+>>> +		 * in the domain list, no mixed formats support.
+>>> +		 * return -EINVAL to fail the attempt of setup
+>>> +		 * VFIO_TYPE1_NESTING_IOMMU if non-identical formats
+>>> +		 * are detected.
+>>> +		 */
+>>> +		if (tmp_format && tmp_format != format) {
+>>> +			ret = -EINVAL;
+>> could be removed
+> 
+> got it.
+> 
+>>> +			format = 0;
+>>> +			goto out_unlock;
+>>> +		}
+>>> +
+>>> +		tmp_format = format;
+>>> +	}
+>>> +	ret = 0;
+>>> +
+>>> +out_unlock:
+>>> +	if (format)
+>> if (!ret) ? then you can remove the format = 0 in case of error.
+> 
+> oh, yes.
+> 
+>>> +		*stage1_format = format;
+>>> +	mutex_unlock(&iommu->lock);
+>>> +	return ret;
+>>> +}
+>>> +
+>>>  static int vfio_iommu_info_add_nesting_cap(struct vfio_iommu *iommu,
+>>>  					 struct vfio_info_cap *caps)
+>>>  {
+>>>  	struct vfio_info_cap_header *header;
+>>>  	struct vfio_iommu_type1_info_cap_nesting *nesting_cap;
+>>> +	u32 formats = 0;
+>>> +	int ret;
+>>> +
+>>> +	ret = vfio_iommu_get_stage1_format(iommu, &formats);
+>>> +	if (ret) {
+>>> +		pr_warn("Failed to get stage-1 format\n");
+>> trace triggered by userspace to be removed?
+> 
+> sure.
+> 
+>>> +		return ret;
+>>> +	}
+>>>
+>>>  	header = vfio_info_cap_add(caps, sizeof(*nesting_cap),
+>>>  				   VFIO_IOMMU_TYPE1_INFO_CAP_NESTING, 1);
+>>> @@ -2254,6 +2309,7 @@ static int vfio_iommu_info_add_nesting_cap(struct
+>> vfio_iommu *iommu,
+>>>  		/* nesting iommu type supports PASID requests (alloc/free) */
+>>>  		nesting_cap->nesting_capabilities |= VFIO_IOMMU_PASID_REQS;
+>> What is the meaning for ARM?
+> 
+> I think it's just a software capability exposed to userspace, on
+> userspace side, it has a choice to use it or not. :-) The reason
+> define it and report it in cap nesting is that I'd like to make
+> the pasid alloc/free be available just for IOMMU with type
+> VFIO_IOMMU_TYPE1_NESTING. Please feel free tell me if it is not
+> good for ARM. We can find a proper way to report the availability.
 
-OK.  I was able to reproduce GPU hangs and thus try to bisect that
-problem: https://gitlab.freedesktop.org/drm/intel/-/issues/1585
+Well it is more a question for jean-Philippe. Do we have a system wide
+PASID allocation on ARM?
 
-Dirk
+Thanks
 
+Eric
+> 
+>>>  	}
+>>> +	nesting_cap->stage1_formats = formats;
+>> as spotted by Kevin, since a single format is supported, rename
+> 
+> ok, I was believing it may be possible on ARM or so. :-) will
+> rename it.
+> 
+> I'll refine the patch per your above comments.
+> 
+> Regards,
+> Yi Liu
+> 
 
-> BR,
-> Jani.
->
->
->>
->> Dirk
->>
->>>>
->>>> ------------------------------------------------------------------------
->>>> Mar 27 19:36:51 lena kernel: [drm:intel_cpu_fifo_underrun_irq_handler
->>>> [i915]] *ERROR* CPU pipe B FIFO underrun
->>>> Mar 27 21:45:19 lena kernel: usb 1-1: USB disconnect, device number 15
->>>> Mar 27 21:45:19 lena kernel: sd 2:0:0:0: [sdb] Synchronizing SCSI cache
->>>> Mar 27 21:45:19 lena kernel: sd 2:0:0:0: [sdb] Synchronize Cache(10)
->>>> failed: Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
->>>> Mar 27 22:00:53 lena kernel: [drm:intel_cpu_fifo_underrun_irq_handler
->>>> [i915]] *ERROR* CPU pipe B FIFO underrun
->>>> Mar 27 23:46:13 lena kernel: ------------[ cut here ]------------
->>>> Mar 27 23:46:13 lena kernel: vblank wait timed out on crtc 1
->>>> Mar 27 23:46:13 lena kernel: WARNING: CPU: 0 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
->>>> Mar 27 23:46:13 lena kernel: Modules linked in: usblp uas usb_storage
->>>> uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2
->>>> videobuf2_common snd_hda_codec
->>>> _hdmi snd_hda_codec_realtek snd_hda_codec_generic crc32_pclmul
->>>> crc32c_intel ghash_clmulni_intel i915 aesni_intel drm_kms_helper
->>>> cfbfillrect crypto_simd glue_he
->>>> lper syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel
->>>> fb_sys_fops cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci
->>>> snd_hwdep sdhci drm_panel_orientat
->>>> ion_quirks snd_hda_core intel_gtt mmc_core xhci_hcd iosf_mbi
->>>> Mar 27 23:46:13 lena kernel: CPU: 0 PID: 4221 Comm: X Not tainted 5.2.0+ #44
->>>> Mar 27 23:46:13 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
->>>> Mar 27 23:46:13 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
->>>> Mar 27 23:46:13 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf
->>>> 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de
->>>> 0d a0 e8 2e bd fc e
->>>> 0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24 28 65 48 33 04 25
->>>> Mar 27 23:46:13 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
->>>> Mar 27 23:46:13 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
->>>> Mar 27 23:46:13 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277a163a0
->>>> Mar 27 23:46:13 lena kernel: RBP: ffff888271b40000 R08: 0000000000000306 R09: 0000000000000001
->>>> Mar 27 23:46:13 lena kernel: R10: ffffc90000e739d0 R11: 000597d6da905e00 R12: 0000000000000000
->>>> Mar 27 23:46:13 lena kernel: R13: 0000000000bd6280 R14: ffff8882765eb160 R15: 0000000000000001
->>>> Mar 27 23:46:13 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
->>>> Mar 27 23:46:13 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>> Mar 27 23:46:13 lena kernel: CR2: 00007f6d6f20d000 CR3: 0000000268a70000 CR4: 00000000001006f0
->>>> Mar 27 23:46:13 lena kernel: Call Trace:
->>>> Mar 27 23:46:13 lena kernel: ? wait_woken+0x68/0x68
->>>> Mar 27 23:46:13 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
->>>> Mar 27 23:46:13 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
->>>> Mar 27 23:46:13 lena kernel: ? flush_workqueue+0x2ab/0x2d4
->>>> Mar 27 23:46:13 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
->>>> Mar 27 23:46:13 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
->>>> Mar 27 23:46:13 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
->>>> Mar 27 23:46:13 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
->>>> Mar 27 23:46:13 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
->>>> Mar 27 23:46:13 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
->>>> Mar 27 23:46:13 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
->>>> Mar 27 23:46:13 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
->>>> Mar 27 23:46:13 lena kernel: ? hrtimer_cancel+0xc/0x16
->>>> Mar 27 23:46:13 lena kernel: ? schedule_hrtimeout_range_clock+0xb3/0xef
->>>> Mar 27 23:46:13 lena kernel: ? hrtimer_init+0x2/0x2
->>>> Mar 27 23:46:13 lena kernel: vfs_ioctl+0x19/0x26
->>>> Mar 27 23:46:13 lena kernel: do_vfs_ioctl+0x52c/0x554
->>>> Mar 27 23:46:13 lena kernel: ? wake_up_q+0x4e/0x4e
->>>> Mar 27 23:46:13 lena kernel: ksys_ioctl+0x39/0x58
->>>> Mar 27 23:46:13 lena kernel: __x64_sys_ioctl+0x11/0x14
->>>> Mar 27 23:46:13 lena kernel: do_syscall_64+0x4a/0xf4
->>>> Mar 27 23:46:13 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>>> Mar 27 23:46:13 lena kernel: RIP: 0033:0x7f6d74ce12b7
->>>> Mar 27 23:46:13 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff
->>>> 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00
->>>> b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00
->>>> f7 d8 64 89 01 48
->>>> Mar 27 23:46:13 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
->>>> Mar 27 23:46:13 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
->>>> Mar 27 23:46:13 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
->>>> Mar 27 23:46:13 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
->>>> Mar 27 23:46:13 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
->>>> Mar 27 23:46:13 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
->>>> Mar 27 23:46:13 lena kernel: ---[ end trace 5361d6be40e0aaf8 ]---
->>>> Mar 28 01:13:22 lena kernel: [drm:drm_atomic_helper_wait_for_flip_done
->>>> [drm_kms_helper]] *ERROR* [CRTC:63:pipe B] flip_done timed out
->>>> Mar 28 01:23:22 lena kernel: ------------[ cut here ]------------
->>>> Mar 28 01:23:22 lena kernel: vblank wait timed out on crtc 1
->>>> Mar 28 01:23:22 lena kernel: WARNING: CPU: 0 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
->>>> Mar 28 01:23:22 lena kernel: Modules linked in: usblp uas usb_storage
->>>> uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2
->>>> videobuf2_common snd_hda_codec_hdmi snd_hda_codec_realtek
->>>> snd_hda_codec_generic crc32_pclmul crc32c_intel ghash_clmulni_intel
->>>> i915 aesni_intel drm_kms_helper cfbfillrect crypto_simd glue_helper
->>>> syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel fb_sys_fops
->>>> cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci snd_hwdep sdhci
->>>> drm_panel_orientation_quirks snd_hda_core intel_gtt mmc_core xhci_hcd
->>>> iosf_mbi
->>>> Mar 28 01:23:22 lena kernel: CPU: 0 PID: 4221 Comm: X Tainted: G        W         5.2.0+ #44
->>>> Mar 28 01:23:22 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
->>>> Mar 28 01:23:22 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
->>>> Mar 28 01:23:22 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf
->>>> 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de
->>>> 0d a0 e8 2e bd fc e0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24
->>>> 28 65 48 33 04 25
->>>> Mar 28 01:23:22 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
->>>> Mar 28 01:23:22 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
->>>> Mar 28 01:23:22 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277a163a0
->>>> Mar 28 01:23:22 lena kernel: RBP: ffff888271b40000 R08: 0000000000000338 R09: 0000000000000001
->>>> Mar 28 01:23:22 lena kernel: R10: ffffc90000e739d0 R11: 0005a05257e63800 R12: 0000000000000000
->>>> Mar 28 01:23:22 lena kernel: R13: 0000000000c25711 R14: ffff8882765eb160 R15: 0000000000000001
->>>> Mar 28 01:23:22 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
->>>> Mar 28 01:23:22 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>> Mar 28 01:23:22 lena kernel: CR2: 00007f6d6dcb0000 CR3: 0000000268a70000 CR4: 00000000001006f0
->>>> Mar 28 01:23:22 lena kernel: Call Trace:
->>>> Mar 28 01:23:22 lena kernel: ? wait_woken+0x68/0x68
->>>> Mar 28 01:23:22 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
->>>> Mar 28 01:23:22 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
->>>> Mar 28 01:23:22 lena kernel: ? flush_workqueue+0x2ab/0x2d4
->>>> Mar 28 01:23:22 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
->>>> Mar 28 01:23:22 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
->>>> Mar 28 01:23:22 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
->>>> Mar 28 01:23:22 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
->>>> Mar 28 01:23:22 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
->>>> Mar 28 01:23:22 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
->>>> Mar 28 01:23:22 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
->>>> Mar 28 01:23:22 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
->>>> Mar 28 01:23:22 lena kernel: ? hrtimer_cancel+0xc/0x16
->>>> Mar 28 01:23:22 lena kernel: ? schedule_hrtimeout_range_clock+0xb3/0xef
->>>> Mar 28 01:23:22 lena kernel: ? hrtimer_init+0x2/0x2
->>>> Mar 28 01:23:22 lena kernel: vfs_ioctl+0x19/0x26
->>>> Mar 28 01:23:22 lena kernel: do_vfs_ioctl+0x52c/0x554
->>>> Mar 28 01:23:22 lena kernel: ? wake_up_q+0x4e/0x4e
->>>> Mar 28 01:23:22 lena kernel: ksys_ioctl+0x39/0x58
->>>> Mar 28 01:23:22 lena kernel: __x64_sys_ioctl+0x11/0x14
->>>> Mar 28 01:23:22 lena kernel: do_syscall_64+0x4a/0xf4
->>>> Mar 28 01:23:22 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>>> Mar 28 01:23:22 lena kernel: RIP: 0033:0x7f6d74ce12b7
->>>> Mar 28 01:23:22 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff
->>>> 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00
->>>> b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00
->>>> f7 d8 64 89 01 48
->>>> Mar 28 01:23:22 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
->>>> Mar 28 01:23:22 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
->>>> Mar 28 01:23:22 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
->>>> Mar 28 01:23:22 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
->>>> Mar 28 01:23:22 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
->>>> Mar 28 01:23:22 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
->>>> Mar 28 01:23:22 lena kernel: ---[ end trace 5361d6be40e0aaf9 ]---
->>>> Mar 28 02:30:26 lena syslog-ng[3629]: Log statistics;
->>>> processed='global(internal_queue_length)=0',
->>>> queued='global(scratch_buffers_count)=1026497183744',
->>>> queued='global(scratch_buffers_bytes)=0',
->>>> processed='global(msg_clones)=0', processed='center(received)=3403',
->>>> processed='source(src)=3403', processed='center(queued)=6806',
->>>> processed='destination(console_all)=3403',
->>>> processed='src.internal(src#1)=107',
->>>> stamp='src.internal(src#1)=1585315826',
->>>> processed='destination(mail)=2359',
->>>> processed='destination(messages)=1044',
->>>> processed='global(sdata_updates)=8',
->>>> processed='global(payload_reallocs)=2439'
->>>> Mar 28 03:55:25 lena kernel: [drm:drm_atomic_helper_wait_for_flip_done
->>>> [drm_kms_helper]] *ERROR* [CRTC:63:pipe B] flip_done timed out
->>>> Mar 28 03:55:35 lena kernel:
->>>> [drm:drm_atomic_helper_wait_for_dependencies [drm_kms_helper]] *ERROR*
->>>> [CRTC:63:pipe B] flip_done timed out
->>>> Mar 28 03:55:45 lena kernel:
->>>> [drm:drm_atomic_helper_wait_for_dependencies [drm_kms_helper]] *ERROR*
->>>> [CONNECTOR:87:HDMI-A-1] flip_done timed out
->>>> Mar 28 03:55:55 lena kernel: [drm:drm_atomic_helper_wait_for_flip_done
->>>> [drm_kms_helper]] *ERROR* [CRTC:63:pipe B] flip_done timed out
->>>> Mar 28 04:05:55 lena kernel: ------------[ cut here ]------------
->>>> Mar 28 04:05:55 lena kernel: vblank wait timed out on crtc 1
->>>> Mar 28 04:05:55 lena kernel: WARNING: CPU: 0 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
->>>> Mar 28 04:05:55 lena kernel: Modules linked in: usblp uas usb_storage
->>>> uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2
->>>> videobuf2_common snd_hda_codec_hdmi snd_hda_codec_realtek
->>>> snd_hda_codec_generic crc32_pclmul crc32c_intel ghash_clmulni_intel
->>>> i915 aesni_intel drm_kms_helper cfbfillrect crypto_simd glue_helper
->>>> syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel fb_sys_fops
->>>> cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci snd_hwdep sdhci
->>>> drm_panel_orientation_quirks snd_hda_core intel_gtt mmc_core xhci_hcd
->>>> iosf_mbi
->>>> Mar 28 04:05:55 lena kernel: CPU: 0 PID: 4221 Comm: X Tainted: G        W         5.2.0+ #44
->>>> Mar 28 04:05:55 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
->>>> Mar 28 04:05:55 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
->>>> Mar 28 04:05:55 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf
->>>> 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de
->>>> 0d a0 e8 2e bd fc e0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24
->>>> 28 65 48 33 04 25
->>>> Mar 28 04:05:55 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
->>>> Mar 28 04:05:55 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
->>>> Mar 28 04:05:55 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277a163a0
->>>> Mar 28 04:05:55 lena kernel: RBP: ffff888271b40000 R08: 000000000000036d R09: 0000000000000001
->>>> Mar 28 04:05:55 lena kernel: R10: ffffc90000e739d0 R11: 0005ae83a6d4cf00 R12: 0000000000000000
->>>> Mar 28 04:05:55 lena kernel: R13: 0000000000ca9ef5 R14: ffff8882765eb160 R15: 0000000000000001
->>>> Mar 28 04:05:55 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
->>>> Mar 28 04:05:55 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>> Mar 28 04:05:55 lena kernel: CR2: 00007f6d6dcb0000 CR3: 0000000268a70000 CR4: 00000000001006f0
->>>> Mar 28 04:05:55 lena kernel: Call Trace:
->>>> Mar 28 04:05:55 lena kernel: ? wait_woken+0x68/0x68
->>>> Mar 28 04:05:55 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
->>>> Mar 28 04:05:55 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
->>>> Mar 28 04:05:55 lena kernel: ? flush_workqueue+0x2ab/0x2d4
->>>> Mar 28 04:05:55 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
->>>> Mar 28 04:05:55 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
->>>> Mar 28 04:05:55 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
->>>> Mar 28 04:05:55 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
->>>> Mar 28 04:05:55 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
->>>> Mar 28 04:05:55 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
->>>> Mar 28 04:05:55 lena kernel: ? ___sys_recvmsg+0x1a0/0x1ce
->>>> Mar 28 04:05:55 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
->>>> Mar 28 04:05:55 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
->>>> Mar 28 04:05:55 lena kernel: ? vfs_writev+0xd3/0x100
->>>> Mar 28 04:05:55 lena kernel: ? timerqueue_del+0x2c/0x3a
->>>> Mar 28 04:05:55 lena kernel: ? __remove_hrtimer+0x28/0x61
->>>> Mar 28 04:05:55 lena kernel: vfs_ioctl+0x19/0x26
->>>> Mar 28 04:05:55 lena kernel: do_vfs_ioctl+0x52c/0x554
->>>> Mar 28 04:05:55 lena kernel: ? __se_sys_setitimer+0xa8/0xf0
->>>> Mar 28 04:05:55 lena kernel: ksys_ioctl+0x39/0x58
->>>> Mar 28 04:05:55 lena kernel: __x64_sys_ioctl+0x11/0x14
->>>> Mar 28 04:05:55 lena kernel: do_syscall_64+0x4a/0xf4
->>>> Mar 28 04:05:55 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>>> Mar 28 04:05:55 lena kernel: RIP: 0033:0x7f6d74ce12b7
->>>> Mar 28 04:05:55 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff
->>>> 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00
->>>> b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00
->>>> f7 d8 64 89 01 48
->>>> Mar 28 04:05:55 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
->>>> Mar 28 04:05:55 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
->>>> Mar 28 04:05:55 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
->>>> Mar 28 04:05:55 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
->>>> Mar 28 04:05:55 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
->>>> Mar 28 04:05:55 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
->>>> Mar 28 04:05:55 lena kernel: ---[ end trace 5361d6be40e0aafa ]---
->>>> Mar 28 04:49:14 lena kernel: ------------[ cut here ]------------
->>>> Mar 28 04:49:14 lena kernel: vblank wait timed out on crtc 1
->>>> Mar 28 04:49:14 lena kernel: WARNING: CPU: 2 PID: 4221 at drm_wait_one_vblank+0xfa/0x12a [drm]
->>>> Mar 28 04:49:14 lena kernel: Modules linked in: usblp uas usb_storage
->>>> uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2
->>>> videobuf2_common snd_hda_codec_hdmi snd_hda_codec_realtek
->>>> snd_hda_codec_generic crc32_pclmul crc32c_intel ghash_clmulni_intel
->>>> i915 aesni_intel drm_kms_helper cfbfillrect crypto_simd glue_helper
->>>> syscopyarea cfbimgblt sysfillrect sysimgblt snd_hda_intel fb_sys_fops
->>>> cfbcopyarea snd_hda_codec sdhci_acpi drm xhci_pci snd_hwdep sdhci
->>>> drm_panel_orientation_quirks snd_hda_core intel_gtt mmc_core xhci_hcd
->>>> iosf_mbi
->>>> Mar 28 04:49:14 lena kernel: CPU: 2 PID: 4221 Comm: X Tainted: G        W         5.2.0+ #44
->>>> Mar 28 04:49:14 lena kernel: Hardware name: Acer Aspire ES1-131/Garp_BA, BIOS V1.23 06/22/2016
->>>> Mar 28 04:49:14 lena kernel: RIP: 0010:drm_wait_one_vblank+0xfa/0x12a [drm]
->>>> Mar 28 04:49:14 lena kernel: Code: 89 e7 e8 31 eb 74 e1 49 89 c4 eb bf
->>>> 48 89 e6 4c 89 f7 e8 d5 b5 ff e0 45 85 e4 75 10 89 de 48 c7 c7 cf de
->>>> 0d a0 e8 2e bd fc e0 <0f> 0b 89 de 48 89 ef e8 82 fe ff ff 48 8b 44 24
->>>> 28 65 48 33 04 25
->>>> Mar 28 04:49:14 lena kernel: RSP: 0018:ffffc90000e73ac0 EFLAGS: 00010296
->>>> Mar 28 04:49:14 lena kernel: RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000007
->>>> Mar 28 04:49:14 lena kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff888277b163a0
->>>> Mar 28 04:49:14 lena kernel: RBP: ffff888271b40000 R08: 000000000000039f R09: 0000000000000001
->>>> Mar 28 04:49:14 lena kernel: R10: ffffc90000e739d0 R11: 0005b24bca063000 R12: 0000000000000000
->>>> Mar 28 04:49:14 lena kernel: R13: 0000000000ccd1e6 R14: ffff8882765eb160 R15: 0000000000000001
->>>> Mar 28 04:49:14 lena kernel: FS:  00007f6d744bd200(0000) GS:ffff888277b00000(0000) knlGS:0000000000000000
->>>> Mar 28 04:49:14 lena kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>> Mar 28 04:49:14 lena kernel: CR2: 00007f6d6dcb0000 CR3: 0000000268a70000 CR4: 00000000001006e0
->>>> Mar 28 04:49:14 lena kernel: Call Trace:
->>>> Mar 28 04:49:14 lena kernel: ? wait_woken+0x68/0x68
->>>> Mar 28 04:49:14 lena kernel: intel_pre_plane_update+0x165/0x1ea [i915]
->>>> Mar 28 04:49:14 lena kernel: intel_atomic_commit_tail+0xcb/0xf10 [i915]
->>>> Mar 28 04:49:14 lena kernel: ? flush_workqueue+0x2ab/0x2d4
->>>> Mar 28 04:49:14 lena kernel: intel_atomic_commit+0x23a/0x248 [i915]
->>>> Mar 28 04:49:14 lena kernel: drm_atomic_connector_commit_dpms+0xc0/0xda [drm]
->>>> Mar 28 04:49:14 lena kernel: drm_mode_obj_set_property_ioctl+0x133/0x241 [drm]
->>>> Mar 28 04:49:14 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
->>>> Mar 28 04:49:14 lena kernel: drm_connector_property_set_ioctl+0x39/0x53 [drm]
->>>> Mar 28 04:49:14 lena kernel: drm_ioctl_kernel+0x8e/0xe2 [drm]
->>>> Mar 28 04:49:14 lena kernel: drm_ioctl+0x1fd/0x2dc [drm]
->>>> Mar 28 04:49:14 lena kernel: ? drm_connector_set_obj_prop+0x67/0x67 [drm]
->>>> Mar 28 04:49:14 lena kernel: ? hrtimer_cancel+0xc/0x16
->>>> Mar 28 04:49:14 lena kernel: ? schedule_hrtimeout_range_clock+0xb3/0xef
->>>> Mar 28 04:49:14 lena kernel: ? hrtimer_init+0x2/0x2
->>>> Mar 28 04:49:14 lena kernel: vfs_ioctl+0x19/0x26
->>>> Mar 28 04:49:14 lena kernel: do_vfs_ioctl+0x52c/0x554
->>>> Mar 28 04:49:14 lena kernel: ? wake_up_q+0x4e/0x4e
->>>> Mar 28 04:49:14 lena kernel: ksys_ioctl+0x39/0x58
->>>> Mar 28 04:49:14 lena kernel: __x64_sys_ioctl+0x11/0x14
->>>> Mar 28 04:49:14 lena kernel: do_syscall_64+0x4a/0xf4
->>>> Mar 28 04:49:14 lena kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>>> Mar 28 04:49:14 lena kernel: RIP: 0033:0x7f6d74ce12b7
->>>> Mar 28 04:49:14 lena kernel: Code: 00 00 00 75 0c 48 c7 c0 ff ff ff ff
->>>> 48 83 c4 18 c3 e8 cd d2 01 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00
->>>> b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a9 cb 0c 00
->>>> f7 d8 64 89 01 48
->>>> Mar 28 04:49:14 lena kernel: RSP: 002b:00007fff62f16b58 EFLAGS: 00003246 ORIG_RAX: 0000000000000010
->>>> Mar 28 04:49:14 lena kernel: RAX: ffffffffffffffda RBX: 000055cc6071deb0 RCX: 00007f6d74ce12b7
->>>> Mar 28 04:49:14 lena kernel: RDX: 00007fff62f16b90 RSI: 00000000c01064ab RDI: 000000000000000c
->>>> Mar 28 04:49:14 lena kernel: RBP: 00007fff62f16b90 R08: 0000000000000057 R09: 00007f6d71394000
->>>> Mar 28 04:49:14 lena kernel: R10: 0000000000000001 R11: 0000000000003246 R12: 00000000c01064ab
->>>> Mar 28 04:49:14 lena kernel: R13: 000000000000000c R14: 00007f6d71394001 R15: 0000000000000000
->>>> Mar 28 04:49:14 lena kernel: ---[ end trace 5361d6be40e0aafb ]---
