@@ -2,358 +2,309 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90F2E19B3DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20EC319B403
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733264AbgDAQYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:24:22 -0400
-Received: from mta-02.yadro.com ([89.207.88.252]:36328 "EHLO mta-01.yadro.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733180AbgDAQYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:24:15 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-01.yadro.com (Postfix) with ESMTP id E7B5541256;
-        Wed,  1 Apr 2020 16:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:from:from:received:received:received; s=mta-01; t=
-        1585758251; x=1587572652; bh=JIQnTnZPoZ/mLXhkzDju/HHZOw6yJzBC/pA
-        B/iDKcdY=; b=v3//I9Pv7Y9hzX7XPuoeGmlzQ82DXX/zWz7mRcTQ3aOMws4pLhM
-        VjonpGavv6xoDzGW8pELBVjFQPKLAnz4OeVM1f8YXa9Fg86mEm4ZKckF8La1OqIm
-        8aMPuTtfKgAdMIL8FvP5w4FsUWQWe4FoInrzy8+Ptsj4JlkVbfl9qyIU=
-X-Virus-Scanned: amavisd-new at yadro.com
-Received: from mta-01.yadro.com ([127.0.0.1])
-        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id kHiMPDclK6zi; Wed,  1 Apr 2020 19:24:11 +0300 (MSK)
-Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        id S2388073AbgDAQyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:54:50 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:25805 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387740AbgDAQ0v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:26:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585758409;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=j4AR5r17BWV2Q3tJVUOU56LC0f5zCeG7TGv0ZIShdr4=;
+        b=EKKwcaWShwD6E+AIOX3mTPeTShFr7jSGTztUHyIilB/vtL0L5EuyRki8Vk9qGtGuDKqTpX
+        8N/tx3XsKczq1z0j15EUKJg8eRLnRanvo7HkOThMFQbbGv4IL4OuOnrUAcr3AVKvP+Gp8U
+        tg6u4Tc358gkVcnURFsqPFR6isjuh/g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-383-vsVvsof0PX69idRJKXN5EA-1; Wed, 01 Apr 2020 12:26:48 -0400
+X-MC-Unique: vsVvsof0PX69idRJKXN5EA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mta-01.yadro.com (Postfix) with ESMTPS id 21D5B4128B;
-        Wed,  1 Apr 2020 19:24:10 +0300 (MSK)
-Received: from localhost.yadro.com (10.199.2.98) by T-EXCH-02.corp.yadro.com
- (172.17.10.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.1.669.32; Wed, 1 Apr
- 2020 19:24:10 +0300
-From:   Ivan Mikhaylov <i.mikhaylov@yadro.com>
-CC:     Ivan Mikhaylov <i.mikhaylov@yadro.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v6 2/2] iio: proximity: Add driver support for vcnl3020 proximity sensor
-Date:   Wed, 1 Apr 2020 19:24:16 +0300
-Message-ID: <20200401162416.24474-3-i.mikhaylov@yadro.com>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200401162416.24474-1-i.mikhaylov@yadro.com>
-References: <20200401162416.24474-1-i.mikhaylov@yadro.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 648951005509;
+        Wed,  1 Apr 2020 16:26:46 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2963D60C05;
+        Wed,  1 Apr 2020 16:26:43 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 031GQghf007465;
+        Wed, 1 Apr 2020 12:26:42 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 031GQfMp007461;
+        Wed, 1 Apr 2020 12:26:42 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 1 Apr 2020 12:26:41 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Dan Williams <dan.j.williams@intel.com>
+cc:     "Elliott, Robert (Servers)" <elliott@hpe.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Mike Snitzer <msnitzer@redhat.com>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] memcpy_flushcache: use cache flusing for larger
+ lengths
+In-Reply-To: <CAPcyv4ijR185RLmtT+A+WZxJs309qPfdqj5eUDEkMgFbxsV+uw@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.2004010941310.23210@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.2003291625590.32108@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2003300729320.9938@file01.intranet.prod.int.rdu2.redhat.com> <CS1PR8401MB12377197482867F688BF93F7ABC80@CS1PR8401MB1237.NAMPRD84.PROD.OUTLOOK.COM>
+ <alpine.LRH.2.02.2003310709090.2117@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4ijR185RLmtT+A+WZxJs309qPfdqj5eUDEkMgFbxsV+uw@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.199.2.98]
-X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
- T-EXCH-02.corp.yadro.com (172.17.10.102)
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Proximity sensor driver based on light/vcnl4000.c code.
-For now supports only the single on-demand measurement.
 
-The VCNL3020 is a fully integrated proximity sensor. Fully
-integrated means that the infrared emitter is included in the
-package. It has 16-bit resolution. It includes a signal
-processing IC and features standard I2C communication
-interface. It features an interrupt function.
 
-Datasheet: http://www.vishay.com/docs/84150/vcnl3020.pdf
-Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
----
- drivers/iio/proximity/Kconfig    |  11 ++
- drivers/iio/proximity/Makefile   |   1 +
- drivers/iio/proximity/vcnl3020.c | 234 +++++++++++++++++++++++++++++++
- 3 files changed, 246 insertions(+)
- create mode 100644 drivers/iio/proximity/vcnl3020.c
+On Tue, 31 Mar 2020, Dan Williams wrote:
 
-diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
-index d53601447da4..b8d2b17e60ac 100644
---- a/drivers/iio/proximity/Kconfig
-+++ b/drivers/iio/proximity/Kconfig
-@@ -112,6 +112,17 @@ config SRF08
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called srf08.
- 
-+config VCNL3020
-+	tristate "VCNL3020 proximity sensor"
-+	select REGMAP_I2C
-+	depends on I2C
-+	help
-+	  Say Y here if you want to build a driver for the Vishay VCNL3020
-+	  proximity sensor.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called vcnl3020.
-+
- config VL53L0X_I2C
- 	tristate "STMicroelectronics VL53L0X ToF ranger sensor (I2C)"
- 	depends on I2C
-diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
-index 0bb5f9de13d6..8245978ced30 100644
---- a/drivers/iio/proximity/Makefile
-+++ b/drivers/iio/proximity/Makefile
-@@ -12,5 +12,6 @@ obj-$(CONFIG_RFD77402)		+= rfd77402.o
- obj-$(CONFIG_SRF04)		+= srf04.o
- obj-$(CONFIG_SRF08)		+= srf08.o
- obj-$(CONFIG_SX9500)		+= sx9500.o
-+obj-$(CONFIG_VCNL3020)		+= vcnl3020.o
- obj-$(CONFIG_VL53L0X_I2C)	+= vl53l0x-i2c.o
- 
-diff --git a/drivers/iio/proximity/vcnl3020.c b/drivers/iio/proximity/vcnl3020.c
-new file mode 100644
-index 000000000000..86f4a926268b
---- /dev/null
-+++ b/drivers/iio/proximity/vcnl3020.c
-@@ -0,0 +1,234 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Support for Vishay VCNL3020 proximity sensor on i2c bus.
-+ * Based on Vishay VCNL4000 driver code.
-+ *
-+ * TODO: interrupts.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/err.h>
-+#include <linux/delay.h>
-+#include <linux/regmap.h>
-+
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+
-+#define VCNL_DRV_NAME		"vcnl3020"
-+#define VCNL3020_PROD_ID	0x21
-+
-+#define VCNL_COMMAND		0x80 /* Command register */
-+#define VCNL_PROD_REV		0x81 /* Product ID and Revision ID */
-+#define VCNL_PROXIMITY_RATE	0x82 /* Rate of Proximity Measurement */
-+#define VCNL_LED_CURRENT	0x83 /* IR LED current for proximity mode */
-+#define VCNL_PS_RESULT_HI	0x87 /* Proximity result register, MSB */
-+#define VCNL_PS_RESULT_LO	0x88 /* Proximity result register, LSB */
-+#define VCNL_PS_ICR		0x89 /* Interrupt Control Register  */
-+
-+#define VCNL_PS_LO_THR_HI	0x8a /* High byte of low threshold value */
-+#define VCNL_PS_LO_THR_LO	0x8b /* Low byte of low threshold value */
-+#define VCNL_PS_HI_THR_HI	0x8c /* High byte of high threshold value */
-+#define VCNL_PS_HI_THR_LO	0x8d /* Low byte of high threshold value */
-+#define VCNL_ISR		0x8e /* Interrupt Status Register */
-+#define VCNL_PS_MOD_ADJ		0x8f /* Proximity Modulator Timing Adjustment */
-+
-+/* Bit masks for COMMAND register */
-+#define VCNL_PS_RDY		BIT(5) /* proximity data ready? */
-+#define VCNL_PS_OD		BIT(3) /* start on-demand proximity
-+					* measurement
-+					*/
-+
-+#define VCNL_ON_DEMAND_TIMEOUT_US	100000
-+#define VCNL_POLL_US			20000
-+
-+/**
-+ * struct vcnl3020_data - vcnl3020 specific data.
-+ * @regmap:	device register map.
-+ * @dev:	vcnl3020 device.
-+ * @rev:	revision id.
-+ * @lock:	lock for protecting access to device hardware registers.
-+ */
-+struct vcnl3020_data {
-+	struct regmap *regmap;
-+	struct device *dev;
-+	u8 rev;
-+	struct mutex lock;
-+};
-+
-+static int get_and_apply_property(struct vcnl3020_data *data, const char *prop,
-+				  u32 reg)
-+{
-+	int rc;
-+	u32 val;
-+
-+	rc = device_property_read_u32(data->dev, prop, &val);
-+	if (rc)
-+		return 0;
-+
-+	rc = regmap_write(data->regmap, reg, val);
-+	if (rc)
-+		dev_err(data->dev, "Error (%d) setting property (%s)",
-+			rc, prop);
-+
-+	return rc;
-+}
-+
-+static int vcnl3020_init(struct vcnl3020_data *data)
-+{
-+	int rc;
-+	unsigned int reg;
-+
-+	rc = regmap_read(data->regmap, VCNL_PROD_REV, &reg);
-+	if (rc) {
-+		dev_err(data->dev,
-+			"Error (%d) reading product revision", rc);
-+		return rc;
-+	}
-+
-+	if (reg != VCNL3020_PROD_ID) {
-+		dev_err(data->dev,
-+			"Product id (%x) did not match vcnl3020 (%x)", reg,
-+			VCNL3020_PROD_ID);
-+		return -ENODEV;
-+	}
-+
-+	data->rev = reg;
-+	mutex_init(&data->lock);
-+
-+	return get_and_apply_property(data, "vishay,led-current-milliamp",
-+				     VCNL_LED_CURRENT);
-+};
-+
-+static int vcnl3020_measure_proximity(struct vcnl3020_data *data, int *val)
-+{
-+	int rc;
-+	unsigned int reg;
-+	__be16 res;
-+
-+	mutex_lock(&data->lock);
-+
-+	rc = regmap_write(data->regmap, VCNL_COMMAND, VCNL_PS_OD);
-+	if (rc)
-+		goto err_unlock;
-+
-+	/* wait for data to become ready */
-+	rc = regmap_read_poll_timeout(data->regmap, VCNL_COMMAND, reg,
-+				      reg & VCNL_PS_RDY, VCNL_POLL_US,
-+				      VCNL_ON_DEMAND_TIMEOUT_US);
-+	if (rc) {
-+		dev_err(data->dev,
-+			"Error (%d) reading vcnl3020 command register", rc);
-+		goto err_unlock;
-+	}
-+
-+	/* high & low result bytes read */
-+	rc = regmap_bulk_read(data->regmap, VCNL_PS_RESULT_HI, &res,
-+			      sizeof(res));
-+	if (rc)
-+		goto err_unlock;
-+
-+	*val = be16_to_cpu(res);
-+
-+err_unlock:
-+	mutex_unlock(&data->lock);
-+
-+	return rc;
-+}
-+
-+static const struct iio_chan_spec vcnl3020_channels[] = {
-+	{
-+		.type = IIO_PROXIMITY,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-+	},
-+};
-+
-+static int vcnl3020_read_raw(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan, int *val,
-+			     int *val2, long mask)
-+{
-+	int rc;
-+	struct vcnl3020_data *data = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		switch (chan->type) {
-+		case IIO_PROXIMITY:
-+			rc = vcnl3020_measure_proximity(data, val);
-+			if (rc)
-+				return rc;
-+			return IIO_VAL_INT;
-+		default:
-+			return -EINVAL;
-+		}
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct iio_info vcnl3020_info = {
-+	.read_raw = vcnl3020_read_raw,
-+};
-+
-+static const struct regmap_config vcnl3020_regmap_config = {
-+	.reg_bits	= 8,
-+	.val_bits	= 8,
-+	.max_register	= VCNL_PS_MOD_ADJ,
-+};
-+
-+static int vcnl3020_probe(struct i2c_client *client)
-+{
-+	struct vcnl3020_data *data;
-+	struct iio_dev *indio_dev;
-+	struct regmap *regmap;
-+	int rc;
-+
-+	regmap = devm_regmap_init_i2c(client, &vcnl3020_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		dev_err(&client->dev, "regmap_init failed!");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	data = iio_priv(indio_dev);
-+	i2c_set_clientdata(client, indio_dev);
-+	data->regmap = regmap;
-+	data->dev = &client->dev;
-+
-+	rc = vcnl3020_init(data);
-+	if (rc)
-+		return rc;
-+
-+	indio_dev->dev.parent = &client->dev;
-+	indio_dev->info = &vcnl3020_info;
-+	indio_dev->channels = vcnl3020_channels;
-+	indio_dev->num_channels = ARRAY_SIZE(vcnl3020_channels);
-+	indio_dev->name = VCNL_DRV_NAME;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+
-+	return devm_iio_device_register(&client->dev, indio_dev);
-+}
-+
-+static const struct of_device_id vcnl3020_of_match[] = {
-+	{
-+		.compatible = "vishay,vcnl3020",
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, vcnl3020_of_match);
-+
-+static struct i2c_driver vcnl3020_driver = {
-+	.driver = {
-+		.name   = VCNL_DRV_NAME,
-+		.of_match_table = vcnl3020_of_match,
-+	},
-+	.probe_new  = vcnl3020_probe,
-+};
-+module_i2c_driver(vcnl3020_driver);
-+
-+MODULE_AUTHOR("Ivan Mikhaylov <i.mikhaylov@yadro.com>");
-+MODULE_DESCRIPTION("Vishay VCNL3020 proximity sensor driver");
-+MODULE_LICENSE("GPL");
--- 
-2.21.1
+> > The benchmark shows that 64-byte non-temporal avx512 vmovntdq is as good
+> > as 8, 16 or 32-bytes writes.
+> >                                          ram            nvdimm
+> > sequential write-nt 4 bytes              4.1 GB/s       1.3 GB/s
+> > sequential write-nt 8 bytes              4.1 GB/s       1.3 GB/s
+> > sequential write-nt 16 bytes (sse)       4.1 GB/s       1.3 GB/s
+> > sequential write-nt 32 bytes (avx)       4.2 GB/s       1.3 GB/s
+> > sequential write-nt 64 bytes (avx512)    4.1 GB/s       1.3 GB/s
+> >
+> > With cached writes (where each cache line is immediatelly followed by clwb
+> > or clflushopt), 8, 16 or 32-byte write performs better than non-temporal
+> > stores and avx512 performs worse.
+> >
+> > sequential write 8 + clwb                5.1 GB/s       1.6 GB/s
+> > sequential write 16 (sse) + clwb         5.1 GB/s       1.6 GB/s
+> > sequential write 32 (avx) + clwb         4.4 GB/s       1.5 GB/s
+> > sequential write 64 (avx512) + clwb      1.7 GB/s       0.6 GB/s
+> 
+> This is indeed compelling straight-line data. My concern, similar to
+> Robert's, is what it does to the rest of the system. In addition to
+> increasing cache pollution, which I agree is difficult to quantify, it
+
+I've made this program that measures cache pollution:
+    http://people.redhat.com/~mpatocka/testcases/pmem/misc/l1-test.c
+- it fills the L1 cache with random pointers, so that memory prediction 
+won't help, and then walks these pointers before and after the task that 
+we want to measure.
+
+The results are:
+
+on RAM, there is not much difference - i.e. nt write is flushing cache as 
+much as clflushopt and clwb:
+nt write:	8514 - 21034
+clflushopt:	8516 - 21798
+clwb:		8516 - 22882
+
+But on PMEM, non-temporal stores perform much better and they perform 
+	even better than on RAM:
+nt write:	8514 - 11694
+clflushopt:	8514 - 20816
+clwb:		8514 - 21480
+
+However, both dm-writecache and the nova filesystem perform better if we 
+use cache flushing instead of nt writes:
+  http://people.redhat.com/~mpatocka/testcases/pmem/benchmarks/fs-bench.txt
+
+> may also increase read-for-ownership traffic. Could you collect 'perf
+> stat' for this clwb vs nt comparison to check if any of this
+> incidental overhead effect shows up in the numbers? Here is a 'perf
+> stat' line that might capture that.
+> 
+> perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses
+> -r 5 $benchmark
+> 
+> In both cases nt and explicit clwb there's nothing that prevents the
+> dirty-cacheline, or the fill buffer from being written-back / flushed
+> before the full line is populated and maybe you are hitting that
+> scenario differently with the two approaches? I did not immediately
+> see a perf counter for events like this. Going forward I think this
+> gets better with the movdir64b instruction because that can guarantee
+> full-line-sized store-buffer writes.
+> 
+> Maybe the perf data can help make a decision about whether we go with
+> your patch in the near term?
+
+These are results for 6 tests:
+1. movntiq on pmem
+2. 8 writes + clflushopt on pmem
+3. 8 writes + clwb on pmem
+4. movntiq on ram
+5. 8 writes + clflushopt on ram
+6. 8 writes + clwb on ram
+
+perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-nt-8 /dev/dax3.0
+thr: 1.280840 GB/s, lat: 6.245904 nsec
+thr: 1.281988 GB/s, lat: 6.240310 nsec
+thr: 1.281000 GB/s, lat: 6.245120 nsec
+thr: 1.278589 GB/s, lat: 6.256896 nsec
+thr: 1.280094 GB/s, lat: 6.249541 nsec
+
+ Performance counter stats for './thrp-write-nt-8 /dev/dax3.0' (5 runs):
+
+         814899605      L1-dcache-loads                                               ( +-  0.04% )  (42.86%)
+           8924277      L1-dcache-load-misses     #    1.10% of all L1-dcache hits    ( +-  0.19% )  (57.15%)
+         810672184      L1-dcache-stores                                              ( +-  0.02% )  (57.15%)
+   <not supported>      L1-dcache-store-misses
+   <not supported>      L1-dcache-prefetch-misses
+            100254      LLC-loads                                                     ( +-  9.58% )  (57.15%)
+              6990      LLC-load-misses           #    6.97% of all LL-cache hits     ( +-  5.08% )  (57.14%)
+             16509      LLC-stores                                                    ( +-  1.38% )  (28.57%)
+              5070      LLC-store-misses                                              ( +-  3.28% )  (28.57%)
+   <not supported>      LLC-prefetch-misses
+
+           5.62889 +- 0.00357 seconds time elapsed  ( +-  0.06% )
+
+
+perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-8-clflushopt /dev/dax3.0
+thr: 1.611084 GB/s, lat: 4.965600 nsec
+thr: 1.598570 GB/s, lat: 5.004474 nsec
+thr: 1.600563 GB/s, lat: 4.998243 nsec
+thr: 1.596818 GB/s, lat: 5.009964 nsec
+thr: 1.593989 GB/s, lat: 5.018856 nsec
+
+ Performance counter stats for './thrp-write-8-clflushopt /dev/dax3.0' (5 runs):
+
+         137415972      L1-dcache-loads                                               ( +-  1.28% )  (42.84%)
+         136513938      L1-dcache-load-misses     #   99.34% of all L1-dcache hits    ( +-  1.24% )  (57.13%)
+        1153397051      L1-dcache-stores                                              ( +-  1.29% )  (57.14%)
+   <not supported>      L1-dcache-store-misses
+   <not supported>      L1-dcache-prefetch-misses
+            168100      LLC-loads                                                     ( +-  0.84% )  (57.15%)
+              3975      LLC-load-misses           #    2.36% of all LL-cache hits     ( +-  2.41% )  (57.16%)
+          58441682      LLC-stores                                                    ( +-  1.38% )  (28.57%)
+              2493      LLC-store-misses                                              ( +-  6.80% )  (28.56%)
+   <not supported>      LLC-prefetch-misses
+
+            5.7029 +- 0.0582 seconds time elapsed  ( +-  1.02% )
+
+
+perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-8-clwb /dev/dax3.0
+thr: 1.595520 GB/s, lat: 5.014039 nsec
+thr: 1.598659 GB/s, lat: 5.004194 nsec
+thr: 1.599901 GB/s, lat: 5.000309 nsec
+thr: 1.603323 GB/s, lat: 4.989636 nsec
+thr: 1.608657 GB/s, lat: 4.973093 nsec
+
+ Performance counter stats for './thrp-write-8-clwb /dev/dax3.0' (5 runs):
+
+         135421993      L1-dcache-loads                                               ( +-  0.06% )  (42.85%)
+         134869685      L1-dcache-load-misses     #   99.59% of all L1-dcache hits    ( +-  0.02% )  (57.14%)
+        1138042172      L1-dcache-stores                                              ( +-  0.02% )  (57.14%)
+   <not supported>      L1-dcache-store-misses
+   <not supported>      L1-dcache-prefetch-misses
+            184600      LLC-loads                                                     ( +-  0.79% )  (57.15%)
+              5756      LLC-load-misses           #    3.12% of all LL-cache hits     ( +-  5.23% )  (57.15%)
+          55755196      LLC-stores                                                    ( +-  0.04% )  (28.57%)
+              4928      LLC-store-misses                                              ( +-  4.19% )  (28.56%)
+   <not supported>      LLC-prefetch-misses
+
+           5.63954 +- 0.00987 seconds time elapsed  ( +-  0.18% )
+
+perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-nt-8 /dev/ram0
+thr: 4.156424 GB/s, lat: 1.924732 nsec
+thr: 4.156363 GB/s, lat: 1.924760 nsec
+thr: 4.159350 GB/s, lat: 1.923377 nsec
+thr: 4.162535 GB/s, lat: 1.921906 nsec
+thr: 4.158470 GB/s, lat: 1.923784 nsec
+
+ Performance counter stats for './thrp-write-nt-8 /dev/ram0' (5 runs):
+
+        3077534777      L1-dcache-loads                                               ( +-  0.14% )  (42.85%)
+          49870893      L1-dcache-load-misses     #    1.62% of all L1-dcache hits    ( +-  0.82% )  (57.14%)
+        2854270644      L1-dcache-stores                                              ( +-  0.01% )  (57.14%)
+   <not supported>      L1-dcache-store-misses
+   <not supported>      L1-dcache-prefetch-misses
+           5391862      LLC-loads                                                     ( +-  0.29% )  (57.15%)
+           5190166      LLC-load-misses           #   96.26% of all LL-cache hits     ( +-  0.23% )  (57.15%)
+           5694448      LLC-stores                                                    ( +-  0.39% )  (28.57%)
+           5544968      LLC-store-misses                                              ( +-  0.37% )  (28.56%)
+   <not supported>      LLC-prefetch-misses
+
+           5.61044 +- 0.00145 seconds time elapsed  ( +-  0.03% )
+
+
+perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-8-clflushopt /dev/ram0
+thr: 5.923164 GB/s, lat: 1.350629 nsec
+thr: 5.922262 GB/s, lat: 1.350835 nsec
+thr: 5.921674 GB/s, lat: 1.350969 nsec
+thr: 5.922305 GB/s, lat: 1.350825 nsec
+thr: 5.921393 GB/s, lat: 1.351033 nsec
+
+ Performance counter stats for './thrp-write-8-clflushopt /dev/ram0' (5 runs):
+
+         935965584      L1-dcache-loads                                               ( +-  0.34% )  (42.85%)
+         521443969      L1-dcache-load-misses     #   55.71% of all L1-dcache hits    ( +-  0.05% )  (57.15%)
+        4460590261      L1-dcache-stores                                              ( +-  0.01% )  (57.15%)
+   <not supported>      L1-dcache-store-misses
+   <not supported>      L1-dcache-prefetch-misses
+           6242393      LLC-loads                                                     ( +-  0.32% )  (57.15%)
+           5727982      LLC-load-misses           #   91.76% of all LL-cache hits     ( +-  0.27% )  (57.15%)
+          54576336      LLC-stores                                                    ( +-  0.05% )  (28.57%)
+          54056225      LLC-store-misses                                              ( +-  0.04% )  (28.57%)
+   <not supported>      LLC-prefetch-misses
+
+           5.79196 +- 0.00105 seconds time elapsed  ( +-  0.02% )
+
+
+perf stat -e L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-dcache-store-misses,L1-dcache-prefetch-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,LLC-prefetch-misses -r 5 ./thrp-write-8-clwb /dev/ram0
+thr: 5.821923 GB/s, lat: 1.374116 nsec
+thr: 5.818980 GB/s, lat: 1.374811 nsec
+thr: 5.821207 GB/s, lat: 1.374285 nsec
+thr: 5.818583 GB/s, lat: 1.374905 nsec
+thr: 5.820813 GB/s, lat: 1.374379 nsec
+
+ Performance counter stats for './thrp-write-8-clwb /dev/ram0' (5 runs):
+
+         951910720      L1-dcache-loads                                               ( +-  0.31% )  (42.84%)
+         512771268      L1-dcache-load-misses     #   53.87% of all L1-dcache hits    ( +-  0.03% )  (57.13%)
+        4390478387      L1-dcache-stores                                              ( +-  0.02% )  (57.15%)
+   <not supported>      L1-dcache-store-misses
+   <not supported>      L1-dcache-prefetch-misses
+           5614628      LLC-loads                                                     ( +-  0.24% )  (57.16%)
+           5200663      LLC-load-misses           #   92.63% of all LL-cache hits     ( +-  0.09% )  (57.16%)
+          52627554      LLC-stores                                                    ( +-  0.10% )  (28.56%)
+          52108200      LLC-store-misses                                              ( +-  0.16% )  (28.55%)
+   <not supported>      LLC-prefetch-misses
+
+          5.646728 +- 0.000438 seconds time elapsed  ( +-  0.01% )
+
+
+
+
+> > > In user space, glibc faces similar choices for its memcpy() functions;
+> > > glibc memcpy() uses non-temporal stores for transfers > 75% of the
+> > > L3 cache size divided by the number of cores. For example, with
+> > > glibc-2.216-16.fc27 (August 2017), on a Broadwell system with
+> > > E5-2699 36 cores 45 MiB L3 cache, non-temporal stores are used
+> > > for memcpy()s over 36 MiB.
+> >
+> > BTW. what does glibc do with reads? Does it flush them from the cache
+> > after they are consumed?
+> >
+> > AFAIK glibc doesn't support persistent memory - i.e. there is no function
+> > that flushes data and the user has to use inline assembly for that.
+> 
+> Yes, and I don't know of any copy routines that try to limit the cache
+> pollution of pulling the source data for a copy, only the destination.
+> 
+> > > It'd be nice if glibc, PMDK, and the kernel used the same algorithms.
+> 
+> Yes, it would. Although I think PMDK would make a different decision
+> than the kernel when optimizing for highest bandwidth for the local
+> application vs bandwidth efficiency across all applications.
+
+Mikulas
 
