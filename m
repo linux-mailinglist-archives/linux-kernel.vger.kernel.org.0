@@ -2,231 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0BB019AF73
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:10:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3053E19AF86
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:15:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732403AbgDAQKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:10:24 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:3445 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbgDAQKX (ORCPT
+        id S1732264AbgDAQPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:15:45 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:42112 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728242AbgDAQPo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:10:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1585757423; x=1617293423;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=f8HUbR5cvKWzDVauqwjQ24njzyfgLggG0ctNNboTQFU=;
-  b=fO/jf8TutCoI43KaS47R5OmNfzsK8mCzhq4H++04EYNb8DmU+U67/W4l
-   TjYCBsuNR3zM3GC34GpRKVxcpULQdFTVuV9ue4qtnq2HNQfdjW18yojaG
-   DQNg1XZT5ZP9fhLOnn1sIjSKPre/8pxGoaBs2bWVZLeEeD23eprbA9GKh
-   UCB7QrUz2ZHVv1xnjrcF4Smv0dE5biZRwYDvSoVyWfL/loTU0DVbfdjp/
-   uZ5L1uht7GYdGs/QO1T7X7NUwTH26jYyRXe1RU6JAF2VtsSvdbt4Boodq
-   KAnjmxv0q0l3oMloPYsfVevpKnumwz/deHJQ8qn8AAXmzP+MM456iReu9
-   Q==;
-IronPort-SDR: nSyJyqtwj8K4LDMJJsAl9jtCU9KdQnPMRWdqG7FtalZmPDMMK8cR9+PqOgSljtwn5oTvWKMhkH
- H+HGNvrBGM+5ZV5z2P1wQbbRYPK2DNGeBh4VXBQXXT4b8v4tVR0+UW1NWtFawCEZHRCevumLr3
- OXp8IasiePIWCSU2BFpqVF+eFeZCvVSYHHh1zss1U0yyEr7CsGD4Ej7q1OI9AL7MKI7JLFu4uq
- qdZ8pEpbgPt/02Qfq0gsR2jyPwQQuqTj+NHLl8BqvwjVoyIvzUpcaNJoWdix3CyS2lfSgquRmq
- osY=
-X-IronPort-AV: E=Sophos;i="5.72,332,1580799600"; 
-   d="scan'208";a="7756912"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 01 Apr 2020 09:10:22 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 1 Apr 2020 09:10:22 -0700
-Received: from localhost (10.10.115.15) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Wed, 1 Apr 2020 09:10:22 -0700
-Date:   Wed, 1 Apr 2020 18:10:21 +0200
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-CC:     <davem@davemloft.net>, <jiri@resnulli.us>, <ivecera@redhat.com>,
-        <kuba@kernel.org>, <roopa@cumulusnetworks.com>,
-        <olteanv@gmail.com>, <andrew@lunn.ch>,
-        <UNGLinuxDriver@microchip.com>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <bridge@lists.linux-foundation.org>
-Subject: Re: [RFC net-next v4 8/9] bridge: mrp: Integrate MRP into the bridge
-Message-ID: <20200401161021.3s2sqvma7r7wpo7h@soft-dev3.microsemi.net>
-References: <20200327092126.15407-1-horatiu.vultur@microchip.com>
- <20200327092126.15407-9-horatiu.vultur@microchip.com>
- <17d9fb2a-cb48-7bb6-cb79-3876ca3a74b2@cumulusnetworks.com>
+        Wed, 1 Apr 2020 12:15:44 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031G9Z4r132264;
+        Wed, 1 Apr 2020 16:10:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=igQpHEyMKJTQgqY+5lVU6UpjVDCEktfMEEUoFi0hzdY=;
+ b=rirqrzEhxiUQjA4Whgg0FsFwpoaHlxZOwChQKYEw30ZadyZYgDq6HwPiLXwva9g8hDl0
+ JYPf85K3A9knnKbMki8AlHxaRhwzkCC8D5OnBTqx/RmadSOBuSMNAbe+4LsasSzGtR0E
+ 2dRImSqjm0aKO0rvUzB2xYeBlb2/tYSbxO0iaxH2uuxZxmsmXtsJ7zehIx3xnNdsJ/40
+ 4yLOlAduuT5vByN2HFFrx8BOgsbqLkv+ellZrWkGE+WVHP/fu5f2usD5kWGVWea5/6Na
+ 9vQ2Ew9fRhYxspuYlghNy6uxF376FvpaNrxM0afzpCVvqv5O8lHX4CmB1ZLRX7c7qODQ IQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 303yun911j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Apr 2020 16:10:21 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031G8DX6040487;
+        Wed, 1 Apr 2020 16:10:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 302ga0s8j5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Apr 2020 16:10:20 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 031GAHbs000767;
+        Wed, 1 Apr 2020 16:10:17 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 01 Apr 2020 09:10:16 -0700
+Date:   Wed, 1 Apr 2020 12:10:36 -0400
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Yiqian Wei <yiwei@redhat.com>
+Subject: Re: [PATCH v1 0/2] mm/page_alloc: fix stalls/soft lockups with huge
+ VMs
+Message-ID: <20200401161036.oqk3dakako33bv3o@ca-dmjordan1.us.oracle.com>
+References: <20200401104156.11564-1-david@redhat.com>
+ <596d593e-7f36-0e24-6c67-311bd6971e89@redhat.com>
+ <CAM9Jb+hYPUZXVLr2T8x6Njcscw_+W0e2SCmr_B1fLZuOwgLZuw@mail.gmail.com>
+ <20200401144529.7zkqq4rfdnitg32h@ca-dmjordan1.us.oracle.com>
+ <8d481b8e-7ffc-e9f5-604b-f90856b2b38a@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <17d9fb2a-cb48-7bb6-cb79-3876ca3a74b2@cumulusnetworks.com>
+In-Reply-To: <8d481b8e-7ffc-e9f5-604b-f90856b2b38a@redhat.com>
 User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 bulkscore=0 mlxscore=0 spamscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004010139
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 lowpriorityscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
+ suspectscore=0 mlxscore=0 spamscore=0 impostorscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004010138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nik,
-
-The 03/30/2020 19:16, Nikolay Aleksandrov wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+On Wed, Apr 01, 2020 at 05:54:40PM +0200, David Hildenbrand wrote:
+> On 01.04.20 16:45, Daniel Jordan wrote:
+> > On Wed, Apr 01, 2020 at 04:31:51PM +0200, Pankaj Gupta wrote:
+> >>> On 01.04.20 12:41, David Hildenbrand wrote:
+> >>>> Two fixes for misleading stall messages / soft lockups with huge nodes /
+> >>>> zones during boot without CONFIG_PREEMPT.
+> >>>>
+> >>>> David Hildenbrand (2):
+> >>>>   mm/page_alloc: fix RCU stalls during deferred page initialization
+> >>>>   mm/page_alloc: fix watchdog soft lockups during set_zone_contiguous()
+> >>>>
+> >>>>  mm/page_alloc.c | 2 ++
+> >>>>  1 file changed, 2 insertions(+)
+> >>>>
+> >>>
+> >>> Patch #1 requires "[PATCH v3] mm: fix tick timer stall during deferred
+> >>> page init"
+> >>>
+> >>> https://lkml.kernel.org/r/20200311123848.118638-1-shile.zhang@linux.alibaba.com
+> >>
+> >> Thanks! Took me some time to figure it out.
+> > 
+> > FYI, I'm planning to post an alternate version of that fix, hopefully today if
+> > all goes well with my testing.
+> > 
 > 
-> On 27/03/2020 11:21, Horatiu Vultur wrote:
-> > To integrate MRP into the bridge, the bridge needs to do the following:
-> > - add new flag(BR_MPP_AWARE) to the net bridge ports, this bit will be set when
-> >   the port is added to an MRP instance. In this way it knows if the frame was
-> >   received on MRP ring port
-> > - detect if the MRP frame was received on MRP ring port in that case it would be
-> >   processed otherwise just forward it as usual.
-> > - enable parsing of MRP
-> > - before whenever the bridge was set up, it would set all the ports in
-> >   forwarding state. Add an extra check to not set ports in forwarding state if
-> >   the port is an MRP ring port. The reason of this change is that if the MRP
-> >   instance initially sets the port in blocked state by setting the bridge up it
-> >   would overwrite this setting.
-> >
-> > Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> > ---
-> >  include/linux/if_bridge.h |  1 +
-> >  net/bridge/br_device.c    |  3 +++
-> >  net/bridge/br_input.c     |  3 +++
-> >  net/bridge/br_netlink.c   |  5 +++++
-> >  net/bridge/br_private.h   | 22 ++++++++++++++++++++++
-> >  net/bridge/br_stp.c       |  6 ++++++
-> >  6 files changed, 40 insertions(+)
-> >
-> > diff --git a/include/linux/if_bridge.h b/include/linux/if_bridge.h
-> > index 9e57c4411734..10baa9efdae8 100644
-> > --- a/include/linux/if_bridge.h
-> > +++ b/include/linux/if_bridge.h
-> > @@ -47,6 +47,7 @@ struct br_ip_list {
-> >  #define BR_BCAST_FLOOD               BIT(14)
-> >  #define BR_NEIGH_SUPPRESS    BIT(15)
-> >  #define BR_ISOLATED          BIT(16)
-> > +#define BR_MRP_AWARE         BIT(17)
-> >
-> >  #define BR_DEFAULT_AGEING_TIME       (300 * HZ)
-> >
-> > diff --git a/net/bridge/br_device.c b/net/bridge/br_device.c
-> > index 0e3dbc5f3c34..8ec1362588af 100644
-> > --- a/net/bridge/br_device.c
-> > +++ b/net/bridge/br_device.c
-> > @@ -463,6 +463,9 @@ void br_dev_setup(struct net_device *dev)
-> >       spin_lock_init(&br->lock);
-> >       INIT_LIST_HEAD(&br->port_list);
-> >       INIT_HLIST_HEAD(&br->fdb_list);
-> > +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
-> > +     INIT_LIST_HEAD(&br->mrp_list);
-> > +#endif
-> >       spin_lock_init(&br->hash_lock);
-> >
-> >       br->bridge_id.prio[0] = 0x80;
-> > diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
-> > index fcc260840028..d5c34f36f0f4 100644
-> > --- a/net/bridge/br_input.c
-> > +++ b/net/bridge/br_input.c
-> > @@ -342,6 +342,9 @@ rx_handler_result_t br_handle_frame(struct sk_buff **pskb)
-> >               }
-> >       }
-> >
-> > +     if (unlikely(br_mrp_process(p, skb)))
-> > +             return RX_HANDLER_PASS;
-> > +
-> >  forward:
-> >       switch (p->state) {
-> >       case BR_STATE_FORWARDING:
-> > diff --git a/net/bridge/br_netlink.c b/net/bridge/br_netlink.c
-> > index 43dab4066f91..77bc96745be6 100644
-> > --- a/net/bridge/br_netlink.c
-> > +++ b/net/bridge/br_netlink.c
-> > @@ -669,6 +669,11 @@ static int br_afspec(struct net_bridge *br,
-> >                       if (err)
-> >                               return err;
-> >                       break;
-> > +             case IFLA_BRIDGE_MRP:
-> > +                     err = br_mrp_parse(br, p, attr, cmd);
-> > +                     if (err)
-> > +                             return err;
-> > +                     break;
-> >               }
-> >       }
-> >
-> > diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
-> > index 1f97703a52ff..38894f2cf98f 100644
-> > --- a/net/bridge/br_private.h
-> > +++ b/net/bridge/br_private.h
-> > @@ -428,6 +428,10 @@ struct net_bridge {
-> >       int offload_fwd_mark;
-> >  #endif
-> >       struct hlist_head               fdb_list;
-> > +
-> > +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
-> > +     struct list_head                __rcu mrp_list;
-> > +#endif
-> >  };
-> >
-> >  struct br_input_skb_cb {
-> > @@ -1304,6 +1308,24 @@ unsigned long br_timer_value(const struct timer_list *timer);
-> >  extern int (*br_fdb_test_addr_hook)(struct net_device *dev, unsigned char *addr);
-> >  #endif
-> >
-> > +/* br_mrp.c */
-> > +#if IS_ENABLED(CONFIG_BRIDGE_MRP)
-> > +int br_mrp_parse(struct net_bridge *br, struct net_bridge_port *p,
-> > +              struct nlattr *attr, int cmd);
-> > +int br_mrp_process(struct net_bridge_port *p, struct sk_buff *skb);
-> > +#else
-> > +static inline int br_mrp_parse(struct net_bridge *br, struct net_bridge_port *p,
-> > +                            struct nlattr *attr, int cmd)
-> > +{
-> > +     return -1;
-> 
-> You should return proper error here.
+> Cool, please CC me :)
 
-It will return -EOPNOTSUPP.
-
-> 
-> > +}
-> > +
-> > +static inline int br_mrp_process(struct net_bridge_port *p, struct sk_buff *skb)
-> > +{
-> > +     return -1;
-> 
-> The bridge can't possibly work with MRP disabled with this.
-
-Good catch, it will return 0.
-
-> 
-> > +}
-> > +#endif
-> > +
-> >  /* br_netlink.c */
-> >  extern struct rtnl_link_ops br_link_ops;
-> >  int br_netlink_init(void);
-> > diff --git a/net/bridge/br_stp.c b/net/bridge/br_stp.c
-> > index 1f14b8455345..3e88be7aa269 100644
-> > --- a/net/bridge/br_stp.c
-> > +++ b/net/bridge/br_stp.c
-> > @@ -36,6 +36,12 @@ void br_set_state(struct net_bridge_port *p, unsigned int state)
-> >       };
-> >       int err;
-> >
-> > +     /* Don't change the state of the ports if they are driven by a different
-> > +      * protocol.
-> > +      */
-> > +     if (p->flags & BR_MRP_AWARE)
-> > +             return;
-> > +
-> 
-> Maybe disallow STP type (kernel/user-space/no-stp) changing as well, force it to no-stp.
-
-I am not sure that I understand completely here, do you want me to
-disable STP if MRP is started?
-
-> 
-> >       p->state = state;
-> >       err = switchdev_port_attr_set(p->dev, &attr);
-> >       if (err && err != -EOPNOTSUPP)
-> >
-> 
-
--- 
-/Horatiu
+Sure, in fact you already were! :)
