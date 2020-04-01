@@ -2,59 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D8719ADD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 16:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 021AD19A8C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:41:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733035AbgDAOaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 10:30:13 -0400
-Received: from mx0a-003e4a01.pphosted.com ([205.220.161.136]:17124 "EHLO
-        mx0a-003e4a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732856AbgDAOaN (ORCPT
+        id S1732156AbgDAJlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 05:41:31 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37954 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726063AbgDAJlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 10:30:13 -0400
-X-Greylist: delayed 17412 seconds by postgrey-1.27 at vger.kernel.org; Wed, 01 Apr 2020 10:30:12 EDT
-Received: from pps.filterd (m0187933.ppops.net [127.0.0.1])
-        by mx0a-003e4a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0319aTR6017641;
-        Wed, 1 Apr 2020 04:39:59 -0500
-Received: from susilcesmtp5.fcstone.com (secureauth06.atidft.net [216.111.165.250] (may be forged))
-        by mx0a-003e4a01.pphosted.com with ESMTP id 30205adt4r-1;
-        Wed, 01 Apr 2020 04:39:59 -0500
-Received: from User ([10.40.13.245]) by SUSILCESMTP5.FCStone.com with Microsoft SMTPSVC(10.0.17763.1);
-         Wed, 1 Apr 2020 04:39:58 -0500
-Reply-To: <abukareem461@gmail.com>
-From:   "Abdul Kareem" <admin@abdulkareem.org>
-Subject: BUSINESS PROPOSAL !!!
-Date:   Wed, 1 Apr 2020 02:39:35 -0700
+        Wed, 1 Apr 2020 05:41:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585734090;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ljSBuTDshyjfWDIFiCj71fILGTvbhkgJDDa/MPsZiCk=;
+        b=DJ4dU1KA/YyoDji7Gcv3BnSl66wJw9UXOkQWDsPbtMNy4TlDiOLSAVSwN+PKoRjBaCJkR7
+        v0C9XYIBvJp9t7eRqG1d6peUUg3xqBk4TBXeQzYWqfCJoiZMeOtjfM7+hHEHC9M6pz3oW2
+        asT/g+5hbEijRaf7MBzbRU6yXl+txOc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-116-Jxw7ZyuKNJKiFRnZIQ0tPQ-1; Wed, 01 Apr 2020 05:41:26 -0400
+X-MC-Unique: Jxw7ZyuKNJKiFRnZIQ0tPQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E97F9107B118;
+        Wed,  1 Apr 2020 09:41:21 +0000 (UTC)
+Received: from [10.36.112.58] (ovpn-112-58.ams2.redhat.com [10.36.112.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 318D4118F20;
+        Wed,  1 Apr 2020 09:41:11 +0000 (UTC)
+Subject: Re: [PATCH v1 3/8] vfio/type1: Report PASID alloc/free support to
+ userspace
+To:     "Liu, Yi L" <yi.l.liu@intel.com>, alex.williamson@redhat.com
+Cc:     kevin.tian@intel.com, jacob.jun.pan@linux.intel.com,
+        joro@8bytes.org, ashok.raj@intel.com, jun.j.tian@intel.com,
+        yi.y.sun@intel.com, jean-philippe@linaro.org, peterx@redhat.com,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hao.wu@intel.com
+References: <1584880325-10561-1-git-send-email-yi.l.liu@intel.com>
+ <1584880325-10561-4-git-send-email-yi.l.liu@intel.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <1b720777-8334-936e-5edb-802b3dae7b05@redhat.com>
+Date:   Wed, 1 Apr 2020 11:41:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="Windows-1251"
+In-Reply-To: <1584880325-10561-4-git-send-email-yi.l.liu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-ID: <SUSILCESMTP5cEPt0nl0000b69c@SUSILCESMTP5.FCStone.com>
-X-OriginalArrivalTime: 01 Apr 2020 09:39:58.0923 (UTC) FILETIME=[826281B0:01D60809]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound score=100 clxscore=1034
- spamscore=100 malwarescore=0 suspectscore=0 impostorscore=0 adultscore=0
- mlxlogscore=-999 bulkscore=99 phishscore=0 priorityscore=1501 mlxscore=100
- lowpriorityscore=99 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004010088
-To:     unlisted-recipients:; (no To-header on input)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dearest Friend
+Yi,
+On 3/22/20 1:32 PM, Liu, Yi L wrote:
+> From: Liu Yi L <yi.l.liu@intel.com>
+> 
+> This patch reports PASID alloc/free availability to userspace (e.g. QEMU)
+> thus userspace could do a pre-check before utilizing this feature.
+> 
+> Cc: Kevin Tian <kevin.tian@intel.com>
+> CC: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Cc: Alex Williamson <alex.williamson@redhat.com>
+> Cc: Eric Auger <eric.auger@redhat.com>
+> Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> ---
+>  drivers/vfio/vfio_iommu_type1.c | 28 ++++++++++++++++++++++++++++
+>  include/uapi/linux/vfio.h       |  8 ++++++++
+>  2 files changed, 36 insertions(+)
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index e40afc0..ddd1ffe 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -2234,6 +2234,30 @@ static int vfio_iommu_type1_pasid_free(struct vfio_iommu *iommu,
+>  	return ret;
+>  }
+>  
+> +static int vfio_iommu_info_add_nesting_cap(struct vfio_iommu *iommu,
+> +					 struct vfio_info_cap *caps)
+> +{
+> +	struct vfio_info_cap_header *header;
+> +	struct vfio_iommu_type1_info_cap_nesting *nesting_cap;
+> +
+> +	header = vfio_info_cap_add(caps, sizeof(*nesting_cap),
+> +				   VFIO_IOMMU_TYPE1_INFO_CAP_NESTING, 1);
+> +	if (IS_ERR(header))
+> +		return PTR_ERR(header);
+> +
+> +	nesting_cap = container_of(header,
+> +				struct vfio_iommu_type1_info_cap_nesting,
+> +				header);
+> +
+> +	nesting_cap->nesting_capabilities = 0;
+> +	if (iommu->nesting) {
+> +		/* nesting iommu type supports PASID requests (alloc/free) */
+> +		nesting_cap->nesting_capabilities |= VFIO_IOMMU_PASID_REQS;
+Supporting nesting does not necessarily mean supporting PASID.
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static long vfio_iommu_type1_ioctl(void *iommu_data,
+>  				   unsigned int cmd, unsigned long arg)
+>  {
+> @@ -2283,6 +2307,10 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
+>  		if (ret)
+>  			return ret;
+>  
+> +		ret = vfio_iommu_info_add_nesting_cap(iommu, &caps);
+> +		if (ret)
+> +			return ret;
+> +
+>  		if (caps.size) {
+>  			info.flags |= VFIO_IOMMU_INFO_CAPS;
+>  
+> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> index 298ac80..8837219 100644
+> --- a/include/uapi/linux/vfio.h
+> +++ b/include/uapi/linux/vfio.h
+> @@ -748,6 +748,14 @@ struct vfio_iommu_type1_info_cap_iova_range {
+>  	struct	vfio_iova_range iova_ranges[];
+>  };
+>  
+> +#define VFIO_IOMMU_TYPE1_INFO_CAP_NESTING  2
+> +
+> +struct vfio_iommu_type1_info_cap_nesting {
+> +	struct	vfio_info_cap_header header;
+> +#define VFIO_IOMMU_PASID_REQS	(1 << 0)
+PASID_REQS sounds a bit far from the claimed host managed alloc/free
+capability.
+VFIO_IOMMU_SYSTEM_WIDE_PASID?
+> +	__u32	nesting_capabilities;
+> +};
+> +
+>  #define VFIO_IOMMU_GET_INFO _IO(VFIO_TYPE, VFIO_BASE + 12)
+>  
+>  /**
+> 
+Thanks
 
-I am Abdul Kareem Working with Emirate NBD Bank Dubai,United Arab Emirate as Finance Manager,I am pleased to get across to you for a very urgent and profitable business proposal which I believe will profit the both of us after completion,I have been in search of someone with this last name as yours,when I saw your name I was pushed to contact you and see how best we can assist each other believing that you will not betray me, My late client citizen of your country who is the founder of (ALF Emirate Gold Refinery DMCC) made a fixed deposit with my bank in January 2009 for 36 calendar months, valued at (US$37,500,000)Thirty Seven Million,Five Hundred Thousand United State Dollars Only,The due date for this deposit contract was the 2nd of April 2012,He met his untimely death in the Japan earthquake and tsunami Friday 11 March 2011 on a business trip.
+Eric
 
-My bank management is yet to know about his death, I knew about it because he was my friend and I was his Account Officer and he did not mention any Next of Kin/ Heir when the account was opened,he was a widowed and no children,I am seeking your co-operation to present you as the Next of Kin/ Heir to the account, since you are a foreigner and my bank  will release the funds to you,There is no risk involved, the transaction will be executed under a legitimate arrangement that will protect us from any breach of law,I am not a greedy person, so I am suggesting we share the funds in this ratio, 50/50% ,Let me know your mind on this and please do treat this information highly confidential, We shall go over the details once I receive your urgent response.
-
-Anticipating your response
-
-Sincerely Yours
-Abdul Kareem
