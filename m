@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40FCB19B091
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE50B19B217
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:41:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388049AbgDAQ1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:27:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51774 "EHLO mail.kernel.org"
+        id S2389384AbgDAQk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:40:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387962AbgDAQ1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:27:03 -0400
+        id S2389372AbgDAQky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:40:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 166D8216FD;
-        Wed,  1 Apr 2020 16:27:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E27E2063A;
+        Wed,  1 Apr 2020 16:40:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758422;
-        bh=CZB+KZiYdArxmr34T50wC1U0sriUX3k/RvRcHsuKGS4=;
+        s=default; t=1585759252;
+        bh=u0oxV+ZE30Cvfe5WC10gcHtQGNHrKMYUrIi5VvOstjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TWzknoBC++BYACfn5BHDoS5nD8ebisGCFJ/NuUtRBL/lnUJCKypzAAI5ftbU2XSVd
-         NEAx2WZoB8OFr42mVZtabACaSuczSQpNFo1nc2xd4Spe8tI7PmjhvJLv8gq4Qr23tZ
-         KjeCuXi3jvnlMUSP5OIxp1NuYlxbW18cen6CRS1w=
+        b=NAmISDxHToVThnN7Mwv7XBwQ144qACWNlIR4IPsDgSl8iXRvzS/nE6CPGJHghG3Df
+         qQNjmshcie2dA3p6sPP8u4fgZL0MZejzY9uORo7bF8QMrnr0sWzleQq6bfZt7YWtTT
+         5xBN3pxGVgMAYZiJwktMABZ8dw2RimmIxl5QrkWk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
-        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 037/116] cgroup1: dont call release_agent when it is ""
-Date:   Wed,  1 Apr 2020 18:16:53 +0200
-Message-Id: <20200401161547.159255283@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Steinmetz <ast@domdv.de>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 022/148] ALSA: seq: virmidi: Fix running status after receiving sysex
+Date:   Wed,  1 Apr 2020 18:16:54 +0200
+Message-Id: <20200401161554.583903034@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tycho Andersen <tycho@tycho.ws>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 2e5383d7904e60529136727e49629a82058a5607 ]
+commit 4384f167ce5fa7241b61bb0984d651bc528ddebe upstream.
 
-Older (and maybe current) versions of systemd set release_agent to "" when
-shutting down, but do not set notify_on_release to 0.
+The virmidi driver handles sysex event exceptionally in a short-cut
+snd_seq_dump_var_event() call, but this missed the reset of the
+running status.  As a result, it may lead to an incomplete command
+right after the sysex when an event with the same running status was
+queued.
 
-Since 64e90a8acb85 ("Introduce STATIC_USERMODEHELPER to mediate
-call_usermodehelper()"), we filter out such calls when the user mode helper
-path is "". However, when used in conjunction with an actual (i.e. non "")
-STATIC_USERMODEHELPER, the path is never "", so the real usermode helper
-will be called with argv[0] == "".
+Fix it by clearing the running status properly via alling
+snd_midi_event_reset_decode() for that code path.
 
-Let's avoid this by not invoking the release_agent when it is "".
+Reported-by: Andreas Steinmetz <ast@domdv.de>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/3b4a4e0f232b7afbaf0a843f63d0e538e3029bfd.camel@domdv.de
+Link: https://lore.kernel.org/r/20200316090506.23966-2-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/cgroup/cgroup-v1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/core/seq/seq_virmidi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index c9628b9a41d23..dd8bdbfbbde1e 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -812,7 +812,7 @@ void cgroup1_release_agent(struct work_struct *work)
- 
- 	pathbuf = kmalloc(PATH_MAX, GFP_KERNEL);
- 	agentbuf = kstrdup(cgrp->root->release_agent_path, GFP_KERNEL);
--	if (!pathbuf || !agentbuf)
-+	if (!pathbuf || !agentbuf || !strlen(agentbuf))
- 		goto out;
- 
- 	spin_lock_irq(&css_set_lock);
--- 
-2.20.1
-
+--- a/sound/core/seq/seq_virmidi.c
++++ b/sound/core/seq/seq_virmidi.c
+@@ -95,6 +95,7 @@ static int snd_virmidi_dev_receive_event
+ 			if ((ev->flags & SNDRV_SEQ_EVENT_LENGTH_MASK) != SNDRV_SEQ_EVENT_LENGTH_VARIABLE)
+ 				continue;
+ 			snd_seq_dump_var_event(ev, (snd_seq_dump_func_t)snd_rawmidi_receive, vmidi->substream);
++			snd_midi_event_reset_decode(vmidi->parser);
+ 		} else {
+ 			len = snd_midi_event_decode(vmidi->parser, msg, sizeof(msg), ev);
+ 			if (len > 0)
 
 
