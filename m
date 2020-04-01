@@ -2,212 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC61A19A726
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45F1019A72D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:23:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730831AbgDAIWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:22:32 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45937 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbgDAIWc (ORCPT
+        id S1731885AbgDAIXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:23:36 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:35257 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730574AbgDAIXg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:22:32 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1jJYdo-0007pE-MB; Wed, 01 Apr 2020 10:22:28 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1jJYdn-0000Pf-AB; Wed, 01 Apr 2020 10:22:27 +0200
-Date:   Wed, 1 Apr 2020 10:22:27 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Lokesh Vutla <lokeshvutla@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>,
-        kernel@pengutronix.de
-Subject: Re: [PATCH v3 4/5] pwm: omap-dmtimer: Do not disable pwm before
- changing period/duty_cycle
-Message-ID: <20200401082227.sxtarbttsmmhs2of@pengutronix.de>
-References: <20200312042210.17344-1-lokeshvutla@ti.com>
- <20200312042210.17344-5-lokeshvutla@ti.com>
- <20200312064042.p7himm3odxjyzroi@pengutronix.de>
- <20200330141436.GG2431644@ulmo>
- <20200330191654.waoocllctanh5nk5@pengutronix.de>
- <20200331204559.GB2954599@ulmo>
+        Wed, 1 Apr 2020 04:23:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1585729416; x=1617265416;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   mime-version;
+  bh=aq3bWriBLQql0BndeSu53xWecGPtWYNKWQvYWVyRjRU=;
+  b=ClFLhGm7G2oaGe91kr03It5oY9EldQ08Pt3sQ3PidOFFdc83cyma2Jm3
+   g6aFp8TDRCMo8xgbgSuzkp6Ct+f1Y1wjL/ovBEJkS7fss1dPATYHFyMPL
+   vxEDIHNzNgY/5dKS6a9CVMkWTA0CBYGlRGEFqXuYth5j8uqeoLCH1EkcS
+   w=;
+IronPort-SDR: 4SflCQgY22B5d62QR6UUROTKgfTsuxQh+AubpVF14xOq2OhLG1NA7fyz/7CIZ3/txiP3ZkocMf
+ ym0kMjbqBpvQ==
+X-IronPort-AV: E=Sophos;i="5.72,331,1580774400"; 
+   d="scan'208";a="36012011"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1a-807d4a99.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 01 Apr 2020 08:23:33 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-807d4a99.us-east-1.amazon.com (Postfix) with ESMTPS id 0B274A333B;
+        Wed,  1 Apr 2020 08:23:22 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Wed, 1 Apr 2020 08:23:22 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.8) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Wed, 1 Apr 2020 08:23:08 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+CC:     SeongJae Park <sjpark@amazon.com>, <akpm@linux-foundation.org>,
+        "SeongJae Park" <sjpark@amazon.de>, <aarcange@redhat.com>,
+        <acme@kernel.org>, <alexander.shishkin@linux.intel.com>,
+        <amit@kernel.org>, <brendan.d.gregg@gmail.com>,
+        <brendanhiggins@google.com>, <cai@lca.pw>,
+        <colin.king@canonical.com>, <corbet@lwn.net>, <dwmw@amazon.com>,
+        <jolsa@redhat.com>, <kirill@shutemov.name>, <mark.rutland@arm.com>,
+        <mgorman@suse.de>, <minchan@kernel.org>, <mingo@redhat.com>,
+        <namhyung@kernel.org>, <peterz@infradead.org>,
+        <rdunlap@infradead.org>, <riel@surriel.com>, <rientjes@google.com>,
+        <rostedt@goodmis.org>, <shuah@kernel.org>, <sj38.park@gmail.com>,
+        <vbabka@suse.cz>, <vdavydov.dev@gmail.com>,
+        <yang.shi@linux.alibaba.com>, <ying.huang@intel.com>,
+        <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH v7 05/15] mm/damon: Adaptively adjust regions
+Date:   Wed, 1 Apr 2020 10:22:53 +0200
+Message-ID: <20200401082253.21405-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200331170855.0000024f@Huawei.com> (raw)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200331204559.GB2954599@ulmo>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [10.43.160.8]
+X-ClientProxiedBy: EX13D29UWC002.ant.amazon.com (10.43.162.254) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Thierry,
+On Tue, 31 Mar 2020 17:08:55 +0100 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
 
-On Tue, Mar 31, 2020 at 10:45:59PM +0200, Thierry Reding wrote:
-> On Mon, Mar 30, 2020 at 09:16:54PM +0200, Uwe Kleine-König wrote:
-> > On Mon, Mar 30, 2020 at 04:14:36PM +0200, Thierry Reding wrote:
-> > > On Thu, Mar 12, 2020 at 07:40:42AM +0100, Uwe Kleine-König wrote:
-> > > > On Thu, Mar 12, 2020 at 09:52:09AM +0530, Lokesh Vutla wrote:
-> > > > > Only the Timer control register(TCLR) cannot be updated when the timer
-> > > > > is running. Registers like Counter register(TCRR), loader register(TLDR),
-> > > > > match register(TMAR) can be updated when the counter is running. Since
-> > > > > TCLR is not updated in pwm_omap_dmtimer_config(), do not stop the
-> > > > > timer for period/duty_cycle update.
-> > > > 
-> > > > I'm not sure what is sensible here. Stopping the PWM for a short period
-> > > > is bad, but maybe emitting a wrong period isn't better. You can however
-> > > > optimise it if only one of period or duty_cycle changes.
-> > > > 
-> > > > @Thierry, what is your position here? I tend to say a short stop is
-> > > > preferable.
-> > > 
-> > > It's not clear to me from the above description how exactly the device
-> > > behaves, but I suspect that it may latch the values in those registers
-> > > and only update the actual signal output once a period has finished. I
-> > > know of a couple of other devices that do that, so it wouldn't be
-> > > surprising.
-> > > 
-> > > Even if that was not the case, I think this is just the kind of thing
-> > > that we have to live with. Sometimes it just isn't possible to have all
-> > > supported devices adhere strictly to an API. So I think the best we can
-> > > do is have an API that loosely defines what's supposed to happen and
-> > > make a best effort to implement those semantics. If a device deviates
-> > > slightly from those expectations, we can always cross fingers and hope
-> > > that things still work. And it looks like they are.
-> > > 
-> > > So I think if Lokesh and Tony agree that this is the right thing to do
-> > > and have verified that things still work after this, that's about as
-> > > good as it's going to get.
+> On Wed, 18 Mar 2020 12:27:12 +0100
+> SeongJae Park <sjpark@amazon.com> wrote:
+> 
+> > From: SeongJae Park <sjpark@amazon.de>
 > > 
-> > I'd say this isn't for the platform people to decide. My position here
-> > is that the PWM drivers should behave as uniform as possible to minimize
-> > surprises for consumers. And so it's a "PWM decision" that is to be made
-> > here, not an "omap decision".
-> 
-> I think there's a fine line to be walked here. I agree that we should
-> aim to have as much consistency between drivers as possible. At the same
-> time I think we need to be pragmatic. As Lokesh said, the particular use
-> case here requires this type of on-the-fly adjustment of the PWM period
-> without stopping and restarting the PWM. It doesn't work otherwise. So
-> th alternative that you're proposing is to say that we don't support
-> that use-case, even though it works just fine given this particular
-> hardware. That's not really an option.
-
-I understand your opinion here. The situation now is that in current
-mainline the driver stops the hardware for reconfiguration and it
-doesn't fit Lokesh's use case so he changed to on-the-fly update
-(accepting that maybe a wrong period is emitted). What if someone relies
-on the old behaviour? What if in a year someone comes and claims the
-wrong period is bad for their usecase and changes back to
-stop-to-update?
-
-When I write a consumer driver, do I have a chance to know how the PWM,
-that I happen to use, behaves? To be able to get my consumer driver
-reliable I might need to know that however.
-
-> > > I know this is perhaps cheating a little, or turning a blind eye, but I
-> > > don't know what the alternative would be. Do we want to tell people that
-> > > a given PWM controller can't be used if it doesn't work according to our
-> > > expectations? That's hard to argue if that controller works just fine
-> > > for all known use-cases.
+> > At the beginning of the monitoring, DAMON constructs the initial regions
+> > by evenly splitting the memory mapped address space of the process into
+> > the user-specified minimal number of regions.  In this initial state,
+> > the assumption of the regions (pages in same region have similar access
+> > frequencies) is normally not kept and thus the monitoring quality could
+> > be low.  To keep the assumption as much as possible, DAMON adaptively
+> > merges and splits each region.
 > > 
-> > I'd like have some official policy here which of the alternatives is the
-> > preferred cheat.
+> > For each ``aggregation interval``, it compares the access frequencies of
+> > adjacent regions and merges those if the frequency difference is small.
+> > Then, after it reports and clears the aggregated access frequency of
+> > each region, it splits each region into two regions if the total number
+> > of regions is smaller than the half of the user-specified maximum number
+> > of regions.
 > > 
-> > The situation here is that period and duty_cycle cannot be updated
-> > atomically. So the two options are:
+> > In this way, DAMON provides its best-effort quality and minimal overhead
+> > while keeping the bounds users set for their trade-off.
 > > 
-> >  - stop shortly
-> >  - update with hardware running and maybe emit a broken period
+> > Signed-off-by: SeongJae Park <sjpark@amazon.de>
 > 
-> I think we can already support both of those with the existing API. If
-> a consumer wants to stop the PWM while reconfiguring, they should be
-> able to do pwm_enable(), pwm_config(), pwm_enable() (or the atomic
-> equivalent) and for the second case they can just do pwm_config() (or
-> the atomic equivalent).
+> A few more edge cases in here, and a suggestion that might be more costly
+> but lead to simpler code.
 
-Yes, the consumer can force the stop and update. But assume I'm "only" a
-consumer driver author and I want: atomic update and if this is not
-possible I prefer "stop-to-update" over "on-the-fly-and-maybe-faulty".
-So I cannot benefit from a good driver/hardware that can do atomic
-updates? Or I have to patch each driver that I actually use to use
-stop-to-update?
+Thank you for finding those!
 
-> Some hardware may actually require the PWM to be disabled before
-> reconfiguring, so they won't be able to strictly adhere to the second
-> use-case.
 > 
-> But as discussed above, I don't want to strive for a lowest common
-> denominator that would preclude some more specific use-cases from
-> working if the hardware supports it.
+> Jonathan
 > 
-> So I think we should aim for drivers to implement the semantics as
-> closely as possible. If the hardware doesn't support some of these
-> requirements strictly while a particular use-case depends on that, then
-> that just means that the hardware isn't compatible with that use-case.
-> Chances are that the system just isn't going to be designed to support
-> that use-case in the first place if the hardware can't do it.
+> > ---
+> >  include/linux/damon.h |   6 +-
+> >  mm/damon.c            | 148 ++++++++++++++++++++++++++++++++++++++++--
+> >  2 files changed, 145 insertions(+), 9 deletions(-)
+> > 
+[...]
+> > diff --git a/mm/damon.c b/mm/damon.c
+> > index 018016793555..23c0de3b502e 100644
+> > --- a/mm/damon.c
+> > +++ b/mm/damon.c
+[...]
+> > +
+> > +/*
+> > + * Split a region into two small regions
+> > + *
+> > + * r		the region to be split
+> > + * sz_r		size of the first sub-region that will be made
+> > + */
+> > +static void damon_split_region_at(struct damon_ctx *ctx,
+> > +		struct damon_region *r, unsigned long sz_r)
+> > +{
+> > +	struct damon_region *new;
+> > +
+> > +	new = damon_new_region(ctx, r->vm_start + sz_r, r->vm_end);
+> > +	r->vm_end = new->vm_start;
 > 
-> The sysfs interface is a bit of a special case here because it isn't
-> possible to know what use-cases people are going to come up with.
+> We may well have a sampling address that is in the wrong region.
+> It should have little effect on the stats as will fix on next sample
+> but in my view still worth cleaning up.
 
-In my eyes the sysfs interface isn't special here. You also don't know
-what the OMAP PWM hardware is used for.
+Good catch!  I will fix this in next spin.
 
-> It's most likely that they'll try something and if it doesn't work
-> they can see if a driver patch can improve things.
-
-So either the group who prefers "stop-to-update" or the group who
-prefers "on-the-fly-and-maybe-faulty" has to carry a system specific
-driver patch?
-
-> One possible extension that I can imagine would be to introduce some
-> sort of capability structure that drivers can fill in to describe the
-> behaviour of the hardware. Drivers like pwm-omap-dmtimer, for example,
-> could describe that they are able to change the period and/or duty cycle
-> while the PWM is on. There could be another capability bit that says
-> that the current period will finish before new settings are applied. Yet
-> another capability could describe that duty-cycle and period can be
-> applied atomically. Consumers could then check those capabilities to see
-> if they match their requirements.
 > 
-> But then again, I think that would just make things overly complicated.
-> None of the existing consumers need that, so it doesn't seem like there
-> is much demand for that feature. In practice I suspect most consumers
-> work fine despite potentially small deviations in how the PWM behaves.
+> > +
+> > +	damon_insert_region(new, r, damon_next_region(r));
+> > +}
+> > +
+[...]
+> > @@ -571,21 +689,29 @@ static int kdamond_fn(void *data)
+> >  	struct damon_task *t;
+> >  	struct damon_region *r, *next;
+> >  	struct mm_struct *mm;
+> > +	unsigned int max_nr_accesses;
+> >  
+> >  	pr_info("kdamond (%d) starts\n", ctx->kdamond->pid);
+> >  	kdamond_init_regions(ctx);
+> >  	while (!kdamond_need_stop(ctx)) {
+> > +		max_nr_accesses = 0;
+> >  		damon_for_each_task(ctx, t) {
+> >  			mm = damon_get_mm(t);
+> >  			if (!mm)
+> >  				continue;
+> > -			damon_for_each_region(r, t)
+> > +			damon_for_each_region(r, t) {
+> >  				kdamond_check_access(ctx, mm, r);
+> > +				max_nr_accesses = max(r->nr_accesses,
+> > +						max_nr_accesses);
+> > +			}
+> >  			mmput(mm);
+> >  		}
+> >  
+> > -		if (kdamond_aggregate_interval_passed(ctx))
+> > +		if (kdamond_aggregate_interval_passed(ctx)) {
+> > +			kdamond_merge_regions(ctx, max_nr_accesses / 10);
+> >  			kdamond_reset_aggregated(ctx);
+> > +			kdamond_split_regions(ctx);
+> > +		}
+> 
+> I wonder if it would be simpler to split the sampling address setup and
+> mkold from the access check.  We would have to walk regions twice,
+> but not have to bother separately dealing with updating some regions
+> if they are modified in the above block.
+> 
+> Also, the above has some overhead, so will bias that first sample each
+> time the block above runs.  If we do the mkold afterwards it will make
+> much less difference.
 
-I think the status quo is what I asked about above: People use sysfs and
-if the PWM behaves different than needed, the driver is patched and most
-of the time not mainlined. If your focus is to support a certain
-industrial system with a defined use case, this is fine. If however you
-target for an universal framework that works for any combination of
-consumer + lowlevel driver without patching (that at least is able to
-diagnose: This PWM cannot provide what my consumer needs), this is bad.
-Also this means that whenever a system designer changes something on
-their machine (kernel update, different hardware, an new usecase for a
-PWM) they might have to reverify if the given PWM driver behaves as
-needed.
+Agreed, it will make code much more simple and easy to read.  However, I'm not
+sure how much of the overhead will be biased because 'aggregate interval' is
+usually larger than 'sampling interval'.  Anyway, Will change so in the next
+spin!
 
-My suggestion for now is to start documenting how the drivers behave
-expanding how limitations are documented in some drivers. So maybe
-change from "Limitations" to "Implementation and Hardware Details"?
 
-Best regards
-Uwe
+Thanks,
+SeongJae Park
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+[...]
