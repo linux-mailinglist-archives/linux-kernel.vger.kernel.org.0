@@ -2,86 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2F2F19AD3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 15:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4500E19AD3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 15:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732800AbgDAN6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 09:58:33 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58887 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732783AbgDAN6c (ORCPT
+        id S1732835AbgDAN7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 09:59:00 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38632 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732783AbgDAN7A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 09:58:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585749512;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8B9xUBos0YJ8VlQ4fiT4d5rWb3J28k251TWX4OuYFvE=;
-        b=dkfTb/Mgd9p7IzU88Jtewzn0Q0HcLCVodoqSBGwo363Lc+AqLAWqrcnTrsI5JYZK7wvbyV
-        zmuxzFLRKRmp1HpAMMIZzSGFu1PS6XM3ByUdwiyP9cNWyrbWQMv7aymQpyGCVGfWEw5MJf
-        7/44OfNnNHN0HjFz63Sj2CKy58J+aRo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-267-koarxiR7O2in1kPI6WwqkQ-1; Wed, 01 Apr 2020 09:58:28 -0400
-X-MC-Unique: koarxiR7O2in1kPI6WwqkQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8B9C6800D4E;
-        Wed,  1 Apr 2020 13:58:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-114-243.ams2.redhat.com [10.36.114.243])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 558528AC2D;
-        Wed,  1 Apr 2020 13:58:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <2488530.1585749351@warthog.procyon.org.uk>
-References: <2488530.1585749351@warthog.procyon.org.uk> <CAJfpeguu52VuLAzjFH4rJJ7WYLB5ag8y+r3VMb-0bqH8c-uJUg@mail.gmail.com> <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <1445647.1585576702@warthog.procyon.org.uk> <2418286.1585691572@warthog.procyon.org.uk> <20200401090445.6t73dt7gz36bv4rh@ws.net.home>
-Cc:     dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Karel Zak <kzak@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
-        andres@anarazel.de, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lennart Poettering <lennart@poettering.net>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+        Wed, 1 Apr 2020 09:59:00 -0400
+Received: by mail-wr1-f68.google.com with SMTP id c7so159383wrx.5
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 06:58:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=d3ubFjm4VVzuezD9K57VpIO57fRHdUfHFre4oE4/E04=;
+        b=LXbULbcGmfMrHy9dOLNhW1kZDtfZBIl5/lz1iQa7oPRNngMcEJOD5l9icOrmOO3Djy
+         EQqlHxTtbMGEE8mA6x2XBw2ECgbR9y6ZS1rqlC2xQfsHBjipC9cadM0uKuyexhvN0x93
+         k80wEGBoqIiMrvi008KAnbEGbOywRBQBtrc6WJuf+RJTwHbrfp2xJ3ES2Blh9aaeV7MF
+         sn5MWYTVT5jYkU50jZkgvTOzplUoQyJAZAAIRnuqgZIrY7YroC14n05NDSNQzdewB6oe
+         m4jvH2JQRvBUQFqQV2RVjStv4Za6RmY7silH4dWxTZawFm1cPOKC6+mQDGBZAe7TTLko
+         lODw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=d3ubFjm4VVzuezD9K57VpIO57fRHdUfHFre4oE4/E04=;
+        b=c/W6wraVe9LndsXKRHRKNRPZEd/p++J3zZ1Vkr5/3lHtdbuDMvsnhk3twfGe74KDBp
+         6KjA+rz+C/0N8jmTjK0RvZ9DdSgJRV00t7bVt/Jjp+auxf/3iJtOKV+l1EQVFzVHajHE
+         OH02AYs6gOSUfP9kGjD5Rjw6ho3htyRN6Bt/LkIx8C6w6Z61CKuZDp2l3gN9qrH80FQg
+         kiCVQahw1Mcan5PcRqWbNhRQlmD2oxpdM3E4h9xSj5rG0nsWKN44Vw6ZzsWgjJvFWsUu
+         yAEiBBSHUhdWcb2I206dDH3T+QIfsYVr/Z0AbqqIVIF15lqdF68sULB0nG2qczScePDG
+         cE6g==
+X-Gm-Message-State: ANhLgQ0YlWLEnyAJCjtPSyV709iMswvgxxJpnQyQRbd3jJd4RitTtgcJ
+        KZT2Xv8oRBoAwGNHo4xVjjV6WQ==
+X-Google-Smtp-Source: ADFU+vthmbr5J9ido3XqSuHL53iktFkKp5Zjtb6yGwfjf/rGGcpxQjJ5+XEG6T8A4hs6VdpG9JxD2w==
+X-Received: by 2002:adf:ee8b:: with SMTP id b11mr6915157wro.404.1585749536778;
+        Wed, 01 Apr 2020 06:58:56 -0700 (PDT)
+Received: from myrica ([2001:171b:226b:54a0:6097:1406:6470:33b5])
+        by smtp.gmail.com with ESMTPSA id a186sm2734787wmh.33.2020.04.01.06.58.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 06:58:56 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 15:58:48 +0200
+From:   Jean-Philippe Brucker <jean-philippe@linaro.org>
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>
+Subject: Re: [PATCH 07/10] iommu/ioasid: Use mutex instead of spinlock
+Message-ID: <20200401135848.GH882512@myrica>
+References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1585158931-1825-8-git-send-email-jacob.jun.pan@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2488733.1585749502.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 01 Apr 2020 14:58:22 +0100
-Message-ID: <2488734.1585749502@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1585158931-1825-8-git-send-email-jacob.jun.pan@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+On Wed, Mar 25, 2020 at 10:55:28AM -0700, Jacob Pan wrote:
+> Each IOASID or set could have multiple users with its own HW context
+> to maintain. Often times access to the HW context requires thread context.
+> For example, consumers of IOASIDs can register notification blocks to
+> sync up its states. Having an atomic notifier is not feasible for these
+> update operations.
+> 
+> This patch converts allocator lock from spinlock to mutex in preparation
+> for IOASID notifier.
 
-> > Attached patch applies against readfile patch.
-> =
+Unfortunately this doesn't work for SVA, which needs to call ioasid_free()
+from the RCU callback of mmu_notifier_put(), which cannot sleep. We're
+relying on MMU notifers this way to ensure that there is a single IOASID
+per mm.
 
-> But doesn't actually do what Karel asked for.  show_mountinfo() itself d=
-oes
-> not give you what Karel asked for.  Plus there's more information you ne=
-ed to
-> add to it.
-
-And arguably, it's worse than just reading /proc/mounts.  If you get a
-notification that something changed (ie. you poll /proc/mounts or mount
-notifications gives you an overrun) you now have to read *every*
-/mountfs/*/info file.  That is way more expensive.
-
-David
-
+Thanks,
+Jean
