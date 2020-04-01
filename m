@@ -2,91 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3C0919A6FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 812BC19A704
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:18:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731396AbgDAISO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:18:14 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49503 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727723AbgDAISO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:18:14 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48sfGC5sDKz9sRf;
-        Wed,  1 Apr 2020 19:18:11 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1585729092;
-        bh=45h8GqJFGQK7xxRFCLSuE/+5xYhWiLofyTdYqaSBfHE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VmNm2ujXqgQIF8s2wrreao8RO2PnOz7oyD6tW10IZMBuMkCMmUjy1KRNNnaR/LTu/
-         t6vUC0/3cilkY/s8JGo9zEdqE6gNyTW3EWTvAcbA5Ngp3ehOFu1GB7U5VcfHSauIaR
-         ECF/1pk6t6QX9hPzBl/TaYhNIn873Whkl9AkYUfLi1dVn5eypWUTV7ecULKGp9w4/H
-         wybyBMsNcbNJcMCu7jwYeyogT7URcljatA+UanrTyda2U6lDIhDGTbO8X7rL1WLCzd
-         3yU1x+pOX5IAtpB+b2i0ovC1jsmJcX3FC1dxl/2D00G+aIoG8fh9c4O5jzKEA35e9c
-         w7e7nbSnj/0kw==
-Date:   Wed, 1 Apr 2020 19:18:10 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] gpio: turn of_pinctrl_get() into a static inline
-Message-ID: <20200401191810.1c06ead6@canb.auug.org.au>
-In-Reply-To: <20200401190810.7a2cfa07@canb.auug.org.au>
-References: <20200401190810.7a2cfa07@canb.auug.org.au>
+        id S1731959AbgDAIS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:18:29 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39217 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731745AbgDAIS2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 04:18:28 -0400
+Received: by mail-ed1-f65.google.com with SMTP id a43so28587060edf.6
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 01:18:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5NfTZ1psxcbruTelVq920UEZMKP5Q8CYhbx3Of3ZlPA=;
+        b=TsV8RV0SNk0duVRe8v/Jj4pUvxKHMnpiNZJsAeg9dXLkJzcr28I12rPobiFSrxekML
+         lZvjBSqesoMNZcw1jplpdWMUlDPvIYiCa5VHqqtrXDqBvhuLrRMLZ7+aBc6IpMGq+fcW
+         2/z6FfT4AnvWnPiH8aQdExL1Q5n0l2QdZdKhI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5NfTZ1psxcbruTelVq920UEZMKP5Q8CYhbx3Of3ZlPA=;
+        b=kO1aB45TwXoX82C61wm118otzBaVZpeOUJuv2jv3PL+GpWC6cEklWsDeXVkjMEL6cZ
+         KApdaOgzc4vdUhE19m1HZ5wBCa9VxFAGrhXdWzKWJDZo/yr3O43MK46CogxSofuC91Iz
+         sa/moGAYA4qdM3RtYLcUliulkixkNIICPGBHmgmM2RKraKk71ewFXH8/aFZPGkIUwxfY
+         GPjJjcvN4UPO9yyF2Yk3VXJ+NmcaIQZLccO173AoT0kGXKOIQYEpgnHibWG65TapJgtr
+         oSo48mCsKr01+zNTDw/+07elABodO7Gll5gxVUQkQw1w9E6c2o1MDez4xDb5knmZmxXD
+         g7Dg==
+X-Gm-Message-State: ANhLgQ3sHLVHk6bW/chO/nZ7JoJgoWjzXtWJLU0Vxos44TVQn2k3ldEU
+        fWcxVsjUESrEwURphii+qnGg9PFsFLtmXG2IJ5qnhw==
+X-Google-Smtp-Source: ADFU+vtzbMBDUSOP6hzS0q+rekhXxHRVTRf1V7Qotd7o9b2HuU0+vYqetl4dyF5TMa+9BSocqVggTTfkwZ/JTmGjJJE=
+X-Received: by 2002:a17:906:9ca:: with SMTP id r10mr18691109eje.151.1585729105602;
+ Wed, 01 Apr 2020 01:18:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/+ilK2whdFO0nYeXvZmTtTS1";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
+ <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com> <50caf93782ba1d66bd6acf098fb8dcb0ecc98610.camel@themaw.net>
+In-Reply-To: <50caf93782ba1d66bd6acf098fb8dcb0ecc98610.camel@themaw.net>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 1 Apr 2020 10:18:14 +0200
+Message-ID: <CAJfpegvvMVoNp1QeXEZiNucCeuUeDP4tKqVfq2F4koQKzjKmvw@mail.gmail.com>
+Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
+To:     Ian Kent <raven@themaw.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/+ilK2whdFO0nYeXvZmTtTS1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Wed, 1 Apr 2020 19:08:10 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Wed, Apr 1, 2020 at 7:22 AM Ian Kent <raven@themaw.net> wrote:
 >
-> This avoids the overheads of an EXPORTed function.
->=20
-> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/pinctrl/devicetree.c    | 6 ------
->  include/linux/pinctrl/pinctrl.h | 9 +++------
->  2 files changed, 3 insertions(+), 12 deletions(-)
->=20
-> This is not even build tested, but is this what you meant, Geert?
+> On Wed, 2020-03-18 at 17:05 +0100, Miklos Szeredi wrote:
+> > On Wed, Mar 18, 2020 at 4:08 PM David Howells <dhowells@redhat.com>
+> > wrote:
+> >
+> > > ============================
+> > > WHY NOT USE PROCFS OR SYSFS?
+> > > ============================
+> > >
+> > > Why is it better to go with a new system call rather than adding
+> > > more magic
+> > > stuff to /proc or /sysfs for each superblock object and each mount
+> > > object?
+> > >
+> > >  (1) It can be targetted.  It makes it easy to query directly by
+> > > path.
+> > >      procfs and sysfs cannot do this easily.
+> > >
+> > >  (2) It's more efficient as we can return specific binary data
+> > > rather than
+> > >      making huge text dumps.  Granted, sysfs and procfs could
+> > > present the
+> > >      same data, though as lots of little files which have to be
+> > >      individually opened, read, closed and parsed.
+> >
+> > Asked this a number of times, but you haven't answered yet:  what
+> > application would require such a high efficiency?
+>
+> Umm ... systemd and udisks2 and about 4 others.
+>
+> A problem I've had with autofs for years is using autofs direct mount
+> maps of any appreciable size cause several key user space applications
+> to consume all available CPU while autofs is starting or stopping which
+> takes a fair while with a very large mount table. I saw a couple of
+> applications affected purely because of the large mount table but not
+> as badly as starting or stopping autofs.
+>
+> Maps of 5,000 to 10,000 map entries can almost be handled, not uncommon
+> for heavy autofs users in spite of the problem, but much larger than
+> that and you've got a serious problem.
+>
+> There are problems with expiration as well but that's more an autofs
+> problem that I need to fix.
+>
+> To be clear it's not autofs that needs the improvement (I need to
+> deal with this in autofs itself) it's the affect that these large
+> mount tables have on the rest of the user space and that's quite
+> significant.
 
-Actually this won't work because get_pinctrl_dev_from_of_node() is
-declared in the private header file drivers/pinctrl/core.h :-(
 
---=20
-Cheers,
-Stephen Rothwell
+According to dhowell's measurements processing 100k mounts would take
+about a few seconds of system time (that's the time spent by the
+kernel to retrieve the data, obviously the userspace processing would
+add to that, but that's independent of the kernel patchset).  I think
+that sort of time spent by the kernel is entirely reasonable and is
+probably not worth heavy optimization, since userspace is probably
+going to spend as much, if not more time with each mount entry.
 
---Sig_/+ilK2whdFO0nYeXvZmTtTS1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> I can't even think about resolving my autofs problem until this
+> problem is resolved and handling very large numbers of mounts
+> as efficiently as possible must be part of that solution for me
+> and I think for the OS overall too.
 
------BEGIN PGP SIGNATURE-----
+The key to that is allowing userspace to retrieve individual mount
+entries instead of having to parse the complete mount table on every
+change.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6ETkIACgkQAVBC80lX
-0GwaTwf/ZXqXcE6OngE9UJ98CrEiUipSNOOyd3RoZQ2b8ddk92Mpafwx8aHt+KpP
-o3dRDhrQF7m/L6caa8kYzu12G5dUvn+Y/W+rn7jqZ8UlJr/rKHaR67YSgQtI2yDn
-1NS8RY2oiqvjVWD0KjSEat2VSWwsGZgvd6Dm71Tr5WBysBFQr9YvRZjltp0W1w1h
-JY0Qq8tdXA+RQ7lGMXBlODPy54IryxTw81wb7f57FbjT0huK1t1w16yz+DgzpgA/
-1Ybf71SzyLpadhZxPTgHIF5vgirYs59I2ITm7ZqCi6yYa4bOPzdF0QAErg4jA1Q5
-F1BphVn5143L3ziuwkzQHnJPJ1Z2Ew==
-=hkY7
------END PGP SIGNATURE-----
-
---Sig_/+ilK2whdFO0nYeXvZmTtTS1--
+Thanks,
+Miklos
