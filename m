@@ -2,42 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82A4019B26F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D503C19B040
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389415AbgDAQn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:43:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44850 "EHLO mail.kernel.org"
+        id S2387816AbgDAQZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:25:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389512AbgDAQn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:43:56 -0400
+        id S2387484AbgDAQZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:25:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF92F2063A;
-        Wed,  1 Apr 2020 16:43:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E2B320BED;
+        Wed,  1 Apr 2020 16:25:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759435;
-        bh=jh4q+6jp3bwJQC4FPQjc+xd9xxgENTXWRRQ6FFlQtsM=;
+        s=default; t=1585758321;
+        bh=+Bubee5EQU1n36vkgo2xupBzeF9rBpZYrdoxdCB6/lw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=thn0UUtJQgFdny3eYszMUNRaruVhHMjCpcdkmqDurpQmeu7GlEE7oF+FzZhLJ0U66
-         p7nfsK4rB/nRBoT2hqBsv5cdDqlNL1NQZ8it4JpJHoOYFioD/9LoX9s9KpaU5COTAH
-         Gs3XvnwAED7JJySc/XLjhZ0Rlg7BRSxs8/ZnGtfk=
+        b=wDDNi7gBDx2rbxhqR1J6CAkRkf6C6MDh5746Vsxv6g/l7vAhAncW3L3w5Kaf/rYMJ
+         jb0Px7Sh4FAheYAXdgmNHz9K3b3bAyLPffWlgRQlEwF+KXi1LQRRsJ5VIaqUvXuybP
+         udmELYtThzI4ZFy4FDhNavSKp0c+a9wnUWu2eHNQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 038/148] page-flags: fix a crash at SetPageError(THP_SWAP)
+        stable@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.19 054/116] perf probe: Do not depend on dwfl_module_addrsym()
 Date:   Wed,  1 Apr 2020 18:17:10 +0200
-Message-Id: <20200401161556.412268483@linuxfoundation.org>
+Message-Id: <20200401161549.560440252@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,66 +49,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit d72520ad004a8ce18a6ba6cde317f0081b27365a upstream.
+commit 1efde2754275dbd9d11c6e0132a4f09facf297ab upstream.
 
-Commit bd4c82c22c36 ("mm, THP, swap: delay splitting THP after swapped
-out") supported writing THP to a swap device but forgot to upgrade an
-older commit df8c94d13c7e ("page-flags: define behavior of FS/IO-related
-flags on compound pages") which could trigger a crash during THP
-swapping out with DEBUG_VM_PGFLAGS=y,
+Do not depend on dwfl_module_addrsym() because it can fail on user-space
+shared libraries.
 
-  kernel BUG at include/linux/page-flags.h:317!
+Actually, same bug was fixed by commit 664fee3dc379 ("perf probe: Do not
+use dwfl_module_addrsym if dwarf_diename finds symbol name"), but commit
+07d369857808 ("perf probe: Fix wrong address verification) reverted to
+get actual symbol address from symtab.
 
-  page dumped because: VM_BUG_ON_PAGE(1 && PageCompound(page))
-  page:fffff3b2ec3a8000 refcount:512 mapcount:0 mapping:000000009eb0338c index:0x7f6e58200 head:fffff3b2ec3a8000 order:9 compound_mapcount:0 compound_pincount:0
-  anon flags: 0x45fffe0000d8454(uptodate|lru|workingset|owner_priv_1|writeback|head|reclaim|swapbacked)
+This fixes it again by getting symbol address from DIE, and only if the
+DIE has only address range, it uses dwfl_module_addrsym().
 
-  end_swap_bio_write()
-    SetPageError(page)
-      VM_BUG_ON_PAGE(1 && PageCompound(page))
-
-  <IRQ>
-  bio_endio+0x297/0x560
-  dec_pending+0x218/0x430 [dm_mod]
-  clone_endio+0xe4/0x2c0 [dm_mod]
-  bio_endio+0x297/0x560
-  blk_update_request+0x201/0x920
-  scsi_end_request+0x6b/0x4b0
-  scsi_io_completion+0x509/0x7e0
-  scsi_finish_command+0x1ed/0x2a0
-  scsi_softirq_done+0x1c9/0x1d0
-  __blk_mqnterrupt+0xf/0x20
-  </IRQ>
-
-Fix by checking PF_NO_TAIL in those places instead.
-
-Fixes: bd4c82c22c36 ("mm, THP, swap: delay splitting THP after swapped out")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Acked-by: "Huang, Ying" <ying.huang@intel.com>
-Acked-by: Rafael Aquini <aquini@redhat.com>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20200310235846.1319-1-cai@lca.pw
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 07d369857808 ("perf probe: Fix wrong address verification)
+Reported-by: Alexandre Ghiti <alex@ghiti.fr>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sasha Levin <sashal@kernel.org>
+Link: http://lore.kernel.org/lkml/158281812176.476.14164573830975116234.stgit@devnote2
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/page-flags.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/probe-finder.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -264,7 +264,7 @@ static inline int TestClearPage##uname(s
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -623,14 +623,19 @@ static int convert_to_trace_point(Dwarf_
+ 		return -EINVAL;
+ 	}
  
- __PAGEFLAG(Locked, locked, PF_NO_TAIL)
- PAGEFLAG(Waiters, waiters, PF_ONLY_HEAD) __CLEARPAGEFLAG(Waiters, waiters, PF_ONLY_HEAD)
--PAGEFLAG(Error, error, PF_NO_COMPOUND) TESTCLEARFLAG(Error, error, PF_NO_COMPOUND)
-+PAGEFLAG(Error, error, PF_NO_TAIL) TESTCLEARFLAG(Error, error, PF_NO_TAIL)
- PAGEFLAG(Referenced, referenced, PF_HEAD)
- 	TESTCLEARFLAG(Referenced, referenced, PF_HEAD)
- 	__SETPAGEFLAG(Referenced, referenced, PF_HEAD)
+-	/* Try to get actual symbol name from symtab */
+-	symbol = dwfl_module_addrsym(mod, paddr, &sym, NULL);
++	if (dwarf_entrypc(sp_die, &eaddr) == 0) {
++		/* If the DIE has entrypc, use it. */
++		symbol = dwarf_diename(sp_die);
++	} else {
++		/* Try to get actual symbol name and address from symtab */
++		symbol = dwfl_module_addrsym(mod, paddr, &sym, NULL);
++		eaddr = sym.st_value;
++	}
+ 	if (!symbol) {
+ 		pr_warning("Failed to find symbol at 0x%lx\n",
+ 			   (unsigned long)paddr);
+ 		return -ENOENT;
+ 	}
+-	eaddr = sym.st_value;
+ 
+ 	tp->offset = (unsigned long)(paddr - eaddr);
+ 	tp->address = (unsigned long)paddr;
 
 
