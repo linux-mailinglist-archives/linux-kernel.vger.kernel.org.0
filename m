@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5E5019B274
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35FCB19B047
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:26:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389282AbgDAQoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:44:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45038 "EHLO mail.kernel.org"
+        id S2387839AbgDAQZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:25:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389679AbgDAQoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:44:04 -0400
+        id S1732376AbgDAQZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:25:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B8DD20658;
-        Wed,  1 Apr 2020 16:44:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD899212CC;
+        Wed,  1 Apr 2020 16:25:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759443;
-        bh=XH7uTBcyzXV4kA3f7gcqFz4C7CleSNZ0spz90N7qeV8=;
+        s=default; t=1585758332;
+        bh=pTje8JevO8hky0yu/c5rIpXSo7NwPeqN2f90xj8XFmM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S40dy2WY6G/Tji1OjwC/P7bHUA90klR713hMP/U4l+5dhCPLSAp/3E2s1K1aEATE7
-         n9bHZd/AVoy6SmzmRwaFpHIuaWjtPt2UNPcc/pHper5xIooLN8kftcNFpw5Q5n434E
-         qpbRv0jgXA4WZ3x23iZ5C5db8LTPGHPTsIhUX+RI=
+        b=QESgrBC+huZxh0HxYt+JcVQUpc+7kCanh8sPtaQ0MivGP49w95ZkPrhkXqE9mVLxK
+         fMwqP1rbyZbaVITi8G8yzgg4tHNh+WlGhhDR/DZLT44yGcUSgq2lqoBr4bumFuuqE5
+         J3ofN+RvllnMYD/f5VL9V6wNjVqd/JA2eHqCPYko=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anthony Mallet <anthony.mallet@laas.fr>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 041/148] USB: cdc-acm: fix rounding error in TIOCSSERIAL
+        stable@vger.kernel.org, Bryan Gurney <bgurney@redhat.com>,
+        Bernhard Sulzer <micraft.b@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 057/116] scsi: sd: Fix optimal I/O size for devices that change reported values
 Date:   Wed,  1 Apr 2020 18:17:13 +0200
-Message-Id: <20200401161556.761117969@linuxfoundation.org>
+Message-Id: <20200401161549.957448642@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,84 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anthony Mallet <anthony.mallet@laas.fr>
+From: Martin K. Petersen <martin.petersen@oracle.com>
 
-[ Upstream commit b401f8c4f492cbf74f3f59c9141e5be3071071bb ]
+commit ea697a8bf5a4161e59806fab14f6e4a46dc7dcb0 upstream.
 
-By default, tty_port_init() initializes those parameters to a multiple
-of HZ. For instance in line 69 of tty_port.c:
-   port->close_delay = (50 * HZ) / 100;
-https://github.com/torvalds/linux/blob/master/drivers/tty/tty_port.c#L69
+Some USB bridge devices will return a default set of characteristics during
+initialization. And then, once an attached drive has spun up, substitute
+the actual parameters reported by the drive. According to the SCSI spec,
+the device should return a UNIT ATTENTION in case any reported parameters
+change. But in this case the change is made silently after a small window
+where default values are reported.
 
-With e.g. CONFIG_HZ = 250 (as this is the case for Ubuntu 18.04
-linux-image-4.15.0-37-generic), the default setting for close_delay is
-thus 125.
+Commit a83da8a4509d ("scsi: sd: Optimal I/O size should be a multiple of
+physical block size") validated the reported optimal I/O size against the
+physical block size to overcome problems with devices reporting nonsensical
+transfer sizes. However, this validation did not account for the fact that
+aforementioned devices will return default values during a brief window
+during spin-up. The subsequent change in reported characteristics would
+invalidate the checking that had previously been performed.
 
-When ioctl(fd, TIOCGSERIAL, &s) is executed, the setting returned in
-user space is '12' (125/10). When ioctl(fd, TIOCSSERIAL, &s) is then
-executed with the same setting '12', the value is interpreted as '120'
-which is different from the current setting and a EPERM error may be
-raised by set_serial_info() if !CAP_SYS_ADMIN.
-https://github.com/torvalds/linux/blob/master/drivers/usb/class/cdc-acm.c#L919
+Unset a previously configured optimal I/O size should the sanity checking
+fail on subsequent revalidate attempts.
 
-Fixes: ba2d8ce9db0a6 ("cdc-acm: implement TIOCSSERIAL to avoid blocking close(2)")
-Signed-off-by: Anthony Mallet <anthony.mallet@laas.fr>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200312133101.7096-2-anthony.mallet@laas.fr
+Link: https://lore.kernel.org/r/33fb522e-4f61-1b76-914f-c9e6a3553c9b@gmail.com
+Cc: Bryan Gurney <bgurney@redhat.com>
+Cc: <stable@vger.kernel.org>
+Reported-by: Bernhard Sulzer <micraft.b@gmail.com>
+Tested-by: Bernhard Sulzer <micraft.b@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/usb/class/cdc-acm.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ drivers/scsi/sd.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
-index 74d0a91e84273..30a124b74d459 100644
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -942,6 +942,7 @@ static int set_serial_info(struct acm *acm,
- {
- 	struct serial_struct new_serial;
- 	unsigned int closing_wait, close_delay;
-+	unsigned int old_closing_wait, old_close_delay;
- 	int retval = 0;
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3210,9 +3210,11 @@ static int sd_revalidate_disk(struct gen
+ 	if (sd_validate_opt_xfer_size(sdkp, dev_max)) {
+ 		q->limits.io_opt = logical_to_bytes(sdp, sdkp->opt_xfer_blocks);
+ 		rw_max = logical_to_sectors(sdp, sdkp->opt_xfer_blocks);
+-	} else
++	} else {
++		q->limits.io_opt = 0;
+ 		rw_max = min_not_zero(logical_to_sectors(sdp, dev_max),
+ 				      (sector_t)BLK_DEF_MAX_SECTORS);
++	}
  
- 	if (copy_from_user(&new_serial, newinfo, sizeof(new_serial)))
-@@ -952,18 +953,24 @@ static int set_serial_info(struct acm *acm,
- 			ASYNC_CLOSING_WAIT_NONE :
- 			msecs_to_jiffies(new_serial.closing_wait * 10);
- 
-+	/* we must redo the rounding here, so that the values match */
-+	old_close_delay	= jiffies_to_msecs(acm->port.close_delay) / 10;
-+	old_closing_wait = acm->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
-+				ASYNC_CLOSING_WAIT_NONE :
-+				jiffies_to_msecs(acm->port.closing_wait) / 10;
-+
- 	mutex_lock(&acm->port.mutex);
- 
--	if (!capable(CAP_SYS_ADMIN)) {
--		if ((close_delay != acm->port.close_delay) ||
--		    (closing_wait != acm->port.closing_wait))
-+	if ((new_serial.close_delay != old_close_delay) ||
-+            (new_serial.closing_wait != old_closing_wait)) {
-+		if (!capable(CAP_SYS_ADMIN))
- 			retval = -EPERM;
--		else
--			retval = -EOPNOTSUPP;
--	} else {
--		acm->port.close_delay  = close_delay;
--		acm->port.closing_wait = closing_wait;
--	}
-+		else {
-+			acm->port.close_delay  = close_delay;
-+			acm->port.closing_wait = closing_wait;
-+		}
-+	} else
-+		retval = -EOPNOTSUPP;
- 
- 	mutex_unlock(&acm->port.mutex);
- 	return retval;
--- 
-2.20.1
-
+ 	/* Do not exceed controller limit */
+ 	rw_max = min(rw_max, queue_max_hw_sectors(q));
 
 
