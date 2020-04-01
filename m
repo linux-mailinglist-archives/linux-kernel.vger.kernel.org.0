@@ -2,243 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D6DD19B8FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:32:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C1B819B905
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:40:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733273AbgDAXcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 19:32:55 -0400
-Received: from mga14.intel.com ([192.55.52.115]:24904 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732503AbgDAXcz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 19:32:55 -0400
-IronPort-SDR: 8Nl3LQu1TSQSonU51qJYmvQXh7bgQ6iodmCyqX8Zb+y9LL4aDOZT2hYLKw4LxtPyL8gX0hnWNW
- +TsMNkBz1Htg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 16:32:54 -0700
-IronPort-SDR: s+MvrXBQLFn4ubqceqCFVl/EWv6z0E2ybZuK3KV5Ir9IewTFD4Fd8jQ/0W2IXjbPEP3QDoMqjy
- lzFWKPBi2O2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,333,1580803200"; 
-   d="scan'208";a="328632621"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 01 Apr 2020 16:32:54 -0700
-Date:   Wed, 1 Apr 2020 16:38:42 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com, "Wu, Hao" <hao.wu@intel.com>
-Subject: Re: [PATCH 00/10] IOASID extensions for guest SVA
-Message-ID: <20200401163842.09c8e1a6@jacob-builder>
-In-Reply-To: <20200401140301.GJ882512@myrica>
-References: <1585158931-1825-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20200401140301.GJ882512@myrica>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1733291AbgDAXkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 19:40:25 -0400
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:57277 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732797AbgDAXkY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 19:40:24 -0400
+Received: by mail-vk1-f201.google.com with SMTP id e186so603172vkh.23
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 16:40:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=rbS4a510PkE5rIpwG7gAA/2Zla37CiAh9XVnNXxajJs=;
+        b=GsKOm7/dAe7WN3G39+RnnQ3lDjNMjlHrVkfqaKysA29xNUXC7VuYpRj6BHHl2r1DCl
+         GxZmG/BjxLqBkGjVk3V5rZ6I7zE+CBHfE4RKpuIU++c1kbl8fPUiko1D60NkZzd7JItP
+         kPo9jc4BCo5eGtSjw8pCrJyGKY0REHtYTSxZ8JgyK7snLsPY5G5jO/NqW5PDXwEsNhlb
+         bnzMihGywiE6CY+hpk+UE1wuIfM2vGwIJDKK2HEJjqTNkCdGmTUC/ZDe8qhPPvDPrEUg
+         0GZBGWP86mj61a8Fj+1iBeakr06MgAHvHVUrJQWWi3oNFdseUo9RvnrXDt99x1cNssBb
+         7FwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=rbS4a510PkE5rIpwG7gAA/2Zla37CiAh9XVnNXxajJs=;
+        b=P0wg/REAWoj7rkBk3M6iR9f59SYJH0l/qMdz8LhXsnQ0ZLpnque1eCl8Q3pmmcuOht
+         WX5zdiDwYDiRVMQb2Zw8IhxcZMJEVMkPcJToPZ0kDI0p2XN6IPxYA1ZljHYKvdDrwHop
+         E3WVBg0ZwrWAxCAtUm4O/p0UjvbmUgXh7N/09vDcityNcTdgS8zrL/4nW/QSM3Xp4QD6
+         ajTvrbLwcKLZWfdZSEfo5+4DtZeM0CsT29F5NMNcfvsI0mEYvOmJmzXtyx53t7/0TluI
+         hQ4DX2vHYtR+B/SRv6+s/Q9ag/a7yO1ZDNHlb6LwKrmsDvo0B6L4Yd5k/VHCduhcVvaH
+         6r/Q==
+X-Gm-Message-State: AGi0PuZM9XpzZv2Aki0h3xAmIaB6ZiBDYLO+bSX89prQfnXJj2geVqrF
+        wHvlfOPSWpG+8kqOgiT/wZ9bYS8r+ISr
+X-Google-Smtp-Source: APiQypLwmFGXB8AWyKPDICalopSWiKutlFLSxqEz67wI1w1HrH4IdMxozKYH04Hl0kEAv1hWyLn+LRmmpZ+C
+X-Received: by 2002:a9f:3b08:: with SMTP id i8mr740392uah.68.1585784423446;
+ Wed, 01 Apr 2020 16:40:23 -0700 (PDT)
+Date:   Wed,  1 Apr 2020 16:39:40 -0700
+Message-Id: <20200401233945.133550-1-irogers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
+Subject: [PATCH 0/5] Benchmark and improve event synthesis performance
+From:   Ian Rogers <irogers@google.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Andrey Zhizhikin <andrey.z@gmail.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Cc:     Stephane Eranian <eranian@google.com>,
+        Ian Rogers <irogers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 Apr 2020 16:03:01 +0200
-Jean-Philippe Brucker <jean-philippe@linaro.org> wrote:
 
-> Hi Jacob,
-> 
-> On Wed, Mar 25, 2020 at 10:55:21AM -0700, Jacob Pan wrote:
-> > IOASID was introduced in v5.5 as a generic kernel allocator service
-> > for both PCIe Process Address Space ID (PASID) and ARM SMMU's Sub
-> > Stream ID. In addition to basic ID allocation, ioasid_set was
-> > introduced as a token that is shared by a group of IOASIDs. This
-> > set token can be used for permission checking but lack of some
-> > features needed by guest Shared Virtual Address (SVA). In addition,
-> > IOASID support for life cycle management is needed among multiple
-> > users.
-> > 
-> > This patchset introduces two extensions to the IOASID code,
-> > 1. IOASID set operations
-> > 2. Notifications for IOASID state synchronization  
-> 
-> My main concern with this series is patch 7 changing the spinlock to a
-> mutex, which prevents SVA from calling ioasid_free() from the RCU
-> callback of MMU notifiers. Could we use atomic notifiers, or do the
-> FREE notification another way?
-> 
-Maybe I am looking at the wrong code, I thought
-mmu_notifier_ops.free_notifier() is called outside spinlock with
-call_srcu(), which will be invoked in the thread context.
-in mmu_notifier.c mmu_notifier_put()
-	spin_unlock(&mm->notifier_subscriptions->lock);
+Event synthesis is performance critical in common tasks using perf. For
+example, when perf record starts in system wide mode the /proc file
+system is scanned with events synthesized for each process and all
+executable mmaps. With large machines and lots of processes, we have seen
+O(seconds) of wall clock time while synthesis is occurring.
 
-	call_srcu(&srcu, &subscription->rcu, mmu_notifier_free_rcu);
+This patch set adds a benchmark for synthesis performance in a new
+benchmark collection called 'internals'. The benchmark uses the
+machine__synthesize_threads function, single threaded on the perf process
+with a 'tool' that just drops the events, to measure how long synthesis
+takes.
 
-Anyway, if we have to use atomic. I tried atomic notifier first, there
-are two subscribers to the free event on x86.
-1. IOMMU
-2. KVM
+By profiling this benchmark 2 performance bottlenecks were identified,
+hugetlbfs_mountpoint and stdio. The impact of theses changes are:
 
-For #1, the problem is that in the free operation, VT-d driver
-needs to do a lot of clean up in thread context.
-- hold a mutex to traverse a list of devices
-- clear PASID entry and flush cache
+Before:
+Average synthesis took: 167.616800 usec
+Average data synthesis took: 208.655600 usec
 
-For #2, KVM might be able to deal with spinlocks for updating VMCS
-PASID translation table. +Hao
+After hugetlbfs_mountpoint scalability fix:
+Average synthesis took: 120.195100 usec
+Average data synthesis took: 156.582300 usec
 
-Perhaps two solutions I can think of:
-1. Use a cyclic IOASID allocator. The main reason of clean up at free
-is to prevent race with IOASID alloc. Similar to PID, 2M IOASID
-will take long time overflow. Then we can use atomic notifier and a
-deferred workqueue to do IOMMU cleanup. The downside is a large and
-growing PASID table, may not be a performance issue since it has TLB.
+After removal of stdio in /proc/pid/maps code:
+Average synthesis took: 67.189100 usec
+Average data synthesis took: 102.451600 usec
 
-2. Let VFIO ensure free always happen after unbind. Then there is no
-need to do cleanup. But that requires VFIO to keep track of all the
-PASIDs within each VM. When the VM terminates, VFIO is responsible for
-the clean up. That was Yi's original proposal. I also tried to provide
-an IOASID set iterator for VFIO to free the IOASIDs within each VM/set,
-but the private data belongs to IOMMU driver.
+Time was measured on an Intel Xeon 6154 compiling with Debian gcc 9.2.1.
 
-Thanks,
+Two patches in the set were sent to LKML previously but are included
+here for context around the benchmark performance impact:
+https://lore.kernel.org/lkml/20200327172914.28603-1-irogers@google.com/T/#u
+https://lore.kernel.org/lkml/20200328014221.168130-1-irogers@google.com/T/#u
 
-Jacob
+A future area of improvement could be to add the perf top
+num-thread-synthesize option more widely to other perf commands, and
+also to benchmark its effectiveness.
 
-> Most of my other comments are just confusion on my part, I think, as I
-> haven't yet properly looked through the VFIO and VT-d changes. I'd
-> rather avoid the change to ioasid_find() if possible, because it adds
-> a seemingly unnecessary indirection to the fast path, but it's
-> probably insignificant.
-> 
-> Thanks,
-> Jean
-> 
-> > 
-> > Part #1:
-> > IOASIDs used by each VM fits naturally into an ioasid_set. The usage
-> > for per set management requires the following features:
-> > 
-> > - Quota enforcement - This is to prevent one VM from abusing the
-> >   allocator to take all the system IOASIDs. Though VFIO layer can
-> > also enforce the quota, but it cannot cover the usage with both
-> > guest and host SVA on the same system.
-> > 
-> > - Stores guest IOASID-Host IOASID mapping within the set. To
-> >   support live migration, IOASID namespace should be owned by the
-> >   guest. This requires per IOASID set look up between guest and host
-> >   IOASIDs. This patchset does not introduce non-identity guest-host
-> >   IOASID lookup, we merely introduce the infrastructure in per set
-> > data.
-> > 
-> > - Set level operations, e.g. when a guest terminates, it is likely
-> > to free the entire set. Having a single place to manage the set
-> > where the IOASIDs are stored makes iteration much easier.
-> > 
-> > 
-> > New APIs are:
-> > - void ioasid_install_capacity(ioasid_t total);
-> >   Set the system capacity prior to any allocations. On x86, VT-d
-> > driver calls this function to set max number of PASIDs, typically 1
-> > million (20 bits).
-> > 
-> > - int ioasid_alloc_system_set(int quota);
-> >   Host system has a default ioasid_set, during boot it is expected
-> > that this default set is allocated with a reasonable quota, e.g.
-> > PID_MAX. This default/system set is used for baremetal SVA.
-> > 
-> > - int ioasid_alloc_set(struct ioasid_set *token, ioasid_t quota, int
-> > *sid);
-> >   Allocate a new set with a token, returned sid (set ID) will be
-> > used to allocate IOASIDs within the set. Allocation of IOASIDs
-> > cannot exceed the quota.
-> > 
-> > - void ioasid_free_set(int sid, bool destroy_set);
-> >   Free the entire set and notify all users with an option to destroy
-> >   the set. Set ID can be used for allocation again if not destroyed.
-> > 
-> > - int ioasid_find_sid(ioasid_t ioasid);
-> >   Look up the set ID from an ioasid. There is no reference held,
-> >   assuming set has a single owner.
-> > 
-> > - int ioasid_adjust_set(int sid, int quota);
-> >   Change the quota of the set, new quota cannot be less than the
-> > number of IOASIDs already allocated within the set. This is useful
-> > when IOASID resource needs to be balanced among VMs.
-> > 
-> > Part #2
-> > Notification service. Since IOASIDs are used by many consumers that
-> > follow publisher-subscriber pattern, notification is a natural
-> > choice to keep states synchronized. For example, on x86 system,
-> > guest PASID allocation and bind call results in VFIO IOCTL that can
-> > add and change guest-host PASID states. At the same time, IOMMU
-> > driver and KVM need to maintain its own PASID contexts. In this
-> > case, VFIO is the publisher within the kernel, IOMMU driver and KVM
-> > are the subscribers.
-> > 
-> > This patchset introduces a global blocking notifier chain and APIs
-> > to operate on. Not all events nor all IOASIDs are of interests to
-> > all subscribers. e.g. KVM is only interested in the IOASIDs within
-> > its set. IOMMU driver is not ioasid_set aware. A further
-> > optimization could be having both global and per set notifier. But
-> > consider the infrequent nature of bind/unbind and relatively long
-> > process life cycle, this optimization may not be needed at this
-> > time.
-> > 
-> > To register/unregister notification blocks, use these two APIs:
-> > - int ioasid_add_notifier(struct notifier_block *nb);
-> > - void ioasid_remove_notifier(struct notifier_block *nb)
-> > 
-> > To send notification on an IOASID with one of the commands (FREE,
-> > BIND/UNBIND, etc.), use:
-> > - int ioasid_notify(ioasid_t id, enum ioasid_notify_val cmd);
-> > 
-> > This work is a result of collaboration with many people:
-> > Liu, Yi L <yi.l.liu@intel.com>
-> > Wu Hao <hao.wu@intel.com>
-> > Ashok Raj <ashok.raj@intel.com>
-> > Kevin Tian <kevin.tian@intel.com>
-> > 
-> > Thanks,
-> > 
-> > Jacob
-> > 
-> > Jacob Pan (10):
-> >   iommu/ioasid: Introduce system-wide capacity
-> >   iommu/vt-d: Set IOASID capacity when SVM is enabled
-> >   iommu/ioasid: Introduce per set allocation APIs
-> >   iommu/ioasid: Rename ioasid_set_data to avoid confusion with
-> >     ioasid_set
-> >   iommu/ioasid: Create an IOASID set for host SVA use
-> >   iommu/ioasid: Convert to set aware allocations
-> >   iommu/ioasid: Use mutex instead of spinlock
-> >   iommu/ioasid: Introduce notifier APIs
-> >   iommu/ioasid: Support ioasid_set quota adjustment
-> >   iommu/vt-d: Register PASID notifier for status change
-> > 
-> >  drivers/iommu/intel-iommu.c |  20 ++-
-> >  drivers/iommu/intel-svm.c   |  89 ++++++++--
-> >  drivers/iommu/ioasid.c      | 387
-> > +++++++++++++++++++++++++++++++++++++++-----
-> > include/linux/intel-iommu.h |   1 + include/linux/ioasid.h      |
-> > 86 +++++++++- 5 files changed, 522 insertions(+), 61 deletions(-)
-> > 
-> > -- 
-> > 2.7.4
-> >   
+Ian Rogers (4):
+  perf bench: add event synthesis benchmark
+  perf synthetic-events: save 4kb from 2 stack frames
+  tools api: add a lightweight buffered reading api
+  perf synthetic events: Remove use of sscanf from /proc reading
 
-[Jacob Pan]
+Stephane Eranian (1):
+  tools api fs: make xxx__mountpoint() more scalable
+
+ tools/lib/api/fs/fs.c              |  17 +++
+ tools/lib/api/fs/fs.h              |  12 ++
+ tools/lib/api/io.h                 | 103 +++++++++++++++++
+ tools/perf/bench/Build             |   2 +-
+ tools/perf/bench/bench.h           |   2 +-
+ tools/perf/bench/synthesize.c      | 101 ++++++++++++++++
+ tools/perf/builtin-bench.c         |   6 +
+ tools/perf/util/synthetic-events.c | 177 +++++++++++++++++++----------
+ 8 files changed, 355 insertions(+), 65 deletions(-)
+ create mode 100644 tools/lib/api/io.h
+ create mode 100644 tools/perf/bench/synthesize.c
+
+-- 
+2.26.0.rc2.310.g2932bb562d-goog
+
