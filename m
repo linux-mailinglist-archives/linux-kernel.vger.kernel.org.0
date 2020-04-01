@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D905B19B08C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCFC019B08E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388028AbgDAQ1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:27:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52494 "EHLO mail.kernel.org"
+        id S2388030AbgDAQ1o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:27:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387850AbgDAQ1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:27:38 -0400
+        id S2387535AbgDAQ1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:27:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 177C620857;
-        Wed,  1 Apr 2020 16:27:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E036212CC;
+        Wed,  1 Apr 2020 16:27:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758457;
-        bh=ir7hZzhLHTgj+JI3LhcJCr1TBbLgHw4uZM6ow7QWwZI=;
+        s=default; t=1585758462;
+        bh=1hbslwvl3HRHrAP4PNYJs+QN20wZAm7e0sZuj0tvEjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s/eIhE18wD4cmaUZjHk2f9EyLdoRn4ZC6dUmgr6CnfM+tFJDNuxop3QR8GPzXzhj6
-         G3zhbYD9Yx0T36TvVPWihRbvEZPHOBNB4FJ2C9Q+Od+rkpUL0KIKi3213eP12dqJGW
-         9XbxLg3hRJrxp3qjfRGShHF4s+psM88CACrc8OpE=
+        b=jRHTFxKotOjNdc393SteRQwmueXX82anZihCmoJO6qR30QqSfq/JUgee4dnL6L4/B
+         yKgoP1aksFQz/u3ELaqhNp7EIZAryv/Fd+lM2t30alDBuL2NZZMPcVOiPzxWGeBLko
+         esI551D0pCRHURk3jhogXin7NemSbAdQBygbnP90=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jouni Malinen <jouni@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.19 096/116] mac80211: Check port authorization in the ieee80211_tx_dequeue() case
-Date:   Wed,  1 Apr 2020 18:17:52 +0200
-Message-Id: <20200401161554.642230437@linuxfoundation.org>
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Woody Suwalski <terraluna977@gmail.com>
+Subject: [PATCH 4.19 097/116] mac80211: fix authentication with iwlwifi/mvm
+Date:   Wed,  1 Apr 2020 18:17:53 +0200
+Message-Id: <20200401161554.757299208@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
 References: <20200401161542.669484650@linuxfoundation.org>
@@ -43,56 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jouni Malinen <jouni@codeaurora.org>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit ce2e1ca703071723ca2dd94d492a5ab6d15050da upstream.
+commit be8c827f50a0bcd56361b31ada11dc0a3c2fd240 upstream.
 
-mac80211 used to check port authorization in the Data frame enqueue case
-when going through start_xmit(). However, that authorization status may
-change while the frame is waiting in a queue. Add a similar check in the
-dequeue case to avoid sending previously accepted frames after
-authorization change. This provides additional protection against
-potential leaking of frames after a station has been disconnected and
-the keys for it are being removed.
+The original patch didn't copy the ieee80211_is_data() condition
+because on most drivers the management frames don't go through
+this path. However, they do on iwlwifi/mvm, so we do need to keep
+the condition here.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
-Link: https://lore.kernel.org/r/20200326155133.ced84317ea29.I34d4c47cd8cc8a4042b38a76f16a601fbcbfd9b3@changeid
+Fixes: ce2e1ca70307 ("mac80211: Check port authorization in the ieee80211_tx_dequeue() case")
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Woody Suwalski <terraluna977@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/tx.c |   19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ net/mac80211/tx.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --- a/net/mac80211/tx.c
 +++ b/net/mac80211/tx.c
-@@ -3513,8 +3513,25 @@ begin:
- 	tx.skb = skb;
- 	tx.sdata = vif_to_sdata(info->control.vif);
- 
--	if (txq->sta)
-+	if (txq->sta) {
- 		tx.sta = container_of(txq->sta, struct sta_info, sta);
-+		/*
-+		 * Drop unicast frames to unauthorised stations unless they are
-+		 * EAPOL frames from the local station.
-+		 */
-+		if (unlikely(!ieee80211_vif_is_mesh(&tx.sdata->vif) &&
-+			     tx.sdata->vif.type != NL80211_IFTYPE_OCB &&
-+			     !is_multicast_ether_addr(hdr->addr1) &&
-+			     !test_sta_flag(tx.sta, WLAN_STA_AUTHORIZED) &&
-+			     (!(info->control.flags &
-+				IEEE80211_TX_CTRL_PORT_CTRL_PROTO) ||
-+			      !ether_addr_equal(tx.sdata->vif.addr,
-+						hdr->addr2)))) {
-+			I802_DEBUG_INC(local->tx_handlers_drop_unauth_port);
-+			ieee80211_free_txskb(&local->hw, skb);
-+			goto begin;
-+		}
-+	}
- 
- 	/*
- 	 * The key can be removed while the packet was queued, so need to call
+@@ -3519,7 +3519,8 @@ begin:
+ 		 * Drop unicast frames to unauthorised stations unless they are
+ 		 * EAPOL frames from the local station.
+ 		 */
+-		if (unlikely(!ieee80211_vif_is_mesh(&tx.sdata->vif) &&
++		if (unlikely(ieee80211_is_data(hdr->frame_control) &&
++			     !ieee80211_vif_is_mesh(&tx.sdata->vif) &&
+ 			     tx.sdata->vif.type != NL80211_IFTYPE_OCB &&
+ 			     !is_multicast_ether_addr(hdr->addr1) &&
+ 			     !test_sta_flag(tx.sta, WLAN_STA_AUTHORIZED) &&
 
 
