@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 332BA19B288
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E93F19B0B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389785AbgDAQoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:44:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45968 "EHLO mail.kernel.org"
+        id S2388133AbgDAQ2n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:28:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388037AbgDAQow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:44:52 -0400
+        id S2387942AbgDAQ2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:28:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4928A206E9;
-        Wed,  1 Apr 2020 16:44:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E4C220BED;
+        Wed,  1 Apr 2020 16:28:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759491;
-        bh=jD/A6vXxrAuH6HnI+HbC6Unssbw6b5eYu6JLroXNTL4=;
+        s=default; t=1585758521;
+        bh=LgPj8+2ycUOEbuzcx4Slc6l4LdVpqf9vUNx2DlNUndY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ooLxLdsJmRKYCWKcDrjpsLjTS9nmoL12F/jA0gkYMfMrfquKBheXPX3M9E6+BFWdo
-         aJZTHaap/xHLMqt7im+bdjz61xXJS57podehb3LuZ9bjI7Rp2Vfix7Eao7wONW8ZRo
-         TPnP1ezGvQ6n0yaBFakBkGHBstnQccJBVbXL+2kw=
+        b=NCROqMkvXTUDNl4KfN4923+SZ/Z1137HXBoANebbvfIl5+cdngzk0rGcf1YuWklvt
+         DhQ7tqRFw02HvaRafox+IzCTKUjzSycBViwKuuNolKfJq42RSCSOyDQRvXYwXbsaKw
+         u+wkfH3jBS2G6xzkWRJTzU2f10S/L7nafiGU87+c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bryan Gurney <bgurney@redhat.com>,
-        Bernhard Sulzer <micraft.b@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 096/148] scsi: sd: Fix optimal I/O size for devices that change reported values
-Date:   Wed,  1 Apr 2020 18:18:08 +0200
-Message-Id: <20200401161602.116006124@linuxfoundation.org>
+        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 4.19 113/116] ARM: dts: imx6: phycore-som: fix arm and soc minimum voltage
+Date:   Wed,  1 Apr 2020 18:18:09 +0200
+Message-Id: <20200401161556.559331247@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin K. Petersen <martin.petersen@oracle.com>
+From: Marco Felsch <m.felsch@pengutronix.de>
 
-commit ea697a8bf5a4161e59806fab14f6e4a46dc7dcb0 upstream.
+commit 636b45b8efa91db05553840b6c0120d6fa6b94fa upstream.
 
-Some USB bridge devices will return a default set of characteristics during
-initialization. And then, once an attached drive has spun up, substitute
-the actual parameters reported by the drive. According to the SCSI spec,
-the device should return a UNIT ATTENTION in case any reported parameters
-change. But in this case the change is made silently after a small window
-where default values are reported.
+The current set minimum voltage of 730000µV seems to be wrong. I don't
+know the document which specifies that but the imx6qdl datasheets says
+that the minimum voltage should be 0.925V for VDD_ARM (LDO bypassed,
+lowest opp) and 1.15V for VDD_SOC (LDO bypassed, lowest opp).
 
-Commit a83da8a4509d ("scsi: sd: Optimal I/O size should be a multiple of
-physical block size") validated the reported optimal I/O size against the
-physical block size to overcome problems with devices reporting nonsensical
-transfer sizes. However, this validation did not account for the fact that
-aforementioned devices will return default values during a brief window
-during spin-up. The subsequent change in reported characteristics would
-invalidate the checking that had previously been performed.
-
-Unset a previously configured optimal I/O size should the sanity checking
-fail on subsequent revalidate attempts.
-
-Link: https://lore.kernel.org/r/33fb522e-4f61-1b76-914f-c9e6a3553c9b@gmail.com
-Cc: Bryan Gurney <bgurney@redhat.com>
-Cc: <stable@vger.kernel.org>
-Reported-by: Bernhard Sulzer <micraft.b@gmail.com>
-Tested-by: Bernhard Sulzer <micraft.b@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: ddec5d1c0047 ("ARM: dts: imx6: Add initial support for phyCORE-i.MX 6 SOM")
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sd.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/imx6qdl-phytec-phycore-som.dtsi |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -3212,9 +3212,11 @@ static int sd_revalidate_disk(struct gen
- 	if (sd_validate_opt_xfer_size(sdkp, dev_max)) {
- 		q->limits.io_opt = logical_to_bytes(sdp, sdkp->opt_xfer_blocks);
- 		rw_max = logical_to_sectors(sdp, sdkp->opt_xfer_blocks);
--	} else
-+	} else {
-+		q->limits.io_opt = 0;
- 		rw_max = min_not_zero(logical_to_sectors(sdp, dev_max),
- 				      (sector_t)BLK_DEF_MAX_SECTORS);
-+	}
+--- a/arch/arm/boot/dts/imx6qdl-phytec-phycore-som.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-phytec-phycore-som.dtsi
+@@ -107,14 +107,14 @@
+ 		regulators {
+ 			vdd_arm: buck1 {
+ 				regulator-name = "vdd_arm";
+-				regulator-min-microvolt = <730000>;
++				regulator-min-microvolt = <925000>;
+ 				regulator-max-microvolt = <1380000>;
+ 				regulator-always-on;
+ 			};
  
- 	/* Do not exceed controller limit */
- 	rw_max = min(rw_max, queue_max_hw_sectors(q));
+ 			vdd_soc: buck2 {
+ 				regulator-name = "vdd_soc";
+-				regulator-min-microvolt = <730000>;
++				regulator-min-microvolt = <1150000>;
+ 				regulator-max-microvolt = <1380000>;
+ 				regulator-always-on;
+ 			};
 
 
