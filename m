@@ -2,88 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AE7119B2EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:48:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 454C719B43C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:00:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390079AbgDAQrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:47:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389554AbgDAQrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:47:37 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8806F20705;
-        Wed,  1 Apr 2020 16:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759657;
-        bh=OJk05znDwBNzrtl7qwWp1XcMT+oENkFkHzaJeU+U+Ms=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rQadTsG8OAcG2g0Mqun9dyqJ11tYZaNmGbh/STiLkEFvjZ8AO34h2JLrc2HjgB9xs
-         b7Rpo1a7gJoiUmvlkUraVhCI0q+nZdekLcQDS9AYgI64SETdDCgfxTLnuI9SX+qKWX
-         /h1JQxXDaeOlftvbGHTwCgsUnpo4YkPLbXdiEYog=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@oss.nxp.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 148/148] arm64: dts: ls1046ardb: set RGMII interfaces to RGMII_ID mode
-Date:   Wed,  1 Apr 2020 18:19:00 +0200
-Message-Id: <20200401161606.196310048@linuxfoundation.org>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1732968AbgDAQU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:20:28 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34058 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732905AbgDAQUZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:20:25 -0400
+Received: by mail-wr1-f66.google.com with SMTP id 65so813773wrl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:20:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qJoVQBaRHJQYbVT1GJGTHlpTo29YQGbRt1FnJ8Q12S8=;
+        b=sh8B2DiXOiWdTC/QlWSo5qJq5PlO04nPxzc5xPhwqU0fqQY8HW7uaoPnEZFA6lAqPg
+         ZMaaMUPGE2T6Y+hRWrkIqWUXep1l5SmH9O6KfhlS+iqbje7hSj4qh1IxzEnmQZLU48a8
+         rO9/WiUH6b7WNeZ8MsCj0HRUeuvJT1w+MAF9NiKGKlwkNBytTNtRobTiGx6uf0Au8elq
+         ztGVxx3us1OW9tFYn3C9AhUunrXUxsn967RZeV5aMLpxmwn/k8a8vzJLmx/w5PP9HOYL
+         ongIMp0xVXong+l/M/4jX46dIlFbb2d4YxzLNfF4C5ba2spvOOydscrC6KL1P0eaVynz
+         Gmlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qJoVQBaRHJQYbVT1GJGTHlpTo29YQGbRt1FnJ8Q12S8=;
+        b=VAnsefP/44aohK7wzZNQ8w7fpM8p3iB0lJ0VGsDbk/pZfZYzgMyF1OLn5qKILRT6Gy
+         VI2yQAW4uRTczm/aOFq6vyfDzIU7MNl1JCJhzjH1dLneRQBwcGrHY75BGHWBqvpPhPVm
+         xXoPhvbhVeGnc3HGroQLlvDPldQ1YR8Axs4jqq5nF/ZgPKZV2U920gcWcDj/IQ7KT0xt
+         MfW/7S1pf9yNuIeuwoZeVza/vRJ8BnMRCF/gUWzH86Rm9zrCo2u8BdQQdTf8a22LMoqD
+         O8hsxNG2u3Ye3OBPPgvnmajGnou4A5/nwQyQPef0uZ210DeMAzrvzfrmR7EM2N1f1vH3
+         tJ+g==
+X-Gm-Message-State: ANhLgQ3mYejQ+496YQi+BGJxgCcI9TB+nPnI/Vm+nXd7R+X2tTszjcVa
+        2mM4Vukw5zMpYc9qJCXSyAQ=
+X-Google-Smtp-Source: ADFU+vv4V0fyp0xmIa06RHGv+1mqQNSwKoo8SzC6ChqvoD/UnqpyMnlCM/3PalLUrlCNEolzghMMgw==
+X-Received: by 2002:a05:6000:1c4:: with SMTP id t4mr25772479wrx.89.1585758023215;
+        Wed, 01 Apr 2020 09:20:23 -0700 (PDT)
+Received: from localhost.localdomain ([213.137.85.32])
+        by smtp.googlemail.com with ESMTPSA id q9sm3871009wrp.84.2020.04.01.09.20.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Apr 2020 09:20:22 -0700 (PDT)
+From:   Daniel Shaulov <daniel.shaulov@gmail.com>
+X-Google-Original-From: Daniel Shaulov <daniel.shaulov@granulate.io>
+Cc:     Daniel Shaulov <daniel.shaulov@granulate.io>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] perf probe: Add support for DW_OP_call_frame_cfa vars
+Date:   Wed,  1 Apr 2020 19:19:52 +0300
+Message-Id: <20200401161954.44640-1-daniel.shaulov@granulate.io>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madalin Bucur <madalin.bucur@oss.nxp.com>
+Add support for probes on variables with DW_OP_call_frame_cfa
+as the dwarf operation in the debug info.
 
-commit d79e9d7c1e4ba5f95f2ff3541880c40ea9722212 upstream.
+Some compilers (specifically Golang compiler) output
+DW_OP_call_frame_cfa instead of DW_OP_fbreg for variables
+on the stack. If DW_OP_call_frame_cfa is the only expression
+than it is the same as DW_OP_fbreg with an offset of zero.
+In the case of the Golang compiler, DW_OP_call_frame_cfa may
+be followed by DW_OP_consts, with a number and than DW_OP_plus.
+This trio is the same as DW_OP_fbreg with the number from
+DW_OP_consts as the offset.
 
-The correct setting for the RGMII ports on LS1046ARDB is to
-enable delay on both Rx and Tx so the interface mode used must
-be PHY_INTERFACE_MODE_RGMII_ID.
+With this change, probing on functions in Golang with variables works.
 
-Since commit 1b3047b5208a80 ("net: phy: realtek: add support for
-configuring the RX delay on RTL8211F") the Realtek 8211F PHY driver
-has control over the RGMII RX delay and it is disabling it for
-RGMII_TXID. The LS1046ARDB uses two such PHYs in RGMII_ID mode but
-in the device tree the mode was described as "rgmii".
-
-Changing the phy-connection-type to "rgmii-id" to address the issue.
-
-Fixes: 3fa395d2c48a ("arm64: dts: add LS1046A DPAA FMan nodes")
-Signed-off-by: Madalin Bucur <madalin.bucur@oss.nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Daniel Shaulov <daniel.shaulov@granulate.io>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/probe-finder.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
-@@ -162,12 +162,12 @@
- &fman0 {
- 	ethernet@e4000 {
- 		phy-handle = <&rgmii_phy1>;
--		phy-connection-type = "rgmii";
-+		phy-connection-type = "rgmii-id";
- 	};
+diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+index e4cff49384f4..866b17aea263 100644
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -240,11 +240,23 @@ static int convert_variable_location(Dwarf_Die *vr_die, Dwarf_Addr addr,
+ 	}
  
- 	ethernet@e6000 {
- 		phy-handle = <&rgmii_phy2>;
--		phy-connection-type = "rgmii";
-+		phy-connection-type = "rgmii-id";
- 	};
+ 	/* If this is based on frame buffer, set the offset */
+-	if (op->atom == DW_OP_fbreg) {
++	if (op->atom == DW_OP_fbreg || op->atom == DW_OP_call_frame_cfa) {
+ 		if (fb_ops == NULL)
+ 			return -ENOTSUP;
+ 		ref = true;
+-		offs = op->number;
++		if (op->atom == DW_OP_fbreg) {
++			offs = op->number;
++		} else if (nops == 3) {
++			/*
++			 * In the case of DW_OP_call_frame_cfa, we either have
++			 * an offset of 0 or we have two more expressions that
++			 * add a const
++			 */
++			if ((op + 1)->atom != DW_OP_consts ||
++			    (op + 2)->atom != DW_OP_plus)
++				return -ENOTSUP;
++			offs = (op + 1)->number;
++		}
+ 		op = &fb_ops[0];
+ 	}
  
- 	ethernet@e8000 {
-
+-- 
+2.22.0
 
