@@ -2,119 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C2619A2CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 02:22:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A053419A9AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 12:37:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731579AbgDAAWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Mar 2020 20:22:55 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35410 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729514AbgDAAWz (ORCPT
+        id S1732238AbgDAKhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 06:37:41 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:55767 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727386AbgDAKhk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Mar 2020 20:22:55 -0400
-Received: by mail-pl1-f195.google.com with SMTP id c12so5996104plz.2
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Mar 2020 17:22:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=0o2sV67Co/BBx0wQ4CH55gP8jkBwRSr+2tVUKNJ+jjs=;
-        b=WO+ozxIIDjv27brvR7QvEowOsM567l0YbO2zH0gREDzz8YZrcRPYUZ1V1ZPiOl3NfE
-         1EaDjS+UlqeOO7OB5Yd/lEZQKIpjeHMjsQPi/V0FK6RcTFGYN1joylj1uA8zmjk9JoY0
-         4srtd/tCSlN1MTJV2QRYOYqxk/xfRkSy35AILPNtkOl6ho6qt4Ix3UkaPF8iecDSFbro
-         kq8+lqj7uW9i+RE5rNwRra9PQaClmxoQo9ArJX72Z9usw4uJcX7GsS4vntuwxjs+J+aw
-         iPulgCUfwRmovAjXdFqTWyLVkSl36vOYQp/J488xiS2HANCxmT8RN5ywrd8LxelYB+LQ
-         e8jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0o2sV67Co/BBx0wQ4CH55gP8jkBwRSr+2tVUKNJ+jjs=;
-        b=cnpv5oAsScAxA4VNb5LwI9LozTC0n+4svOywQsr0v5Xm9ujZ/jx7X0xNpqvnhBu2cL
-         31CMCrs0uyLf6/tJQ2JD/tDrtWmajZysto2nToW3T9IP9vivHsNejiCmVdZBfhKlByJh
-         TsAad9DhW69wOzyVRd9smDUzT7M0j9GhvSQdD/E9fh4+rxy24/y8D0GCIaXLnhUfsNc3
-         kC2zrU3uNguMVGQeNV9X0V3JrzPzSCj9MUdjszkzztr02xnT382gt3JvUlvDH5YMOJ3+
-         2tw6hyCOStzwES+IGA0SFJgnwTQc11OGAwwmQgMlCikwuJx1RDwFPzLmvDHo3/lnPW4L
-         GPXg==
-X-Gm-Message-State: AGi0PuYwK749QkCLkqtbloR4zMOvHNpQNsPLF0BhV692pZtpOYJPFUUg
-        c7ODIdsjdhucGku8cmKo0MFW/g==
-X-Google-Smtp-Source: APiQypKuzqy2/q3VbEGna+2WnnSYjgThOwQnOXSMdNxZiSgHa5xgjTxdBLOAa4VjYDpVIPuyUNxudQ==
-X-Received: by 2002:a17:90a:2103:: with SMTP id a3mr1623468pje.181.1585700573639;
-        Tue, 31 Mar 2020 17:22:53 -0700 (PDT)
-Received: from localhost (c-73-170-36-70.hsd1.ca.comcast.net. [73.170.36.70])
-        by smtp.gmail.com with ESMTPSA id z8sm205317pju.33.2020.03.31.17.22.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 17:22:52 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 17:22:51 -0700
-From:   Sandeep Patil <sspatil@android.com>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v4 2/4] power_supply: Add additional health properties to
- the header
-Message-ID: <20200401002251.GA177505@google.com>
-References: <20200116175039.1317-1-dmurphy@ti.com>
- <20200116175039.1317-3-dmurphy@ti.com>
- <20200117010658.iqs2zpwl6bsomkuo@earth.universe>
- <20200306235548.GA187098@google.com>
- <6b947adc-a176-5fa0-1382-8b08ec3f8b09@ti.com>
+        Wed, 1 Apr 2020 06:37:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585737459;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=RUpxmRN4twru0bIi7VknK4K+lKRCP04ScEp4cAJ17Oo=;
+        b=jQpMoqpA1xRQc2C2UmVmCAKgngBg47pInczF+R7ES8dFiyAKSrU4gEsaViN8p4H6hfMgNG
+        NreIbyjXn/wNowXiDXq7EEVEEKHKxeWgN2Z3Khv7Ye7Ue5tglCeusQImhhTp2D55N+kRYz
+        g2sGemMWyML47LeHdChuXb1pEdGL7rg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-328-OTHgpj1UNlCNqO1lIN--sg-1; Wed, 01 Apr 2020 06:37:36 -0400
+X-MC-Unique: OTHgpj1UNlCNqO1lIN--sg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4EAE18018C8;
+        Wed,  1 Apr 2020 10:37:34 +0000 (UTC)
+Received: from mail (ovpn-112-247.rdu2.redhat.com [10.10.112.247])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6778F5D9CD;
+        Wed,  1 Apr 2020 10:37:31 +0000 (UTC)
+Date:   Tue, 31 Mar 2020 20:32:03 -0400
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Rafael Aquini <aquini@redhat.com>,
+        Mark Salter <msalter@redhat.com>,
+        Jon Masters <jcm@jonmasters.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        Michal Hocko <mhocko@kernel.org>, QI Fuli <qi.fuli@fujitsu.com>
+Subject: Re: [PATCH 3/3] arm64: tlb: skip tlbi broadcast
+Message-ID: <20200401003203.GA12536@redhat.com>
+References: <20200223192520.20808-1-aarcange@redhat.com>
+ <20200223192520.20808-4-aarcange@redhat.com>
+ <20200309112242.GB2487@mbp>
+ <20200314031609.GB2250@redhat.com>
+ <20200316140906.GA6220@lakrids.cambridge.arm.com>
+ <20200331094034.GA1131@C02TD0UTHF1T.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6b947adc-a176-5fa0-1382-8b08ec3f8b09@ti.com>
+In-Reply-To: <20200331094034.GA1131@C02TD0UTHF1T.local>
+User-Agent: Mutt/1.13.4 (2020-02-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 03:09:37PM -0500, Dan Murphy wrote:
-> Hello
+Hello Mark,
+
+On Tue, Mar 31, 2020 at 10:45:11AM +0100, Mark Rutland wrote:
+> Hi Andrea,
 > 
-> On 3/6/20 5:55 PM, Sandeep Patil wrote:
-> > Hi Sebastian,
+> On Mon, Mar 16, 2020 at 02:09:07PM +0000, Mark Rutland wrote:
+> > AFAICT, this series relies on:
 > > 
-> > On Fri, Jan 17, 2020 at 02:06:58AM +0100, Sebastian Reichel wrote:
-> > > Hi,
-> > > 
-> > > On Thu, Jan 16, 2020 at 11:50:37AM -0600, Dan Murphy wrote:
-> > > > Add HEALTH_WARM, HEALTH_COOL and HEALTH_HOT to the health enum.
-> > > > 
-> > > > Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> > > > ---
-> > > Looks good. But I will not merge it without a user and have comments
-> > > for the driver.
-> > Android has been looking for these properties for a while now [1].
-> > It was added[2] when we saw that the manufacturers were implementing these
-> > properties in the driver. I didn't know the properties were absent upstream
-> > until yesterday. Somebody pointed out in our ongoing effort to make sure
-> > all core kernel changes that android depends on are present upstream.
-> > 
-> > I think those values are also propagated in application facing APIs in
-> > Android (but I am not sure yet, let me know if that's something you want
-> > to find out).
-> > 
-> > I wanted to chime in and present you a 'user' for this if that helps.
+> > * An ISB completing prior page table walks when updating TTBR. I don't
+> >   believe this is necessarily the case, given how things work for an
+> >   EL1->EL2 transition where there can be ongoing EL1 walks.
 > 
-> We have re-submitted the BQ25150/155 driver that would be the user and we
-> have 2 more for review that will use the new definitions
+> I've had confirmation that a DSB is necessary (after the MSR and ISB) to
+> complete any ongoing translation table walks for the stale context.
+> 
+> Without a DSB, those walks can observe subsequent stores and encounter
+> the usual set of CONSTRAINED UNPREDICTABLE behaviours (e.g. walking into
+> MMIO with side-effects, continuing from amalgamted entries, etc). Those
+> issues are purely to do with the walk, and apply regardless of whether
+> the resulting translations are architecturally consumed.
 
-Dan / Sebastian, I wasn't able to find the subsequent patches
-that add the 3 health properties, so I'm assuming this patch is still
-"out-of-tree".
+Ok, sorry I didn't get it earlier... I attempted a quick fix below.
 
-I was hoping against that so we (Android) aren't unnecessarily diverging
-from upstream. However, I have now just cherry-picked this patch[1] for the
-next Android release.
+From ab30d8082be62fe24a97eceec5dbfeea8e278511 Mon Sep 17 00:00:00 2001
+From: Andrea Arcangeli <aarcange@redhat.com>
+Date: Tue, 31 Mar 2020 20:03:43 -0400
+Subject: [PATCH 1/1] arm64: tlb: skip tlbi broadcast, fix speculative tlb
+ lookups
 
-Sebastian, since these appear in JEITA spec, will the same patch with
-additions to the commit message saying so be enough?
+Without DSB in between "MSR; ISB" and "atomic_dec(&nr_active_mm)"
+there's the risk a speculative pagecache lookup may still be walking
+pagetables of the unloaded asid after nr_active_mm has been
+decreased. In such case the remote CPU could free the pagetables and
+reuse the memory without first issuing a tlbi broadcast, while the
+speculative tlb lookup still runs on the unloaded asid. For this
+reason the speculative pagetable walks needs to be flushed before
+decreasing nr_active_mm.
+
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+---
+ arch/arm64/include/asm/mmu_context.h | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/include/asm/mmu_context.h b/arch/arm64/include/asm/mmu_context.h
+index 9c66fe317e2f..d821ea3ce839 100644
+--- a/arch/arm64/include/asm/mmu_context.h
++++ b/arch/arm64/include/asm/mmu_context.h
+@@ -210,8 +210,18 @@ enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
+ 	if (per_cpu(cpu_not_lazy_tlb, cpu) &&
+ 	    is_idle_task(tsk)) {
+ 		per_cpu(cpu_not_lazy_tlb, cpu) = false;
+-		if (!system_uses_ttbr0_pan())
++		if (!system_uses_ttbr0_pan()) {
+ 			cpu_set_reserved_ttbr0();
++			/*
++			 * DSB will flush the speculative pagetable
++			 * walks on the old asid. It's required before
++			 * decreasing nr_active_mm because after
++			 * decreasing nr_active_mm the tlbi broadcast
++			 * may not happen on the unloaded asid before
++			 * the pagetables are freed.
++			 */
++			dsb(ish);
++		}
+ 		atomic_dec(&mm->context.nr_active_mm);
+ 	}
+ 	VM_WARN_ON(atomic_read(&mm->context.nr_active_mm) < 0);
+@@ -249,6 +259,14 @@ switch_mm(struct mm_struct *prev, struct mm_struct *next,
+ 	} else if (prev != next) {
+ 		atomic_inc(&next->context.nr_active_mm);
+ 		__switch_mm(next, cpu);
++		/*
++		 * DSB will flush the speculative pagetable walks on the old
++		 * asid. It's required before decreasing nr_active_mm because
++		 * after decreasing nr_active_mm the tlbi broadcast may not
++		 * happen on the unloaded asid before the pagetables are
++		 * freed.
++		 */
++		dsb(ish);
+ 		atomic_dec(&prev->context.nr_active_mm);
+ 	}
+ 	VM_WARN_ON(!atomic_read(&next->context.nr_active_mm));
+
+
+I didn't test it yet, because this being a theoretical issue it is
+better reviewed in the source.
+
+> > * Walks never being initiated for `inactive` contexts within the current
+> >   translation regime. e.g. while ASID x is installed, never starting a
+> >   walk for ASID y. I can imagine that the architecture may permit a form
+> >   of this starting with intermediate walk entries in the TLBs.
+> 
+> I'm still chasing this point.
+
+Appreciated! I'll cross fingers you don't find the speculative lookups
+can randomly start on unloaded ASID. That would also imply that it
+would be impossible on arm64 to use different asid on different CPUs
+as it is normally done on other arches.
 
 Thanks,
-- ssp
+Andrea
 
-1. https://android-review.googlesource.com/c/kernel/common/+/1275596
-
-> 
-> Dan
-> 
