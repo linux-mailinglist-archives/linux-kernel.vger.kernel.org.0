@@ -2,149 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D17D219A861
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:14:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E36F19A874
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 11:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732128AbgDAJN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 05:13:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58070 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726974AbgDAJNz (ORCPT
+        id S1732102AbgDAJR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 05:17:58 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39749 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbgDAJR5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 05:13:55 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 031936qk141565
-        for <linux-kernel@vger.kernel.org>; Wed, 1 Apr 2020 05:13:54 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3022r03ng0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 05:13:54 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Wed, 1 Apr 2020 10:13:38 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 1 Apr 2020 10:13:33 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0319DkEu40173752
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 Apr 2020 09:13:46 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E96194204B;
-        Wed,  1 Apr 2020 09:13:45 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8C1EC42041;
-        Wed,  1 Apr 2020 09:13:42 +0000 (GMT)
-Received: from [9.199.48.114] (unknown [9.199.48.114])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  1 Apr 2020 09:13:42 +0000 (GMT)
-Subject: Re: [PATCH v2 13/16] powerpc/watchpoint: Prepare handler to handle
- more than one watcnhpoint
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     mpe@ellerman.id.au, mikey@neuling.org, apopple@linux.ibm.com,
-        paulus@samba.org, npiggin@gmail.com,
-        naveen.n.rao@linux.vnet.ibm.com, peterz@infradead.org,
-        jolsa@kernel.org, oleg@redhat.com, fweisbec@gmail.com,
-        mingo@kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20200401061309.92442-1-ravi.bangoria@linux.ibm.com>
- <20200401061309.92442-14-ravi.bangoria@linux.ibm.com>
- <6b89991b-481a-8cbd-b5b7-559e5e16cf92@c-s.fr>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Wed, 1 Apr 2020 14:43:41 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Wed, 1 Apr 2020 05:17:57 -0400
+Received: by mail-ot1-f66.google.com with SMTP id x11so25216909otp.6;
+        Wed, 01 Apr 2020 02:17:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zvEBEkwz9Sq6aAttX3Rnj82JX5NkQ0CAunYUtFI0KDM=;
+        b=H/ieCdAhv4hrNNIEhvtS4+1k8PawKy65U0Cbk+Hm5RzxFGf610ILMgOZukq/R5PeLZ
+         lUVMqKJvWmp0/5qKwE0yAyovHKPHHv3C2JVrADyUISp2IkzRmYprBDMzPxJPedV+dmyQ
+         h5vMJcOhBxUHZuNKizVKGqu+AbkNZIIt1U90sdfEFdO9vy1aDKf549pkhNsI7BHJ1GdL
+         RvFIi78VewdwiOsgyPnt6sy1Ia4MzrTo3dpgowpXezfuPwUmZqt3WAmNH0EO5zl0ncTO
+         +wPNsKhe3vggpE+erX9uDryOrUkAfQxiSsCRmGHlXHr7IgDebUFlkspLLkFmL2fWQyXv
+         h15w==
+X-Gm-Message-State: ANhLgQ0mXTaiy2u19eJKB+a5xuoZNjocLpOaH2eRDYR/huANcc82FdEZ
+        6tfRijE01eCvvyGFXwTW09UbZ1D9p790/LTYfN2BKw==
+X-Google-Smtp-Source: ADFU+vs3g5x5BswUgDpQqQ/W2DS6rIW6SxR67+ucWdEeArPwNiHvJgBL2Crzi0FMj7cQPLRGHMi8rxw9qnJPJ0sfRm8=
+X-Received: by 2002:a9d:7402:: with SMTP id n2mr16596009otk.262.1585732676649;
+ Wed, 01 Apr 2020 02:17:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <6b89991b-481a-8cbd-b5b7-559e5e16cf92@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20040109-4275-0000-0000-000003B77F78
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20040109-4276-0000-0000-000038CCD1C2
-Message-Id: <cb2c250b-c963-45fe-f3b4-879076c495ab@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 impostorscore=0
- suspectscore=0 adultscore=0 clxscore=1015 bulkscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004010083
+References: <19409af2-f38a-6760-c7b3-aa5794a94df0@infradead.org> <c292826f-0a41-910d-1973-e6b613fbce7e@redhat.com>
+In-Reply-To: <c292826f-0a41-910d-1973-e6b613fbce7e@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 1 Apr 2020 11:17:44 +0200
+Message-ID: <CAJZ5v0iKvivmqmWqgoDM9W35SfMotacP7xP+er+ow7C7=SVkzA@mail.gmail.com>
+Subject: Re: [PATCH] ACPI; update docs for "acpi_backlight" kernel parameter options
+To:     Hans de Goede <hdegoede@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Mar 31, 2020 at 10:16 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi,
+>
+> On 3/31/20 2:17 AM, Randy Dunlap wrote:
+> > From: Randy Dunlap <rdunlap@infradead.org>
+> >
+> > Update the Documentation for "acpi_backlight" by adding
+> > 2 new options (native and none).
+> >
+> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> > Cc: linux-acpi@vger.kernel.org
+> > Cc: Zhang Rui <rui.zhang@intel.com>
+> > Cc: Hans de Goede <hdegoede@redhat.com>
+> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > Cc: Len Brown <lenb@kernel.org>
+>
+> Thanks!
+>
+> Patch looks good to me:
+>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+>
+> Regards,
+>
+> Hans
+>
+>
+>
+>
+> > ---
+> >   Documentation/admin-guide/kernel-parameters.txt |    8 +++++---
+> >   1 file changed, 5 insertions(+), 3 deletions(-)
+> >
+> > --- linux-next-20200330.orig/Documentation/admin-guide/kernel-parameters.txt
+> > +++ linux-next-20200330/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -22,11 +22,13 @@
+> >                       default: 0
+> >
+> >       acpi_backlight= [HW,ACPI]
+> > -                     acpi_backlight=vendor
+> > -                     acpi_backlight=video
+> > -                     If set to vendor, prefer vendor specific driver
+> > +                     { vendor | video | native | none }
+> > +                     If set to vendor, prefer vendor-specific driver
+> >                       (e.g. thinkpad_acpi, sony_acpi, etc.) instead
+> >                       of the ACPI video.ko driver.
+> > +                     If set to video, use the ACPI video.ko driver.
+> > +                     If set to native, use the device's native backlight mode.
+> > +                     If set to none, disable the ACPI backlight interface.
+> >
+> >       acpi_force_32bit_fadt_addr
+> >                       force FADT to use 32 bit addresses rather than the
+> >
 
-
-On 4/1/20 12:20 PM, Christophe Leroy wrote:
-> 
-> 
-> Le 01/04/2020 à 08:13, Ravi Bangoria a écrit :
->> Currently we assume that we have only one watchpoint supported by hw.
->> Get rid of that assumption and use dynamic loop instead. This should
->> make supporting more watchpoints very easy.
->>
->> With more than one watchpoint, exception handler need to know which
->> DAWR caused the exception, and hw currently does not provide it. So
->> we need sw logic for the same. To figure out which DAWR caused the
->> exception, check all different combinations of user specified range,
->> dawr address range, actual access range and dawrx constrains. For ex,
->> if user specified range and actual access range overlaps but dawrx is
->> configured for readonly watchpoint and the instruction is store, this
->> DAWR must not have caused exception.
->>
->> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
->> ---
->>   arch/powerpc/include/asm/processor.h |   2 +-
->>   arch/powerpc/include/asm/sstep.h     |   2 +
->>   arch/powerpc/kernel/hw_breakpoint.c  | 396 +++++++++++++++++++++------
->>   arch/powerpc/kernel/process.c        |   3 -
->>   4 files changed, 313 insertions(+), 90 deletions(-)
->>
-> 
-> [...]
-> 
->> -static bool
->> -dar_range_overlaps(unsigned long dar, int size, struct arch_hw_breakpoint *info)
->> +static bool dar_user_range_overlaps(unsigned long dar, int size,
->> +                    struct arch_hw_breakpoint *info)
->>   {
->>       return ((dar <= info->address + info->len - 1) &&
->>           (dar + size - 1 >= info->address));
->>   }
-> 
-> Here and several other places, I think it would be more clear if you could avoid the - 1 :
-> 
->      return ((dar < info->address + info->len) &&
->          (dar + size > info->address));
-
-Ok. see below...
-
-> 
-> 
->> +static bool dar_in_hw_range(unsigned long dar, struct arch_hw_breakpoint *info)
->> +{
->> +    unsigned long hw_start_addr, hw_end_addr;
->> +
->> +    hw_start_addr = ALIGN_DOWN(info->address, HW_BREAKPOINT_SIZE);
->> +    hw_end_addr = ALIGN(info->address + info->len, HW_BREAKPOINT_SIZE) - 1;
->> +
->> +    return ((hw_start_addr <= dar) && (hw_end_addr >= dar));
->> +}
-> 
->      hw_end_addr = ALIGN(info->address + info->len, HW_BREAKPOINT_SIZE);
-> 
->      return ((hw_start_addr <= dar) && (hw_end_addr > dar));
-
-I'm using -1 while calculating end address is to make it
-inclusive. If I don't use -1, the end address points to a
-location outside of actual range, i.e. it's not really an
-end address.
-
-Ravi
-
+Applied as 5.7-rc material with a slightly modified subject, thanks!
