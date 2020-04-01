@@ -2,91 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7FFA19B1FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50AF019B341
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:50:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389250AbgDAQjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:39:49 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35338 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389029AbgDAQjr (ORCPT
+        id S2388878AbgDAQkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:40:33 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45531 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389320AbgDAQk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:39:47 -0400
-Received: by mail-pg1-f196.google.com with SMTP id k5so328018pga.2;
-        Wed, 01 Apr 2020 09:39:46 -0700 (PDT)
+        Wed, 1 Apr 2020 12:40:28 -0400
+Received: by mail-ed1-f68.google.com with SMTP id u59so628113edc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:40:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1KvnqiTwTwGyUVWVo1ohp05PHzyr/fqOgpGS9E5cA/I=;
-        b=nUYzm9tQjevOeNPGsLPIZsXkgwuQB0F7C9QXza/hqHM4+Q78jMvLHkYf9EtNeHY5R9
-         WkoostobMpjq7Lk411c7WOtNozsD6ImrzVjQdjYla6cCHnxOqSPVFQFthX88L9j+X261
-         HbOlNVWW6FqZ4CGKJEG3O5cQQBUZxQe7iYVu7RAurGXWam04lRgFvi2XwZOP+r0VBPNT
-         UQj+7L6BCrI13vG+2IUZWOpvPxdB+0nOk9oKQuolcqONcdtQf31Sa0a1O1WuFCyMkQc3
-         rg7ASPgLiNSA6mmFKFyuUQ7pX+vZt3y2twspIQKzmDOa36JzJiqLVCgI8T/qKHzD+5d+
-         ufKQ==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+fmUVquH/4ooUsn9dJwsSnQu0YfOphD9t1TiLdVwAyA=;
+        b=j8+qBqjWDU65AzKOeRCDMK5UMUySdIHq9VSThcPc+0cJacfTp0iwPWJ0tPmJRlx9CK
+         g29vk14anmuLxLrzFgsPKgLWGV1AoK2KSBWRwcKrOLRY+TWkmJk3BfXTohf0E7sApTXz
+         j5YK7xbSDCBUCUpuR+58jZm8/JSS2lAZojDXA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1KvnqiTwTwGyUVWVo1ohp05PHzyr/fqOgpGS9E5cA/I=;
-        b=Z4pP4gVI1wywvLY8ON3/uBbVcUbt87HfFzTAGWbkMYli61uVXafq5pFocdhZyN33ek
-         atD0yyfmz0mzrRWHsC0MRGZUXOUv3ChD8CXVBB/tJPCfIangxwJ8GVKaS3mjVOuoig2s
-         ssZvak1vCvB4CN1vkY37zIvukbYwWvtZR87bVpZM7euKMy8OmbinwwWB4N8lgKYdwGwC
-         BZPNJpUGLpsQOGkrMS+8QYxott65WoqdN1+5f3B+SfnaRSa26n/PsWK/rm3DvJdLsxJ7
-         tfgurw8LnNmyi3NAfeqai3p+CE/rMi6WOFeMxMW1udY6PV2QlaJNQ90kW6hVpTRpEKy4
-         sAKQ==
-X-Gm-Message-State: AGi0PuZofVR38SLIdAhBzY9g9afMoGZYRVUoCUuMTMIXmxraxImdKfcD
-        ZGbcxWUCK9E9UZz5ZT8INEXibFf2
-X-Google-Smtp-Source: APiQypJFjgmkwYIWKxDW0nJltQbosUObrioPcvFAkb+CWEJtYbERVyIpfynLOm0BaHxU1+HaXCFJGw==
-X-Received: by 2002:a62:1648:: with SMTP id 69mr10810975pfw.14.1585759186075;
-        Wed, 01 Apr 2020 09:39:46 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id q91sm2006250pjb.11.2020.04.01.09.39.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Apr 2020 09:39:45 -0700 (PDT)
-Date:   Wed, 1 Apr 2020 09:39:44 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Grant Peltier <grantpeltier93@gmail.com>
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        adam.vaughn.xh@renesas.com
-Subject: Re: [PATCH v3 1/2] hwmon: (pmbus) add support for 2nd Gen Renesas
- digital multiphase
-Message-ID: <20200401163944.GA111856@roeck-us.net>
-References: <cover.1584720563.git.grantpeltier93@gmail.com>
- <62c000adf0108aeb65d3f275f28eb26b690384aa.1584720563.git.grantpeltier93@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+fmUVquH/4ooUsn9dJwsSnQu0YfOphD9t1TiLdVwAyA=;
+        b=Pfsqwlh4xCax3F3ecucuPqv46bm4RAXluO9kewnnRMJk2BnI0ZUfeFVj9v91WiKtyU
+         T8smP43PCaNFQx+yUHz4PpkGnNiatIKrJM3mqWmAJKPsmGwfHKRpzbjfYqfsCdwsEgQW
+         HW9pTPPYgAIqfteSVmKlVcoaZK4tbQLyGBnEX5YFFfaDfJYNKSRXPTsw5mGd/o0977+7
+         1e4j+d7CtXd1oKFKYWDzcWBrCRgofA0YR2+iCPTSGOXkyXfNELQWfJiFCGVznOE3BgYS
+         gJ61oM0nyaG+SwC1+AVeRGyf1BWEFdOLp7R6290cy0WmvGWoYgaYAPgdcQ7BlpEbmcrC
+         Uayg==
+X-Gm-Message-State: ANhLgQ35j/ZKtsre8qOXkCNOTUaMojNPIGtkhuVo4Knv3LbEFMMUycV1
+        427+gOKhHdqDgqhdlH75ZgyX58YsqjTMR/3txT/+vg==
+X-Google-Smtp-Source: ADFU+vuFhviIpWMZWEBTgfJWS7ePu07l9AQSyMf1NQJacKvxD3vVb6oEPToYimLpSN1xJFpQbicsOlDEmkUP00hj82A=
+X-Received: by 2002:a17:906:848d:: with SMTP id m13mr21390474ejx.348.1585759225278;
+ Wed, 01 Apr 2020 09:40:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62c000adf0108aeb65d3f275f28eb26b690384aa.1584720563.git.grantpeltier93@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <1445647.1585576702@warthog.procyon.org.uk>
+ <2418286.1585691572@warthog.procyon.org.uk> <20200401144109.GA29945@gardel-login>
+ <CAJfpegs3uDzFTE4PCjZ7aZsEh8b=iy_LqO1DBJoQzkP+i4aBmw@mail.gmail.com> <2590640.1585757211@warthog.procyon.org.uk>
+In-Reply-To: <2590640.1585757211@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 1 Apr 2020 18:40:13 +0200
+Message-ID: <CAJfpegsXqxizOGwa045jfT6YdUpMxpXET-yJ4T8qudyQbCGkHQ@mail.gmail.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Lennart Poettering <mzxreary@0pointer.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de, keyrings@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 11:16:21AM -0500, Grant Peltier wrote:
-> Extend the isl68137 driver to provide support for 2nd generation Renesas
-> digital multiphase voltage regulators.
-> 
-> Signed-off-by: Grant Peltier <grantpeltier93@gmail.com>
-> ---
-[ ... ]
+On Wed, Apr 1, 2020 at 6:07 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> > I've still not heard a convincing argument in favor of a syscall.
+>
+> From your own results, scanning 10000 mounts through mountfs and reading just
+> two values from each is an order of magnitude slower without the effect of the
+> dentry/inode caches.  It gets faster on the second run because the mountfs
+> dentries and inodes are cached - but at a cost of >205MiB of RAM.  And it's
+> *still* slower than fsinfo().
 
->  
-> -static const struct i2c_device_id isl68137_id[] = {
-> -	{"isl68137", 0},
-> +static const struct i2c_device_id raa_dmpvr_id[] = {
-> +	{"isl68137", isl68137},
-> +	{"raa_dmpvr2_1rail", raa_dmpvr2_1rail},
-> +	{"raa_dmpvr2_2rail", raa_dmpvr2_2rail},
-> +	{"raa_dmpvr2_3rail", raa_dmpvr2_3rail},
-> +	{"raa_dmpvr2_hv", raa_dmpvr2_hv},
->  	{}
+Already told you that we can just delete the dentry on dput_final, so
+the memory argument is immaterial.
 
-I clearly didn't pay attention. I2C device IDs need to match chip names,
-not functionality. Unfortunately I only realized that when I wrote the
-pull request, and I didn't want to drop the patch. I'll send a fixup
-patch later.
+And the speed argument also, because there's no use case where that
+would make a difference.  You keep bringing up the notification queue
+overrun when watching a subtree, but that's going to be painful with
+fsinfo(2) as well.   If that's a relevant use case (not saying it's
+true), might as well add a /mnt/MNT_ID/subtree_info (trivial again)
+that contains all information for the subtree.  Have fun implementing
+that with fsinfo(2).
 
-Guenter
+Thanks,
+Miklos
