@@ -2,134 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02CCD19B0B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4300819B461
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:00:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387964AbgDAQ2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:28:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387659AbgDAQ2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:28:45 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9D782137B;
-        Wed,  1 Apr 2020 16:28:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758524;
-        bh=5JqrpdjqLIuWIOjEGpjTuL1YlPVL+BNI/ZpNl79kbkE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aHw8idb90JtFRWkRqfXHRgw4qMN/WLsBpTHflHW3W/IZ0aIUMS90MU6lTTOGihHT+
-         8HsULRNnauHk9esA31Jr9VWY/Hl0PgmNTLU/x5ULYvetR0xLaiV0Zt1Wl+653o0DIS
-         2hJs//cyVSrXbQJkhiUDsjkAfJ6rnpAp7BzQh74w=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arthur Demchenkov <spinal.by@gmail.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Roger Quadros <rogerq@ti.com>, Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.19 114/116] ARM: dts: N900: fix onenand timings
-Date:   Wed,  1 Apr 2020 18:18:10 +0200
-Message-Id: <20200401161556.667067117@linuxfoundation.org>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
-References: <20200401161542.669484650@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2387552AbgDAQ4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:56:55 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:56526 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732784AbgDAQUL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:20:11 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031GIeiP192555;
+        Wed, 1 Apr 2020 16:19:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=wf5Epvd2PkMi8L7E/eRCUSR0FOvN4Hz0yrwmht90YC0=;
+ b=B1OBTGwNefZz4cvyBMFGvInJhvACIyJVqEmEJQzCbvhwtMRqnux8ubHv88gUbJgRISwc
+ sgQmJYNDDopM8HVE9vyndAjbTtCMdIoiwwuWNaKk9Fq4z0IJsf82fb26GoPVQzVprvNE
+ jH21TQWFzyg+ARWRC5s1+eg0c1gnH48JZE/Pn220xQB2xncVFBUZfdqqti5OQqxdAP3a
+ xZ8NYJsN91wJTh/BMvle72pBf1hqadkuN3ealpyD49mz+IuVUHtzBFpryfpcFtHy++I9
+ gvkQFQO+C0rK+UPXM/DX+49O9GfxjF/ObUeOj/4KTwr59M/btMolfsLq8nOLGAXPI0Ow TQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 303aqhpxbu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Apr 2020 16:19:56 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031GGsu9071569;
+        Wed, 1 Apr 2020 16:17:56 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 302g2gwbn7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Apr 2020 16:17:56 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 031GHspi005974;
+        Wed, 1 Apr 2020 16:17:54 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 01 Apr 2020 09:17:54 -0700
+Date:   Wed, 1 Apr 2020 12:18:10 -0400
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] mm: fix tick timer stall during deferred page init
+Message-ID: <20200401161810.xvqikca2x46yqrlx@ca-dmjordan1.us.oracle.com>
+References: <20200311123848.118638-1-shile.zhang@linux.alibaba.com>
+ <20200401154217.GQ22681@dhcp22.suse.cz>
+ <dfc0014a-9b85-5eeb-70ea-d622ccf5d988@redhat.com>
+ <20200401160048.GU22681@dhcp22.suse.cz>
+ <20200401160929.jwekhr24tb44odea@ca-dmjordan1.us.oracle.com>
+ <20200401161243.GW22681@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200401161243.GW22681@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 mlxscore=0
+ adultscore=0 phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004010141
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 clxscore=1015
+ malwarescore=0 impostorscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004010141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arthur Demchenkov <spinal.by@gmail.com>
+On Wed, Apr 01, 2020 at 06:12:43PM +0200, Michal Hocko wrote:
+> On Wed 01-04-20 12:09:29, Daniel Jordan wrote:
+> > On Wed, Apr 01, 2020 at 06:00:48PM +0200, Michal Hocko wrote:
+> > > On Wed 01-04-20 17:50:22, David Hildenbrand wrote:
+> > > > On 01.04.20 17:42, Michal Hocko wrote:
+> > > > > This needs a double checking but I strongly believe that the lock can be
+> > > > > simply dropped in this path.
+> > 
+> > This is what my fix does, it limits the time the resize lock is held.
+> 
+> Just remove it from the deferred intialization and add a comment that we
+> deliberately not taking the lock here because abc
 
-commit 0c5220a3c1242c7a2451570ed5f5af69620aac75 upstream.
-
-Commit a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
-started using DT specified timings for GPMC, and as a result the
-OneNAND stopped working on N900 as we had wrong values in the DT.
-Fix by updating the values to bootloader timings that have been tested
-to be working on Nokia N900 with OneNAND manufacturers: Samsung,
-Numonyx.
-
-Fixes: a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
-Signed-off-by: Arthur Demchenkov <spinal.by@gmail.com>
-Tested-by: Merlijn Wajer <merlijn@wizzup.org>
-Reviewed-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/arm/boot/dts/omap3-n900.dts |   44 ++++++++++++++++++++++++---------------
- 1 file changed, 28 insertions(+), 16 deletions(-)
-
---- a/arch/arm/boot/dts/omap3-n900.dts
-+++ b/arch/arm/boot/dts/omap3-n900.dts
-@@ -852,34 +852,46 @@
- 		compatible = "ti,omap2-onenand";
- 		reg = <0 0 0x20000>;	/* CS0, offset 0, IO size 128K */
- 
-+		/*
-+		 * These timings are based on CONFIG_OMAP_GPMC_DEBUG=y reported
-+		 * bootloader set values when booted with v5.1
-+		 * (OneNAND Manufacturer: Samsung):
-+		 *
-+		 *   cs0 GPMC_CS_CONFIG1: 0xfb001202
-+		 *   cs0 GPMC_CS_CONFIG2: 0x00111100
-+		 *   cs0 GPMC_CS_CONFIG3: 0x00020200
-+		 *   cs0 GPMC_CS_CONFIG4: 0x11001102
-+		 *   cs0 GPMC_CS_CONFIG5: 0x03101616
-+		 *   cs0 GPMC_CS_CONFIG6: 0x90060000
-+		 */
- 		gpmc,sync-read;
- 		gpmc,sync-write;
- 		gpmc,burst-length = <16>;
- 		gpmc,burst-read;
- 		gpmc,burst-wrap;
- 		gpmc,burst-write;
--		gpmc,device-width = <2>; /* GPMC_DEVWIDTH_16BIT */
--		gpmc,mux-add-data = <2>; /* GPMC_MUX_AD */
-+		gpmc,device-width = <2>;
-+		gpmc,mux-add-data = <2>;
- 		gpmc,cs-on-ns = <0>;
--		gpmc,cs-rd-off-ns = <87>;
--		gpmc,cs-wr-off-ns = <87>;
-+		gpmc,cs-rd-off-ns = <102>;
-+		gpmc,cs-wr-off-ns = <102>;
- 		gpmc,adv-on-ns = <0>;
--		gpmc,adv-rd-off-ns = <10>;
--		gpmc,adv-wr-off-ns = <10>;
--		gpmc,oe-on-ns = <15>;
--		gpmc,oe-off-ns = <87>;
-+		gpmc,adv-rd-off-ns = <12>;
-+		gpmc,adv-wr-off-ns = <12>;
-+		gpmc,oe-on-ns = <12>;
-+		gpmc,oe-off-ns = <102>;
- 		gpmc,we-on-ns = <0>;
--		gpmc,we-off-ns = <87>;
--		gpmc,rd-cycle-ns = <112>;
--		gpmc,wr-cycle-ns = <112>;
--		gpmc,access-ns = <81>;
--		gpmc,page-burst-access-ns = <15>;
-+		gpmc,we-off-ns = <102>;
-+		gpmc,rd-cycle-ns = <132>;
-+		gpmc,wr-cycle-ns = <132>;
-+		gpmc,access-ns = <96>;
-+		gpmc,page-burst-access-ns = <18>;
- 		gpmc,bus-turnaround-ns = <0>;
- 		gpmc,cycle2cycle-delay-ns = <0>;
- 		gpmc,wait-monitoring-ns = <0>;
--		gpmc,clk-activation-ns = <5>;
--		gpmc,wr-data-mux-bus-ns = <30>;
--		gpmc,wr-access-ns = <81>;
-+		gpmc,clk-activation-ns = <6>;
-+		gpmc,wr-data-mux-bus-ns = <36>;
-+		gpmc,wr-access-ns = <96>;
- 		gpmc,sync-clk-ps = <15000>;
- 
- 		/*
-
-
+I think it has to be a little more involved because of the window where
+interrupts might allocate during deferred init, as Vlastimil pointed out a few
+years ago when the change was made.  I'll explain myself in the changelog.
