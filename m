@@ -2,115 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3053E19AF86
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:15:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBB7919AF75
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:11:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732264AbgDAQPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:15:45 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42112 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728242AbgDAQPo (ORCPT
+        id S1732416AbgDAQLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:11:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33594 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbgDAQLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:15:44 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031G9Z4r132264;
-        Wed, 1 Apr 2020 16:10:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=igQpHEyMKJTQgqY+5lVU6UpjVDCEktfMEEUoFi0hzdY=;
- b=rirqrzEhxiUQjA4Whgg0FsFwpoaHlxZOwChQKYEw30ZadyZYgDq6HwPiLXwva9g8hDl0
- JYPf85K3A9knnKbMki8AlHxaRhwzkCC8D5OnBTqx/RmadSOBuSMNAbe+4LsasSzGtR0E
- 2dRImSqjm0aKO0rvUzB2xYeBlb2/tYSbxO0iaxH2uuxZxmsmXtsJ7zehIx3xnNdsJ/40
- 4yLOlAduuT5vByN2HFFrx8BOgsbqLkv+ellZrWkGE+WVHP/fu5f2usD5kWGVWea5/6Na
- 9vQ2Ew9fRhYxspuYlghNy6uxF376FvpaNrxM0afzpCVvqv5O8lHX4CmB1ZLRX7c7qODQ IQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 303yun911j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Apr 2020 16:10:21 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031G8DX6040487;
-        Wed, 1 Apr 2020 16:10:20 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 302ga0s8j5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Apr 2020 16:10:20 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 031GAHbs000767;
-        Wed, 1 Apr 2020 16:10:17 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 01 Apr 2020 09:10:16 -0700
-Date:   Wed, 1 Apr 2020 12:10:36 -0400
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
+        Wed, 1 Apr 2020 12:11:05 -0400
+Received: by mail-wr1-f65.google.com with SMTP id a25so776219wrd.0;
+        Wed, 01 Apr 2020 09:11:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6SgSqYLabdht19WsqZYrt1JZCOHPoNOa62kgTyu4dDY=;
+        b=gxPfVNTVtYMFQ72Wu+U1w5wupZXg47CZVJfLSuT0NJ0jVnHykL3jNCSLCz24ZzDsec
+         9LWKCwOdZCL6Yf7gXVq1HRn60jNitQB+5GzsooD76lxpu+JqP+lVWDyqkbDIBcFBm+x+
+         heTcZHKCNhlJuOdHdVytZQvYoupZYFxMJr5Px1C4PDo8eKAlntx87BCuYSCfcFXDf+Co
+         hVnYeWevW4cVWH2OVHNCSC9OXcJ5131SR19f8V97rBTTvEYpyP7H6MEiUu+HeAvUUdvi
+         w42/Mh/sM426P2A2SiYFS1gMPyavd7E0egu8yf9rq1PnbqO4mzI8sKymlBtEOPRq55Uj
+         TXbw==
+X-Gm-Message-State: ANhLgQ093Bf1GrJOAcCnULEY52IoPBrF+htTKUaKMyoKmb40DWfRwgMs
+        iRPeqdfbEfTxMrenztcaVjU=
+X-Google-Smtp-Source: ADFU+vsJ7ptO/+sfU8MVbmxUQXnHszAgWJSKgC0msCpRCKplGfHo1pAnZvZsGDgekyFl//FlRsrmVg==
+X-Received: by 2002:adf:df8a:: with SMTP id z10mr25302935wrl.278.1585757461997;
+        Wed, 01 Apr 2020 09:11:01 -0700 (PDT)
+Received: from localhost (ip-37-188-180-223.eurotel.cz. [37.188.180.223])
+        by smtp.gmail.com with ESMTPSA id i2sm3499892wrx.22.2020.04.01.09.11.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 09:11:01 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 18:10:59 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Uladzislau Rezki <urezki@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Alexander Duyck <alexander.duyck@gmail.com>,
+        rcu@vger.kernel.org, willy@infradead.org, peterz@infradead.org,
+        neilb@suse.com, vbabka@suse.cz, mgorman@suse.de,
         Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Yiqian Wei <yiwei@redhat.com>
-Subject: Re: [PATCH v1 0/2] mm/page_alloc: fix stalls/soft lockups with huge
- VMs
-Message-ID: <20200401161036.oqk3dakako33bv3o@ca-dmjordan1.us.oracle.com>
-References: <20200401104156.11564-1-david@redhat.com>
- <596d593e-7f36-0e24-6c67-311bd6971e89@redhat.com>
- <CAM9Jb+hYPUZXVLr2T8x6Njcscw_+W0e2SCmr_B1fLZuOwgLZuw@mail.gmail.com>
- <20200401144529.7zkqq4rfdnitg32h@ca-dmjordan1.us.oracle.com>
- <8d481b8e-7ffc-e9f5-604b-f90856b2b38a@redhat.com>
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC] rcu/tree: Use GFP_MEMALLOC for alloc memory to free
+ memory pattern
+Message-ID: <20200401161059.GV22681@dhcp22.suse.cz>
+References: <20200331153450.GM30449@dhcp22.suse.cz>
+ <20200331161215.GA27676@pc636>
+ <20200401070958.GB22681@dhcp22.suse.cz>
+ <20200401123230.GB32593@pc636>
+ <20200401125503.GJ22681@dhcp22.suse.cz>
+ <20200401130816.GA1320@pc636>
+ <20200401131528.GK22681@dhcp22.suse.cz>
+ <20200401132258.GA1953@pc636>
+ <20200401152805.GN22681@dhcp22.suse.cz>
+ <20200401155712.GA15147@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8d481b8e-7ffc-e9f5-604b-f90856b2b38a@redhat.com>
-User-Agent: NeoMutt/20180716
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 mlxscore=0 spamscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004010139
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
- suspectscore=0 mlxscore=0 spamscore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004010138
+In-Reply-To: <20200401155712.GA15147@paulmck-ThinkPad-P72>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 05:54:40PM +0200, David Hildenbrand wrote:
-> On 01.04.20 16:45, Daniel Jordan wrote:
-> > On Wed, Apr 01, 2020 at 04:31:51PM +0200, Pankaj Gupta wrote:
-> >>> On 01.04.20 12:41, David Hildenbrand wrote:
-> >>>> Two fixes for misleading stall messages / soft lockups with huge nodes /
-> >>>> zones during boot without CONFIG_PREEMPT.
-> >>>>
-> >>>> David Hildenbrand (2):
-> >>>>   mm/page_alloc: fix RCU stalls during deferred page initialization
-> >>>>   mm/page_alloc: fix watchdog soft lockups during set_zone_contiguous()
-> >>>>
-> >>>>  mm/page_alloc.c | 2 ++
-> >>>>  1 file changed, 2 insertions(+)
-> >>>>
-> >>>
-> >>> Patch #1 requires "[PATCH v3] mm: fix tick timer stall during deferred
-> >>> page init"
-> >>>
-> >>> https://lkml.kernel.org/r/20200311123848.118638-1-shile.zhang@linux.alibaba.com
-> >>
-> >> Thanks! Took me some time to figure it out.
-> > 
-> > FYI, I'm planning to post an alternate version of that fix, hopefully today if
-> > all goes well with my testing.
-> > 
+On Wed 01-04-20 08:57:12, Paul E. McKenney wrote:
+[...]
+> > diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> > index e3ab1c0d9140..8f09cefdfa7b 100644
+> > --- a/include/linux/gfp.h
+> > +++ b/include/linux/gfp.h
+> > @@ -127,6 +127,8 @@ struct vm_area_struct;
+> >   *
+> >   * Reclaim modifiers
+> >   * ~~~~~~~~~~~~~~~~~
+> > + * Please note that all the folloging flags are only applicable to sleepable
 > 
-> Cool, please CC me :)
+> s/folloging/following/
 
-Sure, in fact you already were! :)
+Fixed. I will add it on top of http://lkml.kernel.org/r/20200401120502.GH22681@dhcp22.suse.cz
+and post both later this week to Andrew.
+
+From ce456c2f6c8fe0588c1d743a5b87e283aa4806f8 Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Wed, 1 Apr 2020 18:02:23 +0200
+Subject: [PATCH] mm: make it clear that gfp reclaim modifiers are valid only
+ for sleepable allocations
+
+While it might be really clear to MM developers that gfp reclaim
+modifiers are applicable only to sleepable allocations (those with
+__GFP_DIRECT_RECLAIM) it seems that actual users of the API are not
+always sure. Make it explicit that they are not applicable for
+GFP_NOWAIT or GFP_ATOMIC allocations which are the most commonly used
+non-sleepable allocation masks.
+
+Acked-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ include/linux/gfp.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index e3ab1c0d9140..8040fa944cd8 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -127,6 +127,8 @@ struct vm_area_struct;
+  *
+  * Reclaim modifiers
+  * ~~~~~~~~~~~~~~~~~
++ * Please note that all the following flags are only applicable to sleepable
++ * allocations (e.g. %GFP_NOWAIT and %GFP_ATOMIC will ignore them).
+  *
+  * %__GFP_IO can start physical IO.
+  *
+-- 
+2.25.1
+
+-- 
+Michal Hocko
+SUSE Labs
