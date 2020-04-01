@@ -2,104 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A166019B4DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0946419B4E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732826AbgDARrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 13:47:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40734 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732328AbgDARrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 13:47:06 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95D7820784;
-        Wed,  1 Apr 2020 17:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585763226;
-        bh=pSIBaD4+b+O8FNdmNyWvEINRgzApDBhx/6Kuu3tMRp4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PX2jvi5/L/tyYNgbVT33eJrZ6Kl3dvqqGooWnn0Pffl/OUuILH++8UCg+URc3P50O
-         UNHR/jeMTYFJn+9OPnDOAcNZXKhbDQsNw0bEld7tXLJgMQVhSdgxEYbQp9tZ/tjSVo
-         hB1fZaKfpxczh/7FPOjFTftUtl8bp7BHfd9tYLvc=
-Subject: Re: [PATCH v8 kunit-next 1/4] kunit: add debugfs
- /sys/kernel/debug/kunit/<suite>/results display
-To:     Alan Maguire <alan.maguire@oracle.com>, brendanhiggins@google.com,
-        frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        linux-kselftest@vger.kernel.org
-Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        shuah <shuah@kernel.org>
-References: <1585232710-322-1-git-send-email-alan.maguire@oracle.com>
- <1585232710-322-2-git-send-email-alan.maguire@oracle.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <0d310181-a172-dec9-19aa-337ece9d7380@kernel.org>
-Date:   Wed, 1 Apr 2020 11:47:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1732683AbgDARsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 13:48:19 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39800 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbgDARsT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 13:48:19 -0400
+Received: by mail-pf1-f196.google.com with SMTP id k15so328595pfh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 10:48:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u6vNzmCXYSnlzwS1NEiJONpT2HwlhEUPd+tMh8UpVM4=;
+        b=k62PxZvfOSvn7SZM9/bmoVqk4F36EjiGs9ZxYxjL0e/a4LZSKyJigXxjAPpGZC8yNc
+         2Zl2AqXrOHO9HlF+MNzRl5IBJBg5Yk2omjwasn22T9F7HCbNhQWzo0ECm4uVSxIX5Fvr
+         gUaVZ5+jPj5QzJly8ScQPgYIE0NJxcETHDnK+PuqJqCgJPgP1BLV3sAafClBnfOxkX/F
+         L4g7YGAMopJk3BBuavB5tfSWu8QD5F8iEBit0ODxi6kTRKMYl9/Fym3JbSmyJLaUfbQY
+         4lgVFC6D3aQ/w9deQTZiT+0HVlAiODtkFPOvTmhSsXyt+h5nUZ4g4Uta7prgQZ3iD218
+         XCvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u6vNzmCXYSnlzwS1NEiJONpT2HwlhEUPd+tMh8UpVM4=;
+        b=CDLE1dhRZyYBumQNRG4E4VJdjVpbWj15FHMurGvVpQi+PF0UALPwdglkj+MzCyGyXH
+         C+nIfi2QWQWTcaXiZcUhaOo17N0KCLS1CY04N1KJM+B9RVsLIcf5IryrbKPasH+75bpq
+         KOGNHUxJ3k7x19E0PgT+XCS73u0nvpeqwNhOnsiIni+QgIKMHU69/D4Y+1GEkGVeSHiF
+         Dk8g+/qtM3iKR78iLMM8eQ/Z3HiIMz7ChzvB3Di20f8JXLSwHrarpAiagUS1y2fU3YwX
+         9Qbsa9iboA9LLdRIHtQ/zPS7KY58f4UMSvPVGnqe1NB5FnnWsadvs/87ul6Nx8psEvQp
+         YBDw==
+X-Gm-Message-State: ANhLgQ317P/BNltjxEZTEQAtA0JU1//TK88tz/rtEVwU0Jcly0NhfNmK
+        7Ri31uVQrWwKe46QJoWQBKi7ar1t0mqTot/gLKesbw==
+X-Google-Smtp-Source: ADFU+vvyFT5HVRRI45CINBDbFyS72TZfDpMZSbU2Bndlbpo8aCrVH3Z/IsUiK71oyEOYoPuxeSqFkXci04QSEMXVgOI=
+X-Received: by 2002:a63:4e22:: with SMTP id c34mr24330185pgb.263.1585763297080;
+ Wed, 01 Apr 2020 10:48:17 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1585232710-322-2-git-send-email-alan.maguire@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200317202404.GA20746@ubuntu-m2-xlarge-x86> <20200317215515.226917-1-ndesaulniers@google.com>
+ <20200327224246.GA12350@ubuntu-m2-xlarge-x86> <CAK7LNAShb1gWuZyycLAGWm19EWn17zeNcmdPyqu1o=K9XrfJbg@mail.gmail.com>
+ <CAK7LNAQ3=jUu4aa=JQB8wErUGDd-Vr=cX_yZSdP_uAP6kWZ=pw@mail.gmail.com>
+ <CAKwvOd=5AG1ARw6JUXmkuiftuShuYHKLk0ZnueuLhvOdMr5dOA@mail.gmail.com>
+ <20200330190312.GA32257@ubuntu-m2-xlarge-x86> <CAK7LNAT1HoV5wUZRdeU0+P1nYAm2xQ4tpOG+7UtT4947QByakg@mail.gmail.com>
+ <CAKwvOd==U6NvvYz8aUz8fUNdvz27pKrn8X5205rFadpGXzRC-Q@mail.gmail.com> <CAK7LNAR0PPxibFVC5F07mytz4J2BbwQkpHcquH56j7=S_Mqj2g@mail.gmail.com>
+In-Reply-To: <CAK7LNAR0PPxibFVC5F07mytz4J2BbwQkpHcquH56j7=S_Mqj2g@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 1 Apr 2020 10:48:06 -0700
+Message-ID: <CAKwvOdnYXXcfxWT6bOZXCX9-ac8tb=p2J53W+T-_gOfUu9vvSg@mail.gmail.com>
+Subject: Re: [PATCH v2] Makefile.llvm: simplify LLVM build
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sandeep Patil <sspatil@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alan,
+On Tue, Mar 31, 2020 at 11:11 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> On Wed, Apr 1, 2020 at 3:39 AM Nick Desaulniers <ndesaulniers@google.com> wrote:
+> >
+> > On Mon, Mar 30, 2020 at 11:25 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > >
+> > > Having both LLVM_DIR and LLVM_SUFFIX seems verbose.
+> >
+> > I agree, so maybe just LLVM=y, and we can support both non-standard
+> > locations and debian suffixes via modifications to PATH.
+>
+>
+>
+> OK, so we will start with the boolean switch 'LLVM'.
+>
+> People can use PATH to cope with directory path and suffixes.
 
-On 3/26/20 8:25 AM, Alan Maguire wrote:
-> add debugfs support for displaying kunit test suite results; this is
-> especially useful for module-loaded tests to allow disentangling of
-> test result display from other dmesg events.  debugfs support is
-> provided if CONFIG_KUNIT_DEBUGFS=y.
-> 
-> As well as printk()ing messages, we append them to a per-test log.
-> 
-> Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
-> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-> Reviewed-by: Frank Rowand <frank.rowand@sony.com>
-> ---
->   include/kunit/test.h   |  54 +++++++++++++++---
->   lib/kunit/Kconfig      |   8 +++
-
-Missing defaults for config options?
-
->   lib/kunit/Makefile     |   4 ++
->   lib/kunit/debugfs.c    | 116 ++++++++++++++++++++++++++++++++++++++
->   lib/kunit/debugfs.h    |  30 ++++++++++
->   lib/kunit/kunit-test.c |   4 +-
->   lib/kunit/test.c       | 147 ++++++++++++++++++++++++++++++++++++++-----------
->   7 files changed, 322 insertions(+), 41 deletions(-)
->   create mode 100644 lib/kunit/debugfs.c
->   create mode 100644 lib/kunit/debugfs.h
-> 
-
-snip
-
-> diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
-> index 065aa16..95d12e3 100644
-> --- a/lib/kunit/Kconfig
-> +++ b/lib/kunit/Kconfig
-> @@ -14,6 +14,14 @@ menuconfig KUNIT
->   
->   if KUNIT
->   
-> +config KUNIT_DEBUGFS
-> +	bool "KUnit - Enable /sys/kernel/debug/kunit debugfs representation"
-> +	help
-> +	  Enable debugfs representation for kunit.  Currently this consists
-> +	  of /sys/kernel/debug/kunit/<test_suite>/results files for each
-> +	  test suite, which allow users to see results of the last test suite
-> +	  run that occurred.
-> +
-
-Any reason why there is default for this option?
-
-Same for all other options. I am sending pull request for now without
-defaults. Would like to see this fixed for rc2.
-
-thanks,
--- Shuah
+Sounds good, we will modify our CI to use PATH modifications rather
+than suffixes. We can even do that before such a patch to Makefile
+exists.
+-- 
+Thanks,
+~Nick Desaulniers
