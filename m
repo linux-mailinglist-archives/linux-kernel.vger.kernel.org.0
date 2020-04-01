@@ -2,48 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AF9319B15D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F71719B1BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732660AbgDAQeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:34:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32872 "EHLO mail.kernel.org"
+        id S2388991AbgDAQhn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:37:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732532AbgDAQeW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:34:22 -0400
+        id S2388814AbgDAQh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:37:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DB22206F8;
-        Wed,  1 Apr 2020 16:34:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B128720772;
+        Wed,  1 Apr 2020 16:37:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758861;
-        bh=7QOQzZSJNdn6jehHqBbKqrU26W4MGHEWlsQRbBTn3WU=;
+        s=default; t=1585759046;
+        bh=tlBCLzB8KqqSYZkd4B/QOZWltHSyIudbX/rrs3U1giY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ivMCwP/68sdR174oO2cATQJqf6Doy3W/4C7JSEKfhVoXciQ5gqeH85q6H05/M+psg
-         qrEAu8IwqHGEFUrwar9u+SLIXJ3d6WvCsEk4+uX9b9S3kfR7ADJcBk5xoKuR7LLLgU
-         SfNuLLebBchkjuz6sC8IklcTIYq3y5mYgntJJpiE=
+        b=W/pY+1frTSSsIoPbZd+mM47PJdidAJ1T0jfgxMnZ+dVALHQYO60hBcE+iFLNn/zVe
+         d94uFtVfNSGSEk8Ne+QVXuinuVjql20mWA16W1bMEGYHx9zt2MLXm+jgOQamXjdp8w
+         zYZUvchho1qfHSzGo+9r2BLdWli5X7TZuxoHJccw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sasha Levin <sashal@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.4 66/91] tools: Let O= makes handle a relative path with -C option
+        stable@vger.kernel.org, stable@kernel.org,
+        Roger Quadros <rogerq@ti.com>, Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 4.9 059/102] ARM: dts: omap5: Add bus_dma_limit for L3 bus
 Date:   Wed,  1 Apr 2020 18:18:02 +0200
-Message-Id: <20200401161535.518867632@linuxfoundation.org>
+Message-Id: <20200401161543.236331056@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
-References: <20200401161512.917494101@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,77 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Roger Quadros <rogerq@ti.com>
 
-[ Upstream commit be40920fbf1003c38ccdc02b571e01a75d890c82 ]
+commit dfa7ea303f56a3a8b1ed3b91ef35af2da67ca4ee upstream.
 
-When I tried to compile tools/perf from the top directory with the -C
-option, the O= option didn't work correctly if I passed a relative path:
+The L3 interconnect's memory map is from 0x0 to
+0xffffffff. Out of this, System memory (SDRAM) can be
+accessed from 0x80000000 to 0xffffffff (2GB)
 
-  $ make O=BUILD -C tools/perf/
-  make: Entering directory '/home/mhiramat/ksrc/linux/tools/perf'
-    BUILD:   Doing 'make -j8' parallel build
-  ../scripts/Makefile.include:4: *** O=/home/mhiramat/ksrc/linux/tools/perf/BUILD does not exist.  Stop.
-  make: *** [Makefile:70: all] Error 2
-  make: Leaving directory '/home/mhiramat/ksrc/linux/tools/perf'
+OMAP5 does support 4GB of SDRAM but upper 2GB can only be
+accessed by the MPU subsystem.
 
-The O= directory existence check failed because the check script ran in
-the build target directory instead of the directory where I ran the make
-command.
+Add the dma-ranges property to reflect the physical address limit
+of the L3 bus.
 
-To fix that, once change directory to $(PWD) and check O= directory,
-since the PWD is set to where the make command runs.
+Cc: stable@kernel.org
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: c883122acc0d ("perf tools: Let O= makes handle relative paths")
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: stable@vger.kernel.org
-Link: http://lore.kernel.org/lkml/158351957799.3363.15269768530697526765.stgit@devnote2
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/Makefile            | 2 +-
- tools/scripts/Makefile.include | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/omap5.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/Makefile b/tools/perf/Makefile
-index 55933b2eb9324..a733e9cf343a3 100644
---- a/tools/perf/Makefile
-+++ b/tools/perf/Makefile
-@@ -34,7 +34,7 @@ endif
- # Only pass canonical directory names as the output directory:
- #
- ifneq ($(O),)
--  FULL_O := $(shell readlink -f $(O) || echo $(O))
-+  FULL_O := $(shell cd $(PWD); readlink -f $(O) || echo $(O))
- endif
- 
- #
-diff --git a/tools/scripts/Makefile.include b/tools/scripts/Makefile.include
-index 7ea4438b801dd..882c18201c7c3 100644
---- a/tools/scripts/Makefile.include
-+++ b/tools/scripts/Makefile.include
-@@ -1,7 +1,7 @@
- ifneq ($(O),)
- ifeq ($(origin O), command line)
--	dummy := $(if $(shell test -d $(O) || echo $(O)),$(error O=$(O) does not exist),)
--	ABSOLUTE_O := $(shell cd $(O) ; pwd)
-+	dummy := $(if $(shell cd $(PWD); test -d $(O) || echo $(O)),$(error O=$(O) does not exist),)
-+	ABSOLUTE_O := $(shell cd $(PWD); cd $(O) ; pwd)
- 	OUTPUT := $(ABSOLUTE_O)/$(if $(subdir),$(subdir)/)
- 	COMMAND_O := O=$(ABSOLUTE_O)
- ifeq ($(objtree),)
--- 
-2.20.1
-
+--- a/arch/arm/boot/dts/omap5.dtsi
++++ b/arch/arm/boot/dts/omap5.dtsi
+@@ -131,6 +131,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges = <0 0 0 0xc0000000>;
++		dma-ranges = <0x80000000 0x0 0x80000000 0x80000000>;
+ 		ti,hwmods = "l3_main_1", "l3_main_2", "l3_main_3";
+ 		reg = <0 0x44000000 0 0x2000>,
+ 		      <0 0x44800000 0 0x3000>,
 
 
