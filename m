@@ -2,132 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C18319B929
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D02E19B934
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 02:00:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733257AbgDAX6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 19:58:42 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34003 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732560AbgDAX6m (ORCPT
+        id S2387421AbgDBAAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 20:00:16 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:39374 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733287AbgDBAAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 19:58:42 -0400
-Received: by mail-pl1-f194.google.com with SMTP id a23so646136plm.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 16:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=6HaOIWdsOvizBvUG72A610lipCbSG/hDyB8c4hgjxM4=;
-        b=TIDyu6sFaiElP3YA0sQ8+IyF0Dbte0xNsHwxCQVD2RygK+ekQ1sy1up8ezowMNa53O
-         BDFkGog/4C6cuAplYC1JQ+4p0ceAKuuCVgKqIXhBGw6UXB6Jk7/TphmATJnp8tl9sZaD
-         YeDYTenE0xhy511z4M3NoTSs6Pydy3mHwoEMXAg29WNYU+0WnnyuVWRK26gFAXtXuq3/
-         H4GRC4rV7VhnqZB73GB8BamTWtO7aWlPJPdo/qE6lv8/JhV8n8xMz9RXZ6Dp6G7dmDt4
-         y0d/kbespU0DOgH/PU+GhNoPWZAIzUdx8SraS1wMIuF4oOPY7O6fO6oV8PbObSV/nyn+
-         /vPQ==
+        Wed, 1 Apr 2020 20:00:15 -0400
+Received: by mail-pj1-f68.google.com with SMTP id z3so767812pjr.4;
+        Wed, 01 Apr 2020 17:00:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6HaOIWdsOvizBvUG72A610lipCbSG/hDyB8c4hgjxM4=;
-        b=Y1AiAJI8yT4FGj95R5AKaVm/vzNCOQ3gi/QHpBisKHW5FK2Cxi0QTbZ625hyj7Gbz7
-         s99G1NPtaIcnLivAPi92MzqFsTNE3QApw944w9NqJ6/sYpDPyThVXeRHUKs2107ZddDc
-         wmVCEOvdTyRWt/2C5vaNOqiJWJq5IgDKEIxzlzBK1RGz/FVqdVQlDEcsJhRcFp0bBIBx
-         n9bKkDnz8aVyhFa/1CEMvWYHu3edCzFNgL63EQeCvJsVlDmJJ8Y2WQJjDf19cgwYKxMT
-         98Dj+NjVtJQrTomDni+BLHRNgv1CfqbpXRQ+ofFPtKj5/LV1hWp4/th+PWUxBxYGKC3b
-         9a/w==
-X-Gm-Message-State: AGi0Pub1FXo/sZgra1mkSaSSQKL+t/kreyeE8AzfytEphh1yGeSf5Zr2
-        W5mx/mvTWE58n0BYgskZSNyA1bSO9lg=
-X-Google-Smtp-Source: APiQypLpGOrbF/srm2g4dqFOnyAzBHe5EYC1anmwa1xXj4psO2w9BNnq2XCMc/1WpyjHjShJ9LnCtw==
-X-Received: by 2002:a17:90a:71c5:: with SMTP id m5mr592961pjs.193.1585785519306;
-        Wed, 01 Apr 2020 16:58:39 -0700 (PDT)
-Received: from nuc7.sifive.com (c-24-5-48-146.hsd1.ca.comcast.net. [24.5.48.146])
-        by smtp.gmail.com with ESMTPSA id o29sm2405893pfp.208.2020.04.01.16.58.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 01 Apr 2020 16:58:38 -0700 (PDT)
-From:   Alan Mikhak <alan.mikhak@sifive.com>
-X-Google-Original-From: Alan Mikhak < alan.mikhak@sifive.com >
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        lorenzo.pieralisi@arm.com, amurray@thegoodpenguin.co.uk,
-        bhelgaas@google.com, kishon@ti.com, paul.walmsley@sifive.com
-Cc:     Alan Mikhak <alan.mikhak@sifive.com>
-Subject: [PATCH] PCI: dwc: Program outbound ATU upper limit register
-Date:   Wed,  1 Apr 2020 16:58:13 -0700
-Message-Id: <1585785493-23210-1-git-send-email-alan.mikhak@sifive.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w+waUt4y2u1TasC9CABKLSfdzELViZORJkYCPcxWv6M=;
+        b=ej3LnOrYDOrRWYN6TKpdtX+/Dq+4mU5e6hZi0eunaCl/vB763WNsB4Bu+/cyCelTax
+         edgTOXJDn5Ke4GIER6o5U1xZVFtz3NwI9VQ//xdxiudPzGcenYocd3bON8qJsnAYK7s7
+         OJXt8m7wQuoc7qSafNkThe/LhVRuXTV0gl33kkcqHddWcGOzEZv8MQ6vtd2O0mMo7El7
+         3FkpvgB0pgGShAjDNK2gFpPkwYC0aNrNYmkB7vPekrmlFOpzoNwy4xld74fjj7hoHgcS
+         Kw8YtNfF9/cPo4LPgyL7QKAXz7QuUnwGKY0x3jn2t4sF0QJWO/kr1/J7Nh7LULfPLgKj
+         8pgg==
+X-Gm-Message-State: AGi0PuY59gEpYwM/cGmzz31kmiAAFSmiMclJhEETgmTjV8ilSoZThqKH
+        17WaDMWz/t1tWeDzeiAbv3GSxTte4SA=
+X-Google-Smtp-Source: APiQypIwnylEuaIJuJLNziJlvP3IeVk11ni6vNFos9tjKBVX1i0Hvbdh/7hbCeL6EDwv9wdD48HMZw==
+X-Received: by 2002:a17:902:b692:: with SMTP id c18mr384318pls.7.1585785613452;
+        Wed, 01 Apr 2020 17:00:13 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id k24sm2282227pfi.196.2020.04.01.17.00.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 17:00:11 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 8808D40254; Thu,  2 Apr 2020 00:00:10 +0000 (UTC)
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de
+Cc:     mhocko@suse.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: [RFC 0/3] block: address blktrace use-after-free
+Date:   Wed,  1 Apr 2020 23:59:59 +0000
+Message-Id: <20200402000002.7442-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.23.0.rc1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Mikhak <alan.mikhak@sifive.com>
+Upstream kernel.org korg#205713 contends that there is a UAF in
+the core debugfs debugfs_remove() function, and has gone through
+pushing for a CVE for this, CVE-2019-19770.
 
-Function dw_pcie_prog_outbound_atu_unroll() does not program the upper
-32-bit ATU limit register. Since ATU programming functions limit the
-size of the translated region to 4GB by using a u32 size parameter,
-these issues may combine into undefined behavior for resource sizes
-with non-zero upper 32-bits.
+If correct then parent dentries are not positive, and this would
+have implications far beyond this bug report. Thankfully, upon review
+with Nicolai, he wasn't buying it. His suspicions that this was just
+a blktrace issue were spot on, and this patch series demonstrates
+that, provides a reproducer, and provides a solution to the issue.
 
-For example, a 128GB address space starting at physical CPU address of
-0x2000000000 with size of 0x2000000000 needs the following values
-programmed into the lower and upper 32-bit limit registers:
- 0x3fffffff in the upper 32-bit limit register
- 0xffffffff in the lower 32-bit limit register
+We there would like to contend CVE-2019-19770 as invalid. The
+implications suggested are not correct, and this issue is only
+triggerable with root, by shooting yourself on the foot by misuing
+blktrace.
 
-Currently, only the lower 32-bit limit register is programmed with a
-value of 0xffffffff but the upper 32-bit limit register is not being
-programmed. As a result, the upper 32-bit limit register remains at its
-default value after reset of 0x0.
+If you want this on a git tree, you can get it from linux-next
+20200401-blktrace-fix-uaf branch [2].
 
-These issues may combine to produce undefined behavior since the ATU
-limit address may be lower than the ATU base address. Programming the
-upper ATU limit address register prevents such undefined behavior despite
-the region size getting truncated due to the 32-bit size limit.
+Wider review, testing, and rants are appreciated.
 
-Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
----
- drivers/pci/controller/dwc/pcie-designware.c | 7 +++++--
- drivers/pci/controller/dwc/pcie-designware.h | 3 ++-
- 2 files changed, 7 insertions(+), 3 deletions(-)
+[0] https://bugzilla.kernel.org/show_bug.cgi?id=205713
+[1] https://nvd.nist.gov/vuln/detail/CVE-2019-19770
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=20200401-blktrace-fix-uaf
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 681548c88282..c92496e36fd5 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -244,13 +244,16 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
- 					     u64 pci_addr, u32 size)
- {
- 	u32 retries, val;
-+	u64 limit_addr = cpu_addr + size - 1;
- 
- 	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_LOWER_BASE,
- 				 lower_32_bits(cpu_addr));
- 	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_UPPER_BASE,
- 				 upper_32_bits(cpu_addr));
--	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_LIMIT,
--				 lower_32_bits(cpu_addr + size - 1));
-+	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_LOWER_LIMIT,
-+				 lower_32_bits(limit_addr));
-+	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_UPPER_LIMIT,
-+				 upper_32_bits(limit_addr));
- 	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_LOWER_TARGET,
- 				 lower_32_bits(pci_addr));
- 	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_UPPER_TARGET,
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index a22ea5982817..5ce1aef706c5 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -112,9 +112,10 @@
- #define PCIE_ATU_UNR_REGION_CTRL2	0x04
- #define PCIE_ATU_UNR_LOWER_BASE		0x08
- #define PCIE_ATU_UNR_UPPER_BASE		0x0C
--#define PCIE_ATU_UNR_LIMIT		0x10
-+#define PCIE_ATU_UNR_LOWER_LIMIT	0x10
- #define PCIE_ATU_UNR_LOWER_TARGET	0x14
- #define PCIE_ATU_UNR_UPPER_TARGET	0x18
-+#define PCIE_ATU_UNR_UPPER_LIMIT	0x20
- 
- /*
-  * The default address offset between dbi_base and atu_base. Root controller
+Luis Chamberlain (3):
+  block: move main block debugfs initialization to its own file
+  blktrace: fix debugfs use after free
+  block: avoid deferral of blk_release_queue() work
+
+ block/Makefile               |  1 +
+ block/blk-core.c             |  9 +--------
+ block/blk-debugfs.c          | 27 +++++++++++++++++++++++++++
+ block/blk-mq-debugfs.c       |  5 -----
+ block/blk-sysfs.c            | 21 ++++++++-------------
+ block/blk.h                  | 17 +++++++++++++++++
+ include/linux/blktrace_api.h |  1 -
+ kernel/trace/blktrace.c      | 19 ++++++++-----------
+ 8 files changed, 62 insertions(+), 38 deletions(-)
+ create mode 100644 block/blk-debugfs.c
+
 -- 
-2.7.4
+2.25.1
 
