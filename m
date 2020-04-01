@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 428B319B2B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C39B19B1F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:40:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389958AbgDAQqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:46:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47954 "EHLO mail.kernel.org"
+        id S2389210AbgDAQjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:39:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389775AbgDAQqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:46:33 -0400
+        id S2387927AbgDAQj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:39:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58C4520705;
-        Wed,  1 Apr 2020 16:46:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A64D720658;
+        Wed,  1 Apr 2020 16:39:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759592;
-        bh=BDRnxjkLLGl0cAzOYdMWTic/foUoSslUvI3pJfjCOQI=;
+        s=default; t=1585759169;
+        bh=RozGLdAyNS5qY69xcQRIDv3RdavXVgjOktEZjz26je4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i2C5vV+szXHv1ykryvGSCfDtiYcWSM7zLEhzR8y0ZY3ITx38W+k5AsztFvvlpl8R2
-         U4JCmmb3pB3bvFJxhMSwJ2aTbyKm1/EK+0cSriqhsqVngxsadp3q+SCNk/Rz9KbV9b
-         MNbx0De3MqssIBT9IpBaCf6joJdlLoaYEHUQXgK4=
+        b=a4J97ivJt+VD9k+svJ1S+6NCNlYNRkpIgJm5LB7KVgQDS7R8nODmhRbgJYdMClcD4
+         VpA2TYJWEpUSIxP0djvzoXaUrYD+Q6/oPz+n9NuBlrR0yKqJYcxD263u1c0wOpPpKC
+         5AswxUxdvoB89Ase2dY6rgF56issdBUkI/vR/EVY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Johan Hovold <johan@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH 4.14 129/148] media: xirlink_cit: add missing descriptor sanity checks
-Date:   Wed,  1 Apr 2020 18:18:41 +0200
-Message-Id: <20200401161604.758832162@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Alexander Potapenko <glider@google.com>,
+        Alistair Delva <adelva@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Yonghong Song <yhs@fb.com>
+Subject: [PATCH 4.9 099/102] bpf: Explicitly memset the bpf_attr structure
+Date:   Wed,  1 Apr 2020 18:18:42 +0200
+Message-Id: <20200401161548.607606712@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,82 +48,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit a246b4d547708f33ff4d4b9a7a5dbac741dc89d8 upstream.
+commit 8096f229421f7b22433775e928d506f0342e5907 upstream.
 
-Make sure to check that we have two alternate settings and at least one
-endpoint before accessing the second altsetting structure and
-dereferencing the endpoint arrays.
+For the bpf syscall, we are relying on the compiler to properly zero out
+the bpf_attr union that we copy userspace data into. Unfortunately that
+doesn't always work properly, padding and other oddities might not be
+correctly zeroed, and in some tests odd things have been found when the
+stack is pre-initialized to other values.
 
-This specifically avoids dereferencing NULL-pointers or corrupting
-memory when a device does not have the expected descriptors.
+Fix this by explicitly memsetting the structure to 0 before using it.
 
-Note that the sanity check in cit_get_packet_size() is not redundant as
-the driver is mixing looking up altsettings by index and by number,
-which may not coincide.
-
-Fixes: 659fefa0eb17 ("V4L/DVB: gspca_xirlink_cit: Add support for camera with a bcd version of 0.01")
-Fixes: 59f8b0bf3c12 ("V4L/DVB: gspca_xirlink_cit: support bandwidth changing for devices with 1 alt setting")
-Cc: stable <stable@vger.kernel.org>     # 2.6.37
-Cc: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Reported-by: Maciej Żenczykowski <maze@google.com>
+Reported-by: John Stultz <john.stultz@linaro.org>
+Reported-by: Alexander Potapenko <glider@google.com>
+Reported-by: Alistair Delva <adelva@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Yonghong Song <yhs@fb.com>
+Link: https://android-review.googlesource.com/c/kernel/common/+/1235490
+Link: https://lore.kernel.org/bpf/20200320094813.GA421650@kroah.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/gspca/xirlink_cit.c |   18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ kernel/bpf/syscall.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/media/usb/gspca/xirlink_cit.c
-+++ b/drivers/media/usb/gspca/xirlink_cit.c
-@@ -1451,6 +1451,9 @@ static int cit_get_packet_size(struct gs
- 		return -EIO;
- 	}
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -802,7 +802,7 @@ static int bpf_obj_get(const union bpf_a
  
-+	if (alt->desc.bNumEndpoints < 1)
-+		return -ENODEV;
-+
- 	return le16_to_cpu(alt->endpoint[0].desc.wMaxPacketSize);
- }
- 
-@@ -2634,6 +2637,7 @@ static int sd_start(struct gspca_dev *gs
- 
- static int sd_isoc_init(struct gspca_dev *gspca_dev)
+ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, size)
  {
-+	struct usb_interface_cache *intfc;
- 	struct usb_host_interface *alt;
- 	int max_packet_size;
+-	union bpf_attr attr = {};
++	union bpf_attr attr;
+ 	int err;
  
-@@ -2649,8 +2653,17 @@ static int sd_isoc_init(struct gspca_dev
- 		break;
+ 	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
+@@ -838,6 +838,7 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf
  	}
  
-+	intfc = gspca_dev->dev->actconfig->intf_cache[0];
-+
-+	if (intfc->num_altsetting < 2)
-+		return -ENODEV;
-+
-+	alt = &intfc->altsetting[1];
-+
-+	if (alt->desc.bNumEndpoints < 1)
-+		return -ENODEV;
-+
- 	/* Start isoc bandwidth "negotiation" at max isoc bandwidth */
--	alt = &gspca_dev->dev->actconfig->intf_cache[0]->altsetting[1];
- 	alt->endpoint[0].desc.wMaxPacketSize = cpu_to_le16(max_packet_size);
+ 	/* copy attributes from user space, may be less than sizeof(bpf_attr) */
++	memset(&attr, 0, sizeof(attr));
+ 	if (copy_from_user(&attr, uattr, size) != 0)
+ 		return -EFAULT;
  
- 	return 0;
-@@ -2673,6 +2686,9 @@ static int sd_isoc_nego(struct gspca_dev
- 		break;
- 	}
- 
-+	/*
-+	 * Existence of altsetting and endpoint was verified in sd_isoc_init()
-+	 */
- 	alt = &gspca_dev->dev->actconfig->intf_cache[0]->altsetting[1];
- 	packet_size = le16_to_cpu(alt->endpoint[0].desc.wMaxPacketSize);
- 	if (packet_size <= min_packet_size)
 
 
