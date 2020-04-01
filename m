@@ -2,211 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EFC219A4AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 07:22:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C916319A4BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 07:32:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731784AbgDAFWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 01:22:55 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:56977 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726125AbgDAFWy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 01:22:54 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.nyi.internal (Postfix) with ESMTP id F2F76580629;
-        Wed,  1 Apr 2020 01:22:51 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 01 Apr 2020 01:22:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        CL/q7l0x3aGF1c50Pvo/bYiApj1J1O+uucbuoLSx1xE=; b=YSE6eE459CJfuGw/
-        KbrwFfyRa0gg8orYFNDT1tkZZHqdyzQh+Y/lEOsWSpZ7WS+BlK8DfgVf43yIWwqv
-        hgKwC228P6WSTxXi7HACpyuDW6fMmIcW/tOfsi+bJCw8oL9OAaNTHWOHvg/lMgbg
-        EVbSFfd+0M1pPohK/2Cere/8HanSJh1PGBuh+ngTkptkbWx200FciPtjJXlNp3Lf
-        5LXeQ43F2bPrnmSBw1q4FiM/bFi1AYjDdHdh2EBJp7gZCzKvanxquJ/7HbIfijfL
-        ppPASbAOKgSES8AueIq1N/R13Cxu9wGgXel2VfLAziRyLXQo1PiyLjRquBUlxB2j
-        lrbv4g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=CL/q7l0x3aGF1c50Pvo/bYiApj1J1O+uucbuoLSx1
-        xE=; b=DA9BdxY1gioAg0NXnQ6GEQUwVfG930YnigMDzI32lurqK2x+HnaIRgPY2
-        b/52LdDuEc6hM13+h8g90aUPwpd+vgg89lSYHhYz76Giic6urXITmUedZUZX/yfe
-        8abynnwl9VsSBavIlWpJGKpXs8YxtRF2BhXiKGah+8p9tUk9c0bCCevVKRAw/JxF
-        GSZnVSDzzoEj1kpB64GZRUaEwq6RZTx0vN21zou4mZsV+AmOB8KwxwAq3/UhPul+
-        joY8ZJY5jGw1T3sbqDRYuDkmUNBtE6fnb41CBmXPE68f1i01fHMyUR7ijRrkCdvs
-        CznAQdpIQgw1D/Ffa5eIYeRYHkszg==
-X-ME-Sender: <xms:KSWEXs8mYEqZr-PT8YRJZeV3CgoRT2MpBIy-OwEg8sMKb7mPpeyk4w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrtddugdehjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdelrd
-    duieeirddvfedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
-    rhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:KSWEXiN4FCOB8HlaGmv7_HS4bbSYTTUIxVk8aTB9DU36zVcjaB8i9w>
-    <xmx:KSWEXoVZ17upHiMJctNk3NlNtlj2GRKJj8pzmgkDmFr-rUEX1-Rjiw>
-    <xmx:KSWEXjnDqnh8Peyc6NFaUnxAOCGSYTMx4QEdR7niPqEx_aeNdOKg8w>
-    <xmx:KyWEXobvzDEnnkTqTPFREfiAa5Uu8gRTac1op0NMRSK6eWSZHRpvRA>
-Received: from mickey.themaw.net (unknown [118.209.166.232])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 6F4DD306CC67;
-        Wed,  1 Apr 2020 01:22:42 -0400 (EDT)
-Message-ID: <50caf93782ba1d66bd6acf098fb8dcb0ecc98610.camel@themaw.net>
-Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
-From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 01 Apr 2020 13:22:38 +0800
-In-Reply-To: <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
-References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
-         <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        id S1731741AbgDAFc0 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 1 Apr 2020 01:32:26 -0400
+Received: from mga03.intel.com ([134.134.136.65]:15821 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731683AbgDAFc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 01:32:26 -0400
+IronPort-SDR: gPwUEcifkcx41Vd8cG+0aLxavBDekgLZSOjAL5373185apDzOhglX51omoxjv4X14EfhjgGj7I
+ CNjgqF2Z4A6Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2020 22:32:25 -0700
+IronPort-SDR: rRNDlEbmxX4+3bAhcoyohLz++3lRP7Sbg19yAvMYAjj8XmOxz4AqLrUH/r8idCM6hvu5OS7vuH
+ O+iRvpjeYmpg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,330,1580803200"; 
+   d="scan'208";a="240347396"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by fmsmga007.fm.intel.com with ESMTP; 31 Mar 2020 22:32:24 -0700
+Received: from shsmsx105.ccr.corp.intel.com (10.239.4.158) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 31 Mar 2020 22:32:24 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.225]) by
+ SHSMSX105.ccr.corp.intel.com ([169.254.11.213]) with mapi id 14.03.0439.000;
+ Wed, 1 Apr 2020 13:32:21 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>
+Subject: RE: [PATCH v2 1/3] iommu/uapi: Define uapi version and capabilities
+Thread-Topic: [PATCH v2 1/3] iommu/uapi: Define uapi version and capabilities
+Thread-Index: AQHWAvq+z2SPyfblHkGvV1oKjQsO9ahaFEoAgAB7VgCAAS14gP//zqQAgAEODYCABAXlIIAALvMAgAFssACAACIBAIABY/uQ
+Date:   Wed, 1 Apr 2020 05:32:21 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D803AFF@SHSMSX104.ccr.corp.intel.com>
+References: <1585178227-17061-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1585178227-17061-2-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20200326092316.GA31648@infradead.org>
+        <20200326094442.5be042ce@jacob-builder>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D7ECB45@SHSMSX104.ccr.corp.intel.com>
+        <20200327074702.GA27959@infradead.org>
+        <20200327165335.397f24a3@jacob-builder>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D7FE150@SHSMSX104.ccr.corp.intel.com>
+        <20200330090746.23c5599c@jacob-builder>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19D8011A9@SHSMSX104.ccr.corp.intel.com>
+ <20200331085444.44bee0bb@jacob-builder>
+In-Reply-To: <20200331085444.44bee0bb@jacob-builder>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-03-18 at 17:05 +0100, Miklos Szeredi wrote:
-> On Wed, Mar 18, 2020 at 4:08 PM David Howells <dhowells@redhat.com>
-> wrote:
+> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Sent: Tuesday, March 31, 2020 11:55 PM
 > 
-> > ============================
-> > WHY NOT USE PROCFS OR SYSFS?
-> > ============================
-> > 
-> > Why is it better to go with a new system call rather than adding
-> > more magic
-> > stuff to /proc or /sysfs for each superblock object and each mount
-> > object?
-> > 
-> >  (1) It can be targetted.  It makes it easy to query directly by
-> > path.
-> >      procfs and sysfs cannot do this easily.
-> > 
-> >  (2) It's more efficient as we can return specific binary data
-> > rather than
-> >      making huge text dumps.  Granted, sysfs and procfs could
-> > present the
-> >      same data, though as lots of little files which have to be
-> >      individually opened, read, closed and parsed.
+> On Tue, 31 Mar 2020 06:06:38 +0000
+> "Tian, Kevin" <kevin.tian@intel.com> wrote:
 > 
-> Asked this a number of times, but you haven't answered yet:  what
-> application would require such a high efficiency?
+> > > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > > Sent: Tuesday, March 31, 2020 12:08 AM
+> > >
+> > > On Mon, 30 Mar 2020 05:40:40 +0000
+> > > "Tian, Kevin" <kevin.tian@intel.com> wrote:
+> > >
+> > > > > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > > > > Sent: Saturday, March 28, 2020 7:54 AM
+> > > > >
+> > > > > On Fri, 27 Mar 2020 00:47:02 -0700
+> > > > > Christoph Hellwig <hch@infradead.org> wrote:
+> > > > >
+> > > > > > On Fri, Mar 27, 2020 at 02:49:55AM +0000, Tian, Kevin wrote:
+> > > > > > > If those API calls are inter-dependent for composing a
+> > > > > > > feature (e.g. SVA), shouldn't we need a way to check them
+> > > > > > > together before exposing the feature to the guest, e.g.
+> > > > > > > through a iommu_get_uapi_capabilities interface?
+> > > > > >
+> > > > > > Yes, that makes sense.  The important bit is to have a
+> > > > > > capability flags and not version numbers.
+> > > > >
+> > > > > The challenge is that there are two consumers in the kernel for
+> > > > > this. 1. VFIO only look for compatibility, and size of each data
+> > > > > struct such that it can copy_from_user.
+> > > > >
+> > > > > 2. IOMMU driver, the "real consumer" of the content.
+> > > > >
+> > > > > For 2, I agree and we do plan to use the capability flags to
+> > > > > check content and maintain backward compatibility etc.
+> > > > >
+> > > > > For VFIO, it is difficult to do size look up based on capability
+> > > > > flags.
+> > > >
+> > > > Can you elaborate the difficulty in VFIO? if, as Christoph Hellwig
+> > > > pointed out, version number is already avoided everywhere, it is
+> > > > interesting to know whether this work becomes a real exception
+> > > > or just requires a different mindset.
+> > > >
+> > > From VFIO p.o.v. the IOMMU UAPI data is opaque, it only needs to do
+> > > two things:
+> > > 1. is the UAPI compatible?
+> > > 2. what is the size to copy?
+> > >
+> > > If you look at the version number, this is really a "version as
+> > > size" lookup, as provided by the helper function in this patch. An
+> > > example can be the newly introduced clone3 syscall.
+> > > https://lwn.net/Articles/792628/
+> > > In clone3, new version must have new size. The slight difference
+> > > here is that, unlike clone3, we have multiple data structures
+> > > instead of a single struct clone_args {}. And each struct has flags
+> > > to enumerate its contents besides size.
+> >
+> > Thanks for providing that link. However clone3 doesn't include a
+> > version field to do "version as size" lookup. Instead, as you said,
+> > it includes a size parameter which sounds like the option 3 (argsz)
+> > listed below.
+> >
+> Right, there is no version in clone3. size = version. I view this as
+> a 1:1 lookup.
+> 
+> > >
+> > > Besides breaching data abstraction, if VFIO has to check IOMMU
+> > > flags to determine the sizes, it has many combinations.
+> > >
+> > > We also separate the responsibilities into two parts
+> > > 1. compatibility - version, size by VFIO
+> > > 2. sanity check - capability flags - by IOMMU
+> >
+> > I feel argsz+flags approach can perfectly meet above requirement. The
+> > userspace set the size and flags for whatever capabilities it uses,
+> > and VFIO simply copies the parameters by size and pass to IOMMU for
+> > further sanity check. Of course the assumption is that we do provide
+> > an interface for userspace to enumerate all supported capabilities.
+> >
+> You cannot trust user for argsz. the size to be copied from user must
+> be based on knowledge in kernel. That is why we have this version to
+> size lookup.
+> 
+> In VFIO, the size to copy is based on knowledge of each VFIO UAPI
+> structures and VFIO flags. But here the flags are IOMMU UAPI flags. As
+> you pointed out in another thread, VFIO is one user.
 
-Umm ... systemd and udisks2 and about 4 others.
+If that is the case, can we let VFIO only copy its own UAPI fields while 
+simply passing the user pointer of IOMMU UAPI structure to IOMMU
+driver for further size check and copy? Otherwise we are entering a
+dead end that VFIO doesn't want to parse a structure which is not
+defined by him while using version to represent the black box size
+is considered as a discarded scheme and doesn't scale well...
 
-A problem I've had with autofs for years is using autofs direct mount
-maps of any appreciable size cause several key user space applications
-to consume all available CPU while autofs is starting or stopping which
-takes a fair while with a very large mount table. I saw a couple of
-applications affected purely because of the large mount table but not
-as badly as starting or stopping autofs.
+> 
+> > Is there anything that I overlooked here? I suppose there might be
+> > some difficulties that block you from going the argsz way...
+> >
+> > Thanks
+> > Kevin
+> >
+> > >
+> > > I think the latter matches what Christoph's comments. So we are in
+> > > agreement at the IOMMU level :)
+> > >
+> > > For example:
+> > > During guest PASID bind, IOMMU driver operates on the data passed
+> > > from VFIO and check format & flags to take different code path.
+> > >
+> > > #define IOMMU_PASID_FORMAT_INTEL_VTD	1
+> > > 	__u32 format;
+> > > #define IOMMU_SVA_GPASID_VAL	(1 << 0) /* guest PASID valid */
+> > > 	__u64 flags;
+> > >
+> > > Jacob
+> > >
+> > > > btw the most relevant discussion which I can find out now is here:
+> > > > 	https://lkml.org/lkml/2020/2/3/1126
+> > > >
+> > > > It mentioned 3 options for handling extension:
+> > > > --
+> > > > 1. Disallow adding new members to each structure other than reuse
+> > > > padding bits or adding union members at the end.
+> > > > 2. Allow extension of the structures beyond union, but union size
+> > > > has to be fixed with reserved spaces
+> > > > 3. Adopt VFIO argsz scheme, I don't think we need version for each
+> > > > struct anymore. argsz implies the version that user is using
+> > > > assuming UAPI data is extension only.
+> > > > --
+> > > >
+> > > > the first two are both version-based. Looks most guys agreed with
+> > > > option-1 (in this v2), but Alex didn't give his opinion at the
+> > > > moment. The last response from him was the raise of option-3 using
+> > > > argsz to avoid version. So, we also need hear from him. Alex?
+> > > >
+> > > > Thanks
+> > > > Kevin
+> > >
+> > > [Jacob Pan]
+> 
+> [Jacob Pan]
 
-Maps of 5,000 to 10,000 map entries can almost be handled, not uncommon
-for heavy autofs users in spite of the problem, but much larger than
-that and you've got a serious problem.
-
-There are problems with expiration as well but that's more an autofs
-problem that I need to fix.
-
-To be clear it's not autofs that needs the improvement (I need to
-deal with this in autofs itself) it's the affect that these large
-mount tables have on the rest of the user space and that's quite
-significant.
-
-I can't even think about resolving my autofs problem until this
-problem is resolved and handling very large numbers of mounts
-as efficiently as possible must be part of that solution for me
-and I think for the OS overall too.
-
-Ian
-> 
-> Nobody's suggesting we move stat(2) to proc interfaces, and AFAIK
-> nobody suggested we move /proc/PID/* to a binary syscall interface.
-> Each one has its place, and I strongly feel that mount info belongs
-> in
-> the latter category.    Feel free to prove the opposite.
-> 
-> >  (3) We wouldn't have the overhead of open and close (even adding a
-> >      self-contained readfile() syscall has to do that internally
-> 
-> Busted: add f_op->readfile() and be done with all that.   For example
-> DEFINE_SHOW_ATTRIBUTE() could be trivially moved to that interface.
-> 
-> We could optimize existing proc, sys, etc. interfaces, but it's not
-> been an issue, apparently.
-> 
-> >  (4) Opening a file in procfs or sysfs has a pathwalk overhead for
-> > each
-> >      file accessed.  We can use an integer attribute ID instead
-> > (yes, this
-> >      is similar to ioctl) - but could also use a string ID if that
-> > is
-> >      preferred.
-> > 
-> >  (5) Can easily query cross-namespace if, say, a container manager
-> > process
-> >      is given an fs_context that hasn't yet been mounted into a
-> > namespace -
-> >      or hasn't even been fully created yet.
-> 
-> Works with my patch.
-> 
-> >  (6) Don't have to create/delete a bunch of sysfs/procfs nodes each
-> > time a
-> >      mount happens or is removed - and since systemd makes much use
-> > of
-> >      mount namespaces and mount propagation, this will create a lot
-> > of
-> >      nodes.
-> 
-> Not true.
-> 
-> > The argument for doing this through procfs/sysfs/somemagicfs is
-> > that
-> > someone using a shell can just query the magic files using ordinary
-> > text
-> > tools, such as cat - and that has merit - but it doesn't solve the
-> > query-by-pathname problem.
-> > 
-> > The suggested way around the query-by-pathname problem is to open
-> > the
-> > target file O_PATH and then look in a magic directory under procfs
-> > corresponding to the fd number to see a set of attribute files[*]
-> > laid out.
-> > Bash, however, can't open by O_PATH or O_NOFOLLOW as things
-> > stand...
-> 
-> Bash doesn't have fsinfo(2) either, so that's not really a good
-> argument.
-> 
-> Implementing a utility to show mount attribute(s) by path is trivial
-> for the file based interface, while it would need to be updated for
-> each extension of fsinfo(2).   Same goes for libc, language bindings,
-> etc.
-> 
-> Thanks,
-> Miklos
-
+Thanks
+Kevin
