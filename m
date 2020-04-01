@@ -2,183 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F87519B59A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8290119B59F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 20:33:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733073AbgDASb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 14:31:58 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:41014 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1733222AbgDASbz (ORCPT
+        id S1732920AbgDAScv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 14:32:51 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43470 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732316AbgDAScu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 14:31:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585765914;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=llTIL35PX5iqkNs81sn7AmE5iXzxb/+U8qroVemQZv0=;
-        b=afjvmvT8TIFwBzk9ZX+NSBhuRwyzmhVTChhRane+fvAJ4OOyUS/geU2tujspEkBC/8lIL6
-        Dvv+rFI5v1RlmXEFlhsTKIK+U85fB8VpOj0i1qZTO9eGsDLTY6Zxnnmwcov3huWy1jicyh
-        tsIEudiuYyfd9LvG+8PHTQK14PB96ik=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-453-QXjaH43yPP-2MoWvCy39JQ-1; Wed, 01 Apr 2020 14:31:51 -0400
-X-MC-Unique: QXjaH43yPP-2MoWvCy39JQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B1D198017F6;
-        Wed,  1 Apr 2020 18:31:49 +0000 (UTC)
-Received: from eperezma.remote.csb (ovpn-113-73.ams2.redhat.com [10.36.113.73])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 583ED96F83;
-        Wed,  1 Apr 2020 18:31:47 +0000 (UTC)
-From:   =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        kvm list <kvm@vger.kernel.org>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH v4 7/7] tools/virtio: Make --reset reset ring idx
-Date:   Wed,  1 Apr 2020 20:31:18 +0200
-Message-Id: <20200401183118.8334-8-eperezma@redhat.com>
-In-Reply-To: <20200401183118.8334-1-eperezma@redhat.com>
-References: <20200401183118.8334-1-eperezma@redhat.com>
+        Wed, 1 Apr 2020 14:32:50 -0400
+Received: by mail-wr1-f65.google.com with SMTP id m11so1231500wrx.10
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 11:32:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=746fvQzZ1Umztu28E3KypqCqWdptr1ovc0pRXKqEkK4=;
+        b=LIJ+NtgZRdc+ieQEF7kotKoNN2N9x0kajfVWhAc+qJ/EnF/zwGPBGbWpPVUEBUknPZ
+         UCzJACzFiPsXHKZXwWP/FQIF0Jopo0D7bxjZsq4iN2ARM45fQL9WGjELO6zVNyTCY3D3
+         kL/2hmtWyM0eTbOrKxw3GRvBxBSUOa2FFBGznFkk4Sr7qm8szq4LkrVAoKa7ra1WU69M
+         lhzPeaD+1rK9baBsc/kZSv5Ym3kB7/THZ+0I7DKhTPpBUurV01ELSkOiL7TC03i6hNSr
+         3GQvpnEB5LWuGjoDXaLKfEo/mkWWFVj3cjBoAN0KEdRaoUARlQL7X7Lg7qj/kgfVVZ+q
+         e6mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=746fvQzZ1Umztu28E3KypqCqWdptr1ovc0pRXKqEkK4=;
+        b=fvv41RyhC6zQp1E+YsEvmtOsrAF2qRBTckcvl+ydoH3stpyv+xEnZZR697pHEhtGxH
+         moy0I5/52VTB65eAGHlIrYQCXBx33MJVp60puyitWseqc+5iiT1Wr/y9Ooc8DJUttMS7
+         yp4w02N4HfcoSJw3yT0fdn03dteCA3IS4GHj2X8xpeZaoRzBlviW01S00W5Q7Pa6SfyH
+         KsD4euSHnj860D6Y97MMUvJeUKA4RFOCIN73Dmg4shA4F4U9gA4zNlhyHtj7osLY1UtD
+         XKf1D+TE7v2ypSIUAkLktbqHiGMDjSHW/XU7dZ1irTS5cng5dY5ValgM4GN7ifMDqUj/
+         pVmA==
+X-Gm-Message-State: ANhLgQ3dqeTxWCm1MjqWZ/sJhkdJZw18eePKvn8/gYN3ZddcohG5zHh2
+        Z5d7EYaR1yvi/KknokBx6w88u1Z9cPN14/41sZXTeA==
+X-Google-Smtp-Source: ADFU+vuZux8n5T9HQGOGlYd2w0bcZldegvX/dW3QqzF55YPPLoi2ejE7fh8nksHxBdPBnsxb6W1CtX7Yg9rnv1IO4Ms=
+X-Received: by 2002:adf:f50d:: with SMTP id q13mr27924252wro.374.1585765968916;
+ Wed, 01 Apr 2020 11:32:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-Content-Transfer-Encoding: quoted-printable
+References: <20200331205740.135525-1-lyude@redhat.com>
+In-Reply-To: <20200331205740.135525-1-lyude@redhat.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 1 Apr 2020 14:32:38 -0400
+Message-ID: <CADnq5_NtTEMGka7vJFZLvOi7UFQkwKex_SL5Hunt61HJW1KFpw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] drm/dp_mst: Remove ->destroy_connector() callback
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Leo Li <sunpeng.li@amd.com>,
+        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
+        David Francis <david.francis@amd.com>,
+        Wenjing Liu <wenjing.liu@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Rodrigo Siqueira <rodrigo.siqueira@amd.com>,
+        Mikita Lipski <mikita.lipski@amd.com>,
+        Bhawanpreet Lakha <bhawanpreet.lakha@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
----
- drivers/virtio/virtio_ring.c | 29 +++++++++++++++++++++++++++++
- tools/virtio/linux/virtio.h  |  2 ++
- tools/virtio/virtio_test.c   | 28 +++++++++++++++++++++++++++-
- 3 files changed, 58 insertions(+), 1 deletion(-)
+On Tue, Mar 31, 2020 at 4:58 PM Lyude Paul <lyude@redhat.com> wrote:
+>
+> This finishes up the work that Pankaj Bharadiya started in:
+>
+> https://patchwork.freedesktop.org/series/74412/
+>
+> And allows us to entirely remove ->destroy_connector()
+>
+> Lyude Paul (4):
+>   drm/amd/amdgpu_dm/mst: Remove unneeded edid assignment when destroying
+>     connectors
+>   drm/amd/amdgpu_dm/mst: Remove ->destroy_connector() callback
+>   drm/amd/amdgpu_dm/mst: Stop printing extra messages in
+>     dm_dp_add_mst_connector()
+>   drm/dp_mst: Remove drm_dp_mst_topology_cbs.destroy_connector
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 58b96baa8d48..f9153a381f72 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -1810,6 +1810,35 @@ int virtqueue_add_inbuf_ctx(struct virtqueue *vq,
- }
- EXPORT_SYMBOL_GPL(virtqueue_add_inbuf_ctx);
-=20
-+#ifndef __KERNEL__
-+
-+/**
-+ * virtqueue_reset_free_head - Reset to 0 the members of split ring.
-+ * @vq: Virtqueue to reset.
-+ *
-+ * At this moment, is only meant for debug the ring index change, do not=
- use
-+ * in production.
-+ */
-+void virtqueue_reset_free_head(struct virtqueue *_vq)
-+{
-+	struct vring_virtqueue *vq =3D to_vvq(_vq);
-+
-+	// vq->last_used_idx =3D 0;
-+	vq->num_added =3D 0;
-+
-+	vq->split.queue_size_in_bytes =3D 0;
-+	vq->split.avail_flags_shadow =3D 0;
-+	vq->split.avail_idx_shadow =3D 0;
-+
-+	memset(vq->split.desc_state, 0, vq->split.vring.num *
-+			sizeof(struct vring_desc_state_split));
-+
-+	vq->free_head =3D 0;
-+}
-+EXPORT_SYMBOL_GPL(virtqueue_reset_free_head);
-+
-+#endif
-+
- /**
-  * virtqueue_kick_prepare - first half of split virtqueue_kick call.
-  * @_vq: the struct virtqueue
-diff --git a/tools/virtio/linux/virtio.h b/tools/virtio/linux/virtio.h
-index b751350d4ce8..5d33eab6b814 100644
---- a/tools/virtio/linux/virtio.h
-+++ b/tools/virtio/linux/virtio.h
-@@ -65,4 +65,6 @@ struct virtqueue *vring_new_virtqueue(unsigned int inde=
-x,
- 				      const char *name);
- void vring_del_virtqueue(struct virtqueue *vq);
-=20
-+void virtqueue_reset_free_head(struct virtqueue *vq);
-+
- #endif
-diff --git a/tools/virtio/virtio_test.c b/tools/virtio/virtio_test.c
-index 93d81cd64ba0..bf21ece30594 100644
---- a/tools/virtio/virtio_test.c
-+++ b/tools/virtio/virtio_test.c
-@@ -49,6 +49,7 @@ struct vdev_info {
-=20
- static const struct vhost_vring_file no_backend =3D { .fd =3D -1 },
- 				     backend =3D { .fd =3D 1 };
-+static const struct vhost_vring_state null_state =3D {};
-=20
- bool vq_notify(struct virtqueue *vq)
- {
-@@ -218,10 +219,33 @@ static void run_test(struct vdev_info *dev, struct =
-vq_info *vq,
- 			}
-=20
- 			if (reset) {
-+				struct vhost_vring_state s =3D { .index =3D 0 };
-+				int i;
-+				vq->vring.avail->idx =3D 0;
-+				vq->vq->num_free =3D vq->vring.num;
-+
-+				// Put everything in free lists.
-+				for (i =3D 0; i < vq->vring.num-1; i++)
-+					vq->vring.desc[i].next =3D
-+						cpu_to_virtio16(&dev->vdev,
-+								i + 1);
-+				vq->vring.desc[vq->vring.num-1].next =3D 0;
-+				virtqueue_reset_free_head(vq->vq);
-+
-+				r =3D ioctl(dev->control, VHOST_GET_VRING_BASE,
-+					  &s);
-+				assert(!r);
-+
-+				s.num =3D 0;
-+				r =3D ioctl(dev->control, VHOST_SET_VRING_BASE,
-+					  &null_state);
-+				assert(!r);
-+
- 				r =3D ioctl(dev->control, VHOST_TEST_SET_BACKEND,
- 					  &backend);
- 				assert(!r);
-=20
-+				started =3D completed;
-                                 while (completed > next_reset)
- 					next_reset +=3D completed;
- 			}
-@@ -243,7 +267,9 @@ static void run_test(struct vdev_info *dev, struct vq=
-_info *vq,
- 	test =3D 0;
- 	r =3D ioctl(dev->control, VHOST_TEST_RUN, &test);
- 	assert(r >=3D 0);
--	fprintf(stderr, "spurious wakeups: 0x%llx\n", spurious);
-+	fprintf(stderr,
-+		"spurious wakeups: 0x%llx started=3D0x%lx completed=3D0x%lx\n",
-+		spurious, started, completed);
- }
-=20
- const char optstring[] =3D "h";
---=20
-2.18.1
+I noticed this as well when I was sorting out the load and unload
+callback removal.  Thanks for finishing this up.  This series looks
+good to me, assuming none of the display folks have any concerns:
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
 
+
+>
+>  .../display/amdgpu_dm/amdgpu_dm_mst_types.c   | 45 +++++--------------
+>  drivers/gpu/drm/drm_dp_mst_topology.c         | 16 ++-----
+>  include/drm/drm_dp_mst_helper.h               |  2 -
+>  3 files changed, 15 insertions(+), 48 deletions(-)
+>
+> --
+> 2.25.1
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
