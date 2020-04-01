@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFC8C19B370
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AAEE19B0AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:29:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389015AbgDAQht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:37:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37020 "EHLO mail.kernel.org"
+        id S2387926AbgDAQ2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:28:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388995AbgDAQho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:37:44 -0400
+        id S2387611AbgDAQ2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:28:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00EC920BED;
-        Wed,  1 Apr 2020 16:37:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7164320857;
+        Wed,  1 Apr 2020 16:28:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759063;
-        bh=+JAAVEF8KYJY+js1qOPD/3WM6MFYxSxtSx/3r8F4uoM=;
+        s=default; t=1585758516;
+        bh=TnaegqLutaCcUAWij8JhdcO3zXmQdHFlD4ZdAEXwmjA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qwdm5gIFLzqBO2AGc0QWIfqejEGVY2+LmsTA9HeUE5SPmsFCTkOXmN4smQyN6++nQ
-         VqQV/BkVdXHBH8EMp4uHuDuSd3/XdNBjV9RR6UfwIdOUmhh0mgVoLlw+AZPhC33m3m
-         Kvjm2ZWZj8ZQ0ynAHUAzftDkYsMvyp5UIn/q2X2A=
+        b=x2wWylVxEWjvTNkfpYKyIiPc8pt52lc0mFM2uaoEV+1J2zglbY75PO3U5USbLjm5t
+         ubE8MoTLNg5J/De9TUDeHQ6PydVyh1DtWLiDTx052Sm4VH449bhcvp4ti7mlx+LBfA
+         1TL8xWM30CKcUvA581W2PSfjf2x2yMRF5DGPU+NE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.9 065/102] vti[6]: fix packet tx through bpf_redirect() in XinY cases
+        stable@vger.kernel.org, Nick Hudson <skrll@netbsd.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH 4.19 112/116] ARM: bcm2835-rpi-zero-w: Add missing pinctrl name
 Date:   Wed,  1 Apr 2020 18:18:08 +0200
-Message-Id: <20200401161543.746725659@linuxfoundation.org>
+Message-Id: <20200401161556.458997100@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+References: <20200401161542.669484650@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,124 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+From: Nick Hudson <skrll@netbsd.org>
 
-commit f1ed10264ed6b66b9cd5e8461cffce69be482356 upstream.
+commit 6687c201fdc3139315c2ea7ef96c157672805cdc upstream.
 
-I forgot the 4in6/6in4 cases in my previous patch. Let's fix them.
+Define the sdhci pinctrl state as "default" so it gets applied
+correctly and to match all other RPis.
 
-Fixes: 95224166a903 ("vti[6]: fix packet tx through bpf_redirect()")
-Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: 2c7c040c73e9 ("ARM: dts: bcm2835: Add Raspberry Pi Zero W")
+Signed-off-by: Nick Hudson <skrll@netbsd.org>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/Kconfig   |    1 +
- net/ipv4/ip_vti.c  |   36 +++++++++++++++++++++++++++++-------
- net/ipv6/ip6_vti.c |   32 +++++++++++++++++++++++++-------
- 3 files changed, 55 insertions(+), 14 deletions(-)
+ arch/arm/boot/dts/bcm2835-rpi-zero-w.dts |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv4/Kconfig
-+++ b/net/ipv4/Kconfig
-@@ -298,6 +298,7 @@ config SYN_COOKIES
- 
- config NET_IPVTI
- 	tristate "Virtual (secure) IP: tunneling"
-+	depends on IPV6 || IPV6=n
- 	select INET_TUNNEL
- 	select NET_IP_TUNNEL
- 	depends on INET_XFRM_MODE_TUNNEL
---- a/net/ipv4/ip_vti.c
-+++ b/net/ipv4/ip_vti.c
-@@ -208,17 +208,39 @@ static netdev_tx_t vti_xmit(struct sk_bu
- 	int mtu;
- 
- 	if (!dst) {
--		struct rtable *rt;
-+		switch (skb->protocol) {
-+		case htons(ETH_P_IP): {
-+			struct rtable *rt;
- 
--		fl->u.ip4.flowi4_oif = dev->ifindex;
--		fl->u.ip4.flowi4_flags |= FLOWI_FLAG_ANYSRC;
--		rt = __ip_route_output_key(dev_net(dev), &fl->u.ip4);
--		if (IS_ERR(rt)) {
-+			fl->u.ip4.flowi4_oif = dev->ifindex;
-+			fl->u.ip4.flowi4_flags |= FLOWI_FLAG_ANYSRC;
-+			rt = __ip_route_output_key(dev_net(dev), &fl->u.ip4);
-+			if (IS_ERR(rt)) {
-+				dev->stats.tx_carrier_errors++;
-+				goto tx_error_icmp;
-+			}
-+			dst = &rt->dst;
-+			skb_dst_set(skb, dst);
-+			break;
-+		}
-+#if IS_ENABLED(CONFIG_IPV6)
-+		case htons(ETH_P_IPV6):
-+			fl->u.ip6.flowi6_oif = dev->ifindex;
-+			fl->u.ip6.flowi6_flags |= FLOWI_FLAG_ANYSRC;
-+			dst = ip6_route_output(dev_net(dev), NULL, &fl->u.ip6);
-+			if (dst->error) {
-+				dst_release(dst);
-+				dst = NULL;
-+				dev->stats.tx_carrier_errors++;
-+				goto tx_error_icmp;
-+			}
-+			skb_dst_set(skb, dst);
-+			break;
-+#endif
-+		default:
- 			dev->stats.tx_carrier_errors++;
- 			goto tx_error_icmp;
- 		}
--		dst = &rt->dst;
--		skb_dst_set(skb, dst);
- 	}
- 
- 	dst_hold(dst);
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -454,15 +454,33 @@ vti6_xmit(struct sk_buff *skb, struct ne
- 	int mtu;
- 
- 	if (!dst) {
--		fl->u.ip6.flowi6_oif = dev->ifindex;
--		fl->u.ip6.flowi6_flags |= FLOWI_FLAG_ANYSRC;
--		dst = ip6_route_output(dev_net(dev), NULL, &fl->u.ip6);
--		if (dst->error) {
--			dst_release(dst);
--			dst = NULL;
-+		switch (skb->protocol) {
-+		case htons(ETH_P_IP): {
-+			struct rtable *rt;
-+
-+			fl->u.ip4.flowi4_oif = dev->ifindex;
-+			fl->u.ip4.flowi4_flags |= FLOWI_FLAG_ANYSRC;
-+			rt = __ip_route_output_key(dev_net(dev), &fl->u.ip4);
-+			if (IS_ERR(rt))
-+				goto tx_err_link_failure;
-+			dst = &rt->dst;
-+			skb_dst_set(skb, dst);
-+			break;
-+		}
-+		case htons(ETH_P_IPV6):
-+			fl->u.ip6.flowi6_oif = dev->ifindex;
-+			fl->u.ip6.flowi6_flags |= FLOWI_FLAG_ANYSRC;
-+			dst = ip6_route_output(dev_net(dev), NULL, &fl->u.ip6);
-+			if (dst->error) {
-+				dst_release(dst);
-+				dst = NULL;
-+				goto tx_err_link_failure;
-+			}
-+			skb_dst_set(skb, dst);
-+			break;
-+		default:
- 			goto tx_err_link_failure;
- 		}
--		skb_dst_set(skb, dst);
- 	}
- 
- 	dst_hold(dst);
+--- a/arch/arm/boot/dts/bcm2835-rpi-zero-w.dts
++++ b/arch/arm/boot/dts/bcm2835-rpi-zero-w.dts
+@@ -118,6 +118,7 @@
+ &sdhci {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
++	pinctrl-names = "default";
+ 	pinctrl-0 = <&emmc_gpio34 &gpclk2_gpio43>;
+ 	mmc-pwrseq = <&wifi_pwrseq>;
+ 	non-removable;
 
 
