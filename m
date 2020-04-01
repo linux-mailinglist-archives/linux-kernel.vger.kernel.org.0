@@ -2,251 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F6F219A682
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:48:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2E4E19A690
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:51:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731995AbgDAHsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 03:48:18 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34665 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731870AbgDAHsR (ORCPT
+        id S1731999AbgDAHvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 03:51:04 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:55120 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730426AbgDAHvE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 03:48:17 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 65so29349217wrl.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 00:48:15 -0700 (PDT)
+        Wed, 1 Apr 2020 03:51:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1585727463; x=1617263463;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=xyOGMOkFbFXBYV/0h98KFIzzgltfZyPCzPOGrobzedg=;
+  b=pkfQ/rThTO3pxU/8dZZcGxh3Tn0Eni8epfF2rPwPvZfI1ikTgak5695/
+   xnF3v3KwEvNHtWA+kTfQh9NPEE662gcP/sCPdRvXN7T4feoYTgnAlBtdp
+   md4QHGqSRCpfm6NX3RXy0nOm5kh3S3MCZu3jUtA5xX2DL0n7SR6NfXf1F
+   oafSkRUiELjdv+tqnwWPv3dIpq/bTuQCEmbp5jn9Hf/qL4B6kzJhLPA3y
+   GVpeKMg8jRRMSwoUZOQEU7s/z02ERJvfMwfBv1KHbjdojfymiRg61y2lY
+   GTI9RphfqHQlxGKZlj7wTiIVaQDMcNegizoTk1kBdwJxXltO9zfCe4agL
+   A==;
+IronPort-SDR: o4UZu/PqwrW1/ckZK4vf1XrQZPdpcV0xAXPqv4WjMKg4XKCEXz0dXp4fHQevCjSZ8ZJbTb6+Wo
+ OHMSmwHO3i8LtyRzxQwRNg52YC/nIWV9TJqfhEv4PXF48iulYX3M/FHoryofOoQxq/QrSQ2lJn
+ TZQyrbE6u0mc0lkftSkn8Vp3Q4hGhJp+zBgrAecYKOBRBPrvvjss2/YnZbJXWggrkL0IP2QiR/
+ /uExEnGv/l7+UIGQTc/nXlhmNFuT/vyV5c2zQzxPZeOpGMX6ivCGfuNE9CZweQcxTqpQxYelOS
+ nVI=
+X-IronPort-AV: E=Sophos;i="5.72,330,1580799600"; 
+   d="scan'208";a="7695485"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 01 Apr 2020 00:51:02 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 1 Apr 2020 00:51:01 -0700
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
+ Transport; Wed, 1 Apr 2020 00:51:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Vh9T3dSFem7xA2/q4mEgS4KEOgeymQvn08JQ96RQdvdmDzpEv4KIxBdkffm5HKDKdGiOYmjfXeiJco2hmH8H3mO94dfP3rXuvNS0EjA9PFwk5pdLizD+QhDg7g2XzIyfwqLEPxvCGs9CE0Z6U4ngZ/1Hgjd1fQL6G2eRTgtXzHcK6NJEOa6JuTf+NylAZ4X/XdW+Ur9thjM0ug+9/dnCKcusLiE/bIzsbjLQds/7uKKxBh+i3/SJXiCyFawYCwQyfrDm/EZuNExmdGpeEDYEnsd5q9vsf2OFOPoau2zNnCWGemEkKbfxstDjQzrx/1eguuwlCHUDEVPRs7ZsGtfaGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xyOGMOkFbFXBYV/0h98KFIzzgltfZyPCzPOGrobzedg=;
+ b=TU0ByHmNjHFdQg3PkNsqaLPQHuhqVOqsfx218uSOLxRlFYmoE9qqWG0tJMEricH4+FnDLSIt874+yuWRooWmS/Y1nn7s+VZAMuT95fVVVUBt2RXzrGxStF6wHdbp4/B+9Rydrnii17rq+KE+iAKX6UgJrw3rIawN8eJCYsuFGxWHzXEQMbfsAlIXXSGSVlM9XPp6/1qVsp49r03/xo0GkGZ1MqVwJbCMNzyWt6NKFYCcsc9fcFOBz1Sjsz1XphrWJlRGRU5Afw7Eokwqr2t7e6HCIhDmbdRqpPU20PGHMeJdTc7y6XTyLF5qk1dxIlgI3JtT7aWCBsUC379byvVOKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Lqlo+Tn7Tg2M14wJLKEZDcQDoUNo94atXFdRfztlgjI=;
-        b=vERgFZtShKXGk8+XcSyKqRHMttP9ThUnz6Q1c5KyJ43+hp5MJhYniufdVrCsJ5nxQd
-         FU4AaMAx+O/kg3pW6PRx0AJgey+OyXMqP34/UFKXnb0QAzAfCz5DdTCxG31/Ob8iL+dV
-         FTSi15SZWQ9PYPpUodVPfYb3wMV/MMQCL6R8PMoh8EgW6+6hYO2YgRJuTD37qWAQmBpJ
-         x/M+gqmYGBGuQE2j3jcg3q6QWwJEY/EAgeb/IgLDsGGLMdpzvsNtXJvbgVrshtLnESgJ
-         GZNO/P/UCqDIfDdEiFiY6o5OdYRSdJ20imQVICakjcKcjilXHoVf59AfKeonjgFofSnB
-         ubMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Lqlo+Tn7Tg2M14wJLKEZDcQDoUNo94atXFdRfztlgjI=;
-        b=j78LSyqpeQm44TD9istYRL561w7xABdbNQkmfbNliZb9wX1Q7tPMctJfStlx1yirMt
-         Ynkye1EGK7la1pwulBQwmSDpe4ep0dF4jbaBmVIYr8unqHyyd++h7SpA+oROQXsP1GNx
-         WTE79JBuUlDy/Ncx5iMFUT3VMeXNU/zj50F1O/I76FgfW0DEuol2pWxgfzV2Rt4XUSbY
-         dzmijMK2W5IuHjq7Ek5MviHtjChBDLeDyVgGof2K/gnJ3BlBboPZd17n9lfHDEoBpvBA
-         rmFTrjRCxisGvpj45751xr8CBoSogxVwomC2wQC2X5Ua2zJGf+pSHTL+wiR33EqJrUjC
-         9mxw==
-X-Gm-Message-State: ANhLgQ1PKExVFx0ExYuRMpyLTSTjlnHrL+OF+xcvwQ3JrqRhP/dMdeIO
-        GFJrDRLgDtJg+QpC14h65kTBbQ==
-X-Google-Smtp-Source: ADFU+vu0BnN/UnzvN+DA+awjDremMq0c6GPFHN6sR1QaGITUYep+z/MlmIANQsTbRBvIoKXdZkabfQ==
-X-Received: by 2002:adf:97c8:: with SMTP id t8mr24370675wrb.319.1585727294449;
-        Wed, 01 Apr 2020 00:48:14 -0700 (PDT)
-Received: from [192.168.0.102] ([84.33.172.71])
-        by smtp.gmail.com with ESMTPSA id n2sm1891553wro.25.2020.04.01.00.48.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Apr 2020 00:48:13 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH 2/2] scsi: core: Fix stall if two threads request budget
- at the same time
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <02968c1d-bd3a-af9c-77e7-23a9d9aa9af4@kernel.dk>
-Date:   Wed, 1 Apr 2020 09:49:40 +0200
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        linux-scsi@vger.kernel.org, Salman Qazi <sqazi@google.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1D4B63FC-FA4B-4C73-B70F-6639CC41D3A6@linaro.org>
-References: <20200330144907.13011-1-dianders@chromium.org>
- <20200330074856.2.I28278ef8ea27afc0ec7e597752a6d4e58c16176f@changeid>
- <20200331014109.GA20230@ming.t460p>
- <D38AB98D-7F6A-4C61-8A8F-C22C53671AC8@linaro.org>
- <d6af2344-11f7-5862-daed-e21cbd496d92@kernel.dk>
- <CAD=FV=WHYFDoUKLnwMCm-o=gEQDCzZFeMAvia3wpJzm9XX7Bow@mail.gmail.com>
- <02968c1d-bd3a-af9c-77e7-23a9d9aa9af4@kernel.dk>
-To:     Jens Axboe <axboe@kernel.dk>
-X-Mailer: Apple Mail (2.3445.104.11)
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xyOGMOkFbFXBYV/0h98KFIzzgltfZyPCzPOGrobzedg=;
+ b=ITytz5uZ21USFEv7k+6xKqqs03hurcLRS1TnuRDjVsIY7FLxEy50a6oBvJz7jmDvgC0hFxIsCwo6TgME9IPSvuGbTsjQA83keyR716FrgiuF9J3tlxWKEgfCd473xa3E96g85O3ZTtjtoae9363Hb0rQyIcU2zjIinpO6K3OfX4=
+Received: from BY5PR11MB4497.namprd11.prod.outlook.com (2603:10b6:a03:1cc::28)
+ by BY5PR11MB4021.namprd11.prod.outlook.com (2603:10b6:a03:191::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.20; Wed, 1 Apr
+ 2020 07:50:58 +0000
+Received: from BY5PR11MB4497.namprd11.prod.outlook.com
+ ([fe80::114b:fdb3:5bf5:2694]) by BY5PR11MB4497.namprd11.prod.outlook.com
+ ([fe80::114b:fdb3:5bf5:2694%5]) with mapi id 15.20.2856.019; Wed, 1 Apr 2020
+ 07:50:58 +0000
+From:   <Codrin.Ciubotariu@microchip.com>
+To:     <andrew@lunn.ch>
+CC:     <f.fainelli@gmail.com>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+        <davem@davemloft.net>
+Subject: Re: [PATCH] net: mdio: of: Do not treat fixed-link as PHY
+Thread-Topic: [PATCH] net: mdio: of: Do not treat fixed-link as PHY
+Thread-Index: AQHWBqykuJ0v/jHHYESe6xUz4L35r6hhU7EAgAAOiACAAQRNgIAARHUAgAE8MwA=
+Date:   Wed, 1 Apr 2020 07:50:58 +0000
+Message-ID: <12cdbe77-b932-9194-5d5e-5058622cef6c@microchip.com>
+References: <20200330160136.23018-1-codrin.ciubotariu@microchip.com>
+ <20200330163028.GE23477@lunn.ch>
+ <9bbbe2ed-985b-49e7-cc16-8b6bae3e8e8e@gmail.com>
+ <bd9f2507-958e-50bf-2b84-c21adf6ab588@microchip.com>
+ <20200331125908.GB24486@lunn.ch>
+In-Reply-To: <20200331125908.GB24486@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Codrin.Ciubotariu@microchip.com; 
+x-originating-ip: [86.121.14.3]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ba4cd23a-87b5-45ba-7aab-08d7d6116a4d
+x-ms-traffictypediagnostic: BY5PR11MB4021:
+x-microsoft-antispam-prvs: <BY5PR11MB4021EB29B488801AC9068C57E7C90@BY5PR11MB4021.namprd11.prod.outlook.com>
+x-bypassexternaltag: True
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 03607C04F0
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR11MB4497.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(376002)(366004)(136003)(346002)(396003)(39860400002)(66476007)(53546011)(86362001)(8676002)(6916009)(478600001)(6506007)(81156014)(36756003)(5660300002)(81166006)(2906002)(76116006)(71200400001)(54906003)(66946007)(91956017)(4744005)(26005)(66446008)(66556008)(8936002)(186003)(6486002)(2616005)(6512007)(31686004)(64756008)(31696002)(4326008)(316002);DIR:OUT;SFP:1101;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 3X0VObii2iflKf9PLl9ATGIcA/SgQDPRq+kr5mUVa5QJK3KoX0yV+haGavbFcgpGwN8e0E4n3WR4RhI3xEZt8ZHNzaSnuLdArqtb2lAiQDzy3odeGDl1EAVEHmRlxjATEIq2poVYAeDYktpURWiX/LYrINAXeuW6V4ljlb4RJCVtZpzPudQrA0BhFuqR3F89GvfpdsfpiCeeoPEkpeapw/GWP5wjmcLKCp2ALIXN4VUNB6t5VmYspbd22xTnSMk2WEpwdME22cLKVpgOO0+glYKP0UdIzygkRoQFH2+5TV8Kp4vSKf1stawKTnWw3Af6KhPbQ+BbNYXKwpnIWlg3XVhfGRnxp9aD1v+wKmykBpXHHwvbGN9spx1r9j6jDj/lC/WHNlPk3rU16xjqF12IV0mM3pTi9y1yvQxaJSGA3apW9IDHOwfeQ8bMIyeZe9gv
+x-ms-exchange-antispam-messagedata: RgfE5n3CUlf2+GGAB4mejdKYJ3/sBsYAJUnkqOTfZ0j0CeJhxjxlH/4dh1dq9SWe+Nlu/nqRIW+EMFUgSrxd8IVVZVxWL3V8CmdC9mAIkVhfWm0aaPpBShTJVtAa7v/vutCJBrun5hMR2Hzj75clQg==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E32D10737FCB4540921FDE0399F08610@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba4cd23a-87b5-45ba-7aab-08d7d6116a4d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Apr 2020 07:50:58.0466
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: v9Och2DVSxi0zaaLl3GBZvPouuy8cyR4dODVnCYyyKs0B6YFUSRgUPqTgpfJwT1GZW2iRzSDYvYQRd1UHDwlYhVfmDyeDClXkuvUjqyBvRs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR11MB4021
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> Il giorno 1 apr 2020, alle ore 03:21, Jens Axboe <axboe@kernel.dk> ha =
-scritto:
->=20
-> On 3/31/20 5:51 PM, Doug Anderson wrote:
->> Hi,
->>=20
->> On Tue, Mar 31, 2020 at 11:26 AM Jens Axboe <axboe@kernel.dk> wrote:
->>>=20
->>> On 3/31/20 12:07 PM, Paolo Valente wrote:
->>>>> Il giorno 31 mar 2020, alle ore 03:41, Ming Lei =
-<ming.lei@redhat.com> ha scritto:
->>>>>=20
->>>>> On Mon, Mar 30, 2020 at 07:49:06AM -0700, Douglas Anderson wrote:
->>>>>> It is possible for two threads to be running
->>>>>> blk_mq_do_dispatch_sched() at the same time with the same "hctx".
->>>>>> This is because there can be more than one caller to
->>>>>> __blk_mq_run_hw_queue() with the same "hctx" and hctx_lock() =
-doesn't
->>>>>> prevent more than one thread from entering.
->>>>>>=20
->>>>>> If more than one thread is running blk_mq_do_dispatch_sched() at =
-the
->>>>>> same time with the same "hctx", they may have contention =
-acquiring
->>>>>> budget.  The blk_mq_get_dispatch_budget() can eventually =
-translate
->>>>>> into scsi_mq_get_budget().  If the device's "queue_depth" is 1 =
-(not
->>>>>> uncommon) then only one of the two threads will be the one to
->>>>>> increment "device_busy" to 1 and get the budget.
->>>>>>=20
->>>>>> The losing thread will break out of blk_mq_do_dispatch_sched() =
-and
->>>>>> will stop dispatching requests.  The assumption is that when more
->>>>>> budget is available later (when existing transactions finish) the
->>>>>> queue will be kicked again, perhaps in scsi_end_request().
->>>>>>=20
->>>>>> The winning thread now has budget and can go on to call
->>>>>> dispatch_request().  If dispatch_request() returns NULL here then =
-we
->>>>>> have a potential problem.  Specifically we'll now call
->>>>>=20
->>>>> I guess this problem should be BFQ specific. Now there is =
-definitely
->>>>> requests in BFQ queue wrt. this hctx. However, looks this request =
-is
->>>>> only available from another loser thread, and it won't be =
-retrieved in
->>>>> the winning thread via e->type->ops.dispatch_request().
->>>>>=20
->>>>> Just wondering why BFQ is implemented in this way?
->>>>>=20
->>>>=20
->>>> BFQ inherited this powerful non-working scheme from CFQ, some age =
-ago.
->>>>=20
->>>> In more detail: if BFQ has at least one non-empty internal queue, =
-then
->>>> is says of course that there is work to do.  But if the currently
->>>> in-service queue is empty, and is expected to receive new I/O, then
->>>> BFQ plugs I/O dispatch to enforce service guarantees for the
->>>> in-service queue, i.e., BFQ responds NULL to a dispatch request.
->>>=20
->>> What BFQ is doing is fine, IFF it always ensures that the queue is =
-run
->>> at some later time, if it returns "yep I have work" yet returns NULL
->>> when attempting to retrieve that work. Generally this should happen =
-from
->>> subsequent IO completion, or whatever else condition will resolve =
-the
->>> issue that is currently preventing dispatch of that request. Last =
-resort
->>> would be a timer, but that can happen if you're slicing your =
-scheduling
->>> somehow.
->>=20
->> I've been poking more at this today trying to understand why the idle
->> timer that Paolo says is in BFQ isn't doing what it should be doing.
->> I've been continuing to put most of my stream-of-consciousness at
->> <https://crbug.com/1061950> to avoid so much spamming of this thread.
->> In the trace I looked at most recently it looks like BFQ does try to
->> ensure that the queue is run at a later time, but at least in this
->> trace the later time is not late enough.  Specifically the quick
->> summary of my recent trace:
->>=20
->> 28977309us - PID 2167 got the budget.
->> 28977518us - BFQ told PID 2167 that there was nothing to dispatch.
->> 28977702us - BFQ idle timer fires.
->> 28977725us - We start to try to dispatch as a result of BFQ's idle =
-timer.
->> 28977732us - Dispatching that was a result of BFQ's idle timer can't =
-get
->>             budget and thus does nothing.
->> 28977780us - PID 2167 put the budget and exits since there was =
-nothing
->>             to dispatch.
->>=20
->> This is only one particular trace, but in this case BFQ did attempt =
-to
->> rerun the queue after it returned NULL, but that ran almost
->> immediately after it returned NULL and thus ran into the race.  :(
->=20
-> OK, and then it doesn't trigger again? It's key that it keeps doing =
-this
-> timeout and re-dispatch if it fails, not just once.
->=20
-
-The goal of BFQ's timer is to make BFQ switch from non-work-conserving
-to work-conserving mode, just because not doing so would cause a
-stall.  In contrast, it sounds a little weird that an I/O scheduler
-systematically kicks I/O periodically (how can BFQ know when no more
-kicking is needed?).  IOW, it doesn't seem very robust that blk-mq may
-need a series of periodic kicks to finally restart, like a flooded
-engine.
-
-Compared with this solution, I'd still prefer one where BFQ doesn't
-trigger this blk-mq stall at all.
-
-Paolo
-
-> But BFQ really should be smarter here. It's the same caller etc that
-> asks whether it has work and whether it can dispatch, yet the answer =
-is
-> different. That's just kind of silly, and it'd make more sense if BFQ
-> actually implemented the ->has_work() as a "would I actually dispatch
-> for this guy, now".
->=20
->>>> It would be very easy to change bfq_has_work so that it returns =
-false
->>>> in case the in-service queue is empty, even if there is I/O
->>>> backlogged.  My only concern is: since everything has worked with =
-the
->>>> current scheme for probably 15 years, are we sure that everything =
-is
->>>> still ok after we change this scheme?
->>>=20
->>> You're comparing apples to oranges, CFQ never worked within the =
-blk-mq
->>> scheduling framework.
->>>=20
->>> That said, I don't think such a change is needed. If we currently =
-have a
->>> hang due to this discrepancy between has_work and gets_work, then it
->>> sounds like we're not always re-running the queue as we should. =46rom=
- the
->>> original patch, the budget putting is not something the scheduler is
->>> involved with. Do we just need to ensure that if we put budget =
-without
->>> having dispatched a request, we need to kick off dispatching again?
->>=20
->> By this you mean a change like this in blk_mq_do_dispatch_sched()?
->>=20
->>  if (!rq) {
->>    blk_mq_put_dispatch_budget(hctx);
->> +    ret =3D true;
->>    break;
->>  }
->>=20
->> I'm pretty sure that would fix the problems and I'd be happy to test,
->> but it feels like a heavy hammer.  IIUC we're essentially going to go
->> into a polling loop and keep calling has_work() and =
-dispatch_request()
->> over and over again until has_work() returns false or we manage to
->> dispatch something...
->=20
-> We obviously have to be careful not to introduce a busy-loop, where we
-> just keep scheduling dispatch, only to fail.
->=20
-> --=20
-> Jens Axboe
-
+T24gMzEuMDMuMjAyMCAxNTo1OSwgQW5kcmV3IEx1bm4gd3JvdGU6DQo+IEVYVEVSTkFMIEVNQUlM
+OiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91IGtub3cg
+dGhlIGNvbnRlbnQgaXMgc2FmZQ0KPiANCj4+IFRoYW5rcyBndXlzLiBJIHRob3VnaHQgdGhlcmUg
+bWlnaHQgYmUgb3RoZXIgY29udHJvbGxlcnMgdGhhdCBoYXZlIHRoZQ0KPj4gUEhZIG5vZGVzIGlu
+c2lkZSB0aGUgZXRoZXJuZXQgbm9kZS4NCj4gDQo+IEhpIENvZHJpbg0KDQpIaSBBbmRyZXcNCg0K
+PiANCj4gVGhlcmUgYXJlIHNvbWUgc3RpbGwgdXNpbmcgdGhpcyBkZXByZWNhdGVkIGZlYXR1cmUu
+IEJ1dCBtYWNiIGlzIHRoZQ0KPiBvbmx5IG9uZSBkb2luZyB0aGlzIG9kZCBsb29waW5nIG92ZXIg
+Y2hpbGQgbm9kZXMuIEl0IGlzIHRoaXMgbG9vcGluZw0KPiB3aGljaCBpcyBicmVha2luZyB0aGlu
+Z3MsIG5vdCB0aGUgdXNlIG9mIHRoZSBkZXByZWNhdGVkIGZlYXR1cmUNCj4gaXRzZWxmLg0KDQpZ
+ZXMsIGl0cyBkdWUgdG8gdGhlIGZhY3QgdGhhdCB0aGUgTURJTyBub2RlIGlzIG1pc3NpbmcuIFNo
+b3VsZCB3ZSBoYXZlIA0KaW4gbWluZCB0byBhZGQgYW4gTURJTyBub2RlIHVuZGVyIHRoZSBtYWNi
+IG5vZGUsIHdoZXJlIHdlIGNvdWxkIGFkZCB0aGUgDQpQSFkgbm9kZXM/IFRoZSBtYWNiIGJpbmRp
+bmdzIGRvbid0IHNlZW0gdG8gcmVxdWlyZSB0aGUgUEhZIG5vZGVzIA0KZGlyZWN0bHkgdW5kZXIg
+dGhlIG1hY2Igbm9kZSwgYnV0IHRoZSBjb21wYXRpYmlsaXR5IHdpdGggdGhlIGRlcHJlY2F0ZWQg
+DQpmZWF0dXJlIG5lZWRzIHRvIGJlIG1haW50YWluZWQuDQoNCkJlc3QgcmVnYXJkcywNCkNvZHJp
+bg==
