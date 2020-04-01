@@ -2,96 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D1419B485
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 291A119B494
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 19:13:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732598AbgDARHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 13:07:43 -0400
-Received: from mga07.intel.com ([134.134.136.100]:21353 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732273AbgDARHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 13:07:43 -0400
-IronPort-SDR: HC3QAmG6qRIx1aO4xUx7EN0BRwf4r1fUnkuJRCHUrhH8W7cYHZoGGjBp/CHbnt/KEUrRokEuXC
- /Cqa/RILpwdQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 10:07:42 -0700
-IronPort-SDR: oQipLpnApWd0p+CgyFBkSRZiHFTfxhOuwvsqHh1iQub51HAu+NxoD5fHDo9HsHXa60RzSslzN3
- Yx50zav9Uwzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,332,1580803200"; 
-   d="scan'208";a="249528821"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga003.jf.intel.com with ESMTP; 01 Apr 2020 10:07:42 -0700
-Date:   Wed, 1 Apr 2020 10:13:30 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Alex Williamson" <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Jonathan Cameron" <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH V10 06/11] iommu/vt-d: Add bind guest PASID support
-Message-ID: <20200401101330.275f6e34@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D800EEC@SHSMSX104.ccr.corp.intel.com>
-References: <1584746861-76386-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1584746861-76386-7-git-send-email-jacob.jun.pan@linux.intel.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D7F77B4@SHSMSX104.ccr.corp.intel.com>
-        <20200330135138.556ea8a4@jacob-builder>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19D800EEC@SHSMSX104.ccr.corp.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1732752AbgDARNb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 13:13:31 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38896 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbgDARNb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 13:13:31 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031H9btK006195;
+        Wed, 1 Apr 2020 17:13:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=QSpo2rWwvgOU28GQ7Bz4BpJhWkG9i7/4mOFtHSMz2wE=;
+ b=pSJmxzDkZBIG8vBLJ6HQLYoLckpuC5Q+oCDKbWy9xpGR5QcrC381FuJSGevOv+UI0Czf
+ Qcv2yZs2gWKPp0/UZ5fupBTr1+aMiLIJR3JEignjj+dqCCZLETum+y03muqbX1pVE8RB
+ JRkrRqiBzbWDvTjIFPybafgABnqGH6mKLvAdSuvPkWn/lsneV/3c4BjdsA+VoRb7uE68
+ r/6qKbEXFMXBmFPsAxydXnAQhXMDLQD9BslLdivlyfy2oQUSkchMrVlc0WaliewXoxyt
+ 03+Kg/WR4O6lCoz5rNiLPxjXf3yc27Oz2v7QdEtxFsityVIcXhYDYC1kPEcUdPeDwSbY dg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 303cev6rd6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Apr 2020 17:13:15 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031H7BQG103658;
+        Wed, 1 Apr 2020 17:13:15 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 304sjkvjk8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Apr 2020 17:13:14 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 031HDBEB010071;
+        Wed, 1 Apr 2020 17:13:11 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 01 Apr 2020 10:13:11 -0700
+Date:   Wed, 1 Apr 2020 13:13:31 -0400
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] mm: fix tick timer stall during deferred page init
+Message-ID: <20200401171331.26v6th25ezhixwpt@ca-dmjordan1.us.oracle.com>
+References: <20200401154217.GQ22681@dhcp22.suse.cz>
+ <dfc0014a-9b85-5eeb-70ea-d622ccf5d988@redhat.com>
+ <20200401160048.GU22681@dhcp22.suse.cz>
+ <20200401160929.jwekhr24tb44odea@ca-dmjordan1.us.oracle.com>
+ <20200401161243.GW22681@dhcp22.suse.cz>
+ <20200401161810.xvqikca2x46yqrlx@ca-dmjordan1.us.oracle.com>
+ <20200401162655.GX22681@dhcp22.suse.cz>
+ <CA+CK2bCGpG6kBjkGd-QP06kNtwezj8mW13Jdvbxs6ExzRaJSpQ@mail.gmail.com>
+ <20200401164654.GY22681@dhcp22.suse.cz>
+ <CA+CK2bCKxok9Ho2NJd0kWR=YCi+eQqyfv6fg1Je3Lmov9PqzwQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+CK2bCKxok9Ho2NJd0kWR=YCi+eQqyfv6fg1Je3Lmov9PqzwQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 phishscore=0 suspectscore=0 mlxlogscore=616 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004010146
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 adultscore=0
+ clxscore=1011 phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 impostorscore=0 mlxlogscore=663 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004010146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Mar 2020 03:43:39 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
-
-> > > >  struct intel_svm_dev {
-> > > > @@ -698,9 +700,13 @@ struct intel_svm_dev {
-> > > >  struct intel_svm {
-> > > >  	struct mmu_notifier notifier;
-> > > >  	struct mm_struct *mm;
-> > > > +
-> > > >  	struct intel_iommu *iommu;
-> > > >  	int flags;
-> > > >  	int pasid;
-> > > > +	int gpasid; /* Guest PASID in case of vSVA bind with
-> > > > non-identity host
-> > > > +		     * to guest PASID mapping.
-> > > > +		     */  
-> > >
-> > > we don't need to highlight identity or non-identity thing, since
-> > > either way shares the same infrastructure here and it is not the
-> > > knowledge that the kernel driver should assume
-> > >  
-> > Sorry, I don't get your point.
-> > 
-> > What I meant was that this field "gpasid" is only used for
-> > non-identity case. For identity case, we don't have
-> > SVM_FLAG_GUEST_PASID.  
+On Wed, Apr 01, 2020 at 12:51:56PM -0400, Pavel Tatashin wrote:
+> > > I do not remember seeing any real failures, this was a theoretical
+> > > window. So, we could potentially simply remove these locks until we
+> > > see a real boot failure in some interrupt thread. The allocation has
+> > > to be rather large as well.
+> >
+> > Yes please! We are really great at over complicating and over
+> > engineering stuff based on theoretical issues and build on top of that
+> > and make the code even more complex because nobody dares to re-evaluate
+> > and so on.
 > 
-> what's the problem if a guest tries to set gpasid even in identity
-> case? do you want to add check to reject it? Also I remember we
-> discussed before that we want to provide a consistent interface 
-> to other consumer e.g. KVM to setup VMCS PASID translation table.
-> In that case, regardless of identity or non-identity, we need provide
-> such mapping info.
-The solution is in flux a little. For KVM to set up VMCS, we are
-planning to use IOASID set private ID as guest PASID. So this part of
-the code will go away, i.e. G-H PASID mapping will no longer stored in
-IOMMU driver. Perhaps we can address this after the transition?
+> I will submit a patch (or revert) whichever is cleaner.
+
+I had thought people would be concerned about that window.  I believe the quote
+from the time it was being discussed was "rare failures suck."  They very much
+do :) but in this case I think any failure would be relatively easy to
+diagnose.
+
+So great, simpler is always better, and I'll wait for what you send, Pasha.
+
+Alternatively, if you won't be able to get to it for a while, I can write it
+up, having thoroughly paged all this in over the past week.
