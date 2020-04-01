@@ -2,117 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32A4319A488
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 07:14:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94E1819A491
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 07:17:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731744AbgDAFNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 01:13:53 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38142 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726811AbgDAFNx (ORCPT
+        id S1731809AbgDAFRD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 01:17:03 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:14851 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731783AbgDAFRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 01:13:53 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c5so19324568lfp.5;
-        Tue, 31 Mar 2020 22:13:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=XMjp4N6SkBeomidPSlGof0y8W8f19f9rN+PDD5MSzR8=;
-        b=mX79wM0Ys6iRYP7zbiZO2UTVcI0EFgfA7iO4H5EUpywt5FKdTbIRWKJo7ZcG2yorFI
-         iRKEGTPtt3ifxvHSp6wG6utNKuzyWpivY0Sg9qISnsMyLJAQCl6MAGYt1xjShOVyXwvV
-         Gr9jEJOyoGNqM7UhRDQG+8mIG8jmD8lIo7QMbIwIldn7xcutQ/DkmvF8kFcQDCInUYm9
-         Mkyix0+uWtOeXV+mvq3FbKT7k3q3RQuHHd62Z3K7R4GbEWNGnQB05FpBU/lATAWm/8AW
-         YUulKJMYDAgaBa3xtJLwr+7AowdOBwgLQlt54VkjRnlmnE/lojAbk1HC5PRa7oj1roZh
-         dVIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=XMjp4N6SkBeomidPSlGof0y8W8f19f9rN+PDD5MSzR8=;
-        b=lvASAZ0arung9/gAZysdtRuRCaHVcGjUtzzEmFgnmjSZ9vr+GkFCwMOoHQoAe+DKR9
-         AZGcimxkZa6WycCzNk2Xa7eJld8lA882bL0VChnchOV6btjErKmmYzbeoXp4rhor8WM8
-         D8b0llrTRMCd85C4gvuJniqcPuV11U7IAmLO14mtx2uIYMDfD2w8CbLuV1QBb2rcLedi
-         BAM5I5/ytMPrWSGKmVCin0q8yvIpQ5WrX9kycaO+gv0oiAl1GJpV/uf7AetFb9qK+3/e
-         5oKdgnOIPhmsIH1ttQgtRwLnXO5RC5nzGr0U2dwpc4rjIBfE/IdoGmVVPlXbWfGbQ5C7
-         CZEg==
-X-Gm-Message-State: AGi0PuYCJm2kwLvGtTWyy5PlfVgePywbVDJrzqJLF5zUYzOjAZd78hUX
-        FikEY2pbol6FU2Ej+YVTiJ5crTm+u4CsId9dtm0=
-X-Google-Smtp-Source: APiQypIjpsODi91FVhgnbfbLT9/wj3HuTOXlQv/Ss9qaiw2mbZ747HdPkNwE2Ig/ZXUaS9X+IrwFGM7xhSvIpEIulR8=
-X-Received: by 2002:a05:6512:3091:: with SMTP id z17mr14033512lfd.42.1585718030102;
- Tue, 31 Mar 2020 22:13:50 -0700 (PDT)
-MIME-Version: 1.0
-From:   "she90122 ." <she90122@gmail.com>
-Date:   Wed, 1 Apr 2020 13:13:39 +0800
-Message-ID: <CAMhTFwnDYz=SQsyT6yV+Whp6mQiCw7KTrgt-4oE3Ve3mvOKgxA@mail.gmail.com>
-Subject: [RESEND,v3,1/1] EDAC: (pnd2) Change the return value of function
- apl_check_ecc_active() & dnv_check_ecc_active() when installed the non-ECC
- memory device.
-To:     she90122 <she90122@gmail.com>
-Cc:     Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rrichter@marvell.com>,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Amy.Shih" <Amy.Shih@advantech.com.tw>,
-        "Oakley.Ding" <Oakley.Ding@advantech.com.tw>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 1 Apr 2020 01:17:01 -0400
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 01 Apr 2020 10:46:12 +0530
+Received: from c-sanm-linux.qualcomm.com ([10.206.25.31])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 01 Apr 2020 10:45:50 +0530
+Received: by c-sanm-linux.qualcomm.com (Postfix, from userid 2343233)
+        id 822392619; Wed,  1 Apr 2020 10:45:49 +0530 (IST)
+From:   Sandeep Maheswaram <sanm@codeaurora.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Chandana Kishori Chiluveru <cchiluve@codeaurora.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>
+Subject: [PATCH v7 0/4] ADD interconnect support for Qualcomm DWC3 driver 
+Date:   Wed,  1 Apr 2020 10:45:41 +0530
+Message-Id: <1585718145-29537-1-git-send-email-sanm@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amy Shih <amy.shih@advantech.com.tw>
+This path series aims to add interconnect support in
+dwc3-qcom driver on SDM845 and SC7180 SoCs.
 
-Set function apl_check_ecc_active() &
-dnv_check_ecc_active() to return -ENXIO when installed the non-ECC
-memory device. And print the message in pnd2_init() accordingly.
+Changes from v6 -> v7
+  > [PATCH 2/4] Fixed review comments from Matthias in DWC3 driver.
+  > Other patches remain unchanged.
 
-Signed-off-by: Amy Shih <amy.shih@advantech.com.tw>
----
-Changes in v3:
-- Change the return value of function check_ecc when installed the
-non-ECC memory device.
-Changes in v2:
-- Remove the word "error" from output message.
+Changes from v5 -> v6
+  > [PATCH 1/4] Addressed comments from Rob.
+  > [PATCH 2/4] Fixed review comments from Matthias in DWC3 driver.
+  > [PATCH 3/4] Ignoring 80 char limit in defining interconnect paths.
+  > Added [PATCH 4/4] in this series. Adding interconnect nodes for SC7180.
+    Depends on patch https://patchwork.kernel.org/patch/11417989/.	
 
- drivers/edac/pnd2_edac.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Changes from v4 -> v5
+  > [PATCH 1/3] Added the interconnect properties in yaml. This patch depends
+    on series https://patchwork.kernel.org/cover/11372641/.
+  > [PATCH 2/3] Fixed review comments from Matthias in DWC3 driver.
+  > [PATCH 3/3] Modified as per the new interconnect nodes in sdm845. Depends
+    on series https://patchwork.kernel.org/cover/11372211/. 
 
-diff --git a/drivers/edac/pnd2_edac.c b/drivers/edac/pnd2_edac.c index
-933f772..27172d7 100644
---- a/drivers/edac/pnd2_edac.c
-+++ b/drivers/edac/pnd2_edac.c
-@@ -1089,7 +1089,7 @@ static int apl_check_ecc_active(void)
-  for (i = 0; i < APL_NUM_CHANNELS; i++)
-  if (chan_mask & BIT(i))
-  ret += check_channel(i);
-- return ret ? -EINVAL : 0;
-+ return ret ? -ENXIO : 0;
- }
 
- #define DIMMS_PRESENT(d) ((d)->rken0 + (d)->rken1 + (d)->rken2 +
-(d)->rken3) @@ -1111,7 +1111,7 @@ static int
-dnv_check_ecc_active(void)
+Changes from v3 -> v4
+  > Fixed review comments from Matthias
+  > [PATCH 1/3] and [PATCH 3/3] remains unchanged
 
-  for (i = 0; i < DNV_NUM_CHANNELS; i++)
-  ret += check_unit(i);
-- return ret ? -EINVAL : 0;
-+ return ret ? -ENXIO : 0;
- }
+Changes from v2 -> v3
+  > Fixed review comments from Matthias and Manu
+  > changed the functions prefix from usb_* to dwc3_qcom_*
 
- static int get_memory_error_data(struct mem_ctl_info *mci, u64 addr,
-@@ -1572,7 +1572,12 @@ static int __init pnd2_init(void)
+Changes since V1:
+  > Comments by Georgi Djakov on "[PATCH 2/3]" addressed
+  > [PATCH 1/3] and [PATCH 3/3] remains unchanged
 
-  rc = pnd2_probe();
-  if (rc < 0) {
-- pnd2_printk(KERN_ERR, "Failed to register device with error %d.\n", rc);
-+ if (rc == -ENXIO)
-+ pnd2_printk(KERN_INFO, "System is not using ECC memory\n");
-+ else
-+ pnd2_printk(KERN_ERR,
-+     "Failed to register device with error %d.\n",
-+     rc);
-  return rc;
-  }
 
---
-1.8.3.1
+Sandeep Maheswaram (4):
+  dt-bindings: usb: qcom,dwc3: Introduce interconnect properties for
+    Qualcomm DWC3 driver
+  usb: dwc3: qcom: Add interconnect support in dwc3 driver
+  arm64: dts: qcom: sdm845: Add interconnect properties for USB
+  arm64: dts: qcom: sc7180: Add interconnect properties for USB
+
+ .../devicetree/bindings/usb/qcom,dwc3.yaml         |   8 ++
+ arch/arm64/boot/dts/qcom/sc7180.dtsi               |   4 +
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               |   8 ++
+ drivers/usb/dwc3/dwc3-qcom.c                       | 128 ++++++++++++++++++++-
+ 4 files changed, 146 insertions(+), 2 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
