@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C427C19B10A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:32:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AA0219B199
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388023AbgDAQbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:31:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57470 "EHLO mail.kernel.org"
+        id S2388706AbgDAQgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:36:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388298AbgDAQbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:31:19 -0400
+        id S2388119AbgDAQgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:36:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9368E2063A;
-        Wed,  1 Apr 2020 16:31:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E3BE206F8;
+        Wed,  1 Apr 2020 16:36:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758679;
-        bh=qTW48sVpSSSVqkcOsFMpmgPKG8SDdLTyQ5tNGaj3Ijo=;
+        s=default; t=1585758976;
+        bh=IoW0UQ7gMuUmvsa4lQ1KLYup5Ho1EcpJce25OdnnrO0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q7sea7HN7yM4BcTaVpRg+BnmsWaaE6P/Y3qD1eQ+ak2KnAsWhoB3kqcESvlolTnK7
-         D3RKdbsy/ooeY9dycAI0FSGeV1pcUCsSfuaESNMwAnFWJzmFllx3eAwe+8tot3GtDF
-         zzbVrN9VeIVEY6IFvwYTmSIHwcostk+EyBo0bVwg=
+        b=1ANlv4IzQxAGX7jGPCUOVxq0/vYTUNEhXq2Og+qL3M8Ht47sUYf1SnVgOOOuvYN5j
+         YKmwDEcWNowXfc3YeHS6LMl7cUCKmLfQaMtuOUrvR5/RNWMDYZTxhrtgIokeiFi1RA
+         4t9K99nooYJhSXYRLWaiROYx8/ONfUziLiAhHqnY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 42/91] hsr: add restart routine into hsr_get_node_list()
-Date:   Wed,  1 Apr 2020 18:17:38 +0200
-Message-Id: <20200401161528.249560395@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 036/102] staging: greybus: loopback_test: fix potential path truncations
+Date:   Wed,  1 Apr 2020 18:17:39 +0200
+Message-Id: <20200401161539.574614378@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
-References: <20200401161512.917494101@linuxfoundation.org>
+In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
+References: <20200401161530.451355388@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,99 +42,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit ca19c70f5225771c05bcdcb832b4eb84d7271c5e ]
+commit ae62cf5eb2792d9a818c2d93728ed92119357017 upstream.
 
-The hsr_get_node_list() is to send node addresses to the userspace.
-If there are so many nodes, it could fail because of buffer size.
-In order to avoid this failure, the restart routine is added.
+Newer GCC warns about possible truncations of two generated path names as
+we're concatenating the configurable sysfs and debugfs path prefixes
+with a filename and placing the results in buffers of the same size as
+the maximum length of the prefixes.
 
-Fixes: f421436a591d ("net/hsr: Add support for the High-availability Seamless Redundancy protocol (HSRv0)")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+	snprintf(d->name, MAX_STR_LEN, "gb_loopback%u", dev_id);
+
+	snprintf(d->sysfs_entry, MAX_SYSFS_PATH, "%s%s/",
+		 t->sysfs_prefix, d->name);
+
+	snprintf(d->debugfs_entry, MAX_SYSFS_PATH, "%sraw_latency_%s",
+		 t->debugfs_prefix, d->name);
+
+Fix this by separating the maximum path length from the maximum prefix
+length and reducing the latter enough to fit the generated strings.
+
+Note that we also need to reduce the device-name buffer size as GCC
+isn't smart enough to figure out that we ever only used MAX_STR_LEN
+bytes of it.
+
+Fixes: 6b0658f68786 ("greybus: tools: Add tools directory to greybus repo and add loopback")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20200312110151.22028-4-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/hsr/hsr_netlink.c |   38 ++++++++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 14 deletions(-)
 
---- a/net/hsr/hsr_netlink.c
-+++ b/net/hsr/hsr_netlink.c
-@@ -366,16 +366,14 @@ fail:
-  */
- static int hsr_get_node_list(struct sk_buff *skb_in, struct genl_info *info)
- {
--	/* For receiving */
--	struct nlattr *na;
-+	unsigned char addr[ETH_ALEN];
- 	struct net_device *hsr_dev;
--
--	/* For sending */
- 	struct sk_buff *skb_out;
--	void *msg_head;
- 	struct hsr_priv *hsr;
--	void *pos;
--	unsigned char addr[ETH_ALEN];
-+	bool restart = false;
-+	struct nlattr *na;
-+	void *pos = NULL;
-+	void *msg_head;
- 	int res;
+---
+ drivers/staging/greybus/tools/loopback_test.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+--- a/drivers/staging/greybus/tools/loopback_test.c
++++ b/drivers/staging/greybus/tools/loopback_test.c
+@@ -20,6 +20,7 @@
+ #include <signal.h>
  
- 	if (!info)
-@@ -393,8 +391,9 @@ static int hsr_get_node_list(struct sk_b
- 	if (!is_hsr_master(hsr_dev))
- 		goto rcu_unlock;
+ #define MAX_NUM_DEVICES 10
++#define MAX_SYSFS_PREFIX 0x80
+ #define MAX_SYSFS_PATH	0x200
+ #define CSV_MAX_LINE	0x1000
+ #define SYSFS_MAX_INT	0x20
+@@ -68,7 +69,7 @@ struct loopback_results {
+ };
  
-+restart:
- 	/* Send reply */
--	skb_out = genlmsg_new(NLMSG_GOODSIZE, GFP_ATOMIC);
-+	skb_out = genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_ATOMIC);
- 	if (!skb_out) {
- 		res = -ENOMEM;
- 		goto fail;
-@@ -408,17 +407,28 @@ static int hsr_get_node_list(struct sk_b
- 		goto nla_put_failure;
+ struct loopback_device {
+-	char name[MAX_SYSFS_PATH];
++	char name[MAX_STR_LEN];
+ 	char sysfs_entry[MAX_SYSFS_PATH];
+ 	char debugfs_entry[MAX_SYSFS_PATH];
+ 	struct loopback_results results;
+@@ -94,8 +95,8 @@ struct loopback_test {
+ 	int stop_all;
+ 	int poll_count;
+ 	char test_name[MAX_STR_LEN];
+-	char sysfs_prefix[MAX_SYSFS_PATH];
+-	char debugfs_prefix[MAX_SYSFS_PATH];
++	char sysfs_prefix[MAX_SYSFS_PREFIX];
++	char debugfs_prefix[MAX_SYSFS_PREFIX];
+ 	struct timespec poll_timeout;
+ 	struct loopback_device devices[MAX_NUM_DEVICES];
+ 	struct loopback_results aggregate_results;
+@@ -917,10 +918,10 @@ int main(int argc, char *argv[])
+ 			t.iteration_max = atoi(optarg);
+ 			break;
+ 		case 'S':
+-			snprintf(t.sysfs_prefix, MAX_SYSFS_PATH, "%s", optarg);
++			snprintf(t.sysfs_prefix, MAX_SYSFS_PREFIX, "%s", optarg);
+ 			break;
+ 		case 'D':
+-			snprintf(t.debugfs_prefix, MAX_SYSFS_PATH, "%s", optarg);
++			snprintf(t.debugfs_prefix, MAX_SYSFS_PREFIX, "%s", optarg);
+ 			break;
+ 		case 'm':
+ 			t.mask = atol(optarg);
+@@ -971,10 +972,10 @@ int main(int argc, char *argv[])
  	}
  
--	res = nla_put_u32(skb_out, HSR_A_IFINDEX, hsr_dev->ifindex);
--	if (res < 0)
--		goto nla_put_failure;
-+	if (!restart) {
-+		res = nla_put_u32(skb_out, HSR_A_IFINDEX, hsr_dev->ifindex);
-+		if (res < 0)
-+			goto nla_put_failure;
-+	}
+ 	if (!strcmp(t.sysfs_prefix, ""))
+-		snprintf(t.sysfs_prefix, MAX_SYSFS_PATH, "%s", sysfs_prefix);
++		snprintf(t.sysfs_prefix, MAX_SYSFS_PREFIX, "%s", sysfs_prefix);
  
- 	hsr = netdev_priv(hsr_dev);
+ 	if (!strcmp(t.debugfs_prefix, ""))
+-		snprintf(t.debugfs_prefix, MAX_SYSFS_PATH, "%s", debugfs_prefix);
++		snprintf(t.debugfs_prefix, MAX_SYSFS_PREFIX, "%s", debugfs_prefix);
  
--	pos = hsr_get_next_node(hsr, NULL, addr);
-+	if (!pos)
-+		pos = hsr_get_next_node(hsr, NULL, addr);
- 	while (pos) {
- 		res = nla_put(skb_out, HSR_A_NODE_ADDR, ETH_ALEN, addr);
--		if (res < 0)
-+		if (res < 0) {
-+			if (res == -EMSGSIZE) {
-+				genlmsg_end(skb_out, msg_head);
-+				genlmsg_unicast(genl_info_net(info), skb_out,
-+						info->snd_portid);
-+				restart = true;
-+				goto restart;
-+			}
- 			goto nla_put_failure;
-+		}
- 		pos = hsr_get_next_node(hsr, pos, addr);
- 	}
- 	rcu_read_unlock();
-@@ -435,7 +445,7 @@ invalid:
- 	return 0;
- 
- nla_put_failure:
--	kfree_skb(skb_out);
-+	nlmsg_free(skb_out);
- 	/* Fall through */
- 
- fail:
+ 	ret = find_loopback_devices(&t);
+ 	if (ret)
 
 
