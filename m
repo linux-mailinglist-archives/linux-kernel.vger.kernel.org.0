@@ -2,107 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B16D319B8FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C580C19B8FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 01:36:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733196AbgDAXcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 19:32:36 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:37860 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732503AbgDAXcg (ORCPT
+        id S1733182AbgDAXgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 19:36:47 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34038 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732503AbgDAXgq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 19:32:36 -0400
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23993316AbgDAXcamxzAZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 01:32:30 +0200
-Date:   Thu, 2 Apr 2020 00:32:30 +0100 (BST)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     Andrew Cooper <andrew.cooper3@citrix.com>
-cc:     Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Jan Kiszka <jan.kiszka@siemens.com>,
-        James Morris <jmorris@namei.org>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Josh Boyer <jwboyer@redhat.com>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <len.brown@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Martin Molnar <martin.molnar.programming@gmail.com>,
-        Pingfan Liu <kernelfans@gmail.com>,
-        jailhouse-dev@googlegroups.com
-Subject: Re: [PATCH] x86/smpboot: Remove 486-isms from the modern AP boot
- path
-In-Reply-To: <beefca46-ac7c-374b-e80a-4e7c3af2eb2b@citrix.com>
-Message-ID: <alpine.LFD.2.21.2004012353100.4156324@eddie.linux-mips.org>
-References: <20200325101431.12341-1-andrew.cooper3@citrix.com> <601E644A-B046-4030-B3BD-280ABF15BF53@zytor.com> <87r1xgxzy6.fsf@nanos.tec.linutronix.de> <alpine.LFD.2.21.2004010001460.3939520@eddie.linux-mips.org>
- <beefca46-ac7c-374b-e80a-4e7c3af2eb2b@citrix.com>
+        Wed, 1 Apr 2020 19:36:46 -0400
+Received: by mail-pl1-f195.google.com with SMTP id a23so627219plm.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 16:36:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=sQjK7qegajNFKiTPiHQ5Z456M8UVRRDL3FiaA3tyTGs=;
+        b=LYTp9ksrfOguPgd3XflLQaiRWyQXN2zGAWee6altMkkc2NYCumREpFdzZpExQW1Qq6
+         H8ZK7mzZ37Z7HLmx7GiNCrpchU54WVA51+coaid+eY4HnF3doY4Bz6inL0koZuy2NFm+
+         myL0WIcVxF+sjBOXLcspklxcfpViozESXgSbwrR6fXFLGxxXOmGleluSQRGL4ByE3r2Z
+         iTfxXwBN81CuR21mLL2wMwJpZBiOM5UYcYhp4lAdlLa+DdMXxsp1ligXXoRMqRrzzeYn
+         HZcOLvEQ+CKuDVUiZoqRasDJnI/9VYQ1xXn48wUYREmgLpyrAXI4xbbEXqXfYwFJnCYa
+         hb+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=sQjK7qegajNFKiTPiHQ5Z456M8UVRRDL3FiaA3tyTGs=;
+        b=WMutjvechzkkhD9cyjhQRo2x7cnmLxmfvm3+68eF0D0JChEQILfRE/N6jZjk5LH2Wd
+         pErgYRdqtWToBHFSQ+2JFmXnyHh21COgHnwbpu7Q1/OHu04wxzMvr5qmedjZoibjlckk
+         ZfcorNV/oLnfS+JcIqvnw/olyMEyotIQV3r2NToKPrWLRzU3bovMLw36J1Cx8E+1Qq0v
+         ZTO4L95J73dbUMlWGEVOUfWKX8WyviingM25hmPh24YyzKVbP+CLDBiXdo1sllbIWVI9
+         I7YE0PI2pq6LM5btRbpMJ398JEED95Ckeep0pO1tXQ5GZXvdOvIRtmVQY0kGw2doKuD8
+         YyMA==
+X-Gm-Message-State: AGi0PuYaCsp0PhDKn9a8SpkSM4gWBwHOPdugptgLTjXEz4akqxLupxUY
+        waJd/YxFoYa0r5NMXotvvs0K0A==
+X-Google-Smtp-Source: APiQypIJCdx4hNppaFM2XL2D9B8R+4Fnma25HLV1H6qHB+zBdia/d//vCt3FUseVJwiQZfZ1RwBbVw==
+X-Received: by 2002:a17:902:9a4c:: with SMTP id x12mr275281plv.297.1585784205324;
+        Wed, 01 Apr 2020 16:36:45 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id a15sm2369442pfg.77.2020.04.01.16.36.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 16:36:44 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 16:36:42 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Tang Bin <tangbin@cmss.chinamobile.com>
+Cc:     robdclark@gmail.com, agross@kernel.org, joro@8bytes.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/qcom:fix local_base status check
+Message-ID: <20200401233642.GI254911@minitux>
+References: <20200401152008.16740-1-tangbin@cmss.chinamobile.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200401152008.16740-1-tangbin@cmss.chinamobile.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 Apr 2020, Andrew Cooper wrote:
+On Wed 01 Apr 08:20 PDT 2020, Tang Bin wrote:
 
-> >  Even though we supported them by spec I believe we never actually ran MP 
-> > on any 486 SMP system (Alan Cox might be able to straighten me out on 
-> > this); none that I know of implemented the MPS even though actual hardware 
-> > might have used the APIC architecture.  Compaq had its competing solution 
-> > for 486 and newer SMP, actually deployed, the name of which I long forgot.  
-> > We never supported it due to the lack of documentation combined with the 
-> > lack of enough incentive for someone to reverse-engineer it.
+> Release resources when exiting on error.
 > 
-> :)
+> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+> ---
+>  drivers/iommu/qcom_iommu.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> I chose "486-ism" based on what the MP spec said about external vs
-> integrated Local APICs.  I can't claim to have any experience of those days.
+> diff --git a/drivers/iommu/qcom_iommu.c b/drivers/iommu/qcom_iommu.c
+> index 4328da0b0..d4ec38b1e 100644
+> --- a/drivers/iommu/qcom_iommu.c
+> +++ b/drivers/iommu/qcom_iommu.c
+> @@ -815,6 +815,8 @@ static int qcom_iommu_device_probe(struct platform_device *pdev)
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	if (res)
+>  		qcom_iommu->local_base = devm_ioremap_resource(dev, res);
+> +		if (IS_ERR(qcom_iommu->local_base))
 
- The spec is quite clear about the use of discrete APICs actually:
+Good catch! But while it works, this is not under the if (res). So
+please add some {} around this chunk.
 
-"5.1 Discrete APIC Configurations
+Regards,
+Bjorn
 
-"   Figure 5-1 shows the default configuration for systems that use the 
-    discrete 82489 APIC.  The Intel486 processor is shown as an example; 
-    however, this configuration can also employ Pentium processors.  In 
-    Pentium processor systems, PRST is connected to INIT instead of to 
-    RESET."
-
-:)  And if in the way the internal local APIC in P54C processors can be
-permanently disabled (causing it not to be reported in CPUID flags) via a 
-reset strap, e.g. to support an unusual configuration.
-
- As I recall the integrated APIC would in principle support SMP configs 
-beyond dual (the inter-APIC bus was serial at the time and supported 15 
-APIC IDs with the P54C), but at the time the P54C processor was released 
-the only compatible I/O APICs were available as a part of Intel PCI south 
-bridges (the 82375EB/SB ESC and the 82379AB SIO.A).  Those chips were not 
-necessarily compatible with whatever custom chipset was developed to 
-support e.g. a quad-SMP P54C system.  Or there were political reasons 
-preventing them from being used.
-
- Then the 82489DX used an incompatible protocol (supporting 254 APIC IDs 
-among others, and as I recall the serial bus had a different number of 
-wires even), so it couldn't be mixed with integrated local APICs.  That's 
-why discrete APICs were sometimes used even with P54C processors.
-
- And the 82093AA standalone I/O APIC was only introduced a few years 
-later, along with the Intel HX (Triton II) SMP chipset.  I still have a 
-nice working machine equipped with this chipset and dual P55C processors 
-@233MHz.  Even the original CPU fans are going strong. :)  Its MP table is 
-however buggy and difficult to work with if the I/O APIC is to be used, 
-especially if PCI-PCI bridges are involved (there's none onboard, but you 
-can have these easily in multiple quantities on option cards nowadays).
-
-  Maciej
+> +			return PTR_ERR(qcom_iommu->local_base);
+>  
+>  	qcom_iommu->iface_clk = devm_clk_get(dev, "iface");
+>  	if (IS_ERR(qcom_iommu->iface_clk)) {
+> -- 
+> 2.20.1.windows.1
+> 
+> 
+> 
