@@ -2,88 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CB8719A78E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:40:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E95FC19A776
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 10:39:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732116AbgDAIkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 04:40:00 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:15086 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732106AbgDAIj6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:39:58 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0318bDf7029926;
-        Wed, 1 Apr 2020 10:39:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=AXPGvtsGWLkKS+I+Kb5oNNnn9+C77me7iOpHlW+3zcQ=;
- b=o2rK4UthE6AKyCuj0SYoVrYUCVidIzLFNlRGTavaWhQWcnIoRCgA7JWWZjMohNlJopee
- ff/oGy12rIApLRdk9tja8gjo+Uml7m90DS/277dhBsDmMmJEssgX3bf5MPmdq9uVK/M0
- 0si38uSlJ5hsFS5eUV3OK05ebF56jwpvtxglNyfL+4LTbeCWSOVAQzZCfopslerPiV0f
- hvtoCMNssPenODnWCdl4CZDU4b9yoom8V8YXuZaRXOb+m2RSBlNxf3dHy+9XisJ6x8Dv
- Tjq9+9BtxGroFTr3HbMzWTBVo71ojDlO8DMsQ9uup/Q+PrcaYw3o46Qwdlq6Bn0rJHbp kg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 301vkdvakg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 01 Apr 2020 10:39:48 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AF8AC100034;
-        Wed,  1 Apr 2020 10:39:47 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A321121CA8E;
-        Wed,  1 Apr 2020 10:39:47 +0200 (CEST)
-Received: from localhost (10.75.127.45) by SFHDAG3NODE3.st.com (10.75.127.9)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Apr 2020 10:39:47
- +0200
-From:   Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     <fabrice.gasnier@st.com>, <lee.jones@linaro.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v6 6/6] ARM: mach-stm32: select low power timer for STM32MP157
-Date:   Wed, 1 Apr 2020 10:39:09 +0200
-Message-ID: <20200401083909.18886-7-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20200401083909.18886-1-benjamin.gaignard@st.com>
-References: <20200401083909.18886-1-benjamin.gaignard@st.com>
+        id S1731680AbgDAIjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 04:39:23 -0400
+Received: from foss.arm.com ([217.140.110.172]:45808 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726368AbgDAIjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 04:39:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 335D831B;
+        Wed,  1 Apr 2020 01:39:22 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A77653F52E;
+        Wed,  1 Apr 2020 01:39:21 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 09:39:20 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     oder_chiou@realtek.com, lgirdwood@gmail.com, perex@perex.cz,
+        tiwai@suse.com, pierre-louis.bossart@linux.intel.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] ASoC: rt5682: Fix build error without CONFIG_I2C
+Message-ID: <20200401083920.GB4943@sirena.org.uk>
+References: <20200401082540.21876-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG3NODE1.st.com (10.75.127.7) To SFHDAG3NODE3.st.com
- (10.75.127.9)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-03-31_07:2020-03-31,2020-03-31 signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="E39vaYmALEf/7YXx"
+Content-Disposition: inline
+In-Reply-To: <20200401082540.21876-1-yuehaibing@huawei.com>
+X-Cookie: The Ranger isn't gonna like it, Yogi.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make MACH_STM32MP157 select CLKSRC_STM32_LP to get a broadcast timer.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- arch/arm/mach-stm32/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+--E39vaYmALEf/7YXx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
-index 57699bd8f107..d78f55b7b1d0 100644
---- a/arch/arm/mach-stm32/Kconfig
-+++ b/arch/arm/mach-stm32/Kconfig
-@@ -46,6 +46,7 @@ if ARCH_MULTI_V7
- config MACH_STM32MP157
- 	bool "STMicroelectronics STM32MP157"
- 	select ARM_ERRATA_814220
-+	select CLKSRC_STM32_LP
- 	default y
- 
- endif # ARMv7-A
--- 
-2.15.0
+On Wed, Apr 01, 2020 at 04:25:40PM +0800, YueHaibing wrote:
 
+> -static const char *rt5682_supply_names[RT5682_NUM_SUPPLIES] =3D {
+> -	"AVDD",
+> -	"MICVDD",
+> -	"VBAT",
+> -};
+> -
+
+I imagine that the device is going to need power even when use with
+slimbus, even if the regulator support isn't wired up at the minute.
+For things like this __maybey_unused annotations tend to be better,=20
+this stops warnings about things not being used but doesn't need ifdefs
+or big code moves.
+
+--E39vaYmALEf/7YXx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6EUzcACgkQJNaLcl1U
+h9ANrgf/f7gocQPtQBlwwICg0sIaoabV0i7a4QjmUQl+hyL/r1q0weR9P42brmMZ
+EQwcm89LZOJJG8pLSonMGPeoIH0gePFlBqN4AbFl0h+uUBDfvuSZbuFnZS+AEVyd
+pa2KTzaM3LAbzuwfAH0R8AkWn2WE9LmetNEGuWluP4yKYsRWLNmGsalDm/kw7ww7
+zexY9Z9eOZZddfn2PBAWfqHcy7HFFXy0bB4rG2LR6KevIGp+8ZwJvs5BwllnpqiU
+/O6tIY282GqwsuPFg1nktHVgUP35cQVkAF+mjddMvPI3pGMdYvAdd3YWcGmwOzJr
+ZXnMzVEKsd1L8e4v9nty0/z7Fk7YUA==
+=lx3U
+-----END PGP SIGNATURE-----
+
+--E39vaYmALEf/7YXx--
