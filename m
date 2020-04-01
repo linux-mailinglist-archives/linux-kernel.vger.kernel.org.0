@@ -2,37 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98EBD19AFEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4A5219B0FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:32:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387485AbgDAQWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:22:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45398 "EHLO mail.kernel.org"
+        id S1732728AbgDAQbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:31:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387463AbgDAQWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:22:22 -0400
+        id S2387768AbgDAQa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:30:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00D7220857;
-        Wed,  1 Apr 2020 16:22:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73A7D2137B;
+        Wed,  1 Apr 2020 16:30:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758140;
-        bh=VnwcAXK+UHzOBiGQchBKglHd/sU6Gq8vZVgDLz7TTZo=;
+        s=default; t=1585758657;
+        bh=FOmBWtWn6+3QgLUu7/ZRMJz1EGVdTZYZfjvklXBdgdU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VdG0fngmfc/zQMrTU6R6yQtUl9a9EbmVR65yJvnGSvHv9N7/aGWugzoVTH3og6gC5
-         eVMbg5YAFxP80guLg/TltnbCEcVGvCL35U9kkuyYDFvwWskmHSYiwVnA0roRs5NpaM
-         q69n6aiiIUWL7tjzljjrEm5ym9XlNZ4rNO+p3f5g=
+        b=wlHMcy7jzqagMmZugur1G9yJ6oEH34QIm6AVLXgXRDcR4EbDA9afhl+RLEQKeiQPP
+         iOwoECiBh8Dzt+mVb31anrE8QR3JJbipCQJF2j2Mt2FZyip7PsbVaavuW7h9ag9QTl
+         rtlxUi9C7ZAKmLfwUAPFTz7NIZWGvPjaPnADf2lY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 5.4 04/27] vt: selection, introduce vc_is_sel
+        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+f9b32aaacd60305d9687@syzkaller.appspotmail.com,
+        syzbot+2f8c233f131943d6056d@syzkaller.appspotmail.com,
+        syzbot+9c2df9fd5e9445b74e01@syzkaller.appspotmail.com
+Subject: [PATCH 4.4 36/91] net_sched: cls_route: remove the right filter from hashtable
 Date:   Wed,  1 Apr 2020 18:17:32 +0200
-Message-Id: <20200401161418.604647666@linuxfoundation.org>
+Message-Id: <20200401161526.901169434@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
-References: <20200401161414.352722470@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,101 +49,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit dce05aa6eec977f1472abed95ccd71276b9a3864 upstream.
+[ Upstream commit ef299cc3fa1a9e1288665a9fdc8bff55629fd359 ]
 
-Avoid global variables (namely sel_cons) by introducing vc_is_sel. It
-checks whether the parameter is the current selection console. This will
-help putting sel_cons to a struct later.
+route4_change() allocates a new filter and copies values from
+the old one. After the new filter is inserted into the hash
+table, the old filter should be removed and freed, as the final
+step of the update.
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Link: https://lore.kernel.org/r/20200219073951.16151-1-jslaby@suse.cz
+However, the current code mistakenly removes the new one. This
+looks apparently wrong to me, and it causes double "free" and
+use-after-free too, as reported by syzbot.
+
+Reported-and-tested-by: syzbot+f9b32aaacd60305d9687@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+2f8c233f131943d6056d@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+9c2df9fd5e9445b74e01@syzkaller.appspotmail.com
+Fixes: 1109c00547fc ("net: sched: RCU cls_route")
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Cc: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/vt/selection.c |    5 +++++
- drivers/tty/vt/vt.c        |    7 ++++---
- drivers/tty/vt/vt_ioctl.c  |    2 +-
- include/linux/selection.h  |    4 +++-
- 4 files changed, 13 insertions(+), 5 deletions(-)
+ net/sched/cls_route.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/vt/selection.c
-+++ b/drivers/tty/vt/selection.c
-@@ -88,6 +88,11 @@ void clear_selection(void)
- }
- EXPORT_SYMBOL_GPL(clear_selection);
- 
-+bool vc_is_sel(struct vc_data *vc)
-+{
-+	return vc == sel_cons;
-+}
-+
- /*
-  * User settable table: what characters are to be considered alphabetic?
-  * 128 bits. Locked by the console lock.
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -890,8 +890,9 @@ static void hide_softcursor(struct vc_da
- 
- static void hide_cursor(struct vc_data *vc)
- {
--	if (vc == sel_cons)
-+	if (vc_is_sel(vc))
- 		clear_selection();
-+
- 	vc->vc_sw->con_cursor(vc, CM_ERASE);
- 	hide_softcursor(vc);
- }
-@@ -901,7 +902,7 @@ static void set_cursor(struct vc_data *v
- 	if (!con_is_fg(vc) || console_blanked || vc->vc_mode == KD_GRAPHICS)
- 		return;
- 	if (vc->vc_deccm) {
--		if (vc == sel_cons)
-+		if (vc_is_sel(vc))
- 			clear_selection();
- 		add_softcursor(vc);
- 		if ((vc->vc_cursor_type & 0x0f) != 1)
-@@ -1207,7 +1208,7 @@ static int vc_do_resize(struct tty_struc
- 		}
- 	}
- 
--	if (vc == sel_cons)
-+	if (vc_is_sel(vc))
- 		clear_selection();
- 
- 	old_rows = vc->vc_rows;
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -43,7 +43,7 @@ char vt_dont_switch;
- extern struct tty_driver *console_driver;
- 
- #define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
--#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_cons[i].d == sel_cons)
-+#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_is_sel(vc_cons[i].d))
- 
- /*
-  * Console (vt and kd) routines, as defined by USL SVR4 manual, and by
---- a/include/linux/selection.h
-+++ b/include/linux/selection.h
-@@ -11,8 +11,8 @@
- #include <linux/tiocl.h>
- #include <linux/vt_buffer.h>
- 
--extern struct vc_data *sel_cons;
- struct tty_struct;
-+struct vc_data;
- 
- extern void clear_selection(void);
- extern int set_selection_user(const struct tiocl_selection __user *sel,
-@@ -24,6 +24,8 @@ extern int sel_loadlut(char __user *p);
- extern int mouse_reporting(void);
- extern void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry);
- 
-+bool vc_is_sel(struct vc_data *vc);
-+
- extern int console_blanked;
- 
- extern const unsigned char color_table[];
+--- a/net/sched/cls_route.c
++++ b/net/sched/cls_route.c
+@@ -540,8 +540,8 @@ static int route4_change(struct net *net
+ 			fp = &b->ht[h];
+ 			for (pfp = rtnl_dereference(*fp); pfp;
+ 			     fp = &pfp->next, pfp = rtnl_dereference(*fp)) {
+-				if (pfp == f) {
+-					*fp = f->next;
++				if (pfp == fold) {
++					rcu_assign_pointer(*fp, fold->next);
+ 					break;
+ 				}
+ 			}
 
 
