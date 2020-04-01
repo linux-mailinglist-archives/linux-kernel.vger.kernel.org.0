@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3463519B326
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F29F19B151
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389020AbgDAQoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:44:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45254 "EHLO mail.kernel.org"
+        id S2388608AbgDAQdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:33:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389157AbgDAQoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:44:17 -0400
+        id S2388595AbgDAQdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:33:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2E0B206E9;
-        Wed,  1 Apr 2020 16:44:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46515214D8;
+        Wed,  1 Apr 2020 16:33:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585759457;
-        bh=fMRsRQ+65f7C+MmvTPcopeURpod73xJ3PavLOx/8fiE=;
+        s=default; t=1585758832;
+        bh=tmjogg9yI+Opax21DufBCCunzR9HJWzo5dAUBKQVx3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FdZBFBN2FPqimWYi6CuuuCDcoaZLo6Weor0VSjVtd4UlhRNVcFP03/sVcjkKs5dN6
-         fnjcsJa9/pkeCQ0FBzio91fPET3TYuxTIFAO3vv1HOCN5OBUv0Vv+75JDPHgNFL5NY
-         lfk9WiTocPbi9Zy4v1H8GnnTa0xKFoY+VzEK/aMg=
+        b=MG0ocWR7Mm9WCIWajE7sug4Mu/d+Vo4lkZZyIaoqU5IqWrE0u0KMRl+WPkup3sxNY
+         HUROa/ZHErGOi5LVPIK3jlOGFGbwCXS3MBYIwmyyONz9w33fS5lhOo2By+YCyRAVx8
+         T+q+WJ7PPX4K2juoL0aiuUYrV/O7B7/YOVkr+Hlw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Suzuki Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 086/148] arm64: compat: map SPSR_ELx<->PSR for signals
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.4 62/91] xfrm: fix uctx len check in verify_sec_ctx_len
 Date:   Wed,  1 Apr 2020 18:17:58 +0200
-Message-Id: <20200401161601.333675944@linuxfoundation.org>
+Message-Id: <20200401161534.360943180@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-References: <20200401161552.245876366@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,64 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 25dc2c80cfa33153057aa94984855acd57adf92a upstream.
+commit 171d449a028573b2f0acdc7f31ecbb045391b320 upstream.
 
-The SPSR_ELx format for exceptions taken from AArch32 differs from the
-AArch32 PSR format. Thus, we must translate between the two when setting
-up a compat sigframe, or restoring context from a compat sigframe.
+It's not sufficient to do 'uctx->len != (sizeof(struct xfrm_user_sec_ctx) +
+uctx->ctx_len)' check only, as uctx->len may be greater than nla_len(rt),
+in which case it will cause slab-out-of-bounds when accessing uctx->ctx_str
+later.
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Fixes: 7206dc93a58fb764 ("arm64: Expose Arm v8.4 features")
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Suzuki Poulose <suzuki.poulose@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
+This patch is to fix it by return -EINVAL when uctx->len > nla_len(rt).
+
+Fixes: df71837d5024 ("[LSM-IPSec]: Security association restriction.")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/signal32.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ net/xfrm/xfrm_user.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/signal32.c
-+++ b/arch/arm64/kernel/signal32.c
-@@ -321,6 +321,7 @@ static int compat_restore_sigframe(struc
- 	int err;
- 	sigset_t set;
- 	struct compat_aux_sigframe __user *aux;
-+	unsigned long psr;
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -109,7 +109,8 @@ static inline int verify_sec_ctx_len(str
+ 		return 0;
  
- 	err = get_sigset_t(&set, &sf->uc.uc_sigmask);
- 	if (err == 0) {
-@@ -344,7 +345,9 @@ static int compat_restore_sigframe(struc
- 	__get_user_error(regs->compat_sp, &sf->uc.uc_mcontext.arm_sp, err);
- 	__get_user_error(regs->compat_lr, &sf->uc.uc_mcontext.arm_lr, err);
- 	__get_user_error(regs->pc, &sf->uc.uc_mcontext.arm_pc, err);
--	__get_user_error(regs->pstate, &sf->uc.uc_mcontext.arm_cpsr, err);
-+	__get_user_error(psr, &sf->uc.uc_mcontext.arm_cpsr, err);
-+
-+	regs->pstate = compat_psr_to_pstate(psr);
+ 	uctx = nla_data(rt);
+-	if (uctx->len != (sizeof(struct xfrm_user_sec_ctx) + uctx->ctx_len))
++	if (uctx->len > nla_len(rt) ||
++	    uctx->len != (sizeof(struct xfrm_user_sec_ctx) + uctx->ctx_len))
+ 		return -EINVAL;
  
- 	/*
- 	 * Avoid compat_sys_sigreturn() restarting.
-@@ -500,6 +503,7 @@ static int compat_setup_sigframe(struct
- 				 struct pt_regs *regs, sigset_t *set)
- {
- 	struct compat_aux_sigframe __user *aux;
-+	unsigned long psr = pstate_to_compat_psr(regs->pstate);
- 	int err = 0;
- 
- 	__put_user_error(regs->regs[0], &sf->uc.uc_mcontext.arm_r0, err);
-@@ -518,7 +522,7 @@ static int compat_setup_sigframe(struct
- 	__put_user_error(regs->compat_sp, &sf->uc.uc_mcontext.arm_sp, err);
- 	__put_user_error(regs->compat_lr, &sf->uc.uc_mcontext.arm_lr, err);
- 	__put_user_error(regs->pc, &sf->uc.uc_mcontext.arm_pc, err);
--	__put_user_error(regs->pstate, &sf->uc.uc_mcontext.arm_cpsr, err);
-+	__put_user_error(psr, &sf->uc.uc_mcontext.arm_cpsr, err);
- 
- 	__put_user_error((compat_ulong_t)0, &sf->uc.uc_mcontext.trap_no, err);
- 	/* set the compat FSR WnR */
+ 	return 0;
 
 
