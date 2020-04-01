@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9526019AFF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:23:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C83319B11E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:33:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387532AbgDAQWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:22:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45836 "EHLO mail.kernel.org"
+        id S2387464AbgDAQcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:32:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732328AbgDAQWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:22:43 -0400
+        id S2388222AbgDAQcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:32:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7654212CC;
-        Wed,  1 Apr 2020 16:22:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C959220658;
+        Wed,  1 Apr 2020 16:32:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758162;
-        bh=PIZTE+EIbLccDU1QGRu3mlihSm17nSu7NpAVqp4qfqM=;
+        s=default; t=1585758727;
+        bh=fuZdubD077dq0B7HOwQ6mfwjuba+ZeVl7JU27HhDW0c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WlZryx18NzHhbNaUW8Op+UMrw6qqSheOYMKcDXewrRvEIOkNC7dQm9d7ikL7lI4pL
-         2dDb4F1T6qHtYDjhzLSpvgA6KHDbwyHiBbKIUkN7y0ybtQsGn/iwoq/PDcx6Auhq4d
-         PggTX1ZCU44Nls22iRlKFXPvnuEXkDgpMuh5NPLA=
+        b=jOMgxWa1StBgNapMiGuf45C5TWFQ9SV3ZfC1vfqcAYZKXnq4skx5kaeBWqAQhpvlt
+         miyLhkU5c2U2UOrGP9Hem6cs5QMV1TSHMrrmRpsRx38pjas59saMMng3+7zx/Bj4Qi
+         crjdiq15v9tgoRH5jp5GeFtwYe5MJhPsMIU0NXDY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arthur Demchenkov <spinal.by@gmail.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Roger Quadros <rogerq@ti.com>, Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 5.4 24/27] ARM: dts: N900: fix onenand timings
+        stable@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.4 56/91] perf probe: Do not depend on dwfl_module_addrsym()
 Date:   Wed,  1 Apr 2020 18:17:52 +0200
-Message-Id: <20200401161433.837031632@linuxfoundation.org>
+Message-Id: <20200401161532.691187361@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161414.352722470@linuxfoundation.org>
-References: <20200401161414.352722470@linuxfoundation.org>
+In-Reply-To: <20200401161512.917494101@linuxfoundation.org>
+References: <20200401161512.917494101@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +49,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arthur Demchenkov <spinal.by@gmail.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 0c5220a3c1242c7a2451570ed5f5af69620aac75 upstream.
+commit 1efde2754275dbd9d11c6e0132a4f09facf297ab upstream.
 
-Commit a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
-started using DT specified timings for GPMC, and as a result the
-OneNAND stopped working on N900 as we had wrong values in the DT.
-Fix by updating the values to bootloader timings that have been tested
-to be working on Nokia N900 with OneNAND manufacturers: Samsung,
-Numonyx.
+Do not depend on dwfl_module_addrsym() because it can fail on user-space
+shared libraries.
 
-Fixes: a758f50f10cf ("mtd: onenand: omap2: Configure driver from DT")
-Signed-off-by: Arthur Demchenkov <spinal.by@gmail.com>
-Tested-by: Merlijn Wajer <merlijn@wizzup.org>
-Reviewed-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Actually, same bug was fixed by commit 664fee3dc379 ("perf probe: Do not
+use dwfl_module_addrsym if dwarf_diename finds symbol name"), but commit
+07d369857808 ("perf probe: Fix wrong address verification) reverted to
+get actual symbol address from symtab.
+
+This fixes it again by getting symbol address from DIE, and only if the
+DIE has only address range, it uses dwfl_module_addrsym().
+
+Fixes: 07d369857808 ("perf probe: Fix wrong address verification)
+Reported-by: Alexandre Ghiti <alex@ghiti.fr>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sasha Levin <sashal@kernel.org>
+Link: http://lore.kernel.org/lkml/158281812176.476.14164573830975116234.stgit@devnote2
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/omap3-n900.dts |   44 ++++++++++++++++++++++++---------------
- 1 file changed, 28 insertions(+), 16 deletions(-)
+ tools/perf/util/probe-finder.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/arch/arm/boot/dts/omap3-n900.dts
-+++ b/arch/arm/boot/dts/omap3-n900.dts
-@@ -849,34 +849,46 @@
- 		compatible = "ti,omap2-onenand";
- 		reg = <0 0 0x20000>;	/* CS0, offset 0, IO size 128K */
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -608,14 +608,19 @@ static int convert_to_trace_point(Dwarf_
+ 		return -EINVAL;
+ 	}
  
-+		/*
-+		 * These timings are based on CONFIG_OMAP_GPMC_DEBUG=y reported
-+		 * bootloader set values when booted with v5.1
-+		 * (OneNAND Manufacturer: Samsung):
-+		 *
-+		 *   cs0 GPMC_CS_CONFIG1: 0xfb001202
-+		 *   cs0 GPMC_CS_CONFIG2: 0x00111100
-+		 *   cs0 GPMC_CS_CONFIG3: 0x00020200
-+		 *   cs0 GPMC_CS_CONFIG4: 0x11001102
-+		 *   cs0 GPMC_CS_CONFIG5: 0x03101616
-+		 *   cs0 GPMC_CS_CONFIG6: 0x90060000
-+		 */
- 		gpmc,sync-read;
- 		gpmc,sync-write;
- 		gpmc,burst-length = <16>;
- 		gpmc,burst-read;
- 		gpmc,burst-wrap;
- 		gpmc,burst-write;
--		gpmc,device-width = <2>; /* GPMC_DEVWIDTH_16BIT */
--		gpmc,mux-add-data = <2>; /* GPMC_MUX_AD */
-+		gpmc,device-width = <2>;
-+		gpmc,mux-add-data = <2>;
- 		gpmc,cs-on-ns = <0>;
--		gpmc,cs-rd-off-ns = <87>;
--		gpmc,cs-wr-off-ns = <87>;
-+		gpmc,cs-rd-off-ns = <102>;
-+		gpmc,cs-wr-off-ns = <102>;
- 		gpmc,adv-on-ns = <0>;
--		gpmc,adv-rd-off-ns = <10>;
--		gpmc,adv-wr-off-ns = <10>;
--		gpmc,oe-on-ns = <15>;
--		gpmc,oe-off-ns = <87>;
-+		gpmc,adv-rd-off-ns = <12>;
-+		gpmc,adv-wr-off-ns = <12>;
-+		gpmc,oe-on-ns = <12>;
-+		gpmc,oe-off-ns = <102>;
- 		gpmc,we-on-ns = <0>;
--		gpmc,we-off-ns = <87>;
--		gpmc,rd-cycle-ns = <112>;
--		gpmc,wr-cycle-ns = <112>;
--		gpmc,access-ns = <81>;
--		gpmc,page-burst-access-ns = <15>;
-+		gpmc,we-off-ns = <102>;
-+		gpmc,rd-cycle-ns = <132>;
-+		gpmc,wr-cycle-ns = <132>;
-+		gpmc,access-ns = <96>;
-+		gpmc,page-burst-access-ns = <18>;
- 		gpmc,bus-turnaround-ns = <0>;
- 		gpmc,cycle2cycle-delay-ns = <0>;
- 		gpmc,wait-monitoring-ns = <0>;
--		gpmc,clk-activation-ns = <5>;
--		gpmc,wr-data-mux-bus-ns = <30>;
--		gpmc,wr-access-ns = <81>;
-+		gpmc,clk-activation-ns = <6>;
-+		gpmc,wr-data-mux-bus-ns = <36>;
-+		gpmc,wr-access-ns = <96>;
- 		gpmc,sync-clk-ps = <15000>;
+-	/* Try to get actual symbol name from symtab */
+-	symbol = dwfl_module_addrsym(mod, paddr, &sym, NULL);
++	if (dwarf_entrypc(sp_die, &eaddr) == 0) {
++		/* If the DIE has entrypc, use it. */
++		symbol = dwarf_diename(sp_die);
++	} else {
++		/* Try to get actual symbol name and address from symtab */
++		symbol = dwfl_module_addrsym(mod, paddr, &sym, NULL);
++		eaddr = sym.st_value;
++	}
+ 	if (!symbol) {
+ 		pr_warning("Failed to find symbol at 0x%lx\n",
+ 			   (unsigned long)paddr);
+ 		return -ENOENT;
+ 	}
+-	eaddr = sym.st_value;
  
- 		/*
+ 	tp->offset = (unsigned long)(paddr - eaddr);
+ 	tp->address = (unsigned long)paddr;
 
 
