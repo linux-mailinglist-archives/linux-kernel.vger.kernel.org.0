@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0488319B183
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BAAA19B24B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:44:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388645AbgDAQfg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:35:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34276 "EHLO mail.kernel.org"
+        id S2389550AbgDAQmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:42:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388089AbgDAQfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:35:33 -0400
+        id S2389380AbgDAQmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:42:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9314206F8;
-        Wed,  1 Apr 2020 16:35:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06CCF20787;
+        Wed,  1 Apr 2020 16:42:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585758932;
-        bh=einYLTSBpG4uznAjnAOOIsoBhlfGFMKvf1YfhGMwuB0=;
+        s=default; t=1585759362;
+        bh=8xPoR8lcTHzxIT9YYImy7csnXrV3THmxe67f63BSe5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w5eNlpmD6DBpKd0VJZ2U3L6kwIYBlHnI/6xf/ZnvTb0VkCXzdKoijo9dmB3cBHwFr
-         BqoeS6OQAbntXybSpgaer/W0zjGEu0+yIoPfBTf+s3hBQ4/pqcF421Raew9DxCFp7M
-         iS0fOkvjcCTlCkzIPFk99PzxbLBLRhpMA2uI4grs=
+        b=tA9fZ9jfB/v5PX6uhindno/4iT8WPxnJ2e1xZVLEZvabmaCvwkjI8NCrF+BOTWrF/
+         czsexI5JrQuLKq+jSPoyg0imVN8mYlTzpPns7NzIqsx5zhHjyoKEXVQsxmxMWTQlQz
+         gJlAAgh6AiCihAUeT7dFu5DPHn3IyiA1l4ForDFc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunguang Xu <brookxu@tencent.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 024/102] memcg: fix NULL pointer dereference in __mem_cgroup_usage_unregister_event
-Date:   Wed,  1 Apr 2020 18:17:27 +0200
-Message-Id: <20200401161537.685569388@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+fcf5dd39282ceb27108d@syzkaller.appspotmail.com,
+        Taehee Yoo <ap420073@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 056/148] hsr: fix general protection fault in hsr_addr_is_self()
+Date:   Wed,  1 Apr 2020 18:17:28 +0200
+Message-Id: <20200401161558.351973084@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161530.451355388@linuxfoundation.org>
-References: <20200401161530.451355388@linuxfoundation.org>
+In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
+References: <20200401161552.245876366@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,120 +45,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunguang Xu <brookxu@tencent.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-commit 7d36665a5886c27ca4c4d0afd3ecc50b400f3587 upstream.
+[ Upstream commit 3a303cfdd28d5f930a307c82e8a9d996394d5ebd ]
 
-An eventfd monitors multiple memory thresholds of the cgroup, closes them,
-the kernel deletes all events related to this eventfd.  Before all events
-are deleted, another eventfd monitors the memory threshold of this cgroup,
-leading to a crash:
+The port->hsr is used in the hsr_handle_frame(), which is a
+callback of rx_handler.
+hsr master and slaves are initialized in hsr_add_port().
+This function initializes several pointers, which includes port->hsr after
+registering rx_handler.
+So, in the rx_handler routine, un-initialized pointer would be used.
+In order to fix this, pointers should be initialized before
+registering rx_handler.
 
-  BUG: kernel NULL pointer dereference, address: 0000000000000004
-  #PF: supervisor write access in kernel mode
-  #PF: error_code(0x0002) - not-present page
-  PGD 800000033058e067 P4D 800000033058e067 PUD 3355ce067 PMD 0
-  Oops: 0002 [#1] SMP PTI
-  CPU: 2 PID: 14012 Comm: kworker/2:6 Kdump: loaded Not tainted 5.6.0-rc4 #3
-  Hardware name: LENOVO 20AWS01K00/20AWS01K00, BIOS GLET70WW (2.24 ) 05/21/2014
-  Workqueue: events memcg_event_remove
-  RIP: 0010:__mem_cgroup_usage_unregister_event+0xb3/0x190
-  RSP: 0018:ffffb47e01c4fe18 EFLAGS: 00010202
-  RAX: 0000000000000001 RBX: ffff8bb223a8a000 RCX: 0000000000000001
-  RDX: 0000000000000001 RSI: ffff8bb22fb83540 RDI: 0000000000000001
-  RBP: ffffb47e01c4fe48 R08: 0000000000000000 R09: 0000000000000010
-  R10: 000000000000000c R11: 071c71c71c71c71c R12: ffff8bb226aba880
-  R13: ffff8bb223a8a480 R14: 0000000000000000 R15: 0000000000000000
-  FS:  0000000000000000(0000) GS:ffff8bb242680000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000004 CR3: 000000032c29c003 CR4: 00000000001606e0
-  Call Trace:
-    memcg_event_remove+0x32/0x90
-    process_one_work+0x172/0x380
-    worker_thread+0x49/0x3f0
-    kthread+0xf8/0x130
-    ret_from_fork+0x35/0x40
-  CR2: 0000000000000004
+Test commands:
+    ip netns del left
+    ip netns del right
+    modprobe -rv veth
+    modprobe -rv hsr
+    killall ping
+    modprobe hsr
+    ip netns add left
+    ip netns add right
+    ip link add veth0 type veth peer name veth1
+    ip link add veth2 type veth peer name veth3
+    ip link add veth4 type veth peer name veth5
+    ip link set veth1 netns left
+    ip link set veth3 netns right
+    ip link set veth4 netns left
+    ip link set veth5 netns right
+    ip link set veth0 up
+    ip link set veth2 up
+    ip link set veth0 address fc:00:00:00:00:01
+    ip link set veth2 address fc:00:00:00:00:02
+    ip netns exec left ip link set veth1 up
+    ip netns exec left ip link set veth4 up
+    ip netns exec right ip link set veth3 up
+    ip netns exec right ip link set veth5 up
+    ip link add hsr0 type hsr slave1 veth0 slave2 veth2
+    ip a a 192.168.100.1/24 dev hsr0
+    ip link set hsr0 up
+    ip netns exec left ip link add hsr1 type hsr slave1 veth1 slave2 veth4
+    ip netns exec left ip a a 192.168.100.2/24 dev hsr1
+    ip netns exec left ip link set hsr1 up
+    ip netns exec left ip n a 192.168.100.1 dev hsr1 lladdr \
+	    fc:00:00:00:00:01 nud permanent
+    ip netns exec left ip n r 192.168.100.1 dev hsr1 lladdr \
+	    fc:00:00:00:00:01 nud permanent
+    for i in {1..100}
+    do
+        ip netns exec left ping 192.168.100.1 &
+    done
+    ip netns exec left hping3 192.168.100.1 -2 --flood &
+    ip netns exec right ip link add hsr2 type hsr slave1 veth3 slave2 veth5
+    ip netns exec right ip a a 192.168.100.3/24 dev hsr2
+    ip netns exec right ip link set hsr2 up
+    ip netns exec right ip n a 192.168.100.1 dev hsr2 lladdr \
+	    fc:00:00:00:00:02 nud permanent
+    ip netns exec right ip n r 192.168.100.1 dev hsr2 lladdr \
+	    fc:00:00:00:00:02 nud permanent
+    for i in {1..100}
+    do
+        ip netns exec right ping 192.168.100.1 &
+    done
+    ip netns exec right hping3 192.168.100.1 -2 --flood &
+    while :
+    do
+        ip link add hsr0 type hsr slave1 veth0 slave2 veth2
+	ip a a 192.168.100.1/24 dev hsr0
+	ip link set hsr0 up
+	ip link del hsr0
+    done
 
-We can reproduce this problem in the following ways:
+Splat looks like:
+[  120.954938][    C0] general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1]I
+[  120.957761][    C0] KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+[  120.959064][    C0] CPU: 0 PID: 1511 Comm: hping3 Not tainted 5.6.0-rc5+ #460
+[  120.960054][    C0] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  120.962261][    C0] RIP: 0010:hsr_addr_is_self+0x65/0x2a0 [hsr]
+[  120.963149][    C0] Code: 44 24 18 70 73 2f c0 48 c1 eb 03 48 8d 04 13 c7 00 f1 f1 f1 f1 c7 40 04 00 f2 f2 f2 4
+[  120.966277][    C0] RSP: 0018:ffff8880d9c09af0 EFLAGS: 00010206
+[  120.967293][    C0] RAX: 0000000000000006 RBX: 1ffff1101b38135f RCX: 0000000000000000
+[  120.968516][    C0] RDX: dffffc0000000000 RSI: ffff8880d17cb208 RDI: 0000000000000000
+[  120.969718][    C0] RBP: 0000000000000030 R08: ffffed101b3c0e3c R09: 0000000000000001
+[  120.972203][    C0] R10: 0000000000000001 R11: ffffed101b3c0e3b R12: 0000000000000000
+[  120.973379][    C0] R13: ffff8880aaf80100 R14: ffff8880aaf800f2 R15: ffff8880aaf80040
+[  120.974410][    C0] FS:  00007f58e693f740(0000) GS:ffff8880d9c00000(0000) knlGS:0000000000000000
+[  120.979794][    C0] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  120.980773][    C0] CR2: 00007ffcb8b38f29 CR3: 00000000afe8e001 CR4: 00000000000606f0
+[  120.981945][    C0] Call Trace:
+[  120.982411][    C0]  <IRQ>
+[  120.982848][    C0]  ? hsr_add_node+0x8c0/0x8c0 [hsr]
+[  120.983522][    C0]  ? rcu_read_lock_held+0x90/0xa0
+[  120.984159][    C0]  ? rcu_read_lock_sched_held+0xc0/0xc0
+[  120.984944][    C0]  hsr_handle_frame+0x1db/0x4e0 [hsr]
+[  120.985597][    C0]  ? hsr_nl_nodedown+0x2b0/0x2b0 [hsr]
+[  120.986289][    C0]  __netif_receive_skb_core+0x6bf/0x3170
+[  120.992513][    C0]  ? check_chain_key+0x236/0x5d0
+[  120.993223][    C0]  ? do_xdp_generic+0x1460/0x1460
+[  120.993875][    C0]  ? register_lock_class+0x14d0/0x14d0
+[  120.994609][    C0]  ? __netif_receive_skb_one_core+0x8d/0x160
+[  120.995377][    C0]  __netif_receive_skb_one_core+0x8d/0x160
+[  120.996204][    C0]  ? __netif_receive_skb_core+0x3170/0x3170
+[ ... ]
 
-1. We create a new cgroup subdirectory and a new eventfd, and then we
-   monitor multiple memory thresholds of the cgroup through this eventfd.
-
-2.  closing this eventfd, and __mem_cgroup_usage_unregister_event ()
-   will be called multiple times to delete all events related to this
-   eventfd.
-
-The first time __mem_cgroup_usage_unregister_event() is called, the
-kernel will clear all items related to this eventfd in thresholds->
-primary.
-
-Since there is currently only one eventfd, thresholds-> primary becomes
-empty, so the kernel will set thresholds-> primary and hresholds-> spare
-to NULL.  If at this time, the user creates a new eventfd and monitor
-the memory threshold of this cgroup, kernel will re-initialize
-thresholds-> primary.
-
-Then when __mem_cgroup_usage_unregister_event () is called for the
-second time, because thresholds-> primary is not empty, the system will
-access thresholds-> spare, but thresholds-> spare is NULL, which will
-trigger a crash.
-
-In general, the longer it takes to delete all events related to this
-eventfd, the easier it is to trigger this problem.
-
-The solution is to check whether the thresholds associated with the
-eventfd has been cleared when deleting the event.  If so, we do nothing.
-
-[akpm@linux-foundation.org: fix comment, per Kirill]
-Fixes: 907860ed381a ("cgroups: make cftype.unregister_event() void-returning")
-Signed-off-by: Chunguang Xu <brookxu@tencent.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/077a6f67-aefa-4591-efec-f2f3af2b0b02@gmail.com
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: syzbot+fcf5dd39282ceb27108d@syzkaller.appspotmail.com
+Fixes: c5a759117210 ("net/hsr: Use list_head (and rcu) instead of array for slave devices.")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- mm/memcontrol.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ net/hsr/hsr_slave.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3481,7 +3481,7 @@ static void __mem_cgroup_usage_unregiste
- 	struct mem_cgroup_thresholds *thresholds;
- 	struct mem_cgroup_threshold_ary *new;
- 	unsigned long usage;
--	int i, j, size;
-+	int i, j, size, entries;
+--- a/net/hsr/hsr_slave.c
++++ b/net/hsr/hsr_slave.c
+@@ -152,16 +152,16 @@ int hsr_add_port(struct hsr_priv *hsr, s
+ 	if (port == NULL)
+ 		return -ENOMEM;
  
- 	mutex_lock(&memcg->thresholds_lock);
- 
-@@ -3501,14 +3501,20 @@ static void __mem_cgroup_usage_unregiste
- 	__mem_cgroup_threshold(memcg, type == _MEMSWAP);
- 
- 	/* Calculate new number of threshold */
--	size = 0;
-+	size = entries = 0;
- 	for (i = 0; i < thresholds->primary->size; i++) {
- 		if (thresholds->primary->entries[i].eventfd != eventfd)
- 			size++;
-+		else
-+			entries++;
++	port->hsr = hsr;
++	port->dev = dev;
++	port->type = type;
++
+ 	if (type != HSR_PT_MASTER) {
+ 		res = hsr_portdev_setup(dev, port);
+ 		if (res)
+ 			goto fail_dev_setup;
  	}
  
- 	new = thresholds->spare;
+-	port->hsr = hsr;
+-	port->dev = dev;
+-	port->type = type;
+-
+ 	list_add_tail_rcu(&port->port_list, &hsr->ports);
+ 	synchronize_rcu();
  
-+	/* If no items related to eventfd have been cleared, nothing to do */
-+	if (!entries)
-+		goto unlock;
-+
- 	/* Set thresholds array to NULL if we don't have thresholds */
- 	if (!size) {
- 		kfree(new);
 
 
