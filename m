@@ -2,120 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC88619B3F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6AD219B108
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:32:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388170AbgDAQ3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:29:16 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:58319 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388148AbgDAQ3L (ORCPT
+        id S2388293AbgDAQbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:31:22 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43356 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388108AbgDAQbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:29:11 -0400
-Received: from envy ([82.207.223.251]) by mrelayeu.kundenserver.de (mreue106
- [212.227.15.183]) with ESMTPSA (Nemesis) id 1N5W0q-1jHt2y0YtW-016w4x; Wed, 01
- Apr 2020 18:28:54 +0200
-Message-ID: <9aea760f9abdd2f90f36642af77de7bfae719485.camel@richard-neumann.de>
-Subject: Re: [PATCH v4 2/4] SFH: PCI driver to add support of AMD sensor
- fusion Hub using HID framework
-From:   Richard Neumann <mail@richard-neumann.de>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Shah, Nehal-bakulchandra" <nehal-bakulchandra.shah@amd.com>
-Cc:     Sandeep Singh <Sandeep.Singh@amd.com>, Shyam-sundar.S-k@amd.com,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Date:   Wed, 01 Apr 2020 18:28:51 +0200
-In-Reply-To: <CAHp75Vfr6q_H6z6tRFfaKedF7oR7nhmZvRWL4mxx3W7uypUFvA@mail.gmail.com>
-References: <1582779537-25662-1-git-send-email-Sandeep.Singh@amd.com>
-         <1582779537-25662-3-git-send-email-Sandeep.Singh@amd.com>
-         <4fe47b0323c1d65d429ee89b000e8bfcd984495f.camel@richard-neumann.de>
-         <896f84bc-f0d6-59a5-c894-809695aa348f@amd.com>
-         <CAHp75Vfr6q_H6z6tRFfaKedF7oR7nhmZvRWL4mxx3W7uypUFvA@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-JMpIYctbEoNFnW+rx2oI"
-User-Agent: Evolution 3.36.1 
+        Wed, 1 Apr 2020 12:31:13 -0400
+Received: by mail-ed1-f68.google.com with SMTP id bd14so612241edb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 09:31:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z5x/eD97YYe+UtsUcQWgKp4y9byY3ksGQkwZWyGAQus=;
+        b=lgNDPXVyyGlYNRnOPf26yaHitf7+pqDoEBpBKrgXIVk39xhYHvjpaLoeMlCbYOOH35
+         gqP+GsjwCSbvRLr0P1EYmVavLSzF91XZxVs0nTVil4/5vneArq4Br9GvtOwNnp+K84fp
+         eeYPrrVySgZo3U4828x7nVKYv0l3frhycdpMM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z5x/eD97YYe+UtsUcQWgKp4y9byY3ksGQkwZWyGAQus=;
+        b=t6DWyxQDuE0JD0RUlZtqeSB19orFX1MMJNm7GknaLLVHHnjX3xxBSHRwr/dKgdHEwX
+         2a2o6bKtbuZQMwpoXggZP7mIVKMMVKCZQ5B3wGwdWYnuG5J8mh/P5ycWoPbpVfPP9/m1
+         aj7v7TkVdYoBXKRtksEBIhkEyAeTlpmGz9yaU2Vwlkq6Kn747lGOraemKxTaZzSyh1XV
+         8CfnmJJ4F7dbzi3WKzJbspjrN/ldIb5f0Mb0kE+y45/2GhULpyS6zqjlOsvaK7viXE2E
+         hnPsRdM4zs60YjvqBjDpNdUOJCNQ88Ip/oN/xec+JkaWX3fU0mJi7VcEP/Mxl2yLWQ4E
+         4tEA==
+X-Gm-Message-State: ANhLgQ23pkZPqCcD83UDq/NlkPkh9OcygxaIt9xzaGnchpf9IuU1FxRv
+        iCZxBvSa1LdpNqGDJEt53Svrvd7D0iBk58H6EL8sYw==
+X-Google-Smtp-Source: ADFU+vuXSy+WOIY1LRGVIsjX6cs7PxeglKy6P6ZhdJuuMLQsyJawyKskAGhJxAk2Obp0S8U3eefwNGGiUrNlnslw5RY=
+X-Received: by 2002:a50:c341:: with SMTP id q1mr22249117edb.247.1585758670968;
+ Wed, 01 Apr 2020 09:31:10 -0700 (PDT)
 MIME-Version: 1.0
-X-Provags-ID: V03:K1:/Iuh6Wc2OWUWANhg+i5sa8DX8+N5Q471sfzV1dJZGtvhNgn30bW
- WFNUEw83jU+/rRD8GACG8t2TGf2kw4Z5QQLxVaB3MvjdmW+0A8XTSl1hI2iTfdflWXmcfYH
- 1IwhXyqvBX/2rCAP5zojzlREeoMLx4pLRZg6+TbOXwHSofssNiK+0ubQ27EHfVP+wpjgfDE
- 9haVSMVl1addbBrysAL7w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:BEgHpqVQWuA=:eab8Bjm6U04XClhfM96ei2
- 6eVrEtmoO/i+1Z0ybln3l54Ic5d8P0vyqSGtUqDdZB+rHtFjXTtH07Hz5ZKah2Up5iX5Lo9zx
- dWBBBxAq3tM2LhPhpwLvl25KM/fiw79mo64WUjY4SLGdy+D2FX7b5mTtRPuBCY+u06nIbBtkd
- ZdUuVhPde03VpLsKqprLsyBP96JXvcWslukQVjTzJP9/AIaw6Mqqm5rZa/YSxck8aAYoqh5PG
- 4f+cMMdZU89i2DRM3SAKN5MwZw2WPrRXBKHgiAZByC5834bmS2/WwbmaNjnAUKmfBvYW4VTn8
- FixF/Of2X2CK3RXKiOx/SitiO5F76BadLahtiLOR7bM++gUyHdkbsm7sKqS2DFh4fUSdBQMNd
- mZLHzHT9hdqNhIp224x/VeQzByHZwaPegkzUv7xWeU2QNIFAscRqcV1AooEKAAHTEBcBOyNay
- OniuUrU51qLrVzVRZif/oO4dBoYVaHezOcZo6j8boCuTeCrpoRxqkM01iSNREWvyAc5mX06Sl
- /kfXvsksupRk669Q08Oi/lMJwXgNaFFWryEs2nNtE/X2/FKmoPXaWhNHy8JGbntNkRovKqt6h
- kb1ccpgMV5Il06Drok+Vcz0rNjsEMvzl6zMF+8QymF30Voc1Fo1JM7CYP4tPykr5JFhRv4Kr8
- k9jTU2x8QxkEGuvAs+uSHJeH/Sc4d8uoLnrVw6ZKwzCMZ1qk4tK60ly4fkYe58OLQdBQvO3LX
- eJyBw2xDeHlfCsiD1ZFPe+SSXskptFLDQ0lgJbwoE52Xkmy+ntyZWo39lQnBJlPLrPqzARLd2
- sMeTVIZRzPwwOnT4o4/r/iRAAGDDqLL5Tw5Ts01zYC7APWmfooBVR0QejZXowu75yG0HU/d
+References: <CAJfpeguu52VuLAzjFH4rJJ7WYLB5ag8y+r3VMb-0bqH8c-uJUg@mail.gmail.com>
+ <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <1445647.1585576702@warthog.procyon.org.uk>
+ <2418286.1585691572@warthog.procyon.org.uk> <20200401090445.6t73dt7gz36bv4rh@ws.net.home>
+ <2488530.1585749351@warthog.procyon.org.uk> <2488734.1585749502@warthog.procyon.org.uk>
+ <CAJfpeguLJcAEgx2JWRNcKMkyFTWB0r4wS6F4fJHK3VHtY=EjXQ@mail.gmail.com> <2590276.1585756914@warthog.procyon.org.uk>
+In-Reply-To: <2590276.1585756914@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 1 Apr 2020 18:30:59 +0200
+Message-ID: <CAJfpeguxDiq3BW94AVFhgY75P+jy_+jk3pdyNZ5z-aJPXNvvGA@mail.gmail.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Karel Zak <kzak@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de, keyrings@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 1, 2020 at 6:02 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> > > > But doesn't actually do what Karel asked for.  show_mountinfo() itself does
+> > > > not give you what Karel asked for.
+> >
+> > Not sure what you mean.  I think it shows precisely the information
+> > Karel asked for.
+>
+> It's not atomic.
 
---=-JMpIYctbEoNFnW+rx2oI
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Yes it is.
 
-Am Dienstag, den 31.03.2020, 20:24 +0300 schrieb Andy Shevchenko:
-> On Tue, Mar 31, 2020 at 4:26 PM Shah, Nehal-bakulchandra
-> <nehal-bakulchandra.shah@amd.com> wrote:
-> > On 3/31/2020 6:01 PM, Richard Neumann wrote:
-> > > Not a real review, but your patch series seems to be repeating a
-> > > lot
-> > > from drivers/i2c/busses/i2c-amd-mp2*.
-> > > Is there any chance we could re-use the code?
-> > > E.g. the AMD_C2P_* definitions from drivers/i2c/busses/i2c-amd-
-> > > mp2.h?
-> >=20
-> > Thanks for the mail. Yes there are some common structures, however
-> > as of now we have kept separately considering both
-> >=20
-> > are part of different sub systems. But may be will consider this
-> > input for future enhancement.
->=20
-> It can be done in a form of shared definitions at least in
-> include/linux/platform_data/x86/amd-mp2.h or alike ...
->=20
-
-I managed to add support for the AMD SFH PCI device to i2c-amd-mp2* and
-outsourced the headers to include/linux/i2c-amd-mp2.h. [1]
-I also refactored the patch series (excluded the documentation) [2] to
-use the PCI device now provided by i2c_amd_mp2_pci and removed some
-duplicate and unncessary code.
-The driver now consist of just one module (amd_sfhtp_hid).
-Unfortunately I was not able to solve the problem, that I get AMD-Vi
-IO_PAGE_FAULT errors when not booted with amd_iommu=3Doff.
-
-[1] https://gist.githubusercontent.com/conqp/4d726f86da8a8397d6e70091a124de=
-67/raw/f97e88a0b44d98bfa1258cb73c8afe4dce7afa87/i2c-amd-mp2.patch
-[2] https://gist.githubusercontent.com/conqp/67036e690aca89d08b958971edac28=
-3d/raw/2a1ef122f9c8c8e07164b6d597962ce7bbad6d45/amd-sfhtp.patch
-
---=-JMpIYctbEoNFnW+rx2oI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT62wKwhMqSt8WaustMqNUjvThq9wUCXoTBQwAKCRBMqNUjvThq
-95P6AQD2f9/1gcoiIcDpJ/lT+fG8FH3cCnQqUJ7jGkVhNmZuiQD/aPm0aB1ZPd0L
-NzfP2Euf/mdDdd0WMbbsFkX4VhKSxw8=
-=0blY
------END PGP SIGNATURE-----
-
---=-JMpIYctbEoNFnW+rx2oI--
-
+Thanks,
+Miklos
