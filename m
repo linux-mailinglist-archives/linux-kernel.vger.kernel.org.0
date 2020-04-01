@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED03D19AF9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF4C019AFB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 18:20:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732451AbgDAQTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 12:19:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41946 "EHLO mail.kernel.org"
+        id S1732147AbgDAQUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 12:20:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbgDAQTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:19:36 -0400
+        id S1732879AbgDAQUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:20:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26A1320658;
-        Wed,  1 Apr 2020 16:19:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D44120857;
+        Wed,  1 Apr 2020 16:20:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585757975;
-        bh=62H8q4wS2U8H3WVXq49tHHl0V1M2VnJlDoEkzXF2fzQ=;
+        s=default; t=1585758020;
+        bh=nnRmublHebH8tVwLmAi+UQ/zgzXNjJ2XDyx3i9qUhW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YtBVXigk+qBy4hkQJ28Ue+J1NGFqej0k8QsaaKM1e+K/azGfkgkTDynFSvrLQQq+p
-         nObTG9nzaeeIg7sXE558j99QeqAvZ+DCdKQmHB2ZajlYkN5MARKRXcngXdXzUqK8hS
-         Hje7xETKOpVRCClTWW6d2EupLUvlSya6kt8mL4Wk=
+        b=mDz2gcUaFSYZI3eInFS7xdD0J4BDsGpZlfmmZNfVXcOEaPK2mVAJc0H6sZnD9lrvY
+         JvGycoBvfAAPZlYDTYW4RtJWX2m+jiXgbeLLm/JoF5frToc1E5kZeXj/3M81HpUpka
+         GQSjtaWwqJkcJVNz1jYNg21Egrx8Tp3TVkC8fGpo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 5.6 05/10] vt: ioctl, switch VT_IS_IN_USE and VT_BUSY to inlines
-Date:   Wed,  1 Apr 2020 18:17:21 +0200
-Message-Id: <20200401161417.782439742@linuxfoundation.org>
+        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 5.5 18/30] clk: imx: Align imx sc clock parent msg structs to 4
+Date:   Wed,  1 Apr 2020 18:17:22 +0200
+Message-Id: <20200401161429.561629963@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200401161413.974936041@linuxfoundation.org>
-References: <20200401161413.974936041@linuxfoundation.org>
+In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
+References: <20200401161414.345528747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,87 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-commit e587e8f17433ddb26954f0edf5b2f95c42155ae9 upstream.
+commit 8400ab8896324641243b57fc49b448023c07409a upstream.
 
-These two were macros. Switch them to static inlines, so that it's more
-understandable what they are doing.
+The imx SC api strongly assumes that messages are composed out of
+4-bytes words but some of our message structs have odd sizeofs.
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Link: https://lore.kernel.org/r/20200219073951.16151-2-jslaby@suse.cz
+This produces many oopses with CONFIG_KASAN=y.
+
+Fix by marking with __aligned(4).
+
+Fixes: 666aed2d13ee ("clk: imx: scu: add set parent support")
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Link: https://lkml.kernel.org/r/aad021e432b3062c142973d09b766656eec18fde.1582216144.git.leonard.crestez@nxp.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt_ioctl.c |   29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+ drivers/clk/imx/clk-scu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -40,10 +40,25 @@
- #include <linux/selection.h>
- 
- char vt_dont_switch;
--extern struct tty_driver *console_driver;
- 
--#define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
--#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_is_sel(vc_cons[i].d))
-+static inline bool vt_in_use(unsigned int i)
-+{
-+	extern struct tty_driver *console_driver;
-+
-+	return console_driver->ttys[i] && console_driver->ttys[i]->count;
-+}
-+
-+static inline bool vt_busy(int i)
-+{
-+	if (vt_in_use(i))
-+		return true;
-+	if (i == fg_console)
-+		return true;
-+	if (vc_is_sel(vc_cons[i].d))
-+		return true;
-+
-+	return false;
-+}
- 
- /*
-  * Console (vt and kd) routines, as defined by USL SVR4 manual, and by
-@@ -289,7 +304,7 @@ static int vt_disallocate(unsigned int v
- 	int ret = 0;
- 
- 	console_lock();
--	if (VT_BUSY(vc_num))
-+	if (vt_busy(vc_num))
- 		ret = -EBUSY;
- 	else if (vc_num)
- 		vc = vc_deallocate(vc_num);
-@@ -311,7 +326,7 @@ static void vt_disallocate_all(void)
- 
- 	console_lock();
- 	for (i = 1; i < MAX_NR_CONSOLES; i++)
--		if (!VT_BUSY(i))
-+		if (!vt_busy(i))
- 			vc[i] = vc_deallocate(i);
- 		else
- 			vc[i] = NULL;
-@@ -648,7 +663,7 @@ int vt_ioctl(struct tty_struct *tty,
- 			state = 1;	/* /dev/tty0 is always open */
- 			for (i = 0, mask = 2; i < MAX_NR_CONSOLES && mask;
- 							++i, mask <<= 1)
--				if (VT_IS_IN_USE(i))
-+				if (vt_in_use(i))
- 					state |= mask;
- 			ret = put_user(state, &vtstat->v_state);
- 		}
-@@ -661,7 +676,7 @@ int vt_ioctl(struct tty_struct *tty,
- 	case VT_OPENQRY:
- 		/* FIXME: locking ? - but then this is a stupid API */
- 		for (i = 0; i < MAX_NR_CONSOLES; ++i)
--			if (! VT_IS_IN_USE(i))
-+			if (!vt_in_use(i))
- 				break;
- 		uival = i < MAX_NR_CONSOLES ? (i+1) : -1;
- 		goto setint;		 
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -84,7 +84,7 @@ struct imx_sc_msg_get_clock_parent {
+ 		struct req_get_clock_parent {
+ 			__le16 resource;
+ 			u8 clk;
+-		} __packed req;
++		} __packed __aligned(4) req;
+ 		struct resp_get_clock_parent {
+ 			u8 parent;
+ 		} resp;
 
 
