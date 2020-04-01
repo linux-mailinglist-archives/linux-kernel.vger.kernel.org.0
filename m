@@ -2,134 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89F7C19B6AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 22:00:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76F0919B6B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 22:05:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732841AbgDAUAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 16:00:31 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:47426 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732337AbgDAUAa (ORCPT
+        id S1732872AbgDAUFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 16:05:36 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44119 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732695AbgDAUFf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 16:00:30 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031JvZMf026385;
-        Wed, 1 Apr 2020 20:00:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=6Lisy5JqAUMhcNAqHk7WzznsvWNCqHCUiK3gIeMP4ag=;
- b=E7aSmuxoN1vvVxR9h17oyRcp4TRcqsPfSNoOcfm5pOEQ7oU5HmUNbOLmLEHx0xPk41K2
- fD0LnahBSTw4A/+/XfCi8ipyEEx+SINVKUJBvD9uTVhQkCGRIOz1EEMTgVFpJhepnKRG
- jBqnKj3za9VnyiMFqgVJNmjePyP/7g9bfdABoEk6gyVEpJvOh+d+uw3djXmbE8FoSTJw
- fOdpeKXfoPHx2005OGrOaiU+gGVHFc2ilgnHADMUCTUPzr3rOXDOFlc6s7qf99BzwOaN
- vqXGRy5BAi6uOjzubnLAfhRYrgbasPbxlRCszy5bZqDHglk0FaT90eDHXj2dGRSHUhq4 KQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 303yuna7ds-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Apr 2020 20:00:13 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031Jv5FC050777;
-        Wed, 1 Apr 2020 20:00:13 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 304sjm8epm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Apr 2020 20:00:13 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 031K08em029395;
-        Wed, 1 Apr 2020 20:00:08 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 01 Apr 2020 13:00:07 -0700
-Date:   Wed, 1 Apr 2020 16:00:27 -0400
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        mhocko@suse.com, linux-mm@kvack.org, dan.j.williams@intel.com,
-        shile.zhang@linux.alibaba.com, daniel.m.jordan@oracle.com,
-        ktkhai@virtuozzo.com, david@redhat.com, jmorris@namei.org,
-        sashal@kernel.org
-Subject: Re: [PATCH] mm: initialize deferred pages with interrupts enabled
-Message-ID: <20200401200027.vsm5roobllewniea@ca-dmjordan1.us.oracle.com>
-References: <20200401193238.22544-1-pasha.tatashin@soleen.com>
+        Wed, 1 Apr 2020 16:05:35 -0400
+Received: by mail-wr1-f68.google.com with SMTP id m17so1533805wrw.11;
+        Wed, 01 Apr 2020 13:05:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vI49ES0RxEAa6EnUEnaXuceKKewptCwJ7U7B/qtu8WE=;
+        b=agLnhc0KJXIezIOiP2dTCNztO+P5XDUm50ivn7pbrmc7okAXwFT3hLwvcdpz9EJQF3
+         mN0WWMfKl7rOdjvMrfN4vgoMKqAdzWuf+JSe9KKiqixVfB45nuVTfp90fZm4adhBFnl6
+         SRQSntwswLdx8ozCP8r6LJNMkOjQSJYpamFT/ktf31H0E87zDz3I8pjXNqWHEmWxgr2h
+         r27+O1ysI8hggLHYXS1E6JEqzDGs1BRbX6Exeimk8mksUJSPSpx8KOz+dyNsCUjPQc6M
+         xpR6OwBAgrOcxaWCSMmH2ZA5icWsDNCSXqVobcUEyYBlxk7LP5noz3Sgnl+Pq5R8pSPv
+         4C1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vI49ES0RxEAa6EnUEnaXuceKKewptCwJ7U7B/qtu8WE=;
+        b=iz25KvG0BQhwX+7f0AX84yJyEQ9B9/hYYaui/1RedNv1pKEAtnw+WDGgP327UnGrjP
+         JcHXP6NboHW0kDI2pKApQxGtuVk1JHxQQ+Lkjok5mDWkxBY4n4fGJS5pYlJDuR6P/13T
+         FlTbRrkbginv2zCn6iktW0FPO4pj56bHKI6pn3nTMwxsa3YFzHbjfe0cuwAGyGl9IVtG
+         O7kB6ESed21LRLFuVF/eRdCDTyQs0Yy4fmrb7ykUwhRLtC7oci3gacOV12vd5Ns7mXrV
+         z5jEoj8/JPXEOhjuj7DBsHFTj1np85EsFaYpHuCtyCh/3DP8MmJSeW6HdeMFF8DlNaKM
+         eYaA==
+X-Gm-Message-State: ANhLgQ1fxClmjqZYuQzPXR4qB7HA88+zNr79jCMmhBGdsyPKZw+hFX5V
+        MJKdKKUVbdKttLHwipTgVDo=
+X-Google-Smtp-Source: ADFU+vszFXDSJDjW1n494XC6zkKdM+PHFUe65IUUCn+OChGVMoU0nJv56VZijGq4G4kBji5hwPv32w==
+X-Received: by 2002:adf:d84d:: with SMTP id k13mr27204536wrl.298.1585771532365;
+        Wed, 01 Apr 2020 13:05:32 -0700 (PDT)
+Received: from localhost (pD9E51CDC.dip0.t-ipconnect.de. [217.229.28.220])
+        by smtp.gmail.com with ESMTPSA id a7sm3757579wmm.34.2020.04.01.13.05.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 13:05:31 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] gpio: Unconditionally assign .request()/.free()
+Date:   Wed,  1 Apr 2020 22:05:26 +0200
+Message-Id: <20200401200527.2982450-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200401193238.22544-1-pasha.tatashin@soleen.com>
-User-Agent: NeoMutt/20180716
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
- malwarescore=0 phishscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004010164
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
- suspectscore=0 mlxscore=0 spamscore=0 impostorscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004010164
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 03:32:38PM -0400, Pavel Tatashin wrote:
-> Initializing struct pages is a long task and keeping interrupts disabled
-> for the duration of this operation introduces a number of problems.
-> 
-> 1. jiffies are not updated for long period of time, and thus incorrect time
->    is reported. See proposed solution and discussion here:
->    lkml/20200311123848.118638-1-shile.zhang@linux.alibaba.com
-> 2. It prevents farther improving deferred page initialization by allowing
+From: Thierry Reding <treding@nvidia.com>
 
-                                                                   not allowing
->    inter-node multi-threading.
+The gpiochip_generic_request() and gpiochip_generic_free() functions can
+now deal properly with chips that don't have any pin-ranges defined, so
+they can be assigned unconditionally.
 
-     intra-node
+Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/gpio-davinci.c |  7 ++-----
+ drivers/gpio/gpio-mxc.c     |  7 ++-----
+ drivers/gpio/gpio-pl061.c   |  7 ++-----
+ drivers/gpio/gpio-pxa.c     |  7 ++-----
+ drivers/gpio/gpio-zx.c      | 10 ++++------
+ 5 files changed, 12 insertions(+), 26 deletions(-)
 
-...
-> After:
-> [    1.632580] node 0 initialised, 12051227 pages in 436ms
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index e0b025689625..085b874db2a9 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -259,11 +259,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	chips->chip.of_gpio_n_cells = 2;
+ 	chips->chip.parent = dev;
+ 	chips->chip.of_node = dev->of_node;
+-
+-	if (of_property_read_bool(dev->of_node, "gpio-ranges")) {
+-		chips->chip.request = gpiochip_generic_request;
+-		chips->chip.free = gpiochip_generic_free;
+-	}
++	chips->chip.request = gpiochip_generic_request;
++	chips->chip.free = gpiochip_generic_free;
+ #endif
+ 	spin_lock_init(&chips->lock);
+ 
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index c77d474185f3..64278a4756f0 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -485,11 +485,8 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ 	if (err)
+ 		goto out_bgio;
+ 
+-	if (of_property_read_bool(np, "gpio-ranges")) {
+-		port->gc.request = gpiochip_generic_request;
+-		port->gc.free = gpiochip_generic_free;
+-	}
+-
++	port->gc.request = gpiochip_generic_request;
++	port->gc.free = gpiochip_generic_free;
+ 	port->gc.to_irq = mxc_gpio_to_irq;
+ 	port->gc.base = (pdev->id < 0) ? of_alias_get_id(np, "gpio") * 32 :
+ 					     pdev->id * 32;
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 3439120f166a..e241fb884c12 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -298,11 +298,8 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 		return PTR_ERR(pl061->base);
+ 
+ 	raw_spin_lock_init(&pl061->lock);
+-	if (of_property_read_bool(dev->of_node, "gpio-ranges")) {
+-		pl061->gc.request = gpiochip_generic_request;
+-		pl061->gc.free = gpiochip_generic_free;
+-	}
+-
++	pl061->gc.request = gpiochip_generic_request;
++	pl061->gc.free = gpiochip_generic_free;
+ 	pl061->gc.base = -1;
+ 	pl061->gc.get_direction = pl061_get_direction;
+ 	pl061->gc.direction_input = pl061_direction_input;
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index 567742d962ae..1361270ecf8c 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -361,11 +361,8 @@ static int pxa_init_gpio_chip(struct pxa_gpio_chip *pchip, int ngpio,
+ 	pchip->chip.set = pxa_gpio_set;
+ 	pchip->chip.to_irq = pxa_gpio_to_irq;
+ 	pchip->chip.ngpio = ngpio;
+-
+-	if (pxa_gpio_has_pinctrl()) {
+-		pchip->chip.request = gpiochip_generic_request;
+-		pchip->chip.free = gpiochip_generic_free;
+-	}
++	pchip->chip.request = gpiochip_generic_request;
++	pchip->chip.free = gpiochip_generic_free;
+ 
+ #ifdef CONFIG_OF_GPIO
+ 	pchip->chip.of_node = np;
+diff --git a/drivers/gpio/gpio-zx.c b/drivers/gpio/gpio-zx.c
+index 98cbaf0e415e..64bfb722756a 100644
+--- a/drivers/gpio/gpio-zx.c
++++ b/drivers/gpio/gpio-zx.c
+@@ -226,13 +226,11 @@ static int zx_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(chip->base))
+ 		return PTR_ERR(chip->base);
+ 
+-	raw_spin_lock_init(&chip->lock);
+-	if (of_property_read_bool(dev->of_node, "gpio-ranges")) {
+-		chip->gc.request = gpiochip_generic_request;
+-		chip->gc.free = gpiochip_generic_free;
+-	}
+-
+ 	id = of_alias_get_id(dev->of_node, "gpio");
++
++	raw_spin_lock_init(&chip->lock);
++	chip->gc.request = gpiochip_generic_request;
++	chip->gc.free = gpiochip_generic_free;
+ 	chip->gc.direction_input = zx_direction_input;
+ 	chip->gc.direction_output = zx_direction_output;
+ 	chip->gc.get = zx_get_value;
+-- 
+2.24.1
 
-Fixes: 3a2d7fa8a3d5 ("mm: disable interrupts while initializing deferred pages")
-Reported-by: Shile Zhang <shile.zhang@linux.alibaba.com>
-
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-
-Freezing jiffies for a while during boot sounds like stable to me, so
-
-Cc: <stable@vger.kernel.org>    [4.17.x+]
-
-
-Can you please add a comment to mmzone.h above node_size_lock, something like
-
-         * Must be held any time you expect node_start_pfn,
-         * node_present_pages, node_spanned_pages or nr_zones to stay constant.
-+        * Also synchronizes pgdat->first_deferred_pfn during deferred page
-+        * init.
-         ...
-        spinlock_t node_size_lock;
-
-> @@ -1854,18 +1859,6 @@ deferred_grow_zone(struct zone *zone, unsigned int order)
->  		return false;
->  
->  	pgdat_resize_lock(pgdat, &flags);
-> -
-> -	/*
-> -	 * If deferred pages have been initialized while we were waiting for
-> -	 * the lock, return true, as the zone was grown.  The caller will retry
-> -	 * this zone.  We won't return to this function since the caller also
-> -	 * has this static branch.
-> -	 */
-> -	if (!static_branch_unlikely(&deferred_pages)) {
-> -		pgdat_resize_unlock(pgdat, &flags);
-> -		return true;
-> -	}
-> -
-
-Huh, looks like this wasn't needed even before this change.
-
-
-The rest looks fine.
-
-Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
