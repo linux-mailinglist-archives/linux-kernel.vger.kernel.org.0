@@ -2,163 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18D5F19A5C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:03:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E8D219A5CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Apr 2020 09:03:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731900AbgDAHDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 03:03:12 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:40884 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731792AbgDAHDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 03:03:11 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48scbc6RWHz9v9vX;
-        Wed,  1 Apr 2020 09:03:08 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=ByQw6/Ki; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id t9A2mRb1pC0D; Wed,  1 Apr 2020 09:03:08 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48scbc5MZ5z9v9vV;
-        Wed,  1 Apr 2020 09:03:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1585724588; bh=1hN7fWH9bflW8Oly7EONXyVEhViF+NoTYgwdw34COUE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ByQw6/KiSQBLfzb7djqMEFTO+OMnpJzlWeo0Xy8P5DzWUwH+ToO5AnrAyBm15lfbz
-         R8AayQvayxZjzMil7QjnyMtCNCVO5gID3gwU5AlssWc+QE9BaaCgZE+H8LjQvQbo3K
-         1u9Y/3/dAQU9/okS6p2ah4QAu5lpSDvYgl/T03ag=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1339F8B7B3;
-        Wed,  1 Apr 2020 09:03:09 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id t_yg-fQeSe3x; Wed,  1 Apr 2020 09:03:08 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B85B68B778;
-        Wed,  1 Apr 2020 09:03:05 +0200 (CEST)
-Subject: Re: [PATCH v2 05/16] powerpc/watchpoint: Provide DAWR number to
- set_dawr
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au,
-        mikey@neuling.org
-Cc:     apopple@linux.ibm.com, paulus@samba.org, npiggin@gmail.com,
-        naveen.n.rao@linux.vnet.ibm.com, peterz@infradead.org,
-        jolsa@kernel.org, oleg@redhat.com, fweisbec@gmail.com,
-        mingo@kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20200401061309.92442-1-ravi.bangoria@linux.ibm.com>
- <20200401061309.92442-6-ravi.bangoria@linux.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <2e7ac5a6-744e-0962-bc84-3005bda229d1@c-s.fr>
-Date:   Wed, 1 Apr 2020 09:03:03 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1731968AbgDAHDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 03:03:46 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:38105 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731792AbgDAHDp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 03:03:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585724624;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=peXFAP/tNqhduATvqLwoltzsPFD/EhXv4vwTpmobIrQ=;
+        b=erpNZ8MypcB6NOZV65f/uFU8SmUyvWvr8mTLYrjMrpQMnPpa3wfQVITGKYh7ZvSsCJwfpN
+        dNE9UB0PHEWfyfZ/iP+aX5QbmeydwmEUwkHPOw4qkFHHKo2ohL+RXZt5lUrRbkN0iy46IK
+        rmNgCpxou4XqdX+xMI14fFhxAKLStwU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-110-Q5TMCUgcOFClZTm4UNkHzw-1; Wed, 01 Apr 2020 03:03:41 -0400
+X-MC-Unique: Q5TMCUgcOFClZTm4UNkHzw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D42A1107ACC7;
+        Wed,  1 Apr 2020 07:03:39 +0000 (UTC)
+Received: from kamzik.brq.redhat.com (unknown [10.40.193.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F159F5E000;
+        Wed,  1 Apr 2020 07:03:25 +0000 (UTC)
+Date:   Wed, 1 Apr 2020 09:03:22 +0200
+From:   Andrew Jones <drjones@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Kevin Tian <kevin.tian@intel.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v8 11/14] KVM: selftests: Introduce after_vcpu_run hook
+ for dirty log test
+Message-ID: <20200401070322.yqdp5g2amzlbftk6@kamzik.brq.redhat.com>
+References: <20200331190000.659614-1-peterx@redhat.com>
+ <20200331190000.659614-12-peterx@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200401061309.92442-6-ravi.bangoria@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331190000.659614-12-peterx@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 01/04/2020 à 08:12, Ravi Bangoria a écrit :
-> Introduce new parameter 'nr' to set_dawr() which indicates which DAWR
-> should be programed.
+On Tue, Mar 31, 2020 at 02:59:57PM -0400, Peter Xu wrote:
+> Provide a hook for the checks after vcpu_run() completes.  Preparation
+> for the dirty ring test because we'll need to take care of another
+> exit reason.
 > 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Since at it, drop the pages_count because after all we have a better
+> summary right now with statistics, and clean it up a bit.
+
+I don't see what you mean by "drop the pages_count", because it's still
+there. But otherwise
+
+Reviewed-by: Andrew Jones <drjones@redhat.com>
+
+> 
+> Signed-off-by: Peter Xu <peterx@redhat.com>
 > ---
->   arch/powerpc/include/asm/hw_breakpoint.h |  4 ++--
->   arch/powerpc/kernel/dawr.c               | 15 ++++++++++-----
->   arch/powerpc/kernel/process.c            |  2 +-
->   3 files changed, 13 insertions(+), 8 deletions(-)
+>  tools/testing/selftests/kvm/dirty_log_test.c | 36 +++++++++++++-------
+>  1 file changed, 24 insertions(+), 12 deletions(-)
 > 
-> diff --git a/arch/powerpc/include/asm/hw_breakpoint.h b/arch/powerpc/include/asm/hw_breakpoint.h
-> index 518b41eef924..62549007c87a 100644
-> --- a/arch/powerpc/include/asm/hw_breakpoint.h
-> +++ b/arch/powerpc/include/asm/hw_breakpoint.h
-> @@ -104,10 +104,10 @@ static inline bool dawr_enabled(void)
->   {
->   	return dawr_force_enable;
->   }
-> -int set_dawr(struct arch_hw_breakpoint *brk);
-> +int set_dawr(struct arch_hw_breakpoint *brk, int nr);
-
-Wondering if it wouldn't make more sense to have nr as first argument.
-
-Christophe
-
->   #else
->   static inline bool dawr_enabled(void) { return false; }
-> -static inline int set_dawr(struct arch_hw_breakpoint *brk) { return -1; }
-> +static inline int set_dawr(struct arch_hw_breakpoint *brk, int nr) { return -1; }
->   #endif
->   
->   #endif	/* __KERNEL__ */
-> diff --git a/arch/powerpc/kernel/dawr.c b/arch/powerpc/kernel/dawr.c
-> index e91b613bf137..311e51ee09f4 100644
-> --- a/arch/powerpc/kernel/dawr.c
-> +++ b/arch/powerpc/kernel/dawr.c
-> @@ -16,7 +16,7 @@
->   bool dawr_force_enable;
->   EXPORT_SYMBOL_GPL(dawr_force_enable);
->   
-> -int set_dawr(struct arch_hw_breakpoint *brk)
-> +int set_dawr(struct arch_hw_breakpoint *brk, int nr)
->   {
->   	unsigned long dawr, dawrx, mrd;
->   
-> @@ -39,15 +39,20 @@ int set_dawr(struct arch_hw_breakpoint *brk)
->   	if (ppc_md.set_dawr)
->   		return ppc_md.set_dawr(dawr, dawrx);
->   
-> -	mtspr(SPRN_DAWR0, dawr);
-> -	mtspr(SPRN_DAWRX0, dawrx);
-> +	if (nr == 0) {
-> +		mtspr(SPRN_DAWR0, dawr);
-> +		mtspr(SPRN_DAWRX0, dawrx);
-> +	} else {
-> +		mtspr(SPRN_DAWR1, dawr);
-> +		mtspr(SPRN_DAWRX1, dawrx);
-> +	}
->   
->   	return 0;
->   }
->   
->   static void set_dawr_cb(void *info)
->   {
-> -	set_dawr(info);
-> +	set_dawr(info, 0);
->   }
->   
->   static ssize_t dawr_write_file_bool(struct file *file,
-> @@ -60,7 +65,7 @@ static ssize_t dawr_write_file_bool(struct file *file,
->   	/* Send error to user if they hypervisor won't allow us to write DAWR */
->   	if (!dawr_force_enable &&
->   	    firmware_has_feature(FW_FEATURE_LPAR) &&
-> -	    set_dawr(&null_brk) != H_SUCCESS)
-> +	    set_dawr(&null_brk, 0) != H_SUCCESS)
->   		return -ENODEV;
->   
->   	rc = debugfs_write_file_bool(file, user_buf, count, ppos);
-> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-> index 110db94cdf3c..b548a584e465 100644
-> --- a/arch/powerpc/kernel/process.c
-> +++ b/arch/powerpc/kernel/process.c
-> @@ -799,7 +799,7 @@ void __set_breakpoint(struct arch_hw_breakpoint *brk)
->   
->   	if (dawr_enabled())
->   		// Power8 or later
-> -		set_dawr(brk);
-> +		set_dawr(brk, 0);
->   	else if (IS_ENABLED(CONFIG_PPC_8xx))
->   		set_breakpoint_8xx(brk);
->   	else if (!cpu_has_feature(CPU_FTR_ARCH_207S))
+> diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
+> index 139ccb550618..a2160946bcf5 100644
+> --- a/tools/testing/selftests/kvm/dirty_log_test.c
+> +++ b/tools/testing/selftests/kvm/dirty_log_test.c
+> @@ -178,6 +178,15 @@ static void clear_log_collect_dirty_pages(struct kvm_vm *vm, int slot,
+>  	kvm_vm_clear_dirty_log(vm, slot, bitmap, 0, num_pages);
+>  }
+>  
+> +static void default_after_vcpu_run(struct kvm_vm *vm)
+> +{
+> +	struct kvm_run *run = vcpu_state(vm, VCPU_ID);
+> +
+> +	TEST_ASSERT(get_ucall(vm, VCPU_ID, NULL) == UCALL_SYNC,
+> +		    "Invalid guest sync status: exit_reason=%s\n",
+> +		    exit_reason_str(run->exit_reason));
+> +}
+> +
+>  struct log_mode {
+>  	const char *name;
+>  	/* Return true if this mode is supported, otherwise false */
+> @@ -187,16 +196,20 @@ struct log_mode {
+>  	/* Hook to collect the dirty pages into the bitmap provided */
+>  	void (*collect_dirty_pages) (struct kvm_vm *vm, int slot,
+>  				     void *bitmap, uint32_t num_pages);
+> +	/* Hook to call when after each vcpu run */
+> +	void (*after_vcpu_run)(struct kvm_vm *vm);
+>  } log_modes[LOG_MODE_NUM] = {
+>  	{
+>  		.name = "dirty-log",
+>  		.collect_dirty_pages = dirty_log_collect_dirty_pages,
+> +		.after_vcpu_run = default_after_vcpu_run,
+>  	},
+>  	{
+>  		.name = "clear-log",
+>  		.supported = clear_log_supported,
+>  		.create_vm_done = clear_log_create_vm_done,
+>  		.collect_dirty_pages = clear_log_collect_dirty_pages,
+> +		.after_vcpu_run = default_after_vcpu_run,
+>  	},
+>  };
+>  
+> @@ -247,6 +260,14 @@ static void log_mode_collect_dirty_pages(struct kvm_vm *vm, int slot,
+>  	mode->collect_dirty_pages(vm, slot, bitmap, num_pages);
+>  }
+>  
+> +static void log_mode_after_vcpu_run(struct kvm_vm *vm)
+> +{
+> +	struct log_mode *mode = &log_modes[host_log_mode];
+> +
+> +	if (mode->after_vcpu_run)
+> +		mode->after_vcpu_run(vm);
+> +}
+> +
+>  static void generate_random_array(uint64_t *guest_array, uint64_t size)
+>  {
+>  	uint64_t i;
+> @@ -261,25 +282,16 @@ static void *vcpu_worker(void *data)
+>  	struct kvm_vm *vm = data;
+>  	uint64_t *guest_array;
+>  	uint64_t pages_count = 0;
+> -	struct kvm_run *run;
+> -
+> -	run = vcpu_state(vm, VCPU_ID);
+>  
+>  	guest_array = addr_gva2hva(vm, (vm_vaddr_t)random_array);
+> -	generate_random_array(guest_array, TEST_PAGES_PER_LOOP);
+>  
+>  	while (!READ_ONCE(host_quit)) {
+> +		generate_random_array(guest_array, TEST_PAGES_PER_LOOP);
+> +		pages_count += TEST_PAGES_PER_LOOP;
+>  		/* Let the guest dirty the random pages */
+>  		ret = _vcpu_run(vm, VCPU_ID);
+>  		TEST_ASSERT(ret == 0, "vcpu_run failed: %d\n", ret);
+> -		if (get_ucall(vm, VCPU_ID, NULL) == UCALL_SYNC) {
+> -			pages_count += TEST_PAGES_PER_LOOP;
+> -			generate_random_array(guest_array, TEST_PAGES_PER_LOOP);
+> -		} else {
+> -			TEST_FAIL("Invalid guest sync status: "
+> -				  "exit_reason=%s\n",
+> -				  exit_reason_str(run->exit_reason));
+> -		}
+> +		log_mode_after_vcpu_run(vm);
+>  	}
+>  
+>  	pr_info("Dirtied %"PRIu64" pages\n", pages_count);
+> -- 
+> 2.24.1
 > 
+
