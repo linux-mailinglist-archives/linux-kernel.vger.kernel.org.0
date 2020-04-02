@@ -2,134 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADCD319BC3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 09:10:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1CA119BC39
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 09:10:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387595AbgDBHKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 03:10:40 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35090 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728234AbgDBHKj (ORCPT
+        id S2387575AbgDBHKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 03:10:10 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2905 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgDBHKK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 03:10:39 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03273VSE148098;
-        Thu, 2 Apr 2020 03:09:56 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3020715xpt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 02 Apr 2020 03:09:56 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 03274hHb151966;
-        Thu, 2 Apr 2020 03:09:55 -0400
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3020715xpf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 02 Apr 2020 03:09:55 -0400
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 03276bJC025443;
-        Thu, 2 Apr 2020 07:09:55 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma04wdc.us.ibm.com with ESMTP id 301x76y1p5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 02 Apr 2020 07:09:55 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 03279sVb34931104
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 2 Apr 2020 07:09:54 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B0193112062;
-        Thu,  2 Apr 2020 07:09:54 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8C769112063;
-        Thu,  2 Apr 2020 07:09:53 +0000 (GMT)
-Received: from [9.70.82.143] (unknown [9.70.82.143])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  2 Apr 2020 07:09:53 +0000 (GMT)
-Subject: [PATCH v10 02/14] powerpc/vas: Define nx_fault_stamp in
- coprocessor_request_block
-From:   Haren Myneni <haren@linux.ibm.com>
-To:     mpe@ellerman.id.au
-Cc:     mikey@neuling.org, srikar@linux.vnet.ibm.com,
-        frederic.barrat@fr.ibm.com, ajd@linux.ibm.com,
-        linux-kernel@vger.kernel.org, npiggin@gmail.com, hch@infradead.org,
-        oohall@gmail.com, clg@kaod.org, sukadev@linux.vnet.ibm.com,
-        linuxppc-dev@lists.ozlabs.org, herbert@gondor.apana.org.au
-In-Reply-To: <1585810846.2275.23.camel@hbabu-laptop>
-References: <1585810846.2275.23.camel@hbabu-laptop>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Thu, 02 Apr 2020 00:09:52 -0700
-Message-ID: <1585811392.2275.36.camel@hbabu-laptop>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.28.3 
+        Thu, 2 Apr 2020 03:10:10 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e858f6f0000>; Thu, 02 Apr 2020 00:08:31 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 02 Apr 2020 00:10:09 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 02 Apr 2020 00:10:09 -0700
+Received: from [10.26.72.253] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 2 Apr
+ 2020 07:10:06 +0000
+Subject: Re: [PATCH 4.19 000/116] 4.19.114-rc1 review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20200401161542.669484650@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <6979d502-1972-e8f3-8751-e2212e584063@nvidia.com>
+Date:   Thu, 2 Apr 2020 08:10:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200401161542.669484650@linuxfoundation.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-01_04:2020-03-31,2020-04-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- spamscore=0 lowpriorityscore=0 adultscore=0 mlxlogscore=868 suspectscore=1
- bulkscore=0 phishscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004020060
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1585811311; bh=oFxj42lnK5zsINX1LdF7uAo30FeHXUKRMqDqFE8AM1I=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=g4UZnnWROi6Zsu1QQulxi6t/AqiiT/OnYE+K5rOjI016S2gcwAhR34OkxkOn1L5C/
+         MJ1118S7M/9zah/76cD5DGu4GXmX20Fh6mpxNBehdf1b176L/UGgWO/XY+RWNVsvzt
+         BeRSYBKSbCBR/fd5A/jMsP2lWYEvSFBtnCMs4thN7XNUR7JvftaICfuA2LL+0DVrun
+         WQm8DhCAnjOhYr8NVUMk/7HixWCwax3cewzAj1K5bbiaN3bkaagqLjs7bwApCJps4l
+         iPFqwKOqb2ot4H6SLG6i9Cjm07wRlJu4kkBNsTGEwFxJwAhQ9Ib7E3pqDFZNzrniT1
+         b2SWifObRAESA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Kernel sets fault address and status in CRB for NX page fault on user
-space address after processing page fault. User space gets the signal
-and handles the fault mentioned in CRB by bringing the page in to
-memory and send NX request again.
+On 01/04/2020 17:16, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.114 release.
+> There are 116 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 03 Apr 2020 16:09:36 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.114-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Signed-off-by: Haren Myneni <haren@linux.ibm.com>
----
- arch/powerpc/include/asm/icswx.h | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+All tests are passing for Tegra ...
 
-diff --git a/arch/powerpc/include/asm/icswx.h b/arch/powerpc/include/asm/icswx.h
-index 9872f85..965b1f3 100644
---- a/arch/powerpc/include/asm/icswx.h
-+++ b/arch/powerpc/include/asm/icswx.h
-@@ -108,6 +108,17 @@ struct data_descriptor_entry {
- 	__be64 address;
- } __packed __aligned(DDE_ALIGN);
- 
-+/* 4.3.2 NX-stamped Fault CRB */
-+
-+#define NX_STAMP_ALIGN          (0x10)
-+
-+struct nx_fault_stamp {
-+	__be64 fault_storage_addr;
-+	__be16 reserved;
-+	__u8   flags;
-+	__u8   fault_status;
-+	__be32 pswid;
-+} __packed __aligned(NX_STAMP_ALIGN);
- 
- /* Chapter 6.5.2 Coprocessor-Request Block (CRB) */
- 
-@@ -135,10 +146,15 @@ struct coprocessor_request_block {
- 
- 	struct coprocessor_completion_block ccb;
- 
--	u8 reserved[48];
-+	union {
-+		struct nx_fault_stamp nx;
-+		u8 reserved[16];
-+	} stamp;
-+
-+	u8 reserved[32];
- 
- 	struct coprocessor_status_block csb;
--} __packed __aligned(CRB_ALIGN);
-+} __packed;
- 
- 
- /* RFC02167 Initiate Coprocessor Instructions document
+Test results for stable-v4.19:
+    11 builds:	11 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
+
+Linux version:	4.19.114-rc1-g558d25f4fc65
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-1.8.3.1
-
-
-
+nvpublic
