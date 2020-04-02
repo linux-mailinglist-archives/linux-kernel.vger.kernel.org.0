@@ -2,453 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADB0519BBA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 08:26:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8E9419BBAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 08:27:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387419AbgDBG0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 02:26:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33508 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729383AbgDBG0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 02:26:37 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CF41206D3;
-        Thu,  2 Apr 2020 06:26:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585808795;
-        bh=SDyPdbQVVO25SdpdaUz4zOUQcb6MaSL1W8bLPoLiQ5g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CZAAszv/SrDJYw/yQz8eYLI2cOtaIgjT6mVZqtGueb1xSBQ9THWkD95H6r/yKDE8g
-         rO7seZdv+C7VOkr1B+6P1xT9WbQuS3SInqIlgQwChi56RWeu1j+9Et0kFCMe9hlPXE
-         TitGxZe9D20+IerYjneR6kfcUB9SklYvGBGLEB/A=
-Date:   Thu, 2 Apr 2020 08:26:32 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 5.6.2
-Message-ID: <20200402062632.GB2678935@kroah.com>
-References: <20200402062620.GA2678935@kroah.com>
+        id S2387484AbgDBG1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 02:27:23 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35533 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387431AbgDBG1W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 02:27:22 -0400
+Received: by mail-wm1-f66.google.com with SMTP id i19so2301492wmb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 23:27:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=IfLSMTLTvFoZT1dG8FvLcXK5lHsPjnFY8JvpK5zcfB4=;
+        b=p1Mklz5otWxF3C6uwltY0477oqxyTQtBXqekpNj8JRCWY5eCAwiU/5+6nW2XrmyErz
+         LanvAt7ReePnJiKE6rRDjvkEyh3AJYg213Q52AEcSMt87HqrGmWk96zKTeIWktHpDsZT
+         yTshrRRT4oJqZXvFGgMl52pZKcXTHVBbODlT0om0mA3Xcx83Aqpgvc4Ykbg/re35baKk
+         EVkQHUNqdH7i99DslxUXMAsv0xyz7e0VTovGkWT5VIQB+jOyXY2F6V8l6E7gv7BRQd1w
+         V7CKk/xmrzEcGJlTP4+AoltT6a8cx6lt0tJhDPTWdEp2hh4eI09vL0XQWCPZSaVyUaSP
+         7Xng==
+X-Gm-Message-State: AGi0PuYOFik5Vn7QiGhTW5zWhJkH4CPXnWyvwYs+ckyvnrQrN0XJQZbA
+        lrkOG/mhui/FkmB7tBGv9Gc=
+X-Google-Smtp-Source: APiQypLCmObbZHMa6hacnQUpup7IVI8EkFLyfmjFSFj3sVOOoLer0cmjEyb2LuDkAo0RAWWCKogzVw==
+X-Received: by 2002:a1c:7e43:: with SMTP id z64mr1714424wmc.45.1585808839220;
+        Wed, 01 Apr 2020 23:27:19 -0700 (PDT)
+Received: from localhost (ip-37-188-180-223.eurotel.cz. [37.188.180.223])
+        by smtp.gmail.com with ESMTPSA id q8sm6709154wrc.8.2020.04.01.23.27.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 23:27:18 -0700 (PDT)
+Date:   Thu, 2 Apr 2020 08:27:17 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Huang, Ying" <ying.huang@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Zi Yan <ziy@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+Subject: Re: [PATCH] /proc/PID/smaps: Add PMD migration entry parsing
+Message-ID: <20200402062717.GB22681@dhcp22.suse.cz>
+References: <20200331085604.1260162-1-ying.huang@intel.com>
+ <20200401160432.855bba5b210c7b4bbf6c56ef@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200402062620.GA2678935@kroah.com>
+In-Reply-To: <20200401160432.855bba5b210c7b4bbf6c56ef@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index 75d17e7f799b..680b2d52405f 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 5
- PATCHLEVEL = 6
--SUBLEVEL = 1
-+SUBLEVEL = 2
- EXTRAVERSION =
- NAME = Kleptomaniac Octopus
- 
-diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
-index 3e3c66dfec2e..ca684ed760d1 100644
---- a/drivers/platform/x86/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -383,6 +383,14 @@ static const struct dmi_system_id critclk_systems[] = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "3I380D"),
- 		},
- 	},
-+	{
-+		/* pmc_plt_clk* - are used for ethernet controllers */
-+		.ident = "Lex 2I385SW",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Lex BayTrail"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "2I385SW"),
-+		},
-+	},
- 	{
- 		/* pmc_plt_clk* - are used for ethernet controllers */
- 		.ident = "Beckhoff CB3163",
-diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-index 3d3c70634589..a223e934f8ea 100644
---- a/drivers/tty/serial/sprd_serial.c
-+++ b/drivers/tty/serial/sprd_serial.c
-@@ -1132,14 +1132,13 @@ static int sprd_remove(struct platform_device *dev)
- 	if (sup) {
- 		uart_remove_one_port(&sprd_uart_driver, &sup->port);
- 		sprd_port[sup->port.line] = NULL;
-+		sprd_rx_free_buf(sup);
- 		sprd_ports_num--;
- 	}
- 
- 	if (!sprd_ports_num)
- 		uart_unregister_driver(&sprd_uart_driver);
- 
--	sprd_rx_free_buf(sup);
--
- 	return 0;
- }
- 
-diff --git a/drivers/tty/vt/selection.c b/drivers/tty/vt/selection.c
-index d7d2e4b844bc..7556139cd0da 100644
---- a/drivers/tty/vt/selection.c
-+++ b/drivers/tty/vt/selection.c
-@@ -88,6 +88,11 @@ void clear_selection(void)
- }
- EXPORT_SYMBOL_GPL(clear_selection);
- 
-+bool vc_is_sel(struct vc_data *vc)
-+{
-+	return vc == sel_cons;
-+}
-+
- /*
-  * User settable table: what characters are to be considered alphabetic?
-  * 128 bits. Locked by the console lock.
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 15d27698054a..b99ac3ebb2b5 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -890,8 +890,9 @@ static void hide_softcursor(struct vc_data *vc)
- 
- static void hide_cursor(struct vc_data *vc)
- {
--	if (vc == sel_cons)
-+	if (vc_is_sel(vc))
- 		clear_selection();
-+
- 	vc->vc_sw->con_cursor(vc, CM_ERASE);
- 	hide_softcursor(vc);
- }
-@@ -901,7 +902,7 @@ static void set_cursor(struct vc_data *vc)
- 	if (!con_is_fg(vc) || console_blanked || vc->vc_mode == KD_GRAPHICS)
- 		return;
- 	if (vc->vc_deccm) {
--		if (vc == sel_cons)
-+		if (vc_is_sel(vc))
- 			clear_selection();
- 		add_softcursor(vc);
- 		if ((vc->vc_cursor_type & 0x0f) != 1)
-@@ -1074,6 +1075,17 @@ static void visual_deinit(struct vc_data *vc)
- 	module_put(vc->vc_sw->owner);
- }
- 
-+static void vc_port_destruct(struct tty_port *port)
-+{
-+	struct vc_data *vc = container_of(port, struct vc_data, port);
-+
-+	kfree(vc);
-+}
-+
-+static const struct tty_port_operations vc_port_ops = {
-+	.destruct = vc_port_destruct,
-+};
-+
- int vc_allocate(unsigned int currcons)	/* return 0 on success */
- {
- 	struct vt_notifier_param param;
-@@ -1099,6 +1111,7 @@ int vc_allocate(unsigned int currcons)	/* return 0 on success */
- 
- 	vc_cons[currcons].d = vc;
- 	tty_port_init(&vc->port);
-+	vc->port.ops = &vc_port_ops;
- 	INIT_WORK(&vc_cons[currcons].SAK_work, vc_SAK);
- 
- 	visual_init(vc, currcons, 1);
-@@ -1207,7 +1220,7 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc,
- 		}
- 	}
- 
--	if (vc == sel_cons)
-+	if (vc_is_sel(vc))
- 		clear_selection();
- 
- 	old_rows = vc->vc_rows;
-@@ -3253,6 +3266,7 @@ static int con_install(struct tty_driver *driver, struct tty_struct *tty)
- 
- 	tty->driver_data = vc;
- 	vc->port.tty = tty;
-+	tty_port_get(&vc->port);
- 
- 	if (!tty->winsize.ws_row && !tty->winsize.ws_col) {
- 		tty->winsize.ws_row = vc_cons[currcons].d->vc_rows;
-@@ -3288,6 +3302,13 @@ static void con_shutdown(struct tty_struct *tty)
- 	console_unlock();
- }
- 
-+static void con_cleanup(struct tty_struct *tty)
-+{
-+	struct vc_data *vc = tty->driver_data;
-+
-+	tty_port_put(&vc->port);
-+}
-+
- static int default_color           = 7; /* white */
- static int default_italic_color    = 2; // green (ASCII)
- static int default_underline_color = 3; // cyan (ASCII)
-@@ -3413,7 +3434,8 @@ static const struct tty_operations con_ops = {
- 	.throttle = con_throttle,
- 	.unthrottle = con_unthrottle,
- 	.resize = vt_resize,
--	.shutdown = con_shutdown
-+	.shutdown = con_shutdown,
-+	.cleanup = con_cleanup,
- };
- 
- static struct cdev vc0_cdev;
-diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
-index ee6c91ef1f6c..daf61c28ba76 100644
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -39,11 +39,32 @@
- #include <linux/kbd_diacr.h>
- #include <linux/selection.h>
- 
--char vt_dont_switch;
--extern struct tty_driver *console_driver;
-+bool vt_dont_switch;
- 
--#define VT_IS_IN_USE(i)	(console_driver->ttys[i] && console_driver->ttys[i]->count)
--#define VT_BUSY(i)	(VT_IS_IN_USE(i) || i == fg_console || vc_cons[i].d == sel_cons)
-+static inline bool vt_in_use(unsigned int i)
-+{
-+	const struct vc_data *vc = vc_cons[i].d;
-+
-+	/*
-+	 * console_lock must be held to prevent the vc from being deallocated
-+	 * while we're checking whether it's in-use.
-+	 */
-+	WARN_CONSOLE_UNLOCKED();
-+
-+	return vc && kref_read(&vc->port.kref) > 1;
-+}
-+
-+static inline bool vt_busy(int i)
-+{
-+	if (vt_in_use(i))
-+		return true;
-+	if (i == fg_console)
-+		return true;
-+	if (vc_is_sel(vc_cons[i].d))
-+		return true;
-+
-+	return false;
-+}
- 
- /*
-  * Console (vt and kd) routines, as defined by USL SVR4 manual, and by
-@@ -289,16 +310,14 @@ static int vt_disallocate(unsigned int vc_num)
- 	int ret = 0;
- 
- 	console_lock();
--	if (VT_BUSY(vc_num))
-+	if (vt_busy(vc_num))
- 		ret = -EBUSY;
- 	else if (vc_num)
- 		vc = vc_deallocate(vc_num);
- 	console_unlock();
- 
--	if (vc && vc_num >= MIN_NR_CONSOLES) {
--		tty_port_destroy(&vc->port);
--		kfree(vc);
--	}
-+	if (vc && vc_num >= MIN_NR_CONSOLES)
-+		tty_port_put(&vc->port);
- 
- 	return ret;
- }
-@@ -311,17 +330,15 @@ static void vt_disallocate_all(void)
- 
- 	console_lock();
- 	for (i = 1; i < MAX_NR_CONSOLES; i++)
--		if (!VT_BUSY(i))
-+		if (!vt_busy(i))
- 			vc[i] = vc_deallocate(i);
- 		else
- 			vc[i] = NULL;
- 	console_unlock();
- 
- 	for (i = 1; i < MAX_NR_CONSOLES; i++) {
--		if (vc[i] && i >= MIN_NR_CONSOLES) {
--			tty_port_destroy(&vc[i]->port);
--			kfree(vc[i]);
--		}
-+		if (vc[i] && i >= MIN_NR_CONSOLES)
-+			tty_port_put(&vc[i]->port);
- 	}
- }
- 
-@@ -335,22 +352,13 @@ int vt_ioctl(struct tty_struct *tty,
- {
- 	struct vc_data *vc = tty->driver_data;
- 	struct console_font_op op;	/* used in multiple places here */
--	unsigned int console;
-+	unsigned int console = vc->vc_num;
- 	unsigned char ucval;
- 	unsigned int uival;
- 	void __user *up = (void __user *)arg;
- 	int i, perm;
- 	int ret = 0;
- 
--	console = vc->vc_num;
--
--
--	if (!vc_cons_allocated(console)) { 	/* impossible? */
--		ret = -ENOIOCTLCMD;
--		goto out;
--	}
--
--
- 	/*
- 	 * To have permissions to do most of the vt ioctls, we either have
- 	 * to be the owner of the tty, or have CAP_SYS_TTY_CONFIG.
-@@ -641,15 +649,16 @@ int vt_ioctl(struct tty_struct *tty,
- 		struct vt_stat __user *vtstat = up;
- 		unsigned short state, mask;
- 
--		/* Review: FIXME: Console lock ? */
- 		if (put_user(fg_console + 1, &vtstat->v_active))
- 			ret = -EFAULT;
- 		else {
- 			state = 1;	/* /dev/tty0 is always open */
-+			console_lock(); /* required by vt_in_use() */
- 			for (i = 0, mask = 2; i < MAX_NR_CONSOLES && mask;
- 							++i, mask <<= 1)
--				if (VT_IS_IN_USE(i))
-+				if (vt_in_use(i))
- 					state |= mask;
-+			console_unlock();
- 			ret = put_user(state, &vtstat->v_state);
- 		}
- 		break;
-@@ -659,10 +668,11 @@ int vt_ioctl(struct tty_struct *tty,
- 	 * Returns the first available (non-opened) console.
- 	 */
- 	case VT_OPENQRY:
--		/* FIXME: locking ? - but then this is a stupid API */
-+		console_lock(); /* required by vt_in_use() */
- 		for (i = 0; i < MAX_NR_CONSOLES; ++i)
--			if (! VT_IS_IN_USE(i))
-+			if (!vt_in_use(i))
- 				break;
-+		console_unlock();
- 		uival = i < MAX_NR_CONSOLES ? (i+1) : -1;
- 		goto setint;		 
- 
-@@ -1011,12 +1021,12 @@ int vt_ioctl(struct tty_struct *tty,
- 	case VT_LOCKSWITCH:
- 		if (!capable(CAP_SYS_TTY_CONFIG))
- 			return -EPERM;
--		vt_dont_switch = 1;
-+		vt_dont_switch = true;
- 		break;
- 	case VT_UNLOCKSWITCH:
- 		if (!capable(CAP_SYS_TTY_CONFIG))
- 			return -EPERM;
--		vt_dont_switch = 0;
-+		vt_dont_switch = false;
- 		break;
- 	case VT_GETHIFONTMASK:
- 		ret = put_user(vc->vc_hi_font_mask,
-@@ -1180,14 +1190,9 @@ long vt_compat_ioctl(struct tty_struct *tty,
- {
- 	struct vc_data *vc = tty->driver_data;
- 	struct console_font_op op;	/* used in multiple places here */
--	unsigned int console = vc->vc_num;
- 	void __user *up = compat_ptr(arg);
- 	int perm;
- 
--
--	if (!vc_cons_allocated(console)) 	/* impossible? */
--		return -ENOIOCTLCMD;
--
- 	/*
- 	 * To have permissions to do most of the vt ioctls, we either have
- 	 * to be the owner of the tty, or have CAP_SYS_TTY_CONFIG.
-diff --git a/include/linux/selection.h b/include/linux/selection.h
-index e2c1f96bf059..5b890ef5b59f 100644
---- a/include/linux/selection.h
-+++ b/include/linux/selection.h
-@@ -11,8 +11,8 @@
- #include <linux/tiocl.h>
- #include <linux/vt_buffer.h>
- 
--extern struct vc_data *sel_cons;
- struct tty_struct;
-+struct vc_data;
- 
- extern void clear_selection(void);
- extern int set_selection_user(const struct tiocl_selection __user *sel,
-@@ -24,6 +24,8 @@ extern int sel_loadlut(char __user *p);
- extern int mouse_reporting(void);
- extern void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry);
- 
-+bool vc_is_sel(struct vc_data *vc);
-+
- extern int console_blanked;
- 
- extern const unsigned char color_table[];
-diff --git a/include/linux/vt_kern.h b/include/linux/vt_kern.h
-index 8dc77e40bc03..ded5c48598f3 100644
---- a/include/linux/vt_kern.h
-+++ b/include/linux/vt_kern.h
-@@ -135,7 +135,7 @@ extern int do_unbind_con_driver(const struct consw *csw, int first, int last,
- 			     int deflt);
- int vty_init(const struct file_operations *console_fops);
- 
--extern char vt_dont_switch;
-+extern bool vt_dont_switch;
- extern int default_utf8;
- extern int global_cursor_default;
- 
-diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-index d9cca6dbd870..efe4c1fc68e5 100644
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -3610,7 +3610,8 @@ struct sk_buff *ieee80211_tx_dequeue(struct ieee80211_hw *hw,
- 		 * Drop unicast frames to unauthorised stations unless they are
- 		 * EAPOL frames from the local station.
- 		 */
--		if (unlikely(!ieee80211_vif_is_mesh(&tx.sdata->vif) &&
-+		if (unlikely(ieee80211_is_data(hdr->frame_control) &&
-+			     !ieee80211_vif_is_mesh(&tx.sdata->vif) &&
- 			     tx.sdata->vif.type != NL80211_IFTYPE_OCB &&
- 			     !is_multicast_ether_addr(hdr->addr1) &&
- 			     !test_sta_flag(tx.sta, WLAN_STA_AUTHORIZED) &&
-diff --git a/tools/testing/selftests/bpf/verifier/jmp32.c b/tools/testing/selftests/bpf/verifier/jmp32.c
-index bd5cae4a7f73..79eeed6029f5 100644
---- a/tools/testing/selftests/bpf/verifier/jmp32.c
-+++ b/tools/testing/selftests/bpf/verifier/jmp32.c
-@@ -783,7 +783,8 @@
- 	},
- 	.prog_type = BPF_PROG_TYPE_SCHED_CLS,
- 	.fixup_map_hash_48b = { 4 },
--	.result = ACCEPT,
-+	.result = REJECT,
-+	.errstr = "R8 unbounded memory access",
- 	.flags = F_NEEDS_EFFICIENT_UNALIGNED_ACCESS,
- },
- {
-@@ -811,7 +812,8 @@
- 	},
- 	.prog_type = BPF_PROG_TYPE_SCHED_CLS,
- 	.fixup_map_hash_48b = { 4 },
--	.result = ACCEPT,
-+	.result = REJECT,
-+	.errstr = "R8 unbounded memory access",
- 	.flags = F_NEEDS_EFFICIENT_UNALIGNED_ACCESS,
- },
- {
-@@ -839,6 +841,7 @@
- 	},
- 	.prog_type = BPF_PROG_TYPE_SCHED_CLS,
- 	.fixup_map_hash_48b = { 4 },
--	.result = ACCEPT,
-+	.result = REJECT,
-+	.errstr = "R8 unbounded memory access",
- 	.flags = F_NEEDS_EFFICIENT_UNALIGNED_ACCESS,
- },
+On Wed 01-04-20 16:04:32, Andrew Morton wrote:
+> On Tue, 31 Mar 2020 16:56:04 +0800 "Huang, Ying" <ying.huang@intel.com> wrote:
+> 
+> > From: Huang Ying <ying.huang@intel.com>
+> > 
+> > Now, when read /proc/PID/smaps, the PMD migration entry in page table is simply
+> > ignored.  To improve the accuracy of /proc/PID/smaps, its parsing and processing
+> > is added.
+> 
+> It would be helpful to show the before-and-after output in the changelog.
+
+Migration entries are ephemeral. Is this observable in practice? I
+suspect this is just primarily motivated by reading the code more than
+hitting the actual problem.
+-- 
+Michal Hocko
+SUSE Labs
