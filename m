@@ -2,150 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D982019BD6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:17:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6AF719BD70
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:17:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387747AbgDBIRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 04:17:01 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24432 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387695AbgDBIRA (ORCPT
+        id S2387764AbgDBIRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 04:17:42 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:41110 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387661AbgDBIRm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:17:00 -0400
+        Thu, 2 Apr 2020 04:17:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585815419;
+        s=mimecast20190719; t=1585815460;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=adQQTRL13HX85W9rTbiS6VARbFJqWcwGdSb1q2fioec=;
-        b=QcDEQzZi9IjPomfWFSojQ/3VtjeK4uGADgBMB4NyAvtpYVLWy1hTBc7K3TjpmpCVz9z9N4
-        OLOtvPVNtwepVI5Qyo+DVn7rtBxE6DSkdNoECITsypxYBeV3Nh4zoY1SSs9rQlOCcFb/ta
-        jSvvBMUrmA7RNU2btzQv3imYkATiuM8=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-169-FYtsRmTYML2sJhLx53iyRQ-1; Thu, 02 Apr 2020 04:16:54 -0400
-X-MC-Unique: FYtsRmTYML2sJhLx53iyRQ-1
-Received: by mail-wm1-f70.google.com with SMTP id s22so714511wmh.8
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 01:16:54 -0700 (PDT)
+        bh=qrXk8LVQd/CXKhg1TsCqsO3eX0JuDNOSoaTAXR1nr78=;
+        b=QpMmA0a3ViOskkEX0qZIgwy8adP+b9m+zeWJh/ydJdfeKttDVaiTaJRwHWlV1mP4y2qUMh
+        WUxGpVWMYOZ0Cr4Y/7xsFnjDcDe7GwnXXk/TG9ayptY9Noy0VAOzOMkOOzScuuraVFiwnk
+        MUoJInVYyAfngKi5LtONidV9kUhWE6E=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-45-oE_NL-NoPdKG6EivgrLtkw-1; Thu, 02 Apr 2020 04:17:39 -0400
+X-MC-Unique: oE_NL-NoPdKG6EivgrLtkw-1
+Received: by mail-qt1-f200.google.com with SMTP id g25so2495104qts.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 01:17:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=adQQTRL13HX85W9rTbiS6VARbFJqWcwGdSb1q2fioec=;
-        b=gnlYiBN81lYJ0D0lKLcqkM8y/6x7agYBX4w4ESwBp1e8f6gCLn0c9XPoNqKGw8T+5W
-         kmzRzJQcNll2TOHI32a576byqxifBpw0/fPgQQrrD3PVJR0TTetxh7pQfFaqQNpHMmXF
-         mu87atbIgnqYNgnpVhmHcdAnOoTSjjA8kDcdM9QUToqoiMq9pF8v2K9j3EwefAeLSyN/
-         ko7XAM083J44NevbskYmL6NN2VSeFNqgF1z3Ex0Gq0J4AFbOIhMCwjYn9TrZd8JtTzuh
-         rAdS3Dd45aPZj4NsYyP07kDTxMenzpjmV5M3yXlBaRbCS6N6B679W5GzUUiU0vWitv6H
-         dKTA==
-X-Gm-Message-State: AGi0PuYBBZBPGAW1GNULonnoXLFNbA5z9TiIQ8K54rWQaZUIUgL+vQE6
-        vb7aygPNWrfFg5i/BfppkArRooUaXKlN3e7XUtmziL4Iu3Hf2TaloJSTLk98QB8GNRCqxuUzrSB
-        MoCW3Zx02DD0GpmyG7V6Y8xwX
-X-Received: by 2002:a7b:c343:: with SMTP id l3mr2333014wmj.38.1585815413320;
-        Thu, 02 Apr 2020 01:16:53 -0700 (PDT)
-X-Google-Smtp-Source: APiQypLU9B7TUBflkZhN1rOBH8BTpMKrs1CkvuyQFyDj2i9rlAK/HNjsW1RrHesMK2nTLFpxWUOu0Q==
-X-Received: by 2002:a7b:c343:: with SMTP id l3mr2332999wmj.38.1585815413097;
-        Thu, 02 Apr 2020 01:16:53 -0700 (PDT)
-Received: from ?IPv6:2a01:cb14:58d:8400:ecf6:58e2:9c06:a308? ([2a01:cb14:58d:8400:ecf6:58e2:9c06:a308])
-        by smtp.gmail.com with ESMTPSA id q4sm10375039wmj.1.2020.04.02.01.16.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Apr 2020 01:16:52 -0700 (PDT)
-Subject: Re: [PATCH v2] objtool,ftrace: Implement UNWIND_HINT_RET_OFFSET
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org,
-        mbenes@suse.cz, Steven Rostedt <rostedt@goodmis.org>
-References: <20200330200254.GV20713@hirez.programming.kicks-ass.net>
- <20200331111652.GH20760@hirez.programming.kicks-ass.net>
- <20200331202315.zialorhlxmml6ec7@treble>
- <20200331204047.GF2452@worktop.programming.kicks-ass.net>
- <20200331211755.pb7f3wa6oxzjnswc@treble>
- <20200331212040.7lrzmj7tbbx2jgrj@treble>
- <20200331222703.GH2452@worktop.programming.kicks-ass.net>
- <d2cad75e-1708-f0bf-7f88-194bcb29e61d@redhat.com>
- <20200401170910.GX20730@hirez.programming.kicks-ass.net>
- <684d6e29-4a01-b4a5-f906-7bdee5ad108f@redhat.com>
- <20200402075036.GA20730@hirez.programming.kicks-ass.net>
-From:   Julien Thierry <jthierry@redhat.com>
-Message-ID: <30b3df44-6254-b5a7-2f5d-0bc071adb00e@redhat.com>
-Date:   Thu, 2 Apr 2020 09:16:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qrXk8LVQd/CXKhg1TsCqsO3eX0JuDNOSoaTAXR1nr78=;
+        b=Yiv64t+u0xKoXYfxAhMQItsoFeaG92IrAM4mVhNpug75KX30Ul15XwtpODX+3ijK6V
+         dp/PpppHUZ67/joHEaGoJkEbmzN1MVT6Q5xoiIGAVg/Yh/rRJtPS9BpHZubdCXzp7K8m
+         hQhS8HKEgK7CC3kPVefPmhLpaDixdQjBkrjIQCd8BtfFPyYkZ/uvIPrwKcCUlL+ksia5
+         pHTIqZ6RD/3PHP0vtd2eyJMz57u0qEC+PVBNWlB0SsqQB3J/nbMpDYFJ1T0aRGe4V+OM
+         RLzrRDRcs9rXqS2LwX3Eq+daX0b7MFsPPST8xBeZGmeCEFVuaPnD+DoJ3MXFzuNE60Oj
+         uS1Q==
+X-Gm-Message-State: AGi0PuYvAZ+9ryXwLCKulNE1XAKsemFaXfYthuwQZxC7Ow1R13YqJTZc
+        f46HLPzrq0Q3fiOB58Kl3w8rr2QHU3KDxJiRBEOrG8jde+ciaSFW6H9Sp96hT1G8/+nHx5UYCpZ
+        M43HANZo4woZaKYD5eSd5fLrCQaKCnd0XUB2a1xLX
+X-Received: by 2002:ac8:740b:: with SMTP id p11mr1626583qtq.379.1585815457648;
+        Thu, 02 Apr 2020 01:17:37 -0700 (PDT)
+X-Google-Smtp-Source: APiQypIWKQ0r7BLw/mXFg9PX+PpdHbG2jGnLDwo9XSxTQBg5Q2ggffGwidECmAS47ycvsUD64mF34zIwUE9GnhztrQo=
+X-Received: by 2002:ac8:740b:: with SMTP id p11mr1626573qtq.379.1585815457383;
+ Thu, 02 Apr 2020 01:17:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200402075036.GA20730@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200331192804.6019-1-eperezma@redhat.com> <c4d2b0b4-0b6d-cd74-0eb5-e7fdfe063d42@de.ibm.com>
+ <CAJaqyWc+fNzHE_p-pApZtj2ypNQfFLawCWf8GJmP8e=k=C+EgA@mail.gmail.com>
+ <916e60f8-45fe-5cc1-d5a1-defdcd00d75b@de.ibm.com> <6d16572f-34e9-4806-a5f8-94d8f75db352@de.ibm.com>
+In-Reply-To: <6d16572f-34e9-4806-a5f8-94d8f75db352@de.ibm.com>
+From:   Eugenio Perez Martin <eperezma@redhat.com>
+Date:   Thu, 2 Apr 2020 10:17:01 +0200
+Message-ID: <CAJaqyWdwqdyfY_ZrWXEGogoUKajEPpT3FdsDMdEUCZ0tt4Dh9w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/8] vhost: Reset batched descriptors on SET_VRING_BASE call
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        kvm list <kvm@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 1, 2020 at 9:13 PM Christian Borntraeger
+<borntraeger@de.ibm.com> wrote:
+>
+> >> Would it be possible to investigate when qemu launches the offending ioctls?
+> >
+> > During guest reboot. This is obvious, no?
+> >
+>
+
+Got it. I thought you received it after the reboot AND once you sent
+the firsts packets, since you said that some pings worked. But now
+that this point is clear, I think we can move forward :). Thank you
+very much!
 
 
-On 4/2/20 8:50 AM, Peter Zijlstra wrote:
-> On Thu, Apr 02, 2020 at 07:41:46AM +0100, Julien Thierry wrote:
->> On 4/1/20 6:09 PM, Peter Zijlstra wrote:
-> 
->>> The code in question (x86's sync_core()), is an exception return to
->>> self. It pushes an exception frame that points to right after the
->>> exception return instruction.
->>>
->>> This is the only usage of IRET in STT_FUNC symbols.
->>>
->>> So rather than teaching objtool how to interpret the whole
->>> push;push;push;push;push;iret sequence, teach it how big the frame is
->>> (arch_exception_frame_size) and let it continue.
->>>
->>> All the other (real) IRETs are in STT_NOTYPE in the entry assembly.
->>>
->>
->> Right, I see.. However I'm not completely convinced by this. I must admit I
->> haven't followed the whole conversation, but what was the issue with the
->> HINT_IRET_SELF? It seemed more elegant, but I might be missing some context.
-> 
-> https://lkml.kernel.org/r/20200331211755.pb7f3wa6oxzjnswc@treble
-> 
-> Josh didn't think it was worth it, I think.
-> 
->> Otherwise, it might be worth having a comment in the code to point that this
->> only handles the sync_core() case.
-> 
-> I can certainly do that. Does ARM have any ERETs sprinkled around in
-> places it should not have? That is, is this going to be a problem for
-> you?
-> 
-
-I had a quick look and I don't think there are ERETS in function 
-symbols. And, worst case scenario, I could also just keep the arm64 
-decoder making ERETS as INSN_CONTEXT_SWITCH as I didn't need more 
-semantics so far (and arm64 ERET don't affect the stack anyway).
-
-After you pointed out this only affect this very specific pattern, I 
-admit that my concerns are more about "not having weird stuff in the 
-generic part".
-If it's too much of a hassle I can understand if you prefer to just put 
-a comment. But if most of this can be kept to the arch specific decoder 
-I think it'd be nicer :) .
-
->> Also, instead of adding a special "arch_exception_frame_size", I could
->> suggest:
->> - Picking this patch [1] from a completely arbitrary source
->> - Getting rid of INSN_STACK type, any instruction could then include stack
->> ops on top of their existing semantics, they can just have an empty list if
->> they don't touch SP/BP
->> - x86 decoder adds a stack_op to the iret to modify the stack pointer by the
->> right amount
-> 
-> That's not the worst idea, lemme try that.
-> 
-
-Thanks, keep me in Cc if you post a new version using that!
-
-Cheers,
-
--- 
-Julien Thierry
+>
+> For example during reboot we do re-setup the virt queues:
+>
+> #1  0x00000000010f3e7a in vhost_kernel_set_vring_base (dev=0x21f5f30, ring=0x3ff84d74e88) at /home/cborntra/REPOS/qemu/hw/virtio/vhost-backend.c:126
+> #2  0x00000000010f2f92 in vhost_virtqueue_start (idx=0, vq=0x21f6180, vdev=0x241d570, dev=0x21f5f30) at /home/cborntra/REPOS/qemu/hw/virtio/vhost.c:1016
+> #3  vhost_dev_start (hdev=hdev@entry=0x21f5f30, vdev=vdev@entry=0x241d570) at /home/cborntra/REPOS/qemu/hw/virtio/vhost.c:1646
+> #4  0x00000000011c265a in vhost_net_start_one (dev=0x241d570, net=0x21f5f30) at /home/cborntra/REPOS/qemu/hw/net/vhost_net.c:236
+> #5  vhost_net_start (dev=dev@entry=0x241d570, ncs=0x2450f40, total_queues=total_queues@entry=1) at /home/cborntra/REPOS/qemu/hw/net/vhost_net.c:338
+> #6  0x00000000010cfdfe in virtio_net_vhost_status (status=15 '\017', n=0x241d570) at /home/cborntra/REPOS/qemu/hw/net/virtio-net.c:250
+> #7  virtio_net_set_status (vdev=0x241d570, status=<optimized out>) at /home/cborntra/REPOS/qemu/hw/net/virtio-net.c:331
+> #8  0x00000000010eaef4 in virtio_set_status (vdev=vdev@entry=0x241d570, val=<optimized out>) at /home/cborntra/REPOS/qemu/hw/virtio/virtio.c:1956
+> #9  0x000000000110ba78 in virtio_ccw_cb (sch=0x2422c30, ccw=...) at /home/cborntra/REPOS/qemu/hw/s390x/virtio-ccw.c:509
+> #10 0x00000000011053fc in css_interpret_ccw (sch=sch@entry=0x2422c30, ccw_addr=<optimized out>, suspend_allowed=suspend_allowed@entry=false) at /home/cborntra/REPOS/qemu/hw/s390x/css.c:1108
+> #11 0x000000000110557c in sch_handle_start_func_virtual (sch=0x2422c30) at /home/cborntra/REPOS/qemu/hw/s390x/css.c:1162
+> #12 do_subchannel_work_virtual (sch=0x2422c30) at /home/cborntra/REPOS/qemu/hw/s390x/css.c:1256
+> #13 0x0000000001168592 in ioinst_handle_ssch (cpu=cpu@entry=0x234b920, reg1=<optimized out>, ipb=<optimized out>, ra=ra@entry=0) at /home/cborntra/REPOS/qemu/target/s390x/ioinst.c:218
+> #14 0x0000000001170012 in handle_b2 (ipa1=<optimized out>, run=0x3ff97880000, cpu=0x234b920) at /home/cborntra/REPOS/qemu/target/s390x/kvm.c:1279
+> #15 handle_instruction (run=0x3ff97880000, cpu=0x234b920) at /home/cborntra/REPOS/qemu/target/s390x/kvm.c:1664
+> #16 handle_intercept (cpu=0x234b920) at /home/cborntra/REPOS/qemu/target/s390x/kvm.c:1747
+> #17 kvm_arch_handle_exit (cs=cs@entry=0x234b920, run=run@entry=0x3ff97880000) at /home/cborntra/REPOS/qemu/target/s390x/kvm.c:1937
+> #18 0x00000000010972dc in kvm_cpu_exec (cpu=cpu@entry=0x234b920) at /home/cborntra/REPOS/qemu/accel/kvm/kvm-all.c:2445
+> #19 0x00000000010784f6 in qemu_kvm_cpu_thread_fn (arg=0x234b920) at /home/cborntra/REPOS/qemu/cpus.c:1246
+> #20 qemu_kvm_cpu_thread_fn (arg=arg@entry=0x234b920) at /home/cborntra/REPOS/qemu/cpus.c:1218
+> #21 0x00000000013891fa in qemu_thread_start (args=0x2372f30) at /home/cborntra/REPOS/qemu/util/qemu-thread-posix.c:519
+> #22 0x000003ff93809ed6 in start_thread () from target:/lib64/libpthread.so.0
+> #23 0x000003ff93705e46 in thread_start () from target:/lib64/libc.so.6
+>
 
