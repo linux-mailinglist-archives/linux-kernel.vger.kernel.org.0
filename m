@@ -2,54 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B02B819BB71
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 07:55:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBE3119BB73
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 07:57:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbgDBFzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 01:55:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725789AbgDBFza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 01:55:30 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23A89206D3;
-        Thu,  2 Apr 2020 05:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585806928;
-        bh=TMOB7xObTXK0rngZ9FmkC9I9d881cIffUOU1cSRb6rI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lYUFGTaf7/8lq9YCS3Lc6Qnzovvd6BiDGcoAxanH/1wLAdCQ0z+71LACMyDzbsWp/
-         jcgAvlDhUhFWHsuXMbTNRFgmSQKNYIHvBUnUnYAQwkUaAT8UVAyzYKYFmA3V8dEA2w
-         CxxsPpqzDNCO45ct/6F91dADVHBTfaf5smgPaaAk=
-Date:   Thu, 2 Apr 2020 07:55:26 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     davem@davemloft.net, smohanad@codeaurora.org, jhugo@codeaurora.org,
-        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
-        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clew@codeaurora.org
-Subject: Re: [PATCH v2 0/3] MHI bus improvements - Part 2
-Message-ID: <20200402055526.GB2636682@kroah.com>
-References: <20200402053610.9345-1-manivannan.sadhasivam@linaro.org>
+        id S1728661AbgDBF5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 01:57:13 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37066 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgDBF5M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 01:57:12 -0400
+Received: by mail-pl1-f195.google.com with SMTP id x1so943338plm.4
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 22:57:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0v8qFG+lakbNwCs1dTA5aCEVT1bp7ahYq6NmZeNOrGQ=;
+        b=G7uZ1WcvWQXQhE89TjGanF83SSBtnYTzfsKrsZMSO99kV3o0lqB4hLjVXUJgPIlEKN
+         MMVBXIwdagq4gBOwV1UYGru2LrNs1b2VXa5vu5r3MzNYwBfTIJ8ITowd1B36Go8wrBru
+         DRTpy/WThWpv9D+uoEjemiAT3xmnzkOOv9JPYZxXQn4x2ogiXP+LkuHhR0IsefzV1Lw8
+         S06y5Yq7W8YqatW+5AjcTHL3m2WsvWt6kCHqhgRN7d3t4XxGV/DEIKS2TpRbRb9glSzl
+         5Mmy6E9a3tylkrg9wUbIO9IWA16tWCpLmACemp8pmWBs5Sw9SKKy1cWB+OIsx6lZogXv
+         ECug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0v8qFG+lakbNwCs1dTA5aCEVT1bp7ahYq6NmZeNOrGQ=;
+        b=H+xpB/jUZg2L7DhCZhy/LEK1l3gVXQwSiroFEKkIWPtA1JzIkD+fyxISsbZVtbpCRj
+         vKE39wVuMpk57PGgzcL/KI49n89pPwG/A76P43kd7IMuKIwDBesKBMsqrfj9UyCqxj+9
+         brUMxKwJOcLJfFO8WFoFxsvH0YbFZVji0MrT43L0pnzGhA5O9J1Cd7Dqw26u8agHeS7M
+         5MePUpYWBD8686zfZ/VqkImLp2C9bXQIFYUYbIqtDvnGw0oFxCcYz6Ey2qf7hvnP+Jp1
+         diZj2yoTdy7BTP0TU0qX1I18XtfHwK+9mu4oiGUTDfcAU6vDcfmnGlUlsWrsuavwLniQ
+         povQ==
+X-Gm-Message-State: AGi0Puby1tJLa8dVbnEKzFNczAwe5rNBeGYdJ05uM5varlEgHBHT56ua
+        tAl8mzaT3SlcxG0gLQsV46o=
+X-Google-Smtp-Source: APiQypLJsNATH03qXt80StDeQlmOxYsyjU6euM+h1RDJeAOmpFoPbaurqtKpPF1ZmeSswUcufB1swQ==
+X-Received: by 2002:a17:90a:fe18:: with SMTP id ck24mr2037363pjb.57.1585807031699;
+        Wed, 01 Apr 2020 22:57:11 -0700 (PDT)
+Received: from localhost.localdomain ([103.87.57.161])
+        by smtp.googlemail.com with ESMTPSA id 207sm2776058pgg.19.2020.04.01.22.57.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 22:57:11 -0700 (PDT)
+From:   Amol Grover <frextrite@gmail.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@redhat.com>
+Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-audit@redhat.com,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH 1/3 RESEND] sched: Remove __rcu annotation from cred pointer
+Date:   Thu,  2 Apr 2020 11:26:38 +0530
+Message-Id: <20200402055640.6677-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200402053610.9345-1-manivannan.sadhasivam@linaro.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 02, 2020 at 11:06:07AM +0530, Manivannan Sadhasivam wrote:
-> Hi Greg,
-> 
-> Here are the remaining patches left from the pervious series. The QRTR MHI
-> client driver has gone a bit of refactoring after incorporating comments from
-> Bjorn and Chris while the MHI suspend/resume patch is unmodified.
+task_struct::cred (subjective credentials) is *always* used
+task-synchronously, hence, does not require RCU semantics.
 
-It's the middle of the merge window, we can't do anything until after
--rc1 is out, so please be patient.
+task_struct::real_cred (objective credentials) can be used in
+RCU context and its __rcu annotation is retained.
 
-greg k-h
+However, task_struct::cred and task_struct::real_cred *may*
+point to the same object, hence, the object pointed to by
+task_struct::cred *may* have RCU delayed freeing.
+
+Suggested-by: Jann Horn <jannh@google.com>
+Co-developed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+ include/linux/sched.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 716ad1d8d95e..39924e6e0cf2 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -879,8 +879,11 @@ struct task_struct {
+ 	/* Objective and real subjective task credentials (COW): */
+ 	const struct cred __rcu		*real_cred;
+ 
+-	/* Effective (overridable) subjective task credentials (COW): */
+-	const struct cred __rcu		*cred;
++	/*
++	 * Effective (overridable) subjective task credentials (COW)
++	 * which is used task-synchronously
++	 */
++	const struct cred		*cred;
+ 
+ #ifdef CONFIG_KEYS
+ 	/* Cached requested key. */
+-- 
+2.24.1
+
