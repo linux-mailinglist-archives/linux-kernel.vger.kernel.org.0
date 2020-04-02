@@ -2,94 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2728319BE42
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:58:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 088F119BE44
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:58:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387891AbgDBI6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 04:58:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59382 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387780AbgDBI6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:58:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1CA9AAA55;
-        Thu,  2 Apr 2020 08:58:07 +0000 (UTC)
-Date:   Thu, 2 Apr 2020 10:58:07 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Julien Thierry <jthierry@redhat.com>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v2] objtool,ftrace: Implement UNWIND_HINT_RET_OFFSET
-In-Reply-To: <0a750745-b069-9ef2-61d3-a15b8fecb649@redhat.com>
-Message-ID: <alpine.LSU.2.21.2004021053160.19977@pobox.suse.cz>
-References: <20200331111652.GH20760@hirez.programming.kicks-ass.net> <20200331202315.zialorhlxmml6ec7@treble> <20200331204047.GF2452@worktop.programming.kicks-ass.net> <20200331211755.pb7f3wa6oxzjnswc@treble> <20200331212040.7lrzmj7tbbx2jgrj@treble>
- <20200331222703.GH2452@worktop.programming.kicks-ass.net> <d2cad75e-1708-f0bf-7f88-194bcb29e61d@redhat.com> <20200401170910.GX20730@hirez.programming.kicks-ass.net> <684d6e29-4a01-b4a5-f906-7bdee5ad108f@redhat.com> <20200402075036.GA20730@hirez.programming.kicks-ass.net>
- <20200402081710.GJ20760@hirez.programming.kicks-ass.net> <0a750745-b069-9ef2-61d3-a15b8fecb649@redhat.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S2387914AbgDBI6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 04:58:51 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12604 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387780AbgDBI6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 04:58:51 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B46B36AA3EDD6D1F55C8;
+        Thu,  2 Apr 2020 16:58:48 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.487.0; Thu, 2 Apr 2020
+ 16:58:39 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <john.garry@huawei.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, <chenxiang66@hisilicon.com>,
+        <b.zolnierkie@samsung.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2] scsi: hisi_sas: Fix build error without SATA_HOST
+Date:   Thu, 2 Apr 2020 16:58:12 +0800
+Message-ID: <20200402085812.32948-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20200402063021.34672-1-yuehaibing@huawei.com>
+References: <20200402063021.34672-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 Apr 2020, Julien Thierry wrote:
+If SATA_HOST is n, build fails:
 
-> 
-> 
-> On 4/2/20 9:17 AM, Peter Zijlstra wrote:
-> > On Thu, Apr 02, 2020 at 09:50:36AM +0200, Peter Zijlstra wrote:
-> >> On Thu, Apr 02, 2020 at 07:41:46AM +0100, Julien Thierry wrote:
-> > 
-> >>> Also, instead of adding a special "arch_exception_frame_size", I could
-> >>> suggest:
-> >>> - Picking this patch [1] from a completely arbitrary source
-> >>> - Getting rid of INSN_STACK type, any instruction could then include stack
-> >>> ops on top of their existing semantics, they can just have an empty list
-> >>> if
-> >>> they don't touch SP/BP
-> >>> - x86 decoder adds a stack_op to the iret to modify the stack pointer by
-> >>> the
-> >>> right amount
-> >>
-> >> That's not the worst idea, lemme try that.
-> > 
-> > Something like so then?
-> > 
-> 
-> Yes, you could even remove INSN_STACK from insn_type and just always call
-> handle_insn_ops() before the switch statement on insn->type. If the list is
-> empty it does nothing.
-> This way you wouldn't need to call it for the INSN_EXCEPTION_RETURN case, and
-> any type of instructions could use stack_ops.
-> 
-> 
-> And the other suggestion is my other email was that you don't even need to add
-> INSN_EXCEPTION_RETURN. You can keep IRET as INSN_CONTEXT_SWITCH by default and
-> x86 decoder lookups the symbol conaining an iret. If it's a function symbol,
-> it can just set the type to INSN_OTHER so that it caries on to the next
-> instruction after having handled the stack_op.
-> 
-> And everything fits under tools/objtool/arch/x86 :) .
-> 
-> Or is it too far-fetch'd?
+drivers/scsi/hisi_sas/hisi_sas_main.o: In function `hisi_sas_fill_ata_reset_cmd':
+hisi_sas_main.c:(.text+0x2500): undefined reference to `ata_tf_to_fis'
 
-Imho no. Well, it depends. I can see benefits of both approach. PeterZ's 
-patch is quite minimal and it demonstrates itself as a one-off hack quite 
-well. On the other hand, it is in a generic code, which is not nice 
-especially when other archs do not have such thing. So your proposal would 
-indeed make sense to hide it in arch-specific code. Especially for the 
-future. And INSN_STACK is not used much in the code, so it can be removed 
-easily as you proposed.
+Select SATA_HOST to fix this.
 
-And going more in direction of supporting more archs in the future, I'd 
-say it would make sense to allow more generic things such as "forget about 
-INSN_STACK. If an instruction has non-empty stack_ops list, just process 
-it". It is definitely more flexible.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: bd322af15ce9 ("ata: make SATA_PMP option selectable only if any SATA host driver is enabled")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: use correct Fixes tag
+---
+ drivers/scsi/hisi_sas/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-So yes, I think it make sense unless I am missing something.
+diff --git a/drivers/scsi/hisi_sas/Kconfig b/drivers/scsi/hisi_sas/Kconfig
+index 90a17452a50d..13ed9073fc72 100644
+--- a/drivers/scsi/hisi_sas/Kconfig
++++ b/drivers/scsi/hisi_sas/Kconfig
+@@ -6,6 +6,7 @@ config SCSI_HISI_SAS
+ 	select SCSI_SAS_LIBSAS
+ 	select BLK_DEV_INTEGRITY
+ 	depends on ATA
++	select SATA_HOST
+ 	help
+ 		This driver supports HiSilicon's SAS HBA, including support based
+ 		on platform device
+-- 
+2.17.1
 
-Miroslav
+
