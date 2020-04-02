@@ -2,61 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ADF219BD1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 09:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92E3D19BD21
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 09:56:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387574AbgDBHyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 03:54:15 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35014 "EHLO
+        id S2387615AbgDBH4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 03:56:49 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40054 "EHLO
         mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbgDBHyP (ORCPT
+        with ESMTP id S1725965AbgDBH4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 03:54:15 -0400
-Received: by mail-lf1-f67.google.com with SMTP id d15so119944lfn.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 00:54:13 -0700 (PDT)
+        Thu, 2 Apr 2020 03:56:49 -0400
+Received: by mail-lf1-f67.google.com with SMTP id j17so1901317lfe.7
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 00:56:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=8+9G4M4fPPKqyjj0sFBu7xOpvf42HPywIxllN2E1ZZg=;
-        b=KdyEFz94YKOC4f+rXyzOXeiUnbNS/1p2sIpVQq8VSiUZsfGVB/bR6KQWQ2gpqyUk2O
-         0INeEPSuyuP42WrwTHj4yqg+GUDhsxyD3BxjbIAQ2q4AxHkNuQwbC5ngn72BbjJvFGUg
-         G4tZUfBUBo6nAi/AptI7TS9lm59OkTA66Jr8nGzEP1aysRdCMTeq3T9F7VFYTR/Bl1W6
-         eGx0/SOs0my/MAsMYDdix4qw5borl4pTjVMz/THhQ8HScZ8aFeggICinlGTuIAjANEd5
-         pk3a8XjL4euZQ4SC5PnYC8Tc2jlQu0FIta/xpkcttgOT2gl16N3jTjDFy7+B337NRAd/
-         g/cg==
+        bh=NLxAfO/+CXjGBU0lneDYEfTm3/RVeCex0QsJS4HUhZc=;
+        b=RmbAMcl888PHsTzOLIAl3LFnAF/LaClsZoOPozQJSeYjsZqb0oxpAyEx6/MxUb3vFY
+         Q2kOTxQb/Gp67rDIH00o5g7ZBUV1U1VoYnaTHxaeGVwNWK6fkxOQODwh+Z2bnvv5ymsJ
+         sijSpJjrPsy8TmsG2arBREV/jexcBBiKN+uhkIlwRKTF08AOQJKOujRbDytrEkKempwC
+         hmbnjA5WnLz0YNt8y32d+aeA89hLAOiBH1eWsnssiGJIqFn8K+dZST9PfqBKJWg1FXy8
+         DnviHEtx46AAaVg5SurPy8EP3SIZDbX1Ukd8lM/iwKozhzQUzTok7u1zT18BzBpufgPQ
+         LHNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8+9G4M4fPPKqyjj0sFBu7xOpvf42HPywIxllN2E1ZZg=;
-        b=LfEXqZ/c9QBLUocFxAiGpO5t4O/OqVhaRX3DweyB3KW9Lc/zAmp01xAOsquUp0NPbO
-         5XZYN1kpekNmVgT5D8A+hsX2g8q70/P2S6wIGtem18T4yLAEr+aSwI01D/VbkPiqF6ht
-         Y8JxOa2lJs1ZDrLCYllkUHATeEhPhxfWM1X1MccJpo8ofeMm77N6n4yeRsEWOqdtldtB
-         ksBu8dJc4kaaCE0+lt9/iANJdsvV6gZeBSgwz7RsllwUI48uSvg0uBM3m2fYl/UoH7t0
-         lAMRVdN0fmEJ4A/1ug5/SZ5WTygxE8kZwiWbdXlLcVoBVLS1e1aW62vcGB7v4AnajpCv
-         FH5Q==
-X-Gm-Message-State: AGi0PuYd3wUSXAUEQPFOjy9TymULlgHokorTiEHSHTYhJMNqQvLFz5eC
-        2Pc0qzbCjSnp2OAttPuMcZblR+MhThfjfY0ew1g1Nw==
-X-Google-Smtp-Source: APiQypLGmvOLWPH4fecZAAUfR1XClrEvPnQEMnQD3k8OwsQJ12DwYu3fZsy9Wo7n8y7yO6PHZ7tvycwUFHzWlCAyIro=
-X-Received: by 2002:ac2:5183:: with SMTP id u3mr1379665lfi.26.1585814053017;
- Thu, 02 Apr 2020 00:54:13 -0700 (PDT)
+        bh=NLxAfO/+CXjGBU0lneDYEfTm3/RVeCex0QsJS4HUhZc=;
+        b=nK6Tn8Iy4368Fgaq/K7yNtylJoG3RpW95uYQMfDdzzF7znCQD6Um8Nbf0WHj2FKuy1
+         Z0QDBZ4Y/CHi/kqz//ak2CICCjcXRK7QjP6hpDo0aKgP3cknirWQBRbUGdScAEydB/PD
+         k4uBse6CZP9Tq52nzqHSGes1q+WK2lcdKdv062mMvQMjEsqgvuC2X7i4smx4NOuFTfT7
+         uEpbd1Rwyz6RwKVcejYGGuqGylWKy0QTA+gDepw4t4w0auJ25oT4WuXIR/tQuFhUtee7
+         geUXSTgJWT+U6+bm5JGPiw+KdeGG3iEMg8lXfAJW7OZrLWwbkcDvHScFpz54ZinZFYYo
+         fzjA==
+X-Gm-Message-State: AGi0Pua5zL2D0NcoQFHzEV8HYR0gvOtynbzHRTbMIyl1wnMVOV158BTf
+        MRS3yUa4j5Cz5ERLhMhpxax92zO+sLudJOYI/a6mvg==
+X-Google-Smtp-Source: APiQypJ4cqTyHEJt4zQugpcoHs1N3egWTunLDxTUril9LnntFZT1U1twMztpRgVqvm7g5n1lG3YDWUTVbxU80Ip3k7A=
+X-Received: by 2002:a19:6e47:: with SMTP id q7mr1311472lfk.164.1585814204978;
+ Thu, 02 Apr 2020 00:56:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200401161552.245876366@linuxfoundation.org>
-In-Reply-To: <20200401161552.245876366@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 2 Apr 2020 13:24:01 +0530
-Message-ID: <CA+G9fYsR9ssXj2QeNALzUuP7_yOqDakoyED9c33pYX7pXF592Q@mail.gmail.com>
-Subject: Re: [PATCH 4.14 000/148] 4.14.175-rc1 review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
+References: <CAG48ez2Sx4ELkM94aD_h_J7K7KBOeuGmvZLKRkg3n_f2WoZ_cg@mail.gmail.com>
+ <4c5fe55d-9db9-2f61-59b2-1fb2e1b45ed0@amd.com>
+In-Reply-To: <4c5fe55d-9db9-2f61-59b2-1fb2e1b45ed0@amd.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 2 Apr 2020 09:56:18 +0200
+Message-ID: <CAG48ez1nHt2BRApHPp2S6rd4kr3P2kFsgHvStUsW7rqHSJprgg@mail.gmail.com>
+Subject: Re: AMD DC graphics display code enables -mhard-float, -msse, -msse2
+ without any visible FPU state protection
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>, amd-gfx@lists.freedesktop.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,108 +69,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 Apr 2020 at 22:11, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Thu, Apr 2, 2020 at 9:34 AM Christian K=C3=B6nig <christian.koenig@amd.c=
+om> wrote:
+> Am 02.04.20 um 04:34 schrieb Jann Horn:
+> > [x86 folks in CC so that they can chime in on the precise rules for thi=
+s stuff]
+> > I noticed that several makefiles under drivers/gpu/drm/amd/display/dc/
+> > turn on floating-point instructions in the compiler flags
+> > (-mhard-float, -msse and -msse2) in order to make the "float" and
+> > "double" types usable from C code without requiring helper functions.
+> >
+> > However, as far as I know, code running in normal kernel context isn't
+> > allowed to use floating-point registers without special protection
+> > using helpers like kernel_fpu_begin() and kernel_fpu_end() (which also
+> > require that the protected code never blocks). If you violate that
+> > rule, that can lead to various issues - among other things, I think
+> > the kernel will clobber userspace FPU register state, and I think the
+> > kernel code can blow up if a context switch happens at the wrong time,
+> > since in-kernel task switches don't preserve FPU state.
+> >
+> > Is there some hidden trick I'm missing that makes it okay to use FPU
+> > registers here?
+> >
+> > I would try testing this, but unfortunately none of the AMD devices I
+> > have here have the appropriate graphics hardware...
 >
-> This is the start of the stable review cycle for the 4.14.175 release.
-> There are 148 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> yes, using the floating point calculations in the display code has been
+> a source of numerous problems and confusion in the past.
 >
-> Responses should be made by Fri, 03 Apr 2020 16:09:36 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.175-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> The calls to kernel_fpu_begin() and kernel_fpu_end() are hidden behind
+> the DC_FP_START() and DC_FP_END() macros which are supposed to hide the
+> architecture depend handling for x86 and PPC64.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Hmm... but as far as I can tell, you're using those macros from inside
+functions that are already compiled with the FPU on:
 
-Summary
-------------------------------------------------------------------------
+ - drivers/gpu/drm/amd/display/dc/calcs/dcn_calcs.c uses the macros,
+but is already compiled with calcs_ccflags
+ - drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c uses the
+macros, but is already compiled with "-mhard-float -msse -msse2"
+ - drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c uses the
+macros, but is already compiled with "-mhard-float -msse -msse2"
 
-kernel: 4.14.175-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: bc03924ca6eab72bec9fb6f455ea41bca1fa5ccc
-git describe: v4.14.174-149-gbc03924ca6ea
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.174-149-gbc03924ca6ea
-
-
-No regressions (compared to build v4.14.174)
-
-
-No fixes (compared to build v4.14.174)
-
-Ran 41452 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- juno-r2-compat
-- juno-r2-kasan
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-- x86-kasan
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* install-android-platform-tools-r2800
-* kselftest
-* libhugetlbfs
-* linux-log-parser
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fs-tests
-* ltp-io-tests
-* ltp-math-tests
-* ltp-sched-tests
-* perf
-* v4l2-compliance
-* kvm-unit-tests
-* ltp-cap_bounds-tests
-* ltp-cpuhotplug-tests
-* ltp-crypto-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-ipc-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* network-basic-tests
-* ltp-open-posix-tests
-* spectre-meltdown-checker-test
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+AFAIK as soon as you enter any function in any file compiled with FPU
+instructions, you may encounter SSE instructions, e.g. via things like
+compiler-generated memory-zeroing code - not just when you're actually
+using doubles or floats.
