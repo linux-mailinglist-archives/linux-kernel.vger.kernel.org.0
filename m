@@ -2,164 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACFB819BC8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 09:19:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0146419BC92
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 09:20:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387554AbgDBHTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 03:19:39 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36068 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728234AbgDBHTj (ORCPT
+        id S2387552AbgDBHUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 03:20:40 -0400
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:56880 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728234AbgDBHUk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 03:19:39 -0400
-Received: by mail-pl1-f193.google.com with SMTP id g2so1016551plo.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 00:19:36 -0700 (PDT)
+        Thu, 2 Apr 2020 03:20:40 -0400
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+        by mx0b-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0327EmMO013645;
+        Thu, 2 Apr 2020 00:20:20 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=date : from : to :
+ cc : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=pfpt0818; bh=yqa6Mt4S+VU9X1Jl955IlU2NQVCoIdpr0JJtDTApcPo=;
+ b=ELQw9tr7Dl+KgUqK4CJz6nU105IGOdaBjshlQ2XkR9MjssXhb1qaG2vNyHMmuFg1fQj8
+ vlAb33//4DuzCFoEp68KVll+MvkAhQIDCwioqJ64VKLvyuwN4QLLl+8U0WT2dZA2CmIj
+ Wotcx4WcYHqpb7hz7Zr0T09Wb7bCIaQYvnsffrmH8Aaskxod1B/GP9W8hkVTJck7Mfaq
+ wmRGG/VWJPlkHnci68cU0K1mt3ePISembEqB9tEIvxSKPu9Wr7VlPgQitsIyy/fdDLi9
+ 0zAODCFYV7TEfVAPbEXZRCDjFUOlbTrw00+fRMT1vbtG6UlwPna+F4u/joMSqH0RDXoc GQ== 
+Received: from sc-exch04.marvell.com ([199.233.58.184])
+        by mx0b-0016f401.pphosted.com with ESMTP id 3046h618c8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 02 Apr 2020 00:20:20 -0700
+Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH04.marvell.com
+ (10.93.176.84) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 2 Apr
+ 2020 00:20:18 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.177)
+ by SC-EXCH02.marvell.com (10.93.176.82) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2 via Frontend Transport; Thu, 2 Apr 2020 00:20:18 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SM7gLcHE4ulMO4Jl+a/2+L/JX/H/S0+O9JoQhKP4jx0c1+RK/48/g3wt/e4QhaNgVUazXjYEghqC1+OZH4cdiRYVeoxPpSTr5PR77NIK+UVfUs2w+9h19FSg1fkl4b/LR/L/pWH/Oqu+r688Mj8467K2MoKY2U2V+ROTFBq0kYF3/ED09uttDoK1YsR3rAZFQeV5CLHmaMxOMtnklby6jBtENruSJ6h2BYCjY2g0JRoxt/Qlp5/+v+Od2QAF/h6ycHXcdSAiPi0CAx1npSTwf7Vmnz7C6aKyd2uzfIEqP121lm1D3jYeK9GVtViM0FpJ24p5F5/DptwjIabtZZOyLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yqa6Mt4S+VU9X1Jl955IlU2NQVCoIdpr0JJtDTApcPo=;
+ b=THnsOH7ZcoaSAyCUen+RCzYMHIg1s83kHGd2AFAP7OPXhvo7Qd69itJsq4P95RgsK+lk/VbaxDAXBSESerlc93t0ax/uESthJIoLUAyVjLwZI2j0vCgm9DJyZlbmG0rL/8Saif4IyYV5siyVFc33O0gSCTjepENbQL64Amgsr1uaWIDgeKGzoA4pjzVHFGxKK8sj3sALGj6OBv3BEnb3zOSDT52MALuj4xAAMX8Sc1PCzuQJ1fQYI8h2R8+NEtijTQXqZEmj4WwSQN8c0wudeFdfooTPfLXEvmaQXWM8SoPbXPkoHpx+pfgLOiMBRynaE4hxGcnLN02gQmQvRmLZqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=MNcbIL1+RcHP9n1/a7uW2cYhRUPkvEWLMMecHAgQsXw=;
-        b=Mkdjc5J1SEZfYsVao6D+3svMUTOlPWR0GUglETGCp1BLe0DlCeO6EhQvWvFeICMv36
-         FhEx79mg9w4G5l0oE52LrM6gGTrotrudHbeodjWMutpEZgdksa6OfQMqYRb+P06vpBHA
-         5ziM8BNeNC/piG1MVXXvFtq9O6gGtn/zz65nI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=MNcbIL1+RcHP9n1/a7uW2cYhRUPkvEWLMMecHAgQsXw=;
-        b=jbCOFLyURjbNC9Pyvlw5HPFxvVlZy5TlvdrGaZpE9xKrFuklbpRHthpbVw63WqEPD2
-         0dQp0Svqja3ymaDi7mXDteLkDGLPqrnEjkNFvsi5ICrVDJrzo8cio5JBZu4jL1ne9s7b
-         1GuzJrhDnlSWvFGUdbyv6qp54ks1LBeVE8dTsM3Vf5S/qWLSnIObAn/N0W2Xzk8Q6CNA
-         c5K+V7eu+CBBLgzE/fe+Zr3KaWFLJW4vr5VsBdHT4lgleRbyJVVi+tudGBcIqxfHMVWc
-         UtOKiGNLj+gw5FDBZr2VaG6NWd4N4KOLIJhrRl/VZGtB6T4jLfysciJlHUDECjotvntL
-         5Rzg==
-X-Gm-Message-State: AGi0PubWp/V6o2aQ7GwBkh+KVw4s/LZUSu88mbrwIjlPkDDmq8bmukur
-        QIVEe0AxN5I72KnWm8fI6/iAkw==
-X-Google-Smtp-Source: APiQypIgY9efFSF0nGqyq4XrnljhNDsb8eVxK3UTxH/mnTcO3+iTBEtSUKooI7eOyQJMhEFKWznCZA==
-X-Received: by 2002:a17:902:b617:: with SMTP id b23mr1717580pls.285.1585811976162;
-        Thu, 02 Apr 2020 00:19:36 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x70sm2957375pfc.21.2020.04.02.00.19.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Apr 2020 00:19:35 -0700 (PDT)
-Date:   Thu, 2 Apr 2020 00:19:34 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Adam Zabrocki <pi3@pi3.com.pl>, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, Jann Horn <jannh@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] signal: Extend exec_id to 64bits
-Message-ID: <202004020019.1F1EEC3669@keescook>
-References: <20200324215049.GA3710@pi3.com.pl>
- <202003291528.730A329@keescook>
- <87zhbvlyq7.fsf_-_@x220.int.ebiederm.org>
-MIME-Version: 1.0
+ d=marvell.onmicrosoft.com; s=selector1-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yqa6Mt4S+VU9X1Jl955IlU2NQVCoIdpr0JJtDTApcPo=;
+ b=as2Apy987+hK0DCTGBMqIz+AwL7n4NngJoHD7yOdxiFUtpuzmFCTsU/Pj2esYzGcZvvD66Xj+OsXRLP7+vNfq4jxrazE4Rq6TqMcRrpcxx7vSHJElQKddcDL6x/JMvuSRzqsabSGFtP2EvBJYWwtrTTAkqnCK2BoBMteS2kvzAA=
+Received: from BYAPR18MB2661.namprd18.prod.outlook.com (2603:10b6:a03:136::26)
+ by BYAPR18MB2807.namprd18.prod.outlook.com (2603:10b6:a03:111::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.20; Thu, 2 Apr
+ 2020 07:20:16 +0000
+Received: from BYAPR18MB2661.namprd18.prod.outlook.com
+ ([fe80::78a2:38df:6c52:a953]) by BYAPR18MB2661.namprd18.prod.outlook.com
+ ([fe80::78a2:38df:6c52:a953%3]) with mapi id 15.20.2856.019; Thu, 2 Apr 2020
+ 07:20:16 +0000
+Date:   Thu, 2 Apr 2020 09:20:06 +0200
+From:   Robert Richter <rrichter@marvell.com>
+To:     Sherry Sun <sherry.sun@nxp.com>
+CC:     "bp@alien8.de" <bp@alien8.de>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "manish.narani@xilinx.com" <manish.narani@xilinx.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Frank Li <frank.li@nxp.com>
+Subject: Re: [PATCH v2 4/4] EDAC: synopsys: Add useful debug and output
+ information for 64bit systems
+Message-ID: <20200402072005.ma6etmns2pdzuqaw@rric.localdomain>
+References: <1585726749-13039-1-git-send-email-sherry.sun@nxp.com>
+ <1585726749-13039-5-git-send-email-sherry.sun@nxp.com>
+ <20200401105647.hszgxzt2uedqofth@rric.localdomain>
+ <VI1PR04MB4960BEC8A60876A543A92ED692C90@VI1PR04MB4960.eurprd04.prod.outlook.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87zhbvlyq7.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <VI1PR04MB4960BEC8A60876A543A92ED692C90@VI1PR04MB4960.eurprd04.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-ClientProxiedBy: HE1PR1001CA0015.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:3:f7::25) To BYAPR18MB2661.namprd18.prod.outlook.com
+ (2603:10b6:a03:136::26)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from rric.localdomain (31.208.96.227) by HE1PR1001CA0015.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:3:f7::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.15 via Frontend Transport; Thu, 2 Apr 2020 07:20:13 +0000
+X-Originating-IP: [31.208.96.227]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d99c4bce-78e4-4e9d-254e-08d7d6d64ac4
+X-MS-TrafficTypeDiagnostic: BYAPR18MB2807:
+X-Microsoft-Antispam-PRVS: <BYAPR18MB2807671FC6FCAE592B2E3C21D9C60@BYAPR18MB2807.namprd18.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
+X-Forefront-PRVS: 0361212EA8
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR18MB2661.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(39860400002)(136003)(396003)(346002)(376002)(366004)(316002)(478600001)(9686003)(7696005)(55016002)(8676002)(66946007)(8936002)(66476007)(86362001)(66556008)(6506007)(54906003)(81166006)(5660300002)(6916009)(1076003)(4326008)(53546011)(2906002)(186003)(16526019)(81156014)(6666004)(7416002)(52116002)(956004)(26005);DIR:OUT;SFP:1101;
+Received-SPF: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PLwIGf3u1lnwypM7Y1ALP2d5IfCWDOHzuodd0RjBkiicJvxmyTVoqKS92bw23ZpNlOpZIa7ribjL/GwYKi96DKA8gj8ekdtpaXN8FtEyjYURmHiVfKsUFvHxlcXVjDKV+u1dDHChTHze/EZY5uXIKeC0LcOXsb1qNUBn6PPX8wcEeRM0CUTmqoZ1I5f6zWZusDFJJ9MFdVgDKMszc38DhKmSim60LNfj2WFbi04SixTju1OSP/4/n2udZ3IrYBkVi/pNB5OFYTbiCM9/cBXStuEAgcaQa6G38bmkFO2LjI8PLK54+WcNcNalyZnNkiMRG9MINyjqiz+qMbq/ixHNmu1oM1kyLB4J6opiUwh72fJS0z0NzNiWnpeCrw+xXY/9JdFCKFqIjyC9kREj+jI7Z7wGhlXqTxjPtZz7bKgdxyHQNHzCeyrr+lDEB8tQKI4Q
+X-MS-Exchange-AntiSpam-MessageData: XoAS5EL4OqbiRHXqxRsqlEZMob0nQErJLoUgWaWR++wV7U4CQe+pk8ULbs3mXOssMqeGSfTOVlNmaJ3qR5Me/aDqwJNw2Iq3B02/uj/dK037pniTsgrX3TBQQApEBM10gbSz+PiDXcts7/xoaua6BQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: d99c4bce-78e4-4e9d-254e-08d7d6d64ac4
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2020 07:20:16.6945
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Sz1y7qI2KtcXoHwF4ogwwZAwWiDN8gRDwIEWD2fNYbBPwgXGZGC1zJSvep3Igfx3Ec8WFYg4j2b4vUfnC+4SlA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR18MB2807
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-01_04:2020-03-31,2020-04-01 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 03:47:44PM -0500, Eric W. Biederman wrote:
-> 
-> Replace the 32bit exec_id with a 64bit exec_id to make it impossible
-> to wrap the exec_id counter.  With care an attacker can cause exec_id
-> wrap and send arbitrary signals to a newly exec'd parent.  This
-> bypasses the signal sending checks if the parent changes their
-> credentials during exec.
-> 
-> The severity of this problem can been seen that in my limited testing
-> of a 32bit exec_id it can take as little as 19s to exec 65536 times.
-> Which means that it can take as little as 14 days to wrap a 32bit
-> exec_id.  Adam Zabrocki has succeeded wrapping the self_exe_id in 7
-> days.  Even my slower timing is in the uptime of a typical server.
-> Which means self_exec_id is simply a speed bump today, and if exec
-> gets noticably faster self_exec_id won't even be a speed bump.
-> 
-> Extending self_exec_id to 64bits introduces a problem on 32bit
-> architectures where reading self_exec_id is no longer atomic and can
-> take two read instructions.  Which means that is is possible to hit
-> a window where the read value of exec_id does not match the written
-> value.  So with very lucky timing after this change this still
-> remains expoiltable.
-> 
-> I have updated the update of exec_id on exec to use WRITE_ONCE
-> and the read of exec_id in do_notify_parent to use READ_ONCE
-> to make it clear that there is no locking between these two
-> locations.
-> 
-> Link: https://lore.kernel.org/kernel-hardening/20200324215049.GA3710@pi3.com.pl
-> Fixes: 2.3.23pre2
-> Cc: stable@vger.kernel.org
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+On 01.04.20 14:32:58, Sherry Sun wrote:
+> > From: Robert Richter <rrichter@marvell.com>
+> > On 01.04.20 15:39:09, Sherry Sun wrote:
 
-Thanks for chasing this down. :)
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
-> ---
+> > > --- a/drivers/edac/synopsys_edac.c
+> > > +++ b/drivers/edac/synopsys_edac.c
+> > > @@ -278,18 +278,22 @@
+> > >   * @col:	Column number.
+> > >   * @bank:	Bank number.
+> > >   * @bitpos:	Bit position.
+> > > - * @data:	Data causing the error.
+> > > + * @data_low:	Low bit data causing the error.
+> > > + * @data_high:	High bit data causing the error(used for 64 bit
+> > systems).
+> > >   * @bankgrpnr:	Bank group number.
+> > >   * @blknr:	Block number.
+> > > + * @syndrome:	Syndrome of the error.
+> > >   */
+> > >  struct ecc_error_info {
+> > >  	u32 row;
+> > >  	u32 col;
+> > >  	u32 bank;
+> > >  	u32 bitpos;
+> > > -	u32 data;
+> > > +	u32 data_low;
+> > > +	u32 data_high;
+> > 
+> > Where are 16, 32 and 64 bit widths. You could handle them all the same in a
+> > u64.
+> > 
+> > If I am not wrong, the width is fix for the whole mci. So you could create
+> > various .get_error_info() functions depending on the data width without run
+> > time width checks.
+> > 
 > 
-> Linus would you prefer to take this patch directly or I could put it in
-> a brach and send you a pull request.
->  
->  fs/exec.c             | 2 +-
->  include/linux/sched.h | 4 ++--
->  kernel/signal.c       | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 0e46ec57fe0a..d55710a36056 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1413,7 +1413,7 @@ void setup_new_exec(struct linux_binprm * bprm)
->  
->  	/* An exec changes our domain. We are no longer part of the thread
->  	   group */
-> -	current->self_exec_id++;
-> +	WRITE_ONCE(current->self_exec_id, current->self_exec_id + 1);
->  	flush_signal_handlers(current, 0);
->  }
->  EXPORT_SYMBOL(setup_new_exec);
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 04278493bf15..0323e4f0982a 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -939,8 +939,8 @@ struct task_struct {
->  	struct seccomp			seccomp;
->  
->  	/* Thread group tracking: */
-> -	u32				parent_exec_id;
-> -	u32				self_exec_id;
-> +	u64				parent_exec_id;
-> +	u64				self_exec_id;
->  
->  	/* Protection against (de-)allocation: mm, files, fs, tty, keyrings, mems_allowed, mempolicy: */
->  	spinlock_t			alloc_lock;
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index 9ad8dea93dbb..5383b562df85 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -1926,7 +1926,7 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
->  		 * This is only possible if parent == real_parent.
->  		 * Check if it has changed security domain.
->  		 */
-> -		if (tsk->parent_exec_id != tsk->parent->self_exec_id)
-> +		if (tsk->parent_exec_id != READ_ONCE(tsk->parent->self_exec_id))
->  			sig = SIGCHLD;
->  	}
->  
-> -- 
-> 2.20.1
-> 
+> Yes, here we can use u64. Will correct it in v3.
+> For the zynq, it's 16-bit bus width, for imx8mp, it's 64-bit bus width.
+> But for zynqmp, it's optional between 32-bit and 64-bit bus width,
+> So we had better run time check the bus width, what do you think?
 
--- 
-Kees Cook
+I am wondering a bit here. *get_dtype() is used only in init_csrows()
+which sets up the mci. So it will be a fix value all the time after
+init. With that you easily can setup functions depending on the width,
+alternatively the width could be stored in struct synps_platform_data
+or struct synps_edac_priv.
+
+> 
+> > >  	u32 bankgrpnr;
+> > >  	u32 blknr;
+> > > +	u32 syndrome;
+> > >  };
+
+> > @@ -480,20
+> > > +559,27 @@ static void handle_error(struct mem_ctl_info *mci, struct
+> > > synps_ecc_status *p)  {
+> > >  	struct synps_edac_priv *priv = mci->pvt_info;
+> > >  	struct ecc_error_info *pinf;
+> > > +	int n;
+> > >
+> > >  	if (p->ce_cnt) {
+> > >  		pinf = &p->ceinfo;
+> > >  		if (priv->p_data->quirks & DDR_ECC_INTR_SUPPORT) {
+> > > -			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+> > > -				 "DDR ECC error type:%s Row %d Bank %d
+> > BankGroup Number %d Block Number %d Bit Position: %d Data: 0x%08x",
+> > > -				 "CE", pinf->row, pinf->bank,
+> > > -				 pinf->bankgrpnr, pinf->blknr,
+> > > -				 pinf->bitpos, pinf->data);
+> > > +			n = snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+> > > +				     "DDR ECC error type:%s Row %d Bank %d
+> > BankGroup Number %d Block Number %d Bit Position: %d Data: 0x%08x",
+> > > +				     "CE", pinf->row, pinf->bank,
+> > > +				     pinf->bankgrpnr, pinf->blknr,
+> > > +				     pinf->bitpos, pinf->data_low);
+> > > +
+> > > +			if (zynqmp_get_dtype(priv->baseaddr) == DEV_X8)
+> > 
+> > This is zynqmp specific, right? but you call it in the generic function
+> > handle_error().
+> 
+> Yes, although handle_error() is a generic function, 
+> but this operation is checked by priv->p_data->quirks,
+> so here is zynqmp and imx8mp specific.
+
+Naah, this is a bit hacky, just make 2 variants of handlers and set
+them up during init. Storing the width in some private data would be
+an alternative.
+
+Thanks,
+
+-Robert
+
+> 
+> Best regards
+> Sherry Sun
+> 
+> > 
+> > -Robert
+> > 
+> > > +				snprintf(priv->message + n,
+> > > +					 SYNPS_EDAC_MSG_SIZE - n,
+> > > +					 " Data_high: 0x%08x Syndrome:
+> > 0x%08x",
+> > > +					 pinf->data_high, pinf->syndrome);
+> > >  		} else {
+> > >  			snprintf(priv->message, SYNPS_EDAC_MSG_SIZE,
+> > >  				 "DDR ECC error type:%s Row %d Bank %d
+> > Col %d Bit Position: %d Data: 0x%08x",
+> > >  				 "CE", pinf->row, pinf->bank, pinf->col,
+> > > -				 pinf->bitpos, pinf->data);
+> > > +				 pinf->bitpos, pinf->data_low);
+> > >  		}
+> > >
+> > >  		edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci,
