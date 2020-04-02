@@ -2,89 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05D2919BD63
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97E1819BD5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387712AbgDBIQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 04:16:19 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50548 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387574AbgDBIQS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:16:18 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328DQwQ143813;
-        Thu, 2 Apr 2020 08:16:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- message-id : date : from : to : cc : subject : references : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=O6BIiuKyZpO6P/IQ7LqOJjcZsm3+4lrzYTFGZULwaZg=;
- b=ApHM7iN40FK5+SS6+xuNNpsMZf22crsmUKtWfIySGUSce5912uZPuHlBsEpr+M/GG+OM
- gcOUdCfYMbvJK0FAv7KsPq5+ntPeyPWHkRnEl5FqbexJBz+VmgI+0/8/xO8oTaOC/4dw
- KlhEBg9abY1TolO3X1sYzBNT4OgP+hAHonRAK6YR7SWqZmL2Mu1uxn1oUR9Ifm+i8J3U
- 2xDuwyBmtvxi65vb8zqB1bIFofoiLQUoCTTwdGlXm4elqVi71pIZq06YQsIQ3wG6RN6e
- gqT8KYg+xuCBy/m2Ju7EMeWtBiBd0GtnZfoLiAtLlQaLTZwLYpqK6KKK/DdmgLUDjpJf AA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 303aqhta04-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 Apr 2020 08:16:09 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328CQ1r076164;
-        Thu, 2 Apr 2020 08:14:08 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 302g4v4hyu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 Apr 2020 08:14:08 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0328E6Dw020581;
-        Thu, 2 Apr 2020 08:14:06 GMT
-Received: from kadam (/41.57.98.10) by default (Oracle Beehive Gateway v4.0)
- with ESMTP ; Thu, 02 Apr 2020 01:12:19 -0700
-USER-AGENT: Mutt/1.9.4 (2018-02-28)
+        id S2387667AbgDBINw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 04:13:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726841AbgDBINw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 04:13:52 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD42F2078B;
+        Thu,  2 Apr 2020 08:13:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585815232;
+        bh=MfvQQkIj2OFoUDYO9jUXwG7FM99uzokTU3uHkH5wg0k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Lq/LJrlM2qvKHHPYYTWR7RsC++8+oesBipjopjmq3dFbpRSnuBHDI9xa8/9afO/s1
+         GhDRHhUSi7sdxX9Ps1865zTSvyjC/n+k1bjKPrVBosVPvvP/Fg/jToNU2O/XicfKJH
+         /iEcLGvV4zdP4OlFXxZOt0Y4+V/NH4W7D6Ki5VZc=
+Date:   Thu, 2 Apr 2020 09:13:47 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, hsinyi@chromium.org,
+        geert+renesas@glider.be, swboyd@chromium.org, robh@kernel.org,
+        tytso@mit.edu
+Subject: Re: [PATCH] Documentation: dt-bindings: Document 'rng-seed' for
+ /chosen
+Message-ID: <20200402081346.GA2548@willie-the-truck>
+References: <20200402033640.12465-1-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Message-ID: <20200402081211.GC2001@kadam>
-Date:   Thu, 2 Apr 2020 01:12:12 -0700 (PDT)
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Aiman Najjar <aiman.najjar@hurranet.com>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8712: fix checkpatch warnings
-References: <20200326055616.GA3718@kernel-dev>
-In-Reply-To: <20200326055616.GA3718@kernel-dev>
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 suspectscore=0
- mlxscore=0 spamscore=0 malwarescore=0 mlxlogscore=851 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004020074
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 clxscore=1011
- malwarescore=0 impostorscore=0 mlxlogscore=905 spamscore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004020074
+Content-Disposition: inline
+In-Reply-To: <20200402033640.12465-1-f.fainelli@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 01:56:16AM -0400, Aiman Najjar wrote:
-> @@ -350,7 +351,7 @@ static int xmitframe_addmic(struct _adapter *padapter,
->  	struct	sta_info *stainfo;
->  	struct	qos_priv *pqospriv = &(padapter->mlmepriv.qospriv);
->  	struct	pkt_attrib  *pattrib = &pxmitframe->attrib;
-> -	struct	security_priv *psecuritypriv = &padapter->securitypriv;
-> +	struct	security_priv *psecpriv = &padapter->securitypriv;
+Hi Florian,
 
-This patch is doing too many things of course, but the other problem is
-that when you're renaming variables we don't what them to start with "p"
-to mean that they are a pointer.  "psecpriv" should just be "secpriv".
-That name is still kind of rubbish, but it's not against the rules like
-starting with a p for pointer.
+On Wed, Apr 01, 2020 at 08:36:40PM -0700, Florian Fainelli wrote:
+> The /chosen node can have a 'rng-seed' property read as a u32 quantity
+> which would contain a random number provided by the boot agent. This is
+> useful in configurations where the kernel does not have access to a
+> random number generator.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/chosen.txt | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 
-regards,
-dan carpenter
+Thanks for doing this; I realised it was undocumented the other day when I
+tried to look it up myself.
 
+> diff --git a/Documentation/devicetree/bindings/chosen.txt b/Documentation/devicetree/bindings/chosen.txt
+> index 45e79172a646..126b31eecfeb 100644
+> --- a/Documentation/devicetree/bindings/chosen.txt
+> +++ b/Documentation/devicetree/bindings/chosen.txt
+> @@ -28,6 +28,19 @@ mode) when EFI_RNG_PROTOCOL is supported, it will be overwritten by
+>  the Linux EFI stub (which will populate the property itself, using
+>  EFI_RNG_PROTOCOL).
+>  
+> +rng-seed
+> +--------
+> +
+> +This property is used to initialize the kernel's entropy pool from a
+> +trusted boot agent capable of providing a random number. It is parsed
+> +as a u32 value, e.g.
+
+Are you sure about this being limited to a u32 value? I thought you could
+pass an arbitrary-length value here.
+
+Will
