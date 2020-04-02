@@ -2,133 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E04C19BBBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 08:35:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C743F19BBD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 08:40:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbgDBGfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 02:35:13 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37880 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbgDBGfN (ORCPT
+        id S2387414AbgDBGkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 02:40:41 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:36996 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732537AbgDBGkk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 02:35:13 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: myjosserand)
-        with ESMTPSA id AC1E528ED5B
-Subject: Re: [PATCH v2 2/2] clk: rockchip: rk3288: Handle clock tree for
- rk3288w
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        kever.yang@rock-chips.com
-References: <20200401153513.423683-1-mylene.josserand@collabora.com>
- <20200401153513.423683-3-mylene.josserand@collabora.com>
- <CAMuHMdXvFOKqmZ-MLJV4SAeLN-PDzqPvMvbVpcD=jyip9tbdnA@mail.gmail.com>
-From:   Mylene Josserand <mylene.josserand@collabora.com>
-Message-ID: <7c21a7d6-a24f-dbc6-4eaa-548ddfc0f73e@collabora.com>
-Date:   Thu, 2 Apr 2020 08:35:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXvFOKqmZ-MLJV4SAeLN-PDzqPvMvbVpcD=jyip9tbdnA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 2 Apr 2020 02:40:40 -0400
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 02 Apr 2020 12:09:57 +0530
+Received: from c-sanm-linux.qualcomm.com ([10.206.25.31])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 02 Apr 2020 12:09:36 +0530
+Received: by c-sanm-linux.qualcomm.com (Postfix, from userid 2343233)
+        id 3238719F8; Thu,  2 Apr 2020 12:09:36 +0530 (IST)
+From:   Sandeep Maheswaram <sanm@codeaurora.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>
+Subject: [PATCH v5 0/3] Add QMP V3 USB3 PHY support for SC7180
+Date:   Thu,  2 Apr 2020 12:08:51 +0530
+Message-Id: <1585809534-11244-1-git-send-email-sanm@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Add QMP V3 USB3 PHY entries for SC7180 in phy driver and
+device tree bindings.
 
-On 4/1/20 6:56 PM, Geert Uytterhoeven wrote:
-> Hi Mylène,
-> 
-> On Wed, Apr 1, 2020 at 5:35 PM Mylène Josserand
-> <mylene.josserand@collabora.com> wrote:
->> The revision rk3288w has a different clock tree about
->> "hclk_vio" clock, according to the BSP kernel code.
->>
->> This patch handles this difference by detecting which SOC it is
->> and creating the div accordingly. Because we are using
->> soc_device_match function, we need to delay the registration
->> of this clock later than others to have time to get SoC revision.
->>
->> Otherwise, because of CLK_OF_DECLARE uses, clock tree will be
->> created too soon to have time to detect SoC's revision.
->>
->> Signed-off-by: Mylène Josserand <mylene.josserand@collabora.com>
-> 
-> Thanks for your patch!
+changes in v5:
+*Addressed comments from Matthias in yaml file.
+*Dropped PATCH 4/4 as it is landed in linux-next. 
 
-Thanks for your review!
+changes in v4:
+*Addressed comments from Matthias and Rob in yaml file.
 
-> 
->> --- a/drivers/clk/rockchip/clk-rk3288.c
->> +++ b/drivers/clk/rockchip/clk-rk3288.c
->> @@ -914,10 +923,15 @@ static struct syscore_ops rk3288_clk_syscore_ops = {
->>          .resume = rk3288_clk_resume,
->>   };
->>
->> +static const struct soc_device_attribute rk3288w[] = {
->> +       { .soc_id = "RK32xx", .revision = "RK3288w" },
->> +       { /* sentinel */ }
->> +};
->> +
->> +static struct rockchip_clk_provider *ctx;
->> +
->>   static void __init rk3288_clk_init(struct device_node *np)
->>   {
->> -       struct rockchip_clk_provider *ctx;
->> -
->>          rk3288_cru_base = of_iomap(np, 0);
->>          if (!rk3288_cru_base) {
->>                  pr_err("%s: could not map cru region\n", __func__);
->> @@ -955,3 +969,17 @@ static void __init rk3288_clk_init(struct device_node *np)
->>          rockchip_clk_of_add_provider(np, ctx);
->>   }
->>   CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
->> +
->> +static int __init rk3288_hclkvio_register(void)
->> +{
-> 
-> This function will always be called, even when running a (multi-platform)
-> kernel on a non-rk3288 platform.  So you need some protection against
-> that.
+changes in v3:
+*Addressed Rob's comments in yaml file.
+*Sepearated the SC7180 support in yaml patch.
+*corrected the phy reset entries in device tree.
 
-erg, good point, I didn't think about that.
+changes in v2:
+*Remove global phy reset in QMP PHY.
+*Convert QMP PHY bindings to yaml.
 
-> 
->> +       /* Check for the rk3288w revision as clock tree is different */
->> +       if (soc_device_match(rk3288w))
->> +               rockchip_clk_register_branches(ctx, rk3288w_hclkvio_branch,
->> +                                              ARRAY_SIZE(rk3288w_hclkvio_branch));
->> +       else
->> +               rockchip_clk_register_branches(ctx, rk3288_hclkvio_branch,
->> +                                              ARRAY_SIZE(rk3288_hclkvio_branch));
-> 
-> Note that soc_device_match() returns a struct soc_device_attribute
-> pointer.  If you would store the rockchip_clk_branch array pointer and
-> size in rk3288w[...].data (i.e. a pointer to a struct containing that
-> info), for both the r83288w and normal rk3288 variants, you could
-> simplify this to:
-> 
->      attr = soc_device_match(rk3288w);
->      if (attr) {
->              struct rk3288_branch_array *p = attr->data;
->              rockchip_clk_register_branches(ctx, p->branches, p->len);
->      }
-> 
-> That would handle the not-running-on-rk3288 issue as well.
+Sandeep Maheswaram (3):
+  dt-bindings: phy: qcom,qmp: Convert QMP PHY bindings to yaml
+  dt-bindings: phy: qcom,qmp: Add support for SC7180
+  phy: qcom-qmp: Add QMP V3 USB3 PHY support for SC7180
 
-Nice, thank you for the explanation and the code, very useful :)
+ .../devicetree/bindings/phy/qcom,qmp-phy.yaml      | 336 +++++++++++++++++++++
+ .../devicetree/bindings/phy/qcom-qmp-phy.txt       | 242 ---------------
+ drivers/phy/qualcomm/phy-qcom-qmp.c                |  38 +++
+ 3 files changed, 374 insertions(+), 242 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom,qmp-phy.yaml
+ delete mode 100644 Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
 
-Best regards,
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
-Mylène
