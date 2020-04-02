@@ -2,108 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51D6619BD59
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:10:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05D2919BD63
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:16:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387687AbgDBIKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 04:10:50 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43916 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387449AbgDBIKu (ORCPT
+        id S2387712AbgDBIQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 04:16:19 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50548 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387574AbgDBIQS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:10:50 -0400
-Received: by mail-pg1-f195.google.com with SMTP id g20so1486210pgk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 01:10:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding;
-        bh=rr2+JiyOTzs2D6VximK33Aonne21icc+eHi8FG/OnsQ=;
-        b=OHFqzXVgCRW79+evfsGJ+kuZ94Ph3DbjI/cTcvPV402yG5nto9O5kiCL6nH1/ilwad
-         P6532gUewqNBMEgllX6tCRBOtx3JEva1KlJfeC0UgLZdWSfZwkIgEzx0gn3MZuq/clpu
-         xzv5W/9bmWHbnCVGIKEOWh01uMHGtNQu0mxXY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding;
-        bh=rr2+JiyOTzs2D6VximK33Aonne21icc+eHi8FG/OnsQ=;
-        b=icvrjpUY0MOAWC1bSXsNV+F5iIz5Ehsao8eCefPZ1tQGP1/x8afU/1+W9KOWHY6slC
-         ZgepAgnCBEp9qbQq77N6LbZWVFYCzyGs+4k6HK3C4ZkwbSBTPv64rCAP22PuWLLgQAof
-         WcJ4a7aDO30rPglHhn4xXDU8mGL/hNRt+fzQ3CwupfFp+GrCQfu+5aty0MlwswTjuk5/
-         jeOBBlz5WpnFFHDB0Ax5gLQH8SWgs2FAL3bGfw0i0IIZ+x4Omk/oY41mHDsfb5Acc157
-         4v+JvDuHkNnh2U/uiSkreCNwV6zbXA23KcxirPc8Xax0B/3XsZwkB8JGhC9IsYJDW/cD
-         zZ9w==
-X-Gm-Message-State: AGi0PuZwzf1JCkyZHy01nHdVj51hYbLG69cgeUNOUKBNk5qYQE2w2sTT
-        z0ityQkDKWy9mBSgzrYhD+z2ug==
-X-Google-Smtp-Source: APiQypJ1LS6Q4XLKxKhj4KtCkhkkBK2oMRUFgRtWym8HkRx+R3SgX2/W68HhQ4MfO49pRYbr+N4Gmw==
-X-Received: by 2002:a63:cf50:: with SMTP id b16mr2200848pgj.189.1585815049479;
-        Thu, 02 Apr 2020 01:10:49 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i15sm2908549pgc.74.2020.04.02.01.10.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Apr 2020 01:10:48 -0700 (PDT)
-Date:   Thu, 2 Apr 2020 01:10:47 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     kernel-hardening@lists.openwall.com
-Cc:     Alexander Popov <alex.popov@linux.com>,
-        Emese Revfy <re.emese@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] gcc-plugins/stackleak: Avoid assignment for unused macro
- argument
-Message-ID: <202004020103.731F201@keescook>
+        Thu, 2 Apr 2020 04:16:18 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328DQwQ143813;
+        Thu, 2 Apr 2020 08:16:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : references : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=O6BIiuKyZpO6P/IQ7LqOJjcZsm3+4lrzYTFGZULwaZg=;
+ b=ApHM7iN40FK5+SS6+xuNNpsMZf22crsmUKtWfIySGUSce5912uZPuHlBsEpr+M/GG+OM
+ gcOUdCfYMbvJK0FAv7KsPq5+ntPeyPWHkRnEl5FqbexJBz+VmgI+0/8/xO8oTaOC/4dw
+ KlhEBg9abY1TolO3X1sYzBNT4OgP+hAHonRAK6YR7SWqZmL2Mu1uxn1oUR9Ifm+i8J3U
+ 2xDuwyBmtvxi65vb8zqB1bIFofoiLQUoCTTwdGlXm4elqVi71pIZq06YQsIQ3wG6RN6e
+ gqT8KYg+xuCBy/m2Ju7EMeWtBiBd0GtnZfoLiAtLlQaLTZwLYpqK6KKK/DdmgLUDjpJf AA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 303aqhta04-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Apr 2020 08:16:09 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328CQ1r076164;
+        Thu, 2 Apr 2020 08:14:08 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 302g4v4hyu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Apr 2020 08:14:08 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0328E6Dw020581;
+        Thu, 2 Apr 2020 08:14:06 GMT
+Received: from kadam (/41.57.98.10) by default (Oracle Beehive Gateway v4.0)
+ with ESMTP ; Thu, 02 Apr 2020 01:12:19 -0700
+USER-AGENT: Mutt/1.9.4 (2018-02-28)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Message-ID: <20200402081211.GC2001@kadam>
+Date:   Thu, 2 Apr 2020 01:12:12 -0700 (PDT)
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Aiman Najjar <aiman.najjar@hurranet.com>
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8712: fix checkpatch warnings
+References: <20200326055616.GA3718@kernel-dev>
+In-Reply-To: <20200326055616.GA3718@kernel-dev>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 suspectscore=0
+ mlxscore=0 spamscore=0 malwarescore=0 mlxlogscore=851 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004020074
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 clxscore=1011
+ malwarescore=0 impostorscore=0 mlxlogscore=905 spamscore=0 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004020074
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With GCC version >= 8, the cgraph_create_edge() macro argument using
-"frequency" goes unused. Instead of assigning a temporary variable for
-the argument, pass the compute_call_stmt_bb_frequency() call directly
-as the macro argument so that it will just not be uncalled when it is
-not wanted by the macros.
+On Thu, Mar 26, 2020 at 01:56:16AM -0400, Aiman Najjar wrote:
+> @@ -350,7 +351,7 @@ static int xmitframe_addmic(struct _adapter *padapter,
+>  	struct	sta_info *stainfo;
+>  	struct	qos_priv *pqospriv = &(padapter->mlmepriv.qospriv);
+>  	struct	pkt_attrib  *pattrib = &pxmitframe->attrib;
+> -	struct	security_priv *psecuritypriv = &padapter->securitypriv;
+> +	struct	security_priv *psecpriv = &padapter->securitypriv;
 
-Silences the warning:
+This patch is doing too many things of course, but the other problem is
+that when you're renaming variables we don't what them to start with "p"
+to mean that they are a pointer.  "psecpriv" should just be "secpriv".
+That name is still kind of rubbish, but it's not against the rules like
+starting with a p for pointer.
 
-scripts/gcc-plugins/stackleak_plugin.c:54:6: warning: variable ‘frequency’ set but not used [-Wunused-but-set-variable]
+regards,
+dan carpenter
 
-Now builds cleanly with gcc-7 and gcc-9. Both boot and pass
-STACKLEAK_ERASING LKDTM test.
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- scripts/gcc-plugins/stackleak_plugin.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/scripts/gcc-plugins/stackleak_plugin.c b/scripts/gcc-plugins/stackleak_plugin.c
-index dbd37460c573..cc75eeba0be1 100644
---- a/scripts/gcc-plugins/stackleak_plugin.c
-+++ b/scripts/gcc-plugins/stackleak_plugin.c
-@@ -51,7 +51,6 @@ static void stackleak_add_track_stack(gimple_stmt_iterator *gsi, bool after)
- 	gimple stmt;
- 	gcall *stackleak_track_stack;
- 	cgraph_node_ptr node;
--	int frequency;
- 	basic_block bb;
- 
- 	/* Insert call to void stackleak_track_stack(void) */
-@@ -68,9 +67,9 @@ static void stackleak_add_track_stack(gimple_stmt_iterator *gsi, bool after)
- 	bb = gimple_bb(stackleak_track_stack);
- 	node = cgraph_get_create_node(track_function_decl);
- 	gcc_assert(node);
--	frequency = compute_call_stmt_bb_frequency(current_function_decl, bb);
- 	cgraph_create_edge(cgraph_get_node(current_function_decl), node,
--			stackleak_track_stack, bb->count, frequency);
-+			stackleak_track_stack, bb->count,
-+			compute_call_stmt_bb_frequency(current_function_decl, bb));
- }
- 
- static bool is_alloca(gimple stmt)
--- 
-2.20.1
-
-
--- 
-Kees Cook
