@@ -2,112 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEE5619BD75
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BBF819BD7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:19:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387724AbgDBISl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 04:18:41 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45752 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387673AbgDBISk (ORCPT
+        id S2387868AbgDBITX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 04:19:23 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37997 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387716AbgDBITW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:18:40 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r14so1390537pfl.12
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 01:18:40 -0700 (PDT)
+        Thu, 2 Apr 2020 04:19:22 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c21so1417893pfo.5;
+        Thu, 02 Apr 2020 01:19:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=hpN1+n5xYd8iTmuJk5my6MaX1tvwBISzriW+LumWFUk=;
-        b=ShO3r9RVFJZ69eJ6byI7q2iz1t91raVXjWEe0QObFryEOAOkMf+jsr93cWzT2A07ay
-         tOt9WfOyads4m3eR2gKxGs+lp/CkGNsVymK8DVt+GBfZkqswyJCJEMSLyklId+ltw9bg
-         /SMxHpXFUrXKGVqyyDgp6/5QGvCoFedfuQIhg=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=VcLk53K2T0017oS2ltgvgf+ueg1rt2M43xBurnp4rmU=;
+        b=FW8wv0FCbof6bO/HEK7jdkaKxTVJsLvyf9QNGHnzUVj1GBkzGjEcfm3PXCCxjws053
+         3LuXI+xR4ZDOJHjjZpbt7vN0pun72MU/V0vkjic75waC0W4vPCCYdBFUJo70GqAN/jnZ
+         1C/sKkFzH2snO2jcQt6CEhxZAZudceQDXpk+HlWaycF4J8ZQ0D4flJEYU2zPVx6YUY+r
+         fTp4VdHYQO061q3WwMkn5NZ+X2/i1mEF86k+0kXKcQ6nT8KrT+8JtES3/+N49lLKxqsx
+         xgsuHKur4YfKBBjCrCOKh4lQQirzsxkoSsniI9NnYhN1rk5Gbvp97r0nMBLhOC//jsWY
+         1Isw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=hpN1+n5xYd8iTmuJk5my6MaX1tvwBISzriW+LumWFUk=;
-        b=U8Y9tfACjXiTfWgWRpqFpzGJFTn/lNm3x+a+gZNM3UPBjAS0eHzPLJPwpr64nvMkze
-         9SGY5JL1oFa0vYJpLw8jDFM1aGzjgh7JgPgGeCZRwoaxlHtxtfjo85q41qfhxbxVK2Br
-         PZFr6ryiXIDOCGzNEGzur+lt2VtyCNofkITczMAxUX+v4ievxjV8aaHR3ByThFutkpDW
-         1CAIeSaD5HIw1S9d+uIaM8Hdd6atulT0TE+g1GiVSzbuCLu2nU7AcGd+OHPNvtzt3aDi
-         pq1G0pff3GRdaytiAhFratxfzOLna6DsLw2CN8q7Xg53nD1rD6pJ74jAFRXUACt0GCGv
-         tbxg==
-X-Gm-Message-State: AGi0PuYboF43T72EDqBjDJ46uAabukQwp4gfOIq/GHluQF8CQbbIZTzQ
-        cIuO4abOXc8/k8XpoiAe2fUpzw==
-X-Google-Smtp-Source: APiQypJGZejXGc9mrFy8cHSjQCYyLuOnjdp6HTJplaYQQdQOXUNLWSE37UneYZaXLMb8oNDqC1GelA==
-X-Received: by 2002:a62:64d5:: with SMTP id y204mr1940179pfb.227.1585815519516;
-        Thu, 02 Apr 2020 01:18:39 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id l9sm1340387pff.16.2020.04.02.01.18.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Apr 2020 01:18:38 -0700 (PDT)
-Date:   Thu, 2 Apr 2020 01:18:37 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kbuild@vger.kernel.org, clang-built-linux@googlegroups.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: mkcompile_h: Include $LD version in /proc/version
-Message-ID: <202004020117.6E434C035@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=VcLk53K2T0017oS2ltgvgf+ueg1rt2M43xBurnp4rmU=;
+        b=eO8LqmzoVHjQg2cMk9SCkx7didfRlIPCFiIh1q3k4Zs+pBkTdugt+yCbmQb33UpwwG
+         XZt+ilJ20GYxGFISfNOlFO45432EjW9LgNbQsHoAgOr7a2JF3v5n+3KDhyPASd7WlzAy
+         phxHVU6i+TwmwoDQ43OjrYBJQSfOiNsTfwfFhlyVjtJgDA+8aq6WoNZsa5v3wY5KMIZO
+         XBq8FNUet7efZN73DZevF6QLtbSMtcf/Jh/9yD+WC7BF1rKd6qz7Dzed+L9TRai5i+eM
+         zhUNp3OpXboWtZZ35jFnrD/qomuR7RqzCOURKdiXs2QmuEiQbvVuHzFdzAfyZcM7ZR3V
+         Lc5w==
+X-Gm-Message-State: AGi0PuZT3yBvB+sosjCQBz7esuuHdT1ow4EafVdyE/2RovHK5Zm+WIZR
+        m9SKJdE2aTslwM9gxuj5Xew=
+X-Google-Smtp-Source: APiQypJVOLMjPtKqXIsBFtNQVMOsJ7OmBQaXkc2Dn3TNb+VYodKyJpp3n0wpXQDPrPORjG1K4AO3nw==
+X-Received: by 2002:a63:735c:: with SMTP id d28mr2335726pgn.63.1585815561779;
+        Thu, 02 Apr 2020 01:19:21 -0700 (PDT)
+Received: from VM_0_35_centos.localdomain ([150.109.62.251])
+        by smtp.gmail.com with ESMTPSA id 135sm3292353pfu.207.2020.04.02.01.19.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Apr 2020 01:19:21 -0700 (PDT)
+From:   Qiujun Huang <hqjagain@gmail.com>
+To:     pkshih@realtek.com, kvalo@codeaurora.org
+Cc:     davem@davemloft.net, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Qiujun Huang <hqjagain@gmail.com>
+Subject: [PATCH] rtlwifi: rtl8723ae: fix spelling mistake "chang" -> "change"
+Date:   Thu,  2 Apr 2020 16:19:17 +0800
+Message-Id: <1585815557-20212-1-git-send-email-hqjagain@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When doing Clang builds of the kernel, it is possible to link with
-either ld.bfd (binutils) or ld.lld (LLVM), but it is not possible to
-discover this from a running kernel. Add the "$LD -v" output to
-/proc/version.
+There is a spelling mistake in a trace message. Fix it.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
 ---
- init/Makefile       | 2 +-
- scripts/mkcompile_h | 8 ++++++--
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/init/Makefile b/init/Makefile
-index 6246a06364d0..82c15bdb42d7 100644
---- a/init/Makefile
-+++ b/init/Makefile
-@@ -35,4 +35,4 @@ include/generated/compile.h: FORCE
- 	@$($(quiet)chk_compile.h)
- 	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/mkcompile_h $@	\
- 	"$(UTS_MACHINE)" "$(CONFIG_SMP)" "$(CONFIG_PREEMPT)"	\
--	"$(CONFIG_PREEMPT_RT)" "$(CC) $(KBUILD_CFLAGS)"
-+	"$(CONFIG_PREEMPT_RT)" "$(LD)" "$(CC) $(KBUILD_CFLAGS)"
-diff --git a/scripts/mkcompile_h b/scripts/mkcompile_h
-index 3a5a4b210c86..f98c07709370 100755
---- a/scripts/mkcompile_h
-+++ b/scripts/mkcompile_h
-@@ -6,7 +6,8 @@ ARCH=$2
- SMP=$3
- PREEMPT=$4
- PREEMPT_RT=$5
--CC=$6
-+LD=$6
-+CC=$7
- 
- vecho() { [ "${quiet}" = "silent_" ] || echo "$@" ; }
- 
-@@ -72,7 +73,10 @@ UTS_VERSION="$(echo $UTS_VERSION $CONFIG_FLAGS $TIMESTAMP | cut -b -$UTS_LEN)"
-   printf '#define LINUX_COMPILE_BY "%s"\n' "$LINUX_COMPILE_BY"
-   echo \#define LINUX_COMPILE_HOST \"$LINUX_COMPILE_HOST\"
- 
--  echo \#define LINUX_COMPILER \"`$CC -v 2>&1 | grep ' version ' | sed 's/[[:space:]]*$//'`\"
-+  CC_VERSION=$($CC -v 2>&1 | grep ' version ' | sed 's/[[:space:]]*$//')
-+  LD_VERSION=$($LD -v | head -n1 | sed 's/(compatible with [^)]*)//' \
-+		      | sed 's/[[:space:]]*$//')
-+  printf '#define LINUX_COMPILER "%s"\n' "$CC_VERSION, $LD_VERSION"
- } > .tmpcompile
- 
- # Only replace the real compile.h if the new one is different,
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c
+index 6801982..652d8ff 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/hal_btc.c
+@@ -131,7 +131,7 @@ static bool rtl8723e_dm_bt_is_same_coexist_state(struct ieee80211_hw *hw)
+ 	    (rtlpriv->btcoexist.previous_state_h ==
+ 	     rtlpriv->btcoexist.cstate_h)) {
+ 		RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_DMESG,
+-			 "[DM][BT], Coexist state do not chang!!\n");
++			 "[DM][BT], Coexist state do not change!!\n");
+ 		return true;
+ 	} else {
+ 		RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_DMESG,
 -- 
-2.20.1
+1.8.3.1
 
-
--- 
-Kees Cook
