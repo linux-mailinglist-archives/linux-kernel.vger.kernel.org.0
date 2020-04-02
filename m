@@ -2,44 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96C4519BEBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 11:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E31619BECA
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 11:41:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387749AbgDBJgg convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 2 Apr 2020 05:36:36 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:36764 "EHLO
+        id S2387800AbgDBJlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 05:41:02 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:36786 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbgDBJgg (ORCPT
+        with ESMTP id S1725965AbgDBJlC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 05:36:36 -0400
+        Thu, 2 Apr 2020 05:41:02 -0400
 Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1jJwGv-0000jL-VM; Thu, 02 Apr 2020 11:36:26 +0200
+        id 1jJwLF-0000q4-JB; Thu, 02 Apr 2020 11:40:53 +0200
 Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id E6FF1100D52; Thu,  2 Apr 2020 11:36:24 +0200 (CEST)
+        id CDF1C100D52; Thu,  2 Apr 2020 11:40:52 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jann Horn <jannh@google.com>,
-        Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>, amd-gfx@lists.freedesktop.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        "David \(ChunMing\) Zhou" <David1.Zhou@amd.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: AMD DC graphics display code enables -mhard-float, -msse, -msse2 without any visible FPU state protection
-In-Reply-To: <CAG48ez1nHt2BRApHPp2S6rd4kr3P2kFsgHvStUsW7rqHSJprgg@mail.gmail.com>
-References: <CAG48ez2Sx4ELkM94aD_h_J7K7KBOeuGmvZLKRkg3n_f2WoZ_cg@mail.gmail.com> <4c5fe55d-9db9-2f61-59b2-1fb2e1b45ed0@amd.com> <CAG48ez1nHt2BRApHPp2S6rd4kr3P2kFsgHvStUsW7rqHSJprgg@mail.gmail.com>
-Date:   Thu, 02 Apr 2020 11:36:24 +0200
-Message-ID: <87k12yns9z.fsf@nanos.tec.linutronix.de>
+To:     kernel test robot <lkp@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+        LKP <lkp@lists.01.org>
+Subject: Re: de8f5e4f2d ("lockdep: Introduce wait-type checks"): [   17.344674] EIP: default_idle
+In-Reply-To: <20200402081732.GM8179@shao2-debian>
+References: <20200402081732.GM8179@shao2-debian>
+Date:   Thu, 02 Apr 2020 11:40:52 +0200
+Message-ID: <87h7y2ns2j.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 X-Linutronix-Spam-Score: -1.0
 X-Linutronix-Spam-Level: -
 X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
@@ -48,136 +40,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jann Horn <jannh@google.com> writes:
-> On Thu, Apr 2, 2020 at 9:34 AM Christian König <christian.koenig@amd.com> wrote:
->> Am 02.04.20 um 04:34 schrieb Jann Horn:
->> > [x86 folks in CC so that they can chime in on the precise rules for
->> > this stuff]
-
-They are pretty simple.
-
-Any code using FPU needs to be completely isolated from regular code
-either by using inline asm or by moving it to a different compilation
-unit. The invocations need fpu_begin/end() of course.
-
->> > I noticed that several makefiles under drivers/gpu/drm/amd/display/dc/
->> > turn on floating-point instructions in the compiler flags
->> > (-mhard-float, -msse and -msse2) in order to make the "float" and
->> > "double" types usable from C code without requiring helper functions.
->> >
->> > However, as far as I know, code running in normal kernel context isn't
->> > allowed to use floating-point registers without special protection
->> > using helpers like kernel_fpu_begin() and kernel_fpu_end() (which also
->> > require that the protected code never blocks). If you violate that
->> > rule, that can lead to various issues - among other things, I think
->> > the kernel will clobber userspace FPU register state, and I think the
->> > kernel code can blow up if a context switch happens at the wrong time,
->> > since in-kernel task switches don't preserve FPU state.
->> >
->> > Is there some hidden trick I'm missing that makes it okay to use FPU
->> > registers here?
->> >
->> > I would try testing this, but unfortunately none of the AMD devices I
->> > have here have the appropriate graphics hardware...
->>
->> yes, using the floating point calculations in the display code has been
->> a source of numerous problems and confusion in the past.
->>
->> The calls to kernel_fpu_begin() and kernel_fpu_end() are hidden behind
->> the DC_FP_START() and DC_FP_END() macros which are supposed to hide the
->> architecture depend handling for x86 and PPC64.
+kernel test robot <lkp@intel.com> writes:
+> Greetings,
 >
-> Hmm... but as far as I can tell, you're using those macros from inside
-> functions that are already compiled with the FPU on:
+> 0day kernel testing robot got the below dmesg and the first bad commit is
 >
->  - drivers/gpu/drm/amd/display/dc/calcs/dcn_calcs.c uses the macros,
-> but is already compiled with calcs_ccflags
->  - drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c uses the
-> macros, but is already compiled with "-mhard-float -msse -msse2"
->  - drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c uses the
-> macros, but is already compiled with "-mhard-float -msse -msse2"
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 >
-> AFAIK as soon as you enter any function in any file compiled with FPU
-> instructions, you may encounter SSE instructions, e.g. via things like
-> compiler-generated memory-zeroing code - not just when you're actually
-> using doubles or floats.
+> commit de8f5e4f2dc1f032b46afda0a78cab5456974f89
+> Author:     Peter Zijlstra <peterz@infradead.org>
+> AuthorDate: Sat Mar 21 12:26:01 2020 +0100
+> Commit:     Peter Zijlstra <peterz@infradead.org>
+> CommitDate: Sat Mar 21 16:00:24 2020 +0100
+>
+>     lockdep: Introduce wait-type checks
 
-That's correct and this will silently cause FPU state corruption ...
+Can you please avoid enabling
 
-We really need objtool support to validate that.
+> CONFIG_PROVE_RAW_LOCK_NESTING=y
 
-Peter, now that we know how to do it (noinstr, clac/stac) we can emit
-annotations (see patch below) and validate that any FPU instruction is
-inside a safe region. Hmm?
+for now?
+
+As the changelog states, there are known issues and that's why the
+config is default=n.
 
 Thanks,
 
         tglx
-
-8<---------------
---- a/arch/x86/include/asm/fpu/api.h
-+++ b/arch/x86/include/asm/fpu/api.h
-@@ -19,8 +19,27 @@
-  * If you intend to use the FPU in softirq you need to check first with
-  * irq_fpu_usable() if it is possible.
-  */
--extern void kernel_fpu_begin(void);
--extern void kernel_fpu_end(void);
-+extern void __kernel_fpu_begin(void);
-+extern void __kernel_fpu_end(void);
-+
-+static inline void kernel_fpu_begin(void)
-+{
-+	asm volatile("%c0:\n\t"
-+		     ".pushsection .discard.fpu_begin\n\t"
-+		     ".long %c0b - .\n\t"
-+		     ".popsection\n\t" : : "i" (__COUNTER__));
-+	__kernel_fpu_begin();
-+}
-+
-+static inline void kernel_fpu_end(void)
-+{
-+	__kernel_fpu_end();
-+	asm volatile("%c0:\n\t"
-+		     ".pushsection .discard.fpu_end\n\t"
-+		     ".long %c0b - .\n\t"
-+		     ".popsection\n\t" : : "i" (__COUNTER__));
-+}
-+
- extern bool irq_fpu_usable(void);
- extern void fpregs_mark_activate(void);
- 
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -82,7 +82,7 @@ bool irq_fpu_usable(void)
- }
- EXPORT_SYMBOL(irq_fpu_usable);
- 
--void kernel_fpu_begin(void)
-+void __kernel_fpu_begin(void)
- {
- 	preempt_disable();
- 
-@@ -102,16 +102,16 @@ void kernel_fpu_begin(void)
- 	}
- 	__cpu_invalidate_fpregs_state();
- }
--EXPORT_SYMBOL_GPL(kernel_fpu_begin);
-+EXPORT_SYMBOL_GPL(__kernel_fpu_begin);
- 
--void kernel_fpu_end(void)
-+void __kernel_fpu_end(void)
- {
- 	WARN_ON_FPU(!this_cpu_read(in_kernel_fpu));
- 
- 	this_cpu_write(in_kernel_fpu, false);
- 	preempt_enable();
- }
--EXPORT_SYMBOL_GPL(kernel_fpu_end);
-+EXPORT_SYMBOL_GPL(__kernel_fpu_end);
- 
- /*
-  * Save the FPU state (mark it for reload if necessary):
-
-
-
