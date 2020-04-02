@@ -2,84 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDE1B19BD80
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C19119BD89
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:21:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387730AbgDBITs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 04:19:48 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:36370 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387603AbgDBITs (ORCPT
+        id S2387758AbgDBIVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 04:21:14 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:54848 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387700AbgDBIVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:19:48 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jJv4f-0007Hd-K5; Thu, 02 Apr 2020 10:19:41 +0200
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id B8300100D52; Thu,  2 Apr 2020 10:19:40 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ingo Molnar <mingo@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] x86 cleanups for v5.7
-In-Reply-To: <CAHk-=wh3_WTKeR=TTbPpbJYjC8DOPcDPJhhoopTVs3WJimsT=A@mail.gmail.com>
-References: <20200331080111.GA20569@gmail.com> <CAHk-=wjpBohNkBSxyPfC7w8165usbU5TuLohdbPs+D0bUYqJhQ@mail.gmail.com> <CAHk-=wijWvUfEkqUZRpvo9FCaJNsioS_qZT+iNWUdqQ6eO8Ozw@mail.gmail.com> <87v9mioj5r.fsf@nanos.tec.linutronix.de> <CAHk-=wh3_WTKeR=TTbPpbJYjC8DOPcDPJhhoopTVs3WJimsT=A@mail.gmail.com>
-Date:   Thu, 02 Apr 2020 10:19:40 +0200
-Message-ID: <87sghmnvtv.fsf@nanos.tec.linutronix.de>
+        Thu, 2 Apr 2020 04:21:14 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328In6m148305;
+        Thu, 2 Apr 2020 08:20:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=S0KcJ+/HxSntHkE6YeHdP5O/WgQiF9EjD5DgCzgQWDU=;
+ b=KUww6XPN5EVJX/b3dnxhJiNJrcq35B07mDJOfskt23N+RtGqvCc+Nr5mQz6joMGW7SbU
+ c+6gjRGpYq7rW912nBhFQ9MnGL528P7ws3Mcl4qmzEC7CQsttj31oZ/MMKEY8MVR4me+
+ yC/9oRS5dSb4lEmw3PbH7O6N50Ox0J2BzNUPYzOSQgy4KtJ7ZIS6wmqtvSChW5uiOY1O
+ xeuoNCcAGg/qLk3VX7FKs85BIHyGjTRquuweQsG4IcKyyITi5Mggri4kjUTbrqefr1L9
+ fuPhsTA9FEuflnaAJkmHOuwWGbV8MsDW5sBMjExP/97UweDyLrhGMXKHunIHQjBuNGvY NQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 303aqhtaj4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Apr 2020 08:20:07 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328H7fx126298;
+        Thu, 2 Apr 2020 08:20:07 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 304sjnswnj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Apr 2020 08:20:06 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0328K4Bo023025;
+        Thu, 2 Apr 2020 08:20:04 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 02 Apr 2020 01:20:03 -0700
+Date:   Thu, 2 Apr 2020 11:19:56 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     aimannajjar <aiman.najjar@hurranet.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        linux-kernel@vger.kernel.org,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: [PATCH v2 1/5] staging: rtl8712: fix checkpatch long-line warning
+Message-ID: <20200402081956.GF2001@kadam>
+References: <20200327080429.GB1627562@kroah.com>
+ <cover.1585353747.git.aiman.najjar@hurranet.com>
+ <6a4d94b4e5446f4665dc11290ed1351661554f01.1585353747.git.aiman.najjar@hurranet.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a4d94b4e5446f4665dc11290ed1351661554f01.1585353747.git.aiman.najjar@hurranet.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 phishscore=0 suspectscore=2 mlxlogscore=999 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004020075
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 clxscore=1015
+ malwarescore=0 impostorscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 suspectscore=2
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004020075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
-> On Wed, Apr 1, 2020 at 4:55 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->>
->>   - x86 starts the short log after the colon with an uppercase
->>     letter
->
-> Ahh. I actually tried to match the previous ones by Al, and they don't
-> follow that pattern.
+On Fri, Mar 27, 2020 at 08:08:07PM -0400, aimannajjar wrote:
+> This patch fixes these two long-line checkpatch warnings
+> in rtl871x_xmit.c:
+> 
+> WARNING: line over 80 characters
+> \#74: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:74:
+> +       * Please allocate memory with the sz = (struct xmit_frame) * NR_XMITFRAME,
+> 
+> WARNING: line over 80 characters
+> \#79: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:79:
+> +               kmalloc(NR_XMITFRAME * sizeof(struct xmit_frame) + 4, GFP_ATOMIC);
+> 
+> Signed-off-by: aimannajjar <aiman.najjar@hurranet.com>
+> ---
+>  drivers/staging/rtl8712/rtl871x_xmit.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8712/rtl871x_xmit.c b/drivers/staging/rtl8712/rtl871x_xmit.c
+> index f0b85338b567..628e4bad1547 100644
+> --- a/drivers/staging/rtl8712/rtl871x_xmit.c
+> +++ b/drivers/staging/rtl8712/rtl871x_xmit.c
+> @@ -71,12 +71,13 @@ int _r8712_init_xmit_priv(struct xmit_priv *pxmitpriv,
+>  	_init_queue(&pxmitpriv->apsd_queue);
+>  	_init_queue(&pxmitpriv->free_xmit_queue);
+>  	/*
+> -	 * Please allocate memory with the sz = (struct xmit_frame) * NR_XMITFRAME,
+> +	 * Please allocate memory with sz = (struct xmit_frame) * NR_XMITFRAME,
+>  	 * and initialize free_xmit_frame below.
+>  	 * Please also apply  free_txobj to link_up all the xmit_frames...
 
-Yeah. As Al's stuff was late already, I just took it as is.
+Probably you could delete the "Please ".
 
->>   - All commits lack a Link:https//lore.kernel.org/r/$MSG-ID tag. That
->>     might be an oversight or just reflecting the fact that these patches
->>     have never seen a mailing list.
->
-> Yeah. They were literally me looking at my patch in my other tree, and
-> trying to make incremental progress.
->
-> Nobody else has a working compiler to even test that patch, because
-> even upstream tip-of-the-day llvm mis-generates code (I have a patch
-> that makes it generate ok code, but that one isn't good enough to
-> actually go upstream in llvm).
+regards,
+dan carpenter
 
-Fair enough.
-
-> I don't think I'll do any more, because the next stage really is to
-> actually have some CONFIG_ASM_GOTO_WITH_INPUTS code and then try to
-> make something similar to the SET_CC for this.
->
->> From a quick check I can confirm that the resulting text changes are
->> just random noise and I did not notice anything horrible in the
->> generated code either.
->
-> Btw, do you guys have some better object code comparison thing than my
-> "objdump plus a few sed scripts to hide code movement effects"
-
-Not sure whether s/sed/python/ makes it any better :)
-
-Thanks,
-
-        tglx
