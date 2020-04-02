@@ -2,68 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E31619BECA
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 11:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FE6D19BECD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 11:42:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387800AbgDBJlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 05:41:02 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:36786 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbgDBJlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 05:41:02 -0400
-Received: from p5de0bf0b.dip0.t-ipconnect.de ([93.224.191.11] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1jJwLF-0000q4-JB; Thu, 02 Apr 2020 11:40:53 +0200
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id CDF1C100D52; Thu,  2 Apr 2020 11:40:52 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     kernel test robot <lkp@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-        LKP <lkp@lists.01.org>
-Subject: Re: de8f5e4f2d ("lockdep: Introduce wait-type checks"): [   17.344674] EIP: default_idle
-In-Reply-To: <20200402081732.GM8179@shao2-debian>
-References: <20200402081732.GM8179@shao2-debian>
-Date:   Thu, 02 Apr 2020 11:40:52 +0200
-Message-ID: <87h7y2ns2j.fsf@nanos.tec.linutronix.de>
+        id S2387865AbgDBJmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 05:42:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725965AbgDBJmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 05:42:47 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA6C72072E;
+        Thu,  2 Apr 2020 09:42:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585820566;
+        bh=Ocr0IjWqiJFKmYYQ7OMkFAY+dmCRv305czhSy6FmIIQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KCLS2ZJ5f+xGIYsOjo6xopsQtTpQmpvdCzLszXHg0WALU9yy4jUWn5COFAGig84Jn
+         DTHmnJsijX99dgWnRfxhi1y8v+n46oHmy9M37cA81HKYxw2FdiGV3n1nFTuU44JNfm
+         4/ym/T3Vw59zCVGwIHGeKnng5UYSeV9LRTpj9OLU=
+Date:   Thu, 2 Apr 2020 10:42:40 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     davem@davemloft.net, arnd@arndb.de, devicetree@vger.kernel.org,
+        grygorii.strashko@ti.com, kishon@ti.com, kuba@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        m-karicheri2@ti.com, netdev@vger.kernel.org, nsekhar@ti.com,
+        olof@lixom.net, olteanv@gmail.com, peter.ujfalusi@ti.com,
+        robh@kernel.org, rogerq@ti.com, t-kristo@ti.com,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH net-next v6 00/11] net: ethernet: ti: add networking
+ support for k3 am65x/j721e soc
+Message-ID: <20200402094239.GA3770@willie-the-truck>
+References: <20200401.113627.1377328159361906184.davem@davemloft.net>
+ <20200401223500.224253-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200401223500.224253-1-ndesaulniers@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kernel test robot <lkp@intel.com> writes:
-> Greetings,
->
-> 0day kernel testing robot got the below dmesg and the first bad commit is
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
->
-> commit de8f5e4f2dc1f032b46afda0a78cab5456974f89
-> Author:     Peter Zijlstra <peterz@infradead.org>
-> AuthorDate: Sat Mar 21 12:26:01 2020 +0100
-> Commit:     Peter Zijlstra <peterz@infradead.org>
-> CommitDate: Sat Mar 21 16:00:24 2020 +0100
->
->     lockdep: Introduce wait-type checks
+On Wed, Apr 01, 2020 at 03:35:00PM -0700, Nick Desaulniers wrote:
+> >> I think the ARM64 build is now also broken on Linus' master branch,
+> >> after the net-next merge? I am not quite sure if the device tree
+> >> patches were supposed to land in mainline the way they did.
+> >
+> >There's a fix in my net tree and it will go to Linus soon.
+> >
+> >There is no clear policy for dt change integration, and honestly
+> >I try to deal with the situation on a case by case basis.
+> 
+> Yep, mainline aarch64-linux-gnu- builds are totally hosed.  DTC fails the build
+> very early on:
+> https://travis-ci.com/github/ClangBuiltLinux/continuous-integration/jobs/311246218
+> https://travis-ci.com/github/ClangBuiltLinux/continuous-integration/jobs/311246270
+> There was no failure in -next, not sure how we skipped our canary in the coal
+> mine.
 
-Can you please avoid enabling
+Yes, one of the things linux-next does a really good job at catching is
+build breakage so it would've been nice to have seen this there rather
+than end up with breakage in Linus' tree :(
 
-> CONFIG_PROVE_RAW_LOCK_NESTING=y
+Was the timing just bad, or are we missing DT coverage or something else?
 
-for now?
-
-As the changelog states, there are known issues and that's why the
-config is default=n.
-
-Thanks,
-
-        tglx
+Will
