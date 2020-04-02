@@ -2,94 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB07119BB57
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 07:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75C5D19BB67
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 07:44:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728947AbgDBFga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 01:36:30 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36711 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbgDBFg3 (ORCPT
+        id S1728053AbgDBFoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 01:44:04 -0400
+Received: from mail-qk1-f178.google.com ([209.85.222.178]:38818 "EHLO
+        mail-qk1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgDBFoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 01:36:29 -0400
-Received: by mail-pg1-f195.google.com with SMTP id c23so1341746pgj.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 22:36:28 -0700 (PDT)
+        Thu, 2 Apr 2020 01:44:03 -0400
+Received: by mail-qk1-f178.google.com with SMTP id h14so2793862qke.5
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 22:44:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qRIzo5o5vpllI++B3nY//4/moCStw1oArBNgpNNZWE0=;
-        b=YX4kK4/l4v2Dc+sIlNifTF+eu7cc0Xwqmrkw6+903BF5W9hYTPcWEQ1O8+LgEOjeXJ
-         QXFfirICEm2ToMk+K+f0BAw2q3aM4+7i/mtghVUotn2aFVQr/rkHHVy4LVTDEhrRC3q5
-         bG9OMYPBR3q3H/nLiX2GyaPOIqz5tskvc9Oyg/MuabGNsxkYzFRjlQCzUafRlE5XYHAq
-         lXfnvpaasLeK+GEb7tU+b2Xxu9ZrwbqDiVUXeweP+wX9flK1mvhJRUyrWxmL/Prxknt4
-         lE9I+3V7sQZxFcL0CdBjr6rIg+ML2jv5LdLcdtU2QhmAsVwdSUHcvQAgE6VYtTngmeYK
-         qj2A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=erlJ9BiPK98HSbML/OVD/782ON3A5u24EUc7eHkRs6Q=;
+        b=id+LAlt93CSAdgB3MXxHQzvKKRofEZUH6Z9iKxB7VMrFw/dQIZS8Ae9yVO+EChSQ+K
+         90oT4C+IHTbS+m1fCTZMk/orxFJ5WoEOR31boS4vls5NqdQhL0D2tVxIG1qZr64rAFqn
+         8Ww2QunjU4NMloJHCK2dt87E8AAdCVNTz49ZLKaoEB+ppscjkiTVPrXLME+N7Uduxs8Y
+         zttoSOI88MSp4mm74jIQIACVMAAzqI71kY4NUJWC00zCngXIE05/j7MLBDOhAnd355l/
+         whPrT5KyXaYrWd/rX85ijEzf7tss4draTaDjSbvXQIZln48LWE9rqStEOBwbnYYKtqih
+         gj5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qRIzo5o5vpllI++B3nY//4/moCStw1oArBNgpNNZWE0=;
-        b=cWpD+xmwcXSKOF2DLJDFhoQtBM+ooFvqd96uyQqB7SsO3cIaqELu8w6YWzv1+cq+/R
-         L3U6yzSeeHgw58omcQisZc97PU/pixVou9kRT90uMCdV6zchZHlYiEHAwkw6fJuidWMZ
-         Ig0IZEOYvWTmXjVGlCklF7RPHFBxI2fDUmyoG2i1NlC4bF7gkvw/mHnA14q3NAxdeQhF
-         VVsJkoRxrsBiq6xfwvvK/29KnUD+7gCKaytQeYxoBoCDlpIRyCYt7MSeSeOaNi1xRsV3
-         zznSouhknqO4gQ/MnVPbzeCxsS1AZchBJ+Xnq9YnseHDjuFAO94POKUb5TTpdiP0i33s
-         ZzlA==
-X-Gm-Message-State: AGi0PuZ1QkxnLb7ojadwHRr+xF+8w5hbw0fuQYJKyAE3/sHuPL/+bJbc
-        oQVnwQnJwysjwRHWtv32xpY=
-X-Google-Smtp-Source: APiQypIAgreB/HoC94SMNNTLUG92Y3nyUkudT6yq5FXpvuXoHAEl+87D1f6IfaXfXj/J4INNUM45eg==
-X-Received: by 2002:a62:7950:: with SMTP id u77mr1573409pfc.34.1585805788026;
-        Wed, 01 Apr 2020 22:36:28 -0700 (PDT)
-Received: from OptiPlexFedora.fios-router.home ([47.144.161.84])
-        by smtp.gmail.com with ESMTPSA id y28sm2863136pfp.128.2020.04.01.22.36.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 22:36:27 -0700 (PDT)
-From:   "John B. Wyatt IV" <jbwyatt4@gmail.com>
-To:     outreachy-kernel@googlegroups.com,
-        Rob Springer <rspringer@google.com>,
-        Todd Poynor <toddpoynor@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     "John B. Wyatt IV" <jbwyatt4@gmail.com>
-Subject: [PATCH 2/2] staging: gasket: Fix comment 75 character limit warning
-Date:   Wed,  1 Apr 2020 22:36:17 -0700
-Message-Id: <20200402053617.826678-3-jbwyatt4@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200402053617.826678-1-jbwyatt4@gmail.com>
-References: <20200402053617.826678-1-jbwyatt4@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=erlJ9BiPK98HSbML/OVD/782ON3A5u24EUc7eHkRs6Q=;
+        b=HA3MB8TEJ8FUkG/NUh53XZcctRzvlo3cwMk4tAk2bWWIqOJsUh2Uuh0H0MVpdBm+x6
+         cwTNGVi0ca9dVanQp4zNO4wAaKwyzg4dFRI2UYhLuPoMaz5Y9KWfFaeQsnNx50894TuS
+         fO4KOl6XKv1n4eVcOcrr0o1tYr8llkeM3ZhsGghVC3ajDFHkYLBighj3gyuk6mzDDvXF
+         zODgam8iPwNfeEz1ji2L9HaIJXcbK9tru/BduqKj1HZm7mjK7k1nQfAT1DJSC2acHnnA
+         Mvcv2aEq0ULyFcSVy0RBhLKinkfebeyDblTKwiMv1EvgctFHVhj6+xKwCzPE2gmRmqHW
+         fD9Q==
+X-Gm-Message-State: AGi0PuZApVyxJrYN8mdKIRzin1Kp3dQCSyN74SU2eR8vu1Re8PBBNBGh
+        c73Bgr5wP+DoB+BdbCIcFEyM39AvnYR6BWz6ez0=
+X-Google-Smtp-Source: APiQypLCJaUnKMnno5qVuPneB/GNmjEHhNB+msDw4ATI/HnlFXaERo7iJRZCV2ZEDXD5YyxwZ9m/rdNUsiZQfuPlSGY=
+X-Received: by 2002:ae9:e858:: with SMTP id a85mr1692048qkg.343.1585806240246;
+ Wed, 01 Apr 2020 22:44:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200306150102.3e77354b@imladris.surriel.com> <8e67d88f-3ec8-4795-35dc-47e3735e530e@suse.cz>
+ <20200311173526.GH96999@carbon.dhcp.thefacebook.com> <CAAmzW4PRCGdZXGceSCfzpesUXNd8GU-zLt-m+t762=WH-BjmoA@mail.gmail.com>
+ <20200401191322.a5c99b408aa8601f999a794a@linux-foundation.org> <20200402025335.GB69473@carbon.DHCP.thefacebook.com>
+In-Reply-To: <20200402025335.GB69473@carbon.DHCP.thefacebook.com>
+From:   Joonsoo Kim <js1304@gmail.com>
+Date:   Thu, 2 Apr 2020 14:43:49 +0900
+Message-ID: <CAAmzW4PF1AXcZnQpWmqWgTShu+5v7B=nv8waRv+vk-0Bd78cZw@mail.gmail.com>
+Subject: Re: [PATCH] mm,page_alloc,cma: conditionally prefer cma pageblocks
+ for movable allocations
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Rik van Riel <riel@surriel.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
+        Qian Cai <cai@lca.pw>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix 75 character limit warning in comment reported by checkpatch.
+2020=EB=85=84 4=EC=9B=94 2=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 11:54, R=
+oman Gushchin <guro@fb.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> On Wed, Apr 01, 2020 at 07:13:22PM -0700, Andrew Morton wrote:
+> > On Thu, 12 Mar 2020 10:41:28 +0900 Joonsoo Kim <js1304@gmail.com> wrote=
+:
+> >
+> > > Hello, Roman.
+> > >
+> > > 2020=EB=85=84 3=EC=9B=94 12=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 2=
+:35, Roman Gushchin <guro@fb.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+> > > >
+> > > > On Wed, Mar 11, 2020 at 09:51:07AM +0100, Vlastimil Babka wrote:
+> > > > > On 3/6/20 9:01 PM, Rik van Riel wrote:
+> > > > > > Posting this one for Roman so I can deal with any upstream feed=
+back and
+> > > > > > create a v2 if needed, while scratching my head over the next p=
+iece of
+> > > > > > this puzzle :)
+> > > > > >
+> > > > > > ---8<---
+> > > > > >
+> > > > > > From: Roman Gushchin <guro@fb.com>
+> > > > > >
+> > > > > > Currently a cma area is barely used by the page allocator becau=
+se
+> > > > > > it's used only as a fallback from movable, however kswapd tries
+> > > > > > hard to make sure that the fallback path isn't used.
+> > > > >
+> > > > > Few years ago Joonsoo wanted to fix these kinds of weird MIGRATE_=
+CMA corner
+> > > > > cases by using ZONE_MOVABLE instead [1]. Unfortunately it was rev=
+erted due to
+> > > > > unresolved bugs. Perhaps the idea could be resurrected now?
+> > > >
+> > > > Hi Vlastimil!
+> > > >
+> > > > Thank you for this reminder! I actually looked at it and also asked=
+ Joonsoo in private
+> > > > about the state of this patch(set). As I understand, Joonsoo plans =
+to resubmit
+> > > > it later this year.
+> > > >
+> > > > What Rik and I are suggesting seems to be much simpler, however it'=
+s perfectly
+> > > > possible that Joonsoo's solution is preferable long-term.
+> > > >
+> > > > So if the proposed patch looks ok for now, I'd suggest to go with i=
+t and return
+> > > > to this question once we'll have a new version of ZONE_MOVABLE solu=
+tion.
+> > >
+> > > Hmm... utilization is not the only matter for CMA user. The more
+> > > important one is
+> > > success guarantee of cma_alloc() and this patch would have a bad impa=
+ct on it.
+> > >
+> > > A few years ago, I have tested this kind of approach and found that i=
+ncreasing
+> > > utilization increases cma_alloc() failure. Reason is that the page
+> > > allocated with
+> > > __GFP_MOVABLE, especially, by sb_bread(), is sometimes pinned by some=
+one.
+> > >
+> > > Until now, cma memory isn't used much so this problem doesn't occur e=
+asily.
+> > > However, with this patch, it would happen.
+> >
+> > So I guess we keep Roman's patch on hold pending clarification of this
+> > risk?
+>
+> The problem here is that we can't really find problems if we don't use CM=
+A as intended
+> and just leave it free. Me and Rik are actively looking for page migratio=
+n problems
+> in our production, and we've found and fixed some of them. Our setup is l=
+ikely different
+> from embedded guys who are in my understanding most active cma users, so =
+even if we
+> don't see any issues I can't guarantee it for everybody.
+>
+> So given Joonsoo's ack down in the thread (btw, I'm sorry I've missed a g=
+ood optimization
+> he suggested, will send a patch for that), I'd go with this patch at leas=
+t until
 
-Reported by checkpatch.
+Looks like you mean Minchan's ack. Anyway, I don't object this one.
 
-Signed-off-by: John B. Wyatt IV <jbwyatt4@gmail.com>
----
- drivers/staging/gasket/apex_driver.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+In fact, I've tested this patch and your fixes for migration problem
+and found that there is
+still migration problem and failure rate is increased by this patch.
+However, given that
+there is no progress on this area for a long time, I think that
+applying the change aggressively
+is required to break the current situation.
 
-diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
-index f48209ec7d24..5ad15f398893 100644
---- a/drivers/staging/gasket/apex_driver.c
-+++ b/drivers/staging/gasket/apex_driver.c
-@@ -50,8 +50,8 @@
- #define NUM_NODES 1
- 
- /*
-- * The total number of entries in the page table. Should match the value read
-- * from the register APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_SIZE.
-+ * The total number of entries in the page table. Should match the
-+ * value read from the register APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_SIZE.
-  */
- #define APEX_PAGE_TABLE_TOTAL_ENTRIES 8192
- 
--- 
-2.25.1
-
+Thanks.
