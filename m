@@ -2,250 +2,273 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5823C19BAD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 06:03:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A657919BAE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 06:12:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728406AbgDBEC7 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 2 Apr 2020 00:02:59 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:40552 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726136AbgDBEC7 (ORCPT
+        id S1729087AbgDBEMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 00:12:15 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:39065 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726136AbgDBEMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 00:02:59 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=teawaterz@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TuNonMf_1585800168;
-Received: from 127.0.0.1(mailfrom:teawaterz@linux.alibaba.com fp:SMTPD_---0TuNonMf_1585800168)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 02 Apr 2020 12:02:53 +0800
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
-Subject: Re: [RFC for Linux] virtio_balloon: Add VIRTIO_BALLOON_F_THP_ORDER to
- handle THP spilt issue
-From:   teawater <teawaterz@linux.alibaba.com>
-In-Reply-To: <5e0e0659-5f70-2162-96be-5fcd0d3f46ad@redhat.com>
-Date:   Thu, 2 Apr 2020 12:02:47 +0800
-Cc:     Nadav Amit <namit@vmware.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "pagupta@redhat.com" <pagupta@redhat.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "mojha@codeaurora.org" <mojha@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        Hui Zhu <teawater@gmail.com>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <07AF0005-2711-4137-A96D-DA264A05C302@linux.alibaba.com>
-References: <20200326031817-mutt-send-email-mst@kernel.org>
- <C4C6BAF7-C040-403D-997C-48C7AB5A7D6B@redhat.com>
- <20200326054554-mutt-send-email-mst@kernel.org>
- <f26dc94a-7296-90c9-56cd-4586b78bc03d@redhat.com>
- <20200331091718-mutt-send-email-mst@kernel.org>
- <02a393ce-c4b4-ede9-7671-76fa4c19097a@redhat.com>
- <20200331093300-mutt-send-email-mst@kernel.org>
- <b69796e0-fa41-a219-c3e5-a11e9f5f18bf@redhat.com>
- <20200331100359-mutt-send-email-mst@kernel.org>
- <85f699d4-459a-a319-0a8f-96c87d345c49@redhat.com>
- <BABD09DC-217E-4F00-9C05-74ABB4B1E13D@vmware.com>
- <5e0e0659-5f70-2162-96be-5fcd0d3f46ad@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-X-Mailer: Apple Mail (2.3608.60.0.2.5)
+        Thu, 2 Apr 2020 00:12:14 -0400
+Received: by mail-pj1-f68.google.com with SMTP id z3so999757pjr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 21:12:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u11SA1v5lDHbwzwkFSCh6NiqhqGABE/1UnVjTe1jwnc=;
+        b=qrjpLexf3pkfUEIq4xKX44iq9xgKCxV8CV/E+vQuLEgHXzQklceVUvwLDaPeXiJYr5
+         AZ4wB23rxcAcy/JTV7WkHnv01kW8PiWMyISOkQl/Vx0qiGps0OrrMOmTxKprGqOb5gqd
+         UM+uOwV41+2YX3d52XKvnaF8a/uPGu8ag4XEbTZ3xD1um5MSnqsRkR4uA8roMF5HcfWm
+         fWPSxqS0fZxK/bf78WhJbuWlt1oq9YF660CS2CdYEff7+AQv4p9W+TkLMR01i/jgtyzE
+         +h+qZ7FSwJgqT5Nh7bTzKtXb4ArIgIwyBxJj7AcEi2FL+CuBLZ/59bN2ClUDbULn86zy
+         NT7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u11SA1v5lDHbwzwkFSCh6NiqhqGABE/1UnVjTe1jwnc=;
+        b=BKF6vJrL25Kbrj50NQDkC0kxnSLNwC2OOH+Li3o8ONWcOWfx4iEogs0+tVMft2rsCC
+         gwi/oN0krQW/MNgw6fzNa57Oe8RiZqvut1Ix4cDm7CJZCs/WvvyekiVqqfsTRDo/nme1
+         aOcI4D4AI0/Lni5lA3Y6yk9Bdqz6glPfJZb8Xvvf37kz8qu1boNibjqK6N2dk40fpEc2
+         yOQOUtgOauvuUNPUIzdA00tCPDS7UR83Psqf1P9MI6MVQeg11cuJOZL+RQSmtqHHgsnS
+         vhKQNTy2cCBJbt1Vyj1EK5q5/x5dsOff1IqXivuqhtB3xNS8L2I7qWvoRzWPhi6SxWEg
+         /0ig==
+X-Gm-Message-State: AGi0PuYg9vCIhbEl8MFfayFmPcw0IH85kO/Uk2cljFY7+/UdfkCrtWPC
+        GsorR0z2SD4+9Xuh4yELHv7ekg==
+X-Google-Smtp-Source: APiQypKXLU201No2vEQ1RTPqbyVKExlpd1AX4SDLxnX5JUncA3ab8mryjs22/JjGJ6Cbtwx/tZsDqA==
+X-Received: by 2002:a17:90b:230d:: with SMTP id mt13mr1585074pjb.164.1585800733481;
+        Wed, 01 Apr 2020 21:12:13 -0700 (PDT)
+Received: from tom-ThinkPad-X1-Carbon-5th.teksavvy.com ([69.172.145.184])
+        by smtp.googlemail.com with ESMTPSA id v25sm2571818pgl.55.2020.04.01.21.12.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 21:12:12 -0700 (PDT)
+From:   Tom Murphy <murphyt7@tcd.ie>
+To:     iommu@lists.linux-foundation.org
+Cc:     Tom Murphy <murphyt7@tcd.ie>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] intel-iommu: Remove all IOVA handling code from the non-dma_ops path in the intel
+Date:   Thu,  2 Apr 2020 05:12:00 +0100
+Message-Id: <20200402041200.12458-1-murphyt7@tcd.ie>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There's no need for the non-dma_ops path to keep track of IOVAs. The
+whole point of the non-dma_ops path is that it allows the IOVAs to be
+handled separately. The IOVA handling code removed in this patch is
+pointless.
 
+Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
+---
+ drivers/iommu/intel-iommu.c | 97 +++++++++++++------------------------
+ 1 file changed, 33 insertions(+), 64 deletions(-)
 
-> 2020年4月1日 17:48，David Hildenbrand <david@redhat.com> 写道：
-> 
-> On 31.03.20 18:37, Nadav Amit wrote:
->>> On Mar 31, 2020, at 7:09 AM, David Hildenbrand <david@redhat.com> wrote:
->>> 
->>> On 31.03.20 16:07, Michael S. Tsirkin wrote:
->>>> On Tue, Mar 31, 2020 at 04:03:18PM +0200, David Hildenbrand wrote:
->>>>> On 31.03.20 15:37, Michael S. Tsirkin wrote:
->>>>>> On Tue, Mar 31, 2020 at 03:32:05PM +0200, David Hildenbrand wrote:
->>>>>>> On 31.03.20 15:24, Michael S. Tsirkin wrote:
->>>>>>>> On Tue, Mar 31, 2020 at 12:35:24PM +0200, David Hildenbrand wrote:
->>>>>>>>> On 26.03.20 10:49, Michael S. Tsirkin wrote:
->>>>>>>>>> On Thu, Mar 26, 2020 at 08:54:04AM +0100, David Hildenbrand wrote:
->>>>>>>>>>>> Am 26.03.2020 um 08:21 schrieb Michael S. Tsirkin <mst@redhat.com>:
->>>>>>>>>>>> 
->>>>>>>>>>>> ﻿On Thu, Mar 12, 2020 at 09:51:25AM +0100, David Hildenbrand wrote:
->>>>>>>>>>>>>> On 12.03.20 09:47, Michael S. Tsirkin wrote:
->>>>>>>>>>>>>> On Thu, Mar 12, 2020 at 09:37:32AM +0100, David Hildenbrand wrote:
->>>>>>>>>>>>>>> 2. You are essentially stealing THPs in the guest. So the fastest
->>>>>>>>>>>>>>> mapping (THP in guest and host) is gone. The guest won't be able to make
->>>>>>>>>>>>>>> use of THP where it previously was able to. I can imagine this implies a
->>>>>>>>>>>>>>> performance degradation for some workloads. This needs a proper
->>>>>>>>>>>>>>> performance evaluation.
->>>>>>>>>>>>>> 
->>>>>>>>>>>>>> I think the problem is more with the alloc_pages API.
->>>>>>>>>>>>>> That gives you exactly the given order, and if there's
->>>>>>>>>>>>>> a larger chunk available, it will split it up.
->>>>>>>>>>>>>> 
->>>>>>>>>>>>>> But for balloon - I suspect lots of other users,
->>>>>>>>>>>>>> we do not want to stress the system but if a large
->>>>>>>>>>>>>> chunk is available anyway, then we could handle
->>>>>>>>>>>>>> that more optimally by getting it all in one go.
->>>>>>>>>>>>>> 
->>>>>>>>>>>>>> 
->>>>>>>>>>>>>> So if we want to address this, IMHO this calls for a new API.
->>>>>>>>>>>>>> Along the lines of
->>>>>>>>>>>>>> 
->>>>>>>>>>>>>>  struct page *alloc_page_range(gfp_t gfp, unsigned int min_order,
->>>>>>>>>>>>>>                  unsigned int max_order, unsigned int *order)
->>>>>>>>>>>>>> 
->>>>>>>>>>>>>> the idea would then be to return at a number of pages in the given
->>>>>>>>>>>>>> range.
->>>>>>>>>>>>>> 
->>>>>>>>>>>>>> What do you think? Want to try implementing that?
->>>>>>>>>>>>> 
->>>>>>>>>>>>> You can just start with the highest order and decrement the order until
->>>>>>>>>>>>> your allocation succeeds using alloc_pages(), which would be enough for
->>>>>>>>>>>>> a first version. At least I don't see the immediate need for a new
->>>>>>>>>>>>> kernel API.
->>>>>>>>>>>> 
->>>>>>>>>>>> OK I remember now.  The problem is with reclaim. Unless reclaim is
->>>>>>>>>>>> completely disabled, any of these calls can sleep. After it wakes up,
->>>>>>>>>>>> we would like to get the larger order that has become available
->>>>>>>>>>>> meanwhile.
->>>>>>>>>>> 
->>>>>>>>>>> Yes, but that‘s a pure optimization IMHO.
->>>>>>>>>>> So I think we should do a trivial implementation first and then see what we gain from a new allocator API. Then we might also be able to justify it using real numbers.
->>>>>>>>>> 
->>>>>>>>>> Well how do you propose implement the necessary semantics?
->>>>>>>>>> I think we are both agreed that alloc_page_range is more or
->>>>>>>>>> less what's necessary anyway - so how would you approximate it
->>>>>>>>>> on top of existing APIs?
->>>>>>>>> diff --git a/include/linux/balloon_compaction.h b/include/linux/balloon_compaction.h
->>>>>> 
->>>>>> .....
->>>>>> 
->>>>>> 
->>>>>>>>> diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
->>>>>>>>> index 26de020aae7b..067810b32813 100644
->>>>>>>>> --- a/mm/balloon_compaction.c
->>>>>>>>> +++ b/mm/balloon_compaction.c
->>>>>>>>> @@ -112,23 +112,35 @@ size_t balloon_page_list_dequeue(struct balloon_dev_info *b_dev_info,
->>>>>>>>> EXPORT_SYMBOL_GPL(balloon_page_list_dequeue);
->>>>>>>>> 
->>>>>>>>> /*
->>>>>>>>> - * balloon_page_alloc - allocates a new page for insertion into the balloon
->>>>>>>>> - *			page list.
->>>>>>>>> + * balloon_pages_alloc - allocates a new page (of at most the given order)
->>>>>>>>> + * 			 for insertion into the balloon page list.
->>>>>>>>> *
->>>>>>>>> * Driver must call this function to properly allocate a new balloon page.
->>>>>>>>> * Driver must call balloon_page_enqueue before definitively removing the page
->>>>>>>>> * from the guest system.
->>>>>>>>> *
->>>>>>>>> + * Will fall back to smaller orders if allocation fails. The order of the
->>>>>>>>> + * allocated page is stored in page->private.
->>>>>>>>> + *
->>>>>>>>> * Return: struct page for the allocated page or NULL on allocation failure.
->>>>>>>>> */
->>>>>>>>> -struct page *balloon_page_alloc(void)
->>>>>>>>> +struct page *balloon_pages_alloc(int order)
->>>>>>>>> {
->>>>>>>>> -	struct page *page = alloc_page(balloon_mapping_gfp_mask() |
->>>>>>>>> -				       __GFP_NOMEMALLOC | __GFP_NORETRY |
->>>>>>>>> -				       __GFP_NOWARN);
->>>>>>>>> -	return page;
->>>>>>>>> +	struct page *page;
->>>>>>>>> +
->>>>>>>>> +	while (order >= 0) {
->>>>>>>>> +		page = alloc_pages(balloon_mapping_gfp_mask() |
->>>>>>>>> +				   __GFP_NOMEMALLOC | __GFP_NORETRY |
->>>>>>>>> +				   __GFP_NOWARN, order);
->>>>>>>>> +		if (page) {
->>>>>>>>> +			set_page_private(page, order);
->>>>>>>>> +			return page;
->>>>>>>>> +		}
->>>>>>>>> +		order--;
->>>>>>>>> +	}
->>>>>>>>> +	return NULL;
->>>>>>>>> }
->>>>>>>>> -EXPORT_SYMBOL_GPL(balloon_page_alloc);
->>>>>>>>> +EXPORT_SYMBOL_GPL(balloon_pages_alloc);
->>>>>>>>> 
->>>>>>>>> /*
->>>>>>>>> * balloon_page_enqueue - inserts a new page into the balloon page list.
->>>>>>>> 
->>>>>>>> 
->>>>>>>> I think this will try to invoke direct reclaim from the first iteration
->>>>>>>> to free up the max order.
->>>>>>> 
->>>>>>> %__GFP_NORETRY: The VM implementation will try only very lightweight
->>>>>>> memory direct reclaim to get some memory under memory pressure (thus it
->>>>>>> can sleep). It will avoid disruptive actions like OOM killer.
->>>>>>> 
->>>>>>> Certainly good enough for a first version I would say, no?
->>>>>> 
->>>>>> Frankly how well that behaves would depend a lot on the workload.
->>>>>> Can regress just as well.
->>>>>> 
->>>>>> For the 1st version I'd prefer something that is the least disruptive,
->>>>>> and that IMHO means we only trigger reclaim at all in the same configuration
->>>>>> as now - when we can't satisfy the lowest order allocation.
->>>>> 
->>>>> Agreed.
->>>>> 
->>>>>> Anything else would be a huge amount of testing with all kind of
->>>>>> workloads.
->>>>> 
->>>>> So doing a "& ~__GFP_RECLAIM" in case order > 0? (as done in
->>>>> GFP_TRANSHUGE_LIGHT)
->>>> 
->>>> That will improve the situation when reclaim is not needed, but leave
->>>> the problem in place for when it's needed: if reclaim does trigger, we
->>>> can get a huge free page and immediately break it up.
->>>> 
->>>> So it's ok as a first step but it will make the second step harder as
->>>> we'll need to test with reclaim :).
->>> 
->>> I expect the whole "steal huge pages from your guest" to be problematic,
->>> as I already mentioned to Alex. This needs a performance evaluation.
->>> 
->>> This all smells like a lot of workload dependent fine-tuning. :)
->> 
->> AFAIK the hardware overheads of keeping huge-pages in the guest and backing
->> them with 4KB pages are non-negligible. Did you take those into account?
-> 
-> Of course, the fastest mapping will be huge pages in host and guest.
-> Having huge pages in your guest but not in your host cannot really be
-> solved using ballooning AFAIKs. Hopefully THP in the host will be doing
-> its job properly :)
-> 
-> ... however, so far, we haven't done any performance comparisons at all.
-> The only numbers from Hui Zhu that I can spot are number of THP in the
-> host, which is not really expressing actual guest performance IMHO. That
-> definitely has to be done to evaluate the different optimizations we
-> might want to try out.
-> 
-
-I did some tests with vm-scalability on Monday comparing their performance in VM:
-//4 processes random r/w
-usemem -R -a -Z  -n 4 1g
-
-write:
-hugepage: 146367 KB/s
-thp:	  133550 KB/s
-normal:   124248 KB/s
-
-read:
-hugepage: 103969 KB/s
-thp:	  100622 KB/s
-normal:   88755 KB/s
-
-Best,
-Hui
-
-
-> -- 
-> Thanks,
-> 
-> David / dhildenb
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 4be549478691..b92606979914 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -1911,11 +1911,6 @@ static int dmar_init_reserved_ranges(void)
+ 	return 0;
+ }
+ 
+-static void domain_reserve_special_ranges(struct dmar_domain *domain)
+-{
+-	copy_reserved_iova(&reserved_iova_list, &domain->iovad);
+-}
+-
+ static inline int guestwidth_to_adjustwidth(int gaw)
+ {
+ 	int agaw;
+@@ -1946,7 +1941,7 @@ static int domain_init(struct dmar_domain *domain, struct intel_iommu *iommu,
+ 			pr_info("iova flush queue initialization failed\n");
+ 	}
+ 
+-	domain_reserve_special_ranges(domain);
++	copy_reserved_iova(&reserved_iova_list, &domain->iovad);
+ 
+ 	/* calculate AGAW */
+ 	if (guest_width > cap_mgaw(iommu->cap))
+@@ -1996,7 +1991,8 @@ static void domain_exit(struct dmar_domain *domain)
+ 	domain_remove_dev_info(domain);
+ 
+ 	/* destroy iovas */
+-	put_iova_domain(&domain->iovad);
++	if (domain->domain.type == IOMMU_DOMAIN_DMA)
++		put_iova_domain(&domain->iovad);
+ 
+ 	if (domain->pgd) {
+ 		struct page *freelist;
+@@ -2793,19 +2789,9 @@ static struct dmar_domain *set_domain_for_dev(struct device *dev,
+ }
+ 
+ static int iommu_domain_identity_map(struct dmar_domain *domain,
+-				     unsigned long long start,
+-				     unsigned long long end)
++				     unsigned long first_vpfn,
++				     unsigned long last_vpfn)
+ {
+-	unsigned long first_vpfn = start >> VTD_PAGE_SHIFT;
+-	unsigned long last_vpfn = end >> VTD_PAGE_SHIFT;
+-
+-	if (!reserve_iova(&domain->iovad, dma_to_mm_pfn(first_vpfn),
+-			  dma_to_mm_pfn(last_vpfn))) {
+-		pr_err("Reserving iova failed\n");
+-		return -ENOMEM;
+-	}
+-
+-	pr_debug("Mapping reserved region %llx-%llx\n", start, end);
+ 	/*
+ 	 * RMRR range might have overlap with physical memory range,
+ 	 * clear it first
+@@ -2882,7 +2868,8 @@ static int __init si_domain_init(int hw)
+ 
+ 		for_each_mem_pfn_range(i, nid, &start_pfn, &end_pfn, NULL) {
+ 			ret = iommu_domain_identity_map(si_domain,
+-					PFN_PHYS(start_pfn), PFN_PHYS(end_pfn));
++					mm_to_dma_pfn(start_pfn),
++					mm_to_dma_pfn(end_pfn));
+ 			if (ret)
+ 				return ret;
+ 		}
+@@ -4812,58 +4799,37 @@ static int intel_iommu_memory_notifier(struct notifier_block *nb,
+ 				       unsigned long val, void *v)
+ {
+ 	struct memory_notify *mhp = v;
+-	unsigned long long start, end;
+-	unsigned long start_vpfn, last_vpfn;
++	unsigned long start_vpfn = mm_to_dma_pfn(mhp->start_pfn);
++	unsigned long last_vpfn = mm_to_dma_pfn(mhp->start_pfn +
++			mhp->nr_pages - 1);
+ 
+ 	switch (val) {
+ 	case MEM_GOING_ONLINE:
+-		start = mhp->start_pfn << PAGE_SHIFT;
+-		end = ((mhp->start_pfn + mhp->nr_pages) << PAGE_SHIFT) - 1;
+-		if (iommu_domain_identity_map(si_domain, start, end)) {
+-			pr_warn("Failed to build identity map for [%llx-%llx]\n",
+-				start, end);
++		if (iommu_domain_identity_map(si_domain, start_vpfn,
++					last_vpfn)) {
++			pr_warn("Failed to build identity map for [%lx-%lx]\n",
++				start_vpfn, last_vpfn);
+ 			return NOTIFY_BAD;
+ 		}
+ 		break;
+ 
+ 	case MEM_OFFLINE:
+ 	case MEM_CANCEL_ONLINE:
+-		start_vpfn = mm_to_dma_pfn(mhp->start_pfn);
+-		last_vpfn = mm_to_dma_pfn(mhp->start_pfn + mhp->nr_pages - 1);
+-		while (start_vpfn <= last_vpfn) {
+-			struct iova *iova;
++		{
+ 			struct dmar_drhd_unit *drhd;
+ 			struct intel_iommu *iommu;
+ 			struct page *freelist;
+ 
+-			iova = find_iova(&si_domain->iovad, start_vpfn);
+-			if (iova == NULL) {
+-				pr_debug("Failed get IOVA for PFN %lx\n",
+-					 start_vpfn);
+-				break;
+-			}
+-
+-			iova = split_and_remove_iova(&si_domain->iovad, iova,
+-						     start_vpfn, last_vpfn);
+-			if (iova == NULL) {
+-				pr_warn("Failed to split IOVA PFN [%lx-%lx]\n",
+-					start_vpfn, last_vpfn);
+-				return NOTIFY_BAD;
+-			}
+-
+-			freelist = domain_unmap(si_domain, iova->pfn_lo,
+-					       iova->pfn_hi);
++			freelist = domain_unmap(si_domain, start_vpfn,
++					last_vpfn);
+ 
+ 			rcu_read_lock();
+ 			for_each_active_iommu(iommu, drhd)
+ 				iommu_flush_iotlb_psi(iommu, si_domain,
+-					iova->pfn_lo, iova_size(iova),
++					start_vpfn, mhp->nr_pages,
+ 					!freelist, 0);
+ 			rcu_read_unlock();
+ 			dma_free_pagelist(freelist);
+-
+-			start_vpfn = iova->pfn_hi + 1;
+-			free_iova_mem(iova);
+ 		}
+ 		break;
+ 	}
+@@ -4891,8 +4857,9 @@ static void free_all_cpu_cached_iovas(unsigned int cpu)
+ 		for (did = 0; did < cap_ndoms(iommu->cap); did++) {
+ 			domain = get_iommu_domain(iommu, (u16)did);
+ 
+-			if (!domain)
++			if (!domain || domain->domain.type != IOMMU_DOMAIN_DMA)
+ 				continue;
++
+ 			free_cpu_cached_iovas(cpu, &domain->iovad);
+ 		}
+ 	}
+@@ -5321,9 +5288,6 @@ static int md_domain_init(struct dmar_domain *domain, int guest_width)
+ {
+ 	int adjust_width;
+ 
+-	init_iova_domain(&domain->iovad, VTD_PAGE_SIZE, IOVA_START_PFN);
+-	domain_reserve_special_ranges(domain);
+-
+ 	/* calculate AGAW */
+ 	domain->gaw = guest_width;
+ 	adjust_width = guestwidth_to_adjustwidth(guest_width);
+@@ -5342,11 +5306,21 @@ static int md_domain_init(struct dmar_domain *domain, int guest_width)
+ 	return 0;
+ }
+ 
++static void intel_init_iova_domain(struct dmar_domain *dmar_domain)
++{
++	init_iova_domain(&dmar_domain->iovad, VTD_PAGE_SIZE, IOVA_START_PFN);
++	copy_reserved_iova(&reserved_iova_list, &dmar_domain->iovad);
++
++	if (!intel_iommu_strict && init_iova_flush_queue(&dmar_domain->iovad,
++				iommu_flush_iova, iova_entry_free)) {
++		pr_info("iova flush queue initialization failed\n");
++	}
++}
++
+ static struct iommu_domain *intel_iommu_domain_alloc(unsigned type)
+ {
+ 	struct dmar_domain *dmar_domain;
+ 	struct iommu_domain *domain;
+-	int ret;
+ 
+ 	switch (type) {
+ 	case IOMMU_DOMAIN_DMA:
+@@ -5363,13 +5337,8 @@ static struct iommu_domain *intel_iommu_domain_alloc(unsigned type)
+ 			return NULL;
+ 		}
+ 
+-		if (!intel_iommu_strict && type == IOMMU_DOMAIN_DMA) {
+-			ret = init_iova_flush_queue(&dmar_domain->iovad,
+-						    iommu_flush_iova,
+-						    iova_entry_free);
+-			if (ret)
+-				pr_info("iova flush queue initialization failed\n");
+-		}
++		if (type == IOMMU_DOMAIN_DMA)
++			intel_init_iova_domain(dmar_domain);
+ 
+ 		domain_update_iommu_cap(dmar_domain);
+ 
+-- 
+2.20.1
 
