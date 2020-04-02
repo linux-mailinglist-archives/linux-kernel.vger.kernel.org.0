@@ -2,76 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A0AC19BF86
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 12:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DBBE19BF8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 12:44:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387966AbgDBKmv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 06:42:51 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:38236 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728612AbgDBKmu (ORCPT
+        id S2387998AbgDBKoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 06:44:08 -0400
+Received: from kernel.crashing.org ([76.164.61.194]:37732 "EHLO
+        kernel.crashing.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728612AbgDBKoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 06:42:50 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id A65211C2EC0; Thu,  2 Apr 2020 12:42:48 +0200 (CEST)
-Date:   Thu, 2 Apr 2020 12:42:48 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 040/116] fsl/fman: detect FMan erratum A050385
-Message-ID: <20200402104247.GA31202@duo.ucw.cz>
-References: <20200401161542.669484650@linuxfoundation.org>
- <20200401161547.550838813@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
-Content-Disposition: inline
-In-Reply-To: <20200401161547.550838813@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 2 Apr 2020 06:44:07 -0400
+Received: from localhost (gate.crashing.org [63.228.1.57])
+        (authenticated bits=0)
+        by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 032Ah8n8028563
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 2 Apr 2020 05:43:12 -0500
+Message-ID: <1947a3705a220ce14a2fda482c833b38a4d9fe9a.camel@kernel.crashing.org>
+Subject: Re: [PATCH] net/faraday: fix grammar in function
+ ftgmac100_setup_clk() in ftgmac100.c
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Hu Haowen <xianfengting221@163.com>, davem@davemloft.net,
+        andrew@lunn.ch, mchehab+samsung@kernel.org, andrew@aj.id.au,
+        corbet@lwn.net
+Cc:     stfrench@microsoft.com, chris@chris-wilson.co.uk,
+        xiubli@redhat.com, airlied@redhat.com, tglx@linutronix.de,
+        hkallweit1@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 02 Apr 2020 21:43:06 +1100
+In-Reply-To: <20200401105624.17423-1-xianfengting221@163.com>
+References: <20200401105624.17423-1-xianfengting221@163.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2020-04-01 at 18:56 +0800, Hu Haowen wrote:
+> "its not" is wrong. The words should be "it's not".
+> 
+> Signed-off-by: Hu Haowen <xianfengting221@163.com>
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Typo more than grammer :-)
 
-Hi!
+Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-> From: Madalin Bucur <madalin.bucur@nxp.com>
->=20
-> [ Upstream commit b281f7b93b258ce1419043bbd898a29254d5c9c7 ]
->=20
-> Detect the presence of the A050385 erratum.
+ (the offender) 
 
-This and the other two patches... _detect_ the erratum, but there are
-no patches that actually use the information. Mainline has such code
-(3c68b8fffb48c0018c24e73c48f2bac768c6203e) but it was not queued for
-stable.
+> ---
+>  drivers/net/ethernet/faraday/ftgmac100.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
+> index 835b7816e372..87236206366f 100644
+> --- a/drivers/net/ethernet/faraday/ftgmac100.c
+> +++ b/drivers/net/ethernet/faraday/ftgmac100.c
+> @@ -1731,7 +1731,7 @@ static int ftgmac100_setup_clk(struct ftgmac100 *priv)
+>  	if (rc)
+>  		goto cleanup_clk;
+>  
+> -	/* RCLK is for RMII, typically used for NCSI. Optional because its not
+> +	/* RCLK is for RMII, typically used for NCSI. Optional because it's not
+>  	 * necessary if it's the AST2400 MAC, or the MAC is configured for
+>  	 * RGMII, or the controller is not an ASPEED-based controller.
+>  	 */
 
-So all this is simply adding unused code, and not suitable for stable.
-
-Best regards,
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXoXBpwAKCRAw5/Bqldv6
-8g8KAJ4sTcUFEu2qK1MtG7mlrnTASn460QCeOA68yrcX4ErnCWUH07Y0KUNXjQ0=
-=L8Je
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
