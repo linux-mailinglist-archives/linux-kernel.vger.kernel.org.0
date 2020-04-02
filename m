@@ -2,68 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C16DD19BD30
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 09:59:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D25419BD34
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:00:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387682AbgDBH7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 03:59:45 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:15715 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387482AbgDBH7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 03:59:44 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 48tFpP4VCTz9txn7;
-        Thu,  2 Apr 2020 09:59:41 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=K2qSbeVr; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id tbdPKUFxzZ1c; Thu,  2 Apr 2020 09:59:41 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 48tFpP32Vdz9txn5;
-        Thu,  2 Apr 2020 09:59:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1585814381; bh=43GKGI0k75m1jMuar17d+4+DhdGR59q9yzVFw5zV0xg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=K2qSbeVrPsfu8z1CMpXAlEYM1yWe37c7NfFevmx7ryqhDzQfVQRDRs32WIX5yp+TZ
-         ywtDBo55GNAC5LEHXK38csaNzIV+L8t0pry8KwAfr0f5yZHSbG5+18iTKc2PfJjSN8
-         A62kH9kShZs4OS9xtLYqVd9modYuFioAzsIKVvQM=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 582B18B776;
-        Thu,  2 Apr 2020 09:59:42 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id Y1pqTqStopDu; Thu,  2 Apr 2020 09:59:42 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 076088B75E;
-        Thu,  2 Apr 2020 09:59:39 +0200 (CEST)
-Subject: Re: [PATCH RESEND 3/4] drm/i915/gem: Replace user_access_begin by
- user_write_access_begin
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, airlied@linux.ie,
-        daniel@ffwll.ch, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org
-References: <27106d62fdbd4ffb47796236050e418131cb837f.1585811416.git.christophe.leroy@c-s.fr>
- <6da6fa391c0d6344cc9ff99a69fcaa65666f3947.1585811416.git.christophe.leroy@c-s.fr>
- <202004020051.649C6B8@keescook>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <e5e1ad22-e3b2-5779-2662-1bd464eae175@c-s.fr>
-Date:   Thu, 2 Apr 2020 09:59:36 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <202004020051.649C6B8@keescook>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S2387687AbgDBIAU convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 2 Apr 2020 04:00:20 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:37702 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387482AbgDBIAU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 04:00:20 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R321e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=teawaterz@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TuOs01r_1585814406;
+Received: from 127.0.0.1(mailfrom:teawaterz@linux.alibaba.com fp:SMTPD_---0TuOs01r_1585814406)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 02 Apr 2020 16:00:11 +0800
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [RFC for Linux] virtio_balloon: Add VIRTIO_BALLOON_F_THP_ORDER to
+ handle THP spilt issue
+From:   teawater <teawaterz@linux.alibaba.com>
+In-Reply-To: <20200331100359-mutt-send-email-mst@kernel.org>
+Date:   Thu, 2 Apr 2020 16:00:05 +0800
+Cc:     David Hildenbrand <david@redhat.com>, Hui Zhu <teawater@gmail.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>, pagupta@redhat.com,
+        mojha@codeaurora.org, namit@vmware.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <02745FD3-E30D-453B-8664-94B8EBF3B313@linux.alibaba.com>
+References: <20200326031817-mutt-send-email-mst@kernel.org>
+ <C4C6BAF7-C040-403D-997C-48C7AB5A7D6B@redhat.com>
+ <20200326054554-mutt-send-email-mst@kernel.org>
+ <f26dc94a-7296-90c9-56cd-4586b78bc03d@redhat.com>
+ <20200331091718-mutt-send-email-mst@kernel.org>
+ <02a393ce-c4b4-ede9-7671-76fa4c19097a@redhat.com>
+ <20200331093300-mutt-send-email-mst@kernel.org>
+ <b69796e0-fa41-a219-c3e5-a11e9f5f18bf@redhat.com>
+ <20200331100359-mutt-send-email-mst@kernel.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -71,82 +51,171 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-Le 02/04/2020 à 09:52, Kees Cook a écrit :
-> On Thu, Apr 02, 2020 at 07:34:18AM +0000, Christophe Leroy wrote:
->> When i915_gem_execbuffer2_ioctl() is using user_access_begin(),
->> that's only to perform unsafe_put_user() so use
->> user_write_access_begin() in order to only open write access.
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> 2020年3月31日 22:07，Michael S. Tsirkin <mst@redhat.com> 写道：
 > 
-> Why is this split from the other conversions?
+> On Tue, Mar 31, 2020 at 04:03:18PM +0200, David Hildenbrand wrote:
+>> On 31.03.20 15:37, Michael S. Tsirkin wrote:
+>>> On Tue, Mar 31, 2020 at 03:32:05PM +0200, David Hildenbrand wrote:
+>>>> On 31.03.20 15:24, Michael S. Tsirkin wrote:
+>>>>> On Tue, Mar 31, 2020 at 12:35:24PM +0200, David Hildenbrand wrote:
+>>>>>> On 26.03.20 10:49, Michael S. Tsirkin wrote:
+>>>>>>> On Thu, Mar 26, 2020 at 08:54:04AM +0100, David Hildenbrand wrote:
+>>>>>>>> 
+>>>>>>>> 
+>>>>>>>>> Am 26.03.2020 um 08:21 schrieb Michael S. Tsirkin <mst@redhat.com>:
+>>>>>>>>> 
+>>>>>>>>> ﻿On Thu, Mar 12, 2020 at 09:51:25AM +0100, David Hildenbrand wrote:
+>>>>>>>>>>> On 12.03.20 09:47, Michael S. Tsirkin wrote:
+>>>>>>>>>>> On Thu, Mar 12, 2020 at 09:37:32AM +0100, David Hildenbrand wrote:
+>>>>>>>>>>>> 2. You are essentially stealing THPs in the guest. So the fastest
+>>>>>>>>>>>> mapping (THP in guest and host) is gone. The guest won't be able to make
+>>>>>>>>>>>> use of THP where it previously was able to. I can imagine this implies a
+>>>>>>>>>>>> performance degradation for some workloads. This needs a proper
+>>>>>>>>>>>> performance evaluation.
+>>>>>>>>>>> 
+>>>>>>>>>>> I think the problem is more with the alloc_pages API.
+>>>>>>>>>>> That gives you exactly the given order, and if there's
+>>>>>>>>>>> a larger chunk available, it will split it up.
+>>>>>>>>>>> 
+>>>>>>>>>>> But for balloon - I suspect lots of other users,
+>>>>>>>>>>> we do not want to stress the system but if a large
+>>>>>>>>>>> chunk is available anyway, then we could handle
+>>>>>>>>>>> that more optimally by getting it all in one go.
+>>>>>>>>>>> 
+>>>>>>>>>>> 
+>>>>>>>>>>> So if we want to address this, IMHO this calls for a new API.
+>>>>>>>>>>> Along the lines of
+>>>>>>>>>>> 
+>>>>>>>>>>> struct page *alloc_page_range(gfp_t gfp, unsigned int min_order,
+>>>>>>>>>>>                 unsigned int max_order, unsigned int *order)
+>>>>>>>>>>> 
+>>>>>>>>>>> the idea would then be to return at a number of pages in the given
+>>>>>>>>>>> range.
+>>>>>>>>>>> 
+>>>>>>>>>>> What do you think? Want to try implementing that?
+>>>>>>>>>> 
+>>>>>>>>>> You can just start with the highest order and decrement the order until
+>>>>>>>>>> your allocation succeeds using alloc_pages(), which would be enough for
+>>>>>>>>>> a first version. At least I don't see the immediate need for a new
+>>>>>>>>>> kernel API.
+>>>>>>>>> 
+>>>>>>>>> OK I remember now.  The problem is with reclaim. Unless reclaim is
+>>>>>>>>> completely disabled, any of these calls can sleep. After it wakes up,
+>>>>>>>>> we would like to get the larger order that has become available
+>>>>>>>>> meanwhile.
+>>>>>>>>> 
+>>>>>>>> 
+>>>>>>>> Yes, but that‘s a pure optimization IMHO.
+>>>>>>>> So I think we should do a trivial implementation first and then see what we gain from a new allocator API. Then we might also be able to justify it using real numbers.
+>>>>>>>> 
+>>>>>>> 
+>>>>>>> Well how do you propose implement the necessary semantics?
+>>>>>>> I think we are both agreed that alloc_page_range is more or
+>>>>>>> less what's necessary anyway - so how would you approximate it
+>>>>>>> on top of existing APIs?
+>>>>>> diff --git a/include/linux/balloon_compaction.h b/include/linux/balloon_compaction.h
+>>> 
+>>> .....
+>>> 
+>>> 
+>>>>>> diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
+>>>>>> index 26de020aae7b..067810b32813 100644
+>>>>>> --- a/mm/balloon_compaction.c
+>>>>>> +++ b/mm/balloon_compaction.c
+>>>>>> @@ -112,23 +112,35 @@ size_t balloon_page_list_dequeue(struct balloon_dev_info *b_dev_info,
+>>>>>> EXPORT_SYMBOL_GPL(balloon_page_list_dequeue);
+>>>>>> 
+>>>>>> /*
+>>>>>> - * balloon_page_alloc - allocates a new page for insertion into the balloon
+>>>>>> - *			page list.
+>>>>>> + * balloon_pages_alloc - allocates a new page (of at most the given order)
+>>>>>> + * 			 for insertion into the balloon page list.
+>>>>>> *
+>>>>>> * Driver must call this function to properly allocate a new balloon page.
+>>>>>> * Driver must call balloon_page_enqueue before definitively removing the page
+>>>>>> * from the guest system.
+>>>>>> *
+>>>>>> + * Will fall back to smaller orders if allocation fails. The order of the
+>>>>>> + * allocated page is stored in page->private.
+>>>>>> + *
+>>>>>> * Return: struct page for the allocated page or NULL on allocation failure.
+>>>>>> */
+>>>>>> -struct page *balloon_page_alloc(void)
+>>>>>> +struct page *balloon_pages_alloc(int order)
+>>>>>> {
+>>>>>> -	struct page *page = alloc_page(balloon_mapping_gfp_mask() |
+>>>>>> -				       __GFP_NOMEMALLOC | __GFP_NORETRY |
+>>>>>> -				       __GFP_NOWARN);
+>>>>>> -	return page;
+>>>>>> +	struct page *page;
+>>>>>> +
+>>>>>> +	while (order >= 0) {
+>>>>>> +		page = alloc_pages(balloon_mapping_gfp_mask() |
+>>>>>> +				   __GFP_NOMEMALLOC | __GFP_NORETRY |
+>>>>>> +				   __GFP_NOWARN, order);
+>>>>>> +		if (page) {
+>>>>>> +			set_page_private(page, order);
+>>>>>> +			return page;
+>>>>>> +		}
+>>>>>> +		order--;
+>>>>>> +	}
+>>>>>> +	return NULL;
+>>>>>> }
+>>>>>> -EXPORT_SYMBOL_GPL(balloon_page_alloc);
+>>>>>> +EXPORT_SYMBOL_GPL(balloon_pages_alloc);
+>>>>>> 
+>>>>>> /*
+>>>>>> * balloon_page_enqueue - inserts a new page into the balloon page list.
+>>>>> 
+>>>>> 
+>>>>> I think this will try to invoke direct reclaim from the first iteration
+>>>>> to free up the max order.
+>>>> 
+>>>> %__GFP_NORETRY: The VM implementation will try only very lightweight
+>>>> memory direct reclaim to get some memory under memory pressure (thus it
+>>>> can sleep). It will avoid disruptive actions like OOM killer.
+>>>> 
+>>>> Certainly good enough for a first version I would say, no?
+>>> 
+>>> Frankly how well that behaves would depend a lot on the workload.
+>>> Can regress just as well.
+>>> 
+>>> For the 1st version I'd prefer something that is the least disruptive,
+>>> and that IMHO means we only trigger reclaim at all in the same configuration
+>>> as now - when we can't satisfy the lowest order allocation.
+>> 
+>> Agreed.
+>> 
+>>> 
+>>> Anything else would be a huge amount of testing with all kind of
+>>> workloads.
+>>> 
+>> 
+>> So doing a "& ~__GFP_RECLAIM" in case order > 0? (as done in
+>> GFP_TRANSHUGE_LIGHT)
+> 
+> That will improve the situation when reclaim is not needed, but leave
+> the problem in place for when it's needed: if reclaim does trigger, we
+> can get a huge free page and immediately break it up.
+> 
+> So it's ok as a first step but it will make the second step harder as
+> we'll need to test with reclaim :).
 
 
-I split it from the other because this one is in drivers while other 
-ones are in core part of the kernel.
+I worry that will increases the allocation failure rate for large pages.
 
-Is it better to squash it in the previous patch ?
+I tried alloc 2M memory without __GFP_RECLAIM when I wrote the VIRTIO_BALLOON_F_THP_ORDER first version.
+It will fail when I use usemem punch-holes function generates 400m fragmentation pages in the guest kernel.
 
-Christophe
+What about add another option to balloon to control with __GFP_RECLAIM or without it?
+
+Best,
+Hui
 
 > 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
 > 
-> 
->> ---
->>   drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c | 11 ++++++-----
->>   1 file changed, 6 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
->> index 7643a30ba4cd..4be8205a70b6 100644
->> --- a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
->> +++ b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
->> @@ -1611,14 +1611,14 @@ static int eb_copy_relocations(const struct i915_execbuffer *eb)
->>   		 * happened we would make the mistake of assuming that the
->>   		 * relocations were valid.
->>   		 */
->> -		if (!user_access_begin(urelocs, size))
->> +		if (!user_write_access_begin(urelocs, size))
->>   			goto end;
->>   
->>   		for (copied = 0; copied < nreloc; copied++)
->>   			unsafe_put_user(-1,
->>   					&urelocs[copied].presumed_offset,
->>   					end_user);
->> -		user_access_end();
->> +		user_write_access_end();
->>   
->>   		eb->exec[i].relocs_ptr = (uintptr_t)relocs;
->>   	}
->> @@ -1626,7 +1626,7 @@ static int eb_copy_relocations(const struct i915_execbuffer *eb)
->>   	return 0;
->>   
->>   end_user:
->> -	user_access_end();
->> +	user_write_access_end();
->>   end:
->>   	kvfree(relocs);
->>   	err = -EFAULT;
->> @@ -2991,7 +2991,8 @@ i915_gem_execbuffer2_ioctl(struct drm_device *dev, void *data,
->>   		 * And this range already got effectively checked earlier
->>   		 * when we did the "copy_from_user()" above.
->>   		 */
->> -		if (!user_access_begin(user_exec_list, count * sizeof(*user_exec_list)))
->> +		if (!user_write_access_begin(user_exec_list,
->> +					     count * sizeof(*user_exec_list)))
->>   			goto end;
->>   
->>   		for (i = 0; i < args->buffer_count; i++) {
->> @@ -3005,7 +3006,7 @@ i915_gem_execbuffer2_ioctl(struct drm_device *dev, void *data,
->>   					end_user);
->>   		}
->>   end_user:
->> -		user_access_end();
->> +		user_write_access_end();
->>   end:;
->>   	}
->>   
 >> -- 
->> 2.25.0
->>
-> 
+>> Thanks,
+>> 
+>> David / dhildenb
+
