@@ -2,113 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F96C19BEC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 11:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F00BE19BE92
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 11:28:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387822AbgDBJir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 05:38:47 -0400
-Received: from mx0a-00154904.pphosted.com ([148.163.133.20]:25740 "EHLO
-        mx0a-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725965AbgDBJiq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 05:38:46 -0400
-X-Greylist: delayed 608 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 Apr 2020 05:38:45 EDT
-Received: from pps.filterd (m0170392.ppops.net [127.0.0.1])
-        by mx0a-00154904.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0329Ot01026600;
-        Thu, 2 Apr 2020 05:28:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=smtpout1;
- bh=7Ocow47AB1qZAY92zenrcfT0CCgfnPw2mvZ8Wspme3k=;
- b=WR44TD0oVT2tgVQRLV1iEGn6ZPCHXm5ftpt2b71HrPki5gFcOVsy9FDdyqM9ChlEtQaV
- UjNQ8b1rymLV0iDOJj1GdpR8n7P+YORh9QiuDi9w4V02s7kR/swm+D5DQv5XT6KnT3PO
- gDHNBCmcVHTtFSimvWYPCLT5Q7RtY0815R4U0tS9ISwFMl4SUOWaTAmVSatRGFJgbNr6
- UMcGXVt79//6J2O8azJctbl2Ro8/H6Tz24ioopgB7j+ZxX8TOFa5xYddwvUQvusxyI/f
- Vovy/VjTKTBujgh9w4Kwru77F5xZwX4OoFju3zyjvfCtJEat7smKtyrLLm1ZMN7ODFSC LA== 
-Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
-        by mx0a-00154904.pphosted.com with ESMTP id 3021reb5ym-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 02 Apr 2020 05:28:20 -0400
-Received: from pps.filterd (m0089483.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0329Oc4c093473;
-        Thu, 2 Apr 2020 05:28:19 -0400
-Received: from mailuogwdur.emc.com (mailuogwdur-nat.lss.emc.com [128.221.224.79] (may be forged))
-        by mx0b-00154901.pphosted.com with ESMTP id 3023cjp9wb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 02 Apr 2020 05:28:19 -0400
-Received: from emc.com (localhost [127.0.0.1])
-        by mailuogwprd53.lss.emc.com (Sentrion-MTA-4.3.1/Sentrion-MTA-4.3.0) with ESMTP id 0329RmcU027368;
-        Thu, 2 Apr 2020 05:28:18 -0400
-Received: from mailsyshubprd05.lss.emc.com ([mailsyshubprd05.lss.emc.com [10.253.24.23]]) by mailuogwprd53.lss.emc.com with ESMTP id 0329Rr16027395 ;
-          Thu, 2 Apr 2020 05:27:54 -0400
-Received: from arwen2.xiolab.lab.emc.com. (arwen2.xiolab.lab.emc.com [10.76.211.113])
-        by mailsyshubprd05.lss.emc.com (Sentrion-MTA-4.3.1/Sentrion-MTA-4.3.0) with ESMTP id 0329Re2m010727;
-        Thu, 2 Apr 2020 05:27:50 -0400
-From:   leonid.ravich@dell.com
-To:     dmaengine@vger.kernel.org
-Cc:     lravich@gmail.com, Leonid Ravich <Leonid.Ravich@dell.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Alexander.Barabash@dell.com" <Alexander.Barabash@dell.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Jilayne Lovejoy <opensource@jilayne.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dmaengine: ioat: Decreasing  allocation chunk size 2M -> 512K
-Date:   Thu,  2 Apr 2020 12:27:18 +0300
-Message-Id: <20200402092725.15121-2-leonid.ravich@dell.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20200402092725.15121-1-leonid.ravich@dell.com>
-References: <20200402092725.15121-1-leonid.ravich@dell.com>
-X-Sentrion-Hostname: mailuogwprd53.lss.emc.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-02_01:2020-03-31,2020-04-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- suspectscore=13 mlxlogscore=338 impostorscore=0 phishscore=0
- malwarescore=0 spamscore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004020085
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0
- suspectscore=13 spamscore=0 mlxscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 malwarescore=0 phishscore=0 mlxlogscore=411
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004020085
+        id S2387843AbgDBJ2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 05:28:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387722AbgDBJ2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 05:28:08 -0400
+Received: from mail.kernel.org (ip5f5ad4d8.dynamic.kabel-deutschland.de [95.90.212.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE5222074D;
+        Thu,  2 Apr 2020 09:28:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585819687;
+        bh=6NuIKa06JuBhIzAx4NV7mmY4eJMRHElqaJQJ06Ey6Dw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=T1EmQBOdi0c/arhTL5zDnjC5vsqdYacLjOWLvQJ1ghRhTRhn9Rv9PcZmLSofp408U
+         uxi5G+QlR685j2QbROP2dYYcq7qVIYB+SQd1kfggl/2O9pppimmZGxnj1GWIDo8xDe
+         zA5uqDSV8qmqWs5lIknIjnE6D/Cg6H8FycuQiMns=
+Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
+        (envelope-from <mchehab@kernel.org>)
+        id 1jJw8s-000Aa3-0k; Thu, 02 Apr 2020 11:28:06 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH 0/6] Fix several issues at qconf.cc
+Date:   Thu,  2 Apr 2020 11:27:57 +0200
+Message-Id: <cover.1585819250.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonid Ravich <Leonid.Ravich@emc.com>
+Since its conversion to support Qt5, back on Kernel 3.14, the qconf.cc tool
+has been having some issues.  With Kernel 5.6 (and Qt 5.13) it doesn't
+work at all, on any of its modes.
 
-current IOAT driver using big (2MB) allocations chunk for its descriptors
-therefore each ioat dma engine need 2 such chunks
-(64k entres in ring  each entry 64B = 4MB)
-requiring 2 * 2M * dmaengine contiguies memory chunk
-might fail due to memory fragmention.
+This patch series restore its functionality to what it had before Kernel 3.14.
 
-so we decresging chunk size and using more chunks.
+Now, all three modes should work as expected, and the layout will be shown
+with a vertical split, with the help messages at the botton, for both Single and
+Full modes.
 
-Signed-off-by: Leonid Ravich <Leonid.Ravich@emc.com>
----
- drivers/dma/ioat/dma.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The Split mode should also work properly, with its horizontal split showing
+the main config items at the left and a per-items view at the right.
 
-diff --git a/drivers/dma/ioat/dma.h b/drivers/dma/ioat/dma.h
-index 535aba9..e9757bc 100644
---- a/drivers/dma/ioat/dma.h
-+++ b/drivers/dma/ioat/dma.h
-@@ -83,7 +83,7 @@ struct ioatdma_device {
- 
- #define IOAT_MAX_ORDER 16
- #define IOAT_MAX_DESCS (1 << IOAT_MAX_ORDER)
--#define IOAT_CHUNK_SIZE (SZ_2M)
-+#define IOAT_CHUNK_SIZE (SZ_512K)
- #define IOAT_DESCS_PER_CHUNK (IOAT_CHUNK_SIZE/IOAT_DESC_SZ)
- 
- struct ioat_descs {
+Mauro Carvalho Chehab (6):
+  kconfig: qconf: clean deprecated warnings
+  kconfig: qconf: Change title for the item window
+  kconfig: qconf: fix the content of the main widget
+  kconfig: qconf: fix support for the split view mode
+  kconfig: qconf: remove some old bogus TODOs
+  kconfig: qconf: Fix a few alignment issues
+
+ scripts/kconfig/qconf.cc | 90 ++++++++++++++++++++++++++++------------
+ scripts/kconfig/qconf.h  |  2 +
+ 2 files changed, 66 insertions(+), 26 deletions(-)
+
 -- 
-1.9.3
+2.25.1
+
 
