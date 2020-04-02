@@ -2,145 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FB6219BCE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 09:40:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C88F719BCDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 09:40:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387627AbgDBHkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 03:40:53 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:34942 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728135AbgDBHkx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 03:40:53 -0400
-Received: by mail-pj1-f67.google.com with SMTP id g9so1196940pjp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 00:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rRniYv7RPwWHFWrPJUZ8iMNVA0tUTHJrCguWpqpN+6k=;
-        b=ZgYWh0h+a5Hg2gYuDaf7bAJw/KFnrjKUiEuvbptyyu8Ds6OObwEJ9RIl0P+Ognz7ON
-         aVcJvZkmoY5pTE9Oigwg6Rz73WgiRqYNakHvrmSrDodIpjaHrTg1KZr/8/65eN0WM5/I
-         HNXT2GWnBGZf3TIUSbj5+3eAx6Fzc29HW0q/8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rRniYv7RPwWHFWrPJUZ8iMNVA0tUTHJrCguWpqpN+6k=;
-        b=S37pUxMnPkCl0yG0BeBPFHXzEimh7qo9wT+QYsF7wa2MKKneL+4vyq/CykXkALlB6T
-         Ri7aDgHF0+SnZbOSdZxFZA3881BCXj5wqz2HpipbBj4F3C/5p585WofY5TxecPTiXUi3
-         Pnku6EeKkHVI4B8z4l5SMQS118TBbyJsKI1x7NUIiCBzhaJKZnH8U0MKbm+Z8Q7R4zfG
-         DB/ttZtMB6mcry6764ctEKDKQAOMgUqSyjBe4I9uSEK1r25N7GAgdGqqr8F4SkVlIHe+
-         3zikYXgztRH2y1Y01kZE7B9k7xaUH2yg8hZx6w3lbzJF//7gdoKPpLmrVdFftB0HE9+w
-         3/HA==
-X-Gm-Message-State: AGi0Puar32GydKmfNTwS3SkaqBhk7JXQ1P+Oep1VwUugHiQPHjOSyD98
-        mxlws1wXC06M73i8dOyXAKqLew==
-X-Google-Smtp-Source: APiQypI2cYt4enOL7sTbasi+WDYQtLGOhHbbnJYUSxIit5amZbHaBwsNKTd/VramUXhMpxHV80lNww==
-X-Received: by 2002:a17:902:a706:: with SMTP id w6mr1769890plq.79.1585813251785;
-        Thu, 02 Apr 2020 00:40:51 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 8sm3137514pfy.130.2020.04.02.00.40.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Apr 2020 00:40:50 -0700 (PDT)
-Date:   Thu, 2 Apr 2020 00:40:09 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v6 00/16] Infrastructure to allow fixing exec deadlocks
-Message-ID: <202004020037.67ED66C8B6@keescook>
-References: <AM6PR03MB5170B2F5BE24A28980D05780E4F50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <871rpg8o7v.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170938306F22C3CF61CC573E4CD0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <202003282041.A2639091@keescook>
- <AM6PR03MB5170E0E722ED0B05B149C135E4CB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <20200330201459.GF22483@bombadil.infradead.org>
+        id S2387585AbgDBHkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 03:40:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54170 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725965AbgDBHkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 03:40:14 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F32120678;
+        Thu,  2 Apr 2020 07:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585813214;
+        bh=h6Tip+cEf7ukuAyyG2JQMpBDVLJi93fc8bs/kqgJm50=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NwdVnWSzPxCFOLmhvjhSSbwAzB45Jl37eGZM2reH178+0ncx/OtgjgChr4X+gEx+N
+         TDrQw61S0VYYLuotclD1h2w8WF0K0+ulTtVtTW29AFRlFANOTpgqkhbgQtLdYZei11
+         x1f/PyE0jsEOs1naIzdClhDcLHLA/6yOuC5BUEw0=
+Date:   Thu, 2 Apr 2020 09:40:11 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] lkdtm: bugs: Fix spelling mistake
+Message-ID: <20200402074011.GB2755501@kroah.com>
+References: <20200401182855.GA16253@embeddedor>
+ <202004020008.C3403E1@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200330201459.GF22483@bombadil.infradead.org>
+In-Reply-To: <202004020008.C3403E1@keescook>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 01:14:59PM -0700, Matthew Wilcox wrote:
-> On Mon, Mar 30, 2020 at 10:12:02PM +0200, Bernd Edlinger wrote:
-> > On 3/29/20 5:44 AM, Kees Cook wrote:
-> > > On Sat, Mar 28, 2020 at 11:32:35PM +0100, Bernd Edlinger wrote:
-> > >> Oh, do I understand you right, that I can add a From: in the
-> > >> *body* of the mail, and then the From: in the MIME header part
-> > >> which I cannot change is ignored, so I can make you the author?
-> > > 
-> > > Correct. (If you use "git send-email" it'll do this automatically.)
-> > > 
-> > > e.g., trimmed from my workflow:
-> > > 
-> > > git format-patch -n --to "$to" --cover-letter -o outgoing/ \
-> > > 	--subject-prefix "PATCH v$version" "$SHA"
-> > > edit outgoing/0000-*
-> > > git send-email --transfer-encoding=8bit --8bit-encoding=UTF-8 \
-> > > 	--from="$ME" --to="$to" --cc="$ME" --cc="...more..." outgoing/*
-> > > 
-> > > 
+On Thu, Apr 02, 2020 at 12:08:56AM -0700, Kees Cook wrote:
+> On Wed, Apr 01, 2020 at 01:28:55PM -0500, Gustavo A. R. Silva wrote:
+> > Fix spelling mistake s/Intentially/Intentionally
 > > 
-> > Okay, thanks, I see that is very helpful information for me, and in
-> > this case I had also fixed a small bug in one of Eric's patches, which
-> > was initially overlooked (aquiring mutexes in wrong order,
-> > releasing an unlocked mutex in some error paths).
-> > I am completely unexperienced, and something that complex was not
-> > expected to happen :-) so this is just to make sure I can handle it
-> > correctly if something like this happens again.
-> > 
-> > In the case of PATCH v6 05/16 I removed the Reviewd-by: Bernd Edlinger
-> > since it is now somehow two authors and reviewing own code is obviously
-> > not ok, instead I added a Signed-off-by: Bernd Edlinger (and posted the
-> > whole series on Eric's behalf (after asking Eric's permissing per off-list
-> > e-mail, which probably ended in his spam folder)
-> > 
-> > Is this having two Signed-off-by: for mutliple authors the
-> > correct way to handle a shared authorship?
+> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > 
-> If the patch comes through you, then Reviewed-by: is inappropriate.
-> Instead, you should use Signed-off-by: in the second sense of
-> Documentation/process/submitting-patches.rst
+> Thanks! Greg, can you snag this when you get a chance?
 > 
-> This also documents how to handle "minor changes" that you make.
+> Acked-by: Kees Cook <keescook@chromium.org>
 
-And in the true case of multiple authors, have both SoBs, but also add a
-Co-developed-by: for the non-"git author" author. Specific details:
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
+Will do, after -rc1 is out.
 
--- 
-Kees Cook
+thanks,
+
+greg k-h
