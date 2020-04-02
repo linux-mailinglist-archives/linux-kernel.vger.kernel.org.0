@@ -2,123 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6554619BA0E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 03:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 811E319BA15
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:00:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733270AbgDBB5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 21:57:46 -0400
-Received: from sandeen.net ([63.231.237.45]:50490 "EHLO sandeen.net"
+        id S1733299AbgDBCAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 22:00:46 -0400
+Received: from mga02.intel.com ([134.134.136.20]:65293 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733073AbgDBB5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 21:57:45 -0400
-Received: from Liberator.local (liberator [10.0.0.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id B842E116F4;
-        Wed,  1 Apr 2020 20:57:35 -0500 (CDT)
-Subject: Re: [RFC 2/3] blktrace: fix debugfs use after free
-To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de
-Cc:     mhocko@suse.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bart Van Assche <bvanassche@acm.org>,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-References: <20200402000002.7442-1-mcgrof@kernel.org>
- <20200402000002.7442-3-mcgrof@kernel.org>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <9a6576cf-b89d-d1af-2d74-652878cb78c8@sandeen.net>
-Date:   Wed, 1 Apr 2020 20:57:42 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.6.0
+        id S1732498AbgDBCAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 22:00:45 -0400
+IronPort-SDR: mN1y/PilKLl/Lwf10aYELEpvCpGDV/YHVlK6/rz0wwJUsvB5+9WK+E3nJO344tSYdEQV/0Wq+2
+ kf76qLyE1yuA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2020 19:00:45 -0700
+IronPort-SDR: VtO7W3BqsOK5s4SUFIxlwyf+pUZfzge24frnaaFGaEjCrFIv3Tvvh4qvC1WKhAJZBsok67jmof
+ MBrpBAmPnF2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,333,1580803200"; 
+   d="scan'208";a="240690407"
+Received: from yhuang-dev.sh.intel.com ([10.239.159.23])
+  by fmsmga007.fm.intel.com with ESMTP; 01 Apr 2020 19:00:41 -0700
+From:   "Huang, Ying" <ying.huang@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>, Zi Yan <ziy@nvidia.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+Subject: [PATCH -V2] /proc/PID/smaps: Add PMD migration entry parsing
+Date:   Thu,  2 Apr 2020 10:00:31 +0800
+Message-Id: <20200402020031.1611223-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <20200402000002.7442-3-mcgrof@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/1/20 7:00 PM, Luis Chamberlain wrote:
-> On commit 6ac93117ab00 ("blktrace: use existing disk debugfs directory")
-> Omar fixed the original blktrace code for multiqueue use. This however
-> left in place a possible crash, if you happen to abuse blktrace in a way
-> it was not intended.
-> 
-> Namely, if you loop adding a device, setup the blktrace with BLKTRACESETUP,
-> forget to BLKTRACETEARDOWN, and then just remove the device you end up
-> with a panic:
+From: Huang Ying <ying.huang@intel.com>
 
-Weird, I swear I tested that and didn't hit it, but ...
+Now, when read /proc/PID/smaps, the PMD migration entry in page table is simply
+ignored.  To improve the accuracy of /proc/PID/smaps, its parsing and processing
+is added.
+
+Before the patch, for a fully populated 400 MB anonymous VMA, sometimes some THP
+pages under migration may be lost as follows.
+
+7f3f6a7e5000-7f3f837e5000 rw-p 00000000 00:00 0
+Size:             409600 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:              407552 kB
+Pss:              407552 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:    407552 kB
+Referenced:       301056 kB
+Anonymous:        407552 kB
+LazyFree:              0 kB
+AnonHugePages:    405504 kB
+ShmemPmdMapped:        0 kB
+FilePmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                0 kB
+THPeligible:		1
+VmFlags: rd wr mr mw me ac
+
+After the patch, it will be always,
+
+7f3f6a7e5000-7f3f837e5000 rw-p 00000000 00:00 0
+Size:             409600 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:              409600 kB
+Pss:              409600 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:    409600 kB
+Referenced:       294912 kB
+Anonymous:        409600 kB
+LazyFree:              0 kB
+AnonHugePages:    407552 kB
+ShmemPmdMapped:        0 kB
+FilePmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                0 kB
+THPeligible:		1
+VmFlags: rd wr mr mw me ac
+
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Reviewed-by: Zi Yan <ziy@nvidia.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Yang Shi <yang.shi@linux.alibaba.com>
+---
+
+v2:
+
+- Use thp_migration_supported() in condition to reduce code size if THP
+  migration isn't enabled.
+
+- Replace VM_BUG_ON() with VM_WARN_ON_ONCE(), it's not necessary to nuking
+  kernel for this.
+
+---
+ fs/proc/task_mmu.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 8d382d4ec067..9c72f9ce2dd8 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -546,10 +546,19 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
+ 	struct mem_size_stats *mss = walk->private;
+ 	struct vm_area_struct *vma = walk->vma;
+ 	bool locked = !!(vma->vm_flags & VM_LOCKED);
+-	struct page *page;
++	struct page *page = NULL;
  
-
-> This issue can be reproduced with break-blktrace [2] using:
-> 
->   break-blktrace -c 10 -d
-
-+ -s, right?
+-	/* FOLL_DUMP will return -EFAULT on huge zero page */
+-	page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
++	if (pmd_present(*pmd)) {
++		/* FOLL_DUMP will return -EFAULT on huge zero page */
++		page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
++	} else if (unlikely(thp_migration_supported() && is_swap_pmd(*pmd))) {
++		swp_entry_t entry = pmd_to_swp_entry(*pmd);
++
++		if (is_migration_entry(entry))
++			page = migration_entry_to_page(entry);
++		else
++			VM_WARN_ON_ONCE(1);
++	}
+ 	if (IS_ERR_OR_NULL(page))
+ 		return;
+ 	if (PageAnon(page))
+@@ -578,8 +587,7 @@ static int smaps_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
  
-> This patch fixes this issue. Note that there is also another
-> respective UAF but from the ioctl path [3], this should also fix
-> that issue.
-> 
-> This patch then also contends the severity of CVE-2019-19770 as
-> this issue is only possible using root to shoot yourself in the
-> foot by also misuing blktrace.
-> 
-> [0] https://bugzilla.kernel.org/show_bug.cgi?id=205713
-> [1] https://nvd.nist.gov/vuln/detail/CVE-2019-19770
-> [2] https://github.com/mcgrof/break-blktrace
+ 	ptl = pmd_trans_huge_lock(pmd, vma);
+ 	if (ptl) {
+-		if (pmd_present(*pmd))
+-			smaps_pmd_entry(pmd, addr, walk);
++		smaps_pmd_entry(pmd, addr, walk);
+ 		spin_unlock(ptl);
+ 		goto out;
+ 	}
+-- 
+2.25.0
 
-I verified that this does reproduce the exact same KASAN splat on
-kernel 4.19.83 as reported in the original bug, thanks!
-
--Eric
