@@ -2,163 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14B2E19BB3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 06:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A067C19BB62
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 07:40:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbgDBE6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 00:58:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47634 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725789AbgDBE6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 00:58:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D2602AD46;
-        Thu,  2 Apr 2020 04:58:05 +0000 (UTC)
-From:   NeilBrown <neilb@suse.de>
-To:     Hillf Danton <hdanton@sina.com>
-Date:   Thu, 02 Apr 2020 15:57:56 +1100
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] MM: replace PF_LESS_THROTTLE with PF_LOCAL_THROTTLE
-In-Reply-To: <20200402042644.17028-1-hdanton@sina.com>
-References: <87tv2b7q72.fsf@notabene.neil.brown.name> <87v9miydai.fsf@notabene.neil.brown.name> <20200402042644.17028-1-hdanton@sina.com>
-Message-ID: <87mu7uxz57.fsf@notabene.neil.brown.name>
+        id S1728398AbgDBFkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 01:40:17 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:34234 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbgDBFkR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 01:40:17 -0400
+Received: by mail-qk1-f193.google.com with SMTP id i6so2814149qke.1;
+        Wed, 01 Apr 2020 22:40:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Hj9hqNcME2oIKIw+5Vx3xGDXGbaFZ4ovP+thufGAVmU=;
+        b=oGgRiCyGM1NttzIOzX4lwfWaLVWlVNJVxi3p2J32f8r5BrPNarW8vx/Yl6iLZg5HU/
+         y1n7ZlChgcMzf6CBkZqbMoDBLXJcQzKXki+ZUF7JoXFN4UXXS8qJ4XMG1Dy5hJIP3D2q
+         PxIWu5Jz96mjpP+jTJdf8y6ohWWqVQYGRE+1Buh1xTTha5aNmdttUQo7vhVy+mQC//Xs
+         LEuGp+m+fJGeAswwrLaJzN9iuSErM4LRexHOGPl21AVS1fxbUL0yQWNG/9NYEI/wx1B6
+         sLOCt5cU4xBWmc99Zmu9lpWLpu4MQRIbmJsSeB8vI+u6Zhyi9W1GAygUEPh5rP6Dw1iu
+         YEvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=Hj9hqNcME2oIKIw+5Vx3xGDXGbaFZ4ovP+thufGAVmU=;
+        b=Smif+8RHLKd1nWQ1GDTERfSIhNR7k4Z7JHxwVtF7WlQghN6KbKR3gkPWuGkSbacT3/
+         4DYz127WT4bSInQrSv+qtk+X12RjcBiMlovv5pHNelKD6i1a1aP9xZFo0LTwT860HKx1
+         y6qxIHvObx/GheS4j0u3ogus0uNzEvTnlIptNQhA3ifwvQNbDh8CuJWaeQVvNB29si1v
+         7kNV8ivhLPLpGA99IAjgA08wgROQD68QC/SpEahxG2LzEG0dITRMUeFoHAq/5YYBuBy5
+         8OxEfsR0G3SqdqLYl8qnuRFFpixh++N2XKpDhqP23Y25U3UZfVRYixxpVTGCqJhqxKWQ
+         FEQA==
+X-Gm-Message-State: AGi0PubsIirzpTp/gtfpoocLpGEqUHWZ6H4oC2JT+fOsEwWJEP7mCPKO
+        GpUyv8R62QuZ9JFioWVUj+u9Yktv
+X-Google-Smtp-Source: APiQypKYQzwTCauSCZsNzFwP7pSAbf43FjGqHiBn/lCnEhAbO+zIU1RyY8RLX9MuztxrJHSKsfzyeg==
+X-Received: by 2002:a37:4c4d:: with SMTP id z74mr1842987qka.53.1585806015666;
+        Wed, 01 Apr 2020 22:40:15 -0700 (PDT)
+Received: from localhost (c-73-74-7-9.hsd1.il.comcast.net. [73.74.7.9])
+        by smtp.gmail.com with ESMTPSA id t140sm2911459qke.48.2020.04.01.22.40.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 22:40:14 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by localhost (8.15.2/8.14.9) with ESMTP id 0325eAOc005904;
+        Thu, 2 Apr 2020 00:40:12 -0500
+Received: (from chris@localhost)
+        by localhost (8.15.2/8.15.2/Submit) id 03254KY3004887;
+        Thu, 2 Apr 2020 00:04:20 -0500
+From:   Chris Rorvick <chris@rorvick.com>
+To:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Chris Rorvick <chris@rorvick.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH] iwlwifi: actually check allocated conf_tlv pointer
+Date:   Thu,  2 Apr 2020 00:02:19 -0500
+Message-Id: <20200402050219.4842-1-chris@rorvick.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Commit 71bc0334a637 ("iwlwifi: check allocated pointer when allocating
+conf_tlvs") attempted to fix a typoe introduced by commit 17b809c9b22e
+("iwlwifi: dbg: move debug data to a struct") but does not implement the
+check correctly.
 
-On Thu, Apr 02 2020, Hillf Danton wrote:
+Tweeted-by: @grsecurity
+Signed-off-by: Chris Rorvick <chris@rorvick.com>
+---
+In this wasn't picked up?
 
-> On Thu, 02 Apr 2020 10:53:20 +1100 NeilBrown wrote:
->>=20
->> PF_LESS_THROTTLE exists for loop-back nfsd, and a similar need in the
->> loop block driver, where a daemon needs to write to one bdi in
->> order to free up writes queued to another bdi.
->>=20
->> The daemon sets PF_LESS_THROTTLE and gets a larger allowance of dirty
->> pages, so that it can still dirty pages after other processses have been
->> throttled.
->>=20
->> This approach was designed when all threads were blocked equally,
->> independently on which device they were writing to, or how fast it was.
->> Since that time the writeback algorithm has changed substantially with
->> different threads getting different allowances based on non-trivial
->> heuristics.  This means the simple "add 25%" heuristic is no longer
->> reliable.
->>=20
->> This patch changes the heuristic to ignore the global limits and
->> consider only the limit relevant to the bdi being written to.  This
->> approach is already available for BDI_CAP_STRICTLIMIT users (fuse) and
->> should not introduce surprises.  This has the desired result of
->> protecting the task from the consequences of large amounts of dirty data
->> queued for other devices.
->>=20
->> This approach of "only consider the target bdi" is consistent with the
->> other use of PF_LESS_THROTTLE in current_may_throttle(), were it causes
->> attention to be focussed only on the target bdi.
->>=20
->> So this patch
->>  - renames PF_LESS_THROTTLE to PF_LOCAL_THROTTLE,
->>  - remove the 25% bonus that that flag gives, and
->>  - imposes 'strictlimit' handling for any process with PF_LOCAL_THROTTLE
->>    set.
->
-> 	/*
-> 	 * The strictlimit feature is a tool preventing mistrusted filesystems
-> 	 * from growing a large number of dirty pages before throttling. For
->
-> Based on the comment snippet, I suspect it is applicable to IO flushers
-> unless they are likely generating tons of dirty pages. If they are,
-> however, cutting their bonuses seem questionable.
+ drivers/net/wireless/intel/iwlwifi/iwl-drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The purpose of the strictlimit feature was to isolate one filesystem
-(bdi) from all others, so that the one cannot create dirty pages which
-unfairly disadvantage the others - this is what that comment says.
-But the implementation appears to focus on the isolation, not the
-specific purpose, and isolation works both ways.  It protects the others
-from the one, and the one from the others.
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+index ff52e69c1c80..a37f330e7bd4 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+@@ -1465,11 +1465,11 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
+ 		if (pieces->dbg_conf_tlv[i]) {
+ 			drv->fw.dbg.conf_tlv[i] =
+ 				kmemdup(pieces->dbg_conf_tlv[i],
+ 					pieces->dbg_conf_tlv_len[i],
+ 					GFP_KERNEL);
+-			if (!pieces->dbg_conf_tlv[i])
++			if (!drv->fw.dbg_conf_tlv[i])
+ 				goto out_free_fw;
+ 		}
+ 	}
+ 
+ 	memset(&trigger_tlv_sz, 0xff, sizeof(trigger_tlv_sz));
+-- 
+2.24.1
 
-fuse needs to be isolated so it doesn't harm others.
-nfsd and loop need to be isolate so they aren't harmed by others.
-I'm less familiar with IO flushers but I suspect that have exactly the
-same need as nfsd and loop - they need to be isolated from dirty pages
-other than on the device they are writing to.
-The 25% bonus was never about giving them a bonus because they need it.
-It was about protecting them from excess usage elsewhere.  I strongly
-suspect that my change will provide a conceptually better service for IO
-flushers. (whether it is better in a practical measurable sense I cannot
-say, but I'd be surprised if it was worse).
-
-One possible problem with strictlimit isolation is suggested by the
-comment
-
-	 *
-	 * In strictlimit case make decision based on the wb counters
-	 * and limits. Small writeouts when the wb limits are ramping
-	 * up are the price we consciously pay for strictlimit-ing.
-	 *
-
-This suggests that starting transients may be worse in some cases.
-I haven't noticed any problems in my (limited) testing so while I
-suspect there is a genuine difference here, I don't expect it to be problem=
-atic.
-
->
->>=20
->> Note that previously realtime threads were treated the same as
->> PF_LESS_THROTTLE threads.  This patch does *not* change the behvaiour for
->> real-time threads, so it is now different from the behaviour of nfsd and
->> loop tasks.  I don't know what is wanted for realtime.
->>=20
->> Signed-off-by: NeilBrown <neilb@suse.de>
->> =3D2D--
->
-> Hrm corrupted delivery?
-
-No, that's just normal email quotation for a multi-part message (needed
-for crypto-signing which I do by default)
-'git am', for example, is quite capable of coping with it.
-
-Thanks,
-NeilBrown
-
->
->>  drivers/block/loop.c  |  2 +-
->>  fs/nfsd/vfs.c         |  9 +++++----
->>  include/linux/sched.h |  2 +-
->>  kernel/sys.c          |  2 +-
->>  mm/page-writeback.c   | 10 ++++++----
->>  mm/vmscan.c           |  4 ++--
->>  6 files changed, 16 insertions(+), 13 deletions(-)
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl6FcNQACgkQOeye3VZi
-gblDmw/+NLPz80exgMWUF374oK1wARIqZr+wHTPVkaibovw8bomzXDLuPfLjOvMZ
-8H/U228VytpbSzhPCT82Ief8GaHb7uARwHEvxIJSCcNyPt+oyKbLJgRbp3Zu5z5h
-GD9in0nS4+TG5cEImhK8318jKBdCsEpX48Xe8YyW4bvIDWRyJHIuV8W6VYVSW/kF
-WWTgtJ7OLPhNGk1Ob/Gcx7gHnTGZv8tCo9EmDzBw87ZJDIP5hCG7fHeETNCf22jj
-GzZirbPR96Gvnur45qGfth2xbIMTiBmUwho0j1lRFE2R8Cz92c7m33UChQ72Z0v2
-1O8gLh6xlFhgD9GqbBLgVsNV3i3JOL6TLPQF2k6V6GC3POjNx3ohVV8S0p21F9Y+
-WUw5F+1XCkuoXUbOyPp4cD/chxzNZ/rE50T4YCD7GYE98qkLUXN9+4tmWkAcQUx2
-zINCbge4dsrUIJKzHberVtWeRpqIp1f2eoUWWZTmw/cHSGr4GkmKeTSKFCa8CWja
-lqjCsbz6FvB2TVHeDOBCI1F9A6CceD0AlbQ3jHU1If63QPVjrtmC1XkhQlcve+bK
-6eivYhInXZWR8JMe3VEogT2v0XHRzLlOEcK26UVFKb4WEDVrhnjC6HS3YTuVGC22
-gk27jBoVuQjCavat0iPBWrMaj4sNe5t37Z/4l6kfC1XXDU1o/60=
-=oqvq
------END PGP SIGNATURE-----
---=-=-=--
