@@ -2,35 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C19819BA49
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:29:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ABBF19BA59
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:34:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733309AbgDBC3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 22:29:23 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47118 "EHLO huawei.com"
+        id S2387432AbgDBCeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 22:34:08 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12666 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732462AbgDBC3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 22:29:23 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 90C198785B598A99A593;
-        Thu,  2 Apr 2020 10:29:14 +0800 (CST)
-Received: from [127.0.0.1] (10.173.223.234) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.487.0; Thu, 2 Apr 2020
- 10:29:10 +0800
-Subject: Re: [PATCH -next] ext4: Fix build error while CONFIG_PRINTK is n
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-References: <20200401073038.33076-1-yuehaibing@huawei.com>
- <20200401212859.GN768293@mit.edu>
-CC:     <adilger.kernel@dilger.ca>, <linux-ext4@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <b9e56f54-2180-4a2c-3e0b-47e85dec221b@huawei.com>
-Date:   Thu, 2 Apr 2020 10:29:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1727135AbgDBCeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 22:34:08 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id ED6EB8EE69BEE25C2339;
+        Thu,  2 Apr 2020 10:33:56 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.487.0; Thu, 2 Apr 2020
+ 10:33:49 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <ayush.sawal@chelsio.com>, <vinay.yadav@chelsio.com>,
+        <rohitm@chelsio.com>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>
+CC:     <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net] crypto/chcr: Add missing include file <linux/highmem.h>
+Date:   Thu, 2 Apr 2020 10:32:58 +0800
+Message-ID: <20200402023258.33336-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20200401212859.GN768293@mit.edu>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.173.223.234]
 X-CFilter-Loop: Reflected
@@ -39,62 +37,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/4/2 5:28, Theodore Y. Ts'o wrote:
-> On Wed, Apr 01, 2020 at 03:30:38PM +0800, YueHaibing wrote:
->> fs/ext4/balloc.c: In function ‘ext4_wait_block_bitmap’:
->> fs/ext4/balloc.c:519:3: error: implicit declaration of function ‘ext4_error_err’; did you mean ‘ext4_error’? [-Werror=implicit-function-declaration]
->>    ext4_error_err(sb, EIO, "Cannot read block bitmap - "
->>    ^~~~~~~~~~~~~~
->>
->> Add missing stub helper and fix ext4_abort.
->>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Fixes: 2ea2fc775321 ("ext4: save all error info in save_error_info() and drop ext4_set_errno()")
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> 
-> Thanks; the patch isn't quite correct, though.  This is what I merged
-> into my tree's version of the "save all error info..." commit.
-> 
->      	       	       	      	    	      - Ted
-> 
+drivers/crypto/chelsio/chcr_ktls.c: In function ‘chcr_short_record_handler’:
+drivers/crypto/chelsio/chcr_ktls.c:1770:12: error: implicit declaration of function ‘kmap_atomic’;
+ did you mean ‘in_atomic’? [-Werror=implicit-function-declaration]
+    vaddr = kmap_atomic(skb_frag_page(f));
+            ^~~~~~~~~~~
 
-Ok, good to know this and thansk!
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: dc05f3df8fac ("chcr: Handle first or middle part of record")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/crypto/chelsio/chcr_ktls.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index eacd2f9cc833..91eb4381cae5 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -2848,6 +2848,11 @@ do {									\
->  	no_printk(fmt, ##__VA_ARGS__);					\
->  	__ext4_error_inode(inode, "", 0, block, 0, " ");		\
->  } while (0)
-> +#define ext4_error_inode_err(inode, func, line, block, err, fmt, ...)	\
-> +do {									\
-> +	no_printk(fmt, ##__VA_ARGS__);					\
-> +	__ext4_error_inode(inode, "", 0, block, err, " ");		\
-> +} while (0)
->  #define ext4_error_file(file, func, line, block, fmt, ...)		\
->  do {									\
->  	no_printk(fmt, ##__VA_ARGS__);					\
-> @@ -2858,10 +2863,15 @@ do {									\
->  	no_printk(fmt, ##__VA_ARGS__);					\
->  	__ext4_error(sb, "", 0, 0, 0, " ");				\
->  } while (0)
-> -#define ext4_abort(sb, fmt, ...)					\
-> +#define ext4_error_err(sb, err, fmt, ...)				\
-> +do {									\
-> +	no_printk(fmt, ##__VA_ARGS__);					\
-> +	__ext4_error(sb, "", 0, err, 0, " ");				\
-> +} while (0)
-> +#define ext4_abort(sb, err, fmt, ...)					\
->  do {									\
->  	no_printk(fmt, ##__VA_ARGS__);					\
-> -	__ext4_abort(sb, "", 0, " ");					\
-> +	__ext4_abort(sb, "", 0, err, " ");				\
->  } while (0)
->  #define ext4_warning(sb, fmt, ...)					\
->  do {									\
-> 
-> .
-> 
+diff --git a/drivers/crypto/chelsio/chcr_ktls.c b/drivers/crypto/chelsio/chcr_ktls.c
+index 73658b71d4a3..cd1769ecdc1c 100644
+--- a/drivers/crypto/chelsio/chcr_ktls.c
++++ b/drivers/crypto/chelsio/chcr_ktls.c
+@@ -2,6 +2,7 @@
+ /* Copyright (C) 2020 Chelsio Communications.  All rights reserved. */
+ 
+ #ifdef CONFIG_CHELSIO_TLS_DEVICE
++#include <linux/highmem.h>
+ #include "chcr_ktls.h"
+ #include "clip_tbl.h"
+ 
+-- 
+2.17.1
+
 
