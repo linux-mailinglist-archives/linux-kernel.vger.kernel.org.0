@@ -2,159 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D18E19BF7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 12:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C48D219BF88
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 12:43:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387973AbgDBKkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 06:40:16 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:37771 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728803AbgDBKkP (ORCPT
+        id S2387991AbgDBKnB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 06:43:01 -0400
+Received: from kernel.crashing.org ([76.164.61.194]:37706 "EHLO
+        kernel.crashing.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728612AbgDBKnA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 06:40:15 -0400
-Received: by mail-ua1-f67.google.com with SMTP id l18so979512uak.4
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 03:40:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EKz0BYCnAYaxNPQCfa65G2LlOu2wy+lcqbRhsvRTDzY=;
-        b=gbcQgrA22EAyItGP+TKMeDdvt9CVIT/R2GLUGHK8fjYaSwYAmzZjrigV8/ZEc97Cs/
-         RNx49zr/EmMLCKs3yICV3DbWcDYNC5Edq669CkOvAdg3+O1GS2jZbpZOCtZQ6l7yebBe
-         DcE5X2RyzxPvE4l95PLzY7VkQp2hTqveDSVtEZd9yAZEIGIIb1ayiV74u9DWw1el7iMl
-         tBMNVst2x0cB6yx6mL/+mwCZbUBehcbP9DWmWpXhe7ZdE/NU+bYYJ0T4rxkQk1zpYaZY
-         //r41sobGat2KcV4rgWj0zoDrb9ujZcg71SJcQQypNO3b7Zv+97mRrl5whWtKXgFY2t5
-         j6Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EKz0BYCnAYaxNPQCfa65G2LlOu2wy+lcqbRhsvRTDzY=;
-        b=WlCjgTXnf18mWhuxYV8amKraUkzkbmIu4r/nP66iiKZIlOCKNWnnmoORrofmuY2VBN
-         BDVb44ggTSjRGO3TjiVUhFJnsz2VG3lc+sc9imjmgaGpFWrbh6sth+l7TT76uYdojZ0u
-         Gn9vPF2gN+Y7/Jt54o0LGUcxrRXGoysvKQsR/Jf+DqhHalB0l4Ak6fgsDFoiQCq60jqI
-         N9SPuLTiVJEYAUSwkwyx7rUT7emsW4N/yp3mJNRXCCEyeJao+QAi8HjymwS6ZgsUUM4D
-         7YEBWS9VtO0lBENh+tz6Ry5SF11ITzrHhi9QULBCUmV9QtNh2jm4VSBVetuV57BC18ow
-         R8/Q==
-X-Gm-Message-State: AGi0PubZBrfWwZqsv20wiVinwJda0z2+DpByKfgkRuDvtfM2W73O7GlW
-        4TYLlnNaFoZlCN76RWSv1920fFVTq5Cv5Po3QYS4XQ==
-X-Google-Smtp-Source: APiQypI83QnOQ6D0d7POmo0QouJRjj7RkZV/O1KQNeqzJrIRwpmjlcrHV9wDaSFuXhDoh9ukC8k3b+Ye0lKDq5mhdK8=
-X-Received: by 2002:ab0:70d9:: with SMTP id r25mr2082703ual.67.1585824014129;
- Thu, 02 Apr 2020 03:40:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <1584966504-21719-1-git-send-email-Anson.Huang@nxp.com> <1584966504-21719-3-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1584966504-21719-3-git-send-email-Anson.Huang@nxp.com>
-From:   Amit Kucheria <amit.kucheria@verdurent.com>
-Date:   Thu, 2 Apr 2020 16:10:03 +0530
-Message-ID: <CAHLCerNG3ZBbWrTwXxCbd1BOfyHxuvpAuo5tW_bNKgWcO5zESA@mail.gmail.com>
-Subject: Re: [PATCH V3 3/3] arm64: dts: imx8mp: Add thermal zones support
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
-        Fabio Estevam <festevam@gmail.com>, horia.geanta@nxp.com,
-        peng.fan@nxp.com, Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        lakml <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-imx@nxp.com
+        Thu, 2 Apr 2020 06:43:00 -0400
+Received: from localhost (gate.crashing.org [63.228.1.57])
+        (authenticated bits=0)
+        by kernel.crashing.org (8.14.7/8.14.7) with ESMTP id 032AfWgw028540
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 2 Apr 2020 05:41:35 -0500
+Message-ID: <f763d9d8487e77006b233bc16e0883f956850b6c.camel@kernel.crashing.org>
+Subject: Re: [PATCH v4 03/25] powerpc/powernv: Map & release OpenCAPI LPC
+ memory
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        "Alastair D'Silva" <alastair@d-silva.org>
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>
+Date:   Thu, 02 Apr 2020 21:41:30 +1100
+In-Reply-To: <CAPcyv4iGEHJpZctEm+Do1-kOZBUDeKKcREr=BqcK4kCvLWhAQQ@mail.gmail.com>
+References: <20200327071202.2159885-1-alastair@d-silva.org>
+         <20200327071202.2159885-4-alastair@d-silva.org>
+         <CAPcyv4iGEHJpZctEm+Do1-kOZBUDeKKcREr=BqcK4kCvLWhAQQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 6:05 PM Anson Huang <Anson.Huang@nxp.com> wrote:
->
-> i.MX8MP has a TMU inside which supports two thermal zones, add support
-> for them.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On Wed, 2020-04-01 at 01:48 -0700, Dan Williams wrote:
+> > 
+> > +u64 pnv_ocxl_platform_lpc_setup(struct pci_dev *pdev, u64 size)
+> > +{
+> > +       struct pci_controller *hose = pci_bus_to_host(pdev->bus);
+> > +       struct pnv_phb *phb = hose->private_data;
+> 
+> Is calling the local variable 'hose' instead of 'host' on purpose?
 
+Haha that's funny :-)
 
-[snip]
+It's an oooooooold usage that comes iirc from sparc ? or maybe alpha ?
+I somewhat accidentally picked it up when adding multiple host-bridge
+support on powerpc in the early 2000's and it hasn't quite died yet :)
 
->
-> +       thermal-zones {
-> +               cpu-thermal {
-> +                       polling-delay-passive = <250>;
-> +                       polling-delay = <2000>;
-> +                       thermal-sensors = <&tmu 0x0>;
+Cheers,
+Ben.
 
-No need for 0x0, just use 0
-
-> +                       trips {
-> +                               cpu_alert0: trip0 {
-> +                                       temperature = <85000>;
-> +                                       hysteresis = <2000>;
-> +                                       type = "passive";
-> +                               };
-> +
-> +                               cpu_crit0: trip1 {
-> +                                       temperature = <95000>;
-> +                                       hysteresis = <2000>;
-> +                                       type = "critical";
-> +                               };
-> +                       };
-> +
-> +                       cooling-maps {
-> +                               map0 {
-> +                                       trip = <&cpu_alert0>;
-> +                                       cooling-device =
-> +                                               <&A53_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +                                               <&A53_1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +                                               <&A53_2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +                                               <&A53_3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +                               };
-> +                       };
-> +               };
-> +
-> +               soc-thermal {
-> +                       polling-delay-passive = <250>;
-> +                       polling-delay = <2000>;
-> +                       thermal-sensors = <&tmu 0x1>;
-
-No need for 0x1, just use 1
-
-> +                       trips {
-> +                               soc_alert0: trip0 {
-> +                                       temperature = <85000>;
-> +                                       hysteresis = <2000>;
-> +                                       type = "passive";
-> +                               };
-> +
-> +                               soc_crit0: trip1 {
-> +                                       temperature = <95000>;
-> +                                       hysteresis = <2000>;
-> +                                       type = "critical";
-> +                               };
-> +                       };
-
-You need a cooling-map here since you have a passive trip point.
-
-
-> +               };
-> +       };
-> +
->         timer {
->                 compatible = "arm,armv8-timer";
->                 interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-> @@ -215,6 +271,13 @@
->                                 gpio-ranges = <&iomuxc 0 114 30>;
->                         };
->
-> +                       tmu: tmu@30260000 {
-> +                               compatible = "fsl,imx8mp-tmu";
-> +                               reg = <0x30260000 0x10000>;
-> +                               clocks = <&clk IMX8MP_CLK_TSENSOR_ROOT>;
-> +                               #thermal-sensor-cells = <1>;
-> +                       };
-> +
->                         wdog1: watchdog@30280000 {
->                                 compatible = "fsl,imx8mp-wdt", "fsl,imx21-wdt";
->                                 reg = <0x30280000 0x10000>;
-> --
-> 2.7.4
->
