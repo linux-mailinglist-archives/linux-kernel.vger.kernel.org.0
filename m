@@ -2,159 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4673C19BD6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:17:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2BFF19BD71
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:17:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387750AbgDBIRX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 04:17:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47324 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387601AbgDBIRW (ORCPT
+        id S2387777AbgDBIRr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 04:17:47 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:34918 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387768AbgDBIRp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:17:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=4rneyj2uBbyN/s3snHsjsVNWi1oFhxVS3X5MPkEZ0VI=; b=nEVfV1AedlA1a/UIMBE6GgwzQN
-        kVnL2sLRv+PFV3LXhXQImgNjqfc/9NpBtFa6z7Jv0gBRYGH+qK/xc6vnqAgSWqdkUanDjYUnvD7Dg
-        LKwoENjF077+pFzgAAWBuDNLYNx0Y5KL4/1joYmDNAwgfvMAO4i59p6kCILyHqPecUr2YNS7mN1Tn
-        U9CcsrMT9nPONYXIbpZIeqO/ARwoOJRaPmAaGKOcAaYwoc45s2pn0swa5SmSBZN16yAxCKfkRJutK
-        5Yqj3QdjqTwxxHP7it5FL0WMK4jsf6mfS6vUezzphBjquyJWvbDcXQDkIrKldsx5xOgiZu1X6gtXZ
-        lnuWntAQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJv2G-0005bV-E6; Thu, 02 Apr 2020 08:17:12 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CBEA1306CD2;
-        Thu,  2 Apr 2020 10:17:10 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 80F18202451B7; Thu,  2 Apr 2020 10:17:10 +0200 (CEST)
-Date:   Thu, 2 Apr 2020 10:17:10 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Julien Thierry <jthierry@redhat.com>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, x86@kernel.org, mhiramat@kernel.org,
-        mbenes@suse.cz, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v2] objtool,ftrace: Implement UNWIND_HINT_RET_OFFSET
-Message-ID: <20200402081710.GJ20760@hirez.programming.kicks-ass.net>
-References: <20200331111652.GH20760@hirez.programming.kicks-ass.net>
- <20200331202315.zialorhlxmml6ec7@treble>
- <20200331204047.GF2452@worktop.programming.kicks-ass.net>
- <20200331211755.pb7f3wa6oxzjnswc@treble>
- <20200331212040.7lrzmj7tbbx2jgrj@treble>
- <20200331222703.GH2452@worktop.programming.kicks-ass.net>
- <d2cad75e-1708-f0bf-7f88-194bcb29e61d@redhat.com>
- <20200401170910.GX20730@hirez.programming.kicks-ass.net>
- <684d6e29-4a01-b4a5-f906-7bdee5ad108f@redhat.com>
- <20200402075036.GA20730@hirez.programming.kicks-ass.net>
+        Thu, 2 Apr 2020 04:17:45 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328HdpD077946;
+        Thu, 2 Apr 2020 08:17:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=WeanoaLBqDrBq+dsLz0IwCLWX8D0EvqVHKxzG85jwu4=;
+ b=xplAvYEEBIYprbeGpiTuBI+T5ZKx8vHh+tczZOxIv7ipgoBwuEHEVkIy/6i43r5US1VE
+ kWvnaG6P66KtEv/94wKgSodPPMqhqbHbx5pHcy/chSF2qvJ6SCjyIQhjF5vezy9yhJQG
+ BBJAL4SBCek519hT7auJfr4n10Ra5MB4frcWKbwCjpHSx0PCNbtsN0GDElYSaLJYdSxy
+ PL11OMw80qlgUjfeh34SxwVcUndy9pvUb+EATdfhbpG2cjWxs24CPgzksHJEVcM3xaBU
+ 0e9+iHUIUnh4rh+wlOFEIkUFEmkyDSN01TC90oWy8QEfKmgtXryIAWbPbTNgBKktRWuz Cw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 303cev9u4u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Apr 2020 08:17:39 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328H0ak022089;
+        Thu, 2 Apr 2020 08:17:39 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 302g2j3nwm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Apr 2020 08:17:38 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0328HcC3021911;
+        Thu, 2 Apr 2020 08:17:38 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 02 Apr 2020 01:17:37 -0700
+Date:   Thu, 2 Apr 2020 11:17:30 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     aimannajjar <aiman.najjar@hurranet.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        linux-kernel@vger.kernel.org,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: [PATCH v2 1/5] staging: rtl8712: fix checkpatch long-line warning
+Message-ID: <20200402081730.GE2001@kadam>
+References: <20200327080429.GB1627562@kroah.com>
+ <cover.1585353747.git.aiman.najjar@hurranet.com>
+ <6a4d94b4e5446f4665dc11290ed1351661554f01.1585353747.git.aiman.najjar@hurranet.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200402075036.GA20730@hirez.programming.kicks-ass.net>
+In-Reply-To: <6a4d94b4e5446f4665dc11290ed1351661554f01.1585353747.git.aiman.najjar@hurranet.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=581 spamscore=0 mlxscore=0
+ adultscore=0 phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004020075
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 adultscore=0
+ clxscore=1015 phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 impostorscore=0 mlxlogscore=628 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004020075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 02, 2020 at 09:50:36AM +0200, Peter Zijlstra wrote:
-> On Thu, Apr 02, 2020 at 07:41:46AM +0100, Julien Thierry wrote:
-
-> > Also, instead of adding a special "arch_exception_frame_size", I could
-> > suggest:
-> > - Picking this patch [1] from a completely arbitrary source
-> > - Getting rid of INSN_STACK type, any instruction could then include stack
-> > ops on top of their existing semantics, they can just have an empty list if
-> > they don't touch SP/BP
-> > - x86 decoder adds a stack_op to the iret to modify the stack pointer by the
-> > right amount
+On Fri, Mar 27, 2020 at 08:08:07PM -0400, aimannajjar wrote:
+> This patch fixes these two long-line checkpatch warnings
+> in rtl871x_xmit.c:
 > 
-> That's not the worst idea, lemme try that.
+> WARNING: line over 80 characters
+> \#74: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:74:
+> +       * Please allocate memory with the sz = (struct xmit_frame) * NR_XMITFRAME,
+> 
+> WARNING: line over 80 characters
+> \#79: FILE: drivers/staging//rtl8712/rtl871x_xmit.c:79:
+> +               kmalloc(NR_XMITFRAME * sizeof(struct xmit_frame) + 4, GFP_ATOMIC);
+> 
+> Signed-off-by: aimannajjar <aiman.najjar@hurranet.com>
+                 ^^^^^^^^^^^
 
-Something like so then?
+You need to use your proper legal name here.  Please capitalize normally
+like you would on a legal document.
 
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -738,7 +738,6 @@ static inline void sync_core(void)
- 	unsigned int tmp;
- 
- 	asm volatile (
--		UNWIND_HINT_SAVE
- 		"mov %%ss, %0\n\t"
- 		"pushq %q0\n\t"
- 		"pushq %%rsp\n\t"
-@@ -748,7 +747,6 @@ static inline void sync_core(void)
- 		"pushq %q0\n\t"
- 		"pushq $1f\n\t"
- 		"iretq\n\t"
--		UNWIND_HINT_RESTORE
- 		"1:"
- 		: "=&r" (tmp), ASM_CALL_CONSTRAINT : : "cc", "memory");
- #endif
---- a/tools/objtool/arch.h
-+++ b/tools/objtool/arch.h
-@@ -19,6 +19,7 @@ enum insn_type {
- 	INSN_CALL,
- 	INSN_CALL_DYNAMIC,
- 	INSN_RETURN,
-+	INSN_EXCEPTION_RETURN,
- 	INSN_CONTEXT_SWITCH,
- 	INSN_STACK,
- 	INSN_BUG,
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -435,9 +435,19 @@ int arch_decode_instruction(struct elf *
- 		*type = INSN_RETURN;
- 		break;
- 
-+	case 0xcf: /* iret */
-+		*type = INSN_EXCEPTION_RETURN;
-+
-+		/* add $40, %rsp */
-+		op->src.type = OP_SRC_ADD;
-+		op->src.reg = CFI_SP;
-+		op->src.offset = 5*8;
-+		op->dest.type = OP_DEST_REG;
-+		op->dest.reg = CFI_SP;
-+		break;
-+
- 	case 0xca: /* retf */
- 	case 0xcb: /* retf */
--	case 0xcf: /* iret */
- 		*type = INSN_CONTEXT_SWITCH;
- 		break;
- 
-@@ -483,7 +493,7 @@ int arch_decode_instruction(struct elf *
- 
- 	*immediate = insn.immediate.nbytes ? insn.immediate.value : 0;
- 
--	if (*type == INSN_STACK)
-+	if (*type == INSN_STACK || *type == INSN_EXCEPTION_RETURN)
- 		list_add_tail(&op->list, ops_list);
- 	else
- 		free(op);
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2224,6 +2224,20 @@ static int validate_branch(struct objtoo
- 
- 			break;
- 
-+		case INSN_EXCEPTION_RETURN:
-+			if (handle_insn_ops(insn, &state))
-+				return 1;
-+
-+			/*
-+			 * This handles x86's sync_core() case, where we use an
-+			 * IRET to self. All 'normal' IRET instructions are in
-+			 * STT_NOTYPE entry symbols.
-+			 */
-+			if (func)
-+				break;
-+
-+			return 0;
-+
- 		case INSN_CONTEXT_SWITCH:
- 			if (func && (!next_insn || !next_insn->hint)) {
- 				WARN_FUNC("unsupported instruction in callable function",
+regards,
+dan carpenter
+
