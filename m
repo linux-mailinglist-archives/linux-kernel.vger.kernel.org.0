@@ -2,93 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E39A819BA40
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:21:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A145719BA45
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:25:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733283AbgDBCVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 22:21:13 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36812 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732560AbgDBCVM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 22:21:12 -0400
-Received: by mail-ed1-f68.google.com with SMTP id i7so2329808edq.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 19:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1M7OKSUxjChEcoYNZEaRS2w/Ep5Pr9E1TfTyAyCSCGU=;
-        b=fKlJIQaa53eGN4Fy8VcYUy2a7XjrwmByQurko1/ikVYzWFoz/xwrPeVDsSf75GRHNb
-         29jlaC2ZDgSU9LJNvdMKB2kqVdFMrpnwMZFTKVBFD0Q0IH+V60MrGYiSLW6wns572Moy
-         3r8nX5Vf0MvcNdCoe9xvYjC9IHbGlkESNk9f03WyB4aU/VG0I2Q1raTqiD8iFz2q1BK2
-         h23PBhxaU5/ij1/ndAfqXEZepXeK5tLctgdeE4W5Gzab9mcgnE8lC2HOge7jRFDvN8p9
-         FachXdeFSlB+iofoxgQfzaORIvhx6yVpZflU+kgmz6DsHLDYWrct1S2aAcni+Qie0rNI
-         Znyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1M7OKSUxjChEcoYNZEaRS2w/Ep5Pr9E1TfTyAyCSCGU=;
-        b=BvL8UAxee+AR3CpzbpkRyTWJXLZU8fnouq/MSL7+RyOyXjbzED0pAKo160SwupgpHZ
-         yzGWN2U4MnIvkWlBJBheVwmfYXHp9fo1tUG9T5I0KuELkrx9aPEspjfdg8z9ymWo0eH7
-         spX2MpFwN+nLzZmIQo0QeKuWE132tYRlFnMkXQmfVFPExMZ4Ed50K0qUyzAU/xdPutI7
-         as2pN+A1zH0ZQMRamSv7GUBO4sompM3cvuafKDGO8nZW+iQNJJ7sOlePta4BgLA6J/4Q
-         C261VhiNe57ft6Fxr++QC+cghRox/0W27S0E75MPVOfLzzWheU1ypHEIRlOWqoChBNKc
-         qerg==
-X-Gm-Message-State: AGi0PuZq4Za9Q0G+/avEKGeJE/e7SAZCW1zLi3jjllGUmGwKNACa8XzD
-        Iw/aFNl/okn15rZ0kUtvExeQpA3A/8WD42oVoA6IAw==
-X-Google-Smtp-Source: APiQypLfWzzdPhYu8JstE8xaJceriFzU0asNEFuyamP/TyOhBMVKn0U8IqjgkCH+xJCJO/KoFgheuGPAIuQ9Y/y0nk8=
-X-Received: by 2002:aa7:c609:: with SMTP id h9mr755033edq.93.1585794070492;
- Wed, 01 Apr 2020 19:21:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <158560290392.6059.16921214463585182874.stgit@djiang5-desk3.ch.intel.com>
- <158560362665.6059.11999047251277108233.stgit@djiang5-desk3.ch.intel.com> <20200401071851.GA31076@infradead.org>
-In-Reply-To: <20200401071851.GA31076@infradead.org>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 1 Apr 2020 19:20:59 -0700
-Message-ID: <CAPcyv4iE_-g8ymYe75bLKmVUvTVtp8GJm3xqUoiscbyTxoUnbQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] pci: add PCI quirk cmdmem fixup for Intel DSA device
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, dmaengine@vger.kernel.org,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-pci@vger.kernel.org,
-        "Luck, Tony" <tony.luck@intel.com>, Jing Lin <jing.lin@intel.com>,
-        Sanjay K Kumar <sanjay.k.kumar@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1733283AbgDBCZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 22:25:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34638 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732435AbgDBCZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 22:25:56 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA22A20721;
+        Thu,  2 Apr 2020 02:25:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585794354;
+        bh=i5q9OjnSdrRHwgxVwFU2JlkrgmID6ZL3uOS6aN9W78I=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aIYJ9Yng+1+VM9IynzqC9z9V+xxzvsPaltBvxSR0hx90jJ4DvSc07dS01cAUqcn2y
+         GyxXx+zNWjPgSHdiN2uga1J/FI6fvlckkBjhSK2ddLHMZgeHGIrOYnDcO52Xj2mG5C
+         9cu4eDSa8c7T3szXgTdSAujcK2diubnA4twiFmhA=
+Date:   Wed, 1 Apr 2020 19:25:53 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, <linux-mm@kvack.org>,
+        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Andreas Schaufler <andreas.schaufler@gmx.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: [PATCH v3] mm: hugetlb: optionally allocate gigantic hugepages
+ using cma 65;5803;1c Commit 944d9fec8d7a
+ ("hugetlb: add support for gigantic page allocation at runtime") has added
+ the run-time allocation of gigantic pages. However it actually works only
+ at early stages of the system loading, when the majority of memory is free.
+ After some time the memory gets fragmented by non-movable pages, so the
+ chances to find a contiguous 1 GB block are getting close to zero. Even
+ dropping caches manually doesn't help a lot.
+Message-Id: <20200401192553.7f437f150203a5fa044a1f75@linux-foundation.org>
+In-Reply-To: <20200311220920.2487528-1-guro@fb.com>
+References: <20200311220920.2487528-1-guro@fb.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 1, 2020 at 12:19 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Mon, Mar 30, 2020 at 02:27:06PM -0700, Dave Jiang wrote:
-> > Since there is no standard way that defines a PCI device that receives
-> > descriptors or commands with synchronous write operations, add quirk to set
-> > cmdmem for the Intel accelerator device that supports it.
->
-> Why do we need a quirk for this?  Even assuming a flag is needed in
-> struct pci_dev (and I don't really understand why that is needed to
-> start with), it could be set in ->probe.
+On Wed, 11 Mar 2020 15:09:20 -0700 Roman Gushchin <guro@fb.com> wrote:
 
-The consideration in my mind is whether this new memory type and
-instruction combination warrants a new __attribute__((noderef,
-address_space(X))) separate from __iomem. If it stays a single device
-concept layered on __iomem then yes, I agree it can all live locally
-in the driver. However, when / if this facility becomes wider spread,
-as the PCI ECR in question is trending, it might warrant general
-annotation.
+> At large scale rebooting servers in order to allocate gigantic hugepages
+> is quite expensive and complex. At the same time keeping some constant
+> percentage of memory in reserved hugepages even if the workload isn't
+> using it is a big waste: not all workloads can benefit from using 1 GB
+> pages.
+> 
+> The following solution can solve the problem:
+> 1) On boot time a dedicated cma area* is reserved. The size is passed
+>    as a kernel argument.
+> 2) Run-time allocations of gigantic hugepages are performed using the
+>    cma allocator and the dedicated cma area
+> 
+> In this case gigantic hugepages can be allocated successfully with a
+> high probability, however the memory isn't completely wasted if nobody
+> is using 1GB hugepages: it can be used for pagecache, anon memory,
+> THPs, etc.
+> 
+> * On a multi-node machine a per-node cma area is allocated on each node.
+>   Following gigantic hugetlb allocation are using the first available
+>   numa node if the mask isn't specified by a user.
+> 
+> Usage:
+> 1) configure the kernel to allocate a cma area for hugetlb allocations:
+>    pass hugetlb_cma=10G as a kernel argument
+> 
+> 2) allocate hugetlb pages as usual, e.g.
+>    echo 10 > /sys/kernel/mm/hugepages/hugepages-1048576kB/nr_hugepages
+> 
+> If the option isn't enabled or the allocation of the cma area failed,
+> the current behavior of the system is preserved.
+> 
+> x86 and arm-64 are covered by this patch, other architectures can be
+> trivially added later.
 
-The enqcmds instruction does not operate on typical x86 mmio
-addresses, only these special device portals offer the ability to have
-non-posted writes with immediate results in the cpu condition code
-flags.
+Lots of review input on v2, but then everyone went quiet ;)
+
+Has everything been addressed?
