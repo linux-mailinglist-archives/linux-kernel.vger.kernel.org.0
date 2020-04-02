@@ -2,120 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B13419BD86
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:21:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3274919BD8E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387805AbgDBIUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 04:20:39 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41182 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387574AbgDBIUi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:20:38 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328HfN3196532;
-        Thu, 2 Apr 2020 08:20:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=EaXZFFeTA8O4D6nJYJebiWR5e5W/VsgY5MuEdEEr1P4=;
- b=Wj0xISE+q64qxa8ro83BtW1HdoFGaxzEvWk32mkVRxai8vcRDcqi9gpv9PC/70o6oawN
- LSypU3xZZ6T8BcI6Ogoh+7muljEbeZ54Dx/Erb6edOeNncZxNjzqKOEXYl6zBtirP46g
- yFZ+ixZttO43wgyycYt5dVHs76sMl7WQxuZuzBEvWpCAQ2+wpHAaeBwFFP+D0Rtua1An
- vvEySFZ/cQpLiAybBhfZXGAK8JS7YzTpCpLtYplmisWXKgv/mW0Cbqjv2iMYn5yHQ20R
- V8pAtP5NhpRJO9mYRIyp1vn4zIhr4pSzOYojdfQedCqVy716s2rKNshvWcoqasaJUzWw Xw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 303yuncefc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 Apr 2020 08:20:24 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328H72f126289;
-        Thu, 2 Apr 2020 08:18:24 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 304sjnssyk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 Apr 2020 08:18:24 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0328INsu003454;
-        Thu, 2 Apr 2020 08:18:23 GMT
-Received: from linux-1.home (/92.157.90.160)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 02 Apr 2020 01:18:23 -0700
-From:   Alexandre Chartre <alexandre.chartre@oracle.com>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, jpoimboe@redhat.com,
-        peterz@infradead.org, jthierry@redhat.com, tglx@linutronix.de,
-        alexandre.chartre@oracle.com
-Subject: [PATCH 7/7] x86/speculation: Remove most ANNOTATE_NOSPEC_ALTERNATIVE
-Date:   Thu,  2 Apr 2020 10:22:20 +0200
-Message-Id: <20200402082220.808-8-alexandre.chartre@oracle.com>
-X-Mailer: git-send-email 2.18.2
-In-Reply-To: <20200402082220.808-1-alexandre.chartre@oracle.com>
-References: <20200402082220.808-1-alexandre.chartre@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
- malwarescore=0 phishscore=0 suspectscore=13 mlxlogscore=999 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004020075
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
- suspectscore=13 mlxscore=0 spamscore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2004020075
+        id S2387710AbgDBIYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 04:24:33 -0400
+Received: from mta-02.yadro.com ([89.207.88.252]:39176 "EHLO mta-01.yadro.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387574AbgDBIYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 04:24:32 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-01.yadro.com (Postfix) with ESMTP id 60C5141252;
+        Thu,  2 Apr 2020 08:24:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
+        content-transfer-encoding:mime-version:user-agent:content-type
+        :content-type:organization:references:in-reply-to:date:date:from
+        :from:subject:subject:message-id:received:received:received; s=
+        mta-01; t=1585815868; x=1587630269; bh=Rk9xR31MTBz42inzc2zDfzMeZ
+        IDUkeMnBQo9b80woiI=; b=Z1QSr1ecssngt9KsASvvvGjwjmSfwzQLU7b3urygH
+        jfQ2eVzv51CZmehzgGEfVE7k2eKD4XeKdy4bNn5FuM69IJ/8R8TSMRkjdlYqLo+l
+        sVv85W8lYsBXvJiVl81kD24CAMcPvG0gRCh/A7cgjEUHSWrsTiigH3W7rFQ4TQPW
+        ok=
+X-Virus-Scanned: amavisd-new at yadro.com
+Received: from mta-01.yadro.com ([127.0.0.1])
+        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id yIxdH8dGqypN; Thu,  2 Apr 2020 11:24:28 +0300 (MSK)
+Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mta-01.yadro.com (Postfix) with ESMTPS id 6E2EA41251;
+        Thu,  2 Apr 2020 11:24:28 +0300 (MSK)
+Received: from localhost.localdomain (10.199.3.154) by
+ T-EXCH-02.corp.yadro.com (172.17.10.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.1.669.32; Thu, 2 Apr 2020 11:24:28 +0300
+Message-ID: <1e2c9b590a3626abee330a28cca86cbae7affb39.camel@yadro.com>
+Subject: Re: [PATCH v6 2/2] iio: proximity: Add driver support for vcnl3020
+ proximity sensor
+From:   Ivan Mikhaylov <i.mikhaylov@yadro.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 2 Apr 2020 11:24:36 +0300
+In-Reply-To: <CAHp75VcdDR-owtFuFMqNLFh_-L902fXODG14_6Dh416tTwjidA@mail.gmail.com>
+References: <20200401162416.24474-1-i.mikhaylov@yadro.com>
+         <20200401162416.24474-3-i.mikhaylov@yadro.com>
+         <CAHp75VcdDR-owtFuFMqNLFh_-L902fXODG14_6Dh416tTwjidA@mail.gmail.com>
+Organization: YADRO
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.199.3.154]
+X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
+ T-EXCH-02.corp.yadro.com (172.17.10.102)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that intra-function calls and retpoline return instructions have
-been annotated and that they are supported by objtool, almost all
-ANNOTATE_NOSPEC_ALTERNATIVE can be removed.
+On Wed, 2020-04-01 at 19:35 +0300, Andy Shevchenko wrote:
+> On Wed, Apr 1, 2020 at 7:24 PM Ivan Mikhaylov <i.mikhaylov@yadro.com> wrote:
+> > Proximity sensor driver based on light/vcnl4000.c code.
+> > For now supports only the single on-demand measurement.
+> > 
+> > The VCNL3020 is a fully integrated proximity sensor. Fully
+> > integrated means that the infrared emitter is included in the
+> > package. It has 16-bit resolution. It includes a signal
+> > processing IC and features standard I2C communication
+> > interface. It features an interrupt function.
+> 
+> Thank you for an update, my comments below.
+> 
+> ...
+> 
+> > +static int get_and_apply_property(struct vcnl3020_data *data, const char
+> > *prop,
+> > +                                 u32 reg)
+> > +{
+> > +       int rc;
+> > +       u32 val;
+> > +
+> > +       rc = device_property_read_u32(data->dev, prop, &val);
+> > +       if (rc)
+> > +               return 0;
+> > +
+> > +       rc = regmap_write(data->regmap, reg, val);
+> > +       if (rc)
+> > +               dev_err(data->dev, "Error (%d) setting property (%s)",
+> > +                       rc, prop);
+> 
+> This requires {} according to the coding style
 
-ANNOTATE_NOSPEC_ALTERNATIVE is still needed when using the
-__FILL_RETURN_BUFFER macro because it loops on intra-function calls
-and objtool doesn't handle loops modifying the stack pointer.
+checkpatch.pl doesn't say anything bad on this spot. Do you mean to make
+something like this?
 
-Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
----
- arch/x86/include/asm/nospec-branch.h | 4 ----
- 1 file changed, 4 deletions(-)
+rc = regmap_write(data->regmap, reg, val);
+if (rc) {
+	dev_err(data->dev, "Error (%d) setting property (%s)",
+                rc, prop);
+}
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 9ae6dde2f10b..70d4444120b1 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -140,7 +140,6 @@
-  */
- .macro JMP_NOSPEC reg:req
- #ifdef CONFIG_RETPOLINE
--	ANNOTATE_NOSPEC_ALTERNATIVE
- 	ALTERNATIVE_2 __stringify(ANNOTATE_RETPOLINE_SAFE; jmp *\reg),	\
- 		__stringify(RETPOLINE_JMP \reg), X86_FEATURE_RETPOLINE,	\
- 		__stringify(lfence; ANNOTATE_RETPOLINE_SAFE; jmp *\reg), X86_FEATURE_RETPOLINE_AMD
-@@ -151,7 +150,6 @@
- 
- .macro CALL_NOSPEC reg:req
- #ifdef CONFIG_RETPOLINE
--	ANNOTATE_NOSPEC_ALTERNATIVE
- 	ALTERNATIVE_2 __stringify(ANNOTATE_RETPOLINE_SAFE; call *\reg),	\
- 		__stringify(RETPOLINE_CALL \reg), X86_FEATURE_RETPOLINE,\
- 		__stringify(lfence; ANNOTATE_RETPOLINE_SAFE; call *\reg), X86_FEATURE_RETPOLINE_AMD
-@@ -190,7 +188,6 @@
-  * which is ensured when CONFIG_RETPOLINE is defined.
-  */
- # define CALL_NOSPEC						\
--	ANNOTATE_NOSPEC_ALTERNATIVE				\
- 	ALTERNATIVE_2(						\
- 	ANNOTATE_RETPOLINE_SAFE					\
- 	"call *%[thunk_target]\n",				\
-@@ -209,7 +206,6 @@
-  * here, anyway.
-  */
- # define CALL_NOSPEC						\
--	ANNOTATE_NOSPEC_ALTERNATIVE				\
- 	ALTERNATIVE_2(						\
- 	ANNOTATE_RETPOLINE_SAFE					\
- 	"call *%[thunk_target]\n",				\
--- 
-2.18.2
+In previous notes you said to remove them. 
+
+> .
+> 
+> > +       return rc;
+> > +}
+> 
+> ...
+> 
+> > +static int vcnl3020_probe(struct i2c_client *client)
+> > +{
+> > +       indio_dev->name = VCNL_DRV_NAME;
+> 
+> It's definitely not a driver name. You have to put part number here.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/iio/light/tsl4531.c?h=v5.6#n199
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/iio/light/max44009.c?h=v5.6#n507
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/iio/light/vl6180.c?h=v5.6#n515
+
 
