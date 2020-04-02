@@ -2,92 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EF6A19BD8A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B1F519BD7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:19:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387775AbgDBIVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 04:21:46 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35679 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387661AbgDBIVp (ORCPT
+        id S2387835AbgDBIS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 04:18:56 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:39230 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387737AbgDBISm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:21:45 -0400
-Received: by mail-wm1-f65.google.com with SMTP id i19so2616184wmb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 01:21:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3yw/mZugffXhJm2+MbO9KEG1ll5RyPq6d+/bgOj0P7Y=;
-        b=qL2mpmgJL89FXVIoIFsPbjVOV373A4m4slm69eSaeMQ8hF4YZnj7H2r9qmNnlrWE+B
-         guJ17nHrE0/l1kfE4Xq75fpWyOCuNOvULyvgoomFV8enESFpc6eARQaePJFATEZsUmBk
-         3CDS7VOTdF+su6vuZKhj2k4zluk9PO8EUlFAGYq9qUmrfLB7kJXh902KgvaizzCnisUB
-         LdXjWzFetCiHM0Svpjg/MR5D/N1njlh5BIkaXspuqeBn0cUkpzpmqTuVshndxaMXVDDo
-         I2kYCMxOASmE8hv/gwLm2ZU3QBO2c2UgdALBWzcSy3SuILWOz6LdkwCrXLxOiN17I75Y
-         kxGw==
-X-Gm-Message-State: AGi0PuYBgQZs7IOtmWzC9Xi/RP1QcjqVIwkOBizYfggn/ambawDU2n4G
-        syN3ND1rAtZYLGIIe+gwb3k=
-X-Google-Smtp-Source: APiQypIRgfJOEvtCzoD8kQfJBLr/c8mDN70xY0FqOj5l0qXDaIAfoDdbVoz3p1CjTuk7lH3y8Jq/2A==
-X-Received: by 2002:a05:600c:291a:: with SMTP id i26mr2213291wmd.96.1585815704010;
-        Thu, 02 Apr 2020 01:21:44 -0700 (PDT)
-Received: from localhost (ip-37-188-180-223.eurotel.cz. [37.188.180.223])
-        by smtp.gmail.com with ESMTPSA id j11sm6086257wmi.33.2020.04.02.01.21.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Apr 2020 01:21:43 -0700 (PDT)
-Date:   Thu, 2 Apr 2020 10:21:42 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        =?utf-8?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Subject: Re: [PATCH -V2] /proc/PID/smaps: Add PMD migration entry parsing
-Message-ID: <20200402082142.GL22681@dhcp22.suse.cz>
-References: <20200402020031.1611223-1-ying.huang@intel.com>
- <20200402064437.GC22681@dhcp22.suse.cz>
- <87zhbufjyc.fsf@yhuang-dev.intel.com>
- <20200402074411.GH22681@dhcp22.suse.cz>
- <87v9mifgui.fsf@yhuang-dev.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87v9mifgui.fsf@yhuang-dev.intel.com>
+        Thu, 2 Apr 2020 04:18:42 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328Hfuo196604;
+        Thu, 2 Apr 2020 08:18:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=p17e2nyu9f8khVOWGKbMQnX5vaZpXcrK5ZQI2Ho/lm4=;
+ b=eej2HpgwaI6tdb9RzaIbds5q10LJdi4Gg8qBlMRaU5df33iXwU/ReF1o76nS4+ga1kp3
+ VcUwC5g+2GgkyR6G5KeLVCxLitTENpJOZIWM35xGHTLEhiWGyOdXmStVuLg1J2clXj1E
+ oVIxSVHrCvlYa0dPPwRnWcqFNfdroCMR9mIsoMaZLpbRPGClbN9RmLMy30izaaahq3N7
+ 7Kl7IkBbObRA7qHtDpZf2f6FYaqcDqMGCMAbj8ILnUFnh6q+rblXD4IA5fMzVf+8z9+8
+ VBAjkDIGXwuqsfCOj82mjwBSimpb9X3WPqbru/rBOynYCymnHMzQ2exPthletdpBboy6 jg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 303yunce44-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Apr 2020 08:18:12 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0328Gw4b022002;
+        Thu, 2 Apr 2020 08:18:12 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 302g2j3pnm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Apr 2020 08:18:11 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0328I90O022173;
+        Thu, 2 Apr 2020 08:18:09 GMT
+Received: from linux-1.home (/92.157.90.160)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 02 Apr 2020 01:18:09 -0700
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+To:     x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org, jpoimboe@redhat.com,
+        peterz@infradead.org, jthierry@redhat.com, tglx@linutronix.de,
+        alexandre.chartre@oracle.com
+Subject: [PATCH 0/7] objtool changes to remove most ANNOTATE_NOSPEC_ALTERNATIVE
+Date:   Thu,  2 Apr 2020 10:22:13 +0200
+Message-Id: <20200402082220.808-1-alexandre.chartre@oracle.com>
+X-Mailer: git-send-email 2.18.2
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=774 spamscore=0 mlxscore=0
+ adultscore=0 phishscore=0 bulkscore=0 suspectscore=1 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004020075
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9578 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 lowpriorityscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=830 bulkscore=0
+ suspectscore=1 mlxscore=0 spamscore=0 impostorscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004020075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 02-04-20 16:10:29, Huang, Ying wrote:
-> Michal Hocko <mhocko@kernel.org> writes:
-> 
-> > On Thu 02-04-20 15:03:23, Huang, Ying wrote:
-[...]
-> >> > Could you explain why do we need this WARN_ON? I haven't really checked
-> >> > the swap support for THP but cannot we have normal swap pmd entries?
-> >> 
-> >> I have some patches to add the swap pmd entry support, but they haven't
-> >> been merged yet.
-> >> 
-> >> Similar checks are for all THP migration code paths, so I follow the
-> >> same style.
-> >
-> > I haven't checked other migration code paths but what is the reason to
-> > add the warning here? Even if this shouldn't happen, smaps is perfectly
-> > fine to ignore that situation, no?
-> 
-> Yes. smaps itself is perfectly fine to ignore it.  I think this is used
-> to find bugs in other code paths such as THP migration related.
+Hi,
 
-Please do not add new warnings without a good an strong reasons. As a
-matter of fact there are people running with panic_on_warn and each
-warning is fatal for them. Please also note that this is a user trigable
-path and that requires even more care.
+Code like retpoline or RSB stuffing, which is used to mitigate some of
+the speculative execution issues, is currently ignored by objtool with
+the ANNOTATE_NOSPEC_ALTERNATIVE directive. This series adds support
+for intra-function calls and trampoline return instructions to objtool
+so that it can handle such a code. With these changes, we can remove
+most ANNOTATE_NOSPEC_ALTERNATIVE directives.
+
+Thanks,
+
+alex.
+
+--
+
+Alexandre Chartre (7):
+  objtool: is_fentry_call() crashes if call has no destination
+  objtool: Allow branches within the same alternative.
+  objtool: Add support for intra-function calls
+  objtool: Add support for return trampoline call
+  x86/speculation: Annotate intra-function calls
+  x86/speculation: Annotate retpoline return instructions
+  x86/speculation: Remove most ANNOTATE_NOSPEC_ALTERNATIVE
+
+ arch/x86/include/asm/nospec-branch.h |  38 ++++--
+ tools/objtool/check.c                | 172 +++++++++++++++++++++++++--
+ tools/objtool/check.h                |   5 +-
+ 3 files changed, 196 insertions(+), 19 deletions(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+2.18.2
+
