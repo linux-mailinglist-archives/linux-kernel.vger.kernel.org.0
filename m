@@ -2,106 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A067C19BB62
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 07:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 407A519BB49
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 07:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbgDBFkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 01:40:17 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:34234 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbgDBFkR (ORCPT
+        id S1727012AbgDBFYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 01:24:16 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39762 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgDBFYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 01:40:17 -0400
-Received: by mail-qk1-f193.google.com with SMTP id i6so2814149qke.1;
-        Wed, 01 Apr 2020 22:40:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Hj9hqNcME2oIKIw+5Vx3xGDXGbaFZ4ovP+thufGAVmU=;
-        b=oGgRiCyGM1NttzIOzX4lwfWaLVWlVNJVxi3p2J32f8r5BrPNarW8vx/Yl6iLZg5HU/
-         y1n7ZlChgcMzf6CBkZqbMoDBLXJcQzKXki+ZUF7JoXFN4UXXS8qJ4XMG1Dy5hJIP3D2q
-         PxIWu5Jz96mjpP+jTJdf8y6ohWWqVQYGRE+1Buh1xTTha5aNmdttUQo7vhVy+mQC//Xs
-         LEuGp+m+fJGeAswwrLaJzN9iuSErM4LRexHOGPl21AVS1fxbUL0yQWNG/9NYEI/wx1B6
-         sLOCt5cU4xBWmc99Zmu9lpWLpu4MQRIbmJsSeB8vI+u6Zhyi9W1GAygUEPh5rP6Dw1iu
-         YEvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=Hj9hqNcME2oIKIw+5Vx3xGDXGbaFZ4ovP+thufGAVmU=;
-        b=Smif+8RHLKd1nWQ1GDTERfSIhNR7k4Z7JHxwVtF7WlQghN6KbKR3gkPWuGkSbacT3/
-         4DYz127WT4bSInQrSv+qtk+X12RjcBiMlovv5pHNelKD6i1a1aP9xZFo0LTwT860HKx1
-         y6qxIHvObx/GheS4j0u3ogus0uNzEvTnlIptNQhA3ifwvQNbDh8CuJWaeQVvNB29si1v
-         7kNV8ivhLPLpGA99IAjgA08wgROQD68QC/SpEahxG2LzEG0dITRMUeFoHAq/5YYBuBy5
-         8OxEfsR0G3SqdqLYl8qnuRFFpixh++N2XKpDhqP23Y25U3UZfVRYixxpVTGCqJhqxKWQ
-         FEQA==
-X-Gm-Message-State: AGi0PubsIirzpTp/gtfpoocLpGEqUHWZ6H4oC2JT+fOsEwWJEP7mCPKO
-        GpUyv8R62QuZ9JFioWVUj+u9Yktv
-X-Google-Smtp-Source: APiQypKYQzwTCauSCZsNzFwP7pSAbf43FjGqHiBn/lCnEhAbO+zIU1RyY8RLX9MuztxrJHSKsfzyeg==
-X-Received: by 2002:a37:4c4d:: with SMTP id z74mr1842987qka.53.1585806015666;
-        Wed, 01 Apr 2020 22:40:15 -0700 (PDT)
-Received: from localhost (c-73-74-7-9.hsd1.il.comcast.net. [73.74.7.9])
-        by smtp.gmail.com with ESMTPSA id t140sm2911459qke.48.2020.04.01.22.40.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 22:40:14 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by localhost (8.15.2/8.14.9) with ESMTP id 0325eAOc005904;
-        Thu, 2 Apr 2020 00:40:12 -0500
-Received: (from chris@localhost)
-        by localhost (8.15.2/8.15.2/Submit) id 03254KY3004887;
-        Thu, 2 Apr 2020 00:04:20 -0500
-From:   Chris Rorvick <chris@rorvick.com>
-To:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Chris Rorvick <chris@rorvick.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH] iwlwifi: actually check allocated conf_tlv pointer
-Date:   Thu,  2 Apr 2020 00:02:19 -0500
-Message-Id: <20200402050219.4842-1-chris@rorvick.com>
-X-Mailer: git-send-email 2.25.0
+        Thu, 2 Apr 2020 01:24:16 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJsKs-008Qfb-6k; Thu, 02 Apr 2020 05:24:14 +0000
+Date:   Thu, 2 Apr 2020 06:24:14 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [git pull] vfs.git pathwalk sanitizing
+Message-ID: <20200402052414.GE23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 71bc0334a637 ("iwlwifi: check allocated pointer when allocating
-conf_tlvs") attempted to fix a typoe introduced by commit 17b809c9b22e
-("iwlwifi: dbg: move debug data to a struct") but does not implement the
-check correctly.
+	Massive pathwalk rewrite and cleanups.  Several iterations had
+been posted; hopefully the damn thing is getting readable and understandable
+now.  Pretty much all parts of pathname resolutions are affected...
 
-Tweeted-by: @grsecurity
-Signed-off-by: Chris Rorvick <chris@rorvick.com>
----
-In this wasn't picked up?
+The branch is identical to what has sat in -next, except for commit message in
+"lift all calls of step_into() out of follow_dotdot/follow_dotdot_rcu",
+crediting Qian Cai for reporting the bug; only commit message changed there.
+ I'd folded the fix back in Mar 25, and it had been present in -next since then
+(see #work.dotdot).  I asked Qian Cai whether he wanted his tested-by on that
+thing, got no reply...
+	Anyway, all diffs in that branch are identical to the ones in
+#work.dotdot, which is what has sat in linux-next for the last week.
 
- drivers/net/wireless/intel/iwlwifi/iwl-drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-index ff52e69c1c80..a37f330e7bd4 100644
---- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-@@ -1465,11 +1465,11 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
- 		if (pieces->dbg_conf_tlv[i]) {
- 			drv->fw.dbg.conf_tlv[i] =
- 				kmemdup(pieces->dbg_conf_tlv[i],
- 					pieces->dbg_conf_tlv_len[i],
- 					GFP_KERNEL);
--			if (!pieces->dbg_conf_tlv[i])
-+			if (!drv->fw.dbg_conf_tlv[i])
- 				goto out_free_fw;
- 		}
- 	}
- 
- 	memset(&trigger_tlv_sz, 0xff, sizeof(trigger_tlv_sz));
--- 
-2.24.1
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
 
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.dotdot1
+
+for you to fetch changes up to 99a4a90c8e9337e364136393286544e3753673c3:
+
+  lookup_open(): don't bother with fallbacks to lookup+create (2020-04-02 01:09:31 -0400)
+
+----------------------------------------------------------------
+Al Viro (69):
+      do_add_mount(): lift lock_mount/unlock_mount into callers
+      fix automount/automount race properly
+      follow_automount(): get rid of dead^Wstillborn code
+      follow_automount() doesn't need the entire nameidata
+      make build_open_flags() treat O_CREAT | O_EXCL as implying O_NOFOLLOW
+      handle_mounts(): start building a sane wrapper for follow_managed()
+      atomic_open(): saner calling conventions (return dentry on success)
+      lookup_open(): saner calling conventions (return dentry on success)
+      do_last(): collapse the call of path_to_nameidata()
+      handle_mounts(): pass dentry in, turn path into a pure out argument
+      lookup_fast(): consolidate the RCU success case
+      teach handle_mounts() to handle RCU mode
+      lookup_fast(): take mount traversal into callers
+      step_into() callers: dismiss the symlink earlier
+      new step_into() flag: WALK_NOFOLLOW
+      fold handle_mounts() into step_into()
+      LOOKUP_MOUNTPOINT: fold path_mountpointat() into path_lookupat()
+      expand the only remaining call of path_lookup_conditional()
+      merging pick_link() with get_link(), part 1
+      merging pick_link() with get_link(), part 2
+      merging pick_link() with get_link(), part 3
+      merging pick_link() with get_link(), part 4
+      merging pick_link() with get_link(), part 5
+      merging pick_link() with get_link(), part 6
+      finally fold get_link() into pick_link()
+      sanitize handling of nd->last_type, kill LAST_BIND
+      namei: invert the meaning of WALK_FOLLOW
+      pick_link(): check for WALK_TRAILING, not LOOKUP_PARENT
+      link_path_walk(): simplify stack handling
+      namei: have link_path_walk() maintain LOOKUP_PARENT
+      massage __follow_mount_rcu() a bit
+      new helper: traverse_mounts()
+      atomic_open(): return the right dentry in FMODE_OPENED case
+      atomic_open(): lift the call of may_open() into do_last()
+      do_last(): merge the may_open() calls
+      do_last(): don't bother with keeping got_write in FMODE_OPENED case
+      do_last(): rejoing the common path earlier in FMODE_{OPENED,CREATED} case
+      do_last(): simplify the liveness analysis past finish_open_created
+      do_last(): rejoin the common path even earlier in FMODE_{OPENED,CREATED} case
+      split the lookup-related parts of do_last() into a separate helper
+      path_connected(): pass mount and dentry separately
+      path_parent_directory(): leave changing path->dentry to callers
+      expand path_parent_directory() in its callers
+      follow_dotdot{,_rcu}(): lift switching nd->path to parent out of loop
+      follow_dotdot{,_rcu}(): lift LOOKUP_BENEATH checks out of loop
+      move handle_dots(), follow_dotdot() and follow_dotdot_rcu() past step_into()
+      handle_dots(), follow_dotdot{,_rcu}(): preparation to switch to step_into()
+      follow_dotdot{,_rcu}(): switch to use of step_into()
+      lift all calls of step_into() out of follow_dotdot/follow_dotdot_rcu
+      follow_dotdot{,_rcu}(): massage loops
+      follow_dotdot_rcu(): be lazy about changing nd->path
+      follow_dotdot(): be lazy about changing nd->path
+      helper for mount rootwards traversal
+      non-RCU analogue of the previous commit
+      fs/namei.c: kill follow_mount()
+      pick_link(): pass it struct path already with normal refcounting rules
+      fold path_to_nameidata() into its only remaining caller
+      pick_link(): more straightforward handling of allocation failures
+      pick_link(): take reserving space on stack into a new helper
+      reserve_stack(): switch to __nd_alloc_stack()
+      __nd_alloc_stack(): make it return bool
+      link_path_walk(): sample parent's i_uid and i_mode for the last component
+      take post-lookup part of do_last() out of loop
+      open_last_lookups(): consolidate fsnotify_create() calls
+      open_last_lookups(): don't abuse complete_walk() when all we want is unlazy
+      open_last_lookups(): lift O_EXCL|O_CREAT handling into do_open()
+      open_last_lookups(): move complete_walk() into do_open()
+      atomic_open(): no need to pass struct open_flags anymore
+      lookup_open(): don't bother with fallbacks to lookup+create
+
+ Documentation/filesystems/path-lookup.rst |    7 +-
+ fs/autofs/dev-ioctl.c                     |    6 +-
+ fs/internal.h                             |    1 -
+ fs/namei.c                                | 1488 ++++++++++++-----------------
+ fs/namespace.c                            |   96 +-
+ fs/open.c                                 |    4 +-
+ include/linux/namei.h                     |    4 +-
+ 7 files changed, 687 insertions(+), 919 deletions(-)
