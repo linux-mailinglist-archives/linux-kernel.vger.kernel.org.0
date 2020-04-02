@@ -2,79 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E1819BD5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2781B19BD61
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:15:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387667AbgDBINw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 04:13:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726841AbgDBINw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:13:52 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD42F2078B;
-        Thu,  2 Apr 2020 08:13:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585815232;
-        bh=MfvQQkIj2OFoUDYO9jUXwG7FM99uzokTU3uHkH5wg0k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Lq/LJrlM2qvKHHPYYTWR7RsC++8+oesBipjopjmq3dFbpRSnuBHDI9xa8/9afO/s1
-         GhDRHhUSi7sdxX9Ps1865zTSvyjC/n+k1bjKPrVBosVPvvP/Fg/jToNU2O/XicfKJH
-         /iEcLGvV4zdP4OlFXxZOt0Y4+V/NH4W7D6Ki5VZc=
-Date:   Thu, 2 Apr 2020 09:13:47 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, hsinyi@chromium.org,
-        geert+renesas@glider.be, swboyd@chromium.org, robh@kernel.org,
-        tytso@mit.edu
-Subject: Re: [PATCH] Documentation: dt-bindings: Document 'rng-seed' for
- /chosen
-Message-ID: <20200402081346.GA2548@willie-the-truck>
-References: <20200402033640.12465-1-f.fainelli@gmail.com>
+        id S2387710AbgDBIPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 04:15:10 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:52955 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387691AbgDBIPJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 04:15:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585815308;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sya16GgscQWBGe8FVvcdkczCb3z+w5XFXS8649TwHeM=;
+        b=e9qCS2CNSOv33cYiURSC9VBZcCn8aFAPuxT/+3mgRaZ+w2BImroPRVHr1AY2TuPjVpGyop
+        aHwVnvkQf9akCw0ediTOijqOWP3GXnh3Vz9Dat+B6Gr6Aml7pexkiOIiduEQIwjt//UMaY
+        0jrgWQdoFyoiv6eys/ZacTtOCSY912U=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-429-Y4rwelsWPoe6TjILq_v51g-1; Thu, 02 Apr 2020 04:15:05 -0400
+X-MC-Unique: Y4rwelsWPoe6TjILq_v51g-1
+Received: by mail-wm1-f70.google.com with SMTP id f9so715284wme.7
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 01:15:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to;
+        bh=sya16GgscQWBGe8FVvcdkczCb3z+w5XFXS8649TwHeM=;
+        b=IU5hC+gIeB2NbxKfbWgcis8ivNga3R/n8h8YI2/vxA6wQhNhDxhELSWUBH95X7MTcv
+         urF7TVsGUOSvgUA81yq8KjoWXW+1nJdJIHVfLA3puyGvfMiDRCZaaum3Md1nuiYtWR9x
+         A2UmoAVwna7DcPnM/bI6D1ci3qy7nmlOJHLvwfhs7oyNO9fdX973S+QrUPNyRQxM4ovj
+         lHnwLrmgWtsx+fJKwj9ST+bYvUFVnNvg1CViCl1y3Is/58elh/0onOfptRX2zBgpi/mM
+         xNZlZxFr8C14+SMRWc5OQOcJslSTGwhcotDMBvgCTwMyYdfA+Z4O7u4BDkDuz1wUTa0a
+         haXw==
+X-Gm-Message-State: AGi0PuY1UxWaLUjAVtdLtGnnNlXVFQFA0f+i5Tt1VNGWv9Qh2rxot0nW
+        lwQSqvnF8cM9UanATZN7EMUrZTcMOtmThCDao1fQNFFtrrgzKmjDXDVdMYgVUelPlDncbm1/o7F
+        D8SrTjTVvAscUZMfM+35loDST
+X-Received: by 2002:a1c:9d8f:: with SMTP id g137mr1448321wme.178.1585815304264;
+        Thu, 02 Apr 2020 01:15:04 -0700 (PDT)
+X-Google-Smtp-Source: APiQypKrVCvCu2TCJw9Lc9tHS5eH8r8weVzmyktk9rGmdg9mOVC7Tj0K5fqv9S8zIbPLu4KJEGJ0bw==
+X-Received: by 2002:a1c:9d8f:: with SMTP id g137mr1448286wme.178.1585815303858;
+        Thu, 02 Apr 2020 01:15:03 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:1868:42dd:216c:2c09? ([2001:b07:6468:f312:1868:42dd:216c:2c09])
+        by smtp.gmail.com with ESMTPSA id g2sm6289801wrs.42.2020.04.02.01.15.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Apr 2020 01:15:03 -0700 (PDT)
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>, KVM <kvm@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Haiwei Li <lihaiwei.kernel@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Joerg Roedel <jroedel@suse.de>
+References: <20200402133637.296e70a9@canb.auug.org.au>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <2cdc7a3e-d516-70d5-9bfb-d077d40b07ed@redhat.com>
+Date:   Thu, 2 Apr 2020 10:15:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200402033640.12465-1-f.fainelli@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200402133637.296e70a9@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="BxqdilmDw8NfJrdybYlCOjBMxClEdTdaG"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--BxqdilmDw8NfJrdybYlCOjBMxClEdTdaG
+Content-Type: multipart/mixed; boundary="qoP0eidW5UXD2MMeQYcjy7cD7ZVgpOqFc"
 
-On Wed, Apr 01, 2020 at 08:36:40PM -0700, Florian Fainelli wrote:
-> The /chosen node can have a 'rng-seed' property read as a u32 quantity
-> which would contain a random number provided by the boot agent. This is
-> useful in configurations where the kernel does not have access to a
-> random number generator.
-> 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  Documentation/devicetree/bindings/chosen.txt | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+--qoP0eidW5UXD2MMeQYcjy7cD7ZVgpOqFc
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for doing this; I realised it was undocumented the other day when I
-tried to look it up myself.
+On 02/04/20 04:36, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the kvm tree got a conflict in:
+>=20
+>   arch/x86/kvm/svm/svm.c
+>=20
+> between commits:
+>=20
+>   aaca21007ba1 ("KVM: SVM: Fix the svm vmexit code for WRMSR")
+>   2da1ed62d55c ("KVM: SVM: document KVM_MEM_ENCRYPT_OP, let userspace d=
+etect if SEV is available")
+>   2e2409afe5f0 ("KVM: SVM: Issue WBINVD after deactivating an SEV guest=
+")
+>=20
+> from Linus' tree and commits:
+>=20
+>   83a2c705f002 ("kVM SVM: Move SVM related files to own sub-directory")=
 
-> diff --git a/Documentation/devicetree/bindings/chosen.txt b/Documentation/devicetree/bindings/chosen.txt
-> index 45e79172a646..126b31eecfeb 100644
-> --- a/Documentation/devicetree/bindings/chosen.txt
-> +++ b/Documentation/devicetree/bindings/chosen.txt
-> @@ -28,6 +28,19 @@ mode) when EFI_RNG_PROTOCOL is supported, it will be overwritten by
->  the Linux EFI stub (which will populate the property itself, using
->  EFI_RNG_PROTOCOL).
->  
-> +rng-seed
-> +--------
-> +
-> +This property is used to initialize the kernel's entropy pool from a
-> +trusted boot agent capable of providing a random number. It is parsed
-> +as a u32 value, e.g.
+>   41f08f0506c0 ("KVM: SVM: Move SEV code to separate file")
+>=20
+> (at least)
+>=20
+> from the kvm tree.
+>=20
+> Its a bit of a pain this code movement appearing during the merge
+> window.  Is it really intended for v5.7?
 
-Are you sure about this being limited to a u32 value? I thought you could
-pass an arbitrary-length value here.
+Yes, it's just due to code movement (a file was split, which I left last
+to avoid pain for contributors and minimal room for regressions).
+Unfortunately, git ends up being confused, but "git merge -X histogram"
+actually does the right thing.
 
-Will
+Paolo
+
+
+--qoP0eidW5UXD2MMeQYcjy7cD7ZVgpOqFc--
+
+--BxqdilmDw8NfJrdybYlCOjBMxClEdTdaG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEE8TM4V0tmI4mGbHaCv/vSX3jHroMFAl6FnwUACgkQv/vSX3jH
+roNcuQf+Pnwk8LWzhHjlkw+o2KkL4PGRDA/BdTHLccdoHWWnmGUQzwhlp31eIQP5
+4bccMDyxPhL/0y1a/zfto428r6kWHv6n/WevUKCkA44yHxVEPOY7r5mfB0oM0Q7D
+g56VanOOkTkT/iZ3IsAFvsR6YxsoWTok6i8Kq6DlPEtepGaYyvzJkiJojj3Wj5Co
+KSNoGFk9+1B4UvtButNuBxITfKbYIDiu78SYTzx5/EMQ4mvfVuYJHdF/tZGGq4vx
+2WJs5bB8cbd0BGomA6ITNJ/ar+WvzK+GQ5UNRQ7FTdelHqTQ0pUSGwhXc9PoST9A
+FSXeI+dBrwbXmwO8hTCBmqZUFpCHPQ==
+=sLmu
+-----END PGP SIGNATURE-----
+
+--BxqdilmDw8NfJrdybYlCOjBMxClEdTdaG--
+
