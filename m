@@ -2,91 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4492919BB5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 07:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BE9A19BB51
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 07:36:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732439AbgDBFgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 01:36:44 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37772 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728999AbgDBFgl (ORCPT
+        id S1728425AbgDBFgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 01:36:23 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41001 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbgDBFgX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 01:36:41 -0400
-Received: by mail-pl1-f193.google.com with SMTP id x1so926148plm.4
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 22:36:41 -0700 (PDT)
+        Thu, 2 Apr 2020 01:36:23 -0400
+Received: by mail-pf1-f194.google.com with SMTP id a24so1224876pfc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 22:36:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jPuAXHpqrNAT+U03Z2D0D9d6MExECUerQyolxFR+Rtk=;
-        b=FLxJvfQS0ysmXpNHESPUDdj7u8d5tYFdiE/P7MB7ZAiuFbqgIiOi0ODzXBe0HK5t5y
-         05ZME+MBiIQY5rPFJhn/ankIYTGPQ39BjLn3zNjh/hKIl83Cq5plB/coFF1KyMN5Wv6x
-         sDjUTNTxeGnF1C9EwKC5E58eLETX49fVYiRrILohyk8d4PThgmZFwY+iYVcnpbPamiKB
-         +VHONI6ttdeP87QsPum9UOXkFBP/QxZOVh1bft6RS92h6kicR1Y7AJsTzXs35vARM8FX
-         xhLXxvZT0kQqlH534Yc9tglbmXj6DaWECLZVNh/vc3ALb/ev+KfKHOlcrHYT8uEppfiD
-         p2mg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Do+aDibkJ+9Nk2xPpC10tUF5bA+dXnOz/2cqO1MNak8=;
+        b=knbC2o+pyAfJPn10/x4p+jSPwqEdUM5vaqMNWU9Le4dYwA55h3tFjJus5wlFnZGXoZ
+         iGGn+aIDrle8DsEd44/Qdz4R386IugeGaclIfFzf2HFdt+Y6thv2a2X4/Jfx5eiga5QP
+         0UbSPz0O/CuSiDzcPtGx+OWOkQFOq3AgKX3CGZqnrYwDRJYt2KjJNqFkKOcTFUwmxXCt
+         7roz2uoNXTY7WGYf7DXRHsW7TIUMgljMou2mWXCbl6lmu9uMIwnkJaC7mSa6qKqo8wWz
+         E8zCOCMXjx+vPaKhSL8kfPtiu7pYDIFMQOwdGG5CshQD5A8QqNoFRIUFmnxgBHgbHmNg
+         aQ8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=jPuAXHpqrNAT+U03Z2D0D9d6MExECUerQyolxFR+Rtk=;
-        b=LAJJ6m90k08ZeNc/b4zK1A+i2qJBFjD1mGx7dmFhZ+VbqRUNQAEdwCpas2yyoKrcau
-         4wh/cbcxcxB98WEEkiWf615+JR10VjssPsf/KVzpdYi3tnbioJ6m4x5zDaYEifzt7d+y
-         6jA8KzLSA+vlgiU+4t9N7ECxCNvRQdOqAiOXwIXDbHsw3cNSKIMxiPMuVd+0yZh296Xq
-         bHixc8FzAfv6ZVcHjbdwFPfiJTr/AO41jBUYFLpf0DpNt5N5/jsF2f+Tfex92r3ZTpss
-         3SxN+KeO8u4Wity9FfVXC9Dftq+fgiCfIDfSQkjkuBAjjX+Kj1cI8S8fqGGOQQvsgiYm
-         VTyw==
-X-Gm-Message-State: AGi0PuZ+Uip8l6IY8q5zhRgI2Yd7LLptbHVjtsm0hMoXasni0QcNoy2B
-        nQ2Y8gtAi8kGJsheyndRPvct
-X-Google-Smtp-Source: APiQypLUO9ItCUYvMe/cdxMNd9ZZ/BddDu0GYPMSa91cheBTNWouOMVF2ehqKljSAS/Zgn43sQDi/w==
-X-Received: by 2002:a17:902:d705:: with SMTP id w5mr1414399ply.68.1585805800814;
-        Wed, 01 Apr 2020 22:36:40 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:29a:a216:d9f7:e98f:311a:69f6])
-        by smtp.gmail.com with ESMTPSA id s14sm2684824pgl.4.2020.04.01.22.36.35
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Do+aDibkJ+9Nk2xPpC10tUF5bA+dXnOz/2cqO1MNak8=;
+        b=IsCnZlM+r59os3a6bzRz3mISW7hemc3VxAizpmR3Phtk8NRQDGsPbhZnk6q02eQRnk
+         KDmdNpPfCtK1Hxl6Xa/rJ0dAh4ZBqx5h2PeHCgvocrredjX8kZJ8qKn92P0/XS0CjRiS
+         tL9Dn0blbs6biWN1mS8cVzCTNQJHSWxDIIwcE2+uubVzF6T+SqzsgcHI6VZLPv/VHqOB
+         hFF8pb+rf06qZNRhnXtzwUgoytbHcpB3E2UNp5KZWk1bRVcQ0kvUh1PN2+lD/yt5XWcM
+         CsCaSUQ8BgiU7qX6O27si9Ma6rJfaPmZAyOKIjKEL9LStJOJwh6ina9tqzvtTNQvGXLC
+         5S5Q==
+X-Gm-Message-State: AGi0PuaJiQdoIV00K8q5i6I4dV8BBPgRdxWOHXwoiu050hY+hHvaDZY1
+        CKQU2UrHDw7DrhxaoqpL4Wo=
+X-Google-Smtp-Source: APiQypJ7XgKegTqXz2SvnZioxcFnmfMvDfpsG1M7dXD4R47yFprVfkXESUJeU0R4FYl3Ew48HDoU6Q==
+X-Received: by 2002:a63:e210:: with SMTP id q16mr1785491pgh.26.1585805781730;
+        Wed, 01 Apr 2020 22:36:21 -0700 (PDT)
+Received: from OptiPlexFedora.fios-router.home ([47.144.161.84])
+        by smtp.gmail.com with ESMTPSA id y28sm2863136pfp.128.2020.04.01.22.36.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 22:36:40 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     gregkh@linuxfoundation.org, davem@davemloft.net
-Cc:     smohanad@codeaurora.org, jhugo@codeaurora.org,
-        kvalo@codeaurora.org, bjorn.andersson@linaro.org,
-        hemantk@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clew@codeaurora.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        netdev@vger.kernel.org
-Subject: [PATCH v2 3/3] net: qrtr: Do not depend on ARCH_QCOM
-Date:   Thu,  2 Apr 2020 11:06:10 +0530
-Message-Id: <20200402053610.9345-4-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200402053610.9345-1-manivannan.sadhasivam@linaro.org>
-References: <20200402053610.9345-1-manivannan.sadhasivam@linaro.org>
+        Wed, 01 Apr 2020 22:36:21 -0700 (PDT)
+From:   "John B. Wyatt IV" <jbwyatt4@gmail.com>
+To:     outreachy-kernel@googlegroups.com,
+        Rob Springer <rspringer@google.com>,
+        Todd Poynor <toddpoynor@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc:     "John B. Wyatt IV" <jbwyatt4@gmail.com>
+Subject: [PATCH 0/2] staging: gasket: Fix style issues in apex_driver.c
+Date:   Wed,  1 Apr 2020 22:36:15 -0700
+Message-Id: <20200402053617.826678-1-jbwyatt4@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IPC Router protocol is also used by external modems for exchanging the QMI
-messages. Hence, it doesn't always depend on Qualcomm platforms. One such
-instance is the QCA6390 WLAN device connected to x86 machine.
+Cache long enums as local variables to fit under 80 characters. Fix a
+comment character limit warning. The goal is to comply with the kernel
+style guide. All style issues were identified by checkpatch.
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- net/qrtr/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+John B. Wyatt IV (2):
+  staging: gasket: Fix 4 over 80 char warnings
+  staging: gasket: Fix comment 75 character limit warning
 
-diff --git a/net/qrtr/Kconfig b/net/qrtr/Kconfig
-index 8eb876471564..f362ca316015 100644
---- a/net/qrtr/Kconfig
-+++ b/net/qrtr/Kconfig
-@@ -4,7 +4,6 @@
- 
- config QRTR
- 	tristate "Qualcomm IPC Router support"
--	depends on ARCH_QCOM || COMPILE_TEST
- 	---help---
- 	  Say Y if you intend to use Qualcomm IPC router protocol.  The
- 	  protocol is used to communicate with services provided by other
+ drivers/staging/gasket/apex_driver.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
 -- 
-2.17.1
+2.25.1
 
