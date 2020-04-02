@@ -2,119 +2,593 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 636FF19BBCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 08:40:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C090E19BBD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 08:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729228AbgDBGkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 02:40:04 -0400
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:36979 "EHLO
-        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728974AbgDBGkD (ORCPT
+        id S1728628AbgDBGle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 02:41:34 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46575 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgDBGld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 02:40:03 -0400
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 02 Apr 2020 12:09:57 +0530
-Received: from c-sanm-linux.qualcomm.com ([10.206.25.31])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 02 Apr 2020 12:09:42 +0530
-Received: by c-sanm-linux.qualcomm.com (Postfix, from userid 2343233)
-        id C260219F8; Thu,  2 Apr 2020 12:09:41 +0530 (IST)
-From:   Sandeep Maheswaram <sanm@codeaurora.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
-        Sandeep Maheswaram <sanm@codeaurora.org>
-Subject: [PATCH v5 3/3] phy: qcom-qmp: Add QMP V3 USB3 PHY support for SC7180
-Date:   Thu,  2 Apr 2020 12:08:54 +0530
-Message-Id: <1585809534-11244-4-git-send-email-sanm@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1585809534-11244-1-git-send-email-sanm@codeaurora.org>
-References: <1585809534-11244-1-git-send-email-sanm@codeaurora.org>
+        Thu, 2 Apr 2020 02:41:33 -0400
+Received: by mail-ed1-f65.google.com with SMTP id cf14so2746620edb.13
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 23:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sjalcPYEU2mdRQRRSOn0OSogsw0DlU+ZafAv6h4gNKs=;
+        b=03/iORX4uUOfApKFGn9Hi+pyTk5HHmHejNCfWOoL3OXtQYP38Y0WDKH+t4ZUbSWXZ8
+         3i7gRteJbtCsGPtqKx+X0ba6rI6Zzk0DE71AMpyksdG8MrXmz6NWAowXe8yk+RTgft/L
+         KemC4MFyUP/Vl+DlqgNSmgW+mKl11/nRgK+bTkE8kj+113mvR4n/vPozxKgZG578RPF1
+         e12qUgLJK3OgOtC2XHLp0x/DzCZvomqK+9mGCVQOMi4WzBfW/UynZ3rphF4gchwxJuAa
+         gb0d2/Mms8vrUnheRbaTGEp+do/If629DxTqBXbS8wyy7i8cRTt6EU9jCbBzIE94mjJ8
+         /yaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sjalcPYEU2mdRQRRSOn0OSogsw0DlU+ZafAv6h4gNKs=;
+        b=C4OepiOQsT1CknHP29JFj4DiBIwlGYe/Tay7MU6IiKDQm2vyu1FySQJEVjIoIOCoTx
+         p6mvpe+LgUwelF91lrt2ZluUCLor4wqNxRqSInJHuGygh0TLffMx3Ba7A8oCAiAXslqL
+         dGKx8EP/Kkb4fWzF23t2LWMk3gZv8fAPSIyEElwbS3MLJ9TAqnzPqkY9G8oXGrUtYarW
+         k5gHzYMHfLZ+wS0gCQbVptrbl64AvEMhXChhO+z1uKTUS4Z7D6N34894t6zP57NCcTuu
+         axCI59e/k9AKdBnL98m8eR46Pq5Xe/u1hWv+MkIL1HcX2QyuVkRXGaJl5raDIXO5+MQ+
+         j7vQ==
+X-Gm-Message-State: AGi0PubOnFeJwaZPDQQh31scJUIcnL2fTSs9kH/wpuyqs316M/eFtGnf
+        mLCWs2StHEzOPTRJjKxzxgK8SCmcZdUD90a/WBBinQ==
+X-Google-Smtp-Source: APiQypIxNrNruY9aXVmd6gi+9sxdD2jQIqOjJfNU/SyO8Fh8Srjaw87z4FSieWaNTSJtBOyhL7CiuZrApQTpWV07A+w=
+X-Received: by 2002:aa7:c609:: with SMTP id h9mr1349335edq.93.1585809689299;
+ Wed, 01 Apr 2020 23:41:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200327071202.2159885-1-alastair@d-silva.org> <20200327071202.2159885-15-alastair@d-silva.org>
+In-Reply-To: <20200327071202.2159885-15-alastair@d-silva.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 1 Apr 2020 23:41:17 -0700
+Message-ID: <CAPcyv4j0V2dVD_C0zhd4Hy5kOPGDOPXVnPAD3JnQHQKu8FknPA@mail.gmail.com>
+Subject: Re: [PATCH v4 14/25] nvdimm/ocxl: Add support for Admin commands
+To:     "Alastair D'Silva" <alastair@d-silva.org>
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding QMP v3 USB3 PHY support for SC7180.
-Adding only usb phy reset in the list to avoid
-reset of DP block.
+On Sun, Mar 29, 2020 at 10:23 PM Alastair D'Silva <alastair@d-silva.org> wrote:
+>
+> Admin commands for these devices are the primary means of interacting
+> with the device controller to provide functionality beyond the load/store
+> capabilities offered via the NPU.
+>
+> For example, SMART data, firmware update, and device error logs are
+> implemented via admin commands.
+>
+> This patch requests the metadata required to issue admin commands, as well
+> as some helper functions to construct and check the completion of the
+> commands.
+>
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> ---
+>  drivers/nvdimm/ocxl/main.c              |  65 ++++++
+>  drivers/nvdimm/ocxl/ocxlpmem.h          |  50 ++++-
+>  drivers/nvdimm/ocxl/ocxlpmem_internal.c | 261 ++++++++++++++++++++++++
+>  3 files changed, 375 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/nvdimm/ocxl/main.c b/drivers/nvdimm/ocxl/main.c
+> index be76acd33d74..8db573036423 100644
+> --- a/drivers/nvdimm/ocxl/main.c
+> +++ b/drivers/nvdimm/ocxl/main.c
+> @@ -217,6 +217,58 @@ static int register_lpc_mem(struct ocxlpmem *ocxlpmem)
+>         return 0;
+>  }
+>
+> +/**
+> + * extract_command_metadata() - Extract command data from MMIO & save it for further use
+> + * @ocxlpmem: the device metadata
+> + * @offset: The base address of the command data structures (address of CREQO)
+> + * @command_metadata: A pointer to the command metadata to populate
+> + * Return: 0 on success, negative on failure
+> + */
+> +static int extract_command_metadata(struct ocxlpmem *ocxlpmem, u32 offset,
+> +                                   struct command_metadata *command_metadata)
 
-Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/phy/qualcomm/phy-qcom-qmp.c | 38 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+How about "struct ocxlpmem *ocp" throughout all these patches? The
+full duplication of the type name as the local variable name makes
+this look like non-idiomatic Linux code to me. It had not quite hit me
+until I saw "struct command_metadata *command_metadata" that just
+strikes me as too literal and the person that gets to maintain this
+code later will appreciate a smaller amount of typing.
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
-index c190406..d9d3e2f 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-@@ -1458,6 +1458,10 @@ static const char * const msm8996_usb3phy_reset_l[] = {
- 	"phy", "common",
- };
- 
-+static const char * const sc7180_usb3phy_reset_l[] = {
-+	"phy",
-+};
-+
- static const char * const sdm845_pciephy_reset_l[] = {
- 	"phy",
- };
-@@ -1671,6 +1675,37 @@ static const struct qmp_phy_cfg qmp_v3_usb3phy_cfg = {
- 	.is_dual_lane_phy	= true,
- };
- 
-+static const struct qmp_phy_cfg sc7180_usb3phy_cfg = {
-+	.type			= PHY_TYPE_USB3,
-+	.nlanes			= 1,
-+
-+	.serdes_tbl		= qmp_v3_usb3_serdes_tbl,
-+	.serdes_tbl_num		= ARRAY_SIZE(qmp_v3_usb3_serdes_tbl),
-+	.tx_tbl			= qmp_v3_usb3_tx_tbl,
-+	.tx_tbl_num		= ARRAY_SIZE(qmp_v3_usb3_tx_tbl),
-+	.rx_tbl			= qmp_v3_usb3_rx_tbl,
-+	.rx_tbl_num		= ARRAY_SIZE(qmp_v3_usb3_rx_tbl),
-+	.pcs_tbl		= qmp_v3_usb3_pcs_tbl,
-+	.pcs_tbl_num		= ARRAY_SIZE(qmp_v3_usb3_pcs_tbl),
-+	.clk_list		= qmp_v3_phy_clk_l,
-+	.num_clks		= ARRAY_SIZE(qmp_v3_phy_clk_l),
-+	.reset_list		= sc7180_usb3phy_reset_l,
-+	.num_resets		= ARRAY_SIZE(sc7180_usb3phy_reset_l),
-+	.vreg_list		= qmp_phy_vreg_l,
-+	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
-+	.regs			= qmp_v3_usb3phy_regs_layout,
-+
-+	.start_ctrl		= SERDES_START | PCS_START,
-+	.pwrdn_ctrl		= SW_PWRDN,
-+
-+	.has_pwrdn_delay	= true,
-+	.pwrdn_delay_min	= POWER_DOWN_DELAY_US_MIN,
-+	.pwrdn_delay_max	= POWER_DOWN_DELAY_US_MAX,
-+
-+	.has_phy_dp_com_ctrl	= true,
-+	.is_dual_lane_phy	= true,
-+};
-+
- static const struct qmp_phy_cfg qmp_v3_usb3_uniphy_cfg = {
- 	.type			= PHY_TYPE_USB3,
- 	.nlanes			= 1,
-@@ -2516,6 +2551,9 @@ static const struct of_device_id qcom_qmp_phy_of_match_table[] = {
- 		.compatible = "qcom,ipq8074-qmp-pcie-phy",
- 		.data = &ipq8074_pciephy_cfg,
- 	}, {
-+		.compatible = "qcom,sc7180-qmp-usb3-phy",
-+		.data = &sc7180_usb3phy_cfg,
-+	}, {
- 		.compatible = "qcom,sdm845-qhp-pcie-phy",
- 		.data = &sdm845_qhp_pciephy_cfg,
- 	}, {
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Also, is it really the case that the layout of the admin command
+metadata needs to be programmatically determined at runtime? I would
+expect it to be a static command definition in the spec.
 
+
+> +{
+> +       int rc;
+> +       u64 tmp;
+> +
+> +       rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu, offset,
+> +                                    OCXL_LITTLE_ENDIAN, &tmp);
+> +       if (rc)
+> +               return rc;
+> +
+> +       command_metadata->request_offset = tmp >> 32;
+> +       command_metadata->response_offset = tmp & 0xFFFFFFFF;
+> +
+> +       rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu, offset + 8,
+> +                                    OCXL_LITTLE_ENDIAN, &tmp);
+> +       if (rc)
+> +               return rc;
+> +
+> +       command_metadata->data_offset = tmp >> 32;
+> +       command_metadata->data_size = tmp & 0xFFFFFFFF;
+> +
+> +       command_metadata->id = 0;
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * setup_command_metadata() - Set up the command metadata
+> + * @ocxlpmem: the device metadata
+> + */
+> +static int setup_command_metadata(struct ocxlpmem *ocxlpmem)
+> +{
+> +       int rc;
+> +
+> +       mutex_init(&ocxlpmem->admin_command.lock);
+> +
+> +       rc = extract_command_metadata(ocxlpmem, GLOBAL_MMIO_ACMA_CREQO,
+> +                                     &ocxlpmem->admin_command);
+> +       if (rc)
+> +               return rc;
+> +
+> +       return 0;
+> +}
+> +
+>  /**
+>   * allocate_minor() - Allocate a minor number to use for an OpenCAPI pmem device
+>   * @ocxlpmem: the device metadata
+> @@ -421,6 +473,14 @@ static int probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>
+>         ocxlpmem->pdev = pci_dev_get(pdev);
+>
+> +       ocxlpmem->timeouts[ADMIN_COMMAND_ERRLOG] = 2000; // ms
+> +       ocxlpmem->timeouts[ADMIN_COMMAND_HEARTBEAT] = 100; // ms
+> +       ocxlpmem->timeouts[ADMIN_COMMAND_SMART] = 100; // ms
+> +       ocxlpmem->timeouts[ADMIN_COMMAND_CONTROLLER_DUMP] = 1000; // ms
+> +       ocxlpmem->timeouts[ADMIN_COMMAND_CONTROLLER_STATS] = 100; // ms
+> +       ocxlpmem->timeouts[ADMIN_COMMAND_SHUTDOWN] = 1000; // ms
+> +       ocxlpmem->timeouts[ADMIN_COMMAND_FW_UPDATE] = 16000; // ms
+> +
+>         pci_set_drvdata(pdev, ocxlpmem);
+>
+>         ocxlpmem->ocxl_fn = ocxl_function_open(pdev);
+> @@ -467,6 +527,11 @@ static int probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>                 goto err;
+>         }
+>
+> +       if (setup_command_metadata(ocxlpmem)) {
+> +               dev_err(&pdev->dev, "Could not read command metadata\n");
+> +               goto err;
+> +       }
+> +
+>         elapsed = 0;
+>         timeout = ocxlpmem->readiness_timeout +
+>                   ocxlpmem->memory_available_timeout;
+> diff --git a/drivers/nvdimm/ocxl/ocxlpmem.h b/drivers/nvdimm/ocxl/ocxlpmem.h
+> index 3eadbe19f6d0..b72b3f909fc3 100644
+> --- a/drivers/nvdimm/ocxl/ocxlpmem.h
+> +++ b/drivers/nvdimm/ocxl/ocxlpmem.h
+> @@ -7,6 +7,7 @@
+>  #include <linux/mm.h>
+>
+>  #define LABEL_AREA_SIZE        BIT_ULL(PA_SECTION_SHIFT)
+> +#define DEFAULT_TIMEOUT 100
+>
+>  #define GLOBAL_MMIO_CHI                0x000
+>  #define GLOBAL_MMIO_CHIC       0x008
+> @@ -57,6 +58,7 @@
+>  #define GLOBAL_MMIO_HCI_CONTROLLER_DUMP_COLLECTED      BIT_ULL(5) // CDC
+>  #define GLOBAL_MMIO_HCI_REQ_HEALTH_PERF                        BIT_ULL(6) // CHPD
+>
+> +// must be maintained with admin_command_names in ocxlpmem_internal.c
+>  #define ADMIN_COMMAND_HEARTBEAT                0x00u
+>  #define ADMIN_COMMAND_SHUTDOWN         0x01u
+>  #define ADMIN_COMMAND_FW_UPDATE                0x02u
+> @@ -68,6 +70,13 @@
+>  #define ADMIN_COMMAND_CMD_CAPS         0x08u
+>  #define ADMIN_COMMAND_MAX              0x08u
+>
+> +#define NS_COMMAND_SECURE_ERASE        0x20ull
+> +
+> +#define NS_RESPONSE_SECURE_ERASE_ACCESSIBLE_SUCCESS 0x20
+> +#define NS_RESPONSE_SECURE_ERASE_ACCESSIBLE_ATTEMPTED 0x28
+> +#define NS_RESPONSE_SECURE_ERASE_DEFECTIVE_SUCCESS 0x30
+> +#define NS_RESPONSE_SECURE_ERASE_DEFECTIVE_ATTEMPTED 0x38
+> +
+>  #define STATUS_SUCCESS         0x00
+>  #define STATUS_MEM_UNAVAILABLE 0x20
+>  #define STATUS_BLOCKED_BG_TASK 0x21
+> @@ -81,6 +90,16 @@
+>  #define STATUS_FW_ARG_INVALID  STATUS_BAD_REQUEST_PARM
+>  #define STATUS_FW_INVALID      STATUS_BAD_DATA_PARM
+>
+> +struct command_metadata {
+> +       u32 request_offset;
+> +       u32 response_offset;
+> +       u32 data_offset;
+> +       u32 data_size;
+> +       struct mutex lock; /* locks access to this command */
+> +       u16 id;
+> +       u8 op_code;
+> +};
+> +
+>  struct ocxlpmem {
+>         struct device dev;
+>         struct pci_dev *pdev;
+> @@ -91,10 +110,11 @@ struct ocxlpmem {
+>         struct ocxl_afu *ocxl_afu;
+>         struct ocxl_context *ocxl_context;
+>         void *metadata_addr;
+> +       struct command_metadata admin_command;
+>         struct resource pmem_res;
+>         struct nd_region *nd_region;
+>         char fw_version[8 + 1];
+> -
+> +       u32 timeouts[ADMIN_COMMAND_MAX + 1];
+>         u32 max_controller_dump_size;
+>         u16 scm_revision; // major/minor
+>         u8 readiness_timeout;  /* The worst case time (in seconds) that the host
+> @@ -123,3 +143,31 @@ struct ocxlpmem {
+>   * Returns 0 on success, negative on error
+>   */
+>  int ocxlpmem_chi(const struct ocxlpmem *ocxlpmem, u64 *chi);
+> +
+> +/**
+> + * admin_command_execute() - Execute an admin command and wait for completion
+> + *
+> + * Additional MMIO registers (dependent on the command) may
+> + * need to be initialized
+> + *
+> + * @ocxlpmem: the device metadata
+> + * @op_code: the code for the admin command
+> + * Returns 0 on success, -EINVAL for a bad op code, -EBUSY on timeout
+> + */
+> +int admin_command_execute(struct ocxlpmem *ocxlpmem, u8 op_code);
+> +
+> +/**
+> + * admin_response_handled() - Notify the controller that the admin response has been handled
+> + * @ocxlpmem: the device metadata
+> + * Returns 0 on success, negative on failure
+> + */
+> +int admin_response_handled(const struct ocxlpmem *ocxlpmem);
+> +
+> +/**
+> + * warn_status() - Emit a kernel warning showing a command status.
+> + * @ocxlpmem: the device metadata
+> + * @message: A message to accompany the warning
+> + * @status: The command status
+> + */
+> +void warn_status(const struct ocxlpmem *ocxlpmem, const char *message,
+> +                u8 status);
+> diff --git a/drivers/nvdimm/ocxl/ocxlpmem_internal.c b/drivers/nvdimm/ocxl/ocxlpmem_internal.c
+> index 5578169b7515..7470a6ab3b08 100644
+> --- a/drivers/nvdimm/ocxl/ocxlpmem_internal.c
+> +++ b/drivers/nvdimm/ocxl/ocxlpmem_internal.c
+> @@ -17,3 +17,264 @@ int ocxlpmem_chi(const struct ocxlpmem *ocxlpmem, u64 *chi)
+>
+>         return 0;
+>  }
+> +
+> +#define COMMAND_REQUEST_SIZE (8 * sizeof(u64))
+> +/**
+> + * scm_command_request() - Set up a command request
+> + * @cmd: The metadata for the type of command to be issued
+> + * @op_code: the op code for the command
+> + * @valid_bytes: the number of bytes in the header to preserve (these must be set before calling)
+> + */
+> +static int scm_command_request(const struct ocxlpmem *ocxlpmem,
+> +                              struct command_metadata *cmd, u8 op_code,
+> +                              u8 valid_bytes)
+
+Ah, here's an abbreviation for command metadata.
+
+> +{
+> +       u64 val = op_code;
+> +       int rc;
+> +       u8 i;
+> +
+> +       cmd->op_code = op_code;
+> +       cmd->id++;
+> +
+> +       val |= ((u64)cmd->id) << 16;
+> +
+> +       rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu, cmd->request_offset,
+> +                                     OCXL_LITTLE_ENDIAN, val);
+> +       if (rc)
+> +               return rc;
+> +
+> +       for (i = valid_bytes; i < COMMAND_REQUEST_SIZE; i += sizeof(u64)) {
+> +               rc = ocxl_global_mmio_write64(ocxlpmem->ocxl_afu,
+> +                                             cmd->request_offset + i,
+> +                                             OCXL_LITTLE_ENDIAN, 0);
+> +               if (rc)
+> +                       return rc;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * admin_command_request() - Issue an admin command request
+> + * @ocxlpmem: the device metadata
+> + * @op_code: The op-code for the command
+> + *
+> + * Returns an identifier for the command, or negative on error
+> + */
+> +static int admin_command_request(struct ocxlpmem *ocxlpmem, u8 op_code)
+> +{
+> +       u8 valid_bytes = sizeof(u64);
+> +
+> +       switch (op_code) {
+> +       case ADMIN_COMMAND_HEARTBEAT:
+> +       case ADMIN_COMMAND_SHUTDOWN:
+> +       case ADMIN_COMMAND_ERRLOG:
+> +       case ADMIN_COMMAND_CMD_CAPS:
+> +               valid_bytes += 0;
+> +               break;
+> +       case ADMIN_COMMAND_FW_UPDATE:
+> +       case ADMIN_COMMAND_SMART:
+> +       case ADMIN_COMMAND_CONTROLLER_STATS:
+> +       case ADMIN_COMMAND_CONTROLLER_DUMP:
+> +               valid_bytes += sizeof(u64);
+> +               break;
+> +       case ADMIN_COMMAND_FW_DEBUG:
+> +               valid_bytes += 3 * sizeof(u64);
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +
+> +       return scm_command_request(ocxlpmem, &ocxlpmem->admin_command, op_code,
+> +                                  valid_bytes);
+
+Why isn't this just:
+
+    ocp_command_request(ocp, op_code, valid_bytes);
+
+...because it's not clear to me why this switches from a generic name
+like admin_command_request() and then switches to scm_. The
+"command_metadata" is implied by the ocp context and the op_code,
+right?
+
+
+> +}
+> +
+> +static int command_response(const struct ocxlpmem *ocxlpmem,
+> +                           const struct command_metadata *cmd)
+> +{
+> +       u64 val;
+> +       u16 id;
+> +       u8 status;
+> +       int rc = ocxl_global_mmio_read64(ocxlpmem->ocxl_afu,
+> +                                        cmd->response_offset,
+> +                                        OCXL_LITTLE_ENDIAN, &val);
+> +       if (rc)
+> +               return rc;
+> +
+> +       status = val & 0xff;
+> +       id = (val >> 16) & 0xffff;
+> +
+> +       if (id != cmd->id) {
+> +               dev_err(&ocxlpmem->dev,
+> +                       "Expected response for command %d, but received response for command %d instead.\n",
+> +                       cmd->id, id);
+> +               return -EBUSY;
+> +       }
+> +
+> +       return status;
+> +}
+> +
+> +/**
+> + * admin_response() - Validate an admin response
+> + * @ocxlpmem: the device metadata
+> + * Returns the status code of the command, or negative on error
+> + */
+> +static int admin_response(const struct ocxlpmem *ocxlpmem)
+> +{
+> +       return command_response(ocxlpmem, &ocxlpmem->admin_command);
+> +}
+> +
+> +/**
+> + * admin_command_exec() - Notify the controller to start processing a pending admin command
+> + * @ocxlpmem: the device metadata
+> + * Returns 0 on success, negative on error
+> + */
+> +static int admin_command_exec(const struct ocxlpmem *ocxlpmem)
+> +{
+> +       return ocxl_global_mmio_set64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_HCI,
+> +                                     OCXL_LITTLE_ENDIAN, GLOBAL_MMIO_HCI_ACRW);
+> +}
+> +
+> +static bool admin_command_complete(const struct ocxlpmem *ocxlpmem)
+> +{
+> +       u64 val = 0;
+> +
+> +       int rc = ocxlpmem_chi(ocxlpmem, &val);
+> +
+> +       WARN_ON(rc);
+> +
+> +       return (val & GLOBAL_MMIO_CHI_ACRA) != 0;
+> +}
+> +
+> +/**
+> + * admin_command_complete_timeout() - Wait for an admin command to finish executing
+> + * @ocxlpmem: the device metadata
+> + * @command: the admin command to wait for completion (determines the timeout)
+> + * Returns 0 on success, -EBUSY on timeout
+> + */
+> +static int admin_command_complete_timeout(const struct ocxlpmem *ocxlpmem,
+> +                                         int command)
+> +{
+> +       unsigned long timeout = jiffies +
+> +                               msecs_to_jiffies(ocxlpmem->timeouts[command]);
+> +
+> +       // 32 is the next power of 2 greater than the 20ms minimum for msleep
+> +#define TIMEOUT_SLEEP_MILLIS 32
+> +       do {
+> +               if (admin_command_complete(ocxlpmem))
+> +                       return 0;
+> +               msleep(TIMEOUT_SLEEP_MILLIS);
+> +       } while (time_before(jiffies, timeout));
+> +
+> +       if (admin_command_complete(ocxlpmem))
+> +               return 0;
+> +
+> +       return -EBUSY;
+> +}
+> +
+> +// Must be maintained with ADMIN_COMMAND_* in ocxlpmem.h
+> +static const char * const admin_command_names[] = {
+> +       "heartbeat",
+> +       "shutdown",
+> +       "firmware update",
+> +       "firmware debug",
+> +       "retrieve error log",
+> +       "retrieve SMART data",
+> +       "controller statistics",
+> +       "controller dump",
+> +       "command capabilities",
+> +};
+> +
+> +/**
+> + * admin_command_name() - get the name of an admin command
+> + * @ocxlpmem: the device metadata
+> + * @op_code: the code for the admin command
+> + * Returns a string representing the name of the command
+> + */
+> +static const char *admin_command_name(u8 op_code)
+> +{
+> +       if (op_code > ADMIN_COMMAND_MAX)
+> +               return "unknown command";
+> +
+> +       return admin_command_names[op_code];
+> +}
+> +
+> +/**
+> + * admin_command_execute() - Execute an admin command and wait for completion
+> + *
+> + * Additional MMIO registers (dependent on the command) may
+> + * need to be initialized
+> + *
+> + * @ocxlpmem: the device metadata
+> + * @op_code: the code for the admin command
+> + * Returns 0 on success, -EINVAL for a bad op code, -EBUSY on timeout
+> + */
+> +int admin_command_execute(struct ocxlpmem *ocxlpmem, u8 op_code)
+> +{
+> +       int rc;
+> +
+> +       if (op_code > ADMIN_COMMAND_MAX)
+> +               return -EINVAL;
+> +
+> +       rc = admin_command_request(ocxlpmem, op_code);
+> +       if (rc)
+> +               return rc;
+> +
+> +       rc = admin_command_exec(ocxlpmem);
+> +       if (rc)
+> +               return rc;
+> +
+> +       rc = admin_command_complete_timeout(ocxlpmem, op_code);
+> +       if (rc < 0) {
+> +               dev_warn(&ocxlpmem->dev, "%s timed out\n",
+> +                        admin_command_name(op_code));
+> +               return rc;
+> +       }
+> +
+> +       return admin_response(ocxlpmem);
+> +}
+> +
+> +int admin_response_handled(const struct ocxlpmem *ocxlpmem)
+> +{
+> +       // writing to the CHIC register clears the bit in CHI
+> +       return ocxl_global_mmio_set64(ocxlpmem->ocxl_afu, GLOBAL_MMIO_CHIC,
+> +                                     OCXL_LITTLE_ENDIAN, GLOBAL_MMIO_CHI_ACRA);
+> +}
+> +
+> +void warn_status(const struct ocxlpmem *ocxlpmem, const char *message,
+> +                u8 status)
+> +{
+> +       const char *text = "Unknown";
+> +
+> +       switch (status) {
+> +       case STATUS_SUCCESS:
+> +               text = "Success";
+> +               break;
+> +
+> +       case STATUS_MEM_UNAVAILABLE:
+> +               text = "Persistent memory unavailable";
+> +               break;
+> +
+> +       case STATUS_BAD_OPCODE:
+> +               text = "Bad opcode";
+> +               break;
+> +
+> +       case STATUS_BAD_REQUEST_PARM:
+> +               text = "Bad request parameter";
+> +               break;
+> +
+> +       case STATUS_BAD_DATA_PARM:
+> +               text = "Bad data parameter";
+> +               break;
+> +
+> +       case STATUS_DEBUG_BLOCKED:
+> +               text = "Debug action blocked";
+> +               break;
+> +
+> +       case STATUS_FAIL:
+> +               text = "Failed";
+> +               break;
+> +       }
+> +
+> +       dev_warn(&ocxlpmem->dev, "%s: %s (%x)\n", message, text, status);
+> +}
+> --
+> 2.24.1
+>
