@@ -2,155 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81FE919BB9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 08:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F312F19BBA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 08:26:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728915AbgDBGVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 02:21:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32032 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727746AbgDBGVt (ORCPT
+        id S1733114AbgDBG0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 02:26:37 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:59802 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729282AbgDBG0g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 02:21:49 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03265FLi100851
-        for <linux-kernel@vger.kernel.org>; Thu, 2 Apr 2020 02:21:48 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 304gst2b4g-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 02:21:48 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ajd@linux.ibm.com>;
-        Thu, 2 Apr 2020 07:21:31 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 2 Apr 2020 07:21:23 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0326LbiA43254262
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 2 Apr 2020 06:21:37 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D87214C050;
-        Thu,  2 Apr 2020 06:21:37 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 314D74C046;
-        Thu,  2 Apr 2020 06:21:37 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  2 Apr 2020 06:21:37 +0000 (GMT)
-Received: from [9.102.43.12] (unknown [9.102.43.12])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 67DCAA0130;
-        Thu,  2 Apr 2020 17:21:30 +1100 (AEDT)
-Subject: Re: [PATCH v4 06/25] ocxl: Tally up the LPC memory on a link & allow
- it to be mapped
-To:     Dan Williams <dan.j.williams@intel.com>,
-        "Alastair D'Silva" <alastair@d-silva.org>
-Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux MM <linux-mm@kvack.org>
-References: <20200327071202.2159885-1-alastair@d-silva.org>
- <20200327071202.2159885-7-alastair@d-silva.org>
- <CAPcyv4jyFQa5BDPCSQ6kmFY8CvWgbydePcn8B4M_Zyc1c7MGpg@mail.gmail.com>
-From:   Andrew Donnellan <ajd@linux.ibm.com>
-Date:   Thu, 2 Apr 2020 17:21:34 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Thu, 2 Apr 2020 02:26:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1585808797; x=1617344797;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=INjASc5VYRvoGeBiJ1p7WuJDA8sR20pLeuBfaTLPg1Y=;
+  b=Df6tQLD5wtjpoTvoInpwaM4LExd0UoPwGRuflXeC5e5OMgdJ4NElrpWH
+   5d7g9FVWOGwbmna1YZHvUD250czcEMqrupIIy/UgwApHBbS5ZekTw1itC
+   IsUMYlUf4L1gLKzrV5n9viSwMUaxPMVzfiVJTEYjf7MFwg1QoyeUC0DHr
+   A=;
+IronPort-SDR: 4RJ3gBK15+qT9PoWc0XeqAuscasQ/jGHssJbdfdRewIbYl2tkpcgkrtkUPDjzYoaqGrZ/0CcI0
+ ygl+iMIIUIgg==
+X-IronPort-AV: E=Sophos;i="5.72,334,1580774400"; 
+   d="scan'208";a="25215332"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-38ae4ad2.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 02 Apr 2020 06:26:24 +0000
+Received: from EX13MTAUWA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1d-38ae4ad2.us-east-1.amazon.com (Postfix) with ESMTPS id 4394EA30D0;
+        Thu,  2 Apr 2020 06:26:20 +0000 (UTC)
+Received: from EX13D01UWA003.ant.amazon.com (10.43.160.107) by
+ EX13MTAUWA001.ant.amazon.com (10.43.160.58) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 2 Apr 2020 06:26:20 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (10.43.162.135) by
+ EX13d01UWA003.ant.amazon.com (10.43.160.107) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Thu, 2 Apr 2020 06:26:20 +0000
+Received: from localhost (10.85.6.202) by mail-relay.amazon.com
+ (10.43.162.232) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
+ Transport; Thu, 2 Apr 2020 06:26:19 +0000
+From:   Balbir Singh <sblbir@amazon.com>
+To:     <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>
+CC:     <tony.luck@intel.com>, <keescook@chromium.org>, <x86@kernel.org>,
+        <benh@kernel.crashing.org>, <dave.hansen@intel.com>,
+        Balbir Singh <sblbir@amazon.com>
+Subject: [PATCH 0/3] arch/x86: Optionally flush L1D on context switch
+Date:   Thu, 2 Apr 2020 17:23:58 +1100
+Message-ID: <20200402062401.29856-1-sblbir@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jyFQa5BDPCSQ6kmFY8CvWgbydePcn8B4M_Zyc1c7MGpg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20040206-4275-0000-0000-000003B8050E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20040206-4276-0000-0000-000038CD59BE
-Message-Id: <0e188ea7-1845-c9ca-a18f-4f331f31b07c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-01_04:2020-03-31,2020-04-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- malwarescore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
- phishscore=0 clxscore=1015 mlxlogscore=999 mlxscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004020050
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/4/20 7:48 pm, Dan Williams wrote:
-> On Sun, Mar 29, 2020 at 10:53 PM Alastair D'Silva <alastair@d-silva.org> wrote:
->>
->> OpenCAPI LPC memory is allocated per link, but each link supports
->> multiple AFUs, and each AFU can have LPC memory assigned to it.
-> 
-> Is there an OpenCAPI primer to decode these objects and their
-> associations that I can reference?
+Provide a mechanisn to flush the L1D cache on context switch.  The goal
+is to allow tasks that are paranoid due to the recent snoop assisted data
+sampling vulnerabilites, to flush their L1D on being switched out.
+This protects their data from being snooped or leaked via side channels
+after the task has context switched out.
 
-There isn't presently a primer that I think addresses these questions 
-nicely (to my knowledge - Fred might have something he can link to?) - 
-there are the specs published by the OpenCAPI Consortium at 
-https://opencapi.org but they're really for hardware implementers.
+The core of the patches is patch 3, the first two refactor the code so
+that common bits can be reused.
 
-We should probably expand what's currently documented in 
-Documentation/userspace-api/accelerators/ocxl.rst generally, and this 
-series should probably update that to include details on LPC.
+Changelog:
+ - Refactor the code and reuse cond_ibpb() - code bits provided by tglx
+ - Merge mm state tracking for ibpb and l1d flush
+ - Rename TIF_L1D_FLUSH to TIF_SPEC_FLUSH_L1D
 
-To explain the specific objects here:
+Changelog RFC:
+ - Reuse existing code for allocation and flush
+ - Simplify the goto logic in the actual l1d_flush function
+ - Optimize the code path with jump labels/static functions
 
-- A "link" is a point-to-point link between the host CPU, and a single 
-OpenCAPI card. (We don't currently support cards making use of multiple 
-links for increased bandwidth, though that is supported from a hardware 
-point of view.)
+The RFC patch was previously posted at
 
-- On POWER9, each link appears as a separate PCI domain, with a single 
-bus, and the card appears as a single device.
+https://lore.kernel.org/lkml/20200325071101.29556-1-sblbir@amazon.com/
 
-- A device can have up to 8 functions, per PCI.
+Balbir Singh (3):
+  arch/x86/kvm: Refactor l1d flush lifecycle management
+  arch/x86: Refactor tlbflush and l1d flush
+  arch/x86: Optionally flush L1D on context switch
 
-- An Attached Functional Unit (AFU) is the abstraction for a particular 
-application function. Each PCI function defines the number of AFUs it 
-has through a set of OpenCAPI-specific DVSECs, max 64 per function. The 
-ocxl driver handles AFU discovery.
-
-- On the host side, LPC memory is mapped by setting a single BAR for the 
-whole link, but on the device side, LPC memory is requested on a per-AFU 
-basis, through an AFU descriptor that is exposed through the 
-aforementioned DVSECs. Hence the need to loop through the AFUs and get 
-the total required LPC memory to work out the correct BAR value.
+ arch/x86/include/asm/cacheflush.h  |  6 ++
+ arch/x86/include/asm/thread_info.h |  6 +-
+ arch/x86/include/asm/tlbflush.h    |  2 +-
+ arch/x86/include/uapi/asm/prctl.h  |  3 +
+ arch/x86/kernel/Makefile           |  1 +
+ arch/x86/kernel/l1d_flush.c        | 85 +++++++++++++++++++++++++++
+ arch/x86/kernel/process_64.c       | 10 +++-
+ arch/x86/kvm/vmx/vmx.c             | 56 +++---------------
+ arch/x86/mm/tlb.c                  | 92 +++++++++++++++++++++++-------
+ 9 files changed, 189 insertions(+), 72 deletions(-)
+ create mode 100644 arch/x86/kernel/l1d_flush.c
 
 -- 
-Andrew Donnellan              OzLabs, ADL Canberra
-ajd@linux.ibm.com             IBM Australia Limited
+2.17.1
 
