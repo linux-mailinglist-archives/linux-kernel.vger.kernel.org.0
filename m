@@ -2,116 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D10119BA66
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:44:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D518F19BA6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:46:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733303AbgDBCon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 22:44:43 -0400
-Received: from foss.arm.com ([217.140.110.172]:36418 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727135AbgDBCom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 22:44:42 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 268E330E;
-        Wed,  1 Apr 2020 19:44:42 -0700 (PDT)
-Received: from [10.163.1.8] (unknown [10.163.1.8])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE6F93F71E;
-        Wed,  1 Apr 2020 19:44:39 -0700 (PDT)
-Subject: Re: [PATCH 6/6] arm64/cpufeature: Replace all open bits shift
- encodings with macros
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
-        mark.rutland@arm.com, james.morse@arm.com,
-        linux-kernel@vger.kernel.org
-References: <1580215149-21492-1-git-send-email-anshuman.khandual@arm.com>
- <1580215149-21492-7-git-send-email-anshuman.khandual@arm.com>
- <caea646f-2a74-115b-ab03-fb1325ed101f@arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <5d331165-6d3f-55d3-8994-d736d5fdb3ef@arm.com>
-Date:   Thu, 2 Apr 2020 08:14:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1733299AbgDBCqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 22:46:50 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12599 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727135AbgDBCqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 22:46:49 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C9C1B6186E5F6EA8223A;
+        Thu,  2 Apr 2020 10:46:44 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.487.0; Thu, 2 Apr 2020
+ 10:46:34 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <mst@redhat.com>, <jasowang@redhat.com>, <lingshan.zhu@intel.com>,
+        <xiao.w.wang@intel.com>, <tiwei.bie@intel.com>,
+        <yuehaibing@huawei.com>
+CC:     <virtualization@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 -next] vdpa: remove unused variables 'ifcvf' and 'ifcvf_lm'
+Date:   Thu, 2 Apr 2020 10:46:26 +0800
+Message-ID: <20200402024626.32944-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20200331080259.33056-1-yuehaibing@huawei.com>
+References: <20200331080259.33056-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <caea646f-2a74-115b-ab03-fb1325ed101f@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+drivers/vdpa/ifcvf/ifcvf_main.c:34:24:
+ warning: variable ‘ifcvf’ set but not used [-Wunused-but-set-variable]
+drivers/vdpa/ifcvf/ifcvf_base.c:304:31:
+ warning: variable ‘ifcvf_lm’ set but not used [-Wunused-but-set-variable]
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
+---
+v2: rework based on commit a4be40cbcedb ("vdpa: move to drivers/vdpa")
+---
+ drivers/vdpa/ifcvf/ifcvf_base.c | 2 --
+ drivers/vdpa/ifcvf/ifcvf_main.c | 2 --
+ 2 files changed, 4 deletions(-)
+
+diff --git a/drivers/vdpa/ifcvf/ifcvf_base.c b/drivers/vdpa/ifcvf/ifcvf_base.c
+index b61b06ea26d3..e24371d644b5 100644
+--- a/drivers/vdpa/ifcvf/ifcvf_base.c
++++ b/drivers/vdpa/ifcvf/ifcvf_base.c
+@@ -301,12 +301,10 @@ int ifcvf_set_vq_state(struct ifcvf_hw *hw, u16 qid, u64 num)
+ 
+ static int ifcvf_hw_enable(struct ifcvf_hw *hw)
+ {
+-	struct ifcvf_lm_cfg __iomem *ifcvf_lm;
+ 	struct virtio_pci_common_cfg __iomem *cfg;
+ 	struct ifcvf_adapter *ifcvf;
+ 	u32 i;
+ 
+-	ifcvf_lm = (struct ifcvf_lm_cfg __iomem *)hw->lm_cfg;
+ 	ifcvf = vf_to_adapter(hw);
+ 	cfg = hw->common_cfg;
+ 	ifc_iowrite16(IFCVF_MSI_CONFIG_OFF, &cfg->msix_config);
+diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf_main.c
+index 8d54dc5b08d2..28d9e5de5675 100644
+--- a/drivers/vdpa/ifcvf/ifcvf_main.c
++++ b/drivers/vdpa/ifcvf/ifcvf_main.c
+@@ -31,11 +31,9 @@ static irqreturn_t ifcvf_intr_handler(int irq, void *arg)
+ static int ifcvf_start_datapath(void *private)
+ {
+ 	struct ifcvf_hw *vf = ifcvf_private_to_vf(private);
+-	struct ifcvf_adapter *ifcvf;
+ 	u8 status;
+ 	int ret;
+ 
+-	ifcvf = vf_to_adapter(vf);
+ 	vf->nr_vring = IFCVF_MAX_QUEUE_PAIRS * 2;
+ 	ret = ifcvf_start_hw(vf);
+ 	if (ret < 0) {
+-- 
+2.17.1
 
 
-On 03/21/2020 12:10 AM, Suzuki K Poulose wrote:
-> On 01/28/2020 12:39 PM, Anshuman Khandual wrote:
->> There are many open bits shift encodings for various CPU ID registers that
->> are scattered across cpufeature. This replaces them with register specific
->> sensible macro definitions. This should not have any functional change.
->>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Marc Zyngier <maz@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: James Morse <james.morse@arm.com>
->> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
-> 
-> 
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -263,7 +263,7 @@ static const struct arm64_ftr_bits ftr_ctr[] = {
->>        * make use of *minLine.
->>        * If we have differing I-cache policies, report it as the weakest - VIPT.
->>        */
->> -    ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_EXACT, 14, 2, ICACHE_POLICY_VIPT),    /* L1Ip */
->> +    ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_EXACT, CTR_L1IP_SHIFT, 2, ICACHE_POLICY_VIPT),    /* L1Ip */
->>       ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IMINLINE_SHIFT, 4, 0),
->>       ARM64_FTR_END,
->>   };
->> @@ -274,19 +274,19 @@ struct arm64_ftr_reg arm64_ftr_reg_ctrel0 = {
->>   };
->>     static const struct arm64_ftr_bits ftr_it will not be a good idea to id_mmfr0[] = {
->> -    S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 28, 4, 0xf),    /* InnerShr */
->> -    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 24, 4, 0),    /* FCSE */
->> -    ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, 20, 4, 0),    /* AuxReg */
->> -    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 0),    /* TCM */
->> -    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 12, 4, 0),    /* ShareLvl */
->> -    S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 8, 4, 0xf),    /* OuterShr */
->> -    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 4, 4, 0),    /* PMSA */
->> -    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 0, 4, 0),    /* VMSA */
->> +    S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_INNERSHR_SHIFT, 4, 0xf),
->> +    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_FCSE_SHIFT, 4, 0),
->> +    ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_MMFR0_AUXREG_SHIFT, 4, 0),
->> +    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_TCM_SHIFT, 4, 0),
->> +    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_SHARELVL_SHIFT, 4, 0),
->> +    S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_OUTERSHR_SHIFT, 4, 0xf),
->> +    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_PMSA_SHIFT, 4, 0),
->> +    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_MMFR0_VMSA_SHIFT, 4, 0),
->>       ARM64_FTR_END,
->>   };
->>     static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
->> -    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, 36, 28, 0),
->> +    ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_EXACT, ID_AA64DFR0_DOUBLELOCK_SHIFT, 28, 0),
-> 
-> This must be a signed feature, as we have the following possible values :
-> 
->     0b0000 - Double lock implemented
->     0b1111 - Double lock not implemented.
-> 
-> So, in case of a conflict we want the safe value as 0b1111.
-> 
-> Please could you fix this as well ?
-
-Sure but in a separate patch, as would like to prevent mixing any
-actual code change from macro replacement.
-
-> 
-> 
-> This patch as such looks fine to me.
-> 
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
