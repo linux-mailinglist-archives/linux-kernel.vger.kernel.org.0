@@ -2,85 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A6419BCB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 09:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4264D19BCBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 09:32:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387502AbgDBHbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 03:31:03 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2629 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727012AbgDBHbD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 03:31:03 -0400
-Received: from lhreml724-chm.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 1C90EA1B68B64323459F;
-        Thu,  2 Apr 2020 08:31:01 +0100 (IST)
-Received: from [127.0.0.1] (10.47.6.242) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 2 Apr 2020
- 08:31:00 +0100
-Subject: Re: [PATCH] scsi: hisi_sas: Fix build error without SATA_HOST
-To:     YueHaibing <yuehaibing@huawei.com>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>, <chenxiang66@hisilicon.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        <linux-ide@vger.kernel.org>
-References: <20200402063021.34672-1-yuehaibing@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <855fee9e-ae2d-ca70-8630-df27a273e6f3@huawei.com>
-Date:   Thu, 2 Apr 2020 08:30:42 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S2387550AbgDBHcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 03:32:32 -0400
+Received: from mga14.intel.com ([192.55.52.115]:54283 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387516AbgDBHcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 03:32:32 -0400
+IronPort-SDR: KjlCnnBbhacVC+Qu+49V5qs1h8bUOGYC2gJzjS3jZOmIzynutONt/3J/kquBAvp6Zyf7zcJNgL
+ VzBno0pFAfbw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2020 00:32:31 -0700
+IronPort-SDR: gdOzEhnqEgsoR8sAYDzfV05CATH4fzVWWsS+k0boW8O/yu3Xfi3sJxeG235iqhxdcOZT0BRZiL
+ Wb4kADP/oc4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,334,1580803200"; 
+   d="scan'208";a="328729980"
+Received: from tronach-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.252.38.191])
+  by orsmga001.jf.intel.com with ESMTP; 02 Apr 2020 00:32:28 -0700
+Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
+        id E279321F19; Thu,  2 Apr 2020 10:32:20 +0300 (EEST)
+Date:   Thu, 2 Apr 2020 10:32:20 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>, Petr Mladek <pmladek@suse.com>,
+        linux-media@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 1/1] lib/vsprintf: Add support for printing V4L2 and DRM
+ fourccs
+Message-ID: <20200402073220.GB1522@kekkonen.localdomain>
+References: <20200401140522.966-1-sakari.ailus@linux.intel.com>
+ <080ddddf-717e-61dc-8522-fbdbe52da94a@xs4all.nl>
+ <20200401151332.GU1922688@smile.fi.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200402063021.34672-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.6.242]
-X-ClientProxiedBy: lhreml729-chm.china.huawei.com (10.201.108.80) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200401151332.GU1922688@smile.fi.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/04/2020 07:30, YueHaibing wrote:
+Hi Andy,
 
-+
+Thanks for the review.
 
-> If SATA_HOST is n, build fails:
+On Wed, Apr 01, 2020 at 06:13:32PM +0300, Andy Shevchenko wrote:
+> On Wed, Apr 01, 2020 at 04:13:51PM +0200, Hans Verkuil wrote:
+> > On 4/1/20 4:05 PM, Sakari Ailus wrote:
+> > > Add a printk modifier %ppf (for pixel format) for printing V4L2 and DRM
+> > > pixel formats denoted by 4ccs. The 4cc encoding is the same for both so
+> > > the same implementation can be used.
 > 
-> drivers/scsi/hisi_sas/hisi_sas_main.o: In function `hisi_sas_fill_ata_reset_cmd':
-> hisi_sas_main.c:(.text+0x2500): undefined reference to `ata_tf_to_fis'
+> %p4cc ?
+
+Sounds good. Numbers have special handling but AFAIR only right after %
+sign, so this should be possible.
+
 > 
-> Select SATA_HOST to fix this.
+> > > +	char ch[2] = { 0 };
+> > 
+> > This can just be '{ };'
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 7c594f0407de ("scsi: hisi_sas: add softreset function for SATA disk")
-
-That's not right. SATA_HOST was only introduced recently in the ATA 
-code. It would fix those kconfig changes.
-
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->   drivers/scsi/hisi_sas/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
+> The latter is GCC extension, while above is C standard. Former is slightly
+> better I think. Though see below.
 > 
-> diff --git a/drivers/scsi/hisi_sas/Kconfig b/drivers/scsi/hisi_sas/Kconfig
-> index 90a17452a50d..13ed9073fc72 100644
-> --- a/drivers/scsi/hisi_sas/Kconfig
-> +++ b/drivers/scsi/hisi_sas/Kconfig
-> @@ -6,6 +6,7 @@ config SCSI_HISI_SAS
->   	select SCSI_SAS_LIBSAS
->   	select BLK_DEV_INTEGRITY
->   	depends on ATA
-> +	select SATA_HOST
+> > > +	unsigned int i;
+> > > +
+> > > +	if (check_pointer(&buf, end, fourcc, spec))
+> > > +		return buf;
+> > > +
+> > > +	switch (fmt[1]) {
+> > > +	case 'f':
+> 
+> > > +		for (i = 0; i < sizeof(*fourcc); i++) {
+> > > +			ch[0] = *fourcc >> (i << 3);
+> > 
+> > You need to AND with 0x7f, otherwise a big endian fourcc (bit 31 is set)
+> > will look wrong. Also, each character is standard 7 bit ascii, bit 7 isn't
+> > used except to indicate a BE variant.
+> 
+> Why not to do it once by a flag and do reset it once?
+> 
+> 	u32 tmp = *fourcc;
+> 	bool be4cc = tmp & BIT(31);
+> 
+> 	tmp &= BIT(31);
 
-That does not feel right.
+I had two extra temporary variables in a version I didn't send but I
+figured they could be removed. :-)
 
-SCSI_HISI_SAS depends on ATA, but SATA_HOST also depends on ATA, so it 
-seems better to just depend on SATA_HOST (and omit explicit ATA 
-dependency), rather than select it.
+> 
+> On top of that, as promised above, why not simple do it in a simpler way, i.e.
+> using standard idiom:
+> 
+> 	for (i = 0; i < sizeof(*fourcc); i++) {
+> 		if (buf < end)
+> 			*buf = tmp >> (i * 8);
+> 		buf++;
+> 	}
+> ?
 
-Thanks,
-John
+I guess that's at least more efficient, and comparing buf to end is
+trivial. I'll do that in v2.
+
+> 
+> > > +			buf = string(buf, end, ch, spec);
+> > > +		}
+> > > +
+> > > +		if (*fourcc & BIT(31))
+> > > +			buf = string(buf, end, "-BE", spec);
+> 
+> Another possibility
+> 
+> 	u8 ch[8];
+> 
+> 	if (*fourcc & BIT(31)) {
+> 		put_unaligned_be32(tmp, &ch[0]);
+> 		strcpy(&ch[4], "-BE");
+> 	} else {
+> 		put_unaligned_le32(tmp, &ch[0]);
+> 		strcpy(&ch[4], "-LE");
+> 	}
+> 	return string(buf, end, &ch[0], spec);
+
+I think I prefer the loop. I figured you can only call string once,
+otherwise field width handling will be broken. Let's see.
+
+> 
+> > > +		return buf;
+> > > +	default:
+> > > +		return error_string(buf, end, "(%pp?)", spec);
+> > > +	}
+> > > +}
+> 
+
+-- 
+Kind regards,
+
+Sakari Ailus
