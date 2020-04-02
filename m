@@ -2,170 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E6F719B9C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 03:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D83719B9E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 03:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733182AbgDBBRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 21:17:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48420 "EHLO mail.kernel.org"
+        id S1732739AbgDBB20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 21:28:26 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:44248 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732435AbgDBBRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 21:17:38 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30A682063A;
-        Thu,  2 Apr 2020 01:17:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585790257;
-        bh=NwyxAywyRAHMLyNX2R4M8OfPL+9m80oHZLb3bOz9a3Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fXLmX4yBuQcG7ErSOdj+FN7GmJXBDP+Cqc9WXJSQaLmmm9F8o8ceCxne8xgFrrZju
-         UHgO0MlWHDJvrUCRfHJfUIqwZcu150nMF6KgjBUApUzvUzz/zm9getHULcZqLOn1Hw
-         I/h3wxOHTVl0zcciJGbtL4RmLVgAbZmvyck5rDXI=
-Date:   Thu, 2 Apr 2020 10:17:33 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Zong Li <zong.li@sifive.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 8/9] riscv: introduce interfaces to patch kernel code
-Message-Id: <20200402101733.1ef240faeaeada6e4d38ae80@kernel.org>
-In-Reply-To: <CANXhq0ra3o+mgenbYLq_q0eZY2KiXNpWmo2V0amD0cFDqCQkXw@mail.gmail.com>
-References: <cover.1583772574.git.zong.li@sifive.com>
-        <d27d9e68491e1df67dbee6c22df6a72ff95bab18.1583772574.git.zong.li@sifive.com>
-        <20200401003233.17fe4b6f7075e5b8f0ed5114@kernel.org>
-        <CANXhq0ra3o+mgenbYLq_q0eZY2KiXNpWmo2V0amD0cFDqCQkXw@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726319AbgDBB20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 21:28:26 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 51FC91A1109;
+        Thu,  2 Apr 2020 03:28:24 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 993D71A1105;
+        Thu,  2 Apr 2020 03:28:18 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DDF0A402DF;
+        Thu,  2 Apr 2020 09:28:11 +0800 (SGT)
+From:   Sherry Sun <sherry.sun@nxp.com>
+To:     bp@alien8.de, mchehab@kernel.org, tony.luck@intel.com,
+        james.morse@arm.com, rrichter@marvell.com, michal.simek@xilinx.com,
+        manish.narani@xilinx.com
+Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, frank.li@nxp.com
+Subject: [patch v3 0/4] Add edac driver for i.MX8MP based on synopsys edac driver
+Date:   Thu,  2 Apr 2020 09:20:29 +0800
+Message-Id: <1585790433-31465-1-git-send-email-sherry.sun@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patchset add edac driver support for i.MX8MP, since i.MX8MP use the same
+synopsys memory controller with ZynqMP, so the driver is based on synopsys_edac
+driver.
 
-On Wed, 1 Apr 2020 15:42:30 +0800
-Zong Li <zong.li@sifive.com> wrote:
+Considering that i.MX8MP dts file is still in kernel/git/shawnguo/linux.git and
+isn't in mainline now, I will add EDAC node in i.MX8MP dts after this file is
+pushed to mainline. 
 
-> > > +
-> > > +static int __kprobes riscv_insn_write(void *addr, const void *insn, size_t len)
-> >
-> > Why would you add "riscv_" prefix for those functions? It seems a bit odd.
-> 
-> There is no particular reason, I just was used to adding a prefix for
-> arch-related stuff. I have no preference here, it's OK to me to remove
-> the prefix of these functions, do you think we need to remove them?
+And the edac driver for i.MX8MP has been tested in kernel/git/shawnguo/linux.git
+where i.MX8MP is supported, it turns out that this driver works well to detect
+corrected and uncorrected errors for LPDDR4 in i.MX8MP.
 
-Yeah, it will be better, unless it can mixed up with arch-independent
-functions.
+Changes since v2:
+=================
+- Use u64 data instead u32 data_low and u32 data_high as robert suggested in
+patch 4/4.
+- Add edac_dbg() for the != DEV_X8 cases in zynqmp_get_error_info() in patch
+4/4.
+- Change the format of the output data to avoid build warnings in patch 4/4.
 
-> > > +{
-> > > +     void *waddr = addr;
-> > > +     bool across_pages = (((uintptr_t) addr & ~PAGE_MASK) + len) > PAGE_SIZE;
-> > > +     unsigned long flags = 0;
-> > > +     int ret;
-> > > +
-> > > +     raw_spin_lock_irqsave(&patch_lock, flags);
-> >
-> > This looks a bit odd since stop_machine() is protected by its own mutex,
-> > and also the irq is already disabled here.
-> 
-> We need it because we don't always enter the riscv_patch_text_nosync()
-> through stop_machine mechanism. If we call the
-> riscv_patch_text_nosync() directly, we need a lock to protect the
-> page.
+Changes since v1:
+=================
+- Reorganized the patchset, no content changes. 
 
-Oh, OK, but it leads another question. Is that safe to patch the
-text without sync? Would you use it for UP system?
-I think it is better to clarify "in what case user can call _nosync()"
-and add a comment on it.
+Sherry Sun (4):
+  dt-bindings: memory-controllers: Add i.MX8MP DDRC binding doc
+  EDAC: Add synopsys edac driver support for i.MX8MP
+  EDAC: synopsys: Add edac driver support for i.MX8MP
+  EDAC: synopsys: Add useful debug and output information for 64bit
+    systems
 
-Thank you,
-
-> 
-> >
-> > Thank you,
-> >
-> > > +
-> > > +     if (across_pages)
-> > > +             patch_map(addr + len, FIX_TEXT_POKE1);
-> > > +
-> > > +     waddr = patch_map(addr, FIX_TEXT_POKE0);
-> > > +
-> > > +     ret = probe_kernel_write(waddr, insn, len);
-> > > +
-> > > +     patch_unmap(FIX_TEXT_POKE0);
-> > > +
-> > > +     if (across_pages)
-> > > +             patch_unmap(FIX_TEXT_POKE1);
-> > > +
-> > > +     raw_spin_unlock_irqrestore(&patch_lock, flags);
-> > > +
-> > > +     return ret;
-> > > +}
-> > > +#else
-> > > +static int __kprobes riscv_insn_write(void *addr, const void *insn, size_t len)
-> > > +{
-> > > +     return probe_kernel_write(addr, insn, len);
-> > > +}
-> > > +#endif /* CONFIG_MMU */
-> > > +
-> > > +int __kprobes riscv_patch_text_nosync(void *addr, const void *insns, size_t len)
-> > > +{
-> > > +     u32 *tp = addr;
-> > > +     int ret;
-> > > +
-> > > +     ret = riscv_insn_write(tp, insns, len);
-> > > +
-> > > +     if (!ret)
-> > > +             flush_icache_range((uintptr_t) tp, (uintptr_t) tp + len);
-> > > +
-> > > +     return ret;
-> > > +}
-> > > +
-> > > +static int __kprobes riscv_patch_text_cb(void *data)
-> > > +{
-> > > +     struct riscv_insn_patch *patch = data;
-> > > +     int ret = 0;
-> > > +
-> > > +     if (atomic_inc_return(&patch->cpu_count) == 1) {
-> > > +             ret =
-> > > +                 riscv_patch_text_nosync(patch->addr, &patch->insn,
-> > > +                                         GET_INSN_LENGTH(patch->insn));
-> > > +             atomic_inc(&patch->cpu_count);
-> > > +     } else {
-> > > +             while (atomic_read(&patch->cpu_count) <= num_online_cpus())
-> > > +                     cpu_relax();
-> > > +             smp_mb();
-> > > +     }
-> > > +
-> > > +     return ret;
-> > > +}
-> > > +
-> > > +int __kprobes riscv_patch_text(void *addr, u32 insn)
-> > > +{
-> > > +     struct riscv_insn_patch patch = {
-> > > +             .addr = addr,
-> > > +             .insn = insn,
-> > > +             .cpu_count = ATOMIC_INIT(0),
-> > > +     };
-> > > +
-> > > +     return stop_machine_cpuslocked(riscv_patch_text_cb,
-> > > +                                    &patch, cpu_online_mask);
-> > > +}
-> > > --
-> > > 2.25.1
-> > >
-> >
-> >
-> > --
-> > Masami Hiramatsu <mhiramat@kernel.org>
-
+ .../bindings/memory-controllers/synopsys.txt  |   8 +-
+ drivers/edac/Kconfig                          |   2 +-
+ drivers/edac/synopsys_edac.c                  | 248 ++++++++++++------
+ 3 files changed, 179 insertions(+), 79 deletions(-)
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.17.1
+
