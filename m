@@ -2,88 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF86019BA14
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52AB219BA1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:05:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733255AbgDBCAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 22:00:36 -0400
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:43032 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732498AbgDBCAf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 22:00:35 -0400
-Received: by mail-qv1-f66.google.com with SMTP id c28so901389qvb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 19:00:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=qfoLXrnqNbdNMc/qg2fQn2VjZnT5IOOCPmT892IlYdk=;
-        b=cKiCEtpAG53uMWAllPIubuUVMZlkf3zGEeenWXGZmNb+BHlxsZBGyKew+FTU9oQ0DK
-         McD3eNpxPXKTXQPqLWrgQdam04yznD9HI+ZfpUVD4+6oU/EnkDneahxLSct/AcGOF4gG
-         uheCdgHsaoKysYe8jmBDL5RQYET+jwYiCS8TGbjMxhAArzztsmCasWUrhDVQx5cbzEiC
-         46MaPsstwXUfybIOU50IHy4Ix+1AtX+LmS7afvx+O+PlAXsZ+jUibdRobmcBTI6f7Jxi
-         MgjCUnelx9ep+I9n1ADEJjzAxCwlrKMWRT47dVTrQnjx7fRr/mKa6yMLmmnXJqb/GFsW
-         Zg4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=qfoLXrnqNbdNMc/qg2fQn2VjZnT5IOOCPmT892IlYdk=;
-        b=Pd9NDu8SQ8w8gYe9t1Bo3/y9JvICQO6FxJitdFX2YDDxI/zVA0eAmnHpreeDjzS4/V
-         0Os0045dZYChR3p1+GATEO9uAmsgc0mPEeUDkhghhYQhmo734/rC8HFslmWNqBR4s/a/
-         +HDJi3DAJuH5pXs4rBAhYj1JLeytpPk4jcSDQH5Ed9n4lJsu0VfrXvKbmWJcWUOZGbWe
-         XdyC8oycr8lJIBvRkv9JdUJW64Kqimn6irrAuhrHM7+p+I7g3oe/lDt9Bq8YBUB29bxR
-         2PsE1LZAqjkBFXkJBMD59nCS3VY4xPjeg1e12tCrw4HchduSemjJnTTqzx2eFDoexSsE
-         SSKQ==
-X-Gm-Message-State: AGi0PuZgIDY0nfNZDZUafalPyjxEe7on7pEOr/kFvcDdvL3mipgPE0Vv
-        QTj2UYJZQCN9hzHLEyouoXMJRg==
-X-Google-Smtp-Source: APiQypKt76w7m6e5xoRV81SkiAPCm2e1rthecIHWTZSulTpArjqfbhWp7Y/79CYWcsS260luE96bsg==
-X-Received: by 2002:a0c:90aa:: with SMTP id p39mr1075930qvp.38.1585792834408;
-        Wed, 01 Apr 2020 19:00:34 -0700 (PDT)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id s56sm2889238qtk.9.2020.04.01.19.00.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Apr 2020 19:00:33 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: Deadlock due to "cpuset: Make cpuset hotplug synchronous"
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <20200325191922.GM162390@mtj.duckdns.org>
-Date:   Wed, 1 Apr 2020 22:00:31 -0400
-Cc:     Prateek Sood <prsood@codeaurora.org>,
-        Li Zefan <lizefan@huawei.com>, cgroups@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6AD62381-394F-4742-816B-12DE67DE9788@lca.pw>
-References: <F0388D99-84D7-453B-9B6B-EEFF0E7BE4CC@lca.pw>
- <20200325191922.GM162390@mtj.duckdns.org>
-To:     Tejun Heo <tj@kernel.org>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
+        id S1733303AbgDBCFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 22:05:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727135AbgDBCFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 22:05:04 -0400
+Subject: Re: [GIT PULL] XArray for 5.7-rc1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585793103;
+        bh=9JjWTMQZTzxCAM732VmpHKueCSqSdGhwvAHvVXu14Ko=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=yBoLz3WSUxCRMOdaqvTr0pROExsRHFK3INr9lgdyqIdiO8+A+TTx7TUW5k6FmwRps
+         hqENVN2F9nRJ66yQjHTemlXZ6J8jXP1Y573rRyC6kgdPfDgvEqNXnV+qRKeb0qIfar
+         yV1nFId9nSzGSi0wQ7DkgIVvbzMLm2e/mIAx2icI=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200331141749.GB21484@bombadil.infradead.org>
+References: <20200331141749.GB21484@bombadil.infradead.org>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200331141749.GB21484@bombadil.infradead.org>
+X-PR-Tracked-Remote: git://git.infradead.org/users/willy/linux-dax.git
+ tags/xarray-5.7
+X-PR-Tracked-Commit-Id: 7e934cf5ace1dceeb804f7493fa28bb697ed3c52
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 193bc55b6d4e0a7b4ad0216ed9794252bee6436e
+Message-Id: <158579310371.873.17070096012445384076.pr-tracker-bot@kernel.org>
+Date:   Thu, 02 Apr 2020 02:05:03 +0000
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The pull request you sent on Tue, 31 Mar 2020 07:17:49 -0700:
 
+> git://git.infradead.org/users/willy/linux-dax.git tags/xarray-5.7
 
-> On Mar 25, 2020, at 3:19 PM, Tejun Heo <tj@kernel.org> wrote:
->=20
-> On Wed, Mar 25, 2020 at 03:16:56PM -0400, Qian Cai wrote:
->> The linux-next commit a49e4629b5ed (=E2=80=9Ccpuset: Make cpuset =
-hotplug synchronous=E2=80=9D)
->> introduced real deadlocks with CPU hotplug as showed in the lockdep =
-splat, since it is
->> now making a relation from cpu_hotplug_lock =E2=80=94> cgroup_mutex.
->=20
-> Prateek, can you please take a look? Given that the merge window is =
-just around
-> the corner, we might have to revert and retry later if it can't be =
-resolved
-> quickly.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/193bc55b6d4e0a7b4ad0216ed9794252bee6436e
 
-Tejun, can you back off this commit now given it seems nobody is trying =
-to rescue it?
+Thank you!
 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
