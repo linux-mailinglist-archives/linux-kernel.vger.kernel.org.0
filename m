@@ -2,67 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ABBF19BA59
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:34:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB55F19BA53
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:33:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387432AbgDBCeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 22:34:08 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12666 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727135AbgDBCeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 22:34:08 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id ED6EB8EE69BEE25C2339;
-        Thu,  2 Apr 2020 10:33:56 +0800 (CST)
-Received: from localhost (10.173.223.234) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.487.0; Thu, 2 Apr 2020
- 10:33:49 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <ayush.sawal@chelsio.com>, <vinay.yadav@chelsio.com>,
-        <rohitm@chelsio.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>
-CC:     <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net] crypto/chcr: Add missing include file <linux/highmem.h>
-Date:   Thu, 2 Apr 2020 10:32:58 +0800
-Message-ID: <20200402023258.33336-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1733269AbgDBCdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 22:33:20 -0400
+Received: from foss.arm.com ([217.140.110.172]:36260 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727135AbgDBCdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Apr 2020 22:33:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5664F30E;
+        Wed,  1 Apr 2020 19:33:19 -0700 (PDT)
+Received: from [10.163.1.8] (unknown [10.163.1.8])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D50E93F71E;
+        Wed,  1 Apr 2020 19:33:16 -0700 (PDT)
+Subject: Re: [PATCH 0/6] Introduce ID_PFR2 and other CPU feature changes
+To:     Peter Maydell <peter.maydell@linaro.org>
+Cc:     arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+        kvmarm@lists.cs.columbia.edu
+References: <1580215149-21492-1-git-send-email-anshuman.khandual@arm.com>
+ <45ce930c-81b3-3161-ced6-34a8c8623ac8@arm.com>
+ <CAFEAcA_yZ55rOD1x+FE9wYO8HXx9seK72ZCmnWjtDVr_95-whg@mail.gmail.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <c2b672ca-9b74-89f8-388c-555bbcbd57ba@arm.com>
+Date:   Thu, 2 Apr 2020 08:03:09 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.173.223.234]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAFEAcA_yZ55rOD1x+FE9wYO8HXx9seK72ZCmnWjtDVr_95-whg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/crypto/chelsio/chcr_ktls.c: In function ‘chcr_short_record_handler’:
-drivers/crypto/chelsio/chcr_ktls.c:1770:12: error: implicit declaration of function ‘kmap_atomic’;
- did you mean ‘in_atomic’? [-Werror=implicit-function-declaration]
-    vaddr = kmap_atomic(skb_frag_page(f));
-            ^~~~~~~~~~~
+On 02/14/2020 09:28 PM, Peter Maydell wrote:
+> On Fri, 14 Feb 2020 at 04:23, Anshuman Khandual
+> <anshuman.khandual@arm.com> wrote:
+>>
+>>
+>>
+>> On 01/28/2020 06:09 PM, Anshuman Khandual wrote:
+>>> This series is primarily motivated from an adhoc list from Mark Rutland
+>>> during our ID_ISAR6 discussion [1]. Besides, it also includes a patch
+>>> which does macro replacement for various open bits shift encodings in
+>>> various CPU ID registers. This series is based on linux-next 20200124.
+>>>
+>>> [1] https://patchwork.kernel.org/patch/11287805/
+>>>
+>>> Is there anything else apart from these changes which can be accommodated
+>>> in this series, please do let me know. Thank you.
+>>
+>> Just a gentle ping. Any updates, does this series looks okay ? Is there
+>> anything else related to CPU ID register feature bits, which can be added
+>> up here. FWIW, the series still applies on v5.6-rc1.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: dc05f3df8fac ("chcr: Handle first or middle part of record")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/crypto/chelsio/chcr_ktls.c | 1 +
- 1 file changed, 1 insertion(+)
+Sorry for the delay in response, was distracted on some other patches.
 
-diff --git a/drivers/crypto/chelsio/chcr_ktls.c b/drivers/crypto/chelsio/chcr_ktls.c
-index 73658b71d4a3..cd1769ecdc1c 100644
---- a/drivers/crypto/chelsio/chcr_ktls.c
-+++ b/drivers/crypto/chelsio/chcr_ktls.c
-@@ -2,6 +2,7 @@
- /* Copyright (C) 2020 Chelsio Communications.  All rights reserved. */
- 
- #ifdef CONFIG_CHELSIO_TLS_DEVICE
-+#include <linux/highmem.h>
- #include "chcr_ktls.h"
- #include "clip_tbl.h"
- 
--- 
-2.17.1
+> 
+> I just ran into some "32-bit KVM doesn't expose all the ID
+> registers to userspace via the ONE_REG API" issues today.
+> I don't know if they'd be reasonable as something to include
+> in this patchset or if they're unrelated.
 
+IMHO, they are bit unrelated.
 
+> 
+> Anyway, missing stuff I have noticed specifically:
+>  * MVFR2
+>  * ID_MMFR4
+>  * ID_ISAR6
+> 
+> More generally I would have expected all these 32-bit registers
+> to exist and read-as-zero for the purpose of the ONE_REG APIs,
+> because that's what the architecture says is supposed to happen
+> and it means we have compatibility and QEMU doesn't gradually
+> build up lots of "kernel doesn't support this yet" conditionals...
+> I think we get this right for 64-bit KVM, but can we do it for
+> 32-bit as well?
+
+I am not very familiar with 32-bit KVM but will definitely keep these
+suggestions noted for later, also try and accommodate if possible.
+
+> thanks
+> -- PMM
+> 
