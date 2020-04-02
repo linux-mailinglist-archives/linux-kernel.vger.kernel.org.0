@@ -2,114 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CCE219BD51
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D9319BDCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 10:46:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387667AbgDBIHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 04:07:32 -0400
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:40244 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387476AbgDBIHc (ORCPT
+        id S2387780AbgDBIqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 04:46:47 -0400
+Received: from 19.mo5.mail-out.ovh.net ([46.105.35.78]:41555 "EHLO
+        19.mo5.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387526AbgDBIqr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 04:07:32 -0400
-Received: by mail-wr1-f48.google.com with SMTP id s8so873244wrt.7
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 01:07:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tessares-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rFtafj8G3p6uylJpT3LxPW3DfRAp8Fyv/LimRAr9TMk=;
-        b=kimZVNAGXwCuOkN4OBZz/FkvFPotAj/bw5l9yyVqCbO7OEmZD14W1Sds/6Uvlt51O9
-         OOYrx77C6acyKzgxtKVjIk3UxiPp7XbIB8slejG33+0PFkERjBRmRHbt6/1gcpsh3OHK
-         g5s+vK8ybk62dtiDNDWcpJDrwTFU059BdQq8IlYHxXo3SrKzD2xI2MSFgRNay2KwtPXU
-         l7IMGGVoYJFdrL1vqRI98E3fSSae6etQ1hs115INSsupTqU8HYXbTXhTKzuiJ90GjvJb
-         f+wtLV9OaGAu1gd71W4NoTY0n817N60y6Lh/pZ3TFTkPGoNLSRTnI5EA9Q5gcUokj/Vi
-         QVrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rFtafj8G3p6uylJpT3LxPW3DfRAp8Fyv/LimRAr9TMk=;
-        b=UJWRByJCmWBVag3ZilSV0iZ60W/RBa/i5H2D6RWBAnlMga7LL+2oG00YRH1d9cp3e6
-         MRbfpE4XldBc5p3O7Hg9UXsSEEqfwovb/twHUM2wblX5bMS+FFM6SjO9cyja94KdAIuk
-         8lGA7xNng9avl1mqghv2f7vjFLGR7Do01lWfMVKO/bS0RlR0rjCGc7qbf64243Sp5FY6
-         9lr9G8zewEiwHe8MNLUvqpZSloy/nuNurYZBZp9lWfqQ6sbnXQXXRHFM2hMf8/kt6Y8P
-         IOzQNSjiGd8BUVmy/0qbEjzx9woqvUNu/NfAmHEqDsSxNDvrN5XLYNkSIIIbI37N5mT7
-         al7A==
-X-Gm-Message-State: AGi0PuaGDBBrFyNe59K3Zf2gOTaxblnZGLRpxYKbVjzg8v+7pKmKWLCY
-        Y7jePvPSlghl76CxI+UrtEwMVQ==
-X-Google-Smtp-Source: APiQypLeuzM1SXog1adVslcN8rAHhURouHDugYLsv+YoexQ0M9ZMz7jTgOOCL6PkdU8DrNcEtc20+Q==
-X-Received: by 2002:a5d:4c48:: with SMTP id n8mr2154904wrt.414.1585814850456;
-        Thu, 02 Apr 2020 01:07:30 -0700 (PDT)
-Received: from tsr-lap-08.nix.tessares.net ([79.132.236.184])
-        by smtp.gmail.com with ESMTPSA id h132sm6489763wmf.18.2020.04.02.01.07.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Apr 2020 01:07:29 -0700 (PDT)
-Subject: Re: [MPTCP] [selftests] eedbc68532:
- kernel-selftests.net/mptcp.pm_netlink.sh.fail
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Paolo Abeni <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
-        mptcp@lists.01.org
-References: <20200402074609.GH8179@shao2-debian>
-From:   Matthieu Baerts <matthieu.baerts@tessares.net>
-Message-ID: <7a1b24ac-73f2-bac1-f450-d8e6c802c0ce@tessares.net>
-Date:   Thu, 2 Apr 2020 10:07:34 +0200
+        Thu, 2 Apr 2020 04:46:47 -0400
+X-Greylist: delayed 1199 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 Apr 2020 04:46:46 EDT
+Received: from player786.ha.ovh.net (unknown [10.108.54.108])
+        by mo5.mail-out.ovh.net (Postfix) with ESMTP id 27D6C277E79
+        for <linux-kernel@vger.kernel.org>; Thu,  2 Apr 2020 10:08:29 +0200 (CEST)
+Received: from kaod.org (82-64-250-170.subs.proxad.net [82.64.250.170])
+        (Authenticated sender: clg@kaod.org)
+        by player786.ha.ovh.net (Postfix) with ESMTPSA id 552F5113122F9;
+        Thu,  2 Apr 2020 08:08:13 +0000 (UTC)
+Subject: Re: [PATCH v10 03/14] powerpc/vas: Alloc and setup IRQ and trigger
+ port address
+To:     Haren Myneni <haren@linux.ibm.com>, mpe@ellerman.id.au
+Cc:     mikey@neuling.org, srikar@linux.vnet.ibm.com,
+        frederic.barrat@fr.ibm.com, ajd@linux.ibm.com,
+        linux-kernel@vger.kernel.org, npiggin@gmail.com, hch@infradead.org,
+        oohall@gmail.com, sukadev@linux.vnet.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, herbert@gondor.apana.org.au
+References: <1585810846.2275.23.camel@hbabu-laptop>
+ <1585811431.2275.39.camel@hbabu-laptop>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+Message-ID: <99d4f018-0e2d-9ab4-b4d4-58af7e494ec3@kaod.org>
+Date:   Thu, 2 Apr 2020 10:08:05 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200402074609.GH8179@shao2-debian>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1585811431.2275.39.camel@hbabu-laptop>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 11347945162253044702
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduhedrtdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepuffvfhfhkffffgggjggtgfesthekredttdefjeenucfhrhhomhepveorughrihgtpgfnvggpifhorghtvghruceotghlgheskhgrohgurdhorhhgqeenucfkpheptddrtddrtddrtddpkedvrdeigedrvdehtddrudejtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejkeeirdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheptghlgheskhgrohgurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-Thank you for the automatic bug report!
-
-On 02/04/2020 09:46, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
+On 4/2/20 9:10 AM, Haren Myneni wrote:
 > 
-> commit: eedbc685321b38fea58a14c9fbd258c4b2c2747c ("selftests: add PM netlink functional tests")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> Allocate a xive irq on each chip with a vas instance. The NX coprocessor
+> raises a host CPU interrupt via vas if it encounters page fault on user
+> space request buffer. Subsequent patches register the trigger port with
+> the NX coprocessor, and create a vas fault handler for this interrupt
+> mapping.
 
-(...)
+Looks good !
 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> Signed-off-by: Haren Myneni <haren@linux.ibm.com>
 
-(...)
 
-> # selftests: net/mptcp: pm_netlink.sh
-> # defaults addr list                                 [ OK ]
-> # defaults limits                                    [ OK ]
-> # simple add/get addr                                [ OK ]
-> # dump addrs                                         [FAIL] expected 'id 1 flags  10.0.1.1
-> # id 2 flags subflow dev lo 10.0.1.2
-> # id 3 flags signal,backup 10.0.1.3 ' got 'id 1 flags  10.0.1.1
+Reviewed-by: Cédric Le Goater <clg@kaod.org>
 
-(...)
+Thanks,
 
-> not ok 2 selftests: net/mptcp: pm_netlink.sh # exit=1
+C.
 
-This issue has already been fixed:
+> ---
+>  arch/powerpc/platforms/powernv/vas.c | 44 +++++++++++++++++++++++++++++++-----
+>  arch/powerpc/platforms/powernv/vas.h |  2 ++
+>  2 files changed, 40 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/powernv/vas.c b/arch/powerpc/platforms/powernv/vas.c
+> index ed9cc6d..3303cfe 100644
+> --- a/arch/powerpc/platforms/powernv/vas.c
+> +++ b/arch/powerpc/platforms/powernv/vas.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/of_address.h>
+>  #include <linux/of.h>
+>  #include <asm/prom.h>
+> +#include <asm/xive.h>
+>  
+>  #include "vas.h"
+>  
+> @@ -25,10 +26,12 @@
+>  
+>  static int init_vas_instance(struct platform_device *pdev)
+>  {
+> -	int rc, cpu, vasid;
+> -	struct resource *res;
+> -	struct vas_instance *vinst;
+>  	struct device_node *dn = pdev->dev.of_node;
+> +	struct vas_instance *vinst;
+> +	struct xive_irq_data *xd;
+> +	uint32_t chipid, hwirq;
+> +	struct resource *res;
+> +	int rc, cpu, vasid;
+>  
+>  	rc = of_property_read_u32(dn, "ibm,vas-id", &vasid);
+>  	if (rc) {
+> @@ -36,6 +39,12 @@ static int init_vas_instance(struct platform_device *pdev)
+>  		return -ENODEV;
+>  	}
+>  
+> +	rc = of_property_read_u32(dn, "ibm,chip-id", &chipid);
+> +	if (rc) {
+> +		pr_err("No ibm,chip-id property for %s?\n", pdev->name);
+> +		return -ENODEV;
+> +	}
+> +
+>  	if (pdev->num_resources != 4) {
+>  		pr_err("Unexpected DT configuration for [%s, %d]\n",
+>  				pdev->name, vasid);
+> @@ -69,9 +78,32 @@ static int init_vas_instance(struct platform_device *pdev)
+>  
+>  	vinst->paste_win_id_shift = 63 - res->end;
+>  
+> -	pr_devel("Initialized instance [%s, %d], paste_base 0x%llx, "
+> -			"paste_win_id_shift 0x%llx\n", pdev->name, vasid,
+> -			vinst->paste_base_addr, vinst->paste_win_id_shift);
+> +	hwirq = xive_native_alloc_irq_on_chip(chipid);
+> +	if (!hwirq) {
+> +		pr_err("Inst%d: Unable to allocate global irq for chip %d\n",
+> +				vinst->vas_id, chipid);
+> +		return -ENOENT;
+> +	}
+> +
+> +	vinst->virq = irq_create_mapping(NULL, hwirq);
+> +	if (!vinst->virq) {
+> +		pr_err("Inst%d: Unable to map global irq %d\n",
+> +				vinst->vas_id, hwirq);
+> +		return -EINVAL;
+> +	}
+> +
+> +	xd = irq_get_handler_data(vinst->virq);
+> +	if (!xd) {
+> +		pr_err("Inst%d: Invalid virq %d\n",
+> +				vinst->vas_id, vinst->virq);
+> +		return -EINVAL;
+> +	}
+> +
+> +	vinst->irq_port = xd->trig_page;
+> +	pr_devel("Initialized instance [%s, %d] paste_base 0x%llx paste_win_id_shift 0x%llx IRQ %d Port 0x%llx\n",
+> +			pdev->name, vasid, vinst->paste_base_addr,
+> +			vinst->paste_win_id_shift, vinst->virq,
+> +			vinst->irq_port);
+>  
+>  	for_each_possible_cpu(cpu) {
+>  		if (cpu_to_chip_id(cpu) == of_get_ibm_chip_id(dn))
+> diff --git a/arch/powerpc/platforms/powernv/vas.h b/arch/powerpc/platforms/powernv/vas.h
+> index 5574aec..598608b 100644
+> --- a/arch/powerpc/platforms/powernv/vas.h
+> +++ b/arch/powerpc/platforms/powernv/vas.h
+> @@ -313,6 +313,8 @@ struct vas_instance {
+>  	u64 paste_base_addr;
+>  	u64 paste_win_id_shift;
+>  
+> +	u64 irq_port;
+> +	int virq;
+>  	struct mutex mutex;
+>  	struct vas_window *rxwin[VAS_COP_TYPE_MAX];
+>  	struct vas_window *windows[VAS_WINDOWS_PER_CHIP];
+> 
 
-   3aeaaa59fd69 (selftests:mptcp: fix failure due to whitespace damage)
-
-This commit -- making both Git AM and selftests happy :) -- has been 
-quickly applied by David (thank you for that!) and it is already in 
-Linus tree.
-
-Cheers,
-Matt
--- 
-Matthieu Baerts | R&D Engineer
-matthieu.baerts@tessares.net
-Tessares SA | Hybrid Access Solutions
-www.tessares.net
-1 Avenue Jean Monnet, 1348 Louvain-la-Neuve, Belgium
