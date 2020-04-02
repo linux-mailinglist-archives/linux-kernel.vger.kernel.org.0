@@ -2,74 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4A1D19BAA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 05:33:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59D9519BAAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 05:37:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387450AbgDBDcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 23:32:52 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40795 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733269AbgDBDcw (ORCPT
+        id S2387449AbgDBDgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 23:36:54 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50951 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387419AbgDBDgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 23:32:52 -0400
-Received: by mail-wr1-f66.google.com with SMTP id s8so318834wrt.7
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 20:32:51 -0700 (PDT)
+        Wed, 1 Apr 2020 23:36:54 -0400
+Received: by mail-wm1-f65.google.com with SMTP id t128so1895256wma.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 20:36:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=vuvlszeVvbpiwXaSMtzxBKQT5Hy4nWnpPtrenpSXP4k=;
-        b=cHC/wXIXryGHwupG1uhlGVc63XzyOIL7cGtvvyrVohOMpu4sGORJBry/UHM981+iRA
-         Jid/S1/J89SdaDHRven7rkxU+wRxdcE2vjeVSkZQcxF9KWeAzrGkRyvhjQHMpWCs92q7
-         RJRg6Sxsmk54xnDaArnk4i/mCErYsfYUiclard8fIM+JRQ3yK4ulc7jBJdgQspjgcdIY
-         KoHdXFG5j7a38FxbFFfacgK9YOFPX2Znue/Inz+DrQCrjVcogSLl3ut3RHeoRrXaNR6P
-         PQNmCmeP364IBFuUIxqfmYousyEgX2VgIkQ0wvAjjYpDECoALMbbHV+KosNJzICGcmdq
-         is3g==
+        h=from:to:cc:subject:date:message-id;
+        bh=m4LdVgh/bvsyv9ZErCSctVO5OR+focWDV/5XQQ8F7AU=;
+        b=vEvXtqqAUPaUcCi3tCJN0g8gIg6t7Nzb/0+Eiawfl6fv9xfoD64GhJxFCciuDo34W7
+         R3UYwsNvVPTvLPzacryiAdF+TFbL9UcXbOTvCSxeuB7q/EHtWYWutAttxgDrDfU/bluV
+         TO4GKdjMbc7Wtk76OXbR0yIkPmOszbWDVh70I1jPOahJYbF1ihCMpfw38wmfSXYPcE9g
+         qTtrw33USTAxbOzS7+PzffYBBrcCjqiLEJJIJQwJCrJG4fti4huyewpK68vPyX/Bln6q
+         RWC9uDKmKnmzPrcZqJDQjTtLTW2GWYfpFeK5eZ242sy8AZpZshd7Ec9ELfF+8FIL5fzQ
+         0r+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=vuvlszeVvbpiwXaSMtzxBKQT5Hy4nWnpPtrenpSXP4k=;
-        b=T4J20ZI4XuHnx/S9ipdkJfcmXczOzDir5yGu+/I0EgDfJkeFXFod+IbYm3sNUNWbcM
-         Nx4gWEkXpkexn1vmfSJ/jy8Nlj8yVMXrWswgikfYiecviCu0rlczzzAWa21AvYezBNNJ
-         8rAsa+EDTvw4DhaFd7aYiYpNMSU1CnM5P9MGa8HVlWM5RhIDQZFpO2TVWUlO8qRg84z5
-         U3OFTZhe5h1JK58f0dTfljFJyS0qNzS0RLQK6JSTJyWxFT4HZ0AL58yT1cnzI9ioHe38
-         hMMObcNgp7FboD0G0KZpY5CWWX1XlyEYyG79bhGkcW9O3kogZLQIJYRPdUv6t0CBiLiO
-         4pOg==
-X-Gm-Message-State: AGi0PuaPnJUqQGn1JuUEGVzVfJn/K58RdnXvHDjGgLzD37UPhkoE2bnc
-        QwDH24OMeVglMhI9MrEGtpSSsD2wRQ/PYjHMdik=
-X-Google-Smtp-Source: APiQypKcLMUD/Xl0Xola3hSNTZ54CsL87DjQ/eER8kv779K+CFnYMh9b5LRwHV1WIIw53VJwpeW1M5B7rp0rfQ1t5hE=
-X-Received: by 2002:a5d:6b8b:: with SMTP id n11mr1090700wrx.379.1585798370317;
- Wed, 01 Apr 2020 20:32:50 -0700 (PDT)
-MIME-Version: 1.0
-Reply-To: abd747591@gmail.com
-Received: by 2002:a1c:205:0:0:0:0:0 with HTTP; Wed, 1 Apr 2020 20:32:49 -0700 (PDT)
-From:   Mr Abd Manaf <abdmanaf2002@gmail.com>
-Date:   Thu, 2 Apr 2020 04:32:49 +0100
-X-Google-Sender-Auth: d2XO1HNMPWeZhv9U4OZq4ZlM6oE
-Message-ID: <CADfURsvLbaPg7AoecLxDaO=uEZ1jhassp6J4KFnMXj6nOzJZzQ@mail.gmail.com>
-Subject: Good Day!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=m4LdVgh/bvsyv9ZErCSctVO5OR+focWDV/5XQQ8F7AU=;
+        b=iVY1T3K/3joSzfAk0fr8zWsqI4AM1RZX4NxmVrKzNq+LPVDpa7VvDK47lwtyDPSPlM
+         8cSMc/sgu4BVZxJ5fTOQpr4otXM2HpOQV1hFSP5TUTOdX1JgYRr4rSLJZfCLf3Ce9wmK
+         Z6wxGgF/3IVPOaSB7pDh37bw/ZOSkdMmvyBUQ0DDEG9AlUTJCPHa4H/GSje/7Lfs//0G
+         0LBSaF1m8vHdkGOhEnovW19r/W6PZdKfdLGVAKgC4OGicEGQljS44kkdCAdYwALqHmZU
+         EUqBmV5l/cydkv9LtAsGUWq4xeg/uTzrcn7GYfhMd6gWubwOibnVjt3bdrXsj0EcceNv
+         2WuQ==
+X-Gm-Message-State: AGi0Pua0MNdEXT/RnKdIBiZtwGAMMm9PuLURjrEjKhuQplZHvpuVMQAD
+        d9GwpQ8uHt5fD3AtmbEnkjqwfDGZ
+X-Google-Smtp-Source: APiQypIZmgCgGltE3CfA0zMYWpj4xYNsprkY0A+5KhTVNXGpiYfRakT0Y8C9MoW/KGQjCRAb7SVV8A==
+X-Received: by 2002:a1c:cc0a:: with SMTP id h10mr1114554wmb.127.1585798611645;
+        Wed, 01 Apr 2020 20:36:51 -0700 (PDT)
+Received: from localhost.localdomain ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id n124sm5402841wma.11.2020.04.01.20.36.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 20:36:51 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>, hsinyi@chromium.org,
+        geert+renesas@glider.be, will@kernel.org, swboyd@chromium.org,
+        robh@kernel.org, tytso@mit.edu
+Subject: [PATCH] Documentation: dt-bindings: Document 'rng-seed' for /chosen
+Date:   Wed,  1 Apr 2020 20:36:40 -0700
+Message-Id: <20200402033640.12465-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-                                    Dear how are you,
+The /chosen node can have a 'rng-seed' property read as a u32 quantity
+which would contain a random number provided by the boot agent. This is
+useful in configurations where the kernel does not have access to a
+random number generator.
 
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ Documentation/devicetree/bindings/chosen.txt | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/chosen.txt b/Documentation/devicetree/bindings/chosen.txt
+index 45e79172a646..126b31eecfeb 100644
+--- a/Documentation/devicetree/bindings/chosen.txt
++++ b/Documentation/devicetree/bindings/chosen.txt
+@@ -28,6 +28,19 @@ mode) when EFI_RNG_PROTOCOL is supported, it will be overwritten by
+ the Linux EFI stub (which will populate the property itself, using
+ EFI_RNG_PROTOCOL).
+ 
++rng-seed
++--------
++
++This property is used to initialize the kernel's entropy pool from a
++trusted boot agent capable of providing a random number. It is parsed
++as a u32 value, e.g.
++
++/ {
++	chosen {
++		rng-seed = <0xcafef00d>;
++	};
++};
++
+ stdout-path
+ -----------
+ 
+-- 
+2.17.1
 
-
-How Are You? I Know That This Mail May Come To You Almost A Surprise
-As We Never Met Before And Please Before You Proceed Reading This
-mail,This Is True and not An Well I Saw Your Contact Email From Yahoo
-Search when I Was Looking For a Foreign Partner, please I don=E2=80=99t now=
- if
-you can keep secret? A word of your own as a human-being? As I have
-gone through your profile.Well I have a deal worth 15.5m$ from the
-dormant account in the bank where I am working.so Please if you can
-keep secret, I will give you more details and the nest thing to do,
-
-MR.Abd Manaf.
