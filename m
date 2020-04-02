@@ -2,100 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61E4519BA54
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49B1719BA5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 04:35:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387407AbgDBCdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 22:33:22 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:34218 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727135AbgDBCdV (ORCPT
+        id S2387403AbgDBCfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 22:35:22 -0400
+Received: from mail-lj1-f170.google.com ([209.85.208.170]:34201 "EHLO
+        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732664AbgDBCfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 22:33:21 -0400
-Received: by mail-pj1-f68.google.com with SMTP id q16so2821166pje.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 19:33:21 -0700 (PDT)
+        Wed, 1 Apr 2020 22:35:21 -0400
+Received: by mail-lj1-f170.google.com with SMTP id p10so1644178ljn.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 19:35:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ATIn1oIMiOwI325i99rfncSx0LFzAXo2FxSFZi+2kaM=;
-        b=n3LBbVdVMR9xztTWPZj9E4NAFROVpVuh4KUeELtpWMpWqKKx5lGsHyovhlSlocwRJf
-         nN/pb2bi91NTXpSJ1uY00zkUiaPE1bGQ1OESWp5M3dZfU5PDgILsOCat+syRefKVKUQd
-         NXAWZZRUUUWiZoDrpVBNkYiOUY3YwQbs4YN+1WLDGx4SIvMQHLOiGDrtnEZBewl7LeBk
-         bV7tfeAbWFkoGaMruVpc4b5Cmt71VHuO8gVt3bKcqOtUZ3+4XYu4x4S6yOMwfntDxKEi
-         Fn+YCM7DNZJ8NmjPzIxP8e2qLMH2U7SpRydjD4pitF5Y5D0juJOw5QqzRa2deSIgGTFi
-         RmVg==
+        d=google.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=ce4+jt1QnAedyVF+O0B43RTY85VjYC1oRuPq2H/Wy7k=;
+        b=A6wogXWb5tIgKQaMIGu+zexhgOwdF6lvWAZm6SmTGOJJnskmH/gBZkeLs280lc9mCO
+         76K5tHRHF4bNPBFY1Vw3xv/9kq5Dr5z498LI8cgExeQLhvzQx1m2F7QHYF4+dItfiqPC
+         ECRlkqxZn7xuEYE0nqIxocSu12YOryDxx7NKkYYfx5xOoD2qPQsMG09WDVc0TQHDFAwe
+         FoOp3yCdSi2sIKf8B95fjPdXWjsMhNsoPcv2TnpUkB9dote+qhBOl3SM4hrV0s3OsqhX
+         gqlCnOtXyW93zxJkpnd1o7QcfHXxxDy3zwD2Doa4MmUyJV1LZeCgrJFBmMpEXVg0B+Fo
+         5HVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ATIn1oIMiOwI325i99rfncSx0LFzAXo2FxSFZi+2kaM=;
-        b=fgrjDIlmWn/e81hzNx1blwZJ4TubD+bSgF1IpbXYeKU8WLahdMM2zd6IN20j41e5JJ
-         cjjx10a4TE3+zW81PiJa71x5jeULutz+gIydBYYCcnn6uXsTh1CDVzmf+DPBE6i2vVDH
-         6hlFb0Sdw4ylhH6u8Wae239+RYlAzp9I1bSHaVvBKU2xGlEH+iUx3Gwy9TPYbbAdzc5x
-         6Z4SFbdBGP4UK65AEavIxzQ3IQZdHkbAnPWQNGPgLBpV5dIllmyzXPTjvpdQwl6hvraD
-         53F6t/TogpnpeTbVo8/aLsjBoFncT7FrdbaizMs+NmO4+v7EEVY+AsEIrYx5ev9wUJcp
-         EL0Q==
-X-Gm-Message-State: AGi0Pua7riLlOdSrrRLTJeRPRnWY7kuUnvXF6q6u5lWzqR74Lgypqe+d
-        PULV0i4FWAnHV32rGtbzP4hgKGeU0b86cA==
-X-Google-Smtp-Source: APiQypLRbDTF91VykRK3Z/pEgpBEwK+uBtcjCC4EZ+kNI3dgYXQkXJFmPIpDmGRKtu9XXqqhig71Fg==
-X-Received: by 2002:a17:90a:24c5:: with SMTP id i63mr1182990pje.177.1585794800765;
-        Wed, 01 Apr 2020 19:33:20 -0700 (PDT)
-Received: from OptiPlexFedora.fios-router.home ([47.144.161.84])
-        by smtp.gmail.com with ESMTPSA id b2sm2609402pjc.6.2020.04.01.19.33.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 19:33:20 -0700 (PDT)
-From:   "John B. Wyatt IV" <jbwyatt4@gmail.com>
-To:     outreachy-kernel@googlegroups.com,
-        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
-Cc:     "John B. Wyatt IV" <jbwyatt4@gmail.com>
-Subject: [PATCH] staging: fsl-dpaa2: ethsw: Fix parenthesis alignment
-Date:   Wed,  1 Apr 2020 19:33:10 -0700
-Message-Id: <20200402023310.816245-1-jbwyatt4@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=ce4+jt1QnAedyVF+O0B43RTY85VjYC1oRuPq2H/Wy7k=;
+        b=WsFGOOzYrNRNO+Prixq+lSG4k5BQhRBkaDzGRPkUu8RvLFdPvuC2QVfyI1jFUPoa97
+         VvrtSJ5a+EGqXfnxdifiBDiJJEPqg2J1B3GdwSPm2s8P89D6vLViOM295m1CHrdlmUSy
+         vXIhC1/XoVFfLHNK6L/6v+sNCOZ2cMzNxrjN987R604N6G1LkFUHXJTAXd5H9u/vZ43Y
+         o0wSMt4Ys0+92YdWSrwb4+q1Za7+2zK75xoJVaWM5cXV7N0hoZZ49hoPz2s/X1Qvj75K
+         IaEI7rR77Xu326A+B5hxoNtdM4uTndhd4Dyz9iSSDUjU0Wk9dBkvMC42OHuQtD2IU46o
+         p8Jw==
+X-Gm-Message-State: AGi0PuZX+WuEgnuHvVMwuMRAgTKfIDtADZ4hG6ULGm7UI1vZP9YuBpse
+        U0Fc9lqCFq602cglDwCI1ImyqDpN4oxIIdt1UztW/A==
+X-Google-Smtp-Source: APiQypJpsCcfgA88Rqg61SjKw/yEVQICGOjzMNwDc7ZgAnbArwj2jd/Vav3GV4epq4pobOo308nYOYZ95TdiDSNZSBI=
+X-Received: by 2002:a2e:9247:: with SMTP id v7mr575345ljg.215.1585794918859;
+ Wed, 01 Apr 2020 19:35:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 2 Apr 2020 04:34:52 +0200
+Message-ID: <CAG48ez2Sx4ELkM94aD_h_J7K7KBOeuGmvZLKRkg3n_f2WoZ_cg@mail.gmail.com>
+Subject: AMD DC graphics display code enables -mhard-float, -msse, -msse2
+ without any visible FPU state protection
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>, amd-gfx@lists.freedesktop.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix 2 parenthesis alignment issues.
+[x86 folks in CC so that they can chime in on the precise rules for this stuff]
 
-Reported by checkpatch.
+Hi!
 
-Signed-off-by: John B. Wyatt IV <jbwyatt4@gmail.com>
----
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+I noticed that several makefiles under drivers/gpu/drm/amd/display/dc/
+turn on floating-point instructions in the compiler flags
+(-mhard-float, -msse and -msse2) in order to make the "float" and
+"double" types usable from C code without requiring helper functions.
 
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-index 676d1ad1b50d..546ad376df99 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-@@ -1094,7 +1094,8 @@ static int swdev_port_obj_del(struct net_device *netdev,
- 
- static int
- ethsw_switchdev_port_attr_set_event(struct net_device *netdev,
--		struct switchdev_notifier_port_attr_info *port_attr_info)
-+				    struct switchdev_notifier_port_attr_info
-+				    *port_attr_info)
- {
- 	int err;
- 
-@@ -1277,7 +1278,8 @@ static int port_switchdev_event(struct notifier_block *unused,
- 
- static int
- ethsw_switchdev_port_obj_event(unsigned long event, struct net_device *netdev,
--			struct switchdev_notifier_port_obj_info *port_obj_info)
-+			       struct switchdev_notifier_port_obj_info
-+			       *port_obj_info)
- {
- 	int err = -EOPNOTSUPP;
- 
--- 
-2.25.1
+However, as far as I know, code running in normal kernel context isn't
+allowed to use floating-point registers without special protection
+using helpers like kernel_fpu_begin() and kernel_fpu_end() (which also
+require that the protected code never blocks). If you violate that
+rule, that can lead to various issues - among other things, I think
+the kernel will clobber userspace FPU register state, and I think the
+kernel code can blow up if a context switch happens at the wrong time,
+since in-kernel task switches don't preserve FPU state.
 
+Is there some hidden trick I'm missing that makes it okay to use FPU
+registers here?
+
+I would try testing this, but unfortunately none of the AMD devices I
+have here have the appropriate graphics hardware...
