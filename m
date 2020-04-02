@@ -2,95 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6755B19BE95
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 11:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CBFC19BEA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 11:29:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387894AbgDBJ2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 05:28:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387734AbgDBJ2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 05:28:09 -0400
-Received: from mail.kernel.org (ip5f5ad4d8.dynamic.kabel-deutschland.de [95.90.212.216])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC66B2080C;
-        Thu,  2 Apr 2020 09:28:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585819688;
-        bh=arJuEu1VaCuRLLMtEVLbOj/nXcpJ/nIL0njuJu/AVCc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Js3TaHpbnk17qr53i8vzInaYB0+ldzlG0BFyxz8OL8ROt+5tUx3meQW6VGgLOFN3m
-         Rj2ILK0L7r/1gZ9c5ewaQtH3bYB15D85m3rLnbyT5rdFoNNT1yo162mMvwz41DHlWl
-         mPh35GJcX/v8DK/wwuL6mNkKrObpzNFleWfuAKKM=
-Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
-        (envelope-from <mchehab@kernel.org>)
-        id 1jJw8s-000AaU-6S; Thu, 02 Apr 2020 11:28:06 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        linux-kbuild@vger.kernel.org
-Subject: [PATCH 6/6] kconfig: qconf: Fix a few alignment issues
-Date:   Thu,  2 Apr 2020 11:28:03 +0200
-Message-Id: <e1d57b9e1dca8680b32744920642ab27aec14ad7.1585819250.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1585819250.git.mchehab+huawei@kernel.org>
-References: <cover.1585819250.git.mchehab+huawei@kernel.org>
+        id S2387726AbgDBJ3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 05:29:36 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42042 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728135AbgDBJ3g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Apr 2020 05:29:36 -0400
+Received: by mail-lj1-f194.google.com with SMTP id q19so2443755ljp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Apr 2020 02:29:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=A1N3cjpRhyvHKi63+qWeoH/cQuETGSuu6i+0dBsDHIQ=;
+        b=coGtTAGeaDc78YWEsJNTZMlDsZCaIbylMttjom5Z70YBE5F2k93ON4BQmZoI51qBSG
+         Hj0XLtAM56EEd0rs1R7c2WCtJ6zviwyxaKNTZhLByT0dOXstrfFqsaevsvjydwXAat9q
+         gJp4Wftj6vxGKAJCls1wBulguntnRPWkhv5FmRnZFYFhAAyaFMojePw74yt5nlGTx7UL
+         dZn036XZYD133ygBTMEcXuml8pgVxNUXm/39S7YnF9Y7abgqKcwwyOJmHb6COE6ILVri
+         wDr8i4GYaN52bp0ny9O1c6iycmUFr5GTvPzKFF2Ff2Tt6bwT7q4Skr8jVj5TN/bw7ukq
+         VemQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=A1N3cjpRhyvHKi63+qWeoH/cQuETGSuu6i+0dBsDHIQ=;
+        b=O+oE8O6LPmbXJv5b/er2leRxuKBppq7WZj5M7qgNUmyKvkAsn9vhoJF3pCTJa3cguA
+         wrb4KOExINLmVrhH3NcnepMLQf+/A9bLCHK1i0cIWQ1UBFqeo9nWQqSkiqqXE59uCx2n
+         BhqYtYDhJHC/UdJoV2O0424sBtftRxrt6fM6szM5W7/qfNqvHU+IE1viwecxF9Ydmfyi
+         QeYw1kB+9nI6ifTxNQzNvqLm6RUsKC1cBsDyq5ij2PD1lRHqe7OSLPvuSjwA097Qv3Zr
+         mC78VADEYGVdLW8FCMV0YhNfxx3tiA8b/FFRqD8q7Q7BEdwlWcQ9+Czts+Df2jDTcIk8
+         aaZQ==
+X-Gm-Message-State: AGi0Pua2/NPv2W9F3qHHwPMWjbx6M4IbSknp46CSmdR8fcPSEJJbQzvO
+        jkZzgheiDcDa/Y9GAPwR5n4wk9XjjeyOsWNgoZrfRj+Mzu8=
+X-Google-Smtp-Source: APiQypJWbdvAHJJzctAi4UyRIqkykag4Hkn+oWpwV6OQZaBcStgupVm0wiJY4b3xonLdhHFBVGA3hi7c2RQIXHJdrCA=
+X-Received: by 2002:a2e:8015:: with SMTP id j21mr1388436ljg.165.1585819773640;
+ Thu, 02 Apr 2020 02:29:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <20200401161414.345528747@linuxfoundation.org>
+In-Reply-To: <20200401161414.345528747@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 2 Apr 2020 14:59:21 +0530
+Message-ID: <CA+G9fYv0bGh3y3y=yswry_n63F9dRzQbBwNUrHS9AVteqV5+NA@mail.gmail.com>
+Subject: Re: [PATCH 5.5 00/30] 5.5.15-rc1 review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a few items with wrong alignments. Solve them.
+On Wed, 1 Apr 2020 at 21:51, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.5.15 release.
+> There are 30 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 03 Apr 2020 16:09:36 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.5.15-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.5.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- scripts/kconfig/qconf.cc | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
-index f3eaeb2b70da..84976b9d2174 100644
---- a/scripts/kconfig/qconf.cc
-+++ b/scripts/kconfig/qconf.cc
-@@ -635,7 +635,7 @@ void ConfigList::updateMenuList(ConfigItem *parent, struct menu* menu)
- 			last = item;
- 			continue;
- 		}
--	hide:
-+hide:
- 		if (item && item->menu == child) {
- 			last = parent->firstChild();
- 			if (last == item)
-@@ -700,7 +700,7 @@ void ConfigList::updateMenuList(ConfigList *parent, struct menu* menu)
- 			last = item;
- 			continue;
- 		}
--	hide:
-+hide:
- 		if (item && item->menu == child) {
- 			last = (ConfigItem*)parent->topLevelItem(0);
- 			if (last == item)
-@@ -1239,10 +1239,11 @@ QMenu* ConfigInfoView::createStandardContextMenu(const QPoint & pos)
- {
- 	QMenu* popup = Parent::createStandardContextMenu(pos);
- 	QAction* action = new QAction("Show Debug Info", popup);
--	  action->setCheckable(true);
--	  connect(action, SIGNAL(toggled(bool)), SLOT(setShowDebug(bool)));
--	  connect(this, SIGNAL(showDebugChanged(bool)), action, SLOT(setOn(bool)));
--	  action->setChecked(showDebug());
-+
-+	action->setCheckable(true);
-+	connect(action, SIGNAL(toggled(bool)), SLOT(setShowDebug(bool)));
-+	connect(this, SIGNAL(showDebugChanged(bool)), action, SLOT(setOn(bool)));
-+	action->setChecked(showDebug());
- 	popup->addSeparator();
- 	popup->addAction(action);
- 	return popup;
--- 
-2.25.1
+NOTE:
+kselftest: bpf_test_verifier: PASS
+with test case fix patch,
+Daniel Borkmann <daniel@iogearbox.net>
+    bpf: update jmp32 test cases to fix range bound deduction
 
+Summary
+------------------------------------------------------------------------
+
+kernel: 5.5.15-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-5.5.y
+git commit: cd17199418ca9a1111bd23641def9c0f3df0dbcd
+git describe: v5.5.14-31-gcd17199418ca
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.5-oe/bui=
+ld/v5.5.14-31-gcd17199418ca
+
+No regressions (compared to build v5.5.14)
+
+Fixes (compared to build v5.5.14)
+---------------------------------------------
+  x86_64:
+  qemu_x86_64:
+     kselftest: bpf_test_verifier: PASS
+
+Ran 29621 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c
+- hi6220-hikey
+- i386
+- juno-r2
+- juno-r2-compat
+- juno-r2-kasan
+- nxp-ls2088
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15
+- x86
+- x86-kasan
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* install-android-platform-tools-r2800
+* kselftest
+* libgpiod
+* libhugetlbfs
+* linux-log-parser
+* ltp-cve-tests
+* ltp-hugetlb-tests
+* ltp-mm-tests
+* ltp-sched-tests
+* perf
+* kvm-unit-tests
+* ltp-dio-tests
+* ltp-io-tests
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-crypto-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-open-posix-tests
+* ltp-pty-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* network-basic-tests
+* v4l2-compliance
+* spectre-meltdown-checker-test
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
