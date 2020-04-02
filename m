@@ -2,196 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A60C19BB6E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 07:50:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D693719BB72
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 07:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728480AbgDBFul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Apr 2020 01:50:41 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44202 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbgDBFul (ORCPT
+        id S1728480AbgDBF4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Apr 2020 01:56:15 -0400
+Received: from smtprelay0030.hostedemail.com ([216.40.44.30]:35508 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725789AbgDBF4P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Apr 2020 01:50:41 -0400
-Received: by mail-qk1-f195.google.com with SMTP id j4so2743599qkc.11
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 22:50:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=d84jwFa3Dz3B4OMZLn3Rh6hMGOHjGjpuPm0I9bJ6Orw=;
-        b=cx0z5TB3iY3LY/S7as/bQEG50M8EDZ8H4Lnuh6+uzwUaxN/PwLUs/CCq+lzMWk/OrT
-         PIBI1ug3fcLtQwL8HMNDoVMlpmRc4dhbAvnQH+OWROC8eI0UQPXInXVqcbvCkCq8JEc2
-         7h2aYE0Aj+YgkcIANmC0Xv40F8LcfX5UIS/VmhWUtA63ouIhiJld82XCb1Idcdq6Z4+v
-         NRsm+QPu5dUr8Cjrf+frNM5qs/j25ZdY5/mwAc5ZW9EVoB+EK7VPjJWiwl/8k07shvSX
-         QvN1sGljzrGPhIMylkpX+b6+VH31GQ/QYDAGvxy+Tzg/CPyvp9g0T1BFTendBsvKlmDU
-         PfhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=d84jwFa3Dz3B4OMZLn3Rh6hMGOHjGjpuPm0I9bJ6Orw=;
-        b=Shp8bJB2AL1sH+uDLxf/hgjMumbpUwnj7syDspk3oEBfwoJa7F6fHuq7qe8VcT3Hr8
-         bJ95MhGaH5of6UM4xw6TzQRYRHU/XqBe0mdbaKKFgbOOPe78zn6NAI7X1SB+IaWLOC+E
-         JjxYMCT9uV4yu7lIlfCaX3lY9niWltWN5A2vVFFm/Pc8GhpJ+bPN4egx31EbE5SVT7BS
-         PdhUSSzXxbKOhlngAb0+IhJ7BtWufS3C5YIzJpvwCTWW/7yFWXmyAhZE3NU2j2xvIpZ6
-         zGO/KNuJfacc0gZXUVFMHX8/LAIQpjAHHcx3wFgJrSQf30oqi2WiEUwaiGHCl+zVJf4R
-         kGeQ==
-X-Gm-Message-State: AGi0PuaRAZaxqnCT/AT09mMuL0AfiPoj7wgEP73n+jz/FjfuWebNYaMy
-        Ni+6IGuBF8ztfWG+qgrRDkADDeIquneA0tgcH3A=
-X-Google-Smtp-Source: APiQypKKgVAjzMwyxrDuFIklrP6ceaUewm9tXVdh9D6ihz8trt988m/86IRcI0R0jwbj1EoAPgRk/zv1exTGVL2PIhs=
-X-Received: by 2002:ae9:e858:: with SMTP id a85mr1708164qkg.343.1585806639692;
- Wed, 01 Apr 2020 22:50:39 -0700 (PDT)
+        Thu, 2 Apr 2020 01:56:15 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 38DD15010;
+        Thu,  2 Apr 2020 05:56:14 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2692:2828:3138:3139:3140:3141:3142:3354:3622:3865:3867:3868:4250:4321:4605:5007:6119:7514:7875:7903:10004:10400:10848:11026:11232:11473:11658:11914:12043:12048:12296:12297:12438:12555:12740:12760:12895:13439:13972:14096:14097:14181:14659:14721:21080:21627:21990:30012:30045:30046:30054:30070:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: judge59_8d939426bb842
+X-Filterd-Recvd-Size: 3915
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Thu,  2 Apr 2020 05:56:12 +0000 (UTC)
+Message-ID: <5d35084fcc0476fc2f43e3cf371f5078c0fbeeab.camel@perches.com>
+Subject: Re: [PATCH 1/2] staging: gasket: Fix 4 over 80 char warnings
+From:   Joe Perches <joe@perches.com>
+To:     "John B. Wyatt IV" <jbwyatt4@gmail.com>,
+        outreachy-kernel@googlegroups.com,
+        Rob Springer <rspringer@google.com>,
+        Todd Poynor <toddpoynor@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Wed, 01 Apr 2020 22:54:17 -0700
+In-Reply-To: <20200402053617.826678-2-jbwyatt4@gmail.com>
+References: <20200402053617.826678-1-jbwyatt4@gmail.com>
+         <20200402053617.826678-2-jbwyatt4@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-References: <1584942732-2184-1-git-send-email-iamjoonsoo.kim@lge.com>
- <1584942732-2184-7-git-send-email-iamjoonsoo.kim@lge.com> <20200323171744.GD204561@cmpxchg.org>
- <CAAmzW4OCofhyOX8-5yrMhUrP-ncUQ_JGzZuNp76GWtqef9DpjQ@mail.gmail.com>
-In-Reply-To: <CAAmzW4OCofhyOX8-5yrMhUrP-ncUQ_JGzZuNp76GWtqef9DpjQ@mail.gmail.com>
-From:   Joonsoo Kim <js1304@gmail.com>
-Date:   Thu, 2 Apr 2020 14:50:28 +0900
-Message-ID: <CAAmzW4OGThMZk2sRrboZt6nx82CiphKVFpxLGaXFXLB7WYfd3Q@mail.gmail.com>
-Subject: Re: [PATCH v4 6/8] mm/swap: implement workingset detection for
- anonymous LRU
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>, kernel-team@lge.com,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2020=EB=85=84 3=EC=9B=94 24=EC=9D=BC (=ED=99=94) =EC=98=A4=ED=9B=84 3:25, J=
-oonsoo Kim <js1304@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> 2020=EB=85=84 3=EC=9B=94 24=EC=9D=BC (=ED=99=94) =EC=98=A4=EC=A0=84 2:17,=
- Johannes Weiner <hannes@cmpxchg.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
-> >
-> > On Mon, Mar 23, 2020 at 02:52:10PM +0900, js1304@gmail.com wrote:
-> > > From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> > >
-> > > This patch implements workingset detection for anonymous LRU.
-> > > All the infrastructure is implemented by the previous patches so this=
- patch
-> > > just activates the workingset detection by installing/retrieving
-> > > the shadow entry.
-> > >
-> > > Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> > > ---
-> > >  include/linux/swap.h |  6 ++++++
-> > >  mm/memory.c          |  7 ++++++-
-> > >  mm/swap_state.c      | 20 ++++++++++++++++++--
-> > >  mm/vmscan.c          |  7 +++++--
-> > >  4 files changed, 35 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/include/linux/swap.h b/include/linux/swap.h
-> > > index 273de48..fb4772e 100644
-> > > --- a/include/linux/swap.h
-> > > +++ b/include/linux/swap.h
-> > > @@ -408,6 +408,7 @@ extern struct address_space *swapper_spaces[];
-> > >  extern unsigned long total_swapcache_pages(void);
-> > >  extern void show_swap_cache_info(void);
-> > >  extern int add_to_swap(struct page *page);
-> > > +extern void *get_shadow_from_swap_cache(swp_entry_t entry);
-> > >  extern int add_to_swap_cache(struct page *page, swp_entry_t entry,
-> > >                       gfp_t gfp, void **shadowp);
-> > >  extern int __add_to_swap_cache(struct page *page, swp_entry_t entry)=
-;
-> > > @@ -566,6 +567,11 @@ static inline int add_to_swap(struct page *page)
-> > >       return 0;
-> > >  }
-> > >
-> > > +static inline void *get_shadow_from_swap_cache(swp_entry_t entry)
-> > > +{
-> > > +     return NULL;
-> > > +}
-> > > +
-> > >  static inline int add_to_swap_cache(struct page *page, swp_entry_t e=
-ntry,
-> > >                                       gfp_t gfp_mask, void **shadowp)
-> > >  {
-> > > diff --git a/mm/memory.c b/mm/memory.c
-> > > index 5f7813a..91a2097 100644
-> > > --- a/mm/memory.c
-> > > +++ b/mm/memory.c
-> > > @@ -2925,10 +2925,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> > >                       page =3D alloc_page_vma(GFP_HIGHUSER_MOVABLE, v=
-ma,
-> > >                                                       vmf->address);
-> > >                       if (page) {
-> > > +                             void *shadow;
-> > > +
-> > >                               __SetPageLocked(page);
-> > >                               __SetPageSwapBacked(page);
-> > >                               set_page_private(page, entry.val);
-> > > -                             lru_cache_add_anon(page);
-> > > +                             shadow =3D get_shadow_from_swap_cache(e=
-ntry);
-> > > +                             if (shadow)
-> > > +                                     workingset_refault(page, shadow=
-);
-> >
-> > Hm, this is calling workingset_refault() on a page that isn't charged
-> > to a cgroup yet. That means the refault stats and inactive age counter
-> > will be bumped incorrectly in the root cgroup instead of the real one.
->
-> Okay.
->
-> > > +                             lru_cache_add(page);
-> > >                               swap_readpage(page, true);
-> > >                       }
-> > >               } else {
-> >
-> > You need to look up and remember the shadow entry at the top and call
-> > workingset_refault() after mem_cgroup_commit_charge() has run.
->
-> Okay. I will call workingset_refault() after charging.
->
-> I completely missed that workingset_refault() should be called after char=
-ging.
-> workingset_refault() in __read_swap_cache_async() also has the same probl=
-em.
->
-> > It'd be nice if we could do the shadow lookup for everybody in
-> > lookup_swap_cache(), but that's subject to race conditions if multiple
-> > faults on the same swap page happen in multiple vmas concurrently. The
-> > swapcache bypass scenario is only safe because it checks that there is
-> > a single pte under the mmap sem to prevent forking. So it looks like
-> > you have to bubble up the shadow entry through swapin_readahead().
->
-> The problem looks not that easy. Hmm...
->
-> In current code, there is a large time gap between the shadow entries
-> are poped up and the page is charged to the memcg, especially,
-> for readahead-ed pages. We cannot maintain the shadow entries of
-> the readahead-ed pages until the pages are charged.
->
-> My plan to solve this problem is propagating the charged mm to
-> __read_swap_cache_async(), like as file cache, charging when
-> the page is added on to the swap cache and calling workingset_refault()
-> there. Charging will only occur if:
->
-> 1. faulted page
-> 2. readahead-ed page with the shadow entry for the same memcg
->
-> Also, readahead only happens when shadow entry's memcg is the same
-> with the charged memcg. If not the same, it's mostly not ours so
-> readahead isn't needed.
->
-> Please let me know how you think of the feasibility of this idea.
+On Wed, 2020-04-01 at 22:36 -0700, John B. Wyatt IV wrote:
+> Fix 4 over 80 char warnings by caching long enum values into local
+> variables.
+> 
+> All enums are only used once inside each function (and once inside
+> the entire file).
+> 
+> Reported by checkpatch.
+> 
+> Signed-off-by: John B. Wyatt IV <jbwyatt4@gmail.com>
+> ---
+>  drivers/staging/gasket/apex_driver.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+> index 46199c8ca441..f48209ec7d24 100644
+> --- a/drivers/staging/gasket/apex_driver.c
+> +++ b/drivers/staging/gasket/apex_driver.c
+> @@ -253,6 +253,8 @@ static int apex_get_status(struct gasket_dev *gasket_dev)
+>  /* Enter GCB reset state. */
+>  static int apex_enter_reset(struct gasket_dev *gasket_dev)
+>  {
+> +	int idle_gen_reg = APEX_BAR2_REG_IDLEGENERATOR_IDLEGEN_IDLEREGISTER;
+> +
 
-Hello, Johannes.
+This indirection only makes the code more difficult to understand.
 
-Could you let me know your opinion about the idea above?
-In fact, since your reply is delayed, I completed the solution about the
-above idea. If you want, I will submit it first. Then, we could discuss
-the solution more easily.
+>  	if (bypass_top_level)
+>  		return 0;
+>  
+> @@ -263,7 +265,7 @@ static int apex_enter_reset(struct gasket_dev *gasket_dev)
+>  	 *    - Enable GCB idle
+>  	 */
+>  	gasket_read_modify_write_64(gasket_dev, APEX_BAR_INDEX,
+> -				    APEX_BAR2_REG_IDLEGENERATOR_IDLEGEN_IDLEREGISTER,
+> +				    idle_gen_reg,
+>  				    0x0, 1, 32);
+>  
+>  	/*    - Initiate DMA pause */
+> @@ -395,11 +397,12 @@ static int apex_device_cleanup(struct gasket_dev *gasket_dev)
+>  	u64 scalar_error;
+>  	u64 hib_error;
+>  	int ret = 0;
+> +	int status = APEX_BAR2_REG_SCALAR_CORE_ERROR_STATUS;
+>  
+>  	hib_error = gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
+>  				       APEX_BAR2_REG_USER_HIB_ERROR_STATUS);
+>  	scalar_error = gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
+> -					  APEX_BAR2_REG_SCALAR_CORE_ERROR_STATUS);
+> +					  status);
+>  
+>  	dev_dbg(gasket_dev->dev,
+>  		"%s 0x%p hib_error 0x%llx scalar_error 0x%llx\n",
+> @@ -584,6 +587,8 @@ static int apex_pci_probe(struct pci_dev *pci_dev,
+>  	ulong page_table_ready, msix_table_ready;
+>  	int retries = 0;
+>  	struct gasket_dev *gasket_dev;
+> +	int page_table_init = APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_INIT;
+> +	int msix_table_init = APEX_BAR2_REG_KERNEL_HIB_MSIX_TABLE_INIT;
+>  
+>  	ret = pci_enable_device(pci_dev);
+>  	if (ret) {
+> @@ -606,10 +611,10 @@ static int apex_pci_probe(struct pci_dev *pci_dev,
+>  	while (retries < APEX_RESET_RETRY) {
+>  		page_table_ready =
+>  			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
+> -					   APEX_BAR2_REG_KERNEL_HIB_PAGE_TABLE_INIT);
+> +					   page_table_init);
+>  		msix_table_ready =
+>  			gasket_dev_read_64(gasket_dev, APEX_BAR_INDEX,
+> -					   APEX_BAR2_REG_KERNEL_HIB_MSIX_TABLE_INIT);
+> +					   msix_table_init);
+>  		if (page_table_ready && msix_table_ready)
+>  			break;
+>  		schedule_timeout(msecs_to_jiffies(APEX_RESET_DELAY));
 
-Thanks.
