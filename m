@@ -2,104 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28CAF19B9DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 03:25:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CB9019B9EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Apr 2020 03:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732732AbgDBBZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Apr 2020 21:25:21 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39392 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732462AbgDBBZV (ORCPT
+        id S1733094AbgDBBbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Apr 2020 21:31:46 -0400
+Received: from smtprelay0003.hostedemail.com ([216.40.44.3]:35042 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732462AbgDBBbp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Apr 2020 21:25:21 -0400
-Received: by mail-pl1-f193.google.com with SMTP id k18so716759pll.6
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Apr 2020 18:25:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ECaKk1XEhaLeQWM1QY7b2cbJfc2H+NtdzI3cEs6W3bc=;
-        b=e0Y8bY0Qfsg7n02ddZ8uiswipY9fuSgKm6X1sbnDAv/lfkxMia058WZBkqhK1Shm17
-         rbhURDSsKfGqJjKOlUlUV1hPqO/r5cxIWXuo9ebuaF40Cwx1NIv7hgfZMYswHlnED/uy
-         laXWmR2WR+D2bLl2xpsyRKvB0q1LRWQVbwujyCMO2IHN7v2HyE4eonQeMS3SafncKKi9
-         a5LEam9Ct4DCAiN63J2BaN5vV43vEQlKajNeDrT0wioFYYpGMIJpTJQ8+Z2XAvX1LnzC
-         wY/Y10MjzbOx4iwbFW0KTzL8oVlYWuoOPNiEIHLJXBzBwB4He1uIlnNFMg7OraR5KX3D
-         xWdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ECaKk1XEhaLeQWM1QY7b2cbJfc2H+NtdzI3cEs6W3bc=;
-        b=e9BGjkM5oqPrJILd+HSRSLkH+Qg3w+ztXaR/BPQlKb6mXXRx3k2mmOQljrEljazOyC
-         wcfvsBfBUvoABymVflsdUmS02WmY8U8auUlCE3540oe3AUo/Z1KkF9zWKt7AoXzMmXlt
-         4M1+OBIRh93X0EOPCMEO9rYdi/bi0/u5uzeoLB/Un5GSSURnn0VhSLF+SxM+iE8Y4gdl
-         yS6Jj1ea2JT4PLQXtNwa9rJpDuJoOScIQYY0WFzodg/+4Kq5k4DhUHtxdRCKh/09ai7p
-         myyLyjoRYIoJK0RNAyBuALYnyQ9H9D1AkIpb+SYyZXxMJTcLETBiLRfSyabxi3Ee6P2D
-         twWQ==
-X-Gm-Message-State: AGi0PuZ24Xtpw4yzwG6eK30kn0Iz+PYS3/fz9hF8AdV65vKWloC7zIJQ
-        Yp1PASAiQzeyo5+P4X8alzA=
-X-Google-Smtp-Source: APiQypLOFU9FlGJw8iOOANTLu4h97F20JAA88jZyZ5O8imCDYlYaifG5zMltxu9kuj6+J1fWyc7dAQ==
-X-Received: by 2002:a17:90a:36c7:: with SMTP id t65mr946992pjb.182.1585790720459;
-        Wed, 01 Apr 2020 18:25:20 -0700 (PDT)
-Received: from OptiPlexFedora.fios-router.home ([47.144.161.84])
-        by smtp.gmail.com with ESMTPSA id q71sm2516633pfc.92.2020.04.01.18.25.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2020 18:25:19 -0700 (PDT)
-From:   "John B. Wyatt IV" <jbwyatt4@gmail.com>
-To:     outreachy-kernel@googlegroups.com,
-        Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
+        Wed, 1 Apr 2020 21:31:45 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 0FB2E1802914A;
+        Thu,  2 Apr 2020 01:31:44 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:2198:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3868:3870:3871:4250:4321:4605:5007:6119:6120:6742:6743:7901:7903:9036:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12438:12679:12740:12760:12895:13019:13069:13095:13255:13311:13357:13439:14181:14659:14721:21080:21088:21212:21433:21627:21660:21990:30054:30060:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: magic31_e7601e651344
+X-Filterd-Recvd-Size: 4003
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Thu,  2 Apr 2020 01:31:39 +0000 (UTC)
+Message-ID: <aac1e71953b564d48f2d1288e50924ebd7e3e98a.camel@perches.com>
+Subject: Re: [PATCH v4 08/25] ocxl: Emit a log message showing how much LPC
+ memory was detected
+From:   Joe Perches <joe@perches.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Alastair D'Silva <alastair@d-silva.org>
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>,
-        devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-Cc:     "John B. Wyatt IV" <jbwyatt4@gmail.com>
-Subject: [PATCH] staging: android: ion: Fix parenthesis alignment
-Date:   Wed,  1 Apr 2020 18:25:15 -0700
-Message-Id: <20200402012515.429329-1-jbwyatt4@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux MM <linux-mm@kvack.org>
+Date:   Wed, 01 Apr 2020 18:29:42 -0700
+In-Reply-To: <CAPcyv4j4_owxEVjanwH5TiuMMJB3CaMannDzpXnaHedX7LuarQ@mail.gmail.com>
+References: <20200327071202.2159885-1-alastair@d-silva.org>
+         <20200327071202.2159885-9-alastair@d-silva.org>
+         <CAPcyv4j4_owxEVjanwH5TiuMMJB3CaMannDzpXnaHedX7LuarQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix 2 parenthesis alignment issues.
+On Wed, 2020-04-01 at 01:49 -0700, Dan Williams wrote:
+> On Sun, Mar 29, 2020 at 10:23 PM Alastair D'Silva <alastair@d-silva.org> wrote:
+> > This patch emits a message showing how much LPC memory & special purpose
+> > memory was detected on an OCXL device.
+[]
+> > diff --git a/drivers/misc/ocxl/config.c b/drivers/misc/ocxl/config.c
+[]
+> > @@ -568,6 +568,10 @@ static int read_afu_lpc_memory_info(struct pci_dev *dev,
+> >                 afu->special_purpose_mem_size =
+> >                         total_mem_size - lpc_mem_size;
+> >         }
+> > +
+> > +       dev_info(&dev->dev, "Probed LPC memory of %#llx bytes and special purpose memory of %#llx bytes\n",
+> > +                afu->lpc_mem_size, afu->special_purpose_mem_size);
+> 
+> A patch for a single log message is too fine grained for my taste,
+> let's squash this into another patch in the series.
 
-Reported by checkpatch.
+Is the granularity of lpc_mem_size actually bytes?
+Might this be better as KiB or something using functions
 
-Signed-off-by: John B. Wyatt IV <jbwyatt4@gmail.com>
----
- drivers/staging/android/ion/ion_page_pool.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Maybe something like:
 
-diff --git a/drivers/staging/android/ion/ion_page_pool.c b/drivers/staging/android/ion/ion_page_pool.c
-index f85ec5b16b65..0198b886d906 100644
---- a/drivers/staging/android/ion/ion_page_pool.c
-+++ b/drivers/staging/android/ion/ion_page_pool.c
-@@ -37,7 +37,7 @@ static void ion_page_pool_add(struct ion_page_pool *pool, struct page *page)
- 	}
- 
- 	mod_node_page_state(page_pgdat(page), NR_KERNEL_MISC_RECLAIMABLE,
--							1 << pool->order);
-+			    1 << pool->order);
- 	mutex_unlock(&pool->mutex);
- }
- 
-@@ -57,7 +57,7 @@ static struct page *ion_page_pool_remove(struct ion_page_pool *pool, bool high)
- 
- 	list_del(&page->lru);
- 	mod_node_page_state(page_pgdat(page), NR_KERNEL_MISC_RECLAIMABLE,
--							-(1 << pool->order));
-+			    -(1 << pool->order));
- 	return page;
- }
- 
--- 
-2.25.1
+unsigned long si_val(unsigned long val)
+{
+	static const char units[] = "BKMGTPE";
+	const char *unit = units;
+
+	while (!(val & 1023) && unit[1]) {
+		val >>= 10;
+		unit++;
+	}
+
+	return val;
+}
+
+char si_type(unsigned long val)
+{
+	static const char units[] = "BKMGTPE";
+	const char *unit = units;
+
+	while (!(val & 1023) && unit[1]) {
+		val >>= 10;
+		unit++;
+	}
+
+	return *unit;
+}
+
+so this could be something like:
+
+       dev_info(&dev->dev, "Probed LPC memory of %#llu%c and special purpose memory of %#llu%c\n",
+                si_val(afu->lpc_mem_size), si_type(afu->lpc_mem_size),
+		si_val(afu->special_purpose_mem_size), si_type(afu->special_purpose_mem_size));
+
+
 
